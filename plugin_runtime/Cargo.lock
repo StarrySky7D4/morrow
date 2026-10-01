@@ -600,7 +600,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-workbench-plugin"
-version = "0.1.9-test.54.7"
+version = "0.1.9-test.54.8"
 dependencies = [
  "capnp",
  "capnpc",

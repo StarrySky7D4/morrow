@@ -28,7 +28,13 @@ Future<void> sendHostRequest(
       action == host.Action.guestMutationStart ||
       action == host.Action.guestMutationSubmit ||
       action == host.Action.mutationReconcile ||
-      action == host.Action.mutationDiscover;
+      action == host.Action.mutationDiscover ||
+      action == host.Action.channelPrepare ||
+      action == host.Action.channelAppend ||
+      action == host.Action.channelRun ||
+      action == host.Action.channelStatus ||
+      action == host.Action.channelClose ||
+      action == host.Action.channelReadSent;
   Uint8List? payload;
   try {
     try {

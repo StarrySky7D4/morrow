@@ -99,6 +99,8 @@ impl ActivationPlan {
 pub(crate) struct Control {
     binding: ConnectionBinding,
     pub(crate) io: Option<Arc<IoContext>>,
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    pub(crate) channel: Option<Arc<crate::channel::ChannelContext>>,
     revocation: Revocation,
     cancel: Cancellation,
 }
@@ -106,10 +108,18 @@ impl Control {
     pub(crate) fn active(&self) -> bool {
         !self.revocation.is_revoked() && self.cancel.fault().is_none()
     }
+    fn signal_stop(&self) {
+        self.revocation.revoke();
+        self.cancel.cancel();
+    }
     fn stop(&self) {
         // Host read and commit boundaries see revocation before cooperative guest cancellation.
         self.revocation.revoke();
         self.cancel.cancel();
+        #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+        if let Some(context) = &self.channel {
+            context.revoke();
+        }
     }
 }
 /// Owns preparation and the approved connection. This stays valid only while its control is live.
@@ -138,6 +148,11 @@ impl ManagedInstance {
     }
     pub(crate) fn cancellation(&self) -> Cancellation {
         self.control.cancel.clone()
+    }
+    /// Revoke the original instance immediately without waiting for queue/storage locks.
+    /// The original worker and cleanup owner retain responsibility for actual reclamation.
+    pub fn request_stop(&self) {
+        self.control.signal_stop();
     }
     pub fn stop(&self) {
         self.control.stop();
@@ -200,6 +215,8 @@ pub struct Manager {
     registry: Registry,
     limits: Limits,
     instances: BTreeMap<String, Vec<Weak<Control>>>,
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    channel_cleanup: Vec<Arc<crate::channel::ChannelContext>>,
 }
 impl Manager {
     pub fn new(registry: Registry, limits: Limits) -> Self {
@@ -208,10 +225,22 @@ impl Manager {
             registry,
             limits,
             instances: BTreeMap::new(),
+            #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+            channel_cleanup: Vec::new(),
         }
     }
     pub(crate) fn identity(&self) -> Weak<()> {
         Arc::downgrade(&self.identity)
+    }
+    /// Reap original managed channel resources without granting new source authority.
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    pub fn reap_channels(&mut self) -> usize {
+        self.channel_cleanup
+            .retain(|context| context.reap() != 0 || Arc::strong_count(context) > 1);
+        self.channel_cleanup
+            .iter()
+            .map(|context| context.reap())
+            .sum()
     }
     pub fn revision(&self) -> u64 {
         self.registry.revision()
@@ -743,6 +772,45 @@ impl Manager {
         )
         .map_err(ManagerError::Io)
     }
+    /// Explicit trusted-host grant of a host-selected local source on this exact live instance.
+    /// The package declaration supplies ceilings only; no IO or content grant is created.
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    #[allow(clippy::too_many_arguments)]
+    pub fn bind_channel(
+        &self,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        expected_digest: [u8; 32],
+        expected_revision: u64,
+        source: crate::channel::Source,
+        budget: morrow_core::channel::Budget,
+        expires: u64,
+        now: u64,
+    ) -> Result<crate::channel::ChannelBroker> {
+        self.checked_selection(
+            &instance.package.package().manifest().package_id,
+            expected_digest,
+            expected_revision,
+        )?;
+        self.validate_instance(host, instance)?;
+        let package = instance.package.package();
+        let declaration = package
+            .channel_declaration()
+            .ok_or(Error::Invalid("channel profile not declared"))?;
+        let number = match source.kind {
+            morrow_core::channel::Kind::ByteStream => 1,
+            morrow_core::channel::Kind::Events => 2,
+        };
+        if !instance.control.active()
+            || package.digest() != expected_digest
+            || instance.connection().package_digest() != Some(expected_digest)
+            || !declaration.kinds.contains(&number)
+        {
+            return Err(Error::Invalid("unapproved channel binding").into());
+        }
+        crate::channel::ChannelBroker::bind(self, host, instance, source, budget, expires, now)
+            .map_err(|_| ManagerError::Core(Error::Invalid("channel binding denied")))
+    }
     pub fn set_enabled(
         &mut self,
         id: &str,
@@ -870,6 +938,13 @@ impl Manager {
     }
     /// Validate current enabled state and package bytes, then bind the stored approved ceiling.
     pub fn connect(&mut self, id: &str, host: &mut HostRuntime) -> Result<ManagedInstance> {
+        #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+        {
+            self.reap_channels();
+            if self.channel_cleanup.len() >= MAX_INSTANCES {
+                return Err(Error::Limit.into());
+            }
+        }
         if self.prune() >= MAX_INSTANCES {
             return Err(Error::Limit.into());
         }
@@ -907,6 +982,17 @@ impl Manager {
                     ))
                 })
             }),
+            #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+            channel: package
+                .package()
+                .channel_declaration()
+                .and_then(|declaration| {
+                    declaration
+                        .budget
+                        .as_ref()
+                        .and_then(|budget| morrow_core::channel::Budget::from_proto(budget).ok())
+                        .map(|budget| Arc::new(crate::channel::ChannelContext::new(budget)))
+                }),
             revocation,
             cancel: Cancellation::default(),
         });
@@ -914,6 +1000,10 @@ impl Manager {
             .entry(id.into())
             .or_default()
             .push(Arc::downgrade(&control));
+        #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+        if let Some(context) = &control.channel {
+            self.channel_cleanup.push(context.clone());
+        }
         Ok(ManagedInstance {
             package,
             connection,

@@ -63,7 +63,7 @@ class ProjectTests(unittest.TestCase):
             tool.new_project(args)
         return args, tool.project(args.path)
 
-    def test_all_three_languages_and_five_starters_have_expected_sources_and_locks(self):
+    def test_all_three_languages_and_supported_starters_have_expected_sources_and_locks(self):
         for language in tool.LANGUAGES:
             for kind in tool.KINDS:
                 with self.subTest(language=language, kind=kind):
@@ -73,7 +73,7 @@ class ProjectTests(unittest.TestCase):
                     self.assertEqual(source.read_bytes(), (self.sdk / "examples" / f"{language}-{profile}" / name).read_bytes())
                     self.assertEqual(config["build"]["language"], language)
                     self.assertEqual(config["plugin"]["dependency_calls"], kind == "dependency")
-                    self.assertEqual(len(config.get("handlers", [])), {"content": 0, "transform": 3, "ui": 2, "dependency": 1, "io": 0, "service": 0}[kind])
+                    self.assertEqual(len(config.get("handlers", [])), {"content": 0, "transform": 3, "ui": 2, "dependency": 1, "io": 0, "service": 0, "channel": 1}[kind])
                     self.assertEqual(config["plugin"]["capabilities"], list(tool.CAPABILITIES) if kind == "content" else ["read-content", "edit-content"] if kind == "dependency" else [])
                     if kind == "io":
                         self.assertEqual(config["build"]["kind"], "io")

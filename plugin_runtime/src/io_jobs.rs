@@ -863,8 +863,8 @@ impl Control {
         }
     }
     fn stop(&self) {
-        let mut state = self.lock();
         self.revocation.revoke();
+        let mut state = self.lock();
         if !matches!(state.phase, Phase::Stopped | Phase::Failed) {
             state.phase = Phase::Stopping;
         }
@@ -1910,6 +1910,11 @@ impl<O: HostOwner> IoWorker<O> {
     }
     /// Revoke first, then cancel every job. Late results are never delivered as
     /// successes by `read`.
+    /// Trusted cancellation only: no owner, result or join proof is transferred.
+    pub fn stop_handle(&self) -> std::sync::Arc<dyn Fn() + Send + Sync> {
+        let control=self.control.clone();let sender=self.sender.clone();
+        std::sync::Arc::new(move || {control.stop();let _=sender.try_send(Message::Wake);})
+    }
     pub fn stop(&self) {
         self.control.stop();
         let _ = self.sender.try_send(Message::Wake);

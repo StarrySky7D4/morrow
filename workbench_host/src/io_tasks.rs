@@ -154,6 +154,7 @@ impl Executor {
 /// The complete state is either local or owned by the original worker. No
 /// fallback store, partial state, or panicking Deref can mask its absence.
 pub(crate) struct StateSlot {
+    pub(crate) product_gate: crate::product_gate::ProductGate,
     owner: Option<WorkbenchState>,
     task: Option<Task>,
     cleanup: Option<ManagedInstance>,
@@ -169,6 +170,32 @@ pub(crate) struct StateSlot {
     pub(crate) submission: Option<[u8; 32]>,
 }
 impl StateSlot {
+    #[cfg(windows)]
+    pub(crate) fn take_channel_owner(&mut self) -> Result<WorkbenchState> {
+        self.require_writable()?;
+        if self.task.is_some() {
+            return Err(AccessError::UnacknowledgedTask.into());
+        }
+        self.owner.take().ok_or_else(|| AccessError::Busy.into())
+    }
+    #[cfg(windows)]
+    pub(crate) fn restore_channel_owner(
+        &mut self,
+        owner: WorkbenchState,
+        repair: bool,
+    ) -> Result<()> {
+        if self.owner.is_some() || self.task.is_some() || self.lost {
+            return Err(AccessError::OwnerUnavailable.into());
+        }
+        self.owner = Some(owner);
+        self.repair_needed |= repair;
+        Ok(())
+    }
+    #[cfg(windows)]
+    pub(crate) fn channel_owner_lost(&mut self) {
+        self.lost = true;
+        self.owner = None;
+    }
     pub(crate) fn has_service_task(&self) -> bool {
         self.task
             .as_ref()
@@ -176,6 +203,7 @@ impl StateSlot {
     }
     pub(crate) fn new(owner: WorkbenchState) -> Self {
         Self {
+            product_gate: Default::default(),
             owner: Some(owner),
             task: None,
             cleanup: None,
@@ -205,6 +233,7 @@ impl StateSlot {
         self.owner.as_mut().ok_or_else(|| AccessError::Busy.into())
     }
     pub(crate) fn require_writable(&self) -> Result<()> {
+        self.product_gate.check()?;
         self.local()?;
         if self.repair_needed {
             return Err(AccessError::RecoveryRequired.into());
@@ -557,7 +586,12 @@ impl Workbench {
             }
         };
         let persistent_job = !matches!(&job, file::Admission::Io(_));
-        let submitted = job.submit(&worker);
+        let admission = self.state.product_gate.register(worker.stop_handle());
+        let submitted = if admission.is_ok() {
+            Some(job.submit(&worker))
+        } else {
+            None
+        };
         self.state.task = Some(Task {
             commands: Default::default(),
             key,
@@ -570,8 +604,12 @@ impl Workbench {
             #[cfg(windows)]
             mutation: None,
         });
+        if let Err(error) = admission {
+            self.state.request_stop();
+            return Err(error);
+        }
         let task = self.state.checked_task(key)?;
-        match submitted {
+        match submitted.expect("admitted original worker") {
             Ok(file::Submitted::Io(handle)) => task.handle = Some(handle),
             Ok(file::Submitted::File(file)) => task.file = Some(file),
             #[cfg(windows)]

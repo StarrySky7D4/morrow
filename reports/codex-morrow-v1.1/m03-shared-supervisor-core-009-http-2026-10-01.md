@@ -1,0 +1,9 @@
+# Shared supervision 009: current real Core/HTTP regression
+
+This supplements the [Windows production integration](m03-production-supervisor-009-2026-10-01.md) and [193-test host library regression](m03-production-supervisor-009-host-regression-2026-10-01.md). Those reports and sealed receipts remain unchanged.
+
+The current shared/native M03 RequestClosed release barrier is compiled and frozen from check004 into fresh `host/m03-shared-supervisor-core-009-http-candidate-001`, reusing the unchanged, pinned real Rust guest006. Fresh `host/m03-shared-supervisor-core-009-http-run-001` executes three actual native supervisor/Core/loopback HTTP fault cases: authority-deadline, network-abort and pipe-partial-close. All three runners exit0; all actual supervisors exit0; every case records exactly one POST, zero extra POST, expected_fault_observed, matching Close/ACK and clean control protocol. Original business Unknown/error outcomes remain unchanged; no original Unknown operation is replayed. Actual worker start/join, native pipe/control reclamation, direct-child exit, dual EOF and Job0 are separately required for bound durable Recovery Reclaimed. A protocol ACK never substitutes for final complete resource reclamation.
+
+The pipe-partial-close case alone uses the explicit qualification feature; it is not evidence of successful nonzero real OS short-write completion. This is the experimental native M03/HTTP path, distinct from the Flutter/Workbench/Wasmi production process path. No cross-platform/product-G0/SDK-freeze conclusion is drawn.
+
+Run evidence-manifest SHA256: `e7f96f9ccea80ae32469e794f48c26e88e185726e7eddc14c0a8fb36cef96dd9`. Current source/candidate pins and original passive006 assertions are checked before/after every case. Historical runs, including the failed shared run002 and original unconfirmed Unknown, remain preserved. No CI, install, privilege change, push, merge, publication or deployment.

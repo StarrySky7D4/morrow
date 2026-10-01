@@ -54,7 +54,7 @@ class ApplicationShutdown {
   void request() {
     if (destroying) return;
     if (requested) {
-      if (session.mayRecover && session.phase != SessionPhase.opening) {
+      if (session.mayCloseWindow && session.phase != SessionPhase.opening) {
         observe();
         return;
       }
@@ -92,7 +92,7 @@ class ApplicationShutdown {
       }
       return;
     }
-    if (session.mayRecover) {
+    if (session.mayCloseWindow) {
       destroying = true;
       _reminder?.cancel();
       unawaited(

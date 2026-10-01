@@ -1,0 +1,33 @@
+schema = 1
+
+[plugin]
+id = "morrow.sdk.channel.directory.cpp"
+version = "0.1.0"
+name = "Channel Directory Consumer (cpp)"
+capabilities = []
+dependency_calls = false
+
+[build]
+language = "cpp"
+source = "plugin.cpp"
+kind = "channel"
+
+[budget]
+fuel = 100000000
+memory_bytes = 16777216
+host_calls = 256
+
+[channel]
+max_channels = 1
+max_frame_bytes = 65536
+max_bytes = 2097152
+max_messages = 32
+max_requests = 128
+max_duration_ms = 30000
+
+[[handlers]]
+name = "channel.directory.consume"
+input_type = "morrow.channel.directory.v1"
+output_type = "bytes"
+max_input_bytes = 65536
+max_output_bytes = 64

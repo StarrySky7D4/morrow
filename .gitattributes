@@ -34,3 +34,52 @@
 /sdk/rust/contracts/service_resources.capnp text eol=lf
 # Qualification receipts bind these probe sources byte for byte.
 /tool/qualification/m03-pipe-driver-check/** -text
+
+# Exact test.57 checkpoint source bytes: preserve qualified CRLF/mixed inputs.
+/README.md -text
+/core/build.rs -text
+/core/schemas/plugin_package.proto -text
+/core/src/lib.rs -text
+/core/src/store.rs -text
+/docs/PLUGIN_TASK_PROTOCOL.md -text
+/lib/plugins/channel_task_codec_native.dart -text
+/lib/plugins/channel_task_manager.dart -text
+/lib/plugins/channel_task_models.dart -text
+/lib/plugins/channel_task_native.dart -text
+/lib/plugins/channel_task_session.dart -text
+/lib/plugins/generated/channel.capnp.dart -text
+/lib/plugins/generated/channel.capnp.ids.dart -text
+/lib/plugins/generated/channel.capnp.native.dart -text
+/lib/plugins/generated/channel.capnp.web.dart -text
+/lib/plugins/generated/host.capnp.ids.dart -text
+/lib/plugins/generated/host.capnp.native.dart -text
+/lib/plugins/generated/host.capnp.web.dart -text
+/lib/plugins/generated/identity.dart -text
+/lib/plugins/plugin_library.dart -text
+/lib/plugins/workbench_channel_supervised.dart -text
+/lib/plugins/workbench_supervision.dart -text
+/plugin_runtime/Cargo.lock -text
+/plugin_runtime/README.md -text
+/plugins/mid_autumn/Cargo.lock -text
+/plugins/mid_autumn/Cargo.toml -text
+/plugins/workbench/Cargo.lock -text
+/plugins/workbench/Cargo.toml -text
+/portable/cc-switch-guest/LICENSE -text
+/pubspec.yaml -text
+/sdk/examples/c-channel-directory/LICENSE -text
+/sdk/examples/cpp-channel-directory/LICENSE -text
+/sdk/examples/rust-channel-directory/LICENSE -text
+/sdk/rust/build.rs -text
+/sdk/rust/src/ffi.rs -text
+/sdk/rust/src/lib.rs -text
+/sdk/rust/src/service_ffi.rs -text
+/test/workbench_owner_recovery_native_test.dart -text
+/tool/build_mid_autumn_theme.ps1 -text
+/tool/generate_workbench_client.py -text
+/workbench_host/examples/package_mid_autumn.rs -text
+/workbench_host/schemas/host.capnp -text
+/workbench_host/src/file_tasks_tests.rs -text
+/workbench_host/src/mutation_tasks_tests.rs -text
+/workbench_host/src/owner_recovery.rs -text
+/workbench_host/src/workbench_supervision.rs -text
+/workbench_host/src/workbench_supervisor.rs -text

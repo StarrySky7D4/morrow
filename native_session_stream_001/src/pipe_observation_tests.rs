@@ -1,4 +1,4 @@
-//! Real local pipe operations only: no child, protocol guest, Core or HTTP.
+//! Real local pipe operations; includes explicit same-user child connector; no Core/HTTP.
 use super::*;
 
 fn collect(driver: &Driver, observations: &mut Vec<Value>) {
@@ -438,4 +438,49 @@ fn original_write_pending_at_deadline_is_reaped_without_complete_or_retry() {
 #[test]
 fn peer_disconnect_after_prefix_retains_error_and_reaps_without_retry() {
     println!("disconnected_prefix={}", prefix_fault(PrefixStop::PeerDisconnect));
+}
+
+#[test]
+fn real_same_user_wrong_pid_connection_rejected_before_business_io() {
+    use std::io::Write;
+    use std::process::{Command as ProcessCommand, Stdio};
+    let executable = std::env::var("MORROW_ISOLATION_TEST_PEER").expect("real peer required");
+    struct ChildGuard(Option<std::process::Child>);
+    impl Drop for ChildGuard {
+        fn drop(&mut self) { if let Some(child)=self.0.as_mut() { let _=child.kill();let _=child.wait(); } }
+    }
+    let mut guard = ChildGuard(Some(ProcessCommand::new(executable).stdin(Stdio::piped())
+        .stdout(Stdio::piped()).stderr(Stdio::piped()).spawn().unwrap()));
+    let child=guard.0.as_mut().unwrap();
+    let actual_pid = child.id();
+    assert_ne!(actual_pid, std::process::id());
+    let mut nonce = [0;16];getrandom::fill(&mut nonce).unwrap();
+    let locator = format!(r"\\.\pipe\morrow-m03-isolation-{}", crate::wire::hex(&nonce));
+    let gate = Arc::new(Mutex::new(EffectGate { revoked:false,deadline:Instant::now()+Duration::from_secs(3),
+        ordinal:0,last_write:0,issued_body_end:0,network_pending:false }));
+    let mut driver=Driver::spawn(locator.clone(),std::process::id(),gate.clone()).unwrap();
+    let deadline=Instant::now()+Duration::from_secs(3);
+    let mut events=Vec::new();
+    loop {
+        if let Some(e)=driver.event(){let created=matches!(e,Event::Created{..});events.push(e);if created{break;}}
+        assert!(Instant::now()<deadline);thread::sleep(Duration::from_millis(1));
+    }
+    writeln!(child.stdin.take().unwrap(),"{}",locator).unwrap();
+    let result=loop {
+        while let Some(e)=driver.event(){events.push(e);}
+        if let Some(result)=driver.join_if_finished(){break result.unwrap();}
+        assert!(Instant::now()<deadline,"actual owner join missing");thread::sleep(Duration::from_millis(1));
+    };
+    while let Some(e)=driver.event(){events.push(e);}
+    while child.try_wait().unwrap().is_none() {
+        assert!(Instant::now()<deadline,"connector process exit missing");thread::sleep(Duration::from_millis(1));
+    }
+    let output=guard.0.take().unwrap().wait_with_output().unwrap();
+    assert!(output.status.success());
+    assert_eq!(String::from_utf8(output.stdout).unwrap().trim(),actual_pid.to_string());
+    assert_eq!(result.error.as_deref(),Some("data peer PID mismatch"));
+    assert!(events.iter().any(|e|matches!(e,Event::Error(error) if error=="data peer PID mismatch")));
+    assert!(!events.iter().any(|e|matches!(e,Event::Connected{..}|Event::Read(_)|Event::WriteIssued{..}|Event::WriteCompleted{..})));
+    assert_eq!(gate.lock().unwrap().ordinal,0);
+    println!("same_user_pid_rejection={}",serde_json::json!({"actual_pid":actual_pid,"expected_pid":std::process::id(),"owner_joined":true,"business_io":false,"same_user_open_succeeded":true,"isolation_claimed":false}));
 }

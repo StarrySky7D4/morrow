@@ -234,6 +234,37 @@ pub struct Pipe {
 // is process-wide and reaping may legally run on a thread other than the issuing thread.
 unsafe impl Send for Pipe {}
 impl Pipe {
+    /// Internal transfer of a connected, overlapped named-pipe handle with no native
+    /// operations outstanding. The atomic process creator establishes this state.
+    pub(crate) fn from_connected_handle(handle: OwnedHandle) -> Self {
+        Self {
+            handle: ManuallyDrop::new(handle),
+            connect: None,
+            read: None,
+            write: None,
+            next_id: 1,
+            connected: true,
+            cancelling: false,
+            server: true,
+        }
+    }
+    /// Internal ownership transfer is permitted only after all operations are reaped.
+    pub(crate) fn into_owned_handle(mut self) -> io::Result<OwnedHandle> {
+        if self.connect.is_some() || self.read.is_some() || self.write.is_some() {
+            // Even this defensive rejection must not invoke the blocking Pipe Drop.
+            // Preserve the original buffers/handle if the quiescence invariant fails.
+            std::mem::forget(self);
+            return Err(io::Error::new(
+                io::ErrorKind::WouldBlock,
+                "native pipe operations remain owned",
+            ));
+        }
+        // SAFETY: no OS operation references operation storage or this handle.
+        // Transfer the unique handle and suppress Pipe's blocking Drop backstop.
+        let handle = unsafe { ManuallyDrop::take(&mut self.handle) };
+        std::mem::forget(self);
+        Ok(handle)
+    }
     pub fn create_private(locator: &str) -> io::Result<Self> {
         let name = name(locator)?;
         let sd = descriptor()?;
@@ -500,6 +531,35 @@ impl Pipe {
         }
         Ok(completions)
     }
+    /// Request cancellation and reap only completions already observed by the OS.
+    /// WouldBlock and other errors retain any outstanding operation's actual
+    /// storage and handle. Retry while owning this Pipe; its existing Drop remains
+    /// a blocking backstop, so bounded callers must retain the Pipe on failure.
+    pub fn cancel_and_reap_nonblocking(&mut self) -> io::Result<Vec<Completed>> {
+        let mut error = self.cancel_all().err();
+        let mut completions = vec![];
+        let mut pending = false;
+        for kind in [Kind::Connect, Kind::Read, Kind::Write] {
+            if self.has_operation(kind) {
+                match self.reap(kind, false) {
+                    Ok(Some(completed)) => completions.push(completed),
+                    Ok(None) => pending = true,
+                    Err(reap_error) => {
+                        if error.is_none() {
+                            error = Some(reap_error);
+                        }
+                    }
+                }
+            }
+        }
+        if let Some(error) = error {
+            return Err(error);
+        }
+        if pending {
+            return Err(io::ErrorKind::WouldBlock.into());
+        }
+        Ok(completions)
+    }
 }
 impl Drop for Pipe {
     fn drop(&mut self) {
@@ -558,3 +618,10 @@ pub fn expected_private_sddl() -> io::Result<String> {
     let sd = descriptor()?;
     sddl_text(sd.0)
 }
+
+pub mod job;
+pub mod controller_lease;
+
+mod job_process;
+
+mod job_stdin;

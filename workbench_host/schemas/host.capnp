@@ -1,6 +1,6 @@
 @0xeefcf786d6838bda;
 # Private trusted UI/host connection. Native selected paths never reach a guest.
-enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; httpStart @47; ioStatus @48; ioPoll @49; ioRead @50; ioCancel @51; ioRepair @52; ioAcknowledge @53; serviceConfigPage @54; serviceConfigSave @55; serviceConfigDisable @56; serviceAuthorityPage @57; serviceAuthenticationIssue @58; serviceAuthorityDisable @59; servicePublicationSave @60; serviceRunStart @61; serviceRunStatus @62; commandSubmit @63; commandStatus @64; commandRead @65; commandCancel @66; commandFrameBegin @67; commandFrameAppend @68; commandFrameFinish @69; commandFrameAbort @70; serviceTlsInspect @71; tlsIdentityPage @72; tlsIdentitySave @73; tlsIdentityDisable @74; readUiFont @75; saveUiFont @76; pendingPreferences @77; acknowledgePreferences @78; abandonPreferences @79; readVersioned @80; pageVersioned @81; planTasksMigration @82; migrateTasks @83; editTasks @84; editCard @85; queryVersioned @86; finishCapturedCard @87; inspectEditorRecoveries @88; resumeEditorRecovery @89; acknowledgeEditorRecovery @90; abandonEditorRecovery @91; beginEditorDraft @92; appendEditorDraft @93; finishEditorDraft @94; abortEditorDraftTransfer @95; readEditorDraft @96; readEditorDraftPart @97; listEditorDrafts @98; discardEditorDraft @99; importEditorDraftAsset @100; exportEditorDraftAsset @101; beginEditorDraftImport @102; completeEditorDraftImport @103; inspectEditorDraftImport @104; listEditorDraftImports @105; exportEditorDraftImport @106; abandonEditorDraftImport @107; reconcileEditorDraftImports @108; prepareEditorDraftImportDecision @109; inspectEditorDraftImportDecision @110; listEditorDraftImportDecisions @111; cancelEditorDraftImportDecision @112; listEditorDraftImportDecisionScopes @113; finishEditorDraftHandoff @114; retireEditorDraftParent @115; listEditorDraftLineages @116; prepareEditorDraftHandoffProposal @117; inspectEditorDraftHandoffProposal @118; listEditorDraftHandoffProposals @119; completeEditorDraftHandoffProposal @120; retireEditorDraftHandoffProposal @121; cancelEditorDraftHandoffProposal @122; inspectEditorCommit @123; fileStart @124; fileChunk @125; fileFinish @126; fileRead @127; mutationStart @128; mutationSubmit @129; mutationStatus @130; mutationRead @131; mutationCancelCommand @132; mutationReconcile @133; mutationDiscover @134; guestMutationStart @135; guestMutationSubmit @136; guestMutationStatus @137; guestMutationRead @138; guestMutationCancelCommand @139; }
+enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; httpStart @47; ioStatus @48; ioPoll @49; ioRead @50; ioCancel @51; ioRepair @52; ioAcknowledge @53; serviceConfigPage @54; serviceConfigSave @55; serviceConfigDisable @56; serviceAuthorityPage @57; serviceAuthenticationIssue @58; serviceAuthorityDisable @59; servicePublicationSave @60; serviceRunStart @61; serviceRunStatus @62; commandSubmit @63; commandStatus @64; commandRead @65; commandCancel @66; commandFrameBegin @67; commandFrameAppend @68; commandFrameFinish @69; commandFrameAbort @70; serviceTlsInspect @71; tlsIdentityPage @72; tlsIdentitySave @73; tlsIdentityDisable @74; readUiFont @75; saveUiFont @76; pendingPreferences @77; acknowledgePreferences @78; abandonPreferences @79; readVersioned @80; pageVersioned @81; planTasksMigration @82; migrateTasks @83; editTasks @84; editCard @85; queryVersioned @86; finishCapturedCard @87; inspectEditorRecoveries @88; resumeEditorRecovery @89; acknowledgeEditorRecovery @90; abandonEditorRecovery @91; beginEditorDraft @92; appendEditorDraft @93; finishEditorDraft @94; abortEditorDraftTransfer @95; readEditorDraft @96; readEditorDraftPart @97; listEditorDrafts @98; discardEditorDraft @99; importEditorDraftAsset @100; exportEditorDraftAsset @101; beginEditorDraftImport @102; completeEditorDraftImport @103; inspectEditorDraftImport @104; listEditorDraftImports @105; exportEditorDraftImport @106; abandonEditorDraftImport @107; reconcileEditorDraftImports @108; prepareEditorDraftImportDecision @109; inspectEditorDraftImportDecision @110; listEditorDraftImportDecisions @111; cancelEditorDraftImportDecision @112; listEditorDraftImportDecisionScopes @113; finishEditorDraftHandoff @114; retireEditorDraftParent @115; listEditorDraftLineages @116; prepareEditorDraftHandoffProposal @117; inspectEditorDraftHandoffProposal @118; listEditorDraftHandoffProposals @119; completeEditorDraftHandoffProposal @120; retireEditorDraftHandoffProposal @121; cancelEditorDraftHandoffProposal @122; inspectEditorCommit @123; fileStart @124; fileChunk @125; fileFinish @126; fileRead @127; mutationStart @128; mutationSubmit @129; mutationStatus @130; mutationRead @131; mutationCancelCommand @132; mutationReconcile @133; mutationDiscover @134; guestMutationStart @135; guestMutationSubmit @136; guestMutationStatus @137; guestMutationRead @138; guestMutationCancelCommand @139; channelPrepare @140; channelAppend @141; channelRun @142; channelStatus @143; channelClose @144; channelReadSent @145; }
 struct Request {
  version @0 :UInt16; digest @1 :Data; action @2 :Action;
  id @3 :Text; operation @4 :Text; revision @5 :UInt64;
@@ -25,6 +25,8 @@ struct Request {
  fileStart @51 :FileStart;
  mutationStart @52 :MutationStart; mutationCommand @53 :MutationCommand;
  mutationCommandId @54 :UInt64; mutationReconcile @55 :MutationReconcile; mutationDiscover @56 :MutationDiscover; guestMutationStart @57 :GuestMutationStart; guestMutationCommand @58 :GuestMutationCommand;
+ channelPrepare @59 :ChannelPrepare; channelAppend @60 :ChannelAppend; channelRun @61 :ChannelRun;
+ channelKey @62 :Data; channelSequence @63 :UInt64; channelOffset @64 :UInt32; channelLimit @65 :UInt32;
 }
 struct Response {
  version @0 :UInt16; digest @1 :Data; payload @2 :Data;
@@ -56,6 +58,7 @@ struct Response {
  fileResult @47 :FileResult;
  mutationState @48 :MutationState; mutationResult @49 :MutationResult;
  mutationCommandId @50 :UInt64; guestMutationState @51 :GuestMutationState; guestMutationResult @52 :GuestMutationResult;
+ channelState @53 :ChannelState; channelSent @54 :ChannelSent;
 }
 
 struct EditorCommitProof {
@@ -130,6 +133,8 @@ struct PluginEntry {
  ioHandlers @14 :List(Text);
  mutationSupported @15 :Bool;
  mutationBudget @16 :MutationBudget;
+ channelSupported @17 :Bool; channelHandlers @18 :List(Text); channelKinds @19 :List(UInt16);
+ channelBudget @20 :ChannelBudget;
 }
 struct MutationBudget { maxJobBytes @0 :UInt64; maxBytes @1 :UInt64; }
 
@@ -307,3 +312,40 @@ struct GuestMutationResult {
  kind @0 :UInt16; owner @1 :MutationResult; frame @2 :Data;
  failureKind @3 :UInt16; failureCode @4 :UInt16;
 }
+
+# Trusted local caller-supplied channel data. These structs grant no path, SQL,
+# network, credential or cloud authority. Each operation is <=128 KiB.
+struct ChannelBudget {
+ maxChannels @0 :UInt32; maxFrameBytes @1 :UInt32; maxBytes @2 :UInt64;
+ maxMessages @3 :UInt64; maxRequests @4 :UInt64; maxDurationMs @5 :UInt64;
+}
+struct ChannelPrepare {
+ submission @0 :Data; packageId @1 :Text; packageDigest @2 :Data;
+ registryRevision @3 :UInt64; handler @4 :Text; kind @5 :UInt16;
+ duplex @6 :Bool; budget @7 :ChannelBudget; lifetimeMs @8 :UInt32;
+ frameCount @9 :UInt32; totalBytes @10 :UInt64;
+}
+struct ChannelAppend { key @0 :Data; sequence @1 :UInt64; bytes @2 :Data; cursor @3 :Data; }
+struct ChannelRun { key @0 :Data; input @1 :Data; }
+# phase: 0 loading/prepared, 1 ready, 2 running, 3 completed, 4 closing, 5 closed.
+# status uses public channel Status numbers 0..12.
+# cleanupProof: 0 pending, 1 no producer existed, 2 actual producer joined.
+# producerOutcome: 0 pending, 1 explicit EOF, 2 unknown.
+# taskState: 0 pending, 1 success, 2 guest failure, 3 runtime fault, 4 unknown.
+# Task completion, cursor ACK, peer observation and two actual joins are distinct.
+# snapshotPending preserves the last original observation while a queue is busy.
+struct ChannelState {
+ key @0 :Data; submission @1 :Data; directory @2 :Data;
+ reference @3 :Data; sourceEpoch @4 :Data; phase @5 :UInt16;
+ status @6 :UInt16; lastAcked @7 :UInt64; acceptedSequence @8 :UInt64;
+ observedSequence @9 :UInt64; cleanupProof @10 :UInt16; producerOutcome @11 :UInt16;
+ taskState @12 :UInt16; taskError @13 :Text; outputType @14 :Text; output @15 :Data;
+ inputSha256 @16 :Data; uploadedFrames @17 :UInt32; uploadedBytes @18 :UInt64;
+ sourceFrames @19 :UInt32; sourceBytes @20 :UInt64; resourceReclaimed @21 :Bool;
+ closeRequested @22 :Bool; observedBytes @23 :UInt64; observedSha256 @24 :Data;
+ workerJoined @25 :Bool; snapshotPending @26 :Bool;
+}
+# Original bytes consumed by the actual native peer, retained under the same
+# finite local grant. Reading this history never retransmits a Send.
+# Sent receipt chunks retain SHA-256 of the complete original payload, not a public Frame digest.
+struct ChannelSent { present @0 :Bool; sequence @1 :UInt64; bytes @2 :Data; offset @3 :UInt32; totalBytes @4 :UInt32; bytesSha256 @5 :Data; }

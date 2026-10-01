@@ -10,6 +10,8 @@ use crate::{
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use std::{path::Path, time::Duration};
 mod binding;
+mod channel_journal;
+pub use channel_journal::{ChannelCheckpoint, ChannelAckReceipt, ChannelCommit, MAX_CHANNEL_RECEIPTS};
 mod card_snapshot;
 pub use card_snapshot::{CardPage, CardReadSnapshot, Census, FrozenCard, ReadPoint};
 mod blobs;
@@ -54,7 +56,7 @@ mod records;
 mod seals;
 const APPLICATION_ID: i64 = 0x4d4f5252;
 /// Latest supported persistent Store schema; historical feature floors stay fixed.
-pub const SCHEMA_VERSION: i64 = 23;
+pub const SCHEMA_VERSION: i64 = 24;
 #[derive(Clone, Copy)]
 pub struct EventBudget {
     pub max_count: u32,
@@ -160,6 +162,7 @@ fn capacity_room(
             .saturating_add(outbound_authority::accounted(c)?)
             .saturating_add(tls_identity::accounted(c)?)
             .saturating_add(file_content::accounted(c)?)
+            .saturating_add(channel_journal::accounted(c)?)
             .saturating_add(incoming_bytes)
             > budget.max_bytes
     {
@@ -645,6 +648,16 @@ impl Store {
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("file-content-receipt-migration-after-commit");
         }
+        if version < 24 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            channel_journal::create(&tx)?;
+            sql(tx.pragma_update(None, "user_version", 24))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("channel-journal-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("channel-journal-migration-after-commit");
+        }
         // Rebuildable SQLite access index; no business-payload change.
         sql(connection.execute_batch(read_archive_budget::INDEX))?;
         sql(connection.pragma_update(None, "foreign_keys", true))?;
@@ -1110,6 +1123,7 @@ impl Store {
         io_evidence::verify_schema(snapshot)?;
         file_content::verify_schema(snapshot)?;
         file_content_receipt::verify_schema(snapshot)?;
+        channel_journal::verify_schema(snapshot)?;
         service_config::verify_schema(snapshot)?;
         service_authority::verify_schema(snapshot)?;
         outbound_authority::verify_schema(snapshot)?;

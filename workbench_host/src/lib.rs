@@ -13,35 +13,43 @@ use morrow_plugin_runtime::{
     manager::Manager,
 };
 use morrow_workbench_plugin::{Action, Asset, Idea, Request, Response, codec, persistence};
-use std::{
-    collections::BTreeMap,
-    path::Path,
-};
+use std::{collections::BTreeMap, path::Path};
 mod platform;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod product_gate;
+#[cfg(target_os = "windows")]
+pub mod workbench_supervision;
 use platform::Instant;
 #[cfg(target_arch = "wasm32")]
 mod browser;
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 pub fn host_protocol_digest() -> [u8; 32] {
     use sha2::{Digest, Sha256};
-    Sha256::digest(include_str!("../schemas/host.capnp").replace("\r\n", "\n").as_bytes()).into()
+    Sha256::digest(
+        include_str!("../schemas/host.capnp")
+            .replace("\r\n", "\n")
+            .as_bytes(),
+    )
+    .into()
 }
 pub mod capture_provenance;
 pub mod captured_cards;
 pub mod cards_content;
 pub mod cards_edit;
+#[cfg(windows)]
+pub mod channel_tasks;
 mod command_frame;
 pub mod content_api;
 mod content_projection;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod credential_control;
+pub mod editor_commit_proof;
 pub mod editor_draft;
-pub mod editor_draft_staging;
-pub mod editor_draft_import_decision;
 mod editor_draft_api;
+pub mod editor_draft_import_decision;
+pub mod editor_draft_staging;
 mod editor_draft_staging_api;
 pub mod editor_recovery;
-pub mod editor_commit_proof;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod endpoint_control;
 mod evidence;
@@ -49,16 +57,18 @@ mod evidence;
 pub mod http_tasks;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod io_tasks;
+pub mod legacy_json_preferences;
 pub mod plugin_catalog;
 mod preferences_evidence;
 mod preferences_local;
 mod preferences_proposal;
 pub mod projection;
 pub mod projection_v2;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod sdk_profiles;
 pub mod tasks_content;
 pub mod tasks_edit;
 pub mod tasks_migration;
-pub mod legacy_json_preferences;
 pub mod versioned_record;
 #[allow(clippy::all)]
 pub mod content_api_capnp {
@@ -102,6 +112,8 @@ pub struct Mutation<'a> {
     pub flag: bool,
 }
 pub struct Workbench {
+    #[cfg(windows)]
+    channel_tasks: channel_tasks::ChannelTasks,
     #[cfg(not(target_arch = "wasm32"))]
     http_tasks: http_tasks::HttpTasks,
     #[cfg(not(target_arch = "wasm32"))]
@@ -112,6 +124,8 @@ pub struct Workbench {
 
 /// All authoritative business state moves together; no worker handle lives here.
 pub(crate) struct WorkbenchState {
+    #[cfg(windows)]
+    local_channel_owner_ready: bool,
     host: storage::Storage,
     plugin: Option<Session>,
     pool: Pool,
@@ -188,10 +202,17 @@ impl WorkbenchState {
         let initialized = initialize();
         Self::with_manager(host, initialized, package)
     }
-    fn with_manager(mut host: storage::Storage, initialized: Result<Manager>, package: Option<Package>) -> Result<Self> {
+    fn with_manager(
+        mut host: storage::Storage,
+        initialized: Result<Manager>,
+        package: Option<Package>,
+    ) -> Result<Self> {
         let (mut manager, mut plugin_warning) = match initialized {
             Ok(manager) => (Some(manager), None),
-            Err(error) => (None, Some(format!("插件管理暂不可用，已有内容仍可读取。{error}"))),
+            Err(error) => (
+                None,
+                Some(format!("插件管理暂不可用，已有内容仍可读取。{error}")),
+            ),
         };
         let mut pool = Pool::new(&host, Default::default())?;
         let plugin = match (&mut manager, &package) {
@@ -220,6 +241,8 @@ impl WorkbenchState {
         let mut query_owner = [0; 32];
         platform::random(&mut query_owner)?;
         let mut workbench = Self {
+            #[cfg(windows)]
+            local_channel_owner_ready: false,
             host,
             plugin,
             pool,
@@ -667,7 +690,10 @@ impl Drop for WorkbenchState {
 
 #[allow(clippy::all)]
 pub mod editor_draft_staging_api_capnp {
-    include!(concat!(env!("OUT_DIR"), "/editor_draft_staging_api_capnp.rs"));
+    include!(concat!(
+        env!("OUT_DIR"),
+        "/editor_draft_staging_api_capnp.rs"
+    ));
 }
 
 #[allow(clippy::all)]
@@ -743,7 +769,10 @@ pub fn restore_active_key(root: &Path, selected: &Path) -> Result<()> {
     }
 }
 
-fn initialize_manager(registry: morrow_core::plugin_package::registry::Registry, package: &mut Option<Package>) -> Result<Manager> {
+fn initialize_manager(
+    registry: morrow_core::plugin_package::registry::Registry,
+    package: &mut Option<Package>,
+) -> Result<Manager> {
     let mut manager = Manager::new(registry, Limits::default());
     if let Some(bundle) = package.as_ref() {
         let id = &bundle.manifest().package_id;
@@ -751,9 +780,9 @@ fn initialize_manager(registry: morrow_core::plugin_package::registry::Registry,
             if selected.digest != bundle.digest() {
                 let installed = manager.installed_package(selected.digest)?;
                 let offered_version = semver::Version::parse(&bundle.manifest().package_version)?;
-                let installed_version = semver::Version::parse(&installed.manifest().package_version)?;
-                if offered_version.cmp_precedence(&installed_version)
-                    != std::cmp::Ordering::Greater
+                let installed_version =
+                    semver::Version::parse(&installed.manifest().package_version)?;
+                if offered_version.cmp_precedence(&installed_version) != std::cmp::Ordering::Greater
                 {
                     // A UI-only preview or an older app must not downgrade the
                     // library's immutable selection, discard approvals, or make
@@ -812,7 +841,9 @@ impl Workbench {
     }
     pub fn writable(&self) -> bool {
         #[cfg(not(target_arch = "wasm32"))]
-        if self.state.require_writable().is_err() { return false; }
+        if self.state.require_writable().is_err() {
+            return false;
+        }
         self.local_state().is_ok_and(WorkbenchState::writable)
     }
     #[cfg(test)]
@@ -870,12 +901,16 @@ impl Workbench {
         Ok(Self {
             http_tasks: Default::default(),
             state: io_tasks::StateSlot::new(WorkbenchState::open(path, package)?),
+            #[cfg(windows)]
+            channel_tasks: Default::default(),
         })
     }
     pub fn open_managed(root: &Path, package: Option<Package>) -> Result<Self> {
         Ok(Self {
             http_tasks: Default::default(),
             state: io_tasks::StateSlot::new(WorkbenchState::open_managed(root, package)?),
+            #[cfg(windows)]
+            channel_tasks: Default::default(),
         })
     }
     pub(crate) fn local_state(&self) -> Result<&WorkbenchState> {
@@ -893,8 +928,16 @@ impl Workbench {
                 .and_then(WorkbenchState::maintenance_warning)
         })
     }
+    pub fn bind_product_gate(&mut self, gate: crate::product_gate::ProductGate) {
+        self.state.product_gate = gate;
+    }
+    pub fn product_gate(&self) -> crate::product_gate::ProductGate {
+        self.state.product_gate.clone()
+    }
     pub fn finish(&mut self) -> Result<()> {
         self.state.request_stop();
+        #[cfg(windows)]
+        self.finish_channels()?;
         self.state.try_reclaim()?;
         self.state.local_mut()?.finish()
     }
@@ -902,6 +945,8 @@ impl Workbench {
 #[cfg(not(target_arch = "wasm32"))]
 impl Drop for Workbench {
     fn drop(&mut self) {
+        #[cfg(windows)]
+        self.channel_tasks.request_stop();
         self.state.request_stop();
     }
 }

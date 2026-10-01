@@ -84,10 +84,10 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, CodecError> {
         return Err(CodecError::Invalid);
     }
     // SAFETY: caller passes a live aligned CRequest, not a wire pointer.
-    let r = unsafe { &*raw };
-    if r.abi_version != 1 || r.struct_size < size_of::<CRequest>() as u32 {
+    if !unsafe { crate::descriptor_prefix::matches(raw) } {
         return Err(CodecError::Contract);
     }
+    let r = unsafe { &*raw };
     // SAFETY: spans are bounded/checked before use; lifetime is the current call.
     let result = unsafe {
         Request {
@@ -1099,10 +1099,10 @@ unsafe fn content_request(raw: *const CContentRequest) -> Result<Request, CodecE
     if raw.is_null() {
         return Err(CodecError::Invalid);
     }
-    let v = unsafe { &*raw };
-    if v.abi_version != 1 || v.struct_size < size_of::<CContentRequest>() as u32 {
+    if !unsafe { crate::descriptor_prefix::matches(raw) } {
         return Err(CodecError::Contract);
     }
+    let v = unsafe { &*raw };
     let r = unsafe {
         Request {
             request_id: read_text(v.request_id, 256)?,
@@ -1325,10 +1325,10 @@ unsafe fn dependency_request(
         return Err(CodecError::Invalid);
     }
     // SAFETY: caller provides a live aligned descriptor and bounded readable spans.
-    let raw = unsafe { &*raw };
-    if raw.abi_version != 1 || raw.struct_size < size_of::<CDependencyRequest>() as u32 {
+    if !unsafe { crate::descriptor_prefix::matches(raw) } {
         return Err(CodecError::Contract);
     }
+    let raw = unsafe { &*raw };
     if raw.input.length as usize > 65536 {
         return Err(CodecError::Limit);
     }

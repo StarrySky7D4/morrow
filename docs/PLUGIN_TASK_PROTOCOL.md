@@ -1,6 +1,6 @@
 # 内容命令与纯转换任务契约、三语言 SDK
 
-基于 0.1.9-test.10，任务契约已扩展为 v3，Wasm guest ABI 仍为 v2。它们独立于原有内容消息 Cap’n Proto v6、包 schema v1 和资料库格式。旧 ABI v1 固定输入样例继续用于回归；新例子从宿主读取动态输入。
+当前 SDK `0.1.9-test.50` 使用任务契约 v3、Wasm guest ABI v2、内容／运行协议 v7 和包 schema v1，分别独立于资料库格式。历史 test.10 的内容协议为 v6，不能用旧摘要生成当前包。旧 ABI v1 固定输入样例继续用于回归；新例子从宿主读取动态输入。
 
 ## 输入、执行和结果
 
@@ -8,7 +8,7 @@
 
 | 消息 | 字段与规则 |
 | --- | --- |
-| Invocation | 任务契约版本、schema 摘要、task_id、完整原始内容命令字节；内容命令自身继续校验 v6 与两个 schema 摘要 |
+| Invocation | 任务契约版本、schema 摘要、task_id、完整原始内容命令字节；内容命令自身校验当前 v7 与两个 schema 摘要 |
 | Completion | 契约版本、schema 摘要、task_id、完整 Invocation 原字节 SHA-256、核心响应原字节 |
 | TaskReport | 执行状态，以及按任务类型互斥的可选 Response／TransformOutput／PluginFailure；执行或协议失败时三者均不交付 |
 
@@ -36,7 +36,7 @@
 
 C 的空输出允许 data 为 NULL 且 length 为 0；非空数据遵守既有缓冲区约定。转换 view 借用 task 所有的数据，在释放 task 后失效；C++ view 也不延长 task 生命周期。
 
-任务契约 v1／v2 的实验包携带旧 schema 摘要，会被当前加载器拒绝；需要同步 SDK 并重新构建、打包。guest ABI v2 的承载接口没有改变，包 schema 仍为 v1，内容消息仍为 v6。此变化不迁移主 Flutter 资料，也不自动升级历史包。
+任务契约 v1／v2 的实验包携带旧 schema 摘要，会被当前加载器拒绝；需要同步 SDK 并重新构建、打包。guest ABI v2 的承载接口没有改变，包 schema 仍为 v1，当前内容消息为 v7。此变化不迁移主 Flutter 资料，也不自动升级历史包。
 
 实际三语言执行及产物摘要见 [纯转换验证记录](../reports/plugin-transform-validation.md)。
 

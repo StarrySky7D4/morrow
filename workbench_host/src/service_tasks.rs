@@ -159,6 +159,10 @@ impl ServiceExecution {
     pub(super) fn progress(&self) -> Progress {
         *self.control.progress()
     }
+    pub(super) fn stop_handle(&self)->Arc<dyn Fn()+Send+Sync>{
+        let control=self.control.clone();let listener=self.listener.clone();let stop=self.host.stop_handle();
+        Arc::new(move||{control.stop.store(true,Ordering::Release);listener.revoke();stop();})
+    }
     pub(super) fn stop(&self) {
         self.control.stop.store(true, Ordering::Release);
         self.listener.revoke();
@@ -632,6 +636,7 @@ impl Workbench {
             options.submission,
             tls,
         );
+        let admission=self.state.product_gate.register(execution.stop_handle());
         self.state.task = Some(Task {
             file: None,
             #[cfg(windows)]
@@ -644,6 +649,7 @@ impl Workbench {
             stopping: false,
             exit: None,
         });
+        if let Err(error)=admission {self.state.request_stop();return Err(error);}
         Ok(key)
     }
     pub fn service_status(&mut self, key: TaskKey) -> Result<ServiceSnapshot> {

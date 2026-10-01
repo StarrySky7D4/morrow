@@ -11,6 +11,7 @@ pub(super) enum Kind {
     Dependency,
     Io,
     Mutation,
+    Channel,
 }
 
 #[derive(Clone)]
@@ -83,6 +84,7 @@ impl Execution {
             dependency: runner.dependency_abi,
             io: runner.io_abi,
             mutation: runner.mutation_abi,
+            channel: runner.channel_abi,
             pending: None,
             session: Arc::new(()),
             limits: StoreLimitsBuilder::new()
@@ -128,6 +130,11 @@ impl Execution {
                 .func_wrap("morrow_mutation_v1", "call", mutation_call)
                 .expect("mutation call import");
         }
+        if runner.channel_abi {
+            linker
+                .func_wrap("morrow_channel_v1", "call", channel_call)
+                .expect("channel call import");
+        }
         let step = (|| {
             let instance = linker
                 .instantiate_and_start(&mut store, &runner.module)
@@ -154,6 +161,10 @@ impl Execution {
 
     // Preserve the original import-boundary fault over a later cancellation,
     // matching the synchronous import's `trap(state, fault)` precedence.
+    /// Abort a suspended original call without retrying a possibly admitted operation.
+    pub(crate) fn abort(&mut self, fault: Fault) {
+        self.stop(fault);
+    }
     fn stop(&mut self, fault: Fault) {
         if self.store.data().stopped.is_none() {
             self.store.data_mut().stopped = Some(fault.clone());

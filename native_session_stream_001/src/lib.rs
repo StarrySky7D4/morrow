@@ -26,6 +26,8 @@ use tokio::{
     sync::{mpsc, oneshot},
 };
 pub mod authority;
+pub mod controller_watch;
+mod managed_child;
 pub type Result<T> = std::result::Result<T, String>;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -205,11 +207,18 @@ enum Control {
     },
 }
 #[derive(Clone)]
-pub(crate) struct Session {
+pub struct Session {
     shared: Arc<Shared>,
     control: mpsc::Sender<Control>,
 }
 impl Session {
+    /// Trusted controller watchdog: close the effect gate before attempting notification.
+    pub fn controller_lost(&self)->bool {
+        if let Ok(mut gate)=self.shared.gate.lock(){gate.revoked=true;}else{return false;}
+        let (ack,_)=oneshot::channel();
+        self.control.try_send(Control::Stop(ack)).is_ok()
+    }
+
     #[cfg(feature = "qualification-pipe-fault")]
     async fn close_data_after_witness(&self, witness: PartialFrameWitness) -> Result<Value> {
         let (ack, reply) = oneshot::channel();
@@ -271,6 +280,8 @@ pub(crate) struct NativeHost {
     policy: Arc<Mutex<HostPolicy>>,
     sessions: BTreeMap<String, Session>,
     next_epoch: u64,
+    pub(crate) supervised: bool,
+    pub(crate) controller:Option<controller_watch::Registration>,
 }
 impl NativeHost {
     pub fn new() -> Result<Self> {
@@ -278,6 +289,8 @@ impl NativeHost {
             policy: Arc::new(Mutex::new(HostPolicy::new().map_err(|e| e.to_string())?)),
             sessions: BTreeMap::new(),
             next_epoch: 1,
+            supervised: false,
+            controller:None,
         })
     }
     pub fn launch(
@@ -295,6 +308,7 @@ impl NativeHost {
         if self.sessions.len() >= 64 && !self.sessions.contains_key(&admission.spec.slot) {
             return Err("slot limit".into());
         }
+        if let Some(controller)=&self.controller{controller.bind_gate(parent.gate.clone())?;}
         let spec = &admission.spec;
         let expires = admission.created + Duration::from_millis(spec.ttl_ms);
         // Recheck immediately before spawn. This is NOT an image-loader TOCTOU closure.
@@ -312,32 +326,33 @@ impl NativeHost {
             .unwrap()
             .activate()
             .map_err(|e| e.to_string())?;
-        let mut command = Command::new(&spec.executable);
-        command
-            .arg("--morrow-native-http-v3")
-            .args(&spec.args)
-            .current_dir(&spec.cwd)
-            .env_clear()
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .kill_on_drop(true);
-        command.envs(&admission.environment);
-        #[cfg(windows)]
-        {
-            command.creation_flags(0x08000000);
-        }
-        let child = match command.spawn() {
-            Ok(v) => v,
-            Err(e) => {
-                let mut p = self.policy.lock().unwrap();
-                let _ = p.safety_stop(instance);
-                let _ = p.stop(instance);
-                let _ = p.retire(instance);
-                return Err(format!("spawn failed: {e}"));
+        let job=if self.supervised {Some(morrow_native_pipe_win::job::Job::new().map_err(|e|format!("job creation: {e}"))?)} else {None};
+        let spawned = if let Some(job)=&job {
+            let mut args=vec!["--morrow-native-http-v3".to_owned()];
+            args.extend(spec.args.iter().cloned());
+            job.spawn_suspended(&spec.executable,&args,&spec.cwd,&admission.environment)
+                .map(|child|managed_child::ManagedChild::contained(child,Duration::from_millis(spec.close_ms)))
+        } else {
+            let mut command=Command::new(&spec.executable);
+            command.arg("--morrow-native-http-v3").args(&spec.args)
+                .current_dir(&spec.cwd).env_clear().envs(&admission.environment)
+                .stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::piped())
+                .kill_on_drop(true);
+            #[cfg(windows)] command.creation_flags(0x08000000);
+            command.spawn().map(managed_child::ManagedChild::legacy)
+        };
+        let mut child=match spawned {
+            Ok(child)=>child,
+            Err(error)=>{
+                let mut policy=self.policy.lock().unwrap();
+                let _=policy.safety_stop(instance);let _=policy.stop(instance);
+                // Supervised failures remain LaunchPending/Unknown even when Create failed.
+                // Never infer durable safe release from an I/O error or a missing PID.
+                if job.is_none(){let _=policy.retire(instance);}
+                return Err(format!("launch failed; owner retained: {error}"));
             }
         };
-        let pid = child.id().ok_or("missing child pid")?;
+        let pid=child.id().ok_or("missing child pid")?;
         let session = u64::from_le_bytes(admission.nonce[..8].try_into().unwrap()).max(1);
         let epoch = self.next_epoch;
         parent.pid = pid;
@@ -363,6 +378,9 @@ impl NativeHost {
                 http: json!({"phase":"Idle"}),
             }),
         });
+        if let Some(job)=&job {
+            shared.event("job_bound",json!({"child_pid":pid,"incarnation":wire::hex(&admission.nonce),"handle_noninherited":!job.inheritable().map_err(|e|e.to_string())?,"limit_flags":job.limit_flags().map_err(|e|e.to_string())?,"atomic_job_at_creation":true,"suspended_attach_before_execution":true}));
+        }
         shared.event("spawn",json!({"pid":pid,"epoch":epoch,"artifact_sha256":wire::hex(&spec.artifact_sha256),"config_sha256":wire::hex(&admission.config),"schema_sha256":wire::hex(&wire::schema_digest()),"platform":std::env::consts::OS,"arch":std::env::consts::ARCH,"path_image_race_closed":false}));
         let gate_matches =
             parent.gate.lock().map_err(|_| "gate poison")?.deadline == parent.deadline;
@@ -372,6 +390,16 @@ impl NativeHost {
             shared: shared.clone(),
             control: tx,
         };
+        if let Some(controller)=&self.controller{controller.bind_session(handle.clone());}
+        // Register the revocation gate and control handle before the primary thread runs.
+        {
+            let gate=parent.gate.lock().map_err(|_|"gate poison before execution")?;
+            if gate.revoked || Instant::now()>=expires || self.controller.as_ref().is_some_and(|c|c.lost()) {
+                if let Some(job)=&job{let _=job.terminate();}let _=child.start_kill();
+                return Err("authority/controller lost before primary resume; owner retained".into());
+            }
+            child.resume().map_err(|error|format!("resume failed; owner retained: {error}"))?;
+        }
         self.sessions.insert(spec.slot.clone(), handle.clone());
         tokio::spawn(supervisor::run(
             child,
@@ -381,6 +409,7 @@ impl NativeHost {
             shared,
             rx,
             parent,
+            job,
         ));
         Ok(handle)
     }

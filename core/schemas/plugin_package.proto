@@ -1,6 +1,7 @@
 syntax = "proto3";
 package morrow.plugin.v1;
 import "io_manifest.proto";
+import "channel_manifest.proto";
 // Persistent package metadata. Declarations are ceilings, never grants.
 enum Capability {
   CAPABILITY_UNSPECIFIED = 0;
@@ -61,6 +62,7 @@ message Manifest {
   bytes dependency_schema_sha256 = 17; // Required only with dependency-calls-v1.
   bytes mutation_schema_sha256 = 19; // Required only with mutation-v1; independent guest import, not approval.
   MutationBudget mutation_budget = 20; // Requires mutation-budget-v1 and explicit trusted-host approval.
+  morrow.plugin.channel.v1.ChannelDeclaration channel_declaration = 21; // Requires channel-v1; declaration only.
 }
 message Package {
   uint32 schema_version = 1;

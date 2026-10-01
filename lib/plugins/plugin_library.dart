@@ -8,6 +8,8 @@ import 'endpoint_control.dart';
 import 'endpoint_manager.dart';
 import 'http_task_manager.dart';
 import 'file_task_manager.dart';
+import 'channel_task_models.dart';
+import 'channel_task_manager.dart';
 import 'mutation_recovery_manager.dart';
 import 'mutation_execution_manager.dart';
 import 'mutation_execution_session.dart';
@@ -74,6 +76,10 @@ class PluginLibraryEntry {
     this.ioHandlers = const [],
     this.mutationSupported = false,
     this.mutationBudget,
+    this.channelSupported = false,
+    this.channelHandlers = const [],
+    this.channelKinds = const [],
+    this.channelBudget,
   }) {
     if (mutationBudget != null && !mutationSupported) {
       throw const FormatException('Mutation budget without mutation feature');
@@ -87,12 +93,18 @@ class PluginLibraryEntry {
   final List<String> ioHandlers;
   final bool mutationSupported;
   final PluginMutationBudget? mutationBudget;
-  bool get isTheme => handlers.any(
-    (h) =>
-        h.name == 'theme.describe' &&
-        h.inputType == 'morrow.ui.theme.request.v1' &&
-        h.outputType == 'morrow.ui.theme.v1',
-  );
+  final bool channelSupported;
+  final List<String> channelHandlers;
+  final List<ChannelSourceKind> channelKinds;
+  final ChannelBudget? channelBudget;
+  bool get isTheme =>
+      !channelSupported &&
+      handlers.any(
+        (h) =>
+            h.name == 'theme.describe' &&
+            h.inputType == 'morrow.ui.theme.request.v1' &&
+            h.outputType == 'morrow.ui.theme.v1',
+      );
 }
 
 class PluginTransformHandler {
@@ -170,6 +182,15 @@ String _pageFingerprint(PluginLibraryPage page) => jsonEncode([
       e.approvedIo,
       e.ioHandlers,
       e.mutationSupported,
+      e.channelSupported,
+      e.channelHandlers,
+      e.channelKinds.map((k) => k.name).toList(),
+      e.channelBudget?.maxChannels,
+      e.channelBudget?.maxFrameBytes,
+      e.channelBudget?.maxBytes.toString(),
+      e.channelBudget?.maxMessages.toString(),
+      e.channelBudget?.maxRequests.toString(),
+      e.channelBudget?.maxDurationMs.toString(),
       e.mutationBudget?.maxJobBytes.toString(),
       e.mutationBudget?.maxBytes.toString(),
       for (final h in e.handlers)
@@ -625,6 +646,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
       }, (l) => l.pluginsUninstallUnknown);
 
   bool _standardUi(PluginLibraryEntry entry) =>
+      !entry.channelSupported &&
       entry.handlers.any(
         (h) =>
             h.name == 'ui.form' &&
@@ -641,10 +663,12 @@ class _PluginLibraryState extends State<PluginLibrary> {
             h.maxInputBytes >= 65536 &&
             h.maxOutputBytes == 65536,
       );
-  List<PluginTransformHandler> _transforms(PluginLibraryEntry entry) => entry
-      .handlers
-      .where((h) => h.name != 'ui.form' && h.name != 'ui.edit')
-      .toList();
+  List<PluginTransformHandler> _transforms(PluginLibraryEntry entry) =>
+      entry.channelSupported
+      ? []
+      : entry.handlers
+            .where((h) => h.name != 'ui.form' && h.name != 'ui.edit')
+            .toList();
   Future<void> _openForm(PluginLibraryEntry entry) =>
       _guard((backend, epoch) async {
         await _drainReleases(backend);
@@ -1023,6 +1047,25 @@ class _PluginLibraryState extends State<PluginLibrary> {
                   !_confirmed ? null : () => _remove(entry),
                   icon: Icons.remove_circle_outline,
                 ),
+                if (entry.channelSupported)
+                  _button(
+                    'Local channels',
+                    'plugin-channel-${entry.id}',
+                    !usable ||
+                            widget.backend is! ChannelTaskBackend ||
+                            !(widget.backend as ChannelTaskBackend)
+                                .supportsLocalChannels
+                        ? null
+                        : () => showDialog<void>(
+                            context: context,
+                            builder: (_) => ChannelTaskManager(
+                              backend: widget.backend as ChannelTaskBackend,
+                              entry: entry,
+                              registryRevision: _revision!,
+                            ),
+                          ),
+                    icon: Icons.stream_outlined,
+                  ),
                 if (!entry.isTheme && _transforms(entry).isNotEmpty)
                   _button(
                     L10n.of(context).pluginsUseTransform,

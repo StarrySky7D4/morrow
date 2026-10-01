@@ -33,6 +33,7 @@ pub(crate) struct Parent {
     pub session: u64,
     pub epoch: u64,
     pub root: PathBuf,
+    pub expected_profile: proto::Profile,
     pub approval: proto::Approval,
     pub store: Arc<Mutex<Store>>,
     pub gate: Gate,
@@ -96,6 +97,7 @@ impl Parent {
         })
     }
     fn check_record(&self, db: &rusqlite::Connection, history: bool) -> Result<()> {
+        authority::validate_profile_mode(db,&self.expected_profile,self.expected_profile.runtime_mode==1)?;
         let owner = authority::load_owner(db)?.ok_or("native owner missing")?;
         if owner.grant_id != self.approval.id
             || owner.issuer != self.approval.issuer

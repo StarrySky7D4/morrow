@@ -65,6 +65,8 @@ impl Setup {
         let storage = crate::storage::Storage::open(&dir.path().join("db")).unwrap();
         let owner = WorkbenchState::with_manager(storage, Ok(manager), None).unwrap();
         let app = Workbench {
+            #[cfg(windows)]
+            channel_tasks: Default::default(),
             http_tasks: Default::default(),
             state: StateSlot::new(owner),
         };

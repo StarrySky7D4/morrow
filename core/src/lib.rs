@@ -1,6 +1,11 @@
 #![deny(unsafe_code)]
 
 pub mod attachment;
+pub mod channel;
+#[allow(clippy::all, unsafe_code)]
+pub mod channel_capnp {
+    include!(concat!(env!("OUT_DIR"), "/channel_capnp.rs"));
+}
 pub mod audit;
 pub mod content;
 pub mod content_change;

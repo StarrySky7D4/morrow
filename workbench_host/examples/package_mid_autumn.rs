@@ -31,7 +31,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .collect();
     let mut manifest =
-        Package::manifest_for_transform("org.morrow.theme.mid-autumn", "1.0.2", &module, handlers);
+        Package::manifest_for_transform("org.morrow.theme.mid-autumn", "1.0.3", &module, handlers);
     manifest.display_name = "中秋 · 月满庭 / Moonlit Court".into();
     let package = Package::build(manifest, &module)?;
     if std::path::Path::new(&output).exists() {

@@ -3,7 +3,7 @@
 use super::*;
 use crate::authority;
 
-async fn setup() -> (Http, authority::HostAuthority, mpsc::Receiver<Control>) {
+async fn real_pipe_setup() -> (Http, authority::HostAuthority, mpsc::Receiver<Control>) {
     let parent = authority::simulated_http_parent();
     let shared = Arc::new(Shared {
         created: Instant::now(),
@@ -44,7 +44,7 @@ async fn setup() -> (Http, authority::HostAuthority, mpsc::Receiver<Control>) {
         payload: w::Payload::None,
     };
     let (authority, rx) = authority::authority_with_simulated_session(&parent, shared.clone());
-    let mut http = Http::new(
+    let http = Http::new(
         initial,
         parent,
         shared,
@@ -53,6 +53,10 @@ async fn setup() -> (Http, authority::HostAuthority, mpsc::Receiver<Control>) {
         None,
     )
     .unwrap();
+    (http, authority, rx)
+}
+async fn setup() -> (Http, authority::HostAuthority, mpsc::Receiver<Control>) {
+    let (mut http, authority, rx) = real_pipe_setup().await;
     finish(&mut http).await; // Real data-thread cancellation/reap/join before RequestClosed.
     // These are supplied state inputs, not a claim of real HTTP/material evidence.
     http.progress.request_closed = true;
@@ -224,4 +228,30 @@ async fn unknown_incomplete_or_nonrevoked_provenance_fails_closed() {
     );
     db.execute_batch("PRAGMA user_version=4").unwrap();
     finish(&mut http).await;
+}
+
+#[tokio::test]
+async fn actual_pipe_join_tick_cannot_precede_request_closed_release_proof() {
+    // Real native data owner and real network_tick scheduling. No child or HTTP
+    // request is fabricated: independent Windows runtime proves the full release.
+    let (mut http, _authority, _rx) = real_pipe_setup().await;
+    http.shared.phase("Closing");
+    http.cancel_http(25).unwrap();
+    finish(&mut http).await;
+    assert!(http.pipe_join_tick);
+    assert!(http.progress.data_closed && http.progress.connect_reaped
+        && http.progress.read_reaped && http.progress.write_reaped);
+    assert!(http.progress.revoke_persisted && http.progress.revoke_applied);
+    assert!(!http.parent.gate.lock().unwrap().network_pending);
+    http.network_tick().await.unwrap();
+    http.publish();
+    assert!(!http.progress.request_closed);
+    assert!(!expiry_teardown::request_reaped(&http.progress));
+    assert_eq!(http.shared.state.lock().unwrap().phase, "Closing");
+    http.network_tick().await.unwrap();
+    http.publish();
+    assert!(expiry_teardown::request_reaped(&http.progress));
+    let frames: Vec<_> = http.control.iter().map(|o| w::Frame::decode(&o.bytes).unwrap()).collect();
+    assert_eq!(frames.iter().filter(|f| f.kind == w::Kind::RequestClosed).count(), 1);
+    assert!(!http.progress.owner_released);
 }

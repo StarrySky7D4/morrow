@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'workbench_supervision.dart';
+import 'workbench_owner_management.dart';
 
 enum SessionPhase {
   idle,
@@ -21,6 +23,67 @@ class SessionCoordinator extends ChangeNotifier {
   String? libraryLocation;
   int generation = 0;
   int? exitCode;
+  int? transportExitCode;
+  WorkbenchSupervisionState? supervision;
+  bool get mayCloseWindow =>
+      owner == null || transportExitCode != null || exitCode != null;
+  void observeSupervision(WorkbenchSupervisionState? state) {
+    if (state == null) return;
+    supervision = state;
+    if (state.uncertain) {
+      phase = SessionPhase.closingUnconfirmed;
+      closeError = const WorkbenchSupervisionUnconfirmed(
+        'Original library owner is retained',
+      );
+    }
+    _changed();
+  }
+
+  void requireRecoverySession(int expectedGeneration) {
+    if (generation != expectedGeneration) {
+      throw const WorkbenchOwnerManagementUnconfirmed('stale_owner_preview');
+    }
+    if (owner != null && transportExitCode == null) {
+      throw const WorkbenchOwnerManagementUnconfirmed(
+        'ui_transport_still_live',
+      );
+    }
+  }
+
+  /// Explicit resource-only repair never changes the old verified exit future.
+  void acceptResourceRecovery(
+    WorkbenchOwnerRecovery proof, {
+    required int expectedGeneration,
+    required String expectedProfile,
+  }) {
+    requireRecoverySession(expectedGeneration);
+    if (!proof.hasOriginalResourceProof ||
+        proof.record['phase'] != 'Recovered' ||
+        proof.record['profile'] != expectedProfile ||
+        proof.record['business_outcome'] != 'Unknown' ||
+        proof.record['normal_shutdown'] != false ||
+        proof.record['business_gate_revoked'] != true ||
+        !ownerResourceProof.every((k) => proof.record[k] == true) ||
+        (owner != null && transportExitCode == null)) {
+      throw StateError(
+        'Owner recovery binding or actual transport exit is unconfirmed',
+      );
+    }
+    final original = supervision;
+    if (original != null) {
+      for (final key in ownerIdentityFields) {
+        if (original.record[key] != proof.record[key]) {
+          throw StateError('Recovered proof belongs to another session');
+        }
+      }
+    }
+    _deadline?.cancel();
+    owner = null;
+    _requestClose = null;
+    phase = SessionPhase.recoveryRequired;
+    _changed();
+  }
+
   Object? closeError;
   Future<void>? _flight, _close;
   Future<void> Function()? _requestClose;
@@ -43,6 +106,8 @@ class SessionCoordinator extends ChangeNotifier {
     generation++;
     owner = null;
     exitCode = null;
+    transportExitCode = null;
+    supervision = null;
     _close = null;
     closeError = null;
     _deadline?.cancel();
@@ -69,6 +134,7 @@ class SessionCoordinator extends ChangeNotifier {
     required String library,
     required Future<int> exited,
     required Future<void> Function() close,
+    Future<int>? transportExited,
   }) {
     if (owner != null) {
       throw StateError('A library owner is already registered');
@@ -77,6 +143,12 @@ class SessionCoordinator extends ChangeNotifier {
     libraryLocation = library;
     _requestClose = close;
     final epoch = generation;
+    transportExited?.then((code) {
+      if (generation == epoch && identical(owner, process)) {
+        transportExitCode = code;
+        _changed();
+      }
+    }, onError: (Object _) {});
     exited.then(
       (code) {
         if (generation != epoch || !identical(owner, process)) return;

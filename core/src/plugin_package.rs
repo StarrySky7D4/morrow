@@ -126,6 +126,7 @@ impl Package {
             io_declaration: None,
             mutation_schema_sha256: vec![],
             mutation_budget: None,
+            channel_declaration: None,
         }
     }
     pub fn manifest_for_task(
@@ -154,9 +155,11 @@ impl Package {
     }
     /// Presentation providers share one active slot; styles remain client settings.
     pub fn is_ui_theme(&self) -> bool {
-        self.manifest.transform_handlers.iter().any(|h|
-            h.handler == "theme.describe" && h.input_type == "morrow.ui.theme.request.v1"
-                && h.output_type == "morrow.ui.theme.v1")
+        self.manifest.transform_handlers.iter().any(|h| {
+            h.handler == "theme.describe"
+                && h.input_type == "morrow.ui.theme.request.v1"
+                && h.output_type == "morrow.ui.theme.v1"
+        })
     }
     /// Package declarations are not grants or proof that the guest implements the handler.
     pub fn transform_handler(
@@ -165,7 +168,7 @@ impl Package {
     ) -> Result<&proto::TransformHandler> {
         // IO packages require their dedicated execution/observation contract, including when
         // the module also advertises a pure entrypoint. Never capture them as pure evidence.
-        if self.io_declaration().is_some() {
+        if self.io_declaration().is_some() || self.channel_declaration().is_some() {
             return Err(Error::Invalid("IO package requires IO execution"));
         }
         let handler = self
@@ -176,6 +179,36 @@ impl Package {
             .ok_or(Error::Invalid("unregistered transform handler"))?;
         if handler.input_type != input.input_type || handler.output_type != input.output_type {
             return Err(Error::Invalid("transform type mismatch"));
+        }
+        if input.input.len() > handler.max_input_bytes as usize {
+            return Err(Error::Limit);
+        }
+        Ok(handler)
+    }
+    /// Task shape for the dedicated channel executor. Metadata never grants a source.
+    /// The ordinary pure transform route rejects every channel package.
+    pub fn channel_handler(
+        &self,
+        input: &crate::task::Transform,
+    ) -> Result<&proto::TransformHandler> {
+        let declaration = self
+            .channel_declaration()
+            .ok_or(Error::Invalid("missing channel declaration"))?;
+        if !declaration
+            .handlers
+            .iter()
+            .any(|handler| handler == &input.handler)
+        {
+            return Err(Error::Invalid("unregistered channel handler"));
+        }
+        let handler = self
+            .manifest
+            .transform_handlers
+            .iter()
+            .find(|handler| handler.handler == input.handler)
+            .ok_or(Error::Invalid("channel handler missing task metadata"))?;
+        if handler.input_type != input.input_type || handler.output_type != input.output_type {
+            return Err(Error::Invalid("channel task type mismatch"));
         }
         if input.input.len() > handler.max_input_bytes as usize {
             return Err(Error::Limit);
@@ -247,7 +280,7 @@ impl Package {
             || manifest.runtime_protocol_version != u32::from(runtime::PROTOCOL_VERSION)
             || manifest.runtime_schema_sha256 != runtime::runtime_digest()
             || manifest.content_schema_sha256 != runtime::content_digest()
-            || manifest.required_features.len() > 9
+            || manifest.required_features.len() > 10
             || manifest.required_features.iter().any(|f| {
                 f != TRANSFORM_HANDLERS_FEATURE
                     && f != DEPENDENCIES_FEATURE
@@ -258,6 +291,7 @@ impl Package {
                     && f != crate::service_resources::FEATURE
                     && f != MUTATION_FEATURE
                     && f != MUTATION_BUDGET_FEATURE
+                    && f != crate::channel::FEATURE
             })
             || manifest
                 .required_features
@@ -343,6 +377,36 @@ impl Package {
                 || handler.max_output_bytes as usize > crate::task::MAX_VALUE_BYTES
             {
                 return Err(Error::Limit);
+            }
+        }
+        crate::channel::validate_manifest_wire(
+            &package.manifest,
+            manifest.channel_declaration.as_ref(),
+        )?;
+        let channel_feature = manifest
+            .required_features
+            .iter()
+            .any(|f| f == crate::channel::FEATURE);
+        if channel_feature != manifest.channel_declaration.is_some()
+            || channel_feature
+                && (manifest.guest_abi_version != 2
+                    || manifest.io_declaration.is_some()
+                    || !manifest.dependencies.is_empty()
+                    || dependencies_feature
+                    || dependency_calls
+                    || !manifest.mutation_schema_sha256.is_empty()
+                    || manifest.mutation_budget.is_some()
+                    || manifest
+                        .required_features
+                        .iter()
+                        .any(|f| matches!(f.as_str(), MUTATION_FEATURE | MUTATION_BUDGET_FEATURE)))
+        {
+            return Err(Error::Invalid("channel declaration feature combination"));
+        }
+        if let Some(declaration) = &manifest.channel_declaration {
+            crate::channel::validate_declaration(declaration)?;
+            if declaration.handlers.iter().any(|h| !handlers.contains(h)) {
+                return Err(Error::Invalid("channel handler missing task metadata"));
             }
         }
         io::validate_wire(&package.manifest, manifest.io_declaration.as_ref())?;
@@ -512,6 +576,9 @@ impl Package {
     }
     pub fn io_declaration(&self) -> Option<&io::proto::IoDeclaration> {
         self.manifest.io_declaration.as_ref()
+    }
+    pub fn channel_declaration(&self) -> Option<&crate::channel::proto::ChannelDeclaration> {
+        self.manifest.channel_declaration.as_ref()
     }
     pub fn mutation_enabled(&self) -> bool {
         self.manifest

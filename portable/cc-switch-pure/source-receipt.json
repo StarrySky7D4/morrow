@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "scope": "source preparation only, not CCSwitch product integration or G0 pass",
+  "upstream_commit": "846de29c13ac4d65f164db8c15dd5fd58e29f972",
+  "original_module_sha256": "c993329009cdffcdb1fce803c63f10be55965f72d2395f2486b47eb9fd9ee4d0",
+  "original_config_sha256": "50e3058146c5ca015a864f1e99d30f7e5e250951447bc296a81c15facce5d2cd",
+  "original_lock_sha256": "7194c34773d7cb09bf912680ca89777eb94b404f8c7115b93484563a067e2a6c",
+  "constant_line": 39,
+  "constant_definition_utf8_sha256": "33bbfb57a215e740846c2ebec4034e1f5b5f5cc283be250e4931423bd54ec005",
+  "module_copied_byte_for_byte": true,
+  "original_callers_modified": false
+}

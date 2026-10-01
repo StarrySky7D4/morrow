@@ -145,6 +145,12 @@ enum Action {
   guestMutationStatus,
   guestMutationRead,
   guestMutationCancelCommand,
+  channelPrepare,
+  channelAppend,
+  channelRun,
+  channelStatus,
+  channelClose,
+  channelReadSent,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -472,6 +478,12 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
       codeOrder: 139,
       ordinal: 139,
     ),
+    EnumerantSchemaInfo(name: 'channelPrepare', codeOrder: 140, ordinal: 140),
+    EnumerantSchemaInfo(name: 'channelAppend', codeOrder: 141, ordinal: 141),
+    EnumerantSchemaInfo(name: 'channelRun', codeOrder: 142, ordinal: 142),
+    EnumerantSchemaInfo(name: 'channelStatus', codeOrder: 143, ordinal: 143),
+    EnumerantSchemaInfo(name: 'channelClose', codeOrder: 144, ordinal: 144),
+    EnumerantSchemaInfo(name: 'channelReadSent', codeOrder: 145, ordinal: 145),
   ],
 );
 
@@ -658,6 +670,32 @@ final class RequestReader extends StructReader {
     46,
     (r) => GuestMutationCommandReader(r, capabilities: capabilityTable),
   );
+
+  ChannelPrepareReader? get channelPrepare => getStructFieldWith(
+    47,
+    (r) => ChannelPrepareReader(r, capabilities: capabilityTable),
+  );
+
+  ChannelAppendReader? get channelAppend => getStructFieldWith(
+    48,
+    (r) => ChannelAppendReader(r, capabilities: capabilityTable),
+  );
+
+  ChannelRunReader? get channelRun => getStructFieldWith(
+    49,
+    (r) => ChannelRunReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get channelKey => getDataField(50);
+
+  int get channelSequence => getUint64Field(64);
+  BigInt get channelSequenceBigInt =>
+      ((BigInt.from(getUint32Field(68).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(64).toUnsigned(32)));
+
+  int get channelOffset => getUint32Field(72);
+
+  int get channelLimit => getUint32Field(76);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -979,6 +1017,49 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasGuestMutationCommand() => hasPointerField(46);
+
+  ChannelPrepareBuilder initChannelPrepare() {
+    return initStructFieldWith(47, (r) => ChannelPrepareBuilder(r), 4, 5);
+  }
+
+  bool hasChannelPrepare() => hasPointerField(47);
+
+  ChannelAppendBuilder initChannelAppend() {
+    return initStructFieldWith(48, (r) => ChannelAppendBuilder(r), 1, 3);
+  }
+
+  bool hasChannelAppend() => hasPointerField(48);
+
+  ChannelRunBuilder initChannelRun() {
+    return initStructFieldWith(49, (r) => ChannelRunBuilder(r), 0, 2);
+  }
+
+  bool hasChannelRun() => hasPointerField(49);
+
+  set channelKey(Uint8List? v) {
+    setDataField(50, v);
+  }
+
+  set channelSequence(int v) {
+    setUint64Field(64, v);
+  }
+
+  set channelSequenceBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field channelSequence');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(64, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(68, (bits >> 32).toInt());
+  }
+
+  set channelOffset(int v) {
+    setUint32Field(72, v);
+  }
+
+  set channelLimit(int v) {
+    setUint32Field(76, v);
+  }
 }
 
 final class _RequestFactory
@@ -986,9 +1067,9 @@ final class _RequestFactory
   @override
   StructSchemaInfo get schema => requestSchema;
   @override
-  int get dataWords => 8;
+  int get dataWords => 10;
   @override
-  int get ptrWords => 47;
+  int get ptrWords => 51;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -1004,8 +1085,8 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   id: 0x98af3617e14b2953,
   displayName: 'host.capnp:Request',
   shortName: 'Request',
-  dataWords: 8,
-  pointerWords: 47,
+  dataWords: 10,
+  pointerWords: 51,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1479,6 +1560,62 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: StructRefTypeSchemaInfo(0xc2f0721cdbc28651),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'channelPrepare',
+      codeOrder: 59,
+      body: SlotFieldSchemaInfo(
+        offset: 47,
+        type: StructRefTypeSchemaInfo(0xf06275f93ca1c58a),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'channelAppend',
+      codeOrder: 60,
+      body: SlotFieldSchemaInfo(
+        offset: 48,
+        type: StructRefTypeSchemaInfo(0xf6a0d85cd579ff7b),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'channelRun',
+      codeOrder: 61,
+      body: SlotFieldSchemaInfo(
+        offset: 49,
+        type: StructRefTypeSchemaInfo(0xf124676368fb14ec),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'channelKey',
+      codeOrder: 62,
+      body: SlotFieldSchemaInfo(
+        offset: 50,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'channelSequence',
+      codeOrder: 63,
+      body: SlotFieldSchemaInfo(
+        offset: 8,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'channelOffset',
+      codeOrder: 64,
+      body: SlotFieldSchemaInfo(
+        offset: 18,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'channelLimit',
+      codeOrder: 65,
+      body: SlotFieldSchemaInfo(
+        offset: 19,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
   ],
 );
 
@@ -1673,6 +1810,16 @@ final class ResponseReader extends StructReader {
     38,
     (r) => GuestMutationResultReader(r, capabilities: capabilityTable),
   );
+
+  ChannelStateReader? get channelState => getStructFieldWith(
+    39,
+    (r) => ChannelStateReader(r, capabilities: capabilityTable),
+  );
+
+  ChannelSentReader? get channelSent => getStructFieldWith(
+    40,
+    (r) => ChannelSentReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -1824,7 +1971,7 @@ final class ResponseBuilder extends StructBuilder {
       length,
       (r) => PluginEntryBuilder(r),
       1,
-      13,
+      16,
     );
   }
 
@@ -2012,6 +2159,18 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasGuestMutationResult() => hasPointerField(38);
+
+  ChannelStateBuilder initChannelState() {
+    return initStructFieldWith(39, (r) => ChannelStateBuilder(r), 9, 10);
+  }
+
+  bool hasChannelState() => hasPointerField(39);
+
+  ChannelSentBuilder initChannelSent() {
+    return initStructFieldWith(40, (r) => ChannelSentBuilder(r), 3, 2);
+  }
+
+  bool hasChannelSent() => hasPointerField(40);
 }
 
 final class _ResponseFactory
@@ -2021,7 +2180,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 39;
+  int get ptrWords => 41;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2038,7 +2197,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 7,
-  pointerWords: 39,
+  pointerWords: 41,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -2462,6 +2621,22 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 38,
         type: StructRefTypeSchemaInfo(0xefd23c868c2b10a7),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'channelState',
+      codeOrder: 53,
+      body: SlotFieldSchemaInfo(
+        offset: 39,
+        type: StructRefTypeSchemaInfo(0xc7b507f73451d865),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'channelSent',
+      codeOrder: 54,
+      body: SlotFieldSchemaInfo(
+        offset: 40,
+        type: StructRefTypeSchemaInfo(0x9dac5e9a8392cbe8),
       ),
     ),
   ],
@@ -4494,6 +4669,17 @@ final class PluginEntryReader extends StructReader {
     12,
     (r) => MutationBudgetReader(r, capabilities: capabilityTable),
   );
+
+  bool get channelSupported => getBoolField(4);
+
+  ListReader<String?>? get channelHandlers => getTextListField(13);
+
+  ListReader<int>? get channelKinds => getUint16ListField(14);
+
+  ChannelBudgetReader? get channelBudget => getStructFieldWith(
+    15,
+    (r) => ChannelBudgetReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class PluginEntryBuilder extends StructBuilder {
@@ -4577,6 +4763,24 @@ final class PluginEntryBuilder extends StructBuilder {
   }
 
   bool hasMutationBudget() => hasPointerField(12);
+
+  set channelSupported(bool v) {
+    setBoolField(4, v);
+  }
+
+  ListBuilder<String?> initChannelHandlers(int length) {
+    return initTextListField(13, length);
+  }
+
+  ListBuilder<int> initChannelKinds(int length) {
+    return initUint16ListField(14, length);
+  }
+
+  ChannelBudgetBuilder initChannelBudget() {
+    return initStructFieldWith(15, (r) => ChannelBudgetBuilder(r), 5, 0);
+  }
+
+  bool hasChannelBudget() => hasPointerField(15);
 }
 
 final class _PluginEntryFactory
@@ -4586,7 +4790,7 @@ final class _PluginEntryFactory
   @override
   int get dataWords => 1;
   @override
-  int get ptrWords => 13;
+  int get ptrWords => 16;
   @override
   PluginEntryReader fromRawReader(RawStructReader r) => PluginEntryReader(r);
   @override
@@ -4604,7 +4808,7 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
   displayName: 'host.capnp:PluginEntry',
   shortName: 'PluginEntry',
   dataWords: 1,
-  pointerWords: 13,
+  pointerWords: 16,
   fields: [
     FieldSchemaInfo(
       name: 'packageId',
@@ -4740,6 +4944,38 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 12,
         type: StructRefTypeSchemaInfo(0xf40b68d6e3ae16f1),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'channelSupported',
+      codeOrder: 17,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'channelHandlers',
+      codeOrder: 18,
+      body: SlotFieldSchemaInfo(
+        offset: 13,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'channelKinds',
+      codeOrder: 19,
+      body: SlotFieldSchemaInfo(
+        offset: 14,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('UInt16')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'channelBudget',
+      codeOrder: 20,
+      body: SlotFieldSchemaInfo(
+        offset: 15,
+        type: StructRefTypeSchemaInfo(0xdacee23e459a2f5c),
       ),
     ),
   ],
@@ -10027,5 +10263,1234 @@ const StructSchemaInfo guestMutationResultSchema = StructSchemaInfo(
 );
 
 final guestMutationResultFactory = _GuestMutationResultFactory();
+
+final class ChannelBudgetReader extends StructReader {
+  ChannelBudgetReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = channelBudgetSchema;
+
+  int get maxChannels => getUint32Field(0);
+
+  int get maxFrameBytes => getUint32Field(4);
+
+  int get maxBytes => getUint64Field(8);
+  BigInt get maxBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  int get maxMessages => getUint64Field(16);
+  BigInt get maxMessagesBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  int get maxRequests => getUint64Field(24);
+  BigInt get maxRequestsBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+
+  int get maxDurationMs => getUint64Field(32);
+  BigInt get maxDurationMsBigInt =>
+      ((BigInt.from(getUint32Field(36).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(32).toUnsigned(32)));
+}
+
+final class ChannelBudgetBuilder extends StructBuilder {
+  ChannelBudgetBuilder(super.raw);
+
+  @override
+  ChannelBudgetReader asReader() => ChannelBudgetReader(rawToReader());
+
+  set maxChannels(int v) {
+    setUint32Field(0, v);
+  }
+
+  set maxFrameBytes(int v) {
+    setUint32Field(4, v);
+  }
+
+  set maxBytes(int v) {
+    setUint64Field(8, v);
+  }
+
+  set maxBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set maxMessages(int v) {
+    setUint64Field(16, v);
+  }
+
+  set maxMessagesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxMessages');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set maxRequests(int v) {
+    setUint64Field(24, v);
+  }
+
+  set maxRequestsBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxRequests');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+
+  set maxDurationMs(int v) {
+    setUint64Field(32, v);
+  }
+
+  set maxDurationMsBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxDurationMs');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(32, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(36, (bits >> 32).toInt());
+  }
+}
+
+final class _ChannelBudgetFactory
+    extends StructFactory<ChannelBudgetReader, ChannelBudgetBuilder> {
+  @override
+  StructSchemaInfo get schema => channelBudgetSchema;
+  @override
+  int get dataWords => 5;
+  @override
+  int get ptrWords => 0;
+  @override
+  ChannelBudgetReader fromRawReader(RawStructReader r) =>
+      ChannelBudgetReader(r);
+  @override
+  ChannelBudgetReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChannelBudgetReader(r, capabilities: capabilities);
+  @override
+  ChannelBudgetBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChannelBudgetBuilder(r);
+}
+
+const StructSchemaInfo channelBudgetSchema = StructSchemaInfo(
+  id: 0xdacee23e459a2f5c,
+  displayName: 'host.capnp:ChannelBudget',
+  shortName: 'ChannelBudget',
+  dataWords: 5,
+  pointerWords: 0,
+  fields: [
+    FieldSchemaInfo(
+      name: 'maxChannels',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxFrameBytes',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxBytes',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxMessages',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxRequests',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxDurationMs',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+  ],
+);
+
+final channelBudgetFactory = _ChannelBudgetFactory();
+
+final class ChannelPrepareReader extends StructReader {
+  ChannelPrepareReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = channelPrepareSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => getUint64Field(0);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get handler => getTextField(3);
+
+  int get kind => getUint16Field(8);
+
+  bool get duplex => getBoolField(80);
+
+  ChannelBudgetReader? get budget => getStructFieldWith(
+    4,
+    (r) => ChannelBudgetReader(r, capabilities: capabilityTable),
+  );
+
+  int get lifetimeMs => getUint32Field(12);
+
+  int get frameCount => getUint32Field(16);
+
+  int get totalBytes => getUint64Field(24);
+  BigInt get totalBytesBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+}
+
+final class ChannelPrepareBuilder extends StructBuilder {
+  ChannelPrepareBuilder(super.raw);
+
+  @override
+  ChannelPrepareReader asReader() => ChannelPrepareReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set handler(String? v) {
+    setTextField(3, v);
+  }
+
+  set kind(int v) {
+    setUint16Field(8, v);
+  }
+
+  set duplex(bool v) {
+    setBoolField(80, v);
+  }
+
+  ChannelBudgetBuilder initBudget() {
+    return initStructFieldWith(4, (r) => ChannelBudgetBuilder(r), 5, 0);
+  }
+
+  bool hasBudget() => hasPointerField(4);
+
+  set lifetimeMs(int v) {
+    setUint32Field(12, v);
+  }
+
+  set frameCount(int v) {
+    setUint32Field(16, v);
+  }
+
+  set totalBytes(int v) {
+    setUint64Field(24, v);
+  }
+
+  set totalBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field totalBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+}
+
+final class _ChannelPrepareFactory
+    extends StructFactory<ChannelPrepareReader, ChannelPrepareBuilder> {
+  @override
+  StructSchemaInfo get schema => channelPrepareSchema;
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 5;
+  @override
+  ChannelPrepareReader fromRawReader(RawStructReader r) =>
+      ChannelPrepareReader(r);
+  @override
+  ChannelPrepareReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChannelPrepareReader(r, capabilities: capabilities);
+  @override
+  ChannelPrepareBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChannelPrepareBuilder(r);
+}
+
+const StructSchemaInfo channelPrepareSchema = StructSchemaInfo(
+  id: 0xf06275f93ca1c58a,
+  displayName: 'host.capnp:ChannelPrepare',
+  shortName: 'ChannelPrepare',
+  dataWords: 4,
+  pointerWords: 5,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'handler',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'duplex',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 80,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'budget',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: StructRefTypeSchemaInfo(0xdacee23e459a2f5c),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'lifetimeMs',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'frameCount',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'totalBytes',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+  ],
+);
+
+final channelPrepareFactory = _ChannelPrepareFactory();
+
+final class ChannelAppendReader extends StructReader {
+  ChannelAppendReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = channelAppendSchema;
+
+  Uint8List? get key => getDataField(0);
+
+  int get sequence => getUint64Field(0);
+  BigInt get sequenceBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  Uint8List? get bytes => getDataField(1);
+
+  Uint8List? get cursor => getDataField(2);
+}
+
+final class ChannelAppendBuilder extends StructBuilder {
+  ChannelAppendBuilder(super.raw);
+
+  @override
+  ChannelAppendReader asReader() => ChannelAppendReader(rawToReader());
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set sequence(int v) {
+    setUint64Field(0, v);
+  }
+
+  set sequenceBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field sequence');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set cursor(Uint8List? v) {
+    setDataField(2, v);
+  }
+}
+
+final class _ChannelAppendFactory
+    extends StructFactory<ChannelAppendReader, ChannelAppendBuilder> {
+  @override
+  StructSchemaInfo get schema => channelAppendSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 3;
+  @override
+  ChannelAppendReader fromRawReader(RawStructReader r) =>
+      ChannelAppendReader(r);
+  @override
+  ChannelAppendReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChannelAppendReader(r, capabilities: capabilities);
+  @override
+  ChannelAppendBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChannelAppendBuilder(r);
+}
+
+const StructSchemaInfo channelAppendSchema = StructSchemaInfo(
+  id: 0xf6a0d85cd579ff7b,
+  displayName: 'host.capnp:ChannelAppend',
+  shortName: 'ChannelAppend',
+  dataWords: 1,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'key',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'sequence',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'bytes',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'cursor',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final channelAppendFactory = _ChannelAppendFactory();
+
+final class ChannelRunReader extends StructReader {
+  ChannelRunReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = channelRunSchema;
+
+  Uint8List? get key => getDataField(0);
+
+  Uint8List? get input => getDataField(1);
+}
+
+final class ChannelRunBuilder extends StructBuilder {
+  ChannelRunBuilder(super.raw);
+
+  @override
+  ChannelRunReader asReader() => ChannelRunReader(rawToReader());
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set input(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _ChannelRunFactory
+    extends StructFactory<ChannelRunReader, ChannelRunBuilder> {
+  @override
+  StructSchemaInfo get schema => channelRunSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 2;
+  @override
+  ChannelRunReader fromRawReader(RawStructReader r) => ChannelRunReader(r);
+  @override
+  ChannelRunReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChannelRunReader(r, capabilities: capabilities);
+  @override
+  ChannelRunBuilder fromRawBuilder(RawStructBuilder r) => ChannelRunBuilder(r);
+}
+
+const StructSchemaInfo channelRunSchema = StructSchemaInfo(
+  id: 0xf124676368fb14ec,
+  displayName: 'host.capnp:ChannelRun',
+  shortName: 'ChannelRun',
+  dataWords: 0,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'key',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'input',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final channelRunFactory = _ChannelRunFactory();
+
+final class ChannelStateReader extends StructReader {
+  ChannelStateReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = channelStateSchema;
+
+  Uint8List? get key => getDataField(0);
+
+  Uint8List? get submission => getDataField(1);
+
+  Uint8List? get directory => getDataField(2);
+
+  Uint8List? get reference => getDataField(3);
+
+  Uint8List? get sourceEpoch => getDataField(4);
+
+  int get phase => getUint16Field(0);
+
+  int get status => getUint16Field(2);
+
+  int get lastAcked => getUint64Field(8);
+  BigInt get lastAckedBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  int get acceptedSequence => getUint64Field(16);
+  BigInt get acceptedSequenceBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  int get observedSequence => getUint64Field(24);
+  BigInt get observedSequenceBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+
+  int get cleanupProof => getUint16Field(4);
+
+  int get producerOutcome => getUint16Field(6);
+
+  int get taskState => getUint16Field(32);
+
+  String? get taskError => getTextField(5);
+
+  String? get outputType => getTextField(6);
+
+  Uint8List? get output => getDataField(7);
+
+  Uint8List? get inputSha256 => getDataField(8);
+
+  int get uploadedFrames => getUint32Field(36);
+
+  int get uploadedBytes => getUint64Field(40);
+  BigInt get uploadedBytesBigInt =>
+      ((BigInt.from(getUint32Field(44).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(40).toUnsigned(32)));
+
+  int get sourceFrames => getUint32Field(48);
+
+  int get sourceBytes => getUint64Field(56);
+  BigInt get sourceBytesBigInt =>
+      ((BigInt.from(getUint32Field(60).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(56).toUnsigned(32)));
+
+  bool get resourceReclaimed => getBoolField(272);
+
+  bool get closeRequested => getBoolField(273);
+
+  int get observedBytes => getUint64Field(64);
+  BigInt get observedBytesBigInt =>
+      ((BigInt.from(getUint32Field(68).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(64).toUnsigned(32)));
+
+  Uint8List? get observedSha256 => getDataField(9);
+
+  bool get workerJoined => getBoolField(274);
+
+  bool get snapshotPending => getBoolField(275);
+}
+
+final class ChannelStateBuilder extends StructBuilder {
+  ChannelStateBuilder(super.raw);
+
+  @override
+  ChannelStateReader asReader() => ChannelStateReader(rawToReader());
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set submission(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set directory(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set reference(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set sourceEpoch(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set phase(int v) {
+    setUint16Field(0, v);
+  }
+
+  set status(int v) {
+    setUint16Field(2, v);
+  }
+
+  set lastAcked(int v) {
+    setUint64Field(8, v);
+  }
+
+  set lastAckedBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field lastAcked');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set acceptedSequence(int v) {
+    setUint64Field(16, v);
+  }
+
+  set acceptedSequenceBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field acceptedSequence');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set observedSequence(int v) {
+    setUint64Field(24, v);
+  }
+
+  set observedSequenceBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field observedSequence');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+
+  set cleanupProof(int v) {
+    setUint16Field(4, v);
+  }
+
+  set producerOutcome(int v) {
+    setUint16Field(6, v);
+  }
+
+  set taskState(int v) {
+    setUint16Field(32, v);
+  }
+
+  set taskError(String? v) {
+    setTextField(5, v);
+  }
+
+  set outputType(String? v) {
+    setTextField(6, v);
+  }
+
+  set output(Uint8List? v) {
+    setDataField(7, v);
+  }
+
+  set inputSha256(Uint8List? v) {
+    setDataField(8, v);
+  }
+
+  set uploadedFrames(int v) {
+    setUint32Field(36, v);
+  }
+
+  set uploadedBytes(int v) {
+    setUint64Field(40, v);
+  }
+
+  set uploadedBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field uploadedBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(40, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(44, (bits >> 32).toInt());
+  }
+
+  set sourceFrames(int v) {
+    setUint32Field(48, v);
+  }
+
+  set sourceBytes(int v) {
+    setUint64Field(56, v);
+  }
+
+  set sourceBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field sourceBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(56, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(60, (bits >> 32).toInt());
+  }
+
+  set resourceReclaimed(bool v) {
+    setBoolField(272, v);
+  }
+
+  set closeRequested(bool v) {
+    setBoolField(273, v);
+  }
+
+  set observedBytes(int v) {
+    setUint64Field(64, v);
+  }
+
+  set observedBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field observedBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(64, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(68, (bits >> 32).toInt());
+  }
+
+  set observedSha256(Uint8List? v) {
+    setDataField(9, v);
+  }
+
+  set workerJoined(bool v) {
+    setBoolField(274, v);
+  }
+
+  set snapshotPending(bool v) {
+    setBoolField(275, v);
+  }
+}
+
+final class _ChannelStateFactory
+    extends StructFactory<ChannelStateReader, ChannelStateBuilder> {
+  @override
+  StructSchemaInfo get schema => channelStateSchema;
+  @override
+  int get dataWords => 9;
+  @override
+  int get ptrWords => 10;
+  @override
+  ChannelStateReader fromRawReader(RawStructReader r) => ChannelStateReader(r);
+  @override
+  ChannelStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChannelStateReader(r, capabilities: capabilities);
+  @override
+  ChannelStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChannelStateBuilder(r);
+}
+
+const StructSchemaInfo channelStateSchema = StructSchemaInfo(
+  id: 0xc7b507f73451d865,
+  displayName: 'host.capnp:ChannelState',
+  shortName: 'ChannelState',
+  dataWords: 9,
+  pointerWords: 10,
+  fields: [
+    FieldSchemaInfo(
+      name: 'key',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'directory',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'reference',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'sourceEpoch',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'phase',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'status',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'lastAcked',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'acceptedSequence',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'observedSequence',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'cleanupProof',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'producerOutcome',
+      codeOrder: 11,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'taskState',
+      codeOrder: 12,
+      body: SlotFieldSchemaInfo(
+        offset: 16,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'taskError',
+      codeOrder: 13,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'outputType',
+      codeOrder: 14,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'output',
+      codeOrder: 15,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'inputSha256',
+      codeOrder: 16,
+      body: SlotFieldSchemaInfo(
+        offset: 8,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'uploadedFrames',
+      codeOrder: 17,
+      body: SlotFieldSchemaInfo(
+        offset: 9,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'uploadedBytes',
+      codeOrder: 18,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'sourceFrames',
+      codeOrder: 19,
+      body: SlotFieldSchemaInfo(
+        offset: 12,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'sourceBytes',
+      codeOrder: 20,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'resourceReclaimed',
+      codeOrder: 21,
+      body: SlotFieldSchemaInfo(
+        offset: 272,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'closeRequested',
+      codeOrder: 22,
+      body: SlotFieldSchemaInfo(
+        offset: 273,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'observedBytes',
+      codeOrder: 23,
+      body: SlotFieldSchemaInfo(
+        offset: 8,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'observedSha256',
+      codeOrder: 24,
+      body: SlotFieldSchemaInfo(
+        offset: 9,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'workerJoined',
+      codeOrder: 25,
+      body: SlotFieldSchemaInfo(
+        offset: 274,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'snapshotPending',
+      codeOrder: 26,
+      body: SlotFieldSchemaInfo(
+        offset: 275,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+  ],
+);
+
+final channelStateFactory = _ChannelStateFactory();
+
+final class ChannelSentReader extends StructReader {
+  ChannelSentReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = channelSentSchema;
+
+  bool get present => getBoolField(0);
+
+  int get sequence => getUint64Field(8);
+  BigInt get sequenceBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get bytes => getDataField(0);
+
+  int get offset => getUint32Field(4);
+
+  int get totalBytes => getUint32Field(16);
+
+  Uint8List? get bytesSha256 => getDataField(1);
+}
+
+final class ChannelSentBuilder extends StructBuilder {
+  ChannelSentBuilder(super.raw);
+
+  @override
+  ChannelSentReader asReader() => ChannelSentReader(rawToReader());
+
+  set present(bool v) {
+    setBoolField(0, v);
+  }
+
+  set sequence(int v) {
+    setUint64Field(8, v);
+  }
+
+  set sequenceBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field sequence');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set offset(int v) {
+    setUint32Field(4, v);
+  }
+
+  set totalBytes(int v) {
+    setUint32Field(16, v);
+  }
+
+  set bytesSha256(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _ChannelSentFactory
+    extends StructFactory<ChannelSentReader, ChannelSentBuilder> {
+  @override
+  StructSchemaInfo get schema => channelSentSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 2;
+  @override
+  ChannelSentReader fromRawReader(RawStructReader r) => ChannelSentReader(r);
+  @override
+  ChannelSentReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChannelSentReader(r, capabilities: capabilities);
+  @override
+  ChannelSentBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChannelSentBuilder(r);
+}
+
+const StructSchemaInfo channelSentSchema = StructSchemaInfo(
+  id: 0x9dac5e9a8392cbe8,
+  displayName: 'host.capnp:ChannelSent',
+  shortName: 'ChannelSent',
+  dataWords: 3,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'present',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'sequence',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'bytes',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'offset',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'totalBytes',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'bytesSha256',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final channelSentFactory = _ChannelSentFactory();
 
 const schemaReflectionAvailable = true;

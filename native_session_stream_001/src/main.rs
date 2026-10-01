@@ -8,6 +8,8 @@ struct Args {
     #[cfg(feature = "qualification-pipe-fault")]
     pipe_fault: Option<PipeFaultPlan>,
     mode: String,
+    watch_pids:Vec<u32>,
+    controller_timeout_ms:u64,
     profile: PathBuf,
     slot: String,
     spec: LaunchSpec,
@@ -24,6 +26,8 @@ fn parse_args(mut it: impl Iterator<Item = String>) -> Result<Args> {
         #[cfg(feature = "qualification-pipe-fault")]
         pipe_fault: None,
         mode,
+        watch_pids:vec![],
+        controller_timeout_ms:2000,
         profile: PathBuf::new(),
         slot: String::new(),
         plugin: String::new(),
@@ -54,6 +58,8 @@ fn parse_args(mut it: impl Iterator<Item = String>) -> Result<Args> {
                 a.pipe_fault =
                     Some(serde_json::from_str(&v).map_err(|_| "qualification plan JSON")?);
             }
+            "--watch-pid"=>{let pid:u32=v.parse().map_err(|_|"watch PID")?;if pid==0 || a.watch_pids.contains(&pid) || a.watch_pids.len()>=2{return Err("watch PID list".into());}a.watch_pids.push(pid);},
+            "--controller-timeout-ms"=>{a.controller_timeout_ms=v.parse().map_err(|_|"controller timeout")?;if !(100..=5000).contains(&a.controller_timeout_ms){return Err("controller timeout range".into());}},
             "--profile" => a.profile = v.into(),
             "--slot" => a.slot = v,
             "--client" => a.spec.executable = v.into(),
@@ -134,19 +140,21 @@ async fn emit(out: &mut tokio::io::Stdout, v: Value) -> Result<()> {
 }
 #[tokio::main(flavor = "multi_thread", worker_threads = 2)]
 async fn main() {
-    if let Err(e) = run().await {
+    if let Err(e) = run(false).await {
         eprintln!("native owner host: {e}");
         std::process::exit(2)
     }
 }
-async fn run() -> Result<()> {
+async fn run(supervised:bool) -> Result<()> {
     let mut a = args()?;
+    if !supervised && (!a.watch_pids.is_empty() || a.controller_timeout_ms!=2000) {return Err("supervisor-only options".into());}
+    if supervised {morrow_native_pipe_win::job::seal_standard_handles_noninherit().map_err(|e|e.to_string())?;}
     let mut out = tokio::io::stdout();
     if a.mode == "init" {
-        HostAuthority::initialize(&a.profile, &a.slot)?;
+        if supervised {HostAuthority::initialize_supervised(&a.profile,&a.slot)?;}else{HostAuthority::initialize(&a.profile, &a.slot)?;}
         return emit(&mut out, json!({"event":"initialized","slot":a.slot})).await;
     }
-    let mut authority = HostAuthority::open(&a.profile)?;
+    let mut authority = if supervised {HostAuthority::open_supervised(&a.profile)?}else{HostAuthority::open(&a.profile)?};
     if a.mode == "inspect" {
         return emit(
             &mut out,
@@ -157,6 +165,11 @@ async fn run() -> Result<()> {
     if a.mode != "serve" {
         return Err("unknown mode".into());
     }
+    let controller=if supervised {Some(morrow_native_session_stream::controller_watch::ControllerWatch::start(&a.watch_pids,Duration::from_millis(a.controller_timeout_ms))?)}else{None};
+    let mut controller_loss_observed=false;
+    if let Some(controller)=&controller {authority.register_controller(controller.registration())?;}
+    let reader_watch=controller.as_ref().map(|c|c.registration());
+    let deadline_watch=reader_watch.clone();
     a.spec.slot = authority.slot().into();
     emit(&mut out,json!({"event":"proposal","host_pid":std::process::id(),"approval_required":true,"slot":a.spec.slot,"artifact_sha256":wire::hex(&a.spec.artifact_sha256),"plugin_id":a.plugin,"role":a.role,"operation":a.operation,"production_cli_authenticated":false})).await?;
     let (tx, mut rx) = mpsc::channel(8);
@@ -168,15 +181,18 @@ async fn run() -> Result<()> {
             loop {
                 let mut b = vec![];
                 let line = match reader.by_ref().take(1025).read_until(b'\n', &mut b) {
-                    Ok(0) => break,
+                    Ok(0) => {if let Some(watch)=&reader_watch{watch.disconnect();}break;},
                     Ok(_) if b.len() <= 1024 => {
                         String::from_utf8(b).map_err(|_| "input UTF8".to_owned())
                     }
                     _ => Err("input limit/read error".into()),
                 };
-                if tx.blocking_send(line).is_err() {
-                    break;
-                }
+                if let Some(watch)=&reader_watch {
+                    if line.is_err(){watch.disconnect();}
+                    // A saturated control queue cannot hide EOF or extend a lease.
+                    if tx.try_send(line).is_err(){watch.disconnect();break;}
+                } else if tx.blocking_send(line).is_err(){break;}
+
             }
         })
         .map_err(|e| e.to_string())?;
@@ -187,15 +203,17 @@ async fn run() -> Result<()> {
     let mut rejected = false;
     let mut quitting = false;
     let mut output_ok = true;
-    loop {
-        tokio::select! {biased;
+    let serving=async {loop {
+        tokio::select! {
          line=rx.recv(),if input_open=>{
           let mut action=String::new();
           let result=match line{
            Some(Ok(line))=>match serde_json::from_str::<Value>(&line){Ok(v)=>{
             action=v["action"].as_str().unwrap_or("").to_owned();
-            if !operator_fields_valid(&v){Err("unknown operator field".into())}else{
+            if controller.as_ref().is_some_and(|c|c.lost()) && !matches!(action.as_str(),"inspect"|"inspect_http"|"stop"|"quit") {Err("controller lease lost; no new authority".into())}
+            else if !operator_fields_valid(&v){Err("unknown operator field".into())}else{
              let id=v["grant_id"].as_str().unwrap_or("");match action.as_str(){
+              "heartbeat" if supervised=>controller.as_ref().unwrap().heartbeat().map(|_|json!({"received":true,"authority_deadline_renewed":false})),
               "approve"=>approve_cli(&mut authority,&a).map(|id|json!({"grant_id":id})),
               #[cfg(feature = "qualification-pipe-fault")]
               "qualification_close_data"=>match serde_json::from_value::<PartialFrameWitness>(v["witness"].clone()){Ok(w)=>authority.qualification_close_data(id,w).await,Err(_)=>Err("qualification witness JSON".into())},
@@ -211,19 +229,31 @@ async fn run() -> Result<()> {
             }
            },Err(e)=>Err(e.to_string())},
            Some(Err(e))=>Err(e),
-           None=>{input_open=false;quitting=true;authority.stop().await.map(|_|json!({"input_closed":true}))}
+           None=>{if let Some(c)=&controller{c.disconnect();}input_open=false;quitting=true;authority.stop().await.map(|_|json!({"input_closed":true}))}
           };
           rejected|=result.is_err();let row=match result{Ok(v)=>json!({"event":"operator_result","action":action,"ok":true,"result":v}),Err(e)=>json!({"event":"operator_result","action":action,"ok":false,"error":e})};
           if output_ok{output_ok=emit(&mut out,row).await.is_ok();}if !output_ok{quitting=true;let _=authority.stop().await;}
          }
          _=interval.tick()=>{
+          if controller.as_ref().is_some_and(|c|c.lost()) && !controller_loss_observed {
+            controller_loss_observed=true;rejected=true;
+            let _=authority.stop().await;
+            if output_ok {output_ok=emit(&mut out,json!({"event":"controller_lost","business_gate_closed":true,"authority_deadline_renewed":false})).await.is_ok();}
+          }
+
           let released=match authority.poll().await{Ok(v)=>v,Err(e)=>{rejected=true;let _=authority.stop().await;if output_ok{output_ok=emit(&mut out,json!({"event":"owner_error","error":e})).await.is_ok();}false}};
           for event in &authority.events[cursor..]{if output_ok{output_ok=emit(&mut out,json!({"event":"authority_observation","observation":event})).await.is_ok();}}cursor=authority.events.len();
           if let Some(s)=authority.snapshot(){
            for event in &s.events[session_cursor..]{if output_ok{output_ok=emit(&mut out,json!({"event":"host_observation","pid":s.pid,"session":s.session,"epoch":s.epoch,"observation":event})).await.is_ok();}}session_cursor=s.events.len();
+           if supervised && s.phase=="ClosingUnconfirmed" {
+            if output_ok{let _=emit(&mut out,json!({"event":"cleanup_unconfirmed","snapshot":s,"owner_retained":true,"business_success_claimed":false})).await;}
+            return Err("supervisor cleanup unconfirmed; owner retained".into());
+           }
            if released{
-            let reason=s.events.iter().find(|e|e["event"]=="session_close_reason").and_then(|e|e["detail"]["reason"].as_u64());rejected|=!matches!(reason,Some(19|25))||s.events.iter().any(|e|e["event"]=="close_ack_failed");
-            if output_ok{output_ok=emit(&mut out,json!({"event":"final","snapshot":s,"state":authority.inspect(None)?})).await.is_ok();}
+            let reason=s.events.iter().find(|e|e["event"]=="session_close_reason").and_then(|e|e["detail"]["reason"].as_u64());
+            let expiry_terminal_complete=expired_terminal_confirmed(&s);
+            rejected|=!(matches!(reason,Some(19|25)) || (reason==Some(20) && expiry_terminal_complete))||s.events.iter().any(|e|e["event"]=="close_ack_failed");
+            if output_ok{output_ok=emit(&mut out,json!({"event":"final","snapshot":s,"state":authority.inspect(None)?,"expired_terminal_protocol_complete":expiry_terminal_complete,"business_success_claimed":false})).await.is_ok();}
             return if rejected||!output_ok{Err("rejected session/operator request; release observed".into())}else{Ok(())}
            }
           }else if quitting{
@@ -233,6 +263,13 @@ async fn run() -> Result<()> {
          }
         }
     }
+    };
+    if let Some(watch)=deadline_watch {
+        tokio::select! {biased;
+            _=watch.reclamation_deadline()=>Err("fixed controller-loss cleanup deadline; durable owner retained".into()),
+            result=serving=>result,
+        }
+    } else {serving.await}
 }
 
 fn hex32(s: &str) -> Result<Vec<u8>> {
@@ -313,5 +350,61 @@ mod qualification_cli_tests {
         assert!(serde_json::from_value::<PartialFrameWitness>(action["witness"].clone()).is_err());
         action["deadline_ms"] = json!(5000);
         assert!(!operator_fields_valid(&action));
+    }
+}
+
+// Exit 0 for expiry means a proven terminal-control/resource exchange only.
+// It never upgrades the expired HTTP business result or durable Unknown.
+fn expired_terminal_confirmed(s: &morrow_native_session_stream::Snapshot) -> bool {
+    if s.phase!="Released" || s.owner_retained || !s.exit_observed || !s.stdout_eof || !s.stderr_eof || s.event_overflow!=0 { return false; }
+    let p=&s.http["progress"];
+    for field in ["revoke_persisted","revoke_applied","request_closed","data_closed","connect_reaped","read_reaped","write_reaped","owner_released","child_exited","stdout_eof","stderr_eof"] {
+        if p[field]!=true { return false; }
+    }
+    if p["worker_started"]==true && p["worker_joined"]!=true { return false; }
+    if p["error_code"]!=20 { return false; }
+    if s.events.iter().any(|e|matches!(e["event"].as_str(),Some("close_ack_failed"|"cancel_persistence_unconfirmed"|"owner_retained"|"kill_requested"|"pipe_driver_error"|"network_supervision_error"|"stderr_limit"|"stderr_error"|"stdout_error"|"wait_unconfirmed"))) { return false; }
+    let rows=|name:&str|s.events.iter().filter(|e|e["event"]==name).collect::<Vec<_>>();
+    let reasons=rows("session_close_reason");let bounds=rows("expiry_teardown_bound");
+    let closes=rows("expiry_teardown_close_received");let acks=rows("expiry_teardown_ack_written");let writes=rows("close_ack_written");
+    if reasons.len()!=1 || reasons[0]["detail"]["reason"]!=20 || bounds.len()!=1 || closes.len()!=1 || acks.len()!=1 || writes.len()!=1 { return false; }
+    let b=&bounds[0]["detail"];let a=&acks[0]["detail"];
+    let Some(deadline)=b["deadline_offset_ns"].as_u64() else{return false};
+    let Some(original)=b["original_deadline_offset_ns"].as_u64() else{return false};
+    let Some(close_ms)=b["close_ms"].as_u64() else{return false};
+    let Some(completed)=a["completed_offset_ns"].as_u64() else{return false};
+    let Some(sequence)=closes[0]["detail"]["sequence"].as_u64() else{return false};
+    b["authority_deadline_renewed"]==false && b["business_gate_closed"]==true
+        && close_ms>0 && deadline>original && completed>=original && completed<deadline
+        && a["deadline_offset_ns"].as_u64()==Some(deadline)
+        && a["sequence"].as_u64()==Some(sequence) && writes[0]["detail"]["sequence"].as_u64()==Some(sequence)
+        && closes[0]["detail"]["first_reason"]==20 && a["business_success"]==false
+}
+
+#[cfg(test)]
+mod expired_terminal_cli_tests {
+    use super::*;
+    fn closed() -> morrow_native_session_stream::Snapshot {
+        let v=json!({"session":1,"epoch":1,"pid":1,"generation":2,"phase":"Released","owner_retained":false,"exit_code":2,
+            "exit_observed":true,"stdout_eof":true,"stderr_eof":true,"event_overflow":0,
+            "http":{"progress":{"revoke_persisted":true,"revoke_applied":true,"request_closed":true,"data_closed":true,"connect_reaped":true,"read_reaped":true,"write_reaped":true,"owner_released":true,"child_exited":true,"stdout_eof":true,"stderr_eof":true,"worker_started":true,"worker_joined":true,"error_code":20,"intent":"Unknown"}},
+            "events":[{"event":"session_close_reason","detail":{"reason":20}},
+                {"event":"expiry_teardown_bound","detail":{"original_deadline_offset_ns":1000000,"deadline_offset_ns":2000000,"close_ms":1,"business_gate_closed":true,"authority_deadline_renewed":false}},
+                {"event":"expiry_teardown_close_received","detail":{"sequence":9,"first_reason":20}},
+                {"event":"close_ack_written","detail":{"sequence":9}},
+                {"event":"expiry_teardown_ack_written","detail":{"sequence":9,"deadline_offset_ns":2000000,"completed_offset_ns":1500000,"business_success":false}}]});
+        morrow_native_session_stream::Snapshot { session:1,epoch:1,pid:1,generation:2,phase:"Released".into(),owner_retained:false,exit_code:Some(2),exit_observed:true,stdout_eof:true,stderr_eof:true,event_overflow:0,events:v["events"].as_array().unwrap().clone(),http:v["http"].clone() }
+    }
+    #[test]
+    fn expired_business_unknown_can_have_independent_complete_terminal_protocol() {
+        let s=closed();assert!(expired_terminal_confirmed(&s));assert_eq!(s.http["progress"]["intent"],"Unknown");
+    }
+    #[test]
+    fn missing_ack_partial_recovery_late_ack_or_failed_close_remain_rejected() {
+        let mut s=closed();s.events.retain(|e|e["event"]!="close_ack_written");assert!(!expired_terminal_confirmed(&s));
+        for field in ["request_closed","read_reaped","worker_joined","revoke_persisted"] {let mut s=closed();s.http["progress"][field]=json!(false);assert!(!expired_terminal_confirmed(&s));}
+        let mut s=closed();s.events[4]["detail"]["completed_offset_ns"]=json!(2000000);assert!(!expired_terminal_confirmed(&s));
+        let mut s=closed();s.events.push(json!({"event":"close_ack_failed"}));assert!(!expired_terminal_confirmed(&s));
+        let mut s=closed();s.events[3]["detail"]["sequence"]=json!(10);assert!(!expired_terminal_confirmed(&s));
     }
 }

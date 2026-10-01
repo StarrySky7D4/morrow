@@ -15,12 +15,59 @@ import 'main.dart' show MorrowApp;
 import 'desktop_frame.dart';
 import 'window_effects.dart';
 import 'plugins/workbench_native.dart';
+import 'plugins/workbench_channel_supervised.dart';
 import 'plugins/studio_storage.dart';
 import 'dart:async';
 import 'plugins/session_coordinator.dart';
+import 'plugins/workbench_owner_management.dart';
 import 'package:window_manager/window_manager.dart';
 
 final _sessions = SessionCoordinator();
+WorkbenchOwnerManager? _ownerManager;
+int? _ownerRecoveryGeneration;
+List<String> _sessionArguments = const [];
+Future<WorkbenchOwnerPreview> _previewOwner() async {
+  final manager = _ownerManager!;
+  final generation = _sessions.generation;
+  final profile = await manager.profile;
+  if (_ownerRecoveryGeneration != null &&
+      _ownerRecoveryGeneration != generation) {
+    throw const WorkbenchOwnerManagementUnconfirmed('stale_owner_preview');
+  }
+  final preview = await manager.preview();
+  if (!identical(manager, _ownerManager)) {
+    throw const WorkbenchOwnerManagementUnconfirmed('stale_owner_preview');
+  }
+  if (preview.confirmedRecovery case final proof?) {
+    _sessions.acceptResourceRecovery(
+      proof,
+      expectedGeneration: generation,
+      expectedProfile: profile,
+    );
+  }
+  return preview;
+}
+
+Future<WorkbenchOwnerRecovery> _recoverOwner(
+  WorkbenchOwnerPreview preview,
+) async {
+  final manager = _ownerManager!;
+  final generation = _sessions.generation;
+  final profile = await manager.profile;
+  _sessions.requireRecoverySession(generation);
+  _ownerRecoveryGeneration = generation;
+  final result = await manager.recover(preview);
+  if (!identical(manager, _ownerManager)) {
+    throw const WorkbenchOwnerManagementUnconfirmed('stale_owner_preview');
+  }
+  _sessions.acceptResourceRecovery(
+    result,
+    expectedGeneration: generation,
+    expectedProfile: profile,
+  );
+  return result;
+}
+
 Future<void>? _desktopInitialization;
 final _applicationClose = _ApplicationClose();
 final _closingViewRevision = ValueNotifier(0);
@@ -30,16 +77,34 @@ void _renderApplication(Widget child) => runApp(
   ValueListenableBuilder<int>(
     valueListenable: _closingViewRevision,
     child: child,
-    builder: (_, _, child) => ApplicationCloseSurface(
-      closing: _applicationClose.requested,
-      retired: _retireWorkbench,
-      closingView: WorkbenchShutdown(
-        session: _sessions,
-        locale: WidgetsBinding.instance.platformDispatcher.locale,
-        onBackground: _applicationClose.shutdown.continueInBackground,
-        windowError: _applicationClose.shutdown.windowError,
-      ),
-      child: child!,
+    builder: (_, _, child) => ListenableBuilder(
+      listenable: _sessions,
+      builder: (_, _) {
+        if (!_applicationClose.requested &&
+            (_sessions.phase == SessionPhase.closingUnconfirmed ||
+                _sessions.phase == SessionPhase.recoveryRequired) &&
+            _sessions.closeError != null) {
+          return WorkbenchRecovery(
+            failure: _sessions.closeError,
+            session: _sessions,
+            onRetry: () =>
+                _sessions.run(() => _startSession(_sessionArguments)),
+            onPreviewOwner: _ownerManager == null ? null : _previewOwner,
+            onRecoverOwner: _ownerManager == null ? null : _recoverOwner,
+          );
+        }
+        return ApplicationCloseSurface(
+          closing: _applicationClose.requested,
+          retired: _retireWorkbench,
+          closingView: WorkbenchShutdown(
+            session: _sessions,
+            locale: WidgetsBinding.instance.platformDispatcher.locale,
+            onBackground: _applicationClose.shutdown.continueInBackground,
+            windowError: _applicationClose.shutdown.windowError,
+          ),
+          child: child!,
+        );
+      },
     ),
   ),
 );
@@ -91,6 +156,9 @@ Future<void> main(List<String> arguments) async {
 }
 
 Future<void> _startSession(List<String> arguments) async {
+  _sessionArguments = List.unmodifiable(arguments);
+  _ownerManager = null;
+  _ownerRecoveryGeneration = null;
   final startupCheck = arguments
       .where((v) => v.startsWith('--startup-check='))
       .firstOrNull
@@ -153,6 +221,14 @@ Future<void> _startSession(List<String> arguments) async {
           : selected.substring('--data-directory='.length),
     );
     recoveryDirectory = directory;
+    if (Platform.isWindows) {
+      _ownerManager = WorkbenchOwnerManager(
+        supervisor: '$executable/morrow-workbench-supervisor.exe',
+        host: '$executable/morrow-workbench-host.exe',
+        package: '$executable/plugins/workbench.morrowplugin',
+        directory: directory,
+      );
+    }
     if (_applicationClose.requested) return;
     if (await File('${directory.path}/MIGRATION_INCOMPLETE.txt').exists()) {
       throw StateError(startupMessages.recoveryMigrationIncomplete);
@@ -170,6 +246,7 @@ Future<void> _startSession(List<String> arguments) async {
       _desktopInitialization!.then((_) => startup.mark('desktop')),
       RustWorkbench.open(
         executable: '$executable/morrow-workbench-host.exe',
+        supervisorExecutable: '$executable/morrow-workbench-supervisor.exe',
         package: '$executable/plugins/workbench.morrowplugin',
         directory: directory,
         managed: managed,
@@ -178,9 +255,22 @@ Future<void> _startSession(List<String> arguments) async {
           _sessions.attach(
             process: backend.process,
             library: directory.absolute.path,
-            exited: backend.process.exitCode,
+            exited: backend.channel.exitCode,
             close: backend.close,
+            transportExited: backend.process.exitCode,
           );
+          if (backend.channel case final SupervisedWorkbenchChannel channel) {
+            final observedGeneration = _sessions.generation;
+            void observe() {
+              if (_sessions.generation == observedGeneration &&
+                  identical(_sessions.owner, backend.process)) {
+                _sessions.observeSupervision(channel.supervision.value);
+              }
+            }
+
+            channel.supervision.addListener(observe);
+            observe();
+          }
         },
       ).then((backend) {
         opened = backend;
@@ -282,6 +372,8 @@ Future<void> _startSession(List<String> arguments) async {
       WorkbenchRecovery(
         session: _sessions,
         failure: error,
+        onPreviewOwner: _ownerManager == null ? null : _previewOwner,
+        onRecoverOwner: _ownerManager == null ? null : _recoverOwner,
         locale: previewLocale,
         onRetry: () => _sessions.run(() => _startSession(arguments)),
         onRestoreSnapshot: !managed || targetDirectory == null

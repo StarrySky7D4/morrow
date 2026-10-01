@@ -24,6 +24,9 @@ import 'io_task_control.dart';
 import 'io_task_codec_native.dart';
 import 'file_task_models.dart';
 import 'file_task_native.dart';
+import 'channel_task_models.dart';
+import 'channel_task_native.dart';
+import 'channel_task_codec_native.dart';
 import 'mutation_task_models.dart';
 import 'mutation_task_native.dart';
 import 'guest_mutation_models.dart';
@@ -34,6 +37,7 @@ import 'workbench_channel.dart';
 import 'workbench_device_files.dart';
 import 'theme_package_import.dart';
 import 'workbench_channel_native.dart';
+import 'workbench_channel_supervised.dart';
 import 'package:morrow_plugin_ui/online.dart';
 import 'studio_native.dart';
 import 'dart:async';
@@ -87,6 +91,18 @@ PluginLibraryEntry decodePluginLibraryEntry(host.PluginEntryReader row) {
     declaredIo: texts(row.declaredIo),
     approvedIo: texts(row.approvedIo),
     ioHandlers: texts(row.ioHandlers),
+    channelSupported: row.channelSupported,
+    channelHandlers: texts(row.channelHandlers),
+    channelKinds: [
+      for (final kind in row.channelKinds ?? <int>[])
+        if (kind == 1 || kind == 2)
+          ChannelSourceKind.values[kind - 1]
+        else
+          throw const FormatException('Unknown package channel kind'),
+    ],
+    channelBudget: row.channelBudget == null
+        ? null
+        : ChannelTaskCodec.hostBudget(row.channelBudget!),
     mutationSupported: row.mutationSupported,
     mutationBudget: switch (row.mutationBudget) {
       null => null,
@@ -134,6 +150,7 @@ class RustWorkbench
         WorkbenchTlsIdentityControl,
         WorkbenchIoTaskControl,
         FileTaskBackend,
+        ChannelTaskBackend,
         FileTaskPlatformCapabilities,
         MutationTaskSupport,
         GuestMutationSupport,
@@ -211,7 +228,13 @@ class RustWorkbench
     try {
       await _stderrDone;
     } catch (_) {}
-    final code = await channel.exitCode;
+    int code;
+    try {
+      code = await channel.exitCode;
+    } catch (error) {
+      _fail(error);
+      return;
+    }
     final detail = utf8.decode(_stderr, allowMalformed: true).trim();
     _fail(StateError(detail.isEmpty ? '内容服务已退出 ($code)' : detail));
   }
@@ -282,17 +305,55 @@ class RustWorkbench
     required Directory directory,
     bool managed = false,
     void Function(RustWorkbench)? onStarted,
+    String? supervisorExecutable,
   }) async {
     await directory.create(recursive: true);
     final cache = Directory('${directory.path}/preview-cache');
     await cache.create(recursive: true);
-    final process = await Process.start(executable, [
-      if (managed) '--managed',
-      managed ? directory.path : '${directory.path}/workbench.db',
-      package,
-    ]);
+    final supervised = Platform.isWindows && supervisorExecutable != null;
+    final supervisorSha = supervised
+        ? sha256
+              .convert(await File(supervisorExecutable).readAsBytes())
+              .toString()
+        : null;
+    final hostSha = supervised
+        ? sha256.convert(await File(executable).readAsBytes()).toString()
+        : null;
+    final packageSha = supervised
+        ? sha256.convert(await File(package).readAsBytes()).toString()
+        : null;
+    var canonicalProfile = supervised
+        ? (await directory.resolveSymbolicLinks())
+              .replaceAll('\\', '/')
+              .toLowerCase()
+        : '';
+    if (canonicalProfile.startsWith('//?/unc/')) {
+      canonicalProfile = '//${canonicalProfile.substring(8)}';
+    } else if (canonicalProfile.startsWith('//?/')) {
+      canonicalProfile = canonicalProfile.substring(4);
+    }
+    final expectedProfile = sha256
+        .convert(utf8.encode(canonicalProfile))
+        .toString();
+    final process = await Process.start(
+      supervised ? supervisorExecutable : executable,
+      [
+        if (supervised) ...[pid.toString(), executable],
+        if (managed) '--managed',
+        managed ? directory.path : '${directory.path}/workbench.db',
+        package,
+      ],
+    );
     final result = RustWorkbench._(
-      NativeWorkbenchChannel(process),
+      supervised
+          ? SupervisedWorkbenchChannel(
+              process,
+              hostSha256: hostSha!,
+              supervisorSha256: supervisorSha!,
+              expectedProfile: expectedProfile,
+              packageSha256: packageSha!,
+            )
+          : NativeWorkbenchChannel(process),
       cache,
       process,
     );
@@ -508,6 +569,51 @@ class RustWorkbench
   /// Retained per backend; attaching a recovery view never starts IO.
   late final MutationRecoverySession mutationRecovery =
       MutationRecoverySession.forBackend(mutationTasks, this);
+
+  @override
+  bool get supportsLocalChannels =>
+      Platform.isWindows &&
+      channel is SupervisedWorkbenchChannel &&
+      (channel as SupervisedWorkbenchChannel).supervision.value?.phase ==
+          'Running';
+
+  late final _channelTasks = NativeChannelTaskClient(
+    _localChannelExchange,
+    () => supportsLocalChannels,
+  );
+  Future<T> _localChannelExchange<T>(
+    host.Action action, {
+    void Function(host.RequestBuilder)? configure,
+    required T Function(host.ResponseReader) decode,
+    required bool clearReply,
+  }) => _exchangeDecoded<T>(
+    action,
+    configure: configure,
+    decode: decode,
+    clearReply: clearReply,
+    updatePresentation: false,
+    routeBusiness: false,
+  );
+  @override
+  Future<ChannelTaskSnapshot> prepareChannel(ChannelPrepareRequest request) =>
+      _channelTasks.prepareChannel(request);
+  @override
+  Future<ChannelTaskSnapshot> appendChannel(
+    Uint8List key,
+    ChannelSourceFrame frame,
+  ) => _channelTasks.appendChannel(key, frame);
+  @override
+  Future<ChannelTaskSnapshot> runChannel(Uint8List key, Uint8List input) =>
+      _channelTasks.runChannel(key, input);
+  @override
+  Future<ChannelTaskSnapshot> statusChannel(Uint8List key) =>
+      _channelTasks.statusChannel(key);
+  @override
+  Future<ChannelTaskSnapshot> closeChannel(Uint8List key) =>
+      _channelTasks.closeChannel(key);
+  @override
+  Future<ChannelSentFrame?> readChannelSent(Uint8List key, BigInt sequence) =>
+      _channelTasks.readChannelSent(key, sequence);
 
   late final _fileTasks = NativeFileTaskClient(_callDecoded);
   @override

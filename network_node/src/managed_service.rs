@@ -741,6 +741,9 @@ impl<O: HostOwner> ServiceHost<O> {
     }
     /// Request cancellation for this shared worker without waiting for exit.
     /// The original owner stays on the worker; this does not release a listener.
+    pub fn stop_handle(&self) -> std::sync::Arc<dyn Fn() + Send + Sync> {
+        self.inner.worker.lock().unwrap_or_else(|e|e.into_inner()).stop_handle()
+    }
     pub fn request_stop(&self) -> Result<()> {
         self.inner
             .worker

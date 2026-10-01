@@ -51,5 +51,11 @@ const schemaIds = <String, String>{
   'guestMutationCommandSchema': 'c2f0721cdbc28651',
   'guestMutationStateSchema': '88db4a5d603dd674',
   'guestMutationResultSchema': 'efd23c868c2b10a7',
+  'channelBudgetSchema': 'dacee23e459a2f5c',
+  'channelPrepareSchema': 'f06275f93ca1c58a',
+  'channelAppendSchema': 'f6a0d85cd579ff7b',
+  'channelRunSchema': 'f124676368fb14ec',
+  'channelStateSchema': 'c7b507f73451d865',
+  'channelSentSchema': '9dac5e9a8392cbe8',
 };
 BigInt schemaId(String name) => BigInt.parse(schemaIds[name]!, radix: 16);

@@ -166,3 +166,34 @@ Tests/vectors prove structural encoding and hash binding only. Runtime cross-mes
 pipe authentication, durable approvals, claim/revoke races and end-to-end success await the
 new host/plugin candidates and independent joint execution. Old001/002 and product gates
 remain unchanged. This is not production CLI authentication or an OS sandbox.
+
+
+## Expired-session terminal control (bounded cleanup, not renewed authority)
+
+An admitted, welcomed session whose original authority expires first may retain
+its control lane for the existing fixed `close_ms` teardown budget. This budget
+is created once on entry to Closing and is not reset by any request. Host gates
+remain revoked; original parent, HTTP, data and effect-fence deadlines never change.
+No DNS/connect/send, positive credit, Prepare, Commit, DataBind, RequestChunk or
+business event delivery is authorized by this terminal window.
+
+Only Query, HttpCancel, Close and zero-window accounting for already issued bytes
+are accepted, using the original identity/admission tuple, request budget and strict
+sequence. Full frame/byte limits still apply. A partial cleanup control frame is
+bounded by the smaller of the original frame-duration cap and fixed teardown end;
+this exception applies solely to terminal control after expiry, never business/data.
+Entry is refused if original input/output has a partial frame, revocation persistence
+is unconfirmed, or Welcome was never completed. Malformed, replayed, post-Close,
+positive-credit or other business input closes the terminal lane without success.
+
+Stop(reason20) reports expiry but does not by itself close stdin. RequestClosed
+requires actual resource reaping/network join; only then can State acknowledge the
+matching Close. ACK writing is bounded by its frame cap and the fixed teardown end.
+After complete ACK, stdin closes and guest EOF/exit plus durable owner release are
+observed. Missing Close, missing/partial/late ACK or retained owners remain failures.
+The first cause remains expiry20; Close does not overwrite it with stop25.
+
+CLI exit0 for an expired session now requires this complete bounded terminal
+exchange and whole-session release. It describes successful host cleanup control,
+never HTTP/model success: business Deadline, transport failure and durable Unknown
+remain independent. The Cap'n Proto schema and identity hash are unchanged.

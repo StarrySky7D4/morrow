@@ -188,6 +188,7 @@ pub(crate) fn simulated_http_parent() -> crate::http_authority::Parent {
         session: 456,
         epoch: 1,
         root: profile,
+        expected_profile:a.profile.clone(),
         approval,
         store: Arc::new(Mutex::new(store)),
         gate: Arc::new(Mutex::new(crate::pipe_driver::EffectGate {
@@ -279,7 +280,9 @@ pub(crate) fn connect(root: &Path) -> Result<Connection> {
     let version: i64 = c
         .query_row("PRAGMA user_version", [], |r| r.get(0))
         .map_err(err)?;
-    if version != 4 {
+    let profile_bytes:Vec<u8>=c.query_row("SELECT CASE WHEN length(payload)<=8352 THEN payload ELSE NULL END FROM profile WHERE singleton=1",[],|r|r.get(0)).map_err(err)?;
+    let profile:proto::Profile=unpack(&profile_bytes)?;
+    if !matches!((version,profile.runtime_mode),(4,0)|(5,1)) {
         return Err("native ledger version".into());
     }
     Ok(c)
@@ -416,6 +419,8 @@ pub struct HostAuthority {
     issuer: String,
     live: BTreeMap<String, LiveApproval>,
     host: NativeHost,
+    supervised: bool,
+    active_recovery:Option<proto::Recovery>,
     pin: Option<std::sync::Arc<std::sync::Mutex<Store>>>,
     session: Option<Session>,
     active: Option<String>,
@@ -425,7 +430,9 @@ pub struct HostAuthority {
     pub events: Vec<Value>,
 }
 impl HostAuthority {
-    pub fn initialize(path: &Path, slot: &str) -> Result<()> {
+    pub fn initialize(path: &Path, slot: &str) -> Result<()> { Self::initialize_kind(path,slot,false) }
+    pub fn initialize_supervised(path: &Path,slot:&str)->Result<()> { Self::initialize_kind(path,slot,true) }
+    fn initialize_kind(path:&Path,slot:&str,supervised:bool)->Result<()> {
         if !valid(slot) || slot.len() > 64 {
             return Err("invalid slot".into());
         }
@@ -451,6 +458,7 @@ impl HostAuthority {
             core_identity_sha256: core_identity(&root)?,
             lock_namespace,
             canonical_root: root.to_string_lossy().into_owned(),
+            runtime_mode:u32::from(supervised),
         };
         let mut c = Connection::open(root.join("native-admissions.sqlite")).map_err(err)?;
         c.execute_batch("PRAGMA journal_mode=DELETE; PRAGMA synchronous=FULL;")
@@ -459,17 +467,22 @@ impl HostAuthority {
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(err)?;
         tx.execute_batch("CREATE TABLE profile(singleton INTEGER PRIMARY KEY CHECK(singleton=1),payload BLOB NOT NULL) STRICT; CREATE TABLE approvals(seq INTEGER PRIMARY KEY AUTOINCREMENT,id TEXT NOT NULL UNIQUE,payload BLOB NOT NULL) STRICT; CREATE TABLE owner(singleton INTEGER PRIMARY KEY CHECK(singleton=1),payload BLOB NOT NULL) STRICT; CREATE TABLE http_approvals(id TEXT PRIMARY KEY,payload BLOB NOT NULL) STRICT; PRAGMA user_version=4;").map_err(err)?;
+        if supervised { tx.execute_batch("CREATE TABLE recovery(singleton INTEGER PRIMARY KEY CHECK(singleton=1),payload BLOB NOT NULL) STRICT; PRAGMA user_version=5;").map_err(err)?; }
         tx.execute("INSERT INTO profile VALUES(1,?1)", [pack(&p)?])
             .map_err(err)?;
         tx.commit().map_err(err)?;
         Ok(())
     }
-    pub fn open(path: &Path) -> Result<Self> {
+    pub fn open(path:&Path)->Result<Self> {Self::open_kind(path,false)}
+    pub fn open_supervised(path:&Path)->Result<Self> {Self::open_kind(path,true)}
+    fn open_kind(path:&Path,supervised:bool)->Result<Self> {
         let root = checked_path(path)?;
         let db = connect(&root)?;
+        let version:i64=db.pragma_query_value(None,"user_version",|r|r.get(0)).map_err(err)?;
+        if version != if supervised {5} else {4} {return Err("profile mode mismatch; no implicit migration".into());}
         let b:Vec<u8>=db.query_row("SELECT CASE WHEN length(payload)<=8352 THEN payload ELSE NULL END FROM profile WHERE singleton=1",[],|r|r.get(0)).map_err(err)?;
         let profile: proto::Profile = unpack(&b)?;
-        if profile.version != 1
+        if profile.runtime_mode!=u32::from(supervised) || profile.version != 1
             || profile.identity.len() != 64
             || !valid(&profile.slot)
             || profile.core_identity_sha256 != core_identity(&root)?
@@ -478,7 +491,9 @@ impl HostAuthority {
         {
             return Err("profile identity, location or lock namespace mismatch".into());
         }
-        load_owner(&db)?;
+        let old_owner=load_owner(&db)?;
+        if supervised {validate_recovery(&db,&profile,old_owner.as_ref())?;}
+        let mut host=NativeHost::new()?;host.supervised=supervised;
         Ok(Self {
             #[cfg(feature = "qualification-pipe-fault")]
             qualification_plan_issued: false,
@@ -487,7 +502,9 @@ impl HostAuthority {
             db,
             issuer: random()?,
             live: BTreeMap::new(),
-            host: NativeHost::new()?,
+            host,
+            supervised,
+            active_recovery:None,
             pin: None,
             session: None,
             active: None,
@@ -538,6 +555,7 @@ impl HostAuthority {
         }
         result
     }
+    fn check_profile(&self)->Result<()> { validate_profile_mode(&self.db,&self.profile,self.supervised) }
     fn approve_bound(
         &mut self,
         spec: LaunchSpec,
@@ -546,6 +564,7 @@ impl HostAuthority {
         operation: &str,
         bind: impl FnOnce(&mut Admission) -> Result<()>,
     ) -> Result<String> {
+        self.check_profile()?;
         if self.failed
             || self.live.len() >= 16
             || spec.slot != self.profile.slot
@@ -583,6 +602,7 @@ impl HostAuthority {
             .db
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(err)?;
+        validate_profile_mode(&tx,&self.profile,self.supervised)?;
         let count: i64 = tx
             .query_row("SELECT count(*) FROM approvals", [], |r| r.get(0))
             .map_err(err)?;
@@ -608,6 +628,7 @@ impl HostAuthority {
         Ok(g.id)
     }
     pub fn claim(&mut self, id: &str) -> Result<Snapshot> {
+        self.check_profile()?;
         if self.failed || self.pin.is_some() {
             return Err("local owner retained".into());
         }
@@ -621,6 +642,7 @@ impl HostAuthority {
                 .db
                 .transaction_with_behavior(TransactionBehavior::Immediate)
                 .map_err(err)?;
+        validate_profile_mode(&tx,&self.profile,self.supervised)?;
             let mut g = load_grant(&tx, id)?;
             if g.state == 1 {
                 g.state = 4;
@@ -641,6 +663,8 @@ impl HostAuthority {
             .db
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(err)?;
+        validate_profile_mode(&tx,&self.profile,self.supervised)?;
+        if self.supervised {let owner=load_owner(&tx)?;validate_recovery(&tx,&self.profile,owner.as_ref())?;}
         if load_owner(&tx)?.as_ref().is_some_and(|o| !terminal(o)) {
             return Err("owner unconfirmed: no automatic crash takeover".into());
         }
@@ -665,6 +689,11 @@ impl HostAuthority {
             ..Default::default()
         };
         save_owner(&tx, &o)?;
+        if self.supervised {
+            let proof=proto::Recovery{version:1,profile:self.profile.identity.clone(),grant_id:id.into(),issuer:self.issuer.clone(),generation:g.generation,
+                incarnation:wire::hex(&admission.nonce),supervisor_pid:std::process::id(),phase:"Pending".into(),artifact_sha256:g.artifact_sha256.clone(),config_sha256:g.config_sha256.clone(),..Default::default()};
+            save_recovery(&tx,&proof)?;self.active_recovery=Some(proof);
+        }
         // Retain the pin even if COMMIT reports an uncertain result. No spawn on that branch.
         self.pin = Some(std::sync::Arc::new(std::sync::Mutex::new(pin)));
         self.active = Some(id.into());
@@ -682,8 +711,16 @@ impl HostAuthority {
             .db
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(err)?;
+        validate_profile_mode(&tx,&self.profile,self.supervised)?;
         let latest = load_grant(&tx, id)?;
         let recorded = load_owner(&tx)?.ok_or("missing pending owner")?;
+        if self.supervised {
+            validate_recovery(&tx,&self.profile,Some(&recorded))?;
+            let pending=load_recovery(&tx)?.ok_or("recovery pending missing")?;
+            if self.active_recovery.as_ref()!=Some(&pending) || pending.phase!="Pending" {
+                self.failed=true;return Err("recovery pending drift; owner retained".into());
+            }
+        }
         if latest != g
             || latest.state != 2
             || recorded.grant_id != id
@@ -704,6 +741,7 @@ impl HostAuthority {
             session: 0,
             epoch: 0,
             root: self.root.clone(),
+            expected_profile:self.profile.clone(),
             approval: g.clone(),
             store: self.pin.as_ref().unwrap().clone(),
             gate: std::sync::Arc::new(std::sync::Mutex::new(crate::pipe_driver::EffectGate {
@@ -732,12 +770,21 @@ impl HostAuthority {
         self.owner_phase = o.phase.clone();
         self.session = Some(session);
         save_owner(&tx, &o)?;
+        if self.supervised {
+            let mut proof=load_recovery(&tx)?.ok_or("recovery pending missing")?;
+            if self.active_recovery.as_ref()!=Some(&proof) || proof.grant_id!=id || proof.issuer!=self.issuer || proof.generation!=g.generation || proof.phase!="Pending" {self.failed=true;return Err("recovery pending drift".into());}
+            proof.child_pid=s.pid;proof.session=s.session;proof.epoch=s.epoch;proof.phase="Registered".into();save_recovery(&tx,&proof)?;self.active_recovery=Some(proof);
+        }
         if let Err(e) = tx.commit() {
             self.failed = true;
             return Err(format!("registration unknown; owner retained: {e}"));
         }
         self.event("owner_registered",json!({"grant_id":id,"generation":g.generation,"pid":s.pid,"session":s.session,"epoch":s.epoch}));
         Ok(s)
+    }
+    pub fn register_controller(&mut self,registration:crate::controller_watch::Registration)->Result<()> {
+        if !self.supervised || self.pin.is_some(){return Err("supervisor controller binding order".into());}
+        self.host.controller=Some(registration);Ok(())
     }
     pub async fn approve_http(
         &self,
@@ -758,10 +805,12 @@ impl HostAuthority {
         Ok(self.session.as_ref().ok_or("no session")?.snapshot().http)
     }
     pub async fn revoke(&mut self, id: &str) -> Result<Value> {
+        self.check_profile()?;
         let tx = self
             .db
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(err)?;
+        validate_profile_mode(&tx,&self.profile,self.supervised)?;
         let mut g = load_grant(&tx, id)?;
         if g.profile != self.profile.identity {
             return Err("foreign profile".into());
@@ -799,14 +848,16 @@ impl HostAuthority {
         self.session.as_ref().map(Session::snapshot)
     }
     pub fn inspect(&self, id: Option<&str>) -> Result<Value> {
+        self.check_profile()?;
         let owner = load_owner(&self.db)?;
         let owner=owner.map(|o|json!({"grant_id":o.grant_id,"generation":o.generation,"phase":o.phase,"pid":o.child_pid,"session":o.session,"epoch":o.epoch,"exit_observed":o.exit_observed,"stdout_eof":o.stdout_eof,"stderr_eof":o.stderr_eof,"owner_retained":!terminal(&o),"locally_observed":self.active.as_deref()==Some(&o.grant_id),"automatic_takeover":false}));
         let grant=id.map(|id|{let g=load_grant(&self.db,id)?;Ok::<_,String>(json!({"grant_id":g.id,"issuer":g.issuer,"generation":g.generation,"state":g.state,"config_sha256":wire::hex(&g.config_sha256),"plugin_id":g.plugin_id,"role":g.role,"operation":g.operation,"live_in_this_issuer":self.live.contains_key(id)}))}).transpose()?;
         Ok(
-            json!({"profile_id":self.profile.identity,"slot":self.profile.slot,"owner":owner,"grant":grant,"failed_closed":self.failed}),
+            json!({"profile_id":self.profile.identity,"slot":self.profile.slot,"owner":owner,"grant":grant,"failed_closed":self.failed,"supervised":self.supervised,"recovery":if self.supervised {recovery_json(load_recovery(&self.db)?)} else {Value::Null}}),
         )
     }
     pub async fn poll(&mut self) -> Result<bool> {
+        self.check_profile()?;
         let Some(session) = self.session.clone() else {
             return Ok(false);
         };
@@ -825,6 +876,7 @@ impl HostAuthority {
                 .db
                 .transaction_with_behavior(TransactionBehavior::Immediate)
                 .map_err(err)?;
+        validate_profile_mode(&tx,&self.profile,self.supervised)?;
             let mut o = load_owner(&tx)?.ok_or("owner missing")?;
             if o.grant_id != id
                 || o.issuer != self.issuer
@@ -845,7 +897,26 @@ impl HostAuthority {
                 self.failed = true;
                 return Err("release proof missing".into());
             }
+            if self.supervised {let recorded=load_owner(&tx)?;validate_recovery(&tx,&self.profile,recorded.as_ref())?;}
             save_owner(&tx, &o)?;
+            if self.supervised {
+                let mut proof=load_recovery(&tx)?.ok_or("recovery missing")?;
+                if self.active_recovery.as_ref()!=Some(&proof){self.failed=true;return Err("immutable recovery record drift".into());}
+
+                if proof.profile!=self.profile.identity || proof.grant_id!=id || proof.issuer!=self.issuer || proof.generation!=o.generation || proof.child_pid!=s.pid || proof.session!=s.session || proof.epoch!=s.epoch {self.failed=true;return Err("recovery binding drift".into());}
+                if s.phase=="Released" {
+                    let p=&s.http["progress"];
+                    if s.event_overflow!=0 || !s.events.iter().any(|e|e["event"]=="control_stdin_closed_reaped" && e["detail"]==true)
+                        || p["revoke_persisted"]!=true || p["revoke_applied"]!=true
+                        || !s.events.iter().any(|e|e["event"]=="job_empty" && e["detail"]["active_processes"]==0)
+                        || p["data_closed"]!=true || p["connect_reaped"]!=true || p["read_reaped"]!=true || p["write_reaped"]!=true
+                        || (p["worker_started"]==true && p["worker_joined"]!=true) || p["request_closed"]!=true {self.failed=true;return Err("supervised reclamation proof incomplete".into());}
+                    proof.phase="Reclaimed".into();proof.tree_empty=true;proof.child_exit=s.exit_observed;proof.stdout_eof=s.stdout_eof;proof.stderr_eof=s.stderr_eof;
+                    proof.pipe_joined=true;proof.network_joined=true;proof.gate_closed=true;proof.snapshot_sha256=o.snapshot_sha256.clone();
+                } else {proof.phase="Retained".into();}
+                save_recovery(&tx,&proof)?;
+                validate_recovery(&tx,&self.profile,Some(&o))?;self.active_recovery=Some(proof);
+            }
             if let Err(e) = tx.commit() {
                 self.failed = true;
                 return Err(format!("owner update unknown; retained: {e}"));
@@ -878,5 +949,79 @@ impl HostAuthority {
             .ok_or("qualification live owner missing")?
             .close_data_after_witness(witness)
             .await
+    }
+}
+
+fn load_recovery(c:&Connection)->Result<Option<proto::Recovery>> {
+ let b:Option<Vec<u8>>=c.query_row("SELECT CASE WHEN length(payload)<=8352 THEN payload ELSE NULL END FROM recovery WHERE singleton=1",[],|r|r.get(0)).optional().map_err(err)?;
+ b.map(|b|unpack(&b)).transpose()
+}
+fn save_recovery(c:&Connection,p:&proto::Recovery)->Result<()> {
+ c.execute("INSERT INTO recovery VALUES(1,?1) ON CONFLICT(singleton) DO UPDATE SET payload=excluded.payload",[pack(p)?]).map_err(err)?;Ok(())
+}
+fn validate_recovery(c:&Connection,profile:&proto::Profile,o:Option<&proto::Owner>)->Result<()> {
+ let p=load_recovery(c)?;
+ match (p,o) {
+  (None,None)=>Ok(()),
+  (Some(p),Some(o))=>{
+   let g=load_grant(c,&p.grant_id)?;
+   if p.version!=1 || p.profile!=profile.identity || p.grant_id!=o.grant_id || p.issuer!=o.issuer || p.generation!=o.generation
+    || p.incarnation.len()!=64 || !p.incarnation.bytes().all(|b|b.is_ascii_hexdigit()) || p.supervisor_pid==0
+    || p.artifact_sha256!=g.artifact_sha256 || p.config_sha256!=g.config_sha256 || !matches!(p.phase.as_str(),"Pending"|"Registered"|"Retained"|"Reclaimed") {return Err("recovery integrity/binding".into());}
+   if o.phase!="LaunchPending" && (p.child_pid!=o.child_pid || p.session!=o.session || p.epoch!=o.epoch) {return Err("recovery process binding".into());}
+   if o.phase=="Released" && (p.phase!="Reclaimed" || !p.tree_empty || !p.child_exit || !p.stdout_eof || !p.stderr_eof || !p.pipe_joined || !p.network_joined || !p.gate_closed || p.snapshot_sha256.len()!=32 || p.snapshot_sha256!=o.snapshot_sha256) {return Err("unproved supervised release".into());}
+   if p.phase=="Reclaimed" && o.phase!="Released" {return Err("orphan reclamation proof".into());}
+   Ok(())
+  }, _=>Err("recovery/owner correspondence".into())
+ }
+}
+fn recovery_json(p:Option<proto::Recovery>)->Value {
+ p.map(|p|json!({"version":p.version,"profile":p.profile,"grant_id":p.grant_id,"issuer":p.issuer,"generation":p.generation,"incarnation":p.incarnation,"supervisor_pid":p.supervisor_pid,"phase":p.phase,"child_pid":p.child_pid,"session":p.session,"epoch":p.epoch,
+ "tree_empty":p.tree_empty,"child_exit":p.child_exit,"stdout_eof":p.stdout_eof,"stderr_eof":p.stderr_eof,"pipe_joined":p.pipe_joined,"network_joined":p.network_joined,"gate_closed":p.gate_closed,"snapshot_sha256":wire::hex(&p.snapshot_sha256),"business_replay_allowed":false})).unwrap_or(Value::Null)
+}
+
+pub(crate) fn validate_profile_mode(c:&Connection,expected:&proto::Profile,supervised:bool)->Result<()> {
+    let version:i64=c.pragma_query_value(None,"user_version",|row|row.get(0)).map_err(err)?;
+    let bytes:Vec<u8>=c.query_row("SELECT CASE WHEN length(payload)<=8352 THEN payload ELSE NULL END FROM profile WHERE singleton=1",[],|row|row.get(0)).map_err(err)?;
+    let actual:proto::Profile=unpack(&bytes)?;
+    if actual!=*expected || version!=if supervised{5}else{4} || actual.runtime_mode!=u32::from(supervised) {
+        return Err("profile runtime mode/identity changed".into());
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod supervisor_recovery_tests {
+    use super::*;
+    fn fresh()->PathBuf {
+        let root=PathBuf::from(std::env::var("MORROW_HTTP_TEST_ROOT").unwrap()).join(&random().unwrap()[..16]);
+        fs::create_dir(&root).unwrap();let profile=root.join("profile");fs::create_dir(&profile).unwrap();profile
+    }
+    #[test]
+    fn supervised_and_legacy_profiles_reject_cross_mode_open() {
+        let root=fresh();HostAuthority::initialize_supervised(&root,"scope-test").unwrap();
+        assert!(HostAuthority::open(&root).is_err());
+        let host=HostAuthority::open_supervised(&root).unwrap();assert!(host.check_profile().is_ok());
+        let legacy=fresh();HostAuthority::initialize(&legacy,"scope-test").unwrap();
+        assert!(HostAuthority::open_supervised(&legacy).is_err());
+    }
+    #[test]
+    fn cached_profile_rejects_consistent_version_and_mode_downgrade() {
+        let root=fresh();HostAuthority::initialize_supervised(&root,"scope-test").unwrap();
+        let host=HostAuthority::open_supervised(&root).unwrap();
+        let mut changed=host.profile.clone();changed.runtime_mode=0;
+        host.db.execute("UPDATE profile SET payload=?1 WHERE singleton=1",[pack(&changed).unwrap()]).unwrap();
+        host.db.pragma_update(None,"user_version",4).unwrap();
+        assert!(host.check_profile().is_err());assert!(host.inspect(None).is_err());
+    }
+    #[test]
+    fn business_parent_rejects_consistent_mode_rewrite() {
+        let parent=simulated_http_parent();let db=connect(&parent.root).unwrap();
+        let mut changed=parent.expected_profile.clone();changed.runtime_mode=1;
+        db.execute("UPDATE profile SET payload=?1 WHERE singleton=1",[pack(&changed).unwrap()]).unwrap();
+        db.pragma_update(None,"user_version",5).unwrap();
+        assert!(connect(&parent.root).is_ok());
+        assert!(parent.revoke_native(25).is_err());
+        assert_eq!(load_grant(&db,&parent.approval.id).unwrap().state,2);
     }
 }

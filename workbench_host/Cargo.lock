@@ -984,6 +984,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-native-pipe-win"
+version = "0.1.0"
+dependencies = [
+ "tokio",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
 name = "morrow-network-node"
 version = "0.1.9-test.51"
 dependencies = [
@@ -1035,6 +1043,7 @@ dependencies = [
  "js-sys",
  "morrow-audit",
  "morrow-core",
+ "morrow-native-pipe-win",
  "morrow-network-node",
  "morrow-plugin-runtime",
  "morrow-workbench-plugin",
@@ -1061,7 +1070,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-workbench-plugin"
-version = "0.1.9-test.54.7"
+version = "0.1.9-test.54.8"
 dependencies = [
  "capnp",
  "capnpc",

@@ -23,7 +23,7 @@ url = "=2.5.8"
 getrandom = "=0.4.3"
 morrow-plugin-runtime = {path = "../plugin_runtime", features = ["packages"]}
 morrow-network-node = { path = "../network_node", features = ["plugin-adapter"] }
-tokio = { version = "=1.53.1", features = ["rt-multi-thread", "net", "io-util", "sync", "time"] }
+tokio = { version = "=1.53.1", features = ["rt-multi-thread", "net", "io-util", "sync", "time", "io-std"] }
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "=0.2.128"
 js-sys = "=0.3.105"
@@ -44,6 +44,7 @@ wat = "=1.239.0"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 morrow-audit = {path = "../audit"}
+morrow-native-pipe-win = {path = "../native_pipe_win_001"}
 rusqlite = { version = "=0.40.2", features = ["backup"] }
 tempfile = "=3.27.0"
 

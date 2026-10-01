@@ -15,11 +15,14 @@ use std::{
 };
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
-    process::Child,
     sync::mpsc,
     task::JoinHandle,
 };
 use tokio_util::sync::CancellationToken;
+#[path = "expiry_teardown.rs"]
+mod expiry_teardown;
+use expiry_teardown::ExpiryTeardown;
+
 type ChunkResult = morrow_network_node_stream::Result<Option<Vec<u8>>>;
 #[cfg(test)]
 #[path = "revocation_interleaving_tests.rs"]
@@ -790,13 +793,14 @@ fn identity(f: &w::Frame, initial: &w::Frame) -> bool {
 }
 
 pub(crate) async fn run(
-    mut child: Child,
+    mut child: crate::managed_child::ManagedChild,
     admission: Admission,
     instance: Instance,
     policy: Arc<Mutex<HostPolicy>>,
     shared: Arc<Shared>,
     mut control: mpsc::Receiver<Control>,
     parent: Parent,
+    job: Option<morrow_native_pipe_win::job::Job>,
 ) {
     let spec = &admission.spec;
     let expires = parent.deadline;
@@ -869,12 +873,17 @@ pub(crate) async fn run(
     let mut stderr_done = false;
     let mut exited = false;
     let mut control_open = true;
+    let mut welcome_written = false;
     let mut reason = 0u32;
     let mut close_sequence: Option<u64> = None;
     let mut close_ack_pending = false;
+    let mut expiry_teardown: Option<ExpiryTeardown> = None;
     let mut closing: Option<Instant> = None;
     let mut killed = false;
     let mut unconfirmed = false;
+    let mut job_barrier_reported=false;
+    let mut job_barrier_deadline:Option<Instant>=None;
+    let mut control_barrier_deadline:Option<Instant>=None;
     let mut tick = tokio::time::interval(Duration::from_millis(1));
     tick.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
     loop {
@@ -898,6 +907,18 @@ pub(crate) async fn run(
             shared.phase("Closing");
             http.progress.owner = w::OwnerPhase::Closing;
             closing = Some(Instant::now() + Duration::from_millis(spec.close_ms));
+            if reason == 20 && ready && welcome_written && cancellation_proven && input.is_empty()
+                && stdin.is_some() && !stdin.as_ref().is_some_and(|s|s.write_unreported()) && !http.control.iter().any(|o| o.offset > 0)
+            {
+                let deadline = closing.unwrap();
+                expiry_teardown = Some(ExpiryTeardown::new(deadline));
+                shared.event("expiry_teardown_bound", json!({
+                    "original_deadline_offset_ns": expires.saturating_duration_since(shared.created).as_nanos(),
+                    "deadline_offset_ns": deadline.saturating_duration_since(shared.created).as_nanos(),
+                    "close_ms": spec.close_ms, "authority_deadline_renewed": false,
+                    "business_gate_closed": http.parent.gate.lock().unwrap().revoked
+                }));
+            }
             if let Some(sequence) =
                 close_sequence.filter(|_| reason == 25 && cancellation_proven && stdin.is_some())
             {
@@ -917,7 +938,7 @@ pub(crate) async fn run(
                         stdin = None;
                     }
                 }
-            } else if http.control.front().is_some_and(|o| o.offset > 0) {
+            } else if http.control.front().is_some_and(|o| o.offset > 0) || stdin.as_ref().is_some_and(|s|s.write_unreported()) {
                 http.control.clear();
                 stdin = None;
                 shared.event("partial_control_write_cancelled", json!(true));
@@ -931,6 +952,9 @@ pub(crate) async fn run(
         if exited
             && stdout_done
             && stderr_done
+            // Pipe join can precede RequestClosed by one tick. Publish no Released
+            // snapshot until the same complete proof required by durable authority.
+            && expiry_teardown::request_reaped(&http.progress)
             && http.pipe_joined
             && (!http.progress.worker_started || http.progress.worker_joined)
             && !http.parent.gate.lock().unwrap().network_pending
@@ -940,6 +964,49 @@ pub(crate) async fn run(
                 s.exit_observed && s.stdout_eof && s.stderr_eof
             };
             if proven {
+                // A dead peer cannot receive further control frames. Retain the writer
+                // in its bounded cancellation owner, never pretend cancellation is ACK.
+                if stdin.is_some() {
+                    if close_ack_pending {
+                        shared.event("close_ack_failed",json!({"reason":"peer exited before ACK completion"}));
+                        close_ack_pending=false;
+                    }
+                    http.control.clear();stdin=None;
+                }
+                if job.is_some() && !child.control_reclamation_finished() {
+                    // The sole writer owner is cancelling/reaping on its bounded owner thread.
+                    // No new write or renewed business authority is possible here.
+                    let deadline=*control_barrier_deadline.get_or_insert_with(||Instant::now()+Duration::from_millis(spec.close_ms));
+                    if Instant::now()>=deadline {
+                        shared.event("control_stdin_reclamation_deadline_unconfirmed",json!({"deadline_offset_ns":deadline.saturating_duration_since(shared.created).as_nanos(),"budget_ms":spec.close_ms}));
+                        shared.phase_if_changed("ClosingUnconfirmed");break;
+                    }
+                    shared.phase_if_changed("Closing");tick.tick().await;continue;
+                }
+                if job.is_some() && !child.control_closed_and_reaped() {
+                    shared.event("control_stdin_reap_unconfirmed",json!(true));
+                    shared.phase_if_changed("ClosingUnconfirmed");break;
+                }
+                if let Some(job)=&job {
+                    match job.active_processes() {
+                        Ok(0)=>shared.event("job_empty",json!({"active_processes":0,"direct_exit":exited,"stdout_eof":stdout_done,"stderr_eof":stderr_done})),
+                        observation=>{
+                            let deadline=*job_barrier_deadline.get_or_insert_with(||Instant::now()+Duration::from_millis(spec.close_ms));
+                            if !job_barrier_reported {
+                                match &observation{Ok(count)=>shared.event("job_tree_retained",json!({"active_processes":count})),Err(error)=>shared.event("job_query_unconfirmed",json!(error.to_string()))};
+                                shared.event("job_reclamation_bound",json!({"deadline_offset_ns":deadline.saturating_duration_since(shared.created).as_nanos(),"budget_ms":spec.close_ms,"business_gate_closed":http.parent.gate.lock().unwrap().revoked}));
+                                job_barrier_reported=true;
+                            }
+                            let _=job.terminate();
+                            if Instant::now()>=deadline {
+                                shared.event("job_reclamation_deadline_unconfirmed",json!(true));
+                                shared.phase_if_changed("ClosingUnconfirmed");break;
+                            }
+                            shared.phase_if_changed("Closing");tick.tick().await;continue;
+                        }
+                    }
+                }
+                if job.is_some(){shared.event("control_stdin_closed_reaped",json!(true));}
                 revoke(&policy, instance, &shared, 24);
                 let mut p = policy.lock().unwrap();
                 let _ = p.stop(instance);
@@ -956,38 +1023,62 @@ pub(crate) async fn run(
                 break;
             }
         }
+        // An expired session can only publish terminal cleanup facts. The ACK
+        // is queued after actual RequestClosed, never after cancellation alone.
+        if let (Some(teardown), Some(sequence)) = (&expiry_teardown, close_sequence) {
+            if !close_ack_pending && stdin.is_some() && Instant::now() < teardown.deadline()
+                && expiry_teardown::request_reaped(&http.progress)
+                && !http.parent.gate.lock().unwrap().network_pending
+            {
+                match http.state(w::Kind::State, sequence) {
+                    Ok(()) => {
+                        for output in &mut http.control {
+                            output.deadline = output.deadline.min(teardown.deadline());
+                        }
+                        close_ack_pending = true;
+                        shared.event("close_ack_pending", json!({"sequence":sequence,"expiry_teardown":true}));
+                    }
+                    Err(error) => {
+                        shared.event("close_ack_failed", json!({"reason":"teardown enqueue","error":error}));
+                        stdin = None;
+                        http.control.clear();
+                    }
+                }
+            }
+        }
         let can_write = stdin.is_some() && !http.control.is_empty();
-        let read_limit = if closing.is_some() {
-            w::MAX_FRAME
-        } else {
-            target - input.len()
-        };
+        // Never read past the current exact frame boundary, including teardown.
+        let read_limit = target - input.len();
         tokio::select! {biased;
             command=control.recv(),if control_open=>match command{
                 #[cfg(feature = "qualification-pipe-fault")]
                 Some(Control::CloseDataAfterWitness{witness,ack})=>{http.pipe.close_after_witness(witness,ack);},
                 Some(Control::ApproveHttp{proposal_ref,expected_hash,response_limit,ack})=>{let result=if ready&&closing.is_none(){http.approve(proposal_ref,expected_hash,response_limit)}else{Err("session not active".into())};http.publish();let _=ack.send(result);},
                 Some(Control::Revoke(ack))=>{let result=http.cancel_http(19);if let Err(e)=result{shared.event("revoke_persistence_unconfirmed",json!(e));reason=27;}revoke(&policy,instance,&shared,19);if closing.is_none(){http.progress.owner=w::OwnerPhase::Revoked;shared.phase("Revoked");}shared.event("control_ack",json!({"action":"revoke","generation":2}));let _=ack.send(());},
-                Some(Control::Stop(ack))=>{reason=25;http.cancel.cancel();http.pipe.cancel();shared.event("control_ack",json!({"action":"stop"}));let _=ack.send(());},
-                None=>{control_open=false;reason=25;},
+                Some(Control::Stop(ack))=>{if reason==0{reason=25;}http.cancel.cancel();http.pipe.cancel();shared.event("control_ack",json!({"action":"stop"}));let _=ack.send(());},
+                None=>{control_open=false;if reason==0{reason=25;}},
             },
             _=tick.tick()=>{
                 let now=Instant::now();
-                if close_ack_pending && (now>=expires || http.control.front().is_some_and(|o|now>=o.deadline) || closing.is_some_and(|d|now>=d)) {
+                if close_ack_pending && ((now>=expires && expiry_teardown.is_none()) || http.control.front().is_some_and(|o|now>=o.deadline) || closing.is_some_and(|d|now>=d)) {
                     close_ack_pending=false;http.control.clear();stdin=None;
                     shared.event("close_ack_failed",json!({"reason":"original/frame/close deadline"}));
+                }
+                if expiry_teardown.is_some() && input_deadline.is_some_and(|d|now>=d) {
+                    shared.event("close_ack_failed",json!({"reason":"teardown partial frame timeout"}));
+                    stdin=None;http.control.clear();expiry_teardown=None;
                 }
                 if closing.is_none(){
                     if now>=expires{reason=20;}else if !ready&&now>=handshake{reason=23;}
                     else if input_deadline.is_some_and(|d|now>=d)||http.control.front().is_some_and(|o|now>=o.deadline)||http.data_deadline.is_some_and(|d|now>=d){reason=16;}
                 }else if !unconfirmed&&now>=closing.unwrap(){
-                    if !killed{killed=true;stdin=None;http.control.clear();let result=child.start_kill();shared.event("kill_requested",json!({"ok":result.is_ok(),"error":result.err().map(|e|e.to_string())}));closing=Some(now+Duration::from_millis(spec.close_ms));}
+                    if !killed{killed=true;if expiry_teardown.is_some(){shared.event("close_ack_failed",json!({"reason":"fixed teardown deadline"}));}stdin=None;http.control.clear();let result=if let Some(job)=&job {shared.event("job_terminate_requested",json!({"reason":reason}));job.terminate()} else {child.start_kill()};shared.event("kill_requested",json!({"ok":result.is_ok(),"error":result.err().map(|e|e.to_string())}));closing=Some(now+Duration::from_millis(spec.close_ms));}
                     else{unconfirmed=true;shared.phase("ClosingUnconfirmed");http.progress.owner=w::OwnerPhase::ClosingUnconfirmed;shared.event("owner_retained",json!(true));}
                 }
-                if let Err(e)=http.pipe_events(){shared.event("pipe_driver_error",json!(e));reason=16;}
+                if let Err(e)=http.pipe_events(){shared.event("pipe_driver_error",json!(e));reason=16;if expiry_teardown.is_some(){shared.event("close_ack_failed",json!({"reason":"teardown pipe driver error"}));stdin=None;http.control.clear();expiry_teardown=None;}}
                 // Read actual write-fence state before processing cross-channel ACKs.
                 {let g=http.parent.gate.lock().unwrap();http.progress.issued_offset=http.progress.issued_offset.max(g.issued_body_end);http.progress.last_write_ordinal=g.last_write;}
-                if let Err(e)=http.network_tick().await{shared.event("network_supervision_error",json!(e));reason=27;}
+                if let Err(e)=http.network_tick().await{shared.event("network_supervision_error",json!(e));reason=27;if expiry_teardown.is_some(){shared.event("close_ack_failed",json!({"reason":"teardown network supervision error"}));stdin=None;http.control.clear();expiry_teardown=None;}}
                 if ready&&http.pipe_created&&!http.offered&&closing.is_none(){http.offered=true;if http.queue(w::Kind::DataOffer,0,0,w::Payload::Channel(http.channel.clone())).is_err(){reason=21;}}
                 if http.connected&&!http.read_waiting&&!http.pipe_joined&&!http.cancel.is_cancelled()&&closing.is_none(){
                     match http.pipe.send(pipe_driver::Command::Read(http.data_target-http.data_input.len())){Ok(())=>{http.read_waiting=true;http.progress.read_reaped=false;},Err(std::sync::mpsc::TrySendError::Full(_))=>{},Err(_)=>reason=24}
@@ -995,23 +1086,38 @@ pub(crate) async fn run(
                 if http.progress.revoke_applied&&closing.is_none(){http.progress.owner=w::OwnerPhase::Revoked;shared.phase_if_changed("Revoked");let _=policy.lock().unwrap().safety_stop(instance);}
                 http.publish();
             },
-            result=async{let o=http.control.front().unwrap();stdin.as_mut().unwrap().write(&o.bytes[o.offset..]).await},if can_write=>{
-                match result{Ok(0)|Err(_)=>{if close_ack_pending{shared.event("close_ack_failed",json!({"reason":"write incomplete/error"}));close_ack_pending=false;}stdin=None;http.control.clear();reason=24;},Ok(n)=>{let o=http.control.front_mut().unwrap();o.offset+=n;if o.offset==o.bytes.len(){let o=http.control.pop_front().unwrap();let frame=w::Frame::decode(&o.bytes).unwrap();shared.event("control_frame_sent",json!({"raw_hex":w::hex(&o.bytes)}));if close_ack_pending && frame.kind==w::Kind::State && Some(frame.sequence)==close_sequence && frame.code==0 {close_ack_pending=false;shared.event("close_ack_written",json!({"sequence":frame.sequence,"bytes":o.bytes.len()}));stdin=None;http.control.clear();}else if frame.kind==w::Kind::Stop{stdin=None;}}}}
+            result=async{let o=http.control.front().unwrap();if Instant::now()>=o.deadline || expiry_teardown.as_ref().is_some_and(|t|Instant::now()>=t.deadline()){return Err(std::io::Error::from(std::io::ErrorKind::TimedOut));}stdin.as_mut().unwrap().write(&o.bytes[o.offset..]).await},if can_write=>{
+                match result{Ok(0)|Err(_)=>{if close_ack_pending{shared.event("close_ack_failed",json!({"reason":"write incomplete/error"}));close_ack_pending=false;}stdin=None;http.control.clear();reason=24;},Ok(n)=>{let o=http.control.front_mut().unwrap();o.offset+=n;if o.offset==o.bytes.len(){let o=http.control.pop_front().unwrap();let frame=w::Frame::decode(&o.bytes).unwrap();shared.event("control_frame_sent",json!({"raw_hex":w::hex(&o.bytes)}));if frame.kind==w::Kind::Welcome{welcome_written=true;}if close_ack_pending && frame.kind==w::Kind::State && Some(frame.sequence)==close_sequence && frame.code==0 {close_ack_pending=false;shared.event("close_ack_written",json!({"sequence":frame.sequence,"bytes":o.bytes.len()}));if let Some(teardown)=&expiry_teardown{let now=Instant::now();if now>=teardown.deadline(){shared.event("close_ack_failed",json!({"reason":"teardown ACK completed too late"}));}else{shared.event("expiry_teardown_ack_written",json!({"sequence":frame.sequence,"deadline_offset_ns":teardown.deadline().saturating_duration_since(shared.created).as_nanos(),"completed_offset_ns":now.saturating_duration_since(shared.created).as_nanos(),"business_success":false}));}}stdin=None;http.control.clear();}else if frame.kind==w::Kind::Stop && expiry_teardown.is_none(){stdin=None;}}}}
             },
             status=child.wait(),if !exited=>{
                 exited=true;match status{Ok(status)=>{let mut s=shared.state.lock().unwrap();s.exit_observed=true;s.exit_code=status.code();drop(s);http.progress.child_exited=true;shared.event("exit",json!({"code":status.code(),"business_success":false}));},Err(error)=>shared.event("wait_unconfirmed",json!(error.to_string()))}reason=if reason==0{24}else{reason};
             },
             result=stdout.read(&mut scratch[..read_limit]),if !stdout_done&&(http.control.len()<8||closing.is_some())=>{
                 match result{Ok(0)=>{stdout_done=true;shared.state.lock().unwrap().stdout_eof=true;http.progress.stdout_eof=true;if reason==0{reason=24;}shared.event("stdout_eof",json!(true));},Err(error)=>{stdout_done=true;reason=24;shared.event("stdout_error",json!(error.to_string()));},Ok(n)=>{
-                    if closing.is_some(){if close_sequence.is_some(){shared.event("close_ack_failed",json!({"reason":"unexpected guest bytes after Close","bytes":n}));close_ack_pending=false;stdin=None;http.control.clear();}continue;}if input.is_empty(){input_deadline=Some(Instant::now()+Duration::from_millis(spec.frame_ms));}input.extend_from_slice(&scratch[..n]);if input.len()!=target{continue;}
-                    if target==4{match w::payload_length(&input){Ok(n)=>{target=n+4;continue;},Err(_)=>{reason=16;continue;}}}
+                    if closing.is_some() && expiry_teardown.is_none(){if close_sequence.is_some(){shared.event("close_ack_failed",json!({"reason":"unexpected guest bytes after Close","bytes":n}));close_ack_pending=false;stdin=None;http.control.clear();}continue;}if close_sequence.is_some() && expiry_teardown.is_some(){shared.event("close_ack_failed",json!({"reason":"unexpected guest bytes after teardown Close","bytes":n}));close_ack_pending=false;stdin=None;http.control.clear();expiry_teardown=None;continue;}if input.is_empty(){let deadline=Instant::now()+Duration::from_millis(spec.frame_ms);input_deadline=Some(expiry_teardown.as_ref().map_or(deadline,|t|deadline.min(t.deadline())));}input.extend_from_slice(&scratch[..n]);if input.len()!=target{continue;}
+                    if target==4{match w::payload_length(&input){Ok(n)=>{target=n+4;continue;},Err(_)=>{input.clear();target=4;input_deadline=None;if expiry_teardown.is_some(){shared.event("close_ack_failed",json!({"reason":"teardown framing"}));stdin=None;http.control.clear();expiry_teardown=None;}else{reason=16;}continue;}}}
                     shared.event("control_frame_received",json!({"raw_hex":w::hex(&input)}));let decoded=w::Frame::decode(&input);input.clear();target=4;input_deadline=None;
-                    let frame=match decoded{Ok(f)=>f,Err(_)=>{reason=16;continue;}};
+                    let frame=match decoded{Ok(f)=>f,Err(_)=>{if expiry_teardown.is_some(){shared.event("close_ack_failed",json!({"reason":"teardown decode"}));stdin=None;http.control.clear();expiry_teardown=None;}else{reason=16;}continue;}};
                     let invalid=if frame.code!=0||!identity(&frame,&initial){17}else if frame.sequence!=last_sequence+1{18}else if !ready&&frame.kind!=w::Kind::Hello{23}else{0};
-                    if invalid!=0{let _=http.queue(w::Kind::Denied,frame.sequence,invalid,w::Payload::None);reason=invalid;continue;}
+                    if invalid!=0{if expiry_teardown.is_some(){shared.event("close_ack_failed",json!({"reason":"teardown identity/sequence","code":invalid}));stdin=None;http.control.clear();expiry_teardown=None;}else{let _=http.queue(w::Kind::Denied,frame.sequence,invalid,w::Payload::None);reason=invalid;}continue;}
                     last_sequence=frame.sequence;
                     if !ready{if policy.lock().unwrap().ready(instance).is_err(){reason=19;continue;}ready=true;shared.phase("Active");http.progress.owner=w::OwnerPhase::Active;if http.queue(w::Kind::Welcome,last_sequence,0,w::Payload::None).is_err(){reason=21;}continue;}
-                    if remaining==0{reason=21;continue;}remaining-=1;
+                    if remaining==0{if expiry_teardown.is_some(){shared.event("close_ack_failed",json!({"reason":"teardown original request budget"}));stdin=None;http.control.clear();expiry_teardown=None;}else{reason=21;}continue;}remaining-=1;
+                    if let Some(teardown)=&expiry_teardown {
+                        if !teardown.permits(Instant::now(),frame.kind,&frame.payload) {
+                            shared.event("close_ack_failed",json!({"reason":"non-cleanup or late teardown request","kind":format!("{:?}",frame.kind)}));
+                            stdin=None;http.control.clear();expiry_teardown=None;continue;
+                        }
+                        shared.event("expiry_teardown_request",json!({"kind":format!("{:?}",frame.kind),"sequence":frame.sequence,"business_gate_closed":http.parent.gate.lock().unwrap().revoked}));
+                        if frame.kind==w::Kind::Close {
+                            close_sequence=Some(last_sequence);
+                            shared.event("expiry_teardown_close_received",json!({"sequence":last_sequence,"first_reason":reason}));
+                        } else if let Err(error)=http.handle_control(frame) {
+                            shared.event("close_ack_failed",json!({"reason":"teardown cleanup request","error":error}));
+                            stdin=None;http.control.clear();expiry_teardown=None;
+                        }
+                        http.publish();continue;
+                    }
                     let revoked={let g=http.parent.gate.lock().unwrap();http.progress.issued_offset=http.progress.issued_offset.max(g.issued_body_end);http.progress.last_write_ordinal=g.last_write;g.revoked};
                     let cleanup=matches!(frame.kind,w::Kind::Query|w::Kind::HttpCancel|w::Kind::Close)||matches!(&frame.payload,w::Payload::Credit(c)if frame.kind==w::Kind::HttpCredit&&c.window_bytes==0);
                     if revoked&&!cleanup{let _=http.queue(w::Kind::Denied,last_sequence,19,w::Payload::None);continue;}
@@ -1023,7 +1129,7 @@ pub(crate) async fn run(
             result=stderr.read(&mut errbuf),if !stderr_done=>match result{
                 Ok(0)=>{stderr_done=true;shared.state.lock().unwrap().stderr_eof=true;http.progress.stderr_eof=true;shared.event("stderr_eof",json!({"bytes":errbytes}));},
                 Err(error)=>{stderr_done=true;reason=24;shared.event("stderr_error",json!(error.to_string()));},
-                Ok(n)=>{errbytes=errbytes.saturating_add(n);if errbytes>65536{reason=21;}},
+                Ok(n)=>{errbytes=errbytes.saturating_add(n);if errbytes>65536{reason=21;shared.event("stderr_limit",json!({"bytes":errbytes}));if expiry_teardown.is_some(){shared.event("close_ack_failed",json!({"reason":"teardown stderr limit"}));stdin=None;http.control.clear();expiry_teardown=None;}}},
             },
         }
     }

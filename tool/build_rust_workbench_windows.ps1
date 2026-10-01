@@ -77,6 +77,7 @@ foreach ($file in Get-ChildItem -LiteralPath $releaseRoot -Recurse -File) {
 # Bundle the matching installed MSVC runtime for a standalone preview.
 $crt = 'C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.44.35112\x64\Microsoft.VC143.CRT'
 if (Test-Path -LiteralPath $crt) { Copy-Item -Path "$crt/*.dll" -Destination $destination -Force }
+Copy-Item -LiteralPath build/workbench-host/release/morrow-workbench-supervisor.exe -Destination $destination
 Copy-Item -LiteralPath build/workbench-host/release/morrow-workbench-host.exe -Destination $destination
 New-Item -ItemType Directory -Force -Path (Join-Path $destination plugins) | Out-Null
 Copy-Item -LiteralPath build/workbench-host/bundle/workbench.morrowplugin -Destination (Join-Path $destination plugins/workbench.morrowplugin)

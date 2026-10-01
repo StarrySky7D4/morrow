@@ -1,0 +1,19 @@
+syntax = "proto3";
+package morrow.channel.journal.v1;
+// Durable history only. Loading these bytes never grants or restores a source.
+message Checkpoint {
+  uint32 schema_version = 1;
+  bytes subscription = 2;
+  bytes source_epoch = 3;
+  uint64 sequence = 4;
+  bytes frame_sha256 = 5;
+  bytes cursor = 6;
+  uint64 revision = 7;
+}
+message AckReceipt {
+  uint32 schema_version = 1;
+  Checkpoint checkpoint = 2;
+  bytes frame_wire = 3;
+  bytes request_wire = 4;
+  bytes response_wire = 5;
+}

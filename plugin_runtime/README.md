@@ -1,6 +1,6 @@
 # 可替换 Wasm 执行后端原型
 
-基于 0.1.9-test.10，消息协议仍为 v6；包含实验 Wasm guest ABI v1 与 v2。本轮在 Windows x64 上运行了使用 SDK 的实际 C／C++／Rust Wasm 模块，并通过可信适配器接入 HostRuntime 与 SQLite。应用版本、数据库格式和 Flutter 工作台未切换。
+历史原型起于 0.1.9-test.10（当时消息协议 v6）。当前 SDK／宿主使用运行协议 v7，支持 legacy guest ABI v1 和任务 ABI v2；[Windows SDK 候选](../reports/codex-morrow-v1.1/windows-sdk-013-2026-10-01.md)分别说明兼容与实验范围。本轮在 Windows x64 上运行了使用 SDK 的实际 C／C++／Rust Wasm 模块，并通过可信适配器接入 HostRuntime 与 SQLite。应用版本、数据库格式和 Flutter 工作台未切换。
 
 ## 执行与权限边界
 

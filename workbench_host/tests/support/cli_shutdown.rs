@@ -256,3 +256,32 @@ fn broken_output_write_and_flush_still_drain_original_owner() {
     assert_drains(state_frame(), false, true, false, false);
     assert_drains(state_frame(), false, false, true, false);
 }
+
+#[test]
+fn supervision_loss_revokes_original_worker_without_fabricating_join() {
+    let dir=tempfile::tempdir().unwrap();
+    let (mut host,release,calls)=start_held(dir.path());
+    host.product_gate().revoke();
+    assert!(host.save_ui_locale("revoked-new-operation",0,"en").is_err(),"new business admission after supervision loss");
+    assert_ne!(host.io_status().storage,StoragePhase::Reclaimed);
+    assert!(host.finish().is_err(),"held original worker cannot be a successful join");
+    assert!(matches!(morrow_audit::library::Registry::open(dir.path()),Err(morrow_audit::library::Error::Busy)));
+    release.send(()).unwrap();
+    let until=std::time::Instant::now()+WAIT;
+    loop {
+        match host.finish() {Ok(())=>break,Err(_) if std::time::Instant::now()<until=>thread::sleep(Duration::from_millis(10)),Err(e)=>panic!("original worker did not return: {e}")}
+    }
+    assert_eq!(host.io_status().storage,StoragePhase::Reclaimed);
+    assert_eq!(calls.load(Ordering::SeqCst),1,"supervision loss must not replay");
+}
+
+#[test]
+fn graceful_close_waits_longer_than_controller_lease_for_original_worker() {
+    let dir=tempfile::tempdir().unwrap();let (mut host,release,calls)=start_held(dir.path());
+    let release_thread=thread::spawn(move|| {thread::sleep(Duration::from_millis(6100));release.send(()).unwrap();});
+    let started=std::time::Instant::now();
+    serve(&mut host,&mut Cursor::new(Vec::<u8>::new()),&mut Vec::<u8>::new()).unwrap();
+    assert!(started.elapsed()>=Duration::from_secs(6));release_thread.join().unwrap();
+    let status=host.io_status();assert_eq!(status.storage,StoragePhase::Reclaimed);assert!(status.exit.is_some());
+    assert_eq!(calls.load(Ordering::SeqCst),1,"normal shutdown cannot replay");
+}

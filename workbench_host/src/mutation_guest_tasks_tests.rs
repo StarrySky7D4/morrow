@@ -119,6 +119,7 @@ impl Setup {
         let owner = WorkbenchState::with_manager(storage, Ok(manager), None).unwrap();
         Self {
             app: Workbench {
+                channel_tasks: Default::default(),
                 http_tasks: Default::default(),
                 state: StateSlot::new(owner),
             },

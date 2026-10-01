@@ -37,7 +37,21 @@ impl PreparedPackage {
             .required_features
             .iter()
             .any(|f| f == morrow_core::plugin_package::DEPENDENCY_CALLS_FEATURE);
-        let runner = if package.mutation_enabled() {
+        let runner = if package.channel_declaration().is_some() {
+            if dependency
+                || package.io_declaration().is_some()
+                || package.mutation_enabled()
+                || morrow_core::channel::MAX_WIRE_BYTES != crate::MAX_TASK_BYTES
+                || !package
+                    .manifest()
+                    .required_features
+                    .iter()
+                    .any(|f| f == morrow_core::channel::FEATURE)
+            {
+                return Err(Fault::UnsupportedAbi);
+            }
+            Runner::new_channel_task(package.module(), limits)?
+        } else if package.mutation_enabled() {
             if dependency
                 || package.io_declaration().is_none()
                 || morrow_core::mutation::MAX_FRAME_BYTES != crate::MAX_MUTATION_FRAME_BYTES
@@ -92,6 +106,17 @@ impl PreparedPackage {
         }
         frame.finish()
     }
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    pub(crate) fn start_channel(
+        &self,
+        input: &[u8],
+        cancel: Cancellation,
+    ) -> Result<crate::continuation::Execution, Fault> {
+        if !self.runner.channel_abi || self.package.channel_declaration().is_none() {
+            return Err(Fault::UnsupportedAbi);
+        }
+        crate::continuation::Execution::start(&self.runner, Some(input), cancel)
+    }
     pub fn package(&self) -> &Package {
         &self.package
     }
@@ -118,7 +143,7 @@ impl PreparedPackage {
         mut clock: impl FnMut() -> u64,
         cancel: Cancellation,
     ) -> Report {
-        if self.package.io_declaration().is_some() {
+        if self.package.io_declaration().is_some() || self.package.channel_declaration().is_some() {
             return Report {
                 outcome: Err(Fault::UnsupportedAbi),
                 host_calls: 0,
@@ -162,7 +187,9 @@ impl PreparedPackage {
         mut clock: impl FnMut() -> u64,
         cancel: Cancellation,
     ) -> TaskReport {
-        let fault = if self.package.io_declaration().is_some() {
+        let fault = if self.package.io_declaration().is_some()
+            || self.package.channel_declaration().is_some()
+        {
             Some(Fault::UnsupportedAbi)
         } else if connection.package_digest() != Some(self.package.digest()) {
             Some(Fault::PackageBinding)

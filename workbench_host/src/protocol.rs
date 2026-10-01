@@ -8,19 +8,24 @@ use capnp::{
 use morrow_workbench_plugin::{Action, Response, codec};
 use sha2::{Digest, Sha256};
 use zeroize::{Zeroize, Zeroizing};
-#[path = "service_run_protocol.rs"]
-#[cfg(not(target_arch = "wasm32"))]
-mod service_run;
+#[cfg(windows)]
+#[path = "channel_task_protocol.rs"]
+mod channel_task;
 #[path = "file_task_protocol.rs"]
 #[cfg(not(target_arch = "wasm32"))]
 mod file_task;
 #[cfg(windows)]
-#[path = "mutation_task_protocol.rs"]
-mod mutation_task;
-#[cfg(windows)]
 #[path = "guest_mutation_protocol.rs"]
 mod guest_mutation;
-pub fn digest() -> [u8; 32] { crate::host_protocol_digest() }
+#[cfg(windows)]
+#[path = "mutation_task_protocol.rs"]
+mod mutation_task;
+#[path = "service_run_protocol.rs"]
+#[cfg(not(target_arch = "wasm32"))]
+mod service_run;
+pub fn digest() -> [u8; 32] {
+    crate::host_protocol_digest()
+}
 
 fn text(v: capnp::Result<capnp::text::Reader<'_>>) -> Result<String> {
     Ok(v?.to_str()?.to_owned())
@@ -131,48 +136,80 @@ trait ResponseTarget {
 
 pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     #[cfg(not(target_arch = "wasm32"))]
-    { respond_target(host, bytes) }
+    {
+        respond_target(host, bytes)
+    }
     #[cfg(target_arch = "wasm32")]
-    { respond_state(&mut host.state, bytes) }
+    {
+        respond_state(&mut host.state, bytes)
+    }
 }
 
 /// The selected device Blob is separate from the bounded control frame.
 /// Reuse the normal reply/error envelope and the authoritative registry owner.
 pub fn respond_theme_package(
-    host: &mut Workbench, frame: &[u8], archive: Result<Vec<u8>>,
+    host: &mut Workbench,
+    frame: &[u8],
+    archive: Result<Vec<u8>>,
 ) -> Result<Vec<u8>> {
     struct ThemeTarget<'a> {
         state: &'a mut WorkbenchState,
         archive: Option<Result<Vec<u8>>>,
     }
     impl ResponseTarget for ThemeTarget<'_> {
-        fn writable(&self) -> bool { self.state.writable() }
-        fn warning(&self) -> Option<&str> { self.state.maintenance_warning() }
-        fn dispatch(&mut self, r: wire::request::Reader<'_>, mut out: wire::response::Builder<'_>) -> Result<()> {
+        fn writable(&self) -> bool {
+            self.state.writable()
+        }
+        fn warning(&self) -> Option<&str> {
+            self.state.maintenance_warning()
+        }
+        fn dispatch(
+            &mut self,
+            r: wire::request::Reader<'_>,
+            mut out: wire::response::Builder<'_>,
+        ) -> Result<()> {
             let action = r.get_action()?;
-            if !matches!(action, wire::Action::PluginInspect | wire::Action::PluginImport)
-                || !text(r.get_selected_path())?.is_empty() || !r.get_payload()?.is_empty() {
+            if !matches!(
+                action,
+                wire::Action::PluginInspect | wire::Action::PluginImport
+            ) || !text(r.get_selected_path())?.is_empty()
+                || !r.get_payload()?.is_empty()
+            {
                 return Err("invalid theme package request".into());
             }
-            let archive = self.archive.take().ok_or("theme request already consumed")??;
-            if archive.is_empty() || archive.len() > morrow_core::plugin_package::MAX_PACKAGE_BYTES {
+            let archive = self
+                .archive
+                .take()
+                .ok_or("theme request already consumed")??;
+            if archive.is_empty() || archive.len() > morrow_core::plugin_package::MAX_PACKAGE_BYTES
+            {
                 return Err("theme package size limit".into());
             }
             let package = morrow_core::plugin_package::Package::decode(&archive)?;
             crate::plugin_catalog::validate_browser_theme(&package)?;
             match action {
                 wire::Action::PluginInspect => {
-                    plugin_catalog_reply(self.state.inspect_plugin_bytes(&archive)?, out.reborrow());
+                    plugin_catalog_reply(
+                        self.state.inspect_plugin_bytes(&archive)?,
+                        out.reborrow(),
+                    );
                 }
                 wire::Action::PluginImport => {
-                    self.state.import_plugin_bytes(&archive, r.get_sha256()?, r.get_revision())?;
+                    self.state
+                        .import_plugin_bytes(&archive, r.get_sha256()?, r.get_revision())?;
                 }
                 _ => unreachable!(),
             }
             Ok(())
         }
     }
-    respond_target(&mut ThemeTarget { state: host.local_state_mut()?, archive: Some(archive) }, frame)
+    respond_target(
+        &mut ThemeTarget {
+            state: host.local_state_mut()?,
+            archive: Some(archive),
+        },
+        frame,
+    )
 }
 
 /// The original owner executes business commands while a worker holds it.
@@ -214,7 +251,8 @@ fn is_scheduler_action(action: wire::Action) -> bool {
     is_service_run_action(action)
         || matches!(
             action,
-            wire::Action::MutationDiscover | wire::Action::MutationReconcile
+            wire::Action::MutationDiscover
+                | wire::Action::MutationReconcile
                 | wire::Action::MutationStart
                 | wire::Action::MutationSubmit
                 | wire::Action::MutationStatus
@@ -296,6 +334,10 @@ impl ResponseTarget for Workbench {
         mut out: wire::response::Builder<'_>,
     ) -> Result<()> {
         let action = r.get_action()?;
+        #[cfg(windows)]
+        if channel_task::is_action(action) {
+            return channel_task::handle(self, r, out);
+        }
         if is_command_frame(action) {
             return Err("frame staging requires the original owner command lane".into());
         }
@@ -325,7 +367,8 @@ impl ResponseTarget for Workbench {
         }
         if matches!(
             action,
-            wire::Action::MutationDiscover | wire::Action::MutationReconcile
+            wire::Action::MutationDiscover
+                | wire::Action::MutationReconcile
                 | wire::Action::MutationStart
                 | wire::Action::MutationSubmit
                 | wire::Action::MutationStatus
@@ -622,9 +665,15 @@ fn handle_business(
         if !text(r.get_selected_path())?.is_empty() {
             return Err("browser requests cannot name native file paths".into());
         }
-        if matches!(action, wire::Action::ImportFile | wire::Action::ExportFile
-            | wire::Action::ImportEditorDraftAsset | wire::Action::ExportEditorDraftAsset
-            | wire::Action::CompleteEditorDraftImport | wire::Action::ExportEditorDraftImport) {
+        if matches!(
+            action,
+            wire::Action::ImportFile
+                | wire::Action::ExportFile
+                | wire::Action::ImportEditorDraftAsset
+                | wire::Action::ExportEditorDraftAsset
+                | wire::Action::CompleteEditorDraftImport
+                | wire::Action::ExportEditorDraftImport
+        ) {
             return Err("device file transfer adapter is not connected".into());
         }
     }
@@ -696,8 +745,38 @@ fn handle_business(
         text(r.get_id())?
     };
     match action {
+        wire::Action::ChannelPrepare
+        | wire::Action::ChannelAppend
+        | wire::Action::ChannelRun
+        | wire::Action::ChannelStatus
+        | wire::Action::ChannelClose
+        | wire::Action::ChannelReadSent => {
+            return Err(
+                "local channel controls require the original Windows workbench actor".into(),
+            );
+        }
         #[cfg(target_arch = "wasm32")]
-        wire::Action::ServiceConfigPage | wire::Action::ServiceConfigSave | wire::Action::ServiceConfigDisable | wire::Action::ServiceAuthorityPage | wire::Action::ServiceAuthenticationIssue | wire::Action::ServiceAuthorityDisable | wire::Action::ServicePublicationSave | wire::Action::ServiceTlsInspect | wire::Action::TlsIdentityPage | wire::Action::TlsIdentitySave | wire::Action::TlsIdentityDisable | wire::Action::EndpointPage | wire::Action::EndpointSave | wire::Action::EndpointDisable | wire::Action::CredentialPage | wire::Action::CredentialSave | wire::Action::CredentialDisable | wire::Action::BackupSnapshot | wire::Action::BackupProtection => return Err("platform service adapter is not connected".into()),
+        wire::Action::ServiceConfigPage
+        | wire::Action::ServiceConfigSave
+        | wire::Action::ServiceConfigDisable
+        | wire::Action::ServiceAuthorityPage
+        | wire::Action::ServiceAuthenticationIssue
+        | wire::Action::ServiceAuthorityDisable
+        | wire::Action::ServicePublicationSave
+        | wire::Action::ServiceTlsInspect
+        | wire::Action::TlsIdentityPage
+        | wire::Action::TlsIdentitySave
+        | wire::Action::TlsIdentityDisable
+        | wire::Action::EndpointPage
+        | wire::Action::EndpointSave
+        | wire::Action::EndpointDisable
+        | wire::Action::CredentialPage
+        | wire::Action::CredentialSave
+        | wire::Action::CredentialDisable
+        | wire::Action::BackupSnapshot
+        | wire::Action::BackupProtection => {
+            return Err("platform service adapter is not connected".into());
+        }
         #[cfg(not(target_arch = "wasm32"))]
         wire::Action::ServiceConfigPage
         | wire::Action::ServiceConfigSave
@@ -715,7 +794,8 @@ fn handle_business(
             crate::service_protocol::handle(host, r, out.reborrow())
                 .map_err(|_| "service administration request could not be completed")?;
         }
-        wire::Action::MutationDiscover | wire::Action::MutationReconcile
+        wire::Action::MutationDiscover
+        | wire::Action::MutationReconcile
         | wire::Action::MutationStart
         | wire::Action::MutationSubmit
         | wire::Action::MutationStatus
@@ -1551,6 +1631,32 @@ fn plugin_catalog_reply(
         row.set_available(entry.available);
         row.set_issue(entry.issue.as_str());
         row.set_mutation_supported(entry.mutation_supported);
+        row.set_channel_supported(entry.channel_supported);
+        {
+            let mut values = row
+                .reborrow()
+                .init_channel_handlers(entry.channel_handlers.len() as u32);
+            for (i, value) in entry.channel_handlers.iter().enumerate() {
+                values.set(i as u32, value);
+            }
+        }
+        {
+            let mut values = row
+                .reborrow()
+                .init_channel_kinds(entry.channel_kinds.len() as u32);
+            for (i, value) in entry.channel_kinds.iter().enumerate() {
+                values.set(i as u32, *value);
+            }
+        }
+        if let Some(budget) = entry.channel_budget {
+            let mut value = row.reborrow().init_channel_budget();
+            value.set_max_channels(budget.max_channels);
+            value.set_max_frame_bytes(budget.max_frame_bytes);
+            value.set_max_bytes(budget.max_bytes);
+            value.set_max_messages(budget.max_messages);
+            value.set_max_requests(budget.max_requests);
+            value.set_max_duration_ms(budget.max_duration_ms);
+        }
         if let Some(budget) = entry.mutation_budget {
             let mut declared = row.reborrow().init_mutation_budget();
             declared.set_max_job_bytes(budget.max_job_bytes);

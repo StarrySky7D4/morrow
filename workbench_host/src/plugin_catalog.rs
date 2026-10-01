@@ -1,5 +1,7 @@
 //! Trusted local catalog adapter. Package declarations are not object grants.
 use crate::{Result, Workbench, WorkbenchState, now};
+#[cfg(not(target_arch = "wasm32"))]
+use morrow_core::plugin_package::catalog;
 use morrow_core::{
     lifecycle::{GrantKind, InstancePhase},
     plugin_package::{Package, io::IoCapability, registry::Selection},
@@ -11,11 +13,9 @@ use morrow_plugin_runtime::{
     instance_pool::Session,
     package::PreparedPackage,
 };
-use std::{collections::BTreeSet, time::Duration};
 #[cfg(not(target_arch = "wasm32"))]
 use std::path::Path;
-#[cfg(not(target_arch = "wasm32"))]
-use morrow_core::plugin_package::catalog;
+use std::{collections::BTreeSet, time::Duration};
 #[derive(Debug)]
 pub struct PluginCatalogPage {
     pub revision: u64,
@@ -39,6 +39,10 @@ pub struct PluginEntry {
     /// A declaration on this exact package, never a runtime approval.
     pub mutation_supported: bool,
     pub mutation_budget: Option<MutationBudgetDeclaration>,
+    pub channel_supported: bool,
+    pub channel_handlers: Vec<String>,
+    pub channel_kinds: Vec<u16>,
+    pub channel_budget: Option<morrow_core::channel::Budget>,
     pub handlers: Vec<PluginHandler>,
     pub dependencies: Vec<String>,
     pub issue: String,
@@ -122,12 +126,24 @@ fn approval(values: &[String]) -> Result<BTreeSet<GrantKind>> {
     }
     Ok(set)
 }
+const CHANNEL_ROUTE_ISSUE: &str = "此插件需要流/事件通道；当前工作台尚未接入，不能启用或运行。";
+fn reject_unbound_channel(package: &Package) -> Result<()> {
+    if package.channel_declaration().is_some() {
+        return Err(CHANNEL_ROUTE_ISSUE.into());
+    }
+    Ok(())
+}
 /// Browser theme admission never grants content, IO, service or dependency access.
 pub(crate) fn validate_browser_theme(p: &Package) -> Result<()> {
-    if !p.is_ui_theme() || !p.capabilities().is_empty()
-        || p.io_declaration().is_some() || !p.manifest().dependencies.is_empty()
-        || p.manifest().required_features.iter().any(|f|
-            f == morrow_core::plugin_package::DEPENDENCY_CALLS_FEATURE)
+    reject_unbound_channel(p)?;
+    if !p.is_ui_theme()
+        || !p.capabilities().is_empty()
+        || p.io_declaration().is_some()
+        || !p.manifest().dependencies.is_empty()
+        || p.manifest()
+            .required_features
+            .iter()
+            .any(|f| f == morrow_core::plugin_package::DEPENDENCY_CALLS_FEATURE)
     {
         return Err("当前 Web 入口仅支持无业务权限、IO 或依赖的主题插件 / This Web entry supports pure theme plugins only".into());
     }
@@ -135,6 +151,20 @@ pub(crate) fn validate_browser_theme(p: &Package) -> Result<()> {
 }
 
 impl WorkbenchState {
+    fn channel_route_ready(&self, p: &Package) -> bool {
+        #[cfg(windows)]
+        {
+            self.local_channel_owner_ready
+                && p.capabilities().is_empty()
+                && p.io_declaration().is_none()
+                && p.manifest().dependencies.is_empty()
+        }
+        #[cfg(not(windows))]
+        {
+            let _ = p;
+            false
+        }
+    }
     fn builtin_id(&self, id: &str) -> bool {
         id == "org.morrow.workbench"
             || self
@@ -172,7 +202,9 @@ impl WorkbenchState {
     fn entry(&self, p: &Package, s: Option<&Selection>) -> PluginEntry {
         let m = p.manifest();
         let selected = s.filter(|s| s.digest == p.digest());
-        let issue = if m.dependencies.iter().any(|d| !d.optional) {
+        let issue = if p.channel_declaration().is_some() && !self.channel_route_ready(p) {
+            CHANNEL_ROUTE_ISSUE.into()
+        } else if m.dependencies.iter().any(|d| !d.optional) {
             "此插件需要依赖批准；当前管理界面尚不支持配置依赖，不能运行。".into()
         } else {
             match PreparedPackage::new(
@@ -214,6 +246,17 @@ impl WorkbenchState {
                 .io_declaration()
                 .map_or_else(Vec::new, |d| d.handlers.clone()),
             mutation_supported: p.mutation_enabled(),
+            channel_supported: p.channel_declaration().is_some(),
+            channel_handlers: p
+                .channel_declaration()
+                .map_or_else(Vec::new, |d| d.handlers.clone()),
+            channel_kinds: p.channel_declaration().map_or_else(Vec::new, |d| {
+                d.kinds.iter().map(|kind| *kind as u16).collect()
+            }),
+            channel_budget: p
+                .channel_declaration()
+                .and_then(|d| d.budget.as_ref())
+                .and_then(|b| morrow_core::channel::Budget::from_proto(b).ok()),
             mutation_budget: p.mutation_budget().map(|budget| MutationBudgetDeclaration {
                 max_job_bytes: budget.max_job_bytes,
                 max_bytes: budget.max_bytes,
@@ -288,6 +331,10 @@ impl WorkbenchState {
                     io_handlers: vec![],
                     mutation_supported: false,
                     mutation_budget: None,
+                    channel_supported: false,
+                    channel_handlers: vec![],
+                    channel_kinds: vec![],
+                    channel_budget: None,
                     approved_io: s
                         .approved_io
                         .iter()
@@ -333,11 +380,21 @@ impl WorkbenchState {
         })
     }
     #[cfg(not(target_arch = "wasm32"))]
-    pub fn import_plugin(&mut self, path: &Path, expected_digest: &[u8], revision: u64) -> Result<()> {
+    pub fn import_plugin(
+        &mut self,
+        path: &Path,
+        expected_digest: &[u8],
+        revision: u64,
+    ) -> Result<()> {
         self.catalog_revision(Some(revision))?;
         self.import_package(catalog::read_file(path)?, expected_digest, revision)
     }
-    pub fn import_plugin_bytes(&mut self, bytes: &[u8], expected_digest: &[u8], revision: u64) -> Result<()> {
+    pub fn import_plugin_bytes(
+        &mut self,
+        bytes: &[u8],
+        expected_digest: &[u8],
+        revision: u64,
+    ) -> Result<()> {
         self.catalog_revision(Some(revision))?;
         let p = Package::decode(bytes)?;
         #[cfg(target_arch = "wasm32")]
@@ -445,6 +502,9 @@ impl WorkbenchState {
         }
         if enable {
             let p = self.external_package(id, digest, revision)?;
+            if p.channel_declaration().is_some() && !self.channel_route_ready(&p) {
+                return Err(CHANNEL_ROUTE_ISSUE.into());
+            }
             #[cfg(target_arch = "wasm32")]
             validate_browser_theme(&p)?;
             if !allowed.is_subset(p.capabilities()) {
@@ -510,6 +570,7 @@ impl WorkbenchState {
     }
     fn start_external(&mut self, id: &str, digest: &[u8], revision: u64) -> Result<Session> {
         let p = self.external_package(id, digest, revision)?;
+        reject_unbound_channel(&p)?;
         if p.manifest().dependencies.iter().any(|d| !d.optional) {
             return Err("此插件需要依赖批准，当前界面尚不支持配置依赖。".into());
         }
@@ -717,8 +778,14 @@ impl Workbench {
     pub fn inspect_plugin_bytes(&self, bytes: &[u8]) -> Result<PluginCatalogPage> {
         self.local_state()?.inspect_plugin_bytes(bytes)
     }
-    pub fn import_plugin_bytes(&mut self, bytes: &[u8], digest: &[u8], revision: u64) -> Result<()> {
-        self.local_state_mut()?.import_plugin_bytes(bytes, digest, revision)
+    pub fn import_plugin_bytes(
+        &mut self,
+        bytes: &[u8],
+        digest: &[u8],
+        revision: u64,
+    ) -> Result<()> {
+        self.local_state_mut()?
+            .import_plugin_bytes(bytes, digest, revision)
     }
 
     pub fn catalog_page(&self, cursor: &str, expected: Option<u64>) -> Result<PluginCatalogPage> {
@@ -756,12 +823,34 @@ impl Workbench {
         approved: &[String],
         enable: bool,
     ) -> Result<()> {
+        #[cfg(windows)]
+        if !enable {
+            if let Ok(owner) = self.state.local() {
+                owner.external_package(id, digest, revision)?;
+            }
+            self.channel_tasks
+                .fence_catalog_stop(id, digest, revision)?;
+        }
         self.local_state_mut()?
-            .configure_external(id, digest, revision, approved, enable)
+            .configure_external(id, digest, revision, approved, enable)?;
+        #[cfg(windows)]
+        self.channel_tasks.clear_catalog_fence(id, digest, revision);
+        Ok(())
     }
     pub fn remove_external(&mut self, id: &str, digest: &[u8], revision: u64) -> Result<()> {
+        #[cfg(windows)]
+        {
+            if let Ok(owner) = self.state.local() {
+                owner.external_package(id, digest, revision)?;
+            }
+            self.channel_tasks
+                .fence_catalog_stop(id, digest, revision)?;
+        }
         self.local_state_mut()?
-            .remove_external(id, digest, revision)
+            .remove_external(id, digest, revision)?;
+        #[cfg(windows)]
+        self.channel_tasks.clear_catalog_fence(id, digest, revision);
+        Ok(())
     }
     #[allow(clippy::too_many_arguments)]
     pub fn run_external_transform(
@@ -800,5 +889,44 @@ impl Workbench {
     }
     pub fn external_ui_close(&mut self, id: &str, generation: u64) -> Result<()> {
         self.local_state_mut()?.external_ui_close(id, generation)
+    }
+}
+
+#[cfg(test)]
+mod channel_route_tests {
+    use super::*;
+    use morrow_core::{channel, plugin_package::proto::TransformHandler};
+    #[test]
+    fn channel_metadata_never_looks_like_an_available_workbench_or_browser_route() {
+        let module = b"\0asm\x01\0\0\0";
+        let mut manifest = Package::manifest_for_transform(
+            "channel.route",
+            "1.0.0",
+            module,
+            vec![TransformHandler {
+                handler: "theme.describe".into(),
+                input_type: "morrow.ui.theme.request.v1".into(),
+                output_type: "morrow.ui.theme.v1".into(),
+                max_input_bytes: 65,
+                max_output_bytes: 64,
+            }],
+        );
+        let ordinary = Package::build(manifest.clone(), module).unwrap();
+        assert!(reject_unbound_channel(&ordinary).is_ok());
+        manifest.required_features.push(channel::FEATURE.into());
+        manifest.channel_declaration = Some(channel::declaration(
+            vec!["theme.describe".into()],
+            vec![channel::Kind::Events],
+        ));
+        let channel = Package::build(manifest, module).unwrap();
+        assert!(channel.is_ui_theme());
+        assert_eq!(
+            reject_unbound_channel(&channel).unwrap_err().to_string(),
+            CHANNEL_ROUTE_ISSUE
+        );
+        assert_eq!(
+            validate_browser_theme(&channel).unwrap_err().to_string(),
+            CHANNEL_ROUTE_ISSUE
+        );
     }
 }

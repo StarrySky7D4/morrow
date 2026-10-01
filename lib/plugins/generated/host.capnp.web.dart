@@ -149,6 +149,12 @@ enum Action {
   guestMutationStatus,
   guestMutationRead,
   guestMutationCancelCommand,
+  channelPrepare,
+  channelAppend,
+  channelRun,
+  channelStatus,
+  channelClose,
+  channelReadSent,
 }
 
 Action? actionFromUint16(int v) =>
@@ -333,6 +339,32 @@ final class RequestReader extends StructReader {
     46,
     (r) => GuestMutationCommandReader(r, capabilities: capabilityTable),
   );
+
+  ChannelPrepareReader? get channelPrepare => getStructFieldWith(
+    47,
+    (r) => ChannelPrepareReader(r, capabilities: capabilityTable),
+  );
+
+  ChannelAppendReader? get channelAppend => getStructFieldWith(
+    48,
+    (r) => ChannelAppendReader(r, capabilities: capabilityTable),
+  );
+
+  ChannelRunReader? get channelRun => getStructFieldWith(
+    49,
+    (r) => ChannelRunReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get channelKey => getDataField(50);
+
+  int get channelSequence => _checkedWireInt(channelSequenceBigInt);
+  BigInt get channelSequenceBigInt =>
+      ((BigInt.from(getUint32Field(68).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(64).toUnsigned(32)));
+
+  int get channelOffset => getUint32Field(72);
+
+  int get channelLimit => getUint32Field(76);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -669,14 +701,60 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasGuestMutationCommand() => hasPointerField(46);
+
+  ChannelPrepareBuilder initChannelPrepare() {
+    return initStructFieldWith(47, (r) => ChannelPrepareBuilder(r), 4, 5);
+  }
+
+  bool hasChannelPrepare() => hasPointerField(47);
+
+  ChannelAppendBuilder initChannelAppend() {
+    return initStructFieldWith(48, (r) => ChannelAppendBuilder(r), 1, 3);
+  }
+
+  bool hasChannelAppend() => hasPointerField(48);
+
+  ChannelRunBuilder initChannelRun() {
+    return initStructFieldWith(49, (r) => ChannelRunBuilder(r), 0, 2);
+  }
+
+  bool hasChannelRun() => hasPointerField(49);
+
+  set channelKey(Uint8List? v) {
+    setDataField(50, v);
+  }
+
+  set channelSequence(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    channelSequenceBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set channelSequenceBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field channelSequence');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(64, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(68, (bits >> 32).toInt());
+  }
+
+  set channelOffset(int v) {
+    setUint32Field(72, v);
+  }
+
+  set channelLimit(int v) {
+    setUint32Field(76, v);
+  }
 }
 
 final class _RequestFactory
     extends StructFactory<RequestReader, RequestBuilder> {
   @override
-  int get dataWords => 8;
+  int get dataWords => 10;
   @override
-  int get ptrWords => 47;
+  int get ptrWords => 51;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -877,6 +955,16 @@ final class ResponseReader extends StructReader {
     38,
     (r) => GuestMutationResultReader(r, capabilities: capabilityTable),
   );
+
+  ChannelStateReader? get channelState => getStructFieldWith(
+    39,
+    (r) => ChannelStateReader(r, capabilities: capabilityTable),
+  );
+
+  ChannelSentReader? get channelSent => getStructFieldWith(
+    40,
+    (r) => ChannelSentReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -1043,7 +1131,7 @@ final class ResponseBuilder extends StructBuilder {
       length,
       (r) => PluginEntryBuilder(r),
       1,
-      13,
+      16,
     );
   }
 
@@ -1234,6 +1322,18 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasGuestMutationResult() => hasPointerField(38);
+
+  ChannelStateBuilder initChannelState() {
+    return initStructFieldWith(39, (r) => ChannelStateBuilder(r), 9, 10);
+  }
+
+  bool hasChannelState() => hasPointerField(39);
+
+  ChannelSentBuilder initChannelSent() {
+    return initStructFieldWith(40, (r) => ChannelSentBuilder(r), 3, 2);
+  }
+
+  bool hasChannelSent() => hasPointerField(40);
 }
 
 final class _ResponseFactory
@@ -1241,7 +1341,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 39;
+  int get ptrWords => 41;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2481,6 +2581,17 @@ final class PluginEntryReader extends StructReader {
     12,
     (r) => MutationBudgetReader(r, capabilities: capabilityTable),
   );
+
+  bool get channelSupported => getBoolField(4);
+
+  ListReader<String?>? get channelHandlers => getTextListField(13);
+
+  ListReader<int>? get channelKinds => getUint16ListField(14);
+
+  ChannelBudgetReader? get channelBudget => getStructFieldWith(
+    15,
+    (r) => ChannelBudgetReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class PluginEntryBuilder extends StructBuilder {
@@ -2564,6 +2675,24 @@ final class PluginEntryBuilder extends StructBuilder {
   }
 
   bool hasMutationBudget() => hasPointerField(12);
+
+  set channelSupported(bool v) {
+    setBoolField(4, v);
+  }
+
+  ListBuilder<String?> initChannelHandlers(int length) {
+    return initTextListField(13, length);
+  }
+
+  ListBuilder<int> initChannelKinds(int length) {
+    return initUint16ListField(14, length);
+  }
+
+  ChannelBudgetBuilder initChannelBudget() {
+    return initStructFieldWith(15, (r) => ChannelBudgetBuilder(r), 5, 0);
+  }
+
+  bool hasChannelBudget() => hasPointerField(15);
 }
 
 final class _PluginEntryFactory
@@ -2571,7 +2700,7 @@ final class _PluginEntryFactory
   @override
   int get dataWords => 1;
   @override
-  int get ptrWords => 13;
+  int get ptrWords => 16;
   @override
   PluginEntryReader fromRawReader(RawStructReader r) => PluginEntryReader(r);
   @override
@@ -5701,6 +5830,745 @@ final class _GuestMutationResultFactory
 }
 
 final guestMutationResultFactory = _GuestMutationResultFactory();
+
+final class ChannelBudgetReader extends StructReader {
+  ChannelBudgetReader(super.raw, {super.capabilities});
+
+  int get maxChannels => getUint32Field(0);
+
+  int get maxFrameBytes => getUint32Field(4);
+
+  int get maxBytes => _checkedWireInt(maxBytesBigInt);
+  BigInt get maxBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  int get maxMessages => _checkedWireInt(maxMessagesBigInt);
+  BigInt get maxMessagesBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  int get maxRequests => _checkedWireInt(maxRequestsBigInt);
+  BigInt get maxRequestsBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+
+  int get maxDurationMs => _checkedWireInt(maxDurationMsBigInt);
+  BigInt get maxDurationMsBigInt =>
+      ((BigInt.from(getUint32Field(36).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(32).toUnsigned(32)));
+}
+
+final class ChannelBudgetBuilder extends StructBuilder {
+  ChannelBudgetBuilder(super.raw);
+
+  @override
+  ChannelBudgetReader asReader() => ChannelBudgetReader(rawToReader());
+
+  set maxChannels(int v) {
+    setUint32Field(0, v);
+  }
+
+  set maxFrameBytes(int v) {
+    setUint32Field(4, v);
+  }
+
+  set maxBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    maxBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set maxBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set maxMessages(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    maxMessagesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set maxMessagesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxMessages');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set maxRequests(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    maxRequestsBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set maxRequestsBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxRequests');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+
+  set maxDurationMs(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    maxDurationMsBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set maxDurationMsBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxDurationMs');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(32, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(36, (bits >> 32).toInt());
+  }
+}
+
+final class _ChannelBudgetFactory
+    extends StructFactory<ChannelBudgetReader, ChannelBudgetBuilder> {
+  @override
+  int get dataWords => 5;
+  @override
+  int get ptrWords => 0;
+  @override
+  ChannelBudgetReader fromRawReader(RawStructReader r) =>
+      ChannelBudgetReader(r);
+  @override
+  ChannelBudgetReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChannelBudgetReader(r, capabilities: capabilities);
+  @override
+  ChannelBudgetBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChannelBudgetBuilder(r);
+}
+
+final channelBudgetFactory = _ChannelBudgetFactory();
+
+final class ChannelPrepareReader extends StructReader {
+  ChannelPrepareReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get handler => getTextField(3);
+
+  int get kind => getUint16Field(8);
+
+  bool get duplex => getBoolField(80);
+
+  ChannelBudgetReader? get budget => getStructFieldWith(
+    4,
+    (r) => ChannelBudgetReader(r, capabilities: capabilityTable),
+  );
+
+  int get lifetimeMs => getUint32Field(12);
+
+  int get frameCount => getUint32Field(16);
+
+  int get totalBytes => _checkedWireInt(totalBytesBigInt);
+  BigInt get totalBytesBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+}
+
+final class ChannelPrepareBuilder extends StructBuilder {
+  ChannelPrepareBuilder(super.raw);
+
+  @override
+  ChannelPrepareReader asReader() => ChannelPrepareReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set handler(String? v) {
+    setTextField(3, v);
+  }
+
+  set kind(int v) {
+    setUint16Field(8, v);
+  }
+
+  set duplex(bool v) {
+    setBoolField(80, v);
+  }
+
+  ChannelBudgetBuilder initBudget() {
+    return initStructFieldWith(4, (r) => ChannelBudgetBuilder(r), 5, 0);
+  }
+
+  bool hasBudget() => hasPointerField(4);
+
+  set lifetimeMs(int v) {
+    setUint32Field(12, v);
+  }
+
+  set frameCount(int v) {
+    setUint32Field(16, v);
+  }
+
+  set totalBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    totalBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set totalBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field totalBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+}
+
+final class _ChannelPrepareFactory
+    extends StructFactory<ChannelPrepareReader, ChannelPrepareBuilder> {
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 5;
+  @override
+  ChannelPrepareReader fromRawReader(RawStructReader r) =>
+      ChannelPrepareReader(r);
+  @override
+  ChannelPrepareReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChannelPrepareReader(r, capabilities: capabilities);
+  @override
+  ChannelPrepareBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChannelPrepareBuilder(r);
+}
+
+final channelPrepareFactory = _ChannelPrepareFactory();
+
+final class ChannelAppendReader extends StructReader {
+  ChannelAppendReader(super.raw, {super.capabilities});
+
+  Uint8List? get key => getDataField(0);
+
+  int get sequence => _checkedWireInt(sequenceBigInt);
+  BigInt get sequenceBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  Uint8List? get bytes => getDataField(1);
+
+  Uint8List? get cursor => getDataField(2);
+}
+
+final class ChannelAppendBuilder extends StructBuilder {
+  ChannelAppendBuilder(super.raw);
+
+  @override
+  ChannelAppendReader asReader() => ChannelAppendReader(rawToReader());
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set sequence(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    sequenceBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set sequenceBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field sequence');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set cursor(Uint8List? v) {
+    setDataField(2, v);
+  }
+}
+
+final class _ChannelAppendFactory
+    extends StructFactory<ChannelAppendReader, ChannelAppendBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 3;
+  @override
+  ChannelAppendReader fromRawReader(RawStructReader r) =>
+      ChannelAppendReader(r);
+  @override
+  ChannelAppendReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChannelAppendReader(r, capabilities: capabilities);
+  @override
+  ChannelAppendBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChannelAppendBuilder(r);
+}
+
+final channelAppendFactory = _ChannelAppendFactory();
+
+final class ChannelRunReader extends StructReader {
+  ChannelRunReader(super.raw, {super.capabilities});
+
+  Uint8List? get key => getDataField(0);
+
+  Uint8List? get input => getDataField(1);
+}
+
+final class ChannelRunBuilder extends StructBuilder {
+  ChannelRunBuilder(super.raw);
+
+  @override
+  ChannelRunReader asReader() => ChannelRunReader(rawToReader());
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set input(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _ChannelRunFactory
+    extends StructFactory<ChannelRunReader, ChannelRunBuilder> {
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 2;
+  @override
+  ChannelRunReader fromRawReader(RawStructReader r) => ChannelRunReader(r);
+  @override
+  ChannelRunReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChannelRunReader(r, capabilities: capabilities);
+  @override
+  ChannelRunBuilder fromRawBuilder(RawStructBuilder r) => ChannelRunBuilder(r);
+}
+
+final channelRunFactory = _ChannelRunFactory();
+
+final class ChannelStateReader extends StructReader {
+  ChannelStateReader(super.raw, {super.capabilities});
+
+  Uint8List? get key => getDataField(0);
+
+  Uint8List? get submission => getDataField(1);
+
+  Uint8List? get directory => getDataField(2);
+
+  Uint8List? get reference => getDataField(3);
+
+  Uint8List? get sourceEpoch => getDataField(4);
+
+  int get phase => getUint16Field(0);
+
+  int get status => getUint16Field(2);
+
+  int get lastAcked => _checkedWireInt(lastAckedBigInt);
+  BigInt get lastAckedBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  int get acceptedSequence => _checkedWireInt(acceptedSequenceBigInt);
+  BigInt get acceptedSequenceBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  int get observedSequence => _checkedWireInt(observedSequenceBigInt);
+  BigInt get observedSequenceBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+
+  int get cleanupProof => getUint16Field(4);
+
+  int get producerOutcome => getUint16Field(6);
+
+  int get taskState => getUint16Field(32);
+
+  String? get taskError => getTextField(5);
+
+  String? get outputType => getTextField(6);
+
+  Uint8List? get output => getDataField(7);
+
+  Uint8List? get inputSha256 => getDataField(8);
+
+  int get uploadedFrames => getUint32Field(36);
+
+  int get uploadedBytes => _checkedWireInt(uploadedBytesBigInt);
+  BigInt get uploadedBytesBigInt =>
+      ((BigInt.from(getUint32Field(44).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(40).toUnsigned(32)));
+
+  int get sourceFrames => getUint32Field(48);
+
+  int get sourceBytes => _checkedWireInt(sourceBytesBigInt);
+  BigInt get sourceBytesBigInt =>
+      ((BigInt.from(getUint32Field(60).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(56).toUnsigned(32)));
+
+  bool get resourceReclaimed => getBoolField(272);
+
+  bool get closeRequested => getBoolField(273);
+
+  int get observedBytes => _checkedWireInt(observedBytesBigInt);
+  BigInt get observedBytesBigInt =>
+      ((BigInt.from(getUint32Field(68).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(64).toUnsigned(32)));
+
+  Uint8List? get observedSha256 => getDataField(9);
+
+  bool get workerJoined => getBoolField(274);
+
+  bool get snapshotPending => getBoolField(275);
+}
+
+final class ChannelStateBuilder extends StructBuilder {
+  ChannelStateBuilder(super.raw);
+
+  @override
+  ChannelStateReader asReader() => ChannelStateReader(rawToReader());
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set submission(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set directory(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set reference(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set sourceEpoch(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set phase(int v) {
+    setUint16Field(0, v);
+  }
+
+  set status(int v) {
+    setUint16Field(2, v);
+  }
+
+  set lastAcked(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    lastAckedBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set lastAckedBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field lastAcked');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set acceptedSequence(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    acceptedSequenceBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set acceptedSequenceBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field acceptedSequence');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set observedSequence(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    observedSequenceBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set observedSequenceBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field observedSequence');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+
+  set cleanupProof(int v) {
+    setUint16Field(4, v);
+  }
+
+  set producerOutcome(int v) {
+    setUint16Field(6, v);
+  }
+
+  set taskState(int v) {
+    setUint16Field(32, v);
+  }
+
+  set taskError(String? v) {
+    setTextField(5, v);
+  }
+
+  set outputType(String? v) {
+    setTextField(6, v);
+  }
+
+  set output(Uint8List? v) {
+    setDataField(7, v);
+  }
+
+  set inputSha256(Uint8List? v) {
+    setDataField(8, v);
+  }
+
+  set uploadedFrames(int v) {
+    setUint32Field(36, v);
+  }
+
+  set uploadedBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    uploadedBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set uploadedBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field uploadedBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(40, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(44, (bits >> 32).toInt());
+  }
+
+  set sourceFrames(int v) {
+    setUint32Field(48, v);
+  }
+
+  set sourceBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    sourceBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set sourceBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field sourceBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(56, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(60, (bits >> 32).toInt());
+  }
+
+  set resourceReclaimed(bool v) {
+    setBoolField(272, v);
+  }
+
+  set closeRequested(bool v) {
+    setBoolField(273, v);
+  }
+
+  set observedBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    observedBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set observedBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field observedBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(64, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(68, (bits >> 32).toInt());
+  }
+
+  set observedSha256(Uint8List? v) {
+    setDataField(9, v);
+  }
+
+  set workerJoined(bool v) {
+    setBoolField(274, v);
+  }
+
+  set snapshotPending(bool v) {
+    setBoolField(275, v);
+  }
+}
+
+final class _ChannelStateFactory
+    extends StructFactory<ChannelStateReader, ChannelStateBuilder> {
+  @override
+  int get dataWords => 9;
+  @override
+  int get ptrWords => 10;
+  @override
+  ChannelStateReader fromRawReader(RawStructReader r) => ChannelStateReader(r);
+  @override
+  ChannelStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChannelStateReader(r, capabilities: capabilities);
+  @override
+  ChannelStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChannelStateBuilder(r);
+}
+
+final channelStateFactory = _ChannelStateFactory();
+
+final class ChannelSentReader extends StructReader {
+  ChannelSentReader(super.raw, {super.capabilities});
+
+  bool get present => getBoolField(0);
+
+  int get sequence => _checkedWireInt(sequenceBigInt);
+  BigInt get sequenceBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get bytes => getDataField(0);
+
+  int get offset => getUint32Field(4);
+
+  int get totalBytes => getUint32Field(16);
+
+  Uint8List? get bytesSha256 => getDataField(1);
+}
+
+final class ChannelSentBuilder extends StructBuilder {
+  ChannelSentBuilder(super.raw);
+
+  @override
+  ChannelSentReader asReader() => ChannelSentReader(rawToReader());
+
+  set present(bool v) {
+    setBoolField(0, v);
+  }
+
+  set sequence(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    sequenceBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set sequenceBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field sequence');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set offset(int v) {
+    setUint32Field(4, v);
+  }
+
+  set totalBytes(int v) {
+    setUint32Field(16, v);
+  }
+
+  set bytesSha256(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _ChannelSentFactory
+    extends StructFactory<ChannelSentReader, ChannelSentBuilder> {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 2;
+  @override
+  ChannelSentReader fromRawReader(RawStructReader r) => ChannelSentReader(r);
+  @override
+  ChannelSentReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ChannelSentReader(r, capabilities: capabilities);
+  @override
+  ChannelSentBuilder fromRawBuilder(RawStructBuilder r) =>
+      ChannelSentBuilder(r);
+}
+
+final channelSentFactory = _ChannelSentFactory();
 
 int _checkedWireInt(BigInt value) {
   final signed = value.toSigned(64);

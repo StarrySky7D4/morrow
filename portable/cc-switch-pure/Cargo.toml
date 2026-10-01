@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+[package]
+name = "morrow-cc-switch-pure"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+[dependencies]
+serde = "=1.0.228"
+serde_json = { version = "=1.0.149", features = ["preserve_order"] }
+# Original CCSwitch lock versions; no change to its product lock.
+indexmap = "=2.13.0"
+memchr = "=2.8.0"
+zmij = "=1.0.21"

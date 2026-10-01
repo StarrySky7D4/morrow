@@ -15,7 +15,7 @@ import plugin_sdk_lock as sdk_lock
 
 ROOT = Path(__file__).resolve().parents[1]
 CAPABILITIES = ("rename", "summary", "operation", "attachment", "create-content", "edit-content", "read-content")
-KINDS = ("content", "transform", "ui", "dependency", "io", "service")
+KINDS = ("content", "transform", "ui", "dependency", "io", "service", "channel")
 LANGUAGES = ("rust", "c", "cpp")
 IO_CAPABILITIES = ("file-read", "http-request", "credential-use")
 
@@ -133,7 +133,7 @@ def project(path):
         if root.name != "plugin.toml":
             raise ToolError("expected a project directory or plugin.toml")
         root = root.parent
-    config = only(read_toml(root / "plugin.toml"), ("schema", "plugin", "build", "budget", "handlers", "dependencies", "io", "service_run"), "project")
+    config = only(read_toml(root / "plugin.toml"), ("schema", "plugin", "build", "budget", "handlers", "dependencies", "io", "service_run", "channel"), "project")
     integer(config.get("schema"), 1, 1, "schema")
     plugin = only(config.get("plugin"), ("id", "version", "name", "capabilities", "dependency_calls"), "plugin")
     identifier = string(plugin.get("id"), "plugin.id")
@@ -148,10 +148,19 @@ def project(path):
     build = only(config.get("build"), ("language", "source", "kind"), "build")
     if build.get("language") not in LANGUAGES:
         raise ToolError("build.language: expected rust, c or cpp")
-    if build.get("kind") not in (None, "io", "service"):
-        raise ToolError("build.kind: only io or service is supported as an explicit project kind")
+    if build.get("kind") not in (None, "io", "service", "channel"):
+        raise ToolError("build.kind: only io, service or channel is supported as an explicit project kind")
     if (build.get("kind") in ("io", "service")) != ("io" in config):
         raise ToolError("IO projects require build.kind = io/service and an [io] declaration")
+    if (build.get("kind") == "channel") != ("channel" in config):
+        raise ToolError("Channel projects require build.kind = channel and a [channel] declaration")
+    if "channel" in config:
+        channel_budget(config["channel"])
+        if not config.get("handlers"):
+            raise ToolError("Channel projects require typed handler metadata")
+        if (plugin.get("capabilities") or plugin.get("dependency_calls", False)
+                or config.get("dependencies") or "io" in config or "service_run" in config):
+            raise ToolError("Channel projects do not mix content, dependencies, IO or service authority")
     if "service_run" in config:
         service_run(config["service_run"], build.get("kind"))
     source = child(root, build.get("source"))
@@ -243,6 +252,37 @@ def sdk(args):
         raise ToolError("SDK and host packager dependency-call versions differ")
     return root
 
+CHANNEL_DEFAULTS = {"max_channels": 1, "max_frame_bytes": 32768, "max_bytes": 2097152,
+                    "max_messages": 64, "max_requests": 512, "max_duration_ms": 30000}
+
+
+def channel_budget(value):
+    value = only(value, CHANNEL_DEFAULTS, "channel")
+    for key, maximum in (("max_channels", 8), ("max_frame_bytes", 65536),
+                         ("max_bytes", 67108864), ("max_messages", 1000000),
+                         ("max_requests", 1000000), ("max_duration_ms", 3600000)):
+        integer(value.get(key), 1, maximum, "channel." + key)
+    if value["max_bytes"] < value["max_frame_bytes"]:
+        raise ToolError("channel.max_bytes must cover max_frame_bytes")
+    return value
+
+
+def sdk_channel(root):
+    for name in ("rust/src/channel.rs", "c/include/morrow_channel_v1.h", "cpp/include/morrow_channel_v1.hpp"):
+        if not (root / name).is_file():
+            raise ToolError("incomplete channel SDK root: " + str(root / name))
+    if (root / "rust/contracts/channel.capnp").read_bytes() != (ROOT / "core/schemas/channel.capnp").read_bytes():
+        raise ToolError("SDK and host packager channel contracts differ")
+    versions = []
+    for source in (root / "rust/src/channel.rs", ROOT / "core/src/channel.rs"):
+        match = re.search(r"pub const VERSION: u32 = ([0-9]+);", source.read_text(encoding="utf-8"))
+        if match is None:
+            raise ToolError("missing channel codec version: " + str(source))
+        versions.append(match.group(1))
+    if versions[0] != versions[1]:
+        raise ToolError("SDK and host packager channel codec versions differ")
+
+
 def sdk_io(root):
     for name in ("rust/src/io.rs", "c/include/morrow_plugin_io.h", "cpp/include/morrow_plugin_io.hpp"):
         if not (root / name).is_file():
@@ -301,6 +341,10 @@ def handler(name, input_type="bytes", output_type="bytes", max_input=65536):
 
 def new_project(args):
     service_http = getattr(args, "service_http", False)
+    channel_input = getattr(args, "channel_input", None)
+    if channel_input is not None and args.kind != "channel":
+        raise ToolError("--channel-input requires --kind channel")
+    directory_channel = args.kind == "channel" and channel_input == "directory"
     if service_http and args.kind != "service":
         raise ToolError("--service-http requires --kind service")
     sdk_root = sdk(args)
@@ -310,6 +354,8 @@ def new_project(args):
         sdk_io(sdk_root)
     elif args.kind == "service":
         sdk_service(sdk_root)
+    elif args.kind == "channel":
+        sdk_channel(sdk_root)
     target = path_text(args.path).absolute()
     if target.exists() or reparse(target):
         raise ToolError("new refuses an existing project path: " + str(target))
@@ -330,6 +376,8 @@ def new_project(args):
     profile = "task" if args.kind == "content" else "dependency-caller" if args.kind == "dependency" else args.kind
     if service_http:
         profile = "service-http"
+    if directory_channel:
+        profile = "channel-directory"
     example = sdk_root / "examples" / f"{args.language}-{profile}"
     source_name = "src/lib.rs" if args.language == "rust" else "src/plugin.cpp" if args.language == "cpp" else "src/plugin.c"
     original = example / ("src/lib.rs" if args.language == "rust" else "plugin.cpp" if args.language == "cpp" else "plugin.c")
@@ -339,13 +387,24 @@ def new_project(args):
         handlers = [handler("ui.form", "text.utf8", "morrow.ui.document.v1", 32), handler("ui.edit", "morrow.ui.event.v1", "morrow.ui.document.v1")]
     if args.kind == "dependency":
         handlers = [handler("bytes.dependency-wrap", max_input=65531)]
+    if args.kind == "channel":
+        handlers = [{"name": "channel.directory.consume" if directory_channel else "channel.exercise",
+                     "input_type": "morrow.channel.directory.v1" if directory_channel else "bytes",
+                     "output_type": "bytes", "max_input_bytes": 65536 if directory_channel else 65,
+                     "max_output_bytes": 64}]
     config = ["schema = 1", "", "[plugin]", "id = " + quote(args.id), "version = " + quote(args.version),
               "name = " + quote(args.name or args.id), "capabilities = [" + ", ".join(quote(c) for c in caps) + "]",
               "dependency_calls = " + str(args.kind == "dependency").lower(), "", "[build]", "language = " + quote(args.language),
               "source = " + quote(source_name)]
-    if args.kind in ("io", "service"):
+    if args.kind in ("io", "service", "channel"):
         config.append("kind = " + quote(args.kind))
     config.extend(["", "[budget]", "fuel = 20000000", "memory_bytes = 16777216", "host_calls = 16"])
+    if args.kind == "channel":
+        config[-3:] = ["fuel = 100000000", "memory_bytes = 16777216", "host_calls = 256"]
+        defaults = dict(CHANNEL_DEFAULTS)
+        if directory_channel:
+            defaults.update(max_frame_bytes=65536, max_messages=32, max_requests=128)
+        config.extend(["", "[channel]"] + [f"{key} = {value}" for key, value in defaults.items()])
     if args.kind == "io":
         config.extend(["", "[io]", "capabilities = [" + ", ".join(quote(cap) for cap in io_caps) + "]",
                        'handlers = ["' + ("morrow.http.forward.v1" if "http-request" in io_caps else "io.request") + '"]'])
@@ -404,7 +463,7 @@ Use Python 3.11+ and the Morrow repository's tool/morrow_plugin.py:
 - `build PROJECT` compiles the current source into PROJECT/build/plugin.wasm.
 - `pack PROJECT` builds again, prepares the candidate and publishes an immutable hash-named package in PROJECT/dist.
 - `check PACKAGE` prepares only; it does not execute, grant permissions or resolve dependencies.
-{('- `transform PACKAGE HANDLER INPUT_TYPE OUTPUT_TYPE INPUT_FILE OUTPUT_FILE` explicitly runs one transform without content grants.' if args.kind not in ('io', 'service') else '- IO packages require the host IO execution route; the transform command cannot run them.')}
+{('- `transform PACKAGE HANDLER INPUT_TYPE OUTPUT_TYPE INPUT_FILE OUTPUT_FILE` explicitly runs one transform without content grants.' if args.kind not in ('io', 'service', 'channel') else '- Channel packages require an explicitly bound managed local source; ordinary transform cannot supply it. Discover and validate any Workbench channel route on the explicitly trusted host.' if args.kind == 'channel' else '- IO packages require the host IO execution route; the transform command cannot run them.')}
 
 plugin.toml is compiler input. The application reads only the Protobuf+LZ4 package.
 Build failures stop packaging; previous packages remain available under their own hashes.
@@ -415,6 +474,7 @@ Content templates need host-provided task identities and per-card grants.
 UI templates need a host renderer and session event validation.
 Dependency templates call slot reverse, require a bytes.tag-reverse provider (^1.0.0), and need an explicitly approved host dependency lock; the simple transform command cannot supply this context.
 {('IO templates relay one host-selected IO request through the experimental io-v1 codec. The declaration is only an upper bound; installation, binding and each operation still require host approval. HTTP projects declare morrow.http.forward.v1 so the workbench can recognize the exact-frame forwarding profile; changing that handler may remove workbench compatibility. No path, URL, credential text or OS handle belongs in plugin.toml.' if args.kind == 'io' else '')}
+{('Channel templates exercise bounded host-provided byte streams, events and duplex sends. Mode/reference/epoch input is supplied by the trusted managed host. Declared budgets grant no file, network, credential or process access. ACK/cursor, Accepted, terminal cause and actual producer reclamation are separate; Unknown is not replayed. This does not connect a Cloud account or provide an SSE/WebSocket backend.' if args.kind == 'channel' else '')}
 {('Service templates echo a bounded binary body. The host owns authentication, route, listener and publication; host approval is required. Longer runs require explicit service_run duration/jobs/bytes; absent that table the short IO profile is retained. Run declarations grant no authority or automatic renewal. TLS, outbound IO and content grants remain host decisions. Do not treat an echoed caller header as an authenticated principal.' if args.kind == 'service' and not service_http else '')}
 {('This service accepts POST and forwards its binary body once to / on exactly one host-selected endpoint. The resource directory is mandatory; absent/ambiguous selection fails without outbound IO. No inbound headers or caller credentials are forwarded. Use a durable host route: the exact original service frame digest forms the outbound operation ID. Unknown is returned as 409 outcome-unknown, never retried. Other denial/status bodies are documented in sdk/SERVICE_API.md. Long runs require the explicit service_run profile.' if service_http else '')}
 Rust uses the selected SDK path in Cargo.toml. If relocating the SDK, update that dependency and pass the matching --sdk-root.
@@ -463,6 +523,8 @@ def preflight_project(args, loaded=None, *, check_lock=True):
         sdk_io(sdk_root)
     if kind == "service":
         sdk_service(sdk_root)
+    if kind == "channel":
+        sdk_channel(sdk_root)
     validate_build_tree(root)
     if config["build"]["language"] == "rust":
         validate_rust_project(root, source, sdk_root)
@@ -488,6 +550,8 @@ def validate_project(args):
         contracts.append("io.capnp")
     if kind == "service":
         contracts += ["service.capnp", "service_resources.capnp"]
+    if kind == "channel":
+        contracts.append("channel.capnp")
     lines = ["schema = 1", 'result = "valid"', 'scope = "project-metadata-and-contracts"',
              "plugin_executed = false", "permissions_granted = false",
              "plugin_id = " + quote(config["plugin"]["id"]),
@@ -540,7 +604,10 @@ def compile_project(args, loaded=None):
         run([cargo, "rustc", *common_cargo, "--manifest-path", sdk_root / "rust/Cargo.toml", "--target", "wasm32-unknown-unknown", "--features", "wasm-c", "--release", "--target-dir", target, "--crate-type", "staticlib"])
         common = ["--target=wasm32-wasip1", "--sysroot=" + str(sysroot), "-O2", "-Wall", "-Wextra", "-Werror", "-I" + str(sdk_root / "c/include")]
         objects = []
-        for name in ("morrow_plugin_sdk", "morrow_plugin_wasm", "morrow_plugin_wasm_libc", "morrow_plugin_task"):
+        sources = ["morrow_plugin_sdk", "morrow_plugin_wasm", "morrow_plugin_wasm_libc", "morrow_plugin_task"]
+        if config["build"].get("kind") == "channel":
+            sources.append("morrow_channel_v1")
+        for name in sources:
             obj = child(root, "build/" + name + ".o", output=True)
             run([clang, *common, "-std=c11", "-c", sdk_root / f"c/src/{name}.c", "-o", obj]); objects.append(obj)
         codec = child(root, "build/sdk/wasm32-unknown-unknown/release/libmorrow_plugin_sdk.a", output=True)
@@ -594,6 +661,11 @@ def package_arguments(config):
             arguments += ["--io-capability", capability]
         for handler_name in config["io"]["handlers"]:
             arguments += ["--io-handler", handler_name]
+    if "channel" in config:
+        ceiling = channel_budget(config["channel"])
+        arguments += ["--channel-budget", *[str(ceiling[key]) for key in CHANNEL_DEFAULTS]]
+        for entry in config["handlers"]:
+            arguments += ["--channel-handler", entry["name"]]
     for key, flag in (("fuel", "--fuel"), ("memory_bytes", "--memory-bytes"), ("host_calls", "--host-calls")):
         if key in config.get("budget", {}):
             arguments += [flag, str(config["budget"][key])]
@@ -690,6 +762,8 @@ def main(argv=None):
             command.add_argument("--lock-sdk", action="store_true", help="record selected SDK library source pins in the new project")
             command.add_argument("--language", choices=LANGUAGES, required=True)
             command.add_argument("--kind", choices=KINDS, default="transform")
+            command.add_argument("--channel-input", choices=("exercise", "directory"),
+                                 help="channel starter input contract: exercise (default) or canonical public Directory for a general managed caller")
             command.add_argument("--io-capability", action="append", choices=IO_CAPABILITIES,
                                  help="requested IO ceiling for --kind io (default: file-read)")
             command.add_argument("--service-http", action="store_true", help="service starter: one explicitly approved POST endpoint with resource discovery")
@@ -706,9 +780,18 @@ def main(argv=None):
                 command.add_argument(argument)
         if name == "doctor":
             command.add_argument("--language", choices=LANGUAGES)
+    profiles = commands.add_parser("profiles", help="read the compiled profiles of an explicitly trusted host; grants no authority")
+    profiles.add_argument("--host", required=True, help="explicit path to a trusted morrow-workbench-host executable")
     args = parser.parse_args(argv)
     try:
-        if args.command == "new":
+        if args.command == "profiles":
+            import json
+            import sdk_profiles
+            try:
+                print(json.dumps(sdk_profiles.query(args.host), sort_keys=True))
+            except ValueError as error:
+                raise ToolError(str(error)) from error
+        elif args.command == "new":
             new_project(args)
         elif args.command == "lock-sdk":
             lock_project_sdk(args)

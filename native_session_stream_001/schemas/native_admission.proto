@@ -7,6 +7,7 @@ message Profile {
   string slot = 3;
   bytes core_identity_sha256 = 4;
   string lock_namespace = 5;
+  uint32 runtime_mode = 7; // 0 legacy,1 independent supervisor; bound to ledger version
   string canonical_root = 6; // profile copies/relocations are not restorable owner domains
 }
 message Approval {
@@ -57,4 +58,29 @@ message HttpApproval {
   uint32 response_limit = 10;
   uint32 state = 11; // 1 approved,2 consumed,3 revoked; no authority restored from disk
   uint32 send_budget = 12;
+}
+
+// Trusted supervisor-local proof. Never reconstructs live approval or retries Unknown.
+message Recovery {
+ uint32 version=1;
+ string profile=2;
+ string grant_id=3;
+ string issuer=4;
+ uint64 generation=5;
+ string incarnation=6;
+ uint32 supervisor_pid=7;
+ string phase=8;
+ uint32 child_pid=9;
+ uint64 session=10;
+ uint64 epoch=11;
+ bytes artifact_sha256=12;
+ bytes config_sha256=13;
+ bytes snapshot_sha256=14;
+ bool tree_empty=15;
+ bool child_exit=16;
+ bool stdout_eof=17;
+ bool stderr_eof=18;
+ bool pipe_joined=19;
+ bool network_joined=20;
+ bool gate_closed=21;
 }

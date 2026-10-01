@@ -1,6 +1,7 @@
 //! Offline developer packaging tool. Inspection/install never executes guest code.
 #[cfg(not(target_arch = "wasm32"))]
 mod native {
+    use morrow_core::channel;
     use morrow_core::plugin_package::{
         DEPENDENCIES_FEATURE, DEPENDENCY_CALLS_FEATURE, MAX_MODULE_BYTES, Package,
         catalog::{self, Catalog},
@@ -14,7 +15,7 @@ mod native {
         path::{Path, PathBuf},
     };
     type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|file-create|file-replace|file-delete|http-request|credential-use|http-listen|http-publish] [--io-handler NAME] [--io-resources N] [--service] [--service-resources] [--service-run DURATION_MS MAX_JOBS MAX_BYTES] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
+    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|file-create|file-replace|file-delete|http-request|credential-use|http-listen|http-publish] [--io-handler NAME] [--io-resources N] [--service] [--service-resources] [--service-run DURATION_MS MAX_JOBS MAX_BYTES] [--channel-budget MAX_CHANNELS MAX_FRAME_BYTES MAX_BYTES MAX_MESSAGES MAX_REQUESTS MAX_DURATION_MS] [--channel-handler NAME] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
     fn capability(name: &str) -> Result<Capability> {
         Ok(match name {
             "rename"=>Capability::RenameCard,"summary"=>Capability::ReadSummary,
@@ -96,6 +97,8 @@ mod native {
         io_caps: Vec<IoCapability>,
         io_handlers: Vec<String>,
         io_resources: Option<u32>,
+        channel_budget: Option<channel::Budget>,
+        channel_handlers: Vec<String>,
         fuel: Option<u64>,
         memory: Option<u64>,
         calls: Option<u32>,
@@ -115,6 +118,7 @@ mod native {
                     | "--service-resources"
                     | "--service-run"
                     | "--io-resources"
+                    | "--channel-budget"
                     | "--fuel"
                     | "--memory-bytes"
                     | "--host-calls"
@@ -174,6 +178,51 @@ mod native {
                         optional,
                     });
                 }
+                "--channel-budget" => {
+                    let budget = channel::Budget {
+                        max_channels: number(
+                            value(args, &mut i, flag, "MAX_CHANNELS")?,
+                            flag,
+                            1,
+                            u64::from(channel::MAX_CHANNELS),
+                        )? as u32,
+                        max_frame_bytes: number(
+                            value(args, &mut i, flag, "MAX_FRAME_BYTES")?,
+                            flag,
+                            1,
+                            channel::MAX_PAYLOAD_BYTES as u64,
+                        )? as u32,
+                        max_bytes: number(
+                            value(args, &mut i, flag, "MAX_BYTES")?,
+                            flag,
+                            1,
+                            channel::MAX_BYTES,
+                        )?,
+                        max_messages: number(
+                            value(args, &mut i, flag, "MAX_MESSAGES")?,
+                            flag,
+                            1,
+                            channel::MAX_MESSAGES,
+                        )?,
+                        max_requests: number(
+                            value(args, &mut i, flag, "MAX_REQUESTS")?,
+                            flag,
+                            1,
+                            channel::MAX_REQUESTS,
+                        )?,
+                        max_duration_ms: number(
+                            value(args, &mut i, flag, "MAX_DURATION_MS")?,
+                            flag,
+                            1,
+                            channel::MAX_DURATION_MS,
+                        )?,
+                    };
+                    budget.validate()?;
+                    o.channel_budget = Some(budget);
+                }
+                "--channel-handler" => o
+                    .channel_handlers
+                    .push(value(args, &mut i, flag, "NAME")?.into()),
                 "--dependency-calls" => o.dependency_calls = true,
                 "--service" => o.service = true,
                 "--service-resources" => o.service_resources = true,
@@ -294,6 +343,36 @@ mod native {
         {
             return Err("--service requires http-listen and http-publish; inbound capabilities require --service".into());
         }
+        if !o.channel_handlers.is_empty() && o.channel_budget.is_none() {
+            return Err("--channel-handler requires --channel-budget".into());
+        }
+        if o.channel_budget.is_some()
+            && (!o.caps.is_empty()
+                || !o.io_caps.is_empty()
+                || !o.dependencies.is_empty()
+                || o.dependency_calls
+                || o.service
+                || o.service_resources
+                || o.service_run.is_some())
+        {
+            return Err("channel profile cannot be mixed with content capabilities, IO, service or dependencies by this tool".into());
+        }
+        if o.channel_budget.is_some() {
+            if o.channel_handlers.is_empty() {
+                o.channel_handlers = o
+                    .handlers
+                    .iter()
+                    .map(|handler| handler.handler.clone())
+                    .collect();
+            }
+            if o.channel_handlers.is_empty()
+                || o.channel_handlers
+                    .iter()
+                    .any(|name| !o.handlers.iter().any(|handler| handler.handler == *name))
+            {
+                return Err("channel declaration requires matching --handler task metadata".into());
+            }
+        }
         Ok(o)
     }
     fn pack_v2(args: &[String]) -> Result<Package> {
@@ -353,6 +432,20 @@ mod native {
                 declaration.service_run = Some(profile);
             }
             manifest.io_declaration = Some(declaration);
+        }
+        if let Some(budget) = o.channel_budget {
+            let handlers = if o.channel_handlers.is_empty() {
+                vec!["channel.local".into()]
+            } else {
+                o.channel_handlers
+            };
+            let mut declaration = channel::declaration(
+                handlers,
+                vec![channel::Kind::ByteStream, channel::Kind::Events],
+            );
+            declaration.budget = Some(budget.to_proto());
+            manifest.required_features.push(channel::FEATURE.into());
+            manifest.channel_declaration = Some(declaration);
         }
         let budget = manifest
             .budget
@@ -459,6 +552,28 @@ mod native {
                 d.provider_version,
                 if d.optional { "optional" } else { "required" }
             )?;
+        }
+        if let Some(declaration) = &m.channel_declaration {
+            writeln!(
+                out,
+                "channel-version={} channel-schema-sha256={} handlers={:?} kinds={:?} (declarations only; no source grant)",
+                declaration.channel_version,
+                hex(&declaration.channel_schema_sha256),
+                declaration.handlers,
+                declaration.kinds
+            )?;
+            if let Some(budget) = &declaration.budget {
+                writeln!(
+                    out,
+                    "channel-budget channels={} frame-bytes={} bytes={} messages={} requests={} duration-ms={}",
+                    budget.max_channels,
+                    budget.max_frame_bytes,
+                    budget.max_bytes,
+                    budget.max_messages,
+                    budget.max_requests,
+                    budget.max_duration_ms
+                )?;
+            }
         }
         if let Some(declaration) = &m.io_declaration {
             writeln!(

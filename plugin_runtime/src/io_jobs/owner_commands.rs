@@ -630,6 +630,7 @@ mod sensitive_tests {
                 limits: JobLimits::default(),
                 timeout: Duration::from_secs(1),
                 mutation_enabled: false,
+                mutation_history: false,
                 state: Mutex::new(State {
                     phase: Phase::Running,
                     next: 1,

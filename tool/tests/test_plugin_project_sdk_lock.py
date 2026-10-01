@@ -192,14 +192,16 @@ class SdkLockTests(unittest.TestCase):
     def test_real_cli_lock_and_strict_validate_without_toolchain(self):
         (self.project / lock.LOCK_NAME).unlink()
         env = {**os.environ, "PATH": ""}
-        cli = [sys.executable, str(tool.ROOT / "tool/morrow_plugin.py")]
+        cli = [sys.executable, "-X", "utf8", str(tool.ROOT / "tool/morrow_plugin.py")]
         for arguments in (["lock-sdk", str(self.project)], ["validate", str(self.project), "--require-sdk-lock"]):
             result = subprocess.run([*cli, *arguments, "--sdk-root", str(self.sdk)], env=env,
-                                    capture_output=True, text=True)
+                                    capture_output=True, text=True, encoding="utf-8")
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(result.stderr, "")
+            self.assertIsInstance(result.stdout, str)
+            self.assertIn('status = "locked"' if arguments[0] == "lock-sdk" else 'sdk_lock_status = "verified"', result.stdout)
         result = subprocess.run([*cli, "lock-sdk", str(self.project), "--sdk-root", str(self.sdk)],
-                                env=env, capture_output=True, text=True)
+                                env=env, capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 1)
         self.assertEqual(result.stdout, "")
         self.assertIn("already exists", result.stderr)

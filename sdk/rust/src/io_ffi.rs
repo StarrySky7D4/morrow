@@ -140,10 +140,10 @@ unsafe fn request(raw: *const CRequest) -> Result<Request, Error> {
         return Err(Error::Invalid);
     }
     // SAFETY: Caller passes an aligned live descriptor, never a wire pointer.
-    let raw = unsafe { &*raw };
-    if raw.abi_version != 1 || raw.struct_size < size_of::<CRequest>() as u32 {
+    if !unsafe { crate::descriptor_prefix::matches(raw) } {
         return Err(Error::Contract);
     }
+    let raw = unsafe { &*raw };
     let action = match raw.kind {
         1 => Action::Submit(Submission {
             operation_id: unsafe { read_bytes(raw.operation_id, io::MAX_OPERATION_BYTES) }?,

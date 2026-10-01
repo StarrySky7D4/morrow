@@ -14,7 +14,9 @@ Morrow（明隙）是本地优先、卡片化的灵感工作台，正在向全�
 
 ## 下载与兼容性
 
-当前版本：**0.1.9-test.56+60**，桌面安装包提供 **Windows x64 测试预览版**，不是稳定版。下载 Windows ZIP、对应源码 ZIP 和 SHA-256 清单；完整解压后运行 `morrow_studio.exe`，保留所有 DLL、宿主、`data`、`plugins` 与许可文件。
+开发分支检查点：**0.1.9-test.57+61**，保存独立 supervisor、owner 恢复与通道接入进展，生产通道资格仍有失败，SDK 未冻结，Linux 开发尚待接续。此编号没有公开安装包或 Release，详见 [test.57 检查点](reports/0.1.9-test.57-checkpoint.md)。
+
+已发布下载版：**0.1.9-test.56+60**，桌面安装包提供 **Windows x64 测试预览版**，不是稳定版。下载 Windows ZIP、对应源码 ZIP 和 SHA-256 清单；完整解压后运行 `morrow_studio.exe`，保留所有 DLL、宿主、`data`、`plugins` 与许可文件。
 
 [下载 test.56](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56) · [test.1 兼容测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 

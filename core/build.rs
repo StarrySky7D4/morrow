@@ -101,11 +101,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     prost_build::Config::new()
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
         .extern_path(".morrow.plugin.io.v1", "crate::plugin_package::io::proto")
+        .extern_path(".morrow.plugin.channel.v1", "crate::channel::proto")
         .file_descriptor_set_path(out.join("plugin_package.descriptor.bin"))
         .compile_protos(&["schemas/plugin_package.proto"], &["schemas"])?;
     prost_build::Config::new()
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
         .compile_protos(&["schemas/io_manifest.proto"], &["schemas"])?;
+    println!("cargo:rerun-if-changed=schemas/channel_manifest.proto");
+    prost_build::Config::new()
+        .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
+        .compile_protos(&["schemas/channel_manifest.proto"], &["schemas"])?;
+    println!("cargo:rerun-if-changed=schemas/channel_journal.proto");
+    prost_build::Config::new()
+        .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
+        .compile_protos(&["schemas/channel_journal.proto"], &["schemas"])?;
+    println!("cargo:rerun-if-changed=schemas/channel.capnp");
     println!("cargo:rerun-if-changed=schemas/plugin_registry.proto");
     prost_build::Config::new()
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
@@ -120,6 +130,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     capnpc::CompilerCommand::new()
         .src_prefix("schemas")
         .file("schemas/runtime.capnp")
+        .file("schemas/channel.capnp")
         .file("schemas/task.capnp")
         .file("schemas/io.capnp")
         .file("schemas/mutation.capnp")
