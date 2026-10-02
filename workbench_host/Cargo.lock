@@ -1193,6 +1193,8 @@ dependencies = [
 name = "morrow-audit"
 version = "0.1.9-test.50"
 dependencies = [
+ "async-io",
+ "futures-lite",
  "getrandom 0.4.3",
  "libc",
  "lz4_flex",
