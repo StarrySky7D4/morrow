@@ -244,12 +244,12 @@ pub unsafe extern "C" fn mp_channel_response_decode(
         }?;
         let request = Request::decode(&request_bytes).map_err(code)?;
         let response = Response::decode(&encoded).map_err(code)?;
-        response.validate_for(&request).map_err(code)?;
         // Decode requires canonical encoding. Bind the original immutable bytes,
         // including their actual layout, rather than a reconstructed descriptor.
-        if response.request_sha256 != Sha256::digest(&request_bytes).as_slice() {
-            return Err(19);
-        }
+        let request_digest = Sha256::digest(&request_bytes).into();
+        response
+            .validate_for_digest(&request, &request_digest)
+            .map_err(code)?;
         let frame_sha256 = match &response.frame {
             Some(f) => f.digest().map_err(code)?,
             None => [0; 32],

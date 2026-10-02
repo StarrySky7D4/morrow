@@ -88,3 +88,12 @@ Dismissal retains the original session/key and any unconfirmed result. Inspect a
 
 
 SDK014 production qualification remains incomplete: the actual 20-case suite passed 11 and failed/errored 9; the generic catalog UI failed before invocation. Compiled discovery remains conservative until the failures are resolved. The source budget, cancellation cause and actual resource joins must be fixed or diagnosed without relaxing this public contract. This is an implementation checkpoint, not SDK freeze. See [SDK014 evidence boundary](../reports/codex-morrow-v1.1/windows-sdk-014-2026-10-01.md).
+
+
+## Reconstruction admission boundary (2026-10-02)
+
+The reconstructed caller freezes original frame collections before validation/listeners, and fences async reply/error/finally/polling by generation. Metadata-only Directory eligibility requires a source-only declaration, an unambiguous declared typed handler and a canonical one-endpoint capacity of 256 bytes (248-byte body plus 8-byte header). This does not grant a source or change general catalog availability. The private 65-byte exercise route remains separate.
+
+An identified, decoded preparation is retained before effective-grant admission so explicit status/Close can use its original key. Before any append/run, every returned ceiling, exact kind/reference/epoch, lifetime/count/total and every frozen frame must fit. Legitimate narrowing, including maxRequests1, is accepted without an inferred RPC minimum. Foreign/lost replies yield no guessed key; raw wire-corrupt replies rejected by the native codec are not salvaged by the session. No automatic Close/retry/replay/splitting is added.
+
+Compiled discovery remains authority none/base candidate/channel experimental with formal public Workbench binding unsupported. Shared runtime, SDK library checks, decoded-caller tests and historical Windows evidence remain separate scopes. The limited Linux reconstruction deliberately leaves protected SQLite/native supervisor/GTK/product wiring unavailable or not rebuilt; see [explicit scope](../reports/reconstruction-2026-10-02/linux-foundation-scope.md).

@@ -501,11 +501,23 @@ impl Response {
         Ok(value)
     }
     pub fn validate_for(&self, request: &Request) -> Result<()> {
+        self.validate_for_with_digest(request, || request.digest())
+    }
+    /// Correlate using the digest of already frozen, canonical request bytes.
+    /// This seam is internal: public callers still validate/hash their request.
+    pub(crate) fn validate_for_digest(&self, request: &Request, digest: &[u8; 32]) -> Result<()> {
+        self.validate_for_with_digest(request, || Ok(*digest))
+    }
+    fn validate_for_with_digest(
+        &self,
+        request: &Request,
+        digest: impl FnOnce() -> Result<[u8; 32]>,
+    ) -> Result<()> {
         self.validate()?;
         if self.call_id != request.call_id
             || self.reference != request.reference
             || self.source_epoch != request.source_epoch
-            || self.request_sha256 != request.digest()?
+            || self.request_sha256 != digest()?
         {
             return Err(Error::Correlation);
         }

@@ -157,3 +157,11 @@ Cursor Ack 不是业务成功或资源回收。`resource_reclaimed` 只报告 ow
 相关来源为 `sdk/rust/src/channel.rs`、`sdk/rust/src/channel/transport.rs`、`sdk/rust/src/channel_ffi.rs`、`sdk/c/include/morrow_channel_v1.h` 和 `sdk/cpp/include/morrow_channel_v1.hpp`。已有黄金与 native tests 覆盖 schema/correlation、Directory 所有权、alias、完整输出容量、C++ 异常隔离及真实 Windows guard page 下的短 descriptor 拒绝。
 
 本接口只消费 caller 显式提供且已由 host 绑定的本地 bytes/events。插件类型和 Directory 不引入网络、云、路径发现或额外数据源权限。实际生产 caller 的 prepare/run/status/close 实现和验证由 host/runtime 的对应合同与证据记录说明。
+
+## 有界 reusable transport（2026-10-02 重建）
+
+`channel::transport::WasmClient` 在 `wasm-guest` 下持有一个不超过 `MAX_WIRE_BYTES` 的输出 buffer，可在同一次受限 guest 执行内显式重复调用 `call(&request)`。每次仍只提交一次，并返回拥有自身数据的 Response；重用 buffer 不授予、续期或恢复通道，也不自动重试。旧 `call_wasm` 保留 one-shot 行为。
+
+Native `Client` 仅在首个有效请求时分配输出，保留构造与非法请求的错误优先级。输入编码和其 SHA 在 callback 前固定，输入／输出不 alias；native callback 可能写满整个 capacity，所以所有成功和错误路径均清空完整 scratch。受信 Wasm import 只写返回长度对应的 prefix，只有该路径可在 owned decode 后清空 prefix。公开 `Response::validate_for` 仍先验证响应，再按原短路顺序验证 identity，最后计算原 request digest。
+
+新生成 channel 项目保留标准执行预算 20M fuel／16MiB／16 calls；Rust channel 新项目采用 opt-level3。旧 guest、示例原包、schema/ABI/version/pin 不覆盖。此次 native SDK 91 项测试及 wasm-guest/wasm-c 编译是局部新证据，真实 Wasmi import/fuel 与 Windows 产品资格单独验证。

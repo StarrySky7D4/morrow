@@ -10,6 +10,8 @@
 
 descriptor 中 runtime 的 content／transform 模式和依赖 feature，不能推导 Workbench 的外部入口支持它们。实际 external_transform／external_ui 不支持外部 content task、依赖调用或 required dependencies；这些约束显式为 false。依赖功能须由受信任的 managed dependency router 绑定，不能将回调指针当作插件权限。
 
+2026-10-02 当前扩展补充：`morrow.channel.v1` 是已实现的三语言实验 profile，独立 `channel.capnp`／import 不改旧 ABI。compiled discovery 仍为 `authority=none`、`status=experimental`、`workbench_routes=[]`；content/dependency/required-dependency/channel-binding 约束全部明确为 false。有限 caller-data 私有 Workbench 接线不是正式公共 binding 资格，网络 SSE/WS、授权 Cloud change source 和异步依赖仍不支持。旧 S013 证据只保留其历史范围。
+
 ## 兼容扩展规则
 
 | 规则 | 接口级依据和本轮证据 |
@@ -30,8 +32,8 @@ descriptor 中 runtime 的 content／transform 模式和依赖 feature，不能�
 | 需求 | 不破坏旧接口的接入方式 | 必须完成的共享合同／准入条件 | 当前状态与冻结影响 |
 | --- | --- | --- | --- |
 | 供应商有界 JSON／结构化转换 | 新 Transform handler/type；每条输入输出64KiB，宿主单独代办 IO | 明确不支持字段、工具/多轮语义、转换错误及不重试；较大请求使用独立资源 profile | 扩展路径已有实际基础证据；012 image-capability不是 Responses 转换实测。具体实现暂停。 |
-| POST SSE、WS、双向会话与工具进度 | 独立 streaming profile/schema/import，或宿主授予的有界资源任务；旧 task3不改为多次完成 | 身份/代次/精确 origin 权限、sequence/credit/累计字节预算、原 deadline、cancel/revoke gate、EOF/error/Unknown、Close/ACK与可信资源回收分开；无自动重放。三语言所有权与实际 broker/Runner 必须闭环 | 私有 M03 stream已有监督证据；公开三语言合同及生产接入未实现。这是完整目标 SDK 的共享前置，不能因基础 ABI 候选通过消失。 |
-| Cloud scoped changes、事件订阅、同步 cursor | 独立 content-change/event profile；保留旧7条内容命令。事件可作为新版本固定任务输入，但不能冒用 UI eventId 或 CommitReceipt.eventId 当同步 cursor | 明确授权范围、分页/ACK、持久 cursor与epoch、撤权后禁止消费、重开重新授权、重复/缺失处理、快照/CAS、无提交就不推进 cursor；不能公开 SQL／Store 路径 | 当前 guest 无 listChanges/subscribe 公共命令；私有 content_api不是SDK。实现和验证前不能称完整 Cloud-capable SDK 冻结。 |
+| POST SSE、WS、双向会话与工具进度 | 独立 streaming profile/schema/import，或宿主授予的有界资源任务；旧 task3不改为多次完成 | 身份/代次/精确 origin 权限、sequence/credit/累计字节预算、原 deadline、cancel/revoke gate、EOF/error/Unknown、Close/ACK与可信资源回收分开；无自动重放。三语言所有权与实际 broker/Runner 必须闭环 | 私有 M03 stream已有监督证据；公开三语言实验 channel 合同及有限本地 runtime 已实现；SSE/WS 网络 source adapter、正式公共 Workbench binding 与相应产品资格仍未完成。这是完整目标 SDK 的共享前置，不能因基础 ABI 候选通过消失。 |
+| Cloud scoped changes、事件订阅、同步 cursor | 独立 content-change/event profile；保留旧7条内容命令。事件可作为新版本固定任务输入，但不能冒用 UI eventId 或 CommitReceipt.eventId 当同步 cursor | 明确授权范围、分页/ACK、持久 cursor与epoch、撤权后禁止消费、重开重新授权、重复/缺失处理、快照/CAS、无提交就不推进 cursor；不能公开 SQL／Store 路径 | 有限本地 Events channel 不授予内容变更来源；当前 guest 无授权 listChanges/subscribe 公共命令，私有 content_api不是SDK。实现和验证前不能称完整 Cloud-capable SDK 冻结。 |
 | 大块附件／上传下载／结构化对象 | 独立 blob/transfer资源 profile，保留基础32KiB附件片段与64KiB消息 | 长度/摘要/范围关联、对象权限、租约/代次、分块累计预算、背压、取消/释放与完整性；引用不含宿主地址/秘密 | 已有片段与部分私有传输；通用公共 profile 未实现。业务数据放有界类型payload可兼容，突破上限不可静默扩大旧接口。 |
 | 跨插件服务／异步依赖 | 独立 service/combined profile，在批准slot和当前实例授权交集内路由 | 深度/循环/死锁规避、根deadline/cancel传递、共享累计预算、调用原字节证据、关闭后旧代次拒绝；不得在持DB锁时等待另一域 | 同步slot依赖已有实际factory/原包；异步/服务依赖尚未稳定。不同类型会话不能仅把同步回调延长。 |
 | Codex执行／PTY／原生能力 | 独立批准的 native/exec backend 与任务资源 profile；普通 Wasm不增加任意WASI/OS权限 | 工作目录/文件/命令/网络/凭据等授权边界、完整进程树和必要句柄、UI/host/supervisor各故障行为、稳定错误/终态、原Unknown保留 | 现有监督不等于任意原生程序隔离或 exec授权。安全/完整执行器权限模型仍需单独明确；具体Codex实现暂停，不因原源码缺口阻塞基础ABI。 |
