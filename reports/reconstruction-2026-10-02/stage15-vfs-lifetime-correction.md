@@ -1,0 +1,15 @@
+# Stage15 correction to the experimental owned-VFS lifetime claim
+
+The stage14 report and published source remain historical evidence. Its assumption that closing the owned main SQLite connection proved the registered VFS had no remaining users was incorrect. A second safe rusqlite connection can select the same registered VFS with `:memory:`; SQLite bypasses the main-file xOpen check and retains the VFS pointer for ancillary callbacks. Closing the owner and freeing that VFS would therefore risk a use-after-free. Main-file fd/inode and lifetime-OFD exclusion do not establish VFS allocation lifetime.
+
+A deterministic pre-fix control demonstrated safe memory-connection selection and the time callback while the owner remained alive. It deliberately dropped that borrower before the owner, avoiding execution through a dangling pointer. Inspection of the pinned SQLite source confirmed that memory pagers retain pVfs and later use its callbacks. This finding applies to the experimental owned-VFS API; the public private Store factories and protected plugin bindings remained closed. No broader absence-of-impact claim is made.
+
+## Corrective implementation
+
+The VFS allocation, registered name and synchronized dispatch context now remain stable through process exit. Retirement closes new file admission before closing the owned SQLite connection, unregisters the VFS, and detaches its live State. Callbacks acquire their own State Arc; actual sqlite3_file objects retain theirs until exact close. Retired contexts keep no State or file pins. An independent memory borrower can continue memory/time operations safely but cannot regain private file authority.
+
+There is an explicit experimental process-lifetime ceiling of 1024 published registrations. A slot is reserved before runtime/state/filesystem effects; retired published slots are never recycled. This is a bounded availability cost, separate from the existing 64-descriptor safe-retirement pool. There is no fallback to the default VFS on exhaustion. The VFS allocation uses UnsafeCell for SQLite's synchronized registry mutations; moving ownership does not grant concurrent sharing of a connection.
+
+Fresh focused tests cover an actual safe named-memory borrower across owner drop and thread use, stale prepared ATTACH rejection, unregistered-name visibility, detached Weak<State>, independent main reopen, retained sqlite3_file state through exact close, a fresh-subprocess ceiling refusal before file creation, and runtime SingleThread refusal. The existing guarded card/ACK slice tests also pass. Additional unwind exit checks cover borrowed operations and cache/no-SQL callbacks; a suspected IMMEDIATE mutation panic gap was experimentally disproved and is not reported as a confirmed defect.
+
+At this correction checkpoint, independent final review and the complete frozen-source aggregate are pending. These focused controls do not qualify protected Store/product activation, all Store operations, GTK ownership, Windows DPAPI, recovery/migration, or SDK freeze. The stage15 completion report will record the final exact source and verification outcomes, including retained baseline failures.

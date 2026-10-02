@@ -11,6 +11,8 @@ license = "AGPL-3.0-only"
 [dependencies]
 libc = "=0.2.189"
 sha2 = "=0.10.9"
+subtle = "=2.6.1"
+zeroize = "=1.9.0"
 
 [[bin]]
 name = "morrow-linux-supervisor-fixture"

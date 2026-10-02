@@ -24,6 +24,7 @@ use std::{
 #[path = "linux_sqlite_vfs.rs"]
 mod sqlite_vfs;
 pub use sqlite_vfs::{GuardedSqliteConnection, GuardedSqliteTransaction};
+pub(crate) use sqlite_vfs::{GuardedStoreOutcome, StoreObjectGuard};
 
 fn invalid() -> io::Error {
     io::Error::new(io::ErrorKind::PermissionDenied, "unsafe private storage")

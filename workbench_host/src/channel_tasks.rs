@@ -15,13 +15,17 @@ use morrow_plugin_runtime::{
     package::TaskReport,
 };
 use sha2::{Digest, Sha256};
+#[cfg(all(test, not(windows)))]
+use std::thread;
 use std::{
     collections::BTreeSet,
-    panic::{AssertUnwindSafe, catch_unwind},
     sync::{Arc, Mutex},
-    thread::{self, JoinHandle},
+    thread::JoinHandle,
     time::{Duration, Instant},
 };
+
+#[path = "channel_executor.rs"]
+mod executor;
 
 pub const MAX_SOURCE_FRAMES: u32 = 64;
 pub const MAX_JOB_BYTES: u64 = 1024 * 1024;
@@ -118,12 +122,7 @@ impl Progress {
         }
     }
 }
-struct Exit {
-    owner: WorkbenchState,
-    report: Option<TaskReport>,
-    error: String,
-    repair: bool,
-}
+type Exit = executor::Exit<WorkbenchState>;
 struct StopFence {
     package_id: String,
     digest: [u8; 32],
@@ -395,9 +394,10 @@ impl Workbench {
             job.worker_joined = true;
             match joined {
                 Ok(exit) => {
-                    self.state.restore_channel_owner(exit.owner, exit.repair)?;
+                    // Retain the original failure even if owner restoration is denied.
                     job.report = exit.report;
                     job.error = exit.error;
+                    self.state.restore_channel_owner(exit.owner, exit.repair)?;
                 }
                 Err(_) => {
                     job.stop();
@@ -763,76 +763,28 @@ impl Workbench {
             }
         });
         if let Err(error) = spawned {
-            self.state.restore_channel_owner(owner, false)?;
             job.error = short_error(error);
             job.stop();
+            self.state.restore_channel_owner(owner, false)?;
             return self.channel_status(key);
         }
-        let broker = job.broker.clone();
-        let instance = job.instance.clone();
-        let max_output_bytes = job.max_output_bytes;
-        let handoff = Arc::new(Mutex::new(Some(owner)));
-        let child_handoff = handoff.clone();
-        let worker = thread::Builder::new()
-            .name("morrow-channel-executor".into())
-            .spawn(move || {
-                let mut owner = child_handoff
-                    .lock()
-                    .unwrap_or_else(|e| e.into_inner())
-                    .take()
-                    .expect("original channel owner handoff");
-                let ran = catch_unwind(AssertUnwindSafe(|| {
-                    let manager = owner.manager.as_ref().expect("original managed owner");
-                    broker.run_invocation(manager, &mut owner.host, &instance, &invocation, || {
-                        now(start)
-                    })
-                }));
-                let (report, error) = match ran {
-                    Ok(report)
-                        if report.output.as_ref().is_none_or(|output| {
-                            output.bytes.len() <= max_output_bytes as usize
-                        }) =>
-                    {
-                        (Some(report), String::new())
-                    }
-                    Ok(_) => (
-                        None,
-                        "channel output exceeds the private result bound".into(),
-                    ),
-                    Err(_) => {
-                        instance.request_stop();
-                        (
-                            None,
-                            "channel executor panicked; business outcome Unknown".into(),
-                        )
-                    }
-                };
-                let maintenance = morrow_plugin_runtime::io_jobs::HostOwner::finish_io(&mut owner);
-                Exit {
-                    owner,
-                    report,
-                    error: if maintenance.is_err() {
-                        "original storage maintenance failed; outcome Unknown".into()
-                    } else {
-                        error
-                    },
-                    repair: maintenance.is_err(),
-                }
-            });
+        let worker = executor::spawn(
+            owner,
+            job.broker.clone(),
+            job.instance.clone(),
+            invocation,
+            move || now(start),
+            job.max_output_bytes,
+        );
         match worker {
             Ok(worker) => {
                 job.worker_started = true;
                 job.worker = Some(worker);
             }
-            Err(error) => {
-                let owner = handoff
-                    .lock()
-                    .unwrap_or_else(|e| e.into_inner())
-                    .take()
-                    .ok_or(AccessError::OwnerUnavailable)?;
-                self.state.restore_channel_owner(owner, false)?;
-                job.error = short_error(error);
+            Err(failure) => {
+                job.error = short_error(failure.error);
                 job.stop();
+                self.state.restore_channel_owner(failure.owner, false)?;
             }
         }
         self.channel_status(key)

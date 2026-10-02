@@ -185,7 +185,7 @@ pub(super) fn accounted(c: &Connection) -> Result<u64> {
     let bytes: i64 = sql(c.query_row("SELECT (SELECT coalesce(sum(length(payload)),0) FROM channel_checkpoints)+(SELECT coalesce(sum(length(payload)),0) FROM channel_ack_receipts)", [], |r| r.get(0)))?;
     u64::try_from(bytes).map_err(|_| Error::Integrity)
 }
-fn checkpoint(
+pub(super) fn checkpoint(
     c: &Connection,
     subscription: &[u8; 32],
     epoch: &[u8; 32],
@@ -209,7 +209,7 @@ fn checkpoint(
     }
     Ok(Some(value))
 }
-fn receipt(
+pub(super) fn receipt(
     c: &Connection,
     subscription: &[u8; 32],
     epoch: &[u8; 32],
@@ -327,6 +327,105 @@ pub(super) fn verify_schema(c: &Connection) -> Result<()> {
     }
     Ok(())
 }
+pub(super) struct PreparedAck {
+    value: ChannelAckReceipt,
+    receipt_bytes: Vec<u8>,
+    checkpoint_bytes: Vec<u8>,
+}
+pub(super) fn prepare_ack(
+    c: &Connection,
+    subscription: &[u8; 32],
+    frame_wire: &[u8],
+    request_wire: &[u8],
+    response_wire: &[u8],
+) -> Result<PreparedAck> {
+    id(subscription)?;
+    if version(c)? < 24 {
+        return Err(Error::UnsupportedVersion);
+    }
+    let frame = Frame::decode(frame_wire)?;
+    let value = ChannelAckReceipt {
+        checkpoint: ChannelCheckpoint {
+            subscription: *subscription,
+            source_epoch: frame.source_epoch,
+            sequence: frame.sequence,
+            frame_sha256: frame.digest()?,
+            cursor: frame.cursor.clone(),
+            revision: frame.sequence,
+        },
+        frame_wire: frame_wire.to_vec(),
+        request_wire: request_wire.to_vec(),
+        response_wire: response_wire.to_vec(),
+    };
+    let receipt_bytes = value.encode()?;
+    let checkpoint_bytes = value.checkpoint.encode()?;
+    Ok(PreparedAck {
+        value,
+        receipt_bytes,
+        checkpoint_bytes,
+    })
+}
+
+pub(super) fn commit_ack_in_transaction(
+    c: &Connection,
+    budget: super::EventBudget,
+    expected: Option<&ChannelCheckpoint>,
+    prepared: PreparedAck,
+    mut guard: impl FnMut() -> Result<()>,
+) -> Result<super::StoreMutation<ChannelCommit>> {
+    let PreparedAck {
+        value,
+        receipt_bytes,
+        checkpoint_bytes,
+    } = prepared;
+    let subscription = &value.checkpoint.subscription;
+    guard()?;
+    let current = checkpoint(c, subscription, &value.checkpoint.source_epoch)?;
+    if let Some(prior) = receipt(
+        c,
+        subscription,
+        &value.checkpoint.source_epoch,
+        value.checkpoint.sequence,
+    )? {
+        if prior.frame_wire != value.frame_wire
+            || prior.checkpoint != value.checkpoint
+            || Request::decode(&prior.request_wire)?.reference
+                != Request::decode(&value.request_wire)?.reference
+        {
+            return Err(Error::OperationConflict);
+        }
+        guard()?;
+        return Ok(super::StoreMutation::Unchanged(ChannelCommit::Duplicate(
+            current.ok_or(Error::Integrity)?,
+        )));
+    }
+    if current.as_ref() != expected
+        || current.as_ref().map_or(1, |v| v.sequence.saturating_add(1)) != value.checkpoint.sequence
+    {
+        return Err(Error::RevisionConflict);
+    }
+    let count: i64 = sql(
+        c.query_row("SELECT count(*) FROM channel_ack_receipts", [], |r| {
+            r.get(0)
+        }),
+    )?;
+    if count >= MAX_CHANNEL_RECEIPTS as i64 {
+        return Err(Error::EventCapacity);
+    }
+    byte_room(
+        c,
+        budget,
+        (receipt_bytes.len() + checkpoint_bytes.len()) as u64,
+    )?;
+    sql(c.execute("INSERT INTO channel_checkpoints(subscription,source_epoch,sequence,revision,payload) VALUES(?1,?2,?3,?4,?5) ON CONFLICT(subscription,source_epoch) DO UPDATE SET sequence=excluded.sequence,revision=excluded.revision,payload=excluded.payload",params![subscription.as_slice(),value.checkpoint.source_epoch.as_slice(),value.checkpoint.sequence as i64,value.checkpoint.revision as i64,checkpoint_bytes]))?;
+    sql(c.execute("INSERT INTO channel_ack_receipts(subscription,source_epoch,sequence,payload) VALUES(?1,?2,?3,?4)",params![subscription.as_slice(),value.checkpoint.source_epoch.as_slice(),value.checkpoint.sequence as i64,receipt_bytes]))?;
+    guard()?;
+    boundary("channel-checkpoint-before-commit");
+    Ok(super::StoreMutation::Commit(ChannelCommit::Committed(
+        value.checkpoint,
+    )))
+}
+
 impl Store {
     /// Durable history, never live source approval or an automatic resume token.
     pub fn channel_checkpoint(
@@ -374,68 +473,25 @@ impl Store {
         frame_wire: &[u8],
         request_wire: &[u8],
         response_wire: &[u8],
-        mut guard: impl FnMut() -> Result<()>,
+        guard: impl FnMut() -> Result<()>,
     ) -> Result<ChannelCommit> {
-        id(subscription)?;
-        if version(&self.connection)? < 24 {
-            return Err(Error::UnsupportedVersion);
-        }
-        let frame = Frame::decode(frame_wire)?;
-        let value = ChannelAckReceipt {
-            checkpoint: ChannelCheckpoint {
-                subscription: *subscription,
-                source_epoch: frame.source_epoch,
-                sequence: frame.sequence,
-                frame_sha256: frame.digest()?,
-                cursor: frame.cursor.clone(),
-                revision: frame.sequence,
-            },
-            frame_wire: frame_wire.to_vec(),
-            request_wire: request_wire.to_vec(),
-            response_wire: response_wire.to_vec(),
-        };
-        let receipt_bytes = value.encode()?;
-        let checkpoint_bytes = value.checkpoint.encode()?;
+        let prepared = prepare_ack(
+            &self.connection,
+            subscription,
+            frame_wire,
+            request_wire,
+            response_wire,
+        )?;
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        guard()?;
-        let current = checkpoint(&tx, subscription, &frame.source_epoch)?;
-        if let Some(prior) = receipt(&tx, subscription, &frame.source_epoch, frame.sequence)? {
-            if prior.frame_wire != frame_wire
-                || prior.checkpoint != value.checkpoint
-                || Request::decode(&prior.request_wire)?.reference
-                    != Request::decode(request_wire)?.reference
-            {
-                return Err(Error::OperationConflict);
+        match commit_ack_in_transaction(&tx, self.budget, expected, prepared, guard)? {
+            super::StoreMutation::Unchanged(value) => Ok(value),
+            super::StoreMutation::Commit(value) => {
+                tx.commit().map_err(|_| Error::CommitUnknown)?;
+                boundary("channel-checkpoint-after-commit");
+                Ok(value)
             }
-            guard()?;
-            return Ok(ChannelCommit::Duplicate(current.ok_or(Error::Integrity)?));
         }
-        if current.as_ref() != expected
-            || current.as_ref().map_or(1, |v| v.sequence.saturating_add(1)) != frame.sequence
-        {
-            return Err(Error::RevisionConflict);
-        }
-        let count: i64 = sql(
-            tx.query_row("SELECT count(*) FROM channel_ack_receipts", [], |r| {
-                r.get(0)
-            }),
-        )?;
-        if count >= MAX_CHANNEL_RECEIPTS as i64 {
-            return Err(Error::EventCapacity);
-        }
-        byte_room(
-            &tx,
-            self.budget,
-            (receipt_bytes.len() + checkpoint_bytes.len()) as u64,
-        )?;
-        sql(tx.execute("INSERT INTO channel_checkpoints(subscription,source_epoch,sequence,revision,payload) VALUES(?1,?2,?3,?4,?5) ON CONFLICT(subscription,source_epoch) DO UPDATE SET sequence=excluded.sequence,revision=excluded.revision,payload=excluded.payload",params![subscription.as_slice(),frame.source_epoch.as_slice(),frame.sequence as i64,value.checkpoint.revision as i64,checkpoint_bytes]))?;
-        sql(tx.execute("INSERT INTO channel_ack_receipts(subscription,source_epoch,sequence,payload) VALUES(?1,?2,?3,?4)",params![subscription.as_slice(),frame.source_epoch.as_slice(),frame.sequence as i64,receipt_bytes]))?;
-        guard()?;
-        boundary("channel-checkpoint-before-commit");
-        tx.commit().map_err(|_| Error::CommitUnknown)?;
-        boundary("channel-checkpoint-after-commit");
-        Ok(ChannelCommit::Committed(value.checkpoint))
     }
 }

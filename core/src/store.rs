@@ -9,6 +9,8 @@ use crate::{
 };
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use std::{path::Path, time::Duration};
+#[cfg(target_os = "linux")]
+mod linux_protected;
 mod binding;
 mod channel_journal;
 pub use channel_journal::{ChannelCheckpoint, ChannelAckReceipt, ChannelCommit, MAX_CHANNEL_RECEIPTS};
@@ -55,6 +57,11 @@ mod read_journal;
 mod records;
 mod seals;
 const APPLICATION_ID: i64 = 0x4d4f5252;
+const BASE_SCHEMA: &str = "CREATE TABLE cards (id TEXT PRIMARY KEY, payload BLOB NOT NULL) STRICT;
+                CREATE TABLE operations (id TEXT PRIMARY KEY, card_id TEXT NOT NULL, object_kind INTEGER NOT NULL DEFAULT 0, payload BLOB NOT NULL) STRICT;
+                CREATE INDEX operation_card ON operations(card_id);
+                CREATE TABLE outbox (sequence INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE NOT NULL REFERENCES operations(id), payload BLOB NOT NULL) STRICT;
+                PRAGMA application_id=1297044050; PRAGMA user_version=4;";
 /// Latest supported persistent Store schema; historical feature floors stay fixed.
 pub const SCHEMA_VERSION: i64 = 24;
 #[derive(Clone, Copy)]
@@ -195,6 +202,215 @@ fn read_commit(connection: &Connection, id: &str) -> Result<Option<Vec<u8>>> {
         transaction::MAX_EVENT_BYTES + transaction::MAX_EVENT_BYTES / 255 + 128,
     )
 }
+// A shared SQL routine never owns transaction control. Portable Store retains
+// its original commit/drop policy; the protected adapter owns verified exits.
+enum StoreMutation<T> {
+    Commit(T),
+    Unchanged(T),
+}
+fn lookup_connection(connection: &Connection, operation_id: &str) -> Result<Lookup> {
+    identity(operation_id)?;
+    match read_commit(connection, operation_id)? {
+        Some(raw) => {
+            let (_, receipt) = transaction::decode_commit(&raw)?;
+            if receipt.operation_id != operation_id {
+                return Err(Error::Integrity);
+            }
+            Ok(Lookup::Committed(receipt))
+        }
+        None => Ok(Lookup::Absent),
+    }
+}
+
+fn lookup_for_card_connection(
+    connection: &Connection,
+    card_id: &str,
+    operation_id: &str,
+) -> Result<Lookup> {
+    identity(card_id)?;
+    identity(operation_id)?;
+    let mut statement = sql(connection
+        .prepare("SELECT payload FROM operations WHERE id=?1 AND card_id=?2 AND object_kind=0"))?;
+    let value = sql(statement
+        .query_row(params![operation_id, card_id], |row| {
+            let bytes = row.get_ref(0)?.as_blob()?;
+            Ok(
+                if bytes.len()
+                    <= transaction::MAX_EVENT_BYTES + transaction::MAX_EVENT_BYTES / 255 + 128
+                {
+                    Some(bytes.to_vec())
+                } else {
+                    None
+                },
+            )
+        })
+        .optional())?;
+    match value {
+        None => Ok(Lookup::Absent),
+        Some(None) => Err(Error::Limit),
+        Some(Some(bytes)) => {
+            let (_, receipt) = transaction::decode_commit(&bytes)?;
+            if receipt.card_id != card_id || receipt.operation_id != operation_id {
+                return Err(Error::Integrity);
+            }
+            Ok(Lookup::Committed(receipt))
+        }
+    }
+}
+
+fn pending_usage_connection(connection: &Connection) -> Result<(u64, u64)> {
+    let (events, bytes): (i64, i64) = sql(connection.query_row(
+        "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
+        [],
+        |row| Ok((row.get(0)?, row.get(1)?)),
+    ))?;
+    Ok((
+        u64::try_from(events).map_err(|_| Error::Integrity)?,
+        u64::try_from(bytes).map_err(|_| Error::Integrity)?,
+    ))
+}
+
+fn pending_connection(
+    connection: &Connection,
+    after_sequence: i64,
+    limit: u32,
+) -> Result<Vec<(i64, Vec<u8>)>> {
+    if after_sequence < 0 || limit == 0 || limit > 128 {
+        return Err(Error::Limit);
+    }
+    let mut statement = sql(connection.prepare(
+            "SELECT sequence,CASE WHEN length(payload)<=?3 THEN payload ELSE NULL END FROM outbox WHERE sequence>?1 ORDER BY sequence LIMIT ?2",
+        ))?;
+    let mut rows = sql(statement.query(params![
+        after_sequence,
+        limit,
+        crate::read_journal::MAX_CONTAINER_BYTES as i64
+    ]))?;
+    let mut result = Vec::new();
+    let mut total = 0usize;
+    while let Some(row) = sql(rows.next())? {
+        let raw = sql(row.get_ref(1))?;
+        if matches!(raw, rusqlite::types::ValueRef::Null) {
+            return Err(Error::Limit);
+        }
+        let value = raw.as_blob().map_err(|_| Error::Integrity)?;
+        total = total.checked_add(value.len()).ok_or(Error::Limit)?;
+        if total > 32 * 1024 * 1024 {
+            return Err(Error::Limit);
+        }
+        if value.starts_with(crate::file_content_receipt::MAGIC) {
+            let receipt = crate::file_content_receipt::Receipt::decode(value)?;
+            file_content_receipt::verify_operation(
+                connection,
+                &receipt.event_id(),
+                receipt.subject(),
+                value,
+            )?;
+        } else if value.starts_with(crate::io_intent::MAGIC) {
+            let record = crate::io_intent::Record::decode(value)?;
+            io_intent::verify_operation(
+                connection,
+                &record.event_id(),
+                &record.command().subject,
+                value,
+            )?;
+        } else if value.starts_with(crate::read_journal::MAGIC) {
+            let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
+            if version < 11 {
+                return Err(Error::UnsupportedVersion);
+            }
+            let observation = crate::read_journal::decode(value)?;
+            if version < 12 && observation.data().schema_version >= 2 {
+                return Err(Error::UnsupportedVersion);
+            }
+            read_archive::verify_observation(connection, &observation)?;
+        } else if value.starts_with(b"MORROWR1") {
+            crate::records::decode_commit(value)?;
+        } else {
+            transaction::decode_commit(value)?;
+        }
+        result.push((sql(row.get(0))?, value.to_vec()));
+    }
+    Ok(result)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn apply_card_in_transaction(
+    connection: &Connection,
+    budget: EventBudget,
+    operation_id: &str,
+    card_id: &str,
+    command: Vec<u8>,
+    task_evidence: &[crate::task_evidence::Evidence],
+    propose: impl FnOnce(Option<&CardRecord>) -> Result<CardRecord>,
+    mut authorize: impl FnMut() -> Result<()>,
+    create: bool,
+) -> Result<StoreMutation<Receipt>> {
+    boundary("after-begin");
+    read_capture::reject_tracked(connection, operation_id)?;
+    authorize()?;
+    let evidence_digests = evidence::digests(task_evidence)?;
+    if let Some(raw) = read_commit(connection, operation_id)? {
+        if !raw.starts_with(b"MORROWT1") {
+            return Err(Error::OperationConflict);
+        }
+        let (previous, receipt) = transaction::decode_commit(&raw)?;
+        if previous.operation_id != operation_id {
+            return Err(Error::Integrity);
+        }
+        if previous.command != command
+            || previous
+                .task_evidence_sha256
+                .iter()
+                .map(Vec::as_slice)
+                .ne(evidence_digests.iter().map(|d| d.as_slice()))
+        {
+            return Err(Error::OperationConflict);
+        }
+        evidence::verify_retry(
+            connection,
+            operation_id,
+            &previous.task_evidence_sha256,
+            task_evidence,
+        )?;
+        authorize()?;
+        return Ok(StoreMutation::Unchanged(receipt));
+    }
+    let current = read_card(connection, card_id)?;
+    if create && current.is_some() {
+        return Err(Error::RevisionConflict);
+    }
+    let next = propose(current.as_ref())?;
+    let event = transaction::encode_commit_with_evidence(command, &next, &evidence_digests)?;
+    let receipt = transaction::decode_commit(&event)?.1;
+    event_room(connection, budget, event.len() as u64)?;
+    let payload = envelope::encode(&next)?;
+    sql(connection.execute("INSERT INTO cards(id,payload) VALUES(?1,?2) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload", params![card_id, payload]))?;
+    boundary("after-card");
+    sql(connection.execute(
+        "INSERT INTO operations(id,card_id,payload) VALUES(?1,?2,?3)",
+        params![operation_id, card_id, event],
+    ))?;
+    boundary("after-operation");
+    sql(connection.execute(
+        "INSERT INTO outbox(id,payload) VALUES(?1,?2)",
+        params![operation_id, event],
+    ))?;
+    sql(connection.execute(
+        "INSERT INTO operation_events(sequence,id) VALUES(last_insert_rowid(),?1)",
+        [operation_id],
+    ))?;
+    boundary("after-event");
+    blobs::bind(connection, &next, operation_id)?;
+    evidence::bind(connection, operation_id, task_evidence)?;
+    boundary("after-task-evidence");
+    // The host is exclusively borrowed throughout. Revocation and commit are serialized.
+    // A fresh host clock tick rejects expiry during synchronous preparation/I/O.
+    authorize()?;
+    boundary("before-commit");
+    Ok(StoreMutation::Commit(receipt))
+}
+
 // Authority locking depends on the actual native database, not snapshot support
 // or journal mode. Unknown native adapters must never become no-op writers.
 #[cfg(not(target_arch = "wasm32"))]
@@ -450,11 +666,7 @@ impl Store {
             if tables != 0 {
                 return Err(Error::Invalid("unrelated database"));
             }
-            sql(tx.execute_batch("CREATE TABLE cards (id TEXT PRIMARY KEY, payload BLOB NOT NULL) STRICT;
-                CREATE TABLE operations (id TEXT PRIMARY KEY, card_id TEXT NOT NULL, object_kind INTEGER NOT NULL DEFAULT 0, payload BLOB NOT NULL) STRICT;
-                CREATE INDEX operation_card ON operations(card_id);
-                CREATE TABLE outbox (sequence INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE NOT NULL REFERENCES operations(id), payload BLOB NOT NULL) STRICT;
-                PRAGMA application_id=1297044050; PRAGMA user_version=4;"))?;
+            sql(tx.execute_batch(BASE_SCHEMA))?;
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
@@ -740,50 +952,11 @@ impl Store {
     }
     /// Host-only query. A transport must apply its read permissions before exposing this.
     pub fn lookup(&self, operation_id: &str) -> Result<Lookup> {
-        identity(operation_id)?;
-        match read_commit(&self.connection, operation_id)? {
-            Some(raw) => {
-                let (_, receipt) = transaction::decode_commit(&raw)?;
-                if receipt.operation_id != operation_id {
-                    return Err(Error::Integrity);
-                }
-                Ok(Lookup::Committed(receipt))
-            }
-            None => Ok(Lookup::Absent),
-        }
+        lookup_connection(&self.connection, operation_id)
     }
     /// Scoped before payload access: a receipt for another card is indistinguishable from absence.
     pub fn lookup_for_card(&self, card_id: &str, operation_id: &str) -> Result<Lookup> {
-        identity(card_id)?;
-        identity(operation_id)?;
-        let mut statement = sql(self.connection.prepare(
-            "SELECT payload FROM operations WHERE id=?1 AND card_id=?2 AND object_kind=0",
-        ))?;
-        let value = sql(statement
-            .query_row(params![operation_id, card_id], |row| {
-                let bytes = row.get_ref(0)?.as_blob()?;
-                Ok(
-                    if bytes.len()
-                        <= transaction::MAX_EVENT_BYTES + transaction::MAX_EVENT_BYTES / 255 + 128
-                    {
-                        Some(bytes.to_vec())
-                    } else {
-                        None
-                    },
-                )
-            })
-            .optional())?;
-        match value {
-            None => Ok(Lookup::Absent),
-            Some(None) => Err(Error::Limit),
-            Some(Some(bytes)) => {
-                let (_, receipt) = transaction::decode_commit(&bytes)?;
-                if receipt.card_id != card_id || receipt.operation_id != operation_id {
-                    return Err(Error::Integrity);
-                }
-                Ok(Lookup::Committed(receipt))
-            }
-        }
+        lookup_for_card_connection(&self.connection, card_id, operation_id)
     }
     /// Host-local creation only. Not a public plugin command or migration entry point.
     /// Every attachment must already exist as a verified staged payload.
@@ -945,77 +1118,30 @@ impl Store {
         command: Vec<u8>,
         task_evidence: &[crate::task_evidence::Evidence],
         propose: impl FnOnce(Option<&CardRecord>) -> Result<CardRecord>,
-        mut authorize: impl FnMut() -> Result<()>,
+        authorize: impl FnMut() -> Result<()>,
         create: bool,
     ) -> Result<Receipt> {
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        boundary("after-begin");
-        read_capture::reject_tracked(&tx, operation_id)?;
-        authorize()?;
-        let evidence_digests = evidence::digests(task_evidence)?;
-        if let Some(raw) = read_commit(&tx, operation_id)? {
-            if !raw.starts_with(b"MORROWT1") {
-                return Err(Error::OperationConflict);
+        match apply_card_in_transaction(
+            &tx,
+            self.budget,
+            operation_id,
+            card_id,
+            command,
+            task_evidence,
+            propose,
+            authorize,
+            create,
+        )? {
+            StoreMutation::Unchanged(receipt) => Ok(receipt),
+            StoreMutation::Commit(receipt) => {
+                tx.commit().map_err(|_| Error::CommitUnknown)?;
+                boundary("after-commit");
+                Ok(receipt)
             }
-            let (previous, receipt) = transaction::decode_commit(&raw)?;
-            if previous.operation_id != operation_id {
-                return Err(Error::Integrity);
-            }
-            if previous.command != command
-                || previous
-                    .task_evidence_sha256
-                    .iter()
-                    .map(Vec::as_slice)
-                    .ne(evidence_digests.iter().map(|d| d.as_slice()))
-            {
-                return Err(Error::OperationConflict);
-            }
-            evidence::verify_retry(
-                &tx,
-                operation_id,
-                &previous.task_evidence_sha256,
-                task_evidence,
-            )?;
-            authorize()?;
-            return Ok(receipt);
         }
-        let current = read_card(&tx, card_id)?;
-        if create && current.is_some() {
-            return Err(Error::RevisionConflict);
-        }
-        let next = propose(current.as_ref())?;
-        let event = transaction::encode_commit_with_evidence(command, &next, &evidence_digests)?;
-        let receipt = transaction::decode_commit(&event)?.1;
-        event_room(&tx, self.budget, event.len() as u64)?;
-        let payload = envelope::encode(&next)?;
-        sql(tx.execute("INSERT INTO cards(id,payload) VALUES(?1,?2) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload", params![card_id, payload]))?;
-        boundary("after-card");
-        sql(tx.execute(
-            "INSERT INTO operations(id,card_id,payload) VALUES(?1,?2,?3)",
-            params![operation_id, card_id, event],
-        ))?;
-        boundary("after-operation");
-        sql(tx.execute(
-            "INSERT INTO outbox(id,payload) VALUES(?1,?2)",
-            params![operation_id, event],
-        ))?;
-        sql(tx.execute(
-            "INSERT INTO operation_events(sequence,id) VALUES(last_insert_rowid(),?1)",
-            [operation_id],
-        ))?;
-        boundary("after-event");
-        blobs::bind(&tx, &next, operation_id)?;
-        evidence::bind(&tx, operation_id, task_evidence)?;
-        boundary("after-task-evidence");
-        // The host is exclusively borrowed throughout. Revocation and commit are serialized.
-        // A fresh host clock tick rejects expiry during synchronous preparation/I/O.
-        authorize()?;
-        boundary("before-commit");
-        tx.commit().map_err(|_| Error::CommitUnknown)?;
-        boundary("after-commit");
-        Ok(receipt)
     }
     /// Engine-consistent snapshot into a new staging file. A failed partial file
     /// must never be published by the caller; this does not modify the source.
@@ -1060,78 +1186,11 @@ impl Store {
     }
     /// Host-local queue pressure without reading or allocating event payloads.
     pub fn pending_usage(&self) -> Result<(u64, u64)> {
-        let (events, bytes): (i64, i64) = sql(self.connection.query_row(
-            "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
-            [],
-            |row| Ok((row.get(0)?, row.get(1)?)),
-        ))?;
-        Ok((
-            u64::try_from(events).map_err(|_| Error::Integrity)?,
-            u64::try_from(bytes).map_err(|_| Error::Integrity)?,
-        ))
+        pending_usage_connection(&self.connection)
     }
     /// Bounded immutable events that have not yet been atomically sealed.
     pub fn pending(&self, after_sequence: i64, limit: u32) -> Result<Vec<(i64, Vec<u8>)>> {
-        if after_sequence < 0 || limit == 0 || limit > 128 {
-            return Err(Error::Limit);
-        }
-        let mut statement = sql(self.connection.prepare(
-            "SELECT sequence,CASE WHEN length(payload)<=?3 THEN payload ELSE NULL END FROM outbox WHERE sequence>?1 ORDER BY sequence LIMIT ?2",
-        ))?;
-        let mut rows = sql(statement.query(params![
-            after_sequence,
-            limit,
-            crate::read_journal::MAX_CONTAINER_BYTES as i64
-        ]))?;
-        let mut result = Vec::new();
-        let mut total = 0usize;
-        while let Some(row) = sql(rows.next())? {
-            let raw = sql(row.get_ref(1))?;
-            if matches!(raw, rusqlite::types::ValueRef::Null) {
-                return Err(Error::Limit);
-            }
-            let value = raw.as_blob().map_err(|_| Error::Integrity)?;
-            total = total.checked_add(value.len()).ok_or(Error::Limit)?;
-            if total > 32 * 1024 * 1024 {
-                return Err(Error::Limit);
-            }
-            if value.starts_with(crate::file_content_receipt::MAGIC) {
-                let receipt = crate::file_content_receipt::Receipt::decode(value)?;
-                file_content_receipt::verify_operation(
-                    &self.connection,
-                    &receipt.event_id(),
-                    receipt.subject(),
-                    value,
-                )?;
-            } else if value.starts_with(crate::io_intent::MAGIC) {
-                let record = crate::io_intent::Record::decode(value)?;
-                io_intent::verify_operation(
-                    &self.connection,
-                    &record.event_id(),
-                    &record.command().subject,
-                    value,
-                )?;
-            } else if value.starts_with(crate::read_journal::MAGIC) {
-                let version: i64 =
-                    sql(self
-                        .connection
-                        .query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-                if version < 11 {
-                    return Err(Error::UnsupportedVersion);
-                }
-                let observation = crate::read_journal::decode(value)?;
-                if version < 12 && observation.data().schema_version >= 2 {
-                    return Err(Error::UnsupportedVersion);
-                }
-                read_archive::verify_observation(&self.connection, &observation)?;
-            } else if value.starts_with(b"MORROWR1") {
-                crate::records::decode_commit(value)?;
-            } else {
-                transaction::decode_commit(value)?;
-            }
-            result.push((sql(row.get(0))?, value.to_vec()));
-        }
-        Ok(result)
+        pending_connection(&self.connection, after_sequence, limit)
     }
     pub fn integrity_check(&self) -> Result<()> {
         let snapshot = sql(self.connection.unchecked_transaction())?;

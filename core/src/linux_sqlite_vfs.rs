@@ -11,12 +11,20 @@
 //! post-commit failure. No public raw Connection, statement, or handle escapes.
 //! WAL/SHM, mmap, attachments, temporary files, extensions and other journal
 //! profiles are unsupported. Production Store entry points remain unavailable.
+//! Named memory connections can retain pVfs without any xOpen callback. Owner
+//! retirement disables opens, closes owned SQLite, unregisters and detaches
+//! live file state, but retains the stable VFS/name/dispatch tombstone until
+//! process exit. At most 1024 registrations may ever be published per process;
+//! exhaustion returns Limit before runtime or filesystem effects. The separate
+//! 64 normal-descriptor active/retired ceiling is unchanged. This experimental
+//! availability bound is not a full private Store/product qualification.
 use super::{
     PrivateDirectory, SqlitePermissions, check_sidecars, invalid, name, openat, private_file,
 };
 use crate::{Error, Result};
 use rusqlite::{Connection, OpenFlags, Params, Row, TransactionBehavior, ffi};
 use std::{
+    cell::UnsafeCell,
     ffi::{CStr, CString, c_char, c_int, c_void},
     fs::File,
     io,
@@ -34,6 +42,29 @@ use std::{
 };
 
 const MAX_DESCRIPTORS: usize = 64;
+// Public SQLite has no VFS reference-count query. Unregistered names/dispatch
+// allocations remain stable for possible named memory borrowers until exit.
+// This is an explicit experimental process-lifetime availability ceiling, not
+// a reclaimable cache. Reserve before runtime/state/file effects; never reset.
+const MAX_REGISTRATIONS: usize = 1024;
+static REGISTRATIONS: AtomicUsize = AtomicUsize::new(0);
+static RETIRED_REGISTRATIONS: OnceLock<Mutex<Vec<StableVfs>>> = OnceLock::new();
+struct RegistrationSlot;
+impl RegistrationSlot {
+    fn reserve() -> Result<Self> {
+        REGISTRATIONS
+            .fetch_update(Ordering::AcqRel, Ordering::Acquire, |count| {
+                (count < MAX_REGISTRATIONS).then_some(count + 1)
+            })
+            .map_err(|_| Error::Limit)?;
+        Ok(Self)
+    }
+}
+impl Drop for RegistrationSlot {
+    fn drop(&mut self) {
+        REGISTRATIONS.fetch_sub(1, Ordering::AcqRel);
+    }
+}
 const MAX_PATH: usize = 4096;
 static DESCRIPTORS: AtomicUsize = AtomicUsize::new(0);
 static RETIRED: OnceLock<Mutex<Vec<(File, DescriptorSlot)>>> = OnceLock::new();
@@ -174,6 +205,9 @@ struct State {
     journal: Mutex<Journal>,
     poisoned: AtomicBool,
     internal_control: AtomicBool,
+    store_read_only: AtomicBool,
+    internal_store_init: AtomicBool,
+    store_header: Option<StoreHeaderAdmission>,
     #[cfg(test)]
     admission_swap: Mutex<Option<(PathBuf, PathBuf)>>,
     #[cfg(test)]
@@ -183,8 +217,21 @@ struct State {
     #[cfg(test)]
     fail_rollback: AtomicBool,
 }
+#[derive(Clone, Copy)]
+struct StoreHeaderAdmission {
+    application_id: u32,
+    version: u32,
+    create: bool,
+}
 impl State {
     fn prepare(path: &Path, create: bool) -> io::Result<Arc<Self>> {
+        Self::prepare_for(path, create, None)
+    }
+    fn prepare_for(
+        path: &Path,
+        create: bool,
+        store_header: Option<StoreHeaderAdmission>,
+    ) -> io::Result<Arc<Self>> {
         // Reject an unsupported existing sidecar before creating a main file.
         let directory = PrivateDirectory::open(
             path.parent()
@@ -198,6 +245,16 @@ impl State {
             let mut sidecar = leaf.as_os_str().to_os_string();
             sidecar.push(suffix);
             match directory.inspect(Path::new(&sidecar)) {
+                Err(error) if error.kind() == io::ErrorKind::NotFound => (),
+                _ => return Err(invalid()),
+            }
+        }
+        if store_header.is_some() {
+            // The bounded Store slice has no authorized recovery policy. Refuse
+            // even a metadata-valid journal before a missing main is created.
+            let mut journal = leaf.as_os_str().to_os_string();
+            journal.push("-journal");
+            match directory.inspect(Path::new(&journal)) {
                 Err(error) if error.kind() == io::ErrorKind::NotFound => (),
                 _ => return Err(invalid()),
             }
@@ -259,6 +316,9 @@ impl State {
             journal: Mutex::new(Journal { pin, open: false }),
             poisoned: AtomicBool::new(false),
             internal_control: AtomicBool::new(false),
+            store_read_only: AtomicBool::new(false),
+            internal_store_init: AtomicBool::new(false),
+            store_header,
             #[cfg(test)]
             admission_swap: Mutex::new(None),
             #[cfg(test)]
@@ -354,15 +414,45 @@ struct VfsFile {
 unsafe fn opened<'a>(file: *mut ffi::sqlite3_file) -> &'a mut OpenFile {
     unsafe { &mut *(*file.cast::<VfsFile>()).owned }
 }
-unsafe fn state<'a>(vfs: *mut ffi::sqlite3_vfs) -> &'a State {
-    unsafe { &*(*vfs).pAppData.cast::<State>() }
+struct DispatchEntry {
+    accepting_opens: bool,
+    state: Option<Arc<State>>,
 }
-unsafe fn clone_state(vfs: *mut ffi::sqlite3_vfs) -> Arc<State> {
-    let pointer = unsafe { (*vfs).pAppData.cast::<State>() };
-    unsafe {
-        Arc::increment_strong_count(pointer);
-        Arc::from_raw(pointer)
+struct DispatchContext {
+    entry: Mutex<DispatchEntry>,
+}
+impl DispatchContext {
+    fn admit_open(&self) -> io::Result<(std::sync::MutexGuard<'_, DispatchEntry>, Arc<State>)> {
+        let entry = self.entry.lock().map_err(|_| invalid())?;
+        if !entry.accepting_opens {
+            return Err(invalid());
+        }
+        let state = entry.state.clone().ok_or_else(invalid)?;
+        // Hold the admission mutex through pMethods installation. Owner
+        // retirement cannot close its main between this check and admission.
+        Ok((entry, state))
     }
+    fn clone_state(&self) -> io::Result<Arc<State>> {
+        let entry = self.entry.lock().map_err(|_| invalid())?;
+        entry.state.clone().ok_or_else(invalid)
+    }
+    fn disable_opens(&self) {
+        self.entry
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .accepting_opens = false;
+    }
+    fn detach(&self) {
+        let mut entry = self.entry.lock().unwrap_or_else(|e| e.into_inner());
+        entry.accepting_opens = false;
+        entry.state = None;
+    }
+}
+// pAppData now targets the lifetime-stable dispatch context, not a State that
+// a named :memory: SQLite connection can outlive. Every callback acquires its
+// own Arc before the live context can detach; file callbacks already own Arcs.
+unsafe fn state(vfs: *mut ffi::sqlite3_vfs) -> io::Result<Arc<State>> {
+    unsafe { &*(*vfs).pAppData.cast::<DispatchContext>() }.clone_state()
 }
 fn callback(operation: impl FnOnce() -> c_int) -> c_int {
     // Never unwind across the C ABI. Ordinary guard failures separately poison
@@ -404,7 +494,11 @@ unsafe extern "C" fn x_open(
         {
             return ffi::SQLITE_CANTOPEN;
         }
-        let state = unsafe { clone_state(vfs) };
+        let context = unsafe { &*(*vfs).pAppData.cast::<DispatchContext>() };
+        let (_admission, state) = match context.admit_open() {
+            Ok(value) => value,
+            Err(_) => return ffi::SQLITE_CANTOPEN,
+        };
         let role = match state.role(unsafe { CStr::from_ptr(path) }) {
             Ok(role) => role,
             Err(_) => return ffi::SQLITE_CANTOPEN,
@@ -491,7 +585,7 @@ unsafe extern "C" fn x_open(
                 exclusive_ofd(descriptor.file())?;
                 state.verify()?;
                 // Refuse a WAL header before SQLite reads it or can downgrade it.
-                let mut header = [0; 20];
+                let mut header = [0; 100];
                 #[cfg(test)]
                 state.header_reads.fetch_add(1, Ordering::SeqCst);
                 let count = descriptor.file().read_at(&mut header, 0)?;
@@ -500,6 +594,24 @@ unsafe extern "C" fn x_open(
                     && (header[18] != 1 || header[19] != 1)
                 {
                     return Err(state.reject());
+                }
+                if let Some(policy) = state.store_header {
+                    let empty = descriptor.file().metadata()?.len() == 0;
+                    if !(empty && policy.create)
+                        && (count != header.len()
+                            || &header[..16] != b"SQLite format 3\0"
+                            || u32::from_be_bytes(header[60..64].try_into().expect("header span"))
+                                != policy.version
+                            || u32::from_be_bytes(header[68..72].try_into().expect("header span"))
+                                != policy.application_id)
+                    {
+                        return Err(state.reject());
+                    }
+                    // A journal appearing after preflight must still reject
+                    // before SQLite can perform hot-journal recovery.
+                    if state.journal.lock().map_err(|_| invalid())?.pin.is_some() {
+                        return Err(state.reject());
+                    }
                 }
             } else {
                 let mut journal = state.journal.lock().map_err(|_| invalid())?;
@@ -818,7 +930,10 @@ unsafe extern "C" fn x_delete(
         if path.is_null() {
             return ffi::SQLITE_IOERR_DELETE;
         }
-        let state = unsafe { state(vfs) };
+        let state = match unsafe { state(vfs) } {
+            Ok(state) => state,
+            Err(_) => return ffi::SQLITE_IOERR_DELETE,
+        };
         if !matches!(
             state.role(unsafe { CStr::from_ptr(path) }),
             Ok(Role::Journal)
@@ -878,7 +993,10 @@ unsafe extern "C" fn x_access(
         {
             return ffi::SQLITE_IOERR_ACCESS;
         }
-        let state = unsafe { state(vfs) };
+        let state = match unsafe { state(vfs) } {
+            Ok(state) => state,
+            Err(_) => return ffi::SQLITE_IOERR_ACCESS,
+        };
         if state.verify().is_err() {
             return ffi::SQLITE_IOERR_ACCESS;
         }
@@ -924,7 +1042,10 @@ unsafe extern "C" fn x_full_path(
         if path.is_null() || amount <= 0 {
             return ffi::SQLITE_CANTOPEN;
         }
-        let state = unsafe { state(vfs) };
+        let state = match unsafe { state(vfs) } {
+            Ok(state) => state,
+            Err(_) => return ffi::SQLITE_CANTOPEN,
+        };
         let path = unsafe { CStr::from_ptr(path) };
         // The wrapper provides this exact absolute no-follow anchored path.
         if !matches!(state.role(path), Ok(Role::Main))
@@ -1005,11 +1126,11 @@ unsafe extern "C" fn authorizer(
     _trigger: *const c_char,
 ) -> c_int {
     callback(|| {
+        let state = unsafe { &*context.cast::<State>() };
         if matches!(action, ffi::SQLITE_ATTACH | ffi::SQLITE_DETACH) {
             return ffi::SQLITE_DENY;
         }
         if matches!(action, ffi::SQLITE_TRANSACTION | ffi::SQLITE_SAVEPOINT) {
-            let state = unsafe { &*context.cast::<State>() };
             if !state.internal_control.load(Ordering::Acquire) {
                 return ffi::SQLITE_DENY;
             }
@@ -1022,6 +1143,37 @@ unsafe extern "C" fn authorizer(
             {
                 return ffi::SQLITE_DENY;
             }
+            return ffi::SQLITE_OK;
+        }
+        if state.store_read_only.load(Ordering::Acquire) {
+            // This scope is private to borrowed Store reads. A cached DML
+            // statement is invalidated on entry, so it cannot bypass this
+            // authorizer by having been prepared in a previous write scope.
+            return match action {
+                ffi::SQLITE_READ
+                | ffi::SQLITE_SELECT
+                | ffi::SQLITE_FUNCTION
+                | ffi::SQLITE_RECURSIVE => ffi::SQLITE_OK,
+                ffi::SQLITE_PRAGMA if second.is_null() => {
+                    let pragma = unsafe { CStr::from_ptr(first) }.to_bytes();
+                    if [
+                        b"application_id".as_slice(),
+                        b"user_version",
+                        b"integrity_check",
+                        b"foreign_key_check",
+                        b"page_count",
+                        b"page_size",
+                    ]
+                    .iter()
+                    .any(|name| pragma.eq_ignore_ascii_case(name))
+                    {
+                        ffi::SQLITE_OK
+                    } else {
+                        ffi::SQLITE_DENY
+                    }
+                }
+                _ => ffi::SQLITE_DENY,
+            };
         }
         if action == ffi::SQLITE_PRAGMA && !second.is_null() {
             let pragma = unsafe { CStr::from_ptr(first) }.to_bytes();
@@ -1030,6 +1182,16 @@ unsafe extern "C" fn authorizer(
             if !pragma.eq_ignore_ascii_case(b"application_id")
                 && !pragma.eq_ignore_ascii_case(b"user_version")
             {
+                // The fixed Store initializer executes this one statement
+                // without a caller callback while this capability is held.
+                if state.internal_store_init.load(Ordering::Acquire)
+                    && pragma.eq_ignore_ascii_case(b"foreign_keys")
+                    && unsafe { CStr::from_ptr(second) }
+                        .to_bytes()
+                        .eq_ignore_ascii_case(b"ON")
+                {
+                    return ffi::SQLITE_OK;
+                }
                 return ffi::SQLITE_DENY;
             }
         }
@@ -1037,25 +1199,52 @@ unsafe extern "C" fn authorizer(
     })
 }
 
-struct Registration {
-    vfs: Box<ffi::sqlite3_vfs>,
+struct StableVfs {
+    vfs: Box<UnsafeCell<ffi::sqlite3_vfs>>,
     name: CString,
+    context: Arc<DispatchContext>,
+    _slot: RegistrationSlot,
+}
+// SAFETY: vfs (Box), name (CString buffer), and context (Arc) are stable heap
+// allocations. Only SQLite changes pNext, under its validated global registry
+// mutex; UnsafeCell permits those C-side mutations without Rust mutable aliases.
+// Other VFS fields are immutable. Callbacks synchronize live State acquisition,
+// or own a file Arc; retirement detaches live authority but never frees these
+// allocations/name/context. Moving this owner transfers ownership only. It
+// grants Send, never Sync or concurrent use of a NOMUTEX connection.
+unsafe impl Send for StableVfs {}
+struct Registration {
+    stable: Option<StableVfs>,
     state: Arc<State>,
 }
 impl Registration {
+    #[cfg(test)]
     fn new(state: Arc<State>) -> Result<Self> {
+        Self::new_reserved(state, RegistrationSlot::reserve()?)
+    }
+    fn new_reserved(state: Arc<State>, slot: RegistrationSlot) -> Result<Self> {
+        // Runtime SingleThread is rejected through the pinned safe rusqlite
+        // constructor before our first VFS registry operation. Memory-only,
+        // discarded, no private DB initialization or fallback.
+        sqlite_runtime_admission()?;
         let id = NEXT_VFS
             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |id| id.checked_add(1))
             .map_err(|_| Error::Limit)?;
         let name = CString::new(format!("morrow-owned-linux-{}-{id}", std::process::id()))
             .map_err(|_| Error::Io)?;
-        let mut vfs = Box::new(ffi::sqlite3_vfs {
+        let context = Arc::new(DispatchContext {
+            entry: Mutex::new(DispatchEntry {
+                accepting_opens: true,
+                state: Some(state.clone()),
+            }),
+        });
+        let vfs = Box::new(UnsafeCell::new(ffi::sqlite3_vfs {
             iVersion: 1,
             szOsFile: std::mem::size_of::<VfsFile>() as c_int,
             mxPathname: MAX_PATH as c_int,
             pNext: ptr::null_mut(),
             zName: name.as_ptr(),
-            pAppData: Arc::as_ptr(&state).cast_mut().cast(),
+            pAppData: Arc::as_ptr(&context).cast_mut().cast(),
             xOpen: Some(x_open),
             xDelete: Some(x_delete),
             xAccess: Some(x_access),
@@ -1072,23 +1261,60 @@ impl Registration {
             xSetSystemCall: None,
             xGetSystemCall: None,
             xNextSystemCall: None,
-        });
+        }));
+
         if unsafe { ffi::sqlite3_initialize() } != ffi::SQLITE_OK
             || !unsafe { ffi::sqlite3_vfs_find(name.as_ptr()) }.is_null()
-            || unsafe { ffi::sqlite3_vfs_register(&mut *vfs, 0) } != ffi::SQLITE_OK
+            || unsafe { ffi::sqlite3_vfs_register(vfs.get(), 0) } != ffi::SQLITE_OK
         {
             return Err(Error::Storage);
         }
-        Ok(Self { vfs, name, state })
+        Ok(Self {
+            stable: Some(StableVfs {
+                vfs,
+                name,
+                context,
+                _slot: slot,
+            }),
+            state,
+        })
+    }
+    fn pointer(&self) -> *mut ffi::sqlite3_vfs {
+        self.stable.as_ref().expect("live registration").vfs.get()
+    }
+    fn name(&self) -> &CStr {
+        self.stable
+            .as_ref()
+            .expect("live registration")
+            .name
+            .as_c_str()
+    }
+    fn disable_opens(&self) {
+        self.stable
+            .as_ref()
+            .expect("live registration")
+            .context
+            .disable_opens();
     }
 }
 impl Drop for Registration {
     fn drop(&mut self) {
-        // The owning wrapper closes SQLite before unregistering. No public
-        // statements/backups/handles can outlive the wrapper's borrowed API.
-        unsafe {
-            ffi::sqlite3_vfs_unregister(&mut *self.vfs);
+        if let Some(stable) = self.stable.take() {
+            stable.context.disable_opens();
+            // Owned Connection closes first. A named memory borrower may still
+            // retain pVfs, so unregister does NOT authorize freeing its address.
+            unsafe {
+                ffi::sqlite3_vfs_unregister(stable.vfs.get());
+            }
+            stable.context.detach();
+            RETIRED_REGISTRATIONS
+                .get_or_init(Default::default)
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .push(stable);
         }
+        // Detached context retains no State/pins. In-flight callback/file Arcs
+        // retain actual resources until their exact callback lifetime ends.
         reap_retired();
     }
 }
@@ -1101,10 +1327,22 @@ fn sqlite<T>(result: rusqlite::Result<T>) -> Result<T> {
         _ => Error::Storage,
     })
 }
+fn sqlite_runtime_admission() -> Result<()> {
+    drop(sqlite(Connection::open_in_memory())?);
+    Ok(())
+}
 fn verify(state: &State) -> Result<()> {
     state
         .verify()
         .map_err(|_| Error::Invalid("unsafe owned Linux SQLite object"))
+}
+struct MetadataExit<'state>(&'state State);
+impl Drop for MetadataExit<'_> {
+    fn drop(&mut self) {
+        // Unwind must observe metadata even when no VFS IO or rollback callback
+        // runs. Detection poisons State before an outer catcher can restore it.
+        let _ = verify(self.0);
+    }
 }
 struct InternalControl<'state>(&'state State);
 impl<'state> InternalControl<'state> {
@@ -1135,25 +1373,61 @@ fn readonly_row<T, P: Params>(
 /// One lifetime-exclusive read/write main database with DELETE rollback journal.
 /// All operations and transaction boundaries verify current private metadata.
 /// Unsupported kernels or profiles reject without a default-VFS fallback.
+/// Ownership may move between threads; concurrent sharing is forbidden.
+/// ```compile_fail
+/// fn require_sync<T: Sync>() {}
+/// require_sync::<morrow_core::linux_storage::GuardedSqliteConnection>();
+/// ```
 pub struct GuardedSqliteConnection {
     connection: Option<Connection>,
     registration: Registration,
+    #[cfg(test)]
+    after_store_read: Option<Box<dyn FnOnce() + Send>>,
+    #[cfg(test)]
+    after_store_commit: Option<Box<dyn FnOnce() + Send>>,
 }
 impl GuardedSqliteConnection {
     /// Opens an anchored private 0600 single-link file beneath a private 0700
     /// directory. Existing unsafe metadata is rejected rather than repaired.
     /// WAL headers/sidecars reject before any SQLite header read or SQL.
     pub fn open(path: &Path, create: bool) -> Result<Self> {
+        let slot = RegistrationSlot::reserve()?;
+        sqlite_runtime_admission()?;
         let state = State::prepare(path, create)
             .map_err(|_| Error::Invalid("unsafe owned Linux SQLite object"))?;
-        let registration = Registration::new(state)?;
+        Self::open_state(state, slot)
+    }
+    /// The bounded Store policy rejects unsupported headers before pMethods or
+    /// SQLite IO; it does not perform hot-journal recovery or old-schema migration.
+    pub(crate) fn open_store(
+        path: &Path,
+        create: bool,
+        application_id: u32,
+        version: u32,
+    ) -> Result<Self> {
+        let slot = RegistrationSlot::reserve()?;
+        sqlite_runtime_admission()?;
+        let state = State::prepare_for(
+            path,
+            create,
+            Some(StoreHeaderAdmission {
+                application_id,
+                version,
+                create,
+            }),
+        )
+        .map_err(|_| Error::Invalid("unsafe owned Linux SQLite object"))?;
+        Self::open_state(state, slot)
+    }
+    fn open_state(state: Arc<State>, slot: RegistrationSlot) -> Result<Self> {
+        let registration = Registration::new_reserved(state, slot)?;
         let path = Path::new(std::ffi::OsStr::from_bytes(
             registration.state.main_path.as_bytes(),
         ));
         let connection = sqlite(Connection::open_with_flags_and_vfs(
             path,
             OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NO_MUTEX,
-            registration.name.to_str().map_err(|_| Error::Io)?,
+            registration.name().to_str().map_err(|_| Error::Io)?,
         ))?;
         verify(&registration.state)?;
         sqlite(connection.busy_timeout(Duration::ZERO))?;
@@ -1177,6 +1451,10 @@ impl GuardedSqliteConnection {
         Ok(Self {
             connection: Some(connection),
             registration,
+            #[cfg(test)]
+            after_store_read: None,
+            #[cfg(test)]
+            after_store_commit: None,
         })
     }
     /// Executes a single statement inside the typed transaction. Mutations
@@ -1191,6 +1469,7 @@ impl GuardedSqliteConnection {
         params: P,
         row: impl FnOnce(&Row<'_>) -> rusqlite::Result<T>,
     ) -> Result<T> {
+        let _exit = MetadataExit(&self.registration.state);
         verify(&self.registration.state)?;
         let result = readonly_row(
             self.connection.as_ref().ok_or(Error::Storage)?,
@@ -1211,6 +1490,7 @@ impl GuardedSqliteConnection {
         operation: impl FnOnce(&mut GuardedSqliteTransaction<'_>) -> Result<T>,
     ) -> Result<T> {
         let state = self.registration.state.clone();
+        let _exit = MetadataExit(&state);
         verify(&state)?;
         let control = InternalControl::begin(&state);
         let transaction = sqlite(
@@ -1222,7 +1502,7 @@ impl GuardedSqliteConnection {
         drop(control);
         let mut guarded = GuardedSqliteTransaction {
             transaction: Some(transaction),
-            state,
+            state: state.clone(),
         };
         let value = operation(&mut guarded)?;
         verify(&guarded.state)?;
@@ -1243,13 +1523,203 @@ impl GuardedSqliteConnection {
     pub fn verify(&self) -> Result<()> {
         verify(&self.registration.state)
     }
+
+    /// Fixed initialization capability, not an arbitrary PRAGMA or SQL escape.
+    /// No caller code runs while the authorizer temporarily permits this exact
+    /// setting. Existing DELETE/FULL/trusted-schema/mmap policy is unchanged.
+    pub(crate) fn configure_store(&mut self) -> Result<()> {
+        let state = &self.registration.state;
+        verify(state)?;
+        let _init = StoreInitScope::begin(state);
+        let connection = self.connection.as_ref().ok_or(Error::Storage)?;
+        let result = sqlite(connection.execute_batch("PRAGMA foreign_keys=ON"));
+        verify(state)?;
+        result?;
+        let enabled: bool = sqlite(connection.query_row("PRAGMA foreign_keys", [], |r| r.get(0)))?;
+        if !enabled {
+            state.reject();
+            return Err(Error::Storage);
+        }
+        Ok(())
+    }
+
+    /// Crate-private borrowed read adapter for shared Store SQL routines. All
+    /// returned data must be owned: the higher-ranked borrow cannot escape as a
+    /// Connection/Row/Statement/Transaction. The authorizer denies writes and
+    /// caller transaction control, and cached statements are flushed on entry.
+    /// Even empty/cached/error results require explicit rollback and postcheck.
+    pub(crate) fn store_read<T>(
+        &mut self,
+        operation: impl for<'db> FnOnce(&'db Connection, StoreObjectGuard<'db>) -> Result<T>,
+    ) -> Result<T> {
+        let state = self.registration.state.clone();
+        let _exit = MetadataExit(&state);
+        verify(&state)?;
+        let connection = self.connection.as_mut().ok_or(Error::Storage)?;
+        connection.flush_prepared_statement_cache();
+        let control = InternalControl::begin(&state);
+        let transaction =
+            sqlite(connection.transaction_with_behavior(TransactionBehavior::Deferred))?;
+        drop(control);
+        let mut guarded = GuardedSqliteTransaction {
+            transaction: Some(transaction),
+            state: state.clone(),
+        };
+        let _read = StoreReadScope::begin(&state);
+        let result = operation(
+            guarded.transaction.as_ref().ok_or(Error::Storage)?,
+            StoreObjectGuard { state: &state },
+        );
+        #[cfg(test)]
+        if let Some(hook) = self.after_store_read.take() {
+            hook();
+        }
+        // Do not return even an error/empty value before validating the object.
+        verify(&state)?;
+        guarded.finish_unchanged()?;
+        result
+    }
+
+    /// Crate-private mutation adapter. Shared SQL routines do not own COMMIT or
+    /// ROLLBACK: their typed outcome selects this wrapper's verified exit.
+    /// Exact retries/duplicate ACKs explicitly rollback instead of committing.
+    /// Authorizer rejection prevents an early COMMIT/SAVEPOINT escape, including
+    /// DML RETURNING. No SQLite view escapes this exclusively borrowed operation.
+    pub(crate) fn store_transaction<T>(
+        &mut self,
+        operation: impl for<'db> FnOnce(
+            &'db Connection,
+            StoreObjectGuard<'db>,
+        ) -> Result<GuardedStoreOutcome<T>>,
+    ) -> Result<T> {
+        let state = self.registration.state.clone();
+        let _exit = MetadataExit(&state);
+        verify(&state)?;
+        let connection = self.connection.as_mut().ok_or(Error::Storage)?;
+        connection.flush_prepared_statement_cache();
+        let control = InternalControl::begin(&state);
+        let transaction =
+            sqlite(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+        drop(control);
+        let mut guarded = GuardedSqliteTransaction {
+            transaction: Some(transaction),
+            state: state.clone(),
+        };
+        let result = operation(
+            guarded.transaction.as_ref().ok_or(Error::Storage)?,
+            StoreObjectGuard { state: &state },
+        );
+        verify(&state)?;
+        match result {
+            Ok(GuardedStoreOutcome::Unchanged(value)) => {
+                guarded.finish_unchanged()?;
+                Ok(value)
+            }
+            Err(error) => {
+                guarded.finish_unchanged()?;
+                Err(error)
+            }
+            Ok(GuardedStoreOutcome::Commit(value)) => {
+                // Last object check is after all caller authority callbacks,
+                // immediately before the only permitted COMMIT.
+                verify(&state)?;
+                let _control = InternalControl::begin(&state);
+                if guarded
+                    .transaction
+                    .take()
+                    .ok_or(Error::Storage)?
+                    .commit()
+                    .is_err()
+                {
+                    state.reject();
+                    return Err(Error::CommitUnknown);
+                }
+                #[cfg(test)]
+                if let Some(hook) = self.after_store_commit.take() {
+                    hook();
+                }
+                if verify(&state).is_err() {
+                    return Err(Error::CommitUnknown);
+                }
+                Ok(value)
+            }
+        }
+    }
+
+    #[cfg(test)]
+    pub(crate) fn test_after_store_read(&mut self, hook: impl FnOnce() + Send + 'static) {
+        self.after_store_read = Some(Box::new(hook));
+    }
+    #[cfg(test)]
+    pub(crate) fn test_after_store_commit(&mut self, hook: impl FnOnce() + Send + 'static) {
+        self.after_store_commit = Some(Box::new(hook));
+    }
+    #[cfg(test)]
+    pub(crate) fn test_fail_store_sync(&self) {
+        self.registration
+            .state
+            .fail_sync
+            .store(true, Ordering::Release);
+    }
+    #[cfg(test)]
+    pub(crate) fn test_fail_store_rollback(&self) {
+        self.registration
+            .state
+            .fail_rollback
+            .store(true, Ordering::Release);
+    }
+}
+
+pub(crate) enum GuardedStoreOutcome<T> {
+    Commit(T),
+    Unchanged(T),
+}
+/// Metadata-only borrowed guard for external authorization callbacks inside a
+/// Store operation. It grants no Connection/IO handle and cannot extend its life.
+pub(crate) struct StoreObjectGuard<'operation> {
+    state: &'operation State,
+}
+impl StoreObjectGuard<'_> {
+    pub(crate) fn verify(&self) -> Result<()> {
+        verify(self.state)
+    }
+    pub(crate) fn verify_on_exit(&self) -> impl Drop + '_ {
+        MetadataExit(self.state)
+    }
+}
+struct StoreReadScope<'operation>(&'operation State);
+impl<'operation> StoreReadScope<'operation> {
+    fn begin(state: &'operation State) -> Self {
+        state.store_read_only.store(true, Ordering::Release);
+        Self(state)
+    }
+}
+impl Drop for StoreReadScope<'_> {
+    fn drop(&mut self) {
+        self.0.store_read_only.store(false, Ordering::Release);
+    }
+}
+struct StoreInitScope<'operation>(&'operation State);
+impl<'operation> StoreInitScope<'operation> {
+    fn begin(state: &'operation State) -> Self {
+        state.internal_store_init.store(true, Ordering::Release);
+        Self(state)
+    }
+}
+impl Drop for StoreInitScope<'_> {
+    fn drop(&mut self) {
+        self.0.internal_store_init.store(false, Ordering::Release);
+    }
 }
 use std::os::unix::ffi::OsStrExt;
 impl Drop for GuardedSqliteConnection {
     fn drop(&mut self) {
-        // Drop SQLite first, including rollback/journal callbacks, while both
-        // the registration and Arc-backed callback state remain alive.
+        // Close admission before owned SQLite close. Cleanup callbacks can
+        // still acquire State until close returns, and file callbacks own Arcs.
+        self.registration.disable_opens();
         drop(self.connection.take());
+        // Registration Drop unregisters and detaches, retaining a stable
+        // tombstone for any independently created named memory connection.
     }
 }
 /// Borrowed guarded transaction. Neither its SQLite connection nor raw handle
@@ -1259,6 +1729,21 @@ pub struct GuardedSqliteTransaction<'connection> {
     state: Arc<State>,
 }
 impl GuardedSqliteTransaction<'_> {
+    fn finish_unchanged(&mut self) -> Result<()> {
+        verify(&self.state)?;
+        let _control = InternalControl::begin(&self.state);
+        if self
+            .transaction
+            .take()
+            .ok_or(Error::Storage)?
+            .rollback()
+            .is_err()
+        {
+            self.state.reject();
+            return Err(Error::Storage);
+        }
+        verify(&self.state)
+    }
     /// Brackets a transaction statement with current-object verification.
     pub fn execute<P: Params>(&mut self, statement: &str, params: P) -> Result<usize> {
         verify(&self.state)?;
@@ -1291,12 +1776,16 @@ impl GuardedSqliteTransaction<'_> {
 }
 impl Drop for GuardedSqliteTransaction<'_> {
     fn drop(&mut self) {
+        // Check before and after rollback, including cache-only unwinding.
+        // Unsafe metadata makes poisoning sticky even if rollback returns OK.
+        let _ = verify(&self.state);
         if let Some(transaction) = self.transaction.take() {
             let _control = InternalControl::begin(&self.state);
             if transaction.rollback().is_err() {
                 self.state.reject();
             }
         }
+        let _ = verify(&self.state);
     }
 }
 
@@ -1308,6 +1797,232 @@ mod tests {
     // Pool counters are process-wide. These two pool/ABI tests run under this
     // lock, independently of metadata-only library tests.
     static UNIT_LOCK: Mutex<()> = Mutex::new(());
+    #[test]
+    fn singlethread_runtime_probe() {
+        let Some(path) = std::env::var_os("MORROW_SQLITE_SINGLETHREAD_PROBE") else {
+            return;
+        };
+        // This helper runs alone in a fresh subprocess, before any SQLite
+        // initialization. Never change global threading in the live test suite.
+        assert_eq!(
+            unsafe { ffi::sqlite3_config(ffi::SQLITE_CONFIG_SINGLETHREAD) },
+            ffi::SQLITE_OK
+        );
+        assert!(matches!(
+            GuardedSqliteConnection::open_store(Path::new(&path), true, 0x4d4f5252, 24),
+            Err(Error::Storage)
+        ));
+        assert!(!Path::new(&path).exists());
+        assert_eq!(ACTUAL_OPENS.load(Ordering::SeqCst), 0);
+        std::process::exit(0);
+    }
+    #[test]
+    fn runtime_singlethread_mode_refuses_before_main_create_or_registry_use() {
+        let dir = directory();
+        let path = dir.path().join("not-created.db");
+        let status = std::process::Command::new(std::env::current_exe().unwrap())
+            .args([
+                "--exact",
+                "linux_storage::sqlite_vfs::tests::singlethread_runtime_probe",
+                "--nocapture",
+            ])
+            .env("MORROW_SQLITE_SINGLETHREAD_PROBE", &path)
+            .status()
+            .unwrap();
+        assert_eq!(status.code(), Some(0));
+        assert!(!path.exists());
+    }
+    #[test]
+    fn rejected_store_header_construction_unregisters_name_before_owner_drop() {
+        let dir = directory();
+        let path = dir.path().join("unsupported-header.db");
+        let state = State::prepare_for(
+            &path,
+            true,
+            Some(StoreHeaderAdmission {
+                application_id: 0x4d4f5252,
+                version: 24,
+                create: false,
+            }),
+        )
+        .unwrap();
+        let registration = Registration::new(state).unwrap();
+        let name = registration.name().to_owned();
+        assert!(
+            Connection::open_with_flags_and_vfs(
+                &path,
+                OpenFlags::SQLITE_OPEN_READ_WRITE,
+                name.to_str().unwrap()
+            )
+            .is_err()
+        );
+        drop(registration);
+        assert!(unsafe { ffi::sqlite3_vfs_find(name.as_ptr()) }.is_null());
+        assert!(std::fs::read(path).unwrap().is_empty());
+    }
+    #[test]
+    fn named_memory_borrower_survives_owner_drop_without_live_file_authority() {
+        let dir = directory();
+        let path = dir.path().join("memory-bypass.db");
+        let owned = GuardedSqliteConnection::open(&path, true).unwrap();
+        let state = Arc::downgrade(&owned.registration.state);
+        let pointer = owned.registration.pointer();
+        let name = owned.registration.name().to_owned();
+        let outside = Connection::open_with_flags_and_vfs(
+            ":memory:",
+            OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_CREATE,
+            name.to_str().unwrap(),
+        )
+        .unwrap();
+        let (ready_tx, ready_rx) = std::sync::mpsc::channel();
+        let (after_tx, after_rx) = std::sync::mpsc::channel();
+        let target = path.clone();
+        let borrower = std::thread::spawn(move || {
+            let mut attach = outside.prepare("ATTACH DATABASE ?1 AS stale").unwrap();
+            ready_tx.send(()).unwrap();
+            after_rx.recv().unwrap();
+            // Exercises the retained pVfs after unregister, through safe SQLite
+            // APIs. No dangling callback is ever invoked: retention is in force.
+            let timestamp: String = outside
+                .query_row("SELECT CURRENT_TIMESTAMP", [], |r| r.get(0))
+                .unwrap();
+            assert!(!timestamp.is_empty());
+            assert!(attach.execute([target.to_str().unwrap()]).is_err());
+            drop(attach);
+            outside
+                .execute_batch("CREATE TABLE memory_only(x); INSERT INTO memory_only VALUES(7)")
+                .unwrap();
+            assert_eq!(
+                outside
+                    .query_row("SELECT x FROM memory_only", [], |r| r.get::<_, i64>(0))
+                    .unwrap(),
+                7
+            );
+        });
+        ready_rx.recv().unwrap();
+        drop(owned);
+        assert!(
+            state.upgrade().is_none(),
+            "retired dispatch must release State and all file pins"
+        );
+        assert!(unsafe { ffi::sqlite3_vfs_find(name.as_ptr()) }.is_null());
+        assert!(unsafe { super::state(pointer) }.is_err());
+        let mut output = 1;
+        assert_eq!(
+            unsafe {
+                x_access(
+                    pointer,
+                    name.as_ptr(),
+                    ffi::SQLITE_ACCESS_EXISTS,
+                    &mut output,
+                )
+            },
+            ffi::SQLITE_IOERR_ACCESS
+        );
+        assert_eq!(output, 0);
+        after_tx.send(()).unwrap();
+        borrower.join().unwrap();
+        // Named memory borrower did not retain main OFD/file authority.
+        let mut fresh = GuardedSqliteConnection::open(&path, false).unwrap();
+        fresh.execute("CREATE TABLE released(x)", []).unwrap();
+    }
+    #[test]
+    fn file_callbacks_keep_detached_state_until_exact_close_then_release_resources() {
+        let _lock = UNIT_LOCK.lock().unwrap();
+        let dir = directory();
+        let path = dir.path().join("callback.db");
+        let state = State::prepare(&path, true).unwrap();
+        let weak = Arc::downgrade(&state);
+        let registration = Registration::new(state.clone()).unwrap();
+        let mut file = VfsFile {
+            base: ffi::sqlite3_file {
+                pMethods: ptr::null(),
+            },
+            owned: ptr::null_mut(),
+        };
+        let baseline = DESCRIPTORS.load(Ordering::SeqCst);
+        assert_eq!(
+            unsafe {
+                x_open(
+                    registration.pointer(),
+                    state.main_path.as_ptr(),
+                    &mut file.base,
+                    ffi::SQLITE_OPEN_MAIN_DB | ffi::SQLITE_OPEN_READWRITE,
+                    ptr::null_mut(),
+                )
+            },
+            ffi::SQLITE_OK
+        );
+        assert_eq!(DESCRIPTORS.load(Ordering::SeqCst), baseline + 1);
+        drop(state);
+        drop(registration);
+        assert!(
+            weak.upgrade().is_some(),
+            "real sqlite3_file owns its callback state"
+        );
+        let mut bytes = [0xffu8; 16];
+        assert_eq!(
+            unsafe {
+                x_read(
+                    &mut file.base,
+                    bytes.as_mut_ptr().cast(),
+                    bytes.len() as c_int,
+                    0,
+                )
+            },
+            ffi::SQLITE_IOERR_SHORT_READ
+        );
+        assert_eq!(bytes, [0; 16]);
+        assert_eq!(unsafe { x_close(&mut file.base) }, ffi::SQLITE_OK);
+        assert!(weak.upgrade().is_none());
+        assert_eq!(DESCRIPTORS.load(Ordering::SeqCst), baseline);
+    }
+    #[test]
+    fn registration_limit_probe() {
+        let Some(path) = std::env::var_os("MORROW_REGISTRATION_LIMIT_PROBE") else {
+            return;
+        };
+        let path = Path::new(&path);
+        let state = State::prepare(path, true).unwrap();
+        for _ in 0..MAX_REGISTRATIONS {
+            drop(Registration::new(state.clone()).unwrap());
+            assert_eq!(
+                Arc::strong_count(&state),
+                1,
+                "retirement retains no live State"
+            );
+        }
+        let opens = ACTUAL_OPENS.load(Ordering::SeqCst);
+        let missing = path.with_file_name("over-limit.db");
+        assert!(matches!(
+            GuardedSqliteConnection::open(&missing, true),
+            Err(Error::Limit)
+        ));
+        assert!(matches!(
+            GuardedSqliteConnection::open_store(&missing, true, 0x4d4f5252, 24),
+            Err(Error::Limit)
+        ));
+        assert!(!missing.exists());
+        assert_eq!(ACTUAL_OPENS.load(Ordering::SeqCst), opens);
+        assert_eq!(REGISTRATIONS.load(Ordering::SeqCst), MAX_REGISTRATIONS);
+        std::process::exit(0);
+    }
+    #[test]
+    fn stable_registration_retirement_is_bounded_before_runtime_or_state_effects() {
+        let dir = directory();
+        let path = dir.path().join("quota.db");
+        let status = std::process::Command::new(std::env::current_exe().unwrap())
+            .args([
+                "--exact",
+                "linux_storage::sqlite_vfs::tests::registration_limit_probe",
+                "--nocapture",
+            ])
+            .env("MORROW_REGISTRATION_LIMIT_PROBE", &path)
+            .status()
+            .unwrap();
+        assert_eq!(status.code(), Some(0));
+        assert!(!dir.path().join("over-limit.db").exists());
+    }
     fn directory() -> tempfile::TempDir {
         tempfile::Builder::new()
             .permissions(std::fs::Permissions::from_mode(0o700))
@@ -1329,7 +2044,7 @@ mod tests {
         );
         *state.admission_swap.lock().unwrap() =
             Some((candidate.clone(), dir.path().join("displaced.db")));
-        let mut registration = Registration::new(state.clone()).unwrap();
+        let registration = Registration::new(state.clone()).unwrap();
         let mut file = VfsFile {
             base: ffi::sqlite3_file {
                 pMethods: ptr::null(),
@@ -1339,7 +2054,7 @@ mod tests {
         let mut flags = 0;
         let result = unsafe {
             x_open(
-                &mut *registration.vfs,
+                registration.pointer(),
                 state.main_path.as_ptr(),
                 &mut file.base,
                 ffi::SQLITE_OPEN_READWRITE | ffi::SQLITE_OPEN_MAIN_DB,
@@ -1480,7 +2195,7 @@ mod tests {
                 .unwrap(),
         );
         let state = State::prepare(&path, false).unwrap();
-        let mut registration = Registration::new(state.clone()).unwrap();
+        let registration = Registration::new(state.clone()).unwrap();
         let mut file = VfsFile {
             base: ffi::sqlite3_file {
                 pMethods: ptr::null(),
@@ -1491,7 +2206,7 @@ mod tests {
         assert_eq!(
             unsafe {
                 x_open(
-                    &mut *registration.vfs,
+                    registration.pointer(),
                     state.journal_path.as_ptr(),
                     &mut file.base,
                     ffi::SQLITE_OPEN_READONLY | ffi::SQLITE_OPEN_MAIN_JOURNAL,
@@ -1541,7 +2256,7 @@ mod tests {
         let dir = directory();
         let path = dir.path().join("delete.db");
         let state = State::prepare(&path, true).unwrap();
-        let mut registration = Registration::new(state.clone()).unwrap();
+        let registration = Registration::new(state.clone()).unwrap();
         let mut file = VfsFile {
             base: ffi::sqlite3_file {
                 pMethods: ptr::null(),
@@ -1551,7 +2266,7 @@ mod tests {
         assert_eq!(
             unsafe {
                 x_open(
-                    &mut *registration.vfs,
+                    registration.pointer(),
                     state.journal_path.as_ptr(),
                     &mut file.base,
                     ffi::SQLITE_OPEN_READWRITE
@@ -1573,7 +2288,7 @@ mod tests {
                 .unwrap(),
         );
         assert_eq!(
-            unsafe { x_delete(&mut *registration.vfs, state.journal_path.as_ptr(), 1) },
+            unsafe { x_delete(registration.pointer(), state.journal_path.as_ptr(), 1) },
             ffi::SQLITE_IOERR_DELETE
         );
         assert!(journal.exists());

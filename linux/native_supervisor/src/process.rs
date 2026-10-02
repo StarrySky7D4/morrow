@@ -4,7 +4,7 @@ use std::{
     fs::{File, OpenOptions},
     io::{self, Read},
     os::{
-        fd::{AsRawFd, FromRawFd, OwnedFd, RawFd},
+        fd::{AsFd, AsRawFd, FromRawFd, OwnedFd, RawFd},
         unix::{
             ffi::OsStrExt,
             fs::{MetadataExt, OpenOptionsExt},
@@ -95,11 +95,107 @@ impl OwnedProcess {
         cwd: &Path,
         args: &[&OsStr],
     ) -> Result<Self, SpawnFailure> {
-        let prepared = prepare(&executable, cwd, args).map_err(SpawnFailure::NotCreated)?;
+        Self::spawn_inner(executable, cwd, args, None, None, None)
+    }
+
+    pub(crate) fn spawn_with_inherited(
+        executable: SealedExecutable,
+        cwd: &Path,
+        args: &[&OsStr],
+        inherited: crate::controller_transport::InheritedLaunch,
+    ) -> Result<Self, SpawnFailure> {
+        Self::spawn_inner(executable, cwd, args, Some(inherited), None, None)
+    }
+
+    /// Synthetic controller-fenced launch. All blocking artifact preparation is
+    /// completed before the final original-object/lease check adjacent to clone.
+    /// An unobserved controller exit can still race clone; any created child is
+    /// retained and requires exact reclamation, never classified NotCreated.
+    pub fn spawn_for_controller_fixture(
+        executable: SealedExecutable,
+        cwd: &Path,
+        args: &[&OsStr],
+        watch: &mut crate::ControllerWatch,
+    ) -> Result<Self, SpawnFailure> {
+        Self::spawn_inner(executable, cwd, args, None, Some(watch), None)
+    }
+
+    /// Prepare every digest/argv/cwd operation before activating the live lease.
+    /// The returned object retains the same sealed executable and owned cwd.
+    pub fn prepare_controller_fixture(
+        executable: SealedExecutable,
+        cwd: &Path,
+        args: &[&OsStr],
+    ) -> io::Result<PreparedControllerFixtureChild> {
+        let prepared = prepare(&executable, cwd, args)?;
+        Ok(PreparedControllerFixtureChild {
+            executable,
+            prepared,
+        })
+    }
+
+    fn spawn_inner(
+        executable: SealedExecutable,
+        cwd: &Path,
+        args: &[&OsStr],
+        inherited: Option<crate::controller_transport::InheritedLaunch>,
+        mut controller_guard: Option<&mut crate::ControllerWatch>,
+        already_prepared: Option<Prepared>,
+    ) -> Result<Self, SpawnFailure> {
+        let prepared = match already_prepared {
+            Some(prepared) => {
+                executable
+                    .verify_object()
+                    .map_err(SpawnFailure::NotCreated)?;
+                let metadata = prepared.cwd.metadata().map_err(SpawnFailure::NotCreated)?;
+                if prepared.parent != unsafe { libc::getpid() }
+                    || !metadata.is_dir()
+                    || metadata.uid() != unsafe { libc::geteuid() }
+                    || metadata.mode() & 0o7777 != 0o700
+                {
+                    return Err(SpawnFailure::NotCreated(invalid(
+                        "prepared launch process/cwd changed",
+                    )));
+                }
+                prepared
+            }
+            None => prepare(&executable, cwd, args).map_err(SpawnFailure::NotCreated)?,
+        };
+        // Stage executable and exec-status away from fixed bootstrap slots3..6.
+        // Every optional role source is already staged>=16 by typed construction.
+        let staged_executable = if inherited.is_some() {
+            Some(
+                crate::controller_transport::duplicate_high(executable.as_fd().as_raw_fd())
+                    .map_err(SpawnFailure::NotCreated)?,
+            )
+        } else {
+            None
+        };
         let stdout = pipe().map_err(SpawnFailure::NotCreated)?;
         let stderr = pipe().map_err(SpawnFailure::NotCreated)?;
         let input = pipe().map_err(SpawnFailure::NotCreated)?;
         let status = pipe().map_err(SpawnFailure::NotCreated)?;
+        let staged_status = if inherited.is_some() {
+            Some(
+                crate::controller_transport::duplicate_high(status.1.as_raw_fd())
+                    .map_err(SpawnFailure::NotCreated)?,
+            )
+        } else {
+            None
+        };
+        let executable_fd = staged_executable
+            .as_ref()
+            .map_or(executable.as_fd().as_raw_fd(), AsRawFd::as_raw_fd);
+        let status_fd = staged_status
+            .as_ref()
+            .map_or(status.1.as_raw_fd(), AsRawFd::as_raw_fd);
+        if let Some(watch) = controller_guard.as_mut() {
+            if !watch.poll() || !watch.admission_open() {
+                return Err(SpawnFailure::NotCreated(invalid(
+                    "original controller admission closed before clone",
+                )));
+            }
+        }
         let mut pidfd = -1i32;
         // Raw clone with CLONE_PIDFD and no VM/thread/stack-sharing flags has
         // fork semantics. On x86_64/aarch64 parent_tid receives the owned pidfd.
@@ -126,11 +222,12 @@ impl OwnedProcess {
             unsafe {
                 child_exec(
                     &prepared,
-                    executable.as_fd().as_raw_fd(),
+                    executable_fd,
                     input.0.as_raw_fd(),
                     stdout.1.as_raw_fd(),
                     stderr.1.as_raw_fd(),
-                    status.1.as_raw_fd(),
+                    status_fd,
+                    inherited.as_ref(),
                 )
             }
         }
@@ -141,6 +238,9 @@ impl OwnedProcess {
         drop(stderr.1);
         drop(input);
         drop(status.1);
+        drop(staged_status);
+        drop(staged_executable);
+        drop(inherited);
         let mut owner = Self {
             pid: pid as u32,
             pidfd,
@@ -155,7 +255,11 @@ impl OwnedProcess {
             nonblocking(owner.stdout.as_raw_fd())?;
             nonblocking(owner.stderr.as_raw_fd())?;
             nonblocking(status.0.as_raw_fd())?;
-            read_exec_status(status.0.as_raw_fd(), SPAWN_TIMEOUT)
+            read_exec_status(
+                status.0.as_raw_fd(),
+                SPAWN_TIMEOUT,
+                controller_guard.as_deref_mut(),
+            )
         })();
         if let Err(error) = initialized {
             // Keep a real owner even when exec failed or timed out. The caller
@@ -168,6 +272,13 @@ impl OwnedProcess {
             });
         }
         Ok(owner)
+    }
+
+    pub fn original_controller(&self) -> io::Result<crate::OriginalController> {
+        if self.exit.is_some() {
+            return Err(invalid("reaped child cannot create controller watch"));
+        }
+        crate::OriginalController::from_owned_child(self.pidfd.as_fd(), self.pid)
     }
 
     pub fn pid(&self) -> u32 {
@@ -291,6 +402,25 @@ impl Drop for OwnedProcess {
     }
 }
 
+/// Typed prelaunch object, not a generic verified flag or pathname cache. The
+/// immutable main ELF is held from full digest admission to the actual clone.
+pub struct PreparedControllerFixtureChild {
+    executable: SealedExecutable,
+    prepared: Prepared,
+}
+impl PreparedControllerFixtureChild {
+    pub fn spawn(self, watch: &mut crate::ControllerWatch) -> Result<OwnedProcess, SpawnFailure> {
+        OwnedProcess::spawn_inner(
+            self.executable,
+            Path::new("/"),
+            &[],
+            None,
+            Some(watch),
+            Some(self.prepared),
+        )
+    }
+}
+
 struct Prepared {
     cwd: File,
     _strings: Vec<CString>,
@@ -352,6 +482,7 @@ unsafe fn child_exec(
     stdout: RawFd,
     stderr: RawFd,
     status: RawFd,
+    inherited: Option<&crate::controller_transport::InheritedLaunch>,
 ) -> ! {
     unsafe {
         if libc::prctl(libc::PR_SET_PDEATHSIG, libc::SIGKILL) < 0
@@ -373,6 +504,15 @@ unsafe fn child_exec(
         ) < 0
         {
             child_error(status);
+        }
+        if let Some(inherited) = inherited {
+            for (target, source) in &inherited.descriptors {
+                if libc::dup2(source.as_raw_fd(), *target) < 0
+                    || libc::fcntl(*target, libc::F_SETFD, 0) < 0
+                {
+                    child_error(status);
+                }
+            }
         }
         let environment: [*const libc::c_char; 1] = [std::ptr::null()];
         libc::syscall(
@@ -438,9 +578,20 @@ fn nonblocking(fd: RawFd) -> io::Result<()> {
     }
     Ok(())
 }
-fn read_exec_status(fd: RawFd, timeout: Duration) -> io::Result<()> {
+fn read_exec_status(
+    fd: RawFd,
+    timeout: Duration,
+    mut watch: Option<&mut crate::ControllerWatch>,
+) -> io::Result<()> {
     let until = Instant::now() + timeout;
     loop {
+        if let Some(watch) = watch.as_mut() {
+            if !watch.poll() || !watch.admission_open() {
+                return Err(invalid(
+                    "controller lost during exec handshake; real child retained",
+                ));
+            }
+        }
         let mut error = 0i32;
         let count = unsafe {
             libc::read(

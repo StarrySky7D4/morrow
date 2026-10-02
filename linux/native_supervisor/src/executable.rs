@@ -135,6 +135,28 @@ impl SealedExecutable {
 
     /// Verify the held memfd itself, never its diagnostic /proc pathname.
     pub fn verify(&self) -> io::Result<()> {
+        let metadata = self.verify_object()?;
+        let mut hasher = Sha256::new();
+        let mut offset = 0;
+        let mut buffer = [0u8; 16 * 1024];
+        while offset < metadata.len() {
+            let count = self.file.read_at(&mut buffer, offset)?;
+            if count == 0 {
+                return Err(invalid("short sealed executable read"));
+            }
+            hasher.update(&buffer[..count]);
+            offset += count as u64;
+        }
+        let actual: [u8; 32] = hasher.finalize().into();
+        if actual != self.digest {
+            return Err(invalid("sealed executable digest mismatch"));
+        }
+        Ok(())
+    }
+    /// Current identity/policy of the same held immutable memfd. Only a typed
+    /// prepared launch may use this without rehashing: WRITE/GROW/SHRINK/SEAL
+    /// make the already-verified bytes and size immutable for this object's life.
+    pub(crate) fn verify_object(&self) -> io::Result<std::fs::Metadata> {
         let fd = self.file.as_raw_fd();
         let metadata = self.file.metadata()?;
         // SAFETY: these calls have no pointers and the descriptor stays held.
@@ -158,22 +180,7 @@ impl SealedExecutable {
         {
             return Err(invalid("sealed executable object policy"));
         }
-        let mut hasher = Sha256::new();
-        let mut offset = 0;
-        let mut buffer = [0u8; 16 * 1024];
-        while offset < metadata.len() {
-            let count = self.file.read_at(&mut buffer, offset)?;
-            if count == 0 {
-                return Err(invalid("short sealed executable read"));
-            }
-            hasher.update(&buffer[..count]);
-            offset += count as u64;
-        }
-        let actual: [u8; 32] = hasher.finalize().into();
-        if actual != self.digest {
-            return Err(invalid("sealed executable digest mismatch"));
-        }
-        Ok(())
+        Ok(metadata)
     }
 }
 

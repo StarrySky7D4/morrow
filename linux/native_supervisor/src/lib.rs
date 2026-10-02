@@ -8,11 +8,21 @@
 #![cfg(target_os = "linux")]
 #![deny(unsafe_op_in_unsafe_fn)]
 
+mod controller;
+mod controller_transport;
 mod executable;
 mod process;
 
+pub use controller::{ControllerLoss, ControllerWatch, LossObservation, OriginalController};
+pub use controller_transport::{
+    AuthenticatedFrame, BoundSupervisorFixtureLaunch, CapabilityTransport, ControllerFixtureLaunch,
+    ControllerLimits, FrameKind, FrameRead, SupervisorFixtureLaunch, fixture_channel_pair,
+    take_controller_fixture_transport, take_supervisor_fixture_transport,
+};
 pub use executable::{MAX_EXECUTABLE_BYTES, SealedExecutable, SourceIdentity, digest};
-pub use process::{ExitObservation, OutputObservation, OwnedProcess, SpawnFailure};
+pub use process::{
+    ExitObservation, OutputObservation, OwnedProcess, PreparedControllerFixtureChild, SpawnFailure,
+};
 
 fn invalid(message: &'static str) -> std::io::Error {
     std::io::Error::new(std::io::ErrorKind::InvalidInput, message)

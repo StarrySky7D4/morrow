@@ -13,7 +13,7 @@ use morrow_core::{
     plugin_package::{Package, catalog::Catalog, proto::TransformHandler, registry::Registry},
     store::Store,
 };
-use morrow_plugin_runtime::{Limits, manager::Manager};
+use morrow_plugin_runtime::{Fault, Limits, manager::Manager};
 
 const WAIT: Duration = Duration::from_secs(10);
 
@@ -41,6 +41,34 @@ fn inert_package() -> Package {
     manifest.channel_declaration = Some(channel::declaration(
         vec!["channel.directory.consume".into()],
         vec![Kind::ByteStream, Kind::Events],
+    ));
+    Package::build(manifest, &wasm).unwrap()
+}
+
+fn trap_package() -> Package {
+    let wasm = wat::parse_str(
+        r#"(module
+            (import "morrow_channel_v1" "call" (func (param i32 i32 i32 i32) (result i32)))
+            (memory (export "memory") 4)
+            (func (export "morrow_run") (result i32) unreachable))"#,
+    )
+    .unwrap();
+    let mut manifest = Package::manifest_for_transform(
+        "org.example.channel.native-trap-fixture",
+        "1.0.0",
+        &wasm,
+        vec![TransformHandler {
+            handler: "channel.directory.consume".into(),
+            input_type: DIRECTORY_INPUT_TYPE.into(),
+            output_type: "bytes".into(),
+            max_input_bytes: 65_536,
+            max_output_bytes: 64,
+        }],
+    );
+    manifest.required_features.push(channel::FEATURE.into());
+    manifest.channel_declaration = Some(channel::declaration(
+        vec!["channel.directory.consume".into()],
+        vec![Kind::Events],
     ));
     Package::build(manifest, &wasm).unwrap()
 }
@@ -252,6 +280,21 @@ fn original_control(app: &Workbench) -> morrow_core::lifecycle::Revocation {
         .unwrap()
 }
 
+fn wait_native_joins(app: &mut Workbench, key: &[u8]) -> View {
+    let deadline = Instant::now() + WAIT;
+    loop {
+        let state = status(app, key);
+        if state.worker_joined && state.resource_reclaimed {
+            return state;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "original native executor/source joins pending: {state:?}"
+        );
+        thread::sleep(Duration::from_millis(1));
+    }
+}
+
 #[test]
 fn native_compilation_cannot_enable_a_package_or_bind_a_production_owner() {
     let mut f = Fixture::new(inert_package());
@@ -459,6 +502,163 @@ fn native_foreign_cleanup_keys_cannot_revoke_after_real_request_exhaustion() {
     assert!(!closed.worker_joined);
 }
 
+#[test]
+fn native_wire_failed_reports_keep_primary_fault_original_owner_and_explicit_close() {
+    for (case, (package, expected)) in [
+        (inert_package(), Fault::TaskProtocol),
+        (trap_package(), Fault::Trap),
+    ]
+    .into_iter()
+    .enumerate()
+    {
+        let mut f = Fixture::new(package);
+        f.bind_synthetic();
+        f.enable();
+        let foreign = {
+            let owner = f.app.state.local_mut().unwrap();
+            owner
+                .manager
+                .as_mut()
+                .unwrap()
+                .connect(&f.package.manifest().package_id, &mut owner.host)
+                .unwrap()
+        };
+        let foreign_control = f
+            .app
+            .state
+            .local()
+            .unwrap()
+            .host
+            .revocation(foreign.connection())
+            .unwrap();
+        let request = f.prepare(30 + case as u8, Kind::Events, 1, 31);
+        let prepared = ok(prepare(&mut f.app, &request));
+        let original = original_control(&f.app);
+        let original_binding = f.app.state.local().unwrap().host.binding();
+        let original_instance = f.app.channel_tasks.job.as_ref().unwrap().instance.clone();
+        ok(append(
+            &mut f.app,
+            &prepared.key,
+            1,
+            &[0x53; 31],
+            b"original-cursor",
+        ));
+        ok(run(&mut f.app, &prepared.key, &prepared.directory));
+        let completed = wait_native_joins(&mut f.app, &prepared.key);
+        assert_eq!(completed.phase, 3);
+        assert_eq!(completed.task_state, 3);
+        assert!(completed.task_error.contains("runtime:"));
+        assert!(!completed.task_error.contains("maintenance"));
+        assert!(completed.output.is_empty());
+        assert_eq!(completed.last_acked, 0);
+        assert_eq!(completed.cleanup_proof, CleanupProof::Joined as u16);
+        assert!(original.is_revoked());
+        assert!(!foreign_control.is_revoked());
+        assert_eq!(
+            f.app.state.local().unwrap().host.binding(),
+            original_binding
+        );
+        assert_eq!(
+            f.app
+                .state
+                .local()
+                .unwrap()
+                .host
+                .connection_phase(original_instance.connection()),
+            Ok(morrow_core::lifecycle::InstancePhase::Revoked)
+        );
+        assert!(f.app.local_state_mut().is_err());
+        let job = f.app.channel_tasks.job.as_ref().unwrap();
+        assert!(job.run_admitted && job.worker_started && job.worker_joined);
+        assert!(!job.close_requested && !job.disconnected);
+        assert!(
+            job.error.is_empty(),
+            "the failed TaskReport remains primary"
+        );
+        let report = job.report.as_ref().unwrap();
+        assert_eq!(report.execution.outcome, Err(expected.clone()));
+        assert!(report.output.is_none());
+        assert!(report.failure.is_none());
+        let recorded = format!("{report:?}");
+        let cause = job.broker.snapshot().terminal_cause;
+        assert!(cause.is_some());
+        let endpoint = job.broker.endpoint();
+        let scope: [u8; 32] = prepared.key.as_slice().try_into().unwrap();
+        let reopened = Store::open_existing(
+            &f.directory.path().join("store.sqlite3"),
+            Default::default(),
+        )
+        .unwrap();
+        assert!(
+            reopened
+                .channel_checkpoint(&scope, &endpoint.source_epoch)
+                .unwrap()
+                .is_none()
+        );
+        assert!(
+            reopened
+                .channel_ack_receipt(&scope, &endpoint.source_epoch, 1)
+                .unwrap()
+                .is_none()
+        );
+        assert!(
+            run(&mut f.app, &prepared.key, &prepared.directory)
+                .error
+                .contains("already admitted")
+        );
+        let closed = close(&mut f.app, &prepared.key);
+        assert_eq!(closed.phase, 5);
+        assert_eq!(closed.task_state, 4);
+        assert!(closed.output.is_empty());
+        assert!(f.app.channel_tasks.job.as_ref().unwrap().disconnected);
+        assert_eq!(
+            f.app
+                .channel_tasks
+                .job
+                .as_ref()
+                .unwrap()
+                .broker
+                .snapshot()
+                .terminal_cause,
+            cause
+        );
+        assert_eq!(
+            format!(
+                "{:?}",
+                f.app
+                    .channel_tasks
+                    .job
+                    .as_ref()
+                    .unwrap()
+                    .report
+                    .as_ref()
+                    .unwrap()
+            ),
+            recorded
+        );
+        assert!(
+            f.app
+                .state
+                .local()
+                .unwrap()
+                .host
+                .connection_phase(original_instance.connection())
+                .is_err()
+        );
+        assert!(!foreign_control.is_revoked());
+        f.app
+            .state
+            .local_mut()
+            .unwrap()
+            .host
+            .disconnect(foreign.connection())
+            .unwrap();
+        eprintln!(
+            "native wire executor failure={expected:?} original_owner_returned=true original_control_revoked=true foreign_control_live=true phase_before_explicit_close=3 ack=0 producer_joined=true executor_joined=true maintenance_repair=true primary_report_retained=true no_replay=true production_binding=false"
+        );
+    }
+}
+
 fn actual_package(control: bool) -> Package {
     let (key, pins) = if control {
         (
@@ -515,6 +715,9 @@ fn real_wasm_wire_runs_preserve_original_owner_acks_and_unknown_maintenance() {
             f.enable();
             let request = f.prepare(21, kind, 5, 32_768);
             let prepared = ok(prepare(&mut f.app, &request));
+            let original = original_control(&f.app);
+            let original_binding = f.app.state.local().unwrap().host.binding();
+            let original_instance = f.app.channel_tasks.job.as_ref().unwrap().instance.clone();
             for sequence in 1u64..=5 {
                 let cursor = if kind == Kind::Events {
                     sequence.to_le_bytes().to_vec()
@@ -550,6 +753,25 @@ fn real_wasm_wire_runs_preserve_original_owner_acks_and_unknown_maintenance() {
             };
             assert_eq!(completed.phase, 3);
             assert_eq!(completed.task_state, 4);
+            assert!(
+                original.is_revoked(),
+                "maintenance failure stops original Control"
+            );
+            assert_eq!(
+                f.app.state.local().unwrap().host.binding(),
+                original_binding
+            );
+            assert_eq!(
+                f.app
+                    .state
+                    .local()
+                    .unwrap()
+                    .host
+                    .connection_phase(original_instance.connection()),
+                Ok(morrow_core::lifecycle::InstancePhase::Revoked)
+            );
+            assert!(!f.app.channel_tasks.job.as_ref().unwrap().close_requested);
+            assert!(!f.app.channel_tasks.job.as_ref().unwrap().disconnected);
             assert!(
                 completed
                     .task_error
@@ -637,6 +859,16 @@ fn real_wasm_wire_runs_preserve_original_owner_acks_and_unknown_maintenance() {
             assert!(closed.worker_joined);
             assert_eq!(closed.cleanup_proof, CleanupProof::Joined as u16);
             assert!(closed.output.is_empty());
+            assert!(f.app.channel_tasks.job.as_ref().unwrap().disconnected);
+            assert!(
+                f.app
+                    .state
+                    .local()
+                    .unwrap()
+                    .host
+                    .connection_phase(original_instance.connection())
+                    .is_err()
+            );
             assert_eq!(
                 f.app
                     .channel_tasks
@@ -656,6 +888,82 @@ fn real_wasm_wire_runs_preserve_original_owner_acks_and_unknown_maintenance() {
             assert!(f.app.finish().is_err());
         }
     }
+}
+
+#[test]
+#[ignore = "requires the actual pinned reusable Directory003 SDK package"]
+fn pinned_private_output_bound_keeps_primary_error_owner_and_ack_without_replay() {
+    let mut f = Fixture::new(actual_package(false));
+    f.bind_synthetic();
+    f.enable();
+    let request = f.prepare(23, Kind::Events, 5, 32_768);
+    let prepared = ok(prepare(&mut f.app, &request));
+    let original = original_control(&f.app);
+    let original_binding = f.app.state.local().unwrap().host.binding();
+    // An explicitly stricter host-private output ceiling. The original package,
+    // Wasm, task envelope, input frames, and guest/runtime budgets are unchanged.
+    f.app.channel_tasks.job.as_mut().unwrap().max_output_bytes = 4;
+    for sequence in 1u64..=5 {
+        ok(append(
+            &mut f.app,
+            &prepared.key,
+            sequence,
+            &payload(sequence),
+            &sequence.to_le_bytes(),
+        ));
+    }
+    ok(run(&mut f.app, &prepared.key, &prepared.directory));
+    let completed = wait_native_joins(&mut f.app, &prepared.key);
+    assert_eq!(completed.phase, 3);
+    assert_eq!(completed.task_state, 4);
+    assert_eq!(
+        completed.task_error,
+        "channel output exceeds the private result bound"
+    );
+    assert!(completed.output.is_empty());
+    assert_eq!(completed.last_acked, 5);
+    assert_eq!(completed.source_frames, 5);
+    assert_eq!(completed.source_bytes, 163_840);
+    assert!(original.is_revoked());
+    assert_eq!(
+        f.app.state.local().unwrap().host.binding(),
+        original_binding
+    );
+    assert!(f.app.local_state_mut().is_err());
+    let job = f.app.channel_tasks.job.as_ref().unwrap();
+    assert!(
+        job.report.is_none(),
+        "rejected private output is never delivered"
+    );
+    assert!(!job.close_requested && !job.disconnected);
+    let endpoint = job.broker.endpoint();
+    let scope: [u8; 32] = prepared.key.as_slice().try_into().unwrap();
+    let reopened = Store::open_existing(
+        &f.directory.path().join("store.sqlite3"),
+        Default::default(),
+    )
+    .unwrap();
+    for sequence in 1u64..=5 {
+        let receipt = reopened
+            .channel_ack_receipt(&scope, &endpoint.source_epoch, sequence)
+            .unwrap()
+            .unwrap();
+        let frame = Frame::decode(&receipt.frame_wire).unwrap();
+        assert_eq!(frame.sequence, sequence);
+        assert_eq!(frame.bytes, payload(sequence));
+        assert_eq!(frame.cursor, sequence.to_le_bytes());
+    }
+    assert!(
+        run(&mut f.app, &prepared.key, &prepared.directory)
+            .error
+            .contains("already admitted")
+    );
+    assert_eq!(close(&mut f.app, &prepared.key).phase, 5);
+    assert!(f.app.channel_tasks.job.as_ref().unwrap().report.is_none());
+    assert!(f.app.channel_tasks.job.as_ref().unwrap().disconnected);
+    eprintln!(
+        "native pinned wire private_output_bound=4 primary_error=private_result_bound original_owner_returned=true original_control_revoked=true phase_before_explicit_close=3 ack=5 source_bytes=163840 producer_joined=true executor_joined=true maintenance_repair=true no_replay=true production_binding=false"
+    );
 }
 
 #[test]
