@@ -97,6 +97,46 @@ class PluginLibraryEntry {
   final List<String> channelHandlers;
   final List<ChannelSourceKind> channelKinds;
   final ChannelBudget? channelBudget;
+
+  /// Catalog metadata enables only this UI entry; it grants no live authority.
+  List<PluginTransformHandler> get directoryChannelHandlers {
+    if (!channelSupported ||
+        declared.isNotEmpty ||
+        approved.isNotEmpty ||
+        declaredIo.isNotEmpty ||
+        approvedIo.isNotEmpty ||
+        ioHandlers.isNotEmpty ||
+        dependencies.isNotEmpty ||
+        mutationSupported ||
+        mutationBudget != null ||
+        channelBudget == null ||
+        channelKinds.isEmpty ||
+        channelKinds.toSet().length != channelKinds.length ||
+        channelHandlers.isEmpty ||
+        channelHandlers.any((name) => name.isEmpty) ||
+        channelHandlers.toSet().length != channelHandlers.length ||
+        handlers.any((handler) => handler.name.isEmpty) ||
+        handlers.map((handler) => handler.name).toSet().length !=
+            handlers.length) {
+      return const [];
+    }
+    final selected = <PluginTransformHandler>[];
+    for (final name in channelHandlers) {
+      final matches = handlers.where((handler) => handler.name == name);
+      if (matches.length != 1) return const [];
+      final handler = matches.single;
+      if (handler.inputType != ChannelDirectory.inputType ||
+          handler.maxInputBytes < ChannelDirectory.singleEndpointWireBytes ||
+          handler.maxInputBytes > 65536) {
+        return const [];
+      }
+      selected.add(handler);
+    }
+    return List.unmodifiable(selected);
+  }
+
+  bool get hasEligibleDirectoryChannels => directoryChannelHandlers.isNotEmpty;
+
   bool get isTheme =>
       !channelSupported &&
       handlers.any(
@@ -1052,6 +1092,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
                     'Local channels',
                     'plugin-channel-${entry.id}',
                     !usable ||
+                            !entry.hasEligibleDirectoryChannels ||
                             widget.backend is! ChannelTaskBackend ||
                             !(widget.backend as ChannelTaskBackend)
                                 .supportsLocalChannels

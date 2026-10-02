@@ -90,4 +90,95 @@ void main() {
       },
     );
   }
+  for (final fails in [false, true]) {
+    testWidgets(
+      'adopted peer receipt ${fails ? "error" : "reply"} clears on generation change',
+      (tester) async {
+        final backend = Backend();
+        final session = ChannelTaskSession.forBackend(backend);
+        final frames = source();
+        final first = request(1, frames);
+        await session.prepareAndRun(first, frames);
+        ChannelTaskSnapshot oldState({bool closed = false}) => snapshot(
+          first,
+          1,
+          uploadedFrames: frames.length,
+          uploadedBytes: first.totalBytes,
+          observedSequence: BigInt.one,
+          closed: closed,
+        );
+        backend.onStatus = (_) async => oldState();
+        await session.refresh();
+        backend.onSent = (_, _) async {
+          if (fails) throw StateError('current receipt failed');
+          return ChannelSentFrame(sequence: BigInt.one, bytes: [222]);
+        };
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ChannelTaskManager(
+              backend: backend,
+              entry: entry(),
+              registryRevision: BigInt.one,
+            ),
+          ),
+        );
+        await tester.tap(find.byKey(const ValueKey('channel-read-sent')));
+        await tester.pump();
+        expect(
+          find.textContaining(
+            fails ? 'Peer receipt unconfirmed' : 'Native peer original send',
+          ),
+          findsOneWidget,
+        );
+        backend.onStatus = (_) async => oldState(closed: true);
+        await session.refresh();
+        await session.prepareAndRun(request(2, frames), frames);
+        await tester.pump();
+        expect(find.textContaining('Peer receipt unconfirmed'), findsNothing);
+        expect(find.textContaining('Native peer original send'), findsNothing);
+        expect(session.snapshot!.key, identity(2));
+        await stopPolling(session, backend);
+        await tester.pumpWidget(const SizedBox.shrink());
+      },
+    );
+  }
+  testWidgets('receipt from already-reclaimed session clears on first change', (
+    tester,
+  ) async {
+    final backend = Backend();
+    final session = ChannelTaskSession.forBackend(backend);
+    final frames = source();
+    final first = request(1, frames);
+    await session.prepareAndRun(first, frames);
+    backend.onStatus = (_) async => snapshot(
+      first,
+      1,
+      uploadedFrames: frames.length,
+      uploadedBytes: first.totalBytes,
+      observedSequence: BigInt.one,
+      closed: true,
+    );
+    await session.refresh();
+    expect(session.canPrepare, isTrue);
+    backend.onSent = (_, _) async =>
+        ChannelSentFrame(sequence: BigInt.one, bytes: [222]);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ChannelTaskManager(
+          backend: backend,
+          entry: entry(),
+          registryRevision: BigInt.one,
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('channel-read-sent')));
+    await tester.pump();
+    expect(find.textContaining('Native peer original send'), findsOneWidget);
+    // No session notification occurs between mounting/adoption and replacement.
+    await session.prepareAndRun(request(2, frames), frames);
+    await tester.pump();
+    expect(find.textContaining('Native peer original send'), findsNothing);
+    await stopPolling(session, backend);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 }

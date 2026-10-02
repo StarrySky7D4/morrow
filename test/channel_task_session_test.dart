@@ -325,4 +325,41 @@ void main() {
       await stopPolling(session, backend);
     },
   );
+  testWidgets(
+    'first business result survives same-generation Unknown cleanup',
+    (tester) async {
+      final backend = Backend();
+      final session = ChannelTaskSession.forBackend(backend);
+      final frames = source();
+      final first = request(1, frames);
+      await session.prepareAndRun(first, frames);
+      final success = snapshot(
+        first,
+        1,
+        uploadedFrames: frames.length,
+        uploadedBytes: first.totalBytes,
+        taskState: ChannelTaskState.success,
+      );
+      backend.onStatus = (_) async => success;
+      await session.refresh();
+      expect(session.observedTaskResult, same(success));
+      final generation = session.generation;
+      backend.onStatus = (_) async => snapshot(
+        first,
+        1,
+        uploadedFrames: frames.length,
+        uploadedBytes: first.totalBytes,
+        closed: true,
+        taskState: ChannelTaskState.unknown,
+      );
+      await session.refresh();
+      expect(session.generation, generation);
+      expect(session.snapshot!.taskState, ChannelTaskState.unknown);
+      expect(session.observedTaskResult, same(success));
+      expect(session.observedTaskResult!.output, [7]);
+      expect(session.canPrepare, isTrue);
+      expect(backend.prepares, 1);
+      expect(backend.closeKeys, isEmpty);
+    },
+  );
 }

@@ -158,6 +158,10 @@ final class ChannelEndpoint {
 }
 
 final class ChannelDirectory {
+  static const inputType = 'morrow.channel.directory.v1';
+  // Canonical one-endpoint Directory, including its 8-byte segment header.
+  static const singleEndpointWireBytes = 256;
+
   ChannelDirectory({
     required List<int> scopeSha256,
     required List<int> wire,

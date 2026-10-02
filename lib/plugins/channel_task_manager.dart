@@ -31,16 +31,13 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
   Object? inputFailure;
   Object? peerFailure;
   ChannelSentFrame? peerReceipt;
-  List<PluginTransformHandler> get handlers => widget.entry.handlers
-      .where(
-        (h) =>
-            widget.entry.channelHandlers.contains(h.name) &&
-            h.inputType == 'morrow.channel.directory.v1',
-      )
-      .toList();
+  late int receiptGeneration;
+  List<PluginTransformHandler> get handlers =>
+      widget.entry.directoryChannelHandlers;
   @override
   void initState() {
     super.initState();
+    receiptGeneration = session.generation;
     session.addListener(_changed);
     handler = handlers.firstOrNull?.name;
     kind = widget.entry.channelKinds.firstOrNull;
@@ -48,7 +45,13 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
 
   void _changed() {
     if (mounted) {
-      setState(() {});
+      setState(() {
+        if (receiptGeneration != session.generation) {
+          receiptGeneration = session.generation;
+          peerReceipt = null;
+          peerFailure = null;
+        }
+      });
     }
   }
 
@@ -193,7 +196,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
               ),
               if (handlers.isEmpty)
                 const Text(
-                  'This package has no handler declaring morrow.channel.directory.v1 input.',
+                  'This package is not eligible for a bounded local Directory invocation.',
                 ),
               DropdownButton<String>(
                 key: const ValueKey('channel-handler'),
@@ -302,6 +305,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
           key: const ValueKey('channel-run'),
           onPressed:
               session.canPrepare &&
+                  widget.entry.hasEligibleDirectoryChannels &&
                   handler != null &&
                   kind != null &&
                   widget.backend.supportsLocalChannels
