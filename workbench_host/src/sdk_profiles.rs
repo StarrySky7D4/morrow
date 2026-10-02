@@ -54,6 +54,7 @@ pub fn descriptor() -> Value {
             "hard_byte_limits": {"module": morrow_plugin_runtime::MAX_MODULE_BYTES, "task_frame": task::MAX_TASK_BYTES, "task_value": task::MAX_VALUE_BYTES, "channel_frame": channel::MAX_WIRE_BYTES, "channel_payload": channel::MAX_PAYLOAD_BYTES, "channel_cursor": channel::MAX_CURSOR_BYTES},
             "runtime_defaults": {"fuel": defaults.fuel, "memory_bytes": defaults.memory_bytes, "host_calls": defaults.host_calls},
             "channel_scope": {"trusted_local_sources": true, "managed_binding_required": true, "workbench_binding": false, "network_backend": false, "cloud_account": false, "automatic_replay": false},
+            "native_binding_implementation": crate::channel_binding::implementation_descriptor(),
             "policy": "Finite package ceilings intersect the current host grant and original instance control; discovery grants nothing.",
             "task_lifecycle": "Multiple bounded frames within one fixed task; ACK, send acceptance, terminal cause and actual producer join are distinct. Unknown is not replayed."
         }],
@@ -108,6 +109,12 @@ mod tests {
         );
         assert_eq!(channel_profile["channel_scope"]["network_backend"], false);
         assert_eq!(channel_profile["channel_scope"]["automatic_replay"], false);
+        assert_eq!(channel_profile["channel_scope"]["workbench_binding"], false);
+        assert_eq!(channel_profile["workbench_constraints"]["channel_binding"], false);
+        assert_eq!(
+            channel_profile["native_binding_implementation"]["production_public_binding_available"],
+            false
+        );
         assert_eq!(profile["workbench_constraints"]["dependency_calls"], false);
         assert_eq!(
             profile["workbench_constraints"]["required_dependencies"],

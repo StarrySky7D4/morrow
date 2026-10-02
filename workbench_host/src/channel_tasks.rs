@@ -1,4 +1,5 @@
-//! Windows local-memory channel jobs on the original workbench owner.
+//! Native local-memory channel jobs on the original workbench owner.
+//! Linux source compilation does not create its missing protected owner backend.
 //! Uploaded bytes are caller-provided data, not authority to read paths, content or network.
 use crate::{Result, Workbench, WorkbenchState, io_tasks::AccessError, now};
 use morrow_core::{
@@ -158,7 +159,7 @@ struct Job {
 }
 #[derive(Default)]
 pub(crate) struct ChannelTasks {
-    owner_ready: bool,
+    owner: Option<crate::channel_binding::OwnerBinding>,
     job: Option<Job>,
     seen: BTreeSet<[u8; 32]>,
     requests: u64,
@@ -373,10 +374,12 @@ impl Job {
 }
 impl Workbench {
     /// Called only by the Windows entry after its existing supervised-owner proof and watch bind.
+    /// Other platforms return a typed prerequisite without granting or starting a source.
     pub fn bind_supervised_channel_owner(&mut self) -> Result<()> {
         self.product_gate().check()?;
-        self.state.local_mut()?.local_channel_owner_ready = true;
-        self.channel_tasks.owner_ready = true;
+        let binding = crate::channel_binding::OwnerBinding::supervised()?;
+        self.state.local_mut()?.local_channel_owner = Some(binding);
+        self.channel_tasks.owner = Some(binding);
         Ok(())
     }
     fn channel_reclaim(&mut self) -> Result<()> {
@@ -437,9 +440,7 @@ impl Workbench {
     pub fn prepare_channel(&mut self, mut request: Prepare) -> Result<State> {
         self.channel_tasks.touch(false)?;
         self.product_gate().check()?;
-        if !self.channel_tasks.owner_ready {
-            return Err("local channels require the current Windows supervised owner".into());
-        }
+        crate::channel_binding::require_owner(self.channel_tasks.owner)?;
         self.channel_reclaim()?;
         if let Some(old) = &self.channel_tasks.job {
             if !old.disconnected || old.worker.is_some() {
@@ -925,6 +926,9 @@ impl Drop for ChannelTasks {
         self.request_stop();
     }
 }
-#[cfg(test)]
+#[cfg(all(test, windows))]
 #[path = "channel_tasks_tests.rs"]
 mod tests;
+#[cfg(all(test, not(windows)))]
+#[path = "channel_tasks_native_tests.rs"]
+mod native_tests;

@@ -170,7 +170,6 @@ pub(crate) struct StateSlot {
     pub(crate) submission: Option<[u8; 32]>,
 }
 impl StateSlot {
-    #[cfg(windows)]
     pub(crate) fn take_channel_owner(&mut self) -> Result<WorkbenchState> {
         self.require_writable()?;
         if self.task.is_some() {
@@ -178,7 +177,6 @@ impl StateSlot {
         }
         self.owner.take().ok_or_else(|| AccessError::Busy.into())
     }
-    #[cfg(windows)]
     pub(crate) fn restore_channel_owner(
         &mut self,
         owner: WorkbenchState,
@@ -191,7 +189,6 @@ impl StateSlot {
         self.repair_needed |= repair;
         Ok(())
     }
-    #[cfg(windows)]
     pub(crate) fn channel_owner_lost(&mut self) {
         self.lost = true;
         self.owner = None;

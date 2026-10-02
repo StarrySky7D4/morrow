@@ -1,4 +1,5 @@
-//! Short controls on the original Windows workbench owner; no service forwarding.
+//! Short controls on the original native workbench owner; no service forwarding.
+//! A source grant still requires the platform's protected and supervised owner.
 use super::{text, wire};
 use crate::{
     Result, Workbench,

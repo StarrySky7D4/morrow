@@ -1,8 +1,10 @@
 //! Linux private-storage metadata validation, not SQLite connection admission.
 //! This helper does not attest the inode actually opened by SQLite. It must not
 //! wrap an ordinary pathname SQLite open as a protected substitute. Private
-//! Store entry points deliberately remain unavailable pending that proof and
-//! complete transaction/snapshot integration. Existing inodes are inspected only
+//! Store entry points deliberately remain unavailable pending complete
+//! transaction/snapshot integration. The separate owned VFS foundation below
+//! does attest its own descriptors, but is not Store/product admission.
+//! Existing inodes are inspected only
 //! with O_PATH: closing a normal descriptor would release this process's SQLite
 //! POSIX record locks, even if SQLite owns another descriptor for the same inode.
 use std::{
@@ -18,6 +20,10 @@ use std::{
     },
     path::{Component, Path, PathBuf},
 };
+
+#[path = "linux_sqlite_vfs.rs"]
+mod sqlite_vfs;
+pub use sqlite_vfs::{GuardedSqliteConnection, GuardedSqliteTransaction};
 
 fn invalid() -> io::Error {
     io::Error::new(io::ErrorKind::PermissionDenied, "unsafe private storage")

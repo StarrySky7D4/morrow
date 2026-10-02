@@ -152,14 +152,14 @@ pub(crate) fn validate_browser_theme(p: &Package) -> Result<()> {
 
 impl WorkbenchState {
     fn channel_route_ready(&self, p: &Package) -> bool {
-        #[cfg(windows)]
+        #[cfg(not(target_arch = "wasm32"))]
         {
-            self.local_channel_owner_ready
+            self.local_channel_owner.is_some()
                 && p.capabilities().is_empty()
                 && p.io_declaration().is_none()
                 && p.manifest().dependencies.is_empty()
         }
-        #[cfg(not(windows))]
+        #[cfg(target_arch = "wasm32")]
         {
             let _ = p;
             false
@@ -823,7 +823,7 @@ impl Workbench {
         approved: &[String],
         enable: bool,
     ) -> Result<()> {
-        #[cfg(windows)]
+        #[cfg(not(target_arch = "wasm32"))]
         if !enable {
             if let Ok(owner) = self.state.local() {
                 owner.external_package(id, digest, revision)?;
@@ -833,12 +833,12 @@ impl Workbench {
         }
         self.local_state_mut()?
             .configure_external(id, digest, revision, approved, enable)?;
-        #[cfg(windows)]
+        #[cfg(not(target_arch = "wasm32"))]
         self.channel_tasks.clear_catalog_fence(id, digest, revision);
         Ok(())
     }
     pub fn remove_external(&mut self, id: &str, digest: &[u8], revision: u64) -> Result<()> {
-        #[cfg(windows)]
+        #[cfg(not(target_arch = "wasm32"))]
         {
             if let Ok(owner) = self.state.local() {
                 owner.external_package(id, digest, revision)?;
@@ -848,7 +848,7 @@ impl Workbench {
         }
         self.local_state_mut()?
             .remove_external(id, digest, revision)?;
-        #[cfg(windows)]
+        #[cfg(not(target_arch = "wasm32"))]
         self.channel_tasks.clear_catalog_fence(id, digest, revision);
         Ok(())
     }

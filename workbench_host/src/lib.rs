@@ -38,7 +38,9 @@ pub mod cards_content;
 pub mod cards_edit;
 #[cfg(not(target_arch = "wasm32"))]
 mod channel_directory_preflight;
-#[cfg(windows)]
+#[cfg(not(target_arch = "wasm32"))]
+pub mod channel_binding;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod channel_tasks;
 mod command_frame;
 pub mod content_api;
@@ -114,7 +116,7 @@ pub struct Mutation<'a> {
     pub flag: bool,
 }
 pub struct Workbench {
-    #[cfg(windows)]
+    #[cfg(not(target_arch = "wasm32"))]
     channel_tasks: channel_tasks::ChannelTasks,
     #[cfg(not(target_arch = "wasm32"))]
     http_tasks: http_tasks::HttpTasks,
@@ -126,8 +128,8 @@ pub struct Workbench {
 
 /// All authoritative business state moves together; no worker handle lives here.
 pub(crate) struct WorkbenchState {
-    #[cfg(windows)]
-    local_channel_owner_ready: bool,
+    #[cfg(not(target_arch = "wasm32"))]
+    local_channel_owner: Option<channel_binding::OwnerBinding>,
     host: storage::Storage,
     plugin: Option<Session>,
     pool: Pool,
@@ -243,8 +245,8 @@ impl WorkbenchState {
         let mut query_owner = [0; 32];
         platform::random(&mut query_owner)?;
         let mut workbench = Self {
-            #[cfg(windows)]
-            local_channel_owner_ready: false,
+            #[cfg(not(target_arch = "wasm32"))]
+            local_channel_owner: None,
             host,
             plugin,
             pool,
@@ -903,7 +905,6 @@ impl Workbench {
         Ok(Self {
             http_tasks: Default::default(),
             state: io_tasks::StateSlot::new(WorkbenchState::open(path, package)?),
-            #[cfg(windows)]
             channel_tasks: Default::default(),
         })
     }
@@ -911,7 +912,6 @@ impl Workbench {
         Ok(Self {
             http_tasks: Default::default(),
             state: io_tasks::StateSlot::new(WorkbenchState::open_managed(root, package)?),
-            #[cfg(windows)]
             channel_tasks: Default::default(),
         })
     }
@@ -938,7 +938,6 @@ impl Workbench {
     }
     pub fn finish(&mut self) -> Result<()> {
         self.state.request_stop();
-        #[cfg(windows)]
         self.finish_channels()?;
         self.state.try_reclaim()?;
         self.state.local_mut()?.finish()
@@ -947,7 +946,6 @@ impl Workbench {
 #[cfg(not(target_arch = "wasm32"))]
 impl Drop for Workbench {
     fn drop(&mut self) {
-        #[cfg(windows)]
         self.channel_tasks.request_stop();
         self.state.request_stop();
     }

@@ -8,7 +8,7 @@ use capnp::{
 use morrow_workbench_plugin::{Action, Response, codec};
 use sha2::{Digest, Sha256};
 use zeroize::{Zeroize, Zeroizing};
-#[cfg(windows)]
+#[cfg(not(target_arch = "wasm32"))]
 #[path = "channel_task_protocol.rs"]
 mod channel_task;
 #[path = "file_task_protocol.rs"]
@@ -334,7 +334,7 @@ impl ResponseTarget for Workbench {
         mut out: wire::response::Builder<'_>,
     ) -> Result<()> {
         let action = r.get_action()?;
-        #[cfg(windows)]
+        #[cfg(not(target_arch = "wasm32"))]
         if channel_task::is_action(action) {
             return channel_task::handle(self, r, out);
         }
@@ -532,6 +532,10 @@ fn respond_target(host: &mut impl ResponseTarget, bytes: &[u8]) -> Result<Vec<u8
                 crate::io_tasks::AccessError::StaleTask => 113,
                 crate::io_tasks::AccessError::UnacknowledgedTask => 114,
             });
+        }
+        #[cfg(not(target_arch = "wasm32"))]
+        if let Some(prerequisite) = e.downcast_ref::<crate::channel_binding::Prerequisite>() {
+            out.set_ui_code(prerequisite.ui_code());
         }
         if let Some(query) = e.downcast_ref::<crate::query_capture::QueryFailure>() {
             out.set_ui_code(match (query.capacity, query.terminal) {
@@ -752,7 +756,7 @@ fn handle_business(
         | wire::Action::ChannelClose
         | wire::Action::ChannelReadSent => {
             return Err(
-                "local channel controls require the original Windows workbench actor".into(),
+                "local channel controls require the original protected native workbench actor".into(),
             );
         }
         #[cfg(target_arch = "wasm32")]

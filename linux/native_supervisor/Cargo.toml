@@ -1,0 +1,17 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "morrow-linux-supervisor-foundation"
+version = "0.1.0-experimental.1"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+
+[dependencies]
+libc = "=0.2.189"
+sha2 = "=0.10.9"
+
+[[bin]]
+name = "morrow-linux-supervisor-fixture"
+path = "src/bin/fixture.rs"
