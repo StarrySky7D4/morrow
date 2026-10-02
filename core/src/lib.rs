@@ -146,3 +146,7 @@ pub mod service_authority;
 pub mod service_config;
 /// Historical inbound service request identity and bounded retention metadata.
 pub mod service_record;
+
+#[cfg(target_os = "linux")]
+#[allow(unsafe_code)]
+pub mod linux_storage;

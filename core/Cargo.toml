@@ -49,3 +49,6 @@ path = "src/main.rs"
 [[bin]]
 name = "morrow-core-store"
 path = "src/store_cli.rs"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "=0.2.189"

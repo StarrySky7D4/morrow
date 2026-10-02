@@ -4,7 +4,7 @@ pub use morrow_core::audit::*;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod archive;
 
-#[cfg(target_os = "windows")]
+#[cfg(any(target_os = "windows", target_os = "linux"))]
 pub mod keys;
 #[cfg(target_os = "windows")]
 pub mod sealer;
@@ -21,7 +21,7 @@ mod backup;
 #[cfg(target_os = "windows")]
 pub mod snapshot;
 
-#[cfg(target_os = "windows")]
+#[cfg(any(target_os = "windows", target_os = "linux"))]
 pub mod identity;
 
 #[cfg(target_os = "windows")]

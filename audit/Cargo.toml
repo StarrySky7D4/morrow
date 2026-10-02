@@ -23,6 +23,8 @@ rusqlite = { version = "=0.40.2", features = ["bundled"] }
 [features]
 # Explicit subprocess crash qualification only; never enabled by the app.
 fault-injection = ["morrow-core/fault-injection"]
+# Synthetic process-memory fixture only. Never selected by environment variables.
+linux-test-keyring = []
 
 [target.'cfg(target_os = "windows")'.dependencies]
 windows-sys = { version = "=0.61.2", features = ["Win32_Foundation", "Win32_Security_Cryptography", "Win32_UI_Shell", "Win32_System_Threading"] }
@@ -40,3 +42,12 @@ path = "src/seal_main.rs"
 [[bin]]
 name = "morrow-build-receipt"
 path = "src/build_receipt_main.rs"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+zbus = { version = "=5.19.0", default-features = false, features = ["async-io", "blocking-api"] }
+async-io = "=2.6.0"
+futures-lite = "=2.6.1"
+libc = "=0.2.189"
+getrandom = "=0.4.3"
+zeroize = "=1.9.0"
+tempfile = "=3.27.0"

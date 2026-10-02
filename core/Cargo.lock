@@ -418,6 +418,7 @@ dependencies = [
  "capnp",
  "capnpc",
  "ed25519-dalek",
+ "libc",
  "lz4_flex",
  "prost",
  "prost-build",

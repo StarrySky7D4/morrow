@@ -1,14 +1,20 @@
 //! Cooperative per-account, per-machine ownership of a signing identity.
+#[cfg(target_os = "windows")]
 use crate::TrustedLog;
+#[cfg(target_os = "windows")]
 use sha2::{Digest, Sha256};
-use std::{
-    fs::File,
-    io,
-    os::windows::fs::OpenOptionsExt,
-    path::{Path, PathBuf},
-};
+use std::io;
+#[cfg(target_os = "windows")]
+use std::{fs::File, path::{Path, PathBuf}};
+#[cfg(target_os = "windows")]
+use std::os::windows::fs::OpenOptionsExt;
+#[cfg(target_os = "windows")]
 #[allow(unsafe_code)]
 mod windows;
+#[cfg(target_os = "linux")]
+mod linux;
+#[cfg(target_os = "linux")]
+pub(crate) use linux::Lease;
 #[derive(Debug)]
 pub enum LeaseError {
     Busy,
@@ -25,9 +31,11 @@ impl From<io::Error> for LeaseError {
         Self::Io(e)
     }
 }
+#[cfg(target_os = "windows")]
 pub(crate) struct Lease {
     _file: File,
 }
+#[cfg(target_os = "windows")]
 fn reject_link(path: &Path) -> io::Result<()> {
     match std::fs::symlink_metadata(path) {
         Ok(m) if m.file_type().is_symlink() => {
@@ -38,6 +46,7 @@ fn reject_link(path: &Path) -> io::Result<()> {
         Err(e) => Err(e),
     }
 }
+#[cfg(target_os = "windows")]
 fn lease_path(trust: &TrustedLog) -> io::Result<PathBuf> {
     // Token-selected profile; no USERPROFILE or LOCALAPPDATA environment lookup.
     let root = windows::profile_dir()?
@@ -64,6 +73,7 @@ fn lease_path(trust: &TrustedLog) -> io::Result<PathBuf> {
     reject_link(&path)?;
     Ok(path)
 }
+#[cfg(target_os = "windows")]
 impl Lease {
     pub(crate) fn acquire(trust: &TrustedLog) -> Result<Self, LeaseError> {
         let path = lease_path(trust)?;
@@ -83,7 +93,7 @@ impl Lease {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, target_os = "windows"))]
 mod tests {
     use super::*;
     #[test]

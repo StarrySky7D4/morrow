@@ -228,6 +228,34 @@ fn native_service_authority_supported(_: &Connection, _: &Path, _: Option<&str>)
     Ok(false)
 }
 impl Store {
+    /// Reserved fail-closed Linux private storage entry point. Usable admission
+    /// requires a reviewed proof of SQLite's actually opened inode before SQL,
+    /// plus transaction and snapshot guards. It is deliberately unavailable.
+    /// Generic `open` is not a protected substitute or fallback.
+    #[cfg(target_os = "linux")]
+    pub fn open_private(_path: &Path, _budget: EventBudget, _create: bool) -> Result<Self> {
+        Err(Error::Invalid("protected Linux SQLite admission unavailable"))
+    }
+    #[cfg(target_os = "linux")]
+    pub fn open_private_audited(
+        _path: &Path,
+        _budget: EventBudget,
+        _create: bool,
+        _trust: crate::audit::TrustedLog,
+    ) -> Result<Self> {
+        Err(Error::Invalid("protected Linux SQLite admission unavailable"))
+    }
+    #[cfg(target_os = "linux")]
+    pub fn open_private_read_only_audited(
+        _path: &Path,
+        _trust: crate::audit::TrustedLog,
+    ) -> Result<Self> {
+        Err(Error::Invalid("protected Linux SQLite admission unavailable"))
+    }
+    #[cfg(target_os = "linux")]
+    pub fn private_audit_binding_status(_path: &Path) -> Result<AuditBindingState> {
+        Err(Error::Invalid("protected Linux SQLite admission unavailable"))
+    }
     /// Pin this file-backed Store before resolving persisted service approvals.
     pub fn pin_service_authority(&mut self) -> Result<ServiceAuthorityLease> {
         self.service_authority_coordinator.pin()

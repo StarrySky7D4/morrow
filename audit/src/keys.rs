@@ -1,4 +1,4 @@
-//! Current-user Windows protection. No load-or-create path and no plaintext key export.
+//! Current-user platform protection. No load-or-create path and no plaintext key export.
 use crate::{SigningKey, TrustedLog};
 use prost::Message;
 use sha2::{Digest, Sha256};
@@ -7,13 +7,26 @@ use std::{
     path::Path,
 };
 use zeroize::{Zeroize, Zeroizing};
+#[cfg(target_os = "windows")]
 #[allow(unsafe_code)]
 mod windows;
+#[cfg(target_os = "windows")]
+use windows as platform;
+#[cfg(target_os = "linux")]
+#[allow(unsafe_code)]
+mod linux;
+#[cfg(target_os = "linux")]
+use linux as platform;
+#[cfg(all(target_os = "linux", feature = "linux-test-keyring"))]
+pub use linux::test_keyring;
 mod proto {
     include!(concat!(env!("OUT_DIR"), "/morrow.keys.v1.rs"));
 }
 const MAGIC: &[u8; 8] = b"MORROWK1";
+#[cfg(target_os = "windows")]
 const PROVIDER: &str = "windows-current-user-dpapi-v1";
+#[cfg(target_os = "linux")]
+const PROVIDER: &str = "linux-current-user-secret-service-v1";
 const MAX_FILE: usize = 64 * 1024;
 impl Drop for proto::SecretKey {
     fn drop(&mut self) {
@@ -55,11 +68,19 @@ impl Key {
     }
     /// Explicit provisioning only. Refuse all existing destinations, even damaged ones.
     pub fn create(path: &Path) -> Result<Self> {
-        if path.try_exists()? {
-            return Err(KeyError::AlreadyExists);
+        #[cfg(target_os = "windows")]
+        if path.try_exists()? { return Err(KeyError::AlreadyExists); }
+        #[cfg(target_os = "linux")]
+        match std::fs::symlink_metadata(path) {
+            Ok(_) => return Err(KeyError::AlreadyExists),
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => (),
+            Err(e) => return Err(KeyError::Io(e)),
         }
+        let parent = path.parent().filter(|p| !p.as_os_str().is_empty()).unwrap_or(Path::new("."));
+        #[cfg(target_os = "linux")]
+        let directory = morrow_core::linux_storage::PrivateDirectory::open(parent, false)?;
         let mut random = Zeroizing::new([0u8; 48]);
-        windows::random(&mut *random)?;
+        platform::random(&mut *random)?;
         let id = format!(
             "audit-{}",
             random[32..]
@@ -78,7 +99,7 @@ impl Key {
         };
         let plain = Zeroizing::new(material.encode_to_vec());
         let packed = Zeroizing::new(lz4_flex::block::compress_prepend_size(&plain));
-        let ciphertext = windows::protect(&packed)?;
+        let ciphertext = platform::protect(&packed)?;
         let container = proto::ProtectedKey {
             version: 1,
             provider: PROVIDER.into(),
@@ -86,14 +107,12 @@ impl Key {
         }
         .encode_to_vec();
         let bytes = frame(&container);
-        let parent = path
-            .parent()
-            .filter(|p| !p.as_os_str().is_empty())
-            .unwrap_or(Path::new("."));
         let mut file = tempfile::NamedTempFile::new_in(parent)?;
         file.write_all(&bytes)?;
         file.as_file().sync_all()?;
         boundary("key-before-publish");
+        #[cfg(target_os = "linux")]
+        directory.verify()?;
         let published = file.persist_noclobber(path).map_err(|e| {
             if e.error.kind() == std::io::ErrorKind::AlreadyExists {
                 KeyError::AlreadyExists
@@ -102,7 +121,11 @@ impl Key {
             }
         })?;
         boundary("key-after-publish");
+        #[cfg(target_os = "linux")]
+        directory.verify()?;
         published.sync_all().map_err(|_| KeyError::PublishUnknown)?;
+        #[cfg(target_os = "linux")]
+        directory.sync().map_err(|_| KeyError::PublishUnknown)?;
         drop(published);
         // Verify the actual published file. If this fails, never replace it on retry.
         Self::load(path)
@@ -132,7 +155,7 @@ impl Key {
         {
             return Err(KeyError::Format);
         }
-        let packed = windows::unprotect(&protected.ciphertext)?;
+        let packed = platform::unprotect(&protected.ciphertext)?;
         let plain = Zeroizing::new(unpack(&packed, 4096)?);
         let material = proto::SecretKey::decode(plain.as_slice()).map_err(|_| KeyError::Format)?;
         if material.version != 1
@@ -157,7 +180,14 @@ impl Key {
     }
 }
 pub(crate) fn read_protected(path: &Path) -> Result<Vec<u8>> {
+    #[cfg(target_os = "windows")]
     let file = std::fs::File::open(path)?;
+    #[cfg(target_os = "linux")]
+    let file = {
+        let parent = path.parent().filter(|p| !p.as_os_str().is_empty()).unwrap_or(Path::new("."));
+        morrow_core::linux_storage::PrivateDirectory::open(parent, false)?
+            .open_read(Path::new(path.file_name().ok_or(KeyError::Format)?))?
+    };
     let meta = file.metadata()?;
     if !meta.is_file() || meta.len() > MAX_FILE as u64 {
         return Err(KeyError::Format);
@@ -183,7 +213,7 @@ fn boundary(_name: &str) {
 }
 
 // Whole compressed-file checksum detects damaged encoding as well as payload;
-// authenticity of the secret still comes from DPAPI and the derived public key.
+// authenticity of the secret still comes from the platform provider and derived public key.
 fn frame(container: &[u8]) -> Vec<u8> {
     let packed = lz4_flex::block::compress_prepend_size(container);
     [
@@ -195,24 +225,32 @@ fn frame(container: &[u8]) -> Vec<u8> {
 }
 // Only the dedicated credential codec may select this separate DPAPI domain.
 pub(crate) fn protect_http_credential(input: &[u8]) -> Result<Vec<u8>> {
-    windows::protect_http(input)
+    platform::protect_http(input)
 }
 pub(crate) fn unprotect_http_credential(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
-    windows::unprotect_http(input)
+    platform::unprotect_http(input)
 }
 pub(crate) fn protect_tls_identity(input: &[u8]) -> Result<Vec<u8>> {
-    windows::protect_tls(input)
+    platform::protect_tls(input)
 }
 pub(crate) fn unprotect_tls_identity(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
-    windows::unprotect_tls(input)
+    platform::unprotect_tls(input)
 }
 
-#[cfg(test)]
+#[cfg(all(test, any(target_os = "windows", all(target_os = "linux", feature = "linux-test-keyring"))))]
 mod tests {
     use super::*;
     #[test]
     fn authenticated_payload_and_derived_key_are_checked_beyond_file_checksum() {
+        #[cfg(target_os = "windows")]
         let d = tempfile::tempdir().unwrap();
+        #[cfg(target_os = "linux")]
+        let _fixture = test_keyring::activate().unwrap();
+        #[cfg(target_os = "linux")]
+        let d = {
+            use std::os::unix::fs::PermissionsExt;
+            tempfile::Builder::new().permissions(std::fs::Permissions::from_mode(0o700)).tempdir().unwrap()
+        };
         let p = d.path().join("key");
         Key::create(&p).unwrap();
         let original = std::fs::read(&p).unwrap();
@@ -222,13 +260,13 @@ mod tests {
         std::fs::write(&p, frame(&protected.encode_to_vec())).unwrap();
         assert!(Key::load(&p).is_err());
         let mut protected = proto::ProtectedKey::decode(raw.as_slice()).unwrap();
-        let decrypted = windows::unprotect(&protected.ciphertext).unwrap();
+        let decrypted = platform::unprotect(&protected.ciphertext).unwrap();
         let plain = Zeroizing::new(unpack(&decrypted, 4096).unwrap());
         let mut secret = proto::SecretKey::decode(plain.as_slice()).unwrap();
         secret.seed[0] ^= 1; // stale embedded public key, despite valid OS protection
         let raw = Zeroizing::new(secret.encode_to_vec());
         let packed = Zeroizing::new(lz4_flex::block::compress_prepend_size(&raw));
-        protected.ciphertext = windows::protect(&packed).unwrap();
+        protected.ciphertext = platform::protect(&packed).unwrap();
         std::fs::write(&p, frame(&protected.encode_to_vec())).unwrap();
         assert!(matches!(Key::load(&p), Err(KeyError::Format)));
     }
