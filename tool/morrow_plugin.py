@@ -400,7 +400,6 @@ def new_project(args):
         config.append("kind = " + quote(args.kind))
     config.extend(["", "[budget]", "fuel = 20000000", "memory_bytes = 16777216", "host_calls = 16"])
     if args.kind == "channel":
-        config[-3:] = ["fuel = 100000000", "memory_bytes = 16777216", "host_calls = 256"]
         defaults = dict(CHANNEL_DEFAULTS)
         if directory_channel:
             defaults.update(max_frame_bytes=65536, max_messages=32, max_requests=128)
@@ -440,7 +439,7 @@ crate-type = ["cdylib"]
 [dependencies]
 morrow-plugin-sdk = {{path = {quote((sdk_root / 'rust').as_posix())}, features = ["wasm-guest"]}}
 [profile.release]
-opt-level = "s"
+opt-level = {3 if args.kind == "channel" else '"s"'}
 panic = "abort"
 strip = true
 """

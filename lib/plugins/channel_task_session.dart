@@ -15,7 +15,10 @@ final class ChannelTaskSession extends ChangeNotifier {
   ChannelTaskSnapshot? snapshot;
   ChannelTaskSnapshot? observedTaskResult;
   Object? failure;
-  bool uncertain = false, busy = false, _polling = false;
+  bool uncertain = false, busy = false;
+  int _generation = 0;
+  int get generation => _generation;
+  int? _refreshGeneration;
   Timer? _timer;
   DateTime? _pollUntil;
   bool get _cleanupConfirmed =>
@@ -68,11 +71,14 @@ final class ChannelTaskSession extends ChangeNotifier {
     ChannelPrepareRequest value,
     List<ChannelSourceFrame> frames,
   ) async {
+    // Own the collection before validation or any listener can mutate it. Each
+    // frame already owns immutable original bytes and cursor bytes.
+    final sourceFrames = List<ChannelSourceFrame>.unmodifiable(frames);
     if (!canPrepare) {
       throw StateError('The previous local channel still needs confirmation');
     }
-    if (frames.length != value.frameCount ||
-        frames.fold<BigInt>(
+    if (sourceFrames.length != value.frameCount ||
+        sourceFrames.fold<BigInt>(
               BigInt.zero,
               (sum, frame) => sum + BigInt.from(frame.bytes.length),
             ) !=
@@ -81,16 +87,21 @@ final class ChannelTaskSession extends ChangeNotifier {
         'Source frames do not match the immutable preparation',
       );
     }
-    for (var i = 0; i < frames.length; i++) {
-      if (frames[i].sequence != BigInt.from(i + 1) ||
-          frames[i].bytes.length > value.budget.maxFrameBytes ||
+    for (var i = 0; i < sourceFrames.length; i++) {
+      if (sourceFrames[i].sequence != BigInt.from(i + 1) ||
+          sourceFrames[i].bytes.length > value.budget.maxFrameBytes ||
           (value.kind == ChannelSourceKind.byteStream &&
-              frames[i].cursor.isNotEmpty)) {
+              sourceFrames[i].cursor.isNotEmpty)) {
         throw const FormatException(
           'Source frame exceeds its sequence, cursor rule or grant ceiling',
         );
       }
     }
+    final generation = ++_generation;
+    _timer?.cancel();
+    _timer = null;
+    _pollUntil = null;
+    _refreshGeneration = null;
     request = value;
     snapshot = null;
     observedTaskResult = null;
@@ -99,83 +110,110 @@ final class ChannelTaskSession extends ChangeNotifier {
     busy = true;
     notifyListeners();
     try {
-      _accept(await backend.prepareChannel(value));
+      final prepared = await backend.prepareChannel(value);
+      if (generation != _generation) return;
+      _accept(prepared);
       notifyListeners();
-      for (final frame in frames) {
+      for (final frame in sourceFrames) {
+        if (generation != _generation) return;
         if (snapshot!.closeRequested) {
           throw StateError('Channel was closed during upload');
         }
-        _accept(await backend.appendChannel(snapshot!.key, frame));
+        final appended = await backend.appendChannel(snapshot!.key, frame);
+        if (generation != _generation) return;
+        _accept(appended);
         notifyListeners();
       }
+      if (generation != _generation) return;
       if (snapshot!.closeRequested) {
         throw StateError('Channel was closed before run');
       }
       // This entry point deliberately accepts only the declared Directory input.
-      _accept(
-        await backend.runChannel(snapshot!.key, snapshot!.directory.wire),
+      final running = await backend.runChannel(
+        snapshot!.key,
+        snapshot!.directory.wire,
       );
+      if (generation != _generation) return;
+      _accept(running);
       _pollUntil = DateTime.now().add(
         Duration(milliseconds: value.lifetimeMs + 10000),
       );
-      _startPolling();
+      _startPolling(generation);
     } catch (error) {
+      if (generation != _generation) return;
       failure = error;
       uncertain = true;
       // Keep the key, epoch and raw snapshot for explicit status/close. A lost
       // preparation reply has no guessed key and cannot trigger another grant.
     } finally {
-      busy = false;
-      notifyListeners();
+      if (generation == _generation) {
+        busy = false;
+        notifyListeners();
+      }
     }
   }
 
   Future<void> refresh() async {
+    final generation = _generation;
     final current = snapshot;
-    if (current == null || _polling) {
+    if (current == null || _refreshGeneration == generation) {
       return;
     }
-    _polling = true;
+    _refreshGeneration = generation;
     try {
-      _accept(await backend.statusChannel(current.key));
+      final updated = await backend.statusChannel(current.key);
+      if (generation != _generation) return;
+      _accept(updated);
       failure = null;
       uncertain = false;
       if (_cleanupConfirmed) {
         _timer?.cancel();
       }
     } catch (error) {
+      if (generation != _generation) return;
       failure = error;
       uncertain = true;
       _timer?.cancel();
     } finally {
-      _polling = false;
-      notifyListeners();
+      // A reply for a reclaimed generation cannot unlock another generation's
+      // pending refresh or overwrite its state through a listener.
+      if (_refreshGeneration == generation) _refreshGeneration = null;
+      if (generation == _generation) notifyListeners();
     }
   }
 
   Future<void> close() async {
+    final generation = _generation;
     final current = snapshot;
     if (current == null) {
       return;
     }
     try {
-      _accept(await backend.closeChannel(current.key));
+      final closed = await backend.closeChannel(current.key);
+      if (generation != _generation) return;
+      _accept(closed);
       failure = null;
       uncertain = false;
       _pollUntil = DateTime.now().add(const Duration(seconds: 10));
-      _startPolling();
+      _startPolling(generation);
     } catch (error) {
+      if (generation != _generation) return;
       failure = error;
       uncertain = true;
     }
-    notifyListeners();
+    if (generation == _generation) notifyListeners();
   }
 
-  void _startPolling() {
+  void _startPolling(int generation) {
+    if (generation != _generation) return;
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(milliseconds: 250), (_) {
+    _timer = Timer.periodic(const Duration(milliseconds: 250), (timer) {
+      if (generation != _generation) {
+        timer.cancel();
+        return;
+      }
       if (_pollUntil != null && DateTime.now().isAfter(_pollUntil!)) {
-        _timer?.cancel();
+        timer.cancel();
         uncertain = true;
         notifyListeners();
         return;

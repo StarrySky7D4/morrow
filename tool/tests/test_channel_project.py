@@ -11,6 +11,24 @@ import morrow_plugin as tool
 import sdk_profiles
 
 class ChannelProject(unittest.TestCase):
+    def test_new_channel_keeps_execution_budget_and_cpu_optimized_rust(self):
+        with tempfile.TemporaryDirectory(prefix='morrow-channel-budget-reconstruction-') as temporary:
+            for language in tool.LANGUAGES:
+                path=Path(temporary)/language
+                with contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(tool.main(['new',str(path),'--language',language,'--kind','channel',
+                        '--channel-input','directory','--id','channel.bounded.'+language]),0)
+                _,config,_=tool.project(path)
+                self.assertEqual(config['budget'],{'fuel':20000000,'memory_bytes':16777216,'host_calls':16})
+                if language=='rust':
+                    cargo=tool.read_toml(path/'Cargo.toml')
+                    self.assertEqual(cargo['profile']['release']['opt-level'],3)
+            ordinary=Path(temporary)/'ordinary-rust'
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(tool.main(['new',str(ordinary),'--language','rust','--kind','transform',
+                    '--id','ordinary.bounded.rust']),0)
+            self.assertEqual(tool.read_toml(ordinary/'Cargo.toml')['profile']['release']['opt-level'],'s')
+
     def test_new_all_languages_pins_and_typed_no_authority(self):
         with tempfile.TemporaryDirectory(prefix='morrow-channel-project-014-') as temporary:
             for language in tool.LANGUAGES:

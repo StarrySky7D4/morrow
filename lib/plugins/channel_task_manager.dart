@@ -145,6 +145,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
   }
 
   Future<void> _readSent() async {
+    final generation = session.generation;
     final current = session.snapshot;
     if (current == null || current.observedSequence == BigInt.zero) {
       return;
@@ -155,6 +156,7 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
         current.observedSequence,
       );
       if (!mounted ||
+          generation != session.generation ||
           session.snapshot == null ||
           !ChannelValidation.same(current.key, session.snapshot!.key)) {
         return;
@@ -164,7 +166,10 @@ final class _ChannelTaskManagerState extends State<ChannelTaskManager> {
         peerFailure = null;
       });
     } catch (error) {
-      if (mounted) {
+      if (mounted &&
+          generation == session.generation &&
+          session.snapshot != null &&
+          ChannelValidation.same(current.key, session.snapshot!.key)) {
         setState(() => peerFailure = error);
       }
     }

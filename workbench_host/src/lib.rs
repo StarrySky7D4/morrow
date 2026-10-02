@@ -36,6 +36,8 @@ pub mod capture_provenance;
 pub mod captured_cards;
 pub mod cards_content;
 pub mod cards_edit;
+#[cfg(not(target_arch = "wasm32"))]
+mod channel_directory_preflight;
 #[cfg(windows)]
 pub mod channel_tasks;
 mod command_frame;

@@ -76,6 +76,10 @@ def validate_descriptor(value):
         constraints = profile.get("workbench_constraints")
         if not isinstance(constraints, dict) or any(type(constraints.get(k)) is not bool for k in ("content_task", "dependency_calls", "required_dependencies")):
             raise ValueError("invalid Workbench route constraints")
+        if profile["id"] == "morrow.channel.v1" and any(
+                constraints.get(k) is not False for k in
+                ("content_task", "dependency_calls", "required_dependencies", "channel_binding")):
+            raise ValueError("unsupported channel Workbench route constraints")
         limits = profile.get("hard_byte_limits")
         if not isinstance(limits, dict) or not limits or len(limits) > 32:
             raise ValueError("missing hard byte limits")

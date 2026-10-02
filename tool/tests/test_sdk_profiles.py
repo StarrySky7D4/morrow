@@ -23,6 +23,7 @@ class Profiles(unittest.TestCase):
         item=descriptor();channel=copy.deepcopy(item['profiles'][0]);channel['id']='morrow.channel.v1'
         channel['status']='experimental';channel['contracts']['channel']={'version':1,'sha256':'1'*64}
         channel['workbench_routes']=[]
+        channel['workbench_constraints']['channel_binding']=False
         channel['channel_scope']={'trusted_local_sources':True,'managed_binding_required':True,
                                  'workbench_binding':False,'network_backend':False,'cloud_account':False,'automatic_replay':False}
         item['profiles'].append(channel);sdk.validate_descriptor(item)
@@ -33,6 +34,22 @@ class Profiles(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'scope'):sdk.validate_descriptor(invalid)
         invalid=copy.deepcopy(item);del invalid['profiles'][1]['contracts']['channel']
         with self.assertRaisesRegex(ValueError,'contracts'):sdk.validate_descriptor(invalid)
+
+    def test_channel_constraints_are_present_and_exactly_false(self):
+        item=descriptor();channel=copy.deepcopy(item['profiles'][0]);channel['id']='morrow.channel.v1'
+        channel['status']='experimental';channel['contracts']['channel']={'version':1,'sha256':'1'*64}
+        channel['workbench_routes']=[]
+        channel['workbench_constraints']['channel_binding']=False
+        channel['channel_scope']={'trusted_local_sources':True,'managed_binding_required':True,
+                                 'workbench_binding':False,'network_backend':False,'cloud_account':False,'automatic_replay':False}
+        item['profiles'].append(channel);sdk.validate_descriptor(item)
+        for field in ('content_task','dependency_calls','required_dependencies','channel_binding'):
+            for bad in ('missing',True,0,'false',None):
+                invalid=copy.deepcopy(item)
+                if bad=='missing':del invalid['profiles'][1]['workbench_constraints'][field]
+                else:invalid['profiles'][1]['workbench_constraints'][field]=bad
+                with self.subTest(field=field,value=bad),self.assertRaises(ValueError):
+                    sdk.validate_descriptor(invalid)
 
     def test_bad_versions_and_missing_contract_are_refused(self):
         for field,value in (('guest_abi_version','wrong'),('package_schema_version',True),('guest_abi_version',0)):

@@ -28,7 +28,7 @@ const MAX_HOST_JOBS: usize = 64;
 const MAX_HOST_RESERVED_BYTES: u64 = 8 * MAX_JOB_BYTES;
 const MAX_HOST_SOURCE_FRAMES: u32 = 256;
 const MAX_HOST_REQUESTS: u64 = 4096;
-pub const DIRECTORY_INPUT_TYPE: &str = "morrow.channel.directory.v1";
+pub const DIRECTORY_INPUT_TYPE: &str = crate::channel_directory_preflight::DIRECTORY_INPUT_TYPE;
 pub struct Prepare {
     pub submission: [u8; 32],
     pub package_id: String,
@@ -495,6 +495,13 @@ impl Workbench {
         if !declaration.handlers.contains(&request.handler) {
             return Err("channel handler is not declared".into());
         }
+        let declared_kind = match request.kind {
+            Kind::ByteStream => 1,
+            Kind::Events => 2,
+        };
+        if !declaration.kinds.contains(&declared_kind) {
+            return Err("channel source kind is not declared".into());
+        }
         let metadata = package
             .manifest()
             .transform_handlers
@@ -542,6 +549,12 @@ impl Workbench {
         {
             return Err("local source exceeds the approved original grant".into());
         }
+        crate::channel_directory_preflight::preflight_directory_input(
+            &input_type,
+            max_input_bytes,
+            request.kind,
+            request.budget,
+        )?;
         let reserve_bytes = self
             .channel_tasks
             .reserved_bytes
