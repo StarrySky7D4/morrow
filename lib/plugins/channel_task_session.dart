@@ -67,6 +67,49 @@ final class ChannelTaskSession extends ChangeNotifier {
     snapshot = next;
   }
 
+  void _validatePreparedSource(
+    ChannelPrepareRequest value,
+    ChannelTaskSnapshot prepared,
+    List<ChannelSourceFrame> sourceFrames,
+  ) {
+    final directory = prepared.directory;
+    if (directory.channels.length != 1 ||
+        directory.wire.length != ChannelDirectory.singleEndpointWireBytes) {
+      throw const FormatException(
+        'Expected one bounded local Directory endpoint',
+      );
+    }
+    final endpoint = directory.channels.single;
+    final granted = endpoint.budget;
+    final requested = value.budget;
+    if (endpoint.kind != value.kind ||
+        !ChannelValidation.same(endpoint.reference, prepared.reference) ||
+        !ChannelValidation.same(endpoint.sourceEpoch, prepared.sourceEpoch) ||
+        granted.maxChannels != 1 ||
+        granted.maxChannels > requested.maxChannels ||
+        granted.maxFrameBytes > requested.maxFrameBytes ||
+        granted.maxBytes > requested.maxBytes ||
+        granted.maxMessages > requested.maxMessages ||
+        granted.maxRequests > requested.maxRequests ||
+        granted.maxDurationMs > requested.maxDurationMs) {
+      throw const FormatException(
+        'Returned Directory exceeds the requested grant',
+      );
+    }
+    if (BigInt.from(value.lifetimeMs) > granted.maxDurationMs ||
+        BigInt.from(sourceFrames.length) > granted.maxMessages ||
+        value.totalBytes > granted.maxBytes ||
+        sourceFrames.any(
+          (frame) => frame.bytes.length > granted.maxFrameBytes,
+        )) {
+      throw const FormatException(
+        'Frozen source does not fit the returned grant',
+      );
+    }
+    // maxRequests is a guest-operation ceiling, not a host upload/RPC count.
+    // A legitimate narrowing to one request remains eligible here.
+  }
+
   Future<void> prepareAndRun(
     ChannelPrepareRequest value,
     List<ChannelSourceFrame> frames,
@@ -112,7 +155,15 @@ final class ChannelTaskSession extends ChangeNotifier {
     try {
       final prepared = await backend.prepareChannel(value);
       if (generation != _generation) return;
+      if (!ChannelValidation.same(prepared.submission, value.submission)) {
+        throw const FormatException(
+          'Local channel preparation submission changed',
+        );
+      }
+      // Retain an identified reply before admission, so an incompatible grant
+      // still has its original key and raw Directory for explicit status/Close.
       _accept(prepared);
+      _validatePreparedSource(value, prepared, sourceFrames);
       notifyListeners();
       for (final frame in sourceFrames) {
         if (generation != _generation) return;
