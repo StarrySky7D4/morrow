@@ -254,8 +254,13 @@ impl Resource {
         }
         Ok(())
     }
-    fn close(&self, cause: Status) {
-        let mut queue = self.queues.lock().unwrap_or_else(|e| e.into_inner());
+    fn close_locked(&self, queue: &mut Queues, cause: Status) {
+        if cause == Status::Closed {
+            // Cleanup has no authority to mask an original stop or deadline.
+            // Observe that gate while owning the same queue lock that records
+            // the first cause, rather than checking it before lock acquisition.
+            let _ = self.check_locked(queue);
+        }
         if queue.cause.is_none() {
             queue.cause = Some(cause);
         }
@@ -263,17 +268,16 @@ impl Resource {
         queue.sent = None;
         self.changed.notify_all();
     }
+    fn close(&self, cause: Status) {
+        let mut queue = self.queues.lock().unwrap_or_else(|e| e.into_inner());
+        self.close_locked(&mut queue, cause);
+    }
     fn try_close(&self, cause: Status) -> bool {
         let mut queue = match self.queues.try_lock() {
             Ok(queue) => queue,
             Err(_) => return false,
         };
-        if queue.cause.is_none() {
-            queue.cause = Some(cause);
-        }
-        queue.frame = None;
-        queue.sent = None;
-        self.changed.notify_all();
+        self.close_locked(&mut queue, cause);
         true
     }
     fn gate(&self) -> Result<()> {
@@ -311,7 +315,9 @@ impl Resource {
             queue.cleanup_proof = CleanupProof::Joined;
             if joined.is_err() {
                 queue.producer_outcome = ProducerOutcome::Unknown;
-                queue.cause = Some(Status::Unknown);
+                // A failed real join makes the source outcome Unknown, but
+                // cannot rewrite an already observed terminal first cause.
+                queue.cause.get_or_insert(Status::Unknown);
                 queue.frame = None;
                 queue.sent = None;
             }
@@ -455,12 +461,15 @@ impl Producer {
 impl Drop for Producer {
     fn drop(&mut self) {
         if !self.finished {
-            self.resource
+            let mut queue = self
+                .resource
                 .queues
                 .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .producer_outcome = ProducerOutcome::Unknown;
-            self.resource.close(Status::Unknown);
+                .unwrap_or_else(|e| e.into_inner());
+            // Record the uncertain source outcome and its first terminal cause
+            // atomically. Cleanup must not insert Closed between these facts.
+            queue.producer_outcome = ProducerOutcome::Unknown;
+            self.resource.close_locked(&mut queue, Status::Unknown);
         }
     }
 }
@@ -491,7 +500,8 @@ pub struct ChannelCleanup {
     resource: Arc<Resource>,
 }
 impl ChannelCleanup {
-    /// Cleanup-only nonblocking control path. Busy keeps its original handle pending.
+    /// Cleanup-only control path. A busy original queue keeps its handle pending.
+    /// The original cancellation/deadline gate is still checked synchronously.
     pub fn try_cleanup(&self) -> Status {
         if !self.resource.try_close(Status::Closed) {
             return Status::ClosingUnconfirmed;
@@ -1267,20 +1277,28 @@ impl ChannelBroker {
         input: &morrow_core::task::Invocation,
         clock: impl FnMut() -> u64,
     ) -> crate::package::TaskReport {
+        // Revocation belongs only to this authentic broker/host/manager and
+        // its original instance. A caller-supplied foreign instance must not be
+        // stopped merely because its task receives a rejected report here.
+        let original_owner = self.owner(manager, host, instance).is_ok();
         let registration = input
             .transform()
             .and_then(|transform| instance.package().package().channel_handler(transform).ok());
         let Some(registration) = registration else {
-            return crate::package::TaskReport {
-                execution: Report {
-                    outcome: Err(Fault::TaskProtocol),
-                    host_calls: 0,
-                    fuel_remaining: instance.package().limits().fuel,
+            return self.finish_invocation(
+                instance,
+                original_owner,
+                crate::package::TaskReport {
+                    execution: Report {
+                        outcome: Err(Fault::TaskProtocol),
+                        host_calls: 0,
+                        fuel_remaining: instance.package().limits().fuel,
+                    },
+                    response: None,
+                    output: None,
+                    failure: None,
                 },
-                response: None,
-                output: None,
-                failure: None,
-            };
+            );
         };
         let mut run = self.run_task(manager, host, instance, input.bytes(), clock);
         let mut output = None;
@@ -1300,12 +1318,35 @@ impl ChannelBroker {
                 _ => run.report.outcome = Err(Fault::TaskProtocol),
             }
         }
-        crate::package::TaskReport {
-            execution: run.report,
-            response: None,
-            output,
-            failure,
+        self.finish_invocation(
+            instance,
+            original_owner,
+            crate::package::TaskReport {
+                execution: run.report,
+                response: None,
+                output,
+                failure,
+            },
+        )
+    }
+    fn finish_invocation(
+        &self,
+        instance: &ManagedInstance,
+        original_owner: bool,
+        report: crate::package::TaskReport,
+    ) -> crate::package::TaskReport {
+        if original_owner
+            && (report.execution.outcome.is_err()
+                || report.failure.is_some()
+                || report.output.is_none())
+        {
+            // First finalize the owned report, then revoke the exact original
+            // shared Control. Its fault/completion is not rewritten as cancel,
+            // Close, rollback or successful resource reclamation.
+            instance.request_stop();
+            self.resource.changed.notify_all();
         }
+        report
     }
 }
 impl Drop for ChannelBroker {
