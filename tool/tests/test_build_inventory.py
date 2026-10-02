@@ -31,12 +31,13 @@ class InventoryTests(unittest.TestCase):
         self.root.mkdir()
         required = [
             "pubspec.yaml", "core/src/plugin_package.rs", "core/src/store.rs",
-            "sdk/rust/src/dependency_call.rs", "sdk/rust/src/io.rs", "sdk/rust/src/service.rs", "sdk/rust/src/service_resources.rs",
+            "sdk/rust/src/dependency_call.rs", "sdk/rust/src/io.rs", "sdk/rust/src/service.rs", "sdk/rust/src/service_resources.rs", "sdk/rust/src/channel.rs",
             "sdk/compat/guest-v1-rc1.sha256", "android/app/build.gradle.kts",
             "lib/plugins/bootstrap_native.dart",
         ]
         required += [folder + "/Cargo.toml" for folder in inventory.CRATES]
         required += [item[1] for item in inventory.PROTOCOLS]
+        required += ["core/src/channel.rs"]
         required += ["sdk/rust/contracts/" + item[3] for item in inventory.PROTOCOLS if item[3]]
         for name in required:
             self.copy(name)
@@ -93,8 +94,10 @@ class InventoryTests(unittest.TestCase):
     def test_original_copied_sources_and_fixed_baseline_are_consistent(self):
         data = self.collect()
         self.assertEqual(data["frozen_count"], 36)
-        self.assertEqual(len(data["protocols"]), 7)
-        self.assertEqual(len(data["mirrors"]), 8)
+        self.assertEqual(len(data["protocols"]), 8)
+        self.assertEqual(len(data["mirrors"]), 9)
+        self.assertIn("channel", [p[0] for p in data["protocols"]])
+        self.assertIn("channel.capnp", [p[0] for p in data["mirrors"]])
         self.assertTrue(data["schemas"])
         self.assertEqual(data["pin"], (REPO / "sdk/compat/guest-v1-rc1.sha256").read_text().strip())
 
@@ -103,7 +106,7 @@ class InventoryTests(unittest.TestCase):
             with self.subTest(protocol=name):
                 saved = (self.root / path).read_bytes()
                 self.edit(path, lambda text: re.sub(
-                    rf"(^pub const {symbol}: u16 = )[0-9]+;", r"\g<1>999;", text, flags=re.MULTILINE))
+                    rf"(^pub const {symbol}: u(?:16|32) = )[0-9]+;", r"\g<1>999;", text, flags=re.MULTILINE))
                 with self.assertRaisesRegex(inventory.InventoryError, "Host/SDK version mismatch"):
                     self.collect()
                 (self.root / path).write_bytes(saved)
@@ -135,7 +138,86 @@ class InventoryTests(unittest.TestCase):
     def test_crlf_only_schema_difference_preserves_declared_normalized_contract(self):
         path = self.root / "sdk/rust/contracts/runtime.capnp"
         path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
-        self.assertEqual(len(self.collect()["mirrors"]), 8)
+        self.assertEqual(len(self.collect()["mirrors"]), 9)
+
+    def test_channel_schema_and_wire_versions_are_observed_without_execution_claim(self):
+        data = self.collect()
+        report = inventory.render(data, ("a" * 40, ""), [], [])
+        self.assertIn("channel.capnp", report)
+        self.assertIn("core/src/channel.rs = sdk/rust/src/channel.rs", report)
+        self.assertIn("No build, guest execution, device test or channel check is performed", report)
+        self.assertIn("NOT_RUN", report)
+        self.assertIn("not old-binary compatibility execution", report)
+        self.assertIn("not a grant or execution result", report)
+        self.assertIn("channel is u32", report)
+        self.assertIn("other listed protocol declarations remain u16", report)
+
+    def test_channel_versions_reject_wrong_type_duplicates_missing_and_overflow(self):
+        declaration = "pub const VERSION: u32 = 1;"
+        replacements = ("", "pub const VERSION: u16 = 1;", "pub const VERSION: u32 = 1 + 0;",
+                        declaration + "\n" + declaration,
+                        declaration + "\npub const VERSION: u16 = 1;",
+                        "pub const VERSION: u32 = 4294967296;", "pub const VERSION: u32 = " + "9" * 5000 + ";",
+                        "// " + declaration, "/*\n" + declaration + "\n*/")
+        for name in ("core/src/channel.rs", "sdk/rust/src/channel.rs"):
+            saved = (self.root / name).read_bytes()
+            for replacement in replacements:
+                with self.subTest(source=name, replacement_length=len(replacement)):
+                    self.write(name, saved.decode("utf-8").replace(declaration, replacement))
+                    with self.assertRaises(inventory.InventoryError):
+                        self.collect()
+            (self.root / name).write_bytes(saved)
+
+    def test_channel_matching_u32_maximum_is_an_observation_not_u16(self):
+        for name in ("core/src/channel.rs", "sdk/rust/src/channel.rs"):
+            self.edit(name, lambda text: text.replace("pub const VERSION: u32 = 1;", "pub const VERSION: u32 = 4294967295;"))
+        row = [p for p in self.collect()["protocols"] if p[0] == "channel"]
+        self.assertEqual(row[0][1], 4294967295)
+
+    def test_channel_string_literal_lookalikes_cannot_supply_a_source_version(self):
+        declaration = "pub const VERSION: u32 = 1;"
+        for name in ("core/src/channel.rs", "sdk/rust/src/channel.rs"):
+            saved = (self.root / name).read_bytes()
+            for marker, suffix in ((r'r#"', '"#'), ('"', '"'), (r'br##"', '"##'), (r'r#"', '"')):
+                with self.subTest(source=name, marker=marker, suffix=suffix):
+                    replacement = "pub const DOC: &str = " + marker + "\n" + declaration + "\n" + suffix + ";"
+                    self.write(name, saved.decode("utf-8").replace(declaration, replacement))
+                    with self.assertRaises(inventory.InventoryError):
+                        self.collect()
+            (self.root / name).write_bytes(saved)
+
+    def test_channel_nested_or_macro_declaration_is_not_top_level(self):
+        declaration = "pub const VERSION: u32 = 1;"
+        for name in ("core/src/channel.rs", "sdk/rust/src/channel.rs"):
+            saved = (self.root / name).read_bytes()
+            for wrapper in ("mod nested {\n%s\n}", "fn unused() {\n%s\n}",
+                            "macro_rules! unused { () => {\n%s\n}; }"):
+                with self.subTest(source=name, wrapper=wrapper):
+                    self.write(name, saved.decode("utf-8").replace(declaration, wrapper % declaration))
+                    with self.assertRaises(inventory.InventoryError):
+                        self.collect()
+            (self.root / name).write_bytes(saved)
+
+    def test_channel_crlf_only_schema_is_observed_but_lone_cr_is_drift(self):
+        path = self.root / "sdk/rust/contracts/channel.capnp"
+        saved = path.read_bytes().replace(b"\r\n", b"\n")
+        path.write_bytes(saved.replace(b"\n", b"\r\n"))
+        self.assertEqual(len(self.collect()["mirrors"]), 9)
+        path.write_bytes(saved.replace(b"\n", b"\r"))
+        with self.assertRaisesRegex(inventory.InventoryError, "Host/SDK schema mismatch: channel.capnp"):
+            self.collect()
+
+    def test_existing_u16_protocols_still_reject_u32_and_overflow(self):
+        name = "core/src/task.rs"
+        saved = (self.root / name).read_bytes()
+        for replacement in ("pub const VERSION: u32 = 3;", "pub const VERSION: u16 = 65536;"):
+            with self.subTest(replacement=replacement):
+                self.write(name, re.sub(r"pub const VERSION: u16 = [0-9]+;", replacement, saved.decode("utf-8")))
+                with self.assertRaises(inventory.InventoryError):
+                    self.collect()
+
+    def test_legacy_u16_zero_padded_literal_acceptance_is_unchanged(self):
+        self.assertEqual(inventory.constant("pub const VERSION: u16 = 000001;", "VERSION", "legacy fixture"), 1)
 
     def test_database_migration_and_all_acceptance_predicates_must_agree(self):
         path = "core/src/store.rs"
@@ -354,4 +436,3 @@ class InventoryTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

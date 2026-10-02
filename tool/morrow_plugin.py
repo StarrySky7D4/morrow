@@ -267,19 +267,90 @@ def channel_budget(value):
     return value
 
 
-def sdk_channel(root):
-    for name in ("rust/src/channel.rs", "c/include/morrow_channel_v1.h", "cpp/include/morrow_channel_v1.hpp"):
+def source_code(text, label):
+    """Mask Rust comments/literals for a narrow declaration observation.
+
+    This does not parse or compile Rust, resolve macros, or qualify behavior.
+    """
+    token = re.compile(r"//|/\*|(?:b|c)?r#*\"|(?:b)?'(?:\\(?:u\{[0-9A-Fa-f_]+\}|x[0-9A-Fa-f]{2}|.)|[^'\\\n])'|\"")
+    block = re.compile(r"/\*|\*/")
+    quoted = re.compile(r'"(?:\\.|[^"\\])*"', re.DOTALL)
+    output = []
+    cursor = 0
+    while match := token.search(text, cursor):
+        output.append(text[cursor:match.start()])
+        marker = match[0]
+        end = match.end()
+        if marker == "//":
+            end = text.find("\n", end)
+            if end < 0:
+                end = len(text)
+        elif marker == "/*":
+            depth = 1
+            while depth:
+                closing = block.search(text, end)
+                if closing is None:
+                    raise ToolError(label + ": unterminated source comment")
+                depth += 1 if closing[0] == "/*" else -1
+                end = closing.end()
+        elif marker.endswith('"') and marker != '"':
+            closing = '"' + "#" * marker.count("#")
+            end = text.find(closing, end)
+            if end < 0:
+                raise ToolError(label + ": unterminated raw source literal")
+            end += len(closing)
+        elif marker == '"':
+            literal = quoted.match(text, match.start())
+            if literal is None:
+                raise ToolError(label + ": unterminated source literal")
+            end = literal.end()
+        output.append(re.sub(r"[^\n]", " ", text[match.start():end]))
+        cursor = end
+    output.append(text[cursor:])
+    return "".join(output)
+
+
+def source_top_level(text, position):
+    """Check delimiter depth after comments/literals have been masked."""
+    stack = []
+    pairs = {")": "(", "]": "[", "}": "{"}
+    for character in text[:position]:
+        if character in "([{":
+            stack.append(character)
+        elif character in pairs:
+            if not stack or stack.pop() != pairs[character]:
+                return False
+    return not stack
+
+
+def channel_version(source):
+    """Observe one exact, bounded wire declaration; not Rust compilation."""
+    text = source.read_bytes().decode("utf-8").replace("\r\n", "\n")
+    text = source_code(text, "channel codec version: " + str(source))
+    declarations = re.findall(r"\bconst\s+VERSION\b", text)
+    matches = list(re.finditer(r"^pub const VERSION: u32 = ([0-9]+);$", text, re.MULTILINE))
+    if len(declarations) != 1 or len(matches) != 1 or not source_top_level(text, matches[0].start()):
+        raise ToolError("channel codec version: expected one exact pub const VERSION: u32 declaration: " + str(source))
+    literal = matches[0][1]
+    if len(literal) > 10 or int(literal) > 4294967295:
+        raise ToolError("channel codec version: u32 declaration out of range: " + str(source))
+    return int(literal)
+
+
+def sdk_channel(root, language=None):
+    names = ["rust/src/channel.rs"]
+    if language in (None, "c", "cpp"):
+        names.append("c/include/morrow_channel_v1.h")
+    if language in (None, "cpp"):
+        names.append("cpp/include/morrow_channel_v1.hpp")
+    for name in names:
         if not (root / name).is_file():
             raise ToolError("incomplete channel SDK root: " + str(root / name))
-    if (root / "rust/contracts/channel.capnp").read_bytes() != (ROOT / "core/schemas/channel.capnp").read_bytes():
+    # Normalize CRLF only, matching the existing contract digest convention.
+    if ((root / "rust/contracts/channel.capnp").read_bytes().replace(b"\r\n", b"\n")
+            != (ROOT / "core/schemas/channel.capnp").read_bytes().replace(b"\r\n", b"\n")):
         raise ToolError("SDK and host packager channel contracts differ")
-    versions = []
-    for source in (root / "rust/src/channel.rs", ROOT / "core/src/channel.rs"):
-        match = re.search(r"pub const VERSION: u32 = ([0-9]+);", source.read_text(encoding="utf-8"))
-        if match is None:
-            raise ToolError("missing channel codec version: " + str(source))
-        versions.append(match.group(1))
-    if versions[0] != versions[1]:
+    if channel_version(root / "rust/src/channel.rs") != channel_version(ROOT / "core/src/channel.rs"):
         raise ToolError("SDK and host packager channel codec versions differ")
 
 
@@ -355,7 +426,7 @@ def new_project(args):
     elif args.kind == "service":
         sdk_service(sdk_root)
     elif args.kind == "channel":
-        sdk_channel(sdk_root)
+        sdk_channel(sdk_root, args.language)
     target = path_text(args.path).absolute()
     if target.exists() or reparse(target):
         raise ToolError("new refuses an existing project path: " + str(target))
@@ -523,7 +594,7 @@ def preflight_project(args, loaded=None, *, check_lock=True):
     if kind == "service":
         sdk_service(sdk_root)
     if kind == "channel":
-        sdk_channel(sdk_root)
+        sdk_channel(sdk_root, config["build"]["language"])
     validate_build_tree(root)
     if config["build"]["language"] == "rust":
         validate_rust_project(root, source, sdk_root)

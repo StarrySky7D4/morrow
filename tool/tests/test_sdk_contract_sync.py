@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 REPOSITORY = Path(__file__).resolve().parents[2]
-SCHEMAS = ("runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp", "io.capnp", "service.capnp", "service_resources.capnp", "mutation.capnp")
+SCHEMAS = ("runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp", "io.capnp", "service.capnp", "service_resources.capnp", "mutation.capnp", "channel.capnp")
 VERSIONS = ("version.txt", "task-version.txt", "ui-version.txt")
 
 
@@ -91,6 +91,44 @@ class ContractSyncTests(unittest.TestCase):
         result = self.run_sync("--check")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Stale guest SDK contract: mutation.capnp", result.stderr)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_channel_only_drift_is_detected_without_repair(self):
+        source = self.root / "core/schemas/channel.capnp"
+        source.write_bytes(source.read_bytes() + b"\n# Changed channel contract\n")
+        before = self.snapshot()
+        result = self.run_sync("--check")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Stale guest SDK contract: channel.capnp", result.stderr)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_missing_channel_sync_restores_only_disposable_copy(self):
+        target = self.root / "sdk/rust/contracts/channel.capnp"
+        target.unlink()
+        result = self.run_sync("--check")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Stale guest SDK contract: channel.capnp", result.stderr)
+        self.assertFalse(target.exists())
+        result = self.run_sync()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(target.read_bytes(), (self.root / "core/schemas/channel.capnp").read_text(encoding="utf-8").encode("utf-8"))
+        self.assertEqual(self.run_sync("--check").returncode, 0)
+
+    def test_channel_crlf_only_difference_is_accepted_without_mutation(self):
+        target = self.root / "sdk/rust/contracts/channel.capnp"
+        target.write_bytes(target.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
+        before = self.snapshot()
+        result = self.run_sync("--check")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_channel_lone_cr_is_drift_not_a_normalized_contract(self):
+        target = self.root / "sdk/rust/contracts/channel.capnp"
+        target.write_bytes(target.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r"))
+        before = self.snapshot()
+        result = self.run_sync("--check")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Stale guest SDK contract: channel.capnp", result.stderr)
         self.assertEqual(self.snapshot(), before)
 
     def test_missing_dependency_normal_sync_restores_and_check_passes(self):

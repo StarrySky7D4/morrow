@@ -21,7 +21,7 @@ import verify_plugin_sdk_baseline as baseline
 ROOT = Path(__file__).resolve().parents[1]
 CRATES = ('core', 'core-web', 'audit', 'plugin_runtime', 'workbench_host',
           'sdk/rust', 'plugins/workbench', 'network_node')
-CONTRACTS = ('runtime.capnp', 'content.proto', 'task.capnp', 'ui.capnp', 'dependency_call.capnp', 'io.capnp', 'service.capnp', 'service_resources.capnp')
+CONTRACTS = ('runtime.capnp', 'content.proto', 'task.capnp', 'ui.capnp', 'dependency_call.capnp', 'io.capnp', 'service.capnp', 'service_resources.capnp', 'channel.capnp')
 PROTOCOLS = (
     ('runtime', 'core/src/runtime.rs', 'PROTOCOL_VERSION', 'version.txt'),
     ('task', 'core/src/task.rs', 'VERSION', 'task-version.txt'),
@@ -30,7 +30,10 @@ PROTOCOLS = (
     ('io', 'core/src/io.rs', 'VERSION', None),
     ('service', 'core/src/service.rs', 'VERSION', None),
     ('service-resources', 'core/src/service_resources.rs', 'VERSION', None),
+    ('channel', 'core/src/channel.rs', 'VERSION', None),
 )
+PROTOCOL_WIDTHS = {name: ('u32' if name == 'channel' else 'u16')
+                   for name, *_ in PROTOCOLS}
 REPORTS = ('reports/test.50-application-plugin-management.md',
            'reports/network-node-initial.md', 'docs/PLUGIN_SDK_COMPATIBILITY.md')
 
@@ -49,11 +52,76 @@ def one(pattern: str, text: str, label: str) -> str:
     return matches[0]
 
 
-def constant(text: str, name: str, label: str) -> int:
+def source_code(text, label):
+    """Mask Rust comments/literals for a narrow declaration observation.
+
+    This does not parse or compile Rust, resolve macros, or qualify behavior.
+    """
+    token = re.compile(r"//|/\*|(?:b|c)?r#*\"|(?:b)?'(?:\\(?:u\{[0-9A-Fa-f_]+\}|x[0-9A-Fa-f]{2}|.)|[^'\\\n])'|\"")
+    block = re.compile(r"/\*|\*/")
+    quoted = re.compile(r'"(?:\\.|[^"\\])*"', re.DOTALL)
+    output = []
+    cursor = 0
+    while match := token.search(text, cursor):
+        output.append(text[cursor:match.start()])
+        marker = match[0]
+        end = match.end()
+        if marker == "//":
+            end = text.find("\n", end)
+            if end < 0:
+                end = len(text)
+        elif marker == "/*":
+            depth = 1
+            while depth:
+                closing = block.search(text, end)
+                if closing is None:
+                    raise InventoryError(label + ": unterminated source comment")
+                depth += 1 if closing[0] == "/*" else -1
+                end = closing.end()
+        elif marker.endswith('"') and marker != '"':
+            closing = '"' + "#" * marker.count("#")
+            end = text.find(closing, end)
+            if end < 0:
+                raise InventoryError(label + ": unterminated raw source literal")
+            end += len(closing)
+        elif marker == '"':
+            literal = quoted.match(text, match.start())
+            if literal is None:
+                raise InventoryError(label + ": unterminated source literal")
+            end = literal.end()
+        output.append(re.sub(r"[^\n]", " ", text[match.start():end]))
+        cursor = end
+    output.append(text[cursor:])
+    return "".join(output)
+
+
+def source_top_level(text, position):
+    """Check delimiter depth after comments/literals have been masked."""
+    stack = []
+    pairs = {")": "(", "]": "[", "}": "{"}
+    for character in text[:position]:
+        if character in "([{":
+            stack.append(character)
+        elif character in pairs:
+            if not stack or stack.pop() != pairs[character]:
+                return False
+    return not stack
+
+
+def constant(text: str, name: str, label: str, width: str = 'u16') -> int:
     # Fail closed if declarations move to expressions or become ambiguous.
-    value = int(one(r'^pub const ' + re.escape(name) + r': u16 = ([0-9]+);$', text, label))
-    if value > 65535:
-        raise InventoryError(label + ': u16 declaration out of range')
+    if width not in ('u16', 'u32'):
+        raise InventoryError(label + ': unsupported source integer width')
+    if width == 'u32':
+        text = source_code(text, label)
+        declaration = re.search(r'^pub const ' + re.escape(name) + r': u32 = [0-9]+;$', text, re.MULTILINE)
+        if (len(re.findall(r'\bconst\s+' + re.escape(name) + r'\b', text)) != 1
+                or declaration is None or not source_top_level(text, declaration.start())):
+            raise InventoryError(label + ': expected one source declaration')
+    literal = one(r'^pub const ' + re.escape(name) + ': ' + width + r' = ([0-9]+);$', text, label)
+    if (width == 'u32' and len(literal) > 10) or int(literal) > (65535 if width == 'u16' else 4294967295):
+        raise InventoryError(label + ': ' + width + ' declaration out of range')
+    value = int(literal)
     return value
 
 
@@ -96,9 +164,10 @@ def collect(root: Path) -> dict:
             reader.read(lock)
     protocols = []
     for name, path, symbol, sdk_file in PROTOCOLS:
-        value = constant(reader.text(path), symbol, path)
+        width = PROTOCOL_WIDTHS[name]
+        value = constant(reader.text(path), symbol, path, width)
         sdk_path = 'sdk/rust/contracts/' + sdk_file if sdk_file else 'sdk/rust/src/' + name.replace('-', '_') + '.rs'
-        sdk_value = int(reader.text(sdk_path).strip()) if sdk_file else constant(reader.text(sdk_path), 'VERSION', sdk_path)
+        sdk_value = int(reader.text(sdk_path).strip()) if sdk_file else constant(reader.text(sdk_path), 'VERSION', sdk_path, width)
         if value != sdk_value:
             raise InventoryError('Host/SDK version mismatch: ' + name)
         protocols.append((name, value, path, sdk_path))
@@ -254,6 +323,8 @@ def render(data: dict, git: tuple[str, str], artifacts: list, tools: list) -> st
         'No build, guest execution, device test or channel check is performed. Historical reports remain historical. '
         'Hashes below identify inspected bytes; they do not bind an old artifact to current source.',
         '', '## Versions and source contracts', '',
+        'Source integer widths: channel is u32; the other listed protocol declarations remain u16. '
+        'These are source observations, not execution or compatibility qualification.', '',
         table(('Item', 'Value', 'Source'), [('application', data['version'], 'pubspec.yaml')] + data['packages'] +
               [(name, value, path + ' = ' + sdk) for name, value, path, sdk in data['protocols']] +
               [('accepted guest ABI (source predicate)', ', '.join(map(str, data['accepted_abis'])), 'core/src/plugin_package.rs'),
