@@ -1,0 +1,18 @@
+[workspace]
+resolver = "2"
+[package]
+name = "morrow-plugin-7f02a8873e49ac96"
+version = "0.1.0-test58.2"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+[lib]
+name = "morrow_plugin"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+[dependencies]
+morrow-plugin-sdk = {path = "../../rust", features = ["wasm-guest"]}
+[profile.release]
+opt-level = 3
+panic = "abort"
+strip = true

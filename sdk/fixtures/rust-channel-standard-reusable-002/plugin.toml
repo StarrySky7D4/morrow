@@ -1,0 +1,33 @@
+schema = 1
+
+[plugin]
+id = "org.example.channel.standard-sdk-reusable-002"
+version = "0.1.0-test58.3"
+name = "org.example.channel.standard-sdk-reusable-002"
+capabilities = []
+dependency_calls = false
+
+[build]
+language = "rust"
+source = "src/lib.rs"
+kind = "channel"
+
+[budget]
+fuel = 20000000
+memory_bytes = 16777216
+host_calls = 16
+
+[channel]
+max_channels = 1
+max_frame_bytes = 65536
+max_bytes = 2097152
+max_messages = 32
+max_requests = 128
+max_duration_ms = 30000
+
+[[handlers]]
+name = "channel.bounded.consume"
+input_type = "morrow.channel.directory.v1"
+output_type = "bytes"
+max_input_bytes = 65536
+max_output_bytes = 64
