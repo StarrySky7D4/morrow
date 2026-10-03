@@ -79,7 +79,6 @@ fn each_known_unimplemented_union_is_explicitly_unsupported_and_correlated() {
         (0, UnsupportedAction::Submit),
         (1, UnsupportedAction::Poll),
         (2, UnsupportedAction::Write),
-        (3, UnsupportedAction::QueryOperation),
     ] {
         let bytes = request(|mut root| match which {
             0 => {
@@ -89,7 +88,6 @@ fn each_known_unimplemented_union_is_explicitly_unsupported_and_correlated() {
             2 => {
                 root.init_write().set_reference(&[5; 32]);
             }
-            3 => root.set_query_operation(b"op"),
             _ => unreachable!(),
         });
         let req = Request::decode(&bytes).unwrap();

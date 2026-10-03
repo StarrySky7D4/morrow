@@ -1,5 +1,25 @@
 # 插件系统当前状态
 
+2026-10-03 **W14 原宿主批准的 POST SSE 通道**：新增显式 `managed-channel` 原生桥接，原 Store 严格 claim 成功后仅一次 POST，真实 Receive／exact ACK 后才读取下一事件，完整元数据使用独立 Cap’n Proto envelope；撤权与期限复核贯穿入队、交付和原 ACK 事务。Windows Release／离线／锁定最终134方法通过（72传输／SSE／新桥接＋62原通道／执行器／原件），新TEMP零残留。Rust／C／C++新 guest 实际消费完整事件；原9基础＋3依赖及 provider 保持原字节，SDK327／冻结57与云端Linux源码未修改。两轮编译失败、一轮48通过／2失败的原始运行保留；定向修复后完整复验，不清除历史。HTTP EOF／ACK／实际HTTP和producer join分别记录，业务仍OutcomeUnknown。未接Workbench生产批准UI／目录，WS／认证／TLS／真实外部API／普通用户token／受保护owner／GUI／其它平台及完整SDK仍OPEN。见 [宿主接口指南](PLUGIN_SSE_CHANNEL.md)与[实现、实测及剩余范围](../reports/reconstruction-2026-10-03/windows-sse-channel.md)。未提交／推送／CI／发布。
+
+2026-10-03 **W13 只读HTTP历史查询**：原QueryOperation在显式managed路由接通；当前单operation批准、原帧／payload摘要核验和Ready／read复核，不重发Unknown、不暴露正文。最终Windows Release离线锁定144方法通过（42新增＋原件回归），SDK327／冻结57原件／Schema／Linux代码恒同。三次fixture失败及定向修正原始保留；unit仅选10项，普通用户token／新三语言query guest／protected owner／GUI／其它平台未验。G07仅此范围推进，完整SDK继续OPEN。见 [接口指南](PLUGIN_OPERATION_HISTORY.md)与[实施／证据](../reports/reconstruction-2026-10-03/windows-operation-history.md)。本阶段未提交／推送／CI／发布。
+
+
+2026-10-03 **W12 有界 SSE 传输**：新增独立 decoder／SseLease，保持旧 HTTP/SDK327/57原件/schema/pins 和 Linux 汇合代码；审查修复解析首因及 EOF-invalid 截断标记。唯一 Windows Release 离线锁定运行55方法通过（34新增SSE＋21原传输），零fail/ignore/filter、新TEMP零残留，独立审查按源码和实际日志分别记录。只验证合成localhost与传输生命周期，公开guest网络源/channel bridge、TLS/外部账号/其他平台及完整SDK继续OPEN；G07历史查询仍待窄只读授权实现。见 [W12范围与证据](../reports/reconstruction-2026-10-03/windows-sse-transport.md)。本阶段未提交／推送／CI／发布。
+
+
+2026-10-03 **W08–W11 本地推进与 Linux 汇合**：channel 45 个无密钥方法通过，最小释放顺序修复后相关 36 方法复验、新目录零残留；独立 SDK 的原 Rust/C/C++ task 均真实离线编译 exit0；W05 原 native 14 个产物在受限 medium token 复跑通过、67 输入恒同。用户提供的 Linux 17 路径源码增量已按原 SHA/blob 合入，原 25 项本地修改保留。云端 Close199 是外部汇总，本包缺完整 Linux 测试日志；当前没有新增 Linux/GUI/受保护 owner 运行资格，整个 SDK 仍 OPEN。见 [夹具清理](../reports/reconstruction-2026-10-03/windows-channel-fixture-cleanup.md)、[独立编译](../reports/reconstruction-2026-10-03/windows-sdk-standalone-builds.md)、[受限 token](../reports/reconstruction-2026-10-03/windows-sdk-restricted-token.md)、[汇合范围](../reports/reconstruction-2026-10-03/linux-windows-convergence.md)。本轮未提交／推送／CI／发布；下方历史记录保持原范围。
+
+2026-10-03 **Windows 原生 SDK 与独立开发工具**：Clang／MSVC 七个原 fixture 各编译运行一次，14 build＋14 run exit0，独立1293项证据复核无阻塞；实际 child-handle token观察限定为管理员，未另证取样瞬间 liveness。新增 source-only SDK 导出／校验与显式 `--sdk-only` 项目工具，原宿主契约检查、source lock 和冻结原件保持；100个相关文件／元数据工具回归通过、0 skip，首次fixture前置清单失败及修复单独保留。SDK独立目录的最终模板／锁验收另记，不把元数据验证当模板业务执行或整个SDK冻结。见 [原生矩阵](../reports/reconstruction-2026-10-03/windows-sdk-native-codecs.md)、[独立分发](../reports/reconstruction-2026-10-03/windows-sdk-distribution.md)。
+
+后续按 [当前26需求／10组门槛](../reports/reconstruction-2026-10-03/sdk-scope-freeze-gates.md) 推进：生产 channel 产品资格、公开 POST SSE／WS、文件目录／blob、异步组合、重启核对与多平台。已有权限复核／Stop／Linux低层基础不再列作未实现；当前完整范围仍 OPEN。原 committed-tool runner 未运行且不绕gate，本轮未提交／推送／CI／发布；下方历史记录保持各自身份。
+
+2026-10-03 **当前 Rust SDK 库复验**：Windows x64 独立离线锁定测试报告92项通过、失败／忽略／过滤均0，真实exit0；其中1项按需夹具导出分支未启用，不作为新增功能证明。327 SDK／57原件／8 pending源码、锁与工具前后不变。管理员recorder及默认子进程token继承范围已记录；普通token、原bounded runner、其他原生codec全集、正式模板／分发及生产UI尚未获资格。见 [库测试证据与边界](../reports/reconstruction-2026-10-03/windows-sdk-library.md)，整个SDK未冻结。
+
+2026-10-03 **Windows SDK 续验**：原 transport 六包本机真实服务／HTTP 的2＋4项通过，runtime服务7套／76个唯一测试与SDK-only Rust／C／C++消费者通过。HTTP fixture清理先复现失败，再通过删除回归及原四项复验，零临时残留；早期72个残留文件和更正原样保留。精确LF C／C++重新编译运行通过，C的NDEBUG按预期拒绝。原件、runtime、消费者与产品资格分别记录，整个SDK未冻结，未提交／推送／CI／发布。见 [续验与剩余范围](../reports/reconstruction-2026-10-03/windows-sdk-transport-consumers.md)；下方条目保留历史身份。
+
+下一步补其他原生codec全集、模板与分发、准确committed-tool身份的完整bounded runner、生产channel／GUI及平台矩阵。已有Stop／权限核验源码不等于生产全链通过，Linux测试不计Windows资格。
+
 2026-10-01 **0.1.9-test.57+61 开发检查点与 Linux 迁移**：用户授权保存本轮代码/文档到原 `codex/m03-stream-revocation-backpressure` 分支，保留全部历史证据，不合并 main、不创建 Release、不运行 Actions/CI。生产 Windows supervisor/host/Flutter 链已落实；SDK014 最新默认 Release 构建通过，真实 normal/host/UI/supervisor 四类故障及 WM_CLOSE 通过。当前生产 channel 20 项实测为 11 通过、9 失败/错误、0 跳过；catalog UI 在 available 检查处失败，旧 native 产品 4 项通过，profile 查询未运行。不能把此前 managedRunner/SDK 库验证当作生产通道全面通过。源码/状态迁移目标已确认 Linux 云电脑，Linux 监督、IPC、权限与工作台需独立实现和实证。详见 [SDK014 精确状态](../reports/codex-morrow-v1.1/windows-sdk-014-2026-10-01.md) 与 [test.57 检查点](../reports/0.1.9-test.57-checkpoint.md)。
 
 

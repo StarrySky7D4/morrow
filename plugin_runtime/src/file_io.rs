@@ -175,7 +175,7 @@ impl FileBroker {
             Action::Read { reference, .. }
             | Action::Finish { reference }
             | Action::Cancel { reference } => *reference,
-            Action::SubmitHttp(_) | Action::Unsupported(_) => {
+            Action::SubmitHttp(_) | Action::QueryOperation { .. } | Action::Unsupported(_) => {
                 return failure(request, Status::Unsupported);
             }
         };
@@ -292,7 +292,7 @@ impl FileBroker {
             Action::Read { reference, .. }
             | Action::Finish { reference }
             | Action::Cancel { reference } => Some(reference),
-            Action::SubmitHttp(_) | Action::Unsupported(_) => None,
+            Action::SubmitHttp(_) | Action::QueryOperation { .. } | Action::Unsupported(_) => None,
         };
         let guard = token
             .and_then(|key| self.files.get(key))

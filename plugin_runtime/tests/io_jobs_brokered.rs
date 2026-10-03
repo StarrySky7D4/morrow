@@ -65,11 +65,12 @@ fn response(request: &Request) -> Vec<u8> {
     .unwrap()
 }
 struct Running {
-    _dir: tempfile::TempDir,
     manager: Manager,
     worker: IoWorker,
     observer: IoBinding,
     digest: [u8; 32],
+    // Close all handles before TempDir removes the synthetic fixture.
+    _dir: tempfile::TempDir,
 }
 impl Running {
     fn new(per_job: u64, total: u64) -> Self {

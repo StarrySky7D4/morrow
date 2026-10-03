@@ -27,11 +27,12 @@ fn all_caps() -> BTreeSet<IoCapability> {
     ])
 }
 struct Fixture {
-    _dir: tempfile::TempDir,
     manager: Manager,
     host: HostRuntime,
     instance: ManagedInstance,
     binding: IoBinding,
+    // Close all handles before TempDir removes the synthetic fixture.
+    _dir: tempfile::TempDir,
 }
 impl Fixture {
     fn new(approved: BTreeSet<IoCapability>) -> Self {

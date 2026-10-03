@@ -71,6 +71,8 @@ pub enum Action {
     /// Outbound HTTP submission, admitted only by a runtime that owns the
     /// referenced origin, method and credential.
     SubmitHttp(HttpSubmission),
+    /// Historical status only; a current, independently issued grant is required.
+    QueryOperation { operation_id: Vec<u8> },
     Unsupported(UnsupportedAction),
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -101,6 +103,29 @@ pub struct HttpOutcome {
     pub headers: Vec<Header>,
     pub body: Vec<u8>,
 }
+/// A bounded historical HTTP status. No headers, body or secret material is exposed.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct OperationOutcome {
+    pub status: Status,
+    pub http_status: u16,
+}
+fn validate_operation_outcome(outcome: &OperationOutcome) -> Result<()> {
+    if outcome.status == Status::Invalid
+        || (outcome.status == Status::Completed && !(100..=599).contains(&outcome.http_status))
+        || (outcome.status != Status::Completed && outcome.http_status != 0)
+    {
+        return Err(Error::Invalid("operation outcome status"));
+    }
+    Ok(())
+}
+fn validate_operation_id(operation_id: &[u8]) -> Result<()> {
+    if operation_id.len() > MAX_OPERATION_BYTES {
+        return Err(Error::Limit);
+    }
+    let operation = std::str::from_utf8(operation_id)
+        .map_err(|_| Error::Invalid("operation identity UTF-8"))?;
+    crate::identity(operation)
+}
 pub const MAX_METHOD_BYTES: usize = 16;
 pub const MAX_TARGET_BYTES: usize = 2048;
 pub const MAX_HEADERS: usize = 64;
@@ -109,6 +134,8 @@ pub const MAX_HEADER_VALUE_BYTES: usize = 8 * 1024;
 pub const MAX_HEADER_BYTES: usize = 16 * 1024;
 pub const MAX_CREDENTIAL_BYTES: usize = 4 * 1024;
 pub const MAX_OPERATION_BYTES: usize = 256;
+/// Fixed pre-lookup reservation for a status-only query response frame.
+pub const MAX_OPERATION_RESPONSE_BYTES: usize = 256;
 pub const MAX_ENDPOINT_BYTES: usize = 256;
 pub const MAX_SUBMIT_DEADLINE_MS: u64 = crate::plugin_package::io::MAX_DURATION_MS;
 /// Hop-by-hop or authority-carrying headers the runtime must own, never the guest.
@@ -283,6 +310,11 @@ impl Request {
         }
         Self::decode(&finish(&message)?)
     }
+    /// Encodes the existing query union without changing its original frame identity.
+    pub fn query_operation(call_id: u64, operation_id: &[u8]) -> Result<Self> {
+        validate_operation_id(operation_id)?;
+        Self::encode(call_id, Action::QueryOperation { operation_id: operation_id.to_vec() })
+    }
     pub fn encode_finish(call_id: u64, reference: &[u8; 32]) -> Result<Self> {
         Self::encode(
             call_id,
@@ -318,6 +350,10 @@ impl Request {
             }
             Action::Finish { reference } => root.set_finish(&reference),
             Action::Cancel { reference } => root.set_cancel(&reference),
+            Action::QueryOperation { operation_id } => {
+                validate_operation_id(&operation_id)?;
+                root.set_query_operation(&operation_id);
+            }
             Action::SubmitHttp(_) => return Err(Error::Invalid("HTTP submission encoder")),
             Action::Unsupported(_) => return Err(Error::Invalid("unsupported IO encoder")),
         }
@@ -430,8 +466,9 @@ impl Request {
                 Action::Unsupported(UnsupportedAction::Write)
             }
             wire::request::QueryOperation(value) => {
-                value.map_err(invalid)?;
-                Action::Unsupported(UnsupportedAction::QueryOperation)
+                let operation_id = value.map_err(invalid)?;
+                validate_operation_id(operation_id)?;
+                Action::QueryOperation { operation_id: operation_id.to_vec() }
             }
         };
         Ok(Self {
@@ -504,7 +541,7 @@ fn validate_response(
                 return Err(Error::Invalid("IO close result"));
             }
         }
-        Action::SubmitHttp(_) | Action::Unsupported(_) => {
+        Action::SubmitHttp(_) | Action::QueryOperation { .. } | Action::Unsupported(_) => {
             return Err(Error::Invalid("unsupported IO success"));
         }
     }
@@ -530,6 +567,66 @@ impl Response {
         root.set_offset(offset);
         root.set_eof(eof);
         finish(&message)
+    }
+    /// Encodes status for this exact query call, never the original submit call.
+    pub fn encode_operation(request: &Request, outcome: &OperationOutcome) -> Result<Vec<u8>> {
+        if !matches!(request.action(), Action::QueryOperation { .. }) {
+            return Err(Error::Invalid("operation outcome request"));
+        }
+        validate_operation_outcome(outcome)?;
+        let mut message = Builder::new_default();
+        let mut root = message.init_root::<wire::response::Builder>();
+        root.set_version(VERSION);
+        root.set_schema_sha256(&schema_digest());
+        root.set_call_id(request.call_id());
+        root.set_request_sha256(&request.digest());
+        root.set_status(outcome.status);
+        root.set_http_status(outcome.http_status);
+        root.set_offset(0);
+        root.set_eof(true);
+        let bytes = finish(&message)?;
+        if bytes.len() > MAX_OPERATION_RESPONSE_BYTES {
+            return Err(Error::Limit);
+        }
+        Ok(bytes)
+    }
+    /// Reads only the status projection. Query replies cannot carry original data.
+    pub fn decode_operation(request: &Request, bytes: &[u8]) -> Result<OperationOutcome> {
+        if bytes.len() > MAX_OPERATION_RESPONSE_BYTES {
+            return Err(Error::Limit);
+        }
+        if !matches!(request.action(), Action::QueryOperation { .. }) {
+            return Err(Error::Invalid("operation outcome request"));
+        }
+        let message = read(bytes)?;
+        let root = message.get_root::<wire::response::Reader>().map_err(invalid)?;
+        if root.total_size().map_err(invalid)?.cap_count != 0 {
+            return Err(invalid(()));
+        }
+        if root.get_version() != VERSION
+            || root.get_schema_sha256().map_err(invalid)? != schema_digest()
+        {
+            return Err(Error::UnsupportedVersion);
+        }
+        if root.get_call_id() != request.call_id()
+            || root.get_request_sha256().map_err(invalid)? != request.digest()
+        {
+            return Err(Error::Integrity);
+        }
+        if !root.get_reference().map_err(invalid)?.is_empty()
+            || !root.get_bytes().map_err(invalid)?.is_empty()
+            || !root.get_headers().map_err(invalid)?.is_empty()
+            || root.get_offset() != 0
+            || !root.get_eof()
+        {
+            return Err(Error::Invalid("operation outcome fields"));
+        }
+        let outcome = OperationOutcome {
+            status: root.get_status().map_err(invalid)?,
+            http_status: root.get_http_status(),
+        };
+        validate_operation_outcome(&outcome)?;
+        Ok(outcome)
     }
     /// Encodes one HTTP outcome bound to its submission frame. A completed
     /// remote 4xx/5xx is still `Completed` with its real `http_status`.
@@ -606,6 +703,10 @@ impl Response {
         Ok(outcome)
     }
     pub fn decode(request: &Request, bytes: &[u8]) -> Result<Self> {
+        if matches!(request.action(), Action::QueryOperation { .. }) {
+            let outcome = Self::decode_operation(request, bytes)?;
+            return Ok(Self { status: outcome.status, payload: Vec::new(), offset: 0, eof: true });
+        }
         let message = read(bytes)?;
         let root = message
             .get_root::<wire::response::Reader>()

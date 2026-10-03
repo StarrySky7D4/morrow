@@ -1,5 +1,7 @@
 //! Explicit trusted-host grants for bounded local-memory channels.
 //! A declaration never selects a source or grants content, filesystem or network access.
+mod source;
+pub use source::SourceGrant;
 use crate::{
     Fault, Report, TaskRun,
     continuation::Kind as CallKind,
@@ -15,7 +17,10 @@ use sha2::{Digest, Sha256};
 use std::{
     collections::hash_map::RandomState,
     hash::{BuildHasher, Hasher},
-    sync::{Arc, Condvar, Mutex, Weak},
+    sync::{
+        Arc, Condvar, Mutex, Weak,
+        atomic::{AtomicBool, Ordering},
+    },
     thread::{self, JoinHandle},
     time::Duration,
 };
@@ -219,38 +224,43 @@ struct Resource {
     queues: Mutex<Queues>,
     changed: Condvar,
     producer: Mutex<Option<JoinHandle<()>>>,
+    source_guard: Mutex<Option<Arc<source::GrantState>>>,
+    // Terminal business state only: this is never a resource join receipt.
+    source_closed: AtomicBool,
 }
 impl Resource {
     // No queue/Store borrow: safe at the durable transaction's final commit boundary.
-    fn commit_gate(&self) -> morrow_core::Result<()> {
-        if Instant::now() >= self.deadline
-            || self
-                .control
-                .upgrade()
-                .is_none_or(|control| !control.active())
-        {
-            return Err(morrow_core::Error::Invalid("inactive channel commit"));
+    fn live_gate(&self) -> Result<()> {
+        if Instant::now() >= self.deadline {
+            return Err(Error::Expired);
+        }
+        if self.control.upgrade().is_none_or(|control| !control.active()) {
+            return Err(Error::Denied);
+        }
+        let source = self.source_guard.lock().map_err(|_| Error::Unknown)?.clone();
+        if let Some(source) = source {
+            source.check_authority()?;
         }
         Ok(())
     }
+    fn commit_gate(&self) -> morrow_core::Result<()> {
+        self.live_gate().map_err(|_| morrow_core::Error::Invalid("inactive channel commit"))
+    }
     fn check_locked(&self, queue: &mut Queues) -> Result<()> {
-        if self.commit_gate().is_err() {
-            let expired = Instant::now() >= self.deadline;
+        if let Err(error) = self.live_gate() {
             if queue.cause.is_none() {
-                queue.cause = Some(if expired {
-                    Status::Expired
-                } else {
-                    Status::Revoked
+                queue.cause = Some(match error {
+                    Error::Expired => Status::Expired,
+                    Error::Denied => Status::Revoked,
+                    Error::Closed => Status::Closed,
+                    _ => Status::Unknown,
                 });
             }
+            self.source_closed.store(true, Ordering::Release);
             queue.frame = None;
             queue.sent = None;
             self.changed.notify_all();
-            return Err(if expired {
-                Error::Expired
-            } else {
-                Error::Denied
-            });
+            return Err(error);
         }
         Ok(())
     }
@@ -264,6 +274,7 @@ impl Resource {
         if queue.cause.is_none() {
             queue.cause = Some(cause);
         }
+        self.source_closed.store(true, Ordering::Release);
         queue.frame = None;
         queue.sent = None;
         self.changed.notify_all();
@@ -281,17 +292,14 @@ impl Resource {
         true
     }
     fn gate(&self) -> Result<()> {
-        if Instant::now() >= self.deadline {
-            self.close(Status::Expired);
-            return Err(Error::Expired);
-        }
-        if self
-            .control
-            .upgrade()
-            .is_none_or(|control| !control.active())
-        {
-            self.close(Status::Revoked);
-            return Err(Error::Denied);
+        if let Err(error) = self.live_gate() {
+            self.close(match error {
+                Error::Expired => Status::Expired,
+                Error::Denied => Status::Revoked,
+                Error::Closed => Status::Closed,
+                _ => Status::Unknown,
+            });
+            return Err(error);
         }
         Ok(())
     }
@@ -318,6 +326,7 @@ impl Resource {
                 // A failed real join makes the source outcome Unknown, but
                 // cannot rewrite an already observed terminal first cause.
                 queue.cause.get_or_insert(Status::Unknown);
+                self.source_closed.store(true, Ordering::Release);
                 queue.frame = None;
                 queue.sent = None;
             }
@@ -349,6 +358,9 @@ pub struct Producer {
 impl Producer {
     /// At most one unacknowledged inbound frame. Waiting is bounded by the original deadline.
     pub fn push(&self, bytes: Vec<u8>, cursor: Vec<u8>) -> Result<()> {
+        self.push_sequence(bytes, cursor).map(|_| ())
+    }
+    fn push_sequence(&self, bytes: Vec<u8>, cursor: Vec<u8>) -> Result<u64> {
         if bytes.is_empty()
             || bytes.len() > self.resource.max_frame_bytes as usize
             || cursor.len() > morrow_core::channel::MAX_CURSOR_BYTES
@@ -379,7 +391,7 @@ impl Producer {
                 });
                 queue.delivered = false;
                 self.resource.changed.notify_all();
-                return Ok(());
+                return Ok(sequence);
             }
             let wait = self
                 .resource
@@ -394,6 +406,50 @@ impl Producer {
                 .map_err(|_| Error::Unknown)?;
             drop(next);
         }
+    }
+    /// Check this exact frame's committed ACK without waiting or reading a source.
+    /// Duplex adapters may service bounded outgoing work while this is false;
+    /// it never authorizes reading the next inbound event or refunds credit.
+    pub fn try_acked(&self, sequence: u64) -> Result<bool> {
+        self.resource.gate()?;
+        let mut queue = self.resource.queues.lock().map_err(|_| Error::Unknown)?;
+        self.resource.check_locked(&mut queue)?;
+        if queue.cause.is_some() {
+            return Err(Error::Closed);
+        }
+        if sequence == 0 || sequence > queue.next_sequence || sequence < queue.last_acked {
+            return Err(Error::Invalid);
+        }
+        Ok(sequence == queue.last_acked)
+    }
+    /// Wait for the exact original frame's committed consumption ACK. No refund,
+    /// source read or network operation is performed while waiting.
+    pub fn wait_acked(&self, sequence: u64) -> Result<()> {
+        loop {
+            self.resource.gate()?;
+            let mut queue = self.resource.queues.lock().map_err(|_| Error::Unknown)?;
+            self.resource.check_locked(&mut queue)?;
+            if queue.cause.is_some() {
+                return Err(Error::Closed);
+            }
+            if sequence == 0 || sequence > queue.next_sequence || sequence < queue.last_acked {
+                return Err(Error::Invalid);
+            }
+            if sequence == queue.last_acked {
+                return Ok(());
+            }
+            let wait = self.resource.deadline.checked_duration_since(Instant::now())
+                .ok_or(Error::Expired)?.min(Duration::from_millis(25));
+            let (next, _) = self.resource.changed.wait_timeout(queue, wait)
+                .map_err(|_| Error::Unknown)?;
+            drop(next);
+        }
+    }
+    /// Preserve push's admission semantics, then await this frame's exact ACK
+    /// before the adapter asks its upstream source for another event.
+    pub fn push_and_wait_acked(&self, bytes: Vec<u8>, cursor: Vec<u8>) -> Result<()> {
+        let sequence = self.push_sequence(bytes, cursor)?;
+        self.wait_acked(sequence)
     }
     /// Accepted by the local broker is not proof that this trusted peer observed it.
     pub fn receive_sent(&self) -> Result<Option<(u64, Vec<u8>)>> {
@@ -451,6 +507,7 @@ impl Producer {
         queue.producer_outcome = ProducerOutcome::Eof;
         if queue.frame.is_none() {
             queue.cause = Some(Status::Closed);
+            self.resource.source_closed.store(true, Ordering::Release);
             queue.sent = None;
         }
         self.finished = true;
@@ -659,6 +716,8 @@ impl ChannelBroker {
             }),
             changed: Condvar::new(),
             producer: Mutex::new(None),
+            source_guard: Mutex::new(None),
+            source_closed: AtomicBool::new(false),
         });
         ledger.counter = counter;
         ledger.last_tick = now;
@@ -973,17 +1032,30 @@ impl ChannelBroker {
                                     Ok(())
                                 })();
                                 if durable.is_err() {
-                                    queue.cause = Some(Status::Unknown);
+                                    // A new source's final guard can reject its actual
+                                    // revocation/expiry after rows were written. Preserve
+                                    // that cause; ordinary local Store failures stay Unknown.
+                                    let source = self.resource.source_guard.lock()
+                                        .map_err(|_| Error::Unknown)?.clone();
+                                    let source_error = source.and_then(|source| source.check_authority().err());
+                                    let error = source_error.unwrap_or(Error::Unknown);
+                                    queue.cause.get_or_insert(match error {
+                                        Error::Denied => Status::Revoked,
+                                        Error::Expired => Status::Expired,
+                                        _ => Status::Unknown,
+                                    });
+                                    self.resource.source_closed.store(true, Ordering::Release);
                                     queue.frame = None;
                                     queue.sent = None;
                                     self.resource.changed.notify_all();
-                                    return Err(Error::Unknown);
+                                    return Err(error);
                                 }
                             }
                             queue.last_acked = *sequence;
                             queue.frame = None;
                             if queue.eof {
                                 queue.cause = Some(Status::Closed);
+                                self.resource.source_closed.store(true, Ordering::Release);
                                 queue.sent = None;
                             }
                             self.resource.changed.notify_all();

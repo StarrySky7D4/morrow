@@ -39,11 +39,11 @@ fn source(kind: Kind, duplex: bool) -> Source {
     }
 }
 struct Fixture {
-    dir: tempfile::TempDir,
     manager: Manager,
     host: HostRuntime,
     instance: ManagedInstance,
     digest: [u8; 32],
+    dir: tempfile::TempDir,
 }
 impl Fixture {
     fn new() -> Self {

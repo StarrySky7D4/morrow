@@ -1,5 +1,7 @@
 # 插件项目工具
 
+2026-10-03 **独立 SDK 三语言真实构建**：原 CLI 在不带 Core 的 SDK 目录外创建并离线编译 Rust/C/C++ task，三者外层 exit0，原 sdk.lock／项目 Cargo.lock 及 `--require-sdk-lock` 保留。此次仅是原模板实际编译，没有 pack/host/Wasm 业务执行；编译器、WASI sysroot、模块 SHA 与验证限制见 [W09 编译记录](../reports/reconstruction-2026-10-03/windows-sdk-standalone-builds.md)。既有元数据回归、包分发与宿主业务资格分别计数。
+
 自 test.49 提供 `tool/morrow_plugin.py`，将 C11、C++17、Rust 的创建、构建和打包入口统一起来。本文描述工具合同；本轮实际运行范围、失败及限制以 [test.49 验证记录](../reports/test.49-sdk-project-tools.md) 为准，不把脚手架生成或静态检查当作功能验收。
 
 2026-09-26 增加 `--kind service` 三语言模板：固定 `service.echo`、显式 `http-listen`／`http-publish`、原帧关联和现有服务 schema pin。打包器要求 `--service`，不产生监听授权；默认短期 profile，可显式声明有限长时运行。使用方法和有限范围见 [服务 SDK](../sdk/SERVICE_API.md)，本轮实际原包与真实 TCP 验证见 [报告](../reports/plugin-service-sdk-2026-09-26.md)。`verify_plugin_projects.py` 的旧五类完整流程保持原范围；新增服务流程使用 `verify_plugin_service_sdk.py`。
@@ -235,3 +237,19 @@ python -B -X utf8 tool/verify_plugin_projects.py --output-root "build/插件工�
 ### 原生文件变更声明的实验边界
 
 2026-09-27：底层 Rust `plugin_package pack-v2` 现可打包 `file-create`／`file-replace`／`file-delete` 声明，用于可信 Windows 宿主选择与恢复测试。它只写包声明，没有路径、选择权限或执行授权。上述 Python 项目生成器的 IO starter 能力范围仍如本节所述，尚未提供完整文件变更 guest SDK 模板；不要据此推断 guest 能直接调用私有宿主调度协议。Windows 条件替换继续明确 Unsupported。恢复会话及真实进程验证见 [本轮报告](../reports/mutation-recovery-session-2026-09-27.md)。
+
+## Explicit SDK source distribution
+
+`python -B tool/package_plugin_sdk.py create --source-root REPOSITORY --output SDK_SOURCE.zip` exports SDK library source, canonical contracts, license/NOTICE, C/C++/Rust starters, project/lock tools and declaration documentation. The destination must not exist and must be outside the source root. No native DLL, precompiled guest, SDK test/fixture, Core or runtime source is included. This is a source developer bundle, not a frozen SDK or product qualification.
+
+Use `verify-zip SDK_SOURCE.zip` before extraction and `verify-directory EXTRACTED_ROOT` afterwards. The bounded inventory verifies local hashes of tools, examples and docs as well as library source; it is not a signature or a second contract/version authority. The existing SDK source lock profile and limits remain unchanged. Do not store projects or caches inside the exact bundle inventory.
+
+Inside the extracted bundle, explicitly add `--sdk-only` to `new`, `validate`, `lock-sdk`, `build` and `doctor`. `new`/`validate`/`lock-sdk` need only ordinary file parsing. `validate` reports `host_contracts_verified = false` and the SDK-distribution inventory scope. Default commands retain their repository host schema/version comparisons. Missing input or changed inventory fails closed.
+
+`build`/`doctor` need separately provisioned trusted Cargo/Rust/Cap'n Proto/Clang/WASI tools and applicable offline dependencies; metadata validation does not prove they work. `pack`/`check`/`transform` in SDK-only mode always reject before compiler/host subprocesses or output: packaging, runtime preparation and guest execution need trusted Core/runtime tooling. There is no bundled precompiled host. Filesystem, network, lifecycle and authority remain host-owned requirements.
+
+Rust project Cargo dependencies record the selected SDK path; after moving a project, update that path and use the matching --sdk-root. C/C++ and declarative UI are supported through the existing SDK starters. No TS/JS/Dart guest language is introduced.
+
+The source exporter requires the selected source-root SDK to match the single repository Core schema/version authority before producing any ZIP. Core is checked as export input and is never bundled. SDK-only directory verification also requires every public C/C++ header and file-backed Rust module and observes generated runtime/task/UI version bindings, canonical mutation version bindings, native C/C++/Rust ABI values and Rust wire VERSION read/write use. These are narrow source observations; compiler expansion, schema/manual decoder semantics and arbitrary self-rehashed malicious source behavior are NOT_PROVED. The manifest is not a signature. C/C++ wire versions come through shared Rust FFI; native descriptor ABI is checked separately and is not a wire version.
+
+The source bundle checks ordinary and target-specific Cargo dependency paths and the library/build source entry. Additional patch/replace graphs, workspace members/inherited inputs and explicit bin/example/test/bench targets are rejected as unsupported source closure shapes. Registry dependencies and offline caches are not resolved or bundled. These checks are transferability limits in a trusted developer workflow, not compiler or malicious-source isolation.

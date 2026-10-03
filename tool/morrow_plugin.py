@@ -231,7 +231,20 @@ def project(path):
     return root, config, source
 
 def sdk(args):
-    root = path_text(args.sdk_root).resolve(strict=True)
+    root = path_text(args.sdk_root).absolute()
+    if getattr(args, "sdk_only", False):
+        try:
+            import package_plugin_sdk as distribution
+        except ImportError as error:
+            raise ToolError("SDK-only distribution verifier is missing") from error
+        try:
+            distribution.verify_distribution(root.parent)
+            if root.name != "sdk":
+                raise distribution.DistributionError("SDK-only root must be the bundle's sdk directory")
+        except (distribution.DistributionError, sdk_lock.SdkLockError, OSError, ValueError) as error:
+            raise ToolError("SDK-only distribution validation failed: " + str(error)) from error
+        return root
+    root = root.resolve(strict=True)
     for file in ("rust/Cargo.toml", "c/include/morrow_plugin_task.h", "cpp/include/morrow_plugin_task.hpp"):
         if not (root / file).is_file():
             raise ToolError("incomplete SDK root: " + str(root / file))
@@ -337,7 +350,7 @@ def channel_version(source):
     return int(literal)
 
 
-def sdk_channel(root, language=None):
+def sdk_channel(root, language=None, *, sdk_only=False):
     names = ["rust/src/channel.rs"]
     if language in (None, "c", "cpp"):
         names.append("c/include/morrow_channel_v1.h")
@@ -346,6 +359,9 @@ def sdk_channel(root, language=None):
     for name in names:
         if not (root / name).is_file():
             raise ToolError("incomplete channel SDK root: " + str(root / name))
+    if sdk_only:
+        channel_version(root / "rust/src/channel.rs")
+        return  # Full bundle bytes were verified by sdk(); no host agreement claimed.
     # Normalize CRLF only, matching the existing contract digest convention.
     if ((root / "rust/contracts/channel.capnp").read_bytes().replace(b"\r\n", b"\n")
             != (ROOT / "core/schemas/channel.capnp").read_bytes().replace(b"\r\n", b"\n")):
@@ -354,10 +370,12 @@ def sdk_channel(root, language=None):
         raise ToolError("SDK and host packager channel codec versions differ")
 
 
-def sdk_io(root):
+def sdk_io(root, *, sdk_only=False):
     for name in ("rust/src/io.rs", "c/include/morrow_plugin_io.h", "cpp/include/morrow_plugin_io.hpp"):
         if not (root / name).is_file():
             raise ToolError("incomplete IO SDK root: " + str(root / name))
+    if sdk_only:
+        return  # Full bundle bytes were verified by sdk(); no host agreement claimed.
     name = "io.capnp"
     if (root / "rust/contracts" / name).read_bytes() != (ROOT / "core/schemas" / name).read_bytes():
         raise ToolError("SDK and host packager IO contracts differ: " + name)
@@ -371,10 +389,12 @@ def sdk_io(root):
         raise ToolError("SDK and host packager IO codec versions differ")
 
 
-def sdk_service(root):
+def sdk_service(root, *, sdk_only=False):
     for name in ("rust/src/service.rs", "c/include/morrow_plugin_service.h", "cpp/include/morrow_plugin_service.hpp"):
         if not (root / name).is_file():
             raise ToolError("incomplete service SDK root: " + str(root / name))
+    if sdk_only:
+        return  # Full bundle bytes were verified by sdk(); no host agreement claimed.
     for stem in ("service", "service_resources"):
         name = stem + ".capnp"
         if (root / "rust/contracts" / name).read_bytes() != (ROOT / "core/schemas" / name).read_bytes():
@@ -387,6 +407,26 @@ def sdk_service(root):
             versions.append(match.group(1))
         if versions[0] != versions[1]:
             raise ToolError("SDK and host packager service codec versions differ")
+
+
+def profile_sdk_check(function, root, args, *profile_arguments):
+    # Preserve the original host comparison path unless explicitly selected.
+    if getattr(args, "sdk_only", False):
+        return function(root, *profile_arguments, sdk_only=True)
+    return function(root, *profile_arguments)
+
+
+def require_host_commands(args, command=None):
+    command = command or args.command
+    if command not in ("pack", "check", "transform"):
+        return
+    if getattr(args, "sdk_only", False):
+        raise ToolError(command + " requires trusted Core/runtime tools; SDK-only mode refuses before compilers, host subprocesses or output")
+    required = [ROOT / "plugin_runtime/Cargo.toml"]
+    if command == "pack":
+        required.append(ROOT / "core/Cargo.toml")
+    if any(not path.is_file() or reparse(path) for path in required):
+        raise ToolError(command + " requires trusted repository Core/runtime tools (not included in the SDK source distribution)")
 
 
 def executable(name):
@@ -420,14 +460,23 @@ def new_project(args):
         raise ToolError("--service-http requires --kind service")
     sdk_root = sdk(args)
     if service_http:
-        sdk_io(sdk_root)
+        profile_sdk_check(sdk_io, sdk_root, args)
     if args.kind == "io":
-        sdk_io(sdk_root)
+        profile_sdk_check(sdk_io, sdk_root, args)
     elif args.kind == "service":
-        sdk_service(sdk_root)
+        profile_sdk_check(sdk_service, sdk_root, args)
     elif args.kind == "channel":
-        sdk_channel(sdk_root, args.language)
+        profile_sdk_check(sdk_channel, sdk_root, args, args.language)
     target = path_text(args.path).absolute()
+    if getattr(args, "sdk_only", False):
+        import package_plugin_sdk as distribution
+        for ancestor in target.parents:
+            if ancestor.exists() or reparse(ancestor):
+                distribution.regular(ancestor, True)
+        target = target.resolve(strict=False)
+        bundle = sdk_root.parent.resolve(strict=True)
+        if target == bundle or bundle in target.parents:
+            raise ToolError("SDK-only new requires a project outside the immutable distribution directory")
     if target.exists() or reparse(target):
         raise ToolError("new refuses an existing project path: " + str(target))
     string(args.id, "plugin.id")
@@ -549,6 +598,8 @@ Dependency templates call slot reverse, require a bytes.tag-reverse provider (^1
 {('This service accepts POST and forwards its binary body once to / on exactly one host-selected endpoint. The resource directory is mandatory; absent/ambiguous selection fails without outbound IO. No inbound headers or caller credentials are forwarded. Use a durable host route: the exact original service frame digest forms the outbound operation ID. Unknown is returned as 409 outcome-unknown, never retried. Other denial/status bodies are documented in sdk/SERVICE_API.md. Long runs require the explicit service_run profile.' if service_http else '')}
 Rust uses the selected SDK path in Cargo.toml. If relocating the SDK, update that dependency and pass the matching --sdk-root.
 """.encode()
+    if getattr(args, "sdk_only", False):
+        files["README.md"] += b"\nSDK-only source distribution: add --sdk-only to project commands. Metadata/lock validation verifies the bundle inventory, not host agreement. pack/check/transform require trusted Core/runtime tools and are refused before subprocesses or output. build/doctor need a separately provisioned trusted compiler toolchain; distribution checks do not run them. Keep projects outside the bundle.\n"
     target.parent.mkdir(parents=True, exist_ok=True)
     target.mkdir(exist_ok=False)
     for name, data in files.items():
@@ -590,11 +641,11 @@ def preflight_project(args, loaded=None, *, check_lock=True):
     # Service outbounds use the IO codec too. A matching service schema alone
     # cannot qualify a different IO contract/version in an external SDK.
     if kind == "io" or (kind == "service" and "http-request" in config["io"]["capabilities"]):
-        sdk_io(sdk_root)
+        profile_sdk_check(sdk_io, sdk_root, args)
     if kind == "service":
-        sdk_service(sdk_root)
+        profile_sdk_check(sdk_service, sdk_root, args)
     if kind == "channel":
-        sdk_channel(sdk_root, config["build"]["language"])
+        profile_sdk_check(sdk_channel, sdk_root, args, config["build"]["language"])
     validate_build_tree(root)
     if config["build"]["language"] == "rust":
         validate_rust_project(root, source, sdk_root)
@@ -635,6 +686,11 @@ def validate_project(args):
                  "Declarations do not prove handler implementation or grant host authority.",
                  "Host dependency locks, endpoints, credentials and resource grants must be approved separately.",
              )) + "]"]
+    if getattr(args, "sdk_only", False):
+        lines[2] = 'scope = "project-metadata-and-sdk-distribution-inventory"'
+        lines += ['host_contracts_verified = false', 'sdk_distribution_verified = true',
+                  'sdk_distribution_is_signature = false', 'sdk_frozen = false',
+                  'sdk_source_bindings_checked = true', 'sdk_codec_semantics_proved = false']
     for label, values in (
         ("content_capabilities", config["plugin"].get("capabilities", [])),
         ("io_capabilities", config.get("io", {}).get("capabilities", [])),
@@ -699,6 +755,7 @@ def compile_project(args, loaded=None):
     return module
 
 def host_tool(example, arguments, args):
+    require_host_commands(args, "pack" if example == "plugin_package" else "check")
     crate = "core" if example == "plugin_package" else "plugin_runtime"
     command = [executable("cargo"), "run", "--locked"] + ([] if args.allow_network else ["--offline"])
     command += ["--release", "--manifest-path", ROOT / crate / "Cargo.toml", "--example", example]
@@ -742,6 +799,7 @@ def package_arguments(config):
     return arguments
 
 def pack_project(args):
+    require_host_commands(args, "pack")
     loaded = project(args.path)
     root, config, _, sdk_root, lock = preflight_project(args, loaded)
     # Pin SDK selection and lock before compilation, not after it. A concurrent
@@ -820,6 +878,7 @@ def main(argv=None):
     for name in ("new", "lock-sdk", "validate", "build", "pack", "check", "transform", "doctor"):
         command = commands.add_parser(name)
         command.add_argument("--sdk-root", default=str(ROOT / "sdk"))
+        command.add_argument("--sdk-only", action="store_true", help="explicit source distribution inventory checks; does not verify host agreement; pack/check/transform unavailable")
         command.add_argument("--sysroot", default=str(ROOT / "build/tools/wasi-34/wasi-sysroot-34.0"))
         command.add_argument("--allow-network", action="store_true", help="allow Cargo dependency downloads (offline by default)")
         if name in ("new", "lock-sdk", "validate", "build", "pack"):
@@ -854,7 +913,10 @@ def main(argv=None):
     profiles.add_argument("--host", required=True, help="explicit path to a trusted morrow-workbench-host executable")
     args = parser.parse_args(argv)
     try:
+        require_host_commands(args)  # Fail before compiler/host child processes or output.
         if args.command == "profiles":
+            if not (ROOT / "tool/sdk_profiles.py").is_file():
+                raise ToolError("profiles requires trusted host profile tooling not bundled in SDK-only distribution")
             import json
             import sdk_profiles
             try:
@@ -878,7 +940,7 @@ def main(argv=None):
             if args.command == "transform":
                 arguments += [args.handler, args.input_type, args.output_type, path_text(args.input_file).resolve(strict=True), path_text(args.output_file).absolute()]
             print(host_tool("plugin_check", arguments, args), end="")
-    except (ToolError, sdk_lock.SdkLockError, OSError, subprocess.TimeoutExpired, UnicodeError) as error:
+    except (ToolError, ValueError, sdk_lock.SdkLockError, OSError, subprocess.TimeoutExpired, UnicodeError) as error:
         print("ERROR:", error, file=sys.stderr)
         return 1
     return 0

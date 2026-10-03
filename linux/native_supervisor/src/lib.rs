@@ -13,10 +13,13 @@ mod controller_transport;
 mod executable;
 mod process;
 
-pub use controller::{ControllerLoss, ControllerWatch, LossObservation, OriginalController};
+pub use controller::{
+    ControllerLoss, ControllerWatch, CurrentController, LossObservation, OriginalController,
+};
 pub use controller_transport::{
     AuthenticatedFrame, BoundSupervisorFixtureLaunch, CapabilityTransport, ControllerFixtureLaunch,
-    ControllerLimits, FrameKind, FrameRead, SupervisorFixtureLaunch, fixture_channel_pair,
+    ControllerLimits, CurrentControllerFixtureLaunch, FrameKind, FrameRead,
+    SupervisorFixtureLaunch, current_controller_fixture_pair, fixture_channel_pair,
     take_controller_fixture_transport, take_supervisor_fixture_transport,
 };
 pub use executable::{MAX_EXECUTABLE_BYTES, SealedExecutable, SourceIdentity, digest};
@@ -45,3 +48,11 @@ fn above_stdio(file: std::fs::File) -> std::io::Result<std::fs::File> {
     }
     Ok(unsafe { std::fs::File::from_raw_fd(fd) })
 }
+
+// Experimental isolated guardian fixture, never a protected/product owner.
+pub use controller_transport::{
+    GuardianControllerFixture, GuardianControllerFixtureLaunch, GuardianEvent,
+    GuardianRegistrationFault, GuardianSupervisorFixture, GuardianSupervisorProcess,
+    GuardianWaitEligibility, GuardianWitness, guardian_controller_fixture_launch,
+    take_guardian_controller_fixture, take_guardian_supervisor_fixture,
+};

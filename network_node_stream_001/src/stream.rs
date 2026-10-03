@@ -64,7 +64,7 @@ impl SendContext {
         Ok(())
     }
     /// One fixed absolute deadline across DNS, headers, demand waits, body and cleanup trigger.
-    async fn run<T>(&self, future: impl Future<Output = Result<T>>) -> Result<T> {
+    pub(crate) async fn run<T>(&self, future: impl Future<Output = Result<T>>) -> Result<T> {
         self.check()?;
         tokio::pin!(future);
         let mut guard_tick = tokio::time::interval(Duration::from_millis(5));
@@ -113,6 +113,30 @@ impl Default for Completion {
         }
     }
 }
+/// Opening failed before a lease could be returned. A Worker receipt retains
+/// the original join flag; it never promotes an unresolved/panicked worker to success.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum OpeningCleanup {
+    NoWorker,
+    Worker(Completion),
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct OpeningError {
+    pub cause: Error,
+    pub cleanup: OpeningCleanup,
+}
+impl OpeningError {
+    pub(crate) fn no_worker(cause: Error) -> Self {
+        Self { cause, cleanup: OpeningCleanup::NoWorker }
+    }
+}
+impl std::fmt::Display for OpeningError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "stream opening: {}", self.cause)
+    }
+}
+impl std::error::Error for OpeningError {}
+
 type Chunk = Result<Option<Bytes>>;
 type Demand = oneshot::Sender<Chunk>;
 struct WorkerExit {
@@ -141,7 +165,7 @@ pub struct StreamLease {
 impl StreamLease {
     // Worker send and caller delivery are different boundaries. An already queued
     // oneshot payload must not survive cancellation, expiry or authority revocation.
-    fn check_delivery(&mut self) -> Result<()> {
+    pub(crate) fn check_delivery(&mut self) -> Result<()> {
         let result = if self.cancel.is_cancelled() {
             Err(Error::Cancelled)
         } else if Instant::now() >= self.deadline {
@@ -239,14 +263,14 @@ impl Drop for StreamLease {
     }
 }
 
-pub(crate) async fn start(
+pub(crate) async fn start_with_receipt(
     client: Client,
     target: Url,
     request: RawHttpRequest,
     headers: HeaderMap,
     context: SendContext,
     permit: OwnedSemaphorePermit,
-) -> Result<StreamLease> {
+) -> std::result::Result<StreamLease, OpeningError> {
     let (head_tx, head_rx) = oneshot::channel();
     let (demand_tx, demand_rx) = mpsc::channel(1);
     let (terminal_tx, terminal_rx) = watch::channel(None);
@@ -288,15 +312,15 @@ pub(crate) async fn start(
     match head_rx.await.unwrap_or(Err(Error::Closed)) {
         Ok(head) => {
             if let Err(error) = lease.check_delivery() {
-                let _ = lease.cancel_and_wait().await;
-                return Err(error);
+                let receipt = lease.cancel_and_wait().await;
+                return Err(OpeningError { cause: error, cleanup: OpeningCleanup::Worker(receipt) });
             }
             lease.head = Some(head);
             Ok(lease)
         }
         Err(error) => {
-            let _ = lease.cancel_and_wait().await;
-            Err(error)
+            let receipt = lease.cancel_and_wait().await;
+            Err(OpeningError { cause: error, cleanup: OpeningCleanup::Worker(receipt) })
         }
     }
 }

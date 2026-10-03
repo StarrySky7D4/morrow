@@ -35,10 +35,11 @@ fn package() -> Package {
     Package::build(manifest, &wasm).unwrap()
 }
 struct Fixture {
-    dir: tempfile::TempDir,
     manager: Manager,
     host: HostRuntime,
     package: Package,
+    // Close all handles before TempDir removes the synthetic fixture.
+    dir: tempfile::TempDir,
 }
 impl Fixture {
     fn new(approve: bool) -> Self {

@@ -1,11 +1,40 @@
-#![forbid(unsafe_code)]
+#![deny(unsafe_code)]
 //! Versioned experimental trusted outbound HTTP stream transport.
 //! The optional managed adapter binds explicit host-selected HTTP resources to
 //! original plugin authority; the transport alone never grants guest networking.
 use std::time::Duration;
 
+#[forbid(unsafe_code)]
 pub mod client;
+#[forbid(unsafe_code)]
+pub mod sse;
+#[forbid(unsafe_code)]
 pub mod stream;
+
+#[cfg(all(feature = "managed-channel", not(target_arch = "wasm32")))]
+#[forbid(unsafe_code)]
+pub mod managed_sse;
+#[cfg(all(feature = "managed-channel", not(target_arch = "wasm32")))]
+#[allow(clippy::all)]
+// Capnpc-generated RAW_SCHEMA metadata only; all handwritten modules remain forbidden.
+#[allow(unsafe_code)]
+mod sse_event_capnp {
+    include!(concat!(env!("OUT_DIR"), "/sse_event_capnp.rs"));
+}
+
+#[cfg(all(feature = "managed-websocket", not(target_arch = "wasm32")))]
+#[forbid(unsafe_code)]
+pub mod websocket;
+#[cfg(all(feature = "managed-websocket", not(target_arch = "wasm32")))]
+#[forbid(unsafe_code)]
+pub mod managed_ws;
+#[cfg(all(feature = "managed-websocket", not(target_arch = "wasm32")))]
+#[allow(clippy::all)]
+// Only generated RAW_SCHEMA metadata; handwritten WS modules still forbid unsafe.
+#[allow(unsafe_code)]
+mod ws_message_capnp {
+    include!(concat!(env!("OUT_DIR"), "/ws_message_capnp.rs"));
+}
 
 // Deliberately no Debug: headers and bodies can contain credentials or user content.
 #[derive(Clone, PartialEq, Eq)]

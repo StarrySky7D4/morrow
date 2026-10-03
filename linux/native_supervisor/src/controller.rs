@@ -27,7 +27,7 @@ impl OriginalController {
         Ok(result)
     }
     /// Only the fixture bootstrap consumes this descriptor. Caller must own it
-    /// exclusively and have received it from the typed original-child handoff.
+    /// exclusively and have received it from a typed owned-child or self handoff.
     pub(crate) unsafe fn from_inherited(fd: OwnedFd, pid: u32) -> io::Result<Self> {
         let result = Self { fd, pid };
         result.validate()?;
@@ -93,6 +93,49 @@ impl OriginalController {
             io::ErrorKind::Interrupted,
             "bounded controller poll interrupted",
         ))
+    }
+}
+
+/// A self-only reference captured by the currently executing controller.
+/// No caller PID or descriptor is accepted. The kernel object is retained,
+/// while the captured process context rejects reuse after fork before launch.
+/// This experimental fixture reference grants neither reaping nor owner rights.
+pub struct CurrentController {
+    original: OriginalController,
+    captured_in: libc::pid_t,
+}
+impl CurrentController {
+    pub fn capture() -> io::Result<Self> {
+        Self::capture_with(|| {
+            // The only production capture source is this executing process.
+            let fd = unsafe { libc::syscall(libc::SYS_pidfd_open, libc::getpid(), 0u32) };
+            if fd < 0 {
+                return Err(kernel_error("capture current controller pidfd"));
+            }
+            Ok(unsafe { OwnedFd::from_raw_fd(fd as i32) })
+        })
+    }
+    fn capture_with(open_self: impl FnOnce() -> io::Result<OwnedFd>) -> io::Result<Self> {
+        let captured_in = unsafe { libc::getpid() };
+        let original = OriginalController {
+            fd: open_self()?,
+            pid: captured_in as u32,
+        };
+        original.validate()?;
+        Ok(Self {
+            original,
+            captured_in,
+        })
+    }
+    pub fn diagnostic_pid(&self) -> u32 {
+        self.original.diagnostic_pid()
+    }
+    pub(crate) fn into_original(self) -> io::Result<OriginalController> {
+        if self.captured_in != unsafe { libc::getpid() } {
+            return Err(invalid("current controller capture process changed"));
+        }
+        self.original.validate()?;
+        Ok(self.original)
     }
 }
 
@@ -187,6 +230,17 @@ pub struct ControllerWatch {
     created: Instant,
 }
 impl ControllerWatch {
+    /// Synthetic initial admission for the exec-status unit regression only.
+    /// This is not an authenticated heartbeat or a product bootstrap.
+    #[cfg(test)]
+    pub(crate) fn synthetic_active_for_exec_status_test(
+        original: OriginalController,
+    ) -> io::Result<Self> {
+        let mut watch = Self::new(original, Duration::from_secs(5), [0x71; 32])?;
+        watch.state.heartbeat(1, Duration::ZERO)?;
+        Ok(watch)
+    }
+
     pub(crate) fn new(
         original: OriginalController,
         timeout: Duration,
@@ -251,6 +305,22 @@ impl ControllerWatch {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn current_capture_retains_self_kernel_object_and_cloexec() {
+        let captured = CurrentController::capture().unwrap();
+        assert_eq!(captured.diagnostic_pid(), std::process::id());
+        assert!(!captured.original.poll_exited().unwrap());
+        let flags = unsafe { libc::fcntl(captured.original.fd.as_raw_fd(), libc::F_GETFD) };
+        assert_ne!(flags & libc::FD_CLOEXEC, 0);
+        assert!(captured.into_original().is_ok());
+    }
+    #[test]
+    fn current_capture_failure_has_no_numeric_or_descriptor_fallback() {
+        // Inject only the capture syscall result; no pidfd was created here.
+        let result =
+            CurrentController::capture_with(|| Err(io::Error::from_raw_os_error(libc::EMFILE)));
+        assert_eq!(result.err().unwrap().raw_os_error(), Some(libc::EMFILE));
+    }
     #[test]
     fn timeout_boundary_and_late_heartbeat_are_sticky() {
         let mut lease = LeaseState::new(Duration::from_millis(100)).unwrap();

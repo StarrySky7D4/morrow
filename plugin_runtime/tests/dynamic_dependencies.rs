@@ -218,12 +218,12 @@ fn caller(count: usize, mode: Mode) -> Package {
     Package::build(manifest, &module).unwrap()
 }
 struct Fixture {
-    _root: tempfile::TempDir,
     manager: Manager,
     host: HostRuntime,
     caller: ManagedInstance,
     providers: Vec<ManagedInstance>,
     objects: SharedObjects,
+    _root: tempfile::TempDir,
 }
 impl Fixture {
     fn new(count: usize, mode: Mode) -> Self {
@@ -758,5 +758,20 @@ fn caller_with_real_edit_grant_cannot_bypass_proposal_through_regular_exchange()
     assert!(
         result.is_err(),
         "a denied direct exchange must poison the final output"
+    );
+}
+
+#[cfg(target_os = "windows")]
+#[test]
+fn fixture_drop_releases_handles_before_removing_temporary_directory() {
+    let fixture = Fixture::new(0, Mode::default());
+    let root = fixture._root.path().to_path_buf();
+    assert!(root.is_dir());
+    eprintln!("fixture_cleanup_root={}", root.display());
+    drop(fixture);
+    assert!(
+        !root.try_exists().unwrap(),
+        "fixture directory must be removed after registry and SQLite handles drop: {}",
+        root.display()
     );
 }

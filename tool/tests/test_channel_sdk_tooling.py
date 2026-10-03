@@ -37,6 +37,9 @@ class ChannelSdkToolingTests(unittest.TestCase):
             for profile in ("channel", "channel-directory", "transform"):
                 name = f"examples/{language}-{profile}"
                 shutil.copytree(REPO / "sdk" / name, self.sdk / name)
+        # Host command preflight checks its manifest before mocked host_tool.
+        self.copy(REPO / "plugin_runtime/Cargo.toml", self.host / "plugin_runtime/Cargo.toml")
+        self.copy(REPO / "core/Cargo.toml", self.host / "core/Cargo.toml")
         shutil.copytree(REPO / "core/schemas", self.host / "core/schemas")
         for name in ("runtime", "task", "ui", "dependency_call", "channel"):
             self.copy(REPO / f"core/src/{name}.rs", self.host / f"core/src/{name}.rs")

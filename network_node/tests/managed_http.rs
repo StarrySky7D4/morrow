@@ -167,12 +167,12 @@ impl CommandOwner for HttpOwner {
     }
 }
 struct Running {
-    _dir: tempfile::TempDir,
     _manager: Manager,
     _original_instance: Option<ManagedInstance>,
     worker: IoWorker<HttpOwner>,
     endpoint: HttpEndpoint,
     secondary: Option<HttpEndpoint>,
+    _dir: tempfile::TempDir,
 }
 impl Running {
     fn new(approval: EndpointApproval, credentials: bool) -> Self {
@@ -453,6 +453,22 @@ impl Running {
             tokio::time::sleep(Duration::from_millis(1)).await;
         }
     }
+}
+#[cfg(target_os = "windows")]
+#[tokio::test]
+async fn running_drop_releases_handles_before_removing_temporary_directory() {
+    let mut run = Running::new(approval("http://127.0.0.1:1"), false);
+    let root = run._dir.path().to_path_buf();
+    assert!(root.is_dir());
+    eprintln!("fixture_cleanup_root={}", root.display());
+    let host = run.finish().await;
+    drop(host);
+    drop(run);
+    assert!(
+        !root.try_exists().unwrap(),
+        "fixture directory must be removed after registry and SQLite handles drop: {}",
+        root.display()
+    );
 }
 async fn ready(job: &mut JobHandle) {
     let end = Instant::now() + WAIT;

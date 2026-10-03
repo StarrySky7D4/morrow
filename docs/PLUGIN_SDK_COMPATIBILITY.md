@@ -1,5 +1,25 @@
 # SDK guest 兼容候选基线
 
+2026-10-03 **W08–W11 本地推进与 Linux 汇合**：channel 45 个无密钥方法通过，最小释放顺序修复后相关 36 方法复验、新目录零残留；独立 SDK 的原 Rust/C/C++ task 均真实离线编译 exit0；W05 原 native 14 个产物在受限 medium token 复跑通过、67 输入恒同。用户提供的 Linux 17 路径源码增量已按原 SHA/blob 合入，原 25 项本地修改保留。云端 Close199 是外部汇总，本包缺完整 Linux 测试日志；当前没有新增 Linux/GUI/受保护 owner 运行资格，整个 SDK 仍 OPEN。见 [夹具清理](../reports/reconstruction-2026-10-03/windows-channel-fixture-cleanup.md)、[独立编译](../reports/reconstruction-2026-10-03/windows-sdk-standalone-builds.md)、[受限 token](../reports/reconstruction-2026-10-03/windows-sdk-restricted-token.md)、[汇合范围](../reports/reconstruction-2026-10-03/linux-windows-convergence.md)。本轮未提交／推送／CI／发布；下方历史记录保持原范围。
+
+## 2026-10-03 原生 codec 与源码独立开发工具
+
+Windows x64 原 fixture 的 Clang／MSVC 14 build＋14 run真实exit0，独立复核无阻塞；实际child进程句柄在wait前直接观察为管理员token，取样瞬间liveness没有独立证明。原始SDK327及57 frozen文件保持；旧schema、pin与sdk.lock规范未改。见 [原生矩阵与更正边界](../reports/reconstruction-2026-10-03/windows-sdk-native-codecs.md)。
+
+新增source-only源码导出／校验和显式 `--sdk-only`：从当前唯一Core契约／版本来源导出，独立SDK目录核对必需库／示例／工具／docs字节清单与有限源绑定；默认模式继续核对Core，pack/check/transform在SDK-only模式早拒。100个相关工具回归已通过，最终异地模板／锁／分发验收见 [专项结果](../reports/reconstruction-2026-10-03/windows-sdk-distribution.md)。本地源码观察不是codec语义证明、供应链签名、第三方运行或SDK冻结；编译／产品及逐平台承诺仍分别开放。
+
+完整目标按 [26需求与10组剩余门槛](../reports/reconstruction-2026-10-03/sdk-scope-freeze-gates.md) 实施。不能缩为旧有界profile后自行宣布整个SDK稳定，也不能将已有源码修复等同当前产品运行通过。
+
+## 2026-10-03 当前库测试补证
+
+当前Rust SDK在Windows x64独立workspace的离线锁定测试报告92项ok、真实exit0；1项仅按需导出夹具的body未启用，另0项doctest，没有用guardpage子进程重复加数。327 SDK原字节与HEAD一致，57原件保持；管理员recorder／子进程token继承边界单独说明。这里只补编解码、FFI和本进程合成内存边界；源码API、C动态库ABI、模板分发、第三方、原runner、产品及跨平台稳定承诺仍未完成。见 [当前库复验](../reports/reconstruction-2026-10-03/windows-sdk-library.md)。
+
+## 2026-10-03 Windows 限定复验
+
+原guest-v1-rc1的base9／dependency3／原provider与shared-descriptor已完成 [接管复验](../reports/reconstruction-2026-10-03/windows-sdk-takeover.md)。原transport-v1-rc1的HTTP4／service2在Windows实际执行，57原件／固定文件前后恒同，不重建guest或重封。76项runtime生命周期与三语言SDK-only消费者分开记录，不相加为原包或产品通过数。
+
+精确LF C／C++消费者重编通过，两次自有64KiB响应、失败不重试及C断言保护有实际证据；管理员token、同源合成vectors与复制SDK源属限定范围。C本地ABI、源码API、正式分发、第三方与全平台冻结尚未获完整承诺，IO/service仍实验。旧清理残留及修复后的零残留分别保留；修改后的原bounded runner未执行，不绕过committed-tool gate。见 [transport与消费者报告](../reports/reconstruction-2026-10-03/windows-sdk-transport-consumers.md)。
+
 状态：test.48 开始建立 `guest-v1-rc1`。它是第一份兼容配置，不是 guest ABI v1，也不是整个 SDK 已发布稳定版。实际配置：guest ABI **2**、运行协议 **7**、任务协议 **3**、UI 协议 **1**、依赖调用协议 **1**。SDK 源码包版本、应用版本、包 SemVer 和上述协议版本分别管理。
 
 ## 兼容承诺的对象

@@ -32,7 +32,7 @@ void main() {
       try {
         await tester.runAsync(() async {
           directory = await Directory.systemTemp.createTemp(
-            'morrow-channel-product-ui-014-',
+            'morrow-external-channel-product-ui-014-',
           );
           backend = await RustWorkbench.open(
             executable: host!,

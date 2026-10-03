@@ -219,9 +219,10 @@ fixtures = Path(__file__).resolve().parent / "fixtures"
 shutil.copy2(fixtures / "sdk_consumer.rs", consumer / "src/main.rs")
 (consumer / "Cargo.toml").write_text('[workspace]\n[package]\nname="morrow-windows-sdk-consumer"\nversion="0.0.0"\nedition="2024"\n[dependencies]\nmorrow-plugin-sdk={path="../sdk/rust"}\n', encoding="utf-8")
 bundle_env = dict(env); bundle_env["CARGO_TARGET_DIR"] = str(out / "standalone-target")
+consumer_env = dict(bundle_env); consumer_env["CARGO_TARGET_DIR"] = str(out / "consumer-target")
 run("consumer-lock", ["cargo", "generate-lockfile", "--offline", "--manifest-path", consumer / "Cargo.toml"],
-    cwd=consumer, custom_env=bundle_env, required=True)
-cargo("standalone-rust-consumer", ["run"], manifest=consumer / "Cargo.toml", cwd=consumer, custom_env=bundle_env)
+    cwd=consumer, custom_env=consumer_env, required=True)
+cargo("standalone-rust-consumer", ["run"], manifest=consumer / "Cargo.toml", cwd=consumer, custom_env=consumer_env)
 cargo("standalone-sdk-dll-build", ["build"], manifest=sdk / "rust/Cargo.toml", cwd=bundle, custom_env=bundle_env, required=True)
 standalone_dll = out / "standalone-target/debug/morrow_plugin_sdk.dll"
 standalone_lib = out / "standalone-target/debug/morrow_plugin_sdk.dll.lib"
@@ -234,9 +235,9 @@ for extension in ("c", "cpp"):
     name = "standalone-" + extension + "-consumer"
     exe = directory / (source.stem + "-" + extension + ".exe")
     if compile_native(name + "-build", source, exe, objects, standalone_lib, sdk, "msvc") == 0:
-        run(name + "-run", [exe], cwd=bundle)
+        run(name + "-run", [exe, vectors], cwd=bundle)
 metadata = subprocess.run(["cargo", "metadata", "--offline", "--locked", "--format-version", "1", "--no-deps",
-    "--manifest-path", consumer / "Cargo.toml"], cwd=consumer, env=bundle_env, capture_output=True, check=True)
+    "--manifest-path", consumer / "Cargo.toml"], cwd=consumer, env=consumer_env, capture_output=True, check=True)
 parsed = json.loads(metadata.stdout)
 dependency_paths = [d["path"] for package in parsed["packages"] for d in package["dependencies"] if "path" in d]
 assert dependency_paths and all(Path(path).is_relative_to(bundle) for path in dependency_paths)

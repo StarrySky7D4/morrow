@@ -19,6 +19,15 @@ const OUTPUT_LIMIT: usize = 64 * 1024;
 const OUTPUT_PER_POLL: usize = 32 * 1024;
 const SPAWN_TIMEOUT: Duration = Duration::from_secs(2);
 
+/// Private coordination present only in unit-test builds. Ordinary launches
+/// never hold exec or retain output writers, and have no pending callback.
+#[cfg(test)]
+struct ExecStatusTestHandshake<'a> {
+    child_hold: (RawFd, RawFd),
+    on_pending: &'a mut dyn FnMut(),
+    retained_outputs: &'a mut Vec<OwnedFd>,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ExitObservation {
     Exited(i32),
@@ -95,7 +104,16 @@ impl OwnedProcess {
         cwd: &Path,
         args: &[&OsStr],
     ) -> Result<Self, SpawnFailure> {
-        Self::spawn_inner(executable, cwd, args, None, None, None)
+        Self::spawn_inner(
+            executable,
+            cwd,
+            args,
+            None,
+            None,
+            None,
+            #[cfg(test)]
+            None,
+        )
     }
 
     pub(crate) fn spawn_with_inherited(
@@ -104,7 +122,16 @@ impl OwnedProcess {
         args: &[&OsStr],
         inherited: crate::controller_transport::InheritedLaunch,
     ) -> Result<Self, SpawnFailure> {
-        Self::spawn_inner(executable, cwd, args, Some(inherited), None, None)
+        Self::spawn_inner(
+            executable,
+            cwd,
+            args,
+            Some(inherited),
+            None,
+            None,
+            #[cfg(test)]
+            None,
+        )
     }
 
     /// Synthetic controller-fenced launch. All blocking artifact preparation is
@@ -117,7 +144,16 @@ impl OwnedProcess {
         args: &[&OsStr],
         watch: &mut crate::ControllerWatch,
     ) -> Result<Self, SpawnFailure> {
-        Self::spawn_inner(executable, cwd, args, None, Some(watch), None)
+        Self::spawn_inner(
+            executable,
+            cwd,
+            args,
+            None,
+            Some(watch),
+            None,
+            #[cfg(test)]
+            None,
+        )
     }
 
     /// Prepare every digest/argv/cwd operation before activating the live lease.
@@ -141,6 +177,7 @@ impl OwnedProcess {
         inherited: Option<crate::controller_transport::InheritedLaunch>,
         mut controller_guard: Option<&mut crate::ControllerWatch>,
         already_prepared: Option<Prepared>,
+        #[cfg(test)] mut test_handshake: Option<ExecStatusTestHandshake<'_>>,
     ) -> Result<Self, SpawnFailure> {
         let prepared = match already_prepared {
             Some(prepared) => {
@@ -189,6 +226,20 @@ impl OwnedProcess {
         let status_fd = staged_status
             .as_ref()
             .map_or(status.1.as_raw_fd(), AsRawFd::as_raw_fd);
+        #[cfg(test)]
+        let test_child_hold = if let Some(test) = test_handshake.as_mut() {
+            // Actual duplicate pipe writers let the test observe each real EOF
+            // separately after reaping. Preparation failure creates no child.
+            for fd in [stdout.1.as_raw_fd(), stderr.1.as_raw_fd()] {
+                test.retained_outputs.push(
+                    crate::controller_transport::duplicate_high(fd)
+                        .map_err(SpawnFailure::NotCreated)?,
+                );
+            }
+            Some(test.child_hold)
+        } else {
+            None
+        };
         if let Some(watch) = controller_guard.as_mut() {
             if !watch.poll() || !watch.admission_open() {
                 return Err(SpawnFailure::NotCreated(invalid(
@@ -228,6 +279,8 @@ impl OwnedProcess {
                     stderr.1.as_raw_fd(),
                     status_fd,
                     inherited.as_ref(),
+                    #[cfg(test)]
+                    test_child_hold,
                 )
             }
         }
@@ -259,6 +312,8 @@ impl OwnedProcess {
                 status.0.as_raw_fd(),
                 SPAWN_TIMEOUT,
                 controller_guard.as_deref_mut(),
+                #[cfg(test)]
+                test_handshake.as_mut(),
             )
         })();
         if let Err(error) = initialized {
@@ -272,6 +327,20 @@ impl OwnedProcess {
             });
         }
         Ok(owner)
+    }
+
+    // Exact clone object/readers exported only to the private, typed guardian
+    // fixture registration path. This does not construct an owner from a PID/fd.
+    pub(crate) fn guardian_fixture_handles(&self) -> io::Result<(OwnedFd, OwnedFd, OwnedFd)> {
+        if self.exit.is_some() {
+            return Err(invalid("reaped fixture child cannot be registered"));
+        }
+        let duplicate = crate::controller_transport::duplicate_high;
+        Ok((
+            duplicate(self.pidfd.as_raw_fd())?,
+            duplicate(self.stdout.as_raw_fd())?,
+            duplicate(self.stderr.as_raw_fd())?,
+        ))
     }
 
     pub fn original_controller(&self) -> io::Result<crate::OriginalController> {
@@ -417,6 +486,8 @@ impl PreparedControllerFixtureChild {
             None,
             Some(watch),
             Some(self.prepared),
+            #[cfg(test)]
+            None,
         )
     }
 }
@@ -483,9 +554,14 @@ unsafe fn child_exec(
     stderr: RawFd,
     status: RawFd,
     inherited: Option<&crate::controller_transport::InheritedLaunch>,
+    #[cfg(test)] test_child_hold: Option<(RawFd, RawFd)>,
 ) -> ! {
     unsafe {
-        if libc::prctl(libc::PR_SET_PDEATHSIG, libc::SIGKILL) < 0
+        // Only the private typed, registered guardian-supervisor fixture can
+        // select its special lifetime. Ordinary C/D and all existing launches
+        // retain SIGKILL; there is no public boolean or raw-PID lifetime factory.
+        let parent_death = inherited.map_or(libc::SIGKILL, |launch| launch.parent_death_signal());
+        if libc::prctl(libc::PR_SET_PDEATHSIG, parent_death) < 0
             || libc::getppid() != prepared.parent
             || libc::fchdir(prepared.cwd.as_raw_fd()) < 0
         {
@@ -513,6 +589,12 @@ unsafe fn child_exec(
                     child_error(status);
                 }
             }
+        }
+        #[cfg(test)]
+        if let Some((ready, release)) = test_child_hold {
+            // Only bounded libc operations are permitted in this copied
+            // post-clone address space; no Rust allocation, lock or Drop.
+            hold_before_exec_for_test(ready, release);
         }
         let environment: [*const libc::c_char; 1] = [std::ptr::null()];
         libc::syscall(
@@ -582,6 +664,7 @@ fn read_exec_status(
     fd: RawFd,
     timeout: Duration,
     mut watch: Option<&mut crate::ControllerWatch>,
+    #[cfg(test)] mut test_handshake: Option<&mut ExecStatusTestHandshake<'_>>,
 ) -> io::Result<()> {
     let until = Instant::now() + timeout;
     loop {
@@ -622,6 +705,14 @@ fn read_exec_status(
         ) {
             return Err(error);
         }
+        #[cfg(test)]
+        if error.kind() == io::ErrorKind::WouldBlock {
+            if let Some(test) = test_handshake.take() {
+                // The unchanged read has really observed an open, pending
+                // exec-status pipe before test coordination may cause loss.
+                (test.on_pending)();
+            }
+        }
         let remaining = until.saturating_duration_since(Instant::now());
         if remaining.is_zero() {
             return Err(io::ErrorKind::TimedOut.into());
@@ -660,4 +751,263 @@ fn drain(
         }
     }
     Ok(())
+}
+
+/// The unit-test child announces its real PID, then holds every inherited
+/// descriptor (including exec-status) until released or a bounded timeout.
+#[cfg(test)]
+unsafe fn hold_before_exec_for_test(ready: RawFd, release: RawFd) {
+    unsafe {
+        let pid = libc::getpid();
+        if libc::write(ready, (&pid as *const libc::pid_t).cast(), 4) != 4 {
+            libc::_exit(126);
+        }
+        let mut input = libc::pollfd {
+            fd: release,
+            events: libc::POLLIN,
+            revents: 0,
+        };
+        // No sleep-based ordering and no unbounded blocking after clone.
+        if libc::poll(&mut input, 1, 5000) != 1 {
+            libc::_exit(124);
+        }
+        let mut byte = 0u8;
+        if libc::read(release, (&mut byte as *mut u8).cast(), 1) != 1 || byte != 1 {
+            libc::_exit(125);
+        }
+    }
+}
+
+#[cfg(test)]
+mod exec_status_tests {
+    use super::*;
+    use crate::{ControllerLoss, ControllerWatch, OriginalController, digest};
+    use std::{
+        fs,
+        os::unix::fs::PermissionsExt,
+        path::PathBuf,
+        sync::atomic::{AtomicU64, Ordering},
+    };
+
+    static NEXT: AtomicU64 = AtomicU64::new(0);
+
+    struct TestDirectory(PathBuf);
+    impl TestDirectory {
+        fn new() -> io::Result<Self> {
+            let root = std::env::temp_dir().join(format!(
+                "morrow-exec-status-unit-{}-{}",
+                std::process::id(),
+                NEXT.fetch_add(1, Ordering::Relaxed)
+            ));
+            fs::create_dir(&root)?;
+            let directory = Self(root);
+            fs::set_permissions(&directory.0, fs::Permissions::from_mode(0o700))?;
+            Ok(directory)
+        }
+    }
+    impl Drop for TestDirectory {
+        fn drop(&mut self) {
+            let _ = fs::remove_dir_all(&self.0);
+        }
+    }
+
+    fn readable(fd: RawFd) -> io::Result<()> {
+        let mut item = libc::pollfd {
+            fd,
+            events: libc::POLLIN,
+            revents: 0,
+        };
+        // One kernel-bounded readiness operation. An interruption is a retained
+        // test failure rather than a fresh deadline or a guessed observation.
+        let result = unsafe { libc::poll(&mut item, 1, 2000) };
+        if result != 1 || item.revents & (libc::POLLERR | libc::POLLNVAL) != 0 {
+            return Err(invalid("test object readiness not observed"));
+        }
+        Ok(())
+    }
+
+    fn ready_pid(fd: RawFd) -> io::Result<u32> {
+        readable(fd)?;
+        let mut pid = 0i32;
+        let count = unsafe { libc::read(fd, (&mut pid as *mut i32).cast(), 4) };
+        if count != 4 || pid <= 0 {
+            return Err(invalid("test child readiness identity missing"));
+        }
+        Ok(pid as u32)
+    }
+
+    /// Real CLONE_PIDFD controller with an owned release pipe and exact reaper.
+    /// Only its initial watch lease is synthetic; no process/handle is mocked.
+    struct TestController {
+        pid: u32,
+        pidfd: OwnedFd,
+        _release: OwnedFd,
+        reaped: bool,
+    }
+    impl TestController {
+        fn start() -> io::Result<Self> {
+            if !cfg!(any(target_arch = "x86_64", target_arch = "aarch64")) {
+                return Err(invalid("unsupported test raw-clone architecture"));
+            }
+            let ready = pipe()?;
+            let release = pipe()?;
+            let mut pidfd = -1i32;
+            let pid = unsafe {
+                libc::syscall(
+                    libc::SYS_clone,
+                    (libc::CLONE_PIDFD | libc::SIGCHLD) as libc::c_ulong,
+                    std::ptr::null_mut::<libc::c_void>(),
+                    &mut pidfd as *mut i32,
+                    0usize,
+                    0usize,
+                )
+            };
+            if pid < 0 {
+                return Err(kernel_error("test controller clone(CLONE_PIDFD)"));
+            }
+            if pid == 0 {
+                // No Rust unwinding or destructor may run after raw clone.
+                unsafe {
+                    hold_before_exec_for_test(ready.1.as_raw_fd(), release.0.as_raw_fd());
+                    libc::_exit(0);
+                }
+            }
+            let controller = Self {
+                pid: pid as u32,
+                pidfd: unsafe { OwnedFd::from_raw_fd(pidfd) },
+                _release: release.1,
+                reaped: false,
+            };
+            drop(ready.1);
+            drop(release.0);
+            if ready_pid(ready.0.as_raw_fd())? != controller.pid {
+                return Err(invalid("test controller clone/readiness mismatch"));
+            }
+            Ok(controller)
+        }
+
+        fn original(&self) -> io::Result<OriginalController> {
+            OriginalController::from_owned_child(self.pidfd.as_fd(), self.pid)
+        }
+
+        fn stop_and_reap(&mut self) -> io::Result<()> {
+            if self.reaped {
+                return Ok(());
+            }
+            let sent = unsafe {
+                libc::syscall(
+                    libc::SYS_pidfd_send_signal,
+                    self.pidfd.as_raw_fd(),
+                    libc::SIGKILL,
+                    std::ptr::null::<libc::siginfo_t>(),
+                    0u32,
+                )
+            };
+            if sent < 0 && io::Error::last_os_error().raw_os_error() != Some(libc::ESRCH) {
+                return Err(kernel_error("test controller pidfd signal"));
+            }
+            readable(self.pidfd.as_raw_fd())?;
+            let mut info: libc::siginfo_t = unsafe { std::mem::zeroed() };
+            let result = unsafe {
+                libc::waitid(
+                    libc::P_PIDFD,
+                    self.pidfd.as_raw_fd() as libc::id_t,
+                    &mut info,
+                    libc::WEXITED | libc::WNOHANG,
+                )
+            };
+            if result != 0 || unsafe { info.si_pid() } != self.pid as i32 {
+                return Err(invalid("test controller exact reap missing"));
+            }
+            self.reaped = true;
+            if info.si_code != libc::CLD_KILLED || unsafe { info.si_status() } != libc::SIGKILL {
+                return Err(invalid("test controller exited before coordinated loss"));
+            }
+            Ok(())
+        }
+    }
+    impl Drop for TestController {
+        fn drop(&mut self) {
+            let _ = self.stop_and_reap();
+        }
+    }
+
+    #[test]
+    fn original_controller_loss_during_pending_exec_retains_real_child_until_both_eofs() {
+        let directory = TestDirectory::new().unwrap();
+        let artifact = directory.0.join("never-executed-test-elf");
+        let bytes = fs::read(std::env::current_exe().unwrap()).unwrap();
+        fs::write(&artifact, &bytes).unwrap();
+        fs::set_permissions(&artifact, fs::Permissions::from_mode(0o700)).unwrap();
+        let executable = SealedExecutable::read(&artifact, digest(&bytes)).unwrap();
+        let mut controller = TestController::start().unwrap();
+        let original_pid = controller.pid;
+        let mut watch =
+            ControllerWatch::synthetic_active_for_exec_status_test(controller.original().unwrap())
+                .unwrap();
+        assert!(watch.poll() && watch.admission_open());
+        let ready = pipe().unwrap();
+        let release = pipe().unwrap();
+        let mut observed_child = None;
+        let mut retained_outputs = Vec::new();
+        let mut on_pending = || {
+            // This runs only after the production reader saw WouldBlock.
+            observed_child = Some(ready_pid(ready.0.as_raw_fd()).unwrap());
+            controller.stop_and_reap().unwrap();
+        };
+        let failure = OwnedProcess::spawn_inner(
+            executable,
+            &directory.0,
+            &[],
+            None,
+            Some(&mut watch),
+            None,
+            Some(ExecStatusTestHandshake {
+                child_hold: (ready.1.as_raw_fd(), release.0.as_raw_fd()),
+                on_pending: &mut on_pending,
+                retained_outputs: &mut retained_outputs,
+            }),
+        )
+        .err()
+        .expect("coordinated original loss must refuse the held exec handshake");
+        let SpawnFailure::Created { error, mut owner } = failure else {
+            panic!("actual cloned child's owner was lost: {failure}");
+        };
+        assert!(
+            error
+                .to_string()
+                .contains("controller lost during exec handshake")
+        );
+        assert_eq!(observed_child, Some(owner.pid()));
+        assert_ne!(owner.pid(), original_pid);
+        assert!(controller.reaped);
+        let first_loss = watch.loss().unwrap();
+        assert_eq!(first_loss.reason, ControllerLoss::OriginalProcessExited);
+        assert!(!watch.poll() && !watch.admission_open());
+        watch.revoke(ControllerLoss::TransportEof);
+        assert_eq!(watch.loss(), Some(first_loss));
+        assert!(owner.exit_observation().is_none());
+        assert!(!owner.cleanup_complete());
+        assert_eq!(retained_outputs.len(), 2);
+
+        readable(owner.pidfd.as_raw_fd()).unwrap();
+        assert!(!owner.observe().unwrap());
+        assert_eq!(
+            owner.exit_observation(),
+            Some(ExitObservation::Signaled(libc::SIGKILL))
+        );
+        assert!(!owner.output().stdout_eof && !owner.output().stderr_eof);
+        drop(retained_outputs.remove(0));
+        assert!(!owner.observe().unwrap());
+        assert!(owner.output().stdout_eof && !owner.output().stderr_eof);
+        drop(retained_outputs.remove(0));
+        assert!(owner.observe().unwrap());
+        assert!(owner.output().stdout_eof && owner.output().stderr_eof);
+        assert!(owner.cleanup_complete());
+        assert_eq!(watch.loss(), Some(first_loss));
+        eprintln!(
+            "exec-status actual-controller={original_pid} ready-child={} retained-created=true exact-pidfd-reaped=true stdout-eof=true stderr-eof=true synthetic-initial-lease=true product-owner=false tree-empty=unproved",
+            owner.pid()
+        );
+    }
 }

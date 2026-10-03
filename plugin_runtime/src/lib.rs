@@ -33,6 +33,8 @@ pub mod io_binding;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod io_execution;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod io_history;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod io_jobs;
 #[cfg(feature = "package-management")]
 pub mod manager;

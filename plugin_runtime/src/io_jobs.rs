@@ -9,6 +9,7 @@ use crate::{
         ServiceRunUsage,
     },
     io_execution::{self, Broker},
+    io_history::OperationHistoryGrant,
     manager::{ManagedInstance, Manager},
     package::{PreparedPackage, TaskReport},
     service_content::ServiceContentAccess,
@@ -20,7 +21,7 @@ use crate::{
 use morrow_core::mutation as mutation_wire;
 use morrow_core::{
     dispatch::{Connection, HostBinding, HostRuntime},
-    io::{Action, HttpOutcome, MAX_FRAME_BYTES, Request, Response},
+    io::{Action, HttpOutcome, OperationOutcome, MAX_FRAME_BYTES, Request, Response},
     io_evidence::{Kind, Material},
     io_intent::{Command, Phase as IntentPhase, Record},
     plugin_package::io::IoCapability,
@@ -217,6 +218,8 @@ pub trait BrokerRouter: Send {
 enum JobRouter {
     /// History queries have no executable resource adapter.
     ReadOnly,
+    /// Authenticated historical HTTP metadata only; no resource adapter or claim.
+    OperationHistory(OperationHistoryGrant),
     Raw(Box<dyn Router>),
     Brokered(Box<dyn BrokerRouter>),
     #[cfg(windows)]
@@ -595,6 +598,11 @@ pub struct JobReport {
     pub mutation_frame: Option<Vec<u8>>,
     /// HTTP result, validated against its exact submission frame.
     pub http_response: Option<HttpOutcome>,
+    /// Historical status correlated to the new query, not a new side effect.
+    pub operation_response: Option<OperationOutcome>,
+    /// Exact bounded query reply, retained only after successful guest correlation.
+    pub operation_frame: Option<Vec<u8>>,
+    operation_read_only: bool,
     /// Service completion bound to its original request, independent of IO responses.
     pub service_response: Option<service::Reply>,
     pub service_persistence: Option<ServicePersistenceStatus>,
@@ -613,6 +621,7 @@ impl std::fmt::Debug for JobReport {
         let mut debug = f.debug_struct("JobReport");
         debug.field("execution", &self.task.execution);
         debug.field("response_present", &self.response.is_some());
+        debug.field("operation_response", &self.operation_response);
         #[cfg(windows)]
         debug.field(
             "mutation_response_present",
@@ -670,6 +679,7 @@ impl JobReport {
                     0
                 }
             }
+            + self.operation_frame.as_ref().map_or(0, Vec::len)
             + self.task.output.as_ref().map_or(0, |o| o.bytes.len())
             + self.task.failure.as_ref().map_or(0, |f| f.message.len())
     }
@@ -684,6 +694,7 @@ struct Slot {
     http_guards: Vec<crate::http_io::HttpCallGuard>,
     service_grant: Option<ServiceGrant>,
     service_content: Option<ServiceContentAccess>,
+    operation_history: Option<OperationHistoryGrant>,
 }
 struct State {
     phase: Phase,
@@ -841,13 +852,29 @@ impl Control {
                 })
             })
     }
+    fn operation_fault(&self, grant: Option<&OperationHistoryGrant>) -> Option<Fault> {
+        let grant = grant?;
+        let Some(authority) = &self.authority else {
+            return Some(Fault::InactiveConnection);
+        };
+        authority.with_execution_time(|now| {
+            authority.binding.check_liveness(now)?;
+            grant.check_at(now)
+        }).err().map(|error| match error {
+            io_execution::Error::Expired => Fault::Deadline,
+            io_execution::Error::Cancelled => Fault::Cancelled,
+            io_execution::Error::Clock => Fault::TaskProtocol,
+            io_execution::Error::Limit => Fault::Limits,
+            _ => Fault::InactiveConnection,
+        })
+    }
     fn refresh(&self, slot: &mut Slot) {
         if let Some(fault) = self.job_fault(
             &slot.cancel,
             slot.service_grant.as_ref(),
             &slot.http_guards,
             slot.service_content.as_ref(),
-        ) && let Some(report) = &mut slot.report
+        ).or_else(|| self.operation_fault(slot.operation_history.as_ref())) && let Some(report) = &mut slot.report
         {
             suppress(report, fault);
         } else if let Some(report) = &mut slot.report
@@ -929,11 +956,13 @@ fn suppress(report: &mut JobReport, fault: Fault) {
         report.mutation_frame = None;
     }
     report.http_response = None;
+    report.operation_response = None;
+    report.operation_frame = None;
     report.service_response = None;
     report.service_persistence = None;
     report.cancelled = true;
     // A routed effect cannot be presumed rolled back when its delivery is suppressed.
-    report.unknown |= report.calls > 0;
+    report.unknown |= !report.operation_read_only && report.calls > 0;
 }
 struct ServiceJob {
     request: service::Request,
@@ -1515,6 +1544,19 @@ impl<O: HostOwner> IoWorker<O> {
         }
         self.submit_routed(input, JobRouter::Brokered(router), timeout, None)
     }
+    /// Execute the existing IO query frame with separately approved history scope.
+    /// No HTTP backend, durable dispatch claim or effect preparation is available.
+    pub fn submit_operation_history(
+        &self,
+        input: Vec<u8>,
+        grant: OperationHistoryGrant,
+        timeout: Duration,
+    ) -> Result<JobHandle, JobError> {
+        let authority = self.control.authority.as_ref().ok_or(JobError::InvalidOptions)?;
+        // Reject a foreign grant before sampling the original clock or admission.
+        grant.validate_binding(&authority.binding).map_err(|_| JobError::InvalidOptions)?;
+        self.submit_routed(input, JobRouter::OperationHistory(grant), timeout, None)
+    }
     /// Validate a service route before native publication, without consuming any
     /// job/byte quota. The original grant already pins declaration and handler.
     pub fn check_service(&self, grant: &ServiceGrant) -> Result<(), JobError> {
@@ -1757,6 +1799,10 @@ impl<O: HostOwner> IoWorker<O> {
         service: Option<Box<ServiceJob>>,
     ) -> Result<JobHandle, JobError> {
         let input = Zeroizing::new(input);
+        let operation_history = match &router {
+            JobRouter::OperationHistory(grant) => Some(grant.clone()),
+            _ => None,
+        };
         // A history worker owns the original Store but is not a guest executor,
         // even if the installed package negotiated the mutation import.
         if self.control.mutation_history {
@@ -1819,6 +1865,14 @@ impl<O: HostOwner> IoWorker<O> {
                         .map_err(|_| JobError::InvalidOptions)?;
                 }
                 a.with_time(|now| {
+                    if let Some(grant) = &operation_history {
+                        grant.check_at(now).map_err(|error| match error {
+                            io_execution::Error::Expired => BindingError::Expired,
+                            io_execution::Error::Limit => BindingError::Limit,
+                            io_execution::Error::Clock => BindingError::Clock,
+                            _ => BindingError::Denied,
+                        })?;
+                    }
                     if let Some(service) = &service {
                         service.grant.check(now)?;
                         if let Some(access) = &service.content {
@@ -1859,6 +1913,7 @@ impl<O: HostOwner> IoWorker<O> {
                 http_guards: Vec::new(),
                 service_grant: service.as_ref().map(|service| service.grant.clone()),
                 service_content: service.as_ref().and_then(|s| s.content.clone()),
+                operation_history,
             },
         );
         if self
@@ -2199,20 +2254,24 @@ fn execute<O: HostOwner>(
             lease,
             service,
         } = job;
+        let operation_history = match &router {
+            JobRouter::OperationHistory(grant) => Some(grant.clone()),
+            _ => None,
+        };
         let mut http_guards = Vec::new();
         let mut report = match control.job_fault(
             &cancel,
             service.as_ref().map(|s| &s.grant),
             &[],
             service.as_ref().and_then(|s| s.content.as_ref()),
-        ) {
+        ).or_else(|| control.operation_fault(operation_history.as_ref())) {
             Some(fault) => {
                 let mut report = cancelled_report(package, fault);
                 report.bytes = input.len() as u64;
                 report
             }
             None => {
-                if !matches!(router, JobRouter::ReadOnly)
+                if !matches!(router, JobRouter::ReadOnly | JobRouter::OperationHistory(_))
                     && !service.as_ref().is_some_and(|service| {
                         service.persistence.as_ref().is_some_and(|p| p.read_only)
                     })
@@ -2294,12 +2353,13 @@ fn execute<O: HostOwner>(
                 }
             }
         };
+        report.operation_read_only = operation_history.is_some();
         if let Some(fault) = control.job_fault(
             &cancel,
             service.as_ref().map(|s| &s.grant),
             &http_guards,
             service.as_ref().and_then(|s| s.content.as_ref()),
-        ) {
+        ).or_else(|| control.operation_fault(operation_history.as_ref())) {
             suppress(&mut report, fault);
         }
         // Computation is over. Only the controlled slot owns the job lease when
@@ -2336,6 +2396,9 @@ fn cancelled_report(package: &PreparedPackage, fault: Fault) -> JobReport {
         #[cfg(windows)]
         mutation_frame: None,
         http_response: None,
+        operation_response: None,
+        operation_frame: None,
+        operation_read_only: false,
         service_response: None,
         service_persistence: None,
         service_validity: None,
@@ -2756,6 +2819,9 @@ fn run_mutation_job<O: HostOwner>(
         mutation_response,
         mutation_frame,
         http_response: None,
+        operation_response: None,
+        operation_frame: None,
+        operation_read_only: false,
         service_response: None,
         service_persistence: None,
         service_validity: None,
@@ -2783,6 +2849,11 @@ fn run_job<O: HostOwner>(
     service: Option<&ServiceJob>,
     history: Option<&(Record, service_history::Validity)>,
 ) -> Result<JobReport, JobError> {
+    let operation_history = match &*router {
+        JobRouter::OperationHistory(grant) => Some(grant.clone()),
+        _ => None,
+    };
+    let operation_read_only = operation_history.is_some();
     let mut owner_error = None;
     let mut calls = 0u32;
     let mut bytes = input.len() as u64;
@@ -2796,7 +2867,7 @@ fn run_job<O: HostOwner>(
         service,
         http_guards,
         history.map(|(_, validity)| validity),
-    ) {
+    ).or_else(|| control.operation_fault(operation_history.as_ref())) {
         let mut report = cancelled_report(package, fault);
         report.bytes = bytes;
         report.unknown = history.is_some();
@@ -2822,12 +2893,16 @@ fn run_job<O: HostOwner>(
                         service,
                         http_guards,
                         history.map(|(_, validity)| validity),
-                    ) {
+                    ).or_else(|| control.operation_fault(operation_history.as_ref())) {
                         fault = Some(late);
                         return Err(());
                     }
                     if calls >= control.limits.max_calls {
                         fault = Some(Fault::Limits);
+                        return Err(());
+                    }
+                    if operation_read_only && content_call {
+                        fault = Some(Fault::TaskProtocol);
                         return Err(());
                     }
                     if content_call && service.and_then(|s| s.content.as_ref()).is_none() {
@@ -2836,6 +2911,13 @@ fn run_job<O: HostOwner>(
                     }
                     let capabilities: &[IoCapability] = if lease.is_some() && !content_call {
                         match Request::decode(request).map(|r| r.action().clone()) {
+                            Ok(Action::QueryOperation { .. }) if operation_read_only => {
+                                &[IoCapability::HttpRequest]
+                            }
+                            Ok(_) if operation_read_only => {
+                                fault = Some(Fault::TaskProtocol);
+                                return Err(());
+                            }
                             Ok(
                                 Action::Read { .. } | Action::Finish { .. } | Action::Cancel { .. },
                             ) => &[IoCapability::FileRead],
@@ -2853,7 +2935,10 @@ fn run_job<O: HostOwner>(
                     };
                     // The request is charged before the router may produce any external
                     // effect, so a byte cap is never discovered after the call.
-                    let request_charge = request.len() as u64;
+                    let operation_reply_bound = if operation_read_only {
+                        morrow_core::io::MAX_OPERATION_RESPONSE_BYTES as u64
+                    } else { 0 };
+                    let request_charge = request.len() as u64 + operation_reply_bound;
                     if bytes
                         .checked_add(request_charge)
                         .is_none_or(|total| total > control.limits.max_job_bytes)
@@ -2876,13 +2961,13 @@ fn run_job<O: HostOwner>(
                         service,
                         http_guards,
                         history.map(|(_, validity)| validity),
-                    ) {
+                    ).or_else(|| control.operation_fault(operation_history.as_ref())) {
                         fault = Some(late);
                         return Err(());
                     }
                     let call = calls;
                     calls += 1;
-                    let mut reserved = 0;
+                    let mut reserved = operation_reply_bound;
                     let routed = if content_call {
                         let response_bound = morrow_core::runtime::MAX_MESSAGE_BYTES as u64;
                         if bytes
@@ -2919,6 +3004,27 @@ fn run_job<O: HostOwner>(
                         )
                     } else {
                         match router {
+                            JobRouter::OperationHistory(grant) => {
+                                match (instance, &control.authority, Request::decode(request)) {
+                                    (Some(instance), Some(authority), Ok(parsed)) => {
+                                        let host = match checked_runtime(owner, control.host) {
+                                            Ok(host) => host,
+                                            Err(error) => {
+                                                owner_error = Some(error);
+                                                return Err(());
+                                            }
+                                        };
+                                        authority.with_execution_time(|now| {
+                                            authority.binding.check_liveness(now)?;
+                                            grant.read(host, instance, &parsed, now)
+                                        }).map_err(|error| match error {
+                                            io_execution::Error::Limit => RouterFault::Limit,
+                                            _ => RouterFault::Denied,
+                                        })
+                                    }
+                                    _ => Err(RouterFault::Denied),
+                                }
+                            }
                             JobRouter::ReadOnly => Err(RouterFault::Denied),
                             #[cfg(windows)]
                             JobRouter::Mutation(_) => Err(RouterFault::Denied),
@@ -2955,16 +3061,16 @@ fn run_job<O: HostOwner>(
                             }
                         }
                     };
-                    bytes += reserved;
+                    if !operation_read_only { bytes += reserved; }
                     if let Some(late) = service_job_fault(
                         control,
                         cancel,
                         service,
                         http_guards,
                         history.map(|(_, validity)| validity),
-                    ) {
+                    ).or_else(|| control.operation_fault(operation_history.as_ref())) {
                         fault = Some(late);
-                        unknown = true;
+                        unknown = !operation_read_only;
                         return Err(());
                     }
                     let response = match routed {
@@ -2979,7 +3085,7 @@ fn run_job<O: HostOwner>(
                         }
                         Err(RouterFault::Unknown) => {
                             fault = Some(Fault::TaskProtocol);
-                            unknown = true;
+                            unknown = !operation_read_only;
                             return Err(());
                         }
                     };
@@ -2998,13 +3104,13 @@ fn run_job<O: HostOwner>(
                         // The call already reached the router; the result cannot be
                         // delivered within quota, so the outcome needs reconciliation.
                         fault = Some(Fault::Limits);
-                        unknown = true;
+                        unknown = !operation_read_only;
                         return Err(());
                     }
                     if let Err(error) = control.charge(response_charge, &[], lease.map(Arc::as_ref))
                     {
                         fault = Some(error);
-                        unknown = true;
+                        unknown = !operation_read_only;
                         return Err(());
                     }
                     bytes += response_charge;
@@ -3027,14 +3133,14 @@ fn run_job<O: HostOwner>(
         service,
         http_guards,
         history.map(|(_, validity)| validity),
-    ) {
+    ).or_else(|| control.operation_fault(operation_history.as_ref())) {
         // A result that outlived its deadline or revocation is not a success.
         let mut report = cancelled_report(package, late);
         report.task.execution.host_calls = run.report.host_calls;
         report.task.execution.fuel_remaining = run.report.fuel_remaining;
         report.calls = calls;
         report.bytes = bytes;
-        report.unknown = unknown || calls > 0 || history.is_some();
+        report.unknown = unknown || (!operation_read_only && calls > 0) || history.is_some();
         report.service_validity = history.map(|(_, validity)| validity.clone());
         return Ok(report);
     }
@@ -3044,6 +3150,8 @@ fn run_job<O: HostOwner>(
     }
     let mut response = None;
     let mut http_response = None;
+    let mut operation_response = None;
+    let mut operation_frame = None;
     let mut service_response = None;
     let mut service_persistence = history.map(|_| ServicePersistenceStatus::Unknown);
     if let Some(service) = service {
@@ -3076,7 +3184,7 @@ fn run_job<O: HostOwner>(
                                         }
                                         Err(_) => {
                                             execution.outcome = Err(Fault::TaskProtocol);
-                                            unknown = true;
+                                            unknown = !operation_read_only;
                                         }
                                     }
                                 } else {
@@ -3093,14 +3201,17 @@ fn run_job<O: HostOwner>(
         // Past an admitted side effect, an invalid/oversized final reply never
         // proves rollback and must not authorize an automatic replay.
         if execution.outcome != Ok(0) {
-            unknown |= calls > 0 || history.is_some();
+            unknown |= (!operation_read_only && calls > 0) || history.is_some();
             service_response = None;
         }
     } else if execution.outcome.is_ok() {
         match (run.completion, last_response, last_request) {
             (Some(done), Some(actual), Some(request)) if calls > 0 && done == actual => {
                 let decoded = Request::decode(&request).and_then(|request| {
-                    if matches!(request.action(), Action::SubmitHttp(_)) {
+                    if operation_read_only && matches!(request.action(), Action::QueryOperation { .. }) {
+                        operation_response = Some(Response::decode_operation(&request, &actual)?);
+                        operation_frame = Some(actual.clone());
+                    } else if matches!(request.action(), Action::SubmitHttp(_)) {
                         http_response = Some(Response::decode_http(&request, &actual)?);
                     } else {
                         response = Some(Response::decode(&request, &actual)?);
@@ -3127,6 +3238,9 @@ fn run_job<O: HostOwner>(
         #[cfg(windows)]
         mutation_frame: None,
         http_response,
+        operation_response,
+        operation_frame,
+        operation_read_only,
         service_response,
         service_persistence,
         service_validity: history.map(|(_, validity)| validity.clone()),

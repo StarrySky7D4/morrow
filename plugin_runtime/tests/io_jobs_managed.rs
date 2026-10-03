@@ -63,7 +63,6 @@ fn script() -> (Arc<AtomicUsize>, Box<dyn Router>) {
     (calls.clone(), Box::new(Script(calls)))
 }
 struct Fixture {
-    _dir: tempfile::TempDir,
     manager: Manager,
     host: HostRuntime,
     instance: ManagedInstance,
@@ -71,6 +70,8 @@ struct Fixture {
     observer: IoBinding,
     digest: [u8; 32],
     limits: JobLimits,
+    // Close all handles before TempDir removes the synthetic fixture.
+    _dir: tempfile::TempDir,
 }
 impl Fixture {
     fn new() -> Self {
@@ -201,12 +202,13 @@ impl Fixture {
     }
 }
 struct Running {
-    _dir: tempfile::TempDir,
     manager: Option<Manager>,
     worker: IoWorker,
     observer: IoBinding,
     time: Arc<AtomicU64>,
     digest: [u8; 32],
+    // Close all handles before TempDir removes the synthetic fixture.
+    _dir: tempfile::TempDir,
 }
 fn ready(handle: &mut JobHandle) {
     let end = Instant::now() + WAIT;

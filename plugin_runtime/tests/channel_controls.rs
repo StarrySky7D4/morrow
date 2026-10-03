@@ -33,11 +33,11 @@ const ID: &str = "org.example.channel.controls";
 const WAIT: Duration = Duration::from_secs(5);
 const SCOPE: [u8; 32] = [0x73; 32];
 struct Fixture {
-    dir: tempfile::TempDir,
     manager: Manager,
     host: HostRuntime,
     instance: ManagedInstance,
     broker: ChannelBroker,
+    dir: tempfile::TempDir,
 }
 impl Fixture {
     fn new() -> Self {

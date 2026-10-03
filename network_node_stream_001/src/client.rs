@@ -166,17 +166,27 @@ impl Client {
     pub async fn send_stream(
         &self,
         request: RawHttpRequest,
-        mut context: SendContext,
+        context: SendContext,
     ) -> Result<StreamLease> {
+        self.send_stream_with_receipt(request, context).await.map_err(|error| error.cause)
+    }
+    /// Same original transport path, with an explicit no-worker/actual cleanup
+    /// receipt on opening failure. No retry, authority or connector is added.
+    pub async fn send_stream_with_receipt(
+        &self,
+        request: RawHttpRequest,
+        mut context: SendContext,
+    ) -> std::result::Result<StreamLease, crate::stream::OpeningError> {
+        use crate::stream::OpeningError;
         context.cap_deadline(tokio::time::Instant::now() + self.limits.timeout);
-        context.check()?;
-        let (target, headers) = self.validate_request(&request)?;
+        context.check().map_err(OpeningError::no_worker)?;
+        let (target, headers) = self.validate_request(&request).map_err(OpeningError::no_worker)?;
         let permit = self
             .concurrent
             .clone()
             .try_acquire_owned()
-            .map_err(|_| Error::Limit)?;
-        crate::stream::start(self.clone(), target, request, headers, context, permit).await
+            .map_err(|_| OpeningError::no_worker(Error::Limit))?;
+        crate::stream::start_with_receipt(self.clone(), target, request, headers, context, permit).await
     }
     /// Collection uses exactly the streaming validation/connector/body path.
     pub async fn collect(
@@ -204,7 +214,7 @@ impl Client {
             body,
         })
     }
-    fn validate_request(&self, request: &RawHttpRequest) -> Result<(Url, HeaderMap)> {
+    pub(crate) fn validate_request(&self, request: &RawHttpRequest) -> Result<(Url, HeaderMap)> {
         let target = parse_target(&request.target)?;
         if target.origin() != self.policy.origin.origin()
             || !self.policy.methods.contains(&request.method)
@@ -247,12 +257,51 @@ impl Client {
     pub(crate) fn response_limit(&self) -> usize {
         self.limits.max_response_bytes
     }
+    #[cfg(feature = "managed-websocket")]
+    pub(crate) fn try_acquire_upgrade(&self) -> Result<tokio::sync::OwnedSemaphorePermit> {
+        self.concurrent.clone().try_acquire_owned().map_err(|_| Error::Limit)
+    }
+    #[cfg(feature = "managed-websocket")]
+    pub(crate) fn upgrade_timeout(&self) -> std::time::Duration {
+        self.limits.timeout
+    }
+    #[cfg(feature = "managed-websocket")]
+    pub(crate) fn validate_upgrade_headers(&self, headers: &HeaderMap) -> Result<()> {
+        let mut bytes = 0usize;
+        for (name, value) in headers {
+            bytes = header_cost(bytes, name.as_str().len(), value.as_bytes().len())?;
+            if bytes > self.limits.max_header_bytes {
+                return Err(Error::Limit);
+            }
+        }
+        Ok(())
+    }
+    #[cfg(feature = "managed-websocket")]
+    pub(crate) async fn execute_upgrade_head(
+        &self,
+        target: Url,
+        request: RawHttpRequest,
+        headers: HeaderMap,
+        context: &SendContext,
+    ) -> Result<(ResponseHead, reqwest::Response)> {
+        self.execute_head_inner(target, request, headers, context, true).await
+    }
     pub(crate) async fn execute_head(
         &self,
         target: Url,
         request: RawHttpRequest,
         headers: HeaderMap,
         context: &SendContext,
+    ) -> Result<(ResponseHead, reqwest::Response)> {
+        self.execute_head_inner(target, request, headers, context, false).await
+    }
+    async fn execute_head_inner(
+        &self,
+        target: Url,
+        request: RawHttpRequest,
+        headers: HeaderMap,
+        context: &SendContext,
+        upgrade_only: bool,
     ) -> Result<(ResponseHead, reqwest::Response)> {
         context.check()?;
         let host = target.host_str().ok_or(Error::Invalid)?;
@@ -294,6 +343,10 @@ impl Client {
             .no_deflate()
             .no_zstd()
             .resolve_to_addrs(host, &addresses);
+        // Only the opt-in RFC6455 handshake requires HTTP/1.1; old HTTP is unchanged.
+        if upgrade_only {
+            builder = builder.http1_only();
+        }
         if let Some(root) = &self.root_certificate {
             builder = builder.add_root_certificate(root.clone());
         }

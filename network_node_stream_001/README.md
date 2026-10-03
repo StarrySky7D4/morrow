@@ -41,3 +41,62 @@ cancel, cancellation-safe demand, size limits, and head-future/lease drop cleanu
 origin client tests retain destination, framing, no-retry/redirect, method/status and limit
 checks. They are transport tests; native pipe OS Pending, real Core/SSE consumption and
 independent joint acceptance remain unrun. No public network or account credentials used.
+
+
+## W12 bounded SSE framing
+
+`SseLease::new(StreamLease, DecoderLimits).await` adds strict UTF-8 SSE framing
+without changing the legacy HTTP send or public guest contracts. `next_event()`
+yields one event and retains the unparsed chunk tail; cancelled reads keep decoder
+and original demand state. Buffered delivery rechecks the original guard, token
+and absolute deadline. `retry` and event IDs are inert metadata; no reconnection,
+replay, grant renewal or provider-specific `[DONE]` convention is implemented.
+
+Only HTTP200 with a single `text/event-stream` Content-Type (optionally one UTF-8
+charset) and absent/single identity encoding is accepted. Open failures cancel and
+join, returning a real cleanup receipt. `finish()` never drains buffered input and
+keeps the first parser/delivery cause separate from transport cleanup. Its decoder,
+HTTP EOF, truncated and worker-joined fields describe separate facts, not remote
+business success. EOF never dispatches a partial block; invalid UTF-8 is an error.
+
+The default decoder has 8KiB line, 64KiB block, 4MiB total, 4096-event, 1024-byte ID
+and 20-digit u64 retry bounds. A CR-following LF counts only against total, so block
+is not a complete wire-byte cap. The underlying response limit remains independent.
+There is one <=8KiB delivered chunk plus decoder state; shared Bytes backing and
+network-library/kernel buffers are not covered by that chunk-view bound.
+
+Windows Release/offline/locked validation ran 55 methods: 21 new decoder, 13 new
+real loopback SSE and 21 inherited transport cases. See
+[the scoped W12 report](../reports/reconstruction-2026-10-03/windows-sse-transport.md).
+This is trusted transport qualification; channel/guest authorization integration,
+TLS, public endpoints, other platforms and full SDK freeze remain open. Framing
+follows the [HTML event-stream rules](https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation)
+with the bounded strict-UTF-8 policy described above, not browser EventSource API semantics.
+
+## W14 opt-in original-host managed source
+
+The separate `managed-channel` native feature now provides `managed_sse::SseSource`:
+immutable explicit host approval, the original Store's strict one-shot claim before
+POST, complete versioned Capnp event payloads on the old channel ABI, exact durable
+ACK before the next SSE event, and source-specific revoke/deadline checks through
+the original final ACK guard. A channel declaration never grants HTTP authority;
+old incompatible guest import combinations remain rejected.
+
+The earlier transport-only and W12 qualifications above keep their historical
+scope. The new bridge rejects credential/cookie/API-key/Last-Event-ID injection,
+does not replay/reconnect, and keeps the streaming IO intent OutcomeUnknown even
+on clean HTTP EOF. HTTP worker and native producer actual joins remain separate.
+`send_stream_with_receipt` exposes NoWorker or real opening cleanup evidence;
+the old `send_stream` keeps its Error API and original path.
+
+Windows Release/offline/locked tests: 72 stream/codec/bridge methods and 62 original
+channel/executor/frozen compatibility methods passed, zero ignored/filtered and
+zero new TEMP files. NEW Rust/C/C++ channel guests were actually executed from
+unchanged SDK example source; the 9 base/3 dependency/provider original artifacts
+were neither rebuilt nor repacked. Two compile failures and one 48-pass/2-fail
+fixture run are retained before the complete successful run. Ordinary token, TLS,
+public APIs/accounts, production Workbench owner/UI, WS and other platforms/full
+SDK qualification are still open.
+
+See [the host guide](../docs/PLUGIN_SSE_CHANNEL.md) and
+[the W14 scoped report](../reports/reconstruction-2026-10-03/windows-sse-channel.md).

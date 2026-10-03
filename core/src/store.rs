@@ -20,6 +20,7 @@ mod blobs;
 mod evidence;
 mod evidence_chunks;
 mod io_intent;
+mod io_history;
 mod open_verification;
 pub use io_intent::IoIntentReservation;
 mod io_evidence;
