@@ -1,5 +1,8 @@
 # 后续编码看板
 
+2026-10-04 **GitHub 进度同步**：Windows 源码检查点 `513811bc` 已与远端一致；新增云端 `codex/cloud-sdk-convergence-20261004`／`468ef2e9`，直接领先 5 个提交、69 项文件差异，推进 WebSocket 生命周期、SDK 发现与静态预检、独立诊断分发、有限卡片变更元数据源。云端 Linux 报告与 Windows C01 42 项分开；不将发现／prepared／分发当作生产路由或 SDK 冻结。云端源码尚未合入本地 Windows；后续优先以精确云端候选进行 Windows 复验，再推进 owner／catalog／GUI 与完整门槛。开发源码 `test.58+62`，公开应用测试预览仍为 `test.56`。见 [完整进度及后续看板](../reports/reconstruction-2026-10-04/github-progress-sync.md)。
+
+
 2026-10-04 **Windows 开发支线源码检查点**：目标分支 `codex/windows-sdk-qualification-20261003`，基线 `63f38d4a`。本次保存云端 Linux 汇合源码及累计 Windows SDK 工具、IO 操作历史、受管 SSE 实现和 W15 WebSocket 待验证草稿。C01 当前无密钥 Windows 定向验证为 42/42，原 SDK327／冻结57保持不变；WebSocket transport 与 19 项新测试尚未编译／运行，受保护 owner、普通用户 token、GUI、其它平台和完整 SDK 冻结仍 OPEN。此前报告中的未提交／未推送为各次验证归档时的历史状态；本条记录此次源码同步范围，不扩大验收结论。见 [汇合核验与范围](../reports/reconstruction-2026-10-04/windows-convergence-recheck.md)。
 
 

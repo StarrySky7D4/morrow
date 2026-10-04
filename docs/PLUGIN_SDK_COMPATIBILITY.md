@@ -1,5 +1,8 @@
 # SDK guest 兼容候选基线
 
+2026-10-04 **GitHub 进度同步**：Windows 源码检查点 `513811bc` 已与远端一致；新增云端 `codex/cloud-sdk-convergence-20261004`／`468ef2e9`，直接领先 5 个提交、69 项文件差异，推进 WebSocket 生命周期、SDK 发现与静态预检、独立诊断分发、有限卡片变更元数据源。云端 Linux 报告与 Windows C01 42 项分开；不将发现／prepared／分发当作生产路由或 SDK 冻结。云端源码尚未合入本地 Windows；后续优先以精确云端候选进行 Windows 复验，再推进 owner／catalog／GUI 与完整门槛。开发源码 `test.58+62`，公开应用测试预览仍为 `test.56`。见 [完整进度及后续看板](../reports/reconstruction-2026-10-04/github-progress-sync.md)。
+
+
 2026-10-03 **W08–W11 本地推进与 Linux 汇合**：channel 45 个无密钥方法通过，最小释放顺序修复后相关 36 方法复验、新目录零残留；独立 SDK 的原 Rust/C/C++ task 均真实离线编译 exit0；W05 原 native 14 个产物在受限 medium token 复跑通过、67 输入恒同。用户提供的 Linux 17 路径源码增量已按原 SHA/blob 合入，原 25 项本地修改保留。云端 Close199 是外部汇总，本包缺完整 Linux 测试日志；当前没有新增 Linux/GUI/受保护 owner 运行资格，整个 SDK 仍 OPEN。见 [夹具清理](../reports/reconstruction-2026-10-03/windows-channel-fixture-cleanup.md)、[独立编译](../reports/reconstruction-2026-10-03/windows-sdk-standalone-builds.md)、[受限 token](../reports/reconstruction-2026-10-03/windows-sdk-restricted-token.md)、[汇合范围](../reports/reconstruction-2026-10-03/linux-windows-convergence.md)。本轮未提交／推送／CI／发布；下方历史记录保持原范围。
 
 ## 2026-10-03 原生 codec 与源码独立开发工具

@@ -1,5 +1,8 @@
 # 插件系统当前状态
 
+2026-10-04 **GitHub 进度同步**：Windows 源码检查点 `513811bc` 已与远端一致；新增云端 `codex/cloud-sdk-convergence-20261004`／`468ef2e9`，直接领先 5 个提交、69 项文件差异，推进 WebSocket 生命周期、SDK 发现与静态预检、独立诊断分发、有限卡片变更元数据源。云端 Linux 报告与 Windows C01 42 项分开；不将发现／prepared／分发当作生产路由或 SDK 冻结。云端源码尚未合入本地 Windows；后续优先以精确云端候选进行 Windows 复验，再推进 owner／catalog／GUI 与完整门槛。开发源码 `test.58+62`，公开应用测试预览仍为 `test.56`。见 [完整进度及后续看板](../reports/reconstruction-2026-10-04/github-progress-sync.md)。
+
+
 2026-10-03 **W14 原宿主批准的 POST SSE 通道**：新增显式 `managed-channel` 原生桥接，原 Store 严格 claim 成功后仅一次 POST，真实 Receive／exact ACK 后才读取下一事件，完整元数据使用独立 Cap’n Proto envelope；撤权与期限复核贯穿入队、交付和原 ACK 事务。Windows Release／离线／锁定最终134方法通过（72传输／SSE／新桥接＋62原通道／执行器／原件），新TEMP零残留。Rust／C／C++新 guest 实际消费完整事件；原9基础＋3依赖及 provider 保持原字节，SDK327／冻结57与云端Linux源码未修改。两轮编译失败、一轮48通过／2失败的原始运行保留；定向修复后完整复验，不清除历史。HTTP EOF／ACK／实际HTTP和producer join分别记录，业务仍OutcomeUnknown。未接Workbench生产批准UI／目录，WS／认证／TLS／真实外部API／普通用户token／受保护owner／GUI／其它平台及完整SDK仍OPEN。见 [宿主接口指南](PLUGIN_SSE_CHANNEL.md)与[实现、实测及剩余范围](../reports/reconstruction-2026-10-03/windows-sse-channel.md)。未提交／推送／CI／发布。
 
 2026-10-03 **W13 只读HTTP历史查询**：原QueryOperation在显式managed路由接通；当前单operation批准、原帧／payload摘要核验和Ready／read复核，不重发Unknown、不暴露正文。最终Windows Release离线锁定144方法通过（42新增＋原件回归），SDK327／冻结57原件／Schema／Linux代码恒同。三次fixture失败及定向修正原始保留；unit仅选10项，普通用户token／新三语言query guest／protected owner／GUI／其它平台未验。G07仅此范围推进，完整SDK继续OPEN。见 [接口指南](PLUGIN_OPERATION_HISTORY.md)与[实施／证据](../reports/reconstruction-2026-10-03/windows-operation-history.md)。本阶段未提交／推送／CI／发布。
