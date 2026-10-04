@@ -13,6 +13,55 @@ sdk=importlib.util.module_from_spec(spec);spec.loader.exec_module(sdk)
 def descriptor():
     return {'schema_version':1,'host_version':'0.1.9-test.50','platform':{'os':'windows','arch':'x86_64'},'backend':'wasmi','authority':'none','package_preflight_required':True,'profiles':[{'id':'morrow.guest-task.v3','status':'candidate','guest_abi_version':2,'package_schema_version':1,'contracts':{name:{'sha256':'0'*64,**({'version':1} if name!='content' else {})} for name in ('runtime','content','task','ui','dependency_call')},'runtime_task_modes':['content','transform'],'workbench_routes':['external_transform','external_ui'],'runtime_supported_required_features':['transform-handlers-v1'],'workbench_constraints':{'content_task':False,'dependency_calls':False,'required_dependencies':False},'hard_byte_limits':{'task_frame':131072},'runtime_defaults':{'fuel':20000000,'memory_bytes':16777216,'host_calls':16}}],'unsupported_requirements':['public_streaming_session'],'experimental_extensions':{'status':'recognized_experimental_not_fully_discovered','feature_names':['io-v1']}}
 
+
+def detailed_descriptor(os='windows'):
+    """Schema fixture; real compiled output and old-validator compatibility are
+    exercised separately by the CLI qualification, not inferred from this data.
+    """
+    value = descriptor()
+    value['platform']['os'] = os
+    details = {'schema_version': 1, 'status': 'compiled_metadata_only', 'authority': 'none',
+               'package_preflight_required': True, 'policy': 'Exported ceilings; no grants.',
+               'current_host_requirements': {key: os == 'windows' for key in (
+                   'protected_owner_backend_compiled', 'stored_http_credentials_compiled',
+                   'protected_tls_identity_compiled')}, 'profiles': []}
+    for name, layout in sdk.EXTENSION_LAYOUTS.items():
+        mutation = name == 'morrow.mutation.v1'
+        profile = {'id': name, 'status': 'experimental', 'guest_abi_version': 2,
+                   'package_schema_version': 1, 'production_public_binding_available': False,
+                   'combined_dependency_import': False, 'combined_channel_import': False,
+                   'qualification': 'not_established_by_discovery',
+                   'contracts': {key: {'version': 1, 'sha256': ('0' if key in ('runtime', 'task') else 'a')*64} for key in layout['contracts']},
+                   'required_features': list(layout['required']), 'optional_features': list(layout['optional']),
+                   'declaration_versions': {key: 1 for key in layout['versions']},
+                   'hard_byte_limits': {key: 1024 for key in layout['bytes']},
+                   'count_limits': {key: 8 for key in layout['counts']},
+                   'duration_limits_ms': {key: 30000 for key in layout['durations']},
+                   'unsupported_operations': sorted(layout['unsupported']),
+                   'explicit_trusted_routes': ['trusted native route'], 'host_prerequisites': ['current grant'],
+                   'implemented_operations': [
+                       {'name': operation, 'route': route,
+                        'implementation_compiled': os == 'windows' if mutation else True,
+                        'platform_requirement': 'windows' if mutation else 'native'}
+                       for operation, route in layout['operations'].items()]}
+        details['profiles'].append(profile)
+    details['profiles'][0]['declared_capabilities'] = [
+        {'name': name, 'number': number} for number, name in enumerate((
+            'FileRead', 'FileList', 'FileCreate', 'FileReplace', 'FileDelete', 'HttpRequest',
+            'HttpListen', 'HttpPublish', 'CredentialUse', 'WebSocketConnect'), 1)]
+    details['profiles'][0]['operation_history'] = {
+        'capability': 'HttpRequest', 'single_exact_operation': True, 'fresh_grant_required': True,
+        'status_only': True, 'body_available': False, 'dispatch_authority': False,
+        'automatic_replay': False, 'general_recovery': False, 'raw_or_brokered_query_route': False}
+    details['profiles'][2]['header'] = 'morrow-service-resources-v1'
+    value['experimental_extensions']['discovery'] = details
+    return value
+
+
+def discovery(value):
+    return value['experimental_extensions']['discovery']
+
+
 class Profiles(unittest.TestCase):
     def test_valid_descriptor_preserves_no_authority_and_candidate(self):
         value=sdk.validate_descriptor(descriptor())
@@ -87,5 +136,118 @@ class Profiles(unittest.TestCase):
         self.assertLess(time.monotonic()-start,8)
         with self.assertRaisesRegex(ValueError,'exit 7'):
             sdk.bounded_process([sys.executable,'-c','raise SystemExit(7)'])
+
+    def test_optional_discovery_preserves_legacy_descriptor_and_status(self):
+        old = descriptor()
+        self.assertIs(sdk.validate_descriptor(old), old)
+        current = detailed_descriptor()
+        self.assertIs(sdk.validate_descriptor(current), current)
+        self.assertEqual(current['experimental_extensions']['status'], old['experimental_extensions']['status'])
+        self.assertEqual(current['profiles'], old['profiles'])
+
+    def test_extension_metadata_does_not_claim_linux_or_macos_owner_readiness(self):
+        for os in ('windows', 'linux', 'macos'):
+            with self.subTest(os=os):
+                item = detailed_descriptor(os)
+                sdk.validate_descriptor(item)
+                profiles = discovery(item)['profiles']
+                self.assertTrue(profiles[0]['implemented_operations'][0]['implementation_compiled'])
+                self.assertEqual(profiles[3]['implemented_operations'][0]['implementation_compiled'], os == 'windows')
+                invalid = copy.deepcopy(item)
+                discovery(invalid)['current_host_requirements']['protected_owner_backend_compiled'] = os != 'windows'
+                with self.assertRaises(ValueError): sdk.validate_descriptor(invalid)
+
+    def test_extension_discovery_version_status_and_authority_are_exact(self):
+        for key, bad in (('schema_version', True), ('schema_version', 2), ('schema_version', None),
+                         ('status', 'stable'), ('authority', 'granted'), ('package_preflight_required', 1)):
+            item = detailed_descriptor(); discovery(item)[key] = bad
+            with self.subTest(key=key, bad=bad), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+        for bad in (None, [], 'unknown'):
+            item = detailed_descriptor(); item['experimental_extensions']['discovery'] = bad
+            with self.subTest(bad=bad), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+
+    def test_extension_profiles_are_complete_unique_and_versioned(self):
+        for action in ('missing', 'duplicate', 'unknown', 'abi_bool', 'package_bool', 'contract_missing', 'contract_version', 'bad_digest'):
+            item = detailed_descriptor(); profiles = discovery(item)['profiles']
+            if action == 'missing': profiles.pop()
+            elif action == 'duplicate': profiles[1] = copy.deepcopy(profiles[0])
+            elif action == 'unknown': profiles[0]['id'] = 'morrow.unknown.v1'
+            elif action == 'abi_bool': profiles[0]['guest_abi_version'] = True
+            elif action == 'package_bool': profiles[0]['package_schema_version'] = True
+            elif action == 'contract_missing': del profiles[0]['contracts']['io']
+            elif action == 'contract_version': profiles[0]['contracts']['io']['version'] = 2
+            else: profiles[0]['contracts']['io']['sha256'] = 'A'*64
+            with self.subTest(action=action), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+
+    def test_extension_public_scope_and_import_composition_cannot_be_promoted(self):
+        for index in range(4):
+            for key in ('production_public_binding_available', 'combined_dependency_import', 'combined_channel_import'):
+                for bad in (True, 0, 'false', None):
+                    item = detailed_descriptor(); discovery(item)['profiles'][index][key] = bad
+                    with self.subTest(index=index, key=key, bad=bad), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+
+    def test_extension_limits_are_typed_bounded_and_in_the_right_units(self):
+        for field in ('hard_byte_limits', 'count_limits', 'duration_limits_ms', 'declaration_versions'):
+            key = next(iter(discovery(detailed_descriptor())['profiles'][0][field]))
+            for bad in (0, -1, True, 1.5, '1', 1 << 63, None):
+                item = detailed_descriptor(); discovery(item)['profiles'][0][field][key] = bad
+                with self.subTest(field=field, bad=bad), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+            item = detailed_descriptor(); del discovery(item)['profiles'][0][field][key]
+            with self.subTest(field=field), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+        item = detailed_descriptor(); discovery(item)['profiles'][2]['duration_limits_ms']['timeout'] = 300000
+        with self.assertRaises(ValueError): sdk.validate_descriptor(item)
+
+    def test_io_declarations_are_not_implemented_public_operations(self):
+        item = detailed_descriptor(); io = discovery(item)['profiles'][0]
+        self.assertIn('WebSocketConnect', [c['name'] for c in io['declared_capabilities']])
+        self.assertNotIn('WebSocketConnect', [o['name'] for o in io['implemented_operations']])
+        for operation in ('SubmitWebSocketConnect', 'SubmitFileList', 'Poll', 'Write'):
+            invalid = copy.deepcopy(item)
+            discovery(invalid)['profiles'][0]['unsupported_operations'].remove(operation)
+            with self.subTest(operation=operation), self.assertRaises(ValueError): sdk.validate_descriptor(invalid)
+        for field, bad in (('number', True), ('number', 99), ('name', 'Exec')):
+            invalid = copy.deepcopy(item); discovery(invalid)['profiles'][0]['declared_capabilities'][0][field] = bad
+            with self.subTest(field=field), self.assertRaises(ValueError): sdk.validate_descriptor(invalid)
+
+    def test_implemented_operation_routes_and_platforms_are_not_interchangeable(self):
+        for index in range(4):
+            for key, bad in (('route', 'raw'), ('platform_requirement', 'any'), ('implementation_compiled', 1), ('name', 'Exec')):
+                item = detailed_descriptor('linux'); discovery(item)['profiles'][index]['implemented_operations'][0][key] = bad
+                with self.subTest(index=index, key=key), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+        item = detailed_descriptor(); operations = discovery(item)['profiles'][0]['implemented_operations']
+        operations[1] = copy.deepcopy(operations[0])
+        with self.assertRaises(ValueError): sdk.validate_descriptor(item)
+
+    def test_http_history_cannot_be_recast_as_replay_or_general_recovery(self):
+        original = discovery(detailed_descriptor())['profiles'][0]['operation_history']
+        for key, value in original.items():
+            for bad in (('FileCreate',) if key == 'capability' else (not value, 1 if value else 0, None)):
+                item = detailed_descriptor(); discovery(item)['profiles'][0]['operation_history'][key] = bad
+                with self.subTest(key=key, bad=bad), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+
+    def test_service_and_mutation_opt_in_features_are_not_blanket_requirements(self):
+        item = detailed_descriptor(); profiles = discovery(item)['profiles']
+        self.assertEqual(profiles[1]['required_features'], ['io-v1'])
+        self.assertEqual(profiles[1]['optional_features'], ['service-run-v1', 'service-run-budget-v1'])
+        self.assertEqual(profiles[3]['optional_features'], ['mutation-budget-v1'])
+        for index in (1, 3):
+            invalid = copy.deepcopy(item); p = discovery(invalid)['profiles'][index]
+            p['required_features'].extend(p['optional_features']); p['optional_features'] = []
+            with self.subTest(index=index), self.assertRaises(ValueError): sdk.validate_descriptor(invalid)
+
+    def test_resource_header_and_required_prerequisites_are_bounded(self):
+        for field, bad in (('header', 'dynamic-discovery'), ('host_prerequisites', []),
+                           ('host_prerequisites', ['x'*257]), ('explicit_trusted_routes', ['same', 'same'])):
+            item = detailed_descriptor(); discovery(item)['profiles'][2][field] = bad
+            with self.subTest(field=field), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+
+    def test_extension_compiled_contract_identities_must_agree(self):
+        for index, contract, field, bad in ((0, 'runtime', 'sha256', 'b'*64),
+                                          (0, 'task', 'version', 4),
+                                          (1, 'io', 'sha256', 'b'*64),
+                                          (2, 'service', 'sha256', 'b'*64)):
+            item = detailed_descriptor(); discovery(item)['profiles'][index]['contracts'][contract][field] = bad
+            with self.subTest(index=index, contract=contract, field=field), self.assertRaisesRegex(ValueError, 'inconsistent'):
+                sdk.validate_descriptor(item)
 
 if __name__=='__main__':unittest.main()

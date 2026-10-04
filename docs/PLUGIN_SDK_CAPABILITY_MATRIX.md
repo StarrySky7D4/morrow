@@ -1,3 +1,5 @@
+2026-10-04 D01 更新：真实 host CLI 与开发工具已补齐 IO／service／service-resources／mutation 的版本、摘要、分单位限额及路由／平台前提发现，并保持旧 descriptor 兼容。F08/G03 的这项有界缺口以[本轮实测报告](../reports/reconstruction-2026-10-04/sdk-discovery-validation.md)和[使用指南](PLUGIN_SDK_DISCOVERY.md)为准；动态 guest 发现、多版本协商及生产 owner/binding 资格仍 OPEN。下列历史矩阵与阶段计数保留各自范围。
+
 2026-10-04 当前状态：下文保留 S013 历史审计。当前实现与平台证据以[云端汇合后 SDK 状态](../reports/reconstruction-2026-10-04/cloud-websocket-validation.md)为准：W14 已有显式宿主批准的实验 POST SSE，W15 已有实验 WS 源码及本轮限定修正，W13 已有 HTTP 单操作历史查询；这些能力不等于生产 Workbench binding、公共 IO WebSocketConnect、完整恢复或完整 SDK 冻结。各阶段计数与各平台资格分开，旧 SDK327/冻结57不改写。
 
 2026-10-02 重建校正：公开三语言实验 `channel-v1` codec/transport、有限本地 bytes/events、credit/ACK 与原 Control 已存在，不能继续统称「公共流／事件合同未实现」。正式公共 Workbench binding、HTTP/SSE/WS backend、授权 Cloud 内容变更来源及异步依赖仍未资格通过。旧 S013 原始报告／JSON／失败证据保留历史范围；此次校正不重写其通过结论。参见[通道合同](PLUGIN_CHANNEL_V1.md)及[有限 Linux 重建范围](../reports/reconstruction-2026-10-02/linux-foundation-scope.md)。
