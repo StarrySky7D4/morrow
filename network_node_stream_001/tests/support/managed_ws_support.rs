@@ -18,11 +18,12 @@ pub struct Seen {
     pub closed: AtomicBool,
     pub release: AtomicBool,
     pub burst_written: AtomicBool,
+    pub opening_started: AtomicBool,
 }
 impl Seen {
     fn new() -> Self {
         Self { handshakes: AtomicUsize::new(0), messages: Mutex::new(Vec::new()),
-            pongs: AtomicUsize::new(0), closed: AtomicBool::new(false), release: AtomicBool::new(false), burst_written: AtomicBool::new(false) }
+            pongs: AtomicUsize::new(0), closed: AtomicBool::new(false), release: AtomicBool::new(false), burst_written: AtomicBool::new(false), opening_started: AtomicBool::new(false) }
     }
     pub fn count(&self) -> usize { self.messages.lock().unwrap().len() }
     pub fn record(&self, opcode: u8, payload: &[u8]) {
@@ -35,6 +36,9 @@ impl Seen {
 #[derive(Clone, Copy)]
 pub enum Scenario {
     EchoDuplex,
+    StallOpening,
+    StalledSink,
+    DelayedText,
     AckHeld,
     InitialText,
     Burst,
@@ -107,10 +111,26 @@ pub fn until(mut condition: impl FnMut() -> bool) {
     }
 }
 fn serve(mut socket: TcpStream, scenario: Scenario, seen: &Seen, stop: &AtomicBool) {
-    if matches!(scenario, Scenario::EchoDuplex | Scenario::AckHeld | Scenario::InitialText | Scenario::Burst) {
+    if matches!(scenario, Scenario::EchoDuplex | Scenario::AckHeld | Scenario::InitialText | Scenario::Burst | Scenario::DelayedText | Scenario::StalledSink) {
         let mut ws = match tungstenite::accept(socket) { Ok(ws) => ws, Err(_) => return };
         seen.handshakes.fetch_add(1, Ordering::SeqCst);
-        if matches!(scenario, Scenario::AckHeld | Scenario::InitialText) {
+        if matches!(scenario, Scenario::StalledSink) {
+            // Complete a real RFC6455 handshake, then deliberately stop reading.
+            // No socket-buffer or OS settings are changed to manufacture capacity.
+            let end = Instant::now() + WAIT;
+            while !stop.load(Ordering::SeqCst) && Instant::now() < end {
+                thread::sleep(Duration::from_millis(1));
+            }
+            return;
+        }
+        if matches!(scenario, Scenario::DelayedText) {
+            let end = Instant::now() + WAIT;
+            while !stop.load(Ordering::SeqCst) && !seen.release.load(Ordering::SeqCst) && Instant::now() < end {
+                thread::sleep(Duration::from_millis(1));
+            }
+            if stop.load(Ordering::SeqCst) { return; }
+        }
+        if matches!(scenario, Scenario::AckHeld | Scenario::InitialText | Scenario::DelayedText) {
             if ws.send(Message::Text(TEXT.into())).is_err() { return; }
             if matches!(scenario, Scenario::AckHeld)
                 && ws.send(Message::Ping(b"ack-held".to_vec().into())).is_err() { return; }
@@ -152,6 +172,11 @@ fn serve(mut socket: TcpStream, scenario: Scenario, seen: &Seen, stop: &AtomicBo
     }
     let head = std::str::from_utf8(&head).expect("synthetic request header UTF-8");
     assert!(head.starts_with("GET /synthetic-ws HTTP/1.1\r\n"));
+    if matches!(scenario, Scenario::StallOpening) {
+        seen.opening_started.store(true, Ordering::SeqCst);
+        if matches!(socket.read(&mut byte), Ok(0)) { seen.closed.store(true, Ordering::SeqCst); }
+        return;
+    }
     let key = head.lines().filter_map(|line| line.split_once(':'))
         .find(|(name, _)| name.eq_ignore_ascii_case("sec-websocket-key")).unwrap().1.trim();
     let accept = if matches!(scenario, Scenario::WrongAccept) { "wrong".to_owned() }

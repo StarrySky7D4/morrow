@@ -157,7 +157,7 @@ async fn pump(state:&State,producer:&Producer,lease:&mut websocket::WebSocketLea
     let reserve=state.approval.quotas.max_message_bytes.checked_add(128).ok_or(Error::Limit)?;
     loop {
         state.grant.check().map_err(Error::Source)?;
-        if let Some(terminal)=lease.terminal(){if let Err(error)=terminal.outcome{return Err(Error::Transport(error));}}
+        if let Some(terminal)=lease.terminal(){transport_result(state,terminal.outcome)?;}
         if let Some(sequence)=inflight {
             if producer.try_acked(sequence).map_err(Error::Source)?{done.messages_acked+=1;inflight=None;}
         }
@@ -177,7 +177,8 @@ async fn pump(state:&State,producer:&Producer,lease:&mut websocket::WebSocketLea
             let message=MessageEnvelope::decode(&bytes)?;
             message.validate(state.approval.quotas.max_message_bytes).map_err(Error::Transport)?;
             state.grant.check().map_err(Error::Source)?;
-            lease.send_message(message).await.map_err(Error::Transport)?;
+            let sent=lease.send_message(message).await;
+            transport_result(state,sent)?;
             done.outgoing_written+=1;
         }
         if eof&&inflight.is_none()&&pending.is_empty(){return Ok(());}
@@ -190,7 +191,7 @@ async fn pump(state:&State,producer:&Producer,lease:&mut websocket::WebSocketLea
         tokio::select!{biased;
             _=tick.tick()=>{},
             message=lease.next_message(),if !eof&&space=>{
-                match message.map_err(Error::Transport)? {
+                match transport_result(state,message)? {
                     Some(message)=>{
                         let bytes=message.encode()?;
                         reserve_encoded(state,done,bytes.len())?;
@@ -204,6 +205,12 @@ async fn pump(state:&State,producer:&Producer,lease:&mut websocket::WebSocketLea
             }
         }
     }
+}
+// A source Close/revoke/expiry can wake a pending transport future. Preserve
+// that original typed authority cause instead of racing it into Cancelled.
+fn transport_result<T>(state:&State,result:websocket::Result<T>)->Result<T> {
+    state.grant.check().map_err(Error::Source)?;
+    result.map_err(Error::Transport)
 }
 fn reserve_encoded(state:&State,done:&mut Completion,bytes:usize)->Result<()> {
     let total=done.encoded_bytes.checked_add(bytes as u64).ok_or(Error::Limit)?;

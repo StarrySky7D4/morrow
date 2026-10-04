@@ -182,7 +182,13 @@ fn uncommitted_ack_does_not_block_outgoing_socket_write_or_already_parsed_ping_p
     until(||peer.seen.count()==1&&peer.seen.pongs.load(Ordering::SeqCst)==1);
     f.no_ack();assert_eq!(f.broker.snapshot().usage.messages,2,"one inbound frame plus one admitted outgoing");
     let observed=peer.seen.messages.lock().unwrap();assert_eq!(observed[0],(2,BINARY.to_vec()));drop(observed);
-    assert_eq!(f.call(Action::Ack{sequence:frame.sequence,frame_sha256:[0;32],cursor:frame.cursor.clone()},41).status,Status::Invalid);
+    // Zero is rejected by the original wire contract before broker dispatch.
+    let zero=f.request(Action::Ack{sequence:frame.sequence,frame_sha256:[0;32],cursor:frame.cursor.clone()},41);
+    assert!(matches!(f.broker.dispatch(&f.manager,&mut f.host,&f.instance,&zero,2),
+        Err(morrow_plugin_runtime::channel::Error::Invalid)));
+    // A validly shaped but incorrect digest reaches exact-ACK comparison.
+    let mut wrong_digest=frame.digest().unwrap();wrong_digest[0]^=1;
+    assert_eq!(f.call(Action::Ack{sequence:frame.sequence,frame_sha256:wrong_digest,cursor:frame.cursor.clone()},43).status,Status::Invalid);
     assert_eq!(f.call(Action::Ack{sequence:frame.sequence,frame_sha256:frame.digest().unwrap(),cursor:vec![0;32]},42).status,Status::Invalid);
     f.no_ack();source.revoke();let done=f.joined(&source);assert_eq!(done.messages_queued,1);assert_eq!(done.messages_acked,0);
     assert_eq!(done.outgoing_written,1);assert!(done.outcome.is_err());f.unknown(&source);peer.finish();

@@ -4,7 +4,7 @@
 use crate::{client::Client, stream::{SendContext, ResponseHead}, RawHttpRequest};
 use futures_util::{SinkExt, StreamExt};
 use reqwest::header::{HeaderName, HeaderValue};
-use std::{io, pin::Pin, sync::{Arc, Mutex}, task::{Context, Poll}};
+use std::{future::Future, io, pin::Pin, sync::{Arc, Mutex}, task::{Context, Poll}};
 use tokio::{io::{AsyncRead, AsyncWrite, ReadBuf}, sync::{mpsc, oneshot, watch, OwnedSemaphorePermit}, task::JoinHandle};
 use tokio_tungstenite::{WebSocketStream, tungstenite::{self, protocol::{Role, WebSocketConfig, CloseFrame, frame::coding::CloseCode}}};
 use tokio_util::sync::CancellationToken;
@@ -132,7 +132,7 @@ impl std::error::Error for OpeningError {}
 struct Outgoing { message: Message, reply: oneshot::Sender<Result<()>> }
 struct Exit { completion: Completion, _permit: OwnedSemaphorePermit }
 pub struct WebSocketLease {
-    head: ResponseHead, context: Arc<SendContext>, cancel: CancellationToken,
+    head: Option<ResponseHead>, context: Arc<SendContext>, cancel: CancellationToken,
     incoming: mpsc::Receiver<Message>, outgoing: mpsc::Sender<Outgoing>,
     terminal: watch::Receiver<Option<Completion>>, worker: Option<JoinHandle<Exit>>,
     demands: mpsc::Sender<()>, pending_demand: bool,
@@ -140,19 +140,23 @@ pub struct WebSocketLease {
 impl std::fmt::Debug for WebSocketLease {fn fmt(&self,f:&mut std::fmt::Formatter<'_>)->std::fmt::Result {
     f.debug_struct("WebSocketLease").field("pending_demand",&self.pending_demand).finish_non_exhaustive()}}
 impl WebSocketLease {
-    pub fn head(&self)->&ResponseHead { &self.head }
+    pub fn head(&self)->&ResponseHead { self.head.as_ref().expect("head installed before return") }
+    fn check(&self)->Result<()> {
+        if self.cancel.is_cancelled() { return Err(Error::Transport(crate::Error::Cancelled)); }
+        self.context.check().map_err(|error| { self.cancel.cancel(); Error::Transport(error) })
+    }
     pub fn terminal(&self)->Option<Completion> { self.terminal.borrow().clone() }
     pub fn cancel(&self) { self.cancel.cancel(); }
     /// Cancellation-safe receive; decoder state lives in the sole worker.
     pub async fn next_message(&mut self)->Result<Option<Message>> {
-        self.context.check().map_err(Error::Transport)?;
+        self.check()?;
         if !self.pending_demand {
             if !self.demands.is_closed() { self.demands.try_send(()).map_err(|_|Error::Closed)?; }
             self.pending_demand=true;
         }
-        let value = self.context.run(async { Ok(self.incoming.recv().await) }).await.map_err(Error::Transport)?;
+        let value = run(&self.context,&self.cancel,async { Ok(self.incoming.recv().await) }).await.map_err(Error::Transport)?;
         self.pending_demand=false;
-        self.context.check().map_err(Error::Transport)?;
+        self.check()?;
         match value { Some(value)=>Ok(Some(value)),None=>loop {
             if let Some(done)=self.terminal.borrow().as_ref() { return done.outcome.map(|()|None); }
             self.terminal.changed().await.map_err(|_|Error::Worker)?;
@@ -160,11 +164,11 @@ impl WebSocketLease {
     }
     /// Success means the mature sink flush actually completed, never merely admission.
     pub async fn send_message(&self,message:Message)->Result<()> {
-        self.context.check().map_err(Error::Transport)?;
+        self.check()?;
         let (reply,recv)=oneshot::channel();
         self.outgoing.try_send(Outgoing {message,reply}).map_err(|_|Error::Limit)?;
-        let result=self.context.run(async { recv.await.map_err(|_|crate::Error::Closed) }).await.map_err(Error::Transport)?;
-        self.context.check().map_err(Error::Transport)?;
+        let result=run(&self.context,&self.cancel,async { recv.await.map_err(|_|crate::Error::Closed) }).await.map_err(Error::Transport)?;
+        self.check()?;
         result
     }
     pub async fn finish(self)->Completion { self.join(false).await }
@@ -219,15 +223,17 @@ pub async fn open(client:&Client,request:RawHttpRequest,subprotocols:Vec<String>
         let _=term_tx.send(Some(done.clone()));
         Exit { completion:done,_permit:permit }
     });
-    match head_rx.await {
-        Ok(Ok(head))=>Ok(WebSocketLease{head,context,cancel,incoming,outgoing,terminal,worker:Some(worker),demands,pending_demand:false}),
-        head=> {
-            let cause=match head { Ok(Err(e))=>e,_=>Error::Worker };
-            cancel.cancel();
-            let cleanup=match worker.await { Ok(mut exit)=> {exit.completion.worker_joined=true; OpeningCleanup::Worker(exit.completion)},
-                Err(_)=>OpeningCleanup::Worker({let mut done=Completion::empty();done.outcome=Err(Error::Worker);done}) };
-            Err(OpeningError{cause,cleanup})
-        }
+    // Own cancellation before awaiting the opening result, as in StreamLease.
+    // Dropping the opening future cancels its sole worker without inventing a join.
+    let mut lease=WebSocketLease{head:None,context,cancel,incoming,outgoing,terminal,worker:Some(worker),demands,pending_demand:false};
+    let opened=match head_rx.await {
+        Ok(Ok(head))=>lease.check().map(|()|head),
+        Ok(Err(error))=>Err(error),
+        Err(_)=>Err(Error::Worker),
+    };
+    match opened {
+        Ok(head)=>{lease.head=Some(head);Ok(lease)},
+        Err(cause)=>Err(OpeningError{cause,cleanup:OpeningCleanup::Worker(lease.cancel_and_wait().await)}),
     }
 }
 pub fn validate_protocols(protocols:&[String])->Result<()> {
@@ -262,15 +268,22 @@ fn verify(head:&ResponseHead,key:&str,protocols:&[String])->Result<()> {
     }
     Ok(())
 }
+// Preserve the context's fixed deadline and authority while also observing the
+// lease-local token during opening, sink flush, event delivery and idle waits.
+async fn run<T>(context:&SendContext,cancel:&CancellationToken,future:impl Future<Output=crate::Result<T>>)->crate::Result<T> {
+    context.run(async {
+        tokio::select! { biased; _=cancel.cancelled()=>Err(crate::Error::Cancelled), result=future=>result }
+    }).await
+}
 #[allow(clippy::too_many_arguments)]
 async fn worker(client:&Client,target:url::Url,request:RawHttpRequest,headers:reqwest::header::HeaderMap,
     key:String,protocols:Vec<String>,quotas:Quotas,context:&SendContext,cancel:&CancellationToken,
     head_tx:oneshot::Sender<Result<ResponseHead>>,events:mpsc::Sender<Message>,mut commands:mpsc::Receiver<Outgoing>,mut demands:mpsc::Receiver<()>,done:&mut Completion)->Result<()> {
-    let opening=context.run(client.execute_upgrade_head(target,request,headers,context)).await.map_err(Error::Transport);
+    let opening=run(context,cancel,client.execute_upgrade_head(target,request,headers,context)).await.map_err(Error::Transport);
     let (head,response)=match opening {Ok(v)=>v,Err(e)=>{let _=head_tx.send(Err(e));return Err(e);}};
     if response.version()!=reqwest::Version::HTTP_11 {let _=head_tx.send(Err(Error::Handshake));return Err(Error::Handshake);}
     if let Err(e)=verify(&head,&key,&protocols) {let _=head_tx.send(Err(e));return Err(e);}
-    let upgraded=match context.run(async{response.upgrade().await.map_err(|_|crate::Error::Transport)}).await {
+    let upgraded=match run(context,cancel,async{response.upgrade().await.map_err(|_|crate::Error::Transport)}).await {
         Ok(v)=>v,Err(e)=>{let e=Error::Transport(e);let _=head_tx.send(Err(e));return Err(e);}
     };
     let meter=Arc::new(Mutex::new(Meters::new(quotas)));
@@ -284,7 +297,7 @@ async fn worker(client:&Client,target:url::Url,request:RawHttpRequest,headers:re
         enum Activity { In(Option<std::result::Result<tungstenite::Message,tungstenite::Error>>), Out(Option<Outgoing>), Demand(Option<()>) }
         let mut reading=false;
         loop {
-            let activity=context.run(async {
+            let activity=run(context,cancel,async {
                 tokio::select! { biased; _=cancel.cancelled()=>Err(crate::Error::Cancelled),
                     command=commands.recv()=>Ok(Activity::Out(command)), demand=demands.recv(),if !reading=>Ok(Activity::Demand(demand)),
                     message=socket.next(),if reading=>Ok(Activity::In(message)) }
@@ -297,7 +310,7 @@ async fn worker(client:&Client,target:url::Url,request:RawHttpRequest,headers:re
                         command.message.validate(quotas.max_message_bytes)?;
                         if meter.lock().unwrap_or_else(|e|e.into_inner()).write.messages>=quotas.max_outgoing_messages { return Err(Error::Limit); }
                         let message=command.message.into_ws()?;
-                        context.run(async {socket.send(message).await.map_err(|_|crate::Error::Transport)}).await.map_err(Error::Transport)?;
+                        run(context,cancel,async {socket.send(message).await.map_err(|_|crate::Error::Transport)}).await.map_err(Error::Transport)?;
                         done.outgoing_messages+=1; Ok(())
                     }.await;
                     let result=if meter.lock().unwrap_or_else(|e|e.into_inner()).limited {Err(Error::Limit)}else{result};
@@ -314,10 +327,10 @@ async fn worker(client:&Client,target:url::Url,request:RawHttpRequest,headers:re
                     if message.kind==MessageKind::Close {done.peer_close=Some(message.clone());}
                     // Flush library-generated Pong/Close under the same authority,
                     // deadline and outgoing frame/wire budget, even while guest ACK waits.
-                    context.run(async {socket.flush().await.map_err(|_|crate::Error::Transport)}).await.map_err(Error::Transport)?;
+                    run(context,cancel,async {socket.flush().await.map_err(|_|crate::Error::Transport)}).await.map_err(Error::Transport)?;
                     context.check().map_err(Error::Transport)?;
                     // Bounded pending message, never an unbounded worker event queue.
-                    context.run(async {tokio::select!{_=cancel.cancelled()=>Err(crate::Error::Cancelled),
+                    run(context,cancel,async {tokio::select!{_=cancel.cancelled()=>Err(crate::Error::Cancelled),
                         result=events.send(message)=>result.map_err(|_|crate::Error::Closed)}}).await.map_err(Error::Transport)?;
                 }
                 Activity::In(Some(Err(e)))=>return Err(ws_error(e)),
@@ -403,4 +416,33 @@ impl AsyncWrite for Metered {
     }
     fn poll_flush(mut self:Pin<&mut Self>,cx:&mut Context<'_>)->Poll<io::Result<()>> {Pin::new(&mut self.inner).poll_flush(cx)}
     fn poll_shutdown(mut self:Pin<&mut Self>,cx:&mut Context<'_>)->Poll<io::Result<()>> {Pin::new(&mut self.inner).poll_shutdown(cx)}
+}
+
+#[cfg(test)]
+mod lifecycle_tests {
+    use super::*;
+    #[tokio::test]
+    async fn lease_local_cancel_rejects_already_buffered_message() {
+        let (events,incoming)=mpsc::channel(1);
+        events.send(Message {kind:MessageKind::Text,payload:b"buffered".to_vec(),close_code:None}).await.unwrap();
+        let (outgoing,_commands)=mpsc::channel(1);let (demands,_demand_rx)=mpsc::channel(1);
+        let (_terminal_tx,terminal)=watch::channel(None);
+        let mut lease=WebSocketLease {head:None,
+            context:Arc::new(SendContext::trusted(tokio::time::Instant::now()+std::time::Duration::from_secs(30),CancellationToken::new())),
+            cancel:CancellationToken::new(),incoming,outgoing,terminal,worker:None,demands,pending_demand:true};
+        lease.cancel();
+        assert!(matches!(lease.next_message().await,Err(Error::Transport(crate::Error::Cancelled))));
+        assert_eq!(lease.incoming.len(),1,"cancel must not consume or deliver buffered private payload");
+    }
+    #[tokio::test]
+    async fn lease_local_cancel_interrupts_in_progress_transport_wait() {
+        let context=SendContext::trusted(tokio::time::Instant::now()+std::time::Duration::from_secs(30),CancellationToken::new());
+        let cancel=CancellationToken::new();let other=cancel.clone();
+        let wait=run(&context,&cancel,async {
+            other.cancel();
+            std::future::pending::<crate::Result<()>>().await
+        });
+        let outcome=tokio::time::timeout(std::time::Duration::from_millis(200),wait).await.expect("local cancellation wakes active IO");
+        assert_eq!(outcome,Err(crate::Error::Cancelled));
+    }
 }
