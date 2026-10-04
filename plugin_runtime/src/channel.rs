@@ -1,6 +1,7 @@
 //! Explicit trusted-host grants for bounded local-memory channels.
 //! A declaration never selects a source or grants content, filesystem or network access.
 mod source;
+pub mod changes;
 pub use source::SourceGrant;
 use crate::{
     Fault, Report, TaskRun,
@@ -212,6 +213,25 @@ struct Queues {
     producer_outcome: ProducerOutcome,
     cleanup_proof: CleanupProof,
 }
+#[derive(Clone)]
+enum SourceGuard {
+    Network(Arc<source::GrantState>),
+    Changes(Arc<changes::GrantState>),
+}
+impl SourceGuard {
+    fn check_authority(&self) -> Result<()> {
+        match self {
+            Self::Network(state) => state.check_authority(),
+            Self::Changes(state) => state.check_authority(),
+        }
+    }
+    fn check_frame(&self, sequence: u64, bytes: &[u8], cursor: &[u8]) -> Result<()> {
+        match self {
+            Self::Network(_) => Ok(()),
+            Self::Changes(state) => state.check_frame(sequence, bytes, cursor),
+        }
+    }
+}
 struct Resource {
     context: Weak<ChannelContext>,
     control: Weak<Control>,
@@ -224,7 +244,8 @@ struct Resource {
     queues: Mutex<Queues>,
     changed: Condvar,
     producer: Mutex<Option<JoinHandle<()>>>,
-    source_guard: Mutex<Option<Arc<source::GrantState>>>,
+    source_guard: Mutex<Option<SourceGuard>>,
+    requires_changes: bool,
     // Terminal business state only: this is never a resource join receipt.
     source_closed: AtomicBool,
 }
@@ -234,12 +255,21 @@ impl Resource {
         if Instant::now() >= self.deadline {
             return Err(Error::Expired);
         }
-        if self.control.upgrade().is_none_or(|control| !control.active()) {
-            return Err(Error::Denied);
-        }
         let source = self.source_guard.lock().map_err(|_| Error::Unknown)?.clone();
-        if let Some(source) = source {
-            source.check_authority()?;
+        if self.requires_changes {
+            // Dedicated source guard owns pure atomic receiver checks and its
+            // original absolute deadline. Never take a clock lock under Store.
+            match source {
+                Some(SourceGuard::Changes(state)) => state.check_authority()?,
+                _ => return Err(Error::Denied),
+            }
+        } else {
+            if self.control.upgrade().is_none_or(|control| !control.active()) {
+                return Err(Error::Denied);
+            }
+            if let Some(source) = source {
+                source.check_authority()?;
+            }
         }
         Ok(())
     }
@@ -247,7 +277,16 @@ impl Resource {
         self.live_gate().map_err(|_| morrow_core::Error::Invalid("inactive channel commit"))
     }
     fn check_locked(&self, queue: &mut Queues) -> Result<()> {
-        if let Err(error) = self.live_gate() {
+        let checked = self.live_gate().and_then(|()| {
+            if let Some(frame) = &queue.frame {
+                let source = self.source_guard.lock().map_err(|_| Error::Unknown)?.clone();
+                if let Some(source) = source {
+                    source.check_frame(frame.sequence, &frame.bytes, &frame.cursor)?;
+                }
+            }
+            Ok(())
+        });
+        if let Err(error) = checked {
             if queue.cause.is_none() {
                 queue.cause = Some(match error {
                     Error::Expired => Status::Expired,
@@ -380,6 +419,17 @@ impl Producer {
             }
             if queue.frame.is_none() {
                 let sequence = queue.next_sequence.checked_add(1).ok_or(Error::Limit)?;
+                let source = self.resource.source_guard.lock().map_err(|_| Error::Unknown)?.clone();
+                if let Some(source) = source {
+                    if let Err(error) = source.check_frame(sequence, &bytes, &cursor) {
+                        self.resource.close_locked(&mut queue, match error {
+                            Error::Expired => Status::Expired,
+                            Error::Denied => Status::Revoked,
+                            _ => Status::Unknown,
+                        });
+                        return Err(error);
+                    }
+                }
                 context.reserve(1, bytes.len() as u64, false)?;
                 self.resource.check_locked(&mut queue)?;
                 queue.next_sequence = sequence;
@@ -566,8 +616,10 @@ impl ChannelCleanup {
         self.resource.reap()
     }
     pub fn try_reap(&self) -> Status {
-        if self.resource.commit_gate().is_err() {
-            let cause = if Instant::now() >= self.resource.deadline {
+        if let Err(error) = self.resource.live_gate() {
+            let cause = if Instant::now() >= self.resource.deadline
+                || self.resource.requires_changes && error == Error::Expired
+            {
                 Status::Expired
             } else {
                 Status::Revoked
@@ -717,6 +769,8 @@ impl ChannelBroker {
             changed: Condvar::new(),
             producer: Mutex::new(None),
             source_guard: Mutex::new(None),
+            requires_changes: instance.package().package().manifest().required_features.iter()
+                .any(|feature| feature == morrow_core::changes_metadata::FEATURE),
             source_closed: AtomicBool::new(false),
         });
         ledger.counter = counter;
@@ -834,6 +888,17 @@ impl ChannelBroker {
             || instance.connection().package_digest() != Some(self.digest)
         {
             return Err(Error::Denied);
+        }
+        // A host identity alone cannot authorize replacing its Store. This
+        // preflight is outside all queue locks and original ACK transactions.
+        // Once dispatch holds &mut HostRuntime, Store cannot be swapped before
+        // final commit; the typed final guard only checks the original lifetime.
+        let source = self.resource.source_guard.lock().map_err(|_| Error::Unknown)?.clone();
+        if let Some(SourceGuard::Changes(state)) = source {
+            if state.validate_store(host).is_err() {
+                self.resource.close(Status::Revoked);
+                return Err(Error::Denied);
+            }
         }
         Ok(())
     }
@@ -1019,6 +1084,8 @@ impl ChannelBroker {
                                         accepted_sequence: 0,
                                         resource_reclaimed: false,
                                     };
+                                    #[cfg(feature = "fault-injection")]
+                                    let mut commit_checks = 0u8;
                                     host.store_local_mut()
                                         .commit_channel_ack_guarded(
                                             &subscription,
@@ -1026,7 +1093,20 @@ impl ChannelBroker {
                                             &pending.encode().map_err(|_| Error::Invalid)?,
                                             &request.encode().map_err(|_| Error::Invalid)?,
                                             &ack.encode().map_err(|_| Error::Invalid)?,
-                                            || self.resource.commit_gate(),
+                                            || {
+                                                #[cfg(feature = "fault-injection")]
+                                                {
+                                                    commit_checks += 1;
+                                                    if commit_checks == 2 {
+                                                        let source = self.resource.source_guard.lock()
+                                                            .map_err(|_| morrow_core::Error::Invalid("source guard"))?.clone();
+                                                        if let Some(SourceGuard::Changes(state)) = source {
+                                                            state.before_final_commit();
+                                                        }
+                                                    }
+                                                }
+                                                self.resource.commit_gate()
+                                            },
                                         )
                                         .map_err(|_| Error::Unknown)?;
                                     Ok(())

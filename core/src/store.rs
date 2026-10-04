@@ -12,6 +12,10 @@ use std::{path::Path, time::Duration};
 #[cfg(target_os = "linux")]
 mod linux_protected;
 mod binding;
+#[cfg(not(target_arch = "wasm32"))]
+mod changes_metadata;
+#[cfg(not(target_arch = "wasm32"))]
+pub use changes_metadata::{ChangesBatch, ChangesBudget, ChangesStart, ChangesStoreBinding, ChangesWindow};
 mod channel_journal;
 pub use channel_journal::{ChannelCheckpoint, ChannelAckReceipt, ChannelCommit, MAX_CHANNEL_RECEIPTS};
 mod card_snapshot;
@@ -86,6 +90,7 @@ pub struct Store {
     audit_trust: Option<crate::audit::TrustedLog>,
     snapshot_origin: Option<std::path::PathBuf>,
     snapshot_identity: std::sync::Arc<()>,
+    changes_liveness: std::sync::Arc<()>,
 }
 fn sql<T>(value: rusqlite::Result<T>) -> Result<T> {
     value.map_err(|error| {
@@ -530,6 +535,7 @@ impl Store {
             service_authority_coordinator,
             snapshot_origin,
             snapshot_identity: std::sync::Arc::new(()),
+            changes_liveness: std::sync::Arc::new(()),
             retention_budget: Default::default(),
             connection,
             budget: EventBudget::default(),
@@ -941,6 +947,7 @@ impl Store {
             service_authority_coordinator,
             snapshot_origin,
             snapshot_identity: std::sync::Arc::new(()),
+            changes_liveness: std::sync::Arc::new(()),
             retention_budget: Default::default(),
             connection,
             budget,

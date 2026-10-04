@@ -234,7 +234,7 @@ impl SourceGrant {
         if installed.is_some() {
             return Err(Error::Denied);
         }
-        *installed = Some(Arc::clone(&state));
+        *installed = Some(super::SourceGuard::Network(Arc::clone(&state)));
         drop(installed);
         drop(queue);
         Ok(Self { state })

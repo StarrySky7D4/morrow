@@ -18,7 +18,7 @@ use morrow_core::{
 };
 use std::{
     collections::{BTreeMap, BTreeSet},
-    sync::{Arc, Weak},
+    sync::{Arc, Weak, atomic::{AtomicBool, Ordering}},
 };
 
 const MAX_INSTANCES: usize = 128;
@@ -105,6 +105,11 @@ pub(crate) struct Control {
     cancel: Cancellation,
 }
 impl Control {
+    // Changes sources already carry the immutable earliest monotonic deadline.
+    // Their final Store guard must never reacquire the cancellation clock mutex.
+    pub(crate) fn changes_active(&self) -> bool {
+        !self.revocation.is_revoked() && !self.cancel.signal.load(Ordering::Acquire)
+    }
     pub(crate) fn active(&self) -> bool {
         !self.revocation.is_revoked() && self.cancel.fault().is_none()
     }
@@ -212,6 +217,8 @@ impl Drop for ManagedInstance {
 /// Existing low-level trusted APIs remain available; this is not isolation from the trusted host.
 pub struct Manager {
     identity: Arc<()>,
+    // Invalidate before any selected-registry mutation; old approvals never revive.
+    changes_revision: Arc<AtomicBool>,
     registry: Registry,
     limits: Limits,
     instances: BTreeMap<String, Vec<Weak<Control>>>,
@@ -222,6 +229,7 @@ impl Manager {
     pub fn new(registry: Registry, limits: Limits) -> Self {
         Self {
             identity: Arc::new(()),
+            changes_revision: Arc::new(AtomicBool::new(false)),
             registry,
             limits,
             instances: BTreeMap::new(),
@@ -231,6 +239,9 @@ impl Manager {
     }
     pub(crate) fn identity(&self) -> Weak<()> {
         Arc::downgrade(&self.identity)
+    }
+    pub(crate) fn changes_revision_guard(&self) -> Arc<AtomicBool> {
+        Arc::clone(&self.changes_revision)
     }
     /// Reap original managed channel resources without granting new source authority.
     #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
@@ -423,6 +434,8 @@ impl Manager {
         }
     }
     fn revoke_required_tree(&mut self, id: &str) {
+        self.changes_revision.store(true, Ordering::Release);
+        self.changes_revision = Arc::new(AtomicBool::new(false));
         // Snapshot the old graph before registry mutation removes or replaces its edges.
         let callers = self.registry.required_dependents(id);
         for caller in callers {

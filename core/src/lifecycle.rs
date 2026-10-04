@@ -55,6 +55,22 @@ impl Revocation {
         self.0.load(Ordering::Acquire)
     }
 }
+/// Restriction-only observation of the original receiver's Ready lifetime.
+/// This grants no metadata/content permission and cannot revoke or revive it.
+#[derive(Clone)]
+pub struct ChangesReceiverLiveness {
+    owner: std::sync::Weak<()>,
+    connection_revocation: Revocation,
+    read_revocation: Revocation,
+}
+impl ChangesReceiverLiveness {
+    /// Atomic-only: safe under a channel queue and final Store ACK guard.
+    pub fn check(&self) -> Result<()> {
+        if self.owner.upgrade().is_none() || self.connection_revocation.is_revoked() || self.read_revocation.is_revoked() {
+            Err(Error::Invalid("inactive changes receiver"))
+        } else { Ok(()) }
+    }
+}
 /// Read-only check of an already issued object grant. This is not a new grant.
 /// Clones retain the original grant/connection expiry and share the host clock.
 #[derive(Clone)]
@@ -66,6 +82,8 @@ pub struct ContentAuthorization {
     clock: Arc<AtomicU64>,
 }
 impl ContentAuthorization {
+    /// Original host-tick deadline; observing it never renews this restriction.
+    pub fn expires_at(&self) -> u64 { self.expires_at }
     pub fn check(&self, now: u64) -> Result<()> {
         self.live(now)?;
         advance_clock(&self.clock, now)?;
@@ -103,6 +121,7 @@ impl Drop for GrantRecord {
     }
 }
 struct InstanceRecord {
+    changes_owner: Arc<()>,
     read_revocation: Revocation,
     revocation: Revocation,
     phase: InstancePhase,
@@ -167,6 +186,7 @@ impl HostPolicy {
         self.instances.insert(
             generation,
             InstanceRecord {
+                changes_owner: Arc::new(()),
                 read_revocation: Revocation(Arc::new(AtomicBool::new(false))),
                 revocation: Revocation(Arc::new(AtomicBool::new(false))),
                 phase: InstancePhase::Preparing,
@@ -199,6 +219,13 @@ impl HostPolicy {
         )
     }
     /// Host control plane only. Existing operations recheck this before commit or response release.
+    pub(crate) fn changes_receiver_liveness(&self, instance: Instance) -> Result<ChangesReceiverLiveness> {
+        let record=self.record(instance)?;
+        if record.phase != InstancePhase::Ready || record.revocation.is_revoked() || record.read_revocation.is_revoked() {
+            return Err(Error::Invalid("inactive changes receiver"));
+        }
+        Ok(ChangesReceiverLiveness {owner: Arc::downgrade(&record.changes_owner),connection_revocation:record.revocation.clone(),read_revocation:record.read_revocation.clone()})
+    }
     pub fn revocation(&self, instance: Instance) -> Result<Revocation> {
         Ok(self.record(instance)?.revocation.clone())
     }
@@ -958,5 +985,26 @@ impl CommitState {
         } else {
             Err(Error::Invalid("not sealed"))
         }
+    }
+}
+
+#[cfg(test)]
+mod changes_receiver_tests {
+    use super::*;
+    #[test]
+    fn changes_receiver_probe_never_survives_drain_stop_or_replacement() {
+        let mut policy=HostPolicy::new().unwrap();
+        let original=policy.activate().unwrap();
+        assert!(policy.changes_receiver_liveness(original).is_err());
+        policy.ready(original).unwrap();
+        let probe=policy.changes_receiver_liveness(original).unwrap();
+        let clone=probe.clone();probe.check().unwrap();
+        let other=HostPolicy::new().unwrap();assert!(other.changes_receiver_liveness(original).is_err());
+        policy.drain(original,100,1).unwrap();assert!(probe.check().is_err());assert!(clone.check().is_err());
+        assert!(policy.changes_receiver_liveness(original).is_err());assert!(policy.ready(original).is_err());
+        policy.safety_stop(original).unwrap();policy.stop(original).unwrap();policy.retire(original).unwrap();
+        let next=policy.activate().unwrap();policy.ready(next).unwrap();
+        let fresh=policy.changes_receiver_liveness(next).unwrap();fresh.check().unwrap();assert!(probe.check().is_err());
+        drop(policy);assert!(fresh.check().is_err());
     }
 }

@@ -178,6 +178,11 @@ impl HostRuntime {
     pub fn revocation(&self, connection: &Connection) -> Result<crate::lifecycle::Revocation> {
         self.policy.revocation(connection.instance)
     }
+    /// Restricts a separately approved metadata source to this original receiver.
+    /// No content/metadata permission is issued; the probe is read-only.
+    pub fn changes_receiver_liveness(&self, connection: &Connection) -> Result<crate::lifecycle::ChangesReceiverLiveness> {
+        self.policy.changes_receiver_liveness(connection.instance)
+    }
     /// Trusted status check; a foreign or retired connection cannot start new guest work.
     pub fn connection_phase(
         &self,

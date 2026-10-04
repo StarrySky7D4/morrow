@@ -1,0 +1,56 @@
+Morrow changes-metadata-v1 canonical wire specification
+Version: 1
+
+This normative file is ASCII text with LF line endings and a final LF.
+The profile digest is SHA256 of every byte of this file, without conversion.
+This file does not embed its own digest.
+All integers below are unsigned little-endian. There is no padding.
+
+Offset  Size  Field
+0       8     Magic: ASCII MRCHG001
+8       2     Version: u16, exactly 1
+10      32    Profile digest: exact SHA256 of this normative file
+42      32    Scope digest: nonzero
+74      32    Window ID: nonzero, exactly outer Frame.source_epoch
+106     8     Revision: u64, nonzero
+114     32    Card SHA256: SHA256 of the complete Card.encode() bytes
+146     2     Card ID byte length: u16, 1 through 256 inclusive
+148     2     Operation ID byte length: u16, 1 through 256 inclusive
+150     N     Card ID: exactly N original UTF-8 bytes
+150+N   M     Operation ID: exactly M original UTF-8 bytes
+
+The payload length is exactly 150+N+M, at most 662 bytes.
+Identifiers are valid UTF-8 with no Unicode control character, slash,
+backslash, or colon. Do not trim, normalize, or substitute their bytes.
+Reject unknown versions, wrong profile digests, invalid identifiers,
+zero scope/window/revision, short data, excessive lengths, and trailing data.
+There are no optional fields. Any extension requires a new explicit contract.
+Card SHA256 is the full Card digest, never a digest of body bytes alone.
+
+The scope digest is SHA256 of this exact concatenation:
+  ASCII Morrow/changes-metadata/scope/v1 followed by one NUL byte
+  profile_digest[32]
+  durable_store_id[32]
+  consumer_package_digest[32]
+  card_count_u32LE
+  repeated(sorted_card_byte_length_u16LE || sorted_card_original_UTF8_bytes)
+The fixed card set has 1 through 32 distinct valid identifiers inclusive.
+Sort by unsigned original UTF-8 bytes. Reject duplicates and zero Store or
+consumer package identities. Do not include private operation positions.
+The existing durable Store identity is a logical identity only: a database
+copy may preserve it. This commitment is not authorization or anti-cloning.
+
+The public cursor is SHA256 of this exact concatenation:
+  ASCII Morrow/changes-metadata/cursor/v1 followed by one NUL byte
+  complete canonical payload bytes
+The cursor is exactly 32 bytes. It is not an operation sequence or grant.
+Outer Frame.sequence remains the channel delivery ordinal. Outer frame
+hashes, this cursor, and the profile digest have distinct meanings.
+The host must check the outer frame epoch and metadata window ID match.
+
+This is a metadata-only, fixed-set, finite-window invalidation profile.
+It contains no body, title, preview, attachment, global sequence, hidden
+upper bound, scan count, gap count, path, account, grant, or SQL metadata.
+A fresh window needs fresh receiver-specific approval. Reopening after a
+verified latest ACK creates a new window; it never restores an old grant,
+old hidden upper bound, or an unacknowledged private scan position.

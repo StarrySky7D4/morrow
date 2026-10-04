@@ -153,6 +153,20 @@ impl Package {
         manifest.transform_handlers = handlers;
         manifest
     }
+    /// Explicit metadata-only package shape; declarations are never approval.
+    pub fn manifest_for_changes_metadata(
+        id: &str, version: &str, module: &[u8], handlers: Vec<proto::TransformHandler>,
+    ) -> proto::Manifest {
+        let names=handlers.iter().map(|h| h.handler.clone()).collect();
+        let mut manifest=Self::manifest_for_transform(id,version,module,handlers);
+        manifest.required_features.push(crate::channel::FEATURE.into());
+        manifest.required_features.push(crate::changes_metadata::FEATURE.into());
+        manifest.channel_declaration=Some(crate::channel::declaration(names,vec![crate::channel::Kind::Events]));
+        manifest
+    }
+    pub fn is_changes_metadata(&self) -> bool {
+        self.manifest.required_features.iter().any(|f| f == crate::changes_metadata::FEATURE)
+    }
     /// Presentation providers share one active slot; styles remain client settings.
     pub fn is_ui_theme(&self) -> bool {
         self.manifest.transform_handlers.iter().any(|h| {
@@ -292,6 +306,7 @@ impl Package {
                     && f != MUTATION_FEATURE
                     && f != MUTATION_BUDGET_FEATURE
                     && f != crate::channel::FEATURE
+                    && f != crate::changes_metadata::FEATURE
             })
             || manifest
                 .required_features
@@ -408,6 +423,16 @@ impl Package {
             if declaration.handlers.iter().any(|h| !handlers.contains(h)) {
                 return Err(Error::Invalid("channel handler missing task metadata"));
             }
+        }
+        if manifest.required_features.iter().any(|f| f == crate::changes_metadata::FEATURE) {
+            // Opt-in metadata profile. Never relax legacy channel semantics or
+            // reinterpret content/IO/service/dependency/mutation permissions.
+            if manifest.guest_abi_version != 2 || !channel_feature
+                || !manifest.requested_capabilities.is_empty()
+                || manifest.required_features.iter().any(|f| !matches!(f.as_str(),
+                    TRANSFORM_HANDLERS_FEATURE | crate::channel::FEATURE | crate::changes_metadata::FEATURE))
+                || manifest.channel_declaration.as_ref().is_none_or(|d| d.kinds != [2])
+            { return Err(Error::Invalid("changes metadata feature combination")); }
         }
         io::validate_wire(&package.manifest, manifest.io_declaration.as_ref())?;
         validate_mutation_budget_wire(&package.manifest, manifest.mutation_budget.as_ref())?;

@@ -1,6 +1,7 @@
 #![deny(unsafe_code)]
 
 pub mod attachment;
+pub mod changes_metadata;
 pub mod channel;
 #[allow(clippy::all, unsafe_code)]
 pub mod channel_capnp {

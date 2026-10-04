@@ -83,3 +83,7 @@
 /workbench_host/src/owner_recovery.rs -text
 /workbench_host/src/workbench_supervision.rs -text
 /workbench_host/src/workbench_supervisor.rs -text
+
+# New opt-in metadata source contract: exact ASCII/LF digest; old rules unchanged.
+/core/schemas/changes_metadata_v1.wire text eol=lf
+/extensions/changes-metadata-v1/contracts/changes_metadata_v1.wire text eol=lf

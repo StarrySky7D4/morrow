@@ -1,0 +1,22 @@
+[workspace]
+resolver = "2"
+members = ["guests/rust"]
+
+[package]
+name = "morrow-changes-metadata-v1"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+
+[lib]
+crate-type = ["rlib", "staticlib"]
+
+[dependencies]
+sha2 = "=0.10.9"
+morrow-plugin-sdk = { path = "../../sdk/rust", optional = true }
+
+[features]
+# One Rust static library contains both the new codec and original C transport
+# exports. Never link two Rust static libraries/runtimes into a C/C++ guest.
+c-transport = ["dep:morrow-plugin-sdk", "morrow-plugin-sdk/wasm-c"]

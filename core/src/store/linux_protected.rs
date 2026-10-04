@@ -30,6 +30,8 @@ pub(super) struct ProtectedStoreSlice {
     database: GuardedSqliteConnection,
     budget: EventBudget,
     trust: TrustedLog,
+    changes_identity: std::sync::Arc<()>,
+    changes_liveness: std::sync::Arc<()>,
 }
 fn outcome<T>(value: StoreMutation<T>) -> GuardedStoreOutcome<T> {
     match value {
@@ -215,9 +217,30 @@ impl ProtectedStoreSlice {
             database,
             budget,
             trust,
+            changes_identity: std::sync::Arc::new(()),
+            changes_liveness: std::sync::Arc::new(()),
         };
         store.integrity_check()?;
         Ok(store)
+    }
+    /// Synthetic guarded SQL support only; this is not a HostRuntime backend.
+    pub(super) fn open_changes_window(&mut self, package: [u8;32], cards: &[String],
+        start: super::ChangesStart, budget: super::ChangesBudget,
+        mut authorize: impl FnMut()->Result<()>) -> Result<super::ChangesWindow> {
+        let owner=self.changes_identity.clone();
+        let liveness=std::sync::Arc::downgrade(&self.changes_liveness);
+        self.database.store_read(|c,guard| {
+            super::changes_metadata::open_connection(c,owner,liveness,package,cards,start,budget,
+                &mut || authority(&guard,&mut authorize))
+        })
+    }
+    pub(super) fn materialize_changes_window(&mut self, window: super::ChangesWindow,
+        mut authorize: impl FnMut()->Result<()>) -> Result<super::ChangesBatch> {
+        let owner=self.changes_identity.clone();
+        self.database.store_read(|c,guard| {
+            super::changes_metadata::materialize_connection(c,&owner,window,
+                &mut || authority(&guard,&mut authorize))
+        })
     }
     pub(super) fn card(&mut self, id: &str) -> Result<Option<CardRecord>> {
         self.database.store_read(|c, _| {
@@ -405,6 +428,49 @@ mod tests {
             request.encode().unwrap(),
             response.encode().unwrap(),
         )
+    }
+    #[test]
+    fn changes_guarded_materialization_and_same_store_ack_have_atomic_authority() {
+        use crate::channel::{Action,Frame,Request,Response,Status};
+        let dir=directory();let path=dir.path().join("changes.db");let mut s=store(&path);
+        let create=s.create_local("create",&card()).unwrap();
+        s.rename(&rename("rename",1),||Ok(())).unwrap();
+        let cards=vec!["card".into()];
+        let w=s.open_changes_window([7;32],&cards,super::super::ChangesStart::Beginning,
+            super::super::ChangesBudget{page_candidates:1,..Default::default()},||Ok(())).unwrap();
+        let b=s.materialize_changes_window(w,||Ok(())).unwrap();assert_eq!(b.changes().len(),2);
+        assert_eq!(b.changes()[0].card_sha256,create.content_sha256);
+        let metadata=b.into_metadata([3;32]).unwrap().remove(0);
+        let frame=Frame{sequence:1,source_epoch:[3;32],bytes:metadata.encode().unwrap(),cursor:metadata.cursor().unwrap().to_vec()};
+        let request=Request{call_id:[1;32],reference:[2;32],source_epoch:[3;32],action:Action::Ack{sequence:1,frame_sha256:frame.digest().unwrap(),cursor:frame.cursor.clone()}};
+        let response=Response{call_id:request.call_id,request_sha256:request.digest().unwrap(),reference:request.reference,source_epoch:request.source_epoch,status:Status::Acked,frame:None,last_acked:1,accepted_sequence:0,resource_reclaimed:false};
+        let f=frame.encode().unwrap();let q=request.encode().unwrap();let r=response.encode().unwrap();
+        let mut checks=0;
+        assert_eq!(s.commit_channel_ack_guarded(&[9;32],None,&f,&q,&r,||{checks+=1;if checks==2{Err(Error::Integrity)}else{Ok(())}}),Err(Error::Integrity));
+        assert_eq!(checks,2);assert!(s.channel_checkpoint(&[9;32],&[3;32]).unwrap().is_none());assert!(s.channel_ack_receipt(&[9;32],&[3;32],1).unwrap().is_none());
+        assert!(matches!(s.commit_channel_ack_guarded(&[9;32],None,&f,&q,&r,||Ok(())).unwrap(),ChannelCommit::Committed(_)));
+        assert!(matches!(s.commit_channel_ack_guarded(&[9;32],None,&f,&q,&r,||Ok(())).unwrap(),ChannelCommit::Duplicate(_)));
+        drop(s);let mut s=ProtectedStoreSlice::open_synthetic(&path,Default::default(),false,trust()).unwrap();
+        assert_eq!(s.channel_ack_receipt(&[9;32],&[3;32],1).unwrap().unwrap().frame_wire,f);
+        let w=s.open_changes_window([7;32],&cards,super::super::ChangesStart::After(metadata),Default::default(),||Ok(())).unwrap();
+        assert_eq!(s.materialize_changes_window(w,||Ok(())).unwrap().changes()[0].operation_id,"rename");
+    }
+    #[test]
+    fn changes_guarded_foreign_window_and_read_authority_reject() {
+        let dir=directory();let mut s=store(&dir.path().join("one.db"));let mut other=store(&dir.path().join("two.db"));s.create_local("create",&card()).unwrap();
+        let cards=vec!["card".into()];let w=s.open_changes_window([7;32],&cards,super::super::ChangesStart::Beginning,Default::default(),||Ok(())).unwrap();
+        assert!(other.materialize_changes_window(w,||Ok(())).is_err());
+        let w=s.open_changes_window([7;32],&cards,super::super::ChangesStart::Beginning,Default::default(),||Ok(())).unwrap();
+        let mut count=0;assert!(s.materialize_changes_window(w,||{count+=1;if count==4{Err(Error::Integrity)}else{Ok(())}}).is_err());
+        s.integrity_check().unwrap();
+    }
+    #[test]
+    fn changes_guarded_final_object_check_never_releases_unsafe_batch() {
+        let dir=directory();let path=dir.path().join("changes.db");let mut s=store(&path);s.create_local("create",&card()).unwrap();
+        let cards=vec!["card".into()];let w=s.open_changes_window([7;32],&cards,super::super::ChangesStart::Beginning,Default::default(),||Ok(())).unwrap();
+        let target=path.clone();s.database.test_after_store_read(move||std::fs::set_permissions(target,std::fs::Permissions::from_mode(0o640)).unwrap());
+        assert!(s.materialize_changes_window(w,||Ok(())).is_err());
+        std::fs::set_permissions(&path,std::fs::Permissions::from_mode(0o600)).unwrap();assert!(s.card("card").is_err());
     }
     #[test]
     fn guarded_fresh_init_real_card_and_ack_match_portable_bytes_and_reopen() {
