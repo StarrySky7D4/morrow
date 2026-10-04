@@ -77,3 +77,12 @@ package preflight on the exact selected host. The guarded `check --host` flow
 first requires that advertisement, preserving safe refusal on older hosts. See
 [the preflight guide](PLUGIN_SDK_PREFLIGHT.md). Preparation grants nothing and
 does not establish runtime, route, owner or product readiness.
+
+## Standalone diagnostics source bundle
+
+When a full repository checkout is unavailable, the separate
+[standalone diagnostics entrypoint](PLUGIN_SDK_DIAGNOSTICS.md) provides `profiles`
+and static `preflight` using this same original validator. Its source ZIP contains
+no host, Core/runtime or SDK library. The existing SDK source distribution and
+project-tool refusal gates are unchanged; a byte inventory is not trusted
+provenance or runtime qualification.

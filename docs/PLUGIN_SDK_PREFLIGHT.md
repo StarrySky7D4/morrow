@@ -91,3 +91,11 @@ Windows owner/token, public TLS/account, production binding, GUI or complete SDK
 qualification follows from `prepared`. Existing frozen SDK originals remain
 unchanged. See [P01 validation](../reports/reconstruction-2026-10-04/sdk-preflight-validation.md)
 for exact actual cases and preserved failures.
+
+## Without a full repository
+
+Use the separate [diagnostics source bundle](PLUGIN_SDK_DIAGNOSTICS.md) and its
+`preflight PACKAGE --host HOST` command. It loads the same original protocol
+validator from its adjacent source file, without a repository/compiler fallback.
+This does not change SDK-only `morrow_plugin.py check --host` refusal behavior.
+The diagnostic retains all static-only, no-authority and local-path limits above.

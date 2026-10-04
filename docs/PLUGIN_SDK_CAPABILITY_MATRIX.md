@@ -1,3 +1,5 @@
+2026-10-04 X01 更新：已有只读 host 发现／静态预检现可通过独立六文件诊断源码包在完整仓库之外使用，复用原 validator；旧 SDK 分发闭包及 SDK-only 门禁不变。详见[独立诊断实测](../reports/reconstruction-2026-10-04/sdk-standalone-diagnostics-validation.md)及[使用指南](PLUGIN_SDK_DIAGNOSTICS.md)。这不新增 guest 执行、平台 owner 或完整 SDK 资格。
+
 2026-10-04 P01 更新：已新增针对显式选定真实 host 的只读包预检，先发现命令能力，再静态准备并校验带摘要的成功／拒绝回执，旧 host 不接收未知参数。详见[本轮实测](../reports/reconstruction-2026-10-04/sdk-preflight-validation.md)及[使用指南](PLUGIN_SDK_PREFLIGHT.md)。静态 prepared 不代表执行、授权、平台 owner 或产品可用；完整 SDK 仍 OPEN。
 
 2026-10-04 D01 更新：真实 host CLI 与开发工具已补齐 IO／service／service-resources／mutation 的版本、摘要、分单位限额及路由／平台前提发现，并保持旧 descriptor 兼容。F08/G03 的这项有界缺口以[本轮实测报告](../reports/reconstruction-2026-10-04/sdk-discovery-validation.md)和[使用指南](PLUGIN_SDK_DISCOVERY.md)为准；动态 guest 发现、多版本协商及生产 owner/binding 资格仍 OPEN。下列历史矩阵与阶段计数保留各自范围。
