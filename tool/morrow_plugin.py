@@ -904,6 +904,8 @@ def main(argv=None):
             command.add_argument("--name")
         if name in ("check", "transform"):
             command.add_argument("package")
+        if name == "check":
+            command.add_argument("--host", help="explicit trusted installed host for bounded static package preparation; no guest execution or authority")
         if name == "transform":
             for argument in ("handler", "input_type", "output_type", "input_file", "output_file"):
                 command.add_argument(argument)
@@ -935,6 +937,13 @@ def main(argv=None):
             pack_project(args)
         elif args.command == "doctor":
             doctor(args)
+        elif args.command == "check" and args.host:
+            import json
+            import sdk_profiles
+            receipt = sdk_profiles.preflight(args.host, path_text(args.package))
+            print(json.dumps(receipt, sort_keys=True))
+            if receipt["preflight"]["status"] == "rejected":
+                return 2
         else:
             arguments = [args.command, path_text(args.package).resolve(strict=True)]
             if args.command == "transform":

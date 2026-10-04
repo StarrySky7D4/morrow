@@ -69,3 +69,11 @@ For current implementation and execution evidence, see
 [the D01 discovery validation report](../reports/reconstruction-2026-10-04/sdk-discovery-validation.md).
 Full SDK, production owner, Windows token/GUI and cross-platform qualification
 remain open; a discovery result does not close those gates.
+
+## Selected-host package preparation
+
+An optional, separately versioned diagnostic advertisement can expose static
+package preflight on the exact selected host. The guarded `check --host` flow
+first requires that advertisement, preserving safe refusal on older hosts. See
+[the preflight guide](PLUGIN_SDK_PREFLIGHT.md). Preparation grants nothing and
+does not establish runtime, route, owner or product readiness.

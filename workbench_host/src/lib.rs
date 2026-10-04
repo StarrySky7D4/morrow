@@ -69,6 +69,8 @@ mod preferences_proposal;
 pub mod projection;
 pub mod projection_v2;
 #[cfg(not(target_arch = "wasm32"))]
+pub mod sdk_preflight;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod sdk_profiles;
 pub mod tasks_content;
 pub mod tasks_edit;

@@ -1,6 +1,18 @@
 #![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
 use std::io::{Read, Write};
 fn main() {
+    // Exact diagnostic mode exits before legacy argument parsing, product gates,
+    // owner supervision, database opening, package installation or guest use.
+    let mut diagnostic_args = std::env::args_os().skip(1);
+    if diagnostic_args.next().as_deref()
+        == Some(std::ffi::OsStr::new(
+            morrow_workbench_host::sdk_preflight::COMMAND,
+        ))
+    {
+        let result = morrow_workbench_host::sdk_preflight::command(diagnostic_args);
+        println!("{}", result.json);
+        std::process::exit(i32::from(result.exit_code));
+    }
     if let Err(e) = run() {
         eprintln!("Morrow workbench host: {e}");
         std::process::exit(1);

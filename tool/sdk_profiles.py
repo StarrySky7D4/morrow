@@ -1,12 +1,22 @@
 """Explicit trusted-host discovery; bounded output, no authority or guest run."""
 import hashlib
 import json
+import os
 from pathlib import Path
+import stat
 import subprocess
 import threading
 import time
 
 MAX_OUTPUT = 65536
+# Version-1 diagnostic bounds mirror core::plugin_package, not a caller-selected
+# or untrusted advertised allocation size. A new format requires a new consumer.
+MAX_MODULE_BYTES = 4 * 1024 * 1024
+MAX_RAW_BYTES = MAX_MODULE_BYTES + 64 * 1024 + 256
+MAX_PACKAGE_BYTES = MAX_RAW_BYTES + MAX_RAW_BYTES // 255 + 128
+PREFLIGHT_MAX_OUTPUT = 16384
+PREFLIGHT_COMMAND = "--sdk-preflight"
+PREFLIGHT_BYTE_LIMITS = {"archive": MAX_PACKAGE_BYTES, "module": MAX_MODULE_BYTES}
 
 
 def unique_object(pairs):
@@ -241,10 +251,138 @@ def validate_descriptor(value):
     strings(experiments.get("feature_names"), "experimental features")
     if "discovery" in experiments:
         extension_discovery(experiments["discovery"], platform, value['profiles'])
+    if "diagnostic_capabilities" in value:
+        preflight_capability(value)
     return value
 
 
-def bounded_process(argv):
+def preflight_capability(descriptor):
+    diagnostics = descriptor.get("diagnostic_capabilities")
+    if not isinstance(diagnostics, dict) or set(diagnostics) != {"package_preflight"}:
+        raise ValueError("host does not advertise a supported package preflight diagnostic")
+    capability = diagnostics["package_preflight"]
+    expected = {"schema_version": 1, "command": PREFLIGHT_COMMAND, "read_only": True,
+                "preparation": "static_only", "max_output_bytes": PREFLIGHT_MAX_OUTPUT,
+                "authority": "none", "hard_byte_limits": PREFLIGHT_BYTE_LIMITS}
+    if (not isinstance(capability, dict) or capability != expected
+            or type(capability.get("schema_version")) is not int
+            or type(capability.get("max_output_bytes")) is not int
+            or any(type(value) is not int for value in capability.get("hard_byte_limits", {}).values())
+            or capability.get("read_only") is not True):
+        raise ValueError("unsupported or contradictory package preflight diagnostic")
+    base = next((p for p in descriptor["profiles"] if p["id"] == "morrow.guest-task.v3"), None)
+    if base is None or base["hard_byte_limits"].get("module") != MAX_MODULE_BYTES:
+        raise ValueError("package preflight disagrees with compiled module limit")
+    validate_limits(base["runtime_defaults"], "compiled host limits")
+    for profile in descriptor["profiles"]:
+        if profile["runtime_defaults"] != base["runtime_defaults"]:
+            raise ValueError("package preflight has inconsistent compiled host limits")
+    return capability
+
+
+def validate_limits(value, label):
+    bounds = {"fuel": (1, 100_000_000), "memory_bytes": (65536, 64 * 1024 * 1024),
+              "host_calls": (0, 1024)}
+    if not isinstance(value, dict) or set(value) != set(bounds):
+        raise ValueError("invalid " + label)
+    for key, (low, high) in bounds.items():
+        if type(value[key]) is not int or not low <= value[key] <= high:
+            raise ValueError("invalid " + label + "." + key)
+    if value["memory_bytes"] % 65536:
+        raise ValueError("invalid " + label + ".memory_bytes")
+
+
+def validate_preflight(value, descriptor, archive, exit_code=0):
+    fields = {"schema_version", "diagnostic", "host_version", "platform", "backend",
+              "status", "phase", "authority", "guest_executed", "installed",
+              "production_qualified", "routes_qualified", "package", "host_limits",
+              "effective_limits", "hard_byte_limits", "error", "preparation", "grants_created"}
+    if (not isinstance(value, dict) or set(value) != fields
+            or type(value.get("schema_version")) is not int or value["schema_version"] != 1
+            or value.get("diagnostic") != "package_preflight"):
+        raise ValueError("unsupported package preflight response schema")
+    if any(value[key] != descriptor[key] for key in ("host_version", "platform", "backend")):
+        raise ValueError("package preflight host identity does not match discovery")
+    if (value["authority"] != "none" or type(value["grants_created"]) is not int
+            or value["grants_created"] != 0 or any(value[key] is not False for key in
+            ("guest_executed", "installed", "production_qualified", "routes_qualified"))):
+        raise ValueError("package preflight claims authority, execution, installation or qualification")
+    if (type(exit_code) is not int or exit_code not in (0, 2)
+            or value["status"] != ("prepared" if exit_code == 0 else "rejected")
+            or value["preparation"] != "static_only"):
+        raise ValueError("package preflight exit/status or preparation mismatch")
+    if (value["hard_byte_limits"] != PREFLIGHT_BYTE_LIMITS
+            or any(type(limit) is not int for limit in value["hard_byte_limits"].values())):
+        raise ValueError("package preflight hard limits do not match discovery")
+    base = next(p for p in descriptor["profiles"] if p["id"] == "morrow.guest-task.v3")
+    validate_limits(value["host_limits"], "host limits")
+    if value["host_limits"] != base["runtime_defaults"]:
+        raise ValueError("package preflight host limits do not match discovery")
+    if exit_code == 0:
+        if value["phase"] != "static_preparation" or value["error"] is not None:
+            raise ValueError("package preflight did not establish static preparation")
+    else:
+        error = value["error"]
+        errors = {"invalid_arguments": ("arguments", False),
+                  "invalid_file_type": ("package_read_decode", False),
+                  "package_unavailable": ("package_read_decode", False),
+                  "package_rejected": ("package_read_decode", False),
+                  "preparation_rejected": ("static_preparation", True),
+                  "output_limit": ("static_preparation", False)}
+        if (not isinstance(error, dict) or set(error) != {"code", "message"}
+                or not isinstance(error["code"], str) or error["code"] not in errors
+                or not isinstance(error["message"], str) or not error["message"]
+                or len(error["message"].encode("utf-8")) > 4096
+                or any(ord(c) < 32 or 127 <= ord(c) <= 159 for c in error["message"])):
+            raise ValueError("invalid package preflight rejection error")
+        phase, has_package = errors[error["code"]]
+        if value["phase"] != phase or value["effective_limits"] is not None:
+            raise ValueError("inconsistent package preflight rejection phase or limits")
+        if not has_package:
+            if value["package"] is not None:
+                raise ValueError("package preflight rejection unexpectedly claims a decoded package")
+            return value
+    package = value["package"]
+    package_fields = {"id", "version", "archive_sha256", "module_sha256", "archive_bytes",
+                      "module_bytes", "manifest_schema_version", "guest_abi_version", "declared_limits"}
+    if not isinstance(package, dict) or set(package) != package_fields:
+        raise ValueError("invalid prepared package identity")
+    for key, maximum in (("id", 256), ("version", 128)):
+        strings([package[key]], "package " + key)
+        if len(package[key].encode("utf-8")) > maximum:
+            raise ValueError("invalid package " + key)
+    if any(c in "/\\:" or 127 <= ord(c) <= 159 for c in package["id"]):
+        raise ValueError("invalid package id")
+    for key in ("archive_sha256", "module_sha256"):
+        contract_digest({"sha256": package[key]})
+    if package["archive_sha256"] != archive["sha256"]:
+        raise ValueError("prepared package archive identity does not match selected file")
+    for key, low, high in (("archive_bytes", 1, MAX_PACKAGE_BYTES), ("module_bytes", 8, MAX_MODULE_BYTES),
+                           ("manifest_schema_version", 1, 1), ("guest_abi_version", 1, 2)):
+        if type(package[key]) is not int or not low <= package[key] <= high:
+            raise ValueError("invalid prepared package " + key)
+    if package["archive_bytes"] != archive["bytes"]:
+        raise ValueError("prepared package archive size does not match selected file")
+    validate_limits(package["declared_limits"], "declared limits")
+    if exit_code == 2:
+        return value
+    validate_limits(value["effective_limits"], "effective limits")
+    expected = {key: min(value["host_limits"][key], package["declared_limits"][key])
+                for key in value["host_limits"]}
+    if value["effective_limits"] != expected:
+        raise ValueError("package preflight effective limits are not the exact bounded intersection")
+    return value
+
+
+def bounded_process(argv, *, max_output=MAX_OUTPUT):
+    exit_code, raw = bounded_process_result(argv, max_output=max_output)
+    if exit_code:
+        raise ValueError("SDK profile query failed (exit " + str(exit_code) + ")")
+    return raw
+
+
+def bounded_process_result(argv, *, max_output=MAX_OUTPUT):
+    """Internal protocol runner; callers must validate the returned exit code."""
     process = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL)
     outputs = [bytearray(), bytearray()]
     exceeded = threading.Event()
@@ -252,16 +390,24 @@ def bounded_process(argv):
 
     def read(index, stream):
         try:
-            while len(outputs[index]) <= MAX_OUTPUT:
-                chunk = stream.read(min(4096, MAX_OUTPUT + 1 - len(outputs[index])))
+            while len(outputs[index]) <= max_output:
+                chunk = stream.read(min(4096, max_output + 1 - len(outputs[index])))
                 if not chunk:
                     return
                 outputs[index].extend(chunk)
-                if len(outputs[index]) > MAX_OUTPUT:
+                if len(outputs[index]) > max_output:
                     exceeded.set()
                     return
         except OSError as error:
             errors.append(error)
+        finally:
+            # The reader owns its pipe. A descendant can keep a pipe open past
+            # the caller's deadline; closing it from the caller can block on the
+            # buffered reader's lock. Close here even after a late EOF/error.
+            try:
+                stream.close()
+            except OSError as error:
+                errors.append(error)
 
     threads = [threading.Thread(target=read, args=(i, stream), daemon=True) for i, stream in enumerate((process.stdout, process.stderr))]
     for thread in threads:
@@ -270,7 +416,7 @@ def bounded_process(argv):
     try:
         while process.poll() is None:
             if exceeded.is_set():
-                raise ValueError("SDK profile output exceeds 64 KiB")
+                raise ValueError("SDK diagnostic output exceeds " + str(max_output) + " bytes")
             if time.monotonic() >= deadline:
                 raise ValueError("SDK profile query timed out")
             time.sleep(0.01)
@@ -279,33 +425,104 @@ def bounded_process(argv):
         if any(thread.is_alive() for thread in threads):
             raise ValueError("SDK profile pipe did not close")
         if exceeded.is_set():
-            raise ValueError("SDK profile output exceeds 64 KiB")
+            raise ValueError("SDK diagnostic output exceeds " + str(max_output) + " bytes")
         if errors:
             raise ValueError("SDK profile pipe read failed")
-        if process.returncode:
-            raise ValueError("SDK profile query failed (exit " + str(process.returncode) + ")")
-        return bytes(outputs[0])
+        return process.returncode, bytes(outputs[0])
     finally:
         if process.poll() is None:
             process.kill()
         process.wait(timeout=1)
         for thread in threads:
             thread.join(timeout=0.5)
-        for stream in (process.stdout, process.stderr):
-            if not any(thread.is_alive() for thread in threads):
-                stream.close()
+
+
+def regular_path(path, label):
+    path = Path(path)
+    metadata = path.lstat()
+    if (not stat.S_ISREG(metadata.st_mode)
+            or getattr(metadata, "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)):
+        raise ValueError(label + " must be a regular file, not a symlink or reparse point")
+    return path.resolve(strict=True)
+
+
+def file_snapshot(path, label, maximum=None):
+    # Stream the explicitly selected file. O_NONBLOCK and fstat also refuse a
+    # FIFO substituted after the initial path check on platforms supporting it.
+    flags = os.O_RDONLY | getattr(os, "O_BINARY", 0) | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_NOFOLLOW", 0)
+    with os.fdopen(os.open(path, flags), "rb") as stream:
+        before = os.fstat(stream.fileno())
+        if not stat.S_ISREG(before.st_mode):
+            raise ValueError(label + " must be a regular file")
+        if maximum is not None and before.st_size > maximum:
+            raise ValueError(label + " exceeds " + str(maximum) + " bytes")
+        digest = hashlib.sha256()
+        size = 0
+        while True:
+            chunk = stream.read(65536 if maximum is None else min(65536, maximum + 1 - size))
+            if not chunk:
+                break
+            size += len(chunk)
+            if maximum is not None and size > maximum:
+                raise ValueError(label + " exceeds " + str(maximum) + " bytes")
+            digest.update(chunk)
+        after = os.fstat(stream.fileno())
+    def identity(metadata):
+        return (metadata.st_dev, metadata.st_ino, metadata.st_mode, metadata.st_size,
+                metadata.st_mtime_ns, metadata.st_ctime_ns)
+    if identity(before) != identity(after) or identity(after) != identity(path.lstat()) or size != after.st_size:
+        raise ValueError(label + " changed while reading")
+    return {"sha256": digest.hexdigest(), "bytes": size, "identity": identity(after)}
+
+
+def parse_json(raw, label):
+    def invalid_constant(value):
+        raise ValueError("non-JSON number: " + value)
+    try:
+        return json.loads(raw.decode("utf-8"), object_pairs_hook=unique_object, parse_constant=invalid_constant)
+    except (UnicodeError, RecursionError, ValueError) as error:
+        raise ValueError("invalid " + label + ": " + str(error)) from error
 
 
 def query(host):
-    host = Path(host).resolve(strict=True)
-    if not host.is_file():
-        raise ValueError("--host must name an explicitly trusted executable")
-    before = hashlib.sha256(host.read_bytes()).hexdigest()
+    # Preserve the profiles command's historical resolved-path behavior. The
+    # new preflight route separately rejects a selected symlink/reparse entry.
+    host = regular_path(Path(host).resolve(strict=True), "--host")
+    before = file_snapshot(host, "host artifact")
     raw = bounded_process([str(host), "--sdk-capabilities"])
-    if hashlib.sha256(host.read_bytes()).hexdigest() != before:
+    if file_snapshot(host, "host artifact") != before:
         raise ValueError("host artifact changed during SDK profile query")
     try:
-        value = validate_descriptor(json.loads(raw.decode("utf-8"), object_pairs_hook=unique_object))
+        value = validate_descriptor(parse_json(raw, "SDK profile descriptor"))
     except (UnicodeError, RecursionError, ValueError) as error:
         raise ValueError("invalid SDK profile descriptor: " + str(error)) from error
-    return {"host_sha256": before, "descriptor_sha256": hashlib.sha256(raw).hexdigest(), "descriptor": value}
+    return {"host_sha256": before["sha256"], "descriptor_sha256": hashlib.sha256(raw).hexdigest(), "descriptor": value}
+
+
+def preflight(host, package):
+    """Ask one explicitly trusted host to statically prepare one selected archive.
+
+    Receipts bind before/after observations, not a sandbox against a malicious
+    executable or a local actor replacing and restoring files between reads.
+    """
+    host = regular_path(host, "--host")
+    before = file_snapshot(host, "host artifact")
+    discovered = query(host)
+    descriptor = discovered["descriptor"]
+    preflight_capability(descriptor)  # Never send a new flag to an old host.
+    package = regular_path(package, "package")
+    archive = file_snapshot(package, "package archive", MAX_PACKAGE_BYTES)
+    if file_snapshot(host, "host artifact") != before or discovered["host_sha256"] != before["sha256"]:
+        raise ValueError("host artifact changed before package preflight")
+    # Do not execute command text from a descriptor, even after validation.
+    exit_code, raw = bounded_process_result([str(host), PREFLIGHT_COMMAND, str(package)], max_output=PREFLIGHT_MAX_OUTPUT)
+    if exit_code not in (0, 2):
+        raise ValueError("package preflight query failed (exit " + str(exit_code) + ")")
+    if file_snapshot(host, "host artifact") != before:
+        raise ValueError("host artifact changed during package preflight")
+    if file_snapshot(package, "package archive", MAX_PACKAGE_BYTES) != archive:
+        raise ValueError("package archive changed during package preflight")
+    value = validate_preflight(parse_json(raw, "package preflight response"), descriptor, archive, exit_code)
+    return {"host_sha256": before["sha256"], "descriptor_sha256": discovered["descriptor_sha256"],
+            "archive_sha256": archive["sha256"], "response_sha256": hashlib.sha256(raw).hexdigest(),
+            "preflight": value}

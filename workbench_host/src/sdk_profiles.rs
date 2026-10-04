@@ -342,6 +342,7 @@ pub fn descriptor() -> Value {
         "unsupported_requirements": ["workbench_public_channel_binding", "network_sse_websocket_backend", "cloud_account_change_subscription", "arbitrary_os_access", "untrusted_native_library", "multi_version_schema_fallback"],
         "legacy_abi1": {"runtime_route_exists": true, "frozen_original_profile": false},
         "extension_policy": "New mandatory semantics require a new required feature, independent versioned contract and explicit decoder/Runner/host route. Unknown features or mismatched versions/digests are rejected; old contracts are not rewritten.",
+        "diagnostic_capabilities": {"package_preflight": crate::sdk_preflight::advertisement()},
         "package_preflight_required": true
     })
 }
@@ -365,6 +366,10 @@ mod tests {
         assert_eq!(discovery["package_preflight_required"], true);
         assert_eq!(discovery["profiles"].as_array().unwrap().len(), 4);
         assert!(serde_json::to_vec(&value).unwrap().len() < 65536);
+        assert_eq!(
+            value["diagnostic_capabilities"]["package_preflight"],
+            crate::sdk_preflight::advertisement()
+        );
         for profile in discovery["profiles"].as_array().unwrap() {
             assert_eq!(profile["production_public_binding_available"], false);
             assert_eq!(profile["qualification"], "not_established_by_discovery");
