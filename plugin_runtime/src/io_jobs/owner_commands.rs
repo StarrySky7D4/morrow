@@ -10,8 +10,17 @@ use super::{
 use std::sync::{Arc, Mutex, Weak, mpsc};
 use zeroize::Zeroizing;
 
+#[cfg(windows)]
+#[path = "directory_commands.rs"]
+pub(super) mod directories;
 #[path = "file_commands.rs"]
 mod files;
+#[cfg(windows)]
+pub use directories::{
+    DIRECTORY_COMMAND_FIXED_BYTES, DIRECTORY_FINISH_CHARGE, DIRECTORY_PAGE_CHARGE,
+    DirectoryCommandError, DirectoryCommandHandle, DirectoryResponse, DirectorySession,
+    MAX_DIRECTORY_OBSERVATIONS,
+};
 #[cfg(windows)]
 #[path = "mutation_commands.rs"]
 mod mutations;
@@ -50,11 +59,15 @@ pub(super) fn dispatch_mutation_guest<O: ManagedHostOwner>(
 pub(super) struct FileResources {
     reads: files::Resources,
     #[cfg(windows)]
+    directories: directories::Resources,
+    #[cfg(windows)]
     mutations: mutations::Resources,
 }
 impl FileResources {
     pub(super) fn reap_cancelled(&mut self) {
         self.reads.reap_cancelled();
+        #[cfg(windows)]
+        self.directories.reap();
         #[cfg(windows)]
         self.mutations.reap_cancelled();
     }
@@ -127,6 +140,8 @@ enum Reply {
     Data(Zeroizing<Vec<u8>>),
     Renewal(Result<ServiceRunSnapshot, BindingError>),
     File(Result<FileResponse, FileCommandError>),
+    #[cfg(windows)]
+    Directory(Box<Result<DirectoryResponse, DirectoryCommandError>>),
     #[cfg(windows)]
     Mutation(Box<Result<MutationResponse, crate::file_target::Error>>),
 }
@@ -312,6 +327,11 @@ struct RenewalRequest {
 
 enum CommandKind<O: HostOwner> {
     #[cfg(windows)]
+    Directory {
+        request: directories::Request,
+        dispatch: directories::Dispatch<O>,
+    },
+    #[cfg(windows)]
     Mutation {
         request: mutations::Request,
         dispatch: mutations::Dispatch<O>,
@@ -369,6 +389,17 @@ impl<O: HostOwner> Command<O> {
         // No control/response lock spans application code. A panic propagates
         // to the existing worker recovery boundary and retains the same owner.
         let reply = match self.kind {
+            #[cfg(windows)]
+            CommandKind::Directory { request, dispatch } => {
+                Some(Reply::Directory(Box::new(dispatch(
+                    owner,
+                    instance,
+                    control,
+                    &self.ticket,
+                    &mut files.directories,
+                    request,
+                ))))
+            }
             CommandKind::File { request, dispatch } => Some(Reply::File(dispatch(
                 owner,
                 instance,
@@ -456,6 +487,8 @@ impl<O: HostOwner> IoWorker<O> {
             return Err(OwnerCommandError::Busy);
         }
         let charge = match &kind {
+            #[cfg(windows)]
+            CommandKind::Directory { request, .. } => request.charge(),
             CommandKind::File { request, .. } => request.charge(),
             #[cfg(windows)]
             CommandKind::Mutation { request, .. } => request.charge(),
@@ -631,6 +664,8 @@ mod sensitive_tests {
                 timeout: Duration::from_secs(1),
                 mutation_enabled: false,
                 mutation_history: false,
+                #[cfg(windows)]
+                directories: Mutex::new(Default::default()),
                 state: Mutex::new(State {
                     phase: Phase::Running,
                     next: 1,

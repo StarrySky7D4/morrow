@@ -1,5 +1,7 @@
 # 原 owner 后台文件任务
 
+当前文件能力与开放门槛见 [项目状态](PROJECT_STATUS.md)。本页保存FileRead与独立mutation任务的历史实现；C07新增的Windows目录捕获／分页／结束是[单独的原owner队列](../reports/reconstruction-2026-10-05/directory-owner-sdk.md)，不从FileRead推导FileList，也不赋予目录项读取／递归／rename权限。公开Core FileList和conditional Replace仍Unsupported，目录Workbench任务入口与picker／祖先来源尚未实现。
+
 2026-09-27 [文件创建／删除界面与独立执行会话](../reports/mutation-execution-ui-2026-09-27.md)：Windows IO 设置已接选择、范围预览、准备、独立执行确认及退出／恢复交接；九语言补齐。修复停止与迟到回执门控、ACK 身份校验，以及真实宿主保留历史提交导致后续操作禁用的问题。执行会话 19/19、Flutter 组合 43/43（含非空三块内容的真实原生与真实控件链路）、本地化 4＋7 通过，严格分析无诊断。系统选择器由测试注入路径；未做完整应用构建或人工验收。下一步为版本化 guest 扩展、三语言 SDK／Wasm 和非空中间故障点；SDK 未冻结，未提交或推送。
 
 2026-09-27 [真实故障后的恢复界面联调](../reports/mutation-crash-widget-2026-09-27.md)：真实时钟 Flutter 控件＋Windows 宿主完成 Create／Delete 各三阶段故障及普通宿主对照，7/7 通过；实际按钮完成发现、选择、离页返回、退出确认及独立核对，Unknown／Observed 文案分离，最终等 ACK 与宿主 close。既有面板及竞态回归 12/12，严格分析无诊断。新增三语言文件变更 SDK 接入计划；正式变更编辑／审批、guest SDK、非空内容中间故障点及其他平台继续开放，SDK 未冻结，未提交或推送。
@@ -168,7 +170,7 @@ Replace 的 Core 持久协议与 Windows 原型见 [条件替换验收](../repor
 | 不覆盖创建 | Windows 原目录链＋一次性执行＋原子观察，原 owner 队列与分块已验 | Workbench 原生任务已接；继续私有协议、SDK／UI |
 | 选定文件删除 | Windows 原句柄＋一次性执行＋原子观察，原 owner 队列已验 | Workbench 原生任务已接；继续私有协议、SDK／UI |
 | 条件替换 | Core 有持久协议；Windows 当前明确不支持 | 在 claim 前返回平台错误，不影响其他操作 |
-| 目录列举 | 尚无完整公共执行链路 | 单独实现有界目录引用、分页与游标语义 |
+| 目录列举 | 无完整公共guest链；C07已有Windows可信已选择root的有限原owner队列 | 公开Dir request/import协商、Workbench任务入口、factory与picker/祖先证明另验；见[当前目录接口](PLUGIN_DIRECTORY_BLOB_SDK.md) |
 
 操作取消／时钟适配及实际 owner ticket＋共享时钟接线现已完成，见下方最新队列记录。不得用 ticket 取消去伪造过期时间，也不能取消一个命令就撤销整个实例。创建的读内容、claim guard、分块写入、同步及发布前都需受同一操作取消控制；删除需在 claim 前／效果前检查。claim 前取消不产生外部效果，claim 后取消保留 Unknown；已完成效果仍保存历史并按当前权限限制交付。
 

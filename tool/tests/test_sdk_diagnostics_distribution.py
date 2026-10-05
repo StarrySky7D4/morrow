@@ -20,6 +20,26 @@ import package_sdk_diagnostics as distribution
 
 
 class DiagnosticsDistributionTests(unittest.TestCase):
+
+    def test_windows_birthtime_and_posix_change_time_identity_remain_exact(self):
+        from types import SimpleNamespace
+        fields = dict(st_dev=1, st_ino=2, st_mode=stat.S_IFREG, st_size=4,
+                      st_mtime_ns=5, st_ctime_ns=6, st_birthtime_ns=7)
+        path = SimpleNamespace(**fields)
+        descriptor = SimpleNamespace(**{**fields, 'st_ctime_ns': 8})
+        with mock.patch.object(distribution.os, 'name', 'nt'):
+            self.assertEqual(distribution.identity(path), distribution.identity(descriptor))
+            filename_mode = SimpleNamespace(**{**fields, 'st_mode': fields['st_mode'] | 0o111})
+            self.assertEqual(distribution.identity(path), distribution.identity(filename_mode))
+            for field in ('st_dev', 'st_ino', 'st_mode', 'st_size', 'st_mtime_ns', 'st_birthtime_ns'):
+                delta = 0o200 if field == 'st_mode' else 1
+                altered = SimpleNamespace(**{**fields, field: fields[field] + delta})
+                self.assertNotEqual(distribution.identity(path), distribution.identity(altered), field)
+            legacy = SimpleNamespace(**{k: v for k, v in fields.items() if k != 'st_birthtime_ns'})
+            self.assertEqual(distribution.identity(legacy)[-1], fields['st_ctime_ns'])
+        with mock.patch.object(distribution.os, 'name', 'posix'):
+            self.assertNotEqual(distribution.identity(path), distribution.identity(descriptor))
+
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)

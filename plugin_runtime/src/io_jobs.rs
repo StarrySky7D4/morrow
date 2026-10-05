@@ -79,9 +79,11 @@ pub use owner_commands::{
 };
 #[cfg(windows)]
 pub use owner_commands::{
-    MAX_MUTATION_CHUNK, MutationBudgetEstimate, MutationDiscoverySession,
-    MutationGuestExecutionPermit, MutationGuestJobMode, MutationGuestLease, MutationHandle,
-    MutationOutcome, MutationResponse, MutationSession,
+    DIRECTORY_COMMAND_FIXED_BYTES, DIRECTORY_FINISH_CHARGE, DIRECTORY_PAGE_CHARGE,
+    DirectoryCommandError, DirectoryCommandHandle, DirectoryResponse, DirectorySession,
+    MAX_DIRECTORY_OBSERVATIONS, MAX_MUTATION_CHUNK, MutationBudgetEstimate,
+    MutationDiscoverySession, MutationGuestExecutionPermit, MutationGuestJobMode,
+    MutationGuestLease, MutationHandle, MutationOutcome, MutationResponse, MutationSession,
 };
 static NEXT_EXECUTOR: AtomicU64 = AtomicU64::new(1);
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -766,6 +768,8 @@ struct Control {
     mutation_enabled: bool,
     mutation_history: bool,
     state: Mutex<State>,
+    #[cfg(windows)]
+    directories: Mutex<owner_commands::directories::Admission>,
 }
 impl Control {
     // Both external-manager and original-owner commands use this single CAS
@@ -1367,6 +1371,8 @@ impl<O: HostOwner> IoWorker<O> {
                 timeout,
                 mutation_enabled: package.package().mutation_enabled(),
                 mutation_history,
+                #[cfg(windows)]
+                directories: Mutex::new(Default::default()),
                 state: Mutex::new(State {
                     phase: Phase::Running,
                     next: 1,

@@ -1256,25 +1256,37 @@ fn separate_current_content_read_conflicts_after_revision_changes_and_does_not_r
 }
 #[test]
 fn actual_registry_publication_failure_invalidates_old_approval_before_failed_write() {
+    use sha2::Digest;
     let mut f = Fixture::new();
     f.seed();
     let source = f.source(cards(), HistoryStart::Beginning, 10_000);
     let frame = f.frame(&source, 0);
+    // Obstruct the actual publication target, without moving the live owner
+    // directory or its non-delete-sharing registry.lock lease on Windows.
     let root = f._dir.path().join("registry");
-    let saved = f._dir.path().join("registry-held");
-    std::fs::rename(&root, &saved).unwrap();
-    std::fs::write(&root, b"synthetic publication blocker").unwrap();
+    let target = root.join("selection.morrow");
+    let saved = root.join("selection-held.morrow");
+    let original = std::fs::read(&target).unwrap();
+    let original_sha256: [u8; 32] = sha2::Sha256::digest(&original).into();
+    std::fs::rename(&target, &saved).unwrap();
+    std::fs::create_dir(&target).unwrap();
     let revision = f.manager.revision();
-    assert!(
-        f.manager
-            .set_enabled(ID, f.package.digest(), false, revision)
-            .is_err()
-    );
+    assert!(matches!(
+        f.manager.set_enabled(ID, f.package.digest(), false, revision),
+        Err(morrow_plugin_runtime::manager::ManagerError::Core(
+            morrow_core::Error::Invalid("registry file type")
+        ))
+    ));
     assert_eq!(f.manager.revision(), revision);
     assert_eq!(joined(&source), Status::Revoked);
     f.no_ack(frame.source_epoch);
-    std::fs::remove_file(&root).unwrap();
-    std::fs::rename(&saved, &root).unwrap();
+    assert_eq!(std::fs::read(&saved).unwrap(), original);
+    std::fs::remove_dir(&target).unwrap();
+    std::fs::rename(&saved, &target).unwrap();
+    let restored = std::fs::read(&target).unwrap();
+    assert_eq!(restored, original);
+    assert_eq!(<[u8; 32]>::from(sha2::Sha256::digest(&restored)), original_sha256);
+    assert!(!saved.exists());
     assert!(
         f.issue(cards(), HistoryStart::Beginning, 10_000).is_err(),
         "old instance never revives after rollback"

@@ -58,6 +58,35 @@ def detailed_descriptor(os='windows'):
     return value
 
 
+def payload_descriptor(os='windows', arch='x86_64'):
+    value = detailed_descriptor(os)
+    value['platform']['arch'] = arch
+    channel = copy.deepcopy(value['profiles'][0])
+    channel.update(id='morrow.channel.v1', status='experimental', workbench_routes=[],
+                   runtime_supported_required_features=['transform-handlers-v1', 'channel-v1'])
+    channel['contracts'] = {k: channel['contracts'][k] for k in ('runtime', 'task')}
+    channel['contracts']['channel'] = {'version': 1, 'sha256': 'c'*64}
+    channel['workbench_constraints'].update(channel_binding=False)
+    channel['channel_scope'] = {'trusted_local_sources': True, 'managed_binding_required': True,
+                                'workbench_binding': False, 'network_backend': False,
+                                'cloud_account': False, 'automatic_replay': False}
+    channel['payload_discovery'] = {'schema_version': 1, 'status': 'compiled_metadata_only',
+        'authority': 'none', 'package_preflight_required': True, 'profiles': [{
+        'id': 'morrow.changes-metadata.v1', 'status': 'experimental',
+        'required_features': ['channel-v1', 'changes-metadata-v1'],
+        'payload_contract': {'version': 1, 'sha256': '07fc0dc4c48eb17f85309207a441d6a07f3fb8e06aab5e2ce337a4b3c98f9089'},
+        'wire_limits': {'header_bytes': 150, 'payload_bytes': 662, 'card_id_bytes': 256,
+                        'operation_id_bytes': 256, 'cursor_bytes': 32}, 'count_limits': {'cards': 32},
+        'channel_kind': 'Events', 'duplex': False, 'finite_window': True, 'metadata_only': True,
+        'runtime_static_preparation_supported': True, 'native_source_required': True,
+        'native_source_adapter_compiled': arch != 'wasm32',
+        'native_prerequisites': ['managed_channel_broker', 'fresh_receiver_specific_changes_approval', 'exact_package_binding', 'live_store_binding'],
+        'workbench_routes': [], 'production_public_binding_available': False,
+        'automatic_run_available': False, 'qualification': 'not_established_by_discovery'}]}
+    value['profiles'].append(channel)
+    return value
+
+
 def discovery(value):
     return value['experimental_extensions']['discovery']
 
@@ -249,5 +278,63 @@ class Profiles(unittest.TestCase):
             item = detailed_descriptor(); discovery(item)['profiles'][index]['contracts'][contract][field] = bad
             with self.subTest(index=index, contract=contract, field=field), self.assertRaisesRegex(ValueError, 'inconsistent'):
                 sdk.validate_descriptor(item)
+
+class PayloadDiscovery(unittest.TestCase):
+    def test_optional_payload_detail_preserves_the_entire_old_projection(self):
+        item = payload_descriptor(); legacy = copy.deepcopy(item)
+        del legacy['profiles'][1]['payload_discovery']
+        self.assertIs(sdk.validate_descriptor(legacy), legacy)
+        self.assertIs(sdk.validate_descriptor(item), item)
+        projected = copy.deepcopy(item); del projected['profiles'][1]['payload_discovery']
+        self.assertEqual(projected, legacy)
+        self.assertEqual(len(discovery(item)['profiles']), 4)
+        self.assertEqual(item['profiles'][1]['runtime_supported_required_features'], ['transform-handlers-v1', 'channel-v1'])
+
+    def test_payload_identity_matches_exact_wire_bytes_and_refuses_unknown_contracts(self):
+        import hashlib
+        self.assertEqual(sdk.CHANGES_PAYLOAD_SHA256, hashlib.sha256((ROOT/'core/schemas/changes_metadata_v1.wire').read_bytes()).hexdigest())
+        for field, bad in [('version', True), ('version', 1.0), ('version', 2), ('sha256', 'a'*64), ('sha256', None)]:
+            item=payload_descriptor(); item['profiles'][1]['payload_discovery']['profiles'][0]['payload_contract'][field]=bad
+            with self.subTest(field=field,bad=bad), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+
+    def test_payload_envelope_and_record_shape_are_bounded_and_versioned(self):
+        original=payload_descriptor()['profiles'][1]['payload_discovery']
+        changes=[None, [], {}, {**original,'schema_version':True}, {**original,'schema_version':2},
+                 {**original,'profiles':[]}, {**original,'profiles':original['profiles']*2},
+                 {**original,'authority':'granted'}, {**original,'package_preflight_required':1}]
+        for bad in changes:
+            item=payload_descriptor(); item['profiles'][1]['payload_discovery']=bad
+            with self.subTest(bad=bad), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+        for key in original['profiles'][0]:
+            item=payload_descriptor(); del item['profiles'][1]['payload_discovery']['profiles'][0][key]
+            with self.subTest(missing=key), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+
+    def test_payload_bounds_reject_numeric_lookalikes_and_enlargement(self):
+        profile=payload_descriptor()['profiles'][1]['payload_discovery']['profiles'][0]
+        for group in ('wire_limits','count_limits'):
+            for key, value in profile[group].items():
+                for bad in (True,float(value),value+1,0):
+                    item=payload_descriptor(); item['profiles'][1]['payload_discovery']['profiles'][0][group][key]=bad
+                    with self.subTest(group=group,key=key,bad=bad), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+
+    def test_payload_requires_the_exact_feature_and_native_approval_prerequisites(self):
+        for key,bad in [('required_features',['changes-metadata-v1']), ('required_features',['channel-v1','io-v1']),
+                        ('native_prerequisites',[]),('native_prerequisites',['managed_channel_broker']),
+                        ('channel_kind','ByteStream'),('id','morrow.unknown.v1')]:
+            item=payload_descriptor(); item['profiles'][1]['payload_discovery']['profiles'][0][key]=bad
+            with self.subTest(key=key,bad=bad), self.assertRaises(ValueError): sdk.validate_descriptor(item)
+
+    def test_payload_platform_metadata_never_promotes_routes_or_automatic_execution(self):
+        for os,arch in [('windows','x86_64'),('linux','x86_64'),('unknown','wasm32')]:
+            item=payload_descriptor(os,arch); sdk.validate_descriptor(item)
+            p=item['profiles'][1]['payload_discovery']['profiles'][0]
+            for key in ('duplex','finite_window','metadata_only','runtime_static_preparation_supported',
+                        'native_source_required','native_source_adapter_compiled','production_public_binding_available','automatic_run_available'):
+                for bad in (not p[key], int(p[key])):
+                    invalid=copy.deepcopy(item); invalid['profiles'][1]['payload_discovery']['profiles'][0][key]=bad
+                    with self.subTest(os=os,arch=arch,key=key,bad=bad), self.assertRaises(ValueError): sdk.validate_descriptor(invalid)
+            invalid=copy.deepcopy(item); invalid['profiles'][1]['payload_discovery']['profiles'][0]['workbench_routes']=['changes']
+            with self.assertRaises(ValueError): sdk.validate_descriptor(invalid)
+
 
 if __name__=='__main__':unittest.main()

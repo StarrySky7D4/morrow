@@ -6,9 +6,19 @@ Lass etwas Raum für die Ideen von morgen.
 
 Morrow (明隙) ist ein lokaler, kartenbasierter Arbeitsbereich für Ideen und entwickelt sich zu einer plattformübergreifenden Plugin-Architektur. Der frühere Name lautet daemon, der Paketname `morrow_studio`. Unter Windows stellt Flutter die Oberfläche bereit; ein Rust-Host und isolierte Wasm-Plugins führen die Arbeitsbereichslogik aus. Web führt Rust/Wasm lokal im Browser aus; Android nutzt weiterhin den früheren Pfad. Die vollständige Plugin- und Produktgleichheit aller Plattformen ist noch nicht abgenommen.
 
+## Entwicklungsstand (2026-10-05)
+
+Der Quellcode-Checkpoint der Anwendung ist **0.1.9-test.58+62**. Die vorgesehene Entwicklungslinie heißt `codex/windows-sdk-convergence-20261005` und basiert auf cloud `468ef2e` mit C02–C07-Änderungen. Der [Projektstatus](../../docs/PROJECT_STATUS.md) enthält den maßgeblichen Stand und die nächsten Schritte; der [begrenzte C07-Prüfbericht](../../reports/reconstruction-2026-10-05/directory-owner-sdk.md) dokumentiert die tatsächlichen Windows-Nachweise.
+
+Die lokale Windows-Prüfung mit synthetischen Daten bestand: 115 Methoden des ursprünglichen Owner-Pfads, darin 7 für Verzeichnisabbruch, 14 für directory owner und 16 für native Verzeichnisse; 42 ursprüngliche Regressionsmethoden; 100 Netzwerkmethoden in 11 Programmen. Der Lauf mit 42 Methoden behält 14 frozen-region-Filter und einen remote-reader-Filter bei. Kindprozess-Helfer zählen nicht als zusätzliche bestandene Methoden. Diese Zahlen belegen keine vollständige SDK- oder Produktabnahme.
+
+Vertrauenswürdiges capture/page/finish für Verzeichnisse nutzt die ursprüngliche IoWorker-Warteschlange, Manager, Runtime, Instanz, IoBinding und FileList-Freigabe. Uhrabfrage und Berechtigungsprüfung erfolgen in kurzen atomaren Schritten; Kontingente werden erst nach tatsächlicher Freigabe der nativen Ressourcen frei. Unknown-Ergebnisse werden nicht automatisch wiederholt, Cursor laufen am Zählerlimit nicht über. Unabhängig versionierte Bibliotheken für typisierte WebSocket/SSE-Nutzdaten bieten Rust-, C- und C++-Codecs mit begrenzter Guest-Prüfung; Verzeichnis-/Blob-Codecs und begrenzter Zustand sind ebenfalls lokal qualifiziert.
+
+**SDK26/G04 bleibt OPEN; das vollständige SDK ist nicht eingefroren.** Geschützte Produktions-Owner, GUI-/Workspace-Aufgabeneinstieg, Auswahldialog und Herkunft der Vorfahren, Fabrik für frische vertrauenswürdige Geheimnisse, Aushandlung neuer Verzeichnis-Request-/Import-/Feature-/Helper-Profile, dauerhafte Blob-Historie, vollständige Produktqualifikation eingehender Dienste, echte TLS/API und andere Plattformen bleiben offen oder NOT_RUN. C08 ist nur ein Entwurf. Diese Prüfung veröffentlicht keinen neuen Installer und ergibt kein stabiles SDK.
+
 ## Download und Kompatibilität
 
-Aktuelle Version: **0.1.9-test.56+60**, eine **Windows-x64-Testvorschau**, keine stabile Veröffentlichung. Lade das Windows-ZIP, das zugehörige Quellcode-ZIP und die SHA-256-Liste herunter. Entpacke alles und starte `morrow_studio.exe`; sämtliche DLLs, Host, `data`, `plugins` und Lizenzdateien müssen erhalten bleiben.
+Neueste veröffentlichte App-Vorschau: **0.1.9-test.56+60**, eine **Windows-x64-Testvorschau**, keine stabile Veröffentlichung. Lade das Windows-ZIP, das zugehörige Quellcode-ZIP und die SHA-256-Liste herunter. Entpacke alles und starte `morrow_studio.exe`; sämtliche DLLs, Host, `data`, `plugins` und Lizenzdateien müssen erhalten bleiben.
 
 [test.56 herunterladen](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56) · [Kompatible Testversion test.1](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
@@ -23,7 +33,7 @@ Aktuelle Version: **0.1.9-test.56+60**, eine **Windows-x64-Testvorschau**, keine
 - Layout und Sprachen: anpassbare Inhalte und separate Einstellungsseiten; Chinesisch, Englisch, Russisch, Französisch, Deutsch, Spanisch, Japanisch, Koreanisch und Portugiesisch.
 - Schutz unter Windows: einheitliche Rust-Speicherung, versiegelte Audit-Aufzeichnungen, Bibliothekssnapshots, Sicherung und Wiederherstellung der ursprünglichen Identität sowie begrenzte gleichzeitige Nutzung derselben Identität.
 
-## Optimierung und Prüfung
+## Änderungen und Prüfung der veröffentlichten Version test.56
 
 test.56 ergänzt Kontextaktionen, Kartensortierung und Ziehen, die Bearbeitung einzelner Tipps und eigenständige Themen-Plugins. Das Kachel-Layout, gefilterte Aktualisierungen und das Beenden wurden verbessert. Vollständiges automatisches Speichern und die Plattformgleichheit bleiben offen.
 
@@ -65,10 +75,11 @@ flutter build web --no-web-resources-cdn
 
 Ziel sind eine Flutter/Dart-Oberfläche, ein portabler Rust-Kern und austauschbare Plugin-Ausführungsumgebungen. Laufzeitgrenzen verwenden feste Verträge; Speicherung und eigene Austauschformate verwenden Protobuf + LZ4. C/C++/Rust-SDKs und deklarative Plugin-Oberflächen sind in Entwicklung. TS/JS-Plugins werden nicht unterstützt; dynamische Dart-Plugins sind nicht erforderlich.
 
-Das vollständige SDK ist noch nicht eingefroren. Verwaltete HTTP/HTTPS-Anfragen, begrenzte API-Dienstknoten und TLS-Identitätsverwaltung sind angebunden. Offen bleiben Unknown-Abgleich nach Neustarts, vollständiges Dateisystem, IO-SDKs für drei Sprachen und Plattformabnahmen. Beim Öffnen wird weiterhin die gesamte Historie geprüft; vollständige Lese-/Rechenpipeline, historische Speicherebenen und automatische Bereinigung fehlen noch.
+Das vollständige SDK ist noch nicht eingefroren. Verwaltete HTTP/HTTPS-Anfragen, begrenzte API-Dienstknoten und TLS-Identitätsverwaltung sind angebunden. Offen bleiben Unknown-Abgleich nach Neustarts, vollständiges Dateisystem, Aushandlung neuer Verzeichnis-Request-/Import-/Feature-/Helper-Profile und Plattformabnahmen. Beim Öffnen wird weiterhin die gesamte Historie geprüft; vollständige Lese-/Rechenpipeline, historische Speicherebenen und automatische Bereinigung fehlen noch.
 
 ## Dokumentation
 
+- [Aktueller Projektstatus](../../docs/PROJECT_STATUS.md)
 - [Versionshinweise und Prüfungen](../../reports/0.1.9-test.56-release.md)
 - [Entwicklungsboard](../../docs/DEVELOPMENT_BOARD.md)
 - [Architekturplanung](../../docs/FUTURE_ROADMAP.md)

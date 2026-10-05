@@ -1,5 +1,7 @@
 # Experimental finite card-change metadata source
 
+Current bounded implementation status is tracked in [PROJECT_STATUS](PROJECT_STATUS.md). This guide describes the source contract; optional payload discovery, synthetic Windows qualification and production authority are separate facts.
+
 `changes-metadata-v1` is a new opt-in native-library source profile for a finite,
 explicitly approved set of card-change notifications. It supports incremental
 indexing and cache invalidation. It is not a live forever watcher, Cloud sync,
@@ -132,16 +134,19 @@ constant scope, and use original receive/ACK transport. Their result is a bounde
 count of ACKed notifications, not a content change or resource-join certificate.
 The new C/C++ build uses one combined Rust archive, not two Rust runtimes.
 
-This phase exposes a native library adapter and developer extension. Workbench
-profile discovery, catalog/GUI integration and production owner binding were not
-extended. Existing discovery flags remain unchanged and do not advertise or
-authorize this new source. Static `prepared` is not evidence that an installed
-Workbench can start it; a host integration must explicitly supply the new source
-approval/binding route.
+The source remains an opt-in native library adapter and developer extension.
+C03 added optional `channel.payload_discovery`, described in the
+[changes SDK guide](PLUGIN_CHANGES_METADATA_SDK.md), while preserving the original
+profile fields. It reports codec/source requirements with `authority: none` and
+no production binding. Catalog/GUI integration and production owner approval
+remain open. Static `prepared` does not prove an installed Workbench can start
+this source; the trusted host must supply the exact approval/binding route.
 
 Linux ordinary disposable-Store end-to-end tests and Core protected temporary-SQL
 tests are separate evidence. `ProtectedStoreSlice` still cannot be passed through
 the complete HostRuntime/channel path. No test constructor or raw Store fallback
-was made public. Windows/macOS/product-owner/GUI qualification remains separate.
+was made public. Later Windows synthetic source/guest qualification is bounded
+and does not qualify protected production owners or GUI. macOS and other platform
+qualification remain separate.
 See [G06 validation](../reports/reconstruction-2026-10-04/changes-metadata-validation.md)
 for exact source, artifact, test and preserved-failure scope.

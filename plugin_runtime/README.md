@@ -1,18 +1,20 @@
 # 可替换 Wasm 执行后端原型
 
-历史原型起于 0.1.9-test.10（当时消息协议 v6）。当前 SDK／宿主使用运行协议 v7，支持 legacy guest ABI v1 和任务 ABI v2；[Windows SDK 候选](../reports/codex-morrow-v1.1/windows-sdk-013-2026-10-01.md)分别说明兼容与实验范围。本轮在 Windows x64 上运行了使用 SDK 的实际 C／C++／Rust Wasm 模块，并通过可信适配器接入 HostRuntime 与 SQLite。应用版本、数据库格式和 Flutter 工作台未切换。
+当前开发入口见 [项目状态](../docs/PROJECT_STATUS.md)、[SDK兼容](../docs/PLUGIN_SDK_COMPATIBILITY.md)和[IO作业](../docs/PLUGIN_IO_JOBS.md)。C07 Windows原IoWorker目录命令已限定通过，公开Core FileList仍Unsupported；C08私有secret factory仅设计。下文test.x计数和lint结果按其历史阶段阅读；当前整库Clippy仍exit101／10既有诊断／owned0，不能沿用早期“Clippy通过”作为当前资格。
+
+历史原型起于 0.1.9-test.10（当时消息协议 v6）。当前 SDK／宿主使用运行协议 v7，支持 legacy guest ABI v1 和任务 ABI v2；[Windows SDK 候选](../reports/codex-morrow-v1.1/windows-sdk-013-2026-10-01.md)分别说明兼容与实验范围。早期Windows原型运行了实际C／C++／Rust Wasm，并通过可信适配器接入HostRuntime与SQLite；当轮版本和数据库边界按原报告保留。当前完整SDK资格与发行状态以项目状态为准。
 
 ## 执行与权限边界
 
-插件编译为独立 wasm32-unknown-unknown 模块，导出 memory 和 morrow_run() -> i32。入口无参数：ABI v1 使用固定输入回归，ABI v2 从固定任务导入读取动态输入并交付有界结果。原生队列已实现；持久实例与恢复仍待建立。模块不含 start 段，准备阶段不执行插件代码。
+插件编译为独立 wasm32-unknown-unknown 模块，导出 memory 和 morrow_run() -> i32。入口无参数：ABI v1 使用固定输入回归，ABI v2 从固定任务导入读取动态输入并交付有界结果。原生队列、实例池和有界资源恢复接口已有后续实现；完整长期持久调度及平台产品资格仍开放。模块不含 start 段，准备阶段不执行插件代码。
 
 ABI v1 唯一允许的导入为 morrow_v1.exchange(input_offset, input_length, output_offset, output_capacity) -> i32。四个参数均为 Wasm i32；成功返回正响应长度，传输失败返回 -1，边界违规直接终止执行。输出容量必须为 65536 字节，输入为 1–65536 字节，两个区域必须有效且不重叠。正长度只代表收到协议消息，权限拒绝与提交结果须由 SDK 解码判断。
 
 后端先验证完整输出空间，再复制输入，之后调用宿主；写回时重新取得线性内存视图。guest 不能指定宿主路径、连接、实例、权限或时钟。可信调用方通过闭包绑定实际连接，核心仍执行逐次授权。默认运行库只依赖执行器和 Wasm 解析器；原生可选 packages feature 增加核心适配，绑定包摘要、能力上限和连接。低层 Runner 的核心依赖仍仅用于测试。后端不拥有数据库或授权配置。
 
-Runner 可复用已校验模块，每次 run 创建独立 Store，结束后释放该次线性内存。当前不维护服务实例、共享内存租约或插件间调用图。取消标志只影响执行／响应交付，不能代替核心撤权，也不能删除已提交内容。
+Runner 可复用已校验模块，每次 run 创建独立 Store，结束后释放该次线性内存。Runner每次Wasm Store仍独立；上层已有有界服务与依赖图，但不因此提供公共共享内存租约或长期实例持久调度。取消标志只影响执行／响应交付，不能代替核心撤权，也不能删除已提交内容。
 
-## 可复现的实验限额
+## 基础exchange的可复现实验限额
 
 | 项目 | 默认值／固定上限 |
 | --- | --- |
@@ -32,7 +34,7 @@ Wasmi 1.1.0 的 fuel 和 StoreLimits 用于验证可替换解释后端，锁定�
 
 无论 guest 返回错误码、trap、fuel 耗尽或取消，宿主调用都可能已经提交，必须查询固定操作 ID 的权威结果。guest 返回的 20 等示例状态值不构成提交证明；验收还独立重开 SQLite 检查操作回执和内容／事件关联。
 
-## 验证
+## 历史原型验证
 
 ```powershell
 pwsh -File tool/prepare_plugin_c_wasm.ps1
@@ -53,7 +55,7 @@ pwsh -File tool/verify_plugin_runtime.ps1
 
 产物和 SHA-256 见 [三语言运行记录](../reports/plugin-sdk-wasm-three-languages.md)。日志：build/plugin-runtime/verification.log；最终去除调试符号的模块已重新执行同一链路与错误路径。编译工具链或源码变化后应重新生成摘要。
 
-当前只证明 Windows 上该解释后端与三语言示例的执行结果。已增加原生实验包校验、不可变安装与绑定执行，见 [插件包说明](../docs/PLUGIN_PACKAGE.md)。启用／更新状态、签名／依赖锁定、长驻服务、多实例持久调度、mmap、审计封存、UI 对接及其余平台仍待完成。实验 ABI 尚未锚定；未发布插件包或 Release。
+当前只证明 Windows 上该解释后端与三语言示例的执行结果。已增加原生实验包校验、不可变安装与绑定执行，见 [插件包说明](../docs/PLUGIN_PACKAGE.md)。Manager启用状态与批准依赖锁、有限服务、UI1及实例池已有各自后续接口；签名产品资格、长期持久调度、公共mmap、完整第三方UI与各平台验收仍开放。后续guest/transport兼容候选已有各自冻结原件；完整SDK尚未冻结，项目发行状态以项目状态页为准。
 
 原生 Worker 已通过四个实际包的后台任务／排空执行，并覆盖队列满、取消隔离、排空期限、旧连接拒绝和宿主线程故障。结果见 [验证记录](../reports/plugin-worker-validation.md)。版本化任务输入已接通，Flutter 主界面接入尚未完成。
 

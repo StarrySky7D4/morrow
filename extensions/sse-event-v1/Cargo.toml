@@ -1,0 +1,26 @@
+[workspace]
+resolver = "2"
+members = ["guests/rust"]
+
+[package]
+name = "morrow-sse-event-v1"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+
+[lib]
+crate-type = ["rlib", "staticlib"]
+
+[dependencies]
+capnp = "=0.24.1"
+morrow-plugin-sdk = { path = "../../sdk/rust", optional = true }
+
+[build-dependencies]
+capnpc = "=0.24.0"
+sha2 = "=0.10.9"
+
+[features]
+# One static archive contains this payload codec and the unchanged C transport.
+# This codec identity is never a new package permission or runtime import.
+c-transport = ["dep:morrow-plugin-sdk", "morrow-plugin-sdk/wasm-c"]

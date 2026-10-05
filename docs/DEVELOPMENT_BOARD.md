@@ -1,5 +1,29 @@
 # 后续编码看板
 
+## 当前开发检查点（2026-10-05）
+
+本次源码同步目标为 `codex/windows-sdk-convergence-20261005`，承接云端 `468ef2e` 并保存 C02–C07 Windows 复验与 SDK 增量。应用源码为 `0.1.9-test.58+62`；已发布下载仍为 test.56 测试预览，本次不构建或发布新安装包。
+
+C07 原 owner 九组 115 方法、原始 SDK 定向回归 42 方法及网络 100 方法分别通过；115 已含取消7 / 目录owner14 / native16，42 保留过滤及 child helper 边界。整库 Clippy 仍有 10 处既有诊断（exit101），本轮 owned 诊断0。327 SDK / 57 冻结输入保持原字节，完整 SDK26 / G04 继续 OPEN。
+
+目录捕获、分页、结束和清理已进入原 IoWorker；原授权、时钟、预算与 Unknown 无重放规则保持。下一阶段 C08 是可信工作线程的随机秘密生成与持有期零化，当前仅完成设计审查；picker / 祖先证明、公开目录协商、blob 耐久后端、生产入口及其他平台资格继续推进。
+
+当前统一入口为[项目状态](PROJECT_STATUS.md)、[SDK门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)和[本次同步范围](../reports/reconstruction-2026-10-05/documentation-sync.md)。下方日期条目保存当时执行与交付状态；其中“未提交／未推送”和旧“下一项”不覆盖本次检查点。
+
+2026-10-05 **C07 Windows 原 owner 目录命令有界通过**：原 `IoWorker` 的可信 selected-directory 捕获／分页／结束、单命令取消、未读交付与 idle 清理已接线；九组实际115方法通过，其中新取消7、新目录owner14和保留native16已包含在115内。原件42和network100分别fresh通过，保留过滤与child helper范围；不与C06历史、旧114、首个负向、子案例、时钟样本或命令数累计。格式检查及strict Rustc通过；整库Clippy仍exit101，10处既有源诊断逐一保持bootstrap字节，本轮owned诊断0。见 [C07范围／原始证据摘要](../reports/reconstruction-2026-10-05/directory-owner-sdk.md)。
+
+原Authority／Control时间、授权和交付校验方法保持，Control新增有界目录Admission记账。每个原clock样本与验证在同一短step中完成，native查询／私有解析、编码、取消谓词和实际root／lease／spool drop均在clock锁外；不能抢占同步OS，不当缓慢的可信clock closure仍可能阻塞共享时钟。global8包含queued／resident／retired tombstone，真实资源drop后才释放额度；累计费用不退，metadata allowance不是总RSS上限，Unknown不自动重放。
+
+**SDK26／G04继续OPEN**。生产protected owner9／真实session／StorageIoWorker／GUI、trusted-secret factory、picker／祖先来源、workspace task入口、新独立Dir request/schema与包feature/import/helperprofile协商、blob durable backend/history及其它平台尚未闭合；原公开FileList及conditional Replace保持Unsupported。普通合成Store和临时目录不替代生产owner。下方C06及更早日期说明保留其历史范围；最终代码资格SHA256为`773e36fa49013d79071a6cb9f9de4500cb74d99c5aec8042b70e39290ccdea7f`。
+
+2026-10-05 **C06 目录观察与分段字节 SDK**：独立Rust/C/C++17目录库13、blob库23、Windows native DirectoryBroker16分别通过；138共享wire vectors（目录76=16接受/60拒绝、blob62=15接受/47拒绝）、独立Rust7方法与19去重检查families通过，C++复执行8个C families不另加方法。当前接线重新实际执行原件42与网络100；42为精确parent名单的定向suite，有过滤/显式child helper排除，不能写整体零过滤。新增消费者均Windows native，没有新增directory/blob Wasm/guest协商；原SDK327/冻结57及旧客体不重建。完整runtime strictClippy真实FAIL101旧style保留，两处新增诊断修正后native16与该范围strictcompilePASS。原Core FileList继续Unsupported，Ticket取消/原owner队列与idle维护/picker祖先证明/fresh trusted-secret factory缺失，wholeblob backend/watch/rename/upload/conditionalReplace仍OPEN或Unsupported，Unknown不重放。G04/SDK26仍OPEN，未改前端/app版本，未commit/push/CI/发布。见 [C06实测](../reports/reconstruction-2026-10-05/directory-blob-sdk.md)、[接口](PLUGIN_DIRECTORY_BLOB_SDK.md)与[下一门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)。
+
+2026-10-05 **C05 SSE SDK 与独立分发**：新增独立Rust／C／C++17事件库，完整UTF-8／NUL与retry None/0/MAX；最终Windows库6、网络100（C04原98＋新增2）、准备策略11分别通过，原生83语料／19检查实现与跨语言编码核对通过。90文件源码包的27个分发测试、项目外两库／六newguest真实编译及WS/SSE四方法新产物执行通过；四方法属于100的再验证，旧客体不重建。首因竞态、UNLOCALIZED失败、驱动失败和修补均保留。原SDK327／冻结57和Windows分支保持，当前本地未提交／推送／CI／发布；生产owner/GUI、账户/TLS、普通token、其它平台及完整SDK26门槛仍OPEN。见 [SSE实测](../reports/reconstruction-2026-10-05/sse-event-sdk.md)、[分发资格](../reports/reconstruction-2026-10-05/channel-payload-distribution.md)、[后续门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)。
+
+2026-10-05 **C04 WebSocket 类型化 SDK**：新增独立 Rust／C／C++17 payload 库与新三语言 Wasm 示例，只复用原 channel import／包特性，不产生 socket 或 URL 权限。Windows Release 下原件42、网络98（原96＋新增2）、独立库6及准备策略11项分别通过；原生参照与 C／C++消费者另核对109个 wire vectors（38接受／71拒绝）、65536个 close code 和各37份编码产物，这些不是新增业务方法数。新夹具的握手失败、最小修补和复跑原样保留。原 SDK327／冻结57、C03能力契约和生产网络源码保持；当前仍为本地候选，未提交／推送／CI／发布，生产批准入口、账户／TLS、普通用户 token、GUI、其它平台及完整 SDK 冻结仍 OPEN。见 [实际结果与边界](../reports/reconstruction-2026-10-05/ws-message-sdk.md)、[SDK 接入](PLUGIN_WS_MESSAGE_SDK.md)和[后续门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)。
+
+2026-10-05 **C02 Windows 复验与 C03 SDK 推进**：在独立候选中检出云端 `468ef2e`，先修复 Windows 文件身份／工具布局、超时首因、背压及 registry 失败夹具问题，再完成原件42、网络96、changes runtime32（production30为子集）、Core18及指定回归；原 SDK327／冻结57恒同，所有初始失败保留。随后新增独立版本的 changes payload discovery 与严格消费者，Python182通过／2 POSIX skip、discovery9／preflight8及实际新旧 host×consumer 兼容通过；生产 route 仍为空／false、authority none。C02 已生成可恢复有界包，C03结果独立保存。原 Windows 分支／工作树保持；当前本地候选未提交／推送／CI／发布，protected owner／普通用户 token／GUI／其它平台和完整 SDK 冻结仍 OPEN。见 [Windows复验](../reports/reconstruction-2026-10-05/windows-sdk-revalidation.md)、[SDK新增阶段](../reports/reconstruction-2026-10-05/changes-sdk-discovery.md)与[接入指南](PLUGIN_CHANGES_METADATA_SDK.md)。
+
 2026-10-04 **Windows 开发支线源码检查点**：目标分支 `codex/windows-sdk-qualification-20261003`，基线 `63f38d4a`。本次保存云端 Linux 汇合源码及累计 Windows SDK 工具、IO 操作历史、受管 SSE 实现和 W15 WebSocket 待验证草稿。C01 当前无密钥 Windows 定向验证为 42/42，原 SDK327／冻结57保持不变；WebSocket transport 与 19 项新测试尚未编译／运行，受保护 owner、普通用户 token、GUI、其它平台和完整 SDK 冻结仍 OPEN。此前报告中的未提交／未推送为各次验证归档时的历史状态；本条记录此次源码同步范围，不扩大验收结论。见 [汇合核验与范围](../reports/reconstruction-2026-10-04/windows-convergence-recheck.md)。
 
 
@@ -331,7 +355,7 @@
 
 状态含义：已验子集＝对应限定实现通过；下一项＝可开始编码；待前置＝须先通过列出的门槛；可并行＝不修改正在整合的核心契约；研究＝不得作为运行后端上线。本轮隔离修正与验证证据见 [修正报告](../reports/io-safety-refactor-2026-09-19.md)；前置提交608ccc3已同步到同名远端开发分支；本轮后续改动的本地验证不代表已发布或主应用端到端验收。
 
-## 当前状态摘要
+## 早期状态摘要（历史；当前状态见顶部）
 
 编码协作自2026-09-21采用SubagentBridge辅助：主代理负责规划、审核、验证和本地整合；模型接收有清晰边界的编码任务与必要上下文，不直接提交或推送。后续按用户要求扩大SubagentBridge承担的实现与测试范围，两个Flash模型均可使用max；主代理保留规划、关键审核、验证与合并。首个GLM max候选经纠正一处断言后，服务会话17项回归及限定分析通过，见[接入记录](../reports/subagentbridge-coding-2026-09-21.md)。该首轮仅新增回归；后续窗口修正与新构建见下方最新报告。
 

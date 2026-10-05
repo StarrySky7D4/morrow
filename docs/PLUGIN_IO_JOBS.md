@@ -1,6 +1,6 @@
 # IO-B2：有界 IO 作业与契约路由
 
-状态：运行时作业层已有生命周期修正与托管准入子集，见 [整合修正报告](../reports/io-safety-refactor-2026-09-19.md)、[托管准入报告](../reports/managed-io-jobs-2026-09-19.md) 和 [子调用接线报告](../reports/brokered-io-jobs-2026-09-19.md)。它把**完整任务输入**、**每作业契约路由**和**有界队列／调用／字节／期限**组合成一个可 submit／poll／read／cancel 的作业，并保证停止后不把迟到结果当作成功。真实网络或文件后端由 IO-D 提供；本层不直接访问外部网络或文件，持久操作由核心 Store 保存。
+状态：运行时作业层已有生命周期修正与托管准入子集，见 [整合修正报告](../reports/io-safety-refactor-2026-09-19.md)、[托管准入报告](../reports/managed-io-jobs-2026-09-19.md) 和 [子调用接线报告](../reports/brokered-io-jobs-2026-09-19.md)。它把**完整任务输入**、**每作业契约路由**和**有界队列／调用／字节／期限**组合成一个可 submit／poll／read／cancel 的作业，并保证停止后不把迟到结果当作成功。普通guest作业通过可信契约路由访问后端；同一IoWorker另有原owner私有File/Mutation命令以及Windows directory命令，实际OS工作在原owner线程完成。持久业务操作由核心Store保存；目录观察本身不代表持久提交。
 
 ## 结构
 
@@ -17,6 +17,10 @@
 - `router: Box<dyn Router + Send>`：可信宿主为每个作业提供的契约路由；`route(call, request)` 按 guest 顺序收到每次调用，执行器从不重试。
 - `JobHandle`：`poll()` 非阻塞观察、`read(max_bytes)` 恰好一次读取终态、`cancel()` 请求取消。
 - `drain(timeout)` 停止接收并收紧所有期限，仍有效的 Ready 等待 read/drop，或等到期限才收尾；`stop()` 先撤权再取消；`try_finish()` 只在执行线程结束后归还核心所有权。
+
+## Windows目录owner命令
+
+`capture_directory`／`next_directory_page`／`finish_directory`是可信已选择File上的私有入口，复用原Manager、IoBinding、Ticket与原clock。global8观察包括queued／resident／retired资源，单页pending／未读、累计费用无退款、Unknown不重放；真正drop后释放额度，停止仍需实际join。原clock仅串行取样及对应检查，native查询／解析／编码／取消谓词／drop在锁外，同步OS不可抢占。C07限定结果见 [目录owner记录](../reports/reconstruction-2026-10-05/directory-owner-sdk.md)，源码与完整开放门槛见 [项目状态](PROJECT_STATUS.md)。这不启用原公开Core FileList，也不证明secret factory或picker／祖先来源。
 
 ## 界限
 
@@ -76,6 +80,6 @@ brokered 的累计计费为 `input + 每次 request + 每次获准 response_limi
 
 ## 仍未覆盖
 
-主应用与持久网络／服务批准、文件系统后端、guest 动态发布路由、OAuth/持久账户凭据与内容范围管理、异步 guest 挂起与多次作业并发、执行器池化、真实远端效果核对与录制回放、按配额退休。单独使用本层不授予资源权限；托管 HTTP 须另获端点批准。原生宿主显式发布服务及 Principal service scopes 已通过本机限定验证，见 [IO-D2](PLUGIN_MANAGED_SERVICE.md)；文件变更后端仍待接入。
+主应用完整批准链、通用文件系统公共入口、guest动态发布路由、OAuth/持久账户、异步guest挂起、完整并发组合、真实远端效果核对与录制回放仍未覆盖；已有私有File/Mutation和Windows目录后端不等于这些产品能力。单独使用本层不授予资源权限；托管 HTTP 须另获端点批准。原生宿主显式发布服务及 Principal service scopes 已通过本机限定验证，见 [IO-D2](PLUGIN_MANAGED_SERVICE.md)；文件变更后端仍待接入。
 
 托管 HTTP 的原实例端点批准与实际传输见 [IO-D1](PLUGIN_MANAGED_HTTP.md)。其资源守卫保留至最终 read/drop，独立端点撤权不必撤销整个插件实例也能阻止旧响应交付。

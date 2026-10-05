@@ -1,0 +1,690 @@
+{
+  "format": "DRCV0001",
+  "scope": "Independent schema semantics, not OS enumeration/grant/SDK freeze",
+  "vectors": [
+    {
+      "name": "file-no-length",
+      "accept": true,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "18e2f8fe64dfbb57e224a95197e8430d1efd8dc54fd250b8b374c444a9bd7d7b"
+    },
+    {
+      "name": "file-zero",
+      "accept": true,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "e7681b30f7b1c5d9565eac25485a6275ce8de250293d1ad6b9f99de9b53a41de"
+    },
+    {
+      "name": "file-max-length",
+      "accept": true,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "05a157d550ffe25f4ae8227b763c13283a74b20fba06c74d471b43bd4ba316e3"
+    },
+    {
+      "name": "utf8-unicode",
+      "accept": true,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "0d2aecb8f8bf4345cb78f2675ab969bb0c0a22c4550b3e4f5d8840ddf5f0d3f6"
+    },
+    {
+      "name": "utf16-isolated-surrogate",
+      "accept": true,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "30d779efb03a74372206d36227630cf458c48906af8cf1f695ec1a6c19191da2"
+    },
+    {
+      "name": "directory",
+      "accept": true,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "3bd35a82472a41dbf328c2737a3faae99e4c7a6c53357f25ce66d930d8717f9e"
+    },
+    {
+      "name": "other",
+      "accept": true,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "79972ae40f60d7483e660c3ba32e5ed327443d723b0e20240318e8d0fcd94e80"
+    },
+    {
+      "name": "empty-terminal",
+      "accept": true,
+      "entries": 0,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 128,
+      "wire_sha256": "3d3d9d3af9fd27d91959814fdfbe95dfe7f8ada53d0bcd22c3d1bcfbf6306373"
+    },
+    {
+      "name": "max-sequence",
+      "accept": true,
+      "entries": 1,
+      "sequence": 18446744073709551615,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "5e41016d58f9ac40bda62c19ff0216662bba44408a47ef28c06e251dc74634f4"
+    },
+    {
+      "name": "expanded-compatible",
+      "accept": true,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 232,
+      "wire_sha256": "f452a8af810b35ff3cdfd81d981f856c89c80442bab01b86d5aea20117ece004"
+    },
+    {
+      "name": "32-entries",
+      "accept": true,
+      "entries": 32,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 2432,
+      "wire_sha256": "bfd3d4735ad8a652e36bde7944c447279f03178eba28c833564603773acd5f15"
+    },
+    {
+      "name": "16k-names",
+      "accept": true,
+      "entries": 2,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 16640,
+      "wire_sha256": "d5ec449b3a186c2f8233082c79f7fe595b3ee8f467a2b43075b4c6e5701b1474"
+    },
+    {
+      "name": "valid-shared-data",
+      "accept": true,
+      "entries": 2,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 4352,
+      "wire_sha256": "fdc9954cb9c631015dda8bf20db043d4f71ce692c41fb64160562b1420676a99"
+    },
+    {
+      "name": "version-0",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "07d8bcb30d2a8b0810f37497ed04bf332723c5994852100ee7663e975b496132"
+    },
+    {
+      "name": "version-2",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "b4922e1041bd909025e44f4cbaa0cf469d2f14e2d6e533efae8dbfa4d4411ec0"
+    },
+    {
+      "name": "version-65535",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "35645b2a97d825451d6808abb7fe5ac72d0837bdb7c43f9ebf5dc579928f5764"
+    },
+    {
+      "name": "digest-missing",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 168,
+      "wire_sha256": "8e080d5d614e9500b78ddd552a78e61a1f7502b08aec87d2d59954b6b8d0280c"
+    },
+    {
+      "name": "digest-short",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "e209bc1ddd6b329529207fce328a1a8313b7821c20966c7e7a0510b14b90a630"
+    },
+    {
+      "name": "digest-long",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 208,
+      "wire_sha256": "11080019322f3b0b326df80526ec5b168b96be17f25fc9b8a4b0deebbd430a04"
+    },
+    {
+      "name": "digest-wrong",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "3feaa597ae18426d747b692cac44c658543c43bdb4e6d19163bffc49ab839044"
+    },
+    {
+      "name": "epoch-zero",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "3529f0bdab39d87c41bd26faefb75dd772ac336393b70bcd34b82a6e58725fc5"
+    },
+    {
+      "name": "epoch-short",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "92379b2bab856a6690af119e2e8ad9acb89c2e065e8c8f0a389277fccae3ec0c"
+    },
+    {
+      "name": "epoch-long",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 208,
+      "wire_sha256": "0320f81c577428cf48d0e8897e979500bcf1ffb3bfc0e58e0c71547c50ea6054"
+    },
+    {
+      "name": "sequence-zero",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "e359b2384270415e7772549751b73fc15378d9340440c7c0b42fa46be21840c3"
+    },
+    {
+      "name": "33-entries",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 2504,
+      "wire_sha256": "691ebbfe6f61bbbbd90e672d652bb6b3cf110fd273a91d2097f063ec67677910"
+    },
+    {
+      "name": "16k-plus-one-names",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 16648,
+      "wire_sha256": "79aa400a6bb0893183e3c35045ad95f31aafb8a905ee6cf0faa95930967c253a"
+    },
+    {
+      "name": "shared-data-aggregate-over-limit",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 10256,
+      "wire_sha256": "21aae8ee771e8041c96ebf1130716133662e5c05d61da93342e535710ed72e78"
+    },
+    {
+      "name": "duplicate-id",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 272,
+      "wire_sha256": "dbde080c8aa899f35350d825bd2bcb2a53697a21645400a7565a065604b5dd32"
+    },
+    {
+      "name": "invalid-name--1",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 192,
+      "wire_sha256": "48972cefe1f1d704ff470d1976b7700946acc89f122ea7c1d0bcb7ce0dd06803"
+    },
+    {
+      "name": "invalid-name-2e-1",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "d15fd365a1e890ff8512c66cf97ce8c8808d21ebea8574500a0f1a8410f626a3"
+    },
+    {
+      "name": "invalid-name-2e2e-1",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "842621c863cf030b26318fe77ed33943e04eae77144013ea5e524976df4bbc22"
+    },
+    {
+      "name": "invalid-name-610062-1",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "251376ef1d723725364e861d8b4646dcdac0c64c8492af7c769ced40cc90f3ba"
+    },
+    {
+      "name": "invalid-name-612f62-1",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "c5155859098e22fce4e192e4e1cac9baf23ca5cc2b4f1e7736f9d7638cdaf759"
+    },
+    {
+      "name": "invalid-name-615c62-1",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "ed9a8e05e99e2654f431932e427a1dfea7762b076dc5b0205f61155de48f20d3"
+    },
+    {
+      "name": "invalid-name-ff-1",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "b5e60dba1372a33c2e1ad798a2517c5672e20530a8a6591bcd81e193fd24c053"
+    },
+    {
+      "name": "invalid-name-c0af-1",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "ee1dc28db6417f0689ef107be6909471888a81ee9e1e9b1e911ba310b7c4ce1f"
+    },
+    {
+      "name": "invalid-name-eda080-1",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "5be088fa34b22574e06a29a1c1c6517d2958f92cbe6fd4c5000a6c029989e760"
+    },
+    {
+      "name": "invalid-name-78-2",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "6abe3485164222dadb1640ef8ef5a27b203c6d5a6d60ed84207821d77c15ea0f"
+    },
+    {
+      "name": "invalid-name-0000-2",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "91cafa396245b6c30188c0b1d9957fdc4c194d122eefd3089d1922f933f2b8af"
+    },
+    {
+      "name": "invalid-name-2e00-2",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "acb0118c0ca46585b65af4cc2900164b550ce675f2676012c2c81ef36316aad8"
+    },
+    {
+      "name": "invalid-name-2f00-2",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "03a3cea6783bd6a50ac37b7c9aca9255d7a38f1c13a99b7f65ce7cb32342216c"
+    },
+    {
+      "name": "invalid-name-5c00-2",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "6ef1b55cf52b35582261060e2bf6814845f3c95e89f5ae853e7c060aa418c812"
+    },
+    {
+      "name": "encoding-0",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "c172133f82b0d5c475c59674a36506f3d090448556711805166057282aa09649"
+    },
+    {
+      "name": "encoding-3",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "f1fa0b156ee8b920f250f5e60fa0df06346294244f0753903c271c85548a7204"
+    },
+    {
+      "name": "encoding-65535",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "a7fef71491c1350489c9d6f4c9a04d806ea14c9d7d9f6c45ece2709c54de8a33"
+    },
+    {
+      "name": "kind-0",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "20e42857f2676f5084bc0c7051a2dad1060ac3a7753ba11b0a1bfb3bcf1981d2"
+    },
+    {
+      "name": "kind-4",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "b53357f43dcb1ecf159715945f2fd78fc39c190ab8e0b0c3247595b3a31ed544"
+    },
+    {
+      "name": "kind-65535",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "63eb976e2fc740b49df9e36ea9a1ca692a3facc5426068f5399894c085475a4e"
+    },
+    {
+      "name": "nonfile-length-2",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "46f235966bcf4b9f22e4860b588bdb7708208e416618edab4d2701a40914a318"
+    },
+    {
+      "name": "nonfile-length-3",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "648329a8732dfa027fa7c6eece25b04ecc2514b839c218509e3b664689743af9"
+    },
+    {
+      "name": "false-length-with-nonzero",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "a444ad3847f319cb93b70f80efbc27f0b7f1d0e36ffa00b5c3ab618f63152332"
+    },
+    {
+      "name": "entry-id-zero",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 200,
+      "wire_sha256": "1645c09fe7659689e1a7d8477e74498cd635d0076a51f49f8b769047fe240518"
+    },
+    {
+      "name": "entry-id-short",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 199,
+      "wire_sha256": "23ba375dcf766a0bfca010cb2c6e64fda3d98d0e3212d535b3d7bd0c3caa1db4"
+    },
+    {
+      "name": "entry-id-long",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 201,
+      "wire_sha256": "7aa94d5c18b18c98474b36a990d9e58b11634416faa0cb6e794c88085c3686bf"
+    },
+    {
+      "name": "truncated-0",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 0,
+      "wire_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "truncated-1",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 1,
+      "wire_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+    },
+    {
+      "name": "truncated-4",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 4,
+      "wire_sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+    },
+    {
+      "name": "truncated-7",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 7,
+      "wire_sha256": "002809c3836ec346159b31b890e099cd64b14b26c3ce8a5b8c22b0515be09cd9"
+    },
+    {
+      "name": "truncated-8",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 8,
+      "wire_sha256": "c63761c39f8366284a6f506bef58955fa4819dead612576e56aaba76f85b8685"
+    },
+    {
+      "name": "truncated-9",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 9,
+      "wire_sha256": "e29577ebd2f9077461320738114a097c4a9c9f3d3142e9800576e7d5db2c9bd6"
+    },
+    {
+      "name": "truncated-199",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 199,
+      "wire_sha256": "71ecb1de821e33587a44d92804a034dccab2a57a0b6994a4da887dcdad2eef9d"
+    },
+    {
+      "name": "tail-byte",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 201,
+      "wire_sha256": "208e859643a7c160af0dad00889b62d839b228ffdc6f4a371e854ca295cc2ad7"
+    },
+    {
+      "name": "tail-word",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 208,
+      "wire_sha256": "9db7a753d1ca6011a19fc4e9eb7374203af23f0095b0985b4e07b68f5e90b090"
+    },
+    {
+      "name": "wire-cap",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 65537,
+      "wire_sha256": "a85e57ed7ffdb1d97c36d6799a13d890a5f51f426cf963b52dd52c4cb6536641"
+    },
+    {
+      "name": "null-root",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 16,
+      "wire_sha256": "c363a7bc246a6180ed9330821f26c31b9a43d94a8462e5d95d8d6face2253822"
+    },
+    {
+      "name": "capability-root",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 16,
+      "wire_sha256": "f5ab48189d6d0733cc0879f04206c559b89a5191eaefa3f042519ceb04e54208"
+    },
+    {
+      "name": "far-unknown-segment",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 16,
+      "wire_sha256": "77ec851ac33c6413084d7eeefaeec59340b0033a54be3b09a9d1a571bc51988b"
+    },
+    {
+      "name": "far-oob",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 32,
+      "wire_sha256": "989e31ba77b3d227e6d22d4a6010bb2273decb2dd16df19470abf671969f72c1"
+    },
+    {
+      "name": "double-far-short",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 32,
+      "wire_sha256": "dd8f8fe1f192f91e6bae4186ed8d37e316e391389b0584498337573126fb0c75"
+    },
+    {
+      "name": "far-landing-far",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 32,
+      "wire_sha256": "7ae4fb9bc334d06d6a720fc2f79f3c4ee40c301cb3dad0a5543b276645f0ab99"
+    },
+    {
+      "name": "513-segments",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 2056,
+      "wire_sha256": "0744b2c7998ea405d3602d60d09e3cb05e983b1a1c7837f2865ddeb793cbc946"
+    },
+    {
+      "name": "valid-single-far",
+      "accept": true,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 216,
+      "wire_sha256": "34aefbbd97677a403bc15ebcbe29374159623fe23577a0d4f7e81343e62b5939"
+    },
+    {
+      "name": "valid-double-far",
+      "accept": true,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 224,
+      "wire_sha256": "a45aff9d9b584539cd48f830f10fd7beca5f9547dd9938c15365fd9d5bd518fa"
+    },
+    {
+      "name": "valid-unused-empty-segment",
+      "accept": true,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 208,
+      "wire_sha256": "89bfc31aa13910296d1bd991b5eb29e9eb45cef1b31ed2dca332031f81579c70"
+    },
+    {
+      "name": "unknown-capability",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 208,
+      "wire_sha256": "08e223541a3a017adad1f711083ed36cc7863ee6e523cd35643a90e3e97f8953"
+    },
+    {
+      "name": "unknown-cycle",
+      "accept": false,
+      "entries": 1,
+      "sequence": 1,
+      "terminal": true,
+      "wire_bytes": 208,
+      "wire_sha256": "d8fbdf39ca5f976ab9db3d91a353debcf8fe9f64807a77870f4942d8f708e22e"
+    }
+  ]
+}

@@ -177,7 +177,11 @@ impl StreamLease {
         };
         if result.is_err() {
             self.pending = None;
-            self.cancel.cancel();
+            // Expiry is already enforced by the worker's original timer. Do not
+            // turn that actual Timeout into a cleanup-induced Cancelled race.
+            if result != Err(Error::Timeout) {
+                self.cancel.cancel();
+            }
         }
         result
     }
@@ -237,7 +241,7 @@ impl StreamLease {
     }
     /// If EOF was not reached, finishing requests cancellation; it never drains silently.
     pub async fn finish(mut self) -> Completion {
-        if self.terminal.borrow().is_none() {
+        if self.terminal.borrow().is_none() && Instant::now() < self.deadline {
             self.cancel.cancel();
         }
         match self.worker.take().expect("single worker").await {

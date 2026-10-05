@@ -1,6 +1,8 @@
 # 宿主选中文件的有界固定读取
 
-2026-09-26：原生运行时新增 `FileBroker::grant_open_file`。Linux 本地及三语言既有 guest 模块已验证；后续已接入 [工作台原生后台文件任务](PLUGIN_FILE_TASKS.md)，私有协议和独立 Dart 客户端已补齐；文件选择器／任务页面、Windows 实机和其他平台适配仍未验收。本接口不开放目录或文件写入，也不改变 IO wire/schema。
+最新 Windows 有界资格见[项目状态](PROJECT_STATUS.md)：C07 的 115 项原 owner 回归包含 file_owner 的 12 项，使用普通合成数据。本文保留单文件读取合同及原三语言夹具历史；这些结果不替代系统选择器、真实用户 GUI、protected owner 或其他平台验收。
+
+2026-09-26：原生运行时新增 `FileBroker::grant_open_file`。Linux 本地及三语言既有 guest 模块已验证；后续已接入 [工作台原生后台文件任务](PLUGIN_FILE_TASKS.md)，私有协议和独立 Dart 客户端已补齐；该阶段未验收文件选择器／任务页面、Windows 实机和其他平台适配；后续范围按本文顶部当前状态区分。本接口不开放目录或文件写入，也不改变 IO wire/schema。
 
 ## 授权与所有权
 
@@ -46,7 +48,7 @@ cargo test --locked --offline --manifest-path plugin_runtime/Cargo.toml \
 python tool/plugin_transport_baseline.py verify
 ```
 
-最后五项测试直接使用保留的三语言 Wasm 字节，并在测试内创建明确声明 FileRead 的临时测试包。它们没有改写冻结文件，但**不表示原来的 HTTP 包获得文件权限**，也不计为原包文件读取验收。目录／设备拒绝专项仅在 Unix 运行；Windows 需独立运行实际文件与共享句柄测试。
+最后五项测试直接使用保留的三语言 Wasm 字节，并在测试内创建明确声明 FileRead 的临时测试包。它们没有改写冻结文件，但**不表示原来的 HTTP 包获得文件权限**，也不计为原包文件读取验收。该阶段目录／设备拒绝专项仅在 Unix 运行，未以这些结果替代 Windows 实际文件与共享句柄测试；后续 Windows 原 owner 合成回归按顶部当前状态单独记录。
 
 完整结果与下一门槛见 [开发记录](../reports/plugin-selected-file-2026-09-26.md)。
 

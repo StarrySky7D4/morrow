@@ -4,7 +4,7 @@
 
 ## 当前来源与工具
 
-实际 companion 是 `C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex`。仓库内 `companions/morrow-codex` 是旧 mirror，本次未用它作产品来源。原固定 Codex 为 `44fe510ce3ee61c8ef623adcbf89b901c73ddd61`，CC Switch 为 `846de29c13ac4d65f164db8c15dd5fd58e29f972`。本轮完整文件盘点没有重新认证下载来源；其用途是绑定当前本机字节与已交接的 004 patch。
+实际 companion 是 `<外部 companion 源码目录>/morrow-codex`。仓库内 `companions/morrow-codex` 是旧 mirror，本次未用它作产品来源。原固定 Codex 为 `44fe510ce3ee61c8ef623adcbf89b901c73ddd61`，CC Switch 为 `846de29c13ac4d65f164db8c15dd5fd58e29f972`。本轮完整文件盘点没有重新认证下载来源；其用途是绑定当前本机字节与已交接的 004 patch。
 
 新增只读工具 [m03_g0_graph_011_check.py](../tool/m03_g0_graph_011_check.py) 检查当前 graph 合同、目标 std 可用性、清单/锁/feature/patch、全锁 vendor 覆盖和源码差异。`--metadata` 仅执行真实产品入口的 `cargo metadata --offline --locked --filter-platform x86_64-pc-windows-msvc`；不编译、不准备锁、不下载、不修改 companion。每次输出必须是独立新目录；个人账号、Cargo/Git 配置、编译 wrapper 不从环境继承。
 

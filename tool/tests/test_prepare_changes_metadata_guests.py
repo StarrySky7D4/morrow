@@ -31,4 +31,26 @@ class PreparationTests(unittest.TestCase):
             (r/'core/schemas/changes_metadata_v1.wire').write_bytes(data)
             with patch.object(M,'ROOT',r),patch.object(M,'EXT',e),self.assertRaises(ValueError):M.validate_contract()
 
+    def test_explicit_windows_paths_with_spaces_are_preserved(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)/'LLVM with spaces';root.mkdir()
+            cc=root/'clang.exe';cxx=root/'clang++.exe';cc.write_bytes(b'compiler-c');cxx.write_bytes(b'compiler-cpp')
+            sysroot=Path(td)/'WASI sysroot';sysroot.mkdir()
+            self.assertEqual(M.compiler_paths(td,cc,cxx,sysroot),(cc.resolve(),cxx.resolve(),sysroot.resolve()))
+    def test_partial_explicit_route_or_missing_input_fails_closed(self):
+        with tempfile.TemporaryDirectory() as td:
+            cc=Path(td)/'clang.exe';cc.write_bytes(b'synthetic')
+            for inputs in [(cc,None,None),(None,cc,None),(None,None,td),(cc,cc,None),(cc,None,td),(None,cc,td)]:
+                with self.assertRaises(ValueError):M.compiler_paths(td,*inputs)
+            with self.assertRaises(FileNotFoundError):M.compiler_paths(td,cc,Path(td)/'missing.exe',td)
+            with self.assertRaises(FileNotFoundError):M.compiler_paths(td,cc,cc,Path(td)/'missing-sysroot')
+    def test_existing_sdk_layout_keeps_defaults_and_windows_exe_selection(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);(root/'bin').mkdir();(root/'share/wasi-sysroot').mkdir(parents=True)
+            for name in ['clang','clang++','clang.exe','clang++.exe']:(root/'bin'/name).write_bytes(b'synthetic')
+            with patch.object(M,'os',type('OS',(),{'name':'nt'})()):
+                self.assertEqual(M.compiler_paths(root),(root/'bin/clang.exe',root/'bin/clang++.exe',root/'share/wasi-sysroot'))
+            with patch.object(M,'os',type('OS',(),{'name':'posix'})()):
+                self.assertEqual(M.compiler_paths(root),(root/'bin/clang',root/'bin/clang++',root/'share/wasi-sysroot'))
+
 if __name__=='__main__':unittest.main()

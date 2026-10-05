@@ -181,8 +181,14 @@ async fn original_deadline_expires_while_waiting_for_demand_and_does_not_renew_a
         .unwrap();
     head_rx.await.unwrap();
     assert_eq!(lease.deadline(), deadline);
-    tokio::time::sleep_until(deadline + Duration::from_millis(30)).await;
+    assert!(lease.terminal().is_none(), "worker must still own its demand wait");
+    // This current-thread executor cannot publish the worker's timer result
+    // while its thread is blocked. Delivery must not cancel that original timer.
+    std::thread::sleep(deadline.saturating_duration_since(Instant::now()) + Duration::from_millis(30));
+    assert!(lease.terminal().is_none(), "exercise delivery before worker publication");
     assert_eq!(lease.next_chunk().await.err(), Some(Error::Timeout));
+    assert_eq!(lease.next_chunk().await.err(), Some(Error::Timeout));
+    assert!(lease.terminal().is_none(), "delivery itself must not invent completion");
     let done = lease.finish().await;
     assert_eq!(done.outcome, Err(Error::Timeout));
     assert!(done.worker_joined && !done.http_eof);
@@ -234,8 +240,10 @@ async fn cancel_pending_body_read_and_cancelled_next_future_do_not_lose_demand()
     );
     gate_tx.send(()).unwrap();
     assert_eq!(lease.next_chunk().await.unwrap().unwrap(), b"x"[..]);
+    let original_deadline = lease.deadline();
     let cancel_task = tokio::spawn(async move {
         tokio::time::sleep(Duration::from_millis(30)).await;
+        assert!(Instant::now() < original_deadline, "explicit predeadline cancellation control");
         token.cancel();
     });
     assert_eq!(lease.next_chunk().await.err(), Some(Error::Cancelled));

@@ -6,9 +6,19 @@ Deja un poco de espacio para las ideas de mañana.
 
 Morrow (明隙) es un espacio de trabajo local basado en tarjetas que evoluciona hacia una arquitectura de plugins multiplataforma. Antes se llamaba daemon; el paquete es `morrow_studio`. En Windows, Flutter proporciona la interfaz y un anfitrión Rust con plugins Wasm aislados ejecuta la lógica. Web ejecuta Rust/Wasm localmente en el navegador; Android aún conserva la ruta anterior. La equivalencia completa del producto y los plugins entre plataformas sigue sin validarse.
 
+## Estado de desarrollo (2026-10-05)
+
+El punto de control del código de la aplicación es **0.1.9-test.58+62**. La línea de desarrollo prevista es `codex/windows-sdk-convergence-20261005`, basada en cloud `468ef2e` y los cambios C02–C07. El [estado del proyecto](../../docs/PROJECT_STATUS.md) reúne el estado canónico y los próximos pasos; el [informe C07 de alcance limitado](../../reports/reconstruction-2026-10-05/directory-owner-sdk.md) documenta las pruebas efectivas de Windows.
+
+La validación local de Windows con datos sintéticos pasó: 115 métodos de la ruta owner original, incluidos 7 de cancelación de directorio, 14 de directory owner y 16 de directorio nativo; 42 métodos de regresión originales; 100 métodos de red en 11 programas. La ejecución de 42 métodos conserva 14 filtros frozen-region y uno remote-reader. Los auxiliares hijos no cuentan como métodos aprobados adicionales. Estas cifras no implican aceptación del SDK completo ni del producto.
+
+Las operaciones de directorio de confianza capture/page/finish usan la cola IoWorker, Manager, runtime, instancia, IoBinding y aprobación FileList originales. El muestreo del reloj y la comprobación de permisos usan pasos atómicos breves; la cuota se libera tras la liberación real de recursos nativos. Unknown no se reproduce automáticamente y los cursores no vuelven al inicio. Las bibliotecas de cargas tipadas WebSocket/SSE, versionadas de forma independiente, ofrecen codecs Rust, C y C++ con validación guest limitada; los codecs de directorio/blob y su estado acotado también tienen validación local.
+
+**SDK26/G04 sigue OPEN; el SDK completo no está congelado.** Owners de producción protegidos, entrada de tareas GUI/espacio de trabajo, selector y procedencia de ancestros, fábrica de secretos de confianza nuevos, negociación de nuevos request/import/feature/helper profile de directorio, historial durable blob, validación completa del producto de servicios entrantes, TLS/API reales y otras plataformas siguen pendientes o NOT_RUN. C08 es solo diseño. Esta validación no publica un nuevo instalador ni constituye un SDK estable.
+
 ## Descarga y compatibilidad
 
-Versión actual: **0.1.9-test.56+60**, una **versión preliminar de prueba para Windows x64**, no estable. Descarga el ZIP de Windows, el ZIP del código fuente correspondiente y la lista SHA-256. Extrae todo y ejecuta `morrow_studio.exe`; conserva las DLL, el anfitrión, `data`, `plugins` y las licencias.
+Última versión de prueba publicada de la aplicación: **0.1.9-test.56+60**, una **versión preliminar de prueba para Windows x64**, no estable. Descarga el ZIP de Windows, el ZIP del código fuente correspondiente y la lista SHA-256. Extrae todo y ejecuta `morrow_studio.exe`; conserva las DLL, el anfitrión, `data`, `plugins` y las licencias.
 
 [Descargar test.56](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56) · [Versión compatible test.1](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
@@ -23,7 +33,7 @@ Versión actual: **0.1.9-test.56+60**, una **versión preliminar de prueba para 
 - Diseño e idiomas: contenido adaptable y páginas de ajustes separadas; chino, inglés, ruso, francés, alemán, español, japonés, coreano y portugués.
 - Protección en Windows: almacenamiento unificado en Rust, sellado de registros de auditoría, instantáneas, copia y recuperación de la identidad original, y uso simultáneo limitado de una misma identidad.
 
-## Optimización y validación
+## Cambios y validación de la versión publicada test.56
 
 test.56 añade acciones contextuales, orden y arrastre de tarjetas, edición individual de tips y plugins de tema independientes. Mejora el diseño de columnas, la actualización de filtros y el cierre. Siguen pendientes el guardado automático completo y la equivalencia entre plataformas.
 
@@ -65,10 +75,11 @@ flutter build web --no-web-resources-cdn
 
 La arquitectura objetivo combina interfaz Flutter/Dart, núcleo Rust portátil y motores de plugins intercambiables. Las fronteras de ejecución usan contratos fijos; la persistencia y los intercambios propios usan Protobuf + LZ4. Los SDK C/C++/Rust y la interfaz declarativa de plugins siguen en desarrollo. No se admiten plugins TS/JS ni se requieren plugins Dart dinámicos.
 
-El SDK completo aún no está congelado. Se han conectado solicitudes HTTP/HTTPS controladas, nodos de servicio API limitados y gestión de identidades TLS. Quedan la conciliación de resultados Unknown entre reinicios, el sistema de archivos completo, los SDK IO en tres lenguajes y la validación multiplataforma. La apertura aún recorre todo el historial; faltan la canalización completa de lectura/cálculo, los niveles de almacenamiento histórico y la limpieza automática.
+El SDK completo aún no está congelado. Se han conectado solicitudes HTTP/HTTPS controladas, nodos de servicio API limitados y gestión de identidades TLS. Quedan la conciliación de resultados Unknown entre reinicios, el sistema de archivos completo, la negociación de nuevos request/import/feature/helper profile de directorio y la validación multiplataforma. La apertura aún recorre todo el historial; faltan la canalización completa de lectura/cálculo, los niveles de almacenamiento histórico y la limpieza automática.
 
 ## Documentación
 
+- [Estado actual del proyecto](../../docs/PROJECT_STATUS.md)
 - [Notas de versión y validación](../../reports/0.1.9-test.56-release.md)
 - [Tablero de desarrollo](../../docs/DEVELOPMENT_BOARD.md)
 - [Hoja de ruta de arquitectura](../../docs/FUTURE_ROADMAP.md)

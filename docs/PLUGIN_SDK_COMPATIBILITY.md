@@ -1,5 +1,23 @@
 # SDK guest 兼容候选基线
 
+当前完整SDK26仍OPEN；项目进度、源版本与发布状态见 [项目状态](PROJECT_STATUS.md)。C07在Windows普通合成Store／临时目录上完成原IoWorker目录队列、合作取消和idle清理：九组115方法（已含7取消／14owner／16native），原件42与network100分别fresh复验，不累加为完整SDK资格。原SDK327／冻结57未重编或改写。
+
+五个实际rustfmt文件与strict库Rustc通过；io_jobs全文件17处旧格式hunks保留。整库Clippy仍exit101，10处既有源诊断、本轮owned0。当前C08仅为原owner生成私有新鲜secret的设计，尚无实现或测试。生产owner9／GUI、picker／祖先来源、公开Dir import协商与blob持久后端等门槛见 [完整下一步](../reports/reconstruction-2026-10-05/sdk-next-gates.md)。C07原始结果及恢复范围见 [阶段记录](../reports/reconstruction-2026-10-05/directory-owner-sdk.md)。
+
+## 历史限定验证记录
+
+以下日期、计数、未提交／推送与待接线描述只对应当轮记录，不作为最新实现或发布状态；原报告和失败证据保持。
+
+2026-10-05 **C06 目录观察与分段字节 SDK**：独立Rust/C/C++17目录库13、blob库23、Windows native DirectoryBroker16分别通过；138共享wire vectors（目录76=16接受/60拒绝、blob62=15接受/47拒绝）、独立Rust7方法与19去重检查families通过，C++复执行8个C families不另加方法。当前接线重新实际执行原件42与网络100；42为精确parent名单的定向suite，有过滤/显式child helper排除，不能写整体零过滤。新增消费者均Windows native，没有新增directory/blob Wasm/guest协商；原SDK327/冻结57及旧客体不重建。完整runtime strictClippy真实FAIL101旧style保留，两处新增诊断修正后native16与该范围strictcompilePASS。原Core FileList继续Unsupported，Ticket取消/原owner队列与idle维护/picker祖先证明/fresh trusted-secret factory缺失，wholeblob backend/watch/rename/upload/conditionalReplace仍OPEN或Unsupported，Unknown不重放。G04/SDK26仍OPEN，未改前端/app版本，未commit/push/CI/发布。见 [C06实测](../reports/reconstruction-2026-10-05/directory-blob-sdk.md)、[接口](PLUGIN_DIRECTORY_BLOB_SDK.md)与[下一门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)。
+
+目录/blob codec是独立native载荷接口，未加入原required-feature/import白名单，未重写旧Core/schema/SDK合同。当前42/100使用原件模块/包，只重建本轮实际host/test程序；不是新增guest路径或旧包重封装。原生C ABI/std::vector/Rust结构仍不是通用插件装载、安全隔离或跨平台稳定承诺。各receipt只证明声明的source范围，C06 index当轮稳定与C05历史index drift actor NOT_YET_LOCALIZED分开。
+
+2026-10-05 **C05 SSE SDK 与独立分发**：新增独立Rust／C／C++17事件库，完整UTF-8／NUL与retry None/0/MAX；最终Windows库6、网络100（C04原98＋新增2）、准备策略11分别通过，原生83语料／19检查实现与跨语言编码核对通过。90文件源码包的27个分发测试、项目外两库／六newguest真实编译及WS/SSE四方法新产物执行通过；四方法属于100的再验证，旧客体不重建。首因竞态、UNLOCALIZED失败、驱动失败和修补均保留。原SDK327／冻结57和Windows分支保持，当前本地未提交／推送／CI／发布；生产owner/GUI、账户/TLS、普通token、其它平台及完整SDK26门槛仍OPEN。见 [SSE实测](../reports/reconstruction-2026-10-05/sse-event-sdk.md)、[分发资格](../reports/reconstruction-2026-10-05/channel-payload-distribution.md)、[后续门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)。
+
+2026-10-05 **C04 WebSocket 类型化 SDK**：新增独立 Rust／C／C++17 payload 库与新三语言 Wasm 示例，只复用原 channel import／包特性，不产生 socket 或 URL 权限。Windows Release 下原件42、网络98（原96＋新增2）、独立库6及准备策略11项分别通过；原生参照与 C／C++消费者另核对109个 wire vectors（38接受／71拒绝）、65536个 close code 和各37份编码产物，这些不是新增业务方法数。新夹具的握手失败、最小修补和复跑原样保留。原 SDK327／冻结57、C03能力契约和生产网络源码保持；当前仍为本地候选，未提交／推送／CI／发布，生产批准入口、账户／TLS、普通用户 token、GUI、其它平台及完整 SDK 冻结仍 OPEN。见 [实际结果与边界](../reports/reconstruction-2026-10-05/ws-message-sdk.md)、[SDK 接入](PLUGIN_WS_MESSAGE_SDK.md)和[后续门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)。
+
+2026-10-05 **C02 Windows 复验与 C03 SDK 推进**：在独立候选中检出云端 `468ef2e`，先修复 Windows 文件身份／工具布局、超时首因、背压及 registry 失败夹具问题，再完成原件42、网络96、changes runtime32（production30为子集）、Core18及指定回归；原 SDK327／冻结57恒同，所有初始失败保留。随后新增独立版本的 changes payload discovery 与严格消费者，Python182通过／2 POSIX skip、discovery9／preflight8及实际新旧 host×consumer 兼容通过；生产 route 仍为空／false、authority none。C02 已生成可恢复有界包，C03结果独立保存。原 Windows 分支／工作树保持；当前本地候选未提交／推送／CI／发布，protected owner／普通用户 token／GUI／其它平台和完整 SDK 冻结仍 OPEN。见 [Windows复验](../reports/reconstruction-2026-10-05/windows-sdk-revalidation.md)、[SDK新增阶段](../reports/reconstruction-2026-10-05/changes-sdk-discovery.md)与[接入指南](PLUGIN_CHANGES_METADATA_SDK.md)。
+
 2026-10-03 **W08–W11 本地推进与 Linux 汇合**：channel 45 个无密钥方法通过，最小释放顺序修复后相关 36 方法复验、新目录零残留；独立 SDK 的原 Rust/C/C++ task 均真实离线编译 exit0；W05 原 native 14 个产物在受限 medium token 复跑通过、67 输入恒同。用户提供的 Linux 17 路径源码增量已按原 SHA/blob 合入，原 25 项本地修改保留。云端 Close199 是外部汇总，本包缺完整 Linux 测试日志；当前没有新增 Linux/GUI/受保护 owner 运行资格，整个 SDK 仍 OPEN。见 [夹具清理](../reports/reconstruction-2026-10-03/windows-channel-fixture-cleanup.md)、[独立编译](../reports/reconstruction-2026-10-03/windows-sdk-standalone-builds.md)、[受限 token](../reports/reconstruction-2026-10-03/windows-sdk-restricted-token.md)、[汇合范围](../reports/reconstruction-2026-10-03/linux-windows-convergence.md)。本轮未提交／推送／CI／发布；下方历史记录保持原范围。
 
 ## 2026-10-03 原生 codec 与源码独立开发工具

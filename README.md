@@ -8,15 +8,19 @@ Morrow（明隙）是本地优先、卡片化的灵感工作台，正在向全�
 
 [打开 Web 预览](https://starrysky7d4.github.io/morrow/)：无需安装，工作区和附件原件保存在设备的浏览器存储中。已验证 Chrome 和 Windows Edge 的保存、刷新恢复与附件下载；完整功能边界与最新构建验收状态见 [Web 进度表](docs/WEB_PARITY.md)，发布方式见 [部署说明](docs/WEB_DEPLOYMENT.md)。
 
-## 开发支线状态（2026-09-29）
+## 开发进展（2026-10-05）
 
-本分支 `codex/m03-stream-revocation-backpressure` 基于 `codex/io-safety-refactor` 的文件读取与创建／删除、三语言 Guest 和 Windows 本地预览增量，另保存 M02 原生会话及 M03 撤权／系统背压的限定资格候选。这些改动尚未合并至 `main`，本地预览 ZIP 也不是新的公开 Release。A010 原失败保留；A011 与 B011 各完成一次生产方运行及独立只读复核。系统选择器人工验收、修复后的新成品、完整 M03、OS 部分写入故障、产品 G0、跨平台和 SDK 冻结仍未完成。详见 [本分支状态](docs/DEVELOPMENT_BRANCH_STATUS.md)和 [M03 交付检查点](reports/codex-morrow-v1.1/delivery-2026-09-29.md)。
+当前应用源码检查点为 **0.1.9-test.58+62**。目标开发支线为 `codex/windows-sdk-convergence-20261005`，代码基于 cloud `468ef2e` 及 C02–C07 增量。完整现状、证据和下一步以 [项目当前状态](docs/PROJECT_STATUS.md) 为准；[C07 限定资格报告](reports/reconstruction-2026-10-05/directory-owner-sdk.md)保存实际 Windows 验证边界。
+
+Windows 本地合成验证完成原 owner 通路 115 个方法（其中目录取消 7、目录 owner 14、原生目录 16，均已包含在 115 中）、原回归 42 个方法，以及网络 11 个程序的 100 个方法。原 42 方法回归保留 frozen-region 的 14 个过滤项和 remote-reader 的 1 个过滤项，子进程辅助程序不另计通过方法。这些数字不代表完整 SDK 或产品验收。
+
+目录 capture／page／finish 已进入原受信任 IoWorker 队列，沿用原 Manager、runtime、instance、IoBinding 与 FileList 审批。时钟采样与授权验证在短原子步骤内完成，原生资源实际释放后才释放配额；Unknown 不自动重放，游标不回绕。独立版本的 WebSocket／SSE 类型化载荷库已提供 Rust、C、C++ 编解码接口及限定 Guest 验证，目录／blob 编解码与有界状态也已完成本地资格。
+
+**SDK26／G04 仍为 OPEN，完整 SDK 未冻结。** 生产受保护 owner、GUI／工作区任务入口、系统选择器及祖先来源证明、新鲜受信任密钥工厂、新目录 request／import／feature／helper profile 协商、blob 持久历史、真实 TLS／API 和其他平台仍待完成或未运行。C08 仅为设计；本次资格没有发布新安装包，也不构成稳定 SDK。
 
 ## 下载与兼容性
 
-开发分支检查点：**0.1.9-test.57+61**，保存独立 supervisor、owner 恢复与通道接入进展，生产通道资格仍有失败，SDK 未冻结，Linux 开发尚待接续。此编号没有公开安装包或 Release，详见 [test.57 检查点](reports/0.1.9-test.57-checkpoint.md)。
-
-已发布下载版：**0.1.9-test.56+60**，桌面安装包提供 **Windows x64 测试预览版**，不是稳定版。下载 Windows ZIP、对应源码 ZIP 和 SHA-256 清单；完整解压后运行 `morrow_studio.exe`，保留所有 DLL、宿主、`data`、`plugins` 与许可文件。
+最新公开下载版：**0.1.9-test.56+60**，桌面安装包提供 **Windows x64 测试预览版**，不是稳定版。下载 Windows ZIP、对应源码 ZIP 和 SHA-256 清单；完整解压后运行 `morrow_studio.exe`，保留所有 DLL、宿主、`data`、`plugins` 与许可文件。
 
 [下载 test.56](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56) · [test.1 兼容测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
@@ -31,7 +35,7 @@ Morrow（明隙）是本地优先、卡片化的灵感工作台，正在向全�
 - 布局与语言：响应式内容布局、独立设置页；中文、英文、俄文、法文、德文、西班牙文、日文、韩文和葡萄牙文。
 - Windows 内容保护：Rust 核心统一保存、审计封存、内容库快照、原身份备份与恢复；同身份并发占用受限。
 
-## 本版优化与验证
+## 已发布 test.56 的优化与验证
 
 test.56 增加卡片、小组件、任务与音乐列表的右键操作、卡片排序与拖拽、tips 逐条编辑及独立主题插件；修复宽屏瀑布流重排、筛选原位更新与安全关闭。发布记录包含 60 项 Flutter 回归、4 项原生集成及 17 项 Windows 实机布局回归。正式界面的完整自动保存尚未完成，详见 [test.56 发布说明](reports/0.1.9-test.56-release.md)。
 
@@ -73,10 +77,11 @@ flutter build web --no-web-resources-cdn
 
 目标架构为 Flutter／Dart 界面、可移植 Rust 核心及可替换插件执行后端。运行期边界采用固定契约；持久化与自有交换采用 Protobuf＋LZ4。C／C++／Rust SDK 与声明式插件 UI 正在推进，暂不支持 TS／JS 插件，也不要求动态 Dart 插件。
 
-完整 SDK 尚未冻结。已接入受管 HTTP／HTTPS 请求、有限 API 服务节点与 TLS 身份管理；主线源码包含 C／C++／Rust 实验 IO SDK、项目模板和原包真实 HTTP 验证。此开发分支继续实现有界文件读取、创建／删除与 Guest 审批／恢复路径，相关限定证据见[本分支状态](docs/DEVELOPMENT_BRANCH_STATUS.md)；它们尚未进入公开 test.56 包。入站服务 SDK、条件 Replace、系统选择器人工验收、完整文件系统、认证／流式网络、跨重启核对与跨平台资格仍待完成。详见 [插件系统当前状态](docs/PLUGIN_SYSTEM_STATUS.md)。开库仍扫描全量历史；完整读取／计算流水线、历史分层与自动清理尚未实现。
+完整 SDK 尚未冻结，SDK26／G04 仍为 OPEN。已接入受管 HTTP／HTTPS 请求、有限 API 服务节点与 TLS 身份管理；源码包含 C／C++／Rust 实验 IO SDK、项目模板和原包真实 HTTP 验证。当前目录 owner、类型化 WebSocket／SSE 载荷库及目录／blob 编解码的 Windows 限定资格见 [项目当前状态](docs/PROJECT_STATUS.md)，不能作为真实 TLS／API 或生产通路验收。这些源码增量不属于公开 test.56 包。新目录 request／import／feature／helper profile 协商、完整入站服务产品资格、条件 Replace、系统选择器人工验收、完整文件系统、跨重启核对与跨平台资格仍待完成。详见 [插件系统当前状态](docs/PLUGIN_SYSTEM_STATUS.md)。开库仍扫描全量历史；完整读取／计算流水线、历史分层与自动清理尚未实现。
 
 ## 文档
 
+- [项目当前状态（统一入口）](docs/PROJECT_STATUS.md)
 - [本版发布说明与验证](reports/0.1.9-test.56-release.md)
 - [开发看板与后续任务](docs/DEVELOPMENT_BOARD.md)
 - [未来架构路线](docs/FUTURE_ROADMAP.md)

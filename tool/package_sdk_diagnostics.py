@@ -80,8 +80,14 @@ Original LICENSE and NOTICE apply to the bundled sources.
 
 
 def identity(info):
-    return (info.st_dev, info.st_ino, info.st_mode, info.st_size,
-            info.st_mtime_ns, info.st_ctime_ns)
+    # Windows path/descriptor stat disagree on ctime in Python 3.12; birth
+    # time is consistent. Python 3.11 ctime already represents birth time.
+    timestamp = (getattr(info, 'st_birthtime_ns', info.st_ctime_ns)
+                 if os.name == 'nt' else info.st_ctime_ns)
+    # Path stat alone synthesizes filename-based execute bits on Windows.
+    mode = info.st_mode & ~0o111 if os.name == 'nt' else info.st_mode
+    return (info.st_dev, info.st_ino, mode, info.st_size,
+            info.st_mtime_ns, timestamp)
 
 
 def checked_directory(path):

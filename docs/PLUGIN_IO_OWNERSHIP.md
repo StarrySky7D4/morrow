@@ -1,6 +1,6 @@
 # 网络作业的原存储所有权
 
-运行时支持把完整受保护存储容器交给 IO 执行线程。Windows 工作台 `Storage` 的适配已通过实际审计会话、受管 Wasm 与本机 HTTP 验证；Workbench Rust 应用入口已使用显式所有权状态，CLI／Flutter 的任务启动与面板仍待接线。应用保持 `0.1.9-test.52+56`。
+运行时支持把完整原宿主容器交给IO线程。Windows Storage审计会话和HTTP验证属于[2026-09-20历史报告](../reports/io-owner-2026-09-20.md)，后续CLI／Flutter私有任务已分项接线，见[主应用任务状态](PLUGIN_APP_IO_TASKS.md)；它们不是本次C07生产owner复验。当前源版本与发行状态见[项目状态](PROJECT_STATUS.md)，不沿用历史test.52版本作为最新版本。
 
 ## 完整容器与独立实例
 
@@ -27,8 +27,8 @@ IO 实例由原 Manager 在同一 HostRuntime 上明确准入。现有 Pool 保�
 
 ## 主应用后续接线
 
-[主应用任务状态](PLUGIN_APP_IO_TASKS.md)已区分存储在调用线程、在线程执行、停止待退出、已取回及待修复。Workbench Rust 入口可在原实例上启动、查询、读取、取消和回收任务；既有私有协议会在依赖存储的副作用前返回 Busy。存储不在当前线程时不重新开库。下一步接具体端点批准和 CLI／Flutter 的短响应任务消息，并处理 EOF／关闭等待退出；原 Manager 继续保留在调用侧。
+[主应用任务状态](PLUGIN_APP_IO_TASKS.md)已区分存储在调用线程、在线程执行、停止待退出、已取回及待修复。Workbench Rust 入口可在原实例上启动、查询、读取、取消和回收任务；既有私有协议会在依赖存储的副作用前返回 Busy。存储不在当前线程时不重新开库。后续短响应协议／CLI／Flutter接线按主应用任务文档分别记录；原Manager归属随所选owner模式保持，不能借目录增量构造第二份Store或批准来源。
 
-任务配置还需接入具体端点批准、凭据引用和真实独立插件调用；主应用完整路径验证后，再扩展 API 节点配置、文件系统与三语言 IO SDK。此项不意味着 SDK 整体稳定或全平台运行完成。
+原IO、文件和mutation已具各自可信任务入口；C07目录命令使用同一ManagedHostOwner，尚无Workbench目录task/public import。普通合成Store的115方法及定向42／network100复验不代表protected owner9／真实session／StorageIoWorker／GUI资格，也不关闭SDK26/G04或其它平台。
 
 证据见[所有权交接验证报告](../reports/io-owner-2026-09-20.md)，当前状态见[开发看板](DEVELOPMENT_BOARD.md)。

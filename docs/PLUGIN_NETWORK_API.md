@@ -1,6 +1,6 @@
 # 插件完整网络 API 对接能力
 
-修订日期：2026-09-14。状态：用户要求的完整目标、设计与待实施任务；**完整 guest 网络运行接口尚未实现；新增原生传输原型范围见 [双向 API 节点](PLUGIN_API_NODE.md)**。本文补充 [IO 设计](PLUGIN_IO_DESIGN.md)，取代将 HTTPS GET 首切片当作网络最终交付的理解。test.50 已通过的插件管理验证不构成联网证明。公共 schema 和冻结原件保持不变；后续双向传输原型不等于完整 SDK 已接入。
+设计起点：2026-09-14；当前实现状态按2026-10-05同步。本文保留完整网络目标；已有有界HTTP／服务、实验原channel上的managed POST SSE／WS及三语言payload库／分发，见[SSE](PLUGIN_SSE_EVENT_SDK.md)、[WS](PLUGIN_WS_MESSAGE_SDK.md)与[双向API节点](PLUGIN_API_NODE.md)。**完整网络SDK／生产批准／账户与跨平台资格仍OPEN**；总体状态见[项目状态](PROJECT_STATUS.md)。本文补充 [IO 设计](PLUGIN_IO_DESIGN.md)，取代将 HTTPS GET 首切片当作网络最终交付的理解。test.50 已通过的插件管理验证不构成联网证明。公共 schema 和冻结原件保持不变；后续双向传输原型不等于完整 SDK 已接入。
 
 ## 1. 完整交付的含义
 
@@ -105,7 +105,7 @@ gRPC 另设 profile：原生后端覆盖 unary、server/client/bidirectional str
 
 ## 7. 执行任务与退出门槛
 
-以下是完整工作包，尚未整项验收；NET-1的有界HTTP出站与NET-6的持久发送分类已形成 [托管HTTP子集](PLUGIN_MANAGED_HTTP.md)，不包含账户/流/三语言新接口或主应用。编号是工作包，不绑定某个 test.x 发布次数。IO-1 的 GET 跑通只能标内部进展。网络完整交付至少要求 NET-1 到 NET-7 在声明平台达到相应验收；NET-8 以独立 profile 验收并准确披露，不能借“不属于基础 profile”声称任意网络 API 已兼容。
+以下是完整工作包，尚未整项验收；NET-1的有界HTTP出站与NET-6的持久发送分类已形成 [托管HTTP子集](PLUGIN_MANAGED_HTTP.md)，该托管HTTP子集不涵盖完整账户／流／产品闭包；后续SSE／WS及三语言payload接口有独立限定记录，不回填NET-1整项通过。编号是工作包，不绑定某个 test.x 发布次数。IO-1 的 GET 跑通只能标内部进展。网络完整交付至少要求 NET-1 到 NET-7 在声明平台达到相应验收；NET-8 以独立 profile 验收并准确披露，不能借“不属于基础 profile”声称任意网络 API 已兼容。
 
 | 任务 | 依赖 | 交付与必须通过的证据 |
 | --- | --- | --- |

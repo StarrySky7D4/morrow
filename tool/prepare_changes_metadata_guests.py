@@ -36,6 +36,25 @@ def validate_contract():
         raise ValueError('Core/extension contract bytes or frozen profile digest mismatch')
 
 
+def compiler_paths(wasi, clang=None, clangxx=None, sysroot=None):
+    """An explicit Windows LLVM/sysroot route is complete or fails closed."""
+    supplied = (clang is not None, clangxx is not None, sysroot is not None)
+    if any(supplied) and not all(supplied):
+        raise ValueError('explicit compiler route requires --clang, --clangxx and --sysroot together')
+    wasi = Path(wasi).resolve(strict=True)
+    def executable(name):
+        plain = wasi / 'bin' / name
+        windows = plain.with_suffix('.exe')
+        return windows if os.name == 'nt' and windows.is_file() else plain
+    cc = Path(clang) if all(supplied) else executable('clang')
+    cxx = Path(clangxx) if all(supplied) else executable('clang++')
+    root = Path(sysroot) if all(supplied) else wasi / 'share/wasi-sysroot'
+    cc, cxx, root = (x.resolve(strict=True) for x in (cc, cxx, root))
+    if not cc.is_file() or not cxx.is_file() or not root.is_dir():
+        raise ValueError('compiler files and sysroot directory are required')
+    return cc, cxx, root
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output', required=True)
@@ -43,6 +62,9 @@ def main():
     p.add_argument('--c-target', required=True)
     p.add_argument('--wasi-sdk', required=True)
     p.add_argument('--pack-executable', required=True)
+    p.add_argument('--clang', help='explicit C compiler; requires --clangxx and --sysroot')
+    p.add_argument('--clangxx', help='explicit C++ compiler; requires --clang and --sysroot')
+    p.add_argument('--sysroot', help='explicit WASI sysroot; requires both compilers')
     args = p.parse_args()
     validate_contract()
     original={p['name']:(p['version'],p.get('checksum')) for p in tomllib.loads((ROOT/'sdk/rust/Cargo.lock').read_text())['package'] if 'source' in p}
@@ -55,6 +77,7 @@ def main():
         raise ValueError('output must not already exist; refusing overwrite')
     wasi = Path(args.wasi_sdk).resolve(strict=True)
     pack = Path(args.pack_executable).resolve(strict=True)
+    clang, clangxx, sysroot = compiler_paths(wasi, args.clang, args.clangxx, args.sysroot)
     for path in targets:
         if path == output or output in path.parents:
             raise ValueError('reusable cache must not be inside output')
@@ -79,7 +102,7 @@ def main():
             subprocess.run(command, cwd=ROOT, env=env, stdout=log, stderr=subprocess.STDOUT, check=True)
     try:
         toolchains = {}
-        for name, command in [('rustc',['rustc','--version']),('cargo',['cargo','--version']),('capnp',['capnp','--version']),('clang',[wasi/'bin/clang','--version'])]:
+        for name, command in [('rustc',['rustc','--version']),('cargo',['cargo','--version']),('capnp',['capnp','--version']),('clang',[clang,'--version']),('clangxx',[clangxx,'--version'])]:
             executable=Path(shutil.which(str(command[0])) or command[0]).resolve(strict=True)
             toolchains[name] = {'version':subprocess.check_output(list(map(str,command)),text=True).strip(),'path':str(executable),'sha256':sha(executable)}
         manifest['toolchains']=toolchains; save()
@@ -89,7 +112,7 @@ def main():
         run(cargo+['-p','morrow-changes-metadata-v1','--features','c-transport','--target-dir',targets[1]],targets[1])
         library=targets[1]/'wasm32-unknown-unknown/release/libmorrow_changes_metadata_v1.a'
         manifest['combined_library']={'path':str(library),'sha256':sha(library)}; save()
-        sysroot=wasi/'share/wasi-sysroot'; clang=wasi/'bin/clang'; clangxx=wasi/'bin/clang++'
+        manifest['sysroot'] = str(sysroot); save()
         common=['--target=wasm32-wasip1','--sysroot='+str(sysroot),'-O2','-Wall','-Wextra','-Werror','-I'+str(ROOT/'sdk/c/include'),'-I'+str(EXT/'include')]
         objects=[]
         for name in ['morrow_plugin_sdk','morrow_plugin_wasm','morrow_plugin_wasm_libc','morrow_plugin_task','morrow_channel_v1']:

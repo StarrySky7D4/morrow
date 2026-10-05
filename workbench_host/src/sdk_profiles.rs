@@ -1,8 +1,8 @@
 //! Read-only compiled host profile discovery. This never opens an owner,
 //! database or guest, and is neither an authorization nor a package preflight.
 use morrow_core::{
-    channel, dependency_call, io, mutation, plugin_package, runtime, service, service_resources,
-    task, ui,
+    changes_metadata, channel, dependency_call, io, mutation, plugin_package, runtime, service,
+    service_resources, task, ui,
 };
 use serde_json::{Value, json};
 
@@ -271,6 +271,45 @@ fn mutation_profile() -> Value {
     value
 }
 
+// This independently versioned optional payload detail preserves the original
+// channel envelope and the four existing extension-discovery records. It describes
+// static package preparation and a native library adapter, never a product route.
+fn channel_payload_discovery() -> Value {
+    json!({
+        "schema_version": 1,
+        "status": "compiled_metadata_only",
+        "authority": "none",
+        "package_preflight_required": true,
+        "profiles": [{
+            "id": "morrow.changes-metadata.v1",
+            "status": "experimental",
+            "required_features": [channel::FEATURE, changes_metadata::FEATURE],
+            "payload_contract": {
+                "version": changes_metadata::VERSION,
+                "sha256": digest(changes_metadata::profile_digest())
+            },
+            "wire_limits": {
+                "header_bytes": changes_metadata::HEADER_BYTES,
+                "payload_bytes": changes_metadata::MAX_PAYLOAD_BYTES,
+                "card_id_bytes": 256, "operation_id_bytes": 256, "cursor_bytes": 32
+            },
+            "count_limits": {"cards": changes_metadata::MAX_CARDS},
+            "channel_kind": "Events",
+            "duplex": false,
+            "finite_window": true,
+            "metadata_only": true,
+            "runtime_static_preparation_supported": true,
+            "native_source_required": true,
+            "native_source_adapter_compiled": cfg!(not(target_arch = "wasm32")),
+            "native_prerequisites": ["managed_channel_broker", "fresh_receiver_specific_changes_approval", "exact_package_binding", "live_store_binding"],
+            "workbench_routes": [],
+            "production_public_binding_available": false,
+            "automatic_run_available": false,
+            "qualification": "not_established_by_discovery"
+        }]
+    })
+}
+
 fn extension_discovery() -> Value {
     json!({
         "schema_version": 1,
@@ -335,6 +374,7 @@ pub fn descriptor() -> Value {
             "runtime_defaults": {"fuel": defaults.fuel, "memory_bytes": defaults.memory_bytes, "host_calls": defaults.host_calls},
             "channel_scope": {"trusted_local_sources": true, "managed_binding_required": true, "workbench_binding": false, "network_backend": false, "cloud_account": false, "automatic_replay": false},
             "native_binding_implementation": crate::channel_binding::implementation_descriptor(),
+            "payload_discovery": channel_payload_discovery(),
             "policy": "Finite package ceilings intersect the current host grant and original instance control; discovery grants nothing.",
             "task_lifecycle": "Multiple bounded frames within one fixed task; ACK, send acceptance, terminal cause and actual producer join are distinct. Unknown is not replayed."
         }],
@@ -350,6 +390,103 @@ pub fn descriptor() -> Value {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use sha2::Digest;
+
+    #[test]
+    fn changes_payload_uses_exact_compiled_wire_identity_and_bounds() {
+        let value = descriptor();
+        let detail = &value["profiles"][1]["payload_discovery"];
+        assert_eq!(detail["schema_version"], 1);
+        assert_eq!(detail["profiles"].as_array().unwrap().len(), 1);
+        let profile = &detail["profiles"][0];
+        assert_eq!(
+            profile["payload_contract"]["version"],
+            changes_metadata::VERSION
+        );
+        assert_eq!(
+            profile["payload_contract"]["sha256"],
+            format!("{:x}", sha2::Sha256::digest(changes_metadata::WIRE_SPEC))
+        );
+        assert_eq!(
+            profile["wire_limits"]["header_bytes"],
+            changes_metadata::HEADER_BYTES
+        );
+        assert_eq!(
+            profile["wire_limits"]["payload_bytes"],
+            changes_metadata::MAX_PAYLOAD_BYTES
+        );
+        assert_eq!(profile["wire_limits"]["card_id_bytes"], 256);
+        assert_eq!(profile["wire_limits"]["operation_id_bytes"], 256);
+        assert_eq!(profile["wire_limits"]["cursor_bytes"], 32);
+        assert_eq!(
+            profile["count_limits"]["cards"],
+            changes_metadata::MAX_CARDS
+        );
+        assert!(changes_metadata::MAX_PAYLOAD_BYTES <= channel::MAX_PAYLOAD_BYTES);
+        assert_eq!(
+            profile["required_features"],
+            json!([channel::FEATURE, changes_metadata::FEATURE])
+        );
+        assert_eq!(
+            value["profiles"][1]["runtime_supported_required_features"],
+            json!([plugin_package::TRANSFORM_HANDLERS_FEATURE, channel::FEATURE])
+        );
+        assert_eq!(
+            value["experimental_extensions"]["discovery"]["profiles"]
+                .as_array()
+                .unwrap()
+                .len(),
+            4
+        );
+        assert!(value.to_string().len() < 65536);
+    }
+
+    #[test]
+    fn changes_payload_metadata_cannot_establish_owner_or_product_route() {
+        let value = descriptor();
+        let detail = &value["profiles"][1]["payload_discovery"];
+        assert_eq!(detail["authority"], "none");
+        assert_eq!(detail["package_preflight_required"], true);
+        let profile = &detail["profiles"][0];
+        for key in [
+            "duplex",
+            "production_public_binding_available",
+            "automatic_run_available",
+        ] {
+            assert_eq!(profile[key], false);
+        }
+        for key in [
+            "finite_window",
+            "metadata_only",
+            "runtime_static_preparation_supported",
+            "native_source_required",
+        ] {
+            assert_eq!(profile[key], true);
+        }
+        assert_eq!(
+            profile["native_source_adapter_compiled"],
+            cfg!(not(target_arch = "wasm32"))
+        );
+        assert_eq!(
+            profile["native_prerequisites"],
+            json!([
+                "managed_channel_broker",
+                "fresh_receiver_specific_changes_approval",
+                "exact_package_binding",
+                "live_store_binding"
+            ])
+        );
+        assert_eq!(profile["workbench_routes"], json!([]));
+        assert_eq!(profile["channel_kind"], "Events");
+        assert_eq!(
+            value["profiles"][1]["channel_scope"]["workbench_binding"],
+            false
+        );
+        assert_eq!(
+            value["profiles"][1]["channel_scope"]["network_backend"],
+            false
+        );
+    }
 
     #[test]
     fn optional_discovery_keeps_legacy_envelope_and_output_bound() {

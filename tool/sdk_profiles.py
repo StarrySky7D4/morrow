@@ -181,6 +181,55 @@ def extension_discovery(discovery, platform, base_profiles):
             raise ValueError("invalid service resources header")
 
 
+# Exact known payload identity; this digest is SHA256 of the canonical wire
+# bytes, not a normalized Cap'n Proto schema or a source-authority assertion.
+CHANGES_PAYLOAD_SHA256 = "07fc0dc4c48eb17f85309207a441d6a07f3fb8e06aab5e2ce337a4b3c98f9089"
+
+
+def channel_payload_discovery(value, platform):
+    envelope = {"schema_version", "status", "authority", "package_preflight_required", "profiles"}
+    if (not isinstance(value, dict) or set(value) != envelope
+            or type(value.get("schema_version")) is not int or value["schema_version"] != 1
+            or value.get("status") != "compiled_metadata_only" or value.get("authority") != "none"
+            or value.get("package_preflight_required") is not True
+            or not isinstance(value.get("profiles"), list) or len(value["profiles"]) != 1):
+        raise ValueError("invalid channel payload discovery")
+    profile = value["profiles"][0]
+    fields = {"id", "status", "required_features", "payload_contract", "wire_limits", "count_limits",
+              "channel_kind", "duplex", "finite_window", "metadata_only", "runtime_static_preparation_supported",
+              "native_source_required", "native_source_adapter_compiled", "native_prerequisites", "workbench_routes",
+              "production_public_binding_available", "automatic_run_available", "qualification"}
+    if not isinstance(profile, dict) or set(profile) != fields:
+        raise ValueError("invalid changes payload profile fields")
+    for key, expected in {"id": "morrow.changes-metadata.v1", "status": "experimental", "channel_kind": "Events",
+                          "qualification": "not_established_by_discovery"}.items():
+        if profile.get(key) != expected:
+            raise ValueError("invalid changes payload " + key)
+    if profile.get("required_features") != ["channel-v1", "changes-metadata-v1"]:
+        raise ValueError("invalid changes payload features")
+    contract = profile.get("payload_contract")
+    if (not isinstance(contract, dict) or set(contract) != {"version", "sha256"}
+            or type(contract.get("version")) is not int or contract["version"] != 1
+            or contract.get("sha256") != CHANGES_PAYLOAD_SHA256):
+        raise ValueError("unsupported changes payload contract")
+    for key, expected in {"wire_limits": {"header_bytes": 150, "payload_bytes": 662, "card_id_bytes": 256,
+                                        "operation_id_bytes": 256, "cursor_bytes": 32},
+                          "count_limits": {"cards": 32}}.items():
+        actual = profile.get(key)
+        if not isinstance(actual, dict) or actual != expected or any(type(v) is not int for v in actual.values()):
+            raise ValueError("invalid changes payload " + key)
+    flags = {"duplex": False, "finite_window": True, "metadata_only": True,
+             "runtime_static_preparation_supported": True, "native_source_required": True,
+             "native_source_adapter_compiled": platform['arch'] != 'wasm32',
+             "production_public_binding_available": False, "automatic_run_available": False}
+    if any(type(profile.get(k)) is not bool or profile[k] != v for k, v in flags.items()):
+        raise ValueError("invalid changes payload authority or native prerequisites")
+    if (profile.get("workbench_routes") != [] or profile.get("native_prerequisites") != [
+            "managed_channel_broker", "fresh_receiver_specific_changes_approval", "exact_package_binding", "live_store_binding"]):
+        raise ValueError("invalid changes payload route prerequisites")
+    return value
+
+
 def validate_descriptor(value):
     if not isinstance(value, dict) or type(value.get("schema_version")) is not int or value["schema_version"] != 1:
         raise ValueError("unsupported SDK descriptor schema")
@@ -217,6 +266,8 @@ def validate_descriptor(value):
             if (not isinstance(scope, dict) or any(type(scope.get(k)) is not bool or scope[k] != v for k, v in expected.items())
                     or profile.get("workbench_routes") != []):
                 raise ValueError("unsupported channel profile scope")
+            if "payload_discovery" in profile:
+                channel_payload_discovery(profile["payload_discovery"], platform)
         for name, contract in contracts.items():
             contract_digest(contract)
             if "version" in contract:
@@ -446,6 +497,19 @@ def regular_path(path, label):
     return path.resolve(strict=True)
 
 
+def file_identity(metadata):
+    # On Windows Python 3.12, path stat retains creation-time ctime while
+    # descriptor stat reports change-time ctime. Birth time is consistent on
+    # both APIs; Python 3.11 uses creation-time ctime on both instead.
+    timestamp = (getattr(metadata, "st_birthtime_ns", metadata.st_ctime_ns)
+                 if os.name == "nt" else metadata.st_ctime_ns)
+    # Windows path stat synthesizes execute bits for .exe/.cmd/.bat names;
+    # descriptor stat has no filename. Keep file type and read/write mode exact.
+    mode = metadata.st_mode & ~0o111 if os.name == "nt" else metadata.st_mode
+    return (metadata.st_dev, metadata.st_ino, mode, metadata.st_size,
+            metadata.st_mtime_ns, timestamp)
+
+
 def file_snapshot(path, label, maximum=None):
     # Stream the explicitly selected file. O_NONBLOCK and fstat also refuse a
     # FIFO substituted after the initial path check on platforms supporting it.
@@ -467,12 +531,9 @@ def file_snapshot(path, label, maximum=None):
                 raise ValueError(label + " exceeds " + str(maximum) + " bytes")
             digest.update(chunk)
         after = os.fstat(stream.fileno())
-    def identity(metadata):
-        return (metadata.st_dev, metadata.st_ino, metadata.st_mode, metadata.st_size,
-                metadata.st_mtime_ns, metadata.st_ctime_ns)
-    if identity(before) != identity(after) or identity(after) != identity(path.lstat()) or size != after.st_size:
+    if file_identity(before) != file_identity(after) or file_identity(after) != file_identity(path.lstat()) or size != after.st_size:
         raise ValueError(label + " changed while reading")
-    return {"sha256": digest.hexdigest(), "bytes": size, "identity": identity(after)}
+    return {"sha256": digest.hexdigest(), "bytes": size, "identity": file_identity(after)}
 
 
 def parse_json(raw, label):

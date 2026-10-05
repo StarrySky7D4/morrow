@@ -1,4 +1,6 @@
-# 可暂停 IO：下一编码项
+# 可暂停 IO：2026-09-21 阶段实施计划
+
+本文保留 2026-09-21 的实施计划及逐项补充；其中“下一项”属于各自日期，不是当前任务排序。最新 owner／目录／网络限定范围见[项目状态](PROJECT_STATUS.md)。可信同步回调与 OS 查询不可强制抢占，已有局部适配不等于通用异步 IO 或完整 SDK 验收。
 
 2026-09-21。这是根据现有实现与[慢回调实测](../reports/service-slow-owner-2026-09-21.md)形成的执行计划。S0隔离原型已有[实际证据](../reports/suspendable-io-s0-2026-09-21.md)：6项测试及严格Clippy通过；后续[owned Runner改造](../reports/owned-runner-2026-09-21.md)已接入现有同步驱动；[broker阶段拆分](../reports/broker-phases-2026-09-21.md)也已接入现有同步入口。[受管HTTP等待与原拥有者调度](../reports/deferred-http-owner-2026-09-21.md)现已接入真实HTTP路径，[入站服务与出站等待组合](../reports/service-outbound-wait-2026-09-21.md)限定路径已通过，应用验收仍待完成，不增加新IO SDK稳定声明。
 

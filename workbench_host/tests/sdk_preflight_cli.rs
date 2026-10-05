@@ -76,6 +76,44 @@ fn check_identity(value: &Value, package: &Package) {
 }
 
 #[test]
+fn changes_metadata_required_feature_is_statically_prepared_without_source_approval() {
+    let cwd = tempfile::tempdir().unwrap();
+    let inputs = tempfile::tempdir().unwrap();
+    let module = wat::parse_str(
+        r#"(module
+        (import "morrow_channel_v1" "call" (func(param i32 i32 i32 i32)(result i32)))
+        (memory(export "memory")1)
+        (func(export "morrow_run")(result i32) unreachable))"#,
+    )
+    .unwrap();
+    let manifest = Package::manifest_for_changes_metadata(
+        "test.preflight-changes",
+        "1.0.0",
+        &module,
+        vec![morrow_core::plugin_package::proto::TransformHandler {
+            handler: "changes".into(),
+            input_type: "example.input".into(),
+            output_type: "example.output".into(),
+            max_input_bytes: 1024,
+            max_output_bytes: 1024,
+        }],
+    );
+    let package = Package::build(manifest.clone(), &module).unwrap();
+    let path = inputs.path().join("changes.mplugin");
+    fs::write(&path, package.archive()).unwrap();
+    let value = call(cwd.path(), &[path.into()], 0);
+    assert_eq!(value["status"], "prepared");
+    check_identity(&value, &package);
+    let mut invalid = manifest;
+    invalid.channel_declaration.as_mut().unwrap().kinds = vec![1];
+    let path = inputs.path().join("invalid-byte-stream-changes.mplugin");
+    fs::write(&path, invalid_archive(invalid, module)).unwrap();
+    let value = call(cwd.path(), &[path.into()], 2);
+    assert_eq!(value["phase"], "package_read_decode");
+    assert_eq!(value["error"]["code"], "package_rejected");
+}
+
+#[test]
 fn original_frozen_packages_prepare_without_execution_or_workbench_state() {
     let cwd = tempfile::tempdir().unwrap();
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../sdk/compat/guest-v1-rc1");

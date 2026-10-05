@@ -176,19 +176,28 @@ async fn local_cancel_joins_actual_backpressured_socket_sink_before_original_dea
         ..Quotas::default()};
     let lease=websocket::open(&client,request(&peer),vec![],quotas,
         SendContext::trusted(tokio::time::Instant::now()+WAIT,CancellationToken::new())).await.unwrap();
-    let payload=vec![0x5a;64*1024];let mut completed=0u64;let mut pending=false;
+    let payload=vec![0x5a;64*1024];let mut completed=0u64;let mut blocked=None;
     for _ in 0..quotas.max_outgoing_messages {
-        match tokio::time::timeout(Duration::from_millis(80),lease.send_message(message(MessageKind::Binary,&payload))).await {
+        let mut send=Box::pin(lease.send_message(message(MessageKind::Binary,&payload)));
+        match tokio::time::timeout(Duration::from_millis(80),send.as_mut()).await {
             Ok(Ok(()))=>completed+=1,
             Ok(Err(error))=>panic!("quota or transport failure cannot stand in for backpressure: {error:?}"),
-            Err(_)=>{pending=true;break;},
+            Err(_)=>{blocked=Some(send);break;},
         }
     }
-    assert!(pending,"a genuinely pending send is required; unsaturated runs do not pass");
-    assert!(completed>=8,"establish substantial actual flushes before pending send");
-    let began=tokio::time::Instant::now();
-    let done=tokio::time::timeout(Duration::from_secs(1),lease.cancel_and_wait()).await
-        .expect("cancel interrupts the real sink before the original deadline");
+    let mut blocked=blocked.expect("a genuinely pending send is required; unsaturated runs do not pass");
+    // OS buffer capacity varies. At least one real completed flush, followed by
+    // an observed pending send, establishes the actual stalled sink boundary.
+    assert!(completed>=1,"a real completed flush must precede the pending send");
+    assert!(std::future::poll_fn(|cx|std::task::Poll::Ready(std::future::Future::poll(blocked.as_mut(),cx))).await.is_pending(),
+        "the original send must still be pending at cancellation");
+    let began=tokio::time::Instant::now();let cancel_deadline=began+Duration::from_secs(1);
+    lease.cancel();
+    assert_eq!(tokio::time::timeout_at(cancel_deadline,blocked.as_mut()).await
+        .expect("explicit cancellation interrupts the still-owned send"),Err(Error::Transport(morrow_network_node_stream::Error::Cancelled)));
+    drop(blocked);
+    let done=tokio::time::timeout_at(cancel_deadline,lease.cancel_and_wait()).await
+        .expect("cancel interrupts and joins the real sink before the original deadline");
     assert!(done.worker_joined);assert_eq!(done.outcome,Err(Error::Transport(morrow_network_node_stream::Error::Cancelled)));
     assert!(done.outgoing_wire_bytes>=completed*(payload.len()as u64+14),"masked large-frame bytes really reached the transport");
     eprintln!("bounded saturated sink: {completed} flushed messages, {} wire bytes, {} ms cancel/join",done.outgoing_wire_bytes,began.elapsed().as_millis());

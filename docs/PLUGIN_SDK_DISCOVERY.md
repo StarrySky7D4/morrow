@@ -28,6 +28,18 @@ They separate byte ceilings, item/count ceilings and duration ceilings; package
 budgets and current grants can be stricter. Do not convert a count into bytes or
 use a long service-run ceiling as a per-request timeout.
 
+## Optional channel payload metadata
+
+C03 additionally publishes independently versioned optional
+`channel.payload_discovery` for `changes-metadata-v1`. It advertises the exact
+payload version/digest, Events-only required features, bounds and native approval
+prerequisites; authority remains none and production routes remain empty/false.
+This preserves descriptor schema1, legacy base/channel fields and the four
+extension records above. It does not advertise WS/SSE or directory/blob codecs as
+new package features or imports. Missing optional detail grants no authority.
+See [the changes guide](PLUGIN_CHANGES_METADATA_SDK.md) for field meanings and
+old/new host-consumer compatibility.
+
 ## What the records mean
 
 | Detail | Implemented scope | Boundaries that remain explicit |
@@ -67,8 +79,9 @@ changes no permission and issues no grant.
 
 For current implementation and execution evidence, see
 [the D01 discovery validation report](../reports/reconstruction-2026-10-04/sdk-discovery-validation.md).
-Full SDK, production owner, Windows token/GUI and cross-platform qualification
-remain open; a discovery result does not close those gates.
+Full SDK, production owner, ordinary Windows token/GUI and cross-platform
+qualification remain open; a discovery result does not close those gates.
+Current project scope and next gates are in [project status](PROJECT_STATUS.md).
 
 ## Selected-host package preparation
 

@@ -833,6 +833,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-fs-directory-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
 name = "morrow-network-node-stream"
 version = "0.1.0"
 dependencies = [
@@ -858,6 +867,7 @@ name = "morrow-plugin-runtime"
 version = "0.1.9-test.50"
 dependencies = [
  "morrow-core",
+ "morrow-fs-directory-v1",
  "prost",
  "sha2 0.10.9",
  "wasmi",

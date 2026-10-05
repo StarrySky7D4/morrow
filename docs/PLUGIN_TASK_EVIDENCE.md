@@ -1,6 +1,8 @@
 # 纯转换历史证据与隔离重放：test.34–test.39
 
-test.34 建立实际捕获、可保存原件和独立执行验证；当前应用版本为 `0.1.9-test.39+44`，已建立[原子内容关联](PLUGIN_COMMITTED_EVIDENCE.md)，默认工作台 create／apply 和设置保存均接入实际捕获。本文单观察说明保留 schema 1 的历史及现行语义；schema 2 的共用包批次见[批量证据](PLUGIN_BATCH_EVIDENCE.md)。捕获本身不提交内容或签名，完整多包流程仍不可由此重放。
+本文保留 test.34–test.39 的契约演进与原验证记录；下文各阶段的版本、格式、“当前／下一步”和测试数字均按该历史阶段解释。应用与平台最新范围见[项目状态](PROJECT_STATUS.md)，本次文档同步不重跑或增加旧证据资格。
+
+test.34 建立实际捕获、可保存原件和独立执行验证；本文 test.39 历史应用基线为 `0.1.9-test.39+44`，已建立[原子内容关联](PLUGIN_COMMITTED_EVIDENCE.md)，默认工作台 create／apply 和设置保存均接入实际捕获。本文单观察说明保留 schema 1 的历史及现行语义；schema 2 的共用包批次见[批量证据](PLUGIN_BATCH_EVIDENCE.md)。捕获本身不提交内容或签名，完整多包流程仍不可由此重放。
 
 ## 证据和完整性
 
@@ -48,6 +50,6 @@ schema 1 的原字段、故障记录规则、原始 PB 上限及既有容器字�
 
 ## test.39 内容投影
 
-当前内容库格式10、批次intent上限12 MiB，原始批次24 MiB与每操作16份／64 MiB预算保留。默认create／apply的新证据携带固定HostProjection v1，保留完整prior与宿主事实，从历史实际观察精确导出原command和完整结果CardRecord；设置继续使用test.38批次，尚未接入该投影。旧schema1证据和重试规则不被改写。
+test.39 内容库格式10、批次intent上限12 MiB，原始批次24 MiB与每操作16份／64 MiB预算保留。默认create／apply的新证据携带固定HostProjection v1，保留完整prior与宿主事实，从历史实际观察精确导出原command和完整结果CardRecord；设置继续使用test.38批次，尚未接入该投影。旧schema1证据和重试规则不被改写。
 
 独立`morrow-content-replay`接受`<commit-file> <commit-container-sha256> <evidence-file> <raw-evidence-sha256>`四个参数，先核对有界输入的外部摘要及`verify_commit`，再以默认逐页Limits和固定1B总燃料调用`replay_batch`。退出0表示投影及观察匹配，2表示实际重放不匹配，1表示格式／摘要／投影／策略拒绝；这不是签名验证或来源认证。该新CLI专项结果待最终记录，不沿用旧纯任务CLI通过结论。准确契约、版本冻结及因果链边界见[内容投影](PLUGIN_CONTENT_PROJECTION.md)和[阶段报告](../reports/test.39-content-projection.md)。

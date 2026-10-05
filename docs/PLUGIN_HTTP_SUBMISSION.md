@@ -1,6 +1,8 @@
 # IO-D1 第一步：HTTP 提交与结果帧编解码
 
-状态：核心协议层已实现，限定回归与边界见 [整合修正报告](../reports/io-safety-refactor-2026-09-19.md)；这是 IO-D1 的核心帧层；后续已接通原实例批准与本机真实 HTTP/TLS，见 [托管 HTTP](PLUGIN_MANAGED_HTTP.md)。持久资源配置、主应用与真实提供者 Unknown 核对仍待完成。
+本文保留 IO-D1 核心帧层的 2026-09-19 合同；下文运行时清单是该阶段后续工作。当前有界后端与应用范围见[项目状态](PROJECT_STATUS.md)，不以编解码成功推断网络权限、提供者成功或完整 SDK 完成。
+
+状态：核心协议层已实现，限定回归与边界见 [整合修正报告](../reports/io-safety-refactor-2026-09-19.md)；这是 IO-D1 的核心帧层；后续已接通原实例批准与本机真实 HTTP/TLS，见 [托管 HTTP](PLUGIN_MANAGED_HTTP.md)。后续[持久端点管理](PLUGIN_ENDPOINT_MANAGEMENT.md)和[主应用 HTTP 任务](PLUGIN_APP_HTTP_TASKS.md)已有有界接线；真实提供者 Unknown 核对及完整产品门槛仍开放。
 
 ## 模型
 
@@ -20,7 +22,7 @@
 - `Invalid` 结果状态在编码与解码两侧均拒绝；失败状态不得携带远端响应字段。
 - 解码路径与编码路径执行同一套校验，手工构造的帧不能绕过；结果头只做形式与大小校验，因为它们是远端数据。
 
-## 运行时仍需完成
+## 核心帧阶段的后续运行时工作
 
 1. 把 `endpoint`／`credential` 引用解析为具体 origin 与方法，并在 Manager／Registry 中建立可撤回的 origin／方法／凭据批准模型。
 2. 通过 `network_node::client::Client` 执行真实 HTTP/HTTPS：DNS 全量检查后钉定连接、禁止隐式代理与重定向、按响应上限读取。

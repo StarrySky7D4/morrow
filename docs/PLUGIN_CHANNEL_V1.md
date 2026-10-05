@@ -2,7 +2,7 @@
 
 `channel-v1` provides bounded byte streams and event subscriptions from sources explicitly supplied by a native trusted host. The public contract is independent of the existing guest ABI v2, task v3 and runtime v7 schemas. Those schemas retain their original bytes. Channel declarations and references provide no content, filesystem, network, credential or provider authority.
 
-The wire schema is [`core/schemas/channel.capnp`](../core/schemas/channel.capnp), version 1, SHA-256 `9517a6c51475f9e86ce0a40a6243dafba3308f473e9bcad00e9d47ac4704be46`. Guest calls use the independent `morrow_channel_v1.call(i32, i32, i32, i32) -> i32` import. A request and its response are complete bounded messages. This contract adds no HTTP, SSE or WebSocket backend; those adapters remain unsupported until separately approved and exercised. Windows qualification and SDK publication/freeze are separate decisions with their own evidence.
+The wire schema is [`core/schemas/channel.capnp`](../core/schemas/channel.capnp), version 1, SHA-256 `9517a6c51475f9e86ce0a40a6243dafba3308f473e9bcad00e9d47ac4704be46`. Guest calls use the independent `morrow_channel_v1.call(i32, i32, i32, i32) -> i32` import. A request and its response are complete bounded messages. The channel contract itself creates no HTTP, SSE or WebSocket backend. Separately opt-in native managed SSE/WS adapters and typed payload guests now have bounded Windows qualification; production Workbench network routes and full SDK freeze remain open. See [SSE](PLUGIN_SSE_EVENT_SDK.md), [WS](PLUGIN_WS_MESSAGE_SDK.md) and [current project status](PROJECT_STATUS.md).
 
 ## Package admission and task metadata
 
@@ -29,7 +29,7 @@ All messages have a 128 KiB encoded ceiling. A data payload is at most 64 KiB; a
 
 The runtime additionally checks the live grant against the package declaration. A managed instance shares cumulative accounting and its first monotonic deadline across binds. Closing a source or making another bind does not refund the ledger or renew the deadline. Time, requests, messages and bytes remain bounded even when no progress occurs.
 
-`Directory` holds a host scope digest and a bounded list of endpoints. Each endpoint has a reference, source epoch, kind and finite budget. The native host grant is tied to the actual Manager, HostRuntime, ManagedInstance, package digest, instance control and connection/host bindings. The guest receives approved references; it cannot select an arbitrary local source or substitute a path, URL or SQL statement. Loading a saved directory or checkpoint does not restore a grant.
+`Directory` lists approved channel endpoints; it is unrelated to filesystem directory listing or FileList permission. It holds a host scope digest and a bounded list of endpoints. Each endpoint has a reference, source epoch, kind and finite budget. The native host grant is tied to the actual Manager, HostRuntime, ManagedInstance, package digest, instance control and connection/host bindings. The guest receives approved references; it cannot select an arbitrary local source or substitute a path, URL or SQL statement. Loading a saved directory or checkpoint does not restore a grant.
 
 ## Requests and observations
 
@@ -87,7 +87,7 @@ Run admission returns promptly while the native executor owns the actual invocat
 Dismissal retains the original session/key and any unconfirmed result. Inspect and close act on that original session. The UI does not automatically retry appends or run, recreate a grant after a lost reply, resume an old reference from a checkpoint, or treat a cursor as owner release. Browser and unsupervised channel execution remain unsupported. HTTP/SSE/WebSocket and real cloud adapters remain outside this route.
 
 
-SDK014 production qualification remains incomplete: the actual 20-case suite passed 11 and failed/errored 9; the generic catalog UI failed before invocation. Compiled discovery remains conservative until the failures are resolved. The source budget, cancellation cause and actual resource joins must be fixed or diagnosed without relaxing this public contract. This is an implementation checkpoint, not SDK freeze. See [SDK014 evidence boundary](../reports/codex-morrow-v1.1/windows-sdk-014-2026-10-01.md).
+The historical SDK014 production qualification remains incomplete: its actual 20-case suite passed 11 and failed/errored 9; the generic catalog UI failed before invocation. Compiled discovery remains conservative until the failures are resolved. The source budget, cancellation cause and actual resource joins must be fixed or diagnosed without relaxing this public contract. This is an implementation checkpoint, not SDK freeze. See [SDK014 evidence boundary](../reports/codex-morrow-v1.1/windows-sdk-014-2026-10-01.md).
 
 
 ## Reconstruction admission boundary (2026-10-02)

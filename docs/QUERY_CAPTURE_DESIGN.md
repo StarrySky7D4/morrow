@@ -1,9 +1,11 @@
 # 查询捕获与一致性读取设计
 
-本文件区分默认查询当前实现与后续持久化任务，不把设计当作已完成的审计能力。
-当前阶段为 test.45；读取日志基础见 [PLUGIN_READ_JOURNAL.md](PLUGIN_READ_JOURNAL.md)。
+本文保留 test.43–test.45 的查询设计与分项接口说明；C07 目录 owner 回归不验证查询持久化、平台快照或 GUI。最新任务范围见[项目状态](PROJECT_STATUS.md)，下文“当前”按该设计阶段解释。
 
-## 当前实际状态
+本文件区分默认查询当前实现与后续持久化任务，不把设计当作已完成的审计能力。
+本文设计阶段基线为 test.45；读取日志基础见 [PLUGIN_READ_JOURNAL.md](PLUGIN_READ_JOURNAL.md)。
+
+## test.45 阶段实际状态
 
 `workbench_host/src/query_plan.rs` 已提供版本化执行器 `VERSION = 1`、`Conditions` 和 `Backend`。
 默认 `Workbench::query` 使用该执行器，并通过 test.43 的独立只读 WAL 快照固定全部候选和正文。

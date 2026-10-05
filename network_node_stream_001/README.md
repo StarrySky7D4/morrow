@@ -1,7 +1,18 @@
 # Experimental outbound stream transport 001
 
+Current integration: opt-in native `managed-channel` POST SSE and
+`managed-websocket` WS sources use original Manager/instance approval, Store
+one-shot claim and channel ACK/Send rules. C07 freshly ran the existing network
+100 methods separately from the nine original-owner suites (115 methods, including
+7 cancellation, 14 directory-owner and 16 native directory methods) and frozen42
+scope; it did not
+rebuild old guest packages. See [current project status](../docs/PROJECT_STATUS.md),
+[SSE SDK](../docs/PLUGIN_SSE_EVENT_SDK.md) and [WS SDK](../docs/PLUGIN_WS_MESSAGE_SDK.md).
+The earlier transport/W12/W14 counts below retain their dated scope; production
+Workbench binding, accounts/TLS, other platforms and full SDK remain open.
+
 Versioned extraction of `network_node/src/client.rs`; original inputs and hashes are under
-`provenance/`. It contains no server, native authority, approval UI or IPC. A trusted caller
+`provenance/`. The original transport extraction contains no server, approval UI or IPC; optional managed adapters bind existing native authority rather than issuing standalone grants. A trusted caller
 must perform its durable one-shot dispatch claim before calling this transport.
 
 `Client::send_stream(RawHttpRequest, SendContext)` validates the same exact origin/method,
@@ -10,14 +21,13 @@ Its fresh connector retains no_proxy, no redirects/retries or transparent decomp
 Raw request/response header values and duplicate entries are preserved; the legacy text
 `send` response conversion fails on non-text values. A later adapter into Core's String
 request representation must reject values that cannot round-trip before its dispatch claim.
-This trusted transport still permits synthetic Authorization used by inherited tests; the
-M03 no-credential approval policy belongs to the not-yet-built native adapter.
+This trusted transport still permits synthetic Authorization used by inherited tests; the opt-in managed native sources reject credential/cookie/API-key injection. This transport alone does not implement that approval policy.
 
 The absolute `SendContext` deadline is capped by this client's per-call timeout at entry,
 and is never restarted after headers. Optional `StreamGuard` is checked across stages and
 at 5ms intervals during waits. A guard is a trusted synchronous callback, not a guest grant.
-Cancellation does not retract HTTP or OS bytes and does not implement the future native
-owner's SendTicket/write fence.
+Cancellation does not retract HTTP or OS bytes. Native owner command and write
+fences remain separate from this trusted transport.
 
 `StreamLease` retains the worker, token, deadline, guard and semaphore permit. The worker
 returns its permit inside its JoinHandle result: headers and even body EOF do not release
@@ -39,8 +49,9 @@ actually consumes the first chunk. The six stream tests cover headers/EOF permit
 raw request/response bytes, no-demand original deadline expiry, guard revocation, body-read
 cancel, cancellation-safe demand, size limits, and head-future/lease drop cleanup. Ten adapted
 origin client tests retain destination, framing, no-retry/redirect, method/status and limit
-checks. They are transport tests; native pipe OS Pending, real Core/SSE consumption and
-independent joint acceptance remain unrun. No public network or account credentials used.
+checks. They are historical transport-only tests. Later managed-source and typed guest
+records cover bounded real Core/SSE consumption; native pipe OS Pending and full
+independent product acceptance remain separate gates. No public network or account credentials used.
 
 
 ## W12 bounded SSE framing
@@ -68,8 +79,9 @@ network-library/kernel buffers are not covered by that chunk-view bound.
 Windows Release/offline/locked validation ran 55 methods: 21 new decoder, 13 new
 real loopback SSE and 21 inherited transport cases. See
 [the scoped W12 report](../reports/reconstruction-2026-10-03/windows-sse-transport.md).
-This is trusted transport qualification; channel/guest authorization integration,
-TLS, public endpoints, other platforms and full SDK freeze remain open. Framing
+This W12 record is trusted transport qualification; later opt-in channel/guest
+integration has separate evidence. TLS, public endpoints, other platforms and
+full SDK freeze remain open. Framing
 follows the [HTML event-stream rules](https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation)
 with the bounded strict-UTF-8 policy described above, not browser EventSource API semantics.
 

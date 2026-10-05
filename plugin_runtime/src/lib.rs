@@ -22,6 +22,8 @@ pub mod dynamic_dependencies;
 pub mod file_io;
 #[cfg(all(feature = "packages", windows))]
 pub mod file_target;
+#[cfg(all(feature = "packages", windows))]
+pub mod directory_io;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod http_io;
 #[cfg(feature = "package-management")]

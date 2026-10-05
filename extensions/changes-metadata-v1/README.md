@@ -50,6 +50,11 @@ This profile covers finite host-approved fixed-card metadata invalidations only.
 Fresh windows need fresh authority. No persistent watch, content grant, Store
 path, global sequence, hidden upper bound or unselected IDs are exposed. Logical
 Store identity can survive copies; no anti-clone claim is made. Linux guarded
-SQL testing does not qualify a protected product-owner runtime path. The previously reported Windows 42 passes retain their original scope; the nine
-protected tests remain NOT_RUN. This new profile has no Windows execution
-qualification.
+SQL testing does not qualify a protected product-owner runtime path. The nine
+protected tests remain NOT_RUN. On 2026-10-05 C02 separately qualified Windows
+keyless temporary-Store sources and NEW three-language guests; original frozen
+42 methods retain their own scope. C03 adds optional versioned payload discovery
+and static preparation compatibility, not production source approval. See
+../../docs/PLUGIN_CHANGES_METADATA_SDK.md and the scoped Windows reports under
+../../reports/reconstruction-2026-10-05/. Other platforms and full SDK freeze
+remain OPEN.

@@ -41,7 +41,7 @@ class DiagnosticsTests(unittest.TestCase):
         self.package = self.root / 'selected.mplugin'
         self.package.write_bytes(b'selected synthetic archive')
         self.calls = self.root / 'calls.jsonl'
-        self.host = self.root / 'trusted-host'
+        self.host = self.root / ('trusted-host.cmd' if os.name == 'nt' else 'trusted-host')
         self.cwd, self.home, self.tmp = (self.root / name for name in ('cwd', 'home', 'tmp'))
         for path in (self.cwd, self.home, self.tmp):
             path.mkdir()
@@ -51,14 +51,18 @@ class DiagnosticsTests(unittest.TestCase):
     def host_script(self, discovery=None, result=None, exit_code=0, raw=None, extra=''):
         discovery = advertised() if discovery is None else discovery
         result = response(self.package.read_bytes()) if result is None else result
-        self.host.write_text('#!' + sys.executable + '\n' +
+        script = self.host.with_suffix('.py') if os.name == 'nt' else self.host
+        script.write_text('#!' + sys.executable + '\n' +
             'import json, sys, time\nfrom pathlib import Path\n' +
             'with Path(' + repr(str(self.calls)) + ').open("a") as out: out.write(json.dumps(sys.argv[1:])+"\\n")\n' +
             'if sys.argv[1:] == ["--sdk-capabilities"]:\n' +
             ' print(' + repr(json.dumps(discovery)) + ')\n raise SystemExit(0)\n' + extra + '\n' +
             'sys.stdout.buffer.write(' + repr(json.dumps(result).encode() if raw is None else raw) + ')\n' +
             'raise SystemExit(' + str(exit_code) + ')\n', encoding='utf-8')
-        self.host.chmod(0o755)
+        if os.name == 'nt':
+            self.host.write_text('@echo off\n"' + sys.executable + '" "' + str(script) + '" %*\n', encoding='utf-8')
+        else:
+            self.host.chmod(0o755)
 
     def run_cli(self, args, isolated=True):
         argv = [sys.executable] + (['-I', '-B'] if isolated else []) + [str(self.script)] + list(map(str, args))
@@ -131,7 +135,11 @@ class DiagnosticsTests(unittest.TestCase):
         self.assert_failure(self.run_cli(['profiles', '--host', self.root / 'missing']))
         self.assert_failure(self.run_cli(['preflight', self.root / 'missing', '--host', self.host]))
         self.assert_failure(self.run_cli(['preflight', self.cwd, '--host', self.host]))
-        self.host.chmod(0o644)
+        if os.name == 'nt':
+            self.host = self.root / 'invalid-host.exe'
+            self.host.write_bytes(b'not a Windows executable')
+        else:
+            self.host.chmod(0o644)
         self.assert_failure(self.preflight())
 
     def test_no_fallback_or_implicit_commands_and_usage_is_not_a_receipt(self):
@@ -161,10 +169,28 @@ class DiagnosticsTests(unittest.TestCase):
     def test_original_process_bounds_are_retained(self):
         self.host_script(raw=b'x' * (sdk_profiles.PREFLIGHT_MAX_OUTPUT + 1))
         self.assert_failure(self.preflight(), 'exceeds')
-        self.host_script(extra='time.sleep(30)')
+        if os.name == 'nt':
+            # The .cmd fixture owns a Python child. The consumer only promises
+            # bounded return, not process-tree cleanup, so release our fixture
+            # after observing that return and move its CWD before test cleanup.
+            release, done = self.root / 'release', self.root / 'done'
+            extra = ('while not Path(' + repr(str(release)) + ').exists(): time.sleep(.01)\n'
+                     'import os\nos.chdir(' + repr(str(self.root.parent)) + ')\n'
+                     'Path(' + repr(str(done)) + ').write_text("released")')
+        else:
+            extra = 'time.sleep(30)'
+        self.host_script(extra=extra)
         start = time.monotonic()
-        self.assert_failure(self.preflight(), 'timed out')
-        self.assertLess(time.monotonic() - start, 8)
+        try:
+            self.assert_failure(self.preflight(), 'timed out')
+            self.assertLess(time.monotonic() - start, 8)
+        finally:
+            if os.name == 'nt':
+                release.write_text('release only our synthetic fixture')
+                deadline = time.monotonic() + 3
+                while not done.exists() and time.monotonic() < deadline:
+                    time.sleep(.01)
+                self.assertTrue(done.exists(), 'synthetic child did not release its CWD')
 
     def test_old_sdk_only_gate_and_exporter_closure_stay_closed(self):
         self.assertEqual(package_plugin_sdk.TOOLS, ('morrow_plugin.py', 'plugin_sdk_lock.py', 'package_plugin_sdk.py'))

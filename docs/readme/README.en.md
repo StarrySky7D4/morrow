@@ -6,9 +6,19 @@ Leave a little room for tomorrow’s ideas.
 
 Morrow (明隙) is a local-first, card-based workspace for ideas, evolving toward a cross-platform plugin architecture. Formerly daemon, its code package is `morrow_studio`. Windows uses Flutter for the interface and a Rust host with sandboxed Wasm plugins for workbench logic. Web runs Rust/Wasm locally in the browser; Android still uses the earlier path. Full plugin and product parity across platforms remains unqualified.
 
+## Development status (2026-10-05)
+
+The application source checkpoint is **0.1.9-test.58+62**. The target development line is `codex/windows-sdk-convergence-20261005`, based on cloud `468ef2e` plus C02–C07 changes. See [Project status](../../docs/PROJECT_STATUS.md) for the canonical status and next steps, and the [bounded C07 qualification report](../../reports/reconstruction-2026-10-05/directory-owner-sdk.md) for actual Windows evidence.
+
+Local synthetic Windows qualification passed 115 methods on the original owner path, including directory cancellation 7, directory owner 14 and native directory 16; 42 original regression methods; and 100 network methods across 11 programs. The 42-method run retains 14 frozen-region filters and one remote-reader filter. Child helpers are not additional passing methods. These counts do not establish complete SDK or product acceptance.
+
+Trusted directory capture/page/finish uses the original IoWorker queue, Manager, runtime, instance, IoBinding and FileList approval. Clock sampling and authorization checks use short atomic steps; quota is released after native resources actually drop. Unknown outcomes do not replay automatically and cursors do not wrap. Independently versioned typed WebSocket/SSE payload libraries provide Rust, C and C++ codecs with bounded guest validation; directory/blob codecs and bounded state also have local qualification.
+
+**SDK26/G04 remains OPEN; the complete SDK is not frozen.** Protected production owners, GUI/workspace task entry, picker and ancestor provenance, a fresh trusted-secret factory, new directory request/import/feature/helper-profile negotiation, blob durable history, complete inbound-service product qualification, real TLS/API and other platforms remain pending or NOT_RUN. C08 is design only. This qualification publishes no new installer and is not a stable SDK.
+
 ## Download and compatibility
 
-Current version: **0.1.9-test.56+60**, a **Windows x64 testing preview**, not a stable release. Download the Windows ZIP, corresponding source ZIP and SHA-256 list. Extract the entire archive and run `morrow_studio.exe`; keep all DLLs, the host, `data`, `plugins` and license files.
+Latest published app preview: **0.1.9-test.56+60**, a **Windows x64 testing preview**, not a stable release. Download the Windows ZIP, corresponding source ZIP and SHA-256 list. Extract the entire archive and run `morrow_studio.exe`; keep all DLLs, the host, `data`, `plugins` and license files.
 
 [Download test.56](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56) · [Compatible test.1 preview](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
@@ -23,7 +33,7 @@ Current version: **0.1.9-test.56+60**, a **Windows x64 testing preview**, not a 
 - Layout and languages: responsive content and separate settings pages; Chinese, English, Russian, French, German, Spanish, Japanese, Korean and Portuguese.
 - Windows content protection: unified Rust storage, sealed audit records, library snapshots, original-identity backup and recovery, and limits on concurrent use of the same identity.
 
-## This update and validation
+## Published test.56 update and validation
 
 test.56 adds context actions, card ordering and dragging, per-item tips editing, and standalone theme plugins. It improves masonry layout, filtered updates, and shutdown. This Windows preview is not a stable release; full autosave and cross-platform parity remain open.
 
@@ -65,10 +75,11 @@ flutter build web --no-web-resources-cdn
 
 The target architecture combines Flutter/Dart UI, a portable Rust core and replaceable plugin execution backends. Runtime boundaries use fixed contracts; persistence and application-owned exchanges use Protobuf + LZ4. C/C++/Rust SDKs and declarative plugin UI are in development. TS/JS plugins are not supported; dynamic Dart plugins are not required.
 
-The complete SDK is not frozen. Managed HTTP/HTTPS requests, limited API service nodes and TLS identity management are connected. Cross-restart reconciliation of Unknown outcomes, the full filesystem, three-language IO SDKs and cross-platform qualification remain open. Library opening still scans all history; a full read/compute pipeline, historical tiers and automatic cleanup are not implemented.
+The complete SDK is not frozen. Managed HTTP/HTTPS requests, limited API service nodes and TLS identity management are connected. Cross-restart reconciliation of Unknown outcomes, the full filesystem, new directory request/import/feature/helper-profile negotiation and cross-platform qualification remain open. Library opening still scans all history; a full read/compute pipeline, historical tiers and automatic cleanup are not implemented.
 
 ## Documentation
 
+- [Current project status](../../docs/PROJECT_STATUS.md)
 - [Release notes and validation](../../reports/0.1.9-test.56-release.md)
 - [Development board and next tasks](../../docs/DEVELOPMENT_BOARD.md)
 - [Architecture roadmap](../../docs/FUTURE_ROADMAP.md)

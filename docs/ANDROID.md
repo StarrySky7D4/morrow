@@ -97,7 +97,7 @@ keyPassword=你的密钥密码
 ## 2026-09-09 已完成的环境配置
 
 - Flutter 3.44.0、Dart 3.12.0、Microsoft OpenJDK 17.0.20.1；Flutter 已保存 Android Studio、Java 和 SDK 路径。
-- SDK 位于 `C:\Users\Administrator\AppData\Local\Android\sdk`。已补齐 Command-line Tools 22.0、Platform API 36（revision 2）以及插件需要的 API 31、34、35、Build-Tools 36.0.0、NDK 28.2.13676358、CMake 3.22.1；保留原有 API 37 与模拟器组件。
+- SDK 位于 `C:\Users\<用户名>\AppData\Local\Android\sdk`。已补齐 Command-line Tools 22.0、Platform API 36（revision 2）以及插件需要的 API 31、34、35、Build-Tools 36.0.0、NDK 28.2.13676358、CMake 3.22.1；保留原有 API 37 与模拟器组件。
 - 全部 SDK 许可证已接受，`flutter doctor -v` 返回 `No issues found!`，网络检查通过。
 - Gradle 9.1.0 已下载，并通过 JDK 17 启动检查。
 - 原生 Java Selector 在默认临时路径上出现 `Unable to establish loopback connection` / `UnixDomainSockets.connect0: Invalid argument`。指定项目内的 socket 临时目录后，最小 Selector 测试和 Gradle 启动均通过。构建脚本通过 `JAVA_TOOL_OPTIONS` 传递此设置，保留已有显式设置，并在退出时恢复原值；未修改系统设置。参数说明见 [Java Networking](https://docs.oracle.com/en/java/javase/17/core/java-networking.html)。
