@@ -6,8 +6,9 @@
 |---|---|---|
 | Protobuf/LZ4、完整记录/未知字段、SQLite 事务、CAS、原操作查询 | `core` | 原样快照并编译 ARM64/x64；设备侧自检覆盖建卡、重启、幂等和 CAS；不是全核心平台回归 |
 | 卡片 V2、类别/阶段、收藏、删除与限时撤销 | `plugins/workbench/cards_v2.rs` | 直接复用；UI 接入；共享 5 项专项测试在 Windows 通过，设备 UI 建卡保存通过 |
-| TaskId 待办、同名独立、历史歧义 | `plugins/workbench/tasks_v2.rs` | dev.4 补重命名、上下移动、批量勾选与当前阶段原子提交、移除确认；主机适配器 5 项、OHOS runner 10 项检查通过，并验证 UI 重启读回。共享模块与 9/27 参照哈希一致。正式 V1→V2 迁移、拖动排序和复制菜单未接入 |
+| TaskId 待办、同名独立、历史歧义 | `plugins/workbench/tasks_v2.rs` | dev.4 补重命名、上下移动、批量勾选与当前阶段原子提交、移除确认；主机适配器 5 项、OHOS runner 10 项检查通过，并验证 UI 重启读回。共享模块与 9/27 参照哈希一致。正式 V1→V2 迁移、任务拖动重排和任务文字复制菜单未接入；dev.11 卡片拖动与复制另列 |
 | 搜索和查询 | `query_v2` / `workbench_host/query_plan_v2.rs` | dev.8 接入单次完整 WAL 快照、原分页筛选/排序归并及 128 项 / 64 KiB 真实帧预算；标题/正文/假设/结论/附件名语义、UTF-16 和稳定收藏排序复用原实现。ArkTS 去抖、串行/coalesce、旧回包丢弃和显式失败；开发库仍 256 张，无 UI 响应分页、大库资格和生产 guest/捕获证据。回收站为独立既有视图 |
+| 阅读详情、卡片菜单、每页手动排序 | Flutter `openIdea` / `component_menus` / `card_order_preferences` / `hold_reorder` | dev.11 接原生 Markdown 阅读、显式进入草稿编辑、分类/阶段/TaskId勾选、收藏/复制/确认删除；卡片正文长按与菜单提供前后移动、转项目和组件设置。五页独立手动开关/顺序，筛选隐藏槽保持、保存失败回滚、过期视图与外部拖动拒绝。独立拖动柄采用鸿蒙原生手势；完整边缘自动滚动、鼠标/键盘菜单和详情任务编辑矩阵待补；不会写业务卡来存排序 |
 | ArkUI 原生节点 | 新 `entry/src/main/cpp/bridge.cpp` | 实际 NativeNode Column/Text 外观预览，NodeContent 挂载和销毁；编辑控件/导航为 ArkTS，非全 NDK UI |
 | ArkTS ↔ Rust | 新 N-API async work + Rust C ABI | 异步执行、串行准入、长度/UTF-8 校验、配对释放；不是 IPC 隔离或插件授权通道 |
 | 正式工作台宿主 | `workbench_host` | 已检查 API 与平台边界；未整体复制/接入，非 Windows 开库仍拒绝；新适配器不能冒充其内容/任务证据链 |

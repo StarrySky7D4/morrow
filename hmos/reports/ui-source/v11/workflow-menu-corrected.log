@@ -1,0 +1,18 @@
+- Dumping layout…
+C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\style-device-check.cjs:9
+ if(flatten(tree).some(x=>(x.n.type || '').startsWith('WindowScene') || x.n.id==='Paf_Permission_Sheet_Window_Builder'))throw Error('HMOS app is not in foreground; stop without gestures');
+                                                                                                                        ^
+
+Error: HMOS app is not in foreground; stop without gestures
+    at Object.layout (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\style-device-check.cjs:9:127)
+    at view (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\card-workflow-device-check.cjs:7:28)
+    at nodes (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\card-workflow-device-check.cjs:7:48)
+    at search (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\card-workflow-device-check.cjs:23:36)
+    at Object.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\card-workflow-device-check.cjs:54:3)
+    at Module._compile (node:internal/modules/cjs/loader:1812:14)
+    at Object..js (node:internal/modules/cjs/loader:1943:10)
+    at Module.load (node:internal/modules/cjs/loader:1533:32)
+    at Module._load (node:internal/modules/cjs/loader:1335:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+
+Node.js v24.14.1

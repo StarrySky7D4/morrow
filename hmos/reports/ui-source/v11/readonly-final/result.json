@@ -1,0 +1,8 @@
+{
+  "result": "PASS",
+  "device": "127.0.0.1:5557",
+  "prefix": "HMOS-flow-20261005-",
+  "checks": [
+    "Markdown reading and native copy create no journal, including restart"
+  ]
+}

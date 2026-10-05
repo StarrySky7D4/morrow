@@ -14,9 +14,21 @@ import { util } from '@kit.ArkTS';
 import native from 'libmorrow.so';
 import { CardView, Command, Reply, TaskView, workbench } from '../model/Workbench';
 import { CardDataSource, WorkspaceCard } from '../model/CardDataSource';
+import { CardOrderPreferences, cardOrderPage } from '../model/CardOrder';
 import { QueryConditions, QueryState, QueryCoordinator } from '../model/QueryCoordinator';
 import { Values as DraftValues, TextValue as DraftTextValue, DraftScope, DraftRecord,
   EditorDraftCoordinator, DraftSaveFailure, copyValues, copyText, sameValues, nextGeneration } from '../model/EditorDraft';
+
+class CardDrag {
+  card: CardView;
+  token: string;
+  revision: number;
+  nonce: string;
+  constructor(card: CardView, token: string, revision: number, nonce: string) {
+    this.card = card; this.token = token; this.revision = revision; this.nonce = nonce;
+  }
+}
+interface CardDragExtra { extraInfo?: string; }
 
 @Component
 struct WorkspaceCardSlot {
@@ -41,6 +53,14 @@ struct Index {
   @State queryPhase: string = 'idle';
   @State queryRefreshing: boolean = false;
   @State selected: string = '';
+  @State @Watch('updateMarkdown') detailId: string = '';
+  @State orderRevision: number = 0;
+  @State orderWorking: boolean = false;
+  @State orderError: string = '';
+  @State dragSource: string = '';
+  @State dragTarget: string = '';
+  private heldCard: CardDrag | undefined = undefined;
+  private cardBounds: Map<string, number[]> = new Map();
   @State title: string = '';
   @State @Watch('updateMarkdown') description: string = '';
   @State hypothesis: string = '';
@@ -131,11 +151,37 @@ struct Index {
     });
   @State appearanceStatus: string = '';
   private preferenceStore: preferences.Preferences | undefined = undefined;
+  private orderStore: preferences.Preferences | undefined = undefined;
+  private cardOrder: CardOrderPreferences = new CardOrderPreferences(
+    async (): Promise<string | undefined> => {
+      if (!this.orderStore) { throw new Error('卡片顺序设置不可用'); }
+      const raw = this.orderStore.getSync('card-order-v1', '') as string; return raw || undefined;
+    }, async (raw: string): Promise<void> => {
+      if (!this.orderStore) { throw new Error('卡片顺序设置不可用'); }
+      const prior = this.orderStore.getSync('card-order-v1', '') as string;
+      try { await this.orderStore.put('card-order-v1', raw); await this.orderStore.flush(); }
+      catch (error) {
+        // Preferences.put also changes its in-memory cache. Roll that cache
+        // back so an unrelated later flush cannot persist a failed candidate.
+        this.orderStore.putSync('card-order-v1', prior); throw new Error('卡片顺序写入失败');
+      }
+    }, (): void => {
+      this.orderRevision = this.cardOrder.revision; this.orderWorking = this.cardOrder.busy || this.cardOrder.loading;
+      this.orderError = this.cardOrder.error; this.updateWorkspaceCards();
+    });
   private appearanceWrites: Promise<void> = Promise.resolve();
   private settingsScroller: Scroller = new Scroller();
   private workspaceScroller: Scroller = new Scroller();
+  private detailScroller: Scroller = new Scroller();
+  private detailOffset: number = 0;
   private workspaceCards: CardDataSource = new CardDataSource();
-  private updateWorkspaceCards(): void { this.workspaceCards.replace(this.section, this.visibleCards()); }
+  private updateWorkspaceCards(): void {
+    this.workspaceCards.replace(this.section, this.visibleCards());
+    const page = cardOrderPage(this.section);
+    if (page) { this.cardOrder.setView(page, this.pageCards().map((c: CardView): string => c.id),
+      this.visibleCards().map((c: CardView): string => c.id), this.cardViewToken()); }
+    else { this.cardOrder.setView('', [], [], ''); }
+  }
   private contentGeneration: number = 0;
   private queryNeedsRestore: boolean = false;
   private queries: QueryCoordinator = new QueryCoordinator(
@@ -154,7 +200,7 @@ struct Index {
       }
     });
   private workspaceContentChanged(): void {
-    this.contentGeneration++; this.updateWorkspaceCards(); this.workspaceConditionsChanged();
+    this.contentGeneration++; this.updateWorkspaceCards(); this.workspaceConditionsChanged(); this.updateMarkdown();
   }
   private workspaceConditionsChanged(): void {
     if (!this.ready) { return; }
@@ -204,11 +250,13 @@ struct Index {
     this.pageAlive = true;
     this.getUIContext().getFont().registerFont({ familyName: 'MorrowIcons', familySrc: $rawfile('materialicons.otf') });
     this.restoreAppearance();
+    this.restoreCardOrder();
     this.start();
   }
   onBackPress(): boolean {
     if (this.draftsOpen) { this.draftsOpen = false; return true; }
     if (this.editorOpen) { this.closeEditor(); return true; }
+    if (this.detailId) { this.closeDetail(); return true; }
     if (this.settingsOpen) { this.backSettings(); return true; }
     return false;
   }
@@ -219,6 +267,7 @@ struct Index {
     this.editorDraft?.dispose();
     this.markdown.dispose();
     this.queries.dispose();
+    this.cardOrder.dispose();
     if (this.workspaceRestoreTimer !== -1) { clearTimeout(this.workspaceRestoreTimer); }
     this.mounted = false; native.releasePreview(this.preview);
   }
@@ -235,8 +284,12 @@ struct Index {
     }
     const byId = new Map<string, CardView>(); this.cards.forEach((c: CardView) => byId.set(c.id, c));
     const items: CardView[] = [];
-    this.queryIds.forEach((id: string): void => { const card = byId.get(id); if (card && !card.deleted) { items.push(card); } });
-    return items;
+    const pageIds = new Set<string>(this.pageCards().map((c: CardView): string => c.id));
+    this.queryIds.forEach((id: string): void => { const card = byId.get(id); if (card && pageIds.has(id)) { items.push(card); } });
+    const page = cardOrderPage(this.section);
+    if (!page || !this.cardOrder.manual(page)) { return items; }
+    const ordered = this.cardOrder.order(page, items.map((c: CardView): string => c.id));
+    return ordered.map((id: string): CardView => byId.get(id)!);
   }
   private refreshPreview(): void {
     if (!this.mounted) { return; }
@@ -279,6 +332,10 @@ struct Index {
       name === 'hypothesis' ? this.editorValues.hypothesis : name === 'conclusion' ? this.editorValues.conclusion : this.editorValues.todos;
   }
   private updateMarkdown(): void {
+    const detail = this.cards.find((c: CardView): boolean => c.id === this.detailId);
+    if (detail && !this.editorOpen) {
+      this.markdown.update('detail:' + detail.id + ':' + detail.revision, detail.description, this.pageAlive); return;
+    }
     this.markdown.update(this.editorDraft?.scope.draft_id ?? '', this.description, this.pageAlive && this.editorOpen && this.previewBody);
   }
   private pasteTargetName(): string {
@@ -346,7 +403,7 @@ struct Index {
     // Only the validated native projection supplies these URLs. Attachment
     // handles stay inside the library and are never opened as external paths.
     const value = href.toLowerCase();
-    if (!this.pageAlive || !this.editorOpen || (!value.startsWith('https://') && !value.startsWith('http://') && !value.startsWith('mailto:'))) { return; }
+    if (!this.pageAlive || (!this.editorOpen && !this.detailId) || (!value.startsWith('https://') && !value.startsWith('http://') && !value.startsWith('mailto:'))) { return; }
     try {
       const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
       await context.openLink(href, { appLinkingOnly: false, hideFailureTipDialog: true });
@@ -559,6 +616,8 @@ struct Index {
   private select(c: CardView): void {
     if (this.editorOpen || this.busy || this.draftWorking || this.draftRetiring || this.draftRetirementUnknown || this.pending.length > 0) { return; }
     if (this.dirty) { this.message = '请先保存当前编辑，输入已保留。'; return; }
+    if (this.cards.find((v: CardView) => v.id === c.id)?.source !== c.source || c.deleted) { return; }
+    this.detailId = '';
     const recovered = this.draftRecords.find((r: DraftRecord) => r.scope.card_id === c.id);
     if (recovered) { this.restoreDraft(recovered); return; }
     this.taskEditId = ''; this.taskText = ''; this.taskRenameText = '';
@@ -633,7 +692,7 @@ struct Index {
         // draft. Retire the old slot only after its latest input is durable.
         if (await this.flushDraft() && await this.retireDraft(completionValues)) { this.attachDraft(this.current(), undefined, true); }
       }
-      const draft = this.editorDraft;
+      const draft = this.editorOpen ? this.editorDraft : undefined;
       if (draft) {
         const record = this.cards.find((c: CardView) => c.id === draft.scope.card_id);
         this.draftConflict = draft.scope.source_kind === 0 ? record?.revision !== draft.scope.source_revision : !!record;
@@ -835,11 +894,142 @@ struct Index {
     this.materialDraft = v;
   }
   private cardAction(c: CardView, action: string, value: string = ''): void {
+    if (!this.canChangeCard(c)) { return; }
     const cmd = new Command(); cmd.action = action; cmd.id = c.id; cmd.source = c.source;
     cmd.operation = util.generateRandomUUID(true); cmd.now_ms = Date.now().toString();
     if (action === 'stage') { cmd.stage = value; }
-    if (action === 'category') { cmd.category = '进行中'; cmd.stage = '计划中'; }
+    if (action === 'category') {
+      cmd.category = value || '进行中';
+      cmd.stage = cmd.category === '进行中' ? '计划中' : cmd.category === '实验' ? '待验证' : '待整理';
+    }
     this.submit(cmd);
+  }
+  private canChangeCard(c: CardView): boolean {
+    return this.pageAlive && this.ready && !this.editorOpen && !this.busy && !this.draftWorking && !this.draftRetiring &&
+      !this.draftRetirementUnknown && !this.pasteWorking && !this.dirty && !c.deleted && this.pending.length === 0 &&
+      this.cards.find((v: CardView): boolean => v.id === c.id)?.source === c.source;
+  }
+  private openDetail(c: CardView): void {
+    if (!this.pageAlive || this.editorOpen || this.busy || this.pending || this.dirty ||
+      this.cards.find((v: CardView): boolean => v.id === c.id)?.source !== c.source) { return; }
+    if (this.detailId !== c.id) { this.detailOffset = 0; }
+    this.selected = c.id; this.detailId = c.id; this.message = ''; this.updateMarkdown();
+  }
+  private closeDetail(): void {
+    if (this.busy) { return; }
+    this.detailId = ''; this.selected = ''; this.updateMarkdown();
+  }
+  private deleteCard(c: CardView): void {
+    if (!this.canChangeCard(c)) { return; }
+    this.getUIContext().showAlertDialog({ title: '移入回收站', message: `删除“${c.title}”？删除后 8 秒内可撤销。`,
+      primaryButton: { value: this.t('取消'), action: () => {} }, secondaryButton: { value: '移入回收站', action: () => {
+        if (this.canChangeCard(c)) { this.cardAction(c, 'delete'); }
+      } } });
+  }
+  private async copyCard(c: CardView): Promise<void> {
+    try {
+      await pasteboard.getSystemPasteboard().setData(pasteboard.createData(pasteboard.MIMETYPE_TEXT_PLAIN, c.title + '\n\n' + c.description));
+      if (this.pageAlive) { this.message = '已复制卡片文字'; }
+    } catch (_) { if (this.pageAlive) { this.message = '卡片文字未能复制，请重试。'; } }
+  }
+  private detailTask(c: CardView, task: TaskView): void {
+    if (!this.canChangeCard(c) || !c.tasks.some((t: TaskView): boolean => t.id === task.id && t.completion === task.completion)) { return; }
+    const cmd = new Command(); cmd.action = 'task_toggle'; cmd.id = c.id; cmd.source = c.source; cmd.task_id = task.id;
+    cmd.flag = task.completion !== 1; cmd.operation = util.generateRandomUUID(true); cmd.now_ms = Date.now().toString(); this.submit(cmd);
+  }
+  private pageCards(): CardView[] {
+    return this.cards.filter((c: CardView): boolean => !c.deleted && (this.section === '概览' ||
+      (this.section === '收藏' ? c.favorite : c.category === this.section)));
+  }
+  private cardViewToken(): string {
+    return JSON.stringify([this.section, this.filter, this.search, this.sort, this.contentGeneration.toString(),
+      this.orderRevision.toString(), this.queryPhase, this.queryIds.join(','), this.queryRefreshing.toString()]);
+  }
+  private canOrderCards(): boolean {
+    return this.pageAlive && this.ready && !!cardOrderPage(this.section) && !this.busy && !this.pending && !this.editorOpen && !this.detailId &&
+      !this.draftsOpen && !this.settingsOpen && !this.cardOrder.busy && !this.cardOrder.loading && this.queryPhase === 'ready' && !this.queryRefreshing;
+  }
+  private sortLabel(): string {
+    const page = cardOrderPage(this.section);
+    return this.orderRevision >= 0 && page && this.cardOrder.manual(page) ? '自定义顺序' : this.sort;
+  }
+  private canSelectSort(): boolean {
+    return this.section === '回收站' ? this.pageAlive && this.ready && !this.busy && !this.pending && !this.editorOpen &&
+      !this.detailId && !this.cardOrder.busy && !this.cardOrder.loading : this.canOrderCards();
+  }
+  private restoreCardOrder(): void {
+    try {
+      const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+      this.orderStore = preferences.getPreferencesSync(context, { name: 'studio-card-order-development' });
+      this.cardOrder.restore();
+    } catch (_) { this.orderError = '卡片顺序设置未能读取'; }
+  }
+  private async selectCardSort(value: string): Promise<void> {
+    if (!this.canSelectSort()) { return; }
+    const section = this.section; const page = cardOrderPage(section); const prior = this.sort;
+    this.sort = value === '自定义顺序' ? '默认顺序' : value;
+    if (!page) { return; }
+    try {
+      const saved = await this.cardOrder.select(page, value === '自定义顺序');
+      if (!saved && this.section === section) { this.sort = prior; }
+    } catch (_) {
+      if (this.section === section) { this.sort = prior; }
+      if (this.pageAlive) { this.message = '卡片顺序未能保存：' + this.cardOrder.error; }
+    }
+  }
+  private canNudge(c: CardView, delta: number): boolean {
+    const index = this.visibleCards().findIndex((v: CardView): boolean => v.id === c.id);
+    return this.canOrderCards() && this.canChangeCard(c) && index >= 0 && index + delta >= 0 && index + delta < this.visibleCards().length;
+  }
+  private async moveCard(c: CardView, target: string, after: boolean, token: string, revision: number): Promise<void> {
+    if (!this.canOrderCards() || !this.canChangeCard(c) || token !== this.cardViewToken() || revision !== this.cardOrder.revision) { return; }
+    const page = cardOrderPage(this.section); if (!page) { return; }
+    const section = this.section;
+    try {
+      const saved = await this.cardOrder.move(page, c.id, target, after,
+        this.pageCards().map((v: CardView): string => v.id), this.visibleCards().map((v: CardView): string => v.id), revision, token);
+      if (saved && this.pageAlive && this.section === section) { this.sort = '默认顺序'; }
+      if (!saved && this.cardOrder.error && this.pageAlive) { this.message = '卡片顺序未能保存：' + this.cardOrder.error; }
+    } catch (_) { if (this.pageAlive) { this.message = '卡片顺序未能保存：' + this.cardOrder.error; } }
+  }
+  private nudgeCard(c: CardView, delta: number): void {
+    if (!this.canNudge(c, delta)) { return; }
+    const visible = this.visibleCards(); const index = visible.findIndex((v: CardView): boolean => v.id === c.id);
+    this.moveCard(c, visible[index + delta].id, delta > 0, this.cardViewToken(), this.cardOrder.revision);
+  }
+  private beginCardDrag(c: CardView): DragItemInfo {
+    this.endCardDrag();
+    if (!this.canOrderCards() || !this.canChangeCard(c)) { return {}; }
+    this.heldCard = new CardDrag(c, this.cardViewToken(), this.cardOrder.revision, util.generateRandomUUID(true));
+    this.dragSource = c.id;
+    return { extraInfo: this.heldCard.nonce, builder: (): void => { this.CardDragPreview(c); } };
+  }
+  private acceptsCardDrag(extra: string | undefined, c: CardView): boolean {
+    const held = this.heldCard;
+    if (!held || !extra || !this.canOrderCards() || !this.canChangeCard(held.card) || !this.canChangeCard(c) ||
+      held.token !== this.cardViewToken() || held.revision !== this.cardOrder.revision || held.card.id === c.id) { return false; }
+    try { return (JSON.parse(extra) as CardDragExtra).extraInfo === held.nonce; } catch (_) { return false; }
+  }
+  private hoverCard(event: DragEvent, extra: string | undefined, c: CardView): void {
+    const allowed = this.acceptsCardDrag(extra, c);
+    event.setResult(allowed ? DragResult.DROP_ENABLED : DragResult.DROP_DISABLED);
+    this.dragTarget = allowed ? c.id : '';
+  }
+  private dropCard(event: DragEvent, extra: string | undefined, c: CardView): void {
+    const held = this.heldCard; const bounds = this.cardBounds.get(this.section + ':' + c.id);
+    if (!held || !bounds || !this.acceptsCardDrag(extra, c)) { event.setResult(DragResult.DRAG_FAILED); this.endCardDrag(); return; }
+    const after = event.getWindowY() >= bounds[0] + bounds[1] / 2;
+    event.setResult(DragResult.DRAG_SUCCESSFUL); this.endCardDrag();
+    this.moveCard(held.card, c.id, after, held.token, held.revision);
+  }
+  private endCardDrag(): void { this.heldCard = undefined; this.dragSource = ''; this.dragTarget = ''; }
+  private restoreDeleted(c: CardView): void {
+    if (!c.deleted || this.busy || this.pending || this.editorOpen || this.cards.find((v: CardView) => v.id === c.id)?.source !== c.source) { return; }
+    if (Date.now() < Number(c.deleted_at) || Date.now() - Number(c.deleted_at) >= 8000) {
+      this.message = '已超过共享核心的 8 秒撤销删除期限，卡片保持删除状态。'; return;
+    }
+    const cmd = new Command(); cmd.action = 'restore'; cmd.id = c.id; cmd.source = c.source;
+    cmd.operation = util.generateRandomUUID(true); cmd.now_ms = Date.now().toString(); this.submit(cmd);
   }
   @Builder
   Rim(id: string = '', base: number = 20) {
@@ -902,6 +1092,7 @@ struct Index {
     this.keepDraftAndClose();
   }
   private favoriteCard(c: CardView): void {
+    if (!this.canChangeCard(c)) { return; }
     const cmd = new Command(); cmd.action = 'favorite'; cmd.id = c.id; cmd.source = c.source;
     cmd.operation = util.generateRandomUUID(true); cmd.now_ms = Date.now().toString(); cmd.flag = !c.favorite;
     this.submit(cmd);
@@ -1076,12 +1267,46 @@ struct Index {
       }.margin({ bottom: 12 })
     }.width('100%')
     Row({ space: 5 }) {
-      Blank(); this.Glyph(() => 0xf01a8,  13, () => this.muted()); Text(this.t(this.sort)).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted())
-    }.padding(6).width('100%').bindMenu([
-      { value: this.t('默认顺序'), action: () => { this.sort = '默认顺序'; } },
-      { value: this.t('收藏优先'), action: () => { this.sort = '收藏优先'; } },
-      { value: this.t('标题'), action: () => { this.sort = '标题'; } }
+      if (this.orderWorking) { Text('正在保存顺序…').fontSize(10).fontColor(this.muted()) }
+      Blank(); this.Glyph(() => 0xf01a8,  13, () => this.muted()); Text(this.t(this.sortLabel())).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted())
+    }.padding(6).width('100%').id('card-sort').bindMenu([
+      { value: this.t('默认顺序'), enabled: this.canSelectSort(), action: () => { this.selectCardSort('默认顺序'); } },
+      { value: this.t('收藏优先'), enabled: this.canSelectSort(), action: () => { this.selectCardSort('收藏优先'); } },
+      { value: this.t('标题'), enabled: this.canSelectSort(), action: () => { this.selectCardSort('标题'); } },
+      { value: '自定义顺序', enabled: this.canOrderCards(), action: () => { this.selectCardSort('自定义顺序'); } }
     ])
+    if (this.orderError) { Text('卡片顺序未能保存 · ' + this.orderError).fontSize(11).fontColor(this.muted()).width('100%') }
+    if (this.sortLabel() === '自定义顺序') { Text('长按拖动柄调整顺序，或在卡片菜单中前移、后移。').fontSize(10).fontColor(this.muted()).width('100%') }
+  }
+  @Builder
+  CardDragPreview(c: CardView) {
+    Text(c.title).fontSize(14).fontColor(this.ink()).maxLines(2).padding(16).width(220)
+      .backgroundColor(this.dark ? '#FF292634' : '#FFFFFFFF').borderRadius(12)
+  }
+  @Builder
+  CardMenu(c: CardView) {
+    Menu() {
+      MenuItem({ content: '查看详情' }).onClick(() => this.openDetail(c))
+      if (!c.deleted) {
+        MenuItem({ content: '前移卡片' }).enabled(this.canNudge(c, -1)).onClick(() => this.nudgeCard(c, -1))
+        MenuItem({ content: '后移卡片' }).enabled(this.canNudge(c, 1)).onClick(() => this.nudgeCard(c, 1))
+        MenuItem({ content: this.t('编辑') }).enabled(this.canChangeCard(c)).onClick(() => this.select(c))
+      }
+      MenuItem({ content: this.t('复制') }).onClick(() => this.copyCard(c))
+      if (c.category === '灵感' && !c.deleted) {
+        MenuItem({ content: '转为项目' }).enabled(this.canChangeCard(c)).onClick(() => this.cardAction(c, 'category'))
+      }
+      if (!c.deleted) {
+        MenuItem({ content: c.favorite ? '取消收藏' : '收藏' }).enabled(this.canChangeCard(c)).onClick(() => this.favoriteCard(c))
+        MenuItem({ content: '移入回收站' }).enabled(this.canChangeCard(c)).onClick(() => this.deleteCard(c))
+        MenuItem({ content: '组件设置' }).onClick(() => {
+          if (this.editorOpen || this.busy || this.pending) { return; }
+          this.closeDetail(); this.openSettings('组件与卡片'); this.beginMaterial('card:' + c.id);
+        })
+      } else {
+        MenuItem({ content: '撤销删除（8秒内）' }).enabled(!this.busy && !this.pending).onClick(() => this.restoreDeleted(c))
+      }
+    }
   }
   @Builder
   IdeaCard(c: CardView) {
@@ -1109,7 +1334,7 @@ struct Index {
       }
     }.alignItems(HorizontalAlign.Start).padding({ left: 19, right: 13, top: 16, bottom: 17 }).width('100%')
       .backgroundColor(this.glass()).backdropBlur(this.materialBlur('card:' + c.id + '')).linearGradient(this.gradient('card:' + c.id + '')).overlay(this.Rim('card:' + c.id + '', 19)).onAreaChange((_, area: Area) => this.rememberSurface('card:' + c.id + '',  19, area)).shadow(this.surfaceShadow('card:' + c.id + '')).borderRadius(this.round(19, 'card:' + c.id + '')).border({ width: this.styleEdgeWidth(), color: this.line() })
-      .onClick(() => this.select(c))
+      .onClick(() => this.openDetail(c)).bindContextMenu(this.CardMenu(c), ResponseType.LongPress)
   }
   @Builder
   WorkspaceHeader() {
@@ -1161,7 +1386,25 @@ struct Index {
           LazyForEach(this.workspaceCards, (item: WorkspaceCard) => {
             Column() {
               WorkspaceCardSlot({ value: item, content: this.WorkspaceCardContent.bind(this) })
+              Row({ space: 6 }) {
+                if (!item.card.deleted) {
+                  Button('⠿', { type: ButtonType.Normal }).fontSize(21).fontColor(this.muted()).width(40).height(32).padding(0).backgroundColor(Color.Transparent)
+                    .id('card-drag:' + item.card.id).accessibilityText('长按拖动卡片：' + item.card.title)
+                    .enabled(this.canOrderCards()).draggable(this.canOrderCards())
+                    .onDragStart((): DragItemInfo => this.beginCardDrag(item.card)).onDragEnd(() => this.endCardDrag())
+                }
+                Blank()
+                Button('···', { type: ButtonType.Normal }).fontSize(21).fontColor(this.muted()).width(40).height(32).padding(0).backgroundColor(Color.Transparent)
+                  .id('card-menu:' + item.card.id).accessibilityText('卡片操作：' + item.card.title).bindMenu(this.CardMenu(item.card))
+              }.width('100%')
             }.width('100%').id('workspace-card:' + item.card.id)
+              .backgroundColor(this.dragTarget === item.card.id ? alpha(this.accent(), .12) : Color.Transparent)
+              .opacity(this.dragSource === item.card.id ? .55 : 1)
+              .onAreaChange((_: Area, area: Area) => { this.cardBounds.set(this.section + ':' + item.card.id, [Number(area.globalPosition.y), Number(area.height)]); })
+              .onDragEnter((event: DragEvent, extra?: string) => this.hoverCard(event, extra, item.card))
+              .onDragMove((event: DragEvent, extra?: string) => this.hoverCard(event, extra, item.card))
+              .onDragLeave(() => { this.dragTarget = ''; })
+              .onDrop((event: DragEvent, extra?: string) => this.dropCard(event, extra, item.card))
           }, (item: WorkspaceCard) => item.key)
         }.columnsTemplate((this.section === '概览' && this.contentWidth >= 460) || (this.section === '进行中' && this.contentWidth >= 660) ? '1fr 1fr' : '1fr')
           .columnsGap(LengthMetrics.vp(14)).rowsGap(LengthMetrics.vp(14))
@@ -1254,7 +1497,7 @@ struct Index {
       }
     }.alignItems(HorizontalAlign.Start).padding(18).width('100%').borderRadius(this.round(20, 'card:' + c.id))
       .backgroundColor(Color.Transparent).backdropBlur(this.materialBlur('card:' + c.id)).linearGradient(this.gradient('card:' + c.id))
-      .border({ width: this.styleEdgeWidth(), color: this.line() }).overlay(this.Rim('card:' + c.id)).onAreaChange((_, area: Area) => this.rememberSurface('card:' + c.id, 20, area)).shadow(this.surfaceShadow('card:' + c.id)).onClick(() => this.select(c))
+      .border({ width: this.styleEdgeWidth(), color: this.line() }).overlay(this.Rim('card:' + c.id)).onAreaChange((_, area: Area) => this.rememberSurface('card:' + c.id, 20, area)).shadow(this.surfaceShadow('card:' + c.id)).onClick(() => this.openDetail(c)).bindContextMenu(this.CardMenu(c), ResponseType.LongPress)
   }
   @Builder
   SettingLabel(text: string, value: () => string = () => '') {
@@ -1661,6 +1904,87 @@ struct Index {
   }
 
   @Builder
+  Detail(c: CardView) {
+    Column({ space: 16 }) {
+      Row({ space: 12 }) {
+        this.Glyph(() => this.icon(c.category), 24, () => this.accent())
+        Column({ space: 5 }) {
+          Text(c.title).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(22).fontWeight(FontWeight.Medium).fontColor(this.ink())
+            .maxLines(3).width('100%').textOverflow({ overflow: TextOverflow.Ellipsis }).id('detail-title')
+          Text('想法详情').fontSize(11).fontColor(this.muted())
+        }.alignItems(HorizontalAlign.Start).layoutWeight(1)
+        Button('×', { type: ButtonType.Normal }).fontSize(22).fontColor(this.muted()).width(36).height(36).padding(0).backgroundColor(Color.Transparent)
+          .accessibilityText('关闭详情').id('detail-close').enabled(!this.busy).onClick(() => this.closeDetail())
+      }.width('100%')
+      Scroll(this.detailScroller) {
+        Column({ space: 18 }) {
+          Text(this.t(c.category)).fontSize(12).fontColor(this.accent()).width('100%')
+          if (this.markdownLoading) { Text('正在生成预览…').fontSize(12).fontColor(this.muted()) }
+          if (this.markdownError) {
+            Text('预览暂不可用 · ' + this.markdownError).fontSize(12).fontColor(this.muted())
+            Button('重新生成预览', { type: ButtonType.Normal }).fontSize(12).fontColor(this.accent()).backgroundColor(Color.Transparent).onClick(() => this.markdown.retry())
+          }
+          if (!c.description.trim()) { Text('给这个念头，留一点生长的空间。').fontSize(13).fontColor(this.muted()) }
+          MarkdownPreview({ document: this.markdownDoc, ink: this.ink(), muted: this.muted(), accent: this.accent(),
+            line: this.line(), family: this.fontFamily || 'HarmonyOS Sans', locale: this.locale,
+            openLink: (href: string): void => { this.openMarkdownLink(href); } })
+          if (c.category === '实验') {
+            Text(this.t('假设 / 想试什么')).fontSize(12).fontColor(this.accent()).width('100%')
+            Text(c.hypothesis || '还没有写下假设。').fontSize(13).lineHeight(22).fontColor(this.ink()).copyOption(CopyOptions.LocalDevice).width('100%')
+            Text(this.t('观察 / 留下发现')).fontSize(12).fontColor(this.accent()).width('100%')
+            Text(c.conclusion || '还没有留下观察记录。').fontSize(13).lineHeight(22).fontColor(this.ink()).copyOption(CopyOptions.LocalDevice).width('100%')
+          }
+          if (!c.deleted) {
+            Row({ space: 12 }) {
+              Select(['灵感', '进行中', '实验'].map((s: string): SelectOption => { return { value: this.t(s) }; }))
+                .value(this.t(c.category)).font({ size: 12 }).fontColor(this.accent()).backgroundColor(Color.Transparent).id('detail-category')
+                .enabled(this.canChangeCard(c)).onSelect((index: number) => {
+                  const value = ['灵感', '进行中', '实验'][index]; if (value && value !== c.category) { this.cardAction(c, 'category', value); }
+                })
+              Blank()
+              Select((c.category === '灵感' ? ['待整理', '已整理'] : c.category === '进行中' ? ['计划中', '推进中', '已完成'] : ['待验证', '验证中', '已记录'])
+                .map((s: string): SelectOption => { return { value: s }; }))
+                .value(c.stage).font({ size: 12 }).fontColor(this.muted()).backgroundColor(Color.Transparent).id('detail-stage')
+                .enabled(this.canChangeCard(c)).onSelect((_: number, value: string) => { if (value !== c.stage) { this.cardAction(c, 'stage', value); } })
+            }.width('100%')
+          }
+          if (c.tasks.length > 0) {
+            Text(`待办事项 · ${c.tasks.filter((task: TaskView): boolean => task.completion === 1).length} / ${c.tasks.length}`).fontSize(12).fontColor(this.accent()).width('100%')
+            ForEach(c.tasks, (task: TaskView) => {
+              Row({ space: 10 }) {
+                Button(task.completion === 1 ? '✓' : task.completion === 2 ? '?' : '○', { type: ButtonType.Normal })
+                  .fontSize(18).fontColor(this.accent()).width(32).height(32).padding(0).backgroundColor(alpha(this.accent(), .08))
+                  .id('detail-task:' + task.id).enabled(this.canChangeCard(c)).onClick(() => this.detailTask(c, task))
+                Text(task.text).fontSize(13).fontColor(this.ink()).layoutWeight(1).copyOption(CopyOptions.LocalDevice)
+              }.width('100%')
+            }, (task: TaskView) => task.id + ':' + task.completion)
+          }
+          if (c.deleted) { Text('这张卡片已移入回收站，删除后 8 秒内可以撤销。').fontSize(12).fontColor(this.muted()).width('100%') }
+          if (this.message) { Text(this.message).fontSize(12).lineHeight(20).fontColor(this.muted()).width('100%').id('detail-message') }
+          if (this.pending && !this.busy) { Button(this.t('核对')).fontSize(12).backgroundColor(this.accent()).onClick(() => this.retry()) }
+        }.alignItems(HorizontalAlign.Start).width('100%')
+      }.height('auto').constraintSize({ maxHeight: Math.max(150, this.viewportHeight - 270) }).width('100%').scrollBar(BarState.Off).align(Alignment.TopStart).id('detail-scroll')
+        .onDidScroll(() => { this.detailOffset = this.detailScroller.currentOffset().yOffset; })
+        .onAppear(() => {
+          const offset = this.detailOffset;
+          setTimeout(() => { if (this.pageAlive && this.detailId === c.id) { this.detailScroller.scrollTo({ xOffset: 0, yOffset: offset }); } }, 16);
+        })
+      Flex({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.End }) {
+        Button(this.t('复制'), { type: ButtonType.Normal }).fontSize(12).fontColor(this.accent()).backgroundColor(Color.Transparent).height(40).onClick(() => this.copyCard(c)).id('detail-copy')
+        if (c.deleted) {
+          Button('撤销删除（8秒内）', { type: ButtonType.Normal }).fontSize(12).fontColor(this.accent()).backgroundColor(Color.Transparent).height(40)
+            .enabled(!this.busy && !this.pending).onClick(() => this.restoreDeleted(c))
+        } else {
+          Button(c.favorite ? '取消收藏' : '收藏', { type: ButtonType.Normal }).fontSize(12).fontColor(this.accent()).backgroundColor(Color.Transparent).height(40).enabled(this.canChangeCard(c)).onClick(() => this.favoriteCard(c))
+          Button('删除', { type: ButtonType.Normal }).fontSize(12).fontColor(this.muted()).backgroundColor(Color.Transparent).height(40).enabled(this.canChangeCard(c)).onClick(() => this.deleteCard(c))
+          Button(this.t('编辑'), { type: ButtonType.Normal }).fontSize(12).fontColor(this.accent()).backgroundColor(Color.Transparent).height(40).enabled(this.canChangeCard(c)).id('detail-edit').onClick(() => this.select(c))
+        }
+        Button('完成', { type: ButtonType.Normal }).fontSize(12).fontColor(this.ink()).backgroundColor(alpha(this.accent(), .12)).height(40).enabled(!this.busy).onClick(() => this.closeDetail())
+      }.width('100%')
+    }.padding(24).width(Math.min(470, this.viewportWidth - 24)).constraintSize({ maxHeight: this.viewportHeight - 40 })
+      .backgroundColor(this.dark ? '#FA292634' : '#FAFFFFFF').backdropBlur(20).borderRadius(this.round(23)).border({ width: this.styleEdgeWidth(), color: this.line() }).id('card-detail')
+  }
+  @Builder
   BodyPreview() {
     Scroll() {
       Column({ space: 7 }) {
@@ -1929,6 +2253,13 @@ struct Index {
         Stack() {
           Rect().width('100%').height('100%').fill('#40302D43').onClick(() => this.closeEditor())
           this.Editor()
+        }.width('100%').height('100%')
+      } else if (this.detailId) {
+        Stack() {
+          Rect().width('100%').height('100%').fill('#40302D43').onClick(() => this.closeDetail())
+          ForEach(this.cards.filter((c: CardView): boolean => c.id === this.detailId), (c: CardView) => {
+            this.Detail(c)
+          }, (c: CardView) => c.id + ':' + c.revision)
         }.width('100%').height('100%')
       } else if (this.message.length > 0) {
         Row({ space: 8 }) {

@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-10-05T09:18:03.363Z",
+  "createdUtc": "2026-10-05T09:54:20.724Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.10",
+  "hmosVersion": "0.1.0-hmos-dev.11",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 23545787,
-    "sha256": "1988A4A87CA28102F53CB1A748C94AD644E7B122AD3D0B7F08CE8F0FA0344C44",
+    "bytes": 23718916,
+    "sha256": "5BC43903EE786FCF5CFDCAA739BF2F5075B397958AA61A8F312F89D00A4B94A5",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "087E7C54D5FE381CDCF268B9111F770345BB1FE2ED33CB0B854181828E1A114C"
+      "sha256": "C2D7C1CEC6CE75DABF5BFBA82EE555C7B687DD9EE77270B4DA0EF906871363F4"
     },
     {
       "path": "entry/build-profile.json5",
@@ -76,7 +76,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "E0027EAF040994BE0750343AE9433987A07153565462A2C89DA6F76C841D1146"
+      "sha256": "81E9D016D42CB845B7EC0B866E3BBFF7426A7785A3A2AA3C12F3C20F5F42F118"
     },
     {
       "path": "hvigor/hvigor-config.json5",
@@ -1113,8 +1113,12 @@
     {
       "path": "rust/src/markdown.rs",
       "sha256": "729286A16E6E3A2566DDBFCD87CFD54BBADC489A41934ABA4690DC7FFCBF25AA"
+    },
+    {
+      "path": "entry/src/main/ets/model/CardOrder.ets",
+      "sha256": "8ECC6057DAA4667002319AC5CBD5C85403B0D52A9254C9923384B6A9012EC384"
     }
   ],
-  "uiValidation": "reports/ui-source/v10/validation.md",
+  "uiValidation": "reports/ui-source/v11/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

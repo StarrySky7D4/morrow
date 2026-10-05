@@ -1,0 +1,8 @@
+{
+  "result": "PASS",
+  "checks": [
+    "inbox manual selection and order do not overwrite overview preferences",
+    "native body long press opens card menu and routes to reading detail"
+  ],
+  "hapSha256": "5BC43903EE786FCF5CFDCAA739BF2F5075B397958AA61A8F312F89D00A4B94A5"
+}

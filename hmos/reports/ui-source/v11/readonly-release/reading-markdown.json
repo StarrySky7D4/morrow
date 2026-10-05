@@ -1,0 +1,807 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "Button",
+        "bounds": [
+          36,
+          156,
+          156,
+          270
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              65,
+              182,
+              128,
+              245
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          219,
+          188,
+          270,
+          239
+        ],
+        "children": []
+      },
+      {
+        "type": "TextInput",
+        "text": "HMOS-markdown-20261005-A",
+        "bounds": [
+          294,
+          156,
+          908,
+          270
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "scrollable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "×",
+        "bounds": [
+          932,
+          182,
+          963,
+          245
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Button",
+        "bounds": [
+          1026,
+          156,
+          1146,
+          270
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "󰉘",
+            "bounds": [
+              1058,
+              185,
+              1115,
+              242
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Button",
+        "text": "草稿",
+        "bounds": [
+          1170,
+          156,
+          1284,
+          270
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Scroll",
+        "bounds": [
+          36,
+          339,
+          1284,
+          2112
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "还没成形，也没关系。",
+            "bounds": [
+              114,
+              339,
+              744,
+              383
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。",
+            "bounds": [
+              114,
+              413,
+              708,
+              535
+            ],
+            "children": []
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              114,
+              595,
+              420,
+              670
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "记录此刻的想法",
+                "bounds": [
+                  114,
+                  613,
+                  345,
+                  652
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  375,
+                  610,
+                  420,
+                  655
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "最近的念头",
+            "bounds": [
+              36,
+              881,
+              262,
+              934
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "01",
+            "bounds": [
+              286,
+              890,
+              321,
+              925
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "全部",
+            "bounds": [
+              357,
+              869,
+              483,
+              946
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "有待办",
+            "bounds": [
+              495,
+              869,
+              651,
+              946
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "含附件",
+            "bounds": [
+              663,
+              869,
+              819,
+              946
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "仅收藏",
+            "bounds": [
+              831,
+              869,
+              987,
+              946
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "id": "card-sort",
+            "type": "Row",
+            "bounds": [
+              36,
+              982,
+              1284,
+              1057
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰆨",
+                "bounds": [
+                  1062,
+                  1000,
+                  1101,
+                  1039
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "自定义顺序",
+                "bounds": [
+                  1116,
+                  1002,
+                  1266,
+                  1037
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "长按拖动柄调整顺序，或在卡片菜单中前移、后移。",
+            "bounds": [
+              36,
+              1057,
+              1284,
+              1092
+            ],
+            "children": []
+          },
+          {
+            "id": "workspace-card:060b5cd8-de23-45e6-95a1-4571ddbf41a6",
+            "type": "Column",
+            "bounds": [
+              36,
+              1140,
+              1284,
+              1789
+            ],
+            "children": [
+              {
+                "type": "Column",
+                "bounds": [
+                  36,
+                  1140,
+                  1284,
+                  1693
+                ],
+                "clickable": true,
+                "longClickable": true,
+                "children": [
+                  {
+                    "type": "Text",
+                    "text": "",
+                    "bounds": [
+                      119,
+                      1214,
+                      176,
+                      1271
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Button",
+                    "bounds": [
+                      1146,
+                      1194,
+                      1242,
+                      1290
+                    ],
+                    "clickable": true,
+                    "children": [
+                      {
+                        "type": "Text",
+                        "text": "",
+                        "bounds": [
+                          1169,
+                          1217,
+                          1220,
+                          1268
+                        ],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-markdown-20261005-A",
+                    "bounds": [
+                      96,
+                      1335,
+                      710,
+                      1384
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "| Name | Value |\n| --- | --- |\n| 中文😀 | 42 |\n| Second | 保留 |",
+                    "bounds": [
+                      96,
+                      1408,
+                      320,
+                      1526
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "灵感",
+                    "bounds": [
+                      96,
+                      1583,
+                      192,
+                      1639
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "待整理",
+                    "bounds": [
+                      1161,
+                      1595,
+                      1242,
+                      1627
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "card-drag:060b5cd8-de23-45e6-95a1-4571ddbf41a6",
+                "type": "Button",
+                "text": "⠿",
+                "bounds": [
+                  36,
+                  1693,
+                  156,
+                  1789
+                ],
+                "children": []
+              },
+              {
+                "id": "card-menu:060b5cd8-de23-45e6-95a1-4571ddbf41a6",
+                "type": "Button",
+                "text": "···",
+                "bounds": [
+                  1164,
+                  1693,
+                  1284,
+                  1789
+                ],
+                "clickable": true,
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              87,
+              1902,
+              138,
+              1953
+            ],
+            "children": []
+          },
+          {
+            "type": "TextInput",
+            "bounds": [
+              174,
+              1858,
+              1119,
+              1996
+            ],
+            "clickable": true,
+            "longClickable": true,
+            "scrollable": true,
+            "children": []
+          },
+          {
+            "type": "Button",
+            "bounds": [
+              1155,
+              1882,
+              1245,
+              1972
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  1175,
+                  1902,
+                  1226,
+                  1953
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "没有紧迫的事。给好奇心一点时间。",
+        "bounds": [
+          129,
+          2021,
+          1158,
+          2060
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "󰛹",
+        "bounds": [
+          1185,
+          2015,
+          1236,
+          2066
+        ],
+        "children": []
+      },
+      {
+        "type": "Rect",
+        "bounds": [
+          0,
+          117,
+          1320,
+          2148
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "id": "card-detail",
+        "type": "Column",
+        "bounds": [
+          36,
+          522,
+          1284,
+          1744
+        ],
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              111,
+              665,
+              183,
+              737
+            ],
+            "children": []
+          },
+          {
+            "id": "detail-title",
+            "type": "Text",
+            "text": "HMOS-markdown-20261005-A",
+            "bounds": [
+              219,
+              597,
+              1065,
+              751
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "想法详情",
+            "bounds": [
+              219,
+              766,
+              351,
+              805
+            ],
+            "children": []
+          },
+          {
+            "id": "detail-close",
+            "type": "Button",
+            "text": "×",
+            "bounds": [
+              1101,
+              647,
+              1209,
+              755
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "id": "detail-scroll",
+            "type": "Scroll",
+            "bounds": [
+              111,
+              853,
+              1209,
+              1501
+            ],
+            "children": [
+              {
+                "type": "Text",
+                "text": "灵感",
+                "bounds": [
+                  111,
+                  853,
+                  1209,
+                  895
+                ],
+                "children": []
+              },
+              {
+                "id": "markdown-block:0:table",
+                "type": "Row",
+                "bounds": [
+                  111,
+                  949,
+                  1209,
+                  1327
+                ],
+                "children": [
+                  {
+                    "id": "markdown-table",
+                    "type": "Scroll",
+                    "bounds": [
+                      111,
+                      949,
+                      1209,
+                      1327
+                    ],
+                    "children": [
+                      {
+                        "id": "markdown-table-row:0",
+                        "type": "Row",
+                        "bounds": [
+                          210,
+                          949,
+                          1110,
+                          1075
+                        ],
+                        "children": [
+                          {
+                            "type": "Text",
+                            "text": "Name",
+                            "bounds": [
+                              238,
+                              977,
+                              632,
+                              1047
+                            ],
+                            "clickable": true,
+                            "longClickable": true,
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "Value",
+                            "bounds": [
+                              688,
+                              977,
+                              1082,
+                              1047
+                            ],
+                            "clickable": true,
+                            "longClickable": true,
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "id": "markdown-table-row:1",
+                        "type": "Row",
+                        "bounds": [
+                          210,
+                          1075,
+                          1110,
+                          1201
+                        ],
+                        "children": [
+                          {
+                            "type": "Text",
+                            "text": "中文😀",
+                            "bounds": [
+                              238,
+                              1103,
+                              632,
+                              1173
+                            ],
+                            "clickable": true,
+                            "longClickable": true,
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "42",
+                            "bounds": [
+                              688,
+                              1103,
+                              1082,
+                              1173
+                            ],
+                            "clickable": true,
+                            "longClickable": true,
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "id": "markdown-table-row:2",
+                        "type": "Row",
+                        "bounds": [
+                          210,
+                          1201,
+                          1110,
+                          1327
+                        ],
+                        "children": [
+                          {
+                            "type": "Text",
+                            "text": "Second",
+                            "bounds": [
+                              238,
+                              1229,
+                              632,
+                              1299
+                            ],
+                            "clickable": true,
+                            "longClickable": true,
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "保留",
+                            "bounds": [
+                              688,
+                              1229,
+                              1082,
+                              1299
+                            ],
+                            "clickable": true,
+                            "longClickable": true,
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "detail-category",
+                "type": "Select",
+                "text": "灵感",
+                "bounds": [
+                  111,
+                  1381,
+                  337,
+                  1501
+                ],
+                "clickable": true,
+                "children": []
+              },
+              {
+                "id": "detail-stage",
+                "type": "Select",
+                "text": "待整理",
+                "bounds": [
+                  947,
+                  1381,
+                  1209,
+                  1501
+                ],
+                "clickable": true,
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "detail-copy",
+            "type": "Button",
+            "text": "复制",
+            "bounds": [
+              364,
+              1549,
+              533,
+              1669
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Button",
+            "text": "收藏",
+            "bounds": [
+              533,
+              1549,
+              702,
+              1669
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Button",
+            "text": "删除",
+            "bounds": [
+              702,
+              1549,
+              871,
+              1669
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "id": "detail-edit",
+            "type": "Button",
+            "text": "编辑",
+            "bounds": [
+              871,
+              1549,
+              1040,
+              1669
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Button",
+            "text": "完成",
+            "bounds": [
+              1040,
+              1549,
+              1209,
+              1669
+            ],
+            "clickable": true,
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]

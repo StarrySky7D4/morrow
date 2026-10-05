@@ -1,0 +1,444 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "Button",
+        "bounds": [
+          36,
+          156,
+          156,
+          270
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              65,
+              182,
+              128,
+              245
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          219,
+          188,
+          270,
+          239
+        ],
+        "children": []
+      },
+      {
+        "type": "TextInput",
+        "text": "HMOS-flow-20261005-",
+        "bounds": [
+          294,
+          156,
+          908,
+          270
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "scrollable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "×",
+        "bounds": [
+          932,
+          182,
+          963,
+          245
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Button",
+        "bounds": [
+          1026,
+          156,
+          1146,
+          270
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "󰉘",
+            "bounds": [
+              1058,
+              185,
+              1115,
+              242
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Button",
+        "text": "草稿",
+        "bounds": [
+          1170,
+          156,
+          1284,
+          270
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Scroll",
+        "bounds": [
+          36,
+          339,
+          1284,
+          2112
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "id": "workspace-card:8c1176bd-e6d9-4558-bb1a-ecb3881ff991",
+            "type": "Column",
+            "bounds": [
+              36,
+              339,
+              1284,
+              929
+            ],
+            "children": [
+              {
+                "type": "Column",
+                "bounds": [
+                  36,
+                  339,
+                  1284,
+                  833
+                ],
+                "clickable": true,
+                "longClickable": true,
+                "children": [
+                  {
+                    "type": "Text",
+                    "text": "",
+                    "bounds": [
+                      119,
+                      354,
+                      176,
+                      411
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Button",
+                    "bounds": [
+                      1146,
+                      339,
+                      1242,
+                      430
+                    ],
+                    "clickable": true,
+                    "children": [
+                      {
+                        "type": "Text",
+                        "text": "",
+                        "bounds": [
+                          1169,
+                          357,
+                          1220,
+                          408
+                        ],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-flow-20261005-A",
+                    "bounds": [
+                      96,
+                      475,
+                      587,
+                      524
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "# HMOS-flow-20261005-A\n\nNative **reading** body.",
+                    "bounds": [
+                      96,
+                      548,
+                      506,
+                      666
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "灵感",
+                    "bounds": [
+                      96,
+                      723,
+                      192,
+                      779
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "待整理",
+                    "bounds": [
+                      1161,
+                      735,
+                      1242,
+                      767
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "card-drag:8c1176bd-e6d9-4558-bb1a-ecb3881ff991",
+                "type": "Button",
+                "text": "⠿",
+                "bounds": [
+                  36,
+                  833,
+                  156,
+                  929
+                ],
+                "children": []
+              },
+              {
+                "id": "card-menu:8c1176bd-e6d9-4558-bb1a-ecb3881ff991",
+                "type": "Button",
+                "text": "···",
+                "bounds": [
+                  1164,
+                  833,
+                  1284,
+                  929
+                ],
+                "clickable": true,
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "workspace-card:9827d318-4750-45ec-b735-c22dba961f15",
+            "type": "Column",
+            "bounds": [
+              36,
+              971,
+              1284,
+              1620
+            ],
+            "children": [
+              {
+                "type": "Column",
+                "bounds": [
+                  36,
+                  971,
+                  1284,
+                  1524
+                ],
+                "clickable": true,
+                "longClickable": true,
+                "children": [
+                  {
+                    "type": "Text",
+                    "text": "",
+                    "bounds": [
+                      119,
+                      1045,
+                      176,
+                      1102
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Button",
+                    "bounds": [
+                      1146,
+                      1025,
+                      1242,
+                      1121
+                    ],
+                    "clickable": true,
+                    "children": [
+                      {
+                        "type": "Text",
+                        "text": "",
+                        "bounds": [
+                          1169,
+                          1048,
+                          1220,
+                          1099
+                        ],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-flow-20261005-C",
+                    "bounds": [
+                      96,
+                      1166,
+                      588,
+                      1215
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "# HMOS-flow-20261005-C\n\nNative **reading** body.",
+                    "bounds": [
+                      96,
+                      1239,
+                      508,
+                      1357
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "灵感",
+                    "bounds": [
+                      96,
+                      1414,
+                      192,
+                      1470
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "待整理",
+                    "bounds": [
+                      1161,
+                      1426,
+                      1242,
+                      1458
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "card-drag:9827d318-4750-45ec-b735-c22dba961f15",
+                "type": "Button",
+                "text": "⠿",
+                "bounds": [
+                  36,
+                  1524,
+                  156,
+                  1620
+                ],
+                "children": []
+              },
+              {
+                "id": "card-menu:9827d318-4750-45ec-b735-c22dba961f15",
+                "type": "Button",
+                "text": "···",
+                "bounds": [
+                  1164,
+                  1524,
+                  1284,
+                  1620
+                ],
+                "clickable": true,
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              87,
+              1733,
+              138,
+              1784
+            ],
+            "children": []
+          },
+          {
+            "type": "TextInput",
+            "bounds": [
+              174,
+              1689,
+              1119,
+              1827
+            ],
+            "clickable": true,
+            "longClickable": true,
+            "scrollable": true,
+            "children": []
+          },
+          {
+            "type": "Button",
+            "bounds": [
+              1155,
+              1713,
+              1245,
+              1803
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  1175,
+                  1733,
+                  1226,
+                  1784
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "没有紧迫的事。给好奇心一点时间。",
+        "bounds": [
+          129,
+          2021,
+          1158,
+          2060
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "󰛹",
+        "bounds": [
+          1185,
+          2015,
+          1236,
+          2066
+        ],
+        "children": []
+      }
+    ]
+  }
+]

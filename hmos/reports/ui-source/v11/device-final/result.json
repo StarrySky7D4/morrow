@@ -1,0 +1,13 @@
+{
+  "result": "PASS",
+  "device": "127.0.0.1:5557",
+  "prefix": "HMOS-flow-20261005-",
+  "checks": [
+    "three unique fixtures saved and title-sorted through actual editor",
+    "card-menu nudge enables manual order",
+    "filtered nudge retains the hidden B card slot",
+    "per-page manual order survives process restart",
+    "explicit detail edit saves one existing identity and refreshes Markdown",
+    "context menu moves inspiration to project through CAS"
+  ]
+}

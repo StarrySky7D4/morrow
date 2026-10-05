@@ -1,0 +1,235 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "MenuItem",
+        "text": "查看详情",
+        "bounds": [
+          366,
+          840,
+          894,
+          984
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "查看详情",
+            "bounds": [
+              402,
+              864,
+              835,
+              960
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "MenuItem",
+        "text": "前移卡片",
+        "bounds": [
+          366,
+          984,
+          894,
+          1128
+        ],
+        "children": [
+          {
+            "type": "Text",
+            "text": "前移卡片",
+            "bounds": [
+              402,
+              1008,
+              835,
+              1104
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "MenuItem",
+        "text": "后移卡片",
+        "bounds": [
+          366,
+          1128,
+          894,
+          1272
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "后移卡片",
+            "bounds": [
+              402,
+              1152,
+              835,
+              1248
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "MenuItem",
+        "text": "编辑",
+        "bounds": [
+          366,
+          1272,
+          894,
+          1416
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "编辑",
+            "bounds": [
+              402,
+              1296,
+              835,
+              1392
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "MenuItem",
+        "text": "复制",
+        "bounds": [
+          366,
+          1416,
+          894,
+          1560
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "复制",
+            "bounds": [
+              402,
+              1440,
+              835,
+              1536
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "MenuItem",
+        "text": "转为项目",
+        "bounds": [
+          366,
+          1560,
+          894,
+          1704
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "转为项目",
+            "bounds": [
+              402,
+              1584,
+              835,
+              1680
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "MenuItem",
+        "text": "取消收藏",
+        "bounds": [
+          366,
+          1704,
+          894,
+          1848
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "取消收藏",
+            "bounds": [
+              402,
+              1728,
+              835,
+              1824
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "MenuItem",
+        "text": "移入回收站",
+        "bounds": [
+          366,
+          1848,
+          894,
+          1992
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "移入回收站",
+            "bounds": [
+              402,
+              1872,
+              835,
+              1968
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "MenuItem",
+        "text": "组件设置",
+        "bounds": [
+          366,
+          1992,
+          894,
+          2136
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "组件设置",
+            "bounds": [
+              402,
+              2016,
+              835,
+              2112
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]

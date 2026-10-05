@@ -19,7 +19,7 @@ for (const p of ['entry/src/main/ets/model/EditorDraft.ets', 'rust/src/draft_bri
   'rust/editor-draft-model/build.rs', 'rust/editor-draft-model/src/wrapper.rs', 'rust/editor-draft-model/src/lib.rs',
   'rust/editor-draft-model/schemas/editor_draft.proto']) inputs.add(p);
 for (const p of ['entry/src/main/ets/model/EditorPaste.ets', 'entry/src/main/ets/pages/MarkdownPreview.ets',
-  'rust/src/markdown.rs']) inputs.add(p);
+  'rust/src/markdown.rs', 'entry/src/main/ets/model/CardOrder.ets']) inputs.add(p);
 manifest.inputs = [...inputs].map(p => ({ path: p, sha256: hash(path.join(root, p)) }));
 manifest.uiValidation = `${reportDir}/validation.md`;
 manifest.upstreamDrift = 'reports/reference-drift.json';
@@ -33,6 +33,8 @@ const extra = ['lib/plugins/query_coordinator.dart','lib/plugins/workbench_ids.d
 extra.push('lib/plugins/editor_draft_session.dart', 'lib/plugins/editor_draft_workspace.dart',
   'workbench_host/src/editor_draft.rs', 'workbench_host/src/editor_draft/model.rs', 'workbench_host/schemas/editor_draft.proto');
 extra.push('lib/content/idea_markdown.dart', 'lib/content/rich_content.dart', 'plugins/workbench/src/capture.rs');
+extra.push('lib/card_order_preferences.dart', 'lib/pages/card_order.dart', 'lib/hold_reorder.dart',
+  'lib/pages/component_menus.dart', 'lib/component_context_menu.dart', 'lib/pages/workspace_pages.dart');
 for (const language of ['en','ja','ko','de','fr','es','pt','ru']) extra.push(`packages/morrow_i18n/lib/l10n/app_${language}.arb`);
 ref.files = [...new Set([...ref.files.map(x => x.path), ...extra])].map(p => ({ path: p, sha256: hash(path.join(ref.root, p)) }));
 fs.writeFileSync(path.join(root, reportDir, 'flutter-reference.json'), JSON.stringify(ref, null, 2) + '\n');
