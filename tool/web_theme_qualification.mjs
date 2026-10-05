@@ -1,14 +1,19 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {qualificationTimer} from './web_qualification_timing.mjs';
 
-export async function qualifyTheme({call,sessionId,root,evaluate,until,rect,enable,waitLabel,click,reopenPage}) {
+export async function qualifyTheme({call,sessionId,root,evaluate,until,rect,enable,waitLabel:rawWaitLabel,click:rawClick,reopenPage:rawReopenPage}) {
+  const timed=qualificationTimer(path.join(root,'build/web-theme-timings.json'));
+  const click=label=>timed(`click: ${label}`,()=>rawClick(label));
+  const waitLabel=label=>timed(`visible: ${label}`,()=>rawWaitLabel(label));
+  const reopenPage=()=>timed('close and reopen tab',rawReopenPage);
   const name='中秋 · 月满庭 / Moonlit Court';
   const caption='MOONLIT COURT / MID-AUTUMN';
   const fixture=path.join(root,'test/fixtures/plugins/morrow-mid-autumn-1.0.0.morrowplugin');
   const bytes=await readFile(fixture);
   if(bytes.length!==661049||createHash('sha256').update(bytes).digest('hex')!=='b9c8dd591ef88e2d14be4ee7f4b402ff5d6563530618f71cbaf1e4d1b61d9751')throw Error('Original theme fixture changed');
-  const idle=()=>until(()=>evaluate('(()=>{const a=globalThis.__mediaWorkerActivity;return a.sent>0&&a.pending===0&&performance.now()-a.last>1000;})()'),'theme host receipts');
+  const idle=()=>timed('theme host receipts',()=>until(()=>evaluate('(()=>{const a=globalThis.__mediaWorkerActivity;return a.sent>0&&a.pending===0&&performance.now()-a.last>1000;})()'),'theme host receipts'));
   const select=async(file,label='Choose theme plugin')=>{
     await call('Page.setInterceptFileChooserDialog',{enabled:true},sessionId);
     await click(label);
@@ -17,12 +22,12 @@ export async function qualifyTheme({call,sessionId,root,evaluate,until,rect,enab
     await call('DOM.setFileInputFiles',{files:[file],objectId:input.result.objectId},sessionId);
     await call('Page.setInterceptFileChooserDialog',{enabled:false},sessionId);
   };
-  const reload=async()=>{
+  const reload=()=>timed('page reload',async()=>{
     // Recreate the page and Worker, retaining the browser's static-code cache.
     // Device data must still be read afresh from persistent storage.
     await call('Page.reload',{},sessionId);await enable();await waitLabel('New idea');await idle();
     if(await rect('Review save'))throw Error('Theme operation broke settings persistence');
-  };
+  });
   const manager=async()=>{await click('Plugins and services');await waitLabel('Choose theme plugin');await idle();};
   const expand=async()=>{await click(name);await idle();};
   await click('Create local workspace');await waitLabel('New idea');await idle();
