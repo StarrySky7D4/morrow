@@ -576,11 +576,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-editor-draft-staging-model"
+version = "0.1.0"
+dependencies = [
+ "prost",
+ "prost-build",
+ "protoc-bin-vendored",
+]
+
+[[package]]
 name = "morrow-hmos"
 version = "0.1.0"
 dependencies = [
  "morrow-core",
  "morrow-editor-draft-model",
+ "morrow-editor-draft-staging-model",
  "morrow-workbench-plugin",
  "prost",
  "pulldown-cmark",

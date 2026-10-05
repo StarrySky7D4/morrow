@@ -1,0 +1,794 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "Button",
+        "bounds": [
+          36,
+          156,
+          156,
+          270
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              65,
+              182,
+              128,
+              245
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          219,
+          188,
+          270,
+          239
+        ],
+        "children": []
+      },
+      {
+        "type": "TextInput",
+        "text": "HMOS-attachment-20261005-A",
+        "bounds": [
+          294,
+          156,
+          908,
+          270
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "scrollable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "×",
+        "bounds": [
+          932,
+          182,
+          963,
+          245
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Button",
+        "bounds": [
+          1026,
+          156,
+          1146,
+          270
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "󰉘",
+            "bounds": [
+              1058,
+              185,
+              1115,
+              242
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Button",
+        "text": "草稿",
+        "bounds": [
+          1170,
+          156,
+          1284,
+          270
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Scroll",
+        "bounds": [
+          36,
+          339,
+          1284,
+          2112
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "A LITTLE SPACE FOR BIG IDEAS",
+            "bounds": [
+              36,
+              339,
+              595,
+              371
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "让想法，自由生长。",
+            "bounds": [
+              36,
+              398,
+              747,
+              503
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "收纳日常的零碎，也留住灵光一闪。",
+            "bounds": [
+              36,
+              527,
+              613,
+              569
+            ],
+            "children": []
+          },
+          {
+            "type": "Button",
+            "bounds": [
+              990,
+              385,
+              1284,
+              523
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  1035,
+                  429,
+                  1086,
+                  480
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "新建灵感",
+                "bounds": [
+                  1107,
+                  435,
+                  1239,
+                  474
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "让可能性发生",
+            "bounds": [
+              150,
+              719,
+              323,
+              747
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "还没成形，也没关系。",
+            "bounds": [
+              114,
+              807,
+              744,
+              881
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。",
+            "bounds": [
+              114,
+              911,
+              708,
+              1033
+            ],
+            "children": []
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              114,
+              1093,
+              420,
+              1168
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "记录此刻的想法",
+                "bounds": [
+                  114,
+                  1111,
+                  345,
+                  1150
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  375,
+                  1108,
+                  420,
+                  1153
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "最近的念头",
+            "bounds": [
+              36,
+              1379,
+              262,
+              1432
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "01",
+            "bounds": [
+              286,
+              1388,
+              321,
+              1423
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "全部",
+            "bounds": [
+              357,
+              1367,
+              483,
+              1444
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "有待办",
+            "bounds": [
+              495,
+              1367,
+              651,
+              1444
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "含附件",
+            "bounds": [
+              663,
+              1367,
+              819,
+              1444
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "仅收藏",
+            "bounds": [
+              831,
+              1367,
+              987,
+              1444
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "id": "card-sort",
+            "type": "Row",
+            "bounds": [
+              36,
+              1480,
+              1284,
+              1555
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰆨",
+                "bounds": [
+                  1062,
+                  1498,
+                  1101,
+                  1537
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "自定义顺序",
+                "bounds": [
+                  1116,
+                  1500,
+                  1266,
+                  1535
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "长按拖动柄调整顺序，或在卡片菜单中前移、后移。",
+            "bounds": [
+              36,
+              1555,
+              1284,
+              1590
+            ],
+            "children": []
+          },
+          {
+            "id": "workspace-card:204235e9-2eb4-4b94-91d3-5a84ff881bf9",
+            "type": "Column",
+            "bounds": [
+              36,
+              1638,
+              1284,
+              2112
+            ],
+            "children": [
+              {
+                "type": "Column",
+                "bounds": [
+                  36,
+                  1638,
+                  1284,
+                  2112
+                ],
+                "clickable": true,
+                "longClickable": true,
+                "children": [
+                  {
+                    "type": "Text",
+                    "text": "",
+                    "bounds": [
+                      119,
+                      1712,
+                      176,
+                      1769
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Button",
+                    "bounds": [
+                      1146,
+                      1692,
+                      1242,
+                      1788
+                    ],
+                    "clickable": true,
+                    "children": [
+                      {
+                        "type": "Text",
+                        "text": "",
+                        "bounds": [
+                          1169,
+                          1715,
+                          1220,
+                          1766
+                        ],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-attachment-20261005-A",
+                    "bounds": [
+                      96,
+                      1833,
+                      727,
+                      1882
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "# Attachment fixture\n\nPreserve 中文😀 and the existing card identity.",
+                    "bounds": [
+                      96,
+                      1906,
+                      408,
+                      2024
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "灵感",
+                    "bounds": [
+                      96,
+                      2081,
+                      192,
+                      2112
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "待整理",
+                    "bounds": [
+                      1161,
+                      2093,
+                      1242,
+                      2112
+                    ],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "没有紧迫的事。给好奇心一点时间。",
+        "bounds": [
+          129,
+          2021,
+          1158,
+          2060
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "󰛹",
+        "bounds": [
+          1185,
+          2015,
+          1236,
+          2066
+        ],
+        "children": []
+      },
+      {
+        "type": "Rect",
+        "bounds": [
+          0,
+          117,
+          1320,
+          2148
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "id": "card-detail",
+        "type": "Column",
+        "bounds": [
+          36,
+          425,
+          1284,
+          1840
+        ],
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              111,
+              568,
+              183,
+              640
+            ],
+            "children": []
+          },
+          {
+            "id": "detail-title",
+            "type": "Text",
+            "text": "HMOS-attachment-20261005-A",
+            "bounds": [
+              219,
+              500,
+              1065,
+              654
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "想法详情",
+            "bounds": [
+              219,
+              669,
+              351,
+              708
+            ],
+            "children": []
+          },
+          {
+            "id": "detail-close",
+            "type": "Button",
+            "text": "×",
+            "bounds": [
+              1101,
+              550,
+              1209,
+              658
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "id": "detail-scroll",
+            "type": "Scroll",
+            "bounds": [
+              111,
+              756,
+              1209,
+              1597
+            ],
+            "children": [
+              {
+                "type": "Text",
+                "text": "灵感",
+                "bounds": [
+                  111,
+                  756,
+                  1209,
+                  798
+                ],
+                "children": []
+              },
+              {
+                "id": "markdown-block:0:heading",
+                "type": "Row",
+                "bounds": [
+                  111,
+                  852,
+                  1209,
+                  987
+                ],
+                "children": [
+                  {
+                    "type": "Text",
+                    "text": "Attachment fixture",
+                    "bounds": [
+                      111,
+                      852,
+                      1209,
+                      987
+                    ],
+                    "clickable": true,
+                    "longClickable": true,
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "markdown-block:1:paragraph",
+                "type": "Row",
+                "bounds": [
+                  111,
+                  1023,
+                  1209,
+                  1093
+                ],
+                "children": [
+                  {
+                    "type": "Text",
+                    "text": "Preserve 中文😀 and the existing card identity.",
+                    "bounds": [
+                      111,
+                      1023,
+                      1209,
+                      1093
+                    ],
+                    "clickable": true,
+                    "longClickable": true,
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "detail-category",
+                "type": "Select",
+                "text": "灵感",
+                "bounds": [
+                  111,
+                  1147,
+                  337,
+                  1267
+                ],
+                "clickable": true,
+                "children": []
+              },
+              {
+                "id": "detail-stage",
+                "type": "Select",
+                "text": "待整理",
+                "bounds": [
+                  947,
+                  1147,
+                  1209,
+                  1267
+                ],
+                "clickable": true,
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "附件 · 1",
+                "bounds": [
+                  111,
+                  1321,
+                  1209,
+                  1363
+                ],
+                "children": []
+              },
+              {
+                "id": "saved-asset:asset-draft-import-e325692c9edda8d417143f317fdc3ba6ab2ef31244823e4c81c64b340fc1a4de",
+                "type": "Row",
+                "bounds": [
+                  111,
+                  1417,
+                  1209,
+                  1597
+                ],
+                "children": [
+                  {
+                    "type": "Text",
+                    "text": "",
+                    "bounds": [
+                      141,
+                      1480,
+                      195,
+                      1534
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-dev12-20261005-中文 文档.txt",
+                    "bounds": [
+                      219,
+                      1463,
+                      850,
+                      1505
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "TXT · 38 B",
+                    "bounds": [
+                      219,
+                      1517,
+                      365,
+                      1552
+                    ],
+                    "children": []
+                  },
+                  {
+                    "id": "attachment-export:asset-draft-import-e325692c9edda8d417143f317fdc3ba6ab2ef31244823e4c81c64b340fc1a4de",
+                    "type": "Button",
+                    "text": "导出",
+                    "bounds": [
+                      1017,
+                      1447,
+                      1179,
+                      1567
+                    ],
+                    "clickable": true,
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "detail-copy",
+            "type": "Button",
+            "text": "复制",
+            "bounds": [
+              364,
+              1645,
+              533,
+              1765
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Button",
+            "text": "收藏",
+            "bounds": [
+              533,
+              1645,
+              702,
+              1765
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Button",
+            "text": "删除",
+            "bounds": [
+              702,
+              1645,
+              871,
+              1765
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "id": "detail-edit",
+            "type": "Button",
+            "text": "编辑",
+            "bounds": [
+              871,
+              1645,
+              1040,
+              1765
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Button",
+            "text": "完成",
+            "bounds": [
+              1040,
+              1645,
+              1209,
+              1765
+            ],
+            "clickable": true,
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]

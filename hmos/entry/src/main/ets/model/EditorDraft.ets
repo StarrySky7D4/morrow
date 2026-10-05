@@ -18,6 +18,24 @@ export class Values {
   todos: TextValue = new TextValue();
   category: string = '灵感';
   stage: string = '待整理';
+  // UI snapshot field. The original protobuf WriteRequest keeps this inventory
+  // beside values, so freeze() moves it to draft.assets on the JSON wire.
+  assets: AssetSelection[] = [];
+}
+
+export class AssetSelection {
+  origin: number = 2;
+  asset_id: string = '';
+  aliases: string[] = [];
+}
+
+export class StoredAsset {
+  selection: AssetSelection = new AssetSelection();
+  pin_id: string = '';
+  display_name: string = '';
+  media_type: string = '';
+  byte_length: string = '0';
+  sha256: string = '';
 }
 
 export class DraftScope {
@@ -38,6 +56,8 @@ export class DraftRecord {
   active: boolean = false;
   current_active: boolean = false;
   repeated: boolean = false;
+  assets: StoredAsset[] = [];
+  consumed_imports: string[] = [];
 }
 
 export class DraftSaveFailure extends Error {
@@ -59,7 +79,19 @@ export function copyValues(values: Values): Values {
   const result = new Values(); result.title = copyText(values.title);
   result.description = copyText(values.description); result.hypothesis = copyText(values.hypothesis);
   result.conclusion = copyText(values.conclusion); result.todos = copyText(values.todos);
-  result.category = values.category; result.stage = values.stage; return result;
+  result.category = values.category; result.stage = values.stage;
+  result.assets = (values.assets ?? []).map((asset: AssetSelection): AssetSelection => copyAsset(asset)); return result;
+}
+
+export function copyAsset(asset: AssetSelection): AssetSelection {
+  const result = new AssetSelection(); result.origin = asset.origin; result.asset_id = asset.asset_id;
+  result.aliases = asset.aliases.slice(); return result;
+}
+
+export function copyStoredAsset(asset: StoredAsset): StoredAsset {
+  const result = new StoredAsset(); result.selection = copyAsset(asset.selection); result.pin_id = asset.pin_id;
+  result.display_name = asset.display_name; result.media_type = asset.media_type;
+  result.byte_length = asset.byte_length; result.sha256 = asset.sha256; return result;
 }
 
 export function copyScope(scope: DraftScope): DraftScope {
@@ -73,7 +105,9 @@ export function copyRecord(record: DraftRecord): DraftRecord {
   result.values = copyValues(record.values); result.operation_id = record.operation_id;
   result.generation = record.generation; result.current_generation = record.current_generation;
   result.active = record.active; result.current_active = record.current_active;
-  result.repeated = record.repeated; return result;
+  result.repeated = record.repeated;
+  result.assets = (record.assets ?? []).map((asset: StoredAsset): StoredAsset => copyStoredAsset(asset));
+  result.consumed_imports = (record.consumed_imports ?? []).slice(); return result;
 }
 
 function sameText(a: TextValue, b: TextValue): boolean {
@@ -85,7 +119,16 @@ function sameText(a: TextValue, b: TextValue): boolean {
 export function sameValues(a: Values, b: Values): boolean {
   return sameText(a.title, b.title) && sameText(a.description, b.description) &&
     sameText(a.hypothesis, b.hypothesis) && sameText(a.conclusion, b.conclusion) && sameText(a.todos, b.todos) &&
-    a.category === b.category && a.stage === b.stage;
+    a.category === b.category && a.stage === b.stage && sameAssets(a.assets ?? [], b.assets ?? []);
+}
+
+function sameAsset(a: AssetSelection, b: AssetSelection): boolean {
+  return a.origin === b.origin && a.asset_id === b.asset_id && a.aliases.length === b.aliases.length &&
+    a.aliases.every((alias: string, index: number): boolean => alias === b.aliases[index]);
+}
+
+export function sameAssets(a: AssetSelection[], b: AssetSelection[]): boolean {
+  return a.length === b.length && a.every((asset: AssetSelection, index: number): boolean => sameAsset(asset, b[index]));
 }
 
 function sameScope(a: DraftScope, b: DraftScope): boolean {
@@ -129,6 +172,53 @@ function validateValues(values: Values): void {
   if (typeof values.category !== 'string' || typeof values.stage !== 'string') {
     throw new Error('Invalid draft category or stage');
   }
+  validateAssets(values.assets ?? []);
+}
+
+function validateAssets(assets: AssetSelection[]): void {
+  if (!Array.isArray(assets) || assets.length > 20) { throw new Error('Invalid draft selected asset count'); }
+  const ids = new Set<string>();
+  for (const asset of assets) {
+    if (!asset || ![0, 2, 3].includes(asset.origin) || typeof asset.asset_id !== 'string' || !asset.asset_id ||
+      ids.has(asset.asset_id) || !Array.isArray(asset.aliases) || asset.aliases.length > 8 ||
+      asset.aliases.some((alias: string): boolean => typeof alias !== 'string' || !alias || alias.length > 16384)) {
+      throw new Error('Invalid draft selected asset identity');
+    }
+    ids.add(asset.asset_id);
+  }
+}
+
+function validateRecordAssets(record: DraftRecord): void {
+  const selected = record.values.assets ?? [], stored = record.assets ?? [], consumed = record.consumed_imports ?? [];
+  if (!Array.isArray(stored) || stored.length !== selected.length || !Array.isArray(consumed) ||
+    consumed.length > stored.length || new Set<string>(consumed).size !== consumed.length ||
+    consumed.some((operation: string): boolean => typeof operation !== 'string' || !operation)) {
+    throw new Error('Draft receipt asset inventory differs');
+  }
+  stored.forEach((asset: StoredAsset, index: number): void => {
+    if (!asset || !asset.selection || !sameAsset(asset.selection, selected[index]) || asset.pin_id !== 'draft-asset-' + index ||
+      typeof asset.display_name !== 'string' || typeof asset.media_type !== 'string' ||
+      !validGeneration(asset.byte_length) || typeof asset.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(asset.sha256)) {
+      throw new Error('Draft receipt stored asset differs');
+    }
+  });
+}
+
+class DraftTextValuesWire {
+  title: TextValue = new TextValue();
+  description: TextValue = new TextValue();
+  hypothesis: TextValue = new TextValue();
+  conclusion: TextValue = new TextValue();
+  todos: TextValue = new TextValue();
+  category: string = '';
+  stage: string = '';
+}
+
+function wireValues(values: Values): DraftTextValuesWire {
+  const result = new DraftTextValuesWire(); result.title = copyText(values.title);
+  result.description = copyText(values.description); result.hypothesis = copyText(values.hypothesis);
+  result.conclusion = copyText(values.conclusion); result.todos = copyText(values.todos);
+  result.category = values.category; result.stage = values.stage; return result;
 }
 
 class DraftWriteWire {
@@ -136,7 +226,8 @@ class DraftWriteWire {
   draft_id: string = '';
   source_kind: number = 1;
   source_revision: string = '0';
-  values: Values = new Values();
+  values: DraftTextValuesWire = new DraftTextValuesWire();
+  assets: AssetSelection[] = [];
   expected_generation: string = '0';
   operation_id: string = '';
 }
@@ -180,6 +271,7 @@ export class EditorDraftCoordinator {
     this.send = send; this.changed = changed; this.operationFactory = operationFactory; this.debounce = debounce;
     if (restored !== undefined) {
       validateValues(restored.values);
+      validateRecordAssets(restored);
       if (!sameScope(restored.scope, this.ownedScope) || !validGeneration(restored.generation) ||
         restored.generation === '0' || !validGeneration(restored.current_generation)) {
         throw new Error('Invalid restored draft record');
@@ -237,6 +329,18 @@ export class EditorDraftCoordinator {
     return this.flushing;
   }
 
+  // Explicitly establish an owner for a successful file selection. Calling this
+  // is the user's import/save action; merely opening an unchanged card is read-only.
+  async ensureConfirmed(): Promise<DraftRecord> {
+    while (true) {
+      const existing = await this.flush();
+      this.requireOpen();
+      if (existing !== undefined && !this.dirty) { return existing; }
+      if (this.journalConflict || this.outcomeUnknown) { throw new Error(this.lastError || 'Draft journal is not confirmed'); }
+      if (existing === undefined) { await this.start(false); }
+    }
+  }
+
   private async flushCurrent(): Promise<DraftRecord | undefined> {
     this.requireOpen(); this.cancelTimer();
     while (true) {
@@ -278,7 +382,14 @@ export class EditorDraftCoordinator {
     const command = new DraftCommandWire(); command.draft.card_id = this.ownedScope.card_id;
     command.draft.draft_id = this.ownedScope.draft_id; command.draft.source_kind = this.ownedScope.source_kind;
     command.draft.source_revision = this.ownedScope.source_revision;
-    command.draft.values = copyValues(this.frozen); command.draft.expected_generation = this.expected;
+    for (const asset of this.frozen.assets) {
+      if (asset.origin === 0 && this.ownedScope.source_kind !== 0 || asset.origin === 3 && this.expected === '0') {
+        throw new Error('Draft asset has no confirmed source');
+      }
+    }
+    command.draft.values = wireValues(this.frozen);
+    command.draft.assets = this.frozen.assets.map((asset: AssetSelection): AssetSelection => copyAsset(asset));
+    command.draft.expected_generation = this.expected;
     command.draft.operation_id = this.operation; this.serialized = JSON.stringify(command);
   }
 
@@ -302,6 +413,14 @@ export class EditorDraftCoordinator {
     try {
       const record = await this.send(this.serialized as string);
       this.requireOpen(); validateValues(record.values);
+      validateRecordAssets(record);
+      for (const asset of record.assets ?? []) {
+        const prior = this.ownedConfirmed?.assets.find((pin: StoredAsset): boolean => pin.selection.asset_id === asset.selection.asset_id);
+        if (prior && (prior.display_name !== asset.display_name || prior.media_type !== asset.media_type ||
+          prior.byte_length !== asset.byte_length || prior.sha256 !== asset.sha256)) {
+          throw new Error('Draft receipt changed a confirmed asset');
+        }
+      }
       if (!sameScope(record.scope, this.ownedScope) || record.operation_id !== this.operation ||
         !sameValues(record.values, frozen) || !record.active || !validGeneration(record.generation) ||
         record.generation !== nextGeneration(this.expected) || !validGeneration(record.current_generation)) {

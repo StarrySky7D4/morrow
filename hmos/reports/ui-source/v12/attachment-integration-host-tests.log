@@ -1,0 +1,10 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src\lib.rs (hmos\rust\target\debug\deps\morrow_hmos-98e278664b0bdce7.exe)
+
+running 3 tests
+test attachment_integration_tests::actual_engine_stream_failures_preserve_business_and_do_not_admit_pending_imports ... ok
+test attachment_integration_tests::actual_engine_existing_and_new_asset_journals_publication_history_restart_and_removal ... ok
+test attachment_integration_tests::actual_engine_private_imports_do_not_count_toward_256_business_cards ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 65 filtered out; finished in 5.86s
+

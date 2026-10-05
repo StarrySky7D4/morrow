@@ -95,13 +95,14 @@ fn main() {
     let values = json!({"title":raw("A😀B"),"description":raw("Raw native draft"),
         "hypothesis":raw("Hypothesis"),"conclusion":raw("Conclusion"),"todos":raw("Todo"),
         "category":"实验","stage":"待验证"});
+    let mut expected_values = values.clone(); expected_values["assets"] = json!([]);
     let proposal = json!({"action":"draft_save","draft":{"card_id":"unsubmitted-native",
         "draft_id":"native-draft","source_kind":1,"source_revision":"0","expected_generation":"0",
         "operation_id":"native-draft-save","values":values}});
     let first_draft = run(&mut reopened, proposal.clone());
     assert_eq!(first_draft["effect"], "committed");
     assert_eq!(first_draft["drafts"][0]["generation"], "1");
-    assert_eq!(first_draft["drafts"][0]["values"], values);
+    assert_eq!(first_draft["drafts"][0]["values"], expected_values);
     assert_eq!(
         run(&mut reopened, json!({"action":"list"}))["cards"],
         completed["cards"]
@@ -208,7 +209,7 @@ fn main() {
         &mut reopened,
         json!({"action":"draft_read","id":"unsubmitted-native","draft_id":"native-draft"}),
     );
-    assert_eq!(draft["drafts"][0]["values"], values);
+    assert_eq!(draft["drafts"][0]["values"], expected_values);
     assert_eq!(draft["effect"], "not_committed");
     let mut successor = proposal.clone();
     successor["draft"]["operation_id"] = json!("native-draft-save-2");

@@ -23,7 +23,7 @@ $env:CARGO_ENCODED_RUSTFLAGS="-C$([char]31)link-arg=--target=$clangTarget$([char
 & $cargo build --locked --offline --release --lib --manifest-path "$root/rust/Cargo.toml" --target $target --target-dir "$root/.build/rust"
 if ($LASTEXITCODE) {throw "Rust $target build failed"}
 if($Runner) {
-  & $cargo build --locked --offline --release --bin hmos-self-check --manifest-path "$root/rust/Cargo.toml" --target $target --target-dir "$root/.build/rust"
+  & $cargo build --locked --offline --release --bin hmos-self-check --bin hmos-attachment-check --manifest-path "$root/rust/Cargo.toml" --target $target --target-dir "$root/.build/rust"
   if($LASTEXITCODE) {throw 'OHOS self-check executable build failed'}
 }
 $out=Join-Path $root "entry/src/main/cpp/rust/$Abi"

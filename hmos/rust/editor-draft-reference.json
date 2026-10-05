@@ -3,7 +3,7 @@
   "source_head": "925fb8ca6563dcb7de38db8fbdf6b005f9ad5420",
   "checked_at": "2026-10-05",
   "profile": "development-unsealed",
-  "phase": "raw-text-durable-journal",
+  "phase": "raw-text-durable-journal-with-attachment-pins",
   "source_files": [
     {
       "path": "workbench_host/schemas/editor_draft.proto",
@@ -39,13 +39,17 @@
     "New-card draft snapshots do not create business cards and may contain empty/intermediate title",
     "Original CreateContent/EditContent grant and HostRuntime transaction entry points",
     "Exact idempotent discard; discarded identity cannot be resurrected",
-    "Original active slot 16, cumulative identity 256 and active byte 64 MiB limits"
+    "Original active slot 16, cumulative identity 256 and active byte 64 MiB limits including retained attachment pin bytes",
+    "Source assets origin 0, durable import assets origin 2 and same-draft previous pins origin 3 retain logical identity and aliases",
+    "Complete pin hash/length verification, private draft asset index and consumed import retirement/reconciliation",
+    "New publication verifies current generation and full source; proven committed business retries reconstruct immutable draft history before Core exact command comparison"
   ],
   "adaptation_boundaries": [
     "Functions receive the caller-owned serialized HostRuntime and monotonic clock rather than WorkbenchState",
     "Existing HMOS development source uses idea format 2; production org.morrow.idea format 1/2 is not opened or migrated",
     "Storage::prepare_write is unavailable on the development HostRuntime; protected maintenance, audit sealing, platform keys and library ownership remain unimplemented",
-    "All assets, consumed imports, predecessor operations/evidence, parent links and retirement markers are explicitly rejected by the phase gate",
+    "Captured predecessor origins 1/4, predecessor operations/evidence, parent links and retirement lineage remain explicitly rejected",
+    "Durable import uses the original staging schema and journal transition rules through the development HostRuntime; this is not protected production recovery",
     "This does not implement editor_recovery, captured formal S1 commit proof or S1/S2 parent-child handoff",
     "Transport and workspace UI must preserve frozen operations and avoid implicit retry when a result is unknown",
     "Journal recognition includes reserved type or identity prefix; callers validate before excluding private records from business cards"

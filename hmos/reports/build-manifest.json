@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-10-05T09:54:20.724Z",
+  "createdUtc": "2026-10-05T11:04:49.049Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.11",
+  "hmosVersion": "0.1.0-hmos-dev.12",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 23718916,
-    "sha256": "5BC43903EE786FCF5CFDCAA739BF2F5075B397958AA61A8F312F89D00A4B94A5",
+    "bytes": 24404611,
+    "sha256": "07AE2562E04CBE189F04BFE1B60F1CC7458CDECBFE3ECF02F3BC0B7C2D83A467",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "C2D7C1CEC6CE75DABF5BFBA82EE555C7B687DD9EE77270B4DA0EF906871363F4"
+      "sha256": "792338B9335EC1A666AFBCAB9BB79AAB93FCCB5F2AF752891CF1B48839CA4356"
     },
     {
       "path": "entry/build-profile.json5",
@@ -52,7 +52,7 @@
     },
     {
       "path": "entry/src/main/cpp/bridge.cpp",
-      "sha256": "743A095A47F36DB03572AAB551232D6480ABB79800AB2AEDD5A026A88B4915E2"
+      "sha256": "9A52517D98BF3AA4FEC2B95F9B53E48AD6126FA97B64FEEA9CF6066F0DE94BA7"
     },
     {
       "path": "entry/src/main/cpp/CMakeLists.txt",
@@ -72,11 +72,11 @@
     },
     {
       "path": "entry/src/main/ets/model/Workbench.ets",
-      "sha256": "B12E5D22AEC01387226CF04180490D4442D93C308D227F413BE9F8875F930678"
+      "sha256": "E325054452DD790D5475C34EFF992133909EBBA299CCF3D7958292BC6AE4F9D5"
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "81E9D016D42CB845B7EC0B866E3BBFF7426A7785A3A2AA3C12F3C20F5F42F118"
+      "sha256": "776577373A6B31E02349C336176A409915DD1D1EB88F7DF9EAD228880567CC8D"
     },
     {
       "path": "hvigor/hvigor-config.json5",
@@ -84,19 +84,19 @@
     },
     {
       "path": "rust/Cargo.lock",
-      "sha256": "A420DA25FCE367E628423EA0C10B22BCC87836681D75D2B1B27C55E3E0921F32"
+      "sha256": "BF7AFB7475AA2E834D5F35E6E286D0A735C49C68881EB0CBAF595F06A7196037"
     },
     {
       "path": "rust/Cargo.toml",
-      "sha256": "315B553E919F6EB05943D3B4572768DEA276FF3194E5F282007CE92C9CF7D8C0"
+      "sha256": "7FD7F5BB10D34D43D2BE0C271511ACD0C04864040B02574FD34E449B51F7A725"
     },
     {
       "path": "rust/src/lib.rs",
-      "sha256": "616D98877A2106D2308C309B67A2262D8AD57603F0D1242ECD954392B1D66D18"
+      "sha256": "B2C3A4AF9E885588FA7398067F41CACC3D0718BCBF1C4BC8508597784F8EC6FC"
     },
     {
       "path": "rust/src/bin/hmos-self-check.rs",
-      "sha256": "165BC08D253461057467290F89881D94D854F29715BBB602FB5909EFCA455855"
+      "sha256": "FB5FDBE3E3CDD3CC2E63D9DA7E9612410D5884D0918543C30284D470B6D365EC"
     },
     {
       "path": "scripts/build-hap.ps1",
@@ -104,7 +104,7 @@
     },
     {
       "path": "scripts/build-rust.ps1",
-      "sha256": "24376AF6DA1E1C22CE9F59A87F1E2D2B4BC4182B5FB11BDD36F69B614BFA9E45"
+      "sha256": "F748609AA7589D2081371A7B66FF391625EFAA7296245525FF45046A658AC82C"
     },
     {
       "path": "scripts/check-reference.ps1",
@@ -1020,7 +1020,7 @@
     },
     {
       "path": "entry/src/main/cpp/types/libmorrow/index.d.ts",
-      "sha256": "721503EC79BF37B087AE0D3170238F6EA8394D9DEF9B9EA310586C4BBCDB2B73"
+      "sha256": "1162247966BF9084F31F13D1813832943A1D172D1F72A5392A39BA385C2E0207"
     },
     {
       "path": "entry/src/main/resources/rawfile/materialicons.otf",
@@ -1068,19 +1068,19 @@
     },
     {
       "path": "entry/src/main/ets/model/EditorDraft.ets",
-      "sha256": "AB46141497072B739BE3B536AE8449052645C0221F2FAB46B18806D7863450F9"
+      "sha256": "CAA435F968CF5B945E463508DAF84B04D7A56C594EDF653C529DDA3F2173A0F5"
     },
     {
       "path": "rust/src/draft_bridge.rs",
-      "sha256": "B97CECEA0AC077310365B594C0E66752086355BC53442FCDC64FFF981C78DD52"
+      "sha256": "EE7FDE6B0A6CBA9C62D6FDFC05F4CA53AF92877C74E410BBD9E25112DEE6A6FB"
     },
     {
       "path": "rust/src/editor_draft.rs",
-      "sha256": "E515615F0C575644E29C165522AF3AE12FBFAA1B31685CBAAD06026666638F75"
+      "sha256": "49410A0892F3673716552FDB5C8BFE4A9188BF21109C31F850E32B349F43A500"
     },
     {
       "path": "rust/editor-draft-reference.json",
-      "sha256": "E35A163FE49F0D9FE81540D31796B54F2A39100760AA0E9E492C38FFE8D7D8D8"
+      "sha256": "9BF76BFB3C9E8D559031FCD8A8145227D65948E276477F4F0F5FE40F570BEFF6"
     },
     {
       "path": "rust/editor-draft-model/Cargo.toml",
@@ -1117,8 +1117,64 @@
     {
       "path": "entry/src/main/ets/model/CardOrder.ets",
       "sha256": "8ECC6057DAA4667002319AC5CBD5C85403B0D52A9254C9923384B6A9012EC384"
+    },
+    {
+      "path": "entry/src/main/ets/model/AttachmentFiles.ets",
+      "sha256": "497EDACAD0398F66404845542103FC59AC3985026AB155F79345D58D59819115"
+    },
+    {
+      "path": "entry/src/main/ets/model/Attachments.ets",
+      "sha256": "7375378A85BFEE215979B271AA40AA69C351F32277DC669861A6AAC136D30B3F"
+    },
+    {
+      "path": "rust/src/attachment_bridge.rs",
+      "sha256": "7D7AAE1F11B20E0678FD56141FC0F1A413F348654D99B0032647208A33E6265E"
+    },
+    {
+      "path": "rust/src/file_stream.rs",
+      "sha256": "0FA404070FC47F1F41785A187F62B4FDC1F98876BDD0934A618C481FF5D83AB3"
+    },
+    {
+      "path": "rust/src/editor_draft_staging.rs",
+      "sha256": "0FEBB0C9F8DF31EC104D473FAC9B89C9F2CAF4EFD4DA6715B25C9FD2DEEF0E87"
+    },
+    {
+      "path": "rust/src/bin/hmos-attachment-check.rs",
+      "sha256": "2DB07F060F60ADE8EFE65EAD0A07D189D5AC040B5E2528DD8DA92DA749E507D3"
+    },
+    {
+      "path": "rust/src/attachment_integration_tests.rs",
+      "sha256": "8AF4193DDE1BFA45C6F7DB08CD9333C55A340B1E1DC8B048F10651E92D6E7267"
+    },
+    {
+      "path": "rust/src/historical_retry_tests.rs",
+      "sha256": "A6A79AE756CC3D9538142895BE791C20ABF102A3742F8E8C4F19D42A48D513FE"
+    },
+    {
+      "path": "rust/src/editor_draft_staging_tests.rs",
+      "sha256": "7E17CD04EEC2937870CBDC2E5D01E0CFDDD05FDEBACA780CAA07B995288D127F"
+    },
+    {
+      "path": "rust/editor-draft-staging-reference.json",
+      "sha256": "E88203FC3873A000E0ACB619DACC2B45F1603EB7A5B1C0670FA18E8BE58DD5F2"
+    },
+    {
+      "path": "rust/editor-draft-staging-model/Cargo.toml",
+      "sha256": "8BA4D433B8B173AC61218523A08D28CD3DD790FA095DCAE23F63AF2D5ECD7A33"
+    },
+    {
+      "path": "rust/editor-draft-staging-model/build.rs",
+      "sha256": "B28A11E1BA7F0EEEC7E4423F731C5A6F1746434FFDBB068E1EB392ED35ACA537"
+    },
+    {
+      "path": "rust/editor-draft-staging-model/src/wrapper.rs",
+      "sha256": "73099BC778D2DD5436F40ACABB20D2C0EE1F01E23CED84D4B7984A61B3D6FB8F"
+    },
+    {
+      "path": "rust/editor-draft-staging-model/schemas/editor_draft_staging.proto",
+      "sha256": "5FD6183551224232AA90ADB6F7D90E26317E2B4A294F155732668A8B9EA4E981"
     }
   ],
-  "uiValidation": "reports/ui-source/v11/validation.md",
+  "uiValidation": "reports/ui-source/v12/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

@@ -1,0 +1,13 @@
+[package]
+name = "morrow-editor-draft-staging-model"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+[lib]
+path = "src/wrapper.rs"
+[dependencies]
+prost = "=0.14.4"
+[build-dependencies]
+prost-build = "=0.14.4"
+protoc-bin-vendored = "=3.2.0"

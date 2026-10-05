@@ -19,4 +19,5 @@
 !/reports/*.log
 !/reports/ui-source/*.log
 !/reports/ui-source/v3/*.log
+!/reports/ui-source/v12/*.log
 

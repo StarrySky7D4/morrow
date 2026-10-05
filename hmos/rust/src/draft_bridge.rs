@@ -78,6 +78,64 @@ impl From<&proto::Values> for Values {
         }
     }
 }
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[serde(default, deny_unknown_fields)]
+pub struct AssetSelection {
+    origin: u32,
+    asset_id: String,
+    aliases: Vec<String>,
+}
+impl From<AssetSelection> for proto::AssetSelection {
+    fn from(v: AssetSelection) -> Self {
+        Self {
+            origin: v.origin,
+            asset_id: v.asset_id,
+            aliases: v.aliases,
+        }
+    }
+}
+impl From<&proto::AssetSelection> for AssetSelection {
+    fn from(v: &proto::AssetSelection) -> Self {
+        Self {
+            origin: v.origin,
+            asset_id: v.asset_id.clone(),
+            aliases: v.aliases.clone(),
+        }
+    }
+}
+#[derive(Debug, Serialize)]
+pub struct StoredAsset {
+    selection: AssetSelection,
+    pin_id: String,
+    display_name: String,
+    media_type: String,
+    byte_length: String,
+    sha256: String,
+}
+impl StoredAsset {
+    fn from_proto(v: &proto::StoredAsset) -> Result<Self> {
+        Ok(Self {
+            selection: v
+                .selection
+                .as_ref()
+                .ok_or("DraftAssetSelectionMissing")?
+                .into(),
+            pin_id: v.pin_id.clone(),
+            display_name: v.display_name.clone(),
+            media_type: v.media_type.clone(),
+            byte_length: v.byte_length.to_string(),
+            sha256: hex(&v.sha256),
+        })
+    }
+}
+/// The UI observes text and selected identities together. On the write wire,
+/// the same selections live at Write.assets, exactly as in the original schema.
+#[derive(Debug, Serialize)]
+pub struct ViewValues {
+    #[serde(flatten)]
+    text: Values,
+    assets: Vec<AssetSelection>,
+}
 #[derive(Default, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct Write {
@@ -88,6 +146,7 @@ pub struct Write {
     expected_generation: String,
     operation_id: String,
     values: Option<Values>,
+    assets: Vec<AssetSelection>,
 }
 pub fn number(v: &str) -> Result<u64> {
     let n: u64 = v.parse().map_err(|_| "InvalidDraftInteger")?;
@@ -107,6 +166,7 @@ impl Write {
             expected_generation: number(&self.expected_generation)?,
             operation_id: self.operation_id,
             values: self.values.map(Into::into),
+            assets: self.assets.into_iter().map(Into::into).collect(),
             ..Default::default()
         };
         morrow_editor_draft_model::validate_request(&request).map_err(err)?;
@@ -124,7 +184,9 @@ pub struct Scope {
 #[derive(Debug, Serialize)]
 pub struct View {
     scope: Scope,
-    values: Values,
+    values: ViewValues,
+    assets: Vec<StoredAsset>,
+    consumed_imports: Vec<String>,
     operation_id: String,
     generation: String,
     current_generation: String,
@@ -144,7 +206,17 @@ impl View {
                 source_revision: request.source_revision.to_string(),
                 source: hex(&record.slot.source_card),
             },
-            values: values.into(),
+            values: ViewValues {
+                text: values.into(),
+                assets: request.assets.iter().map(Into::into).collect(),
+            },
+            assets: record
+                .slot
+                .assets
+                .iter()
+                .map(StoredAsset::from_proto)
+                .collect::<Result<Vec<_>>>()?,
+            consumed_imports: record.slot.consumed_imports.clone(),
             operation_id: request.operation_id.clone(),
             generation: record.slot.generation.to_string(),
             current_generation: record.current_generation.to_string(),

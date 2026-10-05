@@ -1,0 +1,12 @@
+- Dumping layout…
+- Executing click...
+√ click at (790, 907)
+- Dumping layout…
+[
+  { text: '最近', bounds: [ 440, 225, 525, 274 ] },
+  { text: '浏览', bounds: [ 796, 225, 881, 274 ] },
+  { text: '没有文件', bounds: [ 576, 1267, 745, 1316 ] },
+  { text: '已选 (0)', bounds: [ 48, 1952, 220, 2015 ] },
+  { text: '完成', bounds: [ 1092, 1959, 1236, 2007 ] },
+  { text: '仅可访问所选项目', bounds: [ 531, 2082, 832, 2130 ] }
+]

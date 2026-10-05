@@ -15,9 +15,11 @@ import native from 'libmorrow.so';
 import { CardView, Command, Reply, TaskView, workbench } from '../model/Workbench';
 import { CardDataSource, WorkspaceCard } from '../model/CardDataSource';
 import { CardOrderPreferences, cardOrderPage } from '../model/CardOrder';
+import { AttachmentFiles, PreparedAttachment, VerifiedPreview, AttachmentRecoveryDiagnostic } from '../model/AttachmentFiles';
+import { AssetView, ImportRecord, ImportCommand, attachmentKind, attachmentSize, attachmentIcon, attachmentDetails, selectedImport, sameImport } from '../model/Attachments';
 import { QueryConditions, QueryState, QueryCoordinator } from '../model/QueryCoordinator';
 import { Values as DraftValues, TextValue as DraftTextValue, DraftScope, DraftRecord,
-  EditorDraftCoordinator, DraftSaveFailure, copyValues, copyText, sameValues, nextGeneration } from '../model/EditorDraft';
+  AssetSelection, EditorDraftCoordinator, DraftSaveFailure, copyValues, copyText, sameValues, nextGeneration } from '../model/EditorDraft';
 
 class CardDrag {
   card: CardView;
@@ -91,6 +93,14 @@ struct Index {
   @State draftRecords: DraftRecord[] = [];
   @State draftsOpen: boolean = false;
   @State draftWorking: boolean = false;
+  @State attachmentWorking: boolean = false;
+  @State editorAssets: AssetView[] = [];
+  @State importRecords: ImportRecord[] = [];
+  @State pendingSpools: PreparedAttachment[] = [];
+  @State attachmentDiagnostics: AttachmentRecoveryDiagnostic[] = [];
+  private attachmentFiles: AttachmentFiles | undefined = undefined;
+  @State attachmentPending: string = '';
+  @State attachmentPreview: VerifiedPreview | undefined = undefined;
   @State draftConflict: boolean = false;
   @State draftRetiring: boolean = false;
   @State draftRetirementUnknown: boolean = false;
@@ -248,12 +258,14 @@ struct Index {
 
   aboutToAppear(): void {
     this.pageAlive = true;
+    this.attachmentFiles = new AttachmentFiles(this.getUIContext().getHostContext() as common.UIAbilityContext);
     this.getUIContext().getFont().registerFont({ familyName: 'MorrowIcons', familySrc: $rawfile('materialicons.otf') });
     this.restoreAppearance();
     this.restoreCardOrder();
     this.start();
   }
   onBackPress(): boolean {
+    if (this.attachmentPreview) { this.closeAttachmentPreview(); return true; }
     if (this.draftsOpen) { this.draftsOpen = false; return true; }
     if (this.editorOpen) { this.closeEditor(); return true; }
     if (this.detailId) { this.closeDetail(); return true; }
@@ -261,6 +273,7 @@ struct Index {
     return false;
   }
   aboutToDisappear(): void {
+    this.closeAttachmentPreview();
     this.pageAlive = false;
     // No mutation is replayed on destruction. Only earlier acknowledged raw
     // journal generations are recoverable after a forced process termination.
@@ -318,6 +331,7 @@ struct Index {
   private draftChanged(): void {
     const draft = this.editorDraft;
     if (!draft) { return; }
+    this.refreshEditorAssets();
     this.draftStatus = draft.unknown ? '草稿回复未确认，原请求已保留' : draft.conflicted ? '草稿世代已变化，请核对' :
       draft.error.length > 0 ? '草稿保存失败：' + draft.error : draft.saving ? '正在保留草稿…' :
       draft.dirty ? '草稿等待保存' : draft.confirmed ? '草稿已保留' : '';
@@ -344,7 +358,7 @@ struct Index {
   }
   private canPaste(): boolean {
     return this.ready && this.editorOpen && !!this.editorDraft && !this.editorDraft.disposed &&
-      !this.pasteWorking && !this.draftRestoreInput && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown &&
+      !this.attachmentWorking && !this.pasteWorking && !this.draftRestoreInput && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown &&
       !this.draftCaptureIncomplete && !this.editorDraft.unknown && this.pending.length === 0 && !this.current()?.deleted;
   }
   private async pasteContent(): Promise<void> {
@@ -410,7 +424,7 @@ struct Index {
     } catch (_) { if (this.pageAlive) { this.message = '链接无法打开，请检查可用的浏览器或邮件应用。'; } }
   }
   private draftTextChanged(name: string, value: string, preview?: PreviewText): void {
-    if (!this.pageAlive || !this.editorOpen || !this.editorDraft || this.editorDraft.disposed || this.draftRestoreInput || this.draftRetiring || this.draftRetirementUnknown) { return; }
+    if (!this.pageAlive || !this.editorOpen || !this.editorDraft || this.editorDraft.disposed || this.draftRestoreInput || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown) { return; }
     const field = this.draftField(name);
     const offset = preview?.offset ?? -1, candidate = preview?.value ?? '';
     if (candidate.length > 0 && (!Number.isInteger(offset) || offset < 0 || offset > value.length)) {
@@ -430,7 +444,7 @@ struct Index {
     this.editorDraft?.update(copyValues(this.editorValues));
   }
   private draftSelectionChanged(name: string, start: number, end: number): void {
-    if (!this.pageAlive || !this.editorOpen || this.editorDraft?.disposed || !this.draftFocusedFields.has(name) || this.draftRestoreInput || this.draftRetiring || this.draftRetirementUnknown || !this.editorDraft) { return; }
+    if (!this.pageAlive || !this.editorOpen || this.editorDraft?.disposed || !this.draftFocusedFields.has(name) || this.draftRestoreInput || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || !this.editorDraft) { return; }
     const field = this.draftField(name);
     if (this.draftCaptureBlocked.has(name) || start < -1 || end < -1 || start > field.text.length || end > field.text.length) { return; }
     // An actual focused selection supersedes a scheduled restoration. Native
@@ -488,6 +502,9 @@ struct Index {
       values.hypothesis.text = this.hypothesis; values.conclusion.text = this.conclusion;
       values.todos.text = this.taskText; values.category = this.category;
       values.stage = card?.stage ?? (this.category === '进行中' ? '计划中' : this.category === '实验' ? '待验证' : '待整理');
+      values.assets = (card?.assets ?? []).map((asset: AssetView): AssetSelection => {
+        const selected = new AssetSelection(); selected.asset_id = asset.id; selected.origin = 0; return selected;
+      });
     }
     this.editorValues = values;
     this.editorDraft = new EditorDraftCoordinator(scope, values,
@@ -501,6 +518,7 @@ struct Index {
     // record. No implicit rebase or overwrite is permitted.
     this.draftConflict = scope.source_kind === 0 ? card?.revision !== scope.source_revision : !!card;
     this.draftChanged(); this.updateMarkdown();
+    this.importRecords = []; this.pendingSpools = []; this.attachmentDiagnostics = []; this.loadImports();
   }
   private restoreDraft(record: DraftRecord): void {
     if (this.busy || this.pending.length > 0 || this.editorOpen) { return; }
@@ -531,6 +549,194 @@ struct Index {
     }
     catch (error) { this.message = '最新输入尚未保留：' + String(error); return false; }
     finally { this.draftWorking = false; this.draftChanged(); }
+  }
+  private refreshEditorAssets(): void {
+    const draft = this.editorDraft;
+    const sources: AssetView[] = (this.current()?.assets ?? []).slice();
+    for (const pin of draft?.confirmed?.assets ?? []) {
+      sources.push({ id: pin.selection.asset_id, name: pin.display_name, kind: attachmentKind(pin.display_name), byte_length: pin.byte_length, sha256: pin.sha256, media_type: pin.media_type });
+    }
+    for (const item of this.importRecords) {
+      sources.push({ id: item.asset_id, name: item.request.name, kind: item.request.kind, byte_length: item.request.byte_length, sha256: item.request.sha256, media_type: '' });
+    }
+    this.editorAssets = (draft?.current.assets ?? []).map((selected: AssetSelection): AssetView =>
+      sources.filter((asset: AssetView): boolean => asset.id === selected.asset_id).pop() ??
+      { id: selected.asset_id, name: '附件信息待核对', kind: 'file', byte_length: '0', sha256: '', media_type: '' });
+  }
+  private canImportAttachment(): boolean {
+    return this.pageAlive && this.ready && this.editorOpen && !!this.editorDraft && !this.attachmentWorking &&
+      !this.pasteWorking && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && !this.attachmentPending &&
+      !this.draftConflict && !this.draftCaptureIncomplete && !this.editorDraft?.unknown && this.pending.length === 0;
+  }
+  private async loadImports(): Promise<void> {
+    const draft = this.editorDraft, files = this.attachmentFiles;
+    if (!draft || !files) { return; }
+    try {
+      const cmd = new Command(); cmd.action = 'import_list'; cmd.id = draft.scope.card_id; cmd.draft_id = draft.scope.draft_id;
+      const result = await workbench.send(JSON.stringify(cmd));
+      if (!result.ok) { throw new Error(result.error); }
+      const spools = await files.recover();
+      if (this.editorDraft !== draft || !this.editorOpen || !this.pageAlive) { return; }
+      this.importRecords = result.imports;
+      this.attachmentDiagnostics = files.recoveryDiagnostics();
+      this.pendingSpools = spools.filter((spool: PreparedAttachment): boolean => {
+        if (!spool.original_request) { return true; } // No native request was admitted; show cancel-preparation explicitly.
+        try { const frozen = JSON.parse(spool.original_request) as ImportCommand;
+          return frozen.action === 'import_file' && frozen.import_request.card_id === draft.scope.card_id && frozen.import_request.draft_id === draft.scope.draft_id;
+        } catch (_) { return false; }
+      });
+      this.refreshEditorAssets();
+    } catch (error) { if (this.editorDraft === draft) { this.message = '附件记录读取失败：' + String(error); } }
+  }
+  private async importAttachment(): Promise<void> {
+    if (!this.canImportAttachment() || !this.attachmentFiles || !this.editorDraft) { return; }
+    const draft = this.editorDraft, files = this.attachmentFiles;
+    this.attachmentWorking = true; let spool: PreparedAttachment | undefined = undefined;
+    try {
+      spool = await files.pick();
+      if (!spool) { return; }
+      if (this.editorDraft !== draft || !this.editorOpen || !this.pageAlive || this.draftConflict || draft.unknown) {
+        await files.release(spool); return;
+      }
+      const confirmed = await draft.ensureConfirmed();
+      if (!this.pageAlive || !this.editorOpen || draft.disposed || this.editorDraft !== draft || draft.dirty || confirmed.generation !== draft.confirmed?.generation) {
+        await files.release(spool); this.message = '草稿发生变化，请重新选择附件。'; return;
+      }
+      const cmd = new ImportCommand(); const request = cmd.import_request;
+      request.card_id = draft.scope.card_id; request.draft_id = draft.scope.draft_id;
+      request.expected_generation = confirmed.generation; request.operation_id = util.generateRandomUUID(true);
+      request.name = spool.name; request.kind = attachmentKind(spool.name); request.byte_length = spool.byte_length; request.sha256 = spool.sha256;
+      await this.acceptPreparedImport(draft, spool, JSON.stringify(cmd));
+    } catch (error) {
+      if (spool && !spool.original_request) { try { await files.release(spool); } catch (_) {} }
+      this.message = '附件导入尚未确认：' + String(error);
+    } finally { this.attachmentWorking = false; this.draftChanged(); await this.loadImports(); }
+  }
+  private async acceptPreparedImport(draft: EditorDraftCoordinator, spool: PreparedAttachment, original: string): Promise<void> {
+    const files = this.attachmentFiles;
+    if (!files) { return; }
+    const request = (JSON.parse(original) as ImportCommand).import_request;
+    const result = JSON.parse(await files.importPrepared(spool, original,
+      (serialized: string, fd: number): Promise<string> => workbench.importFd(serialized, fd))) as Reply;
+    if (!result.ok || result.imports.length !== 1) { throw new Error(result.error || '附件回执缺失'); }
+    const record = result.imports[0];
+    if (!sameImport(record.request, request)) { throw new Error('原附件回执身份不匹配。'); }
+    if (this.editorDraft !== draft || !this.editorOpen || !this.pageAlive) { return; }
+    if (record.phase === 'retired') { await files.release(spool); this.message = '原导入已结束。'; return; }
+    selectedImport(record, request);
+    this.importRecords = this.importRecords.filter((r: ImportRecord): boolean => r.request.operation_id !== request.operation_id).concat([record]);
+    await files.release(spool); // Ready is retained in Rust; URI/spool are no longer recovery evidence.
+    if (draft.confirmed?.generation !== request.expected_generation || draft.dirty || draft.unknown) {
+      this.message = '附件已导入，草稿已变化；可在待处理附件中明确加入。'; return;
+    }
+    await this.addImportedAsset(record);
+  }
+  private async retryAttachment(spool: PreparedAttachment): Promise<void> {
+    if (!this.canImportAttachment() || !this.editorDraft || !spool.original_request) { return; }
+    const draft = this.editorDraft; this.attachmentWorking = true;
+    try { await this.acceptPreparedImport(draft, spool, spool.original_request); }
+    catch (error) { this.message = '原附件请求核对失败：' + String(error); }
+    finally { this.attachmentWorking = false; this.draftChanged(); await this.loadImports(); }
+  }
+  private async addImportedAsset(record: ImportRecord): Promise<void> {
+    const draft = this.editorDraft;
+    if (!draft || draft.unknown || draft.dirty || !draft.confirmed) { this.message = '请先保留当前草稿，再加入附件。'; return; }
+    const selected = selectedImport(record, record.request);
+    const values = draft.current;
+    if (values.assets.some((asset: AssetSelection): boolean => asset.asset_id === selected.asset_id)) { return; }
+    values.assets.push(selected); this.editorValues = copyValues(values); this.dirty = true;
+    draft.update(values); await draft.flush(); this.message = '附件已保留在草稿中，保存卡片后生效。';
+  }
+  private async selectPendingImport(record: ImportRecord): Promise<void> {
+    if (!this.canImportAttachment()) { return; }
+    this.attachmentWorking = true;
+    try { await this.addImportedAsset(record); }
+    catch (error) { this.message = '附件加入尚未确认：' + String(error); }
+    finally { this.attachmentWorking = false; this.draftChanged(); await this.loadImports(); }
+  }
+  private removeEditorAsset(asset: AssetView): void {
+    if (!this.canImportAttachment() || !this.editorDraft) { return; }
+    const values = this.editorDraft.current;
+    values.assets = values.assets.filter((selection: AssetSelection): boolean => selection.asset_id !== asset.id);
+    this.editorValues = copyValues(values); this.dirty = true; this.editorDraft.update(values);
+  }
+  private abandonImport(record: ImportRecord): void {
+    if (!this.canImportAttachment() || !this.editorDraft?.confirmed) { return; }
+    const draft = this.editorDraft;
+    this.getUIContext().showAlertDialog({ title: '放弃这次附件导入？', message: record.request.name,
+      primaryButton: { value: '继续保留', action: () => {} }, secondaryButton: { value: '放弃导入', action: () => {
+        if (this.editorDraft !== draft || !this.canImportAttachment() || !draft.confirmed) { return; }
+        const cmd = new Command(); cmd.action = 'import_abandon'; cmd.id = draft.scope.card_id; cmd.draft_id = draft.scope.draft_id;
+        cmd.generation = draft.confirmed.generation; cmd.operation = util.generateRandomUUID(true); cmd.import_request = record.request;
+        this.attachmentPending = JSON.stringify(cmd); this.retryAttachmentCleanup();
+      } } });
+  }
+  private async cancelPrepared(spool: PreparedAttachment): Promise<void> {
+    if (!this.attachmentFiles || spool.original_request || this.attachmentWorking) { return; }
+    this.attachmentWorking = true;
+    try { await this.attachmentFiles.release(spool); this.message = '尚未开始的附件准备已取消。'; }
+    catch (error) { this.message = '附件缓存清理失败：' + String(error); }
+    finally { this.attachmentWorking = false; await this.loadImports(); }
+  }
+  private async reconcileImports(): Promise<void> {
+    const draft = this.editorDraft;
+    if (!draft || this.attachmentWorking) { return; }
+    const cmd = new Command(); cmd.action = 'import_reconcile'; cmd.id = draft.scope.card_id; cmd.draft_id = draft.scope.draft_id;
+    this.attachmentPending = JSON.stringify(cmd); await this.retryAttachmentCleanup();
+  }
+  private async retryAttachmentCleanup(): Promise<void> {
+    if (!this.attachmentPending || this.attachmentWorking) { return; }
+    const original = this.attachmentPending; this.attachmentWorking = true;
+    try {
+      const result = await workbench.send(original);
+      if (!result.ok) {
+        if (result.effect === 'not_committed') { this.attachmentPending = ''; }
+        throw new Error(result.error);
+      }
+      const command = JSON.parse(original) as Command;
+      if (command.action === 'import_abandon') {
+        command.action = 'import_reconcile'; this.attachmentPending = JSON.stringify(command);
+        const cleanup = await workbench.send(this.attachmentPending);
+        if (!cleanup.ok) { throw new Error(cleanup.error); }
+      }
+      this.attachmentPending = ''; this.message = '原附件导入已结束。';
+    } catch (error) { this.message = '附件清理尚未确认：' + String(error); }
+    finally { this.attachmentWorking = false; await this.loadImports(); }
+  }
+  private async exportAttachment(c: CardView, asset: AssetView): Promise<void> {
+    if (this.attachmentWorking || this.busy || this.pending || !this.attachmentFiles || this.cards.find((card: CardView): boolean => card.id === c.id)?.source !== c.source) { return; }
+    const cmd = new Command(); cmd.action = 'attachment_export'; cmd.id = c.id; cmd.source = c.source;
+    cmd.generation = c.revision; cmd.attachment_id = asset.id;
+    this.attachmentWorking = true;
+    try { this.message = await this.attachmentFiles.exportToPicker(JSON.stringify(cmd), asset.name,
+      (serialized: string, fd: number): Promise<string> => workbench.exportFd(serialized, fd)) ? '附件已导出。' : '已取消导出。'; }
+    catch (error) { this.message = '附件导出未完成：' + String(error); }
+    finally { this.attachmentWorking = false; }
+  }
+  private async previewAttachment(asset: AssetView, c?: CardView): Promise<void> {
+    if (this.attachmentWorking || this.busy || !this.attachmentFiles || !['image', 'gif'].includes(asset.kind)) { return; }
+    const cmd = new Command(); const draft = this.editorDraft;
+    if (c) {
+      if (this.cards.find((card: CardView): boolean => card.id === c.id)?.source !== c.source) { return; }
+      cmd.action = 'attachment_export'; cmd.id = c.id; cmd.source = c.source; cmd.generation = c.revision;
+    } else if (draft?.confirmed && draft.confirmed.assets.some((pin): boolean => pin.selection.asset_id === asset.id)) {
+      cmd.action = 'draft_asset_export'; cmd.id = draft.scope.card_id; cmd.draft_id = draft.scope.draft_id; cmd.generation = draft.confirmed.generation;
+    } else {
+      const current = this.current(); if (!current || current.source !== this.draftSource) { return; }
+      cmd.action = 'attachment_export'; cmd.id = current.id; cmd.source = current.source; cmd.generation = current.revision;
+    }
+    cmd.attachment_id = asset.id; this.attachmentWorking = true;
+    try {
+      const verified = await this.attachmentFiles.previewFile(JSON.stringify(cmd), asset.name,
+        (serialized: string, fd: number): Promise<string> => workbench.exportFd(serialized, fd));
+      if (!this.pageAlive || (c ? this.detailId !== c.id : this.editorDraft !== draft)) { await this.attachmentFiles.releasePreview(verified.token); return; }
+      this.attachmentPreview = verified;
+    } catch (error) { this.message = '附件预览失败：' + String(error); }
+    finally { this.attachmentWorking = false; }
+  }
+  private async closeAttachmentPreview(): Promise<void> {
+    const preview = this.attachmentPreview; this.attachmentPreview = undefined;
+    if (preview && this.attachmentFiles) { try { await this.attachmentFiles.releasePreview(preview.token); } catch (_) {} }
   }
   private async keepDraftAndClose(): Promise<void> {
     if (!(await this.flushDraft())) { return; }
@@ -574,7 +780,7 @@ struct Index {
     } finally { this.draftRetiring = false; }
   }
   private discardDraft(): void {
-    if (this.pasteWorking) { return; }
+    if (this.attachmentWorking || this.pasteWorking) { return; }
     if (this.busy || this.pending.length > 0 || this.draftWorking || this.editorDraft?.unknown) { return; }
     this.getUIContext().showAlertDialog({ title: '放弃这份草稿？', message: '草稿中的文字将被丢弃，已保存卡片保持原样。',
       primaryButton: { value: '继续编辑', action: () => {} }, secondaryButton: { value: '放弃草稿', action: () => this.discardDraftConfirmed() } });
@@ -602,7 +808,7 @@ struct Index {
     finally { this.draftWorking = false; }
   }
   private editorInputChanged(name: string, value: string, preview?: PreviewText): void {
-    if (!this.pageAlive || !this.editorOpen || !this.editorDraft || this.editorDraft.disposed || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
+    if (!this.pageAlive || !this.editorOpen || !this.editorDraft || this.editorDraft.disposed || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
     const previous = name === 'title' ? this.title : name === 'description' ? this.description :
       name === 'hypothesis' ? this.hypothesis : name === 'conclusion' ? this.conclusion : this.taskText;
     if (name === 'title') { this.title = value; }
@@ -642,11 +848,15 @@ struct Index {
     cmd.operation = util.generateRandomUUID(true); cmd.now_ms = Date.now().toString(); return cmd;
   }
   private async submit(cmd: Command, raw?: DraftValues): Promise<void> {
-    if (this.pasteWorking) { this.message = '正在读取粘贴内容，请稍候。'; return; }
+    if (this.attachmentWorking || this.pasteWorking) { this.message = '文件或粘贴操作尚未完成，请稍候。'; return; }
     if (this.busy || this.pending.length > 0 || this.draftWorking || this.draftRetirementUnknown) { return; }
     if (this.taskEditId.length > 0 && cmd.action !== 'task_rename') { this.message = '请先保存或取消待办重命名'; return; }
     const frozen = raw ?? (this.editorOpen ? this.editorDraft?.current : undefined);
     if (this.editorOpen && !(await this.flushDraft())) { return; }
+    if ((cmd.action === 'create' || cmd.action === 'edit') && this.editorDraft?.confirmed) {
+      const record = this.editorDraft.confirmed;
+      cmd.draft_id = record.scope.draft_id; cmd.generation = record.generation; cmd.draft_operation = record.operation_id;
+    }
     this.submittedRaw = frozen;
     this.pending = JSON.stringify(cmd); await this.retry();
   }
@@ -704,7 +914,7 @@ struct Index {
     finally { this.busy = false; }
   }
   private async save(): Promise<void> {
-    if (this.pasteWorking) { this.message = '正在读取粘贴内容，请稍候。'; return; }
+    if (this.attachmentWorking || this.pasteWorking) { this.message = '文件或粘贴操作尚未完成，请稍候。'; return; }
     if (this.draftWorking || this.draftConflict) { return; }
     if (this.taskEditId.length > 0) { this.message = '请先保存或取消待办重命名'; return; }
     if (this.title.trim().length === 0) { this.message = '请输入卡片标题'; return; }
@@ -713,7 +923,7 @@ struct Index {
     const cmd = this.command(this.selected.length > 0 ? 'edit' : 'create');
     cmd.title = values.title.text; cmd.description = values.description.text; cmd.hypothesis = values.hypothesis.text;
     cmd.conclusion = values.conclusion.text; cmd.category = values.category;
-    cmd.stage = this.category === '进行中' ? '计划中' : this.category === '实验' ? '待验证' : '待整理';
+    cmd.stage = values.stage;
     this.submit(cmd, values);
   }
   private mutate(action: string, task?: TaskView): void {
@@ -741,7 +951,7 @@ struct Index {
     this.submit(cmd);
   }
   private canEditTasks(): boolean {
-    return this.ready && !this.pasteWorking && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.editorDraft?.unknown && this.pending.length === 0 &&
+    return this.ready && !this.attachmentWorking && !this.pasteWorking && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.editorDraft?.unknown && this.pending.length === 0 &&
       !!this.current() && !this.current()?.deleted && !this.dirty && this.taskEditId.length === 0;
   }
   private renameTask(task: TaskView): void {
@@ -906,7 +1116,7 @@ struct Index {
   }
   private canChangeCard(c: CardView): boolean {
     return this.pageAlive && this.ready && !this.editorOpen && !this.busy && !this.draftWorking && !this.draftRetiring &&
-      !this.draftRetirementUnknown && !this.pasteWorking && !this.dirty && !c.deleted && this.pending.length === 0 &&
+      !this.draftRetirementUnknown && !this.attachmentWorking && !this.pasteWorking && !this.dirty && !c.deleted && this.pending.length === 0 &&
       this.cards.find((v: CardView): boolean => v.id === c.id)?.source === c.source;
   }
   private openDetail(c: CardView): void {
@@ -1086,7 +1296,7 @@ struct Index {
     this.restoreWorkspace();
   }
   private closeEditor(): void {
-    if (this.pasteWorking) { this.message = '正在读取粘贴内容，请稍候。'; return; }
+    if (this.attachmentWorking || this.pasteWorking) { this.message = '文件或粘贴操作尚未完成，请稍候。'; return; }
     if (this.busy || this.pending.length > 0 || this.draftWorking || this.draftRetirementUnknown) { this.message = '操作尚未确认，当前输入已保留。'; return; }
     if (this.taskEditId.length > 0) { this.message = '请先保存或取消待办重命名'; return; }
     this.keepDraftAndClose();
@@ -1959,6 +2169,22 @@ struct Index {
               }.width('100%')
             }, (task: TaskView) => task.id + ':' + task.completion)
           }
+          if (c.assets.length > 0) {
+            Text('附件 · ' + c.assets.length).fontSize(12).fontColor(this.accent()).width('100%')
+            ForEach(c.assets, (asset: AssetView) => {
+              Row({ space: 8 }) {
+                this.Glyph(() => attachmentIcon(asset), 18, () => this.accent())
+                Column({ space: 4 }) {
+                  Text(asset.name).fontSize(12).fontColor(this.ink()).maxLines(2)
+                  Text(attachmentDetails(asset)).fontSize(10).fontColor(this.muted())
+                }.alignItems(HorizontalAlign.Start).layoutWeight(1)
+                if (['image', 'gif'].includes(asset.kind)) {
+                  Button('预览', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent).enabled(!this.attachmentWorking).onClick(() => this.previewAttachment(asset, c)).id('attachment-preview:' + asset.id)
+                }
+                Button('导出', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent).enabled(!this.attachmentWorking).onClick(() => this.exportAttachment(c, asset)).id('attachment-export:' + asset.id)
+              }.width('100%').padding(10).backgroundColor('#0B7662BA').borderRadius(10).id('saved-asset:' + asset.id)
+            }, (asset: AssetView) => asset.id)
+          }
           if (c.deleted) { Text('这张卡片已移入回收站，删除后 8 秒内可以撤销。').fontSize(12).fontColor(this.muted()).width('100%') }
           if (this.message) { Text(this.message).fontSize(12).lineHeight(20).fontColor(this.muted()).width('100%').id('detail-message') }
           if (this.pending && !this.busy) { Button(this.t('核对')).fontSize(12).backgroundColor(this.accent()).onClick(() => this.retry()) }
@@ -2005,7 +2231,7 @@ struct Index {
     TextArea({ text: this.description, placeholder: this.t('写下思路，或粘贴一段内容…'), controller: this.descriptionController })
       .fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).placeholderFont({ size: 13 }).fontColor(this.ink()).placeholderColor(this.muted())
       .backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() }).borderRadius(this.round(12)).height(180).maxLength(20000)
-      .enabled(!this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-description')
+      .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-description')
       .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('description', s, preview))
       .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('description', start, end))
       .onFocus(() => this.focusDraftField('description')).onBlur(() => this.blurDraftField('description'))
@@ -2038,6 +2264,67 @@ struct Index {
       .backgroundColor(alpha(this.surface(), .96)).borderRadius(this.round(24)).border({ width: this.styleEdgeWidth(), color: this.line() }).clip(true)
   }
   @Builder
+  EditorAttachments() {
+    Column({ space: 9 }) {
+      if (this.editorAssets.length > 0) {
+        Text('草稿附件').fontSize(13).fontWeight(FontWeight.Medium).fontColor(this.ink()).width('100%')
+        ForEach(this.editorAssets, (asset: AssetView) => {
+          Row({ space: 8 }) {
+            this.Glyph(() => attachmentIcon(asset), 18, () => this.accent())
+            Column({ space: 4 }) {
+              Text(asset.name).fontSize(12).fontColor(this.ink()).maxLines(2)
+              Text(attachmentDetails(asset)).fontSize(10).fontColor(this.muted())
+            }.alignItems(HorizontalAlign.Start).layoutWeight(1)
+            if (['image', 'gif'].includes(asset.kind)) {
+              Button('预览', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.accent())
+                .enabled(!this.attachmentWorking && !this.busy).onClick(() => this.previewAttachment(asset))
+            }
+            Button('移除', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.muted())
+              .enabled(this.canImportAttachment()).onClick(() => this.removeEditorAsset(asset)).id('draft-asset-remove:' + asset.id)
+          }.width('100%').padding(10).backgroundColor('#0B7662BA').borderRadius(10).id('draft-asset:' + asset.id)
+        }, (asset: AssetView) => asset.id)
+      }
+      ForEach(this.importRecords.filter((item: ImportRecord): boolean => !this.editorAssets.some((asset: AssetView): boolean => asset.id === item.asset_id)), (item: ImportRecord) => {
+        Column({ space: 7 }) {
+          Text(item.request.name + ' · ' + attachmentSize(item.request.byte_length)).fontSize(12).fontColor(this.ink()).width('100%')
+          Text(item.phase === 'retired' ? '导入已结束，清理待确认' : item.phase === 'ready' ? '已导入，尚未加入草稿' : item.bytes_retained ? '字节已保留，导入结果待核对' : '导入待完成').fontSize(10).fontColor(this.muted()).width('100%')
+          Row({ space: 10 }) {
+            if (item.phase === 'ready' && item.current_active) {
+              Button('加入草稿', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.accent()).enabled(this.canImportAttachment()).onClick(() => this.selectPendingImport(item))
+            }
+            if (item.phase === 'retired') {
+              Button('核对清理', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.accent()).enabled(this.canImportAttachment()).onClick(() => this.reconcileImports())
+            } else {
+              Button('放弃导入', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.muted()).enabled(this.canImportAttachment()).onClick(() => this.abandonImport(item))
+            }
+          }.width('100%')
+        }.padding(10).backgroundColor('#0B7662BA').borderRadius(10).width('100%').id('pending-import:' + item.request.operation_id)
+      }, (item: ImportRecord) => item.request.operation_id + ':' + item.phase)
+      ForEach(this.pendingSpools, (spool: PreparedAttachment) => {
+        Row({ space: 10 }) {
+          Text(spool.name + (spool.original_request ? ' · 原导入待核对' : ' · 尚未开始导入')).fontSize(11).fontColor(this.muted()).layoutWeight(1)
+          if (spool.original_request) {
+            Button('核对导入', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.accent()).enabled(this.canImportAttachment()).onClick(() => this.retryAttachment(spool))
+          } else {
+            Button('取消准备', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.muted()).enabled(!this.attachmentWorking).onClick(() => this.cancelPrepared(spool))
+          }
+        }.width('100%')
+      }, (spool: PreparedAttachment) => spool.spool_id)
+      ForEach(this.attachmentDiagnostics, (issue: AttachmentRecoveryDiagnostic) => {
+        Row({ space: 10 }) {
+          Text(issue.message).fontSize(11).fontColor(this.muted()).layoutWeight(1)
+          if (issue.requires_review) {
+            Button('重新检查', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.accent())
+              .enabled(!this.attachmentWorking).onClick(() => this.loadImports())
+          }
+        }.width('100%').id('attachment-recovery:' + issue.spool_id)
+      }, (issue: AttachmentRecoveryDiagnostic) => issue.spool_id + ':' + issue.code)
+      if (this.attachmentPending) {
+        Button('核对附件清理', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent).enabled(!this.attachmentWorking).onClick(() => this.retryAttachmentCleanup())
+      }
+    }.width('100%')
+  }
+  @Builder
   Editor() {
     Column() {
       Row({ space: 12 }) {
@@ -2057,7 +2344,7 @@ struct Index {
           TextInput({ text: this.title, placeholder: this.t('给它起个名字'), controller: this.titleController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(23).placeholderFont({ size: 23 }).fontWeight(FontWeight.Medium)
             .fontColor(this.ink()).placeholderColor(this.muted()).backgroundColor(Color.Transparent).padding(16).maxLength(60).height(64)
             .border({ width: 1, color: this.accent() }).borderRadius(this.round(12))
-            .enabled(!this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-title')
+            .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-title')
             .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('title', s, preview))
             .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('title', start, end))
             .onFocus(() => this.focusDraftField('title')).onBlur(() => this.blurDraftField('title'))
@@ -2071,10 +2358,12 @@ struct Index {
                 else { this.message = '剪贴板读取未获授权，请再次点击粘贴按钮。'; }
               })
             Button({ type: ButtonType.Normal }) { Row({ space: 6 }) { this.Glyph(() => 0xe0b1,  16, () => this.muted()); Text(this.t('导入文件')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontColor(this.muted()) } }
-              .height(40).padding({ left: 16, right: 16 }).borderRadius(this.round(12)).backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() }).enabled(false)
+              .height(40).padding({ left: 16, right: 16 }).borderRadius(this.round(12)).backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() })
+              .enabled(this.canImportAttachment()).id('editor-import').onClick(() => this.importAttachment())
           }.justifyContent(FlexAlign.Center).width('100%')
-          Text(this.pasteWorking ? '正在读取粘贴内容…' : '粘贴至' + this.pasteTargetName() + ' · 文字与表格可粘贴，附件仍在适配。')
+          Text(this.attachmentWorking ? '正在处理附件…' : this.pasteWorking ? '正在读取粘贴内容…' : '粘贴至' + this.pasteTargetName() + ' · 附件从文件选择器导入。')
             .fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).lineHeight(18).fontColor(this.muted()).width('100%')
+          this.EditorAttachments()
           Column({ space: 10 }) {
             Row({ space: 8 }) {
               this.Glyph(() => 0xf0023,  18, () => this.accent()); Text(this.t('正文 · Markdown')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(14).fontWeight(FontWeight.Medium).fontColor(this.ink()); Blank()
@@ -2096,7 +2385,7 @@ struct Index {
               .font({ size: 12 }).fontColor(this.ink()).backgroundColor('#147662BA').borderRadius(this.round(10))
               .enabled(!this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
               .onSelect((_: number, value: string) => {
-                if (this.pasteWorking || this.draftWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
+                if (this.pasteWorking || this.draftWorking || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
                 if (!this.current()) {
                   this.category = value; this.dirty = true; this.editorValues.category = value;
                   this.editorValues.stage = value === '进行中' ? '计划中' : value === '实验' ? '待验证' : '待整理';
@@ -2111,7 +2400,7 @@ struct Index {
               Select(this.stages()).value(this.current()?.stage ?? '待整理').font({ size: 11 }).fontColor(this.muted()).backgroundColor(Color.Transparent)
                 .enabled(!this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
                 .onSelect((_: number, value: string) => {
-                  if (this.pasteWorking || this.draftWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
+                  if (this.pasteWorking || this.draftWorking || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
                   if (this.dirty) { this.message = '请先保存正文编辑'; return; }
                   const cmd = this.command('stage'); cmd.stage = value; this.submit(cmd);
                 })
@@ -2119,11 +2408,11 @@ struct Index {
           }.width('100%')
           if (this.category === '实验') {
             TextArea({ text: this.hypothesis, placeholder: this.t('假设'), controller: this.hypothesisController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(5000).height(96)
-              .enabled(!this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-hypothesis')
+              .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-hypothesis')
               .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('hypothesis', s, preview))
               .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('hypothesis', start, end)).onFocus(() => this.focusDraftField('hypothesis')).onBlur(() => this.blurDraftField('hypothesis'))
             TextArea({ text: this.conclusion, placeholder: this.t('结论'), controller: this.conclusionController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(10000).height(116)
-              .enabled(!this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-conclusion')
+              .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-conclusion')
               .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('conclusion', s, preview))
               .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('conclusion', start, end)).onFocus(() => this.focusDraftField('conclusion')).onBlur(() => this.blurDraftField('conclusion'))
           }
@@ -2167,7 +2456,7 @@ struct Index {
             if (!this.current()?.deleted) {
               Row({ space: 8 }) {
                 TextInput({ text: this.taskText, placeholder: this.t('添加一个小步骤…'), controller: this.taskController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(500)
-                  .enabled(!this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-todos')
+                  .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-todos')
                   .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('todos', s, preview))
                   .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('todos', start, end)).onFocus(() => this.focusDraftField('todos')).onBlur(() => this.blurDraftField('todos')).layoutWeight(1)
                 Button(this.t('+'), { type: ButtonType.Normal }).fontSize(21).fontColor(this.accent()).width(36).height(36).padding(0).backgroundColor('#147662BA').borderRadius(10)
@@ -2268,6 +2557,16 @@ struct Index {
           else { Text(this.t('×')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(18).fontColor(this.muted()).onClick(() => { this.message = ''; }) }
         }.padding(14).width('90%').backgroundColor(this.dark ? '#F5292634' : '#F5FFFFFF').borderRadius(this.round(12))
           .border({ width: this.styleEdgeWidth(), color: this.line() }).position({ x: '5%', y: Math.max(0, this.viewportHeight - 124) })
+      }
+      if (this.attachmentPreview) {
+        Stack() {
+          Rect().width('100%').height('100%').fill('#B0302D43').onClick(() => this.closeAttachmentPreview())
+          Column({ space: 12 }) {
+            Text(this.attachmentPreview.name).fontSize(15).fontColor(this.ink()).width('100%').maxLines(2)
+            Image('file://' + this.attachmentPreview.path).objectFit(ImageFit.Contain).width('100%').height(Math.max(160, this.viewportHeight - 200)).id('verified-attachment-image')
+            Button('关闭预览', { type: ButtonType.Normal }).fontSize(12).fontColor(this.accent()).backgroundColor(Color.Transparent).onClick(() => this.closeAttachmentPreview())
+          }.padding(18).width(Math.min(660, this.viewportWidth - 24)).backgroundColor(this.surface()).borderRadius(this.round(18))
+        }.width('100%').height('100%').id('attachment-preview-dialog')
       }
     }.width('100%').height('100%').backgroundColor(this.canvasBackgroundColorValue())
       .onAreaChange((_, area: Area) => { this.viewportWidth = Number(area.width); this.viewportHeight = Number(area.height); })

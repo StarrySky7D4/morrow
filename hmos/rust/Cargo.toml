@@ -15,6 +15,7 @@ crate-type = ["staticlib", "rlib"]
 morrow-core = { path = "../shared/core" }
 morrow-workbench-plugin = { path = "../shared/plugins/workbench" }
 morrow-editor-draft-model = { path = "editor-draft-model" }
+morrow-editor-draft-staging-model = { path = "editor-draft-staging-model" }
 prost = "=0.14.4"
 pulldown-cmark = { version = "=0.13.4", default-features = false }
 sha2 = "=0.10.9"

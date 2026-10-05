@@ -1,0 +1,17 @@
+{
+  "result": "PASS",
+  "files": [
+    {
+      "source": "HMOS-dev12-20261005-中文 图片.png",
+      "target": "HMOS-dev12-exported-image-20261005-A.png",
+      "bytes": 1924867,
+      "sha256": "d0c0bdd622e6349d8e7357035376c818f2dbd7da5ee28e1752d4d8405e52ad0f"
+    },
+    {
+      "source": "HMOS-dev12-20261005-中文 文档.txt",
+      "target": "HMOS-dev12-exported-document-20261005-A.txt",
+      "bytes": 38,
+      "sha256": "baef51c8ac22f4485193ff57a071cb32510b2c3f56599b4d240596e7e9df44d4"
+    }
+  ]
+}

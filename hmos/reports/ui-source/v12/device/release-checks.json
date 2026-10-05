@@ -1,0 +1,82 @@
+{
+  "device": "127.0.0.1:5557",
+  "fixture": "HMOS-attachment-20261005-A",
+  "checks": [
+    {
+      "label": "final HAP restores and previews retained image pin after process restart",
+      "details": {}
+    },
+    {
+      "label": "final HAP imports actual Unicode document URI and retains two draft attachments",
+      "details": {}
+    },
+    {
+      "label": "final HAP publishes two attachments to the original card identity and retains Markdown body",
+      "details": {
+        "card_id": "204235e9-2eb4-4b94-91d3-5a84ff881bf9"
+      }
+    },
+    {
+      "label": "final HAP exports image through actual save URI",
+      "details": {
+        "filename": "HMOS-dev12-exported-image-20261005-A.png"
+      }
+    },
+    {
+      "label": "final HAP exports document through actual save URI",
+      "details": {
+        "filename": "HMOS-dev12-exported-document-20261005-A.txt"
+      }
+    },
+    {
+      "label": "actual provider image and document exports match original bytes and SHA256",
+      "details": {
+        "files": [
+          {
+            "source": "HMOS-dev12-20261005-中文 图片.png",
+            "target": "HMOS-dev12-exported-image-20261005-A.png",
+            "bytes": 1924867,
+            "sha256": "d0c0bdd622e6349d8e7357035376c818f2dbd7da5ee28e1752d4d8405e52ad0f"
+          },
+          {
+            "source": "HMOS-dev12-20261005-中文 文档.txt",
+            "target": "HMOS-dev12-exported-document-20261005-A.txt",
+            "bytes": 38,
+            "sha256": "baef51c8ac22f4485193ff57a071cb32510b2c3f56599b4d240596e7e9df44d4"
+          }
+        ]
+      }
+    },
+    {
+      "label": "final HAP reopens two published assets; cancelling chooser and unchanged editor creates no journal",
+      "details": {}
+    },
+    {
+      "label": "final icon package reads published attachments and previews image",
+      "details": {
+        "built_hap_sha256": "07AE2562E04CBE189F04BFE1B60F1CC7458CDECBFE3ECF02F3BC0B7C2D83A467"
+      }
+    },
+    {
+      "label": "final icon package removes only image reference; document and body survive business restart",
+      "details": {
+        "built_hap_sha256": "07AE2562E04CBE189F04BFE1B60F1CC7458CDECBFE3ECF02F3BC0B7C2D83A467"
+      }
+    },
+    {
+      "label": "final HAP exports document-after-remove through actual save URI",
+      "details": {
+        "filename": "HMOS-dev12-exported-document-20261005-B.txt"
+      }
+    },
+    {
+      "label": "final icon package exports remaining document after removal with exact original bytes",
+      "details": {
+        "result": "PASS",
+        "built_hap_sha256": "07AE2562E04CBE189F04BFE1B60F1CC7458CDECBFE3ECF02F3BC0B7C2D83A467",
+        "bytes": 38,
+        "sha256": "baef51c8ac22f4485193ff57a071cb32510b2c3f56599b4d240596e7e9df44d4"
+      }
+    }
+  ]
+}

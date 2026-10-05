@@ -63,7 +63,7 @@ fn query_searches_complete_properties_without_mutation_or_card_projection() {
 }
 
 #[test]
-fn query_uses_original_asset_metadata_when_ui_projection_has_no_assets() {
+fn query_uses_original_asset_metadata_with_materialized_assets() {
     let (_dir, mut engine) = fixture();
     for (id, kind, name) in [
         ("image", "image", "AttachmentOnly Image.PNG"),
@@ -80,9 +80,13 @@ fn query_uses_original_asset_metadata_when_ui_projection_has_no_assets() {
         asset.kind = kind.into();
         asset.name = name.into();
         asset.bytes = 17;
-        // Valid V2 properties metadata only. No file/blob import, file access,
-        // or attachment materialization is exercised by this query fixture.
-        seed(&mut engine, id, "记录", p);
+        // Fixture bytes are bound to the metadata, now also exposed in UI.
+        // This still qualifies query semantics, not provider/URI import.
+        let bytes = [0_u8; 17];
+        let blob = engine.host.store_local_mut().stage_blob(&mut bytes.as_slice(), 17, None, 1).unwrap();
+        let outer = morrow_core::content::Attachment { id: format!("asset-{id}"), display_name: name.into(), media_type: "application/octet-stream".into(), byte_length: 17, sha256: blob.sha256 };
+        let card = CardRecord::new_with_attachments(id, "idea", 2, "记录", p.encode_to_vec(), &[outer]).unwrap();
+        engine.host.store_local_mut().create_local(&format!("seed-{id}"), &card).unwrap();
     }
     let mut plain = properties();
     plain.favorite = true;
@@ -92,7 +96,7 @@ fn query_uses_original_asset_metadata_when_ui_projection_has_no_assets() {
     for card in &projected {
         assert!(!card.title.contains("AttachmentOnly"));
         assert!(!card.description.contains("AttachmentOnly"));
-        assert!(serde_json::to_value(card).unwrap().get("assets").is_none());
+        assert_eq!(card.assets.len(), usize::from(card.id != "plain"));
         let original = CardRecord::decode(&unhex(&card.source).unwrap()).unwrap();
         let p = tasks_v2::decode(&card.id, &card.title, &original.body()).unwrap();
         assert_eq!(p.assets.len(), usize::from(card.id != "plain"));

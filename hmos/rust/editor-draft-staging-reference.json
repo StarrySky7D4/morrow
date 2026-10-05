@@ -1,0 +1,84 @@
+{
+  "source_worktree": "build/io-safety-refactor",
+  "source_head": "925fb8ca6563dcb7de38db8fbdf6b005f9ad5420",
+  "checked_at": "2026-10-05",
+  "profile": "development-unsealed",
+  "phase": "durable-editor-imports-with-selected-draft-pins",
+  "source_files": [
+    {
+      "path": "workbench_host/schemas/editor_draft_staging.proto",
+      "sha256": "5FD6183551224232AA90ADB6F7D90E26317E2B4A294F155732668A8B9EA4E981",
+      "destination": "hmos/rust/editor-draft-staging-model/schemas/editor_draft_staging.proto",
+      "reuse": "byte-for-byte; standalone prost build wrapper only"
+    },
+    {
+      "path": "workbench_host/src/editor_draft_staging.rs",
+      "sha256": "4DE975878809AD9FCB969693768165BC55AD0090FDD8971DAA64ABB7215B2C99",
+      "destination": "hmos/rust/src/editor_draft_staging.rs",
+      "reuse": "adapted original identities, validation, transactions, phase transitions, exact immutable history, ownership, capacity reservation and cleanup"
+    },
+    {
+      "path": "workbench_host/src/editor_draft.rs",
+      "sha256": "B4ADAFD9EDCA7ECBA9E4DD3A23963F226E3009233914D62C16630A1C7AC0DA28",
+      "destination": "hmos/rust/src/editor_draft.rs",
+      "reuse": "integration uses the independently adapted original main draft Slot, selected origin-2 pins and consumed_imports proof; this provenance file does not replace the main draft provenance"
+    }
+  ],
+  "preserved_rules": [
+    "Original schema field numbers and canonical Protobuf bytes, SHA-256 identity framing and reserved journal type/prefix/title",
+    "Original Pending intent precedes Core stage_blob_retained; bytes and Snapshot retention commit together or roll back together",
+    "Ready is audited only after Core validates declared byte length and SHA-256; exact retained-owner retry never reads the replacement source reader",
+    "Import operation immutable Pending history binds request, owner and generated asset identity; payload-changing retry is rejected",
+    "Historical retries return current phase without rewinding newer staging revisions or resurrecting Retired/Pruned operations",
+    "Selected pins resolve only from an active main draft at the expected current generation; imports may finish at a newer generation only if original bytes are already retained",
+    "Consumed markers must match exactly one selected origin-2 pin by asset ID, display name, media type, length and digest before any Snapshot release",
+    "Retired transition precedes Snapshot release; Pruned transition follows release, with exact historical cleanup binding and safe resume after partial progress",
+    "Inactive main drafts retire and prune all remaining unselected Pending/Ready imports; selected draft/event pins independently retain shared physical bytes",
+    "Original limits: 256 journal identities, 20 entries per draft, 320 current entries, 64 MiB aggregate declared bytes, 1 MiB journal body, 256 revisions",
+    "Pending admission reserves all still-possible Ready/Retired/Pruned transitions so an accepted import cannot exhaust cleanup revision budget",
+    "Private staging journals contain no CardRecord attachment references and never create business cards",
+    "Verified streaming export goes through Core export_blob_local and compares returned digest and byte length against retained metadata"
+  ],
+  "adaptation_boundaries": [
+    "Reader/Writer functions receive the caller-owned serialized HostRuntime, monotonic authorization clock and supplied Unix blob clock rather than WorkbenchState/Storage",
+    "Development HostRuntime has no production Storage::prepare_write, library lease, protected maintenance, audit seal, platform key or production storage admission; no equivalence is claimed",
+    "The unchanged frozen Core owns byte transactions, deduplication, Snapshot retentions, chunk verification, atomic rollback, event references and delayed collection",
+    "Current draft Reader delegates to HMOS editor_draft::read for the original main Slot; captured predecessor/parent lineage remains explicitly unsupported by the development adapter",
+    "Initial import pin selection uses durable metadata and ownership; this module does not offer an in-memory importer fallback",
+    "Ready resolver additionally compares current request/owner/asset ID to immutable original Pending history before selection, a fail-closed tightening for the unsealed development adapter",
+    "Effects describe staging/internal transactions only: a committed Pending intent or retention release remains committed if a later Ready/Pruned transition fails; callers inspect current phase before presenting completion",
+    "Exact immutable begin/abandon history marks effect committed before current journal readback, so corruption or disconnect after that proof cannot downgrade the original outcome",
+    "Core RevisionConflict/UnsupportedVersion/Invalid/Limit are proven not_committed only before any successful phase in this invocation; other uncertain mutation errors remain unknown",
+    "Main draft save/discard must use separate staging cleanup effects; cleanup success does not prove an unissued main draft write committed",
+    "Streaming writers may receive partial output before a downstream I/O/digest failure; the external URI adapter must publish only a successfully verified temporary output",
+    "No production formal-save S1 capture, S2 parent-child handoff, library import/export archive or rich clipboard HTML support is introduced"
+  ],
+  "public_api": [
+    "begin(host, request, monotonic_clock, blob_unix_ms, effect)",
+    "import_durable(host, request, reader, monotonic_clock, blob_unix_ms, effect)",
+    "inspect(host, card_id, draft_id, import_operation)",
+    "list(host, card_id, draft_id)",
+    "resolve_durable_draft_import(host, card_id, draft_id, asset_id, expected_generation)",
+    "abandon(host, card_id, draft_id, expected_generation, import_operation, abandon_operation, monotonic_clock, blob_unix_ms, effect)",
+    "reconcile(host, card_id, draft_id, monotonic_clock, blob_unix_ms, effect)",
+    "export_verified(host, card_id, draft_id, expected_generation, import_operation, writer)",
+    "is_journal(card) / validate_journal(card)"
+  ],
+  "test_reference": [
+    "workbench_host/tests/editor_draft_staging.rs",
+    "workbench_host/tests/editor_draft_staging_capacity.rs",
+    "workbench_host/tests/editor_draft_staging_failures.rs",
+    "workbench_host/tests/editor_draft.rs",
+    "core/tests/attachments.rs",
+    "core/tests/attachment_crash.rs",
+    "core/tests/attachment_reads.rs",
+    "hmos/rust/src/editor_draft_staging_tests.rs"
+  ],
+  "verified_scope": {
+    "host_staging_tests": 16,
+    "host_staging_result": "PASS",
+    "device_saf_picker_stream_and_uri_export": "NOT_RUN_BY_MODULE_AGENT",
+    "ohos_arm64_x86_64_builds": "NOT_RUN_BY_MODULE_AGENT",
+    "production_storage_admission": "UNIMPLEMENTED"
+  }
+}

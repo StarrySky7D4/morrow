@@ -1,0 +1,40 @@
+syntax = "proto3";
+package morrow.workbench.editor_draft_staging.v1;
+
+// Private, audited metadata only. Raw bytes are held by a releasable Core
+// Snapshot retention; this journal never lists CardRecord attachments.
+message ImportRequest {
+  uint32 schema_version = 1;
+  string card_id = 2;
+  string draft_id = 3;
+  string operation_id = 4;
+  uint64 expected_generation = 5;
+  string name = 6;
+  string kind = 7;
+  uint64 byte_length = 8;
+  bytes sha256 = 9;
+}
+
+message Entry {
+  ImportRequest request = 1;
+  string asset_id = 2;
+  string owner = 3;
+  string blob_id = 4;
+  uint32 phase = 5; // 0 Pending, 1 Ready, 2 Retired.
+}
+
+message LastMutation {
+  string operation_id = 1;
+  string import_operation = 2;
+  uint64 expected_generation = 3;
+  uint32 kind = 4; // 0 Pending, 1 Ready, 2 automatic Retired, 3 Pruned, 4 explicit Abandoned.
+}
+
+message Slot {
+  uint32 schema_version = 1;
+  string card_id = 2;
+  string draft_id = 3;
+  uint64 revision = 4;
+  repeated Entry entries = 5;
+  LastMutation last_mutation = 6;
+}

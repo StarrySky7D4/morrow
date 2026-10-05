@@ -1,0 +1,188 @@
+- Dumping layout…
+- Dumping layout…
+- Executing click...
+√ click at (1098, 1391)
+- Dumping layout…
+- Dumping layout…
+[
+  {
+    id: 'detail-category',
+    type: 'Select',
+    text: '灵感',
+    bounds: [ 111, 1025, 337, 1145 ]
+  },
+  {
+    id: 'detail-stage',
+    type: 'Select',
+    text: '待整理',
+    bounds: [ 947, 1025, 1209, 1145 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: '附件 · 2',
+    bounds: [ 111, 1199, 1209, 1241 ]
+  },
+  {
+    id: 'saved-asset:asset-draft-import-4cbddb2b26f7d08f2dbdd020b41d29eddc0fea8d3a3df7c6f8861f3efcd67ba8',
+    type: 'Row',
+    text: undefined,
+    bounds: [ 111, 1295, 1209, 1486 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: '',
+    bounds: [ 141, 1364, 195, 1418 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: 'HMOS-dev12-20261005-中文 图片.png',
+    bounds: [ 219, 1325, 761, 1409 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: '1.8 MiB',
+    bounds: [ 219, 1421, 321, 1456 ]
+  },
+  {
+    id: 'attachment-preview:asset-draft-import-4cbddb2b26f7d08f2dbdd020b41d29eddc0fea8d3a3df7c6f8861f3efcd67ba8',
+    type: 'Button',
+    text: '预览',
+    bounds: [ 831, 1331, 993, 1451 ]
+  },
+  {
+    id: 'attachment-export:asset-draft-import-4cbddb2b26f7d08f2dbdd020b41d29eddc0fea8d3a3df7c6f8861f3efcd67ba8',
+    type: 'Button',
+    text: '导出',
+    bounds: [ 1017, 1331, 1179, 1451 ]
+  },
+  {
+    id: 'saved-asset:asset-draft-import-e325692c9edda8d417143f317fdc3ba6ab2ef31244823e4c81c64b340fc1a4de',
+    type: 'Row',
+    text: undefined,
+    bounds: [ 111, 1540, 1209, 1720 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: '',
+    bounds: [ 141, 1603, 195, 1657 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: 'HMOS-dev12-20261005-中文 文档.txt',
+    bounds: [ 219, 1586, 850, 1628 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: '38 B',
+    bounds: [ 219, 1640, 281, 1675 ]
+  },
+  {
+    id: 'attachment-export:asset-draft-import-e325692c9edda8d417143f317fdc3ba6ab2ef31244823e4c81c64b340fc1a4de',
+    type: 'Button',
+    text: '导出',
+    bounds: [ 1017, 1570, 1179, 1690 ]
+  },
+  {
+    id: 'detail-copy',
+    type: 'Button',
+    text: '复制',
+    bounds: [ 364, 1768, 533, 1888 ]
+  },
+  {
+    id: undefined,
+    type: 'Button',
+    text: '收藏',
+    bounds: [ 533, 1768, 702, 1888 ]
+  },
+  {
+    id: undefined,
+    type: 'Button',
+    text: '删除',
+    bounds: [ 702, 1768, 871, 1888 ]
+  },
+  {
+    id: 'detail-edit',
+    type: 'Button',
+    text: '编辑',
+    bounds: [ 871, 1768, 1040, 1888 ]
+  },
+  {
+    id: undefined,
+    type: 'Button',
+    text: '完成',
+    bounds: [ 1040, 1768, 1209, 1888 ]
+  },
+  {
+    id: 'left_icon',
+    type: 'SymbolGlyph',
+    text: undefined,
+    bounds: [ 78, 198, 132, 252 ]
+  },
+  {
+    id: 'new_document_icon',
+    type: 'SymbolGlyph',
+    text: undefined,
+    bounds: [ 1044, 198, 1098, 252 ]
+  },
+  {
+    id: 'dialog_confirm',
+    type: 'SymbolGlyph',
+    text: undefined,
+    bounds: [ 1188, 198, 1242, 252 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: '将文件保存至 "我的手机"',
+    bounds: [ 72, 330, 598, 386 ]
+  },
+  {
+    id: undefined,
+    type: 'TextInput',
+    text: 'HMOS-dev12-20261005-中文 图片.png',
+    bounds: [ 30, 416, 1290, 536 ]
+  },
+  {
+    id: '我的手机',
+    type: 'Row',
+    text: undefined,
+    bounds: [ 0, 617, 1320, 785 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: '我的手机',
+    bounds: [ 192, 673, 1200, 729 ]
+  },
+  {
+    id: 'Documents',
+    type: 'Row',
+    text: undefined,
+    bounds: [ 0, 788, 1320, 956 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: 'Documents',
+    bounds: [ 228, 844, 1200, 900 ]
+  },
+  {
+    id: 'Download',
+    type: 'Row',
+    text: undefined,
+    bounds: [ 0, 959, 1320, 1127 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: 'Download',
+    bounds: [ 228, 1015, 1200, 1071 ]
+  }
+]

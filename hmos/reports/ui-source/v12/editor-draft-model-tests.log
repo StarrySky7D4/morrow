@@ -1,0 +1,33 @@
+✔ new cards durably save the initial empty snapshot; unchanged existing cards do not (4.1854ms)
+✔ successful explicit import preparation establishes an unchanged source journal once; opening does not (2.0874ms)
+✔ selected identities and aliases are immutable snapshot input; attachment-only changes save a generation (2.3076ms)
+✔ an unknown attachment save retries exact selection bytes and leaves newer removal intact (1.8611ms)
+✔ restored selected pins remain read-only and text autosave preserves origin, aliases and inventory (1.1889ms)
+✔ missing or altered stored asset evidence cannot certify a selection receipt (2.6236ms)
+✔ parent/predecessor, duplicate and oversized attachment selections fail before transport (0.9446ms)
+✔ ensureConfirmed surfaces failure without silently certifying empty state or retrying it (0.9809ms)
+✔ a later receipt cannot substitute bytes for the same already confirmed asset identity (1.2334ms)
+✔ all twenty selected asset identities and Unicode aliases survive serialization without truncation (1.6157ms)
+✔ debounce coalesces input and owns scope and full UTF-16 editing values (1.2415ms)
+✔ an older receipt confirms history but never replaces newer input; automatic S2 is debounced (1.3486ms)
+✔ flush waits for the issued save and then confirms all latest input before resolving (1.3038ms)
+✔ unknown outcomes preserve exact serialized bytes and explicit retry stops at original S1 (1.4791ms)
+✔ known rejection clears the proposal, surfaces flush failure and does not replay failed S1 (1.5126ms)
+✔ a different S2 already observed during rejected S1 may autosave without replaying S1 (1.0596ms)
+✔ a known rejection of retry cannot erase an already uncertain operation (0.9194ms)
+✔ restoring a confirmed draft is read-only and snapshots are detached (0.9632ms)
+✔ inactive or advanced restored journals block flush and autosave (2.4956ms)
+✔ historical or mismatched receipts cannot certify latest input (3.7107ms)
+✔ disposal stops publication and new work while leaving an issued operation uncancelled (1.0717ms)
+✔ selection-only and composing-only changes are real generations; invalid UTF-16 offsets fail before send (1.7161ms)
+✔ decimal generation increments preserve u64 precision and reject overflow/noncanonical values (0.7107ms)
+✔ pre-send generation exhaustion is an explicit error and never an unknown transport outcome (1.2559ms)
+✔ disposing before debounce prevents new writes (0.908ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 416.6157

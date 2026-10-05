@@ -1,11 +1,11 @@
 //! Development adaptation of the original host editor draft journal.
 //! The original schema/model and journal transaction/history rules are reused.
-//! This phase supports raw text snapshots only. Assets, captured predecessors,
-//! parent handoff and S1 recovery are explicitly rejected, never simulated.
+//! Selected source assets and durable imports are pinned atomically with the
+//! raw snapshot. Captured predecessors, parent handoff and S1 remain rejected.
 //! The caller owns one serialized HostRuntime; protected maintenance is absent.
 use crate::{Result, err};
 use morrow_core::{
-    content::CardRecord,
+    content::{Attachment, CardRecord},
     content_change::ContentChange,
     dispatch::HostRuntime,
     lifecycle::GrantKind,
@@ -59,11 +59,14 @@ fn key(card: &str, draft: &str) -> String {
 }
 fn phase_request(request: &proto::WriteRequest) -> Result<()> {
     validate_request(request).map_err(err)?;
-    if !request.assets.is_empty()
+    if request
+        .assets
+        .iter()
+        .any(|asset| !matches!(asset.origin, 0 | 2 | 3))
         || !request.predecessor_operation.is_empty()
         || !request.predecessor_sha256.is_empty()
     {
-        return Err("DraftPhaseUnsupported: assets and captured predecessors".into());
+        return Err("DraftPhaseUnsupported: predecessor and parent assets".into());
     }
     Ok(())
 }
@@ -92,13 +95,36 @@ fn validate_source(card: &CardRecord) -> Result<()> {
     }
     Ok(())
 }
+fn asset_pin(index: usize) -> String {
+    format!("draft-asset-{index}")
+}
+fn attachment(asset: &proto::StoredAsset) -> Result<Attachment> {
+    Ok(Attachment {
+        id: asset.pin_id.clone(),
+        display_name: asset.display_name.clone(),
+        media_type: asset.media_type.clone(),
+        byte_length: asset.byte_length,
+        sha256: asset
+            .sha256
+            .as_slice()
+            .try_into()
+            .map_err(|_| "draft asset digest")?,
+    })
+}
 fn charge(slot: &proto::Slot) -> Result<u64> {
     let mut metadata = slot.clone();
     metadata.active_bytes = 0;
-    // Original monotonic varint fixed point. Unsupported blob/pin fields are
-    // rejected before this function, so the encoded slot is the entire charge.
+    let mut blobs = 0_u64;
+    for asset in &slot.assets {
+        blobs = blobs
+            .checked_add(asset.byte_length)
+            .ok_or("draft byte count overflow")?;
+    }
+    // Original monotonic varint fixed point, including every selected pin.
     for _ in 0..12 {
-        let total = metadata.encoded_len() as u64;
+        let total = (metadata.encoded_len() as u64)
+            .checked_add(blobs)
+            .ok_or("draft byte count overflow")?;
         if total > MAX_ACTIVE_BYTES {
             return Err("draft active byte limit".into());
         }
@@ -121,12 +147,10 @@ fn decode_body(raw: &[u8]) -> Result<proto::Slot> {
     phase_request(request)?;
     if slot.parent_link.is_some()
         || slot.retirement.is_some()
-        || !slot.assets.is_empty()
-        || !slot.consumed_imports.is_empty()
         || !slot.predecessor_card.is_empty()
         || slot.predecessor_evidence_bytes != 0
     {
-        return Err("DraftPhaseUnsupported: pins, lineage and captured recovery".into());
+        return Err("DraftPhaseUnsupported: lineage and captured recovery".into());
     }
     if slot.generation == 0
         || (slot.active && request.expected_generation.checked_add(1) != Some(slot.generation))
@@ -144,6 +168,25 @@ fn decode_body(raw: &[u8]) -> Result<proto::Slot> {
         }
     } else if !slot.source_card.is_empty() {
         return Err("new-card draft must not invent a source card".into());
+    }
+    if slot.consumed_imports.len() > 20 || slot.consumed_imports.len() > slot.assets.len() {
+        return Err("draft import consumption limit".into());
+    }
+    let mut consumed = std::collections::HashSet::new();
+    for operation in &slot.consumed_imports {
+        identity(&request.card_id, &request.draft_id, operation)?;
+        if !consumed.insert(operation) {
+            return Err("duplicate draft import consumption".into());
+        }
+    }
+    if slot.assets.len() != request.assets.len() {
+        return Err("draft selected assets changed".into());
+    }
+    for (index, (asset, selected)) in slot.assets.iter().zip(&request.assets).enumerate() {
+        if asset.selection.as_ref() != Some(selected) || asset.pin_id != asset_pin(index) {
+            return Err("draft asset identity changed".into());
+        }
+        attachment(asset)?;
     }
     if (slot.active && slot.active_bytes != charge(&slot)?)
         || (!slot.active && slot.active_bytes != 0)
@@ -163,8 +206,16 @@ fn decode_card(card: &CardRecord) -> Result<proto::Slot> {
     {
         return Err("draft journal identity changed".into());
     }
-    if !card.attachments().is_empty() {
-        return Err("DraftPhaseUnsupported: journal attachments".into());
+    let expected = if slot.active {
+        slot.assets
+            .iter()
+            .map(attachment)
+            .collect::<Result<Vec<_>>>()?
+    } else {
+        Vec::new()
+    };
+    if card.attachments() != expected {
+        return Err("draft pin list changed".into());
     }
     Ok(slot)
 }
@@ -212,16 +263,36 @@ fn draft_history(host: &HostRuntime, id: &str, operation: &str) -> Result<Option
                 || !change.preview_text.is_empty()
                 || change.attachments.is_none()
                 || change.expected_revision.checked_add(1) != Some(receipt.revision)
-                || !change
-                    .attachments
-                    .as_ref()
-                    .expect("checked")
-                    .items
-                    .is_empty()
             {
                 return Err("draft history command mismatch".into());
             }
-            decode_body(&change.body)?
+            let slot = decode_body(&change.body)?;
+            let expected = if slot.active {
+                slot.assets
+                    .iter()
+                    .map(attachment)
+                    .collect::<Result<Vec<_>>>()?
+            } else {
+                Vec::new()
+            };
+            let actual = change
+                .attachments
+                .as_ref()
+                .expect("checked")
+                .items
+                .as_slice();
+            if actual.len() != expected.len()
+                || actual.iter().zip(&expected).any(|(a, b)| {
+                    a.id != b.id
+                        || a.display_name != b.display_name
+                        || a.media_type != b.media_type
+                        || a.byte_length != b.byte_length
+                        || a.sha256 != b.sha256
+                })
+            {
+                return Err("draft historical pins mismatch".into());
+            }
+            slot
         }
         _ => return Err("operation is not a draft mutation".into()),
     };
@@ -272,6 +343,14 @@ fn write_draft_journal(
 ) -> Result<()> {
     let body = slot.encode_to_vec();
     decode_body(&body)?;
+    let pins = if slot.active {
+        slot.assets
+            .iter()
+            .map(attachment)
+            .collect::<Result<Vec<_>>>()?
+    } else {
+        Vec::new()
+    };
     // The production Storage::prepare_write seals protected audit state.
     // This explicit development HostRuntime has no protected maintenance API.
     let mut connection = host.connect().map_err(err)?;
@@ -292,7 +371,7 @@ fn write_draft_journal(
         *effect = "unknown";
         let committed = if previous == 0 {
             let card =
-                CardRecord::new_with_attachments(id, TYPE, 1, TITLE, body, &[]).map_err(err)?;
+                CardRecord::new_with_attachments(id, TYPE, 1, TITLE, body, &pins).map_err(err)?;
             host.create_content(&connection, operation, &card, &mut clock)
         } else {
             host.edit_content(
@@ -304,7 +383,7 @@ fn write_draft_journal(
                     title: TITLE.into(),
                     body,
                     preview_text: String::new(),
-                    attachments: Some(Vec::new()),
+                    attachments: Some(pins),
                 },
                 &mut clock,
             )
@@ -347,6 +426,22 @@ pub fn save_with_effect(
     host: &mut HostRuntime,
     request: &proto::WriteRequest,
     clock: impl FnMut() -> u64,
+    effect: &mut &'static str,
+) -> Result<DraftRecord> {
+    *effect = "not_committed";
+    save_with_effect_at(host, request, clock, unix_millis()?, effect)
+}
+fn unix_millis() -> Result<i64> {
+    let elapsed = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_err(err)?;
+    i64::try_from(elapsed.as_millis()).map_err(err)
+}
+pub fn save_with_effect_at(
+    host: &mut HostRuntime,
+    request: &proto::WriteRequest,
+    mut clock: impl FnMut() -> u64,
+    blob_unix_ms: i64,
     effect: &mut &'static str,
 ) -> Result<DraftRecord> {
     *effect = "not_committed";
@@ -408,6 +503,110 @@ pub fn save_with_effect(
         }
         source.encode()
     };
+    // Cleanup operations have their own effects. Until the main draft write is
+    // issued, a staging cleanup failure must remain not_committed for this save.
+    if previous.is_some() {
+        crate::editor_draft_staging::reconcile(
+            host,
+            &request.card_id,
+            &request.draft_id,
+            &mut clock,
+            blob_unix_ms,
+            &mut "not_committed",
+        )
+        .map_err(err)?;
+    }
+    let source = if source_card.is_empty() {
+        None
+    } else {
+        Some(CardRecord::decode(&source_card).map_err(err)?)
+    };
+    let source_assets = source
+        .as_ref()
+        .map_or_else(Vec::new, CardRecord::attachments);
+    let mut stored = Vec::new();
+    let mut consumed_imports = Vec::new();
+    for (index, selection) in request.assets.iter().enumerate() {
+        let prior_pin = previous.as_ref().and_then(|slot| {
+            slot.assets.iter().find(|asset| {
+                asset
+                    .selection
+                    .as_ref()
+                    .is_some_and(|s| s.asset_id == selection.asset_id)
+            })
+        });
+        let selected = match selection.origin {
+            0 => {
+                let item = source_assets
+                    .iter()
+                    .find(|a| a.id == selection.asset_id)
+                    .cloned()
+                    .ok_or("draft attachment does not belong to this source")?;
+                if let Some(pin) = prior_pin.filter(|pin| {
+                    pin.display_name == item.display_name
+                        && pin.media_type == item.media_type
+                        && pin.byte_length == item.byte_length
+                        && pin.sha256 == item.sha256
+                }) {
+                    verify_pin(host, &id, pin, &mut std::io::sink())?;
+                } else {
+                    let live = host
+                        .store_local()
+                        .card(&request.card_id)
+                        .map_err(err)?
+                        .ok_or("draft source missing")?;
+                    if live.encode() != source_card {
+                        return Err("draft exact source changed".into());
+                    }
+                    let info = host
+                        .store_local()
+                        .export_attachment_local(
+                            &request.card_id,
+                            &selection.asset_id,
+                            &mut std::io::sink(),
+                        )
+                        .map_err(err)?;
+                    if info.sha256 != item.sha256 || info.byte_length != item.byte_length {
+                        return Err("draft source attachment mismatch".into());
+                    }
+                }
+                item
+            }
+            2 => {
+                if let Some((item, operation)) =
+                    crate::editor_draft_staging::resolve_durable_draft_import(
+                        host,
+                        &request.card_id,
+                        &request.draft_id,
+                        &selection.asset_id,
+                        request.expected_generation,
+                    )
+                    .map_err(err)?
+                {
+                    consumed_imports.push(operation);
+                    item
+                } else {
+                    let pin = prior_pin.ok_or("draft attachment does not belong to this source")?;
+                    verify_pin(host, &id, pin, &mut std::io::sink())?;
+                    attachment(pin)?
+                }
+            }
+            3 => {
+                let pin = prior_pin.ok_or("draft attachment does not belong to this source")?;
+                verify_pin(host, &id, pin, &mut std::io::sink())?;
+                attachment(pin)?
+            }
+            _ => return Err("DraftPhaseUnsupported: asset origin".into()),
+        };
+        stored.push(proto::StoredAsset {
+            selection: Some(selection.clone()),
+            pin_id: asset_pin(index),
+            display_name: selected.display_name,
+            media_type: selected.media_type,
+            byte_length: selected.byte_length,
+            sha256: selected.sha256.to_vec(),
+        });
+    }
     let mut slot = proto::Slot {
         schema_version: 1,
         request: Some(request.clone()),
@@ -416,6 +615,8 @@ pub fn save_with_effect(
             .ok_or("draft generation exhausted")?,
         active: true,
         source_card,
+        assets: stored,
+        consumed_imports,
         ..Default::default()
     };
     slot.active_bytes = charge(&slot)?;
@@ -449,7 +650,7 @@ pub fn save_with_effect(
         &request.operation_id,
         generation,
         &slot,
-        clock,
+        &mut clock,
         effect,
     )?;
     Ok(DraftRecord {
@@ -479,6 +680,183 @@ pub fn list(host: &HostRuntime) -> Result<Vec<DraftRecord>> {
         })
         .collect())
 }
+fn verify_pin(
+    host: &HostRuntime,
+    journal: &str,
+    pin: &proto::StoredAsset,
+    writer: &mut impl std::io::Write,
+) -> Result<morrow_core::attachment::BlobInfo> {
+    let info = host
+        .store_local()
+        .export_attachment_local(journal, &pin.pin_id, writer)
+        .map_err(err)?;
+    if info.byte_length != pin.byte_length || info.sha256.as_slice() != pin.sha256 {
+        return Err("draft exported asset mismatch".into());
+    }
+    Ok(info)
+}
+/// Stream only an exact current draft pin. The writer may receive partial data
+/// before a digest error; callers must publish their temporary output only on Ok.
+pub fn export_asset_verified(
+    host: &HostRuntime,
+    card: &str,
+    draft: &str,
+    generation: u64,
+    asset_id: &str,
+    writer: &mut impl std::io::Write,
+) -> Result<morrow_core::attachment::BlobInfo> {
+    let slot = draft_card(host, card, draft)?.ok_or("draft missing")?;
+    if !slot.active || slot.generation != generation {
+        return Err("draft export generation conflict".into());
+    }
+    let pin = slot
+        .assets
+        .iter()
+        .find(|asset| {
+            asset
+                .selection
+                .as_ref()
+                .is_some_and(|s| s.asset_id == asset_id)
+        })
+        .ok_or("draft asset absent")?;
+    verify_pin(host, &key(card, draft), pin, writer)
+}
+#[derive(Clone, Debug)]
+pub struct PublishedAssets {
+    pub assets: Vec<morrow_workbench_plugin::Asset>,
+    pub attachments: Vec<Attachment>,
+    /// The exact raw values whose journal grants this selected pin inventory.
+    /// A business save must compare its intended text/category/stage to these.
+    pub values: proto::Values,
+}
+fn kind(media_type: &str) -> &'static str {
+    let bare = media_type
+        .split(';')
+        .next()
+        .unwrap_or("")
+        .trim()
+        .to_ascii_lowercase();
+    if bare == "image/gif" {
+        "gif"
+    } else if bare.starts_with("image/") {
+        "image"
+    } else if bare.starts_with("video/") {
+        "video"
+    } else if bare.starts_with("audio/") {
+        "audio"
+    } else {
+        "file"
+    }
+}
+/// Read-only publication validation. All pins are streamed and verified before
+/// any metadata is returned. The caller still performs the ordinary business
+/// transaction with the same exact source; this confers no capture authority.
+/// Do not compare the live business record here: an exact business operation
+/// retry may arrive after that operation advanced it. The core transaction
+/// checks immutable operation history first, then complete source CAS for any
+/// new operation. A caller must not substitute a revision-only content edit.
+pub fn publish_assets(
+    host: &HostRuntime,
+    card: &str,
+    draft: &str,
+    generation: u64,
+    operation: &str,
+    source: &[u8],
+) -> Result<PublishedAssets> {
+    identity(card, draft, operation)?;
+    let slot = draft_card(host, card, draft)?.ok_or("draft missing")?;
+    let request = slot.request.as_ref().expect("validated request");
+    if !slot.active || slot.generation != generation || request.operation_id != operation {
+        return Err("draft publication generation or operation conflict".into());
+    }
+    let result = project_assets(&slot, source)?;
+    for pin in &slot.assets {
+        verify_pin(host, &key(card, draft), pin, &mut std::io::sink())?;
+    }
+    Ok(result)
+}
+/// Reconstruct metadata only for an already proven committed business retry.
+/// The caller must first prove that SAME business operation belongs to this
+/// card, retain effect=committed on later errors, and send the fully rebuilt
+/// command through the core's immutable history payload comparison. This is
+/// never a fallback authority for a new business mutation or a byte export.
+pub fn published_assets_history(
+    host: &HostRuntime,
+    card: &str,
+    draft: &str,
+    generation: u64,
+    operation: &str,
+    source: &[u8],
+) -> Result<PublishedAssets> {
+    identity(card, draft, operation)?;
+    let slot =
+        draft_history(host, &key(card, draft), operation)?.ok_or("draft save history missing")?;
+    let request = slot.request.as_ref().expect("validated request");
+    if !slot.active || slot.generation != generation || request.operation_id != operation {
+        return Err("draft publication history generation or operation conflict".into());
+    }
+    project_assets(&slot, source)
+}
+fn project_assets(slot: &proto::Slot, source: &[u8]) -> Result<PublishedAssets> {
+    let request = slot.request.as_ref().ok_or("draft request missing")?;
+    if slot.source_card != source {
+        return Err("draft publication exact source changed".into());
+    }
+    let mut baseline_assets: Vec<morrow_workbench_plugin::Asset> = Vec::new();
+    let mut baseline_attachments = Vec::new();
+    if request.source_kind == 1 {
+        if !source.is_empty() {
+            return Err("new-card draft must not invent a source card".into());
+        }
+    } else {
+        let baseline = CardRecord::decode(source).map_err(err)?;
+        validate_source(&baseline)?;
+        let summary = baseline.summary();
+        let properties =
+            tasks_v2::decode(&summary.id, &summary.title, &baseline.body()).map_err(err)?;
+        if baseline.encode() != source
+            || summary.id != request.card_id
+            || summary.revision != request.source_revision
+            || properties.deleted
+        {
+            return Err("draft publication source binding conflict".into());
+        }
+        baseline_attachments = baseline.attachments();
+        baseline_assets = properties
+            .assets
+            .iter()
+            .map(|asset| morrow_workbench_plugin::Asset {
+                id: asset.id.clone(),
+                name: asset.name.clone(),
+                kind: asset.kind.clone(),
+                bytes: asset.bytes,
+            })
+            .collect();
+    }
+    let mut result = PublishedAssets {
+        assets: Vec::new(),
+        attachments: Vec::new(),
+        values: request.values.clone().ok_or("draft values missing")?,
+    };
+    for pin in &slot.assets {
+        let selected = pin.selection.as_ref().expect("validated selection");
+        let mut outer = attachment(pin)?;
+        outer.id = selected.asset_id.clone();
+        let prior = if baseline_attachments.contains(&outer) {
+            baseline_assets.iter().find(|asset| asset.id == outer.id)
+        } else {
+            None
+        };
+        result.assets.push(morrow_workbench_plugin::Asset {
+            id: selected.asset_id.clone(),
+            name: pin.display_name.clone(),
+            kind: prior.map_or_else(|| kind(&pin.media_type).into(), |asset| asset.kind.clone()),
+            bytes: pin.byte_length,
+        });
+        result.attachments.push(outer);
+    }
+    Ok(result)
+}
 pub fn discard(
     host: &mut HostRuntime,
     card: &str,
@@ -507,6 +885,29 @@ pub fn discard_with_effect(
     effect: &mut &'static str,
 ) -> Result<DraftRecord> {
     *effect = "not_committed";
+    discard_with_effect_at(
+        host,
+        card,
+        draft,
+        expected,
+        operation,
+        clock,
+        unix_millis()?,
+        effect,
+    )
+}
+#[allow(clippy::too_many_arguments)]
+pub fn discard_with_effect_at(
+    host: &mut HostRuntime,
+    card: &str,
+    draft: &str,
+    expected: u64,
+    operation: &str,
+    mut clock: impl FnMut() -> u64,
+    blob_unix_ms: i64,
+    effect: &mut &'static str,
+) -> Result<DraftRecord> {
+    *effect = "not_committed";
     identity(card, draft, operation)?;
     let id = key(card, draft);
     if let Some(slot) = draft_history(host, &id, operation)? {
@@ -515,6 +916,15 @@ pub fn discard_with_effect(
         }
         *effect = "committed";
         let current = draft_card(host, card, draft)?.ok_or("draft record missing")?;
+        crate::editor_draft_staging::reconcile(
+            host,
+            card,
+            draft,
+            &mut clock,
+            blob_unix_ms,
+            &mut "not_committed",
+        )
+        .map_err(err)?;
         return Ok(DraftRecord {
             slot,
             current_generation: current.generation,
@@ -526,12 +936,33 @@ pub fn discard_with_effect(
     if !slot.active || slot.generation != expected {
         return Err("draft discard generation conflict".into());
     }
+    crate::editor_draft_staging::reconcile(
+        host,
+        card,
+        draft,
+        &mut clock,
+        blob_unix_ms,
+        &mut "not_committed",
+    )
+    .map_err(err)?;
     slot.generation = expected
         .checked_add(1)
         .ok_or("draft generation exhausted")?;
     slot.active = false;
     slot.active_bytes = 0;
-    write_draft_journal(host, &id, operation, expected, &slot, clock, effect)?;
+    write_draft_journal(host, &id, operation, expected, &slot, &mut clock, effect)?;
+    // An inactive main journal releases all its pins atomically. Remaining
+    // unselected imports then retire through their original staging journal.
+    // Failure preserves the proven committed main outcome for an exact retry.
+    crate::editor_draft_staging::reconcile(
+        host,
+        card,
+        draft,
+        &mut clock,
+        blob_unix_ms,
+        &mut "not_committed",
+    )
+    .map_err(err)?;
     Ok(DraftRecord {
         current_generation: slot.generation,
         current_active: slot.active,

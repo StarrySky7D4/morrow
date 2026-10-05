@@ -1,0 +1,32 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.24s
+     Running unittests src\lib.rs (hmos\rust\target\debug\deps\morrow_hmos-98e278664b0bdce7.exe)
+
+running 24 tests
+test editor_draft::tests::exact_history_never_rewinds_newer_snapshot_and_modified_retry_is_rejected ... ok
+test editor_draft::tests::exact_saved_history_stays_committed_when_current_journal_readback_is_corrupt ... ok
+test editor_draft::tests::exact_discard_history_stays_committed_when_current_journal_readback_is_corrupt ... ok
+test editor_draft::tests::draft_bridge_keeps_original_asset_selection_and_u64_metadata_without_accepting_client_pins ... ok
+test editor_draft::tests::durable_selected_import_is_pinned_consumed_once_and_text_autosave_does_not_reopen_import ... ok
+test editor_draft::tests::failed_consumed_cleanup_keeps_previous_generation_and_main_effect_not_committed_until_explicit_retry ... ok
+test editor_draft::tests::discard_is_exact_idempotent_inactive_and_old_save_history_remains_read_only ... ok
+test editor_draft::tests::development_workbench_list_and_snapshot_query_exclude_valid_private_journals ... ok
+test editor_draft::tests::discard_releases_main_pins_and_all_pending_and_unselected_ready_import_owners ... ok
+test editor_draft::tests::foreign_operation_cannot_save_or_discard_another_journal ... ok
+test editor_draft::tests::noncanonical_or_corrupt_private_record_is_never_skipped_as_absence ... ok
+test editor_draft::tests::generation_cas_and_baseline_are_fixed_while_original_business_bytes_stay_unchanged ... ok
+test editor_draft::tests::import_identity_cannot_cross_drafts_or_select_a_pending_unverified_payload ... ok
+test editor_draft::tests::pinned_publication_allows_same_business_operation_retries_and_core_rejects_changed_payload ... ok
+test editor_draft::tests::invalid_raw_shape_unowned_import_and_unsupported_capture_are_rejected_without_a_journal ... ok
+test editor_draft::tests::new_card_baseline_remains_empty_after_foreign_create_and_existing_target_rejects_first_write ... ok
+test editor_draft::tests::post_discard_cleanup_failure_preserves_proven_committed_outcome_and_exact_retry_finishes_cleanup ... ok
+test editor_draft::tests::publication_requires_current_exact_generation_operation_and_complete_source_cas ... ok
+test editor_draft::tests::raw_empty_values_utf16_selection_and_composing_survive_restart_without_business_card ... ok
+test editor_draft::tests::sixteen_active_slots_limit_and_discard_frees_only_active_capacity ... ok
+test editor_draft::tests::source_asset_pins_survive_restart_and_previous_pin_adoption_preserves_exact_bytes ... ok
+test editor_draft::tests::stored_pin_metadata_and_blob_charge_are_not_optional_and_stream_failure_is_not_success ... ok
+test editor_draft::tests::transaction_budget_failure_keeps_unknown_original_and_previous_journal_until_exact_retry ... ok
+test editor_draft::tests::cumulative_identity_limit_survives_discard_and_restart ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 44 filtered out; finished in 5.39s
+

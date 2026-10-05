@@ -20,7 +20,10 @@ use std::{
 // ../query-plan-reference.json. It establishes query correspondence only,
 // not a production plugin execution, permission, or durable capture.
 mod draft_bridge;
+mod attachment_bridge;
 pub mod editor_draft;
+pub mod editor_draft_staging;
+pub mod file_stream;
 pub mod markdown;
 pub mod query_plan_v2;
 
@@ -56,6 +59,9 @@ pub struct Request {
     draft: Option<draft_bridge::Write>,
     draft_id: String,
     generation: String,
+    draft_operation: String,
+    attachment_id: String,
+    import_request: Option<attachment_bridge::ImportWrite>,
 }
 #[derive(Debug, Serialize)]
 pub struct TaskView {
@@ -78,6 +84,7 @@ pub struct CardView {
     deleted: bool,
     deleted_at: String,
     tasks: Vec<TaskView>,
+    assets: Vec<attachment_bridge::AssetView>,
 }
 #[derive(Debug, Serialize)]
 pub struct Reply {
@@ -91,6 +98,7 @@ pub struct Reply {
     receipt_revision: String,
     profile: &'static str,
     effect: &'static str,
+    imports: Vec<attachment_bridge::ImportView>,
 }
 impl Reply {
     fn failure(message: String) -> Self {
@@ -105,6 +113,7 @@ impl Reply {
             receipt_revision: String::new(),
             profile: "development-unsealed",
             effect: "unknown",
+            imports: vec![],
         }
     }
 }
@@ -115,6 +124,81 @@ pub struct Engine {
     effect: &'static str,
 }
 impl Engine {
+    fn published_assets(&mut self, request: &Request) -> Result<Option<editor_draft::PublishedAssets>> {
+        if request.draft_id.is_empty() {
+            if !request.generation.is_empty() || !request.draft_operation.is_empty() { return Err("IncompleteDraftPublication".into()); }
+            return Ok(None);
+        }
+        let committed = matches!(self.host.store_local().lookup_for_card(&request.id, &request.operation).map_err(err)?, morrow_core::transaction::Lookup::Committed(_));
+        let selected = if committed {
+            self.effect = "committed";
+            editor_draft::published_assets_history(&self.host, &request.id, &request.draft_id, draft_bridge::number(&request.generation)?, &request.draft_operation, &unhex(&request.source)?).map_err(err)?
+        } else {
+            editor_draft::publish_assets(&self.host, &request.id, &request.draft_id, draft_bridge::number(&request.generation)?, &request.draft_operation, &unhex(&request.source)?).map_err(err)?
+        };
+        let values = &selected.values;
+        if values.title.as_ref().is_none_or(|v| v.text != request.title) || values.description.as_ref().is_none_or(|v| v.text != request.description) ||
+            values.hypothesis.as_ref().is_none_or(|v| v.text != request.hypothesis) || values.conclusion.as_ref().is_none_or(|v| v.text != request.conclusion) ||
+            request.action == "create" && (values.category != request.category || values.stage != request.stage) {
+            return Err("DraftPublicationValuesMismatch".into());
+        }
+        Ok(Some(selected))
+    }
+    fn import_reply(&self, imports: Vec<editor_draft_staging::DraftImportRecord>) -> Reply {
+        Reply { ok: true, error: String::new(), cards: vec![], ids: vec![], drafts: vec![], markdown: markdown::MarkdownDoc::default(), paste_text: String::new(), receipt_revision: String::new(), profile: "development-unsealed", effect: self.effect, imports: imports.into_iter().map(Into::into).collect() }
+    }
+    pub fn import_from(&mut self, request: Request, reader: &mut impl std::io::Read) -> Result<Reply> {
+        self.effect = "not_committed";
+        if request.action != "import_file" { return Err("UnsupportedFileAction".into()); }
+        let start = self.start;
+        let clock = || u64::try_from(start.elapsed().as_millis()).unwrap_or(u64::MAX - 1).saturating_add(1);
+        let record = editor_draft_staging::import_durable(&mut self.host, &request.import_request.ok_or("ImportRequestRequired")?.request()?, reader, clock, unix_millis()?, &mut self.effect).map_err(err)?;
+        Ok(self.import_reply(vec![record]))
+    }
+    pub fn export_to(&mut self, request: Request, writer: &mut impl std::io::Write) -> Result<file_stream::FileMetadata> {
+        self.effect = "not_committed";
+        let info = match request.action.as_str() {
+            "import_export" => editor_draft_staging::export_verified(&self.host, &request.id, &request.draft_id, draft_bridge::number(&request.generation)?, &request.operation, writer).map_err(err)?,
+            "draft_asset_export" => editor_draft::export_asset_verified(&self.host, &request.id, &request.draft_id, draft_bridge::number(&request.generation)?, &request.attachment_id, writer).map_err(err)?,
+            "attachment_export" => return self.export_card_attachment(&request, writer),
+            _ => return Err("UnsupportedFileAction".into()),
+        };
+        Ok(file_stream::FileMetadata::new(info.byte_length, &info.sha256))
+    }
+    fn export_card_attachment(&mut self, request: &Request, writer: &mut impl std::io::Write) -> Result<file_stream::FileMetadata> {
+        use sha2::{Digest, Sha256};
+        let card = self.host.store_local().card(&request.id).map_err(err)?.ok_or("NotFound")?;
+        // Full source and revision remain bound for the entire serialized read.
+        if card.encode() != unhex(&request.source)? || card.summary().revision != draft_bridge::number(&request.generation)? { return Err("RevisionConflict".into()); }
+        let asset = card.attachments().into_iter().find(|a| a.id == request.attachment_id).ok_or("NotFound")?;
+        let start = self.start;
+        let clock = || u64::try_from(start.elapsed().as_millis()).unwrap_or(u64::MAX - 1).saturating_add(1);
+        let mut connection = self.host.connect().map_err(err)?;
+        let result = (|| -> Result<file_stream::FileMetadata> {
+            let now = clock();
+            self.host.grant_attachment(&mut connection, &request.id, &request.attachment_id, now.saturating_add(300_000), now).map_err(err)?;
+            let mut offset = 0_u64;
+            let mut hash = Sha256::new();
+            loop {
+                let command = morrow_core::runtime::Command::ReadAttachment(morrow_core::runtime::ReadAttachment { request_id: format!("hmos-attachment-read-{offset}"), card_id: request.id.clone(), attachment_id: request.attachment_id.clone(), expected_revision: card.summary().revision, offset, length: 32768 });
+                let response = self.host.dispatch(&connection, &command.encode().map_err(err)?, clock).map_err(err)?;
+                let chunk = match morrow_core::response::Response::decode(&response).map_err(err)?.outcome {
+                    morrow_core::response::Outcome::AttachmentChunk(chunk) => chunk,
+                    _ => return Err("AttachmentReadFailed".into()),
+                };
+                if chunk.offset != offset || chunk.total_length != asset.byte_length || chunk.content_sha256 != asset.sha256 { return Err("AttachmentIntegrity".into()); }
+                writer.write_all(&chunk.bytes).map_err(err)?; hash.update(&chunk.bytes);
+                offset = offset.checked_add(chunk.bytes.len() as u64).ok_or("AttachmentIntegrity")?;
+                if offset == asset.byte_length { break; }
+                if chunk.bytes.is_empty() || offset > asset.byte_length { return Err("AttachmentIntegrity".into()); }
+            }
+            writer.flush().map_err(err)?;
+            if hash.finalize().as_slice() != asset.sha256 { return Err("AttachmentIntegrity".into()); }
+            Ok(file_stream::FileMetadata::new(asset.byte_length, &asset.sha256))
+        })();
+        let disconnected = self.host.disconnect(&connection).map_err(err);
+        result.and_then(|metadata| disconnected.map(|_| metadata))
+    }
     pub fn open(path: &Path) -> Result<Self> {
         // A separate development database; never open or migrate the production
         // managed library. No fallback from Workbench::open is permitted.
@@ -150,6 +234,8 @@ impl Engine {
                     .ok_or("NotFound")?;
                 if editor_draft::is_journal(&card) {
                     editor_draft::validate_journal(&card).map_err(err)?;
+                } else if editor_draft_staging::is_journal(&card) {
+                    editor_draft_staging::validate_journal(&card).map_err(err)?;
                 } else {
                     ids.push(id);
                 }
@@ -188,6 +274,11 @@ impl Engine {
                     favorite: p.favorite,
                     deleted: p.deleted,
                     deleted_at: p.deleted_at.to_string(),
+                    assets: p.assets.iter().map(|asset| {
+                        let outer = card.attachments().into_iter().find(|a| a.id == asset.id).ok_or("AttachmentMetadataMismatch")?;
+                        if outer.display_name != asset.name || outer.byte_length != asset.bytes { return Err("AttachmentMetadataMismatch".into()); }
+                        Ok(attachment_bridge::AssetView { id: asset.id.clone(), name: asset.name.clone(), kind: asset.kind.clone(), byte_length: asset.bytes.to_string(), sha256: hex(&outer.sha256), media_type: outer.media_type })
+                    }).collect::<Result<Vec<_>>>()?,
                     tasks: p
                         .tasks
                         .into_iter()
@@ -213,6 +304,10 @@ impl Engine {
                 let card = entry.card();
                 if editor_draft::is_journal(&card) {
                     editor_draft::validate_journal(&card).map_err(err)?;
+                    continue;
+                }
+                if editor_draft_staging::is_journal(&card) {
+                    editor_draft_staging::validate_journal(&card).map_err(err)?;
                     continue;
                 }
                 if candidates.len() >= 256 {
@@ -282,6 +377,22 @@ impl Engine {
     }
     pub fn execute(&mut self, r: Request) -> Result<Reply> {
         self.effect = "not_committed";
+        if r.action.starts_with("import_") {
+            let start = self.start;
+            let clock = || u64::try_from(start.elapsed().as_millis()).unwrap_or(u64::MAX - 1).saturating_add(1);
+            let imports = match r.action.as_str() {
+                "import_list" => editor_draft_staging::list(&self.host, &r.id, &r.draft_id).map_err(err)?,
+                "import_inspect" => editor_draft_staging::inspect(&self.host, &r.id, &r.draft_id, &r.operation).map_err(err)?.into_iter().collect(),
+                "import_begin" => vec![editor_draft_staging::begin(&mut self.host, &r.import_request.ok_or("ImportRequestRequired")?.request()?, clock, unix_millis()?, &mut self.effect).map_err(err)?],
+                "import_abandon" => vec![editor_draft_staging::abandon(&mut self.host, &r.id, &r.draft_id, draft_bridge::number(&r.generation)?, &r.import_request.ok_or("ImportRequestRequired")?.operation_id, &r.operation, clock, unix_millis()?, &mut self.effect).map_err(err)?],
+                "import_reconcile" => {
+                    editor_draft_staging::reconcile(&mut self.host, &r.id, &r.draft_id, clock, unix_millis()?, &mut self.effect).map_err(err)?;
+                    editor_draft_staging::list(&self.host, &r.id, &r.draft_id).map_err(err)?
+                }
+                _ => return Err("FileDescriptorRequired".into()),
+            };
+            return Ok(self.import_reply(imports));
+        }
         if r.action == "markdown" || r.action == "paste_plain" {
             // Inert, bounded projection only. No Store lookup, host grant,
             // transaction, URL launch or filesystem access is involved.
@@ -303,7 +414,7 @@ impl Engine {
                 paste_text,
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
-                effect: self.effect,
+                effect: self.effect, imports: vec![],
             });
         }
         if r.action == "query" {
@@ -319,7 +430,7 @@ impl Engine {
                 paste_text: String::new(),
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
-                effect: self.effect,
+                effect: self.effect, imports: vec![],
             });
         }
         if r.action.starts_with("draft_") {
@@ -338,10 +449,11 @@ impl Engine {
                 "draft_save" => {
                     let request = r.draft.ok_or("DraftRequestRequired")?.request()?;
                     vec![
-                        editor_draft::save_with_effect(
+                        editor_draft::save_with_effect_at(
                             &mut self.host,
                             &request,
                             clock,
+                            unix_millis()?,
                             &mut self.effect,
                         )
                         .map_err(err)?,
@@ -350,13 +462,14 @@ impl Engine {
                 "draft_discard" => {
                     let generation = draft_bridge::number(&r.generation)?;
                     vec![
-                        editor_draft::discard_with_effect(
+                        editor_draft::discard_with_effect_at(
                             &mut self.host,
                             &r.id,
                             &r.draft_id,
                             generation,
                             &r.operation,
                             clock,
+                            unix_millis()?,
                             &mut self.effect,
                         )
                         .map_err(err)?,
@@ -377,11 +490,28 @@ impl Engine {
                 paste_text: String::new(),
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
-                effect: self.effect,
+                effect: self.effect, imports: vec![],
             });
         }
         let mut receipt = String::new();
         if r.action != "list" {
+            // A retry may already have committed before its caller received a
+            // reply. Establish that outcome before connection admission or
+            // current-card discovery can fail. Only a successful authoritative
+            // absence lookup permits a later pre-write rejection to be reported
+            // as not_committed. Core still compares the complete command below.
+            self.effect = "unknown";
+            let historical = match self.host.store_local()
+                .lookup_for_card(&r.id, &r.operation).map_err(err)? {
+                morrow_core::transaction::Lookup::Committed(_) => {
+                    self.effect = "committed";
+                    true
+                }
+                morrow_core::transaction::Lookup::Absent => {
+                    self.effect = "not_committed";
+                    false
+                }
+            };
             let start = self.start;
             let clock = || {
                 u64::try_from(start.elapsed().as_millis())
@@ -395,7 +525,7 @@ impl Engine {
                     if r.id.starts_with("morrow-host-") {
                         return Err("ReservedCardIdentity".into());
                     }
-                    if self.ids()?.len() >= 256
+                    if !historical && self.ids()?.len() >= 256
                         && self.host.store_local().card(&r.id).map_err(err)?.is_none()
                     {
                         return Err("DevelopmentCardLimit".into());
@@ -409,9 +539,14 @@ impl Engine {
                         conclusion: r.conclusion.clone(),
                         ..Default::default()
                     };
-                    let body = p.encode_to_vec();
+                    let published = self.published_assets(&r)?;
+                    let body = if let Some(ref selected) = published {
+                        cards_v2::apply(&r.id, &r.title, &p.encode_to_vec(), &cards_v2::Command::Edit(cards_v2::Fields {
+                            title: r.title.clone(), description: r.description.clone(), hypothesis: r.hypothesis.clone(), conclusion: r.conclusion.clone(), icon: p.icon as u16, color: p.color, assets: selected.assets.clone(),
+                        })).map_err(err)?.properties
+                    } else { p.encode_to_vec() };
                     tasks_v2::decode(&r.id, &r.title, &body).map_err(err)?;
-                    let card = CardRecord::new(&r.id, "idea", 2, &r.title, body).map_err(err)?;
+                    let card = CardRecord::new_with_attachments(&r.id, "idea", 2, &r.title, body, &published.map(|p| p.attachments).unwrap_or_default()).map_err(err)?;
                     self.host
                         .grant(
                             &mut connection,
@@ -421,7 +556,7 @@ impl Engine {
                             now,
                         )
                         .map_err(err)?;
-                    self.effect = "unknown";
+                    if self.effect != "committed" { self.effect = "unknown"; }
                     let committed =
                         self.host
                             .create_content(&connection, &r.operation, &card, clock);
@@ -434,6 +569,7 @@ impl Engine {
                     return Err("SourceMismatch".into());
                 }
                 let p = tasks_v2::decode(&r.id, &s.title, &card.body()).map_err(err)?;
+                let published = if r.action == "edit" { self.published_assets(&r)? } else { None };
                 let mut title = s.title.clone();
                 let body = match r.action.as_str() {
                     "task_add" | "task_toggle" | "task_remove" | "task_rename" | "task_reorder"
@@ -472,7 +608,7 @@ impl Engine {
                                 conclusion: r.conclusion.clone(),
                                 icon: p.icon as u16,
                                 color: p.color,
-                                assets: p
+                                assets: published.as_ref().map(|p| p.assets.clone()).unwrap_or_else(|| p
                                     .assets
                                     .iter()
                                     .map(|a| morrow_workbench_plugin::Asset {
@@ -481,7 +617,7 @@ impl Engine {
                                         kind: a.kind.clone(),
                                         bytes: a.bytes,
                                     })
-                                    .collect(),
+                                    .collect()),
                             }),
                             "favorite" => cards_v2::Command::SetFavorite(r.flag),
                             "category" => cards_v2::Command::SetCategory {
@@ -517,9 +653,9 @@ impl Engine {
                     title,
                     body,
                     preview_text: String::new(),
-                    attachments: None,
+                    attachments: published.map(|p| p.attachments),
                 };
-                self.effect = "unknown";
+                if self.effect != "committed" { self.effect = "unknown"; }
                 let committed = self
                     .host
                     .edit_versioned_content(&connection, &change, clock);
@@ -540,14 +676,14 @@ impl Engine {
             paste_text: String::new(),
             receipt_revision: receipt,
             profile: "development-unsealed",
-            effect: self.effect,
+            effect: self.effect, imports: vec![],
         })
     }
     fn commit_result(
         &mut self,
         result: morrow_core::Result<morrow_core::transaction::Receipt>,
     ) -> Result<String> {
-        self.effect = "unknown";
+        if self.effect != "committed" { self.effect = "unknown"; }
         match result {
             Ok(receipt) => {
                 self.effect = "committed";
@@ -555,7 +691,7 @@ impl Engine {
             }
             Err(error) => {
                 use morrow_core::Error;
-                if matches!(
+                if self.effect != "committed" && matches!(
                     error,
                     Error::RevisionConflict
                         | Error::UnsupportedVersion
@@ -569,8 +705,16 @@ impl Engine {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "historical_retry_tests.rs"]
+mod historical_retry_tests;
 fn hex(bytes: &[u8]) -> String {
     bytes.iter().map(|b| format!("{b:02x}")).collect()
+}
+fn unix_millis() -> Result<i64> {
+    let elapsed = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_err(err)?;
+    i64::try_from(elapsed.as_millis()).map_err(err)
 }
 fn unhex(text: &str) -> Result<Vec<u8>> {
     if text.len() > LIMIT || text.len() % 2 != 0 {
@@ -619,7 +763,7 @@ pub fn dispatch(input: &str) -> String {
                 paste_text: String::new(),
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
-                effect: "not_committed",
+                effect: "not_committed", imports: vec![],
             });
         }
         let engine = slot.as_mut().ok_or("NotOpen")?;
@@ -637,6 +781,8 @@ pub fn dispatch(input: &str) -> String {
 
 #[cfg(test)]
 mod query_tests;
+#[cfg(test)]
+mod attachment_integration_tests;
 /// C++ owns the request until return; every returned pointer must be freed once.
 /// Calls must be serialized by the native owner. Never pass arbitrary pointers.
 #[unsafe(no_mangle)]
@@ -656,6 +802,74 @@ pub unsafe extern "C" fn morrow_hmos_free(value: *mut c_char) {
     if !value.is_null() {
         drop(unsafe { CString::from_raw(value) });
     }
+}
+
+#[cfg(unix)]
+fn c_reply(reply: impl Serialize) -> *mut c_char {
+    CString::new(serde_json::to_string(&reply).expect("serializable reply")).expect("JSON has no raw NUL").into_raw()
+}
+#[cfg(unix)]
+unsafe fn take_file(fd: i32) -> Result<std::fs::File> {
+    use std::os::fd::FromRawFd;
+    if fd < 0 { return Err("InvalidFileDescriptor".into()); }
+    // NAPI duplicates synchronously and transfers exactly one owned descriptor.
+    Ok(unsafe { std::fs::File::from_raw_fd(fd) })
+}
+/// All passed descriptors are consumed, including invalid request/error paths.
+#[cfg(unix)]
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn morrow_hmos_prepare(source_fd: i32, destination_fd: i32, max_bytes: u64) -> *mut c_char {
+    let source = unsafe { take_file(source_fd) };
+    let destination = if destination_fd == source_fd { Err("DistinctFileDescriptorsRequired".into()) } else { unsafe { take_file(destination_fd) } };
+    let result = (|| -> Result<file_stream::FileMetadata> {
+        let mut source = source?; let mut destination = destination?;
+        use std::os::unix::fs::MetadataExt;
+        use std::io::Seek;
+        let source_metadata = source.metadata().map_err(err)?;
+        let destination_metadata = destination.metadata().map_err(err)?;
+        if source_metadata.dev() == destination_metadata.dev() && source_metadata.ino() == destination_metadata.ino() { return Err("SameFileRejected".into()); }
+        if !destination_metadata.is_file() { return Err("PrivateSpoolFileRequired".into()); }
+        destination.set_len(0).map_err(err)?;
+        destination.rewind().map_err(err)?;
+        let metadata = file_stream::prepare(&mut source, &mut destination, max_bytes)?;
+        destination.sync_all().map_err(err)?; Ok(metadata)
+    })();
+    c_reply(file_stream::FileReply::from_result(result))
+}
+#[cfg(unix)]
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn morrow_hmos_import(input: *const c_char, owned_fd: i32) -> *mut c_char {
+    let file = unsafe { take_file(owned_fd) };
+    let result = (|| -> Result<Reply> {
+        let mut file = file?;
+        if input.is_null() { return Err("NullRequest".into()); }
+        let input = unsafe { CStr::from_ptr(input) }.to_str().map_err(|_| "InvalidUtf8")?;
+        if input.len() > LIMIT { return Err("RequestTooLarge".into()); }
+        let request = serde_json::from_str(input).map_err(|_| "InvalidRequest")?;
+        let mut slot = SESSION.lock().map_err(|_| "SessionUnavailable")?;
+        let engine = slot.as_mut().ok_or("NotOpen")?;
+        Ok(match engine.import_from(request, &mut file) { Ok(reply) => reply, Err(error) => { let mut reply = Reply::failure(error); reply.effect = engine.effect; reply } })
+    })();
+    c_reply(result.unwrap_or_else(Reply::failure))
+}
+#[cfg(unix)]
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn morrow_hmos_export(input: *const c_char, owned_fd: i32) -> *mut c_char {
+    let file = unsafe { take_file(owned_fd) };
+    let result = (|| -> Result<file_stream::FileMetadata> {
+        let mut file = file?;
+        use std::io::Seek;
+        if !file.metadata().map_err(err)?.is_file() { return Err("PrivateExportFileRequired".into()); }
+        file.set_len(0).map_err(err)?; file.rewind().map_err(err)?;
+        if input.is_null() { return Err("NullRequest".into()); }
+        let input = unsafe { CStr::from_ptr(input) }.to_str().map_err(|_| "InvalidUtf8")?;
+        if input.len() > LIMIT { return Err("RequestTooLarge".into()); }
+        let request = serde_json::from_str(input).map_err(|_| "InvalidRequest")?;
+        let mut slot = SESSION.lock().map_err(|_| "SessionUnavailable")?;
+        let metadata = slot.as_mut().ok_or("NotOpen")?.export_to(request, &mut file)?;
+        file.sync_all().map_err(err)?; Ok(metadata)
+    })();
+    c_reply(file_stream::FileReply::from_result(result))
 }
 
 #[cfg(test)]

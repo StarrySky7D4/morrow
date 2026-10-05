@@ -1,0 +1,98 @@
+- Dumping layout…
+- Dumping layout…
+- Executing click...
+√ click at (1098, 1573)
+- Dumping layout…
+- Dumping layout…
+[
+  {
+    id: undefined,
+    type: 'Button',
+    text: '收藏',
+    bounds: [ 533, 1825, 702, 1945 ]
+  },
+  {
+    id: undefined,
+    type: 'Button',
+    text: '删除',
+    bounds: [ 702, 1825, 871, 1945 ]
+  },
+  {
+    id: 'detail-edit',
+    type: 'Button',
+    text: '编辑',
+    bounds: [ 871, 1825, 1040, 1945 ]
+  },
+  {
+    id: undefined,
+    type: 'Button',
+    text: '完成',
+    bounds: [ 1040, 1825, 1209, 1945 ]
+  },
+  {
+    id: 'left_icon',
+    type: 'SymbolGlyph',
+    text: undefined,
+    bounds: [ 78, 198, 132, 252 ]
+  },
+  {
+    id: 'new_document_icon',
+    type: 'SymbolGlyph',
+    text: undefined,
+    bounds: [ 1044, 198, 1098, 252 ]
+  },
+  {
+    id: 'dialog_confirm',
+    type: 'SymbolGlyph',
+    text: undefined,
+    bounds: [ 1188, 198, 1242, 252 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: '将文件保存至 "Download"',
+    bounds: [ 72, 330, 628, 386 ]
+  },
+  {
+    id: undefined,
+    type: 'TextInput',
+    text: 'HMOS-dev12-20261005-中文 文档.txt',
+    bounds: [ 30, 416, 1290, 536 ]
+  },
+  {
+    id: '我的手机',
+    type: 'Row',
+    text: undefined,
+    bounds: [ 0, 617, 1320, 785 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: '我的手机',
+    bounds: [ 192, 673, 1200, 729 ]
+  },
+  {
+    id: 'Download',
+    type: 'Row',
+    text: undefined,
+    bounds: [ 0, 788, 1320, 956 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: 'Download',
+    bounds: [ 228, 844, 1248, 900 ]
+  },
+  {
+    id: 'Documents',
+    type: 'Row',
+    text: undefined,
+    bounds: [ 0, 959, 1320, 1127 ]
+  },
+  {
+    id: undefined,
+    type: 'Text',
+    text: 'Documents',
+    bounds: [ 228, 1015, 1200, 1071 ]
+  }
+]
