@@ -34,7 +34,7 @@ jobs:
           channel: stable
           cache: true
       - name: Browser harness unit tests
-        run: node --test tool/web_qualification_timing.test.mjs
+        run: node --test tool/web_qualification_timing.test.mjs tool/web_browser_wait.test.mjs
       - name: Install pinned native and Wasm tools
         run: ./tool/setup_web_ci.ps1
       - uses: actions/cache@v4
@@ -101,6 +101,7 @@ jobs:
           path: |
             build/web-bootstrap-*-failure.html
             build/web-theme-timings.json
+            build/web-wait-diagnostics.json
             build/web-network-*.json
       - uses: actions/upload-pages-artifact@v4
         if: success() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
