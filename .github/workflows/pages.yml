@@ -2,13 +2,15 @@ name: Build and deploy Web
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: github-pages
+  group: web-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -31,6 +33,8 @@ jobs:
           flutter-version: '3.44.4'
           channel: stable
           cache: true
+      - name: Browser harness unit tests
+        run: node --test tool/web_qualification_timing.test.mjs tool/web_browser_wait.test.mjs
       - name: Install pinned native and Wasm tools
         run: ./tool/setup_web_ci.ps1
       - uses: actions/cache@v4
@@ -83,25 +87,30 @@ jobs:
           node tool/test_core_browser.mjs --app --base-path /morrow/ --media
           if ($LASTEXITCODE -ne 0) { throw 'Imported media preferences acceptance failed' }
       - name: Browser theme import and recovery under CPU throttling
-        timeout-minutes: 12
+        # Complete 4x lifecycle measured 13m49s; a slower run reached its
+        # final media checks at 19m. Keep bounded headroom for runner variance.
+        timeout-minutes: 25
         run: |
           node tool/test_core_browser.mjs --app --base-path /morrow/ --theme --slow-ui 4
           if ($LASTEXITCODE -ne 0) { throw 'Theme import and recovery acceptance failed' }
       - name: Add source and distribution notices
         run: ./tool/package_web_release.ps1
-      - name: Retain browser failure diagnostics
-        if: always() && (failure() || cancelled())
+      - name: Retain text browser diagnostics
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: browser-failure
+          name: browser-diagnostics
           path: |
-            build/web-bootstrap-*-failure.*
+            build/web-bootstrap-*-failure.html
+            build/web-theme-timings.json
+            build/web-wait-diagnostics.json
             build/web-network-*.json
       - uses: actions/upload-pages-artifact@v4
-        if: success()
+        if: success() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         with:
           path: build/web
   deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     permissions:

@@ -1,6 +1,10 @@
 import {writeFile,readFile,mkdtemp} from 'node:fs/promises';
 import path from 'node:path';
-import {setTimeout as delay} from 'node:timers/promises';
+import {fileURLToPath} from 'node:url';
+import {browserWaitPolicy,waitForBrowser} from './web_browser_wait.mjs';
+const waitPolicy=browserWaitPolicy();
+const waitDiagnostics=[];
+const waitDiagnosticsPath=fileURLToPath(new URL('../build/web-wait-diagnostics.json',import.meta.url));
 import {qualifyTheme} from './web_theme_qualification.mjs';
 
 const legacySnapshot=JSON.stringify({version:1,theme:'white',glass:'frosted',background:'ambient',ideas:[{
@@ -13,11 +17,21 @@ function context(call,sessionId) {
     if(response.exceptionDetails)throw Error(response.exceptionDetails.text+': '+(response.exceptionDetails.exception?.description??''));
     return response.result?.value;
   };
-  const until=async(check,label)=>{
-    const deadline=Date.now()+(process.argv.includes('--site')?90000:45000);
-    while(Date.now()<deadline){if(await check())return;await delay(150);}
-    throw Error('Timed out: '+label);
-  };
+  const until=(check,label)=>waitForBrowser(check,label,waitPolicy,{observe:async event=>{
+    // Preserve the original deadline crossing and transport/UI state. This is
+    // test-fixture metadata only; never copy business frames or file bytes.
+    console.log('Browser wait: '+JSON.stringify(event));
+    try {
+      const state=await evaluate(`(()=>({
+        readyState:document.readyState,
+        activity:globalThis.__mediaWorkerActivity??null,
+        fileInputs:[...document.querySelectorAll('input[type=file]')].map(e=>({accept:e.accept,multiple:e.multiple,files:[...e.files].map(f=>({name:f.name,size:f.size}))})),
+        musicImport:[...document.querySelectorAll('flt-semantics')].filter(e=>(e.getAttribute('aria-label')??e.textContent??'').trim()==='Import music').map(e=>({disabled:e.getAttribute('aria-disabled')}))
+      }))()`);
+      waitDiagnostics.push({...event,state});
+      await writeFile(waitDiagnosticsPath,JSON.stringify(waitDiagnostics,null,2));
+    } catch(error) {console.warn('Browser wait diagnostic unavailable: '+error.message);}
+  }});
   return {evaluate,until};
 }
 export async function prepareWebApp(call,sessionId,site,variant) {
@@ -79,7 +93,7 @@ export async function qualifyWebApp(call,sessionId,base,root,variant) {
     const version=await rawCall('Browser.getVersion');
     await call('Network.setUserAgentOverride',{userAgent:version.userAgent,acceptLanguage:'en-US,en'},sessionId);
     await call('Emulation.setLocaleOverride',{locale:'en_US'},sessionId);
-    if(process.argv.includes('--slow-ui'))await call('Emulation.setCPUThrottlingRate',{rate:4},sessionId);
+    if(waitPolicy.cpuRate!==1)await call('Emulation.setCPUThrottlingRate',{rate:waitPolicy.cpuRate},sessionId);
     await prepareWebApp(rawCall,activeSession,site,variant);
     await call('Page.navigate',{url:site},sessionId);
   };

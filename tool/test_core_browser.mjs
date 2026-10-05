@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import {prepareWebApp,qualifyWebApp} from './web_app_qualification.mjs';
+import {browserWaitPolicy} from './web_browser_wait.mjs';
+const waitPolicy=browserWaitPolicy();
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const candidates = [process.env.CHROME_BIN, process.env.CHROME_EXECUTABLE,
@@ -126,7 +128,7 @@ try {
       // fixtures deterministic without modifying application preferences.
       await call('Network.setUserAgentOverride',{userAgent:version.userAgent,acceptLanguage:'en-US,en'},sessionId);
       await call('Emulation.setLocaleOverride',{locale:'en_US'},sessionId);
-      if(process.argv.includes('--slow-ui'))await call('Emulation.setCPUThrottlingRate',{rate:4},sessionId);
+      if(waitPolicy.cpuRate!==1)await call('Emulation.setCPUThrottlingRate',{rate:waitPolicy.cpuRate},sessionId);
     }
     if(app) {
       try {await prepareWebApp(call,sessionId,site,appVariant);}
