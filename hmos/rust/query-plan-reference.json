@@ -1,0 +1,11 @@
+{
+  "source": "workbench_host/src/query_plan_v2.rs",
+  "observed_worktree": "build/io-safety-refactor",
+  "observed_head": "925fb8ca6563dcb7de38db8fbdf6b005f9ad5420",
+  "observed_date": "2026-10-05",
+  "copied_to": "src/query_plan_v2.rs",
+  "sha256": "d88dc19efe7a07c3f9d62dd7995c6e78e81bbdca7595c585fa0c3faa13e885e9",
+  "copy": "byte-for-byte",
+  "license": "AGPL-3.0-only",
+  "scope": "Pure scheduler and frame budgets; local execution is not production guest execution or durable query capture."
+}

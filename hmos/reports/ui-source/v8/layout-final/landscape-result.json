@@ -1,0 +1,23 @@
+{
+  "result": "PASS",
+  "mode": "landscape",
+  "display": [
+    2232,
+    1320
+  ],
+  "density": 3,
+  "columns": 2,
+  "checks": [
+    "native query title order",
+    "column count",
+    "14vp gaps/no overlap",
+    "four results reachable",
+    "identity after reorder"
+  ],
+  "ids": {
+    "HMOS-masonry-01": "workspace-card:a4161340-70ca-444e-a212-4babf2d04ff3",
+    "HMOS-masonry-02": "workspace-card:d796e6a7-a39f-4f9f-bb8d-d7272067c82a",
+    "HMOS-masonry-03": "workspace-card:3dd69831-c089-4ec8-8cb5-07c960e83670",
+    "HMOS-masonry-04": "workspace-card:0dbdd30f-687c-459e-bb08-ef182c941ccf"
+  }
+}

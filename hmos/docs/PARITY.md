@@ -7,7 +7,7 @@
 | Protobuf/LZ4、完整记录/未知字段、SQLite 事务、CAS、原操作查询 | `core` | 原样快照并编译 ARM64/x64；设备侧自检覆盖建卡、重启、幂等和 CAS；不是全核心平台回归 |
 | 卡片 V2、类别/阶段、收藏、删除与限时撤销 | `plugins/workbench/cards_v2.rs` | 直接复用；UI 接入；共享 5 项专项测试在 Windows 通过，设备 UI 建卡保存通过 |
 | TaskId 待办、同名独立、历史歧义 | `plugins/workbench/tasks_v2.rs` | dev.4 补重命名、上下移动、批量勾选与当前阶段原子提交、移除确认；主机适配器 5 项、OHOS runner 10 项检查通过，并验证 UI 重启读回。共享模块与 9/27 参照哈希一致。正式 V1→V2 迁移、拖动排序和复制菜单未接入 |
-| 搜索和查询 | `query_v2` / `workbench_host/query_*` | 当前只有已加载 256 张卡片内的标题/正文筛选；上游查询计划、捕获证据、排序未接入 |
+| 搜索和查询 | `query_v2` / `workbench_host/query_plan_v2.rs` | dev.8 接入单次完整 WAL 快照、原分页筛选/排序归并及 128 项 / 64 KiB 真实帧预算；标题/正文/假设/结论/附件名语义、UTF-16 和稳定收藏排序复用原实现。ArkTS 去抖、串行/coalesce、旧回包丢弃和显式失败；开发库仍 256 张，无 UI 响应分页、大库资格和生产 guest/捕获证据。回收站为独立既有视图 |
 | ArkUI 原生节点 | 新 `entry/src/main/cpp/bridge.cpp` | 实际 NativeNode Column/Text 外观预览，NodeContent 挂载和销毁；编辑控件/导航为 ArkTS，非全 NDK UI |
 | ArkTS ↔ Rust | 新 N-API async work + Rust C ABI | 异步执行、串行准入、长度/UTF-8 校验、配对释放；不是 IPC 隔离或插件授权通道 |
 | 正式工作台宿主 | `workbench_host` | 已检查 API 与平台边界；未整体复制/接入，非 Windows 开库仍拒绝；新适配器不能冒充其内容/任务证据链 |
@@ -20,7 +20,7 @@
 | 歌词/媒体与格式解密 | Flutter lyrics/media + `third_party/um_decrypt` | 未移植；不能把共享 Rust 核心当作这些功能已经具备 |
 | 语言、字体、主题、玻璃效果、稳定瀑布流 | Flutter `morrow_i18n`, fonts/layout/shaders | dev.3 已补齐专用分类卡片、外观/独立材质/色盘/系统字体设置、基础正文预览、日常清单和音乐空状态；复用九语 ARB、外观持久保存。模拟器验证详见 UI_DESIGN_DEV3.md；折射 shader、完整九语动态文案、字体/背景文件导入、媒体与宽屏设备验收仍待完成 |
 | 七种风格、立体深度、组件材质跟随 | Flutter `appearance.dart`, `component_material_page.dart` | dev.5 基础面板圆角/边缘/阴影和完整材质引用；循环拒绝、取消/应用和重启验证通过。公共描边使用面板实测尺寸并限制绘制范围，修复跨卡片框线。控件浮起/按压动画及 shader 尚未复现；详见 dev.5 验证记录 |
-| 工作区布局与位置 | Flutter `workspace_viewport.dart` / `stable_masonry_grid.dart` / `render_stable_masonry_grid.dart` | dev.7 改为原生 LazyVWaterFlowLayout + LazyForEach；页面/卡片身份稳定，修订内容和移动位置分别失效，16 张交错记录验证排序/编辑后的间距、收藏刷新、空结果与完整遍历。dev.6 已验 880/1488 vp 面板折叠和五页位置恢复。完整窄屏、键盘/动画及内存/帧时资格仍未完成 |
+| 工作区布局与位置 | Flutter `workspace_viewport.dart` / `stable_masonry_grid.dart` / `render_stable_masonry_grid.dart` | dev.7 改为原生 LazyVWaterFlowLayout + LazyForEach；页面/卡片身份稳定，修订内容和移动位置分别失效，保留 16 张交错记录验证。dev.8 最终包新增 440/744 vp 单/双列、四卡间距/排序/遍历与查询修订刷新；dev.6 保留 880/1488 vp 面板与五页位置恢复证据。完整主题、键盘/动画及内存/帧时资格仍未完成 |
 | 平台分发 | DevEco API 26 | 双架构未签名 HAP 已构建；x64 模拟器安装/启动；ARM64 真机、签名、发布均未验收 |
 
 ## 后续顺序

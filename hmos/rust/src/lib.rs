@@ -7,7 +7,7 @@ use morrow_core::{
     store::{EventBudget, Store},
     versioned_content_change::VersionedContentChange,
 };
-use morrow_workbench_plugin::{cards_v2, tasks_v2};
+use morrow_workbench_plugin::{cards_v2, query_v2, tasks_v2};
 use prost::Message;
 use serde::{Deserialize, Serialize};
 use std::{
@@ -15,6 +15,11 @@ use std::{
     path::Path,
     sync::Mutex,
 };
+
+// Byte-for-byte pure scheduler reference; provenance is pinned in
+// ../query-plan-reference.json. It establishes query correspondence only,
+// not a production plugin execution, permission, or durable capture.
+pub mod query_plan_v2;
 
 const LIMIT: usize = 512 * 1024;
 static SESSION: Mutex<Option<Engine>> = Mutex::new(None);
@@ -40,6 +45,9 @@ pub struct Request {
     task_id: String,
     order: Vec<String>,
     text: String,
+    section: String,
+    filter: String,
+    sort: String,
     flag: bool,
     now_ms: String,
 }
@@ -70,6 +78,7 @@ pub struct Reply {
     ok: bool,
     error: String,
     cards: Vec<CardView>,
+    ids: Vec<String>,
     receipt_revision: String,
     profile: &'static str,
     effect: &'static str,
@@ -80,6 +89,7 @@ impl Reply {
             ok: false,
             error: message,
             cards: vec![],
+            ids: vec![],
             receipt_revision: String::new(),
             profile: "development-unsealed",
             effect: "unknown",
@@ -167,8 +177,96 @@ impl Engine {
             })
             .collect()
     }
+    fn query_candidates(&self) -> Result<Vec<query_v2::Candidate>> {
+        let ids = self.ids()?;
+        let mut snapshot = self.host.store_local().open_card_snapshot().map_err(err)?;
+        let mut candidates = Vec::with_capacity(ids.len());
+        loop {
+            let page = snapshot
+                .next_page(32, morrow_core::content::MAX_RECORD_BYTES)
+                .map_err(err)?;
+            for entry in page.entries {
+                if candidates.len() >= 256 {
+                    return Err("DevelopmentCardLimit".into());
+                }
+                let card = entry.card();
+                let summary = card.summary();
+                if summary.format_version != 2 {
+                    return Err("UnsupportedVersion".into());
+                }
+                // Use the original complete properties, never the reduced UI
+                // projection. Every candidate belongs to one pinned WAL view.
+                let candidate = query_v2::Candidate {
+                    id: summary.id,
+                    title: summary.title,
+                    format_version: summary.format_version,
+                    properties: card.body(),
+                };
+                // Validate each original body before retaining the whole bounded
+                // set: 256 valid candidates each have at most 64 KiB properties.
+                query_v2::sort_key(&candidate).map_err(err)?;
+                candidates.push(candidate);
+            }
+            if page.done {
+                break;
+            }
+        }
+        snapshot.finish().map_err(err)?;
+        if !candidates.iter().map(|c| &c.id).eq(ids.iter()) {
+            // Discovery and snapshot acquisition observed different membership;
+            // do not silently query a second source or retry a failed read.
+            return Err("RevisionConflict".into());
+        }
+        snapshot.close().map_err(err)?;
+        Ok(candidates)
+    }
+    fn query(&self, r: &Request) -> Result<Vec<String>> {
+        let conditions = query_v2::Conditions {
+            section: r.section.clone(),
+            filter: r.filter.clone(),
+            text: r.text.clone(),
+            sort: r.sort.clone(),
+        };
+        query_v2::validate_request(&query_v2::Request::Filter {
+            conditions: conditions.clone(),
+            candidates: vec![],
+        })
+        .map_err(err)?;
+        struct Local {
+            candidates: std::vec::IntoIter<query_v2::Candidate>,
+        }
+        impl query_plan_v2::Backend for Local {
+            fn next_candidate(&mut self) -> Result<Option<query_v2::Candidate>> {
+                Ok(self.candidates.next())
+            }
+            fn invoke(
+                &mut self,
+                _: query_plan_v2::Phase,
+                request: query_v2::Request,
+            ) -> Result<query_v2::Response> {
+                query_v2::execute(request).map_err(err)
+            }
+        }
+        let mut local = Local {
+            candidates: self.query_candidates()?.into_iter(),
+        };
+        query_plan_v2::execute(&conditions, &mut local)
+    }
     pub fn execute(&mut self, r: Request) -> Result<Reply> {
         self.effect = "not_committed";
+        if r.action == "query" {
+            // Trusted-local development read only. This neither grants guest
+            // access nor records a production query/task/audit observation.
+            return Ok(Reply {
+                ok: true,
+                error: String::new(),
+                cards: vec![],
+                ids: self.query(&r)?,
+                receipt_revision: String::new(),
+                profile: "development-unsealed",
+                effect: self.effect,
+            });
+        }
         let mut receipt = String::new();
         if r.action != "list" {
             let start = self.start;
@@ -320,6 +418,7 @@ impl Engine {
             ok: true,
             error: String::new(),
             cards: self.cards()?,
+            ids: vec![],
             receipt_revision: receipt,
             profile: "development-unsealed",
             effect: self.effect,
@@ -395,6 +494,7 @@ pub fn dispatch(input: &str) -> String {
                 ok: true,
                 error: String::new(),
                 cards: vec![],
+                ids: vec![],
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
                 effect: "not_committed",
@@ -412,6 +512,9 @@ pub fn dispatch(input: &str) -> String {
     })();
     serde_json::to_string(&result.unwrap_or_else(Reply::failure)).expect("serializable reply")
 }
+
+#[cfg(test)]
+mod query_tests;
 /// C++ owns the request until return; every returned pointer must be freed once.
 /// Calls must be serialized by the native owner. Never pass arbitrary pointers.
 #[unsafe(no_mangle)]

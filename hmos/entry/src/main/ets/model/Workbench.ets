@@ -11,9 +11,10 @@ export class Command {
   conclusion: string = ''; category: string = ''; stage: string = ''; task_id: string = '';
   text: string = ''; flag: boolean = false; now_ms: string = '';
   order: string[] = [];
+  section: string = '概览'; filter: string = '全部'; sort: string = '最近添加';
 }
 export interface Reply {
-  ok: boolean; error: string; cards: CardView[]; receipt_revision: string; profile: string; effect: string;
+  ok: boolean; error: string; cards: CardView[]; ids: string[]; receipt_revision: string; profile: string; effect: string;
 }
 // Single admission owner. No implicit mutation retry; native database work runs
 // off the UI thread. The caller owns each immutable serialized proposal.

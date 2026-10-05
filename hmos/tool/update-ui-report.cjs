@@ -1,4 +1,4 @@
-const fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto');
+const fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto'), cp = require('node:child_process');
 const root = path.resolve(__dirname, '..');
 const hash = p => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex').toUpperCase();
 const manifestFile = path.join(root, 'reports/build-manifest.json');
@@ -12,7 +12,7 @@ if (!fs.existsSync(path.join(root, reportDir, 'validation.md'))) throw new Error
 const artifact = path.join(root, manifest.artifact.path);
 manifest.artifact.bytes = fs.statSync(artifact).size;
 manifest.artifact.sha256 = hash(artifact);
-const newInputs = ['entry/src/main/ets/model/CardDataSource.ets', 'entry/src/main/ets/model/Appearance.ets', 'entry/src/main/ets/model/UiStrings.ets', 'entry/src/main/ets/model/Markdown.ets', 'entry/src/main/ets/pages/ColorWheel.ets', 'entry/src/main/ets/pages/SurfaceRelief.ets'];
+const newInputs = ['entry/src/main/ets/model/QueryCoordinator.ets', 'rust/src/query_plan_v2.rs', 'rust/query-plan-reference.json', 'entry/src/main/ets/model/CardDataSource.ets', 'entry/src/main/ets/model/Appearance.ets', 'entry/src/main/ets/model/UiStrings.ets', 'entry/src/main/ets/model/Markdown.ets', 'entry/src/main/ets/pages/ColorWheel.ets', 'entry/src/main/ets/pages/SurfaceRelief.ets'];
 const inputs = new Set([...manifest.inputs.map(x => x.path), ...newInputs]);
 manifest.inputs = [...inputs].map(p => ({ path: p, sha256: hash(path.join(root, p)) }));
 manifest.uiValidation = `${reportDir}/validation.md`;
@@ -21,8 +21,9 @@ fs.writeFileSync(manifestFile, JSON.stringify(manifest, null, 2) + '\n');
 const refFile = path.join(root, 'reports/ui-source/flutter-reference.json');
 const ref = JSON.parse(fs.readFileSync(refFile, 'utf8'));
 ref.observedUtc = new Date().toISOString();
+ref.head = cp.execFileSync('git', ['-C', ref.root, 'rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
 ref.note = 'Current source observation. Screenshot provenance and verification scope are recorded in validation.md; the upstream working tree is active, not frozen.';
-const extra = ['lib/workspace_viewport.dart','lib/stable_masonry_grid.dart','lib/render_stable_masonry_grid.dart','lib/little_tips.dart','lib/visual_style_picker.dart','lib/style_depth_slider.dart','lib/neumorphic_controls.dart','lib/versioned_task_panel.dart','plugins/workbench/src/tasks_v2.rs','lib/component_material_page.dart','lib/color_compass.dart','lib/fonts/font_settings.dart','lib/liquid_glass.dart','lib/music/music_panel.dart'];
+const extra = ['lib/plugins/query_coordinator.dart','lib/plugins/workbench_ids.dart','workbench_host/src/query_plan_v2.rs','plugins/workbench/src/query_v2.rs','plugins/workbench/src/query_v2_codec.rs','lib/workspace_viewport.dart','lib/stable_masonry_grid.dart','lib/render_stable_masonry_grid.dart','lib/little_tips.dart','lib/visual_style_picker.dart','lib/style_depth_slider.dart','lib/neumorphic_controls.dart','lib/versioned_task_panel.dart','plugins/workbench/src/tasks_v2.rs','lib/component_material_page.dart','lib/color_compass.dart','lib/fonts/font_settings.dart','lib/liquid_glass.dart','lib/music/music_panel.dart'];
 for (const language of ['en','ja','ko','de','fr','es','pt','ru']) extra.push(`packages/morrow_i18n/lib/l10n/app_${language}.arb`);
 ref.files = [...new Set([...ref.files.map(x => x.path), ...extra])].map(p => ({ path: p, sha256: hash(path.join(ref.root, p)) }));
 fs.writeFileSync(path.join(root, reportDir, 'flutter-reference.json'), JSON.stringify(ref, null, 2) + '\n');

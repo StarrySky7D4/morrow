@@ -6,7 +6,7 @@ const device=process.env.HMOS_DEVICE || '127.0.0.1:5555';
 const out=path.resolve(__dirname,'../reports/ui-source/v5');
 function run(...args){return cp.execFileSync(process.execPath,[cli,'ui',...args,'--device',device],{encoding:'utf8',timeout:30000,maxBuffer:4*1024*1024});}
 function layout(){const raw=run('layout','--format','json');const tree=JSON.parse(raw.slice(raw.indexOf('[')));
- if(flatten(tree).some(x=>(x.n.type || '').startsWith('WindowScene')))throw Error('HMOS app is not in foreground; stop without gestures');
+ if(flatten(tree).some(x=>(x.n.type || '').startsWith('WindowScene') || x.n.id==='Paf_Permission_Sheet_Window_Builder'))throw Error('HMOS app is not in foreground; stop without gestures');
  return tree;}
 function flatten(nodes,parents=[]){return nodes.flatMap(n=>[{n,parents},...flatten(n.children || [],[...parents,n])]);}
 function scrollBounds(tree){return flatten(tree).find(x=>x.n.type==='Scroll')?.n.bounds;}

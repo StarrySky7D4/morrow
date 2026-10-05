@@ -2,8 +2,8 @@
   "app": {
     "bundleName": "dev.morrow.hmos",
     "vendor": "Morrow",
-    "versionCode": 1000007,
-    "versionName": "0.1.0-hmos-dev.7",
+    "versionCode": 1000008,
+    "versionName": "0.1.0-hmos-dev.8",
     "icon": "$media:layered_image",
     "label": "$string:app_name"
   }

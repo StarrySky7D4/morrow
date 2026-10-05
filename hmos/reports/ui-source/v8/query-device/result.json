@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "device": "127.0.0.1:5557",
+  "cardId": "workspace-card:c9af16e2-0f77-4371-b324-e47d9b50371b",
+  "checks": [
+    "hypothesis-only search",
+    "conclusion-only search",
+    "same-id favorite revision repaint",
+    "favorites query",
+    "lab query",
+    "empty result removes old rows",
+    "restore after empty",
+    "query after process restart"
+  ],
+  "note": "Uses one explicitly created development fixture and observed UI controls; no database edits."
+}

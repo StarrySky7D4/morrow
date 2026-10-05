@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-09-27T05:29:39.688Z",
+  "createdUtc": "2026-10-05T07:23:01.768Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.7",
+  "hmosVersion": "0.1.0-hmos-dev.8",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 22155283,
-    "sha256": "E80224964CDB055AB85364FEBD91A21D6409299B2398354D3998E4390F269C1A",
+    "bytes": 22296875,
+    "sha256": "F0DD0A031358E383E099ED5E6A97901907CD550425A7CD13C65EA46708A19BD8",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "3161BD4C30A2CF3B92564BFE2882F9FEC9F74D7C33357D20B44CA048B7553660"
+      "sha256": "41451DDF32E761963B9D456F9EA42FC2417221E1C99D86ACFF6D64F018EEC29A"
     },
     {
       "path": "entry/build-profile.json5",
@@ -72,11 +72,11 @@
     },
     {
       "path": "entry/src/main/ets/model/Workbench.ets",
-      "sha256": "669634D5DEFE38BB4085F6E251B11FB8B2DC792489E30CCFF855B610C1865603"
+      "sha256": "AC4EB8D069DBC17146234978110AF269F8D6D1C4A1BD6908335D9C6FDE7459A2"
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "7E033997B74CA428ECDE8ABF9A8258DAD1A80396C5DB0A386288B0C33FEF16CA"
+      "sha256": "B594035DD16FFA504A2EDB6DB1AF4C6661E7F5DCBDC545F0916D03E1479CB856"
     },
     {
       "path": "hvigor/hvigor-config.json5",
@@ -92,11 +92,11 @@
     },
     {
       "path": "rust/src/lib.rs",
-      "sha256": "61FD15E7C90C797639687931ED005C4DE355E9FF813061EE13082825BD306C5C"
+      "sha256": "2BBC513AD81C05801BCF10E70CCA72438C4F049ECE944B151D90B9F1935FCB6F"
     },
     {
       "path": "rust/src/bin/hmos-self-check.rs",
-      "sha256": "973863A2B3038FA86D127EA121C14CF008596D51144262B270D9B57547BC869F"
+      "sha256": "55C7F4E8DDBA5DC29AA2D2DF779E4BB4D59E7C183BBC0042D09BE8BD79EBA8B6"
     },
     {
       "path": "scripts/build-hap.ps1",
@@ -108,7 +108,7 @@
     },
     {
       "path": "scripts/check-reference.ps1",
-      "sha256": "20F4B01B1D8247755B2421ED7D74548EA6E8942EA35101A134CC2FB157506A5E"
+      "sha256": "3190EBBAA5B66F4C7ECF11E260B709CA96A39B021C0DE8309AB1DB3839DE6728"
     },
     {
       "path": "scripts/sync-reference.ps1",
@@ -1053,8 +1053,20 @@
     {
       "path": "entry/src/main/ets/model/CardDataSource.ets",
       "sha256": "D94192F38F0FD29572DA3FBC7EAB55390A9893BB65355085244FB4573236DEEB"
+    },
+    {
+      "path": "entry/src/main/ets/model/QueryCoordinator.ets",
+      "sha256": "2E45179BEA198F7C42EBBDF69D87F1C0C33BFF496B362F1792BCA2624D410798"
+    },
+    {
+      "path": "rust/src/query_plan_v2.rs",
+      "sha256": "D88DC19EFE7A07C3F9D62DD7995C6E78E81BBDCA7595C585FA0C3FAA13E885E9"
+    },
+    {
+      "path": "rust/query-plan-reference.json",
+      "sha256": "63E29B81C2BF98838323AC2E7BBAEE60C8567D49A630E760549ACD7F97362367"
     }
   ],
-  "uiValidation": "reports/ui-source/v7/validation.md",
+  "uiValidation": "reports/ui-source/v8/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

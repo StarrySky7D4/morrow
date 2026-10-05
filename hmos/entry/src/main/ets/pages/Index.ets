@@ -11,6 +11,7 @@ import { util } from '@kit.ArkTS';
 import native from 'libmorrow.so';
 import { CardView, Command, Reply, TaskView, workbench } from '../model/Workbench';
 import { CardDataSource, WorkspaceCard } from '../model/CardDataSource';
+import { QueryConditions, QueryState, QueryCoordinator } from '../model/QueryCoordinator';
 
 @Component
 struct WorkspaceCardSlot {
@@ -28,9 +29,12 @@ struct WorkspaceCardSlot {
 @Entry
 @Component
 struct Index {
-  @State @Watch('updateWorkspaceCards') cards: CardView[] = [];
-  @State @Watch('updateWorkspaceCards') section: string = '概览';
-  @State @Watch('updateWorkspaceCards') search: string = '';
+  @State @Watch('workspaceContentChanged') cards: CardView[] = [];
+  @State @Watch('workspaceConditionsChanged') section: string = '概览';
+  @State @Watch('workspaceConditionsChanged') search: string = '';
+  @State queryIds: string[] = [];
+  @State queryPhase: string = 'idle';
+  @State queryRefreshing: boolean = false;
   @State selected: string = '';
   @State title: string = '';
   @State description: string = '';
@@ -52,8 +56,8 @@ struct Index {
   @State viewportWidth: number = 440;
   @State viewportHeight: number = 676;
   @State contentWidth: number = 416;
-  @State @Watch('updateWorkspaceCards') filter: string = '全部';
-  @State @Watch('updateWorkspaceCards') sort: string = '默认顺序';
+  @State @Watch('workspaceConditionsChanged') filter: string = '全部';
+  @State @Watch('workspaceConditionsChanged') sort: string = '默认顺序';
   @State capture: string = '';
   @State showAppearance: boolean = true;
   @State sidebarExpanded: boolean = true;
@@ -91,11 +95,45 @@ struct Index {
   private workspaceScroller: Scroller = new Scroller();
   private workspaceCards: CardDataSource = new CardDataSource();
   private updateWorkspaceCards(): void { this.workspaceCards.replace(this.section, this.visibleCards()); }
+  private contentGeneration: number = 0;
+  private queryNeedsRestore: boolean = false;
+  private queries: QueryCoordinator = new QueryCoordinator(
+    async (conditions: QueryConditions): Promise<string[]> => {
+      const cmd = new Command(); cmd.action = 'query';
+      cmd.section = conditions.section; cmd.filter = conditions.filter;
+      cmd.text = conditions.text; cmd.sort = conditions.sort;
+      const reply = await workbench.send(JSON.stringify(cmd));
+      if (!reply.ok) { throw new Error(reply.error); }
+      return reply.ids;
+    }, (state: QueryState): void => {
+      this.queryIds = state.ids; this.queryPhase = state.phase; this.queryRefreshing = state.refreshing;
+      this.updateWorkspaceCards();
+      if (state.phase === 'ready' && this.queryNeedsRestore) {
+        this.queryNeedsRestore = false; this.restoreWorkspace();
+      }
+    });
+  private workspaceContentChanged(): void {
+    this.contentGeneration++; this.updateWorkspaceCards(); this.workspaceConditionsChanged();
+  }
+  private workspaceConditionsChanged(): void {
+    if (!this.ready) { return; }
+    if (this.section === '回收站') {
+      this.queries.invalidate(); this.updateWorkspaceCards(); return;
+    }
+    const conditions = new QueryConditions(); conditions.generation = this.contentGeneration;
+    conditions.section = this.section === '灵感' ? '灵感收件箱' : this.section === '进行中' ? '小项目' :
+      this.section === '实验' ? '实验室' : this.section === '收藏' ? '已收藏' : '概览';
+    conditions.filter = this.filter === '图片' ? '图像' : this.filter === '影音' ? '音视频' : this.filter;
+    conditions.text = this.search;
+    conditions.sort = this.sort === '标题' ? '标题排序' : this.sort === '收藏优先' ? '收藏优先' : '最近添加';
+    this.queries.select(conditions);
+  }
   private workspaceOffsets: Map<string, number> = new Map();
   private workspaceRestoreTimer: number = -1;
   private restoringWorkspace: boolean = false;
   private rememberWorkspace(): void {
-    if (this.restoringWorkspace || this.settingsOpen) { return; }
+    if (this.restoringWorkspace || this.settingsOpen || this.queryNeedsRestore ||
+      (this.queryPhase === 'loading' && !this.queryRefreshing)) { return; }
     const y = Math.max(0, this.workspaceScroller.currentOffset().yOffset);
     this.workspaceOffsets.delete(this.section);
     this.workspaceOffsets.set(this.section, y);
@@ -131,23 +169,24 @@ struct Index {
     return false;
   }
   aboutToDisappear(): void {
+    this.queries.dispose();
     if (this.workspaceRestoreTimer !== -1) { clearTimeout(this.workspaceRestoreTimer); }
     this.mounted = false; native.releasePreview(this.preview);
   }
   private current(): CardView | undefined { return this.cards.find((c: CardView) => c.id === this.selected); }
   private visibleCards(): CardView[] {
-    const items = this.cards.filter((c: CardView): boolean => {
-      if (this.section === '回收站' ? !c.deleted : c.deleted) { return false; }
-      if (this.section === '收藏' && !c.favorite) { return false; }
-      if (['灵感', '进行中', '实验'].includes(this.section) && c.category !== this.section) { return false; }
-      if (this.filter === '有待办' && !c.tasks.some((t: TaskView) => t.completion !== 1)) { return false; }
-      if (['待整理', '已整理', '计划中', '推进中', '已完成', '待验证', '验证中', '已记录'].includes(this.filter) && c.stage !== this.filter) { return false; }
-      if (['含附件', '图片', '影音', '文件'].includes(this.filter)) { return false; }
-      if (this.filter === '仅收藏' && !c.favorite) { return false; }
-      return (c.title + '\n' + c.description).toLowerCase().includes(this.search.toLowerCase());
-    });
-    if (this.sort === '标题') { items.sort((a: CardView, b: CardView) => a.title.localeCompare(b.title)); }
-    if (this.sort === '收藏优先') { items.sort((a: CardView, b: CardView) => Number(b.favorite) - Number(a.favorite)); }
+    if (this.section === '回收站') {
+      // Deleted rows have their own restore workflow; normal query_v2 excludes
+      // them by contract. Keep this explicitly separate from live queries.
+      const items = this.cards.filter((c: CardView): boolean => c.deleted &&
+        `${c.title}\n${c.description}\n${c.hypothesis}\n${c.conclusion}`.toLowerCase().includes(this.search.toLowerCase()));
+      if (this.sort === '标题') { items.sort((a: CardView, b: CardView): number => a.title < b.title ? -1 : a.title > b.title ? 1 : 0); }
+      if (this.sort === '收藏优先') { items.sort((a: CardView, b: CardView): number => Number(b.favorite) - Number(a.favorite)); }
+      return items;
+    }
+    const byId = new Map<string, CardView>(); this.cards.forEach((c: CardView) => byId.set(c.id, c));
+    const items: CardView[] = [];
+    this.queryIds.forEach((id: string): void => { const card = byId.get(id); if (card && !card.deleted) { items.push(card); } });
     return items;
   }
   private refreshPreview(): void {
@@ -163,7 +202,7 @@ struct Index {
       let result: Reply = await workbench.send(JSON.stringify(cmd));
       if (!result.ok && result.error === 'AlreadyOpen') { result = await workbench.send(JSON.stringify(new Command())); }
       if (!result.ok) { this.message = result.error; return; }
-      this.cards = result.cards; this.ready = true; this.message = ''; 
+      this.cards = result.cards; this.ready = true; this.message = ''; this.workspaceConditionsChanged();
     } catch (_) { this.message = '打开失败，请重试'; }
     finally { this.busy = false; }
   }
@@ -457,7 +496,9 @@ struct Index {
     return section === '概览' ? 0xf7c4 : section === '灵感' ? 0xf126 : section === '进行中' ? 0xf091 : section === '实验' ? 0xf33d : section === '收藏' ? 0xf5cf : 0xf696;
   }
   private navigate(section: string): void {
-    this.rememberWorkspace(); this.section = section; this.filter = '全部';
+    this.rememberWorkspace();
+    if (section !== this.section) { this.queryNeedsRestore = section !== '回收站'; }
+    this.section = section; this.filter = '全部';
     this.restoreWorkspace();
   }
   private closeEditor(): void {
@@ -628,7 +669,7 @@ struct Index {
     Flex({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.Start, alignItems: ItemAlign.Center }) {
       Row({ space: 8 }) {
         Text(this.section === '概览' ? this.t('最近的念头') : this.label(this.section)).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(15).fontWeight(FontWeight.Medium).fontColor(this.ink())
-        Text(this.visibleCards().length.toString().padStart(2, '0')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted())
+        Text(this.queryPhase === 'loading' && !this.queryRefreshing ? '…' : this.visibleCards().length.toString().padStart(2, '0')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted())
       }.margin({ right: 12, bottom: 12 })
       Row({ space: 4 }) {
         ForEach(this.pageFilters(), (f: string) => {
@@ -686,7 +727,15 @@ struct Index {
   @Builder
   WorkspaceFooter() {
     Column() {
-      if (this.visibleCards().length === 0) {
+      if (this.queryPhase === 'loading' && !this.queryRefreshing) {
+        Text(this.t('正在查找…')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontColor(this.muted())
+          .width('100%').height(160).textAlign(TextAlign.Center)
+      } else if (this.queryPhase === 'failed') {
+        Column({ space: 12 }) {
+          Text(this.t('查询未完成')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontColor(this.muted())
+          Text(this.t('重试')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.accent()).onClick(() => this.queries.retry())
+        }.width('100%').height(160).justifyContent(FlexAlign.Center)
+      } else if (this.visibleCards().length === 0) {
         Column({ space: 12 }) {
           this.Glyph(() => 0xf013c,  24, () => this.muted()); Text(this.t('没有找到匹配的想法')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontColor(this.muted())
           Text(this.t('查看全部')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.accent()).onClick(() => { this.search = ''; this.navigate('概览'); })

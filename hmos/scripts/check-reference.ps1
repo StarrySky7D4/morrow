@@ -19,5 +19,6 @@ foreach($file in ($current | Sort-Object -Unique)) {
   if($file -match '\.(rs|proto|capnp|toml|lock|h|md|txt)$' -and !$known.ContainsKey($file)) {$changes += "added: $file"}
 }
 $result=[ordered]@{checkedUtc=[DateTime]::UtcNow.ToString('o');sourceThread=$baseline.sourceThread;head=(& git -C $Source rev-parse HEAD);changes=$changes;matches=($changes.Count -eq 0)}
-$result | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath "$root/reports/reference-drift.json" -Encoding utf8
+$json=($result | ConvertTo-Json -Depth 4).Replace("`r`n","`n")+"`n"
+[IO.File]::WriteAllText("$root/reports/reference-drift.json",$json,[Text.UTF8Encoding]::new($false))
 $result | ConvertTo-Json -Depth 4
