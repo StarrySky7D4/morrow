@@ -1,5 +1,6 @@
 import native from 'libmorrow.so';
 import { DraftRecord } from './EditorDraft';
+import { MarkdownDoc } from './Markdown';
 export interface TaskView { id: string; text: string; completion: number; }
 export interface CardView {
   id: string; revision: string; source: string; title: string; description: string;
@@ -17,6 +18,7 @@ export class Command {
 }
 export interface Reply {
   ok: boolean; error: string; cards: CardView[]; ids: string[]; drafts: DraftRecord[]; receipt_revision: string; profile: string; effect: string;
+  markdown: MarkdownDoc; paste_text: string;
 }
 // Single admission owner. No implicit mutation retry; native database work runs
 // off the UI thread. The caller owns each immutable serialized proposal.

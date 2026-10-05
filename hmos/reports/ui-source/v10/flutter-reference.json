@@ -1,0 +1,174 @@
+{
+  "capturedUtc": "2026-09-23T08:39:43.8831964Z",
+  "root": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor",
+  "head": "925fb8ca6563dcb7de38db8fbdf6b005f9ad5420",
+  "source": "active working tree, including uncommitted files",
+  "files": [
+    {
+      "path": "lib/main.dart",
+      "sha256": "6203B7465F320DC8463DFACB5387EA8B437EC3EC1458CCA7E215E44B8F65CB1E"
+    },
+    {
+      "path": "lib/appearance.dart",
+      "sha256": "C85918041A677D5BE2B535E6F45E500AB7490F1A62CB8E03BDF2EF9AE722AA63"
+    },
+    {
+      "path": "lib/pages/workspace_pages.dart",
+      "sha256": "2BA77D5F35C4E414C77E09B73A7D3534B7F4D9084D1E2099C339E088AE4063B6"
+    },
+    {
+      "path": "lib/little_tips.dart",
+      "sha256": "3BF0512B9FA6683C0AAC3712D3BE1BECB6B6EE129B2CA4BA3CFAE2579171E285"
+    },
+    {
+      "path": "lib/workspace_viewport.dart",
+      "sha256": "C59DB15FB7046E9C66B52C613FE97B67E8D5FD0FE9369B90844B615720508207"
+    },
+    {
+      "path": "lib/settings_surface.dart",
+      "sha256": "A5543A34B8DEA76BF4C64DC55EB66B820C805CD28CCE01F5487BA92FE9CA0033"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_zh.arb",
+      "sha256": "13C9C3A145E3FC7C3E356314AB400565AA7FB5BFBD2ABF847E154D840386018B"
+    },
+    {
+      "path": "lib/plugins/query_coordinator.dart",
+      "sha256": "6987C80F9FC4AC075EF9D71D2767D1806FE8A0B4312E0C5B0CF70DADE3824075"
+    },
+    {
+      "path": "lib/plugins/workbench_ids.dart",
+      "sha256": "3CDAA3EFFA734337266147A63578E7BD684871B104D71459BF9F65423C22110F"
+    },
+    {
+      "path": "workbench_host/src/query_plan_v2.rs",
+      "sha256": "D88DC19EFE7A07C3F9D62DD7995C6E78E81BBDCA7595C585FA0C3FAA13E885E9"
+    },
+    {
+      "path": "plugins/workbench/src/query_v2.rs",
+      "sha256": "1A36C8C55BFE90EC127CEABD61EE1E1FFCD28555E50B09BC5F90DBD4AF617837"
+    },
+    {
+      "path": "plugins/workbench/src/query_v2_codec.rs",
+      "sha256": "0FF6287236A4A990848AA23DB0B076C8241058B4F0E2A94AD2F716EF48F39613"
+    },
+    {
+      "path": "lib/stable_masonry_grid.dart",
+      "sha256": "00A209413440F6D5A34B8D691027F0305EBA7EB2F280AA51FC899BCF3FF89E63"
+    },
+    {
+      "path": "lib/render_stable_masonry_grid.dart",
+      "sha256": "CA14524B56A4431E66A394EFA57405AC9205CECEEA6EA85CD863D20277854FEE"
+    },
+    {
+      "path": "lib/visual_style_picker.dart",
+      "sha256": "4BCC590895FBD47933C644023C3903132609B32EB0AF7EB7EFF13EFBD0A3DBA7"
+    },
+    {
+      "path": "lib/style_depth_slider.dart",
+      "sha256": "ABB4F6C738AE45C68500AD86498EC61E5EB0DB2C74C12566524FD3F923E48143"
+    },
+    {
+      "path": "lib/neumorphic_controls.dart",
+      "sha256": "974AB6A4C55063E1315A69AF8CA204886E28C61F56F6BCD60D47FD30E48EEAE9"
+    },
+    {
+      "path": "lib/versioned_task_panel.dart",
+      "sha256": "3C3D68B59AB84BCC0A1B95338900DD4786F86B2F1DC06E3E3A84EC17A1408538"
+    },
+    {
+      "path": "plugins/workbench/src/tasks_v2.rs",
+      "sha256": "43849B828B2C6F4605EA8FE677CBB4E95A64FCFB68EEC4639346556E9947C70D"
+    },
+    {
+      "path": "lib/component_material_page.dart",
+      "sha256": "16FB2E9D4D0BC250C76207F2E0CB4BB246E79A77210F0284BB571A73A04003C4"
+    },
+    {
+      "path": "lib/color_compass.dart",
+      "sha256": "BC463325DC3C4B0950C53428F14963E8E57BC6D4DBB2CE564B56943149727405"
+    },
+    {
+      "path": "lib/fonts/font_settings.dart",
+      "sha256": "723BB164FD3364DCD0E67713D65BE28A16D64EF390DCA6DF109EAB039734E98B"
+    },
+    {
+      "path": "lib/liquid_glass.dart",
+      "sha256": "511D766825EF503F9D37F669F62ABE10E00B6F4C945782D27A2B4DBFAC7B7C4F"
+    },
+    {
+      "path": "lib/music/music_panel.dart",
+      "sha256": "B3957A5F946E720B98F9D6FB1C36E9860697F9A829514EEAF372B00BBD3EE25D"
+    },
+    {
+      "path": "lib/plugins/editor_draft_session.dart",
+      "sha256": "422A4AC7C7CACE0115CC50290E027FE63348C6B8273E89A659C24C5302015E7E"
+    },
+    {
+      "path": "lib/plugins/editor_draft_workspace.dart",
+      "sha256": "D68E2529D4D7E32A20B3537CB9E0908F2225CE8EA3A1DFE06624883907DDE52B"
+    },
+    {
+      "path": "workbench_host/src/editor_draft.rs",
+      "sha256": "B4ADAFD9EDCA7ECBA9E4DD3A23963F226E3009233914D62C16630A1C7AC0DA28"
+    },
+    {
+      "path": "workbench_host/src/editor_draft/model.rs",
+      "sha256": "D11632512506F357A73112568A6E8856AA74E87500B91709C87083A50DAC6C8E"
+    },
+    {
+      "path": "workbench_host/schemas/editor_draft.proto",
+      "sha256": "8F80DB114BCC480D9553AE60916170B1982C9CDE0D0452753A35B491279FDDDC"
+    },
+    {
+      "path": "lib/content/idea_markdown.dart",
+      "sha256": "816AC4C1B3A04149A51C5A1453C2F5F17B5E0DD750A74D9A27571CE5F68BA9E0"
+    },
+    {
+      "path": "lib/content/rich_content.dart",
+      "sha256": "BAD8A530EF678B453CBDB1E1F9A0FE33B712FE44CB0D0C25A4D3A08B7428D4E9"
+    },
+    {
+      "path": "plugins/workbench/src/capture.rs",
+      "sha256": "89D199F3A831B489D047C56F23CE520F451E37B4F163CB2F699B4F91F30B4BCF"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_en.arb",
+      "sha256": "C862440EF1E84F2335CCB72876E3B2C039E17BBBC6F8D48BF1E27F1200B9B55C"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_ja.arb",
+      "sha256": "96816E67439CCDE8DCFA06B5425C1C94D0B98C7EF4729C0C0C562AA32B9B9D81"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_ko.arb",
+      "sha256": "3935F10C150B561EE401140573DC95824F34369C4D2631DB764D23077C5D4E3A"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_de.arb",
+      "sha256": "B73B317BC2261116521B0FCD43776DA70A62A29C4A2AEF19623549A3A02AB155"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_fr.arb",
+      "sha256": "E7375BCF8AFE069276E41900607D5EB72B1996D2A733B2A309E2C87E7E52AE54"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_es.arb",
+      "sha256": "7CF1E73C85B2A4A9079B13B9C4D820FD9EE0D94C37FDE5B44BB83742A8081822"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_pt.arb",
+      "sha256": "C4BD824F301A841D5D0A598A14FE88AC8AB9F05044767DB397B60E4682F7449F"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_ru.arb",
+      "sha256": "42B7FC70754847AAABD8C304EB1BBB3C4B40B4A22A2E6896E8FB91D019FEE781"
+    }
+  ],
+  "renderedBy": "tool/flutter_ui_reference_test.dart",
+  "mobileLogicalSize": "440x676",
+  "desktopLogicalSize": "1280x900",
+  "pixelRatio": 3,
+  "observedUtc": "2026-10-05T09:18:03.414Z",
+  "note": "Current source observation. Screenshot provenance and verification scope are recorded in validation.md; the upstream working tree is active, not frozen."
+}

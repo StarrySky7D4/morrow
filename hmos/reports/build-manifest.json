@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-10-05T08:38:58.583Z",
+  "createdUtc": "2026-10-05T09:18:03.363Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.9",
+  "hmosVersion": "0.1.0-hmos-dev.10",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 22685409,
-    "sha256": "4BA0830D729B7D2021B54DBC27DD50724AC565EC2098204B76242F4952C96096",
+    "bytes": 23545787,
+    "sha256": "1988A4A87CA28102F53CB1A748C94AD644E7B122AD3D0B7F08CE8F0FA0344C44",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "7C8FF50CC78A9883C5466D982E5D3B11A37B02C660021B426772FEF7CD26A47F"
+      "sha256": "087E7C54D5FE381CDCF268B9111F770345BB1FE2ED33CB0B854181828E1A114C"
     },
     {
       "path": "entry/build-profile.json5",
@@ -48,7 +48,7 @@
     },
     {
       "path": "entry/src/main/module.json5",
-      "sha256": "279A06E9FC8A8E38349E943215EFD6B540228ECED81A763DF9D9B19C5E8CAEFC"
+      "sha256": "E5531A8A126D27E02FFD9F93B89ADD108C7772C77D9C28536A72BBE6165AF8CC"
     },
     {
       "path": "entry/src/main/cpp/bridge.cpp",
@@ -72,11 +72,11 @@
     },
     {
       "path": "entry/src/main/ets/model/Workbench.ets",
-      "sha256": "E053E2FC5475F8445019CE3CC5EDCCEDA4ABCB54DAD6A980DCF365577E92F7BC"
+      "sha256": "B12E5D22AEC01387226CF04180490D4442D93C308D227F413BE9F8875F930678"
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "FD86EEF2B261A68599A935F5E77E7DB1E2EDF0520AA14FC0F416AF70424BAC9D"
+      "sha256": "E0027EAF040994BE0750343AE9433987A07153565462A2C89DA6F76C841D1146"
     },
     {
       "path": "hvigor/hvigor-config.json5",
@@ -84,19 +84,19 @@
     },
     {
       "path": "rust/Cargo.lock",
-      "sha256": "83EDB06510E2923BEE70B16932146EC626327AA70E4F628C0CD5F3B12716AD89"
+      "sha256": "A420DA25FCE367E628423EA0C10B22BCC87836681D75D2B1B27C55E3E0921F32"
     },
     {
       "path": "rust/Cargo.toml",
-      "sha256": "31AA6D7516EE6D8606511FCAD1D1EE43DEAB5017E4FBE978ED6932F1615BCC53"
+      "sha256": "315B553E919F6EB05943D3B4572768DEA276FF3194E5F282007CE92C9CF7D8C0"
     },
     {
       "path": "rust/src/lib.rs",
-      "sha256": "8E7D96F85B12159C85E32E6A3C3B55AB5EE1BC335701579C4848A88ED0322C8A"
+      "sha256": "616D98877A2106D2308C309B67A2262D8AD57603F0D1242ECD954392B1D66D18"
     },
     {
       "path": "rust/src/bin/hmos-self-check.rs",
-      "sha256": "DAB0F816C1824ECFB35CA0CED97DCB042613500B6D07A9CCD40CF99EA801D9B3"
+      "sha256": "165BC08D253461057467290F89881D94D854F29715BBB602FB5909EFCA455855"
     },
     {
       "path": "scripts/build-hap.ps1",
@@ -1040,7 +1040,7 @@
     },
     {
       "path": "entry/src/main/ets/model/Markdown.ets",
-      "sha256": "3A39BF20F470395F947DE9658AD8A1049560B170412735BC68607CD4EDD472E6"
+      "sha256": "23293D786CB518F9484DE29DF5FA3A156E770F79A43C30E98CCFEF740AA08D6D"
     },
     {
       "path": "entry/src/main/ets/pages/ColorWheel.ets",
@@ -1101,8 +1101,20 @@
     {
       "path": "rust/editor-draft-model/schemas/editor_draft.proto",
       "sha256": "8F80DB114BCC480D9553AE60916170B1982C9CDE0D0452753A35B491279FDDDC"
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorPaste.ets",
+      "sha256": "B005D5F0B35EEAE658AE40F88BEBFF37B9DB82FBAB98F428737AAEC91720C42E"
+    },
+    {
+      "path": "entry/src/main/ets/pages/MarkdownPreview.ets",
+      "sha256": "FC866C1DC0BEBA4211C4DFEABB7173CF3AFF7B3D22C61EA31951EBC92F1AA7B4"
+    },
+    {
+      "path": "rust/src/markdown.rs",
+      "sha256": "729286A16E6E3A2566DDBFCD87CFD54BBADC489A41934ABA4690DC7FFCBF25AA"
     }
   ],
-  "uiValidation": "reports/ui-source/v9/validation.md",
+  "uiValidation": "reports/ui-source/v10/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

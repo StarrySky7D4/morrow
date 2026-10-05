@@ -16,12 +16,12 @@
 | 附件原件、文件选择器、媒体预览/导出 | `core/attachment`, Flutter file_selector/media_kit | 核心已编译但无 UI/平台通路；需 SAF/URI 授权、流式校验、一致性提交和 AVPlayer/图像适配 |
 | Wasm 插件解释器与包管理 | `plugin_runtime` + `sdk/rust` | SDK 随业务模块复用编译；运行期宿主权限、worker、动态包审批/UI 渲染未接入。未声称 Rust 原生直调等于 Wasm 隔离运行 |
 | HTTP/服务/TLS/凭据 | `network_node`, `workbench_host/*control`, `io_tasks` | 审查依赖与平台边界；本次未连接外部服务，未编译/运行完整网络节点；后台任务、权限、HUKS/TLS 适配待实现 |
-| 捕获/转换、富文本、表格/RTF | `plugins/workbench/capture.rs` | 源码复用编译；剪贴板来源、捕获证据和 ArkUI 编辑通路未接入 |
+| 捕获/转换、富文本、表格/RTF | `plugins/workbench/capture.rs` | dev.10 使用系统授权 PasteButton 读取纯文字，正文复用 capture::plain 转 TSV 表格，按完整字段/选区插入；先检查全部行列避免原预算裁剪。完整 HTML/Office/RTF、文件及捕获证据仍未接入 |
 | 歌词/媒体与格式解密 | Flutter lyrics/media + `third_party/um_decrypt` | 未移植；不能把共享 Rust 核心当作这些功能已经具备 |
 | 语言、字体、主题、玻璃效果、稳定瀑布流 | Flutter `morrow_i18n`, fonts/layout/shaders | dev.3 已补齐专用分类卡片、外观/独立材质/色盘/系统字体设置、基础正文预览、日常清单和音乐空状态；复用九语 ARB、外观持久保存。模拟器验证详见 UI_DESIGN_DEV3.md；折射 shader、完整九语动态文案、字体/背景文件导入、媒体与宽屏设备验收仍待完成 |
 | 七种风格、立体深度、组件材质跟随 | Flutter `appearance.dart`, `component_material_page.dart` | dev.5 基础面板圆角/边缘/阴影和完整材质引用；循环拒绝、取消/应用和重启验证通过。公共描边使用面板实测尺寸并限制绘制范围，修复跨卡片框线。控件浮起/按压动画及 shader 尚未复现；详见 dev.5 验证记录 |
 | 工作区布局与位置 | Flutter `workspace_viewport.dart` / `stable_masonry_grid.dart` / `render_stable_masonry_grid.dart` | dev.7 改为原生 LazyVWaterFlowLayout + LazyForEach；页面/卡片身份稳定，修订内容和移动位置分别失效，保留 16 张交错记录验证。dev.8 最终包新增 440/744 vp 单/双列、四卡间距/排序/遍历与查询修订刷新；dev.6 保留 880/1488 vp 面板与五页位置恢复证据。完整主题、键盘/动画及内存/帧时资格仍未完成 |
-| 编辑器文字与预览 | Flutter `main.dart::_bodyEditor` | dev.9 补 590 vp 内容宽度下并排编辑/预览、实验多行字段、原 UI 数值上限及文字草稿入口；Harmony 字符计数/IME 会话与 Flutter 不完全相同，附件/富文本仍未接 |
+| 编辑器文字与预览 | Flutter `main.dart::_bodyEditor` / `idea_markdown.dart` | dev.10 使用 Rust CommonMark 投影，接通原生强调、删除线、嵌套列表、引用、代码块、横向表格、安全链接和远程图片显式读取。HTML为文字；按块选择复制，跨块连续选择未接。保留 dev.9 的 590 vp 分栏与 journal；Harmony 字符计数/IME 会话与 Flutter 不完全相同，附件/完整富文本仍未接 |
 | 平台分发 | DevEco API 26 | 双架构未签名 HAP 已构建；x64 模拟器安装/启动；ARM64 真机、签名、发布均未验收 |
 
 ## 后续顺序

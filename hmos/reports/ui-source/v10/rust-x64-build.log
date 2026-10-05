@@ -1,0 +1,16 @@
+   Compiling memchr v2.8.3
+   Compiling pulldown-cmark v0.13.4
+   Compiling unicase v2.9.0
+   Compiling aho-corasick v1.1.5
+   Compiling serde_json v1.0.151
+   Compiling regex-automata v0.4.18
+   Compiling regex v1.13.1
+   Compiling morrow-workbench-plugin v0.1.9-test.54.3 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\shared\plugins\workbench)
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `release` profile [optimized] target(s) in 11.28s
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `release` profile [optimized] target(s) in 1.24s
+
+Algorithm       Hash                                                                   Path
+---------       ----                                                                   ----
+SHA256          2FF21151E19F99F6485F11634E8DC5862C8867E8C4041C0EAFF4CC704EC25703       C:\Users\Administrator\Desktop\C…

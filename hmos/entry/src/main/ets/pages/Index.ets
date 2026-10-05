@@ -1,5 +1,8 @@
 import { ColorWheel } from './ColorWheel';
-import { MarkdownLine, markdownLines } from '../model/Markdown';
+import { MarkdownDoc, MarkdownPreviewCoordinator } from '../model/Markdown';
+import { MarkdownPreview } from './MarkdownPreview';
+import { insertPaste, samePasteTarget } from '../model/EditorPaste';
+import { pasteboard } from '@kit.BasicServicesKit';
 import { uiText } from '../model/UiStrings';
 import { preferences } from '@kit.ArkData';
 import { AppearanceSnapshot, MaterialChoice, alpha, mix, contrast, visualStyles, visualStyleLabels, styleRadiusScale, resolveMaterial, normalizeMaterials, canFollow } from '../model/Appearance';
@@ -13,7 +16,7 @@ import { CardView, Command, Reply, TaskView, workbench } from '../model/Workbenc
 import { CardDataSource, WorkspaceCard } from '../model/CardDataSource';
 import { QueryConditions, QueryState, QueryCoordinator } from '../model/QueryCoordinator';
 import { Values as DraftValues, TextValue as DraftTextValue, DraftScope, DraftRecord,
-  EditorDraftCoordinator, DraftSaveFailure, copyValues, sameValues, nextGeneration } from '../model/EditorDraft';
+  EditorDraftCoordinator, DraftSaveFailure, copyValues, copyText, sameValues, nextGeneration } from '../model/EditorDraft';
 
 @Component
 struct WorkspaceCardSlot {
@@ -39,7 +42,7 @@ struct Index {
   @State queryRefreshing: boolean = false;
   @State selected: string = '';
   @State title: string = '';
-  @State description: string = '';
+  @State @Watch('updateMarkdown') description: string = '';
   @State hypothesis: string = '';
   @State conclusion: string = '';
   @State category: string = '灵感';
@@ -50,7 +53,7 @@ struct Index {
   @State busy: boolean = false;
   @State ready: boolean = false;
   @State message: string = '';
-  @State editorOpen: boolean = false;
+  @State @Watch('updateMarkdown') editorOpen: boolean = false;
   @State settingsOpen: boolean = false;
   @State dark: boolean = false;
   @State glassOpacity: number = 76;
@@ -111,7 +114,21 @@ struct Index {
   @State colorTarget: string = 'theme';
   @State showTone: boolean = false;
   @State playlistOpen: boolean = false;
-  @State previewBody: boolean = false;
+  @State @Watch('updateMarkdown') previewBody: boolean = false;
+  @State markdownDoc: MarkdownDoc = new MarkdownDoc();
+  @State markdownLoading: boolean = false;
+  @State markdownError: string = '';
+  @State pasteWorking: boolean = false;
+  @State lastDraftField: string = 'description';
+  private markdown: MarkdownPreviewCoordinator = new MarkdownPreviewCoordinator(
+    async (text: string): Promise<MarkdownDoc> => {
+      const command = new Command(); command.action = 'markdown'; command.text = text;
+      const reply = await workbench.send(JSON.stringify(command));
+      if (!reply.ok) { throw new Error(reply.error); }
+      return reply.markdown;
+    }, (): void => {
+      this.markdownDoc = this.markdown.doc ?? new MarkdownDoc(); this.markdownLoading = this.markdown.loading; this.markdownError = this.markdown.error;
+    });
   @State appearanceStatus: string = '';
   private preferenceStore: preferences.Preferences | undefined = undefined;
   private appearanceWrites: Promise<void> = Promise.resolve();
@@ -200,6 +217,7 @@ struct Index {
     // No mutation is replayed on destruction. Only earlier acknowledged raw
     // journal generations are recoverable after a forced process termination.
     this.editorDraft?.dispose();
+    this.markdown.dispose();
     this.queries.dispose();
     if (this.workspaceRestoreTimer !== -1) { clearTimeout(this.workspaceRestoreTimer); }
     this.mounted = false; native.releasePreview(this.preview);
@@ -260,6 +278,80 @@ struct Index {
     return name === 'title' ? this.editorValues.title : name === 'description' ? this.editorValues.description :
       name === 'hypothesis' ? this.editorValues.hypothesis : name === 'conclusion' ? this.editorValues.conclusion : this.editorValues.todos;
   }
+  private updateMarkdown(): void {
+    this.markdown.update(this.editorDraft?.scope.draft_id ?? '', this.description, this.pageAlive && this.editorOpen && this.previewBody);
+  }
+  private pasteTargetName(): string {
+    return this.lastDraftField === 'title' ? '标题' : this.lastDraftField === 'hypothesis' ? '假设' :
+      this.lastDraftField === 'conclusion' ? '结论' : this.lastDraftField === 'todos' ? '待办输入' : '正文';
+  }
+  private canPaste(): boolean {
+    return this.ready && this.editorOpen && !!this.editorDraft && !this.editorDraft.disposed &&
+      !this.pasteWorking && !this.draftRestoreInput && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown &&
+      !this.draftCaptureIncomplete && !this.editorDraft.unknown && this.pending.length === 0 && !this.current()?.deleted;
+  }
+  private async pasteContent(): Promise<void> {
+    if (!this.canPaste()) { return; }
+    const draft = this.editorDraft!, name = this.lastDraftField, snapshot = copyText(this.draftField(name));
+    if (snapshot.composing_start !== -1 || snapshot.composing_end !== -1) {
+      this.message = '请先完成输入法候选，再粘贴内容。'; return;
+    }
+    const limit = name === 'title' ? 60 : name === 'todos' ? 500 : name === 'hypothesis' ? 5000 : name === 'conclusion' ? 10000 : 20000;
+    this.pasteWorking = true;
+    try {
+      const clipboard = pasteboard.getSystemPasteboard(), before = clipboard.getChangeCount();
+      const data = await clipboard.getData();
+      const count = data.getRecordCount();
+      if (count > 20) { throw new Error('剪贴板条目过多，请分次复制，内容未插入。'); }
+      const chunks: string[] = []; let rich = false, unsupported = false;
+      for (let index = 0; index < count; index++) {
+        const record = data.getRecord(index);
+        const types = record.getValidTypes([pasteboard.MIMETYPE_TEXT_PLAIN, pasteboard.MIMETYPE_TEXT_HTML]);
+        rich = rich || types.includes(pasteboard.MIMETYPE_TEXT_HTML);
+        if (types.includes(pasteboard.MIMETYPE_TEXT_PLAIN)) {
+          const text = await record.getData(pasteboard.MIMETYPE_TEXT_PLAIN);
+          if (typeof text !== 'string') { throw new Error('剪贴板文字格式无法读取，内容未插入。'); }
+          chunks.push(text);
+        } else { unsupported = true; }
+      }
+      if (clipboard.getChangeCount() !== before) { throw new Error('读取期间剪贴板发生了变化，请重新粘贴。'); }
+      const text = chunks.join('\n\n');
+      if (text.length === 0) { throw new Error('剪贴板中没有可粘贴的文字。文件与图片导入仍在适配。'); }
+      if (text.length > 20000) { throw new Error('剪贴板文字过长，请分次复制，内容未插入。'); }
+      const command = new Command(); command.action = 'paste_plain'; command.text = text; command.section = name;
+      const reply = await workbench.send(JSON.stringify(command));
+      if (!reply.ok) { throw new Error(reply.error); }
+      if (typeof reply.paste_text !== 'string') { throw new Error('粘贴内容回复无效，内容未插入。'); }
+      if (!this.pageAlive || !this.editorOpen || this.editorDraft !== draft || draft.disposed || this.draftRetiring ||
+        this.draftRetirementUnknown || this.draftCaptureIncomplete || !samePasteTarget(snapshot, this.draftField(name))) {
+        throw new Error('插入位置或文字已变化，请重新粘贴，内容未插入。');
+      }
+      const inserted = insertPaste(snapshot, reply.paste_text, limit);
+      this.editorInputChanged(name, inserted.text);
+      const field = this.draftField(name); field.selection_base = inserted.selection_base; field.selection_extent = inserted.selection_extent;
+      draft.update(copyValues(this.editorValues)); this.draftSelectionPending.add(name);
+      if (name === 'description') {
+        // A wide editor retains its native input alongside the preview. Defer
+        // a narrow editor's caret until that field is visible/focused again.
+        this.previewBody = true; this.updateMarkdown();
+        if (Math.min(820, this.viewportWidth - 40) - 80 >= 590) { this.restoreSelection(name); }
+      }
+      else { this.restoreSelection(name); }
+      this.message = rich || unsupported ? '已粘贴可读文字；富文本样式、图片与文件尚未导入。' : '内容已读入 · ' + this.pasteTargetName();
+    } catch (error) {
+      if (this.pageAlive && this.editorDraft === draft) { this.message = String(error); }
+    } finally { this.pasteWorking = false; }
+  }
+  private async openMarkdownLink(href: string): Promise<void> {
+    // Only the validated native projection supplies these URLs. Attachment
+    // handles stay inside the library and are never opened as external paths.
+    const value = href.toLowerCase();
+    if (!this.pageAlive || !this.editorOpen || (!value.startsWith('https://') && !value.startsWith('http://') && !value.startsWith('mailto:'))) { return; }
+    try {
+      const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+      await context.openLink(href, { appLinkingOnly: false, hideFailureTipDialog: true });
+    } catch (_) { if (this.pageAlive) { this.message = '链接无法打开，请检查可用的浏览器或邮件应用。'; } }
+  }
   private draftTextChanged(name: string, value: string, preview?: PreviewText): void {
     if (!this.pageAlive || !this.editorOpen || !this.editorDraft || this.editorDraft.disposed || this.draftRestoreInput || this.draftRetiring || this.draftRetirementUnknown) { return; }
     const field = this.draftField(name);
@@ -269,6 +361,7 @@ struct Index {
       this.message = '输入法预编辑位置无法确认，请完成输入后保留草稿。'; return;
     }
     this.draftCaptureBlocked.delete(name); this.draftCaptureIncomplete = this.draftCaptureBlocked.size > 0;
+    this.draftSelectionPending.delete(name);
     field.text = candidate.length > 0 ? value.slice(0, offset) + candidate + value.slice(offset) : value;
     field.composing_start = candidate.length > 0 ? offset : -1;
     field.composing_end = candidate.length > 0 ? offset + candidate.length : -1;
@@ -280,21 +373,26 @@ struct Index {
     this.editorDraft?.update(copyValues(this.editorValues));
   }
   private draftSelectionChanged(name: string, start: number, end: number): void {
-    if (!this.pageAlive || !this.editorOpen || this.editorDraft?.disposed || !this.draftFocusedFields.has(name) || this.draftRestoreInput || this.draftRetiring || this.draftRetirementUnknown || this.draftSelectionPending.has(name) || !this.editorDraft) { return; }
+    if (!this.pageAlive || !this.editorOpen || this.editorDraft?.disposed || !this.draftFocusedFields.has(name) || this.draftRestoreInput || this.draftRetiring || this.draftRetirementUnknown || !this.editorDraft) { return; }
     const field = this.draftField(name);
     if (this.draftCaptureBlocked.has(name) || start < -1 || end < -1 || start > field.text.length || end > field.text.length) { return; }
-    field.selection_base = start; field.selection_extent = end;
+    // An actual focused selection supersedes a scheduled restoration. Native
+    // construction events are already excluded by the focused-field guard.
+    this.draftSelectionPending.delete(name); field.selection_base = start; field.selection_extent = end;
     this.editorDraft.update(copyValues(this.editorValues));
   }
   private restoreSelection(name: string): void {
     if (!this.draftSelectionPending.has(name)) { return; }
-    const value = this.draftField(name), start = value.selection_base, end = value.selection_extent;
+    const value = copyText(this.draftField(name)), start = value.selection_base, end = value.selection_extent;
     const draft = this.editorDraft;
     if (start < 0 || end < 0) { this.draftSelectionPending.delete(name); return; }
     // Do not start a new IME composition or steal focus. The caller already
     // focused this field; native controllers cannot restore the old IME session.
     setTimeout(() => {
       if (!this.pageAlive || !this.editorOpen || !draft || draft.disposed || this.draftRetiring || this.draftRetirementUnknown || this.editorDraft !== draft) { return; }
+      if (!this.draftSelectionPending.has(name)) { return; }
+      if (!samePasteTarget(value, this.draftField(name))) { this.draftSelectionPending.delete(name); return; }
+      this.draftSelectionPending.delete(name);
       const low = Math.min(start, end), high = Math.max(start, end);
       if (name === 'description' || name === 'hypothesis' || name === 'conclusion') {
         const controller = name === 'description' ? this.descriptionController : name === 'hypothesis' ? this.hypothesisController : this.conclusionController;
@@ -305,7 +403,6 @@ struct Index {
         if (low === high) { controller.caretPosition(low); }
         else { controller.setTextSelection(low, high, { menuPolicy: MenuPolicy.HIDE }); }
       }
-      setTimeout(() => { if (this.pageAlive && !draft.disposed && this.editorDraft === draft) { this.draftSelectionPending.delete(name); } }, 16);
     }, 16);
   }
   private focusDraftField(name: string): void {
@@ -313,13 +410,14 @@ struct Index {
     // A native control emits its initial selection while being constructed.
     // Only a field that the user actually focuses can create a selection-only
     // generation; viewing an unchanged card must not consume a journal slot.
+    this.lastDraftField = name;
     this.draftFocusedFields.clear(); this.draftFocusedFields.add(name); this.restoreSelection(name);
   }
   private blurDraftField(name: string): void { this.draftFocusedFields.delete(name); }
   private attachDraft(card?: CardView, restored?: DraftRecord, preserveFocus: boolean = false): void {
     this.editorDraft?.dispose(); this.draftConflict = false; this.draftStatus = '';
     this.draftSelectionPending = restored ? new Set(['title', 'description', 'hypothesis', 'conclusion', 'todos']) : new Set();
-    if (!preserveFocus) { this.draftFocusedFields.clear(); }
+    if (!preserveFocus) { this.draftFocusedFields.clear(); this.lastDraftField = 'description'; }
     this.draftRestoreInput = !!restored; this.draftCaptureBlocked.clear(); this.draftCaptureIncomplete = false;
     const scope = restored?.scope ?? new DraftScope();
     if (!restored) {
@@ -345,7 +443,7 @@ struct Index {
     // A restored frozen baseline remains separate from the current business
     // record. No implicit rebase or overwrite is permitted.
     this.draftConflict = scope.source_kind === 0 ? card?.revision !== scope.source_revision : !!card;
-    this.draftChanged();
+    this.draftChanged(); this.updateMarkdown();
   }
   private restoreDraft(record: DraftRecord): void {
     if (this.busy || this.pending.length > 0 || this.editorOpen) { return; }
@@ -419,6 +517,7 @@ struct Index {
     } finally { this.draftRetiring = false; }
   }
   private discardDraft(): void {
+    if (this.pasteWorking) { return; }
     if (this.busy || this.pending.length > 0 || this.draftWorking || this.editorDraft?.unknown) { return; }
     this.getUIContext().showAlertDialog({ title: '放弃这份草稿？', message: '草稿中的文字将被丢弃，已保存卡片保持原样。',
       primaryButton: { value: '继续编辑', action: () => {} }, secondaryButton: { value: '放弃草稿', action: () => this.discardDraftConfirmed() } });
@@ -484,6 +583,7 @@ struct Index {
     cmd.operation = util.generateRandomUUID(true); cmd.now_ms = Date.now().toString(); return cmd;
   }
   private async submit(cmd: Command, raw?: DraftValues): Promise<void> {
+    if (this.pasteWorking) { this.message = '正在读取粘贴内容，请稍候。'; return; }
     if (this.busy || this.pending.length > 0 || this.draftWorking || this.draftRetirementUnknown) { return; }
     if (this.taskEditId.length > 0 && cmd.action !== 'task_rename') { this.message = '请先保存或取消待办重命名'; return; }
     const frozen = raw ?? (this.editorOpen ? this.editorDraft?.current : undefined);
@@ -545,6 +645,7 @@ struct Index {
     finally { this.busy = false; }
   }
   private async save(): Promise<void> {
+    if (this.pasteWorking) { this.message = '正在读取粘贴内容，请稍候。'; return; }
     if (this.draftWorking || this.draftConflict) { return; }
     if (this.taskEditId.length > 0) { this.message = '请先保存或取消待办重命名'; return; }
     if (this.title.trim().length === 0) { this.message = '请输入卡片标题'; return; }
@@ -581,7 +682,7 @@ struct Index {
     this.submit(cmd);
   }
   private canEditTasks(): boolean {
-    return this.ready && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.editorDraft?.unknown && this.pending.length === 0 &&
+    return this.ready && !this.pasteWorking && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.editorDraft?.unknown && this.pending.length === 0 &&
       !!this.current() && !this.current()?.deleted && !this.dirty && this.taskEditId.length === 0;
   }
   private renameTask(task: TaskView): void {
@@ -795,6 +896,7 @@ struct Index {
     this.restoreWorkspace();
   }
   private closeEditor(): void {
+    if (this.pasteWorking) { this.message = '正在读取粘贴内容，请稍候。'; return; }
     if (this.busy || this.pending.length > 0 || this.draftWorking || this.draftRetirementUnknown) { this.message = '操作尚未确认，当前输入已保留。'; return; }
     if (this.taskEditId.length > 0) { this.message = '请先保存或取消待办重命名'; return; }
     this.keepDraftAndClose();
@@ -1563,23 +1665,23 @@ struct Index {
     Scroll() {
       Column({ space: 7 }) {
         if (!this.description.trim()) { Text(this.t('写一点内容，再看看它的样子。')).fontSize(13).fontColor(this.muted()) }
-        ForEach(markdownLines(this.description), (line: MarkdownLine) => {
-          Text(line.text || ' ').fontFamily(line.kind === 'code' ? 'monospace' : this.fontFamily || 'HarmonyOS Sans')
-            .fontSize(line.kind === 'heading' ? Math.max(14, 24 - line.level * 2) : 13)
-            .fontWeight(line.kind === 'heading' ? FontWeight.Medium : FontWeight.Normal).lineHeight(23)
-            .fontColor(line.kind === 'quote' ? this.muted() : this.ink()).width('100%')
-            .padding(line.kind === 'code' ? 8 : 0).backgroundColor(line.kind === 'code' ? alpha(this.accent(), .07) : Color.Transparent)
-        })
+        if (this.markdownLoading) { Text('正在生成预览…').fontSize(12).fontColor(this.muted()) }
+        if (this.markdownError) {
+          Text('预览暂不可用 · ' + this.markdownError).fontSize(12).fontColor(this.muted())
+          Button('重新生成预览', { type: ButtonType.Normal }).fontSize(12).backgroundColor(Color.Transparent).fontColor(this.accent()).onClick(() => this.markdown.retry())
+        }
+        MarkdownPreview({ document: this.markdownDoc, ink: this.ink(), muted: this.muted(), accent: this.accent(),
+          line: this.line(), family: this.fontFamily || 'HarmonyOS Sans', locale: this.locale,
+          openLink: (href: string): void => { this.openMarkdownLink(href); } })
       }.alignItems(HorizontalAlign.Start).width('100%').padding(8)
-    }.height(200).width('100%').scrollBar(BarState.Off).align(Alignment.TopStart)
-    Text(this.t('预览支持标题、列表、引用与代码块；附件和复杂排版仍在适配。')).fontSize(10).fontColor(this.muted())
+    }.height(250).width('100%').scrollBar(BarState.Off).align(Alignment.TopStart).id('markdown-preview')
   }
   @Builder
   BodyInput() {
     TextArea({ text: this.description, placeholder: this.t('写下思路，或粘贴一段内容…'), controller: this.descriptionController })
       .fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).placeholderFont({ size: 13 }).fontColor(this.ink()).placeholderColor(this.muted())
       .backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() }).borderRadius(this.round(12)).height(180).maxLength(20000)
-      .enabled(!this.draftRetiring && !this.draftRetirementUnknown).id('draft-description')
+      .enabled(!this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-description')
       .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('description', s, preview))
       .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('description', start, end))
       .onFocus(() => this.focusDraftField('description')).onBlur(() => this.blurDraftField('description'))
@@ -1631,18 +1733,24 @@ struct Index {
           TextInput({ text: this.title, placeholder: this.t('给它起个名字'), controller: this.titleController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(23).placeholderFont({ size: 23 }).fontWeight(FontWeight.Medium)
             .fontColor(this.ink()).placeholderColor(this.muted()).backgroundColor(Color.Transparent).padding(16).maxLength(60).height(64)
             .border({ width: 1, color: this.accent() }).borderRadius(this.round(12))
-            .enabled(!this.draftRetiring && !this.draftRetirementUnknown).id('draft-title')
+            .enabled(!this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-title')
             .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('title', s, preview))
             .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('title', start, end))
             .onFocus(() => this.focusDraftField('title')).onBlur(() => this.blurDraftField('title'))
           Text(`${this.title.length} / 60`).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted()).width('100%').textAlign(TextAlign.End)
           Row({ space: 8 }) {
-            Button({ type: ButtonType.Normal }) { Row({ space: 6 }) { this.Glyph(() => 0xe192,  16, () => this.muted()); Text(this.t('粘贴内容')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontColor(this.muted()) } }
-              .height(40).padding({ left: 16, right: 16 }).borderRadius(this.round(12)).backgroundColor('#217662BA').enabled(false)
+            PasteButton({ icon: PasteIconStyle.LINES, text: PasteDescription.PASTE, buttonType: ButtonType.Normal })
+              .height(40).fontSize(13).fontColor('#302D43').iconColor('#302D43').backgroundColor('#E9E4F8')
+              .padding({ left: 16, right: 16 }).borderRadius(12).enabled(this.canPaste()).id('editor-paste')
+              .onClick((_: ClickEvent, result: PasteButtonOnClickResult) => {
+                if (result === PasteButtonOnClickResult.SUCCESS) { this.pasteContent(); }
+                else { this.message = '剪贴板读取未获授权，请再次点击粘贴按钮。'; }
+              })
             Button({ type: ButtonType.Normal }) { Row({ space: 6 }) { this.Glyph(() => 0xe0b1,  16, () => this.muted()); Text(this.t('导入文件')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontColor(this.muted()) } }
               .height(40).padding({ left: 16, right: 16 }).borderRadius(this.round(12)).backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() }).enabled(false)
           }.justifyContent(FlexAlign.Center).width('100%')
-          Text(this.t('富文本粘贴与附件导入正在适配；纯文字可使用输入框的粘贴菜单。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).lineHeight(18).fontColor(this.muted()).width('100%')
+          Text(this.pasteWorking ? '正在读取粘贴内容…' : '粘贴至' + this.pasteTargetName() + ' · 文字与表格可粘贴，附件仍在适配。')
+            .fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).lineHeight(18).fontColor(this.muted()).width('100%')
           Column({ space: 10 }) {
             Row({ space: 8 }) {
               this.Glyph(() => 0xf0023,  18, () => this.accent()); Text(this.t('正文 · Markdown')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(14).fontWeight(FontWeight.Medium).fontColor(this.ink()); Blank()
@@ -1664,7 +1772,7 @@ struct Index {
               .font({ size: 12 }).fontColor(this.ink()).backgroundColor('#147662BA').borderRadius(this.round(10))
               .enabled(!this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
               .onSelect((_: number, value: string) => {
-                if (this.draftWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
+                if (this.pasteWorking || this.draftWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
                 if (!this.current()) {
                   this.category = value; this.dirty = true; this.editorValues.category = value;
                   this.editorValues.stage = value === '进行中' ? '计划中' : value === '实验' ? '待验证' : '待整理';
@@ -1679,7 +1787,7 @@ struct Index {
               Select(this.stages()).value(this.current()?.stage ?? '待整理').font({ size: 11 }).fontColor(this.muted()).backgroundColor(Color.Transparent)
                 .enabled(!this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
                 .onSelect((_: number, value: string) => {
-                  if (this.draftWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
+                  if (this.pasteWorking || this.draftWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
                   if (this.dirty) { this.message = '请先保存正文编辑'; return; }
                   const cmd = this.command('stage'); cmd.stage = value; this.submit(cmd);
                 })
@@ -1687,11 +1795,11 @@ struct Index {
           }.width('100%')
           if (this.category === '实验') {
             TextArea({ text: this.hypothesis, placeholder: this.t('假设'), controller: this.hypothesisController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(5000).height(96)
-              .enabled(!this.draftRetiring && !this.draftRetirementUnknown).id('draft-hypothesis')
+              .enabled(!this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-hypothesis')
               .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('hypothesis', s, preview))
               .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('hypothesis', start, end)).onFocus(() => this.focusDraftField('hypothesis')).onBlur(() => this.blurDraftField('hypothesis'))
             TextArea({ text: this.conclusion, placeholder: this.t('结论'), controller: this.conclusionController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(10000).height(116)
-              .enabled(!this.draftRetiring && !this.draftRetirementUnknown).id('draft-conclusion')
+              .enabled(!this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-conclusion')
               .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('conclusion', s, preview))
               .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('conclusion', start, end)).onFocus(() => this.focusDraftField('conclusion')).onBlur(() => this.blurDraftField('conclusion'))
           }
@@ -1735,7 +1843,7 @@ struct Index {
             if (!this.current()?.deleted) {
               Row({ space: 8 }) {
                 TextInput({ text: this.taskText, placeholder: this.t('添加一个小步骤…'), controller: this.taskController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(500)
-                  .enabled(!this.draftRetiring && !this.draftRetirementUnknown).id('draft-todos')
+                  .enabled(!this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-todos')
                   .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('todos', s, preview))
                   .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('todos', start, end)).onFocus(() => this.focusDraftField('todos')).onBlur(() => this.blurDraftField('todos')).layoutWeight(1)
                 Button(this.t('+'), { type: ButtonType.Normal }).fontSize(21).fontColor(this.accent()).width(36).height(36).padding(0).backgroundColor('#147662BA').borderRadius(10)

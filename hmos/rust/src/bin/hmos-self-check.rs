@@ -106,6 +106,102 @@ fn main() {
         run(&mut reopened, json!({"action":"list"}))["cards"],
         completed["cards"]
     );
+    let original_drafts = run(&mut reopened, json!({"action":"draft_list"}))["drafts"].clone();
+    let markdown = run(
+        &mut reopened,
+        json!({"action":"markdown","text":"# Native Markdown😀\n\n3. first\n\n   continuation\n\n   - [x] child\n\n> **bold** *italic* ~~strike~~ `inline`\n\n```rust\nlet x = 1;\n\nlet y = 2;\n```\n\n| Left | Right |\n| :--- | ---: |\n| [safe](https://example.com) | ![asset](attachment:image.png) |\n\n<script>inert()</script>\n\n[bad](javascript:alert) ![local](file:///tmp/image.png)\n\n---"}),
+    );
+    assert_eq!(markdown["effect"], "not_committed");
+    assert_eq!(markdown["cards"], json!([]));
+    let blocks = markdown["markdown"]["blocks"].as_array().unwrap();
+    assert_eq!(blocks[0]["kind"], "heading");
+    assert_eq!(blocks[0]["level"], 1);
+    assert_eq!(blocks[0]["runs"][0]["text"], "Native Markdown😀");
+    assert_eq!(blocks[1]["marker"], "3.");
+    assert_eq!(blocks[2]["marker"], "");
+    assert_eq!(blocks[2]["indent"], 1);
+    assert_eq!(blocks[3]["marker"], "☑");
+    assert_eq!(blocks[3]["indent"], 2);
+    assert_eq!(blocks[4]["quote"], 1);
+    for flag in ["bold", "italic", "strike", "code"] {
+        assert!(
+            blocks[4]["runs"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|r| r[flag] == true)
+        );
+    }
+    assert_eq!(blocks[5]["kind"], "code");
+    assert_eq!(blocks[5]["language"], "rust");
+    assert_eq!(blocks[5]["runs"][0]["text"], "let x = 1;\n\nlet y = 2;\n");
+    assert_eq!(blocks[6]["kind"], "table");
+    assert_eq!(blocks[6]["alignments"], json!(["left", "right"]));
+    assert_eq!(blocks[6]["rows"][0]["header"], true);
+    assert_eq!(
+        blocks[6]["rows"][1]["cells"][0]["runs"][0]["href"],
+        "https://example.com"
+    );
+    assert_eq!(blocks[6]["rows"][1]["cells"][1]["runs"][0]["image"], true);
+    assert_eq!(blocks[7]["runs"][0]["text"], "<script>inert()</script>\n");
+    assert!(
+        blocks[8]["runs"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|r| r["href"] == "")
+    );
+    assert_eq!(blocks[9]["kind"], "rule");
+    let plain = "  A😀\tB\r\nC\tD  ";
+    for section in ["title", "hypothesis", "conclusion", "todos"] {
+        let pasted = run(
+            &mut reopened,
+            json!({"action":"paste_plain","section":section,"text":plain}),
+        );
+        assert_eq!(pasted["paste_text"], plain);
+        assert_eq!(pasted["effect"], "not_committed");
+    }
+    let pasted = run(
+        &mut reopened,
+        json!({"action":"paste_plain","section":"description","text":plain}),
+    );
+    assert_eq!(
+        pasted["paste_text"],
+        "| A😀 | B |\n| --- | --- |\n| C | D |"
+    );
+    for (request, error) in [
+        (
+            json!({"action":"markdown","text":"😀".repeat(10_001)}),
+            "MarkdownLimit:UTF16",
+        ),
+        (
+            json!({"action":"markdown","text":format!("{}x", "> ".repeat(33))}),
+            "MarkdownLimit:Depth",
+        ),
+        (
+            json!({"action":"paste_plain","section":"description","text":"a\tb\n".repeat(501)}),
+            "MarkdownLimit:PasteRows",
+        ),
+        (
+            json!({"action":"paste_plain","section":"description","text":format!("{}\na\tb", vec!["x"; 81].join("\t"))}),
+            "MarkdownLimit:PasteColumns",
+        ),
+    ] {
+        assert_eq!(
+            reopened
+                .execute(serde_json::from_value(request).unwrap())
+                .unwrap_err(),
+            error
+        );
+    }
+    assert_eq!(
+        run(&mut reopened, json!({"action":"list"}))["cards"],
+        completed["cards"]
+    );
+    assert_eq!(
+        run(&mut reopened, json!({"action":"draft_list"}))["drafts"],
+        original_drafts
+    );
     drop(reopened);
     let mut reopened = Engine::open(&path).unwrap();
     let draft = run(
@@ -146,6 +242,6 @@ fn main() {
     );
     println!(
         "{}",
-        json!({"result":"PASS","platform":std::env::consts::OS,"arch":std::env::consts::ARCH,"checks":["create","independent-duplicate-task-id","stale-cas-rejected","historical-receipt-vs-current","reopen","retry-after-reopen","rename-by-id","reorder-preserves-completion","complete-all-and-stage","reorder-replay-after-reopen","query-complete-properties","query-stage","query-completed-tasks-empty","draft-full-raw-values","draft-never-creates-business-card","draft-reopen-read-only","draft-historical-generation","draft-discard-and-exact-retry","draft-active-list-empty","draft-inactive-current-vs-historical"],"profile":"development-unsealed"})
+        json!({"result":"PASS","platform":std::env::consts::OS,"arch":std::env::consts::ARCH,"checks":["create","independent-duplicate-task-id","stale-cas-rejected","historical-receipt-vs-current","reopen","retry-after-reopen","rename-by-id","reorder-preserves-completion","complete-all-and-stage","reorder-replay-after-reopen","query-complete-properties","query-stage","query-completed-tasks-empty","draft-full-raw-values","draft-never-creates-business-card","draft-reopen-read-only","draft-historical-generation","draft-discard-and-exact-retry","draft-active-list-empty","draft-inactive-current-vs-historical","markdown-headings-and-styles","markdown-nested-list-and-continuation","markdown-quote-code-table-order","markdown-html-inert-and-unsafe-links","markdown-utf16-depth-budget-rejection","paste-plain-raw-field-preservation","paste-tsv-complete-table-and-budget-rejection","markdown-paste-business-and-drafts-unchanged"],"profile":"development-unsealed"})
     );
 }

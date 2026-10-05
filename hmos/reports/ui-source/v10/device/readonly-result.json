@@ -1,0 +1,10 @@
+{
+  "result": "PASS",
+  "device": "127.0.0.1:5557",
+  "title": "HMOS-markdown-20261005-A",
+  "cardId": "workspace-card:060b5cd8-de23-45e6-95a1-4571ddbf41a6",
+  "checks": [
+    "view and preview of confirmed business body consumes no draft",
+    "read-only preview remains without a journal after process restart"
+  ]
+}

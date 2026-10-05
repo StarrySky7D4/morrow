@@ -1,6 +1,6 @@
 # Morrow HMOS
 
-Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前交付 **0.1.0-hmos-dev.9 开发预览**，尚未与 Flutter 功能等价，不能替代正式资料库。
+Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前交付 **0.1.0-hmos-dev.10 开发预览**，尚未与 Flutter 功能等价，不能替代正式资料库。
 
 2026-09-27 跟进：按 Flutter `versioned_task_panel.dart` 接入待办重命名、上下移动、批量完成与移除确认。共享 Rust TaskId 模块与当日参照一致；通过主机测试、双架构构建和 x64 模拟器验证。见 [dev.4 验证记录](reports/ui-source/v4/validation.md)。
 
@@ -11,6 +11,8 @@ Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前交付 **0
 2026-09-27 dev.6：修复短内容被滚动容器居中造成的大块留白，按 Flutter 固定 14 vp 列间距排列卡片；增加侧栏收起/展开、五页滚动位置保留和设置返回恢复，并支持遵循系统旋转锁定的自适应方向。880 vp 竖屏与 1488 vp 横屏的实际设备证据见 [dev.6 布局验证](reports/ui-source/v6/validation.md)。
 
 ## UI 源码对齐
+
+2026-10-05 dev.10：正文预览改用 Rust CommonMark 解析投影，原生显示行内强调、删除线、嵌套列表、引用、完整代码块和横向表格，链接由用户点击打开，远程图片点击后读取。原始 HTML 只显示为文字。粘贴入口接入鸿蒙授权 PasteButton，按字段和 UTF-16 选区插入完整文字，正文 TSV 复用原 Rust capture 转为 Markdown 表格；超限与异步目标变化拒绝插入，原文字保留。完整富文本、Office 和附件导入仍待接入。见 [dev.10 验证记录](reports/ui-source/v10/validation.md)。
 
 2026-10-05 dev.9：按原 `editor_draft` schema/model 接通文字草稿私有事务日志，保留完整来源、世代 CAS 和原操作历史回执。新卡草稿不创建业务卡；关闭时确认最新文字再保留，提供草稿列表、恢复和确认弃稿入口。仅查看未编辑的已有卡片不占用草稿槽。正文宽度达到 Flutter 的 590 vp 条件时编辑/预览并排，实验字段改为多行。真实验证和限制见 [dev.9 验证记录](reports/ui-source/v9/validation.md)。原始候选串可保留为文字，但普通控件不能重建原 IME 会话。
 

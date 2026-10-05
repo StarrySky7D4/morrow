@@ -1,0 +1,80 @@
+> hvigor [32mFinished :entry:default@PreBuild... after 103 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 8 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 25 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 20 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 4 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 11 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GeneratePkgContextInfo...  [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 96 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessResource...  [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 9 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 271 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 3 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 91 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessLibs...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@DoNativeStrip...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CacheNativeLibs...  [39m
+> hvigor ERROR: Failed :entry:default@CompileArkTS...
+> hvigor WARN:
+1 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:1152:83
+ 'Function.bind' is not supported (arkts-no-func-bind)
+
+2 WARN: ArkTS:WARN: For details about ArkTS syntax errors, see FAQs
+3 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:87:54
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+4 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:88:59
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+5 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:89:58
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+6 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:90:58
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+7 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:91:53
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+8 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:303:36
+ To use this API, you need to apply for the permissions: ohos.permission.READ_PASTEBOARD [since 12]
+
+> hvigor ERROR: ArkTS Compiler Error
+1 ERROR: 10505001 ArkTS Compiler Error
+Error Message: Property 'size' in type 'MarkdownPreview' is not assignable to the same property in base type 'CustomComponent'.
+  Type '(block: MarkdownBlock) => number' is not assignable to type '(value: SizeOptions) => CommonAttribute'.
+    Types of parameters 'block' and 'value' are incompatible.
+      Type 'SizeOptions' is missing the following properties from type 'MarkdownBlock': kind, runs, level, indent, and 5 more. At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/MarkdownPreview.ets:21:11
+
+
+COMPILE RESULT:FAIL {ERROR:2 WARN:8}
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+
+[31m
+FAILURE: Build completed with 1 failure.[31m[39m
+[31m
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task 'default@CompileArkTS'.
+  > Compilation error. See log for more details
+
+[31m* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+[31m[39m
+[31m================================================================================[31m[39m
+> hvigor ERROR: BUILD FAILED in 8 s 307 ms
+
+25 tasks in total: 20 executed, 5 up-to-date

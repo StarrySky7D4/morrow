@@ -1,0 +1,15 @@
+{
+  "result": "PASS",
+  "device": "127.0.0.1:5557",
+  "title": "HMOS-markdown-20261005-A",
+  "cardId": "workspace-card:060b5cd8-de23-45e6-95a1-4571ddbf41a6",
+  "checks": [
+    "actual native headings, styles, list, quote, code and table projection",
+    "HTML stays literal and local images remain inert",
+    "system-authorized clipboard TSV converts completely and replaces selected body",
+    "last-focused title uses raw Unicode clipboard text",
+    "oversized title paste is refused without altering title",
+    "complete converted body survives acknowledged journal and process restart",
+    "explicit save creates one business identity and retires its raw journal"
+  ]
+}

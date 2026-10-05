@@ -1,0 +1,30 @@
+✔ full Unicode, leading spaces and trailing LF survive an unset selection (0.6851ms)
+✔ reversed UTF16 selection replaces only the selected emoji (0.1185ms)
+✔ a caret at a valid UTF16 boundary inserts without replacing neighbors (0.093ms)
+✔ the complete resulting field is limited, never truncated (0.3504ms)
+✔ live composing text cannot be replaced by a clipboard result (0.1247ms)
+✔ invalid or partial selection sentinels are rejected (0.1786ms)
+✔ a surrogate cannot be split while pasting (0.1444ms)
+✔ a frozen paste target detects raw text, selection and composing drift (0.1358ms)
+✔ enabled preview debounces and sends only latest input (2.3174ms)
+✔ pending input removes old preview; serial work coalesces later input (1.2036ms)
+✔ switching editor with identical text rejects stale success and failure (1.506ms)
+✔ A to B to A cannot revive an earlier receipt (0.7904ms)
+✔ stale failure cannot show an error or block the latest request (0.8939ms)
+✔ failure has a nonempty error, no automatic replay, and explicit retry (0.8506ms)
+✔ corrected input schedules only the corrected text after a failure (0.6824ms)
+✔ disable cancels debounce and ignores issued work while preserving original input (0.5991ms)
+✔ closing and reopening the same editor rejects the previous request (0.7666ms)
+✔ dispose cancels debounce and late work cannot publish or schedule (1.5613ms)
+✔ 20k UTF-16 input is sent whole without trimming or clipping surrogate pairs (0.7189ms)
+✔ malformed JSON blocks, runs and tables are rejected rather than displayed (1.1955ms)
+✔ complete DTO snapshots are owned independently of transport and getter mutations (1.2871ms)
+✔ valid empty documents render without invented content (0.5497ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 316.4857

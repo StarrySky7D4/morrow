@@ -1,0 +1,34 @@
+✔ same identity receives new content without invalidating unrelated cards (1.9052ms)
+✔ reordered results refresh revised retained identities and discard removed entries (0.2158ms)
+✔ moved identities invalidate positional height caches even without a content revision (0.2063ms)
+✔ page identity separates different card presentations and empty queries clear visible data (0.2079ms)
+✔ identical queries do not invalidate nodes and detached views receive no events (0.1669ms)
+✔ new cards durably save the initial empty snapshot; unchanged existing cards do not (3.5848ms)
+✔ debounce coalesces input and owns scope and full UTF-16 editing values (1.0538ms)
+✔ an older receipt confirms history but never replaces newer input; automatic S2 is debounced (1.2139ms)
+✔ flush waits for the issued save and then confirms all latest input before resolving (1.2405ms)
+✔ unknown outcomes preserve exact serialized bytes and explicit retry stops at original S1 (1.5529ms)
+✔ known rejection clears the proposal, surfaces flush failure and does not replay failed S1 (1.1794ms)
+✔ a different S2 already observed during rejected S1 may autosave without replaying S1 (0.9833ms)
+✔ a known rejection of retry cannot erase an already uncertain operation (0.9259ms)
+✔ restoring a confirmed draft is read-only and snapshots are detached (0.9594ms)
+✔ inactive or advanced restored journals block flush and autosave (2.4641ms)
+✔ historical or mismatched receipts cannot certify latest input (3.5602ms)
+✔ disposal stops publication and new work while leaving an issued operation uncancelled (0.9449ms)
+✔ selection-only and composing-only changes are real generations; invalid UTF-16 offsets fail before send (1.1417ms)
+✔ decimal generation increments preserve u64 precision and reject overflow/noncanonical values (0.6175ms)
+✔ pre-send generation exhaustion is an explicit error and never an unknown transport outcome (0.8618ms)
+✔ disposing before debounce prevents new writes (0.6039ms)
+✔ obsolete reply is discarded and only latest pending page reaches the owner (59.3457ms)
+✔ typing is debounced while tabs and confirmed content refresh issue immediately (171.411ms)
+✔ failures clear confirmed membership and explicit retry is a new read (95.5327ms)
+✔ obsolete failure, invalidation and disposal cannot publish or replay pending work (109.8817ms)
+✔ selection owns conditions and an unchanged view does not duplicate requests (62.5645ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 788.7921

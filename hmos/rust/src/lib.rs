@@ -21,6 +21,7 @@ use std::{
 // not a production plugin execution, permission, or durable capture.
 mod draft_bridge;
 pub mod editor_draft;
+pub mod markdown;
 pub mod query_plan_v2;
 
 const LIMIT: usize = 512 * 1024;
@@ -85,6 +86,8 @@ pub struct Reply {
     cards: Vec<CardView>,
     ids: Vec<String>,
     drafts: Vec<draft_bridge::View>,
+    markdown: markdown::MarkdownDoc,
+    paste_text: String,
     receipt_revision: String,
     profile: &'static str,
     effect: &'static str,
@@ -97,6 +100,8 @@ impl Reply {
             cards: vec![],
             ids: vec![],
             drafts: vec![],
+            markdown: markdown::MarkdownDoc::default(),
+            paste_text: String::new(),
             receipt_revision: String::new(),
             profile: "development-unsealed",
             effect: "unknown",
@@ -277,6 +282,30 @@ impl Engine {
     }
     pub fn execute(&mut self, r: Request) -> Result<Reply> {
         self.effect = "not_committed";
+        if r.action == "markdown" || r.action == "paste_plain" {
+            // Inert, bounded projection only. No Store lookup, host grant,
+            // transaction, URL launch or filesystem access is involved.
+            let (markdown, paste_text) = if r.action == "markdown" {
+                (markdown::project(&r.text)?, String::new())
+            } else {
+                (
+                    markdown::MarkdownDoc::default(),
+                    markdown::paste_plain(&r.text, &r.section)?,
+                )
+            };
+            return Ok(Reply {
+                ok: true,
+                error: String::new(),
+                cards: vec![],
+                ids: vec![],
+                drafts: vec![],
+                markdown,
+                paste_text,
+                receipt_revision: String::new(),
+                profile: "development-unsealed",
+                effect: self.effect,
+            });
+        }
         if r.action == "query" {
             // Trusted-local development read only. This neither grants guest
             // access nor records a production query/task/audit observation.
@@ -286,6 +315,8 @@ impl Engine {
                 cards: vec![],
                 ids: self.query(&r)?,
                 drafts: vec![],
+                markdown: markdown::MarkdownDoc::default(),
+                paste_text: String::new(),
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
                 effect: self.effect,
@@ -342,6 +373,8 @@ impl Engine {
                     .into_iter()
                     .map(draft_bridge::View::from_record)
                     .collect::<Result<Vec<_>>>()?,
+                markdown: markdown::MarkdownDoc::default(),
+                paste_text: String::new(),
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
                 effect: self.effect,
@@ -503,6 +536,8 @@ impl Engine {
             cards: self.cards()?,
             ids: vec![],
             drafts: vec![],
+            markdown: markdown::MarkdownDoc::default(),
+            paste_text: String::new(),
             receipt_revision: receipt,
             profile: "development-unsealed",
             effect: self.effect,
@@ -580,6 +615,8 @@ pub fn dispatch(input: &str) -> String {
                 cards: vec![],
                 ids: vec![],
                 drafts: vec![],
+                markdown: markdown::MarkdownDoc::default(),
+                paste_text: String::new(),
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
                 effect: "not_committed",
@@ -753,6 +790,68 @@ mod tests {
         assert_eq!(e.effect, "unknown");
         assert!(e.commit_result(Err(morrow_core::Error::Storage)).is_err());
         assert_eq!(e.effect, "unknown");
+    }
+    #[test]
+    fn markdown_and_plain_paste_are_read_only_and_have_complete_json_defaults() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("hmos-development.sqlite");
+        let mut e = Engine::open(&path).unwrap();
+        let original = create(&mut e).cards.remove(0);
+        assert_eq!(e.effect, "committed");
+        let projected = e.execute(req(serde_json::json!({"action":"markdown","text":"## Preview😀\n\n**bold** [safe](https://example.com)"}))).unwrap();
+        assert_eq!(projected.effect, "not_committed");
+        assert!(
+            projected.cards.is_empty() && projected.ids.is_empty() && projected.drafts.is_empty()
+        );
+        assert!(projected.paste_text.is_empty() && projected.receipt_revision.is_empty());
+        let wire = serde_json::to_value(projected).unwrap();
+        let block = &wire["markdown"]["blocks"][0];
+        for key in [
+            "kind",
+            "runs",
+            "level",
+            "indent",
+            "quote",
+            "marker",
+            "language",
+            "rows",
+            "alignments",
+        ] {
+            assert!(block.get(key).is_some(), "{key}");
+        }
+        for key in ["text", "bold", "italic", "strike", "code", "href", "image"] {
+            assert!(block["runs"][0].get(key).is_some(), "{key}");
+        }
+        assert_eq!(block["level"], 2);
+        assert_eq!(block["runs"][0]["text"], "Preview😀");
+        let pasted = e.execute(req(serde_json::json!({"action":"paste_plain","section":"description","text":"A\tB\nC\tD"}))).unwrap();
+        assert_eq!(pasted.effect, "not_committed");
+        assert!(pasted.markdown.blocks.is_empty());
+        assert_eq!(pasted.paste_text, "| A | B |\n| --- | --- |\n| C | D |");
+        for invalid in [
+            serde_json::json!({"action":"markdown","text":"😀".repeat(10_001)}),
+            serde_json::json!({"action":"paste_plain","section":"description","text":"A\tB\n".repeat(501)}),
+            serde_json::json!({"action":"paste_plain","section":"unknown","text":"x"}),
+        ] {
+            assert!(e.execute(req(invalid)).is_err());
+            assert_eq!(e.effect, "not_committed");
+        }
+        assert_eq!(e.cards().unwrap()[0].source, original.source);
+        let business = serde_json::to_value(
+            e.execute(req(serde_json::json!({"action":"list"})))
+                .unwrap(),
+        )
+        .unwrap();
+        assert_eq!(business["markdown"], serde_json::json!({"blocks":[]}));
+        assert_eq!(business["paste_text"], "");
+        assert_eq!(
+            serde_json::to_value(Reply::failure("test".into())).unwrap()["markdown"],
+            serde_json::json!({"blocks":[]})
+        );
+        e.host.store_local().integrity_check().unwrap();
+        drop(e);
+        let reopened = Engine::open(&path).unwrap();
+        assert_eq!(reopened.cards().unwrap()[0].source, original.source);
     }
     #[test]
     fn delete_undo_window_and_failed_restore_preserve_the_original() {

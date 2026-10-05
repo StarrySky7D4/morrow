@@ -1,0 +1,43 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.60s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-d797e3ab015ab5a7.exe)
+
+running 36 tests
+test editor_draft::tests::foreign_operation_cannot_save_or_discard_another_journal ... ok
+test editor_draft::tests::invalid_raw_shape_and_unsupported_capture_assets_are_rejected_without_a_journal ... ok
+test editor_draft::tests::exact_saved_history_stays_committed_when_current_journal_readback_is_corrupt ... ok
+test editor_draft::tests::new_card_baseline_remains_empty_after_foreign_create_and_existing_target_rejects_first_write ... ok
+test editor_draft::tests::generation_cas_and_baseline_are_fixed_while_original_business_bytes_stay_unchanged ... ok
+test editor_draft::tests::exact_history_never_rewinds_newer_snapshot_and_modified_retry_is_rejected ... ok
+test editor_draft::tests::exact_discard_history_stays_committed_when_current_journal_readback_is_corrupt ... ok
+test editor_draft::tests::discard_is_exact_idempotent_inactive_and_old_save_history_remains_read_only ... ok
+test markdown::tests::href_policy_rejects_userinfo_controls_local_and_active_urls ... ok
+test markdown::tests::headings_inline_styles_soft_breaks_and_code_are_preserved ... ok
+test editor_draft::tests::development_workbench_list_and_snapshot_query_exclude_valid_private_journals ... ok
+test markdown::tests::nested_loose_lists_tasks_quotes_and_continuations_keep_order ... ok
+test markdown::tests::plain_paste_preserves_raw_text_and_converts_complete_tsv ... ok
+test markdown::tests::plain_paste_rejects_every_legacy_truncation_or_output_overflow ... ok
+test markdown::tests::reference_links_images_and_html_never_execute_or_read_files ... ok
+test markdown::tests::repeated_reference_destinations_have_an_output_budget ... ok
+test markdown::tests::table_rows_alignment_and_inline_cells_are_structured ... ok
+test markdown::tests::utf16_depth_and_node_budgets_fail_instead_of_truncating ... ok
+test editor_draft::tests::noncanonical_or_corrupt_private_record_is_never_skipped_as_absence ... ok
+test editor_draft::tests::transaction_budget_failure_keeps_unknown_original_and_previous_journal_until_exact_retry ... ok
+test query_tests::query_searches_complete_properties_without_mutation_or_card_projection ... ok
+test editor_draft::tests::raw_empty_values_utf16_selection_and_composing_survive_restart_without_business_card ... ok
+test editor_draft::tests::sixteen_active_slots_limit_and_discard_frees_only_active_capacity ... ok
+test query_tests::query_sections_stage_tasks_favorites_and_deleted_follow_original_v2_semantics ... ok
+test query_tests::query_uses_original_asset_metadata_when_ui_projection_has_no_assets ... ok
+test tests::production_path_and_malformed_input_are_rejected ... ok
+test query_tests::query_utf16_sort_and_equal_titles_preserve_reverse_id_protocol_order ... ok
+test tests::delete_undo_window_and_failed_restore_preserve_the_original ... ok
+test tests::markdown_and_plain_paste_are_read_only_and_have_complete_json_defaults ... ok
+test tests::invalid_edit_does_not_write_and_unknown_is_never_cleared ... ok
+test query_tests::query_byte_batches_and_single_card_frame_failure_do_not_fall_back_or_write ... ok
+test tests::task_edits_keep_identity_validate_order_and_replay_after_reopen ... ok
+test tests::persistence_cas_exact_retry_and_duplicate_task_names ... ok
+test query_tests::query_more_than_one_run_filters_and_stably_merges_all_candidates ... ok
+test query_tests::query_empty_invalid_and_capacity_rejection_preserve_development_boundary ... ok
+test editor_draft::tests::cumulative_identity_limit_survives_discard_and_restart ... ok
+
+test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.58s
