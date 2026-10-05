@@ -1,0 +1,13 @@
+✔ obsolete reply is discarded and only latest pending page reaches the owner (65.2799ms)
+✔ typing is debounced while tabs and confirmed content refresh issue immediately (169.2925ms)
+✔ failures clear confirmed membership and explicit retry is a new read (93.5034ms)
+✔ obsolete failure, invalidation and disposal cannot publish or replay pending work (109.6325ms)
+✔ selection owns conditions and an unchanged view does not duplicate requests (63.3203ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 506.6089

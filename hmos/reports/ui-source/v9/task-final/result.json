@@ -1,0 +1,12 @@
+{
+  "result": "PASS",
+  "device": "127.0.0.1:5557",
+  "title": "HMOS-draft-20261005-C",
+  "checks": [
+    "completed raw todo is submitted once and only its consumed input is cleared",
+    "ordinary business mutation preserves pending todo and surfaces source conflict",
+    "pending todo survives process restart after source change",
+    "explicit raw discard preserves previously committed task"
+  ],
+  "note": "Completed plain input through actual ArkUI; real IME candidate sessions remain untested."
+}

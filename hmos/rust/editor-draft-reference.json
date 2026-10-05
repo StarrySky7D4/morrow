@@ -1,0 +1,64 @@
+{
+  "source_worktree": "build/io-safety-refactor",
+  "source_head": "925fb8ca6563dcb7de38db8fbdf6b005f9ad5420",
+  "checked_at": "2026-10-05",
+  "profile": "development-unsealed",
+  "phase": "raw-text-durable-journal",
+  "source_files": [
+    {
+      "path": "workbench_host/schemas/editor_draft.proto",
+      "sha256": "8F80DB114BCC480D9553AE60916170B1982C9CDE0D0452753A35B491279FDDDC",
+      "destination": "hmos/rust/editor-draft-model/schemas/editor_draft.proto",
+      "reuse": "byte-for-byte"
+    },
+    {
+      "path": "workbench_host/src/editor_draft/model.rs",
+      "sha256": "D11632512506F357A73112568A6E8856AA74E87500B91709C87083A50DAC6C8E",
+      "destination": "hmos/rust/editor-draft-model/src/lib.rs",
+      "reuse": "byte-for-byte; wrapper preserves crate::Result"
+    },
+    {
+      "path": "workbench_host/src/editor_draft.rs",
+      "sha256": "B4ADAFD9EDCA7ECBA9E4DD3A23963F226E3009233914D62C16630A1C7AC0DA28",
+      "destination": "hmos/rust/src/editor_draft.rs",
+      "reuse": "adapted journal transaction and history branches"
+    },
+    {
+      "path": "workbench_host/src/versioned_record.rs",
+      "sha256": "6A0131915BAC966FF745DA5580A91256A918D0C10B246B9E7C4120E972385E8A",
+      "destination": "hmos/rust/src/editor_draft.rs::validate_source",
+      "reuse": "format 2 decoding and attachment metadata binding"
+    }
+  ],
+  "preserved_rules": [
+    "Original editor_draft protobuf schema, raw TextValue values and UTF-16 offset validation",
+    "Original journal identity hash, reserved card type, canonical protobuf validation and generation CAS",
+    "Immutable source_kind/source_revision/predecessor baseline and exact source CardRecord bytes",
+    "Original historical command decoding and exact retry payload equality before any write",
+    "Historical generation is returned separately from current generation and active state",
+    "New-card draft snapshots do not create business cards and may contain empty/intermediate title",
+    "Original CreateContent/EditContent grant and HostRuntime transaction entry points",
+    "Exact idempotent discard; discarded identity cannot be resurrected",
+    "Original active slot 16, cumulative identity 256 and active byte 64 MiB limits"
+  ],
+  "adaptation_boundaries": [
+    "Functions receive the caller-owned serialized HostRuntime and monotonic clock rather than WorkbenchState",
+    "Existing HMOS development source uses idea format 2; production org.morrow.idea format 1/2 is not opened or migrated",
+    "Storage::prepare_write is unavailable on the development HostRuntime; protected maintenance, audit sealing, platform keys and library ownership remain unimplemented",
+    "All assets, consumed imports, predecessor operations/evidence, parent links and retirement markers are explicitly rejected by the phase gate",
+    "This does not implement editor_recovery, captured formal S1 commit proof or S1/S2 parent-child handoff",
+    "Transport and workspace UI must preserve frozen operations and avoid implicit retry when a result is unknown",
+    "Journal recognition includes reserved type or identity prefix; callers validate before excluding private records from business cards"
+  ],
+  "test_reference": [
+    "workbench_host/tests/editor_draft.rs",
+    "workbench_host/tests/editor_draft_protocol.rs",
+    "workbench_host/tests/editor_draft_handoff_boundaries.rs",
+    "workbench_host/tests/editor_recovery.rs",
+    "lib/plugins/editor_draft_session.dart",
+    "lib/plugins/editor_draft_workspace.dart",
+    "test/editor_draft_session_test.dart",
+    "test/editor_draft_workspace_test.dart",
+    "test/editor_draft_binding_test.dart"
+  ]
+}

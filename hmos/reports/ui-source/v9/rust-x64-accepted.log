@@ -1,0 +1,13 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `release` profile [optimized] target(s) in 3.59s
+    Blocking waiting for file lock on artifact directory
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `release` profile [optimized] target(s) in 2.04s
+
+Algorithm       Hash                                                                   Path
+---------       ----                                                                   ----
+SHA256          0DF409447482794AAC1364A8D555EAC0653C29D1CE543A98FA7286B90A757BEC       C:\Users\Administrator\Desktop\C…

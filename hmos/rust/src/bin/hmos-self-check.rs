@@ -88,8 +88,64 @@ fn main() {
         json!({"action":"query","section":"概览","filter":"有待办","text":"","sort":"收藏优先"}),
     );
     assert_eq!(pending["ids"], json!([]));
+    let raw = |text: &str| {
+        json!({"text":text,"selection_base":1,"selection_extent":2,
+        "affinity":0,"directional":false,"composing_start":1,"composing_end":2})
+    };
+    let values = json!({"title":raw("A😀B"),"description":raw("Raw native draft"),
+        "hypothesis":raw("Hypothesis"),"conclusion":raw("Conclusion"),"todos":raw("Todo"),
+        "category":"实验","stage":"待验证"});
+    let proposal = json!({"action":"draft_save","draft":{"card_id":"unsubmitted-native",
+        "draft_id":"native-draft","source_kind":1,"source_revision":"0","expected_generation":"0",
+        "operation_id":"native-draft-save","values":values}});
+    let first_draft = run(&mut reopened, proposal.clone());
+    assert_eq!(first_draft["effect"], "committed");
+    assert_eq!(first_draft["drafts"][0]["generation"], "1");
+    assert_eq!(first_draft["drafts"][0]["values"], values);
+    assert_eq!(
+        run(&mut reopened, json!({"action":"list"}))["cards"],
+        completed["cards"]
+    );
+    drop(reopened);
+    let mut reopened = Engine::open(&path).unwrap();
+    let draft = run(
+        &mut reopened,
+        json!({"action":"draft_read","id":"unsubmitted-native","draft_id":"native-draft"}),
+    );
+    assert_eq!(draft["drafts"][0]["values"], values);
+    assert_eq!(draft["effect"], "not_committed");
+    let mut successor = proposal.clone();
+    successor["draft"]["operation_id"] = json!("native-draft-save-2");
+    successor["draft"]["expected_generation"] = json!("1");
+    successor["draft"]["values"]["title"]["text"] = json!("A😀B newer");
+    assert_eq!(
+        run(&mut reopened, successor)["drafts"][0]["generation"],
+        "2"
+    );
+    let historical = run(&mut reopened, proposal.clone());
+    assert_eq!(historical["drafts"][0]["generation"], "1");
+    assert_eq!(historical["drafts"][0]["current_generation"], "2");
+    assert_eq!(historical["drafts"][0]["repeated"], true);
+    let discard = json!({"action":"draft_discard","id":"unsubmitted-native","draft_id":"native-draft",
+        "generation":"2","operation":"native-draft-discard"});
+    assert_eq!(
+        run(&mut reopened, discard.clone())["drafts"][0]["active"],
+        false
+    );
+    assert_eq!(run(&mut reopened, discard)["drafts"][0]["repeated"], true);
+    assert_eq!(
+        run(&mut reopened, json!({"action":"draft_list"}))["drafts"],
+        json!([])
+    );
+    let historical = run(&mut reopened, proposal);
+    assert_eq!(historical["drafts"][0]["current_generation"], "3");
+    assert_eq!(historical["drafts"][0]["current_active"], false);
+    assert_eq!(
+        run(&mut reopened, json!({"action":"list"}))["cards"],
+        completed["cards"]
+    );
     println!(
         "{}",
-        json!({"result":"PASS","platform":std::env::consts::OS,"arch":std::env::consts::ARCH,"checks":["create","independent-duplicate-task-id","stale-cas-rejected","historical-receipt-vs-current","reopen","retry-after-reopen","rename-by-id","reorder-preserves-completion","complete-all-and-stage","reorder-replay-after-reopen","query-complete-properties","query-stage","query-completed-tasks-empty"],"profile":"development-unsealed"})
+        json!({"result":"PASS","platform":std::env::consts::OS,"arch":std::env::consts::ARCH,"checks":["create","independent-duplicate-task-id","stale-cas-rejected","historical-receipt-vs-current","reopen","retry-after-reopen","rename-by-id","reorder-preserves-completion","complete-all-and-stage","reorder-replay-after-reopen","query-complete-properties","query-stage","query-completed-tasks-empty","draft-full-raw-values","draft-never-creates-business-card","draft-reopen-read-only","draft-historical-generation","draft-discard-and-exact-retry","draft-active-list-empty","draft-inactive-current-vs-historical"],"profile":"development-unsealed"})
     );
 }

@@ -566,14 +566,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-editor-draft-model"
+version = "0.1.0"
+dependencies = [
+ "morrow-core",
+ "prost",
+ "prost-build",
+ "protoc-bin-vendored",
+]
+
+[[package]]
 name = "morrow-hmos"
 version = "0.1.0"
 dependencies = [
  "morrow-core",
+ "morrow-editor-draft-model",
  "morrow-workbench-plugin",
  "prost",
  "serde",
  "serde_json",
+ "sha2 0.10.9",
  "tempfile",
 ]
 

@@ -1,0 +1,336 @@
+// A draft journal is separate from a business edit. An acknowledgement only
+// confirms the frozen snapshot; it never replaces the user's newer input.
+export class TextValue {
+  text: string = '';
+  selection_base: number = -1;
+  selection_extent: number = -1;
+  affinity: number = 0;
+  directional: boolean = false;
+  composing_start: number = -1;
+  composing_end: number = -1;
+}
+
+export class Values {
+  title: TextValue = new TextValue();
+  description: TextValue = new TextValue();
+  hypothesis: TextValue = new TextValue();
+  conclusion: TextValue = new TextValue();
+  todos: TextValue = new TextValue();
+  category: string = '灵感';
+  stage: string = '待整理';
+}
+
+export class DraftScope {
+  card_id: string = '';
+  draft_id: string = '';
+  source_kind: number = 1;
+  source_revision: string = '0';
+  // UI-only source card bytes. These are never authority in a draft request.
+  source: string = '';
+}
+
+export class DraftRecord {
+  scope: DraftScope = new DraftScope();
+  values: Values = new Values();
+  operation_id: string = '';
+  generation: string = '0';
+  current_generation: string = '0';
+  active: boolean = false;
+  current_active: boolean = false;
+  repeated: boolean = false;
+}
+
+export class DraftSaveFailure extends Error {
+  knownRejected: boolean;
+  constructor(knownRejected: boolean, message: string = 'Draft save failed') {
+    super(message); this.knownRejected = knownRejected;
+  }
+}
+
+export function copyText(value: TextValue): TextValue {
+  const result = new TextValue(); result.text = value.text;
+  result.selection_base = value.selection_base; result.selection_extent = value.selection_extent;
+  result.affinity = value.affinity; result.directional = value.directional;
+  result.composing_start = value.composing_start; result.composing_end = value.composing_end;
+  return result;
+}
+
+export function copyValues(values: Values): Values {
+  const result = new Values(); result.title = copyText(values.title);
+  result.description = copyText(values.description); result.hypothesis = copyText(values.hypothesis);
+  result.conclusion = copyText(values.conclusion); result.todos = copyText(values.todos);
+  result.category = values.category; result.stage = values.stage; return result;
+}
+
+export function copyScope(scope: DraftScope): DraftScope {
+  const result = new DraftScope(); result.card_id = scope.card_id; result.draft_id = scope.draft_id;
+  result.source_kind = scope.source_kind; result.source_revision = scope.source_revision;
+  result.source = scope.source; return result;
+}
+
+export function copyRecord(record: DraftRecord): DraftRecord {
+  const result = new DraftRecord(); result.scope = copyScope(record.scope);
+  result.values = copyValues(record.values); result.operation_id = record.operation_id;
+  result.generation = record.generation; result.current_generation = record.current_generation;
+  result.active = record.active; result.current_active = record.current_active;
+  result.repeated = record.repeated; return result;
+}
+
+function sameText(a: TextValue, b: TextValue): boolean {
+  return a.text === b.text && a.selection_base === b.selection_base && a.selection_extent === b.selection_extent &&
+    a.affinity === b.affinity && a.directional === b.directional && a.composing_start === b.composing_start &&
+    a.composing_end === b.composing_end;
+}
+
+export function sameValues(a: Values, b: Values): boolean {
+  return sameText(a.title, b.title) && sameText(a.description, b.description) &&
+    sameText(a.hypothesis, b.hypothesis) && sameText(a.conclusion, b.conclusion) && sameText(a.todos, b.todos) &&
+    a.category === b.category && a.stage === b.stage;
+}
+
+function sameScope(a: DraftScope, b: DraftScope): boolean {
+  return a.card_id === b.card_id && a.draft_id === b.draft_id && a.source_kind === b.source_kind &&
+    a.source_revision === b.source_revision;
+}
+
+function validGeneration(value: string): boolean {
+  return /^(0|[1-9][0-9]*)$/.test(value) && (value.length < 20 ||
+    value.length === 20 && value <= '18446744073709551615');
+}
+
+// Avoid Number/BigInt conversion: revisions can exceed Number's safe range.
+export function nextGeneration(value: string): string {
+  if (!validGeneration(value) || value === '18446744073709551615') {
+    throw new Error('Invalid or exhausted draft generation');
+  }
+  let carry = true, result = '';
+  for (let index = value.length - 1; index >= 0; index--) {
+    const digit = value.charCodeAt(index) - 48;
+    result = (carry ? digit === 9 ? '0' : (digit + 1).toString() : value[index]) + result;
+    carry = carry && digit === 9;
+  }
+  return carry ? '1' + result : result;
+}
+
+function validOffset(offset: number, units: number): boolean {
+  return Number.isInteger(offset) && (offset === -1 || offset >= 0 && offset <= units);
+}
+
+function validateValues(values: Values): void {
+  for (const value of [values.title, values.description, values.hypothesis, values.conclusion, values.todos]) {
+    if (typeof value.text !== 'string' || !validOffset(value.selection_base, value.text.length) ||
+      !validOffset(value.selection_extent, value.text.length) || !validOffset(value.composing_start, value.text.length) ||
+      !validOffset(value.composing_end, value.text.length) ||
+      value.composing_start >= 0 && value.composing_end >= 0 && value.composing_start > value.composing_end ||
+      value.affinity !== 0 && value.affinity !== 1 || typeof value.directional !== 'boolean') {
+      throw new Error('Invalid draft UTF-16 editing value');
+    }
+  }
+  if (typeof values.category !== 'string' || typeof values.stage !== 'string') {
+    throw new Error('Invalid draft category or stage');
+  }
+}
+
+class DraftWriteWire {
+  card_id: string = '';
+  draft_id: string = '';
+  source_kind: number = 1;
+  source_revision: string = '0';
+  values: Values = new Values();
+  expected_generation: string = '0';
+  operation_id: string = '';
+}
+
+class DraftCommandWire {
+  action: string = 'draft_save';
+  draft: DraftWriteWire = new DraftWriteWire();
+}
+
+export class EditorDraftCoordinator {
+  private ownedScope: DraftScope;
+  private ownedCurrent: Values;
+  private baseline: Values;
+  private ownedConfirmed: DraftRecord | undefined = undefined;
+  private journalGeneration: string = '0';
+  private serialized: string | undefined = undefined;
+  private frozen: Values | undefined = undefined;
+  private operation: string = '';
+  private expected: string = '0';
+  private inFlight: Promise<DraftRecord> | undefined = undefined;
+  private flushing: Promise<DraftRecord | undefined> | undefined = undefined;
+  private timer: number = -1;
+  private stopped: boolean = false;
+  private outcomeUnknown: boolean = false;
+  private journalConflict: boolean = false;
+  private lastError: string = '';
+  private send: (serialized: string) => Promise<DraftRecord>;
+  private changed: () => void;
+  private operationFactory: () => string;
+  private debounce: number;
+
+  constructor(scope: DraftScope, initial: Values, send: (serialized: string) => Promise<DraftRecord>,
+    changed: () => void, operationFactory: () => string, restored: DraftRecord | undefined = undefined,
+    debounce: number = 500) {
+    if (scope.card_id.length === 0 || scope.draft_id.length === 0 || !validGeneration(scope.source_revision) ||
+      (scope.source_kind !== 0 && scope.source_kind !== 1) ||
+      (scope.source_kind === 0 ? scope.source_revision === '0' : scope.source_revision !== '0') ||
+      !Number.isFinite(debounce) || debounce < 0) { throw new Error('Invalid draft scope'); }
+    validateValues(initial);
+    this.ownedScope = copyScope(scope); this.ownedCurrent = copyValues(initial); this.baseline = copyValues(initial);
+    this.send = send; this.changed = changed; this.operationFactory = operationFactory; this.debounce = debounce;
+    if (restored !== undefined) {
+      validateValues(restored.values);
+      if (!sameScope(restored.scope, this.ownedScope) || !validGeneration(restored.generation) ||
+        restored.generation === '0' || !validGeneration(restored.current_generation)) {
+        throw new Error('Invalid restored draft record');
+      }
+      this.ownedConfirmed = copyRecord(restored); this.baseline = copyValues(restored.values);
+      this.journalGeneration = restored.generation;
+      this.journalConflict = !restored.active || !restored.current_active ||
+        restored.current_generation !== restored.generation;
+      if (this.journalConflict) { this.lastError = 'Draft journal changed'; }
+      // Restoring is a read-only action, including a restored new-card draft.
+    } else if (scope.source_kind === 1) { this.schedule(); }
+  }
+
+  get scope(): DraftScope { return copyScope(this.ownedScope); }
+  get current(): Values { return copyValues(this.ownedCurrent); }
+  get confirmed(): DraftRecord | undefined {
+    return this.ownedConfirmed === undefined ? undefined : copyRecord(this.ownedConfirmed);
+  }
+  get pending(): string | undefined { return this.serialized; }
+  get dirty(): boolean {
+    return this.ownedScope.source_kind === 1 && this.ownedConfirmed === undefined ||
+      !sameValues(this.ownedCurrent, this.baseline);
+  }
+  get saving(): boolean { return this.inFlight !== undefined; }
+  get unknown(): boolean { return this.outcomeUnknown; }
+  get conflicted(): boolean { return this.journalConflict; }
+  get error(): string { return this.lastError; }
+  get disposed(): boolean { return this.stopped; }
+
+  update(values: Values): void {
+    this.requireOpen(); validateValues(values);
+    if (sameValues(values, this.ownedCurrent)) { return; }
+    this.ownedCurrent = copyValues(values);
+    if (!this.outcomeUnknown && !this.journalConflict && !this.saving) { this.lastError = ''; }
+    this.schedule(); this.notify();
+  }
+
+  // Only an explicit retry may reconcile an uncertain original request. It
+  // stops at that receipt; newer input requires its own flush or observation.
+  async retry(): Promise<DraftRecord | undefined> {
+    this.requireOpen(); this.cancelTimer();
+    if (this.journalConflict) { throw new Error('Draft journal changed'); }
+    if (this.inFlight !== undefined) { return copyRecord(await this.inFlight); }
+    if (!this.outcomeUnknown || this.serialized === undefined || this.frozen === undefined) {
+      throw new Error('No uncertain draft request to retry');
+    }
+    return copyRecord(await this.start(true));
+  }
+
+  // Callers may close/submit only after this resolves with the latest values.
+  // Issued work is never cancelled when the caller or view stops waiting.
+  flush(): Promise<DraftRecord | undefined> {
+    if (this.flushing !== undefined) { return this.flushing; }
+    this.flushing = this.flushCurrent().finally(() => { this.flushing = undefined; });
+    return this.flushing;
+  }
+
+  private async flushCurrent(): Promise<DraftRecord | undefined> {
+    this.requireOpen(); this.cancelTimer();
+    while (true) {
+      if (this.inFlight !== undefined) { await this.inFlight; }
+      this.requireOpen(); this.cancelTimer();
+      if (this.journalConflict) { throw new Error('Draft journal changed'); }
+      if (this.outcomeUnknown) { throw new Error(this.lastError || 'Draft save outcome is unknown'); }
+      if (!this.dirty) { return this.confirmed; }
+      await this.start(false);
+    }
+  }
+
+  dispose(): void { this.stopped = true; this.cancelTimer(); }
+
+  private requireOpen(): void {
+    if (this.stopped) { throw new Error('Draft coordinator is disposed'); }
+  }
+  private notify(): void { if (!this.stopped) { this.changed(); } }
+  private cancelTimer(): void {
+    if (this.timer !== -1) { clearTimeout(this.timer); this.timer = -1; }
+  }
+  private schedule(): void {
+    this.cancelTimer();
+    if (this.stopped || this.outcomeUnknown || this.journalConflict || this.saving || !this.dirty) { return; }
+    this.timer = setTimeout(() => {
+      this.timer = -1;
+      if (this.stopped || this.outcomeUnknown || this.journalConflict || this.saving || !this.dirty) { return; }
+      // start() stores and publishes the failure before rejecting. Automatic
+      // saves expose it through state; explicit flush/retry preserve rejection.
+      this.start(false).catch(() => {});
+    }, this.debounce);
+  }
+
+  private freeze(): void {
+    this.frozen = copyValues(this.ownedCurrent); this.operation = this.operationFactory();
+    if (this.operation.length === 0) { throw new Error('Empty draft operation'); }
+    this.expected = this.journalGeneration;
+    nextGeneration(this.expected);
+    const command = new DraftCommandWire(); command.draft.card_id = this.ownedScope.card_id;
+    command.draft.draft_id = this.ownedScope.draft_id; command.draft.source_kind = this.ownedScope.source_kind;
+    command.draft.source_revision = this.ownedScope.source_revision;
+    command.draft.values = copyValues(this.frozen); command.draft.expected_generation = this.expected;
+    command.draft.operation_id = this.operation; this.serialized = JSON.stringify(command);
+  }
+
+  private start(retry: boolean): Promise<DraftRecord> {
+    this.requireOpen();
+    if (this.inFlight !== undefined) { return this.inFlight; }
+    this.cancelTimer();
+    if (!retry) {
+      try { this.freeze(); } catch (error) {
+        this.serialized = undefined; this.frozen = undefined;
+        this.lastError = String(error); this.outcomeUnknown = false; this.notify();
+        return Promise.reject(error);
+      }
+    }
+    this.inFlight = this.perform(retry); this.notify(); return this.inFlight;
+  }
+
+  private async perform(retry: boolean): Promise<DraftRecord> {
+    const wasUnknown = this.outcomeUnknown, frozen = copyValues(this.frozen as Values);
+    let scheduleNext = false;
+    try {
+      const record = await this.send(this.serialized as string);
+      this.requireOpen(); validateValues(record.values);
+      if (!sameScope(record.scope, this.ownedScope) || record.operation_id !== this.operation ||
+        !sameValues(record.values, frozen) || !record.active || !validGeneration(record.generation) ||
+        record.generation !== nextGeneration(this.expected) || !validGeneration(record.current_generation)) {
+        throw new Error('Draft receipt differs from original request');
+      }
+      if (!record.current_active || record.current_generation !== record.generation) {
+        this.journalConflict = true; throw new Error('Draft journal advanced during save');
+      }
+      this.ownedConfirmed = copyRecord(record); this.baseline = frozen;
+      this.journalGeneration = record.generation; this.serialized = undefined; this.frozen = undefined;
+      this.outcomeUnknown = false; this.lastError = ''; scheduleNext = !retry; this.notify();
+      return copyRecord(record);
+    } catch (error) {
+      if (!this.stopped) {
+        const rejected = !wasUnknown && error instanceof DraftSaveFailure && error.knownRejected;
+        this.lastError = String(error); this.outcomeUnknown = !rejected;
+        if (rejected) {
+          this.serialized = undefined; this.frozen = undefined;
+          // A different S2 observed during S1 may debounce, never the rejected S1.
+          scheduleNext = !retry && !sameValues(this.ownedCurrent, frozen);
+        }
+        this.notify();
+      }
+      if (error instanceof Error) { throw error; }
+      throw new Error(String(error));
+    } finally {
+      this.inFlight = undefined;
+      if (scheduleNext) { this.schedule(); }
+      this.notify();
+    }
+  }
+}

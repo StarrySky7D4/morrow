@@ -1,0 +1,18 @@
+{
+  "result": "PASS",
+  "device": "127.0.0.1:5557",
+  "title": "HMOS-draft-20261005-C",
+  "cardId": "workspace-card:b6f32cb3-6cf6-48ac-bf34-772c3356d14f",
+  "checks": [
+    "empty new-card draft is acknowledged without a business card",
+    "close keeps raw values and does not submit business content",
+    "new-card raw Unicode and multiline values recover after process restart",
+    "latest autosaved raw generation recovers without closing the editor",
+    "explicit submission creates one business identity and retires its raw draft",
+    "existing-card draft leaves the committed source content unchanged",
+    "existing-card unsubmitted values recover after restart",
+    "discard cancellation keeps the editor and draft",
+    "confirmed discard remains inactive after restart and never changes the business card"
+  ],
+  "note": "UI creates one named development fixture. Native model tests cover raw selection/composing metadata; this is not IME session restoration or captured S1/S2 handoff acceptance."
+}

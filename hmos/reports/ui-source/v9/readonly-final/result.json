@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "device": "127.0.0.1:5557",
+  "title": "HMOS-draft-20261005-C",
+  "checks": [
+    "view and scroll of unchanged existing card consumes no draft slot",
+    "read-only view remains without a journal after restart"
+  ]
+}

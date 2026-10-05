@@ -1,4 +1,5 @@
 import native from 'libmorrow.so';
+import { DraftRecord } from './EditorDraft';
 export interface TaskView { id: string; text: string; completion: number; }
 export interface CardView {
   id: string; revision: string; source: string; title: string; description: string;
@@ -12,9 +13,10 @@ export class Command {
   text: string = ''; flag: boolean = false; now_ms: string = '';
   order: string[] = [];
   section: string = '概览'; filter: string = '全部'; sort: string = '最近添加';
+  draft_id: string = ''; generation: string = '';
 }
 export interface Reply {
-  ok: boolean; error: string; cards: CardView[]; ids: string[]; receipt_revision: string; profile: string; effect: string;
+  ok: boolean; error: string; cards: CardView[]; ids: string[]; drafts: DraftRecord[]; receipt_revision: string; profile: string; effect: string;
 }
 // Single admission owner. No implicit mutation retry; native database work runs
 // off the UI thread. The caller owns each immutable serialized proposal.

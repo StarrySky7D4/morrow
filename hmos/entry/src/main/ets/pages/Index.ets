@@ -12,6 +12,8 @@ import native from 'libmorrow.so';
 import { CardView, Command, Reply, TaskView, workbench } from '../model/Workbench';
 import { CardDataSource, WorkspaceCard } from '../model/CardDataSource';
 import { QueryConditions, QueryState, QueryCoordinator } from '../model/QueryCoordinator';
+import { Values as DraftValues, TextValue as DraftTextValue, DraftScope, DraftRecord,
+  EditorDraftCoordinator, DraftSaveFailure, copyValues, sameValues, nextGeneration } from '../model/EditorDraft';
 
 @Component
 struct WorkspaceCardSlot {
@@ -62,6 +64,28 @@ struct Index {
   @State showAppearance: boolean = true;
   @State sidebarExpanded: boolean = true;
   @State pending: string = '';
+  @State draftStatus: string = '';
+  @State draftRecords: DraftRecord[] = [];
+  @State draftsOpen: boolean = false;
+  @State draftWorking: boolean = false;
+  @State draftConflict: boolean = false;
+  @State draftRetiring: boolean = false;
+  @State draftRetirementUnknown: boolean = false;
+  private draftRetirement: string = '';
+  private submittedRaw: DraftValues | undefined = undefined;
+  private editorDraft: EditorDraftCoordinator | undefined = undefined;
+  private editorValues: DraftValues = new DraftValues();
+  private draftSource: string = '';
+  private draftRestoreInput: boolean = false;
+  private draftSelectionPending: Set<string> = new Set();
+  private draftFocusedFields: Set<string> = new Set();
+  private draftCaptureBlocked: Set<string> = new Set();
+  @State draftCaptureIncomplete: boolean = false;
+  private titleController: TextInputController = new TextInputController();
+  private descriptionController: TextAreaController = new TextAreaController();
+  private hypothesisController: TextAreaController = new TextAreaController();
+  private conclusionController: TextAreaController = new TextAreaController();
+  private taskController: TextInputController = new TextInputController();
   @State mode: string = '磨砂';
   @State visualStyle: string = 'flat';
   @State styleDepth: number = 1;
@@ -157,18 +181,25 @@ struct Index {
   private settingsRouteChanged(): void { this.settingsScroller.scrollTo({ xOffset: 0, yOffset: 0 }); }
   private preview: NodeContent = new NodeContent();
   private mounted: boolean = false;
+  private pageAlive: boolean = false;
 
   aboutToAppear(): void {
+    this.pageAlive = true;
     this.getUIContext().getFont().registerFont({ familyName: 'MorrowIcons', familySrc: $rawfile('materialicons.otf') });
     this.restoreAppearance();
     this.start();
   }
   onBackPress(): boolean {
+    if (this.draftsOpen) { this.draftsOpen = false; return true; }
     if (this.editorOpen) { this.closeEditor(); return true; }
     if (this.settingsOpen) { this.backSettings(); return true; }
     return false;
   }
   aboutToDisappear(): void {
+    this.pageAlive = false;
+    // No mutation is replayed on destruction. Only earlier acknowledged raw
+    // journal generations are recoverable after a forced process termination.
+    this.editorDraft?.dispose();
     this.queries.dispose();
     if (this.workspaceRestoreTimer !== -1) { clearTimeout(this.workspaceRestoreTimer); }
     this.mounted = false; native.releasePreview(this.preview);
@@ -203,32 +234,261 @@ struct Index {
       if (!result.ok && result.error === 'AlreadyOpen') { result = await workbench.send(JSON.stringify(new Command())); }
       if (!result.ok) { this.message = result.error; return; }
       this.cards = result.cards; this.ready = true; this.message = ''; this.workspaceConditionsChanged();
+      await this.loadDrafts();
     } catch (_) { this.message = '打开失败，请重试'; }
     finally { this.busy = false; }
   }
+  private async loadDrafts(): Promise<void> {
+    const cmd = new Command(); cmd.action = 'draft_list';
+    const result = await workbench.send(JSON.stringify(cmd));
+    if (!result.ok) { throw new Error(result.error); }
+    this.draftRecords = result.drafts;
+  }
+  private draftChanged(): void {
+    const draft = this.editorDraft;
+    if (!draft) { return; }
+    this.draftStatus = draft.unknown ? '草稿回复未确认，原请求已保留' : draft.conflicted ? '草稿世代已变化，请核对' :
+      draft.error.length > 0 ? '草稿保存失败：' + draft.error : draft.saving ? '正在保留草稿…' :
+      draft.dirty ? '草稿等待保存' : draft.confirmed ? '草稿已保留' : '';
+    const confirmed = draft.confirmed;
+    if (confirmed && confirmed.active && confirmed.current_active && confirmed.generation === confirmed.current_generation) {
+      const others = this.draftRecords.filter((r: DraftRecord) => r.scope.draft_id !== confirmed.scope.draft_id);
+      this.draftRecords = others.concat([confirmed]);
+    }
+  }
+  private draftField(name: string): DraftTextValue {
+    return name === 'title' ? this.editorValues.title : name === 'description' ? this.editorValues.description :
+      name === 'hypothesis' ? this.editorValues.hypothesis : name === 'conclusion' ? this.editorValues.conclusion : this.editorValues.todos;
+  }
+  private draftTextChanged(name: string, value: string, preview?: PreviewText): void {
+    if (!this.pageAlive || !this.editorOpen || !this.editorDraft || this.editorDraft.disposed || this.draftRestoreInput || this.draftRetiring || this.draftRetirementUnknown) { return; }
+    const field = this.draftField(name);
+    const offset = preview?.offset ?? -1, candidate = preview?.value ?? '';
+    if (candidate.length > 0 && (!Number.isInteger(offset) || offset < 0 || offset > value.length)) {
+      this.draftCaptureBlocked.add(name); this.draftCaptureIncomplete = true;
+      this.message = '输入法预编辑位置无法确认，请完成输入后保留草稿。'; return;
+    }
+    this.draftCaptureBlocked.delete(name); this.draftCaptureIncomplete = this.draftCaptureBlocked.size > 0;
+    field.text = candidate.length > 0 ? value.slice(0, offset) + candidate + value.slice(offset) : value;
+    field.composing_start = candidate.length > 0 ? offset : -1;
+    field.composing_end = candidate.length > 0 ? offset + candidate.length : -1;
+    // Selection is independent of an edit's range. Retain valid controller
+    // offsets; a later selection callback captures the actual current range.
+    if (field.selection_base > field.text.length) { field.selection_base = -1; }
+    if (field.selection_extent > field.text.length) { field.selection_extent = -1; }
+    this.editorValues.category = this.category;
+    this.editorDraft?.update(copyValues(this.editorValues));
+  }
+  private draftSelectionChanged(name: string, start: number, end: number): void {
+    if (!this.pageAlive || !this.editorOpen || this.editorDraft?.disposed || !this.draftFocusedFields.has(name) || this.draftRestoreInput || this.draftRetiring || this.draftRetirementUnknown || this.draftSelectionPending.has(name) || !this.editorDraft) { return; }
+    const field = this.draftField(name);
+    if (this.draftCaptureBlocked.has(name) || start < -1 || end < -1 || start > field.text.length || end > field.text.length) { return; }
+    field.selection_base = start; field.selection_extent = end;
+    this.editorDraft.update(copyValues(this.editorValues));
+  }
+  private restoreSelection(name: string): void {
+    if (!this.draftSelectionPending.has(name)) { return; }
+    const value = this.draftField(name), start = value.selection_base, end = value.selection_extent;
+    const draft = this.editorDraft;
+    if (start < 0 || end < 0) { this.draftSelectionPending.delete(name); return; }
+    // Do not start a new IME composition or steal focus. The caller already
+    // focused this field; native controllers cannot restore the old IME session.
+    setTimeout(() => {
+      if (!this.pageAlive || !this.editorOpen || !draft || draft.disposed || this.draftRetiring || this.draftRetirementUnknown || this.editorDraft !== draft) { return; }
+      const low = Math.min(start, end), high = Math.max(start, end);
+      if (name === 'description' || name === 'hypothesis' || name === 'conclusion') {
+        const controller = name === 'description' ? this.descriptionController : name === 'hypothesis' ? this.hypothesisController : this.conclusionController;
+        if (low === high) { controller.caretPosition(low); }
+        else { controller.setTextSelection(low, high, { menuPolicy: MenuPolicy.HIDE }); }
+      } else {
+        const controller = name === 'title' ? this.titleController : this.taskController;
+        if (low === high) { controller.caretPosition(low); }
+        else { controller.setTextSelection(low, high, { menuPolicy: MenuPolicy.HIDE }); }
+      }
+      setTimeout(() => { if (this.pageAlive && !draft.disposed && this.editorDraft === draft) { this.draftSelectionPending.delete(name); } }, 16);
+    }, 16);
+  }
+  private focusDraftField(name: string): void {
+    if (!this.pageAlive || !this.editorOpen || !this.editorDraft || this.editorDraft.disposed || this.draftRetiring || this.draftRetirementUnknown) { return; }
+    // A native control emits its initial selection while being constructed.
+    // Only a field that the user actually focuses can create a selection-only
+    // generation; viewing an unchanged card must not consume a journal slot.
+    this.draftFocusedFields.clear(); this.draftFocusedFields.add(name); this.restoreSelection(name);
+  }
+  private blurDraftField(name: string): void { this.draftFocusedFields.delete(name); }
+  private attachDraft(card?: CardView, restored?: DraftRecord, preserveFocus: boolean = false): void {
+    this.editorDraft?.dispose(); this.draftConflict = false; this.draftStatus = '';
+    this.draftSelectionPending = restored ? new Set(['title', 'description', 'hypothesis', 'conclusion', 'todos']) : new Set();
+    if (!preserveFocus) { this.draftFocusedFields.clear(); }
+    this.draftRestoreInput = !!restored; this.draftCaptureBlocked.clear(); this.draftCaptureIncomplete = false;
+    const scope = restored?.scope ?? new DraftScope();
+    if (!restored) {
+      scope.card_id = card?.id ?? util.generateRandomUUID(true); scope.draft_id = util.generateRandomUUID(true);
+      scope.source_kind = card ? 0 : 1; scope.source_revision = card?.revision ?? '0'; scope.source = card?.source ?? '';
+    }
+    this.draftSource = scope.source;
+    const values = restored ? copyValues(restored.values) : new DraftValues();
+    if (!restored) {
+      values.title.text = this.title; values.description.text = this.description;
+      values.hypothesis.text = this.hypothesis; values.conclusion.text = this.conclusion;
+      values.todos.text = this.taskText; values.category = this.category;
+      values.stage = card?.stage ?? (this.category === '进行中' ? '计划中' : this.category === '实验' ? '待验证' : '待整理');
+    }
+    this.editorValues = values;
+    this.editorDraft = new EditorDraftCoordinator(scope, values,
+      async (serialized: string): Promise<DraftRecord> => {
+        const result = await workbench.send(serialized);
+        if (!result.ok) { throw new DraftSaveFailure(result.effect === 'not_committed', result.error); }
+        if (result.drafts.length !== 1) { throw new Error('草稿回执缺失'); }
+        return result.drafts[0];
+      }, () => this.draftChanged(), () => util.generateRandomUUID(true), restored);
+    // A restored frozen baseline remains separate from the current business
+    // record. No implicit rebase or overwrite is permitted.
+    this.draftConflict = scope.source_kind === 0 ? card?.revision !== scope.source_revision : !!card;
+    this.draftChanged();
+  }
+  private restoreDraft(record: DraftRecord): void {
+    if (this.busy || this.pending.length > 0 || this.editorOpen) { return; }
+    this.draftRestoreInput = true;
+    this.selected = record.scope.source_kind === 0 ? record.scope.card_id : '';
+    this.title = record.values.title.text; this.description = record.values.description.text;
+    this.hypothesis = record.values.hypothesis.text; this.conclusion = record.values.conclusion.text;
+    this.taskText = record.values.todos.text; this.category = record.values.category;
+    this.taskEditId = ''; this.taskRenameText = ''; this.previewBody = false; this.editorOpen = true; this.draftsOpen = false;
+    this.dirty = true; this.message = '';
+    this.attachDraft(this.cards.find((c: CardView) => c.id === record.scope.card_id), record);
+    const draft = this.editorDraft;
+    setTimeout(() => { if (this.editorDraft === draft) { this.draftRestoreInput = false; } }, 16);
+    if (this.draftConflict) { this.message = '原卡片已变化，草稿文字已保留。请查看当前卡片并核对；此草稿不会覆盖新的修订。'; }
+  }
+  private async flushDraft(): Promise<boolean> {
+    if (this.draftCaptureIncomplete) { this.message = '当前输入尚未完整捕获，请完成输入后重试，编辑器保持打开。'; return false; }
+    const draft = this.editorDraft;
+    if (!draft) { return true; }
+    this.draftWorking = true;
+    try {
+      const record = await draft.flush();
+      if (this.editorDraft !== draft || this.draftCaptureIncomplete || draft.dirty || draft.unknown ||
+        (record && !sameValues(draft.current, record.values))) {
+        this.message = '当前输入在保留期间发生变化，请再次保留，编辑器保持打开。'; return false;
+      }
+      return true;
+    }
+    catch (error) { this.message = '最新输入尚未保留：' + String(error); return false; }
+    finally { this.draftWorking = false; this.draftChanged(); }
+  }
+  private async keepDraftAndClose(): Promise<void> {
+    if (!(await this.flushDraft())) { return; }
+    this.dirty = false; this.editorOpen = false; this.message = this.editorDraft?.confirmed ? '草稿已保留，可从草稿入口继续。' : '';
+    this.editorDraft?.dispose(); this.editorDraft = undefined;
+    this.taskEditId = ''; this.taskRenameText = ''; this.taskText = ''; await this.loadDrafts();
+  }
+  private async retireDraft(expected?: DraftValues, reconcile: boolean = false): Promise<boolean> {
+    const draft = this.editorDraft, record = draft?.confirmed;
+    if (!draft || !record) { this.editorDraft?.dispose(); this.editorDraft = undefined; return true; }
+    if (!reconcile && this.draftRetirementUnknown) { return false; }
+    if (draft.saving || draft.unknown || draft.dirty || !sameValues(draft.current, record.values) ||
+      (expected && !sameValues(draft.current, expected))) {
+      this.message = '卡片已保存，后续输入的草稿仍保留。'; return false;
+    }
+    if (this.draftRetirement.length === 0) {
+      const cmd = new Command(); cmd.action = 'draft_discard'; cmd.id = record.scope.card_id;
+      cmd.draft_id = record.scope.draft_id; cmd.generation = record.generation; cmd.operation = util.generateRandomUUID(true);
+      this.draftRetirement = JSON.stringify(cmd);
+    }
+    this.draftRetiring = true;
+    try {
+      const result = await workbench.send(this.draftRetirement);
+      if (!result.ok) {
+        if (result.effect === 'not_committed' && !this.draftRetirementUnknown) { this.draftRetirement = ''; }
+        else { this.draftRetirementUnknown = true; }
+        this.message = '草稿清理未确认：' + result.error; return false;
+      }
+      if (result.drafts.length !== 1 || result.drafts[0].active || result.drafts[0].current_active ||
+        result.drafts[0].scope.card_id !== record.scope.card_id || result.drafts[0].scope.draft_id !== record.scope.draft_id ||
+        result.drafts[0].generation !== nextGeneration(record.generation) || result.drafts[0].current_generation !== result.drafts[0].generation) {
+        throw new Error('草稿清理回执不匹配');
+      }
+      draft.dispose(); this.editorDraft = undefined; this.draftStatus = ''; this.draftConflict = false;
+      this.draftRetirement = ''; this.draftRetirementUnknown = false;
+      this.draftRecords = this.draftRecords.filter((r: DraftRecord) => r.scope.draft_id !== record.scope.draft_id);
+      try { await this.loadDrafts(); } catch (_) { this.message = '草稿已清理，列表刷新失败，请重新打开工作区核对。'; }
+      return true;
+    } catch (_) {
+      this.draftRetirementUnknown = true; this.message = '草稿清理回复未确认，原操作已保留，请显式核对。'; return false;
+    } finally { this.draftRetiring = false; }
+  }
+  private discardDraft(): void {
+    if (this.busy || this.pending.length > 0 || this.draftWorking || this.editorDraft?.unknown) { return; }
+    this.getUIContext().showAlertDialog({ title: '放弃这份草稿？', message: '草稿中的文字将被丢弃，已保存卡片保持原样。',
+      primaryButton: { value: '继续编辑', action: () => {} }, secondaryButton: { value: '放弃草稿', action: () => this.discardDraftConfirmed() } });
+  }
+  private async discardDraftConfirmed(): Promise<void> {
+    this.draftRetiring = true;
+    if (!(await this.flushDraft())) { this.draftRetiring = false; return; }
+    this.draftWorking = true;
+    try {
+      if (await this.retireDraft()) { this.dirty = false; this.taskText = ''; this.editorOpen = false; }
+    } catch (_) { this.message = '草稿放弃未确认，记录仍保留，请重新读取后核对。'; }
+    finally { this.draftWorking = false; this.draftRetiring = false; }
+  }
+  private async retryDraft(): Promise<void> {
+    if (!this.editorDraft || this.draftWorking) { return; }
+    this.draftWorking = true;
+    try { await this.editorDraft.retry(); }
+    catch (error) { this.message = '草稿核对失败：' + String(error); }
+    finally { this.draftWorking = false; this.draftChanged(); }
+  }
+  private async retryDraftRetirement(): Promise<void> {
+    if (!this.draftRetirementUnknown || this.draftWorking || this.busy) { return; }
+    this.draftWorking = true;
+    try { if (await this.retireDraft(undefined, true)) { this.dirty = false; this.editorOpen = false; } }
+    finally { this.draftWorking = false; }
+  }
+  private editorInputChanged(name: string, value: string, preview?: PreviewText): void {
+    if (!this.pageAlive || !this.editorOpen || !this.editorDraft || this.editorDraft.disposed || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
+    const previous = name === 'title' ? this.title : name === 'description' ? this.description :
+      name === 'hypothesis' ? this.hypothesis : name === 'conclusion' ? this.conclusion : this.taskText;
+    if (name === 'title') { this.title = value; }
+    else if (name === 'description') { this.description = value; }
+    else if (name === 'hypothesis') { this.hypothesis = value; }
+    else if (name === 'conclusion') { this.conclusion = value; }
+    else { this.taskText = value; }
+    if (name !== 'todos' && (previous !== value || (preview?.value.length ?? 0) > 0)) { this.dirty = true; }
+    this.draftTextChanged(name, value, preview);
+  }
   private select(c: CardView): void {
-    if (this.busy || this.pending.length > 0) { return; }
+    if (this.editorOpen || this.busy || this.draftWorking || this.draftRetiring || this.draftRetirementUnknown || this.pending.length > 0) { return; }
     if (this.dirty) { this.message = '请先保存当前编辑，输入已保留。'; return; }
+    const recovered = this.draftRecords.find((r: DraftRecord) => r.scope.card_id === c.id);
+    if (recovered) { this.restoreDraft(recovered); return; }
     this.taskEditId = ''; this.taskText = ''; this.taskRenameText = '';
     this.previewBody = false; this.selected = c.id; this.title = c.title; this.description = c.description;
     this.hypothesis = c.hypothesis; this.conclusion = c.conclusion; this.category = c.category; this.editorOpen = true; this.message = ''; 
+    this.attachDraft(c);
     this.refreshPreview();
   }
-  private newCard(): void {
-    if (this.busy || this.pending.length > 0) { return; }
-    if (this.dirty) { this.message = '请先保存当前编辑，输入已保留。'; return; }
+  private newCard(): boolean {
+    if (this.editorOpen || this.busy || this.draftWorking || this.draftRetiring || this.draftRetirementUnknown || this.pending.length > 0) { return false; }
+    if (this.dirty) { this.message = '请先保存当前编辑，输入已保留。'; return false; }
     this.taskEditId = ''; this.taskText = ''; this.taskRenameText = '';
     this.selected = ''; this.title = ''; this.description = ''; this.hypothesis = ''; this.conclusion = '';
     this.category = ['灵感', '进行中', '实验'].includes(this.section) ? this.section : '灵感'; this.previewBody = false; this.editorOpen = true; this.message = ''; this.refreshPreview();
+    this.attachDraft();
+    return true;
   }
   private command(action: string): Command {
     const c = this.current(); const cmd = new Command();
-    cmd.action = action; cmd.id = c?.id ?? util.generateRandomUUID(true); cmd.source = c?.source ?? '';
+    cmd.action = action; cmd.id = c?.id ?? this.editorDraft?.scope.card_id ?? util.generateRandomUUID(true);
+    cmd.source = (action === 'edit' && this.editorDraft) ? this.draftSource : c?.source ?? '';
     cmd.operation = util.generateRandomUUID(true); cmd.now_ms = Date.now().toString(); return cmd;
   }
-  private async submit(cmd: Command): Promise<void> {
-    if (this.busy || this.pending.length > 0) { return; }
+  private async submit(cmd: Command, raw?: DraftValues): Promise<void> {
+    if (this.busy || this.pending.length > 0 || this.draftWorking || this.draftRetirementUnknown) { return; }
     if (this.taskEditId.length > 0 && cmd.action !== 'task_rename') { this.message = '请先保存或取消待办重命名'; return; }
+    const frozen = raw ?? (this.editorOpen ? this.editorDraft?.current : undefined);
+    if (this.editorOpen && !(await this.flushDraft())) { return; }
+    this.submittedRaw = frozen;
     this.pending = JSON.stringify(cmd); await this.retry();
   }
   private async retry(): Promise<void> {
@@ -239,33 +499,62 @@ struct Index {
       const result = await workbench.send(original);
       if (!result.ok) {
         if (result.effect === 'not_committed') {
-          this.pending = ''; this.message = `未提交：${result.error}。请修正后再保存，输入已保留。`;
+          this.pending = ''; this.submittedRaw = undefined; this.message = `未提交：${result.error}。请修正后再保存，输入已保留。`;
         } else { this.message = `保存未确认：${result.error}。原请求与当前输入均已保留。`; }
         return;
       }
       this.cards = result.cards; this.pending = '';
+      const unchangedRaw = !this.draftCaptureIncomplete &&
+        (!this.submittedRaw || !this.editorDraft || sameValues(this.editorDraft.current, this.submittedRaw));
       if (cmd.action === 'create' || cmd.action === 'edit') {
         this.selected = cmd.id;
-        this.dirty = this.title !== cmd.title || this.description !== cmd.description ||
-          this.hypothesis !== cmd.hypothesis || this.conclusion !== cmd.conclusion;
+        const values = this.editorDraft?.current ?? this.editorValues;
+        this.dirty = values.title.text !== cmd.title || values.description.text !== cmd.description ||
+          values.hypothesis.text !== cmd.hypothesis || values.conclusion.text !== cmd.conclusion;
       }
-      if (cmd.action === 'task_add' && this.taskText === cmd.text) { this.taskText = ''; }
+      const todoRaw = this.editorDraft?.current.todos ?? this.editorValues.todos;
+      if (cmd.action === 'task_add' && this.taskText === cmd.text && todoRaw.text === cmd.text &&
+        todoRaw.composing_start === -1 && todoRaw.composing_end === -1 && unchangedRaw && !this.draftCaptureBlocked.has('todos')) {
+        this.taskText = ''; this.draftTextChanged('todos', '');
+      }
       if (cmd.action === 'task_rename' && this.selected === cmd.id && this.taskEditId === cmd.task_id &&
         this.taskRenameText.trim() === cmd.text) { this.taskEditId = ''; this.taskRenameText = ''; }
       this.message = result.receipt_revision.length > 0 ? `已保存 · 操作修订 ${result.receipt_revision}` : '已刷新';
-      if ((cmd.action === 'create' || cmd.action === 'edit') && !this.dirty) { this.editorOpen = false; }
+      const completionValues = this.editorDraft?.current;
+      // Ordinary body/favorite/stage commands do not consume pending todo text.
+      // Keep its raw journal until an explicit task submission or handoff.
+      const consumedInput = unchangedRaw && (completionValues?.todos.text.length ?? 0) === 0;
+      if ((cmd.action === 'create' || cmd.action === 'edit') && !this.dirty && consumedInput) {
+        // A business receipt does not certify later raw input. Retire only the
+        // exact latest confirmed draft; otherwise keep the independent draft.
+        if (await this.flushDraft() && await this.retireDraft(completionValues)) { this.editorOpen = false; }
+      } else if (this.editorOpen && !this.dirty && consumedInput && this.taskEditId.length === 0) {
+        // Each confirmed business revision starts a distinct source-bound raw
+        // draft. Retire the old slot only after its latest input is durable.
+        if (await this.flushDraft() && await this.retireDraft(completionValues)) { this.attachDraft(this.current(), undefined, true); }
+      }
+      const draft = this.editorDraft;
+      if (draft) {
+        const record = this.cards.find((c: CardView) => c.id === draft.scope.card_id);
+        this.draftConflict = draft.scope.source_kind === 0 ? record?.revision !== draft.scope.source_revision : !!record;
+        if (this.draftConflict) { this.message = '卡片已保存，较新的草稿输入仍保留。原卡片已变化，请核对后处理。'; }
+      }
+      this.submittedRaw = undefined;
       this.refreshPreview();
     } catch (_) { this.message = '回复未确认。请用原请求核对，不会创建新的操作。'; }
     finally { this.busy = false; }
   }
-  private save(): void {
+  private async save(): Promise<void> {
+    if (this.draftWorking || this.draftConflict) { return; }
     if (this.taskEditId.length > 0) { this.message = '请先保存或取消待办重命名'; return; }
     if (this.title.trim().length === 0) { this.message = '请输入卡片标题'; return; }
+    if (!(await this.flushDraft())) { return; }
+    const values = this.editorDraft?.current ?? this.editorValues;
     const cmd = this.command(this.selected.length > 0 ? 'edit' : 'create');
-    cmd.title = this.title; cmd.description = this.description; cmd.hypothesis = this.hypothesis;
-    cmd.conclusion = this.conclusion; cmd.category = this.category;
+    cmd.title = values.title.text; cmd.description = values.description.text; cmd.hypothesis = values.hypothesis.text;
+    cmd.conclusion = values.conclusion.text; cmd.category = values.category;
     cmd.stage = this.category === '进行中' ? '计划中' : this.category === '实验' ? '待验证' : '待整理';
-    this.submit(cmd);
+    this.submit(cmd, values);
   }
   private mutate(action: string, task?: TaskView): void {
     if (this.taskEditId.length > 0 && action !== 'task_rename') { this.message = '请先保存或取消待办重命名'; return; }
@@ -283,12 +572,16 @@ struct Index {
     }
     if (action === 'task_add') {
       if (this.taskText.trim().length === 0) { return; }
+      const raw = this.editorDraft?.current.todos ?? this.editorValues.todos;
+      if (this.draftCaptureIncomplete || raw.text !== this.taskText || raw.composing_start !== -1 || raw.composing_end !== -1) {
+        this.message = '请先完成待办文字输入，再添加待办；草稿输入已保留。'; return;
+      }
       cmd.task_id = util.generateRandomUUID(true); cmd.text = this.taskText;
     }
     this.submit(cmd);
   }
   private canEditTasks(): boolean {
-    return this.ready && !this.busy && this.pending.length === 0 &&
+    return this.ready && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.editorDraft?.unknown && this.pending.length === 0 &&
       !!this.current() && !this.current()?.deleted && !this.dirty && this.taskEditId.length === 0;
   }
   private renameTask(task: TaskView): void {
@@ -502,12 +795,9 @@ struct Index {
     this.restoreWorkspace();
   }
   private closeEditor(): void {
-    if (this.busy || this.pending.length > 0) { this.message = '操作尚未确认，当前输入已保留。'; return; }
-    if (this.dirty || this.taskEditId.length > 0 || this.taskText.length > 0) {
-      this.getUIContext().showAlertDialog({ title: '放弃这次修改？', message: '尚未保存的输入将被丢弃。',
-        primaryButton: { value: '继续编辑', action: () => {} },
-        secondaryButton: { value: '放弃修改', action: () => { this.dirty = false; this.taskEditId = ''; this.taskRenameText = ''; this.taskText = ''; this.editorOpen = false; } } });
-    } else { this.editorOpen = false; }
+    if (this.busy || this.pending.length > 0 || this.draftWorking || this.draftRetirementUnknown) { this.message = '操作尚未确认，当前输入已保留。'; return; }
+    if (this.taskEditId.length > 0) { this.message = '请先保存或取消待办重命名'; return; }
+    this.keepDraftAndClose();
   }
   private favoriteCard(c: CardView): void {
     const cmd = new Command(); cmd.action = 'favorite'; cmd.id = c.id; cmd.source = c.source;
@@ -515,9 +805,8 @@ struct Index {
     this.submit(cmd);
   }
   private captureIdea(): void {
-    this.newCard();
-    if (this.editorOpen && this.selected.length === 0 && !this.dirty && this.capture.length > 0) {
-      this.title = this.capture; this.capture = ''; this.dirty = true;
+    if (this.newCard() && this.capture.length > 0) {
+      this.editorInputChanged('title', this.capture); this.capture = '';
     }
   }
   @Builder
@@ -592,6 +881,10 @@ struct Index {
       Button({ type: ButtonType.Normal }) { this.Glyph(() => 0xf0258,  19, () => this.muted()) }
         .width(40).height(38).backgroundColor(Color.Transparent).accessibilityText('空间外观')
         .onClick(() => { if (this.viewportWidth >= 1050) { this.showAppearance = !this.showAppearance; } else { this.openSettings('设置'); } })
+      Button('草稿' + (this.draftRecords.length > 0 ? ' ' + this.draftRecords.length : ''), { type: ButtonType.Normal })
+        .fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+        .height(38).padding({ left: 8, right: 8 }).accessibilityText('打开草稿')
+        .enabled(this.ready && !this.busy && this.pending.length === 0).onClick(() => { this.draftsOpen = true; })
     }.width('100%').height(40)
   }
   @Builder
@@ -1282,6 +1575,43 @@ struct Index {
     Text(this.t('预览支持标题、列表、引用与代码块；附件和复杂排版仍在适配。')).fontSize(10).fontColor(this.muted())
   }
   @Builder
+  BodyInput() {
+    TextArea({ text: this.description, placeholder: this.t('写下思路，或粘贴一段内容…'), controller: this.descriptionController })
+      .fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).placeholderFont({ size: 13 }).fontColor(this.ink()).placeholderColor(this.muted())
+      .backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() }).borderRadius(this.round(12)).height(180).maxLength(20000)
+      .enabled(!this.draftRetiring && !this.draftRetirementUnknown).id('draft-description')
+      .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('description', s, preview))
+      .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('description', start, end))
+      .onFocus(() => this.focusDraftField('description')).onBlur(() => this.blurDraftField('description'))
+  }
+  @Builder
+  Drafts() {
+    Column({ space: 16 }) {
+      Row() {
+        Text('保留的草稿').fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(20).fontColor(this.ink()).layoutWeight(1)
+        Button('关闭', { type: ButtonType.Normal }).fontSize(12).fontColor(this.accent()).backgroundColor(Color.Transparent).onClick(() => { this.draftsOpen = false; })
+      }.width('100%')
+      Text('继续未完成的文字。打开草稿不会提交卡片。').fontSize(12).fontColor(this.muted()).width('100%')
+      Scroll() {
+        Column({ space: 12 }) {
+          if (this.draftRecords.length === 0) { Text('还没有保留的草稿').fontSize(13).fontColor(this.muted()).padding(24) }
+          ForEach(this.draftRecords, (record: DraftRecord) => {
+            Column({ space: 8 }) {
+              Text(record.values.title.text || '还没起名字的想法').fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(15).fontColor(this.ink()).maxLines(2)
+              Text(record.values.description.text || '先保留，慢慢整理。').fontSize(12).fontColor(this.muted()).maxLines(3)
+              Row() {
+                Text(record.scope.source_kind === 1 ? '新想法' : '继续修改').fontSize(10).fontColor(this.muted()); Blank()
+                Button('恢复编辑', { type: ButtonType.Normal }).fontSize(12).fontColor(this.accent()).backgroundColor(Color.Transparent).onClick(() => this.restoreDraft(record))
+              }.width('100%')
+            }.alignItems(HorizontalAlign.Start).width('100%').padding(16).backgroundColor('#0B7662BA').borderRadius(this.round(14))
+              .id('draft-row:' + record.scope.draft_id)
+          }, (record: DraftRecord) => record.scope.draft_id + ':' + record.generation)
+        }.width('100%')
+      }.layoutWeight(1).width('100%').scrollBar(BarState.Off).align(Alignment.TopStart)
+    }.padding(24).width(Math.min(620, this.viewportWidth - 40)).height(Math.min(560, this.viewportHeight - 48))
+      .backgroundColor(alpha(this.surface(), .96)).borderRadius(this.round(24)).border({ width: this.styleEdgeWidth(), color: this.line() }).clip(true)
+  }
+  @Builder
   Editor() {
     Column() {
       Row({ space: 12 }) {
@@ -1298,11 +1628,14 @@ struct Index {
         .width('100%').padding({ left: 24, right: 24 }).margin({ top: 12, bottom: 22 })
       Scroll() {
         Column({ space: 16 }) {
-          TextInput({ text: this.title, placeholder: this.t('给它起个名字') }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(23).placeholderFont({ size: 23 }).fontWeight(FontWeight.Medium)
-            .fontColor(this.ink()).placeholderColor(this.muted()).backgroundColor(Color.Transparent).padding(16).maxLength(4000).height(64)
+          TextInput({ text: this.title, placeholder: this.t('给它起个名字'), controller: this.titleController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(23).placeholderFont({ size: 23 }).fontWeight(FontWeight.Medium)
+            .fontColor(this.ink()).placeholderColor(this.muted()).backgroundColor(Color.Transparent).padding(16).maxLength(60).height(64)
             .border({ width: 1, color: this.accent() }).borderRadius(this.round(12))
-            .onChange((s: string) => { if (this.title !== s) { this.title = s; this.dirty = true; } })
-          Text(`${this.title.length} / 4000`).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted()).width('100%').textAlign(TextAlign.End)
+            .enabled(!this.draftRetiring && !this.draftRetirementUnknown).id('draft-title')
+            .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('title', s, preview))
+            .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('title', start, end))
+            .onFocus(() => this.focusDraftField('title')).onBlur(() => this.blurDraftField('title'))
+          Text(`${this.title.length} / 60`).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted()).width('100%').textAlign(TextAlign.End)
           Row({ space: 8 }) {
             Button({ type: ButtonType.Normal }) { Row({ space: 6 }) { this.Glyph(() => 0xe192,  16, () => this.muted()); Text(this.t('粘贴内容')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontColor(this.muted()) } }
               .height(40).padding({ left: 16, right: 16 }).borderRadius(this.round(12)).backgroundColor('#217662BA').enabled(false)
@@ -1317,18 +1650,26 @@ struct Index {
                 .width(32).height(32).backgroundColor(Color.Transparent).accessibilityText(this.previewBody ? '隐藏预览' : '实时预览').onClick(() => { this.previewBody = !this.previewBody; })
             }.width('100%').height(32)
             Divider().color(this.line())
-            if (this.previewBody) { this.BodyPreview() }
-            else { TextArea({ text: this.description, placeholder: this.t('写下思路，或粘贴一段内容…') }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).placeholderFont({ size: 13 }).fontColor(this.ink()).placeholderColor(this.muted())
-              .backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() }).borderRadius(this.round(12)).height(160).maxLength(16000)
-              .onChange((s: string) => { if (this.description !== s) { this.description = s; this.dirty = true; } }) }
+            if (this.previewBody && Math.min(820, this.viewportWidth - 40) - 80 >= 590) {
+              Row({ space: 24 }) {
+                Column() { this.BodyInput() }.layoutWeight(1)
+                Column() { this.BodyPreview() }.layoutWeight(1)
+              }.width('100%').alignItems(VerticalAlign.Top).id('draft-body-split')
+            } else if (this.previewBody) { this.BodyPreview() }
+            else { this.BodyInput() }
           }.padding(16).width('100%').backgroundColor('#077662BA').borderRadius(this.round(16)).border({ width: this.styleEdgeWidth(), color: this.line() })
           Row({ space: 12 }) {
             Text(this.t('放在哪里')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted())
             Select([{ value: '灵感' }, { value: '进行中' }, { value: '实验' }]).value(this.current()?.category ?? this.category)
               .font({ size: 12 }).fontColor(this.ink()).backgroundColor('#147662BA').borderRadius(this.round(10))
-              .enabled(!this.busy && this.pending.length === 0 && !this.current()?.deleted)
+              .enabled(!this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
               .onSelect((_: number, value: string) => {
-                if (!this.current()) { this.category = value; this.dirty = true; return; }
+                if (this.draftWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
+                if (!this.current()) {
+                  this.category = value; this.dirty = true; this.editorValues.category = value;
+                  this.editorValues.stage = value === '进行中' ? '计划中' : value === '实验' ? '待验证' : '待整理';
+                  this.editorDraft?.update(copyValues(this.editorValues)); return;
+                }
                 if (this.dirty) { this.message = '请先保存正文编辑'; return; }
                 const cmd = this.command('category'); cmd.category = value;
                 cmd.stage = value === '进行中' ? '计划中' : value === '实验' ? '待验证' : '待整理'; this.category = value; this.submit(cmd);
@@ -1336,18 +1677,23 @@ struct Index {
             Blank()
             if (this.current()) {
               Select(this.stages()).value(this.current()?.stage ?? '待整理').font({ size: 11 }).fontColor(this.muted()).backgroundColor(Color.Transparent)
-                .enabled(!this.busy && this.pending.length === 0 && !this.current()?.deleted)
+                .enabled(!this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
                 .onSelect((_: number, value: string) => {
+                  if (this.draftWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
                   if (this.dirty) { this.message = '请先保存正文编辑'; return; }
                   const cmd = this.command('stage'); cmd.stage = value; this.submit(cmd);
                 })
             }
           }.width('100%')
           if (this.category === '实验') {
-            TextInput({ text: this.hypothesis, placeholder: this.t('假设') }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(4000)
-              .onChange((s: string) => { if (this.hypothesis !== s) { this.hypothesis = s; this.dirty = true; } })
-            TextInput({ text: this.conclusion, placeholder: this.t('结论') }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(4000)
-              .onChange((s: string) => { if (this.conclusion !== s) { this.conclusion = s; this.dirty = true; } })
+            TextArea({ text: this.hypothesis, placeholder: this.t('假设'), controller: this.hypothesisController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(5000).height(96)
+              .enabled(!this.draftRetiring && !this.draftRetirementUnknown).id('draft-hypothesis')
+              .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('hypothesis', s, preview))
+              .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('hypothesis', start, end)).onFocus(() => this.focusDraftField('hypothesis')).onBlur(() => this.blurDraftField('hypothesis'))
+            TextArea({ text: this.conclusion, placeholder: this.t('结论'), controller: this.conclusionController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(10000).height(116)
+              .enabled(!this.draftRetiring && !this.draftRetirementUnknown).id('draft-conclusion')
+              .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('conclusion', s, preview))
+              .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('conclusion', start, end)).onFocus(() => this.focusDraftField('conclusion')).onBlur(() => this.blurDraftField('conclusion'))
           }
           if (this.current()) {
             Divider().color(this.line())
@@ -1388,8 +1734,10 @@ struct Index {
             }, (task: TaskView) => task.id + ':' + task.completion.toString() + ':' + task.text)
             if (!this.current()?.deleted) {
               Row({ space: 8 }) {
-                TextInput({ text: this.taskText, placeholder: this.t('添加一个小步骤…') }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(500)
-                  .onChange((s: string) => { this.taskText = s; }).layoutWeight(1)
+                TextInput({ text: this.taskText, placeholder: this.t('添加一个小步骤…'), controller: this.taskController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(500)
+                  .enabled(!this.draftRetiring && !this.draftRetirementUnknown).id('draft-todos')
+                  .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('todos', s, preview))
+                  .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('todos', start, end)).onFocus(() => this.focusDraftField('todos')).onBlur(() => this.blurDraftField('todos')).layoutWeight(1)
                 Button(this.t('+'), { type: ButtonType.Normal }).fontSize(21).fontColor(this.accent()).width(36).height(36).padding(0).backgroundColor('#147662BA').borderRadius(10)
                   .onClick(() => this.mutate('task_add')).enabled(this.canEditTasks())
               }
@@ -1409,14 +1757,25 @@ struct Index {
         }.padding({ left: 24, right: 24, bottom: 16 }).width('100%')
       }.layoutWeight(1).width('100%').scrollBar(BarState.Off).align(Alignment.TopStart)
       if (this.message.length > 0) { Text(this.message).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.accent()).padding({ left: 24, right: 24, bottom: 12 }).width('100%') }
+      if (this.draftStatus.length > 0) {
+        Row() {
+          Text(this.draftStatus).fontSize(10).fontColor(this.muted()).layoutWeight(1).id('draft-status')
+          if (this.editorDraft?.unknown) { Button('核对草稿', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent).enabled(!this.draftWorking).onClick(() => this.retryDraft()) }
+        }.width('100%').padding({ left: 24, right: 24, bottom: 8 })
+      }
+      if (this.draftRetirementUnknown) {
+        Button('核对草稿清理', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+          .enabled(!this.draftWorking && !this.busy).onClick(() => this.retryDraftRetirement())
+      }
       Divider().color(this.line())
       Row({ space: 12 }) {
-        if (this.dirty) { Text(this.t('未保存')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted()) }
+        Button('放弃草稿', { type: ButtonType.Normal }).fontSize(10).fontColor(this.muted()).backgroundColor(Color.Transparent)
+          .enabled(!this.busy && !this.draftWorking && !this.draftRetirementUnknown && !this.editorDraft?.unknown && this.pending.length === 0).onClick(() => this.discardDraft())
         Blank()
-        Button(this.t('再想想'), { type: ButtonType.Normal }).fontSize(12).height(38).fontColor(this.accent()).backgroundColor(Color.Transparent).onClick(() => this.closeEditor())
+        Button('保留草稿', { type: ButtonType.Normal }).fontSize(12).height(38).fontColor(this.accent()).backgroundColor(Color.Transparent).onClick(() => this.closeEditor())
         Button(this.busy ? '保存中…' : '保存灵感', { type: ButtonType.Normal }).fontSize(12).height(38).padding({ left: 22, right: 22 })
           .fontColor(this.dark ? '#302D43' : '#FFFFFF').backgroundColor(this.accent()).borderRadius(this.round(10))
-          .enabled(this.ready && !this.busy && this.pending.length === 0 && !this.current()?.deleted).onClick(() => this.save())
+          .enabled(this.ready && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.draftRetirementUnknown && !this.editorDraft?.unknown && this.pending.length === 0 && !this.current()?.deleted).onClick(() => this.save())
       }.padding({ left: 24, right: 24, top: 14, bottom: 14 }).width('100%')
       if (this.pending.length > 0 && !this.busy) {
         Button(this.t('使用原操作重试 / 核对')).fontSize(12).backgroundColor(this.accent()).margin({ bottom: 12 }).onClick(() => this.retry())
@@ -1453,7 +1812,12 @@ struct Index {
           if (!this.busy) { Button(this.t('重新打开')).backgroundColor(this.accent()).onClick(() => this.start()) }
         }.padding(32).width('90%').backgroundColor(this.glass()).borderRadius(this.round(23))
       }
-      if (this.editorOpen) {
+      if (this.draftsOpen) {
+        Stack() {
+          Rect().width('100%').height('100%').fill('#40302D43').onClick(() => { this.draftsOpen = false; })
+          this.Drafts()
+        }.width('100%').height('100%')
+      } else if (this.editorOpen) {
         Stack() {
           Rect().width('100%').height('100%').fill('#40302D43').onClick(() => this.closeEditor())
           this.Editor()

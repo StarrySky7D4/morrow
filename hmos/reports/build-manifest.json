@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-10-05T07:23:01.768Z",
+  "createdUtc": "2026-10-05T08:38:58.583Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.8",
+  "hmosVersion": "0.1.0-hmos-dev.9",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 22296875,
-    "sha256": "F0DD0A031358E383E099ED5E6A97901907CD550425A7CD13C65EA46708A19BD8",
+    "bytes": 22685409,
+    "sha256": "4BA0830D729B7D2021B54DBC27DD50724AC565EC2098204B76242F4952C96096",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "41451DDF32E761963B9D456F9EA42FC2417221E1C99D86ACFF6D64F018EEC29A"
+      "sha256": "7C8FF50CC78A9883C5466D982E5D3B11A37B02C660021B426772FEF7CD26A47F"
     },
     {
       "path": "entry/build-profile.json5",
@@ -72,11 +72,11 @@
     },
     {
       "path": "entry/src/main/ets/model/Workbench.ets",
-      "sha256": "AC4EB8D069DBC17146234978110AF269F8D6D1C4A1BD6908335D9C6FDE7459A2"
+      "sha256": "E053E2FC5475F8445019CE3CC5EDCCEDA4ABCB54DAD6A980DCF365577E92F7BC"
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "B594035DD16FFA504A2EDB6DB1AF4C6661E7F5DCBDC545F0916D03E1479CB856"
+      "sha256": "FD86EEF2B261A68599A935F5E77E7DB1E2EDF0520AA14FC0F416AF70424BAC9D"
     },
     {
       "path": "hvigor/hvigor-config.json5",
@@ -84,19 +84,19 @@
     },
     {
       "path": "rust/Cargo.lock",
-      "sha256": "2723B38F82D90172A58FF7AE4FA812F74A63A4EDA96C4C4348F4DBDC9384D018"
+      "sha256": "83EDB06510E2923BEE70B16932146EC626327AA70E4F628C0CD5F3B12716AD89"
     },
     {
       "path": "rust/Cargo.toml",
-      "sha256": "02F476773CD9B581FA0C95E7D5EF5A7DBC154CE30AA7172CCF2E7C4ED59E1BC4"
+      "sha256": "31AA6D7516EE6D8606511FCAD1D1EE43DEAB5017E4FBE978ED6932F1615BCC53"
     },
     {
       "path": "rust/src/lib.rs",
-      "sha256": "2BBC513AD81C05801BCF10E70CCA72438C4F049ECE944B151D90B9F1935FCB6F"
+      "sha256": "8E7D96F85B12159C85E32E6A3C3B55AB5EE1BC335701579C4848A88ED0322C8A"
     },
     {
       "path": "rust/src/bin/hmos-self-check.rs",
-      "sha256": "55C7F4E8DDBA5DC29AA2D2DF779E4BB4D59E7C183BBC0042D09BE8BD79EBA8B6"
+      "sha256": "DAB0F816C1824ECFB35CA0CED97DCB042613500B6D07A9CCD40CF99EA801D9B3"
     },
     {
       "path": "scripts/build-hap.ps1",
@@ -1065,8 +1065,44 @@
     {
       "path": "rust/query-plan-reference.json",
       "sha256": "63E29B81C2BF98838323AC2E7BBAEE60C8567D49A630E760549ACD7F97362367"
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorDraft.ets",
+      "sha256": "AB46141497072B739BE3B536AE8449052645C0221F2FAB46B18806D7863450F9"
+    },
+    {
+      "path": "rust/src/draft_bridge.rs",
+      "sha256": "B97CECEA0AC077310365B594C0E66752086355BC53442FCDC64FFF981C78DD52"
+    },
+    {
+      "path": "rust/src/editor_draft.rs",
+      "sha256": "E515615F0C575644E29C165522AF3AE12FBFAA1B31685CBAAD06026666638F75"
+    },
+    {
+      "path": "rust/editor-draft-reference.json",
+      "sha256": "E35A163FE49F0D9FE81540D31796B54F2A39100760AA0E9E492C38FFE8D7D8D8"
+    },
+    {
+      "path": "rust/editor-draft-model/Cargo.toml",
+      "sha256": "FEAF4FBFBBF6EB7AFF6B70E1F98B606F7E5298851C5CFA7A445882B381F472B2"
+    },
+    {
+      "path": "rust/editor-draft-model/build.rs",
+      "sha256": "C66D78E82D77938C7EC7B2D9863F43D6179C7C4F371C19755D87A0F4ED555FB0"
+    },
+    {
+      "path": "rust/editor-draft-model/src/wrapper.rs",
+      "sha256": "0EA145B9BC7DFE3C4008DC16EF599689DA537F7A7AE2BE7C5A19CEB6ED299223"
+    },
+    {
+      "path": "rust/editor-draft-model/src/lib.rs",
+      "sha256": "D11632512506F357A73112568A6E8856AA74E87500B91709C87083A50DAC6C8E"
+    },
+    {
+      "path": "rust/editor-draft-model/schemas/editor_draft.proto",
+      "sha256": "8F80DB114BCC480D9553AE60916170B1982C9CDE0D0452753A35B491279FDDDC"
     }
   ],
-  "uiValidation": "reports/ui-source/v8/validation.md",
+  "uiValidation": "reports/ui-source/v9/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

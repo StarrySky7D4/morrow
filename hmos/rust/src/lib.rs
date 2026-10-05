@@ -19,6 +19,8 @@ use std::{
 // Byte-for-byte pure scheduler reference; provenance is pinned in
 // ../query-plan-reference.json. It establishes query correspondence only,
 // not a production plugin execution, permission, or durable capture.
+mod draft_bridge;
+pub mod editor_draft;
 pub mod query_plan_v2;
 
 const LIMIT: usize = 512 * 1024;
@@ -50,6 +52,9 @@ pub struct Request {
     sort: String,
     flag: bool,
     now_ms: String,
+    draft: Option<draft_bridge::Write>,
+    draft_id: String,
+    generation: String,
 }
 #[derive(Debug, Serialize)]
 pub struct TaskView {
@@ -79,6 +84,7 @@ pub struct Reply {
     error: String,
     cards: Vec<CardView>,
     ids: Vec<String>,
+    drafts: Vec<draft_bridge::View>,
     receipt_revision: String,
     profile: &'static str,
     effect: &'static str,
@@ -90,6 +96,7 @@ impl Reply {
             error: message,
             cards: vec![],
             ids: vec![],
+            drafts: vec![],
             receipt_revision: String::new(),
             profile: "development-unsealed",
             effect: "unknown",
@@ -129,7 +136,19 @@ impl Engine {
                 break;
             }
             after = page.last().unwrap().clone();
-            ids.extend(page);
+            for id in page {
+                let card = self
+                    .host
+                    .store_local()
+                    .card(&id)
+                    .map_err(err)?
+                    .ok_or("NotFound")?;
+                if editor_draft::is_journal(&card) {
+                    editor_draft::validate_journal(&card).map_err(err)?;
+                } else {
+                    ids.push(id);
+                }
+            }
             if ids.len() > 256 {
                 return Err("DevelopmentCardLimit".into());
             }
@@ -186,10 +205,14 @@ impl Engine {
                 .next_page(32, morrow_core::content::MAX_RECORD_BYTES)
                 .map_err(err)?;
             for entry in page.entries {
+                let card = entry.card();
+                if editor_draft::is_journal(&card) {
+                    editor_draft::validate_journal(&card).map_err(err)?;
+                    continue;
+                }
                 if candidates.len() >= 256 {
                     return Err("DevelopmentCardLimit".into());
                 }
-                let card = entry.card();
                 let summary = card.summary();
                 if summary.format_version != 2 {
                     return Err("UnsupportedVersion".into());
@@ -262,6 +285,63 @@ impl Engine {
                 error: String::new(),
                 cards: vec![],
                 ids: self.query(&r)?,
+                drafts: vec![],
+                receipt_revision: String::new(),
+                profile: "development-unsealed",
+                effect: self.effect,
+            });
+        }
+        if r.action.starts_with("draft_") {
+            let start = self.start;
+            let clock = || {
+                u64::try_from(start.elapsed().as_millis())
+                    .unwrap_or(u64::MAX - 1)
+                    .saturating_add(1)
+            };
+            let drafts = match r.action.as_str() {
+                "draft_list" => editor_draft::list(&self.host).map_err(err)?,
+                "draft_read" => editor_draft::read(&self.host, &r.id, &r.draft_id)
+                    .map_err(err)?
+                    .into_iter()
+                    .collect(),
+                "draft_save" => {
+                    let request = r.draft.ok_or("DraftRequestRequired")?.request()?;
+                    vec![
+                        editor_draft::save_with_effect(
+                            &mut self.host,
+                            &request,
+                            clock,
+                            &mut self.effect,
+                        )
+                        .map_err(err)?,
+                    ]
+                }
+                "draft_discard" => {
+                    let generation = draft_bridge::number(&r.generation)?;
+                    vec![
+                        editor_draft::discard_with_effect(
+                            &mut self.host,
+                            &r.id,
+                            &r.draft_id,
+                            generation,
+                            &r.operation,
+                            clock,
+                            &mut self.effect,
+                        )
+                        .map_err(err)?,
+                    ]
+                }
+                _ => return Err("UnsupportedAction".into()),
+            };
+            return Ok(Reply {
+                ok: true,
+                error: String::new(),
+                cards: vec![],
+                ids: vec![],
+                drafts: drafts
+                    .into_iter()
+                    .map(draft_bridge::View::from_record)
+                    .collect::<Result<Vec<_>>>()?,
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
                 effect: self.effect,
@@ -279,6 +359,9 @@ impl Engine {
             let mut connection = self.host.connect().map_err(err)?;
             let result = (|| -> Result<String> {
                 if r.action == "create" {
+                    if r.id.starts_with("morrow-host-") {
+                        return Err("ReservedCardIdentity".into());
+                    }
                     if self.ids()?.len() >= 256
                         && self.host.store_local().card(&r.id).map_err(err)?.is_none()
                     {
@@ -419,6 +502,7 @@ impl Engine {
             error: String::new(),
             cards: self.cards()?,
             ids: vec![],
+            drafts: vec![],
             receipt_revision: receipt,
             profile: "development-unsealed",
             effect: self.effect,
@@ -495,6 +579,7 @@ pub fn dispatch(input: &str) -> String {
                 error: String::new(),
                 cards: vec![],
                 ids: vec![],
+                drafts: vec![],
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
                 effect: "not_committed",

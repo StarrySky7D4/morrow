@@ -14,6 +14,10 @@ manifest.artifact.bytes = fs.statSync(artifact).size;
 manifest.artifact.sha256 = hash(artifact);
 const newInputs = ['entry/src/main/ets/model/QueryCoordinator.ets', 'rust/src/query_plan_v2.rs', 'rust/query-plan-reference.json', 'entry/src/main/ets/model/CardDataSource.ets', 'entry/src/main/ets/model/Appearance.ets', 'entry/src/main/ets/model/UiStrings.ets', 'entry/src/main/ets/model/Markdown.ets', 'entry/src/main/ets/pages/ColorWheel.ets', 'entry/src/main/ets/pages/SurfaceRelief.ets'];
 const inputs = new Set([...manifest.inputs.map(x => x.path), ...newInputs]);
+for (const p of ['entry/src/main/ets/model/EditorDraft.ets', 'rust/src/draft_bridge.rs',
+  'rust/src/editor_draft.rs', 'rust/editor-draft-reference.json', 'rust/editor-draft-model/Cargo.toml',
+  'rust/editor-draft-model/build.rs', 'rust/editor-draft-model/src/wrapper.rs', 'rust/editor-draft-model/src/lib.rs',
+  'rust/editor-draft-model/schemas/editor_draft.proto']) inputs.add(p);
 manifest.inputs = [...inputs].map(p => ({ path: p, sha256: hash(path.join(root, p)) }));
 manifest.uiValidation = `${reportDir}/validation.md`;
 manifest.upstreamDrift = 'reports/reference-drift.json';
@@ -24,6 +28,8 @@ ref.observedUtc = new Date().toISOString();
 ref.head = cp.execFileSync('git', ['-C', ref.root, 'rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
 ref.note = 'Current source observation. Screenshot provenance and verification scope are recorded in validation.md; the upstream working tree is active, not frozen.';
 const extra = ['lib/plugins/query_coordinator.dart','lib/plugins/workbench_ids.dart','workbench_host/src/query_plan_v2.rs','plugins/workbench/src/query_v2.rs','plugins/workbench/src/query_v2_codec.rs','lib/workspace_viewport.dart','lib/stable_masonry_grid.dart','lib/render_stable_masonry_grid.dart','lib/little_tips.dart','lib/visual_style_picker.dart','lib/style_depth_slider.dart','lib/neumorphic_controls.dart','lib/versioned_task_panel.dart','plugins/workbench/src/tasks_v2.rs','lib/component_material_page.dart','lib/color_compass.dart','lib/fonts/font_settings.dart','lib/liquid_glass.dart','lib/music/music_panel.dart'];
+extra.push('lib/plugins/editor_draft_session.dart', 'lib/plugins/editor_draft_workspace.dart',
+  'workbench_host/src/editor_draft.rs', 'workbench_host/src/editor_draft/model.rs', 'workbench_host/schemas/editor_draft.proto');
 for (const language of ['en','ja','ko','de','fr','es','pt','ru']) extra.push(`packages/morrow_i18n/lib/l10n/app_${language}.arb`);
 ref.files = [...new Set([...ref.files.map(x => x.path), ...extra])].map(p => ({ path: p, sha256: hash(path.join(ref.root, p)) }));
 fs.writeFileSync(path.join(root, reportDir, 'flutter-reference.json'), JSON.stringify(ref, null, 2) + '\n');
