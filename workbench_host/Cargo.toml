@@ -7,6 +7,7 @@ edition = "2024"
 publish = false
 license = "AGPL-3.0-only"
 [dependencies]
+morrow-fs-directory-request-v1 = {path = "../extensions/fs-directory-request-v1"}
 x509-parser = { version = "=0.18.1", default-features = false }
 rustls-pki-types = "=1.15.1"
 zeroize = "=1.9.0"

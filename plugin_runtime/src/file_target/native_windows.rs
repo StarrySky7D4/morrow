@@ -212,6 +212,81 @@ pub(super) fn open_child_directory(parent: &File, segment: &str) -> std::io::Res
     Ok(unsafe { File::from_raw_handle(raw) })
 }
 
+/// Trusted-host single raw UTF-16 component, relative to the retained parent.
+/// This readonly open is no grant and never creates or follows a reparse point.
+/// The caller retains the root/all ancestors and validates this same returned
+/// handle's directory attributes and 24-byte volume/file identity before use.
+pub(super) fn open_relative_directory(
+    parent: &File,
+    component: &[u16],
+    listing: bool,
+) -> std::io::Result<File> {
+    use std::os::windows::io::FromRawHandle;
+    use std::ptr::null_mut;
+    crate::directory_io::selection_path::validate_component(component)
+        .map_err(|_| std::io::Error::from(std::io::ErrorKind::InvalidInput))?;
+    let mut encoded = Vec::new();
+    encoded.try_reserve_exact(component.len())
+        .map_err(|_| std::io::Error::other("directory component allocation failed"))?;
+    encoded.extend_from_slice(component);
+    let bytes = u16::try_from(encoded.len().checked_mul(2)
+        .ok_or(std::io::ErrorKind::InvalidInput)?)
+        .map_err(|_| std::io::Error::from(std::io::ErrorKind::InvalidInput))?;
+    let mut name = UnicodeString {
+        length: bytes,
+        maximum_length: bytes,
+        buffer: encoded.as_mut_ptr(),
+    };
+    let mut attributes = ObjectAttributes {
+        length: size_of::<ObjectAttributes>() as u32,
+        root_directory: parent.as_raw_handle(),
+        object_name: &mut name,
+        attributes: 0x1040, // OBJ_CASE_INSENSITIVE | OBJ_DONT_REPARSE
+        security_descriptor: null_mut(),
+        security_quality_of_service: null_mut(),
+    };
+    let mut status = IoStatusBlock {
+        status: IoStatus { pointer: null_mut() },
+        information: 0,
+    };
+    let mut raw = null_mut();
+    // SAFETY: one validated <=255-unit UTF-16 component is live and writable
+    // through this synchronous call; all initialized repr(C) native structures
+    // have their ABI alignment. The borrowed parent File retains its handle.
+    // FILE_OPEN=1 never creates/truncates. DIRECTORY|SYNCHRONOUS_NONALERT|
+    // OPEN_REPARSE_POINT=0x200021; SYNCHRONIZE prevents pending buffer use.
+    // Fixed readonly rights: TRAVERSE|READ_ATTRIBUTES|SYNCHRONIZE, with LIST
+    // only for the final listing directory. Share READ alone denies ordinary
+    // WRITE/DELETE opens while this handle lives; no guest handle is exposed.
+    let result = unsafe {
+        NtCreateFile(
+            &mut raw,
+            if listing { 0x0010_00a1 } else { 0x0010_00a0 },
+            &mut attributes,
+            &mut status,
+            std::ptr::null(),
+            0,
+            1,
+            1,
+            0x0020_0021,
+            std::ptr::null(),
+            0,
+        )
+    };
+    if result < 0 {
+        // SAFETY: pure status translation, no borrowed pointers or ownership.
+        return Err(std::io::Error::from_raw_os_error(
+            unsafe { RtlNtStatusToDosError(result) } as i32,
+        ));
+    }
+    if raw.is_null() || raw as isize == -1 {
+        return Err(std::io::Error::other("invalid native directory handle"));
+    }
+    // SAFETY: synchronous successful NtCreateFile transferred one owned handle;
+    // File wraps it once and performs the only close. No raw value is exposed.
+    Ok(unsafe { File::from_raw_handle(raw) })
+}
+
 pub(super) enum CreateAttempt {
     Created,
     /// API failure, with the newly created temporary file confirmed cleaned up

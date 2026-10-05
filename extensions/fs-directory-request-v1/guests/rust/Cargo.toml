@@ -1,0 +1,10 @@
+[package]
+name = "morrow-fs-directory-request-guest"
+version = "0.1.0"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+[lib]
+crate-type = ["cdylib"]
+[dependencies]
+morrow-fs-directory-request-v1 = { path = "../.." }

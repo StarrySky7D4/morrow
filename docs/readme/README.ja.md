@@ -6,15 +6,23 @@
 
 Morrow（明隙）は、カードでアイデアを整理するローカルファーストのワークスペースです。全プラットフォーム対応のプラグイン構成へ移行中です。旧名は daemon、コードのパッケージ名は `morrow_studio`。Windows では Flutter が画面を、Rust ホストと隔離された Wasm プラグインが処理を担当します。Web はブラウザー内で Rust/Wasm をローカル実行します。Android は従来の経路を維持しており、全プラットフォームでの製品・プラグイン機能の同等性は未検証です。
 
+## 現在の開発チェックポイント
+
+今回の更新にはC08–C10が含まれます。独立したfs-directory-request-v1 profileは元の承認済みディレクトリ選択とownerを使います。Windows限定検証では新Rust34、既存回帰191、frame5が通過し、Python33とnative C/C++の2つのconsumerは別に数えます。新Rust Wasmはコンパイルのみ通過し、実際の新Rust guest実行、C/C++ Wasm、Workbench製品／GUI、保護されたSession、他プラットフォームは未検証です。従来のCore IO FileListはUnsupported、SDK26／G04はOPENのままです。新しいReleaseはありません。 [C10](../../reports/reconstruction-2026-10-05/directory-request-sdk.md)
+
 ## 開発状況（2026-10-05）
 
 アプリのソースチェックポイントは **0.1.9-test.58+62** です。開発先のブランチは `codex/windows-sdk-convergence-20261005` で、cloud `468ef2e` と C02–C07 の変更を基にします。最新状況と次の作業の基準は [プロジェクト状況](../../docs/PROJECT_STATUS.md)、実際の Windows 検証範囲は [C07 限定検証レポート](../../reports/reconstruction-2026-10-05/directory-owner-sdk.md) を参照してください。
 
-Windows のローカル合成検証では、元の owner 経路の 115 メソッド（ディレクトリ取消 7、directory owner 14、ネイティブディレクトリ 16 を含む）、元の回帰 42 メソッド、11 プログラムのネットワーク 100 メソッドが成功しました。42 メソッドの実行では frozen-region の 14 件と remote-reader の 1 件をフィルター対象として維持し、子プロセスの補助プログラムは追加の成功メソッドに数えません。完全な SDK や製品の受入完了を示す数値ではありません。
+C07の歴史的限定検証：Windows のローカル合成検証では、元の owner 経路の 115 メソッド（ディレクトリ取消 7、directory owner 14、ネイティブディレクトリ 16 を含む）、元の回帰 42 メソッド、11 プログラムのネットワーク 100 メソッドが成功しました。42 メソッドの実行では frozen-region の 14 件と remote-reader の 1 件をフィルター対象として維持し、子プロセスの補助プログラムは追加の成功メソッドに数えません。完全な SDK や製品の受入完了を示す数値ではありません。
 
 信頼されたディレクトリ capture/page/finish は元の IoWorker キュー、Manager、runtime、instance、IoBinding、FileList 承認を使用します。時刻取得と権限確認は短い原子的ステップで行い、ネイティブ資源の実際の解放後に割当枠を解放します。Unknown の自動再実行やカーソルの周回はありません。独立して版管理する型付き WebSocket/SSE ペイロードライブラリは Rust、C、C++ のコーデックと限定 Guest 検証を提供し、ディレクトリ／blob コーデックと有界状態もローカル検証済みです。
 
-**SDK26／G04 は OPEN のままで、完全な SDK は凍結していません。** 本番の保護された owner、GUI／ワークスペースのタスク入口、選択ダイアログと祖先由来の証明、新しい信頼済み秘密値の生成機構、新しいディレクトリ request／import／feature／helper profile の交渉、blob の永続履歴、受信サービスの完全な製品検証、実際の TLS／API、他プラットフォームは未完了または NOT_RUN です。C08 は設計のみです。この検証による新しいインストーラーの公開はなく、安定版 SDK でもありません。
+## C08／C09の過去の限定結果
+
+**SDK26／G04 は OPEN のままで、完全な SDK は凍結していません。** 本番の保護された owner、ワークスペースの製品受入／GUI、選択ダイアログと祖先由来の証明、本番の信頼済み選択と秘密値のライフサイクル、新しいディレクトリ request／import／feature／helper profile の交渉、blob の永続履歴、受信サービスの完全な製品検証、実際の TLS／API、他プラットフォームは未完了または NOT_RUN です。C08の元workerによるnative秘密生成は限定検証済みです。14メソッド成功、未選択69件はフィルター対象です。owner115、original42、network100も個別に再検証しました。[C08記録](../../reports/reconstruction-2026-10-05/directory-secret-factory.md)を参照してください。C08追加はローカルで未commit／push、既存文書commit772466は保持されています。この検証による新しいインストーラーの公開はなく、安定版 SDK でもありません。
+
+C09のローカルな信頼済み相対ディレクトリ選択はWindows限定検証を通過し、新20メソッドと元の回帰範囲は[C09報告](../../reports/reconstruction-2026-10-05/directory-selection-owner.md)に記録されていますが、保持するopened root→相対子孫の句柄チェーンだけが対象で、picker、rootより上の由来や本番資格は証明しません。Workbenchホスト入口はコンパイル確認のみで、ワークスペース製品受入／GUIは未実行、公開guest FileListとconditional ReplaceはUnsupported、SDK26／G04はOPENです。push済みチェックポイントは772466で、C08/C09はローカル未commit／push、新版未公開です。
 
 ## ダウンロードと互換性
 
@@ -75,7 +83,7 @@ flutter build web --no-web-resources-cdn
 
 目標は Flutter／Dart の UI、移植可能な Rust コア、交換可能なプラグイン実行基盤です。実行時の境界では固定契約、永続化と独自のデータ交換では Protobuf＋LZ4 を使用します。C／C++／Rust SDK と宣言的なプラグイン UI を開発中です。TS／JS プラグインは非対応で、動的 Dart プラグインも必須にしません。
 
-完全な SDK はまだ凍結していません。管理された HTTP／HTTPS リクエスト、限定的な API サービスノード、TLS 識別情報管理は接続済みです。再起動後の Unknown 結果照合、完全なファイルシステム、新しいディレクトリ request／import／feature／helper profile の交渉、各プラットフォームの検証は残っています。開庫時は全履歴を走査します。読み取りと計算を重ねる完全なパイプライン、履歴の階層化、自動整理は未実装です。
+完全な SDK はまだ凍結していません。管理された HTTP／HTTPS リクエスト、限定的な API サービスノード、TLS 識別情報管理は接続済みです。再起動後の Unknown 結果照合、完全なファイルシステム、新しいディレクトリguestの実際の実行と製品検証、各プラットフォームの検証は残っています。開庫時は全履歴を走査します。読み取りと計算を重ねる完全なパイプライン、履歴の階層化、自動整理は未実装です。
 
 ## ドキュメント
 

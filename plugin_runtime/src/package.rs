@@ -37,7 +37,15 @@ impl PreparedPackage {
             .required_features
             .iter()
             .any(|f| f == morrow_core::plugin_package::DEPENDENCY_CALLS_FEATURE);
-        let runner = if package.channel_declaration().is_some() {
+        let directory = package.manifest().required_features.iter()
+            .any(|feature| feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE);
+        let runner = if directory {
+            if dependency || package.io_declaration().is_none()
+                || package.channel_declaration().is_some() || package.mutation_enabled() {
+                return Err(Fault::UnsupportedAbi);
+            }
+            Runner::new_directory_task(package.module(), limits)?
+        } else if package.channel_declaration().is_some() {
             if dependency
                 || package.io_declaration().is_some()
                 || package.mutation_enabled()

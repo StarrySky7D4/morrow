@@ -1,12 +1,16 @@
 # Morrow 未来路线与任务清单
 
+当前C10检查点（2026-10-05）：本次开发分支更新收录C08–C10。C10已新增独立 `fs-directory-request-v1`、严格单import、包feature及只读discovery，复用原已批准selection和owner，不导出路径、句柄或新授权。Windows新Rust34（codec12/helper4/profile9/owner9）、既有回归191及frame5分别通过；Python33和两个原生C/C++消费者另计。新Rust Wasm仅编译通过，真实新Rust guest、C/C++ Wasm、Workbench产品／GUI、受保护Session与其他平台仍未验收。旧Core IO FileList保持Unsupported，SDK26／G04仍OPEN，无新Release。 详见[接口与实测边界](../reports/reconstruction-2026-10-05/directory-request-sdk.md)。
+
 ## 当前开发检查点（2026-10-05）
 
 本次源码同步目标为 `codex/windows-sdk-convergence-20261005`，承接云端 `468ef2e` 并保存 C02–C07 Windows 复验与 SDK 增量。应用源码为 `0.1.9-test.58+62`；已发布下载仍为 test.56 测试预览，本次不构建或发布新安装包。
 
 C07 原 owner 九组 115 方法、原始 SDK 定向回归 42 方法及网络 100 方法分别通过；115 已含取消7 / 目录owner14 / native16，42 保留过滤及 child helper 边界。整库 Clippy 仍有 10 处既有诊断（exit101），本轮 owned 诊断0。327 SDK / 57 冻结输入保持原字节，完整 SDK26 / G04 继续 OPEN。
 
-目录捕获、分页、结束和清理已进入原 IoWorker；原授权、时钟、预算与 Unknown 无重放规则保持。下一阶段 C08 是可信工作线程的随机秘密生成与持有期零化，当前仅完成设计审查；picker / 祖先证明、公开目录协商、blob 耐久后端、生产入口及其他平台资格继续推进。
+目录捕获、分页、结束和清理已进入原IoWorker；C08新增可信宿主 `capture_directory_fresh(File, CaptureLimits)`，生产生成固定使用getrandom0.4.3，原身份／clock／取消前后复核和所持缓冲Zeroizing保持。新Windows Release／locked／offline实际factory14（69filtered）、原owner115／九组、原件42／五组、网络100／十一组分别通过，42保留region14与reader1过滤。限定三文件fmt及strict库Rustc通过；整库library Clippy仍exit101／10旧诊断／owned0，不是全SDK冻结。C08历史限定证据保留，本次开发提交收录C08–C10，详见 [C08实测](../reports/reconstruction-2026-10-05/directory-secret-factory.md)。C08不提供picker或祖先证明；新的C09限定链见下文，公开目录协商、blob耐久后端、生产入口及其它平台仍OPEN。
+
+C09已完成限定Windows Release／locked／offline资格，见 [C09阶段说明](../reports/reconstruction-2026-10-05/directory-selection-owner.md)。可信宿主 `capture_directory_under(anchor, relative, limits)`只保留并核验原opened anchor到relative leaf的raw UTF-16句柄链，复用原worker FileList、原时钟、取消和预算；root加N个分量共享原8资源，32段语法上限不是可用深度。新selection_path8＋directory_selection12、C08 factory14、原owner九组115和原件42分别当前实际PASS；原件42为base9／dependency3／region7／reader主9／shared14，reader raw10含child helper1不加方法，region保留84过滤。17个credited测试进程合191 meaningful方法（raw192含child1），zero-match失败进程保留且不计功；这些数字不能作为SDK冻结。Workbench第二次Release x86_64 `--locked --offline --lib` check通过，首次缺offline asn1-rs0.7.2的exit101保留；只是编译检查，ProtectedSession／GUI／picker以上provenance和non-Windows产品执行NOT_RUN。C09 network100和Clippy明确NOT_RUN，不继承C08历史通过或lint结果。这不证明picker时刻、anchor以上来源或传入anchor的sharing策略，不增加guest FileList、目录guest或公共UI，blob耐久后端仍缺。SDK26／G04仍OPEN，公开FileList及conditional Replace仍Unsupported。C08/C09历史报告保留当时状态；本次开发分支更新收录C08–C10，无新Release。
 
 当前统一入口为[项目状态](PROJECT_STATUS.md)、[SDK门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)和[本次同步范围](../reports/reconstruction-2026-10-05/documentation-sync.md)。下方日期条目保存当时执行与交付状态；其中“未提交／未推送”和旧“下一项”不覆盖本次检查点。
 

@@ -81,6 +81,7 @@ pub use owner_commands::{
 pub use owner_commands::{
     DIRECTORY_COMMAND_FIXED_BYTES, DIRECTORY_FINISH_CHARGE, DIRECTORY_PAGE_CHARGE,
     DirectoryCommandError, DirectoryCommandHandle, DirectoryResponse, DirectorySession,
+    DirectoryGuestHandle, DirectoryGuestResult,
     MAX_DIRECTORY_OBSERVATIONS, MAX_MUTATION_CHUNK, MutationBudgetEstimate,
     MutationDiscoverySession, MutationGuestExecutionPermit, MutationGuestJobMode,
     MutationGuestLease, MutationHandle, MutationOutcome, MutationResponse, MutationSession,
@@ -765,6 +766,8 @@ struct Control {
     capacity: usize,
     limits: JobLimits,
     timeout: Duration,
+    #[cfg(windows)]
+    directory_request_enabled: bool,
     mutation_enabled: bool,
     mutation_history: bool,
     state: Mutex<State>,
@@ -1371,6 +1374,9 @@ impl<O: HostOwner> IoWorker<O> {
                 timeout,
                 mutation_enabled: package.package().mutation_enabled(),
                 mutation_history,
+                #[cfg(windows)]
+                directory_request_enabled: package.package().manifest().required_features.iter()
+                    .any(|feature| feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE),
                 #[cfg(windows)]
                 directories: Mutex::new(Default::default()),
                 state: Mutex::new(State {

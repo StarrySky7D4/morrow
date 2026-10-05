@@ -536,6 +536,8 @@ impl Workbench {
                     self.state.task = Some(Task {
                         file: None,
                         #[cfg(windows)]
+                        directory: None,
+                        #[cfg(windows)]
                         mutation: None,
                         commands: Default::default(),
                         key,
@@ -581,6 +583,8 @@ impl Workbench {
                 self.state.task = Some(Task {
                     file: None,
                     #[cfg(windows)]
+                    directory: None,
+                    #[cfg(windows)]
                     mutation: None,
                     commands: Default::default(),
                     key,
@@ -608,6 +612,8 @@ impl Workbench {
                 failure.worker.stop();
                 self.state.task = Some(Task {
                     file: None,
+                    #[cfg(windows)]
+                    directory: None,
                     #[cfg(windows)]
                     mutation: None,
                     commands: Default::default(),
@@ -639,6 +645,8 @@ impl Workbench {
         let admission=self.state.product_gate.register(execution.stop_handle());
         self.state.task = Some(Task {
             file: None,
+            #[cfg(windows)]
+            directory: None,
             #[cfg(windows)]
             mutation: None,
             commands: Default::default(),

@@ -6,15 +6,23 @@ Leave a little room for tomorrow’s ideas.
 
 Morrow (明隙) is a local-first, card-based workspace for ideas, evolving toward a cross-platform plugin architecture. Formerly daemon, its code package is `morrow_studio`. Windows uses Flutter for the interface and a Rust host with sandboxed Wasm plugins for workbench logic. Web runs Rust/Wasm locally in the browser; Android still uses the earlier path. Full plugin and product parity across platforms remains unqualified.
 
+## Current development checkpoint
+
+This development update includes C08–C10. The separate fs-directory-request-v1 profile reuses the original approved directory selection and owner. Bounded Windows checks passed: 34 new Rust methods, 191 existing regression methods and 5 frame methods; 33 Python tests and two native C/C++ consumers are counted separately. The new Rust Wasm only compiled; actual new Rust guest execution, C/C++ Wasm, Workbench product/GUI, protected Session and other platforms remain unqualified. Legacy Core IO FileList is Unsupported; SDK26/G04 is OPEN. No new Release. [C10](../../reports/reconstruction-2026-10-05/directory-request-sdk.md)
+
 ## Development status (2026-10-05)
 
 The application source checkpoint is **0.1.9-test.58+62**. The target development line is `codex/windows-sdk-convergence-20261005`, based on cloud `468ef2e` plus C02–C07 changes. See [Project status](../../docs/PROJECT_STATUS.md) for the canonical status and next steps, and the [bounded C07 qualification report](../../reports/reconstruction-2026-10-05/directory-owner-sdk.md) for actual Windows evidence.
 
-Local synthetic Windows qualification passed 115 methods on the original owner path, including directory cancellation 7, directory owner 14 and native directory 16; 42 original regression methods; and 100 network methods across 11 programs. The 42-method run retains 14 frozen-region filters and one remote-reader filter. Child helpers are not additional passing methods. These counts do not establish complete SDK or product acceptance.
+Historical C07 qualification: Local synthetic Windows qualification passed 115 methods on the original owner path, including directory cancellation 7, directory owner 14 and native directory 16; 42 original regression methods; and 100 network methods across 11 programs. The 42-method run retains 14 frozen-region filters and one remote-reader filter. Child helpers are not additional passing methods. These counts do not establish complete SDK or product acceptance.
 
 Trusted directory capture/page/finish uses the original IoWorker queue, Manager, runtime, instance, IoBinding and FileList approval. Clock sampling and authorization checks use short atomic steps; quota is released after native resources actually drop. Unknown outcomes do not replay automatically and cursors do not wrap. Independently versioned typed WebSocket/SSE payload libraries provide Rust, C and C++ codecs with bounded guest validation; directory/blob codecs and bounded state also have local qualification.
 
-**SDK26/G04 remains OPEN; the complete SDK is not frozen.** Protected production owners, GUI/workspace task entry, picker and ancestor provenance, a fresh trusted-secret factory, new directory request/import/feature/helper-profile negotiation, blob durable history, complete inbound-service product qualification, real TLS/API and other platforms remain pending or NOT_RUN. C08 is design only. This qualification publishes no new installer and is not a stable SDK.
+## Historical C08/C09 bounded records
+
+**SDK26/G04 remains OPEN; the complete SDK is not frozen.** Protected production owners, workspace task product acceptance/GUI, picker and ancestor provenance, production trusted selection and secret lifecycle, new directory request/import/feature/helper-profile negotiation, blob durable history, complete inbound-service product qualification, real TLS/API and other platforms remain pending or NOT_RUN. The C08 stage added a bounded native worker secret factory: 14 methods passed, with 69 unselected methods filtered; owner115, original42 and network100 each passed fresh regressions. See the [C08 record](../../reports/reconstruction-2026-10-05/directory-secret-factory.md). C08 additions are local and uncommitted/unpushed; the earlier documentation commit772466 remains. This qualification publishes no new installer and is not a stable SDK.
+
+C09’s local trusted relative directory selection passed bounded Windows validation; the new20 methods and original regressions are in the [C09 report](../../reports/reconstruction-2026-10-05/directory-selection-owner.md), covering only held handles from the opened root to relative descendants, not picker, above-root provenance or production qualification. The Workbench host entry passed compile checks only; workspace task product acceptance/GUI remain unrun, with public guest FileList and conditional Replace Unsupported and SDK26/G04 OPEN. The pushed checkpoint is772466; C08/C09 changes remain local, uncommitted, unpushed and unreleased.
 
 ## Download and compatibility
 
@@ -75,7 +83,7 @@ flutter build web --no-web-resources-cdn
 
 The target architecture combines Flutter/Dart UI, a portable Rust core and replaceable plugin execution backends. Runtime boundaries use fixed contracts; persistence and application-owned exchanges use Protobuf + LZ4. C/C++/Rust SDKs and declarative plugin UI are in development. TS/JS plugins are not supported; dynamic Dart plugins are not required.
 
-The complete SDK is not frozen. Managed HTTP/HTTPS requests, limited API service nodes and TLS identity management are connected. Cross-restart reconciliation of Unknown outcomes, the full filesystem, new directory request/import/feature/helper-profile negotiation and cross-platform qualification remain open. Library opening still scans all history; a full read/compute pipeline, historical tiers and automatic cleanup are not implemented.
+The complete SDK is not frozen. Managed HTTP/HTTPS requests, limited API service nodes and TLS identity management are connected. Cross-restart reconciliation of Unknown outcomes, the full filesystem, actual guest and product qualification for the new directory profile and cross-platform qualification remain open. Library opening still scans all history; a full read/compute pipeline, historical tiers and automatic cleanup are not implemented.
 
 ## Documentation
 

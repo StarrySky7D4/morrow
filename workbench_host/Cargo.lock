@@ -1258,10 +1258,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-fs-directory-request-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "morrow-fs-directory-v1",
+ "sha2 0.10.9",
+]
+
+[[package]]
+name = "morrow-fs-directory-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
 name = "morrow-plugin-runtime"
 version = "0.1.9-test.50"
 dependencies = [
+ "morrow-fs-directory-request-v1",
+ "getrandom 0.4.3",
  "morrow-core",
+ "morrow-fs-directory-v1",
  "prost",
  "sha2 0.10.9",
  "wasm-bindgen",
@@ -1283,6 +1305,7 @@ dependencies = [
 name = "morrow-workbench-host"
 version = "0.1.9-test.50"
 dependencies = [
+ "morrow-fs-directory-request-v1",
  "capnp",
  "capnpc",
  "getrandom 0.4.3",

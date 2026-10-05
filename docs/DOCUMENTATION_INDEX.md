@@ -1,5 +1,7 @@
 # Morrow 文档导航与维护范围
 
+当前C10检查点（2026-10-05）：本次开发分支更新收录C08–C10。C10已新增独立 `fs-directory-request-v1`、严格单import、包feature及只读discovery，复用原已批准selection和owner，不导出路径、句柄或新授权。Windows新Rust34（codec12/helper4/profile9/owner9）、既有回归191及frame5分别通过；Python33和两个原生C/C++消费者另计。新Rust Wasm仅编译通过，真实新Rust guest、C/C++ Wasm、Workbench产品／GUI、受保护Session与其他平台仍未验收。旧Core IO FileList保持Unsupported，SDK26／G04仍OPEN，无新Release。 详见[接口与实测边界](../reports/reconstruction-2026-10-05/directory-request-sdk.md)。
+
 核对日期：2026-10-05。当前版本、资格和下一阶段以[项目状态](PROJECT_STATUS.md)为准；具体任务见[开发看板](DEVELOPMENT_BOARD.md)、[路线](FUTURE_ROADMAP.md)和[SDK 门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)。
 
 本次逐文件盘点覆盖更新前的 1,759 份 Markdown。下表按文档用途划定维护范围；核对记录不增加任何测试通过数。本页与当前状态、同步报告为本次新增入口，不计入盘点前基数。
@@ -13,7 +15,9 @@
 | companion／upstream 快照与资格说明 | 1,093 | 保留来源、版权与历史身份，不作全量版本替换 |
 | 冻结 SDK／原二进制基线说明 | 15 | 原字节保留；新的使用说明与冻结原件分开 |
 
-9 份多语言 README 共用当前源码检查点与已发布下载的边界。SDK327／frozen57 以及原封存交接包不改；文档更新不把 C08 设计计为实现、不把限定 Windows PASS 计为完整 SDK 冻结。源码与公开下载的身份见[文档同步记录](../reports/reconstruction-2026-10-05/documentation-sync.md)。
+C09已完成限定Windows Release／locked／offline资格，见 [C09阶段说明](../reports/reconstruction-2026-10-05/directory-selection-owner.md)。可信宿主 `capture_directory_under(anchor, relative, limits)`只保留并核验原opened anchor到relative leaf的raw UTF-16句柄链，复用原worker FileList、原时钟、取消和预算；root加N个分量共享原8资源，32段语法上限不是可用深度。新selection_path8＋directory_selection12、C08 factory14、原owner九组115和原件42分别当前实际PASS；原件42为base9／dependency3／region7／reader主9／shared14，reader raw10含child helper1不加方法，region保留84过滤。17个credited测试进程合191 meaningful方法（raw192含child1），zero-match失败进程保留且不计功；这些数字不能作为SDK冻结。Workbench第二次Release x86_64 `--locked --offline --lib` check通过，首次缺offline asn1-rs0.7.2的exit101保留；只是编译检查，ProtectedSession／GUI／picker以上provenance和non-Windows产品执行NOT_RUN。C09 network100和Clippy明确NOT_RUN，不继承C08历史通过或lint结果。这不证明picker时刻、anchor以上来源或传入anchor的sharing策略，不增加guest FileList、目录guest或公共UI，blob耐久后端仍缺。SDK26／G04仍OPEN，公开FileList及conditional Replace仍Unsupported。C08/C09历史报告保留当时状态；本次开发分支更新收录C08–C10，无新Release。
+
+9 份多语言 README 共用当前源码检查点与已发布下载的边界。SDK327／frozen57 以及原封存交接包不改；C08已新增原worker fresh-secret入口并完成限定Windows复验，见 [C08实测](../reports/reconstruction-2026-10-05/directory-secret-factory.md)；这仍不把限定Windows PASS计为完整SDK冻结。源码与公开下载的身份见[文档同步记录](../reports/reconstruction-2026-10-05/documentation-sync.md)。
 
 ## 项目自有维护说明
 

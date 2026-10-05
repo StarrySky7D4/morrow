@@ -19,6 +19,7 @@ mod files;
 pub use directories::{
     DIRECTORY_COMMAND_FIXED_BYTES, DIRECTORY_FINISH_CHARGE, DIRECTORY_PAGE_CHARGE,
     DirectoryCommandError, DirectoryCommandHandle, DirectoryResponse, DirectorySession,
+    DirectoryGuestHandle, DirectoryGuestResult,
     MAX_DIRECTORY_OBSERVATIONS,
 };
 #[cfg(windows)]
@@ -142,6 +143,8 @@ enum Reply {
     File(Result<FileResponse, FileCommandError>),
     #[cfg(windows)]
     Directory(Box<Result<DirectoryResponse, DirectoryCommandError>>),
+    #[cfg(windows)]
+    DirectoryGuest(Box<Result<directories::GuestReply, DirectoryCommandError>>),
     #[cfg(windows)]
     Mutation(Box<Result<MutationResponse, crate::file_target::Error>>),
 }
@@ -327,6 +330,11 @@ struct RenewalRequest {
 
 enum CommandKind<O: HostOwner> {
     #[cfg(windows)]
+    DirectoryGuest {
+        request: directories::GuestRequest,
+        dispatch: directories::GuestDispatch<O>,
+    },
+    #[cfg(windows)]
     Directory {
         request: directories::Request,
         dispatch: directories::Dispatch<O>,
@@ -389,6 +397,11 @@ impl<O: HostOwner> Command<O> {
         // No control/response lock spans application code. A panic propagates
         // to the existing worker recovery boundary and retains the same owner.
         let reply = match self.kind {
+            #[cfg(windows)]
+            CommandKind::DirectoryGuest { request, dispatch } => {
+                Some(Reply::DirectoryGuest(Box::new(dispatch(owner, instance, control,
+                    &self.ticket, &mut files.directories, request))))
+            }
             #[cfg(windows)]
             CommandKind::Directory { request, dispatch } => {
                 Some(Reply::Directory(Box::new(dispatch(
@@ -489,6 +502,8 @@ impl<O: HostOwner> IoWorker<O> {
         let charge = match &kind {
             #[cfg(windows)]
             CommandKind::Directory { request, .. } => request.charge(),
+            #[cfg(windows)]
+            CommandKind::DirectoryGuest { request, .. } => request.charge(),
             CommandKind::File { request, .. } => request.charge(),
             #[cfg(windows)]
             CommandKind::Mutation { request, .. } => request.charge(),
@@ -664,6 +679,8 @@ mod sensitive_tests {
                 timeout: Duration::from_secs(1),
                 mutation_enabled: false,
                 mutation_history: false,
+                #[cfg(windows)]
+                directory_request_enabled: false,
                 #[cfg(windows)]
                 directories: Mutex::new(Default::default()),
                 state: Mutex::new(State {

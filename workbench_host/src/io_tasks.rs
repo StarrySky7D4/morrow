@@ -19,6 +19,9 @@ pub mod mutation;
 
 #[path = "file_tasks.rs"]
 pub mod file;
+#[cfg(windows)]
+#[path = "directory_tasks.rs"]
+pub mod directory;
 #[path = "service_tasks.rs"]
 pub mod service;
 #[path = "service_commands.rs"]
@@ -110,6 +113,49 @@ pub struct PreparedJob {
     pub router: Box<dyn BrokerRouter>,
     pub timeout: Duration,
 }
+// Preserve all existing file/IO/mutation admission paths through pure wrapping.
+// Conversion occurs immediately after the original preparation closure returns.
+enum TaskAdmission {
+    Original(file::Admission),
+    #[cfg(windows)]
+    Directory(directory::Admission),
+}
+enum TaskSubmitted {
+    Original(file::Submitted),
+    #[cfg(windows)]
+    Directory(directory::DirectoryTask),
+}
+impl From<file::Admission> for TaskAdmission {
+    fn from(value: file::Admission) -> Self {
+        Self::Original(value)
+    }
+}
+#[cfg(windows)]
+impl From<directory::Admission> for TaskAdmission {
+    fn from(value: directory::Admission) -> Self {
+        Self::Directory(value)
+    }
+}
+impl TaskAdmission {
+    fn timeout(&self) -> Duration {
+        match self {
+            Self::Original(value) => value.timeout(),
+            #[cfg(windows)]
+            Self::Directory(value) => value.timeout(),
+        }
+    }
+    fn submit(self, worker: &IoWorker<WorkbenchState>) -> Result<TaskSubmitted> {
+        match self {
+            Self::Original(value) => value.submit(worker).map(TaskSubmitted::Original),
+            #[cfg(windows)]
+            Self::Directory(value) => value.submit(worker).map(TaskSubmitted::Directory),
+        }
+    }
+    fn persistent(&self) -> bool {
+        !matches!(self, Self::Original(file::Admission::Io(_)))
+    }
+}
+
 struct Task {
     key: TaskKey,
     commands: service_commands::Registry,
@@ -119,6 +165,8 @@ struct Task {
     exit: Option<ExitStatus>,
     service: Option<service::Progress>,
     file: Option<file::FileTask>,
+    #[cfg(windows)]
+    directory: Option<directory::DirectoryTask>,
     #[cfg(windows)]
     mutation: Option<mutation::MutationTask>,
 }
@@ -332,6 +380,16 @@ impl StateSlot {
                     .or_else(|| {
                         #[cfg(windows)]
                         {
+                            t.directory.as_ref().and_then(directory::DirectoryTask::poll)
+                        }
+                        #[cfg(not(windows))]
+                        {
+                            None
+                        }
+                    })
+                    .or_else(|| {
+                        #[cfg(windows)]
+                        {
                             t.mutation.as_mut().and_then(mutation::MutationTask::poll)
                         }
                         #[cfg(not(windows))]
@@ -424,18 +482,18 @@ impl Workbench {
     ) -> Result<TaskKey> {
         self.start_task(options, |p| prepare(p).map(file::Admission::Io))
     }
-    fn start_task(
+    fn start_task<J: Into<TaskAdmission>>(
         &mut self,
         options: StartOptions,
-        prepare: impl FnOnce(Preparation<'_>) -> Result<file::Admission>,
+        prepare: impl FnOnce(Preparation<'_>) -> Result<J>,
     ) -> Result<TaskKey> {
         self.start_task_with_binding(options, BindingProfile::Ordinary, prepare)
     }
-    fn start_task_with_binding(
+    fn start_task_with_binding<J: Into<TaskAdmission>>(
         &mut self,
         options: StartOptions,
         binding_profile: BindingProfile,
-        prepare: impl FnOnce(Preparation<'_>) -> Result<file::Admission>,
+        prepare: impl FnOnce(Preparation<'_>) -> Result<J>,
     ) -> Result<TaskKey> {
         self.state.try_reclaim()?;
         self.state.local()?;
@@ -505,13 +563,13 @@ impl Workbench {
                     time,
                 )?,
             };
-            let job = prepare(Preparation {
+            let job: TaskAdmission = prepare(Preparation {
                 manager,
                 host: &state.host,
                 instance: &instance,
                 binding: &binding,
                 now: time,
-            })?;
+            })?.into();
             if job.timeout().is_zero() || job.timeout() > options.lifetime {
                 return Err("invalid IO job timeout".into());
             }
@@ -531,6 +589,8 @@ impl Workbench {
                         stopping: false,
                         service: None,
                         file: None,
+                        #[cfg(windows)]
+                        directory: None,
                         #[cfg(windows)]
                         mutation: None,
                         exit: Some(ExitStatus {
@@ -572,6 +632,8 @@ impl Workbench {
                     service: None,
                     file: None,
                     #[cfg(windows)]
+                    directory: None,
+                    #[cfg(windows)]
                     mutation: None,
                     exit: Some(ExitStatus {
                         execution: Err(error),
@@ -582,7 +644,7 @@ impl Workbench {
                 return Err(format!("IO worker admission failed: {error:?}").into());
             }
         };
-        let persistent_job = !matches!(&job, file::Admission::Io(_));
+        let persistent_job = job.persistent();
         let admission = self.state.product_gate.register(worker.stop_handle());
         let submitted = if admission.is_ok() {
             Some(job.submit(&worker))
@@ -599,6 +661,8 @@ impl Workbench {
             service: None,
             file: None,
             #[cfg(windows)]
+            directory: None,
+            #[cfg(windows)]
             mutation: None,
         });
         if let Err(error) = admission {
@@ -607,10 +671,12 @@ impl Workbench {
         }
         let task = self.state.checked_task(key)?;
         match submitted.expect("admitted original worker") {
-            Ok(file::Submitted::Io(handle)) => task.handle = Some(handle),
-            Ok(file::Submitted::File(file)) => task.file = Some(file),
+            Ok(TaskSubmitted::Original(file::Submitted::Io(handle))) => task.handle = Some(handle),
+            Ok(TaskSubmitted::Original(file::Submitted::File(file))) => task.file = Some(file),
             #[cfg(windows)]
-            Ok(file::Submitted::Mutation(mutation)) => task.mutation = Some(mutation),
+            Ok(TaskSubmitted::Directory(directory)) => task.directory = Some(directory),
+            #[cfg(windows)]
+            Ok(TaskSubmitted::Original(file::Submitted::Mutation(mutation))) => task.mutation = Some(mutation),
             Err(error) => {
                 self.state.request_stop();
                 return Err(format!(

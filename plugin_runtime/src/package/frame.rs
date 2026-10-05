@@ -19,6 +19,11 @@ impl FrameExecution {
         self.execution.resume(token, result)
     }
 
+    /// End a failed admitted directory call without replaying or re-entering the guest.
+    pub(crate) fn abort(&mut self, fault: Fault) {
+        self.execution.abort(fault);
+    }
+
     /// Finalize the frame; an unanswered import cannot become a successful result.
     ///
     /// If any `Core` call was denied while running in IO-only mode, the
@@ -64,6 +69,26 @@ impl PreparedPackage {
         self.start_frame(input, cancel, false, true)
     }
 
+    /// Only the negotiated independent directory import; Core remains denied.
+    pub(crate) fn start_directory_frame(
+        &self, input: &[u8], cancel: Cancellation,
+    ) -> Result<FrameExecution, TaskRun> {
+        let result = if input.len() <= crate::MAX_DIRECTORY_REQUEST_BYTES
+            && self.runner.directory_abi
+            && self.package.manifest().required_features.iter().any(|feature|
+                feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE)
+        {
+            Execution::start(&self.runner, Some(input), cancel)
+        } else {
+            Err(Fault::UnsupportedAbi)
+        };
+        result.map(|execution| FrameExecution {
+            execution, allow_content: false, denied_core: false,
+        }).map_err(|fault| TaskRun {
+            report: Report { outcome: Err(fault), host_calls: 0,
+                fuel_remaining: self.limits.fuel }, completion: None,
+        })
+    }
     fn start_frame(
         &self,
         input: &[u8],

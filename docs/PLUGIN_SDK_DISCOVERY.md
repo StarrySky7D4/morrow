@@ -99,3 +99,22 @@ and static `preflight` using this same original validator. Its source ZIP contai
 no host, Core/runtime or SDK library. The existing SDK source distribution and
 project-tool refusal gates are unchanged; a byte inventory is not trusted
 provenance or runtime qualification.
+
+## Independent directory request profile (C10)
+
+`experimental_extensions.directory_request_discovery` is a separate optional
+versioned record. It requires `io-v1` and `fs-directory-request-v1`, the fixed
+`morrow_fs_directory_v1.call` import, and exact request/page/IO digests.
+The original four extension records, base profiles and `feature_names` stay unchanged.
+An absent record does not advertise this new profile. Discovery is not authority.
+
+Raw task input is the original Open request (at most 512 bytes); completion must
+match the last directory response (at most 65,536 bytes). `read_input` still requires
+131,072 bytes of writable capacity. `standard_typed_task_helpers=false`:
+ordinary typed task envelopes cannot be substituted.
+
+Static preparation is implemented; the native adapter is compiled on Windows.
+`production_public_binding_available=false` and `workbench_routes=[]`.
+Metadata does not create a selection, capture, grant, native handle or OS path.
+Workbench compiled checks are not product execution. See the
+[C10 report](../reports/reconstruction-2026-10-05/directory-request-sdk.md).

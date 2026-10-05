@@ -230,6 +230,110 @@ def channel_payload_discovery(value, platform):
     return value
 
 
+
+# Optional new directory metadata has an independent identity; legacy discovery
+# records remain accepted unchanged. These checks never create a live selection.
+DIRECTORY_REQUEST_SCHEMA_SHA256 = "04bc8c556059551c320df641f28bf8da5475737534f9d161ad2269bfe5b1d0df"
+DIRECTORY_IO_SCHEMA_SHA256 = "78e87b3f7b7a2df7675937f3bea84d5b33399cd4559d560c7d4ab7f4da4bccf5"
+DIRECTORY_PAGE_SCHEMA_SHA256 = "ade60daee77497056a3fe618b38616331b8d5de61bdb494f703592e74ec3d5f7"
+DIRECTORY_REQUEST_BYTE_LIMITS = {
+    "request": 512, "response": 65536, "page": 65536, "nomination_ref": 32,
+    "nonce": 32, "selection_epoch": 32, "entry_id": 32,
+}
+DIRECTORY_SELECTION_SCOPE = {
+    "host_nominated_precaptured_selection": True, "live_file_list_binding_required": True,
+    "guest_paths": False, "os_handles": False, "guest_capture": False,
+    "directory_session_serial": False, "new_grants": False, "automatic_replay": False,
+    "native_picker_attestation": False, "ancestors_above_anchor_attested": False,
+    "atomic_filesystem_snapshot": False, "finish_cancel_proves_join": False,
+}
+
+
+def directory_request_discovery(detail, platform, base_profiles, legacy_discovery=None):
+    if (not isinstance(detail, dict) or type(detail.get("schema_version")) is not int
+            or detail["schema_version"] != 1 or detail.get("status") != "compiled_metadata_only"
+            or detail.get("authority") != "none" or detail.get("package_preflight_required") is not True):
+        raise ValueError("invalid directory request discovery")
+    profiles = detail.get("profiles")
+    if not isinstance(profiles, list) or len(profiles) != 1 or not isinstance(profiles[0], dict):
+        raise ValueError("invalid directory request profiles")
+    profile = profiles[0]
+    for key, expected in {"id": "morrow.fs-directory-request.v1", "status": "experimental",
+                          "guest_abi_version": 2, "package_schema_version": 1,
+                          "qualification": "not_established_by_discovery"}.items():
+        if profile.get(key) != expected or (type(expected) is int and type(profile.get(key)) is not int):
+            raise ValueError("invalid directory request identity")
+    expected_flags = {"production_public_binding_available": False, "automatic_run_available": False,
+                      "combined_dependency_import": False, "combined_channel_import": False,
+                      "runtime_static_preparation_supported": True,
+                      "native_source_adapter_compiled": platform["os"] == "windows" and platform["arch"] != "wasm32"}
+    if any(type(profile.get(key)) is not bool or profile[key] != value for key, value in expected_flags.items()):
+        raise ValueError("invalid directory request availability")
+    if (profile.get("required_features") != ["io-v1", "fs-directory-request-v1"]
+            or profile.get("optional_features") != [] or profile.get("workbench_routes") != []
+            or profile.get("explicit_trusted_routes") != ["IoWorker::submit_directory_guest_frame"]):
+        raise ValueError("invalid directory request route or features")
+    if profile.get("import") != {"module": "morrow_fs_directory_v1", "name": "call",
+                                "parameters": ["i32"] * 4, "result": "i32"}:
+        raise ValueError("invalid directory request import")
+    contracts = profile.get("contracts")
+    if not isinstance(contracts, dict) or set(contracts) != {"runtime", "task", "io", "directory_request", "directory_page"}:
+        raise ValueError("invalid directory request contracts")
+    base = next((item for item in base_profiles if item["id"] == "morrow.guest-task.v3"), None)
+    if base is None or any(contracts[key] != base["contracts"][key] for key in ("runtime", "task")):
+        raise ValueError("directory request base contract mismatch")
+    for key, item in contracts.items():
+        contract_digest(item)
+        if (type(item.get("version")) is not int or item["version"] < 1
+                or (key not in ("runtime", "task") and item["version"] != 1)):
+            raise ValueError("invalid directory request contract version")
+    if contracts["io"]["sha256"] != DIRECTORY_IO_SCHEMA_SHA256:
+        raise ValueError("directory request exact IO schema mismatch")
+    if legacy_discovery is not None:
+        original_io = next((item for item in legacy_discovery["profiles"] if item["id"] == "morrow.io.v1"), None)
+        if original_io is None or contracts["io"] != original_io["contracts"]["io"]:
+            raise ValueError("directory request legacy IO contract mismatch")
+    if (contracts["directory_request"]["sha256"] != DIRECTORY_REQUEST_SCHEMA_SHA256
+            or contracts["directory_page"]["sha256"] != DIRECTORY_PAGE_SCHEMA_SHA256):
+        raise ValueError("directory request exact schema mismatch")
+    limits = profile.get("hard_byte_limits")
+    if (not isinstance(limits, dict) or limits != DIRECTORY_REQUEST_BYTE_LIMITS
+            or any(type(value) is not int for value in limits.values())
+            or profile.get("declaration_versions") != {"io": 1}
+            or type(profile["declaration_versions"]["io"]) is not int
+            or profile.get("count_limits") != {"resident_observations": 8}
+            or type(profile["count_limits"]["resident_observations"]) is not int
+            or profile.get("duration_limits_ms") != {}):
+        raise ValueError("invalid directory request limits")
+    scope = profile.get("selection_scope")
+    if (not isinstance(scope, dict) or set(scope) != set(DIRECTORY_SELECTION_SCOPE)
+            or any(type(scope[key]) is not bool or scope[key] != value for key, value in DIRECTORY_SELECTION_SCOPE.items())):
+        raise ValueError("invalid directory selection scope")
+    helper = profile.get("helper_profile")
+    expected_helper = {"version": 1, "request_schema_sha256": DIRECTORY_REQUEST_SCHEMA_SHA256,
+                       "response_original_request_sha256": True, "one_pending_call": True,
+                       "automatic_retry": False, "authority": "none",
+                       "input": "original_open_request_wire", "completion": "exact_last_directory_response_wire",
+                       "standard_typed_task_helpers": False, "task_read_input_capacity": 131072}
+    if (not isinstance(helper, dict) or helper != expected_helper or type(helper["version"]) is not int
+            or any(type(helper[key]) is not bool for key in ("response_original_request_sha256", "one_pending_call", "automatic_retry", "standard_typed_task_helpers"))
+            or type(helper["task_read_input_capacity"]) is not int):
+        raise ValueError("invalid directory request helper profile")
+    native = expected_flags["native_source_adapter_compiled"]
+    expected_operations = [{"name": action, "route": "managed_directory_owner",
+                            "implementation_compiled": native, "platform_requirement": "windows"}
+                           for action in ("Open", "Next", "Finish", "Cancel")]
+    operations = profile.get("implemented_operations")
+    if (operations != expected_operations or not isinstance(operations, list)
+            or any(type(operation.get("implementation_compiled")) is not bool for operation in operations)):
+        raise ValueError("invalid directory request operation availability")
+    if profile.get("unsupported_operations") != ["GuestCapture", "GuestPath", "ReadFileContents", "Watch", "Rename", "Delete", "ConditionalReplace", "DurableReopen", "NonWindowsDirectoryOwner"]:
+        raise ValueError("invalid directory request unsupported operations")
+    strings(profile.get("host_prerequisites"), "directory request prerequisites")
+    if not profile["host_prerequisites"]:
+        raise ValueError("missing directory request prerequisites")
+
+
 def validate_descriptor(value):
     if not isinstance(value, dict) or type(value.get("schema_version")) is not int or value["schema_version"] != 1:
         raise ValueError("unsupported SDK descriptor schema")
@@ -302,6 +406,8 @@ def validate_descriptor(value):
     strings(experiments.get("feature_names"), "experimental features")
     if "discovery" in experiments:
         extension_discovery(experiments["discovery"], platform, value['profiles'])
+    if "directory_request_discovery" in experiments:
+        directory_request_discovery(experiments["directory_request_discovery"], platform, value["profiles"], experiments.get("discovery"))
     if "diagnostic_capabilities" in value:
         preflight_capability(value)
     return value

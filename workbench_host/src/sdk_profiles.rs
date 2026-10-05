@@ -310,6 +310,60 @@ fn channel_payload_discovery() -> Value {
     })
 }
 
+
+// Separate opt-in metadata; the original four extension records remain unchanged.
+fn directory_request_discovery() -> Value {
+    use morrow_fs_directory_request_v1 as directory;
+    let mut profile = extension_profile(
+        "morrow.fs-directory-request.v1", "directory_request", directory::VERSION,
+        directory::schema_digest(),
+    );
+    profile["contracts"]["io"] = json!({"version": io::VERSION, "sha256": digest(io::schema_digest())});
+    profile["contracts"]["directory_page"] = json!({"version": 1, "sha256": digest(directory::page_schema_digest())});
+    profile["required_features"] = json!([plugin_package::io::FEATURE, plugin_package::DIRECTORY_REQUEST_FEATURE]);
+    profile["declaration_versions"] = json!({"io": plugin_package::io::DECLARATION_VERSION});
+    profile["import"] = json!({"module": "morrow_fs_directory_v1", "name": "call", "parameters": ["i32", "i32", "i32", "i32"], "result": "i32"});
+    profile["hard_byte_limits"] = json!({
+        "request": directory::MAX_REQUEST_BYTES, "response": directory::MAX_RESPONSE_BYTES,
+        "page": directory::MAX_PAGE_BYTES, "nomination_ref": 32, "nonce": 32,
+        "selection_epoch": 32, "entry_id": 32,
+    });
+    profile["count_limits"] = json!({"resident_observations": 8});
+    profile["implemented_operations"] = json!(operations(
+        &["Open", "Next", "Finish", "Cancel"], "managed_directory_owner", true,
+    ));
+    profile["unsupported_operations"] = json!([
+        "GuestCapture", "GuestPath", "ReadFileContents", "Watch", "Rename", "Delete",
+        "ConditionalReplace", "DurableReopen", "NonWindowsDirectoryOwner",
+    ]);
+    profile["runtime_static_preparation_supported"] = json!(true);
+    profile["native_source_adapter_compiled"] = json!(cfg!(windows));
+    profile["workbench_routes"] = json!([]);
+    profile["explicit_trusted_routes"] = json!(["IoWorker::submit_directory_guest_frame"]);
+    profile["automatic_run_available"] = json!(false);
+    profile["selection_scope"] = json!({
+        "host_nominated_precaptured_selection": true, "live_file_list_binding_required": true,
+        "guest_paths": false, "os_handles": false, "guest_capture": false,
+        "directory_session_serial": false, "new_grants": false, "automatic_replay": false,
+        "native_picker_attestation": false, "ancestors_above_anchor_attested": false,
+        "atomic_filesystem_snapshot": false, "finish_cancel_proves_join": false,
+    });
+    profile["helper_profile"] = json!({
+        "version": 1, "request_schema_sha256": digest(directory::schema_digest()),
+        "response_original_request_sha256": true, "one_pending_call": true,
+        "automatic_retry": false, "authority": "none",
+        "input": "original_open_request_wire", "completion": "exact_last_directory_response_wire",
+        "standard_typed_task_helpers": false, "task_read_input_capacity": morrow_plugin_runtime::MAX_TASK_BYTES,
+    });
+    profile["host_prerequisites"] = json!([
+        "ABI2 package with io-v1 and fs-directory-request-v1; FileList-only declaration; one fixed directory import",
+        "Original managed instance, owner, IoBinding and a live host-approved already captured selection; no guest path or capture",
+        "Original clock, cumulative budget, cancellation, resource retirement and actual worker join; discovery creates no grant",
+    ]);
+    json!({"schema_version": 1, "status": "compiled_metadata_only", "authority": "none",
+        "package_preflight_required": true, "profiles": [profile]})
+}
+
 fn extension_discovery() -> Value {
     json!({
         "schema_version": 1,
@@ -378,7 +432,7 @@ pub fn descriptor() -> Value {
             "policy": "Finite package ceilings intersect the current host grant and original instance control; discovery grants nothing.",
             "task_lifecycle": "Multiple bounded frames within one fixed task; ACK, send acceptance, terminal cause and actual producer join are distinct. Unknown is not replayed."
         }],
-        "experimental_extensions": {"status": "recognized_experimental_not_fully_discovered", "feature_names": [plugin_package::io::FEATURE, plugin_package::io::SERVICE_RUN_FEATURE, plugin_package::io::SERVICE_RUN_BUDGET_FEATURE, morrow_core::service_resources::FEATURE, plugin_package::MUTATION_FEATURE, plugin_package::MUTATION_BUDGET_FEATURE], "discovery": extension_discovery()},
+        "experimental_extensions": {"status": "recognized_experimental_not_fully_discovered", "feature_names": [plugin_package::io::FEATURE, plugin_package::io::SERVICE_RUN_FEATURE, plugin_package::io::SERVICE_RUN_BUDGET_FEATURE, morrow_core::service_resources::FEATURE, plugin_package::MUTATION_FEATURE, plugin_package::MUTATION_BUDGET_FEATURE], "discovery": extension_discovery(), "directory_request_discovery": directory_request_discovery()},
         "unsupported_requirements": ["workbench_public_channel_binding", "network_sse_websocket_backend", "cloud_account_change_subscription", "arbitrary_os_access", "untrusted_native_library", "multi_version_schema_fallback"],
         "legacy_abi1": {"runtime_route_exists": true, "frozen_original_profile": false},
         "extension_policy": "New mandatory semantics require a new required feature, independent versioned contract and explicit decoder/Runner/host route. Unknown features or mismatched versions/digests are rejected; old contracts are not rewritten.",
@@ -753,5 +807,26 @@ mod tests {
             profile["workbench_constraints"]["required_dependencies"],
             false
         );
+    }
+
+    #[test]
+    fn directory_request_metadata_preserves_original_records_and_declares_no_authority() {
+        let value = descriptor();
+        let existing = &value["experimental_extensions"]["discovery"];
+        assert_eq!(existing["profiles"].as_array().unwrap().len(), 4);
+        assert_eq!(existing["profiles"][0]["unsupported_operations"][1], "SubmitFileList");
+        let detail = &value["experimental_extensions"]["directory_request_discovery"];
+        assert_eq!(detail["authority"], "none");
+        let profile = &detail["profiles"][0];
+        assert_eq!(profile["contracts"]["directory_request"]["sha256"], digest(morrow_fs_directory_request_v1::schema_digest()));
+        assert_eq!(profile["contracts"]["directory_page"]["sha256"], digest(morrow_fs_directory_request_v1::page_schema_digest()));
+        assert_eq!(profile["required_features"], json!([plugin_package::io::FEATURE, plugin_package::DIRECTORY_REQUEST_FEATURE]));
+        assert_eq!(profile["hard_byte_limits"]["response"], 65536);
+        assert_eq!(profile["native_source_adapter_compiled"], cfg!(windows));
+        assert_eq!(profile["production_public_binding_available"], false);
+        assert_eq!(profile["selection_scope"]["guest_capture"], false);
+        assert_eq!(profile["selection_scope"]["automatic_replay"], false);
+        assert_eq!(profile["selection_scope"]["finish_cancel_proves_join"], false);
+        assert_eq!(profile["workbench_routes"], json!([]));
     }
 }

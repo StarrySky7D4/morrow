@@ -1,0 +1,1836 @@
+{
+  "status": "PASS_SCOPED_WINDOWS_SYNTHETIC_PRE_PUSH",
+  "date": "2026-10-05",
+  "baseline_commit": "772466177fe589cee53bc633e69f411c34610104",
+  "baseline_tree": "3465ed6fa23002397602934688f0e071e7fc997d",
+  "branch": "codex/windows-sdk-convergence-20261005",
+  "candidate_manifest": {
+    "bytes": 57398,
+    "sha256": "98714bc6fda2e8b2c6fd5f9be5ebd041ed9c0e857857a4cba43c2446d1c2ff19"
+  },
+  "source_guards_count": 176,
+  "source_pins": {
+    "extensions/blob-transfer-v1/Cargo.lock": {
+      "bytes": 3184,
+      "sha256": "427e251b95762f62ba9d35767ebc5c4a2b05310a8605be7bfc614b233dee299f"
+    },
+    "extensions/blob-transfer-v1/Cargo.toml": {
+      "bytes": 351,
+      "sha256": "ffa0923afb4a11f00cd6ba5120fbb2c7bb198e6363315b3e89e71b1a483da5bc"
+    },
+    "extensions/blob-transfer-v1/build.rs": {
+      "bytes": 574,
+      "sha256": "8a03ca61ba6d68dfaa97b7ac4279612ffdc65487ecaacd016b832b8f57bfd818"
+    },
+    "extensions/blob-transfer-v1/contracts/blob_transfer.capnp": {
+      "bytes": 753,
+      "sha256": "941db7c662815f8963b46bbb65a5c143d90f9e7217937e84c05d1b8f11024543"
+    },
+    "extensions/blob-transfer-v1/include/morrow_blob_transfer_v1.h": {
+      "bytes": 4508,
+      "sha256": "4001199170182c8858e8fae9bcfcc8e445f7c978513ce8b9ecfd92616ce591f3"
+    },
+    "extensions/blob-transfer-v1/include/morrow_blob_transfer_v1.hpp": {
+      "bytes": 2602,
+      "sha256": "dceefdf00beacf6124ac5f28a203b4b84b24844b52a99f3dbd2d62a6f675b504"
+    },
+    "extensions/blob-transfer-v1/src/ffi.rs": {
+      "bytes": 31099,
+      "sha256": "457817705debfd16a9678e5c9234c86dfc142ecb10c31f031c4bb50c759ac898"
+    },
+    "extensions/blob-transfer-v1/src/lib.rs": {
+      "bytes": 27913,
+      "sha256": "4b2ca804d7ee32003c6f32ced57b13abf222bd1d5aec274dc13efdde233fedd4"
+    },
+    "extensions/blob-transfer-v1/src/state.rs": {
+      "bytes": 22775,
+      "sha256": "1c789bd8d7451e40cf1ebf749e80da97110f4126908ceaa38076c0fb4257f7b8"
+    },
+    "extensions/blob-transfer-v1/tests/conformance.c": {
+      "bytes": 5905,
+      "sha256": "6a68ab7d34ba9a02925ca0220c66fc1a1fb99481418398917f8e4b9b7cb9c62e"
+    },
+    "extensions/blob-transfer-v1/tests/conformance.cpp": {
+      "bytes": 1618,
+      "sha256": "3b322f58fe8a2d254f2d07522e9b3c139462f4c9c0b2abe0a4c09611cf117594"
+    },
+    "extensions/blob-transfer-v1/tests/conformance.rs": {
+      "bytes": 7263,
+      "sha256": "504236d2c60e016709e1f432fb511379c877f3bcd197dc2460092711d760955e"
+    },
+    "extensions/blob-transfer-v1/tests/generate_vectors.py": {
+      "bytes": 5574,
+      "sha256": "f73e684011856495006fb49528d21782368ef1b0420394a67902ebc02428b9bc"
+    },
+    "extensions/blob-transfer-v1/tests/vectors.bin": {
+      "bytes": 270644,
+      "sha256": "cee3d34a2b6566402823d0a9df27bf030ee3c36c662a1938a16d25520ab8e168"
+    },
+    "extensions/blob-transfer-v1/tests/vectors.json": {
+      "bytes": 30768,
+      "sha256": "907279795156bf1b596f82ac88c14a0ff10d7f26874ed5835a4306d7ec42cc43"
+    },
+    "extensions/fs-directory-v1/Cargo.lock": {
+      "bytes": 3066,
+      "sha256": "096ba4f5578eeb33947afbc4601491e362f01b5915093b2ed94b0ddf033c751e"
+    },
+    "extensions/fs-directory-v1/Cargo.toml": {
+      "bytes": 281,
+      "sha256": "15f3eb3525622b61ccd3d514cfb311690cd18da12417c0368ba2ef7127ec732c"
+    },
+    "extensions/fs-directory-v1/build.rs": {
+      "bytes": 592,
+      "sha256": "de7bbc447d3f0924c8b5995ffcd1ac1e688041e412860cffe0f4cf0f19d07d21"
+    },
+    "extensions/fs-directory-v1/contracts/fs_directory.capnp": {
+      "bytes": 631,
+      "sha256": "ade60daee77497056a3fe618b38616331b8d5de61bdb494f703592e74ec3d5f7"
+    },
+    "extensions/fs-directory-v1/include/morrow_fs_directory_v1.h": {
+      "bytes": 4822,
+      "sha256": "d6e88f053add6e9b0e4655658e60eb0773425bf2bde1a8eff7cb7176b317c5ec"
+    },
+    "extensions/fs-directory-v1/include/morrow_fs_directory_v1.hpp": {
+      "bytes": 4827,
+      "sha256": "c71361ebec531b8d5bee5f11672b59138f9ba35eec38297ec6b511d56dab1f50"
+    },
+    "extensions/fs-directory-v1/src/ffi.rs": {
+      "bytes": 23054,
+      "sha256": "fb1dbdc9502daaffe7a8c90e931132d544c7cb66534049e4ee6e6e92f808a4f6"
+    },
+    "extensions/fs-directory-v1/src/lib.rs": {
+      "bytes": 19412,
+      "sha256": "b402870ea8c67c7d84ffb115655bb981e2e8d6beefe002a1a9d8987a20a3b04e"
+    },
+    "extensions/fs-directory-v1/src/state.rs": {
+      "bytes": 11533,
+      "sha256": "3c1c24d5c95c084fb08e6bae93c4b827ca84300cbdcfcb8930c6f9ef559d845e"
+    },
+    "extensions/fs-directory-v1/tests/conformance.c": {
+      "bytes": 6255,
+      "sha256": "34951d7842c21c5385fc54d66161724e77c124ac5e94c82723de459d7a19384e"
+    },
+    "extensions/fs-directory-v1/tests/conformance.cpp": {
+      "bytes": 1542,
+      "sha256": "e774bfadaf37af82bc6dc41a74a581e22fd6cb6e961f4935e8977a8134918476"
+    },
+    "extensions/fs-directory-v1/tests/conformance.rs": {
+      "bytes": 4555,
+      "sha256": "7c19f1e9d9eefefd81571eb08859501eed01746fe3d53aac59549f394021ed85"
+    },
+    "extensions/fs-directory-v1/tests/generate_vectors.py": {
+      "bytes": 6068,
+      "sha256": "65d1ba428553ececf4818c2a6892a4e93be1f5b07ce962ff72bfb1afe71be7d0"
+    },
+    "extensions/fs-directory-v1/tests/vectors.bin": {
+      "bytes": 166128,
+      "sha256": "6e90473bb329e1c9f88ff32d241f45ac37c2192ba91f7886dfa51f3bb8959991"
+    },
+    "extensions/fs-directory-v1/tests/vectors.json": {
+      "bytes": 19515,
+      "sha256": "ada8aae3a6f79321c5e9211e9cd617a92348928ec04475423f0db0b62cd647db"
+    },
+    "extensions/sse-event-v1/Cargo.lock": {
+      "bytes": 3328,
+      "sha256": "026b8789153386e58caf6811ceb0d19a2037b911ae095ef9f2e6767d1e6a2b4a"
+    },
+    "extensions/sse-event-v1/Cargo.toml": {
+      "bytes": 604,
+      "sha256": "471c7f0f971632570fdaeef213980e7e5f134076443ad66309633568459a4a3a"
+    },
+    "extensions/sse-event-v1/build.rs": {
+      "bytes": 603,
+      "sha256": "2a87be0eb85d04b692103125f75d602b6f3bb9d8adbef4218a797ca36fa13431"
+    },
+    "extensions/sse-event-v1/contracts/sse_event.capnp": {
+      "bytes": 345,
+      "sha256": "bec1e174b7586e46155b60471867900bf91f1fb11849e6761916bfc3ca7c9863"
+    },
+    "extensions/sse-event-v1/guests/c/plugin.c": {
+      "bytes": 5378,
+      "sha256": "24f2dc1be97be33c2cf96fc88f12063f41708e364b826d5f8627130dfe7b1507"
+    },
+    "extensions/sse-event-v1/guests/cpp/plugin.cpp": {
+      "bytes": 4785,
+      "sha256": "f53e3c1eea2c35a25406812a0d0f851d0f63754c4c23d617f419c412b5c31096"
+    },
+    "extensions/sse-event-v1/guests/rust/Cargo.toml": {
+      "bytes": 286,
+      "sha256": "656870a7b31e67399916e4b54d27d6a744631500cb2b2dbc929a1006432f3bdf"
+    },
+    "extensions/sse-event-v1/guests/rust/src/lib.rs": {
+      "bytes": 4143,
+      "sha256": "318de57b5f8951ec37465ab4e109dc94638ebb910c1d2ce22a279528c9857ade"
+    },
+    "extensions/sse-event-v1/include/morrow_sse_event_v1.h": {
+      "bytes": 2387,
+      "sha256": "5c93f0a4dbdbe8e0ed05b1e403f69202ef7a5b6eb3bf4c80d16d1f4494375408"
+    },
+    "extensions/sse-event-v1/include/morrow_sse_event_v1.hpp": {
+      "bytes": 2841,
+      "sha256": "3a40ac5dbbfe15081a245323ee45f13933e6ba1f91ba1df6fe89ad0f215b14ba"
+    },
+    "extensions/sse-event-v1/src/ffi.rs": {
+      "bytes": 11069,
+      "sha256": "fff0d3968fd84e251d7131e71a3ea8fc204e67bc2000b63aa98a98bdefe1ac49"
+    },
+    "extensions/sse-event-v1/src/lib.rs": {
+      "bytes": 9339,
+      "sha256": "7da0bc02247bc56bf847a92295685c9382644a60f96ce020b04e31f27762f74a"
+    },
+    "extensions/sse-event-v1/tests/conformance.c": {
+      "bytes": 9454,
+      "sha256": "e4631490c2386ca0fe03a8eb45871fc346cf08aa8e432057007cfc527e9c83fa"
+    },
+    "extensions/sse-event-v1/tests/conformance.cpp": {
+      "bytes": 2731,
+      "sha256": "1c84c045b8a0f91d43b3a14ba3693b2b696b989838bd48dc7ddddf0c374e30a9"
+    },
+    "extensions/sse-event-v1/tests/generate_vectors.py": {
+      "bytes": 7556,
+      "sha256": "454f8a237287efd8fce300ecc55b4de7ea4b3df3620b60b2e692581d0905bf83"
+    },
+    "extensions/sse-event-v1/tests/native_oracle.rs": {
+      "bytes": 4109,
+      "sha256": "3c47996f023e88c023ac15c782168c7af3432109987218ee4b04873ff55967a4"
+    },
+    "extensions/sse-event-v1/tests/vectors.bin": {
+      "bytes": 460561,
+      "sha256": "bc7fe189481692ffe09bde4a3e1eecab0b7ad3dc00059b9a33cb6a547fce8197"
+    },
+    "extensions/sse-event-v1/tests/vectors.json": {
+      "bytes": 317462,
+      "sha256": "d0a6c266ba4aadc1d1a44845f48a66cc867bdf646ed612c48c8c6ca79a37025f"
+    },
+    "extensions/ws-message-v1/Cargo.lock": {
+      "bytes": 3331,
+      "sha256": "92c88a61e7cdcad67f4d3c2fcf68e1d5f331e0f3653afb24ae4ad0ff28aa67ee"
+    },
+    "extensions/ws-message-v1/Cargo.toml": {
+      "bytes": 605,
+      "sha256": "05956055c2ec6aa46e0158326b76f7383f62e9f5bc0a3614f936a4861049f19e"
+    },
+    "extensions/ws-message-v1/build.rs": {
+      "bytes": 607,
+      "sha256": "2db7fab7b139cc02c2712dca181b7ce0b189673b2e7a5f310a8f05b572a7d4e7"
+    },
+    "extensions/ws-message-v1/contracts/ws_message.capnp": {
+      "bytes": 406,
+      "sha256": "2d2f3b1913060bd410d3bc608362c01d28cf7d0e3c1cdc82a5293abcaa696e6d"
+    },
+    "extensions/ws-message-v1/guests/c/plugin.c": {
+      "bytes": 5380,
+      "sha256": "343391a3da48a5c49ac68c0b15c0ccaf875702d9842623b9b77ae052edc45326"
+    },
+    "extensions/ws-message-v1/guests/cpp/plugin.cpp": {
+      "bytes": 4695,
+      "sha256": "88f9c18254dd825c5ddca570fb34b7e290cc879f01bc8f8bc675809361ac9a2d"
+    },
+    "extensions/ws-message-v1/guests/rust/Cargo.toml": {
+      "bytes": 288,
+      "sha256": "01e1acc0742c53c433072684585c2837171e6e942275cc047b51c115926506a2"
+    },
+    "extensions/ws-message-v1/guests/rust/src/lib.rs": {
+      "bytes": 4682,
+      "sha256": "bdda2b01fec7114ff4e86fd3f4a74557be55482fb0a9328a24816ad7cbf47d7b"
+    },
+    "extensions/ws-message-v1/include/morrow_ws_message_v1.h": {
+      "bytes": 2189,
+      "sha256": "74b9c039dcf1b65da544adfc1beb14954d8ea00e0de99050f6e1de8ecd72cb2f"
+    },
+    "extensions/ws-message-v1/include/morrow_ws_message_v1.hpp": {
+      "bytes": 2242,
+      "sha256": "45fe75a622f806bf890868e2477f8a0d576f8684eb7de91e92829dfd0edd7ba1"
+    },
+    "extensions/ws-message-v1/src/ffi.rs": {
+      "bytes": 9647,
+      "sha256": "a860737519cc7b659f131af9ed8306409ac94210b7be1c8cb2487f1f5c5ee77d"
+    },
+    "extensions/ws-message-v1/src/lib.rs": {
+      "bytes": 10813,
+      "sha256": "64d828ea1d99ff103c31f99179371a18bcaffbd2f0242871b386b73eedf1e09e"
+    },
+    "extensions/ws-message-v1/tests/conformance.c": {
+      "bytes": 7252,
+      "sha256": "bd7a39101e7c08de99cc4831323b1637818f28beeffc6a61e340c9220f20406e"
+    },
+    "extensions/ws-message-v1/tests/conformance.cpp": {
+      "bytes": 2341,
+      "sha256": "cd8ee2c2f26bcedd0edb8ae188bbabee9701d4ceb1f02ae67e650a86b9e40bd4"
+    },
+    "extensions/ws-message-v1/tests/generate_vectors.py": {
+      "bytes": 6890,
+      "sha256": "e385727ff2aeadbddab6cfcc7885227f3389a444f352ce47fcc2881e299697e8"
+    },
+    "extensions/ws-message-v1/tests/native_oracle.rs": {
+      "bytes": 2693,
+      "sha256": "c358a91abd3dc4d80b69b341bd3a3ee6c0296c145050f06d4d8ef19741212200"
+    },
+    "extensions/ws-message-v1/tests/vectors.bin": {
+      "bytes": 546001,
+      "sha256": "6bd6b0e28785deea0304cc47e72535648b75831906b5414c463c09a36d55f47e"
+    },
+    "extensions/ws-message-v1/tests/vectors.json": {
+      "bytes": 425736,
+      "sha256": "bd5fdd6ef349110369528d061325657fd2d6d15a2a7b4606ff9294b1bea9d7f0"
+    },
+    "network_node_stream_001/examples/sse_sdk_package.rs": {
+      "bytes": 3141,
+      "sha256": "ace9d615995c4b2b8aa5e0669f186134dba9e32d849fc0d3def017088df4b092"
+    },
+    "network_node_stream_001/examples/ws_sdk_package.rs": {
+      "bytes": 3148,
+      "sha256": "359b9a43b60989e70da7cf6bb507b5e7b6c5c640a2f080a516e3b155901d28ae"
+    },
+    "network_node_stream_001/src/stream.rs": {
+      "bytes": 13565,
+      "sha256": "8514f9575fd7a2f8fedadcff13f834bfa1f5d4bbaa5128e4b6b262f7fda38c93"
+    },
+    "network_node_stream_001/tests/sse_sdk.rs": {
+      "bytes": 20141,
+      "sha256": "ad139fd34d3de045587e4d56fdaf3f4de4309570995e482bf8a1d039ed1ae769"
+    },
+    "network_node_stream_001/tests/stream.rs": {
+      "bytes": 14838,
+      "sha256": "2caab4ecf6af95410020ca935780e7048249738638996d502fc06100bc1391eb"
+    },
+    "network_node_stream_001/tests/support/sse_sdk_support.rs": {
+      "bytes": 837,
+      "sha256": "fdd189e1bb1b080298048d0afba7bac13198666ac63a1157df68a8f7b7d5d5f2"
+    },
+    "network_node_stream_001/tests/support/ws_sdk_support.rs": {
+      "bytes": 6569,
+      "sha256": "aff523372482ffec5c9481ec855f4fd39316b32266c1c5a975e2fc53d0c65fcb"
+    },
+    "network_node_stream_001/tests/websocket.rs": {
+      "bytes": 14064,
+      "sha256": "ffc6415acc8b95623440705a86185875a9d19e4b71a72b9907fcdb1b4982e56c"
+    },
+    "network_node_stream_001/tests/ws_sdk.rs": {
+      "bytes": 16861,
+      "sha256": "d1458d9d369f2633d1afdbe1cc855e44850c7d0b91cc3cd59bbde796563d7db2"
+    },
+    "plugin_runtime/src/directory_io.rs": {
+      "bytes": 30424,
+      "sha256": "7e3c908a45c8a10a6deee4e6578afb51308f61eeb268d14e974df2b476466996"
+    },
+    "plugin_runtime/src/directory_io/native_windows.rs": {
+      "bytes": 6465,
+      "sha256": "134e878c350e741e04bd7c19f25d0ce4002c560966cbc6eea18b25b34df997e7"
+    },
+    "plugin_runtime/src/directory_io/selection.rs": {
+      "bytes": 6977,
+      "sha256": "4816ec27edba7840fa0ec6401681c3c8d92b887f7baf063047f5cf2e39844eb0"
+    },
+    "plugin_runtime/src/directory_io/selection_path.rs": {
+      "bytes": 6571,
+      "sha256": "e76c00cda84ab17e0a597892c42248f6deeca1477bfe4303682e7b1879de3fdd"
+    },
+    "plugin_runtime/src/directory_io/selection_path_tests.rs": {
+      "bytes": 5236,
+      "sha256": "951feb8477eb4a6d39fe1143526eb8f5d35db7bcf24ff31fd7aeae1d198f22ca"
+    },
+    "plugin_runtime/src/file_target.rs": {
+      "bytes": 19170,
+      "sha256": "8c2de9f8a64baf910f22aa901dab1e2b04493e653aee45c25938decb72b5877d"
+    },
+    "plugin_runtime/src/file_target/native_windows.rs": {
+      "bytes": 19401,
+      "sha256": "94f015af3237cd97e0dad41ab7adf59e04c7e2672bcecc38e67b80d366149717"
+    },
+    "plugin_runtime/src/io_jobs/directory_commands/secret_factory_tests.rs": {
+      "bytes": 40861,
+      "sha256": "6db8c597d7cc8b40a6921b830410b9782a7dd590d021284286d8d3876352dcba"
+    },
+    "plugin_runtime/tests/changes_source.rs": {
+      "bytes": 52394,
+      "sha256": "70b69f8736dc75b0708aa652a975c9431d9e30cea486279761d8801bcfc50c4b"
+    },
+    "plugin_runtime/tests/directory_cancel.rs": {
+      "bytes": 16095,
+      "sha256": "873d295b99ebfde3182b5e13f84b0e17bcd4493adaa0f75357b4395f20aa41b7"
+    },
+    "plugin_runtime/tests/directory_io.rs": {
+      "bytes": 27123,
+      "sha256": "40dc1031d43aebafdd799bd2b2869fbc71bb06678cb92e63ac54de900f85821a"
+    },
+    "plugin_runtime/tests/directory_owner.rs": {
+      "bytes": 41752,
+      "sha256": "59a9a015a96dcb17e95ad42c4b5852393dd3973d970793003eba2115d9f628d2"
+    },
+    "plugin_runtime/tests/directory_selection.rs": {
+      "bytes": 33147,
+      "sha256": "2e7c496a9265f516c055e24cde5fd7be296dcc2c3cd1b42383de689f094e1bb8"
+    },
+    "tool/export_channel_payload_sdk.py": {
+      "bytes": 9152,
+      "sha256": "c985b5a206ab3ffbc0ede6105c54dad0d86b63ec2c68e5c11420fa97e8311448"
+    },
+    "tool/package_sdk_diagnostics.py": {
+      "bytes": 14061,
+      "sha256": "3447c7c4b8c4aef12153eb4b5a18514bf23b6261ac949f07529c9d438b704dbc"
+    },
+    "tool/prepare_changes_metadata_guests.py": {
+      "bytes": 9149,
+      "sha256": "cff9995d1cf386a4772421725b86884a206e50188379f838722d09c1b89d3708"
+    },
+    "tool/prepare_sse_event_guests.py": {
+      "bytes": 12880,
+      "sha256": "bf6074b5e77855c30d131318b1ccb09592bc3d872c690918fcbc0207a9f35ce2"
+    },
+    "tool/prepare_ws_message_guests.py": {
+      "bytes": 12886,
+      "sha256": "766e5f36681c2746efed403d9d4f3dae5cc45b3697c75ba30d2b5b623f537644"
+    },
+    "tool/tests/test_channel_payload_sdk_distribution.py": {
+      "bytes": 16738,
+      "sha256": "a8108f94631f18ae9a9873b1014fbfe207ee340673de1e48a53f4b6352fb0928"
+    },
+    "tool/tests/test_prepare_changes_metadata_guests.py": {
+      "bytes": 3914,
+      "sha256": "89ca3e6698a5a00c44a786ab06c7670cbbf3de72cced439e0eabf8635d7cbe5d"
+    },
+    "tool/tests/test_prepare_sse_event_guests.py": {
+      "bytes": 7208,
+      "sha256": "0e5e2046347ca63a9373ca181f18e903cfb862682e314a44ef100f567a9ae0a6"
+    },
+    "tool/tests/test_prepare_ws_message_guests.py": {
+      "bytes": 7212,
+      "sha256": "ee30f4de20b0f5fb0641932c29ffdd6bbfd2dfe9a7e13dc36b828e2f3df42e32"
+    },
+    "tool/tests/test_sdk_diagnostics.py": {
+      "bytes": 11411,
+      "sha256": "98b66d7b634ab881d0f16dcb7fc1a2858ca56b29242c9bf9043423814c03a3a8"
+    },
+    "tool/tests/test_sdk_diagnostics_distribution.py": {
+      "bytes": 17092,
+      "sha256": "25ca563499381ac992a6bc02c9f0f1d5d21a5c0bd0d8b2704e049bea146089ef"
+    },
+    "tool/tests/test_sdk_preflight.py": {
+      "bytes": 28935,
+      "sha256": "524f418bf6eaaa1dc772df0c8c51835a7734e7075ab33f9d9a87f35b38bd4ae8"
+    },
+    "tool/tests/test_sdk_profiles.py": {
+      "bytes": 24921,
+      "sha256": "0ff1cff194624bd449aa63e3bc583fe8b9e16b92f3f7a7a7ae945f956a1e09d1"
+    },
+    "tool/verify_channel_payload_sdk.py": {
+      "bytes": 19878,
+      "sha256": "3be44269b1cd3f67b87e40fedf287adf5fe3bca2b70edf50b8bccc2bcf2d78c6"
+    },
+    "workbench_host/src/io_tasks.rs": {
+      "bytes": 25319,
+      "sha256": "246d3c611536de89196f259bebcbe9dcb01839363052d5fc0d05acba4c8f1d4f"
+    },
+    "workbench_host/src/service_tasks.rs": {
+      "bytes": 26917,
+      "sha256": "ad9ca3797375affcc10b75dec63f317f2746423f287520a714c47bdd40e721b9"
+    },
+    "workbench_host/tests/sdk_preflight_cli.rs": {
+      "bytes": 13764,
+      "sha256": "2d4a16a5f19cadba58e708df48c760eaa9790d9c690e924d3019d815667eaa57"
+    },
+    "core/src/plugin_package/io.rs": {
+      "bytes": 7854,
+      "sha256": "171a0110fba04a22f2246b39b7abd8e58baf61878e9c1f1665c4d8a6642fda1f"
+    },
+    "core/src/io.rs": {
+      "bytes": 28751,
+      "sha256": "f27b83f1e09d7b8515a2cd0b5a44a381ea88e9c63257f96835919ed232c24591"
+    },
+    "core/src/channel.rs": {
+      "bytes": 25306,
+      "sha256": "6f0900d6cfebcdbbaa947a82191483d1fe508ea0e035300223734eadcc378284"
+    },
+    "core/schemas/plugin_package.proto": {
+      "bytes": 2723,
+      "sha256": "cfda351fe0542bff860b61ba48000999e64aeb3dcb069cda3c5112511d901522"
+    },
+    "plugin_runtime/src/io_binding.rs": {
+      "bytes": 36363,
+      "sha256": "5b09be59948b46aeea846f7196344f154442bd73d26bafc207eaa5801b92c116"
+    },
+    "plugin_runtime/src/io_execution.rs": {
+      "bytes": 29300,
+      "sha256": "a3c66d07bfe99cfc8ebe6927bb321c801b8fcf7249f98b62be6e2367ec66bef1"
+    },
+    "sdk/rust/src/io.rs": {
+      "bytes": 28017,
+      "sha256": "4011e3d7d366575a550a4aba67248ae015b57766cd8192e207c8616c44df9e56"
+    },
+    "sdk/rust/Cargo.lock": {
+      "bytes": 3069,
+      "sha256": "395ffb285db0cf70876872b1f98c5fea95d84db0e1ccc7a798de7f648b6ed164"
+    },
+    "docs/PROJECT_STATUS.md": {
+      "bytes": 7817,
+      "sha256": "6d174cd5b475dbca83beaf6ab6f1bf45a23deedd5db27b29f7b673e2184b85c5"
+    },
+    "docs/PLUGIN_DIRECTORY_BLOB_SDK.md": {
+      "bytes": 13723,
+      "sha256": "c145c71eb79ccae2d6babb8eef713fd2eec2856e8715b9c521fc3d5263a10627"
+    },
+    "reports/reconstruction-2026-10-05/sdk-next-gates.md": {
+      "bytes": 13604,
+      "sha256": "a74419e3473fc8e1bc38c28d236941a70b1eff4c053e0579af8aa6c8b03e3198"
+    },
+    "sdk/rust/src/wasm.rs": {
+      "bytes": 9094,
+      "sha256": "186f3a8f672b8b81781be650f99326f87351cf129e00f7399251227936d7cbab"
+    },
+    "docs/PLUGIN_SYSTEM_STATUS.md": {
+      "bytes": 63341,
+      "sha256": "6b27248099bffa33073b0813ddec0607d7e907f603226371de480e942b840b3d"
+    },
+    "docs/DEVELOPMENT_BOARD.md": {
+      "bytes": 149572,
+      "sha256": "45a2ff6f8b1e02efc040cdd3128ceb568c577b143215b27e01df6b91783bf54b"
+    },
+    "extensions/fs-directory-v1/README.md": {
+      "bytes": 5315,
+      "sha256": "0a5407e4bad6d2a9804155910af1deb4df5db2e00300ab6828ad7cc452f052ea"
+    },
+    "reports/reconstruction-2026-10-05/directory-selection-owner.md": {
+      "bytes": 7527,
+      "sha256": "e45ec2fd7ac15ec80926bf0337eae6787a5c6166efd549db01e3767ceb7e2baf"
+    },
+    "docs/DEVELOPMENT_BRANCH_STATUS.md": {
+      "bytes": 25924,
+      "sha256": "aab1e23490c5b69fa3b4014d1298744c9e46e0f9e36ed9c17bc987d18976c88e"
+    },
+    "docs/FUTURE_ROADMAP.md": {
+      "bytes": 98161,
+      "sha256": "7a68b06f827d85b4b79334329d9a8fa534f442a14346b8ad8634a40dd248c487"
+    },
+    "docs/PLUGIN_SDK_COMPATIBILITY.md": {
+      "bytes": 20202,
+      "sha256": "1c04776c25dc2507850e2b2087a86c6183e7431ea5670b57522ec95072741427"
+    },
+    "docs/PLUGIN_SDK_CAPABILITY_MATRIX.md": {
+      "bytes": 35203,
+      "sha256": "24cb5dd3741266d9b2d0e2057397a8e46b36ae3c866a607dc8ef3ad0ab0d1614"
+    },
+    "plugin_runtime/README.md": {
+      "bytes": 15266,
+      "sha256": "3fcb4ceab26706caf96f226b4a53ae6516e0bc50c0e4648023bc8f49420ad391"
+    },
+    "README.md": {
+      "bytes": 10116,
+      "sha256": "8d81308253a2e0ef5bbda91be59bcedd72e6a7475875c8bec4c451aa0cf9d3ac"
+    },
+    "docs/DOCUMENTATION_INDEX.md": {
+      "bytes": 12762,
+      "sha256": "aac49e52fb401a88691f879049bdaa116ea17168b54f357be69f0057ce896339"
+    },
+    "docs/PLUGIN_CHANGES_METADATA_SDK.md": {
+      "bytes": 4914,
+      "sha256": "b6f872326b0e238543f67fda09fea73152b89c05b519517f830a41bceb38d1fd"
+    },
+    "docs/readme/README.en.md": {
+      "bytes": 10483,
+      "sha256": "5dc696be3d959d1123bb4d783153601b2991b63cdc9abd80c348a7113686c5b1"
+    },
+    "docs/readme/README.ru.md": {
+      "bytes": 17410,
+      "sha256": "0980324f84134aed28dd76c54bb6cb1d320475215ad2a9d493bfc7b80d83cb08"
+    },
+    "docs/readme/README.fr.md": {
+      "bytes": 12012,
+      "sha256": "f0cd48d8e145fa11e963b92688d3f0fd20b68527aceeb70b22607fac3a9b26e8"
+    },
+    "docs/readme/README.de.md": {
+      "bytes": 11607,
+      "sha256": "8f1ddaa3c8a797626118eedda6f42721e2deff6e304898051ebd4654f900c8d1"
+    },
+    "docs/readme/README.es.md": {
+      "bytes": 11462,
+      "sha256": "58fa63f368cff104438327b5e4e51cf0c004967f9f621937c9dc00b063ee3c0e"
+    },
+    "docs/readme/README.ja.md": {
+      "bytes": 12758,
+      "sha256": "e0adc6812680461f2889b0ec8097c8ef1f1aee8554793331ea08274e3a3c7af4"
+    },
+    "docs/readme/README.ko.md": {
+      "bytes": 11872,
+      "sha256": "d1acd40bb626bf87151a4ae492c7131b533d0dab3de40c44e7ee64df1669d1d9"
+    },
+    "docs/readme/README.pt.md": {
+      "bytes": 11496,
+      "sha256": "d728d280774cc9100cab3b37e2cbc3ff85d68bd263929058b95e0d33055fb73d"
+    },
+    "extensions/fs-directory-request-v1/build.rs": {
+      "bytes": 772,
+      "sha256": "9ed7e1bc3b07b098d3f1d5a395f9dcfe982013a39965f6b1024dd1bad9a9c6af"
+    },
+    "extensions/fs-directory-request-v1/Cargo.lock": {
+      "bytes": 3340,
+      "sha256": "d6abd09b55c3e9f9d4fe95ff4b1195a5c9d8fcc06a26ed9d31e3ef4bc5e95a58"
+    },
+    "extensions/fs-directory-request-v1/Cargo.toml": {
+      "bytes": 389,
+      "sha256": "fa51aed2667bc88abc5e39b1119e5845dd09dd193aacfaf3ed9fb978996425e8"
+    },
+    "extensions/fs-directory-request-v1/contracts/fs_directory_request.capnp": {
+      "bytes": 867,
+      "sha256": "04bc8c556059551c320df641f28bf8da5475737534f9d161ad2269bfe5b1d0df"
+    },
+    "extensions/fs-directory-request-v1/guests/c/plugin.c": {
+      "bytes": 3414,
+      "sha256": "31e20acdd16d021c2467dcdb21a7b2c8a25e3c49e64d0f05607256f44ab91016"
+    },
+    "extensions/fs-directory-request-v1/guests/cpp/plugin.cpp": {
+      "bytes": 2826,
+      "sha256": "16ae8030a48538380004a8f9e053d320abf1a522c6512971fa9a20f222ccb617"
+    },
+    "extensions/fs-directory-request-v1/guests/rust/Cargo.toml": {
+      "bytes": 227,
+      "sha256": "93124a27d0f29ff6bc7c55d6858dbe915b18b08c0aeb96e28ced9212186a8236"
+    },
+    "extensions/fs-directory-request-v1/guests/rust/src/lib.rs": {
+      "bytes": 2168,
+      "sha256": "2a202abcfbacb1b9ed9663f7cd989a306e2928fe26e8868893d337e7f30fc536"
+    },
+    "extensions/fs-directory-request-v1/include/morrow_fs_directory_request_v1.h": {
+      "bytes": 5419,
+      "sha256": "d46be9d7c925185b961b79dafd8e991360d4bf43a1121713bac3393fb3e7b91a"
+    },
+    "extensions/fs-directory-request-v1/include/morrow_fs_directory_request_v1.hpp": {
+      "bytes": 4776,
+      "sha256": "17a6ccf526f73788d6296bf7a69cc45c269dc21781e587d1cdce0bc3dae63568"
+    },
+    "extensions/fs-directory-request-v1/src/ffi.rs": {
+      "bytes": 17834,
+      "sha256": "ec54a3af919f6428dac7782aa6afc939d8ba5643b9a7d2c72f2053dac9d28452"
+    },
+    "extensions/fs-directory-request-v1/src/lib.rs": {
+      "bytes": 15150,
+      "sha256": "8e33378bc89cb3d9796bb1218e798496e5ebf22f12fb8ece231371e691c84ca8"
+    },
+    "extensions/fs-directory-request-v1/src/state.rs": {
+      "bytes": 7201,
+      "sha256": "0831d7cfbd8b678a19071d609cf3e31dd62d68ce54a7133c2e537115a6aae22d"
+    },
+    "extensions/fs-directory-request-v1/src/tests.rs": {
+      "bytes": 13357,
+      "sha256": "1a6d413a8455ded22abb80cb474f5c3d2703bfb7d2f45abb519dafe9ed4452de"
+    },
+    "extensions/fs-directory-request-v1/src/transport.rs": {
+      "bytes": 1567,
+      "sha256": "c7133662958f4241fe3b26913c843cb1d1b65ff2c61f6268f5dc4cf0631e1c3b"
+    },
+    "extensions/fs-directory-request-v1/tests/conformance.c": {
+      "bytes": 4455,
+      "sha256": "3355894470f2aab9219685b02cba16474b7b44a95b7d70641cc9fa0596cea2c8"
+    },
+    "extensions/fs-directory-request-v1/tests/conformance.cpp": {
+      "bytes": 3278,
+      "sha256": "5bc9a3466848923e127b0109110a0f812bd69db0b24dbb29479dc7a281c62132"
+    },
+    "Core/src/plugin_package.rs": {
+      "bytes": 31039,
+      "sha256": "34140e680b2716c37a1fc78ca6e7d4c98b6d87cd6eab48c6ef38b2ec38da67f2"
+    },
+    "plugin_runtime/src/lib.rs": {
+      "bytes": 30058,
+      "sha256": "448de1c7195a4c01a3b6f6fa235298c60fcdf214aa3501a02efd7a4cb1073676"
+    },
+    "plugin_runtime/src/continuation.rs": {
+      "bytes": 10129,
+      "sha256": "b77b83896edcc28cbc31c4ba89d5ea0023ef804198707d3f3caa2e58a2d1f34c"
+    },
+    "plugin_runtime/src/package.rs": {
+      "bytes": 13818,
+      "sha256": "5d38a26b2de23e8e6c649a5a2a725294c4ed1937fa01d3be74de7e7811406344"
+    },
+    "plugin_runtime/src/package/frame.rs": {
+      "bytes": 5246,
+      "sha256": "3339055907ba2ae8fe1ba65888838b5002430392a44d8ac7fdfebb8b1a9c5fce"
+    },
+    "plugin_runtime/src/io_jobs/directory_commands.rs": {
+      "bytes": 34368,
+      "sha256": "66d22c9368ee52373540a8072798a4d1f6df69536b50f00eaf46cb48e3f8caa9"
+    },
+    "plugin_runtime/src/io_jobs/owner_commands.rs": {
+      "bytes": 28116,
+      "sha256": "479c8b2a6104c6f41525ee2e1d99d4e87ea20815a1e34d41b10220021df0e646"
+    },
+    "plugin_runtime/src/io_jobs.rs": {
+      "bytes": 131702,
+      "sha256": "f268e969797612a5e483fca892727595a61a5d8a5752fba39d6d244e29709103"
+    },
+    "plugin_runtime/src/io_jobs/directory_commands/guest.rs": {
+      "bytes": 21680,
+      "sha256": "2741fca0c08cdef75edf7352ba49314d02320a95d88480ece58ccc2bcf4d3170"
+    },
+    "workbench_host/src/directory_tasks.rs": {
+      "bytes": 9896,
+      "sha256": "61ef6667a53dd32905c6da0b06e7ff8ce4edf82391fb9bf3a5484b996348e649"
+    },
+    "plugin_runtime/Cargo.toml": {
+      "bytes": 3325,
+      "sha256": "67d8e9c54242c4ff40e943763f65d739b2f654a4825cbe27b64a83aae8c2d92b"
+    },
+    "workbench_host/src/sdk_profiles.rs": {
+      "bytes": 39763,
+      "sha256": "7e65cd0ce6a8f4c5a856f16b889855036f3e31b18eebf8b205251ef3b45d2efa"
+    },
+    "tool/sdk_profiles.py": {
+      "bytes": 44118,
+      "sha256": "fab375ea4a21147daa7ceaca7c8f092f0878d7047afa0ad99ff38116bab23078"
+    },
+    "workbench_host/Cargo.toml": {
+      "bytes": 2228,
+      "sha256": "378c1b67ce6cbfd7ec98b64208928051ec2c59dc606c0c1db65de8d164d0cca7"
+    },
+    "tool/tests/test_directory_request_profiles.py": {
+      "bytes": 8500,
+      "sha256": "5547963fdc3656c839d76235cce096133716a03e49620ee68ba9ebb1dc61b15d"
+    },
+    "plugin_runtime/Cargo.lock": {
+      "bytes": 35688,
+      "sha256": "fa1cde1e8ee821a9e79b65f229a315d7a244bdd9b5155851b003782c9b7170cd"
+    },
+    "workbench_host/Cargo.lock": {
+      "bytes": 75936,
+      "sha256": "9c057165e59b24a53459413f1349a5f7884038dde5ba3c6c984dec9bd8d823b5"
+    },
+    "network_node_stream_001/Cargo.lock": {
+      "bytes": 59048,
+      "sha256": "4e9215ea58772522566aaa63e32beab7d2ccdcd89942aa3f99edf8087e1b302f"
+    },
+    "plugin_runtime/tests/directory_request_profile.rs": {
+      "bytes": 6942,
+      "sha256": "83f0886ec4ddb50631ac07ea77b8404da0801199ad5a5bfe0c116cce08b2588a"
+    },
+    "plugin_runtime/tests/directory_guest_owner.rs": {
+      "bytes": 25668,
+      "sha256": "27e08952f211e048d276bb823694204dd9ac2e7bfec19807b870a1fd170304d3"
+    },
+    "extensions/fs-directory-request-v1/tests/directory_request_helper.rs": {
+      "bytes": 4225,
+      "sha256": "cb67a4e98e41a6ece53de88194636cb8fad0be162f5883385b1df8a40cb79bf9"
+    },
+    "plugin_runtime/src/package/frame/tests.rs": {
+      "bytes": 7179,
+      "sha256": "aa517fb7e9e1ffc30254eb2662029ce7f0ed8e5df38c0edbce581a432cbb22ab"
+    }
+  },
+  "tests": {
+    "existing_regression_meaningful": 191,
+    "existing_regression_raw": 192,
+    "child_helper_excluded": 1,
+    "C10_Rust": 34,
+    "codec": 12,
+    "helper": 4,
+    "package_profile": 9,
+    "owner_guest": 9,
+    "frame_regression": 5,
+    "Rust_native_meaningful": 230,
+    "Python": 33,
+    "native_consumers": 2
+  },
+  "records": [
+    {
+      "label": "push-regression-test-00-directory_selection",
+      "record": {
+        "bytes": 65511,
+        "sha256": "b923725a55c456788eecd32a9cb0e9f98a688c1ba1593bab55bb6bb77b1f6049"
+      },
+      "stdout": {
+        "bytes": 1241,
+        "sha256": "308e0d22ba70af3221092e8e7554caa0b7c318120c7167e7144bd2e431952e56"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          12,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 12,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "actual_intermediate_and_leaf_junctions_refuse_without_selection_leak_or_restart_poison",
+        "actual_isolated_surrogate_directory_component_is_opened_without_lossy_conversion",
+        "anchor_plus_seven_components_exactly_uses_eight_resources_and_deeper_chain_fails_closed",
+        "dropped_unread_page_releases_its_chain_and_other_original_instance_remains_live",
+        "expired_or_backwards_original_clock_before_selection_refuses_without_native_child_open",
+        "file_read_only_refuses_file_list_before_child_open_and_releases_admission",
+        "loose_share_anchor_rename_replacement_still_uses_held_original_anchor_not_path",
+        "missing_or_ordinary_file_component_returns_io_without_creating_or_modifying_any_child",
+        "original_worker_two_level_unicode_leaf_lists_paginated_metadata_without_read_grant",
+        "queued_cancel_never_opens_child_and_cumulative_fees_are_not_refunded_or_replayed",
+        "ready_unread_capture_cancel_is_unknown_no_replay_and_releases_pinned_leaf",
+        "retained_intermediate_and_leaf_block_rename_until_finish_then_release_every_lease"
+      ],
+      "tool_name": "directory_selection-9e308b999dabcf35.exe",
+      "tool_pin": {
+        "bytes": 9221120,
+        "sha256": "93bc5062d5e2706a1f6f7e3fff041c0c524dc24e1608a9443fb007f8cde51050"
+      }
+    },
+    {
+      "label": "push-regression-test-01-morrow_plugin_runtime",
+      "record": {
+        "bytes": 65385,
+        "sha256": "2faabf00bc3e3137ccbd3fe3418ab295fb75e33f5839dd1c4e87fb920e602627"
+      },
+      "stdout": {
+        "bytes": 1023,
+        "sha256": "6cdb99b417f85cc6493c258fa2c4c27cdc817420f9eb09d6714426fd89a3340c"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          8,
+          0,
+          0,
+          0,
+          83
+        ]
+      ],
+      "credited_methods": 8,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "directory_io::selection_path::tests::aggregate_spare_capacity_is_bounded_and_actual_retained_bytes_are_accounted",
+        "directory_io::selection_path::tests::debug_output_redacts_exact_directory_spelling",
+        "directory_io::selection_path::tests::device_stems_ascii_case_extensions_and_superscript_digits_are_refused",
+        "directory_io::selection_path::tests::forbidden_navigation_control_separator_ads_and_trailing_spellings_are_refused",
+        "directory_io::selection_path::tests::oversized_component_container_capacity_is_refused_even_with_one_short_name",
+        "directory_io::selection_path::tests::oversized_name_capacity_is_refused_even_with_one_unit",
+        "directory_io::selection_path::tests::raw_isolated_surrogates_and_non_ascii_spelling_remain_exact",
+        "directory_io::selection_path::tests::semantic_unit_segment_and_aggregate_byte_limits_are_exact"
+      ],
+      "tool_name": "morrow_plugin_runtime-8828f0477c476684.exe",
+      "tool_pin": {
+        "bytes": 10123776,
+        "sha256": "a62001385dc98c857606841ac6001c30e70b94ac1ca458be97a365c3c46c0b92"
+      }
+    },
+    {
+      "label": "push-regression-test-02b-morrow_plugin_runtime",
+      "record": {
+        "bytes": 66392,
+        "sha256": "a863ad7d52c2d9fbd857b3174ddaa90f2a278da29b88d3e86795e95261c29d5d"
+      },
+      "stdout": {
+        "bytes": 2067,
+        "sha256": "32ba36469e37940ccad8d70a7928ecf896a54b0f9f8575f3f939a33837012344"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          14,
+          0,
+          0,
+          0,
+          77
+        ]
+      ],
+      "credited_methods": 14,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "io_jobs::owner_commands::directories::secret_factory_tests::all_zero_entropy_is_refused_without_derive_or_native_publication",
+        "io_jobs::owner_commands::directories::secret_factory_tests::cancellation_after_entropy_before_derive_is_unknown_and_never_replayed",
+        "io_jobs::owner_commands::directories::secret_factory_tests::checked_local_directory_serial_exhaustion_never_wraps_or_reuses",
+        "io_jobs::owner_commands::directories::secret_factory_tests::delayed_entropy_does_not_hold_original_clock_control_or_ticket_locks",
+        "io_jobs::owner_commands::directories::secret_factory_tests::fixed_test_entropy_is_separated_by_worker_and_capture_serial",
+        "io_jobs::owner_commands::directories::secret_factory_tests::fresh_effective_capture_ceiling_and_cumulative_charges_never_refund",
+        "io_jobs::owner_commands::directories::secret_factory_tests::fresh_global_quota_includes_live_queued_and_in_generation_reservations",
+        "io_jobs::owner_commands::directories::secret_factory_tests::fresh_os_entropy_uses_original_worker_and_typed_directory_lifecycle",
+        "io_jobs::owner_commands::directories::secret_factory_tests::legacy_explicit_secret_bypasses_factory_and_entropy_failures_are_redacted",
+        "io_jobs::owner_commands::directories::secret_factory_tests::original_file_list_identity_and_time_gates_precede_entropy",
+        "io_jobs::owner_commands::directories::secret_factory_tests::original_stop_revocation_expiry_and_backwards_time_after_fill_prevent_selection",
+        "io_jobs::owner_commands::directories::secret_factory_tests::partial_entropy_error_zeroizes_scratch_without_selection_fallback_or_refund",
+        "io_jobs::owner_commands::directories::secret_factory_tests::queued_fresh_cancel_and_drop_never_generate_or_replay",
+        "io_jobs::owner_commands::directories::secret_factory_tests::ready_unread_fresh_cancel_or_drop_retires_without_regeneration"
+      ],
+      "tool_name": "morrow_plugin_runtime-8828f0477c476684.exe",
+      "tool_pin": {
+        "bytes": 10123776,
+        "sha256": "a62001385dc98c857606841ac6001c30e70b94ac1ca458be97a365c3c46c0b92"
+      }
+    },
+    {
+      "label": "push-regression-test-03-directory_cancel",
+      "record": {
+        "bytes": 65062,
+        "sha256": "04688f50f2baa4b292afc889bd5566df317715e8034f4b35051169a05c9e78d0"
+      },
+      "stdout": {
+        "bytes": 789,
+        "sha256": "0824b11a2a08522e710c44241e6e222899ee3ee15d7b079ba5faff2c5e72d6ab"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          7,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 7,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "cancellation_before_cursor_commit_retires_only_that_selection_other_instance_stays_live",
+        "cancellation_predicate_does_not_authorize_file_read_or_override_stop_expiry_and_clock",
+        "cancelled_capture_after_actual_native_batch_discards_all_observation_and_keeps_costs",
+        "cancelled_capture_before_broker_entry_retention_returns_no_partial_reference",
+        "cancelled_capture_before_first_native_query_releases_leases_without_fee_refund",
+        "cancelled_page_after_actual_encoding_retires_nonterminal_cursor_without_delivery_or_refund",
+        "foreign_owner_epoch_sequence_and_cursor_reject_before_veto_and_cannot_erase_selection"
+      ],
+      "tool_name": "directory_cancel-a4af1f2a8785b0d8.exe",
+      "tool_pin": {
+        "bytes": 7839744,
+        "sha256": "607e652e365c570dca2b5e36df6702b48a251ef72b85d80cecd229a2f832078f"
+      }
+    },
+    {
+      "label": "push-regression-test-04-directory_owner",
+      "record": {
+        "bytes": 65467,
+        "sha256": "4f21a0ba9e789a9b7b09699ca59f7da6d92b55c22ce550ebd65b3e25eeedbf01"
+      },
+      "stdout": {
+        "bytes": 1215,
+        "sha256": "5d4e179e51e97c2ff40ef6e554e879c43243ff52b4c6c976f7e40781c52801d3"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          14,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 14,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "default_owner_opt_in_and_exact_file_list_capability_are_required",
+        "dropped_unread_page_retires_only_its_selection_and_other_instance_runs",
+        "effective_capture_ceiling_and_cumulative_admission_are_not_refunded",
+        "eight_global_live_and_queued_captures_reserve_capacity",
+        "file_list_capture_pages_and_terminal_release_use_original_owner",
+        "foreign_worker_stale_session_epoch_and_cursor_preserve_both_observations",
+        "one_pending_or_unread_page_blocks_second_page_until_consumed",
+        "original_clock_expiry_and_backwards_time_release_idle_without_new_request",
+        "original_registry_revoke_suppresses_unread_reply_and_releases_idle",
+        "queued_page_cancel_before_started_retires_without_replay",
+        "ready_unread_capture_cancel_after_started_is_unknown_and_not_replayed",
+        "runtime_replacement_during_prepare_refuses_directory_dispatch",
+        "slow_original_directory_context_does_not_block_poll_read_or_admission",
+        "stop_and_failed_maintenance_return_joined_original_owner_without_resources"
+      ],
+      "tool_name": "directory_owner-8f0406ed2f7d7917.exe",
+      "tool_pin": {
+        "bytes": 9273856,
+        "sha256": "fae8240ad65fbde9bc58f13531be899ce7a556e52a68446af84b5eff3af81ff1"
+      }
+    },
+    {
+      "label": "push-regression-test-05-directory_io",
+      "record": {
+        "bytes": 65830,
+        "sha256": "29d521e2acb42571cfcf91ae29f20368786ba44535329466491269ae95920120"
+      },
+      "stdout": {
+        "bytes": 1605,
+        "sha256": "4fdc1c3f49e481989ec06ed2f4b7c2e8751214657ec49986b264e91ba1719e48"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          16,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 16,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "actual_1025_children_refuse_without_partial_reference_and_release_slots_not_bytes",
+        "actual_empty_directory_terminal_page_releases_root_resource_job_and_not_bytes",
+        "actual_host_metadata_entry_and_original_job_cumulative_resource_limits_fail_closed",
+        "actual_junction_root_or_child_is_refused_without_following_target_or_partial_reference",
+        "actual_unicode_zero_long_names_immediate_directories_and_multiple_native_batches_pages",
+        "actual_windows_isolated_surrogate_name_units_are_retained_without_lossy_utf8",
+        "exact_manager_digest_revision_and_requested_capabilities_gate_original_binding",
+        "file_read_and_file_create_approvals_do_not_authorize_list_and_no_native_bytes_admitted",
+        "foreign_manager_host_instance_broker_epoch_sequence_and_entry_cursor_refuse_without_consumption",
+        "hardlinks_with_same_native_file_id_receive_distinct_name_scoped_opaque_ids",
+        "original_lease_expiry_and_backwards_clock_prevent_capture_or_delivery",
+        "retained_root_survives_namespace_rename_replacement_and_not_guest_path_reopen",
+        "selected_regular_file_is_not_directory_and_broker_drop_releases_original_resource",
+        "stop_after_actual_page_encoding_withholds_delivery_releases_root_and_preserves_charges",
+        "stop_and_registry_revoke_suppress_delivery_then_original_maintenance_releases",
+        "stop_during_actual_capture_batch_withholds_all_observation_and_releases"
+      ],
+      "tool_name": "directory_io-c87c9c33e0ef7e23.exe",
+      "tool_pin": {
+        "bytes": 7929344,
+        "sha256": "39cc7bc60b66e1b4a0582bc2776ef1ee8b102c9bb237e43d38e1e09ef719bd2a"
+      }
+    },
+    {
+      "label": "push-regression-test-06-owner_commands",
+      "record": {
+        "bytes": 65674,
+        "sha256": "970bbf64411fd88ee5af2c1260e43a23a04283ae4828feb270ebf773eea3f9ec"
+      },
+      "stdout": {
+        "bytes": 1451,
+        "sha256": "1492e21371307cd146249184d94cb8db2c3f9f0b07036c8f2b1192e2167b8795"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          16,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 16,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "dropping_running_handle_cannot_refund_its_reservation_while_effect_is_running",
+        "eight_ready_unread_commands_retain_count_and_reserved_bytes_until_consumed",
+        "exact_input_and_reply_limits_are_accepted_and_fully_reserved",
+        "expired_ready_payload_is_suppressed_while_blocked_handler_prevents_monitor_tick",
+        "expiry_during_prepare_prevents_start_and_recovers_owner_without_business_effect",
+        "handler_error_or_oversize_after_effect_reports_unknown_without_automatic_replay",
+        "invalid_bounds_have_no_effect_or_reservation_and_zero_reply_supports_empty_result",
+        "io_ready_queue_saturation_does_not_consume_reserved_owner_command_capacity",
+        "missing_or_foreign_owned_manager_is_rejected_before_clock_and_returns_original_objects",
+        "original_owner_executes_writes_and_reads_and_is_recovered_once",
+        "panicking_command_recovers_original_owner_and_never_runs_queued_command",
+        "queued_cancellation_never_enters_handler",
+        "runnable_guest_gets_a_turn_before_owner_queue_is_exhausted",
+        "running_cancellation_reports_unknown_and_retains_reservation_until_handler_returns",
+        "stop_or_drain_rejects_queued_commands_and_suppresses_running_output",
+        "substituted_runtime_is_detected_and_queue_does_not_continue"
+      ],
+      "tool_name": "owner_commands-23048ddd984b274e.exe",
+      "tool_pin": {
+        "bytes": 9147904,
+        "sha256": "58b6449c4ca4e7fa8118923a1a9cf074290ded5eeb11fbde0586b853ab6c4e35"
+      }
+    },
+    {
+      "label": "push-regression-test-07-file_owner",
+      "record": {
+        "bytes": 65195,
+        "sha256": "38235556feabb2d1f7b2b9991c5afbc2513a12c058b96838038e6c835ccd4d66"
+      },
+      "stdout": {
+        "bytes": 967,
+        "sha256": "eaf0404c186604476fecd4e8a30cfc21f4083055fc8a3621f02abb4f2e2db92c"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          12,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 12,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "admission_is_nonblocking_and_queued_cancel_never_reads_the_file",
+        "bounded_queue_and_invalid_requests_do_not_replace_original_owner",
+        "foreign_worker_token_cannot_consume_capacity",
+        "host_worker_ceiling_is_reserved_before_capture_and_never_refunded",
+        "managed_runtime_default_does_not_call_action",
+        "managed_runtime_split_borrow_uses_original_manager_and_store",
+        "preparation_panic_and_maintenance_failure_still_return_exact_owner",
+        "ready_chunk_is_suppressed_on_stop_and_expiry",
+        "selected_path_invalid_inputs_and_preopen_expiry_fail_closed",
+        "selected_path_is_opened_on_original_worker_after_admission",
+        "three_original_modules_capture_read_finish_on_original_owner_thread",
+        "unread_cancelled_capture_releases_resource_before_next_capture"
+      ],
+      "tool_name": "file_owner-bdd3e699cc5a9420.exe",
+      "tool_pin": {
+        "bytes": 7950336,
+        "sha256": "6a077f6c6a819574f04bec0e85062d22faa72a3329c653cdbab0f36731292ce2"
+      }
+    },
+    {
+      "label": "push-regression-test-08-io_owner",
+      "record": {
+        "bytes": 65108,
+        "sha256": "5e2fd413e77f6b7df71b89409593438ad866c650b6817eac9f3f1706e5b9f8f7"
+      },
+      "stdout": {
+        "bytes": 885,
+        "sha256": "7bec91edc6a024765541933b855ec1667b74484ef93163319d3aed4956e94ab5"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          10,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 10,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "dropped_worker_retains_owner_until_blocking_router_returns",
+        "failed_admission_and_panicking_clock_return_original_owner_and_instance",
+        "failed_disconnect_preserves_exact_instance_for_explicit_cleanup",
+        "maintenance_cannot_replace_owner_runtime_and_report_success",
+        "maintenance_error_or_panic_is_separate_from_successful_committed_update",
+        "preparation_cannot_replace_host_for_store_mutation_or_disconnection",
+        "preparation_failure_or_panic_revokes_ready_reports_and_preserves_owner",
+        "preparation_failure_prevents_queued_store_mutation",
+        "router_panic_still_returns_original_owner_after_disconnect_and_maintenance",
+        "same_owner_returns_after_jobs_and_original_store_mutation"
+      ],
+      "tool_name": "io_owner-25f4e3a36bd2913c.exe",
+      "tool_pin": {
+        "bytes": 9034752,
+        "sha256": "0f0d2e38f4bedcbbd58b866ba0a1fe54706d7004c7af06dee8fa83573d7921c6"
+      }
+    },
+    {
+      "label": "push-regression-test-09-io_jobs",
+      "record": {
+        "bytes": 65457,
+        "sha256": "b4b9fe2412f32fc8fdf0efd1ecfe4bc4cebe87da4b78f7c7cc6a0170973e0761"
+      },
+      "stdout": {
+        "bytes": 1266,
+        "sha256": "11458895165fa6791fdedbec6e9468e48bd9b43f5cd118c5ebb9738f6c835437"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          17,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 17,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "a_call_that_exceeds_the_job_budget_is_denied_before_any_effect",
+        "deadline_suppresses_a_late_result_without_retry",
+        "drain_preserves_valid_ready_until_read_or_drop",
+        "dropping_running_handle_cannot_release_capacity_while_router_is_still_running",
+        "expired_ready_metadata_does_not_prevent_drain_from_ending",
+        "expiry_and_external_revocation_after_ready_suppress_delivery",
+        "external_connection_revocation_must_block_router",
+        "external_revocation_during_route_prevents_further_calls_and_queued_effects",
+        "manifest_limits_bound_slots_bytes_duration_and_runtime_calls",
+        "multiple_calls_route_in_order_and_read_is_exactly_once",
+        "poll_is_nonblocking_and_read_honours_its_byte_bound",
+        "queue_capacity_and_byte_limits_are_enforced",
+        "ready_reports_hold_capacity_through_read_bound_and_release_on_read_or_drop",
+        "ready_then_cancel_must_not_deliver_success",
+        "ready_then_worker_stop_must_not_deliver_success",
+        "spawn_must_validate_public_limits",
+        "stop_revokes_recycles_and_never_delivers_a_late_success"
+      ],
+      "tool_name": "io_jobs-1032a61d22609af0.exe",
+      "tool_pin": {
+        "bytes": 8810496,
+        "sha256": "0bb3b43948d8f54a864e24ffadf5349d9eb4501838d28e858f4e4939b768d4b2"
+      }
+    },
+    {
+      "label": "push-regression-test-10-io_jobs_managed",
+      "record": {
+        "bytes": 65274,
+        "sha256": "15394522f68f5ecb4b9d0442858d20bce1587ccfcc761edb5e0b20cebfec985e"
+      },
+      "stdout": {
+        "bytes": 1016,
+        "sha256": "b3ef1f73a9999ca5ce812f8dc73921096ad0b08f46a64fd9edb5c53468954aa9"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          12,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 12,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "an_unapproved_action_never_enters_the_trusted_router",
+        "approved_http_script_preserves_status_and_bounds_or_suppresses_all_response_data",
+        "cumulative_shared_bytes_are_not_refunded_after_consumption",
+        "dropping_manager_revokes_already_ready_delivery",
+        "http_credential_reference_requires_both_approved_capabilities_before_routing",
+        "managed_read_uses_one_shared_job_and_exact_cumulative_bytes",
+        "manager_revocation_is_nonblocking_and_abandoned_running_job_holds_shared_slot",
+        "read_samples_current_trusted_clock_after_ready",
+        "ready_result_is_not_delivered_after_io_approval_is_removed",
+        "ready_slots_compete_with_other_bindings_until_read_or_drop",
+        "response_exceeding_shared_instance_bytes_is_unknown_without_success_or_refund",
+        "wrong_manager_host_and_instance_are_rejected_before_clock"
+      ],
+      "tool_name": "io_jobs_managed-9d8dba20067dc25c.exe",
+      "tool_pin": {
+        "bytes": 9089536,
+        "sha256": "bb96976a50e322ce1bdb54f35f0551c40e48ef5bdc4ed269d33af8f749c37aee"
+      }
+    },
+    {
+      "label": "push-regression-test-11-io_jobs_brokered",
+      "record": {
+        "bytes": 65204,
+        "sha256": "cb78e4b052ca4e74fad98efdf3ff215b7c49feac45ac37ad808955a671a663dd"
+      },
+      "stdout": {
+        "bytes": 936,
+        "sha256": "4eadf6fbebba5c8a1451dd818bc96bf024ccabd81607334300e1ff2e16615152"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          11,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 11,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "actual_response_over_reserved_bound_is_unknown_not_safe_to_retry",
+        "backend_error_retains_unknown_and_repeat_cannot_resend",
+        "changed_or_denied_reply_after_dispatch_is_unknown_but_keeps_original_fact",
+        "mismatched_command_never_calls_backend_or_creates_history",
+        "observed_operation_is_not_dispatched_again",
+        "one_managed_job_uses_one_slot_and_reserves_response_bytes_once",
+        "persisted_unknown_cannot_be_downgraded_to_denied_by_router",
+        "repeated_dispatch_in_same_route_never_reenters_backend",
+        "response_reservation_is_admitted_before_backend_for_both_budget_domains",
+        "revocation_during_callback_keeps_observed_history_without_delivering_result",
+        "valid_response_without_dispatch_cannot_be_delivered_as_broker_output"
+      ],
+      "tool_name": "io_jobs_brokered-09701575c25baaf5.exe",
+      "tool_pin": {
+        "bytes": 9155072,
+        "sha256": "9e1b63dc6ca2cc28d931490998e2f5d37dbbcc831e240f51ea501bd3fee4e395"
+      }
+    },
+    {
+      "label": "push-regression-test-12-sdk_frozen_compat",
+      "record": {
+        "bytes": 64592,
+        "sha256": "974cc0c301d293adc35c5698c6be72fb92f5440b5a67aa65b3501637046cfac8"
+      },
+      "stdout": {
+        "bytes": 308,
+        "sha256": "05ee6b5fa4ebc495e547c197f470ca0d41b0528ffdbaabc2fbde9b3aaa957db0"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          9,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 9,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "c_task",
+        "c_transform",
+        "c_ui",
+        "cpp_task",
+        "cpp_transform",
+        "cpp_ui",
+        "rust_task",
+        "rust_transform",
+        "rust_ui"
+      ],
+      "tool_name": "sdk_frozen_compat-cb41b432c8d6b08f.exe",
+      "tool_pin": {
+        "bytes": 7100928,
+        "sha256": "b243e3410c4ed2d6daf08850aa07aaffacd51eb056d1bb25965f8194391cce41"
+      }
+    },
+    {
+      "label": "push-regression-test-13-sdk_frozen_dependency",
+      "record": {
+        "bytes": 64660,
+        "sha256": "b9ceb760317b3db6e9678e1db224804e7d0bcd8a00017afd63ebe01d7030cdb2"
+      },
+      "stdout": {
+        "bytes": 343,
+        "sha256": "5d0d64571b670a1d75365d4a92f23421193fef9cafc29ad28aff5ed8e85e30ce"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          3,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 3,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "frozen_c_dependency_binary_preserves_routing_and_authorization",
+        "frozen_cpp_dependency_binary_preserves_routing_and_authorization",
+        "frozen_rust_dependency_binary_preserves_routing_and_authorization"
+      ],
+      "tool_name": "sdk_frozen_dependency-cf486e3958ee0d32.exe",
+      "tool_pin": {
+        "bytes": 7344128,
+        "sha256": "1afd0d5acd818c4d3b6e2fce12197eb1723594480833eabe9858e5bb9bfcec8e"
+      }
+    },
+    {
+      "label": "push-regression-original42-region7-shared_memory_windows",
+      "record": {
+        "bytes": 65401,
+        "sha256": "f73891ef6587ef38f4b35f61c14675256bfb8650ed1eccf41a09bbe773ea108b"
+      },
+      "stdout": {
+        "bytes": 822,
+        "sha256": "069d32c0e18248855810990bb554e9b0cc395313060f427e079acbac8a50eda0"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          7,
+          0,
+          0,
+          0,
+          84
+        ]
+      ],
+      "credited_methods": 7,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "shared_memory::windows::tests::actual_child_receives_readonly_noninheritable_mapping_and_reuses_input_handle",
+        "shared_memory::windows::tests::arc_leases_can_outlive_producer_and_move_across_threads",
+        "shared_memory::windows::tests::producer_changes_do_not_change_frozen_mapping",
+        "shared_memory::windows::tests::readonly_mapping_rejects_actual_write_without_a_dialog",
+        "shared_memory::windows::tests::size_boundaries_are_checked_before_allocation",
+        "shared_memory::windows::tests::transfer_rejects_oversize_and_exited_actual_child",
+        "shared_memory::windows::tests::writable_original_and_invalid_handles_are_rejected_without_consuming_source"
+      ],
+      "tool_name": "morrow_plugin_runtime-8828f0477c476684.exe",
+      "tool_pin": {
+        "bytes": 10123776,
+        "sha256": "a62001385dc98c857606841ac6001c30e70b94ac1ca458be97a365c3c46c0b92"
+      }
+    },
+    {
+      "label": "push-regression-test-14-remote_reader",
+      "record": {
+        "bytes": 65105,
+        "sha256": "d74ad449d4e2b8513ab89460f4edc726c5a5f5eb2fb7659722ab3ead07240306"
+      },
+      "stdout": {
+        "bytes": 852,
+        "sha256": "eba2233da579c9e2f35e2aef5e2cc7fb404db41f9995acc007d501b0f34171ce"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          10,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 9,
+      "excluded_helpers": 1,
+      "python_count": null,
+      "test_names": [
+        "abnormal_exit_is_not_inferred_from_reply_error_but_reaped_by_actual_child",
+        "closing_input_before_any_reply_really_delivers_eof",
+        "controlled_reader_child",
+        "dropping_live_reader_reaps_process_before_releasing_retired_allocation",
+        "malformed_reply_while_child_is_live_retains_pin_until_actual_stop",
+        "no_reply_poll_is_nonblocking_and_explicit_stop_releases_only_after_exit",
+        "real_reply_does_not_release_pin_and_frozen_source_survives_original_mutation",
+        "revoked_expired_and_retired_leases_cannot_start_or_deliver_new_access",
+        "spawn_failure_never_leaves_an_unowned_mapping_pin",
+        "wrong_host_or_consumer_cannot_spawn_or_receive_anothers_lease"
+      ],
+      "tool_name": "remote_reader-d72150762615b27a.exe",
+      "tool_pin": {
+        "bytes": 5309952,
+        "sha256": "e86167ad6dff178829097881de6255a187e338d235d38e192f288080b47bd6d7"
+      }
+    },
+    {
+      "label": "push-regression-test-15-shared_objects",
+      "record": {
+        "bytes": 65484,
+        "sha256": "00584893831052c8fb400085a4583ae01c9d0b5cabcf094c5ee40b4c1b11c1bc"
+      },
+      "stdout": {
+        "bytes": 1252,
+        "sha256": "dd5a2e0f7f4bc4cdcac34b88daf9a42c6041c15d570e5afc530e071a5a6c0e37"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          14,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 14,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "consumer_revocation_blocks_new_maps_but_cannot_retract_delivered_bytes",
+        "every_descriptor_component_and_wrong_scope_are_rejected",
+        "expiry_boundary_rejects_new_access_without_unmapping_delivered_bytes",
+        "final_clock_expiry_or_revocation_discards_real_wasm_output",
+        "foreign_broker_host_and_consumer_cannot_reuse_descriptors_leases_or_mappings",
+        "foreign_or_invalid_requests_with_future_timestamps_do_not_poison_the_host_clock",
+        "identical_payloads_in_different_scopes_have_distinct_objects",
+        "lease_mapping_and_conservative_allocation_limits_are_enforced_and_reclaimed",
+        "oversized_wasm_input_clock_regression_and_invalid_limits_are_rejected",
+        "producer_revocation_stops_new_grants_without_revoking_existing_consumer_lease",
+        "publication_freezes_producer_buffer_and_hashes_the_fixed_mapping",
+        "real_wasm_checks_exact_frozen_input_and_foreign_mapping_never_executes",
+        "retire_keeps_old_pages_charged_until_last_mapping_and_never_reuses_identity",
+        "revoked_or_retired_mapping_cannot_be_used_for_new_wasm_work"
+      ],
+      "tool_name": "shared_objects-0b0eb9d07fa5dfdf.exe",
+      "tool_pin": {
+        "bytes": 8211456,
+        "sha256": "46691becb2ec7131f0c5febcebb9c381335b63c9cdfe0b370b5628edbec80e9c"
+      }
+    },
+    {
+      "label": "push-frame-regression-001",
+      "record": {
+        "bytes": 64842,
+        "sha256": "7351f839b00e90ca58fc3522ba64ad47498959fa0e72bfa2a0f22b96e652110a"
+      },
+      "stdout": {
+        "bytes": 599,
+        "sha256": "a8aaa60ea6b1e6b370f9fa7097df73efb4d3dd3ed9ef8ed3a4471ea20cff926f"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          5,
+          0,
+          0,
+          0,
+          86
+        ]
+      ],
+      "credited_methods": 5,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "package::frame::tests::denied_second_core_not_misrouted_to_io",
+        "package::frame::tests::earlier_denied_core_remains_protocol_fault_after_pending_io_cancellation",
+        "package::frame::tests::negotiated_mutation_package_only_enters_its_independent_frame",
+        "package::frame::tests::ordinary_package_cannot_enter_a_service_frame_or_run_its_guest",
+        "package::frame::tests::owned_service_frame_survives_package_and_input_and_exposes_exact_imports"
+      ],
+      "tool_name": "morrow_plugin_runtime-8828f0477c476684.exe",
+      "tool_pin": {
+        "bytes": 10123776,
+        "sha256": "a62001385dc98c857606841ac6001c30e70b94ac1ca458be97a365c3c46c0b92"
+      }
+    },
+    {
+      "label": "push-check-codec-test-morrow_fs_directory_request_v1-001",
+      "record": {
+        "bytes": 65359,
+        "sha256": "22e17d6ea31b5945811f8bb624fda52464ee82231ee1ffac747b2a5c6ce43b7e"
+      },
+      "stdout": {
+        "bytes": 989,
+        "sha256": "8e1952335c6795febb886eb4c25fb325a20b76000af4a7516fe776d9b17b5fc3"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          12,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 12,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "tests::c_opaque_outputs_preserve_slots_prefix_lengths_and_owned_wire",
+        "tests::empty_nonterminal_page_remains_encodable_next_cursor",
+        "tests::finish_cancel_and_wire_unknown_are_terminal_without_join_claim",
+        "tests::inner_page_limits_propagate_and_error_body_cannot_be_success",
+        "tests::nonce_reuse_and_pending_are_rejected_without_new_charge",
+        "tests::nonempty_page_exact_cursor_and_foreign_identity_rejection",
+        "tests::original_multisegment_request_digest_and_one_call",
+        "tests::owned_page_and_debug_do_not_expose_raw_names_or_tokens",
+        "tests::request_actions_and_cursor_boundaries",
+        "tests::response_wrong_correlation_is_unknown_and_never_refunds",
+        "tests::strict_outer_contract_and_trailing_rejection",
+        "tests::transport_loss_is_one_call_and_replay_is_blocked"
+      ],
+      "tool_name": "morrow_fs_directory_request_v1-ca69ebc3bc2a3e95.exe",
+      "tool_pin": {
+        "bytes": 868864,
+        "sha256": "955dfc9e7cabd178123219a2f49bc07535c14da7568089399f02e7967a84c8c4"
+      }
+    },
+    {
+      "label": "push-check-codec-test-directory_request_helper-001",
+      "record": {
+        "bytes": 64802,
+        "sha256": "f128930849e9162a8b80ce3edf0a876fbfa515d665df308ab73b906b9bbbd9a4"
+      },
+      "stdout": {
+        "bytes": 451,
+        "sha256": "80d9b8fa6c46e0377e5a09ea69c05cfdeef0a162b21bac57ae0934a0e426e498"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          4,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 4,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "empty_nonterminal_page_produces_a_valid_next_cursor_without_changing_old_page_codec",
+        "other_original_request_response_closes_without_cursor_advance_or_refund",
+        "terminal_page_closes_helper_but_does_not_assert_native_worker_join",
+        "uncertain_transport_calls_once_and_requires_explicit_unknown_close"
+      ],
+      "tool_name": "directory_request_helper-7788e555b3596752.exe",
+      "tool_pin": {
+        "bytes": 809472,
+        "sha256": "562484780491ed8189eedd30abad0ad45e6113b995d9de0d86d5b0a287dd4499"
+      }
+    },
+    {
+      "label": "push-check-test-directory_request_profile-001",
+      "record": {
+        "bytes": 65137,
+        "sha256": "62f3856c86a7dde35f48786a3ebd680c54ce7adfb0796e8b0684a19a2ecca748"
+      },
+      "stdout": {
+        "bytes": 803,
+        "sha256": "1f2d1b82ed04ee466a54843c6fed859a9df8d348d7b8e27d16c2981164f3c035"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          9,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 9,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "a_directory_runner_cannot_be_driven_by_an_unbound_synchronous_callback",
+        "directory_factory_refuses_absent_future_or_wrong_import_signatures",
+        "directory_import_does_not_enable_any_second_extra_import_or_wasi",
+        "directory_only_declarations_reject_read_mutation_network_and_content_ceilings",
+        "every_legacy_factory_refuses_the_new_import",
+        "exact_opt_in_prepares_without_creating_authority_or_running_a_guest",
+        "original_io_resource_job_and_byte_ceilings_still_bound_the_new_profile",
+        "package_feature_and_import_must_match_in_both_directions",
+        "unknown_profile_and_changed_legacy_contracts_do_not_fallback"
+      ],
+      "tool_name": "directory_request_profile-610b9c18812c41d8.exe",
+      "tool_pin": {
+        "bytes": 6479360,
+        "sha256": "356a72c48995308e856c9aaa8993a0ab34c733c3281792c7288787720ad40283"
+      }
+    },
+    {
+      "label": "push-check-discovery-python-001",
+      "record": {
+        "bytes": 64404,
+        "sha256": "5b4798465f3ab943f7bc4951de44249bf842b6d44cb14e516e51b4d7c08826a2"
+      },
+      "stdout": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "bytes": 5783,
+        "sha256": "4a098809a203e08c6a52fa3add686494beadc1a65aea6d26007c96a8d38a788d"
+      },
+      "exit": 0,
+      "raw_test_counts": null,
+      "credited_methods": null,
+      "excluded_helpers": 0,
+      "python_count": 33,
+      "test_names": [],
+      "tool_name": "python.exe",
+      "tool_pin": {
+        "bytes": 107312,
+        "sha256": "49c94f6b8326c4e5a1e2099f95a188a49be331ffa0bb7b7d179080f662daa6b5"
+      }
+    },
+    {
+      "label": "push-check-native-c-test-001",
+      "record": {
+        "bytes": 64179,
+        "sha256": "df4b96d835c7f8e5bca1646948124059acb91a00d24e9283d004aed940641d87"
+      },
+      "stdout": {
+        "bytes": 91,
+        "sha256": "22e6956f3f382cc71bd1f82414b8b17cc8ea11d5ade0dd87a60ca8e4ed40fb3f"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": null,
+      "credited_methods": null,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [],
+      "tool_name": "c-conformance.exe",
+      "tool_pin": {
+        "bytes": 239616,
+        "sha256": "46b22f09179aefd06eedd00a7fb77c99d3e137c998fae7f99c2357dd36a402d4"
+      }
+    },
+    {
+      "label": "push-check-native-cpp-test-001",
+      "record": {
+        "bytes": 64207,
+        "sha256": "f364d8f5139dfdeecd1db281f407948f5614d30b01d311684f412977cdb16f71"
+      },
+      "stdout": {
+        "bytes": 104,
+        "sha256": "16db0fbada69d350a82a5d9bc48258b22092f7514df1bdda88676bdef1ebc333"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": null,
+      "credited_methods": null,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [],
+      "tool_name": "cpp-conformance.exe",
+      "tool_pin": {
+        "bytes": 252928,
+        "sha256": "cc7c4800f13bb218939cdba446f808351951cf66004309775475fadd13fddc61"
+      }
+    },
+    {
+      "label": "test-directory_guest_owner-002",
+      "record": {
+        "bytes": 65157,
+        "sha256": "f065f46c6090edc67b0d93042a46e619c31bfc621889641b1b1ab84d89076910"
+      },
+      "stdout": {
+        "bytes": 904,
+        "sha256": "d2ea16169c71cb6192fc6bae08062777f417992adb28370171c393a161ed0635"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exit": 0,
+      "raw_test_counts": [
+        [
+          9,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "credited_methods": 9,
+      "excluded_helpers": 0,
+      "python_count": null,
+      "test_names": [
+        "actual_terminal_next_uses_direct_worker_and_eof_still_requires_owner_join",
+        "cancelled_ready_reply_is_unknown_and_cannot_be_replayed_as_new_invocation",
+        "foreign_worker_and_oversized_handler_allocation_cannot_retire_other_selection",
+        "guest_actual_open_wire_fees_charge_original_binding_and_unread_job_lifetime",
+        "page_generated_then_wrong_final_completion_is_unknown_without_cursor_replay",
+        "queued_cancel_retains_fees_and_retires_only_after_original_worker_maintenance",
+        "repeated_original_open_nonce_fails_closed_and_never_leaves_resumable_selection",
+        "undeclared_handler_rejection_preserves_this_selection_for_valid_call",
+        "unread_nonterminal_page_drop_retires_this_selection_and_preserves_other_worker"
+      ],
+      "tool_name": "directory_guest_owner-ed6f9c383bc401e5.exe",
+      "tool_pin": {
+        "bytes": 9204736,
+        "sha256": "306fc2243dabd3b84df3302bd7a88b23e4887a378ba837f96e469d5e3b3f838d"
+      }
+    }
+  ],
+  "compile_only": {
+    "Workbench": "Windows Release locked offline library check PASS",
+    "new_Rust_Wasm": "wasm32-unknown-unknown Release locked offline build PASS"
+  },
+  "not_run": [
+    "actual_new_Rust_Wasm_consumer_execution",
+    "new_C_CPP_Wasm_build_execution",
+    "C10_Clippy",
+    "C10_complete_format_check",
+    "Workbench_product",
+    "GUI",
+    "protected_Session",
+    "real_accounts",
+    "non_Windows_product"
+  ],
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "legacy_Core_FileList": "Unsupported",
+  "CI_run": false,
+  "release_created": false,
+  "original_sdk327_two_roots_unchanged": true,
+  "original_frozen57_two_roots_unchanged": true,
+  "original_guest_provider_rebuilt": false
+}

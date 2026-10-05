@@ -1,15 +1,24 @@
 //! Trusted selected-directory commands on the complete original owner worker.
-//! No path lookup, guest import, factory, fresh approval or recursion is added.
+//! Fresh capture generates its secret only on this original worker. No path
+//! lookup, guest import, fresh approval or recursion is added.
 use super::*;
 use crate::directory_io::{
-    CaptureLimits, DirectoryBroker, DirectoryClock, PageRequest, SelectedDirectory,
+    CaptureLimits, DirectoryBroker, DirectoryClock, DirectoryRelativePath, PageRequest,
+    SelectedDirectory,
 };
 use morrow_fs_directory_v1::FsDirectoryPage;
+use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeMap,
     fs::File,
     sync::atomic::{AtomicU64, Ordering},
 };
+
+#[path = "directory_commands/guest.rs"]
+mod guest;
+pub use guest::{DirectoryGuestHandle, DirectoryGuestResult};
+pub(in crate::io_jobs) use guest::{GuestRequest, GuestReply};
+pub(super) use guest::GuestDispatch;
 
 pub const MAX_DIRECTORY_OBSERVATIONS: usize = 8;
 const MAX_WIRE: u64 = 65536;
@@ -19,9 +28,19 @@ pub const DIRECTORY_COMMAND_FIXED_BYTES: u64 =
     (size_of::<Request>() + size_of::<DirectoryResponse>()) as u64;
 /// Includes allocator/encoded-wire coexistence as well as owned page storage.
 pub const DIRECTORY_PAGE_CHARGE: u64 =
-    105 + 3 * MAX_WIRE + 64 + MAX_PAGE_OWNED + DIRECTORY_COMMAND_FIXED_BYTES;
+    105 + 3 * MAX_WIRE + 64 + MAX_PAGE_OWNED + DIRECTORY_COMMAND_FIXED_BYTES + 7 * 64;
 pub const DIRECTORY_FINISH_CHARGE: u64 = 64 + DIRECTORY_COMMAND_FIXED_BYTES;
 static NEXT_DIRECTORY: AtomicU64 = AtomicU64::new(1);
+
+// Checked original serial domain. Failed admission burns a serial; no rollback,
+// zero identity or wraparound is accepted. Tests use their own local counter.
+fn next_directory_serial(counter: &AtomicU64) -> Result<u64, OwnerCommandError> {
+    counter
+        .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+            next.checked_add(1).filter(|_| next != 0)
+        })
+        .map_err(|_| OwnerCommandError::Limit)
+}
 
 /// Opaque worker identity, never a path, child authority or native OS handle.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -80,6 +99,8 @@ struct Admitted {
 #[derive(Default)]
 pub(in crate::io_jobs) struct Admission {
     selections: BTreeMap<u64, Admitted>,
+    #[cfg(test)]
+    entropy_probe: Option<Arc<EntropyProbe>>,
 }
 fn admission(control: &Control) -> std::sync::MutexGuard<'_, Admission> {
     control
@@ -143,20 +164,199 @@ pub(super) struct Request {
 }
 enum Action {
     Capture {
-        file: File,
+        source: CaptureSource,
         limits: CaptureLimits,
-        secret: Zeroizing<[u8; 32]>,
+        secret: CaptureSecret,
     },
     Page(PageRequest),
     Finish,
 }
+enum CaptureSource {
+    Open(File),
+    Under {
+        anchor: File,
+        relative: DirectoryRelativePath,
+    },
+}
+impl CaptureSource {
+    fn input_bytes(&self) -> u64 {
+        match self {
+            Self::Open(_) => 0,
+            Self::Under { relative, .. } => relative.retained_input_bytes() as u64,
+        }
+    }
+}
+// No production entropy provider or public injection parameter exists.
+enum CaptureSecret {
+    Provided(Zeroizing<[u8; 32]>),
+    Fresh(FreshSecret),
+}
+struct FreshSecret {
+    #[cfg(test)]
+    probe: Option<Arc<EntropyProbe>>,
+}
+
+struct EntropyBuffer {
+    bytes: Zeroizing<[u8; 32]>,
+    #[cfg(test)]
+    probe: Option<Arc<EntropyProbe>>,
+}
+// Production relies on the Zeroizing field's Drop. This test-only observer
+// wipes live owned memory first, then records a boolean, never freed bytes.
+#[cfg(test)]
+impl Drop for EntropyBuffer {
+    fn drop(&mut self) {
+        use zeroize::Zeroize;
+        self.bytes.zeroize();
+        if let Some(probe) = &self.probe {
+            probe
+                .wipe_observed
+                .store(self.bytes.iter().all(|byte| *byte == 0), Ordering::Release);
+        }
+    }
+}
+
+#[cfg(test)]
+#[derive(Clone, Copy)]
+enum EntropyTestMode {
+    OperatingSystem,
+    Nonzero,
+    AllZero,
+    PartialError,
+}
+#[cfg(test)]
+struct EntropyProbe {
+    mode: EntropyTestMode,
+    calls: std::sync::atomic::AtomicUsize,
+    thread: Mutex<Option<std::thread::ThreadId>>,
+    before_fill: Mutex<Option<Box<dyn FnOnce() + Send>>>,
+    after_fill: Mutex<Option<Box<dyn FnOnce() + Send>>>,
+    wipe_observed: std::sync::atomic::AtomicBool,
+}
+#[cfg(test)]
+impl EntropyProbe {
+    fn new(mode: EntropyTestMode) -> Self {
+        Self {
+            mode,
+            calls: std::sync::atomic::AtomicUsize::new(0),
+            thread: Mutex::new(None),
+            before_fill: Mutex::new(None),
+            after_fill: Mutex::new(None),
+            wipe_observed: std::sync::atomic::AtomicBool::new(false),
+        }
+    }
+    fn run_once(
+        hook: &Mutex<Option<Box<dyn FnOnce() + Send>>>,
+    ) -> Result<(), DirectoryCommandError> {
+        let hook = hook
+            .lock()
+            .map_err(|_| DirectoryCommandError::Entropy)?
+            .take();
+        if let Some(hook) = hook {
+            hook();
+        }
+        Ok(())
+    }
+}
+
+fn fill_entropy(buffer: &mut EntropyBuffer) -> Result<(), DirectoryCommandError> {
+    #[cfg(test)]
+    if let Some(probe) = &buffer.probe {
+        probe.calls.fetch_add(1, Ordering::Relaxed);
+        *probe
+            .thread
+            .lock()
+            .map_err(|_| DirectoryCommandError::Entropy)? = Some(std::thread::current().id());
+        EntropyProbe::run_once(&probe.before_fill)?;
+        match probe.mode {
+            EntropyTestMode::OperatingSystem => {
+                getrandom::fill(&mut buffer.bytes[..])
+                    .map_err(|_| DirectoryCommandError::Entropy)?;
+            }
+            EntropyTestMode::Nonzero => buffer.bytes.fill(0xA5),
+            EntropyTestMode::AllZero => buffer.bytes.fill(0),
+            EntropyTestMode::PartialError => {
+                buffer.bytes[..16].fill(0xA5);
+                return Err(DirectoryCommandError::Entropy);
+            }
+        }
+        EntropyProbe::run_once(&probe.after_fill)?;
+        return Ok(());
+    }
+    getrandom::fill(&mut buffer.bytes[..]).map_err(|_| DirectoryCommandError::Entropy)
+}
+
+fn fresh_directory_secret(
+    id: DirectorySession,
+    fresh: FreshSecret,
+    recheck: impl FnOnce() -> Result<(), DirectoryCommandError>,
+) -> Result<Zeroizing<[u8; 32]>, DirectoryCommandError> {
+    if id.worker == 0 || id.serial == 0 {
+        return Err(DirectoryCommandError::Limit);
+    }
+    let FreshSecret {
+        #[cfg(test)]
+        probe,
+    } = fresh;
+    let mut random = EntropyBuffer {
+        bytes: Zeroizing::new([0; 32]),
+        #[cfg(test)]
+        probe,
+    };
+    // A partial OS error never reaches hashing; owned entropy drops on every
+    // error and unwind. An all-zero successful fill is also refused.
+    fill_entropy(&mut random)?;
+    if random.bytes.iter().all(|byte| *byte == 0) {
+        return Err(DirectoryCommandError::Entropy);
+    }
+    recheck()?;
+    let mut hash = Sha256::new();
+    hash.update(b"morrow.io-owner.directory.fresh-secret.v1\0");
+    hash.update(id.worker.to_le_bytes());
+    hash.update(id.serial.to_le_bytes());
+    hash.update(&random.bytes[..]);
+    let mut secret = Zeroizing::new([0; 32]);
+    hash.finalize_into((&mut *secret).into());
+    if secret.iter().all(|byte| *byte == 0) {
+        return Err(DirectoryCommandError::Entropy);
+    }
+    Ok(secret)
+}
+
+fn capture_veto(
+    control: &Control,
+    ticket: &Ticket,
+    authority: &super::super::Authority,
+) -> Result<(), DirectoryCommandError> {
+    // Never call Control::fault or acquire Control/clock from this predicate.
+    // Each ticket guard ends before any clock step or OS entropy call.
+    if ticket.lock().cancelled || control.revocation.is_revoked() {
+        return Err(DirectoryCommandError::Cancelled);
+    }
+    if let Some(fault) = authority.cancellation.fault() {
+        return Err(match fault {
+            super::super::Fault::Deadline => {
+                DirectoryCommandError::Admission(BindingError::Expired)
+            }
+            _ => DirectoryCommandError::Cancelled,
+        });
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+#[path = "directory_commands/secret_factory_tests.rs"]
+mod secret_factory_tests;
+
 impl Request {
     fn fixed_charge() -> u64 {
         DIRECTORY_COMMAND_FIXED_BYTES
     }
     pub(super) fn charge(&self) -> u64 {
-        match self.action {
-            Action::Capture { limits, .. } => limits.max_job_bytes + Self::fixed_charge(),
+        match &self.action {
+            Action::Capture { source, limits, .. } => {
+                limits.max_job_bytes + Self::fixed_charge() + source.input_bytes()
+            }
             // Request105, builder/encoded-wire coexistence, two identity queries, owned page
             // name/container storage and complete command/reply bookkeeping.
             Action::Page(_) => DIRECTORY_PAGE_CHARGE,
@@ -164,8 +364,10 @@ impl Request {
         }
     }
     fn reservation(&self) -> Result<usize, OwnerCommandError> {
-        let variable = match self.action {
-            Action::Capture { limits, .. } => limits.max_metadata_bytes,
+        let variable = match &self.action {
+            Action::Capture { source, limits, .. } => {
+                limits.max_metadata_bytes + source.input_bytes()
+            }
             Action::Page(_) => 3 * MAX_WIRE + MAX_PAGE_OWNED,
             Action::Finish => 0,
         };
@@ -326,20 +528,88 @@ impl<O: ManagedHostOwner> IoWorker<O> {
         limits: CaptureLimits,
         fresh_host_secret: [u8; 32],
     ) -> Result<(DirectorySession, DirectoryCommandHandle), OwnerCommandError> {
-        let secret = Zeroizing::new(fresh_host_secret);
+        self.capture_directory_request(
+            CaptureSource::Open(file),
+            limits,
+            CaptureSecret::Provided(Zeroizing::new(fresh_host_secret)),
+        )
+    }
+    /// File is already selected by the trusted host. This queues generation of
+    /// fresh OS entropy on the original owner worker after identity/liveness
+    /// checks. It supplies no approval, path, picker or ancestor provenance.
+    /// Entropy errors fail closed. System RNG work is cooperative, not an OS
+    /// interrupt, and no original clock/Control guard spans it. Lost delivery
+    /// retains original Unknown/no-replay semantics and cumulative charges.
+    pub fn capture_directory_fresh(
+        &self,
+        file: File,
+        limits: CaptureLimits,
+    ) -> Result<(DirectorySession, DirectoryCommandHandle), OwnerCommandError> {
+        self.capture_directory_request(
+            CaptureSource::Open(file),
+            limits,
+            CaptureSecret::Fresh(FreshSecret {
+                #[cfg(test)]
+                probe: None,
+            }),
+        )
+    }
+    /// Original-worker selection beneath a trusted, already opened anchor.
+    /// Only the exact retained UTF16 components are opened, without reparse
+    /// traversal. Root nomination/above-root/picker provenance stay with the
+    /// trusted host; this host API supplies no guest pathname or child grant.
+    /// Every held ancestor and leaf shares the original FileList resource cap;
+    /// OS work remains cooperative, and lost delivery is Unknown/no-replay.
+    pub fn capture_directory_under(
+        &self,
+        anchor: File,
+        relative: DirectoryRelativePath,
+        limits: CaptureLimits,
+    ) -> Result<(DirectorySession, DirectoryCommandHandle), OwnerCommandError> {
+        self.capture_directory_request(
+            CaptureSource::Under { anchor, relative },
+            limits,
+            CaptureSecret::Fresh(FreshSecret {
+                #[cfg(test)]
+                probe: None,
+            }),
+        )
+    }
+    #[cfg(test)]
+    fn install_entropy_probe(&self, probe: Arc<EntropyProbe>) {
+        admission(&self.control).entropy_probe = Some(probe);
+    }
+    fn capture_directory_request(
+        &self,
+        source: CaptureSource,
+        limits: CaptureLimits,
+        secret: CaptureSecret,
+    ) -> Result<(DirectorySession, DirectoryCommandHandle), OwnerCommandError> {
         if self.control.authority.is_none() {
             return Err(OwnerCommandError::Closed);
         }
-        let limits = self.directory_capture_budget(limits)?;
+        let mut limits = self.directory_capture_budget(limits)?;
+        let available = self
+            .control
+            .limits
+            .max_job_bytes
+            .checked_sub(Request::fixed_charge())
+            .and_then(|value| value.checked_sub(source.input_bytes()))
+            .filter(|value| *value != 0)
+            .ok_or(OwnerCommandError::Limit)?;
+        limits.max_job_bytes = limits.max_job_bytes.min(available);
         let mut state = admission(&self.control);
         if state.selections.len() >= MAX_DIRECTORY_OBSERVATIONS {
             return Err(OwnerCommandError::Busy);
         }
-        let serial = NEXT_DIRECTORY
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
-                next.checked_add(1)
-            })
-            .map_err(|_| OwnerCommandError::Limit)?;
+        let serial = next_directory_serial(&NEXT_DIRECTORY)?;
+        #[cfg(test)]
+        let secret = match secret {
+            CaptureSecret::Fresh(_) => CaptureSecret::Fresh(FreshSecret {
+                probe: state.entropy_probe.clone(),
+            }),
+            provided => provided,
+        };
         let id = DirectorySession {
             worker: self.control.id,
             serial,
@@ -359,7 +629,7 @@ impl<O: ManagedHostOwner> IoWorker<O> {
         let request = Request {
             id,
             action: Action::Capture {
-                file,
+                source,
                 limits,
                 secret,
             },
@@ -500,21 +770,66 @@ fn dispatch<O: ManagedHostOwner>(
     };
     let result = match request.action {
         Action::Capture {
-            file,
+            source,
             limits,
             secret,
         } => {
-            let mut broker = DirectoryBroker::new(*secret);
-            let selected = broker.grant_open_directory_with_clock_and_cancel(
-                manager,
-                owner.runtime(),
-                instance,
-                &authority.binding,
-                file,
-                limits,
-                &mut clock,
-                || ticket.lock().cancelled,
-            )?;
+            // This remains readonly runtime getter #2; #1 validated identity.
+            // Fresh preflight reuses this exact host reference, without another
+            // getter or original-clock guard across the entropy/derive phase.
+            let host = owner.runtime();
+            let secret = match secret {
+                CaptureSecret::Provided(secret) => secret,
+                CaptureSecret::Fresh(fresh) => {
+                    let mut validate = || {
+                        capture_veto(control, ticket, authority)?;
+                        clock.with(|now| {
+                            authority
+                                .binding
+                                .preflight_capability(
+                                    manager,
+                                    host,
+                                    instance,
+                                    morrow_core::plugin_package::io::IoCapability::FileList,
+                                    now,
+                                )
+                                .map_err(DirectoryCommandError::from)
+                        })?;
+                        capture_veto(control, ticket, authority)
+                    };
+                    validate()?;
+                    let secret = fresh_directory_secret(id, fresh, &mut validate)?;
+                    // Cancellation may race derivation; no broker is created or
+                    // observation published without this further original veto.
+                    capture_veto(control, ticket, authority)?;
+                    secret
+                }
+            };
+            let mut broker = DirectoryBroker::from_secret(secret);
+            let selected = match source {
+                CaptureSource::Open(file) => broker.grant_open_directory_with_clock_and_cancel(
+                    manager,
+                    host,
+                    instance,
+                    &authority.binding,
+                    file,
+                    limits,
+                    &mut clock,
+                    || ticket.lock().cancelled,
+                )?,
+                CaptureSource::Under { anchor, relative } => broker
+                    .grant_directory_under_with_clock_and_cancel(
+                        manager,
+                        host,
+                        instance,
+                        &authority.binding,
+                        anchor,
+                        relative,
+                        limits,
+                        &mut clock,
+                        || ticket.lock().cancelled,
+                    )?,
+            };
             if ticket.lock().cancelled {
                 return Err(DirectoryCommandError::Cancelled);
             }

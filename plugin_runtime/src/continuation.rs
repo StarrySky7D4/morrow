@@ -12,6 +12,7 @@ pub(super) enum Kind {
     Io,
     Mutation,
     Channel,
+    Directory,
 }
 
 #[derive(Clone)]
@@ -85,6 +86,7 @@ impl Execution {
             io: runner.io_abi,
             mutation: runner.mutation_abi,
             channel: runner.channel_abi,
+            directory: runner.directory_abi,
             pending: None,
             session: Arc::new(()),
             limits: StoreLimitsBuilder::new()
@@ -134,6 +136,10 @@ impl Execution {
             linker
                 .func_wrap("morrow_channel_v1", "call", channel_call)
                 .expect("channel call import");
+        }
+        if runner.directory_abi {
+            linker.func_wrap("morrow_fs_directory_v1", "call", directory_call)
+                .expect("directory request import");
         }
         let step = (|| {
             let instance = linker

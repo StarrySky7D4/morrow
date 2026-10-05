@@ -89,6 +89,17 @@ pub use creation_selection::SelectedCreateTarget;
 #[allow(unsafe_code)]
 mod native_windows;
 
+/// Internal trusted-host readonly directory open, relative to a retained File.
+/// `listing` chooses fixed LIST rights, never an approval. Root/all ancestors,
+/// original FileList authority, limits and same-handle checks remain caller duties.
+pub(crate) fn open_relative_directory(
+    parent: &File,
+    component: &[u16],
+    listing: bool,
+) -> std::io::Result<File> {
+    native_windows::open_relative_directory(parent, component, listing)
+}
+
 /// Supplied by the trusted selection/approval flow, never deserialized from a
 /// guest. The digest correlates that approval; the original live lease enforces it.
 #[derive(Clone, Debug)]

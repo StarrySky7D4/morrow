@@ -8,15 +8,23 @@ Morrow（明隙）是本地优先、卡片化的灵感工作台，正在向全�
 
 [打开 Web 预览](https://starrysky7d4.github.io/morrow/)：无需安装，工作区和附件原件保存在设备的浏览器存储中。已验证 Chrome 和 Windows Edge 的保存、刷新恢复与附件下载；完整功能边界与最新构建验收状态见 [Web 进度表](docs/WEB_PARITY.md)，发布方式见 [部署说明](docs/WEB_DEPLOYMENT.md)。
 
+## 当前开发检查点
+
+本次开发分支更新收录C08–C10。C10已新增独立 `fs-directory-request-v1`、严格单import、包feature及只读discovery，复用原已批准selection和owner，不导出路径、句柄或新授权。Windows新Rust34（codec12/helper4/profile9/owner9）、既有回归191及frame5分别通过；Python33和两个原生C/C++消费者另计。新Rust Wasm仅编译通过，真实新Rust guest、C/C++ Wasm、Workbench产品／GUI、受保护Session与其他平台仍未验收。旧Core IO FileList保持Unsupported，SDK26／G04仍OPEN，无新Release。 [C10](reports/reconstruction-2026-10-05/directory-request-sdk.md)
+
 ## 开发进展（2026-10-05）
 
 当前应用源码检查点为 **0.1.9-test.58+62**。目标开发支线为 `codex/windows-sdk-convergence-20261005`，代码基于 cloud `468ef2e` 及 C02–C07 增量。完整现状、证据和下一步以 [项目当前状态](docs/PROJECT_STATUS.md) 为准；[C07 限定资格报告](reports/reconstruction-2026-10-05/directory-owner-sdk.md)保存实际 Windows 验证边界。
 
-Windows 本地合成验证完成原 owner 通路 115 个方法（其中目录取消 7、目录 owner 14、原生目录 16，均已包含在 115 中）、原回归 42 个方法，以及网络 11 个程序的 100 个方法。原 42 方法回归保留 frozen-region 的 14 个过滤项和 remote-reader 的 1 个过滤项，子进程辅助程序不另计通过方法。这些数字不代表完整 SDK 或产品验收。
+C07历史限定验证：Windows 本地合成验证完成原 owner 通路 115 个方法（其中目录取消 7、目录 owner 14、原生目录 16，均已包含在 115 中）、原回归 42 个方法，以及网络 11 个程序的 100 个方法。原 42 方法回归保留 frozen-region 的 14 个过滤项和 remote-reader 的 1 个过滤项，子进程辅助程序不另计通过方法。这些数字不代表完整 SDK 或产品验收。
 
 目录 capture／page／finish 已进入原受信任 IoWorker 队列，沿用原 Manager、runtime、instance、IoBinding 与 FileList 审批。时钟采样与授权验证在短原子步骤内完成，原生资源实际释放后才释放配额；Unknown 不自动重放，游标不回绕。独立版本的 WebSocket／SSE 类型化载荷库已提供 Rust、C、C++ 编解码接口及限定 Guest 验证，目录／blob 编解码与有界状态也已完成本地资格。
 
-**SDK26／G04 仍为 OPEN，完整 SDK 未冻结。** 生产受保护 owner、GUI／工作区任务入口、系统选择器及祖先来源证明、新鲜受信任密钥工厂、新目录 request／import／feature／helper profile 协商、blob 持久历史、真实 TLS／API 和其他平台仍待完成或未运行。C08 仅为设计；本次资格没有发布新安装包，也不构成稳定 SDK。
+## 历史 C08／C09 限定记录
+
+**SDK26／G04 仍为 OPEN，完整 SDK 未冻结。** 生产受保护 owner、工作区任务产品验收／GUI、系统选择器及祖先来源证明、生产受信任选择与秘密生命周期、新目录 request／import／feature／helper profile 协商、blob 持久历史、真实 TLS／API 和其他平台仍待完成或未运行。C08阶段原worker秘密factory已完成限定Windows资格（factory14／69filtered）；原owner115、原件42、网络100分别fresh通过，详见 [C08记录](reports/reconstruction-2026-10-05/directory-secret-factory.md)。C08新增尚未commit／push，已有文档提交772466保持；本次资格没有发布新安装包，也不构成稳定 SDK。
+
+C09本地可信目录相对选择已获Windows限定验证，新20方法及原回归范围见 [C09报告](reports/reconstruction-2026-10-05/directory-selection-owner.md)；它仅保留原opened root至相对后代的句柄链，不证明picker、root以上来源或生产资格。Workbench宿主入口仅通过编译检查，工作区任务产品验收／GUI仍未运行，公开guest FileList和conditional Replace仍Unsupported。完整SDK26／G04保持OPEN；已推送检查点为772466，C08/C09改动仍本地未提交、未推送、未发布新版本。
 
 ## 下载与兼容性
 
@@ -77,7 +85,7 @@ flutter build web --no-web-resources-cdn
 
 目标架构为 Flutter／Dart 界面、可移植 Rust 核心及可替换插件执行后端。运行期边界采用固定契约；持久化与自有交换采用 Protobuf＋LZ4。C／C++／Rust SDK 与声明式插件 UI 正在推进，暂不支持 TS／JS 插件，也不要求动态 Dart 插件。
 
-完整 SDK 尚未冻结，SDK26／G04 仍为 OPEN。已接入受管 HTTP／HTTPS 请求、有限 API 服务节点与 TLS 身份管理；源码包含 C／C++／Rust 实验 IO SDK、项目模板和原包真实 HTTP 验证。当前目录 owner、类型化 WebSocket／SSE 载荷库及目录／blob 编解码的 Windows 限定资格见 [项目当前状态](docs/PROJECT_STATUS.md)，不能作为真实 TLS／API 或生产通路验收。这些源码增量不属于公开 test.56 包。新目录 request／import／feature／helper profile 协商、完整入站服务产品资格、条件 Replace、系统选择器人工验收、完整文件系统、跨重启核对与跨平台资格仍待完成。详见 [插件系统当前状态](docs/PLUGIN_SYSTEM_STATUS.md)。开库仍扫描全量历史；完整读取／计算流水线、历史分层与自动清理尚未实现。
+完整 SDK 尚未冻结，SDK26／G04 仍为 OPEN。已接入受管 HTTP／HTTPS 请求、有限 API 服务节点与 TLS 身份管理；源码包含 C／C++／Rust 实验 IO SDK、项目模板和原包真实 HTTP 验证。当前目录 owner、类型化 WebSocket／SSE 载荷库及目录／blob 编解码的 Windows 限定资格见 [项目当前状态](docs/PROJECT_STATUS.md)，不能作为真实 TLS／API 或生产通路验收。这些源码增量不属于公开 test.56 包。新目录profile的真实三语言guest与产品资格、完整入站服务产品资格、条件 Replace、系统选择器人工验收、完整文件系统、跨重启核对与跨平台资格仍待完成。详见 [插件系统当前状态](docs/PLUGIN_SYSTEM_STATUS.md)。开库仍扫描全量历史；完整读取／计算流水线、历史分层与自动清理尚未实现。
 
 ## 文档
 

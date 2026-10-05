@@ -13,6 +13,8 @@ pub const MAX_TRANSFORM_HANDLERS: usize = 16;
 pub const DEPENDENCY_CALLS_FEATURE: &str = "dependency-calls-v1";
 pub const DEPENDENCIES_FEATURE: &str = "dependencies-v1";
 pub const MUTATION_FEATURE: &str = "mutation-v1";
+/// Independent directory request profile; declarations are ceilings, never selection authority.
+pub const DIRECTORY_REQUEST_FEATURE: &str = "fs-directory-request-v1";
 pub const MUTATION_BUDGET_FEATURE: &str = "mutation-budget-v1";
 pub const MAX_MUTATION_JOB_BYTES: u64 = 32 * 1024 * 1024;
 pub const MAX_MUTATION_BYTES: u64 = 256 * 1024 * 1024;
@@ -303,6 +305,7 @@ impl Package {
                     && f != io::SERVICE_RUN_FEATURE
                     && f != io::SERVICE_RUN_BUDGET_FEATURE
                     && f != crate::service_resources::FEATURE
+                    && f != DIRECTORY_REQUEST_FEATURE
                     && f != MUTATION_FEATURE
                     && f != MUTATION_BUDGET_FEATURE
                     && f != crate::channel::FEATURE
@@ -476,6 +479,19 @@ impl Package {
         } else {
             BTreeSet::new()
         };
+        let directory_feature = manifest.required_features.iter()
+            .any(|feature| feature == DIRECTORY_REQUEST_FEATURE);
+        if directory_feature && (manifest.guest_abi_version != 2 || !io_feature
+            || !manifest.requested_capabilities.is_empty()
+            || io_ceiling != BTreeSet::from([io::IoCapability::FileList])
+            || manifest.required_features.iter().any(|feature| !matches!(feature.as_str(),
+                io::FEATURE | DIRECTORY_REQUEST_FEATURE | TRANSFORM_HANDLERS_FEATURE))
+            || manifest.io_declaration.as_ref().is_none_or(|declaration|
+                declaration.service_run.is_some() || !declaration.service_schema_sha256.is_empty())
+            || manifest.channel_declaration.is_some() || !manifest.mutation_schema_sha256.is_empty())
+        {
+            return Err(Error::Invalid("directory request feature combination"));
+        }
         let mutation_feature = manifest
             .required_features
             .iter()

@@ -1,6 +1,8 @@
 # 目录观察与分段字节验证 SDK
 
-当前开发范围与完整项目状态见 [项目状态](PROJECT_STATUS.md)。C06提供独立目录/blob载荷库；C07在Windows普通合成Store／临时目录上接入原IoWorker目录命令、合作取消与idle清理。公开guest FileList及conditional Replace仍Unsupported，SDK26／G04保持OPEN。
+当前C10检查点（2026-10-05）：本次开发分支更新收录C08–C10。C10已新增独立 `fs-directory-request-v1`、严格单import、包feature及只读discovery，复用原已批准selection和owner，不导出路径、句柄或新授权。Windows新Rust34（codec12/helper4/profile9/owner9）、既有回归191及frame5分别通过；Python33和两个原生C/C++消费者另计。新Rust Wasm仅编译通过，真实新Rust guest、C/C++ Wasm、Workbench产品／GUI、受保护Session与其他平台仍未验收。旧Core IO FileList保持Unsupported，SDK26／G04仍OPEN，无新Release。 详见[接口与实测边界](../reports/reconstruction-2026-10-05/directory-request-sdk.md)。
+
+当前开发范围与完整项目状态见 [项目状态](PROJECT_STATUS.md)。C06提供独立目录/blob载荷库；C07在Windows普通合成Store／临时目录上接入原IoWorker目录命令、合作取消与idle清理。C08已新增原工作线程生成秘密的可信宿主入口，验证结果为 `PASS（Windows限定）`，见 [阶段说明](../reports/reconstruction-2026-10-05/directory-secret-factory.md)。公开guest FileList及conditional Replace仍Unsupported，SDK26／G04保持OPEN。
 
 这两个独立实验库提供 Rust、C 和 C++17 数据接口：`fs-directory-v1` 表示有限的目录观察，`blob-transfer-v1` 验证有界分段字节流。本轮 G04 和 SDK26 仍 OPEN。它们的 codec 身份不是包 required_feature、公开 import、文件路径授权或生产能力。
 
@@ -18,15 +20,27 @@ Windows Release 的库内方法已完成：目录库 13 个、blob 库 23 个，
 
 ## Windows 原生目录接线边界
 
-新增宿主侧 `DirectoryBroker` 消费可信宿主已经选择并打开的 directory `File`，直接对持有的 Windows handle 查询身份与有限条目；不使用公开 guest 路径，也不重新解析路径。原 IoBinding、精确 managed instance 和原 host 继续负责 FileList admission、预算与各边界检查。同步 OS 查询必须由原 owner 在 UI 线程之外调用，合作式取消不能中断正在进行的同步查询。
+原bare-File宿主侧 `DirectoryBroker` 消费可信宿主已经选择并打开的 directory `File`，直接对持有的 Windows handle 查询身份与有限条目；不使用公开 guest 路径，也不重新解析路径。原 IoBinding、精确 managed instance 和原 host 继续负责 FileList admission、预算与各边界检查。同步 OS 查询必须由原 owner 在 UI 线程之外调用，合作式取消不能中断正在进行的同步查询。
 
-当前实现拒绝 root/child reparse，查询期间保留 root handle 并在批次及交付边界核验对象身份；不会跟随子目录、symlink/junction 或以 entry 名称打开子文件。hardlink 的目录项观察不授予链接目标读取或写入。持有 root object 只证明这个对象，不能证明它的祖先路径、picker 来源或父级选择策略；这些证据仍由可信选择 adapter 保管。并发目录编辑可能被观察到，本接口不保证文件系统原子快照。
+原bare-File观察实现拒绝 root/child reparse，查询期间保留 root handle 并在批次及交付边界核验对象身份；不会跟随子目录、symlink/junction 或以 entry 名称打开子文件。hardlink 的目录项观察不授予链接目标读取或写入。持有 root object 只证明这个对象，不能证明它的祖先路径、picker 来源或父级选择策略；这些证据仍由可信选择 adapter 保管。并发目录编辑可能被观察到，本接口不保证文件系统原子快照。
 
 C07的可信宿主入口是原IoWorker的 `capture_directory(file, limits, fresh_host_secret)`、`next_directory_page(session, request)` 和 `finish_directory(session)`；原Manager／HostRuntime／ManagedInstance／IoBinding负责实际FileList准入。每个selection只允许一个pending／未读结果，broker在页编码与最终核验后提交cursor；调用方只有成功领取后才可据回执请求下一页；foreign session/epoch/cursor不能擦除他人selection，Unknown不自动重放。global8包含queued／resident／retired tombstone，原root／lease／spool真正drop后才释放额度；累计费用不退，`directory_usage().1`是metadata allowance，不是总RSS上限。
 
 原clock的采样与对应验证在同一短step完成；native identity/Buffer查询、私有解析、编码、取消谓词和实际drop在clock锁外。谓词只读取Ticket取消标记，不能授予权限，也不能插入native内部双查询／解析或抢占同步OS。idle维护沿原clock，停止信号、EOF或终态回执均不能替代原owner实际join。
 
-九组115方法（已含7取消／14owner／16native）、原件42与network100分别fresh通过；过滤、child helper与各层join范围见 [C07记录](../reports/reconstruction-2026-10-05/directory-owner-sdk.md)。这仅是普通keyless Store／临时目录范围，不是生产protected owner资格。`DirectoryBroker::new(secret)`仍由可信调用者提供secret，不保证其新鲜；C08原owner生成私有secret的factory仅为设计，尚无代码或测试。picker／祖先来源、workspace任务入口和新的公共Dir request/import协商仍缺。
+C07九组115方法（已含7取消／14owner／16native）、原件42与network100分别通过；过滤、child helper与各层join范围见 [C07记录](../reports/reconstruction-2026-10-05/directory-owner-sdk.md)。这些历史结果不代替C08复验，也不是生产protected owner资格。
+
+C08新增 `IoWorker::capture_directory_fresh(file, limits)`，在原owner工作线程经原身份、FileList及clock检查后调用固定 `getrandom 0.4.3` 的OS随机源；随机调用及派生均不持原clock、Control或Ticket锁，生成后再次核验原取消、时钟与授权。非零worker/session serial参与版本化域分离，checked exhaustion不回绕。失败、部分填充或全零输出关闭，不以时间、路径、旧key或重试替代熵；原Unknown与不重放规则保持。
+
+生成缓冲、派生key及broker持有key由 `Zeroizing` 管理，在普通Drop／unwind清理。此范围不保证SHA内部状态、OS／编译器临时副本、abort或进程退出后的擦除。原 `capture_directory(file, limits, secret)` 和 `DirectoryBroker::new(secret)`保留，legacy caller仍负责秘密新鲜性和自己的副本。C08实际结果为 `PASS（Windows限定）`；它没有新增C／C++／Wasm目录入口。这些C08结果不提供picker或祖先来源证明；C09新增下面限定的宿主相对选择接线，C10已新增独立Dir request/import/profile，真实三语言guest及产品资格仍待验证。
+
+## C09 可信anchor相对选择（Windows限定）
+
+C09已完成限定Windows Release／locked／offline资格，见 [C09阶段说明](../reports/reconstruction-2026-10-05/directory-selection-owner.md)。可信宿主 `capture_directory_under(anchor, relative, limits)`只保留并核验原opened anchor到relative leaf的raw UTF-16句柄链，复用原worker FileList、原时钟、取消和预算；root加N个分量共享原8资源，32段语法上限不是可用深度。新selection_path8＋directory_selection12、C08 factory14、原owner九组115和原件42分别当前实际PASS；原件42为base9／dependency3／region7／reader主9／shared14，reader raw10含child helper1不加方法，region保留84过滤。17个credited测试进程合191 meaningful方法（raw192含child1），zero-match失败进程保留且不计功；这些数字不能作为SDK冻结。Workbench第二次Release x86_64 `--locked --offline --lib` check通过，首次缺offline asn1-rs0.7.2的exit101保留；只是编译检查，ProtectedSession／GUI／picker以上provenance和non-Windows产品执行NOT_RUN。C09 network100和Clippy明确NOT_RUN，不继承C08历史通过或lint结果。这不证明picker时刻、anchor以上来源或传入anchor的sharing策略，不增加guest FileList、目录guest或公共UI，blob耐久后端仍缺。SDK26／G04仍OPEN，公开FileList及conditional Replace仍Unsupported。C08/C09历史报告保留当时状态；本次开发分支更新收录C08–C10，无新Release。
+
+原 `DirectoryRelativePath::new(Vec<Vec<u16>>)`保留精确raw UTF-16，不做Unicode转换、规范化或路径重开。每分量最多255 units，合计长度及保留分量容量最多8192 bytes，外层段数及容量最多32；空段、`.`／`..`、NUL、控制字符、分隔符、Windows保留设备名及末尾空格／点关闭。孤立surrogate不被转成替代字符。这只是可信宿主输入的语法边界，不是grant。
+
+worker先在原IoBinding中为整个链预留FileList资源，然后以父句柄为RootDirectory逐段只读打开；NtCreateFile的FILE_OPEN不创建或截断，NoReparse设置和返回句柄的目录／reparse／volume-file identity检查共同关闭重解析路径。所有已持有祖先和leaf在native查询、分页的前后复核。查询及打开在原clock锁外，采样和对应授权验证仍在同一短step；取消只能否决，不能抢占同步OS调用。已admitted bytes费用不退，失败／取消／结束实际drop整链后才归还资源额度。通常N最多7，其他原IO资源会进一步减少可用深度；额度不足在native打开前关闭。持有链不等于文件系统原子快照。
 
 ## Blob frame 与接收状态
 

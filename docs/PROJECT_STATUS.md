@@ -1,12 +1,14 @@
 # Morrow 当前开发状态
 
+当前C10检查点（2026-10-05）：本次开发分支更新收录C08–C10。C10已新增独立 `fs-directory-request-v1`、严格单import、包feature及只读discovery，复用原已批准selection和owner，不导出路径、句柄或新授权。Windows新Rust34（codec12/helper4/profile9/owner9）、既有回归191及frame5分别通过；Python33和两个原生C/C++消费者另计。新Rust Wasm仅编译通过，真实新Rust guest、C/C++ Wasm、Workbench产品／GUI、受保护Session与其他平台仍未验收。旧Core IO FileList保持Unsupported，SDK26／G04仍OPEN，无新Release。 详见[接口与实测边界](../reports/reconstruction-2026-10-05/directory-request-sdk.md)。
+
 更新：2026-10-05。本文是当前状态入口；[开发看板](DEVELOPMENT_BOARD.md)保存任务，[SDK 门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)保存验收顺序。带日期的报告、冻结夹具和历史源码快照保留各自身份，不因文档同步获得新的测试资格。
 
 ## 版本与开发线
 
 | 项目 | 当前身份与边界 |
 |---|---|
-| 本次源码检查点 | `codex/windows-sdk-convergence-20261005`，承接云端 `codex/cloud-sdk-convergence-20261004` 的 `468ef2e912ac74e5f97f0016a8729b7d5c1f5399`，保存 C02–C07 Windows 修正与 SDK 增量 |
+| 本次源码检查点 | `codex/windows-sdk-convergence-20261005`，承接云端 `codex/cloud-sdk-convergence-20261004` 的 `468ef2e912ac74e5f97f0016a8729b7d5c1f5399`，已发布检查点 `772466177fe589cee53bc633e69f411c34610104`保存C02–C07 Windows修正及文档；C08新增在该基线上本地完成限定资格，C09相对目录选择接线已完成限定Windows资格；本次开发分支更新收录C08–C10，提交身份以分支历史为准 |
 | 应用源码版本 | `0.1.9-test.58+62`；SDK/crate/schema 的独立版本保持，不把应用版本当协议版本 |
 | 已发布 Windows 下载 | [test.56 测试预览版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56)；本次同步不产生新安装包或 Release |
 | 原 Windows 资格分支 | `codex/windows-sdk-qualification-20261003` 保留 `20669f671152972470340a65eac3458dd2f61b4d`，与本次检查点分开 |
@@ -15,7 +17,7 @@
 
 ## 最新限定验证
 
-以下来自已封存的 Windows x64 Release、离线锁定执行；本次文档同步没有重跑这些测试。
+下表保留已封存C07的Windows x64 Release、离线锁定结果；历史数字不代替C08复验。C08本轮实际factory14／69filtered、原owner115／九组、原件42／五组、network100／十一组各自通过；42保留region14与reader1过滤。三文件fmt与strict库Rustc通过；整库Clippy仍exit101／10旧诊断／owned0，见 [阶段说明](../reports/reconstruction-2026-10-05/directory-secret-factory.md)。
 
 | 范围 | 结果 | 计数限制 |
 |---|---|---|
@@ -36,12 +38,15 @@
 - Windows 目录捕获、分页、结束、取消、未读交付及 idle 清理接入原 `IoWorker`，保持原 Manager、HostRuntime、IoBinding、时钟和预算。
 - 目录查询、编码、取消谓词及真实资源 drop 留在短时钟检查之外；额度在 root / broker / lease 真正释放后归还，累计费用不退。Unknown 不自动重放。
 
+C09已完成限定Windows Release／locked／offline资格，见 [C09阶段说明](../reports/reconstruction-2026-10-05/directory-selection-owner.md)。可信宿主 `capture_directory_under(anchor, relative, limits)`只保留并核验原opened anchor到relative leaf的raw UTF-16句柄链，复用原worker FileList、原时钟、取消和预算；root加N个分量共享原8资源，32段语法上限不是可用深度。新selection_path8＋directory_selection12、C08 factory14、原owner九组115和原件42分别当前实际PASS；原件42为base9／dependency3／region7／reader主9／shared14，reader raw10含child helper1不加方法，region保留84过滤。17个credited测试进程合191 meaningful方法（raw192含child1），zero-match失败进程保留且不计功；这些数字不能作为SDK冻结。Workbench第二次Release x86_64 `--locked --offline --lib` check通过，首次缺offline asn1-rs0.7.2的exit101保留；只是编译检查，ProtectedSession／GUI／picker以上provenance和non-Windows产品执行NOT_RUN。C09 network100和Clippy明确NOT_RUN，不继承C08历史通过或lint结果。这不证明picker时刻、anchor以上来源或传入anchor的sharing策略，不增加guest FileList、目录guest或公共UI，blob耐久后端仍缺。SDK26／G04仍OPEN，公开FileList及conditional Replace仍Unsupported。C08/C09历史报告保留当时状态；本次开发分支更新收录C08–C10，无新Release。
+
 ## 下一阶段与冻结门槛
 
 | 顺序 | 工作 | 当前状态 |
 |---|---|---|
-| C08 | 原工作线程生成目录会话的新鲜随机秘密；失败关闭、取消、预算和持有期零化 | 设计已审，代码与测试尚未执行；旧显式 secret 接口仍由可信调用者负责 |
-| G04 后续 | picker / 祖先来源证明、工作台任务入口、独立目录 request/schema 和 feature/import/helper profile 协商 | OPEN；bare File 仅证明对象，公开 FileList 仍 Unsupported |
+| C08 | 原工作线程生成目录会话的新鲜随机秘密；原身份／FileList与生成前后clock／取消复核，所持缓冲Zeroizing | 新 `capture_directory_fresh(File, CaptureLimits)`已实现；Windows复验 `PASS（Windows限定）`，不据C07计数推导通过；旧显式secret接口及caller-copy责任保持 |
+| C09 | 可信opened anchor到leaf的相对raw UTF-16目录链；原worker FileList预算、全部持有祖先检查及Workbench宿主入口 | 限定Windows新20＋factory14＋原owner115＋原件42分别通过；Workbench仅check通过，产品NOT_RUN |
+| G04 后续 | anchor以上／native picker时刻来源、Workbench产品执行、C10独立目录profile已实现，真实三语言guest与产品资格仍待验证、blob耐久后端 | OPEN；bare File仅证明对象，相对链不证明anchor以上来源，公开FileList仍Unsupported |
 | 文件完整能力 | blob 耐久 backend/history、upload、watch、rename及恢复矩阵 | OPEN；conditional Replace 仍 Unsupported，不退化为无条件覆盖 |
 | SDK26 其余门槛 | 异步组合、长期 changes/cursor、完整账户与网络恢复、第三方安装批准、平台矩阵及生产 UI | OPEN，按完整 26 项要求审计；不缩小为当前已通过的子集 |
 

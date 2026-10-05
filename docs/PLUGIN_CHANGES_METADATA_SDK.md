@@ -1,5 +1,7 @@
 # Changes metadata SDK 接入与能力发现
 
+当前C10检查点（2026-10-05）：本次开发分支更新收录C08–C10。C10已新增独立 `fs-directory-request-v1`、严格单import、包feature及只读discovery，复用原已批准selection和owner，不导出路径、句柄或新授权。Windows新Rust34（codec12/helper4/profile9/owner9）、既有回归191及frame5分别通过；Python33和两个原生C/C++消费者另计。新Rust Wasm仅编译通过，真实新Rust guest、C/C++ Wasm、Workbench产品／GUI、受保护Session与其他平台仍未验收。旧Core IO FileList保持Unsupported，SDK26／G04仍OPEN，无新Release。 详见[接口与实测边界](../reports/reconstruction-2026-10-05/directory-request-sdk.md)。
+
 `changes-metadata-v1` 是独立实验扩展，使用原 `channel-v1` 的 Events / Receive / ACK 传输，支持宿主批准的有限固定卡片集合。它不改变 SDK327、冻结原件或旧 channel wire，不提供内容读取权限、长期 watch 或自动同步。
 
 ## 查询选定宿主
@@ -40,4 +42,4 @@ Rust 库与 C / C++ 头文件位于 `extensions/changes-metadata-v1`，不属于
 
 Windows C02 的普通合成 Store、有限 source 与三语言新 guest 已限定通过；C03 新增只读发现和静态准备兼容资格。见 [Windows 复验](../reports/reconstruction-2026-10-05/windows-sdk-revalidation.md)与[C03 接入验证](../reports/reconstruction-2026-10-05/changes-sdk-discovery.md)。
 
-protected owner、生产 UI / catalog 绑定、长期 watch、retention / gap / 跨进程完整恢复、其他平台和整个 SDK 冻结仍 OPEN。独立WS/SSE类型库与源码分发、目录/blob载荷库及Windows原owner目录队列已有各自限定记录；这些增量不关闭生产通道或完整同步门槛。下一项C08私有secret factory仅处设计阶段，完整范围与后续实现见 [项目状态](PROJECT_STATUS.md)及[下一门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)；发现信息不能替代运行和授权。
+protected owner、生产 UI / catalog 绑定、长期 watch、retention / gap / 跨进程完整恢复、其他平台和整个 SDK 冻结仍 OPEN。独立WS/SSE类型库与源码分发、目录/blob载荷库及Windows原owner目录队列已有各自限定记录；这些增量不关闭生产通道或完整同步门槛。C08原owner fresh-secret入口已有独立限定Windows资格，见 [C08记录](../reports/reconstruction-2026-10-05/directory-secret-factory.md)，完整范围与后续门槛见 [项目状态](PROJECT_STATUS.md)及[下一门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)；当前C09新增原root至相对descendant的持有链接线，新20、factory14、原owner115及原件42分别实际通过，Workbench仅Release库check通过、protected产品NOT_RUN；C09 network100和Clippy NOT_RUN，见 [C09范围](../reports/reconstruction-2026-10-05/directory-selection-owner.md)；不证明picker／root以上来源，不新增目录guest或blob耐久后端。发现信息不能替代运行和授权。

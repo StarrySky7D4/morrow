@@ -6,15 +6,23 @@
 
 Morrow(明隙)는 카드를 중심으로 아이디어를 정리하는 로컬 우선 작업 공간이며, 모든 플랫폼을 위한 플러그인 구조로 발전하고 있습니다. 이전 이름은 daemon, 코드 패키지 이름은 `morrow_studio`입니다. Windows에서는 Flutter가 화면을, Rust 호스트와 격리된 Wasm 플러그인이 작업 로직을 담당합니다. Web은 브라우저에서 Rust/Wasm을 로컬로 실행합니다. Android는 기존 경로를 유지하며, 플랫폼 전반의 제품 및 플러그인 기능 동등성은 아직 검증되지 않았습니다.
 
+## 현재 개발 체크포인트
+
+이번 업데이트에는 C08–C10이 포함됩니다. 독립 fs-directory-request-v1 profile은 원래 승인된 디렉터리 선택과 owner를 사용합니다. Windows 제한 검증에서 새 Rust 34개, 기존 회귀 191개, frame 5개가 통과했으며 Python 33개와 native C/C++ consumer 두 개는 별도로 셉니다. 새 Rust Wasm은 컴파일만 통과했습니다. 실제 새 Rust guest 실행, C/C++ Wasm, Workbench 제품/GUI, 보호된 Session 및 다른 플랫폼은 미검증 상태입니다. 기존 Core IO FileList는 Unsupported, SDK26/G04는 OPEN입니다. 새 Release는 없습니다. [C10](../../reports/reconstruction-2026-10-05/directory-request-sdk.md)
+
 ## 개발 현황 (2026-10-05)
 
 앱 소스 체크포인트는 **0.1.9-test.58+62**입니다. 목표 개발 브랜치는 `codex/windows-sdk-convergence-20261005`이며 cloud `468ef2e`와 C02–C07 변경을 기반으로 합니다. 현재 상태와 다음 작업의 기준은 [프로젝트 현황](../../docs/PROJECT_STATUS.md), 실제 Windows 검증 범위는 [C07 제한 검증 보고서](../../reports/reconstruction-2026-10-05/directory-owner-sdk.md)를 참고하세요.
 
-Windows 로컬 합성 검증에서 기존 owner 경로 115개 메서드(디렉터리 취소 7개, directory owner 14개, 네이티브 디렉터리 16개 포함), 기존 회귀 42개 메서드, 11개 프로그램의 네트워크 100개 메서드가 통과했습니다. 42개 메서드 실행은 frozen-region 14개와 remote-reader 1개 필터를 유지하며, 자식 보조 프로그램은 추가 통과 메서드로 세지 않습니다. 이 수치는 전체 SDK나 제품의 인수 완료를 뜻하지 않습니다.
+C07 과거 제한 검증: Windows 로컬 합성 검증에서 기존 owner 경로 115개 메서드(디렉터리 취소 7개, directory owner 14개, 네이티브 디렉터리 16개 포함), 기존 회귀 42개 메서드, 11개 프로그램의 네트워크 100개 메서드가 통과했습니다. 42개 메서드 실행은 frozen-region 14개와 remote-reader 1개 필터를 유지하며, 자식 보조 프로그램은 추가 통과 메서드로 세지 않습니다. 이 수치는 전체 SDK나 제품의 인수 완료를 뜻하지 않습니다.
 
 신뢰된 디렉터리 capture/page/finish는 기존 IoWorker 큐, Manager, runtime, instance, IoBinding 및 FileList 승인을 사용합니다. 시계 샘플링과 권한 검증은 짧은 원자적 단계로 수행하며, 네이티브 자원이 실제 해제된 뒤 할당 한도를 반환합니다. Unknown은 자동 재실행하지 않고 커서를 순환 재사용하지 않습니다. 독립적으로 버전 관리하는 타입 기반 WebSocket/SSE 페이로드 라이브러리는 Rust, C, C++ 코덱과 제한된 Guest 검증을 제공하며, 디렉터리/blob 코덱과 제한된 상태도 로컬 검증을 마쳤습니다.
 
-**SDK26/G04는 OPEN이며 전체 SDK는 동결되지 않았습니다.** 보호된 프로덕션 owner, GUI/작업 공간 태스크 진입점, 선택기와 상위 경로 출처 증명, 새 신뢰 비밀값 생성기, 새 디렉터리 request/import/feature/helper profile 협상, blob 영속 이력, 수신 서비스의 완전한 제품 검증, 실제 TLS/API와 다른 플랫폼은 미완료 또는 NOT_RUN입니다. C08은 설계만 존재합니다. 이번 검증은 새 설치 패키지 출시나 안정 SDK를 의미하지 않습니다.
+## C08/C09 과거 제한 검증 기록
+
+**SDK26/G04는 OPEN이며 전체 SDK는 동결되지 않았습니다.** 보호된 프로덕션 owner, 작업 공간 태스크 제품 인수/GUI, 선택기와 상위 경로 출처 증명, 프로덕션 신뢰 선택과 비밀값 수명 주기, 새 디렉터리 request/import/feature/helper profile 협상, blob 영속 이력, 수신 서비스의 완전한 제품 검증, 실제 TLS/API와 다른 플랫폼은 미완료 또는 NOT_RUN입니다. C08 원래 worker의 native 비밀값 생성기는 제한된 검증을 통과했습니다. 14메서드 통과, 미선택69개는 필터링되었으며 owner115, original42, network100도 각각 새로 검증했습니다. [C08 기록](../../reports/reconstruction-2026-10-05/directory-secret-factory.md)을 참조하세요. C08 추가는 로컬 미commit/push 상태이며 기존 문서commit772466은 유지됩니다. 이번 검증은 새 설치 패키지 출시나 안정 SDK를 의미하지 않습니다.
+
+C09 로컬 신뢰 상대 디렉터리 선택은 Windows 제한 검증을 통과했으며 새20메서드와 기존 회귀는 [C09 보고서](../../reports/reconstruction-2026-10-05/directory-selection-owner.md)에 있고, 보유한 opened root→상대 하위 디렉터리 핸들 체인만 다루므로 picker, root위 출처나 프로덕션 자격을 증명하지 않습니다. Workbench 호스트 진입점은 컴파일 검사만 통과했으며 작업 공간 제품 인수/GUI는 미실행이고 공개guest FileList와conditional Replace는Unsupported, SDK26/G04는OPEN입니다. push된 체크포인트는772466이며 C08/C09는로컬 미commit/push, 새버전 미출시입니다.
 
 ## 다운로드와 호환성
 
@@ -75,7 +83,7 @@ flutter build web --no-web-resources-cdn
 
 목표 구조는 Flutter/Dart UI, 이식 가능한 Rust 코어, 교체 가능한 플러그인 실행 기반입니다. 실행 경계는 고정 계약을, 저장과 자체 교환은 Protobuf + LZ4를 사용합니다. C/C++/Rust SDK와 선언형 플러그인 UI를 개발 중입니다. TS/JS 플러그인은 지원하지 않으며, 동적 Dart 플러그인을 요구하지 않습니다.
 
-전체 SDK는 아직 동결되지 않았습니다. 관리되는 HTTP/HTTPS 요청, 제한적인 API 서비스 노드, TLS 식별 정보 관리가 연결되어 있습니다. 재시작 후 Unknown 결과 대조, 완전한 파일 시스템, 새 디렉터리 request/import/feature/helper profile 협상과 플랫폼 검증은 남아 있습니다. 라이브러리를 열 때 여전히 전체 이력을 검사합니다. 읽기와 계산을 겹치는 전체 파이프라인, 이력 계층화, 자동 정리는 구현되지 않았습니다.
+전체 SDK는 아직 동결되지 않았습니다. 관리되는 HTTP/HTTPS 요청, 제한적인 API 서비스 노드, TLS 식별 정보 관리가 연결되어 있습니다. 재시작 후 Unknown 결과 대조, 완전한 파일 시스템, 새 디렉터리 guest의 실제 실행과 제품 검증과 플랫폼 검증은 남아 있습니다. 라이브러리를 열 때 여전히 전체 이력을 검사합니다. 읽기와 계산을 겹치는 전체 파이프라인, 이력 계층화, 자동 정리는 구현되지 않았습니다.
 
 ## 문서
 

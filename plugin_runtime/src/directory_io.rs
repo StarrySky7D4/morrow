@@ -14,10 +14,14 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fs::File,
 };
+use zeroize::Zeroizing;
 
 // Only the private OS query module may use unsafe. No guest memory reaches it.
 #[allow(unsafe_code)]
 mod native_windows;
+mod selection;
+pub(crate) mod selection_path;
+pub use selection_path::{DirectoryPathError, DirectoryRelativePath};
 
 pub const MAX_ENTRIES: usize = 1024;
 pub const MAX_METADATA_BYTES: u64 = 1024 * 1024;
@@ -34,6 +38,9 @@ pub enum Error {
     SourceChanged,
     InvalidCursor,
     Cancelled,
+    /// System entropy failed, yielded all zero, or private derivation failed.
+    /// No underlying error, partial random bytes or secret are disclosed.
+    Entropy,
     Limit,
     Allocation,
     Io(std::io::ErrorKind),
@@ -131,8 +138,10 @@ impl SelectedDirectory {
 }
 
 struct Observation {
-    lease: IoResourceLease,
+    // Actual objects close before concurrent resource capacity is released.
     root: File,
+    ancestors: selection::Ancestors,
+    lease: IoResourceLease,
     identity: [u8; 24],
     epoch: [u8; 32],
     entries: Vec<DirectoryEntry>,
@@ -143,12 +152,19 @@ struct Observation {
 }
 /// Secret is supplied/generated only by the trusted host per broker.
 pub struct DirectoryBroker {
-    secret: [u8; 32],
+    secret: Zeroizing<[u8; 32]>,
     sequence: u64,
     observations: BTreeMap<[u8; 32], Observation>,
 }
 impl DirectoryBroker {
+    /// Legacy trusted-host constructor. The caller owns freshness and any
+    /// retained copy of the supplied array; this does not prove selection origin.
     pub fn new(secret: [u8; 32]) -> Self {
+        Self::from_secret(Zeroizing::new(secret))
+    }
+    // Consuming owner-factory boundary: never unwrap the secret to a raw array.
+    // Retention and every broker drop/unwind use Zeroizing's owned Drop.
+    pub(crate) fn from_secret(secret: Zeroizing<[u8; 32]>) -> Self {
         Self {
             secret,
             sequence: 0,
@@ -189,7 +205,7 @@ impl DirectoryBroker {
     fn token(&self, domain: &[u8], next: u64, identity: &[u8; 24]) -> [u8; 32] {
         let mut h = Sha256::new();
         h.update(domain);
-        h.update(self.secret);
+        h.update(&self.secret[..]);
         h.update(next.to_le_bytes());
         h.update(identity);
         h.finalize().into()
@@ -266,6 +282,54 @@ impl DirectoryBroker {
         root: File,
         limits: CaptureLimits,
         clock: &mut impl DirectoryClock,
+        cancelled: impl FnMut() -> bool,
+    ) -> Result<SelectedDirectory, Error> {
+        self.grant_source(
+            manager, host, instance, binding, root, None, limits, clock, cancelled,
+        )
+    }
+
+    /// Host-only descendant selection relative to an already trusted opened
+    /// anchor. Every retained ancestor and leaf is charged to the original
+    /// FileList ledger. This proves neither picker-time selection nor ancestors
+    /// above the anchor; it authorizes no future child read, mutation or reopen.
+    #[allow(clippy::too_many_arguments)]
+    pub fn grant_directory_under_with_clock_and_cancel(
+        &mut self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        anchor: File,
+        relative: DirectoryRelativePath,
+        limits: CaptureLimits,
+        clock: &mut impl DirectoryClock,
+        cancelled: impl FnMut() -> bool,
+    ) -> Result<SelectedDirectory, Error> {
+        self.grant_source(
+            manager,
+            host,
+            instance,
+            binding,
+            anchor,
+            Some(relative),
+            limits,
+            clock,
+            cancelled,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn grant_source(
+        &mut self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        root: File,
+        relative: Option<DirectoryRelativePath>,
+        limits: CaptureLimits,
+        clock: &mut impl DirectoryClock,
         mut cancelled: impl FnMut() -> bool,
     ) -> Result<SelectedDirectory, Error> {
         let limits = limits.validate()?;
@@ -285,11 +349,29 @@ impl DirectoryBroker {
                 .admit_resource(manager, host, instance, &[IoCapability::FileList], now)
                 .map_err(Error::from)
         })?;
+        // This local must be declared after the leaf lease: failed job
+        // admission or unwind closes the owned anchor before releasing quota.
+        let root = root;
         let job = clock.with(|now| {
             binding
                 .admit_job_authenticated(0, limits.max_job_bytes, now)
                 .map_err(Error::from)
         })?;
+        let (root, ancestors) = match relative {
+            Some(relative) => selection::open_under(
+                manager,
+                host,
+                instance,
+                binding,
+                root,
+                relative,
+                &lease,
+                &job,
+                clock,
+                &mut cancelled,
+            )?,
+            None => (root, selection::Ancestors::default()),
+        };
         let check = |now| {
             lease
                 .check(manager, host, instance, now)
@@ -301,6 +383,12 @@ impl DirectoryBroker {
                 .map_err(Error::from)
         })?;
         cancellation_veto(&mut cancelled)?;
+        ancestors.verify(manager, host, instance, clock, &mut cancelled, |clock| {
+            clock.with(|now| {
+                job.charge(&[IoCapability::FileList], ROOT_QUERY_BYTES, now)
+                    .map_err(Error::from)
+            })
+        })?;
         let identity = native_windows::identity(&root)?;
         cancellation_veto(&mut cancelled)?;
         clock.with(check)?;
@@ -333,6 +421,12 @@ impl DirectoryBroker {
                     .map_err(Error::from)
             })?;
             cancellation_veto(&mut cancelled)?;
+            ancestors.verify(manager, host, instance, clock, &mut cancelled, |clock| {
+                clock.with(|now| {
+                    job.charge(&[IoCapability::FileList], ROOT_QUERY_BYTES, now)
+                        .map_err(Error::from)
+                })
+            })?;
             if native_windows::identity(&root)? != identity {
                 return Err(Error::SourceChanged);
             }
@@ -356,6 +450,12 @@ impl DirectoryBroker {
                     .map_err(Error::from)
             })?;
             cancellation_veto(&mut cancelled)?;
+            ancestors.verify(manager, host, instance, clock, &mut cancelled, |clock| {
+                clock.with(|now| {
+                    job.charge(&[IoCapability::FileList], ROOT_QUERY_BYTES, now)
+                        .map_err(Error::from)
+                })
+            })?;
             if native_windows::identity(&root)? != identity {
                 return Err(Error::SourceChanged);
             }
@@ -418,6 +518,12 @@ impl DirectoryBroker {
                 .map_err(Error::from)
         })?;
         cancellation_veto(&mut cancelled)?;
+        ancestors.verify(manager, host, instance, clock, &mut cancelled, |clock| {
+            clock.with(|now| {
+                job.charge(&[IoCapability::FileList], ROOT_QUERY_BYTES, now)
+                    .map_err(Error::from)
+            })
+        })?;
         if native_windows::identity(&root)? != identity {
             return Err(Error::SourceChanged);
         }
@@ -437,6 +543,7 @@ impl DirectoryBroker {
             Observation {
                 lease,
                 root,
+                ancestors,
                 identity,
                 epoch,
                 entries,
@@ -550,12 +657,20 @@ impl DirectoryBroker {
                         instance,
                         IoCapability::FileList,
                         0,
-                        request_bytes + 65536 + ROOT_QUERY_BYTES * 2,
+                        request_bytes
+                            + 65536
+                            + ROOT_QUERY_BYTES * 2
+                            + observed.ancestors.query_bytes() * 2,
                         now,
                     )
                     .map_err(Error::from)
             })?;
             cancellation_veto(&mut cancelled)?;
+            observed
+                .ancestors
+                .verify(manager, host, instance, clock, &mut cancelled, |clock| {
+                    clock.with(|now| job.check(manager, host, instance, now).map_err(Error::from))
+                })?;
             if native_windows::identity(&observed.root)? != observed.identity {
                 return Err(Error::SourceChanged);
             }
@@ -593,6 +708,11 @@ impl DirectoryBroker {
             page.validate().map_err(|_| Error::Codec)?;
             clock.with(|now| job.check(manager, host, instance, now).map_err(Error::from))?;
             cancellation_veto(&mut cancelled)?;
+            observed
+                .ancestors
+                .verify(manager, host, instance, clock, &mut cancelled, |clock| {
+                    clock.with(|now| job.check(manager, host, instance, now).map_err(Error::from))
+                })?;
             if native_windows::identity(&observed.root)? != observed.identity {
                 return Err(Error::SourceChanged);
             }

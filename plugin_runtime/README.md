@@ -1,8 +1,20 @@
 # 可替换 Wasm 执行后端原型
 
-当前开发入口见 [项目状态](../docs/PROJECT_STATUS.md)、[SDK兼容](../docs/PLUGIN_SDK_COMPATIBILITY.md)和[IO作业](../docs/PLUGIN_IO_JOBS.md)。C07 Windows原IoWorker目录命令已限定通过，公开Core FileList仍Unsupported；C08私有secret factory仅设计。下文test.x计数和lint结果按其历史阶段阅读；当前整库Clippy仍exit101／10既有诊断／owned0，不能沿用早期“Clippy通过”作为当前资格。
+当前C10检查点（2026-10-05）：本次开发分支更新收录C08–C10。C10已新增独立 `fs-directory-request-v1`、严格单import、包feature及只读discovery，复用原已批准selection和owner，不导出路径、句柄或新授权。Windows新Rust34（codec12/helper4/profile9/owner9）、既有回归191及frame5分别通过；Python33和两个原生C/C++消费者另计。新Rust Wasm仅编译通过，真实新Rust guest、C/C++ Wasm、Workbench产品／GUI、受保护Session与其他平台仍未验收。旧Core IO FileList保持Unsupported，SDK26／G04仍OPEN，无新Release。 详见[接口与实测边界](../reports/reconstruction-2026-10-05/directory-request-sdk.md)。
+
+当前开发入口见 [项目状态](../docs/PROJECT_STATUS.md)、[SDK兼容](../docs/PLUGIN_SDK_COMPATIBILITY.md)和[IO作业](../docs/PLUGIN_IO_JOBS.md)。C07 Windows原IoWorker目录命令已限定通过，公开Core FileList仍Unsupported；C08已新增原worker秘密factory，当前复验为 `PASS（Windows限定）`。下文test.x计数和lint结果按其历史阶段阅读；C07封存的整库Clippy为exit101／10既有诊断／owned0；C08当时三文件fmt和strict库Rustc通过，整库Clippy仍exit101／10既有诊断／owned0（仅library lint范围），不能沿用早期“Clippy通过”作为当前资格。
 
 历史原型起于 0.1.9-test.10（当时消息协议 v6）。当前 SDK／宿主使用运行协议 v7，支持 legacy guest ABI v1 和任务 ABI v2；[Windows SDK 候选](../reports/codex-morrow-v1.1/windows-sdk-013-2026-10-01.md)分别说明兼容与实验范围。早期Windows原型运行了实际C／C++／Rust Wasm，并通过可信适配器接入HostRuntime与SQLite；当轮版本和数据库边界按原报告保留。当前完整SDK资格与发行状态以项目状态为准。
+
+## 原owner目录秘密factory（C08）
+
+Windows `packages`下新增可信宿主 `capture_directory_fresh(File, CaptureLimits)`，返回原目录session／command handle。原owner经prepare及精确Manager／HostRuntime／ManagedInstance／IoBinding校验后生成OS熵；锁定 `getrandom 0.4.3`已在原依赖图中，只增加原生Windows使用边。原clock采样与对应FileList验证仍在同一短step；随机调用、hash、native查询和真实drop在clock／Control／Ticket锁外。生成前后原授权、取消与期限复验，没有生产可选entropy provider或secret读取接口。
+
+熵错／部分填充／全零关闭，成功只产生目录观察；取消后原Unknown不自动重放。key所有权用Zeroizing保留并Drop清理，不能据此声称SHA／OS／编译器全部副本擦除。legacy显式seed接口及caller-copy责任保持；bare File没有picker或祖先来源。本轮fresh Windows Release／locked／offline实际factory14通过（69未选方法保留过滤），原owner115／九组、原件42／五组、网络100／十一组各自重新通过，不沿用或累计C07历史计数。42保留region14与reader1过滤，helper不另计方法。详情见 [C08说明](../reports/reconstruction-2026-10-05/directory-secret-factory.md)。SDK327／冻结57不重建，完整SDK26／G04仍OPEN，公开目录guest import未新增。
+
+## 原owner相对目录选择（C09）
+
+C09已完成限定Windows Release／locked／offline资格，见 [C09阶段说明](../reports/reconstruction-2026-10-05/directory-selection-owner.md)。可信宿主 `capture_directory_under(anchor, relative, limits)`只保留并核验原opened anchor到relative leaf的raw UTF-16句柄链，复用原worker FileList、原时钟、取消和预算；root加N个分量共享原8资源，32段语法上限不是可用深度。新selection_path8＋directory_selection12、C08 factory14、原owner九组115和原件42分别当前实际PASS；原件42为base9／dependency3／region7／reader主9／shared14，reader raw10含child helper1不加方法，region保留84过滤。17个credited测试进程合191 meaningful方法（raw192含child1），zero-match失败进程保留且不计功；这些数字不能作为SDK冻结。Workbench第二次Release x86_64 `--locked --offline --lib` check通过，首次缺offline asn1-rs0.7.2的exit101保留；只是编译检查，ProtectedSession／GUI／picker以上provenance和non-Windows产品执行NOT_RUN。C09 network100和Clippy明确NOT_RUN，不继承C08历史通过或lint结果。这不证明picker时刻、anchor以上来源或传入anchor的sharing策略，不增加guest FileList、目录guest或公共UI，blob耐久后端仍缺。SDK26／G04仍OPEN，公开FileList及conditional Replace仍Unsupported。C08/C09历史报告保留当时状态；本次开发分支更新收录C08–C10，无新Release。
 
 ## 执行与权限边界
 
