@@ -87,7 +87,9 @@ jobs:
           node tool/test_core_browser.mjs --app --base-path /morrow/ --media
           if ($LASTEXITCODE -ne 0) { throw 'Imported media preferences acceptance failed' }
       - name: Browser theme import and recovery under CPU throttling
-        timeout-minutes: 30
+        # Complete 4x lifecycle measured 13m49s; a slower run reached its
+        # final media checks at 19m. Keep bounded headroom for runner variance.
+        timeout-minutes: 25
         run: |
           node tool/test_core_browser.mjs --app --base-path /morrow/ --theme --slow-ui 4
           if ($LASTEXITCODE -ne 0) { throw 'Theme import and recovery acceptance failed' }
