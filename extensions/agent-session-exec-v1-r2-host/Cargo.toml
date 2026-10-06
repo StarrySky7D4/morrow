@@ -1,0 +1,20 @@
+[workspace]
+resolver = "2"
+[package]
+name = "morrow-agent-session-exec-v1-r2-host"
+version = "0.1.0-experimental.2"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+[dependencies]
+morrow-agent-session-exec-v1-r2 = { path = "../agent-session-exec-v1-r2" }
+morrow-core = { path = "../../core" }
+morrow-plugin-runtime = { path = "../../plugin_runtime", features = ["package-execution"] }
+prost = "=0.14.4"
+sha2 = "=0.10.9"
+lz4_flex = { version = "=0.14.0", default-features = false, features = ["std", "safe-encode", "safe-decode", "checked-decode"] }
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "=0.2.189"
+[dev-dependencies]
+tempfile = "=3.27.0"
+wat = "=1.239.0"

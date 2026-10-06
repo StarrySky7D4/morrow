@@ -87,3 +87,26 @@
 # New opt-in metadata source contract: exact ASCII/LF digest; old rules unchanged.
 /core/schemas/changes_metadata_v1.wire text eol=lf
 /extensions/changes-metadata-v1/contracts/changes_metadata_v1.wire text eol=lf
+
+# Codex R1/R2 source freezes bind complete crate inputs by raw SHA256.
+# Preserve their reviewed bytes even when a checkout enables core.autocrlf.
+/LICENSE -text
+/core/** -text
+/plugin_runtime/** -text
+/sdk/rust/** -text
+/plugins/workbench/** -text
+/extensions/fs-directory-v1/** -text
+/extensions/fs-directory-request-v1/** -text
+/extensions/agent-content-v1/** -text
+/extensions/agent-session-exec-v1/** -text
+/extensions/agent-session-exec-v1-r2/** -text
+/extensions/agent-session-exec-v1-r2-host/** -text
+/tool/verify_codex_sdk_candidate.py -text
+/tool/verify_session_exec*.py -text
+/tool/tests/test_codex_sdk_candidate.py -text
+/tool/tests/test_session_exec*.py -text
+/reports/reconstruction-2026-10-05/*.json -text
+/reports/reconstruction-2026-10-05/*.sha256 -text
+/reports/reconstruction-2026-10-05/*.tar.gz -text
+# This pinned fixture includes a reviewed trailing blank line; keep its bytes.
+/companions/morrow-codex/session-exec-r2/host-fixture/Cargo.toml whitespace=-blank-at-eof

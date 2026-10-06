@@ -16,14 +16,14 @@ pub mod channel;
 mod continuation;
 #[cfg(feature = "package-management")]
 pub mod dependency;
+#[cfg(all(feature = "packages", windows))]
+pub mod directory_io;
 #[cfg(feature = "package-management")]
 pub mod dynamic_dependencies;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod file_io;
 #[cfg(all(feature = "packages", windows))]
 pub mod file_target;
-#[cfg(all(feature = "packages", windows))]
-pub mod directory_io;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod http_io;
 #[cfg(feature = "package-management")]
@@ -177,6 +177,7 @@ struct State {
     mutation: bool,
     channel: bool,
     directory: bool,
+    agent: bool,
     pending: Option<continuation::PendingCall>,
     session: Arc<()>,
     limits: StoreLimits,
@@ -195,40 +196,51 @@ pub struct Runner {
     mutation_abi: bool,
     channel_abi: bool,
     directory_abi: bool,
+    agent_abi: bool,
     engine: Engine,
     module: Module,
     limits: Limits,
 }
 impl Runner {
     pub fn new(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, false, false, false, false, false, false)
+        Self::prepare(
+            bytes, limits, false, false, false, false, false, false, false,
+        )
     }
     pub fn new_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false, false, false, false, false)
+        Self::prepare(
+            bytes, limits, true, false, false, false, false, false, false,
+        )
     }
     /// Task ABI with one additional fixed dependency import. The callback is host-routed;
     /// it must not re-enter this guest and cannot be supplied to ordinary task runners.
     pub fn new_dependency_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, true, false, false, false, false)
+        Self::prepare(bytes, limits, true, true, false, false, false, false, false)
     }
     /// Task ABI with the fixed IO import. Combined with dependency imports is rejected.
     pub fn new_io_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false, true, false, false, false)
+        Self::prepare(bytes, limits, true, false, true, false, false, false, false)
     }
     /// The separate mutation import is available only to an explicitly negotiated
     /// package frame. Ordinary synchronous Runner entry points fail closed.
     pub fn new_mutation_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false, false, true, false, false)
+        Self::prepare(bytes, limits, true, false, false, true, false, false, false)
     }
     /// Independent local channel profile. Only a managed channel broker can drive it.
     pub fn new_channel_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false, false, false, true, false)
+        Self::prepare(bytes, limits, true, false, false, false, true, false, false)
     }
     /// Fifth fixed extra import. Only original managed directory-owner dispatch may drive it.
     /// All legacy factories continue rejecting this import and mixed extra profiles.
     pub fn new_directory_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false, false, false, false, true)
+        Self::prepare(bytes, limits, true, false, false, false, false, true, false)
     }
+    /// Independent R2 agent profile. A reviewed host package drives this import;
+    /// legacy task/IO factories continue to reject it.
+    pub fn new_agent_session_exec_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
+        Self::prepare(bytes, limits, true, false, false, false, false, false, true)
+    }
+    #[allow(clippy::too_many_arguments)]
     fn prepare(
         bytes: &[u8],
         limits: Limits,
@@ -238,13 +250,21 @@ impl Runner {
         mutation_abi: bool,
         channel_abi: bool,
         directory_abi: bool,
+        agent_abi: bool,
     ) -> Result<Self, Fault> {
-        if !task_abi && (dependency_abi || io_abi || mutation_abi || channel_abi || directory_abi)
+        if !task_abi
+            && (dependency_abi
+                || io_abi
+                || mutation_abi
+                || channel_abi
+                || directory_abi
+                || agent_abi)
             || u8::from(dependency_abi)
                 + u8::from(io_abi)
                 + u8::from(mutation_abi)
                 + u8::from(channel_abi)
                 + u8::from(directory_abi)
+                + u8::from(agent_abi)
                 > 1
         {
             return Err(Fault::UnsupportedAbi);
@@ -285,6 +305,7 @@ impl Runner {
                 ("morrow_mutation_v1", "call") if mutation_abi => 4,
                 ("morrow_channel_v1", "call") if channel_abi => 4,
                 ("morrow_fs_directory_v1", "call") if directory_abi => 4,
+                ("morrow_agent_session_exec_v1", "call") if agent_abi => 4,
                 ("morrow_task_v1", "read_input" | "complete") if task_abi => 2,
                 _ => return Err(Fault::UnsupportedAbi),
             };
@@ -302,6 +323,9 @@ impl Runner {
             return Err(Fault::UnsupportedAbi);
         }
         if directory_abi && !imports.contains(&("morrow_fs_directory_v1", "call")) {
+            return Err(Fault::UnsupportedAbi);
+        }
+        if agent_abi && !imports.contains(&("morrow_agent_session_exec_v1", "call")) {
             return Err(Fault::UnsupportedAbi);
         }
         let mut memory = false;
@@ -327,6 +351,7 @@ impl Runner {
             mutation_abi,
             channel_abi,
             directory_abi,
+            agent_abi,
             engine,
             module,
             limits,
@@ -371,6 +396,45 @@ impl Runner {
     ) -> TaskRun {
         self.execute(exchange, None, Some(io), cancel, Some(input))
     }
+    /// Drive the separate agent import. The callback remains outside Wasm and
+    /// must validate original host admission and every request/reply.
+    pub fn run_agent_session_exec_task<'a>(
+        &self,
+        input: &'a [u8],
+        agent: Exchange<'a>,
+        cancel: Cancellation,
+    ) -> TaskRun {
+        let started = if self.agent_abi {
+            continuation::Execution::start(self, Some(input), cancel)
+        } else {
+            Err(Fault::UnsupportedAbi)
+        };
+        let mut execution = match started {
+            Ok(execution) => execution,
+            Err(fault) => {
+                return TaskRun {
+                    report: Report {
+                        outcome: Err(fault),
+                        host_calls: 0,
+                        fuel_remaining: self.limits.fuel,
+                    },
+                    completion: None,
+                };
+            }
+        };
+        while let Some(call) = execution.pending() {
+            let token = call.token.clone();
+            // IO denotes the shared bounded suspension frame, not IO authority.
+            // No ordinary IO runner can prepare the agent import.
+            let response = if matches!(call.kind, continuation::Kind::Io) {
+                agent(&call.bytes)
+            } else {
+                Err(())
+            };
+            execution.resume(&token, response).expect("same agent call");
+        }
+        execution.finish()
+    }
     fn execute<'a>(
         &self,
         exchange: Exchange<'a>,
@@ -382,6 +446,7 @@ impl Runner {
         let started = if self.mutation_abi
             || self.channel_abi
             || self.directory_abi
+            || self.agent_abi
             || self.dependency_abi != dependency.is_some()
             || self.io_abi != io.is_some()
         {
@@ -413,7 +478,9 @@ impl Runner {
                     dependency.as_mut().expect("checked mode")(&pending.bytes)
                 }
                 continuation::Kind::Io => io.as_mut().expect("checked mode")(&pending.bytes),
-                continuation::Kind::Mutation | continuation::Kind::Channel | continuation::Kind::Directory => Err(()),
+                continuation::Kind::Mutation
+                | continuation::Kind::Channel
+                | continuation::Kind::Directory => Err(()),
             };
             execution
                 .resume(&token, response)
@@ -867,5 +934,67 @@ fn directory_call(
         memory,
         output,
         MAX_DIRECTORY_RESPONSE_BYTES,
+    ))
+}
+
+// R2 agent frames use the original bounded suspension mechanism.
+fn agent_call(
+    mut caller: Caller<'_, State>,
+    input: i32,
+    length: i32,
+    output: i32,
+    capacity: i32,
+) -> Result<i32, wasmi::Error> {
+    if let Some(fault) = caller.data().cancel.fault() {
+        return Err(trap(caller.data_mut(), fault));
+    }
+    if !caller.data().agent
+        || caller
+            .data()
+            .task
+            .as_ref()
+            .is_none_or(|t| !t.read || t.completion.is_some())
+    {
+        return Err(trap(caller.data_mut(), Fault::TaskProtocol));
+    }
+    if input < 0
+        || output < 0
+        || length <= 0
+        || length as usize > MAX_TASK_BYTES
+        || capacity as usize != MAX_TASK_BYTES
+    {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    }
+    let memory = caller
+        .get_export("memory")
+        .and_then(|v| v.into_memory())
+        .ok_or_else(|| wasmi::Error::new("missing memory"))?;
+    let input = input as usize;
+    let output = output as usize;
+    let Some(input_end) = input.checked_add(length as usize) else {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    };
+    let Some(output_end) = output.checked_add(MAX_TASK_BYTES) else {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    };
+    let memory_len = memory.data(&caller).len();
+    if input_end > memory_len
+        || output_end > memory_len
+        || (input < output_end && output < input_end)
+    {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    }
+    if caller.data().calls >= caller.data().max_calls {
+        return Err(trap(caller.data_mut(), Fault::Limits));
+    }
+    let fixed = memory.data(&caller)[input..input_end].to_vec();
+    caller.data_mut().calls += 1;
+    Err(continuation::suspend(
+        caller.data_mut(),
+        continuation::Kind::Io,
+        fixed,
+        memory,
+        output,
+        MAX_TASK_BYTES,
     ))
 }

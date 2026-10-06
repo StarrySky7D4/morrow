@@ -1,5 +1,6 @@
 #![deny(unsafe_code)]
 
+pub mod agent_ledger;
 pub mod attachment;
 pub mod changes_metadata;
 pub mod channel;

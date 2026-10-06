@@ -437,7 +437,7 @@ fn honest_v21_without_the_new_table_migrates_but_forged_downgrade_is_rejected() 
     assert!(Store::open_existing(&path, EventBudget::default()).is_err());
     let connection = rusqlite::Connection::open(&path).unwrap();
     connection
-        .execute_batch("DROP TABLE IF EXISTS file_content_receipts; DROP TABLE file_mutation_content;")
+        .execute_batch("DROP TABLE IF EXISTS agent_ledger; DROP TABLE IF EXISTS channel_ack_receipts; DROP TABLE IF EXISTS channel_checkpoints; DROP TABLE IF EXISTS file_content_receipts; DROP TABLE file_mutation_content;")
         .unwrap();
     drop(connection);
     let reopened = Store::open_existing(&path, EventBudget::default()).unwrap();

@@ -112,7 +112,7 @@ fn reconstruct_v22_with_staged_bytes(path: &Path, live: &Receipt) {
         .unwrap();
     }
     sql.execute_batch(
-        "DROP TABLE file_content_receipts; UPDATE sqlite_sequence SET seq=1 WHERE name='outbox'; PRAGMA user_version=22;",
+        "DROP TABLE IF EXISTS agent_ledger; DROP TABLE IF EXISTS channel_ack_receipts; DROP TABLE IF EXISTS channel_checkpoints; DROP TABLE file_content_receipts; UPDATE sqlite_sequence SET seq=1 WHERE name='outbox'; PRAGMA user_version=22;",
     )
     .unwrap();
 }
@@ -307,7 +307,7 @@ fn receipt_survives_pending_seal_snapshot_and_pinned_readpoint() {
         .container()
         .to_vec();
     let snapshot = store.open_card_snapshot().unwrap();
-    assert_eq!(snapshot.readpoint().database_version, 23);
+    assert_eq!(snapshot.readpoint().database_version, morrow_core::store::SCHEMA_VERSION as u32);
     assert_eq!(snapshot.readpoint().operation_sequence, pending[1].0 as u64);
     store.snapshot_to(&before, 16 * 1024 * 1024).unwrap();
     for source in [&path, &before] {
@@ -364,7 +364,7 @@ fn existing_v22_content_is_marked_legacy_import_on_migration() {
             .unwrap()
             .query_row("PRAGMA user_version", [], |r| r.get::<_, i64>(0))
             .unwrap(),
-        23
+        morrow_core::store::SCHEMA_VERSION
     );
     reopened.integrity_check().unwrap();
 }

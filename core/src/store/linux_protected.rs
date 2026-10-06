@@ -103,6 +103,7 @@ fn supported_content(c: &Connection) -> Result<()> {
         "tls_identities",
         "file_mutation_content",
         "file_content_receipts",
+        "agent_ledger",
     ] {
         let count: i64 =
             sql(c.query_row(&format!("SELECT count(*) FROM {table}"), [], |r| r.get(0)))?;
@@ -162,6 +163,7 @@ fn initialize_current(
             tls_identity::SCHEMA,
             file_content::SCHEMA,
             file_content_receipt::SCHEMA,
+            super::agent_ledger::SCHEMA,
         ] {
             sql(c.execute_batch(schema))?;
         }
@@ -958,8 +960,8 @@ mod tests {
             drop(original);
             let mut bytes = std::fs::read(&path).unwrap();
             match case {
-                0 => bytes[60..64].copy_from_slice(&23u32.to_be_bytes()),
-                1 => bytes[60..64].copy_from_slice(&25u32.to_be_bytes()),
+                0 => bytes[60..64].copy_from_slice(&((SCHEMA_VERSION - 1) as u32).to_be_bytes()),
+                1 => bytes[60..64].copy_from_slice(&((SCHEMA_VERSION + 1) as u32).to_be_bytes()),
                 2 => bytes[68..72].copy_from_slice(&1u32.to_be_bytes()),
                 3 => bytes.truncate(99),
                 4 => bytes[..16].fill(0),

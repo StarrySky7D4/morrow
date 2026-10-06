@@ -122,7 +122,7 @@ fn content_admission_and_schema_migration_survive_real_process_exit() {
         if point.contains("migration") {
             rusqlite::Connection::open(&path)
                 .unwrap()
-                .execute_batch("DROP TABLE IF EXISTS file_content_receipts; DROP TABLE file_mutation_content; PRAGMA user_version=21;")
+                .execute_batch("DROP TABLE IF EXISTS agent_ledger; DROP TABLE IF EXISTS channel_ack_receipts; DROP TABLE IF EXISTS channel_checkpoints; DROP TABLE IF EXISTS file_content_receipts; DROP TABLE file_mutation_content; PRAGMA user_version=21;")
                 .unwrap();
         }
         crash(&path, point);

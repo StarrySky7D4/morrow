@@ -6,7 +6,7 @@
 //! state, not protection against a user who can replace either arbitrarily.
 use crate::{Error, Result};
 use std::sync::{
-    Arc, Mutex,
+    Arc, Mutex, MutexGuard,
     atomic::{AtomicBool, Ordering},
 };
 #[cfg(not(target_arch = "wasm32"))]
@@ -38,6 +38,22 @@ impl ServiceAuthorityResource {
 struct State {
     alive: AtomicBool,
     epoch: Mutex<Epochs>,
+    ledger_owner: Mutex<Arc<AtomicBool>>,
+}
+/// Original-Store ledger coordination only. Resource-specific service revocation
+/// does not invalidate it; global revoke, owner rotation and Store close do.
+#[derive(Clone)]
+pub struct AgentLedgerOwnerLease {
+    lease: ServiceAuthorityLease,
+    owner_epoch: Arc<AtomicBool>,
+}
+impl AgentLedgerOwnerLease {
+    pub fn check(&self) -> Result<()> {
+        if self.owner_epoch.load(Ordering::Acquire) {
+            return Err(Error::Invalid("inactive agent ledger owner"));
+        }
+        self.lease.check()
+    }
 }
 /// A read-only observation of an authority resolution from one original Store.
 /// It cannot extend the Store lifetime, restore a revoked epoch, or grant IO.
@@ -76,6 +92,11 @@ impl ServiceAuthorityControl {
             poisoned.into_inner()
         });
         epoch.revoke_all();
+        let owner = self.state.ledger_owner.lock().unwrap_or_else(|poisoned| {
+            self.state.alive.store(false, Ordering::Release);
+            poisoned.into_inner()
+        });
+        owner.store(true, Ordering::Release);
     }
     /// Revoke exact dependents and every legacy all-writes lease. Re-resolution
     /// is required even when the following write rolls back or remains unknown.
@@ -94,6 +115,12 @@ pub(crate) struct ServiceAuthorityWriteGuard {
     #[cfg(not(target_arch = "wasm32"))]
     _file: Option<Arc<File>>,
 }
+/// Serializes the durable commit with global and ledger-owner invalidation.
+/// A completed revoke cannot be followed by a commit from its old owner.
+pub(crate) struct AgentLedgerCommitGuard<'a> {
+    _global: MutexGuard<'a, Epochs>,
+    _owner: MutexGuard<'a, Arc<AtomicBool>>,
+}
 pub(crate) struct ServiceAuthorityCoordinator {
     store_id: [u8; 32],
     native_restore_supported: bool,
@@ -109,6 +136,7 @@ impl ServiceAuthorityCoordinator {
             state: Arc::new(State {
                 alive: AtomicBool::new(true),
                 epoch: Mutex::new(Epochs::default()),
+                ledger_owner: Mutex::new(Arc::new(AtomicBool::new(true))),
             }),
             #[cfg(not(target_arch = "wasm32"))]
             pinned: None,
@@ -149,6 +177,83 @@ impl ServiceAuthorityCoordinator {
             lease.check()?;
             Ok(lease)
         }
+    }
+    pub(crate) fn pin_ledger_owner(&mut self) -> Result<AgentLedgerOwnerLease> {
+        let resolved = self.pin()?;
+        let _global = self.state.epoch.lock().map_err(|_| Error::Integrity)?;
+        let mut current_owner = self
+            .state
+            .ledger_owner
+            .lock()
+            .map_err(|_| Error::Integrity)?;
+        resolved.check()?;
+        // A new trusted resolution replaces every prior ledger owner of this
+        // original Store. Only one issuer may have a live profile fence.
+        current_owner.store(true, Ordering::Release);
+        let owner_epoch = Arc::new(AtomicBool::new(false));
+        *current_owner = owner_epoch.clone();
+        let lease = AgentLedgerOwnerLease {
+            lease: ServiceAuthorityLease {
+                state: resolved.state,
+                global: resolved.global,
+                writes: None,
+                dependencies: vec![],
+            },
+            owner_epoch,
+        };
+        lease.check()?;
+        Ok(lease)
+    }
+    pub(crate) fn legacy_ledger_write_guard(&self) -> Result<MutexGuard<'_, Arc<AtomicBool>>> {
+        let owner = self
+            .state
+            .ledger_owner
+            .lock()
+            .map_err(|_| Error::Integrity)?;
+        if !owner.load(Ordering::Acquire) {
+            return Err(Error::Invalid("active agent ledger owner"));
+        }
+        Ok(owner)
+    }
+    pub(crate) fn validate_ledger_owner(&self, lease: &AgentLedgerOwnerLease) -> Result<()> {
+        if !Arc::ptr_eq(&self.state, &lease.lease.state) {
+            return Err(Error::Invalid("foreign agent ledger owner"));
+        }
+        lease.check()
+    }
+    pub(crate) fn ledger_commit_guard(
+        &self,
+        lease: &AgentLedgerOwnerLease,
+    ) -> Result<AgentLedgerCommitGuard<'_>> {
+        // This order agrees with pinning. Owner rotation never takes global.
+        let global = self.state.epoch.lock().map_err(|_| Error::Integrity)?;
+        let owner = self
+            .state
+            .ledger_owner
+            .lock()
+            .map_err(|_| Error::Integrity)?;
+        self.validate_ledger_owner(lease)?;
+        if !Arc::ptr_eq(&owner, &lease.owner_epoch) {
+            return Err(Error::Invalid("foreign agent ledger epoch"));
+        }
+        Ok(AgentLedgerCommitGuard {
+            _global: global,
+            _owner: owner,
+        })
+    }
+    pub(crate) fn invalidate_ledger_owner(&self, lease: &AgentLedgerOwnerLease) -> Result<()> {
+        let mut owner_epoch = self
+            .state
+            .ledger_owner
+            .lock()
+            .map_err(|_| Error::Integrity)?;
+        self.validate_ledger_owner(lease)?;
+        if !Arc::ptr_eq(&owner_epoch, &lease.owner_epoch) {
+            return Err(Error::Invalid("foreign agent ledger epoch"));
+        }
+        owner_epoch.store(true, Ordering::Release);
+        *owner_epoch = Arc::new(AtomicBool::new(true));
+        Ok(())
     }
     /// Convert a still-valid all-writes resolution guard after reading records.
     /// Validation and dependency capture share the invalidation mutex: a revoke
@@ -363,6 +468,48 @@ mod tests {
         next_owner.pin().unwrap().check().unwrap();
     }
     #[test]
+    fn ledger_commit_guard_orders_global_revoke_and_owner_rotation() {
+        use std::{sync::mpsc, time::Duration};
+        let mut coordinator = ServiceAuthorityCoordinator::new(id(), true);
+        let owner = coordinator.pin_ledger_owner().unwrap();
+        let control = coordinator.control();
+        std::thread::scope(|scope| {
+            let guard = coordinator.ledger_commit_guard(&owner).unwrap();
+            let (attempted, attempt) = mpsc::channel();
+            let (completed, completion) = mpsc::channel();
+            scope.spawn(move || {
+                attempted.send(()).unwrap();
+                control.revoke_all();
+                completed.send(()).unwrap();
+            });
+            attempt.recv().unwrap();
+            assert!(completion.recv_timeout(Duration::from_millis(25)).is_err());
+            owner.check().unwrap();
+            drop(guard);
+            completion.recv_timeout(Duration::from_secs(2)).unwrap();
+        });
+        assert!(coordinator.ledger_commit_guard(&owner).is_err());
+        let fresh = coordinator.pin_ledger_owner().unwrap();
+        std::thread::scope(|scope| {
+            let guard = coordinator.ledger_commit_guard(&fresh).unwrap();
+            let (attempted, attempt) = mpsc::channel();
+            let (completed, completion) = mpsc::channel();
+            let coordinator = &coordinator;
+            let fresh = &fresh;
+            scope.spawn(move || {
+                attempted.send(()).unwrap();
+                coordinator.invalidate_ledger_owner(fresh).unwrap();
+                completed.send(()).unwrap();
+            });
+            attempt.recv().unwrap();
+            assert!(completion.recv_timeout(Duration::from_millis(25)).is_err());
+            fresh.check().unwrap();
+            drop(guard);
+            completion.recv_timeout(Duration::from_secs(2)).unwrap();
+        });
+        assert!(coordinator.ledger_commit_guard(&fresh).is_err());
+    }
+    #[test]
     fn independent_stores_cannot_write_or_pin_active_identity() {
         let identity = id();
         let mut owner = ServiceAuthorityCoordinator::new(identity, true);
@@ -385,6 +532,10 @@ mod tests {
     fn unsupported_memory_restore_rejects_live_lease_but_preserves_local_storage() {
         let mut owner = ServiceAuthorityCoordinator::new(id(), false);
         assert_eq!(owner.pin().err(), Some(Error::UnsupportedVersion));
+        assert_eq!(
+            owner.pin_ledger_owner().err(),
+            Some(Error::UnsupportedVersion)
+        );
         owner.writer().unwrap();
         owner.control().revoke_all();
         owner.writer().unwrap();

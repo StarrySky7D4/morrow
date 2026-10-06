@@ -1,0 +1,342 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "platform": "Linux x86_64",
+  "branch": "codex/windows-sdk-convergence-20261005",
+  "incremental_baseline": "679e16a6a44f8aac13f85da05204d9cd8afb30b8",
+  "extension": {
+    "profile": "agent-content-v1",
+    "version": 1,
+    "revision": 1,
+    "raw_schema_sha256": "4679e41c9154eea42fc158778babc86bebd85d98bcef903510625dc0a0063d79",
+    "source_files": [
+      {
+        "path": "Cargo.lock",
+        "bytes": 24459,
+        "sha256": "1c9c2c16df260dcffaa45a5dc4d18f5aad835d2183e3ca53520bb005f2acd01a"
+      },
+      {
+        "path": "Cargo.toml",
+        "bytes": 351,
+        "sha256": "26f8e8a069638f56deca66e12ff7bcadc3bb82f76a9bc878a6565d6a970f7ed1"
+      },
+      {
+        "path": "README.md",
+        "bytes": 4069,
+        "sha256": "8a0c7642f28fee310c43b6bbb283aa8e40c1eb115d33ac1947f30feb6babdcb3"
+      },
+      {
+        "path": "build.rs",
+        "bytes": 581,
+        "sha256": "e4418a7fab25e71f1393dc18035623486217a17f2226410053116583978f8bcf"
+      },
+      {
+        "path": "contracts/agent_content.capnp",
+        "bytes": 1845,
+        "sha256": "4679e41c9154eea42fc158778babc86bebd85d98bcef903510625dc0a0063d79"
+      },
+      {
+        "path": "examples/content_roundtrip.rs",
+        "bytes": 4699,
+        "sha256": "5b53601a266b8759ac48f220cf288d23a3bef49cd7998d603ab7f4ee8df0da75"
+      },
+      {
+        "path": "src/client.rs",
+        "bytes": 4908,
+        "sha256": "8162ee082962c0422b188de3b29705ae89d05bd362d47af37add54b9d8584dfe"
+      },
+      {
+        "path": "src/host.rs",
+        "bytes": 19746,
+        "sha256": "084404ce61f8342a9bb0b4f521b76d1ce7b4a678e3d5560987540375920a1020"
+      },
+      {
+        "path": "src/lib.rs",
+        "bytes": 25985,
+        "sha256": "ce687e6868bf684a8b600edbfb5787dc32d8ece43a67fbadb57d8a614df2a9bc"
+      },
+      {
+        "path": "tests/client.rs",
+        "bytes": 13322,
+        "sha256": "88e7a947d7621c4dae41ca3f3d1d5bfda47218d9d9e880e7eb25cdf62a8e200f"
+      },
+      {
+        "path": "tests/codec.rs",
+        "bytes": 30137,
+        "sha256": "b4f098c7b16f30c0cb14f5ec8b3e7b0bd86c0abd301ac4d0c94dac3e5027348c"
+      },
+      {
+        "path": "tests/host_content.rs",
+        "bytes": 33146,
+        "sha256": "804119739ae5c05461d907e8296957cc4f4e97a3c71e434ce093ecc2e0c66e2c"
+      }
+    ],
+    "source_inventory_sha256": "cfc06a9995c8bf809d047a4dbc8f9b2759bf655462a7a20c54a2ad690c3df9d3",
+    "lock_sha256": "1c9c2c16df260dcffaa45a5dc4d18f5aad835d2183e3ca53520bb005f2acd01a"
+  },
+  "implemented": [
+    "Query: bounded host-nominated summaries",
+    "ReadRef: original scoped revision/length/digest body read",
+    "ProposeMutation: fixed Core EditContent, separate trusted approval and one-shot execution",
+    "InspectOperation: original scoped read-only durable history",
+    "read_complete: bounded sequential whole-body SHA256 verification"
+  ],
+  "current_tests": [
+    {
+      "suite": "codec",
+      "passed": 29,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "suite": "host_content",
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    {
+      "suite": "client",
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    }
+  ],
+  "zero_test_runners_not_credited": [
+    "unit",
+    "doc"
+  ],
+  "original_core_regression": [
+    {
+      "suite": "content_changes",
+      "passed": 4
+    },
+    {
+      "suite": "content_guard",
+      "passed": 6
+    },
+    {
+      "suite": "guarded_dispatch",
+      "passed": 9
+    },
+    {
+      "suite": "operation_commit",
+      "passed": 5
+    }
+  ],
+  "commands": {
+    "extension_tests": {
+      "args": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "extensions/agent-content-v1/Cargo.toml",
+        "--target-dir",
+        "build/agent-content-v1-target"
+      ],
+      "exit_code": 0,
+      "lock_before": "1c9c2c16df260dcffaa45a5dc4d18f5aad835d2183e3ca53520bb005f2acd01a",
+      "lock_after": "1c9c2c16df260dcffaa45a5dc4d18f5aad835d2183e3ca53520bb005f2acd01a"
+    },
+    "core_regression": {
+      "args": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "core/Cargo.toml",
+        "--target-dir",
+        "build/agent-content-v1-target",
+        "--test",
+        "guarded_dispatch",
+        "--test",
+        "content_changes",
+        "--test",
+        "content_guard",
+        "--test",
+        "operation_commit"
+      ],
+      "exit_code": 0,
+      "lock_before": "480f46ef6c8be103adcee4cd338602efc2c21a0c18d72dae196e032a0be8f457",
+      "lock_after": "480f46ef6c8be103adcee4cd338602efc2c21a0c18d72dae196e032a0be8f457"
+    },
+    "example": {
+      "args": [
+        "cargo",
+        "run",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "extensions/agent-content-v1/Cargo.toml",
+        "--target-dir",
+        "build/agent-content-v1-target",
+        "--example",
+        "content_roundtrip"
+      ],
+      "exit_code": 0
+    },
+    "format_check": "cargo fmt --manifest-path extensions/agent-content-v1/Cargo.toml -- --check"
+  },
+  "example_expected_output": "PASS: Query, ReadRef, proposal without write, trusted approval, one CAS commit, history inspection; revision=2.",
+  "old_candidate": {
+    "schema_version": 1,
+    "status": "qualification_only",
+    "scope": "current_host_source_identity_kit_integrity_and_consumer_review_binding",
+    "manifest_sha256": "5555751ab1cf590d68e9610dae396677b79422999ec61b7c3d3d7183e8ed4a01",
+    "review_sha256": "664b5802af5c3a83973730df4fa3b721c0ccfd9e724f9b71edbdcd4f9fdb0d5f",
+    "schema_sha256": "da0ac7a42e4b0f6aec0cfbdd2358cf86688b08e862626186bb9de4914f355a7f",
+    "wire_major": 1,
+    "wire_revision": 1,
+    "files_verified": 180,
+    "source_files_verified": 12,
+    "source_inventory_sha256": "9d67874586c25eccd06f119a4bc040d1f8cdec1657c7dea60a0bcc07e5ecfef2",
+    "sdk_freeze": "OPEN",
+    "p02_qualification": "NOT_RUN",
+    "production_binding_available": false
+  },
+  "compatibility": {
+    "frozen_inputs_verified_including_manifests_pins": 57,
+    "guest_manifest_members": 36,
+    "transport_manifest_members": 17,
+    "contract_snapshots_check": "PASS",
+    "old_source_paths_have_no_tracked_diff": true,
+    "sdk327_mutated": false,
+    "old_guest_rebuilt": false,
+    "existing_lockfiles_mutated": false
+  },
+  "development_attempts": [
+    {
+      "name": "host test before concurrently developed client module existed",
+      "exit_code": 101,
+      "tests_executed": false,
+      "credit": false
+    },
+    {
+      "name": "new summary fixtures regressed original host clock",
+      "exit_code": 101,
+      "passed": 15,
+      "failed": 2,
+      "credit": false,
+      "fix": "fixture uses monotonic time1 for each card; original Core unchanged"
+    },
+    {
+      "name": "final extension suite",
+      "exit_code": 0,
+      "passed": 60,
+      "failed": 0
+    }
+  ],
+  "current_workspace_evidence": [
+    {
+      "path": "build/sdk-freeze-c12/logs/content-suite-result.json",
+      "bytes": 390,
+      "sha256": "318dfcfe5c4166fb675a086ac50629e739bdb72d3b9eff816e241874cd72ff46"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/content-suite.stdout.log",
+      "bytes": 4975,
+      "sha256": "f3146f87b2d660803fea91357f3e70787d4cd449e2eca0bdcc38a740373c8ec5"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/content-suite.stderr.log",
+      "bytes": 7128,
+      "sha256": "2ca83620bf89a6437acbe16f00ef9cdcdc8d93ad8274a5194d154e9c0b316817"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/core-content-regression-result.json",
+      "bytes": 515,
+      "sha256": "1ceea6229937c37848e34bbdafe181373af531f006d1b84e0a41d08f5817a935"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/core-content-regression.stdout.log",
+      "bytes": 2261,
+      "sha256": "775e5e1adef45c13bd7b8cef53cff91f346483b994c419e428cde24dd187cfde"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/core-content-regression.stderr.log",
+      "bytes": 8107,
+      "sha256": "83f4a63095150fb1b6557b2d6ccf04cb0e9b95a0405d3a4cbccfcca30f98c096"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/content-example-final-result.json",
+      "bytes": 262,
+      "sha256": "64ac2487baaa373fa335c2c9648c95c3d57db441c39ee888c4244fb19ba597af"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/content-example-final.stdout.log",
+      "bytes": 112,
+      "sha256": "67e8f3686d8c36e65436cd3d5c597a5496f9f9d7df659d6191dd8b3559e89232"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/content-example-final.stderr.log",
+      "bytes": 6645,
+      "sha256": "0a44012312a8bac535befed7cdd9ab1883757f020b80536e026f020cac432154"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/host-final-result.json",
+      "bytes": 257,
+      "sha256": "f3d434a47d4a334e3413f11d42ee3dd0441e2ab6349dc4b450c91e911d7b942c"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/host-final.stdout.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/host-final.stderr.log",
+      "bytes": 7078,
+      "sha256": "3c5e2b44603d7810bc4c3e37bcc27ac5e238e1b1a815e524092c8e6685e7b99d"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/host-with-client-result.json",
+      "bytes": 257,
+      "sha256": "f3d434a47d4a334e3413f11d42ee3dd0441e2ab6349dc4b450c91e911d7b942c"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/host-with-client.stdout.log",
+      "bytes": 2397,
+      "sha256": "a763d3b7557ea9a4b0db21a27b33b100c79ba28dc300cbdfb43aa1ec7f3abce4"
+    },
+    {
+      "path": "build/sdk-freeze-c12/logs/host-with-client.stderr.log",
+      "bytes": 6839,
+      "sha256": "073308fb18794625a587b6c2ff0bdfbe6a9ff8865614a6d29ced858a342dcb73"
+    }
+  ],
+  "not_run": [
+    "Codex P-02 product",
+    "native IPC content admission",
+    "new content Wasm guest",
+    "Windows original owner and ProtectedSession",
+    "GUI",
+    "C/C++ content consumer",
+    "Account/OAuth and actual TLS",
+    "whole SDK26 qualification",
+    "whole-library Clippy"
+  ],
+  "remaining": [
+    "M04 public durable session/writer/checkpoint/gap/outbox",
+    "M05 attachment/other-card-action/native admission/external-send/persistent proposal integration",
+    "M06 approved argv/cwd/env/exec/PTY/input/output/exit facts",
+    "M07 view subscription/projection lifecycle",
+    "M08 account credential authorization and recovery",
+    "M09 native-package/bundle installation approval and selection",
+    "G04/G05/G07/G09 whole product and platform matrices"
+  ],
+  "status": {
+    "M05": "IMPLEMENTED_BOUNDED_CONTENT_SLICE_REMAINING_OPEN",
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "Codex_G0": "OPEN",
+    "production_binding_available": false,
+    "stable_sdk_frozen": false,
+    "commit_created": false,
+    "push_performed": false,
+    "release_created": false
+  }
+}

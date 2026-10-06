@@ -1,0 +1,634 @@
+{
+  "format": "morrow.session-exec-basic-audit.v1",
+  "created_utc": "2026-10-05T21:26:47.148074+00:00",
+  "branch": "codex/windows-sdk-convergence-20261005",
+  "head": "679e16a6a44f8aac13f85da05204d9cd8afb30b8",
+  "scope": [
+    "session",
+    "safe-exec-basic",
+    "production-consumption-status"
+  ],
+  "status": "pinned_r1_with_open_basic_gaps",
+  "source_changes_applied": false,
+  "new_revision_frozen": false,
+  "frozen_pin_preserved": "2e958fde445c37671f3100e1f880875fe4d8c9173a7014519494a55f1b9c33f5",
+  "finding_count": 6,
+  "findings": [
+    {
+      "id": "SESSION_TERMINAL_CAPACITY",
+      "priority": "P1",
+      "classification": "basic_session_recovery",
+      "locations": [
+        "extensions/agent-session-exec-v1/src/session.rs:479",
+        "extensions/agent-session-exec-v1/src/session.rs:113",
+        "extensions/agent-session-exec-v1/src/session.rs:382",
+        "extensions/agent-session-exec-v1/src/session.rs:535"
+      ],
+      "trigger_receipts": "Create + OpenWriter + 126 legal one-event Append requests fill all 128 retained mutation receipts.",
+      "observed_receipts": "RECEIPT_CAP tail=126 stored_bytes=94648 checkpoint=Rejected(Limit) fork=Rejected(Conflict) compact=Err(Conflict) archive=Rejected(Limit) open_writer=Rejected(Limit)",
+      "trigger_payload": "31 legal one-event 32768-byte Appends retain 2056190 bytes; a legal 32768-byte Checkpoint needs more than the 2 MiB state capacity.",
+      "observed_payload": [
+        "PAYLOAD_CAP first_failed_append=32 outcome=Rejected(Limit)",
+        "PAYLOAD_CAP tail=31 stored_bytes=2056190 checkpoint_32k=Rejected(Limit) fork=Rejected(Conflict) compact=Err(Conflict)"
+      ],
+      "impact": "Accepted history can reach a state that cannot be checkpointed; at receipt capacity Archive and writer recovery are also denied. Current-tail fork and compaction require a successful sealed checkpoint and cannot recover this unsealed state.",
+      "next_revision": "Reserve receipt slots and worst-case retained bytes for checkpoint, archive, and fresh writer recovery before accepting append traffic. Compaction retains identity digests and complete mutation receipts, so it cannot recover receipt capacity. Preserve current raw-request deduplication and require fresh approved admissions after restart."
+    },
+    {
+      "id": "SNAPSHOT_CURSOR_REPLY_CORRELATION",
+      "priority": "P2",
+      "classification": "basic_sdk_contract_validation",
+      "locations": [
+        "extensions/agent-session-exec-v1/src/lib.rs:1200",
+        "extensions/agent-session-exec-v1/src/session.rs:319"
+      ],
+      "trigger": "For Snapshot(session, after=1, limit=1), supply a success reply with tail=0, floor=1, empty checkpoint and empty events, correct request ID and request SHA.",
+      "observed": [
+        "CURSOR_OVER_TAIL reply_constructor_accepts=true",
+        "CURSOR_OVER_TAIL decoder_accepts=true"
+      ],
+      "impact": "Public Reply construction and decode_for accept a successful over-tail cursor reply even though the host and documented contract require Conflict. A client cannot rely on the SDK to reject this impossible recovery response.",
+      "next_revision": "Require request.after <= reply.info.tail before accepting a successful Snapshot in validate_for; reject this response in both typed construction and raw consumer decoding."
+    },
+    {
+      "id": "EXECUTION_OBSERVATION_ADVANCE",
+      "priority": "P2",
+      "kind": "missing_basic_host_interface",
+      "title": "Accepted partial execution observations cannot advance when later exit/output-closure facts arrive",
+      "source": [
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 789
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 642
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 651
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 804
+        }
+      ],
+      "scenario": "Trusted callback returns exit_code=Some(0), output_closed=false. An exact Report is accepted as Reported. After the output stream really closes, a complete Report returns Conflict, execute_claimed returns Denied without invoking a callback, and inspect_tool_observation continues to return the original partial facts.",
+      "probe": "recorded_exit_without_output_eof_cannot_be_advanced_to_complete_facts",
+      "observed": "Confirmed with real original Core Store; partial state and complete state are distinguished correctly but there is no progression interface.",
+      "safety": "This is an availability/completeness gap, not unauthorized execution. Callback replay remains blocked.",
+      "suggested_followup": "Add a separately reviewed trusted host observation progression/reconciliation path. Keep the one-shot invocation marker intact and require monotonic independently validated exit/output-close observations; do not use callback replay to obtain later facts.",
+      "contract_status": "R1 documentation explicitly permits partial Reported observations. The repro does not show a frozen-contract violation; it demonstrates that the basic lifecycle lacks a subsequent observation progression interface."
+    },
+    {
+      "id": "UNKNOWN_LATE_OBSERVATION",
+      "priority": "P2",
+      "kind": "missing_basic_host_interface",
+      "title": "A callback error after an effect leaves no trusted late-observation recording path",
+      "source": [
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 797
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 801
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 651
+        }
+      ],
+      "scenario": "Trusted callback performs a real file-write effect and then returns Error::Storage. SDK returns CommitUnknown, records no observed_facts, rejects a subsequently recovered factual Report with Conflict, and permanently prevents callback reentry.",
+      "probe": "callback_error_after_real_effect_has_no_trusted_late_fact_submission",
+      "observed": "Confirmed: effect exists, observations None, phase DispatchUnknown, late Report Conflict, callback reentry count zero.",
+      "safety": "Unknown and no replay are correct. The missing interface is factual reconciliation, not permission to retry the effect.",
+      "suggested_followup": "Provide a trusted host-only way to retain independently recovered facts for an existing Unknown operation without issuing a permit, claim, callback, or renewed execution authority.",
+      "contract_status": "R1 intentionally retains Unknown after a callback error and forbids replay. The missing capability is trusted late factual reconciliation, not a violation of the no-replay contract."
+    },
+    {
+      "id": "ADMISSION_HISTORY_CAPACITY",
+      "priority": "P2",
+      "kind": "lifecycle_capacity_gap",
+      "title": "Revoked/expired admission history consumes all 128 lifetime slots",
+      "source": [
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/authority.rs",
+          "line": 154
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/authority.rs",
+          "line": 159
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/authority.rs",
+          "line": 165
+        }
+      ],
+      "scenario": "After 128 cumulative admissions, the next admission returns Limit even after all earlier admissions were revoked or have expired.",
+      "probes": [
+        "revoked_admission_slots_are_never_reclaimed",
+        "expired_admission_slots_are_never_reclaimed"
+      ],
+      "safety": "All invalid admissions still fail closed; this prevents long-lived host operation.",
+      "suggested_followup": "Reclaim inactive entries without reviving or reusing their nonces; preserve exact connection/issuer/lifetime checks."
+    },
+    {
+      "id": "TOOL_REVOCATION_AFTER_PROPOSER_END",
+      "priority": "P2",
+      "kind": "missing_basic_host_lifecycle_interface",
+      "title": "Trusted host cannot finalize an unconsumed tool after its original proposer disappears",
+      "source": [
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 753
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 767
+        }
+      ],
+      "scenario": "Tool is Approved. Revoke or disconnect original proposer; trusted revoke_tool returns Denied while a valid current reader still sees Approved.",
+      "probes": [
+        "trusted_tool_revocation_fails_after_proposer_disconnect",
+        "trusted_tool_revocation_fails_after_proposer_revocation"
+      ],
+      "safety": "Claim/execution are already denied by live proposer checks. Consumed Unknown must never be relabeled as proof of no execution.",
+      "suggested_followup": "Allow an independently authorized trusted host to terminate unconsumed Proposed/Approved state without requiring the expired/revoked proposer; retain consumed Unknown history."
+    }
+  ],
+  "integration_gaps": [
+    {
+      "id": "REAL_THREAD_STORE_ADAPTER",
+      "status": "OPEN",
+      "summary": "Real Codex ThreadStore/LiveThread callers do not consume the new profile; old qualification append/persist are unsupported.",
+      "sources": [
+        {
+          "path": "/workspace/morrow/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/core/src/session/mod.rs",
+          "bytes": 210371,
+          "sha256": "aa75ddc17c151ef8bde8f0a66f016b65fb8044f83cca934ab4bfb4fb6c35c28f",
+          "line": 4537,
+          "excerpt": "    pub(crate) async fn persist_rollout_items(&self, items: &[RolloutItem]) -> bool {"
+        },
+        {
+          "path": "/workspace/morrow/companions/morrow-codex/qualification/p02-integration-004/src/store.rs",
+          "bytes": 11638,
+          "sha256": "0cae9c6b683b53417df7c832ca3aa43e4778cf2b2c65e82c5b2c4756bb4fe3ca",
+          "line": 150,
+          "excerpt": "            Err(ThreadStoreError::Unsupported {"
+        }
+      ]
+    },
+    {
+      "id": "REAL_EXEC_BACKEND_AND_APPROVAL_BRIDGE",
+      "status": "OPEN",
+      "summary": "No current adapter maps real ExecBackend start to the new reviewed admission, trusted approve/permit handoff, Claim, one-shot callback and Report.",
+      "sources": [
+        {
+          "path": "/workspace/morrow/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/core/src/unified_exec/process_manager.rs",
+          "bytes": 74246,
+          "sha256": "a97c62c227838b4484df6fa481dc0cbe8e24bc3e5d5de590403ca17fea473b4f",
+          "line": 1362,
+          "excerpt": "                None => backend.start(params).await,"
+        },
+        {
+          "path": "/workspace/morrow/companions/morrow-codex/qualification/p02-integration-004/src/exec.rs",
+          "bytes": 6098,
+          "sha256": "3082b2591541ac9554af8128dc370daea6d20e6420adc7b7989b926b5fd6428c",
+          "line": 43,
+          "excerpt": "impl ExecBackend for Boundary {"
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "bytes": 29022,
+          "sha256": "da49786f2b28960fda0ba65b8c28b01d94febe3ee71b3a13fd16246329f70455",
+          "line": 709,
+          "excerpt": "    pub fn approve("
+        }
+      ]
+    },
+    {
+      "id": "PACKAGE_IMPORT_NATIVE_ROUTE",
+      "status": "OPEN",
+      "summary": "Production package declarations, runtime import/factory, profile discovery and old native dispatch do not route the new profile. Trusted admit arguments are not a package review bridge.",
+      "sources": [
+        {
+          "path": "/workspace/morrow/core/src/plugin_package.rs",
+          "bytes": 31039,
+          "sha256": "34140e680b2716c37a1fc78ca6e7d4c98b6d87cd6eab48c6ef38b2ec38da67f2",
+          "line": 300,
+          "excerpt": "            || manifest.required_features.iter().any(|f| {"
+        },
+        {
+          "path": "/workspace/morrow/plugin_runtime/src/lib.rs",
+          "bytes": 30058,
+          "sha256": "448de1c7195a4c01a3b6f6fa235298c60fcdf214aa3501a02efd7a4cb1073676",
+          "line": 281,
+          "excerpt": "            let arity = match (import.module(), import.name()) {"
+        },
+        {
+          "path": "/workspace/morrow/plugin_runtime/src/package.rs",
+          "bytes": 13818,
+          "sha256": "5d38a26b2de23e8e6c649a5a2a725294c4ed1937fa01d3be74de7e7811406344",
+          "line": 35,
+          "excerpt": "        let dependency = package"
+        },
+        {
+          "path": "/workspace/morrow/workbench_host/src/sdk_profiles.rs",
+          "bytes": 39763,
+          "sha256": "7e65cd0ce6a8f4c5a856f16b889855036f3e31b18eebf8b205251ef3b45d2efa",
+          "line": 379,
+          "excerpt": "        \"profiles\": [io_profile(), service_profile(), service_resources_profile(), mutation_profile()]"
+        },
+        {
+          "path": "/workspace/morrow/native_session_owner_002/src/lib.rs",
+          "bytes": 22267,
+          "sha256": "ff4bcb2cea6bbb0c9d466d1896a274c2f420c036df409b02bd1de3f7161bd4b2",
+          "line": 506,
+          "excerpt": "                        }else if frame.kind==Kind::Close {reason=25;}"
+        },
+        {
+          "path": "/workspace/morrow/native_session_stream_001/src/supervisor.rs",
+          "bytes": 60872,
+          "sha256": "be217fd6a73ea823763dd4ddb645a59e69dc341c4977f78d20eecf927049d70f",
+          "line": 388,
+          "excerpt": "    fn handle_control(&mut self, f: w::Frame) -> Result<()> {"
+        }
+      ]
+    },
+    {
+      "id": "CONTROLLED_FIXED_INPUT_EXECUTOR",
+      "status": "OPEN",
+      "summary": "The SDK callback contract assigns artifact handle validation, isolation, input delivery, timeout and bounded output to a trusted adapter; the printf fixture is not that production adapter.",
+      "sources": [
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/README.md",
+          "bytes": 8326,
+          "sha256": "aea3dee32f7aa8e8a21968a1a1ae1b93eb9269f0521812d40bc8f1a663ab7798",
+          "line": 53,
+          "excerpt": "The executor callback is an explicitly trusted execution-domain adapter. It"
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/tests/safe_exec.rs",
+          "bytes": 31951,
+          "sha256": "86c596fafa7862098706aa5b4f1deec8db7c7e8b8eeb2a77abbcf53e0f32a4b3",
+          "line": 1067,
+          "excerpt": "                if hash(&std::fs::read(&intent.program).map_err(|_| Error::Storage)?)"
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "bytes": 29022,
+          "sha256": "da49786f2b28960fda0ba65b8c28b01d94febe3ee71b3a13fd16246329f70455",
+          "line": 776,
+          "excerpt": "    pub fn execute_claimed("
+        }
+      ]
+    },
+    {
+      "id": "CONSUMABLE_SDK_DISTRIBUTION",
+      "status": "OPEN",
+      "summary": "Existing SDK export excludes this experimental crate, which uses a Core path dependency. The 237-input local source pin is not a portable SDK package or executable-input closure.",
+      "sources": [
+        {
+          "path": "/workspace/morrow/tool/package_plugin_sdk.py",
+          "bytes": 33620,
+          "sha256": "e617305ccc5b298a9f6d7e6ba8bf27eab2131129ceb2121cc15dc77899e87b15",
+          "line": 25,
+          "excerpt": "STARTERS = ('task', 'transform', 'ui', 'dependency-caller', 'io', 'service', 'service-http', 'channel', 'channel-directory')"
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/Cargo.toml",
+          "bytes": 452,
+          "sha256": "7dd60842c5186c8d3cbb4139c2381b9d2081b198dbf08c4648eb5c13f858c549",
+          "line": 1,
+          "excerpt": "[workspace]"
+        },
+        {
+          "path": "/workspace/morrow/tool/verify_session_exec_freeze.py",
+          "bytes": 19092,
+          "sha256": "a7b922cd9928cbd3c1142e79fccc5f77a15fedb4c1e558ee9f79260ac4f2bcdb",
+          "line": 264,
+          "excerpt": "        if record[\"cwd\"] != str(root) or type(record[\"exit_code\"]) is not int or record[\"exit_code\"] != 0:"
+        }
+      ]
+    }
+  ],
+  "production_profile_search": [
+    {
+      "crate": "plugin_runtime",
+      "searched_source_files": 62,
+      "profile_reference_matches": []
+    },
+    {
+      "crate": "workbench_host",
+      "searched_source_files": 109,
+      "profile_reference_matches": []
+    },
+    {
+      "crate": "native_session",
+      "searched_source_files": 3,
+      "profile_reference_matches": []
+    },
+    {
+      "crate": "native_session_owner_002",
+      "searched_source_files": 4,
+      "profile_reference_matches": []
+    },
+    {
+      "crate": "native_session_stream_001",
+      "searched_source_files": 19,
+      "profile_reference_matches": []
+    }
+  ],
+  "confirmed_boundaries": [
+    {
+      "name": "Report does not depend on original proposer",
+      "source": [
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 637
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 682
+        }
+      ],
+      "probes": [
+        "report_still_succeeds_after_original_proposer_is_revoked",
+        "callback_crossing_only_proposer_expiry_can_be_factually_reported"
+      ],
+      "result": "Both accepted Reported with original executor still live. The old proposer-dependency concern is absent in current source."
+    },
+    {
+      "name": "Unknown observation can be read under fresh authority without restoring execution",
+      "source": [
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 357
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 700
+        }
+      ],
+      "probe": "recorded_unknown_after_executor_expiry_is_readable_but_new_authority_cannot_accept_it",
+      "result": "Persisted complete observations are readable; a fresh executor cannot submit Report as the original executor. This is a documented recovery boundary; final phase reconciliation needs a distinct host interface if desired."
+    },
+    {
+      "name": "Winning Claim receipt loss and old-token restoration",
+      "source": [
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 608
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 622
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/safe_exec.rs",
+          "line": 789
+        }
+      ],
+      "result": "Source audit: Claim is consumed before reply, duplicates are denied, callback marker prevents reentry, new issuer/admission cannot restore historical execution. Losing the winning receipt therefore leaves Unknown with no replay/recovery receipt API. This is fail-closed behavior, not an execution bypass."
+    },
+    {
+      "name": "Store owner pin lasts until original Store closes",
+      "source": [
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/README.md",
+          "line": 62
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/authority.rs",
+          "line": 93
+        }
+      ],
+      "probe": "dropping_adapter_does_not_release_store_pin",
+      "result": "Confirmed documented limitation; SessionExecHost drop does not release the original Store owner pin."
+    },
+    {
+      "name": "Service resource revocation also invalidates profile all-writes lease",
+      "source": [
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/authority.rs",
+          "line": 93
+        },
+        {
+          "path": "/workspace/morrow/core/src/store/service_authority_lock/epochs.rs",
+          "line": 62
+        },
+        {
+          "path": "/workspace/morrow/core/src/store/service_config.rs",
+          "line": 224
+        }
+      ],
+      "probe": "unrelated_service_resource_revocation_disables_entire_profile_host",
+      "result": "Confirmed: unrelated Configuration revocation makes the current adapter Inspect/admit/revoke_tool return Denied. Lifecycle coupling/owner-lease re-resolution must be considered; no unauthorized operation occurs."
+    },
+    {
+      "condition": "Seal parent at tail 1, then append event 2; fork at historical parent_tail 1 conflicts.",
+      "reason": "The frozen basic profile deliberately requires the parent checkpoint and current parent tail to equal parent_tail. Historical checkpoint selection is outside this frozen interface.",
+      "observed": "FORK_OLD_SEALED_TAIL outcome=Rejected(Conflict)"
+    }
+  ],
+  "explicitly_deferred": [
+    "PTY",
+    "interactive stdin",
+    "output-byte streaming",
+    "resize",
+    "signal",
+    "terminate"
+  ],
+  "unverified_qualification": [
+    "production transport",
+    "production OS sandbox",
+    "Windows owner",
+    "ProtectedSession",
+    "GUI approval",
+    "C/C++ consumers",
+    "full SDK26"
+  ],
+  "evidence": {
+    "session": {
+      "path": "/workspace/morrow/build/session-exec-audit-v1/session-findings.json",
+      "bytes": 7303,
+      "sha256": "601752c5764630549714ea5faefd70dd7f08403cfe56ca23868bdf31a9a49ac9"
+    },
+    "execution_and_authority": {
+      "path": "/workspace/morrow/build/session-exec-audit-v1/execution-findings.json",
+      "bytes": 17623,
+      "sha256": "98562835ff9bce13f280a549b0f59cf28655a88ba6d710fbfbb1b60aa962bb53"
+    },
+    "referenced_file_identities_checked": 36,
+    "session_archived_sources": [
+      {
+        "path": "/workspace/morrow/build/session-exec-audit-v1/repro/session/Cargo.toml",
+        "bytes": 308,
+        "sha256": "bd3cc08cda2cf20db09afbe69ddff096483446d9e465ebddc5a9ae461dd77c59"
+      },
+      {
+        "path": "/workspace/morrow/build/session-exec-audit-v1/repro/session/Cargo.lock",
+        "bytes": 24626,
+        "sha256": "6e3e661406a14d9c70a7d60164cc5c2a0d35bfb50d589f5903c75425a8c3834d"
+      },
+      {
+        "path": "/workspace/morrow/build/session-exec-audit-v1/repro/session/src/main.rs",
+        "bytes": 4575,
+        "sha256": "5c0cb945a844aa6b1182d60345f6423c1e3aac1064d2591ae85b8c87a5f5f160"
+      }
+    ],
+    "session_consumer_exit_code": 0,
+    "session_expected_observation_lines": 6,
+    "session_actual_observation_lines_matched": 6,
+    "independent_rust_probe_counts": {
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 0
+    },
+    "probe_pass_meaning": "The missing behavior was reproduced, not fixed. Existing 81 formal tests were not reexecuted during this audit.",
+    "final_pin_check": {
+      "command": [
+        "python3",
+        "tool/verify_session_exec_freeze.py",
+        "--baseline",
+        "reports/reconstruction-2026-10-05/session-exec-v1-freeze.json",
+        "--expected-pin",
+        "2e958fde445c37671f3100e1f880875fe4d8c9173a7014519494a55f1b9c33f5",
+        "--json"
+      ],
+      "cwd": "/workspace/morrow",
+      "exit_code": 0,
+      "stdout": {
+        "path": "/workspace/morrow/build/session-exec-audit-v1/final-pin-check.stdout.json",
+        "bytes": 764,
+        "sha256": "b9729a092f0d0edadfda467967b81e0e95a265257858ff3c89a02a9717918c9c"
+      },
+      "stderr": {
+        "path": "/workspace/morrow/build/session-exec-audit-v1/final-pin-check.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "observed": {
+        "contract": {
+          "crate_version": "0.1.0-experimental.1",
+          "revision": 1,
+          "schema_path": "extensions/agent-session-exec-v1/contracts/session_exec.capnp",
+          "schema_sha256": "0271ddda25e2a4a5246ea4c660956cc515b8abbea554142d45692fd7e40ffa19",
+          "version": 1
+        },
+        "current_reexecution": false,
+        "evidence_execution_repeated": false,
+        "execution_extensions_deferred": true,
+        "manifest_sha256": "2e958fde445c37671f3100e1f880875fe4d8c9173a7014519494a55f1b9c33f5",
+        "os_sandbox_verified": false,
+        "production_transport_verified": false,
+        "profile": "agent-session-exec-v1",
+        "recorded_tests_verified": 81,
+        "reviewer_authenticated": false,
+        "schema_version": 1,
+        "scope": [
+          "session",
+          "safe-exec-basic"
+        ],
+        "sdk26_frozen": false,
+        "source_files_verified": 237,
+        "status": "local_contract_frozen"
+      }
+    }
+  },
+  "runtime_limits": [
+    {
+      "id": "PERSISTENT_LEDGER_LIFETIME_CAPACITY",
+      "kind": "documented_limit_with_missing_retention_contract",
+      "summary": "128 retained ledger rows shared by all domains. Each new session or tool proposal consumes one row; terminal reports, revocation, Archive, compact and restart do not release it. At least one session leaves at most 127 tool proposals, before other domains. Existing rows can still be updated at capacity.",
+      "sources": [
+        {
+          "path": "/workspace/morrow/core/src/store/agent_ledger.rs",
+          "bytes": 7281,
+          "sha256": "480146fbc2914f55e717e33d45a56312ea8fd07a46f885068dc6da3229a3e817",
+          "line": 145,
+          "excerpt": "        let count: i64 ="
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/README.md",
+          "bytes": 8326,
+          "sha256": "aea3dee32f7aa8e8a21968a1a1ae1b93eb9269f0521812d40bc8f1a663ab7798",
+          "line": 82,
+          "excerpt": "budget; there are at most 128 ledger rows across all domains."
+        }
+      ],
+      "required_followup": "Reviewed bounded retirement/deletion and retained anti-replay identities; do not delete Unknown or consumed history just to recover execution capacity."
+    },
+    {
+      "id": "PROFILE_ALL_WRITES_LEASE_COUPLING",
+      "kind": "confirmed_owner_lifecycle_limit",
+      "summary": "Unrelated Configuration resource revocation makes the original profile Inspect/revoke_tool fail closed. The consumer directly calls Core revoke_resource; service configuration updates invoke that control.",
+      "sources": [
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/authority.rs",
+          "bytes": 9141,
+          "sha256": "e2655ccad1fc2d8d773390f57a6c5950e71370e831a92214761cbf9803e5be8c",
+          "line": 93,
+          "excerpt": "        let lease = runtime"
+        },
+        {
+          "path": "/workspace/morrow/core/src/store/service_authority_lock/epochs.rs",
+          "bytes": 2716,
+          "sha256": "0ad5a9868e26e6103b870e212830a5d2a6f3926dbe9fa2403b63f85219f0816f",
+          "line": 62,
+          "excerpt": "    pub(super) fn revoke(&mut self, key: &ServiceAuthorityResource) {"
+        },
+        {
+          "path": "/workspace/morrow/core/src/store/service_config.rs",
+          "bytes": 11172,
+          "sha256": "8e1f9e34f318bf78a1ecb3ac6733c13d0de409a80e1cc8cbd8eb386726c70788",
+          "line": 224,
+          "excerpt": "        self.service_authority_coordinator"
+        }
+      ],
+      "evidence": "unrelated_service_resource_revocation_disables_entire_profile_host",
+      "required_followup": "Define profile owner lease isolation or explicitly authorized re-resolution without restoring historical execution authority."
+    }
+  ],
+  "thread_store_alignment": {
+    "source": {
+      "path": "/workspace/morrow/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/thread-store/src/store.rs",
+      "bytes": 20323,
+      "sha256": "ca98fcc2e652a9ab88c9ce467169a3542f460c30c57c40a7e3fdd1ca237f2cba",
+      "line": 93,
+      "excerpt": "pub trait ThreadStore: Any + Send + Sync {"
+    },
+    "no_extra_wire_required": {
+      "create_resume_append": "Create/OpenWriter/Append with typed opaque events.",
+      "persist_flush": "Wait for durable Append receipts plus adapter queue barriers.",
+      "shutdown_discard": "Close adapter queues and revoke a dedicated writer admission; retain durable history.",
+      "load_history_read_thread": "Snapshot paging and typed metadata projection; gap requires an adequate complete baseline or explicit refusal.",
+      "list_threads": "Adapter sort/filter/cursor over the finite nominated set, not global store discovery.",
+      "update_metadata": "Append a typed metadata patch and optionally seal a new tail.",
+      "archive_unarchive": "Reversible logical metadata projection, not irreversible SDK Archive."
+    },
+    "unmapped_required_behavior": {
+      "method": "delete_thread",
+      "summary": "Successful upstream deletion includes persisted rollout history, metadata and associated state. Archive/compact retain checkpoint, event identities and raw request receipts; pretending success is invalid.",
+      "sources": [
+        {
+          "path": "/workspace/morrow/companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/thread-store/src/store.rs",
+          "bytes": 20323,
+          "sha256": "ca98fcc2e652a9ab88c9ce467169a3542f460c30c57c40a7e3fdd1ca237f2cba",
+          "line": 534,
+          "excerpt": "    /// Deletes a thread's persisted rollout data and associated metadata."
+        },
+        {
+          "path": "/workspace/morrow/extensions/agent-session-exec-v1/src/session.rs",
+          "bytes": 21724,
+          "sha256": "f8fd8efce10600a358196949a818584df656eb77d749544c987ced9f910ebff1",
+          "line": 485,
+          "excerpt": "                state.receipts.push(PReceipt {"
+        }
+      ],
+      "required_followup": "A separately reviewed physical cleanup/anti-replay contract, or explicit Unsupported until it is implemented."
+    }
+  }
+}

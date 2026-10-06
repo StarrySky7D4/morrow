@@ -1,6 +1,7 @@
 //! Static admission and legacy isolation for the opt-in directory request ABI.
 //! No native selection, Store, account, protected Session or product qualification.
-#![cfg(all(feature = "packages", windows))]
+//! These checks are platform-independent; they never drive a native directory owner.
+#![cfg(feature = "packages")]
 
 use morrow_core::plugin_package::{self, Package, io, proto};
 use morrow_plugin_runtime::{Cancellation, Fault, Limits, Runner, package::PreparedPackage};

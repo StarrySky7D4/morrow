@@ -131,6 +131,7 @@ fn unsafe_sidecar_is_rejected_before_database_creation() {
         .tempdir()
         .unwrap();
     fs::write(dir.path().join("new.db-wal"), b"unsafe").unwrap();
+    fs::set_permissions(dir.path().join("new.db-wal"), fs::Permissions::from_mode(0o644)).unwrap();
     assert!(SqlitePermissions::prepare(&dir.path().join("new.db"), true).is_err());
     assert!(!dir.path().join("new.db").exists());
     let anchored = PrivateDirectory::open(dir.path(), false).unwrap();

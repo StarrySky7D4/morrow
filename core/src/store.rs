@@ -16,6 +16,9 @@ mod binding;
 mod changes_metadata;
 #[cfg(not(target_arch = "wasm32"))]
 pub use changes_metadata::{ChangesBatch, ChangesBudget, ChangesStart, ChangesStoreBinding, ChangesWindow};
+mod agent_ledger;
+pub use agent_ledger::MAX_RECORDS as MAX_AGENT_LEDGER_RECORDS;
+pub use agent_ledger::{AgentLedgerMutation, MAX_MUTATIONS as MAX_AGENT_LEDGER_MUTATIONS};
 mod channel_journal;
 pub use channel_journal::{ChannelCheckpoint, ChannelAckReceipt, ChannelCommit, MAX_CHANNEL_RECEIPTS};
 mod card_snapshot;
@@ -50,7 +53,7 @@ mod service_request;
 pub use binding::{AuditBinding, AuditBindingState};
 pub use io_evidence::IoMaterialReservation;
 pub use service_authority_lock::{
-    ServiceAuthorityControl, ServiceAuthorityLease, ServiceAuthorityResource,
+    AgentLedgerOwnerLease, ServiceAuthorityControl, ServiceAuthorityLease, ServiceAuthorityResource,
 };
 mod read_archive;
 mod read_archive_budget;
@@ -68,7 +71,7 @@ const BASE_SCHEMA: &str = "CREATE TABLE cards (id TEXT PRIMARY KEY, payload BLOB
                 CREATE TABLE outbox (sequence INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE NOT NULL REFERENCES operations(id), payload BLOB NOT NULL) STRICT;
                 PRAGMA application_id=1297044050; PRAGMA user_version=4;";
 /// Latest supported persistent Store schema; historical feature floors stay fixed.
-pub const SCHEMA_VERSION: i64 = 24;
+pub const SCHEMA_VERSION: i64 = 25;
 #[derive(Clone, Copy)]
 pub struct EventBudget {
     pub max_count: u32,
@@ -176,6 +179,7 @@ fn capacity_room(
             .saturating_add(tls_identity::accounted(c)?)
             .saturating_add(file_content::accounted(c)?)
             .saturating_add(channel_journal::accounted(c)?)
+            .saturating_add(agent_ledger::accounted(c)?)
             .saturating_add(incoming_bytes)
             > budget.max_bytes
     {
@@ -493,6 +497,19 @@ impl Store {
     }
     pub fn validate_service_authority(&self, lease: &ServiceAuthorityLease) -> Result<()> {
         self.service_authority_coordinator.validate(lease)
+    }
+    /// Pin the original file-backed Store for generic ledger coordination.
+    /// Configuration-specific revocation preserves this independent owner.
+    pub fn pin_agent_ledger_owner(&mut self) -> Result<AgentLedgerOwnerLease> {
+        self.service_authority_coordinator.pin_ledger_owner()
+    }
+    pub fn validate_agent_ledger_owner(&self, lease: &AgentLedgerOwnerLease) -> Result<()> {
+        self.service_authority_coordinator.validate_ledger_owner(lease)
+    }
+    /// Close every ledger owner issued in this original Store epoch. A fresh
+    /// host must resolve a new owner; this never renews an existing lease.
+    pub fn invalidate_agent_ledger_owner(&self, lease: &AgentLedgerOwnerLease) -> Result<()> {
+        self.service_authority_coordinator.invalidate_ledger_owner(lease)
     }
     pub fn service_authority_control(&self) -> ServiceAuthorityControl {
         self.service_authority_coordinator.control()
@@ -905,6 +922,16 @@ impl Store {
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("channel-journal-migration-after-commit");
         }
+        if version < 25 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(agent_ledger::SCHEMA))?;
+            sql(tx.pragma_update(None, "user_version", 25))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("agent-ledger-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("agent-ledger-migration-after-commit");
+        }
         // Rebuildable SQLite access index; no business-payload change.
         sql(connection.execute_batch(read_archive_budget::INDEX))?;
         sql(connection.pragma_update(None, "foreign_keys", true))?;
@@ -1219,6 +1246,7 @@ impl Store {
         file_content::verify_schema(snapshot)?;
         file_content_receipt::verify_schema(snapshot)?;
         channel_journal::verify_schema(snapshot)?;
+        agent_ledger::verify_schema(snapshot)?;
         service_config::verify_schema(snapshot)?;
         service_authority::verify_schema(snapshot)?;
         outbound_authority::verify_schema(snapshot)?;

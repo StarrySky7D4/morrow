@@ -1,0 +1,422 @@
+{
+  "schema": "morrow-session-safe-exec-r2-validation-v1",
+  "date_utc": "2026-10-05",
+  "branch": "codex/windows-sdk-convergence-20261005",
+  "incremental_baseline": "679e16a6a44f8aac13f85da05204d9cd8afb30b8",
+  "status": "local_session_safe_exec_basic_repaired_frozen_and_independently_reviewed",
+  "scope": [
+    "session",
+    "safe-exec-basic"
+  ],
+  "contract": {
+    "crate_version": "0.1.0-experimental.2",
+    "revision": 2,
+    "schema_path": "extensions/agent-session-exec-v1-r2/contracts/session_exec.capnp",
+    "schema_sha256": "f905eaed5107bebc9612a9dede757fa54ce674f13120adce31ed331cf7557685",
+    "version": 1
+  },
+  "bounds": {
+    "execution_extensions_deferred": true,
+    "os_sandbox_verified": false,
+    "production_transport_verified": false,
+    "sdk26_frozen": false
+  },
+  "repaired_original_findings": [
+    "session_control_receipt_and_byte_reserves",
+    "reported_monotonic_observations",
+    "unknown_late_fact_reconciliation_without_replay",
+    "expired_revoked_disconnected_admission_reclamation",
+    "trusted_host_finalization_after_proposer_leaves",
+    "successful_snapshot_rejects_cursor_beyond_tail"
+  ],
+  "additional_overall_review_repairs": [
+    "active_owner_blocks_generic_cas",
+    "exclusive_trusted_owner_replacement_and_global_commit_guard",
+    "startup_metadata_business_row_revision_digest_generation_closure",
+    "executor_retains_leader_pid_and_bounded_cleanup_outside_sdk_lock",
+    "codex_writer_cleanup_on_initialization_and_checkpoint_failures",
+    "codex_pending_identity_and_checkpoint_metadata_capacity",
+    "codex_large_event_pagination_fits_frame"
+  ],
+  "formal_actual_execution": {
+    "rust_tests": 156,
+    "groups": {
+      "codec": 48,
+      "core:agent_ledger": 11,
+      "core:agent_ledger_owner_batch": 11,
+      "host:fixed_executor": 7,
+      "host:package_route": 4,
+      "r2:authority": 6,
+      "runtime:bounds": 11,
+      "runtime:task_bounds": 2,
+      "runtime:task_failures": 3,
+      "safe_exec": 29,
+      "session": 24
+    },
+    "python_tests": 32,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0,
+    "external_codex_tests": 2,
+    "external_scope": "actual_thread_store_positive_and_actual_exec_denial_only",
+    "external_full_upstream_graph_source_closed": false,
+    "recorded_commands": 19,
+    "actual_commands_including_preparation": 21,
+    "independent_consumer_compilations": 1,
+    "source_files": 573,
+    "source_before_after_equal": true,
+    "summary": {
+      "path": "build/session-exec-r2-final-reviewed/pipeline-summary.json",
+      "sha256": "669d5dc1d59e5aef1af772d6ce84ce6be43a682e427c30d462093a8ae14bbff7",
+      "bytes": 28568
+    },
+    "preparation_validation": {
+      "path": "build/session-exec-r2-final-reviewed/validation.json",
+      "sha256": "964f36cf11ff8241104b9ef139fc307a90618a2725e3266c04b608476a67a58f",
+      "bytes": 168956
+    },
+    "source_before": {
+      "path": "build/session-exec-r2-final-reviewed/source-before.json",
+      "sha256": "80f26f975cd07de81e79212a034fe13f6f622fe1456cc03363c7beb9812c3803",
+      "bytes": 62796
+    },
+    "source_after": {
+      "path": "build/session-exec-r2-final-reviewed/source-after.json",
+      "sha256": "80f26f975cd07de81e79212a034fe13f6f622fe1456cc03363c7beb9812c3803",
+      "bytes": 62796
+    },
+    "execution_inputs": {
+      "path": "build/session-exec-r2-final-reviewed/execution-inputs.json",
+      "sha256": "79f5739bce659d03c16506d20149d049697a120001a0d095f5342617ce148c1b",
+      "bytes": 2136
+    },
+    "runner": {
+      "path": "build/session-exec-r2-final-reviewed/runner.py",
+      "sha256": "acec5ca6510dbe0db6cf02c0e22be9b0dbb40c4808c774bb603284980c6c50f2",
+      "bytes": 21623
+    },
+    "actual_host_fixture": {
+      "path": "/workspace/morrow/build/codex-session-exec-r2-host-target/debug/morrow-codex-r2-host-fixture",
+      "resolved_path": "/workspace/morrow/build/codex-session-exec-r2-host-target/debug/morrow-codex-r2-host-fixture",
+      "sha256": "d2bd4d2dad447263ab9c531b336801dc70efef0ad64134b8c3f59175620a8e4e"
+    }
+  },
+  "freeze": {
+    "baseline": {
+      "path": "reports/reconstruction-2026-10-05/session-exec-v1-r2-freeze.json",
+      "sha256": "7c86d0cfa2f5714bbaae7031a1526a08ed61a48068f3210258d4002d33aa2e6f",
+      "bytes": 236774
+    },
+    "reviewed_pin": "7c86d0cfa2f5714bbaae7031a1526a08ed61a48068f3210258d4002d33aa2e6f",
+    "pin_file": {
+      "path": "reports/reconstruction-2026-10-05/session-exec-v1-r2-freeze.sha256",
+      "sha256": "2a99d6bf04ff2306c6fb9268ea04463a70ff3d30ad040ec13235d0980e684376",
+      "bytes": 65
+    },
+    "source_archive": {
+      "path": "reports/reconstruction-2026-10-05/session-exec-v1-r2-source.tar.gz",
+      "sha256": "59a1a276a6e432a9bfa78c42e2b7bbe81f21e236579de5890fa96ce0593fbb8b",
+      "bytes": 2180936
+    },
+    "archive_members": 617,
+    "portable_archive_verified": true,
+    "root_verification": {
+      "path": "build/session-exec-r2-final-reviewed/freeze-verification.json",
+      "sha256": "31acc132604178bb6f47167660724ecd23a793608d03387c4a96be8439a8f5e3",
+      "bytes": 2602
+    },
+    "portable_verification": {
+      "path": "build/session-exec-r2-final-reviewed/portable-archive-verification.json",
+      "sha256": "47edc1d8258468c52a5418851a01028d881d886c43e8aa7ec99f97b4c6f8ac5b",
+      "bytes": 2735
+    },
+    "independent_pin_review": {
+      "path": "build/session-exec-r2-final-reviewed/independent-review/result.json",
+      "sha256": "3ba290d99d6eb8e42421c05693aba63f60a878d9cf2ed05a1543cb9f18e7062c",
+      "bytes": 723
+    },
+    "independent_archive_review": {
+      "path": "build/session-exec-r2-final-reviewed/independent-review/archive-result.json",
+      "sha256": "0a3068161d9983567b1ee9d0831a9e293ff780d3a7e4939b556d3f203cff24a9",
+      "bytes": 922
+    },
+    "reviewer_authenticated": false,
+    "verification_reruns_cargo": false,
+    "after_documentation_verification": {
+      "path": "build/session-exec-r2-final-reviewed/after-docs-verification.json",
+      "sha256": "a60496ec45f31d0b2cbd0d804aa17206b571af5858dcf0b723454541d5cc87f5",
+      "bytes": 2347
+    }
+  },
+  "supplementary_actual_execution": {
+    "quality": {
+      "path": "build/session-exec-r2-quality-final2/evidence.json",
+      "sha256": "b75d9fbb9aaa166ae97be143974f96e6de668b96f489410c0a1c0529b83a522b",
+      "bytes": 13824
+    },
+    "client_codec_tests": 47,
+    "client_only_wasm_compile_passed": true,
+    "new_sdk_and_host_strict_clippy_passed": true,
+    "owned_format_and_diff_checks_passed": true,
+    "runtime_clippy_qualified": false,
+    "batch_fault_group": {
+      "passed": 12,
+      "failed": 0,
+      "ignored_child_harnesses": 1,
+      "parent_executed_child": 2,
+      "actual_child_exit": 86,
+      "boundaries": [
+        "agent-ledger-batch-before-commit",
+        "agent-ledger-batch-after-commit"
+      ],
+      "includes_11_already_credited_formal_cases": true
+    },
+    "old_content_regression": {
+      "path": "build/session-exec-r2-content-regression/evidence.json",
+      "sha256": "8fb5eb612a01647c23d0f67e2c5ec7c024e2bbc844a7d22cfe226dc13ba6c73c",
+      "bytes": 2045
+    },
+    "old_content_tests": 60,
+    "old_content_source_inputs": 143,
+    "compatibility": {
+      "path": "build/session-exec-r2-evidence/compatibility-final.json",
+      "sha256": "123e0ce42511bade854a265e4b4eebc4529a8a2d151054c84f84e2a4be4532ca",
+      "bytes": 1231
+    },
+    "frozen_originals": 57,
+    "r1_live_crate_files_unchanged": 12,
+    "historical_r1": {
+      "archive_sha256": "c8ca0b529f3cc33177b36a7a3c396f42168a4303532f0a93ce28fd6aa3970d0c",
+      "baseline_sha256": "2e958fde445c37671f3100e1f880875fe4d8c9173a7014519494a55f1b9c33f5",
+      "path": "reports/reconstruction-2026-10-05/session-exec-v1-r1-source.tar.gz",
+      "recorded_tests_verified": 81,
+      "source_files_verified": 237
+    },
+    "input_and_log_sha256": {
+      "build/session-exec-r2-quality-final2/commands.json": "091d6efe0d3ca0fcd2b817cef2cf0fc3e40a67e72055958f825a3c5adf77ed62",
+      "build/session-exec-r2-quality-final2/evidence.json": "b75d9fbb9aaa166ae97be143974f96e6de668b96f489410c0a1c0529b83a522b",
+      "build/session-exec-r2-quality-final2/logs/batch-crash.stderr.log": "3af5e2d2a40cf1bd3817fd81c992d5b5eeaa75e7be96deab7d3276f18f089027",
+      "build/session-exec-r2-quality-final2/logs/batch-crash.stdout.log": "93b5583517be01b3812ac90e42d895da28e58026614991d2195284452b501ff3",
+      "build/session-exec-r2-quality-final2/logs/client-codec.stderr.log": "78e9a54641026215ae4d246fdd47b680589e35330b74b8dff8bae9ed81366ca4",
+      "build/session-exec-r2-quality-final2/logs/client-codec.stdout.log": "ce4542daa43438375c45efac357726198f625200f2b01297ce47f60499396ca2",
+      "build/session-exec-r2-quality-final2/logs/diff-check.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-quality-final2/logs/diff-check.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-quality-final2/logs/host-clippy.stderr.log": "329d3497bf1e8c3d02d6f20549cc0b7eae05beeb2a074219a7f99fecf8677b19",
+      "build/session-exec-r2-quality-final2/logs/host-clippy.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-quality-final2/logs/host-fmt.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-quality-final2/logs/host-fmt.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-quality-final2/logs/runtime-fmt.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-quality-final2/logs/runtime-fmt.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-quality-final2/logs/sdk-clippy.stderr.log": "738e8d51b39dab4d49281ddb5e218f1a380c8bd18058c5f39e1affa5152bc0a3",
+      "build/session-exec-r2-quality-final2/logs/sdk-clippy.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-quality-final2/logs/sdk-fmt.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-quality-final2/logs/sdk-fmt.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-quality-final2/logs/wasm-client.stderr.log": "99f71393b9903dca098310bb446022a4bdee195ea9996f351a787195555210a6",
+      "build/session-exec-r2-quality-final2/logs/wasm-client.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-quality-final2/runner.py": "266ccd0456cb78e1e4084e80ac25078d1eadbcabdb78718983788bdde87d457c",
+      "build/session-exec-r2-quality-final2/source-after.json": "12aa0635d8a305a5b06235afe3bd178608580d6b04ed1030e0f71788b945573b",
+      "build/session-exec-r2-quality-final2/source-before.json": "12aa0635d8a305a5b06235afe3bd178608580d6b04ed1030e0f71788b945573b",
+      "build/session-exec-r2-content-regression/evidence.json": "8fb5eb612a01647c23d0f67e2c5ec7c024e2bbc844a7d22cfe226dc13ba6c73c",
+      "build/session-exec-r2-content-regression/inputs-after.json": "dda5c8e0d8ebd2ec3b7fcf79580fdb54dfdf7c6bb5148a8811289799286422fe",
+      "build/session-exec-r2-content-regression/inputs-before.json": "dda5c8e0d8ebd2ec3b7fcf79580fdb54dfdf7c6bb5148a8811289799286422fe",
+      "build/session-exec-r2-content-regression/stderr.log": "83ec933cc776f2f18fe39b1e2b000832de29330bacff42045a28d80df865dca0",
+      "build/session-exec-r2-content-regression/stdout.log": "fed3f75bcae00db7d0f40bf84cfdf85e98ab066e2d4b154454db82e3aaff8f18",
+      "build/session-exec-r2-session-final/result.json": "2eff9be6f6efb6302c9a7665e793e6effb59e064375038c98f68b69a46d0a70c",
+      "build/session-exec-r2-session-final/stderr.log": "6d485d0434aadb8744cb6edf3d749d190fb7e7eb023d6c2aa97750d34df4919b",
+      "build/session-exec-r2-session-final/stdout.log": "9a61ed6a933637d5f5ca5ca6dc9ed9506b35c5d3007c7146385e61ca66d5bcc1",
+      "build/session-exec-r2-fixture-env-validation/evidence.json": "8374a26cc55cfa14d27a5006b2cb79af662f37a19cf18ce8e60bd611624a662e",
+      "build/session-exec-r2-fixture-env-validation/stderr.log": "9ef3c056f71730627b24727e517921f9441303b0d72f938d4331df214a3f657d",
+      "build/session-exec-r2-fixture-env-validation/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-host-evidence/clippy-first.log": "725c0a4ab1a5c74c5a936d96f467e87b04a684ad92db63d2fe15c816b2f87024",
+      "build/session-exec-r2-host-evidence/fixed-executor-final.log": "d080cd285d532d1d9c2b6ce8931d93492d6c05cf133a5991bc849f31ff3457a6",
+      "build/session-exec-r2-host-evidence/fixed-executor-final2.log": "dcaff63c3466d9b8f7b2e05a7e59eed1c4cf0447000954f1dd8ab91b81eaeace",
+      "build/session-exec-r2-host-evidence/fixed-executor-first.log": "31398d4b70d8579700d6ac6aa40b8852fcd373714af26cf52c44030587774c85",
+      "build/session-exec-r2-host-evidence/fixed-executor-validation.json": "e833dbef83176fa08e0b1199226851783d77eba74d68c259c705f91a75284b61",
+      "build/session-exec-r2-host-evidence/fmt-first.log": "00057f0ebe186e91fc1f12d6652461c2234e55dbf948c3f616dec072c8e61936",
+      "build/session-exec-r2-host-evidence/fmt-owned.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-host-evidence/host-quality-validation.json": "6401e224e8f2b9789c56c713219b5eba0f0f6552dd45d3ea77f294c792a104ca",
+      "build/session-exec-r2-evidence/compatibility-final.json": "123e0ce42511bade854a265e4b4eebc4529a8a2d151054c84f84e2a4be4532ca",
+      "build/session-exec-r2-evidence/safe-exec-final.log": "df8aefed03d9f1e46c5739bebc63548166038cbb9e13ff1e6259acf28fe0c477",
+      "build/session-exec-r2-evidence/safe-exec-first.log": "e48ba8a737851ccbdf41e61fddc9a64478f73750623f3d17fbc48d9d6e66cbdd",
+      "build/session-exec-r2-evidence/safe-exec-second.log": "1b2c8a3b75826555c5922f07349c279d7d258118ad137d0ad88335b4b9a8cb1f",
+      "build/session-exec-r2-evidence/safe-exec-validation.json": "3e3ecb090ff83879d2519ebda7283458c4fa330a92d04a83406c8726fda5ebc6",
+      "build/session-exec-r2-final-reviewed/independent-review/archive-result.json": "0a3068161d9983567b1ee9d0831a9e293ff780d3a7e4939b556d3f203cff24a9",
+      "build/session-exec-r2-final-reviewed/independent-review/result.json": "3ba290d99d6eb8e42421c05693aba63f60a878d9cf2ed05a1543cb9f18e7062c",
+      "build/session-exec-r2-final-reviewed/independent-review/verify-archive.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-final-reviewed/independent-review/verify-archive.stdout.json": "4ca02f79fd9b9ef1d57aca6466011aad3629501c500eee3bea8e7765f975ba72",
+      "build/session-exec-r2-final-reviewed/independent-review/verify.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "build/session-exec-r2-final-reviewed/independent-review/verify.stdout.json": "809f7e7a746def7be5802b1293e93ba1a65494d109a4b5c17cea56c276814163",
+      "build/session-exec-r2-final-reviewed/exported-host-check/result.json": "89d8466d7cc6c94b0596591ec084821a184ae9bd5cd8c3a6aebc47488b3e08ef",
+      "build/session-exec-r2-final-reviewed/exported-host-check/stderr.log": "09594877ea6c004b3162474b0f76ba233edc1ad8fa98b0a3f8de42a51bf3aef6",
+      "build/session-exec-r2-final-reviewed/exported-host-check/stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "independent_exported_host_library_check": {
+      "path": "build/session-exec-r2-final-reviewed/exported-host-check/result.json",
+      "sha256": "89d8466d7cc6c94b0596591ec084821a184ae9bd5cd8c3a6aebc47488b3e08ef",
+      "bytes": 1304
+    }
+  },
+  "retained_failures": {
+    "diagnoses": [
+      "shared_workspace_target_overwrote_feature_specific_core_rlib_cdylib_fixed_with_separate_targets",
+      "new_owner_guard_correctly_rejected_old_corruption_fixture_fixed_by_direct_sqlite_corruption_without_changing_live_host",
+      "synthetic_gate_fixture_inherited_real_rustc_cc_fixed_by_fixture_environment_isolation_only",
+      "new_runtime_route_unused_mut_removed_intermediate_source_drift_rejected_manifest_final_stable_pipeline_passed",
+      "new_host_fixture_initial_invalid_semver_corrected_to_1_0_0",
+      "transient_missing_shared_validator_and_initial_compile_errors_retained"
+    ],
+    "record_identities": {
+      "build/session-exec-r2-final-pipeline": {
+        "path": "build/session-exec-r2-final-pipeline/pipeline-failure.json",
+        "sha256": "6f68b68226a97d279bb058c7bc4c1df564231bbf647053c0fe6a2ca0ea83e9b5",
+        "bytes": 7145
+      },
+      "build/session-exec-r2-final-pass": {
+        "path": "build/session-exec-r2-final-pass/pipeline-failure.json",
+        "sha256": "151997afe6ab7fe1dc2f70814f3e42370be7c8c0abc57bea9c30af5eaa051a7a",
+        "bytes": 25281
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-clippy-audit-final.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-clippy-audit-final.log",
+        "sha256": "52fc4c107677eaae2be3cde7c4a6d09c6dadf54db56aba62f061e0347906017e",
+        "bytes": 6755
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-clippy-final-lock.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-clippy-final-lock.log",
+        "sha256": "2e6df44a572a946e1a30a7a229dab313af4d33099d2f7ca69c8ea90db5b4a576",
+        "bytes": 6690
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-clippy-final.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-clippy-final.log",
+        "sha256": "fa26cf444819d31e6fff2f74bcd6c31be5773d241913714991fceb3fd0a2abfe",
+        "bytes": 8988
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-core-cache-isolation.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-core-cache-isolation.log",
+        "sha256": "beeadcd8b1a415259b0ebac19b77054ddfe2634498ab148f5dce664337cf767f",
+        "bytes": 38
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-diff-check-final.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-diff-check-final.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-final-pass.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-final-pass.log",
+        "sha256": "44af7a527934789d340f9d7c71fcfadd20849ca1c4d682c5aff87a47c1609c78",
+        "bytes": 6499
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-final-pipeline.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-final-pipeline.log",
+        "sha256": "7af36fe5e37799d29e1da6e93359cc2678f64d2c749d99ac25a21aad5ee7037c",
+        "bytes": 2127
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-final-reviewed.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-final-reviewed.log",
+        "sha256": "8666055cf6035a6d7e74a962638cc8d691ed672ecf9794771fcfe0ac6a385320",
+        "bytes": 10423
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-fmt-final-lock.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-fmt-final-lock.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-fmt-final.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-fmt-final.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-host-check.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-host-check.log",
+        "sha256": "7cda0d57c934319d7edce23c0d7f57fddbb5e2568504b3209f5f048acc87dc8c",
+        "bytes": 13027
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-host-tests-second.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-host-tests-second.log",
+        "sha256": "4b5d2e985fb4e8492d44d1909f3e6abb0f167f305ecc0c37e2338daa86ba9586",
+        "bytes": 11481
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-host-tests.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-host-tests.log",
+        "sha256": "bae87be0c67460e0cafef6b40ee808cd3f780b7d80a6c1b3e17dc630ba1c26f3",
+        "bytes": 14249
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-package-route-final.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-package-route-final.log",
+        "sha256": "13711818d5134437eaf665e2eb56044fd037a503969bc3b16bc3bc710d54bb1f",
+        "bytes": 10804
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-package-route-ready.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-package-route-ready.log",
+        "sha256": "ef4759b0d25b06e184cc25e2cfdd71419591b624d80784dbab8c7f0331274441",
+        "bytes": 11985
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-package-route-ready2.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-package-route-ready2.log",
+        "sha256": "a21c5ba1174cba97afe83fe7bbbd78c5377d69a78dae3d90b45e2da236052c3e",
+        "bytes": 10590
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-runtime-fmt-final.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-runtime-fmt-final.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-supplementary-final.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-supplementary-final.log",
+        "sha256": "c90e09d8bf26a50f95881c281e72fb6c29dbcddb42fabd733e5ee63a53fb06b3",
+        "bytes": 322
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-supplementary-final2.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/session-exec-r2-supplementary-final2.log",
+        "sha256": "c90e09d8bf26a50f95881c281e72fb6c29dbcddb42fabd733e5ee63a53fb06b3",
+        "bytes": 322
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/agent-ledger-batch-fault-shared-target-failed.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/agent-ledger-batch-fault-shared-target-failed.log",
+        "sha256": "278a96fc816aa1898d1369ec4c11109278872becf0038db34d393d669fd9cfaa",
+        "bytes": 8594
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/agent-ledger-batch-fault-final.log": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/agent-ledger-batch-fault-final.log",
+        "sha256": "a34534a642c054d8a3da7ab102cc0a0e433b542372ddc45b8d689883414472cd",
+        "bytes": 10343
+      },
+      "build/session-exec-r2-final-reviewed/retained-initial-logs/agent-ledger-batch-fault-final.json": {
+        "path": "build/session-exec-r2-final-reviewed/retained-initial-logs/agent-ledger-batch-fault-final.json",
+        "sha256": "c2dcd803566cd6d5e9af559b14e09637f11d689302588698b3498aa695b322e1",
+        "bytes": 3786
+      }
+    }
+  },
+  "not_qualified": [
+    "production_started_exec_process_and_event_provider",
+    "complete_codex_application_injection",
+    "authenticated_production_plugin_transport_and_gui_approval",
+    "windows_owner_protected_session_and_other_platforms",
+    "os_sandbox_and_arbitrary_descendant_containment",
+    "dynamic_loader_and_shared_library_artifact_closure",
+    "c_and_cpp_session_exec_consumers",
+    "complete_sdk26",
+    "final_source_entire_core_test_suite"
+  ],
+  "explicitly_deferred": [
+    "pty",
+    "interactive_stdin",
+    "streaming_output",
+    "resize",
+    "signal",
+    "terminate"
+  ],
+  "warnings": {
+    "core_existing": 18,
+    "runtime_existing_package_execution": 7,
+    "runtime_existing_default": 1,
+    "new_sdk_host_own_strict_clippy": "passed",
+    "whole_core_runtime_clippy": "not_qualified"
+  },
+  "worktree": {
+    "committed": false,
+    "pushed": false,
+    "published": false
+  }
+}

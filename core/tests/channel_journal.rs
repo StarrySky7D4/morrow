@@ -581,7 +581,7 @@ fn journal_migration_process_crash_before_and_after_commit_reopens_same_store() 
         let path = dir.path().join("migration-crash.sqlite");
         drop(Store::open(&path, EventBudget::default()).unwrap());
         let db = rusqlite::Connection::open(&path).unwrap();
-        db.execute_batch("DROP TABLE channel_ack_receipts; DROP TABLE channel_checkpoints; PRAGMA user_version=23;").unwrap();
+        db.execute_batch("DROP TABLE IF EXISTS agent_ledger; DROP TABLE channel_ack_receipts; DROP TABLE channel_checkpoints; PRAGMA user_version=23;").unwrap();
         drop(db);
         let output = std::process::Command::new(std::env::current_exe().unwrap())
             .args([

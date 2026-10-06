@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "morrow-codex-r2-host-fixture"
+version = "0.1.0-experimental.2"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+
+[dependencies]
+morrow-agent-session-exec-v1-r2 = { path = "../../../../extensions/agent-session-exec-v1-r2" }
+morrow-core = { path = "../../../../core" }
+serde_json = "=1.0.151"
+

@@ -1,5 +1,11 @@
 # SDK 后续门槛与实施顺序
 
+Codex基础接口R2完成后的顺序（2026-10-05）：原六项缺口已修补，收尾预留、可信事实递进、退休／换代、准入回收和独占owner具备实际回归。专用包／Wasm／native路由、Linux固定输入执行器与实际ThreadStore通过限定验收；正式Rust156／Python32／外部Codex2及移地客户端编译通过，573来源／617成员归档独立核验。下一步为实际生产Exec进程／事件provider、完整Codex注入、认证批准链与平台资格；PTY／交互输入输出／resize／signal／terminate延期，SDK26仍OPEN。R1历史保持，见[修补与整体核查](session-exec-v1-r2-repair.md)和[当前合同](../../docs/PLUGIN_AGENT_SESSION_EXEC.md)。
+
+此前内容片段已实现（2026-10-05）：独立agent-content-v1四请求与原HostRuntime接线、可信批准／单次CAS、完整读取消费者当时通过60个方法，原Core回归24及示例分别实际通过；本轮v25后内容60项再次回归。后续继续新native准入与内容外发交集、view、账户和native bundle。完整M05／SDK26保持OPEN；[当前缺口与证据](codex-sdk-interface-gaps.md)区分已有实现及尚未闭合的接线。
+
+Codex候选冻结门禁推进（2026-10-05，Linux云端）：当前宿主新增[候选验证入口](../../tool/verify_codex_sdk_candidate.py)，核验consumer review与kit摘要、180个完整文件、当前canonical全部12个源码文件及wire身份；19对向量、1项版本拒绝和命令证据也须完整。Python门禁40／兼容与同步22、canonical Rust qualification14、默认feature check、目录静态profile9实际通过，各自计数。输出仍为 `qualification_only`、SDK `OPEN`、P-02 `NOT_RUN`。后续消费该候选先运行此宿主门禁，再按独立门槛执行真实插件资格；归档build_plan和历史receipt不能替代当前检查。详见[本轮证据与未闭合项](codex-sdk-freeze-gate.md)。
+
 当前C10检查点（2026-10-05）：本次开发分支更新收录C08–C10。C10已新增独立 `fs-directory-request-v1`、严格单import、包feature及只读discovery，复用原已批准selection和owner，不导出路径、句柄或新授权。Windows新Rust34（codec12/helper4/profile9/owner9）、既有回归191及frame5分别通过；Python33和两个原生C/C++消费者另计。新Rust Wasm仅编译通过，真实新Rust guest、C/C++ Wasm、Workbench产品／GUI、受保护Session与其他平台仍未验收。旧Core IO FileList保持Unsupported，SDK26／G04仍OPEN，无新Release。 详见[接口与实测边界](directory-request-sdk.md)。
 
 ## 2026-10-05 源码同步后的执行顺序
@@ -47,7 +53,7 @@ SDK 的接口实现、编解码一致性、实际插件执行、宿主批准链�
 | G07 历史与恢复 | 有界单操作核对、HTTP 历史、内容回执和 resource-only 恢复各有独立合同 | 跨进程真实故障窗口、各扩展恢复身份与资源释放矩阵；Unknown 不自动重放，历史 ACK 不恢复活授权 |
 | G08 UI／第三方产品 | 基础声明式 UI 与冻结原件有旧有界接口和运行证据 | 独立开发者安装、批准、内容动作、撤权与关闭；富 UI profile／控件 fallback／资源租约逐项验证。C／C++／Rust 为入口，当前不新增 TS／JS 或动态 Dart 插件 |
 | G09 平台 | 本阶段是 Windows x64 的限定资格；Linux 云端与旧平台报告各保留来源 | OS×架构×profile 的 backend／owner／存储／凭据／UI／生命周期矩阵；Android、Web、macOS、iOS 不继承 Windows PASS |
-| G10 冻结与分发 | SDK327／冻结57字节保持，原 Rust／C／C++ guest 与 provider 不重建；C03 交接补丁可恢复 | 扩展独立分发与模板、第三方接入、原 committed-tool runner 身份和完整目标验收；提交／公开分发须在授权范围内，ZIP 或版本号不代表冻结 |
+| G10 冻结与分发 | SDK327／冻结57历史字节证据保持，原 Rust／C／C++ guest 与 provider 不重建；当前Codex候选kit／review／canonical源码门禁通过，57个冻结输入重新核验；C03 交接补丁可恢复 | 候选门禁只证明输入身份与完整性，不能关闭SDK26；继续扩展独立分发与模板、第三方接入、原 committed-tool runner 身份和完整目标验收；提交／公开分发须在授权范围内，ZIP 或版本号不代表冻结 |
 
 ## 建议次序
 

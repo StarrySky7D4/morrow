@@ -1,0 +1,746 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-05",
+  "branch": "codex/windows-sdk-convergence-20261005",
+  "status": {
+    "schema_version": 1,
+    "profile": "agent-session-exec-v1",
+    "status": "local_contract_frozen",
+    "scope": [
+      "session",
+      "safe-exec-basic"
+    ],
+    "manifest_sha256": "2e958fde445c37671f3100e1f880875fe4d8c9173a7014519494a55f1b9c33f5",
+    "contract": {
+      "schema_path": "extensions/agent-session-exec-v1/contracts/session_exec.capnp",
+      "schema_sha256": "0271ddda25e2a4a5246ea4c660956cc515b8abbea554142d45692fd7e40ffa19",
+      "crate_version": "0.1.0-experimental.1",
+      "version": 1,
+      "revision": 1
+    },
+    "source_files_verified": 237,
+    "recorded_tests_verified": 81,
+    "evidence_execution_repeated": false,
+    "current_reexecution": false,
+    "reviewer_authenticated": false,
+    "sdk26_frozen": false,
+    "production_transport_verified": false,
+    "os_sandbox_verified": false,
+    "execution_extensions_deferred": true
+  },
+  "freeze_baseline": {
+    "path": "reports/reconstruction-2026-10-05/session-exec-v1-freeze.json",
+    "sha256": "2e958fde445c37671f3100e1f880875fe4d8c9173a7014519494a55f1b9c33f5",
+    "bytes": 36039
+  },
+  "freeze_gate": {
+    "path": "tool/verify_session_exec_freeze.py",
+    "sha256": "a7b922cd9928cbd3c1142e79fccc5f77a15fedb4c1e558ee9f79260ac4f2bcdb",
+    "bytes": 19092
+  },
+  "freeze_gate_tests": {
+    "path": "tool/tests/test_session_exec_freeze.py",
+    "sha256": "1dc39867ee9b30c8f8ee50e827dd3ea8d7eecf2494e9ff230484915518f07e1b",
+    "bytes": 18630
+  },
+  "formal_test_counts": {
+    "codec": 40,
+    "session": 13,
+    "safe_exec": 17,
+    "core:agent_ledger": 11
+  },
+  "formal_evidence": {
+    "tools": {
+      "rustc": {
+        "argv": [
+          "rustc",
+          "-Vv"
+        ],
+        "exit_code": 0,
+        "stdout": {
+          "path": "build/session-exec-freeze-v1/logs/rustc.stdout.log",
+          "sha256": "f64c55ed9f210d80a9b248206104a47175faf5ec94a093e4ad132549209089fc"
+        },
+        "stderr": {
+          "path": "build/session-exec-freeze-v1/logs/rustc.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "cargo": {
+        "argv": [
+          "cargo",
+          "-V"
+        ],
+        "exit_code": 0,
+        "stdout": {
+          "path": "build/session-exec-freeze-v1/logs/cargo.stdout.log",
+          "sha256": "b6ef6807dd96d18b833474ad68e7a23a29e562a29c67afa71a59fb9a73df0068"
+        },
+        "stderr": {
+          "path": "build/session-exec-freeze-v1/logs/cargo.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "capnp": {
+        "argv": [
+          "capnp",
+          "--version"
+        ],
+        "exit_code": 0,
+        "stdout": {
+          "path": "build/session-exec-freeze-v1/logs/capnp.stdout.log",
+          "sha256": "65a7f3ec8b4cc99da983582b202da66eb1401e6f83360a020b49b59e66dc4b20"
+        },
+        "stderr": {
+          "path": "build/session-exec-freeze-v1/logs/capnp.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "tests": {
+      "codec": {
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "extensions/agent-session-exec-v1/Cargo.toml",
+          "--target-dir",
+          "build/agent-session-exec-target",
+          "--test",
+          "codec"
+        ],
+        "exit_code": 0,
+        "stdout": {
+          "path": "build/session-exec-freeze-v1/logs/codec.stdout.log",
+          "sha256": "db4d460f33ab43f1d56a9c95e85cda452f359ee3ec80b07a915f446e1799e24c"
+        },
+        "stderr": {
+          "path": "build/session-exec-freeze-v1/logs/codec.stderr.log",
+          "sha256": "ca47bda4e4d102ad278d5325c0e15751d848b8b783570d5527cd5bcc0e7d6d11"
+        },
+        "cwd": "/workspace/morrow"
+      },
+      "session": {
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "extensions/agent-session-exec-v1/Cargo.toml",
+          "--target-dir",
+          "build/agent-session-exec-target",
+          "--test",
+          "session"
+        ],
+        "exit_code": 0,
+        "stdout": {
+          "path": "build/session-exec-freeze-v1/logs/session.stdout.log",
+          "sha256": "7f48682427bd8cc2708a1870edc8d48e20690d9ddaee96dfbd4bb1c92ee89f8a"
+        },
+        "stderr": {
+          "path": "build/session-exec-freeze-v1/logs/session.stderr.log",
+          "sha256": "4aa136c90c58d66195b83c71bc7221c56116c070de40df395c7fa8ae6b722960"
+        },
+        "cwd": "/workspace/morrow"
+      },
+      "safe_exec": {
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "extensions/agent-session-exec-v1/Cargo.toml",
+          "--target-dir",
+          "build/agent-session-exec-target",
+          "--test",
+          "safe_exec"
+        ],
+        "exit_code": 0,
+        "stdout": {
+          "path": "build/session-exec-freeze-v1/logs/safe_exec.stdout.log",
+          "sha256": "5fcb4cd0afa83b528b4c6f1e179fbff4754416111d0783a93afea1186833738d"
+        },
+        "stderr": {
+          "path": "build/session-exec-freeze-v1/logs/safe_exec.stderr.log",
+          "sha256": "2aaf9d5085527a7909bae581ccd21af4a40104b7b12852faa764e168d0c0f8b2"
+        },
+        "cwd": "/workspace/morrow"
+      },
+      "core:agent_ledger": {
+        "argv": [
+          "cargo",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "core/Cargo.toml",
+          "--target-dir",
+          "build/agent-session-exec-target",
+          "--test",
+          "agent_ledger"
+        ],
+        "exit_code": 0,
+        "stdout": {
+          "path": "build/session-exec-freeze-v1/logs/core-agent_ledger.stdout.log",
+          "sha256": "35380f0c2b2edee72b2a30899622124024cff3550c4db34316a8bc0e8371034f"
+        },
+        "stderr": {
+          "path": "build/session-exec-freeze-v1/logs/core-agent_ledger.stderr.log",
+          "sha256": "caa0caf0c460fcf4faafc2fb64bcb888cb2bc95ba154cc9ae29cfaa0770890f2"
+        },
+        "cwd": "/workspace/morrow"
+      }
+    }
+  },
+  "supplemental_checks": {
+    "rustc": {
+      "argv": [
+        "rustc",
+        "-Vv"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "path": "build/session-exec-freeze-v1/logs/rustc.stdout.log",
+        "sha256": "f64c55ed9f210d80a9b248206104a47175faf5ec94a093e4ad132549209089fc"
+      },
+      "stderr": {
+        "path": "build/session-exec-freeze-v1/logs/rustc.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "cargo": {
+      "argv": [
+        "cargo",
+        "-V"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "path": "build/session-exec-freeze-v1/logs/cargo.stdout.log",
+        "sha256": "b6ef6807dd96d18b833474ad68e7a23a29e562a29c67afa71a59fb9a73df0068"
+      },
+      "stderr": {
+        "path": "build/session-exec-freeze-v1/logs/cargo.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "capnp": {
+      "argv": [
+        "capnp",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "path": "build/session-exec-freeze-v1/logs/capnp.stdout.log",
+        "sha256": "65a7f3ec8b4cc99da983582b202da66eb1401e6f83360a020b49b59e66dc4b20"
+      },
+      "stderr": {
+        "path": "build/session-exec-freeze-v1/logs/capnp.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "codec": {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "extensions/agent-session-exec-v1/Cargo.toml",
+        "--target-dir",
+        "build/agent-session-exec-target",
+        "--test",
+        "codec"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "path": "build/session-exec-freeze-v1/logs/codec.stdout.log",
+        "sha256": "db4d460f33ab43f1d56a9c95e85cda452f359ee3ec80b07a915f446e1799e24c"
+      },
+      "stderr": {
+        "path": "build/session-exec-freeze-v1/logs/codec.stderr.log",
+        "sha256": "ca47bda4e4d102ad278d5325c0e15751d848b8b783570d5527cd5bcc0e7d6d11"
+      },
+      "cwd": "/workspace/morrow"
+    },
+    "session": {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "extensions/agent-session-exec-v1/Cargo.toml",
+        "--target-dir",
+        "build/agent-session-exec-target",
+        "--test",
+        "session"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "path": "build/session-exec-freeze-v1/logs/session.stdout.log",
+        "sha256": "7f48682427bd8cc2708a1870edc8d48e20690d9ddaee96dfbd4bb1c92ee89f8a"
+      },
+      "stderr": {
+        "path": "build/session-exec-freeze-v1/logs/session.stderr.log",
+        "sha256": "4aa136c90c58d66195b83c71bc7221c56116c070de40df395c7fa8ae6b722960"
+      },
+      "cwd": "/workspace/morrow"
+    },
+    "safe_exec": {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "extensions/agent-session-exec-v1/Cargo.toml",
+        "--target-dir",
+        "build/agent-session-exec-target",
+        "--test",
+        "safe_exec"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "path": "build/session-exec-freeze-v1/logs/safe_exec.stdout.log",
+        "sha256": "5fcb4cd0afa83b528b4c6f1e179fbff4754416111d0783a93afea1186833738d"
+      },
+      "stderr": {
+        "path": "build/session-exec-freeze-v1/logs/safe_exec.stderr.log",
+        "sha256": "2aaf9d5085527a7909bae581ccd21af4a40104b7b12852faa764e168d0c0f8b2"
+      },
+      "cwd": "/workspace/morrow"
+    },
+    "core-agent_ledger": {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "core/Cargo.toml",
+        "--target-dir",
+        "build/agent-session-exec-target",
+        "--test",
+        "agent_ledger"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "path": "build/session-exec-freeze-v1/logs/core-agent_ledger.stdout.log",
+        "sha256": "35380f0c2b2edee72b2a30899622124024cff3550c4db34316a8bc0e8371034f"
+      },
+      "stderr": {
+        "path": "build/session-exec-freeze-v1/logs/core-agent_ledger.stderr.log",
+        "sha256": "caa0caf0c460fcf4faafc2fb64bcb888cb2bc95ba154cc9ae29cfaa0770890f2"
+      },
+      "cwd": "/workspace/morrow"
+    },
+    "format": {
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "extensions/agent-session-exec-v1/Cargo.toml",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "path": "build/session-exec-freeze-v1/logs/format.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "build/session-exec-freeze-v1/logs/format.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cwd": "/workspace/morrow"
+    },
+    "clippy": {
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "extensions/agent-session-exec-v1/Cargo.toml",
+        "--target-dir",
+        "build/agent-session-exec-target",
+        "--all-targets",
+        "--no-deps",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "path": "build/session-exec-freeze-v1/logs/clippy.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "build/session-exec-freeze-v1/logs/clippy.stderr.log",
+        "sha256": "6c0078fddaebb4c7a609fd5b371fb89c239acf46372af4c3081c98e2ef042969"
+      },
+      "cwd": "/workspace/morrow"
+    },
+    "wasm-client": {
+      "argv": [
+        "cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "--lib",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--manifest-path",
+        "extensions/agent-session-exec-v1/Cargo.toml",
+        "--target-dir",
+        "build/agent-session-exec-target"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "path": "build/session-exec-freeze-v1/logs/wasm-client.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "build/session-exec-freeze-v1/logs/wasm-client.stderr.log",
+        "sha256": "fa3131b496b323a3b8ca5c37922d4db326b4498f172c556a536cd1930de1e2d5"
+      },
+      "cwd": "/workspace/morrow"
+    },
+    "python-gate": {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "tool.tests.test_session_exec_freeze",
+        "-v"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "path": "build/session-exec-freeze-v1/logs/python-gate.stdout.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "build/session-exec-freeze-v1/logs/python-gate.stderr.log",
+        "sha256": "23ca4f90db8d8125874ca4d1930a3d6efcd53c5cecf8ca64d77c64a5806def9d"
+      },
+      "cwd": "/workspace/morrow"
+    },
+    "content-regression": {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "extensions/agent-content-v1/Cargo.toml",
+        "--target-dir",
+        "build/agent-session-exec-target"
+      ],
+      "exit_code": 0,
+      "stdout": {
+        "path": "build/session-exec-freeze-v1/logs/content-regression.stdout.log",
+        "sha256": "02030f06fe9e7766929b06ff09ce35f25999eabd975cac92a5dac3893cfdc6eb"
+      },
+      "stderr": {
+        "path": "build/session-exec-freeze-v1/logs/content-regression.stderr.log",
+        "sha256": "29f6792c91293e0dc91a00bf37b1986396a6b464e0896f00dbd79b71971b15f9"
+      },
+      "cwd": "/workspace/morrow"
+    }
+  },
+  "source_unchanged_during_execution": true,
+  "core_regression": {
+    "initial_full_default": {
+      "exit_code": 101,
+      "suites": 97,
+      "pass": 787,
+      "failed": 30,
+      "ignored": 1,
+      "filtered": 0,
+      "failed_tests": [
+        "linux_storage::sqlite_vfs::tests::readonly_journal_fd_is_owned_writable_for_safe_retirement_and_short_reads_zero_fill",
+        "linux_storage::sqlite_vfs::tests::rejected_descriptor_retirement_is_bounded_before_open_and_reaps_after_unlock",
+        "store::linux_protected::tests::store_profile_rejects_old_future_unrelated_partial_and_hot_states_without_changes",
+        "audited_readonly_v7_does_not_migrate_and_v8_preserves_existing_signature",
+        "format_eight_readonly_then_migration_preserve_unknown_v1_bytes_and_signed_history",
+        "legacy_migration_preserves_raw_unknown_fields_exact_container_and_commit_bytes",
+        "format_nine_preserves_legacy_maximum_intent_and_signature_across_migration",
+        "schema_two_hidden_in_format_eight_is_rejected_without_version_repair",
+        "expanded_intent_roundtrips_in_ten_but_cannot_be_smuggled_into_nine",
+        "existing_v22_content_is_marked_legacy_import_on_migration",
+        "receipt_survives_pending_seal_snapshot_and_pinned_readpoint",
+        "live_receipt_after_cancel_is_rejected_but_legacy_import_after_cancel_is_valid",
+        "v22_import_without_event_room_rolls_back_and_succeeds_with_room",
+        "honest_v21_without_the_new_table_migrates_but_forged_downgrade_is_rejected",
+        "downgrade_with_new_objects_is_refused_and_honest_v16_migrates_cleanly",
+        "version_fifteen_with_prepared_intent_migrates_and_then_reserves",
+        "version_fourteen_migrates_without_rewriting_existing_content_or_pending_bytes",
+        "unsafe_sidecar_is_rejected_before_database_creation",
+        "native::v19_migration_preserves_inbound_identity_and_event_bytes",
+        "migration_preserves_original_legacy_read_and_signature_and_rejects_old_format_masquerade",
+        "legacy_over_count_preparations_are_preserved_and_can_be_explicitly_drained",
+        "migration_and_snapshot_preserve_originals_and_signatures_with_self_contained_ledger",
+        "legacy_over_hard_archive_count_is_preserved_readable_and_blocks_only_growth",
+        "migration_preserves_legacy_read_archive_originals_and_sealed_signature",
+        "format_ten_migration_preserves_original_content_evidence_and_signed_segment",
+        "read_event_cannot_be_smuggled_into_old_format_ten",
+        "migration_preserves_v4_records_and_corrupt_migration_rolls_back",
+        "native::v18_migration_preserves_configs_and_events_and_rejects_false_downgrade",
+        "native::migration_preserves_old_event_bytes_and_rejects_false_downgrade",
+        "v20_migration_preserves_original_identity_and_refuses_premature_table"
+      ],
+      "scope": "default Linux Core all suites; cfg-disabled zero-test binaries do not provide native owner evidence"
+    },
+    "repaired_failed_default_groups": {
+      "exit_code": 0,
+      "suites": 18,
+      "passed": 270,
+      "failed": 0,
+      "ignored": 1,
+      "filtered": 0,
+      "failed_tests": [],
+      "scope": "18 previously failing default Core targets after routine old-schema fixtures, current-version expectations, explicit unsafe permissions repaired; serial harness"
+    },
+    "unique_default_cases_covered": 817,
+    "default_ignored_helpers": 1,
+    "single_final_full_suite_green_claimed": false,
+    "old_migration_fault_tests": {
+      "exit_code": 0,
+      "suites": 14,
+      "passed": 15,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 153,
+      "failed_tests": [],
+      "scope": "changed historical migration fixtures only; 14 targets with migration filter, 8 ordinary migration cases already tested skipped; actual parent subprocess boundaries"
+    },
+    "ledger_fault_tests": {
+      "exit_code": 0,
+      "scope": "final ledger CAS after global row-cap fix, including real before/after crash subprocess boundaries"
+    },
+    "fixture_repairs": {
+      "test_files": [
+        "core/tests/evidence_chunks.rs",
+        "core/tests/file_content_receipt_store.rs",
+        "core/tests/file_content_store.rs",
+        "core/tests/io_evidence.rs",
+        "core/tests/io_intent_reservation.rs",
+        "core/tests/outbound_authority.rs",
+        "core/tests/read_archive.rs",
+        "core/tests/read_archive_budget.rs",
+        "core/tests/read_archive_retention_budget.rs",
+        "core/tests/read_capture.rs",
+        "core/tests/read_journal.rs",
+        "core/tests/service_config.rs",
+        "core/tests/service_authority.rs",
+        "core/tests/tls_identity_store.rs",
+        "core/tests/operation_evidence.rs",
+        "core/tests/io_intent_crash.rs",
+        "core/tests/io_evidence_crash.rs",
+        "core/tests/file_content_crash.rs",
+        "core/tests/file_content_receipt_crash.rs",
+        "core/tests/io_intent_store.rs",
+        "core/tests/sealing.rs",
+        "core/tests/channel_journal.rs",
+        "core/tests/linux_storage.rs"
+      ],
+      "source_test_fixture": "core/src/store/linux_protected.rs",
+      "scope": "honest old-version setup drops current additive tables; current-version expectations use SCHEMA_VERSION; explicit unsafe-mode fixture; original refusal/integrity assertions preserved"
+    }
+  },
+  "compatibility": {
+    "frozen_inputs_verified_including_manifests_pins": 57,
+    "sets": [
+      {
+        "name": "guest-v1-rc1",
+        "manifest_members": 36,
+        "manifest_sha256": "cdda1d8fde36f984f95d193753eaf40b2f75db4bb119986ca1cc733710000266"
+      },
+      {
+        "name": "transport-v1-rc1",
+        "manifest_members": 17,
+        "manifest_sha256": "341a40bf335b468954734613c2e8d43999c6523249ac06b8648558d6593f4cb0"
+      }
+    ],
+    "existing_core_lock_unchanged": true,
+    "tracked_diff_contracts_sdk_companions": []
+  },
+  "core_evidence_files": [
+    {
+      "path": "build/agent-ledger-evidence/core-failed-groups-final.result.json",
+      "sha256": "a530f5a85e6f49fbf60ec50639f35815169858fd85ab70a0e572c39bd87a3ead",
+      "bytes": 299
+    },
+    {
+      "path": "build/agent-ledger-evidence/core-failed-groups-final.stderr.log",
+      "sha256": "9a71f4bba4e01bd657bafb6c2af5fba437a5f3183747da5ef18ecb83f22790a9",
+      "bytes": 8235
+    },
+    {
+      "path": "build/agent-ledger-evidence/core-failed-groups-final.stdout.log",
+      "sha256": "0151572fb9fc3c00f237610c0061d1a8a9492359b438bd1058b5302e07218e3c",
+      "bytes": 26001
+    },
+    {
+      "path": "build/agent-ledger-evidence/core-full-first-source.json",
+      "sha256": "8805d7e40fb67aa0e37065e8a9f5118f7fb97fc71f9156f669ad9f3e973bb773",
+      "bytes": 26573
+    },
+    {
+      "path": "build/agent-ledger-evidence/core-full-first.result.json",
+      "sha256": "1be69c7b039e6652d49856d790f7d73bee65f39bd69c8ef8fff7b7fdf3b92f59",
+      "bytes": 2708
+    },
+    {
+      "path": "build/agent-ledger-evidence/core-full-first.stderr.log",
+      "sha256": "686601593f4a2cde363e601d0253fa0951580cd7b6b7fc60c86a7a7af12fabfe",
+      "bytes": 18484
+    },
+    {
+      "path": "build/agent-ledger-evidence/core-full-first.stdout.log",
+      "sha256": "6dc8bd0b188f0c211c49e95ecd85e943611b2761de6c1daaf56f272572192f28",
+      "bytes": 89666
+    },
+    {
+      "path": "build/agent-ledger-evidence/crash-final.result.json",
+      "sha256": "a48969d752e5d81e4a352e213834c5a93950df952bbc15c1236e056d82368b3d",
+      "bytes": 148
+    },
+    {
+      "path": "build/agent-ledger-evidence/crash-final.stderr.log",
+      "sha256": "4b5e0493e8a0ae4197ee06faf02a48fae8c9d8e199bd2b9312acc0a34285d79e",
+      "bytes": 6324
+    },
+    {
+      "path": "build/agent-ledger-evidence/crash-final.stdout.log",
+      "sha256": "3545793db9512976ae0caf35ed90c09a12e1346e6b427c46779c57489343d9f7",
+      "bytes": 1352
+    },
+    {
+      "path": "build/agent-ledger-evidence/final-review.json",
+      "sha256": "f17a52ca4fa807b3913f13460d3d85ad9ffcfdc8de73ee68d226050851ad1a1f",
+      "bytes": 4464
+    },
+    {
+      "path": "build/agent-ledger-evidence/first.stderr.log",
+      "sha256": "f5858f9c4ea0bc5f6f381f8962da6c621edd54be70a80535b3882bda13ec1456",
+      "bytes": 9181
+    },
+    {
+      "path": "build/agent-ledger-evidence/first.stdout.log",
+      "sha256": "be2c65dc9aff0e99198b1a951299584a985ddfa31c20f2dc32172cf2028a692e",
+      "bytes": 426
+    },
+    {
+      "path": "build/agent-ledger-evidence/fixture-repair-paths.json",
+      "sha256": "91a7aef241666c387ba0cbb7d8c5cacf1914b2b06e0be0f641f2e315e51dcc05",
+      "bytes": 1176
+    },
+    {
+      "path": "build/agent-ledger-evidence/ledger-default-final.result.json",
+      "sha256": "5beac17fecf0d820ce4a77baa23d6e964d56c85f9872e5e35cef6d3cf5554268",
+      "bytes": 158
+    },
+    {
+      "path": "build/agent-ledger-evidence/ledger-default-final.stderr.log",
+      "sha256": "0f0f3994e7e7ae4bf7ee8c5755f4e67c67884bae938827435398c0b433abe988",
+      "bytes": 6330
+    },
+    {
+      "path": "build/agent-ledger-evidence/ledger-default-final.stdout.log",
+      "sha256": "35be5d773e272cf49c10b22903803a58b991ccc6217291fcd236845e7ccafb4c",
+      "bytes": 1036
+    },
+    {
+      "path": "build/agent-ledger-evidence/old-migration-crash-final.result.json",
+      "sha256": "b9ed877e3e4f4bc1becbd71771375297c79bdaafec453347476c5320bcd37964",
+      "bytes": 304
+    },
+    {
+      "path": "build/agent-ledger-evidence/old-migration-crash-final.stderr.log",
+      "sha256": "ea94f79e501798d7ef99cd7355d89872643fbbceb7cf26214d577ae24b46d621",
+      "bytes": 10661
+    },
+    {
+      "path": "build/agent-ledger-evidence/old-migration-crash-final.stdout.log",
+      "sha256": "2745a3c6a6d2bb4306b8921a13f54567d4633dc6c5b9259dba69bfd2306c755d",
+      "bytes": 3080
+    },
+    {
+      "path": "build/agent-ledger-evidence/record-final.stderr.log",
+      "sha256": "056c383988d9d0c9737dc2c3044794e64c1bc60dd49ce5a2165b8490b34e5b12",
+      "bytes": 240
+    },
+    {
+      "path": "build/agent-ledger-evidence/record-final.stdout.log",
+      "sha256": "c4c584c96fb3f2ba245708b8917f20c1526978541f9da7c38b78b261eed63ec0",
+      "bytes": 411
+    },
+    {
+      "path": "build/agent-ledger-evidence/record-store-final.result.json",
+      "sha256": "8f377f97256c6c43ada6b2509d2387c6c957c598222f2865ea0311a77c6c02a7",
+      "bytes": 224
+    },
+    {
+      "path": "build/agent-ledger-evidence/row-cap-crash-final.result.json",
+      "sha256": "a0eb32687224ec1f1ef3ccb28015aeaf45e1b13e560d024fb7f3fc16fcd786d6",
+      "bytes": 134
+    },
+    {
+      "path": "build/agent-ledger-evidence/row-cap-crash-final.stderr.log",
+      "sha256": "c6386efbd01f08b9c851d84e6ec93980a70d8bf262aee5f17b2d77f168e02eac",
+      "bytes": 6329
+    },
+    {
+      "path": "build/agent-ledger-evidence/row-cap-crash-final.stdout.log",
+      "sha256": "53f6f7a067ca402dc330cf7e101cf3d2b8471d443c86706a3a613d36f5c945e9",
+      "bytes": 1352
+    },
+    {
+      "path": "build/agent-ledger-evidence/store-final.stderr.log",
+      "sha256": "982e780fe7355802d1abd678c8b365262c346432ea4c7385f24ce14ef1007ac8",
+      "bytes": 6323
+    },
+    {
+      "path": "build/agent-ledger-evidence/store-final.stdout.log",
+      "sha256": "0cdbba183f420a50185c52b8b8b1198ec9408b3dead60007a59b8a57369dc8de",
+      "bytes": 1036
+    },
+    {
+      "path": "build/agent-ledger-evidence/vfs-readonly-isolated.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "build/agent-ledger-evidence/vfs-readonly-isolated.stdout.log",
+      "sha256": "cb1ed9c7bdab55da7d6fddfdefad8986843e2b1208eb681a8b379e2640e44ca6",
+      "bytes": 243
+    },
+    {
+      "path": "build/agent-ledger-evidence/vfs-retirement-isolated.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "build/agent-ledger-evidence/vfs-retirement-isolated.stdout.log",
+      "sha256": "c4ffbe254b660319c0dcd8885c1c409e8529799651af03daffc316ce1046308e",
+      "bytes": 236
+    }
+  ],
+  "not_run": [
+    "real Codex P-02 ThreadStore/ExecBackend adapter",
+    "production package import/native transport",
+    "Windows native owner",
+    "ProtectedSession",
+    "GUI approval flow",
+    "C/C++ consumers",
+    "production OS execution sandbox",
+    "PTY/stdin/output streams/resize/signal/terminate"
+  ],
+  "committed": false,
+  "pushed": false,
+  "published": false
+}

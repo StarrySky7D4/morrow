@@ -87,6 +87,7 @@ impl Execution {
             mutation: runner.mutation_abi,
             channel: runner.channel_abi,
             directory: runner.directory_abi,
+            agent: runner.agent_abi,
             pending: None,
             session: Arc::new(()),
             limits: StoreLimitsBuilder::new()
@@ -138,8 +139,14 @@ impl Execution {
                 .expect("channel call import");
         }
         if runner.directory_abi {
-            linker.func_wrap("morrow_fs_directory_v1", "call", directory_call)
+            linker
+                .func_wrap("morrow_fs_directory_v1", "call", directory_call)
                 .expect("directory request import");
+        }
+        if runner.agent_abi {
+            linker
+                .func_wrap("morrow_agent_session_exec_v1", "call", agent_call)
+                .expect("agent session execution import");
         }
         let step = (|| {
             let instance = linker

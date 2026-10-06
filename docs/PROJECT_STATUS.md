@@ -1,8 +1,14 @@
 # Morrow 当前开发状态
 
+Codex基础接口R2修补（2026-10-05，Linux云端）：原六项缺口已修补，session／safe-exec-basic以新revision及独立pin冻结。正式Rust156、Python32、真实Codex消费2、旧内容回归60及移地独立客户端离线编译分别通过；573输入前后一致，617成员归档核验通过。R1原件保持，live Core已演进。实际生产Exec进程／事件provider、完整应用注入、认证transport、Windows／OS／GUI及SDK26仍OPEN，扩展执行延期。详见[修补与整体核查](../reports/reconstruction-2026-10-05/session-exec-v1-r2-repair.md)和[当前合同](PLUGIN_AGENT_SESSION_EXEC.md)。本轮提交收录修补源码及R1／R2冻结归档；提交身份以开发分支历史为准，未创建Release。
+
+此前Codex内容片段（本会话前一阶段，2026-10-05）：独立 `extensions/agent-content-v1` 实现有界Query／ReadRef／ProposeMutation／InspectOperation，复用原HostRuntime对象授权、CAS和持久操作记录；完整读取客户端收齐并验证SHA256后返回VerifiedContent。当时60项及原Core24项通过，示例运行成功；本轮v25后内容60项再次回归通过。M05其余接线、扩展执行、view、Account／OAuth、native bundle与产品／平台仍OPEN；不新增旧native协商能力、不关闭SDK26。详见[接口缺口与补齐](../reports/reconstruction-2026-10-05/codex-sdk-interface-gaps.md)和[内容接口](PLUGIN_AGENT_CONTENT.md)。
+
+Codex候选冻结门禁推进（2026-10-05，Linux云端）：新增宿主侧 `tool/verify_codex_sdk_candidate.py`，将consumer review、180个kit文件与当前canonical全部12个源码文件、原始schema摘要及major/revision绑定。宿主校验补齐19对向量与1项版本拒绝、生成identity、完整证据清单及默认不启用fake的命令检查。当前Python门禁40与兼容／契约同步22分别通过；canonical Rust qualification14、默认feature库check及目录静态准入9实际通过。候选仍是 `qualification_only`，完整SDK26／G04及Codex生产插件资格保持OPEN；本轮没有运行P-02、Windows owner、三语言真实目录guest或产品GUI。详见[Codex候选门禁与证据](../reports/reconstruction-2026-10-05/codex-sdk-freeze-gate.md)。
+
 当前C10检查点（2026-10-05）：本次开发分支更新收录C08–C10。C10已新增独立 `fs-directory-request-v1`、严格单import、包feature及只读discovery，复用原已批准selection和owner，不导出路径、句柄或新授权。Windows新Rust34（codec12/helper4/profile9/owner9）、既有回归191及frame5分别通过；Python33和两个原生C/C++消费者另计。新Rust Wasm仅编译通过，真实新Rust guest、C/C++ Wasm、Workbench产品／GUI、受保护Session与其他平台仍未验收。旧Core IO FileList保持Unsupported，SDK26／G04仍OPEN，无新Release。 详见[接口与实测边界](../reports/reconstruction-2026-10-05/directory-request-sdk.md)。
 
-更新：2026-10-05。本文是当前状态入口；[开发看板](DEVELOPMENT_BOARD.md)保存任务，[SDK 门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)保存验收顺序。带日期的报告、冻结夹具和历史源码快照保留各自身份，不因文档同步获得新的测试资格。
+更新：2026-10-06。本文是当前状态入口；[开发看板](DEVELOPMENT_BOARD.md)保存任务，[SDK 门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)保存验收顺序。带日期的报告、冻结夹具和历史源码快照保留各自身份，不因文档同步获得新的测试资格。
 
 ## 版本与开发线
 

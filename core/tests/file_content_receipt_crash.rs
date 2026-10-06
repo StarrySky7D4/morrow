@@ -116,7 +116,7 @@ fn migration_exit_keeps_whole_v22_or_imports_whole_v23_without_live_staging_clai
         drop(store);
         // Honest v22 retained content: no receipt namespace or fabricated kind-6 event.
         let sql = rusqlite::Connection::open(&path).unwrap();
-        sql.execute_batch("DROP TABLE file_content_receipts; PRAGMA user_version=22;")
+        sql.execute_batch("DROP TABLE IF EXISTS agent_ledger; DROP TABLE IF EXISTS channel_ack_receipts; DROP TABLE IF EXISTS channel_checkpoints; DROP TABLE file_content_receipts; PRAGMA user_version=22;")
             .unwrap();
         sql.execute("INSERT INTO file_mutation_content(operation_id,subject,request_sha256,content_sha256,content_length,container) VALUES(?1,?2,?3,?4,?5,?6)",rusqlite::params![OPERATION,SUBJECT,content.request_sha256().as_slice(),content.content_sha256().as_slice(),content.content().len() as i64,content.container()]).unwrap();
         drop(sql);
