@@ -20,6 +20,8 @@ for (const p of ['entry/src/main/ets/model/EditorDraft.ets', 'rust/src/draft_bri
   'rust/editor-draft-model/schemas/editor_draft.proto']) inputs.add(p);
 for (const p of ['entry/src/main/ets/model/EditorPaste.ets', 'entry/src/main/ets/pages/MarkdownPreview.ets',
   'rust/src/markdown.rs', 'entry/src/main/ets/model/CardOrder.ets']) inputs.add(p);
+for (const p of ['entry/src/main/ets/model/ClipboardInput.ets', 'entry/src/main/ets/model/ClipboardPaste.ets',
+  'rust/src/clipboard.rs']) inputs.add(p);
 for (const p of ['entry/src/main/ets/model/AttachmentFiles.ets', 'entry/src/main/ets/model/Attachments.ets',
   'entry/src/main/ets/model/VerifiedImages.ets', 'entry/src/main/ets/pages/AttachmentImagePreview.ets',
   'entry/src/main/ets/model/AttachmentPlayback.ets', 'entry/src/main/ets/pages/AttachmentMediaPreview.ets',

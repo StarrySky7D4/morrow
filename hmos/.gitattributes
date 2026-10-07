@@ -16,3 +16,4 @@ reports/ui-source/v15/device-current/*.log whitespace=-blank-at-eol,-blank-at-eo
 reports/ui-source/v16/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 reports/ui-source/v16/device-current/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 reports/ui-source/v16/multiselect-device/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
+reports/ui-source/v17/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol

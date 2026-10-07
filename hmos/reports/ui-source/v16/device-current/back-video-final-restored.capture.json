@@ -1,0 +1,21 @@
+{
+  "label": "back-video-final-restored",
+  "started": 1791348849185,
+  "screenshotAt": 1791348849752,
+  "layoutAt": 1791348850529,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": true,
+    "opacity": 0,
+    "hitTestBehavior": "Default",
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "OPACITY_ZERO"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\back-video-final-restored.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\back-video-final-restored.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\back-video-final-restored.raw.json"
+  }
+}

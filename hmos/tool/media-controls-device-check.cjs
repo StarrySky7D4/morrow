@@ -12,10 +12,24 @@ assert.match(expectedVersion,/^0\.1\.0-hmos-dev\.[0-9]+$/,'explicit application 
 assert.ok(packageSha==='NOT_SUPPLIED'||/^[A-Fa-f0-9]{64}$/.test(packageSha),'expected package SHA256');
 const assets={audio:{name:'HMOS-dev14-tone.wav',id:'asset-draft-import-62a954f711c5144c3f2e333407ecd11f5f1aad374634f95e42a9787a7742ff4f'},
  video:{name:'HMOS-dev14-bars.mp4',id:'asset-draft-import-eaa74272b78711cf088e3953cd54830e6f3e583084dbe34eaafd4798b9ee9e77'}};
-const journal=path.join(out,'progress-media-controls.json');let active,serial=0;
+const journal=path.join(out,'progress-media-controls.json');let active,serial=0,journalSerial=0;
 const wait=ms=>{assert.ok(ms>=0&&ms<=5000);Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,ms);};
-function readProgress(){return fs.existsSync(journal)?JSON.parse(fs.readFileSync(journal,'utf8')):{fixture,device:process.env.HMOS_DEVICE,stages:[]};}
-function persist(value){assert.equal(value.fixture,fixture);assert.equal(value.device,process.env.HMOS_DEVICE);fs.writeFileSync(journal,JSON.stringify(value,null,2)+'\n');}
+function journalIO(operation){
+ // Retry only local journal I/O. Never repeat a device command after any
+ // uncertain acknowledgement. Windows can briefly reject a shared file open.
+ for(let attempt=0;;attempt++){try{return operation();}catch(error){
+  if(attempt>=3||!['UNKNOWN','EBUSY','EACCES','EPERM'].includes(error.code))throw error;wait(50*(attempt+1));
+ }}
+}
+function readProgress(){return journalIO(()=>{try{return JSON.parse(fs.readFileSync(journal,'utf8'));}catch(error){
+ if(error.code==='ENOENT')return {fixture,device:process.env.HMOS_DEVICE,stages:[]};throw error;
+}});}
+function persist(value){
+ assert.equal(value.fixture,fixture);assert.equal(value.device,process.env.HMOS_DEVICE);
+ const pending=journal+'.'+process.pid+'-'+(++journalSerial)+'.pending';
+ try{journalIO(()=>fs.writeFileSync(pending,JSON.stringify(value,null,2)+'\n',{flag:'w'}));journalIO(()=>fs.renameSync(pending,journal));}
+ catch(error){error.message+='; prior journal retained; pending local evidence: '+pending;throw error;}
+}
 function update(){if(active){const p=readProgress(),i=p.stages.findIndex(s=>s.label===active.label);assert.ok(i>=0);p.stages[i]=active;persist(p);}}
 function command(...args){
  const action={arguments:args,phase:'INTENT',at:new Date().toISOString()};if(active){active.actions.push(action);update();}
@@ -164,11 +178,22 @@ function close(kind,label='close-'+kind){return runStage(label,key=>{
  return {before,fixture:assertFixture(after),modalClosed:true,physicalLeaseDeletion:'NOT_PROVEN_BY_UI; reopen is a separate explicit stage'};
 });}
 function background(kind,label='background-'+kind){return runStage(label,key=>{
- let tree=capture(key+'-before'),before=modal(tree,kind);assert.equal(before.playing,true,'explicitly start playback before this stage');
- command('shell','uitest','uiInput','keyEvent','Home');wait(250);capture(key+'-home');command('shell','aa','start','-a','EntryAbility','-b','dev.morrow.hmos');wait(250);
+ let tree=capture(key+'-before'),before=modal(tree,kind);assert.equal(before.playing,false,'background stage starts from an explicitly observed paused session');
+ assert.equal(before.fullscreenLabel,'全屏','exit fullscreen explicitly before background stage');assert.ok(before.position<8,'leave enough fixture time to distinguish pause from natural completion');
+ quickControl(tree,'attachment-media-toggle');tree=capture(key+'-playing');const started=modal(tree,kind);assert.equal(started.playing,true,'actual play effect before Home');
+ wait(1000);tree=capture(key+'-advanced');const advanced=modal(tree,kind);assert.equal(advanced.playing,true);assert.ok(advanced.position>before.position,'actual playback advances before Home');
+ assert.ok(advanced.position<10,'stop before Home if fixture is too near natural completion');
+ const homeRequestedAt=Date.now();command('shell','uitest','uiInput','keyEvent','Home');wait(1400);
+ const home=capture(key+'-home');assert.ok(!find(home,'attachment-preview-dialog'),'actual app modal is absent from the foreground Home observation');
+ command('shell','aa','start','-a','EntryAbility','-b','dev.morrow.hmos');wait(850);
  tree=capture(key+'-returned');const returned=modal(tree,kind);assert.equal(returned.playing,false,'background pauses without foreground autoplay');assert.equal(returned.fullscreenLabel,'全屏');
+ assert.ok(returned.position<returned.duration,'paused before natural completion');assert.ok(returned.position>=advanced.position&&returned.position<=advanced.position+1,
+  'whole-second position remains near last observed playback during background interval');
  wait(1300);tree=capture(key+'-still-paused');const stable=modal(tree,kind);assert.equal(stable.playing,false);assert.equal(stable.position,returned.position);
- return {before,returned,stable,identityEvidence:'same exact pin and filename; private native player identity is not exposed'};
+ return {before,started,advanced,returned,stable,homeRequestedAt,foregroundPausedBeforeEnd:true,
+  noAutoplay:'paused glyph and stable position after foreground return',
+  identityEvidence:'same exact pin and filename; private native player identity is not exposed',
+  backgroundStateLimit:'pause is qualified by returned state/time before EOF; the private player state while Home is foreground is not exposed'};
 });}
 function seekGestures(kind,label='seek-gestures-'+kind){return runStage(label,key=>{
  let tree=capture(key+'-before'),before=modal(tree,kind);assert.equal(before.playing,false);assert.equal(before.fullscreenLabel,'退出全屏');

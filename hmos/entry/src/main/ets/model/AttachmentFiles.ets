@@ -1,9 +1,11 @@
 import { common } from '@kit.AbilityKit';
 import { fileIo as fs, fileUri, picker } from '@kit.CoreFileKit';
 import { util } from '@kit.ArkTS';
+import { cryptoFramework } from '@kit.CryptoArchitectureKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import native from 'libmorrow.so';
 import { ImportCommand } from './Attachments';
+import { ClipboardSource, ClipboardSourceRead, ClipboardFormat, CLIPBOARD_SOURCE_LIMIT, checkClipboardSource, consumeClipboardSource } from './ClipboardInput';
 
 export const ATTACHMENT_IMPORT_BUDGET: number = 64 * 1024 * 1024;
 export const ATTACHMENT_EXPORT_LIMIT: number = 200 * 1024 * 1024;
@@ -29,6 +31,38 @@ export class PreparedAttachment {
   byte_length: string = '0';
   sha256: string = '';
   original_request: string = '';
+}
+
+export class ClipboardImageMetadata {
+  local_id: string = '';
+  name: string = '';
+  byte_length: string = '0';
+  sha256: string = '';
+}
+export class ClipboardConversion {
+  ok: boolean = false;
+  error: string = '';
+  paste_text: string = '';
+  warnings: string[] = [];
+  images: ClipboardImageMetadata[] = [];
+  source_sha256: string = '';
+  source_byte_length: string = '0';
+}
+class PreparedSpoolResult {
+  name: string = '';
+  reply: FileStreamReply = { ok: false, error: '', byte_length: '', sha256: '' };
+}
+class PreparedClipboardHolder {
+  value: PreparedAttachment | undefined = undefined;
+}
+class ConversionBinding {
+  source: PreparedAttachment;
+  signature: string;
+  format: ClipboardFormat;
+  section: string;
+  constructor(source: PreparedAttachment, value: ClipboardConversion, format: ClipboardFormat, section: string) {
+    this.source = source; this.signature = JSON.stringify(value); this.format = format; this.section = section;
+  }
 }
 
 export class AttachmentRecoveryDiagnostic {
@@ -159,6 +193,7 @@ export class AttachmentFiles {
   private static activePreviews: Map<string, PreviewEntry> = new Map<string, PreviewEntry>();
   private issues: AttachmentRecoveryDiagnostic[] = [];
   private selection: Set<string> = new Set<string>();
+  private conversions: Map<ClipboardConversion, ConversionBinding> = new Map<ClipboardConversion, ConversionBinding>();
   // Instances in the same UI process share filesystem admission too.
   private static tail: Promise<void> = Promise.resolve();
 
@@ -357,32 +392,168 @@ export class AttachmentFiles {
         throw new Error('附件导入额度无效。');
       }
       if (!this.selection.delete(uri)) { throw new Error('此附件不属于尚未读取的系统选择。'); }
-      const remaining = await this.remaining(true);
-      const directory = await fs.mkdtemp(this.root + '/import-XXXXXX');
-      let source: fs.File | undefined = undefined;
-      let spool: fs.File | undefined = undefined;
-      let prepared: boolean = false;
-      try {
-        // Open the exact picker URI with the actual grant; never resolve it to
-        // an Android-style path, persist a raw FD, or assume durable URI rights.
-        source = await fs.open(uri, fs.OpenMode.READ_ONLY);
-        spool = await fs.open(directory + '/data', fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
-        const reply = streamReply(await native.prepareFile(source.fd, spool.fd, Math.min(maxBytes, remaining)),
-          Math.min(maxBytes, remaining));
-        const stat = await fs.stat(spool.fd);
-        if (!stat.isFile() || stat.size !== Number(reply.byte_length)) { throw new Error('附件长度验证失败。'); }
-        const value = new PreparedAttachment();
-        value.spool_id = directory.slice(this.root.length + 1);
-        value.name = safeName(source.name); value.byte_length = reply.byte_length; value.sha256 = reply.sha256;
-        const entry = new SpoolEntry(value, directory);
-        await this.writeSmall(directory + '/metadata.json', JSON.stringify(value), 4096);
-        this.entries.set(value.spool_id, entry); prepared = true; return value;
-      } finally {
-        close(source); close(spool);
-        // Prepare has no Store/session effect, so a failed partial copy can be
-        // removed even if the native preparation result was unavailable.
-        if (!prepared) { try { await this.removeOwn(directory); } catch (_) {} }
+      return this.prepareSpool(maxBytes, async (fd: number, limit: number): Promise<PreparedSpoolResult> => {
+        // Exact selected URI is never resolved or persisted as a retry source.
+        const source = await fs.open(uri, fs.OpenMode.READ_ONLY);
+        try {
+          const result = new PreparedSpoolResult(); result.name = source.name;
+          result.reply = streamReply(await native.prepareFile(source.fd, fd, limit), limit); return result;
+        } finally { close(source); }
+      });
+    });
+  }
+
+  private async prepareSpool(maxBytes: number,
+    write: (fd: number, limit: number) => Promise<PreparedSpoolResult>, check: () => void = (): void => {}): Promise<PreparedAttachment> {
+    if (!Number.isSafeInteger(maxBytes) || maxBytes <= 0 || maxBytes > ATTACHMENT_IMPORT_BUDGET) { throw new Error('附件导入额度无效。'); }
+    const remaining = await this.remaining(true); check();
+    const limit = Math.min(maxBytes, remaining);
+    const directory = await fs.mkdtemp(this.root + '/import-XXXXXX');
+    let spool: fs.File | undefined = undefined;
+    let prepared: boolean = false;
+    try {
+      check(); spool = await fs.open(directory + '/data', fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE); check();
+      const result = await write(spool.fd, limit); check();
+      const reply = streamReply(JSON.stringify(result.reply), limit);
+      const stat = await fs.stat(spool.fd); check();
+      if (!stat.isFile() || stat.size !== Number(reply.byte_length)) { throw new Error('附件长度验证失败。'); }
+      const value = new PreparedAttachment(); value.spool_id = directory.slice(this.root.length + 1);
+      value.name = safeName(result.name); value.byte_length = reply.byte_length; value.sha256 = reply.sha256;
+      await this.writeSmall(directory + '/metadata.json', JSON.stringify(value), 4096); check();
+      this.entries.set(value.spool_id, new SpoolEntry(value, directory)); prepared = true; return value;
+    } finally {
+      close(spool);
+      // No import request was issued: a partial preparation can be cleaned.
+      if (!prepared) { try { await this.removeOwn(directory); } catch (_) {} }
+    }
+  }
+
+  private async writeClipboardBytes(fd: number, source: ClipboardSourceRead, limit: number): Promise<FileStreamReply> {
+    const bytes = source.bytes;
+    if (bytes.byteLength > limit) { throw new Error('剪贴板原件超过剩余附件预算。'); }
+    const digest = cryptoFramework.createMd('SHA256');
+    let offset: number = 0;
+    while (offset < bytes.byteLength) {
+      source.check();
+      const chunk = bytes.slice(offset, Math.min(offset + 65536, bytes.byteLength));
+      let written: number = 0;
+      while (written < chunk.byteLength) {
+        const count = await fs.write(fd, chunk.buffer.slice(written)); source.check();
+        if (!Number.isSafeInteger(count) || count <= 0 || count > chunk.byteLength - written) { throw new Error('剪贴板附件未能完整保存。'); }
+        written += count;
       }
+      await digest.update({ data: chunk }); source.check(); offset += chunk.byteLength;
+    }
+    await fs.fsync(fd); source.check();
+    const hash = await digest.digest(); source.check();
+    if (!hash?.data || hash.data.byteLength !== 32) { throw new Error('剪贴板原件校验未完成。'); }
+    let sha: string = '';
+    for (let i: number = 0; i < hash.data.length; i++) { sha += hash.data[i].toString(16).padStart(2, '0'); }
+    return { ok: true, error: '', byte_length: bytes.byteLength.toString(), sha256: sha };
+  }
+
+  prepareClipboard(source: ClipboardSource, maxBytes: number = ATTACHMENT_IMPORT_BUDGET): Promise<PreparedAttachment> {
+    return this.queued(async (): Promise<PreparedAttachment> => {
+      // Capability proof precedes any provider open. It is separate from picker
+      // grants, one-shot and invalidated by changed clipboard/owner/disposal.
+      checkClipboardSource(source);
+      if (!Number.isSafeInteger(maxBytes) || maxBytes <= 0 || maxBytes > ATTACHMENT_IMPORT_BUDGET) { throw new Error('附件导入额度无效。'); }
+      const remaining = await this.remaining(true);
+      const completed = new PreparedClipboardHolder();
+      try {
+        return await consumeClipboardSource(source, Math.min(maxBytes, remaining), async (read: ClipboardSourceRead): Promise<PreparedAttachment> => {
+          const value = await this.prepareSpool(maxBytes, async (fd: number, limit: number): Promise<PreparedSpoolResult> => {
+            const result = new PreparedSpoolResult(); result.name = read.name;
+            if (read.uri) {
+              let file: fs.File | undefined = undefined;
+              try {
+                file = await fs.open(read.uri, fs.OpenMode.READ_ONLY); read.check(); result.name = file.name;
+                result.reply = streamReply(await native.prepareFile(file.fd, fd, limit), limit); read.check();
+              } catch (error) { read.check(); throw new Error('系统剪贴板文件无法打开或读取：' + (error as Error).message); }
+              finally { close(file); }
+            } else { result.reply = await this.writeClipboardBytes(fd, read, limit); }
+            return result;
+          }, read.check);
+          completed.value = value;
+          return value;
+        });
+      } catch (error) {
+        const value = completed.value;
+        if (value) {
+          const entry = this.checked(value);
+          try { await this.removeOwn(entry.directory); this.entries.delete(value.spool_id); } catch (_) {}
+        }
+        if (error instanceof Error) { throw error; }
+        throw new Error(String(error));
+      }
+    });
+  }
+
+  private clipboardRequest(value: PreparedAttachment, format: ClipboardFormat, section: string, localId: string = ''): string {
+    this.checked(value);
+    if (!['plain', 'html', 'rtf', 'xml'].includes(format) ||
+      !['title', 'description', 'hypothesis', 'conclusion', 'todos'].includes(section) ||
+      Number(value.byte_length) > CLIPBOARD_SOURCE_LIMIT) { throw new Error('剪贴板转换格式、目标或原件额度无效。'); }
+    const sha = value.sha256.toLowerCase();
+    if (!/^[0-9a-f]{64}$/.test(sha)) { throw new Error('剪贴板原件校验身份无效。'); }
+    return localId ? JSON.stringify({ format: format, section: section, expected_sha256: sha, local_id: localId }) :
+      JSON.stringify({ format: format, section: section, expected_sha256: sha });
+  }
+
+  convertPreparedClipboard(value: PreparedAttachment, format: ClipboardFormat, section: string): Promise<ClipboardConversion> {
+    return this.queued(async (): Promise<ClipboardConversion> => {
+      const request = this.clipboardRequest(value, format, section);
+      const entry = this.checked(value);
+      let source: fs.File | undefined = undefined;
+      try {
+        source = await fs.open(entry.path, fs.OpenMode.READ_ONLY);
+        const serialized = await native.clipboardConvert(request, source.fd);
+        if (typeof serialized !== 'string' || new util.TextEncoder().encodeInto(serialized).byteLength > MAX_REQUEST_BYTES) { throw new Error('剪贴板转换结果超过预算。'); }
+        const reply = JSON.parse(serialized) as ClipboardConversion;
+        if (!reply || typeof reply.ok !== 'boolean' || typeof reply.error !== 'string' || typeof reply.paste_text !== 'string' ||
+          reply.paste_text.length > 20000 || !Array.isArray(reply.warnings) || reply.warnings.length > 64 ||
+          reply.warnings.some((warning: string): boolean => typeof warning !== 'string' || warning.length > 4096) ||
+          !Array.isArray(reply.images) || reply.images.length > 10) { throw new Error('剪贴板转换结果不完整。'); }
+        if (!reply.ok) {
+          if (reply.paste_text || reply.images.length || reply.source_sha256 || reply.source_byte_length !== '') { throw new Error('失败的剪贴板转换返回了不可信内容。'); }
+          throw new Error('剪贴板转换失败：' + reply.error);
+        }
+        if (reply.error || reply.source_sha256 !== value.sha256.toLowerCase() || reply.source_byte_length !== value.byte_length) { throw new Error('剪贴板转换原件校验不一致。'); }
+        let total: number = 0; const ids = new Set<string>();
+        for (let i: number = 0; i < reply.images.length; i++) {
+          const item = reply.images[i];
+          if (!item || typeof item.local_id !== 'string' || !/^image-[1-9][0-9]*$/.test(item.local_id) || ids.has(item.local_id) ||
+            Number(item.local_id.slice(6)) > 10 || typeof item.name !== 'string' ||
+            !new RegExp('^clipboard-' + reply.source_sha256 + '-' + item.local_id + '\\.(png|gif|webp|jpg|jpeg|bmp)$').test(item.name) ||
+            typeof item.byte_length !== 'string' || !/^[1-9][0-9]*$/.test(item.byte_length) || !Number.isSafeInteger(Number(item.byte_length)) ||
+            typeof item.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(item.sha256)) { throw new Error('剪贴板内嵌图片校验结果无效。'); }
+          total += Number(item.byte_length); ids.add(item.local_id);
+        }
+        if (total > ATTACHMENT_IMPORT_BUDGET) { throw new Error('剪贴板内嵌图片超过预算。'); }
+        this.conversions.set(reply, new ConversionBinding(value, reply, format, section)); return reply;
+      } finally { close(source); }
+    });
+  }
+
+  prepareEmbeddedClipboardImage(value: PreparedAttachment, conversion: ClipboardConversion, localId: string,
+    maxBytes: number = ATTACHMENT_IMPORT_BUDGET): Promise<PreparedAttachment> {
+    return this.queued(async (): Promise<PreparedAttachment> => {
+      const binding = this.conversions.get(conversion);
+      if (!binding || binding.source !== value || binding.signature !== JSON.stringify(conversion)) { throw new Error('剪贴板转换或原件身份已变化。'); }
+      const metadata = conversion.images.find((item: ClipboardImageMetadata): boolean => item.local_id === localId);
+      if (!metadata) { throw new Error('图片不是此次已核验转换的内嵌资源。'); }
+      const request = this.clipboardRequest(value, binding.format, binding.section, localId);
+      const entry = this.checked(value);
+      return this.prepareSpool(maxBytes, async (fd: number, limit: number): Promise<PreparedSpoolResult> => {
+        if (Number(metadata.byte_length) > limit) { throw new Error('剪贴板内嵌图片超过剩余附件预算。'); }
+        const source = await fs.open(entry.path, fs.OpenMode.READ_ONLY);
+        try {
+          const result = new PreparedSpoolResult(); result.name = metadata.name;
+          result.reply = streamReply(await native.clipboardImage(request, source.fd, fd, limit), limit);
+          if (result.reply.sha256 !== metadata.sha256 || result.reply.byte_length !== metadata.byte_length) { throw new Error('剪贴板内嵌图片与转换校验不一致。'); }
+          return result;
+        } finally { close(source); }
+      });
     });
   }
 
@@ -481,6 +652,9 @@ export class AttachmentFiles {
     return this.queued(async (): Promise<void> => {
       const entry = this.checked(value);
       await this.removeOwn(entry.directory); this.entries.delete(value.spool_id);
+      this.conversions.forEach((binding: ConversionBinding, conversion: ClipboardConversion): void => {
+        if (binding.source === value) { this.conversions.delete(conversion); }
+      });
     });
   }
 

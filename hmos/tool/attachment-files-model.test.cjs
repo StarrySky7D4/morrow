@@ -166,6 +166,8 @@ function harness() {
       if (id === '@kit.ArkTS') { return { util: { TextEncoder: class {
         encodeInto(text) { return new Uint8Array(Buffer.from(text)); }
       } } }; }
+      if (id === '@kit.CryptoArchitectureKit') { return {}; }
+      if (id === './ClipboardInput') { return { CLIPBOARD_SOURCE_LIMIT: 2 * 1024 * 1024 }; }
       if (id === 'libmorrow.so') { return { default: native }; }
       if (id === '@kit.AbilityKit' || id === '@kit.BasicServicesKit' || id === './Attachments') { return {}; }
       throw new Error('Unexpected actual-source import: ' + id);

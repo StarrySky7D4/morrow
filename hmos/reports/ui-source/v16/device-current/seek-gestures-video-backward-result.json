@@ -1,0 +1,1714 @@
+[
+  {
+    "type": "",
+    "text": "",
+    "bounds": [
+      0,
+      0,
+      2232,
+      1320
+    ],
+    "hitTestBehavior": "",
+    "opacity": 0,
+    "enabled": "",
+    "children": [
+      {
+        "type": "root",
+        "text": "",
+        "bounds": [
+          0,
+          0,
+          2232,
+          1320
+        ],
+        "hitTestBehavior": "Default",
+        "opacity": 1,
+        "visible": "true",
+        "enabled": "true",
+        "children": [
+          {
+            "type": "Stack",
+            "text": "",
+            "bounds": [
+              0,
+              0,
+              2232,
+              1320
+            ],
+            "hitTestBehavior": "Default",
+            "opacity": 1,
+            "visible": "true",
+            "enabled": "true",
+            "children": [
+              {
+                "type": "Canvas",
+                "text": "",
+                "bounds": [
+                  0,
+                  0,
+                  2232,
+                  1320
+                ],
+                "hitTestBehavior": "None",
+                "opacity": 1,
+                "visible": "true",
+                "enabled": "true",
+                "children": []
+              },
+              {
+                "type": "Row",
+                "text": "",
+                "bounds": [
+                  0,
+                  0,
+                  2232,
+                  1320
+                ],
+                "hitTestBehavior": "Default",
+                "opacity": 1,
+                "visible": "true",
+                "enabled": "true",
+                "children": [
+                  {
+                    "type": "Column",
+                    "text": "",
+                    "bounds": [
+                      36,
+                      36,
+                      2196,
+                      1284
+                    ],
+                    "hitTestBehavior": "Default",
+                    "opacity": 1,
+                    "visible": "true",
+                    "enabled": "true",
+                    "children": [
+                      {
+                        "type": "Row",
+                        "text": "",
+                        "bounds": [
+                          36,
+                          36,
+                          2196,
+                          156
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": [
+                          {
+                            "type": "Button",
+                            "text": "",
+                            "bounds": [
+                              36,
+                              39,
+                              156,
+                              153
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "Text",
+                                "text": "",
+                                "bounds": [
+                                  65,
+                                  65,
+                                  128,
+                                  128
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Row",
+                            "text": "",
+                            "bounds": [
+                              180,
+                              39,
+                              1885,
+                              153
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "Text",
+                                "text": "",
+                                "bounds": [
+                                  219,
+                                  71,
+                                  270,
+                                  122
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              },
+                              {
+                                "type": "TextInput",
+                                "text": "",
+                                "bounds": [
+                                  294,
+                                  39,
+                                  1752,
+                                  153
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "Ctrl K",
+                                "bounds": [
+                                  1776,
+                                  80,
+                                  1846,
+                                  112
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              },
+                              {
+                                "type": "Stack",
+                                "text": "",
+                                "bounds": [
+                                  180,
+                                  39,
+                                  1885,
+                                  153
+                                ],
+                                "hitTestBehavior": "None",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": [
+                                  {
+                                    "type": "Canvas",
+                                    "text": "",
+                                    "bounds": [
+                                      180,
+                                      39,
+                                      1885,
+                                      153
+                                    ],
+                                    "hitTestBehavior": "None",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Button",
+                            "text": "",
+                            "bounds": [
+                              1909,
+                              39,
+                              2029,
+                              153
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "Text",
+                                "text": "󰉘",
+                                "bounds": [
+                                  1941,
+                                  68,
+                                  1998,
+                                  125
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Button",
+                            "text": "草稿 1",
+                            "bounds": [
+                              2053,
+                              39,
+                              2196,
+                              153
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Row",
+                        "text": "",
+                        "bounds": [
+                          36,
+                          222,
+                          2196,
+                          1284
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": [
+                          {
+                            "type": "Stack",
+                            "text": "",
+                            "bounds": [
+                              36,
+                              222,
+                              2196,
+                              1284
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "Scroll",
+                                "text": "",
+                                "bounds": [
+                                  36,
+                                  222,
+                                  2196,
+                                  1284
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": [
+                                  {
+                                    "type": "LazyVWaterFlowLayout",
+                                    "text": "",
+                                    "bounds": [
+                                      36,
+                                      222,
+                                      2196,
+                                      1284
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": [
+                                      {
+                                        "type": "Column",
+                                        "text": "",
+                                        "bounds": [
+                                          36,
+                                          222,
+                                          2196,
+                                          1284
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": [
+                                          {
+                                            "type": "Row",
+                                            "text": "",
+                                            "bounds": [
+                                              36,
+                                              222,
+                                              2196,
+                                              452
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": [
+                                              {
+                                                "type": "Column",
+                                                "text": "",
+                                                "bounds": [
+                                                  36,
+                                                  222,
+                                                  1866,
+                                                  452
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": [
+                                                  {
+                                                    "type": "Text",
+                                                    "text": "A LITTLE SPACE FOR BIG IDEAS",
+                                                    "bounds": [
+                                                      36,
+                                                      222,
+                                                      595,
+                                                      254
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  },
+                                                  {
+                                                    "type": "Text",
+                                                    "text": "让想法，自由生长。",
+                                                    "bounds": [
+                                                      36,
+                                                      281,
+                                                      747,
+                                                      386
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  },
+                                                  {
+                                                    "type": "Text",
+                                                    "text": "收纳日常的零碎，也留住灵光一闪。",
+                                                    "bounds": [
+                                                      36,
+                                                      410,
+                                                      613,
+                                                      452
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "type": "Button",
+                                                "text": "",
+                                                "bounds": [
+                                                  1902,
+                                                  268,
+                                                  2196,
+                                                  406
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": [
+                                                  {
+                                                    "type": "Row",
+                                                    "text": "",
+                                                    "bounds": [
+                                                      1947,
+                                                      312,
+                                                      2151,
+                                                      363
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": [
+                                                      {
+                                                        "type": "Text",
+                                                        "text": "",
+                                                        "bounds": [
+                                                          1947,
+                                                          312,
+                                                          1998,
+                                                          363
+                                                        ],
+                                                        "hitTestBehavior": "Default",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": []
+                                                      },
+                                                      {
+                                                        "type": "Text",
+                                                        "text": "新建灵感",
+                                                        "bounds": [
+                                                          2019,
+                                                          318,
+                                                          2151,
+                                                          357
+                                                        ],
+                                                        "hitTestBehavior": "Default",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": []
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "type": "Column",
+                                            "text": "",
+                                            "bounds": [
+                                              36,
+                                              524,
+                                              2196,
+                                              1166
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": [
+                                              {
+                                                "type": "Stack",
+                                                "text": "",
+                                                "bounds": [
+                                                  36,
+                                                  524,
+                                                  2196,
+                                                  1166
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": [
+                                                  {
+                                                    "type": "__Common__",
+                                                    "text": "",
+                                                    "bounds": [
+                                                      1236,
+                                                      524,
+                                                      2196,
+                                                      950
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": [
+                                                      {
+                                                        "type": "Canvas",
+                                                        "text": "",
+                                                        "bounds": [
+                                                          1236,
+                                                          524,
+                                                          2196,
+                                                          1166
+                                                        ],
+                                                        "hitTestBehavior": "None",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": []
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "type": "Column",
+                                                    "text": "",
+                                                    "bounds": [
+                                                      39,
+                                                      527,
+                                                      2193,
+                                                      1126
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": [
+                                                      {
+                                                        "type": "Row",
+                                                        "text": "",
+                                                        "bounds": [
+                                                          114,
+                                                          602,
+                                                          323,
+                                                          630
+                                                        ],
+                                                        "hitTestBehavior": "Default",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": [
+                                                          {
+                                                            "type": "Circle",
+                                                            "text": "",
+                                                            "bounds": [
+                                                              114,
+                                                              609,
+                                                              129,
+                                                              624
+                                                            ],
+                                                            "hitTestBehavior": "Default",
+                                                            "opacity": 1,
+                                                            "visible": "true",
+                                                            "enabled": "true",
+                                                            "children": []
+                                                          },
+                                                          {
+                                                            "type": "Text",
+                                                            "text": "让可能性发生",
+                                                            "bounds": [
+                                                              150,
+                                                              602,
+                                                              323,
+                                                              630
+                                                            ],
+                                                            "hitTestBehavior": "Default",
+                                                            "opacity": 1,
+                                                            "visible": "true",
+                                                            "enabled": "true",
+                                                            "children": []
+                                                          }
+                                                        ]
+                                                      },
+                                                      {
+                                                        "type": "Text",
+                                                        "text": "还没成形，也没关系。",
+                                                        "bounds": [
+                                                          114,
+                                                          690,
+                                                          744,
+                                                          764
+                                                        ],
+                                                        "hitTestBehavior": "Default",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": []
+                                                      },
+                                                      {
+                                                        "type": "Text",
+                                                        "text": "一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。",
+                                                        "bounds": [
+                                                          114,
+                                                          794,
+                                                          708,
+                                                          916
+                                                        ],
+                                                        "hitTestBehavior": "Default",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": []
+                                                      },
+                                                      {
+                                                        "type": "Row",
+                                                        "text": "",
+                                                        "bounds": [
+                                                          114,
+                                                          976,
+                                                          420,
+                                                          1051
+                                                        ],
+                                                        "hitTestBehavior": "Default",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": [
+                                                          {
+                                                            "type": "Text",
+                                                            "text": "记录此刻的想法",
+                                                            "bounds": [
+                                                              114,
+                                                              994,
+                                                              345,
+                                                              1033
+                                                            ],
+                                                            "hitTestBehavior": "Default",
+                                                            "opacity": 1,
+                                                            "visible": "true",
+                                                            "enabled": "true",
+                                                            "children": []
+                                                          },
+                                                          {
+                                                            "type": "Text",
+                                                            "text": "",
+                                                            "bounds": [
+                                                              375,
+                                                              991,
+                                                              420,
+                                                              1036
+                                                            ],
+                                                            "hitTestBehavior": "Default",
+                                                            "opacity": 1,
+                                                            "visible": "true",
+                                                            "enabled": "true",
+                                                            "children": []
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "type": "Stack",
+                                                    "text": "",
+                                                    "bounds": [
+                                                      36,
+                                                      524,
+                                                      2196,
+                                                      1166
+                                                    ],
+                                                    "hitTestBehavior": "None",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": [
+                                                      {
+                                                        "type": "Canvas",
+                                                        "text": "",
+                                                        "bounds": [
+                                                          36,
+                                                          524,
+                                                          2196,
+                                                          1166
+                                                        ],
+                                                        "hitTestBehavior": "None",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": []
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "type": "Flex",
+                                            "text": "",
+                                            "bounds": [
+                                              36,
+                                              1250,
+                                              2196,
+                                              1284
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": [
+                                              {
+                                                "type": "Row",
+                                                "text": "",
+                                                "bounds": [
+                                                  36,
+                                                  1262,
+                                                  321,
+                                                  1284
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": [
+                                                  {
+                                                    "type": "Text",
+                                                    "text": "最近的念头",
+                                                    "bounds": [
+                                                      36,
+                                                      1262,
+                                                      262,
+                                                      1284
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  },
+                                                  {
+                                                    "type": "Text",
+                                                    "text": "14",
+                                                    "bounds": [
+                                                      286,
+                                                      1271,
+                                                      321,
+                                                      1284
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "type": "Row",
+                                                "text": "",
+                                                "bounds": [
+                                                  357,
+                                                  1250,
+                                                  987,
+                                                  1284
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": [
+                                                  {
+                                                    "type": "Text",
+                                                    "text": "全部",
+                                                    "bounds": [
+                                                      357,
+                                                      1250,
+                                                      483,
+                                                      1284
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  },
+                                                  {
+                                                    "type": "Text",
+                                                    "text": "有待办",
+                                                    "bounds": [
+                                                      495,
+                                                      1250,
+                                                      651,
+                                                      1284
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  },
+                                                  {
+                                                    "type": "Text",
+                                                    "text": "含附件",
+                                                    "bounds": [
+                                                      663,
+                                                      1250,
+                                                      819,
+                                                      1284
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  },
+                                                  {
+                                                    "type": "Text",
+                                                    "text": "仅收藏",
+                                                    "bounds": [
+                                                      831,
+                                                      1250,
+                                                      987,
+                                                      1284
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Row",
+                                "text": "",
+                                "bounds": [
+                                  36,
+                                  1140,
+                                  2196,
+                                  1284
+                                ],
+                                "hitTestBehavior": "None",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": [
+                                  {
+                                    "type": "Circle",
+                                    "text": "",
+                                    "bounds": [
+                                      84,
+                                      1203,
+                                      102,
+                                      1221
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": []
+                                  },
+                                  {
+                                    "type": "Text",
+                                    "text": "没有紧迫的事。给好奇心一点时间。",
+                                    "bounds": [
+                                      129,
+                                      1193,
+                                      2070,
+                                      1232
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": []
+                                  },
+                                  {
+                                    "type": "Text",
+                                    "text": "󰛹",
+                                    "bounds": [
+                                      2097,
+                                      1187,
+                                      2148,
+                                      1238
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": []
+                                  },
+                                  {
+                                    "type": "Stack",
+                                    "text": "",
+                                    "bounds": [
+                                      36,
+                                      1140,
+                                      2196,
+                                      1284
+                                    ],
+                                    "hitTestBehavior": "None",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Stack",
+                "text": "",
+                "bounds": [
+                  0,
+                  0,
+                  2232,
+                  1320
+                ],
+                "hitTestBehavior": "Default",
+                "opacity": 1,
+                "visible": "true",
+                "enabled": "true",
+                "children": [
+                  {
+                    "type": "Rect",
+                    "text": "",
+                    "bounds": [
+                      0,
+                      0,
+                      2232,
+                      1320
+                    ],
+                    "hitTestBehavior": "Default",
+                    "opacity": 1,
+                    "visible": "true",
+                    "enabled": "true",
+                    "children": []
+                  },
+                  {
+                    "type": "Column",
+                    "text": "",
+                    "bounds": [
+                      60,
+                      60,
+                      2172,
+                      1260
+                    ],
+                    "hitTestBehavior": "Default",
+                    "opacity": 1,
+                    "visible": "true",
+                    "enabled": "true",
+                    "children": [
+                      {
+                        "type": "Row",
+                        "text": "",
+                        "bounds": [
+                          63,
+                          63,
+                          2169,
+                          249
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": [
+                          {
+                            "type": "Row",
+                            "text": "",
+                            "bounds": [
+                              135,
+                              135,
+                              249,
+                              249
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "Text",
+                                "text": "",
+                                "bounds": [
+                                  161,
+                                  161,
+                                  224,
+                                  224
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Column",
+                            "text": "",
+                            "bounds": [
+                              285,
+                              136,
+                              1965,
+                              249
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "Text",
+                                "text": "MORROW / A LITTLE POSSIBILITY",
+                                "bounds": [
+                                  285,
+                                  136,
+                                  743,
+                                  164
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "接住一个新想法",
+                                "bounds": [
+                                  285,
+                                  179,
+                                  705,
+                                  249
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Button",
+                            "text": "",
+                            "bounds": [
+                              2001,
+                              138,
+                              2097,
+                              246
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "Text",
+                                "text": "",
+                                "bounds": [
+                                  2022,
+                                  165,
+                                  2076,
+                                  219
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Text",
+                        "text": "文字、表格、图片，先放在这里。让一个念头慢慢成形。",
+                        "bounds": [
+                          63,
+                          285,
+                          2169,
+                          341
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": []
+                      },
+                      {
+                        "type": "Scroll",
+                        "text": "",
+                        "bounds": [
+                          63,
+                          407,
+                          2169,
+                          993
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": [
+                          {
+                            "type": "Column",
+                            "text": "",
+                            "bounds": [
+                              63,
+                              407,
+                              2169,
+                              993
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "TextInput",
+                                "id": "draft-title",
+                                "text": "HMOS-media-20261007-A",
+                                "bounds": [
+                                  135,
+                                  407,
+                                  2097,
+                                  599
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "21 / 60",
+                                "bounds": [
+                                  135,
+                                  647,
+                                  2097,
+                                  682
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              },
+                              {
+                                "type": "Row",
+                                "text": "",
+                                "bounds": [
+                                  135,
+                                  730,
+                                  2097,
+                                  850
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": [
+                                  {
+                                    "type": "PasteButton",
+                                    "id": "editor-paste",
+                                    "text": "粘贴",
+                                    "bounds": [
+                                      824,
+                                      730,
+                                      1059,
+                                      850
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": []
+                                  },
+                                  {
+                                    "type": "Button",
+                                    "id": "editor-import",
+                                    "text": "",
+                                    "bounds": [
+                                      1083,
+                                      730,
+                                      1408,
+                                      850
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": [
+                                      {
+                                        "type": "Row",
+                                        "text": "",
+                                        "bounds": [
+                                          1134,
+                                          766,
+                                          1357,
+                                          814
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": [
+                                          {
+                                            "type": "Text",
+                                            "text": "",
+                                            "bounds": [
+                                              1134,
+                                              766,
+                                              1182,
+                                              814
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": []
+                                          },
+                                          {
+                                            "type": "Text",
+                                            "text": "导入文件",
+                                            "bounds": [
+                                              1200,
+                                              767,
+                                              1357,
+                                              813
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": []
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "Text",
+                                "text": "粘贴至正文 · 附件从文件选择器导入。",
+                                "bounds": [
+                                  135,
+                                  898,
+                                  2097,
+                                  952
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Row",
+                        "text": "",
+                        "bounds": [
+                          63,
+                          993,
+                          2169,
+                          1052
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": [
+                          {
+                            "type": "Text",
+                            "id": "draft-status",
+                            "text": "草稿已保留",
+                            "bounds": [
+                              135,
+                              993,
+                              2097,
+                              1028
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Divider",
+                        "text": "",
+                        "bounds": [
+                          63,
+                          1052,
+                          2169,
+                          1053
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": []
+                      },
+                      {
+                        "type": "Row",
+                        "text": "",
+                        "bounds": [
+                          63,
+                          1053,
+                          2169,
+                          1257
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": [
+                          {
+                            "type": "Button",
+                            "text": "放弃草稿",
+                            "bounds": [
+                              135,
+                              1095,
+                              351,
+                              1215
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": []
+                          },
+                          {
+                            "type": "Blank",
+                            "text": "",
+                            "bounds": [
+                              387,
+                              1095,
+                              1507,
+                              1215
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": []
+                          },
+                          {
+                            "type": "Button",
+                            "text": "保留草稿",
+                            "bounds": [
+                              1543,
+                              1098,
+                              1784,
+                              1212
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": []
+                          },
+                          {
+                            "type": "Button",
+                            "text": "保存灵感",
+                            "bounds": [
+                              1820,
+                              1098,
+                              2097,
+                              1212
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Stack",
+                        "text": "",
+                        "bounds": [
+                          60,
+                          60,
+                          2172,
+                          1260
+                        ],
+                        "hitTestBehavior": "None",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": [
+                          {
+                            "type": "Canvas",
+                            "text": "",
+                            "bounds": [
+                              60,
+                              60,
+                              2172,
+                              1260
+                            ],
+                            "hitTestBehavior": "None",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Stack",
+                "id": "attachment-preview-dialog",
+                "text": "",
+                "bounds": [
+                  0,
+                  0,
+                  2232,
+                  1320
+                ],
+                "hitTestBehavior": "Default",
+                "opacity": 1,
+                "visible": "true",
+                "enabled": "true",
+                "children": [
+                  {
+                    "type": "Rect",
+                    "text": "",
+                    "bounds": [
+                      0,
+                      0,
+                      2232,
+                      1320
+                    ],
+                    "hitTestBehavior": "Default",
+                    "opacity": 1,
+                    "visible": "true",
+                    "enabled": "true",
+                    "children": []
+                  },
+                  {
+                    "type": "Column",
+                    "text": "",
+                    "bounds": [
+                      0,
+                      19,
+                      2232,
+                      1302
+                    ],
+                    "hitTestBehavior": "Default",
+                    "opacity": 1,
+                    "visible": "true",
+                    "enabled": "true",
+                    "children": [
+                      {
+                        "type": "Text",
+                        "text": "HMOS-dev14-bars.mp4",
+                        "bounds": [
+                          54,
+                          73,
+                          2178,
+                          126
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": []
+                      },
+                      {
+                        "type": "Stack",
+                        "text": "",
+                        "bounds": [
+                          54,
+                          162,
+                          2178,
+                          1092
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": [
+                          {
+                            "type": "XComponent",
+                            "id": "attachment-video-surface",
+                            "text": "",
+                            "bounds": [
+                              54,
+                              162,
+                              2178,
+                              1092
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": []
+                          },
+                          {
+                            "type": "Stack",
+                            "id": "attachment-media-gesture-zone",
+                            "text": "",
+                            "bounds": [
+                              102,
+                              210,
+                              2130,
+                              1044
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": []
+                          },
+                          {
+                            "type": "Stack",
+                            "id": "attachment-media-controls",
+                            "text": "",
+                            "bounds": [
+                              54,
+                              162,
+                              2178,
+                              1092
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 0,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "Button",
+                                "id": "attachment-media-toggle",
+                                "text": "▷",
+                                "bounds": [
+                                  1032,
+                                  543,
+                                  1200,
+                                  711
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              },
+                              {
+                                "type": "Column",
+                                "text": "",
+                                "bounds": [
+                                  54,
+                                  162,
+                                  2178,
+                                  1092
+                                ],
+                                "hitTestBehavior": "Transparent",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": [
+                                  {
+                                    "type": "Slider",
+                                    "id": "attachment-media-seek",
+                                    "text": "0.000000",
+                                    "bounds": [
+                                      102,
+                                      774,
+                                      2130,
+                                      858
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": []
+                                  },
+                                  {
+                                    "type": "Row",
+                                    "text": "",
+                                    "bounds": [
+                                      102,
+                                      870,
+                                      2130,
+                                      966
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": [
+                                      {
+                                        "type": "Text",
+                                        "id": "attachment-media-time",
+                                        "text": "0:00 / 0:12",
+                                        "bounds": [
+                                          102,
+                                          897,
+                                          275,
+                                          939
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": []
+                                      },
+                                      {
+                                        "type": "Blank",
+                                        "text": "",
+                                        "bounds": [
+                                          311,
+                                          870,
+                                          1853,
+                                          966
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": []
+                                      },
+                                      {
+                                        "type": "Button",
+                                        "id": "attachment-media-fullscreen",
+                                        "text": "退出全屏",
+                                        "bounds": [
+                                          1889,
+                                          870,
+                                          2130,
+                                          966
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Button",
+                        "id": "attachment-preview-close",
+                        "text": "关闭预览",
+                        "bounds": [
+                          996,
+                          1128,
+                          1237,
+                          1248
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

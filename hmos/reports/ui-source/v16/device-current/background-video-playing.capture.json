@@ -1,0 +1,21 @@
+{
+  "label": "background-video-playing",
+  "started": 1791348857894,
+  "screenshotAt": 1791348858221,
+  "layoutAt": 1791348858998,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": true,
+    "opacity": 1,
+    "hitTestBehavior": "Transparent",
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "OPACITY_ONE"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\background-video-playing.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\background-video-playing.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\background-video-playing.raw.json"
+  }
+}

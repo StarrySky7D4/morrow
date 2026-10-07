@@ -1,0 +1,21 @@
+{
+  "label": "back-video-stop-observed",
+  "started": 1791348735188,
+  "screenshotAt": 1791348735398,
+  "layoutAt": 1791348736094,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": true,
+    "opacity": 0,
+    "hitTestBehavior": "Default",
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "OPACITY_ZERO"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\back-video-stop-observed.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\back-video-stop-observed.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\back-video-stop-observed.raw.json"
+  }
+}

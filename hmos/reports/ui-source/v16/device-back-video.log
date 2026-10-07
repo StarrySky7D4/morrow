@@ -1,0 +1,22 @@
+C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:116
+ }catch(error){active.phase='FAILED_OR_UNKNOWN';active.error=error.message;update();throw error;}finally{active=undefined;}
+                                                                                    ^
+
+Error: UNKNOWN: unknown error, open 'C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\reports\ui-source\v16\device-current\progress-media-controls.json'
+    at Object.writeFileSync (node:fs:2413:20)
+    at persist (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:18:115)
+    at update (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:19:136)
+    at command (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:21:114)
+    at C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:143:102
+    at runStage (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:115:16)
+    at Object.back (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:142:47)
+    at Object.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:190:138)
+    at Module._compile (node:internal/modules/cjs/loader:1812:14)
+    at Object..js (node:internal/modules/cjs/loader:1943:10) {
+  errno: -4094,
+  code: 'UNKNOWN',
+  syscall: 'open',
+  path: 'C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\progress-media-controls.json'
+}
+
+Node.js v24.14.1

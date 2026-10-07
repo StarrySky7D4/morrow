@@ -1,0 +1,44 @@
+✔ actual SDK snapshot reads each requested flavor and exposes opaque capabilities (4.5406ms)
+✔ system file URI excludes text flavors and is never obtained from plain text (2.322ms)
+✔ non-file URI is literal content without file authority (1.3476ms)
+✔ binary image wins PixelMap independent of provider order and has no duplicate binary entry (1.4189ms)
+✔ PixelMap encodes bounded PNG with explicit bufferSize and releases encoder and image (1.5144ms)
+✔ dispose during encoding invalidates late bytes without releasing the live encoder early (1.5289ms)
+✔ owner change while reading a flavor invalidates the entire snapshot and does not re-read (1.2007ms)
+✔ changeCount after system read rejects instead of adopting new content (1.0054ms)
+✔ changeCount before consume stops old source and a fresh read requires explicit disposal (1.2244ms)
+✔ source is one-shot while sibling flavors remain usable until snapshot disposal (1.3725ms)
+✔ copied or fabricated source metadata cannot become authority (1.1097ms)
+✔ mutated source name is refused (1.1278ms)
+✔ mutated source mime is refused (1.0481ms)
+✔ mutated source kind is refused (1.0436ms)
+✔ mutated source format is refused (1.1907ms)
+✔ invalid or over-limit record count -1 does not silently truncate (0.964ms)
+✔ invalid or over-limit record count 21 does not silently truncate (0.8432ms)
+✔ invalid or over-limit record count 1.5 does not silently truncate (0.877ms)
+✔ invalid or over-limit record count NaN does not silently truncate (0.8025ms)
+✔ invalid provider MIME list is refused before flavor reads (1.0169ms)
+✔ invalid provider MIME list is refused before flavor reads (0.8925ms)
+✔ invalid provider MIME list is refused before flavor reads (0.9271ms)
+✔ invalid provider MIME list is refused before flavor reads (0.8505ms)
+✔ unrequested MIME and sparse valid-type reply do not mint capabilities (1.9033ms)
+✔ wrong value types warn without pretending the format was imported (0.958ms)
+✔ UTF8 byte limit is enforced before exposing plain_text, while valid HTML sibling survives (3.7788ms)
+✔ snapshot buffers are copied before a provider can mutate its ArrayBuffer (1.6275ms)
+✔ PixelMap oversized dimensions stop before encoder admission and still release (3.6696ms)
+✔ PixelMap encoded overflow and rejected encoder never become output and never replay (2.1458ms)
+✔ snapshot disposal revokes unread sources and does not read their providers again (0.9877ms)
+✔ late SDK PixelMap reply is released when the owner changed before flavor admission (0.9906ms)
+✔ HTML and RTF larger than converter limit preserve original capability within attachment budget (10.9655ms)
+✔ owner change during awaited encoder cleanup invalidates successful late bytes (1.3357ms)
+✔ source kinds reuse the actual attachment suffix classifier (1.3778ms)
+✔ encoder release failure is explicit after pixel release and does not allow replay (3.6931ms)
+✔ disposal attempts every unused PixelMap before reporting a release failure (3.0268ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 566.4347

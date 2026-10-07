@@ -1,0 +1,21 @@
+{
+  "label": "seek-gestures-video-forward-feedback",
+  "started": 1791348590494,
+  "screenshotAt": 1791348590721,
+  "layoutAt": 1791348591438,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": true,
+    "opacity": 0,
+    "hitTestBehavior": "Default",
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "OPACITY_ZERO"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\seek-gestures-video-forward-feedback.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\seek-gestures-video-forward-feedback.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\seek-gestures-video-forward-feedback.raw.json"
+  }
+}

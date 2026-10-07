@@ -21,6 +21,8 @@ extern "C" char *morrow_hmos_request(const char *);
 extern "C" char *morrow_hmos_import(const char *, int owned_fd);
 extern "C" char *morrow_hmos_export(const char *, int owned_fd);
 extern "C" char *morrow_hmos_prepare(int source_owned_fd, int destination_owned_fd, uint64_t max_bytes);
+extern "C" char *morrow_hmos_clipboard_convert(const char *, int source_owned_fd);
+extern "C" char *morrow_hmos_clipboard_image(const char *, int source_owned_fd, int destination_owned_fd, uint64_t max_bytes);
 extern "C" void morrow_hmos_free(char *);
 
 namespace {
@@ -35,7 +37,7 @@ bool Read(napi_env env, napi_value value, std::string &result) {
     return result.find('\0') == std::string::npos;
 }
 napi_value Undefined(napi_env env) { napi_value v; napi_get_undefined(env, &v); return v; }
-enum class Operation { Request, Import, Export, Prepare };
+enum class Operation { Request, Import, Export, Prepare, ClipboardConvert, ClipboardImage };
 struct Work {
     napi_async_work work{};
     napi_deferred deferred{};
@@ -86,6 +88,12 @@ void Execute(napi_env, void *data) {
         case Operation::Request: reply = morrow_hmos_request(w->request.c_str()); break;
         case Operation::Import: reply = morrow_hmos_import(w->request.c_str(), std::exchange(w->source_fd, -1)); break;
         case Operation::Export: reply = morrow_hmos_export(w->request.c_str(), std::exchange(w->source_fd, -1)); break;
+        case Operation::ClipboardConvert: reply = morrow_hmos_clipboard_convert(w->request.c_str(), std::exchange(w->source_fd, -1)); break;
+        case Operation::ClipboardImage: {
+            const int source = std::exchange(w->source_fd, -1);
+            const int destination = std::exchange(w->destination_fd, -1);
+            reply = morrow_hmos_clipboard_image(w->request.c_str(), source, destination, w->max_bytes); break;
+        }
         case Operation::Prepare: {
             const int source = std::exchange(w->source_fd, -1);
             const int destination = std::exchange(w->destination_fd, -1);
@@ -149,6 +157,24 @@ napi_value Transfer(napi_env env, napi_callback_info info, Operation operation) 
 }
 napi_value ImportFile(napi_env env, napi_callback_info info) { return Transfer(env, info, Operation::Import); }
 napi_value ExportFile(napi_env env, napi_callback_info info) { return Transfer(env, info, Operation::Export); }
+napi_value ClipboardConvert(napi_env env, napi_callback_info info) { return Transfer(env, info, Operation::ClipboardConvert); }
+napi_value ClipboardImage(napi_env env, napi_callback_info info) {
+    size_t argc = 5; napi_value argv[5]; int source, destination;
+    if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok) {
+        napi_throw_type_error(env, "NATIVE_NOT_STARTED", "Cannot read clipboard image arguments"); return nullptr;
+    }
+    auto work = std::make_unique<Work>(); work->operation = Operation::ClipboardImage;
+    if (argc != 4 || !Read(env, argv[0], work->request) || !ReadFd(env, argv[1], source) ||
+        !ReadFd(env, argv[2], destination) || source == destination || !ReadLimit(env, argv[3], work->max_bytes)) {
+        napi_throw_type_error(env, "NATIVE_NOT_STARTED", "Expected bounded clipboard request, distinct authorized FDs and byte limit"); return nullptr;
+    }
+    work->source_fd = Duplicate(source);
+    if (work->source_fd >= 0) work->destination_fd = Duplicate(destination);
+    if (work->source_fd < 0 || work->destination_fd < 0) {
+        napi_throw_error(env, "NATIVE_NOT_STARTED", "Cannot duplicate clipboard file descriptors"); return nullptr;
+    }
+    return Queue(env, std::move(work));
+}
 napi_value PrepareFile(napi_env env, napi_callback_info info) {
     size_t argc = 4; napi_value argv[4]; int source, destination;
     if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok) {
@@ -231,6 +257,8 @@ napi_value Init(napi_env env, napi_value exports) {
         {"importFile",nullptr,ImportFile,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"exportFile",nullptr,ExportFile,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"prepareFile",nullptr,PrepareFile,nullptr,nullptr,nullptr,napi_default,nullptr},
+        {"clipboardConvert",nullptr,ClipboardConvert,nullptr,nullptr,nullptr,napi_default,nullptr},
+        {"clipboardImage",nullptr,ClipboardImage,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"renderPreview",nullptr,Render,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"releasePreview",nullptr,Release,nullptr,nullptr,nullptr,napi_default,nullptr}
     };

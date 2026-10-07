@@ -1,0 +1,27 @@
+[
+  {
+    "format": "html",
+    "source": "<h2>研究</h2><p><b>重点</b> 与 <i>观察</i></p><ul><li>一步</li></ul><script>alert(1)</script><a href=\"javascript:alert(1)\">危险链接</a>",
+    "paste_text": "## 研究\n\n**重点** 与 *观察*\n\n- 一步\n\n危险链接"
+  },
+  {
+    "format": "html",
+    "source": "<table><tr><td rowspan=\"2\">跨行</td><td>A</td></tr><tr><td>B</td></tr></table>",
+    "paste_text": "| 跨行 | A |\n| --- | --- |\n|  | B |"
+  },
+  {
+    "format": "xml",
+    "source": "<Workbook xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Worksheet><Table><Row><Cell><Data>名称</Data></Cell><Cell><Data>结果</Data></Cell></Row><Row><Cell><Data>合计</Data></Cell><Cell ss:Formula=\"=SUM(R[-1]C:R[-1]C)\"><Data>42</Data></Cell></Row></Table></Worksheet></Workbook>",
+    "paste_text": "| 名称 | 结果 |\n| --- | --- |\n| 合计 | 42 (公式: =SUM(R[-1]C:R[-1]C)) |"
+  },
+  {
+    "format": "rtf",
+    "source": "{\\rtf1\\ansi\\uc1 {\\fonttbl secret}\\u20013?\\u25991?\\par next{\\*\\objdata payload}}",
+    "paste_text": "中文\nnext"
+  },
+  {
+    "format": "plain",
+    "source": "A\tB\n1\t2",
+    "paste_text": "| A | B |\n| --- | --- |\n| 1 | 2 |"
+  }
+]

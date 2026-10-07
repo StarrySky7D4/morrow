@@ -24,6 +24,7 @@ mod attachment_bridge;
 pub mod editor_draft;
 pub mod editor_draft_staging;
 pub mod file_stream;
+pub mod clipboard;
 pub mod markdown;
 pub mod query_plan_v2;
 
@@ -868,6 +869,48 @@ pub unsafe extern "C" fn morrow_hmos_export(input: *const c_char, owned_fd: i32)
         let mut slot = SESSION.lock().map_err(|_| "SessionUnavailable")?;
         let metadata = slot.as_mut().ok_or("NotOpen")?.export_to(request, &mut file)?;
         file.sync_all().map_err(err)?; Ok(metadata)
+    })();
+    c_reply(file_stream::FileReply::from_result(result))
+}
+
+/// Read-only conversion consumes a duplicate source FD, rewinds it, and binds
+/// every result to the complete immutable spool SHA. It needs no open Store.
+#[cfg(unix)]
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn morrow_hmos_clipboard_convert(input: *const c_char, source_fd: i32) -> *mut c_char {
+    let source = unsafe { take_file(source_fd) };
+    let result = (|| -> Result<clipboard::ConvertReply> {
+        let mut source = source?;
+        use std::io::Seek;
+        if !source.metadata().map_err(err)?.is_file() { return Err("ClipboardSpoolFileRequired".into()); }
+        if input.is_null() { return Err("NullRequest".into()); }
+        let input = unsafe { CStr::from_ptr(input) }.to_str().map_err(|_| "InvalidUtf8")?;
+        source.rewind().map_err(err)?;
+        clipboard::convert(input, &mut source)
+    })();
+    c_reply(result.unwrap_or_else(clipboard::ConvertReply::failure))
+}
+
+#[cfg(unix)]
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn morrow_hmos_clipboard_image(input: *const c_char, source_fd: i32, destination_fd: i32, max_bytes: u64) -> *mut c_char {
+    let source = unsafe { take_file(source_fd) };
+    let destination = if destination_fd == source_fd { Err("DistinctFileDescriptorsRequired".into()) } else { unsafe { take_file(destination_fd) } };
+    let result = (|| -> Result<file_stream::FileMetadata> {
+        let mut source = source?; let mut destination = destination?;
+        use std::{io::Seek, os::unix::fs::MetadataExt};
+        let a = source.metadata().map_err(err)?; let b = destination.metadata().map_err(err)?;
+        if !a.is_file() || !b.is_file() { return Err("ClipboardSpoolFileRequired".into()); }
+        if a.dev() == b.dev() && a.ino() == b.ino() { return Err("SameFileRejected".into()); }
+        if input.is_null() { return Err("NullRequest".into()); }
+        let input = unsafe { CStr::from_ptr(input) }.to_str().map_err(|_| "InvalidUtf8")?;
+        source.rewind().map_err(err)?;
+        // Parse, recheck the whole source and identify the bounded image before
+        // mutating the private destination, including its previous length.
+        let image = clipboard::extract_bytes(input, &mut source, max_bytes)?;
+        destination.set_len(0).map_err(err)?; destination.rewind().map_err(err)?;
+        let metadata = file_stream::prepare(&mut image.as_slice(), &mut destination, max_bytes)?;
+        destination.sync_all().map_err(err)?; Ok(metadata)
     })();
     c_reply(file_stream::FileReply::from_result(result))
 }

@@ -1,0 +1,21 @@
+{
+  "label": "seek-gestures-video-reveal-1",
+  "started": 1791348583820,
+  "screenshotAt": 1791348584073,
+  "layoutAt": 1791348584766,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": true,
+    "opacity": 1,
+    "hitTestBehavior": "Transparent",
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "OPACITY_ONE"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\seek-gestures-video-reveal-1.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\seek-gestures-video-reveal-1.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\seek-gestures-video-reveal-1.raw.json"
+  }
+}

@@ -1,0 +1,4 @@
+TARGET aarch64-linux-ohos
+EXIT_CODE 0
+TARGET x86_64-linux-ohos
+EXIT_CODE 0

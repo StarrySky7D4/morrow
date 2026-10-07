@@ -1,0 +1,21 @@
+{
+  "label": "background-video-fresh-play-shown",
+  "started": 1791349294216,
+  "screenshotAt": 1791349294428,
+  "layoutAt": 1791349295175,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": true,
+    "opacity": 1,
+    "hitTestBehavior": "Transparent",
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "OPACITY_ONE"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\background-video-fresh-play-shown.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\background-video-fresh-play-shown.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v16\\device-current\\background-video-fresh-play-shown.raw.json"
+  }
+}

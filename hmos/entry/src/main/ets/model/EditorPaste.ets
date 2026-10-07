@@ -2,7 +2,8 @@ import { TextValue, copyText } from './EditorDraft';
 
 export function samePasteTarget(a: TextValue, b: TextValue): boolean {
   return a.text === b.text && a.selection_base === b.selection_base &&
-    a.selection_extent === b.selection_extent && a.composing_start === b.composing_start &&
+    a.selection_extent === b.selection_extent && a.affinity === b.affinity && a.directional === b.directional &&
+    a.composing_start === b.composing_start &&
     a.composing_end === b.composing_end;
 }
 

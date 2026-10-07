@@ -1,0 +1,43 @@
+{
+  "captured_utc": "2026-10-07T05:14:47.7431684Z",
+  "version": "0.1.0-hmos-dev.17",
+  "artifact": "hmos/.build/artifacts/dev17/entry-default-unsigned.hap",
+  "bytes": 27815034,
+  "sha256": "D9DECC46BB0E953BB56A4CDC5DBBB71D0B863E6380C273CC677B73C36689C03F",
+  "build": "API26 unsigned debug SUCCESS 9.467s",
+  "native_entries": [
+    {
+      "path": "libs/arm64-v8a/libc++_shared.so",
+      "bytes": 1262504,
+      "sha256": "F69947AF100B652E349AE51E4A4888BCC7A327DB9085272D318176EF1782BF0F",
+      "prior_bytes": 1262504,
+      "prior_sha256": "F69947AF100B652E349AE51E4A4888BCC7A327DB9085272D318176EF1782BF0F",
+      "byte_equal": true
+    },
+    {
+      "path": "libs/arm64-v8a/libmorrow.so",
+      "bytes": 10186824,
+      "sha256": "36EB839C0C1A635AAD25D1352725DF02FD98D9B8F5A46CA86998CFC0F2D97D57",
+      "prior_bytes": 8777960,
+      "prior_sha256": "0661CF65DFBB62B063F9362C22380E7080AD0B17F999C9AB49176FC16DDEC0CC",
+      "byte_equal": false
+    },
+    {
+      "path": "libs/x86_64/libc++_shared.so",
+      "bytes": 1294904,
+      "sha256": "09B9E3A97D3C01260B5E269E2CE15FE4D3B7C787B99DC4378295D4F35E2FA006",
+      "prior_bytes": 1294904,
+      "prior_sha256": "09B9E3A97D3C01260B5E269E2CE15FE4D3B7C787B99DC4378295D4F35E2FA006",
+      "byte_equal": true
+    },
+    {
+      "path": "libs/x86_64/libmorrow.so",
+      "bytes": 10635272,
+      "sha256": "7FDB00DB0CA2375C96B483FFFB48AF6D75460F0C9D9C63668C436A6CF219F69E",
+      "prior_bytes": 9219592,
+      "prior_sha256": "9F47A37E6E4DCF21D9C8BA09F5C7E2973A024CCCC89A5502B528EBE8C063697D",
+      "byte_equal": false
+    }
+  ],
+  "qualification": "Fresh native dual ABI builds and current HAP link; no device/native-FD acceptance"
+}

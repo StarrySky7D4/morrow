@@ -10,6 +10,9 @@ import { AttachmentImportSelection, AttachmentImportBoundary, AttachmentImportId
   AttachmentImportSelectionState, attachmentImportTitle } from '../model/AttachmentImportSelection';
 import { ImageReadTarget, ImageLease, VerifiedImageView, VerifiedImages } from '../model/VerifiedImages';
 import { insertPaste, samePasteTarget } from '../model/EditorPaste';
+import { ClipboardInput, ClipboardSnapshot, ClipboardSource } from '../model/ClipboardInput';
+import { ClipboardPaste, ClipboardPasteAttachment, ClipboardPastePlan, ClipboardPasteBoundary,
+  ClipboardPasteIdentity, ClipboardPasteReceipt } from '../model/ClipboardPaste';
 import { pasteboard } from '@kit.BasicServicesKit';
 import { uiText } from '../model/UiStrings';
 import { preferences } from '@kit.ArkData';
@@ -23,7 +26,7 @@ import native from 'libmorrow.so';
 import { CardView, Command, Reply, TaskView, workbench } from '../model/Workbench';
 import { CardDataSource, WorkspaceCard } from '../model/CardDataSource';
 import { CardOrderPreferences, cardOrderPage } from '../model/CardOrder';
-import { AttachmentFiles, PreparedAttachment, VerifiedPreview, AttachmentRecoveryDiagnostic } from '../model/AttachmentFiles';
+import { AttachmentFiles, PreparedAttachment, VerifiedPreview, AttachmentRecoveryDiagnostic, ClipboardConversion } from '../model/AttachmentFiles';
 import { AssetView, ImportRecord, ImportCommand, attachmentKind, attachmentSize, attachmentIcon, attachmentDetails, selectedImport, sameImport } from '../model/Attachments';
 import { QueryConditions, QueryState, QueryCoordinator } from '../model/QueryCoordinator';
 import { Values as DraftValues, TextValue as DraftTextValue, DraftScope, DraftRecord,
@@ -198,6 +201,8 @@ struct Index {
     }, async (token: string): Promise<void> => { await this.releaseImageToken(token); },
     (): void => { this.markdownImages = this.inlineImages.views(); });
   @State pasteWorking: boolean = false;
+  private clipboardInput: ClipboardInput = new ClipboardInput();
+  private clipboardPaste: ClipboardPaste | undefined = undefined;
   @State lastDraftField: string = 'description';
   private markdown: MarkdownPreviewCoordinator = new MarkdownPreviewCoordinator(
     async (text: string): Promise<MarkdownDoc> => {
@@ -333,6 +338,7 @@ struct Index {
     return false;
   }
   aboutToDisappear(): void {
+    this.clipboardPaste?.stop();
     this.attachmentSelection?.stop();
     this.closeAttachmentPreview();
     this.pageAlive = false;
@@ -347,7 +353,7 @@ struct Index {
     this.mounted = false; native.releasePreview(this.preview);
   }
   private foregroundChanged(): void {
-    if (!this.foreground) { this.mediaPlayback.pauseForBackground(); this.exitMediaFullscreen(); }
+    if (!this.foreground) { this.clipboardPaste?.stop(); this.mediaPlayback.pauseForBackground(); this.exitMediaFullscreen(); }
     else { this.fileOpen?.reconcile(); }
   }
   private async switchMediaFullscreen(token: string): Promise<void> {
@@ -467,56 +473,205 @@ struct Index {
       !this.draftCaptureIncomplete && !this.editorDraft.unknown && this.pending.length === 0 && !this.current()?.deleted;
   }
   private async pasteContent(): Promise<void> {
-    if (!this.canPaste()) { return; }
-    const draft = this.editorDraft!, name = this.lastDraftField, snapshot = copyText(this.draftField(name));
+    if (!this.canPaste() || !this.attachmentFiles) { return; }
+    const draft = this.editorDraft!, files = this.attachmentFiles, name = this.lastDraftField;
+    const snapshot = copyText(this.draftField(name)), originalValues = draft.current, editor = this.attachmentEditorIdentity;
     if (snapshot.composing_start !== -1 || snapshot.composing_end !== -1) {
       this.message = '请先完成输入法候选，再粘贴内容。'; return;
     }
     const limit = name === 'title' ? 60 : name === 'todos' ? 500 : name === 'hypothesis' ? 5000 : name === 'conclusion' ? 10000 : 20000;
+    const spools: Map<string, PreparedAttachment> = new Map<string, PreparedAttachment>();
+    let input: ClipboardSnapshot | undefined = undefined;
+    // Admission permits this paste's confirmed pins, but no newer editing
+    // value, source editor, composition or selection may be borrowed.
+    const owner = (): boolean => {
+      if (!this.pageAlive || !this.foreground || !this.editorOpen || this.editorDraft !== draft || draft.disposed || this.draftRetiring ||
+        this.draftRetirementUnknown || this.draftCaptureIncomplete || draft.unknown || draft.conflicted || this.draftConflict ||
+        this.attachmentEditorIdentity !== editor || !samePasteTarget(snapshot, this.draftField(name))) { return false; }
+      const current = draft.current; current.assets = originalValues.assets;
+      return sameValues(current, originalValues);
+    };
     this.pasteWorking = true;
     try {
-      const clipboard = pasteboard.getSystemPasteboard(), before = clipboard.getChangeCount();
-      const data = await clipboard.getData();
-      const count = data.getRecordCount();
-      if (count > 20) { throw new Error('剪贴板条目过多，请分次复制，内容未插入。'); }
-      const chunks: string[] = []; let rich = false, unsupported = false;
-      for (let index = 0; index < count; index++) {
-        const record = data.getRecord(index);
-        const types = record.getValidTypes([pasteboard.MIMETYPE_TEXT_PLAIN, pasteboard.MIMETYPE_TEXT_HTML]);
-        rich = rich || types.includes(pasteboard.MIMETYPE_TEXT_HTML);
-        if (types.includes(pasteboard.MIMETYPE_TEXT_PLAIN)) {
-          const text = await record.getData(pasteboard.MIMETYPE_TEXT_PLAIN);
-          if (typeof text !== 'string') { throw new Error('剪贴板文字格式无法读取，内容未插入。'); }
-          chunks.push(text);
-        } else { unsupported = true; }
+      input = await this.clipboardInput.readAuthorized(owner);
+      if (!owner() || !await this.loadImports()) { throw new Error('粘贴目标或附件记录已变化，未开始导入。'); }
+      const plan: ClipboardPastePlan = await this.prepareClipboardPlan(input, files, name, owner, spools);
+      if (!owner() || !this.clipboardInput.isCurrent(input)) { throw new Error('剪贴板或插入位置已变化，未开始导入。'); }
+      if (!plan.text && plan.attachments.length === 0) { throw new Error(plan.warnings.join('\n') || '剪贴板中没有可读取的内容。'); }
+      await this.clipboardInput.dispose(input); input = undefined;
+      const coordinator = new ClipboardPaste({
+        read: (): ClipboardPasteBoundary => this.clipboardBoundary(draft, editor, name, owner),
+        confirm: async (_boundary: ClipboardPasteBoundary): Promise<ClipboardPasteBoundary> => {
+          await draft.ensureConfirmed(); return this.clipboardBoundary(draft, editor, name, owner);
+        },
+        importOne: (item: ClipboardPasteAttachment, identity: ClipboardPasteIdentity,
+          boundary: ClipboardPasteBoundary): Promise<ClipboardPasteReceipt> =>
+          this.importClipboardAttachment(draft, files, editor, name, owner, spools, item, identity, boundary),
+        commitText: async (value: DraftTextValue, _boundary: ClipboardPasteBoundary): Promise<ClipboardPasteBoundary> => {
+          if (!owner()) { throw new Error('粘贴目标已变化，正文未插入。'); }
+          this.editorInputChanged(name, value.text);
+          const field = this.draftField(name); field.selection_base = value.selection_base; field.selection_extent = value.selection_extent;
+          draft.update(copyValues(this.editorValues)); this.draftSelectionPending.add(name); await draft.flush();
+          const after = this.clipboardBoundary(draft, editor, name, (): boolean => true);
+          const others = draft.current; others.assets = originalValues.assets;
+          if (name === 'title') { others.title = originalValues.title; }
+          else if (name === 'description') { others.description = originalValues.description; }
+          else if (name === 'hypothesis') { others.hypothesis = originalValues.hypothesis; }
+          else if (name === 'conclusion') { others.conclusion = originalValues.conclusion; }
+          else { others.todos = originalValues.todos; }
+          after.blocked = !this.pageAlive || !this.foreground || !this.editorOpen || this.editorDraft !== draft || draft.disposed ||
+            this.attachmentEditorIdentity !== editor || !sameValues(others, originalValues) || draft.dirty || draft.unknown ||
+            draft.conflicted || !draft.confirmed || !sameValues(draft.current, draft.confirmed.values);
+          return after;
+        },
+        operation: (): string => util.generateRandomUUID(true)
+      });
+      this.clipboardPaste = coordinator;
+      const result = await coordinator.run(plan, limit);
+      if (this.pageAlive && this.editorDraft === draft) {
+        if (result.phase === 'complete' && !draft.current.title.text.trim() && plan.attachments.length > 0) {
+          const title = attachmentImportTitle(draft.current.title.text, plan.attachments[0].name);
+          if (title !== undefined && !draft.dirty && !draft.unknown && draft.confirmed) {
+            const values = draft.current; values.title.text = title; values.title.selection_base = title.length; values.title.selection_extent = title.length;
+            this.title = title; this.editorValues = copyValues(values); draft.update(values); await draft.flush();
+          }
+        }
+        if (name === 'description' && result.text_inserted) { this.previewBody = true; this.updateMarkdown(); }
+        if (result.text_inserted && (name !== 'description' || Math.min(820, this.viewportWidth - 40) - 80 >= 590)) { this.restoreSelection(name); }
+        const count = result.selected.toString() + '/' + result.total.toString();
+        this.message = result.phase === 'complete' ?
+          (result.warnings.length > 0 ? '内容已保留 · 附件 ' + count + '\n' + result.warnings.join('\n') :
+            '内容已保留 · ' + this.pasteTargetName() + (result.total > 0 ? ' · 附件 ' + count : '')) :
+          '粘贴已停止 · 已确认附件 ' + count + '\n' + result.error;
       }
-      if (clipboard.getChangeCount() !== before) { throw new Error('读取期间剪贴板发生了变化，请重新粘贴。'); }
-      const text = chunks.join('\n\n');
-      if (text.length === 0) { throw new Error('剪贴板中没有可粘贴的文字。文件与图片导入仍在适配。'); }
-      if (text.length > 20000) { throw new Error('剪贴板文字过长，请分次复制，内容未插入。'); }
-      const command = new Command(); command.action = 'paste_plain'; command.text = text; command.section = name;
-      const reply = await workbench.send(JSON.stringify(command));
-      if (!reply.ok) { throw new Error(reply.error); }
-      if (typeof reply.paste_text !== 'string') { throw new Error('粘贴内容回复无效，内容未插入。'); }
-      if (!this.pageAlive || !this.editorOpen || this.editorDraft !== draft || draft.disposed || this.draftRetiring ||
-        this.draftRetirementUnknown || this.draftCaptureIncomplete || !samePasteTarget(snapshot, this.draftField(name))) {
-        throw new Error('插入位置或文字已变化，请重新粘贴，内容未插入。');
-      }
-      const inserted = insertPaste(snapshot, reply.paste_text, limit);
-      this.editorInputChanged(name, inserted.text);
-      const field = this.draftField(name); field.selection_base = inserted.selection_base; field.selection_extent = inserted.selection_extent;
-      draft.update(copyValues(this.editorValues)); this.draftSelectionPending.add(name);
-      if (name === 'description') {
-        // A wide editor retains its native input alongside the preview. Defer
-        // a narrow editor's caret until that field is visible/focused again.
-        this.previewBody = true; this.updateMarkdown();
-        if (Math.min(820, this.viewportWidth - 40) - 80 >= 590) { this.restoreSelection(name); }
-      }
-      else { this.restoreSelection(name); }
-      this.message = rich || unsupported ? '已粘贴可读文字；富文本样式、图片与文件尚未导入。' : '内容已读入 · ' + this.pasteTargetName();
     } catch (error) {
       if (this.pageAlive && this.editorDraft === draft) { this.message = String(error); }
-    } finally { this.pasteWorking = false; }
+    } finally {
+      if (input) { try { await this.clipboardInput.dispose(input); } catch (_) {} }
+      for (const spool of spools.values()) {
+        // A possibly issued import keeps its immutable request and spool for
+        // the existing recovery UI. Only unissued preparation is abandoned.
+        if (!spool.original_request) { try { await files.release(spool); } catch (_) {} }
+      }
+      this.clipboardPaste = undefined; this.pasteWorking = false; this.draftChanged(); await this.loadImports();
+    }
+  }
+
+  private clipboardBoundary(draft: EditorDraftCoordinator, editor: string, name: string,
+    owner: () => boolean): ClipboardPasteBoundary {
+    return { editor_id: editor, card_id: draft.scope.card_id, draft_id: draft.scope.draft_id,
+      generation: draft.confirmed?.generation ?? '0', selected_count: draft.current.assets.length,
+      import_count: this.importRecords.length, target: copyText(this.draftField(name)),
+      blocked: !owner() || this.busy || this.draftWorking || this.draftRetiring || this.draftRetirementUnknown ||
+        !!this.attachmentPending || this.pending.length > 0 };
+  }
+
+  private async importClipboardAttachment(draft: EditorDraftCoordinator, files: AttachmentFiles, editor: string,
+    name: string, owner: () => boolean, spools: Map<string, PreparedAttachment>, item: ClipboardPasteAttachment,
+    identity: ClipboardPasteIdentity, boundary: ClipboardPasteBoundary): Promise<ClipboardPasteReceipt> {
+    const spool = spools.get(item.key);
+    if (!spool || spool.name !== item.name || spool.byte_length !== item.byte_length || spool.sha256 !== item.sha256 || !owner()) {
+      return { outcome: 'cancelled', identity, asset_id: '', next: undefined };
+    }
+    const command = new ImportCommand(); const request = command.import_request;
+    request.card_id = identity.card_id; request.draft_id = identity.draft_id; request.expected_generation = identity.expected_generation;
+    request.operation_id = identity.operation_id; request.name = item.name; request.kind = attachmentKind(item.name);
+    request.byte_length = item.byte_length; request.sha256 = item.sha256;
+    try {
+      const current = this.clipboardBoundary(draft, editor, name, owner);
+      if (current.blocked || current.generation !== boundary.generation || current.selected_count !== boundary.selected_count ||
+        current.import_count !== boundary.import_count || !samePasteTarget(current.target, boundary.target)) {
+        return { outcome: 'cancelled', identity, asset_id: '', next: undefined };
+      }
+      const outcome = await this.acceptPreparedImport(draft, spool, JSON.stringify(command), false);
+      const record = this.importRecords.find((entry: ImportRecord): boolean => entry.request.operation_id === identity.operation_id);
+      const assetId = outcome === 'selected' && record ? selectedImport(record, request).asset_id : '';
+      return { outcome, identity, asset_id: assetId,
+        next: outcome === 'selected' ? this.clipboardBoundary(draft, editor, name, owner) : undefined };
+    } catch (_) { return { outcome: spool.original_request ? 'unknown' : 'failed', identity, asset_id: '', next: undefined }; }
+  }
+
+  private async prepareClipboardPlan(snapshot: ClipboardSnapshot, files: AttachmentFiles, name: string,
+    owner: () => boolean, spools: Map<string, PreparedAttachment>): Promise<ClipboardPastePlan> {
+    const plan: ClipboardPastePlan = { text: '', attachments: [], warnings: snapshot.warnings.slice() };
+    const prepared: Map<ClipboardSource, PreparedAttachment> = new Map<ClipboardSource, PreparedAttachment>();
+    const parts: string[] = [];
+    const check = (): void => { if (!owner() || !this.clipboardInput.isCurrent(snapshot)) { throw new Error('剪贴板或粘贴位置已变化，尚未开始加入。'); } };
+    const prepare = async (source: ClipboardSource): Promise<PreparedAttachment> => {
+      check(); const prior = prepared.get(source); if (prior) { return prior; }
+      const spool = await files.prepareClipboard(source); spools.set(spool.spool_id, spool); prepared.set(source, spool); check(); return spool;
+    };
+    const append = (spool: PreparedAttachment, references: string[] = []): ClipboardPasteAttachment => {
+      let item = plan.attachments.find((entry: ClipboardPasteAttachment): boolean => entry.key === spool.spool_id);
+      if (!item) {
+        item = { key: spool.spool_id, name: spool.name, byte_length: spool.byte_length, sha256: spool.sha256,
+          references: [], image: ['image', 'gif'].includes(attachmentKind(spool.name)) }; plan.attachments.push(item);
+      }
+      for (const reference of references) { if (!item.references.includes(reference)) { item.references.push(reference); } }
+      return item;
+    };
+    const appendImage = async (spool: PreparedAttachment, reference: string): Promise<void> => {
+      const prior = plan.attachments.find((item: ClipboardPasteAttachment): boolean =>
+        item.image && item.sha256 === spool.sha256 && item.byte_length === spool.byte_length);
+      if (prior && prior.key !== spool.spool_id) {
+        if (!prior.references.includes(reference)) { prior.references.push(reference); }
+        await files.release(spool); spools.delete(spool.spool_id);
+      } else { append(spool, [reference]); }
+    };
+    for (const record of snapshot.records) {
+      check();
+      if (record.file) {
+        const spool = await prepare(record.file);
+        if (['image', 'gif'].includes(attachmentKind(spool.name))) { await appendImage(spool, 'clipboard-image-' + spool.sha256); }
+        else { append(spool); }
+        continue;
+      }
+      const primary = record.xml ?? record.html ?? (record.plain_text ? undefined : record.rtf);
+      let converted: string | undefined = undefined;
+      for (const source of [record.html, record.rtf, record.xml]) {
+        if (!source) { continue; }
+        const spool = await prepare(source); append(spool);
+        try {
+          const conversion: ClipboardConversion = await files.convertPreparedClipboard(spool, source.format, name); check();
+          plan.warnings.push(...conversion.warnings);
+          for (const image of conversion.images) {
+            const duplicate = plan.attachments.find((item: ClipboardPasteAttachment): boolean =>
+              item.references.includes(image.name) && item.image && item.byte_length === image.byte_length && item.sha256 === image.sha256);
+            if (duplicate) { continue; }
+            const embedded = await files.prepareEmbeddedClipboardImage(spool, conversion, image.local_id);
+            spools.set(embedded.spool_id, embedded); check(); await appendImage(embedded, image.name);
+          }
+          if (source === primary) { converted = conversion.paste_text; }
+        } catch (error) {
+          if (source === primary) { converted = undefined; }
+          check(); plan.warnings.push('已保留 ' + spool.name + ' 原件，转换未完成：' + String(error));
+        }
+      }
+      let plain = record.plain_text;
+      if (record.plain && (name === 'description' && converted === undefined || !plain)) {
+        const spool = await prepare(record.plain);
+        const conversion = await files.convertPreparedClipboard(spool, 'plain', name); check();
+        plain = conversion.paste_text;
+        if (plain !== record.plain_text) { append(spool); plan.warnings.push('表格已转换，原始 TSV 已保留。'); }
+        else { await files.release(spool); spools.delete(spool.spool_id); }
+      }
+      const text = name === 'description' ? converted || plain || record.uri_text : record.plain_text || plain || converted || record.uri_text;
+      if (text) { parts.push(text); }
+      for (const source of record.binary) { append(await prepare(source)); }
+      if (record.image) {
+        const spool = await prepare(record.image);
+        await appendImage(spool, 'clipboard-image-' + spool.sha256);
+      }
+    }
+    plan.text = parts.join('\n\n');
+    if (name === 'description' && !plan.text) {
+      plan.text = plan.attachments.filter((item: ClipboardPasteAttachment): boolean => item.image)
+        .map((item: ClipboardPasteAttachment): string => {
+          if (item.references.length === 0) { item.references.push('clipboard-image-' + item.sha256); }
+          return '![图片](attachment:' + encodeURIComponent(item.references[0]) + ')';
+        }).join('\n\n');
+    }
+    check(); return plan;
   }
   private async openMarkdownLink(href: string): Promise<void> {
     // Only the validated native projection supplies these URLs. Attachment
@@ -2643,7 +2798,8 @@ struct Index {
           Text(this.selected.length > 0 ? '让想法更清晰' : '接住一个新想法').fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(20).fontWeight(FontWeight.Medium).fontColor(this.ink())
         }.alignItems(HorizontalAlign.Start).layoutWeight(1)
         Button({ type: ButtonType.Normal }) { this.Glyph(() => 0xf647,  18, () => this.muted()) }
-          .width(32).height(36).backgroundColor(Color.Transparent).accessibilityText('关闭编辑器').onClick(() => this.closeEditor())
+          .width(32).height(36).backgroundColor(Color.Transparent).accessibilityText('关闭编辑器')
+          .enabled(!this.pasteWorking && !this.attachmentWorking).onClick(() => this.closeEditor())
       }.width('100%').padding({ left: 24, right: 24, top: 24 })
       Text(this.t('文字、表格、图片，先放在这里。让一个念头慢慢成形。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).lineHeight(18.7).fontColor(this.muted())
         .width('100%').padding({ left: 24, right: 24 }).margin({ top: 12, bottom: 22 })
@@ -2676,7 +2832,8 @@ struct Index {
             Row({ space: 8 }) {
               this.Glyph(() => 0xf0023,  18, () => this.accent()); Text(this.t('正文 · Markdown')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(14).fontWeight(FontWeight.Medium).fontColor(this.ink()); Blank()
               Button({ type: ButtonType.Normal }) { this.Glyph(() => 0xf4a1,  19, () => this.previewBody ? this.accent() : this.muted()) }
-                .width(32).height(32).backgroundColor(Color.Transparent).accessibilityText(this.previewBody ? '隐藏预览' : '实时预览').onClick(() => { this.previewBody = !this.previewBody; })
+                .width(32).height(32).backgroundColor(Color.Transparent).accessibilityText(this.previewBody ? '隐藏预览' : '实时预览')
+                .enabled(!this.pasteWorking && !this.attachmentWorking).onClick(() => { this.previewBody = !this.previewBody; })
             }.width('100%').height(32)
             Divider().color(this.line())
             if (this.previewBody && Math.min(820, this.viewportWidth - 40) - 80 >= 590) {
@@ -2691,7 +2848,7 @@ struct Index {
             Text(this.t('放在哪里')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted())
             Select([{ value: '灵感' }, { value: '进行中' }, { value: '实验' }]).value(this.current()?.category ?? this.category)
               .font({ size: 12 }).fontColor(this.ink()).backgroundColor('#147662BA').borderRadius(this.round(10))
-              .enabled(!this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
+              .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
               .onSelect((_: number, value: string) => {
                 if (this.pasteWorking || this.draftWorking || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
                 if (!this.current()) {
@@ -2706,7 +2863,7 @@ struct Index {
             Blank()
             if (this.current()) {
               Select(this.stages()).value(this.current()?.stage ?? '待整理').font({ size: 11 }).fontColor(this.muted()).backgroundColor(Color.Transparent)
-                .enabled(!this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
+                .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
                 .onSelect((_: number, value: string) => {
                   if (this.pasteWorking || this.draftWorking || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
                   if (this.dirty) { this.message = '请先保存正文编辑'; return; }
@@ -2749,13 +2906,13 @@ struct Index {
                 Column({ space: 8 }) {
                   TextInput({ text: this.taskRenameText, placeholder: this.t('重命名') }).fontFamily(this.fontFamily || 'HarmonyOS Sans')
                     .fontSize(12).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(500)
-                    .enabled(!this.busy && this.pending.length === 0).onChange((s: string) => { this.taskRenameText = s; })
+                    .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && this.pending.length === 0).onChange((s: string) => { this.taskRenameText = s; })
                   Row({ space: 8 }) {
                     Blank()
                     Button(this.t('取消')).fontSize(12).fontColor(this.muted()).backgroundColor(Color.Transparent)
-                      .enabled(!this.busy && this.pending.length === 0).onClick(() => { this.taskEditId = ''; this.taskRenameText = ''; })
+                      .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && this.pending.length === 0).onClick(() => { this.taskEditId = ''; this.taskRenameText = ''; })
                     Button(this.t('保存')).fontSize(12).backgroundColor(this.accent())
-                      .enabled(!this.busy && this.pending.length === 0 && !this.dirty && this.taskRenameText.trim().length > 0)
+                      .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && this.pending.length === 0 && !this.dirty && this.taskRenameText.trim().length > 0)
                       .onClick(() => this.mutate('task_rename', task))
                   }.width('100%')
                 }.width('100%').padding({ left: 40, bottom: 8 })
@@ -2777,10 +2934,10 @@ struct Index {
             }
             Row({ space: 12 }) {
               Button(this.current()?.favorite ? '取消收藏' : '收藏', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
-                .onClick(() => this.mutate('favorite')).enabled(!this.busy && this.pending.length === 0 && !this.current()?.deleted)
+                .onClick(() => this.mutate('favorite')).enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && this.pending.length === 0 && !this.current()?.deleted)
               Blank()
               Button(this.current()?.deleted ? '撤销删除（8秒内）' : '移入回收站', { type: ButtonType.Normal }).fontSize(11).fontColor(this.muted()).backgroundColor(Color.Transparent)
-                .onClick(() => this.mutate(this.current()?.deleted ? 'restore' : 'delete')).enabled(!this.busy && this.pending.length === 0)
+                .onClick(() => this.mutate(this.current()?.deleted ? 'restore' : 'delete')).enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && this.pending.length === 0)
             }.width('100%')
           }
         }.padding({ left: 24, right: 24, bottom: 16 }).width('100%')
@@ -2789,25 +2946,27 @@ struct Index {
       if (this.draftStatus.length > 0) {
         Row() {
           Text(this.draftStatus).fontSize(10).fontColor(this.muted()).layoutWeight(1).id('draft-status')
-          if (this.editorDraft?.unknown) { Button('核对草稿', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent).enabled(!this.draftWorking).onClick(() => this.retryDraft()) }
+          if (this.editorDraft?.unknown) { Button('核对草稿', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent).enabled(!this.pasteWorking && !this.attachmentWorking && !this.draftWorking).onClick(() => this.retryDraft()) }
         }.width('100%').padding({ left: 24, right: 24, bottom: 8 })
       }
       if (this.draftRetirementUnknown) {
         Button('核对草稿清理', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
-          .enabled(!this.draftWorking && !this.busy).onClick(() => this.retryDraftRetirement())
+          .enabled(!this.pasteWorking && !this.attachmentWorking && !this.draftWorking && !this.busy).onClick(() => this.retryDraftRetirement())
       }
       Divider().color(this.line())
       Row({ space: 12 }) {
         Button('放弃草稿', { type: ButtonType.Normal }).fontSize(10).fontColor(this.muted()).backgroundColor(Color.Transparent)
-          .enabled(!this.busy && !this.draftWorking && !this.draftRetirementUnknown && !this.editorDraft?.unknown && this.pending.length === 0).onClick(() => this.discardDraft())
+          .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && !this.draftWorking && !this.draftRetirementUnknown && !this.editorDraft?.unknown && this.pending.length === 0).onClick(() => this.discardDraft())
         Blank()
-        Button('保留草稿', { type: ButtonType.Normal }).fontSize(12).height(38).fontColor(this.accent()).backgroundColor(Color.Transparent).onClick(() => this.closeEditor())
+        Button('保留草稿', { type: ButtonType.Normal }).fontSize(12).height(38).fontColor(this.accent()).backgroundColor(Color.Transparent)
+          .enabled(!this.pasteWorking && !this.attachmentWorking).onClick(() => this.closeEditor())
         Button(this.busy ? '保存中…' : '保存灵感', { type: ButtonType.Normal }).fontSize(12).height(38).padding({ left: 22, right: 22 })
           .fontColor(this.dark ? '#302D43' : '#FFFFFF').backgroundColor(this.accent()).borderRadius(this.round(10))
-          .enabled(this.ready && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.draftRetirementUnknown && !this.editorDraft?.unknown && this.pending.length === 0 && !this.current()?.deleted).onClick(() => this.save())
+          .enabled(this.ready && !this.pasteWorking && !this.attachmentWorking && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.draftRetirementUnknown && !this.editorDraft?.unknown && this.pending.length === 0 && !this.current()?.deleted).onClick(() => this.save())
       }.padding({ left: 24, right: 24, top: 14, bottom: 14 }).width('100%')
       if (this.pending.length > 0 && !this.busy) {
-        Button(this.t('使用原操作重试 / 核对')).fontSize(12).backgroundColor(this.accent()).margin({ bottom: 12 }).onClick(() => this.retry())
+        Button(this.t('使用原操作重试 / 核对')).fontSize(12).backgroundColor(this.accent()).margin({ bottom: 12 })
+          .enabled(!this.pasteWorking && !this.attachmentWorking).onClick(() => this.retry())
       }
     }.width(Math.min(820, this.viewportWidth - 40)).height(Math.max(160, Math.min(760, this.viewportHeight - 40))).backgroundColor(alpha(this.surface(), .9))
       .backdropBlur(this.materialBlur()).linearGradient(this.gradient('', true)).overlay(this.Rim('', 28)).onAreaChange((_, area: Area) => this.rememberSurface('',  28, area)).shadow(this.surfaceShadow('')).borderRadius(this.round(28)).border({ width: this.styleEdgeWidth(), color: this.line() }).clip(true)
