@@ -1,0 +1,12 @@
+{
+  "createdUtc": "2026-10-07T11:09:08.735Z",
+  "baseline": "8c3059615d9adc1296363cd365267b24929b3cc7",
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-candidates\\dev23-todo-capture",
+  "inputs": 312,
+  "archive": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev23-todo-capture\\entry-default-unsigned.hap",
+  "bytes": 29102190,
+  "sha256": "3116FBB89FB09A0B4747BCF207F87C18FE7AC58BFD24B23233BE7619DB602EBC",
+  "signed": false,
+  "installed": false,
+  "scope": "8c305961 product plus frozen EditorTodos construction-selection repair; includes v22 native foundation, not future business-intent/handoff changes; not a queue-drain guarantee"
+}

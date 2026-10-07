@@ -1,5 +1,7 @@
 # 持续追平 Windows 工作台
 
+2026-10-07 **v23 最新检查点**：完整状态快照门禁避免混合 props 打断 Todo formatter，恢复选区回调按焦点及实际 controller 标记分类。755 模型、最终 API26 构建与 337 输入核对通过，最终 `935E1B2E…` 包设备 NOT_RUN；首个 `3116FBB8…` 候选恢复仍 FAILED_OR_UNKNOWN，保留关闭未执行。新原 wire 持久恢复/source0 交接仅为候选设计，未进入生产。完整追平目标保持 OPEN，见 [v23 验证](../reports/ui-source/v23/validation.md)；下文 v22 与更早记录保留历史事实。
+
 目标：持续跟进 `01a085bd-7a94-7f93-8a1f-1ecf417f5ee3`，直至 HMOS 追平 Windows 侧 UI 与大部分实现。独立 `hmos/` 工程、Rust 复用、ArkUI/NDK 路线不变；只推送 `codex/ArkTsUI`，不合并主线。
 
 2026-10-07 最新增量为 [恢复门禁修复与严格业务基础检查点](../reports/ui-source/v22/validation.md)：恢复标志和 lease 挂载归属改为响应式状态，解除恢复后 Add 禁用；新 `editor_save` / `editor_commit_inspect`、单事务 `continued_todos` 和独立 ETS 协调器已实现。准确原请求/publication/历史 result、Unknown 同 wire、恒定 root/latest baseline 与全文未知字段保留已有专项/Store/ETS证明。**新基础未接 Index，业务 source0 子草稿交接、产品在途原 wire 跨进程恢复和完整目标仍 OPEN**。原 rawfork 不自动解除 source 冲突；[v21报告](../reports/ui-source/v21/validation.md)及更早证据不追改。

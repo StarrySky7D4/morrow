@@ -1,5 +1,7 @@
 # 功能对齐与 Rust 复用检查
 
+2026-10-07 **v23 当前状态**：待办恢复回调分类和完整 props 快照门禁已实现，755 模型与最终 API26 构建通过。最终 `935E1B2E…` 包未安装；首个 `3116FBB8…` 候选恢复仍 FAILED_OR_UNKNOWN，keep 未执行。Rust 复用未变的 v22 archives，业务接续仅新增候选设计，完整目标 OPEN。见 [v23 验证](../reports/ui-source/v23/validation.md)。下文 v22 及更早段落均为各轮历史范围。
+
 2026-10-07 当前增量：恢复标志 `draftRestoreInput` 与 lease `mountedOwner` 改为响应式状态，owner 挂载前不构建输入控件，解除恢复后的 Add 禁用。另实现严格 `editor_save` / `editor_commit_inspect`、单次事务 `continued_todos` 和独立 ETS 协调器；原 wire/publication/历史 Card 完整绑定、Unknown 同请求、恒定 root 与 latest baseline 已有有界验证。**新业务基础尚未接 Index，source0 子草稿交接/准确保存后全流程仍未实现，完整目标 OPEN**。本轮见 [v22验证](../reports/ui-source/v22/validation.md)，[v21界面验证](../reports/ui-source/v21/validation.md)与更早报告保留当轮事实。
 
 设备当前为独立 UI 候选 **96C0AB68… /28,799,011字节**，只含 f9 加两项状态修复并复用旧 b486 native；不含新业务后端。API26/x64 公开 D 恢复及Add空行限定 PASS；首次准确输入 **FAILED_OR_UNKNOWN**（capture字段undefined、Back退出），后来独立恢复 **PASS**并读回`first 汉字 🧪 é.`。随后保留关闭仍 **FAILED_OR_UNKNOWN**，未完整捕获事件导致清理停止，编辑器仍打开、草稿保留；不填写完整关闭/业务保存闭环PASS。最终新产品 **742模型/fresh双ABI/HAP9.653s/29,101,587字节/41688FDA…**通过，尚未安装，不能由此UI-only候选代替。历史段落和报告保留各轮当时事实。

@@ -1,0 +1,19 @@
+{
+  "label": "v23-own-D-preserve-observed-controls-before",
+  "started": 1791371070685,
+  "screenshotAt": 1791371070936,
+  "layoutAt": 1791371071692,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-preserve-observed-controls-before.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-preserve-observed-controls-before.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-preserve-observed-controls-before.raw.json"
+  }
+}

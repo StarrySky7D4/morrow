@@ -74,8 +74,12 @@ export struct EditorTodos {
   private t(value: string): string { return uiText(value, this.locale); }
   private sourceChanged(): void {
     if (!this.alive || !this.ownerKey) { return; }
+    const value: TextValue = copyText(this.source);
+    // Prop watchers may deliver revision and source separately. Only the full
+    // parent-owned snapshot can replace rows or cancel an in-flight formatter.
+    if (!this.isCurrent(this.ownerKey, this.revision, value)) { return; }
     if (this.state.owner !== this.ownerKey) { this.focusIntentChanged(); this.finishDrag(); this.areas.clear(); }
-    try { this.model.bind(this.ownerKey, this.revision, copyText(this.source)); if (!this.editingEnabled) { this.model.stop(); } }
+    try { this.model.bind(this.ownerKey, this.revision, value); if (!this.editingEnabled) { this.model.stop(); } }
     catch (error) {
       // Do not borrow a previous owner's status when this source cannot bind.
       const status = new EditorTodosStatus(); status.owner = this.ownerKey; status.revision = this.revision;
@@ -302,6 +306,7 @@ struct EditorTodoRowInput {
     if (!this.alive) { return; }
     const fresh = new EditorTodoTicket(); fresh.owner = this.owner; fresh.id = this.row.id; fresh.incarnation = this.row.incarnation;
     this.session = fresh; this.text = this.row.display_text;
+    this.expectedBase = -1; this.expectedExtent = -1;
     const serial: number = ++this.serial, value = copyText(this.row.value);
     if (this.row.pending || value.composing_start !== -1 || value.composing_end !== -1 || value.selection_base < 0 || value.selection_extent < 0) { return; }
     setTimeout((): void => {
@@ -320,16 +325,21 @@ struct EditorTodoRowInput {
     this.onInput(ticket, text, preview);
   }
   private selectionFor(ticket: EditorTodoTicket, base: number, extent: number): void {
-    if (!this.editingEnabled) {
-      if (this.ownsIdentity(ticket)) { this.onUncaptured(ticket, todoSelectionEvent(base, extent)); } return;
+    // Unfocused construction callbacks describe the native control, not a new
+    // raw selection. A disabled focused row can still deliver a real event.
+    if (!this.ownsIdentity(ticket) || !this.focused) { return; }
+    if (this.expectedBase >= 0 && this.expectedExtent >= 0 && base === this.expectedBase && extent === this.expectedExtent) {
+      this.expectedBase = -1; this.expectedExtent = -1; return;
     }
-    if (!this.owns(ticket) || !this.focused) { return; }
-    if (base === this.expectedBase && extent === this.expectedExtent) { this.expectedBase = -1; this.expectedExtent = -1; return; }
-    this.expectedBase = -1; this.expectedExtent = -1; this.onSelection(ticket, base, extent);
+    this.expectedBase = -1; this.expectedExtent = -1;
+    if (!this.editingEnabled) { this.onUncaptured(ticket, todoSelectionEvent(base, extent)); return; }
+    this.onSelection(ticket, base, extent);
   }
   private focusFor(ticket: EditorTodoTicket, focused: boolean): void {
-    if (!this.owns(ticket)) { return; }
-    this.focused = focused; if (focused) { this.onRowFocus(ticket); }
+    if (!this.ownsIdentity(ticket)) { return; }
+    if (!focused) { this.focused = false; this.expectedBase = -1; this.expectedExtent = -1; return; }
+    if (!this.editingEnabled) { return; }
+    this.focused = true; this.onRowFocus(ticket);
   }
   @Builder
   private field(ticket: EditorTodoTicket) {

@@ -1,0 +1,19 @@
+{
+  "label": "v23-own-D-preserve-after-selection-seek-7",
+  "started": 1791370995009,
+  "screenshotAt": 1791370995336,
+  "layoutAt": 1791370996087,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-preserve-after-selection-seek-7.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-preserve-after-selection-seek-7.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-preserve-after-selection-seek-7.raw.json"
+  }
+}

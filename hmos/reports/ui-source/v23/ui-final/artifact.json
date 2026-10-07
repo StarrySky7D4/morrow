@@ -1,0 +1,12 @@
+{
+  "createdUtc": "2026-10-07T11:20:21.023Z",
+  "baseline": "8c3059615d9adc1296363cd365267b24929b3cc7",
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-candidates\\dev23-todo-watch-final",
+  "inputs": 312,
+  "archive": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev23-todo-watch-final\\entry-default-unsigned.hap",
+  "bytes": 29102519,
+  "sha256": "935E1B2E784D216F552890C67785179C2EC22470E3993067AB1D3A7EC69106AF",
+  "signed": false,
+  "installed": false,
+  "scope": "8c305961 product plus frozen EditorTodos construction-selection and complete per-prop snapshot guard; includes unchanged v22 native foundation; candidate business-intent/handoff contracts are not implemented; final package device NOT_RUN; full parity OPEN"
+}

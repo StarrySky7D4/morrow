@@ -1,0 +1,19 @@
+{
+  "label": "v23-own-D-dismiss-keyboard-and-keep-after",
+  "started": 1791371177794,
+  "screenshotAt": 1791371178062,
+  "layoutAt": 1791371178763,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-dismiss-keyboard-and-keep-after.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-dismiss-keyboard-and-keep-after.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-dismiss-keyboard-and-keep-after.raw.json"
+  }
+}

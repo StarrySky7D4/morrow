@@ -1,0 +1,19 @@
+{
+  "label": "v23-own-D-confirm-current-selection-before",
+  "started": 1791370984393,
+  "screenshotAt": 1791370984635,
+  "layoutAt": 1791370985349,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-confirm-current-selection-before.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-confirm-current-selection-before.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-confirm-current-selection-before.raw.json"
+  }
+}

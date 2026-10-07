@@ -1,0 +1,19 @@
+{
+  "label": "v23-own-D-dismiss-keyboard-and-keep-seek-10",
+  "started": 1791371171822,
+  "screenshotAt": 1791371172168,
+  "layoutAt": 1791371172884,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-dismiss-keyboard-and-keep-seek-10.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-dismiss-keyboard-and-keep-seek-10.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v23\\device-preflight\\v23-own-D-dismiss-keyboard-and-keep-seek-10.raw.json"
+  }
+}

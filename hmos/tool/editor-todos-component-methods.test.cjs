@@ -43,7 +43,9 @@ function fixture(initial = 'a\nb', options = {}) {
   view.ownerKey = owner; view.revision = revision; view.source = draft.copyText(raw);
   view.onCapture = (value, capturedOwner) => {
     if (capturedOwner !== owner) return undefined;
-    raw = draft.copyText(value); captures.push(raw); view.revision = ++revision; view.source = draft.copyText(raw); return revision;
+    raw = draft.copyText(value); captures.push(raw); revision++;
+    if (!options.deferProps) { view.revision = revision; view.source = draft.copyText(raw); }
+    return revision;
   };
   view.isCurrent = (capturedOwner, capturedRevision, value) => owner === capturedOwner && revision === capturedRevision && JSON.stringify(raw) === JSON.stringify(value);
   view.count = async (value, guard) => (await policy.checkField('todos', value, guard)).grapheme_count;
@@ -51,9 +53,17 @@ function fixture(initial = 'a\nb', options = {}) {
   view.onStatus = status => statuses.push(JSON.parse(JSON.stringify(status)));  view.onRowFocused = (...args) => focuses.push(args); view.onRevealRow = (...args) => reveals.push(args);
   view.getUIContext = () => ({ getFocusController: () => ({ requestFocus: element => requestedFocus.push(element) }) });
   view.aboutToAppear();
-  return { view, captures, statuses, focuses, reveals, requestedFocus, get raw() { return raw; },
+  return { view, captures, statuses, focuses, reveals, requestedFocus, get raw() { return raw; }, get revision() { return revision; }, get owner() { return owner; },
     ticket(index = 0) { return view.ticket(view.state.rows[index]); },
     echo() { view.sourceChanged(); },
+    deliver(prop) {
+      if (prop === 'ownerKey') view.ownerKey = owner;
+      else if (prop === 'revision') view.revision = revision;
+      else if (prop === 'source') view.source = draft.copyText(raw);
+      else throw new Error('Unsupported prop delivery: ' + prop);
+      view.sourceChanged();
+    },
+    external(value, newOwner = owner) { owner = newOwner; raw = draft.copyText(value); revision++; },
     switchOwner(newOwner = 'owner-B', value = text('x\ny')) {
       owner = newOwner; raw = value; view.ownerKey = owner; view.source = draft.copyText(raw); view.revision = ++revision; view.sourceChanged();
     }
@@ -348,8 +358,10 @@ test('disabled same-owner parent input and selection notify complete events with
 test('disabled current parent ticket can notify after epoch preflight is invalidated but old identity never does', async () => {
   const notifications = [], f = fixture('a'); const ticket = f.ticket();
   f.view.onUncaptured = (...args) => notifications.push(args); f.view.editingEnabled = false; f.view.availabilityChanged();
+  const current = f.view.isCurrent;
   f.view.isCurrent = () => false;
   await f.view.inputFor(ticket, 'unconfirmed'); assert.equal(notifications.length, 1);
+  f.view.isCurrent = current;
   f.view.editingEnabled = true; f.view.availabilityChanged(); f.view.editingEnabled = false; f.view.availabilityChanged();
   await f.view.selectionFor(ticket, 0, 0); assert.equal(notifications.length, 1);
   f.switchOwner(); await f.view.inputFor(ticket, 'foreign'); await f.view.selectionFor(ticket, 1, 1);
@@ -358,7 +370,8 @@ test('disabled current parent ticket can notify after epoch preflight is invalid
 });
 
 test('disabled actual child input/selection forward raw events without changing its text or invoking normal capture', () => {
-  const notifications = [], f = rowFixture(); f.view.onUncaptured = (...args) => notifications.push(args); f.view.editingEnabled = false;
+  const notifications = [], f = rowFixture(); f.view.onUncaptured = (...args) => notifications.push(args);
+  f.view.focusFor(f.ticket, true); f.view.editingEnabled = false;
   const original = f.view.text, preview = { value: '候😀', offset: 1 };
   f.view.changeFor(f.ticket, 'unconfirmed raw', preview); f.view.selectionFor(f.ticket, 2, 0);
   assert.equal(notifications.length, 2); assert.equal(notifications[0][0], f.ticket);
@@ -379,4 +392,189 @@ test('disabled child refuses old owner/incarnation/disposed callbacks and curren
   child.owner = 'foreign-owner'; child.rowChanged(); child.changeFor(ticket, 'old owner'); assert.equal(notifications.length, 1);
   child.aboutToDisappear(); child.changeFor(child.session, 'destroyed'); assert.equal(notifications.length, 1);
   assert.equal(parent.captures.length, 0); assert.equal(parent.raw.text, 'a');
+});
+
+test('restored disabled unfocused row initialization does not report a missing raw selection', async () => {
+  const parent = fixture('first 汉字 🧪 é.'), child = new EditorTodoRowInput(), notifications = [];
+  const original = JSON.stringify(parent.raw);
+  parent.view.onUncaptured = (...args) => notifications.push(args);
+  parent.view.editingEnabled = false; parent.view.availabilityChanged();
+  child.owner = parent.view.ownerKey; child.row = parent.view.state.rows[0]; child.editingEnabled = false;
+  child.onUncaptured = (ticket, event) => parent.view.uncapturedFor(ticket, event); child.aboutToAppear();
+  child.selectionFor(child.session, 0, 0); child.selectionFor(child.session, -1, -1);
+  assert.equal(notifications.length, 0); assert.equal(parent.captures.length, 0);
+  assert.equal(JSON.stringify(parent.raw), original); assert.equal(parent.statuses.at(-1).raw_capture_complete, true);
+  parent.view.editingEnabled = true; parent.view.availabilityChanged();
+  child.row = parent.view.state.rows[0]; child.editingEnabled = true; child.rowChanged();
+  child.selectionFor(child.session, 0, 0); await tick();
+  assert.equal(notifications.length, 0); assert.equal(parent.captures.length, 0);
+  assert.equal(JSON.stringify(parent.raw), original); assert.equal(parent.statuses.at(-1).raw_capture_complete, true);
+  parent.view.aboutToDisappear(); child.aboutToDisappear();
+});
+
+test('already issued controller restoration echo remains identifiable after a focused row is disabled', async () => {
+  const f = rowFixture(), notifications = []; f.view.onUncaptured = (...args) => notifications.push(args);
+  f.view.focusFor(f.ticket, true); f.view.row.value = text('abc', { selection_base: 2, selection_extent: 0 });
+  f.view.rowChanged(); await tick(); assert.deepEqual(f.view.controller.selections, [[2, 0]]);
+  f.view.editingEnabled = false; f.view.selectionFor(f.view.session, 2, 0);
+  assert.equal(notifications.length, 0); assert.equal(f.selections.length, 0);
+  f.view.selectionFor(f.view.session, 0, 2);
+  assert.equal(notifications.length, 1); assert.deepEqual(JSON.parse(notifications[0][1]), { kind: 'selection', base: 0, extent: 2 });
+  assert.equal(f.view.text, 'abc'); assert.equal(f.inputs.length, 0); assert.equal(f.selections.length, 0);
+});
+
+test('disabled blur revokes current focus after a delivered genuine selection, while all text input remains observable', () => {
+  const f = rowFixture(), notifications = []; f.view.onUncaptured = (...args) => notifications.push(args);
+  f.view.focusFor(f.ticket, true); f.view.editingEnabled = false; f.view.selectionFor(f.ticket, 2, 0);
+  assert.equal(notifications.length, 1); assert.equal(f.view.focused, true);
+  f.view.focusFor(f.ticket, false); assert.equal(f.view.focused, false);
+  f.view.selectionFor(f.ticket, 0, 0); assert.equal(notifications.length, 1);
+  const preview = { value: '候😀', offset: 99 }; f.view.changeFor(f.ticket, 'unconfirmed raw', preview);
+  assert.equal(notifications.length, 2); assert.deepEqual(JSON.parse(notifications[1][1]), { kind: 'input', text: 'unconfirmed raw', preview });
+  assert.equal(f.view.text, 'abc'); assert.equal(f.inputs.length, 0); assert.equal(f.selections.length, 0);
+});
+
+test('disabled focused invalid or absent-selection positions are retained, never mistaken for an unissued restoration', () => {
+  const f = rowFixture(), notifications = []; f.view.onUncaptured = (...args) => notifications.push(args);
+  f.view.focusFor(f.ticket, true); f.view.editingEnabled = false;
+  f.view.selectionFor(f.ticket, -1, -1); f.view.selectionFor(f.ticket, 99, -2);
+  assert.deepEqual(notifications.map(row => JSON.parse(row[1])), [
+    { kind: 'selection', base: -1, extent: -1 }, { kind: 'selection', base: 99, extent: -2 }
+  ]);
+  assert.equal(f.view.controller.selections.length, 0); assert.equal(f.inputs.length, 0); assert.equal(f.selections.length, 0);
+});
+
+test('old row identity cannot consume a new controller echo or blur the new incarnation', async () => {
+  const f = rowFixture(), notifications = []; f.view.onUncaptured = (...args) => notifications.push(args);
+  f.view.focusFor(f.ticket, true); f.view.row.incarnation = 2;
+  f.view.row.value = text('abc', { selection_base: 2, selection_extent: 0 }); f.view.rowChanged(); await tick();
+  f.view.editingEnabled = false; f.view.selectionFor(f.ticket, 2, 0); f.view.focusFor(f.ticket, false);
+  assert.equal(notifications.length, 0); assert.equal(f.view.focused, true); assert.equal(f.view.expectedBase, 2);
+  f.view.selectionFor(f.view.session, 2, 0); assert.equal(f.view.expectedBase, -1); assert.equal(notifications.length, 0);
+  f.view.selectionFor(f.view.session, 0, 2); assert.equal(notifications.length, 1);
+});
+
+test('refreshing a pending row invalidates the previous incarnation controller restoration marker', async () => {
+  const f = rowFixture(), notifications = []; f.view.onUncaptured = (...args) => notifications.push(args);
+  f.view.focusFor(f.ticket, true); f.view.row.value = text('abc', { selection_base: 2, selection_extent: 0 });
+  f.view.rowChanged(); await tick(); assert.equal(f.view.expectedBase, 2);
+  f.view.row.incarnation = 2; f.view.row.pending = true; f.view.rowChanged();
+  assert.equal(f.view.expectedBase, -1); f.view.editingEnabled = false; f.view.selectionFor(f.view.session, 2, 0);
+  assert.equal(notifications.length, 1); assert.deepEqual(JSON.parse(notifications[0][1]), { kind: 'selection', base: 2, extent: 0 });
+  assert.equal(f.view.controller.selections.length, 1); assert.equal(f.selections.length, 0);
+});
+
+for (const order of [['revision', 'source'], ['source', 'revision']]) {
+  test('actual per-prop ' + order.join('-first-') + ' self echo preserves changed-text pending formatter and exact ACK', async () => {
+    const wait = deferred(), formats = [], f = fixture('old', { deferProps: true, format: (oldValue, newValue, remaining, owned) => {
+      formats.push({ oldValue: draft.copyText(oldValue), newValue: draft.copyText(newValue), remaining, owned }); return wait.promise;
+    } });
+    const original = f.ticket(), running = f.view.inputFor(original, 'whole candidate 😀'); await tick();
+    assert.equal(formats.length, 1); assert.equal(f.view.revision, 0); assert.equal(f.view.source.text, 'old');
+    assert.equal(f.view.state.value.text, 'whole candidate 😀'); const statusCount = f.statuses.length;
+    f.deliver(order[0]);
+    assert.equal(f.statuses.length, statusCount); assert.equal(f.ticket().incarnation, original.incarnation);
+    assert.equal(f.view.model.status().format_pending, true); assert.equal(f.view.model.status().business_ready, false);
+    assert.equal(formats[0].owned(), true); assert.equal(f.view.model.status().format_error, '');
+    f.deliver(order[1]);
+    assert.equal(f.ticket().incarnation, original.incarnation); assert.equal(f.view.model.status().format_pending, true);
+    assert.equal(f.view.model.status().business_ready, false); assert.equal(formats[0].owned(), true);
+    assert.equal(f.captures.length, 1); assert.equal(JSON.stringify(f.view.state.value), JSON.stringify(f.raw));
+    wait.resolve({ action: 'accepted', value: draft.copyText(formats[0].newValue) }); await running;
+    assert.equal(f.captures.length, 2); assert.equal(f.raw.text, 'whole candidate 😀');
+    assert.equal(f.view.model.status().format_pending, false); assert.equal(f.view.model.status().business_ready, true);
+    assert.equal(f.view.model.status().format_error, ''); f.view.aboutToDisappear();
+  });
+}
+
+test('actual per-prop self selection echo preserves latest same-text formatter, reverse positions and stale-reply fence', async () => {
+  const waits = [deferred(), deferred()], formats = [], f = fixture('abc', { deferProps: true, format: (oldValue, newValue, remaining, owned) => {
+    const index = formats.length; formats.push({ oldValue: draft.copyText(oldValue), newValue: draft.copyText(newValue), remaining, owned }); return waits[index].promise;
+  } });
+  f.external(text('abc', { selection_base: 0, selection_extent: 0 })); f.deliver('revision'); f.deliver('source');
+  const original = f.ticket(), input = f.view.inputFor(original, 'abc'); await tick();
+  const selecting = f.view.selectionFor(original, 2, 0); await tick();
+  assert.equal(formats.length, 2); assert.equal(f.raw.text, f.view.source.text);
+  assert.equal(f.view.source.selection_base, 0); assert.equal(f.raw.selection_base, 2); assert.equal(f.raw.selection_extent, 0);
+  const statusCount = f.statuses.length; f.deliver('revision');
+  assert.equal(f.statuses.length, statusCount); assert.equal(f.ticket().incarnation, original.incarnation);
+  assert.equal(f.view.model.status().format_pending, true); assert.equal(f.view.model.status().business_ready, false);
+  assert.equal(f.view.model.status().format_error, ''); f.deliver('source');
+  assert.equal(f.ticket().incarnation, original.incarnation); assert.equal(formats[1].owned(), true); assert.equal(formats[0].owned(), false);
+  waits[0].resolve({ action: 'accepted', value: draft.copyText(formats[0].newValue) }); await input;
+  assert.equal(f.captures.length, 2); assert.equal(f.view.model.status().format_pending, true);
+  assert.equal(f.view.model.status().business_ready, false); assert.equal(f.raw.selection_base, 2);
+  waits[1].resolve({ action: 'accepted', value: draft.copyText(formats[1].newValue) }); await selecting;
+  assert.equal(f.captures.length, 3); assert.equal(f.raw.selection_base, 2); assert.equal(f.raw.selection_extent, 0);
+  assert.equal(f.view.model.status().business_ready, true); assert.equal(f.view.model.status().format_error, ''); f.view.aboutToDisappear();
+});
+
+test('actual per-prop self composition-commit echo keeps same-text full raw and confirms only the exact formatter ACK', async () => {
+  const wait = deferred(), formats = [], f = fixture('abc', { deferProps: true, format: (oldValue, newValue, remaining, owned) => {
+    formats.push({ oldValue: draft.copyText(oldValue), newValue: draft.copyText(newValue), remaining, owned }); return wait.promise;
+  } });
+  f.external(text('abc', { selection_base: 2, selection_extent: 2, composing_start: 0, composing_end: 2 }));
+  f.deliver('revision'); f.deliver('source');
+  const original = f.ticket(), running = f.view.inputFor(original, 'abc'); await tick();
+  assert.equal(formats.length, 1); assert.equal(f.raw.text, f.view.source.text);
+  assert.equal(f.view.source.composing_start, 0); assert.equal(f.raw.composing_start, -1);
+  const statusCount = f.statuses.length; f.deliver('revision');
+  assert.equal(f.statuses.length, statusCount); assert.equal(f.ticket().incarnation, original.incarnation);
+  assert.equal(f.view.model.status().format_error, ''); assert.equal(f.view.model.status().business_ready, false);
+  f.deliver('source'); assert.equal(f.ticket().incarnation, original.incarnation);
+  assert.equal(f.view.model.status().format_pending, true); assert.equal(formats[0].owned(), true);
+  wait.resolve({ action: 'accepted', value: draft.copyText(formats[0].newValue) }); await running;
+  assert.equal(f.captures.length, 2); assert.equal(f.raw.composing_start, -1); assert.equal(f.raw.composing_end, -1);
+  assert.equal(f.raw.selection_base, 2); assert.equal(f.view.model.status().business_ready, true);
+  assert.equal(f.view.model.status().format_error, ''); f.view.aboutToDisappear();
+});
+
+test('actual full external replacement still cancels the older formatter after mixed props are deferred', async () => {
+  const wait = deferred(), formats = [], f = fixture('old', { deferProps: true, format: (_old, value, _remaining, owned) => {
+    formats.push({ value: draft.copyText(value), owned }); return wait.promise;
+  } });
+  const original = f.ticket(), running = f.view.inputFor(original, 'complete pending'); await tick();
+  f.deliver('revision'); f.deliver('source'); assert.equal(f.view.model.status().format_pending, true);
+  f.external(text('external complete value', { selection_base: 3, selection_extent: 1, directional: true }));
+  const statusCount = f.statuses.length; f.deliver('revision');
+  assert.equal(f.statuses.length, statusCount); assert.equal(f.ticket().incarnation, original.incarnation);
+  assert.equal(f.view.model.status().format_pending, true); assert.equal(formats[0].owned(), false);
+  f.deliver('source'); assert.notEqual(f.ticket().incarnation, original.incarnation);
+  assert.equal(f.view.model.status().format_pending, false); assert.equal(JSON.stringify(f.view.state.value), JSON.stringify(f.raw));
+  wait.resolve({ action: 'accepted', value: draft.copyText(formats[0].value) }); await running;
+  assert.equal(f.captures.length, 1); assert.equal(f.raw.text, 'external complete value'); assert.equal(f.raw.selection_base, 3);
+  await f.view.inputFor(original, 'borrowed old row'); assert.equal(f.captures.length, 1); f.view.aboutToDisappear();
+});
+
+test('actual new-owner prop delivery cannot clear old-owner rows or areas until its complete parent snapshot arrives', async () => {
+  const f = fixture('old', { deferProps: true }), original = f.ticket();
+  f.view.areaFor(original, { globalPosition: { y: 90 }, height: 40 });
+  const focusEpoch = f.view.focusIntentEpoch, statusCount = f.statuses.length;
+  f.external(text('new owner raw'), 'owner-B'); f.deliver('ownerKey');
+  assert.equal(f.view.state.owner, 'owner-A'); assert.equal(f.view.areas.size, 1);
+  assert.equal(f.view.focusIntentEpoch, focusEpoch); assert.equal(f.statuses.length, statusCount);
+  await f.view.inputFor(original, 'old callback'); assert.equal(f.captures.length, 0);
+  f.deliver('revision'); assert.equal(f.view.state.owner, 'owner-A'); assert.equal(f.view.areas.size, 1);
+  f.deliver('source'); assert.equal(f.view.state.owner, 'owner-B'); assert.equal(f.view.areas.size, 0);
+  assert.ok(f.view.focusIntentEpoch > focusEpoch); assert.equal(f.view.state.value.text, 'new owner raw');
+  await f.view.selectionFor(original, 1, 0); assert.equal(f.captures.length, 0); f.view.aboutToDisappear();
+});
+
+test('actual disabled restore admits its complete parent snapshot without allowing editing or reusing an old row ticket', async () => {
+  const notifications = [], f = fixture('old', { deferProps: true }), original = f.ticket();
+  f.view.onUncaptured = (...args) => notifications.push(args);
+  f.view.editingEnabled = false; f.view.availabilityChanged();
+  const restored = text('restored 汉字 🧪 é.', { selection_base: 3, selection_extent: 1, directional: true });
+  f.external(restored); const statusCount = f.statuses.length; f.deliver('revision');
+  assert.equal(f.statuses.length, statusCount); assert.equal(f.view.state.value.text, 'old');
+  f.deliver('source'); assert.equal(JSON.stringify(f.view.state.value), JSON.stringify(restored));
+  assert.equal(f.view.model.status().raw_capture_complete, true); assert.equal(f.view.model.status().format_pending, false);
+  assert.equal(f.view.model.active, false); assert.notEqual(f.ticket().incarnation, original.incarnation);
+  await f.view.inputFor(original, 'old callback'); assert.equal(notifications.length, 0);
+  await f.view.inputFor(f.ticket(), 'real disabled input'); assert.equal(notifications.length, 1);
+  assert.deepEqual(JSON.parse(notifications[0][2]), { kind: 'input', text: 'real disabled input' });
+  assert.equal(f.captures.length, 0); assert.equal(JSON.stringify(f.raw), JSON.stringify(restored));
+  f.view.editingEnabled = true; f.view.availabilityChanged();
+  assert.equal(f.view.model.active, true); assert.equal(JSON.stringify(f.view.state.value), JSON.stringify(restored));
+  assert.equal(f.captures.length, 0); f.view.aboutToDisappear();
 });
