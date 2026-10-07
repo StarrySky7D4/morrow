@@ -1,10 +1,16 @@
 # 持续追平 Windows 工作台
 
-2026-10-07 **v23 最新检查点**：完整状态快照门禁避免混合 props 打断 Todo formatter，恢复选区回调按焦点及实际 controller 标记分类。755 模型、最终 API26 构建与 337 输入核对通过，最终 `935E1B2E…` 包设备 NOT_RUN；首个 `3116FBB8…` 候选恢复仍 FAILED_OR_UNKNOWN，保留关闭未执行。新原 wire 持久恢复/source0 交接仅为候选设计，未进入生产。完整追平目标保持 OPEN，见 [v23 验证](../reports/ui-source/v23/validation.md)；下文 v22 与更早记录保留历史事实。
+2026-10-07 **v24 当前分支检查点**：普通字段恢复选区先核焦点与 lease owner；待办初建控件用一次性初始化能力确认原始显示回声，避免其被误报为未完整捕获。冻结 Index `AFF77EB7…` / Todo `83B6C6A5…`。API26/x64 的独立 UI 候选 **29,107,139 字节 / B62DBD23…** 恢复公开 D 草稿，准确读回 `first 汉字 🧪 é.` 并显示 **13/1000**；随后“保留草稿”成功关闭编辑器、草稿数仍为3，业务提交数为0，两个阶段限定 **PASS**。该候选复用旧 v22 native，不包含新 intent 后端；见 [实际阶段证据](../reports/ui-source/v24/device-fixed/progress-clipboard.json)与 [安装身份](../reports/ui-source/v24/device-fixed/installation.json)。此前 96C0、3116 和诊断候选的失败或未知结果保留，不以本次限定通过覆盖。
+
+本轮另冻结独立业务 intent journal 与 `EditorBusinessSession` 基础：prepare 保留完整原 Submission/publication 和 pins，issue CAS 持久生成实际 save/inspect literal，分 part 原样读回后才显式保存；Unknown 只核对或重试固定原 wire，prepared 可条件取消、issued 不可取消。首请求签发后晚 S2/owner 失效可显式只读恢复后结算原 S1，不消费 S2。原生库 **165 PASS /11 default ignored**、附件二进制 **3 PASS**，新24个真实 Store crash 向量及完整 DTO 导出已分别执行；ETS Session **30/30 PASS**，含真实 Store issued/closed 全五 part DTO，独立 API26 public-API 编译 **PASS /9.480s**。见 [native审计](../reports/ui-source/v24/editor-intent-native-audit.md)、[Session审计](../reports/ui-source/v24/editor-business-session-audit.md)和 [隔离SDK](../reports/ui-source/v24/session-sdk/sdk-audit.md)。阶段/元数据回执不证明业务提交，development proof 不是 protected handoff 资格。
+
+**本轮完整实际 ETS 模型807/807 PASS、0 skipped（11837.3834ms）；271项native来源构建前后一致，新ARM64/x64 release采用分别为56,517,238字节/E416EA7F…及54,925,386字节/A99CF367…。完整API26产品构建SUCCESS /13.893s，34任务fresh、313项完整复制、364项仓库输入构建前后字节一致，4项包内.so核对PASS；最终未签名HAP为29,381,667字节/F6EEEAE2D2175A7EA54DCEF582EA1BD5D15E324D48E65583B752775B4EC8925C，未安装。** 首轮隔离副本漏hvigor配置、13ms/0任务失败的日志和清单保留；仅补完整验证副本后在新retry1构建成功，生产源码未改。见 [v24统一验证](../reports/ui-source/v24/validation.md)。 新 Session 尚未接 Index 保存/恢复入口；业务 source0 子草稿交接、`saved_exact` 关闭、详情变更后重新编辑、新 native 设备运行及完整输入/保存/重启闭环仍 **OPEN**。SDK 或旧 native UI 候选不能代替这些资格。版本保持 **dev19/1000019**，只推送 `codex/ArkTsUI`、不并入主线；完整 Flutter/Windows 对齐仍 **OPEN**。以下 v23/v22 及更早段落保留各轮历史事实。
+
+2026-10-07 **v23 历史检查点**：完整状态快照门禁避免混合 props 打断 Todo formatter，恢复选区回调按焦点及实际 controller 标记分类。755 模型、最终 API26 构建与 337 输入核对通过，最终 `935E1B2E…` 包设备 NOT_RUN；首个 `3116FBB8…` 候选恢复仍 FAILED_OR_UNKNOWN，保留关闭未执行。新原 wire 持久恢复/source0 交接仅为候选设计，未进入生产。完整追平目标保持 OPEN，见 [v23 验证](../reports/ui-source/v23/validation.md)；下文 v22 与更早记录保留历史事实。
 
 目标：持续跟进 `01a085bd-7a94-7f93-8a1f-1ecf417f5ee3`，直至 HMOS 追平 Windows 侧 UI 与大部分实现。独立 `hmos/` 工程、Rust 复用、ArkUI/NDK 路线不变；只推送 `codex/ArkTsUI`，不合并主线。
 
-2026-10-07 最新增量为 [恢复门禁修复与严格业务基础检查点](../reports/ui-source/v22/validation.md)：恢复标志和 lease 挂载归属改为响应式状态，解除恢复后 Add 禁用；新 `editor_save` / `editor_commit_inspect`、单事务 `continued_todos` 和独立 ETS 协调器已实现。准确原请求/publication/历史 result、Unknown 同 wire、恒定 root/latest baseline 与全文未知字段保留已有专项/Store/ETS证明。**新基础未接 Index，业务 source0 子草稿交接、产品在途原 wire 跨进程恢复和完整目标仍 OPEN**。原 rawfork 不自动解除 source 冲突；[v21报告](../reports/ui-source/v21/validation.md)及更早证据不追改。
+2026-10-07 v22 历史增量为 [恢复门禁修复与严格业务基础检查点](../reports/ui-source/v22/validation.md)：恢复标志和 lease 挂载归属改为响应式状态，解除恢复后 Add 禁用；新 `editor_save` / `editor_commit_inspect`、单事务 `continued_todos` 和独立 ETS 协调器已实现。准确原请求/publication/历史 result、Unknown 同 wire、恒定 root/latest baseline 与全文未知字段保留已有专项/Store/ETS证明。**新基础未接 Index，业务 source0 子草稿交接、产品在途原 wire 跨进程恢复和完整目标仍 OPEN**。原 rawfork 不自动解除 source 冲突；[v21报告](../reports/ui-source/v21/validation.md)及更早证据不追改。
 
 设备已安装独立 UI 候选 **96C0AB68… /28,799,011字节**（f9加两项状态修复、旧b486 native，新业务源未包含）。公开D恢复与Add空行限定PASS；首次文字输入仍FAILED_OR_UNKNOWN，之后独立恢复PASS准确读回`first 汉字 🧪 é.`。随后保留关闭仍FAILED_OR_UNKNOWN，因未完整捕获事件而停止清理，现编辑器打开且草稿保留，不声称关闭/业务保存闭环完成。最终fresh新native产品742模型/HAP9.653s/29,101,587字节/41688FDA…通过但未安装，候选设备结果不能替代；旧失败证据保留。
 
@@ -52,15 +58,15 @@ dev.8 已接入原 `query_plan_v2` 的分页过滤、稳定排序和归并，复
 | 七种风格、玻璃模式、深度、色盘、组件材质跟随 | dev.5 已接基础面板/深度/材质跟随；错位边缘已修复 | 渲染参照、七风格交叉玻璃模式、主题切换、控件与过渡、跟随/循环/取消/保存/重启测试；不能只显示风格名称 |
 | 字体、语言、背景、窗口行为 | 系统字体/部分九语/内置纹理已接；文件导入与完整文案缺失 | 字体和背景选择器、持久 URI/授权、动态文案、可访问性与宽屏实测 |
 | 卡片、TaskId、分类/阶段、回收站 | dev.11 接阅读详情、显式编辑、复制、长按/菜单及持久前后移动和独立拖动柄；dev.4 完整 TaskId 编辑保留 | 补任务迁移、详情完整任务操作、拖动边缘自动滚动和鼠标/键盘交互矩阵；保持未知字段、CAS、原操作回执、删除时间规则 |
-| 字段字数、待办输入、完整未来粘贴 | Unicode16/formatter原对照保持，Index新卡多行1000/100行及create TaskId已接；恢复门禁/lease响应式修复后的96C0候选恢复与Add空行有限PASS，首次准确输入FAILED_OR_UNKNOWN | 核准确输入、多行高度/拖动、保存/重启全闭环；IME preview延迟formatter、SDK实时截短/任意候选恢复与全篇连续选择仍OPEN，不把空行Add或纯模型算完整设备通过 |
+| 字段字数、待办输入、完整未来粘贴 | Unicode16/formatter原对照保持，Index新卡多行1000/100行及create TaskId已接；v24 AFF普通字段恢复焦点门禁、83B一次性Todo初建能力已冻，B62旧native候选准确恢复公开D/13/1000与keep关闭限定PASS | 补新文字/IME/多行编辑和业务保存重启的设备闭环；SDK未交付事件/实时formatter/任意候选恢复/连续选择仍OPEN，恢复和保留关闭不代替保存验收 |
 | 查询、排序、大库加载 | dev.8 已接原 Rust 计划、单次完整快照、完整属性搜索与稳定排序；去抖/待发合并/过期回包丢弃，真实失败与空结果分开 | 仍限定 256 张；需 UI 响应分页、大库内存/帧时和生产 guest/捕获资格。旧“最近添加”为反向 ID 顺序，不能宣称为创建时间排序 |
 | 正式 Rust 宿主和存储会话 | 未接；当前为独立未封存开发库 | 提取平台会话接口，HUKS、稳定身份、单库所有者、审计/备份/恢复契约；禁止绕过原宿主非 Windows 拒绝规则 |
-| 持久草稿、S1/S2、未知结果核对 | rawfork/准确父proof/首origin4后继3/先子durable再条件父退休与lease分别关闭保持；本轮补响应式恢复门禁，新严格业务历史检查独立实现 | 实现准确历史业务source0子草稿/祖先权限与Index接线，持久完整在途原wire；kind1 rawfork不自动重基。protected captured S1/S2、SDK未交付事件保全和完整关闭/重启仍OPEN；16槽/64MiB/256身份保持 |
-| 严格原子业务与owned全文todos | 新editor_save/inspect、原wire/pub/history绑定、恒定root/latest baseline、singletransaction continued_todos与独立ETS已实现；Rust158/9默认ignored、14专项、14实际Store故障向量、Dart50、ETS23及隔离SDK通过 | 接到真实Index保存/未知核对/准确source0接续；再次保存S2/S3/附件/外部CAS冲突/重启全流程验收。legacy文本成员规则与已有V2 TaskId编辑差异分别保留，50003不是protected证明 |
+| 持久草稿、S1/S2、未知结果核对 | 原rawfork/source/CAS/lease合同保持；v24独立intent持久完整原wire/publication/pins、issue实际native计划与Session显式五part恢复/原S1重试已实现，晚S2不消费 | 接入Index原请求核对/继续入口、准确历史业务source0交接、handoff/saved_exact；fresh save阻止晚S2后不可把拒绝作为终态。protected捕获、SDK未交付事件保全及完整保存关闭/重启仍OPEN；新nativecombined16槽/64MiB/256身份与跨独立进程全局quota原子性分别核 |
+| 严格原子业务与owned全文todos | 既有strict历史业务和continued_todos基础保持；v24 intent native165库+3附件/11默认ignored、新24实际Store故障向量、Session30实际ETS及真实DTO、独立SDK9.480s通过，未接产品Index | 实现真实Index保存/Unknown原wire跨进程核对/source0接续/再次S2S3保存、准确附件与外部CAS冲突闭环。保留legacy成员与既有V2 TaskId差异；phase/紧凑marker/development proof不授予protected资格 |
 | 附件、剪贴板、Markdown/富文本、导入导出 | dev.19在dev.17/18快照/原件/富转换基础上将完整输出改为Unicode16 grapheme≤20000，回执绑定完整UTF-16/UTF-8长度和版本；完整未来选区粘贴异步preflight及pin后重检。原source限制、SHA、64MiB/20槽/sidecar保持。独立API26双指tester编译main/test HAP与10工具模型通过，未安装/执行设备手势 | 本轮Rust106和三项条件Flutter对照fresh通过；完整ETS/HAP/native身份见v19最终验证。系统富内容/Office持久闭环、dev19字段/IME与图片手势设备NOT_RUN。RTF插件仍2Mi+64KiB，无异常fallback；严格坏编码/RTF U+FFFD、直接输入formatter行为、更严格字节预算、200MiB容量、完整格式/惯性/GIF仍有差距 |
 | 音乐、歌词、解密 | 空状态 | 复用 Rust 解密模块，播放器、播放列表、歌词、文件权限、后台/中断恢复实测 |
 | 插件包、动态 UI、HTTP/服务/文件任务 | 未接运行期宿主 | 跟进 Windows 实现与合约，接 Wasm 执行/权限/资源预算/服务与任务控制；区分 Windows 平台实现和共享业务块 |
-| 分发与资格 | 版本dev19/1000019保持；v22模型742/742、fresh双ABI267完整原生inputs/两库采用、HAP9.653s/29,101,587字节/41688FDA…、334构建输入前后/disk及4包内so PASS。96C0 UI-only候选用旧native且仅分阶段设备资格；新最终包未安装，见 [v22验证](../reports/ui-source/v22/validation.md)；v21旧事实保留 | 验新包准确输入/多行保存重启/业务source0接续与完整关闭；签名、ARM64真机、HUKS、字段/IME/富内容/手势/拒权/空间耗尽及完整目标仍OPEN |
+| 分发与资格 | dev19/1000019保持，仅codex/ArkTsUI、不并主线。v24实际ETS807/807 PASS0skip、新双ABI/271 native来源前后PASS，完整API26产品13.893s/34 fresh任务、313复制/364仓库输入前后及4包内so PASS；最终HAP29,381,667b/F6EEEAE2…未签/未安装。首轮0任务隔离配置失败证据保留；B62旧v22 native UI候选29,107,139b仅公开D恢复和keep关闭限定PASS，见 [v24统一验证](../reports/ui-source/v24/validation.md) | 验新native准确输入/多行业务保存重启/source0交接/完整关闭；签名、ARM64真机、HUKS、富内容/手势/拒权/空间耗尽及完整目标仍OPEN，旧失败与历史build不覆盖 |
 
 每一轮更新源码观察与实际功能证据，保护 `shared/reference.json` 的冻结来源。上游在途代码不得未经审查直接覆盖。新版本截图、测试日志和构建输入哈希分别记录，旧图不能被当成新包验收。
 

@@ -1,0 +1,21 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.73s
+     Running unittests src\lib.rs (hmos\rust\target\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 1 test
+test editor_intent::tests::explicit_part_reads_list_bounds_closed_context_and_envelope_budgets_do_not_drop_original_bytes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 175 filtered out; finished in 0.24s
+
+     Running unittests src\bin\hmos-attachment-check.rs (hmos\rust\target\debug\deps\hmos_attachment_check-a3f9af3be9b32370.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running unittests src\bin\hmos-self-check.rs (hmos\rust\target\debug\deps\hmos_self_check-f8a2d59b8a982b0d.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

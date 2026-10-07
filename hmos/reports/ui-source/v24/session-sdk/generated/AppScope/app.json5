@@ -1,0 +1,10 @@
+{
+  "app": {
+    "bundleName": "dev.morrow.hmos.editorbusinesssessionsdk",
+    "vendor": "Morrow Session SDK Smoke",
+    "versionCode": 2400024,
+    "versionName": "0.1.0-editor-business-session-sdk-smoke.24",
+    "icon": "$media:layered_image",
+    "label": "$string:app_name"
+  }
+}

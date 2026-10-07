@@ -681,6 +681,7 @@ fn save_internal(
     if others.len() >= MAX_SLOTS || total > MAX_ACTIVE_BYTES {
         return Err("draft active capacity reached".into());
     }
+    crate::editor_intent::check_capacity(host, &id, slot.active_bytes, previous.is_none())?;
     write_draft_journal(
         host,
         &id,
@@ -706,6 +707,15 @@ pub fn read(host: &HostRuntime, card: &str, draft: &str) -> Result<Option<DraftR
         slot,
         repeated: false,
     }))
+}
+/// Immutable save view for a separately verified host intent. This read does
+/// not authorize ordinary writes, exports, or reactivation of an old draft.
+pub(crate) fn read_history(host: &HostRuntime, card: &str, draft: &str, operation: &str) -> Result<DraftRecord> {
+    let slot = draft_history(host, &key(card, draft), operation)?.ok_or("draft history missing")?;
+    fork::verify_slot(host, &slot)?;
+    let current = draft_card(host, card, draft)?.ok_or("draft current record missing")?;
+    fork::verify_slot(host, &current)?;
+    Ok(DraftRecord { slot, current_generation: current.generation, current_active: current.active, repeated: true })
 }
 pub fn list(host: &HostRuntime) -> Result<Vec<DraftRecord>> {
     let slots = all_draft_metadata(host)?;

@@ -1,0 +1,19 @@
+{
+  "label": "v24-own-D-before-fixed-UI-install-current",
+  "started": 1791373988921,
+  "screenshotAt": 1791373989173,
+  "layoutAt": 1791373989920,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-preflight-fixed\\v24-own-D-before-fixed-UI-install-current.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-preflight-fixed\\v24-own-D-before-fixed-UI-install-current.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-preflight-fixed\\v24-own-D-before-fixed-UI-install-current.raw.json"
+  }
+}

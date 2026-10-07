@@ -1,4 +1,5 @@
 import { TextValue, copyText } from '../model/EditorDraft';
+import { samePasteTarget } from '../model/EditorPaste';
 import { EditorTodosDraft, EditorTodoRow, EditorTodoTicket, EditorTodoDrag, EditorTodosView, EditorTodosStatus, EditorTodoFormatResult } from '../model/EditorTodos';
 import { uiText } from '../model/UiStrings';
 
@@ -9,6 +10,14 @@ class TodoRowArea {
 }
 interface TodoUncapturedInput { kind: string; text: string; preview?: PreviewText; }
 interface TodoUncapturedSelection { kind: string; base: number; extent: number; }
+interface TodoInitialDisplayEcho {
+  controller: TextAreaController;
+  ticket: EditorTodoTicket;
+  value: TextValue;
+  display: string;
+  control: string;
+  pending: boolean;
+}
 function todoInputEvent(text: string, preview?: PreviewText): string {
   const event: TodoUncapturedInput = { kind: 'input', text, preview }; return JSON.stringify(event);
 }
@@ -295,14 +304,26 @@ struct EditorTodoRowInput {
   private serial: number = 0;
   private expectedBase: number = -1;
   private expectedExtent: number = -1;
+  private mountedOnce: boolean = false;
+  private everFocused: boolean = false;
+  private initialEcho: TodoInitialDisplayEcho | undefined = undefined;
 
-  aboutToAppear(): void { this.alive = true; this.rowChanged(); }
-  aboutToDisappear(): void { this.alive = false; this.focused = false; this.serial++; this.controller.stopEditing(); }
+  aboutToAppear(): void {
+    const firstMount: boolean = !this.mountedOnce; this.mountedOnce = true;
+    this.alive = true; this.rowChanged();
+    if (firstMount) {
+      const ticket = new EditorTodoTicket(); ticket.owner = this.session.owner; ticket.id = this.session.id; ticket.incarnation = this.session.incarnation;
+      const echo: TodoInitialDisplayEcho = { controller: this.controller, ticket, value: copyText(this.row.value), display: this.row.display_text, control: this.text, pending: this.row.pending };
+      this.initialEcho = echo;
+    }
+  }
+  aboutToDisappear(): void { this.initialEcho = undefined; this.alive = false; this.focused = false; this.serial++; this.controller.stopEditing(); }
   private ownsIdentity(ticket: EditorTodoTicket): boolean {
     return this.alive && ticket.owner === this.owner && ticket.id === this.row.id && ticket.incarnation === this.row.incarnation;
   }
   private owns(ticket: EditorTodoTicket): boolean { return this.editingEnabled && this.ownsIdentity(ticket); }
   private rowChanged(): void {
+    this.initialEcho = undefined;
     if (!this.alive) { return; }
     const fresh = new EditorTodoTicket(); fresh.owner = this.owner; fresh.id = this.row.id; fresh.incarnation = this.row.incarnation;
     this.session = fresh; this.text = this.row.display_text;
@@ -317,10 +338,19 @@ struct EditorTodoRowInput {
     }, 0);
   }
   private changeFor(ticket: EditorTodoTicket, text: string, preview?: PreviewText): void {
+    if (!this.ownsIdentity(ticket)) { return; }
+    // Only the first admitted callback of a new control can acknowledge its
+    // already-set initial display. A refresh, focus or prior input revokes this
+    // capability; equal text by itself never clears a missing capture/Unknown.
+    const echo = this.initialEcho; this.initialEcho = undefined;
+    if (echo && echo.controller === this.controller && echo.ticket.owner === ticket.owner && echo.ticket.id === ticket.id &&
+      echo.ticket.incarnation === ticket.incarnation && !this.everFocused && !this.focused && !echo.pending && !this.row.pending &&
+      echo.value.composing_start === -1 && echo.value.composing_end === -1 && samePasteTarget(echo.value, this.row.value) &&
+      echo.value.text === echo.display && echo.display === this.row.display_text && echo.control === this.text && text === echo.display && text === echo.control &&
+      (preview === undefined || (!!preview && preview.value === '' && preview.offset === -1))) { return; }
     if (!this.editingEnabled) {
-      if (this.ownsIdentity(ticket)) { this.onUncaptured(ticket, todoInputEvent(text, preview)); } return;
+      this.onUncaptured(ticket, todoInputEvent(text, preview)); return;
     }
-    if (!this.owns(ticket)) { return; }
     this.text = text; this.expectedBase = -1; this.expectedExtent = -1;
     this.onInput(ticket, text, preview);
   }
@@ -337,6 +367,8 @@ struct EditorTodoRowInput {
   }
   private focusFor(ticket: EditorTodoTicket, focused: boolean): void {
     if (!this.ownsIdentity(ticket)) { return; }
+    this.initialEcho = undefined;
+    if (focused) { this.everFocused = true; }
     if (!focused) { this.focused = false; this.expectedBase = -1; this.expectedExtent = -1; return; }
     if (!this.editingEnabled) { return; }
     this.focused = true; this.onRowFocus(ticket);

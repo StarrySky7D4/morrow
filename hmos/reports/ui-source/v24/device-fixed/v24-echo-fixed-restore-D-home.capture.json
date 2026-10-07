@@ -1,0 +1,19 @@
+{
+  "label": "v24-echo-fixed-restore-D-home",
+  "started": 1791373999800,
+  "screenshotAt": 1791374000488,
+  "layoutAt": 1791374001258,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-fixed\\v24-echo-fixed-restore-D-home.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-fixed\\v24-echo-fixed-restore-D-home.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-fixed\\v24-echo-fixed-restore-D-home.raw.json"
+  }
+}

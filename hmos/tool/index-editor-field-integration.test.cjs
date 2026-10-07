@@ -20,6 +20,7 @@ function section(from, to) {
 const methods = [
   section('  private draftField(', '  private updateMarkdown('),
   section('  private draftTextChanged(', '  private restoreSelection('),
+  section('  private restoreSelection(', '  private ownsEditorView('),
   section('  private editorInputChanged(', '  private select('),
   section('  private async flushDraft(', '  private refreshEditorAssets('),
   section('  private command(', '  private moveTask('),
@@ -103,7 +104,8 @@ function harness(options = {}) {
     title: values.title.text, description: values.description.text, hypothesis: values.hypothesis.text, conclusion: values.conclusion.text,
     category: values.category, taskText: values.todos.text, taskEditId: '', taskRenameText: '', taskRenameValue: new draftApi.TextValue(),
     draftFocusedFields: new Set(['title', 'description', 'hypothesis', 'conclusion', 'todos']), draftSelectionPending: new Set(),
-    draftCaptureBlocked: new Set(), dirty: false, message: '', draftSource: 'frozen-card-source',
+    draftCaptureBlocked: new Set(), retirementInput: new Map(), editorFocusIntent: 0,
+    dirty: false, message: '', draftSource: 'frozen-card-source',
     cards: [{ id: scope.card_id, source: 'frozen-card-source', revision: '1', title: values.title.text, description: values.description.text,
       hypothesis: values.hypothesis.text, conclusion: values.conclusion.text, category: values.category, stage: values.stage,
       favorite: false, deleted: false, tasks: [{ id: 'task-fixture', text: 'Task', completion: 0 }], assets: [] }],
@@ -307,5 +309,134 @@ test('late IME rename callback during issued business request retains newer cand
     h.page.taskRenameChanged('Task', { value: '候选', offset: 4 }); gate.resolve(); await settle();
     assert.equal(h.page.taskEditId, 'task-fixture'); assert.equal(h.page.taskRenameValue.text, 'Task候选');
     assert.equal(h.page.taskRenameValue.composing_start, 4); assert.equal(h.page.taskRenameText, 'Task');
+  } finally { h.close(); }
+});
+
+test('actual ordinary-field construction selections do not change raw or epoch before focus, including during restore', async () => {
+  for (const restoring of [false, true]) {
+    const h = harness(); try {
+      h.page.draftFocusedFields.clear(); h.page.draftRestoreInput = restoring;
+      const original = plain(h.draft.current), epoch = h.page.editorInputEpoch, owner = h.page.editorViewOwner;
+      for (const name of ['title', 'description', 'hypothesis', 'conclusion']) {
+        h.page.leaseSelectionChanged(owner, name, h.page.draftField(name).text.length + 1, -2);
+        h.page.leaseSelectionChanged(owner, name, 0.5, 0);
+        h.page.leaseSelectionChanged(owner, name, 0, 0);
+      }
+      assert.equal(h.page.editorInputEpoch, epoch); assert.equal(h.page.retirementInput.size, 0);
+      assert.equal(h.page.draftCaptureIncomplete, false); assert.equal(h.page.draftCaptureBlocked.size, 0);
+      assert.deepEqual(plain(h.draft.current), original); assert.deepEqual(plain(h.page.editorValues), original);
+      assert.equal(h.page.message, ''); assert.equal(h.raw().length, 0); assert.equal(h.business().length, 0);
+      h.page.draftRestoreInput = false; assert.equal(await h.page.flushDraft(), true);
+      assert.equal(h.raw().length, 0, 'unchanged restore must not consume another raw journal generation');
+    } finally { h.close(); }
+  }
+});
+
+test('actual unfocused initialization cannot clear or overwrite an existing unknown event', async () => {
+  const h = harness(); try {
+    const owner = h.page.editorViewOwner, unknown = JSON.stringify({ start: 77, end: -4 });
+    h.page.leaseUncaptured(owner, 'title', unknown); h.page.draftFocusedFields.clear(); h.page.draftRestoreInput = true;
+    const epoch = h.page.editorInputEpoch, original = plain(h.draft.current);
+    h.page.leaseSelectionChanged(owner, 'title', 0, 0); h.page.leaseSelectionChanged(owner, 'title', 999, -2);
+    assert.equal(h.page.retirementInput.get('title:text'), unknown); assert.equal(h.page.editorInputEpoch, epoch);
+    assert.equal(h.page.draftCaptureIncomplete, true); assert.equal(h.page.draftCaptureBlocked.has('title'), true);
+    assert.deepEqual(plain(h.draft.current), original); assert.equal(await h.page.flushDraft(), false);
+    assert.equal(h.raw().length, 0); assert.equal(h.business().length, 0);
+  } finally { h.close(); }
+});
+
+test('actual focused invalid ranges remain exact uncaptured events in active and disabled ordinary fields', async () => {
+  for (const disabledFlag of ['', 'draftRestoreInput', 'attachmentWorking', 'draftRetiring', 'draftRetirementUnknown']) {
+    for (const name of ['title', 'description', 'hypothesis', 'conclusion']) {
+      const h = harness(); try {
+        const owner = h.page.editorViewOwner; h.page.draftFocusedFields.clear(); h.page.leaseFocusChanged(owner, name, true);
+        assert.deepEqual([...h.page.draftFocusedFields], [name]); if (disabledFlag) h.page[disabledFlag] = true;
+        const original = plain(h.draft.current), live = plain(h.page.editorValues), epoch = h.page.editorInputEpoch;
+        const start = h.page.draftField(name).text.length + 3, end = -2;
+        h.page.leaseSelectionChanged(owner, name, start, end);
+        assert.deepEqual(JSON.parse(h.page.retirementInput.get(name + ':text')), { start, end });
+        assert.equal(h.page.editorInputEpoch, epoch + 1); assert.equal(h.page.draftCaptureBlocked.has(name), true);
+        assert.equal(h.page.draftCaptureIncomplete, true); assert.deepEqual(plain(h.draft.current), original);
+        assert.deepEqual(plain(h.page.editorValues), live); assert.equal(await h.page.flushDraft(), false);
+        assert.equal(h.raw().length, 0); assert.equal(h.business().length, 0);
+      } finally { h.close(); }
+    }
+  }
+});
+
+test('actual focused valid reverse selection preserves complete composition, UTF16 metadata and confirmed pins', async () => {
+  const h = harness(); try {
+    const owner = h.page.editorViewOwner; h.page.draftFocusedFields.clear(); h.page.leaseFocusChanged(owner, 'description', true);
+    h.page.editorValues.description.affinity = 1; h.page.editorValues.description.directional = true;
+    h.page.leaseTextChanged(owner, 'description', 'A😀B', { value: 'e\u0301', offset: 3 });
+    const original = plain(h.draft.current), epoch = h.page.editorInputEpoch;
+    h.page.leaseSelectionChanged(owner, 'description', 5, 3);
+    assert.equal(h.page.editorInputEpoch, epoch + 1); assert.equal(h.page.retirementInput.size, 0);
+    assert.equal(await h.page.flushDraft(), true); const written = h.raw().at(-1).request.values;
+    assert.deepEqual(written.description, { ...original.description, selection_base: 5, selection_extent: 3 });
+    assert.equal(written.description.text, 'A😀e\u0301B'); assert.equal(written.description.composing_start, 3);
+    assert.equal(written.description.composing_end, 5); assert.equal(written.description.affinity, 1);
+    assert.equal(written.description.directional, true);
+    for (const name of ['title', 'hypothesis', 'conclusion', 'todos']) assert.deepEqual(written[name], original[name]);
+    assert.equal(h.raw().at(-1).request.assets[0].asset_id, 'confirmed-pin-original'); assert.equal(h.business().length, 0);
+  } finally { h.close(); }
+});
+
+test('actual blur excludes subsequent unfocused ranges without erasing the invalid selection already delivered', async () => {
+  const h = harness(); try {
+    const owner = h.page.editorViewOwner; h.page.draftFocusedFields.clear(); h.page.leaseFocusChanged(owner, 'title', true);
+    h.page.leaseSelectionChanged(owner, 'title', 88, -2);
+    const originalEvent = h.page.retirementInput.get('title:text'), epoch = h.page.editorInputEpoch;
+    h.page.leaseFocusChanged(owner, 'title', false); assert.equal(h.page.draftFocusedFields.has('title'), false);
+    h.page.leaseSelectionChanged(owner, 'title', 999, -3); h.page.leaseSelectionChanged(owner, 'title', 0, 0);
+    assert.equal(h.page.retirementInput.get('title:text'), originalEvent); assert.equal(h.page.editorInputEpoch, epoch);
+    assert.equal(h.page.draftCaptureIncomplete, true); assert.equal(await h.page.flushDraft(), false);
+    assert.equal(h.raw().length, 0); assert.equal(h.draft.current.title.text, 'Title');
+  } finally { h.close(); }
+});
+
+test('actual old or revoked leases cannot submit valid, invalid, focus or text events to a replacement editor', async () => {
+  for (const revoke of [false, true]) {
+    const h = harness(); try {
+      const oldOwner = h.page.editorViewOwner, original = plain(h.draft.current), epoch = h.page.editorInputEpoch;
+      if (revoke) h.page.editorViewRevoked = true;
+      else { h.page.editorViewOwner = 'replacement-owner'; h.page.attachmentEditorIdentity = 'replacement-owner'; }
+      h.page.leaseSelectionChanged(oldOwner, 'title', 3, 1); h.page.leaseSelectionChanged(oldOwner, 'title', 999, -2);
+      h.page.leaseTextChanged(oldOwner, 'description', 'old text', { value: '候', offset: 99 });
+      h.page.leaseFocusChanged(oldOwner, 'description', true);
+      assert.equal(h.page.editorInputEpoch, epoch); assert.equal(h.page.retirementInput.size, 0);
+      assert.equal(h.page.draftCaptureIncomplete, false); assert.deepEqual(plain(h.draft.current), original);
+      assert.deepEqual(plain(h.page.editorValues), original); assert.equal(h.raw().length, 0); assert.equal(h.business().length, 0);
+    } finally { h.close(); }
+  }
+});
+
+test('actual disabled text and preview still retain exact events regardless of focused selection admission', async () => {
+  for (const offset of [3, 99]) {
+    const h = harness(); try {
+      const owner = h.page.editorViewOwner; h.page.draftFocusedFields.clear(); h.page.draftRetiring = true;
+      const original = plain(h.draft.current), epoch = h.page.editorInputEpoch, preview = { value: '候e\u0301', offset };
+      h.page.leaseTextChanged(owner, 'description', 'A😀B', preview);
+      assert.deepEqual(JSON.parse(h.page.retirementInput.get('description:text')), { value: 'A😀B', preview });
+      assert.equal(h.page.editorInputEpoch, epoch + 1); assert.equal(h.page.draftCaptureIncomplete, true);
+      assert.deepEqual(plain(h.draft.current), original); assert.equal(h.draft.confirmed.assets[0].selection.asset_id, 'confirmed-pin-original');
+      if (offset === 3) {
+        assert.equal(h.page.editorValues.description.text, 'A😀候e\u0301B');
+        assert.equal(h.page.editorValues.description.composing_start, 3); assert.equal(h.page.editorValues.description.composing_end, 6);
+      } else assert.deepEqual(plain(h.page.editorValues.description), original.description);
+      assert.equal(await h.page.flushDraft(), false); assert.equal(h.raw().length, 0); assert.equal(h.business().length, 0);
+    } finally { h.close(); }
+  }
+});
+
+test('actual focused valid retirement selection retains original event and local range without writing a retired raw scope', async () => {
+  const h = harness(); try {
+    const owner = h.page.editorViewOwner; h.page.draftFocusedFields.clear(); h.page.leaseFocusChanged(owner, 'title', true);
+    h.page.draftRetiring = true; const original = plain(h.draft.current), epoch = h.page.editorInputEpoch;
+    h.page.leaseSelectionChanged(owner, 'title', 4, 1);
+    assert.deepEqual(JSON.parse(h.page.retirementInput.get('title:selection')), { value: 'Title', start: 4, end: 1 });
+    assert.equal(h.page.editorInputEpoch, epoch + 1); assert.equal(h.page.editorValues.title.selection_base, 4);
+    assert.equal(h.page.editorValues.title.selection_extent, 1); assert.deepEqual(plain(h.draft.current), original);
+    assert.equal(h.page.draftCaptureIncomplete, true); assert.equal(await h.page.flushDraft(), false); assert.equal(h.raw().length, 0);
   } finally { h.close(); }
 });

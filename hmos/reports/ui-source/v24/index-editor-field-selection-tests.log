@@ -1,0 +1,37 @@
+Index.ets SHA256=aff77eb7f1c90e53ddf5d64dd89fb3a037dab98ac0b08ae0382090a2055efeaf; SDK TypeScript=4.9.5
+✔ fresh actual Index methods use installed SDK compiler; emit source hash (1.8547ms)
+✔ all five fields retain original graphemes and UTF16 range in actual raw journal (87.9788ms)
+✔ IME candidate is journaled losslessly in all fields while business admission is blocked (297.9888ms)
+✔ invalid IME offset blocks retention and leaves previous confirmed raw values intact (51.3085ms)
+✔ older count cannot replace a newer edit or a newer UTF16 selection count (47.8986ms)
+✔ business validation revokes edits, selection, category, owner, command and foreground changes (383.7973ms)
+✔ later input during final raw flush prevents issuing a frozen business command (49.4762ms)
+✔ over-limit title keeps every character and confirmed pins without business mutation (44.2065ms)
+✔ count worker failure never authorizes business or normalizes original input (50.4454ms)
+✔ unknown raw journal preserves exact pending request and confirmed pins, no business issue (49.0477ms)
+✔ unknown business reply retains original serialized command and raw snapshot with confirmed pins (56.4081ms)
+✔ create/edit business send preserves exact source strings and binds confirmed generation (49.2647ms)
+✔ task_add validates full raw text and does not consume later text or IME (45.2428ms)
+✔ task rename validates its untrimmed original while command retains established trimming (47.1618ms)
+✔ same-value rename roundtrip after issue does not consume newer input epoch (41.9544ms)
+✔ actual cancel callback invalidates pending validation and later reopen is not consumed (47.325ms)
+✔ unknown rename preserves original request and frozen raw identity through explicit reconciliation (44.9691ms)
+✔ confirmed not-committed rename clears only frozen request, preserving user text (42.8301ms)
+✔ foreground loss after issued rename revokes successful input consumption (47.582ms)
+✔ late IME rename callback during issued business request retains newer candidate (43.9059ms)
+✔ actual ordinary-field construction selections do not change raw or epoch before focus, including during restore (94.556ms)
+✔ actual unfocused initialization cannot clear or overwrite an existing unknown event (46.0644ms)
+✔ actual focused invalid ranges remain exact uncaptured events in active and disabled ordinary fields (885.4316ms)
+✔ actual focused valid reverse selection preserves complete composition, UTF16 metadata and confirmed pins (42.2923ms)
+✔ actual blur excludes subsequent unfocused ranges without erasing the invalid selection already delivered (47.5436ms)
+✔ actual old or revoked leases cannot submit valid, invalid, focus or text events to a replacement editor (87.0829ms)
+✔ actual disabled text and preview still retain exact events regardless of focused selection admission (85.7034ms)
+✔ actual focused valid retirement selection retains original event and local range without writing a retired raw scope (39.2861ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3467.7145

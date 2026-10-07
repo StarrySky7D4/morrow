@@ -1,0 +1,37 @@
+syntax = "proto3";
+package morrow.workbench.editor_draft.v1;
+import "editor_draft.proto";
+
+// Independent development-unsealed host journal. This is never a protected
+// ParentLink, an editor draft Slot field, or evidence that business committed.
+message EditorIntentPublication {
+  string draft_id = 1;
+  uint64 generation = 2;
+  string save_operation = 3;
+  bytes request_sha256 = 4;
+}
+message EditorIntentSlot {
+  uint32 schema_version = 1;
+  string card_id = 2;
+  string business_operation = 3;
+  string prepare_operation = 4;
+  string request_json = 5;
+  bytes request_sha256 = 6;
+  EditorIntentPublication publication = 7;
+  bytes publication_sha256 = 8;
+  uint64 expected_revision = 9;
+  bytes command_sha256 = 10;
+  bytes content_sha256 = 11;
+  repeated morrow.workbench.editor_draft.v1.StoredAsset assets = 12;
+  uint64 generation = 13;
+  // 0 prepared, 1 issued, 2 closed (cancel_prepared only).
+  uint32 phase = 14;
+  bool active = 15;
+  uint64 active_bytes = 16;
+  // Empty in immutable generation 1: avoids a self-referential body digest.
+  bytes prepared_record_sha256 = 17;
+  string save_request_json = 18;
+  string inspect_request_json = 19;
+  string close_request_json = 20;
+  string mutation_operation = 21;
+}

@@ -1,0 +1,14 @@
+> hvigor ERROR: 00303148 Configuration Error
+Error Message: Hvigorfile not found. At file: C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\.build\device-candidates\dev24-intent-checkpoint\hvigorfile.ts
+
+* Try the following:
+  > Ensure that both the project and the module contain a hvigorfile.ts.
+
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+
+> hvigor ERROR: BUILD FAILED in 13 ms 
+
+0 task in total: 0 executed, 0 up-to-date.

@@ -1,0 +1,10 @@
+{
+  "createdUtc": "2026-10-07T12:09:46.023Z",
+  "path": ".build/artifacts/dev24-intent-checkpoint/entry-default-unsigned.hap",
+  "bytes": 29381667,
+  "sha256": "F6EEEAE2D2175A7EA54DCEF582EA1BD5D15E324D48E65583B752775B4EC8925C",
+  "archive_path": ".build/artifacts/dev24-intent-checkpoint/entry-default-unsigned.hap",
+  "signed": false,
+  "installed": false,
+  "scope": "v24 initial Todo display echo and unfocused selection repair; native durable original-request intent and ETS session foundation; Index integration, business handoff and new-native device acceptance OPEN; full Flutter/Windows parity OPEN"
+}

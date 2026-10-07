@@ -1,0 +1,11 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling morrow-editor-draft-model v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust\editor-draft-model)
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `release` profile [optimized] target(s) in 7.29s
+
+Algorithm       Hash                                                                   Path
+---------       ----                                                                   ----
+SHA256          E416EA7FBA13BB5DE0310942AA0C0F0FF725D6C3D7AFB37CAC33A3C5E6746C80       C:\Users\Administrator\Desktop\C…
+

@@ -1,0 +1,19 @@
+{
+  "label": "v24-detail-restore-D-observation-row-seek-0",
+  "started": 1791372880001,
+  "screenshotAt": 1791372880337,
+  "layoutAt": 1791372881043,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-diagnostic-detail\\v24-detail-restore-D-observation-row-seek-0.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-diagnostic-detail\\v24-detail-restore-D-observation-row-seek-0.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-diagnostic-detail\\v24-detail-restore-D-observation-row-seek-0.raw.json"
+  }
+}

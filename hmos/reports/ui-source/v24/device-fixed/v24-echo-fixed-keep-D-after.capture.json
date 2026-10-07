@@ -1,0 +1,19 @@
+{
+  "label": "v24-echo-fixed-keep-D-after",
+  "started": 1791374017003,
+  "screenshotAt": 1791374017268,
+  "layoutAt": 1791374017975,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-fixed\\v24-echo-fixed-keep-D-after.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-fixed\\v24-echo-fixed-keep-D-after.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-fixed\\v24-echo-fixed-keep-D-after.raw.json"
+  }
+}

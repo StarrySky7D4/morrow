@@ -1,0 +1,4 @@
+10-07 19:34:34.447 19675 19675 I A03d00/JSAPP: HMOS_CAPTURE_ROW_DIAG owned=true enabled=false focused=false same_display=true same_control=true text_length=15 preview=true preview_length=0 preview_offset=-1 raw_composing_start=-1 raw_composing_end=-1 pending=false incarnation=1 serial=1
+10-07 19:34:34.447 19675 19675 I A03d00/JSAPP: HMOS_CAPTURE_DIAG uncaptured name=todos kind=todo_input focused=false restore=true owned=true event_length=76
+10-07 19:34:34.448 19675 19675 I A03d00/JSAPP: HMOS_CAPTURE_DIAG selection name=title start=21 end=21 length=21 focused=false restore=true owned=true
+10-07 19:34:34.450 19675 19675 I A03d00/JSAPP: HMOS_CAPTURE_DIAG selection name=description start=41 end=41 length=41 focused=false restore=true owned=true

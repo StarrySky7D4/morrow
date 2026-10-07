@@ -1,0 +1,57 @@
+[
+  {
+    "path": "hmos/rust/src/editor_intent.rs",
+    "bytes": 37602,
+    "sha256": "CA722439719EF6FE19900B28BADE5273372F31075A05BE7B49733B32F95F08A3"
+  },
+  {
+    "path": "hmos/rust/src/editor_intent/tests.rs",
+    "bytes": 36096,
+    "sha256": "FEF586499FD249E09C45AA6E9F859DAC150A105CF2B675C67FCEAA2E40E835DD"
+  },
+  {
+    "path": "hmos/rust/src/editor_business.rs",
+    "bytes": 45581,
+    "sha256": "C5502B47C4F78DF27D87AB7D7BD6EF7508E1A29A7E201AFAFAA5CBE63DB456EF"
+  },
+  {
+    "path": "hmos/rust/src/editor_draft.rs",
+    "bytes": 37985,
+    "sha256": "28C2409C830EDE59D852B3C46EAA77228ECF52928371A910B5C1716A8DABF59A"
+  },
+  {
+    "path": "hmos/rust/src/lib.rs",
+    "bytes": 59059,
+    "sha256": "E9B5F362D7F1EB32880DD4DFE948FE1D533859AB9E0CE6209EBFC14A6AF55DCE"
+  },
+  {
+    "path": "hmos/rust/editor-draft-model/schemas/editor_intent.proto",
+    "bytes": 1228,
+    "sha256": "461269138817CE96A83781B7EBED34A4B10CCA497173307B8DF2BDD1416D45E0"
+  },
+  {
+    "path": "hmos/rust/editor-draft-model/build.rs",
+    "bytes": 480,
+    "sha256": "D9FB0310E615F8FC7BA62A760E626E449E000915E99D2B381BD65A17871592D9"
+  },
+  {
+    "path": "hmos/rust/editor-draft-model/src/lib.rs",
+    "bytes": 19964,
+    "sha256": "0518F380D0335C21EBDD031AD22B11572FCF5917024ED0AA408D092AC6E06E4E"
+  },
+  {
+    "path": "hmos/rust/Cargo.toml",
+    "bytes": 919,
+    "sha256": "C3C53EB60EB751BCB3F5BD26E37EF54D26D5C906A8FBEB7FDF76887377E2BB82"
+  },
+  {
+    "path": "hmos/rust/Cargo.lock",
+    "bytes": 43572,
+    "sha256": "99388ED4B939078A28617A7624ECBC38A3B7D527AD181AEFAC824F07562F119D"
+  },
+  {
+    "path": "hmos/reports/ui-source/v24/editor-intent-store-fixture.json",
+    "bytes": 39256,
+    "sha256": "9C8BD71EE6C42AD965A129973C5943F62A38261EEF99310FA3D12AF99A9999BB"
+  }
+]

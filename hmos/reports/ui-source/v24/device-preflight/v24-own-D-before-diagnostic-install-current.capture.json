@@ -1,0 +1,19 @@
+{
+  "label": "v24-own-D-before-diagnostic-install-current",
+  "started": 1791372637171,
+  "screenshotAt": 1791372637437,
+  "layoutAt": 1791372638177,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-preflight\\v24-own-D-before-diagnostic-install-current.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-preflight\\v24-own-D-before-diagnostic-install-current.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-preflight\\v24-own-D-before-diagnostic-install-current.raw.json"
+  }
+}

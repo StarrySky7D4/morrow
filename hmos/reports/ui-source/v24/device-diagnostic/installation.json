@@ -1,0 +1,62 @@
+{
+  "phase": "INSTALLED_AND_LAUNCHED",
+  "device": "127.0.0.1:5555",
+  "artifact": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev24-capture-diagnostic\\entry-default-unsigned.hap",
+  "sha256": "6FCB10286838BC6EAD15266C7E07FADA89D739E76A725CE66814345CECE4FA0D",
+  "bytes": 29104652,
+  "versionName": "0.1.0-hmos-dev.19",
+  "versionCode": 1000019,
+  "baselineCommit": "7f07d07480660bbc868369b9565dc98a47e8af08",
+  "sourceManifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\ui-diagnostic\\source-copy-manifest.json",
+  "previousFixtureCapture": "NOT_QUALIFIED",
+  "actions": [
+    {
+      "label": "force-stop-before-install",
+      "args": [
+        "shell",
+        "aa",
+        "force-stop",
+        "dev.morrow.hmos"
+      ],
+      "phase": "ACKNOWLEDGED",
+      "at": "2026-10-07T11:30:45.573Z"
+    },
+    {
+      "label": "candidate-install",
+      "args": [
+        "install",
+        "-r",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev24-capture-diagnostic\\entry-default-unsigned.hap"
+      ],
+      "phase": "ACKNOWLEDGED",
+      "at": "2026-10-07T11:30:45.680Z"
+    },
+    {
+      "label": "bundle-after-install",
+      "args": [
+        "shell",
+        "bm",
+        "dump",
+        "-n",
+        "dev.morrow.hmos"
+      ],
+      "phase": "ACKNOWLEDGED",
+      "at": "2026-10-07T11:30:46.348Z"
+    },
+    {
+      "label": "start-after-install",
+      "args": [
+        "shell",
+        "aa",
+        "start",
+        "-a",
+        "EntryAbility",
+        "-b",
+        "dev.morrow.hmos"
+      ],
+      "phase": "ACKNOWLEDGED",
+      "at": "2026-10-07T11:30:46.451Z"
+    }
+  ],
+  "completed": "2026-10-07T11:30:46.586Z"
+}

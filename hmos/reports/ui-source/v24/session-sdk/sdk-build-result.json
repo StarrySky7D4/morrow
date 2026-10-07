@@ -1,0 +1,19 @@
+{
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\checkpoint-sdk-smoke\\dev24-business-session-retry1",
+  "bundle_name": "dev.morrow.hmos.editorbusinesssessionsdk",
+  "api": "26.0.0",
+  "daemon": false,
+  "exit_code": 0,
+  "verification_exit_code": 0,
+  "artifacts": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\checkpoint-sdk-smoke\\dev24-business-session-retry1\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "bytes": 26169517,
+      "sha256": "2F56774CEBB9BAA65636B924977AC09F09819E55C8DF1DA34A7C8B4899228DF1"
+    }
+  ],
+  "runtime": "NOT_RUN",
+  "device": "NOT_RUN",
+  "installation": "NOT_RUN",
+  "qualification": "Independent EditorSession SDK compile only; no Index or native runtime qualification"
+}

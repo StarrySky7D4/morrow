@@ -3,7 +3,7 @@ const { test } = require('node:test'), assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path'), vm = require('node:vm'), crypto = require('node:crypto');
 const ts = require('C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/build-tools/ets-loader/node_modules/typescript');
 const { load, createPolicy, deferred } = require('./editor-field-test-harness.cjs');
-const draft = load('EditorDraft'), model = load('EditorTodos');
+const draft = load('EditorDraft'), model = load('EditorTodos'), paste = load('EditorPaste');
 const sourcePath = path.resolve(__dirname, '../entry/src/main/ets/pages/EditorTodos.ets');
 const source = fs.readFileSync(sourcePath, 'utf8').replace(/\r\n/g, '\n');
 const childStart = source.indexOf('\n@Component\nstruct EditorTodoRowInput');
@@ -26,6 +26,7 @@ const exportsObject = {};
 vm.runInNewContext(compiled.outputText, { exports: exportsObject, setTimeout, clearTimeout, encodeURIComponent,
   TextAreaController: Controller, require(name) {
     if (name === '../model/EditorDraft') return draft;
+    if (name === '../model/EditorPaste') return paste;
     if (name === '../model/EditorTodos') return model;
     if (name === '../model/UiStrings') return { uiText: text => text };
     throw new Error('Unexpected dependency: ' + name);
@@ -69,13 +70,16 @@ function fixture(initial = 'a\nb', options = {}) {
     }
   };
 }
-function rowFixture() {
-  const view = new EditorTodoRowInput(), inputs = [], selections = [], focuses = [];
-  view.owner = 'owner-A'; view.row = Object.assign(new model.EditorTodoRow(), { id: 'row_A', incarnation: 1, display_text: 'abc', value: text('abc') });
+function rowFixture(options = {}) {
+  const view = new EditorTodoRowInput(), inputs = [], selections = [], focuses = [], notifications = [];
+  const value = options.value || text('abc');
+  view.owner = 'owner-A'; view.editingEnabled = options.enabled ?? true;
+  view.row = Object.assign(new model.EditorTodoRow(), { id: 'row_A', incarnation: 1, display_text: options.display ?? value.text, value: draft.copyText(value), pending: options.pending ?? false });
   view.onInput = (...args) => { inputs.push(args); return Promise.resolve(); };
   view.onSelection = (...args) => { selections.push(args); return Promise.resolve(); };
+  view.onUncaptured = (...args) => notifications.push(args);
   view.onRowFocus = ticket => focuses.push(ticket); view.aboutToAppear();
-  return { view, inputs, selections, focuses, ticket: view.session };
+  return { view, inputs, selections, focuses, notifications, ticket: view.session };
 }
 
 test('actual component methods source identity; builders retain full rows and no platform maxLength', t => {
@@ -577,4 +581,158 @@ test('actual disabled restore admits its complete parent snapshot without allowi
   f.view.editingEnabled = true; f.view.availabilityChanged();
   assert.equal(f.view.model.active, true); assert.equal(JSON.stringify(f.view.state.value), JSON.stringify(restored));
   assert.equal(f.captures.length, 0); f.view.aboutToDisappear();
+});
+
+test('initial disabled display callback with exact empty-minus-one preview is acknowledged once without a raw event', () => {
+  const f = rowFixture({ enabled: false, value: text('first 汉字 🧪 é.', { selection_base: 15, selection_extent: 15, affinity: 0, directional: true }) });
+  const raw = JSON.stringify(f.view.row.value), control = f.view.controller, serial = f.view.serial;
+  f.view.changeFor(f.ticket, f.view.text, { value: '', offset: -1 });
+  assert.equal(f.notifications.length, 0); assert.equal(f.inputs.length, 0); assert.equal(f.selections.length, 0);
+  assert.equal(JSON.stringify(f.view.row.value), raw); assert.equal(f.view.controller, control); assert.equal(f.view.serial, serial);
+  assert.equal(f.view.initialEcho, undefined);
+  f.view.changeFor(f.ticket, f.view.text, { value: '', offset: -1 });
+  assert.equal(f.notifications.length, 1);
+  assert.deepEqual(JSON.parse(f.notifications[0][1]), { kind: 'input', text: 'first 汉字 🧪 é.', preview: { value: '', offset: -1 } });
+  assert.equal(JSON.stringify(f.view.row.value), raw);
+});
+
+test('an absent preview initial callback is acknowledged once on either initial enabled state', () => {
+  for (const enabled of [false, true]) {
+    const f = rowFixture({ enabled }); f.view.changeFor(f.ticket, 'abc');
+    assert.equal(f.notifications.length, 0); assert.equal(f.inputs.length, 0); assert.equal(f.view.text, 'abc');
+    f.view.changeFor(f.ticket, 'abc');
+    assert.equal(f.notifications.length, enabled ? 0 : 1); assert.equal(f.inputs.length, enabled ? 1 : 0);
+  }
+});
+
+test('first different input consumes the initial capability and every later same-text event stays observable', () => {
+  const f = rowFixture({ enabled: false });
+  f.view.changeFor(f.ticket, 'different'); f.view.changeFor(f.ticket, 'abc', { value: '', offset: -1 });
+  assert.deepEqual(f.notifications.map(row => JSON.parse(row[1])), [
+    { kind: 'input', text: 'different' }, { kind: 'input', text: 'abc', preview: { value: '', offset: -1 } }
+  ]);
+  assert.equal(f.view.text, 'abc'); assert.equal(f.view.row.value.text, 'abc'); assert.equal(f.inputs.length, 0);
+});
+
+test('nonempty, other-offset, malformed or null preview cannot acknowledge even a matching initial display', () => {
+  const previews = [{ value: '候😀', offset: -1 }, { value: '', offset: 0 }, { value: '', offset: 99 },
+    { value: '', offset: ' -1' }, { value: undefined, offset: -1 }, {}, null];
+  for (const preview of previews) {
+    const f = rowFixture({ enabled: false }); f.view.changeFor(f.ticket, 'abc', preview);
+    assert.equal(f.notifications.length, 1); assert.equal(f.view.initialEcho, undefined);
+    assert.equal(f.view.row.value.text, 'abc'); assert.equal(f.view.text, 'abc'); assert.equal(f.inputs.length, 0);
+    f.view.changeFor(f.ticket, 'abc', { value: '', offset: -1 }); assert.equal(f.notifications.length, 2);
+  }
+});
+
+test('any admitted focus including disabled focus and blur revokes initial display acknowledgement', () => {
+  for (const focus of [true, false]) {
+    const f = rowFixture({ enabled: false }); f.view.focusFor(f.ticket, focus);
+    assert.equal(f.view.focused, false); f.view.changeFor(f.ticket, 'abc', { value: '', offset: -1 });
+    assert.equal(f.notifications.length, 1); assert.equal(f.inputs.length, 0); assert.equal(f.focuses.length, 0);
+  }
+});
+
+test('same-text input after real focus and a disabled blur remains captured as a complete unresolved event', () => {
+  const f = rowFixture(); f.view.focusFor(f.ticket, true); f.view.editingEnabled = false;
+  f.view.changeFor(f.ticket, 'abc'); f.view.focusFor(f.ticket, false);
+  f.view.changeFor(f.ticket, 'abc', { value: '', offset: -1 });
+  assert.deepEqual(f.notifications.map(row => JSON.parse(row[1])), [
+    { kind: 'input', text: 'abc' }, { kind: 'input', text: 'abc', preview: { value: '', offset: -1 } }
+  ]);
+  assert.equal(f.inputs.length, 0); assert.equal(f.view.text, 'abc'); assert.equal(f.view.focused, false);
+});
+
+test('a row refresh even with identical bytes never rearms the initial display capability', () => {
+  const f = rowFixture({ enabled: false }); f.view.rowChanged();
+  f.view.changeFor(f.view.session, 'abc', { value: '', offset: -1 });
+  assert.equal(f.notifications.length, 1); assert.equal(f.view.initialEcho, undefined);
+  f.view.row.incarnation++; f.view.rowChanged(); f.view.changeFor(f.view.session, 'abc');
+  assert.equal(f.notifications.length, 2); assert.equal(f.inputs.length, 0);
+});
+
+test('old owner or incarnation input and focus cannot consume a new instance initial display capability', () => {
+  for (const patch of [{ owner: 'old-owner' }, { incarnation: 0 }, { id: 'old-row' }]) {
+    const f = rowFixture({ enabled: false }), old = Object.assign(new model.EditorTodoTicket(), f.ticket, patch);
+    const echo = f.view.initialEcho; f.view.changeFor(old, 'abc', { value: 'old preview', offset: 0 });
+    f.view.focusFor(old, true); f.view.focusFor(old, false);
+    assert.equal(f.view.initialEcho, echo); assert.equal(f.notifications.length, 0); assert.equal(f.view.everFocused, false);
+    f.view.changeFor(f.ticket, 'abc', { value: '', offset: -1 }); assert.equal(f.notifications.length, 0);
+    f.view.changeFor(f.ticket, 'abc'); assert.equal(f.notifications.length, 1);
+  }
+});
+
+test('complete initial raw snapshot checks every TextValue field instead of only equal text', () => {
+  const changes = { text: 'different raw', selection_base: 0, selection_extent: 0, affinity: 1, directional: true,
+    composing_start: 0, composing_end: 0 };
+  for (const [field, value] of Object.entries(changes)) {
+    const f = rowFixture({ enabled: false }); f.view.row.value[field] = value;
+    const raw = JSON.stringify(f.view.row.value); f.view.changeFor(f.ticket, 'abc', { value: '', offset: -1 });
+    assert.equal(f.notifications.length, 1, field); assert.equal(JSON.stringify(f.view.row.value), raw, field);
+    assert.equal(f.inputs.length, 0); assert.equal(f.view.text, 'abc');
+  }
+});
+
+test('pending, original composition or mismatched raw display do not qualify as initial display echoes', () => {
+  const options = [{ pending: true }, { value: text('abc', { composing_start: 0, composing_end: 1 }) },
+    { value: text('abc', { composing_start: 0, composing_end: 0 }) }, { display: 'different display' }];
+  for (const option of options) {
+    const f = rowFixture({ enabled: false, ...option }); const raw = JSON.stringify(f.view.row.value);
+    f.view.changeFor(f.ticket, f.view.text, { value: '', offset: -1 });
+    assert.equal(f.notifications.length, 1); assert.equal(JSON.stringify(f.view.row.value), raw); assert.equal(f.inputs.length, 0);
+  }
+  const pending = rowFixture({ enabled: false }); pending.view.row.pending = true;
+  pending.view.changeFor(pending.ticket, 'abc'); assert.equal(pending.notifications.length, 1);
+  const initiallyPending = rowFixture({ enabled: false, pending: true }); initiallyPending.view.row.pending = false;
+  initiallyPending.view.changeFor(initiallyPending.ticket, 'abc'); assert.equal(initiallyPending.notifications.length, 1);
+});
+
+test('controller, display and displayed control mutations invalidate the frozen initial capability', () => {
+  for (const change of [f => { f.view.controller = new Controller(); }, f => { f.view.row.display_text = 'changed'; }, f => { f.view.text = 'changed'; }]) {
+    const f = rowFixture({ enabled: false }); change(f); f.view.changeFor(f.ticket, 'abc', { value: '', offset: -1 });
+    assert.equal(f.notifications.length, 1); assert.equal(f.inputs.length, 0);
+  }
+});
+
+test('enabled changes and repeated lifecycle appearances never create a second initial capability', () => {
+  const f = rowFixture({ enabled: false }); f.view.changeFor(f.ticket, 'abc');
+  f.view.editingEnabled = true; f.view.editingEnabled = false;
+  f.view.changeFor(f.ticket, 'abc'); assert.equal(f.notifications.length, 1);
+  f.view.aboutToDisappear(); f.view.changeFor(f.ticket, 'abc'); assert.equal(f.notifications.length, 1);
+  f.view.aboutToAppear(); f.view.changeFor(f.view.session, 'abc', { value: '', offset: -1 });
+  assert.equal(f.notifications.length, 2); assert.equal(f.view.initialEcho, undefined);
+  const untouched = rowFixture({ enabled: false }); untouched.view.aboutToDisappear(); untouched.view.aboutToAppear();
+  untouched.view.changeFor(untouched.view.session, 'abc'); assert.equal(untouched.notifications.length, 1);
+});
+
+test('matching initial display leaves complete model raw, epoch, status and prior Unknown untouched', async () => {
+  const parent = fixture('old', { format: async () => { throw new Error('KnownUnknown'); } });
+  await parent.view.inputFor(parent.ticket(), 'full kept 🧪'); await tick();
+  parent.view.editingEnabled = false; parent.view.availabilityChanged();
+  const notifications = [], child = new EditorTodoRowInput(); parent.view.onUncaptured = (...args) => notifications.push(args);
+  child.owner = parent.view.ownerKey; child.row = parent.view.state.rows[0]; child.editingEnabled = false;
+  child.onUncaptured = (ticket, event) => parent.view.uncapturedFor(ticket, event); child.aboutToAppear();
+  const before = { raw: JSON.stringify(parent.raw), revision: parent.revision, status: JSON.stringify(parent.view.model.status()),
+    statuses: parent.statuses.length, captures: parent.captures.length };
+  child.changeFor(child.session, child.text, { value: '', offset: -1 });
+  assert.equal(notifications.length, 0); assert.equal(JSON.stringify(parent.raw), before.raw); assert.equal(parent.revision, before.revision);
+  assert.equal(JSON.stringify(parent.view.model.status()), before.status); assert.equal(parent.statuses.length, before.statuses);
+  assert.equal(parent.captures.length, before.captures); assert.match(parent.view.model.status().format_error, /KnownUnknown/);
+  assert.equal(parent.view.model.status().business_ready, false); child.aboutToDisappear(); parent.view.aboutToDisappear();
+});
+
+test('an incomplete preview with unmatched raw/display remains observable and cannot be cleared by equal control text', async () => {
+  const parent = fixture('kept raw'); await parent.view.inputFor(parent.ticket(), 'different', { value: '候', offset: 99 });
+  parent.view.editingEnabled = false; parent.view.availabilityChanged();
+  const child = new EditorTodoRowInput(), notifications = [];
+  parent.view.onUncaptured = (...args) => notifications.push(args);
+  child.owner = parent.view.ownerKey; child.row = parent.view.state.rows[0]; child.editingEnabled = false;
+  child.onUncaptured = (ticket, event) => parent.view.uncapturedFor(ticket, event); child.aboutToAppear();
+  const raw = JSON.stringify(parent.raw), status = JSON.stringify(parent.view.model.status()), revision = parent.revision;
+  child.changeFor(child.session, child.text);
+  assert.equal(notifications.length, 1); assert.equal(JSON.stringify(parent.raw), raw); assert.equal(parent.revision, revision);
+  assert.equal(JSON.stringify(parent.view.model.status()), status); assert.equal(parent.view.model.status().raw_capture_complete, false);
+  assert.equal(parent.view.model.status().business_ready, false);
+  child.changeFor(child.session, child.text); assert.equal(notifications.length, 2);
+  child.aboutToDisappear(); parent.view.aboutToDisappear();
 });

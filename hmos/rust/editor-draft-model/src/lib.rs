@@ -12,6 +12,10 @@ pub mod proto {
         "/morrow.workbench.editor_draft.v1.rs"
     ));
 }
+// A separate host journal; no ordinary/protected draft validation is widened.
+pub mod intent_proto {
+    pub use crate::proto::{EditorIntentPublication as Publication, EditorIntentSlot as Slot};
+}
 
 pub const MAX_BODY_BYTES: usize = 4 * 1024 * 1024;
 pub const MAX_TEXT_BYTES: usize = 512 * 1024;

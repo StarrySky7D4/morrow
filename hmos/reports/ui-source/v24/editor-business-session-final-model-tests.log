@@ -1,0 +1,37 @@
+✔ actual Business admission freezes raw/publication before native prepare; intent is not a business receipt (290.8349ms)
+✔ actual field/composition/full raw admission refuses a proposal before any durable mutation (483.0476ms)
+✔ prepare Unknown retains original operation and full bytes; explicit retry after owner replacement uses the same request (84.1777ms)
+✔ a first no-write prepare failure stays known, while a no-write uncertain retry cannot erase uncertainty (196.5576ms)
+✔ metadata proof/ID/domain/current generation and business tuple mismatches never admit native issue (981.0306ms)
+✔ issue freezes only immutable proof/gen1, requires explicit ACK and literal reads before business (74.8195ms)
+✔ issue Unknown reuses the exact CAS request and never presumes business submission (69.7311ms)
+✔ late owner/epoch after prepare blocks fresh issue and late raw after issue blocks fresh save (72.1025ms)
+✔ parent queue must be paused for the exact publication before fresh preparation/issue/save, while historical retry never resumes it (151.4694ms)
+✔ an in-flight metadata request excludes another action and late raw remains live while the original ACK is retained (69.1861ms)
+✔ missing/wrong/extra native save envelope cannot be sent and explicit read retry retains one exact part request (292.2556ms)
+✔ native inspect literal is checked independently, mapped once and sent byte-for-byte even with different key order (71.4794ms)
+✔ business Unknown retries actual registered outer bytes after late selection/composition and view owner replacement (80.3853ms)
+✔ inspection Unknown keeps its native original wire; later not_committed cannot wash a known committed effect (73.698ms)
+✔ malformed committed business DTO retains commitment hint without qualifying or consuming the result (73.6322ms)
+✔ restart reads all five parts without a mutation and preserves immutable historical publication despite later retirement (73.3441ms)
+✔ restart rejects changed literal/hash/publication text/inconsistent asset aliases/order and mixed-phase snapshots (423.0395ms)
+✔ restored asset metadata must match actual historical business assets before receipt qualification (76.1918ms)
+✔ subsequent publication part requires full original selection, pin metadata and aliases against the frozen publication (288.2883ms)
+✔ prepared restart does not invent save/inspect plans; empty read payload is not cancellation or business absence (79.5042ms)
+✔ native cancel prepared CAS has a fixed independent literal and unknown cancellation retries exact bytes (89.4198ms)
+✔ prepared historical retry returning current issued state does not grant prepared cancel rights (71.9886ms)
+✔ intent discovery is read-only and rejects duplicate IDs, foreign card, mixed parts and invalid pagination cursor (77.6387ms)
+✔ complete native list DTO is copied before async SHA so caller mutation cannot replace its visible identity (80.4973ms)
+✔ full UTF8 reply/transport budgets fail closed before sending and never truncate original bytes (81.4897ms)
+✔ continued_todos needs an own qualified historical baseline, constant root and a real source0 publication (78.5193ms)
+✔ complete u64 expected revision is retained without Number conversion across issued restore and inspect (72.6204ms)
+✔ fresh actual Store complete intent parts restore the exact native registered save/inspect literals and qualify historical Card bytes (81.0494ms)
+✔ fresh actual Store cancel_prepared complete five-part closed context restores its original Close without inventing business plans (78.5115ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4943.7112

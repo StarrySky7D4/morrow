@@ -1,0 +1,27 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.89s
+     Running unittests src\lib.rs (hmos\rust\target\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 9 tests
+test editor_intent::tests::actual_store_intent_crashes_keep_fixed_request_and_one_cas_effect ... ignored, host-only subprocess crash vectors require --features morrow-core/fault-injection
+test editor_intent::tests::actual_store_intent_dto_fixture ... ignored, explicit output path; actual Store DTO fixture, not native transport/device proof
+test editor_intent::tests::original_core_source_cas_still_rejects_a_changed_source_after_intent_issue ... ok
+
+thread 'editor_intent::tests::immutable_publication_keeps_complete_s1_and_pins_after_parent_s2_removes_them' (33728) panicked at src\editor_intent\tests.rs:7:89:
+called `Result::unwrap()` on an `Err` value: "invalid idea identity or category"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test editor_intent::tests::immutable_publication_keeps_complete_s1_and_pins_after_parent_s2_removes_them ... FAILED
+test editor_intent::tests::issued_even_business_absent_cannot_cancel_and_altered_proof_or_literal_cannot_mutate ... ok
+test editor_intent::tests::cancel_and_issue_have_one_actual_cas_winner_and_cancel_tombstone_blocks_every_old_save_route ... ok
+test editor_intent::tests::explicit_part_reads_list_bounds_closed_context_and_envelope_budgets_do_not_drop_original_bytes ... ok
+test editor_intent::tests::actual_store_prepare_issue_read_plans_reopen_and_strict_business_are_separate_transactions ... ok
+test editor_intent::tests::combined_active_count_blocks_intent_first_and_reverse_ordinary_draft_bypass ... ok
+
+failures:
+
+failures:
+    editor_intent::tests::immutable_publication_keeps_complete_s1_and_pins_after_parent_s2_removes_them
+
+test result: FAILED. 6 passed; 1 failed; 2 ignored; 0 measured; 164 filtered out; finished in 0.57s
+
+error: test failed, to rerun pass `--lib`

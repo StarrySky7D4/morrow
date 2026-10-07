@@ -29,6 +29,7 @@ pub mod editor_field;
 pub mod editor_input;
 mod create_todos;
 mod editor_business;
+mod editor_intent;
 pub mod markdown;
 pub mod query_plan_v2;
 
@@ -72,6 +73,13 @@ pub struct Request {
     import_request: Option<attachment_bridge::ImportWrite>,
     editor_save: Option<editor_business::SaveEnvelope>,
     editor_commit: Option<editor_business::InspectEnvelope>,
+    editor_intent: Option<editor_intent::Prepare>,
+    editor_intent_issue: Option<editor_intent::Issue>,
+    editor_intent_ref: Option<editor_intent::Read>,
+    editor_intent_query: Option<editor_intent::Query>,
+    editor_intent_close: Option<editor_intent::Close>,
+    #[serde(skip)]
+    transport_json: String,
 }
 #[derive(Debug, Serialize)]
 pub struct TaskView {
@@ -111,6 +119,10 @@ pub struct Reply {
     imports: Vec<attachment_bridge::ImportView>,
     #[serde(skip_serializing_if = "Option::is_none")]
     editor_commit: Option<editor_business::CommitView>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    editor_intents: Option<Vec<editor_intent::View>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    intent_next_after: Option<String>,
 }
 impl Reply {
     fn failure(message: String) -> Self {
@@ -126,7 +138,7 @@ impl Reply {
             profile: "development-unsealed",
             effect: "unknown",
             imports: vec![],
-            editor_commit: None,
+            editor_commit: None, editor_intents: None, intent_next_after: None,
         }
     }
 }
@@ -159,11 +171,12 @@ impl Engine {
         Ok(Some(selected))
     }
     fn import_reply(&self, imports: Vec<editor_draft_staging::DraftImportRecord>) -> Reply {
-        Reply { ok: true, error: String::new(), cards: vec![], ids: vec![], drafts: vec![], markdown: markdown::MarkdownDoc::default(), paste_text: String::new(), receipt_revision: String::new(), profile: "development-unsealed", effect: self.effect, imports: imports.into_iter().map(Into::into).collect(), editor_commit: None }
+        Reply { ok: true, error: String::new(), cards: vec![], ids: vec![], drafts: vec![], markdown: markdown::MarkdownDoc::default(), paste_text: String::new(), receipt_revision: String::new(), profile: "development-unsealed", effect: self.effect, imports: imports.into_iter().map(Into::into).collect(), editor_commit: None, editor_intents: None, intent_next_after: None }
     }
     pub fn import_from(&mut self, request: Request, reader: &mut impl std::io::Read) -> Result<Reply> {
         self.effect = "not_committed";
         editor_business::reject_other_envelope(&request)?;
+        editor_intent::reject_other_envelope(&request)?;
         if request.action != "import_file" { return Err("UnsupportedFileAction".into()); }
         let start = self.start;
         let clock = || u64::try_from(start.elapsed().as_millis()).unwrap_or(u64::MAX - 1).saturating_add(1);
@@ -173,6 +186,8 @@ impl Engine {
     pub fn export_to(&mut self, request: Request, writer: &mut impl std::io::Write) -> Result<file_stream::FileMetadata> {
         self.effect = "not_committed";
         editor_business::reject_other_envelope(&request)?;
+        editor_intent::reject_other_envelope(&request)?;
+        if request.id.starts_with("morrow-host-") { return Err("HostOwnedIdentity".into()); }
         let info = match request.action.as_str() {
             "import_export" => editor_draft_staging::export_verified(&self.host, &request.id, &request.draft_id, draft_bridge::number(&request.generation)?, &request.operation, writer).map_err(err)?,
             "draft_asset_export" => editor_draft::export_asset_verified(&self.host, &request.id, &request.draft_id, draft_bridge::number(&request.generation)?, &request.attachment_id, writer).map_err(err)?,
@@ -252,6 +267,8 @@ impl Engine {
                     editor_draft::validate_journal(&card).map_err(err)?;
                 } else if editor_draft_staging::is_journal(&card) {
                     editor_draft_staging::validate_journal(&card).map_err(err)?;
+                } else if editor_intent::is_journal(&card) {
+                    editor_intent::validate_journal(&card)?;
                 } else {
                     ids.push(id);
                 }
@@ -326,6 +343,7 @@ impl Engine {
                     editor_draft_staging::validate_journal(&card).map_err(err)?;
                     continue;
                 }
+                if editor_intent::is_journal(&card) { editor_intent::validate_journal(&card)?; continue; }
                 if candidates.len() >= 256 {
                     return Err("DevelopmentCardLimit".into());
                 }
@@ -394,7 +412,11 @@ impl Engine {
     pub fn execute(&mut self, r: Request) -> Result<Reply> {
         self.effect = "not_committed";
         editor_business::reject_other_envelope(&r)?;
+        editor_intent::reject_other_envelope(&r)?;
+        if r.action.starts_with("editor_intent_") { return editor_intent::execute(self, r); }
         if r.action == "editor_save" || r.action == "editor_commit_inspect" { return editor_business::execute(self, r); }
+        if r.id.starts_with("morrow-host-") { return Err("HostOwnedIdentity".into()); }
+        editor_intent::reject_legacy_business(self, &r)?;
         if r.action.starts_with("import_") {
             let start = self.start;
             let clock = || u64::try_from(start.elapsed().as_millis()).unwrap_or(u64::MAX - 1).saturating_add(1);
@@ -432,7 +454,7 @@ impl Engine {
                 paste_text,
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
-                effect: self.effect, imports: vec![], editor_commit: None,
+                effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None,
             });
         }
         if r.action == "query" {
@@ -448,7 +470,7 @@ impl Engine {
                 paste_text: String::new(),
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
-                effect: self.effect, imports: vec![], editor_commit: None,
+                effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None,
             });
         }
         if r.action.starts_with("draft_") {
@@ -516,7 +538,7 @@ impl Engine {
                 paste_text: String::new(),
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
-                effect: self.effect, imports: vec![], editor_commit: None,
+                effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None,
             });
         }
         let mut receipt = String::new();
@@ -710,7 +732,7 @@ impl Engine {
             paste_text: String::new(),
             receipt_revision: receipt,
             profile: "development-unsealed",
-            effect: self.effect, imports: vec![], editor_commit: None,
+            effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None,
         })
     }
     fn commit_result(
@@ -773,8 +795,10 @@ pub fn dispatch(input: &str) -> String {
         if input.len() > LIMIT {
             return Err("RequestTooLarge".into());
         }
-        let r: Request = serde_json::from_str(input).map_err(|_| "InvalidRequest")?;
+        let mut r: Request = serde_json::from_str(input).map_err(|_| "InvalidRequest")?;
+        r.transport_json = input.to_owned();
         editor_business::reject_other_envelope(&r)?;
+        editor_intent::reject_other_envelope(&r)?;
         let mut slot = SESSION.lock().map_err(|_| "SessionUnavailable")?;
         if r.action == "open" {
             if slot.is_some() {
@@ -798,7 +822,7 @@ pub fn dispatch(input: &str) -> String {
                 paste_text: String::new(),
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
-                effect: "not_committed", imports: vec![], editor_commit: None,
+                effect: "not_committed", imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None,
             });
         }
         let engine = slot.as_mut().ok_or("NotOpen")?;

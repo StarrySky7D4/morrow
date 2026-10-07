@@ -1076,7 +1076,9 @@ struct Index {
     this.editorInputChanged(name, value, preview);
   }
   private leaseSelectionChanged(owner: string, name: string, start: number, end: number): void {
-    if (!this.ownsEditorView(owner)) { return; }
+    // A control's unfocused construction range is presentation state. Admit
+    // the original lease and a focused field before retaining an invalid event.
+    if (!this.ownsEditorView(owner) || !this.draftFocusedFields.has(name)) { return; }
     if (!Number.isInteger(start) || !Number.isInteger(end) || start < -1 || end < -1 ||
       start > this.draftField(name).text.length || end > this.draftField(name).text.length) {
       this.leaseUncaptured(owner, name, JSON.stringify({ start: start, end: end })); return;

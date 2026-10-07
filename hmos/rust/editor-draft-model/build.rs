@@ -3,7 +3,8 @@ fn main() {
     let mut config = prost_build::Config::new();
     config.protoc_executable(protoc);
     config
-        .compile_protos(&["schemas/editor_draft.proto"], &["schemas"])
+        .compile_protos(&["schemas/editor_draft.proto", "schemas/editor_intent.proto"], &["schemas"])
         .expect("original editor draft schema");
     println!("cargo:rerun-if-changed=schemas/editor_draft.proto");
+    println!("cargo:rerun-if-changed=schemas/editor_intent.proto");
 }

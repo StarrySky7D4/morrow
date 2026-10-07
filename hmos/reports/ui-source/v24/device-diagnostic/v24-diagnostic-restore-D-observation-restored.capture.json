@@ -1,0 +1,19 @@
+{
+  "label": "v24-diagnostic-restore-D-observation-restored",
+  "started": 1791372687216,
+  "screenshotAt": 1791372687483,
+  "layoutAt": 1791372688187,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-diagnostic\\v24-diagnostic-restore-D-observation-restored.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-diagnostic\\v24-diagnostic-restore-D-observation-restored.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v24\\device-diagnostic\\v24-diagnostic-restore-D-observation-restored.raw.json"
+  }
+}

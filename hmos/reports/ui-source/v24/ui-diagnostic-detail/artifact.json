@@ -1,0 +1,12 @@
+{
+  "createdUtc": "2026-10-07T11:33:50.617Z",
+  "baseline": "7f07d07480660bbc868369b9565dc98a47e8af08",
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-candidates\\dev24-capture-diagnostic-detail",
+  "inputs": 312,
+  "archive": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev24-capture-diagnostic-detail\\entry-default-unsigned.hap",
+  "bytes": 29106549,
+  "sha256": "7D0CA55831AD0A6C3A70D6D945BF7E579692E2B9BF719126A88CBC41171A0D19",
+  "signed": false,
+  "installed": false,
+  "scope": "Frozen 7f07d074 product plus metadata-only capture diagnostics in isolated Index and Todo row input; no live Index/Rust edits adopted; unchanged v22 native; no text or preview payload logged; not a release or queue-drain proof"
+}

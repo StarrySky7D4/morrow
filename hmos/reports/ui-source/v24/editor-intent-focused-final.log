@@ -1,0 +1,36 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.50s
+     Running unittests src\lib.rs (hmos\rust\target\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 12 tests
+test editor_intent::tests::actual_store_intent_crashes_keep_fixed_request_and_one_cas_effect ... ignored, host-only subprocess crash vectors require --features morrow-core/fault-injection
+test editor_intent::tests::actual_store_intent_dto_fixture ... ignored, explicit output path; actual Store DTO fixture, not native transport/device proof
+test editor_intent::tests::issued_even_business_absent_cannot_cancel_and_altered_proof_or_literal_cannot_mutate ... ok
+
+thread 'editor_intent::tests::immutable_publication_keeps_complete_s1_and_pins_after_parent_s2_removes_them' (20080) panicked at src\editor_intent\tests.rs:116:5:
+assertion `left == right` failed
+  left: Null
+ right: "complete 汉字 🧪 e\u{301}."
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test editor_intent::tests::original_core_source_cas_still_rejects_a_changed_source_after_intent_issue ... ok
+test editor_intent::tests::immutable_publication_keeps_complete_s1_and_pins_after_parent_s2_removes_them ... FAILED
+test editor_intent::tests::cancel_and_issue_have_one_actual_cas_winner_and_cancel_tombstone_blocks_every_old_save_route ... ok
+test editor_intent::tests::explicit_part_reads_list_bounds_closed_context_and_envelope_budgets_do_not_drop_original_bytes ... ok
+test editor_intent::tests::actual_store_prepare_issue_read_plans_reopen_and_strict_business_are_separate_transactions ... ok
+test editor_intent::tests::combined_active_count_blocks_intent_first_and_reverse_ordinary_draft_bypass ... ok
+test editor_intent::tests::competing_issue_and_cancel_actual_store_transactions_cas_the_same_exact_generation ... ok
+
+thread 'editor_intent::tests::selected_blob_bytes_are_double_charged_and_ordinary_draft_growth_cannot_bypass_intent_bytes' (37624) panicked at src\editor_intent\tests.rs:7:89:
+called `Result::unwrap()` on an `Err` value: "new-card draft target already exists"
+test editor_intent::tests::selected_blob_bytes_are_double_charged_and_ordinary_draft_growth_cannot_bypass_intent_bytes ... FAILED
+test editor_intent::tests::closed_intent_contexts_and_draft_identities_share_the_exact_cumulative_256_ceiling ... ok
+
+failures:
+
+failures:
+    editor_intent::tests::immutable_publication_keeps_complete_s1_and_pins_after_parent_s2_removes_them
+    editor_intent::tests::selected_blob_bytes_are_double_charged_and_ordinary_draft_growth_cannot_bypass_intent_bytes
+
+test result: FAILED. 8 passed; 2 failed; 2 ignored; 0 measured; 164 filtered out; finished in 19.82s
+
+error: test failed, to rerun pass `--lib`

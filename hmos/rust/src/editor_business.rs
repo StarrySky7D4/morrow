@@ -33,6 +33,8 @@ const PUBLICATION_DOMAIN: &[u8] = b"morrow.hmos.editor-publication.v1\0";
 #[serde(deny_unknown_fields)]
 pub struct SaveEnvelope {
     pub request_json: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub intent: Option<crate::editor_intent::Proof>,
 }
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -701,9 +703,22 @@ fn prepare(
     historical_only: bool,
     with_marker: bool,
 ) -> Result<Prepared> {
+    prepare_using(engine, value, wire, historical_only, with_marker, None)
+}
+fn prepare_using(
+    engine: &Engine,
+    value: &Submission,
+    wire: &str,
+    historical_only: bool,
+    with_marker: bool,
+    authorized: Option<editor_draft::PublishedAssets>,
+) -> Result<Prepared> {
     let r = &value.business;
     let source = unhex(&r.source)?;
-    let published = publication(engine, value, &source, historical_only)?;
+    let published = match authorized {
+        Some(published) => published,
+        None => publication(engine, value, &source, historical_only)?,
+    };
     let identity = Marker {
         mode: value.mode,
         wire: hash(wire.as_bytes()),
@@ -941,6 +956,8 @@ fn reply(commit: CommitView, effect: &'static str) -> Result<Reply> {
         effect,
         imports: vec![],
         editor_commit: Some(commit),
+        editor_intents: None,
+        intent_next_after: None,
     };
     if serde_json::to_vec(&result).map_err(err)?.len() > crate::LIMIT {
         return Err("EditorReplyBytesLimit".into());
@@ -978,7 +995,7 @@ pub fn reject_other_envelope(r: &Request) -> Result<()> {
     }
     Ok(())
 }
-fn route_is_empty(r: &Request) -> bool {
+pub(crate) fn route_is_empty(r: &Request) -> bool {
     r.path.is_empty()
         && r.operation.is_empty()
         && r.id.is_empty()
@@ -1006,6 +1023,95 @@ fn route_is_empty(r: &Request) -> bool {
         && r.draft_operation.is_empty()
         && r.attachment_id.is_empty()
         && r.import_request.is_none()
+        && crate::editor_intent::envelopes_empty(r)
+}
+pub(crate) struct IntentCandidate {
+    pub publication: Publication,
+    pub publication_sha256: Vec<u8>,
+    pub expected_revision: u64,
+    pub command_sha256: Vec<u8>,
+    pub content_sha256: Vec<u8>,
+}
+pub(crate) fn intent_identity(wire: &str) -> Result<(String, String, Publication)> {
+    let value = parse(wire)?;
+    validate_submission(&value)?;
+    Ok((
+        value.business.id,
+        value.business.operation,
+        value.publication,
+    ))
+}
+pub(crate) fn intent_publication_digest(card: &str, publication: &Publication) -> Result<Vec<u8>> {
+    Ok(publication_hash(card, publication)?.to_vec())
+}
+pub(crate) fn prepare_intent(engine: &Engine, wire: &str) -> Result<IntentCandidate> {
+    let value = parse(wire)?;
+    validate_submission(&value)?;
+    if historical(engine, &value.business.id, &value.business.operation)?.is_some() {
+        return Err("EditorIntentBusinessAlreadyCommitted".into());
+    }
+    let source = unhex(&value.business.source)?;
+    let current = engine
+        .host
+        .store_local()
+        .card(&value.business.id)
+        .map_err(err)?;
+    if value.mode == Mode::Create {
+        if current.is_some() {
+            return Err("EditorIntentSourceConflict".into());
+        }
+        if engine.ids()?.len() >= 256 {
+            return Err("DevelopmentCardLimit".into());
+        }
+    } else if current.as_ref().is_none_or(|card| card.encode() != source) {
+        return Err("EditorIntentSourceConflict".into());
+    }
+    let prepared = prepare(engine, &value, wire, false, true)?;
+    // The original business success reply is independently bounded before any
+    // intent is retained. Intent phase never substitutes for this receipt.
+    let predicted = Historical {
+        command: prepared.command.clone(),
+        receipt: Receipt {
+            operation_id: value.business.operation.clone(),
+            card_id: value.business.id.clone(),
+            revision: prepared.result.summary().revision,
+            content_sha256: hash(&prepared.result.encode()),
+            event_id: value.business.operation.clone(),
+        },
+        result: prepared.result.clone(),
+        source: prepared
+            .change
+            .as_ref()
+            .map(|c| c.source().map_err(err))
+            .transpose()?,
+    };
+    reply(
+        view(
+            &value,
+            &predicted,
+            "development_editor_wire_v1",
+            &prepared.marker,
+            Some(&prepared.result),
+        )?,
+        "committed",
+    )?;
+    Ok(IntentCandidate {
+        publication: value.publication.clone(),
+        publication_sha256: publication_hash(&value.business.id, &value.publication)?.to_vec(),
+        expected_revision: prepared.result.summary().revision,
+        command_sha256: hash(&prepared.command).to_vec(),
+        content_sha256: hash(&prepared.result.encode()).to_vec(),
+    })
+}
+pub(crate) fn intent_publication(
+    engine: &Engine,
+    wire: &str,
+) -> Result<editor_draft::PublishedAssets> {
+    let value = parse(wire)?;
+    validate_submission(&value)?;
+    // Read-only metadata reconstruction. The caller MUST separately establish
+    // an active, exact issued intent and verify every retained intent pin.
+    publication(engine, &value, &unhex(&value.business.source)?, true)
 }
 pub fn execute(engine: &mut Engine, r: Request) -> Result<Reply> {
     reject_other_envelope(&r)?;
@@ -1013,7 +1119,8 @@ pub fn execute(engine: &mut Engine, r: Request) -> Result<Reply> {
         return Err("EditorOuterFields".into());
     }
     let inspect = r.action == "editor_commit_inspect";
-    let (wire, expected_revision, outer_size) = if inspect {
+    let actual_outer = r.transport_json.clone();
+    let (wire, expected_revision, outer_size, intent, outer) = if inspect {
         let envelope = r.editor_commit.ok_or("EditorInspectEnvelopeRequired")?;
         let revision = positive(&envelope.expected_revision)?;
         let size = serde_json::to_vec(
@@ -1021,7 +1128,13 @@ pub fn execute(engine: &mut Engine, r: Request) -> Result<Reply> {
         )
         .map_err(err)?
         .len();
-        (envelope.request_json, Some(revision), size)
+        (
+            envelope.request_json,
+            Some(revision),
+            size,
+            None,
+            String::new(),
+        )
     } else {
         let envelope = r.editor_save.ok_or("EditorSaveEnvelopeRequired")?;
         let size = serde_json::to_vec(
@@ -1029,7 +1142,15 @@ pub fn execute(engine: &mut Engine, r: Request) -> Result<Reply> {
         )
         .map_err(err)?
         .len();
-        (envelope.request_json, None, size)
+        let outer = if actual_outer.is_empty() {
+            serde_json::to_string(
+                &serde_json::json!({"action":"editor_save", "editor_save":&envelope}),
+            )
+            .map_err(err)?
+        } else {
+            actual_outer
+        };
+        (envelope.request_json, None, size, envelope.intent, outer)
     };
     if outer_size > crate::LIMIT {
         return Err("EditorEnvelopeBytesLimit".into());
@@ -1046,6 +1167,11 @@ pub fn execute(engine: &mut Engine, r: Request) -> Result<Reply> {
         "not_committed"
     };
     validate_submission(&value)?;
+    let authorized = if inspect {
+        None
+    } else {
+        crate::editor_intent::save_authority(engine, &wire, intent.as_ref(), &outer)?
+    };
     if let Some(original) = original {
         if expected_revision.is_some_and(|revision| revision != original.receipt.revision) {
             return Err("EditorReceiptRevisionMismatch".into());
@@ -1098,7 +1224,15 @@ pub fn execute(engine: &mut Engine, r: Request) -> Result<Reply> {
             "not_committed",
         );
     }
-    let prepared = prepare(engine, &value, &wire, false, true)?;
+    let prepared = prepare_using(engine, &value, &wire, false, true, authorized)?;
+    if let Some(proof) = intent.as_ref() {
+        crate::editor_intent::verify_projection(
+            engine,
+            proof,
+            &prepared.command,
+            &prepared.result.encode(),
+        )?;
+    }
     if value.mode == Mode::Create
         && engine.ids()?.len() >= 256
         && engine

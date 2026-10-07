@@ -1,0 +1,896 @@
+{
+  "business_reply": {
+    "cards": [],
+    "drafts": [],
+    "editor_commit": {
+      "card_id": "intent-business-card",
+      "command_sha256": "91765c1a26490f3037eca638b32e86669ca6f881fdfdde85991d38cff7d06ea0",
+      "commit_status": "committed",
+      "content_sha256": "240ef6727e1f7e1683ef05a2e77e41a0764034060e8404f592de3378efc5e253",
+      "event_id": "intent-business-op",
+      "historical_card": {
+        "assets": [],
+        "category": "灵感",
+        "conclusion": "c",
+        "deleted": false,
+        "deleted_at": "0",
+        "description": "complete 汉字 🧪 é.",
+        "favorite": false,
+        "hypothesis": "h",
+        "id": "intent-business-card",
+        "revision": "1",
+        "source": "08011214696e74656e742d627573696e6573732d636172641a046964656120022801320c696e74656e74207469746c653a950308021a06e781b5e6849f2209e5be85e695b4e79086a201580a517461736b2d686d6f732d6372656174652d3037353236343235366531366165356234313264623938336233316639306636326662373535303665376264336563343937386634303132313231373163353212036f6e65a201580a517461736b2d686d6f732d6372656174652d35613736633137323038653834666234313863383037303236373663346431363461653636396231663131613932336238316637313232623739346138656463120374776f1219636f6d706c65746520e6b189e5ad9720f09fa7aa2065cc812e2a0168320163580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e763100b448469be7486b9ce40817c3bfaff2372612562a152c238cdf5fe752d45444af9ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e7631000101a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533f192ec11941e0e52bda8c1744439fd27acaa0f2005f1d7614b444d92700dd5e7",
+        "stage": "待整理",
+        "tasks": [
+          {
+            "completion": 0,
+            "id": "task-hmos-create-075264256e16ae5b412db983b31f90f62fb75506e7bd3ec4978f401212171c52",
+            "text": "one"
+          },
+          {
+            "completion": 0,
+            "id": "task-hmos-create-5a76c17208e84fb418c80702676c4d164ae669b1f11a923b81f7122b794a8edc",
+            "text": "two"
+          }
+        ],
+        "title": "intent title"
+      },
+      "live_matches": true,
+      "live_revision": "1",
+      "operation": "intent-business-op",
+      "publication": {
+        "draft_id": "intent-parent",
+        "generation": "1",
+        "request_sha256": "cf78a64422abe3539972f7505889cb2b40dfa8c0770b8e7c821a03e35e00e89c",
+        "save_operation": "intent-pub-save"
+      },
+      "publication_sha256": "f192ec11941e0e52bda8c1744439fd27acaa0f2005f1d7614b444d92700dd5e7",
+      "qualification": "development_editor_wire_v1",
+      "request_sha256": "a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533",
+      "revision": "1",
+      "source_revision": "0"
+    },
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "1"
+  },
+  "cancel": {
+    "close_reply": {
+      "cards": [],
+      "drafts": [],
+      "editor_intents": [
+        {
+          "business_operation": "cancel-fixture-business",
+          "card_id": "intent-business-card",
+          "close_disposition": "cancel_prepared",
+          "close_request_json": "",
+          "current_active": false,
+          "current_generation": "2",
+          "expected_revision": "1",
+          "inspect_request_json": "",
+          "issue_operation": "morrow-host-intent-issue-57a5678c5c4d198785889403f3302d292e5ff522a21a48dbdd0e25dc1556abb1",
+          "part": "summary",
+          "phase": "closed",
+          "proof": {
+            "generation": "1",
+            "intent_id": "morrow-host-editor-intent-ffb368e56a5b4f8584fc549bdaa77561b2ff66932e3a4b3366dd85648eceefd7",
+            "prepare_operation": "cancel-fixture-prepare",
+            "prepared_record_sha256": "f7cdf7a6d7db8cc92b9cb92d15872cf00110cfa8f077b26cf132c4679e6d4e81",
+            "request_sha256": "0170137f80d40ed2f355dd4a5df515fb196a7ab8b3e80dcaf5363fc69979da82"
+          },
+          "publication": null,
+          "repeated": false,
+          "request_json": "",
+          "save_request_json": ""
+        }
+      ],
+      "effect": "committed",
+      "error": "",
+      "ids": [],
+      "imports": [],
+      "intent_next_after": "",
+      "markdown": {
+        "blocks": []
+      },
+      "ok": true,
+      "paste_text": "",
+      "profile": "development-unsealed",
+      "receipt_revision": "2"
+    },
+    "close_request": {
+      "action": "editor_intent_close",
+      "editor_intent_close": {
+        "request_json": "{\"disposition\":\"cancel_prepared\",\"expected_generation\":\"1\",\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-ffb368e56a5b4f8584fc549bdaa77561b2ff66932e3a4b3366dd85648eceefd7\",\"prepare_operation\":\"cancel-fixture-prepare\",\"prepared_record_sha256\":\"f7cdf7a6d7db8cc92b9cb92d15872cf00110cfa8f077b26cf132c4679e6d4e81\",\"request_sha256\":\"0170137f80d40ed2f355dd4a5df515fb196a7ab8b3e80dcaf5363fc69979da82\"},\"operation_id\":\"cancel-fixture-close\",\"schema_version\":1}"
+      }
+    },
+    "parts": {
+      "close": {
+        "cards": [],
+        "drafts": [],
+        "editor_intents": [
+          {
+            "business_operation": "cancel-fixture-business",
+            "card_id": "intent-business-card",
+            "close_disposition": "cancel_prepared",
+            "close_request_json": "{\"disposition\":\"cancel_prepared\",\"expected_generation\":\"1\",\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-ffb368e56a5b4f8584fc549bdaa77561b2ff66932e3a4b3366dd85648eceefd7\",\"prepare_operation\":\"cancel-fixture-prepare\",\"prepared_record_sha256\":\"f7cdf7a6d7db8cc92b9cb92d15872cf00110cfa8f077b26cf132c4679e6d4e81\",\"request_sha256\":\"0170137f80d40ed2f355dd4a5df515fb196a7ab8b3e80dcaf5363fc69979da82\"},\"operation_id\":\"cancel-fixture-close\",\"schema_version\":1}",
+            "current_active": false,
+            "current_generation": "2",
+            "expected_revision": "1",
+            "inspect_request_json": "",
+            "issue_operation": "morrow-host-intent-issue-57a5678c5c4d198785889403f3302d292e5ff522a21a48dbdd0e25dc1556abb1",
+            "part": "close",
+            "phase": "closed",
+            "proof": {
+              "generation": "1",
+              "intent_id": "morrow-host-editor-intent-ffb368e56a5b4f8584fc549bdaa77561b2ff66932e3a4b3366dd85648eceefd7",
+              "prepare_operation": "cancel-fixture-prepare",
+              "prepared_record_sha256": "f7cdf7a6d7db8cc92b9cb92d15872cf00110cfa8f077b26cf132c4679e6d4e81",
+              "request_sha256": "0170137f80d40ed2f355dd4a5df515fb196a7ab8b3e80dcaf5363fc69979da82"
+            },
+            "publication": null,
+            "repeated": false,
+            "request_json": "",
+            "save_request_json": ""
+          }
+        ],
+        "effect": "not_committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "intent_next_after": "",
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": ""
+      },
+      "inspect": {
+        "cards": [],
+        "drafts": [],
+        "editor_intents": [
+          {
+            "business_operation": "cancel-fixture-business",
+            "card_id": "intent-business-card",
+            "close_disposition": "cancel_prepared",
+            "close_request_json": "",
+            "current_active": false,
+            "current_generation": "2",
+            "expected_revision": "1",
+            "inspect_request_json": "",
+            "issue_operation": "morrow-host-intent-issue-57a5678c5c4d198785889403f3302d292e5ff522a21a48dbdd0e25dc1556abb1",
+            "part": "inspect",
+            "phase": "closed",
+            "proof": {
+              "generation": "1",
+              "intent_id": "morrow-host-editor-intent-ffb368e56a5b4f8584fc549bdaa77561b2ff66932e3a4b3366dd85648eceefd7",
+              "prepare_operation": "cancel-fixture-prepare",
+              "prepared_record_sha256": "f7cdf7a6d7db8cc92b9cb92d15872cf00110cfa8f077b26cf132c4679e6d4e81",
+              "request_sha256": "0170137f80d40ed2f355dd4a5df515fb196a7ab8b3e80dcaf5363fc69979da82"
+            },
+            "publication": null,
+            "repeated": false,
+            "request_json": "",
+            "save_request_json": ""
+          }
+        ],
+        "effect": "not_committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "intent_next_after": "",
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": ""
+      },
+      "publication": {
+        "cards": [],
+        "drafts": [],
+        "editor_intents": [
+          {
+            "business_operation": "cancel-fixture-business",
+            "card_id": "intent-business-card",
+            "close_disposition": "cancel_prepared",
+            "close_request_json": "",
+            "current_active": false,
+            "current_generation": "2",
+            "expected_revision": "1",
+            "inspect_request_json": "",
+            "issue_operation": "morrow-host-intent-issue-57a5678c5c4d198785889403f3302d292e5ff522a21a48dbdd0e25dc1556abb1",
+            "part": "publication",
+            "phase": "closed",
+            "proof": {
+              "generation": "1",
+              "intent_id": "morrow-host-editor-intent-ffb368e56a5b4f8584fc549bdaa77561b2ff66932e3a4b3366dd85648eceefd7",
+              "prepare_operation": "cancel-fixture-prepare",
+              "prepared_record_sha256": "f7cdf7a6d7db8cc92b9cb92d15872cf00110cfa8f077b26cf132c4679e6d4e81",
+              "request_sha256": "0170137f80d40ed2f355dd4a5df515fb196a7ab8b3e80dcaf5363fc69979da82"
+            },
+            "publication": {
+              "active": true,
+              "assets": [],
+              "consumed_imports": [],
+              "current_active": true,
+              "current_generation": "1",
+              "fork_link": null,
+              "fork_retirement": null,
+              "generation": "1",
+              "operation_id": "intent-pub-save",
+              "repeated": true,
+              "request_sha256": "cf78a64422abe3539972f7505889cb2b40dfa8c0770b8e7c821a03e35e00e89c",
+              "scope": {
+                "card_id": "intent-business-card",
+                "draft_id": "intent-parent",
+                "source": "",
+                "source_kind": 1,
+                "source_revision": "0"
+              },
+              "values": {
+                "assets": [],
+                "category": "灵感",
+                "conclusion": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": "c"
+                },
+                "description": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": "complete 汉字 🧪 é."
+                },
+                "hypothesis": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": "h"
+                },
+                "stage": "待整理",
+                "title": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": "intent title"
+                },
+                "todos": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": " one\ntwo "
+                }
+              }
+            },
+            "repeated": false,
+            "request_json": "",
+            "save_request_json": ""
+          }
+        ],
+        "effect": "not_committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "intent_next_after": "",
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": ""
+      },
+      "save": {
+        "cards": [],
+        "drafts": [],
+        "editor_intents": [
+          {
+            "business_operation": "cancel-fixture-business",
+            "card_id": "intent-business-card",
+            "close_disposition": "cancel_prepared",
+            "close_request_json": "",
+            "current_active": false,
+            "current_generation": "2",
+            "expected_revision": "1",
+            "inspect_request_json": "",
+            "issue_operation": "morrow-host-intent-issue-57a5678c5c4d198785889403f3302d292e5ff522a21a48dbdd0e25dc1556abb1",
+            "part": "save",
+            "phase": "closed",
+            "proof": {
+              "generation": "1",
+              "intent_id": "morrow-host-editor-intent-ffb368e56a5b4f8584fc549bdaa77561b2ff66932e3a4b3366dd85648eceefd7",
+              "prepare_operation": "cancel-fixture-prepare",
+              "prepared_record_sha256": "f7cdf7a6d7db8cc92b9cb92d15872cf00110cfa8f077b26cf132c4679e6d4e81",
+              "request_sha256": "0170137f80d40ed2f355dd4a5df515fb196a7ab8b3e80dcaf5363fc69979da82"
+            },
+            "publication": null,
+            "repeated": false,
+            "request_json": "",
+            "save_request_json": ""
+          }
+        ],
+        "effect": "not_committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "intent_next_after": "",
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": ""
+      },
+      "submission": {
+        "cards": [],
+        "drafts": [],
+        "editor_intents": [
+          {
+            "business_operation": "cancel-fixture-business",
+            "card_id": "intent-business-card",
+            "close_disposition": "cancel_prepared",
+            "close_request_json": "",
+            "current_active": false,
+            "current_generation": "2",
+            "expected_revision": "1",
+            "inspect_request_json": "",
+            "issue_operation": "morrow-host-intent-issue-57a5678c5c4d198785889403f3302d292e5ff522a21a48dbdd0e25dc1556abb1",
+            "part": "submission",
+            "phase": "closed",
+            "proof": {
+              "generation": "1",
+              "intent_id": "morrow-host-editor-intent-ffb368e56a5b4f8584fc549bdaa77561b2ff66932e3a4b3366dd85648eceefd7",
+              "prepare_operation": "cancel-fixture-prepare",
+              "prepared_record_sha256": "f7cdf7a6d7db8cc92b9cb92d15872cf00110cfa8f077b26cf132c4679e6d4e81",
+              "request_sha256": "0170137f80d40ed2f355dd4a5df515fb196a7ab8b3e80dcaf5363fc69979da82"
+            },
+            "publication": null,
+            "repeated": false,
+            "request_json": "{\"business\":{\"action\":\"create\",\"category\":\"灵感\",\"conclusion\":\"c\",\"description\":\"complete 汉字 🧪 é.\",\"hypothesis\":\"h\",\"id\":\"intent-business-card\",\"operation\":\"cancel-fixture-business\",\"source\":\"\",\"stage\":\"待整理\",\"title\":\"intent title\",\"todos\":\" one\\ntwo \"},\"continuation\":null,\"mode\":\"create\",\"publication\":{\"draft_id\":\"intent-parent\",\"generation\":\"1\",\"request_sha256\":\"cf78a64422abe3539972f7505889cb2b40dfa8c0770b8e7c821a03e35e00e89c\",\"save_operation\":\"intent-pub-save\"},\"schema_version\":1}",
+            "save_request_json": ""
+          }
+        ],
+        "effect": "not_committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "intent_next_after": "",
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": ""
+      }
+    },
+    "prepare_reply": {
+      "cards": [],
+      "drafts": [],
+      "editor_intents": [
+        {
+          "business_operation": "cancel-fixture-business",
+          "card_id": "intent-business-card",
+          "close_disposition": "",
+          "close_request_json": "",
+          "current_active": true,
+          "current_generation": "1",
+          "expected_revision": "1",
+          "inspect_request_json": "",
+          "issue_operation": "morrow-host-intent-issue-57a5678c5c4d198785889403f3302d292e5ff522a21a48dbdd0e25dc1556abb1",
+          "part": "summary",
+          "phase": "prepared",
+          "proof": {
+            "generation": "1",
+            "intent_id": "morrow-host-editor-intent-ffb368e56a5b4f8584fc549bdaa77561b2ff66932e3a4b3366dd85648eceefd7",
+            "prepare_operation": "cancel-fixture-prepare",
+            "prepared_record_sha256": "f7cdf7a6d7db8cc92b9cb92d15872cf00110cfa8f077b26cf132c4679e6d4e81",
+            "request_sha256": "0170137f80d40ed2f355dd4a5df515fb196a7ab8b3e80dcaf5363fc69979da82"
+          },
+          "publication": null,
+          "repeated": false,
+          "request_json": "",
+          "save_request_json": ""
+        }
+      ],
+      "effect": "committed",
+      "error": "",
+      "ids": [],
+      "imports": [],
+      "intent_next_after": "",
+      "markdown": {
+        "blocks": []
+      },
+      "ok": true,
+      "paste_text": "",
+      "profile": "development-unsealed",
+      "receipt_revision": "1"
+    },
+    "prepare_request": {
+      "action": "editor_intent_prepare",
+      "editor_intent": {
+        "operation_id": "cancel-fixture-prepare",
+        "request_json": "{\"business\":{\"action\":\"create\",\"category\":\"灵感\",\"conclusion\":\"c\",\"description\":\"complete 汉字 🧪 é.\",\"hypothesis\":\"h\",\"id\":\"intent-business-card\",\"operation\":\"cancel-fixture-business\",\"source\":\"\",\"stage\":\"待整理\",\"title\":\"intent title\",\"todos\":\" one\\ntwo \"},\"continuation\":null,\"mode\":\"create\",\"publication\":{\"draft_id\":\"intent-parent\",\"generation\":\"1\",\"request_sha256\":\"cf78a64422abe3539972f7505889cb2b40dfa8c0770b8e7c821a03e35e00e89c\",\"save_operation\":\"intent-pub-save\"},\"schema_version\":1}"
+      }
+    },
+    "request_json": "{\"business\":{\"action\":\"create\",\"category\":\"灵感\",\"conclusion\":\"c\",\"description\":\"complete 汉字 🧪 é.\",\"hypothesis\":\"h\",\"id\":\"intent-business-card\",\"operation\":\"cancel-fixture-business\",\"source\":\"\",\"stage\":\"待整理\",\"title\":\"intent title\",\"todos\":\" one\\ntwo \"},\"continuation\":null,\"mode\":\"create\",\"publication\":{\"draft_id\":\"intent-parent\",\"generation\":\"1\",\"request_sha256\":\"cf78a64422abe3539972f7505889cb2b40dfa8c0770b8e7c821a03e35e00e89c\",\"save_operation\":\"intent-pub-save\"},\"schema_version\":1}"
+  },
+  "inspect_reply": {
+    "cards": [],
+    "drafts": [],
+    "editor_commit": {
+      "card_id": "intent-business-card",
+      "command_sha256": "91765c1a26490f3037eca638b32e86669ca6f881fdfdde85991d38cff7d06ea0",
+      "commit_status": "committed",
+      "content_sha256": "240ef6727e1f7e1683ef05a2e77e41a0764034060e8404f592de3378efc5e253",
+      "event_id": "intent-business-op",
+      "historical_card": {
+        "assets": [],
+        "category": "灵感",
+        "conclusion": "c",
+        "deleted": false,
+        "deleted_at": "0",
+        "description": "complete 汉字 🧪 é.",
+        "favorite": false,
+        "hypothesis": "h",
+        "id": "intent-business-card",
+        "revision": "1",
+        "source": "08011214696e74656e742d627573696e6573732d636172641a046964656120022801320c696e74656e74207469746c653a950308021a06e781b5e6849f2209e5be85e695b4e79086a201580a517461736b2d686d6f732d6372656174652d3037353236343235366531366165356234313264623938336233316639306636326662373535303665376264336563343937386634303132313231373163353212036f6e65a201580a517461736b2d686d6f732d6372656174652d35613736633137323038653834666234313863383037303236373663346431363461653636396231663131613932336238316637313232623739346138656463120374776f1219636f6d706c65746520e6b189e5ad9720f09fa7aa2065cc812e2a0168320163580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e763100b448469be7486b9ce40817c3bfaff2372612562a152c238cdf5fe752d45444af9ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e7631000101a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533f192ec11941e0e52bda8c1744439fd27acaa0f2005f1d7614b444d92700dd5e7",
+        "stage": "待整理",
+        "tasks": [
+          {
+            "completion": 0,
+            "id": "task-hmos-create-075264256e16ae5b412db983b31f90f62fb75506e7bd3ec4978f401212171c52",
+            "text": "one"
+          },
+          {
+            "completion": 0,
+            "id": "task-hmos-create-5a76c17208e84fb418c80702676c4d164ae669b1f11a923b81f7122b794a8edc",
+            "text": "two"
+          }
+        ],
+        "title": "intent title"
+      },
+      "live_matches": true,
+      "live_revision": "1",
+      "operation": "intent-business-op",
+      "publication": {
+        "draft_id": "intent-parent",
+        "generation": "1",
+        "request_sha256": "cf78a64422abe3539972f7505889cb2b40dfa8c0770b8e7c821a03e35e00e89c",
+        "save_operation": "intent-pub-save"
+      },
+      "publication_sha256": "f192ec11941e0e52bda8c1744439fd27acaa0f2005f1d7614b444d92700dd5e7",
+      "qualification": "development_editor_wire_v1",
+      "request_sha256": "a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533",
+      "revision": "1",
+      "source_revision": "0"
+    },
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "1"
+  },
+  "issue_reply": {
+    "cards": [],
+    "drafts": [],
+    "editor_intents": [
+      {
+        "business_operation": "intent-business-op",
+        "card_id": "intent-business-card",
+        "close_disposition": "",
+        "close_request_json": "",
+        "current_active": true,
+        "current_generation": "2",
+        "expected_revision": "1",
+        "inspect_request_json": "",
+        "issue_operation": "morrow-host-intent-issue-a8644e12e042a22968c7b0cb61d581e28f5d83d579888020487dc6dfb3b61374",
+        "part": "summary",
+        "phase": "issued",
+        "proof": {
+          "generation": "1",
+          "intent_id": "morrow-host-editor-intent-0f0e948000559c3bfc2e0a2ef5ef1e69f9cd2c591a387c26b2a5b74863b3c90a",
+          "prepare_operation": "intent-prepare-op",
+          "prepared_record_sha256": "08a678284200b6db930437c55a26b0eb384aa84dd4728dc171d07a9d0ff29332",
+          "request_sha256": "a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533"
+        },
+        "publication": null,
+        "repeated": false,
+        "request_json": "",
+        "save_request_json": ""
+      }
+    ],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "intent_next_after": "",
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "2"
+  },
+  "issue_request": {
+    "action": "editor_intent_issue",
+    "editor_intent_issue": {
+      "expected_generation": "1",
+      "intent": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-0f0e948000559c3bfc2e0a2ef5ef1e69f9cd2c591a387c26b2a5b74863b3c90a",
+        "prepare_operation": "intent-prepare-op",
+        "prepared_record_sha256": "08a678284200b6db930437c55a26b0eb384aa84dd4728dc171d07a9d0ff29332",
+        "request_sha256": "a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533"
+      }
+    }
+  },
+  "parts": {
+    "close": {
+      "cards": [],
+      "drafts": [],
+      "editor_intents": [
+        {
+          "business_operation": "intent-business-op",
+          "card_id": "intent-business-card",
+          "close_disposition": "",
+          "close_request_json": "",
+          "current_active": true,
+          "current_generation": "2",
+          "expected_revision": "1",
+          "inspect_request_json": "",
+          "issue_operation": "morrow-host-intent-issue-a8644e12e042a22968c7b0cb61d581e28f5d83d579888020487dc6dfb3b61374",
+          "part": "close",
+          "phase": "issued",
+          "proof": {
+            "generation": "1",
+            "intent_id": "morrow-host-editor-intent-0f0e948000559c3bfc2e0a2ef5ef1e69f9cd2c591a387c26b2a5b74863b3c90a",
+            "prepare_operation": "intent-prepare-op",
+            "prepared_record_sha256": "08a678284200b6db930437c55a26b0eb384aa84dd4728dc171d07a9d0ff29332",
+            "request_sha256": "a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533"
+          },
+          "publication": null,
+          "repeated": false,
+          "request_json": "",
+          "save_request_json": ""
+        }
+      ],
+      "effect": "not_committed",
+      "error": "",
+      "ids": [],
+      "imports": [],
+      "intent_next_after": "",
+      "markdown": {
+        "blocks": []
+      },
+      "ok": true,
+      "paste_text": "",
+      "profile": "development-unsealed",
+      "receipt_revision": ""
+    },
+    "inspect": {
+      "cards": [],
+      "drafts": [],
+      "editor_intents": [
+        {
+          "business_operation": "intent-business-op",
+          "card_id": "intent-business-card",
+          "close_disposition": "",
+          "close_request_json": "",
+          "current_active": true,
+          "current_generation": "2",
+          "expected_revision": "1",
+          "inspect_request_json": "{\"action\":\"editor_commit_inspect\",\"editor_commit\":{\"expected_revision\":\"1\",\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"create\\\",\\\"category\\\":\\\"灵感\\\",\\\"conclusion\\\":\\\"c\\\",\\\"description\\\":\\\"complete 汉字 🧪 é.\\\",\\\"hypothesis\\\":\\\"h\\\",\\\"id\\\":\\\"intent-business-card\\\",\\\"operation\\\":\\\"intent-business-op\\\",\\\"source\\\":\\\"\\\",\\\"stage\\\":\\\"待整理\\\",\\\"title\\\":\\\"intent title\\\",\\\"todos\\\":\\\" one\\\\ntwo \\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"create\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"intent-parent\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"cf78a64422abe3539972f7505889cb2b40dfa8c0770b8e7c821a03e35e00e89c\\\",\\\"save_operation\\\":\\\"intent-pub-save\\\"},\\\"schema_version\\\":1}\"}}",
+          "issue_operation": "morrow-host-intent-issue-a8644e12e042a22968c7b0cb61d581e28f5d83d579888020487dc6dfb3b61374",
+          "part": "inspect",
+          "phase": "issued",
+          "proof": {
+            "generation": "1",
+            "intent_id": "morrow-host-editor-intent-0f0e948000559c3bfc2e0a2ef5ef1e69f9cd2c591a387c26b2a5b74863b3c90a",
+            "prepare_operation": "intent-prepare-op",
+            "prepared_record_sha256": "08a678284200b6db930437c55a26b0eb384aa84dd4728dc171d07a9d0ff29332",
+            "request_sha256": "a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533"
+          },
+          "publication": null,
+          "repeated": false,
+          "request_json": "",
+          "save_request_json": ""
+        }
+      ],
+      "effect": "not_committed",
+      "error": "",
+      "ids": [],
+      "imports": [],
+      "intent_next_after": "",
+      "markdown": {
+        "blocks": []
+      },
+      "ok": true,
+      "paste_text": "",
+      "profile": "development-unsealed",
+      "receipt_revision": ""
+    },
+    "publication": {
+      "cards": [],
+      "drafts": [],
+      "editor_intents": [
+        {
+          "business_operation": "intent-business-op",
+          "card_id": "intent-business-card",
+          "close_disposition": "",
+          "close_request_json": "",
+          "current_active": true,
+          "current_generation": "2",
+          "expected_revision": "1",
+          "inspect_request_json": "",
+          "issue_operation": "morrow-host-intent-issue-a8644e12e042a22968c7b0cb61d581e28f5d83d579888020487dc6dfb3b61374",
+          "part": "publication",
+          "phase": "issued",
+          "proof": {
+            "generation": "1",
+            "intent_id": "morrow-host-editor-intent-0f0e948000559c3bfc2e0a2ef5ef1e69f9cd2c591a387c26b2a5b74863b3c90a",
+            "prepare_operation": "intent-prepare-op",
+            "prepared_record_sha256": "08a678284200b6db930437c55a26b0eb384aa84dd4728dc171d07a9d0ff29332",
+            "request_sha256": "a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533"
+          },
+          "publication": {
+            "active": true,
+            "assets": [],
+            "consumed_imports": [],
+            "current_active": true,
+            "current_generation": "1",
+            "fork_link": null,
+            "fork_retirement": null,
+            "generation": "1",
+            "operation_id": "intent-pub-save",
+            "repeated": true,
+            "request_sha256": "cf78a64422abe3539972f7505889cb2b40dfa8c0770b8e7c821a03e35e00e89c",
+            "scope": {
+              "card_id": "intent-business-card",
+              "draft_id": "intent-parent",
+              "source": "",
+              "source_kind": 1,
+              "source_revision": "0"
+            },
+            "values": {
+              "assets": [],
+              "category": "灵感",
+              "conclusion": {
+                "affinity": 1,
+                "composing_end": -1,
+                "composing_start": -1,
+                "directional": false,
+                "selection_base": -1,
+                "selection_extent": -1,
+                "text": "c"
+              },
+              "description": {
+                "affinity": 1,
+                "composing_end": -1,
+                "composing_start": -1,
+                "directional": false,
+                "selection_base": -1,
+                "selection_extent": -1,
+                "text": "complete 汉字 🧪 é."
+              },
+              "hypothesis": {
+                "affinity": 1,
+                "composing_end": -1,
+                "composing_start": -1,
+                "directional": false,
+                "selection_base": -1,
+                "selection_extent": -1,
+                "text": "h"
+              },
+              "stage": "待整理",
+              "title": {
+                "affinity": 1,
+                "composing_end": -1,
+                "composing_start": -1,
+                "directional": false,
+                "selection_base": -1,
+                "selection_extent": -1,
+                "text": "intent title"
+              },
+              "todos": {
+                "affinity": 1,
+                "composing_end": -1,
+                "composing_start": -1,
+                "directional": false,
+                "selection_base": -1,
+                "selection_extent": -1,
+                "text": " one\ntwo "
+              }
+            }
+          },
+          "repeated": false,
+          "request_json": "",
+          "save_request_json": ""
+        }
+      ],
+      "effect": "not_committed",
+      "error": "",
+      "ids": [],
+      "imports": [],
+      "intent_next_after": "",
+      "markdown": {
+        "blocks": []
+      },
+      "ok": true,
+      "paste_text": "",
+      "profile": "development-unsealed",
+      "receipt_revision": ""
+    },
+    "save": {
+      "cards": [],
+      "drafts": [],
+      "editor_intents": [
+        {
+          "business_operation": "intent-business-op",
+          "card_id": "intent-business-card",
+          "close_disposition": "",
+          "close_request_json": "",
+          "current_active": true,
+          "current_generation": "2",
+          "expected_revision": "1",
+          "inspect_request_json": "",
+          "issue_operation": "morrow-host-intent-issue-a8644e12e042a22968c7b0cb61d581e28f5d83d579888020487dc6dfb3b61374",
+          "part": "save",
+          "phase": "issued",
+          "proof": {
+            "generation": "1",
+            "intent_id": "morrow-host-editor-intent-0f0e948000559c3bfc2e0a2ef5ef1e69f9cd2c591a387c26b2a5b74863b3c90a",
+            "prepare_operation": "intent-prepare-op",
+            "prepared_record_sha256": "08a678284200b6db930437c55a26b0eb384aa84dd4728dc171d07a9d0ff29332",
+            "request_sha256": "a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533"
+          },
+          "publication": null,
+          "repeated": false,
+          "request_json": "",
+          "save_request_json": "{\"action\":\"editor_save\",\"editor_save\":{\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-0f0e948000559c3bfc2e0a2ef5ef1e69f9cd2c591a387c26b2a5b74863b3c90a\",\"prepare_operation\":\"intent-prepare-op\",\"prepared_record_sha256\":\"08a678284200b6db930437c55a26b0eb384aa84dd4728dc171d07a9d0ff29332\",\"request_sha256\":\"a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533\"},\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"create\\\",\\\"category\\\":\\\"灵感\\\",\\\"conclusion\\\":\\\"c\\\",\\\"description\\\":\\\"complete 汉字 🧪 é.\\\",\\\"hypothesis\\\":\\\"h\\\",\\\"id\\\":\\\"intent-business-card\\\",\\\"operation\\\":\\\"intent-business-op\\\",\\\"source\\\":\\\"\\\",\\\"stage\\\":\\\"待整理\\\",\\\"title\\\":\\\"intent title\\\",\\\"todos\\\":\\\" one\\\\ntwo \\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"create\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"intent-parent\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"cf78a64422abe3539972f7505889cb2b40dfa8c0770b8e7c821a03e35e00e89c\\\",\\\"save_operation\\\":\\\"intent-pub-save\\\"},\\\"schema_version\\\":1}\"}}"
+        }
+      ],
+      "effect": "not_committed",
+      "error": "",
+      "ids": [],
+      "imports": [],
+      "intent_next_after": "",
+      "markdown": {
+        "blocks": []
+      },
+      "ok": true,
+      "paste_text": "",
+      "profile": "development-unsealed",
+      "receipt_revision": ""
+    },
+    "submission": {
+      "cards": [],
+      "drafts": [],
+      "editor_intents": [
+        {
+          "business_operation": "intent-business-op",
+          "card_id": "intent-business-card",
+          "close_disposition": "",
+          "close_request_json": "",
+          "current_active": true,
+          "current_generation": "2",
+          "expected_revision": "1",
+          "inspect_request_json": "",
+          "issue_operation": "morrow-host-intent-issue-a8644e12e042a22968c7b0cb61d581e28f5d83d579888020487dc6dfb3b61374",
+          "part": "submission",
+          "phase": "issued",
+          "proof": {
+            "generation": "1",
+            "intent_id": "morrow-host-editor-intent-0f0e948000559c3bfc2e0a2ef5ef1e69f9cd2c591a387c26b2a5b74863b3c90a",
+            "prepare_operation": "intent-prepare-op",
+            "prepared_record_sha256": "08a678284200b6db930437c55a26b0eb384aa84dd4728dc171d07a9d0ff29332",
+            "request_sha256": "a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533"
+          },
+          "publication": null,
+          "repeated": false,
+          "request_json": "{\"business\":{\"action\":\"create\",\"category\":\"灵感\",\"conclusion\":\"c\",\"description\":\"complete 汉字 🧪 é.\",\"hypothesis\":\"h\",\"id\":\"intent-business-card\",\"operation\":\"intent-business-op\",\"source\":\"\",\"stage\":\"待整理\",\"title\":\"intent title\",\"todos\":\" one\\ntwo \"},\"continuation\":null,\"mode\":\"create\",\"publication\":{\"draft_id\":\"intent-parent\",\"generation\":\"1\",\"request_sha256\":\"cf78a64422abe3539972f7505889cb2b40dfa8c0770b8e7c821a03e35e00e89c\",\"save_operation\":\"intent-pub-save\"},\"schema_version\":1}",
+          "save_request_json": ""
+        }
+      ],
+      "effect": "not_committed",
+      "error": "",
+      "ids": [],
+      "imports": [],
+      "intent_next_after": "",
+      "markdown": {
+        "blocks": []
+      },
+      "ok": true,
+      "paste_text": "",
+      "profile": "development-unsealed",
+      "receipt_revision": ""
+    }
+  },
+  "prepare_reply": {
+    "cards": [],
+    "drafts": [],
+    "editor_intents": [
+      {
+        "business_operation": "intent-business-op",
+        "card_id": "intent-business-card",
+        "close_disposition": "",
+        "close_request_json": "",
+        "current_active": true,
+        "current_generation": "1",
+        "expected_revision": "1",
+        "inspect_request_json": "",
+        "issue_operation": "morrow-host-intent-issue-a8644e12e042a22968c7b0cb61d581e28f5d83d579888020487dc6dfb3b61374",
+        "part": "summary",
+        "phase": "prepared",
+        "proof": {
+          "generation": "1",
+          "intent_id": "morrow-host-editor-intent-0f0e948000559c3bfc2e0a2ef5ef1e69f9cd2c591a387c26b2a5b74863b3c90a",
+          "prepare_operation": "intent-prepare-op",
+          "prepared_record_sha256": "08a678284200b6db930437c55a26b0eb384aa84dd4728dc171d07a9d0ff29332",
+          "request_sha256": "a50c34ad5a23b94772e55378f417466b4b851e161ddffe776a23baf0a55a8533"
+        },
+        "publication": null,
+        "repeated": false,
+        "request_json": "",
+        "save_request_json": ""
+      }
+    ],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "intent_next_after": "",
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "1"
+  },
+  "prepare_request": {
+    "action": "editor_intent_prepare",
+    "editor_intent": {
+      "operation_id": "intent-prepare-op",
+      "request_json": "{\"business\":{\"action\":\"create\",\"category\":\"灵感\",\"conclusion\":\"c\",\"description\":\"complete 汉字 🧪 é.\",\"hypothesis\":\"h\",\"id\":\"intent-business-card\",\"operation\":\"intent-business-op\",\"source\":\"\",\"stage\":\"待整理\",\"title\":\"intent title\",\"todos\":\" one\\ntwo \"},\"continuation\":null,\"mode\":\"create\",\"publication\":{\"draft_id\":\"intent-parent\",\"generation\":\"1\",\"request_sha256\":\"cf78a64422abe3539972f7505889cb2b40dfa8c0770b8e7c821a03e35e00e89c\",\"save_operation\":\"intent-pub-save\"},\"schema_version\":1}"
+    }
+  },
+  "producer": "fresh actual Store",
+  "request_json": "{\"business\":{\"action\":\"create\",\"category\":\"灵感\",\"conclusion\":\"c\",\"description\":\"complete 汉字 🧪 é.\",\"hypothesis\":\"h\",\"id\":\"intent-business-card\",\"operation\":\"intent-business-op\",\"source\":\"\",\"stage\":\"待整理\",\"title\":\"intent title\",\"todos\":\" one\\ntwo \"},\"continuation\":null,\"mode\":\"create\",\"publication\":{\"draft_id\":\"intent-parent\",\"generation\":\"1\",\"request_sha256\":\"cf78a64422abe3539972f7505889cb2b40dfa8c0770b8e7c821a03e35e00e89c\",\"save_operation\":\"intent-pub-save\"},\"schema_version\":1}"
+}

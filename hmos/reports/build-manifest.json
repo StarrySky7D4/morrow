@@ -1,5 +1,5 @@
 {
-  "createdUtc": "2026-10-07T11:20:27.465Z",
+  "createdUtc": "2026-10-07T12:09:46.023Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
   "hmosVersion": "0.1.0-hmos-dev.19",
   "sdk": "HarmonyOS API26 26.0.0.105",
@@ -8,10 +8,10 @@
     "x86_64"
   ],
   "artifact": {
-    "path": ".build/artifacts/dev23-todo-watch-final/entry-default-unsigned.hap",
-    "archive_path": ".build/artifacts/dev23-todo-watch-final/entry-default-unsigned.hap",
-    "bytes": 29102519,
-    "sha256": "935E1B2E784D216F552890C67785179C2EC22470E3993067AB1D3A7EC69106AF",
+    "path": ".build/artifacts/dev24-intent-checkpoint/entry-default-unsigned.hap",
+    "bytes": 29381667,
+    "sha256": "F6EEEAE2D2175A7EA54DCEF582EA1BD5D15E324D48E65583B752775B4EC8925C",
+    "archive_path": ".build/artifacts/dev24-intent-checkpoint/entry-default-unsigned.hap",
     "signed": false,
     "installed": false
   },
@@ -19,6 +19,22 @@
     {
       "path": "AppScope/app.json5",
       "sha256": "954E326044E72696153B4461C85757533FC51973A28BF8B842C3C8DCF52006C0"
+    },
+    {
+      "path": "AppScope/resources/base/element/string.json",
+      "sha256": "9EB7AED7FD9CE4E5CD77A691100F7E68881E7C33B4DFFC034DCCF985701BE9E3"
+    },
+    {
+      "path": "AppScope/resources/base/media/background.png",
+      "sha256": "497EDEAFC51AF043C73E72EE8C4FBAC4663357EF1BA275C0289F31A366B26239"
+    },
+    {
+      "path": "AppScope/resources/base/media/foreground.png",
+      "sha256": "57E549283F255505A649042F36A1D6793C307A69A94C9FA7E27A38AF38DDBE8C"
+    },
+    {
+      "path": "AppScope/resources/base/media/layered_image.json",
+      "sha256": "3D18DCD7ED9E7D3D2C54C20CB80A44EB4877C661131C68A46E20B6E19D0BB476"
     },
     {
       "path": "build-profile.json5",
@@ -29,8 +45,20 @@
       "sha256": "F557C3BCDB40C64C986BFFED9628310CC7A79FB7D2642C1C8B8D265FD92E25AD"
     },
     {
+      "path": "entry/.gitignore",
+      "sha256": "C4868DBAB8112EC2283B23448AD795702A967BB55229333AB317CBEB8C3AD690"
+    },
+    {
       "path": "entry/build-profile.json5",
       "sha256": "C5EDC06AAA8B6D84401FEE598345AC5A2C2D60156767B2319DB719D0FC9A891F"
+    },
+    {
+      "path": "entry/hvigorfile.ts",
+      "sha256": "1EF08CF4D5A2995964B0213834DD91DE3AFB8845AAE53178016E1C56DF0844B6"
+    },
+    {
+      "path": "entry/obfuscation-rules.txt",
+      "sha256": "42C563D696CDF0A0367C39F564E752D82EC15E394549F826848228680674A4EF"
     },
     {
       "path": "entry/oh-package-lock.json5",
@@ -121,6 +149,10 @@
       "sha256": "6469D1F2AF4E2DA6B9066B52917E658BC13ECECB4EF2A4E6B92FBB4AD0D996CF"
     },
     {
+      "path": "entry/src/main/ets/model/EditorBusinessSession.ets",
+      "sha256": "792E95BC45D5D589A08810B4A3BED24FA0C6229612FB38FDA18ABD12A9821FBD"
+    },
+    {
       "path": "entry/src/main/ets/model/EditorDirectInput.ets",
       "sha256": "A56119B3DFC3EA52E83082F0654C6BD9164383A646AF503B6D72CE2F0D7E6030"
     },
@@ -186,7 +218,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/EditorTodos.ets",
-      "sha256": "E0A3DA36C9AEED16B37FCD3BFD46B83EF35A32373933D38E5413692C15C835DE"
+      "sha256": "83B6C6A5C5811EAD9FA14EBB23F9B5DEA7F9A858FD0B5461181091E929473836"
     },
     {
       "path": "entry/src/main/ets/pages/EditorViewLease.ets",
@@ -194,7 +226,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "34DDECA5A375328ADB1A7EC53DE7F8E5D1A90804CD8634FAA85672D7A588160C"
+      "sha256": "AFF77EB7F1C90E53DDF5D64DD89FB3A037DAB98AC0B08AE0382090A2055EFEAF"
     },
     {
       "path": "entry/src/main/ets/pages/MarkdownPreview.ets",
@@ -213,6 +245,46 @@
       "sha256": "E5531A8A126D27E02FFD9F93B89ADD108C7772C77D9C28536A72BBE6165AF8CC"
     },
     {
+      "path": "entry/src/main/resources/base/element/color.json",
+      "sha256": "4E028F6E8A847F8A98CFEE6D37309DEF0E7E2E7290041D89E22BA3AC38A802B8"
+    },
+    {
+      "path": "entry/src/main/resources/base/element/float.json",
+      "sha256": "8DB02F7A08F7B7B73D6EB95B09A6643463D10258B757901E70F255DE0A2C83EF"
+    },
+    {
+      "path": "entry/src/main/resources/base/element/string.json",
+      "sha256": "600384A08C4A490F52DA2F897BE992F4CEF5894B57B6C765E38DCF996C045AAC"
+    },
+    {
+      "path": "entry/src/main/resources/base/media/background.png",
+      "sha256": "497EDEAFC51AF043C73E72EE8C4FBAC4663357EF1BA275C0289F31A366B26239"
+    },
+    {
+      "path": "entry/src/main/resources/base/media/foreground.png",
+      "sha256": "57E549283F255505A649042F36A1D6793C307A69A94C9FA7E27A38AF38DDBE8C"
+    },
+    {
+      "path": "entry/src/main/resources/base/media/layered_image.json",
+      "sha256": "3D18DCD7ED9E7D3D2C54C20CB80A44EB4877C661131C68A46E20B6E19D0BB476"
+    },
+    {
+      "path": "entry/src/main/resources/base/media/startIcon.png",
+      "sha256": "567C7C0C7A321CA180E010AD880F0F7519F6D351AC2B9665E2EE710E7CFE7778"
+    },
+    {
+      "path": "entry/src/main/resources/base/profile/backup_config.json",
+      "sha256": "CBF358749C48AAA4AFA6819E796E71EF5C0629CC3E651E2E09A91612F1041696"
+    },
+    {
+      "path": "entry/src/main/resources/base/profile/main_pages.json",
+      "sha256": "F21984FB1D5096F0DB41314DA0BB94C573E7AD018E5AFAE3044F8D5FF71B0BFC"
+    },
+    {
+      "path": "entry/src/main/resources/dark/element/color.json",
+      "sha256": "F26F3F1E47165AE79EBE6F295A3E12593F01E90079D03FC7FF61E47CE0B366A6"
+    },
+    {
       "path": "entry/src/main/resources/rawfile/materialicons.otf",
       "sha256": "D9865B671A09D683D13A863089D8825E0F61A37696CE5D7D448BC8023AA62453"
     },
@@ -223,6 +295,10 @@
     {
       "path": "hvigor/hvigor-config.json5",
       "sha256": "D285A4721D6F20CA06A5A1A5B88AFC3CD2A6A6049C94193801405DBBDCA64AA6"
+    },
+    {
+      "path": "hvigorfile.ts",
+      "sha256": "B8882FB4B6DA475EEEEB64875E8F80A1BDFE4EA4B9D943396E91BE45478A4758"
     },
     {
       "path": "oh-package-lock.json5",
@@ -281,6 +357,22 @@
       "sha256": "A8408C9E96E1BCD224548DE8634A2A5AF22E31249E917810F44BC40D95464026"
     },
     {
+      "path": "reports/ui-source/v24/build-native.ps1",
+      "sha256": "7D71C9B22AB34F3D5FACFCF68FC3EAB00CC094AAB9FA3CCB76ADDC18BC634157"
+    },
+    {
+      "path": "reports/ui-source/v24/checkpoint.cjs",
+      "sha256": "667542F5143E8D77426B973A9E43C367D148BB0856D6DBCCBDEE5B5E3191A418"
+    },
+    {
+      "path": "reports/ui-source/v24/editor-intent-store-fixture.json",
+      "sha256": "9C8BD71EE6C42AD965A129973C5943F62A38261EEF99310FA3D12AF99A9999BB"
+    },
+    {
+      "path": "reports/ui-source/v24/verify-package.ps1",
+      "sha256": "A80CCFC2223F2C7D6D9AC15F652094570BAB53CA9EC5978FF4DB4C079272DE98"
+    },
+    {
       "path": "rust/Cargo.lock",
       "sha256": "99388ED4B939078A28617A7624ECBC38A3B7D527AD181AEFAC824F07562F119D"
     },
@@ -294,15 +386,19 @@
     },
     {
       "path": "rust/editor-draft-model/build.rs",
-      "sha256": "C66D78E82D77938C7EC7B2D9863F43D6179C7C4F371C19755D87A0F4ED555FB0"
+      "sha256": "D9FB0310E615F8FC7BA62A760E626E449E000915E99D2B381BD65A17871592D9"
     },
     {
       "path": "rust/editor-draft-model/schemas/editor_draft.proto",
       "sha256": "9605A649D595B8404BB232ED81551F58ECB3BABDAF24187468AE300B7EBA7814"
     },
     {
+      "path": "rust/editor-draft-model/schemas/editor_intent.proto",
+      "sha256": "461269138817CE96A83781B7EBED34A4B10CCA497173307B8DF2BDD1416D45E0"
+    },
+    {
       "path": "rust/editor-draft-model/src/lib.rs",
-      "sha256": "D11632512506F357A73112568A6E8856AA74E87500B91709C87083A50DAC6C8E"
+      "sha256": "0518F380D0335C21EBDD031AD22B11572FCF5917024ED0AA408D092AC6E06E4E"
     },
     {
       "path": "rust/editor-draft-model/src/wrapper.rs",
@@ -370,7 +466,7 @@
     },
     {
       "path": "rust/src/editor_business.rs",
-      "sha256": "BE299723AF695C603CC8F1C41AFCC621FE0CF7EE94327903CD1EF5B1B86940C1"
+      "sha256": "C5502B47C4F78DF27D87AB7D7BD6EF7508E1A29A7E201AFAFAA5CBE63DB456EF"
     },
     {
       "path": "rust/src/editor_business/tests.rs",
@@ -378,7 +474,7 @@
     },
     {
       "path": "rust/src/editor_draft.rs",
-      "sha256": "B1A547C40AFF9297A9ADD46518A4569B5C99E03D8FD25D44670118562DACC6C4"
+      "sha256": "28C2409C830EDE59D852B3C46EAA77228ECF52928371A910B5C1716A8DABF59A"
     },
     {
       "path": "rust/src/editor_draft_fork.rs",
@@ -417,6 +513,14 @@
       "sha256": "24389B752946E0EA49F49A661E52919ACE753722370EB495A4F8E4E24E8BC5BC"
     },
     {
+      "path": "rust/src/editor_intent.rs",
+      "sha256": "CA722439719EF6FE19900B28BADE5273372F31075A05BE7B49733B32F95F08A3"
+    },
+    {
+      "path": "rust/src/editor_intent/tests.rs",
+      "sha256": "FEF586499FD249E09C45AA6E9F859DAC150A105CF2B675C67FCEAA2E40E835DD"
+    },
+    {
       "path": "rust/src/file_stream.rs",
       "sha256": "0FA404070FC47F1F41785A187F62B4FDC1F98876BDD0934A618C481FF5D83AB3"
     },
@@ -426,7 +530,7 @@
     },
     {
       "path": "rust/src/lib.rs",
-      "sha256": "F2A3BC120EB4CA5348EF311DC9A8FFF2A2F46A62B78A0732F0CE23ECB33F717F"
+      "sha256": "E9B5F362D7F1EB32880DD4DFE948FE1D533859AB9E0CE6209EBFC14A6AF55DCE"
     },
     {
       "path": "rust/src/markdown.rs",
@@ -1361,27 +1465,31 @@
       "sha256": "27E49FF7E78E72A707F33DB41D3A54065F24CD3EE4BDEC165D6D9F9E6B5FD19C"
     },
     {
+      "path": "tool/editor-business-session-model.test.cjs",
+      "sha256": "F64477A60AF77857D090AC17E606CF13E9EAA3442FF9CCFBF4E9F41C60661540"
+    },
+    {
       "path": "tool/index-draft-fork-integration.test.cjs",
       "sha256": "749787FB04DEE1786F8F76E799B06C57A5D19D8D027EDB00455952E5AF145FB1"
     }
   ],
-  "uiValidation": "reports/ui-source/v23/validation.md",
+  "uiValidation": "reports/ui-source/v24/validation.md",
   "upstreamDrift": "reports/reference-drift.json",
-  "deliveryScope": "Todo construction-selection admission and complete per-prop snapshot guard; unchanged v22 Rust business foundation; business-intent and Index handoff documents are candidate contracts only; final package device NOT_RUN; prior 3116 candidate restore FAILED_OR_UNKNOWN; full Flutter/Windows parity OPEN",
-  "nativeInputs": "reports/ui-source/v22/native-build-inputs.json",
+  "deliveryScope": "v24 initial Todo display echo and unfocused selection repair; native durable original-request intent and ETS session foundation; Index integration, business handoff and new-native device acceptance OPEN; full Flutter/Windows parity OPEN",
+  "nativeInputs": "reports/ui-source/v24/native-build-inputs.json",
   "nativeArchives": [
     {
       "abi": "arm64-v8a",
-      "path": ".build/editor-input-native/dev22-business-checkpoint/arm64-v8a/libmorrow_hmos.a",
-      "bytes": 56104946,
-      "sha256": "F3815F306E96618F8389B17E59679CDD1E1E477BC1324BE34943B579DBF2DAA4",
+      "path": ".build/editor-input-native/dev24-business-intent-checkpoint/arm64-v8a/libmorrow_hmos.a",
+      "bytes": 56517238,
+      "sha256": "E416EA7FBA13BB5DE0310942AA0C0F0FF725D6C3D7AFB37CAC33A3C5E6746C80",
       "production_path": "entry/src/main/cpp/rust/arm64-v8a/libmorrow_hmos.a"
     },
     {
       "abi": "x86_64",
-      "path": ".build/editor-input-native/dev22-business-checkpoint/x86_64/libmorrow_hmos.a",
-      "bytes": 54511556,
-      "sha256": "5ADCB7BAD62417868DD6A2D03699B9D69C3267DE1072B8534E0926FE30DE6B41",
+      "path": ".build/editor-input-native/dev24-business-intent-checkpoint/x86_64/libmorrow_hmos.a",
+      "bytes": 54925386,
+      "sha256": "A99CF367DFAC3F518332CA36232688617E9D576BD349DC4E98494683C74DE0CA",
       "production_path": "entry/src/main/cpp/rust/x86_64/libmorrow_hmos.a"
     }
   ]
