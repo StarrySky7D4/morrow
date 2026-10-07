@@ -105,9 +105,10 @@ for (const invalid of [0, -1, Number.NaN, 1.5, budget + 1]) {
     assert.equal(h.logs.some(item => item[0] === 'open'), false); assert.ok(await h.files.prepareClipboard(s.records[0].html)); await c.input.dispose(s);
   });
 }
-test('HTML over converter 2MiB limit keeps exact original but cannot enter native conversion', async () => {
-  const h = await prepared([{ 'text/html': 'x'.repeat(2 * 1024 * 1024 + 1) }]);
-  assert.equal(h.value.byte_length, String(2 * 1024 * 1024 + 1));
+test('HTML over converter UTF8 byte envelope keeps exact original but cannot enter native conversion', async () => {
+  const length = 3 * 2 * 1024 * 1024 + 4;
+  const h = await prepared([{ 'text/html': 'x'.repeat(length) }]);
+  assert.equal(h.value.byte_length, String(length));
   await assert.rejects(h.files.convertPreparedClipboard(h.value, 'html', 'description'), /额度/);
   assert.equal(h.logs.some(item => item[0] === 'clipboardConvert'), false); assert.ok(h.read(h.directory(h.value.spool_id) + '/data'));
   await h.c.input.dispose(h.snapshot);
@@ -206,4 +207,66 @@ test('encoder release failure prevents prepared image admission and cleans only 
   c.state.records = [{ pixelMap: pixel }]; const h = createFilesHarness(c), s = await c.read();
   await assert.rejects(h.files.prepareClipboard(s.records[0].image), /释放未确认/);
   assert.equal(privateFiles(h).length, 0); assert.equal(h.fds.size, 0); assert.equal(pixel.released, 1); await c.input.dispose(s);
+});
+
+test('CJK plain original above the former 2MiB byte cap reaches native unchanged', async () => {
+  const content = '中'.repeat(800000), h = await prepared([{ 'text/plain': content }]);
+  const reply = await h.files.convertPreparedClipboard(h.value, 'plain', 'description');
+  assert.equal(h.value.byte_length, '2400000'); assert.equal(reply.source_byte_length, '2400000');
+  assert.deepEqual(h.read(h.directory(h.value.spool_id) + '/data'), Buffer.from(content));
+  assert.equal(h.value.sha256, sha(Buffer.from(content))); assert.equal(h.fds.size, 0); await h.c.input.dispose(h.snapshot);
+});
+test('native decoded-unit rejection preserves complete rich original with no successful payload', async () => {
+  const content = 'x'.repeat(2 * 1024 * 1024 + 1), h = await prepared([{ 'text/html': content }]);
+  let calls = 0;
+  h.setConvert(async () => { calls++; return JSON.stringify(response(h.value, {
+    ok: false, error: 'source UTF16 unit budget exceeded', paste_text: '', source_sha256: '', source_byte_length: '' })); });
+  await assert.rejects(h.files.convertPreparedClipboard(h.value, 'html', 'description'), /UTF16 unit/);
+  assert.equal(calls, 1); assert.equal(h.fds.size, 0); assert.deepEqual(h.read(h.directory(h.value.spool_id) + '/data'), Buffer.from(content));
+  await h.c.input.dispose(h.snapshot);
+});
+for (const format of ['plain', 'html', 'xml', 'rtf']) {
+  const envelope = 3 * (format === 'rtf' ? 8 : 2) * 1024 * 1024 + 3;
+  for (const extra of [0, 1]) {
+    test('conversion byte preflight ' + format + ' at envelope +' + extra + ' is format-specific', async () => {
+      // A virtual large file isolates ArkTS byte preflight; native UTF16 parsing
+      // and full actual byte reads are covered by native tests, not this fixture.
+      const h = createFilesHarness(); h.seed('import-BOUND1', { data: 'own', dataSize: envelope + extra });
+      const values = await h.files.recover(), value = values[0]; let calls = 0;
+      h.setConvert(async (_request, fd) => { calls++; assert.equal(h.fdPath(fd), h.directory(value.spool_id) + '/data'); return JSON.stringify(response(value)); });
+      const readsBefore = h.logs.filter(item => item[0] === 'open').length;
+      if (extra) {
+        await assert.rejects(h.files.convertPreparedClipboard(value, format, 'description'), /额度/);
+        assert.equal(calls, 0); assert.equal(h.logs.filter(item => item[0] === 'open').length, readsBefore);
+      } else {
+        const result = await h.files.convertPreparedClipboard(value, format, 'description');
+        assert.equal(calls, 1); assert.equal(result.source_byte_length, String(envelope));
+      }
+      assert.equal(h.fds.size, 0); assert.equal(h.read(h.directory(value.spool_id) + '/data').toString(), 'own');
+    });
+  }
+}
+test('a system file URI original beyond the RTF conversion envelope still uses attachment quota', async () => {
+  const uri = 'file://docs/own/Large.pdf', length = 3 * 8 * 1024 * 1024 + 4;
+  const c = createClipboardHarness([{ 'text/uri': uri }]), h = createFilesHarness(c);
+  h.putFile(uri, new Uint8Array(length), { name: 'Large.pdf' }); const s = await c.read();
+  const value = await h.files.prepareClipboard(s.records[0].file);
+  assert.equal(value.byte_length, String(length)); assert.equal(value.name, 'Large.pdf');
+  assert.equal(h.logs.some(item => item[0] === 'clipboardConvert'), false); assert.equal(h.fds.size, 0); await c.input.dispose(s);
+});
+test('SDK Unicode RTF serialization length and SHA include the BOM throughout the native read contract', async () => {
+  const content = "{\\rtf1\\ansi\\ansicpg1252 Ελληνικά😀 \\'e9}", c = createClipboardHarness([{ 'text/rtf': content }]);
+  const h = createFilesHarness(c), s = await c.read(), value = await h.files.prepareClipboard(s.records[0].rtf);
+  const expected = Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), Buffer.from(content)]);
+  assert.equal(value.byte_length, String(expected.length)); assert.equal(value.sha256, sha(expected));
+  assert.deepEqual(h.read(h.directory(value.spool_id) + '/data'), expected);
+  const converted = await h.files.convertPreparedClipboard(value, 'rtf', 'description');
+  assert.equal(converted.source_sha256, sha(expected)); assert.equal(converted.source_byte_length, String(expected.length));
+  assert.equal(h.fds.size, 0); await c.input.dispose(s);
+});
+test('SDK RTF BOM bytes also count against the unchanged global payload plus sidecar allowance', async () => {
+  const content = '{\\rtf1 text}', c = createClipboardHarness([{ 'text/rtf': content }]), h = createFilesHarness(c), s = await c.read();
+  h.seed('import-BUDGET', { data: 'old', dataSize: budget - reserve * 2 - Buffer.byteLength(content) });
+  await assert.rejects(h.files.prepareClipboard(s.records[0].rtf), /剩余附件预算/);
+  assert.equal([...h.nodes.keys()].filter(name => /\/data$/.test(name)).length, 1); assert.equal(h.fds.size, 0); await c.input.dispose(s);
 });

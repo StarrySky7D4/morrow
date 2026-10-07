@@ -1,0 +1,19 @@
+{
+  "label": "create-own-clipboard-C-input-40",
+  "started": 1791350735297,
+  "screenshotAt": 1791350735627,
+  "layoutAt": 1791350736445,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\create-own-clipboard-C-input-40.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\create-own-clipboard-C-input-40.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\create-own-clipboard-C-input-40.raw.json"
+  }
+}

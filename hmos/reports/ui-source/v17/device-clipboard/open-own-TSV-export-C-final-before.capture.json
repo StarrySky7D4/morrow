@@ -1,0 +1,19 @@
+{
+  "label": "open-own-TSV-export-C-final-before",
+  "started": 1791351316781,
+  "screenshotAt": 1791351317040,
+  "layoutAt": 1791351317827,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\open-own-TSV-export-C-final-before.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\open-own-TSV-export-C-final-before.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\open-own-TSV-export-C-final-before.raw.json"
+  }
+}

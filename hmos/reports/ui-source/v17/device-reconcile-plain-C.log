@@ -1,0 +1,1 @@
+{"label":"reconcile-plain-C-without-paste-replay","result":{"body":"HMOS-clipboard-20261007-C","confirmed":true,"pins":0,"pasteRequestsIssuedInThisStage":0,"firstDriver":"post-action input-node assertion stopped because successful paste switched to preview"},"phase":"PASS"}

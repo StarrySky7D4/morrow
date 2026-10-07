@@ -1,0 +1,19 @@
+{
+  "label": "native-title-copy-body-paste-C-copied-title",
+  "started": 1791350776829,
+  "screenshotAt": 1791350777216,
+  "layoutAt": 1791350777954,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\native-title-copy-body-paste-C-copied-title.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\native-title-copy-body-paste-C-copied-title.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\native-title-copy-body-paste-C-copied-title.raw.json"
+  }
+}

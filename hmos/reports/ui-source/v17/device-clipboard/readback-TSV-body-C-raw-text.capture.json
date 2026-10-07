@@ -1,0 +1,19 @@
+{
+  "label": "readback-TSV-body-C-raw-text",
+  "started": 1791351267442,
+  "screenshotAt": 1791351267752,
+  "layoutAt": 1791351268474,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\readback-TSV-body-C-raw-text.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\readback-TSV-body-C-raw-text.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\readback-TSV-body-C-raw-text.raw.json"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "label": "native-TSV-copy-rich-paste-C-result",
+  "started": 1791350930609,
+  "screenshotAt": 1791350930891,
+  "layoutAt": 1791350931681,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\native-TSV-copy-rich-paste-C-result.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\native-TSV-copy-rich-paste-C-result.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\native-TSV-copy-rich-paste-C-result.raw.json"
+  }
+}

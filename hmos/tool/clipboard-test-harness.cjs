@@ -92,7 +92,7 @@ function createFilesHarness(clipboard = createClipboardHarness()) {
   assert.ok(start >= 0 && end > start);
   let fixture = original.slice(start, end);
   fixture = fixture.replace("if (id === '@kit.CryptoArchitectureKit') { return {}; }", "if (id === '@kit.CryptoArchitectureKit') { return cryptoKit; }");
-  fixture = fixture.replace("if (id === './ClipboardInput') { return { CLIPBOARD_SOURCE_LIMIT: 2 * 1024 * 1024 }; }", "if (id === './ClipboardInput') { return inputModule; }");
+  fixture = fixture.replace("if (id === './ClipboardInput') { return {}; }", "if (id === './ClipboardInput') { return inputModule; }");
   const cryptoKit = { cryptoFramework: { createMd(algorithm) {
     assert.equal(algorithm, 'SHA256'); const hash = crypto.createHash('sha256');
     return { async update(blob) { hash.update(Buffer.from(blob.data)); }, async digest() { return { data: new Uint8Array(hash.digest()) }; } };

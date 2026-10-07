@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.19s
+     Running unittests src\lib.rs (hmos\rust\target\debug\deps\morrow_hmos-03e0dd115225c073.exe)
+
+running 1 test
+test clipboard::tests::actual_flutter_source_capacity_matches_six_complete_boundary_identities ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 99 filtered out; finished in 7.13s
+

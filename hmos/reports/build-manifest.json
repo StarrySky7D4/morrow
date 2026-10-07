@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-10-07T05:16:05.248Z",
+  "createdUtc": "2026-10-07T05:54:54.834Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.17",
+  "hmosVersion": "0.1.0-hmos-dev.18",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 27815034,
-    "sha256": "D9DECC46BB0E953BB56A4CDC5DBBB71D0B863E6380C273CC677B73C36689C03F",
+    "bytes": 27866016,
+    "sha256": "910F3069B7979E5F8C6CF9E7DC770DF6E342725D493798DDE38F317524DB7DE2",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "35281E841DD058363D317CE5FDE49DE2019B920250ECC49D0FAA0CFC8367BED2"
+      "sha256": "2CAC903832A590AC17AB0913840908A62A05D3A1FD07972679C3517B7EBCDFCC"
     },
     {
       "path": "entry/build-profile.json5",
@@ -1120,7 +1120,7 @@
     },
     {
       "path": "entry/src/main/ets/model/AttachmentFiles.ets",
-      "sha256": "82AE05E18FB1E1B2742A15C9534043131D2B11D3563D912D49879A6E7CA721EA"
+      "sha256": "B619594141F7E9051F0F375968A17703573DDC533736A2A5A12BB9090200471E"
     },
     {
       "path": "entry/src/main/ets/model/Attachments.ets",
@@ -1180,7 +1180,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/AttachmentImagePreview.ets",
-      "sha256": "DF9822E6286DEEDCB22804D3C091130077843587F9F3C5577A0D22481AC4B36E"
+      "sha256": "484076C31DCF78DDDB69B0EA27F6BB46C8FD753FC9763F0F07759CE9438442A8"
     },
     {
       "path": "entry/src/main/ets/model/AttachmentPlayback.ets",
@@ -1208,7 +1208,7 @@
     },
     {
       "path": "entry/src/main/ets/model/ClipboardInput.ets",
-      "sha256": "D69D99D11DEC4FA298D8FFA9F3B4FC2ECAE1123524AE296C952382276747D25A"
+      "sha256": "0F286EA943C4D1FF5A9AF2B3739F5EF9536485051C19B0159255B8296146B90C"
     },
     {
       "path": "entry/src/main/ets/model/ClipboardPaste.ets",
@@ -1216,9 +1216,13 @@
     },
     {
       "path": "rust/src/clipboard.rs",
-      "sha256": "703D0BBB16FB65E387E7B6FB5492F699703A86B599CAD3C61CC67CECD102A7C7"
+      "sha256": "9219D1F05F96F437B6F002BB1927864450D88587DDF4DDC9ABC47548C108161E"
+    },
+    {
+      "path": "entry/src/main/ets/model/AttachmentImageGestures.ets",
+      "sha256": "73AF8DD840BAB941C7A5ACDBC45639920E0B423912D441472C1756FC77647FC9"
     }
   ],
-  "uiValidation": "reports/ui-source/v17/validation.md",
+  "uiValidation": "reports/ui-source/v18/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

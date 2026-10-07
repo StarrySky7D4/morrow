@@ -1,0 +1,19 @@
+{
+  "label": "reconcile-plain-C-without-paste-replay-preview",
+  "started": 1791350841061,
+  "screenshotAt": 1791350841374,
+  "layoutAt": 1791350842166,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\reconcile-plain-C-without-paste-replay-preview.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\reconcile-plain-C-without-paste-replay-preview.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v17\\device-clipboard\\reconcile-plain-C-without-paste-replay-preview.raw.json"
+  }
+}

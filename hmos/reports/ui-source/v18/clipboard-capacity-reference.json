@@ -1,0 +1,56 @@
+[
+  {
+    "format": "html",
+    "source_utf16": 2097152,
+    "source_byte_length": 6291420,
+    "source_sha256": "874bb7ac4f2ed7df1bff6f50744c984e8e0b81bd95f2b3513488a1c27f2b7dc5",
+    "accepted": true,
+    "paste_text": "ok",
+    "error": ""
+  },
+  {
+    "format": "html",
+    "source_utf16": 2097153,
+    "source_byte_length": 6291423,
+    "source_sha256": "285ef7d46c96ce5442afd6036e382012474dc0efdd8f61f38202509f02070c6c",
+    "accepted": false,
+    "paste_text": "",
+    "error": "FormatException: 富文本超过 2 MB，请将文档作为附件导入。"
+  },
+  {
+    "format": "xml",
+    "source_utf16": 2097152,
+    "source_byte_length": 6291332,
+    "source_sha256": "990848f3a40987175b68dea71d2befcffc865c941a33871775e12fe79847cf7d",
+    "accepted": true,
+    "paste_text": "| ok |\n| --- |",
+    "error": ""
+  },
+  {
+    "format": "xml",
+    "source_utf16": 2097153,
+    "source_byte_length": 6291335,
+    "source_sha256": "af327f0a6f368cad003ab8fb680ff4c0130b105fad3c84a5efd59b5afa664679",
+    "accepted": false,
+    "paste_text": "",
+    "error": "FormatException: 表格过大，请导入 Excel 文件。"
+  },
+  {
+    "format": "rtf",
+    "source_utf16": 8388608,
+    "source_byte_length": 25165754,
+    "source_sha256": "a192e051cb9311d0b0469745de84975cabfdd5289480be44814e34afe135ead0",
+    "accepted": true,
+    "paste_text": "ok",
+    "error": ""
+  },
+  {
+    "format": "rtf",
+    "source_utf16": 8388609,
+    "source_byte_length": 25165757,
+    "source_sha256": "70486a8a3fc0948a18fb35d06e1526ff77f857f8354dfe63749e0ed711fcf3ac",
+    "accepted": false,
+    "paste_text": "",
+    "error": "FormatException: RTF 过大，请导入原始文档。"
+  }
+]

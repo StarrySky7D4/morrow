@@ -1,0 +1,40 @@
+✔ actual ETS model and component-method harness expose their fresh source identity (1.0831ms)
+ℹ AttachmentImageGestures.ets SHA256 73af8dd840bab941c7a5acdbc45639920e0b423912d441472c1756fc77647fc9
+ℹ AttachmentImagePreview.ets normalized-source SHA256 484076c31dcf78dddb69b0ea27f6bb46c8fd753fc9763f0f07759ce9438442a8
+✔ tight Flutter layout box has effective scale 1 through 2.5 with clipped pan at identity (0.5445ms)
+✔ off-center pinch preserves the scene point underneath the fingers (0.1313ms)
+✔ moving two-finger focal point translates the already scaled image (0.1321ms)
+✔ pinch registration scale is normalized without a recognition-threshold jump (0.146ms)
+✔ single-finger pan uses the contain Image layout box, including letterboxing (0.1872ms)
+✔ both directions reverse immediately after hitting a pan boundary (0.1329ms)
+✔ moving pinch focal point reverses immediately after either boundary clips it (0.1309ms)
+✔ two-finger translation works without requiring a pinch distance change (0.1351ms)
+✔ two-finger pan supersedes one-finger pan and its late cancellation cannot cancel the new owner (0.2057ms)
+✔ pinch takes over both pan recognizers and parallel updates cannot double-apply translation (0.1801ms)
+✔ finished and cancelled tickets cannot update again; fresh gestures can proceed (0.1408ms)
+✔ old end and cancel tickets never control a newer gesture in the same preview (0.0979ms)
+✔ replacement, including reuse of the same token, revokes old starts, updates, ends and reset (0.14ms)
+✔ geometry changes reset the transform and reject all former geometry tickets (0.1068ms)
+✔ loading/background invalidation and disposal revoke tickets without autonomous replay (0.1286ms)
+✔ reset and button zoom invalidate any currently admitted gesture tickets (0.0923ms)
+✔ invalid gesture numbers and unusable viewport sizes cannot publish a corrupt transform (0.158ms)
+✔ returned view and scope snapshots cannot mutate the owned transform (0.0596ms)
+✔ actual component only admits status-1 decoded, finite, current exact token and URI (0.3332ms)
+✔ actual component pinch uses moving focal point and actual pan binds a separate ticket (0.4685ms)
+✔ actual component former preview callbacks cannot alter or fail the next preview (0.2198ms)
+✔ actual component geometry replacement revokes old gesture closures while retaining decode identity (0.1447ms)
+✔ actual component owner replacement changes its real ForEach key even if geometry and availability are unchanged (0.2297ms)
+✔ actual component foreground resume replaces callback owner and retains the current transform (0.1323ms)
+✔ actual component read loading/failure revokes former owner without resetting to another resource (0.4222ms)
+✔ actual component current decode failure stops gestures and preserves the original verified export (0.171ms)
+✔ actual component disappearance rejects source, gesture, reset and visibility late callbacks (0.1328ms)
+✔ actual component timestamp fences prevent queued old pan end/cancel from borrowing a new ticket (0.1329ms)
+✔ actual component timestamp fences prevent queued old pinch end/cancel from borrowing a new ticket (0.1188ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 317.0059

@@ -4,7 +4,15 @@ import { util } from '@kit.ArkTS';
 import { attachmentKind } from './Attachments';
 
 export type ClipboardFormat = 'plain' | 'html' | 'rtf' | 'xml' | '';
-export const CLIPBOARD_SOURCE_LIMIT: number = 2 * 1024 * 1024;
+// Flutter source.length counts UTF-16 units. Bytes are an independent envelope
+// for strict UTF-8 (+ optional BOM); UTF-16 BOM originals fit within it too.
+export const CLIPBOARD_SOURCE_UTF16_LIMIT: number = 2 * 1024 * 1024;
+export const CLIPBOARD_RTF_SOURCE_UTF16_LIMIT: number = 8 * 1024 * 1024;
+export const CLIPBOARD_SOURCE_BYTE_LIMIT: number = 3 * CLIPBOARD_SOURCE_UTF16_LIMIT + 3;
+export const CLIPBOARD_RTF_SOURCE_BYTE_LIMIT: number = 3 * CLIPBOARD_RTF_SOURCE_UTF16_LIMIT + 3;
+export function clipboardSourceByteLimit(format: ClipboardFormat): number {
+  return format === 'rtf' ? CLIPBOARD_RTF_SOURCE_BYTE_LIMIT : CLIPBOARD_SOURCE_BYTE_LIMIT;
+}
 const BATCH_BYTES: number = 64 * 1024 * 1024;
 const TYPES_LIMIT: number = 64;
 const TEXT = 'text/plain';
@@ -136,8 +144,13 @@ function textByteLength(text: string, maximum: number): number {
     const code = text.charCodeAt(i);
     if (code < 0x80) { total++; }
     else if (code < 0x800) { total += 2; }
-    else if (code >= 0xd800 && code <= 0xdbff && i + 1 < text.length && text.charCodeAt(i + 1) >= 0xdc00 && text.charCodeAt(i + 1) <= 0xdfff) {
+    else if (code >= 0xd800 && code <= 0xdbff) {
+      if (i + 1 >= text.length || text.charCodeAt(i + 1) < 0xdc00 || text.charCodeAt(i + 1) > 0xdfff) {
+        throw new Error('剪贴板文字含不配对的 UTF-16 代理项，未编码或保存该原件。');
+      }
       total += 4; i++;
+    } else if (code >= 0xdc00 && code <= 0xdfff) {
+      throw new Error('剪贴板文字含不配对的 UTF-16 代理项，未编码或保存该原件。');
     } else { total += 3; }
     if (total > maximum) { throw new Error('剪贴板原件超过读取预算。'); }
   }
@@ -218,12 +231,23 @@ export class ClipboardInput {
             else if (XML_TYPES.includes(type)) { format = 'xml'; }
             let bytes: Uint8Array;
             if (typeof raw === 'string' && format) {
-              const limit = format === 'plain' ? CLIPBOARD_SOURCE_LIMIT : BATCH_BYTES;
-              if (raw.length > limit || textByteLength(raw, limit) > limit) { throw new Error('剪贴板文字超过读取预算。'); }
-              bytes = new util.TextEncoder().encodeInto(raw);
+              // A system Unicode RTF flavor has no original document encoding.
+              // Serialize it explicitly as BOM UTF-8 so literal Unicode cannot
+              // be mistaken for ansicpg bytes; raw ArrayBuffer stays untouched.
+              const prefixBytes: number = format === 'rtf' ? 3 : 0;
+              const limit = format === 'plain' ? CLIPBOARD_SOURCE_BYTE_LIMIT : BATCH_BYTES - prefixBytes;
+              if (format === 'plain' && raw.length > CLIPBOARD_SOURCE_UTF16_LIMIT ||
+                raw.length > BATCH_BYTES || textByteLength(raw, limit) > limit) { throw new Error('剪贴板文字超过读取预算。'); }
+              const encoded = new util.TextEncoder().encodeInto(raw);
+              if (prefixBytes) {
+                bytes = new Uint8Array(encoded.byteLength + prefixBytes);
+                bytes[0] = 0xef; bytes[1] = 0xbb; bytes[2] = 0xbf; bytes.set(encoded, prefixBytes);
+              } else { bytes = encoded; }
             } else if (raw instanceof ArrayBuffer) { bytes = new Uint8Array(raw); }
             else { throw new Error('剪贴板格式值类型无法读取。'); }
-            if (format === 'plain' && bytes.byteLength > CLIPBOARD_SOURCE_LIMIT || bytes.byteLength > BATCH_BYTES || entry.bytes + bytes.byteLength > BATCH_BYTES) {
+            // Rich-format originals survive conversion limits, within the same
+            // attachment quota. Native checks decoded UTF-16 before conversion.
+            if (format === 'plain' && bytes.byteLength > CLIPBOARD_SOURCE_BYTE_LIMIT || bytes.byteLength > BATCH_BYTES || entry.bytes + bytes.byteLength > BATCH_BYTES) {
               throw new Error('剪贴板原件超过读取预算。');
             }
             entry.bytes += bytes.byteLength;

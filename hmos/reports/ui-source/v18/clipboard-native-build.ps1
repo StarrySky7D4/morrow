@@ -1,0 +1,31 @@
+param(
+  [ValidateSet('arm64-v8a','x86_64')][string]$Abi = 'arm64-v8a',
+  [string]$RepositoryRoot = (Get-Location).Path,
+  [string]$Sdk = 'C:\Program Files\Huawei\DevEco Studio\sdk\default\openharmony'
+)
+$ErrorActionPreference = 'Stop'
+$taskRepoRoot = (Resolve-Path -LiteralPath $RepositoryRoot).Path
+$taskHmosRoot = Join-Path $taskRepoRoot 'hmos'
+if (-not (Test-Path -LiteralPath (Join-Path $taskHmosRoot 'rust/Cargo.toml'))) { throw 'HMOS repository input missing' }
+$taskCargo = Join-Path $env:USERPROFILE '.cargo/bin/cargo.exe'
+$taskCapnp = Join-Path $env:LOCALAPPDATA 'Temp/kilo/capnp/capnproto-tools-win32-1.4.0'
+$env:Path = "$(Split-Path $taskCargo);$taskCapnp;$env:Path"
+$taskTarget = if ($Abi -eq 'arm64-v8a') { 'aarch64-unknown-linux-ohos' } else { 'x86_64-unknown-linux-ohos' }
+$taskClangTarget = if ($Abi -eq 'arm64-v8a') { 'aarch64-linux-ohos' } else { 'x86_64-linux-ohos' }
+$taskLlvm = Join-Path $Sdk 'native/llvm/bin'
+$taskSysroot = (Join-Path $Sdk 'native/sysroot').Replace('\','/')
+$taskSuffix = $taskTarget.Replace('-','_')
+$env:CC_SHELL_ESCAPED_FLAGS = '1'
+[Environment]::SetEnvironmentVariable("CC_$taskSuffix", (Join-Path $taskLlvm 'clang.exe'), 'Process')
+[Environment]::SetEnvironmentVariable("AR_$taskSuffix", (Join-Path $taskLlvm 'llvm-ar.exe'), 'Process')
+[Environment]::SetEnvironmentVariable("CFLAGS_$taskSuffix", "--target=$taskClangTarget --sysroot=`"$taskSysroot`"", 'Process')
+[Environment]::SetEnvironmentVariable("CARGO_TARGET_$($taskSuffix.ToUpper())_LINKER", (Join-Path $taskLlvm 'clang.exe'), 'Process')
+$env:CARGO_ENCODED_RUSTFLAGS = "-C$([char]31)link-arg=--target=$taskClangTarget$([char]31)-C$([char]31)link-arg=--sysroot=$taskSysroot"
+& $taskCargo build --locked --offline --release --lib --manifest-path (Join-Path $taskHmosRoot 'rust/Cargo.toml') --target $taskTarget --target-dir (Join-Path $taskHmosRoot '.build/rust')
+if ($LASTEXITCODE) { throw "v18 candidate Rust $taskTarget build failed" }
+# Candidates are deliberately separate from the published dev17 cpp/rust
+# archive inputs. Parent alone decides when a later HAP adopts these files.
+$taskOutput = Join-Path $taskHmosRoot ".build/clipboard-native/dev18/$Abi"
+New-Item -ItemType Directory -Force -Path $taskOutput | Out-Null
+Copy-Item -LiteralPath (Join-Path $taskHmosRoot ".build/rust/$taskTarget/release/libmorrow_hmos.a") -Destination (Join-Path $taskOutput 'libmorrow_hmos.a')
+Get-FileHash -LiteralPath (Join-Path $taskOutput 'libmorrow_hmos.a') -Algorithm SHA256

@@ -5,7 +5,7 @@ import { cryptoFramework } from '@kit.CryptoArchitectureKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import native from 'libmorrow.so';
 import { ImportCommand } from './Attachments';
-import { ClipboardSource, ClipboardSourceRead, ClipboardFormat, CLIPBOARD_SOURCE_LIMIT, checkClipboardSource, consumeClipboardSource } from './ClipboardInput';
+import { ClipboardSource, ClipboardSourceRead, ClipboardFormat, clipboardSourceByteLimit, checkClipboardSource, consumeClipboardSource } from './ClipboardInput';
 
 export const ATTACHMENT_IMPORT_BUDGET: number = 64 * 1024 * 1024;
 export const ATTACHMENT_EXPORT_LIMIT: number = 200 * 1024 * 1024;
@@ -493,7 +493,7 @@ export class AttachmentFiles {
     this.checked(value);
     if (!['plain', 'html', 'rtf', 'xml'].includes(format) ||
       !['title', 'description', 'hypothesis', 'conclusion', 'todos'].includes(section) ||
-      Number(value.byte_length) > CLIPBOARD_SOURCE_LIMIT) { throw new Error('剪贴板转换格式、目标或原件额度无效。'); }
+      Number(value.byte_length) > clipboardSourceByteLimit(format)) { throw new Error('剪贴板转换格式、目标或原件额度无效。'); }
     const sha = value.sha256.toLowerCase();
     if (!/^[0-9a-f]{64}$/.test(sha)) { throw new Error('剪贴板原件校验身份无效。'); }
     return localId ? JSON.stringify({ format: format, section: section, expected_sha256: sha, local_id: localId }) :

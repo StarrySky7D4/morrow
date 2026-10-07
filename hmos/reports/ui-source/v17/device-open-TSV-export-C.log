@@ -1,0 +1,24 @@
+C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\clipboard-device-check.cjs:45
+  } catch (error) { active.phase = 'FAILED_OR_UNKNOWN'; active.error = error.message; update(); throw error; } finally { active = undefined; }
+                                                                                                ^
+
+AssertionError [ERR_ASSERTION]: exact own pin export control
+    at [stdin]:2:180
+    at Object.stage (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\clipboard-device-check.cjs:44:20)
+    at [stdin]:2:3
+    at runScriptInThisContext (node:internal/vm:219:10)
+    at node:internal/process/execution:451:12
+    at [stdin]-wrapper:6:24
+    at runScriptInContext (node:internal/process/execution:449:60)
+    at evalFunction (node:internal/process/execution:283:30)
+    at evalTypeScript (node:internal/process/execution:295:3)
+    at node:internal/main/eval_stdin:51:5 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: undefined,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.14.1

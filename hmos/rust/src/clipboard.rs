@@ -5,7 +5,7 @@ use base64::{
     Engine, alphabet,
     engine::{DecodePaddingMode, GeneralPurpose, GeneralPurposeConfig},
 };
-use encoding_rs::{Encoding, WINDOWS_1252};
+use encoding_rs::{Encoding, UTF_8, WINDOWS_1252};
 use morrow_workbench_plugin::capture::{self, Node};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -15,7 +15,13 @@ use std::{
     io::{Read, Write},
 };
 
-pub const MAX_SOURCE_BYTES: usize = 2 * 1024 * 1024;
+pub const MAX_TEXT_SOURCE_UTF16: usize = 2 * 1024 * 1024;
+pub const MAX_RTF_SOURCE_UTF16: usize = 8 * 1024 * 1024;
+// Every valid UTF-8 scalar uses at most three bytes per UTF-16 unit. Include
+// its optional BOM; UTF-16 BOM payloads fit this same envelope. These byte
+// bounds are transport limits, not replacements for decoded source limits.
+pub const MAX_SOURCE_BYTES: usize = 3 * MAX_TEXT_SOURCE_UTF16 + 3;
+pub const MAX_RTF_SOURCE_BYTES: usize = 3 * MAX_RTF_SOURCE_UTF16 + 3;
 const MAX_NODES: usize = 1024;
 const MAX_DEPTH: usize = 40;
 const MAX_IMAGES: usize = 10;
@@ -91,13 +97,20 @@ fn validate(format: &str, section: &str, hash: &str) -> Result<()> {
     }
     Ok(())
 }
-fn read_source(reader: &mut impl Read, expected: &str) -> Result<Vec<u8>> {
+fn source_byte_limit(format: &str) -> usize {
+    if format == "rtf" {
+        MAX_RTF_SOURCE_BYTES
+    } else {
+        MAX_SOURCE_BYTES
+    }
+}
+fn read_source(reader: &mut impl Read, expected: &str, maximum: usize) -> Result<Vec<u8>> {
     let mut source = Vec::new();
     reader
-        .take((MAX_SOURCE_BYTES + 1) as u64)
+        .take((maximum + 1) as u64)
         .read_to_end(&mut source)
         .map_err(err)?;
-    if source.len() > MAX_SOURCE_BYTES {
+    if source.len() > maximum {
         return Err("ClipboardSourceByteLimit".into());
     }
     if hex(&Sha256::digest(&source)) != expected {
@@ -113,10 +126,20 @@ fn utf8(source: &[u8]) -> Result<&str> {
     }
     Ok(text)
 }
-fn text_source(source: &[u8]) -> Result<Cow<'_, str>> {
+fn source_utf16_limit(text: &str, maximum: usize) -> Result<()> {
+    if text.encode_utf16().take(maximum + 1).count() > maximum {
+        Err("ClipboardSourceUtf16Limit".into())
+    } else {
+        Ok(())
+    }
+}
+fn text_source(source: &[u8], maximum: usize) -> Result<Cow<'_, str>> {
     if source.starts_with(&[0xff, 0xfe]) || source.starts_with(&[0xfe, 0xff]) {
         if source.len() % 2 != 0 {
             return Err("ClipboardUtf16Required".into());
+        }
+        if source.len() / 2 - 1 > maximum {
+            return Err("ClipboardSourceUtf16Limit".into());
         }
         let little = source[0] == 0xff;
         let units = source[2..]
@@ -135,7 +158,9 @@ fn text_source(source: &[u8]) -> Result<Cow<'_, str>> {
         }
         Ok(Cow::Owned(text))
     } else {
-        Ok(Cow::Borrowed(utf8(source)?))
+        let text = utf8(source)?;
+        source_utf16_limit(text, maximum)?;
+        Ok(Cow::Borrowed(text))
     }
 }
 fn output_limit(text: &str) -> Result<()> {
@@ -634,9 +659,49 @@ fn flush_rtf(bytes: &mut Vec<u8>, out: &mut String, encoding: &'static Encoding)
     bytes.clear();
     Ok(())
 }
+struct RtfSourceUnits {
+    cursor: usize,
+    units: usize,
+}
+impl RtfSourceUnits {
+    fn through(&mut self, source: &[u8], end: usize, encoding: &'static Encoding) -> Result<()> {
+        // Count exact original syntax, including literal control words and
+        // escaped-hex spellings. Generated Markdown/RTF escapes are never a
+        // proxy for source size. Flush before an actual code-page transition.
+        let text = encoding
+            .decode_without_bom_handling_and_without_replacement(&source[self.cursor..end])
+            .ok_or("ClipboardRtfSourceEncoding")?;
+        let remaining = MAX_RTF_SOURCE_UTF16 - self.units;
+        let units = text.encode_utf16().take(remaining + 1).count();
+        if units > remaining {
+            return Err("ClipboardSourceUtf16Limit".into());
+        }
+        self.units += units;
+        self.cursor = end;
+        Ok(())
+    }
+}
+fn rtf_buffer_encoding(
+    unicode: bool,
+    hex_run: bool,
+    encoding: &'static Encoding,
+) -> &'static Encoding {
+    if unicode && !hex_run { UTF_8 } else { encoding }
+}
 /// Normalize ANSI/hex bytes separately from the immutable RTF source. Keep
 /// controls/destinations for the shared converter; never execute embedded data.
 fn normalize_rtf(source: &[u8]) -> Result<String> {
+    if source.starts_with(&[0xff, 0xfe])
+        || source.starts_with(&[0xfe, 0xff])
+        || source.starts_with(&[0xef, 0xbb, 0xbf])
+    {
+        let text = text_source(source, MAX_RTF_SOURCE_UTF16)?;
+        normalize_rtf_bytes(text.as_bytes(), true)
+    } else {
+        normalize_rtf_bytes(source, false)
+    }
+}
+fn normalize_rtf_bytes(source: &[u8], unicode: bool) -> Result<String> {
     if !source.starts_with(b"{\\rtf1") || source.contains(&0) {
         return Err("ClipboardRtfSyntax".into());
     }
@@ -650,10 +715,20 @@ fn normalize_rtf(source: &[u8]) -> Result<String> {
     let mut stack = Vec::new();
     let mut out = String::new();
     let mut bytes = Vec::new();
+    let mut hex_run = false;
+    let mut original = RtfSourceUnits {
+        cursor: 0,
+        units: 0,
+    };
     let mut i = 0;
     while i < source.len() {
+        let before_encoding = state.encoding;
         let byte = source[i];
         if byte == b'\\' && source.get(i + 1) == Some(&b'\'') {
+            if unicode && !hex_run {
+                flush_rtf(&mut bytes, &mut out, UTF_8)?;
+                hex_run = true;
+            }
             if i + 3 >= source.len() {
                 return Err("ClipboardRtfHex".into());
             }
@@ -675,13 +750,18 @@ fn normalize_rtf(source: &[u8]) -> Result<String> {
             }
             continue;
         }
+        if unicode && hex_run {
+            flush_rtf(&mut bytes, &mut out, state.encoding)?;
+            hex_run = false;
+        }
+        let buffer_encoding = rtf_buffer_encoding(unicode, hex_run, state.encoding);
         // In a DBCS run a raw trail byte may look like an RTF delimiter.
         // Byte runs are flushed in small complete chunks to avoid quadratic
         // decoding of a large paragraph. Escaped hex runs are handled above.
-        if !bytes.is_empty()
-            && !state.encoding.is_single_byte()
-            && state
-                .encoding
+        if matches!(byte, b'{' | b'}' | b'\\')
+            && !bytes.is_empty()
+            && !buffer_encoding.is_single_byte()
+            && buffer_encoding
                 .decode_without_bom_handling_and_without_replacement(&bytes)
                 .is_none()
         {
@@ -692,12 +772,16 @@ fn normalize_rtf(source: &[u8]) -> Result<String> {
         if !matches!(byte, b'{' | b'}' | b'\\') {
             bytes.push(byte);
             i += 1;
-            if bytes.len() >= 256 {
-                flush_rtf(&mut bytes, &mut out, state.encoding)?;
+            if bytes.len() >= 256
+                && buffer_encoding
+                    .decode_without_bom_handling_and_without_replacement(&bytes)
+                    .is_some()
+            {
+                flush_rtf(&mut bytes, &mut out, buffer_encoding)?;
             }
             continue;
         }
-        flush_rtf(&mut bytes, &mut out, state.encoding)?;
+        flush_rtf(&mut bytes, &mut out, buffer_encoding)?;
         if byte == b'{' {
             if stack.len() >= MAX_DEPTH {
                 return Err("ClipboardDepthLimit".into());
@@ -766,12 +850,12 @@ fn normalize_rtf(source: &[u8]) -> Result<String> {
                 "fcharset" if state.font_table => {
                     let encoding = font_encoding(number.ok_or("ClipboardRtfControl")?, default)?;
                     fonts.insert(state.font.ok_or("ClipboardRtfFont")?, encoding);
+                    state.encoding = encoding;
                 }
                 "cpg" if state.font_table => {
-                    fonts.insert(
-                        state.font.ok_or("ClipboardRtfFont")?,
-                        codepage(number.ok_or("ClipboardRtfControl")?)?,
-                    );
+                    let encoding = codepage(number.ok_or("ClipboardRtfControl")?)?;
+                    fonts.insert(state.font.ok_or("ClipboardRtfFont")?, encoding);
+                    state.encoding = encoding;
                 }
                 "uc" if number.is_none_or(|n| !(0..=16).contains(&n)) => {
                     return Err("ClipboardRtfUnicode".into());
@@ -783,14 +867,26 @@ fn normalize_rtf(source: &[u8]) -> Result<String> {
             }
             out.push_str(std::str::from_utf8(&source[start..i]).unwrap());
         }
-        if out.len() > MAX_SOURCE_BYTES * 4 {
+        if !std::ptr::eq(before_encoding, state.encoding) {
+            original.through(source, i, if unicode { UTF_8 } else { before_encoding })?;
+        }
+        if out.len() > MAX_RTF_SOURCE_UTF16 * 4 {
             return Err("ClipboardRtfNormalizationLimit".into());
         }
     }
-    flush_rtf(&mut bytes, &mut out, state.encoding)?;
+    flush_rtf(
+        &mut bytes,
+        &mut out,
+        rtf_buffer_encoding(unicode, hex_run, state.encoding),
+    )?;
     if !stack.is_empty() {
         return Err("ClipboardRtfSyntax".into());
     }
+    original.through(
+        source,
+        source.len(),
+        if unicode { UTF_8 } else { state.encoding },
+    )?;
     Ok(out)
 }
 fn normalized(request: &ConvertRequest, source: &[u8]) -> Result<Converted> {
@@ -798,12 +894,18 @@ fn normalized(request: &ConvertRequest, source: &[u8]) -> Result<Converted> {
     let description = request.section == "description";
     let (text, warnings, images) = match request.format.as_str() {
         "plain" => (
-            crate::markdown::paste_plain(&text_source(source)?, &request.section)?,
+            crate::markdown::paste_plain(
+                &text_source(source, MAX_TEXT_SOURCE_UTF16)?,
+                &request.section,
+            )?,
             vec![],
             vec![],
         ),
         "html" => {
-            let (nodes, images) = html(&text_source(source)?, &request.expected_sha256)?;
+            let (nodes, images) = html(
+                &text_source(source, MAX_TEXT_SOURCE_UTF16)?,
+                &request.expected_sha256,
+            )?;
             let (markdown, warnings) = capture::html(&nodes).map_err(err)?;
             (
                 if description {
@@ -816,7 +918,7 @@ fn normalized(request: &ConvertRequest, source: &[u8]) -> Result<Converted> {
             )
         }
         "xml" => {
-            let nodes = xml(&text_source(source)?)?;
+            let nodes = xml(&text_source(source, MAX_TEXT_SOURCE_UTF16)?)?;
             let (markdown, warnings) = capture::spreadsheet(&nodes).map_err(err)?;
             (
                 if description {
@@ -859,7 +961,11 @@ pub fn convert(input: &str, reader: &mut impl Read) -> Result<ConvertReply> {
     }
     let request: ConvertRequest = serde_json::from_str(input).map_err(|_| "ClipboardRequest")?;
     validate(&request.format, &request.section, &request.expected_sha256)?;
-    let source = read_source(reader, &request.expected_sha256)?;
+    let source = read_source(
+        reader,
+        &request.expected_sha256,
+        source_byte_limit(&request.format),
+    )?;
     Ok(normalized(&request, &source)?.reply)
 }
 pub fn extract_bytes(input: &str, reader: &mut impl Read, maximum: u64) -> Result<Vec<u8>> {
@@ -874,7 +980,11 @@ pub fn extract_bytes(input: &str, reader: &mut impl Read, maximum: u64) -> Resul
     if request.format != "html" {
         return Err("ClipboardImageFormat".into());
     }
-    let source = read_source(reader, &request.expected_sha256)?;
+    let source = read_source(
+        reader,
+        &request.expected_sha256,
+        source_byte_limit(&request.format),
+    )?;
     let converted = normalized(
         &ConvertRequest {
             format: request.format,
@@ -1282,6 +1392,212 @@ mod tests {
         );
     }
     #[test]
+    fn source_limit_counts_utf16_units_instead_of_utf8_bytes() {
+        for text in [
+            "中".repeat(MAX_TEXT_SOURCE_UTF16),
+            "😀".repeat(MAX_TEXT_SOURCE_UTF16 / 2),
+        ] {
+            assert!(text.len() > 2 * 1024 * 1024);
+            assert_eq!(
+                text_source(text.as_bytes(), MAX_TEXT_SOURCE_UTF16).unwrap(),
+                text
+            );
+            let over = text + "x";
+            assert!(
+                text_source(over.as_bytes(), MAX_TEXT_SOURCE_UTF16)
+                    .unwrap_err()
+                    .contains("SourceUtf16Limit")
+            );
+        }
+        let mut exact = vec![0xef, 0xbb, 0xbf];
+        exact.extend("中".repeat(MAX_TEXT_SOURCE_UTF16).as_bytes());
+        assert_eq!(exact.len(), MAX_SOURCE_BYTES);
+        let read = read_source(
+            &mut exact.as_slice(),
+            &hex(&Sha256::digest(&exact)),
+            MAX_SOURCE_BYTES,
+        )
+        .unwrap();
+        assert_eq!(
+            text_source(&read, MAX_TEXT_SOURCE_UTF16)
+                .unwrap()
+                .encode_utf16()
+                .count(),
+            MAX_TEXT_SOURCE_UTF16
+        );
+        // Accepting the whole source does not enlarge a field's output limit.
+        fail(
+            "plain",
+            &"x".repeat(MAX_TEXT_SOURCE_UTF16),
+            "MarkdownLimit:UTF16",
+        );
+    }
+    #[test]
+    fn bom_transport_envelope_does_not_replace_the_utf16_source_limit() {
+        for little in [true, false] {
+            let mut bytes = if little {
+                vec![0xff, 0xfe]
+            } else {
+                vec![0xfe, 0xff]
+            };
+            for unit in "中".repeat(MAX_TEXT_SOURCE_UTF16).encode_utf16() {
+                bytes.extend(if little {
+                    unit.to_le_bytes()
+                } else {
+                    unit.to_be_bytes()
+                });
+            }
+            assert!(bytes.len() > 2 * 1024 * 1024);
+            assert!(bytes.len() < MAX_SOURCE_BYTES);
+            assert_eq!(
+                text_source(&bytes, MAX_TEXT_SOURCE_UTF16)
+                    .unwrap()
+                    .encode_utf16()
+                    .count(),
+                MAX_TEXT_SOURCE_UTF16
+            );
+            bytes.extend(if little {
+                0x61_u16.to_le_bytes()
+            } else {
+                0x61_u16.to_be_bytes()
+            });
+            assert!(
+                text_source(&bytes, MAX_TEXT_SOURCE_UTF16)
+                    .unwrap_err()
+                    .contains("SourceUtf16Limit")
+            );
+        }
+    }
+    fn padded_source(prefix: &str, suffix: &str, maximum: usize, padding: &str) -> String {
+        assert_eq!(padding.encode_utf16().count(), 1);
+        let units = prefix.encode_utf16().count() + suffix.encode_utf16().count();
+        format!("{prefix}{}{suffix}", padding.repeat(maximum - units))
+    }
+    #[test]
+    fn html_and_xml_accept_complete_multibyte_sources_at_the_real_source_limit() {
+        for (format, prefix, suffix, output) in [
+            ("html", "<p title='", "'>ok</p>", "ok"),
+            (
+                "xml",
+                "<Table note='",
+                "'><Row><Cell><Data>ok</Data></Cell></Row></Table>",
+                "| ok |\n| --- |",
+            ),
+        ] {
+            let source = padded_source(prefix, suffix, MAX_TEXT_SOURCE_UTF16, "中");
+            assert!(source.len() > 2 * 1024 * 1024 && source.len() <= MAX_SOURCE_BYTES);
+            let reply = run(format, &source);
+            assert_eq!(reply.paste_text, output);
+            assert_eq!(reply.source_byte_length, source.len().to_string());
+            assert_eq!(reply.source_sha256, hex(&Sha256::digest(source.as_bytes())));
+            fail(
+                format,
+                &padded_source(prefix, suffix, MAX_TEXT_SOURCE_UTF16 + 1, "中"),
+                "SourceUtf16Limit",
+            );
+        }
+    }
+    #[test]
+    fn rtf_counts_original_control_spellings_before_the_shared_conversion() {
+        let prefix = "{\\rtf1\\ansi{\\info ";
+        let suffix = "}ok}";
+        let repeats = (MAX_RTF_SOURCE_UTF16 - prefix.len() - suffix.len()) / 4;
+        let mut exact = format!("{prefix}{}", "\\'e9".repeat(repeats));
+        exact.push_str(&" ".repeat(MAX_RTF_SOURCE_UTF16 - exact.len() - suffix.len()));
+        exact.push_str(suffix);
+        assert_eq!(exact.len(), MAX_RTF_SOURCE_UTF16);
+        assert_eq!(run("rtf", &exact).paste_text, "ok");
+        exact.insert_str(exact.len() - suffix.len(), "x");
+        fail("rtf", &exact, "SourceUtf16Limit");
+    }
+    #[test]
+    fn rtf_ansi_codepage_and_unicode_bom_sources_have_independent_capacity() {
+        // DBCS bytes are two bytes per source unit. Count decoded original
+        // grammar, rather than raw bytes or the UTF-8 normalized output.
+        let prefix = "{\\rtf1\\ansi\\ansicpg936{\\info ";
+        let suffix = "}ok}";
+        let exact = padded_source(prefix, suffix, MAX_RTF_SOURCE_UTF16, "中");
+        let (bytes, _, malformed) = encoding_rs::GBK.encode(&exact);
+        assert!(!malformed);
+        assert!(bytes.len() > MAX_RTF_SOURCE_UTF16 && bytes.len() <= MAX_RTF_SOURCE_BYTES);
+        let reply = convert(&request("rtf", "description", &bytes), &mut bytes.as_ref()).unwrap();
+        assert_eq!(reply.paste_text, "ok");
+        assert_eq!(reply.source_sha256, hex(&Sha256::digest(&bytes)));
+        drop(bytes);
+        drop(exact);
+        let unicode = padded_source("{\\rtf1\\ansi{\\info ", suffix, MAX_RTF_SOURCE_UTF16, "中");
+        let mut bom = vec![0xff, 0xfe];
+        for unit in unicode.encode_utf16() {
+            bom.extend(unit.to_le_bytes());
+        }
+        assert!(bom.len() <= MAX_RTF_SOURCE_BYTES);
+        let reply = convert(&request("rtf", "description", &bom), &mut bom.as_slice()).unwrap();
+        assert_eq!(reply.paste_text, "ok");
+        assert_eq!(reply.source_byte_length, bom.len().to_string());
+        bom.splice(bom.len() - 2..bom.len() - 2, [0x61, 0]);
+        assert!(
+            convert(&request("rtf", "description", &bom), &mut bom.as_slice())
+                .unwrap_err()
+                .contains("SourceUtf16Limit")
+        );
+    }
+    #[test]
+    fn rtf_unicode_bom_text_and_ansi_hex_runs_use_their_actual_encodings() {
+        let source = "{\\rtf1\\ansi\\ansicpg1252 中文😀 \\'e9}";
+        for kind in [0, 1, 2] {
+            let mut bytes = match kind {
+                0 => vec![0xef, 0xbb, 0xbf],
+                1 => vec![0xff, 0xfe],
+                _ => vec![0xfe, 0xff],
+            };
+            if kind == 0 {
+                bytes.extend(source.as_bytes());
+            } else {
+                for unit in source.encode_utf16() {
+                    bytes.extend(if kind == 1 {
+                        unit.to_le_bytes()
+                    } else {
+                        unit.to_be_bytes()
+                    });
+                }
+            }
+            let reply = convert(
+                &request("rtf", "description", &bytes),
+                &mut bytes.as_slice(),
+            )
+            .unwrap();
+            assert_eq!(reply.paste_text, "中文😀 é");
+            assert_eq!(reply.source_sha256, hex(&Sha256::digest(&bytes)));
+        }
+        let raw = format!("{{\\rtf1\\ansi\\ansicpg65001 {} }}", "中".repeat(300));
+        assert_eq!(run("rtf", &raw).paste_text, "中".repeat(300));
+    }
+    #[test]
+    fn format_byte_envelopes_remain_bounded_before_parsing_or_hash_acceptance() {
+        for format in ["plain", "html", "xml", "rtf"] {
+            let maximum = source_byte_limit(format);
+            assert_eq!(
+                maximum,
+                if format == "rtf" {
+                    MAX_RTF_SOURCE_BYTES
+                } else {
+                    MAX_SOURCE_BYTES
+                }
+            );
+            assert!(maximum < file_stream::MAX_IMPORT_BYTES as usize);
+            // The regular-FD reader has a byte-envelope + one sentinel bound.
+            // A mismatched request hash cannot turn an over-envelope source
+            // into accepted text; the source is never partially normalized.
+            let reader = std::io::repeat(b'x').take((maximum + 100) as u64);
+            let error = convert(
+                &request(format, "description", b"x"),
+                &mut reader.take(u64::MAX),
+            )
+            .unwrap_err();
+            assert_eq!(error, "ClipboardSourceByteLimit");
+        }
+    }
+    #[test]
     fn structural_output_and_table_budgets_never_silently_crop_content() {
         fail(
             "html",
@@ -1382,6 +1698,49 @@ mod tests {
                 value["paste_text"].as_str().unwrap(),
                 "actual Flutter {format}"
             );
+        }
+    }
+    #[test]
+    #[ignore = "requires a fresh actual Flutter capture in HMOS_CLIPBOARD_FLUTTER_CAPACITY_REFERENCE"]
+    fn actual_flutter_source_capacity_matches_six_complete_boundary_identities() {
+        let path = std::env::var("HMOS_CLIPBOARD_FLUTTER_CAPACITY_REFERENCE")
+            .expect("fresh Flutter capacity fixture path");
+        let values: Vec<serde_json::Value> =
+            serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+        assert_eq!(values.len(), 6);
+        for value in values {
+            let format = value["format"].as_str().unwrap();
+            let units = value["source_utf16"].as_u64().unwrap() as usize;
+            let (prefix, suffix) = match format {
+                "html" => ("<p title='", "'>ok</p>"),
+                "xml" => (
+                    "<Table note='",
+                    "'><Row><Cell><Data>ok</Data></Cell></Row></Table>",
+                ),
+                "rtf" => ("{\\rtf1\\ansi\\ansicpg65001{\\info ", "}ok}"),
+                _ => panic!("Unexpected capacity fixture format"),
+            };
+            let source = padded_source(prefix, suffix, units, "中");
+            assert_eq!(
+                source.len(),
+                value["source_byte_length"].as_u64().unwrap() as usize
+            );
+            assert_eq!(
+                hex(&Sha256::digest(source.as_bytes())),
+                value["source_sha256"].as_str().unwrap()
+            );
+            let result = convert(
+                &request(format, "description", source.as_bytes()),
+                &mut source.as_bytes(),
+            );
+            if value["accepted"].as_bool().unwrap() {
+                assert_eq!(
+                    result.unwrap().paste_text,
+                    value["paste_text"].as_str().unwrap()
+                );
+            } else {
+                assert_eq!(result.unwrap_err(), "ClipboardSourceUtf16Limit");
+            }
         }
     }
 }
