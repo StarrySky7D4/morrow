@@ -6,7 +6,7 @@ export struct EditorViewLease {
   @BuilderParam content: (owner: string) => void;
   onMounted: (owner: string) => void = (_owner: string): void => {};
   onRevoked: (owner: string) => void = (_owner: string): void => {};
-  private mountedOwner: string = '';
+  @State private mountedOwner: string = '';
 
   aboutToAppear(): void {
     this.mountedOwner = this.owner;
@@ -18,6 +18,8 @@ export struct EditorViewLease {
     if (owner) { this.onRevoked(owner); }
   }
   build() {
-    this.content(this.mountedOwner)
+    if (this.mountedOwner) {
+      this.content(this.mountedOwner)
+    }
   }
 }

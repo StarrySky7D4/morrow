@@ -1,0 +1,19 @@
+{
+  "label": "final-recover-after-input-D-v22-drafts",
+  "started": 1791370285276,
+  "screenshotAt": 1791370285476,
+  "layoutAt": 1791370286244,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\final-recover-after-input-D-v22-drafts.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\final-recover-after-input-D-v22-drafts.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\final-recover-after-input-D-v22-drafts.raw.json"
+  }
+}

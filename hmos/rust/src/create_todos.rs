@@ -59,6 +59,33 @@ fn dart_whitespace(value: char) -> bool {
 }
 
 pub fn prepare(card: &str, operation: &str, raw: &str) -> Result<Prepared, String> {
+    let labels = normalized_labels(raw)?;
+    let identity = (!raw.is_empty()).then(|| raw_identity(raw));
+    let tasks = labels
+        .into_iter()
+        .enumerate()
+        .map(|(index, text)| Task {
+            id: task_id(
+                card,
+                operation,
+                identity.as_ref().expect("nonempty task has raw source"),
+                index,
+            ),
+            text,
+            completion: Completion::Incomplete as i32,
+            legacy_completed: false,
+            legacy_duplicates: 0,
+        })
+        .collect();
+    Ok(Prepared {
+        tasks,
+        raw_identity: identity,
+    })
+}
+
+/// Same raw-field and view-row admission as creation, then actual Dart's
+/// LF/trim/blank/first-unique projection. Never normalizes the saved raw input.
+pub fn normalized_labels(raw: &str) -> Result<Vec<String>, String> {
     let measurement = crate::editor_field::inspect("todos", raw);
     debug_assert_eq!(measurement.limit, MAX_GRAPHEMES);
     if !measurement.ok {
@@ -69,23 +96,16 @@ pub fn prepare(card: &str, operation: &str, raw: &str) -> Result<Prepared, Strin
     if !raw.is_empty() && raw.split('\n').count() > MAX_ROWS {
         return Err("CreateTodosRowLimit".into());
     }
-    let identity = (!raw.is_empty()).then(|| raw_identity(raw));
     let mut seen = BTreeSet::new();
-    let mut tasks = Vec::new();
+    let mut labels = Vec::new();
     for line in raw.split('\n') {
         let text = line.trim_matches(dart_whitespace);
         if text.is_empty() || !seen.insert(text) {
             continue;
         }
-        tasks.push(Task {
-            id: task_id(card, operation, identity.as_ref().expect("nonempty task has raw source"), tasks.len()),
-            text: text.into(),
-            completion: Completion::Incomplete as i32,
-            legacy_completed: false,
-            legacy_duplicates: 0,
-        });
+        labels.push(text.into());
     }
-    Ok(Prepared { tasks, raw_identity: identity })
+    Ok(labels)
 }
 
 impl Prepared {

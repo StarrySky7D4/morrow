@@ -1,0 +1,10 @@
+{
+  "checkedUtc": "2026-10-07T10:40:45.833Z",
+  "archive": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev22-lease-diagnostic\\entry-default-unsigned.hap",
+  "bytes": 28799230,
+  "sha256": "009D613D0BB32C837F5A52BA827A1024A416C321EB63070D3345A33290A1511D",
+  "inputs": 311,
+  "signed": false,
+  "installed": false,
+  "scope": "Temporary console-only ownership diagnostics. Frozen UI candidate/native; no raw text logged and no new business backend included."
+}

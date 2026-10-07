@@ -1,0 +1,19 @@
+{
+  "label": "final-restore-D-v22-restored",
+  "started": 1791369896234,
+  "screenshotAt": 1791369896625,
+  "layoutAt": 1791369897385,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\final-restore-D-v22-restored.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\final-restore-D-v22-restored.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\final-restore-D-v22-restored.raw.json"
+  }
+}

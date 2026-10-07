@@ -1,0 +1,19 @@
+{
+  "label": "final-input-first-D-v22-input-17",
+  "started": 1791370071386,
+  "screenshotAt": 1791370071631,
+  "layoutAt": 1791370072340,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\final-input-first-D-v22-input-17.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\final-input-first-D-v22-input-17.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\final-input-first-D-v22-input-17.raw.json"
+  }
+}

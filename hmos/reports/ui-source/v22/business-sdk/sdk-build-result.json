@@ -1,0 +1,19 @@
+{
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\checkpoint-sdk-smoke\\business-dev22-2026-10-07T10-44-44-764Z",
+  "bundle_name": "dev.morrow.hmos.editorbusinesssdk",
+  "api": "26.0.0",
+  "daemon": false,
+  "exit_code": 0,
+  "verification_exit_code": 0,
+  "artifacts": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\checkpoint-sdk-smoke\\business-dev22-2026-10-07T10-44-44-764Z\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "bytes": 25774084,
+      "sha256": "8A09E79FEE2A57BFFA1A0BF505DCE54FB68504D5831B0532B87B5B59BACAE621"
+    }
+  ],
+  "runtime": "NOT_RUN",
+  "device": "NOT_RUN",
+  "installation": "NOT_RUN",
+  "qualification": "Independent EditorBusiness SDK compile only; no Index or native runtime qualification"
+}

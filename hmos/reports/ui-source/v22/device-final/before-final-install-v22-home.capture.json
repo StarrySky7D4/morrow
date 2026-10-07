@@ -1,0 +1,19 @@
+{
+  "label": "before-final-install-v22-home",
+  "started": 1791369876567,
+  "screenshotAt": 1791369876816,
+  "layoutAt": 1791369877534,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\before-final-install-v22-home.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\before-final-install-v22-home.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\before-final-install-v22-home.raw.json"
+  }
+}

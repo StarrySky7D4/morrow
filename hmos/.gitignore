@@ -39,6 +39,13 @@
 !/reports/ui-source/v20/device-integration/*.log
 !/reports/ui-source/v21/*.log
 !/reports/ui-source/v21/device-todos/*.log
+!/reports/ui-source/v21/device-fixed/*.log
+!/reports/ui-source/v22/*.log
+!/reports/ui-source/v22/lease/*.log
+!/reports/ui-source/v22/business-sdk/*.log
+!/reports/ui-source/v22/device-lease/*.log
+!/reports/ui-source/v22/device-diagnostic/*.log
+!/reports/ui-source/v22/device-final/*.log
 
 # The emulator keeps these streams open; publish frozen snapshots instead.
 /reports/ui-source/v13/emulator-start.stderr.log

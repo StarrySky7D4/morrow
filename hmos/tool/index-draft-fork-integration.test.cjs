@@ -43,7 +43,7 @@ assert.ok(fields.includes('editorViewRevoked') && fields.includes('rawForkParent
 const indexCode = compile('export class ActualIndex {\n' + fields + '\n' + methods + '\n}', indexPath);
 const leaseSource = fs.readFileSync(leasePath, 'utf8');
 const leaseCode = compile(leaseSource.replace('@Component\n', '').replace('export struct', 'export class')
-  .replace(/@Prop /g, '').replace(/@BuilderParam /g, ''), leasePath);
+  .replace(/@Prop |@State /g, '').replace(/@BuilderParam /g, ''), leasePath);
 
 function harness(options = {}) {
   let op = 0, timer = 0, page, lease; const modules = new Map(), timers = new Map(), events = [], slots = new Map(), history = new Map();
@@ -149,6 +149,18 @@ test('actual Index/lease and installed compiler identities are emitted', () => {
   for (const field of ['title', 'description', 'hypothesis', 'conclusion', 'todos']) assert.ok(source.includes("this.leaseTextChanged(owner, '" + field + "'"));
   assert.ok(source.includes('this.leaseTaskRenameChanged(owner, task.id, renameOwner'));
   assert.ok(source.includes('focusIntent: this.editorFocusIntent'));
+});
+
+test('actual view content waits for mounted admission and disappears after revocation', () => {
+  const api = {}; vm.runInNewContext(leaseCode, { exports: api }, { filename: leasePath });
+  const lease = new api.EditorViewLease(), content = []; let admitted = '';
+  lease.owner = 'view-A'; lease.onMounted = owner => { admitted = owner; };
+  lease.onRevoked = owner => { assert.equal(owner, admitted); admitted = ''; };
+  lease.content = owner => { assert.ok(owner); assert.equal(owner, admitted); content.push(owner); };
+  lease.build(); assert.equal(content.length, 0);
+  lease.aboutToAppear(); lease.build(); assert.deepEqual(content, ['view-A']);
+  lease.owner = 'replacement-prop'; lease.build(); assert.deepEqual(content, ['view-A', 'view-A']);
+  lease.aboutToDisappear(); lease.build(); assert.equal(content.length, 2); assert.equal(admitted, '');
 });
 test('first fixed ACK switches writer before complete latest child flush, then retires only parent proof', async () => {
   const first = gate(), h = harness({ effect: ({ command }) => command.action === 'draft_fork' ? first.promise : undefined });

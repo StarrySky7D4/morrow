@@ -1,0 +1,68 @@
+# Strict editor business foundation — source qualification
+
+2026-10-07. Implemented in the isolated `development-unsealed` adapter: `editor_save`, read-only `editor_commit_inspect`, and a single-transaction `continued_todos` V2 projection. This is native foundation source and actual Windows Store evidence. It does not implement a business-success draft successor, protected capture, automatic rebase, or Index UI wiring. New native archives, a product HAP, and device verification are **NOT_RUN by this worker**. Full Flutter parity remains **OPEN**.
+
+## Frozen wire and qualification
+
+Outer requests are `{action:'editor_save',editor_save:{request_json}}` and `{action:'editor_commit_inspect',editor_commit:{request_json,expected_revision}}`. `request_json` is the complete original UTF-8 JSON string. Its schema is `{schema_version:1,mode,business,publication,continuation}`. All business fields are required strings: `action,id,operation,source,title,description,hypothesis,conclusion,todos,category,stage`. Publication is `{draft_id,generation,save_operation,request_sha256}`; generation is a canonical positive decimal u64 and the hash is lowercase SHA256 of the canonical protobuf WriteRequest. Unknown envelope/submission fields fail closed.
+
+- `create`: empty business source, action `create`, no continuation. Complete original raw todos are checked before LF splitting, actual Dart trim, blank removal and first-unique ordering. Real V2 TaskIds bind card, operation and complete original raw identity. No view-row ID becomes a business ID.
+- `edit`: action `edit`, exact complete canonical idea/V2 source, empty todos, no continuation. Tasks and completion are preserved. A source owned by a strict create/continued marker requires `continued_todos`, preventing a plain edit from silently dropping that ownership.
+- `continued_todos`: action `edit`, exact original baseline source and publication source-kind 0. Continuation contains the constant complete root `root_request_json` plus latest baseline `{operation,revision,command_sha256,content_sha256,request_sha256,publication_sha256}`. It never recursively embeds every prior submission. A source-kind 1 raw fork does not automatically become an editable business successor.
+
+The optional `Reply.editor_commit` contains `commit_status`, `qualification`, card/operation/source/result revisions, event ID, command/content/original-wire/publication hashes, the publication tuple, exact `historical_card`, and `live_matches/live_revision`. Other collections are empty. Qualification is `development_editor_wire_v1`, `legacy_semantic_only`, or `absent`. Historical content SHA is over the complete immutable result Card bytes, also exposed as hex `historical_card.source`. Current card bytes are used only for equality/conflict diagnostics, never to construct the historical baseline. An absent inspect is a read snapshot, not a promise that a concurrent future commit cannot occur.
+
+Canonical publication SHA256 input is domain `morrow.hmos.editor-publication.v1\0`, framed card ID, framed draft ID, generation u64 little endian, framed save operation, and the 32 decoded canonical WriteRequest SHA bytes. Each string frame is UTF-8 byte length u64 little endian followed by exact UTF-8 bytes. This is not JSON hashing.
+
+## Same transaction, exact history, and authority
+
+Fresh registration search found field **50003** unused in shared/adapter Rust/proto before implementation; current fresh search finds it only in this new module. The length-delimited marker is `morrow.hmos.editor-wire.v1\0` + schema byte 1 + mode byte + original complete Submission wire SHA256 + canonical publication SHA256. It stores only two hashes and mode, not duplicate source/raw/continuation bodies. Existing 50001 and all unrelated Properties fields remain raw.
+
+Before a new write, the active exact draft generation/save operation must authorize all selected verified pins and the entire original business source. The same immutable save is decoded to verify canonical request SHA, full five raw fields, category/stage, and absence of active composition. No new export grant comes from a historical receipt. Before retry/inspect/root reconstruction, the actual Core operation history is established first; only then may immutable publication history be used. A later bad proof never reclassifies a proven committed operation as absent/not-committed. Complete rebuilt command bytes must match the actual original Core command, and both compact marker hashes must match. Whitespace/key ordering changes to the frozen Submission string are therefore changes of identity even when parsed semantics are equal.
+
+Root qualification reconstructs the actual original strict create with its complete original wire/publication and compares its immutable command/result. Latest baseline checks all six proof fields, exact source Card, root raw identity, actual command type, and stored marker. An ordinary favorite/task edit that merely copies an older marker cannot become a baseline: a continued command must have a qualified prior marker and a different result marker. This induction relies on the trusted development adapter being the registered marker producer; it is not signed/protected provenance and does not authorize arbitrary direct Core writers.
+
+One ordinary `host.create_content` or `host.edit_versioned_content` transaction writes final body, selected attachments, tasks, marker, original command/receipt and outbox. Complete source CAS is unchanged. Foreign advancement rejects a new submission instead of rebasing. Committed retries/inspect after advancement or draft retirement return the original historical result without a new business write. Unknown is not automatically replayed by the product protocol; the tests explicitly reopen and reconcile the same original wire.
+
+## Complete projection and independent budgets
+
+Continued labels use the same complete raw 1000-grapheme/100-view-row admission and actual Dart normalization as create. Retained labels keep their complete original Task payload bytes, TaskId, completion and unknown fields. Removed IDs become retired. New labels receive deterministic IDs bound to card, constant root operation, new operation, complete raw todos and normalized index; active and retired ID collisions reject. Reordering moves existing identities; changing a label removes/adds instead of guessing a positional rename. No migration origin or legacy completion is invented.
+
+The final raw scanner composes all common fields/category/stage/assets/tasks/retired IDs and compact marker before applying the unchanged shared final-body validation once. It preserves unknown Properties bytes, retained complete Task bytes, retained Asset payloads (or updates only known fields 1–4), outer Card/BlobRef/Relation unknown fields, favorite, icon/color and existing retired IDs. This avoids an intermediate 64KiB failure when a single save shortens old text while adding tasks. It still rejects a genuinely oversized final body.
+
+Unicode16 grapheme limits remain title60/todos1000/hypothesis5000/conclusion10000/description20000. Selection/composition raw coordinates stay UTF-16; strict save rejects composition without modifying the durable raw journal. Task text remains at most 2048 UTF-8 bytes; final Properties64KiB, shared task/retired limits, exact attachment/pin authority, draft quotas and development card limits are unchanged. Original UTF-8 Submission, complete outer JSON including string escaping, and complete success reply independently remain at most512KiB. The full predicted success JSON is validated before the business mutation. No trim/normalization/truncation is applied to the raw journal or common text fields.
+
+## Fresh evidence
+
+| Scope | Result | Evidence |
+| --- | --- | --- |
+| New native focused suite | **14 PASS, 0 FAIL, 2 default ignored**, 2.12s | [editor-business-rust-tests.log](editor-business-rust-tests.log) |
+| Actual Store loss of process/outcome | **1 PASS**, 3.37s; **14 vectors**: create and continued × seven real transaction boundaries | [editor-business-store-crash-tests.log](editor-business-store-crash-tests.log) |
+| Real Store DTO export | **1 PASS**, 0.21s; fresh create and continued complete wire + exact native DraftRecord + complete native reply | [editor-business-store-fixture-tests.log](editor-business-store-fixture-tests.log), [fixture](editor-business-store-fixture.json) |
+| Actual installed Dart/Characters normalization | **50 complete identities**, capture exit0; fresh Rust conditional comparison **1 PASS** | [capture](create-todos-dart-capture.log), [full reference](create-todos-reference.json), [comparison](create-todos-dart-compare-tests.log) |
+| Full default Rust regression | **158 PASS, 0 FAIL** (155 library +3 attachment binary), **9 default ignored**; library81.45s + attachment5.51s; a single complete default run | [editor-business-full-rust-tests.log](editor-business-full-rust-tests.log) |
+| New actual ETS cross-layer model | Peer reported **23 PASS, 0 FAIL, 0 SKIP**, including the real Store create/continued DTO fixture; not transport/runtime proof | [editor-business-model-final-tests.log](editor-business-model-final-tests.log) |
+| Native archive / final product HAP / device | **NOT_RUN by this worker** | Root owns subsequent build/adoption/device qualification |
+
+Focused checks include real Store/reopen/retry after current advancement and draft retirement, complete original wire/publication/root/baseline rejection, copied marker rejection, original command comparison, active composition/source-kind/outer-schema guards, legacy/absent scope, final-fit and final-overflow, full fields atomic change, raw nested/outer unknown bytes and verified actual attachment export, deterministic TaskId/retirement/completion, Unicode/row/task/protocol budgets and event-capacity Unknown without partial mutation. The pure completed-task projection check proves preservation by the projector; it does not grant a foreign task edit baseline authority.
+
+The explicit host-only crash test uses `--features morrow-core/fault-injection` and a subprocess exit86 at `after-begin`, `after-card`, `after-operation`, `after-event`, `after-task-evidence`, `before-commit`, `after-commit`. Parent opens the fresh Store after child exit; precommit cases retain complete prior state, after-commit has exact complete new result/command/receipt/outbox. Same-wire retry is exactly one business commit. Fault injection is not an additional release feature or a device-crash proof.
+
+Commands, run from repository root: `cargo test --manifest-path hmos/rust/Cargo.toml editor_business::tests -- --nocapture`; `cargo test --manifest-path hmos/rust/Cargo.toml editor_business::tests::actual_store_process_loss_is_all_or_nothing_and_retries_the_original_wire --features morrow-core/fault-injection -- --ignored --nocapture`; explicit `HMOS_EDITOR_BUSINESS_FIXTURE` then `... actual_store_dto_fixture -- --ignored --nocapture`; `C:/flutter/bin/cache/dart-sdk/bin/dart.exe --packages=build/io-safety-refactor/.dart_tool/package_config.json hmos/rust/src/create_todos/reference.dart`; explicit `HMOS_CREATE_TODOS_DART_REFERENCE` then `... create_todos::tests::actual_dart_vm_complete_normalization_outputs_match -- --ignored --nocapture`; full default `cargo test --manifest-path hmos/rust/Cargo.toml`.
+
+## Compatibility limits and source freeze
+
+Old commits without 50003 can only receive `legacy_semantic_only` after exact old command reconstruction; they cannot strict-save or create an owned continued baseline. This is deliberately **not a universal legacy edit inspection path**: the old edit publication gate checked four common texts but allowed differing pending todos/category/stage/composition. The new inspect five-field/no-composition gate can reject those older requests; an actual Store test covers this while retaining `effect=committed`. No marker is retroactively manufactured.
+
+No business-success draft successor/proto extension is added here. New native action wiring is foundation only; source-kind conversion, exact successful-business continuation and Index UI adoption remain separate required work. Existing frozen shared code, Cargo graph, C++/DTS, protected ParentLink and draft protocol were not modified. The existing generic execute worker carries these JSON actions; no new native FFI symbol/dependency/proto generation is required. Native inventories must include the new Rust module and its tests before a rebuilt archive is qualified.
+
+| Owned native input | SHA256 |
+| --- | --- |
+| `rust/src/editor_business.rs` (new) | `BE299723AF695C603CC8F1C41AFCC621FE0CF7EE94327903CD1EF5B1B86940C1` |
+| `rust/src/editor_business/tests.rs` (new) | `AE37C89C01A126CFDA071BDB4468E798157C191C741D34A068412718F890B7EF` |
+| `rust/src/create_todos.rs` (shared pure helper extraction) | `4C03E1118582F8930B75FF534480D92665BFE0D7920B7799860AAF233B0A5615` |
+| `rust/src/lib.rs` (minimal route/optional DTO) | `F2A3BC120EB4CA5348EF311DC9A8FFF2A2F46A62B78A0732F0CE23ECB33F717F` |
+| actual Store DTO fixture | `7930BBE56C010ED33D80806703B3CFF73D211FD4D631BEFD4681AE7E46D12C70` |
+| fresh actual Dart50 reference | `2495C566CF47645407946861195574C97D0CB9181055110EADAF0D87583E478C` |
+
+[Owned-source input inventory](editor-business-source-inputs.json) and [fresh identity check](editor-business-source-check.log) cover exactly these four owned native files, not a complete archive/build inventory. Source hashes stayed identical after the full regression. The new modules have not been linked into a new product package here; editor_save/inspect remain **unwired in Index** for this source checkpoint.

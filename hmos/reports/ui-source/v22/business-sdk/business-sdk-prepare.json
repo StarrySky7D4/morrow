@@ -1,0 +1,67 @@
+{
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\checkpoint-sdk-smoke\\business-dev22-2026-10-07T10-44-44-764Z",
+  "manifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\checkpoint-sdk-smoke\\business-dev22-2026-10-07T10-44-44-764Z\\source-copy-manifest.json",
+  "copied_files": 311,
+  "generated_files": 5,
+  "bundle": "dev.morrow.hmos.editorbusinesssdk",
+  "source_version": "0.1.0-hmos-dev.19",
+  "smoke_version": "0.1.0-editor-business-sdk-smoke.22",
+  "device": "NOT_RUN",
+  "installation": "NOT_RUN",
+  "actual_compile_inputs": [
+    {
+      "path": "entry/src/main/ets/model/EditorBusiness.ets",
+      "bytes": 26767,
+      "sha256": "6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf"
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorDraft.ets",
+      "bytes": 29143,
+      "sha256": "a3ae1e99d198fcba3cdef741a6f138612ad16979be42c7a8809003f00d04f965"
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorFieldPolicy.ets",
+      "bytes": 6929,
+      "sha256": "10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842"
+    },
+    {
+      "path": "entry/src/main/ets/model/Workbench.ets",
+      "bytes": 2393,
+      "sha256": "1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf"
+    },
+    {
+      "path": "entry/src/main/ets/model/Attachments.ets",
+      "bytes": 3048,
+      "sha256": "7375378a85bfee215979b271aa40aa69c351f32277dc669861a6aac136d30b3f"
+    },
+    {
+      "path": "entry/src/main/ets/model/Markdown.ets",
+      "bytes": 13451,
+      "sha256": "b1b173937d53f158d9d13a865a4f00d21baff6067d324ec5c0e2cd5089793fe9"
+    },
+    {
+      "path": "entry/src/main/cpp/types/libmorrow/index.d.ts",
+      "bytes": 1524,
+      "sha256": "6791086c2d958f95e54733a3fc0a87d5908acba9bddcab279aa69807363526f3"
+    }
+  ],
+  "rewritten_wrappers": [
+    {
+      "path": "AppScope/app.json5",
+      "from": "Fresh base prepare.cjs generated wrapper",
+      "before_bytes": 241,
+      "before_sha256": "65ad55d521ed0d6bc21528c673c8d7ac98ba421175db286b8c5a120fcabbbaca",
+      "after_bytes": 270,
+      "after_sha256": "71ca00295e7033d03c778f28daa93b044b46825dfd3c24884320a92f91ab86e4"
+    },
+    {
+      "path": "entry/src/main/ets/pages/CheckpointSdkSmoke.ets",
+      "from": "Fresh base prepare.cjs generated wrapper",
+      "before_bytes": 2332,
+      "before_sha256": "29da9117c5a3c6429704180828cc692183d8c8ba0b49af0edc77b61b1734b629",
+      "after_bytes": 3531,
+      "after_sha256": "a9f9e70fba20d1769190328f8824acdc2bd4f39973770713c0d73948bb2442a5"
+    }
+  ],
+  "runtime": "NOT_RUN"
+}

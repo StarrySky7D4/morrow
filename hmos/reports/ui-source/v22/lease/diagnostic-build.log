@@ -1,0 +1,305 @@
+> hvigor [32mFinished :entry:clean... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreBuild... after 98 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 14 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 20 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 1 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 1 s 274 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 16 ms [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 72 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessResource... after 3 ms [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 6 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 210 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 2 ms [39m
+> hvigor WARN: When performing compilation for the x86_64 architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor WARN: When performing compilation for the arm64-v8a architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 801 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 103 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 71 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 5 ms [39m
+> hvigor WARN: WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/Index.ets:2654:83
+ 'Function.bind' is not supported (arkts-no-func-bind)
+
+WARN: ArkTS:WARN: For details about ArkTS syntax errors, see FAQs
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/ClipboardInput.ets:173:32
+ To use this API, you need to apply for the permissions: ohos.permission.READ_PASTEBOARD [since 12]
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/ClipboardInput.ets:330:36
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:230:58
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:231:27
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:232:15
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:232:37
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:277:28
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:283:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:284:19
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:284:43
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:285:33
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:293:21
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:293:38
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:313:23
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:316:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:322:16
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:342:17
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:342:41
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:343:28
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:352:26
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:352:43
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:362:54
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:367:19
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:368:14
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:429:32
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:433:33
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:436:29
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:437:17
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:452:36
+ The system capacity of this api 'createMd' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:452:36
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:459:32
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:463:20
+ The system capacity of this api 'update' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:463:20
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:465:14
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:466:31
+ The system capacity of this api 'digest' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:466:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFiles.ets:593:33
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:98:59
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:99:15
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:101:78
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:102:64
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:105:59
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:106:13
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:107:53
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:107:100
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:124:57
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:124:77
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:126:33
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:130:59
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:130:79
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentImagePreview.ets:131:31
+ This API is unavailable to phone, tablet.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentMediaPreview.ets:26:26
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentMediaPreview.ets:27:27
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentMediaPreview.ets:28:15
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentMediaPreview.ets:29:26
+ The system capacity of this api 'media' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentMediaPreview.ets:29:32
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentMediaPreview.ets:32:69
+ The system capacity of this api 'media' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentMediaPreview.ets:43:55
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentMediaPreview.ets:44:52
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentMediaPreview.ets:45:53
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentMediaPreview.ets:46:56
+ The system capacity of this api 'media' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentMediaPreview.ets:51:25
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/AttachmentMediaPreview.ets:53:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFullscreen.ets:34:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFullscreen.ets:36:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFullscreen.ets:36:97
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFullscreen.ets:41:68
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFullscreen.ets:42:65
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFullscreen.ets:46:21
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFullscreen.ets:48:72
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFullscreen.ets:54:29
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/AttachmentFullscreen.ets:55:12
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/EditorInputHash.ets:5:34
+ The system capacity of this api 'createMd' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/EditorInputHash.ets:5:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/EditorInputHash.ets:6:16
+ The system capacity of this api 'update' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/EditorInputHash.ets:6:16
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/EditorInputHash.ets:7:31
+ The system capacity of this api 'digest' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/model/EditorInputHash.ets:7:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/EditorTodos.ets:289:48
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/Index.ets:216:54
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/Index.ets:217:59
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/Index.ets:218:58
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/Index.ets:219:58
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/Index.ets:220:53
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev22-lease-diagnostic/entry/src/main/ets/pages/Index.ets:221:59
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+
+> hvigor [32mFinished :entry:default@CompileArkTS... after 7 s 984 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgModuleJson... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessCompiledResources... after 1 ms [39m
+> hvigor [32mFinished :entry:default@PackageHap... after 360 ms [39m
+> hvigor [32mFinished :entry:default@PackingCheck... after 4 ms [39m
+> hvigor WARN: Will skip sign 'hos_hap'. No signingConfigs profile is configured in current project.
+             If needed, configure the signingConfigs in C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\.build\device-candidates\dev22-lease-diagnostic\build-profile.json5.
+> hvigor [32mFinished :entry:default@SignHap... after 2 ms [39m
+> hvigor [32mFinished :entry:default@CollectDebugSymbol... after 1 ms [39m
+> hvigor [32mFinished :entry:assembleHap... after 1 ms [39m
+> hvigor [32mBUILD SUCCESSFUL in 13 s 426 ms [39m
+
+34 tasks in total: 34 executed, 0 up-to-date

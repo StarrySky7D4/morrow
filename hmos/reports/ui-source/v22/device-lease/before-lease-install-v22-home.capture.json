@@ -1,0 +1,19 @@
+{
+  "label": "before-lease-install-v22-home",
+  "started": 1791369413988,
+  "screenshotAt": 1791369414227,
+  "layoutAt": 1791369414949,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-lease\\before-lease-install-v22-home.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-lease\\before-lease-install-v22-home.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-lease\\before-lease-install-v22-home.raw.json"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "label": "fixed-preserve-before-lease-D-v21-seek-7",
+  "started": 1791369278391,
+  "screenshotAt": 1791369278700,
+  "layoutAt": 1791369279423,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v21\\device-fixed\\fixed-preserve-before-lease-D-v21-seek-7.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v21\\device-fixed\\fixed-preserve-before-lease-D-v21-seek-7.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v21\\device-fixed\\fixed-preserve-before-lease-D-v21-seek-7.raw.json"
+  }
+}

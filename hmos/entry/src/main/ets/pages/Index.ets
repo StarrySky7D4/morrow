@@ -208,7 +208,7 @@ struct Index {
   @State rawForkStatus: string = '';
   private editorValues: DraftValues = new DraftValues();
   private draftSource: string = '';
-  private draftRestoreInput: boolean = false;
+  @State private draftRestoreInput: boolean = false;
   private draftSelectionPending: Set<string> = new Set();
   private draftFocusedFields: Set<string> = new Set();
   private draftCaptureBlocked: Set<string> = new Set();

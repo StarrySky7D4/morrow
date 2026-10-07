@@ -1,0 +1,60 @@
+{
+  "phase": "INSTALLED_AND_LAUNCHED",
+  "artifact": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev22-lease-diagnostic\\entry-default-unsigned.hap",
+  "sha256": "009D613D0BB32C837F5A52BA827A1024A416C321EB63070D3345A33290A1511D",
+  "baselineCommit": "f9c395a7cc7b1d3b0707b52f241565b758114614",
+  "sourceManifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\lease\\diagnostic-copy-manifest.json",
+  "device": "127.0.0.1:5555",
+  "versionName": "0.1.0-hmos-dev.19",
+  "versionCode": 1000019,
+  "actions": [
+    {
+      "label": "force-stop-before-install",
+      "args": [
+        "shell",
+        "aa",
+        "force-stop",
+        "dev.morrow.hmos"
+      ],
+      "phase": "ACKNOWLEDGED",
+      "at": "2026-10-07T10:41:39.466Z"
+    },
+    {
+      "label": "diagnostic-install",
+      "args": [
+        "install",
+        "-r",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev22-lease-diagnostic\\entry-default-unsigned.hap"
+      ],
+      "phase": "ACKNOWLEDGED",
+      "at": "2026-10-07T10:41:39.571Z"
+    },
+    {
+      "label": "bundle-after-install",
+      "args": [
+        "shell",
+        "bm",
+        "dump",
+        "-n",
+        "dev.morrow.hmos"
+      ],
+      "phase": "ACKNOWLEDGED",
+      "at": "2026-10-07T10:41:40.189Z"
+    },
+    {
+      "label": "start-after-install",
+      "args": [
+        "shell",
+        "aa",
+        "start",
+        "-a",
+        "EntryAbility",
+        "-b",
+        "dev.morrow.hmos"
+      ],
+      "phase": "ACKNOWLEDGED",
+      "at": "2026-10-07T10:41:40.343Z"
+    }
+  ],
+  "completed": "2026-10-07T10:41:40.586Z"
+}

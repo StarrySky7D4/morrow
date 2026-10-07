@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "scope": "owned source inputs only; not full native build inventory or archive qualification",
+  "entries": [
+    {
+      "path": "hmos/rust/src/editor_business.rs",
+      "sha256": "BE299723AF695C603CC8F1C41AFCC621FE0CF7EE94327903CD1EF5B1B86940C1",
+      "bytes": 40865
+    },
+    {
+      "path": "hmos/rust/src/editor_business/tests.rs",
+      "sha256": "AE37C89C01A126CFDA071BDB4468E798157C191C741D34A068412718F890B7EF",
+      "bytes": 39984
+    },
+    {
+      "path": "hmos/rust/src/create_todos.rs",
+      "sha256": "4C03E1118582F8930B75FF534480D92665BFE0D7920B7799860AAF233B0A5615",
+      "bytes": 4661
+    },
+    {
+      "path": "hmos/rust/src/lib.rs",
+      "sha256": "F2A3BC120EB4CA5348EF311DC9A8FFF2A2F46A62B78A0732F0CE23ECB33F717F",
+      "bytes": 57367
+    }
+  ]
+}

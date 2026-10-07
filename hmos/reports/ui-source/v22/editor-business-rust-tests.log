@@ -1,0 +1,35 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src\lib.rs (hmos\rust\target\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 16 tests
+test editor_business::tests::actual_store_dto_fixture ... ignored, requires explicit output path; exports real Store receipts for actual ETS cross-layer tests
+test editor_business::tests::actual_store_process_loss_is_all_or_nothing_and_retries_the_original_wire ... ignored, requires explicit morrow-core/fault-injection; fourteen real subprocess transaction boundaries
+test editor_business::tests::continued_projection_keeps_completed_task_raw_and_retired_ids_without_position_rename ... ok
+test editor_business::tests::byte_identical_original_json_and_exact_publication_proof_are_required_after_commit ... ok
+test editor_business::tests::legacy_history_is_semantic_only_and_absence_inspection_is_read_only ... ok
+test editor_business::tests::copied_marker_foreign_task_cannot_become_owned_baseline_or_strict_edit ... ok
+test editor_business::tests::historical_inspect_and_exact_retry_never_mix_current_advanced_or_retired_raw_values ... ok
+test editor_business::tests::event_capacity_unknown_reopens_and_retries_same_complete_original_wire ... ok
+test editor_business::tests::publication_full_values_composition_kind_and_outer_shape_are_not_borrowable ... ok
+test editor_business::tests::changed_continuation_baseline_or_root_never_mutates_and_current_is_not_a_rebase ... ok
+test editor_business::tests::continued_todos_full_field_order_membership_and_retirement_are_one_business_transaction ... ok
+test editor_business::tests::complete_final_fit_is_accepted_but_final_overflow_retains_raw_and_changes_no_business ... ok
+test editor_business::tests::strict_create_marker_and_full_historical_receipt_are_one_actual_store_commit ... ok
+test editor_business::tests::registered_marker_collision_and_legacy_edit_inspection_scope_are_explicit ... ok
+test editor_business::tests::strict_edit_retains_unknown_task_asset_outer_and_verified_attachment_bytes ... ok
+test editor_business::tests::full_grapheme_rows_task_bytes_and_reply_envelope_limits_fail_before_business_mutation ... ok
+
+test result: ok. 14 passed; 0 failed; 2 ignored; 0 measured; 148 filtered out; finished in 2.12s
+
+     Running unittests src\bin\hmos-attachment-check.rs (hmos\rust\target\debug\deps\hmos_attachment_check-a3f9af3be9b32370.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running unittests src\bin\hmos-self-check.rs (hmos\rust\target\debug\deps\hmos_self_check-f8a2d59b8a982b0d.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

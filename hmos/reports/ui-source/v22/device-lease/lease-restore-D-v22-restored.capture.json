@@ -1,0 +1,19 @@
+{
+  "label": "lease-restore-D-v22-restored",
+  "started": 1791369437846,
+  "screenshotAt": 1791369438117,
+  "layoutAt": 1791369438880,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-lease\\lease-restore-D-v22-restored.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-lease\\lease-restore-D-v22-restored.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-lease\\lease-restore-D-v22-restored.raw.json"
+  }
+}

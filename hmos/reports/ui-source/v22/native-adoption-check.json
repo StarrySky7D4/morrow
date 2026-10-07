@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "repository_sources": 267,
+  "inventory_complete": true,
+  "archives": 2,
+  "production_archives": 2,
+  "archive_identity": [
+    {
+      "abi": "arm64-v8a",
+      "path": ".build/editor-input-native/dev22-business-checkpoint/arm64-v8a/libmorrow_hmos.a",
+      "bytes": 56104946,
+      "sha256": "F3815F306E96618F8389B17E59679CDD1E1E477BC1324BE34943B579DBF2DAA4",
+      "production_path": "entry/src/main/cpp/rust/arm64-v8a/libmorrow_hmos.a"
+    },
+    {
+      "abi": "x86_64",
+      "path": ".build/editor-input-native/dev22-business-checkpoint/x86_64/libmorrow_hmos.a",
+      "bytes": 54511556,
+      "sha256": "5ADCB7BAD62417868DD6A2D03699B9D69C3267DE1072B8534E0926FE30DE6B41",
+      "production_path": "entry/src/main/cpp/rust/x86_64/libmorrow_hmos.a"
+    }
+  ],
+  "device": "NOT_RUN"
+}

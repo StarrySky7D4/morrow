@@ -2,11 +2,11 @@
 
 Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前源码版本为 **0.1.0-hmos-dev.19 开发预览**；尚未与 Flutter 功能等价，不能替代正式资料库。各版本的构建、模型与实际设备证据分别记录。
 
-2026-10-07 当前同步为 **编辑器生命周期与草稿接续界面修复检查点**：Index 接入冻结视图归属、完整 raw 接续和条件父草稿清理；旧视图回调不能写入替换编辑器。手动放弃、保留关闭和保存成功关闭采用分别核对的入口，未知结果保留原操作。多行待办 Add 自动焦点等待有效布局，用户转焦或旧事件会撤销过期请求。版本号仍 dev19，当前本地检查与设备边界见 [本轮验证](reports/ui-source/v21/validation.md)。
+2026-10-07 当前同步为 **恢复输入门禁修复与严格业务保存基础检查点**。Index 的恢复标志与视图挂载归属改为响应式状态，owner 未挂载时不构建输入控件，解除恢复后的待办 Add 禁用。`editor_save` / `editor_commit_inspect`、单次事务的 `continued_todos` 和独立 ETS 协调器已实现并完成有界验证，**尚未接入 Index，也没有业务成功后的 source0 子草稿交接**。版本仍 dev19；完整模型 **742/742 PASS**、fresh双ABI及最终API26产品构建 **SUCCESS /9.653s**，HAP **29,101,587字节 /41688FDA…**，334输入与四项包内native核对通过；新最终包未安装，见 [本轮验证](reports/ui-source/v22/validation.md)。
 
-接续保留原卡片 source，不自动解除业务 CAS 冲突；准确业务成功基线接续及 `editor_save` 后端仍未实现。SDK 生命周期撤销是应用接纳边界，不证明系统输入队列已排空。完整 Flutter/Windows 目标仍 **OPEN**。此前未接入 Index 的 [接续基础检查点](reports/ui-source/v20/retirement/validation.md)保留其交付时事实。
+现 Index 的 raw fork 继续保留原 source 和业务 CAS 冲突；新基础可核准确原 wire、publication 与历史结果，却不自动重基或恢复产品在途业务请求。完整 Rust **158 PASS /9 default ignored**、新专项14 PASS、实际 Store14故障边界、实际 Dart50全量 normalization 对照、ETS23项与隔离 API26 编译通过，分别见 [native审计](reports/ui-source/v22/editor-business-native-audit.md)和 [协调器审计](reports/ui-source/v22/editor-business-model-audit.md)。SDK 生命周期撤销仅是应用接纳边界，不证明系统输入队列已排空。完整 Flutter/Windows 目标仍 **OPEN**；[v21界面检查点](reports/ui-source/v21/validation.md)及更早报告保留各轮当时事实。
 
-设备仍运行提交 `eeca59f8` 的 **47690159…** 旧 UI 集成包。该包实际点击多行待办 Add 后出现焦点错误 **150003**；公开 D 草稿的标题和正文随后恢复并保留。**新的焦点修复、视图归属及 fork 接线尚无设备验证**，旧包恢复不能算新包通过。首页和空待办区的原截图及此前观察另见 [旧包设备记录](reports/ui-source/v20/device-integration/validation.md)；[原集成验证](reports/ui-source/v20/integration/validation.md)保留当时事实。
+API26/x64 设备已安装独立 UI 候选 **28,799,011字节 /96C0AB68…**，它只含 f9 界面加上述两项状态修复，复用旧 b486 native，**不含本轮新业务后端**。公开 D 恢复与Add空行限定 PASS；首次文字输入仍为 **FAILED_OR_UNKNOWN**（准确捕获字段undefined，Back退出）。之后独立恢复阶段 **PASS**，实际读回`first 汉字 🧪 é.`，原失败没有覆盖；再点保留仍 **FAILED_OR_UNKNOWN**，因“当前事件尚未完整捕获…草稿清理已停止”保持编辑器打开、草稿保留，完整关闭/业务保存闭环未通过。新最终产品包设备资格不得套用这个候选。旧150003崩溃及 [v21记录](reports/ui-source/v21/validation.md)保留原事实。
 
 此前发布的 **dev20 源码检查点** 新增 Flutter 输入格式处理、多行待办模型/组件和新卡待办原子保存，完整模型617项、Rust123项及实际Flutter/Dart对照通过。**当时 Index 尚未接入新UI，版本号仍dev19。** 该检查点包未安装；已发布dev19包的安装、旧草稿和TSV附件恢复另有设备记录。见 [原检查点范围](reports/ui-source/v20/checkpoint-status.md)与 [原验证记录](reports/ui-source/v20/validation.md)；以下dev19及更早段落保留其交付时事实。
 

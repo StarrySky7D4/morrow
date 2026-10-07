@@ -1,0 +1,13 @@
+{
+  "createdUtc": "2026-10-07T10:44:36.033Z",
+  "baseline": "f9c395a7cc7b1d3b0707b52f241565b758114614",
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-candidates\\dev22-lease-final",
+  "inputs": 311,
+  "artifact": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-candidates\\dev22-lease-final\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+  "archive": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev22-lease-final-checkpoint\\entry-default-unsigned.hap",
+  "bytes": 28799011,
+  "sha256": "96C0AB68BCB513251C56AC9E61543594762693BEFE280E31E24552C50679CA28",
+  "signed": false,
+  "installed": false,
+  "scope": "Actual product UI candidate: frozen f9 sources plus explicit ViewLease render and restore-state repairs; unchanged b486 native. Parallel new backend sources are excluded."
+}

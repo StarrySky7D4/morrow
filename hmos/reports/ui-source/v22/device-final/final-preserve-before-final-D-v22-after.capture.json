@@ -1,0 +1,19 @@
+{
+  "label": "final-preserve-before-final-D-v22-after",
+  "started": 1791370298450,
+  "screenshotAt": 1791370298720,
+  "layoutAt": 1791370299422,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\final-preserve-before-final-D-v22-after.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\final-preserve-before-final-D-v22-after.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-final\\final-preserve-before-final-D-v22-after.raw.json"
+  }
+}

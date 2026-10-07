@@ -1,0 +1,30 @@
+✔ prepare freezes all raw strings, full editing publication and exact original wire before asynchronous checks (221.5116ms)
+✔ native field policy, composition, exact raw and active publication are separate mandatory admission gates (609.3778ms)
+✔ owner or input epoch revoked during asynchronous validation cannot issue a proposal (64.1239ms)
+✔ Unknown retains one complete original save wire; retry is explicit even after late raw and owner replacement (56.5351ms)
+✔ late selection/composition or same-values away/back epoch cannot consume a valid historical result (56.7971ms)
+✔ initial definitive no-write failure is rejected; an Unknown retry cannot be downgraded by not_committed (108.5528ms)
+✔ full source digest and canonical framed publication independently bind strict history, including u64 over 2^53 (59.2823ms)
+✔ mismatched tuple/hash/revision/full source/common fields/duplicate identities never qualify or consume (770.6845ms)
+✔ inspect uses only exact historical DTO even when Reply.cards is newer, missing or deleted live state (100.4201ms)
+✔ snapshot absence does not resolve uncertain original save, generate a new operation or automatically retry (51.7948ms)
+✔ Unknown inspection retains its own same wire and cannot be confused with save transport (51.5575ms)
+✔ a qualified known commit remains committed on later damaged/oversize readback and cannot become absent (49.113ms)
+✔ restart restore preserves noncanonical JSON spacing/key order and exact retired publication history (52.4361ms)
+✔ legacy semantic-only history stays readonly and cannot acquire strict wire/publication or a continued root (48.9218ms)
+✔ continued todos derives constant original create plus latest six-field baseline through two own historical commits (51.2852ms)
+✔ foreign source/operation/owner and kind1 raw fork cannot be promoted to a business continuation (47.6041ms)
+✔ ordinary existing V2 edit rejects any nonempty legacy todos and cannot be used as an owned-root factory (96.4881ms)
+✔ complete escaped outer wire budget, not UTF16 length or inner JSON size, gates all proposals (59.3097ms)
+✔ inspect revision overflow/noncanonical identity and incomplete Unicode fail before any transport (188.1161ms)
+✔ missing editor_commit and oversized initial reply remain Unknown with exact retry, never use current cards fallback (97.0939ms)
+✔ full DTO is frozen before asynchronous source hashing, so caller mutation cannot change an admitted receipt (50.2098ms)
+✔ canonical publication supports the complete u64 range and history effect/status inconsistency is rejected (46.002ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3143.2051

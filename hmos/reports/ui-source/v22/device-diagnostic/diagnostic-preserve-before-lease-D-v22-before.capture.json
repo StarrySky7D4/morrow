@@ -1,0 +1,19 @@
+{
+  "label": "diagnostic-preserve-before-lease-D-v22-before",
+  "started": 1791369840558,
+  "screenshotAt": 1791369840874,
+  "layoutAt": 1791369841794,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-diagnostic\\diagnostic-preserve-before-lease-D-v22-before.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-diagnostic\\diagnostic-preserve-before-lease-D-v22-before.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v22\\device-diagnostic\\diagnostic-preserve-before-lease-D-v22-before.raw.json"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "label": "before-f9-install-v21-home",
+  "started": 1791368936650,
+  "screenshotAt": 1791368936900,
+  "layoutAt": 1791368937618,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v21\\device-fixed\\before-f9-install-v21-home.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v21\\device-fixed\\before-f9-install-v21-home.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v21\\device-fixed\\before-f9-install-v21-home.raw.json"
+  }
+}

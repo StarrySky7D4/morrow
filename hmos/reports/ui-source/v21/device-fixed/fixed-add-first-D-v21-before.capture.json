@@ -1,0 +1,19 @@
+{
+  "label": "fixed-add-first-D-v21-before",
+  "started": 1791368993710,
+  "screenshotAt": 1791368993973,
+  "layoutAt": 1791368994721,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v21\\device-fixed\\fixed-add-first-D-v21-before.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v21\\device-fixed\\fixed-add-first-D-v21-before.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v21\\device-fixed\\fixed-add-first-D-v21-before.raw.json"
+  }
+}

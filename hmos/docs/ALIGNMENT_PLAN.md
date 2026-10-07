@@ -2,9 +2,9 @@
 
 目标：持续跟进 `01a085bd-7a94-7f93-8a1f-1ecf417f5ee3`，直至 HMOS 追平 Windows 侧 UI 与大部分实现。独立 `hmos/` 工程、Rust 复用、ArkUI/NDK 路线不变；只推送 `codex/ArkTsUI`，不合并主线。
 
-2026-10-07 最新增量为 [编辑器生命周期与草稿接续界面修复](../reports/ui-source/v21/validation.md)：Index 已接冻结视图归属、raw fork、完整子草稿确认后的条件父清理，分别处理手动放弃、保留关闭和准确保存成功关闭；修复多行待办 Add 的过早焦点请求和旧焦点意图。业务来源不自动重基，`editor_save`/准确业务接续、跨进程业务 Unknown 原请求恢复和完整目标仍 **OPEN**。此前 [接续基础检查点](../reports/ui-source/v20/retirement/validation.md)保留未接线时的证据。
+2026-10-07 最新增量为 [恢复门禁修复与严格业务基础检查点](../reports/ui-source/v22/validation.md)：恢复标志和 lease 挂载归属改为响应式状态，解除恢复后 Add 禁用；新 `editor_save` / `editor_commit_inspect`、单事务 `continued_todos` 和独立 ETS 协调器已实现。准确原请求/publication/历史 result、Unknown 同 wire、恒定 root/latest baseline 与全文未知字段保留已有专项/Store/ETS证明。**新基础未接 Index，业务 source0 子草稿交接、产品在途原 wire 跨进程恢复和完整目标仍 OPEN**。原 rawfork 不自动解除 source 冲突；[v21报告](../reports/ui-source/v21/validation.md)及更早证据不追改。
 
-设备仍为 `eeca59f8` 的 **47690159…** 旧包，已实际复现 Add 焦点崩溃150003，公开 D 草稿随后恢复并保留。新修复包尚未安装；新焦点、lease/fork、关闭与多行保存重启流程均待实际验收，不能据旧包恢复填写通过。旧安装和页面观察另记 [设备范围](../reports/ui-source/v20/device-integration/validation.md)。
+设备已安装独立 UI 候选 **96C0AB68… /28,799,011字节**（f9加两项状态修复、旧b486 native，新业务源未包含）。公开D恢复与Add空行限定PASS；首次文字输入仍FAILED_OR_UNKNOWN，之后独立恢复PASS准确读回`first 汉字 🧪 é.`。随后保留关闭仍FAILED_OR_UNKNOWN，因未完整捕获事件而停止清理，现编辑器打开且草稿保留，不声称关闭/业务保存闭环完成。最终fresh新native产品742模型/HAP9.653s/29,101,587字节/41688FDA…通过但未安装，候选设备结果不能替代；旧失败证据保留。
 
 2026-10-07 此前交付的 [主页面 UI 集成源码检查点](../reports/ui-source/v20/integration/validation.md)：新卡多行待办与输入协调已接入 Index，粘贴/自动标题完整选区交接及迟到输入守卫已补。交付时版本号仍 dev19，新 UI 未设备验收；旧草稿清理成功后迟到输入的新身份持久接续尚未实现，完整目标 **OPEN**。此前 [dev20 源码检查点](../reports/ui-source/v20/checkpoint-status.md) 尚未接入 Index 的记录及其617项模型、123项Rust和实际Flutter/Dart对照保留为历史限定证据，以下记录同样保留各轮交付时事实。
 
@@ -50,14 +50,15 @@ dev.8 已接入原 `query_plan_v2` 的分页过滤、稳定排序和归并，复
 | 七种风格、玻璃模式、深度、色盘、组件材质跟随 | dev.5 已接基础面板/深度/材质跟随；错位边缘已修复 | 渲染参照、七风格交叉玻璃模式、主题切换、控件与过渡、跟随/循环/取消/保存/重启测试；不能只显示风格名称 |
 | 字体、语言、背景、窗口行为 | 系统字体/部分九语/内置纹理已接；文件导入与完整文案缺失 | 字体和背景选择器、持久 URI/授权、动态文案、可访问性与宽屏实测 |
 | 卡片、TaskId、分类/阶段、回收站 | dev.11 接阅读详情、显式编辑、复制、长按/菜单及持久前后移动和独立拖动柄；dev.4 完整 TaskId 编辑保留 | 补任务迁移、详情完整任务操作、拖动边缘自动滚动和鼠标/键盘交互矩阵；保持未知字段、CAS、原操作回执、删除时间规则 |
-| 字段字数、待办输入、完整未来粘贴 | Unicode16与Windows formatter已有真实对照；Index异步完整值检查、新卡多行1000/100行及单次create投影已接，本轮Add焦点修复和lease保护通过本地模型 | 下一步在新包核实际Add、多行输入/高度/拖动/保存重启；IME preview只保全并延迟formatter采用，SDK实时截短/任意候选恢复与全篇连续选择仍OPEN；保留UTF16选区及独立共享字节预算，不把模型算设备资格 |
+| 字段字数、待办输入、完整未来粘贴 | Unicode16/formatter原对照保持，Index新卡多行1000/100行及create TaskId已接；恢复门禁/lease响应式修复后的96C0候选恢复与Add空行有限PASS，首次准确输入FAILED_OR_UNKNOWN | 核准确输入、多行高度/拖动、保存/重启全闭环；IME preview延迟formatter、SDK实时截短/任意候选恢复与全篇连续选择仍OPEN，不把空行Add或纯模型算完整设备通过 |
 | 查询、排序、大库加载 | dev.8 已接原 Rust 计划、单次完整快照、完整属性搜索与稳定排序；去抖/待发合并/过期回包丢弃，真实失败与空结果分开 | 仍限定 256 张；需 UI 响应分页、大库内存/帧时和生产 guest/捕获资格。旧“最近添加”为反向 ID 顺序，不能宣称为创建时间排序 |
 | 正式 Rust 宿主和存储会话 | 未接；当前为独立未封存开发库 | 提取平台会话接口，HUKS、稳定身份、单库所有者、审计/备份/恢复契约；禁止绕过原宿主非 Windows 拒绝规则 |
-| 持久草稿、S1/S2、未知结果核对 | 独立development rawfork已接Index：准确父proof、origin4首pin/后续3、先子完整确认再条件父退休；lease撤销后分别准入手动弃稿、保留与准确保存成功关闭，Unknown同原请求显式核对 | 继续实现准确原业务wire/历史结果检查与source0后继，原子V2全篇todos投影；当前设计后端未实施，原业务source冲突不自动解除。业务原wire跨进程恢复、protected captured S1/S2、SDK未交付事件持久化仍OPEN；16槽/64MiB/256身份不放宽 |
+| 持久草稿、S1/S2、未知结果核对 | rawfork/准确父proof/首origin4后继3/先子durable再条件父退休与lease分别关闭保持；本轮补响应式恢复门禁，新严格业务历史检查独立实现 | 实现准确历史业务source0子草稿/祖先权限与Index接线，持久完整在途原wire；kind1 rawfork不自动重基。protected captured S1/S2、SDK未交付事件保全和完整关闭/重启仍OPEN；16槽/64MiB/256身份保持 |
+| 严格原子业务与owned全文todos | 新editor_save/inspect、原wire/pub/history绑定、恒定root/latest baseline、singletransaction continued_todos与独立ETS已实现；Rust158/9默认ignored、14专项、14实际Store故障向量、Dart50、ETS23及隔离SDK通过 | 接到真实Index保存/未知核对/准确source0接续；再次保存S2/S3/附件/外部CAS冲突/重启全流程验收。legacy文本成员规则与已有V2 TaskId编辑差异分别保留，50003不是protected证明 |
 | 附件、剪贴板、Markdown/富文本、导入导出 | dev.19在dev.17/18快照/原件/富转换基础上将完整输出改为Unicode16 grapheme≤20000，回执绑定完整UTF-16/UTF-8长度和版本；完整未来选区粘贴异步preflight及pin后重检。原source限制、SHA、64MiB/20槽/sidecar保持。独立API26双指tester编译main/test HAP与10工具模型通过，未安装/执行设备手势 | 本轮Rust106和三项条件Flutter对照fresh通过；完整ETS/HAP/native身份见v19最终验证。系统富内容/Office持久闭环、dev19字段/IME与图片手势设备NOT_RUN。RTF插件仍2Mi+64KiB，无异常fallback；严格坏编码/RTF U+FFFD、直接输入formatter行为、更严格字节预算、200MiB容量、完整格式/惯性/GIF仍有差距 |
 | 音乐、歌词、解密 | 空状态 | 复用 Rust 解密模块，播放器、播放列表、歌词、文件权限、后台/中断恢复实测 |
 | 插件包、动态 UI、HTTP/服务/文件任务 | 未接运行期宿主 | 跟进 Windows 实现与合约，接 Wasm 执行/权限/资源预算/服务与任务控制；区分 Windows 平台实现和共享业务块 |
-| 分发与资格 | 当前dev19/1000019检查点模型718/718、API26 HAP14.348s通过，28,796,777字节/5B62B7F3…；复用未改b486双ABI，264原生source/双库、4个包内native和322整包输入核对见 [v21验证](../reports/ui-source/v21/validation.md)。新包未安装，设备仍476901旧UI包 | 实际焦点/lease/fork/关闭、多行保存重启及旧包失败回归待验；字段/IME、富剪贴板、图片手势、拒权/空间耗尽等继续分项验收；签名、ARM64真机、HUKS和完整目标仍OPEN |
+| 分发与资格 | 版本dev19/1000019保持；v22模型742/742、fresh双ABI267完整原生inputs/两库采用、HAP9.653s/29,101,587字节/41688FDA…、334构建输入前后/disk及4包内so PASS。96C0 UI-only候选用旧native且仅分阶段设备资格；新最终包未安装，见 [v22验证](../reports/ui-source/v22/validation.md)；v21旧事实保留 | 验新包准确输入/多行保存重启/业务source0接续与完整关闭；签名、ARM64真机、HUKS、字段/IME/富内容/手势/拒权/空间耗尽及完整目标仍OPEN |
 
 每一轮更新源码观察与实际功能证据，保护 `shared/reference.json` 的冻结来源。上游在途代码不得未经审查直接覆盖。新版本截图、测试日志和构建输入哈希分别记录，旧图不能被当成新包验收。
 

@@ -1,0 +1,289 @@
+{
+  "cases": [
+    {
+      "name": "create",
+      "publication": {
+        "active": true,
+        "assets": [],
+        "consumed_imports": [],
+        "current_active": true,
+        "current_generation": "1",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "1",
+        "operation_id": "fixture-root-save",
+        "repeated": false,
+        "request_sha256": "ea3091a8d5bc9a880a6792aea6e1a6acb0b5274da3200309b38c3e90960b5cad",
+        "scope": {
+          "card_id": "strict-editor-card",
+          "draft_id": "fixture-root-draft",
+          "source": "",
+          "source_kind": 1,
+          "source_revision": "0"
+        },
+        "values": {
+          "assets": [],
+          "category": "灵感",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "conclusion"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "raw body 汉字 🧪 é."
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "hypothesis"
+          },
+          "stage": "待整理",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "strict title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": " beta \nalpha\nbeta\n😀"
+          }
+        }
+      },
+      "reply": {
+        "cards": [],
+        "drafts": [],
+        "editor_commit": {
+          "card_id": "strict-editor-card",
+          "command_sha256": "348b2a81d25bda6257e6b20bf6b2db9a10df188d48589a0e2b181a4cd9a85ab4",
+          "commit_status": "committed",
+          "content_sha256": "2a4792b9ed21003a2a5fc120916be962c38c0584e006719af8c2b4685f515294",
+          "event_id": "strict-original-create",
+          "historical_card": {
+            "assets": [],
+            "category": "灵感",
+            "conclusion": "conclusion",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "raw body 汉字 🧪 é.",
+            "favorite": false,
+            "hypothesis": "hypothesis",
+            "id": "strict-editor-card",
+            "revision": "1",
+            "source": "080112127374726963742d656469746f722d636172641a046964656120022801320c737472696374207469746c653a860408021a06e781b5e6849f2209e5be85e695b4e79086a201590a517461736b2d686d6f732d6372656174652d33336166396235316337646132346531323639376430306165616662633961323132386464306539653335393362656437636464343230373237356235336231120462657461a2015a0a517461736b2d686d6f732d6372656174652d333737623164623731613935363339313935303336643531646531316434326133373561353938363335303462353365643131333338633732633235363038361205616c706861a201590a517461736b2d686d6f732d6372656174652d346236663666353435336237333833633433616661393639643164396364303132393331633963343732633636303762333537643039303065373566313130371204f09f9880121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e763100b6916e465d43ed46c3afd8cd65fa4dfa273e37f6a7d1990e87d34f10c96bb9059ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e763100010166f77f4d8ae08f8c8e43c9081d1972a4d5aab7e39dba655acea1d88dd1aa47049b2456a29f4843601dc467630aa2cad26ef4a19b00880a1b8eefadb9a07b23b8",
+            "stage": "待整理",
+            "tasks": [
+              {
+                "completion": 0,
+                "id": "task-hmos-create-33af9b51c7da24e12697d00aeafbc9a2128dd0e9e3593bed7cdd4207275b53b1",
+                "text": "beta"
+              },
+              {
+                "completion": 0,
+                "id": "task-hmos-create-377b1db71a95639195036d51de11d42a375a59863504b53ed11338c72c256086",
+                "text": "alpha"
+              },
+              {
+                "completion": 0,
+                "id": "task-hmos-create-4b6f6f5453b7383c43afa969d1d9cd012931c9c472c6607b357d0900e75f1107",
+                "text": "😀"
+              }
+            ],
+            "title": "strict title"
+          },
+          "live_matches": true,
+          "live_revision": "1",
+          "operation": "strict-original-create",
+          "publication": {
+            "draft_id": "fixture-root-draft",
+            "generation": "1",
+            "request_sha256": "ea3091a8d5bc9a880a6792aea6e1a6acb0b5274da3200309b38c3e90960b5cad",
+            "save_operation": "fixture-root-save"
+          },
+          "publication_sha256": "9b2456a29f4843601dc467630aa2cad26ef4a19b00880a1b8eefadb9a07b23b8",
+          "qualification": "development_editor_wire_v1",
+          "request_sha256": "66f77f4d8ae08f8c8e43c9081d1972a4d5aab7e39dba655acea1d88dd1aa4704",
+          "revision": "1",
+          "source_revision": "0"
+        },
+        "effect": "committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": "1"
+      },
+      "request_json": "{\"business\":{\"action\":\"create\",\"category\":\"灵感\",\"conclusion\":\"conclusion\",\"description\":\"raw body 汉字 🧪 é.\",\"hypothesis\":\"hypothesis\",\"id\":\"strict-editor-card\",\"operation\":\"strict-original-create\",\"source\":\"\",\"stage\":\"待整理\",\"title\":\"strict title\",\"todos\":\" beta \\nalpha\\nbeta\\n😀\"},\"continuation\":null,\"mode\":\"create\",\"publication\":{\"draft_id\":\"fixture-root-draft\",\"generation\":\"1\",\"request_sha256\":\"ea3091a8d5bc9a880a6792aea6e1a6acb0b5274da3200309b38c3e90960b5cad\",\"save_operation\":\"fixture-root-save\"},\"schema_version\":1}"
+    },
+    {
+      "name": "continued_todos",
+      "publication": {
+        "active": true,
+        "assets": [],
+        "consumed_imports": [],
+        "current_active": true,
+        "current_generation": "1",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "1",
+        "operation_id": "fixture-continued-draft-save",
+        "repeated": false,
+        "request_sha256": "f81e4e843d50d1a6ac2e302617654ee3d2f76d989e1dfd5d4c3401d2f6453bf0",
+        "scope": {
+          "card_id": "strict-editor-card",
+          "draft_id": "fixture-continued-draft",
+          "source": "080112127374726963742d656469746f722d636172641a046964656120022801320c737472696374207469746c653a860408021a06e781b5e6849f2209e5be85e695b4e79086a201590a517461736b2d686d6f732d6372656174652d33336166396235316337646132346531323639376430306165616662633961323132386464306539653335393362656437636464343230373237356235336231120462657461a2015a0a517461736b2d686d6f732d6372656174652d333737623164623731613935363339313935303336643531646531316434326133373561353938363335303462353365643131333338633732633235363038361205616c706861a201590a517461736b2d686d6f732d6372656174652d346236663666353435336237333833633433616661393639643164396364303132393331633963343732633636303762333537643039303065373566313130371204f09f9880121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e763100b6916e465d43ed46c3afd8cd65fa4dfa273e37f6a7d1990e87d34f10c96bb9059ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e763100010166f77f4d8ae08f8c8e43c9081d1972a4d5aab7e39dba655acea1d88dd1aa47049b2456a29f4843601dc467630aa2cad26ef4a19b00880a1b8eefadb9a07b23b8",
+          "source_kind": 0,
+          "source_revision": "1"
+        },
+        "values": {
+          "assets": [],
+          "category": "灵感",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "conclusion"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "raw body 汉字 🧪 é."
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "hypothesis"
+          },
+          "stage": "待整理",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "strict title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "😀\nnew\nalpha"
+          }
+        }
+      },
+      "reply": {
+        "cards": [],
+        "drafts": [],
+        "editor_commit": {
+          "card_id": "strict-editor-card",
+          "command_sha256": "e128025568fde3a82bbd5ce6a13f958ae61bb837bbb9f38657e6fad1cb83a843",
+          "commit_status": "committed",
+          "content_sha256": "bb3521d99e8e0f72f3ddbd24529d6e71411864d096aa06474ae196711313b13d",
+          "event_id": "fixture-continued",
+          "historical_card": {
+            "assets": [],
+            "category": "灵感",
+            "conclusion": "conclusion",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "raw body 汉字 🧪 é.",
+            "favorite": false,
+            "hypothesis": "hypothesis",
+            "id": "strict-editor-card",
+            "revision": "2",
+            "source": "080112127374726963742d656469746f722d636172641a046964656120022802320c737472696374207469746c653adc0408028ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e763100b6916e465d43ed46c3afd8cd65fa4dfa273e37f6a7d1990e87d34f10c96bb905121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e1a06e781b5e6849f2209e5be85e695b4e790862a0a6879706f746865736973320a636f6e636c7573696f6e58006000a201590a517461736b2d686d6f732d6372656174652d346236663666353435336237333833633433616661393639643164396364303132393331633963343732633636303762333537643039303065373566313130371204f09f9880a2015b0a547461736b2d686d6f732d636f6e74696e7565642d6566643234623131396436316333653938333030333862326163303731343030356262366636323932396330316461343331333238316132386161663337323412036e6577a2015a0a517461736b2d686d6f732d6372656174652d333737623164623731613935363339313935303336643531646531316434326133373561353938363335303462353365643131333338633732633235363038361205616c706861b201517461736b2d686d6f732d6372656174652d333361663962353163376461323465313236393764303061656166626339613231323864643065396533353933626564376364643432303732373562353362319ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e7631000103e9e68a53188700f717d6a7fcb9a55c5676cf054853c2f9b5a0e887a7cd1a8844cfcfe9c8401e4b42f50c0cd352a1561c185dea1ada80ccea6f5918a1e01039455200",
+            "stage": "待整理",
+            "tasks": [
+              {
+                "completion": 0,
+                "id": "task-hmos-create-4b6f6f5453b7383c43afa969d1d9cd012931c9c472c6607b357d0900e75f1107",
+                "text": "😀"
+              },
+              {
+                "completion": 0,
+                "id": "task-hmos-continued-efd24b119d61c3e9830038b2ac0714005bb6f62929c01da4313281a28aaf3724",
+                "text": "new"
+              },
+              {
+                "completion": 0,
+                "id": "task-hmos-create-377b1db71a95639195036d51de11d42a375a59863504b53ed11338c72c256086",
+                "text": "alpha"
+              }
+            ],
+            "title": "strict title"
+          },
+          "live_matches": true,
+          "live_revision": "2",
+          "operation": "fixture-continued",
+          "publication": {
+            "draft_id": "fixture-continued-draft",
+            "generation": "1",
+            "request_sha256": "f81e4e843d50d1a6ac2e302617654ee3d2f76d989e1dfd5d4c3401d2f6453bf0",
+            "save_operation": "fixture-continued-draft-save"
+          },
+          "publication_sha256": "cfcfe9c8401e4b42f50c0cd352a1561c185dea1ada80ccea6f5918a1e0103945",
+          "qualification": "development_editor_wire_v1",
+          "request_sha256": "e9e68a53188700f717d6a7fcb9a55c5676cf054853c2f9b5a0e887a7cd1a8844",
+          "revision": "2",
+          "source_revision": "1"
+        },
+        "effect": "committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": "2"
+      },
+      "request_json": "{\"business\":{\"action\":\"edit\",\"category\":\"灵感\",\"conclusion\":\"conclusion\",\"description\":\"raw body 汉字 🧪 é.\",\"hypothesis\":\"hypothesis\",\"id\":\"strict-editor-card\",\"operation\":\"fixture-continued\",\"source\":\"080112127374726963742d656469746f722d636172641a046964656120022801320c737472696374207469746c653a860408021a06e781b5e6849f2209e5be85e695b4e79086a201590a517461736b2d686d6f732d6372656174652d33336166396235316337646132346531323639376430306165616662633961323132386464306539653335393362656437636464343230373237356235336231120462657461a2015a0a517461736b2d686d6f732d6372656174652d333737623164623731613935363339313935303336643531646531316434326133373561353938363335303462353365643131333338633732633235363038361205616c706861a201590a517461736b2d686d6f732d6372656174652d346236663666353435336237333833633433616661393639643164396364303132393331633963343732633636303762333537643039303065373566313130371204f09f9880121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e763100b6916e465d43ed46c3afd8cd65fa4dfa273e37f6a7d1990e87d34f10c96bb9059ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e763100010166f77f4d8ae08f8c8e43c9081d1972a4d5aab7e39dba655acea1d88dd1aa47049b2456a29f4843601dc467630aa2cad26ef4a19b00880a1b8eefadb9a07b23b8\",\"stage\":\"待整理\",\"title\":\"strict title\",\"todos\":\"😀\\nnew\\nalpha\"},\"continuation\":{\"baseline\":{\"command_sha256\":\"348b2a81d25bda6257e6b20bf6b2db9a10df188d48589a0e2b181a4cd9a85ab4\",\"content_sha256\":\"2a4792b9ed21003a2a5fc120916be962c38c0584e006719af8c2b4685f515294\",\"operation\":\"strict-original-create\",\"publication_sha256\":\"9b2456a29f4843601dc467630aa2cad26ef4a19b00880a1b8eefadb9a07b23b8\",\"request_sha256\":\"66f77f4d8ae08f8c8e43c9081d1972a4d5aab7e39dba655acea1d88dd1aa4704\",\"revision\":\"1\"},\"root_request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"create\\\",\\\"category\\\":\\\"灵感\\\",\\\"conclusion\\\":\\\"conclusion\\\",\\\"description\\\":\\\"raw body 汉字 🧪 é.\\\",\\\"hypothesis\\\":\\\"hypothesis\\\",\\\"id\\\":\\\"strict-editor-card\\\",\\\"operation\\\":\\\"strict-original-create\\\",\\\"source\\\":\\\"\\\",\\\"stage\\\":\\\"待整理\\\",\\\"title\\\":\\\"strict title\\\",\\\"todos\\\":\\\" beta \\\\nalpha\\\\nbeta\\\\n😀\\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"create\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"fixture-root-draft\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"ea3091a8d5bc9a880a6792aea6e1a6acb0b5274da3200309b38c3e90960b5cad\\\",\\\"save_operation\\\":\\\"fixture-root-save\\\"},\\\"schema_version\\\":1}\"},\"mode\":\"continued_todos\",\"publication\":{\"draft_id\":\"fixture-continued-draft\",\"generation\":\"1\",\"request_sha256\":\"f81e4e843d50d1a6ac2e302617654ee3d2f76d989e1dfd5d4c3401d2f6453bf0\",\"save_operation\":\"fixture-continued-draft-save\"},\"schema_version\":1}"
+    }
+  ],
+  "producer": "fresh actual Store"
+}

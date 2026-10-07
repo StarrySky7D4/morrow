@@ -1,0 +1,25 @@
+{"index_sha256":"b0a53c29beb0f7a54a2d6dfb3db0f6c74cabf316996bf46198f906ce97ac37e9","lease_sha256":"96624fe1f3adf1528bf188f0c7fffbe838454833499e3eda1bab48e428b4cff3","compiler":"4.9.5","scope":"controlled actual methods; no SDK queue/Store/device"}
+✔ actual Index/lease and installed compiler identities are emitted (2.5259ms)
+✔ actual view content waits for mounted admission and disappears after revocation (1.3158ms)
+✔ first fixed ACK switches writer before complete latest child flush, then retires only parent proof (110.8281ms)
+✔ first Unknown retains original wire while later full raw requires explicit same request retry (86.4456ms)
+✔ child Unknown blocks parent cleanup; exact child retry precedes latest fresh child generation (64.2597ms)
+✔ parent cleanup Unknown uses original retirement wire and preserves every later child capture (58.0905ms)
+✔ wrong first scope/fullraw/pin aliases and wrong retirement proof never authorize writer/cleanup (204.9904ms)
+✔ same raw with a different live owner cannot adopt first ACK or issue parent cleanup (55.0069ms)
+✔ an unselected Ready/Unknown import or pending spool cannot be silently left behind by fork (152.776ms)
+✔ capture incomplete during first ACK preserves both slots and never retires parent (52.8327ms)
+✔ manual discard waits for actual lease revoke; old callbacks cannot populate a new owner (59.7932ms)
+✔ second manual discard of the live child also requires revoke and never forks or revives it (41.8863ms)
+✔ incomplete detach capture stops deletion and remounts full values under a fresh lease (40.1112ms)
+✔ exact business close waits for lease and late accepted same-value epoch creates durable fork (102.4106ms)
+✔ discard Unknown stays detached and only explicit retry resends its original wire (40.8246ms)
+✔ rename incarnation and selection restoration timer cannot borrow a replacement lease (43.9505ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1595.2703
