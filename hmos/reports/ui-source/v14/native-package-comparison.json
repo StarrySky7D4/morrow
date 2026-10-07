@@ -1,0 +1,59 @@
+{
+  "checkedUtc": "2026-10-07T03:59:04.2908083Z",
+  "baseline": {
+    "version": "0.1.0-hmos-dev.13",
+    "artifact": ".build/artifacts/dev13/entry-default-unsigned.hap",
+    "bytes": 24549446,
+    "sha256": "F782293778D5049DFD8F4D59C77E63559DCF8D80A8C94F32C29B50DC3EC39143"
+  },
+  "current": {
+    "version": "0.1.0-hmos-dev.14",
+    "artifact": ".build/artifacts/dev14/entry-default-unsigned.hap",
+    "bytes": 24743359,
+    "sha256": "43E4021710E06FEAA268CC8BA762DFF43FAD4D9CAD7881D4EE72CC58BFF91502",
+    "matchesRootFixedArtifact": true
+  },
+  "nativeLibraries": [
+    {
+      "path": "libs/arm64-v8a/libc++_shared.so",
+      "bytes": 1262504,
+      "sha256": "F69947AF100B652E349AE51E4A4888BCC7A327DB9085272D318176EF1782BF0F",
+      "dev13Bytes": 1262504,
+      "dev13Sha256": "F69947AF100B652E349AE51E4A4888BCC7A327DB9085272D318176EF1782BF0F",
+      "identicalToDev13": true,
+      "comparison": "direct equality of base64 encodings of complete uncompressed library bytes; SHA-256 independently recorded"
+    },
+    {
+      "path": "libs/arm64-v8a/libmorrow.so",
+      "bytes": 8777960,
+      "sha256": "0661CF65DFBB62B063F9362C22380E7080AD0B17F999C9AB49176FC16DDEC0CC",
+      "dev13Bytes": 8777960,
+      "dev13Sha256": "0661CF65DFBB62B063F9362C22380E7080AD0B17F999C9AB49176FC16DDEC0CC",
+      "identicalToDev13": true,
+      "comparison": "direct equality of base64 encodings of complete uncompressed library bytes; SHA-256 independently recorded"
+    },
+    {
+      "path": "libs/x86_64/libc++_shared.so",
+      "bytes": 1294904,
+      "sha256": "09B9E3A97D3C01260B5E269E2CE15FE4D3B7C787B99DC4378295D4F35E2FA006",
+      "dev13Bytes": 1294904,
+      "dev13Sha256": "09B9E3A97D3C01260B5E269E2CE15FE4D3B7C787B99DC4378295D4F35E2FA006",
+      "identicalToDev13": true,
+      "comparison": "direct equality of base64 encodings of complete uncompressed library bytes; SHA-256 independently recorded"
+    },
+    {
+      "path": "libs/x86_64/libmorrow.so",
+      "bytes": 9219592,
+      "sha256": "9F47A37E6E4DCF21D9C8BA09F5C7E2973A024CCCC89A5502B528EBE8C063697D",
+      "dev13Bytes": 9219592,
+      "dev13Sha256": "9F47A37E6E4DCF21D9C8BA09F5C7E2973A024CCCC89A5502B528EBE8C063697D",
+      "identicalToDev13": true,
+      "comparison": "direct equality of base64 encodings of complete uncompressed library bytes; SHA-256 independently recorded"
+    }
+  ],
+  "addedNativeLibraries": [],
+  "removedNativeLibraries": [],
+  "allNativeLibrariesIdentical": true,
+  "trackedNativeSourceDiffFromDev13": [],
+  "qualification": "This demonstrates reuse of exact dev13 packaged library bytes. It is not a fresh ARM64 build or physical-device acceptance, and does not assert latest upstream Rust parity."
+}

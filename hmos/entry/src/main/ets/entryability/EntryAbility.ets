@@ -20,7 +20,10 @@ import { window } from '@kit.ArkUI';
 const DOMAIN = 0x0000;
 
 export default class EntryAbility extends UIAbility {
+  private windowGeneration: number = 0;
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+    AppStorage.setOrCreate('hmos-foreground', true);
+    AppStorage.setOrCreate('hmos-fullscreen-policy-ready', false);
     try {
       this.context.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET);
     } catch (err) {
@@ -30,19 +33,32 @@ export default class EntryAbility extends UIAbility {
   }
 
   onDestroy(): void {
+    this.windowGeneration++;
+    AppStorage.setOrCreate('hmos-foreground', false);
+    AppStorage.setOrCreate('hmos-fullscreen-policy-ready', false);
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onDestroy');
   }
 
   onWindowStageCreate(windowStage: window.WindowStage): void {
+    const generation = ++this.windowGeneration;
+    AppStorage.setOrCreate('hmos-fullscreen-policy-ready', false);
     // Main window is created, set main page for this ability
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
 
     // Keep the responsive workspace usable in both orientations while
     // respecting the user's system rotation lock.
-    windowStage.getMainWindow().then((mainWindow: window.Window) => {
-      return mainWindow.setPreferredOrientation(window.Orientation.AUTO_ROTATION_RESTRICTED);
+    windowStage.getMainWindow().then(async (mainWindow: window.Window): Promise<void> => {
+      if (generation !== this.windowGeneration) { return; }
+      await mainWindow.setPreferredOrientation(window.Orientation.AUTO_ROTATION_RESTRICTED);
+      if (generation !== this.windowGeneration) { return; }
+      // This application owns its baseline bar policy. The SDK has no getter
+      // for enabled bars, so fullscreen restores this explicit known policy.
+      await mainWindow.setWindowSystemBarEnable(['status', 'navigation']);
+      if (generation !== this.windowGeneration) { return; }
+      AppStorage.setOrCreate('hmos-fullscreen-window-id', mainWindow.getWindowProperties().id);
+      AppStorage.setOrCreate('hmos-fullscreen-policy-ready', true);
     }).catch((err: Error) => {
-      hilog.warn(DOMAIN, 'Morrow', 'Could not set adaptive orientation: %{public}s', err.message);
+      hilog.warn(DOMAIN, 'Morrow', 'Could not establish application window policy: %{public}s', err.message);
     });
 
     windowStage.loadContent('pages/Index', (err) => {
@@ -55,16 +71,20 @@ export default class EntryAbility extends UIAbility {
   }
 
   onWindowStageDestroy(): void {
+    this.windowGeneration++;
+    AppStorage.setOrCreate('hmos-fullscreen-policy-ready', false);
     // Main window is destroyed, release UI related resources
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onWindowStageDestroy');
   }
 
   onForeground(): void {
+    AppStorage.setOrCreate('hmos-foreground', true);
     // Ability has brought to foreground
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onForeground');
   }
 
   onBackground(): void {
+    AppStorage.setOrCreate('hmos-foreground', false);
     // Ability has back to background
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onBackground');
   }

@@ -1,0 +1,167 @@
+✔ picker opens exact authorized URI, native streams Unicode bytes, returned metadata has no path (5.6369ms)
+✔ picker cancellation does not prepare or create spool (1.2833ms)
+✔ provider open denial closes caller files and removes unadmitted private directory (1.5358ms)
+✔ native over-budget partial prepare is removed (1.0245ms)
+✔ unknown import retains exact original JSON and recovery supports only the same proposal (2.5515ms)
+✔ 20 retained requests block picker before provider admission (2.7923ms)
+✔ remaining quota includes reserved sidecars of unknown imports (1.1103ms)
+✔ bad native whole hash never opens save picker (1.3142ms)
+✔ verified short export truncates longer destination, syncs and checks final size (2.2816ms)
+✔ provider destination stat unsupported is explicitly unconfirmed (1.2115ms)
+✔ private image preview is verified, one at a time, and token-scoped cleanup (1.4781ms)
+✔ dialog and inline previews coexist, and every original token is released independently (1.1362ms)
+✔ inline admission permits eight files then blocks before native read, including another adapter (1.6422ms)
+✔ single dialog admission is shared across adapters, while foreign release cannot delete it (1.241ms)
+✔ inline byte quota uses immutable native metadata and restores only after release (4.5139ms)
+✔ inline refuses missing or invalid pre-admission length "" (0.7197ms)
+✔ inline refuses missing or invalid pre-admission length "-1" (0.48ms)
+✔ inline refuses missing or invalid pre-admission length "01" (0.4301ms)
+✔ inline refuses missing or invalid pre-admission length "1.0" (0.4659ms)
+✔ inline refuses missing or invalid pre-admission length "9007199254740992" (0.4577ms)
+✔ inline refuses missing or invalid pre-admission length "67108865" (0.4263ms)
+✔ unexpected inline result length is rejected and its private partial is removed (0.8814ms)
+✔ invalid purpose does not read native bytes or create private paths (0.5179ms)
+✔ preview identity rejects copied handles and every mutated display/path field (0.72ms)
+✔ failed preview URI conversion cleans its private copy and caller descriptor (0.6639ms)
+✔ failed token cleanup retains admission and can be explicitly retried (0.7879ms)
+✔ failed cleanup remains visible without a UI handle, explicit retry restores dialog admission (1.0496ms)
+✔ same-cache new helper retries old failed cleanup, old owner release does not touch disk twice (1.2002ms)
+✔ explicit cleanup skips healthy live tokens and preserves failed quota when retry also fails (0.9892ms)
+✔ explicit retry keeps immutable inline bytes until actual removal then restores byte budget (1.0414ms)
+✔ cache-root identity isolates cleanup and quotas even for a nested cache directory (0.9158ms)
+✔ Flutter image scale range is finite and panning stays inside contained image geometry (0.5846ms)
+✔ preview length mismatch removes private copy and closes FD (0.7353ms)
+✔ unknown preview copy result removes private partial bytes without retry (0.6515ms)
+✔ provider copy failure is unconfirmed and private export is cleaned (0.8685ms)
+✔ crash after mkdtemp before data creation cleans only strict unadmitted directory (0.8071ms)
+✔ crash with partial data and undefined metadata, no request, frees quota (0.6769ms)
+✔ crash with partial data and  metadata, no request, frees quota (0.7503ms)
+✔ crash with partial data and {"spool_id": metadata, no request, frees quota (0.7307ms)
+✔ metadata write failure during live pick leaves no admitted request or caller FD (1.0273ms)
+✔ 20 crashed preparations are cleaned before a new picker request (3.2593ms)
+✔ existing corrupt request "" is retained with diagnostic and no handle (0.8749ms)
+✔ existing corrupt request "{\"action\":" is retained with diagnostic and no handle (0.7545ms)
+✔ existing corrupt request "null" is retained with diagnostic and no handle (0.6828ms)
+✔ existing corrupt request "{}" is retained with diagnostic and no handle (0.6479ms)
+✔ existing corrupt request "{\"action\":\"import_file\",\"import_request\":[]}" is retained with diagnostic and no handle (0.6861ms)
+✔ partial metadata and partial request remain visible, neither becomes an import handle (0.6921ms)
+✔ missing metadata with a valid request is preserved (0.7122ms)
+✔ schema-invalid or mismatched retained request {"sha256":"0000000000000000000000000000000000000000000000000000000000000000"} is not importable (0.8013ms)
+✔ schema-invalid or mismatched retained request {"kind":"unknown"} is not importable (0.6481ms)
+✔ schema-invalid or mismatched retained request {"expected_generation":"18446744073709551616"} is not importable (0.693ms)
+✔ schema-invalid or mismatched retained request {"operation_id":""} is not importable (0.6381ms)
+✔ symlink directory is never recursively removed or exposed (0.7065ms)
+✔ symlink data is never recursively removed or exposed (0.6107ms)
+✔ symlink metadata.json is never recursively removed or exposed (0.561ms)
+✔ symlink request.json is never recursively removed or exposed (0.6308ms)
+✔ permission failure does not imply request absence and prevents quota admission (0.7946ms)
+✔ unexpected child directory survives recursive SDK rmdir and blocks new admission (1.0006ms)
+✔ unknown namespace is retained, diagnosed, and cannot be quota-evicted (0.6552ms)
+✔ complete preparation without request recovers an opaque handle for explicit use (0.7308ms)
+✔ corrupt cached metadata invalidates the old in-memory handle (0.9938ms)
+✔ cleanup failure remains visible and blocks the unsafe cached item (0.7602ms)
+✔ oversized corrupt journals count actual bytes and block a new picker (0.7452ms)
+✔ diagnostics are copied so caller mutation cannot hide retained review state (0.66ms)
+✖ system open lease uses bounded safe original suffix and exact read metadata (1.5028ms)
+✔ system open requires preadmitted canonical length within 200 MiB (2.7505ms)
+✖ system open actual byte length mismatch removes unregistered candidate (0.765ms)
+✔ safe system preview filename preserves suffix under Unicode truncation (0.5897ms)
+✖ system open admission is shared but independent of image dialog and inline leases (1.2499ms)
+✖ failed system open cleanup retains immutable admission until explicit retry (0.7616ms)
+✔ verified private URI and SDK MIME reach the system viewer, launch never releases bytes (3.3842ms)
+✔ forged, wrong-purpose and arbitrary provider URI candidates are rejected without adopting or opening (0.8484ms)
+✔ all guarded executable families avoid system dispatch and safely release unopened lease (5.979ms)
+✔ MIME hints follow PreviewKit values and unknown names remain unspecified (0.7134ms)
+✔ support failure or unsupported file before dispatch removes own file and does not launch (1.8849ms)
+✔ a pre-existing singleton window is never replaced or closed by candidate opening (0.786ms)
+✔ UI navigation, foreground observation and window disappearance retain bytes for possible external readers (0.7834ms)
+✔ close and successful closure observation preserve bytes until explicit all-readers-finished action (0.8586ms)
+✔ finish refuses while the system preview is still displayed (0.732ms)
+✔ open rejection after dispatch is unknown and never automatically replayed or removed (0.773ms)
+✔ silent launch without observed window remains retained rather than being treated as reader completion (1.0701ms)
+✔ observation and closure failures retain the known capability and permit only explicit retry (1.0646ms)
+✔ close resolution without observed closure cannot authorize removal (1.2778ms)
+✔ failed file removal keeps original capability across adapter recreation, retry does not reopen (1.3478ms)
+✔ failed pre-dispatch cleanup does not claim ownership of unrelated singleton on later retries (0.891ms)
+✔ mutation during support await cannot inject another file URI into dispatch (1.1608ms)
+✔ queued finish waits for dispatch settlement and never removes in-flight bytes (1.4163ms)
+✔ returned UI snapshots cannot alter retained session or expose private URI (0.9471ms)
+✔ cleanup uses original immutable token after a post-dispatch caller mutation (0.7355ms)
+✔ audio prepares paused with time controls and never starts automatically (2.8604ms)
+✔ video waits for its exact token surface and prepares once irrespective of callback order (1.2321ms)
+✔ close before awaited open admission cannot create a player or expose a deleted lease (0.2805ms)
+✔ close awaits late factory creation and releases without loading that source (0.4246ms)
+✔ close waits for pending native initialization before releasing the player (0.6271ms)
+✔ close awaits an already executing play instead of releasing its descriptor mid-command (0.4426ms)
+✔ surface observed before native initialization is used only after initialized (0.7568ms)
+✔ failed prepare remains failed with controls disabled and releasable ownership (0.609ms)
+✔ rejected release keeps resource ownership and an explicit close can retry (0.5732ms)
+✔ reopening never bypasses a failed previous release or starts another source (0.345ms)
+✔ concurrent close callers share one cleanup and stale events cannot update a replacement (0.4315ms)
+✔ latest concurrent opening wins with no native work from a superseded admission (0.1555ms)
+✔ controls reject invalid positions and serialize accepted actions before release (0.7003ms)
+✔ background pauses an in-flight accepted play without restoring autoplay (0.7936ms)
+✔ media failure is visible and callbacks cannot silently recover or automatically replay (0.1815ms)
+✔ source and view snapshots cannot be mutated to substitute another file (0.1954ms)
+✔ actual SDK adapter uses readonly nofollow FD with exact byte extent, then release before fd close (27.8783ms)
+✔ actual SDK adapter retains descriptor when native release fails and retries only after explicit close (13.821ms)
+✔ actual SDK adapter retains failed FD close after player release, retry never re-releases the player (10.3693ms)
+✔ actual SDK adapter holds partial initialization resources for cleanup and never feeds mismatched bytes to AVPlayer (20.037ms)
+ℹ tests 109
+ℹ suites 0
+ℹ pass 105
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 486.5133
+
+✖ failing tests:
+
+test at hmos\tool\attachment-files-model.test.cjs:554:1
+✖ system open lease uses bounded safe original suffix and exact read metadata (1.5028ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'file://dev.morrow.hmos/app/cache/morrow-preview-000001/.._%E4%B8%AD%E6%96%87_report.PDF'
+  - 'file://test/app/cache/morrow-preview-000001/.._中文_report.PDF'
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\attachment-files-model.test.cjs:558:72)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'file://dev.morrow.hmos/app/cache/morrow-preview-000001/.._%E4%B8%AD%E6%96%87_report.PDF',
+    expected: 'file://test/app/cache/morrow-preview-000001/.._中文_report.PDF',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\attachment-files-model.test.cjs:569:1
+✖ system open actual byte length mismatch removes unregistered candidate (0.765ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at noFilesUnder (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\attachment-files-model.test.cjs:207:43)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\attachment-files-model.test.cjs:571:32)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\attachment-files-model.test.cjs:578:1
+✖ system open admission is shared but independent of image dialog and inline leases (1.2499ms)
+  Error: 预览缓存清理尚未完成，请明确重试清理。
+      at AttachmentFiles.cleanupPreview (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\model\AttachmentFiles.ets:625:19)
+      at async C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\model\AttachmentFiles.ets:610:13
+
+test at hmos\tool\attachment-files-model.test.cjs:589:1
+✖ failed system open cleanup retains immutable admission until explicit retry (0.7616ms)
+  Error: 部分预览缓存仍未清理，请保留提示并再次核对。
+      at C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\model\AttachmentFiles.ets:658:23

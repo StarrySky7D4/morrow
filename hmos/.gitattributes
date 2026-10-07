@@ -7,3 +7,6 @@ reports/ui-source/v12/bundle-*.json whitespace=cr-at-eol
 reports/ui-source/v13/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 reports/ui-source/v13/bundle-*.json whitespace=cr-at-eol
 reports/ui-source/v13/emulator-instances-after-start.json whitespace=-blank-at-eof,cr-at-eol
+reports/ui-source/v14/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
+reports/ui-source/v14/bundle-*.json whitespace=cr-at-eol
+reports/ui-source/v14/fixtures/*.pdf binary

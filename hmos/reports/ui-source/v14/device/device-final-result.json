@@ -1,0 +1,13 @@
+{
+  "finalHapSha256": "43E4021710E06FEAA268CC8BA762DFF43FAD4D9CAD7881D4EE72CC58BFF91502",
+  "installation": "PASS",
+  "draftRestore": "PASS",
+  "fixture": "HMOS-media-20261007-A",
+  "selectedAssets": 0,
+  "businessPublished": false,
+  "providerSelection": "STOPPED_BEFORE_FILE_SELECTION",
+  "mediaDecode": "NOT_RUN",
+  "mediaFullscreen": "NOT_RUN",
+  "audibleOutput": "NOT_RUN",
+  "systemFileContent": "NOT_RUN"
+}

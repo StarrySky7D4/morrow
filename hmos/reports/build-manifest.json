@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-10-07T03:33:16.546Z",
+  "createdUtc": "2026-10-07T04:00:03.154Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.13",
+  "hmosVersion": "0.1.0-hmos-dev.14",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 24549446,
-    "sha256": "F782293778D5049DFD8F4D59C77E63559DCF8D80A8C94F32C29B50DC3EC39143",
+    "bytes": 24743359,
+    "sha256": "43E4021710E06FEAA268CC8BA762DFF43FAD4D9CAD7881D4EE72CC58BFF91502",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "A3462CAF7084AC0C3531009E788537281DD191D80F32C5C755B237E8F531F11F"
+      "sha256": "B63A4A9BB6B657757C60C1ADD28E3138873DB3E009424F62EF63A2F3405AC746"
     },
     {
       "path": "entry/build-profile.json5",
@@ -64,7 +64,7 @@
     },
     {
       "path": "entry/src/main/ets/entryability/EntryAbility.ets",
-      "sha256": "9D9D3D304EDCC475C65ACD9CBD3FC2C62F1F8504AACC8400CAF370AF9537BA1A"
+      "sha256": "879C0E1F5D32794717DE35167156A28AE1C7B9270A9EBF5A37EB37DA3190CD10"
     },
     {
       "path": "entry/src/main/ets/entrybackupability/EntryBackupAbility.ets",
@@ -76,7 +76,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "415A518151180059F493A6F2DE678E316D7220607E39830D86AEB5F5718B3584"
+      "sha256": "CD56FBF27715AA9E7F8683858F808E7506688F1F0734DB99DD24BF8CE59A544E"
     },
     {
       "path": "hvigor/hvigor-config.json5",
@@ -1120,7 +1120,7 @@
     },
     {
       "path": "entry/src/main/ets/model/AttachmentFiles.ets",
-      "sha256": "7CDBF049F26642650342D2FAB5236B245A62FDE4C21F4AF6874B4F11446BD27D"
+      "sha256": "44EF11CF29E0EB9ECDCDFB2572C90FB0CADCE7909BDF0F4E89DF5A0EDC648212"
     },
     {
       "path": "entry/src/main/ets/model/Attachments.ets",
@@ -1181,8 +1181,24 @@
     {
       "path": "entry/src/main/ets/pages/AttachmentImagePreview.ets",
       "sha256": "DF9822E6286DEEDCB22804D3C091130077843587F9F3C5577A0D22481AC4B36E"
+    },
+    {
+      "path": "entry/src/main/ets/model/AttachmentPlayback.ets",
+      "sha256": "03447394C58439F8D09DA4448919668120E7AFD1A2A5755054605F55ED2EA817"
+    },
+    {
+      "path": "entry/src/main/ets/pages/AttachmentMediaPreview.ets",
+      "sha256": "E3B21B5CF0446A48C0853774AF31390D8BC6D15CA4B0D6707B6E3D6FEA070E2B"
+    },
+    {
+      "path": "entry/src/main/ets/model/AttachmentOpen.ets",
+      "sha256": "92D0C07AB7FFE5B8A5622E4DC731B07713EE6B46B5967A56249668205409506B"
+    },
+    {
+      "path": "entry/src/main/ets/model/AttachmentFullscreen.ets",
+      "sha256": "36CCB92A53F1918C8795E31E43E6F0FD723EF61E8A718E0B88BC6FE9ECD4EE42"
     }
   ],
-  "uiValidation": "reports/ui-source/v13/validation.md",
+  "uiValidation": "reports/ui-source/v14/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

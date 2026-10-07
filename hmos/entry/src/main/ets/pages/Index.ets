@@ -2,6 +2,10 @@ import { ColorWheel } from './ColorWheel';
 import { MarkdownDoc, MarkdownPreviewCoordinator, MarkdownAttachment, collectMarkdownImages, resolveMarkdownImage } from '../model/Markdown';
 import { MarkdownPreview } from './MarkdownPreview';
 import { AttachmentImagePreview } from './AttachmentImagePreview';
+import { AttachmentMediaPreview, createAttachmentPlayer } from './AttachmentMediaPreview';
+import { AttachmentPlayback, PlaybackSource, PlaybackView } from '../model/AttachmentPlayback';
+import { AttachmentOpen, AttachmentOpenState, attachmentOpenBlocked } from '../model/AttachmentOpen';
+import { AttachmentFullscreen, FullscreenView, FullscreenWindow, createFullscreenWindow } from '../model/AttachmentFullscreen';
 import { ImageReadTarget, ImageLease, VerifiedImageView, VerifiedImages } from '../model/VerifiedImages';
 import { insertPaste, samePasteTarget } from '../model/EditorPaste';
 import { pasteboard } from '@kit.BasicServicesKit';
@@ -11,7 +15,7 @@ import { AppearanceSnapshot, MaterialChoice, alpha, mix, contrast, visualStyles,
 import { SurfaceRelief } from './SurfaceRelief';
 import { AmbientBackdrop, IdeaOrb, GlassRim, PaperBackdrop } from './StudioArtwork';
 import { common } from '@kit.AbilityKit';
-import { NodeContent, LazyVWaterFlowLayout, LazyVWaterFlowLayoutAttribute, LengthMetrics } from '@kit.ArkUI';
+import { NodeContent, LazyVWaterFlowLayout, LazyVWaterFlowLayoutAttribute, LengthMetrics, window } from '@kit.ArkUI';
 import { util } from '@kit.ArkTS';
 import native from 'libmorrow.so';
 import { CardView, Command, Reply, TaskView, workbench } from '../model/Workbench';
@@ -106,6 +110,27 @@ struct Index {
   @State attachmentPreviewOpen: boolean = false;
   @State attachmentPreviewLoading: boolean = false;
   @State attachmentPreviewFailure: string = '';
+  @State attachmentPreviewKind: string = 'image';
+  @State attachmentPreviewTitle: string = '';
+  @State attachmentPreviewClosing: boolean = false;
+  @State mediaFullscreen: boolean = false;
+  @State fullscreenState: FullscreenView = new FullscreenView();
+  private fullscreen: AttachmentFullscreen = new AttachmentFullscreen(
+    (): Promise<FullscreenWindow> => createFullscreenWindow(this.getUIContext().getHostContext() as common.UIAbilityContext),
+    window.Orientation.LANDSCAPE, (): void => {
+      if (this.pageAlive) { this.fullscreenState = this.fullscreen.view(); this.mediaFullscreen = this.fullscreenState.active; }
+    });
+  @State mediaView: PlaybackView = new PlaybackView();
+  private mediaPlayback: AttachmentPlayback = new AttachmentPlayback(createAttachmentPlayer,
+    (): void => {
+      if (this.pageAlive) {
+        const prior = this.mediaView.phase; this.mediaView = this.mediaPlayback.view();
+        if (this.mediaView.phase === 'failed' && prior !== 'failed') { this.exitMediaFullscreen(); }
+      }
+    });
+  @StorageLink('hmos-foreground') @Watch('foregroundChanged') foreground: boolean = true;
+  @State fileOpenState: AttachmentOpenState = new AttachmentOpenState();
+  private fileOpen: AttachmentOpen | undefined = undefined;
   private attachmentPreviewEpoch: number = 0;
   @State previewCleanupPending: boolean = false;
   @State previewCleanupWorking: boolean = false;
@@ -276,7 +301,15 @@ struct Index {
 
   aboutToAppear(): void {
     this.pageAlive = true;
-    this.attachmentFiles = new AttachmentFiles(this.getUIContext().getHostContext() as common.UIAbilityContext);
+    const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+    if (!this.attachmentFiles) { this.attachmentFiles = new AttachmentFiles(context); }
+    const files = this.attachmentFiles;
+    this.fileOpen = new AttachmentOpen(context, (lease: VerifiedPreview): boolean => files.isPreviewActive(lease),
+      async (token: string): Promise<void> => {
+        try { await files.releasePreview(token); }
+        finally { if (this.pageAlive) { this.previewCleanupPending = files.previewCleanupPending(); } }
+      }, (state: AttachmentOpenState): void => { if (this.pageAlive) { this.fileOpenState = state; } });
+    this.fileOpenState = this.fileOpen.snapshot();
     this.previewCleanupPending = this.attachmentFiles.previewCleanupPending();
     this.getUIContext().getFont().registerFont({ familyName: 'MorrowIcons', familySrc: $rawfile('materialicons.otf') });
     this.restoreAppearance();
@@ -284,6 +317,7 @@ struct Index {
     this.start();
   }
   onBackPress(): boolean {
+    if (this.attachmentPreviewOpen && this.mediaFullscreen) { this.exitMediaFullscreen(); return true; }
     if (this.attachmentPreviewOpen) { this.closeAttachmentPreview(); return true; }
     if (this.draftsOpen) { this.draftsOpen = false; return true; }
     if (this.editorOpen) { this.closeEditor(); return true; }
@@ -303,6 +337,19 @@ struct Index {
     this.cardOrder.dispose();
     if (this.workspaceRestoreTimer !== -1) { clearTimeout(this.workspaceRestoreTimer); }
     this.mounted = false; native.releasePreview(this.preview);
+  }
+  private foregroundChanged(): void {
+    if (!this.foreground) { this.mediaPlayback.pauseForBackground(); this.exitMediaFullscreen(); }
+    else { this.fileOpen?.reconcile(); }
+  }
+  private async switchMediaFullscreen(): Promise<void> {
+    if (!this.pageAlive || !this.attachmentPreviewOpen || this.attachmentPreviewClosing || !this.mediaView.token) { return; }
+    try { await this.fullscreen.toggle(); }
+    catch (_) { if (this.pageAlive) { this.message = this.fullscreen.view().error || '全屏切换未完成，请重试。'; } }
+  }
+  private async exitMediaFullscreen(): Promise<void> {
+    try { await this.fullscreen.exit(); }
+    catch (_) { if (this.pageAlive) { this.message = this.fullscreen.view().error || '窗口恢复未完成，请重试退出。'; } }
   }
   private current(): CardView | undefined { return this.cards.find((c: CardView) => c.id === this.selected); }
   private visibleCards(): CardView[] {
@@ -797,25 +844,90 @@ struct Index {
     finally { this.attachmentWorking = false; }
   }
   private async previewAttachment(asset: AssetView, c?: CardView): Promise<void> {
-    if (this.attachmentWorking || this.busy || this.attachmentPreviewOpen || !this.attachmentFiles || !['image', 'gif'].includes(asset.kind)) { return; }
+    if (this.attachmentWorking || this.busy || this.attachmentPreviewOpen || !this.attachmentFiles || !['image', 'gif', 'audio', 'video'].includes(asset.kind)) { return; }
     const draft = this.editorDraft, files = this.attachmentFiles, epoch = ++this.attachmentPreviewEpoch;
     let candidate: VerifiedPreview | undefined = undefined;
     this.attachmentWorking = true; this.attachmentPreviewOpen = true; this.attachmentPreviewLoading = true; this.attachmentPreviewFailure = '';
+    this.attachmentPreviewKind = asset.kind; this.attachmentPreviewTitle = asset.name; this.mediaFullscreen = false;
     try {
       const original = this.attachmentReadRequest(asset, c);
       const verified = await files.previewFile(original, asset.name,
-        (serialized: string, fd: number): Promise<string> => workbench.exportFd(serialized, fd));
+        (serialized: string, fd: number): Promise<string> => workbench.exportFd(serialized, fd), 'dialog', asset.byte_length);
       candidate = verified;
       if (!this.pageAlive || epoch !== this.attachmentPreviewEpoch || (c ? this.detailId !== c.id : this.editorDraft !== draft) ||
         this.attachmentReadRequest(asset, c) !== original) { return; }
       this.attachmentPreview = verified; candidate = undefined;
+      if (asset.kind === 'audio' || asset.kind === 'video') {
+        const source = new PlaybackSource(); source.token = verified.token; source.path = verified.path;
+        source.uri = verified.uri; source.kind = asset.kind; source.byteLength = Number(verified.byte_length);
+        await this.mediaPlayback.open(source);
+      }
     } catch (error) { if (this.pageAlive && epoch === this.attachmentPreviewEpoch) { this.attachmentPreviewFailure = '附件预览失败：' + String(error); } }
     finally { if (candidate) { try { await this.releaseImageToken(candidate.token); } catch (_) {} } this.attachmentWorking = false; if (epoch === this.attachmentPreviewEpoch) { this.attachmentPreviewLoading = false; } }
   }
   private async closeAttachmentPreview(): Promise<void> {
-    this.attachmentPreviewEpoch++; this.attachmentPreviewOpen = false; this.attachmentPreviewLoading = false; this.attachmentPreviewFailure = '';
-    const preview = this.attachmentPreview; this.attachmentPreview = undefined;
-    if (preview && this.attachmentFiles) { try { await this.releaseImageToken(preview.token); } catch (_) {} }
+    if (this.attachmentPreviewClosing) { return; }
+    this.attachmentPreviewEpoch++; this.attachmentPreviewLoading = false; this.attachmentPreviewClosing = true;
+    try {
+      let windowRestored: boolean = true;
+      try { await this.fullscreen.exit(); } catch (_) { windowRestored = false; }
+      // A rejected native release retains the descriptor and its verified
+      // file; keeping this modal open gives the same owner an explicit retry.
+      await this.mediaPlayback.dispose();
+      const preview = this.attachmentPreview; this.attachmentPreview = undefined;
+      this.attachmentPreviewOpen = !windowRestored;
+      this.attachmentPreviewFailure = windowRestored ? '' : '播放器已关闭，窗口还未恢复。请重试关闭。';
+      if (preview && this.attachmentFiles) {
+        try { await this.releaseImageToken(preview.token); }
+        catch (_) { if (this.pageAlive) { this.message = '预览已关闭，临时文件清理尚未完成。'; } }
+      }
+    } catch (_) {
+      if (this.pageAlive) { this.attachmentPreviewFailure = '媒体尚未完成关闭，文件已保留。请重试关闭。'; }
+    } finally { this.attachmentPreviewClosing = false; }
+  }
+  private async openSystemAttachment(asset: AssetView, c?: CardView): Promise<void> {
+    const files = this.attachmentFiles, opener = this.fileOpen;
+    if (!files || !opener || this.attachmentWorking || this.busy || this.attachmentPreviewOpen || this.fileOpenState.retained || this.fileOpenState.busy) { return; }
+    if (attachmentOpenBlocked(asset.name)) { this.message = '此文件类型不直接打开，请导出后查看。'; return; }
+    const draft = this.editorDraft;
+    let candidate: VerifiedPreview | undefined = undefined;
+    this.attachmentWorking = true;
+    try {
+      const original = this.attachmentReadRequest(asset, c);
+      const verified = await files.previewFile(original, asset.name,
+        (serialized: string, fd: number): Promise<string> => workbench.exportFd(serialized, fd), 'open', asset.byte_length);
+      candidate = verified;
+      if (!this.pageAlive || (c ? this.detailId !== c.id : this.editorDraft !== draft) || this.attachmentReadRequest(asset, c) !== original) { return; }
+      if (await opener.open(verified)) { candidate = undefined; }
+      else { this.message = '已有文件正在查看，请先结束本次查看。'; }
+    } catch (error) { if (this.pageAlive) { this.message = '文件打开未完成：' + String(error); } }
+    finally {
+      // Once adopted, an unknown system dispatch also owns the lease. Never
+      // delete its bytes just because a UI route disappeared or await failed.
+      if (candidate && !opener.owns(candidate)) { try { await files.releasePreview(candidate.token); } catch (_) {} }
+      this.attachmentWorking = false; this.previewCleanupPending = files.previewCleanupPending();
+    }
+  }
+  @Builder
+  FileOpenNotice() {
+    if (this.fileOpenState.phase !== 'idle' || this.fileOpenState.retained) {
+      Column({ space: 5 }) {
+        Text(this.fileOpenState.name).fontSize(12).fontColor(this.ink()).width('100%').maxLines(2)
+        Text(this.fileOpenState.message).fontSize(11).fontColor(this.muted()).width('100%')
+        if (this.fileOpenState.retained) {
+          Flex({ wrap: FlexWrap.Wrap }) {
+            Button('关闭系统预览', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+              .enabled(!this.fileOpenState.busy).onClick(() => this.fileOpen?.close()).id('attachment-system-close')
+            Button('核对', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+              .enabled(!this.fileOpenState.busy).onClick(() => this.fileOpen?.reconcile()).id('attachment-system-reconcile')
+            if (this.fileOpenState.can_finish) {
+              Button('已结束查看，清理临时文件', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+                .enabled(!this.fileOpenState.busy).onClick(() => this.fileOpen?.finishReadersClosed()).id('attachment-system-finish')
+            }
+          }.width('100%')
+        }
+      }.width('100%').padding(10).backgroundColor(alpha(this.accent(), .05)).borderRadius(this.round(10)).id('attachment-system-state')
+    }
   }
   private async releaseImageToken(token: string): Promise<void> {
     const files = this.attachmentFiles;
@@ -834,7 +946,7 @@ struct Index {
   PreviewCleanupNotice() {
     if (this.previewCleanupPending) {
       Row({ space: 8 }) {
-        Text('图片缓存未能清理').fontSize(11).fontColor(this.muted()).layoutWeight(1)
+        Text('预览临时文件未能清理').fontSize(11).fontColor(this.muted()).layoutWeight(1)
         Button('重试清理', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
           .enabled(!this.previewCleanupWorking).onClick(() => this.retryImageCleanup()).id('preview-cleanup-retry')
       }.width('100%')
@@ -2232,6 +2344,7 @@ struct Index {
         Column({ space: 18 }) {
           Text(this.t(c.category)).fontSize(12).fontColor(this.accent()).width('100%')
           this.PreviewCleanupNotice()
+          this.FileOpenNotice()
           if (this.markdownLoading) { Text('正在生成预览…').fontSize(12).fontColor(this.muted()) }
           if (this.markdownError) {
             Text('预览暂不可用 · ' + this.markdownError).fontSize(12).fontColor(this.muted())
@@ -2285,8 +2398,12 @@ struct Index {
                   Text(asset.name).fontSize(12).fontColor(this.ink()).maxLines(2)
                   Text(attachmentDetails(asset)).fontSize(10).fontColor(this.muted())
                 }.alignItems(HorizontalAlign.Start).layoutWeight(1)
-                if (['image', 'gif'].includes(asset.kind)) {
+                if (['image', 'gif', 'audio', 'video'].includes(asset.kind)) {
                   Button('预览', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent).enabled(!this.attachmentWorking).onClick(() => this.previewAttachment(asset, c)).id('attachment-preview:' + asset.id)
+                } else {
+                  Button('打开', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+                    .enabled(!this.attachmentWorking && !this.fileOpenState.retained && !this.fileOpenState.busy)
+                    .onClick(() => this.openSystemAttachment(asset, c)).id('attachment-open:' + asset.id)
                 }
                 Button('导出', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent).enabled(!this.attachmentWorking).onClick(() => this.exportAttachment(c, asset)).id('attachment-export:' + asset.id)
               }.width('100%').padding(10).backgroundColor('#0B7662BA').borderRadius(10).id('saved-asset:' + asset.id)
@@ -2378,6 +2495,7 @@ struct Index {
   EditorAttachments() {
     Column({ space: 9 }) {
       this.PreviewCleanupNotice()
+      this.FileOpenNotice()
       if (this.editorAssets.length > 0) {
         Text('草稿附件').fontSize(13).fontWeight(FontWeight.Medium).fontColor(this.ink()).width('100%')
         ForEach(this.editorAssets, (asset: AssetView) => {
@@ -2387,9 +2505,13 @@ struct Index {
               Text(asset.name).fontSize(12).fontColor(this.ink()).maxLines(2)
               Text(attachmentDetails(asset)).fontSize(10).fontColor(this.muted())
             }.alignItems(HorizontalAlign.Start).layoutWeight(1)
-            if (['image', 'gif'].includes(asset.kind)) {
+            if (['image', 'gif', 'audio', 'video'].includes(asset.kind)) {
               Button('预览', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.accent())
-                .enabled(!this.attachmentWorking && !this.busy).onClick(() => this.previewAttachment(asset))
+                .enabled(!this.attachmentWorking && !this.busy).onClick(() => this.previewAttachment(asset)).id('draft-asset-preview:' + asset.id)
+            } else {
+              Button('打开', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+                .enabled(this.canImportAttachment() && !this.fileOpenState.retained && !this.fileOpenState.busy)
+                .onClick(() => this.openSystemAttachment(asset)).id('draft-asset-open:' + asset.id)
             }
             Button('导出', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.accent())
               .enabled(this.canImportAttachment()).onClick(() => this.exportEditorAttachment(asset)).id('draft-asset-export:' + asset.id)
@@ -2631,6 +2753,7 @@ struct Index {
           if (this.viewportWidth >= 760 && this.sidebarExpanded) { this.Navigation() }
           Column({ space: 22 }) {
             this.Header()
+            if (!this.editorOpen && !this.detailId) { this.FileOpenNotice() }
             Row({ space: 24 }) {
               this.Workspace()
               if (this.viewportWidth >= 1050 && this.showAppearance) {
@@ -2676,12 +2799,28 @@ struct Index {
         Stack() {
           Rect().width('100%').height('100%').fill('#B0302D43').onClick(() => this.closeAttachmentPreview())
           Column({ space: 12 }) {
-            Text(this.attachmentPreview?.name || '图片预览').fontSize(15).fontColor(this.ink()).width('100%').maxLines(2)
-            AttachmentImagePreview({ preview: this.attachmentPreview, loading: this.attachmentPreviewLoading, failure: this.attachmentPreviewFailure,
-              contentWidth: Math.min(660, this.viewportWidth - 24) - 36, contentHeight: Math.max(160, this.viewportHeight - 270),
-              ink: this.ink(), muted: this.muted(), accent: this.accent(), family: this.fontFamily || 'HarmonyOS Sans', locale: this.locale })
-            Button('关闭预览', { type: ButtonType.Normal }).fontSize(12).fontColor(this.accent()).backgroundColor(Color.Transparent).onClick(() => this.closeAttachmentPreview())
-          }.padding(18).width(Math.min(660, this.viewportWidth - 24)).backgroundColor(this.surface()).borderRadius(this.round(18))
+            Text(this.attachmentPreview?.name || this.attachmentPreviewTitle || '附件预览').fontSize(15).fontColor(this.ink()).width('100%').maxLines(2)
+            if (['audio', 'video'].includes(this.attachmentPreviewKind)) {
+              AttachmentMediaPreview({ view: this.mediaView, loading: this.attachmentPreviewLoading, failure: this.attachmentPreviewFailure,
+                contentWidth: (this.mediaFullscreen ? this.viewportWidth : Math.min(656, this.viewportWidth - 24)) - 36,
+                contentHeight: this.mediaFullscreen ? Math.max(160, this.viewportHeight - 130) : Math.max(160, Math.min(320, this.viewportHeight - 180)),
+                ink: this.ink(), muted: this.muted(), accent: this.accent(), family: this.fontFamily || 'HarmonyOS Sans', locale: this.locale,
+                fullscreen: this.mediaFullscreen,
+                onToggle: (): void => { if (!this.attachmentPreviewClosing) { this.mediaPlayback.toggle(); } },
+                onSeek: (value: number): void => { if (!this.attachmentPreviewClosing) { this.mediaPlayback.seek(value); } },
+                onSurface: (token: string, id: string): void => this.mediaPlayback.setSurface(token, id),
+                onBackground: (token: string): void => { if (token) { this.mediaPlayback.pauseForBackground(token); } },
+                onFullscreen: (): void => { this.switchMediaFullscreen(); } })
+            } else {
+              AttachmentImagePreview({ preview: this.attachmentPreview, loading: this.attachmentPreviewLoading, failure: this.attachmentPreviewFailure,
+                contentWidth: Math.min(660, this.viewportWidth - 24) - 36, contentHeight: Math.max(160, this.viewportHeight - 270),
+                ink: this.ink(), muted: this.muted(), accent: this.accent(), family: this.fontFamily || 'HarmonyOS Sans', locale: this.locale })
+            }
+            if (this.fullscreenState.error) { Text(this.fullscreenState.error).fontSize(11).fontColor(this.muted()).width('100%').id('attachment-fullscreen-failure') }
+            Button(this.attachmentPreviewClosing ? '正在关闭…' : this.mediaView.phase === 'cleanup_failed' || this.fullscreenState.phase === 'restore_failed' ? '重试关闭' : '关闭预览', { type: ButtonType.Normal })
+              .fontSize(12).fontColor(this.accent()).backgroundColor(Color.Transparent).enabled(!this.attachmentPreviewClosing)
+              .onClick(() => this.closeAttachmentPreview()).id('attachment-preview-close')
+          }.padding(18).width(this.mediaFullscreen ? this.viewportWidth : Math.min(660, this.viewportWidth - 24)).backgroundColor(this.surface()).borderRadius(this.mediaFullscreen ? 0 : this.round(18))
         }.width('100%').height('100%').id('attachment-preview-dialog')
       }
     }.width('100%').height('100%').backgroundColor(this.canvasBackgroundColorValue())

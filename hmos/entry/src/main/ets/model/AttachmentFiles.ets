@@ -109,6 +109,15 @@ function safeName(value: string): string {
   return name && name !== '.' && name !== '..' ? name : '附件';
 }
 
+// The system previewer detects formats from this display-name suffix. Names
+// remain one bounded path component inside a newly generated private folder.
+export function attachmentPreviewName(value: string): string {
+  const cleaned = value.replace(/[\u0000-\u001f\u007f\\/:*?"<>|]/g, '_').trim();
+  if (cleaned.length <= 128) { return safeName(cleaned); }
+  const suffix = /\.[A-Za-z0-9]{1,20}$/.exec(cleaned)?.[0] || '';
+  return suffix ? safeName(cleaned.slice(0, 128 - suffix.length)) + suffix : safeName(cleaned);
+}
+
 function streamReply(serialized: string, limit: number): FileStreamReply {
   const reply = JSON.parse(serialized) as FileStreamReply;
   if (!reply || reply.ok !== true) { throw new Error('文件未能完成读取或验证。'); }
@@ -257,20 +266,26 @@ export class AttachmentFiles {
     } finally { close(file); }
   }
 
-  private async removeOwn(directory: string, unadmitted: boolean = false): Promise<void> {
+  private async removeOwn(directory: string, unadmitted: boolean = false, previewName: string = 'data'): Promise<void> {
     // Every directory passed here was created by this instance, or recovered
     // from the strict private spool namespace. No URI-derived path is accepted.
     const importId = directory.slice(this.root.length + 1);
     const exportId = directory.slice(this.context.cacheDir.length + 1);
+    const isImport = directory.startsWith(this.root + '/') && /^import-[A-Za-z0-9]{6}$/.test(importId);
     if (!(directory.startsWith(this.root + '/') && /^import-[A-Za-z0-9]{6}$/.test(importId)) &&
       !(directory.startsWith(this.context.cacheDir + '/') && /^morrow-(export|preview)-[A-Za-z0-9]{6}$/.test(exportId))) {
       throw new Error('附件缓存位置无效。');
+    }
+    if (!previewName || previewName.length > 128 || previewName === '.' || previewName === '..' ||
+      /[\u0000-\u001f\u007f\\/]/.test(previewName) || previewName !== 'data' && !/^morrow-preview-[A-Za-z0-9]{6}$/.test(exportId)) {
+      throw new Error('附件预览文件名无效。');
     }
     const folder = await this.statIfPresent(directory);
     if (!folder) { return; }
     if (!folder.isDirectory() || folder.isSymbolicLink()) { throw new Error('附件缓存需要核对，已保留。'); }
     const names = await fs.listFile(directory);
-    if (names.some((name: string): boolean => !['data', 'metadata.json', 'request.json'].includes(name))) {
+    const allowed = isImport ? ['data', 'metadata.json', 'request.json'] : [previewName];
+    if (names.some((name: string): boolean => !allowed.includes(name))) {
       throw new Error('附件缓存需要核对，已保留。');
     }
     // SDK rmdir is recursive. Preflight every child before deleting anything
@@ -439,7 +454,7 @@ export class AttachmentFiles {
   }
 
   private previewLimit(purpose: string, expectedByteLength: string): number {
-    if (purpose !== 'dialog' && purpose !== 'inline') { throw new Error('附件预览类型无效。'); }
+    if (!['dialog', 'inline', 'open'].includes(purpose)) { throw new Error('附件预览类型无效。'); }
     let count: number = 0;
     let used: number = 0;
     AttachmentFiles.activePreviews.forEach((entry: PreviewEntry): void => {
@@ -448,15 +463,16 @@ export class AttachmentFiles {
       }
     });
     if (purpose === 'dialog' && count > 0) { throw new Error('请先关闭当前附件预览。'); }
+    if (purpose === 'open' && count > 0) { throw new Error('请先结束查看并清理当前文件预览。'); }
     if (purpose === 'inline' && count >= ATTACHMENT_INLINE_PREVIEW_LIMIT) { throw new Error('当前内容最多同时显示 8 张附件图片。'); }
     const limit = purpose === 'inline' ? ATTACHMENT_INLINE_PREVIEW_BUDGET - used : ATTACHMENT_EXPORT_LIMIT;
     // The current export ABI has no caller byte-limit argument. Inline callers
     // must pre-admit the exact Core/pin metadata before the native read, and the
     // completed stream is checked against that length as well as its whole hash.
-    if (purpose === 'inline' || expectedByteLength !== '') {
+    if (purpose === 'inline' || purpose === 'open' || expectedByteLength !== '') {
       const bytes = Number(expectedByteLength);
       if (!/^(0|[1-9][0-9]*)$/.test(expectedByteLength) || !Number.isSafeInteger(bytes) || bytes > limit) {
-        throw new Error('附件图片超过当前 64 MiB 预览额度，或长度无法确认。');
+        throw new Error(purpose === 'inline' ? '附件图片超过当前 64 MiB 预览额度，或长度无法确认。' : '附件超过 200 MiB 预览上限，或长度无法确认。');
       }
     }
     return limit;
@@ -468,10 +484,11 @@ export class AttachmentFiles {
     return this.queued(async (): Promise<VerifiedPreview> => {
       const limit = this.previewLimit(purpose, expectedByteLength);
       const directory = await fs.mkdtemp(this.context.cacheDir + '/morrow-preview-XXXXXX');
+      const previewPath = directory + '/' + (purpose === 'open' ? attachmentPreviewName(name) : 'data');
       let temporary: fs.File | undefined = undefined;
       let verified: boolean = false;
       try {
-        temporary = await fs.open(directory + '/data', fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
+        temporary = await fs.open(previewPath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
         const reply = streamReply(await send(serialized, temporary.fd), limit);
         if (expectedByteLength !== '' && reply.byte_length !== expectedByteLength) {
           throw new Error('附件长度已变化，未打开预览。');
@@ -481,7 +498,7 @@ export class AttachmentFiles {
         await fs.fsync(temporary.fd);
         const value = new VerifiedPreview();
         value.token = directory.slice(this.context.cacheDir.length + 1);
-        value.path = directory + '/data'; value.uri = fileUri.getUriFromPath(value.path); value.name = safeName(name);
+        value.path = previewPath; value.uri = fileUri.getUriFromPath(value.path); value.name = purpose === 'open' ? attachmentPreviewName(name) : safeName(name);
         value.byte_length = reply.byte_length; value.sha256 = reply.sha256;
         value.purpose = purpose;
         // File extension is not used as authority; the Index receives the
@@ -491,7 +508,7 @@ export class AttachmentFiles {
         verified = true; return value;
       } finally {
         close(temporary);
-        if (!verified) { try { await this.removeOwn(directory); } catch (_) {} }
+        if (!verified) { try { await this.removeOwn(directory, false, previewPath.slice(directory.length + 1)); } catch (_) {} }
       }
     });
   }
@@ -509,7 +526,7 @@ export class AttachmentFiles {
 
   private async cleanupPreview(entry: PreviewEntry): Promise<void> {
     try {
-      await this.removeOwn(entry.directory);
+      await this.removeOwn(entry.directory, false, entry.path.slice(entry.directory.length + 1));
       AttachmentFiles.activePreviews.delete(entry.directory);
       if (this.previews.get(entry.token) === entry) { this.previews.delete(entry.token); }
     } catch (_) {

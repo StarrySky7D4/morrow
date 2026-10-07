@@ -1,0 +1,182 @@
+> hvigor [32mFinished :entry:default@PreBuild... after 104 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GenerateMetadata...  [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 10 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 25 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 19 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 17 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GeneratePkgContextInfo...  [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 104 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessRouterMap...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessShareConfig...  [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessResource...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@GenerateLoaderJson...  [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 258 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 4 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 128 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessLibs...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@DoNativeStrip...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CacheNativeLibs...  [39m
+> hvigor ERROR: Failed :entry:default@CompileArkTS... 
+> hvigor WARN: 
+1 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:1788:83
+ 'Function.bind' is not supported (arkts-no-func-bind)
+
+2 WARN: ArkTS:WARN: For details about ArkTS syntax errors, see FAQs
+3 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:176:58
+ Function may throw exceptions. Special handling is required.
+
+4 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:177:27
+ Function may throw exceptions. Special handling is required.
+
+5 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:178:15
+ Function may throw exceptions. Special handling is required.
+
+6 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:178:37
+ Function may throw exceptions. Special handling is required.
+
+7 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:220:28
+ Function may throw exceptions. Special handling is required.
+
+8 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:226:31
+ Function may throw exceptions. Special handling is required.
+
+9 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:227:19
+ Function may throw exceptions. Special handling is required.
+
+10 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:227:43
+ Function may throw exceptions. Special handling is required.
+
+11 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:228:33
+ Function may throw exceptions. Special handling is required.
+
+12 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:236:21
+ Function may throw exceptions. Special handling is required.
+
+13 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:236:38
+ Function may throw exceptions. Special handling is required.
+
+14 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:256:23
+ Function may throw exceptions. Special handling is required.
+
+15 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:259:34
+ Function may throw exceptions. Special handling is required.
+
+16 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:265:16
+ Function may throw exceptions. Special handling is required.
+
+17 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:285:17
+ Function may throw exceptions. Special handling is required.
+
+18 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:285:41
+ Function may throw exceptions. Special handling is required.
+
+19 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:286:28
+ Function may throw exceptions. Special handling is required.
+
+20 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:295:26
+ Function may throw exceptions. Special handling is required.
+
+21 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:295:43
+ Function may throw exceptions. Special handling is required.
+
+22 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:305:54
+ Function may throw exceptions. Special handling is required.
+
+23 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:310:19
+ Function may throw exceptions. Special handling is required.
+
+24 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:311:14
+ Function may throw exceptions. Special handling is required.
+
+25 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentFiles.ets:361:33
+ Function may throw exceptions. Special handling is required.
+
+26 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets:25:26
+ Function may throw exceptions. Special handling is required.
+
+27 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets:26:27
+ Function may throw exceptions. Special handling is required.
+
+28 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets:27:15
+ Function may throw exceptions. Special handling is required.
+
+29 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets:28:26
+ The system capacity of this api 'media' is not supported on all devices
+
+30 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets:28:32
+ Function may throw exceptions. Special handling is required.
+
+31 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets:31:69
+ The system capacity of this api 'media' is not supported on all devices
+
+32 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets:42:55
+ Function may throw exceptions. Special handling is required.
+
+33 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets:43:52
+ Function may throw exceptions. Special handling is required.
+
+34 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets:44:53
+ Function may throw exceptions. Special handling is required.
+
+35 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets:45:56
+ The system capacity of this api 'media' is not supported on all devices
+
+36 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets:50:25
+ Function may throw exceptions. Special handling is required.
+
+37 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets:52:31
+ Function may throw exceptions. Special handling is required.
+
+38 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:138:54
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+39 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:139:59
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+40 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:140:58
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+41 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:141:58
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+42 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:142:53
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+43 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets:448:36
+ To use this API, you need to apply for the permissions: ohos.permission.READ_PASTEBOARD [since 12]
+
+> hvigor ERROR: ArkTS Compiler Error
+1 ERROR: 10605087 ArkTS Compiler Error
+Error Message: "throw" statements cannot accept values of arbitrary types (arkts-limited-throw) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/AttachmentPlayback.ets:227:7
+
+
+COMPILE RESULT:FAIL {ERROR:2 WARN:43}
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+
+[31m
+FAILURE: Build completed with 1 failure.[31m[39m
+[31m
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task 'default@CompileArkTS'.
+  > Compilation error. See log for more details
+
+[31m* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+[31m[39m
+[31m================================================================================[31m[39m
+> hvigor ERROR: BUILD FAILED in 11 s 2 ms 
+
+25 tasks in total: 16 executed, 9 up-to-date

@@ -190,6 +190,7 @@ function harness() {
   }
   return { nodes, fds, logs, faults, modes, fs, native, create, seed, putDir, putFile, putLink, directory, sendBytes,
     imagePreviewScale: module.exports.imagePreviewScale, imagePreviewOffset: module.exports.imagePreviewOffset,
+    attachmentPreviewName: module.exports.attachmentPreviewName,
     setSelect: value => { selectUris = value; }, setSave: value => { saveUris = value; },
     setPrepare: value => { prepareOverride = value; },
     read: name => node(name).bytes, writeFd: (fd, bytes) => { node(descriptor(fd).path).bytes = Buffer.from(bytes); },
@@ -548,4 +549,63 @@ test('diagnostics are copied so caller mutation cannot hide retained review stat
   const h = harness(); h.seed('import-ABC123', { request: '{' }); const files = h.create(); await files.recover();
   const issue = files.recoveryDiagnostics()[0]; issue.requires_review = false; issue.code = 'forged';
   assert.equal(files.recoveryDiagnostics()[0].requires_review, true); assert.equal(files.recoveryDiagnostics()[0].code, 'REQUEST_INVALID');
+});
+
+test('system open lease uses bounded safe original suffix and exact read metadata', async () => {
+  const h = harness(), files = h.create();
+  const lease = await files.previewFile('exact-request', '../中文:report.PDF', h.sendBytes('pdf'), 'open', '3');
+  assert.equal(lease.name, '.._中文_report.PDF'); assert.equal(path.posix.basename(lease.path), lease.name);
+  assert.ok(lease.path.startsWith(CACHE + '/morrow-preview-')); assert.equal(lease.uri, 'file://dev.morrow.hmos' + encodeURI(lease.path));
+  assert.equal(lease.byte_length, '3'); assert.equal(lease.sha256, sha(Buffer.from('pdf')));
+  assert.ok(files.isPreviewActive(lease)); assert.equal(h.fds.size, 0);
+  await files.releasePreview(lease.token); assert.equal(files.isPreviewActive(lease), false); noFilesUnder(h, path.posix.dirname(lease.path) + '/');
+});
+test('system open requires preadmitted canonical length within 200 MiB', async () => {
+  for (const length of ['', '-1', '01', '1.5', '209715201', '9007199254740992']) {
+    const h = harness(); await assert.rejects(h.create().previewFile('exact', 'file.pdf', h.sendBytes('x'), 'open', length));
+    noNative(h); assert.equal(h.logs.some(x => x[0] === 'mkdtemp'), false);
+  }
+});
+test('system open actual byte length mismatch removes unregistered candidate', async () => {
+  const h = harness(); await assert.rejects(h.create().previewFile('exact', 'file.pdf', h.sendBytes('xx'), 'open', '1'), /长度/);
+  assert.equal(h.fds.size, 0); noFilesUnder(h, CACHE + '/morrow-preview-');
+});
+test('safe system preview filename preserves suffix under Unicode truncation', () => {
+  const h = harness(); const value = h.attachmentPreviewName('😀'.repeat(100) + '.pdf');
+  assert.ok(value.length <= 128); assert.ok(value.endsWith('.pdf')); assert.ok(!/[\uD800-\uDBFF]\.pdf$/.test(value));
+  assert.equal(h.attachmentPreviewName('..'), '附件'); assert.equal(h.attachmentPreviewName('a/\u0000b.pdf'), 'a__b.pdf');
+});
+test('system open admission is shared but independent of image dialog and inline leases', async () => {
+  const h = harness(), owner = h.create(), next = h.create();
+  const open = await owner.previewFile('open', 'doc.pdf', h.sendBytes('a'), 'open', '1');
+  const dialog = await next.previewFile('audio', 'sound.wav', h.sendBytes('b'), 'dialog', '1');
+  const inline = await next.previewFile('inline', 'image.png', h.sendBytes('c'), 'inline', '1');
+  const readCount = h.logs.filter(x => x[0] === 'send').length;
+  await assert.rejects(next.previewFile('second-open', 'other.pdf', h.sendBytes('d'), 'open', '1'), /结束查看/);
+  assert.equal(h.logs.filter(x => x[0] === 'send').length, readCount);
+  await owner.releasePreview(open.token); await next.releasePreview(dialog.token); await next.releasePreview(inline.token);
+  assert.ok(await next.previewFile('new-open', 'other.pdf', h.sendBytes('d'), 'open', '1'));
+});
+test('failed system open cleanup retains immutable admission until explicit retry', async () => {
+  const h = harness(), owner = h.create(), next = h.create();
+  const open = await owner.previewFile('open', 'doc.pdf', h.sendBytes('a'), 'open', '1');
+  const dir = path.posix.dirname(open.path); h.faults.set('rmdir:' + dir, error(13900012));
+  await assert.rejects(owner.releasePreview(open.token)); assert.equal(next.previewCleanupPending(), true);
+  open.purpose = 'inline'; await assert.rejects(next.previewFile('second-open', 'other.pdf', h.sendBytes('a'), 'open', '1'));
+  h.faults.delete('rmdir:' + dir); await next.retryPreviewCleanup(); assert.equal(next.previewCleanupPending(), false);
+  assert.ok(await next.previewFile('replacement', 'other.pdf', h.sendBytes('a'), 'open', '1'));
+});
+
+test('named system preview cleanup refuses foreign sidecars before deleting its verified file', async () => {
+  const h = harness(), files = h.create(); const open = await files.previewFile('open', 'doc.pdf', h.sendBytes('known'), 'open', '5');
+  const dir = path.posix.dirname(open.path); h.putFile(dir + '/metadata.json', 'foreign');
+  await assert.rejects(files.releasePreview(open.token)); assert.equal(h.read(open.path).toString(), 'known');
+  assert.equal(h.read(dir + '/metadata.json').toString(), 'foreign');
+  assert.equal(h.logs.some(x => x[0] === 'unlink' && (x[1] === open.path || x[1] === dir + '/metadata.json')), false);
+});
+test('named system preview cleanup validates its exact file is not a symlink', async () => {
+  const h = harness(), files = h.create(); const open = await files.previewFile('open', 'doc.pdf', h.sendBytes('known'), 'open', '5');
+  h.putFile('/foreign.pdf', 'keep'); h.putLink(open.path, '/foreign.pdf');
+  await assert.rejects(files.releasePreview(open.token)); assert.equal(h.read('/foreign.pdf').toString(), 'keep');
+  assert.equal(h.logs.some(x => x[0] === 'unlink' && x[1] === open.path), false);
 });

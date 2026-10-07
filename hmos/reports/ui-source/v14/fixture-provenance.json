@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-10-07 11:47 Asia/Shanghai",
+  "content_provenance": "All media and PDF content was generated procedurally for this HMOS test. No network media, user media, microphone, camera, or recording was read.",
+  "files": [
+    {
+      "name": "bars-source-0.bmp",
+      "bytes": 172854,
+      "sha256": "FB074ABDEE2699E92FCB68CD57EF2C52F6B24F2CE2D5E5275E6A67372FFD4875"
+    },
+    {
+      "name": "bars-source-1.bmp",
+      "bytes": 172854,
+      "sha256": "85F982ADDC97297A8F39D689987516B9F0F6DBBA3F749C6210D88F96B2EBE34F"
+    },
+    {
+      "name": "bars-source-2.bmp",
+      "bytes": 172854,
+      "sha256": "1B7779B5A634537C669AB6BD5FB98DA3CAD6B9FD0A2EB4A1F7DA7EDF6644A269"
+    },
+    {
+      "name": "HMOS-dev14-bars.mp4",
+      "bytes": 51509,
+      "sha256": "DC9D8BA93F826029FB7C4D60BA7AEAD4AC302319FA29228533A2022E2EBC067A"
+    },
+    {
+      "name": "HMOS-dev14-generic.pdf",
+      "bytes": 740,
+      "sha256": "451AB55AED30FE494A0A32E5916D03D8D3FCF853B1CD96FEF17F7DD97ADD2C79"
+    },
+    {
+      "name": "HMOS-dev14-tone.wav",
+      "bytes": 1152044,
+      "sha256": "4CE919D013F1C31F116EC9487A8DC6CFDB80CF71377816AFA8EE5AA27619A60C"
+    }
+  ],
+  "wave": {
+    "codec": "PCM signed 16-bit little-endian",
+    "channels": 1,
+    "sample_rate": 48000,
+    "sample_width_bytes": 2,
+    "sample_count": 576000,
+    "duration_seconds": 12.0,
+    "signal": "One 250 ms 1 kHz integer triangle pulse each second; silence for the remaining 750 ms. Integer phase period 48, phase index n%48, triangle=(phase if phase<12 else 24-phase if phase<36 else phase-48), signed sample triangle*256, 48 kHz. Total duration 12 seconds."
+  },
+  "video": {
+    "duration_seconds": 12,
+    "width": 320,
+    "height": 180,
+    "frame_rate": 10,
+    "frame_count": 120,
+    "codec": "H.264 Constrained Baseline",
+    "pixel_format": "yuv420p",
+    "audio_codec": "AAC LC",
+    "audio_sample_rate": 48000,
+    "audio_channels": 1,
+    "content": "Three sequential 4-second shifted eight-color RGB bar panels with a white bottom marker at x=0/100/200. Background audio is the generated WAV."
+  },
+  "generic_pdf": {
+    "version": "1.4",
+    "pages": 1,
+    "page_width": 480,
+    "page_height": 260,
+    "content": "English test label and red/green/blue vector rectangles.",
+    "structural_check": "Known xref offset and EOF passed; no separate PDF visual QA in this source audit."
+  },
+  "host_verification": {
+    "video_full_decode_returncode": 0,
+    "decoded_rgb24_bytes": 20736000,
+    "framehash_frame_count": 120,
+    "unique_decoded_frame_hashes": 7,
+    "phase_samples": [
+      {
+        "phase": 0,
+        "frame": 0,
+        "max_center_color_error": 4,
+        "moving_white_marker_rgb": [
+          232,
+          234,
+          231
+        ]
+      },
+      {
+        "phase": 0,
+        "frame": 20,
+        "max_center_color_error": 4,
+        "moving_white_marker_rgb": [
+          232,
+          234,
+          231
+        ]
+      },
+      {
+        "phase": 0,
+        "frame": 39,
+        "max_center_color_error": 4,
+        "moving_white_marker_rgb": [
+          232,
+          234,
+          231
+        ]
+      },
+      {
+        "phase": 1,
+        "frame": 40,
+        "max_center_color_error": 4,
+        "moving_white_marker_rgb": [
+          232,
+          234,
+          231
+        ]
+      },
+      {
+        "phase": 1,
+        "frame": 60,
+        "max_center_color_error": 4,
+        "moving_white_marker_rgb": [
+          232,
+          234,
+          231
+        ]
+      },
+      {
+        "phase": 1,
+        "frame": 79,
+        "max_center_color_error": 4,
+        "moving_white_marker_rgb": [
+          232,
+          234,
+          231
+        ]
+      },
+      {
+        "phase": 2,
+        "frame": 80,
+        "max_center_color_error": 4,
+        "moving_white_marker_rgb": [
+          232,
+          234,
+          231
+        ]
+      },
+      {
+        "phase": 2,
+        "frame": 100,
+        "max_center_color_error": 4,
+        "moving_white_marker_rgb": [
+          232,
+          234,
+          231
+        ]
+      },
+      {
+        "phase": 2,
+        "frame": 119,
+        "max_center_color_error": 4,
+        "moving_white_marker_rgb": [
+          232,
+          234,
+          231
+        ]
+      }
+    ],
+    "phase_sample_error_limit": 15,
+    "audio_full_12s_pcm16_returncode": 0,
+    "decoded_audio_bytes": 1152000,
+    "decoded_audio_sha256": "FEDDEBDB8F171C46A242F1A0EA1F19A3BAE3D30EA1729F8BBAC801C900748CA2",
+    "metadata_probe_stderr": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v14\\fixtures\\HMOS-dev14-bars.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n  Duration: 00:00:12.00, start: 0.000000, bitrate: 34 kb/s\n  Stream #0:0[0x1](und): Video: h264 (Constrained Baseline) (avc1 / 0x31637661), yuv420p(progressive), 320x180, 6 kb/s, 10 fps, 10 tbr, 10240 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n        encoder         : Lavc libx264\n  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, mono, fltp, 24 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\nStream mapping:\n  Stream #0:0 -> #0:0 (h264 (native) -> rawvideo (native))\nOutput #0, framehash, to 'pipe:':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf61.7.100\n  Stream #0:0(und): Video: rawvideo (I420 / 0x30323449), yuv420p(progressive), 320x180, q=2-31, 6912 kb/s, 10 fps, 10 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n        encoder         : Lavc61.19.100 rawvideo\n[out#0/framehash @ 000001fc110b6500] video:10125KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: unknown\nframe=  120 fps=0.0 q=-0.0 Lsize=      13KiB time=00:00:12.00 bitrate=   9.1kbits/s speed= 383x    \n"
+  },
+  "tool_provenance": {
+    "imageio_ffmpeg_version": "0.6.0",
+    "installation_scope": "hmos/.build/fixture-tools only, Git ignored. No global installation, system PATH change, or dependency-file edit. Command: pip install --target hmos/.build/fixture-tools --no-cache-dir --no-deps --only-binary=:all: --index-url https://pypi.org/simple imageio-ffmpeg==0.6.0",
+    "wheel_filename": "imageio_ffmpeg-0.6.0-py3-none-win_amd64.whl",
+    "wheel_download_url": "https://files.pythonhosted.org/packages/2c/c6/fa760e12a2483469e2bf5058c5faff664acf66cadb4df2ad6205b016a73d/imageio_ffmpeg-0.6.0-py3-none-win_amd64.whl",
+    "wheel_sha256_from_PyPI": "02fa47c83703c37df6bfe4896aab339013f62bf02c5ebf2dce6da56af04ffc0a",
+    "ffmpeg_version": "ffmpeg version 7.1-essentials_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers",
+    "ffmpeg_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\fixture-tools\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe",
+    "ffmpeg_bytes": 87638016,
+    "ffmpeg_sha256": "2CE797A0F88D7F067180338FB227F7B1928EA727BD9A4D7A1D022F7C52AF71A3",
+    "primary_sources": [
+      "https://pypi.org/project/imageio-ffmpeg/0.6.0/",
+      "https://github.com/imageio/imageio-ffmpeg/releases/tag/v0.6.0"
+    ]
+  },
+  "generation_history": [
+    "Standalone FFmpeg was not found in PATH, workspace/runtime/Python/common Comfy/cache/Huawei/OBS locations.",
+    "Windows MediaComposition PowerShell direct collection Add failed on __ComObject; generic IList cast failed. Neither attempt created an output file.",
+    "The typed C# WinRT bridge compiled and created a zero-byte HMOS-dev14-bars.mp4, but RenderToFileAsync failed before media was written. The process finished with exit 1, and no operation remained live. Its exact inner failure code was not captured. After checking the exact path in the fixture folder and length zero, only this generated empty file was removed.",
+    "Root explicitly authorized project-local imageio-ffmpeg 0.6.0 installation. FFmpeg encoding completed once.",
+    "The first host check incorrectly assumed only three decoded frame hashes would result from lossy encoding; there are seven. All 120 frames decoded successfully. Encoding was not replayed. Current verification checks all 120 frames and samples all three panels with bar-center colors and the moving marker, allowing quantization tolerance."
+  ],
+  "recipes": {
+    "python_wave_bmp_pdf": "from pathlib import Path\nimport struct,wave,json,hashlib\nroot=Path(r\"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v14\\fixtures\")\nroot.mkdir(parents=True,exist_ok=True)\nwav=root/\"HMOS-dev14-tone.wav\"\nassert not wav.exists(), \"fixture exists; refusing overwrite\"\nsample_rate=48000\nseconds=12\npcm=bytearray()\nfor n in range(sample_rate*seconds):\n    phase=n%48\n    triangle=(phase if phase<12 else 24-phase if phase<36 else phase-48)\n    v=triangle*256 if n%sample_rate<12000 else 0\n    pcm.extend(struct.pack(\"<h\",v))\nwith wave.open(str(wav),\"wb\") as w:\n    w.setnchannels(1); w.setsampwidth(2); w.setframerate(sample_rate); w.writeframes(pcm)\ncolors=[(235,235,235),(235,235,16),(16,235,235),(16,235,16),(235,16,235),(235,16,16),(16,16,235),(16,16,16)]\nfor phase in range(3):\n    p=root/(\"bars-source-%d.bmp\"%phase)\n    assert not p.exists(), \"source exists; refusing overwrite\"\n    width,height=320,180\n    pixels=bytearray()\n    for y in range(height):\n        for x in range(width):\n            rgb=colors[((x//40)+phase)%len(colors)] if y<140 else ((235,235,235) if phase*100 <= x < phase*100+20 else (16,16,16))\n            pixels.extend(bytes(rgb[::-1]))\n    header=b\"BM\"+struct.pack(\"<IHHI\",54+len(pixels),0,0,54)+struct.pack(\"<IiiHHIIiiII\",40,width,-height,1,24,0,len(pixels),2835,2835,0,0)\n    p.write_bytes(header+pixels)\ntext=\"HMOS dev14 deterministic generic attachment preview fixture.\"\nobjects=[\nb\"<< /Type /Catalog /Pages 2 0 R >>\",\nb\"<< /Type /Pages /Kids [3 0 R] /Count 1 >>\",\nb\"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 480 260] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>\",\nb\"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\",\n]\ncontent=(\"BT /F1 16 Tf 24 214 Td (\"+text+\") Tj ET\\n0.8 0.1 0.1 rg 24 100 120 70 re f\\n0.1 0.7 0.2 rg 162 100 120 70 re f\\n0.1 0.2 0.8 rg 300 100 120 70 re f\\n\").encode(\"ascii\")\nobjects.append(b\"<< /Length \"+str(len(content)).encode()+b\" >>\\nstream\\n\"+content+b\"endstream\")\npdf=bytearray(b\"%PDF-1.4\\n\")\noffsets=[0]\nfor i,obj in enumerate(objects,1):\n    offsets.append(len(pdf)); pdf.extend(str(i).encode()+b\" 0 obj\\n\"+obj+b\"\\nendobj\\n\")\nxref=len(pdf); pdf.extend(b\"xref\\n0 \"+str(len(objects)+1).encode()+b\"\\n0000000000 65535 f \\n\")\nfor offset in offsets[1:]: pdf.extend((\"%010d 00000 n \\n\"%offset).encode())\npdf.extend(b\"trailer\\n<< /Size \"+str(len(objects)+1).encode()+b\" /Root 1 0 R >>\\nstartxref\\n\"+str(xref).encode()+b\"\\n%%EOF\\n\")\np=root/\"HMOS-dev14-generic.pdf\"; assert not p.exists(); p.write_bytes(pdf)\nfor p in sorted(root.iterdir()):\n    print(json.dumps({\"name\":p.name,\"bytes\":p.stat().st_size,\"sha256\":hashlib.sha256(p.read_bytes()).hexdigest().upper()}))\nwith wave.open(str(wav),\"rb\") as w: print(json.dumps({\"wave_verified\":{\"channels\":w.getnchannels(),\"rate\":w.getframerate(),\"sample_width\":w.getsampwidth(),\"nframes\":w.getnframes(),\"seconds\":w.getnframes()/w.getframerate()}}))\n",
+    "failed_typed_winrt_ps": "$ErrorActionPreference=\"Stop\"\nAdd-Type -AssemblyName System.Runtime.WindowsRuntime\n$source=@\"\nusing System;\nusing System.IO;\nusing System.Threading.Tasks;\nusing Windows.Storage;\nusing Windows.Media.Editing;\nusing Windows.Media.MediaProperties;\nusing Windows.Media.Transcoding;\npublic static class MorrowDev14MediaFixture {\n  public static async Task<string> Generate(string root) {\n    var composition=new MediaComposition();\n    for(int phase=0;phase<3;phase++) {\n      var image=await StorageFile.GetFileFromPathAsync(Path.Combine(root,\"bars-source-\"+phase+\".bmp\"));\n      var clip=await MediaClip.CreateFromImageFileAsync(image,TimeSpan.FromSeconds(4));\n      composition.Clips.Add(clip);\n    }\n    var wave=await StorageFile.GetFileFromPathAsync(Path.Combine(root,\"HMOS-dev14-tone.wav\"));\n    var track=await BackgroundAudioTrack.CreateFromFileAsync(wave);\n    composition.BackgroundAudioTracks.Add(track);\n    var profile=MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);\n    profile.Video.Width=320; profile.Video.Height=180; profile.Video.Bitrate=150000;\n    profile.Video.FrameRate.Numerator=10; profile.Video.FrameRate.Denominator=1;\n    profile.Audio=AudioEncodingProperties.CreateAac(48000,1,96000);\n    var folder=await StorageFolder.GetFolderFromPathAsync(root);\n    var file=await folder.CreateFileAsync(\"HMOS-dev14-bars.mp4\",CreationCollisionOption.FailIfExists);\n    var reason=await composition.RenderToFileAsync(file,MediaTrimmingPreference.Precise,profile);\n    if(reason!=TranscodeFailureReason.None) throw new Exception(\"WinRT render failed: \"+reason);\n    var props=await file.Properties.GetVideoPropertiesAsync();\n    return \"result=\"+reason+\" duration_ms=\"+props.Duration.TotalMilliseconds+\" width=\"+props.Width+\" height=\"+props.Height+\" bitrate=\"+props.Bitrate+\" video_requested=\"+profile.Video.Subtype+\" audio_requested=\"+profile.Audio.Subtype;\n  }\n}\n\"@\n$provider=New-Object Microsoft.CSharp.CSharpCodeProvider\n$params=New-Object System.CodeDom.Compiler.CompilerParameters\n$params.GenerateInMemory=$true\nforeach($ref in @(\"C:\\Program Files (x86)\\Windows Kits\\10\\UnionMetadata\\10.0.26100.0\\Windows.winmd\",\"C:\\Windows\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Runtime.WindowsRuntime\\v4.0_4.0.0.0__b77a5c561934e089\\System.Runtime.WindowsRuntime.dll\",\"C:\\Windows\\Microsoft.NET\\assembly\\GAC_MSIL\\System.Runtime\\v4.0_4.0.0.0__b03f5f7f11d50a3a\\System.Runtime.dll\",\"System.dll\",\"System.Core.dll\")) { [void]$params.ReferencedAssemblies.Add($ref) }\n$result=$provider.CompileAssemblyFromSource($params,$source)\nif($result.Errors.HasErrors) { $result.Errors | ForEach-Object { Write-Output $_.ToString() }; exit 1 }\n$fixtureType=$result.CompiledAssembly.GetType(\"MorrowDev14MediaFixture\")\n$task=$fixtureType.GetMethod(\"Generate\").Invoke($null,@(\"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v14\\fixtures\"))\nif(-not $task.Wait(60000)) { throw \"Typed WinRT fixture render timeout; inspect operation before retry\" }\n$task.GetAwaiter().GetResult()\n",
+    "ffmpeg_encode_and_initial_verify": "from pathlib import Path\nimport sys,subprocess,json,hashlib\nsys.path.insert(0,r\"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\fixture-tools\")\nimport imageio_ffmpeg\nroot=Path(r\"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v14\\fixtures\")\nexe=imageio_ffmpeg.get_ffmpeg_exe()\noutput=root/\"HMOS-dev14-bars.mp4\"\nassert not output.exists(), \"refuse replacing nonempty fixture\"\nargs=[exe,\"-hide_banner\",\"-nostdin\",\"-n\"]\nfor phase in range(3): args+=[\"-loop\",\"1\",\"-framerate\",\"10\",\"-t\",\"4\",\"-i\",str(root/(\"bars-source-%d.bmp\"%phase))]\nargs+=[\"-i\",str(root/\"HMOS-dev14-tone.wav\"),\"-filter_complex\",\"[0:v][1:v][2:v]concat=n=3:v=1:a=0[v]\",\"-map\",\"[v]\",\"-map\",\"3:a\",\"-c:v\",\"libx264\",\"-profile:v\",\"baseline\",\"-level:v\",\"3.0\",\"-pix_fmt\",\"yuv420p\",\"-r\",\"10\",\"-g\",\"10\",\"-c:a\",\"aac\",\"-b:a\",\"64k\",\"-ar\",\"48000\",\"-ac\",\"1\",\"-t\",\"12\",\"-threads\",\"1\",\"-fflags\",\"+bitexact\",\"-flags:v\",\"+bitexact\",\"-flags:a\",\"+bitexact\",\"-map_metadata\",\"-1\",\"-movflags\",\"+faststart\",str(output)]\nrender=subprocess.run(args,capture_output=True,text=True,timeout=60)\nif render.returncode: raise RuntimeError(render.stderr)\ndecode=subprocess.run([exe,\"-hide_banner\",\"-nostdin\",\"-i\",str(output),\"-map\",\"0:v:0\",\"-f\",\"framehash\",\"-\"],capture_output=True,text=True,timeout=30)\nassert decode.returncode==0, decode.stderr\nframes=[line for line in decode.stdout.splitlines() if line and not line.startswith(\"#\")]\nassert len(frames)==120, len(frames)\nhashes=[line.rsplit(\",\",1)[1].strip() for line in frames]\nassert len(set(hashes))==3\nassert hashes[0]!=hashes[40]!=hashes[80] and all(h==hashes[0] for h in hashes[:40]) and all(h==hashes[40] for h in hashes[40:80]) and all(h==hashes[80] for h in hashes[80:])\naudio=subprocess.run([exe,\"-hide_banner\",\"-nostdin\",\"-i\",str(output),\"-map\",\"0:a:0\",\"-t\",\"12\",\"-c:a\",\"pcm_s16le\",\"-f\",\"s16le\",\"-\"],capture_output=True,timeout=30)\nassert audio.returncode==0, audio.stderr.decode()\nassert len(audio.stdout)==1152000, len(audio.stdout)\nsummary={\"package_version\":imageio_ffmpeg.__version__,\"ffmpeg_path\":exe,\"ffmpeg_sha256\":hashlib.sha256(Path(exe).read_bytes()).hexdigest().upper(),\"ffmpeg_version\":subprocess.run([exe,\"-version\"],capture_output=True,text=True,check=True).stdout.splitlines()[0],\"file\":output.name,\"bytes\":output.stat().st_size,\"sha256\":hashlib.sha256(output.read_bytes()).hexdigest().upper(),\"encode_args\":args,\"decode\":{\"return_code\":decode.returncode,\"frames\":len(frames),\"unique_frame_hashes\":len(set(hashes)),\"phase_frame_hashes\":[hashes[0],hashes[40],hashes[80]],\"phase_lengths_frames\":[40,40,40],\"audio_pcm16_mono_decoded_bytes_12s\":len(audio.stdout),\"decoded_audio_sha256\":hashlib.sha256(audio.stdout).hexdigest().upper()},\"metadata_probe_stderr\":decode.stderr}\nmanifest=root.parent/\"fixture-provenance.json\"\nassert not manifest.exists(), \"manifest exists\"\nmanifest.write_text(json.dumps(summary,ensure_ascii=False,indent=2)+\"\\n\",encoding=\"utf8\")\nprint(json.dumps(summary,ensure_ascii=False))\n"
+  },
+  "qualification_boundary": "This manifest proves procedural fixture provenance and complete host decoding. It does not prove HMOS AVPlayer decoding, playback, audible device output, UI interactions, physical ARM behavior, PreviewKit rendering, or production qualification. Root records actual device outcomes separately."
+}
