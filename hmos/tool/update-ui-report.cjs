@@ -24,6 +24,7 @@ for (const p of ['entry/src/main/ets/model/AttachmentFiles.ets', 'entry/src/main
   'entry/src/main/ets/model/VerifiedImages.ets', 'entry/src/main/ets/pages/AttachmentImagePreview.ets',
   'entry/src/main/ets/model/AttachmentPlayback.ets', 'entry/src/main/ets/pages/AttachmentMediaPreview.ets',
   'entry/src/main/ets/model/AttachmentOpen.ets', 'entry/src/main/ets/model/AttachmentFullscreen.ets',
+  'entry/src/main/ets/model/AttachmentImportSelection.ets', 'entry/src/main/ets/model/AttachmentMediaGestures.ets',
   'rust/src/attachment_bridge.rs', 'rust/src/file_stream.rs', 'rust/src/editor_draft_staging.rs',
   'rust/src/bin/hmos-attachment-check.rs', 'rust/src/attachment_integration_tests.rs',
   'rust/src/historical_retry_tests.rs', 'rust/src/editor_draft_staging_tests.rs',

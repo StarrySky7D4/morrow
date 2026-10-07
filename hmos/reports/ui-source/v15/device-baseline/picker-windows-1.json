@@ -1,0 +1,65 @@
+[
+  {
+    "id": 4,
+    "name": "SCBScenePanel12",
+    "pid": 1547,
+    "displayId": 0,
+    "focused": false
+  },
+  {
+    "id": 5,
+    "name": "BackgroundBlurView3",
+    "pid": 1547,
+    "displayId": 0,
+    "focused": false
+  },
+  {
+    "id": 8,
+    "name": "SCBWallpaper6",
+    "pid": 1547,
+    "displayId": 0,
+    "focused": false
+  },
+  {
+    "id": 11,
+    "name": "SCBDesktop8",
+    "pid": 1547,
+    "displayId": 0,
+    "focused": false
+  },
+  {
+    "id": 17,
+    "name": "SCBFormCenter14",
+    "pid": 1547,
+    "displayId": 0,
+    "focused": false
+  },
+  {
+    "id": 18,
+    "name": "SCBGestureNavBar15",
+    "pid": 1547,
+    "displayId": 0,
+    "focused": false
+  },
+  {
+    "id": 22,
+    "name": "SCBGestureBack19",
+    "pid": 1547,
+    "displayId": 0,
+    "focused": false
+  },
+  {
+    "id": 27,
+    "name": "SCBStatusBar24",
+    "pid": 1547,
+    "displayId": 0,
+    "focused": false
+  },
+  {
+    "id": 70,
+    "name": "hmos0",
+    "pid": 11935,
+    "displayId": 0,
+    "focused": true
+  }
+]

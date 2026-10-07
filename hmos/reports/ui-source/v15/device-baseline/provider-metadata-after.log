@@ -1,0 +1,14 @@
+10-07 12:00:25.472 11156 11882 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getAVMetaData success, metaData: {"duration":12000,"mimeType":"audio/wav","height":0,"width":0,"thumbnailPath":""} <private>
+10-07 12:00:25.732 11156 11875 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getAVMetaData success, metaData: {"duration":12000,"mimeType":"video/mp4","height":180,"width":320,"thumbnailPath":"/data/storage/el2/base/haps/phone/files/thumbnail/localDevice/8ec3e406c0d217766f727bee4c92c3b1b7fa8f400d9fadfd748c09cffed019f8.jpg"} <private>
+10-07 12:00:25.804 11156 11882 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getImageMetaData success <private>
+10-07 12:00:25.808 11156 11897 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getImageMetaData success <private>
+10-07 12:00:25.876 11156 11897 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getImageMetaData success <private>
+10-07 12:00:26.071 11156 11875 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getImageMetaData success <private>
+10-07 12:00:26.080 11156 11875 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getImageMetaData success <private>
+10-07 12:07:11.575 15070 16742 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getAVMetaData success, metaData: {"duration":12000,"mimeType":"audio/wav","height":0,"width":0,"thumbnailPath":""} <private>
+10-07 12:07:11.614 15070 16742 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getAVMetaData success, metaData: {"duration":12000,"mimeType":"video/mp4","height":180,"width":320,"thumbnailPath":"/data/storage/el2/base/haps/phone/files/thumbnail/localDevice/8ec3e406c0d217766f727bee4c92c3b1b7fa8f400d9fadfd748c09cffed019f8.jpg"} <private>
+10-07 12:07:11.738 15070 16740 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getImageMetaData success <private>
+10-07 12:07:11.749 15070 16742 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getImageMetaData success <private>
+10-07 12:07:11.749 15070 16742 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getImageMetaData success <private>
+10-07 12:07:11.781 15070 16740 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getImageMetaData success <private>
+10-07 12:07:11.784 15070 16742 I A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getImageMetaData success <private>

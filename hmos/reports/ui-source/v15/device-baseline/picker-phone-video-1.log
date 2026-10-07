@@ -1,0 +1,623 @@
+- Dumping layout…
+- Executing click...
+√ click at (301, 738)
+- Dumping layout…
+[
+  {
+    type: 'Text',
+    id: undefined,
+    text: '',
+    bounds: [ 65, 182, 128, 245 ],
+    parents: [ undefined, 'Button' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '',
+    bounds: [ 219, 188, 270, 239 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: 'Ctrl K',
+    bounds: [ 864, 197, 934, 229 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '󰉘',
+    bounds: [ 1029, 185, 1086, 242 ],
+    parents: [ undefined, 'Button' ]
+  },
+  {
+    type: 'Button',
+    id: undefined,
+    text: '草稿 1',
+    bounds: [ 1141, 156, 1284, 270 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: 'A LITTLE SPACE FOR BIG IDEAS',
+    bounds: [ 36, 339, 595, 371 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '让想法，自由生长。',
+    bounds: [ 36, 398, 747, 503 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '收纳日常的零碎，也留住灵光一闪。',
+    bounds: [ 36, 527, 613, 569 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '',
+    bounds: [ 1035, 429, 1086, 480 ],
+    parents: [ undefined, 'Scroll', 'Button' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '新建灵感',
+    bounds: [ 1107, 435, 1239, 474 ],
+    parents: [ undefined, 'Scroll', 'Button' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '让可能性发生',
+    bounds: [ 150, 719, 323, 747 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '还没成形，也没关系。',
+    bounds: [ 114, 807, 744, 881 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。',
+    bounds: [ 114, 911, 708, 1033 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '记录此刻的想法',
+    bounds: [ 114, 1111, 345, 1150 ],
+    parents: [ undefined, 'Scroll', 'Row' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '',
+    bounds: [ 375, 1108, 420, 1153 ],
+    parents: [ undefined, 'Scroll', 'Row' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '最近的念头',
+    bounds: [ 36, 1379, 262, 1432 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '14',
+    bounds: [ 286, 1388, 321, 1423 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '全部',
+    bounds: [ 357, 1367, 483, 1444 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '有待办',
+    bounds: [ 495, 1367, 651, 1444 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '含附件',
+    bounds: [ 663, 1367, 819, 1444 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '仅收藏',
+    bounds: [ 831, 1367, 987, 1444 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Row',
+    id: 'card-sort',
+    text: undefined,
+    bounds: [ 36, 1480, 1284, 1555 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '󰆨',
+    bounds: [ 1062, 1498, 1101, 1537 ],
+    parents: [ undefined, 'Scroll', 'Row' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '自定义顺序',
+    bounds: [ 1116, 1500, 1266, 1535 ],
+    parents: [ undefined, 'Scroll', 'Row' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '长按拖动柄调整顺序，或在卡片菜单中前移、后移。',
+    bounds: [ 36, 1555, 1284, 1590 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Column',
+    id: 'workspace-card:060b5cd8-de23-45e6-95a1-4571ddbf41a6',
+    text: undefined,
+    bounds: [ 36, 1638, 1284, 2112 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '',
+    bounds: [ 119, 1712, 176, 1769 ],
+    parents: [ undefined, 'Scroll', 'Column', 'Column' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '',
+    bounds: [ 1169, 1715, 1220, 1766 ],
+    parents: [ undefined, 'Scroll', 'Column', 'Column', 'Button' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: 'HMOS-markdown-20261005-A',
+    bounds: [ 96, 1833, 710, 1882 ],
+    parents: [ undefined, 'Scroll', 'Column', 'Column' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '| Name | Value |\n| --- | --- |\n| 中文😀 | 42 |\n| Second | 保留 |',
+    bounds: [ 96, 1906, 320, 2024 ],
+    parents: [ undefined, 'Scroll', 'Column', 'Column' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '灵感',
+    bounds: [ 96, 2081, 192, 2112 ],
+    parents: [ undefined, 'Scroll', 'Column', 'Column' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '待整理',
+    bounds: [ 1161, 2093, 1242, 2112 ],
+    parents: [ undefined, 'Scroll', 'Column', 'Column' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '没有紧迫的事。给好奇心一点时间。',
+    bounds: [ 129, 2021, 1158, 2060 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '󰛹',
+    bounds: [ 1185, 2015, 1236, 2066 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '',
+    bounds: [ 161, 278, 224, 341 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: 'MORROW / A LITTLE POSSIBILITY',
+    bounds: [ 285, 253, 743, 281 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '接住一个新想法',
+    bounds: [ 285, 296, 705, 366 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '',
+    bounds: [ 1110, 282, 1164, 336 ],
+    parents: [ undefined, 'Button' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '文字、表格、图片，先放在这里。让一个念头慢慢成形。',
+    bounds: [ 63, 402, 1257, 458 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'TextInput',
+    id: 'draft-title',
+    text: 'HMOS-media-20261007-A',
+    bounds: [ 135, 524, 1185, 716 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '21 / 60',
+    bounds: [ 135, 764, 1185, 799 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'PasteButton',
+    id: 'editor-paste',
+    text: '粘贴',
+    bounds: [ 368, 847, 603, 967 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Button',
+    id: 'editor-import',
+    text: undefined,
+    bounds: [ 627, 847, 952, 967 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '',
+    bounds: [ 678, 883, 726, 931 ],
+    parents: [ undefined, 'Scroll', 'Button' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '导入文件',
+    bounds: [ 744, 884, 901, 930 ],
+    parents: [ undefined, 'Scroll', 'Button' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '正在处理附件…',
+    bounds: [ 135, 1015, 1185, 1069 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '草稿附件',
+    bounds: [ 135, 1117, 1185, 1163 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Row',
+    id: 'draft-asset:asset-draft-import-62a954f711c5144c3f2e333407ecd11f5f1aad374634f95e42a9787a7742ff4f',
+    text: undefined,
+    bounds: [ 135, 1190, 1185, 1381 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '',
+    bounds: [ 165, 1259, 219, 1313 ],
+    parents: [ undefined, 'Scroll', 'Row' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: 'HMOS-dev14-tone.wav',
+    bounds: [ 243, 1220, 486, 1304 ],
+    parents: [ undefined, 'Scroll', 'Row' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: 'WAV · 1.1 MiB',
+    bounds: [ 243, 1316, 440, 1351 ],
+    parents: [ undefined, 'Scroll', 'Row' ]
+  },
+  {
+    type: 'Button',
+    id: 'draft-asset-preview:asset-draft-import-62a954f711c5144c3f2e333407ecd11f5f1aad374634f95e42a9787a7742ff4f',
+    text: '预览',
+    bounds: [ 621, 1226, 783, 1346 ],
+    parents: [ undefined, 'Scroll', 'Row' ]
+  },
+  {
+    type: 'Button',
+    id: 'draft-asset-export:asset-draft-import-62a954f711c5144c3f2e333407ecd11f5f1aad374634f95e42a9787a7742ff4f',
+    text: '导出',
+    bounds: [ 807, 1226, 969, 1346 ],
+    parents: [ undefined, 'Scroll', 'Row' ]
+  },
+  {
+    type: 'Button',
+    id: 'draft-asset-remove:asset-draft-import-62a954f711c5144c3f2e333407ecd11f5f1aad374634f95e42a9787a7742ff4f',
+    text: '移除',
+    bounds: [ 993, 1226, 1155, 1346 ],
+    parents: [ undefined, 'Scroll', 'Row' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '󰀣',
+    bounds: [ 186, 1501, 240, 1555 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '正文 · Markdown',
+    bounds: [ 264, 1504, 598, 1553 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '',
+    bounds: [ 1058, 1500, 1115, 1557 ],
+    parents: [ undefined, 'Scroll', 'Button' ]
+  },
+  {
+    type: 'TextArea',
+    id: 'draft-description',
+    text: '# Public media fixture\n' +
+      '\n' +
+      '12-second generated audio/video and a generated PDF.',
+    bounds: [ 186, 1637, 1134, 1746 ],
+    parents: [ undefined, 'Scroll' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '附件已保留在草稿中，保存卡片后生效。',
+    bounds: [ 63, 1746, 1257, 1821 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'Text',
+    id: 'draft-status',
+    text: '草稿已保留',
+    bounds: [ 135, 1821, 1185, 1856 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'Button',
+    id: undefined,
+    text: '放弃草稿',
+    bounds: [ 135, 1923, 351, 2043 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'Button',
+    id: undefined,
+    text: '保留草稿',
+    bounds: [ 631, 1926, 872, 2040 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'Button',
+    id: undefined,
+    text: '保存灵感',
+    bounds: [ 908, 1926, 1185, 2040 ],
+    parents: [ undefined ]
+  },
+  {
+    type: 'SymbolGlyph',
+    id: 'left_icon',
+    text: undefined,
+    bounds: [ 78, 222, 132, 276 ],
+    parents: [ undefined, 'SheetWrapper', 'SheetPage', 'Column' ]
+  },
+  {
+    type: 'Text',
+    id: 'top_title',
+    text: '我的手机',
+    bounds: [ 186, 223, 426, 293 ],
+    parents: [ undefined, 'SheetWrapper', 'SheetPage' ]
+  },
+  {
+    type: 'Column',
+    id: 'top_menu',
+    text: undefined,
+    bounds: [ 1020, 192, 1134, 306 ],
+    parents: [ undefined, 'SheetWrapper', 'SheetPage' ]
+  },
+  {
+    type: 'Column',
+    id: 'top_menu',
+    text: undefined,
+    bounds: [ 1158, 192, 1272, 306 ],
+    parents: [ undefined, 'SheetWrapper', 'SheetPage' ]
+  },
+  {
+    type: 'Search',
+    id: 'top_search',
+    text: undefined,
+    bounds: [ 48, 333, 1272, 453 ],
+    parents: [ undefined, 'SheetWrapper', 'SheetPage', 'Column' ]
+  },
+  {
+    type: 'SearchField',
+    id: '__SearchField__top_search',
+    text: undefined,
+    bounds: [ 156, 333, 1164, 453 ],
+    parents: [ undefined, 'SheetWrapper', 'SheetPage', 'Column', 'Search' ]
+  },
+  {
+    type: 'SymbolGlyph',
+    id: '__SearchField__Image__top_search',
+    text: undefined,
+    bounds: [ 84, 369, 132, 417 ],
+    parents: [ undefined, 'SheetWrapper', 'SheetPage', 'Column', 'Search' ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '2 项',
+    bounds: [ 621, 525, 699, 574 ],
+    parents: [ undefined, 'SheetWrapper', 'SheetPage', 'Scroll', 'Column' ]
+  },
+  {
+    type: 'Column',
+    id: '0',
+    text: undefined,
+    bounds: [ 48, 622, 343, 996 ],
+    parents: [
+      undefined,
+      'SheetWrapper',
+      'SheetPage',
+      'Scroll',
+      'Grid',
+      'GridItem'
+    ]
+  },
+  {
+    type: '__Common__',
+    id: 'file://docs/storage/Users/currentUser/DownloadIcon',
+    text: undefined,
+    bounds: [ 81, 634, 309, 862 ],
+    parents: [
+      undefined,
+      'SheetWrapper',
+      'SheetPage',
+      'Scroll',
+      'Grid',
+      'GridItem',
+      'Column'
+    ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: 'Download',
+    bounds: [ 97, 874, 294, 931 ],
+    parents: [
+      undefined,
+      'SheetWrapper',
+      'SheetPage',
+      'Scroll',
+      'Grid',
+      'GridItem',
+      'Column'
+    ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '11:56',
+    bounds: [ 157, 943, 234, 978 ],
+    parents: [
+      undefined,
+      'SheetWrapper',
+      'SheetPage',
+      'Scroll',
+      'Grid',
+      'GridItem',
+      'Column'
+    ]
+  },
+  {
+    type: 'Column',
+    id: '1',
+    text: undefined,
+    bounds: [ 358, 622, 653, 996 ],
+    parents: [
+      undefined,
+      'SheetWrapper',
+      'SheetPage',
+      'Scroll',
+      'Grid',
+      'GridItem'
+    ]
+  },
+  {
+    type: '__Common__',
+    id: 'file://docs/storage/Users/currentUser/DocumentsIcon',
+    text: undefined,
+    bounds: [ 391, 634, 619, 862 ],
+    parents: [
+      undefined,
+      'SheetWrapper',
+      'SheetPage',
+      'Scroll',
+      'Grid',
+      'GridItem',
+      'Column'
+    ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: 'Documents',
+    bounds: [ 395, 874, 616, 931 ],
+    parents: [
+      undefined,
+      'SheetWrapper',
+      'SheetPage',
+      'Scroll',
+      'Grid',
+      'GridItem',
+      'Column'
+    ]
+  },
+  {
+    type: 'Text',
+    id: undefined,
+    text: '2026/10/05',
+    bounds: [ 425, 943, 586, 978 ],
+    parents: [
+      undefined,
+      'SheetWrapper',
+      'SheetPage',
+      'Scroll',
+      'Grid',
+      'GridItem',
+      'Column'
+    ]
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "name": "HMOS-media-20261007-A",
+  "device": "127.0.0.1:5555",
+  "checks": [
+    {
+      "stage": "restore-final-package"
+    },
+    {
+      "stage": "preview-audio"
+    },
+    {
+      "stage": "playback-audio",
+      "before": "0:04 / 0:12",
+      "after": "0:07 / 0:12"
+    },
+    {
+      "stage": "fullscreen-audio",
+      "surfaceBounds": [
+        1038,
+        347,
+        1195,
+        655
+      ]
+    },
+    {
+      "stage": "close-audio"
+    }
+  ]
+}

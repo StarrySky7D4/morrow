@@ -16,6 +16,7 @@ export class PlaybackView {
   positionMs: number = 0;
   durationMs: number = 0;
   busy: boolean = false;
+  surfaceReady: boolean = true;
 }
 
 export interface AttachmentPlayer {
@@ -46,6 +47,7 @@ class PlaybackSession {
   background: boolean = false;
   constructor(source: PlaybackSource) {
     this.source = source; this.view.token = source.token; this.view.kind = source.kind; this.view.phase = 'loading';
+    this.view.surfaceReady = source.kind !== 'video';
   }
 }
 
@@ -56,7 +58,7 @@ export function playbackTime(value: number): string {
 }
 
 export function playbackCanControl(view: PlaybackView): boolean {
-  return ['prepared', 'playing', 'paused', 'completed'].includes(view.phase) && !view.busy;
+  return ['prepared', 'playing', 'paused', 'completed'].includes(view.phase) && !view.busy && view.surfaceReady !== false;
 }
 
 export class AttachmentPlayback {
@@ -74,6 +76,7 @@ export class AttachmentPlayback {
     if (value) {
       result.token = value.token; result.kind = value.kind; result.phase = value.phase; result.error = value.error;
       result.positionMs = value.positionMs; result.durationMs = value.durationMs; result.busy = value.busy;
+      result.surfaceReady = value.surfaceReady;
     }
     return result;
   }
@@ -145,10 +148,18 @@ export class AttachmentPlayback {
   setSurface(token: string, id: string): void {
     const session = this.current;
     if (!session || !this.active(session) || session.source.token !== token || session.source.kind !== 'video' || !id) { return; }
-    session.surface = id;
+    session.surface = id; session.view.surfaceReady = true; this.notify(session);
     if (session.preparing) {
-      this.enqueue(session, async (): Promise<void> => { session.player?.setSurface(id); });
+      this.enqueue(session, async (): Promise<void> => { if (session.surface === id) { session.player?.setSurface(id); } });
     } else { this.prepareIfReady(session); }
+  }
+
+  clearSurface(token: string, id: string): void {
+    const session = this.current;
+    if (!session || !this.active(session) || session.source.token !== token || session.source.kind !== 'video' ||
+      !id || session.surface !== id) { return; }
+    session.surface = ''; session.view.surfaceReady = false; this.notify(session);
+    this.pauseForBackground(token);
   }
 
   private prepareIfReady(session: PlaybackSession): void {
@@ -156,6 +167,7 @@ export class AttachmentPlayback {
       (session.source.kind === 'video' && !session.surface)) { return; }
     session.preparing = true;
     this.enqueue(session, async (): Promise<void> => {
+      if (session.source.kind === 'video' && !session.surface) { session.preparing = false; return; }
       if (session.source.kind === 'video') { session.player?.setSurface(session.surface); }
       await session.player?.prepare();
     });
@@ -173,9 +185,9 @@ export class AttachmentPlayback {
     return next;
   }
 
-  async toggle(): Promise<void> {
+  async toggle(token: string = ''): Promise<void> {
     const session = this.current;
-    if (!session || !this.active(session) || !playbackCanControl(session.view)) { return; }
+    if (!session || !this.active(session) || (token && token !== session.source.token) || !playbackCanControl(session.view)) { return; }
     session.background = false;
     const pause = session.view.phase === 'playing';
     await this.enqueue(session, async (): Promise<void> => {
@@ -183,9 +195,9 @@ export class AttachmentPlayback {
     });
   }
 
-  async seek(value: number): Promise<void> {
+  async seek(value: number, token: string = ''): Promise<void> {
     const session = this.current;
-    if (!session || !this.active(session) || !playbackCanControl(session.view) ||
+    if (!session || !this.active(session) || (token && token !== session.source.token) || !playbackCanControl(session.view) ||
       !Number.isFinite(value) || session.view.durationMs <= 0) { return; }
     const target = Math.round(Math.max(0, Math.min(session.view.durationMs, value)));
     await this.enqueue(session, async (): Promise<void> => { session.player?.seek(target); });

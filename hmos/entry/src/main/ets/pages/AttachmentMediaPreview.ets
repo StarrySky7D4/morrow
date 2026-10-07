@@ -2,6 +2,7 @@ import { media } from '@kit.MediaKit';
 import { fileIo as fs } from '@kit.CoreFileKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { AttachmentPlayer, PlaybackSource, PlaybackView, playbackCanControl, playbackTime } from '../model/AttachmentPlayback';
+import { AttachmentMediaGestures, AttachmentDoubleTapSeek, AttachmentControlVisibility, MediaGestureAction } from '../model/AttachmentMediaGestures';
 import { uiText } from '../model/UiStrings';
 
 // Only the parent can admit a verified lease. AVPlayer receives a read-only
@@ -70,38 +71,169 @@ export struct AttachmentMediaPreview {
   @Prop accent: string = '#7662BA';
   @Prop family: string = 'HarmonyOS Sans';
   @Prop locale: string = 'zh';
-  @Prop fullscreen: boolean = false;
-  onToggle: () => void = (): void => {};
-  onSeek: (value: number) => void = (_value: number): void => {};
+  @Prop @Watch('fullscreenChanged') fullscreen: boolean = false;
+  onToggle: (token: string) => void = (_token: string): void => {};
+  onSeek: (value: number, token: string) => void = (_value: number, _token: string): void => {};
   onSurface: (token: string, id: string) => void = (_token: string, _id: string): void => {};
+  onSurfaceGone: (token: string, id: string) => void = (_token: string, _id: string): void => {};
   onBackground: (token: string) => void = (_token: string): void => {};
-  onFullscreen: () => void = (): void => {};
+  onFullscreen: (token: string) => void = (_token: string): void => {};
   @State seeking: boolean = false;
   @State seekPosition: number = 0;
-  private surfaceController: XComponentController = new XComponentController();
+  @State controlsVisible: boolean = false;
+  @State gestureFeedback: MediaGestureAction = new MediaGestureAction();
+  private surfaceController: AttachmentSurfaceController = new AttachmentSurfaceController();
   private lastToken: string = '';
+  private surfaceId: string = '';
+  private surfaceEpoch: number = 0;
+  private alive: boolean = false;
+  private gestures: AttachmentMediaGestures = new AttachmentMediaGestures();
+  private controlsVisibility: AttachmentControlVisibility = new AttachmentControlVisibility((visible: boolean): void => {
+    if (this.alive) { this.controlsVisible = visible; }
+  });
+  private doubleTap: AttachmentDoubleTapSeek = new AttachmentDoubleTapSeek(
+    (): PlaybackView => this.view, (): boolean => this.alive && this.fullscreen,
+    (action: MediaGestureAction): void => { if (this.alive) { this.gestureFeedback = action; } },
+    (action: MediaGestureAction): void => {
+      if (this.alive && action.token === this.view.token && this.ready()) { this.onSeek(action.value, action.token); }
+    });
   private t(value: string): string { return uiText(value, this.locale); }
   private viewChanged(): void {
-    if (this.lastToken !== this.view.token) { this.lastToken = this.view.token; this.seeking = false; }
+    if (this.lastToken !== this.view.token) {
+      this.surfaceEpoch++; this.surfaceId = ''; this.lastToken = this.view.token;
+      this.bindSurface(this.view.token, this.surfaceEpoch);
+      this.cancelGestures(); this.controlsVisibility.bind(this.view.token, this.fullscreen);
+    }
+    if (this.failed() || this.view.phase === 'closing') { this.cancelGestures(); }
     if (!this.seeking) { this.seekPosition = this.view.positionMs; }
   }
-  aboutToDisappear(): void { this.onBackground(this.view.token); }
+  private fullscreenChanged(): void { this.cancelGestures(); this.controlsVisibility.bind(this.view.token, this.fullscreen); }
+  aboutToAppear(): void { this.alive = true; this.viewChanged(); this.controlsVisibility.bind(this.view.token, this.fullscreen); }
+  aboutToDisappear(): void {
+    this.alive = false; this.controlsVisibility.dispose(); this.cancelGestures();
+    if (this.surfaceId) { this.onSurfaceGone(this.lastToken, this.surfaceId); this.surfaceId = ''; }
+    this.surfaceEpoch++; this.onBackground(this.view.token);
+  }
+  private cancelGestures(): void { this.gestures.cancel(); this.doubleTap.cancel(); this.seeking = false; }
   private failed(): boolean { return this.view.phase === 'failed' || this.view.phase === 'cleanup_failed'; }
   private ready(): boolean { return playbackCanControl(this.view) && !this.loading && !this.failure; }
-  private canvasHeight(): number { return Math.max(100, this.contentHeight - 84); }
   private positionLabel(): string { return playbackTime(this.seeking ? this.seekPosition : this.view.positionMs); }
+  private bindSurface(token: string, epoch: number): void {
+    this.surfaceController = new AttachmentSurfaceController(
+      (id: string): void => this.admitSurface(token, epoch, id),
+      (id: string): void => {
+        if (token !== this.view.token || epoch !== this.surfaceEpoch || id !== this.surfaceId) { return; }
+        this.surfaceId = ''; this.onSurfaceGone(token, id); this.onBackground(token);
+      });
+  }
+  private admitSurface(token: string, epoch: number, id: string): void {
+    if (!this.alive || token !== this.view.token || epoch !== this.surfaceEpoch || !id || this.surfaceId === id) { return; }
+    this.surfaceId = id; this.onSurface(token, id);
+  }
+  private surfaceLoaded(token: string, epoch: number, controller: XComponentController): () => void {
+    return (): void => {
+      if (!this.alive || token !== this.view.token || epoch !== this.surfaceEpoch) { return; }
+      this.admitSurface(token, epoch, controller.getXComponentSurfaceId());
+    };
+  }
+  private gestureX(event: GestureEvent): number {
+    const fingers = event.fingerInfos && event.fingerInfos.length > 0 ? event.fingerInfos : event.fingerList;
+    return fingers.length > 0 && fingers[0] ? fingers[0].localX : -1;
+  }
+  private feedbackLabel(): string {
+    const delta = this.gestureFeedback.deltaMs;
+    return (delta < 0 ? '⏪ −' : '⏩ +') + Math.abs(Math.round(delta / 1000)).toString() + this.t('秒') + '\n' +
+      playbackTime(this.gestureFeedback.value) + ' / ' + playbackTime(this.view.durationMs);
+  }
 
   @Builder
   VideoCanvas(value: PlaybackView) {
     XComponent({ id: 'attachment-video-' + value.token, type: XComponentType.SURFACE, controller: this.surfaceController })
       .width('100%').height('100%').backgroundColor(Color.Black).id('attachment-video-surface')
-      .onLoad((): void => { this.onSurface(value.token, this.surfaceController.getXComponentSurfaceId()); })
-      .onDestroy((): void => { if (this.view.token === value.token) { this.onBackground(value.token); } })
+      .onLoad(this.surfaceLoaded(value.token, this.surfaceEpoch, this.surfaceController))
+  }
+
+  @Builder
+  GestureZone(token: string) {
+    Stack() {}.width(Math.max(1, this.contentWidth - 32)).height(Math.max(1, this.contentHeight - 32))
+      .backgroundColor(Color.Transparent).id('attachment-media-gesture-zone')
+      .gesture(GestureGroup(GestureMode.Exclusive,
+        PanGesture({ fingers: 1, direction: PanDirection.Horizontal })
+          .onActionStart((): void => {
+            if (token !== this.view.token || !this.ready()) { return; }
+            this.doubleTap.cancel(); this.controlsVisibility.hold(token); this.gestures.begin(this.view, this.fullscreen);
+          })
+          .onActionUpdate((event: GestureEvent): void => {
+            if (token !== this.view.token || !this.ready()) { return; }
+            const action = this.gestures.move(event.offsetX, this.view, this.fullscreen);
+            if (action.kind) { this.gestureFeedback = action; this.seeking = true; this.seekPosition = action.value; }
+          })
+          .onActionEnd((): void => {
+            const action = this.gestures.finish(this.view, this.fullscreen);
+            this.seeking = false; this.gestureFeedback = new MediaGestureAction(); this.controlsVisibility.release(token);
+            if (token === this.view.token && action.token === token && action.kind && this.ready()) { this.onSeek(action.value, token); }
+          })
+          .onActionCancel((): void => { this.gestures.cancel(); this.seeking = false; this.gestureFeedback = new MediaGestureAction(); this.controlsVisibility.release(token); }),
+        TapGesture({ count: 2 }).onAction((event: GestureEvent): void => {
+          if (token === this.view.token && this.ready()) {
+            this.doubleTap.trigger(this.view, this.fullscreen, this.gestureX(event), Math.max(1, this.contentWidth - 32));
+          }
+        }),
+        TapGesture({ count: 1 }).onAction((event: GestureEvent): void => {
+          if (token !== this.view.token || !this.alive || this.failed()) { return; }
+          if (!this.doubleTap.increment(this.view, this.fullscreen, this.gestureX(event), Math.max(1, this.contentWidth - 32))) {
+            this.controlsVisibility.tap(token);
+          }
+        })
+      ))
+  }
+
+  @Builder
+  Controls(token: string) {
+    Stack() {
+      Button(this.view.phase === 'playing' ? 'Ⅱ' : '▷', { type: ButtonType.Normal })
+        .fontFamily(this.family).fontSize(this.fullscreen ? 44 : 38).fontColor(Color.White)
+        .backgroundColor(Color.Transparent).width(this.fullscreen ? 56 : 48).height(this.fullscreen ? 56 : 48)
+        .accessibilityText(this.t(this.view.phase === 'playing' ? '暂停' : '播放')).enabled(this.ready()).id('attachment-media-toggle')
+        .onClick((): void => {
+          if (token === this.view.token && this.ready()) { this.controlsVisibility.interact(token); this.onToggle(token); }
+        })
+      Column({ space: 4 }) {
+        Slider({ value: this.seeking ? this.seekPosition : this.view.positionMs, min: 0,
+          max: Math.max(1, this.view.durationMs), step: 1, style: SliderStyle.OutSet })
+          .width('100%').height(28).selectedColor(Color.Red).trackColor('#61FFFFFF')
+          .enabled(this.ready() && this.view.durationMs > 0).id('attachment-media-seek')
+          .onChange((value: number, mode: SliderChangeMode): void => {
+            if (token !== this.view.token || !this.ready() || !Number.isFinite(value)) { return; }
+            this.seekPosition = Math.max(0, Math.min(this.view.durationMs, value));
+            if (mode === SliderChangeMode.Begin || mode === SliderChangeMode.Moving) {
+              this.controlsVisibility.hold(token); this.seeking = true;
+            }
+            if (mode === SliderChangeMode.End || mode === SliderChangeMode.Click) {
+              this.seeking = false; this.controlsVisibility.release(token); this.onSeek(this.seekPosition, token);
+            }
+          })
+        Row({ space: 12 }) {
+          Text(this.positionLabel() + ' / ' + playbackTime(this.view.durationMs)).fontFamily(this.family)
+            .fontSize(12).fontColor(Color.White).id('attachment-media-time')
+          Blank()
+          Button(this.t(this.fullscreen ? '退出全屏' : '全屏'), { type: ButtonType.Normal })
+            .fontFamily(this.family).fontSize(12).fontColor(Color.White).backgroundColor(Color.Transparent)
+            .height(32).enabled(!this.loading && !this.failed() && this.view.phase !== 'closing')
+            .onClick((): void => { if (token === this.view.token && this.alive) { this.onFullscreen(token); } })
+            .id('attachment-media-fullscreen')
+        }.width('100%').height(32)
+      }.width('100%').height('100%').justifyContent(FlexAlign.End)
+        .padding({ left: 16, right: 16, bottom: this.fullscreen ? 42 : 8 })
+        .hitTestBehavior(HitTestMode.Transparent)
+    }.width('100%').height('100%').backgroundColor('#66000000')
+      .opacity(this.controlsVisible ? 1 : 0).animation({ duration: 300, curve: Curve.EaseInOut })
+      .hitTestBehavior(this.controlsVisible ? HitTestMode.Transparent : HitTestMode.None)
+      .id('attachment-media-controls')
   }
 
   build() {
-    Column({ space: 8 }) {
-      Stack() {
+    Stack() {
         if (this.failure.length > 0) {
           Text(this.failure).fontFamily(this.family).fontSize(13).fontColor(this.muted)
             .textAlign(TextAlign.Center).padding(24).id('attachment-media-read-failure')
@@ -121,33 +253,32 @@ export struct AttachmentMediaPreview {
           if (this.loading || ['idle', 'loading', 'closing'].includes(this.view.phase)) {
             LoadingProgress().width(32).height(32).color(this.accent).id('attachment-media-loading')
           }
-        }
-      }.width(this.contentWidth).height(this.canvasHeight()).clip(true)
-      Slider({ value: this.seeking ? this.seekPosition : this.view.positionMs, min: 0,
-        max: Math.max(1, this.view.durationMs), step: 1, style: SliderStyle.OutSet })
-        .width('100%').height(24).selectedColor(this.accent).trackColor('#DFDAE8')
-        .enabled(this.ready() && this.view.durationMs > 0).id('attachment-media-seek')
-        .onChange((value: number, mode: SliderChangeMode): void => {
-          if (!this.ready() || !Number.isFinite(value)) { return; }
-          this.seekPosition = Math.max(0, Math.min(this.view.durationMs, value));
-          if (mode === SliderChangeMode.Begin || mode === SliderChangeMode.Moving) { this.seeking = true; }
-          if (mode === SliderChangeMode.End || mode === SliderChangeMode.Click) {
-            this.seeking = false; this.onSeek(this.seekPosition);
+          this.GestureZone(this.view.token)
+          this.Controls(this.view.token)
+          if (this.gestureFeedback.kind && this.gestureFeedback.token === this.view.token) {
+            Text(this.feedbackLabel()).fontFamily(this.family).fontSize(13).fontColor(Color.White)
+              .textAlign(TextAlign.Center).padding({ left: 18, right: 18, top: 12, bottom: 12 })
+              .backgroundColor('#88000000').borderRadius(24).hitTestBehavior(HitTestMode.None)
+              .id('attachment-media-gesture-feedback')
           }
-        })
-      Row({ space: 12 }) {
-        Button(this.t(this.view.phase === 'playing' ? '暂停' : '播放'), { type: ButtonType.Normal })
-          .fontFamily(this.family).fontSize(13).fontColor(this.accent).backgroundColor(Color.Transparent)
-          .height(32).enabled(this.ready()).onClick((): void => this.onToggle()).id('attachment-media-toggle')
-        Text(this.positionLabel() + ' / ' + playbackTime(this.view.durationMs)).fontFamily(this.family)
-          .fontSize(12).fontColor(this.ink).id('attachment-media-time')
-        Blank()
-        Button(this.t(this.fullscreen ? '退出全屏' : '全屏'), { type: ButtonType.Normal })
-          .fontFamily(this.family).fontSize(12).fontColor(this.accent).backgroundColor(Color.Transparent)
-          .height(32).enabled(!this.loading && !this.failed() && this.view.phase !== 'closing')
-          .onClick((): void => this.onFullscreen()).id('attachment-media-fullscreen')
-      }.width('100%').height(32)
-    }.width(this.contentWidth).height(this.contentHeight)
-      .onVisibleAreaChange([0], (visible: boolean, _ratio: number): void => { if (!visible) { this.onBackground(this.view.token); } })
+        }
+    }.width(this.contentWidth).height(this.contentHeight).backgroundColor(Color.Black).clip(true)
+      .onVisibleAreaChange([0], (visible: boolean, _ratio: number): void => {
+        if (!visible) { this.cancelGestures(); this.controlsVisibility.dispose(); this.onBackground(this.view.token); }
+        else { this.controlsVisibility.bind(this.view.token, this.fullscreen); }
+      })
   }
+}
+
+// API 26 identifies the exact destroyed surface. An old destruction callback
+// cannot borrow this component's newer surface ID or newer lease controller.
+class AttachmentSurfaceController extends XComponentController {
+  private created: (id: string) => void;
+  private destroyed: (id: string) => void;
+  constructor(created: (id: string) => void = (_id: string): void => {},
+    destroyed: (id: string) => void = (_id: string): void => {}) {
+    super(); this.created = created; this.destroyed = destroyed;
+  }
+  onSurfaceCreated(id: string): void { this.created(id); }
+  onSurfaceDestroyed(id: string): void { this.destroyed(id); }
 }

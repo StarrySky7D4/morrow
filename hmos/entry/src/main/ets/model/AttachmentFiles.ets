@@ -158,6 +158,7 @@ export class AttachmentFiles {
   // cannot bypass the inline byte/file budget or the single-dialog limit.
   private static activePreviews: Map<string, PreviewEntry> = new Map<string, PreviewEntry>();
   private issues: AttachmentRecoveryDiagnostic[] = [];
+  private selection: Set<string> = new Set<string>();
   // Instances in the same UI process share filesystem admission too.
   private static tail: Promise<void> = Promise.resolve();
 
@@ -215,8 +216,11 @@ export class AttachmentFiles {
     return entry;
   }
 
-  private async remaining(): Promise<number> {
+  private async remaining(keepCleaned: boolean = false): Promise<number> {
+    const cleaned = keepCleaned ? this.issues.filter((issue: AttachmentRecoveryDiagnostic): boolean => !issue.preserved && !issue.requires_review) : [];
     await this.scanSpools();
+    this.issues = cleaned.filter((issue: AttachmentRecoveryDiagnostic): boolean =>
+      !this.issues.some((current: AttachmentRecoveryDiagnostic): boolean => current.spool_id === issue.spool_id)).concat(this.issues);
     const names = await fs.listFile(this.root);
     if (names.length >= MAX_SPOOLS) { throw new Error('已有 20 份待处理附件，请先处理已有附件。'); }
     let used: number = 0;
@@ -311,17 +315,49 @@ export class AttachmentFiles {
     await fs.rmdir(directory);
   }
 
-  pick(maxBytes: number = ATTACHMENT_IMPORT_BUDGET): Promise<PreparedAttachment | undefined> {
-    return this.queued(async (): Promise<PreparedAttachment | undefined> => {
+  selectUris(maximum: number): Promise<string[]> {
+    return this.queued(async (): Promise<string[]> => {
+      if (!Number.isInteger(maximum) || maximum < 1 || maximum > 20 || this.selection.size > 0) {
+        throw new Error('附件选择额度无效或已有选择尚未处理。');
+      }
+      await this.remaining();
+      const options = new picker.DocumentSelectOptions();
+      options.maxSelectNumber = maximum; options.selectMode = picker.DocumentSelectMode.FILE;
+      const returned = await new picker.DocumentViewPicker(this.context).select(options);
+      if (!Array.isArray(returned) || returned.length > maximum) { throw new Error('系统返回的附件选择无法确认。'); }
+      const uris: string[] = [];
+      for (let i: number = 0; i < returned.length; i++) {
+        const uri: string = returned[i];
+        if (typeof uri !== 'string' || !uri || uri.length > 16384 || /[\u0000-\u001f\u007f]/.test(uri)) {
+          throw new Error('系统返回的附件选择无法确认。');
+        }
+        uris.push(uri);
+      }
+      if (new Set<string>(uris).size !== uris.length) { throw new Error('系统返回的附件选择无法确认。'); }
+      this.selection = new Set<string>(uris); return uris;
+    });
+  }
+
+  // Grants are ephemeral and never a durable retry source. Forget unstarted
+  // items when their batch ends; admitted requests retain the existing journal.
+  discardSelection(): void { this.selection.clear(); }
+
+  async pick(maxBytes: number = ATTACHMENT_IMPORT_BUDGET): Promise<PreparedAttachment | undefined> {
+    if (!Number.isSafeInteger(maxBytes) || maxBytes <= 0 || maxBytes > ATTACHMENT_IMPORT_BUDGET) {
+      throw new Error('附件导入额度无效。');
+    }
+    const uris = await this.selectUris(1);
+    try { return uris.length === 0 ? undefined : await this.prepareUri(uris[0], maxBytes); }
+    finally { this.discardSelection(); }
+  }
+
+  prepareUri(uri: string, maxBytes: number = ATTACHMENT_IMPORT_BUDGET): Promise<PreparedAttachment> {
+    return this.queued(async (): Promise<PreparedAttachment> => {
       if (!Number.isSafeInteger(maxBytes) || maxBytes <= 0 || maxBytes > ATTACHMENT_IMPORT_BUDGET) {
         throw new Error('附件导入额度无效。');
       }
-      const remaining = await this.remaining();
-      const options = new picker.DocumentSelectOptions();
-      options.maxSelectNumber = 1; options.selectMode = picker.DocumentSelectMode.FILE;
-      const uris = await new picker.DocumentViewPicker(this.context).select(options);
-      if (uris.length === 0) { return undefined; }
-      if (uris.length !== 1 || !uris[0]) { throw new Error('请选择一个附件。'); }
+      if (!this.selection.delete(uri)) { throw new Error('此附件不属于尚未读取的系统选择。'); }
+      const remaining = await this.remaining(true);
       const directory = await fs.mkdtemp(this.root + '/import-XXXXXX');
       let source: fs.File | undefined = undefined;
       let spool: fs.File | undefined = undefined;
@@ -329,7 +365,7 @@ export class AttachmentFiles {
       try {
         // Open the exact picker URI with the actual grant; never resolve it to
         // an Android-style path, persist a raw FD, or assume durable URI rights.
-        source = await fs.open(uris[0], fs.OpenMode.READ_ONLY);
+        source = await fs.open(uri, fs.OpenMode.READ_ONLY);
         spool = await fs.open(directory + '/data', fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
         const reply = streamReply(await native.prepareFile(source.fd, spool.fd, Math.min(maxBytes, remaining)),
           Math.min(maxBytes, remaining));

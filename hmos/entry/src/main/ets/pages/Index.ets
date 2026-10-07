@@ -6,6 +6,8 @@ import { AttachmentMediaPreview, createAttachmentPlayer } from './AttachmentMedi
 import { AttachmentPlayback, PlaybackSource, PlaybackView } from '../model/AttachmentPlayback';
 import { AttachmentOpen, AttachmentOpenState, attachmentOpenBlocked } from '../model/AttachmentOpen';
 import { AttachmentFullscreen, FullscreenView, FullscreenWindow, createFullscreenWindow } from '../model/AttachmentFullscreen';
+import { AttachmentImportSelection, AttachmentImportBoundary, AttachmentImportIdentity, AttachmentImportReceipt,
+  AttachmentImportSelectionState, attachmentImportTitle } from '../model/AttachmentImportSelection';
 import { ImageReadTarget, ImageLease, VerifiedImageView, VerifiedImages } from '../model/VerifiedImages';
 import { insertPaste, samePasteTarget } from '../model/EditorPaste';
 import { pasteboard } from '@kit.BasicServicesKit';
@@ -100,6 +102,11 @@ struct Index {
   @State draftsOpen: boolean = false;
   @State draftWorking: boolean = false;
   @State attachmentWorking: boolean = false;
+  @State attachmentSelectionState: AttachmentImportSelectionState = { phase: 'idle', busy: false, total: 0, started: 0, selected: 0, retained: 0, error: '' };
+  private attachmentSelection: AttachmentImportSelection | undefined = undefined;
+  private attachmentEditEpoch: number = 0;
+  private attachmentEditorIdentity: string = '';
+  private attachmentEditingValues: string = '';
   @State editorAssets: AssetView[] = [];
   @State importRecords: ImportRecord[] = [];
   @State pendingSpools: PreparedAttachment[] = [];
@@ -326,6 +333,7 @@ struct Index {
     return false;
   }
   aboutToDisappear(): void {
+    this.attachmentSelection?.stop();
     this.closeAttachmentPreview();
     this.pageAlive = false;
     // No mutation is replayed on destruction. Only earlier acknowledged raw
@@ -342,8 +350,8 @@ struct Index {
     if (!this.foreground) { this.mediaPlayback.pauseForBackground(); this.exitMediaFullscreen(); }
     else { this.fileOpen?.reconcile(); }
   }
-  private async switchMediaFullscreen(): Promise<void> {
-    if (!this.pageAlive || !this.attachmentPreviewOpen || this.attachmentPreviewClosing || !this.mediaView.token) { return; }
+  private async switchMediaFullscreen(token: string): Promise<void> {
+    if (!this.pageAlive || !this.attachmentPreviewOpen || this.attachmentPreviewClosing || !token || token !== this.mediaView.token) { return; }
     try { await this.fullscreen.toggle(); }
     catch (_) { if (this.pageAlive) { this.message = this.fullscreen.view().error || '全屏切换未完成，请重试。'; } }
   }
@@ -398,6 +406,8 @@ struct Index {
   private draftChanged(): void {
     const draft = this.editorDraft;
     if (!draft) { return; }
+    const values = JSON.stringify(draft.current);
+    if (values !== this.attachmentEditingValues) { this.attachmentEditingValues = values; this.attachmentEditEpoch++; }
     this.refreshEditorAssets();
     this.updateInlineImages();
     this.draftStatus = draft.unknown ? '草稿回复未确认，原请求已保留' : draft.conflicted ? '草稿世代已变化，请核对' :
@@ -581,6 +591,9 @@ struct Index {
   }
   private blurDraftField(name: string): void { this.draftFocusedFields.delete(name); }
   private attachDraft(card?: CardView, restored?: DraftRecord, preserveFocus: boolean = false): void {
+    this.attachmentSelection?.stop(); this.attachmentSelection = undefined;
+    this.attachmentEditorIdentity = util.generateRandomUUID(true); this.attachmentEditingValues = '';
+    this.attachmentSelectionState = { phase: 'idle', busy: false, total: 0, started: 0, selected: 0, retained: 0, error: '' };
     this.editorDraft?.dispose(); this.draftConflict = false; this.draftStatus = '';
     this.draftSelectionPending = restored ? new Set(['title', 'description', 'hypothesis', 'conclusion', 'todos']) : new Set();
     if (!preserveFocus) { this.draftFocusedFields.clear(); this.lastDraftField = 'description'; }
@@ -663,15 +676,15 @@ struct Index {
       !this.pasteWorking && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && !this.attachmentPending &&
       !this.draftConflict && !this.draftCaptureIncomplete && !this.editorDraft?.unknown && this.pending.length === 0;
   }
-  private async loadImports(): Promise<void> {
+  private async loadImports(): Promise<boolean> {
     const draft = this.editorDraft, files = this.attachmentFiles;
-    if (!draft || !files) { return; }
+    if (!draft || !files) { return false; }
     try {
       const cmd = new Command(); cmd.action = 'import_list'; cmd.id = draft.scope.card_id; cmd.draft_id = draft.scope.draft_id;
       const result = await workbench.send(JSON.stringify(cmd));
       if (!result.ok) { throw new Error(result.error); }
       const spools = await files.recover();
-      if (this.editorDraft !== draft || !this.editorOpen || !this.pageAlive) { return; }
+      if (this.editorDraft !== draft || !this.editorOpen || !this.pageAlive) { return false; }
       this.importRecords = result.imports;
       this.attachmentDiagnostics = files.recoveryDiagnostics();
       this.pendingSpools = spools.filter((spool: PreparedAttachment): boolean => {
@@ -681,50 +694,90 @@ struct Index {
         } catch (_) { return false; }
       });
       this.refreshEditorAssets();
-    } catch (error) { if (this.editorDraft === draft) { this.message = '附件记录读取失败：' + String(error); } }
+      return true;
+    } catch (error) { if (this.editorDraft === draft) { this.message = '附件记录读取失败：' + String(error); } return false; }
+  }
+  private importBoundary(draft: EditorDraftCoordinator, editor: string): AttachmentImportBoundary {
+    return { editor_id: this.attachmentEditorIdentity, card_id: draft.scope.card_id, draft_id: draft.scope.draft_id,
+      generation: draft.confirmed?.generation ?? '0', edit_epoch: this.attachmentEditEpoch,
+      selected_count: draft.current.assets.length, import_count: this.importRecords.length, title: draft.current.title.text,
+      blocked: !this.pageAlive || !this.editorOpen || this.editorDraft !== draft || this.attachmentEditorIdentity !== editor ||
+        draft.disposed || draft.unknown || draft.conflicted || this.draftConflict || this.draftCaptureIncomplete ||
+        this.busy || this.pasteWorking || this.draftRetiring || this.draftRetirementUnknown || !!this.attachmentPending || !!this.pending ||
+        this.title !== draft.current.title.text };
   }
   private async importAttachment(): Promise<void> {
     if (!this.canImportAttachment() || !this.attachmentFiles || !this.editorDraft) { return; }
-    const draft = this.editorDraft, files = this.attachmentFiles;
-    this.attachmentWorking = true; let spool: PreparedAttachment | undefined = undefined;
+    const draft = this.editorDraft, files = this.attachmentFiles, editor = this.attachmentEditorIdentity;
+    const current = draft.current; this.attachmentWorking = true;
     try {
-      spool = await files.pick();
-      if (!spool) { return; }
-      if (this.editorDraft !== draft || !this.editorOpen || !this.pageAlive || this.draftConflict || draft.unknown) {
-        await files.release(spool); return;
-      }
-      const confirmed = await draft.ensureConfirmed();
-      if (!this.pageAlive || !this.editorOpen || draft.disposed || this.editorDraft !== draft || draft.dirty || confirmed.generation !== draft.confirmed?.generation) {
-        await files.release(spool); this.message = '草稿发生变化，请重新选择附件。'; return;
+      // Settle already scheduled input before a slow picker. A cancelled
+      // unchanged source editor still never creates a new raw journal.
+      if (draft.dirty || draft.saving) { await draft.ensureConfirmed(); }
+      if (this.importBoundary(draft, editor).blocked || !sameValues(current, draft.current) || !await this.loadImports()) { return; }
+      const selection = new AttachmentImportSelection({
+        read: (): AttachmentImportBoundary => this.importBoundary(draft, editor),
+        select: (maximum: number): Promise<string[]> => files.selectUris(maximum),
+        confirm: async (_boundary: AttachmentImportBoundary): Promise<AttachmentImportBoundary> => {
+          await draft.ensureConfirmed(); return this.importBoundary(draft, editor);
+        },
+        importOne: (uri: string, identity: AttachmentImportIdentity, boundary: AttachmentImportBoundary): Promise<AttachmentImportReceipt> =>
+          this.importSelectedUri(draft, files, editor, uri, identity, boundary),
+        operation: (): string => util.generateRandomUUID(true),
+        changed: (state: AttachmentImportSelectionState): void => {
+          if (this.pageAlive && this.editorDraft === draft && this.attachmentEditorIdentity === editor) { this.attachmentSelectionState = state; }
+        }
+      });
+      this.attachmentSelection = selection;
+      const result = await selection.run();
+      if (this.pageAlive && this.editorDraft === draft && result.error) { this.message = result.error; }
+    } catch (error) {
+      if (this.pageAlive && this.editorDraft === draft) { this.message = '附件导入尚未确认：' + String(error); }
+    } finally { files.discardSelection(); this.attachmentWorking = false; this.draftChanged(); await this.loadImports(); }
+  }
+  private async importSelectedUri(draft: EditorDraftCoordinator, files: AttachmentFiles, editor: string, uri: string,
+    identity: AttachmentImportIdentity, boundary: AttachmentImportBoundary): Promise<AttachmentImportReceipt> {
+    let spool: PreparedAttachment | undefined = undefined;
+    try {
+      spool = await files.prepareUri(uri);
+      const now = this.importBoundary(draft, editor);
+      if (now.blocked || draft.dirty || now.generation !== identity.expected_generation || now.edit_epoch !== boundary.edit_epoch ||
+        now.selected_count !== boundary.selected_count || now.import_count !== boundary.import_count || now.title !== boundary.title) {
+        return { outcome: 'cancelled', identity, name: spool.name, next: undefined, error: '草稿发生变化，后续附件未开始导入。' };
       }
       const cmd = new ImportCommand(); const request = cmd.import_request;
-      request.card_id = draft.scope.card_id; request.draft_id = draft.scope.draft_id;
-      request.expected_generation = confirmed.generation; request.operation_id = util.generateRandomUUID(true);
+      request.card_id = identity.card_id; request.draft_id = identity.draft_id;
+      request.expected_generation = identity.expected_generation; request.operation_id = identity.operation_id;
       request.name = spool.name; request.kind = attachmentKind(spool.name); request.byte_length = spool.byte_length; request.sha256 = spool.sha256;
-      await this.acceptPreparedImport(draft, spool, JSON.stringify(cmd));
-    } catch (error) {
+      const outcome = await this.acceptPreparedImport(draft, spool, JSON.stringify(cmd), true);
+      return { outcome, identity, name: spool.name, next: outcome === 'selected' ? this.importBoundary(draft, editor) : undefined,
+        error: outcome === 'selected' ? '' : '附件已保留，后续附件未开始导入。' };
+    } catch (_) {
+      return { outcome: spool?.original_request ? 'unknown' : 'failed', identity, name: spool?.name ?? '', next: undefined,
+        error: spool?.original_request ? '附件导入尚未确认，原请求已保留；后续附件未开始导入。' : '附件准备失败，后续附件未开始导入。' };
+    } finally {
       if (spool && !spool.original_request) { try { await files.release(spool); } catch (_) {} }
-      this.message = '附件导入尚未确认：' + String(error);
-    } finally { this.attachmentWorking = false; this.draftChanged(); await this.loadImports(); }
+    }
   }
-  private async acceptPreparedImport(draft: EditorDraftCoordinator, spool: PreparedAttachment, original: string): Promise<void> {
+  private async acceptPreparedImport(draft: EditorDraftCoordinator, spool: PreparedAttachment, original: string, fillTitle: boolean = false): Promise<string> {
     const files = this.attachmentFiles;
-    if (!files) { return; }
+    if (!files) { return 'retained'; }
     const request = (JSON.parse(original) as ImportCommand).import_request;
     const result = JSON.parse(await files.importPrepared(spool, original,
       (serialized: string, fd: number): Promise<string> => workbench.importFd(serialized, fd))) as Reply;
     if (!result.ok || result.imports.length !== 1) { throw new Error(result.error || '附件回执缺失'); }
     const record = result.imports[0];
     if (!sameImport(record.request, request)) { throw new Error('原附件回执身份不匹配。'); }
-    if (this.editorDraft !== draft || !this.editorOpen || !this.pageAlive) { return; }
-    if (record.phase === 'retired') { await files.release(spool); this.message = '原导入已结束。'; return; }
+    if (this.editorDraft !== draft || !this.editorOpen || !this.pageAlive) { return 'retained'; }
+    if (record.phase === 'retired') { await files.release(spool); this.message = '原导入已结束。'; return 'cancelled'; }
     selectedImport(record, request);
     this.importRecords = this.importRecords.filter((r: ImportRecord): boolean => r.request.operation_id !== request.operation_id).concat([record]);
     await files.release(spool); // Ready is retained in Rust; URI/spool are no longer recovery evidence.
+    if (this.editorDraft !== draft || !this.editorOpen || !this.pageAlive || draft.disposed || draft.conflicted || this.draftConflict) { return 'retained'; }
     if (draft.confirmed?.generation !== request.expected_generation || draft.dirty || draft.unknown) {
-      this.message = '附件已导入，草稿已变化；可在待处理附件中明确加入。'; return;
+      this.message = '附件已导入，草稿已变化；可在待处理附件中明确加入。'; return 'retained';
     }
-    await this.addImportedAsset(record);
+    return await this.addImportedAsset(record, fillTitle, draft) ? 'selected' : 'retained';
   }
   private async retryAttachment(spool: PreparedAttachment): Promise<void> {
     if (!this.canImportAttachment() || !this.editorDraft || !spool.original_request) { return; }
@@ -733,14 +786,22 @@ struct Index {
     catch (error) { this.message = '原附件请求核对失败：' + String(error); }
     finally { this.attachmentWorking = false; this.draftChanged(); await this.loadImports(); }
   }
-  private async addImportedAsset(record: ImportRecord): Promise<void> {
-    const draft = this.editorDraft;
-    if (!draft || draft.unknown || draft.dirty || !draft.confirmed) { this.message = '请先保留当前草稿，再加入附件。'; return; }
+  private async addImportedAsset(record: ImportRecord, fillTitle: boolean = false, expectedDraft?: EditorDraftCoordinator): Promise<boolean> {
+    const draft = expectedDraft ?? this.editorDraft;
+    if (!draft || draft !== this.editorDraft || !this.pageAlive || !this.editorOpen || draft.disposed || draft.conflicted ||
+      record.request.card_id !== draft.scope.card_id || record.request.draft_id !== draft.scope.draft_id ||
+      draft.unknown || draft.dirty || !draft.confirmed) { this.message = '请先保留当前草稿，再加入附件。'; return false; }
     const selected = selectedImport(record, record.request);
     const values = draft.current;
-    if (values.assets.some((asset: AssetSelection): boolean => asset.asset_id === selected.asset_id)) { return; }
+    if (values.assets.some((asset: AssetSelection): boolean => asset.asset_id === selected.asset_id)) { return true; }
+    const title = fillTitle ? attachmentImportTitle(values.title.text, record.request.name) : undefined;
+    if (title !== undefined) {
+      const text = new DraftTextValue(); text.text = title; text.selection_base = title.length; text.selection_extent = title.length;
+      values.title = text; this.title = title;
+    }
     values.assets.push(selected); this.editorValues = copyValues(values); this.dirty = true;
     draft.update(values); await draft.flush(); this.message = '附件已保留在草稿中，保存卡片后生效。';
+    return this.editorDraft === draft && !draft.dirty && !draft.unknown && !!draft.confirmed && sameValues(draft.current, draft.confirmed.values);
   }
   private async selectPendingImport(record: ImportRecord): Promise<void> {
     if (!this.canImportAttachment()) { return; }
@@ -2496,6 +2557,17 @@ struct Index {
     Column({ space: 9 }) {
       this.PreviewCleanupNotice()
       this.FileOpenNotice()
+      if (this.attachmentSelectionState.busy || this.attachmentSelectionState.selected > 0 || this.attachmentSelectionState.error) {
+        Row({ space: 8 }) {
+          Text(this.attachmentSelectionState.busy ? '正在导入附件…' : this.attachmentSelectionState.error || '附件已保留在草稿中。')
+            .fontSize(11).fontColor(this.muted()).layoutWeight(1)
+          Text(`${this.attachmentSelectionState.selected}/${this.attachmentSelectionState.total}`).fontSize(11).fontColor(this.accent())
+          if (this.attachmentSelectionState.busy) {
+            Button('停止后续导入', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+              .onClick(() => this.attachmentSelection?.stop()).id('attachment-import-stop')
+          }
+        }.width('100%').padding(8).id('attachment-import-progress')
+      }
       if (this.editorAssets.length > 0) {
         Text('草稿附件').fontSize(13).fontWeight(FontWeight.Medium).fontColor(this.ink()).width('100%')
         ForEach(this.editorAssets, (asset: AssetView) => {
@@ -2806,11 +2878,12 @@ struct Index {
                 contentHeight: this.mediaFullscreen ? Math.max(160, this.viewportHeight - 130) : Math.max(160, Math.min(320, this.viewportHeight - 180)),
                 ink: this.ink(), muted: this.muted(), accent: this.accent(), family: this.fontFamily || 'HarmonyOS Sans', locale: this.locale,
                 fullscreen: this.mediaFullscreen,
-                onToggle: (): void => { if (!this.attachmentPreviewClosing) { this.mediaPlayback.toggle(); } },
-                onSeek: (value: number): void => { if (!this.attachmentPreviewClosing) { this.mediaPlayback.seek(value); } },
+                onToggle: (token: string): void => { if (!this.attachmentPreviewClosing && token === this.mediaView.token) { this.mediaPlayback.toggle(token); } },
+                onSeek: (value: number, token: string): void => { if (!this.attachmentPreviewClosing && token === this.mediaView.token) { this.mediaPlayback.seek(value, token); } },
                 onSurface: (token: string, id: string): void => this.mediaPlayback.setSurface(token, id),
+                onSurfaceGone: (token: string, id: string): void => this.mediaPlayback.clearSurface(token, id),
                 onBackground: (token: string): void => { if (token) { this.mediaPlayback.pauseForBackground(token); } },
-                onFullscreen: (): void => { this.switchMediaFullscreen(); } })
+                onFullscreen: (token: string): void => { this.switchMediaFullscreen(token); } })
             } else {
               AttachmentImagePreview({ preview: this.attachmentPreview, loading: this.attachmentPreviewLoading, failure: this.attachmentPreviewFailure,
                 contentWidth: Math.min(660, this.viewportWidth - 24) - 36, contentHeight: Math.max(160, this.viewportHeight - 270),

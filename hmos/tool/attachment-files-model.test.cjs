@@ -48,6 +48,7 @@ function harness() {
   let nextFd = 10;
   let nextDirectory = 1;
   let selectUris = [URI];
+  let selectOverride;
   let saveUris = [SAVE_URI];
   let prepareOverride;
   const modes = { READ_ONLY: 0, WRITE_ONLY: 1, READ_WRITE: 2, CREATE: 64, TRUNC: 512 };
@@ -147,7 +148,10 @@ function harness() {
   };
   class DocumentViewPicker {
     constructor(context) { assert.equal(context.filesDir, '/app/files'); }
-    async select(options) { logs.push(['select', options.maxSelectNumber, options.selectMode]); return selectUris; }
+    async select(options) {
+      logs.push(['select', options.maxSelectNumber, options.selectMode]);
+      return selectOverride ? selectOverride(options) : selectUris;
+    }
     async save(options) { logs.push(['save', ...options.newFileNames]); return saveUris; }
   }
   const picker = { DocumentViewPicker, DocumentSelectOptions: class {}, DocumentSaveOptions: class {},
@@ -192,6 +196,7 @@ function harness() {
     imagePreviewScale: module.exports.imagePreviewScale, imagePreviewOffset: module.exports.imagePreviewOffset,
     attachmentPreviewName: module.exports.attachmentPreviewName,
     setSelect: value => { selectUris = value; }, setSave: value => { saveUris = value; },
+    setSelectAsync: value => { selectOverride = value; },
     setPrepare: value => { prepareOverride = value; },
     read: name => node(name).bytes, writeFd: (fd, bytes) => { node(descriptor(fd).path).bytes = Buffer.from(bytes); },
     fdPath: fd => descriptor(fd).path };
@@ -608,4 +613,173 @@ test('named system preview cleanup validates its exact file is not a symlink', a
   h.putFile('/foreign.pdf', 'keep'); h.putLink(open.path, '/foreign.pdf');
   await assert.rejects(files.releasePreview(open.token)); assert.equal(h.read('/foreign.pdf').toString(), 'keep');
   assert.equal(h.logs.some(x => x[0] === 'unlink' && x[1] === open.path), false);
+});
+
+test('batch selection returns every URI in provider order and passes the exact ceiling without copying bytes', async () => {
+  const h = harness(), files = h.create();
+  const batch = [URI + '?second', URI, URI + '?third']; h.setSelect(batch);
+  const selected = await files.selectUris(3);
+  assert.deepEqual(Array.from(selected), batch);
+  assert.deepEqual(h.logs.filter(x => x[0] === 'select'), [['select', 3, 1]]);
+  assert.equal(h.logs.some(x => x[0] === 'open' || x[0] === 'mkdtemp'), false);
+  assert.equal(h.fds.size, 0); noNative(h); noFilesUnder(h, ROOT + '/import-');
+  assert.notEqual(selected, batch, 'the provider cannot mutate the returned batch through the same array');
+  batch[0] = 'content://unselected/provider-mutation'; selected[1] = 'content://unselected/caller-mutation';
+  await assert.rejects(files.prepareUri(batch[0]), /系统选择/);
+  await assert.rejects(files.prepareUri(selected[1]), /系统选择/); noNative(h);
+  assert.equal((await files.prepareUri(URI)).name, '中文文件.txt', 'selection ownership survives caller array mutation');
+  files.discardSelection();
+});
+
+test('invalid batch ceilings fail before picker admission or file copying', async () => {
+  for (const maximum of [0, -1, 1.5, 21, NaN, Infinity, '2']) {
+    const h = harness(); await assert.rejects(h.create().selectUris(maximum), /选择额度/);
+    assert.equal(h.logs.some(x => x[0] === 'select' || x[0] === 'open' || x[0] === 'mkdtemp'), false);
+    noNative(h);
+  }
+});
+
+test('empty batch selection grants no URI and permits another explicit picker request', async () => {
+  const h = harness(), files = h.create(); h.setSelect([]);
+  assert.deepEqual(Array.from(await files.selectUris(20)), []);
+  await assert.rejects(files.prepareUri(URI), /系统选择/); noNative(h); noFilesUnder(h, ROOT + '/import-');
+  h.setSelect([URI]); assert.deepEqual(Array.from(await files.selectUris(1)), [URI]);
+  assert.equal(h.logs.filter(x => x[0] === 'select').length, 2); files.discardSelection();
+});
+
+test('an unselected URI or another helper cannot consume the selecting helper grant', async () => {
+  const h = harness(), owner = h.create(), stranger = h.create();
+  await assert.rejects(owner.prepareUri(URI), /系统选择/); await owner.selectUris(2);
+  await assert.rejects(owner.prepareUri(URI + '?unselected'), /系统选择/);
+  await assert.rejects(stranger.prepareUri(URI), /系统选择/);
+  noNative(h); assert.equal(h.logs.some(x => x[0] === 'open' || x[0] === 'mkdtemp'), false);
+  const value = await owner.prepareUri(URI); assert.equal(value.name, '中文文件.txt');
+  await assert.rejects(owner.prepareUri(URI), /系统选择/);
+  assert.equal(h.logs.filter(x => x[0] === 'prepareFile').length, 1);
+  await owner.release(value);
+});
+
+test('discarding an unread selection revokes its URI without opening or copying it', async () => {
+  const h = harness(), files = h.create(); await files.selectUris(1); files.discardSelection();
+  await assert.rejects(files.prepareUri(URI), /系统选择/); noNative(h);
+  assert.equal(h.logs.some(x => x[0] === 'open' || x[0] === 'mkdtemp' || x[0] === 'unlink' || x[0] === 'rmdir'), false);
+  assert.equal(h.read(URI).toString(), '中文\n😀');
+  assert.deepEqual(Array.from(await files.selectUris(1)), [URI]); files.discardSelection();
+});
+
+const malformedSelections = [
+  ['over the caller ceiling', [URI, URI + '?2', URI + '?3']],
+  ['duplicate URIs', [URI, URI]],
+  ['empty URI', [URI, '']],
+  ['non-string URI', [URI, 42]],
+  ['undefined URI', [URI, undefined]],
+  ['control character in URI', [URI, URI + '\u0000']],
+  ['DEL in URI', [URI, URI + '\u007f']],
+  ['overlong URI', [URI, 'x'.repeat(16385)]],
+  ['sparse array', [URI, ,]],
+  ['null provider result', null],
+  ['undefined provider result', undefined],
+  ['object provider result', { 0: URI, length: 1 }],
+  ['string provider result', URI],
+];
+for (const [label, returned] of malformedSelections) {
+  test('batch rejects the whole ' + label + ' result without granting a valid prefix or admitting native work', async () => {
+    const h = harness(), files = h.create(); h.setSelect(returned);
+    await assert.rejects(files.selectUris(2), /系统返回/);
+    await assert.rejects(files.prepareUri(URI), /系统选择/); noNative(h);
+    assert.equal(h.logs.some(x => x[0] === 'open' || x[0] === 'mkdtemp'), false);
+    noFilesUnder(h, ROOT + '/import-');
+    h.setSelect([URI]); assert.deepEqual(Array.from(await files.selectUris(1)), [URI], 'invalid result did not leave a blocked partial batch');
+    files.discardSelection();
+  });
+}
+
+test('unread batch members block another picker until each is consumed or explicitly discarded', async () => {
+  const h = harness(), files = h.create(), second = URI + '?second';
+  h.putFile(second, 'second', { name: 'second.txt' }); h.setSelect([URI, second]);
+  await files.selectUris(2); await assert.rejects(files.selectUris(1), /尚未处理/);
+  const first = await files.prepareUri(URI); await assert.rejects(files.selectUris(1), /尚未处理/);
+  assert.equal(h.logs.filter(x => x[0] === 'select').length, 1, 'no second provider request while unread grants exist');
+  const next = await files.prepareUri(second); h.setSelect([]);
+  assert.deepEqual(Array.from(await files.selectUris(1)), [], 'consuming the last grant permits a new explicit selection');
+  assert.equal(h.logs.filter(x => x[0] === 'select').length, 2);
+  await files.release(first); await files.release(next);
+});
+
+test('a pending provider reply serializes a second request and blocks it once the first grants arrive', async () => {
+  const h = harness(), files = h.create(); let accept;
+  const provider = new Promise(resolve => { accept = resolve; });
+  let entered; const start = new Promise(resolve => { entered = resolve; });
+  h.setSelectAsync(() => { entered(); return provider; });
+  const first = files.selectUris(2); await start;
+  const second = files.selectUris(1); const rejection = assert.rejects(second, /尚未处理/);
+  assert.equal(h.logs.filter(x => x[0] === 'select').length, 1); noNative(h);
+  accept([URI]); assert.deepEqual(Array.from(await first), [URI]); await rejection;
+  assert.equal(h.logs.filter(x => x[0] === 'select').length, 1); files.discardSelection();
+});
+
+test('provider rejection grants no URI and requires a new explicit selection before preparation', async () => {
+  const h = harness(), files = h.create(); h.setSelectAsync(async () => { throw error('PICKER_REJECTED'); });
+  await assert.rejects(files.selectUris(3), /synthetic provider failure/);
+  await assert.rejects(files.prepareUri(URI), /系统选择/); noNative(h);
+  h.setSelectAsync(undefined); await files.selectUris(1);
+  assert.ok(await files.prepareUri(URI)); assert.equal(h.logs.filter(x => x[0] === 'select').length, 2);
+});
+
+test('each selected URI recalculates the shared spool byte budget including other helper preparations', async () => {
+  const h = harness(), files = h.create(), second = URI + '?second', third = URI + '?third';
+  h.putFile(second, 'second', { name: 'second.txt' }); h.putFile(third, 'third', { name: 'third.txt' });
+  h.setSelect([URI, second, third]); await files.selectUris(3);
+  const first = await files.prepareUri(URI); const next = await files.prepareUri(second);
+  const firstLength = Number(first.byte_length), nextLength = Number(next.byte_length);
+  assert.deepEqual(h.logs.filter(x => x[0] === 'prepareFile').map(x => x[3]),
+    [BUDGET - RESERVE, BUDGET - 2 * RESERVE - firstLength]);
+  // A second helper prepares retained work after the batch was selected. Its
+  // physical spool is part of the same root; stale initial quota cannot apply.
+  const concurrent = h.seed('import-ABC123', { dataSize: BUDGET - 4 * RESERVE - 1024, request: command });
+  assert.equal((await h.create().recover()).some(x => x.spool_id === concurrent.spool_id), true);
+  const last = await files.prepareUri(third);
+  assert.equal(h.logs.filter(x => x[0] === 'prepareFile').at(-1)[3], 1024 - firstLength - nextLength);
+  assert.equal(last.byte_length, '5'); assert.equal(h.fds.size, 0);
+  await files.release(first); await files.release(next); await files.release(last);
+});
+
+test('a selected URI whose shared spool count fills before preparation is denied without a native read or retry', async () => {
+  const h = harness(), files = h.create(), second = URI + '?second';
+  h.putFile(second, 'second'); h.setSelect([URI, second]); await files.selectUris(2);
+  const first = await files.prepareUri(URI);
+  for (let i = 0; i < 19; i++) { h.seed('import-' + String(100000 + i), { request: command }); }
+  await assert.rejects(files.prepareUri(second), /20/);
+  await assert.rejects(files.prepareUri(second), /系统选择/);
+  assert.equal(h.logs.filter(x => x[0] === 'prepareFile').length, 1);
+  assert.equal(h.logs.some(x => x[0] === 'open' && x[1] === second), false);
+  assert.equal(h.read(h.directory(first.spool_id) + '/data').toString(), '中文\n😀');
+  files.discardSelection(); await files.release(first);
+});
+
+test('a failed selected URI is consumed once while a previously prepared spool remains usable', async () => {
+  const h = harness(), files = h.create(), second = URI + '?second';
+  h.putFile(second, 'second'); h.setSelect([URI, second]); await files.selectUris(2);
+  const first = await files.prepareUri(URI); h.faults.set('open:' + second, error(13900012));
+  await assert.rejects(files.prepareUri(second)); h.faults.delete('open:' + second);
+  await assert.rejects(files.prepareUri(second), /系统选择/);
+  assert.equal(h.logs.filter(x => x[0] === 'prepareFile').length, 1); assert.equal(h.fds.size, 0);
+  const raw = command(first); let calls = 0;
+  assert.equal(await files.importPrepared(first, raw, async (sent, fd) => {
+    calls++; assert.equal(sent, raw); assert.equal(h.read(h.fdPath(fd)).toString(), '中文\n😀'); return 'accepted';
+  }), 'accepted'); assert.equal(calls, 1); await files.release(first);
+});
+
+test('discarding remaining grants does not delete or invalidate an already prepared spool', async () => {
+  const h = harness(), files = h.create(), second = URI + '?second';
+  h.putFile(second, 'second', { name: 'second.txt' }); h.setSelect([URI, second]); await files.selectUris(2);
+  const prepared = await files.prepareUri(URI), savedPath = h.directory(prepared.spool_id) + '/data';
+  const mutationCount = h.logs.filter(x => x[0] === 'unlink' || x[0] === 'rmdir').length;
+  files.discardSelection(); files.discardSelection();
+  await assert.rejects(files.prepareUri(second), /系统选择/);
+  assert.equal(h.logs.filter(x => x[0] === 'unlink' || x[0] === 'rmdir').length, mutationCount);
+  assert.equal(h.read(savedPath).toString(), '中文\n😀'); assert.equal(h.read(second).toString(), 'second');
+  const recovered = await files.recover(); assert.equal(recovered.length, 1); assert.equal(recovered[0], prepared);
+  assert.equal(await files.importPrepared(prepared, command(prepared), async () => 'accepted'), 'accepted');
+  await files.release(prepared); noFilesUnder(h, h.directory(prepared.spool_id));
 });
