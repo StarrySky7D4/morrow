@@ -1,0 +1,115 @@
+- Dumping layout…
+- Dumping layout…
+- Executing click...
+√ click at (601, 213)
+- Dumping layout…
+- Dumping layout…
+- Dumping layout…
+- Dumping layout…
+- Dumping layout…
+[
+  {
+    "id": "workspace-card:7eb2c5ee-5c8f-4fe6-b334-5972c8be5598",
+    "type": "Column",
+    "bounds": [
+      36,
+      1638,
+      1284,
+      2112
+    ],
+    "children": [
+      {
+        "type": "Column",
+        "bounds": [
+          36,
+          1638,
+          1284,
+          2112
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              119,
+              1712,
+              176,
+              1769
+            ],
+            "children": []
+          },
+          {
+            "type": "Button",
+            "bounds": [
+              1146,
+              1692,
+              1242,
+              1788
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  1169,
+                  1715,
+                  1220,
+                  1766
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "HMOS-inline-20261007-A",
+            "bounds": [
+              96,
+              1833,
+              609,
+              1882
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "# Inline attachment\n\n![名称](attachment:HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.png)\n\n![重复](attachment:HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.png)\n\n| Image |\n| --- |\n| ![表格](attachment:HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.png) |\n\n![损坏](attachment:HMOS-dev13-invalid.png)\n\n![缺失](attachment:not-imported.png)\n\n![网络](https://example.invalid/image.png)",
+            "bounds": [
+              96,
+              1906,
+              390,
+              2024
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "灵感",
+            "bounds": [
+              96,
+              2081,
+              192,
+              2112
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "待整理",
+            "bounds": [
+              1161,
+              2093,
+              1242,
+              2112
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]
+- Dumping layout…

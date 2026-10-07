@@ -1,0 +1,14 @@
+[
+  {
+    "path": "libs/arm64-v8a/libmorrow.so",
+    "bytes": 8777960,
+    "sha256": "0661CF65DFBB62B063F9362C22380E7080AD0B17F999C9AB49176FC16DDEC0CC",
+    "identicalToDev12": true
+  },
+  {
+    "path": "libs/x86_64/libmorrow.so",
+    "bytes": 9219592,
+    "sha256": "9F47A37E6E4DCF21D9C8BA09F5C7E2973A024CCCC89A5502B528EBE8C063697D",
+    "identicalToDev12": true
+  }
+]

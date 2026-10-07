@@ -1,0 +1,28 @@
+10-07 11:15:35.211  8831  8831 I A0f666/[FileMgr:-5.0.65.067]myPhone: disableHighlight
+10-07 11:15:35.307  8831  8831 I A0f666/[FileMgr:-5.0.65.067]myPhone: disableHighlight
+10-07 11:15:35.307  8831  8831 I A0f666/[FileMgr:-5.0.65.067]FileViewCo: onClickEvent:  <private>
+10-07 11:15:35.307  8831  8831 I A0f666/[FileMgr:-5.0.65.067]myPhone: setShowLoading:true}
+10-07 11:15:35.307  8831  8831 I A0f666/[FileMgr:-5.0.65.067]myPhone: this listYOffset: 0
+10-07 11:15:35.307  8831  8831 I A0f666/[FileMgr:-5.0.65.067]HiSysEvent: deviceType:1, reportEvent name: FILE_OPERATION, params: {"OPERATE_NAME":2,"OPERATE_FROM":3,"OPERATE_OBJECT":"folder","ABILITY_NAME":"fileManager","OPERATE_RESULT":0},
+10-07 11:15:35.307  8831  8831 I A0f666/[FileMgr:-5.0.65.067]HiSysEvent:      eventType: undefined
+10-07 11:15:35.311  8831  8831 I A0f666/[FileMgr:-5.0.65.067]myPhone: listScrollShow start. 
+10-07 11:15:35.311  8831  8831 I A0f666/[FileMgr:-5.0.65.067]myPhone: curBreadCrumb: Download
+10-07 11:15:35.311  8831  8831 I A0f666/[FileMgr:-5.0.65.067]myPhone: getListFile start: 
+10-07 11:15:35.311  8831  8831 I A0f666/[FileMgr:-5.0.65.067]BaseTask: cancel task.
+10-07 11:15:35.312  8831  8831 E A0f666/[FileMgr:-5.0.65.067]BaseTask: cancel task error: BusinessError: The task to cancel does not exist, taskpool:: task is not executed or has been executed
+10-07 11:15:35.314  8831  8831 I A0f666/[FileMgr:-5.0.65.067]BaseTask: set onReceiveData fun  fileQuery
+10-07 11:15:35.314  8831  8831 I A0f666/[FileMgr:-5.0.65.067]myPhone: onDireListChange BreadCrumb length:1
+10-07 11:15:35.315  8831  8831 I A0f666/[FileMgr:-5.0.65.067]HiSysEvent: name: FILE_OPERATION sucess
+10-07 11:15:35.315  8831 10210 I A0f666/[FileMgr:-5.0.65.067]FileQueryT: QueryLocalFileTask start <private>
+10-07 11:15:35.315  8831 10210 I A0f666/[FileMgr:-5.0.65.067]FileQueryT: QueryLocalFileTask path <private>
+10-07 11:15:35.325  8831  8831 I A0f666/[FileMgr:-5.0.65.067]BreadCrumb: aboutToAppear: 
+10-07 11:15:35.325  8831  8831 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:toFoldedStatus
+10-07 11:15:35.332  8831  8831 I A0f666/[FileMgr:-5.0.65.067]myPhone: getListLocalFiles queryFilesEnd start4 7
+10-07 11:15:35.333  8831  8831 I A0f666/[FileMgr:-5.0.65.067]myPhone: setShowLoading:false}
+10-07 11:15:35.338  8831  8831 I A0f666/[FileMgr:-5.0.65.067]TaskManage: execute taskName = mediaMetaDataQuery, taskMode = 1, maxRunningTask = 2
+10-07 11:15:35.338  8831  8831 I A0f666/[FileMgr:-5.0.65.067]TaskExecut: startTask, runningList len is 0, maxTaskRunningNum = 2, waitList len is 1, maxWaitLimit 50
+10-07 11:15:35.338  8831  8831 I A0f666/[FileMgr:-5.0.65.067]TaskExecut: executeTask is really start, task.task name = i264
+10-07 11:15:35.345  8831  9113 E A0f666/[FileMgr:-5.0.65.067]MediaMetaD: getImageMetaData fail, error: "error status, no message"error status, no message <private>
+10-07 11:15:35.378  8831  8831 I A0f666/[FileMgr:-5.0.65.067]TaskManage: execute taskName = mediaMetaDataQuery, taskMode = 1, maxRunningTask = 2
+10-07 11:15:35.378  8831  8831 I A0f666/[FileMgr:-5.0.65.067]TaskExecut: startTask, runningList len is 1, maxTaskRunningNum = 2, waitList len is 1, maxWaitLimit 50
+10-07 11:15:35.378  8831  8831 I A0f666/[FileMgr:-5.0.65.067]TaskExecut: executeTask is really start, task.task name = i264

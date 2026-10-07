@@ -1,0 +1,7171 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "Button",
+        "bounds": [
+          36,
+          156,
+          156,
+          270
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              65,
+              182,
+              128,
+              245
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          219,
+          188,
+          270,
+          239
+        ],
+        "children": []
+      },
+      {
+        "type": "TextInput",
+        "bounds": [
+          294,
+          156,
+          840,
+          270
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "scrollable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "Ctrl K",
+        "bounds": [
+          864,
+          197,
+          934,
+          229
+        ],
+        "children": []
+      },
+      {
+        "type": "Button",
+        "bounds": [
+          997,
+          156,
+          1117,
+          270
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "󰉘",
+            "bounds": [
+              1029,
+              185,
+              1086,
+              242
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Button",
+        "text": "草稿 1",
+        "bounds": [
+          1141,
+          156,
+          1284,
+          270
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Scroll",
+        "bounds": [
+          36,
+          339,
+          1284,
+          2112
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "A LITTLE SPACE FOR BIG IDEAS",
+            "bounds": [
+              36,
+              339,
+              595,
+              371
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "让想法，自由生长。",
+            "bounds": [
+              36,
+              398,
+              747,
+              503
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "收纳日常的零碎，也留住灵光一闪。",
+            "bounds": [
+              36,
+              527,
+              613,
+              569
+            ],
+            "children": []
+          },
+          {
+            "type": "Button",
+            "bounds": [
+              990,
+              385,
+              1284,
+              523
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  1035,
+                  429,
+                  1086,
+                  480
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "新建灵感",
+                "bounds": [
+                  1107,
+                  435,
+                  1239,
+                  474
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "让可能性发生",
+            "bounds": [
+              150,
+              719,
+              323,
+              747
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "还没成形，也没关系。",
+            "bounds": [
+              114,
+              807,
+              744,
+              881
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。",
+            "bounds": [
+              114,
+              911,
+              708,
+              1033
+            ],
+            "children": []
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              114,
+              1093,
+              420,
+              1168
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "记录此刻的想法",
+                "bounds": [
+                  114,
+                  1111,
+                  345,
+                  1150
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  375,
+                  1108,
+                  420,
+                  1153
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "最近的念头",
+            "bounds": [
+              36,
+              1379,
+              262,
+              1432
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "13",
+            "bounds": [
+              286,
+              1388,
+              321,
+              1423
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "全部",
+            "bounds": [
+              357,
+              1367,
+              483,
+              1444
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "有待办",
+            "bounds": [
+              495,
+              1367,
+              651,
+              1444
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "含附件",
+            "bounds": [
+              663,
+              1367,
+              819,
+              1444
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "仅收藏",
+            "bounds": [
+              831,
+              1367,
+              987,
+              1444
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "id": "card-sort",
+            "type": "Row",
+            "bounds": [
+              36,
+              1480,
+              1284,
+              1555
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰆨",
+                "bounds": [
+                  1062,
+                  1498,
+                  1101,
+                  1537
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "自定义顺序",
+                "bounds": [
+                  1116,
+                  1500,
+                  1266,
+                  1535
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "长按拖动柄调整顺序，或在卡片菜单中前移、后移。",
+            "bounds": [
+              36,
+              1555,
+              1284,
+              1590
+            ],
+            "children": []
+          },
+          {
+            "id": "workspace-card:060b5cd8-de23-45e6-95a1-4571ddbf41a6",
+            "type": "Column",
+            "bounds": [
+              36,
+              1638,
+              1284,
+              2112
+            ],
+            "children": [
+              {
+                "type": "Column",
+                "bounds": [
+                  36,
+                  1638,
+                  1284,
+                  2112
+                ],
+                "clickable": true,
+                "longClickable": true,
+                "children": [
+                  {
+                    "type": "Text",
+                    "text": "",
+                    "bounds": [
+                      119,
+                      1712,
+                      176,
+                      1769
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Button",
+                    "bounds": [
+                      1146,
+                      1692,
+                      1242,
+                      1788
+                    ],
+                    "clickable": true,
+                    "children": [
+                      {
+                        "type": "Text",
+                        "text": "",
+                        "bounds": [
+                          1169,
+                          1715,
+                          1220,
+                          1766
+                        ],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-markdown-20261005-A",
+                    "bounds": [
+                      96,
+                      1833,
+                      710,
+                      1882
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "| Name | Value |\n| --- | --- |\n| 中文😀 | 42 |\n| Second | 保留 |",
+                    "bounds": [
+                      96,
+                      1906,
+                      320,
+                      2024
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "灵感",
+                    "bounds": [
+                      96,
+                      2081,
+                      192,
+                      2112
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "待整理",
+                    "bounds": [
+                      1161,
+                      2093,
+                      1242,
+                      2112
+                    ],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "没有紧迫的事。给好奇心一点时间。",
+        "bounds": [
+          129,
+          2021,
+          1158,
+          2060
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "󰛹",
+        "bounds": [
+          1185,
+          2015,
+          1236,
+          2066
+        ],
+        "children": []
+      },
+      {
+        "type": "Rect",
+        "bounds": [
+          0,
+          117,
+          1320,
+          2148
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          161,
+          278,
+          224,
+          341
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "MORROW / A LITTLE POSSIBILITY",
+        "bounds": [
+          285,
+          253,
+          743,
+          281
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "接住一个新想法",
+        "bounds": [
+          285,
+          296,
+          705,
+          366
+        ],
+        "children": []
+      },
+      {
+        "type": "Button",
+        "bounds": [
+          1089,
+          255,
+          1185,
+          363
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              1110,
+              282,
+              1164,
+              336
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "文字、表格、图片，先放在这里。让一个念头慢慢成形。",
+        "bounds": [
+          63,
+          402,
+          1257,
+          458
+        ],
+        "children": []
+      },
+      {
+        "type": "Scroll",
+        "bounds": [
+          63,
+          524,
+          1257,
+          1821
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "id": "draft-title",
+            "type": "TextInput",
+            "text": "HMOS-inline-20261007-A",
+            "bounds": [
+              135,
+              524,
+              1185,
+              716
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "22 / 60",
+            "bounds": [
+              135,
+              764,
+              1185,
+              799
+            ],
+            "children": []
+          },
+          {
+            "id": "editor-paste",
+            "type": "PasteButton",
+            "text": "粘贴",
+            "bounds": [
+              368,
+              847,
+              603,
+              967
+            ],
+            "children": []
+          },
+          {
+            "id": "editor-import",
+            "type": "Button",
+            "bounds": [
+              627,
+              847,
+              952,
+              967
+            ],
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  678,
+                  883,
+                  726,
+                  931
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "导入文件",
+                "bounds": [
+                  744,
+                  884,
+                  901,
+                  930
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "正在处理附件…",
+            "bounds": [
+              135,
+              1015,
+              1185,
+              1069
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "󰀣",
+            "bounds": [
+              186,
+              1236,
+              240,
+              1290
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "正文 · Markdown",
+            "bounds": [
+              264,
+              1239,
+              598,
+              1288
+            ],
+            "children": []
+          },
+          {
+            "type": "Button",
+            "bounds": [
+              1038,
+              1215,
+              1134,
+              1311
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  1058,
+                  1235,
+                  1115,
+                  1292
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "draft-description",
+            "type": "TextArea",
+            "text": "# Inline attachment\n\n![名称](attachment:HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.png)\n\n![重复](attachment:HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.png)\n\n| Image |\n| --- |\n| ![表格](attachment:HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.png) |\n\n![损坏](attachment:HMOS-dev13-invalid.png)\n\n![缺失](attachment:not-imported.png)\n\n![网络](https://example.invalid/image.png)",
+            "bounds": [
+              186,
+              1372,
+              1134,
+              1821
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "draft-status",
+        "type": "Text",
+        "text": "草稿已保留",
+        "bounds": [
+          135,
+          1821,
+          1185,
+          1856
+        ],
+        "children": []
+      },
+      {
+        "type": "Button",
+        "text": "放弃草稿",
+        "bounds": [
+          135,
+          1923,
+          351,
+          2043
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Button",
+        "text": "保留草稿",
+        "bounds": [
+          631,
+          1926,
+          872,
+          2040
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Button",
+        "text": "保存灵感",
+        "bounds": [
+          908,
+          1926,
+          1185,
+          2040
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "SheetWrapper",
+        "bounds": [
+          0,
+          117,
+          1320,
+          2232
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "SheetPage",
+            "bounds": [
+              0,
+              141,
+              1320,
+              2232
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Column",
+                "bounds": [
+                  48,
+                  192,
+                  162,
+                  306
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "id": "left_icon",
+                    "type": "SymbolGlyph",
+                    "bounds": [
+                      78,
+                      222,
+                      132,
+                      276
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "top_title",
+                "type": "Text",
+                "text": "我的手机",
+                "bounds": [
+                  186,
+                  223,
+                  426,
+                  293
+                ],
+                "children": []
+              },
+              {
+                "id": "top_menu",
+                "type": "Column",
+                "bounds": [
+                  1020,
+                  192,
+                  1134,
+                  306
+                ],
+                "clickable": true,
+                "children": []
+              },
+              {
+                "id": "top_menu",
+                "type": "Column",
+                "bounds": [
+                  1158,
+                  192,
+                  1272,
+                  306
+                ],
+                "clickable": true,
+                "children": []
+              },
+              {
+                "type": "Column",
+                "bounds": [
+                  48,
+                  309,
+                  1272,
+                  477
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "id": "top_search",
+                    "type": "Search",
+                    "bounds": [
+                      48,
+                      333,
+                      1272,
+                      453
+                    ],
+                    "children": [
+                      {
+                        "id": "__SearchField__top_search",
+                        "type": "SearchField",
+                        "bounds": [
+                          156,
+                          333,
+                          1164,
+                          453
+                        ],
+                        "children": []
+                      },
+                      {
+                        "id": "__SearchField__Image__top_search",
+                        "type": "SymbolGlyph",
+                        "bounds": [
+                          84,
+                          369,
+                          132,
+                          417
+                        ],
+                        "clickable": true,
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Row",
+                "bounds": [
+                  24,
+                  533,
+                  294,
+                  590
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "type": "Text",
+                    "text": "我的手机",
+                    "bounds": [
+                      24,
+                      534,
+                      265,
+                      590
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "type": "Text",
+                "text": "Download",
+                "bounds": [
+                  294,
+                  533,
+                  564,
+                  589
+                ],
+                "children": []
+              },
+              {
+                "type": "Scroll",
+                "bounds": [
+                  0,
+                  647,
+                  1320,
+                  2076
+                ],
+                "scrollable": true,
+                "children": [
+                  {
+                    "type": "Column",
+                    "bounds": [
+                      0,
+                      695,
+                      1320,
+                      744
+                    ],
+                    "longClickable": true,
+                    "children": [
+                      {
+                        "type": "Text",
+                        "text": "7 项",
+                        "bounds": [
+                          621,
+                          695,
+                          699,
+                          744
+                        ],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Grid",
+                    "bounds": [
+                      0,
+                      792,
+                      1320,
+                      2076
+                    ],
+                    "longClickable": true,
+                    "scrollable": true,
+                    "children": [
+                      {
+                        "type": "GridItem",
+                        "bounds": [
+                          48,
+                          792,
+                          343,
+                          1201
+                        ],
+                        "clickable": true,
+                        "children": [
+                          {
+                            "id": "0",
+                            "type": "Column",
+                            "bounds": [
+                              48,
+                              792,
+                              343,
+                              1201
+                            ],
+                            "children": [
+                              {
+                                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-invalid.pngIcon",
+                                "type": "__Common__",
+                                "bounds": [
+                                  81,
+                                  804,
+                                  309,
+                                  1032
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Image",
+                                "bounds": [
+                                  93,
+                                  816,
+                                  165,
+                                  888
+                                ],
+                                "clickable": true,
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "HMOS-dev13-invalid.png",
+                                "bounds": [
+                                  48,
+                                  1044,
+                                  342,
+                                  1101
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "11:08",
+                                "bounds": [
+                                  157,
+                                  1113,
+                                  234,
+                                  1148
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "54 B",
+                                "bounds": [
+                                  165,
+                                  1154,
+                                  227,
+                                  1189
+                                ],
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "GridItem",
+                        "bounds": [
+                          358,
+                          792,
+                          653,
+                          1201
+                        ],
+                        "clickable": true,
+                        "children": [
+                          {
+                            "id": "1",
+                            "type": "Column",
+                            "bounds": [
+                              358,
+                              792,
+                              653,
+                              1201
+                            ],
+                            "children": [
+                              {
+                                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+                                "type": "__Common__",
+                                "bounds": [
+                                  391,
+                                  804,
+                                  619,
+                                  1032
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Image",
+                                "bounds": [
+                                  403,
+                                  816,
+                                  475,
+                                  888
+                                ],
+                                "clickable": true,
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "HMOS-dev13-中文 图片.png",
+                                "bounds": [
+                                  358,
+                                  1044,
+                                  652,
+                                  1101
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "11:08",
+                                "bounds": [
+                                  467,
+                                  1113,
+                                  544,
+                                  1148
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "1.92 MB",
+                                "bounds": [
+                                  449,
+                                  1154,
+                                  561,
+                                  1189
+                                ],
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "GridItem",
+                        "bounds": [
+                          668,
+                          792,
+                          963,
+                          1201
+                        ],
+                        "clickable": true,
+                        "children": [
+                          {
+                            "id": "2",
+                            "type": "Column",
+                            "bounds": [
+                              668,
+                              792,
+                              963,
+                              1201
+                            ],
+                            "children": [
+                              {
+                                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-B.txtIcon",
+                                "type": "__Common__",
+                                "bounds": [
+                                  701,
+                                  804,
+                                  929,
+                                  1032
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "HMOS-dev12-exported-document-20261005-B.txt",
+                                "bounds": [
+                                  668,
+                                  1044,
+                                  962,
+                                  1101
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "2026/10/05",
+                                "bounds": [
+                                  735,
+                                  1113,
+                                  896,
+                                  1148
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "38 B",
+                                "bounds": [
+                                  785,
+                                  1154,
+                                  847,
+                                  1189
+                                ],
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "GridItem",
+                        "bounds": [
+                          977,
+                          792,
+                          1272,
+                          1201
+                        ],
+                        "clickable": true,
+                        "children": [
+                          {
+                            "id": "3",
+                            "type": "Column",
+                            "bounds": [
+                              977,
+                              792,
+                              1272,
+                              1201
+                            ],
+                            "children": [
+                              {
+                                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-A.txtIcon",
+                                "type": "__Common__",
+                                "bounds": [
+                                  1010,
+                                  804,
+                                  1238,
+                                  1032
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "HMOS-dev12-exported-document-20261005-A.txt",
+                                "bounds": [
+                                  977,
+                                  1044,
+                                  1271,
+                                  1101
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "2026/10/05",
+                                "bounds": [
+                                  1044,
+                                  1113,
+                                  1205,
+                                  1148
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "38 B",
+                                "bounds": [
+                                  1094,
+                                  1154,
+                                  1156,
+                                  1189
+                                ],
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "GridItem",
+                        "bounds": [
+                          48,
+                          1225,
+                          343,
+                          1634
+                        ],
+                        "clickable": true,
+                        "children": [
+                          {
+                            "id": "4",
+                            "type": "Column",
+                            "bounds": [
+                              48,
+                              1225,
+                              343,
+                              1634
+                            ],
+                            "children": [
+                              {
+                                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-image-20261005-A.pngIcon",
+                                "type": "__Common__",
+                                "bounds": [
+                                  81,
+                                  1237,
+                                  309,
+                                  1465
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Image",
+                                "bounds": [
+                                  93,
+                                  1249,
+                                  165,
+                                  1321
+                                ],
+                                "clickable": true,
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "HMOS-dev12-exported-image-20261005-A.png",
+                                "bounds": [
+                                  48,
+                                  1477,
+                                  342,
+                                  1534
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "2026/10/05",
+                                "bounds": [
+                                  115,
+                                  1546,
+                                  276,
+                                  1581
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "1.92 MB",
+                                "bounds": [
+                                  140,
+                                  1587,
+                                  252,
+                                  1622
+                                ],
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "GridItem",
+                        "bounds": [
+                          358,
+                          1225,
+                          653,
+                          1634
+                        ],
+                        "clickable": true,
+                        "children": [
+                          {
+                            "id": "5",
+                            "type": "Column",
+                            "bounds": [
+                              358,
+                              1225,
+                              653,
+                              1634
+                            ],
+                            "children": [
+                              {
+                                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E6%96%87%E6%A1%A3.txtIcon",
+                                "type": "__Common__",
+                                "bounds": [
+                                  391,
+                                  1237,
+                                  619,
+                                  1465
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "HMOS-dev12-20261005-中文 文档.txt",
+                                "bounds": [
+                                  358,
+                                  1477,
+                                  652,
+                                  1534
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "2026/10/05",
+                                "bounds": [
+                                  425,
+                                  1546,
+                                  586,
+                                  1581
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "38 B",
+                                "bounds": [
+                                  475,
+                                  1587,
+                                  537,
+                                  1622
+                                ],
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "GridItem",
+                        "bounds": [
+                          668,
+                          1225,
+                          963,
+                          1634
+                        ],
+                        "clickable": true,
+                        "children": [
+                          {
+                            "id": "6",
+                            "type": "Column",
+                            "bounds": [
+                              668,
+                              1225,
+                              963,
+                              1634
+                            ],
+                            "children": [
+                              {
+                                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+                                "type": "__Common__",
+                                "bounds": [
+                                  701,
+                                  1237,
+                                  929,
+                                  1465
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Image",
+                                "bounds": [
+                                  713,
+                                  1249,
+                                  785,
+                                  1321
+                                ],
+                                "clickable": true,
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "HMOS-dev12-20261005-中文 图片.png",
+                                "bounds": [
+                                  668,
+                                  1477,
+                                  962,
+                                  1534
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "2026/10/05",
+                                "bounds": [
+                                  735,
+                                  1546,
+                                  896,
+                                  1581
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "1.92 MB",
+                                "bounds": [
+                                  760,
+                                  1587,
+                                  872,
+                                  1622
+                                ],
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Button",
+    "bounds": [
+      36,
+      156,
+      156,
+      270
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          65,
+          182,
+          128,
+          245
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      65,
+      182,
+      128,
+      245
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      219,
+      188,
+      270,
+      239
+    ],
+    "children": []
+  },
+  {
+    "type": "TextInput",
+    "bounds": [
+      294,
+      156,
+      840,
+      270
+    ],
+    "clickable": true,
+    "longClickable": true,
+    "scrollable": true,
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "Ctrl K",
+    "bounds": [
+      864,
+      197,
+      934,
+      229
+    ],
+    "children": []
+  },
+  {
+    "type": "Button",
+    "bounds": [
+      997,
+      156,
+      1117,
+      270
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "type": "Text",
+        "text": "󰉘",
+        "bounds": [
+          1029,
+          185,
+          1086,
+          242
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "󰉘",
+    "bounds": [
+      1029,
+      185,
+      1086,
+      242
+    ],
+    "children": []
+  },
+  {
+    "type": "Button",
+    "text": "草稿 1",
+    "bounds": [
+      1141,
+      156,
+      1284,
+      270
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Scroll",
+    "bounds": [
+      36,
+      339,
+      1284,
+      2112
+    ],
+    "scrollable": true,
+    "children": [
+      {
+        "type": "Text",
+        "text": "A LITTLE SPACE FOR BIG IDEAS",
+        "bounds": [
+          36,
+          339,
+          595,
+          371
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "让想法，自由生长。",
+        "bounds": [
+          36,
+          398,
+          747,
+          503
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "收纳日常的零碎，也留住灵光一闪。",
+        "bounds": [
+          36,
+          527,
+          613,
+          569
+        ],
+        "children": []
+      },
+      {
+        "type": "Button",
+        "bounds": [
+          990,
+          385,
+          1284,
+          523
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              1035,
+              429,
+              1086,
+              480
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "新建灵感",
+            "bounds": [
+              1107,
+              435,
+              1239,
+              474
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "让可能性发生",
+        "bounds": [
+          150,
+          719,
+          323,
+          747
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "还没成形，也没关系。",
+        "bounds": [
+          114,
+          807,
+          744,
+          881
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。",
+        "bounds": [
+          114,
+          911,
+          708,
+          1033
+        ],
+        "children": []
+      },
+      {
+        "type": "Row",
+        "bounds": [
+          114,
+          1093,
+          420,
+          1168
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "记录此刻的想法",
+            "bounds": [
+              114,
+              1111,
+              345,
+              1150
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              375,
+              1108,
+              420,
+              1153
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "最近的念头",
+        "bounds": [
+          36,
+          1379,
+          262,
+          1432
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "13",
+        "bounds": [
+          286,
+          1388,
+          321,
+          1423
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "全部",
+        "bounds": [
+          357,
+          1367,
+          483,
+          1444
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "有待办",
+        "bounds": [
+          495,
+          1367,
+          651,
+          1444
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "含附件",
+        "bounds": [
+          663,
+          1367,
+          819,
+          1444
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "仅收藏",
+        "bounds": [
+          831,
+          1367,
+          987,
+          1444
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "id": "card-sort",
+        "type": "Row",
+        "bounds": [
+          36,
+          1480,
+          1284,
+          1555
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "󰆨",
+            "bounds": [
+              1062,
+              1498,
+              1101,
+              1537
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "自定义顺序",
+            "bounds": [
+              1116,
+              1500,
+              1266,
+              1535
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "长按拖动柄调整顺序，或在卡片菜单中前移、后移。",
+        "bounds": [
+          36,
+          1555,
+          1284,
+          1590
+        ],
+        "children": []
+      },
+      {
+        "id": "workspace-card:060b5cd8-de23-45e6-95a1-4571ddbf41a6",
+        "type": "Column",
+        "bounds": [
+          36,
+          1638,
+          1284,
+          2112
+        ],
+        "children": [
+          {
+            "type": "Column",
+            "bounds": [
+              36,
+              1638,
+              1284,
+              2112
+            ],
+            "clickable": true,
+            "longClickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  119,
+                  1712,
+                  176,
+                  1769
+                ],
+                "children": []
+              },
+              {
+                "type": "Button",
+                "bounds": [
+                  1146,
+                  1692,
+                  1242,
+                  1788
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "type": "Text",
+                    "text": "",
+                    "bounds": [
+                      1169,
+                      1715,
+                      1220,
+                      1766
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "type": "Text",
+                "text": "HMOS-markdown-20261005-A",
+                "bounds": [
+                  96,
+                  1833,
+                  710,
+                  1882
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "| Name | Value |\n| --- | --- |\n| 中文😀 | 42 |\n| Second | 保留 |",
+                "bounds": [
+                  96,
+                  1906,
+                  320,
+                  2024
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "灵感",
+                "bounds": [
+                  96,
+                  2081,
+                  192,
+                  2112
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "待整理",
+                "bounds": [
+                  1161,
+                  2093,
+                  1242,
+                  2112
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "A LITTLE SPACE FOR BIG IDEAS",
+    "bounds": [
+      36,
+      339,
+      595,
+      371
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "让想法，自由生长。",
+    "bounds": [
+      36,
+      398,
+      747,
+      503
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "收纳日常的零碎，也留住灵光一闪。",
+    "bounds": [
+      36,
+      527,
+      613,
+      569
+    ],
+    "children": []
+  },
+  {
+    "type": "Button",
+    "bounds": [
+      990,
+      385,
+      1284,
+      523
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          1035,
+          429,
+          1086,
+          480
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "新建灵感",
+        "bounds": [
+          1107,
+          435,
+          1239,
+          474
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      1035,
+      429,
+      1086,
+      480
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "新建灵感",
+    "bounds": [
+      1107,
+      435,
+      1239,
+      474
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "让可能性发生",
+    "bounds": [
+      150,
+      719,
+      323,
+      747
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "还没成形，也没关系。",
+    "bounds": [
+      114,
+      807,
+      744,
+      881
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。",
+    "bounds": [
+      114,
+      911,
+      708,
+      1033
+    ],
+    "children": []
+  },
+  {
+    "type": "Row",
+    "bounds": [
+      114,
+      1093,
+      420,
+      1168
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "type": "Text",
+        "text": "记录此刻的想法",
+        "bounds": [
+          114,
+          1111,
+          345,
+          1150
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          375,
+          1108,
+          420,
+          1153
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "记录此刻的想法",
+    "bounds": [
+      114,
+      1111,
+      345,
+      1150
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      375,
+      1108,
+      420,
+      1153
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "最近的念头",
+    "bounds": [
+      36,
+      1379,
+      262,
+      1432
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "13",
+    "bounds": [
+      286,
+      1388,
+      321,
+      1423
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "全部",
+    "bounds": [
+      357,
+      1367,
+      483,
+      1444
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "有待办",
+    "bounds": [
+      495,
+      1367,
+      651,
+      1444
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "含附件",
+    "bounds": [
+      663,
+      1367,
+      819,
+      1444
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "仅收藏",
+    "bounds": [
+      831,
+      1367,
+      987,
+      1444
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "id": "card-sort",
+    "type": "Row",
+    "bounds": [
+      36,
+      1480,
+      1284,
+      1555
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "type": "Text",
+        "text": "󰆨",
+        "bounds": [
+          1062,
+          1498,
+          1101,
+          1537
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "自定义顺序",
+        "bounds": [
+          1116,
+          1500,
+          1266,
+          1535
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "󰆨",
+    "bounds": [
+      1062,
+      1498,
+      1101,
+      1537
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "自定义顺序",
+    "bounds": [
+      1116,
+      1500,
+      1266,
+      1535
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "长按拖动柄调整顺序，或在卡片菜单中前移、后移。",
+    "bounds": [
+      36,
+      1555,
+      1284,
+      1590
+    ],
+    "children": []
+  },
+  {
+    "id": "workspace-card:060b5cd8-de23-45e6-95a1-4571ddbf41a6",
+    "type": "Column",
+    "bounds": [
+      36,
+      1638,
+      1284,
+      2112
+    ],
+    "children": [
+      {
+        "type": "Column",
+        "bounds": [
+          36,
+          1638,
+          1284,
+          2112
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              119,
+              1712,
+              176,
+              1769
+            ],
+            "children": []
+          },
+          {
+            "type": "Button",
+            "bounds": [
+              1146,
+              1692,
+              1242,
+              1788
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  1169,
+                  1715,
+                  1220,
+                  1766
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "HMOS-markdown-20261005-A",
+            "bounds": [
+              96,
+              1833,
+              710,
+              1882
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "| Name | Value |\n| --- | --- |\n| 中文😀 | 42 |\n| Second | 保留 |",
+            "bounds": [
+              96,
+              1906,
+              320,
+              2024
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "灵感",
+            "bounds": [
+              96,
+              2081,
+              192,
+              2112
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "待整理",
+            "bounds": [
+              1161,
+              2093,
+              1242,
+              2112
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Column",
+    "bounds": [
+      36,
+      1638,
+      1284,
+      2112
+    ],
+    "clickable": true,
+    "longClickable": true,
+    "children": [
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          119,
+          1712,
+          176,
+          1769
+        ],
+        "children": []
+      },
+      {
+        "type": "Button",
+        "bounds": [
+          1146,
+          1692,
+          1242,
+          1788
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              1169,
+              1715,
+              1220,
+              1766
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "HMOS-markdown-20261005-A",
+        "bounds": [
+          96,
+          1833,
+          710,
+          1882
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "| Name | Value |\n| --- | --- |\n| 中文😀 | 42 |\n| Second | 保留 |",
+        "bounds": [
+          96,
+          1906,
+          320,
+          2024
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "灵感",
+        "bounds": [
+          96,
+          2081,
+          192,
+          2112
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "待整理",
+        "bounds": [
+          1161,
+          2093,
+          1242,
+          2112
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      119,
+      1712,
+      176,
+      1769
+    ],
+    "children": []
+  },
+  {
+    "type": "Button",
+    "bounds": [
+      1146,
+      1692,
+      1242,
+      1788
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          1169,
+          1715,
+          1220,
+          1766
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      1169,
+      1715,
+      1220,
+      1766
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "HMOS-markdown-20261005-A",
+    "bounds": [
+      96,
+      1833,
+      710,
+      1882
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "| Name | Value |\n| --- | --- |\n| 中文😀 | 42 |\n| Second | 保留 |",
+    "bounds": [
+      96,
+      1906,
+      320,
+      2024
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "灵感",
+    "bounds": [
+      96,
+      2081,
+      192,
+      2112
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "待整理",
+    "bounds": [
+      1161,
+      2093,
+      1242,
+      2112
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "没有紧迫的事。给好奇心一点时间。",
+    "bounds": [
+      129,
+      2021,
+      1158,
+      2060
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "󰛹",
+    "bounds": [
+      1185,
+      2015,
+      1236,
+      2066
+    ],
+    "children": []
+  },
+  {
+    "type": "Rect",
+    "bounds": [
+      0,
+      117,
+      1320,
+      2148
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      161,
+      278,
+      224,
+      341
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "MORROW / A LITTLE POSSIBILITY",
+    "bounds": [
+      285,
+      253,
+      743,
+      281
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "接住一个新想法",
+    "bounds": [
+      285,
+      296,
+      705,
+      366
+    ],
+    "children": []
+  },
+  {
+    "type": "Button",
+    "bounds": [
+      1089,
+      255,
+      1185,
+      363
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          1110,
+          282,
+          1164,
+          336
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      1110,
+      282,
+      1164,
+      336
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "文字、表格、图片，先放在这里。让一个念头慢慢成形。",
+    "bounds": [
+      63,
+      402,
+      1257,
+      458
+    ],
+    "children": []
+  },
+  {
+    "type": "Scroll",
+    "bounds": [
+      63,
+      524,
+      1257,
+      1821
+    ],
+    "scrollable": true,
+    "children": [
+      {
+        "id": "draft-title",
+        "type": "TextInput",
+        "text": "HMOS-inline-20261007-A",
+        "bounds": [
+          135,
+          524,
+          1185,
+          716
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "22 / 60",
+        "bounds": [
+          135,
+          764,
+          1185,
+          799
+        ],
+        "children": []
+      },
+      {
+        "id": "editor-paste",
+        "type": "PasteButton",
+        "text": "粘贴",
+        "bounds": [
+          368,
+          847,
+          603,
+          967
+        ],
+        "children": []
+      },
+      {
+        "id": "editor-import",
+        "type": "Button",
+        "bounds": [
+          627,
+          847,
+          952,
+          967
+        ],
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              678,
+              883,
+              726,
+              931
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "导入文件",
+            "bounds": [
+              744,
+              884,
+              901,
+              930
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "正在处理附件…",
+        "bounds": [
+          135,
+          1015,
+          1185,
+          1069
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "󰀣",
+        "bounds": [
+          186,
+          1236,
+          240,
+          1290
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "正文 · Markdown",
+        "bounds": [
+          264,
+          1239,
+          598,
+          1288
+        ],
+        "children": []
+      },
+      {
+        "type": "Button",
+        "bounds": [
+          1038,
+          1215,
+          1134,
+          1311
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              1058,
+              1235,
+              1115,
+              1292
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "draft-description",
+        "type": "TextArea",
+        "text": "# Inline attachment\n\n![名称](attachment:HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.png)\n\n![重复](attachment:HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.png)\n\n| Image |\n| --- |\n| ![表格](attachment:HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.png) |\n\n![损坏](attachment:HMOS-dev13-invalid.png)\n\n![缺失](attachment:not-imported.png)\n\n![网络](https://example.invalid/image.png)",
+        "bounds": [
+          186,
+          1372,
+          1134,
+          1821
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "draft-title",
+    "type": "TextInput",
+    "text": "HMOS-inline-20261007-A",
+    "bounds": [
+      135,
+      524,
+      1185,
+      716
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "22 / 60",
+    "bounds": [
+      135,
+      764,
+      1185,
+      799
+    ],
+    "children": []
+  },
+  {
+    "id": "editor-paste",
+    "type": "PasteButton",
+    "text": "粘贴",
+    "bounds": [
+      368,
+      847,
+      603,
+      967
+    ],
+    "children": []
+  },
+  {
+    "id": "editor-import",
+    "type": "Button",
+    "bounds": [
+      627,
+      847,
+      952,
+      967
+    ],
+    "children": [
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          678,
+          883,
+          726,
+          931
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "导入文件",
+        "bounds": [
+          744,
+          884,
+          901,
+          930
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      678,
+      883,
+      726,
+      931
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "导入文件",
+    "bounds": [
+      744,
+      884,
+      901,
+      930
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "正在处理附件…",
+    "bounds": [
+      135,
+      1015,
+      1185,
+      1069
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "󰀣",
+    "bounds": [
+      186,
+      1236,
+      240,
+      1290
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "正文 · Markdown",
+    "bounds": [
+      264,
+      1239,
+      598,
+      1288
+    ],
+    "children": []
+  },
+  {
+    "type": "Button",
+    "bounds": [
+      1038,
+      1215,
+      1134,
+      1311
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          1058,
+          1235,
+          1115,
+          1292
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      1058,
+      1235,
+      1115,
+      1292
+    ],
+    "children": []
+  },
+  {
+    "id": "draft-description",
+    "type": "TextArea",
+    "text": "# Inline attachment\n\n![名称](attachment:HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.png)\n\n![重复](attachment:HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.png)\n\n| Image |\n| --- |\n| ![表格](attachment:HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.png) |\n\n![损坏](attachment:HMOS-dev13-invalid.png)\n\n![缺失](attachment:not-imported.png)\n\n![网络](https://example.invalid/image.png)",
+    "bounds": [
+      186,
+      1372,
+      1134,
+      1821
+    ],
+    "children": []
+  },
+  {
+    "id": "draft-status",
+    "type": "Text",
+    "text": "草稿已保留",
+    "bounds": [
+      135,
+      1821,
+      1185,
+      1856
+    ],
+    "children": []
+  },
+  {
+    "type": "Button",
+    "text": "放弃草稿",
+    "bounds": [
+      135,
+      1923,
+      351,
+      2043
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Button",
+    "text": "保留草稿",
+    "bounds": [
+      631,
+      1926,
+      872,
+      2040
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Button",
+    "text": "保存灵感",
+    "bounds": [
+      908,
+      1926,
+      1185,
+      2040
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "SheetWrapper",
+    "bounds": [
+      0,
+      117,
+      1320,
+      2232
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "type": "SheetPage",
+        "bounds": [
+          0,
+          141,
+          1320,
+          2232
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Column",
+            "bounds": [
+              48,
+              192,
+              162,
+              306
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "id": "left_icon",
+                "type": "SymbolGlyph",
+                "bounds": [
+                  78,
+                  222,
+                  132,
+                  276
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "top_title",
+            "type": "Text",
+            "text": "我的手机",
+            "bounds": [
+              186,
+              223,
+              426,
+              293
+            ],
+            "children": []
+          },
+          {
+            "id": "top_menu",
+            "type": "Column",
+            "bounds": [
+              1020,
+              192,
+              1134,
+              306
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "id": "top_menu",
+            "type": "Column",
+            "bounds": [
+              1158,
+              192,
+              1272,
+              306
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Column",
+            "bounds": [
+              48,
+              309,
+              1272,
+              477
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "id": "top_search",
+                "type": "Search",
+                "bounds": [
+                  48,
+                  333,
+                  1272,
+                  453
+                ],
+                "children": [
+                  {
+                    "id": "__SearchField__top_search",
+                    "type": "SearchField",
+                    "bounds": [
+                      156,
+                      333,
+                      1164,
+                      453
+                    ],
+                    "children": []
+                  },
+                  {
+                    "id": "__SearchField__Image__top_search",
+                    "type": "SymbolGlyph",
+                    "bounds": [
+                      84,
+                      369,
+                      132,
+                      417
+                    ],
+                    "clickable": true,
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              24,
+              533,
+              294,
+              590
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "我的手机",
+                "bounds": [
+                  24,
+                  534,
+                  265,
+                  590
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "Download",
+            "bounds": [
+              294,
+              533,
+              564,
+              589
+            ],
+            "children": []
+          },
+          {
+            "type": "Scroll",
+            "bounds": [
+              0,
+              647,
+              1320,
+              2076
+            ],
+            "scrollable": true,
+            "children": [
+              {
+                "type": "Column",
+                "bounds": [
+                  0,
+                  695,
+                  1320,
+                  744
+                ],
+                "longClickable": true,
+                "children": [
+                  {
+                    "type": "Text",
+                    "text": "7 项",
+                    "bounds": [
+                      621,
+                      695,
+                      699,
+                      744
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "type": "Grid",
+                "bounds": [
+                  0,
+                  792,
+                  1320,
+                  2076
+                ],
+                "longClickable": true,
+                "scrollable": true,
+                "children": [
+                  {
+                    "type": "GridItem",
+                    "bounds": [
+                      48,
+                      792,
+                      343,
+                      1201
+                    ],
+                    "clickable": true,
+                    "children": [
+                      {
+                        "id": "0",
+                        "type": "Column",
+                        "bounds": [
+                          48,
+                          792,
+                          343,
+                          1201
+                        ],
+                        "children": [
+                          {
+                            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-invalid.pngIcon",
+                            "type": "__Common__",
+                            "bounds": [
+                              81,
+                              804,
+                              309,
+                              1032
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Image",
+                            "bounds": [
+                              93,
+                              816,
+                              165,
+                              888
+                            ],
+                            "clickable": true,
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "HMOS-dev13-invalid.png",
+                            "bounds": [
+                              48,
+                              1044,
+                              342,
+                              1101
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "11:08",
+                            "bounds": [
+                              157,
+                              1113,
+                              234,
+                              1148
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "54 B",
+                            "bounds": [
+                              165,
+                              1154,
+                              227,
+                              1189
+                            ],
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "GridItem",
+                    "bounds": [
+                      358,
+                      792,
+                      653,
+                      1201
+                    ],
+                    "clickable": true,
+                    "children": [
+                      {
+                        "id": "1",
+                        "type": "Column",
+                        "bounds": [
+                          358,
+                          792,
+                          653,
+                          1201
+                        ],
+                        "children": [
+                          {
+                            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+                            "type": "__Common__",
+                            "bounds": [
+                              391,
+                              804,
+                              619,
+                              1032
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Image",
+                            "bounds": [
+                              403,
+                              816,
+                              475,
+                              888
+                            ],
+                            "clickable": true,
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "HMOS-dev13-中文 图片.png",
+                            "bounds": [
+                              358,
+                              1044,
+                              652,
+                              1101
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "11:08",
+                            "bounds": [
+                              467,
+                              1113,
+                              544,
+                              1148
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "1.92 MB",
+                            "bounds": [
+                              449,
+                              1154,
+                              561,
+                              1189
+                            ],
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "GridItem",
+                    "bounds": [
+                      668,
+                      792,
+                      963,
+                      1201
+                    ],
+                    "clickable": true,
+                    "children": [
+                      {
+                        "id": "2",
+                        "type": "Column",
+                        "bounds": [
+                          668,
+                          792,
+                          963,
+                          1201
+                        ],
+                        "children": [
+                          {
+                            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-B.txtIcon",
+                            "type": "__Common__",
+                            "bounds": [
+                              701,
+                              804,
+                              929,
+                              1032
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "HMOS-dev12-exported-document-20261005-B.txt",
+                            "bounds": [
+                              668,
+                              1044,
+                              962,
+                              1101
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "2026/10/05",
+                            "bounds": [
+                              735,
+                              1113,
+                              896,
+                              1148
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "38 B",
+                            "bounds": [
+                              785,
+                              1154,
+                              847,
+                              1189
+                            ],
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "GridItem",
+                    "bounds": [
+                      977,
+                      792,
+                      1272,
+                      1201
+                    ],
+                    "clickable": true,
+                    "children": [
+                      {
+                        "id": "3",
+                        "type": "Column",
+                        "bounds": [
+                          977,
+                          792,
+                          1272,
+                          1201
+                        ],
+                        "children": [
+                          {
+                            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-A.txtIcon",
+                            "type": "__Common__",
+                            "bounds": [
+                              1010,
+                              804,
+                              1238,
+                              1032
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "HMOS-dev12-exported-document-20261005-A.txt",
+                            "bounds": [
+                              977,
+                              1044,
+                              1271,
+                              1101
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "2026/10/05",
+                            "bounds": [
+                              1044,
+                              1113,
+                              1205,
+                              1148
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "38 B",
+                            "bounds": [
+                              1094,
+                              1154,
+                              1156,
+                              1189
+                            ],
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "GridItem",
+                    "bounds": [
+                      48,
+                      1225,
+                      343,
+                      1634
+                    ],
+                    "clickable": true,
+                    "children": [
+                      {
+                        "id": "4",
+                        "type": "Column",
+                        "bounds": [
+                          48,
+                          1225,
+                          343,
+                          1634
+                        ],
+                        "children": [
+                          {
+                            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-image-20261005-A.pngIcon",
+                            "type": "__Common__",
+                            "bounds": [
+                              81,
+                              1237,
+                              309,
+                              1465
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Image",
+                            "bounds": [
+                              93,
+                              1249,
+                              165,
+                              1321
+                            ],
+                            "clickable": true,
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "HMOS-dev12-exported-image-20261005-A.png",
+                            "bounds": [
+                              48,
+                              1477,
+                              342,
+                              1534
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "2026/10/05",
+                            "bounds": [
+                              115,
+                              1546,
+                              276,
+                              1581
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "1.92 MB",
+                            "bounds": [
+                              140,
+                              1587,
+                              252,
+                              1622
+                            ],
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "GridItem",
+                    "bounds": [
+                      358,
+                      1225,
+                      653,
+                      1634
+                    ],
+                    "clickable": true,
+                    "children": [
+                      {
+                        "id": "5",
+                        "type": "Column",
+                        "bounds": [
+                          358,
+                          1225,
+                          653,
+                          1634
+                        ],
+                        "children": [
+                          {
+                            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E6%96%87%E6%A1%A3.txtIcon",
+                            "type": "__Common__",
+                            "bounds": [
+                              391,
+                              1237,
+                              619,
+                              1465
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "HMOS-dev12-20261005-中文 文档.txt",
+                            "bounds": [
+                              358,
+                              1477,
+                              652,
+                              1534
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "2026/10/05",
+                            "bounds": [
+                              425,
+                              1546,
+                              586,
+                              1581
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "38 B",
+                            "bounds": [
+                              475,
+                              1587,
+                              537,
+                              1622
+                            ],
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "GridItem",
+                    "bounds": [
+                      668,
+                      1225,
+                      963,
+                      1634
+                    ],
+                    "clickable": true,
+                    "children": [
+                      {
+                        "id": "6",
+                        "type": "Column",
+                        "bounds": [
+                          668,
+                          1225,
+                          963,
+                          1634
+                        ],
+                        "children": [
+                          {
+                            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+                            "type": "__Common__",
+                            "bounds": [
+                              701,
+                              1237,
+                              929,
+                              1465
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Image",
+                            "bounds": [
+                              713,
+                              1249,
+                              785,
+                              1321
+                            ],
+                            "clickable": true,
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "HMOS-dev12-20261005-中文 图片.png",
+                            "bounds": [
+                              668,
+                              1477,
+                              962,
+                              1534
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "2026/10/05",
+                            "bounds": [
+                              735,
+                              1546,
+                              896,
+                              1581
+                            ],
+                            "children": []
+                          },
+                          {
+                            "type": "Text",
+                            "text": "1.92 MB",
+                            "bounds": [
+                              760,
+                              1587,
+                              872,
+                              1622
+                            ],
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "SheetPage",
+    "bounds": [
+      0,
+      141,
+      1320,
+      2232
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "type": "Column",
+        "bounds": [
+          48,
+          192,
+          162,
+          306
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "id": "left_icon",
+            "type": "SymbolGlyph",
+            "bounds": [
+              78,
+              222,
+              132,
+              276
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "top_title",
+        "type": "Text",
+        "text": "我的手机",
+        "bounds": [
+          186,
+          223,
+          426,
+          293
+        ],
+        "children": []
+      },
+      {
+        "id": "top_menu",
+        "type": "Column",
+        "bounds": [
+          1020,
+          192,
+          1134,
+          306
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "id": "top_menu",
+        "type": "Column",
+        "bounds": [
+          1158,
+          192,
+          1272,
+          306
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Column",
+        "bounds": [
+          48,
+          309,
+          1272,
+          477
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "id": "top_search",
+            "type": "Search",
+            "bounds": [
+              48,
+              333,
+              1272,
+              453
+            ],
+            "children": [
+              {
+                "id": "__SearchField__top_search",
+                "type": "SearchField",
+                "bounds": [
+                  156,
+                  333,
+                  1164,
+                  453
+                ],
+                "children": []
+              },
+              {
+                "id": "__SearchField__Image__top_search",
+                "type": "SymbolGlyph",
+                "bounds": [
+                  84,
+                  369,
+                  132,
+                  417
+                ],
+                "clickable": true,
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Row",
+        "bounds": [
+          24,
+          533,
+          294,
+          590
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "我的手机",
+            "bounds": [
+              24,
+              534,
+              265,
+              590
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "Download",
+        "bounds": [
+          294,
+          533,
+          564,
+          589
+        ],
+        "children": []
+      },
+      {
+        "type": "Scroll",
+        "bounds": [
+          0,
+          647,
+          1320,
+          2076
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "type": "Column",
+            "bounds": [
+              0,
+              695,
+              1320,
+              744
+            ],
+            "longClickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "7 项",
+                "bounds": [
+                  621,
+                  695,
+                  699,
+                  744
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Grid",
+            "bounds": [
+              0,
+              792,
+              1320,
+              2076
+            ],
+            "longClickable": true,
+            "scrollable": true,
+            "children": [
+              {
+                "type": "GridItem",
+                "bounds": [
+                  48,
+                  792,
+                  343,
+                  1201
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "id": "0",
+                    "type": "Column",
+                    "bounds": [
+                      48,
+                      792,
+                      343,
+                      1201
+                    ],
+                    "children": [
+                      {
+                        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-invalid.pngIcon",
+                        "type": "__Common__",
+                        "bounds": [
+                          81,
+                          804,
+                          309,
+                          1032
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Image",
+                        "bounds": [
+                          93,
+                          816,
+                          165,
+                          888
+                        ],
+                        "clickable": true,
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "HMOS-dev13-invalid.png",
+                        "bounds": [
+                          48,
+                          1044,
+                          342,
+                          1101
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "11:08",
+                        "bounds": [
+                          157,
+                          1113,
+                          234,
+                          1148
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "54 B",
+                        "bounds": [
+                          165,
+                          1154,
+                          227,
+                          1189
+                        ],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "GridItem",
+                "bounds": [
+                  358,
+                  792,
+                  653,
+                  1201
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "id": "1",
+                    "type": "Column",
+                    "bounds": [
+                      358,
+                      792,
+                      653,
+                      1201
+                    ],
+                    "children": [
+                      {
+                        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+                        "type": "__Common__",
+                        "bounds": [
+                          391,
+                          804,
+                          619,
+                          1032
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Image",
+                        "bounds": [
+                          403,
+                          816,
+                          475,
+                          888
+                        ],
+                        "clickable": true,
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "HMOS-dev13-中文 图片.png",
+                        "bounds": [
+                          358,
+                          1044,
+                          652,
+                          1101
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "11:08",
+                        "bounds": [
+                          467,
+                          1113,
+                          544,
+                          1148
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "1.92 MB",
+                        "bounds": [
+                          449,
+                          1154,
+                          561,
+                          1189
+                        ],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "GridItem",
+                "bounds": [
+                  668,
+                  792,
+                  963,
+                  1201
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "id": "2",
+                    "type": "Column",
+                    "bounds": [
+                      668,
+                      792,
+                      963,
+                      1201
+                    ],
+                    "children": [
+                      {
+                        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-B.txtIcon",
+                        "type": "__Common__",
+                        "bounds": [
+                          701,
+                          804,
+                          929,
+                          1032
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "HMOS-dev12-exported-document-20261005-B.txt",
+                        "bounds": [
+                          668,
+                          1044,
+                          962,
+                          1101
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "2026/10/05",
+                        "bounds": [
+                          735,
+                          1113,
+                          896,
+                          1148
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "38 B",
+                        "bounds": [
+                          785,
+                          1154,
+                          847,
+                          1189
+                        ],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "GridItem",
+                "bounds": [
+                  977,
+                  792,
+                  1272,
+                  1201
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "id": "3",
+                    "type": "Column",
+                    "bounds": [
+                      977,
+                      792,
+                      1272,
+                      1201
+                    ],
+                    "children": [
+                      {
+                        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-A.txtIcon",
+                        "type": "__Common__",
+                        "bounds": [
+                          1010,
+                          804,
+                          1238,
+                          1032
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "HMOS-dev12-exported-document-20261005-A.txt",
+                        "bounds": [
+                          977,
+                          1044,
+                          1271,
+                          1101
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "2026/10/05",
+                        "bounds": [
+                          1044,
+                          1113,
+                          1205,
+                          1148
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "38 B",
+                        "bounds": [
+                          1094,
+                          1154,
+                          1156,
+                          1189
+                        ],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "GridItem",
+                "bounds": [
+                  48,
+                  1225,
+                  343,
+                  1634
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "id": "4",
+                    "type": "Column",
+                    "bounds": [
+                      48,
+                      1225,
+                      343,
+                      1634
+                    ],
+                    "children": [
+                      {
+                        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-image-20261005-A.pngIcon",
+                        "type": "__Common__",
+                        "bounds": [
+                          81,
+                          1237,
+                          309,
+                          1465
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Image",
+                        "bounds": [
+                          93,
+                          1249,
+                          165,
+                          1321
+                        ],
+                        "clickable": true,
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "HMOS-dev12-exported-image-20261005-A.png",
+                        "bounds": [
+                          48,
+                          1477,
+                          342,
+                          1534
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "2026/10/05",
+                        "bounds": [
+                          115,
+                          1546,
+                          276,
+                          1581
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "1.92 MB",
+                        "bounds": [
+                          140,
+                          1587,
+                          252,
+                          1622
+                        ],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "GridItem",
+                "bounds": [
+                  358,
+                  1225,
+                  653,
+                  1634
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "id": "5",
+                    "type": "Column",
+                    "bounds": [
+                      358,
+                      1225,
+                      653,
+                      1634
+                    ],
+                    "children": [
+                      {
+                        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E6%96%87%E6%A1%A3.txtIcon",
+                        "type": "__Common__",
+                        "bounds": [
+                          391,
+                          1237,
+                          619,
+                          1465
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "HMOS-dev12-20261005-中文 文档.txt",
+                        "bounds": [
+                          358,
+                          1477,
+                          652,
+                          1534
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "2026/10/05",
+                        "bounds": [
+                          425,
+                          1546,
+                          586,
+                          1581
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "38 B",
+                        "bounds": [
+                          475,
+                          1587,
+                          537,
+                          1622
+                        ],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "GridItem",
+                "bounds": [
+                  668,
+                  1225,
+                  963,
+                  1634
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "id": "6",
+                    "type": "Column",
+                    "bounds": [
+                      668,
+                      1225,
+                      963,
+                      1634
+                    ],
+                    "children": [
+                      {
+                        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+                        "type": "__Common__",
+                        "bounds": [
+                          701,
+                          1237,
+                          929,
+                          1465
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Image",
+                        "bounds": [
+                          713,
+                          1249,
+                          785,
+                          1321
+                        ],
+                        "clickable": true,
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "HMOS-dev12-20261005-中文 图片.png",
+                        "bounds": [
+                          668,
+                          1477,
+                          962,
+                          1534
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "2026/10/05",
+                        "bounds": [
+                          735,
+                          1546,
+                          896,
+                          1581
+                        ],
+                        "children": []
+                      },
+                      {
+                        "type": "Text",
+                        "text": "1.92 MB",
+                        "bounds": [
+                          760,
+                          1587,
+                          872,
+                          1622
+                        ],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Column",
+    "bounds": [
+      48,
+      192,
+      162,
+      306
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "id": "left_icon",
+        "type": "SymbolGlyph",
+        "bounds": [
+          78,
+          222,
+          132,
+          276
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "left_icon",
+    "type": "SymbolGlyph",
+    "bounds": [
+      78,
+      222,
+      132,
+      276
+    ],
+    "children": []
+  },
+  {
+    "id": "top_title",
+    "type": "Text",
+    "text": "我的手机",
+    "bounds": [
+      186,
+      223,
+      426,
+      293
+    ],
+    "children": []
+  },
+  {
+    "id": "top_menu",
+    "type": "Column",
+    "bounds": [
+      1020,
+      192,
+      1134,
+      306
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "id": "top_menu",
+    "type": "Column",
+    "bounds": [
+      1158,
+      192,
+      1272,
+      306
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Column",
+    "bounds": [
+      48,
+      309,
+      1272,
+      477
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "id": "top_search",
+        "type": "Search",
+        "bounds": [
+          48,
+          333,
+          1272,
+          453
+        ],
+        "children": [
+          {
+            "id": "__SearchField__top_search",
+            "type": "SearchField",
+            "bounds": [
+              156,
+              333,
+              1164,
+              453
+            ],
+            "children": []
+          },
+          {
+            "id": "__SearchField__Image__top_search",
+            "type": "SymbolGlyph",
+            "bounds": [
+              84,
+              369,
+              132,
+              417
+            ],
+            "clickable": true,
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "top_search",
+    "type": "Search",
+    "bounds": [
+      48,
+      333,
+      1272,
+      453
+    ],
+    "children": [
+      {
+        "id": "__SearchField__top_search",
+        "type": "SearchField",
+        "bounds": [
+          156,
+          333,
+          1164,
+          453
+        ],
+        "children": []
+      },
+      {
+        "id": "__SearchField__Image__top_search",
+        "type": "SymbolGlyph",
+        "bounds": [
+          84,
+          369,
+          132,
+          417
+        ],
+        "clickable": true,
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "__SearchField__top_search",
+    "type": "SearchField",
+    "bounds": [
+      156,
+      333,
+      1164,
+      453
+    ],
+    "children": []
+  },
+  {
+    "id": "__SearchField__Image__top_search",
+    "type": "SymbolGlyph",
+    "bounds": [
+      84,
+      369,
+      132,
+      417
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Row",
+    "bounds": [
+      24,
+      533,
+      294,
+      590
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "type": "Text",
+        "text": "我的手机",
+        "bounds": [
+          24,
+          534,
+          265,
+          590
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "我的手机",
+    "bounds": [
+      24,
+      534,
+      265,
+      590
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "Download",
+    "bounds": [
+      294,
+      533,
+      564,
+      589
+    ],
+    "children": []
+  },
+  {
+    "type": "Scroll",
+    "bounds": [
+      0,
+      647,
+      1320,
+      2076
+    ],
+    "scrollable": true,
+    "children": [
+      {
+        "type": "Column",
+        "bounds": [
+          0,
+          695,
+          1320,
+          744
+        ],
+        "longClickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "7 项",
+            "bounds": [
+              621,
+              695,
+              699,
+              744
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Grid",
+        "bounds": [
+          0,
+          792,
+          1320,
+          2076
+        ],
+        "longClickable": true,
+        "scrollable": true,
+        "children": [
+          {
+            "type": "GridItem",
+            "bounds": [
+              48,
+              792,
+              343,
+              1201
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "id": "0",
+                "type": "Column",
+                "bounds": [
+                  48,
+                  792,
+                  343,
+                  1201
+                ],
+                "children": [
+                  {
+                    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-invalid.pngIcon",
+                    "type": "__Common__",
+                    "bounds": [
+                      81,
+                      804,
+                      309,
+                      1032
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Image",
+                    "bounds": [
+                      93,
+                      816,
+                      165,
+                      888
+                    ],
+                    "clickable": true,
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-dev13-invalid.png",
+                    "bounds": [
+                      48,
+                      1044,
+                      342,
+                      1101
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "11:08",
+                    "bounds": [
+                      157,
+                      1113,
+                      234,
+                      1148
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "54 B",
+                    "bounds": [
+                      165,
+                      1154,
+                      227,
+                      1189
+                    ],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "GridItem",
+            "bounds": [
+              358,
+              792,
+              653,
+              1201
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "id": "1",
+                "type": "Column",
+                "bounds": [
+                  358,
+                  792,
+                  653,
+                  1201
+                ],
+                "children": [
+                  {
+                    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+                    "type": "__Common__",
+                    "bounds": [
+                      391,
+                      804,
+                      619,
+                      1032
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Image",
+                    "bounds": [
+                      403,
+                      816,
+                      475,
+                      888
+                    ],
+                    "clickable": true,
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-dev13-中文 图片.png",
+                    "bounds": [
+                      358,
+                      1044,
+                      652,
+                      1101
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "11:08",
+                    "bounds": [
+                      467,
+                      1113,
+                      544,
+                      1148
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "1.92 MB",
+                    "bounds": [
+                      449,
+                      1154,
+                      561,
+                      1189
+                    ],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "GridItem",
+            "bounds": [
+              668,
+              792,
+              963,
+              1201
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "id": "2",
+                "type": "Column",
+                "bounds": [
+                  668,
+                  792,
+                  963,
+                  1201
+                ],
+                "children": [
+                  {
+                    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-B.txtIcon",
+                    "type": "__Common__",
+                    "bounds": [
+                      701,
+                      804,
+                      929,
+                      1032
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-dev12-exported-document-20261005-B.txt",
+                    "bounds": [
+                      668,
+                      1044,
+                      962,
+                      1101
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "2026/10/05",
+                    "bounds": [
+                      735,
+                      1113,
+                      896,
+                      1148
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "38 B",
+                    "bounds": [
+                      785,
+                      1154,
+                      847,
+                      1189
+                    ],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "GridItem",
+            "bounds": [
+              977,
+              792,
+              1272,
+              1201
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "id": "3",
+                "type": "Column",
+                "bounds": [
+                  977,
+                  792,
+                  1272,
+                  1201
+                ],
+                "children": [
+                  {
+                    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-A.txtIcon",
+                    "type": "__Common__",
+                    "bounds": [
+                      1010,
+                      804,
+                      1238,
+                      1032
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-dev12-exported-document-20261005-A.txt",
+                    "bounds": [
+                      977,
+                      1044,
+                      1271,
+                      1101
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "2026/10/05",
+                    "bounds": [
+                      1044,
+                      1113,
+                      1205,
+                      1148
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "38 B",
+                    "bounds": [
+                      1094,
+                      1154,
+                      1156,
+                      1189
+                    ],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "GridItem",
+            "bounds": [
+              48,
+              1225,
+              343,
+              1634
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "id": "4",
+                "type": "Column",
+                "bounds": [
+                  48,
+                  1225,
+                  343,
+                  1634
+                ],
+                "children": [
+                  {
+                    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-image-20261005-A.pngIcon",
+                    "type": "__Common__",
+                    "bounds": [
+                      81,
+                      1237,
+                      309,
+                      1465
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Image",
+                    "bounds": [
+                      93,
+                      1249,
+                      165,
+                      1321
+                    ],
+                    "clickable": true,
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-dev12-exported-image-20261005-A.png",
+                    "bounds": [
+                      48,
+                      1477,
+                      342,
+                      1534
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "2026/10/05",
+                    "bounds": [
+                      115,
+                      1546,
+                      276,
+                      1581
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "1.92 MB",
+                    "bounds": [
+                      140,
+                      1587,
+                      252,
+                      1622
+                    ],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "GridItem",
+            "bounds": [
+              358,
+              1225,
+              653,
+              1634
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "id": "5",
+                "type": "Column",
+                "bounds": [
+                  358,
+                  1225,
+                  653,
+                  1634
+                ],
+                "children": [
+                  {
+                    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E6%96%87%E6%A1%A3.txtIcon",
+                    "type": "__Common__",
+                    "bounds": [
+                      391,
+                      1237,
+                      619,
+                      1465
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-dev12-20261005-中文 文档.txt",
+                    "bounds": [
+                      358,
+                      1477,
+                      652,
+                      1534
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "2026/10/05",
+                    "bounds": [
+                      425,
+                      1546,
+                      586,
+                      1581
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "38 B",
+                    "bounds": [
+                      475,
+                      1587,
+                      537,
+                      1622
+                    ],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "GridItem",
+            "bounds": [
+              668,
+              1225,
+              963,
+              1634
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "id": "6",
+                "type": "Column",
+                "bounds": [
+                  668,
+                  1225,
+                  963,
+                  1634
+                ],
+                "children": [
+                  {
+                    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+                    "type": "__Common__",
+                    "bounds": [
+                      701,
+                      1237,
+                      929,
+                      1465
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Image",
+                    "bounds": [
+                      713,
+                      1249,
+                      785,
+                      1321
+                    ],
+                    "clickable": true,
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "HMOS-dev12-20261005-中文 图片.png",
+                    "bounds": [
+                      668,
+                      1477,
+                      962,
+                      1534
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "2026/10/05",
+                    "bounds": [
+                      735,
+                      1546,
+                      896,
+                      1581
+                    ],
+                    "children": []
+                  },
+                  {
+                    "type": "Text",
+                    "text": "1.92 MB",
+                    "bounds": [
+                      760,
+                      1587,
+                      872,
+                      1622
+                    ],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Column",
+    "bounds": [
+      0,
+      695,
+      1320,
+      744
+    ],
+    "longClickable": true,
+    "children": [
+      {
+        "type": "Text",
+        "text": "7 项",
+        "bounds": [
+          621,
+          695,
+          699,
+          744
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "type": "Text",
+    "text": "7 项",
+    "bounds": [
+      621,
+      695,
+      699,
+      744
+    ],
+    "children": []
+  },
+  {
+    "type": "Grid",
+    "bounds": [
+      0,
+      792,
+      1320,
+      2076
+    ],
+    "longClickable": true,
+    "scrollable": true,
+    "children": [
+      {
+        "type": "GridItem",
+        "bounds": [
+          48,
+          792,
+          343,
+          1201
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "id": "0",
+            "type": "Column",
+            "bounds": [
+              48,
+              792,
+              343,
+              1201
+            ],
+            "children": [
+              {
+                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-invalid.pngIcon",
+                "type": "__Common__",
+                "bounds": [
+                  81,
+                  804,
+                  309,
+                  1032
+                ],
+                "children": []
+              },
+              {
+                "type": "Image",
+                "bounds": [
+                  93,
+                  816,
+                  165,
+                  888
+                ],
+                "clickable": true,
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "HMOS-dev13-invalid.png",
+                "bounds": [
+                  48,
+                  1044,
+                  342,
+                  1101
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "11:08",
+                "bounds": [
+                  157,
+                  1113,
+                  234,
+                  1148
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "54 B",
+                "bounds": [
+                  165,
+                  1154,
+                  227,
+                  1189
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "GridItem",
+        "bounds": [
+          358,
+          792,
+          653,
+          1201
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "id": "1",
+            "type": "Column",
+            "bounds": [
+              358,
+              792,
+              653,
+              1201
+            ],
+            "children": [
+              {
+                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+                "type": "__Common__",
+                "bounds": [
+                  391,
+                  804,
+                  619,
+                  1032
+                ],
+                "children": []
+              },
+              {
+                "type": "Image",
+                "bounds": [
+                  403,
+                  816,
+                  475,
+                  888
+                ],
+                "clickable": true,
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "HMOS-dev13-中文 图片.png",
+                "bounds": [
+                  358,
+                  1044,
+                  652,
+                  1101
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "11:08",
+                "bounds": [
+                  467,
+                  1113,
+                  544,
+                  1148
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "1.92 MB",
+                "bounds": [
+                  449,
+                  1154,
+                  561,
+                  1189
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "GridItem",
+        "bounds": [
+          668,
+          792,
+          963,
+          1201
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "id": "2",
+            "type": "Column",
+            "bounds": [
+              668,
+              792,
+              963,
+              1201
+            ],
+            "children": [
+              {
+                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-B.txtIcon",
+                "type": "__Common__",
+                "bounds": [
+                  701,
+                  804,
+                  929,
+                  1032
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "HMOS-dev12-exported-document-20261005-B.txt",
+                "bounds": [
+                  668,
+                  1044,
+                  962,
+                  1101
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "2026/10/05",
+                "bounds": [
+                  735,
+                  1113,
+                  896,
+                  1148
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "38 B",
+                "bounds": [
+                  785,
+                  1154,
+                  847,
+                  1189
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "GridItem",
+        "bounds": [
+          977,
+          792,
+          1272,
+          1201
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "id": "3",
+            "type": "Column",
+            "bounds": [
+              977,
+              792,
+              1272,
+              1201
+            ],
+            "children": [
+              {
+                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-A.txtIcon",
+                "type": "__Common__",
+                "bounds": [
+                  1010,
+                  804,
+                  1238,
+                  1032
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "HMOS-dev12-exported-document-20261005-A.txt",
+                "bounds": [
+                  977,
+                  1044,
+                  1271,
+                  1101
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "2026/10/05",
+                "bounds": [
+                  1044,
+                  1113,
+                  1205,
+                  1148
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "38 B",
+                "bounds": [
+                  1094,
+                  1154,
+                  1156,
+                  1189
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "GridItem",
+        "bounds": [
+          48,
+          1225,
+          343,
+          1634
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "id": "4",
+            "type": "Column",
+            "bounds": [
+              48,
+              1225,
+              343,
+              1634
+            ],
+            "children": [
+              {
+                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-image-20261005-A.pngIcon",
+                "type": "__Common__",
+                "bounds": [
+                  81,
+                  1237,
+                  309,
+                  1465
+                ],
+                "children": []
+              },
+              {
+                "type": "Image",
+                "bounds": [
+                  93,
+                  1249,
+                  165,
+                  1321
+                ],
+                "clickable": true,
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "HMOS-dev12-exported-image-20261005-A.png",
+                "bounds": [
+                  48,
+                  1477,
+                  342,
+                  1534
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "2026/10/05",
+                "bounds": [
+                  115,
+                  1546,
+                  276,
+                  1581
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "1.92 MB",
+                "bounds": [
+                  140,
+                  1587,
+                  252,
+                  1622
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "GridItem",
+        "bounds": [
+          358,
+          1225,
+          653,
+          1634
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "id": "5",
+            "type": "Column",
+            "bounds": [
+              358,
+              1225,
+              653,
+              1634
+            ],
+            "children": [
+              {
+                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E6%96%87%E6%A1%A3.txtIcon",
+                "type": "__Common__",
+                "bounds": [
+                  391,
+                  1237,
+                  619,
+                  1465
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "HMOS-dev12-20261005-中文 文档.txt",
+                "bounds": [
+                  358,
+                  1477,
+                  652,
+                  1534
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "2026/10/05",
+                "bounds": [
+                  425,
+                  1546,
+                  586,
+                  1581
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "38 B",
+                "bounds": [
+                  475,
+                  1587,
+                  537,
+                  1622
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "GridItem",
+        "bounds": [
+          668,
+          1225,
+          963,
+          1634
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "id": "6",
+            "type": "Column",
+            "bounds": [
+              668,
+              1225,
+              963,
+              1634
+            ],
+            "children": [
+              {
+                "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+                "type": "__Common__",
+                "bounds": [
+                  701,
+                  1237,
+                  929,
+                  1465
+                ],
+                "children": []
+              },
+              {
+                "type": "Image",
+                "bounds": [
+                  713,
+                  1249,
+                  785,
+                  1321
+                ],
+                "clickable": true,
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "HMOS-dev12-20261005-中文 图片.png",
+                "bounds": [
+                  668,
+                  1477,
+                  962,
+                  1534
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "2026/10/05",
+                "bounds": [
+                  735,
+                  1546,
+                  896,
+                  1581
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "1.92 MB",
+                "bounds": [
+                  760,
+                  1587,
+                  872,
+                  1622
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "GridItem",
+    "bounds": [
+      48,
+      792,
+      343,
+      1201
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "id": "0",
+        "type": "Column",
+        "bounds": [
+          48,
+          792,
+          343,
+          1201
+        ],
+        "children": [
+          {
+            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-invalid.pngIcon",
+            "type": "__Common__",
+            "bounds": [
+              81,
+              804,
+              309,
+              1032
+            ],
+            "children": []
+          },
+          {
+            "type": "Image",
+            "bounds": [
+              93,
+              816,
+              165,
+              888
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "HMOS-dev13-invalid.png",
+            "bounds": [
+              48,
+              1044,
+              342,
+              1101
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "11:08",
+            "bounds": [
+              157,
+              1113,
+              234,
+              1148
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "54 B",
+            "bounds": [
+              165,
+              1154,
+              227,
+              1189
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "0",
+    "type": "Column",
+    "bounds": [
+      48,
+      792,
+      343,
+      1201
+    ],
+    "children": [
+      {
+        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-invalid.pngIcon",
+        "type": "__Common__",
+        "bounds": [
+          81,
+          804,
+          309,
+          1032
+        ],
+        "children": []
+      },
+      {
+        "type": "Image",
+        "bounds": [
+          93,
+          816,
+          165,
+          888
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "HMOS-dev13-invalid.png",
+        "bounds": [
+          48,
+          1044,
+          342,
+          1101
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "11:08",
+        "bounds": [
+          157,
+          1113,
+          234,
+          1148
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "54 B",
+        "bounds": [
+          165,
+          1154,
+          227,
+          1189
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-invalid.pngIcon",
+    "type": "__Common__",
+    "bounds": [
+      81,
+      804,
+      309,
+      1032
+    ],
+    "children": []
+  },
+  {
+    "type": "Image",
+    "bounds": [
+      93,
+      816,
+      165,
+      888
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "HMOS-dev13-invalid.png",
+    "bounds": [
+      48,
+      1044,
+      342,
+      1101
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "11:08",
+    "bounds": [
+      157,
+      1113,
+      234,
+      1148
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "54 B",
+    "bounds": [
+      165,
+      1154,
+      227,
+      1189
+    ],
+    "children": []
+  },
+  {
+    "type": "GridItem",
+    "bounds": [
+      358,
+      792,
+      653,
+      1201
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "id": "1",
+        "type": "Column",
+        "bounds": [
+          358,
+          792,
+          653,
+          1201
+        ],
+        "children": [
+          {
+            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+            "type": "__Common__",
+            "bounds": [
+              391,
+              804,
+              619,
+              1032
+            ],
+            "children": []
+          },
+          {
+            "type": "Image",
+            "bounds": [
+              403,
+              816,
+              475,
+              888
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "HMOS-dev13-中文 图片.png",
+            "bounds": [
+              358,
+              1044,
+              652,
+              1101
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "11:08",
+            "bounds": [
+              467,
+              1113,
+              544,
+              1148
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "1.92 MB",
+            "bounds": [
+              449,
+              1154,
+              561,
+              1189
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "1",
+    "type": "Column",
+    "bounds": [
+      358,
+      792,
+      653,
+      1201
+    ],
+    "children": [
+      {
+        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+        "type": "__Common__",
+        "bounds": [
+          391,
+          804,
+          619,
+          1032
+        ],
+        "children": []
+      },
+      {
+        "type": "Image",
+        "bounds": [
+          403,
+          816,
+          475,
+          888
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "HMOS-dev13-中文 图片.png",
+        "bounds": [
+          358,
+          1044,
+          652,
+          1101
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "11:08",
+        "bounds": [
+          467,
+          1113,
+          544,
+          1148
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "1.92 MB",
+        "bounds": [
+          449,
+          1154,
+          561,
+          1189
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev13-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+    "type": "__Common__",
+    "bounds": [
+      391,
+      804,
+      619,
+      1032
+    ],
+    "children": []
+  },
+  {
+    "type": "Image",
+    "bounds": [
+      403,
+      816,
+      475,
+      888
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "HMOS-dev13-中文 图片.png",
+    "bounds": [
+      358,
+      1044,
+      652,
+      1101
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "11:08",
+    "bounds": [
+      467,
+      1113,
+      544,
+      1148
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "1.92 MB",
+    "bounds": [
+      449,
+      1154,
+      561,
+      1189
+    ],
+    "children": []
+  },
+  {
+    "type": "GridItem",
+    "bounds": [
+      668,
+      792,
+      963,
+      1201
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "id": "2",
+        "type": "Column",
+        "bounds": [
+          668,
+          792,
+          963,
+          1201
+        ],
+        "children": [
+          {
+            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-B.txtIcon",
+            "type": "__Common__",
+            "bounds": [
+              701,
+              804,
+              929,
+              1032
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "HMOS-dev12-exported-document-20261005-B.txt",
+            "bounds": [
+              668,
+              1044,
+              962,
+              1101
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "2026/10/05",
+            "bounds": [
+              735,
+              1113,
+              896,
+              1148
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "38 B",
+            "bounds": [
+              785,
+              1154,
+              847,
+              1189
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "type": "Column",
+    "bounds": [
+      668,
+      792,
+      963,
+      1201
+    ],
+    "children": [
+      {
+        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-B.txtIcon",
+        "type": "__Common__",
+        "bounds": [
+          701,
+          804,
+          929,
+          1032
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "HMOS-dev12-exported-document-20261005-B.txt",
+        "bounds": [
+          668,
+          1044,
+          962,
+          1101
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "2026/10/05",
+        "bounds": [
+          735,
+          1113,
+          896,
+          1148
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "38 B",
+        "bounds": [
+          785,
+          1154,
+          847,
+          1189
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-B.txtIcon",
+    "type": "__Common__",
+    "bounds": [
+      701,
+      804,
+      929,
+      1032
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "HMOS-dev12-exported-document-20261005-B.txt",
+    "bounds": [
+      668,
+      1044,
+      962,
+      1101
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "2026/10/05",
+    "bounds": [
+      735,
+      1113,
+      896,
+      1148
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "38 B",
+    "bounds": [
+      785,
+      1154,
+      847,
+      1189
+    ],
+    "children": []
+  },
+  {
+    "type": "GridItem",
+    "bounds": [
+      977,
+      792,
+      1272,
+      1201
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "id": "3",
+        "type": "Column",
+        "bounds": [
+          977,
+          792,
+          1272,
+          1201
+        ],
+        "children": [
+          {
+            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-A.txtIcon",
+            "type": "__Common__",
+            "bounds": [
+              1010,
+              804,
+              1238,
+              1032
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "HMOS-dev12-exported-document-20261005-A.txt",
+            "bounds": [
+              977,
+              1044,
+              1271,
+              1101
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "2026/10/05",
+            "bounds": [
+              1044,
+              1113,
+              1205,
+              1148
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "38 B",
+            "bounds": [
+              1094,
+              1154,
+              1156,
+              1189
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "3",
+    "type": "Column",
+    "bounds": [
+      977,
+      792,
+      1272,
+      1201
+    ],
+    "children": [
+      {
+        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-A.txtIcon",
+        "type": "__Common__",
+        "bounds": [
+          1010,
+          804,
+          1238,
+          1032
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "HMOS-dev12-exported-document-20261005-A.txt",
+        "bounds": [
+          977,
+          1044,
+          1271,
+          1101
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "2026/10/05",
+        "bounds": [
+          1044,
+          1113,
+          1205,
+          1148
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "38 B",
+        "bounds": [
+          1094,
+          1154,
+          1156,
+          1189
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-document-20261005-A.txtIcon",
+    "type": "__Common__",
+    "bounds": [
+      1010,
+      804,
+      1238,
+      1032
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "HMOS-dev12-exported-document-20261005-A.txt",
+    "bounds": [
+      977,
+      1044,
+      1271,
+      1101
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "2026/10/05",
+    "bounds": [
+      1044,
+      1113,
+      1205,
+      1148
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "38 B",
+    "bounds": [
+      1094,
+      1154,
+      1156,
+      1189
+    ],
+    "children": []
+  },
+  {
+    "type": "GridItem",
+    "bounds": [
+      48,
+      1225,
+      343,
+      1634
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "id": "4",
+        "type": "Column",
+        "bounds": [
+          48,
+          1225,
+          343,
+          1634
+        ],
+        "children": [
+          {
+            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-image-20261005-A.pngIcon",
+            "type": "__Common__",
+            "bounds": [
+              81,
+              1237,
+              309,
+              1465
+            ],
+            "children": []
+          },
+          {
+            "type": "Image",
+            "bounds": [
+              93,
+              1249,
+              165,
+              1321
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "HMOS-dev12-exported-image-20261005-A.png",
+            "bounds": [
+              48,
+              1477,
+              342,
+              1534
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "2026/10/05",
+            "bounds": [
+              115,
+              1546,
+              276,
+              1581
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "1.92 MB",
+            "bounds": [
+              140,
+              1587,
+              252,
+              1622
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "4",
+    "type": "Column",
+    "bounds": [
+      48,
+      1225,
+      343,
+      1634
+    ],
+    "children": [
+      {
+        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-image-20261005-A.pngIcon",
+        "type": "__Common__",
+        "bounds": [
+          81,
+          1237,
+          309,
+          1465
+        ],
+        "children": []
+      },
+      {
+        "type": "Image",
+        "bounds": [
+          93,
+          1249,
+          165,
+          1321
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "HMOS-dev12-exported-image-20261005-A.png",
+        "bounds": [
+          48,
+          1477,
+          342,
+          1534
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "2026/10/05",
+        "bounds": [
+          115,
+          1546,
+          276,
+          1581
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "1.92 MB",
+        "bounds": [
+          140,
+          1587,
+          252,
+          1622
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-exported-image-20261005-A.pngIcon",
+    "type": "__Common__",
+    "bounds": [
+      81,
+      1237,
+      309,
+      1465
+    ],
+    "children": []
+  },
+  {
+    "type": "Image",
+    "bounds": [
+      93,
+      1249,
+      165,
+      1321
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "HMOS-dev12-exported-image-20261005-A.png",
+    "bounds": [
+      48,
+      1477,
+      342,
+      1534
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "2026/10/05",
+    "bounds": [
+      115,
+      1546,
+      276,
+      1581
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "1.92 MB",
+    "bounds": [
+      140,
+      1587,
+      252,
+      1622
+    ],
+    "children": []
+  },
+  {
+    "type": "GridItem",
+    "bounds": [
+      358,
+      1225,
+      653,
+      1634
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "id": "5",
+        "type": "Column",
+        "bounds": [
+          358,
+          1225,
+          653,
+          1634
+        ],
+        "children": [
+          {
+            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E6%96%87%E6%A1%A3.txtIcon",
+            "type": "__Common__",
+            "bounds": [
+              391,
+              1237,
+              619,
+              1465
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "HMOS-dev12-20261005-中文 文档.txt",
+            "bounds": [
+              358,
+              1477,
+              652,
+              1534
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "2026/10/05",
+            "bounds": [
+              425,
+              1546,
+              586,
+              1581
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "38 B",
+            "bounds": [
+              475,
+              1587,
+              537,
+              1622
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "5",
+    "type": "Column",
+    "bounds": [
+      358,
+      1225,
+      653,
+      1634
+    ],
+    "children": [
+      {
+        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E6%96%87%E6%A1%A3.txtIcon",
+        "type": "__Common__",
+        "bounds": [
+          391,
+          1237,
+          619,
+          1465
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "HMOS-dev12-20261005-中文 文档.txt",
+        "bounds": [
+          358,
+          1477,
+          652,
+          1534
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "2026/10/05",
+        "bounds": [
+          425,
+          1546,
+          586,
+          1581
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "38 B",
+        "bounds": [
+          475,
+          1587,
+          537,
+          1622
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E6%96%87%E6%A1%A3.txtIcon",
+    "type": "__Common__",
+    "bounds": [
+      391,
+      1237,
+      619,
+      1465
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "HMOS-dev12-20261005-中文 文档.txt",
+    "bounds": [
+      358,
+      1477,
+      652,
+      1534
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "2026/10/05",
+    "bounds": [
+      425,
+      1546,
+      586,
+      1581
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "38 B",
+    "bounds": [
+      475,
+      1587,
+      537,
+      1622
+    ],
+    "children": []
+  },
+  {
+    "type": "GridItem",
+    "bounds": [
+      668,
+      1225,
+      963,
+      1634
+    ],
+    "clickable": true,
+    "children": [
+      {
+        "id": "6",
+        "type": "Column",
+        "bounds": [
+          668,
+          1225,
+          963,
+          1634
+        ],
+        "children": [
+          {
+            "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+            "type": "__Common__",
+            "bounds": [
+              701,
+              1237,
+              929,
+              1465
+            ],
+            "children": []
+          },
+          {
+            "type": "Image",
+            "bounds": [
+              713,
+              1249,
+              785,
+              1321
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "HMOS-dev12-20261005-中文 图片.png",
+            "bounds": [
+              668,
+              1477,
+              962,
+              1534
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "2026/10/05",
+            "bounds": [
+              735,
+              1546,
+              896,
+              1581
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "1.92 MB",
+            "bounds": [
+              760,
+              1587,
+              872,
+              1622
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "6",
+    "type": "Column",
+    "bounds": [
+      668,
+      1225,
+      963,
+      1634
+    ],
+    "children": [
+      {
+        "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+        "type": "__Common__",
+        "bounds": [
+          701,
+          1237,
+          929,
+          1465
+        ],
+        "children": []
+      },
+      {
+        "type": "Image",
+        "bounds": [
+          713,
+          1249,
+          785,
+          1321
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "HMOS-dev12-20261005-中文 图片.png",
+        "bounds": [
+          668,
+          1477,
+          962,
+          1534
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "2026/10/05",
+        "bounds": [
+          735,
+          1546,
+          896,
+          1581
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "1.92 MB",
+        "bounds": [
+          760,
+          1587,
+          872,
+          1622
+        ],
+        "children": []
+      }
+    ]
+  },
+  {
+    "id": "file://docs/storage/Users/currentUser/Download/HMOS-dev12-20261005-%E4%B8%AD%E6%96%87%20%E5%9B%BE%E7%89%87.pngIcon",
+    "type": "__Common__",
+    "bounds": [
+      701,
+      1237,
+      929,
+      1465
+    ],
+    "children": []
+  },
+  {
+    "type": "Image",
+    "bounds": [
+      713,
+      1249,
+      785,
+      1321
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "HMOS-dev12-20261005-中文 图片.png",
+    "bounds": [
+      668,
+      1477,
+      962,
+      1534
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "2026/10/05",
+    "bounds": [
+      735,
+      1546,
+      896,
+      1581
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "1.92 MB",
+    "bounds": [
+      760,
+      1587,
+      872,
+      1622
+    ],
+    "children": []
+  }
+]

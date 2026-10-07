@@ -1,6 +1,8 @@
 import { ColorWheel } from './ColorWheel';
-import { MarkdownDoc, MarkdownPreviewCoordinator } from '../model/Markdown';
+import { MarkdownDoc, MarkdownPreviewCoordinator, MarkdownAttachment, collectMarkdownImages, resolveMarkdownImage } from '../model/Markdown';
 import { MarkdownPreview } from './MarkdownPreview';
+import { AttachmentImagePreview } from './AttachmentImagePreview';
+import { ImageReadTarget, ImageLease, VerifiedImageView, VerifiedImages } from '../model/VerifiedImages';
 import { insertPaste, samePasteTarget } from '../model/EditorPaste';
 import { pasteboard } from '@kit.BasicServicesKit';
 import { uiText } from '../model/UiStrings';
@@ -101,6 +103,12 @@ struct Index {
   private attachmentFiles: AttachmentFiles | undefined = undefined;
   @State attachmentPending: string = '';
   @State attachmentPreview: VerifiedPreview | undefined = undefined;
+  @State attachmentPreviewOpen: boolean = false;
+  @State attachmentPreviewLoading: boolean = false;
+  @State attachmentPreviewFailure: string = '';
+  private attachmentPreviewEpoch: number = 0;
+  @State previewCleanupPending: boolean = false;
+  @State previewCleanupWorking: boolean = false;
   @State draftConflict: boolean = false;
   @State draftRetiring: boolean = false;
   @State draftRetirementUnknown: boolean = false;
@@ -148,6 +156,15 @@ struct Index {
   @State markdownDoc: MarkdownDoc = new MarkdownDoc();
   @State markdownLoading: boolean = false;
   @State markdownError: string = '';
+  @State markdownAssets: MarkdownAttachment[] = [];
+  @State markdownImages: VerifiedImageView[] = [];
+  private inlineImages: VerifiedImages = new VerifiedImages(
+    async (target: ImageReadTarget): Promise<ImageLease> => {
+      if (!this.pageAlive || !this.attachmentFiles) { throw new Error('图片读取已关闭'); }
+      return await this.attachmentFiles.previewFile(target.request, target.name,
+        (serialized: string, fd: number): Promise<string> => workbench.exportFd(serialized, fd), 'inline', target.byte_length);
+    }, async (token: string): Promise<void> => { await this.releaseImageToken(token); },
+    (): void => { this.markdownImages = this.inlineImages.views(); });
   @State pasteWorking: boolean = false;
   @State lastDraftField: string = 'description';
   private markdown: MarkdownPreviewCoordinator = new MarkdownPreviewCoordinator(
@@ -158,6 +175,7 @@ struct Index {
       return reply.markdown;
     }, (): void => {
       this.markdownDoc = this.markdown.doc ?? new MarkdownDoc(); this.markdownLoading = this.markdown.loading; this.markdownError = this.markdown.error;
+      this.updateInlineImages();
     });
   @State appearanceStatus: string = '';
   private preferenceStore: preferences.Preferences | undefined = undefined;
@@ -259,13 +277,14 @@ struct Index {
   aboutToAppear(): void {
     this.pageAlive = true;
     this.attachmentFiles = new AttachmentFiles(this.getUIContext().getHostContext() as common.UIAbilityContext);
+    this.previewCleanupPending = this.attachmentFiles.previewCleanupPending();
     this.getUIContext().getFont().registerFont({ familyName: 'MorrowIcons', familySrc: $rawfile('materialicons.otf') });
     this.restoreAppearance();
     this.restoreCardOrder();
     this.start();
   }
   onBackPress(): boolean {
-    if (this.attachmentPreview) { this.closeAttachmentPreview(); return true; }
+    if (this.attachmentPreviewOpen) { this.closeAttachmentPreview(); return true; }
     if (this.draftsOpen) { this.draftsOpen = false; return true; }
     if (this.editorOpen) { this.closeEditor(); return true; }
     if (this.detailId) { this.closeDetail(); return true; }
@@ -279,6 +298,7 @@ struct Index {
     // journal generations are recoverable after a forced process termination.
     this.editorDraft?.dispose();
     this.markdown.dispose();
+    this.inlineImages.dispose();
     this.queries.dispose();
     this.cardOrder.dispose();
     if (this.workspaceRestoreTimer !== -1) { clearTimeout(this.workspaceRestoreTimer); }
@@ -332,6 +352,7 @@ struct Index {
     const draft = this.editorDraft;
     if (!draft) { return; }
     this.refreshEditorAssets();
+    this.updateInlineImages();
     this.draftStatus = draft.unknown ? '草稿回复未确认，原请求已保留' : draft.conflicted ? '草稿世代已变化，请核对' :
       draft.error.length > 0 ? '草稿保存失败：' + draft.error : draft.saving ? '正在保留草稿…' :
       draft.dirty ? '草稿等待保存' : draft.confirmed ? '草稿已保留' : '';
@@ -348,9 +369,36 @@ struct Index {
   private updateMarkdown(): void {
     const detail = this.cards.find((c: CardView): boolean => c.id === this.detailId);
     if (detail && !this.editorOpen) {
-      this.markdown.update('detail:' + detail.id + ':' + detail.revision, detail.description, this.pageAlive); return;
+      this.markdown.update('detail:' + detail.id + ':' + detail.revision, detail.description, this.pageAlive); this.updateInlineImages(); return;
     }
     this.markdown.update(this.editorDraft?.scope.draft_id ?? '', this.description, this.pageAlive && this.editorOpen && this.previewBody);
+    this.updateInlineImages();
+  }
+  private updateInlineImages(): void {
+    const card = !this.editorOpen ? this.cards.find((value: CardView): boolean => value.id === this.detailId) : undefined;
+    const enabled = this.pageAlive && (!!card || this.editorOpen && this.previewBody);
+    const assets: AssetView[] = enabled ? card?.assets ?? this.editorAssets : [];
+    this.markdownAssets = assets.map((asset: AssetView): MarkdownAttachment => {
+      const value = new MarkdownAttachment(); value.id = asset.id; value.name = asset.name; value.kind = asset.kind; return value;
+    });
+    const targets: ImageReadTarget[] = [];
+    if (enabled) {
+      for (const href of collectMarkdownImages(this.markdownDoc)) {
+        const resolved = resolveMarkdownImage(href, this.markdownAssets);
+        const asset = assets.find((value: AssetView): boolean => value.id === resolved.attachment_id);
+        if (resolved.kind !== 'attachment' || !asset) { continue; }
+        try {
+          const target = new ImageReadTarget(); target.id = asset.id; target.name = asset.name; target.byte_length = asset.byte_length;
+          target.request = this.attachmentReadRequest(asset, card); targets.push(target);
+        } catch (_) {} // The renderer shows unavailable metadata rather than opening a source path.
+      }
+    }
+    this.inlineImages.update(targets);
+  }
+  private openInlineImage(id: string): void {
+    const card = !this.editorOpen ? this.cards.find((value: CardView): boolean => value.id === this.detailId) : undefined;
+    const asset = (card?.assets ?? this.editorAssets).find((value: AssetView): boolean => value.id === id);
+    if (asset) { this.previewAttachment(asset, card); }
   }
   private pasteTargetName(): string {
     return this.lastDraftField === 'title' ? '标题' : this.lastDraftField === 'hypothesis' ? '假设' :
@@ -713,30 +761,84 @@ struct Index {
     catch (error) { this.message = '附件导出未完成：' + String(error); }
     finally { this.attachmentWorking = false; }
   }
-  private async previewAttachment(asset: AssetView, c?: CardView): Promise<void> {
-    if (this.attachmentWorking || this.busy || !this.attachmentFiles || !['image', 'gif'].includes(asset.kind)) { return; }
+  private attachmentReadRequest(asset: AssetView, c?: CardView): string {
     const cmd = new Command(); const draft = this.editorDraft;
     if (c) {
-      if (this.cards.find((card: CardView): boolean => card.id === c.id)?.source !== c.source) { return; }
+      if (this.cards.find((card: CardView): boolean => card.id === c.id)?.source !== c.source ||
+        !c.assets.some((value: AssetView): boolean => value.id === asset.id && value.sha256 === asset.sha256 && value.byte_length === asset.byte_length)) {
+        throw new Error('附件来源已变化，请重新打开卡片。');
+      }
       cmd.action = 'attachment_export'; cmd.id = c.id; cmd.source = c.source; cmd.generation = c.revision;
-    } else if (draft?.confirmed && draft.confirmed.assets.some((pin): boolean => pin.selection.asset_id === asset.id)) {
-      cmd.action = 'draft_asset_export'; cmd.id = draft.scope.card_id; cmd.draft_id = draft.scope.draft_id; cmd.generation = draft.confirmed.generation;
     } else {
-      const current = this.current(); if (!current || current.source !== this.draftSource) { return; }
-      cmd.action = 'attachment_export'; cmd.id = current.id; cmd.source = current.source; cmd.generation = current.revision;
+      if (!this.editorOpen || !draft || draft.disposed || !draft.current.assets.some((selection: AssetSelection): boolean => selection.asset_id === asset.id)) {
+        throw new Error('附件已从当前草稿移除。');
+      }
+      const pin = draft.confirmed?.assets.find((value): boolean => value.selection.asset_id === asset.id);
+      if (pin && pin.sha256 === asset.sha256 && pin.byte_length === asset.byte_length) {
+        cmd.action = 'draft_asset_export'; cmd.id = draft.scope.card_id; cmd.draft_id = draft.scope.draft_id; cmd.generation = draft.confirmed!.generation;
+      } else {
+        const current = this.current();
+        if (!current || current.source !== this.draftSource || !current.assets.some((value: AssetView): boolean => value.id === asset.id && value.sha256 === asset.sha256 && value.byte_length === asset.byte_length)) {
+          throw new Error('附件信息尚未确认，请先保留草稿后重试。');
+        }
+        cmd.action = 'attachment_export'; cmd.id = current.id; cmd.source = current.source; cmd.generation = current.revision;
+      }
     }
-    cmd.attachment_id = asset.id; this.attachmentWorking = true;
+    cmd.attachment_id = asset.id; return JSON.stringify(cmd);
+  }
+  private async exportEditorAttachment(asset: AssetView): Promise<void> {
+    if (!this.canImportAttachment() || !this.attachmentFiles) { return; }
+    this.attachmentWorking = true;
     try {
-      const verified = await this.attachmentFiles.previewFile(JSON.stringify(cmd), asset.name,
-        (serialized: string, fd: number): Promise<string> => workbench.exportFd(serialized, fd));
-      if (!this.pageAlive || (c ? this.detailId !== c.id : this.editorDraft !== draft)) { await this.attachmentFiles.releasePreview(verified.token); return; }
-      this.attachmentPreview = verified;
-    } catch (error) { this.message = '附件预览失败：' + String(error); }
+      const original = this.attachmentReadRequest(asset);
+      this.message = await this.attachmentFiles.exportToPicker(original, asset.name,
+        (serialized: string, fd: number): Promise<string> => workbench.exportFd(serialized, fd)) ? '附件已导出。' : '已取消导出。';
+    } catch (error) { this.message = '附件导出未完成：' + String(error); }
     finally { this.attachmentWorking = false; }
   }
+  private async previewAttachment(asset: AssetView, c?: CardView): Promise<void> {
+    if (this.attachmentWorking || this.busy || this.attachmentPreviewOpen || !this.attachmentFiles || !['image', 'gif'].includes(asset.kind)) { return; }
+    const draft = this.editorDraft, files = this.attachmentFiles, epoch = ++this.attachmentPreviewEpoch;
+    let candidate: VerifiedPreview | undefined = undefined;
+    this.attachmentWorking = true; this.attachmentPreviewOpen = true; this.attachmentPreviewLoading = true; this.attachmentPreviewFailure = '';
+    try {
+      const original = this.attachmentReadRequest(asset, c);
+      const verified = await files.previewFile(original, asset.name,
+        (serialized: string, fd: number): Promise<string> => workbench.exportFd(serialized, fd));
+      candidate = verified;
+      if (!this.pageAlive || epoch !== this.attachmentPreviewEpoch || (c ? this.detailId !== c.id : this.editorDraft !== draft) ||
+        this.attachmentReadRequest(asset, c) !== original) { return; }
+      this.attachmentPreview = verified; candidate = undefined;
+    } catch (error) { if (this.pageAlive && epoch === this.attachmentPreviewEpoch) { this.attachmentPreviewFailure = '附件预览失败：' + String(error); } }
+    finally { if (candidate) { try { await this.releaseImageToken(candidate.token); } catch (_) {} } this.attachmentWorking = false; if (epoch === this.attachmentPreviewEpoch) { this.attachmentPreviewLoading = false; } }
+  }
   private async closeAttachmentPreview(): Promise<void> {
+    this.attachmentPreviewEpoch++; this.attachmentPreviewOpen = false; this.attachmentPreviewLoading = false; this.attachmentPreviewFailure = '';
     const preview = this.attachmentPreview; this.attachmentPreview = undefined;
-    if (preview && this.attachmentFiles) { try { await this.attachmentFiles.releasePreview(preview.token); } catch (_) {} }
+    if (preview && this.attachmentFiles) { try { await this.releaseImageToken(preview.token); } catch (_) {} }
+  }
+  private async releaseImageToken(token: string): Promise<void> {
+    const files = this.attachmentFiles;
+    if (!files) { return; }
+    try { await files.releasePreview(token); }
+    finally { this.previewCleanupPending = files.previewCleanupPending(); }
+  }
+  private async retryImageCleanup(): Promise<void> {
+    if (!this.attachmentFiles || this.previewCleanupWorking) { return; }
+    this.previewCleanupWorking = true;
+    try { await this.attachmentFiles.retryPreviewCleanup(); }
+    catch (_) { this.message = '图片缓存尚未清理，请稍后重试。'; }
+    finally { this.previewCleanupPending = this.attachmentFiles.previewCleanupPending(); this.previewCleanupWorking = false; }
+  }
+  @Builder
+  PreviewCleanupNotice() {
+    if (this.previewCleanupPending) {
+      Row({ space: 8 }) {
+        Text('图片缓存未能清理').fontSize(11).fontColor(this.muted()).layoutWeight(1)
+        Button('重试清理', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+          .enabled(!this.previewCleanupWorking).onClick(() => this.retryImageCleanup()).id('preview-cleanup-retry')
+      }.width('100%')
+    }
   }
   private async keepDraftAndClose(): Promise<void> {
     if (!(await this.flushDraft())) { return; }
@@ -2129,6 +2231,7 @@ struct Index {
       Scroll(this.detailScroller) {
         Column({ space: 18 }) {
           Text(this.t(c.category)).fontSize(12).fontColor(this.accent()).width('100%')
+          this.PreviewCleanupNotice()
           if (this.markdownLoading) { Text('正在生成预览…').fontSize(12).fontColor(this.muted()) }
           if (this.markdownError) {
             Text('预览暂不可用 · ' + this.markdownError).fontSize(12).fontColor(this.muted())
@@ -2137,6 +2240,10 @@ struct Index {
           if (!c.description.trim()) { Text('给这个念头，留一点生长的空间。').fontSize(13).fontColor(this.muted()) }
           MarkdownPreview({ document: this.markdownDoc, ink: this.ink(), muted: this.muted(), accent: this.accent(),
             line: this.line(), family: this.fontFamily || 'HarmonyOS Sans', locale: this.locale,
+            attachments: this.markdownAssets, images: this.markdownImages,
+            openImage: (id: string): void => this.openInlineImage(id),
+            retryImage: (id: string): void => this.inlineImages.retry(id),
+            imageError: (id: string, path: string): void => this.inlineImages.decodeFailed(id, path),
             openLink: (href: string): void => { this.openMarkdownLink(href); } })
           if (c.category === '实验') {
             Text(this.t('假设 / 想试什么')).fontSize(12).fontColor(this.accent()).width('100%')
@@ -2222,6 +2329,10 @@ struct Index {
         }
         MarkdownPreview({ document: this.markdownDoc, ink: this.ink(), muted: this.muted(), accent: this.accent(),
           line: this.line(), family: this.fontFamily || 'HarmonyOS Sans', locale: this.locale,
+          attachments: this.markdownAssets, images: this.markdownImages,
+          openImage: (id: string): void => this.openInlineImage(id),
+          retryImage: (id: string): void => this.inlineImages.retry(id),
+          imageError: (id: string, path: string): void => this.inlineImages.decodeFailed(id, path),
           openLink: (href: string): void => { this.openMarkdownLink(href); } })
       }.alignItems(HorizontalAlign.Start).width('100%').padding(8)
     }.height(250).width('100%').scrollBar(BarState.Off).align(Alignment.TopStart).id('markdown-preview')
@@ -2266,6 +2377,7 @@ struct Index {
   @Builder
   EditorAttachments() {
     Column({ space: 9 }) {
+      this.PreviewCleanupNotice()
       if (this.editorAssets.length > 0) {
         Text('草稿附件').fontSize(13).fontWeight(FontWeight.Medium).fontColor(this.ink()).width('100%')
         ForEach(this.editorAssets, (asset: AssetView) => {
@@ -2279,6 +2391,8 @@ struct Index {
               Button('预览', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.accent())
                 .enabled(!this.attachmentWorking && !this.busy).onClick(() => this.previewAttachment(asset))
             }
+            Button('导出', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.accent())
+              .enabled(this.canImportAttachment()).onClick(() => this.exportEditorAttachment(asset)).id('draft-asset-export:' + asset.id)
             Button('移除', { type: ButtonType.Normal }).fontSize(11).backgroundColor(Color.Transparent).fontColor(this.muted())
               .enabled(this.canImportAttachment()).onClick(() => this.removeEditorAsset(asset)).id('draft-asset-remove:' + asset.id)
           }.width('100%').padding(10).backgroundColor('#0B7662BA').borderRadius(10).id('draft-asset:' + asset.id)
@@ -2558,12 +2672,14 @@ struct Index {
         }.padding(14).width('90%').backgroundColor(this.dark ? '#F5292634' : '#F5FFFFFF').borderRadius(this.round(12))
           .border({ width: this.styleEdgeWidth(), color: this.line() }).position({ x: '5%', y: Math.max(0, this.viewportHeight - 124) })
       }
-      if (this.attachmentPreview) {
+      if (this.attachmentPreviewOpen) {
         Stack() {
           Rect().width('100%').height('100%').fill('#B0302D43').onClick(() => this.closeAttachmentPreview())
           Column({ space: 12 }) {
-            Text(this.attachmentPreview.name).fontSize(15).fontColor(this.ink()).width('100%').maxLines(2)
-            Image('file://' + this.attachmentPreview.path).objectFit(ImageFit.Contain).width('100%').height(Math.max(160, this.viewportHeight - 200)).id('verified-attachment-image')
+            Text(this.attachmentPreview?.name || '图片预览').fontSize(15).fontColor(this.ink()).width('100%').maxLines(2)
+            AttachmentImagePreview({ preview: this.attachmentPreview, loading: this.attachmentPreviewLoading, failure: this.attachmentPreviewFailure,
+              contentWidth: Math.min(660, this.viewportWidth - 24) - 36, contentHeight: Math.max(160, this.viewportHeight - 270),
+              ink: this.ink(), muted: this.muted(), accent: this.accent(), family: this.fontFamily || 'HarmonyOS Sans', locale: this.locale })
             Button('关闭预览', { type: ButtonType.Normal }).fontSize(12).fontColor(this.accent()).backgroundColor(Color.Transparent).onClick(() => this.closeAttachmentPreview())
           }.padding(18).width(Math.min(660, this.viewportWidth - 24)).backgroundColor(this.surface()).borderRadius(this.round(18))
         }.width('100%').height('100%').id('attachment-preview-dialog')

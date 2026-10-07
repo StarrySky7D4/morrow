@@ -4,3 +4,6 @@
 # Retain original console output, including Windows endings and table padding.
 reports/ui-source/v12/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 reports/ui-source/v12/bundle-*.json whitespace=cr-at-eol
+reports/ui-source/v13/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
+reports/ui-source/v13/bundle-*.json whitespace=cr-at-eol
+reports/ui-source/v13/emulator-instances-after-start.json whitespace=-blank-at-eof,cr-at-eol

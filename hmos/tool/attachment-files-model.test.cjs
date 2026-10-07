@@ -156,7 +156,9 @@ function harness() {
   vm.runInNewContext(transpiled.outputText, {
     module, exports: module.exports, Uint8Array, ArrayBuffer, console,
     require(id) {
-      if (id === '@kit.CoreFileKit') { return { fileIo: fs, picker }; }
+      if (id === '@kit.CoreFileKit') { return { fileIo: fs, picker, fileUri: {
+        getUriFromPath(name) { logs.push(['fileUri', name]); check('fileUri', name); return 'file://dev.morrow.hmos' + encodeURI(name); },
+      } }; }
       if (id === '@kit.ArkTS') { return { util: { TextEncoder: class {
         encodeInto(text) { return new Uint8Array(Buffer.from(text)); }
       } } }; }
@@ -165,8 +167,7 @@ function harness() {
       throw new Error('Unexpected actual-source import: ' + id);
     },
   }, { filename: sourcePath });
-  const context = { filesDir: '/app/files', cacheDir: CACHE };
-  const create = () => new module.exports.AttachmentFiles(context);
+  const create = (cacheDir = CACHE) => new module.exports.AttachmentFiles({ filesDir: '/app/files', cacheDir });
   const directory = id => ROOT + '/' + id;
   function seed(id = 'import-ABC123', options = {}) {
     const { data = 'payload', request = undefined, dataSize = undefined, name = '附件.txt' } = options;
@@ -188,6 +189,7 @@ function harness() {
     };
   }
   return { nodes, fds, logs, faults, modes, fs, native, create, seed, putDir, putFile, putLink, directory, sendBytes,
+    imagePreviewScale: module.exports.imagePreviewScale, imagePreviewOffset: module.exports.imagePreviewOffset,
     setSelect: value => { selectUris = value; }, setSave: value => { saveUris = value; },
     setPrepare: value => { prepareOverride = value; },
     read: name => node(name).bytes, writeFd: (fd, bytes) => { node(descriptor(fd).path).bytes = Buffer.from(bytes); },
@@ -263,10 +265,167 @@ test('provider destination stat unsupported is explicitly unconfirmed', async ()
 test('private image preview is verified, one at a time, and token-scoped cleanup', async () => {
   const h = harness(); const files = h.create(); const value = await files.previewFile('request', '图.gif', h.sendBytes('GIF89a'));
   assert.equal(value.name, '图.gif'); assert.equal(value.byte_length, '6'); assert.equal(value.sha256, sha(Buffer.from('GIF89a')));
+  assert.equal(value.uri, 'file://dev.morrow.hmos' + value.path); assert.equal(value.purpose, 'dialog'); assert.equal(files.isPreviewActive(value), true);
   assert.equal(h.read(value.path).toString(), 'GIF89a'); assert.equal(h.logs.some(item => item[0] === 'save' || item[0] === 'select'), false);
   await assert.rejects(files.previewFile('request', 'other', h.sendBytes('x')), /关闭/);
   await files.releasePreview('../forged'); assert.ok(h.nodes.has(value.path));
   await files.releasePreview(value.token); noFilesUnder(h, CACHE + '/morrow-preview-'); assert.equal(h.fds.size, 0);
+  assert.equal(files.isPreviewActive(value), false);
+});
+
+test('dialog and inline previews coexist, and every original token is released independently', async () => {
+  const h = harness(); const files = h.create();
+  const inline = await files.previewFile('inline', 'same.png', h.sendBytes('inline'), 'inline', '6');
+  const dialog = await files.previewFile('dialog', 'same.png', h.sendBytes('dialog'));
+  assert.notEqual(inline.token, dialog.token); assert.equal(inline.purpose, 'inline');
+  await files.releasePreview(dialog.token); assert.equal(files.isPreviewActive(inline), true); assert.equal(h.read(inline.path).toString(), 'inline');
+  await files.releasePreview(inline.token); noFilesUnder(h, CACHE + '/morrow-preview-'); assert.equal(h.fds.size, 0);
+});
+
+test('inline admission permits eight files then blocks before native read, including another adapter', async () => {
+  const h = harness(); const files = h.create(); const values = [];
+  for (let index = 0; index < 8; index++) { values.push(await files.previewFile('inline-' + index, 'picture.png', h.sendBytes('x'), 'inline', '1')); }
+  const before = h.logs.length; await assert.rejects(h.create().previewFile('ninth', 'picture.png', h.sendBytes('x'), 'inline', '1'), /8/);
+  assert.equal(h.logs.length, before);
+  const dialog = await h.create().previewFile('dialog', 'picture.png', h.sendBytes('y'));
+  assert.equal(dialog.purpose, 'dialog');
+  await files.releasePreview(values[0].token);
+  assert.ok(await files.previewFile('replacement', 'picture.png', h.sendBytes('z'), 'inline', '1'));
+});
+
+test('single dialog admission is shared across adapters, while foreign release cannot delete it', async () => {
+  const h = harness(); const owner = h.create(); const other = h.create();
+  const value = await owner.previewFile('request', 'image.png', h.sendBytes('x')); const before = h.logs.length;
+  await assert.rejects(other.previewFile('second', 'image.png', h.sendBytes('y')), /关闭/); assert.equal(h.logs.length, before);
+  assert.equal(other.isPreviewActive(value), false); await other.releasePreview(value.token); assert.equal(owner.isPreviewActive(value), true);
+  await owner.releasePreview(value.token); assert.ok(await other.previewFile('later', 'image.png', h.sendBytes('y')));
+});
+
+test('inline byte quota uses immutable native metadata and restores only after release', async () => {
+  const h = harness(); const files = h.create();
+  // Only admission is being exercised here. The synthetic provider represents
+  // a large regular file by its stat size; this is not a real large-file/hash test.
+  const large = async (_, fd) => { h.nodes.get(h.fdPath(fd)).size = BUDGET - 1;
+    return JSON.stringify({ ok: true, error: '', byte_length: String(BUDGET - 1), sha256: 'a'.repeat(64) }); };
+  const value = await files.previewFile('large', 'large.png', large, 'inline', String(BUDGET - 1));
+  value.byte_length = '1'; assert.equal(files.isPreviewActive(value), false); const before = h.logs.length;
+  await assert.rejects(h.create().previewFile('too-big', 'small.png', h.sendBytes('xx'), 'inline', '2'), /64 MiB/);
+  assert.equal(h.logs.length, before);
+  const last = await files.previewFile('fits', 'last.png', h.sendBytes('x'), 'inline', '1'); assert.ok(last);
+  await files.releasePreview(value.token); assert.ok(await files.previewFile('again', 'small.png', h.sendBytes('xx'), 'inline', '2'));
+});
+
+for (const length of ['', '-1', '01', '1.0', '9007199254740992', String(BUDGET + 1)]) {
+  test('inline refuses missing or invalid pre-admission length ' + JSON.stringify(length), async () => {
+    const h = harness(); await assert.rejects(h.create().previewFile('request', 'image.png', h.sendBytes('x'), 'inline', length));
+    assert.equal(h.logs.length, 0); assert.equal(h.fds.size, 0);
+  });
+}
+
+test('unexpected inline result length is rejected and its private partial is removed', async () => {
+  const h = harness(); const files = h.create();
+  await assert.rejects(files.previewFile('request', 'image.png', h.sendBytes('xx'), 'inline', '1'), /长度/);
+  assert.equal(h.fds.size, 0); noFilesUnder(h, CACHE + '/morrow-preview-');
+  assert.ok(await files.previewFile('replacement', 'image.png', h.sendBytes('x'), 'inline', '1'));
+});
+
+test('invalid purpose does not read native bytes or create private paths', async () => {
+  const h = harness(); await assert.rejects(h.create().previewFile('request', 'image.png', h.sendBytes('x'), 'unbounded', '1'));
+  assert.equal(h.logs.length, 0);
+});
+
+test('preview identity rejects copied handles and every mutated display/path field', async () => {
+  const h = harness(); const files = h.create(); const value = await files.previewFile('request', 'image.png', h.sendBytes('x'));
+  assert.equal(files.isPreviewActive({ ...value }), false);
+  for (const key of ['token', 'path', 'uri', 'name', 'byte_length', 'sha256', 'purpose']) {
+    const before = value[key]; value[key] = '../forged'; assert.equal(files.isPreviewActive(value), false);
+    value[key] = before; assert.equal(files.isPreviewActive(value), true);
+  }
+  await files.releasePreview(value.token);
+});
+
+test('failed preview URI conversion cleans its private copy and caller descriptor', async () => {
+  const h = harness(); h.faults.set('fileUri:' + CACHE + '/morrow-preview-000001/data', error(13900005));
+  await assert.rejects(h.create().previewFile('request', 'image.png', h.sendBytes('x')));
+  noFilesUnder(h, CACHE + '/morrow-preview-'); assert.equal(h.fds.size, 0);
+});
+
+test('failed token cleanup retains admission and can be explicitly retried', async () => {
+  const h = harness(); const files = h.create(); const value = await files.previewFile('request', 'image.png', h.sendBytes('x'));
+  h.faults.set('unlink:' + value.path, error(13900012)); await assert.rejects(files.releasePreview(value.token));
+  assert.equal(files.isPreviewActive(value), true); await assert.rejects(h.create().previewFile('other', 'image.png', h.sendBytes('x')), /关闭/);
+  h.faults.delete('unlink:' + value.path); await files.releasePreview(value.token); assert.equal(files.isPreviewActive(value), false);
+});
+
+test('failed cleanup remains visible without a UI handle, explicit retry restores dialog admission', async () => {
+  const h = harness(); const files = h.create(); const value = await files.previewFile('request', 'image.png', h.sendBytes('x'));
+  assert.equal(files.previewCleanupPending(), false);
+  h.faults.set('unlink:' + value.path, error(13900012)); await assert.rejects(files.releasePreview(value.token), /明确重试/);
+  assert.equal(files.previewCleanupPending(), true);
+  const before = h.logs.length; assert.equal(files.previewCleanupPending(), true); assert.equal(h.logs.length, before);
+  await assert.rejects(files.previewFile('new', 'image.png', h.sendBytes('x')), /关闭/);
+  h.faults.delete('unlink:' + value.path); await files.retryPreviewCleanup(); assert.equal(files.previewCleanupPending(), false);
+  assert.equal(files.isPreviewActive(value), false); noFilesUnder(h, value.path.slice(0, -5));
+  assert.ok(await files.previewFile('new', 'image.png', h.sendBytes('x')));
+});
+
+test('same-cache new helper retries old failed cleanup, old owner release does not touch disk twice', async () => {
+  const h = harness(); const old = h.create(); const replacement = h.create();
+  const value = await old.previewFile('request', 'image.png', h.sendBytes('x'));
+  const originalToken = value.token;
+  h.faults.set('unlink:' + value.path, error(13900012)); await assert.rejects(old.releasePreview(originalToken));
+  assert.equal(replacement.previewCleanupPending(), true); h.faults.delete('unlink:' + value.path);
+  value.token = '../caller-mutated';
+  await replacement.retryPreviewCleanup(); assert.equal(old.previewCleanupPending(), false); assert.equal(old.isPreviewActive(value), false);
+  const before = h.logs.length; await old.releasePreview(originalToken); assert.equal(h.logs.length, before);
+  assert.ok(await replacement.previewFile('later', 'image.png', h.sendBytes('x')));
+});
+
+test('explicit cleanup skips healthy live tokens and preserves failed quota when retry also fails', async () => {
+  const h = harness(); const files = h.create();
+  const failed = await files.previewFile('failed', 'image.png', h.sendBytes('a'), 'inline', '1');
+  const healthy = await files.previewFile('healthy', 'image.png', h.sendBytes('b'), 'inline', '1');
+  h.faults.set('unlink:' + failed.path, error(13900012)); await assert.rejects(files.releasePreview(failed.token));
+  await assert.rejects(files.retryPreviewCleanup(), /仍未清理/); assert.equal(files.previewCleanupPending(), true);
+  assert.equal(files.isPreviewActive(failed), true); assert.equal(files.isPreviewActive(healthy), true);
+  assert.equal(h.logs.some(item => item[0] === 'unlink' && item[1] === healthy.path), false);
+  h.faults.delete('unlink:' + failed.path); await files.retryPreviewCleanup();
+  assert.equal(files.isPreviewActive(failed), false); assert.equal(files.isPreviewActive(healthy), true); assert.equal(files.previewCleanupPending(), false);
+});
+
+test('explicit retry keeps immutable inline bytes until actual removal then restores byte budget', async () => {
+  const h = harness(); const files = h.create();
+  const large = async (_, fd) => { h.nodes.get(h.fdPath(fd)).size = BUDGET;
+    return JSON.stringify({ ok: true, error: '', byte_length: String(BUDGET), sha256: 'a'.repeat(64) }); };
+  const value = await files.previewFile('large', 'large.png', large, 'inline', String(BUDGET));
+  h.faults.set('unlink:' + value.path, error(13900012)); await assert.rejects(files.releasePreview(value.token));
+  value.byte_length = '0'; await assert.rejects(files.previewFile('new', 'new.png', h.sendBytes('x'), 'inline', '1'), /64 MiB/);
+  h.faults.delete('unlink:' + value.path); await h.create().retryPreviewCleanup();
+  assert.ok(await files.previewFile('new', 'new.png', h.sendBytes('x'), 'inline', '1'));
+});
+
+test('cache-root identity isolates cleanup and quotas even for a nested cache directory', async () => {
+  const h = harness(); const nestedRoot = CACHE + '/nested'; h.putDir(nestedRoot);
+  const owner = h.create(); const nested = h.create(nestedRoot);
+  const parentValue = await owner.previewFile('parent', 'image.png', h.sendBytes('a'));
+  const nestedValue = await nested.previewFile('nested', 'image.png', h.sendBytes('b'));
+  h.faults.set('unlink:' + parentValue.path, error(13900012)); h.faults.set('unlink:' + nestedValue.path, error(13900012));
+  await assert.rejects(owner.releasePreview(parentValue.token)); await assert.rejects(nested.releasePreview(nestedValue.token));
+  h.faults.delete('unlink:' + parentValue.path); await h.create().retryPreviewCleanup();
+  assert.equal(owner.previewCleanupPending(), false); assert.equal(nested.previewCleanupPending(), true); assert.ok(h.nodes.has(nestedValue.path));
+  assert.equal(nested.isPreviewActive(nestedValue), true); h.faults.delete('unlink:' + nestedValue.path);
+  await h.create(nestedRoot).retryPreviewCleanup(); assert.equal(nested.previewCleanupPending(), false);
+});
+
+test('Flutter image scale range is finite and panning stays inside contained image geometry', () => {
+  const h = harness(); assert.equal(h.imagePreviewScale(-50), 0.8); assert.equal(h.imagePreviewScale(99), 2.5);
+  assert.equal(h.imagePreviewScale(NaN), 1); assert.equal(h.imagePreviewScale(Infinity), 1);
+  assert.equal(h.imagePreviewOffset(999, 200, 100, 2), 150);
+  assert.equal(h.imagePreviewOffset(-999, 200, 100, 2), -150);
+  assert.equal(h.imagePreviewOffset(25, 100, 200, 1), 0);
+  assert.equal(h.imagePreviewOffset(25, 100, 100, 0.8), 0);
+  assert.equal(h.imagePreviewOffset(NaN, 200, 100, 2), 0);
+  assert.equal(h.imagePreviewOffset(10, 0, 100, 2), 0);
 });
 test('preview length mismatch removes private copy and closes FD', async () => {
   const h = harness(); await assert.rejects(h.create().previewFile('request', 'test', h.sendBytes('abc', { byte_length: '99' })), /长度/);

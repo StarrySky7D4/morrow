@@ -1,5 +1,5 @@
 import { common } from '@kit.AbilityKit';
-import { fileIo as fs, picker } from '@kit.CoreFileKit';
+import { fileIo as fs, fileUri, picker } from '@kit.CoreFileKit';
 import { util } from '@kit.ArkTS';
 import { BusinessError } from '@kit.BasicServicesKit';
 import native from 'libmorrow.so';
@@ -7,6 +7,8 @@ import { ImportCommand } from './Attachments';
 
 export const ATTACHMENT_IMPORT_BUDGET: number = 64 * 1024 * 1024;
 export const ATTACHMENT_EXPORT_LIMIT: number = 200 * 1024 * 1024;
+export const ATTACHMENT_INLINE_PREVIEW_BUDGET: number = 64 * 1024 * 1024;
+export const ATTACHMENT_INLINE_PREVIEW_LIMIT: number = 8;
 const MAX_SPOOLS: number = 20;
 const MAX_REQUEST_BYTES: number = 512 * 1024;
 // Reserve room for a future unknown-operation journal as well as metadata, so
@@ -43,9 +45,46 @@ export class AttachmentRecoveryDiagnostic {
 export class VerifiedPreview {
   token: string = '';
   path: string = '';
+  uri: string = '';
   name: string = '';
   byte_length: string = '0';
   sha256: string = '';
+  purpose: string = 'dialog';
+}
+
+// Flutter InteractiveViewer's default image range. Geometry is expressed in
+// vp and kept independent of source pixels and private file ownership.
+export function imagePreviewScale(value: number): number {
+  return Number.isFinite(value) ? Math.max(0.8, Math.min(2.5, value)) : 1;
+}
+export function imagePreviewOffset(value: number, renderedExtent: number, viewportExtent: number, scale: number): number {
+  if (!Number.isFinite(value) || !Number.isFinite(renderedExtent) || !Number.isFinite(viewportExtent) ||
+    renderedExtent <= 0 || viewportExtent <= 0) { return 0; }
+  const limit = Math.max(0, (renderedExtent * imagePreviewScale(scale) - viewportExtent) / 2);
+  return Math.max(-limit, Math.min(limit, value));
+}
+
+class PreviewEntry {
+  value: VerifiedPreview;
+  token: string;
+  directory: string;
+  cache_root: string;
+  path: string;
+  uri: string;
+  name: string;
+  byte_length: string;
+  sha256: string;
+  purpose: string;
+  cleanup_failed: boolean = false;
+  constructor(value: VerifiedPreview, directory: string, cacheRoot: string) {
+    this.value = value; this.token = value.token; this.directory = directory; this.cache_root = cacheRoot; this.path = value.path; this.uri = value.uri;
+    this.name = value.name; this.byte_length = value.byte_length; this.sha256 = value.sha256; this.purpose = value.purpose;
+  }
+  matches(value: VerifiedPreview): boolean {
+    return this.value === value && value.token === this.token &&
+      value.path === this.path && value.uri === this.uri && value.name === this.name && value.byte_length === this.byte_length &&
+      value.sha256 === this.sha256 && value.purpose === this.purpose;
+  }
 }
 
 class SpoolEntry {
@@ -105,7 +144,10 @@ export class AttachmentFiles {
   private context: common.UIAbilityContext;
   private root: string;
   private entries: Map<string, SpoolEntry> = new Map<string, SpoolEntry>();
-  private previews: Map<string, string> = new Map<string, string>();
+  private previews: Map<string, PreviewEntry> = new Map<string, PreviewEntry>();
+  // Admission is shared across adapters in this UI process. A new instance
+  // cannot bypass the inline byte/file budget or the single-dialog limit.
+  private static activePreviews: Map<string, PreviewEntry> = new Map<string, PreviewEntry>();
   private issues: AttachmentRecoveryDiagnostic[] = [];
   // Instances in the same UI process share filesystem admission too.
   private static tail: Promise<void> = Promise.resolve();
@@ -391,26 +433,62 @@ export class AttachmentFiles {
     });
   }
 
+  isPreviewActive(value: VerifiedPreview): boolean {
+    const entry = this.previews.get(value.token);
+    return entry !== undefined && entry.matches(value) && AttachmentFiles.activePreviews.get(entry.directory) === entry;
+  }
+
+  private previewLimit(purpose: string, expectedByteLength: string): number {
+    if (purpose !== 'dialog' && purpose !== 'inline') { throw new Error('附件预览类型无效。'); }
+    let count: number = 0;
+    let used: number = 0;
+    AttachmentFiles.activePreviews.forEach((entry: PreviewEntry): void => {
+      if (entry.cache_root === this.context.cacheDir && entry.purpose === purpose) {
+        count++; used += Number(entry.byte_length);
+      }
+    });
+    if (purpose === 'dialog' && count > 0) { throw new Error('请先关闭当前附件预览。'); }
+    if (purpose === 'inline' && count >= ATTACHMENT_INLINE_PREVIEW_LIMIT) { throw new Error('当前内容最多同时显示 8 张附件图片。'); }
+    const limit = purpose === 'inline' ? ATTACHMENT_INLINE_PREVIEW_BUDGET - used : ATTACHMENT_EXPORT_LIMIT;
+    // The current export ABI has no caller byte-limit argument. Inline callers
+    // must pre-admit the exact Core/pin metadata before the native read, and the
+    // completed stream is checked against that length as well as its whole hash.
+    if (purpose === 'inline' || expectedByteLength !== '') {
+      const bytes = Number(expectedByteLength);
+      if (!/^(0|[1-9][0-9]*)$/.test(expectedByteLength) || !Number.isSafeInteger(bytes) || bytes > limit) {
+        throw new Error('附件图片超过当前 64 MiB 预览额度，或长度无法确认。');
+      }
+    }
+    return limit;
+  }
+
   previewFile(serialized: string, name: string,
-    send: (request: string, fd: number) => Promise<string>): Promise<VerifiedPreview> {
+    send: (request: string, fd: number) => Promise<string>, purpose: string = 'dialog',
+    expectedByteLength: string = ''): Promise<VerifiedPreview> {
     return this.queued(async (): Promise<VerifiedPreview> => {
-      if (this.previews.size > 0) { throw new Error('请先关闭当前附件预览。'); }
+      const limit = this.previewLimit(purpose, expectedByteLength);
       const directory = await fs.mkdtemp(this.context.cacheDir + '/morrow-preview-XXXXXX');
       let temporary: fs.File | undefined = undefined;
       let verified: boolean = false;
       try {
         temporary = await fs.open(directory + '/data', fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
-        const reply = streamReply(await send(serialized, temporary.fd), ATTACHMENT_EXPORT_LIMIT);
+        const reply = streamReply(await send(serialized, temporary.fd), limit);
+        if (expectedByteLength !== '' && reply.byte_length !== expectedByteLength) {
+          throw new Error('附件长度已变化，未打开预览。');
+        }
         const stat = await fs.stat(temporary.fd);
         if (!stat.isFile() || stat.size !== Number(reply.byte_length)) { throw new Error('附件长度验证失败，未打开预览。'); }
         await fs.fsync(temporary.fd);
         const value = new VerifiedPreview();
         value.token = directory.slice(this.context.cacheDir.length + 1);
-        value.path = directory + '/data'; value.name = safeName(name);
+        value.path = directory + '/data'; value.uri = fileUri.getUriFromPath(value.path); value.name = safeName(name);
         value.byte_length = reply.byte_length; value.sha256 = reply.sha256;
+        value.purpose = purpose;
         // File extension is not used as authority; the Index receives the
         // selected attachment's MIME/name projection and chooses its viewer.
-        this.previews.set(value.token, directory); verified = true; return value;
+        const entry = new PreviewEntry(value, directory, this.context.cacheDir);
+        this.previews.set(value.token, entry); AttachmentFiles.activePreviews.set(directory, entry);
+        verified = true; return value;
       } finally {
         close(temporary);
         if (!verified) { try { await this.removeOwn(directory); } catch (_) {} }
@@ -420,9 +498,48 @@ export class AttachmentFiles {
 
   releasePreview(token: string): Promise<void> {
     return this.queued(async (): Promise<void> => {
-      const directory = this.previews.get(token);
-      if (!directory) { return; }
-      await this.removeOwn(directory); this.previews.delete(token);
+      const entry = this.previews.get(token);
+      if (!entry) { return; }
+      // A different helper may have completed an explicit failed-cleanup
+      // retry. Discard this stale local reference without touching disk again.
+      if (AttachmentFiles.activePreviews.get(entry.directory) !== entry) { this.previews.delete(token); return; }
+      await this.cleanupPreview(entry);
+    });
+  }
+
+  private async cleanupPreview(entry: PreviewEntry): Promise<void> {
+    try {
+      await this.removeOwn(entry.directory);
+      AttachmentFiles.activePreviews.delete(entry.directory);
+      if (this.previews.get(entry.token) === entry) { this.previews.delete(entry.token); }
+    } catch (_) {
+      // UI owners can disappear before removal completes. Keep the immutable
+      // registered directory and its quota until an explicit retry succeeds.
+      entry.cleanup_failed = true;
+      throw new Error('预览缓存清理尚未完成，请明确重试清理。');
+    }
+  }
+
+  previewCleanupPending(): boolean {
+    let pending: boolean = false;
+    AttachmentFiles.activePreviews.forEach((entry: PreviewEntry): void => {
+      if (entry.cache_root === this.context.cacheDir && entry.cleanup_failed) { pending = true; }
+    });
+    return pending;
+  }
+
+  retryPreviewCleanup(): Promise<void> {
+    return this.queued(async (): Promise<void> => {
+      const pending: PreviewEntry[] = [];
+      AttachmentFiles.activePreviews.forEach((entry: PreviewEntry): void => {
+        if (entry.cache_root === this.context.cacheDir && entry.cleanup_failed) { pending.push(entry); }
+      });
+      let failed: boolean = false;
+      for (const entry of pending) {
+        if (AttachmentFiles.activePreviews.get(entry.directory) !== entry) { continue; }
+        try { await this.cleanupPreview(entry); } catch (_) { failed = true; }
+      }
+      if (failed) { throw new Error('部分预览缓存仍未清理，请保留提示并再次核对。'); }
     });
   }
 

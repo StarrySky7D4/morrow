@@ -1,0 +1,85 @@
+10-07 11:10:33.691  3259  3259 I A03d00/JSAPP: [picker] modalPicker start 
+10-07 11:10:34.004  4781  4781 I A0f666/[FileMgr:-5.0.65.067]FilePicker: FilePickerUIExtAbility onCreate
+10-07 11:10:34.022  4781  4781 I A0f666/[FileMgr:-5.0.65.067]FilePicker: FilePickerUIExtAbility onSessionCreate, want:  <private>
+10-07 11:10:34.023  4781  4781 I A0f666/[FileMgr:-5.0.65.067]FilePicker: getDocumentOptions : {"windowType":"Ability","action":"ohos.want.action.OPEN_FILE_SERVICE","callerAbilityName":"EntryAbility","callerBundleName":"dev.morrow.hmos","callerUid":20020063,"defaultFilePathUri":"","extType":"filePicker","pickerFlag":false,"pickerType":"select","suffixesDescriptions":[],"fileSuffixFilters":[],"maxSelectNumber":1,"selectMode":0,"isAuthMode":false,"phonePickerType":"","phonePickerTypeList":[],"newFileNames":[],"fileSuffixChoices":[],"PhoneFileSuffixChoices":"","startMode":0}
+10-07 11:10:34.025  4781  4781 I A0f666/[FileMgr:-5.0.65.067]FilePicker: bottomNavBarHeight:28
+10-07 11:10:34.025  4781  4781 I A0f666/[FileMgr:-5.0.65.067]FilePicker: FilePickerUIExtAbility filter types[]
+10-07 11:10:34.027  4781  4781 I A0f666/[FileMgr:-5.0.65.067]FilePicker: getAppResourceInfo start
+10-07 11:10:34.032  4781  4781 I A0f666/[FileMgr:-5.0.65.067]FilePicker: getBundleResourceInfo successfully. Data label: "Morrow"
+10-07 11:10:34.032  4781  4781 I A0f666/[FileMgr:-5.0.65.067]FilePicker: initSessionFilePicker start
+10-07 11:10:34.035  4781  4781 I A0f666/[FileMgr:-5.0.65.067]AbilityMan: filePicker addAbility:1, allAbilityCount: 1
+10-07 11:10:34.035  4781  4781 I A0f666/[FileMgr:-5.0.65.067]HiSysEvent: deviceType:1, reportEvent name: CREATE_ABILITY, params: {"ABILITY_NAME":"filePicker","INSTANCES_NUM":1,"CALL_SOURCE":"dev.morrow.hmos"},
+10-07 11:10:34.041  4781  4781 I A0f666/[FileMgr:-5.0.65.067]FilePicker: Succeeded in getting preferences.
+10-07 11:10:34.437  4781  4781 I A0f666/[FileMgr:-5.0.65.067]MainEntry: loadDefaultPickDir, isFilePicker = true <private>
+10-07 11:10:34.437  4781  4781 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:UiExtensionPickerIndexChange
+10-07 11:10:34.438  4781  4781 W A0f666/[FileMgr:-5.0.65.067]PasteBoard: can't execute startReadPasteboardTask, current usage scenes is picker
+10-07 11:10:34.439  4781  4781 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:showPathPicker
+10-07 11:10:34.439  4781  4781 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:closePathPicker
+10-07 11:10:34.439  4781  4781 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:closeUiFilePicker
+10-07 11:10:34.568  4781  4781 I A0f666/[FileMgr:-5.0.65.067]MainEntry: uiPickerMain onAppear
+10-07 11:11:22.722  4781  4781 I A0f666/[FileMgr:-5.0.65.067]EventBus: emit event:UiExtensionPickerIndexChange
+10-07 11:11:31.701  3259  3259 I A03d00/JSAPP: [picker] document select selectResult: : errorcode is = -1, selecturi is = 
+10-07 11:12:49.943  3259  3259 I A03d00/JSAPP: [picker] ParseWindow: not window mode.
+10-07 11:12:49.943  3259  3259 I A03d00/JSAPP: [picker] parseDocumentPickerSelectOption start
+10-07 11:12:49.943  3259  3259 I A03d00/JSAPP: [picker] parseDocumentPickerSelectOption end
+10-07 11:12:49.943  3259  3259 I A03d00/JSAPP: [picker] modalPicker start 
+10-07 11:12:50.211  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: FilePickerUIExtAbility onCreate
+10-07 11:12:50.233  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: FilePickerUIExtAbility onSessionCreate, want:  <private>
+10-07 11:12:50.233  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: getDocumentOptions : {"windowType":"Ability","action":"ohos.want.action.OPEN_FILE_SERVICE","callerAbilityName":"EntryAbility","callerBundleName":"dev.morrow.hmos","callerUid":20020063,"defaultFilePathUri":"","extType":"filePicker","pickerFlag":false,"pickerType":"select","suffixesDescriptions":[],"fileSuffixFilters":[],"maxSelectNumber":1,"selectMode":0,"isAuthMode":false,"phonePickerType":"","phonePickerTypeList":[],"newFileNames":[],"fileSuffixChoices":[],"PhoneFileSuffixChoices":"","startMode":0}
+10-07 11:12:50.235  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: bottomNavBarHeight:28
+10-07 11:12:50.235  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: FilePickerUIExtAbility filter types[]
+10-07 11:12:50.236  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: getAppResourceInfo start
+10-07 11:12:50.242  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: getBundleResourceInfo successfully. Data label: "Morrow"
+10-07 11:12:50.242  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: initSessionFilePicker start
+10-07 11:12:50.243  5880  5880 I A0f666/[FileMgr:-5.0.65.067]AbilityMan: filePicker addAbility:1, allAbilityCount: 1
+10-07 11:12:50.244  5880  5880 I A0f666/[FileMgr:-5.0.65.067]HiSysEvent: deviceType:1, reportEvent name: CREATE_ABILITY, params: {"ABILITY_NAME":"filePicker","INSTANCES_NUM":1,"CALL_SOURCE":"dev.morrow.hmos"},
+10-07 11:12:50.258  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: Succeeded in getting preferences.
+10-07 11:12:50.655  5880  5880 I A0f666/[FileMgr:-5.0.65.067]MainEntry: loadDefaultPickDir, isFilePicker = true <private>
+10-07 11:12:50.655  5880  5880 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:UiExtensionPickerIndexChange
+10-07 11:12:50.656  5880  5880 W A0f666/[FileMgr:-5.0.65.067]PasteBoard: can't execute startReadPasteboardTask, current usage scenes is picker
+10-07 11:12:50.657  5880  5880 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:showPathPicker
+10-07 11:12:50.657  5880  5880 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:closePathPicker
+10-07 11:12:50.657  5880  5880 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:closeUiFilePicker
+10-07 11:12:50.791  5880  5880 I A0f666/[FileMgr:-5.0.65.067]MainEntry: uiPickerMain onAppear
+10-07 11:13:32.200  5880  5880 I A0f666/[FileMgr:-5.0.65.067]MainEntry: uiPickerMain onWillDisappear
+10-07 11:13:32.402  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: enter terminateFilePicker, result length： 0, resultCode:-1
+10-07 11:13:32.402  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: returnPicker start
+10-07 11:13:32.404  5880  5880 E A0f666/[FileMgr:-5.0.65.067]FilePicker: closeUIExtFilePicker terminateSelfWithResult is called = undefined
+10-07 11:13:32.455  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: FilePickerUIExtAbility onSessionDestroy
+10-07 11:13:32.460  5880  5880 I A0f666/[FileMgr:-5.0.65.067]EventBus: off event:showPathPicker
+10-07 11:13:32.460  5880  5880 I A0f666/[FileMgr:-5.0.65.067]EventBus: off event:closePathPicker
+10-07 11:13:32.460  5880  5880 I A0f666/[FileMgr:-5.0.65.067]EventBus: off event:UiExtensionPickerIndexChange
+10-07 11:13:32.460  5880  5880 I A0f666/[FileMgr:-5.0.65.067]EventBus: off event:closeUiFilePicker
+10-07 11:13:32.479  5880  5880 I A0f666/[FileMgr:-5.0.65.067]FilePicker: FilePickerUIExtAbility onDestroy
+10-07 11:13:32.480  5880  5880 I A0f666/[FileMgr:-5.0.65.067]AbilityMan: filePicker reduceAbility: 0, allAbilityCount: 0
+10-07 11:13:32.549  3259  3259 I A03d00/JSAPP: [picker] document select selectResult: : errorcode is = -1, selecturi is = 
+10-07 11:14:00.894  1547  1547 I A01a00/SYS_UI: StatusBarColorPickerVm --> App 20020063, foreground: false
+10-07 11:14:01.021  1547  1547 I A01a00/SYS_UI: StatusBarColorPickerVm --> not in app full screen, use desktop color: #FF000000
+10-07 11:14:01.047  1547  1547 I A01a00/SYS_UI: StatusBarColorPickerVm --> color enable false, this.windowSetColor: #FFFFFFFF
+10-07 11:14:01.891  1547  1547 I A01a00/SYS_UI: StatusBarColorPickerVm --> App 20020063, foreground: true
+10-07 11:14:02.558  1547  1547 I A01a00/SYS_UI: StatusBarColorPickerVm --> color enable false, this.windowSetColor: #FF000000
+10-07 11:14:15.019  8742  8742 I A03d00/JSAPP: [picker] ParseWindow: not window mode.
+10-07 11:14:15.019  8742  8742 I A03d00/JSAPP: [picker] parseDocumentPickerSelectOption start
+10-07 11:14:15.019  8742  8742 I A03d00/JSAPP: [picker] parseDocumentPickerSelectOption end
+10-07 11:14:15.019  8742  8742 I A03d00/JSAPP: [picker] modalPicker start 
+10-07 11:14:15.256  8831  8831 I A0f666/[FileMgr:-5.0.65.067]FilePicker: FilePickerUIExtAbility onCreate
+10-07 11:14:15.282  8831  8831 I A0f666/[FileMgr:-5.0.65.067]FilePicker: FilePickerUIExtAbility onSessionCreate, want:  <private>
+10-07 11:14:15.282  8831  8831 I A0f666/[FileMgr:-5.0.65.067]FilePicker: getDocumentOptions : {"windowType":"Ability","action":"ohos.want.action.OPEN_FILE_SERVICE","callerAbilityName":"EntryAbility","callerBundleName":"dev.morrow.hmos","callerUid":20020063,"defaultFilePathUri":"","extType":"filePicker","pickerFlag":false,"pickerType":"select","suffixesDescriptions":[],"fileSuffixFilters":[],"maxSelectNumber":1,"selectMode":0,"isAuthMode":false,"phonePickerType":"","phonePickerTypeList":[],"newFileNames":[],"fileSuffixChoices":[],"PhoneFileSuffixChoices":"","startMode":0}
+10-07 11:14:15.285  8831  8831 I A0f666/[FileMgr:-5.0.65.067]FilePicker: bottomNavBarHeight:28
+10-07 11:14:15.286  8831  8831 I A0f666/[FileMgr:-5.0.65.067]FilePicker: FilePickerUIExtAbility filter types[]
+10-07 11:14:15.287  8831  8831 I A0f666/[FileMgr:-5.0.65.067]FilePicker: getAppResourceInfo start
+10-07 11:14:15.290  8831  8831 I A0f666/[FileMgr:-5.0.65.067]FilePicker: getBundleResourceInfo successfully. Data label: "Morrow"
+10-07 11:14:15.290  8831  8831 I A0f666/[FileMgr:-5.0.65.067]FilePicker: initSessionFilePicker start
+10-07 11:14:15.292  8831  8831 I A0f666/[FileMgr:-5.0.65.067]AbilityMan: filePicker addAbility:1, allAbilityCount: 1
+10-07 11:14:15.292  8831  8831 I A0f666/[FileMgr:-5.0.65.067]HiSysEvent: deviceType:1, reportEvent name: CREATE_ABILITY, params: {"ABILITY_NAME":"filePicker","INSTANCES_NUM":1,"CALL_SOURCE":"dev.morrow.hmos"},
+10-07 11:14:15.302  8831  8831 I A0f666/[FileMgr:-5.0.65.067]FilePicker: Succeeded in getting preferences.
+10-07 11:14:15.696  8831  8831 I A0f666/[FileMgr:-5.0.65.067]MainEntry: loadDefaultPickDir, isFilePicker = true <private>
+10-07 11:14:15.697  8831  8831 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:UiExtensionPickerIndexChange
+10-07 11:14:15.697  8831  8831 W A0f666/[FileMgr:-5.0.65.067]PasteBoard: can't execute startReadPasteboardTask, current usage scenes is picker
+10-07 11:14:15.698  8831  8831 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:showPathPicker
+10-07 11:14:15.698  8831  8831 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:closePathPicker
+10-07 11:14:15.698  8831  8831 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:closeUiFilePicker
+10-07 11:14:15.925  8831  8831 I A0f666/[FileMgr:-5.0.65.067]MainEntry: uiPickerMain onAppear
+10-07 11:14:41.225  8831  8831 I A0f666/[FileMgr:-5.0.65.067]EventBus: emit event:UiExtensionPickerIndexChange
+10-07 11:15:35.808  8742  8742 I A03d00/JSAPP: [picker] document select selectResult: : errorcode is = -1, selecturi is = 
+10-07 11:15:48.647   464 10448 I C01560/networkSelectionManager: NetworkSelector: { "name": "autoConnectIntegrator" ,"filter": "(notHidden&&notSignalWooWeak)","subNetworkSelectors": [{ "name": "savedNetworkTracker" ,"filter": "(savedWifiFilter&&notPassPoint&&notEphemeral&&enableWifi&&matchUserSelect&&blackListNetworkSelector&&hasInternetNetworkSelector&&recoveryNetworkSelector&&(portalWifiFilter||maybePortal||huaweiGuest)&&noInternetNetworkSelector)","subNetworkSelectors": [{ "name": "hasInternetNetworkSelector" ,"filter": "(notHuaweiGuest&&hasInternet)"},{ "name": "recoveryNetworkSelector" ,"filter": "(notHuaweiGuest&&recovery)"},{ "name": "portalNetworkSelector" ,"filter": "(portalWifiFilter||maybePortal||huaweiGuest)&&notPoorPortal"},{ "name": "noInternetNetworkSelector" ,"filter": "noInternet"},{ "name": "blackListNetworkSelector" ,"filter": "isBlackList"}]},{ "name": "suggestionNetworkTracker" ,"filter": "(suggestionNetworkWifiFilter&&enableWifi&&notEphemeral)"}]}

@@ -1,0 +1,16 @@
+{
+  "observedUtc": "2026-10-07T03:07:37.2228500Z",
+  "pid": 16972,
+  "liveProcess": true,
+  "commandLine": "\"C:\\Program Files\\Huawei\\DevEco Studio\\tools\\emulator\\Emulator.exe\" -hvd \"Pura X View2\" -path \"C:\\Users\\Administrator\\AppData\\Local\\Huawei\\Emulator\\deployed\" -imageRoot \"C:\\Users\\Administrator\\AppData\\Local\\Huawei\\Sdk\" -bootmode snapshot -noWindow",
+  "target": "127.0.0.1:5555",
+  "deviceSoftware": "emulator 7.0.0.106(SP1DEVC00E999R4P11)",
+  "api": "26",
+  "abi": "x86_64",
+  "bundleBeforeInstall": "0.1.0-hmos-dev.12",
+  "versionCode": 1000012,
+  "imageListExit": 0,
+  "imageListStdout": "",
+  "configSha256": "98B6CD6F9395909AF05A5B97C3CF359A14250EF3D16635F1240D25076948CCD6",
+  "preservedConfig": true
+}

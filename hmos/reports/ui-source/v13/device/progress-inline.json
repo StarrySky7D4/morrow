@@ -1,0 +1,38 @@
+{
+  "name": "HMOS-inline-20261007-A",
+  "device": "127.0.0.1:5555",
+  "checks": [
+    {
+      "check": "final HAP restores exact raw Markdown fixture without reseeding"
+    },
+    {
+      "check": "single-selection picker accepted clicked file directly; exact one normal asset confirmed without replay",
+      "asset_id": "draft-asset:asset-draft-import-2ce7186109e9accc52a286df6a0073926a6da4f31b469a0dbe30f23d885be847"
+    },
+    {
+      "check": "draft inline image decodes, opens, zooms and resets without business publication",
+      "asset_id": "asset-draft-import-2ce7186109e9accc52a286df6a0073926a6da4f31b469a0dbe30f23d885be847"
+    },
+    {
+      "check": "editor confirmed pin exports through actual save picker without publishing business card"
+    },
+    {
+      "check": "explicit save publishes exactly one card with inline attachment",
+      "identity": "workspace-card:7eb2c5ee-5c8f-4fe6-b334-5972c8be5598",
+      "observation": "save not replayed; selected Text card title after search-field predicate correction"
+    },
+    {
+      "check": "duplicate/table references share one verified image; missing and remote placeholders stay explicit; read-only restart creates no journal"
+    },
+    {
+      "check": "actual published table cell displays the shared attachment image"
+    },
+    {
+      "check": "removing exact selected image clears inline display and resolves unchanged body reference as missing before business save"
+    },
+    {
+      "check": "explicit removal save and restart retain exact business identity and raw Markdown with zero selected assets and no journal",
+      "identity": "workspace-card:7eb2c5ee-5c8f-4fe6-b334-5972c8be5598"
+    }
+  ]
+}

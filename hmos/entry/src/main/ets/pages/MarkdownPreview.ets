@@ -1,4 +1,5 @@
-import { MarkdownDoc, MarkdownBlock, MarkdownRun, MarkdownCell, MarkdownRow } from '../model/Markdown';
+import { MarkdownDoc, MarkdownBlock, MarkdownRun, MarkdownCell, MarkdownRow, MarkdownAttachment, resolveMarkdownImage } from '../model/Markdown';
+import { VerifiedImageView } from '../model/VerifiedImages';
 import { alpha } from '../model/Appearance';
 import { uiText } from '../model/UiStrings';
 
@@ -12,6 +13,11 @@ export struct MarkdownPreview {
   @Prop family: string = 'HarmonyOS Sans';
   @Prop locale: string = 'zh';
   openLink: (href: string) => void = (): void => {};
+  @Prop attachments: MarkdownAttachment[] = [];
+  @Prop images: VerifiedImageView[] = [];
+  openImage: (id: string) => void = (): void => {};
+  retryImage: (id: string) => void = (): void => {};
+  imageError: (id: string, path: string) => void = (): void => {};
   @State requestedImages: string[] = [];
   @State failedImages: string[] = [];
   private imageEpoch: number = 0;
@@ -22,7 +28,13 @@ export struct MarkdownPreview {
       if (epoch === this.imageEpoch && this.requestedImages.includes(run.href)) { this.failedImages = this.failedImages.concat([run.href]); }
     };
   }
-  private canLoadImage(run: MarkdownRun): boolean { const value = run.href.toLowerCase(); return value.startsWith('https://') || value.startsWith('http://'); }
+  private canLoadImage(run: MarkdownRun): boolean { return resolveMarkdownImage(run.href, this.attachments).kind === 'remote'; }
+  private attachmentId(run: MarkdownRun): string { return resolveMarkdownImage(run.href, this.attachments).attachment_id; }
+  private imageView(run: MarkdownRun): VerifiedImageView | undefined {
+    return this.images.find((value: VerifiedImageView): boolean => value.id === this.attachmentId(run));
+  }
+  private localImageFailure(id: string, path: string): () => void { return (): void => this.imageError(id, path); }
+  private hasText(runs: MarkdownRun[]): boolean { return runs.some((run: MarkdownRun): boolean => !run.image && run.text.length > 0); }
   private blockFontSize(block: MarkdownBlock): number { return block.kind === 'heading' ? [25, 21, 18, 16, 14, 13][Math.max(0, Math.min(5, block.level - 1))] : 13; }
   private cellAlign(value: string): TextAlign { return value === 'right' ? TextAlign.End : value === 'center' ? TextAlign.Center : TextAlign.Start; }
 
@@ -30,7 +42,7 @@ export struct MarkdownPreview {
   Runs(runs: MarkdownRun[], size: number = 13, strong: boolean = false, alignment: TextAlign = TextAlign.Start) {
     Text() {
       ForEach(runs, (run: MarkdownRun) => {
-        Span(run.image ? '▧ ' + (run.text || this.t('图片')) : run.text)
+        Span(run.image ? '' : run.text)
           .fontFamily(run.code ? 'monospace' : this.family).fontSize(run.code ? 12 : size)
           .fontWeight(run.bold || strong ? FontWeight.Bold : FontWeight.Normal)
           .fontStyle(run.italic ? FontStyle.Italic : FontStyle.Normal)
@@ -44,8 +56,23 @@ export struct MarkdownPreview {
   @Builder
   Images(runs: MarkdownRun[]) {
     ForEach(runs.filter((run: MarkdownRun) => run.image), (run: MarkdownRun) => {
-      if (this.requestedImages.includes(run.href) && !this.failedImages.includes(run.href)) {
-        Image(run.href).objectFit(ImageFit.Contain).constraintSize({ maxHeight: 220 }).width('100%')
+      if (this.attachmentId(run)) {
+        if (this.imageView(run)?.phase === 'ready') {
+          ForEach([this.imageView(run)!], (view: VerifiedImageView) => {
+            Image(view.uri).objectFit(ImageFit.Contain).constraintSize({ maxHeight: 300 }).width('100%')
+              .accessibilityText(run.text || this.t('图片')).id('markdown-attachment-image:' + view.id)
+              .onError(this.localImageFailure(view.id, view.path)).onClick(() => this.openImage(view.id))
+          }, (view: VerifiedImageView): string => view.path)
+        } else {
+          Button(this.imageView(run)?.phase === 'failed' ? this.t('图片读取失败') + ' · ' + (run.text || this.t('图片')) :
+            this.imageView(run) ? this.t('正在读取图片…') : this.t('图片未导入') + ' · ' + (run.text || this.t('图片')), { type: ButtonType.Normal })
+            .fontSize(12).fontColor(this.muted).backgroundColor(Color.Transparent).padding(10).borderRadius(8)
+            .id('markdown-attachment-status:' + this.attachmentId(run))
+            .enabled(this.imageView(run)?.phase === 'failed').onClick(() => this.retryImage(this.attachmentId(run)))
+          if (this.imageView(run)?.error) { Text(this.imageView(run)!.error).fontSize(11).fontColor(this.muted) }
+        }
+      } else if (this.canLoadImage(run) && this.requestedImages.includes(run.href) && !this.failedImages.includes(run.href)) {
+        Image(resolveMarkdownImage(run.href, this.attachments).href).objectFit(ImageFit.Contain).constraintSize({ maxHeight: 220 }).width('100%')
           .accessibilityText(run.text || this.t('图片'))
           .onError(this.imageFailure(run, this.imageEpoch))
       } else {
@@ -63,7 +90,7 @@ export struct MarkdownPreview {
         ForEach(block.rows, (row: MarkdownRow, index: number) => {
           Row() {
             ForEach(row.cells, (cell: MarkdownCell, column: number) => {
-              Column({ space: 8 }) { this.Runs(cell.runs, 13, row.header, this.cellAlign(block.alignments[column])); this.Images(cell.runs) }
+              Column({ space: 8 }) { if (this.hasText(cell.runs)) { this.Runs(cell.runs, 13, row.header, this.cellAlign(block.alignments[column])); } this.Images(cell.runs) }
                 .width(150).padding(9).alignItems(HorizontalAlign.Start)
                 .border({ width: .5, color: this.line }).backgroundColor(row.header ? alpha(this.accent, .065) : Color.Transparent)
             })
@@ -86,7 +113,7 @@ export struct MarkdownPreview {
               if (block.language) { Text(block.language).fontSize(10).fontColor(this.muted) }
               Text(block.runs.map((run: MarkdownRun) => run.text).join('')).fontFamily('monospace').fontSize(12)
                 .fontColor(this.accent).lineHeight(20).width('100%').copyOption(CopyOptions.LocalDevice)
-            } else { this.Runs(block.runs, this.blockFontSize(block), block.kind === 'heading'); this.Images(block.runs) }
+            } else { if (this.hasText(block.runs)) { this.Runs(block.runs, this.blockFontSize(block), block.kind === 'heading'); } this.Images(block.runs) }
           }.layoutWeight(1).alignItems(HorizontalAlign.Start)
             .padding(block.kind === 'code' || block.quote > 0 ? 12 : 0)
             .backgroundColor(block.kind === 'code' ? alpha(this.ink, .045) : block.quote > 0 ? alpha(this.accent, .065) : Color.Transparent)

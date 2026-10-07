@@ -1,0 +1,16 @@
+{
+  "createdUtc": "2026-10-07T03:35:51.1208422Z",
+  "note": "Frozen evidence from still-open emulator streams; no emulator stop.",
+  "files": [
+    {
+      "path": "emulator-start.stdout.snapshot.log",
+      "bytes": 56,
+      "sha256": "E908AB38B501D0C1DDB1F2A21B101F96F13C3CE13E79A407AA7D25A5F91FCC55"
+    },
+    {
+      "path": "emulator-start.stderr.snapshot.log",
+      "bytes": 485083,
+      "sha256": "DEE13F656D0906F4D5E57F0ED6E579AA1814CE809F08E014F8504AA379B3BECA"
+    }
+  ]
+}

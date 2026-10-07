@@ -1,0 +1,6 @@
+{
+  "result": "PASS",
+  "bytes": 1924867,
+  "sha256": "d0c0bdd622e6349d8e7357035376c818f2dbd7da5ee28e1752d4d8405e52ad0f",
+  "scope": "actual editor confirmed pin -> system save picker -> public target URI -> HDC byte comparison; no business publication"
+}

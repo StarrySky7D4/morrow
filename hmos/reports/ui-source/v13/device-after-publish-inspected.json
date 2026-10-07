@@ -1,0 +1,183 @@
+[
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      65,
+      182,
+      128,
+      245
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      219,
+      188,
+      270,
+      239
+    ],
+    "children": []
+  },
+  {
+    "type": "TextInput",
+    "text": "HMOS-inline-20261007-A",
+    "bounds": [
+      294,
+      156,
+      908,
+      270
+    ],
+    "clickable": true,
+    "longClickable": true,
+    "scrollable": true,
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "×",
+    "bounds": [
+      932,
+      182,
+      963,
+      245
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "󰉘",
+    "bounds": [
+      1058,
+      185,
+      1115,
+      242
+    ],
+    "children": []
+  },
+  {
+    "type": "Button",
+    "text": "草稿",
+    "bounds": [
+      1170,
+      156,
+      1284,
+      270
+    ],
+    "clickable": true,
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "A LITTLE SPACE FOR BIG IDEAS",
+    "bounds": [
+      36,
+      339,
+      595,
+      371
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "让想法，自由生长。",
+    "bounds": [
+      36,
+      398,
+      747,
+      503
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "收纳日常的零碎，也留住灵光一闪。",
+    "bounds": [
+      36,
+      527,
+      613,
+      569
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      1035,
+      429,
+      1086,
+      480
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "新建灵感",
+    "bounds": [
+      1107,
+      435,
+      1239,
+      474
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "让可能性发生",
+    "bounds": [
+      150,
+      719,
+      323,
+      747
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "还没成形，也没关系。",
+    "bounds": [
+      114,
+      807,
+      744,
+      881
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。",
+    "bounds": [
+      114,
+      911,
+      708,
+      1033
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "记录此刻的想法",
+    "bounds": [
+      114,
+      1111,
+      345,
+      1150
+    ],
+    "children": []
+  },
+  {
+    "type": "Text",
+    "text": "",
+    "bounds": [
+      375,
+      1108,
+      420,
+      1153
+    ],
+    "children": []
+  }
+]

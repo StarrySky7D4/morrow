@@ -1,0 +1,95 @@
+10-07 11:15:44.674   791  1201 W C01121/BMSQuery: GetBundleInfo failed -n com.huawei.hmsapp.totemweather -u 100
+10-07 11:15:44.674   471  1612 E C01651/BundleMgrProxy: GetBundleInfoFromBMS: GetBundleInfo failed!bundleName is com.huawei.hmsapp.totemweather, userId is 100
+10-07 11:15:44.674   471  1612 E C01651/DataProviderConfig: GetFromProxyData: Get bundleInfo failed! bundleName:com.huawei.hmsapp.totemweather, userId:100, visitedId:100, uri:******clockForms
+10-07 11:15:44.674   471  1612 E C01651/DataShareServiceImpl: GetBMSAndMetaDataStatus: CalledInfo failed! token:0x200ed237,ret:1001,uri:******clockForms
+10-07 11:15:44.674  1547  1547 E A01c06/ICON: PageDesktopOneShotManager: get weather info failed, code: 15700010, message: The DataShareHelper is not initialized successfully.
+10-07 11:15:45.341  9118  9128 I C0430a/FileAccessFwk: [(IsUnused:680)]IsUnused: obsManager_: 1, calledCount_: 0
+10-07 11:15:45.341  9118  9128 I C0430a/FileAccessFwk: [(IsAppProxyMapEmpty:687)]IsUnused: appProxyMap_: 1
+10-07 11:15:45.341  9118  9128 I C0430a/FileAccessFwk: [(UnRegisterBundleBroadcast:653)]FileAccessService::UnRegisterBundleBroadcast Begin
+10-07 11:15:45.342  9118  9128 I C0430a/FileAccessFwk: [(UnRegisterBundleBroadcast:660)]FileAccessService::UnRegisterBundleBroadcast End. ret = 0
+10-07 11:15:45.343  9118 10420 I C0430a/FileAccessFwk: [(UnRegisterBundleBroadcast:653)]FileAccessService::UnRegisterBundleBroadcast Begin
+10-07 11:15:45.343  9118 10420 I C0430a/FileAccessFwk: [(UnRegisterBundleBroadcast:660)]FileAccessService::UnRegisterBundleBroadcast End. ret = 0
+10-07 11:15:45.359   271 10124 E C01702/CGS: [a92ab1b96157857] AddTidToCgroup failed to write; fd = 82, errno = 13
+10-07 11:15:45.359   271 10124 E C01702/CGS: [a92ab1b96157857] AddTidToCgroup failed to write; fd = 91, errno = 13
+10-07 11:15:45.359   791 10277 I C01357/ProcessMgr: [ARR1156]terminate FileExtensionAbility
+10-07 11:15:45.359   791 10277 I C01357/ProcessMgr: [ARM1040]Terminate last:com.ohos.UserFile.ExternalFileManager.
+10-07 11:15:45.359   791 10277 I C01357/ProcessMgr: [ARR1156]terminate FileManagerExtensionAbility
+10-07 11:15:45.359   791 10277 I C01357/ProcessMgr: [ARM1040]Terminate last:com.huawei.hmos.filemanager.
+10-07 11:15:45.361   271 10125 E C01704/TagSched: [a92ab1b96157857] [OpenQosCtrl]Failed to open qos_ctrl device
+10-07 11:15:45.361   271 10125 E C01704/TagSched: [a92ab1b96157857] [IsQosHandleOpen]get qosSetHandle_ fail
+10-07 11:15:45.361   271 10125 E C01704/TagSched: [a92ab1b96157857] [SetQosInternal]qosSetHandle open fail
+10-07 11:15:45.361   271 10124 E C01702/CGS: [a92ab2b96157e8f] AddTidToCgroup failed to write; fd = 82, errno = 13
+10-07 11:15:45.361   271 10124 E C01702/CGS: [a92ab2b96157e8f] AddTidToCgroup failed to write; fd = 91, errno = 13
+10-07 11:15:45.362   271 10209 E C01704/TagSched: [a92ab2b96157e8f] [OpenQosCtrl]Failed to open qos_ctrl device
+10-07 11:15:45.362   271 10209 E C01704/TagSched: [a92ab2b96157e8f] [IsQosHandleOpen]get qosSetHandle_ fail
+10-07 11:15:45.362   271 10209 E C01704/TagSched: [a92ab2b96157e8f] [SetQosInternal]qosSetHandle open fail
+10-07 11:15:45.362   271 10124 E C01702/CGS: [a92ab3b9615890b] AddTidToCgroup failed to write; fd = 80, errno = 13
+10-07 11:15:45.362   271 10124 E C01702/CGS: [a92ab3b9615890b] AddTidToCgroup failed to write; fd = 89, errno = 13
+10-07 11:15:45.362   271 10125 I C01731/SUSPEND_MSG: [a92ab3b9615890b] OnExtensionStateTerminated uid:20020057 pid:9131, 56_FileExtensionAbility_5_12
+10-07 11:15:45.363   271 10125 E C01704/TagSched: [a92ab3b9615890b] [OpenQosCtrl]Failed to open qos_ctrl device
+10-07 11:15:45.363   271 10125 E C01704/TagSched: [a92ab3b9615890b] [IsQosHandleOpen]get qosSetHandle_ fail
+10-07 11:15:45.363   271 10125 E C01704/TagSched: [a92ab3b9615890b] [SetQosInternal]qosSetHandle open fail
+10-07 11:15:45.364   271 10125 I C01731/SUSPEND_MSG: [a92ab6b96159004] OnExtensionStateTerminated uid:20020024 pid:9086, 55_FileManagerExtensionAbility_5_12
+10-07 11:15:45.364   271 10125 E C01702/CGS: [a92ab6b96159004] AddTidToCgroup failed to write; fd = 80, errno = 13
+10-07 11:15:45.364   271 10125 E C01702/CGS: [a92ab6b96159004] AddTidToCgroup failed to write; fd = 89, errno = 13
+10-07 11:15:45.365   271 10125 E C01704/TagSched: [a92ab6b96159004] [OpenQosCtrl]Failed to open qos_ctrl device
+10-07 11:15:45.365   271 10125 E C01704/TagSched: [a92ab6b96159004] [IsQosHandleOpen]get qosSetHandle_ fail
+10-07 11:15:45.365   271 10125 E C01704/TagSched: [a92ab6b96159004] [SetQosInternal]qosSetHandle open fail
+10-07 11:15:45.366   271 10208 E C01706/qos_manager: [a92ab9b9615952e] thread 10208 belong to user 1096 open auth node failed
+10-07 11:15:45.366   271 10208 E C01706/ueaServer-IntelliSenseServer: [a92ab9b9615952e] auth_delete 9086 failed
+10-07 11:15:45.366   236   236 I C02699/MM: OnProcessDied u=20020024,p=9086,pN=com.huawei.hmos.filemanager:fileAccess,bN=com.huawei.hmos.filemanager
+10-07 11:15:45.366   236   236 I C02699/MM: OnProcessDied u=20020057,p=9131,pN=com.ohos.UserFile.ExternalFileManager:fileAccess,bN=com.ohos.UserFile.ExternalFileManager
+10-07 11:15:45.367   271 10125 E C01706/qos_manager: [a92abcb961599b7] thread 10125 belong to user 1096 open auth node failed
+10-07 11:15:45.367   271 10125 E C01706/ueaServer-IntelliSenseServer: [a92abcb961599b7] auth_delete 9131 failed
+10-07 11:15:45.369   195  1207 E C01707/CONCUR: [a92ab1b96157857] [TaskControllerInterface] ReportData failed, funcLoader_ load func failed
+10-07 11:15:45.369   195  1207 E C01707/CONCUR: [a92ab2b96157e8f] [TaskControllerInterface] ReportData failed, funcLoader_ load func failed
+10-07 11:15:45.369   195  1207 E C01707/CONCUR: [a92ab3b9615890b] [TaskControllerInterface] ReportData failed, funcLoader_ load func failed
+10-07 11:15:45.369   195  1207 E C01707/CONCUR: [a92ab6b96159004] [TaskControllerInterface] ReportData failed, funcLoader_ load func failed
+10-07 11:15:45.410   147   147 W C02c11/APPSPAWN: [appspawn_cgroup.c:78]SetForkDenied 9131 open failed 
+10-07 11:15:45.411   147   147 E C02c11/APPSPAWN: [appspawn_cgroup.c:95]Open file fail /dev/pids/100/com.ohos.UserFile.ExternalFileManager/app_9131/cgroup.procs errno: 2
+10-07 11:15:45.411   147   147 W C02c11/APPSPAWN: [appspawn_cgroup.c:78]SetForkDenied 9086 open failed 
+10-07 11:15:45.411   147   147 E C02c11/APPSPAWN: [appspawn_cgroup.c:95]Open file fail /dev/pids/100/com.huawei.hmos.filemanager/app_9086/cgroup.procs errno: 2
+10-07 11:15:45.411   147   147 W C02c11/APPSPAWN: [appspawn_cgroup.c:78]SetForkDenied 9131 open failed 
+10-07 11:15:45.411   147   147 E C02c11/APPSPAWN: [appspawn_cgroup.c:95]Open file fail /dev/pids/100/com.ohos.UserFile.ExternalFileManager/app_9131/cgroup.procs errno: 2
+10-07 11:15:45.425   137  1139 E C02d66/XPerf: [InquiryOhImpl::ExtractStringValue] Canonical FilePath: /sys/class/ithermal/lpm/lpm_freq failed.
+10-07 11:15:45.426   137  1139 E C02d66/XPerf: [InquiryOhImpl::ExtractStringValue] Canonical FilePath: /sys/class/power_supply/Battery/status failed.
+10-07 11:15:45.680   471  1612 E C01707/CONCUR: [Interface] task 1612 apply qos failed, errno = 4
+10-07 11:15:45.680   471  1612 E C01611/QosManager: QosManager: Failed to set thread QoS to QOS_USER_INTERACTIVE, ret: -1
+10-07 11:15:45.681   791  1201 W C01121/BMSQuery: GetBundleInfo failed -n com.huawei.hmsapp.totemweather -u 100
+10-07 11:15:45.681   471  1612 E C01651/BundleMgrProxy: GetBundleInfoFromBMS: GetBundleInfo failed!bundleName is com.huawei.hmsapp.totemweather, userId is 100
+10-07 11:15:45.681   471  1612 E C01651/DataProviderConfig: GetFromProxyData: Get bundleInfo failed! bundleName:com.huawei.hmsapp.totemweather, userId:100, visitedId:100, uri:******clockForms
+10-07 11:15:45.681   471  1612 E C01651/DataShareServiceImpl: GetBMSAndMetaDataStatus: CalledInfo failed! token:0x200ed237,ret:1001,uri:******clockForms
+10-07 11:15:45.681  1547  1547 E A01c06/ICON: PageDesktopOneShotManager: get weather info failed, code: 15700010, message: The DataShareHelper is not initialized successfully.
+10-07 11:15:45.691 10434 10434 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10434 2000 2000] failed
+10-07 11:15:45.691 10434 10434 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10434 2000 2000] failed
+10-07 11:15:45.691 10434 10434 W C02c02/PARAM: SystemReadParam failed!name is:persist.init.debug.loglevel,err:1002
+10-07 11:15:45.696 10437 10437 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10437 2000 2000] failed
+10-07 11:15:45.696 10436 10436 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10436 2000 2000] failed
+10-07 11:15:45.696 10438 10438 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10438 2000 2000] failed
+10-07 11:15:45.696 10436 10436 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10436 2000 2000] failed
+10-07 11:15:45.696 10438 10438 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10438 2000 2000] failed
+10-07 11:15:45.696 10436 10436 W C02c02/PARAM: SystemReadParam failed!name is:persist.init.debug.loglevel,err:1002
+10-07 11:15:45.696 10438 10438 W C02c02/PARAM: SystemReadParam failed!name is:persist.init.debug.loglevel,err:1002
+10-07 11:15:45.696 10437 10437 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10437 2000 2000] failed
+10-07 11:15:45.696 10437 10437 W C02c02/PARAM: SystemReadParam failed!name is:persist.init.debug.loglevel,err:1002
+10-07 11:15:45.701 10439 10439 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10439 2000 2000] failed
+10-07 11:15:45.701 10440 10440 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10440 2000 2000] failed
+10-07 11:15:45.701 10440 10440 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10440 2000 2000] failed
+10-07 11:15:45.701 10439 10439 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10439 2000 2000] failed
+10-07 11:15:45.701 10440 10440 W C02c02/PARAM: SystemReadParam failed!name is:persist.init.debug.loglevel,err:1002
+10-07 11:15:45.701 10439 10439 W C02c02/PARAM: SystemReadParam failed!name is:persist.init.debug.loglevel,err:1002
+10-07 11:15:45.781 10441 10441 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10441 2000 2000] failed
+10-07 11:15:45.781 10441 10441 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10441 2000 2000] failed
+10-07 11:15:45.782 10441 10441 W C02c02/PARAM: SystemReadParam failed!name is:persist.init.debug.loglevel,err:1002
+10-07 11:15:45.785 10443 10443 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10443 2000 2000] failed
+10-07 11:15:45.785 10443 10443 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10443 2000 2000] failed
+10-07 11:15:45.785 10443 10443 W C02c02/PARAM: SystemReadParam failed!name is:persist.init.debug.loglevel,err:1002
+10-07 11:15:45.789 10444 10444 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10444 2000 2000] failed
+10-07 11:15:45.789 10444 10444 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10444 2000 2000] failed
+10-07 11:15:45.789 10444 10444 W C02c02/PARAM: SystemReadParam failed!name is:persist.init.debug.loglevel,err:1002
+10-07 11:15:45.939 10446 10446 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10446 2000 2000] failed
+10-07 11:15:45.939 10446 10446 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10446 2000 2000] failed
+10-07 11:15:45.939 10446 10446 W C02c02/PARAM: SystemReadParam failed!name is:persist.init.debug.loglevel,err:1002
+10-07 11:15:45.943 10446 10446 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10446 2000 2000] failed
+10-07 11:15:45.943 10446 10446 W C02c02/PARAM: Selinux check name persist.init.debug.loglevel in u:object_r:startup_init_param:s0 [10446 2000 2000] failed
+10-07 11:15:45.943 10446 10446 W C02c02/PARAM: SystemReadParam failed!name is:persist.init.debug.loglevel,err:1002

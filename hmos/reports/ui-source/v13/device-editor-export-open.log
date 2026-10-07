@@ -1,0 +1,49 @@
+- Dumping layout…
+- Executing click...
+√ click at (888, 1286)
+- Dumping layout…
+- Dumping layout…
+[
+  {
+    type: 'TextInput',
+    bounds: [ 294, 156, 840, 270 ],
+    clickable: true,
+    longClickable: true,
+    scrollable: true,
+    children: []
+  },
+  {
+    id: 'draft-title',
+    type: 'TextInput',
+    text: 'HMOS-inline-20261007-A',
+    bounds: [ 135, 524, 1185, 716 ],
+    children: []
+  },
+  {
+    id: 'dialog_confirm',
+    type: 'SymbolGlyph',
+    bounds: [ 1188, 198, 1242, 252 ],
+    children: []
+  },
+  {
+    type: 'TextInput',
+    text: 'HMOS-dev13-中文 图片.png',
+    bounds: [ 30, 416, 1290, 536 ],
+    clickable: true,
+    longClickable: true,
+    scrollable: true,
+    children: []
+  },
+  {
+    type: 'Text',
+    text: '我的手机',
+    bounds: [ 192, 673, 1200, 729 ],
+    children: []
+  },
+  {
+    type: 'Text',
+    text: 'Download',
+    bounds: [ 228, 844, 1248, 900 ],
+    children: []
+  }
+]

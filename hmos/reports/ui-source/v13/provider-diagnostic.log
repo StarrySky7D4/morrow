@@ -1,0 +1,65 @@
+10-07 11:14:15.292  8831  8831 I A0f666/[FileMgr:-5.0.65.067]HiSysEvent: deviceType:1, reportEvent name: CREATE_ABILITY, params: {"ABILITY_NAME":"filePicker","INSTANCES_NUM":1,"CALL_SOURCE":"dev.morrow.hmos"},
+10-07 11:14:15.302  8831  8831 I A0f666/[FileMgr:-5.0.65.067]FilePicker: Succeeded in getting preferences.
+10-07 11:14:15.536  9086  9086 I A0f666/[FileMgr:-5.0.65.067]AbilitySta: FileManager Application Start
+10-07 11:14:15.539  9086  9086 I A00001/ExternalFileManager: Extension init process
+10-07 11:14:15.610  9131  9131 I A00001/ExternalFileManager: Extension init process
+10-07 11:14:15.615  9131  9131 I A00001/ExternalFileManager: External file count: 0
+10-07 11:14:15.615  9131  9131 I A00001/ExternalFileManager: getRoots failed errorcode: undefined
+10-07 11:14:15.696  8831  8831 I A0f666/[FileMgr:-5.0.65.067]MainEntry: loadDefaultPickDir, isFilePicker = true <private>
+10-07 11:14:15.697  8831  8831 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:FileManager_onNewWant
+10-07 11:14:15.698  8831  8831 I A0f666/[FileMgr:-5.0.65.067]EventBus: on event:closeUiFilePicker
+10-07 11:15:00.323  8831  8831 I A0f666/[FileMgr:-5.0.65.067]BundleReso: createDownloadUriShowNameMap start.
+10-07 11:15:00.324  8831  8831 I A0f666/[FileMgr:-5.0.65.067]BundleReso: createDownloadUriShowIconMap  CommonUtil.downloadUriShowNameMap length: 0 ;  CommonUtil.downloadUriShowIconMap length: 0
+10-07 11:15:35.307  8831  8831 I A0f666/[FileMgr:-5.0.65.067]HiSysEvent: deviceType:1, reportEvent name: FILE_OPERATION, params: {"OPERATE_NAME":2,"OPERATE_FROM":3,"OPERATE_OBJECT":"folder","ABILITY_NAME":"fileManager","OPERATE_RESULT":0},
+10-07 11:15:35.311  8831  8831 I A0f666/[FileMgr:-5.0.65.067]myPhone: curBreadCrumb: Download
+10-07 11:15:35.762  1547  1547 W A01a00/SYS_UI: AppLifeCycleManager: onProcessDied, uid: 20020024, bundleName: com.huawei.hmos.filemanager, pid: 8831
+10-07 11:15:35.765   194  3316 I C02b83/AudioServiceAppStateListener: [OnAppStateChanged]app state changed, bundleName=com.huawei.hmos.filemanager uid=20020024 pid=8831 state=4
+10-07 11:15:35.765   236   236 I C02699/MM: OnProcessDied u=20020024,p=8831,pN=com.huawei.hmos.filemanager:sysPicker/filePicker,bN=com.huawei.hmos.filemanager
+10-07 11:15:35.766   271   346 I C01718/StandbyService: [OnProcessStatusChanged:938] process status change, uid: 20020024, pid: 8831, name: com.huawei.hmos.filemanager, alive: 0
+10-07 11:15:35.767   271 10124 I C01731/SUSPEND_MSG: [a92ab6b957bb30c] OnExtensionStateTerminated uid:20020024 pid:8831, 54_FilePickerUIExtAbility_5_408
+10-07 11:15:35.767   271 10124 I C01731/SUSPEND_MSG: [a92ab7b957bb38a] 20020024_com.huawei.hmos.filemanager_8831 died
+10-07 11:15:35.768   137  1026 I C02d11/FaultloggerExt-Mgr: [a92ab1b9575f69e, 3d5c8a, 0] GetExtName: bundleName: com.huawei.hmos.filemanager, find extName failed
+10-07 11:15:35.768   137  1026 I C02d11/FaultloggerExt-Mgr: [a92ab1b9575f69e, 3d5c8a, 0] OnFault: com.huawei.hmos.filemanager Unsupported faultlog abily
+10-07 11:15:35.773  8742  8742 I C01406/OHOS::RS: RSSurfaceNode::~RSSurfaceNode, Node: 37928856190977, Name: com.huawei.hmos.filemanagerFilePickerUIExtAbility
+10-07 11:15:45.349   791 10275 I C01335/Connection: [CONN127]Disconnect FileManagerExtensionAbility
+10-07 11:15:45.349   791 10275 I C01342/ServiceExt: [BER177]DisconnectAbility, bundle:com.huawei.hmos.filemanager, ability:FileManagerExtensionAbility.
+10-07 11:15:45.349   791 10275 I C01342/ServiceExt: [BER177]DisconnectAbility, bundle:com.ohos.UserFile.ExternalFileManager, ability:FileExtensionAbility.
+10-07 11:15:45.350   791  1057 I C01340/Ext: [ABCM1051]schedule disconnect com.ohos.UserFile.ExternalFileManager/FileExtensionAbility
+10-07 11:15:45.351   791  1057 I C01340/Ext: [ABCM3006]MoveToTerminatingMap: recordId=56 bundle=com.ohos.UserFile.ExternalFileManager ability=FileExtensionAbility
+10-07 11:15:45.352   791  1053 I C01336/AMS: [ABMS8384]Done:com.ohos.UserFile.ExternalFileManager/FileExtensionAbility, s:0, c:9131
+10-07 11:15:45.352   791  1053 I C01336/AMS: [ABMS8390]Lifecycle: ability:/com.ohos.UserFile.ExternalFileManager/entry/FileExtensionAbility
+10-07 11:15:45.352   791  1201 I C01340/Ext: [ABCM1051]schedule disconnect com.huawei.hmos.filemanager/FileManagerExtensionAbility
+10-07 11:15:45.352   791  1201 I C01340/Ext: [ABCM3006]MoveToTerminatingMap: recordId=55 bundle=com.huawei.hmos.filemanager ability=FileManagerExtensionAbility
+10-07 11:15:45.353   791  1053 I C01340/Ext: [ABCM845]com.ohos.UserFile.ExternalFileManager/FileExtensionAbility, INITIAL
+10-07 11:15:45.353  9086  9086 I C01340/Ext: [EXTI88]FileManagerExtensionAbility;2;0;0
+10-07 11:15:45.353   791   945 I C01336/AMS: [ABMS8384]Done:com.huawei.hmos.filemanager/FileManagerExtensionAbility, s:0, c:9086
+10-07 11:15:45.353   791   945 I C01336/AMS: [ABMS8390]Lifecycle: ability:/com.huawei.hmos.filemanager/phone/FileManagerExtensionAbility
+10-07 11:15:45.353   791   945 I C01340/Ext: [ABCM845]com.huawei.hmos.filemanager/FileManagerExtensionAbility, INITIAL
+10-07 11:15:45.359   791 10277 I C01357/ProcessMgr: [ARM1040]Terminate last:com.ohos.UserFile.ExternalFileManager.
+10-07 11:15:45.359   791 10277 I C01357/ProcessMgr: [ARR1156]terminate FileManagerExtensionAbility
+10-07 11:15:45.359   791 10277 I C01357/ProcessMgr: [ARM1040]Terminate last:com.huawei.hmos.filemanager.
+10-07 11:15:45.364   271 10125 I C01731/SUSPEND_MSG: [a92ab6b96159004] OnExtensionStateTerminated uid:20020024 pid:9086, 55_FileManagerExtensionAbility_5_12
+10-07 11:15:45.365  1547  1547 W A01a00/SYS_UI: AppLifeCycleManager: onProcessDied, uid: 20020024, bundleName: com.huawei.hmos.filemanager, pid: 9086
+10-07 11:15:45.366   271 10208 I C01706/ueaServer-IntelliSenseServer: [a92ab8b96159466] Get app info:9086 20020024 com.huawei.hmos.filemanager 5
+10-07 11:15:45.366   390  3272 I C02220/SocketSessionManager: in OnProcessDied, 'com.huawei.hmos.filemanager' died, pid:9086
+10-07 11:15:45.366   271 10208 I C01731/SUSPEND_MSG: [a92ab9b9615952e] 20020024_com.huawei.hmos.filemanager_9086 died
+10-07 11:15:45.366   271 10208 I C01724/TASK_DETECTION: [a92abab961596e4] [OnAppStopped:961]uid: 20020024 bundleName: com.huawei.hmos.filemanager app stopped
+10-07 11:15:45.366   271   346 I C01718/StandbyService: [OnProcessStatusChanged:938] process status change, uid: 20020024, pid: 9086, name: com.huawei.hmos.filemanager, alive: 0
+10-07 11:15:45.366   236   236 I C02699/MM: OnProcessDied u=20020024,p=9086,pN=com.huawei.hmos.filemanager:fileAccess,bN=com.huawei.hmos.filemanager
+10-07 11:15:45.366   236   236 I C02699/MM: OnProcessDied u=20020057,p=9131,pN=com.ohos.UserFile.ExternalFileManager:fileAccess,bN=com.ohos.UserFile.ExternalFileManager
+10-07 11:15:45.366   390  3272 I C02220/SocketSessionManager: in OnProcessDied, 'com.ohos.UserFile.ExternalFileManager' died, pid:9131
+10-07 11:15:45.367   271 10209 I C01706/ueaServer-IntelliSenseServer: [a92abbb961597f8] Get app info:9131 20020057 com.ohos.UserFile.ExternalFileManager 5
+10-07 11:15:45.367   271   346 I C01718/StandbyService: [OnProcessStatusChanged:938] process status change, uid: 20020057, pid: 9131, name: com.ohos.UserFile.ExternalFileManager, alive: 0
+10-07 11:15:45.367   271 10125 I C01731/SUSPEND_MSG: [a92abcb961599b7] 20020057_com.ohos.UserFile.ExternalFileManager_9131 died
+10-07 11:15:45.367   271 10209 I C01724/TASK_DETECTION: [a92abdb96159ad3] [OnAppStopped:961]uid: 20020057 bundleName: com.ohos.UserFile.ExternalFileManager app stopped
+10-07 11:15:45.368  1547  1547 W A01a00/SYS_UI: AppLifeCycleManager: onProcessDied, uid: 20020057, bundleName: com.ohos.UserFile.ExternalFileManager, pid: 9131
+10-07 11:15:45.373   296 10279 I C015b5/NetMgrEnhanced: NotifyAbilityStateChanged:uid=2******4, pid=9086, state=5, abilityName=FileManagerExtensionAbility
+10-07 11:15:45.373   296 10279 I C015b5/NetMgrEnhanced: NotifyAppStopped appName:com.huawei.hmos.filemanager uid:20020024 pid:9086 state:5
+10-07 11:15:45.373   296 10279 I C015b5/NetMgrEnhanced: NotifyAppStopped appName:com.ohos.UserFile.ExternalFileManager uid:20020057 pid:9131 state:5
+10-07 11:15:45.411   147   147 E C02c11/APPSPAWN: [appspawn_cgroup.c:95]Open file fail /dev/pids/100/com.ohos.UserFile.ExternalFileManager/app_9131/cgroup.procs errno: 2
+10-07 11:15:45.411   147   147 W C02c11/APPSPAWN: [appspawn_service.c:144]com.huawei.hmos.filemanager with pid 9086 exit with code:0
+10-07 11:15:45.411   147   147 E C02c11/APPSPAWN: [appspawn_cgroup.c:95]Open file fail /dev/pids/100/com.huawei.hmos.filemanager/app_9086/cgroup.procs errno: 2
+10-07 11:15:45.411   147   147 W C02c11/APPSPAWN: [appspawn_service.c:144]com.ohos.UserFile.ExternalFileManager with pid 9131 exit with code:0
+10-07 11:15:45.411   147   147 E C02c11/APPSPAWN: [appspawn_cgroup.c:95]Open file fail /dev/pids/100/com.ohos.UserFile.ExternalFileManager/app_9131/cgroup.procs errno: 2
+10-07 11:15:46.368   236 10280 I C02699/MM: HandleAppDied bN=com.huawei.hmos.filemanager,u=20020024
+10-07 11:15:46.369   236 10280 I C02699/MM: HandleAppDied bN=com.ohos.UserFile.ExternalFileManager,u=20020057

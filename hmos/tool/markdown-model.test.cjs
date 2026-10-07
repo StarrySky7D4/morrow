@@ -1,5 +1,6 @@
-// Executes the actual ArkTS coordinator with controlled transport and time.
-// These cases prove preview coordination, not ArkUI rendering or parser output.
+// Executes the actual ArkTS model with controlled transport and time.
+// URI golden cases come from installed Dart Uri, independently of this model.
+// These cases prove coordination/resolution, not ArkUI rendering or byte reads.
 const fs = require('node:fs'), vm = require('node:vm'), path = require('node:path');
 const assert = require('node:assert/strict'), { test } = require('node:test');
 const ts = require(process.env.HMOS_TYPESCRIPT || 'C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/build-tools/ets-loader/node_modules/typescript');
@@ -166,4 +167,121 @@ test('valid empty documents render without invented content', async () => {
   const h = harness(); h.coordinator.update('e1', '', true); await h.tick(150);
   assert.equal(h.calls[0].text, ''); h.calls[0].resolve(new h.api.MarkdownDoc()); await settle();
   assert.equal(h.coordinator.phase, 'ready'); assert.deepEqual(plain(h.coordinator.doc), { blocks: [] }); h.coordinator.dispose();
+});
+
+test('attachment paths match independent Dart URI golden results', () => {
+  const { api } = harness();
+  const golden = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/flutter-markdown-uri.json'), 'utf8'));
+  assert.equal(golden.dart, '3.12.0'); assert.equal(golden.cases.length, 26);
+  for (const item of golden.cases) {
+    const asset = Object.assign(new api.MarkdownAttachment(), { id: 'golden-asset', name: item.name ?? '', kind: 'image' });
+    const result = api.resolveMarkdownImage(item.href, [asset]);
+    assert.equal(result.error, item.error, item.href);
+    if (item.error) { assert.equal(result.kind, 'invalid', item.href); assert.equal(result.attachment_id, ''); }
+    else {
+      assert.equal(result.name, item.name, item.href);
+      assert.equal(result.kind, item.name ? 'attachment' : 'not_imported', item.href);
+      assert.equal(result.attachment_id, item.name ? asset.id : '', item.href);
+    }
+  }
+});
+
+test('attachment lookup matches image and GIF name, explicit location, or asset ID', () => {
+  const { api } = harness();
+  const assets = [
+    Object.assign(new api.MarkdownAttachment(), { id: 'asset-1', name: '中文 😀.png', location: 'C:/private/image.png', kind: 'image' }),
+    Object.assign(new api.MarkdownAttachment(), { id: 'asset-gif', name: 'animation.gif', kind: 'gif' }),
+  ];
+  for (const href of ['attachment:%E4%B8%AD%E6%96%87%20%F0%9F%98%80.png',
+    'attachment:C%3A%2Fprivate%2Fimage.png', 'attachment:asset-1']) {
+    const result = api.resolveMarkdownImage(href, assets);
+    assert.equal(result.kind, 'attachment'); assert.equal(result.attachment_id, 'asset-1');
+    assert.equal(result.name, '中文 😀.png'); assert.equal(result.href, href);
+  }
+  assert.equal(api.resolveMarkdownImage('attachment:animation.gif', assets).attachment_id, 'asset-gif');
+});
+
+test('first eligible match follows inventory order without preferring ID over name', () => {
+  const { api } = harness();
+  const assets = [
+    { id: 'file-asset', name: 'shared', location: '', kind: 'file' },
+    { id: 'first-image', name: 'shared', location: '', kind: 'image' },
+    { id: 'shared', name: 'last-image.png', location: '', kind: 'gif' },
+  ];
+  assert.equal(api.resolveMarkdownImage('attachment:shared', assets).attachment_id, 'first-image');
+  assert.equal(api.resolveMarkdownImage('attachment:shared', assets.slice().reverse()).attachment_id, 'shared');
+});
+
+test('numeric tokens are literal names or IDs, never attachment indexes', () => {
+  const { api } = harness();
+  const assets = [{ id: 'first', name: 'one.png', location: '', kind: 'image' }];
+  for (const name of ['0', '1', '-1']) { assert.equal(api.resolveMarkdownImage('attachment:' + name, assets).kind, 'not_imported'); }
+  assets.push({ id: 'numbered', name: '0', location: '', kind: 'image' });
+  assert.equal(api.resolveMarkdownImage('attachment:0', assets).attachment_id, 'numbered');
+});
+
+test('attachment decoding is exact once and case-sensitive without URL form decoding', () => {
+  const { api } = harness();
+  const assets = [{ id: 'literal', name: 'my%20file.png', location: '', kind: 'image' },
+    { id: 'plus', name: 'my+file.png', location: '', kind: 'gif' }];
+  assert.equal(api.resolveMarkdownImage('attachment:my%2520file.png', assets).attachment_id, 'literal');
+  assert.equal(api.resolveMarkdownImage('attachment:my%20file.png', assets).kind, 'not_imported');
+  assert.equal(api.resolveMarkdownImage('attachment:my+file.png?ignored#ignored', assets).attachment_id, 'plus');
+  assert.equal(api.resolveMarkdownImage('attachment:MY+FILE.PNG', assets).kind, 'not_imported');
+});
+
+test('unsupported, missing or malformed attachments cannot become URI or path reads', () => {
+  const { api } = harness();
+  const assets = [{ id: 'file', name: 'image.png', location: '/private/image.png', kind: 'file' },
+    { id: 'video', name: 'movie.mp4', location: '', kind: 'video' },
+    { id: '', name: 'broken.png', location: '', kind: 'image' }];
+  for (const href of ['attachment:image.png', 'attachment:movie.mp4', 'attachment:missing.png',
+    'attachment:broken.png', 'file:///private/image.png', '/private/image.png', 'C:/private/image.png',
+    'data:image/png;base64,AA==', 'mailto:image@example.com', 'javascript:alert(1)']) {
+    const result = api.resolveMarkdownImage(href, assets);
+    assert.equal(result.kind, 'not_imported', href); assert.equal(result.attachment_id, '', href);
+  }
+  for (const href of ['attachment:%FF.png', 'attachment:%ED%A0%80.png', 'attachment://host:bad/image.png']) {
+    const result = api.resolveMarkdownImage(href, assets);
+    assert.equal(result.kind, 'invalid', href); assert.equal(result.attachment_id, '', href);
+  }
+});
+
+test('remote images remain explicit load candidates with a host and no credentials', () => {
+  const { api } = harness();
+  for (const href of ['https://example.com/image.png', 'http://example.com:8080/image.png', 'https://[::1]/image.png']) {
+    const result = api.resolveMarkdownImage(href, []);
+    assert.equal(result.kind, 'remote'); assert.equal(result.attachment_id, ''); assert.equal(result.href, href);
+  }
+  assert.equal(api.resolveMarkdownImage('HTTPS://example.com/image.png', []).href, 'https://example.com/image.png');
+  for (const href of ['https://user:password@example.com/image.png', 'https:///image.png',
+    'https:relative.png', 'http://example.com:bad/image.png', 'http://example.com%40evil.com/image.png',
+    'https://example .com/image.png']) {
+    assert.equal(api.resolveMarkdownImage(href, []).kind, 'invalid', href);
+  }
+});
+
+test('image source collection covers tables and paragraphs without code or duplicate reads', () => {
+  const { api } = harness();
+  const image = (href, text = '') => Object.assign(new api.MarkdownRun(), { href, text, image: true });
+  const paragraph = new api.MarkdownBlock(); paragraph.runs = [image('attachment:one.png', 'first alt'),
+    Object.assign(new api.MarkdownRun(), { href: 'https://example.com/link', text: 'link' }), image('attachment:one.png', 'second alt')];
+  const table = new api.MarkdownBlock(); table.kind = 'table'; table.rows = [{ header: true, cells: [
+    { runs: [image('attachment:two.gif')] }, { runs: [image('https://example.com/remote.png')] }] }];
+  const code = new api.MarkdownBlock(); code.kind = 'code'; code.runs = [image('attachment:code.png')];
+  const doc = new api.MarkdownDoc(); doc.blocks = [paragraph, table, code];
+  const original = plain(doc);
+  assert.deepEqual(plain(api.collectMarkdownImages(doc)), ['attachment:one.png', 'attachment:two.gif', 'https://example.com/remote.png']);
+  assert.deepEqual(plain(doc), original); assert.deepEqual(plain(api.collectMarkdownImages(new api.MarkdownDoc())), []);
+});
+
+test('attachment resolution does not mutate inventory and never exposes a location as an image source', () => {
+  const { api } = harness();
+  const asset = { id: 'verified-id', name: 'image.png', location: 'file://docs/private/image.png', kind: 'image' };
+  const original = plain(asset);
+  const result = api.resolveMarkdownImage('attachment:file%3A%2F%2Fdocs%2Fprivate%2Fimage.png', [asset]);
+  assert.equal(result.kind, 'attachment'); assert.equal(result.attachment_id, 'verified-id');
+  assert.equal(result.href, 'attachment:file%3A%2F%2Fdocs%2Fprivate%2Fimage.png');
+  assert.equal(Object.values(result).includes(asset.location), false); assert.deepEqual(asset, original);
+  result.attachment_id = 'mutated'; assert.equal(asset.id, 'verified-id');
 });
