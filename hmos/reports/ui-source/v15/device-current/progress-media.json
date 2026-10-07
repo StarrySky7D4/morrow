@@ -1,0 +1,12 @@
+{
+  "name": "HMOS-media-20261007-A",
+  "device": "127.0.0.1:5555",
+  "checks": [
+    {
+      "stage": "retain-before-update"
+    },
+    {
+      "stage": "restore-final-package"
+    }
+  ]
+}

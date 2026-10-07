@@ -228,7 +228,7 @@ export struct AttachmentMediaPreview {
         .hitTestBehavior(HitTestMode.Transparent)
     }.width('100%').height('100%').backgroundColor('#66000000')
       .opacity(this.controlsVisible ? 1 : 0).animation({ duration: 300, curve: Curve.EaseInOut })
-      .hitTestBehavior(this.controlsVisible ? HitTestMode.Transparent : HitTestMode.None)
+      .hitTestBehavior(this.controlsVisible ? HitTestMode.Transparent : HitTestMode.BLOCK_DESCENDANTS)
       .id('attachment-media-controls')
   }
 
@@ -253,8 +253,12 @@ export struct AttachmentMediaPreview {
           if (this.loading || ['idle', 'loading', 'closing'].includes(this.view.phase)) {
             LoadingProgress().width(32).height(32).color(this.accent).id('attachment-media-loading')
           }
-          this.GestureZone(this.view.token)
-          this.Controls(this.view.token)
+          // Builder arguments are captured by their event handlers. Rebuild
+          // both layers when the admitted lease replaces the loading token.
+          ForEach([this.view.token], (token: string): void => {
+            this.GestureZone(token)
+            this.Controls(token)
+          }, (token: string): string => token)
           if (this.gestureFeedback.kind && this.gestureFeedback.token === this.view.token) {
             Text(this.feedbackLabel()).fontFamily(this.family).fontSize(13).fontColor(Color.White)
               .textAlign(TextAlign.Center).padding({ left: 18, right: 18, top: 12, bottom: 12 })

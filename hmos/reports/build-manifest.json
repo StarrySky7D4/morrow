@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-10-07T04:26:30.900Z",
+  "createdUtc": "2026-10-07T04:44:10.359Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.15",
+  "hmosVersion": "0.1.0-hmos-dev.16",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 24856916,
-    "sha256": "7347C8A8E2136D33A888BDD606766D788A6729633D7449A4BBA16F9CF8624A4B",
+    "bytes": 24857891,
+    "sha256": "A971227AC2D39730C2228972B513DBAAB4049E1C9E9AAB49397517BFB0208C7C",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "0C761F81977EF02923B9B3948694F1DFF656474586C36A5B4F02C42E180576C6"
+      "sha256": "C018798133C39E3D77470675487740CEC2182CBB1588E404857C80E4C012356B"
     },
     {
       "path": "entry/build-profile.json5",
@@ -1188,7 +1188,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/AttachmentMediaPreview.ets",
-      "sha256": "67448E7E81CD54B34AAF1F115FD496A4AAD94888A6E9CFCD1C03951DA071C724"
+      "sha256": "DB0E2AD65213C06CEE57BDB1F683EAFEB0DEAFBF93D10484D0F5DC0E0C315A27"
     },
     {
       "path": "entry/src/main/ets/model/AttachmentOpen.ets",
@@ -1207,6 +1207,6 @@
       "sha256": "7DE415764EC18953725B8E64EC2BB13F894DDE484FDAB1A15A5AC2913641D43C"
     }
   ],
-  "uiValidation": "reports/ui-source/v15/validation.md",
+  "uiValidation": "reports/ui-source/v16/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

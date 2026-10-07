@@ -1,0 +1,89 @@
+- Dumping layout…
+- Dumping layout…
+- Executing click...
+√ click at (702, 1286)
+- Dumping layout…
+- Dumping layout…
+[
+  {
+    id: 'attachment-preview-dialog',
+    type: 'Stack',
+    text: undefined,
+    bounds: [ 0, 117, 1320, 2148 ],
+    visible: undefined,
+    opacity: undefined,
+    enabled: undefined
+  },
+  {
+    id: 'attachment-audio-canvas',
+    type: 'Column',
+    text: undefined,
+    bounds: [ 582, 945, 739, 1253 ],
+    visible: undefined,
+    opacity: undefined,
+    enabled: undefined
+  },
+  {
+    id: 'attachment-media-gesture-zone',
+    type: 'Stack',
+    text: undefined,
+    bounds: [ 138, 667, 1182, 1531 ],
+    visible: undefined,
+    opacity: undefined,
+    enabled: undefined
+  },
+  {
+    id: 'attachment-media-controls',
+    type: 'Stack',
+    text: undefined,
+    bounds: [ 90, 619, 1230, 1579 ],
+    visible: undefined,
+    opacity: undefined,
+    enabled: undefined
+  },
+  {
+    id: 'attachment-media-toggle',
+    type: 'Button',
+    text: '▷',
+    bounds: [ 588, 1027, 732, 1171 ],
+    visible: undefined,
+    opacity: undefined,
+    enabled: undefined
+  },
+  {
+    id: 'attachment-media-seek',
+    type: 'Slider',
+    text: '0.000000',
+    bounds: [ 138, 1363, 1182, 1447 ],
+    visible: undefined,
+    opacity: undefined,
+    enabled: undefined
+  },
+  {
+    id: 'attachment-media-time',
+    type: 'Text',
+    text: '0:00 / 0:12',
+    bounds: [ 138, 1486, 311, 1528 ],
+    visible: undefined,
+    opacity: undefined,
+    enabled: undefined
+  },
+  {
+    id: 'attachment-media-fullscreen',
+    type: 'Button',
+    text: '全屏',
+    bounds: [ 1013, 1459, 1182, 1555 ],
+    visible: undefined,
+    opacity: undefined,
+    enabled: undefined
+  },
+  {
+    id: 'attachment-preview-close',
+    type: 'Button',
+    text: '关闭预览',
+    bounds: [ 540, 1615, 781, 1735 ],
+    visible: undefined,
+    opacity: undefined,
+    enabled: undefined
+  }
+]

@@ -1,0 +1,40 @@
+- Dumping layout…
+- Dumping layout…
+[
+  {
+    id: 'draft-title',
+    type: 'TextInput',
+    text: 'HMOS-media-20261007-A',
+    bounds: [ 135, 524, 1185, 716 ]
+  },
+  {
+    id: 'draft-asset:asset-draft-import-62a954f711c5144c3f2e333407ecd11f5f1aad374634f95e42a9787a7742ff4f',
+    type: 'Row',
+    text: undefined,
+    bounds: [ 135, 1190, 1185, 1381 ]
+  },
+  {
+    id: 'draft-asset-preview:asset-draft-import-62a954f711c5144c3f2e333407ecd11f5f1aad374634f95e42a9787a7742ff4f',
+    type: 'Button',
+    text: '预览',
+    bounds: [ 621, 1226, 783, 1346 ]
+  },
+  {
+    id: 'draft-asset:asset-draft-import-eaa74272b78711cf088e3953cd54830e6f3e583084dbe34eaafd4798b9ee9e77',
+    type: 'Row',
+    text: undefined,
+    bounds: [ 135, 1408, 1185, 1599 ]
+  },
+  {
+    id: 'draft-asset-preview:asset-draft-import-eaa74272b78711cf088e3953cd54830e6f3e583084dbe34eaafd4798b9ee9e77',
+    type: 'Button',
+    text: '预览',
+    bounds: [ 621, 1444, 783, 1564 ]
+  },
+  {
+    id: 'draft-status',
+    type: 'Text',
+    text: '草稿已保留',
+    bounds: [ 135, 1821, 1185, 1856 ]
+  }
+]

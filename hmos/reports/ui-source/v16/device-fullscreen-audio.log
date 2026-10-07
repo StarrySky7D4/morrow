@@ -1,0 +1,27 @@
+C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:95
+ }catch(error){active.phase='FAILED_OR_UNKNOWN';active.error=error.message;update();throw error;}finally{active=undefined;}
+                                                                                    ^
+
+AssertionError [ERR_ASSERTION]: exact two existing pins
+
+0 !== 2
+
+    at assertFixture (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:59:9)
+    at modal (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:66:72)
+    at C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:116:104
+    at runStage (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:94:16)
+    at Object.fullscreen (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:114:59)
+    at Object.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\media-controls-device-check.cjs:154:95)
+    at Module._compile (node:internal/modules/cjs/loader:1812:14)
+    at Object..js (node:internal/modules/cjs/loader:1943:10)
+    at Module.load (node:internal/modules/cjs/loader:1533:32)
+    at Module._load (node:internal/modules/cjs/loader:1335:12) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: 2,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.14.1

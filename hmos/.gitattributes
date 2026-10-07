@@ -12,3 +12,7 @@ reports/ui-source/v14/bundle-*.json whitespace=cr-at-eol
 reports/ui-source/v14/fixtures/*.pdf binary
 reports/ui-source/v15/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 reports/ui-source/v15/device-baseline/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
+reports/ui-source/v15/device-current/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
+reports/ui-source/v16/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
+reports/ui-source/v16/device-current/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
+reports/ui-source/v16/multiselect-device/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
