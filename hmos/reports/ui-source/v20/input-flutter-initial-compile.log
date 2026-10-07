@@ -1,0 +1,26 @@
+00:00 +0: loading C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/reports/ui-source/v20/input-flutter-reference_test.dart
+../../hmos/reports/ui-source/v20/input-flutter-reference_test.dart:118:20: Error: Undefined name 'debugDefaultTargetPlatformOverride'.
+    final original=debugDefaultTargetPlatformOverride;
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../hmos/reports/ui-source/v20/input-flutter-reference_test.dart:119:5: Error: Setter not found: 'debugDefaultTargetPlatformOverride'.
+    debugDefaultTargetPlatformOverride=TargetPlatform.windows;
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../hmos/reports/ui-source/v20/input-flutter-reference_test.dart:133:17: Error: Setter not found: 'debugDefaultTargetPlatformOverride'.
+    } finally { debugDefaultTargetPlatformOverride=original; }
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+00:00 +0 -1: loading C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/reports/ui-source/v20/input-flutter-reference_test.dart [E]
+  Failed to load "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/reports/ui-source/v20/input-flutter-reference_test.dart":
+  Compilation failed for testPath=C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/reports/ui-source/v20/input-flutter-reference_test.dart: ../../hmos/reports/ui-source/v20/input-flutter-reference_test.dart:118:20: Error: Undefined name 'debugDefaultTargetPlatformOverride'.
+      final original=debugDefaultTargetPlatformOverride;
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  ../../hmos/reports/ui-source/v20/input-flutter-reference_test.dart:119:5: Error: Setter not found: 'debugDefaultTargetPlatformOverride'.
+      debugDefaultTargetPlatformOverride=TargetPlatform.windows;
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  ../../hmos/reports/ui-source/v20/input-flutter-reference_test.dart:133:17: Error: Setter not found: 'debugDefaultTargetPlatformOverride'.
+      } finally { debugDefaultTargetPlatformOverride=original; }
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  .
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/reports/ui-source/v20/input-flutter-reference_test.dart: loading C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/reports/ui-source/v20/input-flutter-reference_test.dart

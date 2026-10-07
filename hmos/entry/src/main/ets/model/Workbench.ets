@@ -11,7 +11,7 @@ export interface CardView {
 export class Command {
   action: string = 'list'; path: string = ''; operation: string = ''; id: string = '';
   source: string = ''; title: string = ''; description: string = ''; hypothesis: string = '';
-  conclusion: string = ''; category: string = ''; stage: string = ''; task_id: string = '';
+  conclusion: string = ''; todos: string = ''; category: string = ''; stage: string = ''; task_id: string = '';
   text: string = ''; flag: boolean = false; now_ms: string = '';
   order: string[] = [];
   section: string = '概览'; filter: string = '全部'; sort: string = '最近添加';

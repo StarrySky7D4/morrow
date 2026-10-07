@@ -1,0 +1,112 @@
+> hvigor [32mFinished :entry:clean... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreBuild... after 103 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 16 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 24 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 4 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 1 ms [39m
+> hvigor WARN: CMake Warning in C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/.cxx/default/default/debug/arm64-v8a/CMakeFiles/CMakeScratch/TryCompile-86tq7u/CMakeLists.txt:
+  The object file directory
+
+    C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/.cxx/default/default/debug/arm64-v8a/CMakeFiles/CMakeScratch/TryCompile-86tq7u/CMakeFiles/cmTC_b55ed.dir/./
+
+  has 228 characters.  The maximum full path to an object file is 250
+  characters (see CMAKE_OBJECT_PATH_MAX).  Object file
+
+    CMakeCXXCompilerABI.cpp.o
+
+  cannot be safely placed under this directory.  The build may not work
+  correctly.
+
+
+
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 1 s 643 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 26 ms [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 84 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessResource... after 3 ms [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 7 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 236 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 2 ms [39m
+> hvigor WARN: When performing compilation for the arm64-v8a architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor WARN: When performing compilation for the x86_64 architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 1 s 244 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 120 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 81 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 7 ms [39m
+> hvigor ERROR: Failed :entry:default@CompileArkTS... 
+> hvigor WARN: 
+1 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/src/main/ets/entryability/CheckpointSmokeAbility.ets:4:64
+ Function may throw exceptions. Special handling is required.
+
+2 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/src/main/ets/pages/EditorTodos.ets:208:48
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+3 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/src/main/ets/model/EditorInputHash.ets:5:34
+ The system capacity of this api 'createMd' is not supported on all devices
+
+4 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/src/main/ets/model/EditorInputHash.ets:5:34
+ Function may throw exceptions. Special handling is required.
+
+5 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/src/main/ets/model/EditorInputHash.ets:6:16
+ The system capacity of this api 'update' is not supported on all devices
+
+6 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/src/main/ets/model/EditorInputHash.ets:6:16
+ Function may throw exceptions. Special handling is required.
+
+7 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/src/main/ets/model/EditorInputHash.ets:7:31
+ The system capacity of this api 'digest' is not supported on all devices
+
+8 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/src/main/ets/model/EditorInputHash.ets:7:31
+ Function may throw exceptions. Special handling is required.
+
+> hvigor ERROR: ArkTS Compiler Error
+1 ERROR: 10505001 ArkTS Compiler Error
+Error Message: Property 'enabled' in type 'EditorTodos' is not assignable to the same property in base type 'CustomComponent'.
+  Type 'boolean' is not assignable to type '(value: boolean) => CommonAttribute'. At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/src/main/ets/pages/EditorTodos.ets:18:39
+
+
+2 ERROR: 10505001 ArkTS Compiler Error
+Error Message: Property 'onFocus' in type 'EditorTodos' is not assignable to the same property in base type 'CustomComponent'.
+  Type '(owner: string, row: string) => void' is not assignable to type '(event: () => void) => CommonAttribute'. At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/src/main/ets/pages/EditorTodos.ets:34:3
+
+
+3 ERROR: 10505001 ArkTS Compiler Error
+Error Message: Property 'enabled' in type 'EditorTodoRowInput' is not assignable to the same property in base type 'CustomComponent'.
+  Type 'boolean' is not assignable to type '(value: boolean) => CommonAttribute'. At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/dev20-2026-10-07T08-06-46-808Z/entry/src/main/ets/pages/EditorTodos.ets:197:9
+
+
+COMPILE RESULT:FAIL {ERROR:4 WARN:8}
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+
+[31m
+FAILURE: Build completed with 1 failure.[31m[39m
+[31m
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task 'default@CompileArkTS'.
+  > Compilation error. See log for more details
+
+[31m* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+[31m[39m
+[31m================================================================================[31m[39m
+> hvigor ERROR: BUILD FAILED in 9 s 740 ms 
+
+26 tasks in total: 26 executed, 0 up-to-date

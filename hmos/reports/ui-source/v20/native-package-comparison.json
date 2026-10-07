@@ -1,0 +1,44 @@
+{
+  "native_entries": [
+    {
+      "prior_bytes": 10314456,
+      "byte_equal": false,
+      "path": "libs/arm64-v8a/libmorrow.so",
+      "bytes": 10343720,
+      "prior_sha256": "79D8D093E4D3DCD2237DA1B203814FF11EECB29F13CAED4F8669388B69719745",
+      "sha256": "81D69EFE55009CDADA07FC06F3F319A0B983AF0DABAF27DDF9A7C200D5564BA0"
+    },
+    {
+      "prior_bytes": 1262504,
+      "byte_equal": true,
+      "path": "libs/arm64-v8a/libc++_shared.so",
+      "bytes": 1262504,
+      "prior_sha256": "F69947AF100B652E349AE51E4A4888BCC7A327DB9085272D318176EF1782BF0F",
+      "sha256": "F69947AF100B652E349AE51E4A4888BCC7A327DB9085272D318176EF1782BF0F"
+    },
+    {
+      "prior_bytes": 10762520,
+      "byte_equal": false,
+      "path": "libs/x86_64/libmorrow.so",
+      "bytes": 10794712,
+      "prior_sha256": "DD615F9B575ACB1BD12516246E57F0CC83FE36180F67EB227B549ACFEA7BBA3E",
+      "sha256": "8B969960103A9461253877F7B41F4DCB7229173AC96B98463A665457E8EC6760"
+    },
+    {
+      "prior_bytes": 1294904,
+      "byte_equal": true,
+      "path": "libs/x86_64/libc++_shared.so",
+      "bytes": 1294904,
+      "prior_sha256": "09B9E3A97D3C01260B5E269E2CE15FE4D3B7C787B99DC4378295D4F35E2FA006",
+      "sha256": "09B9E3A97D3C01260B5E269E2CE15FE4D3B7C787B99DC4378295D4F35E2FA006"
+    }
+  ],
+  "result": "PASS",
+  "captured_utc": "2026-10-07T08:13:41.6922195Z",
+  "scope": "All four native ZIP entries fully decompressed and SHA/length checked; both product libraries match SDK stripped packaging files and differ from published dev19; libc++ entries unchanged. Unreleased dev20 source checkpoint; manifest version remains dev19. No installation or device claim.",
+  "artifact": "hmos/.build/artifacts/dev20-source-checkpoint-final/entry-default-unsigned.hap",
+  "bytes": 28225993,
+  "prior_artifact": "hmos/.build/artifacts/dev19/entry-default-unsigned.hap",
+  "version": "0.1.0-hmos-dev.19",
+  "sha256": "36151E624FD61297436E979F9AA54D0682CDA8DF9B9F02F162AA0EF4CC07C3C5"
+}

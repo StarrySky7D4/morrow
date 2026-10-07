@@ -1,0 +1,1 @@
+{"characters_version":"1.4.1","unicode_version":"16.0.0","target_platform":"windows","enforcement":"enforced","records":297,"complete_value_matches_within_wire":285,"explicit_native_request_reply_budget_differences":12,"gate":"EditableText textChanged || textCommitted"}

@@ -1,0 +1,1 @@
+{"result":"PASS","version":"0.1.0-hmos-dev.19","inputs":313,"artifact":{"path":"entry/build/default/outputs/default/entry-default-unsigned.hap","archive_path":".build/artifacts/dev20-source-checkpoint-final/entry-default-unsigned.hap","bytes":28225993,"sha256":"36151E624FD61297436E979F9AA54D0682CDA8DF9B9F02F162AA0EF4CC07C3C5","signed":false,"installed":false}}

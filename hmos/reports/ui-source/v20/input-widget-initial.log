@@ -1,0 +1,49 @@
+00:00 +0: loading C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/reports/ui-source/v20/input-flutter-reference_test.dart
+00:00 +0: actual installed Flutter complete Windows formatter values and todo row chain
+Actual Flutter complete editing capture: 294 identities; 282 within wire / 12 explicit wire differences.
+00:01 +1: actual EditableText Windows gate preserves raw selection and noncommit composition
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: {
+            'text': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+            'selection_base': 3,
+            'selection_extent': 1,
+            'affinity': 0,
+            'directional': true,
+            'composing_start': 2,
+            'composing_end': 4
+          }
+  Actual: {
+            'text': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+            'selection_base': 3,
+            'selection_extent': 1,
+            'affinity': 0,
+            'directional': true,
+            'composing_start': -1,
+            'composing_end': -1
+          }
+   Which: at location ['composing_start'] is <-1> instead of <2>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/reports/ui-source/v20/input-flutter-reference_test.dart:131:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/reports/ui-source/v20/input-flutter-reference_test.dart line 131
+The test description was:
+  actual EditableText Windows gate preserves raw selection and noncommit composition
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +1 -1: actual EditableText Windows gate preserves raw selection and noncommit composition [E]
+  Test failed. See exception logs above.
+  The test description was: actual EditableText Windows gate preserves raw selection and noncommit composition
+  
+00:01 +1 -1: Some tests failed.
+
+Failing tests:
+  C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/reports/ui-source/v20/input-flutter-reference_test.dart: actual EditableText Windows gate preserves raw selection and noncommit composition

@@ -1,0 +1,70 @@
+> hvigor [32mFinished :entry:clean... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreBuild... after 95 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 13 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 23 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 24 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 4 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 5 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 2 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 1 s 337 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 22 ms [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 89 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessResource... after 4 ms [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 15 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 232 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 2 ms [39m
+> hvigor WARN: When performing compilation for the x86_64 architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor WARN: When performing compilation for the arm64-v8a architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 874 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 293 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 109 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 16 ms [39m
+> hvigor WARN: WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/a2/entry/src/main/ets/entryability/CheckpointSmokeAbility.ets:4:64
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/a2/entry/src/main/ets/pages/EditorTodos.ets:208:48
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/a2/entry/src/main/ets/model/EditorInputHash.ets:5:34
+ The system capacity of this api 'createMd' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/a2/entry/src/main/ets/model/EditorInputHash.ets:5:34
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/a2/entry/src/main/ets/model/EditorInputHash.ets:6:16
+ The system capacity of this api 'update' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/a2/entry/src/main/ets/model/EditorInputHash.ets:6:16
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/a2/entry/src/main/ets/model/EditorInputHash.ets:7:31
+ The system capacity of this api 'digest' is not supported on all devices
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/a2/entry/src/main/ets/model/EditorInputHash.ets:7:31
+ Function may throw exceptions. Special handling is required.
+
+
+> hvigor [32mFinished :entry:default@CompileArkTS... after 4 s 144 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgModuleJson... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessCompiledResources... after 1 ms [39m
+> hvigor [32mFinished :entry:default@PackageHap... after 414 ms [39m
+> hvigor [32mFinished :entry:default@PackingCheck... after 6 ms [39m
+> hvigor WARN: Will skip sign 'hos_hap'. No signingConfigs profile is configured in current project.
+             If needed, configure the signingConfigs in C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\.build\checkpoint-sdk-smoke\a2\build-profile.json5.
+> hvigor [32mFinished :entry:default@SignHap... after 3 ms [39m
+> hvigor [32mFinished :entry:default@CollectDebugSymbol... after 2 ms [39m
+> hvigor [32mFinished :entry:assembleHap... after 1 ms [39m
+> hvigor [32mBUILD SUCCESSFUL in 10 s 754 ms [39m
+
+34 tasks in total: 34 executed, 0 up-to-date

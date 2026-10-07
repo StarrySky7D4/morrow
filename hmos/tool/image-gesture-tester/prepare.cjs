@@ -19,7 +19,7 @@ function prepare(destination) {
     targets: [{ name: 'default' }, { name: 'ohosTest' }] });
   json('entry/oh-package.json5', { name: 'entry', version: '1.0.0', description: 'Non-launching UITest runner', dependencies: {} });
   json('AppScope/app.json5', { app: { bundleName: 'dev.morrow.hmos.gesturetester', vendor: 'Morrow Test',
-    versionCode: 190001, versionName: '0.1.0-image-tester.19', icon: '$media:probe_icon', label: '$string:app_name' } });
+    versionCode: 200001, versionName: '0.1.0-image-tester.20', icon: '$media:probe_icon', label: '$string:app_name' } });
   json('AppScope/resources/base/element/string.json', { string: [{ name: 'app_name', value: 'Morrow Gesture Tester' }] });
   files['AppScope/resources/base/media/probe_icon.svg'] = '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="12" fill="#7662BA"/><circle cx="23" cy="32" r="7" fill="white"/><circle cx="41" cy="32" r="7" fill="white"/></svg>\n';
   json('entry/src/main/module.json5', { module: { name: 'entry', type: 'entry', description: '$string:module_desc',

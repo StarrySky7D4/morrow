@@ -26,6 +26,8 @@ pub mod editor_draft_staging;
 pub mod file_stream;
 pub mod clipboard;
 pub mod editor_field;
+pub mod editor_input;
+mod create_todos;
 pub mod markdown;
 pub mod query_plan_v2;
 
@@ -48,6 +50,7 @@ pub struct Request {
     description: String,
     hypothesis: String,
     conclusion: String,
+    todos: String,
     category: String,
     stage: String,
     task_id: String,
@@ -141,7 +144,8 @@ impl Engine {
         let values = &selected.values;
         if values.title.as_ref().is_none_or(|v| v.text != request.title) || values.description.as_ref().is_none_or(|v| v.text != request.description) ||
             values.hypothesis.as_ref().is_none_or(|v| v.text != request.hypothesis) || values.conclusion.as_ref().is_none_or(|v| v.text != request.conclusion) ||
-            request.action == "create" && (values.category != request.category || values.stage != request.stage) {
+            request.action == "create" && (values.category != request.category || values.stage != request.stage ||
+                values.todos.as_ref().is_none_or(|v| v.text != request.todos)) {
             return Err("DraftPublicationValuesMismatch".into());
         }
         Ok(Some(selected))
@@ -532,6 +536,7 @@ impl Engine {
                     {
                         return Err("DevelopmentCardLimit".into());
                     }
+                    let todos = create_todos::prepare(&r.id, &r.operation, &r.todos)?;
                     let p = tasks_v2::Properties {
                         version: 2,
                         description: r.description.clone(),
@@ -539,14 +544,16 @@ impl Engine {
                         stage: r.stage.clone(),
                         hypothesis: r.hypothesis.clone(),
                         conclusion: r.conclusion.clone(),
+                        tasks: todos.tasks.clone(),
                         ..Default::default()
                     };
                     let published = self.published_assets(&r)?;
-                    let body = if let Some(ref selected) = published {
+                    let mut body = if let Some(ref selected) = published {
                         cards_v2::apply(&r.id, &r.title, &p.encode_to_vec(), &cards_v2::Command::Edit(cards_v2::Fields {
                             title: r.title.clone(), description: r.description.clone(), hypothesis: r.hypothesis.clone(), conclusion: r.conclusion.clone(), icon: p.icon as u16, color: p.color, assets: selected.assets.clone(),
                         })).map_err(err)?.properties
                     } else { p.encode_to_vec() };
+                    todos.append_raw_identity(&mut body);
                     tasks_v2::decode(&r.id, &r.title, &body).map_err(err)?;
                     let card = CardRecord::new_with_attachments(&r.id, "idea", 2, &r.title, body, &published.map(|p| p.attachments).unwrap_or_default()).map_err(err)?;
                     self.host
@@ -563,6 +570,11 @@ impl Engine {
                         self.host
                             .create_content(&connection, &r.operation, &card, clock);
                     return self.commit_result(committed);
+                }
+                // Format-2 tasks are edited by TaskId commands, never by a
+                // legacy newline editor projection over existing properties.
+                if r.action == "edit" && !r.todos.is_empty() {
+                    return Err("V2EditorTodosUnsupported".into());
                 }
                 let source = unhex(&r.source)?;
                 let card = CardRecord::decode(&source).map_err(err)?;
@@ -812,6 +824,21 @@ pub unsafe extern "C" fn morrow_hmos_editor_field(input: *const c_char) -> *mut 
         }
     };
     CString::new(serde_json::to_string(&reply).expect("bounded field reply"))
+        .expect("JSON has no raw NUL").into_raw()
+}
+/// Read-only complete editing proposal. Caller must still own the exact raw
+/// input/IME epoch before adopting it; this never grants business-save rights.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn morrow_hmos_editor_input(input: *const c_char) -> *mut c_char {
+    let reply = if input.is_null() {
+        editor_input::Reply::failure("", "", 0, "EditorInputNullRequest", "")
+    } else {
+        match unsafe { CStr::from_ptr(input) }.to_str() {
+            Ok(input) => editor_input::request(input),
+            Err(_) => editor_input::Reply::failure("", "", 0, "EditorInputInvalidUtf8", ""),
+        }
+    };
+    CString::new(serde_json::to_string(&reply).expect("bounded input reply"))
         .expect("JSON has no raw NUL").into_raw()
 }
 #[unsafe(no_mangle)]

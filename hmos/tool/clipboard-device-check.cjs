@@ -9,7 +9,8 @@ process.env.HMOS_EXPECTED_HAP_SHA256 ||= 'D9DECC46BB0E953BB56A4CDC5DBBB71D0B863E
 assert.equal(process.env.HMOS_DEVICE, '127.0.0.1:5555');
 const m = require('./media-controls-device-check.cjs'), binding = require('./multiselect-device-check.cjs');
 const out = process.env.HMOS_REPORT_DIR, hdc = 'C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/toolchains/hdc.exe';
-const fixture = 'HMOS-clipboard-20261007-C', journal = path.join(out, 'progress-clipboard.json');
+const fixture = process.env.HMOS_CLIPBOARD_FIXTURE || 'HMOS-clipboard-20261007-C', journal = path.join(out, 'progress-clipboard.json');
+assert.ok(fixture.startsWith('HMOS-') && fixture.length <= 4096 && !/[\r\n\0]/.test(fixture), 'explicit own fixture identity');
 let active, serial = 0;
 const wait = ms => { assert.ok(ms >= 0 && ms <= 3000); Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms); };
 const flat = tree => m.f.d.flatten(tree);

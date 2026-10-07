@@ -1,0 +1,30 @@
+✔ install plan hashes exact standalone artifact manifests and prints only independent install commands (3.115ms)
+✔ even a hash-matched product bundle disguised as tester filename is refused (1.5799ms)
+✔ install plans fail before execution for changed bytes, omitted hashes, guessed device and unsafe staging label (1.9726ms)
+✔ probe command uses freshly supplied identity/version/bounds and actual ETS multipointer plan (205.1318ms)
+✔ probe printer rejects missing live expectations and observe never prepares input matrix (0.2643ms)
+✔ collected report inspection records hashes/percent scope without claiming pixel displacement or private token identity (4.9518ms)
+✔ unknown input remains unknown during readonly inspection and never creates a retry command (3.4498ms)
+✔ collected success requires matching typed observations, complete artifacts and positive injection acknowledgement (17.0648ms)
+✔ actual trace generator supplies complete independent 2x9 paths inside observed px canvas (1.6272ms)
+✔ actual two-finger pure pan preserves separation while moving the focal center (0.1439ms)
+✔ invalid bounds, unknown operations and nonpercentage accessibility labels fail closed (0.4749ms)
+✔ actual runner submits one true multipointer matrix and records screenshot-only visual scope (52.878ms)
+✔ actual readonly observe never injects a gesture or clicks reset (27.6298ms)
+✔ actual fixture name, focused foreground window, product version and supplied bounds gate input before a matrix is sent (115.4446ms)
+✔ actual failed native injection remains unknown, preserves input intent and never retries (19.8003ms)
+✔ actual repeated label, stopped runner and unprepared zoom cannot replay input (45.8845ms)
+✔ command printer validates exact fixture/bounds/version and never runs device commands (1.1287ms)
+✔ independent project preparation blocks paths outside its owned work directory (1.066ms)
+✔ actual runner requires enabled decoded-image admission and exact image description before gesture (72.7008ms)
+✔ actual final foreground checks revoke injection when another app becomes focused during observation (41.6659ms)
+✔ pure two-finger pan remains pixel-exact for irregular fresh canvas sizes (3.6858ms)
+✔ independent reverse pan stages provide an actual opposite trace for post-boundary visual review (0.2605ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 662.5007

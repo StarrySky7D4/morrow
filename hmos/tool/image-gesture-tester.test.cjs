@@ -16,19 +16,23 @@ const config = () => ({ operation: 'pinch-out', runLabel: 'mock-owned-image', ex
 const plain = value => JSON.parse(JSON.stringify(value));
 function fixture(overrides = {}) {
   const state = { parameters: config(), zoom: 100, version: 1000018, bounds: { ...bounds }, injectionResult: true,
-    calls: [], journal: new Map(), directories: new Set(), finish: undefined, focused: true, active: true, ...overrides };
+    calls: [], journal: new Map(), directories: new Set(), finish: undefined, focused: true, active: true,
+    zoomEnabled: true, loadingMarkers: [], imageDescription: 'own-image.png', windowReads: 0, ...overrides };
   const queries = { id(value) { return { id: value, inWindow(bundle) { this.bundle = bundle; return this; } }; },
     text(value) { return { text: value, inWindow(bundle) { this.bundle = bundle; return this; }, withinComponent(value) { this.modal = value; return this; } }; } };
   const component = (id) => ({ id, async getOriginalText() { return id === 'draft-title' ? 'own-fixture' : state.zoom + '%'; },
-    async getDescription() { return 'own-image.png'; }, async getBounds() { return { ...state.bounds }; } });
+    async getDescription() { return state.imageDescription; }, async isEnabled() { return state.zoomEnabled; },
+    async getBounds() { return { ...state.bounds }; } });
   const driver = {
     async findWindow(filter) {
       assert.equal(filter.bundleName, 'dev.morrow.hmos');
+      state.windowReads++; if (state.focusLostAt && state.windowReads >= state.focusLostAt) state.focused = false;
       return { async getBundleName() { return 'dev.morrow.hmos'; }, async isFocused() { return state.focused; }, async isActive() { return state.active; } };
     },
     async findComponents(query) {
       assert.equal(query.bundle, 'dev.morrow.hmos');
       if (query.text) return query.text === 'own-image.png' ? [component('modal-name')] : [];
+      if (/^attachment-image-(read|decode)-(loading|failure)$/.test(query.id)) return state.loadingMarkers.includes(query.id) ? [component(query.id)] : [];
       return [component(query.id)];
     },
     async screenCap(file) { state.calls.push(['screenCap', file]); return true; },
@@ -59,7 +63,7 @@ function fixture(overrides = {}) {
 }
 
 test('actual trace generator supplies complete independent 2x9 paths inside observed px canvas', () => {
-  for (const operation of ['pinch-out', 'pinch-in', 'pinch-moving-focal', 'pan-two', 'boundary-pan-two']) {
+  for (const operation of ['pinch-out', 'pinch-in', 'pinch-moving-focal', 'pan-two', 'pan-reverse-two', 'boundary-pan-two']) {
     const plan = plans.imagePointerPlan(operation, bounds); assert.equal(plan.fingers, 2); assert.equal(plan.steps, 9);
     for (const finger of plan.points) {
       assert.equal(finger.length, 9); for (const point of finger) {
@@ -72,7 +76,7 @@ test('actual trace generator supplies complete independent 2x9 paths inside obse
 });
 test('actual two-finger pure pan preserves separation while moving the focal center', () => {
   const plan = plans.imagePointerPlan('pan-two', bounds), startGap = plan.points[1][0].x - plan.points[0][0].x;
-  for (let step = 1; step < plan.steps; step++) assert.ok(Math.abs(plan.points[1][step].x - plan.points[0][step].x - startGap) <= 1);
+  for (let step = 1; step < plan.steps; step++) assert.equal(plan.points[1][step].x - plan.points[0][step].x, startGap);
   assert.ok(plan.points[0].at(-1).x > plan.points[0][0].x); assert.ok(plan.points[0].at(-1).y > plan.points[0][0].y);
 });
 test('invalid bounds, unknown operations and nonpercentage accessibility labels fail closed', () => {
@@ -125,4 +129,37 @@ test('command printer validates exact fixture/bounds/version and never runs devi
 test('independent project preparation blocks paths outside its owned work directory', () => {
   const { prepare } = require('./image-gesture-tester/prepare.cjs');
   assert.throws(() => prepare(path.join(__dirname, '..', 'entry'))); assert.throws(() => prepare(path.join(directory, 'work')));
+});
+test('actual runner requires enabled decoded-image admission and exact image description before gesture', async () => {
+  for (const override of [{ zoomEnabled: false }, { loadingMarkers: ['attachment-image-decode-loading'] },
+    { loadingMarkers: ['attachment-image-decode-failure'] }, { imageDescription: 'foreign-image.png' }]) {
+    const f = fixture(override), result = await f.run(); assert.equal(result.code, 1);
+    assert.equal(f.state.calls.filter(c => c[0] === 'multiPointer').length, 0);
+  }
+  const readonly = fixture({ zoomEnabled: false, loadingMarkers: ['attachment-image-decode-loading'], parameters: { ...config(), operation: 'observe' } });
+  const result = await readonly.run(); assert.equal(result.report.before.imageReadiness, 'UI_NOT_READY'); assert.equal(result.report.status, 'READONLY_OBSERVED');
+});
+test('actual final foreground checks revoke injection when another app becomes focused during observation', async () => {
+  for (const focusLostAt of [2, 4, 5]) {
+    const f = fixture({ focusLostAt }), result = await f.run(); assert.equal(result.code, 1);
+    assert.equal(f.state.calls.filter(c => c[0] === 'multiPointer').length, 0);
+  }
+});
+test('pure two-finger pan remains pixel-exact for irregular fresh canvas sizes', () => {
+  for (let width = 120; width <= 2200; width += 13) {
+    for (const operation of ['pan-two', 'pan-reverse-two', 'boundary-pan-two']) {
+      const plan = plans.imagePointerPlan(operation, { left: 19, top: 71, right: 19 + width, bottom: 572 });
+      const dx = plan.points[1][0].x - plan.points[0][0].x, dy = plan.points[1][0].y - plan.points[0][0].y;
+      for (let step = 0; step < plan.steps; step++) {
+        assert.equal(plan.points[1][step].x - plan.points[0][step].x, dx); assert.equal(plan.points[1][step].y - plan.points[0][step].y, dy);
+      }
+    }
+  }
+});
+test('independent reverse pan stages provide an actual opposite trace for post-boundary visual review', () => {
+  for (const operation of ['pan-reverse-one', 'pan-reverse-two']) {
+    const plan = plans.imagePointerPlan(operation, bounds);
+    for (const finger of plan.points) { assert.ok(finger.at(-1).x < finger[0].x); assert.ok(finger.at(-1).y < finger[0].y); }
+    const { command } = require('./image-gesture-tester/command.cjs'); assert.equal(command({ ...config(), operation }).operation, operation);
+  }
 });

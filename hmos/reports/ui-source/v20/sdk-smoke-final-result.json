@@ -1,0 +1,17 @@
+{
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\checkpoint-sdk-smoke\\a2",
+  "bundle_name": "dev.morrow.hmos.checkpointsdk",
+  "api": "26.0.0",
+  "daemon": false,
+  "exit_code": 0,
+  "artifacts": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\checkpoint-sdk-smoke\\a2\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "bytes": 26464308,
+      "sha256": "B28AF8BF91FDE3A990205830F4605901318C6FAB4DFF6682EDB7BB0D329EB480"
+    }
+  ],
+  "device": "NOT_RUN",
+  "installation": "NOT_RUN",
+  "qualification": "Independent SDK compile only"
+}

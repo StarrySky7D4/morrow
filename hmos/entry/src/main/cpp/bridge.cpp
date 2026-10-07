@@ -17,6 +17,7 @@
 
 extern "C" char *morrow_hmos_request(const char *);
 extern "C" char *morrow_hmos_editor_field(const char *);
+extern "C" char *morrow_hmos_editor_input(const char *);
 // Each Rust entry point consumes every owned FD even when validation or I/O
 // fails. Caller FDs are synchronously duplicated before NAPI returns.
 extern "C" char *morrow_hmos_import(const char *, int owned_fd);
@@ -55,7 +56,7 @@ bool ReadField(napi_env env, napi_value value, std::string &result) {
     return Read(env, value, result);
 }
 napi_value Undefined(napi_env env) { napi_value v; napi_get_undefined(env, &v); return v; }
-enum class Operation { Request, EditorField, Import, Export, Prepare, ClipboardConvert, ClipboardImage };
+enum class Operation { Request, EditorField, EditorInput, Import, Export, Prepare, ClipboardConvert, ClipboardImage };
 struct Work {
     napi_async_work work{};
     napi_deferred deferred{};
@@ -105,6 +106,7 @@ void Execute(napi_env, void *data) {
     switch (w->operation) {
         case Operation::Request: reply = morrow_hmos_request(w->request.c_str()); break;
         case Operation::EditorField: reply = morrow_hmos_editor_field(w->request.c_str()); break;
+        case Operation::EditorInput: reply = morrow_hmos_editor_input(w->request.c_str()); break;
         case Operation::Import: reply = morrow_hmos_import(w->request.c_str(), std::exchange(w->source_fd, -1)); break;
         case Operation::Export: reply = morrow_hmos_export(w->request.c_str(), std::exchange(w->source_fd, -1)); break;
         case Operation::ClipboardConvert: reply = morrow_hmos_clipboard_convert(w->request.c_str(), std::exchange(w->source_fd, -1)); break;
@@ -167,6 +169,17 @@ napi_value EditorField(napi_env env, napi_callback_info info) {
     auto work = std::make_unique<Work>(); work->operation = Operation::EditorField;
     if (argc != 1 || !ReadField(env, argv[0], work->request)) {
         napi_throw_type_error(env, "NATIVE_NOT_STARTED", "Expected bounded scalar-valid editor field JSON"); return nullptr;
+    }
+    return Queue(env, std::move(work));
+}
+napi_value EditorInput(napi_env env, napi_callback_info info) {
+    size_t argc = 2; napi_value argv[2];
+    if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok) {
+        napi_throw_type_error(env, "NATIVE_NOT_STARTED", "Cannot read editor input arguments"); return nullptr;
+    }
+    auto work = std::make_unique<Work>(); work->operation = Operation::EditorInput;
+    if (argc != 1 || !ReadField(env, argv[0], work->request)) {
+        napi_throw_type_error(env, "NATIVE_NOT_STARTED", "Expected bounded scalar-valid editing JSON"); return nullptr;
     }
     return Queue(env, std::move(work));
 }
@@ -285,6 +298,7 @@ napi_value Init(napi_env env, napi_value exports) {
     napi_property_descriptor methods[] = {
         {"request",nullptr,Request,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"editorField",nullptr,EditorField,nullptr,nullptr,nullptr,napi_default,nullptr},
+        {"editorInput",nullptr,EditorInput,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"importFile",nullptr,ImportFile,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"exportFile",nullptr,ExportFile,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"prepareFile",nullptr,PrepareFile,nullptr,nullptr,nullptr,napi_default,nullptr},

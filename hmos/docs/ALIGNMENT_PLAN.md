@@ -2,6 +2,8 @@
 
 目标：持续跟进 `01a085bd-7a94-7f93-8a1f-1ecf417f5ee3`，直至 HMOS 追平 Windows 侧 UI 与大部分实现。独立 `hmos/` 工程、Rust 复用、ArkUI/NDK 路线不变；只推送 `codex/ArkTsUI`，不合并主线。
 
+2026-10-07 当前交付为 [dev20源码检查点](../reports/ui-source/v20/checkpoint-status.md)：完整输入formatter、多行待办模型/组件、新卡待办原子事务与限定测试已实现；Index尚未采用新UI，版本号仍dev19。完整模型617项、Rust123项及实际Flutter/Dart对照通过，产品构建与隔离组件编译分别记录于 [当前验证](../reports/ui-source/v20/validation.md)。新检查点包未安装；既有dev19包的安装/旧草稿恢复单列，不能替代新UI验收。完整目标仍 **OPEN**，以下记录保留原交付时事实。
+
 2026-10-07 dev.19：字段按真实 Flutter `characters 1.4.1 / Unicode 16.0.0` 的 grapheme 规则计数，标题/传入待办字段/假设/结论/正文上限分别为 **60/1000/5000/10000/20000**。当前UI的待办字段仅为待添加单条输入，未复现Flutter全部已有行与待添加行的聚合1000和行间选区模型。粘贴先异步检查选区替换后的完整未来文字，再导入原件；确认 pin 后用实际资产引用重检，失败保留已确认附件。移除编辑控件的 UTF-16 `maxLength`，显示异步计数，超限完整输入保留；raw journal/IME 沿用既有结构与字节预算，业务保存和粘贴拒绝活跃 composing 或超限。待办重命名成功回执仅在原 owner、epoch 和完整输入一致且无 composition 时关闭编辑器，迟到候选继续保留。真实 Flutter 的 **1,198 组完整对照 PASS**，完整实际 ETS 模型 **535/535 PASS**，Rust **106 PASS**，三项默认条件 ignored 已单独 fresh 比较通过。最终 **0.1.0-hmos-dev.19 /1000019** 的 API26 未签名 debug HAP **SUCCESS /11.302s**，**28,164,478 字节**，SHA-256 `F7A913980CF3213536820727A677EEC04EA169FE2B65CE16E305F352D14BE4EC`；见 [dev.19 验证记录](../reports/ui-source/v19/validation.md)。**dev.19/dev.18 均未安装，当前设备仍 dev.17，新包设备验收 NOT_RUN**。完整 Windows/Flutter 对齐目标仍 **OPEN**。
 
 dev.19 已改正旧 dev.18 字段按 UTF-16 计数的误限，并将待添加单条待办输入从500提高到1000；Flutter多行待办聚合和行间选区模型仍未齐。富转换输出也按 Unicode16 grapheme 检查。完整 worker/转换输出/序列化及共享业务字节预算仍独立生效，不保证 20,000 grapheme 一定可保存。直接输入保留超限，与实际 Flutter 默认 formatter 的自动截短行为存在明确差异；系统 IME、选区 affinity 和全篇连续选择仍未齐。独立 API26 双指测试工具已构建 main/test HAP，10 项工具模型通过，但未安装、未注入实际设备手势；不能计作图片手势验收，见 [字段审计](../reports/ui-source/v19/editor-field-policy-source-audit.md)与 [双指测试工具审计](../reports/ui-source/v19/image-multipointer-tester-audit.md)。

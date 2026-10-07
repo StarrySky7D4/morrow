@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.21s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 1 test
+Actual Flutter complete-value matches: 282; separately explicit native wire-budget differences: 12
+test editor_input::tests::actual_flutter_complete_windows_edit_values_match ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 117 filtered out; finished in 5.07s
+

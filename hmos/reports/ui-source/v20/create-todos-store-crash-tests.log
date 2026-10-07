@@ -1,0 +1,11 @@
+   Compiling morrow-core v0.1.9-test.50 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\shared\core)
+   Compiling morrow-editor-draft-model v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust\editor-draft-model)
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.57s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-5dc4350283be0464.exe)
+
+running 1 test
+test create_todos::tests::actual_store_process_loss_is_all_or_nothing_and_reconciles_the_same_create ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 128 filtered out; finished in 1.68s
+

@@ -1,5 +1,5 @@
 const fs = require('node:fs');
-const operations = new Set(['observe', 'pinch-out', 'pinch-in', 'pinch-moving-focal', 'pan-one', 'pan-two', 'boundary-pan-two', 'double-tap-reset']);
+const operations = new Set(['observe', 'pinch-out', 'pinch-in', 'pinch-moving-focal', 'pan-one', 'pan-two', 'pan-reverse-one', 'pan-reverse-two', 'boundary-pan-two', 'double-tap-reset']);
 function command(config) {
   if (!operations.has(config.operation)) throw new Error('Unknown probe operation');
   if (!/^[A-Za-z0-9_-]{1,80}$/.test(config.runLabel || '')) throw new Error('A fresh runLabel is mandatory');

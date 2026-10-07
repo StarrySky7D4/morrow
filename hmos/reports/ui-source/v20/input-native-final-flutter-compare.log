@@ -1,0 +1,13 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.98s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 4 tests
+test clipboard::tests::actual_flutter_reference_outputs_match_five_complete_fixtures ... ok
+test editor_field::tests::actual_flutter_characters_corpus_and_complete_field_boundaries_match ... ok
+Actual Flutter complete-value matches: 282; separately explicit native wire-budget differences: 12
+test editor_input::tests::actual_flutter_complete_windows_edit_values_match ... ok
+test clipboard::tests::actual_flutter_source_capacity_matches_six_complete_boundary_identities ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 114 filtered out; finished in 7.07s
+

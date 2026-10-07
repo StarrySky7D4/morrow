@@ -1,0 +1,10 @@
+{
+  "phase": "INTENT",
+  "no_reset": true,
+  "device": "127.0.0.1:5555",
+  "archive": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev19\\entry-default-unsigned.hap",
+  "sha256": "F7A913980CF3213536820727A677EEC04EA169FE2B65CE16E305F352D14BE4EC",
+  "at": "2026-10-07T07:36:13.3812488Z",
+  "version": "0.1.0-hmos-dev.19",
+  "preceding_editor_closed": "dev20-retain-c-before-upgrade PASS"
+}

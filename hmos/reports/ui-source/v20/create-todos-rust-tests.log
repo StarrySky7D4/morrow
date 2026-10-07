@@ -1,0 +1,21 @@
+   Compiling morrow-core v0.1.9-test.50 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\shared\core)
+   Compiling morrow-editor-draft-model v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust\editor-draft-model)
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.49s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 11 tests
+test create_todos::tests::actual_dart_vm_complete_normalization_outputs_match ... ignored, requires a fresh actual Dart VM normalization capture
+test create_todos::tests::actual_store_process_loss_is_all_or_nothing_and_reconciles_the_same_create ... ignored, requires explicit morrow-core/fault-injection; subprocess loss-of-outcome qualification
+test create_todos::tests::normalizes_actual_flutter_lf_trim_blank_dedup_without_unicode_normalization ... ok
+test create_todos::tests::business_task_ids_are_deterministic_original_request_ids_not_view_row_ids ... ok
+test create_todos::tests::original_grapheme_and_view_row_budgets_precede_blank_and_duplicate_normalization ... ok
+test create_todos::tests::old_empty_create_proposal_keeps_exact_core_payload_and_existing_v2_editor_rejects_todos ... ok
+test create_todos::tests::creates_all_tasks_in_one_authorized_store_operation_and_exact_receipt_after_reopen ... ok
+test create_todos::tests::preserves_registered_and_unrelated_unknown_properties_across_edits_and_historical_retry ... ok
+test create_todos::tests::new_create_binds_original_raw_draft_values_and_replays_history_after_newer_generation ... ok
+test create_todos::tests::same_normalized_tasks_different_complete_raw_retries_are_rejected_including_all_blank ... ok
+test create_todos::tests::task_and_aggregate_byte_limits_refuse_before_creating_any_card_operation_or_subset ... ok
+
+test result: ok. 9 passed; 0 failed; 2 ignored; 0 measured; 118 filtered out; finished in 1.40s
+

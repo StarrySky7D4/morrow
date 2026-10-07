@@ -1,0 +1,126 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.20s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 118 tests
+test clipboard::tests::actual_flutter_reference_outputs_match_five_complete_fixtures ... ignored, requires a fresh actual Flutter capture in HMOS_CLIPBOARD_FLUTTER_REFERENCE
+test clipboard::tests::actual_flutter_source_capacity_matches_six_complete_boundary_identities ... ignored, requires a fresh actual Flutter capture in HMOS_CLIPBOARD_FLUTTER_CAPACITY_REFERENCE
+test clipboard::tests::flutter_excel_fixture_uses_namespace_formula_and_sparse_columns ... ok
+test clipboard::tests::flutter_merged_html_table_retains_empty_occupied_cell_and_warning ... ok
+test clipboard::tests::flutter_rtf_fixture_and_utf16_surrogate_pair_match_shared_converter ... ok
+test clipboard::tests::extract_refuses_changed_source_unknown_id_and_limit_before_writing ... ok
+test clipboard::tests::actual_dom_recovers_tags_entities_tables_and_foreign_active_nodes ... ok
+test clipboard::tests::data_images_have_complete_metadata_and_exact_hash_bound_fd_extraction ... ok
+test clipboard::tests::flutter_word_html_fixture_preserves_structure_without_active_content ... ok
+test clipboard::tests::non_body_fields_receive_plain_dom_text_without_markdown ... ok
+test clipboard::tests::image_overlimit_malformed_mime_or_magic_fail_whole_conversion ... ok
+test clipboard::tests::interrupted_reads_short_writes_and_failed_writer_preserve_failure_semantics ... ok
+test clipboard::tests::image_percent_encoding_and_blocked_subtrees_do_not_read_external_sources ... ok
+test clipboard::tests::rtf_ansi_hex_bytes_are_decoded_by_declared_codepage_without_changing_raw_hash ... ok
+test clipboard::tests::rtf_invalid_groups_binary_codepage_or_hex_are_explicit_errors ... ok
+test clipboard::tests::rtf_raw_ansi_and_font_codepages_are_not_assumed_utf8 ... ok
+test clipboard::tests::rtf_unicode_bom_text_and_ansi_hex_runs_use_their_actual_encodings ... ok
+test clipboard::tests::format_byte_envelopes_remain_bounded_before_parsing_or_hash_acceptance ... ok
+test clipboard::tests::structural_output_and_table_budgets_never_silently_crop_content ... ok
+test clipboard::tests::text_bom_encoding_is_strict_and_keeps_original_byte_hash ... ok
+test clipboard::tests::unsafe_links_and_forged_attachment_aliases_are_inert ... ok
+test clipboard::tests::xml_rejects_entities_namespace_confusion_malformed_and_truncated_tables ... ok
+test clipboard::tests::source_sha_utf8_sections_schema_and_actual_read_limits_fail_closed ... ok
+test attachment_integration_tests::actual_engine_stream_failures_preserve_business_and_do_not_admit_pending_imports ... ok
+test editor_draft::tests::development_workbench_list_and_snapshot_query_exclude_valid_private_journals ... ok
+test clipboard::tests::bom_transport_envelope_does_not_replace_the_utf16_source_limit ... ok
+test attachment_integration_tests::actual_engine_existing_and_new_asset_journals_publication_history_restart_and_removal ... ok
+test clipboard::tests::source_limit_counts_utf16_units_instead_of_utf8_bytes ... ok
+test editor_draft::tests::discard_is_exact_idempotent_inactive_and_old_save_history_remains_read_only ... ok
+test editor_draft::tests::draft_bridge_keeps_original_asset_selection_and_u64_metadata_without_accepting_client_pins ... ok
+test editor_draft::tests::discard_releases_main_pins_and_all_pending_and_unselected_ready_import_owners ... ok
+test editor_draft::tests::exact_discard_history_stays_committed_when_current_journal_readback_is_corrupt ... ok
+test editor_draft::tests::durable_selected_import_is_pinned_consumed_once_and_text_autosave_does_not_reopen_import ... ok
+test editor_draft::tests::exact_history_never_rewinds_newer_snapshot_and_modified_retry_is_rejected ... ok
+test editor_draft::tests::exact_saved_history_stays_committed_when_current_journal_readback_is_corrupt ... ok
+test editor_draft::tests::foreign_operation_cannot_save_or_discard_another_journal ... ok
+test editor_draft::tests::failed_consumed_cleanup_keeps_previous_generation_and_main_effect_not_committed_until_explicit_retry ... ok
+test clipboard::tests::html_and_xml_accept_complete_multibyte_sources_at_the_real_source_limit ... ok
+test clipboard::tests::rtf_counts_original_control_spellings_before_the_shared_conversion ... ok
+test editor_draft::tests::generation_cas_and_baseline_are_fixed_while_original_business_bytes_stay_unchanged ... ok
+test editor_draft::tests::import_identity_cannot_cross_drafts_or_select_a_pending_unverified_payload ... ok
+test editor_draft::tests::invalid_raw_shape_unowned_import_and_unsupported_capture_are_rejected_without_a_journal ... ok
+test editor_draft::tests::noncanonical_or_corrupt_private_record_is_never_skipped_as_absence ... ok
+test editor_draft::tests::pinned_publication_allows_same_business_operation_retries_and_core_rejects_changed_payload ... ok
+test editor_draft::tests::new_card_baseline_remains_empty_after_foreign_create_and_existing_target_rejects_first_write ... ok
+test editor_draft::tests::post_discard_cleanup_failure_preserves_proven_committed_outcome_and_exact_retry_finishes_cleanup ... ok
+test editor_draft::tests::publication_requires_current_exact_generation_operation_and_complete_source_cas ... ok
+test editor_draft::tests::raw_empty_values_utf16_selection_and_composing_survive_restart_without_business_card ... ok
+test editor_draft::tests::sixteen_active_slots_limit_and_discard_frees_only_active_capacity ... ok
+test editor_draft::tests::source_asset_pins_survive_restart_and_previous_pin_adoption_preserves_exact_bytes ... ok
+test editor_draft::tests::stored_pin_metadata_and_blob_charge_are_not_optional_and_stream_failure_is_not_success ... ok
+test editor_draft_staging::tests::changed_retry_payload_foreign_operation_and_stale_admission_never_read_source ... ok
+test editor_draft::tests::transaction_budget_failure_keeps_unknown_original_and_previous_journal_until_exact_retry ... ok
+test editor_draft_staging::tests::consumed_binding_and_original_ready_identity_reject_tampered_metadata ... ok
+test editor_draft_staging::tests::failed_pending_transaction_is_unknown_and_exact_original_can_retry_after_restart ... ok
+test editor_draft_staging::tests::inactive_discard_reports_committed_when_missing_ready_owner_blocks_cleanup_until_repaired ... ok
+test editor_draft_staging::tests::inactive_main_cleans_every_unselected_pending_and_ready_import ... ok
+test editor_draft_staging::tests::journal_filtering_is_private_fail_closed_and_schema_is_canonical ... ok
+test editor_draft_staging::tests::pending_restart_ready_and_exact_retry_use_verified_durable_bytes ... ok
+test editor_draft_staging::tests::ready_then_abandon_prune_restart_preserves_terminal_receipts_without_reacquiring_owner ... ok
+test editor_draft_staging::tests::original_pending_and_abandon_receipts_stay_committed_when_current_readback_is_corrupt ... ok
+test editor_draft_staging::tests::release_and_prune_failures_resume_without_recreating_snapshot_owner ... ok
+test editor_field::tests::actual_flutter_characters_corpus_and_complete_field_boundaries_match ... ignored, requires fresh actual Flutter Characters reference in HMOS_EDITOR_FIELD_FLUTTER_REFERENCE
+test editor_field::tests::async_ffi_contract_is_pure_and_always_owns_a_freeable_reply ... ok
+test editor_field::tests::complete_raw_field_counts_are_independent_of_utf16_offsets ... ok
+test editor_field::tests::escaped_unpaired_utf16_fails_without_replacement_or_losing_known_field ... ok
+test editor_draft_staging::tests::pending_per_draft_and_byte_budgets_reject_before_reading ... ok
+test editor_draft_staging::tests::invalid_streams_roll_back_bytes_but_preserve_committed_pending_intent ... ok
+test editor_field::tests::pinned_tables_use_the_actual_flutter_characters_unicode_version ... ok
+test editor_field::tests::markdown_and_rich_outputs_accept_full_graphemes_above_the_old_utf16_proxy ... ok
+test editor_field::tests::schema_and_transport_limits_are_distinct_from_character_count ... ok
+test editor_input::tests::actual_flutter_complete_windows_edit_values_match ... ignored, requires actual full Flutter editing-value capture in HMOS_EDITOR_INPUT_FLUTTER_REFERENCE
+test editor_draft_staging::tests::retained_bytes_survive_failed_ready_and_finish_after_newer_main_generation_without_source ... ok
+test editor_draft_staging::tests::selected_import_cleanup_keeps_draft_pin_across_text_save_restart_and_discard ... ok
+test editor_draft_staging::tests::same_content_owners_are_independent_and_unselected_bytes_collect_only_after_last_release ... ok
+test editor_input::tests::editable_gate_preserves_complete_overlimit_raw_selection_and_noncommit_ime_updates ... ok
+test editor_input::tests::enforced_keeps_complete_old_at_exact_limit_but_accepts_deletion_and_selection_replacement ... ok
+test editor_input::tests::input_ffi_returns_a_freeable_read_only_full_reply_and_rejects_invalid_c_input ... ok
+test editor_input::tests::receipt_hash_binds_exact_request_bytes_and_echoes_complete_non_normalized_values ... ok
+test editor_input::tests::todo_zero_guard_filter_and_positive_enforcement_have_the_actual_order_and_full_metadata ... ok
+test editor_input::tests::truncate_uses_unicode16_prefix_and_actual_utf16_selection_and_composition_rules ... ok
+test file_stream::tests::bounded_copy_preserves_binary_and_cross_block_hash ... ok
+test file_stream::tests::failed_writer_cannot_produce_a_confirmed_metadata_reply ... ok
+test file_stream::tests::interrupted_short_reads_and_short_writes_are_complete ... ok
+test editor_input::tests::all_fixed_field_limits_accept_retain_and_truncate_without_business_authority ... ok
+test editor_input::tests::strict_schema_unicode_offsets_and_complete_wire_budgets_never_return_a_partial_success ... ok
+test editor_field::tests::render_and_converter_bytes_remain_independent_of_one_huge_grapheme ... ok
+test markdown::tests::grapheme_depth_and_node_budgets_fail_instead_of_truncating ... ok
+test markdown::tests::headings_inline_styles_soft_breaks_and_code_are_preserved ... ok
+test editor_field::tests::every_field_has_its_real_limit_and_keeps_complete_overflow_counts ... ok
+test markdown::tests::href_policy_rejects_userinfo_controls_local_and_active_urls ... ok
+test markdown::tests::nested_loose_lists_tasks_quotes_and_continuations_keep_order ... ok
+test markdown::tests::plain_paste_preserves_raw_text_and_converts_complete_tsv ... ok
+test markdown::tests::reference_links_images_and_html_never_execute_or_read_files ... ok
+test markdown::tests::repeated_reference_destinations_have_an_output_budget ... ok
+test markdown::tests::table_rows_alignment_and_inline_cells_are_structured ... ok
+test markdown::tests::plain_paste_rejects_every_legacy_truncation_or_output_overflow ... ok
+test historical_retry_tests::authoritative_absence_and_failed_lookup_have_distinct_pre_write_effects ... ok
+test historical_retry_tests::committed_operation_still_checks_complete_core_command_and_never_accepts_changed_payload ... ok
+test editor_draft_staging::tests::original_revision_reservation_keeps_final_ready_retire_prune_at_256 ... ok
+test historical_retry_tests::committed_create_skips_new_census_and_stays_committed_after_current_draft_corruption ... ok
+test historical_retry_tests::committed_edit_and_other_business_retry_keep_proof_on_later_current_read_failure ... ok
+test query_tests::query_searches_complete_properties_without_mutation_or_card_projection ... ok
+test query_tests::query_sections_stage_tasks_favorites_and_deleted_follow_original_v2_semantics ... ok
+test query_tests::query_byte_batches_and_single_card_frame_failure_do_not_fall_back_or_write ... ok
+test query_tests::query_utf16_sort_and_equal_titles_preserve_reverse_id_protocol_order ... ok
+test query_tests::query_uses_original_asset_metadata_with_materialized_assets ... ok
+test tests::production_path_and_malformed_input_are_rejected ... ok
+test tests::delete_undo_window_and_failed_restore_preserve_the_original ... ok
+test tests::invalid_edit_does_not_write_and_unknown_is_never_cleared ... ok
+test tests::markdown_and_plain_paste_are_read_only_and_have_complete_json_defaults ... ok
+test tests::persistence_cas_exact_retry_and_duplicate_task_names ... ok
+test tests::task_edits_keep_identity_validate_order_and_replay_after_reopen ... ok
+test editor_draft::tests::cumulative_identity_limit_survives_discard_and_restart ... ok
+test query_tests::query_empty_invalid_and_capacity_rejection_preserve_development_boundary ... ok
+test query_tests::query_more_than_one_run_filters_and_stably_merges_all_candidates ... ok
+test attachment_integration_tests::actual_engine_private_imports_do_not_count_toward_256_business_cards ... ok
+test clipboard::tests::rtf_ansi_codepage_and_unicode_bom_sources_have_independent_capacity has been running for over 60 seconds
+test clipboard::tests::rtf_ansi_codepage_and_unicode_bom_sources_have_independent_capacity ... ok
+
+test result: ok. 114 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 88.31s
+

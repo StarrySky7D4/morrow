@@ -1,0 +1,8 @@
+{
+  "stageLabel": "dev20-image-owned-20261007-a",
+  "device": "127.0.0.1:5555",
+  "mainHap": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791358849475/entry/build/default/outputs/default/entry-default-unsigned.hap",
+  "testHap": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791358849475/entry/build/default/outputs/ohosTest/entry-ohosTest-unsigned.hap",
+  "mainSha256": "F580A08FFD221CC7C7ADA7E1AE3F913757D45A1E0A6148320CE770401F4FF6D4",
+  "testSha256": "E6E5677144CD0A6BD0450B6E13A119E105B5949D0AD221384B3CA9B400A46A22"
+}

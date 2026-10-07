@@ -1,0 +1,23 @@
+✔ actual ETS keeps full Unicode text and editing metadata in the hashed request (2.2925ms)
+✔ selection-only overlimit receipt is accepted without authorizing a save (0.4066ms)
+✔ truncated native prefix requires a full boundary count and retains full request (0.3747ms)
+✔ positive-limit retained must preserve the entire old editing value (0.8232ms)
+✔ zero-budget retained validates filtered old: collapsed composition (0.5423ms)
+✔ zero-budget retained validates filtered old: invalid selection (0.366ms)
+✔ zero-budget retained validates filtered old: CRLF replacement (0.4302ms)
+✔ accepted row validates filtering metadata as well as its text (1.2039ms)
+✔ accepted row cannot contradict a positive quota or zero-budget no-growth guard (0.5135ms)
+✔ wrong request hash, full echoes, Unicode identity and all lengths reject once (1.449ms)
+✔ stop or owner change during hashing prevents any worker request (0.322ms)
+✔ late worker reply cannot survive stop or a same-text owner epoch change (3.8538ms)
+✔ original full editing values are frozen and caller mutations invalidate pending results (0.717ms)
+✔ invalid Unicode, row mode and wire budgets fail before issuing a worker (5.8781ms)
+✔ explicit failure and malformed replies fail without an automatic replay (2.5659ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 393.9829

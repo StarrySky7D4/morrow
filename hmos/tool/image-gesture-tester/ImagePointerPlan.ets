@@ -38,6 +38,10 @@ export function imagePointerPlan(operation: string, bounds: Rect): ImagePointerP
     startX = [0.25, 0.55]; endX = [0.6, 0.9]; startY = [0.35, 0.35]; endY = [0.7, 0.7];
   } else if (operation === 'pan-one') {
     startX = [0.4]; endX = [0.55]; startY = [0.45]; endY = [0.55];
+  } else if (operation === 'pan-reverse-one') {
+    startX = [0.55]; endX = [0.4]; startY = [0.55]; endY = [0.45];
+  } else if (operation === 'pan-reverse-two') {
+    startX = [0.45, 0.75]; endX = [0.3, 0.6]; startY = [0.55, 0.55]; endY = [0.45, 0.45];
   } else { throw new Error('Unsupported pointer operation'); }
   plan.fingers = startX.length;
   for (let finger = 0; finger < plan.fingers; finger++) {
@@ -51,6 +55,17 @@ export function imagePointerPlan(operation: string, bounds: Rect): ImagePointerP
       });
     }
     plan.points.push(points);
+  }
+  // Pure pan must retain exact integer screen-pixel separation. Independently
+  // rounding two fractional traces can vary the gap by one pixel and cause
+  // an unintended scale change in a parallel Pinch recognizer.
+  if ((operation === 'pan-two' || operation === 'pan-reverse-two' || operation === 'boundary-pan-two') && plan.fingers === 2) {
+    const gapX: number = plan.points[1][0].x - plan.points[0][0].x;
+    const gapY: number = plan.points[1][0].y - plan.points[0][0].y;
+    for (let step = 1; step < plan.steps; step++) {
+      plan.points[1][step] = { x: plan.points[0][step].x + gapX, y: plan.points[0][step].y + gapY,
+        displayId: plan.points[0][step].displayId };
+    }
   }
   return plan;
 }

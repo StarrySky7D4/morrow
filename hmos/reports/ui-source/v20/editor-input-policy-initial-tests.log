@@ -1,0 +1,71 @@
+✔ actual ETS keeps full Unicode text and editing metadata in the hashed request (3.7927ms)
+✔ selection-only overlimit receipt is accepted without authorizing a save (0.5906ms)
+✔ truncated native prefix requires a full boundary count and retains full request (0.7768ms)
+✔ positive-limit retained must preserve the entire old editing value (1.0972ms)
+✖ zero-budget retained validates filtered old: collapsed composition (0.4782ms)
+✔ zero-budget retained validates filtered old: invalid selection (0.4369ms)
+✔ zero-budget retained validates filtered old: CRLF replacement (0.4837ms)
+✖ accepted row validates filtering metadata as well as its text (0.4264ms)
+✖ wrong request hash, full echoes, Unicode identity and all lengths reject once (1.2067ms)
+✔ stop or owner change during hashing prevents any worker request (0.5159ms)
+✔ late worker reply cannot survive stop or a same-text owner epoch change (11.5814ms)
+✖ original full editing values are frozen and caller mutations invalidate pending results (2.8309ms)
+✔ invalid Unicode, row mode and wire budgets fail before issuing a worker (5.0963ms)
+✔ explicit failure and malformed replies fail without an automatic replay (3.4154ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 10
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 561.1448
+
+✖ failing tests:
+
+test at hmos\tool\editor-input-policy-model.test.cjs:60:4
+✖ zero-budget retained validates filtered old: collapsed composition (0.4782ms)
+  Error: 完整输入处理结果无法确认，原输入仍保留。
+      at EditorInputPolicy.format (evalmachine.<anonymous>:125:19)
+      at async TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\editor-input-policy-model.test.cjs:62:27)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\editor-input-policy-model.test.cjs:66:1
+✖ accepted row validates filtering metadata as well as its text (0.4264ms)
+  Error: 完整输入处理结果无法确认，原输入仍保留。
+      at EditorInputPolicy.format (evalmachine.<anonymous>:125:19)
+      at async TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\editor-input-policy-model.test.cjs:68:17)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\editor-input-policy-model.test.cjs:72:1
+✖ wrong request hash, full echoes, Unicode identity and all lengths reject once (1.2067ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\editor-input-policy-model.test.cjs:77:36)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /回执/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at hmos\tool\editor-input-policy-model.test.cjs:93:1
+✖ original full editing values are frozen and caller mutations invalidate pending results (2.8309ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  -1 !== 0
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\editor-input-policy-model.test.cjs:96:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: -1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

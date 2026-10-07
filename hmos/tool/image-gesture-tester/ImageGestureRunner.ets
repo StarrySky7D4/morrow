@@ -11,6 +11,10 @@ class ProbeObservation {
   imageDescription: string = '';
   zoomText: string = '';
   zoomPercent: number = 0;
+  zoomEnabled: boolean = false;
+  imageReadiness: string = 'UNKNOWN';
+  readinessMarkers: string[] = [];
+  imageBoundsSemantics: string = 'UITEST_COMPONENT_RECT_NOT_RENDERED_PIXEL_TRANSFORM';
   windowFocused: boolean = false;
   canvas: Rect = { left: 0, top: 0, right: 0, bottom: 0 };
   image: Rect = { left: 0, top: 0, right: 0, bottom: 0 };
@@ -72,6 +76,15 @@ export default class ImageGestureRunner implements TestRunner {
     return values[0];
   }
 
+  private async checkProductWindow(): Promise<void> {
+    this.checkStopped();
+    const productWindow = await this.driver!.findWindow({ bundleName: PRODUCT_BUNDLE });
+    if (await productWindow.getBundleName() !== PRODUCT_BUNDLE || !await productWindow.isFocused() || !await productWindow.isActive()) {
+      throw new Error('The product window is not the active focused window; do not inject into another app or picker');
+    }
+    this.checkStopped();
+  }
+
   private async observe(): Promise<ProbeObservation> {
     this.checkStopped();
     const delegator = abilityDelegatorRegistry.getAbilityDelegator();
@@ -82,10 +95,7 @@ export default class ImageGestureRunner implements TestRunner {
       Number(value.substring(value.indexOf(':') + 1).trim()) !== this.report.expectedVersionCode)) {
       throw new Error('Installed product version does not match the requested probe');
     }
-    const productWindow = await this.driver!.findWindow({ bundleName: PRODUCT_BUNDLE });
-    if (await productWindow.getBundleName() !== PRODUCT_BUNDLE || !await productWindow.isFocused() || !await productWindow.isActive()) {
-      throw new Error('The product window is not the active focused window; do not inject into another app or picker');
-    }
+    await this.checkProductWindow();
     const modal = await this.unique('attachment-preview-dialog');
     const names = await this.driver!.findComponents(ON.text(this.report.expectedImageName)
       .withinComponent(modal).inWindow(PRODUCT_BUNDLE));
@@ -102,8 +112,17 @@ export default class ImageGestureRunner implements TestRunner {
     observation.windowFocused = true;
     observation.draftTitle = title; observation.imageName = this.report.expectedImageName;
     observation.imageDescription = await image.getDescription(); observation.image = await image.getBounds();
+    if (observation.imageDescription !== this.report.expectedImageName) { throw new Error('Image component description differs from the exact preview fixture'); }
     observation.canvas = bounds; observation.zoomText = await zoom.getOriginalText();
-    observation.zoomPercent = imageZoomPercent(observation.zoomText); observation.capturedAt = Date.now();
+    observation.zoomPercent = imageZoomPercent(observation.zoomText); observation.zoomEnabled = await zoom.isEnabled();
+    for (const id of ['attachment-image-read-loading', 'attachment-image-read-failure', 'attachment-image-decode-loading', 'attachment-image-decode-failure']) {
+      if ((await this.driver!.findComponents(ON.id(id).inWindow(PRODUCT_BUNDLE))).length > 0) { observation.readinessMarkers.push(id); }
+    }
+    observation.imageReadiness = observation.zoomEnabled && observation.readinessMarkers.length === 0 ? 'UI_ADMISSION_READY_REQUIRES_PIXEL_REVIEW' : 'UI_NOT_READY';
+    if (this.report.operation !== 'observe' && observation.imageReadiness === 'UI_NOT_READY') {
+      throw new Error('Decoded image admission is not ready; gestures will not be injected');
+    }
+    await this.checkProductWindow(); observation.capturedAt = Date.now();
     return observation;
   }
 
@@ -158,6 +177,7 @@ export default class ImageGestureRunner implements TestRunner {
       if (this.report.operation === 'observe') {
         this.report.status = 'READONLY_OBSERVED'; this.report.visualEffect = 'NOT_RUN'; exitCode = 0;
       } else if (this.report.operation === 'double-tap-reset') {
+        await this.checkProductWindow();
         this.report.status = 'INPUT_INTENT'; this.write('input-intent.json', this.report); this.checkStopped();
         await this.driver.doubleClick(Math.round((this.report.intent.canvas.left + this.report.intent.canvas.right) / 2),
           Math.round((this.report.intent.canvas.top + this.report.intent.canvas.bottom) / 2));
@@ -168,6 +188,7 @@ export default class ImageGestureRunner implements TestRunner {
         for (let finger = 0; finger < this.report.plan.fingers; finger++) {
           for (let step = 0; step < this.report.plan.steps; step++) { matrix.setPoint(finger, step, this.report.plan.points[finger][step]); }
         }
+        await this.checkProductWindow();
         this.report.status = 'INPUT_INTENT'; this.write('input-intent.json', this.report); this.checkStopped();
         this.report.injectionAcknowledged = await this.driver.injectMultiPointerAction(matrix, this.report.plan.speed);
         if (!this.report.injectionAcknowledged) { throw new Error('Multi-pointer provider did not acknowledge the gesture; do not replay'); }

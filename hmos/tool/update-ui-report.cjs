@@ -24,6 +24,10 @@ for (const p of ['entry/src/main/ets/model/ClipboardInput.ets', 'entry/src/main/
   'rust/src/clipboard.rs']) inputs.add(p);
 for (const p of ['entry/src/main/ets/model/EditorFieldPolicy.ets', 'rust/src/editor_field.rs',
   'rust/src/editor_field/tests.rs']) inputs.add(p);
+for (const p of ['entry/src/main/ets/model/EditorInputPolicy.ets', 'entry/src/main/ets/model/EditorInputHash.ets',
+  'entry/src/main/ets/model/EditorTodos.ets', 'entry/src/main/ets/pages/EditorTodos.ets',
+  'rust/src/editor_input.rs', 'rust/src/editor_input/tests.rs',
+  'rust/src/create_todos.rs', 'rust/src/create_todos/tests.rs']) inputs.add(p);
 for (const p of ['entry/src/main/ets/model/AttachmentFiles.ets', 'entry/src/main/ets/model/Attachments.ets',
   'entry/src/main/ets/model/VerifiedImages.ets', 'entry/src/main/ets/pages/AttachmentImagePreview.ets',
   'entry/src/main/ets/model/AttachmentPlayback.ets', 'entry/src/main/ets/pages/AttachmentMediaPreview.ets',

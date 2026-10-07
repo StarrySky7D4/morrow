@@ -1,0 +1,17 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.94s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 9 tests
+test editor_input::tests::actual_flutter_complete_windows_edit_values_match ... ignored, requires actual full Flutter editing-value capture in HMOS_EDITOR_INPUT_FLUTTER_REFERENCE
+test editor_input::tests::receipt_hash_binds_exact_request_bytes_and_echoes_complete_non_normalized_values ... ok
+test editor_input::tests::editable_gate_preserves_complete_overlimit_raw_selection_and_noncommit_ime_updates ... ok
+test editor_input::tests::todo_zero_guard_filter_and_positive_enforcement_have_the_actual_order_and_full_metadata ... ok
+test editor_input::tests::enforced_keeps_complete_old_at_exact_limit_but_accepts_deletion_and_selection_replacement ... ok
+test editor_input::tests::input_ffi_returns_a_freeable_read_only_full_reply_and_rejects_invalid_c_input ... ok
+test editor_input::tests::truncate_uses_unicode16_prefix_and_actual_utf16_selection_and_composition_rules ... ok
+test editor_input::tests::strict_schema_unicode_offsets_and_complete_wire_budgets_never_return_a_partial_success ... ok
+test editor_input::tests::all_fixed_field_limits_accept_retain_and_truncate_without_business_authority ... ok
+
+test result: ok. 8 passed; 0 failed; 1 ignored; 0 measured; 109 filtered out; finished in 0.15s
+

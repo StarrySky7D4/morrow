@@ -1,0 +1,19 @@
+{
+  "label": "dev20-read-own-c-draft19-before",
+  "started": 1791358872231,
+  "screenshotAt": 1791358872513,
+  "layoutAt": 1791358873247,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device19-current\\dev20-read-own-c-draft19-before.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device19-current\\dev20-read-own-c-draft19-before.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device19-current\\dev20-read-own-c-draft19-before.raw.json"
+  }
+}

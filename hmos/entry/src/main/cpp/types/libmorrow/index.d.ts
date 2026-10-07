@@ -3,6 +3,9 @@ export const request: (input: string) => Promise<string>;
 /** Pure Unicode16 extended-grapheme field validation. Preserves UTF16 positions;
  * JSON input is {field, text}. No Store mutation, IME completion or truncation. */
 export const editorField: (input: string) => Promise<string>;
+/** Pure Windows Flutter input proposal for complete old/new TextValues.
+ * Preserves raw caller input; owner/IME epoch and business saving are separate. */
+export const editorInput: (input: string) => Promise<string>;
 /** Duplicates caller FDs synchronously. Rust consumes only the duplicates. */
 export const prepareFile: (sourceFd: number, destinationFd: number, maxBytes: number) => Promise<string>;
 export const importFile: (input: string, sourceFd: number) => Promise<string>;
