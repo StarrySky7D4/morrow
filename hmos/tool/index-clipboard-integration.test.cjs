@@ -52,11 +52,11 @@ function integrationModels(workbench) {
     vm.runInContext(compile(fs.readFileSync(filename, 'utf8'), filename), moduleContext, { filename }); return api;
   }
   const draft = load('EditorDraft'), attachments = load('Attachments');
-  const fieldPolicy = load('EditorFieldPolicy');
-  Object.assign(context, draft, attachments, fieldPolicy, load('EditorPaste'), load('ClipboardPaste'), load('AttachmentImportSelection'),
+  const fieldPolicy = load('EditorFieldPolicy'), directInput = load('EditorDirectInput');
+  Object.assign(context, draft, attachments, fieldPolicy, directInput, load('EditorPaste'), load('ClipboardPaste'), load('AttachmentImportSelection'),
     { DraftTextValue: draft.TextValue, Command: load('Workbench').Command });
   vm.runInContext(integrationCode, context, { filename: sourcePath });
-  return { draft, attachments, fieldPolicy, Index: context.exports.IndexPasteIntegration };
+  return { draft, attachments, fieldPolicy, directInput, Index: context.exports.IndexPasteIntegration };
 }
 function conversionReply(bytes, text, images = []) {
   const count = fieldReply('description', text);
@@ -110,6 +110,11 @@ function harness(records, options = {}) {
   });
   Object.assign(page, { ready: true, pageAlive: true, foreground: true, editorOpen: true, editorDraft: draft, editorValues: api.copyValues(values),
     fieldPolicy, editorInputEpoch: 0, fieldCountEpochs: new Map(), fieldCountLabels: [], fieldValidationWorking: false,
+    // Preserve existing paste assertions; only the new direct-input platform
+    // readiness dependency is synthetic in this integration harness.
+    directInput: { canConfirm: () => true, capture: () => true, bind: () => {}, stop: () => {}, view: () => undefined, unbind: () => {}, retry: () => {} },
+    inputPolicy: { stop: () => {} }, inputRevisions: new Map(), inputRulesRevision: 0, inputRulesMessage: '',
+    todoBusinessReady: true, todoFormatPending: false, todoInputRevision: 0, todoInputValue: api.copyText(values.todos), todoDragTimer: -1,
     taskEditId: '', taskRenameValue: new api.TextValue(), draftFocusedFields: new Set(['title', 'description', 'hypothesis', 'conclusion', 'todos']),
     attachmentEditorIdentity: 'editor-clipboard', attachmentFiles: files.files, clipboardInput: clipboard.input,
     attachmentWorking: false, pasteWorking: false, draftRestoreInput: false, busy: false, draftWorking: false,
@@ -120,6 +125,23 @@ function harness(records, options = {}) {
     draftCaptureBlocked: new Set(), draftSelectionPending: new Set(),
     draftChanged: () => {}, refreshEditorAssets: () => {}, updateMarkdown: () => {}, restoreSelection: () => {},
     mediaPlayback: { pauseForBackground: () => events.push({ kind: 'background-media-pause' }) }, exitMediaFullscreen: () => {}, fileOpen: undefined });
+  if (options.realDirectInput) {
+    page.directInput = new models.directInput.EditorDirectInput({
+      isCurrent: (owner, key, revision, value) => page.directInputCurrent(owner, key, revision, value),
+      // Synthetic accepted formatter proposal. Actual sequencing/ownership and
+      // Root's full external-value handoff execute without a readiness mock.
+      format: async (field, _old, next) => {
+        const count = fieldReply(field, next.text);
+        return { value: api.copyText(next), action: 'accepted', format_applied: true,
+          grapheme_count: count.grapheme_count, limit: count.limit };
+      },
+      apply: (proposal, owned) => page.applyDirectInput(proposal, owned), changed: () => page.directInputChanged()
+    });
+    page.bindInputRules();
+    // Row component readiness is independent; no row edit in these direct-input
+    // cases is claimed to execute EditorTodos or its native row formatter.
+    page.todoBusinessReady = true;
+  }
   if (options.importCount) imported.push(...Array.from({ length: options.importCount }, (_, i) => ({ request: { operation_id: 'old-' + i } })));
   if (options.convert) files.setConvert(options.convert(files));
   else files.setConvert(async (serialized, fd) => {
@@ -127,7 +149,7 @@ function harness(records, options = {}) {
     return JSON.stringify(conversionReply(bytes, request.format === 'plain' ? bytes.toString('utf8') : 'converted'));
   });
   if (options.image) files.setImage(options.image(files));
-  return { page, draft, files, clipboard, events, models, imported,
+  return { page, draft, files, clipboard, events, models, imported, importedMetadata,
     async paste() { await page.pasteContent(); return { values: plain(draft.current), message: page.message, events }; },
     close() { draft.dispose(); } };
 }
@@ -153,6 +175,51 @@ test('text selection insertion uses actual Index + draft methods for every edita
       assert.equal(result.values[target].selection_base, result.values[target].text.length); assert.match(result.message, /内容已保留/);
       assert.equal(h.events.filter(item => item.kind === 'native-import').length, 0);
     } finally { h.close(); }
+  }
+});
+test('actual DirectInput remains current after paste adopts complete selection metadata', async () => {
+  const h = harness([{ 'text/plain': '粘贴😀' }], { realDirectInput: true }); try {
+    assert.equal(h.page.canPaste(), true); const result = await h.paste(); await settle();
+    const value = h.draft.current.description, state = h.page.directInput.view('description');
+    assert.equal(result.values.description.text, 'before 粘贴😀'); assert.equal(value.selection_base, value.text.length);
+    assert.equal(value.selection_extent, value.text.length); assert.deepEqual(plain(state.value), plain(value));
+    assert.equal(state.revision, h.page.inputRevisions.get('description')); assert.equal(state.pending, false);
+    assert.equal(h.page.directInput.canConfirm('description'), true); assert.equal(h.page.inputReadyFor('create'), true);
+    assert.equal(h.page.inputReadyFor('edit'), true); assert.equal(h.page.canPaste(), true);
+    h.page.foreground = false; h.page.foregroundChanged(); assert.equal(h.page.directInput.canConfirm('description'), false);
+    h.page.foreground = true; h.page.foregroundChanged(); await settle();
+    for (const key of ['title', 'description', 'hypothesis', 'conclusion']) {
+      assert.equal(h.page.directInput.canConfirm(key), true, 'each stopped field resumes: ' + key);
+      assert.deepEqual(plain(h.page.directInput.view(key).value), plain(h.draft.current[key]), key);
+    }
+    assert.equal(h.page.inputReadyFor('edit'), true); assert.equal(h.page.canPaste(), true);
+  } finally { h.page.directInput.stop(); h.close(); }
+});
+test('paste and selected-import automatic titles hand complete raw/selection to actual DirectInput', async () => {
+  for (const mode of ['paste', 'selected-import']) {
+    const h = harness([rich], { realDirectInput: true, convert: files => imageConversion(files), image: files => async (_request, _fd, destination) => {
+      files.writeFd(destination, Buffer.from(imageBytes)); return JSON.stringify(files.stream(Buffer.from(imageBytes))); } });
+    try {
+      const values = h.draft.current; values.title.text = ''; values.title.selection_base = -1; values.title.selection_extent = -1;
+      h.page.editorValues = h.models.draft.copyValues(values); h.page.title = ''; h.draft.update(values); await h.draft.flush();
+      h.page.bindInputRules(); h.page.todoBusinessReady = true;
+      if (mode === 'paste') { const result = await h.paste(); assert.match(result.message, /内容已保留/); }
+      else {
+        const request = Object.assign(new h.models.attachments.ImportRequest(), { card_id: h.draft.scope.card_id, draft_id: h.draft.scope.draft_id,
+          operation_id: 'synthetic-selected-title', expected_generation: h.draft.confirmed.generation, name: '用户附件 🧪.txt',
+          kind: 'file', byte_length: '8', sha256: 'b'.repeat(64) });
+        const record = Object.assign(new h.models.attachments.ImportRecord(), { request, asset_id: 'selected-title-asset', phase: 'ready',
+          current_active: true, bytes_retained: true, staging_revision: '1' });
+        h.imported.push(record); h.importedMetadata.set(record.asset_id, request);
+        assert.equal(await h.page.addImportedAsset(record, true, h.draft), true);
+      }
+      await settle(); const title = h.draft.current.title; assert.ok(title.text.length > 0, 'actual automatic title: ' + mode);
+      assert.equal(title.selection_base, title.text.length, mode); assert.equal(title.selection_extent, title.text.length, mode);
+      assert.deepEqual(plain(h.page.directInput.view('title').value), plain(title), mode);
+      assert.equal(h.page.directInput.canConfirm('title'), true, mode); assert.equal(h.page.directInput.canConfirm('description'), true, mode);
+      assert.equal(h.page.inputReadyFor('create'), true, mode); assert.equal(h.page.inputReadyFor('edit'), true, mode); assert.equal(h.page.canPaste(), true, mode);
+      assert.equal(h.draft.confirmed.values.title.text, title.text, mode); assert.ok(h.draft.confirmed.assets.length > 0, mode);
+    } finally { h.page.directInput.stop(); h.close(); }
   }
 });
 test('rich source and exact image pins precede portable body save', async () => {

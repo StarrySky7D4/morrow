@@ -1,0 +1,31 @@
+✔ raw capture is already complete while a formatter is pending and confirmation alone is blocked (5.3211ms)
+✔ same-turn onChange and onSelection coalesce and preserve the original old value (0.6557ms)
+✔ later selection revokes old worker and reissues against original edit, preventing selection-only bypass (0.9606ms)
+✔ a new text edit uses the immediately preceding raw value and rejects previous reply (0.6569ms)
+✔ independent fields do not invalidate one another and task rename uses separate key with todos policy (0.6112ms)
+✔ owner replacement and same-identity unbind/rebind prevent ABA adoption (0.8468ms)
+✔ stop cancels queued and running workers and stopped fields cannot confirm or capture (0.6465ms)
+✔ an uncaptured external field revision or metadata change revokes an in-flight result (0.7824ms)
+✔ active preview is fully captured and checked without adoption; commit preserves composing oldValue gate (0.6024ms)
+✔ preview flag alone blocks adoption even when SDK composing metadata is collapsed (0.7359ms)
+✔ a destructive preview proposal is counted separately and never replaces complete candidate raw (0.6623ms)
+✔ positive retained adoption preserves the complete old selection and receives a new field revision (1.5512ms)
+✔ retained old active composition after commit is explicit failure, never silently cleared (1.6157ms)
+✔ worker failure retains raw, blocks confirmation and only explicit retry replays the same intent (0.7779ms)
+✔ selection after failed truncation retains original edit identity, not a same-text bypass (0.6676ms)
+✔ late failure cannot poison a newer successful field revision (0.595ms)
+✔ apply refusal, stale adoption receipt or throwing controller cannot authorize confirmation (1.1199ms)
+✔ reentrant new raw during controller adoption cannot be overwritten by the previous result (0.9057ms)
+✔ callers cannot mutate bound values, captured snapshots, views or applied proposals into later adoption (0.9043ms)
+✔ strict Unicode and independent request budget failures preserve all original raw text (11.1296ms)
+✔ malformed receipt or invalid full metadata fails without discarding raw or automatic replay (0.6934ms)
+✔ selection-only after settled input follows the actual same-text gate and does not imply save eligibility (0.5303ms)
+✔ revision reuse, stale owners, unknown fields and inactive slots cannot issue or adopt new work (0.6753ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 444.0814

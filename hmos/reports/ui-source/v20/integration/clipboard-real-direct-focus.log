@@ -1,0 +1,29 @@
+✔ actual DirectInput remains current after paste adopts complete selection metadata (126.9915ms)
+✖ paste and selected-import automatic titles hand complete raw/selection to actual DirectInput (101.9403ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 844.6117
+
+✖ failing tests:
+
+test at hmos\tool\index-clipboard-integration.test.cjs:191:1
+✖ paste and selected-import automatic titles hand complete raw/selection to actual DirectInput (101.9403ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /内容已保留/. Input:
+  
+  ''
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:199:70)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /内容已保留/,
+    operator: 'match',
+    diff: 'simple'
+  }

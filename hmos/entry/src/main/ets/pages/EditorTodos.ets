@@ -1,11 +1,19 @@
 import { TextValue, copyText } from '../model/EditorDraft';
-import { EditorTodosDraft, EditorTodoRow, EditorTodoTicket, EditorTodoDrag, EditorTodosView, EditorTodoFormatResult } from '../model/EditorTodos';
+import { EditorTodosDraft, EditorTodoRow, EditorTodoTicket, EditorTodoDrag, EditorTodosView, EditorTodosStatus, EditorTodoFormatResult } from '../model/EditorTodos';
 import { uiText } from '../model/UiStrings';
 
 class TodoRowArea {
   incarnation: number = 0;
   top: number = 0;
   height: number = 0;
+}
+interface TodoUncapturedInput { kind: string; text: string; preview?: PreviewText; }
+interface TodoUncapturedSelection { kind: string; base: number; extent: number; }
+function todoInputEvent(text: string, preview?: PreviewText): string {
+  const event: TodoUncapturedInput = { kind: 'input', text, preview }; return JSON.stringify(event);
+}
+function todoSelectionEvent(base: number, extent: number): string {
+  const event: TodoUncapturedSelection = { kind: 'selection', base, extent }; return JSON.stringify(event);
 }
 
 // This component edits only the raw newline field. Its parent owns the journal,
@@ -19,6 +27,9 @@ export struct EditorTodos {
   @Prop title: string = '待办';
   @Prop ink: string = '#302D43';
   @Prop muted: string = '#81798F';
+  // Flutter's ordinary IconButtons use onSurfaceVariant, while the handle uses
+  // palette.muted. Parent can supply the actual theme control color explicitly.
+  @Prop controlInk: string = '';
   @Prop accent: string = '#7662BA';
   @Prop surface: string = '#FFFFFF';
   @Prop line: string = '#DDD8E8';
@@ -30,7 +41,8 @@ export struct EditorTodos {
   count: (text: string, owned: () => boolean) => Promise<number> = async (): Promise<number> => { throw new Error('待办计数未连接。'); };
   format: (oldValue: TextValue, newValue: TextValue, remaining: number, owned: () => boolean) => Promise<EditorTodoFormatResult> =
     async (): Promise<EditorTodoFormatResult> => { throw new Error('待办行检查未连接。'); };
-  onStatus: (owner: string, complete: boolean, pending: boolean, error: string) => void = (): void => {};
+  onStatus: (status: EditorTodosStatus) => void = (): void => {};
+  onUncaptured: (owner: string, row: string, event: string) => void = (): void => {};
   onRowFocused: (owner: string, row: string) => void = (): void => {};
   onRevealRow: (owner: string, row: string, element: string) => void = (): void => {};
   onDragPosition: (owner: string, windowY: number, active: boolean) => void = (): void => {};
@@ -46,7 +58,7 @@ export struct EditorTodos {
     count: (text: string, owned: () => boolean): Promise<number> => this.count(text, owned),
     format: (oldValue: TextValue, newValue: TextValue, remaining: number, owned: () => boolean): Promise<EditorTodoFormatResult> => this.format(oldValue, newValue, remaining, owned),
     changed: (): void => this.syncView(),
-    failed: (owner: string, message: string): void => { if (this.alive && owner === this.ownerKey) { this.onStatus(owner, false, false, message); } },
+    failed: (_owner: string, _message: string): void => {},
     id: (): string => 'todo_' + (++this.serial)
   });
 
@@ -57,30 +69,42 @@ export struct EditorTodos {
     if (!this.alive || !this.ownerKey) { return; }
     if (this.state.owner !== this.ownerKey) { this.finishDrag(); this.areas.clear(); }
     try { this.model.bind(this.ownerKey, this.revision, copyText(this.source)); if (!this.editingEnabled) { this.model.stop(); } }
-    catch (error) { this.onStatus(this.ownerKey, false, false, String(error)); }
+    catch (error) {
+      // Do not borrow a previous owner's status when this source cannot bind.
+      const status = new EditorTodosStatus(); status.owner = this.ownerKey; status.revision = this.revision;
+      status.value = copyText(this.source); status.raw_capture_complete = false; status.business_ready = false;
+      status.capture_error = String(error); this.onStatus(status);
+    }
   }
   private availabilityChanged(): void { if (this.editingEnabled) { this.sourceChanged(); } else { this.finishDrag(); this.model.stop(); } }
   private syncView(): void {
     if (!this.alive) { return; }
     this.state = this.model.view(); this.renderRevision++;
     if (this.state.owner === this.ownerKey) {
-      this.onStatus(this.ownerKey, this.state.capture_complete, this.state.rows.some((row: EditorTodoRow): boolean => row.pending), this.state.error);
+      this.onStatus(this.model.status());
     }
   }
   private ticket(row: EditorTodoRow): EditorTodoTicket {
     const result = new EditorTodoTicket(); result.owner = this.state.owner; result.id = row.id; result.incarnation = row.incarnation; return result;
   }
-  private owns(ticket: EditorTodoTicket): boolean {
+  private ownsIdentity(ticket: EditorTodoTicket): boolean {
     const row = this.model.row(ticket.id);
-    return this.alive && this.editingEnabled && ticket.owner === this.ownerKey && ticket.owner === this.state.owner &&
-      row?.incarnation === ticket.incarnation && this.isCurrent(this.state.owner, this.state.revision, copyText(this.state.value));
+    return this.alive && ticket.owner === this.ownerKey && ticket.owner === this.state.owner && !!row && row.incarnation === ticket.incarnation;
+  }
+  private owns(ticket: EditorTodoTicket): boolean {
+    return this.editingEnabled && this.ownsIdentity(ticket) && this.isCurrent(this.state.owner, this.state.revision, copyText(this.state.value));
+  }
+  private uncapturedFor(ticket: EditorTodoTicket, event: string): void {
+    if (this.ownsIdentity(ticket)) { this.onUncaptured(ticket.owner, ticket.id, event); }
   }
   private element(row: string, owner: string = this.state.owner): string { return 'editor-todo-' + encodeURIComponent(owner) + '-' + row; }
   private async inputFor(ticket: EditorTodoTicket, text: string, preview?: PreviewText): Promise<void> {
+    if (!this.editingEnabled) { this.uncapturedFor(ticket, todoInputEvent(text, preview)); return; }
     if (!this.owns(ticket)) { return; }
     await this.model.input(ticket, text, preview?.value || '', preview?.offset ?? -1);
   }
   private async selectionFor(ticket: EditorTodoTicket, base: number, extent: number): Promise<void> {
+    if (!this.editingEnabled) { this.uncapturedFor(ticket, todoSelectionEvent(base, extent)); return; }
     if (this.owns(ticket)) { await this.model.selection(ticket, base, extent); }
   }
   private focusFor(ticket: EditorTodoTicket): void {
@@ -97,7 +121,11 @@ export struct EditorTodos {
       setTimeout((): void => {
         if (this.owns(ticket)) { this.getUIContext().getFocusController().requestFocus(this.element(id, owner)); }
       }, 0);
-    } catch (error) { if (this.alive && owner === this.ownerKey) { this.onStatus(owner, false, false, String(error)); } }
+    } catch (error) {
+      // A failed nonmutating Add count is not a missing raw capture or a
+      // failed formatter for the current text. Parent still validates save.
+      if (this.alive && owner === this.ownerKey) { this.state.error = String(error); }
+    }
   }
   private removeFor(ticket: EditorTodoTicket): void { if (this.owns(ticket)) { this.model.remove(ticket); } }
   private moveFor(ticket: EditorTodoTicket, delta: number): void { if (this.owns(ticket)) { this.model.move(ticket, delta); } }
@@ -128,33 +156,47 @@ export struct EditorTodos {
     if (!drag || !this.owns(ticket) || !area || area.incarnation !== ticket.incarnation || !Number.isFinite(y)) { return; }
     this.model.drop(drag, ticket, y >= area.top + area.height / 2);
   }
+  private actionPath(action: string): string {
+    if (action === 'up') { return 'M4.6 11.3Q4 12 4.7 12.7Q5.4 13.4 6.1 12.7L11 7.8V20H13V7.8L17.9 12.7Q18.6 13.4 19.3 12.7Q20 12 19.4 11.3L12 4Z'; }
+    if (action === 'down') { return 'M4.6 12.7Q4 12 4.7 11.3Q5.4 10.6 6.1 11.3L11 16.2V4H13V16.2L17.9 11.3Q18.6 10.6 19.3 11.3Q20 12 19.4 12.7L12 20Z'; }
+    return 'M5.3 5.3Q6 4.6 6.7 5.3L12 10.6L17.3 5.3Q18 4.6 18.7 5.3Q19.4 6 18.7 6.7L13.4 12L18.7 17.3Q19.4 18 18.7 18.7Q18 19.4 17.3 18.7L12 13.4L6.7 18.7Q6 19.4 5.3 18.7Q4.6 18 5.3 17.3L10.6 12L5.3 6.7Q4.6 6 5.3 5.3Z';
+  }
 
   @Builder
-  private action(label: string, description: string, allowed: boolean, run: () => void) {
-    Button(label, { type: ButtonType.Normal }).fontSize(14).fontColor(this.accent).backgroundColor(Color.Transparent)
-      .borderRadius(9).height(32).width(32).enabled(this.editingEnabled && allowed).accessibilityText(this.t(description)).onClick(run)
+  private action(icon: string, description: string, allowed: boolean, run: () => void) {
+    Button({ type: ButtonType.Normal }) {
+      Shape() { Path().commands(this.actionPath(icon)).fill(this.controlInk || this.muted) }
+        .viewPort({ x: 0, y: 0, width: 24, height: 24 }).width(17).height(17)
+    }.backgroundColor(Color.Transparent).padding(8).borderRadius(12).height(40).width(40)
+      .enabled(this.editingEnabled && allowed).accessibilityText(this.t(description)).onClick(run)
   }
   @Builder
   private dragHandle(ticket: EditorTodoTicket) {
-    Button('⋮⋮', { type: ButtonType.Normal }).fontSize(14).fontColor(this.accent).backgroundColor(Color.Transparent)
-      .borderRadius(9).height(32).width(32).enabled(this.editingEnabled && this.model.canChangeRows()).accessibilityText(this.t('拖拽排序'))
+    Button({ type: ButtonType.Normal }) {
+      Shape() {
+        Path().commands('M8 3A2 2 0 1 1 8 7A2 2 0 1 1 8 3ZM16 3A2 2 0 1 1 16 7A2 2 0 1 1 16 3ZM8 10A2 2 0 1 1 8 14A2 2 0 1 1 8 10ZM16 10A2 2 0 1 1 16 14A2 2 0 1 1 16 10ZM8 17A2 2 0 1 1 8 21A2 2 0 1 1 8 17ZM16 17A2 2 0 1 1 16 21A2 2 0 1 1 16 17Z').fill(this.muted)
+      }.viewPort({ x: 0, y: 0, width: 24, height: 24 }).width(19).height(19)
+        .opacity(this.editingEnabled && this.model.canChangeRows() ? 1 : 0.3)
+    }.backgroundColor(Color.Transparent).padding(0).borderRadius(12).height(40).width(36)
+      .accessibilityText(this.t('拖拽排序'))
       .draggable(this.editingEnabled && this.model.canChangeRows()).onDragStart((): DragItemInfo => this.startDrag(ticket))
       .onDragMove((event: DragEvent): void => this.dragMoved(event)).onDragEnd((): void => this.finishDrag())
   }
   @Builder
   private rowEditor(row: EditorTodoRow, index: number, ticket: EditorTodoTicket) {
-    Column({ space: 5 }) {
-      Row({ space: 3 }) {
-        Text(this.t('提示') + ' ' + (index + 1).toString().padStart(2, '0')).fontSize(11).fontColor(this.accent).fontWeight(FontWeight.Medium).layoutWeight(1)
+    Column() {
+      Row() {
+        Text(this.t('提示') + ' ' + (index + 1).toString().padStart(2, '0')).fontSize(11).fontColor(this.accent).fontWeight(600).layoutWeight(1)
         this.dragHandle(ticket)
-        this.action('↑', '上移', this.model.canChangeRows() && index > 0, (): void => this.moveFor(ticket, -1))
-        this.action('↓', '下移', this.model.canChangeRows() && index < this.state.rows.length - 1, (): void => this.moveFor(ticket, 1))
-        this.action('×', '删除', this.model.canChangeRows(), (): void => this.removeFor(ticket))
+        this.action('up', '上移', this.model.canChangeRows() && index > 0, (): void => this.moveFor(ticket, -1))
+        this.action('down', '下移', this.model.canChangeRows() && index < this.state.rows.length - 1, (): void => this.moveFor(ticket, 1))
+        this.action('delete', '删除', this.model.canChangeRows(), (): void => this.removeFor(ticket))
       }.width('100%')
       EditorTodoRowInput({ row, owner: ticket.owner, elementId: this.element(row.id), renderRevision: this.renderRevision,
         editingEnabled: this.editingEnabled && this.model.canEdit(row.id), ink: this.ink, muted: this.muted, accent: this.accent, family: this.family, locale: this.locale,
         onInput: (captured: EditorTodoTicket, text: string, preview?: PreviewText): Promise<void> => this.inputFor(captured, text, preview),
         onSelection: (captured: EditorTodoTicket, base: number, extent: number): Promise<void> => this.selectionFor(captured, base, extent),
+        onUncaptured: (captured: EditorTodoTicket, event: string): void => this.uncapturedFor(captured, event),
         onRowFocus: (captured: EditorTodoTicket): void => this.focusFor(captured)
       })
       if (row.pending) { Text(this.t('正在检查…')).fontSize(11).fontColor(this.muted).width('100%') }
@@ -167,7 +209,7 @@ export struct EditorTodos {
     Column({ space: 12 }) {
       Row({ space: 12 }) {
         Text('“').fontSize(28).fontColor(this.accent).padding(10).borderRadius(14).backgroundColor(this.surface)
-        Text(this.title).fontSize(18).fontWeight(FontWeight.Medium).fontColor(this.ink).layoutWeight(1)
+        Text(this.title).fontSize(18).fontWeight(600).fontColor(this.ink).layoutWeight(1)
         Text(this.state.rows.length + ' / 100').fontSize(12).fontColor(this.muted)
       }.width('100%')
       Text(this.t('一条一张卡片，可添加、删除或拖拽排序。随当前卡片一起保存。')).fontSize(12).fontColor(this.muted).lineHeight(19).width('100%')
@@ -202,21 +244,23 @@ struct EditorTodoRowInput {
   @Prop locale: string = 'zh';
   onInput: (ticket: EditorTodoTicket, text: string, preview?: PreviewText) => Promise<void> = async (): Promise<void> => {};
   onSelection: (ticket: EditorTodoTicket, base: number, extent: number) => Promise<void> = async (): Promise<void> => {};
+  onUncaptured: (ticket: EditorTodoTicket, event: string) => void = (): void => {};
   onRowFocus: (ticket: EditorTodoTicket) => void = (): void => {};
   @State private text: string = '';
   @State private session: EditorTodoTicket = new EditorTodoTicket();
   private controller: TextAreaController = new TextAreaController();
   private alive: boolean = false;
-  private focused: boolean = false;
+  @State private focused: boolean = false;
   private serial: number = 0;
   private expectedBase: number = -1;
   private expectedExtent: number = -1;
 
   aboutToAppear(): void { this.alive = true; this.rowChanged(); }
   aboutToDisappear(): void { this.alive = false; this.focused = false; this.serial++; this.controller.stopEditing(); }
-  private owns(ticket: EditorTodoTicket): boolean {
-    return this.alive && this.editingEnabled && ticket.owner === this.owner && ticket.id === this.row.id && ticket.incarnation === this.row.incarnation;
+  private ownsIdentity(ticket: EditorTodoTicket): boolean {
+    return this.alive && ticket.owner === this.owner && ticket.id === this.row.id && ticket.incarnation === this.row.incarnation;
   }
+  private owns(ticket: EditorTodoTicket): boolean { return this.editingEnabled && this.ownsIdentity(ticket); }
   private rowChanged(): void {
     if (!this.alive) { return; }
     const fresh = new EditorTodoTicket(); fresh.owner = this.owner; fresh.id = this.row.id; fresh.incarnation = this.row.incarnation;
@@ -231,11 +275,17 @@ struct EditorTodoRowInput {
     }, 0);
   }
   private changeFor(ticket: EditorTodoTicket, text: string, preview?: PreviewText): void {
+    if (!this.editingEnabled) {
+      if (this.ownsIdentity(ticket)) { this.onUncaptured(ticket, todoInputEvent(text, preview)); } return;
+    }
     if (!this.owns(ticket)) { return; }
     this.text = text; this.expectedBase = -1; this.expectedExtent = -1;
     this.onInput(ticket, text, preview);
   }
   private selectionFor(ticket: EditorTodoTicket, base: number, extent: number): void {
+    if (!this.editingEnabled) {
+      if (this.ownsIdentity(ticket)) { this.onUncaptured(ticket, todoSelectionEvent(base, extent)); } return;
+    }
     if (!this.owns(ticket) || !this.focused) { return; }
     if (base === this.expectedBase && extent === this.expectedExtent) { this.expectedBase = -1; this.expectedExtent = -1; return; }
     this.expectedBase = -1; this.expectedExtent = -1; this.onSelection(ticket, base, extent);
@@ -248,7 +298,9 @@ struct EditorTodoRowInput {
   private field(ticket: EditorTodoTicket) {
     TextArea({ text: this.text, placeholder: uiText('写下一句话…', this.locale), controller: this.controller })
       .id(this.elementId).enabled(this.editingEnabled).fontFamily(this.family).fontSize(14).fontColor(this.ink).placeholderColor(this.muted)
-      .backgroundColor(Color.Transparent).borderRadius(0).padding({ top: 8, bottom: 8 }).width('100%').height(76)
+      .backgroundColor(Color.Transparent).borderRadius(0).borderWidth({ bottom: this.focused ? 1 : 0 }).borderColor(this.accent)
+      .padding({ top: 8, bottom: 8 }).width('100%').lineHeight('23.1fp')
+      .minLines(1).maxLines(3, { overflowMode: MaxLinesMode.SCROLL }).textOverflow(TextOverflow.None)
       .enablePreviewText(true).onChange((text: string, preview?: PreviewText): void => this.changeFor(ticket, text, preview))
       .onTextSelectionChange((base: number, extent: number): void => this.selectionFor(ticket, base, extent))
       .onFocus((): void => this.focusFor(ticket, true)).onBlur((): void => this.focusFor(ticket, false))

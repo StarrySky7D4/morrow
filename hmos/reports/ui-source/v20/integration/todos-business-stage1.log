@@ -1,0 +1,62 @@
+Index.ets SHA256=f4f91d164f48e02c86ab806e2e254baadac9734ad37947cc95658529c217c880; SDK TypeScript=4.9.5
+✔ actual Index create sends one immutable operation with complete raw todos and confirmed publication (124.6158ms)
+✔ new-card todos composition is preserved in confirmed raw but never admitted as create (112.3363ms)
+✔ complete aggregate todos overflow stays raw and never becomes a partial create (133.0517ms)
+✔ backend known rejection preserves full todos/pins and requires an explicit new save (87.2159ms)
+✔ Unknown create retains exact wire and explicit retry does not borrow later todos (108.6412ms)
+✔ raw journal Unknown reconciles only its original todos; later rows need a fresh confirmed publication (117.8653ms)
+✔ structured unconfirmed or historical committed error preserves the original create wire (178.5414ms)
+✔ late todos text/range/composition/edit-away-back revokes create input consumption (283.8655ms)
+✖ a different editor owner with identical raw values cannot be consumed by an old create receipt (72.455ms)
+✔ successful exact create retires its full raw generation without emptying/normalizing it first (79.8072ms)
+✖ late input or owner change during discard never disposes the live editor (57.4141ms)
+✔ invalid discard receipt retains its original retirement request and raw editor (66.8626ms)
+✔ existing V2 edit leaves single pending task input separate and sends no legacy todos or task command (63.2068ms)
+✔ actual create admission rejects a command borrowing different raw todos (57.852ms)
+✔ emit fresh source identity for the actual Index business boundary (1.239ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 13
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2130.1319
+
+✖ failing tests:
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:274:1
+✖ a different editor owner with identical raw values cannot be consumed by an old create receipt (72.455ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'card-create-fixture'
+  - 'replacement-editor-card'
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:280:71)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'card-create-fixture',
+    expected: 'replacement-editor-card',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:293:1
+✖ late input or owner change during discard never disposes the live editor (57.4141ms)
+  AssertionError [ERR_ASSERTION]: input
+  
+  false !== true
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:301:48)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

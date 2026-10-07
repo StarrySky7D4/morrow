@@ -1,0 +1,23 @@
+Index.ets SHA256=f4f91d164f48e02c86ab806e2e254baadac9734ad37947cc95658529c217c880; SDK TypeScript=4.9.5
+late foreground loss: actual confirmed pin count=1; UI=粘贴已停止 · 已确认附件 1/2 Error: 已确认附件保留；粘贴目标已变化，后续附件和正文未开始加入。
+✔ actual Index methods + SDK compiler are used, with source identity emitted (2.1316ms)
+✔ text selection insertion uses actual Index + draft methods for every editable field (728.8519ms)
+✔ rich source and exact image pins precede portable body save (126.2923ms)
+✔ image extraction failure preserves source and uses plain fallback without dangling refs (109.8871ms)
+✔ expanded 20-slot or import-record capacity stops before any native import or text save (209.314ms)
+✔ unknown second import preserves first confirmed pin and exact original request/spool, no body insertion (80.8539ms)
+✔ selection, IME, other field, clipboard or foreground changing during read prevents all imports/text (506.6746ms)
+✔ IME candidate present before paste never reads clipboard (91.8009ms)
+✔ foreground loss during admitted native import retains its confirmed pin and admits no later import/body (119.434ms)
+✔ plain byte flavor inserts converted text into all non-body fields (276.6727ms)
+✔ actual Index input epoch rejects text roundtrip during a delayed complete future-field count (60.6217ms)
+✔ actual Index input epoch rejects selection roundtrip during a delayed complete future-field count (65.2277ms)
+✔ actual Index rejects a complete future over-limit title before any native import (58.8579ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3259.3031

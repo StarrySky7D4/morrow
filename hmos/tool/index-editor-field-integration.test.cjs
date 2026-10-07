@@ -29,10 +29,8 @@ const methods = [
   section('  private closeEditor():', '  private favoriteCard(')
 ].join('\n');
 // These new submission fields use their actual declarations/initializers.
-const submittedRenameFields = ['submittedRename', 'submittedRenameEpoch', 'submittedRenameEditor'].map(name => {
-  const line = source.split(/\r?\n/).find(value => value.startsWith('  private ' + name + ':'));
-  assert.ok(line, 'actual submitted rename field: ' + name); return line;
-}).join('\n');
+const submittedRenameFields = source.split(/\r?\n/).filter(line => /^  private submitted\w+:/.test(line)).join('\n');
+assert.ok(submittedRenameFields.includes('submittedRenameEditor') && submittedRenameFields.includes('submittedDraft'), 'actual submission fields');
 const cancelRenameAnchor = '.onClick(() => { this.taskEditId = \'\'; this.taskRenameText = \'\'; })';
 assert.ok(source.includes(cancelRenameAnchor), 'actual rename cancel callback');
 const cancelRenameMethod = 'cancelRenameFromActualBuilder(): void { ' + cancelRenameAnchor.slice(cancelRenameAnchor.indexOf('{') + 1, cancelRenameAnchor.lastIndexOf('}')) + ' }';
@@ -91,6 +89,11 @@ function harness(options = {}) {
   });
   Object.assign(page, { ready: true, pageAlive: true, foreground: true, editorOpen: true, editorDraft: draft,
     editorValues: draftApi.copyValues(values), fieldPolicy, editorInputEpoch: 0, fieldCountEpochs: new Map(),
+    // Synthetic ready contract; actual direct-input sequencing is qualified by
+    // its separate ETS model tests. Existing business assertions stay intact.
+    directInput: { canConfirm: () => true, capture: () => true, bind: () => {}, stop: () => {}, view: () => undefined, unbind: () => {}, retry: () => {} },
+    inputPolicy: { stop: () => {} }, inputRevisions: new Map(), inputRulesRevision: 0, inputRulesMessage: '',
+    todoBusinessReady: true, todoFormatPending: false, todoInputRevision: 0, todoInputValue: draftApi.copyText(values.todos), todoDragTimer: -1,
     fieldCountLabels: [], fieldValidationWorking: false, selected: scope.card_id, attachmentEditorIdentity: 'editor-field-owner',
     attachmentWorking: false, pasteWorking: false, draftRestoreInput: false, busy: false, pending: '', submittedRaw: undefined,
     draftWorking: false, draftRetiring: false, draftRetirementUnknown: false, draftCaptureIncomplete: false, draftConflict: false,

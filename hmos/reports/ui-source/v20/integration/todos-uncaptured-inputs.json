@@ -1,0 +1,29 @@
+{
+  "checked_at": "2026-10-07T09:14:02.753Z",
+  "scope": "actual ETS host model/component methods; disabled late SDK callback notification; no product HAP/device/Git",
+  "sources": [
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorTodos.ets",
+      "bytes": 21509,
+      "sha256": "e7a0748f5066939ad42fa4a9b6bde3d9d9761e15df2e42403356c1277a48d710"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/EditorTodos.ets",
+      "bytes": 20170,
+      "sha256": "2e00afde5759be4494f659174a5695b2f6a8fe47030697f33de554fcee649d62"
+    },
+    {
+      "path": "hmos/tool/editor-todos-model.test.cjs",
+      "bytes": 25613,
+      "sha256": "19025846071185001a63e43f625eb55e56b0b811fa27e7fb4fc66d5791530875"
+    },
+    {
+      "path": "hmos/tool/editor-todos-component-methods.test.cjs",
+      "bytes": 21492,
+      "sha256": "ca7a64be597f02ca15e3c6c5f8e34edb89cef216123bdff02a7deffd9fcd86f7"
+    }
+  ],
+  "tests": 74,
+  "pass": 74,
+  "fail": 0
+}

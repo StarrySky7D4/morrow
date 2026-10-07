@@ -1,0 +1,25 @@
+Index.ets SHA256=66bddb35376a252bc98611e611ac729bcb60bbbf899ed9de64be31eaedf68977; SDK TypeScript=4.9.5
+✔ actual Index create sends one immutable operation with complete raw todos and confirmed publication (128.9169ms)
+✔ new-card todos composition is preserved in confirmed raw but never admitted as create (99.4331ms)
+✔ complete grapheme overflow or 101 original blank rows stay raw without a partial create (264.7828ms)
+✔ unready direct-input or row formatting blocks business while exact raw remains retainable (247.4979ms)
+✔ backend known rejection preserves full todos/pins and requires an explicit new save (78.8786ms)
+✔ Unknown create retains exact wire and explicit retry does not borrow later todos (69.9672ms)
+✔ raw journal Unknown reconciles only its original todos; later rows need a fresh confirmed publication (82.8023ms)
+✔ structured unconfirmed or historical committed error preserves the original create wire (165.6874ms)
+✔ late todos text/range/composition/edit-away-back revokes create input consumption (344.0935ms)
+✔ a different editor owner with identical raw values cannot be consumed by an old create receipt (71.5743ms)
+✔ successful exact create retires its full raw generation without emptying/normalizing it first (79.2294ms)
+✔ late input/range/roundtrip or owner change during discard never disposes the live editor (306.7156ms)
+✔ invalid discard receipt retains its original retirement request and raw editor (102.3883ms)
+✔ existing V2 edit leaves single pending task input separate and sends no legacy todos or task command (78.5808ms)
+✔ actual create admission rejects a command borrowing different raw todos (56.0768ms)
+✔ emit fresh source identity for the actual Index business boundary (2.1564ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2776.6265

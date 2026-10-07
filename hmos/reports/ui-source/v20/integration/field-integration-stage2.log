@@ -1,0 +1,29 @@
+Index.ets SHA256=66bddb35376a252bc98611e611ac729bcb60bbbf899ed9de64be31eaedf68977; SDK TypeScript=4.9.5
+✔ fresh actual Index methods use installed SDK compiler; emit source hash (2.168ms)
+✔ all five fields retain original graphemes and UTF16 range in actual raw journal (92.693ms)
+✔ IME candidate is journaled losslessly in all fields while business admission is blocked (508.2706ms)
+✔ invalid IME offset blocks retention and leaves previous confirmed raw values intact (73.8111ms)
+✔ older count cannot replace a newer edit or a newer UTF16 selection count (59.0283ms)
+✔ business validation revokes edits, selection, category, owner, command and foreground changes (430.6985ms)
+✔ later input during final raw flush prevents issuing a frozen business command (74.7858ms)
+✔ over-limit title keeps every character and confirmed pins without business mutation (67.9864ms)
+✔ count worker failure never authorizes business or normalizes original input (50.6081ms)
+✔ unknown raw journal preserves exact pending request and confirmed pins, no business issue (61.278ms)
+✔ unknown business reply retains original serialized command and raw snapshot with confirmed pins (73.2442ms)
+✔ create/edit business send preserves exact source strings and binds confirmed generation (56.0024ms)
+✔ task_add validates full raw text and does not consume later text or IME (56.6044ms)
+✔ task rename validates its untrimmed original while command retains established trimming (71.2441ms)
+✔ same-value rename roundtrip after issue does not consume newer input epoch (67.457ms)
+✔ actual cancel callback invalidates pending validation and later reopen is not consumed (46.95ms)
+✔ unknown rename preserves original request and frozen raw identity through explicit reconciliation (44.0386ms)
+✔ confirmed not-committed rename clears only frozen request, preserving user text (64.7193ms)
+✔ foreground loss after issued rename revokes successful input consumption (75.4558ms)
+✔ late IME rename callback during issued business request retains newer candidate (41.2462ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2689.289

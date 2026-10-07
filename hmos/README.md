@@ -2,7 +2,9 @@
 
 Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前源码版本为 **0.1.0-hmos-dev.19 开发预览**；尚未与 Flutter 功能等价，不能替代正式资料库。各版本的构建、模型与实际设备证据分别记录。
 
-2026-10-07 当前同步为 **dev20 源码检查点**：新增 Flutter 输入格式处理、多行待办模型/组件和新卡待办原子保存，完整模型617项、Rust123项及实际Flutter/Dart对照通过。**Index尚未接入新UI，版本号仍dev19，不是dev20正式版本。** 当前重新构建包与已发布dev19包分别按SHA归档；新检查点包未安装。已发布dev19包的安装、旧草稿和TSV附件恢复另有设备记录。见 [检查点范围](reports/ui-source/v20/checkpoint-status.md)与 [验证记录](reports/ui-source/v20/validation.md)；以下dev19及更早段落保留其交付时事实。
+2026-10-07 当前同步为 **主页面 UI 集成源码检查点**：已把 Flutter 参照的多行待办组件、完整输入检查与新卡原子待办保存接入 Index。新增输入状态协调、粘贴与附件标题的完整选区交接，以及旧保存回执/草稿清理的迟到输入守卫。**版本号仍 dev19，新界面尚未安装或完成设备验收；不是 dev20 发行。** 草稿清理成功后的较新输入接续仍 OPEN，这些输入可能仅在当前编辑器内存中，不能宣称已持久保留。当前构建与限定检查见 [集成验证记录](reports/ui-source/v20/integration/validation.md)。
+
+此前发布的 **dev20 源码检查点** 新增 Flutter 输入格式处理、多行待办模型/组件和新卡待办原子保存，完整模型617项、Rust123项及实际Flutter/Dart对照通过。**当时 Index 尚未接入新UI，版本号仍dev19。** 该检查点包未安装；已发布dev19包的安装、旧草稿和TSV附件恢复另有设备记录。见 [原检查点范围](reports/ui-source/v20/checkpoint-status.md)与 [原验证记录](reports/ui-source/v20/validation.md)；以下dev19及更早段落保留其交付时事实。
 
 2026-09-27 跟进：按 Flutter `versioned_task_panel.dart` 接入待办重命名、上下移动、批量完成与移除确认。共享 Rust TaskId 模块与当日参照一致；通过主机测试、双架构构建和 x64 模拟器验证。见 [dev.4 验证记录](reports/ui-source/v4/validation.md)。
 

@@ -29,6 +29,16 @@ export class EditorTodoDrag {
   id: string = '';
   version: number = 0;
 }
+export class EditorTodosStatus {
+  owner: string = '';
+  revision: number = 0;
+  value: TextValue = new TextValue();
+  raw_capture_complete: boolean = true;
+  business_ready: boolean = false;
+  format_pending: boolean = false;
+  capture_error: string = '';
+  format_error: string = '';
+}
 export class EditorTodosView {
   owner: string = '';
   revision: number = 0;
@@ -39,7 +49,11 @@ export class EditorTodosView {
   focused_id: string = '';
   error: string = '';
   notice: string = '';
-  capture_complete: boolean = true;
+  raw_capture_complete: boolean = true;
+  business_ready: boolean = false;
+  format_pending: boolean = false;
+  capture_error: string = '';
+  format_error: string = '';
 }
 class TodoInputIntent {
   id: string = '';
@@ -55,8 +69,7 @@ function editingValue(value: TextValue): boolean {
   const offsets: number[] = [value.selection_base, value.selection_extent, value.composing_start, value.composing_end];
   return typeof value.text === 'string' && offsets.every((n: number): boolean => Number.isInteger(n) && n >= -1 && n <= value.text.length) &&
     (value.affinity === 0 || value.affinity === 1) && typeof value.directional === 'boolean' &&
-    (value.composing_start === -1 && value.composing_end === -1 ||
-      value.composing_start >= 0 && value.composing_end >= value.composing_start);
+    !(value.composing_start >= 0 && value.composing_end >= 0 && value.composing_start > value.composing_end);
 }
 
 // Presentation row IDs never leave this model, enter a raw journal, or become
@@ -74,7 +87,9 @@ export class EditorTodosDraft {
   private countPending: boolean = false;
   private error: string = '';
   private notice: string = '';
-  private complete: boolean = true;
+  private rawComplete: boolean = true;
+  private captureError: string = '';
+  private formatError: string = '';
   private pending: TodoInputIntent | undefined = undefined;
   private countCache: Map<string, number> = new Map<string, number>();
   private issuedIds: Set<string> = new Set<string>();
@@ -86,8 +101,12 @@ export class EditorTodosDraft {
     if (this.active && owner === this.owner && revision === this.revision && samePasteTarget(value, this.raw)) { return; }
     const sameOwner: boolean = owner === this.owner;
     const textChanged: boolean = !sameOwner || value.text !== this.raw.text;
+    const interrupted: boolean = sameOwner && !textChanged && !!this.pending;
     this.version++; this.active = true; this.owner = owner; this.revision = revision; this.raw = copyText(value);
-    this.pending = undefined; this.complete = true; this.error = ''; this.notice = '';
+    this.pending = undefined;
+    if (!sameOwner || textChanged) { this.rawComplete = true; this.captureError = ''; this.formatError = ''; }
+    else if (interrupted) { this.formatError = '待办行检查已中断，完整输入仍保留，请完成编辑后重新检查。'; }
+    this.error = this.captureError || this.formatError; this.notice = '';
     if (textChanged) {
       const previous: EditorTodoRow[] = sameOwner ? this.rows : [];
       const lines: string[] = value.text === '' ? [] : value.text.split('\n');
@@ -108,6 +127,7 @@ export class EditorTodosDraft {
     this.hooks.changed(); this.refreshCount();
   }
   stop(): void {
+    if (this.pending) { this.formatError = '待办行检查已停止，完整输入仍保留，请重新检查后保存。'; this.error = this.captureError || this.formatError; }
     this.active = false; this.version++; this.pending = undefined;
     for (const row of this.rows) { row.pending = false; } this.countPending = false; this.hooks.changed();
   }
@@ -115,7 +135,18 @@ export class EditorTodosDraft {
     const result = new EditorTodosView(); result.owner = this.owner; result.revision = this.revision; result.value = copyText(this.raw);
     result.rows = this.rows.map((row: EditorTodoRow): EditorTodoRow => cloneRow(row)); result.count = this.countValue;
     result.counting = this.countPending; result.focused_id = this.focusId; result.error = this.error;
-    result.notice = this.notice; result.capture_complete = this.complete; return result;
+    const status = this.status(); result.notice = this.notice; result.raw_capture_complete = status.raw_capture_complete;
+    result.business_ready = status.business_ready; result.format_pending = status.format_pending;
+    result.capture_error = status.capture_error; result.format_error = status.format_error; return result;
+  }
+  status(): EditorTodosStatus {
+    const result = new EditorTodosStatus(); result.owner = this.owner; result.revision = this.revision; result.value = copyText(this.raw);
+    result.raw_capture_complete = this.rawComplete; result.format_pending = !!this.pending;
+    result.capture_error = this.captureError; result.format_error = this.formatError;
+    // Readiness is a property of this exact captured value, not journal permission
+    // or editor liveness. Parent must still check owner/epoch and field/backend budgets.
+    result.business_ready = !!this.owner && this.rawComplete && !this.pending && !this.captureError && !this.formatError && !composing(this.raw);
+    return result;
   }
   row(id: string): EditorTodoRow | undefined { const row = this.rows.find((item: EditorTodoRow): boolean => item.id === id); return row ? cloneRow(row) : undefined; }
   ticket(id: string): EditorTodoTicket {
@@ -155,7 +186,7 @@ export class EditorTodosDraft {
         row.value.selection_base = value.selection_base - offset; row.value.selection_extent = value.selection_extent - offset;
         row.value.affinity = value.affinity; row.value.directional = value.directional;
       }
-      if (value.composing_start >= offset && value.composing_end <= end && value.composing_start >= 0) {
+      if (value.composing_start >= offset && value.composing_end >= value.composing_start && value.composing_end <= end) {
         row.value.composing_start = value.composing_start - offset; row.value.composing_end = value.composing_end - offset;
       }
       offset = end + 1;
@@ -168,9 +199,10 @@ export class EditorTodosDraft {
       const source: TextValue = copyText(this.raw), owner: string = this.owner, previous: number = this.revision;
       // A rejected parent capture must not leave a different local aggregate.
       this.rows = []; this.owner = ''; this.bind(owner, previous, source);
-      this.fail('待办目标已变化，原始输入未确认。'); return false;
+      this.fail('待办目标已变化，原始输入未确认。', true); return false;
     }
-    this.raw = copyText(value); this.revision = revision; this.version++; this.hooks.changed(); this.refreshCount(); return true;
+    this.raw = copyText(value); this.revision = revision; this.rawComplete = true; this.captureError = '';
+    this.error = this.formatError; this.version++; this.hooks.changed(); this.refreshCount(); return true;
   }
   private guard(version: number, revision: number, value: TextValue): () => boolean {
     const owner: string = this.owner;
@@ -198,22 +230,28 @@ export class EditorTodosDraft {
     for (const text of texts) { used += await this.counted(text, owned); }
     return Math.max(0, Math.min(1000, 1000 - used));
   }
-  private fail(message: string): void { this.error = message; this.complete = false; this.hooks.failed(this.owner, message); this.hooks.changed(); }
+  private fail(message: string, captureIncomplete: boolean = false): void {
+    if (captureIncomplete) { this.rawComplete = false; this.captureError = message; } else { this.formatError = message; }
+    this.error = this.captureError || this.formatError; this.hooks.failed(this.owner, message); this.hooks.changed();
+  }
 
   async input(ticket: EditorTodoTicket, text: string, previewValue: string = '', previewOffset: number = -1): Promise<void> {
     const row = this.admitted(ticket); if (!row) { return; }
+    if (composing(this.raw) && !composing(row.value)) { return; }
     const previous = this.pending;
     const oldValue: TextValue = copyText(previous?.id === row.id ? previous.old_value : row.value), next: TextValue = copyText(row.value);
     for (const item of this.rows) { item.pending = false; }
     if (previewValue && (!Number.isInteger(previewOffset) || previewOffset < 0 || previewOffset > text.length)) {
       row.display_text = text; this.version++; this.pending = undefined; row.pending = false;
-      this.fail('输入法候选位置无法确认，请完成输入后再保存；旧草稿未替换。'); return;
+      this.fail('输入法候选位置无法确认，请完成输入后再保存；旧草稿未替换。', true); return;
     }
     next.text = previewValue ? text.slice(0, previewOffset) + previewValue + text.slice(previewOffset) : text;
     next.composing_start = previewValue ? previewOffset : -1; next.composing_end = previewValue ? previewOffset + previewValue.length : -1;
     if (next.selection_base > next.text.length) { next.selection_base = -1; }
     if (next.selection_extent > next.text.length) { next.selection_extent = -1; }
-    row.display_text = text; row.value = next; this.focusId = row.id; this.error = ''; this.notice = ''; this.complete = true;
+    row.display_text = text; row.value = next; this.focusId = row.id; this.error = ''; this.notice = ''; this.formatError = '';
+    const intent = new TodoInputIntent(); intent.id = row.id; intent.old_value = oldValue; intent.new_value = copyText(next);
+    this.pending = composing(next) ? undefined : intent;
     if (!this.emit(this.aggregate(row.id))) { return; }
     if (previous && previous.id !== row.id) {
       this.pending = undefined; this.fail('前一行仍在检查，完整输入已保留，请重新核对待办草稿。'); return;
@@ -221,8 +259,7 @@ export class EditorTodosDraft {
     if (composing(next)) {
       row.pending = false; this.pending = undefined; this.notice = '输入法候选已保留，完成输入后继续检查。'; this.hooks.changed(); return;
     }
-    const intent = new TodoInputIntent(); intent.id = row.id; intent.old_value = oldValue; intent.new_value = copyText(next);
-    this.pending = intent; this.complete = false; await this.formatIntent(intent);
+    await this.formatIntent(intent);
   }
   private async formatIntent(intent: TodoInputIntent): Promise<void> {
     const row = this.rows.find((item: EditorTodoRow): boolean => item.id === intent.id); if (!row) { return; }
@@ -239,7 +276,7 @@ export class EditorTodosDraft {
       row.value = copyText(result.value); row.display_text = result.value.text; row.pending = false; this.pending = undefined;
       this.notice = result.action === 'truncated' ? '已按剩余字数保留可见字符，请核对本行。' :
         result.action === 'retained' ? '本行已达剩余字数上限，仍保留原内容。' : '';
-      this.complete = true; this.emit(this.aggregate(row.id));
+      this.formatError = ''; this.emit(this.aggregate(row.id));
     } catch (error) {
       if (owned() && this.pending === intent) { row.pending = false; this.pending = undefined; this.fail(String(error)); }
     }
@@ -247,6 +284,9 @@ export class EditorTodosDraft {
   async selection(ticket: EditorTodoTicket, base: number, extent: number): Promise<void> {
     const row = this.admitted(ticket); if (!row || !Number.isInteger(base) || !Number.isInteger(extent) ||
       base < -1 || extent < -1 || base > row.value.text.length || extent > row.value.text.length) { return; }
+    // An unmapped/cross-row raw composition cannot be silently cleared by a
+    // different controller's selection callback. Parent raw remains complete.
+    if (composing(this.raw) && !composing(row.value)) { return; }
     row.value.selection_base = base; row.value.selection_extent = extent; this.focusId = row.id;
     const pending = this.pending; if (!this.emit(this.aggregate(row.id))) { return; }
     if (pending && pending.id === row.id && !composing(row.value)) {
@@ -257,9 +297,12 @@ export class EditorTodosDraft {
   focus(ticket: EditorTodoTicket): void { const row = this.admitted(ticket); if (row) { this.focusId = row.id; this.hooks.changed(); } }
   canChangeRows(): boolean {
     return this.active && !!this.owner && this.hooks.isCurrent(this.owner, this.revision, copyText(this.raw)) &&
-      !this.pending && this.complete && !this.rows.some((row: EditorTodoRow): boolean => composing(row.value));
+      this.status().business_ready && !this.rows.some((row: EditorTodoRow): boolean => composing(row.value));
   }
-  canEdit(id: string): boolean { return !this.pending || this.pending.id === id; }
+  canEdit(id: string): boolean {
+    if (composing(this.raw) && !this.rows.some((row: EditorTodoRow): boolean => row.id === id && composing(row.value))) { return false; }
+    return !this.pending || this.pending.id === id;
+  }
   async add(): Promise<string | undefined> {
     if (!this.owner || !this.canChangeRows() || this.rows.length >= 100) { return undefined; }
     const value: TextValue = copyText(this.raw), owned = this.guard(this.version, this.revision, value);

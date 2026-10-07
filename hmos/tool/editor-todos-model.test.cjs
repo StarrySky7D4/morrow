@@ -8,7 +8,7 @@ const plain = value => JSON.parse(JSON.stringify(value));
 const tick = () => new Promise(resolve => setImmediate(resolve));
 function text(value, patch = {}) { return Object.assign(new TextValue(), { text: value }, patch); }
 function fixture(initial = '', options = {}) {
-  const field = createPolicy(), captures = [], formats = [], failures = [];
+  const field = createPolicy(), captures = [], formats = [], failures = [], statuses = [];
   let owner = 'A', revision = 0, current = text(initial), serial = 0, model;
   model = new EditorTodosDraft({
     capture(value, capturedOwner) {
@@ -28,11 +28,11 @@ function fixture(initial = '', options = {}) {
       if (options.format) return options.format(oldValue, newValue, remaining, guard, formats.length);
       return { action: 'accepted', value: copyText(newValue) };
     },
-    changed() {}, failed(capturedOwner, message) { failures.push({ owner: capturedOwner, message }); },
+    changed() { if (model) statuses.push(model.status()); }, failed(capturedOwner, message) { failures.push({ owner: capturedOwner, message }); },
     id() { return options.id ? options.id() : 'row_' + (++serial); }
   });
   model.bind(owner, revision, current);
-  return { model, captures, formats, failures, get raw() { return current; }, get owner() { return owner; }, get revision() { return revision; },
+  return { model, captures, formats, failures, statuses, get raw() { return current; }, get owner() { return owner; }, get revision() { return revision; },
     ticket(index = 0) { return model.ticket(model.view().rows[index].id); },
     bind(value = current, newOwner = owner) { owner = newOwner; current = copyText(value); revision++; model.bind(owner, revision, current); },
     echo() { model.bind(owner, revision, current); },
@@ -117,7 +117,7 @@ test('zero retained adopts complete filtered-old invalid-selection finalize inst
   await f.model.input(f.ticket(), 'growth');
   assert.equal(f.formats[0].remaining, 0); assert.equal(f.raw.text, '\n' + 'x'.repeat(999));
   assert.equal(f.raw.selection_base, -1); assert.equal(f.raw.selection_extent, -1); assert.equal(f.raw.affinity, 1);
-  assert.equal(f.raw.directional, false); assert.equal(f.model.view().capture_complete, true);
+  assert.equal(f.raw.directional, false); assert.equal(f.model.view().business_ready, true);
 });
 
 test('zero retained keeps legal reverse UTF16 positions/affinity/direction and replaces raw CR with one space', async () => {
@@ -126,7 +126,7 @@ test('zero retained keeps legal reverse UTF16 positions/affinity/direction and r
   await f.model.input(f.ticket(), 'ab\rGrowth');
   assert.equal(f.formats[0].remaining, 0); assert.equal(f.raw.text, 'ab \n' + 'x'.repeat(999));
   assert.equal(f.raw.selection_base, 2); assert.equal(f.raw.selection_extent, 0);
-  assert.equal(f.raw.affinity, 0); assert.equal(f.raw.directional, true); assert.equal(f.model.view().capture_complete, true);
+  assert.equal(f.raw.affinity, 0); assert.equal(f.raw.directional, true); assert.equal(f.model.view().business_ready, true);
 });
 
 test('zero retained finalizes collapsed composition but rejects any unrelated receipt position change', async () => {
@@ -134,19 +134,19 @@ test('zero retained finalizes collapsed composition but rejects any unrelated re
   f.bind(text(f.raw.text, { selection_base: 0, selection_extent: 0, affinity: 0, composing_start: 0, composing_end: 0 }));
   await f.model.input(f.ticket(), 'growth');
   assert.equal(f.raw.composing_start, -1); assert.equal(f.raw.composing_end, -1); assert.equal(f.raw.affinity, 0);
-  assert.equal(f.model.view().capture_complete, true);
+  assert.equal(f.model.view().business_ready, true);
   const bad = fixture('\n' + 'x'.repeat(999), { format: oldValue => {
     const value = editorTodoFilteredOld(oldValue); value.affinity = 0; return { action: 'retained', value };
   } });
   await bad.model.input(bad.ticket(), 'full candidate');
-  assert.equal(bad.raw.text, 'full candidate\n' + 'x'.repeat(999)); assert.equal(bad.model.view().capture_complete, false);
+  assert.equal(bad.raw.text, 'full candidate\n' + 'x'.repeat(999)); assert.equal(bad.model.view().business_ready, false);
 });
 
 test('positive remaining retained continues to require exact old without zero-rule metadata relaxation', async () => {
   const f = fixture('old', { format: oldValue => ({ action: 'retained', value: editorTodoFilteredOld(oldValue) }) });
   await f.model.input(f.ticket(), 'whole future candidate');
   assert.equal(f.formats[0].remaining, 1000); assert.equal(f.raw.text, 'whole future candidate');
-  assert.equal(f.model.view().capture_complete, false);
+  assert.equal(f.model.view().business_ready, false);
 });
 
 test('native CRLF-filter full result is adopted without an independent ETS replacement', async () => {
@@ -159,20 +159,25 @@ test('native CRLF-filter full result is adopted without an independent ETS repla
 test('complete raw future candidate is captured before any asynchronous formatter; result is visible', async () => {
   const wait = deferred(), f = fixture('old', { format: async () => wait.promise });
   const running = f.model.input(f.ticket(), '完整candidate'); await tick();
-  assert.equal(f.raw.text, '完整candidate'); assert.equal(f.model.view().capture_complete, false);
+  assert.equal(f.raw.text, '完整candidate'); assert.equal(f.model.view().business_ready, false);
+  assert.equal(f.model.view().raw_capture_complete, true); assert.equal(f.model.view().format_pending, true);
   wait.resolve({ action: 'truncated', value: text('完整') }); await running;
-  assert.equal(f.raw.text, '完整'); assert.equal(f.model.view().capture_complete, true); assert.match(f.model.view().notice, /核对/);
+  assert.equal(f.raw.text, '完整'); assert.equal(f.model.view().business_ready, true); assert.match(f.model.view().notice, /核对/);
 });
 
 test('malformed native receipt preserves complete candidate and blocks confirmed publication', async () => {
   const f = fixture('old', { format: () => ({ action: 'retained', value: text('different') }) });
   await f.model.input(f.ticket(), 'candidate'); assert.equal(f.raw.text, 'candidate');
-  assert.equal(f.model.view().capture_complete, false); assert.equal(f.failures.length, 1);
+  assert.equal(f.model.view().business_ready, false); assert.equal(f.failures.length, 1);
+  assert.equal(f.model.view().raw_capture_complete, true); assert.equal(f.model.view().capture_error, '');
+  assert.match(f.model.view().format_error, /回执/);
 });
 
 test('pure worker Unknown never removes or truncates the captured raw candidate', async () => {
   const f = fixture('old', { format: () => { throw new Error('Unknown'); } });
   await f.model.input(f.ticket(), 'whole raw'); assert.equal(f.raw.text, 'whole raw'); assert.match(f.model.view().error, /Unknown/);
+  assert.equal(f.model.status().raw_capture_complete, true); assert.equal(f.model.status().business_ready, false);
+  assert.equal(f.model.status().format_pending, false); assert.equal(f.model.status().capture_error, '');
 });
 
 test('preview keeps complete text and composition in aggregate, with no native formatting until commit', async () => {
@@ -180,12 +185,16 @@ test('preview keeps complete text and composition in aggregate, with no native f
   assert.equal(f.raw.text, 'first\na候😀b'); assert.equal(f.raw.composing_start, 7); assert.equal(f.raw.composing_end, 10);
   assert.equal(f.model.view().rows[1].display_text, 'ab'); assert.equal(f.formats.length, 0);
   assert.equal(f.model.canChangeRows(), false);
+  assert.equal(f.model.status().raw_capture_complete, true); assert.equal(f.model.status().business_ready, false);
+  assert.equal(f.model.status().format_pending, false); assert.equal(f.model.status().format_error, '');
   await f.model.input(f.ticket(1), 'a候😀b'); assert.equal(f.formats.length, 1); assert.equal(f.raw.composing_start, -1);
 });
 
 test('unknown preview offset preserves old raw and reports capture incomplete without guessing', async () => {
   const f = fixture('old'); await f.model.input(f.ticket(), 'new', '候选', 9);
-  assert.equal(f.raw.text, 'old'); assert.equal(f.model.view().capture_complete, false); assert.equal(f.formats.length, 0);
+  assert.equal(f.raw.text, 'old'); assert.equal(f.model.view().business_ready, false); assert.equal(f.formats.length, 0);
+  assert.equal(f.model.status().raw_capture_complete, false); assert.match(f.model.status().capture_error, /候选位置/);
+  assert.equal(f.model.status().format_error, '');
 });
 
 test('row selection during pending formatting invalidates old reply and rechecks exact new UTF16 selection', async () => {
@@ -206,10 +215,10 @@ test('rapid same-row typing retains frozen last confirmed old value and rejects 
   a.resolve({ action: 'accepted', value: text('first') }); await first; assert.equal(f.raw.text, 'second');
 });
 
-test('unexpected second-row input during prior pending check preserves both raw candidates and marks incomplete', async () => {
+test('unexpected second-row input preserves complete raw candidates but cannot publish pending formatting', async () => {
   const wait = deferred(), f = fixture('a\nb', { format: () => wait.promise });
   const first = f.model.input(f.ticket(), 'A'); await tick(); assert.equal(f.model.canEdit(f.ticket(1).id), false);
-  await f.model.input(f.ticket(1), 'B'); assert.equal(f.raw.text, 'A\nB'); assert.equal(f.model.view().capture_complete, false);
+  await f.model.input(f.ticket(1), 'B'); assert.equal(f.raw.text, 'A\nB'); assert.equal(f.model.view().business_ready, false);
   wait.resolve({ action: 'accepted', value: text('A') }); await first; assert.equal(f.raw.text, 'A\nB');
 });
 
@@ -226,17 +235,18 @@ test('same text edit-away-and-back at parent epoch blocks a late formatter', asy
   wait.resolve({ action: 'accepted', value: text('stale') }); await running; assert.equal(f.raw.text, 'A');
 });
 
-test('stop revokes callbacks and pure replies, while a fresh bind can resume same raw snapshot', async () => {
+test('stop revokes callbacks and preserves complete raw, while fresh bind cannot qualify canceled formatting', async () => {
   const wait = deferred(), f = fixture('a', { format: () => wait.promise }), ticket = f.ticket();
   const running = f.model.input(ticket, 'A'); await tick(); f.model.stop();
   wait.resolve({ action: 'accepted', value: text('stale') }); await running; await f.model.input(ticket, 'late');
-  assert.equal(f.raw.text, 'A'); f.echo(); assert.equal(f.model.canChangeRows(), true);
+  assert.equal(f.raw.text, 'A'); f.echo(); assert.equal(f.model.canChangeRows(), false); assert.equal(f.model.view().raw_capture_complete, true);
 });
 
 test('capture rejection restores source-consistent local rows instead of creating a second raw draft', async () => {
   const f = fixture('old', { rejectCapture: true }); await f.model.input(f.ticket(), 'new');
   assert.equal(f.raw.text, 'old'); assert.equal(f.model.view().value.text, 'old');
-  assert.equal(f.model.view().rows[0].value.text, 'old'); assert.equal(f.model.view().capture_complete, false);
+  assert.equal(f.model.view().rows[0].value.text, 'old'); assert.equal(f.model.view().business_ready, false);
+  assert.equal(f.model.status().raw_capture_complete, false); assert.match(f.model.status().capture_error, /未确认/);
 });
 
 test('Add includes new separator in full future count and refuses total1000 without slicing', async () => {
@@ -285,4 +295,71 @@ test('pending/IME prevents remove, move, Add and beginDrag without losing raw ca
   const f = fixture('a\nb'); await f.model.input(f.ticket(), 'a', '候', 1); const before = f.raw.text;
   f.model.remove(f.ticket()); f.model.move(f.ticket(), 1);
   assert.equal(await f.model.add(), undefined); assert.equal(f.model.beginDrag(f.ticket()), undefined); assert.equal(f.raw.text, before);
+});
+
+test('status owns an independent full TextValue and cannot mutate row capture authority', () => {
+  const f = fixture('😀\nraw'); f.bind(text(f.raw.text, { selection_base: 5, selection_extent: 3, affinity: 0, directional: true }));
+  const status = f.model.status(); assert.equal(status.owner, f.owner); assert.equal(status.revision, f.revision);
+  assert.deepEqual(plain(status.value), plain(f.raw)); status.value.text = 'changed'; status.value.selection_base = 0;
+  assert.equal(f.model.status().value.text, '😀\nraw'); assert.equal(f.model.status().value.selection_base, 5);
+});
+
+test('pending count and formatter never transiently publish a captured candidate as business-ready', async () => {
+  const wait = deferred(), f = fixture('old\nother', { countWait: () => wait.promise });
+  const running = f.model.input(f.ticket(), 'whole pending raw'); await tick();
+  const captured = f.statuses.filter(status => status.value.text === 'whole pending raw\nother');
+  assert.ok(captured.length > 0); assert.ok(captured.every(status => status.raw_capture_complete && !status.business_ready && status.format_pending));
+  assert.deepEqual(plain(f.model.status().value), plain(f.raw)); wait.resolve(); await running;
+  assert.equal(f.model.status().business_ready, true);
+});
+
+test('same exact parent echo retains pending status and full raw; epoch change cancels only formatting qualification', async () => {
+  const wait = deferred(), f = fixture('old', { format: () => wait.promise });
+  const running = f.model.input(f.ticket(), 'whole raw'); await tick(); f.echo();
+  assert.equal(f.model.status().format_pending, true); assert.equal(f.model.status().raw_capture_complete, true);
+  f.bind(); assert.equal(f.model.status().format_pending, false); assert.equal(f.model.status().raw_capture_complete, true);
+  assert.equal(f.model.status().business_ready, false); assert.match(f.model.status().format_error, /中断/);
+  wait.resolve({ action: 'accepted', value: text('stale') }); await running; assert.equal(f.raw.text, 'whole raw');
+});
+
+test('Unknown and incomplete capture remain separate across same raw rebind and recover after a confirmed new input', async () => {
+  let unknown = true;
+  const f = fixture('old', { format: (_, value) => { if (unknown) throw new Error('Unknown'); return { action: 'accepted', value }; } });
+  await f.model.input(f.ticket(), 'full candidate'); f.bind();
+  assert.equal(f.model.status().raw_capture_complete, true); assert.equal(f.model.status().business_ready, false);
+  unknown = false; await f.model.input(f.ticket(), 'confirmed candidate'); assert.equal(f.model.status().business_ready, true);
+  await f.model.input(f.ticket(), 'unlocated', '候', 99); f.bind();
+  assert.equal(f.model.status().raw_capture_complete, false); assert.equal(f.model.status().business_ready, false);
+  await f.model.input(f.ticket(), 'recovered'); assert.equal(f.model.status().raw_capture_complete, true);
+  assert.equal(f.model.status().business_ready, true); assert.equal(f.model.status().capture_error, '');
+});
+
+test('disabling a fully confirmed raw value does not make its existing formatting result incomplete', async () => {
+  const f = fixture('old'); await f.model.input(f.ticket(), 'confirmed'); f.model.stop();
+  assert.equal(f.model.status().raw_capture_complete, true); assert.equal(f.model.status().business_ready, true);
+  assert.equal(f.model.canChangeRows(), false); f.echo(); assert.equal(f.model.canChangeRows(), true);
+});
+
+test('raw sentinel and cross-row composition are retained without guessing a restorable row range', async () => {
+  const f = fixture('abc\ndef'); f.bind(text(f.raw.text, { composing_start: 1, composing_end: -1 }));
+  assert.deepEqual(plain(f.model.status().value), plain(f.raw)); assert.equal(f.model.status().raw_capture_complete, true);
+  assert.equal(f.model.status().business_ready, false); assert.equal(f.model.canEdit(f.ticket().id), false);
+  await f.model.selection(f.ticket(), 1, 1); assert.equal(f.raw.composing_start, 1); assert.equal(f.raw.composing_end, -1);
+  f.bind(text(f.raw.text, { composing_start: 2, composing_end: 5 }));
+  await f.model.input(f.ticket(1), 'late'); assert.equal(f.raw.text, 'abc\ndef'); assert.equal(f.raw.composing_end, 5);
+  assert.equal(f.model.status().raw_capture_complete, true); assert.equal(f.formats.length, 0);
+});
+
+test('other row controller callbacks cannot clear the captured active preview composition', async () => {
+  const f = fixture('a\nb'); await f.model.input(f.ticket(), 'a', '候', 1); const raw = plain(f.raw);
+  assert.equal(f.model.canEdit(f.ticket(1).id), false);
+  await f.model.input(f.ticket(1), 'other'); await f.model.selection(f.ticket(1), 0, 0);
+  assert.deepEqual(plain(f.raw), raw); assert.equal(f.model.status().raw_capture_complete, true);
+});
+
+test('remaining-count failure preserves complete future raw and blocks only formatter business qualification', async () => {
+  const f = fixture('old\nother', { countError: true }); await f.model.input(f.ticket(), 'whole future raw');
+  const status = f.model.status(); assert.equal(status.value.text, 'whole future raw\nother');
+  assert.equal(status.raw_capture_complete, true); assert.equal(status.business_ready, false); assert.equal(status.format_pending, false);
+  assert.equal(status.capture_error, ''); assert.match(status.format_error, /CountUnknown/); assert.equal(f.formats.length, 0);
 });

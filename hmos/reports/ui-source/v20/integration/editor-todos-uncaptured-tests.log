@@ -1,0 +1,456 @@
+TAP version 13
+# Subtest: actual component methods source identity; builders retain full rows and no platform maxLength
+ok 1 - actual component methods source identity; builders retain full rows and no platform maxLength
+  ---
+  duration_ms: 1.6251
+  type: 'test'
+  ...
+# pages/EditorTodos.ets normalized SHA256 2e00afde5759be4494f659174a5695b2f6a8fe47030697f33de554fcee649d62
+# Subtest: actual parent captures whole raw field and maps per-row selection
+ok 2 - actual parent captures whole raw field and maps per-row selection
+  ---
+  duration_ms: 2.421
+  type: 'test'
+  ...
+# Subtest: preview text is forwarded unchanged to model and raw composing offsets
+ok 3 - preview text is forwarded unchanged to model and raw composing offsets
+  ---
+  duration_ms: 0.3452
+  type: 'test'
+  ...
+# Subtest: successful Add reveals the exact owned element before its guarded focus callback
+ok 4 - successful Add reveals the exact owned element before its guarded focus callback
+  ---
+  duration_ms: 5.3547
+  type: 'test'
+  ...
+# Subtest: owner switch between Add and queued focus cancels old-card focus
+ok 5 - owner switch between Add and queued focus cancels old-card focus
+  ---
+  duration_ms: 5.7331
+  type: 'test'
+  ...
+# Subtest: parent disable/disappear blocks editing and late row callbacks without borrowing a new owner
+ok 6 - parent disable/disappear blocks editing and late row callbacks without borrowing a new owner
+  ---
+  duration_ms: 0.5133
+  type: 'test'
+  ...
+# Subtest: parent status distinguishes complete raw capture and pending formatting before exact reply
+ok 7 - parent status distinguishes complete raw capture and pending formatting before exact reply
+  ---
+  duration_ms: 10.5697
+  type: 'test'
+  ...
+# Subtest: readonly count failure keeps full rows visible with unconfirmed counter
+ok 8 - readonly count failure keeps full rows visible with unconfirmed counter
+  ---
+  duration_ms: 14.9346
+  type: 'test'
+  ...
+# Subtest: drop uses matching private drag token and measured window geometry to insert after target
+ok 9 - drop uses matching private drag token and measured window geometry to insert after target
+  ---
+  duration_ms: 0.6974
+  type: 'test'
+  ...
+# Subtest: drop before midpoint preserves moved row identity
+ok 10 - drop before midpoint preserves moved row identity
+  ---
+  duration_ms: 0.3838
+  type: 'test'
+  ...
+# Subtest: foreign drop, malformed geometry and drag-end leave raw unchanged
+ok 11 - foreign drop, malformed geometry and drag-end leave raw unchanged
+  ---
+  duration_ms: 0.2486
+  type: 'test'
+  ...
+# Subtest: drag frozen before selection change cannot reorder on late drop
+ok 12 - drag frozen before selection change cannot reorder on late drop
+  ---
+  duration_ms: 0.2295
+  type: 'test'
+  ...
+# Subtest: drag-position callback forwards only a current drag and cancels a stale revision
+ok 13 - drag-position callback forwards only a current drag and cancels a stale revision
+  ---
+  duration_ms: 0.2663
+  type: 'test'
+  ...
+# Subtest: actual child forwards committed string plus exact SDK preview separately
+ok 14 - actual child forwards committed string plus exact SDK preview separately
+  ---
+  duration_ms: 0.2486
+  type: 'test'
+  ...
+# Subtest: child selection only captures while focused and preserves reverse UTF16 order
+ok 15 - child selection only captures while focused and preserves reverse UTF16 order
+  ---
+  duration_ms: 0.111
+  type: 'test'
+  ...
+# Subtest: child controllers are stable through refresh and restore confirmed selection after a frame
+ok 16 - child controllers are stable through refresh and restore confirmed selection after a frame
+  ---
+  duration_ms: 13.6562
+  type: 'test'
+  ...
+# Subtest: child does not attempt arbitrary composition restore or confirmed cursor during pending
+ok 17 - child does not attempt arbitrary composition restore or confirmed cursor during pending
+  ---
+  duration_ms: 30.4918
+  type: 'test'
+  ...
+# Subtest: child old incarnation callbacks and destroyed controller queued selection are revoked
+ok 18 - child old incarnation callbacks and destroyed controller queued selection are revoked
+  ---
+  duration_ms: 15.2291
+  type: 'test'
+  ...
+# Subtest: same local row ID on another owner cannot admit old callbacks
+ok 19 - same local row ID on another owner cannot admit old callbacks
+  ---
+  duration_ms: 0.212
+  type: 'test'
+  ...
+# Subtest: actual builder uses SDK adaptive1..3 SCROLL lines with full source and Flutter row geometry
+ok 20 - actual builder uses SDK adaptive1..3 SCROLL lines with full source and Flutter row geometry
+  ---
+  duration_ms: 0.2911
+  type: 'test'
+  ...
+# Subtest: parent Unknown status keeps complete raw retain permission and separately blocks business readiness
+ok 21 - parent Unknown status keeps complete raw retain permission and separately blocks business readiness
+  ---
+  duration_ms: 0.515
+  type: 'test'
+  ...
+# Subtest: valid preview reports complete captured composition rather than formatter failure
+ok 22 - valid preview reports complete captured composition rather than formatter failure
+  ---
+  duration_ms: 0.7429
+  type: 'test'
+  ...
+# Subtest: unlocatable preview reports capture incomplete and preserves exact old raw identity
+ok 23 - unlocatable preview reports capture incomplete and preserves exact old raw identity
+  ---
+  duration_ms: 0.268
+  type: 'test'
+  ...
+# Subtest: invalid new-owner source status does not borrow previous owner row state
+ok 24 - invalid new-owner source status does not borrow previous owner row state
+  ---
+  duration_ms: 0.1868
+  type: 'test'
+  ...
+# Subtest: failed nonmutating Add count does not misreport the current full raw as capture-incomplete
+ok 25 - failed nonmutating Add count does not misreport the current full raw as capture-incomplete
+  ---
+  duration_ms: 12.9388
+  type: 'test'
+  ...
+# Subtest: disable pending preserves raw retain permission but cannot turn canceled format into a confirmed receipt
+ok 26 - disable pending preserves raw retain permission but cannot turn canceled format into a confirmed receipt
+  ---
+  duration_ms: 15.3437
+  type: 'test'
+  ...
+# Subtest: disabled same-owner parent input and selection notify complete events without raw mutation or formatting
+ok 27 - disabled same-owner parent input and selection notify complete events without raw mutation or formatting
+  ---
+  duration_ms: 0.4352
+  type: 'test'
+  ...
+# Subtest: disabled current parent ticket can notify after epoch preflight is invalidated but old identity never does
+ok 28 - disabled current parent ticket can notify after epoch preflight is invalidated but old identity never does
+  ---
+  duration_ms: 0.3153
+  type: 'test'
+  ...
+# Subtest: disabled actual child input/selection forward raw events without changing its text or invoking normal capture
+ok 29 - disabled actual child input/selection forward raw events without changing its text or invoking normal capture
+  ---
+  duration_ms: 0.1612
+  type: 'test'
+  ...
+# Subtest: disabled child refuses old owner/incarnation/disposed callbacks and current child notification reaches parent
+ok 30 - disabled child refuses old owner/incarnation/disposed callbacks and current child notification reaches parent
+  ---
+  duration_ms: 0.2279
+  type: 'test'
+  ...
+# Subtest: actual ETS model exposes its fresh source identity and uses injected field count/formatter only
+ok 31 - actual ETS model exposes its fresh source identity and uses injected field count/formatter only
+  ---
+  duration_ms: 2.3151
+  type: 'test'
+  ...
+# EditorTodos.ets SHA256 e7a0748f5066939ad42fa4a9b6bde3d9d9761e15df2e42403356c1277a48d710
+# Subtest: LF split preserves interior/trailing blanks and CR original without trimming or normalization
+ok 32 - LF split preserves interior/trailing blanks and CR original without trimming or normalization
+  ---
+  duration_ms: 5.5704
+  type: 'test'
+  ...
+# Subtest: empty source has zero rows but explicit Add keeps an empty local row across its same-value echo
+ok 33 - empty source has zero rows but explicit Add keeps an empty local row across its same-value echo
+  ---
+  duration_ms: 0.913
+  type: 'test'
+  ...
+# Subtest: external source sync reuses IDs by index and invalidates previous row callbacks
+ok 34 - external source sync reuses IDs by index and invalidates previous row callbacks
+  ---
+  duration_ms: 0.572
+  type: 'test'
+  ...
+# Subtest: row and view copies cannot mutate private raw state
+ok 35 - row and view copies cannot mutate private raw state
+  ---
+  duration_ms: 0.2641
+  type: 'test'
+  ...
+# Subtest: duplicate and malformed local IDs reject instead of producing ambiguous rows
+ok 36 - duplicate and malformed local IDs reject instead of producing ambiguous rows
+  ---
+  duration_ms: 0.4415
+  type: 'test'
+  ...
+# Subtest: selection mapping uses UTF16 offsets across rows including a supplementary emoji
+ok 37 - selection mapping uses UTF16 offsets across rows including a supplementary emoji
+  ---
+  duration_ms: 0.4618
+  type: 'test'
+  ...
+# Subtest: external aggregate selection maps within one row but preserves a cross-row selection only in raw
+ok 38 - external aggregate selection maps within one row but preserves a cross-row selection only in raw
+  ---
+  duration_ms: 0.3126
+  type: 'test'
+  ...
+# Subtest: external metadata clearing does not leave stale composition on a row
+ok 39 - external metadata clearing does not leave stale composition on a row
+  ---
+  duration_ms: 0.3143
+  type: 'test'
+  ...
+# Subtest: remaining budget subtracts other graphemes and one LF per gap, not their UTF16 lengths
+ok 40 - remaining budget subtracts other graphemes and one LF per gap, not their UTF16 lengths
+  ---
+  duration_ms: 1.1158
+  type: 'test'
+  ...
+# Subtest: zero remaining is forwarded intact to native row no-growth policy
+ok 41 - zero remaining is forwarded intact to native row no-growth policy
+  ---
+  duration_ms: 1.2023
+  type: 'test'
+  ...
+# Subtest: zero retained adopts complete filtered-old invalid-selection finalize instead of demanding exact-old
+ok 42 - zero retained adopts complete filtered-old invalid-selection finalize instead of demanding exact-old
+  ---
+  duration_ms: 0.7792
+  type: 'test'
+  ...
+# Subtest: zero retained keeps legal reverse UTF16 positions/affinity/direction and replaces raw CR with one space
+ok 43 - zero retained keeps legal reverse UTF16 positions/affinity/direction and replaces raw CR with one space
+  ---
+  duration_ms: 0.9824
+  type: 'test'
+  ...
+# Subtest: zero retained finalizes collapsed composition but rejects any unrelated receipt position change
+ok 44 - zero retained finalizes collapsed composition but rejects any unrelated receipt position change
+  ---
+  duration_ms: 2.4554
+  type: 'test'
+  ...
+# Subtest: positive remaining retained continues to require exact old without zero-rule metadata relaxation
+ok 45 - positive remaining retained continues to require exact old without zero-rule metadata relaxation
+  ---
+  duration_ms: 0.3799
+  type: 'test'
+  ...
+# Subtest: native CRLF-filter full result is adopted without an independent ETS replacement
+ok 46 - native CRLF-filter full result is adopted without an independent ETS replacement
+  ---
+  duration_ms: 0.6077
+  type: 'test'
+  ...
+# Subtest: complete raw future candidate is captured before any asynchronous formatter; result is visible
+ok 47 - complete raw future candidate is captured before any asynchronous formatter; result is visible
+  ---
+  duration_ms: 8.4708
+  type: 'test'
+  ...
+# Subtest: malformed native receipt preserves complete candidate and blocks confirmed publication
+ok 48 - malformed native receipt preserves complete candidate and blocks confirmed publication
+  ---
+  duration_ms: 0.3348
+  type: 'test'
+  ...
+# Subtest: pure worker Unknown never removes or truncates the captured raw candidate
+ok 49 - pure worker Unknown never removes or truncates the captured raw candidate
+  ---
+  duration_ms: 0.2761
+  type: 'test'
+  ...
+# Subtest: preview keeps complete text and composition in aggregate, with no native formatting until commit
+ok 50 - preview keeps complete text and composition in aggregate, with no native formatting until commit
+  ---
+  duration_ms: 0.3173
+  type: 'test'
+  ...
+# Subtest: unknown preview offset preserves old raw and reports capture incomplete without guessing
+ok 51 - unknown preview offset preserves old raw and reports capture incomplete without guessing
+  ---
+  duration_ms: 0.1423
+  type: 'test'
+  ...
+# Subtest: row selection during pending formatting invalidates old reply and rechecks exact new UTF16 selection
+ok 52 - row selection during pending formatting invalidates old reply and rechecks exact new UTF16 selection
+  ---
+  duration_ms: 2.4699
+  type: 'test'
+  ...
+# Subtest: rapid same-row typing retains frozen last confirmed old value and rejects late candidate reply
+ok 53 - rapid same-row typing retains frozen last confirmed old value and rejects late candidate reply
+  ---
+  duration_ms: 0.5023
+  type: 'test'
+  ...
+# Subtest: unexpected second-row input preserves complete raw candidates but cannot publish pending formatting
+ok 54 - unexpected second-row input preserves complete raw candidates but cannot publish pending formatting
+  ---
+  duration_ms: 0.4775
+  type: 'test'
+  ...
+# Subtest: owner switch blocks late row formatter and old controller events
+ok 55 - owner switch blocks late row formatter and old controller events
+  ---
+  duration_ms: 0.4115
+  type: 'test'
+  ...
+# Subtest: same text edit-away-and-back at parent epoch blocks a late formatter
+ok 56 - same text edit-away-and-back at parent epoch blocks a late formatter
+  ---
+  duration_ms: 0.3303
+  type: 'test'
+  ...
+# Subtest: stop revokes callbacks and preserves complete raw, while fresh bind cannot qualify canceled formatting
+ok 57 - stop revokes callbacks and preserves complete raw, while fresh bind cannot qualify canceled formatting
+  ---
+  duration_ms: 0.3772
+  type: 'test'
+  ...
+# Subtest: capture rejection restores source-consistent local rows instead of creating a second raw draft
+ok 58 - capture rejection restores source-consistent local rows instead of creating a second raw draft
+  ---
+  duration_ms: 0.1927
+  type: 'test'
+  ...
+# Subtest: Add includes new separator in full future count and refuses total1000 without slicing
+ok 59 - Add includes new separator in full future count and refuses total1000 without slicing
+  ---
+  duration_ms: 0.5488
+  type: 'test'
+  ...
+# Subtest: Add caps local rows100 but restore preserves over100 existing raw rows
+ok 60 - Add caps local rows100 but restore preserves over100 existing raw rows
+  ---
+  duration_ms: 0.3081
+  type: 'test'
+  ...
+# Subtest: late Add count after changed owner cannot append a row to a new card
+ok 61 - late Add count after changed owner cannot append a row to a new card
+  ---
+  duration_ms: 0.3301
+  type: 'test'
+  ...
+# Subtest: remove accepts blank row, joins all remaining rows, and resets aggregate selection only
+ok 62 - remove accepts blank row, joins all remaining rows, and resets aggregate selection only
+  ---
+  duration_ms: 0.2376
+  type: 'test'
+  ...
+# Subtest: up/down preserve row IDs and row UTF16 cursor metadata while changing aggregate order
+ok 63 - up/down preserve row IDs and row UTF16 cursor metadata while changing aggregate order
+  ---
+  duration_ms: 0.9141
+  type: 'test'
+  ...
+# Subtest: private drag can insert before and after a real target with stable row identity
+ok 64 - private drag can insert before and after a real target with stable row identity
+  ---
+  duration_ms: 0.4295
+  type: 'test'
+  ...
+# Subtest: stale drag revision and old owner never reorder raw
+ok 65 - stale drag revision and old owner never reorder raw
+  ---
+  duration_ms: 0.5442
+  type: 'test'
+  ...
+# Subtest: pending/IME prevents remove, move, Add and beginDrag without losing raw candidate
+ok 66 - pending/IME prevents remove, move, Add and beginDrag without losing raw candidate
+  ---
+  duration_ms: 0.3469
+  type: 'test'
+  ...
+# Subtest: status owns an independent full TextValue and cannot mutate row capture authority
+ok 67 - status owns an independent full TextValue and cannot mutate row capture authority
+  ---
+  duration_ms: 0.2413
+  type: 'test'
+  ...
+# Subtest: pending count and formatter never transiently publish a captured candidate as business-ready
+ok 68 - pending count and formatter never transiently publish a captured candidate as business-ready
+  ---
+  duration_ms: 1.606
+  type: 'test'
+  ...
+# Subtest: same exact parent echo retains pending status and full raw; epoch change cancels only formatting qualification
+ok 69 - same exact parent echo retains pending status and full raw; epoch change cancels only formatting qualification
+  ---
+  duration_ms: 0.4139
+  type: 'test'
+  ...
+# Subtest: Unknown and incomplete capture remain separate across same raw rebind and recover after a confirmed new input
+ok 70 - Unknown and incomplete capture remain separate across same raw rebind and recover after a confirmed new input
+  ---
+  duration_ms: 0.4894
+  type: 'test'
+  ...
+# Subtest: disabling a fully confirmed raw value does not make its existing formatting result incomplete
+ok 71 - disabling a fully confirmed raw value does not make its existing formatting result incomplete
+  ---
+  duration_ms: 0.2121
+  type: 'test'
+  ...
+# Subtest: raw sentinel and cross-row composition are retained without guessing a restorable row range
+ok 72 - raw sentinel and cross-row composition are retained without guessing a restorable row range
+  ---
+  duration_ms: 0.2612
+  type: 'test'
+  ...
+# Subtest: other row controller callbacks cannot clear the captured active preview composition
+ok 73 - other row controller callbacks cannot clear the captured active preview composition
+  ---
+  duration_ms: 0.1955
+  type: 'test'
+  ...
+# Subtest: remaining-count failure preserves complete future raw and blocks only formatter business qualification
+ok 74 - remaining-count failure preserves complete future raw and blocks only formatter business qualification
+  ---
+  duration_ms: 0.2858
+  type: 'test'
+  ...
+1..74
+# tests 74
+# suites 0
+# pass 74
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 636.4966

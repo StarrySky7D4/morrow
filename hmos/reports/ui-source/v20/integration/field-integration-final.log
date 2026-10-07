@@ -1,0 +1,29 @@
+Index.ets SHA256=b72ecdabcf33eebadd5348728c0150f1ee197a68dca7ee9434cfccc710db1a1c; SDK TypeScript=4.9.5
+✔ fresh actual Index methods use installed SDK compiler; emit source hash (1.8067ms)
+✔ all five fields retain original graphemes and UTF16 range in actual raw journal (68.6449ms)
+✔ IME candidate is journaled losslessly in all fields while business admission is blocked (305.3805ms)
+✔ invalid IME offset blocks retention and leaves previous confirmed raw values intact (51.0449ms)
+✔ older count cannot replace a newer edit or a newer UTF16 selection count (53.4761ms)
+✔ business validation revokes edits, selection, category, owner, command and foreground changes (378.9923ms)
+✔ later input during final raw flush prevents issuing a frozen business command (57.1559ms)
+✔ over-limit title keeps every character and confirmed pins without business mutation (45.5217ms)
+✔ count worker failure never authorizes business or normalizes original input (42.2121ms)
+✔ unknown raw journal preserves exact pending request and confirmed pins, no business issue (37.038ms)
+✔ unknown business reply retains original serialized command and raw snapshot with confirmed pins (39.9739ms)
+✔ create/edit business send preserves exact source strings and binds confirmed generation (46.4831ms)
+✔ task_add validates full raw text and does not consume later text or IME (38.9223ms)
+✔ task rename validates its untrimmed original while command retains established trimming (37.796ms)
+✔ same-value rename roundtrip after issue does not consume newer input epoch (39.4341ms)
+✔ actual cancel callback invalidates pending validation and later reopen is not consumed (35.9563ms)
+✔ unknown rename preserves original request and frozen raw identity through explicit reconciliation (38.9524ms)
+✔ confirmed not-committed rename clears only frozen request, preserving user text (34.4765ms)
+✔ foreground loss after issued rename revokes successful input consumption (39.9692ms)
+✔ late IME rename callback during issued business request retains newer candidate (35.8905ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1956.7065

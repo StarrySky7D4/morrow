@@ -1,0 +1,149 @@
+{
+  "captured_at": "2026-10-07T08:44:20.815Z",
+  "references": [
+    {
+      "path": "build/io-safety-refactor",
+      "head": "925fb8ca6563dcb7de38db8fbdf6b005f9ad5420",
+      "files": [
+        {
+          "path": "build/io-safety-refactor/lib/card_tips_editor.dart",
+          "bytes": 3254,
+          "sha256": "cae29cfd83020ff9f8a9e17b128b5f9c83d3260d2e117cb41630b83befcfde64",
+          "lf_sha256": "5dffdc4dfd6f45c17e7145721815e6070976e1e687cbeedba572dbf17c8c4c0d",
+          "lf_git_blob_sha1": "16620678b6cfd0d9a6c6615fbb62e78c7be7f5a3"
+        },
+        {
+          "path": "build/io-safety-refactor/lib/tip_list_editor.dart",
+          "bytes": 15369,
+          "sha256": "d4af62531cbc28807c2ce0356e6b7ea26a12e81c82e979d9d470deeb11dd9191",
+          "lf_sha256": "fefdce765a39cd0ac78adf786a91f9267211ed7a844d298d5051874fe75104ea",
+          "lf_git_blob_sha1": "1a674f64827cec137aef1361529fb834a1582aff"
+        },
+        {
+          "path": "build/io-safety-refactor/lib/tip_preferences.dart",
+          "bytes": 7780,
+          "sha256": "c09d7d56758437b0554c5340b3278b1caf3f7b102d5e6cbe290806c88638f9b6",
+          "lf_sha256": "82563338a1f706d64653dde84b4b4c07bb0966872e9e73c81d6117033b5f30ee",
+          "lf_git_blob_sha1": "55c0008486b4caa4de710c633cf011bded675ff0"
+        },
+        {
+          "path": "build/io-safety-refactor/lib/hold_reorder.dart",
+          "bytes": 7637,
+          "sha256": "6776a3b8b45ff18f7d4c04f29182e7b77a6675e9b8f4a38aaff5c4f415478062",
+          "lf_sha256": "2bd70dcd16ee8bea076a7bf10b9fe1e99129d899899610d79827d7ae2ee97007",
+          "lf_git_blob_sha1": "2ed1ab3b4b26bad3a3ba4c49050ef6b76980898e"
+        }
+      ]
+    },
+    {
+      "path": "build/win-cloud-20261005",
+      "head": "e83cdf1d3506b001d07ffceaaa9f98b688bcc150",
+      "files": [
+        {
+          "path": "build/win-cloud-20261005/lib/card_tips_editor.dart",
+          "bytes": 3143,
+          "sha256": "5dffdc4dfd6f45c17e7145721815e6070976e1e687cbeedba572dbf17c8c4c0d",
+          "lf_sha256": "5dffdc4dfd6f45c17e7145721815e6070976e1e687cbeedba572dbf17c8c4c0d",
+          "lf_git_blob_sha1": "16620678b6cfd0d9a6c6615fbb62e78c7be7f5a3"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/tip_list_editor.dart",
+          "bytes": 14941,
+          "sha256": "fefdce765a39cd0ac78adf786a91f9267211ed7a844d298d5051874fe75104ea",
+          "lf_sha256": "fefdce765a39cd0ac78adf786a91f9267211ed7a844d298d5051874fe75104ea",
+          "lf_git_blob_sha1": "1a674f64827cec137aef1361529fb834a1582aff"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/tip_preferences.dart",
+          "bytes": 7541,
+          "sha256": "82563338a1f706d64653dde84b4b4c07bb0966872e9e73c81d6117033b5f30ee",
+          "lf_sha256": "82563338a1f706d64653dde84b4b4c07bb0966872e9e73c81d6117033b5f30ee",
+          "lf_git_blob_sha1": "55c0008486b4caa4de710c633cf011bded675ff0"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/hold_reorder.dart",
+          "bytes": 7415,
+          "sha256": "2bd70dcd16ee8bea076a7bf10b9fe1e99129d899899610d79827d7ae2ee97007",
+          "lf_sha256": "2bd70dcd16ee8bea076a7bf10b9fe1e99129d899899610d79827d7ae2ee97007",
+          "lf_git_blob_sha1": "2ed1ab3b4b26bad3a3ba4c49050ef6b76980898e"
+        }
+      ]
+    }
+  ],
+  "sdk_files": [
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/component/text_area.d.ts",
+      "bytes": 72279,
+      "sha256": "a0f6ef26a0fd23933df202535ae392af305cff5cadfc36285101e0525abebbb4",
+      "lf_sha256": "a0f6ef26a0fd23933df202535ae392af305cff5cadfc36285101e0525abebbb4",
+      "lf_git_blob_sha1": "7c830aa1b95dcdf958fbbc7a0ec41f0c947f663c"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/component/text_common.d.ts",
+      "bytes": 72432,
+      "sha256": "d06fb8570b900b39adeb2159c161f3087907b58dfffaf189a558d51bc644a216",
+      "lf_sha256": "d06fb8570b900b39adeb2159c161f3087907b58dfffaf189a558d51bc644a216",
+      "lf_git_blob_sha1": "ddae9cacf86d9c075b4c0ad7b5a66e52ed515f0d"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/component/common.d.ts",
+      "bytes": 930344,
+      "sha256": "2662a40432b2fa6efcfe387c3bc4bdc79ac9a993de1e415042b37a78d6315614",
+      "lf_sha256": "2662a40432b2fa6efcfe387c3bc4bdc79ac9a993de1e415042b37a78d6315614",
+      "lf_git_blob_sha1": "ab623288bdd90cc4fd59299316e4e29437702397"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/component/shape.d.ts",
+      "bytes": 20667,
+      "sha256": "db845292b2b703b4f39aa645539571841073893b32f74e06b9009ca6306532c0",
+      "lf_sha256": "db845292b2b703b4f39aa645539571841073893b32f74e06b9009ca6306532c0",
+      "lf_git_blob_sha1": "c103814bccf5d4fcf1bcba2a87dae16d2ac2e78e"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/component/path.d.ts",
+      "bytes": 6207,
+      "sha256": "7ea5929586e9b8c6cf5ce8a4143ea63e13cebb2f6d390c9a921a3d2fb2e845e6",
+      "lf_sha256": "7ea5929586e9b8c6cf5ce8a4143ea63e13cebb2f6d390c9a921a3d2fb2e845e6",
+      "lf_git_blob_sha1": "8100f25c55479390ce7c51979508f6696f6fbfec"
+    }
+  ],
+  "flutter_sdk_icon_button": {
+    "path": "C:/flutter/packages/flutter/lib/src/material/icon_button.dart",
+    "bytes": 57552,
+    "sha256": "4af0de64e90fda46e22da0c62d9167357614737d27a6e1acd8d855c170e5d5aa",
+    "lf_sha256": "5ef9d1abe87429931b9eeb533db8823b4bc02cb3c28f616b5dfc9d15a80267f8",
+    "lf_git_blob_sha1": "1df0c76a1ea45a77e978033511d185bb401feb13"
+  },
+  "sources": [
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorTodos.ets",
+      "bytes": 21509,
+      "sha256": "e7a0748f5066939ad42fa4a9b6bde3d9d9761e15df2e42403356c1277a48d710",
+      "lf_sha256": "e7a0748f5066939ad42fa4a9b6bde3d9d9761e15df2e42403356c1277a48d710",
+      "lf_git_blob_sha1": "05815f768aa198a1d27bb7c6f35ece2325947dfd"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/EditorTodos.ets",
+      "bytes": 18504,
+      "sha256": "b06ef02ebc7a396f0f2b2461359187d9f1685085a07adad0783ba0679d4a62b8",
+      "lf_sha256": "b06ef02ebc7a396f0f2b2461359187d9f1685085a07adad0783ba0679d4a62b8",
+      "lf_git_blob_sha1": "e55029316113c2425962da2642adc80d83051dff"
+    },
+    {
+      "path": "hmos/tool/editor-todos-model.test.cjs",
+      "bytes": 25613,
+      "sha256": "19025846071185001a63e43f625eb55e56b0b811fa27e7fb4fc66d5791530875",
+      "lf_sha256": "19025846071185001a63e43f625eb55e56b0b811fa27e7fb4fc66d5791530875",
+      "lf_git_blob_sha1": "35965ba5e1f828c1e7cecaf9fdb568a24fb563af"
+    },
+    {
+      "path": "hmos/tool/editor-todos-component-methods.test.cjs",
+      "bytes": 17403,
+      "sha256": "f89113ec84d5f13ba9ce9c68e6c0df2788fb57f6c78e0471d01a9ae5d9415347",
+      "lf_sha256": "f89113ec84d5f13ba9ce9c68e6c0df2788fb57f6c78e0471d01a9ae5d9415347",
+      "lf_git_blob_sha1": "b3111d67be65e0f39f47dbe21c242d8af6b4e0a5"
+    }
+  ],
+  "scope": "source identity and documented API check; no rendered layout, product HAP, device or Git action",
+  "checked_at": "2026-10-07T08:45:48.350Z"
+}

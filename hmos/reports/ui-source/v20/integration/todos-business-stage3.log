@@ -1,0 +1,43 @@
+Index.ets SHA256=b72ecdabcf33eebadd5348728c0150f1ee197a68dca7ee9434cfccc710db1a1c; SDK TypeScript=4.9.5
+✔ actual Index create sends one immutable operation with complete raw todos and confirmed publication (102.6027ms)
+✔ new-card todos composition is preserved in confirmed raw but never admitted as create (83.7539ms)
+✔ complete grapheme overflow or 101 original blank rows stay raw without a partial create (160.2334ms)
+✔ unready direct-input or row formatting blocks business while exact raw remains retainable (154.0786ms)
+✔ backend known rejection preserves full todos/pins and requires an explicit new save (76.9496ms)
+✔ Unknown create retains exact wire and explicit retry does not borrow later todos (52.1542ms)
+✔ raw journal Unknown reconciles only its original todos; later rows need a fresh confirmed publication (55.4648ms)
+✔ structured unconfirmed or historical committed error preserves the original create wire (144.7993ms)
+✔ late todos text/range/composition/edit-away-back revokes create input consumption (220.5606ms)
+✔ a different editor owner with identical raw values cannot be consumed by an old create receipt (58.7425ms)
+✔ successful exact create retires its full raw generation without emptying/normalizing it first (57.5738ms)
+✖ late input/range/roundtrip/actual SDK callback or owner change during discard never closes the live editor (202.089ms)
+✖ invalid discard receipt retains its original retirement request and raw editor (76.0514ms)
+✔ existing V2 edit leaves single pending task input separate and sends no legacy todos or task command (48.8545ms)
+✔ actual create admission rejects a command borrowing different raw todos (45.7904ms)
+✔ emit fresh source identity for the actual Index business boundary (1.2824ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 14
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2079.014
+
+✖ failing tests:
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:311:1
+✖ late input/range/roundtrip/actual SDK callback or owner change during discard never closes the live editor (202.089ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:324:31)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:341:1
+✖ invalid discard receipt retains its original retirement request and raw editor (76.0514ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:351:23)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)

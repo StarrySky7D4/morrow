@@ -44,7 +44,7 @@ function fixture(initial = 'a\nb', options = {}) {
   view.isCurrent = (capturedOwner, capturedRevision, value) => owner === capturedOwner && revision === capturedRevision && JSON.stringify(raw) === JSON.stringify(value);
   view.count = async (value, guard) => (await policy.checkField('todos', value, guard)).grapheme_count;
   view.format = options.format || (async (_, value) => ({ action: 'accepted', value: draft.copyText(value) }));
-  view.onStatus = (...args) => statuses.push(args); view.onRowFocused = (...args) => focuses.push(args); view.onRevealRow = (...args) => reveals.push(args);
+  view.onStatus = status => statuses.push(JSON.parse(JSON.stringify(status)));  view.onRowFocused = (...args) => focuses.push(args); view.onRevealRow = (...args) => reveals.push(args);
   view.getUIContext = () => ({ getFocusController: () => ({ requestFocus: element => requestedFocus.push(element) }) });
   view.aboutToAppear();
   return { view, captures, statuses, focuses, reveals, requestedFocus, get raw() { return raw; },
@@ -99,12 +99,12 @@ test('parent disable/disappear blocks editing and late row callbacks without bor
   await f.view.inputFor(ticket, 'late-again'); assert.equal(f.raw.text, 'a\nb');
 });
 
-test('parent state exposes pending/incomplete before row formatter and complete after exact reply', async () => {
+test('parent status distinguishes complete raw capture and pending formatting before exact reply', async () => {
   const wait = deferred(), f = fixture('a', { format: () => wait.promise });
   const running = f.view.inputFor(f.ticket(), 'candidate'); await tick();
-  assert.ok(f.statuses.some(([, complete, pending]) => !complete && pending));
+  assert.ok(f.statuses.some(status => status.raw_capture_complete && !status.business_ready && status.format_pending));
   wait.resolve({ action: 'accepted', value: text('candidate') }); await running;
-  assert.equal(f.statuses.at(-1)[1], true); assert.equal(f.statuses.at(-1)[2], false);
+  assert.equal(f.statuses.at(-1).raw_capture_complete, true); assert.equal(f.statuses.at(-1).business_ready, true); assert.equal(f.statuses.at(-1).format_pending, false);
 });
 
 test('readonly count failure keeps full rows visible with unconfirmed counter', async () => {
@@ -187,4 +187,111 @@ test('child old incarnation callbacks and destroyed controller queued selection 
 test('same local row ID on another owner cannot admit old callbacks', () => {
   const f = rowFixture(); f.view.owner = 'owner-B'; f.view.rowChanged(); f.view.changeFor(f.ticket, 'borrowed');
   assert.equal(f.inputs.length, 0);
+});
+
+test('actual builder uses SDK adaptive1..3 SCROLL lines with full source and Flutter row geometry', () => {
+  assert.match(source, /\.minLines\(1\)\.maxLines\(3,\s*\{\s*overflowMode:\s*MaxLinesMode\.SCROLL\s*\}\)\.textOverflow\(TextOverflow\.None\)/);
+  assert.match(source, /\.lineHeight\('23\.1fp'\)/); assert.doesNotMatch(source, /\.height\(76\)|onContentSizeChange|\.maxLength\(/);
+  assert.match(source, /fontSize\(11\).*fontWeight\(600\)/);
+  assert.match(source, /\.width\(17\)\.height\(17\)/); assert.match(source, /\.height\(40\)\.width\(40\)/);
+  assert.match(source, /\.width\(19\)\.height\(19\)/); assert.match(source, /\.height\(40\)\.width\(36\)/);
+  assert.match(source, /fill\(this\.controlInk \|\| this\.muted\)/); assert.match(source, /fill\(this\.muted\)/);
+  assert.match(source, /borderWidth\(\{ bottom: this\.focused \? 1 : 0 \}\)/);
+});
+
+test('parent Unknown status keeps complete raw retain permission and separately blocks business readiness', async () => {
+  const f = fixture('a', { format: async () => { throw new Error('Unknown'); } });
+  await f.view.inputFor(f.ticket(), 'full raw 😀'); const status = f.statuses.at(-1);
+  assert.equal(status.owner, f.view.ownerKey); assert.equal(status.revision, f.view.revision);
+  assert.equal(JSON.stringify(status.value), JSON.stringify(f.raw)); assert.equal(status.raw_capture_complete, true);
+  assert.equal(status.business_ready, false); assert.equal(status.format_pending, false);
+  assert.equal(status.capture_error, ''); assert.match(status.format_error, /Unknown/);
+});
+
+test('valid preview reports complete captured composition rather than formatter failure', async () => {
+  const f = fixture('a'); await f.view.inputFor(f.ticket(), 'a', { value: '候😀', offset: 1 });
+  const status = f.statuses.at(-1); assert.equal(status.value.text, 'a候😀');
+  assert.equal(status.value.composing_start, 1); assert.equal(status.value.composing_end, 4);
+  assert.equal(status.raw_capture_complete, true); assert.equal(status.business_ready, false);
+  assert.equal(status.format_pending, false); assert.equal(status.format_error, '');
+});
+
+test('unlocatable preview reports capture incomplete and preserves exact old raw identity', async () => {
+  const f = fixture('old'); await f.view.inputFor(f.ticket(), 'new', { value: '候', offset: 99 });
+  const status = f.statuses.at(-1); assert.equal(status.raw_capture_complete, false); assert.equal(status.business_ready, false);
+  assert.equal(status.value.text, 'old'); assert.match(status.capture_error, /位置/);
+  assert.equal(JSON.stringify(status.value), JSON.stringify(f.raw));
+});
+
+test('invalid new-owner source status does not borrow previous owner row state', () => {
+  const f = fixture('old'); f.switchOwner('new-owner', text('new raw', { selection_base: 99 }));
+  const status = f.statuses.at(-1); assert.equal(status.owner, 'new-owner'); assert.equal(status.revision, f.view.revision);
+  assert.equal(status.value.text, 'new raw'); assert.equal(status.raw_capture_complete, false);
+  assert.equal(status.business_ready, false); assert.match(status.capture_error, /位置/);
+});
+
+test('failed nonmutating Add count does not misreport the current full raw as capture-incomplete', async () => {
+  const f = fixture('a'); await tick(); f.view.model.countCache.clear();
+  f.view.count = async () => { throw new Error('AddCountUnknown'); };
+  await f.view.addRow(); assert.equal(f.raw.text, 'a'); assert.equal(f.view.state.rows.length, 1);
+  assert.equal(f.view.model.status().raw_capture_complete, true); assert.equal(f.view.model.status().business_ready, true);
+  assert.equal(f.statuses.at(-1).raw_capture_complete, true); assert.match(f.view.state.error, /AddCountUnknown/);
+});
+
+test('disable pending preserves raw retain permission but cannot turn canceled format into a confirmed receipt', async () => {
+  const wait = deferred(), f = fixture('a', { format: () => wait.promise });
+  const running = f.view.inputFor(f.ticket(), 'complete pending raw'); await tick();
+  f.view.editingEnabled = false; f.view.availabilityChanged();
+  assert.equal(f.statuses.at(-1).raw_capture_complete, true); assert.equal(f.statuses.at(-1).business_ready, false);
+  f.view.editingEnabled = true; f.view.availabilityChanged();
+  wait.resolve({ action: 'accepted', value: text('late') }); await running;
+  assert.equal(f.raw.text, 'complete pending raw'); assert.equal(f.statuses.at(-1).business_ready, false);
+  assert.equal(f.statuses.at(-1).value.text, 'complete pending raw');
+});
+
+test('disabled same-owner parent input and selection notify complete events without raw mutation or formatting', async () => {
+  const formats = [], notifications = [], f = fixture('a\nb', { format: async (...args) => { formats.push(args); return { action: 'accepted', value: args[1] }; } });
+  const ticket = f.ticket(1), original = JSON.stringify(f.raw), preview = { value: '候😀\r\n', offset: 9 };
+  f.view.onUncaptured = (...args) => notifications.push(args); f.view.editingEnabled = false; f.view.availabilityChanged();
+  await f.view.inputFor(ticket, 'whole\nraw😀', preview); await f.view.selectionFor(ticket, 7, 2);
+  assert.equal(notifications.length, 2); assert.equal(notifications[0][0], 'owner-A'); assert.equal(notifications[0][1], ticket.id);
+  assert.deepEqual(JSON.parse(notifications[0][2]), { kind: 'input', text: 'whole\nraw😀', preview });
+  assert.deepEqual(JSON.parse(notifications[1][2]), { kind: 'selection', base: 7, extent: 2 });
+  assert.equal(JSON.stringify(f.raw), original); assert.equal(f.captures.length, 0); assert.equal(formats.length, 0);
+});
+
+test('disabled current parent ticket can notify after epoch preflight is invalidated but old identity never does', async () => {
+  const notifications = [], f = fixture('a'); const ticket = f.ticket();
+  f.view.onUncaptured = (...args) => notifications.push(args); f.view.editingEnabled = false; f.view.availabilityChanged();
+  f.view.isCurrent = () => false;
+  await f.view.inputFor(ticket, 'unconfirmed'); assert.equal(notifications.length, 1);
+  f.view.editingEnabled = true; f.view.availabilityChanged(); f.view.editingEnabled = false; f.view.availabilityChanged();
+  await f.view.selectionFor(ticket, 0, 0); assert.equal(notifications.length, 1);
+  f.switchOwner(); await f.view.inputFor(ticket, 'foreign'); await f.view.selectionFor(ticket, 1, 1);
+  assert.equal(notifications.length, 1); f.view.aboutToDisappear();
+  await f.view.inputFor(f.ticket(), 'destroyed'); assert.equal(notifications.length, 1);
+});
+
+test('disabled actual child input/selection forward raw events without changing its text or invoking normal capture', () => {
+  const notifications = [], f = rowFixture(); f.view.onUncaptured = (...args) => notifications.push(args); f.view.editingEnabled = false;
+  const original = f.view.text, preview = { value: '候😀', offset: 1 };
+  f.view.changeFor(f.ticket, 'unconfirmed raw', preview); f.view.selectionFor(f.ticket, 2, 0);
+  assert.equal(notifications.length, 2); assert.equal(notifications[0][0], f.ticket);
+  assert.deepEqual(JSON.parse(notifications[0][1]), { kind: 'input', text: 'unconfirmed raw', preview });
+  assert.deepEqual(JSON.parse(notifications[1][1]), { kind: 'selection', base: 2, extent: 0 });
+  assert.equal(f.view.text, original); assert.equal(f.inputs.length, 0); assert.equal(f.selections.length, 0);
+});
+
+test('disabled child refuses old owner/incarnation/disposed callbacks and current child notification reaches parent', () => {
+  const notifications = [], parent = fixture('a'), child = new EditorTodoRowInput();
+  child.owner = parent.view.ownerKey; child.row = parent.view.state.rows[0]; child.editingEnabled = false;
+  parent.view.editingEnabled = false; parent.view.availabilityChanged();
+  parent.view.onUncaptured = (...args) => notifications.push(args);
+  child.onUncaptured = (ticket, event) => parent.view.uncapturedFor(ticket, event); child.aboutToAppear();
+  const ticket = child.session; child.changeFor(ticket, 'same owner'); assert.equal(notifications.length, 1);
+  child.row = Object.assign(new model.EditorTodoRow(), child.row, { incarnation: ticket.incarnation + 1 }); child.rowChanged();
+  child.changeFor(ticket, 'old incarnation'); child.selectionFor(ticket, 1, 1); assert.equal(notifications.length, 1);
+  child.owner = 'foreign-owner'; child.rowChanged(); child.changeFor(ticket, 'old owner'); assert.equal(notifications.length, 1);
+  child.aboutToDisappear(); child.changeFor(child.session, 'destroyed'); assert.equal(notifications.length, 1);
+  assert.equal(parent.captures.length, 0); assert.equal(parent.raw.text, 'a');
 });
