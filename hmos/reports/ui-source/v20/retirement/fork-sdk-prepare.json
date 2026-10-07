@@ -1,0 +1,43 @@
+{
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\checkpoint-sdk-smoke\\fork-dev20-2026-10-07T09-58-58-796Z",
+  "manifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\checkpoint-sdk-smoke\\fork-dev20-2026-10-07T09-58-58-796Z\\source-copy-manifest.json",
+  "copied_files": 309,
+  "generated_files": 5,
+  "bundle": "dev.morrow.hmos.draftforksdk",
+  "source_version": "0.1.0-hmos-dev.19",
+  "smoke_version": "0.1.0-draft-fork-sdk-smoke.20",
+  "device": "NOT_RUN",
+  "installation": "NOT_RUN",
+  "actual_models": [
+    {
+      "path": "entry/src/main/ets/model/EditorDraft.ets",
+      "bytes": 29143,
+      "sha256": "a3ae1e99d198fcba3cdef741a6f138612ad16979be42c7a8809003f00d04f965"
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorDraftFork.ets",
+      "bytes": 12805,
+      "sha256": "2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c"
+    }
+  ],
+  "rewritten_wrappers": [
+    {
+      "path": "AppScope/app.json5",
+      "from": "fresh output of tool/checkpoint-sdk-smoke/prepare.cjs",
+      "before_bytes": 241,
+      "before_sha256": "65ad55d521ed0d6bc21528c673c8d7ac98ba421175db286b8c5a120fcabbbaca",
+      "after_bytes": 256,
+      "after_sha256": "c80e92811b15bf340306926d688d6a0570d74af8e4469c87c7a459754a4b86c1"
+    },
+    {
+      "path": "entry/src/main/ets/pages/CheckpointSdkSmoke.ets",
+      "from": "fresh output of tool/checkpoint-sdk-smoke/prepare.cjs",
+      "before_bytes": 2332,
+      "before_sha256": "29da9117c5a3c6429704180828cc692183d8c8ba0b49af0edc77b61b1734b629",
+      "after_bytes": 3126,
+      "after_sha256": "8ee07fe8925bd5fdcd5a7ebd3e1ec56d1b2ffb56ca526a6a22939c5bae06c7bb"
+    }
+  ],
+  "runtime": "NOT_RUN",
+  "scope": "Compile-only actual constructor, public methods and View types; controlled provider never calls transport"
+}

@@ -1,0 +1,354 @@
+{
+  "fixture": "HMOS-todos-20261007-D",
+  "device": "127.0.0.1:5555",
+  "stages": [
+    {
+      "label": "own-todo-ui-new",
+      "phase": "PASS",
+      "started": "2026-10-07T09:44:55.929Z",
+      "installation": {
+        "hap_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev20-integration-checkpoint\\entry-default-unsigned.hap",
+        "hap_sha256": "4769015976A302099D4CDC6ABB49DE3F7A836AE3559FED1AD6F56A677F6C460E",
+        "hap_bytes": 28533476,
+        "install_log_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\integration-install.log",
+        "install_log_sha256": "D8952972FC4A33EDB070A41B39D416F3881F47EF686729D09DD172AF325E3B21",
+        "saved_bundle_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\bundle-after-install.json",
+        "saved_bundle_sha256": "61A923BD656E94055EE570C257AE92A981C64620B4A7DB07CC66970D5D112987",
+        "name": "dev.morrow.hmos",
+        "versionName": "0.1.0-hmos-dev.19",
+        "versionCode": 1000019,
+        "device": "127.0.0.1:5555",
+        "proof_scope": "Host archive hash + exact path in successful install log + saved/fresh bm version; install log has no device serial and bm exposes no installed-byte hash"
+      },
+      "actions": [
+        {
+          "arguments": [
+            "shell",
+            "bm",
+            "dump",
+            "-n",
+            "dev.morrow.hmos"
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:44:55.930Z",
+          "reply": "dev.morrow.hmos:\r\n{\r\n    \"appId\": \"dev.morrow.hmos_\",\r\n    \"appIdentifier\": \"\",\r\n    \"appIndex\": 0,\r\n    \"applicationInfo\": {\r\n        \"GWPAsanEnabled\": false,\r\n        \"accessTokenId\": 537001893,\r\n        \"accessTokenIdEx\": 34896740261,\r\n        \"accessible\": false,\r\n        \"allowAppRunWhenDeviceFirstLocked\": false,\r\n        \"allowArkTsLargeHeap\": false,\r\n        \"allowCommonEvent\": [],\r\n        \"allowEnableNotification\": false,\r\n        \"allowListenBundleChangedEvent\": [],\r\n        \"allowMultiProcess\": false,\r\n        \"alternateIcons\": [],\r\n        \"apiCompatibleVersion\": 260000026,\r\n        \"apiReleaseType\": \"Release\",\r\n        \"apiTargetVersion\": 260000026,\r\n        \"appDetailAbilityLibraryPath\": \"\",\r\n        \"appDistributionType\": \"none\",\r\n        \"appEnvironments\": [],\r\n        \"appIndex\": 0,\r\n        \"appPreloadPhase\": 0,\r\n        \"appPrivilegeLevel\": \"normal\",\r\n        \"appProvisionType\": \"debug\",\r\n        \"appQuickFix\": {\r\n            \"bundleName\": \"\",\r\n            \"deployedAppqfInfo\": {\r\n                \"cpuAbi\": \"\",\r\n                \"hqfInfos\": [],\r\n                \"nativeLibraryPath\": \"\",\r\n                \"type\": 0,\r\n                \"versionCode\": 0,\r\n                \"versionName\": \"\"\r\n            },\r\n            \"deployingAppqfInfo\": {\r\n                \"cpuAbi\": \"\",\r\n                \"hqfInfos\": [],\r\n                \"nativeLibraryPath\": \"\",\r\n                \"type\": 0,\r\n                \"versionCode\": 0,\r\n                \"versionName\": \"\"\r\n            },\r\n            \"versionCode\": 0,\r\n            \"versionName\": \"\"\r\n        },\r\n        \"appSignType\": \"none\",\r\n        \"applicationFlags\": 1,\r\n        \"applicationReservedFlag\": 0,\r\n        \"arkNativeFileAbi\": \"\",\r\n        \"arkNativeFilePath\": \"\",\r\n        \"arkTSMode\": \"dynamic\",\r\n        \"asanEnabled\": false,\r\n        \"asanLogPath\": \"\",\r\n        \"assetAccessGroups\": [],\r\n        \"associatedWakeUp\": false,\r\n        \"bundleName\": \"dev.morrow.hmos\",\r\n        \"bundleType\": 0,\r\n        \"cacheDir\": \"\",\r\n        \"cloudFileSyncEnabled\": false,\r\n        \"cloudStructuredDataSyncEnabled\": false,\r\n        \"codePath\": \"/data/app/el1/bundle/public/dev.morrow.hmos\",\r\n        \"compatibleMinorVersion\": 0,\r\n        \"compatiblePatchVersion\": 0,\r\n        \"compileSdkType\": \"HarmonyOS\",\r\n        \"compileSdkVersion\": \"26.0.0.105\",\r\n        \"configuration\": \"\",\r\n        \"cpuAbi\": \"x86_64\",\r\n        \"crowdtestDeadline\": -1,\r\n        \"curAlternateIconModuleName\": \"entry\",\r\n        \"dataBaseDir\": \"/data/app/el2/database/dev.morrow.hmos\",\r\n        \"dataDir\": \"\",\r\n        \"debug\": true,\r\n        \"description\": \"\",\r\n        \"descriptionId\": 0,\r\n        \"descriptionResource\": {\r\n            \"bundleName\": \"dev.morrow.hmos\",\r\n            \"id\": 0,\r\n            \"moduleName\": \"entry\"\r\n        },\r\n        \"deviceId\": \"PHONE-001\",\r\n        \"distributedNotificationEnabled\": true,\r\n        \"enabled\": true,\r\n        \"entityType\": \"unspecified\",\r\n        \"entryDir\": \"\",\r\n        \"entryModuleName\": \"\",\r\n        \"fingerprint\": \"\",\r\n        \"flags\": 0,\r\n        \"formVisibleNotify\": false,\r\n        \"hasPlugin\": false,\r\n        \"hideDesktopIcon\": false,\r\n        \"hnpPackages\": {},\r\n        \"hwasanEnabled\": false,\r\n        \"icon\": \"\",\r\n        \"iconId\": 16777219,\r\n        \"iconPath\": \"$media:layered_image\",\r\n        \"iconResource\": {\r\n            \"bundleName\": \"dev.morrow.hmos\",\r\n            \"id\": 16777219,\r\n            \"moduleName\": \"entry\"\r\n        },\r\n        \"installSource\": \"unknown\",\r\n        \"installedForAllUser\": false,\r\n        \"isCompressNativeLibs\": true,\r\n        \"isForceRotate\": false,\r\n        \"isFreeInstallApp\": false,\r\n        \"isLauncherApp\": false,\r\n        \"isSystemApp\": false,\r\n        \"keepAlive\": false,\r\n        \"label\": \"$string:app_name\",\r\n        \"labelId\": 16777221,\r\n        \"labelResource\": {\r\n            \"bundleName\": \"dev.morrow.hmos\",\r\n            \"id\": 16777221,\r\n            \"moduleName\": \"entry\"\r\n        },\r\n        \"maxChildProcess\": 512,\r\n        \"metaData\": {},\r\n        \"metadata\": {},\r\n        \"minCompatibleVersionCode\": 1000019,\r\n        \"moduleInfos\": [\r\n            {\r\n                \"moduleName\": \"entry\",\r\n                \"moduleSourceDir\": \"\",\r\n                \"preloads\": []\r\n            }\r\n        ],\r\n        \"moduleSourceDirs\": [],\r\n        \"multiAppMode\": {\r\n            \"maxCount\": 0,\r\n            \"multiAppModeType\": 0\r\n        },\r\n        \"multiProjects\": false,\r\n        \"name\": \"dev.morrow.hmos\",\r\n        \"nativeLibraryPath\": \"libs/x86_64\",\r\n        \"needAppDetail\": false,\r\n        \"organization\": \"\",\r\n        \"overlayState\": 0,\r\n        \"permissions\": [],\r\n        \"process\": \"dev.morrow.hmos\",\r\n        \"profileable\": false,\r\n        \"removable\": true,\r\n        \"resourcesApply\": [],\r\n        \"runningResourcesApply\": false,\r\n        \"signatureKey\": \"\",\r\n        \"singleton\": false,\r\n        \"startMode\": 1,\r\n        \"supportedModes\": 0,\r\n        \"targetBundleList\": [],\r\n        \"targetBundleName\": \"\",\r\n        \"targetMinorApiVersion\": 0,\r\n        \"targetPatchApiVersion\": 0,\r\n        \"targetPriority\": 0,\r\n        \"tsanEnabled\": false,\r\n        \"ubsanEnabled\": false,\r\n        \"uid\": 20020063,\r\n        \"userDataClearable\": true,\r\n        \"vendor\": \"Morrow\",\r\n        \"versionCode\": 1000019,\r\n        \"versionName\": \"0.1.0-hmos-dev.19\"\r\n    },\r\n    \"buildVersion\": \"\",\r\n    \"compatibleMinorVersion\": 0,\r\n    \"compatiblePatchVersion\": 0,\r\n    \"compatibleVersion\": 260000026,\r\n    \"cpuAbi\": \"\",\r\n    \"defPermissions\": [],\r\n    \"description\": \"\",\r\n    \"entryInstallationFree\": false,\r\n    \"entryModuleName\": \"entry\",\r\n    \"firstInstallTime\": 1791183795282,\r\n    \"gid\": 20020063,\r\n    \"hapModuleInfos\": [\r\n        {\r\n            \"abilityInfos\": [\r\n                {\r\n                    \"allowSelfRedirect\": true,\r\n                    \"appIndex\": 0,\r\n                    \"applicationName\": \"dev.morrow.hmos\",\r\n                    \"arkTSMode\": \"dynamic\",\r\n                    \"backgroundModes\": 0,\r\n                    \"bundleName\": \"dev.morrow.hmos\",\r\n                    \"codePath\": \"\",\r\n                    \"compileMode\": 1,\r\n                    \"configChanges\": [],\r\n                    \"continuable\": false,\r\n                    \"continueBundleName\": [],\r\n                    \"continueType\": [\r\n                        \"EntryAbility\"\r\n                    ],\r\n                    \"defaultFormHeight\": 0,\r\n                    \"defaultFormWidth\": 0,\r\n                    \"description\": \"$string:EntryAbility_desc\",\r\n                    \"descriptionId\": 16777220,\r\n                    \"deviceCapabilities\": [],\r\n                    \"deviceTypes\": [\r\n                        \"phone\",\r\n                        \"tablet\"\r\n                    ],\r\n                    \"enabled\": true,\r\n                    \"excludeFromDock\": false,\r\n                    \"excludeFromMissions\": false,\r\n                    \"extensionAbilityType\": 255,\r\n                    \"formEnabled\": false,\r\n                    \"formEntity\": 0,\r\n                    \"hapPath\": \"/data/app/el1/bundle/public/dev.morrow.hmos/entry.hap\",\r\n                    \"iconId\": 16777219,\r\n                    \"iconPath\": \"$media:layered_image\",\r\n                    \"isLauncherAbility\": false,\r\n                    \"isModuleJson\": true,\r\n                    \"isNativeAbility\": false,\r\n                    \"isStageBasedModel\": true,\r\n                    \"isolationProcess\": false,\r\n                    \"kind\": \"\",\r\n                    \"label\": \"$string:EntryAbility_label\",\r\n                    \"labelId\": 16777221,\r\n                    \"launchMode\": 0,\r\n                    \"maxWindowHeight\": 0,\r\n                    \"maxWindowRatio\": 0,\r\n                    \"maxWindowWidth\": 0,\r\n                    \"metaData\": {\r\n                        \"customizeData\": []\r\n                    },\r\n                    \"metadata\": [],\r\n                    \"minFormHeight\": 0,\r\n                    \"minFormWidth\": 0,\r\n                    \"minWindowHeight\": 0,\r\n                    \"minWindowRatio\": 0,\r\n                    \"minWindowWidth\": 0,\r\n                    \"moduleName\": \"entry\",\r\n                    \"name\": \"EntryAbility\",\r\n                    \"orientation\": 0,\r\n                    \"orientationId\": 0,\r\n                    \"package\": \"entry\",\r\n                    \"permissions\": [],\r\n                    \"preferMultiWindowOrientation\": \"default\",\r\n                    \"priority\": 0,\r\n                    \"process\": \"\",\r\n                    \"readPermission\": \"\",\r\n                    \"recoverable\": false,\r\n                    \"removeMissionAfterTerminate\": false,\r\n                    \"resourcePath\": \"/data/app/el1/bundle/public/dev.morrow.hmos/entry/resources.index\",\r\n                    \"skills\": [\r\n                        {\r\n                            \"actions\": [\r\n                                \"ohos.want.action.home\"\r\n                            ],\r\n                            \"domainVerify\": false,\r\n                            \"entities\": [\r\n                                \"entity.system.home\"\r\n                            ],\r\n                            \"permissions\": [],\r\n                            \"uris\": []\r\n                        }\r\n                    ],\r\n                    \"srcEntrance\": \"./ets/entryability/EntryAbility.ets\",\r\n                    \"srcLanguage\": \"js\",\r\n                    \"srcPath\": \"\",\r\n                    \"startWindow\": \"\",\r\n                    \"startWindowBackground\": \"$color:start_window_background\",\r\n                    \"startWindowBackgroundId\": 16777223,\r\n                    \"startWindowIcon\": \"$media:startIcon\",\r\n                    \"startWindowIconId\": 16777225,\r\n                    \"startWindowId\": 0,\r\n                    \"startWindowResource\": {\r\n                        \"startWindowAppIconId\": 0,\r\n                        \"startWindowBackgroundColorId\": 0,\r\n                        \"startWindowBackgroundImageFit\": \"Cover\",\r\n                        \"startWindowBackgroundImageId\": 0,\r\n                        \"startWindowBrandingImageId\": 0,\r\n                        \"startWindowIllustrationId\": 0\r\n                    },\r\n                    \"supportExtNames\": [],\r\n                    \"supportMimeTypes\": [],\r\n                    \"supportPipMode\": false,\r\n                    \"supportWindowMode\": [\r\n                        0,\r\n                        1,\r\n                        2\r\n                    ],\r\n                    \"targetAbility\": \"\",\r\n                    \"theme\": \"\",\r\n                    \"type\": 1,\r\n                    \"uid\": -1,\r\n                    \"unclearableMission\": false,\r\n                    \"uri\": \"\",\r\n                    \"visible\": true,\r\n                    \"writePermission\": \"\"\r\n                }\r\n            ],\r\n            \"abilitySrcEntryDelegator\": \"\",\r\n            \"abilityStageSrcEntryDelegator\": \"\",\r\n            \"aotCompileStatus\": 0,\r\n            \"appEnvironments\": [],\r\n            \"appStartup\": \"\",\r\n            \"arkTSMode\": \"dynamic\",\r\n            \"backgroundImg\": \"\",\r\n            \"buildHash\": \"\",\r\n            \"bundleName\": \"dev.morrow.hmos\",\r\n            \"colorMode\": -1,\r\n            \"compileMode\": 1,\r\n            \"compressNativeLibs\": true,\r\n            \"cpuAbi\": \"\",\r\n            \"crossAppSharedConfig\": \"\",\r\n            \"deduplicateHar\": false,\r\n            \"deliveryWithInstall\": true,\r\n            \"dependencies\": [],\r\n            \"description\": \"$string:module_desc\",\r\n            \"descriptionId\": 16777222,\r\n            \"deviceTypes\": [\r\n                \"phone\",\r\n                \"tablet\"\r\n            ],\r\n            \"easyGo\": \"\",\r\n            \"executableBinaryPaths\": [],\r\n            \"extensionInfos\": [\r\n                {\r\n                    \"appIdentifierAllowList\": [],\r\n                    \"appIndex\": 0,\r\n                    \"arkTSMode\": \"dynamic\",\r\n                    \"bundleName\": \"dev.morrow.hmos\",\r\n                    \"compileMode\": 1,\r\n                    \"customProcess\": \"\",\r\n                    \"dataGroupIds\": [],\r\n                    \"description\": \"\",\r\n                    \"descriptionId\": 0,\r\n                    \"enabled\": true,\r\n                    \"extensionProcessMode\": -1,\r\n                    \"extensionTypeName\": \"backup\",\r\n                    \"hapPath\": \"/data/app/el1/bundle/public/dev.morrow.hmos/entry.hap\",\r\n                    \"icon\": \"\",\r\n                    \"iconId\": 0,\r\n                    \"isolationProcess\": false,\r\n                    \"label\": \"\",\r\n                    \"labelId\": 0,\r\n                    \"metadata\": [\r\n                        {\r\n                            \"name\": \"ohos.extension.backup\",\r\n                            \"resource\": \"$profile:backup_config\",\r\n                            \"value\": \"\",\r\n                            \"valueId\": 0\r\n                        }\r\n                    ],\r\n                    \"moduleName\": \"entry\",\r\n                    \"name\": \"EntryBackupAbility\",\r\n                    \"needCreateSandbox\": false,\r\n                    \"permissions\": [],\r\n                    \"priority\": 0,\r\n                    \"process\": \"dev.morrow.hmos:backup\",\r\n                    \"readPermission\": \"\",\r\n                    \"resourcePath\": \"/data/app/el1/bundle/public/dev.morrow.hmos/entry/resources.index\",\r\n                    \"skills\": [],\r\n                    \"skipAbilityStageLifecycle\": false,\r\n                    \"srcEntrance\": \"./ets/entrybackupability/EntryBackupAbility.ets\",\r\n                    \"type\": 9,\r\n                    \"uid\": -1,\r\n                    \"uri\": \"\",\r\n                    \"validDataGroupIds\": [],\r\n                    \"visible\": false,\r\n                    \"writePermission\": \"\"\r\n                }\r\n            ],\r\n            \"fileContextMenu\": \"\",\r\n            \"formExtensionModule\": \"\",\r\n            \"formWidgetModule\": \"\",\r\n            \"hapPath\": \"/data/app/el1/bundle/public/dev.morrow.hmos/entry.hap\",\r\n            \"hasIntent\": false,\r\n            \"hashValue\": \"\",\r\n            \"hqfInfo\": {\r\n                \"cpuAbi\": \"\",\r\n                \"hapSha256\": \"\",\r\n                \"hqfFilePath\": \"\",\r\n                \"moduleName\": \"\",\r\n                \"nativeLibraryPath\": \"\",\r\n                \"type\": 0\r\n            },\r\n            \"iconId\": 16777219,\r\n            \"iconPath\": \"$media:layered_image\",\r\n            \"installationFree\": false,\r\n            \"isLibIsolated\": false,\r\n            \"isModuleJson\": true,\r\n            \"isRemovable\": {},\r\n            \"isRemovableSet\": [],\r\n            \"isStageBasedModel\": true,\r\n            \"isolationMode\": 0,\r\n            \"label\": \"$string:EntryAbility_label\",\r\n            \"labelId\": 16777221,\r\n            \"librarySupportDirectory\": [],\r\n            \"mainAbility\": \"EntryAbility\",\r\n            \"mainElementName\": \"EntryAbility\",\r\n            \"metadata\": [],\r\n            \"moduleArkTSMode\": \"dynamic\",\r\n            \"moduleName\": \"entry\",\r\n            \"moduleSourceDir\": \"\",\r\n            \"moduleType\": 1,\r\n            \"name\": \"entry\",\r\n            \"nativeLibraryFileNames\": [],\r\n            \"nativeLibraryPath\": \"\",\r\n            \"overlayModuleInfos\": [],\r\n            \"package\": \"entry\",\r\n            \"packageName\": \"entry\",\r\n            \"pages\": \"$profile:main_pages\",\r\n            \"preloads\": [],\r\n            \"process\": \"dev.morrow.hmos\",\r\n            \"proxyDatas\": [],\r\n            \"reqCapabilities\": [],\r\n            \"requiredDeviceFeatures\": {},\r\n            \"resizeable\": false,\r\n            \"resourcePath\": \"/data/app/el1/bundle/public/dev.morrow.hmos/entry/resources.index\",\r\n            \"routerArray\": [],\r\n            \"routerMap\": \"\",\r\n            \"shareFiles\": \"\",\r\n            \"srcEntrance\": \"\",\r\n            \"srcPath\": \"\",\r\n            \"supportedModes\": 0,\r\n            \"systemTheme\": \"\",\r\n            \"uiSyntax\": \"hml\",\r\n            \"upgradeFlag\": 0,\r\n            \"versionCode\": 1000019,\r\n            \"virtualMachine\": \"\"\r\n        }\r\n    ],\r\n    \"hapModuleNames\": [\r\n        \"entry\"\r\n    ],\r\n    \"installTime\": 1791183795282,\r\n    \"isDifferentName\": false,\r\n    \"isKeepAlive\": false,\r\n    \"isNativeApp\": false,\r\n    \"isNewVersion\": true,\r\n    \"isPreInstallApp\": false,\r\n    \"jointUserId\": \"\",\r\n    \"label\": \"\",\r\n    \"mainEntry\": \"entry\",\r\n    \"maxSdkVersion\": -1,\r\n    \"minCompatibleVersionCode\": 1000019,\r\n    \"minSdkVersion\": -1,\r\n    \"moduleDirs\": [\r\n        \"/data/app/el1/bundle/public/dev.morrow.hmos/entry\"\r\n    ],\r\n    \"moduleNames\": [\r\n        \"entry\"\r\n    ],\r\n    \"modulePublicDirs\": [\r\n        \"\"\r\n    ],\r\n    \"moduleResPaths\": [\r\n        \"/data/app/el1/bundle/public/dev.morrow.hmos/entry/resources.index\"\r\n    ],\r\n    \"name\": \"dev.morrow.hmos\",\r\n    \"oldAppIds\": [\r\n        \"dev.morrow.hmos_\"\r\n    ],\r\n    \"overlayBundleInfos\": [],\r\n    \"overlayType\": 3,\r\n    \"pluginBundleInfos\": {},\r\n    \"releaseType\": \"Release\",\r\n    \"reqPermissionDetails\": [\r\n        {\r\n            \"moduleName\": \"entry\",\r\n            \"name\": \"ohos.permission.INTERNET\",\r\n            \"reason\": \"\",\r\n            \"reasonId\": 0,\r\n            \"requiredFeature\": \"\",\r\n            \"usedScene\": {\r\n                \"abilities\": [],\r\n                \"when\": \"\"\r\n            }\r\n        }\r\n    ],\r\n    \"reqPermissionStates\": [\r\n        0\r\n    ],\r\n    \"reqPermissions\": [\r\n        \"ohos.permission.INTERNET\"\r\n    ],\r\n    \"routerArray\": [],\r\n    \"sandboxCreatorBundleName\": \"\",\r\n    \"seInfo\": \"\",\r\n    \"singleton\": false,\r\n    \"targetMinorApiVersion\": 0,\r\n    \"targetPatchApiVersion\": 0,\r\n    \"targetVersion\": 260000026,\r\n    \"uid\": 20020063,\r\n    \"updateTime\": 1791365881101,\r\n    \"userInfo\": [\r\n        {\r\n            \"accessTokenId\": 537001893,\r\n            \"accessTokenIdEx\": 34896740261,\r\n            \"bundleName\": \"dev.morrow.hmos\",\r\n            \"bundleUserInfo\": {\r\n                \"disabledAbilities\": [],\r\n                \"enabled\": true,\r\n                \"overlayState\": [],\r\n                \"setEnabledCaller\": \"\",\r\n                \"userId\": 100\r\n            },\r\n            \"canUninstall\": true,\r\n            \"cloneInfos\": {},\r\n            \"curAlternateIconName\": \"\",\r\n            \"curDynamicIconModule\": \"\",\r\n            \"firstInstallTime\": 1791183795282,\r\n            \"gids\": [\r\n                20020063\r\n            ],\r\n            \"installTime\": 1791183795282,\r\n            \"installedPluginSet\": [],\r\n            \"isBundleFirstLaunched\": true,\r\n            \"isRemovable\": true,\r\n            \"sandboxInfos\": {},\r\n            \"uid\": 20020063,\r\n            \"updateTime\": 1791365881101\r\n        }\r\n    ],\r\n    \"vendor\": \"Morrow\",\r\n    \"versionCode\": 1000019,\r\n    \"versionName\": \"0.1.0-hmos-dev.19\"\r\n}\r\n"
+        },
+        {
+          "arguments": [
+            "shell",
+            "uitest",
+            "uiInput",
+            "click",
+            1137,
+            454
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:44:57.186Z",
+          "reply": "No Error\r\n"
+        },
+        {
+          "arguments": [
+            "shell",
+            "uitest",
+            "uiInput",
+            "click",
+            660,
+            620
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:44:59.745Z",
+          "reply": "No Error\r\n"
+        },
+        {
+          "arguments": [
+            "shell",
+            "uitest",
+            "uiInput",
+            "keyEvent",
+            "2072",
+            "2017"
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:44:59.964Z",
+          "reply": "No Error\r\n"
+        },
+        {
+          "arguments": [
+            "file",
+            "send",
+            "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-input-33464-12.sh",
+            "/data/local/tmp/hmos-clipboard-input-33464-12.sh"
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:45:00.305Z",
+          "reply": "FileTransfer finish, Size:124, File count = 1, time:14ms rate:8.86kB/s\r\r\n"
+        },
+        {
+          "arguments": [
+            "shell",
+            "sh",
+            "/data/local/tmp/hmos-clipboard-input-33464-12.sh"
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:45:00.364Z",
+          "reply": "No Error\r\n"
+        },
+        {
+          "arguments": [
+            "shell",
+            "rm",
+            "-f",
+            "/data/local/tmp/hmos-clipboard-input-33464-12.sh"
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:45:01.627Z",
+          "reply": ""
+        },
+        {
+          "arguments": [
+            "shell",
+            "uitest",
+            "uiInput",
+            "keyEvent",
+            "Back"
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:45:01.700Z",
+          "reply": "No Error\r\n"
+        },
+        {
+          "arguments": [
+            "shell",
+            "uitest",
+            "uiInput",
+            "click",
+            660,
+            1597
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:45:05.805Z",
+          "reply": "No Error\r\n"
+        },
+        {
+          "arguments": [
+            "shell",
+            "uitest",
+            "uiInput",
+            "keyEvent",
+            "2072",
+            "2017"
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:45:06.024Z",
+          "reply": "No Error\r\n"
+        },
+        {
+          "arguments": [
+            "file",
+            "send",
+            "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-input-33464-27.sh",
+            "/data/local/tmp/hmos-clipboard-input-33464-27.sh"
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:45:06.272Z",
+          "reply": "FileTransfer finish, Size:160, File count = 1, time:11ms rate:14.55kB/s\r\r\n"
+        },
+        {
+          "arguments": [
+            "shell",
+            "sh",
+            "/data/local/tmp/hmos-clipboard-input-33464-27.sh"
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:45:06.322Z",
+          "reply": "No Error\r\n"
+        },
+        {
+          "arguments": [
+            "shell",
+            "rm",
+            "-f",
+            "/data/local/tmp/hmos-clipboard-input-33464-27.sh"
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:45:07.380Z",
+          "reply": ""
+        },
+        {
+          "arguments": [
+            "shell",
+            "uitest",
+            "uiInput",
+            "keyEvent",
+            "Back"
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:45:07.420Z",
+          "reply": "No Error\r\n"
+        }
+      ],
+      "captures": [
+        {
+          "label": "own-todo-ui-new-home",
+          "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-home.json",
+          "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-home.png"
+        },
+        {
+          "label": "own-todo-ui-new-blank",
+          "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-blank.json",
+          "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-blank.png"
+        },
+        {
+          "label": "own-todo-ui-new-input-20",
+          "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-input-20.json",
+          "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-input-20.png"
+        },
+        {
+          "label": "own-todo-ui-new-title",
+          "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-title.json",
+          "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-title.png"
+        },
+        {
+          "label": "own-todo-ui-new-input-35",
+          "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-input-35.json",
+          "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-input-35.png"
+        },
+        {
+          "label": "own-todo-ui-new-body",
+          "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-body.json",
+          "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-body.png"
+        }
+      ],
+      "result": {
+        "title": "HMOS-todos-20261007-D",
+        "rows": [],
+        "counts": [
+          {
+            "id": "field-count:title",
+            "text": "21 / 60"
+          }
+        ],
+        "texts": [
+          "",
+          "",
+          "Ctrl K",
+          "󰉘",
+          "草稿 3",
+          "A LITTLE SPACE FOR BIG IDEAS",
+          "让想法，自由生长。",
+          "收纳日常的零碎，也留住灵光一闪。",
+          "",
+          "新建灵感",
+          "让可能性发生",
+          "还没成形，也没关系。",
+          "一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。",
+          "记录此刻的想法",
+          "",
+          "最近的念头",
+          "14",
+          "全部",
+          "有待办",
+          "含附件",
+          "仅收藏",
+          "󰆨",
+          "自定义顺序",
+          "长按拖动柄调整顺序，或在卡片菜单中前移、后移。",
+          "",
+          "",
+          "HMOS-markdown-20261005-A",
+          "| Name | Value |\n| --- | --- |\n| 中文😀 | 42 |\n| Second | 保留 |",
+          "灵感",
+          "待整理",
+          "没有紧迫的事。给好奇心一点时间。",
+          "󰛹",
+          "",
+          "MORROW / A LITTLE POSSIBILITY",
+          "接住一个新想法",
+          "",
+          "文字、表格、图片，先放在这里。让一个念头慢慢成形。",
+          "HMOS-todos-20261007-D",
+          "21 / 60",
+          "粘贴",
+          "",
+          "导入文件",
+          "粘贴至正文 · 附件从文件选择器导入。",
+          "󰀣",
+          "正文 · Markdown",
+          "",
+          "Public Flutter todo UI fixture: 汉字 🧪 é.",
+          "草稿已保留",
+          "放弃草稿",
+          "保留草稿",
+          "保存灵感",
+          "05",
+          ":",
+          "45",
+          "100"
+        ]
+      },
+      "completed": "2026-10-07T09:45:11.383Z"
+    },
+    {
+      "label": "own-todo-ui-add-row",
+      "phase": "FAILED_OR_UNKNOWN",
+      "started": "2026-10-07T09:46:21.057Z",
+      "installation": {
+        "hap_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev20-integration-checkpoint\\entry-default-unsigned.hap",
+        "hap_sha256": "4769015976A302099D4CDC6ABB49DE3F7A836AE3559FED1AD6F56A677F6C460E",
+        "hap_bytes": 28533476,
+        "install_log_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\integration-install.log",
+        "install_log_sha256": "D8952972FC4A33EDB070A41B39D416F3881F47EF686729D09DD172AF325E3B21",
+        "saved_bundle_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\bundle-after-install.json",
+        "saved_bundle_sha256": "61A923BD656E94055EE570C257AE92A981C64620B4A7DB07CC66970D5D112987",
+        "name": "dev.morrow.hmos",
+        "versionName": "0.1.0-hmos-dev.19",
+        "versionCode": 1000019,
+        "device": "127.0.0.1:5555",
+        "proof_scope": "Host archive hash + exact path in successful install log + saved/fresh bm version; install log has no device serial and bm exposes no installed-byte hash"
+      },
+      "actions": [
+        {
+          "arguments": [
+            "shell",
+            "bm",
+            "dump",
+            "-n",
+            "dev.morrow.hmos"
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:46:21.059Z",
+          "reply": "dev.morrow.hmos:\r\n{\r\n    \"appId\": \"dev.morrow.hmos_\",\r\n    \"appIdentifier\": \"\",\r\n    \"appIndex\": 0,\r\n    \"applicationInfo\": {\r\n        \"GWPAsanEnabled\": false,\r\n        \"accessTokenId\": 537001893,\r\n        \"accessTokenIdEx\": 34896740261,\r\n        \"accessible\": false,\r\n        \"allowAppRunWhenDeviceFirstLocked\": false,\r\n        \"allowArkTsLargeHeap\": false,\r\n        \"allowCommonEvent\": [],\r\n        \"allowEnableNotification\": false,\r\n        \"allowListenBundleChangedEvent\": [],\r\n        \"allowMultiProcess\": false,\r\n        \"alternateIcons\": [],\r\n        \"apiCompatibleVersion\": 260000026,\r\n        \"apiReleaseType\": \"Release\",\r\n        \"apiTargetVersion\": 260000026,\r\n        \"appDetailAbilityLibraryPath\": \"\",\r\n        \"appDistributionType\": \"none\",\r\n        \"appEnvironments\": [],\r\n        \"appIndex\": 0,\r\n        \"appPreloadPhase\": 0,\r\n        \"appPrivilegeLevel\": \"normal\",\r\n        \"appProvisionType\": \"debug\",\r\n        \"appQuickFix\": {\r\n            \"bundleName\": \"\",\r\n            \"deployedAppqfInfo\": {\r\n                \"cpuAbi\": \"\",\r\n                \"hqfInfos\": [],\r\n                \"nativeLibraryPath\": \"\",\r\n                \"type\": 0,\r\n                \"versionCode\": 0,\r\n                \"versionName\": \"\"\r\n            },\r\n            \"deployingAppqfInfo\": {\r\n                \"cpuAbi\": \"\",\r\n                \"hqfInfos\": [],\r\n                \"nativeLibraryPath\": \"\",\r\n                \"type\": 0,\r\n                \"versionCode\": 0,\r\n                \"versionName\": \"\"\r\n            },\r\n            \"versionCode\": 0,\r\n            \"versionName\": \"\"\r\n        },\r\n        \"appSignType\": \"none\",\r\n        \"applicationFlags\": 1,\r\n        \"applicationReservedFlag\": 0,\r\n        \"arkNativeFileAbi\": \"\",\r\n        \"arkNativeFilePath\": \"\",\r\n        \"arkTSMode\": \"dynamic\",\r\n        \"asanEnabled\": false,\r\n        \"asanLogPath\": \"\",\r\n        \"assetAccessGroups\": [],\r\n        \"associatedWakeUp\": false,\r\n        \"bundleName\": \"dev.morrow.hmos\",\r\n        \"bundleType\": 0,\r\n        \"cacheDir\": \"\",\r\n        \"cloudFileSyncEnabled\": false,\r\n        \"cloudStructuredDataSyncEnabled\": false,\r\n        \"codePath\": \"/data/app/el1/bundle/public/dev.morrow.hmos\",\r\n        \"compatibleMinorVersion\": 0,\r\n        \"compatiblePatchVersion\": 0,\r\n        \"compileSdkType\": \"HarmonyOS\",\r\n        \"compileSdkVersion\": \"26.0.0.105\",\r\n        \"configuration\": \"\",\r\n        \"cpuAbi\": \"x86_64\",\r\n        \"crowdtestDeadline\": -1,\r\n        \"curAlternateIconModuleName\": \"entry\",\r\n        \"dataBaseDir\": \"/data/app/el2/database/dev.morrow.hmos\",\r\n        \"dataDir\": \"\",\r\n        \"debug\": true,\r\n        \"description\": \"\",\r\n        \"descriptionId\": 0,\r\n        \"descriptionResource\": {\r\n            \"bundleName\": \"dev.morrow.hmos\",\r\n            \"id\": 0,\r\n            \"moduleName\": \"entry\"\r\n        },\r\n        \"deviceId\": \"PHONE-001\",\r\n        \"distributedNotificationEnabled\": true,\r\n        \"enabled\": true,\r\n        \"entityType\": \"unspecified\",\r\n        \"entryDir\": \"\",\r\n        \"entryModuleName\": \"\",\r\n        \"fingerprint\": \"\",\r\n        \"flags\": 0,\r\n        \"formVisibleNotify\": false,\r\n        \"hasPlugin\": false,\r\n        \"hideDesktopIcon\": false,\r\n        \"hnpPackages\": {},\r\n        \"hwasanEnabled\": false,\r\n        \"icon\": \"\",\r\n        \"iconId\": 16777219,\r\n        \"iconPath\": \"$media:layered_image\",\r\n        \"iconResource\": {\r\n            \"bundleName\": \"dev.morrow.hmos\",\r\n            \"id\": 16777219,\r\n            \"moduleName\": \"entry\"\r\n        },\r\n        \"installSource\": \"unknown\",\r\n        \"installedForAllUser\": false,\r\n        \"isCompressNativeLibs\": true,\r\n        \"isForceRotate\": false,\r\n        \"isFreeInstallApp\": false,\r\n        \"isLauncherApp\": false,\r\n        \"isSystemApp\": false,\r\n        \"keepAlive\": false,\r\n        \"label\": \"$string:app_name\",\r\n        \"labelId\": 16777221,\r\n        \"labelResource\": {\r\n            \"bundleName\": \"dev.morrow.hmos\",\r\n            \"id\": 16777221,\r\n            \"moduleName\": \"entry\"\r\n        },\r\n        \"maxChildProcess\": 512,\r\n        \"metaData\": {},\r\n        \"metadata\": {},\r\n        \"minCompatibleVersionCode\": 1000019,\r\n        \"moduleInfos\": [\r\n            {\r\n                \"moduleName\": \"entry\",\r\n                \"moduleSourceDir\": \"\",\r\n                \"preloads\": []\r\n            }\r\n        ],\r\n        \"moduleSourceDirs\": [],\r\n        \"multiAppMode\": {\r\n            \"maxCount\": 0,\r\n            \"multiAppModeType\": 0\r\n        },\r\n        \"multiProjects\": false,\r\n        \"name\": \"dev.morrow.hmos\",\r\n        \"nativeLibraryPath\": \"libs/x86_64\",\r\n        \"needAppDetail\": false,\r\n        \"organization\": \"\",\r\n        \"overlayState\": 0,\r\n        \"permissions\": [],\r\n        \"process\": \"dev.morrow.hmos\",\r\n        \"profileable\": false,\r\n        \"removable\": true,\r\n        \"resourcesApply\": [],\r\n        \"runningResourcesApply\": false,\r\n        \"signatureKey\": \"\",\r\n        \"singleton\": false,\r\n        \"startMode\": 1,\r\n        \"supportedModes\": 0,\r\n        \"targetBundleList\": [],\r\n        \"targetBundleName\": \"\",\r\n        \"targetMinorApiVersion\": 0,\r\n        \"targetPatchApiVersion\": 0,\r\n        \"targetPriority\": 0,\r\n        \"tsanEnabled\": false,\r\n        \"ubsanEnabled\": false,\r\n        \"uid\": 20020063,\r\n        \"userDataClearable\": true,\r\n        \"vendor\": \"Morrow\",\r\n        \"versionCode\": 1000019,\r\n        \"versionName\": \"0.1.0-hmos-dev.19\"\r\n    },\r\n    \"buildVersion\": \"\",\r\n    \"compatibleMinorVersion\": 0,\r\n    \"compatiblePatchVersion\": 0,\r\n    \"compatibleVersion\": 260000026,\r\n    \"cpuAbi\": \"\",\r\n    \"defPermissions\": [],\r\n    \"description\": \"\",\r\n    \"entryInstallationFree\": false,\r\n    \"entryModuleName\": \"entry\",\r\n    \"firstInstallTime\": 1791183795282,\r\n    \"gid\": 20020063,\r\n    \"hapModuleInfos\": [\r\n        {\r\n            \"abilityInfos\": [\r\n                {\r\n                    \"allowSelfRedirect\": true,\r\n                    \"appIndex\": 0,\r\n                    \"applicationName\": \"dev.morrow.hmos\",\r\n                    \"arkTSMode\": \"dynamic\",\r\n                    \"backgroundModes\": 0,\r\n                    \"bundleName\": \"dev.morrow.hmos\",\r\n                    \"codePath\": \"\",\r\n                    \"compileMode\": 1,\r\n                    \"configChanges\": [],\r\n                    \"continuable\": false,\r\n                    \"continueBundleName\": [],\r\n                    \"continueType\": [\r\n                        \"EntryAbility\"\r\n                    ],\r\n                    \"defaultFormHeight\": 0,\r\n                    \"defaultFormWidth\": 0,\r\n                    \"description\": \"$string:EntryAbility_desc\",\r\n                    \"descriptionId\": 16777220,\r\n                    \"deviceCapabilities\": [],\r\n                    \"deviceTypes\": [\r\n                        \"phone\",\r\n                        \"tablet\"\r\n                    ],\r\n                    \"enabled\": true,\r\n                    \"excludeFromDock\": false,\r\n                    \"excludeFromMissions\": false,\r\n                    \"extensionAbilityType\": 255,\r\n                    \"formEnabled\": false,\r\n                    \"formEntity\": 0,\r\n                    \"hapPath\": \"/data/app/el1/bundle/public/dev.morrow.hmos/entry.hap\",\r\n                    \"iconId\": 16777219,\r\n                    \"iconPath\": \"$media:layered_image\",\r\n                    \"isLauncherAbility\": false,\r\n                    \"isModuleJson\": true,\r\n                    \"isNativeAbility\": false,\r\n                    \"isStageBasedModel\": true,\r\n                    \"isolationProcess\": false,\r\n                    \"kind\": \"\",\r\n                    \"label\": \"$string:EntryAbility_label\",\r\n                    \"labelId\": 16777221,\r\n                    \"launchMode\": 0,\r\n                    \"maxWindowHeight\": 0,\r\n                    \"maxWindowRatio\": 0,\r\n                    \"maxWindowWidth\": 0,\r\n                    \"metaData\": {\r\n                        \"customizeData\": []\r\n                    },\r\n                    \"metadata\": [],\r\n                    \"minFormHeight\": 0,\r\n                    \"minFormWidth\": 0,\r\n                    \"minWindowHeight\": 0,\r\n                    \"minWindowRatio\": 0,\r\n                    \"minWindowWidth\": 0,\r\n                    \"moduleName\": \"entry\",\r\n                    \"name\": \"EntryAbility\",\r\n                    \"orientation\": 0,\r\n                    \"orientationId\": 0,\r\n                    \"package\": \"entry\",\r\n                    \"permissions\": [],\r\n                    \"preferMultiWindowOrientation\": \"default\",\r\n                    \"priority\": 0,\r\n                    \"process\": \"\",\r\n                    \"readPermission\": \"\",\r\n                    \"recoverable\": false,\r\n                    \"removeMissionAfterTerminate\": false,\r\n                    \"resourcePath\": \"/data/app/el1/bundle/public/dev.morrow.hmos/entry/resources.index\",\r\n                    \"skills\": [\r\n                        {\r\n                            \"actions\": [\r\n                                \"ohos.want.action.home\"\r\n                            ],\r\n                            \"domainVerify\": false,\r\n                            \"entities\": [\r\n                                \"entity.system.home\"\r\n                            ],\r\n                            \"permissions\": [],\r\n                            \"uris\": []\r\n                        }\r\n                    ],\r\n                    \"srcEntrance\": \"./ets/entryability/EntryAbility.ets\",\r\n                    \"srcLanguage\": \"js\",\r\n                    \"srcPath\": \"\",\r\n                    \"startWindow\": \"\",\r\n                    \"startWindowBackground\": \"$color:start_window_background\",\r\n                    \"startWindowBackgroundId\": 16777223,\r\n                    \"startWindowIcon\": \"$media:startIcon\",\r\n                    \"startWindowIconId\": 16777225,\r\n                    \"startWindowId\": 0,\r\n                    \"startWindowResource\": {\r\n                        \"startWindowAppIconId\": 0,\r\n                        \"startWindowBackgroundColorId\": 0,\r\n                        \"startWindowBackgroundImageFit\": \"Cover\",\r\n                        \"startWindowBackgroundImageId\": 0,\r\n                        \"startWindowBrandingImageId\": 0,\r\n                        \"startWindowIllustrationId\": 0\r\n                    },\r\n                    \"supportExtNames\": [],\r\n                    \"supportMimeTypes\": [],\r\n                    \"supportPipMode\": false,\r\n                    \"supportWindowMode\": [\r\n                        0,\r\n                        1,\r\n                        2\r\n                    ],\r\n                    \"targetAbility\": \"\",\r\n                    \"theme\": \"\",\r\n                    \"type\": 1,\r\n                    \"uid\": -1,\r\n                    \"unclearableMission\": false,\r\n                    \"uri\": \"\",\r\n                    \"visible\": true,\r\n                    \"writePermission\": \"\"\r\n                }\r\n            ],\r\n            \"abilitySrcEntryDelegator\": \"\",\r\n            \"abilityStageSrcEntryDelegator\": \"\",\r\n            \"aotCompileStatus\": 0,\r\n            \"appEnvironments\": [],\r\n            \"appStartup\": \"\",\r\n            \"arkTSMode\": \"dynamic\",\r\n            \"backgroundImg\": \"\",\r\n            \"buildHash\": \"\",\r\n            \"bundleName\": \"dev.morrow.hmos\",\r\n            \"colorMode\": -1,\r\n            \"compileMode\": 1,\r\n            \"compressNativeLibs\": true,\r\n            \"cpuAbi\": \"\",\r\n            \"crossAppSharedConfig\": \"\",\r\n            \"deduplicateHar\": false,\r\n            \"deliveryWithInstall\": true,\r\n            \"dependencies\": [],\r\n            \"description\": \"$string:module_desc\",\r\n            \"descriptionId\": 16777222,\r\n            \"deviceTypes\": [\r\n                \"phone\",\r\n                \"tablet\"\r\n            ],\r\n            \"easyGo\": \"\",\r\n            \"executableBinaryPaths\": [],\r\n            \"extensionInfos\": [\r\n                {\r\n                    \"appIdentifierAllowList\": [],\r\n                    \"appIndex\": 0,\r\n                    \"arkTSMode\": \"dynamic\",\r\n                    \"bundleName\": \"dev.morrow.hmos\",\r\n                    \"compileMode\": 1,\r\n                    \"customProcess\": \"\",\r\n                    \"dataGroupIds\": [],\r\n                    \"description\": \"\",\r\n                    \"descriptionId\": 0,\r\n                    \"enabled\": true,\r\n                    \"extensionProcessMode\": -1,\r\n                    \"extensionTypeName\": \"backup\",\r\n                    \"hapPath\": \"/data/app/el1/bundle/public/dev.morrow.hmos/entry.hap\",\r\n                    \"icon\": \"\",\r\n                    \"iconId\": 0,\r\n                    \"isolationProcess\": false,\r\n                    \"label\": \"\",\r\n                    \"labelId\": 0,\r\n                    \"metadata\": [\r\n                        {\r\n                            \"name\": \"ohos.extension.backup\",\r\n                            \"resource\": \"$profile:backup_config\",\r\n                            \"value\": \"\",\r\n                            \"valueId\": 0\r\n                        }\r\n                    ],\r\n                    \"moduleName\": \"entry\",\r\n                    \"name\": \"EntryBackupAbility\",\r\n                    \"needCreateSandbox\": false,\r\n                    \"permissions\": [],\r\n                    \"priority\": 0,\r\n                    \"process\": \"dev.morrow.hmos:backup\",\r\n                    \"readPermission\": \"\",\r\n                    \"resourcePath\": \"/data/app/el1/bundle/public/dev.morrow.hmos/entry/resources.index\",\r\n                    \"skills\": [],\r\n                    \"skipAbilityStageLifecycle\": false,\r\n                    \"srcEntrance\": \"./ets/entrybackupability/EntryBackupAbility.ets\",\r\n                    \"type\": 9,\r\n                    \"uid\": -1,\r\n                    \"uri\": \"\",\r\n                    \"validDataGroupIds\": [],\r\n                    \"visible\": false,\r\n                    \"writePermission\": \"\"\r\n                }\r\n            ],\r\n            \"fileContextMenu\": \"\",\r\n            \"formExtensionModule\": \"\",\r\n            \"formWidgetModule\": \"\",\r\n            \"hapPath\": \"/data/app/el1/bundle/public/dev.morrow.hmos/entry.hap\",\r\n            \"hasIntent\": false,\r\n            \"hashValue\": \"\",\r\n            \"hqfInfo\": {\r\n                \"cpuAbi\": \"\",\r\n                \"hapSha256\": \"\",\r\n                \"hqfFilePath\": \"\",\r\n                \"moduleName\": \"\",\r\n                \"nativeLibraryPath\": \"\",\r\n                \"type\": 0\r\n            },\r\n            \"iconId\": 16777219,\r\n            \"iconPath\": \"$media:layered_image\",\r\n            \"installationFree\": false,\r\n            \"isLibIsolated\": false,\r\n            \"isModuleJson\": true,\r\n            \"isRemovable\": {},\r\n            \"isRemovableSet\": [],\r\n            \"isStageBasedModel\": true,\r\n            \"isolationMode\": 0,\r\n            \"label\": \"$string:EntryAbility_label\",\r\n            \"labelId\": 16777221,\r\n            \"librarySupportDirectory\": [],\r\n            \"mainAbility\": \"EntryAbility\",\r\n            \"mainElementName\": \"EntryAbility\",\r\n            \"metadata\": [],\r\n            \"moduleArkTSMode\": \"dynamic\",\r\n            \"moduleName\": \"entry\",\r\n            \"moduleSourceDir\": \"\",\r\n            \"moduleType\": 1,\r\n            \"name\": \"entry\",\r\n            \"nativeLibraryFileNames\": [],\r\n            \"nativeLibraryPath\": \"\",\r\n            \"overlayModuleInfos\": [],\r\n            \"package\": \"entry\",\r\n            \"packageName\": \"entry\",\r\n            \"pages\": \"$profile:main_pages\",\r\n            \"preloads\": [],\r\n            \"process\": \"dev.morrow.hmos\",\r\n            \"proxyDatas\": [],\r\n            \"reqCapabilities\": [],\r\n            \"requiredDeviceFeatures\": {},\r\n            \"resizeable\": false,\r\n            \"resourcePath\": \"/data/app/el1/bundle/public/dev.morrow.hmos/entry/resources.index\",\r\n            \"routerArray\": [],\r\n            \"routerMap\": \"\",\r\n            \"shareFiles\": \"\",\r\n            \"srcEntrance\": \"\",\r\n            \"srcPath\": \"\",\r\n            \"supportedModes\": 0,\r\n            \"systemTheme\": \"\",\r\n            \"uiSyntax\": \"hml\",\r\n            \"upgradeFlag\": 0,\r\n            \"versionCode\": 1000019,\r\n            \"virtualMachine\": \"\"\r\n        }\r\n    ],\r\n    \"hapModuleNames\": [\r\n        \"entry\"\r\n    ],\r\n    \"installTime\": 1791183795282,\r\n    \"isDifferentName\": false,\r\n    \"isKeepAlive\": false,\r\n    \"isNativeApp\": false,\r\n    \"isNewVersion\": true,\r\n    \"isPreInstallApp\": false,\r\n    \"jointUserId\": \"\",\r\n    \"label\": \"\",\r\n    \"mainEntry\": \"entry\",\r\n    \"maxSdkVersion\": -1,\r\n    \"minCompatibleVersionCode\": 1000019,\r\n    \"minSdkVersion\": -1,\r\n    \"moduleDirs\": [\r\n        \"/data/app/el1/bundle/public/dev.morrow.hmos/entry\"\r\n    ],\r\n    \"moduleNames\": [\r\n        \"entry\"\r\n    ],\r\n    \"modulePublicDirs\": [\r\n        \"\"\r\n    ],\r\n    \"moduleResPaths\": [\r\n        \"/data/app/el1/bundle/public/dev.morrow.hmos/entry/resources.index\"\r\n    ],\r\n    \"name\": \"dev.morrow.hmos\",\r\n    \"oldAppIds\": [\r\n        \"dev.morrow.hmos_\"\r\n    ],\r\n    \"overlayBundleInfos\": [],\r\n    \"overlayType\": 3,\r\n    \"pluginBundleInfos\": {},\r\n    \"releaseType\": \"Release\",\r\n    \"reqPermissionDetails\": [\r\n        {\r\n            \"moduleName\": \"entry\",\r\n            \"name\": \"ohos.permission.INTERNET\",\r\n            \"reason\": \"\",\r\n            \"reasonId\": 0,\r\n            \"requiredFeature\": \"\",\r\n            \"usedScene\": {\r\n                \"abilities\": [],\r\n                \"when\": \"\"\r\n            }\r\n        }\r\n    ],\r\n    \"reqPermissionStates\": [\r\n        0\r\n    ],\r\n    \"reqPermissions\": [\r\n        \"ohos.permission.INTERNET\"\r\n    ],\r\n    \"routerArray\": [],\r\n    \"sandboxCreatorBundleName\": \"\",\r\n    \"seInfo\": \"\",\r\n    \"singleton\": false,\r\n    \"targetMinorApiVersion\": 0,\r\n    \"targetPatchApiVersion\": 0,\r\n    \"targetVersion\": 260000026,\r\n    \"uid\": 20020063,\r\n    \"updateTime\": 1791365881101,\r\n    \"userInfo\": [\r\n        {\r\n            \"accessTokenId\": 537001893,\r\n            \"accessTokenIdEx\": 34896740261,\r\n            \"bundleName\": \"dev.morrow.hmos\",\r\n            \"bundleUserInfo\": {\r\n                \"disabledAbilities\": [],\r\n                \"enabled\": true,\r\n                \"overlayState\": [],\r\n                \"setEnabledCaller\": \"\",\r\n                \"userId\": 100\r\n            },\r\n            \"canUninstall\": true,\r\n            \"cloneInfos\": {},\r\n            \"curAlternateIconName\": \"\",\r\n            \"curDynamicIconModule\": \"\",\r\n            \"firstInstallTime\": 1791183795282,\r\n            \"gids\": [\r\n                20020063\r\n            ],\r\n            \"installTime\": 1791183795282,\r\n            \"installedPluginSet\": [],\r\n            \"isBundleFirstLaunched\": true,\r\n            \"isRemovable\": true,\r\n            \"sandboxInfos\": {},\r\n            \"uid\": 20020063,\r\n            \"updateTime\": 1791365881101\r\n        }\r\n    ],\r\n    \"vendor\": \"Morrow\",\r\n    \"versionCode\": 1000019,\r\n    \"versionName\": \"0.1.0-hmos-dev.19\"\r\n}\r\n"
+        },
+        {
+          "arguments": [
+            "shell",
+            "uitest",
+            "uiInput",
+            "swipe",
+            1245,
+            1721,
+            1245,
+            624,
+            650
+          ],
+          "phase": "ACKNOWLEDGED",
+          "at": "2026-10-07T09:46:22.344Z",
+          "reply": "No Error\r\n"
+        }
+      ],
+      "captures": [
+        {
+          "label": "own-todo-ui-add-row-before",
+          "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-add-row-before.json",
+          "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-add-row-before.png"
+        },
+        {
+          "label": "own-todo-ui-add-row-seek-7",
+          "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-add-row-seek-7.json",
+          "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-add-row-seek-7.png"
+        }
+      ],
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(plus)\n"
+    }
+  ]
+}

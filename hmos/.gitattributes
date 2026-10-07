@@ -23,6 +23,8 @@ reports/ui-source/v20/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 reports/ui-source/v20/device-migration/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 reports/ui-source/v20/device19-current/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 reports/ui-source/v20/integration/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
+reports/ui-source/v20/retirement/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
+reports/ui-source/v20/device-integration/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 # Preserve the exact scripts hashed by the native build evidence.
 reports/ui-source/v20/input-native-build.ps1 whitespace=-blank-at-eof,cr-at-eol
 reports/ui-source/v20/input-native-final-build.ps1 whitespace=-blank-at-eof,cr-at-eol

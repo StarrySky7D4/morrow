@@ -729,6 +729,8 @@ impl<F: FnMut() -> u64> Writer<'_, F> {
         }
         self.local_phase_guard(&request.card_id, &request.draft_id)?;
 
+        crate::editor_draft::require_mutable(self.host, &request.card_id, &request.draft_id)?;
+
         let main = self.main_draft(&request.card_id, &request.draft_id)?;
         if !main.active || main.generation != request.expected_generation {
             return Err("draft import generation conflict".into());
@@ -804,6 +806,7 @@ impl<F: FnMut() -> u64> Writer<'_, F> {
             return Ok(record);
         }
         self.local_phase_guard(&request.card_id, &request.draft_id)?;
+        crate::editor_draft::require_mutable(self.host, &request.card_id, &request.draft_id)?;
         let main = self.main_draft(&request.card_id, &request.draft_id)?;
         if !main.active || main.consumed_imports.contains(&request.operation_id) {
             self.reconcile_draft_imports(&request.card_id, &request.draft_id)?;

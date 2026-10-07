@@ -157,6 +157,11 @@ pub fn number(v: &str) -> Result<u64> {
 }
 impl Write {
     pub fn request(self) -> Result<proto::WriteRequest> {
+        let request = self.raw_request()?;
+        morrow_editor_draft_model::validate_request(&request).map_err(err)?;
+        Ok(request)
+    }
+    fn raw_request(self) -> Result<proto::WriteRequest> {
         let request = proto::WriteRequest {
             schema_version: 1,
             card_id: self.card_id,
@@ -169,9 +174,98 @@ impl Write {
             assets: self.assets.into_iter().map(Into::into).collect(),
             ..Default::default()
         };
-        morrow_editor_draft_model::validate_request(&request).map_err(err)?;
         Ok(request)
     }
+}
+#[derive(Default, Deserialize)]
+#[serde(default, deny_unknown_fields)]
+pub struct Fork {
+    child: Write,
+    parent_draft_id: String,
+    parent_generation: String,
+    parent_save_operation: String,
+    parent_request_sha256: String,
+}
+fn digest(value: &str) -> Result<Vec<u8>> {
+    if value.len() != 64 {
+        return Err("InvalidDraftDigest".into());
+    }
+    crate::unhex(value)
+}
+impl Fork {
+    pub fn request(self) -> Result<(proto::WriteRequest, proto::DevelopmentForkLink)> {
+        let child = self.child.raw_request()?;
+        let link = proto::DevelopmentForkLink {
+            schema_version: 1,
+            parent_draft_id: self.parent_draft_id,
+            parent_generation: number(&self.parent_generation)?,
+            parent_save_operation: self.parent_save_operation,
+            parent_request_sha256: digest(&self.parent_request_sha256)?,
+            child_operation: child.operation_id.clone(),
+        };
+        crate::editor_draft::validate_fork_request(&child, &link)?;
+        Ok((child, link))
+    }
+}
+#[derive(Default, Deserialize)]
+#[serde(default, deny_unknown_fields)]
+pub struct ForkRetirement {
+    card_id: String,
+    child_draft_id: String,
+    child_operation: String,
+    parent_draft_id: String,
+    parent_generation: String,
+    parent_save_operation: String,
+    parent_request_sha256: String,
+    operation_id: String,
+}
+impl ForkRetirement {
+    pub fn request(self) -> Result<(String, proto::DevelopmentForkRetirement)> {
+        Ok((
+            self.card_id,
+            proto::DevelopmentForkRetirement {
+                schema_version: 1,
+                child_draft_id: self.child_draft_id,
+                operation_id: self.operation_id,
+                fork_link: Some(proto::DevelopmentForkLink {
+                    schema_version: 1,
+                    parent_draft_id: self.parent_draft_id,
+                    parent_generation: number(&self.parent_generation)?,
+                    parent_save_operation: self.parent_save_operation,
+                    parent_request_sha256: digest(&self.parent_request_sha256)?,
+                    child_operation: self.child_operation,
+                }),
+            },
+        ))
+    }
+}
+#[derive(Debug, Serialize)]
+pub struct ForkLinkView {
+    schema_version: u32,
+    parent_draft_id: String,
+    parent_generation: String,
+    parent_save_operation: String,
+    parent_request_sha256: String,
+    child_operation: String,
+}
+impl From<&proto::DevelopmentForkLink> for ForkLinkView {
+    fn from(v: &proto::DevelopmentForkLink) -> Self {
+        Self {
+            schema_version: v.schema_version,
+            parent_draft_id: v.parent_draft_id.clone(),
+            parent_generation: v.parent_generation.to_string(),
+            parent_save_operation: v.parent_save_operation.clone(),
+            parent_request_sha256: hex(&v.parent_request_sha256),
+            child_operation: v.child_operation.clone(),
+        }
+    }
+}
+#[derive(Debug, Serialize)]
+pub struct ForkRetirementView {
+    schema_version: u32,
+    child_draft_id: String,
+    operation_id: String,
+    fork_link: ForkLinkView,
 }
 #[derive(Debug, Serialize)]
 pub struct Scope {
@@ -193,6 +287,9 @@ pub struct View {
     active: bool,
     current_active: bool,
     repeated: bool,
+    request_sha256: String,
+    fork_link: Option<ForkLinkView>,
+    fork_retirement: Option<ForkRetirementView>,
 }
 impl View {
     pub fn from_record(record: crate::editor_draft::DraftRecord) -> Result<Self> {
@@ -223,6 +320,25 @@ impl View {
             active: record.slot.active,
             current_active: record.current_active,
             repeated: record.repeated,
+            request_sha256: crate::editor_draft::request_sha256(request),
+            fork_link: record.slot.development_fork_link.as_ref().map(Into::into),
+            fork_retirement: record
+                .slot
+                .development_fork_retirement
+                .as_ref()
+                .map(|v| -> Result<ForkRetirementView> {
+                    Ok(ForkRetirementView {
+                        schema_version: v.schema_version,
+                        child_draft_id: v.child_draft_id.clone(),
+                        operation_id: v.operation_id.clone(),
+                        fork_link: v
+                            .fork_link
+                            .as_ref()
+                            .ok_or("DraftForkRetirementLinkMissing")?
+                            .into(),
+                    })
+                })
+                .transpose()?,
         })
     }
 }

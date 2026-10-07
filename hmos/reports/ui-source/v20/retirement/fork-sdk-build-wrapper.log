@@ -1,0 +1,130 @@
+> hvigor [32mFinished :entry:clean... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreBuild... after 100 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 19 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 23 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 1 ms [39m
+> hvigor WARN: CMake Warning in C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/fork-dev20-2026-10-07T09-58-58-796Z/entry/.cxx/default/default/debug/arm64-v8a/CMakeFiles/CMakeScratch/TryCompile-z7qdi5/CMakeLists.txt:
+  The object file directory
+
+    C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/fork-dev20-2026-10-07T09-58-58-796Z/entry/.cxx/default/default/debug/arm64-v8a/CMakeFiles/CMakeScratch/TryCompile-z7qdi5/CMakeFiles/cmTC_e631c.dir/./
+
+
+> hvigor WARN: CMake Warning in C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/fork-dev20-2026-10-07T09-58-58-796Z/entry/.cxx/default/default/debug/x86_64/CMakeFiles/CMakeScratch/TryCompile-38n038/CMakeLists.txt:
+  The object file directory
+
+    C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/fork-dev20-2026-10-07T09-58-58-796Z/entry/.cxx/default/default/debug/x86_64/CMakeFiles/CMakeScratch/TryCompile-38n038/CMakeFiles/cmTC_0d1f5.dir/./
+
+  has 230 characters.  The maximum full path to an object file is 250
+  characters (see CMAKE_OBJECT_PATH_MAX).  Object file
+
+    CMakeCCompilerABI.c.o
+
+  cannot be safely placed under this directory.  The build may not work
+  correctly.
+
+
+
+> hvigor WARN:   has 233 characters.  The maximum full path to an object file is 250
+  characters (see CMAKE_OBJECT_PATH_MAX).  Object file
+
+    CMakeCCompilerABI.c.o
+
+  cannot be safely placed under this directory.  The build may not work
+  correctly.
+
+
+
+> hvigor WARN: CMake Warning in C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/fork-dev20-2026-10-07T09-58-58-796Z/entry/.cxx/default/default/debug/arm64-v8a/CMakeFiles/CMakeScratch/TryCompile-bdxewj/CMakeLists.txt:
+  The object file directory
+
+> hvigor WARN: 
+    C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/fork-dev20-2026-10-07T09-58-58-796Z/entry/.cxx/default/default/debug/arm64-v8a/CMakeFiles/CMakeScratch/TryCompile-bdxewj/CMakeFiles/cmTC_dd3a6.dir/./
+
+  has 233 characters.  The maximum full path to an object file is 250
+  characters (see CMAKE_OBJECT_PATH_MAX).  Object file
+
+    CMakeCXXCompilerABI.cpp.o
+
+  cannot be safely placed under this directory.  The build may not work
+  correctly.
+
+
+
+> hvigor WARN: CMake Warning in C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/fork-dev20-2026-10-07T09-58-58-796Z/entry/.cxx/default/default/debug/x86_64/CMakeFiles/CMakeScratch/TryCompile-p2bx7c/CMakeLists.txt:
+
+> hvigor WARN:   The object file directory
+
+    C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/fork-dev20-2026-10-07T09-58-58-796Z/entry/.cxx/default/default/debug/x86_64/CMakeFiles/CMakeScratch/TryCompile-p2bx7c/CMakeFiles/cmTC_b3b34.dir/./
+
+  has 230 characters.  The maximum full path to an object file is 250
+  characters (see CMAKE_OBJECT_PATH_MAX).  Object file
+
+    CMakeCXXCompilerABI.cpp.o
+
+  cannot be safely placed under this directory.  The build may not work
+  correctly.
+
+
+
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 1 s 489 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 21 ms [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 81 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessResource... after 3 ms [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 7 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 264 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 2 ms [39m
+> hvigor WARN: When performing compilation for the x86_64 architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor WARN: When performing compilation for the arm64-v8a architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 1 s 153 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 120 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 79 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 5 ms [39m
+> hvigor WARN: WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/checkpoint-sdk-smoke/fork-dev20-2026-10-07T09-58-58-796Z/entry/src/main/ets/entryability/CheckpointSmokeAbility.ets:4:64
+ Function may throw exceptions. Special handling is required.
+
+
+> hvigor [32mFinished :entry:default@CompileArkTS... after 2 s 867 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgModuleJson... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessCompiledResources... after 1 ms [39m
+> hvigor [32mFinished :entry:default@PackageHap... after 368 ms [39m
+> hvigor [32mFinished :entry:default@PackingCheck... after 3 ms [39m
+> hvigor WARN: Will skip sign 'hos_hap'. No signingConfigs profile is configured in current project.
+             If needed, configure the signingConfigs in C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\.build\checkpoint-sdk-smoke\fork-dev20-2026-10-07T09-58-58-796Z\build-profile.json5.
+> hvigor [32mFinished :entry:default@SignHap... after 2 ms [39m
+> hvigor [32mFinished :entry:default@CollectDebugSymbol... after 1 ms [39m
+> hvigor [32mFinished :entry:assembleHap... after 1 ms [39m
+> hvigor [32mBUILD SUCCESSFUL in 8 s 827 ms [39m
+
+34 tasks in total: 34 executed, 0 up-to-date
+{
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\checkpoint-sdk-smoke\\fork-dev20-2026-10-07T09-58-58-796Z",
+  "bundle_name": "dev.morrow.hmos.draftforksdk",
+  "api": "26.0.0",
+  "daemon": false,
+  "exit_code": 0,
+  "artifacts": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\checkpoint-sdk-smoke\\fork-dev20-2026-10-07T09-58-58-796Z\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "bytes": 25719630,
+      "sha256": "7560FEFB254E3875C261E3EEDE517E9A2BCF860D3AAC47FBABF4425B40BE3E56"
+    }
+  ],
+  "runtime": "NOT_RUN",
+  "device": "NOT_RUN",
+  "installation": "NOT_RUN",
+  "qualification": "Independent fork SDK compile only; copied CPP is not native fork identity or runtime proof"
+}

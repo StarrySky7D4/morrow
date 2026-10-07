@@ -23,6 +23,16 @@ const TITLE: &str = "Editor draft";
 const MAX_SLOTS: usize = 16;
 const MAX_JOURNALS: usize = 256;
 const MAX_ACTIVE_BYTES: u64 = 64 * 1024 * 1024;
+#[path = "editor_draft_fork.rs"]
+mod fork;
+pub use fork::{fork_with_effect_at, retire_fork_with_effect_at, validate_fork_request};
+pub fn request_sha256(request: &proto::WriteRequest) -> String {
+    crate::hex(&Sha256::digest(request.encode_to_vec()))
+}
+pub(crate) fn require_mutable(host: &HostRuntime, card: &str, draft: &str) -> Result<()> {
+    if fork::successor(host, card, draft)?.is_some() { return Err("DraftForkParentFrozen".into()); }
+    Ok(())
+}
 
 #[derive(Clone, Debug)]
 pub struct DraftRecord {
@@ -144,7 +154,10 @@ fn decode_body(raw: &[u8]) -> Result<proto::Slot> {
         return Err("unsupported or noncanonical draft".into());
     }
     let request = slot.request.as_ref().ok_or("draft request missing")?;
-    phase_request(request)?;
+    if let Some(link) = &slot.development_fork_link {
+        if request.expected_generation == 0 { validate_fork_request(request, link)?; }
+        else { phase_request(request)?; fork::validate_link(request, link)?; }
+    } else { phase_request(request)?; }
     if slot.parent_link.is_some()
         || slot.retirement.is_some()
         || !slot.predecessor_card.is_empty()
@@ -152,6 +165,7 @@ fn decode_body(raw: &[u8]) -> Result<proto::Slot> {
     {
         return Err("DraftPhaseUnsupported: lineage and captured recovery".into());
     }
+    fork::validate_slot_shape(&slot)?;
     if slot.generation == 0
         || (slot.active && request.expected_generation.checked_add(1) != Some(slot.generation))
     {
@@ -440,22 +454,32 @@ fn unix_millis() -> Result<i64> {
 pub fn save_with_effect_at(
     host: &mut HostRuntime,
     request: &proto::WriteRequest,
-    mut clock: impl FnMut() -> u64,
+    clock: impl FnMut() -> u64,
     blob_unix_ms: i64,
     effect: &mut &'static str,
 ) -> Result<DraftRecord> {
+    save_internal(host, request, None, None, clock, blob_unix_ms, effect)
+}
+fn save_internal(
+    host: &mut HostRuntime, request: &proto::WriteRequest,
+    fork_link: Option<&proto::DevelopmentForkLink>, parent: Option<&proto::Slot>,
+    mut clock: impl FnMut() -> u64, blob_unix_ms: i64, effect: &mut &'static str,
+) -> Result<DraftRecord> {
     *effect = "not_committed";
-    phase_request(request)?;
+    if let Some(link) = fork_link { validate_fork_request(request, link)?; } else { phase_request(request)?; }
     let id = key(&request.card_id, &request.draft_id);
     if let Some(slot) = draft_history(host, &id, &request.operation_id)? {
-        if !slot.active || slot.request.as_ref() != Some(request) {
+        if !slot.active || slot.request.as_ref() != Some(request) ||
+            fork_link.is_some_and(|link| slot.development_fork_link.as_ref() != Some(link)) {
             return Err("draft retry payload changed".into());
         }
         // Exact immutable history proves this operation committed. A failure
         // reading its current journal must not downgrade that proven outcome.
         *effect = "committed";
+        fork::verify_slot(host, &slot)?;
         let current = draft_card(host, &request.card_id, &request.draft_id)?
             .ok_or("draft current record missing")?;
+        fork::verify_slot(host, &current)?;
         return Ok(DraftRecord {
             slot,
             current_generation: current.generation,
@@ -464,11 +488,14 @@ pub fn save_with_effect_at(
         });
     }
     let previous = draft_card(host, &request.card_id, &request.draft_id)?;
+    require_mutable(host, &request.card_id, &request.draft_id)?;
     let generation = previous.as_ref().map_or(0, |slot| slot.generation);
     if request.expected_generation != generation {
         return Err("draft generation conflict".into());
     }
     let source_card = if let Some(slot) = &previous {
+        if fork_link.is_some() { return Err("DraftForkChildIdentityExists".into()); }
+        fork::verify_slot(host, slot)?;
         if !slot.active {
             return Err("discarded draft identity cannot be reused".into());
         }
@@ -481,6 +508,8 @@ pub fn save_with_effect_at(
             return Err("draft baseline cannot silently change".into());
         }
         slot.source_card.clone()
+    } else if let Some(parent) = parent {
+        parent.source_card.clone()
     } else if request.source_kind == 1 {
         if host
             .store_local()
@@ -596,6 +625,13 @@ pub fn save_with_effect_at(
                 verify_pin(host, &id, pin, &mut std::io::sink())?;
                 attachment(pin)?
             }
+            4 if fork_link.is_some() => {
+                let parent = parent.ok_or("DraftForkParentMissing")?;
+                let link = fork_link.expect("checked");
+                let pin = fork::selected_parent_pin(parent, selection)?;
+                verify_pin(host, &key(&request.card_id, &link.parent_draft_id), pin, &mut std::io::sink())?;
+                attachment(pin)?
+            }
             _ => return Err("DraftPhaseUnsupported: asset origin".into()),
         };
         stored.push(proto::StoredAsset {
@@ -617,6 +653,7 @@ pub fn save_with_effect_at(
         source_card,
         assets: stored,
         consumed_imports,
+        development_fork_link: fork_link.cloned().or_else(|| previous.as_ref().and_then(|p| p.development_fork_link.clone())),
         ..Default::default()
     };
     slot.active_bytes = charge(&slot)?;
@@ -661,7 +698,9 @@ pub fn save_with_effect_at(
     })
 }
 pub fn read(host: &HostRuntime, card: &str, draft: &str) -> Result<Option<DraftRecord>> {
-    Ok(draft_card(host, card, draft)?.map(|slot| DraftRecord {
+    let slot = draft_card(host, card, draft)?;
+    if let Some(slot) = &slot { fork::verify_slot(host, slot)?; }
+    Ok(slot.map(|slot| DraftRecord {
         current_generation: slot.generation,
         current_active: slot.active,
         slot,
@@ -669,7 +708,9 @@ pub fn read(host: &HostRuntime, card: &str, draft: &str) -> Result<Option<DraftR
     }))
 }
 pub fn list(host: &HostRuntime) -> Result<Vec<DraftRecord>> {
-    Ok(all_draft_metadata(host)?
+    let slots = all_draft_metadata(host)?;
+    for slot in &slots { fork::verify_slot(host, slot)?; }
+    Ok(slots
         .into_iter()
         .filter(|slot| slot.active)
         .map(|slot| DraftRecord {
@@ -706,6 +747,7 @@ pub fn export_asset_verified(
     writer: &mut impl std::io::Write,
 ) -> Result<morrow_core::attachment::BlobInfo> {
     let slot = draft_card(host, card, draft)?.ok_or("draft missing")?;
+    fork::verify_slot(host, &slot)?;
     if !slot.active || slot.generation != generation {
         return Err("draft export generation conflict".into());
     }
@@ -765,6 +807,7 @@ pub fn publish_assets(
 ) -> Result<PublishedAssets> {
     identity(card, draft, operation)?;
     let slot = draft_card(host, card, draft)?.ok_or("draft missing")?;
+    fork::verify_slot(host, &slot)?;
     let request = slot.request.as_ref().expect("validated request");
     if !slot.active || slot.generation != generation || request.operation_id != operation {
         return Err("draft publication generation or operation conflict".into());
@@ -791,6 +834,7 @@ pub fn published_assets_history(
     identity(card, draft, operation)?;
     let slot =
         draft_history(host, &key(card, draft), operation)?.ok_or("draft save history missing")?;
+    fork::verify_slot(host, &slot)?;
     let request = slot.request.as_ref().expect("validated request");
     if !slot.active || slot.generation != generation || request.operation_id != operation {
         return Err("draft publication history generation or operation conflict".into());
@@ -915,7 +959,12 @@ pub fn discard_with_effect_at(
             return Err("draft discard retry changed".into());
         }
         *effect = "committed";
+        fork::verify_slot(host, &slot)?;
+        if slot.development_fork_retirement.is_some() {
+            return Err("DraftForkRetirementRequiresDedicatedAction".into());
+        }
         let current = draft_card(host, card, draft)?.ok_or("draft record missing")?;
+        fork::verify_slot(host, &current)?;
         crate::editor_draft_staging::reconcile(
             host,
             card,
@@ -933,6 +982,9 @@ pub fn discard_with_effect_at(
         });
     }
     let mut slot = draft_card(host, card, draft)?.ok_or("draft missing")?;
+    fork::verify_slot(host, &slot)?;
+    require_mutable(host, card, draft)?;
+    if slot.development_fork_link.is_some() { fork::require_parent_retired(host, &slot)?; }
     if !slot.active || slot.generation != expected {
         return Err("draft discard generation conflict".into());
     }

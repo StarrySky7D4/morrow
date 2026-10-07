@@ -1,5 +1,5 @@
 {
-  "createdUtc": "2026-10-07T09:17:44.034Z",
+  "createdUtc": "2026-10-07T09:56:15.469Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
   "hmosVersion": "0.1.0-hmos-dev.19",
   "sdk": "HarmonyOS API26 26.0.0.105",
@@ -9,9 +9,9 @@
   ],
   "artifact": {
     "path": "entry/build/default/outputs/default/entry-default-unsigned.hap",
-    "archive_path": ".build/artifacts/dev20-integration-checkpoint/entry-default-unsigned.hap",
-    "bytes": 28533476,
-    "sha256": "4769015976A302099D4CDC6ABB49DE3F7A836AE3559FED1AD6F56A677F6C460E",
+    "archive_path": ".build/artifacts/dev20-fork-checkpoint/entry-default-unsigned.hap",
+    "bytes": 28675122,
+    "sha256": "2C6D37BFAD1E19C4026B5708FD50BBEA68C671687E2594C0EA559026E46D1176",
     "signed": false,
     "installed": false
   },
@@ -94,7 +94,7 @@
     },
     {
       "path": "rust/src/lib.rs",
-      "sha256": "00D11B29CA60F309C8FB59451D3317E79720E83BEC1E70FF4EF8CDC3171FF3D9"
+      "sha256": "AD144F2C7106AE876A2B482679E84116A2DC4E2BB8D7F89D1A9275CAA0731D6D"
     },
     {
       "path": "rust/src/bin/hmos-self-check.rs",
@@ -1070,15 +1070,15 @@
     },
     {
       "path": "entry/src/main/ets/model/EditorDraft.ets",
-      "sha256": "CAA435F968CF5B945E463508DAF84B04D7A56C594EDF653C529DDA3F2173A0F5"
+      "sha256": "A3AE1E99D198FCBA3CDEF741A6F138612AD16979BE42C7A8809003F00D04F965"
     },
     {
       "path": "rust/src/draft_bridge.rs",
-      "sha256": "EE7FDE6B0A6CBA9C62D6FDFC05F4CA53AF92877C74E410BBD9E25112DEE6A6FB"
+      "sha256": "F73A5ED46FF45A52B40D784C8D0F3CE3A1DFF6294DF122CCD0A34B878F623CCF"
     },
     {
       "path": "rust/src/editor_draft.rs",
-      "sha256": "49410A0892F3673716552FDB5C8BFE4A9188BF21109C31F850E32B349F43A500"
+      "sha256": "B1A547C40AFF9297A9ADD46518A4569B5C99E03D8FD25D44670118562DACC6C4"
     },
     {
       "path": "rust/editor-draft-reference.json",
@@ -1102,7 +1102,7 @@
     },
     {
       "path": "rust/editor-draft-model/schemas/editor_draft.proto",
-      "sha256": "8F80DB114BCC480D9553AE60916170B1982C9CDE0D0452753A35B491279FDDDC"
+      "sha256": "9605A649D595B8404BB232ED81551F58ECB3BABDAF24187468AE300B7EBA7814"
     },
     {
       "path": "entry/src/main/ets/model/EditorPaste.ets",
@@ -1138,7 +1138,7 @@
     },
     {
       "path": "rust/src/editor_draft_staging.rs",
-      "sha256": "0FEBB0C9F8DF31EC104D473FAC9B89C9F2CAF4EFD4DA6715B25C9FD2DEEF0E87"
+      "sha256": "5E853203C8A2442032FCF67F9843A4EB624111564F3CA6EEDD06F09DAAB6542A"
     },
     {
       "path": "rust/src/bin/hmos-attachment-check.rs",
@@ -1271,9 +1271,25 @@
     {
       "path": "entry/src/main/ets/model/EditorDirectInput.ets",
       "sha256": "A56119B3DFC3EA52E83082F0654C6BD9164383A646AF503B6D72CE2F0D7E6030"
+    },
+    {
+      "path": "rust/src/editor_draft_fork.rs",
+      "sha256": "BF5E63DCF5E6ECC89055F8857E7FC973DF98EF33636023E428CECC1A15B66F49"
+    },
+    {
+      "path": "rust/src/editor_draft_fork_tests.rs",
+      "sha256": "C26EBD089948753BB3D66B31127D44B7D2FEF9015051A0581B98CBDACE6CD313"
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorDraftFork.ets",
+      "sha256": "2F5CC8586D2400F99EE7598DD816970E63D9E3D4B53C5DFFBC54CB4E4062263C"
+    },
+    {
+      "path": "reports/ui-source/v20/retirement/build-native.ps1",
+      "sha256": "2406CA5F256B810EFC69DE6E68889B52189515B5D7840F2F3C20A3742050699E"
     }
   ],
-  "uiValidation": "reports/ui-source/v20/integration/validation.md",
+  "uiValidation": "reports/ui-source/v20/retirement/validation.md",
   "upstreamDrift": "reports/reference-drift.json",
-  "deliveryScope": "Index UI integration source checkpoint; dev19 version unchanged; new UI not device-qualified; retired-draft succession OPEN"
+  "deliveryScope": "Development raw-draft fork foundation checkpoint; no Index fork wiring or device acceptance; version remains dev19"
 }

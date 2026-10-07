@@ -1,0 +1,58 @@
+{
+  "phase": "INSTALLED_AND_LAUNCHED",
+  "artifact": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev20-integration-checkpoint\\entry-default-unsigned.hap",
+  "sha256": "4769015976A302099D4CDC6ABB49DE3F7A836AE3559FED1AD6F56A677F6C460E",
+  "sourceCommit": "eeca59f85227939449b72c45dae28d90545fcfd8",
+  "versionName": "0.1.0-hmos-dev.19",
+  "versionCode": 1000019,
+  "actions": [
+    {
+      "label": "force-stop-before-install",
+      "args": [
+        "shell",
+        "aa",
+        "force-stop",
+        "dev.morrow.hmos"
+      ],
+      "phase": "ACKNOWLEDGED",
+      "at": "2026-10-07T09:38:01.394Z"
+    },
+    {
+      "label": "integration-install",
+      "args": [
+        "install",
+        "-r",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev20-integration-checkpoint\\entry-default-unsigned.hap"
+      ],
+      "phase": "ACKNOWLEDGED",
+      "at": "2026-10-07T09:38:01.505Z"
+    },
+    {
+      "label": "bundle-after-install",
+      "args": [
+        "shell",
+        "bm",
+        "dump",
+        "-n",
+        "dev.morrow.hmos"
+      ],
+      "phase": "ACKNOWLEDGED",
+      "at": "2026-10-07T09:38:02.249Z"
+    },
+    {
+      "label": "start-after-install",
+      "args": [
+        "shell",
+        "aa",
+        "start",
+        "-a",
+        "EntryAbility",
+        "-b",
+        "dev.morrow.hmos"
+      ],
+      "phase": "ACKNOWLEDGED",
+      "at": "2026-10-07T09:38:02.367Z"
+    }
+  ],
+  "completed": "2026-10-07T09:38:02.532Z"
+}

@@ -1,0 +1,19 @@
+{
+  "label": "integration-home-initial-observed",
+  "started": 1791365909544,
+  "screenshotAt": 1791365909789,
+  "layoutAt": 1791365910516,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\integration-home-initial-observed.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\integration-home-initial-observed.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\integration-home-initial-observed.raw.json"
+  }
+}

@@ -62,6 +62,8 @@ pub struct Request {
     flag: bool,
     now_ms: String,
     draft: Option<draft_bridge::Write>,
+    fork: Option<draft_bridge::Fork>,
+    fork_retirement: Option<draft_bridge::ForkRetirement>,
     draft_id: String,
     generation: String,
     draft_operation: String,
@@ -480,6 +482,14 @@ impl Engine {
                         )
                         .map_err(err)?,
                     ]
+                }
+                "draft_fork" => {
+                    let (request, link) = r.fork.ok_or("DraftForkRequestRequired")?.request()?;
+                    vec![editor_draft::fork_with_effect_at(&mut self.host, &request, &link, clock, unix_millis()?, &mut self.effect)?]
+                }
+                "draft_fork_retire" => {
+                    let (card, marker) = r.fork_retirement.ok_or("DraftForkRetirementRequired")?.request()?;
+                    vec![editor_draft::retire_fork_with_effect_at(&mut self.host, &card, &marker, clock, unix_millis()?, &mut self.effect)?]
                 }
                 _ => return Err("UnsupportedAction".into()),
             };

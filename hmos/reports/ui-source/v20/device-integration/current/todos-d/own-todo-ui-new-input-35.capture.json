@@ -1,0 +1,19 @@
+{
+  "label": "own-todo-ui-new-input-35",
+  "started": 1791366308000,
+  "screenshotAt": 1791366308330,
+  "layoutAt": 1791366309066,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-input-35.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-input-35.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-new-input-35.raw.json"
+  }
+}

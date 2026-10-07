@@ -74,6 +74,23 @@ message ParentRetirement {
   uint64 parent_generation = 4;
 }
 
+// Isolated development raw-recovery fork. No business commit/capture proof,
+// source rebase, protected ParentLink or production handoff authority.
+message DevelopmentForkLink {
+  uint32 schema_version = 1;
+  string parent_draft_id = 2;
+  uint64 parent_generation = 3;
+  string parent_save_operation = 4;
+  bytes parent_request_sha256 = 5;
+  string child_operation = 6;
+}
+message DevelopmentForkRetirement {
+  uint32 schema_version = 1;
+  string child_draft_id = 2;
+  string operation_id = 3;
+  DevelopmentForkLink fork_link = 4;
+}
+
 message Slot {
   uint32 schema_version = 1;
   WriteRequest request = 2;
@@ -89,4 +106,6 @@ message Slot {
   repeated string consumed_imports = 10;
   ParentLink parent_link = 11;
   ParentRetirement retirement = 12;
+  DevelopmentForkLink development_fork_link = 13;
+  DevelopmentForkRetirement development_fork_retirement = 14;
 }

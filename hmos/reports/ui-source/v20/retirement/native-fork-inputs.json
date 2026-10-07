@@ -1,0 +1,58 @@
+{
+  "profile": "development-unsealed",
+  "qualification": "source-and-host-Store-tests-only",
+  "native_archive_build": "NOT_RUN",
+  "device": "NOT_RUN",
+  "inputs": [
+    {
+      "path": "hmos/rust/src/editor_draft_fork.rs",
+      "bytes": 16843,
+      "sha256": "BF5E63DCF5E6ECC89055F8857E7FC973DF98EF33636023E428CECC1A15B66F49"
+    },
+    {
+      "path": "hmos/rust/src/editor_draft_fork_tests.rs",
+      "bytes": 36950,
+      "sha256": "C26EBD089948753BB3D66B31127D44B7D2FEF9015051A0581B98CBDACE6CD313"
+    },
+    {
+      "path": "hmos/rust/src/editor_draft.rs",
+      "bytes": 37239,
+      "sha256": "B1A547C40AFF9297A9ADD46518A4569B5C99E03D8FD25D44670118562DACC6C4"
+    },
+    {
+      "path": "hmos/rust/src/editor_draft_staging.rs",
+      "bytes": 46776,
+      "sha256": "5E853203C8A2442032FCF67F9843A4EB624111564F3CA6EEDD06F09DAAB6542A"
+    },
+    {
+      "path": "hmos/rust/src/draft_bridge.rs",
+      "bytes": 11473,
+      "sha256": "F73A5ED46FF45A52B40D784C8D0F3CE3A1DFF6294DF122CCD0A34B878F623CCF"
+    },
+    {
+      "path": "hmos/rust/src/lib.rs",
+      "bytes": 56614,
+      "sha256": "AD144F2C7106AE876A2B482679E84116A2DC4E2BB8D7F89D1A9275CAA0731D6D"
+    },
+    {
+      "path": "hmos/rust/editor-draft-model/schemas/editor_draft.proto",
+      "bytes": 3178,
+      "sha256": "9605A649D595B8404BB232ED81551F58ECB3BABDAF24187468AE300B7EBA7814"
+    },
+    {
+      "path": "hmos/rust/editor-draft-model/src/lib.rs",
+      "bytes": 19766,
+      "sha256": "D11632512506F357A73112568A6E8856AA74E87500B91709C87083A50DAC6C8E"
+    },
+    {
+      "path": "hmos/rust/Cargo.toml",
+      "bytes": 919,
+      "sha256": "C3C53EB60EB751BCB3F5BD26E37EF54D26D5C906A8FBEB7FDF76887377E2BB82"
+    },
+    {
+      "path": "hmos/rust/Cargo.lock",
+      "bytes": 43572,
+      "sha256": "99388ED4B939078A28617A7624ECBC38A3B7D527AD181AEFAC824F07562F119D"
+    }
+  ]
+}

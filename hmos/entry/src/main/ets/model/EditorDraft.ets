@@ -58,6 +58,28 @@ export class DraftRecord {
   repeated: boolean = false;
   assets: StoredAsset[] = [];
   consumed_imports: string[] = [];
+  // Native canonical WriteRequest digest. Required for development fork proof;
+  // older normal-only synthetic receipts may omit it.
+  request_sha256: string = '';
+  fork_link: DraftForkLink | null = null;
+  fork_retirement: DraftForkRetirement | null = null;
+}
+
+// Independent development lineage; never a protected capture/handoff ticket.
+export class DraftForkLink {
+  schema_version: number = 1;
+  parent_draft_id: string = '';
+  parent_generation: string = '0';
+  parent_save_operation: string = '';
+  parent_request_sha256: string = '';
+  child_operation: string = '';
+}
+
+export class DraftForkRetirement {
+  schema_version: number = 1;
+  child_draft_id: string = '';
+  operation_id: string = '';
+  fork_link: DraftForkLink = new DraftForkLink();
 }
 
 export class DraftSaveFailure extends Error {
@@ -107,7 +129,30 @@ export function copyRecord(record: DraftRecord): DraftRecord {
   result.active = record.active; result.current_active = record.current_active;
   result.repeated = record.repeated;
   result.assets = (record.assets ?? []).map((asset: StoredAsset): StoredAsset => copyStoredAsset(asset));
-  result.consumed_imports = (record.consumed_imports ?? []).slice(); return result;
+  result.consumed_imports = (record.consumed_imports ?? []).slice();
+  result.request_sha256 = record.request_sha256 ?? '';
+  result.fork_link = record.fork_link ? copyForkLink(record.fork_link) : null;
+  result.fork_retirement = record.fork_retirement ? copyForkRetirement(record.fork_retirement) : null;
+  return result;
+}
+
+export function copyForkLink(link: DraftForkLink): DraftForkLink {
+  const result = new DraftForkLink(); result.schema_version = link.schema_version;
+  result.parent_draft_id = link.parent_draft_id; result.parent_generation = link.parent_generation;
+  result.parent_save_operation = link.parent_save_operation; result.parent_request_sha256 = link.parent_request_sha256;
+  result.child_operation = link.child_operation; return result;
+}
+
+export function copyForkRetirement(marker: DraftForkRetirement): DraftForkRetirement {
+  const result = new DraftForkRetirement(); result.schema_version = marker.schema_version;
+  result.child_draft_id = marker.child_draft_id; result.operation_id = marker.operation_id;
+  result.fork_link = copyForkLink(marker.fork_link); return result;
+}
+
+export function sameForkLink(a: DraftForkLink, b: DraftForkLink): boolean {
+  return a.schema_version === b.schema_version && a.parent_draft_id === b.parent_draft_id &&
+    a.parent_generation === b.parent_generation && a.parent_save_operation === b.parent_save_operation &&
+    a.parent_request_sha256 === b.parent_request_sha256 && a.child_operation === b.child_operation;
 }
 
 function sameText(a: TextValue, b: TextValue): boolean {
@@ -136,8 +181,8 @@ function sameScope(a: DraftScope, b: DraftScope): boolean {
     a.source_revision === b.source_revision;
 }
 
-function validGeneration(value: string): boolean {
-  return /^(0|[1-9][0-9]*)$/.test(value) && (value.length < 20 ||
+export function validGeneration(value: string): boolean {
+  return typeof value === 'string' && /^(0|[1-9][0-9]*)$/.test(value) && (value.length < 20 ||
     value.length === 20 && value <= '18446744073709551615');
 }
 
@@ -159,7 +204,7 @@ function validOffset(offset: number, units: number): boolean {
   return Number.isInteger(offset) && (offset === -1 || offset >= 0 && offset <= units);
 }
 
-function validateValues(values: Values): void {
+export function validateValues(values: Values, allowForkAssets: boolean = false): void {
   for (const value of [values.title, values.description, values.hypothesis, values.conclusion, values.todos]) {
     if (typeof value.text !== 'string' || !validOffset(value.selection_base, value.text.length) ||
       !validOffset(value.selection_extent, value.text.length) || !validOffset(value.composing_start, value.text.length) ||
@@ -172,14 +217,14 @@ function validateValues(values: Values): void {
   if (typeof values.category !== 'string' || typeof values.stage !== 'string') {
     throw new Error('Invalid draft category or stage');
   }
-  validateAssets(values.assets ?? []);
+  validateAssets(values.assets ?? [], allowForkAssets);
 }
 
-function validateAssets(assets: AssetSelection[]): void {
+function validateAssets(assets: AssetSelection[], allowForkAssets: boolean = false): void {
   if (!Array.isArray(assets) || assets.length > 20) { throw new Error('Invalid draft selected asset count'); }
   const ids = new Set<string>();
   for (const asset of assets) {
-    if (!asset || ![0, 2, 3].includes(asset.origin) || typeof asset.asset_id !== 'string' || !asset.asset_id ||
+    if (!asset || ![0, 2, 3].includes(asset.origin) && !(allowForkAssets && asset.origin === 4) || typeof asset.asset_id !== 'string' || !asset.asset_id ||
       ids.has(asset.asset_id) || !Array.isArray(asset.aliases) || asset.aliases.length > 8 ||
       asset.aliases.some((alias: string): boolean => typeof alias !== 'string' || !alias || alias.length > 16384)) {
       throw new Error('Invalid draft selected asset identity');
@@ -202,6 +247,61 @@ function validateRecordAssets(record: DraftRecord): void {
       throw new Error('Draft receipt stored asset differs');
     }
   });
+}
+
+export function validateForkProof(link: DraftForkLink): void {
+  if (!link || link.schema_version !== 1 || typeof link.parent_draft_id !== 'string' || !link.parent_draft_id ||
+    !validGeneration(link.parent_generation) || link.parent_generation === '0' || link.parent_generation === '18446744073709551615' ||
+    typeof link.parent_save_operation !== 'string' || !link.parent_save_operation ||
+    typeof link.child_operation !== 'string' || !link.child_operation || link.child_operation === link.parent_save_operation ||
+    typeof link.parent_request_sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(link.parent_request_sha256)) {
+    throw new Error('Invalid development draft fork proof');
+  }
+}
+
+// Validate native proof shape and its binding to the full values/inventory.
+// Native checks the digest against authoritative canonical protobuf history;
+// ETS never treats a digest by itself as storage or capture authority.
+export function validateRecord(record: DraftRecord, requireDigest: boolean = false): void {
+  const link = record.fork_link;
+  const marker = record.fork_retirement;
+  const digest = record.request_sha256 ?? '';
+  if (link !== undefined && link !== null && typeof link !== 'object' ||
+    marker !== undefined && marker !== null && typeof marker !== 'object') {
+    throw new Error('Invalid development draft fork relation');
+  }
+  if (typeof record.active !== 'boolean' || typeof record.current_active !== 'boolean') {
+    throw new Error('Invalid draft receipt active state');
+  }
+  if (record.request_sha256 === null || typeof digest !== 'string' || (requireDigest || !!link || !!marker || digest.length > 0) && !/^[0-9a-f]{64}$/.test(digest)) {
+    throw new Error('Invalid draft canonical request digest');
+  }
+  if (link) {
+    validateForkProof(link);
+    if (link.parent_draft_id === record.scope.draft_id || !validGeneration(record.generation) || record.generation === '0' ||
+      record.generation === '1' && record.operation_id !== link.child_operation ||
+      record.scope.source_kind === 1 && record.scope.source !== '' ||
+      record.scope.source_kind === 0 && !/^(?:[0-9a-f]{2})+$/.test(record.scope.source)) {
+      throw new Error('Development fork receipt binding differs');
+    }
+  }
+  if (marker) {
+    validateForkProof(marker.fork_link);
+    if (marker.schema_version !== 1 || typeof marker.child_draft_id !== 'string' || !marker.child_draft_id ||
+      marker.child_draft_id === record.scope.draft_id || marker.fork_link.parent_draft_id !== record.scope.draft_id ||
+      typeof marker.operation_id !== 'string' || !marker.operation_id || marker.operation_id === marker.fork_link.child_operation ||
+      marker.operation_id === marker.fork_link.parent_save_operation || record.active ||
+      record.generation !== nextGeneration(marker.fork_link.parent_generation) ||
+      record.operation_id !== marker.fork_link.parent_save_operation || digest !== marker.fork_link.parent_request_sha256) {
+      throw new Error('Development fork retirement receipt differs');
+    }
+  }
+  validateValues(record.values, !!link);
+  validateRecordAssets(record);
+  if (record.values.assets.some((asset: AssetSelection): boolean => asset.origin === 4) &&
+    (!link || record.active && record.generation !== '1' || record.operation_id !== link.child_operation)) {
+    throw new Error('Parent pins require the exact first development fork receipt');
+  }
 }
 
 class DraftTextValuesWire {
@@ -251,6 +351,8 @@ export class EditorDraftCoordinator {
   private flushing: Promise<DraftRecord | undefined> | undefined = undefined;
   private timer: number = -1;
   private stopped: boolean = false;
+  private paused: boolean = false;
+  private forkOriginsPromoted: boolean = false;
   private outcomeUnknown: boolean = false;
   private journalConflict: boolean = false;
   private lastError: string = '';
@@ -266,15 +368,20 @@ export class EditorDraftCoordinator {
       (scope.source_kind !== 0 && scope.source_kind !== 1) ||
       (scope.source_kind === 0 ? scope.source_revision === '0' : scope.source_revision !== '0') ||
       !Number.isFinite(debounce) || debounce < 0) { throw new Error('Invalid draft scope'); }
-    validateValues(initial);
+    if (restored !== undefined) { validateRecord(restored); }
+    validateValues(initial, !!restored?.fork_link);
     this.ownedScope = copyScope(scope); this.ownedCurrent = copyValues(initial); this.baseline = copyValues(initial);
     this.send = send; this.changed = changed; this.operationFactory = operationFactory; this.debounce = debounce;
     if (restored !== undefined) {
-      validateValues(restored.values);
-      validateRecordAssets(restored);
+      validateRecord(restored);
       if (!sameScope(restored.scope, this.ownedScope) || !validGeneration(restored.generation) ||
         restored.generation === '0' || !validGeneration(restored.current_generation)) {
         throw new Error('Invalid restored draft record');
+      }
+      if (restored.fork_link && restored.scope.source !== this.ownedScope.source) { throw new Error('Restored development fork source differs'); }
+      if (initial.assets.some((asset: AssetSelection): boolean => asset.origin === 4 &&
+        !restored.assets.some((pin: StoredAsset): boolean => pin.selection.asset_id === asset.asset_id))) {
+        throw new Error('Restored development parent pin is not confirmed');
       }
       this.ownedConfirmed = copyRecord(restored); this.baseline = copyValues(restored.values);
       this.journalGeneration = restored.generation;
@@ -300,11 +407,20 @@ export class EditorDraftCoordinator {
   get conflicted(): boolean { return this.journalConflict; }
   get error(): string { return this.lastError; }
   get disposed(): boolean { return this.stopped; }
+  get writesPaused(): boolean { return this.paused; }
+
+  // Pausing never cancels issued work or replaces complete current raw input.
+  pauseWrites(): void { this.requireOpen(); this.paused = true; this.cancelTimer(); this.notify(); }
+  resumeWrites(): void { this.requireOpen(); this.paused = false; this.schedule(); this.notify(); }
 
   update(values: Values): void {
-    this.requireOpen(); validateValues(values);
-    if (sameValues(values, this.ownedCurrent)) { return; }
-    this.ownedCurrent = copyValues(values);
+    this.requireOpen(); validateValues(values, !!this.ownedConfirmed?.fork_link);
+    const latest = copyValues(values);
+    if (this.ownedConfirmed?.fork_link && (this.forkOriginsPromoted || !sameValues(latest, this.ownedCurrent))) {
+      this.promoteForkAssets(latest); this.forkOriginsPromoted = true;
+    }
+    if (sameValues(latest, this.ownedCurrent)) { return; }
+    this.ownedCurrent = latest;
     if (!this.outcomeUnknown && !this.journalConflict && !this.saving) { this.lastError = ''; }
     this.schedule(); this.notify();
   }
@@ -312,7 +428,7 @@ export class EditorDraftCoordinator {
   // Only an explicit retry may reconcile an uncertain original request. It
   // stops at that receipt; newer input requires its own flush or observation.
   async retry(): Promise<DraftRecord | undefined> {
-    this.requireOpen(); this.cancelTimer();
+    this.requireWritable(); this.cancelTimer();
     if (this.journalConflict) { throw new Error('Draft journal changed'); }
     if (this.inFlight !== undefined) { return copyRecord(await this.inFlight); }
     if (!this.outcomeUnknown || this.serialized === undefined || this.frozen === undefined) {
@@ -332,6 +448,7 @@ export class EditorDraftCoordinator {
   // Explicitly establish an owner for a successful file selection. Calling this
   // is the user's import/save action; merely opening an unchanged card is read-only.
   async ensureConfirmed(): Promise<DraftRecord> {
+    this.requireWritable();
     while (true) {
       const existing = await this.flush();
       this.requireOpen();
@@ -342,10 +459,10 @@ export class EditorDraftCoordinator {
   }
 
   private async flushCurrent(): Promise<DraftRecord | undefined> {
-    this.requireOpen(); this.cancelTimer();
+    this.requireWritable(); this.cancelTimer();
     while (true) {
       if (this.inFlight !== undefined) { await this.inFlight; }
-      this.requireOpen(); this.cancelTimer();
+      this.requireWritable(); this.cancelTimer();
       if (this.journalConflict) { throw new Error('Draft journal changed'); }
       if (this.outcomeUnknown) { throw new Error(this.lastError || 'Draft save outcome is unknown'); }
       if (!this.dirty) { return this.confirmed; }
@@ -358,16 +475,19 @@ export class EditorDraftCoordinator {
   private requireOpen(): void {
     if (this.stopped) { throw new Error('Draft coordinator is disposed'); }
   }
+  private requireWritable(): void {
+    this.requireOpen(); if (this.paused) { throw new Error('Draft writes are paused'); }
+  }
   private notify(): void { if (!this.stopped) { this.changed(); } }
   private cancelTimer(): void {
     if (this.timer !== -1) { clearTimeout(this.timer); this.timer = -1; }
   }
   private schedule(): void {
     this.cancelTimer();
-    if (this.stopped || this.outcomeUnknown || this.journalConflict || this.saving || !this.dirty) { return; }
+    if (this.stopped || this.paused || this.outcomeUnknown || this.journalConflict || this.saving || !this.dirty) { return; }
     this.timer = setTimeout(() => {
       this.timer = -1;
-      if (this.stopped || this.outcomeUnknown || this.journalConflict || this.saving || !this.dirty) { return; }
+      if (this.stopped || this.paused || this.outcomeUnknown || this.journalConflict || this.saving || !this.dirty) { return; }
       // start() stores and publishes the failure before rejecting. Automatic
       // saves expose it through state; explicit flush/retry preserve rejection.
       this.start(false).catch(() => {});
@@ -375,6 +495,9 @@ export class EditorDraftCoordinator {
   }
 
   private freeze(): void {
+    if (this.ownedConfirmed?.fork_link) {
+      this.promoteForkAssets(this.ownedCurrent); this.forkOriginsPromoted = true;
+    }
     this.frozen = copyValues(this.ownedCurrent); this.operation = this.operationFactory();
     if (this.operation.length === 0) { throw new Error('Empty draft operation'); }
     this.expected = this.journalGeneration;
@@ -394,7 +517,7 @@ export class EditorDraftCoordinator {
   }
 
   private start(retry: boolean): Promise<DraftRecord> {
-    this.requireOpen();
+    this.requireWritable();
     if (this.inFlight !== undefined) { return this.inFlight; }
     this.cancelTimer();
     if (!retry) {
@@ -412,8 +535,12 @@ export class EditorDraftCoordinator {
     let scheduleNext = false;
     try {
       const record = await this.send(this.serialized as string);
-      this.requireOpen(); validateValues(record.values);
-      validateRecordAssets(record);
+      this.requireOpen(); validateRecord(record);
+      const priorLink = this.ownedConfirmed?.fork_link;
+      if (!!priorLink !== !!record.fork_link || priorLink && record.fork_link && !sameForkLink(priorLink, record.fork_link) ||
+        priorLink && record.scope.source !== this.ownedScope.source || record.fork_retirement) {
+        throw new Error('Draft receipt changed development lineage');
+      }
       for (const asset of record.assets ?? []) {
         const prior = this.ownedConfirmed?.assets.find((pin: StoredAsset): boolean => pin.selection.asset_id === asset.selection.asset_id);
         if (prior && (prior.display_name !== asset.display_name || prior.media_type !== asset.media_type ||
@@ -450,6 +577,18 @@ export class EditorDraftCoordinator {
       this.inFlight = undefined;
       if (scheduleNext) { this.schedule(); }
       this.notify();
+    }
+  }
+
+  private promoteForkAssets(values: Values): void {
+    for (const selected of values.assets) {
+      const confirmed = this.ownedConfirmed?.assets.some((pin: StoredAsset): boolean => pin.selection.asset_id === selected.asset_id);
+      if (selected.origin === 4 && !confirmed) {
+        throw new Error('Development parent pin is not confirmed');
+      }
+      if (this.ownedConfirmed?.fork_link && confirmed) {
+        selected.origin = 3;
+      }
     }
   }
 }

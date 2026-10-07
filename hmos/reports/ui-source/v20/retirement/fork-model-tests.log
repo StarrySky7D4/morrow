@@ -1,0 +1,28 @@
+EditorDraft.ets SHA256=a3ae1e99d198fcba3cdef741a6f138612ad16979be42c7a8809003f00d04f965
+EditorDraftFork.ets SHA256=2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c
+SDK TypeScript=4.9.5
+✔ pause captures every raw field/metadata/assets without automatic or explicit writes; resume retains them (194.5393ms)
+✔ pause never cancels issued work, but prevents its completion from issuing later raw (77.1747ms)
+✔ fork freezes full source/proof/raw and selected subset order/aliases as origin4 without a business command (68.1038ms)
+✔ new-card fork inherits kind1/revision0/empty source and raw legacy rows without business reconciliation (51.6463ms)
+✔ latest raw stays on paused parent during first ACK; caller updates child completely before its ordinary save (47.6087ms)
+✔ normal fork child keeps fixed lineage and source, promotes parent pins once, and exposes immutable proof (44.7991ms)
+✔ Unknown first fork preserves one original wire; late raw and explicit retry do not change its operation (42.4664ms)
+✔ known first rejection can explicitly release parent; Unknown reconciliation cannot downgrade or release (86.6116ms)
+✔ owner replacement cannot install a valid durable old fork or issue its Unknown retry (78.0385ms)
+✔ valid historical first commitment with advanced or inactive current state is conflict, never resurrected or replayed (82.343ms)
+✔ wrong full source/operation/parent proof/raw/digest/first active state never installs a child (515.5959ms)
+✔ receipt pin bytes/metadata and exact inventory aliases/order/identities are validated against the frozen parent (318.0866ms)
+✔ normal-only paths still reject origin4 without a verified fork, and later receipts cannot alter lineage/source (32.0124ms)
+✔ retirement freezes explicit parent/child identity once; building it alone never sends or retires either journal (33.4982ms)
+✔ fork constructor rejects duplicate identity, wrong scope, incomplete pins and unavailable parents before transport (359.2436ms)
+✔ development retirement marker binds the exact original parent digest and cannot revive an inactive child (31.1585ms)
+✔ fresh SDK compiler and actual fork/draft model source identities are emitted (34.5824ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2307.0147

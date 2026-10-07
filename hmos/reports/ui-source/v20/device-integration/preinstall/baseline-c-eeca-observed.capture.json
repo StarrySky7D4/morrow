@@ -1,0 +1,19 @@
+{
+  "label": "baseline-c-eeca-observed",
+  "started": 1791365331225,
+  "screenshotAt": 1791365331513,
+  "layoutAt": 1791365332340,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\preinstall\\baseline-c-eeca-observed.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\preinstall\\baseline-c-eeca-observed.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\preinstall\\baseline-c-eeca-observed.raw.json"
+  }
+}

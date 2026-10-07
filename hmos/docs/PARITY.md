@@ -1,6 +1,8 @@
 # 功能对齐与 Rust 复用检查
 
-2026-10-07 当前增量：Index 已接入新卡多行待办 UI、完整输入协调和一次 create 发布待办；已有 V2 TaskId 面板保持独立。粘贴及自动附件标题按完整值/选区重新绑定；旧业务回执不覆盖替换的编辑器，清理期间迟到 SDK 事件会撤销关闭资格。当前仍是 dev19 版本的源码集成检查点，新界面设备验收 NOT_RUN；成功清理后新 scope 的持久接续 OPEN，不能把仅在编辑器中的输入称为可重启恢复。见 [当前集成验证](../reports/ui-source/v20/integration/validation.md)；下方历史版本保留各轮当时事实。
+2026-10-07 当前增量：新增独立开发库的 raw 草稿 fork 后端和 ArkTS 协调器，保持原 source、完整文字、选区与确认附件，先确认子草稿再条件清理父草稿。**Index 尚未接线，清理后的界面接续仍 OPEN**；原业务冲突不自动解除，也不提供保护存储或跨对象原子提交。见 [当前接续验证](../reports/ui-source/v20/retirement/validation.md)。
+
+此前 Index 已接入新卡多行待办、完整输入协调及一次 create 发布待办。`eeca59f8` 的 UI 集成包已安装到 x64 模拟器，观察到首页和空待办区，没有此前贯穿框线；未验收实际多行编辑、拖动和保存闭环。本轮新增 fork 包未安装。见 [设备范围记录](../reports/ui-source/v20/device-integration/validation.md)；[原集成验证](../reports/ui-source/v20/integration/validation.md)及下方历史版本保留各轮当时事实。
 
 基线：用户指定主任务的 `build/io-safety-refactor` 实际工作树，test.54 + 未提交增量，2026-09-23。本表是迁移状态，不是主任务整体完成声明；其上游报告尚未关闭的资格项，在 HMOS 同样不能填写完成。
 

@@ -1,0 +1,43 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.51s
+     Running unittests src\lib.rs (hmos\rust\target\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 19 tests
+test editor_draft::fork::tests::actual_store_crash_boundaries_preserve_pins_and_exact_original_outcomes ... ignored, explicit fault-injection host subprocess test; not an OHOS or cross-process concurrency claim
+
+thread 'editor_draft::fork::tests::actual_engine_dispatch_round_trip_fork_then_retire_and_history_after_restart' (2776) panicked at src\editor_draft_fork_tests.rs:834:49:
+called `Result::unwrap()` on an `Err` value: "DevelopmentDatabaseRequired"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test editor_draft::fork::tests::actual_engine_dispatch_round_trip_fork_then_retire_and_history_after_restart ... FAILED
+test editor_draft::fork::tests::committed_exact_retries_preserve_effect_and_never_reactivate_inactive_child ... ok
+test editor_draft::fork::tests::existing_source_bytes_are_inherited_without_adopting_new_business_revision ... ok
+test editor_draft::fork::tests::child_can_fork_again_only_after_exact_parent_retirement ... ok
+test editor_draft::fork::tests::new_card_complete_late_raw_two_phase_reopen_and_exact_history ... ok
+test editor_draft::fork::tests::grant_expiry_cannot_bypass_fork_or_retirement_authority ... ok
+test editor_draft::fork::tests::fork_requires_exact_aliases_order_and_parent_owned_pins_but_allows_subset ... ok
+test editor_draft::fork::tests::child_counts_as_second_active_slot_and_fields_keep_original_limits ... ok
+test editor_draft::fork::tests::parent_mutations_and_second_fork_sealed_while_child_can_keep_raw ... ok
+test editor_draft::fork::tests::fork_and_retirement_unknown_event_capacity_keep_original_for_retry ... ok
+test editor_draft::fork::tests::protected_lineage_and_ordinary_origin4_are_still_rejected ... ok
+test editor_draft::fork::tests::proof_shape_sha_generation_source_identity_fail_before_child_write ... ok
+
+thread 'editor_draft::fork::tests::retirement_requires_exact_first_child_link_and_parent_cas' (13380) panicked at src\editor_draft_fork_tests.rs:522:9:
+assertion `left == right` failed
+  left: "committed"
+ right: "not_committed"
+test editor_draft::fork::tests::retirement_requires_exact_first_child_link_and_parent_cas ... FAILED
+test editor_draft::fork::tests::strict_json_envelopes_export_complete_proofs_and_canonical_request_sha ... ok
+test editor_draft::fork::tests::unpublished_selected_pins_export_bytes_after_parent_retirement_and_child_origin3_save ... ok
+test editor_draft::fork::tests::unresolved_pending_or_ready_import_blocks_fork_without_freezing_parent ... ok
+test editor_draft::fork::tests::inactive_journals_still_count_against_fork_identity_capacity_after_reopen ... ok
+test editor_draft::fork::tests::selected_blob_is_logically_charged_twice_while_parent_and_child_are_active ... ok
+
+failures:
+
+failures:
+    editor_draft::fork::tests::actual_engine_dispatch_round_trip_fork_then_retire_and_history_after_restart
+    editor_draft::fork::tests::retirement_requires_exact_first_child_link_and_parent_cas
+
+test result: FAILED. 16 passed; 2 failed; 1 ignored; 0 measured; 129 filtered out; finished in 12.91s
+
+error: test failed, to rerun pass `--lib`

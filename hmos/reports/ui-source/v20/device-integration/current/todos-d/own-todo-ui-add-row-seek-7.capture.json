@@ -1,0 +1,19 @@
+{
+  "label": "own-todo-ui-add-row-seek-7",
+  "started": 1791366385076,
+  "screenshotAt": 1791366385401,
+  "layoutAt": 1791366386117,
+  "order": "screenshot before raw native dump",
+  "visualReview": "REQUIRED; node presence is not rendered visibility",
+  "controls": {
+    "present": false,
+    "inputState": "UNKNOWN",
+    "inputStateReason": "dump hitTestBehavior does not prove dispatch",
+    "renderState": "NOT_EXPOSED; inspect PNG"
+  },
+  "files": {
+    "png": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-add-row-seek-7.png",
+    "json": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-add-row-seek-7.json",
+    "raw": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\reports\\ui-source\\v20\\device-integration\\current\\todos-d\\own-todo-ui-add-row-seek-7.raw.json"
+  }
+}

@@ -2,7 +2,9 @@
 
 目标：持续跟进 `01a085bd-7a94-7f93-8a1f-1ecf417f5ee3`，直至 HMOS 追平 Windows 侧 UI 与大部分实现。独立 `hmos/` 工程、Rust 复用、ArkUI/NDK 路线不变；只推送 `codex/ArkTsUI`，不合并主线。
 
-2026-10-07 当前交付为 [主页面 UI 集成源码检查点](../reports/ui-source/v20/integration/validation.md)：新卡多行待办与输入协调已接入 Index，粘贴/自动标题完整选区交接及迟到输入守卫已补。版本号仍 dev19，新 UI 未设备验收；旧草稿清理成功后迟到输入的新身份持久接续尚未实现，完整目标 **OPEN**。此前 [dev20 源码检查点](../reports/ui-source/v20/checkpoint-status.md) 尚未接入 Index 的记录及其617项模型、123项Rust和实际Flutter/Dart对照保留为历史限定证据，以下记录同样保留各轮交付时事实。
+2026-10-07 最新增量为 [草稿接续基础能力检查点](../reports/ui-source/v20/retirement/validation.md)：独立开发库支持新 raw 草稿承接已确认父 pin，再条件清理父草稿；ArkTS 保留原请求和较晚完整输入。Index 尚未接线，业务 Unknown 的持久原请求恢复、准确业务基线接续与最终界面清理仍 OPEN。此前 `eeca59f8` UI 包的 x64 安装和首页/空待办区观察另记 [设备范围](../reports/ui-source/v20/device-integration/validation.md)，不能作为新 fork 包或多行编辑保存验收。
+
+2026-10-07 此前交付的 [主页面 UI 集成源码检查点](../reports/ui-source/v20/integration/validation.md)：新卡多行待办与输入协调已接入 Index，粘贴/自动标题完整选区交接及迟到输入守卫已补。交付时版本号仍 dev19，新 UI 未设备验收；旧草稿清理成功后迟到输入的新身份持久接续尚未实现，完整目标 **OPEN**。此前 [dev20 源码检查点](../reports/ui-source/v20/checkpoint-status.md) 尚未接入 Index 的记录及其617项模型、123项Rust和实际Flutter/Dart对照保留为历史限定证据，以下记录同样保留各轮交付时事实。
 
 2026-10-07 dev.19：字段按真实 Flutter `characters 1.4.1 / Unicode 16.0.0` 的 grapheme 规则计数，标题/传入待办字段/假设/结论/正文上限分别为 **60/1000/5000/10000/20000**。当前UI的待办字段仅为待添加单条输入，未复现Flutter全部已有行与待添加行的聚合1000和行间选区模型。粘贴先异步检查选区替换后的完整未来文字，再导入原件；确认 pin 后用实际资产引用重检，失败保留已确认附件。移除编辑控件的 UTF-16 `maxLength`，显示异步计数，超限完整输入保留；raw journal/IME 沿用既有结构与字节预算，业务保存和粘贴拒绝活跃 composing 或超限。待办重命名成功回执仅在原 owner、epoch 和完整输入一致且无 composition 时关闭编辑器，迟到候选继续保留。真实 Flutter 的 **1,198 组完整对照 PASS**，完整实际 ETS 模型 **535/535 PASS**，Rust **106 PASS**，三项默认条件 ignored 已单独 fresh 比较通过。最终 **0.1.0-hmos-dev.19 /1000019** 的 API26 未签名 debug HAP **SUCCESS /11.302s**，**28,164,478 字节**，SHA-256 `F7A913980CF3213536820727A677EEC04EA169FE2B65CE16E305F352D14BE4EC`；见 [dev.19 验证记录](../reports/ui-source/v19/validation.md)。**dev.19/dev.18 均未安装，当前设备仍 dev.17，新包设备验收 NOT_RUN**。完整 Windows/Flutter 对齐目标仍 **OPEN**。
 

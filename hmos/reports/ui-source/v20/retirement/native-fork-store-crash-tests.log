@@ -1,0 +1,23 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.24s
+     Running unittests src\lib.rs (hmos\rust\target\debug\deps\morrow_hmos-5dc4350283be0464.exe)
+
+running 1 test
+phase=fork boundary=after-begin original_committed=false exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=fork boundary=after-card original_committed=false exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=fork boundary=after-operation original_committed=false exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=fork boundary=after-event original_committed=false exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=fork boundary=after-task-evidence original_committed=false exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=fork boundary=before-commit original_committed=false exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=fork boundary=after-commit original_committed=true exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=retire boundary=after-begin original_committed=false exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=retire boundary=after-card original_committed=false exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=retire boundary=after-operation original_committed=false exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=retire boundary=after-event original_committed=false exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=retire boundary=after-task-evidence original_committed=false exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=retire boundary=before-commit original_committed=false exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+phase=retire boundary=after-commit original_committed=true exact_retry=PASS exported_bytes=19 exported_sha256=21123eca36ffd853d5a880b50d0de55566ccd58e8061c633e44ba6131ca34ace
+test editor_draft::fork::tests::actual_store_crash_boundaries_preserve_pins_and_exact_original_outcomes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 147 filtered out; finished in 3.77s
+
