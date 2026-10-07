@@ -16,6 +16,7 @@
 #include <vector>
 
 extern "C" char *morrow_hmos_request(const char *);
+extern "C" char *morrow_hmos_editor_field(const char *);
 // Each Rust entry point consumes every owned FD even when validation or I/O
 // fails. Caller FDs are synchronously duplicated before NAPI returns.
 extern "C" char *morrow_hmos_import(const char *, int owned_fd);
@@ -36,8 +37,25 @@ bool Read(napi_env env, napi_value value, std::string &result) {
     result.assign(bytes.data(), length);
     return result.find('\0') == std::string::npos;
 }
+// NAPI UTF8 conversion may replace a lone UTF16 surrogate. Reject it first,
+// retaining the caller's original ArkTS value for IME completion/recovery.
+bool ReadField(napi_env env, napi_value value, std::string &result) {
+    size_t length = 0;
+    if (napi_get_value_string_utf16(env, value, nullptr, 0, &length) != napi_ok || length > MAX_REQUEST) return false;
+    std::vector<char16_t> units(length + 1);
+    size_t copied = 0;
+    if (napi_get_value_string_utf16(env, value, units.data(), units.size(), &copied) != napi_ok || copied != length) return false;
+    for (size_t i = 0; i < length; ++i) {
+        const auto unit = units[i];
+        if (unit >= 0xD800 && unit <= 0xDBFF) {
+            if (i + 1 >= length || units[i + 1] < 0xDC00 || units[i + 1] > 0xDFFF) return false;
+            ++i;
+        } else if (unit >= 0xDC00 && unit <= 0xDFFF) { return false; }
+    }
+    return Read(env, value, result);
+}
 napi_value Undefined(napi_env env) { napi_value v; napi_get_undefined(env, &v); return v; }
-enum class Operation { Request, Import, Export, Prepare, ClipboardConvert, ClipboardImage };
+enum class Operation { Request, EditorField, Import, Export, Prepare, ClipboardConvert, ClipboardImage };
 struct Work {
     napi_async_work work{};
     napi_deferred deferred{};
@@ -86,6 +104,7 @@ void Execute(napi_env, void *data) {
     char *reply = nullptr;
     switch (w->operation) {
         case Operation::Request: reply = morrow_hmos_request(w->request.c_str()); break;
+        case Operation::EditorField: reply = morrow_hmos_editor_field(w->request.c_str()); break;
         case Operation::Import: reply = morrow_hmos_import(w->request.c_str(), std::exchange(w->source_fd, -1)); break;
         case Operation::Export: reply = morrow_hmos_export(w->request.c_str(), std::exchange(w->source_fd, -1)); break;
         case Operation::ClipboardConvert: reply = morrow_hmos_clipboard_convert(w->request.c_str(), std::exchange(w->source_fd, -1)); break;
@@ -137,6 +156,17 @@ napi_value Request(napi_env env, napi_callback_info info) {
     auto work = std::make_unique<Work>();
     if (argc != 1 || !Read(env, argv[0], work->request)) {
         napi_throw_type_error(env, "NATIVE_NOT_STARTED", "Expected bounded UTF-8 request"); return nullptr;
+    }
+    return Queue(env, std::move(work));
+}
+napi_value EditorField(napi_env env, napi_callback_info info) {
+    size_t argc = 2; napi_value argv[2];
+    if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok) {
+        napi_throw_type_error(env, "NATIVE_NOT_STARTED", "Cannot read editor field arguments"); return nullptr;
+    }
+    auto work = std::make_unique<Work>(); work->operation = Operation::EditorField;
+    if (argc != 1 || !ReadField(env, argv[0], work->request)) {
+        napi_throw_type_error(env, "NATIVE_NOT_STARTED", "Expected bounded scalar-valid editor field JSON"); return nullptr;
     }
     return Queue(env, std::move(work));
 }
@@ -254,6 +284,7 @@ napi_value Release(napi_env env, napi_callback_info info) {
 napi_value Init(napi_env env, napi_value exports) {
     napi_property_descriptor methods[] = {
         {"request",nullptr,Request,nullptr,nullptr,nullptr,napi_default,nullptr},
+        {"editorField",nullptr,EditorField,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"importFile",nullptr,ImportFile,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"exportFile",nullptr,ExportFile,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"prepareFile",nullptr,PrepareFile,nullptr,nullptr,nullptr,napi_default,nullptr},

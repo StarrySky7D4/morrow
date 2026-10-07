@@ -22,6 +22,8 @@ for (const p of ['entry/src/main/ets/model/EditorPaste.ets', 'entry/src/main/ets
   'rust/src/markdown.rs', 'entry/src/main/ets/model/CardOrder.ets']) inputs.add(p);
 for (const p of ['entry/src/main/ets/model/ClipboardInput.ets', 'entry/src/main/ets/model/ClipboardPaste.ets',
   'rust/src/clipboard.rs']) inputs.add(p);
+for (const p of ['entry/src/main/ets/model/EditorFieldPolicy.ets', 'rust/src/editor_field.rs',
+  'rust/src/editor_field/tests.rs']) inputs.add(p);
 for (const p of ['entry/src/main/ets/model/AttachmentFiles.ets', 'entry/src/main/ets/model/Attachments.ets',
   'entry/src/main/ets/model/VerifiedImages.ets', 'entry/src/main/ets/pages/AttachmentImagePreview.ets',
   'entry/src/main/ets/model/AttachmentPlayback.ets', 'entry/src/main/ets/pages/AttachmentMediaPreview.ets',

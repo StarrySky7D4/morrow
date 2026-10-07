@@ -43,6 +43,10 @@ export class ClipboardConversion {
   ok: boolean = false;
   error: string = '';
   paste_text: string = '';
+  paste_grapheme_count: number = 0;
+  paste_utf16_length: number = 0;
+  paste_utf8_length: number = 0;
+  unicode_version: string = '';
   warnings: string[] = [];
   images: ClipboardImageMetadata[] = [];
   source_sha256: string = '';
@@ -51,6 +55,20 @@ export class ClipboardConversion {
 class PreparedSpoolResult {
   name: string = '';
   reply: FileStreamReply = { ok: false, error: '', byte_length: '', sha256: '' };
+}
+
+function clipboardOutputBytes(text: string): number {
+  for (let index: number = 0; index < text.length; index++) {
+    const code: number = text.charCodeAt(index);
+    if (code >= 0xD800 && code <= 0xDBFF) {
+      const next: number = text.charCodeAt(index + 1);
+      if (!(next >= 0xDC00 && next <= 0xDFFF)) { throw new Error('剪贴板转换文字包含不完整的 Unicode 字符。'); }
+      index++;
+    } else if (code >= 0xDC00 && code <= 0xDFFF) {
+      throw new Error('剪贴板转换文字包含不完整的 Unicode 字符。');
+    }
+  }
+  return new util.TextEncoder().encodeInto(text).byteLength;
 }
 class PreparedClipboardHolder {
   value: PreparedAttachment | undefined = undefined;
@@ -511,11 +529,18 @@ export class AttachmentFiles {
         if (typeof serialized !== 'string' || new util.TextEncoder().encodeInto(serialized).byteLength > MAX_REQUEST_BYTES) { throw new Error('剪贴板转换结果超过预算。'); }
         const reply = JSON.parse(serialized) as ClipboardConversion;
         if (!reply || typeof reply.ok !== 'boolean' || typeof reply.error !== 'string' || typeof reply.paste_text !== 'string' ||
-          reply.paste_text.length > 20000 || !Array.isArray(reply.warnings) || reply.warnings.length > 64 ||
+          reply.unicode_version !== '16.0.0' || !Number.isSafeInteger(reply.paste_grapheme_count) ||
+          reply.paste_grapheme_count < 0 || reply.paste_grapheme_count > 20000 ||
+          reply.paste_grapheme_count > reply.paste_text.length ||
+          (reply.paste_text.length === 0 ? reply.paste_grapheme_count !== 0 : reply.paste_grapheme_count === 0) ||
+          reply.paste_utf16_length !== reply.paste_text.length ||
+          reply.paste_utf8_length !== clipboardOutputBytes(reply.paste_text) || reply.paste_utf8_length > MAX_REQUEST_BYTES ||
+          !Array.isArray(reply.warnings) || reply.warnings.length > 64 ||
           reply.warnings.some((warning: string): boolean => typeof warning !== 'string' || warning.length > 4096) ||
           !Array.isArray(reply.images) || reply.images.length > 10) { throw new Error('剪贴板转换结果不完整。'); }
         if (!reply.ok) {
-          if (reply.paste_text || reply.images.length || reply.source_sha256 || reply.source_byte_length !== '') { throw new Error('失败的剪贴板转换返回了不可信内容。'); }
+          if (reply.paste_text || reply.paste_grapheme_count !== 0 || reply.paste_utf16_length !== 0 ||
+            reply.paste_utf8_length !== 0 || reply.images.length || reply.source_sha256 || reply.source_byte_length !== '') { throw new Error('失败的剪贴板转换返回了不可信内容。'); }
           throw new Error('剪贴板转换失败：' + reply.error);
         }
         if (reply.error || reply.source_sha256 !== value.sha256.toLowerCase() || reply.source_byte_length !== value.byte_length) { throw new Error('剪贴板转换原件校验不一致。'); }

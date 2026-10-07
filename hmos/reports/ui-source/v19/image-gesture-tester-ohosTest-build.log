@@ -1,0 +1,99 @@
+> hvigor [32mFinished :entry:ohosTest@PreBuild... after 113 ms [39m
+> hvigor [32mFinished :entry:ohosTest@CreateModuleInfo... after 2 ms [39m
+> hvigor [32mFinished :entry:ohosTest@GenerateMetadata... after 3 ms [39m
+> hvigor [32mFinished :entry:ohosTest@ConfigureCmake... after 1 ms [39m
+> hvigor [32mFinished :entry:ohosTest@MergeProfile... after 3 ms [39m
+> hvigor [32mFinished :entry:ohosTest@CreateBuildProfile... after 2 ms [39m
+> hvigor [32mFinished :entry:ohosTest@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:ohosTest@GeneratePkgContextInfo... after 8 ms [39m
+> hvigor [32mFinished :entry:ohosTest@GeneratePkgSdkInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:ohosTest@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:ohosTest@BuildNativeWithCmake... after 1 ms [39m
+> hvigor [32mFinished :entry:ohosTest@MakePackInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:ohosTest@SyscapTransform... after 2 ms [39m
+> hvigor [32mFinished :entry:ohosTest@ProcessProfile... after 72 ms [39m
+> hvigor [32mFinished :entry:ohosTest@ProcessRouterMap... after 3 ms [39m
+> hvigor [32mFinished :entry:ohosTest@ProcessShareConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:ohosTest@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:ohosTest@BuildNativeWithNinja... after 2 ms [39m
+> hvigor [32mFinished :entry:ohosTest@ProcessResource... after 3 ms [39m
+> hvigor [32mFinished :entry:ohosTest@GenerateLoaderJson... after 8 ms [39m
+> hvigor [32mFinished :entry:ohosTest@ProcessLibs... after 5 ms [39m
+> hvigor [32mFinished :entry:ohosTest@CompileResource... after 173 ms [39m
+> hvigor [32mFinished :entry:ohosTest@DoNativeStrip... after 2 ms [39m
+> hvigor [32mFinished :entry:ohosTest@OhosTestBuildJS... after 3 ms [39m
+> hvigor [32mFinished :entry:ohosTest@CacheNativeLibs... after 17 ms [39m
+> hvigor WARN: WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:61:21
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:63:14
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:63:69
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:64:18
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:70:39
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:85:46
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:86:29
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:86:88
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:86:124
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:90:38
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:91:8
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:94:31
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:97:33
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:104:48
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:104:98
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:105:68
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:112:36
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:113:37
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:130:70
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/tool/image-gesture-tester/work/build-1791357367787/entry/src/ohosTest/ets/testrunner/ImageGestureRunner.ets:194:21
+ Function may throw exceptions. Special handling is required.
+
+
+> hvigor [32mFinished :entry:ohosTest@OhosTestCompileArkTS... after 3 s 1000 ms [39m
+> hvigor [32mFinished :entry:ohosTest@OhosTestCopyMockConfigJson... after 2 ms [39m
+> hvigor [32mFinished :entry:ohosTest@GeneratePkgModuleJson... after 3 ms [39m
+> hvigor [32mFinished :entry:ohosTest@ProcessCompiledResources... after 1 ms [39m
+> hvigor [32mFinished :entry:ohosTest@PackageHap... after 410 ms [39m
+> hvigor [32mFinished :entry:ohosTest@PackingCheck... after 5 ms [39m
+> hvigor WARN: No signingConfig found for product default
+> hvigor [32mFinished :entry:ohosTest@SignHap... after 2 ms [39m
+> hvigor [32mFinished :entry:ohosTest@CollectDebugSymbol... after 2 ms [39m
+> hvigor [32mFinished :entry:assembleHap... after 1 ms [39m
+> hvigor [32mBUILD SUCCESSFUL in 9 s 73 ms [39m
+
+34 tasks in total: 34 executed, 0 up-to-date

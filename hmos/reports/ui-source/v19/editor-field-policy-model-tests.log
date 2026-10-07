@@ -1,0 +1,24 @@
+✔ exact Flutter field limits use grapheme policy, including todos 1000 (2.4389ms)
+✔ emoji, combining marks, family, flags and CRLF count complete graphemes (1.7145ms)
+✔ each exact boundary is accepted and one additional grapheme is fully rejected (36.9144ms)
+✔ empty, whitespace and intentional replacement characters are never normalized (0.4552ms)
+✔ lone high or low surrogate is rejected before encoding and paired emoji survives (0.39ms)
+✔ owner loss or stop before the worker completes rejects a late count (0.3429ms)
+✔ an already closed owner is rejected without issuing a worker request (0.1264ms)
+✔ field, limit, Unicode identity and UTF16/UTF8 lengths must match the original text (0.3564ms)
+✔ invalid counts or contradictory success cannot authorize a field (0.4818ms)
+✔ a bounded native failure remains explicit and cannot become a truncated success (5.001ms)
+✔ malformed JSON or worker rejection fails closed without a replay (0.3755ms)
+✔ full Values are frozen before awaits and all five fields are checked (0.8238ms)
+✔ raw inspect and explicitly composing raw validation preserve IME metadata (0.37ms)
+✔ full Values validates every field and reports oversized fields without saving (3.5254ms)
+✔ owner generation drift during full Values stops subsequent workers (0.404ms)
+✔ native request-byte failure before field parsing remains an explicit independent budget error (2.1986ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 929.0354

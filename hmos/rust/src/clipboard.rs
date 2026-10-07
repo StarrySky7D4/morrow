@@ -26,7 +26,8 @@ const MAX_NODES: usize = 1024;
 const MAX_DEPTH: usize = 40;
 const MAX_IMAGES: usize = 10;
 const MAX_IMAGE_BYTES: usize = 64 * 1024 * 1024;
-const MAX_OUTPUT_UTF16: usize = 20_000;
+const MAX_OUTPUT_GRAPHEMES: usize = 20_000;
+const MAX_OUTPUT_BYTES: usize = 512 * 1024;
 const SS_NS: &str = "urn:schemas-microsoft-com:office:spreadsheet";
 
 #[derive(Debug, Deserialize)]
@@ -60,11 +61,16 @@ pub struct ConvertReply {
     pub images: Vec<ImageMetadata>,
     pub source_sha256: String,
     pub source_byte_length: String,
+    pub paste_grapheme_count: usize,
+    pub paste_utf16_length: usize,
+    pub paste_utf8_length: usize,
+    pub unicode_version: String,
 }
 impl ConvertReply {
     pub fn failure(error: String) -> Self {
         Self {
             error,
+            unicode_version: crate::editor_field::UNICODE_VERSION.into(),
             ..Self::default()
         }
     }
@@ -164,7 +170,9 @@ fn text_source(source: &[u8], maximum: usize) -> Result<Cow<'_, str>> {
     }
 }
 fn output_limit(text: &str) -> Result<()> {
-    if text.encode_utf16().count() > MAX_OUTPUT_UTF16 {
+    if text.len() > MAX_OUTPUT_BYTES {
+        Err("ClipboardOutputBytesLimit".into())
+    } else if crate::editor_field::grapheme_count(text) > MAX_OUTPUT_GRAPHEMES {
         Err("ClipboardOutputLimit".into())
     } else {
         Ok(())
@@ -947,12 +955,19 @@ fn normalized(request: &ConvertRequest, source: &[u8]) -> Result<Converted> {
     let reply = ConvertReply {
         ok: true,
         error: String::new(),
+        paste_grapheme_count: crate::editor_field::grapheme_count(&text),
+        paste_utf16_length: text.encode_utf16().count(),
+        paste_utf8_length: text.len(),
+        unicode_version: crate::editor_field::UNICODE_VERSION.into(),
         paste_text: text,
         warnings,
         images: images.iter().map(|i| i.metadata.clone()).collect(),
         source_sha256: request.expected_sha256.clone(),
         source_byte_length: source.len().to_string(),
     };
+    if serde_json::to_vec(&reply).map_err(err)?.len() > crate::LIMIT {
+        return Err("ClipboardReplyBytesLimit".into());
+    }
     Ok(Converted { reply, images })
 }
 pub fn convert(input: &str, reader: &mut impl Read) -> Result<ConvertReply> {
@@ -1429,7 +1444,7 @@ mod tests {
         fail(
             "plain",
             &"x".repeat(MAX_TEXT_SOURCE_UTF16),
-            "MarkdownLimit:UTF16",
+            "MarkdownLimit:InputBytes",
         );
     }
     #[test]
@@ -1607,7 +1622,7 @@ mod tests {
         fail("html", &"<br>".repeat(1100), "NodeLimit");
         fail(
             "html",
-            &format!("<p>{}</p>", "😀".repeat(10001)),
+            &format!("<p>{}</p>", "😀".repeat(20001)),
             "OutputLimit",
         );
         fail(

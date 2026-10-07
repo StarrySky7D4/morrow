@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-10-07T05:54:54.834Z",
+  "createdUtc": "2026-10-07T07:25:49.134Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.18",
+  "hmosVersion": "0.1.0-hmos-dev.19",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 27866016,
-    "sha256": "910F3069B7979E5F8C6CF9E7DC770DF6E342725D493798DDE38F317524DB7DE2",
+    "bytes": 28164478,
+    "sha256": "F7A913980CF3213536820727A677EEC04EA169FE2B65CE16E305F352D14BE4EC",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "2CAC903832A590AC17AB0913840908A62A05D3A1FD07972679C3517B7EBCDFCC"
+      "sha256": "954E326044E72696153B4461C85757533FC51973A28BF8B842C3C8DCF52006C0"
     },
     {
       "path": "entry/build-profile.json5",
@@ -52,7 +52,7 @@
     },
     {
       "path": "entry/src/main/cpp/bridge.cpp",
-      "sha256": "8225C989907E17BC74C076EA506D0E0D6ACAD142C1806DB917F9B192929B03BC"
+      "sha256": "EBA9A598EECCCDE270BDA21C9786AE21AE57645655A752A1B92DF01152467B4A"
     },
     {
       "path": "entry/src/main/cpp/CMakeLists.txt",
@@ -76,7 +76,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "A8165FF6680C6149A0E2FBC73AF4BE79B3AB5121A15A921E365EFC25927E283D"
+      "sha256": "9B897AC560A05A91D05007C4706E9B96576FC24329AE037B3E7C8CB8A5B6C85A"
     },
     {
       "path": "hvigor/hvigor-config.json5",
@@ -84,15 +84,15 @@
     },
     {
       "path": "rust/Cargo.lock",
-      "sha256": "EA93C37D2A0A1DB5FAC4A67D0272B31342F36285C2DEEBD4975E03EE853A1658"
+      "sha256": "99388ED4B939078A28617A7624ECBC38A3B7D527AD181AEFAC824F07562F119D"
     },
     {
       "path": "rust/Cargo.toml",
-      "sha256": "E4E4E019BDBBED8348D48F1E9267C54F9E8462F3517DB84C015DBF827E9F833F"
+      "sha256": "C3C53EB60EB751BCB3F5BD26E37EF54D26D5C906A8FBEB7FDF76887377E2BB82"
     },
     {
       "path": "rust/src/lib.rs",
-      "sha256": "0C40A9D5F1D4153194D460E799222EDE235A6C1C3537A61B1CE52C1ECD579508"
+      "sha256": "785A0DAC542AF77EC4D2A3A729B0639BAF16C42E8253EDAC61998021BCD5E410"
     },
     {
       "path": "rust/src/bin/hmos-self-check.rs",
@@ -1020,7 +1020,7 @@
     },
     {
       "path": "entry/src/main/cpp/types/libmorrow/index.d.ts",
-      "sha256": "E67C6C520D67AAB16833A1BE4269869D7183943A3295C1A934B1DC0EBF019B55"
+      "sha256": "97B839E0073B044F67388574111043BAD303CCF8A69FC14674BDCD787F438581"
     },
     {
       "path": "entry/src/main/resources/rawfile/materialicons.otf",
@@ -1104,7 +1104,7 @@
     },
     {
       "path": "entry/src/main/ets/model/EditorPaste.ets",
-      "sha256": "61308144870B486F55864365ED68ECA0754FCC296E0C77EB784B066C3D5D81F0"
+      "sha256": "28D54A7D02BF644D68B58AC68A4D824AB2FF3FB71B87AB0E00C279456B6D160E"
     },
     {
       "path": "entry/src/main/ets/pages/MarkdownPreview.ets",
@@ -1112,7 +1112,7 @@
     },
     {
       "path": "rust/src/markdown.rs",
-      "sha256": "729286A16E6E3A2566DDBFCD87CFD54BBADC489A41934ABA4690DC7FFCBF25AA"
+      "sha256": "73DC388AAFDD33EFD0DBC934197F872648E1B89416545354054C706A33518660"
     },
     {
       "path": "entry/src/main/ets/model/CardOrder.ets",
@@ -1120,7 +1120,7 @@
     },
     {
       "path": "entry/src/main/ets/model/AttachmentFiles.ets",
-      "sha256": "B619594141F7E9051F0F375968A17703573DDC533736A2A5A12BB9090200471E"
+      "sha256": "74AD85E0E6504EB97BC81D9C1983D6F3369E6C72FE0C14D81ED0F92B4B8849BB"
     },
     {
       "path": "entry/src/main/ets/model/Attachments.ets",
@@ -1212,17 +1212,29 @@
     },
     {
       "path": "entry/src/main/ets/model/ClipboardPaste.ets",
-      "sha256": "2EE1330635350F8A2E3311908902703142962DCCBB71415FF5954450310E5748"
+      "sha256": "98CCD0F8D25D4B3C657023EC7D8F521B7C1278083260D5A7EEAE2ED093610658"
     },
     {
       "path": "rust/src/clipboard.rs",
-      "sha256": "9219D1F05F96F437B6F002BB1927864450D88587DDF4DDC9ABC47548C108161E"
+      "sha256": "53FD49372FBECABEB27623B684CE939C55DB274B101C27C8C32AAF5720326ED6"
     },
     {
       "path": "entry/src/main/ets/model/AttachmentImageGestures.ets",
       "sha256": "73AF8DD840BAB941C7A5ACDBC45639920E0B423912D441472C1756FC77647FC9"
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorFieldPolicy.ets",
+      "sha256": "10C3162E77A947335ACF0C3DF2E464C80195D0AC2BBC2922BBB09C0A8A626842"
+    },
+    {
+      "path": "rust/src/editor_field.rs",
+      "sha256": "104951869197CF2868865CFF7238AF0645D7913E61EF49FB3D2E21CA5730D925"
+    },
+    {
+      "path": "rust/src/editor_field/tests.rs",
+      "sha256": "BD1BCE844DF4D3DC15D5AA934BE19CA0C7C168EBE8FB4856479539678B849E40"
     }
   ],
-  "uiValidation": "reports/ui-source/v18/validation.md",
+  "uiValidation": "reports/ui-source/v19/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

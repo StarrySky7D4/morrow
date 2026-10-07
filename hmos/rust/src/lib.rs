@@ -25,6 +25,7 @@ pub mod editor_draft;
 pub mod editor_draft_staging;
 pub mod file_stream;
 pub mod clipboard;
+pub mod editor_field;
 pub mod markdown;
 pub mod query_plan_v2;
 
@@ -798,6 +799,21 @@ pub unsafe extern "C" fn morrow_hmos_request(input: *const c_char) -> *mut c_cha
     };
     CString::new(reply).expect("JSON has no raw NUL").into_raw()
 }
+/// Stateless measurement; independent of the serialized Store owner. The
+/// JSON string retains escaped UTF16 surrogates for explicit strict rejection.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn morrow_hmos_editor_field(input: *const c_char) -> *mut c_char {
+    let reply = if input.is_null() {
+        editor_field::Reply::failure("", "EditorFieldNullRequest")
+    } else {
+        match unsafe { CStr::from_ptr(input) }.to_str() {
+            Ok(input) => editor_field::request(input),
+            Err(_) => editor_field::Reply::failure("", "EditorFieldInvalidUtf8"),
+        }
+    };
+    CString::new(serde_json::to_string(&reply).expect("bounded field reply"))
+        .expect("JSON has no raw NUL").into_raw()
+}
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn morrow_hmos_free(value: *mut c_char) {
     if !value.is_null() {
@@ -1086,7 +1102,7 @@ mod tests {
         assert!(pasted.markdown.blocks.is_empty());
         assert_eq!(pasted.paste_text, "| A | B |\n| --- | --- |\n| C | D |");
         for invalid in [
-            serde_json::json!({"action":"markdown","text":"😀".repeat(10_001)}),
+            serde_json::json!({"action":"markdown","text":"😀".repeat(20_001)}),
             serde_json::json!({"action":"paste_plain","section":"description","text":"A\tB\n".repeat(501)}),
             serde_json::json!({"action":"paste_plain","section":"unknown","text":"x"}),
         ] {

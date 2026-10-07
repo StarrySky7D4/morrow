@@ -112,7 +112,9 @@ function createFilesHarness(clipboard = createClipboardHarness()) {
     const args = JSON.parse(request), bytes = h.read(h.fdPath(sourceFd));
     const hash = sha(bytes);
     assert.equal(args.expected_sha256, hash);
-    return JSON.stringify({ ok: true, error: '', paste_text: 'converted', warnings: [], images: [], source_sha256: hash, source_byte_length: String(bytes.length) });
+    return JSON.stringify({ ok: true, error: '', paste_text: 'converted', paste_grapheme_count: 9,
+      paste_utf16_length: 9, paste_utf8_length: 9, unicode_version: '16.0.0',
+      warnings: [], images: [], source_sha256: hash, source_byte_length: String(bytes.length) });
   };
   h.native.clipboardImage = async (request, sourceFd, destFd, maxBytes) => {
     h.logs.push(['clipboardImage', request, sourceFd, destFd, maxBytes]);

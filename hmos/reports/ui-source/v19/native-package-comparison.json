@@ -1,0 +1,44 @@
+{
+  "prior_artifact": "hmos/.build/artifacts/dev18/entry-default-unsigned.hap",
+  "artifact": "hmos/.build/artifacts/dev19/entry-default-unsigned.hap",
+  "bytes": 28164478,
+  "result": "PASS",
+  "version": "0.1.0-hmos-dev.19",
+  "scope": "All four native ZIP entries fully decompressed and SHA/length checked; both product libraries match SDK stripped packaging files and differ from dev18; libc++ entries unchanged. No installation or device claim.",
+  "native_entries": [
+    {
+      "sha256": "79D8D093E4D3DCD2237DA1B203814FF11EECB29F13CAED4F8669388B69719745",
+      "prior_bytes": 10188392,
+      "path": "libs/arm64-v8a/libmorrow.so",
+      "bytes": 10314456,
+      "prior_sha256": "ED895EF7B758377573364732E8D77C43CD3012802E6D87CB05392635B9E22AF0",
+      "byte_equal": false
+    },
+    {
+      "sha256": "F69947AF100B652E349AE51E4A4888BCC7A327DB9085272D318176EF1782BF0F",
+      "prior_bytes": 1262504,
+      "path": "libs/arm64-v8a/libc++_shared.so",
+      "bytes": 1262504,
+      "prior_sha256": "F69947AF100B652E349AE51E4A4888BCC7A327DB9085272D318176EF1782BF0F",
+      "byte_equal": true
+    },
+    {
+      "sha256": "DD615F9B575ACB1BD12516246E57F0CC83FE36180F67EB227B549ACFEA7BBA3E",
+      "prior_bytes": 10637368,
+      "path": "libs/x86_64/libmorrow.so",
+      "bytes": 10762520,
+      "prior_sha256": "F359118CAFE01B48F649CEA347910CD6F5E448A56386F6A89C3DFEC0BE82C5A4",
+      "byte_equal": false
+    },
+    {
+      "sha256": "09B9E3A97D3C01260B5E269E2CE15FE4D3B7C787B99DC4378295D4F35E2FA006",
+      "prior_bytes": 1294904,
+      "path": "libs/x86_64/libc++_shared.so",
+      "bytes": 1294904,
+      "prior_sha256": "09B9E3A97D3C01260B5E269E2CE15FE4D3B7C787B99DC4378295D4F35E2FA006",
+      "byte_equal": true
+    }
+  ],
+  "captured_utc": "2026-10-07T07:25:06.2095895Z",
+  "sha256": "F7A913980CF3213536820727A677EEC04EA169FE2B65CE16E305F352D14BE4EC"
+}

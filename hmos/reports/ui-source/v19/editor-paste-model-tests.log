@@ -1,0 +1,20 @@
+✔ full Unicode, leading spaces and trailing LF survive an unset selection (0.868ms)
+✔ reversed UTF16 selection replaces only the selected emoji (0.1432ms)
+✔ a caret at a valid UTF16 boundary inserts without replacing neighbors (0.0877ms)
+✔ the complete resulting field is grapheme limited, never UTF16 truncated (1.9535ms)
+✔ live composing text cannot be replaced by a clipboard result (11.5169ms)
+✔ invalid or partial selection sentinels are rejected (0.4216ms)
+✔ a surrogate cannot be split while pasting (4.2155ms)
+✔ a frozen paste target detects raw text, selection and composing drift (0.1954ms)
+✔ new editing text, selection, affinity, direction or IME after an async check prevents insertion (5.6557ms)
+✔ async paste checks the complete prefix plus inserted text plus suffix (1.2647ms)
+✔ replacing a selection can combine graphemes across the insertion boundary (0.4524ms)
+✔ policy worker failure rejects the full paste without changing the input (0.223ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1121.3668

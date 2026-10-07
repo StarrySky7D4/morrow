@@ -7,6 +7,7 @@ const crypto = require('node:crypto'), assert = require('node:assert/strict'), {
 const ts = require(process.env.HMOS_TYPESCRIPT_PATH || process.env.HMOS_TYPESCRIPT ||
   'C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/build-tools/ets-loader/node_modules/typescript');
 const { createClipboardHarness, createFilesHarness, sha, deferred } = require('./clipboard-test-harness.cjs');
+const { response: fieldReply } = require('./editor-field-test-harness.cjs');
 const sourcePath = path.resolve(__dirname, '../entry/src/main/ets/pages/Index.ets');
 const source = fs.readFileSync(sourcePath, 'utf8'), modelRoot = path.resolve(__dirname, '../entry/src/main/ets/model');
 const plain = value => value === undefined ? undefined : JSON.parse(JSON.stringify(value));
@@ -22,6 +23,7 @@ const methods = [
   section('  private current():', '  private refreshPreview('),
   section('  private draftField(', '  private updateMarkdown('),
   section('  private draftTextChanged(', '  private draftSelectionChanged('),
+  section('  private draftSelectionChanged(', '  private restoreSelection('),
   section('  private editorInputChanged(', '  private select('),
   section('  private async loadImports():', '  private importBoundary('),
   section('  private async acceptPreparedImport(', '  private async retryAttachment('),
@@ -50,10 +52,17 @@ function integrationModels(workbench) {
     vm.runInContext(compile(fs.readFileSync(filename, 'utf8'), filename), moduleContext, { filename }); return api;
   }
   const draft = load('EditorDraft'), attachments = load('Attachments');
-  Object.assign(context, draft, attachments, load('EditorPaste'), load('ClipboardPaste'), load('AttachmentImportSelection'),
+  const fieldPolicy = load('EditorFieldPolicy');
+  Object.assign(context, draft, attachments, fieldPolicy, load('EditorPaste'), load('ClipboardPaste'), load('AttachmentImportSelection'),
     { DraftTextValue: draft.TextValue, Command: load('Workbench').Command });
   vm.runInContext(integrationCode, context, { filename: sourcePath });
-  return { draft, attachments, Index: context.exports.IndexPasteIntegration };
+  return { draft, attachments, fieldPolicy, Index: context.exports.IndexPasteIntegration };
+}
+function conversionReply(bytes, text, images = []) {
+  const count = fieldReply('description', text);
+  return { ok: true, error: '', paste_text: text, paste_grapheme_count: count.grapheme_count,
+    paste_utf16_length: count.utf16_length, paste_utf8_length: count.utf8_length, unicode_version: '16.0.0',
+    warnings: [], images, source_sha256: sha(bytes), source_byte_length: String(bytes.length) };
 }
 function harness(records, options = {}) {
   const clipboard = createClipboardHarness(records, options.clipboard || {}), files = createFilesHarness(clipboard);
@@ -94,7 +103,14 @@ function harness(records, options = {}) {
     reply.active = true; reply.current_active = true; return reply;
   }, () => {}, () => 'draft-write-' + (++writes), restored);
   const page = new models.Index();
+  const fieldPolicy = new models.fieldPolicy.EditorFieldPolicy(async serialized => {
+    const request = JSON.parse(serialized); events.push({ kind: 'field-count', request: plain(request) });
+    if (options.fieldEffect) await options.fieldEffect({ request, page, draft, events });
+    return JSON.stringify(fieldReply(request.field, request.text));
+  });
   Object.assign(page, { ready: true, pageAlive: true, foreground: true, editorOpen: true, editorDraft: draft, editorValues: api.copyValues(values),
+    fieldPolicy, editorInputEpoch: 0, fieldCountEpochs: new Map(), fieldCountLabels: [], fieldValidationWorking: false,
+    taskEditId: '', taskRenameValue: new api.TextValue(), draftFocusedFields: new Set(['title', 'description', 'hypothesis', 'conclusion', 'todos']),
     attachmentEditorIdentity: 'editor-clipboard', attachmentFiles: files.files, clipboardInput: clipboard.input,
     attachmentWorking: false, pasteWorking: false, draftRestoreInput: false, busy: false, draftWorking: false,
     draftRetiring: false, draftRetirementUnknown: false, draftCaptureIncomplete: false, draftConflict: false,
@@ -108,8 +124,7 @@ function harness(records, options = {}) {
   if (options.convert) files.setConvert(options.convert(files));
   else files.setConvert(async (serialized, fd) => {
     const request = JSON.parse(serialized), bytes = files.read(files.fdPath(fd));
-    return JSON.stringify({ ok: true, error: '', paste_text: request.format === 'plain' ? bytes.toString('utf8') : 'converted',
-      warnings: [], images: [], source_sha256: sha(bytes), source_byte_length: String(bytes.length) });
+    return JSON.stringify(conversionReply(bytes, request.format === 'plain' ? bytes.toString('utf8') : 'converted'));
   });
   if (options.image) files.setImage(options.image(files));
   return { page, draft, files, clipboard, events, models, imported,
@@ -121,12 +136,10 @@ const rich = { 'text/plain': 'plain fallback', 'text/html': '<p>public fixture</
 function imageConversion(h, imageCount = 1) {
   return async (serialized, fd) => {
     const request = JSON.parse(serialized), bytes = h.read(h.fdPath(fd));
-    if (request.format === 'plain') return JSON.stringify({ ok: true, error: '', paste_text: bytes.toString('utf8'),
-      warnings: [], images: [], source_sha256: sha(bytes), source_byte_length: String(bytes.length) });
+    if (request.format === 'plain') return JSON.stringify(conversionReply(bytes, bytes.toString('utf8')));
     const images = Array.from({ length: imageCount }, (_, i) => ({ local_id: 'image-' + (i + 1),
       name: 'clipboard-' + request.expected_sha256 + '-image-' + (i + 1) + '.png', byte_length: String(imageBytes.length), sha256: sha(imageBytes) }));
-    return JSON.stringify({ ok: true, error: '', paste_text: 'rich\n\n' + images.map(item => '![image](attachment:' + item.name + ')').join('\n'),
-      warnings: [], images, source_sha256: sha(bytes), source_byte_length: String(bytes.length) });
+    return JSON.stringify(conversionReply(bytes, 'rich\n\n' + images.map(item => '![image](attachment:' + item.name + ')').join('\n'), images));
   };
 }
 test('actual Index methods + SDK compiler are used, with source identity emitted', () => {
@@ -212,8 +225,36 @@ test('foreground loss during admitted native import retains its confirmed pin an
 test('plain byte flavor inserts converted text into all non-body fields', async () => {
   for (const target of ['title', 'hypothesis', 'conclusion', 'todos']) {
     const h = harness([{ 'text/plain': Uint8Array.from(Buffer.from('bytes plain')).buffer }], { target,
-      convert: files => async (_serialized, fd) => { const bytes = files.read(files.fdPath(fd)); return JSON.stringify({ ok: true, error: '', paste_text: 'bytes plain', warnings: [], images: [], source_sha256: sha(bytes), source_byte_length: String(bytes.length) }); } });
+      convert: files => async (_serialized, fd) => { const bytes = files.read(files.fdPath(fd)); return JSON.stringify(conversionReply(bytes, 'bytes plain')); } });
     try { await h.paste(); assert.equal(h.draft.current[target].text, 'before bytes plain', 'actual converted plain fallback for ' + target); }
     finally { h.close(); }
   }
+});
+
+for (const change of ['text roundtrip', 'selection roundtrip']) {
+  test('actual Index input epoch rejects ' + change + ' during a delayed complete future-field count', async () => {
+    const gate = deferred(), entered = deferred(), h = harness([rich], { fieldEffect: async ({ request }) => {
+      if (request.text === 'before converted') { entered.resolve(); await gate.promise; }
+    } });
+    try {
+      const original = plain(h.draft.current), pending = h.page.pasteContent(); await entered.promise;
+      if (change === 'text roundtrip') {
+        h.page.editorInputChanged('description', 'before afterx'); h.page.editorInputChanged('description', 'before after');
+      } else {
+        h.page.draftSelectionChanged('description', 0, 0); h.page.draftSelectionChanged('description', 7, 12);
+      }
+      assert.deepEqual(plain(h.draft.current), original); assert.equal(h.page.editorInputEpoch, 2);
+      gate.resolve(); await pending; assert.equal(h.events.filter(item => item.kind === 'native-import').length, 0);
+      assert.equal(h.draft.current.description.text, 'before after'); assert.match(h.page.message, /变化/);
+      assert.equal((await h.files.files.recover()).length, 0);
+    } finally { gate.resolve(); h.close(); }
+  });
+}
+test('actual Index rejects a complete future over-limit title before any native import', async () => {
+  const h = harness([{ 'text/plain': 'x'.repeat(61), 'application/pdf': Uint8Array.from([1, 2, 3]).buffer }], { target: 'title' });
+  try {
+    const result = await h.paste(); assert.equal(h.events.filter(item => item.kind === 'native-import').length, 0);
+    assert.equal(result.values.title.text, 'before after'); assert.match(result.message, /60.*超限/);
+    assert.equal((await h.files.files.recover()).length, 0);
+  } finally { h.close(); }
 });

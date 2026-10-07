@@ -1,4 +1,5 @@
 import { TextValue, copyText } from './EditorDraft';
+import { EditorFieldPolicy } from './EditorFieldPolicy';
 
 export function samePasteTarget(a: TextValue, b: TextValue): boolean {
   return a.text === b.text && a.selection_base === b.selection_base &&
@@ -15,11 +16,11 @@ function splitsSurrogate(text: string, offset: number): boolean {
 
 // Apply one complete clipboard snapshot to one frozen UTF-16 selection. Never
 // trim, truncate, or silently overwrite a composing candidate or newer input.
-export function insertPaste(value: TextValue, inserted: string, limit: number): TextValue {
+export function insertPaste(value: TextValue, inserted: string): TextValue {
   if (value.composing_start !== -1 || value.composing_end !== -1) {
     throw new Error('请先完成输入法候选，再粘贴内容。');
   }
-  if (!Number.isInteger(limit) || limit < 1) { throw new Error('文字上限无效。'); }
+  if (typeof inserted !== 'string') { throw new Error('粘贴文字无法确认。'); }
   const a = value.selection_base, b = value.selection_extent;
   const unset = a === -1 && b === -1;
   if (!unset && (!Number.isInteger(a) || !Number.isInteger(b) || a < 0 || b < 0 || a > value.text.length || b > value.text.length)) {
@@ -31,8 +32,18 @@ export function insertPaste(value: TextValue, inserted: string, limit: number): 
   }
   const result = copyText(value);
   result.text = value.text.slice(0, start) + inserted + value.text.slice(end);
-  if (result.text.length > limit) { throw new Error('此字段最多输入 ' + limit.toString() + ' 个 UTF-16 单位，内容未插入。'); }
   result.selection_base = start + inserted.length; result.selection_extent = result.selection_base;
   result.composing_start = -1; result.composing_end = -1;
+  return result;
+}
+
+// Count the complete future field, including its untouched prefix and suffix.
+// The synchronous splice never grants permission to persist the result.
+export async function insertPasteChecked(value: TextValue, inserted: string, field: string,
+  policy: EditorFieldPolicy, stillOwned: () => boolean): Promise<TextValue> {
+  const frozen: TextValue = copyText(value), result: TextValue = insertPaste(frozen, inserted);
+  const owned = (): boolean => stillOwned() && samePasteTarget(value, frozen);
+  await policy.requireTextValue(field, result, owned);
+  if (!owned()) { throw new Error('粘贴目标已变化，文字未插入。'); }
   return result;
 }

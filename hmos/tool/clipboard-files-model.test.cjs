@@ -8,7 +8,10 @@ const budget = 64 * 1024 * 1024;
 const reserve = 512 * 1024 + 4096;
 function privateFiles(h) { return [...h.nodes.keys()].filter(name => name.startsWith(root + '/')); }
 function response(value, changes = {}) {
-  return { ok: true, error: '', paste_text: 'converted', warnings: [], images: [],
+  const text = changes.paste_text ?? 'converted';
+  const count = [...new Intl.Segmenter('und', { granularity: 'grapheme' }).segment(text)].length;
+  return { ok: true, error: '', paste_text: text, paste_grapheme_count: count,
+    paste_utf16_length: text.length, paste_utf8_length: Buffer.byteLength(text), unicode_version: '16.0.0', warnings: [], images: [],
     source_sha256: value.sha256.toLowerCase(), source_byte_length: value.byte_length, ...changes };
 }
 async function prepared(records = [{ 'text/html': '<p>own</p>' }]) {
@@ -135,7 +138,7 @@ for (const [label, changes] of [
   });
 }
 test('native explicit conversion error keeps original bytes and exposes no forged result', async () => {
-  const h = await prepared(); h.setConvert(async () => JSON.stringify({ ok: false, error: 'Malformed HTML', paste_text: '', warnings: [], images: [], source_sha256: '', source_byte_length: '' }));
+  const h = await prepared(); h.setConvert(async () => JSON.stringify(response(h.value, { ok: false, error: 'Malformed HTML', paste_text: '', warnings: [], images: [], source_sha256: '', source_byte_length: '' })));
   await assert.rejects(h.files.convertPreparedClipboard(h.value, 'html', 'description'), /Malformed HTML/);
   assert.ok(h.read(h.directory(h.value.spool_id) + '/data')); await h.c.input.dispose(h.snapshot);
 });
@@ -269,4 +272,30 @@ test('SDK RTF BOM bytes also count against the unchanged global payload plus sid
   h.seed('import-BUDGET', { data: 'old', dataSize: budget - reserve * 2 - Buffer.byteLength(content) });
   await assert.rejects(h.files.prepareClipboard(s.records[0].rtf), /剩余附件预算/);
   assert.equal([...h.nodes.keys()].filter(name => /\/data$/.test(name)).length, 1); assert.equal(h.fds.size, 0); await c.input.dispose(s);
+});
+
+for (const [label, text, count] of [['emoji', '😀'.repeat(20000), 20000], ['combining', 'e\u0301'.repeat(20000), 20000], ['family', '👨‍👩‍👧‍👦'.repeat(5000), 5000]]) {
+  test('conversion validates full native grapheme receipt for ' + label + ' above old UTF16 limit', async () => {
+    const h = await prepared(); h.setConvert(async () => JSON.stringify(response(h.value, { paste_text: text })));
+    const reply = await h.files.convertPreparedClipboard(h.value, 'html', 'description');
+    assert.equal(reply.paste_text, text); assert.equal(reply.paste_grapheme_count, count);
+    assert.equal(reply.paste_utf16_length, text.length); assert.equal(reply.paste_utf8_length, Buffer.byteLength(text)); assert.equal(h.fds.size, 0);
+    await h.c.input.dispose(h.snapshot);
+  });
+}
+for (const [label, changes] of [['missing grapheme receipt', { paste_grapheme_count: undefined }], ['wrong Unicode version', { unicode_version: '17.0.0' }],
+  ['zero nonempty count', { paste_grapheme_count: 0 }], ['fractional count', { paste_grapheme_count: .5 }],
+  ['wrong UTF16 count', { paste_utf16_length: 8 }], ['wrong UTF8 count', { paste_utf8_length: 8 }],
+  ['surrogate replacement', { paste_text: '\uD800' }]]) {
+  test('conversion refuses ' + label + ' without releasing the original or exposing partial text', async () => {
+    const h = await prepared(); h.setConvert(async () => JSON.stringify(response(h.value, changes)));
+    await assert.rejects(h.files.convertPreparedClipboard(h.value, 'html', 'description')); assert.equal(h.fds.size, 0);
+    assert.ok(h.read(h.directory(h.value.spool_id) + '/data')); await h.c.input.dispose(h.snapshot);
+  });
+}
+test('few graphemes cannot bypass the independent complete conversion JSON/UTF8 byte budget', async () => {
+  const h = await prepared(), text = 'e' + '\u0301'.repeat(262144);
+  h.setConvert(async () => JSON.stringify(response(h.value, { paste_text: text })));
+  await assert.rejects(h.files.convertPreparedClipboard(h.value, 'html', 'description'), /预算/);
+  assert.equal(h.fds.size, 0); assert.ok(h.read(h.directory(h.value.spool_id) + '/data')); await h.c.input.dispose(h.snapshot);
 });

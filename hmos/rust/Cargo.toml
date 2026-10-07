@@ -20,12 +20,13 @@ prost = "=0.14.4"
 pulldown-cmark = { version = "=0.13.4", default-features = false }
 sha2 = "=0.10.9"
 serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+serde_json = { version = "1", features = ["raw_value"] }
 scraper = { version = "=0.24.0", default-features = false }
 html5ever = "=0.35.0"
 roxmltree = "=0.21.1"
 base64 = "=0.22.1"
 encoding_rs = "=0.8.35"
+unicode-segmentation = "=1.12.0"
 
 [dev-dependencies]
 tempfile = "=3.27.0"

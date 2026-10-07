@@ -1,6 +1,6 @@
 # Morrow HMOS
 
-Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前源码版本为 **0.1.0-hmos-dev.18 开发预览**；尚未与 Flutter 功能等价，不能替代正式资料库。各版本的构建、模型与实际设备证据分别记录。
+Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前源码版本为 **0.1.0-hmos-dev.19 开发预览**；尚未与 Flutter 功能等价，不能替代正式资料库。各版本的构建、模型与实际设备证据分别记录。
 
 2026-09-27 跟进：按 Flutter `versioned_task_panel.dart` 接入待办重命名、上下移动、批量完成与移除确认。共享 Rust TaskId 模块与当日参照一致；通过主机测试、双架构构建和 x64 模拟器验证。见 [dev.4 验证记录](reports/ui-source/v4/validation.md)。
 
@@ -12,9 +12,13 @@ Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前源码版�
 
 ## UI 源码对齐
 
-2026-10-07 dev.18：剪贴板来源按真实 Flutter UTF-16 单元限制分档，修复中文/emoji 被旧 2 MiB 字节上限误拒，以及系统 Unicode RTF string 无编码标记导致的 ANSI 误读；图片基础手势修复焦点、边界、识别器接管和旧事件身份。最终 **0.1.0-hmos-dev.18 / 1000018**，完整实际 ETS 模型 **464/464 PASS**，Rust 主机 **98 PASS**，两项条件实际 Flutter 对照单独通过，ARM64/x64 原生重新构建。API 26 未签名 debug HAP **SUCCESS / 6.782 s**，**27,866,016 字节**，SHA-256 `910F3069B7979E5F8C6CF9E7DC770DF6E342725D493798DDE38F317524DB7DE2`。本轮为源码、模型与构建分支交付；**dev.18 未安装，设备验收 NOT_RUN**，设备仍为 dev.17。见 [dev.18 验证记录](reports/ui-source/v18/validation.md)。完整 Windows/Flutter 对齐目标仍 **OPEN**。
+2026-10-07 dev.19：字段按真实 Flutter `characters 1.4.1 / Unicode 16.0.0` 的 grapheme 规则计数，标题/传入待办字段/假设/结论/正文上限分别为 **60/1000/5000/10000/20000**。当前UI的待办字段仅为待添加单条输入，未复现Flutter全部已有行与待添加行的聚合1000和行间选区模型。粘贴先异步检查选区替换后的完整未来文字，再导入原件；确认 pin 后用实际资产引用重检，失败保留已确认附件。移除编辑控件的 UTF-16 `maxLength`，显示异步计数，超限完整输入保留；raw journal/IME 沿用既有结构与字节预算，业务保存和粘贴拒绝活跃 composing 或超限。待办重命名成功回执仅在原 owner、epoch 和完整输入一致且无 composition 时关闭编辑器，迟到候选继续保留。真实 Flutter 的 **1,198 组完整对照 PASS**，完整实际 ETS 模型 **535/535 PASS**，Rust **106 PASS**，三项默认条件 ignored 已单独 fresh 比较通过。最终 **0.1.0-hmos-dev.19 /1000019** 的 API26 未签名 debug HAP **SUCCESS /11.302s**，**28,164,478 字节**，SHA-256 `F7A913980CF3213536820727A677EEC04EA169FE2B65CE16E305F352D14BE4EC`；见 [dev.19 验证记录](reports/ui-source/v19/validation.md)。**dev.19/dev.18 均未安装，当前设备仍 dev.17，新包设备验收 NOT_RUN**。完整 Windows/Flutter 对齐目标仍 **OPEN**。
 
-dev.18 来源上限为 plain/HTML/XML **2 Mi UTF-16 单元**、RTF **8 Mi**，分别使用 **6,291,459 / 25,165,827 bytes** 包络；RTF 8 Mi 只对齐 Flutter 可达的 **无插件本地分支**，正式 RustStudioPlugin 仍统一 2 Mi 单元且插件请求 64 KiB，无异常 fallback。系统 Unicode RTF string 保存为确定性 **UTF-8+BOM serialization**，不声称原始 document bytes；ArrayBuffer 原件逐字节保留。孤立 surrogate 在编码前拒绝，合法 emoji/有意 U+FFFD 在读取层保留；native RTF 输出仍保守拒绝 U+FFFD，严格损坏编码/NUL/不支持 RTF 与 Flutter 宽松解码有差异。64 MiB/20 槽/sidecar 与草稿 pin 预算未放宽，字段 grapheme、待办 500/1000 和 Flutter 200 MiB 附件容量仍未对齐。
+dev.19 已改正旧 dev.18 字段按 UTF-16 计数的误限，并将待添加单条待办输入从500提高到1000；Flutter多行待办聚合和行间选区模型仍未齐。富转换输出也按 Unicode16 grapheme 检查。完整 worker/转换输出/序列化及共享业务字节预算仍独立生效，不保证 20,000 grapheme 一定可保存。直接输入保留超限，与实际 Flutter 默认 formatter 的自动截短行为存在明确差异；系统 IME、选区 affinity 和全篇连续选择仍未齐。独立 API26 双指测试工具已构建 main/test HAP，10 项工具模型通过，但未安装、未注入实际设备手势；不能计作图片手势验收，见 [字段审计](reports/ui-source/v19/editor-field-policy-source-audit.md)与 [双指测试工具审计](reports/ui-source/v19/image-multipointer-tester-audit.md)。
+
+2026-10-07 dev.18 历史交付：剪贴板来源按真实 Flutter UTF-16 单元限制分档，修复中文/emoji 被旧 2 MiB 字节上限误拒，以及系统 Unicode RTF string 无编码标记导致的 ANSI 误读；图片基础手势修复焦点、边界、识别器接管和旧事件身份。最终 **0.1.0-hmos-dev.18 / 1000018**，完整实际 ETS 模型 **464/464 PASS**，Rust 主机 **98 PASS**，两项条件实际 Flutter 对照单独通过，ARM64/x64 原生重新构建。API 26 未签名 debug HAP **SUCCESS / 6.782 s**，**27,866,016 字节**，SHA-256 `910F3069B7979E5F8C6CF9E7DC770DF6E342725D493798DDE38F317524DB7DE2`。本轮为源码、模型与构建分支交付；**dev.18 未安装，设备验收 NOT_RUN**，设备仍为 dev.17。见 [dev.18 验证记录](reports/ui-source/v18/validation.md)。完整 Windows/Flutter 对齐目标仍 **OPEN**。
+
+dev.18 来源上限为 plain/HTML/XML **2 Mi UTF-16 单元**、RTF **8 Mi**，分别使用 **6,291,459 / 25,165,827 bytes** 包络；RTF 8 Mi 只对齐 Flutter 可达的 **无插件本地分支**，正式 RustStudioPlugin 仍统一 2 Mi 单元且插件请求 64 KiB，无异常 fallback。系统 Unicode RTF string 保存为确定性 **UTF-8+BOM serialization**，不声称原始 document bytes；ArrayBuffer 原件逐字节保留。孤立 surrogate 在编码前拒绝，合法 emoji/有意 U+FFFD 在读取层保留；native RTF 输出仍保守拒绝 U+FFFD，严格损坏编码/NUL/不支持 RTF 与 Flutter 宽松解码有差异。64 MiB/20 槽/sidecar 与草稿 pin 预算未放宽；该轮字段 grapheme 误限和待添加单条500限制已由dev.19改进；Flutter多行待办总量模型仍未齐，Flutter 200 MiB 附件容量仍未对齐。
 
 dev.18 图片基础手势模型 **30/30 PASS**：移动双指焦点同步缩放/平移，单指与纯双指 pan、pinch 接管、边界立即反向及 end/cancel/旧令牌/时间戳围栏。按实际 Flutter tight InteractiveViewer 的布局边界限制有效手势缩放 1–2.5；既有按钮和双击复位是 HMOS 补充。最终包图片手势 **NOT_RUN**，惯性/fling/scale-velocity 动画尚未实现，GIF/损坏格式未验，见 [图片手势审计](reports/ui-source/v18/image-gesture-source-audit.md)。
 
@@ -22,7 +26,7 @@ dev.17 的独立后续设备观察限定确认：自有控件系统复制的普�
 
 2026-10-07 dev.17 历史交付：接入授权 PasteButton 的系统剪贴板快照，按实际提供的 plain/HTML/RTF/Spreadsheet XML、原始二进制图片/文件和 PixelMap 准备原件，复用 durable import/pin；HTML 内嵌图片仅在确认 pin 后替换为持久资产引用。一次性来源绑定剪贴板 changeCount 和编辑目标，URI 不进入文件选择器授权表、不持久保存或跨读取复用；先完整检查正文、槽位和预算，再逐项确认，未知导入保留原请求。原件、转换、图片提取和冻结选区插入已有源码与模型覆盖；**真实系统富内容粘贴、Office 提供者及保存/重启/导出闭环 NOT_RUN**。最终版本 **0.1.0-hmos-dev.17 / 1000017**，完整实际 ETS 模型 **402/402 PASS**，API 26 未签名 debug HAP 构建 **PASS / 9.467 s**；包 **27,815,034 字节**，SHA-256 `D9DECC46BB0E953BB56A4CDC5DBBB71D0B863E6380C273CC677B73C36689C03F`。301 项构建输入 disk 与 staged 核对均 PASS，见 [dev.17 验证记录](reports/ui-source/v17/validation.md)。完整 Windows/Flutter 对齐仍 **OPEN**。
 
-dev.17 交付时的容量差距（来源字节限制已由 dev.18 改进）：原生转换上限为 2 MiB 原件字节，Flutter 来源上限按 2 Mi UTF-16 单元计；较大富格式原件可在附件预算内保留，但转换失败须明确提示。系统快照最多 20 条记录，展开图片/原件仍共用剩余 20 个 spool 槽和含 sidecar 的 64 MiB 预算，不能据此宣称 Flutter 200 MiB 附件容量等价。字段仍按 UTF-16 计数而非 Flutter grapheme，待办 500 与 Flutter 1000 的差距仍在；IME、全篇连续选择、生产捕获证据链及 HUKS 保护未补齐。
+dev.17 交付时的容量差距（来源字节限制已由 dev.18 改进）：原生转换上限为 2 MiB 原件字节，Flutter 来源上限按 2 Mi UTF-16 单元计；较大富格式原件可在附件预算内保留，但转换失败须明确提示。系统快照最多 20 条记录，展开图片/原件仍共用剩余 20 个 spool 槽和含 sidecar 的 64 MiB 预算，不能据此宣称 Flutter 200 MiB 附件容量等价。该轮字段UTF-16计数和待添加单条500限制已由dev.19改进，Flutter多行待办聚合/行间选区仍未齐；直接输入控件、IME、全篇连续选择、生产捕获证据链及 HUKS 保护仍未补齐。
 
 2026-10-07 dev.16 历史交付：实际运行 dev.15 后复现媒体中心单击仍不能显示控件，关闭入口可以响应；负面截图另存于 [dev.15 后续设备观察](reports/ui-source/v15/device-current)，原公开验证报告保留交付时的事实。dev.16 修复隐藏控件子树继续参与命中，并按预览令牌重建手势和控件节点。最终实际 ETS 模型 **303/303**、API 26 HAP 构建通过，未签名包为 **24,857,891 字节**，SHA-256 `A971227AC2D39730C2228972B513DBAAB4049E1C9E9AAB49397517BFB0208C7C`。已在既有 x64 模拟器安装并读回版本 `1000016`，恢复同一 `HMOS-media-20261007-A` 草稿的 WAV/MP4 两个 pin；原生 WAV 两次观察均为 **0:00 / 0:12、无自动播放**，中心单击后控件实际可见的截图已复核。播放时间从 0:01 推进至 0:03，暂停后两次均为 0:06，限定播放/暂停检查通过；真实音频输出未证明。首次全屏实际进入横屏，但驱动裁剪断言停止，阶段为 **FAILED_OR_UNKNOWN**，随后只读核对横屏状态通过；首个Back驱动在动作前断言停止，修正驱动后fresh Back恢复1320×2232竖屏、正常系统栏和同一0:06暂停预览，关闭后回编辑器保留原两份附件ID/名称，截图已实际复核。本次按用户要求收束为媒体点击修复分支更新，多选/空标题新设备流程、seek/全屏手势、视频与系统文件预览仍未验收，详见 [dev.16 验证记录](reports/ui-source/v16/validation.md)。完整对齐目标仍开放。
 
@@ -78,6 +82,7 @@ HAP 输出：`entry/build/default/outputs/default/entry-default-unsigned.hap`。
 ## 已接通范围
 
 - 卡片标题、正文、假设、结论，新建和修改；类别、阶段、收藏、搜索和删除视图。
+- 字段与待添加单条待办输入按 Unicode16 grapheme 异步计数，粘贴/业务保存检查完整未来值；原始输入、UTF-16 选区与 IME 草稿分别保留，超限不静默截短。完整字节预算和保存失败仍独立检查。
 - V2 TaskId 待办新增、独立勾选、重命名、上下移动、确认移除；同名任务不会联动。批量勾选经确认后与当前阶段在同一事务提交，普通排序/重命名保持阶段和完成状态。
 - 直接调用现有 `cards_v2` / `tasks_v2`，通过 `morrow-core::HostRuntime` 的对象授权、版本化 CAS 与原操作幂等事务保存。
 - 开发库查询从单次 WAL 快照读取完整属性，复用 `query_plan_v2` 的 128 项 / 64 KiB 帧预算、分页过滤和排序归并；回收站保持独立撤销视图。此本地调用没有生产 guest 执行、查询捕获或审计权限证据。

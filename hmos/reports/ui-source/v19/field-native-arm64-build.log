@@ -1,0 +1,13 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+   Compiling serde_json v1.0.151
+   Compiling unicode-segmentation v1.12.0
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `release` profile [optimized] target(s) in 14.56s
+
+Algorithm       Hash                                                                   Path
+---------       ----                                                                   ----
+SHA256          97B6EF7CDD178F6E22179881894AE6A7D5A24E3E60394B51B091DAF1CBA6A937       C:\Users\Administrator\Desktop\C…
+

@@ -1,0 +1,44 @@
+Index.ets SHA256=9b897ac560a05a91d05007c4706e9b96576fc24329ae037b3e7c8cb8a5b6c85a; SDK TypeScript=4.9.5
+late foreground loss: actual confirmed pin count=1; UI=粘贴已停止 · 已确认附件 1/2 Error: 已确认附件保留；粘贴目标已变化，后续附件和正文未开始加入。
+✔ actual Index methods + SDK compiler are used, with source identity emitted (1.74ms)
+✔ text selection insertion uses actual Index + draft methods for every editable field (463.0455ms)
+✔ rich source and exact image pins precede portable body save (87.8731ms)
+✔ image extraction failure preserves source and uses plain fallback without dangling refs (111.4909ms)
+✔ expanded 20-slot or import-record capacity stops before any native import or text save (190.1349ms)
+✔ unknown second import preserves first confirmed pin and exact original request/spool, no body insertion (88.6636ms)
+✔ selection, IME, other field, clipboard or foreground changing during read prevents all imports/text (389.2862ms)
+✔ IME candidate present before paste never reads clipboard (58.4436ms)
+✔ foreground loss during admitted native import retains its confirmed pin and admits no later import/body (80.0501ms)
+✔ plain byte flavor inserts converted text into all non-body fields (256.5782ms)
+✔ actual Index input epoch rejects text roundtrip during a delayed complete future-field count (63.3117ms)
+✔ actual Index input epoch rejects selection roundtrip during a delayed complete future-field count (58.4587ms)
+✔ actual Index rejects a complete future over-limit title before any native import (64.5673ms)
+Index.ets SHA256=9b897ac560a05a91d05007c4706e9b96576fc24329ae037b3e7c8cb8a5b6c85a; SDK TypeScript=4.9.5
+✔ fresh actual Index methods use installed SDK compiler; emit source hash (1.9444ms)
+✔ all five fields retain original graphemes and UTF16 range in actual raw journal (84.8356ms)
+✔ IME candidate is journaled losslessly in all fields while business admission is blocked (277.262ms)
+✔ invalid IME offset blocks retention and leaves previous confirmed raw values intact (43.4438ms)
+✔ older count cannot replace a newer edit or a newer UTF16 selection count (44.5526ms)
+✔ business validation revokes edits, selection, category, owner, command and foreground changes (325.5803ms)
+✔ later input during final raw flush prevents issuing a frozen business command (44.5879ms)
+✔ over-limit title keeps every character and confirmed pins without business mutation (53.665ms)
+✔ count worker failure never authorizes business or normalizes original input (48.4594ms)
+✔ unknown raw journal preserves exact pending request and confirmed pins, no business issue (39.4835ms)
+✔ unknown business reply retains original serialized command and raw snapshot with confirmed pins (41.1678ms)
+✔ create/edit business send preserves exact source strings and binds confirmed generation (50.2641ms)
+✔ task_add validates full raw text and does not consume later text or IME (37.5682ms)
+✔ task rename validates its untrimmed original while command retains established trimming (36.4972ms)
+✔ same-value rename roundtrip after issue does not consume newer input epoch (40.3264ms)
+✔ actual cancel callback invalidates pending validation and later reopen is not consumed (42.4344ms)
+✔ unknown rename preserves original request and frozen raw identity through explicit reconciliation (34.7943ms)
+✔ confirmed not-committed rename clears only frozen request, preserving user text (39.6647ms)
+✔ foreground loss after issued rename revokes successful input consumption (44.9329ms)
+✔ late IME rename callback during issued business request retains newer candidate (50.4371ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2561.5855

@@ -1,0 +1,111 @@
+> hvigor [32mUP-TO-DATE :entry:default@PreBuild...  [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GenerateMetadata...  [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 8 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@MergeProfile...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CreateBuildProfile...  [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 20 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@MakePackInfo...  [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 10 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GeneratePkgContextInfo...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessProfile...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessRouterMap...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessShareConfig...  [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessResource...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@GenerateLoaderJson...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CompileResource...  [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 2 ms [39m
+> hvigor WARN: When performing compilation for the x86_64 architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor ERROR: Failed :entry:default@BuildNativeWithNinja... 
+> hvigor ERROR: 00303300 Configuration Error
+Error Message: Exceptions happened while executing C:\Program Files\Huawei\DevEco Studio\sdk\default\openharmony\native\build-tools\cmake\bin\ninja.exe -C C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\.cxx\default\default\debug\x86_64.
+FAILED: [code=1] C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/build/default/intermediates/cmake/default/obj/x86_64/libmorrow.so 
+ld.lld: error: undefined symbol: morrow_hmos_editor_field
+>>> referenced by bridge.cpp:107 (C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/cpp/bridge.cpp:107)
+>>>               CMakeFiles/morrow.dir/bridge.cpp.o:((anonymous namespace)::Execute(napi_env__*, void*))
+clang++: error: linker command failed with exit code 1 (use -v to see invocation)
+ninja: build stopped: subcommand failed.
+A 'undefined symbol' error has occurred.
+* Try the following:
+  > Troubleshoot the errors according to the following guidelines.
+  > More info: https://developer.huawei.com/consumer/cn/doc/harmonyos-faqs/faqs-compiling-and-building-116
+
+* Try the following:
+  > Check the error details to identify which module failed.
+  > Verify CMake/Ninja configuration is correct.
+
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+
+[31m
+FAILURE: Build completed with 1 failure.[31m[39m
+[31m
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task 'default@BuildNativeWithNinja'.
+[31m00303300 Configuration Error
+[31mError Message: Exceptions happened while executing C:\Program Files\Huawei\DevEco Studio\sdk\default\openharmony\native\build-tools\cmake\bin\ninja.exe -C C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\.cxx\default\default\debug\x86_64.
+[31mFAILED: [code=1] C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/build/default/intermediates/cmake/default/obj/x86_64/libmorrow.so [31m[39m
+[31mld.lld: error: undefined symbol: morrow_hmos_editor_field[31m[39m
+[31m>>> referenced by bridge.cpp:107 (C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/cpp/bridge.cpp:107)[31m[39m
+[31m>>>               CMakeFiles/morrow.dir/bridge.cpp.o:((anonymous namespace)::Execute(napi_env__*, void*))[31m[39m
+[31mclang++: error: linker command failed with exit code 1 (use -v to see invocation)[31m[39m
+[31mninja: build stopped: subcommand failed.[31m[39m
+[31mA 'undefined symbol' error has occurred.
+* Try the following:
+  > Troubleshoot the errors according to the following guidelines.
+  > More info: https://developer.huawei.com/consumer/cn/doc/harmonyos-faqs/faqs-compiling-and-building-116[31m[39m
+[31m
+* Try the following:
+  > Check the error details to identify which module failed.
+  > Verify CMake/Ninja configuration is correct.
+[39m
+
+[31m* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+[31m[39m
+[31m================================================================================[31m[39m
+> hvigor ERROR: BUILD FAILED in 3 s 546 ms 
+
+21 tasks in total: 9 executed, 12 up-to-date
+> hvigor WARN: When performing compilation for the arm64-v8a architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor ERROR: Failed :entry:default@BuildNativeWithNinja... 
+> hvigor ERROR: 00303300 Configuration Error
+Error Message: Exceptions happened while executing C:\Program Files\Huawei\DevEco Studio\sdk\default\openharmony\native\build-tools\cmake\bin\ninja.exe -C C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\.cxx\default\default\debug\arm64-v8a.
+FAILED: [code=1] C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libmorrow.so 
+ld.lld: error: undefined symbol: morrow_hmos_editor_field
+>>> referenced by bridge.cpp:107 (C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/cpp/bridge.cpp:107)
+>>>               CMakeFiles/morrow.dir/bridge.cpp.o:((anonymous namespace)::Execute(napi_env__*, void*))
+clang++: error: linker command failed with exit code 1 (use -v to see invocation)
+ninja: build stopped: subcommand failed.
+A 'undefined symbol' error has occurred.
+* Try the following:
+  > Troubleshoot the errors according to the following guidelines.
+  > More info: https://developer.huawei.com/consumer/cn/doc/harmonyos-faqs/faqs-compiling-and-building-116
+
+* Try the following:
+  > Check the error details to identify which module failed.
+  > Verify CMake/Ninja configuration is correct.
+
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+
+Exception: C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\scripts\build-hap.ps1:10
+Line |
+  10 |    if($LASTEXITCODE) {throw 'HAP build failed'}
+     |                       ~~~~~~~~~~~~~~~~~~~~~~~~
+     | HAP build failed

@@ -9,7 +9,8 @@ import { AttachmentFullscreen, FullscreenView, FullscreenWindow, createFullscree
 import { AttachmentImportSelection, AttachmentImportBoundary, AttachmentImportIdentity, AttachmentImportReceipt,
   AttachmentImportSelectionState, attachmentImportTitle } from '../model/AttachmentImportSelection';
 import { ImageReadTarget, ImageLease, VerifiedImageView, VerifiedImages } from '../model/VerifiedImages';
-import { insertPaste, samePasteTarget } from '../model/EditorPaste';
+import { samePasteTarget } from '../model/EditorPaste';
+import { EditorFieldPolicy, editorFieldLimit } from '../model/EditorFieldPolicy';
 import { ClipboardInput, ClipboardSnapshot, ClipboardSource } from '../model/ClipboardInput';
 import { ClipboardPaste, ClipboardPasteAttachment, ClipboardPastePlan, ClipboardPasteBoundary,
   ClipboardPasteIdentity, ClipboardPasteReceipt } from '../model/ClipboardPaste';
@@ -82,6 +83,12 @@ struct Index {
   @State taskText: string = '';
   @State taskEditId: string = '';
   @State taskRenameText: string = '';
+  @State fieldCountLabels: string[] = ['', '', '', '', '', ''];
+  @State fieldValidationWorking: boolean = false;
+  private fieldPolicy: EditorFieldPolicy = new EditorFieldPolicy((request: string): Promise<string> => native.editorField(request));
+  private fieldCountEpochs: Map<string, number> = new Map();
+  private editorInputEpoch: number = 0;
+  private taskRenameValue: DraftTextValue = new DraftTextValue();
   @State dirty: boolean = false;
   @State busy: boolean = false;
   @State ready: boolean = false;
@@ -149,6 +156,9 @@ struct Index {
   @State draftRetirementUnknown: boolean = false;
   private draftRetirement: string = '';
   private submittedRaw: DraftValues | undefined = undefined;
+  private submittedRename: DraftTextValue | undefined = undefined;
+  private submittedRenameEpoch: number = -1;
+  private submittedRenameEditor: string = '';
   private editorDraft: EditorDraftCoordinator | undefined = undefined;
   private editorValues: DraftValues = new DraftValues();
   private draftSource: string = '';
@@ -338,6 +348,7 @@ struct Index {
     return false;
   }
   aboutToDisappear(): void {
+    this.fieldPolicy.stop(); this.editorInputEpoch++;
     this.clipboardPaste?.stop();
     this.attachmentSelection?.stop();
     this.closeAttachmentPreview();
@@ -353,8 +364,8 @@ struct Index {
     this.mounted = false; native.releasePreview(this.preview);
   }
   private foregroundChanged(): void {
-    if (!this.foreground) { this.clipboardPaste?.stop(); this.mediaPlayback.pauseForBackground(); this.exitMediaFullscreen(); }
-    else { this.fileOpen?.reconcile(); }
+    if (!this.foreground) { this.fieldPolicy.stop(); this.editorInputEpoch++; this.clipboardPaste?.stop(); this.mediaPlayback.pauseForBackground(); this.exitMediaFullscreen(); }
+    else { this.fileOpen?.reconcile(); if (this.editorOpen) { this.refreshFieldCounts(); } }
   }
   private async switchMediaFullscreen(token: string): Promise<void> {
     if (!this.pageAlive || !this.attachmentPreviewOpen || this.attachmentPreviewClosing || !token || token !== this.mediaView.token) { return; }
@@ -429,6 +440,43 @@ struct Index {
     return name === 'title' ? this.editorValues.title : name === 'description' ? this.editorValues.description :
       name === 'hypothesis' ? this.editorValues.hypothesis : name === 'conclusion' ? this.editorValues.conclusion : this.editorValues.todos;
   }
+  private fieldCountIndex(name: string): number {
+    return name === 'title' ? 0 : name === 'description' ? 1 : name === 'hypothesis' ? 2 : name === 'conclusion' ? 3 : name === 'todos' ? 4 : 5;
+  }
+  private setFieldCount(name: string, label: string): void {
+    const labels = this.fieldCountLabels.slice(); labels[this.fieldCountIndex(name)] = label; this.fieldCountLabels = labels;
+  }
+  private fieldCountLabel(name: string): string { return this.fieldCountLabels[this.fieldCountIndex(name)] || '计数中…'; }
+  private refreshFieldCounts(): void {
+    for (const name of ['title', 'description', 'hypothesis', 'conclusion', 'todos']) { this.refreshFieldCount(name); }
+    if (this.taskEditId) { this.refreshFieldCount('taskRename'); }
+  }
+  private async refreshFieldCount(name: string): Promise<void> {
+    const draft = this.editorDraft, editor = this.attachmentEditorIdentity, task = this.taskEditId;
+    if (!this.pageAlive || !this.foreground || !this.editorOpen || !draft || draft.disposed) { return; }
+    const rename = name === 'taskRename', field = rename ? 'todos' : name;
+    const snapshot = copyText(rename ? this.taskRenameValue : this.draftField(name));
+    const epoch = (this.fieldCountEpochs.get(name) ?? 0) + 1; this.fieldCountEpochs.set(name, epoch);
+    const owned = (): boolean => this.pageAlive && this.foreground && this.editorOpen && this.editorDraft === draft && !draft.disposed &&
+      this.attachmentEditorIdentity === editor && this.fieldCountEpochs.get(name) === epoch &&
+      (!rename || this.taskEditId === task) && samePasteTarget(snapshot, rename ? this.taskRenameValue : this.draftField(name));
+    this.setFieldCount(name, '计数中…');
+    try {
+      const result = await this.fieldPolicy.checkField(field, snapshot.text, owned);
+      if (!owned()) { return; }
+      this.setFieldCount(name, result.grapheme_count < 0 ? '计数未确认，完整输入已保留' :
+        result.grapheme_count.toString() + ' / ' + editorFieldLimit(field).toString() + (result.ok ? '' : ' · 超出字数，完整输入已保留'));
+    } catch (_) { if (owned()) { this.setFieldCount(name, '计数未确认，完整输入已保留'); } }
+  }
+  private taskRenameChanged(value: string, preview?: PreviewText): void {
+    this.editorInputEpoch++; this.taskRenameText = value;
+    const candidate = preview?.value ?? '', offset = preview?.offset ?? -1;
+    const valid = candidate.length === 0 || (Number.isInteger(offset) && offset >= 0 && offset <= value.length);
+    this.taskRenameValue.text = valid && candidate ? value.slice(0, offset) + candidate + value.slice(offset) : value;
+    this.taskRenameValue.composing_start = candidate.length > 0 ? Math.max(0, offset) : -1;
+    this.taskRenameValue.composing_end = candidate.length > 0 ? Math.max(0, offset) + candidate.length : -1;
+    this.refreshFieldCount('taskRename');
+  }
   private updateMarkdown(): void {
     const detail = this.cards.find((c: CardView): boolean => c.id === this.detailId);
     if (detail && !this.editorOpen) {
@@ -469,17 +517,16 @@ struct Index {
   }
   private canPaste(): boolean {
     return this.ready && this.editorOpen && !!this.editorDraft && !this.editorDraft.disposed &&
-      !this.attachmentWorking && !this.pasteWorking && !this.draftRestoreInput && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown &&
+      !this.attachmentWorking && !this.pasteWorking && !this.fieldValidationWorking && !this.draftRestoreInput && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown &&
       !this.draftCaptureIncomplete && !this.editorDraft.unknown && this.pending.length === 0 && !this.current()?.deleted;
   }
   private async pasteContent(): Promise<void> {
     if (!this.canPaste() || !this.attachmentFiles) { return; }
     const draft = this.editorDraft!, files = this.attachmentFiles, name = this.lastDraftField;
-    const snapshot = copyText(this.draftField(name)), originalValues = draft.current, editor = this.attachmentEditorIdentity;
+    const snapshot = copyText(this.draftField(name)), originalValues = draft.current, editor = this.attachmentEditorIdentity, inputEpoch = this.editorInputEpoch;
     if (snapshot.composing_start !== -1 || snapshot.composing_end !== -1) {
       this.message = '请先完成输入法候选，再粘贴内容。'; return;
     }
-    const limit = name === 'title' ? 60 : name === 'todos' ? 500 : name === 'hypothesis' ? 5000 : name === 'conclusion' ? 10000 : 20000;
     const spools: Map<string, PreparedAttachment> = new Map<string, PreparedAttachment>();
     let input: ClipboardSnapshot | undefined = undefined;
     // Admission permits this paste's confirmed pins, but no newer editing
@@ -487,7 +534,7 @@ struct Index {
     const owner = (): boolean => {
       if (!this.pageAlive || !this.foreground || !this.editorOpen || this.editorDraft !== draft || draft.disposed || this.draftRetiring ||
         this.draftRetirementUnknown || this.draftCaptureIncomplete || draft.unknown || draft.conflicted || this.draftConflict ||
-        this.attachmentEditorIdentity !== editor || !samePasteTarget(snapshot, this.draftField(name))) { return false; }
+        this.attachmentEditorIdentity !== editor || this.editorInputEpoch !== inputEpoch || !samePasteTarget(snapshot, this.draftField(name))) { return false; }
       const current = draft.current; current.assets = originalValues.assets;
       return sameValues(current, originalValues);
     };
@@ -501,6 +548,9 @@ struct Index {
       await this.clipboardInput.dispose(input); input = undefined;
       const coordinator = new ClipboardPaste({
         read: (): ClipboardPasteBoundary => this.clipboardBoundary(draft, editor, name, owner),
+        checkText: async (value: DraftTextValue, _boundary: ClipboardPasteBoundary): Promise<void> => {
+          await this.fieldPolicy.requireTextValue(name, value, owner);
+        },
         confirm: async (_boundary: ClipboardPasteBoundary): Promise<ClipboardPasteBoundary> => {
           await draft.ensureConfirmed(); return this.clipboardBoundary(draft, editor, name, owner);
         },
@@ -527,13 +577,13 @@ struct Index {
         operation: (): string => util.generateRandomUUID(true)
       });
       this.clipboardPaste = coordinator;
-      const result = await coordinator.run(plan, limit);
+      const result = await coordinator.run(plan);
       if (this.pageAlive && this.editorDraft === draft) {
         if (result.phase === 'complete' && !draft.current.title.text.trim() && plan.attachments.length > 0) {
           const title = attachmentImportTitle(draft.current.title.text, plan.attachments[0].name);
           if (title !== undefined && !draft.dirty && !draft.unknown && draft.confirmed) {
             const values = draft.current; values.title.text = title; values.title.selection_base = title.length; values.title.selection_extent = title.length;
-            this.title = title; this.editorValues = copyValues(values); draft.update(values); await draft.flush();
+            this.title = title; this.editorValues = copyValues(values); this.editorInputEpoch++; draft.update(values); this.refreshFieldCount('title'); await draft.flush();
           }
         }
         if (name === 'description' && result.text_inserted) { this.previewBody = true; this.updateMarkdown(); }
@@ -685,10 +735,13 @@ struct Index {
   }
   private draftTextChanged(name: string, value: string, preview?: PreviewText): void {
     if (!this.pageAlive || !this.editorOpen || !this.editorDraft || this.editorDraft.disposed || this.draftRestoreInput || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown) { return; }
+    this.editorInputEpoch++;
     const field = this.draftField(name);
     const offset = preview?.offset ?? -1, candidate = preview?.value ?? '';
     if (candidate.length > 0 && (!Number.isInteger(offset) || offset < 0 || offset > value.length)) {
       this.draftCaptureBlocked.add(name); this.draftCaptureIncomplete = true;
+      this.fieldCountEpochs.set(name, (this.fieldCountEpochs.get(name) ?? 0) + 1);
+      this.setFieldCount(name, '计数未确认，完整输入已保留');
       this.message = '输入法预编辑位置无法确认，请完成输入后保留草稿。'; return;
     }
     this.draftCaptureBlocked.delete(name); this.draftCaptureIncomplete = this.draftCaptureBlocked.size > 0;
@@ -702,6 +755,7 @@ struct Index {
     if (field.selection_extent > field.text.length) { field.selection_extent = -1; }
     this.editorValues.category = this.category;
     this.editorDraft?.update(copyValues(this.editorValues));
+    this.refreshFieldCount(name);
   }
   private draftSelectionChanged(name: string, start: number, end: number): void {
     if (!this.pageAlive || !this.editorOpen || this.editorDraft?.disposed || !this.draftFocusedFields.has(name) || this.draftRestoreInput || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || !this.editorDraft) { return; }
@@ -710,7 +764,9 @@ struct Index {
     // An actual focused selection supersedes a scheduled restoration. Native
     // construction events are already excluded by the focused-field guard.
     this.draftSelectionPending.delete(name); field.selection_base = start; field.selection_extent = end;
+    this.editorInputEpoch++;
     this.editorDraft.update(copyValues(this.editorValues));
+    this.refreshFieldCount(name);
   }
   private restoreSelection(name: string): void {
     if (!this.draftSelectionPending.has(name)) { return; }
@@ -746,6 +802,9 @@ struct Index {
   }
   private blurDraftField(name: string): void { this.draftFocusedFields.delete(name); }
   private attachDraft(card?: CardView, restored?: DraftRecord, preserveFocus: boolean = false): void {
+    this.fieldPolicy.stop(); this.editorInputEpoch++; this.fieldCountEpochs.clear();
+    this.fieldCountLabels = ['', '', '', '', '', ''];
+    this.taskRenameValue = new DraftTextValue();
     this.attachmentSelection?.stop(); this.attachmentSelection = undefined;
     this.attachmentEditorIdentity = util.generateRandomUUID(true); this.attachmentEditingValues = '';
     this.attachmentSelectionState = { phase: 'idle', busy: false, total: 0, started: 0, selected: 0, retained: 0, error: '' };
@@ -780,7 +839,7 @@ struct Index {
     // A restored frozen baseline remains separate from the current business
     // record. No implicit rebase or overwrite is permitted.
     this.draftConflict = scope.source_kind === 0 ? card?.revision !== scope.source_revision : !!card;
-    this.draftChanged(); this.updateMarkdown();
+    this.draftChanged(); this.updateMarkdown(); this.refreshFieldCounts();
     this.importRecords = []; this.pendingSpools = []; this.attachmentDiagnostics = []; this.loadImports();
   }
   private restoreDraft(record: DraftRecord): void {
@@ -1279,15 +1338,43 @@ struct Index {
   }
   private async submit(cmd: Command, raw?: DraftValues): Promise<void> {
     if (this.attachmentWorking || this.pasteWorking) { this.message = '文件或粘贴操作尚未完成，请稍候。'; return; }
-    if (this.busy || this.pending.length > 0 || this.draftWorking || this.draftRetirementUnknown) { return; }
+    if (this.busy || this.pending.length > 0 || this.draftWorking || this.fieldValidationWorking || this.draftRetirementUnknown) { return; }
     if (this.taskEditId.length > 0 && cmd.action !== 'task_rename') { this.message = '请先保存或取消待办重命名'; return; }
-    const frozen = raw ?? (this.editorOpen ? this.editorDraft?.current : undefined);
-    if (this.editorOpen && !(await this.flushDraft())) { return; }
+    const draft = this.editorDraft, editor = this.attachmentEditorIdentity, inputEpoch = this.editorInputEpoch;
+    const selected = this.selected, task = this.taskEditId, rename = copyText(this.taskRenameValue);
+    const original = JSON.stringify(cmd), frozen = raw ? copyValues(raw) : (this.editorOpen ? draft?.current : undefined);
+    const owned = (): boolean => this.pageAlive && this.foreground && this.editorDraft === draft && this.attachmentEditorIdentity === editor &&
+      this.editorInputEpoch === inputEpoch && this.selected === selected && this.taskEditId === task && JSON.stringify(cmd) === original &&
+      (!frozen || (!!draft && !draft.disposed && sameValues(frozen, draft.current)));
+    this.fieldValidationWorking = true;
+    try {
+      if (cmd.action === 'create' || cmd.action === 'edit') {
+        if (!frozen || frozen.title.text !== cmd.title || frozen.description.text !== cmd.description ||
+          frozen.hypothesis.text !== cmd.hypothesis || frozen.conclusion.text !== cmd.conclusion) { throw new Error('保存目标已变化，完整输入已保留。'); }
+        for (const name of ['title', 'description', 'hypothesis', 'conclusion']) {
+          await this.fieldPolicy.requireTextValue(name, name === 'title' ? frozen.title : name === 'description' ? frozen.description :
+            name === 'hypothesis' ? frozen.hypothesis : frozen.conclusion, owned);
+        }
+      } else if (cmd.action === 'task_add') {
+        if (!frozen || frozen.todos.text !== cmd.text) { throw new Error('待办输入已变化，完整输入已保留。'); }
+        await this.fieldPolicy.requireTextValue('todos', frozen.todos, owned);
+      } else if (cmd.action === 'task_rename') {
+        if (!task || task !== cmd.task_id || rename.text.trim() !== cmd.text) { throw new Error('重命名输入已变化，完整输入已保留。'); }
+        await this.fieldPolicy.requireTextValue('todos', rename, owned);
+      }
+      if (!owned()) { throw new Error('保存目标已变化，完整输入已保留。'); }
+      // Raw retention remains independent of business limits and preserves IME.
+      if (this.editorOpen && !(await this.flushDraft())) { return; }
+      if (!owned()) { throw new Error('保存目标已变化，完整输入已保留。'); }
+    } catch (error) { if (this.pageAlive && this.attachmentEditorIdentity === editor && this.editorDraft === draft) { this.message = String(error); } return; }
+    finally { this.fieldValidationWorking = false; }
     if ((cmd.action === 'create' || cmd.action === 'edit') && this.editorDraft?.confirmed) {
       const record = this.editorDraft.confirmed;
       cmd.draft_id = record.scope.draft_id; cmd.generation = record.generation; cmd.draft_operation = record.operation_id;
     }
     this.submittedRaw = frozen;
+    this.submittedRename = cmd.action === 'task_rename' ? copyText(rename) : undefined;
+    this.submittedRenameEpoch = inputEpoch; this.submittedRenameEditor = editor;
     this.pending = JSON.stringify(cmd); await this.retry();
   }
   private async retry(): Promise<void> {
@@ -1298,7 +1385,7 @@ struct Index {
       const result = await workbench.send(original);
       if (!result.ok) {
         if (result.effect === 'not_committed') {
-          this.pending = ''; this.submittedRaw = undefined; this.message = `未提交：${result.error}。请修正后再保存，输入已保留。`;
+          this.pending = ''; this.submittedRaw = undefined; this.submittedRename = undefined; this.message = `未提交：${result.error}。请修正后再保存，输入已保留。`;
         } else { this.message = `保存未确认：${result.error}。原请求与当前输入均已保留。`; }
         return;
       }
@@ -1317,7 +1404,10 @@ struct Index {
         this.taskText = ''; this.draftTextChanged('todos', '');
       }
       if (cmd.action === 'task_rename' && this.selected === cmd.id && this.taskEditId === cmd.task_id &&
-        this.taskRenameText.trim() === cmd.text) { this.taskEditId = ''; this.taskRenameText = ''; }
+        this.taskRenameText.trim() === cmd.text && this.submittedRename &&
+        this.submittedRenameEditor === this.attachmentEditorIdentity && this.submittedRenameEpoch === this.editorInputEpoch &&
+        this.taskRenameValue.composing_start === -1 && this.taskRenameValue.composing_end === -1 &&
+        samePasteTarget(this.submittedRename, this.taskRenameValue)) { this.taskEditId = ''; this.taskRenameText = ''; }
       this.message = result.receipt_revision.length > 0 ? `已保存 · 操作修订 ${result.receipt_revision}` : '已刷新';
       const completionValues = this.editorDraft?.current;
       // Ordinary body/favorite/stage commands do not consume pending todo text.
@@ -1338,14 +1428,14 @@ struct Index {
         this.draftConflict = draft.scope.source_kind === 0 ? record?.revision !== draft.scope.source_revision : !!record;
         if (this.draftConflict) { this.message = '卡片已保存，较新的草稿输入仍保留。原卡片已变化，请核对后处理。'; }
       }
-      this.submittedRaw = undefined;
+      this.submittedRaw = undefined; this.submittedRename = undefined;
       this.refreshPreview();
     } catch (_) { this.message = '回复未确认。请用原请求核对，不会创建新的操作。'; }
     finally { this.busy = false; }
   }
   private async save(): Promise<void> {
     if (this.attachmentWorking || this.pasteWorking) { this.message = '文件或粘贴操作尚未完成，请稍候。'; return; }
-    if (this.draftWorking || this.draftConflict) { return; }
+    if (this.draftWorking || this.fieldValidationWorking || this.draftConflict) { return; }
     if (this.taskEditId.length > 0) { this.message = '请先保存或取消待办重命名'; return; }
     if (this.title.trim().length === 0) { this.message = '请输入卡片标题'; return; }
     if (!(await this.flushDraft())) { return; }
@@ -1381,12 +1471,13 @@ struct Index {
     this.submit(cmd);
   }
   private canEditTasks(): boolean {
-    return this.ready && !this.attachmentWorking && !this.pasteWorking && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.editorDraft?.unknown && this.pending.length === 0 &&
+    return this.ready && !this.attachmentWorking && !this.pasteWorking && !this.fieldValidationWorking && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.editorDraft?.unknown && this.pending.length === 0 &&
       !!this.current() && !this.current()?.deleted && !this.dirty && this.taskEditId.length === 0;
   }
   private renameTask(task: TaskView): void {
     if (!this.canEditTasks()) { return; }
-    this.taskEditId = task.id; this.taskRenameText = task.text;
+    this.taskEditId = task.id; this.taskRenameText = task.text; this.taskRenameValue = new DraftTextValue();
+    this.taskRenameValue.text = task.text; this.editorInputEpoch++; this.refreshFieldCount('taskRename');
   }
   private moveTask(task: TaskView, delta: number): void {
     if (!this.canEditTasks()) { return; }
@@ -2674,11 +2765,16 @@ struct Index {
   BodyInput() {
     TextArea({ text: this.description, placeholder: this.t('写下思路，或粘贴一段内容…'), controller: this.descriptionController })
       .fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).placeholderFont({ size: 13 }).fontColor(this.ink()).placeholderColor(this.muted())
-      .backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() }).borderRadius(this.round(12)).height(180).maxLength(20000)
+      .backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() }).borderRadius(this.round(12)).height(180)
       .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-description')
       .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('description', s, preview))
       .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('description', start, end))
       .onFocus(() => this.focusDraftField('description')).onBlur(() => this.blurDraftField('description'))
+    this.FieldCounter('description')
+  }
+  @Builder
+  FieldCounter(name: string) {
+    Text(this.fieldCountLabel(name)).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted()).width('100%').textAlign(TextAlign.End).id('field-count:' + name)
   }
   @Builder
   Drafts() {
@@ -2806,13 +2902,13 @@ struct Index {
       Scroll() {
         Column({ space: 16 }) {
           TextInput({ text: this.title, placeholder: this.t('给它起个名字'), controller: this.titleController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(23).placeholderFont({ size: 23 }).fontWeight(FontWeight.Medium)
-            .fontColor(this.ink()).placeholderColor(this.muted()).backgroundColor(Color.Transparent).padding(16).maxLength(60).height(64)
+            .fontColor(this.ink()).placeholderColor(this.muted()).backgroundColor(Color.Transparent).padding(16).height(64)
             .border({ width: 1, color: this.accent() }).borderRadius(this.round(12))
             .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-title')
             .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('title', s, preview))
             .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('title', start, end))
             .onFocus(() => this.focusDraftField('title')).onBlur(() => this.blurDraftField('title'))
-          Text(`${this.title.length} / 60`).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted()).width('100%').textAlign(TextAlign.End)
+          this.FieldCounter('title')
           Row({ space: 8 }) {
             PasteButton({ icon: PasteIconStyle.LINES, text: PasteDescription.PASTE, buttonType: ButtonType.Normal })
               .height(40).fontSize(13).fontColor('#302D43').iconColor('#302D43').backgroundColor('#E9E4F8')
@@ -2852,7 +2948,7 @@ struct Index {
               .onSelect((_: number, value: string) => {
                 if (this.pasteWorking || this.draftWorking || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
                 if (!this.current()) {
-                  this.category = value; this.dirty = true; this.editorValues.category = value;
+                  this.editorInputEpoch++; this.category = value; this.dirty = true; this.editorValues.category = value;
                   this.editorValues.stage = value === '进行中' ? '计划中' : value === '实验' ? '待验证' : '待整理';
                   this.editorDraft?.update(copyValues(this.editorValues)); return;
                 }
@@ -2872,14 +2968,16 @@ struct Index {
             }
           }.width('100%')
           if (this.category === '实验') {
-            TextArea({ text: this.hypothesis, placeholder: this.t('假设'), controller: this.hypothesisController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(5000).height(96)
+            TextArea({ text: this.hypothesis, placeholder: this.t('假设'), controller: this.hypothesisController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).height(96)
               .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-hypothesis')
               .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('hypothesis', s, preview))
               .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('hypothesis', start, end)).onFocus(() => this.focusDraftField('hypothesis')).onBlur(() => this.blurDraftField('hypothesis'))
-            TextArea({ text: this.conclusion, placeholder: this.t('结论'), controller: this.conclusionController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(10000).height(116)
+            this.FieldCounter('hypothesis')
+            TextArea({ text: this.conclusion, placeholder: this.t('结论'), controller: this.conclusionController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).height(116)
               .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-conclusion')
               .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('conclusion', s, preview))
               .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('conclusion', start, end)).onFocus(() => this.focusDraftField('conclusion')).onBlur(() => this.blurDraftField('conclusion'))
+            this.FieldCounter('conclusion')
           }
           if (this.current()) {
             Divider().color(this.line())
@@ -2905,14 +3003,15 @@ struct Index {
               if (this.taskEditId === task.id) {
                 Column({ space: 8 }) {
                   TextInput({ text: this.taskRenameText, placeholder: this.t('重命名') }).fontFamily(this.fontFamily || 'HarmonyOS Sans')
-                    .fontSize(12).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(500)
-                    .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && this.pending.length === 0).onChange((s: string) => { this.taskRenameText = s; })
+                    .fontSize(12).fontColor(this.ink()).backgroundColor(this.glass())
+                    .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && this.pending.length === 0).onChange((s: string, preview?: PreviewText) => this.taskRenameChanged(s, preview))
+                  this.FieldCounter('taskRename')
                   Row({ space: 8 }) {
                     Blank()
                     Button(this.t('取消')).fontSize(12).fontColor(this.muted()).backgroundColor(Color.Transparent)
                       .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && this.pending.length === 0).onClick(() => { this.taskEditId = ''; this.taskRenameText = ''; })
                     Button(this.t('保存')).fontSize(12).backgroundColor(this.accent())
-                      .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && this.pending.length === 0 && !this.dirty && this.taskRenameText.trim().length > 0)
+                      .enabled(!this.pasteWorking && !this.attachmentWorking && !this.fieldValidationWorking && !this.busy && this.pending.length === 0 && !this.dirty && this.taskRenameText.trim().length > 0)
                       .onClick(() => this.mutate('task_rename', task))
                   }.width('100%')
                 }.width('100%').padding({ left: 40, bottom: 8 })
@@ -2920,13 +3019,14 @@ struct Index {
             }, (task: TaskView) => task.id + ':' + task.completion.toString() + ':' + task.text)
             if (!this.current()?.deleted) {
               Row({ space: 8 }) {
-                TextInput({ text: this.taskText, placeholder: this.t('添加一个小步骤…'), controller: this.taskController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(500)
+                TextInput({ text: this.taskText, placeholder: this.t('添加一个小步骤…'), controller: this.taskController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass())
                   .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-todos')
                   .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('todos', s, preview))
                   .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('todos', start, end)).onFocus(() => this.focusDraftField('todos')).onBlur(() => this.blurDraftField('todos')).layoutWeight(1)
                 Button(this.t('+'), { type: ButtonType.Normal }).fontSize(21).fontColor(this.accent()).width(36).height(36).padding(0).backgroundColor('#147662BA').borderRadius(10)
                   .onClick(() => this.mutate('task_add')).enabled(this.canEditTasks())
               }
+              this.FieldCounter('todos')
               if ((this.current()?.tasks.length ?? 0) > 0) {
                 Button(this.t('全部勾选并设置阶段'), { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent())
                   .backgroundColor(Color.Transparent).enabled(this.canEditTasks()).onClick(() => this.confirmTaskChange())
@@ -2962,7 +3062,7 @@ struct Index {
           .enabled(!this.pasteWorking && !this.attachmentWorking).onClick(() => this.closeEditor())
         Button(this.busy ? '保存中…' : '保存灵感', { type: ButtonType.Normal }).fontSize(12).height(38).padding({ left: 22, right: 22 })
           .fontColor(this.dark ? '#302D43' : '#FFFFFF').backgroundColor(this.accent()).borderRadius(this.round(10))
-          .enabled(this.ready && !this.pasteWorking && !this.attachmentWorking && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.draftRetirementUnknown && !this.editorDraft?.unknown && this.pending.length === 0 && !this.current()?.deleted).onClick(() => this.save())
+          .enabled(this.ready && !this.pasteWorking && !this.attachmentWorking && !this.fieldValidationWorking && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.draftRetirementUnknown && !this.editorDraft?.unknown && this.pending.length === 0 && !this.current()?.deleted).onClick(() => this.save())
       }.padding({ left: 24, right: 24, top: 14, bottom: 14 }).width('100%')
       if (this.pending.length > 0 && !this.busy) {
         Button(this.t('使用原操作重试 / 核对')).fontSize(12).backgroundColor(this.accent()).margin({ bottom: 12 })

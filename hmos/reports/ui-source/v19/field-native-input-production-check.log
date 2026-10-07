@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "candidate_release": "dev19",
+  "repository_sources": 256,
+  "candidate_archives_checked": 2,
+  "preserved_dev18_archives_checked": 2,
+  "production_archives_checked": true,
+  "flutter_references_checked": false,
+  "external_dependencies_checked": false
+}

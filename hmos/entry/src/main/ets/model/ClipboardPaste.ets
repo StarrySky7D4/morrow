@@ -52,6 +52,7 @@ export interface ClipboardPasteResult {
 
 export interface ClipboardPasteHooks {
   read: () => ClipboardPasteBoundary;
+  checkText: (value: TextValue, boundary: ClipboardPasteBoundary) => Promise<void>;
   confirm: (boundary: ClipboardPasteBoundary) => Promise<ClipboardPasteBoundary>;
   importOne: (attachment: ClipboardPasteAttachment, identity: ClipboardPasteIdentity,
     boundary: ClipboardPasteBoundary) => Promise<ClipboardPasteReceipt>;
@@ -105,21 +106,21 @@ export class ClipboardPaste {
   constructor(hooks: ClipboardPasteHooks) { this.hooks = hooks; }
   stop(): void { this.epoch++; }
 
-  run(plan: ClipboardPastePlan, limit: number): Promise<ClipboardPasteResult> {
+  run(plan: ClipboardPastePlan): Promise<ClipboardPasteResult> {
     if (this.inFlight !== undefined) { return this.inFlight; }
     const epoch: number = ++this.epoch;
     // Copy public plan metadata before any await; the actual capabilities stay
     // in the caller's private key -> PreparedAttachment inventory.
     const frozen: ClipboardPastePlan = { text: plan.text, warnings: plan.warnings.slice(),
-      attachments: plan.attachments.map((item: ClipboardPasteAttachment): ClipboardPasteAttachment =>
+      attachments: Array.from(plan.attachments).map((item: ClipboardPasteAttachment): ClipboardPasteAttachment =>
         ({ key: item.key, name: item.name, byte_length: item.byte_length, sha256: item.sha256,
-          references: item.references.slice(), image: item.image })) };
-    this.inFlight = Promise.resolve().then((): Promise<ClipboardPasteResult> => this.perform(frozen, limit, epoch))
+          references: Array.from(item.references), image: item.image })) };
+    this.inFlight = Promise.resolve().then((): Promise<ClipboardPasteResult> => this.perform(frozen, epoch))
       .finally(() => { this.inFlight = undefined; });
     return this.inFlight;
   }
 
-  private async perform(plan: ClipboardPastePlan, limit: number, epoch: number): Promise<ClipboardPasteResult> {
+  private async perform(plan: ClipboardPastePlan, epoch: number): Promise<ClipboardPasteResult> {
     const result: ClipboardPasteResult = { phase: 'preparing', total: plan.attachments.length,
       selected: 0, text_inserted: false, warnings: plan.warnings.slice(), error: '' };
     const ids: Map<string, string> = new Map<string, string>();
@@ -146,7 +147,14 @@ export class ClipboardPaste {
       }
       // Imported IDs have a fixed validated size. Preflight the complete final
       // insertion before the first native request, without persisting a token.
-      insertPaste(boundary.target, referenceText(plan, ids), limit); ids.clear();
+      const prepared: TextValue = insertPaste(boundary.target, referenceText(plan, ids)); ids.clear();
+      await this.hooks.checkText(copyText(prepared), copyBoundary(boundary));
+      const checked: ClipboardPasteBoundary = copyBoundary(this.hooks.read());
+      if (!validBoundary(checked) || !sameOwner(boundary, checked) || epoch !== this.epoch ||
+        checked.generation !== boundary.generation || checked.selected_count !== boundary.selected_count ||
+        checked.import_count !== boundary.import_count) {
+        throw new Error('文字检查期间插入目标发生变化，尚未开始导入。');
+      }
       const original: ClipboardPasteBoundary = boundary;
       boundary = copyBoundary(await this.hooks.confirm(copyBoundary(boundary)));
       if (!validBoundary(boundary) || !sameOwner(original, boundary) || epoch !== this.epoch ||
@@ -186,7 +194,14 @@ export class ClipboardPaste {
       }
       const text: string = referenceText(plan, ids);
       if (text.length > 0) {
-        const inserted: TextValue = insertPaste(boundary.target, text, limit);
+        const inserted: TextValue = insertPaste(boundary.target, text);
+        await this.hooks.checkText(copyText(inserted), copyBoundary(boundary));
+        const checked: ClipboardPasteBoundary = copyBoundary(this.hooks.read());
+        if (!validBoundary(checked) || !sameOwner(boundary, checked) || epoch !== this.epoch ||
+          checked.generation !== boundary.generation || checked.selected_count !== boundary.selected_count ||
+          checked.import_count !== boundary.import_count) {
+          throw new Error('文字检查期间插入目标发生变化，已确认附件保留，正文未插入。');
+        }
         result.phase = 'saving';
         const after: ClipboardPasteBoundary = await this.hooks.commitText(inserted, copyBoundary(boundary));
         if (epoch !== this.epoch || !validBoundary(after) || after.blocked || after.editor_id !== boundary.editor_id ||

@@ -4,7 +4,8 @@ use morrow_workbench_plugin::capture;
 use pulldown_cmark::{Alignment, CodeBlockKind, Event, Options, Parser, Tag, TagEnd};
 use serde::Serialize;
 
-pub const MAX_UTF16: usize = 20_000;
+pub const MAX_GRAPHEMES: usize = 20_000;
+const MAX_INPUT_BYTES: usize = 512 * 1024;
 const MAX_DEPTH: usize = 32;
 const MAX_EVENTS: usize = 8_192;
 const MAX_BLOCKS: usize = 2_048;
@@ -75,7 +76,8 @@ fn limit(ok: bool, name: &str) -> Result<()> {
     }
 }
 fn text_limit(input: &str) -> Result<()> {
-    limit(input.encode_utf16().count() <= MAX_UTF16, "UTF16")
+    limit(input.len() <= MAX_INPUT_BYTES, "InputBytes")?;
+    limit(crate::editor_field::grapheme_count(input) <= MAX_GRAPHEMES, "Grapheme")
 }
 
 /// Reuse the original protocol's URL policy, then reject control-character
@@ -632,14 +634,14 @@ mod tests {
         assert!(safe_href("mailto:a@example.com", true).is_empty());
     }
     #[test]
-    fn utf16_depth_and_node_budgets_fail_instead_of_truncating() {
+    fn grapheme_depth_and_node_budgets_fail_instead_of_truncating() {
         assert_eq!(
-            text(&project(&"😀".repeat(10_000)).unwrap().blocks[0]),
-            "😀".repeat(10_000)
+            text(&project(&"😀".repeat(20_000)).unwrap().blocks[0]),
+            "😀".repeat(20_000)
         );
         assert_eq!(
-            project(&"😀".repeat(10_001)).unwrap_err(),
-            "MarkdownLimit:UTF16"
+            project(&"😀".repeat(20_001)).unwrap_err(),
+            "MarkdownLimit:Grapheme"
         );
         assert_eq!(
             project(&format!("{}x", "> ".repeat(33))).unwrap_err(),
@@ -693,14 +695,14 @@ mod tests {
         );
         assert_eq!(
             paste_plain(&"x".repeat(20_001), "todos").unwrap_err(),
-            "MarkdownLimit:UTF16"
+            "MarkdownLimit:Grapheme"
         );
         // A legal 500-row input can expand beyond the body budget; reject the
         // complete result rather than returning a partial table to the editor.
         let expansion = "x\tx\tx\tx\tx\tx\tx\tx\tx\tx\n".repeat(500);
         assert_eq!(
             paste_plain(&expansion, "description").unwrap_err(),
-            "MarkdownLimit:UTF16"
+            "MarkdownLimit:Grapheme"
         );
     }
 }

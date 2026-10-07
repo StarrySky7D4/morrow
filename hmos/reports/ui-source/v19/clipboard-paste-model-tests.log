@@ -1,0 +1,22 @@
+✔ exact pins are confirmed sequentially before portable text and caret persist (2.8005ms)
+✔ full expanded plan and final insertion budget are checked before any import (0.4866ms)
+✔ target selection or raw text changing during confirmation never imports (0.7591ms)
+✔ wrong owner, operation receipt, pin ID or target cannot authorize the next import or text (1.1264ms)
+✔ Unknown stops later admissions without a native replay or placeholder insertion (0.2933ms)
+✔ stop while one native import is live observes that result and admits nothing else (62.2055ms)
+✔ copy plan metadata before awaits and refuse a text save without a new confirmed generation (7ms)
+✔ complete future grapheme field is checked before the first attachment import (2.2377ms)
+✔ large emoji paste fitting the grapheme limit retains every UTF16 unit (2.1135ms)
+✔ owner, selection, generation, blocked or import inventory drift during preflight stops before confirmation (59.7458ms)
+✔ stop during preflight cannot issue any native import (15.7591ms)
+✔ actual persistent image references are checked again after pins before text (0.4919ms)
+✔ second async policy failure retains confirmed pins and does not save text or replay imports (0.2829ms)
+✔ target or owner drift during final count retains pins but never commits stale text (0.7886ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1286.2813
