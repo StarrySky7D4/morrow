@@ -32,6 +32,10 @@ vm.runInNewContext(compiled.outputText, { exports: exportsObject, setTimeout, cl
   } });
 const { EditorTodos, EditorTodoRowInput } = exportsObject;
 const tick = () => new Promise(resolve => setTimeout(resolve, 5));
+const waitForFocus = async condition => {
+  for (let n = 0; n < 120 && !condition(); n++) await tick();
+  assert.ok(condition(), 'bounded focus completion');
+};
 function text(value, patch = {}) { return Object.assign(new draft.TextValue(), { text: value }, patch); }
 function fixture(initial = 'a\nb', options = {}) {
   const view = new EditorTodos(), policy = createPolicy().policy, captures = [], statuses = [], focuses = [], reveals = [], requestedFocus = [];
@@ -83,8 +87,89 @@ test('preview text is forwarded unchanged to model and raw composing offsets', a
 });
 
 test('successful Add reveals the exact owned element before its guarded focus callback', async () => {
-  const f = fixture('a'); await f.view.addRow(); await tick();
+  const f = fixture('a'); await f.view.addRow();
+  const ticket = f.ticket(1); f.view.areaFor(ticket, { globalPosition: { y: 100 }, height: 80 });
+  await waitForFocus(() => f.requestedFocus.length > 0);
   assert.equal(f.raw.text, 'a\n'); assert.equal(f.reveals.length, 1); assert.equal(f.requestedFocus[0], f.reveals[0][2]);
+});
+
+test('manual row focus supersedes a pending Add focus without losing the added row', async () => {
+  const f = fixture('a'); await f.view.addRow(); const added = f.ticket(1);
+  f.view.areaFor(added, { globalPosition: { y: 100 }, height: 80 });
+  f.view.focusFor(f.ticket()); f.view.focusAddedRow(); await tick();
+  assert.equal(f.requestedFocus.length, 0); assert.equal(f.view.focusTicket, undefined);
+  assert.equal(f.raw.text, 'a\n'); assert.equal(f.view.state.focused_id, f.ticket().id);
+});
+
+test('external field focus revokes pending Add even before its prop watcher runs', async () => {
+  const f = fixture('a'); await f.view.addRow(); const added = f.ticket(1);
+  f.view.areaFor(added, { globalPosition: { y: 100 }, height: 80 });
+  f.view.focusIntent++; f.view.focusAddedRow(); await tick();
+  assert.equal(f.requestedFocus.length, 0); assert.equal(f.view.focusTicket, undefined);
+  assert.equal(f.raw.text, 'a\n');
+});
+
+test('user focus during awaited Add prevents a late focus request while retaining the row', async () => {
+  const f = fixture('a'), wait = deferred(); await tick(); f.view.model.countCache.clear();
+  f.view.count = async () => wait.promise;
+  const adding = f.view.addRow(); await tick(); f.view.focusFor(f.ticket());
+  wait.resolve(1); await adding;
+  assert.equal(f.view.state.rows.length, 2); assert.equal(f.raw.text, 'a\n');
+  assert.equal(f.view.focusTicket, undefined); assert.equal(f.requestedFocus.length, 0);
+});
+
+test('old row incarnation area notification cannot delete the current measured area', async () => {
+  const f = fixture('a'), old = f.ticket();
+  f.view.editingEnabled = false; f.view.availabilityChanged();
+  f.view.editingEnabled = true; f.view.availabilityChanged();
+  const current = f.ticket(); assert.notEqual(current.incarnation, old.incarnation);
+  f.view.areaFor(current, { globalPosition: { y: 100 }, height: 80 });
+  f.view.areaFor(old, { globalPosition: { y: 200 }, height: 0 });
+  assert.equal(f.view.areas.get(current.id).incarnation, current.incarnation);
+  assert.equal(f.view.areas.get(current.id).height, 80);
+});
+
+test('new empty row waits for its measured incarnation before reveal/focus and retains the raw echo', async () => {
+  const f = fixture(''); await f.view.addRow(); f.echo();
+  f.view.focusAddedRow(); assert.equal(f.reveals.length, 0); assert.equal(f.requestedFocus.length, 0);
+  assert.equal(f.raw.text, ''); assert.equal(f.view.state.rows.length, 1);
+  const ticket = f.ticket(); f.view.areaFor(ticket, { globalPosition: { y: 200 }, height: 80 });
+  await waitForFocus(() => f.requestedFocus.length > 0);
+  assert.equal(f.requestedFocus[0], f.view.element(ticket.id, ticket.owner));
+});
+
+test('API26 invisible focus error is contained and the same mounted row can become focusable later', async () => {
+  const f = fixture('a'); let attempts = 0;
+  f.view.getUIContext = () => ({ getFocusController: () => ({ requestFocus(element) {
+    if (++attempts <= 2) throw Object.assign(new Error('invisible'), { code: 150003 });
+    f.requestedFocus.push(element);
+  } }) });
+  await f.view.addRow(); const ticket = f.ticket(1);
+  f.view.areaFor(ticket, { globalPosition: { y: 200 }, height: 80 });
+  await waitForFocus(() => f.requestedFocus.length === 1);
+  assert.equal(attempts, 3); assert.equal(f.raw.text, 'a\n'); assert.equal(f.view.state.rows.length, 2);
+  assert.equal(f.view.focusTicket, undefined);
+});
+
+test('permanently unavailable focus remains bounded without losing or deleting the added row', async () => {
+  const f = fixture('a'); let attempts = 0;
+  f.view.getUIContext = () => ({ getFocusController: () => ({ requestFocus() { attempts++; throw new Error('disabled'); } }) });
+  await f.view.addRow(); const ticket = f.ticket(1); f.view.areaFor(ticket, { globalPosition: { y: 200 }, height: 80 });
+  for (let n = 0; n < 15; n++) f.view.focusAddedRow();
+  assert.equal(f.view.focusTicket, undefined); assert.ok(attempts > 0 && attempts <= 12);
+  const finished = attempts; await tick(); assert.equal(attempts, finished);
+  assert.equal(f.raw.text, 'a\n'); assert.equal(f.view.state.rows.length, 2);
+});
+
+test('disable and disappear revoke pending mounted-row focus before an old callback can request it', async () => {
+  for (const stop of ['disable', 'disappear']) {
+    const f = fixture('a'); await f.view.addRow(); const ticket = f.ticket(1);
+    f.view.areaFor(ticket, { globalPosition: { y: 200 }, height: 80 });
+    if (stop === 'disable') { f.view.editingEnabled = false; f.view.availabilityChanged(); }
+    else f.view.aboutToDisappear();
+    f.view.focusAddedRow(); await tick(); assert.equal(f.requestedFocus.length, 0);
+    assert.equal(f.view.focusTicket, undefined); assert.equal(f.raw.text, 'a\n');
+  }
 });
 
 test('owner switch between Add and queued focus cancels old-card focus', async () => {

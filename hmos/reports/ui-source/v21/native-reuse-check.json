@@ -1,0 +1,24 @@
+{
+  "checkedUtc": "2026-10-07T10:23:25.588Z",
+  "status": "PASS",
+  "basis": "b4860df4b253ff594bfb0811a68adea90d05ce81",
+  "source_manifest": "reports/ui-source/v20/retirement/native-build-inputs.json",
+  "repository_sources": 264,
+  "archives": [
+    {
+      "abi": "arm64-v8a",
+      "path": ".build/editor-input-native/dev20-fork-checkpoint/arm64-v8a/libmorrow_hmos.a",
+      "bytes": 55587274,
+      "sha256": "F33B4EDB1AB59AA75953F1A293BE328CECAA074580CE37739DE0F17063297836",
+      "production_path": "entry/src/main/cpp/rust/arm64-v8a/libmorrow_hmos.a"
+    },
+    {
+      "abi": "x86_64",
+      "path": ".build/editor-input-native/dev20-fork-checkpoint/x86_64/libmorrow_hmos.a",
+      "bytes": 53994540,
+      "sha256": "C76C25B12EAFF38437386270032F37445EF6CF8AE8F1DC86F1C2D03E49F137BB",
+      "production_path": "entry/src/main/cpp/rust/x86_64/libmorrow_hmos.a"
+    }
+  ],
+  "rebuilt": false
+}

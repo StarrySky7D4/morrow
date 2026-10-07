@@ -26,7 +26,8 @@ const methods = [
   section('  private foregroundChanged():', '  private async switchMediaFullscreen('),
   section('  private current():', '  private visibleCards('),
   section('  private async keepDraftAndClose():', '  private async retireDraft('),
-  section('  private closeEditor():', '  private favoriteCard(')
+  section('  private closeEditor():', '  private favoriteCard('),
+  section('  private ownsEditorView(', '  private attachDraft(')
 ].join('\n');
 // These new submission fields use their actual declarations/initializers.
 const submittedRenameFields = source.split(/\r?\n/).filter(line => /^  private submitted\w+:/.test(line)).join('\n');
@@ -79,7 +80,7 @@ function harness(options = {}) {
     return { ok: true, error: '', cards: plain(page.cards), receipt_revision: '2' };
   } };
   const context = vm.createContext({ exports: {}, workbench, util: { generateRandomUUID: () => 'operation-' + (++operation) },
-    ...draftApi, ...policy, ...load('EditorPaste'), DraftTextValue: draftApi.TextValue, Command: load('Workbench').Command });
+    ...draftApi, ...policy, ...load('EditorPaste'), ...load('EditorDraftFork'), DraftTextValue: draftApi.TextValue, Command: load('Workbench').Command });
   vm.runInContext(code, context, { filename: sourcePath }); page = new context.exports.ActualIndexFields();
   const fieldPolicy = new policy.EditorFieldPolicy(async serialized => {
     const request = JSON.parse(serialized); events.push({ kind: 'field-check', request });
@@ -97,6 +98,8 @@ function harness(options = {}) {
     fieldCountLabels: [], fieldValidationWorking: false, selected: scope.card_id, attachmentEditorIdentity: 'editor-field-owner',
     attachmentWorking: false, pasteWorking: false, draftRestoreInput: false, busy: false, pending: '', submittedRaw: undefined,
     draftWorking: false, draftRetiring: false, draftRetirementUnknown: false, draftCaptureIncomplete: false, draftConflict: false,
+    editorViewOwner: 'editor-field-owner', editorViewVisible: true, editorViewRevoked: false, editorBoundary: '',
+    importRecords: [], pendingSpools: [], attachmentPending: '', rawForkRetirement: '',
     title: values.title.text, description: values.description.text, hypothesis: values.hypothesis.text, conclusion: values.conclusion.text,
     category: values.category, taskText: values.todos.text, taskEditId: '', taskRenameText: '', taskRenameValue: new draftApi.TextValue(),
     draftFocusedFields: new Set(['title', 'description', 'hypothesis', 'conclusion', 'todos']), draftSelectionPending: new Set(),
@@ -106,6 +109,9 @@ function harness(options = {}) {
       favorite: false, deleted: false, tasks: [{ id: 'task-fixture', text: 'Task', completion: 0 }], assets: [] }],
     draftChanged: () => {}, refreshPreview: () => {}, loadDrafts: async () => {}, retireDraft: async () => { events.push({ kind: 'retire-attempt' }); return false; },
     mediaPlayback: { pauseForBackground: () => events.push({ kind: 'media-pause' }) }, exitMediaFullscreen: () => {}, fileOpen: undefined });
+  const revokeView = page.revokeEditorView.bind(page), remountView = page.remountEditorView.bind(page);
+  page.revokeEditorView = draft => { const result = revokeView(draft); page.editorLeaseRevoked(page.editorViewOwner); return result; };
+  page.remountEditorView = draft => { const result = remountView(draft); page.editorLeaseMounted(page.editorViewOwner); return result; };
   return { page, draft, events, draftApi, close: () => draft.dispose(),
     business: () => events.filter(e => e.kind === 'business-send'), raw: () => events.filter(e => e.kind === 'draft-save') };
 }

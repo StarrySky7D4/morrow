@@ -109,6 +109,7 @@ function harness(records, options = {}) {
     return JSON.stringify(fieldReply(request.field, request.text));
   });
   Object.assign(page, { ready: true, pageAlive: true, foreground: true, editorOpen: true, editorDraft: draft, editorValues: api.copyValues(values),
+    editorViewVisible: true, editorViewRevoked: false, editorBoundary: '',
     fieldPolicy, editorInputEpoch: 0, fieldCountEpochs: new Map(), fieldCountLabels: [], fieldValidationWorking: false,
     // Preserve existing paste assertions; only the new direct-input platform
     // readiness dependency is synthetic in this integration harness.

@@ -1,0 +1,36 @@
+{
+  "checkedUtc": "2026-10-07T10:23:53.6415307Z",
+  "status": "PASS",
+  "artifact": "dev21-ui-checkpoint",
+  "entries": [
+    {
+      "path": "libs/arm64-v8a/libmorrow.so",
+      "bytes": 10402456,
+      "sha256": "B687F7E869782E3140F6EA72F87A688833DEA5B4BF51AAD1C0210B73F941CBDE",
+      "source": "entry/build/default/intermediates/stripped_native_libs/default/arm64-v8a/libmorrow.so",
+      "status": "PASS"
+    },
+    {
+      "path": "libs/arm64-v8a/libc++_shared.so",
+      "bytes": 1262504,
+      "sha256": "F69947AF100B652E349AE51E4A4888BCC7A327DB9085272D318176EF1782BF0F",
+      "source": "entry/build/default/intermediates/stripped_native_libs/default/arm64-v8a/libc++_shared.so",
+      "status": "PASS"
+    },
+    {
+      "path": "libs/x86_64/libmorrow.so",
+      "bytes": 10858312,
+      "sha256": "E760832B6F7B76C30C98DBBA81E34426613A145B387AA188360F0432B6D3F9D0",
+      "source": "entry/build/default/intermediates/stripped_native_libs/default/x86_64/libmorrow.so",
+      "status": "PASS"
+    },
+    {
+      "path": "libs/x86_64/libc++_shared.so",
+      "bytes": 1294904,
+      "sha256": "09B9E3A97D3C01260B5E269E2CE15FE4D3B7C787B99DC4378295D4F35E2FA006",
+      "source": "entry/build/default/intermediates/stripped_native_libs/default/x86_64/libc++_shared.so",
+      "status": "PASS"
+    }
+  ],
+  "device": "NOT_RUN"
+}

@@ -1,0 +1,43 @@
+{"index_sha256":"4b8b786ef1c54eac5f85c3e3e07cd395b05db7e8a3cd8cb0307b101d425a990c","lease_sha256":"4f3172c6c8dadec3019a36f0fa4ef82cfa1d1b8a9232f16f5a0cae4fad870730","compiler":"4.9.5","scope":"controlled actual methods; no SDK queue/Store/device"}
+✔ actual Index/lease and installed compiler identities are emitted (2.8787ms)
+✔ first fixed ACK switches writer before complete latest child flush, then retires only parent proof (209.3772ms)
+✔ first Unknown retains original wire while later full raw requires explicit same request retry (121.8897ms)
+✔ child Unknown blocks parent cleanup; exact child retry precedes latest fresh child generation (86.6443ms)
+✔ parent cleanup Unknown uses original retirement wire and preserves every later child capture (75.7069ms)
+✔ wrong first scope/fullraw/pin aliases and wrong retirement proof never authorize writer/cleanup (376.1027ms)
+✔ same raw with a different live owner cannot adopt first ACK or issue parent cleanup (88.7936ms)
+✔ an unselected Ready/Unknown import or pending spool cannot be silently left behind by fork (314.1999ms)
+✔ capture incomplete during first ACK preserves both slots and never retires parent (73.4234ms)
+✔ manual discard waits for actual lease revoke; old callbacks cannot populate a new owner (90.081ms)
+✔ second manual discard of the live child also requires revoke and never forks or revives it (99.5825ms)
+✔ incomplete detach capture stops deletion and remounts full values under a fresh lease (75.2968ms)
+✖ exact business close waits for lease and late accepted same-value epoch creates durable fork (196.3778ms)
+✔ discard Unknown stays detached and only explicit retry resends its original wire (113.1573ms)
+✔ rename incarnation and selection restoration timer cannot borrow a replacement lease (66.0978ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 14
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2789.09
+
+✖ failing tests:
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:272:1
+✖ exact business close waits for lease and late accepted same-value epoch creates durable fork (196.3778ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:281:146)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

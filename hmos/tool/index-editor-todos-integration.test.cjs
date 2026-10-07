@@ -31,7 +31,8 @@ const methods = [
   section('  private command(', '  private moveTask('),
   section('  private current():', '  private visibleCards('),
   actualMethod('editorInputChanged'),
-  actualMethod('retireDraft')
+  actualMethod('retireDraft'), actualMethod('closeSavedEditor'),
+  section('  private ownsEditorView(', '  private attachDraft(')
 ].join('\n');
 const submittedFields = source.split(/\r?\n/).filter(line => /^  private submitted\w+:/.test(line)).join('\n');
 assert.ok(submittedFields.includes('submittedRaw'), 'actual frozen submission fields');
@@ -98,7 +99,7 @@ function harness(options = {}) {
       drafts: [], receipt_revision: options.existing ? '8' : '1' };
   }
   const context = vm.createContext({ exports: {}, workbench, util: { generateRandomUUID: () => 'business-operation-' + (++operation) },
-    ...draftApi, ...fieldApi, ...load('EditorPaste'), ...load('EditorDirectInput'), DraftTextValue: draftApi.TextValue,
+    ...draftApi, ...fieldApi, ...load('EditorPaste'), ...load('EditorDirectInput'), ...load('EditorDraftFork'), DraftTextValue: draftApi.TextValue,
     Command: load('Workbench').Command });
   vm.runInContext(code, context, { filename: sourcePath }); page = new context.exports.ActualIndexTodosBusiness();
   const fieldPolicy = new fieldApi.EditorFieldPolicy(async serialized => {
@@ -118,6 +119,8 @@ function harness(options = {}) {
     attachmentWorking: false, pasteWorking: false, draftRestoreInput: false, busy: false, pending: '', draftWorking: false,
     draftRetiring: false, draftRetirement: '', draftRetirementUnknown: false, draftCaptureIncomplete: false, draftConflict: false,
     draftRetiredIdentity: '', retirementInput: new Map(),
+    editorViewOwner: 'create-editor-owner', editorViewVisible: true, editorViewRevoked: false, editorBoundary: '',
+    importRecords: [], pendingSpools: [], attachmentPending: '', rawForkRetirement: '',
     title: values.title.text, description: values.description.text, hypothesis: values.hypothesis.text, conclusion: values.conclusion.text,
     category: values.category, taskText: values.todos.text, taskEditId: '', taskRenameText: '', taskRenameValue: new draftApi.TextValue(),
     draftFocusedFields: new Set(['title', 'description', 'hypothesis', 'conclusion', 'todos']), draftSelectionPending: new Set(),
@@ -129,6 +132,11 @@ function harness(options = {}) {
       tasks: [{ id: 'original-v2-task-id', text: 'Existing task', completion: 1 }], assets: [] }] : [],
     draftChanged: () => {}, refreshPreview: () => {}, loadDrafts: async () => {},
     attachDraft: () => { throw Error('unexpected draft handoff in create/edit test'); } });
+  // Controlled framework lifecycle delivery; the freshly extracted methods
+  // above still enforce all admission and cleanup conditions.
+  const revokeView = page.revokeEditorView.bind(page), remountView = page.remountEditorView.bind(page);
+  page.revokeEditorView = draft => { const result = revokeView(draft); page.editorLeaseRevoked(page.editorViewOwner); return result; };
+  page.remountEditorView = draft => { const result = remountView(draft); page.editorLeaseMounted(page.editorViewOwner); return result; };
   function edit(value, field = 'todos') {
     const next = typeof value === 'string' ? Object.assign(new draftApi.TextValue(), { text: value }) : Object.assign(new draftApi.TextValue(), value);
     page.editorValues[field] = draftApi.copyText(next); page.editorInputEpoch++;

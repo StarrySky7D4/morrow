@@ -2,9 +2,11 @@
 
 Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前源码版本为 **0.1.0-hmos-dev.19 开发预览**；尚未与 Flutter 功能等价，不能替代正式资料库。各版本的构建、模型与实际设备证据分别记录。
 
-2026-10-07 当前同步新增 **草稿接续基础能力检查点**：Rust 可先持久保存新草稿的完整文字和已确认附件，再有条件清理父草稿；ArkTS 协调器保留固定原请求、较晚输入与未知结果。此能力仅用于独立开发库，**尚未接入 Index，界面清理后的输入接续仍 OPEN**，不能把本地输入称为可重启恢复。版本号仍 dev19；本轮构建及限定验证见 [接续检查点](reports/ui-source/v20/retirement/validation.md)。
+2026-10-07 当前同步为 **编辑器生命周期与草稿接续界面修复检查点**：Index 接入冻结视图归属、完整 raw 接续和条件父草稿清理；旧视图回调不能写入替换编辑器。手动放弃、保留关闭和保存成功关闭采用分别核对的入口，未知结果保留原操作。多行待办 Add 自动焦点等待有效布局，用户转焦或旧事件会撤销过期请求。版本号仍 dev19，当前本地检查与设备边界见 [本轮验证](reports/ui-source/v21/validation.md)。
 
-此前主页面已接入 Flutter 参照的多行待办、完整输入检查与新卡原子待办保存。该提交 `eeca59f8` 对应的 `47690159…` 包已安装到 x64 模拟器：首页和空待办区的截图未观察到贯穿框线，公开 Unicode 文字输入已观察；多行编辑、拖动、业务保存和重启闭环尚未验收。该安装属于此前 UI 集成包，不能证明本轮新增 fork 运行能力。见 [设备范围记录](reports/ui-source/v20/device-integration/validation.md)；[原集成验证](reports/ui-source/v20/integration/validation.md)保留交付时事实。
+接续保留原卡片 source，不自动解除业务 CAS 冲突；准确业务成功基线接续及 `editor_save` 后端仍未实现。SDK 生命周期撤销是应用接纳边界，不证明系统输入队列已排空。完整 Flutter/Windows 目标仍 **OPEN**。此前未接入 Index 的 [接续基础检查点](reports/ui-source/v20/retirement/validation.md)保留其交付时事实。
+
+设备仍运行提交 `eeca59f8` 的 **47690159…** 旧 UI 集成包。该包实际点击多行待办 Add 后出现焦点错误 **150003**；公开 D 草稿的标题和正文随后恢复并保留。**新的焦点修复、视图归属及 fork 接线尚无设备验证**，旧包恢复不能算新包通过。首页和空待办区的原截图及此前观察另见 [旧包设备记录](reports/ui-source/v20/device-integration/validation.md)；[原集成验证](reports/ui-source/v20/integration/validation.md)保留当时事实。
 
 此前发布的 **dev20 源码检查点** 新增 Flutter 输入格式处理、多行待办模型/组件和新卡待办原子保存，完整模型617项、Rust123项及实际Flutter/Dart对照通过。**当时 Index 尚未接入新UI，版本号仍dev19。** 该检查点包未安装；已发布dev19包的安装、旧草稿和TSV附件恢复另有设备记录。见 [原检查点范围](reports/ui-source/v20/checkpoint-status.md)与 [原验证记录](reports/ui-source/v20/validation.md)；以下dev19及更早段落保留其交付时事实。
 

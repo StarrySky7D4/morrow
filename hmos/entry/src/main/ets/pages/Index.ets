@@ -15,6 +15,7 @@ import { EditorInputPolicy } from '../model/EditorInputPolicy';
 import { editorInputHash } from '../model/EditorInputHash';
 import { EditorDirectInput, EditorDirectInputProposal } from '../model/EditorDirectInput';
 import { EditorTodos } from './EditorTodos';
+import { EditorViewLease } from './EditorViewLease';
 import { EditorTodosStatus } from '../model/EditorTodos';
 import { ClipboardInput, ClipboardSnapshot, ClipboardSource } from '../model/ClipboardInput';
 import { ClipboardPaste, ClipboardPasteAttachment, ClipboardPastePlan, ClipboardPasteBoundary,
@@ -36,7 +37,9 @@ import { AttachmentFiles, PreparedAttachment, VerifiedPreview, AttachmentRecover
 import { AssetView, ImportRecord, ImportCommand, attachmentKind, attachmentSize, attachmentIcon, attachmentDetails, selectedImport, sameImport } from '../model/Attachments';
 import { QueryConditions, QueryState, QueryCoordinator } from '../model/QueryCoordinator';
 import { Values as DraftValues, TextValue as DraftTextValue, DraftScope, DraftRecord,
-  AssetSelection, EditorDraftCoordinator, DraftSaveFailure, copyValues, copyText, sameValues, nextGeneration } from '../model/EditorDraft';
+  AssetSelection, EditorDraftCoordinator, DraftSaveFailure, copyValues, copyText, copyScope, sameValues, nextGeneration,
+  validateRecord, sameForkLink } from '../model/EditorDraft';
+import { EditorDraftForkCoordinator } from '../model/EditorDraftFork';
 
 class CardDrag {
   card: CardView;
@@ -48,6 +51,8 @@ class CardDrag {
   }
 }
 interface CardDragExtra { extraInfo?: string; }
+interface RawForkRetirementIdentity { operation_id: string; }
+interface RawForkRetirementCommand { fork_retirement: RawForkRetirementIdentity; }
 
 @Component
 struct WorkspaceCardSlot {
@@ -87,6 +92,7 @@ struct Index {
   @State category: string = '灵感';
   @State taskText: string = '';
   @State taskEditId: string = '';
+  @State taskRenameOwner: string = '';
   @State taskRenameText: string = '';
   @State fieldCountLabels: string[] = ['', '', '', '', '', ''];
   @State fieldValidationWorking: boolean = false;
@@ -184,6 +190,22 @@ struct Index {
   private submittedRenameEpoch: number = -1;
   private submittedRenameEditor: string = '';
   private editorDraft: EditorDraftCoordinator | undefined = undefined;
+  @State editorViewVisible: boolean = true;
+  @State editorViewOwner: string = '';
+  @State editorFocusIntent: number = 0;
+  private editorViewRevoked: boolean = true;
+  private editorDetachResolve: (() => void) | undefined = undefined;
+  private editorMountResolve: ((mounted: boolean) => void) | undefined = undefined;
+  private editorBoundaryDraft: EditorDraftCoordinator | undefined = undefined;
+  @State editorBoundary: string = '';
+  private rawFork: EditorDraftForkCoordinator | undefined = undefined;
+  private rawForkParent: EditorDraftCoordinator | undefined = undefined;
+  private rawForkOwner: string = '';
+  private rawForkRetirement: string = '';
+  private rawForkRetirementUnknown: boolean = false;
+  @State rawForkWorking: boolean = false;
+  @State rawForkAction: string = '';
+  @State rawForkStatus: string = '';
   private editorValues: DraftValues = new DraftValues();
   private draftSource: string = '';
   private draftRestoreInput: boolean = false;
@@ -382,6 +404,10 @@ struct Index {
     this.attachmentSelection?.stop();
     this.closeAttachmentPreview();
     this.pageAlive = false;
+    const detach = this.editorDetachResolve; this.editorDetachResolve = undefined;
+    if (detach) { detach(); } // Cancels the wait; pageAlive=false rejects cleanup.
+    const mount = this.editorMountResolve; this.editorMountResolve = undefined;
+    if (mount) { mount(false); }
     // No mutation is replayed on destruction. Only earlier acknowledged raw
     // journal generations are recoverable after a forced process termination.
     this.editorDraft?.dispose();
@@ -462,7 +488,7 @@ struct Index {
     if (values !== this.attachmentEditingValues) { this.attachmentEditingValues = values; this.attachmentEditEpoch++; }
     this.refreshEditorAssets();
     this.updateInlineImages();
-    this.draftStatus = draft.unknown ? '草稿回复未确认，原请求已保留' : draft.conflicted ? '草稿世代已变化，请核对' :
+    this.draftStatus = this.rawFork ? this.rawForkStatus || '完整输入正在接续保留' : draft.unknown ? '草稿回复未确认，原请求已保留' : draft.conflicted ? '草稿世代已变化，请核对' :
       draft.error.length > 0 ? '草稿保存失败：' + draft.error : draft.saving ? '正在保留草稿…' :
       draft.dirty ? '草稿等待保存' : draft.confirmed ? '草稿已保留' : '';
     const confirmed = draft.confirmed;
@@ -480,7 +506,7 @@ struct Index {
   private directValue(key: string): DraftTextValue { return key === 'taskRename' ? this.taskRenameValue : this.draftField(key); }
   private directInputCurrent(owner: string, key: string, revision: number, value: DraftTextValue): boolean {
     return this.pageAlive && this.foreground && this.editorOpen && !!this.editorDraft && !this.editorDraft.disposed &&
-      !this.draftRetiring && !this.draftRetirementUnknown && this.draftRetiredIdentity !== this.editorDraft.scope.draft_id &&
+      !this.editorViewRevoked && !this.draftRetiring && !this.draftRetirementUnknown && this.draftRetiredIdentity !== this.editorDraft.scope.draft_id &&
       !this.draftCaptureBlocked.has(key) && owner === this.directOwner(key) &&
       this.inputRevisions.get(key) === revision && (key !== 'taskRename' || !!this.taskEditId) && samePasteTarget(value, this.directValue(key));
   }
@@ -644,7 +670,7 @@ struct Index {
   private revealTodoRow(owner: string, element: string): void {
     const revision = this.todoInputRevision;
     setTimeout((): void => {
-      if (!this.editorOpen || !this.newCardTodos() || owner !== this.attachmentEditorIdentity || revision !== this.todoInputRevision || !this.foreground) { return; }
+      if (!this.ownsEditorView(owner) || !this.newCardTodos() || revision !== this.todoInputRevision || !this.foreground) { return; }
       try {
         const context = this.getUIContext(), row = context.getComponentUtils().getRectangleById(element), bounds = this.editorScrollBounds();
         const top = context.px2vp(row.windowOffset.y), bottom = top + context.px2vp(row.size.height);
@@ -733,6 +759,7 @@ struct Index {
   private canPaste(): boolean {
     return this.ready && this.editorOpen && !!this.editorDraft && !this.editorDraft.disposed &&
       !this.attachmentWorking && !this.pasteWorking && !this.fieldValidationWorking && !this.draftRestoreInput && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown &&
+      !this.rawFork && !this.rawForkWorking && !this.editorBoundary && !this.editorViewRevoked &&
       !this.draftCaptureIncomplete && !this.editorDraft.unknown && this.pending.length === 0 && !this.current()?.deleted &&
       (this.lastDraftField === 'todos' && this.newCardTodos() ? this.todoBusinessReady : this.directInput.canConfirm(this.lastDraftField));
   }
@@ -991,12 +1018,12 @@ struct Index {
   private restoreSelection(name: string): void {
     if (!this.draftSelectionPending.has(name)) { return; }
     const value = copyText(this.draftField(name)), start = value.selection_base, end = value.selection_extent;
-    const draft = this.editorDraft;
+    const draft = this.editorDraft, owner = this.editorViewOwner;
     if (start < 0 || end < 0) { this.draftSelectionPending.delete(name); return; }
     // Do not start a new IME composition or steal focus. The caller already
     // focused this field; native controllers cannot restore the old IME session.
     setTimeout(() => {
-      if (!this.pageAlive || !this.editorOpen || !draft || draft.disposed || this.draftRetiring || this.draftRetirementUnknown || this.editorDraft !== draft) { return; }
+      if (!this.ownsEditorView(owner) || !draft || draft.disposed || this.draftRetiring || this.draftRetirementUnknown || this.editorDraft !== draft) { return; }
       if (!this.draftSelectionPending.has(name)) { return; }
       if (!samePasteTarget(value, this.draftField(name))) { this.draftSelectionPending.delete(name); return; }
       this.draftSelectionPending.delete(name);
@@ -1021,6 +1048,200 @@ struct Index {
     this.draftFocusedFields.clear(); this.draftFocusedFields.add(name); this.restoreSelection(name);
   }
   private blurDraftField(name: string): void { this.draftFocusedFields.delete(name); }
+  private ownsEditorView(owner: string): boolean {
+    return !!owner && owner === this.editorViewOwner && owner === this.attachmentEditorIdentity &&
+      !this.editorViewRevoked && this.pageAlive && this.editorOpen;
+  }
+  private editorLeaseMounted(owner: string): void {
+    if (owner !== this.editorViewOwner || owner !== this.attachmentEditorIdentity || !this.editorViewVisible || !this.editorOpen) { return; }
+    this.editorViewRevoked = false;
+    const resolve = this.editorMountResolve; this.editorMountResolve = undefined;
+    if (resolve) { resolve(true); }
+  }
+  private editorLeaseRevoked(owner: string): void {
+    if (owner !== this.editorViewOwner || this.editorViewRevoked) { return; }
+    // Revoke before resolving the waiter. No cleanup transport is admitted
+    // while a view with this lease can submit another accepted SDK capture.
+    this.editorViewRevoked = true;
+    this.directInput.stop(); this.inputPolicy.stop(); this.fieldPolicy.stop();
+    this.todoDragPosition('', 0, false);
+    const resolve = this.editorDetachResolve; this.editorDetachResolve = undefined;
+    if (resolve) { resolve(); }
+  }
+  private leaseTextChanged(owner: string, name: string, value: string, preview?: PreviewText): void {
+    if (!this.ownsEditorView(owner)) { return; }
+    if (preview?.value.length && (!Number.isInteger(preview.offset) || preview.offset < 0 || preview.offset > value.length)) {
+      this.retirementInput.set(name + ':text', JSON.stringify({ value: value, preview: preview }));
+    }
+    this.editorInputChanged(name, value, preview);
+  }
+  private leaseSelectionChanged(owner: string, name: string, start: number, end: number): void {
+    if (!this.ownsEditorView(owner)) { return; }
+    if (!Number.isInteger(start) || !Number.isInteger(end) || start < -1 || end < -1 ||
+      start > this.draftField(name).text.length || end > this.draftField(name).text.length) {
+      this.leaseUncaptured(owner, name, JSON.stringify({ start: start, end: end })); return;
+    }
+    this.draftSelectionChanged(name, start, end);
+  }
+  private leaseFocusChanged(owner: string, name: string, focused: boolean): void {
+    if (!this.ownsEditorView(owner)) { return; }
+    if (focused) { this.editorFocusIntent++; this.focusDraftField(name); } else { this.blurDraftField(name); }
+  }
+  private leaseTaskRenameChanged(owner: string, task: string, incarnation: string, value: string, preview?: PreviewText): void {
+    if (!this.ownsEditorView(owner) || !incarnation || incarnation !== this.taskRenameOwner || task !== this.taskEditId) { return; }
+    this.taskRenameChanged(value, preview);
+  }
+  private leaseTaskRenameFocus(owner: string, task: string, incarnation: string): void {
+    if (this.ownsEditorView(owner) && incarnation && incarnation === this.taskRenameOwner && task === this.taskEditId) { this.editorFocusIntent++; }
+  }
+  private leaseUncaptured(owner: string, name: string, event: string): void {
+    if (!this.ownsEditorView(owner)) { return; }
+    this.retirementInput.set(name + ':text', event); this.editorInputEpoch++;
+    this.draftCaptureBlocked.add(name); this.draftCaptureIncomplete = true;
+    this.message = '当前事件尚未完整捕获，原事件已保留；草稿清理已停止。';
+  }
+  private async revokeEditorView(draft: EditorDraftCoordinator): Promise<boolean> {
+    const owner = this.editorViewOwner;
+    if (!this.pageAlive || !this.editorOpen || this.editorDraft !== draft || !this.ownsEditorView(owner) || this.editorDetachResolve) { return false; }
+    this.editorBoundaryDraft = draft;
+    const detached = new Promise<void>((resolve: () => void): void => { this.editorDetachResolve = resolve; });
+    this.editorViewVisible = false;
+    await detached;
+    return this.pageAlive && this.editorOpen && this.editorDraft === draft && this.editorViewOwner === owner &&
+      this.editorViewRevoked && !this.editorViewVisible;
+  }
+  private async remountEditorView(draft: EditorDraftCoordinator): Promise<boolean> {
+    if (!this.pageAlive || !this.editorOpen || this.editorDraft !== draft || draft.disposed || !this.editorViewRevoked || this.editorMountResolve) { return false; }
+    // Preserve full TextValues and the original scope; no attachDraft or
+    // string-only reconstruction, and no synthetic end of IME composition.
+    this.title = this.editorValues.title.text; this.description = this.editorValues.description.text;
+    this.hypothesis = this.editorValues.hypothesis.text; this.conclusion = this.editorValues.conclusion.text;
+    this.taskText = this.editorValues.todos.text;
+    this.attachmentEditorIdentity = util.generateRandomUUID(true); this.editorViewOwner = this.attachmentEditorIdentity;
+    const owner = this.editorViewOwner;
+    const mounted = new Promise<boolean>((resolve: (mounted: boolean) => void): void => { this.editorMountResolve = resolve; });
+    this.editorViewRevoked = true; this.editorViewVisible = true; this.editorInputEpoch++;
+    this.draftFocusedFields.clear(); this.draftSelectionPending = new Set(['title', 'description', 'hypothesis', 'conclusion', 'todos']);
+    this.bindInputRules(); this.refreshFieldCounts();
+    return await mounted && this.pageAlive && this.editorDraft === draft && this.ownsEditorView(owner);
+  }
+  private rawForkCurrent(fork: EditorDraftForkCoordinator, parent: EditorDraftCoordinator, owner: string): boolean {
+    return this.pageAlive && this.editorOpen && !this.editorViewRevoked && this.attachmentEditorIdentity === owner &&
+      this.editorViewOwner === owner && this.rawFork === fork && this.rawForkParent === parent && !parent.disposed &&
+      (this.editorDraft === parent || this.editorDraft?.scope.draft_id === fork.scope.draft_id);
+  }
+  private async sendRawDraft(serialized: string): Promise<DraftRecord> {
+    const result = await workbench.send(serialized);
+    if (!result.ok) { throw new DraftSaveFailure(result.effect === 'not_committed', result.error); }
+    if (result.drafts.length !== 1) { throw new Error('草稿回执缺失'); }
+    return result.drafts[0];
+  }
+  private async beginRawFork(): Promise<void> {
+    if (this.rawForkWorking || this.rawFork || this.pending.length > 0 || this.attachmentWorking || this.pasteWorking || this.editorBoundary) { return; }
+    const parent = this.editorDraft, owner = this.attachmentEditorIdentity;
+    if (!parent || parent.disposed || !this.ownsEditorView(owner) || this.draftCaptureIncomplete) { this.message = '完整输入尚未确认，接续未开始。'; return; }
+    const selected = new Set(parent.current.assets.map((asset: AssetSelection): string => asset.asset_id));
+    if (this.attachmentPending || this.pendingSpools.length > 0 || this.importRecords.some((record: ImportRecord): boolean =>
+      record.phase === 'pending' || record.phase === 'unknown' || record.phase === 'ready' && !selected.has(record.asset_id))) {
+      this.rawForkStatus = '尚未加入草稿的附件导入仍归原草稿，请先核对或处理，再接续。'; this.message = this.rawForkStatus; return;
+    }
+    this.rawForkWorking = true; this.rawForkStatus = '正在接续保留完整输入…';
+    try {
+      // Settle an already issued save before freezing its exact parent proof.
+      // Unknown is never reconciled by this call.
+      await parent.ensureConfirmed();
+      if (!this.ownsEditorView(owner) || this.editorDraft !== parent || this.draftCaptureIncomplete || parent.saving || parent.unknown || parent.conflicted) {
+        throw new Error('原草稿或完整输入已变化，接续未开始');
+      }
+      const scope = copyScope(parent.scope); scope.draft_id = util.generateRandomUUID(true);
+      this.rawForkParent = parent; this.rawForkOwner = owner;
+      const fork = new EditorDraftForkCoordinator(parent, scope, parent.current, util.generateRandomUUID(true), {
+        send: (serialized: string): Promise<DraftRecord> => this.sendRawDraft(serialized),
+        changed: (): void => this.draftChanged(), operation: (): string => util.generateRandomUUID(true),
+        isCurrent: (): boolean => this.pageAlive && this.editorOpen && !this.editorViewRevoked &&
+          this.attachmentEditorIdentity === owner && this.editorViewOwner === owner && !parent.disposed &&
+          (this.editorDraft === parent || this.editorDraft?.scope.draft_id === scope.draft_id)
+      });
+      this.rawFork = fork;
+      await fork.begin(); await this.finishRawFork(fork, parent, owner);
+    } catch (error) { this.rawForkFailed(String(error)); }
+    finally { this.rawForkWorking = false; this.draftChanged(); }
+  }
+  private rawForkFailed(error: string): void {
+    const fork = this.rawFork;
+    this.rawForkAction = this.rawForkRetirement ? 'retirement' : fork?.unknown ? 'first' :
+      this.editorDraft !== this.rawForkParent && this.editorDraft?.unknown ? 'child' : fork?.conflicted ? 'conflict' : 'continue';
+    this.rawForkStatus = '接续未完成，原输入与操作仍保留：' + error; this.message = this.rawForkStatus;
+  }
+  private async finishRawFork(fork: EditorDraftForkCoordinator, parent: EditorDraftCoordinator, owner: string, reconcile: boolean = false): Promise<void> {
+    if (!this.rawForkCurrent(fork, parent, owner) || this.draftCaptureIncomplete) { throw new Error('接续的界面归属或完整输入无法确认'); }
+    let child = this.editorDraft;
+    if (child === parent) {
+      child = fork.openChild();
+      this.rawForkRetirement = fork.retirementCommand(util.generateRandomUUID(true));
+      child.update(copyValues(parent.current));
+      // Switch in the same synchronous turn before the first child flush.
+      // Every subsequent accepted callback writes only this live child.
+      this.editorDraft = child; this.editorValues = copyValues(child.current);
+      this.attachmentEditingValues = ''; this.draftChanged();
+    }
+    if (!child || child.scope.draft_id !== fork.scope.draft_id || child.unknown || child.conflicted) { throw new Error('子草稿需显式核对原请求'); }
+    const confirmed = await child.flush();
+    const epoch = this.editorInputEpoch, latest = child.current;
+    if (!confirmed || !this.rawForkCurrent(fork, parent, owner) || this.editorDraft !== child || this.draftCaptureIncomplete ||
+      child.dirty || child.unknown || !sameValues(latest, confirmed.values) || !sameValues(latest, this.editorValues)) {
+      throw new Error('较新的完整输入尚未由子草稿确认');
+    }
+    if (this.editorInputEpoch !== epoch || !sameValues(latest, child.current)) { throw new Error('接续输入已变化'); }
+    await this.retireRawForkParent(fork, parent, child, owner, reconcile);
+  }
+  private async retireRawForkParent(fork: EditorDraftForkCoordinator, parent: EditorDraftCoordinator,
+    child: EditorDraftCoordinator, owner: string, reconcile: boolean): Promise<void> {
+    if (!this.rawForkCurrent(fork, parent, owner) || this.editorDraft !== child || !this.rawForkRetirement ||
+      this.rawForkRetirementUnknown && !reconcile) { throw new Error('父草稿清理需核对原操作'); }
+    const original = this.rawForkRetirement, command = JSON.parse(original) as RawForkRetirementCommand;
+    const proof = fork.parentProof, parentRecord = parent.confirmed!;
+    let result: Reply;
+    try { result = await workbench.send(original); }
+    catch (_) { this.rawForkRetirementUnknown = true; throw new Error('父草稿清理回复未确认'); }
+    if (!result.ok) {
+      if (result.effect !== 'not_committed' || this.rawForkRetirementUnknown) { this.rawForkRetirementUnknown = true; }
+      throw new Error(result.error);
+    }
+    try {
+      if (result.drafts.length !== 1) { throw new Error('父草稿清理回执缺失'); }
+      const record = result.drafts[0]; validateRecord(record, true);
+      if (record.active || record.scope.card_id !== parentRecord.scope.card_id || record.scope.draft_id !== parentRecord.scope.draft_id ||
+        record.scope.source_kind !== parentRecord.scope.source_kind || record.scope.source_revision !== parentRecord.scope.source_revision ||
+        record.scope.source !== parentRecord.scope.source || record.generation !== nextGeneration(proof.parent_generation) ||
+        record.operation_id !== proof.parent_save_operation || record.request_sha256 !== proof.parent_request_sha256 ||
+        !sameValues(record.values, parentRecord.values) || !record.fork_retirement ||
+        record.fork_retirement.child_draft_id !== child.scope.draft_id ||
+        record.fork_retirement.operation_id !== command.fork_retirement.operation_id ||
+        !sameForkLink(record.fork_retirement.fork_link, proof)) { throw new Error('父草稿清理回执不匹配'); }
+      if (!this.rawForkCurrent(fork, parent, owner) || this.editorDraft !== child) { throw new Error('清理结果属于原界面，请从草稿入口核对'); }
+      parent.dispose(); this.rawFork = undefined; this.rawForkParent = undefined; this.rawForkOwner = '';
+      this.rawForkRetirement = ''; this.rawForkRetirementUnknown = false; this.rawForkAction = '';
+      this.draftRecords = this.draftRecords.filter((value: DraftRecord): boolean => value.scope.draft_id !== proof.parent_draft_id);
+      this.rawForkStatus = '接续草稿已建立，较新的输入以草稿确认状态为准。原卡片来源保持不变，请核对后继续处理。'; this.message = this.rawForkStatus;
+      if (record.current_active || record.current_generation !== record.generation) { this.message += '父草稿的当前状态已变化，请从草稿入口核对。'; }
+    } catch (error) { this.rawForkRetirementUnknown = true; throw new Error(String(error)); }
+  }
+  private async retryRawFork(): Promise<void> {
+    const fork = this.rawFork, parent = this.rawForkParent, owner = this.rawForkOwner;
+    if (!fork || !parent || this.rawForkWorking || this.busy || !this.rawForkCurrent(fork, parent, owner)) { return; }
+    this.rawForkWorking = true;
+    try {
+      if (!fork.confirmed && !fork.unknown && !fork.conflicted) {
+        fork.releaseRejectedParent(); this.rawFork = undefined; this.rawForkParent = undefined; this.rawForkOwner = '';
+        this.rawForkAction = ''; this.rawForkWorking = false; await this.beginRawFork(); return;
+      }
+      if (fork.unknown) { await fork.retry(); }
+      else if (this.editorDraft !== parent && this.editorDraft?.unknown) { await this.editorDraft.retry(); }
+      await this.finishRawFork(fork, parent, owner, this.rawForkRetirementUnknown);
+    } catch (error) { this.rawForkFailed(String(error)); }
+    finally { this.rawForkWorking = false; this.draftChanged(); }
+  }
   private attachDraft(card?: CardView, restored?: DraftRecord, preserveFocus: boolean = false): void {
     this.draftRetiredIdentity = ''; this.retirementInput.clear();
     this.fieldPolicy.stop(); this.editorInputEpoch++; this.fieldCountEpochs.clear();
@@ -1028,6 +1249,7 @@ struct Index {
     this.taskRenameValue = new DraftTextValue();
     this.attachmentSelection?.stop(); this.attachmentSelection = undefined;
     this.attachmentEditorIdentity = util.generateRandomUUID(true); this.attachmentEditingValues = '';
+    this.editorViewOwner = this.attachmentEditorIdentity; this.editorViewRevoked = true; this.editorViewVisible = true; this.editorBoundary = '';
     this.attachmentSelectionState = { phase: 'idle', busy: false, total: 0, started: 0, selected: 0, retained: 0, error: '' };
     this.editorDraft?.dispose(); this.draftConflict = false; this.draftStatus = '';
     this.draftSelectionPending = restored ? new Set(['title', 'description', 'hypothesis', 'conclusion', 'todos']) : new Set();
@@ -1080,6 +1302,9 @@ struct Index {
     if (this.draftConflict) { this.message = '原卡片已变化，草稿文字已保留。请查看当前卡片并核对；此草稿不会覆盖新的修订。'; }
   }
   private async flushDraft(): Promise<boolean> {
+    if (this.rawFork && this.editorDraft === this.rawForkParent) {
+      this.message = '接续原请求尚未确认，请使用接续核对入口。'; return false;
+    }
     if (this.draftRetiredIdentity && this.draftRetiredIdentity === this.editorDraft?.scope.draft_id) {
       this.message = '旧草稿已清理，较新的输入仅在当前编辑器中，尚未写入新草稿。'; return false;
     }
@@ -1113,6 +1338,7 @@ struct Index {
   }
   private canImportAttachment(): boolean {
     return this.pageAlive && this.ready && this.editorOpen && !!this.editorDraft && !this.attachmentWorking &&
+      !this.rawFork && !this.rawForkWorking && !this.editorBoundary && !this.editorViewRevoked &&
       !this.pasteWorking && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && !this.attachmentPending &&
       !this.draftConflict && !this.draftCaptureIncomplete && !this.editorDraft?.unknown && this.pending.length === 0;
   }
@@ -1456,13 +1682,50 @@ struct Index {
     }
   }
   private async keepDraftAndClose(): Promise<void> {
-    if (!(await this.flushDraft())) { return; }
-    this.dirty = false; this.editorOpen = false; this.message = this.editorDraft?.confirmed ? '草稿已保留，可从草稿入口继续。' : '';
-    this.editorDraft?.dispose(); this.editorDraft = undefined;
-    this.taskEditId = ''; this.taskRenameText = ''; this.taskText = ''; await this.loadDrafts();
+    const draft = this.editorDraft;
+    if (!draft || this.rawFork || this.editorBoundary || !this.ownsEditorView(this.editorViewOwner)) { return; }
+    this.editorBoundary = 'keep';
+    try {
+      if (!(await this.flushDraft())) { this.editorBoundary = ''; return; }
+      draft.pauseWrites();
+      if (!(await this.revokeEditorView(draft))) { return; }
+      draft.resumeWrites();
+      if (this.draftCaptureIncomplete || !(await this.flushDraft())) { this.editorBoundary = ''; this.remountEditorView(draft); return; }
+      this.dirty = false; this.editorOpen = false; this.message = draft.confirmed ? '已确认的完整输入已保留，可从草稿入口继续。' : '';
+      draft.dispose(); this.editorDraft = undefined; this.editorBoundary = '';
+      this.taskEditId = ''; this.taskRenameText = ''; this.taskText = '';
+      try { await this.loadDrafts(); } catch (_) { this.message = '已确认的完整输入已保留，草稿列表刷新失败，请重新打开核对。'; }
+    } finally { this.draftWorking = false; }
+  }
+  private async closeSavedEditor(expected: DraftValues, epoch: number): Promise<boolean> {
+    const draft = this.editorDraft;
+    if (!draft || this.rawFork || this.editorBoundary || !this.ownsEditorView(this.editorViewOwner)) { return false; }
+    if (this.draftCaptureIncomplete || this.editorInputEpoch !== epoch || !sameValues(draft.current, expected)) {
+      if (!this.draftCaptureIncomplete) { await this.beginRawFork(); } return false;
+    }
+    this.editorBoundary = 'saved'; this.draftWorking = true;
+    try {
+      if (!(await this.flushDraft())) { this.editorBoundary = ''; return false; }
+      draft.pauseWrites();
+      if (!(await this.revokeEditorView(draft))) { return false; }
+      draft.resumeWrites();
+      if (this.draftCaptureIncomplete || this.editorInputEpoch !== epoch || !sameValues(draft.current, expected)) {
+        this.editorBoundary = ''; const remounted = await this.remountEditorView(draft);
+        this.message = '关闭期间有较新的输入，编辑器已保留；正在接续完整草稿。';
+        if (remounted && !this.draftCaptureIncomplete) { await this.beginRawFork(); } return false;
+      }
+      if (!(await this.flushDraft())) { this.editorBoundary = ''; this.remountEditorView(draft); return false; }
+      const retired = await this.retireDraft(expected);
+      if (retired) { this.editorBoundary = ''; return true; }
+      if (!this.draftRetirementUnknown) { this.editorBoundary = ''; this.remountEditorView(draft); }
+      return false;
+    } finally { this.draftWorking = false; }
   }
   private async retireDraft(expected?: DraftValues, reconcile: boolean = false): Promise<boolean> {
     const draft = this.editorDraft, record = draft?.confirmed;
+    if (!this.editorViewRevoked || this.editorViewVisible || this.editorBoundaryDraft !== draft) {
+      this.message = '编辑器尚未撤销，草稿清理未开始。'; return false;
+    }
     if (this.draftRetiredIdentity && this.draftRetiredIdentity === draft?.scope.draft_id) { return false; }
     if (!draft || !record) { this.editorDraft?.dispose(); this.editorDraft = undefined; return true; }
     if (!reconcile && this.draftRetirementUnknown) { return false; }
@@ -1509,16 +1772,29 @@ struct Index {
   }
   private discardDraft(): void {
     if (this.attachmentWorking || this.pasteWorking) { return; }
-    if (this.busy || this.pending.length > 0 || this.draftWorking || this.editorDraft?.unknown) { return; }
+    if (this.busy || this.pending.length > 0 || this.draftWorking || this.editorDraft?.unknown || this.rawFork || this.rawForkWorking || this.editorBoundary) { return; }
     this.getUIContext().showAlertDialog({ title: '放弃这份草稿？', message: '草稿中的文字将被丢弃，已保存卡片保持原样。',
       primaryButton: { value: '继续编辑', action: () => {} }, secondaryButton: { value: '放弃草稿', action: () => this.discardDraftConfirmed() } });
   }
   private async discardDraftConfirmed(): Promise<void> {
-    this.draftRetiring = true;
-    if (!(await this.flushDraft())) { this.draftRetiring = false; return; }
+    const draft = this.editorDraft;
+    if (this.draftCaptureIncomplete) { this.message = '完整输入尚未捕获，放弃未执行。'; return; }
+    if (!draft || this.rawFork || this.editorBoundary || this.pending.length > 0) { return; }
+    this.editorBoundary = 'discard';
     this.draftWorking = true;
     try {
-      if (await this.retireDraft()) { this.dirty = false; this.taskText = ''; this.editorOpen = false; }
+      if (!(await this.flushDraft())) { this.editorBoundary = ''; return; }
+      if (this.editorDraft !== draft || !this.ownsEditorView(this.editorViewOwner)) { return; }
+      draft.pauseWrites();
+      if (!(await this.revokeEditorView(draft))) { return; }
+      if (this.draftCaptureIncomplete) {
+        draft.resumeWrites(); this.editorBoundary = ''; this.remountEditorView(draft);
+        this.message = '关闭期间的输入无法完整确认，放弃未执行；原事件仍保留，请完成输入后重试。'; return;
+      }
+      draft.resumeWrites();
+      if (!(await this.flushDraft())) { this.editorBoundary = ''; this.remountEditorView(draft); return; }
+      if (await this.retireDraft()) { this.dirty = false; this.taskText = ''; this.editorOpen = false; this.editorBoundary = ''; }
+      else if (!this.draftRetirementUnknown && this.editorDraft === draft) { this.editorBoundary = ''; this.remountEditorView(draft); }
     } catch (_) { this.message = '草稿放弃未确认，记录仍保留，请重新读取后核对。'; }
     finally { this.draftWorking = false; this.draftRetiring = false; }
   }
@@ -1532,7 +1808,7 @@ struct Index {
   private async retryDraftRetirement(): Promise<void> {
     if (!this.draftRetirementUnknown || this.draftWorking || this.busy) { return; }
     this.draftWorking = true;
-    try { if (await this.retireDraft(undefined, true)) { this.dirty = false; this.editorOpen = false; } }
+    try { if (await this.retireDraft(undefined, true)) { this.dirty = false; this.editorOpen = false; this.editorBoundary = ''; } }
     finally { this.draftWorking = false; }
   }
   private editorInputChanged(name: string, value: string, preview?: PreviewText): void {
@@ -1578,7 +1854,7 @@ struct Index {
   }
   private async submit(cmd: Command, raw?: DraftValues): Promise<void> {
     if (this.attachmentWorking || this.pasteWorking) { this.message = '文件或粘贴操作尚未完成，请稍候。'; return; }
-    if (this.busy || this.pending.length > 0 || this.draftWorking || this.fieldValidationWorking || this.draftRetirementUnknown) { return; }
+    if (this.busy || this.pending.length > 0 || this.draftWorking || this.fieldValidationWorking || this.draftRetirementUnknown || this.rawFork || this.rawForkWorking || this.editorBoundary) { return; }
     if (this.taskEditId.length > 0 && cmd.action !== 'task_rename') { this.message = '请先保存或取消待办重命名'; return; }
     if (!this.inputReadyFor(cmd.action)) { this.message = '输入规则尚未确认，请完成输入或重新检查；原始草稿仍可保留。'; return; }
     const draft = this.editorDraft, editor = this.attachmentEditorIdentity, inputEpoch = this.editorInputEpoch;
@@ -1666,11 +1942,14 @@ struct Index {
       if ((cmd.action === 'create' || cmd.action === 'edit') && !this.dirty && consumedInput) {
         // A business receipt does not certify later raw input. Retire only the
         // exact latest confirmed draft; otherwise keep the independent draft.
-        if (await this.flushDraft() && await this.retireDraft(completionValues)) { this.editorOpen = false; }
+        if (completionValues && await this.closeSavedEditor(completionValues, this.submittedInputEpoch)) { this.editorOpen = false; }
       } else if (this.editorOpen && !this.dirty && consumedInput && this.taskEditId.length === 0) {
-        // Each confirmed business revision starts a distinct source-bound raw
-        // draft. Retire the old slot only after its latest input is durable.
-        if (await this.flushDraft() && await this.retireDraft(completionValues)) { this.attachDraft(this.current(), undefined, true); }
+        // Preserve the original source bytes. A business-source continuation
+        // is a separate contract, never a string-only attachDraft rebase.
+        if (this.submittedDraft === this.editorDraft && this.submittedEditor === this.attachmentEditorIdentity) { await this.beginRawFork(); }
+      } else if ((cmd.action === 'create' || cmd.action === 'edit') && this.editorOpen && !this.draftCaptureIncomplete &&
+        this.submittedDraft === this.editorDraft && this.submittedEditor === this.attachmentEditorIdentity) {
+        await this.beginRawFork();
       }
       const draft = this.editorOpen ? this.editorDraft : undefined;
       if (draft) {
@@ -1724,12 +2003,13 @@ struct Index {
     this.submit(cmd);
   }
   private canEditTasks(): boolean {
-    return this.ready && !this.attachmentWorking && !this.pasteWorking && !this.fieldValidationWorking && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.editorDraft?.unknown && this.pending.length === 0 &&
+    return this.ready && !this.rawFork && !this.rawForkWorking && !this.editorBoundary && !this.editorViewRevoked && !this.attachmentWorking && !this.pasteWorking && !this.fieldValidationWorking && !this.busy && !this.draftWorking && !this.draftConflict && !this.draftCaptureIncomplete && !this.editorDraft?.unknown && this.pending.length === 0 &&
       !!this.current() && !this.current()?.deleted && !this.dirty && this.taskEditId.length === 0;
   }
   private renameTask(task: TaskView): void {
     if (!this.canEditTasks()) { return; }
     this.taskEditId = task.id; this.taskRenameText = task.text; this.taskRenameValue = new DraftTextValue();
+    this.taskRenameOwner = util.generateRandomUUID(true);
     this.taskRenameValue.text = task.text; this.editorInputEpoch++; this.refreshFieldCount('taskRename');
     const revision = (this.inputRevisions.get('taskRename') ?? 0) + 1; this.inputRevisions.set('taskRename', revision);
     this.directInput.bind('taskRename', 'todos', this.directOwner('taskRename'), revision, copyText(this.taskRenameValue));
@@ -2073,7 +2353,7 @@ struct Index {
   }
   private closeEditor(): void {
     if (this.attachmentWorking || this.pasteWorking) { this.message = '文件或粘贴操作尚未完成，请稍候。'; return; }
-    if (this.busy || this.pending.length > 0 || this.draftWorking || this.draftRetirementUnknown) { this.message = '操作尚未确认，当前输入已保留。'; return; }
+    if (this.busy || this.pending.length > 0 || this.draftWorking || this.draftRetirementUnknown || this.rawFork || this.rawForkWorking || this.editorBoundary) { this.message = '操作尚未确认，当前输入已保留。'; return; }
     if (this.taskEditId.length > 0) { this.message = '请先保存或取消待办重命名'; return; }
     this.keepDraftAndClose();
   }
@@ -3017,14 +3297,14 @@ struct Index {
     }.height(250).width('100%').scrollBar(BarState.Off).align(Alignment.TopStart).id('markdown-preview')
   }
   @Builder
-  BodyInput() {
+  BodyInput(owner: string) {
     TextArea({ text: this.description, placeholder: this.t('写下思路，或粘贴一段内容…'), controller: this.descriptionController })
       .fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).placeholderFont({ size: 13 }).fontColor(this.ink()).placeholderColor(this.muted())
       .backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() }).borderRadius(this.round(12)).height(180)
       .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-description')
-      .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('description', s, preview))
-      .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('description', start, end))
-      .onFocus(() => this.focusDraftField('description')).onBlur(() => this.blurDraftField('description'))
+      .onChange((s: string, preview?: PreviewText) => this.leaseTextChanged(owner, 'description', s, preview))
+      .onTextSelectionChange((start: number, end: number) => this.leaseSelectionChanged(owner, 'description', start, end))
+      .onFocus(() => this.leaseFocusChanged(owner, 'description', true)).onBlur(() => this.leaseFocusChanged(owner, 'description', false))
     this.FieldCounter('description')
   }
   @Builder
@@ -3139,7 +3419,7 @@ struct Index {
     }.width('100%')
   }
   @Builder
-  Editor() {
+  Editor(owner: string) {
     Column() {
       Row({ space: 12 }) {
         Row() { this.Glyph(() => 0xeea9,  21, () => this.accent()) }.width(38).height(38).justifyContent(FlexAlign.Center)
@@ -3160,9 +3440,9 @@ struct Index {
             .fontColor(this.ink()).placeholderColor(this.muted()).backgroundColor(Color.Transparent).padding(16).height(64)
             .border({ width: 1, color: this.accent() }).borderRadius(this.round(12))
             .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-title')
-            .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('title', s, preview))
-            .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('title', start, end))
-            .onFocus(() => this.focusDraftField('title')).onBlur(() => this.blurDraftField('title'))
+            .onChange((s: string, preview?: PreviewText) => this.leaseTextChanged(owner, 'title', s, preview))
+            .onTextSelectionChange((start: number, end: number) => this.leaseSelectionChanged(owner, 'title', start, end))
+            .onFocus(() => this.leaseFocusChanged(owner, 'title', true)).onBlur(() => this.leaseFocusChanged(owner, 'title', false))
           this.FieldCounter('title')
           Row({ space: 8 }) {
             PasteButton({ icon: PasteIconStyle.LINES, text: PasteDescription.PASTE, buttonType: ButtonType.Normal })
@@ -3189,11 +3469,11 @@ struct Index {
             Divider().color(this.line())
             if (this.previewBody && Math.min(820, this.viewportWidth - 40) - 80 >= 590) {
               Row({ space: 24 }) {
-                Column() { this.BodyInput() }.layoutWeight(1)
+                Column() { this.BodyInput(owner) }.layoutWeight(1)
                 Column() { this.BodyPreview() }.layoutWeight(1)
               }.width('100%').alignItems(VerticalAlign.Top).id('draft-body-split')
             } else if (this.previewBody) { this.BodyPreview() }
-            else { this.BodyInput() }
+            else { this.BodyInput(owner) }
           }.padding(16).width('100%').backgroundColor('#077662BA').borderRadius(this.round(16)).border({ width: this.styleEdgeWidth(), color: this.line() })
           Row({ space: 12 }) {
             Text(this.t('放在哪里')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted())
@@ -3201,7 +3481,7 @@ struct Index {
               .font({ size: 12 }).fontColor(this.ink()).backgroundColor('#147662BA').borderRadius(this.round(10))
               .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
               .onSelect((_: number, value: string) => {
-                if (this.pasteWorking || this.draftWorking || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
+                if (!this.ownsEditorView(owner) || this.rawFork || this.rawForkWorking || this.editorBoundary || this.pasteWorking || this.draftWorking || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
                 if (!this.current()) {
                   this.editorInputEpoch++; this.category = value; this.dirty = true; this.editorValues.category = value;
                   this.editorValues.stage = value === '进行中' ? '计划中' : value === '实验' ? '待验证' : '待整理';
@@ -3216,7 +3496,7 @@ struct Index {
               Select(this.stages()).value(this.current()?.stage ?? '待整理').font({ size: 11 }).fontColor(this.muted()).backgroundColor(Color.Transparent)
                 .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
                 .onSelect((_: number, value: string) => {
-                  if (this.pasteWorking || this.draftWorking || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
+                  if (!this.ownsEditorView(owner) || this.rawFork || this.rawForkWorking || this.editorBoundary || this.pasteWorking || this.draftWorking || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
                   if (this.dirty) { this.message = '请先保存正文编辑'; return; }
                   const cmd = this.command('stage'); cmd.stage = value; this.submit(cmd);
                 })
@@ -3225,38 +3505,36 @@ struct Index {
           if (this.category === '实验') {
             TextArea({ text: this.hypothesis, placeholder: this.t('假设'), controller: this.hypothesisController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).height(96)
               .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-hypothesis')
-              .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('hypothesis', s, preview))
-              .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('hypothesis', start, end)).onFocus(() => this.focusDraftField('hypothesis')).onBlur(() => this.blurDraftField('hypothesis'))
+              .onChange((s: string, preview?: PreviewText) => this.leaseTextChanged(owner, 'hypothesis', s, preview))
+              .onTextSelectionChange((start: number, end: number) => this.leaseSelectionChanged(owner, 'hypothesis', start, end)).onFocus(() => this.leaseFocusChanged(owner, 'hypothesis', true)).onBlur(() => this.leaseFocusChanged(owner, 'hypothesis', false))
             this.FieldCounter('hypothesis')
             TextArea({ text: this.conclusion, placeholder: this.t('结论'), controller: this.conclusionController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).height(116)
               .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-conclusion')
-              .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('conclusion', s, preview))
-              .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('conclusion', start, end)).onFocus(() => this.focusDraftField('conclusion')).onBlur(() => this.blurDraftField('conclusion'))
+              .onChange((s: string, preview?: PreviewText) => this.leaseTextChanged(owner, 'conclusion', s, preview))
+              .onTextSelectionChange((start: number, end: number) => this.leaseSelectionChanged(owner, 'conclusion', start, end)).onFocus(() => this.leaseFocusChanged(owner, 'conclusion', true)).onBlur(() => this.leaseFocusChanged(owner, 'conclusion', false))
             this.FieldCounter('conclusion')
           }
           if (this.newCardTodos()) {
-            EditorTodos({ ownerKey: this.attachmentEditorIdentity, revision: this.todoInputRevision, source: this.todoInputValue,
+            EditorTodos({ ownerKey: owner, revision: this.todoInputRevision, source: this.todoInputValue, focusIntent: this.editorFocusIntent,
               editingEnabled: !this.attachmentWorking && !this.pasteWorking && !this.draftRestoreInput && !this.draftRetiring && !this.draftRetirementUnknown,
               title: this.t('待办事项'), ink: this.ink(), muted: this.muted(), accent: this.accent(), surface: this.glass(),
               line: this.line(), radius: this.round(12), family: this.fontFamily || 'HarmonyOS Sans', locale: this.locale, controlInk: this.muted(),
-              onCapture: (value: DraftTextValue, owner: string): number | undefined => this.captureTodoRows(value, owner),
-              isCurrent: (owner: string, revision: number, value: DraftTextValue): boolean => this.todoRowsCurrent(owner, revision, value),
+              onCapture: (value: DraftTextValue, owner: string): number | undefined => this.ownsEditorView(owner) ? this.captureTodoRows(value, owner) : undefined,
+              isCurrent: (owner: string, revision: number, value: DraftTextValue): boolean => this.ownsEditorView(owner) && this.todoRowsCurrent(owner, revision, value),
               count: async (text: string, owned: () => boolean): Promise<number> => {
                 const count = await this.fieldPolicy.checkField('todos', text, owned);
                 if (count.grapheme_count < 0) { throw new Error(count.error); } return count.grapheme_count;
               },
               format: (oldValue: DraftTextValue, newValue: DraftTextValue, remaining: number, owned: () => boolean) => this.inputPolicy.format('todos', oldValue, newValue, owned, remaining),
-              onStatus: (status: EditorTodosStatus): void => this.todoRowsStatus(status),
+              onStatus: (status: EditorTodosStatus): void => { if (this.ownsEditorView(status.owner)) { this.todoRowsStatus(status); } },
               onUncaptured: (owner: string, _row: string, event: string): void => {
-                if (this.pageAlive && this.editorOpen && this.editorDraft && owner === this.attachmentEditorIdentity) {
-                  this.retirementCapture('todos', event);
-                }
+                this.leaseUncaptured(owner, 'todos', event);
               },
               onRowFocused: (owner: string, _row: string): void => {
-                if (owner === this.attachmentEditorIdentity) { this.lastDraftField = 'todos'; this.draftFocusedFields.clear(); this.draftFocusedFields.add('todos'); }
+                if (this.ownsEditorView(owner)) { this.editorFocusIntent++; this.lastDraftField = 'todos'; this.draftFocusedFields.clear(); this.draftFocusedFields.add('todos'); }
               },
-              onRevealRow: (owner: string, _row: string, element: string): void => this.revealTodoRow(owner, element),
-              onDragPosition: (owner: string, y: number, active: boolean): void => this.todoDragPosition(owner, y, active)
+              onRevealRow: (owner: string, _row: string, element: string): void => { if (this.ownsEditorView(owner)) { this.revealTodoRow(owner, element); } },
+              onDragPosition: (owner: string, y: number, active: boolean): void => { if (this.ownsEditorView(owner)) { this.todoDragPosition(owner, y, active); } }
             })
           } else if (this.current()) {
             Divider().color(this.line())
@@ -3280,10 +3558,12 @@ struct Index {
                   ])
               }.width('100%')
               if (this.taskEditId === task.id) {
+                ForEach([this.taskRenameOwner], (renameOwner: string) => {
                 Column({ space: 8 }) {
                   TextInput({ text: this.taskRenameText, placeholder: this.t('重命名'), controller: this.taskRenameController }).fontFamily(this.fontFamily || 'HarmonyOS Sans')
                     .fontSize(12).fontColor(this.ink()).backgroundColor(this.glass())
-                    .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && this.pending.length === 0).onChange((s: string, preview?: PreviewText) => this.taskRenameChanged(s, preview))
+                    .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && this.pending.length === 0).onChange((s: string, preview?: PreviewText) => this.leaseTaskRenameChanged(owner, task.id, renameOwner, s, preview))
+                    .onFocus(() => this.leaseTaskRenameFocus(owner, task.id, renameOwner))
                   this.FieldCounter('taskRename')
                   Row({ space: 8 }) {
                     Blank()
@@ -3294,14 +3574,15 @@ struct Index {
                       .onClick(() => this.mutate('task_rename', task))
                   }.width('100%')
                 }.width('100%').padding({ left: 40, bottom: 8 })
+                }, (renameOwner: string): string => renameOwner)
               }
             }, (task: TaskView) => task.id + ':' + task.completion.toString() + ':' + task.text)
             if (!this.current()?.deleted) {
               Row({ space: 8 }) {
                 TextInput({ text: this.taskText, placeholder: this.t('添加一个小步骤…'), controller: this.taskController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass())
                   .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-todos')
-                  .onChange((s: string, preview?: PreviewText) => this.editorInputChanged('todos', s, preview))
-                  .onTextSelectionChange((start: number, end: number) => this.draftSelectionChanged('todos', start, end)).onFocus(() => this.focusDraftField('todos')).onBlur(() => this.blurDraftField('todos')).layoutWeight(1)
+              .onChange((s: string, preview?: PreviewText) => this.leaseTextChanged(owner, 'todos', s, preview))
+                  .onTextSelectionChange((start: number, end: number) => this.leaseSelectionChanged(owner, 'todos', start, end)).onFocus(() => this.leaseFocusChanged(owner, 'todos', true)).onBlur(() => this.leaseFocusChanged(owner, 'todos', false)).layoutWeight(1)
                 Button(this.t('+'), { type: ButtonType.Normal }).fontSize(21).fontColor(this.accent()).width(36).height(36).padding(0).backgroundColor('#147662BA').borderRadius(10)
                   .onClick(() => this.mutate('task_add')).enabled(this.canEditTasks())
               }
@@ -3338,6 +3619,15 @@ struct Index {
       if (this.draftRetirementUnknown) {
         Button('核对草稿清理', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
           .enabled(!this.pasteWorking && !this.attachmentWorking && !this.draftWorking && !this.busy).onClick(() => this.retryDraftRetirement())
+      }
+      if (this.rawForkStatus) {
+        Row() {
+          Text(this.rawForkStatus).fontSize(10).fontColor(this.muted()).layoutWeight(1)
+          if (this.rawForkAction && this.rawForkAction !== 'conflict') {
+            Button('核对接续', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+              .enabled(!this.rawForkWorking && !this.busy).onClick(() => this.rawFork ? this.retryRawFork() : this.beginRawFork())
+          }
+        }.width('100%').padding({ left: 24, right: 24, bottom: 8 })
       }
       Divider().color(this.line())
       Row({ space: 12 }) {
@@ -3395,7 +3685,20 @@ struct Index {
       } else if (this.editorOpen) {
         Stack() {
           Rect().width('100%').height('100%').fill('#40302D43').onClick(() => this.closeEditor())
-          this.Editor()
+          if (this.editorViewVisible) {
+            ForEach([this.editorViewOwner], (owner: string) => {
+              EditorViewLease({ owner: owner, content: (lease: string): void => { this.Editor(lease); },
+                onMounted: (lease: string): void => this.editorLeaseMounted(lease),
+                onRevoked: (lease: string): void => this.editorLeaseRevoked(lease) })
+            }, (owner: string): string => owner)
+          } else {
+            Column({ space: 12 }) {
+              Text(this.draftRetirementUnknown ? '草稿清理尚未确认，原操作已保留。' : '正在确认编辑器关闭边界…').fontColor(this.ink())
+              if (this.draftRetirementUnknown) {
+                Button('核对草稿清理').enabled(!this.draftWorking && !this.busy).onClick(() => this.retryDraftRetirement())
+              }
+            }.padding(24).backgroundColor(this.surface()).borderRadius(this.round(20))
+          }
         }.width('100%').height('100%')
       } else if (this.detailId) {
         Stack() {

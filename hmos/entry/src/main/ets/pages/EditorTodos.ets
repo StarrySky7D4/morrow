@@ -24,6 +24,7 @@ export struct EditorTodos {
   @Prop @Watch('sourceChanged') revision: number = 0;
   @Prop @Watch('sourceChanged') source: TextValue = new TextValue();
   @Prop @Watch('availabilityChanged') editingEnabled: boolean = true;
+  @Prop @Watch('focusIntentChanged') focusIntent: number = 0;
   @Prop title: string = '待办';
   @Prop ink: string = '#302D43';
   @Prop muted: string = '#81798F';
@@ -52,6 +53,12 @@ export struct EditorTodos {
   private serial: number = 0;
   private drag: EditorTodoDrag | undefined = undefined;
   private areas: Map<string, TodoRowArea> = new Map<string, TodoRowArea>();
+  private focusTicket: EditorTodoTicket | undefined = undefined;
+  private focusTimer: number = -1;
+  private focusAttempt: number = 0;
+  private focusRevealed: boolean = false;
+  private focusIntentEpoch: number = 0;
+  private focusRequestIntent: number = 0;
   private model: EditorTodosDraft = new EditorTodosDraft({
     capture: (value: TextValue, owner: string): number | undefined => this.alive && this.editingEnabled && owner === this.ownerKey ? this.onCapture(value, owner) : undefined,
     isCurrent: (owner: string, revision: number, value: TextValue): boolean => this.alive && this.editingEnabled && owner === this.ownerKey && this.isCurrent(owner, revision, value),
@@ -63,11 +70,11 @@ export struct EditorTodos {
   });
 
   aboutToAppear(): void { this.alive = true; this.sourceChanged(); }
-  aboutToDisappear(): void { this.finishDrag(); this.alive = false; this.areas.clear(); this.model.stop(); }
+  aboutToDisappear(): void { this.focusIntentChanged(); this.finishDrag(); this.alive = false; this.areas.clear(); this.model.stop(); }
   private t(value: string): string { return uiText(value, this.locale); }
   private sourceChanged(): void {
     if (!this.alive || !this.ownerKey) { return; }
-    if (this.state.owner !== this.ownerKey) { this.finishDrag(); this.areas.clear(); }
+    if (this.state.owner !== this.ownerKey) { this.focusIntentChanged(); this.finishDrag(); this.areas.clear(); }
     try { this.model.bind(this.ownerKey, this.revision, copyText(this.source)); if (!this.editingEnabled) { this.model.stop(); } }
     catch (error) {
       // Do not borrow a previous owner's status when this source cannot bind.
@@ -76,7 +83,8 @@ export struct EditorTodos {
       status.capture_error = String(error); this.onStatus(status);
     }
   }
-  private availabilityChanged(): void { if (this.editingEnabled) { this.sourceChanged(); } else { this.finishDrag(); this.model.stop(); } }
+  private availabilityChanged(): void { if (this.editingEnabled) { this.sourceChanged(); } else { this.focusIntentChanged(); this.finishDrag(); this.model.stop(); } }
+  private focusIntentChanged(): void { this.focusIntentEpoch++; this.cancelFocus(); }
   private syncView(): void {
     if (!this.alive) { return; }
     this.state = this.model.view(); this.renderRevision++;
@@ -109,22 +117,50 @@ export struct EditorTodos {
   }
   private focusFor(ticket: EditorTodoTicket): void {
     if (!this.owns(ticket)) { return; }
+    this.focusIntentChanged();
     this.model.focus(ticket); this.onRowFocused(ticket.owner, ticket.id);
   }
   private async addRow(): Promise<void> {
     const owner: string = this.state.owner;
+    this.focusIntentChanged();
+    const epoch: number = this.focusIntentEpoch, intent: number = this.focusIntent;
     try {
       const id: string | undefined = await this.model.add();
-      if (!id || !this.alive || owner !== this.ownerKey) { return; }
+      if (!id || !this.alive || owner !== this.ownerKey || epoch !== this.focusIntentEpoch || intent !== this.focusIntent) { return; }
       const ticket = this.model.ticket(id);
-      this.onRevealRow(owner, id, this.element(id, owner));
-      setTimeout((): void => {
-        if (this.owns(ticket)) { this.getUIContext().getFocusController().requestFocus(this.element(id, owner)); }
-      }, 0);
+      // A completed model Add is not proof that ArkUI has mounted its field.
+      // Wait for that row's measured area, reveal it, then focus in a later frame.
+      this.cancelFocus(); this.focusTicket = ticket; this.focusRequestIntent = intent; this.focusAttempt = 0; this.queueFocus();
     } catch (error) {
       // A failed nonmutating Add count is not a missing raw capture or a
       // failed formatter for the current text. Parent still validates save.
       if (this.alive && owner === this.ownerKey) { this.state.error = String(error); }
+    }
+  }
+  private cancelFocus(): void {
+    if (this.focusTimer !== -1) { clearTimeout(this.focusTimer); }
+    this.focusTimer = -1; this.focusTicket = undefined; this.focusAttempt = 0; this.focusRevealed = false;
+  }
+  private queueFocus(): void {
+    if (!this.focusTicket || this.focusTimer !== -1) { return; }
+    this.focusTimer = setTimeout((): void => { this.focusTimer = -1; this.focusAddedRow(); }, 32);
+  }
+  private focusAddedRow(): void {
+    const ticket = this.focusTicket;
+    if (!ticket || !this.owns(ticket) || this.focusRequestIntent !== this.focusIntent) { this.cancelFocus(); return; }
+    if (++this.focusAttempt > 12) { this.cancelFocus(); return; }
+    const area = this.areas.get(ticket.id);
+    if (!area || area.incarnation !== ticket.incarnation) { this.queueFocus(); return; }
+    const element = this.element(ticket.id, ticket.owner);
+    if (!this.focusRevealed || this.focusAttempt % 3 === 0) {
+      this.focusRevealed = true; this.onRevealRow(ticket.owner, ticket.id, element); this.queueFocus(); return;
+    }
+    try {
+      this.getUIContext().getFocusController().requestFocus(element); this.cancelFocus();
+    } catch (_) {
+      // API26 throws 150003 for a not-yet-mounted, clipped or disabled field.
+      // It is a presentation delay: do not lose the row or terminate the app.
+      this.queueFocus();
     }
   }
   private removeFor(ticket: EditorTodoTicket): void { if (this.owns(ticket)) { this.model.remove(ticket); } }
@@ -145,7 +181,8 @@ export struct EditorTodos {
     if (Number.isFinite(y)) { this.onDragPosition(drag.owner, y, true); }
   }
   private areaFor(ticket: EditorTodoTicket, area: Area): void {
-    if (!this.owns(ticket) || typeof area.globalPosition.y !== 'number' || typeof area.height !== 'number' ||
+    if (!this.owns(ticket)) { return; }
+    if (typeof area.globalPosition.y !== 'number' || typeof area.height !== 'number' ||
       !Number.isFinite(area.globalPosition.y) || !Number.isFinite(area.height) || area.height <= 0) { this.areas.delete(ticket.id); return; }
     const result = new TodoRowArea(); result.incarnation = ticket.incarnation; result.top = area.globalPosition.y; result.height = area.height;
     this.areas.set(ticket.id, result);

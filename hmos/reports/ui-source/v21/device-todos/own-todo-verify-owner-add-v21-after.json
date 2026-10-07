@@ -1,0 +1,1311 @@
+[
+  {
+    "type": "",
+    "text": "",
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "hitTestBehavior": "",
+    "opacity": 0,
+    "enabled": "",
+    "children": [
+      {
+        "type": "WindowScene",
+        "id": "session11",
+        "text": "",
+        "bounds": [
+          0,
+          117,
+          1320,
+          2232
+        ],
+        "hitTestBehavior": "Default",
+        "opacity": 1,
+        "visible": "true",
+        "enabled": "true",
+        "children": [
+          {
+            "type": "EffectComponent",
+            "id": "SCBDesktop_Image_container",
+            "text": "",
+            "bounds": [
+              0,
+              117,
+              1320,
+              2232
+            ],
+            "hitTestBehavior": "Default",
+            "opacity": 1,
+            "visible": "true",
+            "enabled": "true",
+            "children": [
+              {
+                "type": "Stack",
+                "text": "",
+                "bounds": [
+                  0,
+                  117,
+                  1320,
+                  2232
+                ],
+                "hitTestBehavior": "Default",
+                "opacity": 1,
+                "visible": "true",
+                "enabled": "true",
+                "children": [
+                  {
+                    "type": "Flex",
+                    "id": "SCBDesktop_Flex_Desktop",
+                    "text": "",
+                    "bounds": [
+                      0,
+                      117,
+                      1320,
+                      2232
+                    ],
+                    "hitTestBehavior": "Default",
+                    "opacity": 1,
+                    "visible": "true",
+                    "enabled": "true",
+                    "children": [
+                      {
+                        "type": "Column",
+                        "id": "SCBDesktop_Column_PageDesktopLayout",
+                        "text": "",
+                        "bounds": [
+                          0,
+                          117,
+                          1320,
+                          1908
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": [
+                          {
+                            "type": "__Common__",
+                            "text": "",
+                            "bounds": [
+                              0,
+                              117,
+                              1320,
+                              1908
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "Stack",
+                                "id": "GridSwiper_stack_snap",
+                                "text": "",
+                                "bounds": [
+                                  0,
+                                  117,
+                                  1320,
+                                  1908
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": [
+                                  {
+                                    "type": "Swiper",
+                                    "id": "GridSwiper_Stack_Swiper",
+                                    "text": "",
+                                    "bounds": [
+                                      0,
+                                      117,
+                                      1320,
+                                      1908
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": [
+                                      {
+                                        "type": "Stack",
+                                        "text": "",
+                                        "bounds": [
+                                          0,
+                                          117,
+                                          1320,
+                                          1908
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": [
+                                          {
+                                            "type": "Stack",
+                                            "text": "",
+                                            "bounds": [
+                                              0,
+                                              117,
+                                              1320,
+                                              1908
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": [
+                                              {
+                                                "type": "Grid",
+                                                "id": "SwiperPage_Grid_WorkSpace_1",
+                                                "text": "",
+                                                "bounds": [
+                                                  43,
+                                                  204,
+                                                  1277,
+                                                  1746
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": [
+                                                  {
+                                                    "type": "GridItem",
+                                                    "id": "SwiperPage_GridItem_[com.ohos.contacts___218103811___0,1]",
+                                                    "text": "",
+                                                    "bounds": [
+                                                      43,
+                                                      204,
+                                                      351,
+                                                      512
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": [
+                                                      {
+                                                        "type": "RelativeContainer",
+                                                        "id": "Container_AppIcon_Image_com.ohos.contactscom.ohos.contacts.EntryAbilityentry0_undefined_0",
+                                                        "text": "",
+                                                        "bounds": [
+                                                          43,
+                                                          204,
+                                                          351,
+                                                          512
+                                                        ],
+                                                        "hitTestBehavior": "Default",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": [
+                                                          {
+                                                            "type": "Image",
+                                                            "id": "AppIcon_Image_com.ohos.contactscom.ohos.contacts.EntryAbilityentry0_undefined_0",
+                                                            "text": "",
+                                                            "bounds": [
+                                                              110,
+                                                              229,
+                                                              284,
+                                                              403
+                                                            ],
+                                                            "hitTestBehavior": "Default",
+                                                            "opacity": 1,
+                                                            "visible": "true",
+                                                            "enabled": "true",
+                                                            "children": []
+                                                          },
+                                                          {
+                                                            "type": "Text",
+                                                            "id": "2d54695f-8da5-4808-a62f-d6afdab7dd58",
+                                                            "text": "联系人",
+                                                            "bounds": [
+                                                              131,
+                                                              413,
+                                                              264,
+                                                              455
+                                                            ],
+                                                            "hitTestBehavior": "Default",
+                                                            "opacity": 1,
+                                                            "visible": "true",
+                                                            "enabled": "true",
+                                                            "children": []
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "type": "GridItem",
+                                                    "id": "SwiperPage_GridItem_[dev.morrow.hmos___16777219___0,1]",
+                                                    "text": "",
+                                                    "bounds": [
+                                                      351,
+                                                      204,
+                                                      660,
+                                                      512
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": [
+                                                      {
+                                                        "type": "RelativeContainer",
+                                                        "id": "Container_AppIcon_Image_dev.morrow.hmosEntryAbilityentry0_undefined_0",
+                                                        "text": "",
+                                                        "bounds": [
+                                                          351,
+                                                          204,
+                                                          659,
+                                                          512
+                                                        ],
+                                                        "hitTestBehavior": "Default",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": [
+                                                          {
+                                                            "type": "Image",
+                                                            "id": "AppIcon_Image_dev.morrow.hmosEntryAbilityentry0_undefined_0",
+                                                            "text": "",
+                                                            "bounds": [
+                                                              418,
+                                                              229,
+                                                              592,
+                                                              403
+                                                            ],
+                                                            "hitTestBehavior": "Default",
+                                                            "opacity": 1,
+                                                            "visible": "true",
+                                                            "enabled": "true",
+                                                            "children": []
+                                                          },
+                                                          {
+                                                            "type": "Text",
+                                                            "id": "921db4be-d495-4536-ae24-fab55d9a2681",
+                                                            "text": "Morrow",
+                                                            "bounds": [
+                                                              429,
+                                                              413,
+                                                              581,
+                                                              455
+                                                            ],
+                                                            "hitTestBehavior": "Default",
+                                                            "opacity": 1,
+                                                            "visible": "true",
+                                                            "enabled": "true",
+                                                            "children": []
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "__Common__",
+                                    "text": "",
+                                    "bounds": [
+                                      609,
+                                      1821,
+                                      711,
+                                      1845
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": [
+                                      {
+                                        "type": "Stack",
+                                        "id": "SwiperIndicator_indicator",
+                                        "text": "",
+                                        "bounds": [
+                                          609,
+                                          1821,
+                                          711,
+                                          1845
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": [
+                                          {
+                                            "type": "Row",
+                                            "text": "",
+                                            "bounds": [
+                                              609,
+                                              1821,
+                                              711,
+                                              1845
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": [
+                                              {
+                                                "type": "Image",
+                                                "id": "SwiperIndicator_ic_negative_screen_indicator",
+                                                "text": "",
+                                                "bounds": [
+                                                  609,
+                                                  1821,
+                                                  627,
+                                                  1845
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": []
+                                              },
+                                              {
+                                                "type": "Stack",
+                                                "text": "",
+                                                "bounds": [
+                                                  651,
+                                                  1824,
+                                                  669,
+                                                  1842
+                                                ],
+                                                "hitTestBehavior": "Transparent",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": []
+                                              },
+                                              {
+                                                "type": "Stack",
+                                                "text": "",
+                                                "bounds": [
+                                                  693,
+                                                  1824,
+                                                  711,
+                                                  1842
+                                                ],
+                                                "hitTestBehavior": "Transparent",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": []
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "type": "Stack",
+                                            "text": "",
+                                            "bounds": [
+                                              684,
+                                              1824,
+                                              720,
+                                              1842
+                                            ],
+                                            "hitTestBehavior": "Transparent",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": []
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Column",
+                        "id": "SCBDesktop_Column_smartDock",
+                        "text": "",
+                        "bounds": [
+                          0,
+                          1908,
+                          1320,
+                          2232
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": [
+                          {
+                            "type": "Row",
+                            "text": "",
+                            "bounds": [
+                              0,
+                              1908,
+                              1320,
+                              2232
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "Stack",
+                                "id": "ResidentLayout",
+                                "text": "",
+                                "bounds": [
+                                  0,
+                                  1908,
+                                  1320,
+                                  2154
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": [
+                                  {
+                                    "type": "Column",
+                                    "id": "SmartDock_V_ResidentLayout_Rect_placeholder",
+                                    "text": "",
+                                    "bounds": [
+                                      573,
+                                      1944,
+                                      747,
+                                      2118
+                                    ],
+                                    "hitTestBehavior": "None",
+                                    "opacity": 0,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": []
+                                  },
+                                  {
+                                    "type": "List",
+                                    "text": "",
+                                    "bounds": [
+                                      0,
+                                      1908,
+                                      1320,
+                                      2154
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": [
+                                      {
+                                        "type": "ListItem",
+                                        "id": "ResidentLayout_AppItem_com.ohos.contactscom.ohos.contacts.MainAbility_Wrap",
+                                        "text": "",
+                                        "bounds": [
+                                          418,
+                                          1944,
+                                          592,
+                                          2118
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": [
+                                          {
+                                            "type": "ListItem",
+                                            "id": "ResidentLayout_AppItem_com.ohos.contactscom.ohos.contacts.MainAbility",
+                                            "text": "",
+                                            "bounds": [
+                                              418,
+                                              1944,
+                                              592,
+                                              2118
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": [
+                                              {
+                                                "type": "RelativeContainer",
+                                                "id": "Container_AppIcon_Image_com.ohos.contactscom.ohos.contacts.MainAbilityentry0_undefined_1",
+                                                "text": "",
+                                                "bounds": [
+                                                  418,
+                                                  1944,
+                                                  592,
+                                                  2118
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": [
+                                                  {
+                                                    "type": "Image",
+                                                    "id": "AppIcon_Image_com.ohos.contactscom.ohos.contacts.MainAbilityentry0_undefined_1",
+                                                    "text": "",
+                                                    "bounds": [
+                                                      418,
+                                                      1944,
+                                                      592,
+                                                      2118
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "type": "ListItem",
+                                        "id": "ResidentLayout_AppItem_com.huawei.hmos.browser_Wrap",
+                                        "text": "",
+                                        "bounds": [
+                                          726,
+                                          1944,
+                                          900,
+                                          2118
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": [
+                                          {
+                                            "type": "ListItem",
+                                            "id": "ResidentLayout_AppItem_com.huawei.hmos.browser",
+                                            "text": "",
+                                            "bounds": [
+                                              726,
+                                              1944,
+                                              900,
+                                              2118
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": [
+                                              {
+                                                "type": "RelativeContainer",
+                                                "id": "Container_AppIcon_Image_com.huawei.hmos.browserMainAbilityentry0_undefined_1",
+                                                "text": "",
+                                                "bounds": [
+                                                  726,
+                                                  1944,
+                                                  900,
+                                                  2118
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": [
+                                                  {
+                                                    "type": "Image",
+                                                    "id": "AppIcon_Image_com.huawei.hmos.browserMainAbilityentry0_undefined_1",
+                                                    "text": "",
+                                                    "bounds": [
+                                                      726,
+                                                      1944,
+                                                      900,
+                                                      2118
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Column",
+                    "text": "",
+                    "bounds": [
+                      660,
+                      1116,
+                      661,
+                      1117
+                    ],
+                    "hitTestBehavior": "Default",
+                    "opacity": 1,
+                    "visible": "true",
+                    "enabled": "true",
+                    "children": [
+                      {
+                        "type": "Column",
+                        "text": "",
+                        "bounds": [
+                          660,
+                          1116,
+                          661,
+                          1117
+                        ],
+                        "hitTestBehavior": "None",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "WindowScene",
+        "id": "session27",
+        "text": "",
+        "bounds": [
+          0,
+          0,
+          1320,
+          117
+        ],
+        "hitTestBehavior": "None",
+        "opacity": 1,
+        "visible": "true",
+        "enabled": "true",
+        "children": [
+          {
+            "type": "__Common__",
+            "id": "StatusBarBox",
+            "text": "",
+            "bounds": [
+              0,
+              0,
+              1320,
+              117
+            ],
+            "hitTestBehavior": "Default",
+            "opacity": 1,
+            "visible": "true",
+            "enabled": "true",
+            "children": [
+              {
+                "type": "Stack",
+                "text": "",
+                "bounds": [
+                  0,
+                  0,
+                  1320,
+                  117
+                ],
+                "hitTestBehavior": "Default",
+                "opacity": 1,
+                "visible": "true",
+                "enabled": "true",
+                "children": [
+                  {
+                    "type": "__Common__",
+                    "id": "StatusBarBridgeView",
+                    "text": "",
+                    "bounds": [
+                      0,
+                      0,
+                      1320,
+                      117
+                    ],
+                    "hitTestBehavior": "Default",
+                    "opacity": 1,
+                    "visible": "true",
+                    "enabled": "true",
+                    "children": [
+                      {
+                        "type": "Stack",
+                        "text": "",
+                        "bounds": [
+                          0,
+                          0,
+                          1320,
+                          117
+                        ],
+                        "hitTestBehavior": "Default",
+                        "opacity": 1,
+                        "visible": "true",
+                        "enabled": "true",
+                        "children": [
+                          {
+                            "type": "Row",
+                            "id": "status_bar_color_picker",
+                            "text": "",
+                            "bounds": [
+                              98,
+                              41,
+                              1222,
+                              113
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": []
+                          },
+                          {
+                            "type": "Stack",
+                            "id": "StatusBarView",
+                            "text": "",
+                            "bounds": [
+                              0,
+                              0,
+                              1320,
+                              117
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "Row",
+                                "id": "StatusBarBackground_Row_0",
+                                "text": "",
+                                "bounds": [
+                                  0,
+                                  0,
+                                  1320,
+                                  117
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": []
+                              },
+                              {
+                                "type": "Stack",
+                                "id": "sbg_left",
+                                "text": "",
+                                "bounds": [
+                                  98,
+                                  41,
+                                  1320,
+                                  113
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": [
+                                  {
+                                    "type": "RelativeContainer",
+                                    "text": "",
+                                    "bounds": [
+                                      98,
+                                      41,
+                                      1320,
+                                      113
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": [
+                                      {
+                                        "type": "Stack",
+                                        "id": "StatusBarIconWrapper_status_bar_clock",
+                                        "text": "",
+                                        "bounds": [
+                                          98,
+                                          41,
+                                          219,
+                                          113
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": [
+                                          {
+                                            "type": "Row",
+                                            "text": "",
+                                            "bounds": [
+                                              98,
+                                              41,
+                                              219,
+                                              113
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": [
+                                              {
+                                                "type": "Flex",
+                                                "id": "ClockStatusView",
+                                                "text": "",
+                                                "bounds": [
+                                                  98,
+                                                  41,
+                                                  219,
+                                                  113
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": [
+                                                  {
+                                                    "type": "Row",
+                                                    "text": "",
+                                                    "bounds": [
+                                                      98,
+                                                      51,
+                                                      165,
+                                                      104
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": [
+                                                      {
+                                                        "type": "TextClock",
+                                                        "id": "TimeView_Text_timeText",
+                                                        "text": "",
+                                                        "bounds": [
+                                                          98,
+                                                          51,
+                                                          152,
+                                                          104
+                                                        ],
+                                                        "hitTestBehavior": "Default",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": [
+                                                          {
+                                                            "type": "Text",
+                                                            "text": "06",
+                                                            "bounds": [
+                                                              98,
+                                                              51,
+                                                              152,
+                                                              104
+                                                            ],
+                                                            "hitTestBehavior": "Default",
+                                                            "opacity": 1,
+                                                            "visible": "true",
+                                                            "enabled": "true",
+                                                            "children": []
+                                                          }
+                                                        ]
+                                                      },
+                                                      {
+                                                        "type": "Text",
+                                                        "id": "TimeView_Text_timeText",
+                                                        "text": ":",
+                                                        "bounds": [
+                                                          152,
+                                                          55,
+                                                          165,
+                                                          100
+                                                        ],
+                                                        "hitTestBehavior": "Default",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": []
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "type": "TextClock",
+                                                    "id": "TimeView_Text_timeText",
+                                                    "text": "",
+                                                    "bounds": [
+                                                      165,
+                                                      51,
+                                                      219,
+                                                      104
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": [
+                                                      {
+                                                        "type": "Text",
+                                                        "text": "06",
+                                                        "bounds": [
+                                                          165,
+                                                          51,
+                                                          219,
+                                                          104
+                                                        ],
+                                                        "hitTestBehavior": "Default",
+                                                        "opacity": 1,
+                                                        "visible": "true",
+                                                        "enabled": "true",
+                                                        "children": []
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "RelativeContainer",
+                                "id": "sbg_right",
+                                "text": "",
+                                "bounds": [
+                                  0,
+                                  41,
+                                  1222,
+                                  113
+                                ],
+                                "hitTestBehavior": "None",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": [
+                                  {
+                                    "type": "Stack",
+                                    "id": "StatusBarIconWrapper_status_bar_ethernet",
+                                    "text": "",
+                                    "bounds": [
+                                      985,
+                                      41,
+                                      1058,
+                                      113
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": [
+                                      {
+                                        "type": "Row",
+                                        "text": "",
+                                        "bounds": [
+                                          991,
+                                          41,
+                                          1058,
+                                          113
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": [
+                                          {
+                                            "type": "SymbolGlyph",
+                                            "id": "StatusBarIconItemEthernetComponent_Image_icon",
+                                            "text": "",
+                                            "bounds": [
+                                              991,
+                                              53,
+                                              1058,
+                                              101
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": []
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "Stack",
+                                    "id": "StatusBarIconWrapper_status_bar_signal",
+                                    "text": "",
+                                    "bounds": [
+                                      1058,
+                                      41,
+                                      1132,
+                                      113
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": [
+                                      {
+                                        "type": "Row",
+                                        "text": "",
+                                        "bounds": [
+                                          1064,
+                                          41,
+                                          1132,
+                                          113
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": [
+                                          {
+                                            "type": "Stack",
+                                            "text": "",
+                                            "bounds": [
+                                              1064,
+                                              53,
+                                              1132,
+                                              101
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": [
+                                              {
+                                                "type": "SymbolGlyph",
+                                                "id": "SignalComponent-SignalIcon_Image_cellular",
+                                                "text": "",
+                                                "bounds": [
+                                                  1064,
+                                                  53,
+                                                  1132,
+                                                  101
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": []
+                                              },
+                                              {
+                                                "type": "SymbolGlyph",
+                                                "id": "SignalComponent-SignalIcon_Image_cellularImage",
+                                                "text": "",
+                                                "bounds": [
+                                                  1064,
+                                                  53,
+                                                  1132,
+                                                  101
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": []
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "Stack",
+                                    "id": "StatusBarIconWrapper_status_bar_battery",
+                                    "text": "",
+                                    "bounds": [
+                                      1132,
+                                      41,
+                                      1222,
+                                      113
+                                    ],
+                                    "hitTestBehavior": "Default",
+                                    "opacity": 1,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": [
+                                      {
+                                        "type": "Row",
+                                        "id": "BatteryComponent-batteryIcon_Image_batteryIcon",
+                                        "text": "",
+                                        "bounds": [
+                                          1138,
+                                          41,
+                                          1222,
+                                          113
+                                        ],
+                                        "hitTestBehavior": "Default",
+                                        "opacity": 1,
+                                        "visible": "true",
+                                        "enabled": "true",
+                                        "children": [
+                                          {
+                                            "type": "Stack",
+                                            "text": "",
+                                            "bounds": [
+                                              1138,
+                                              53,
+                                              1222,
+                                              101
+                                            ],
+                                            "hitTestBehavior": "Default",
+                                            "opacity": 1,
+                                            "visible": "true",
+                                            "enabled": "true",
+                                            "children": [
+                                              {
+                                                "type": "Stack",
+                                                "text": "",
+                                                "bounds": [
+                                                  1138,
+                                                  53,
+                                                  1222,
+                                                  101
+                                                ],
+                                                "hitTestBehavior": "Default",
+                                                "opacity": 1,
+                                                "visible": "true",
+                                                "enabled": "true",
+                                                "children": [
+                                                  {
+                                                    "type": "SymbolGlyph",
+                                                    "id": "BatteryComponent-batteryIcon_Image_batteryBorder",
+                                                    "text": "",
+                                                    "bounds": [
+                                                      1138,
+                                                      53,
+                                                      1222,
+                                                      101
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  },
+                                                  {
+                                                    "type": "Text",
+                                                    "id": "BatteryComponent-batteryIcon_Text_batterySoc",
+                                                    "text": "100",
+                                                    "bounds": [
+                                                      1146,
+                                                      58,
+                                                      1206,
+                                                      97
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  },
+                                                  {
+                                                    "type": "Text",
+                                                    "id": "BatteryComponent-batteryIcon_Text_batterySoc",
+                                                    "text": "100",
+                                                    "bounds": [
+                                                      1146,
+                                                      58,
+                                                      1206,
+                                                      97
+                                                    ],
+                                                    "hitTestBehavior": "Default",
+                                                    "opacity": 0.1,
+                                                    "visible": "true",
+                                                    "enabled": "true",
+                                                    "children": []
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "type": "Stack",
+                            "id": "StatusBarView_LiveCapsuleListContainer",
+                            "text": "",
+                            "bounds": [
+                              617,
+                              35,
+                              701,
+                              117
+                            ],
+                            "hitTestBehavior": "Default",
+                            "opacity": 1,
+                            "visible": "true",
+                            "enabled": "true",
+                            "children": [
+                              {
+                                "type": "Stack",
+                                "id": "[Live]LiveCapsuleListView",
+                                "text": "",
+                                "bounds": [
+                                  617,
+                                  35,
+                                  701,
+                                  117
+                                ],
+                                "hitTestBehavior": "Default",
+                                "opacity": 1,
+                                "visible": "true",
+                                "enabled": "true",
+                                "children": [
+                                  {
+                                    "type": "metaballNode",
+                                    "id": "LiveMetaBallBaseVm",
+                                    "text": "",
+                                    "bounds": [
+                                      449,
+                                      10,
+                                      869,
+                                      117
+                                    ],
+                                    "hitTestBehavior": "None",
+                                    "opacity": 0,
+                                    "visible": "true",
+                                    "enabled": "true",
+                                    "children": []
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
