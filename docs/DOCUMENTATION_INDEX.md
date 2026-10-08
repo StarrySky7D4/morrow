@@ -1,15 +1,15 @@
 # Morrow 文档导航与维护范围
 
 <!-- C28-CURRENT-BEGIN -->
-## 当前开发检查点（2026-10-09，C28 H011 构建与验证准备）
+## 当前开发检查点（2026-10-09，C28 Windows 资格准备）
 
-后续 H011 隔离源码候选完成锁定、离线 Windows 依赖核验及 release 验证程序编译，实际退出 0。构建图 774 个可达包、19 条唯一路由已核对；4,299 个固定输入无漂移，原锁 837 个外部依赖记录保持。程序已保存并核对完整哈希，尚未执行；公开相对路径副本的完整构建仍 NOT_RUN，验证入口当前三个 Wasm 嵌入目标缺失，需补齐可复现输入准备。
+H011 隔离 Windows release 验证程序编译通过，实际退出 0；4,299 个固定输入无漂移，原锁 837 个外部依赖记录保持。程序未执行，公开相对路径副本完整构建仍 NOT_RUN，三个 Wasm 嵌入目标缺少可复现输入。
 
-控制包两个有限静态独审通过，十个 PowerShell 文件实际 5.1 纯语法解析通过；包仍硬禁用，真实目标恢复与执行未验收。此前 Native 11 项纯诊断与投影器 1,987 项合成检查保留原范围；底层 observer 8、runner 3、默认 backend 1 项仍 NOT_RUN，独立库离线核验受固定测试依赖缺失阻塞。
+新增宿主命令来源只读观察与独立回读：23 个命令、15 个物理文件匹配，退出 0、当前无漂移；不代表导入前门禁或安全执行验收。公共依赖获取候选 29 项纯离线合成检查退出 0，来源记录在执行前后一致；CLI 仍禁用，真实下载未运行，Git 获取及 Cargo 缓存安装未实现，不能据此解除底层测试依赖阻塞。
 
-历史 Start 保持 Unknown/BackendError，不自动重放；原 owner 的正常退出、EOF、ACK、cleanup/join 与资源债务仍 pending。SDK26/G04、Agent 会话层及安全执行层验收仍 OPEN，SDK 未冻结，release_eligible=false。
+恢复草案独审发现授权绑定、时间精度和逐动作尝试记录缺口；后继最终审核与实际恢复未计入已验收范围。底层 observer 8、runner 3、默认 backend 1 项仍 NOT_RUN。历史 Start 保持 Unknown/BackendError，原 owner 的正常退出、EOF、ACK、cleanup/join 与资源债务继续 pending，不自动重放。
 
-下一步补齐底层库资格、完成控制包实际绑定及 Windows 生命周期复验。达到 Agent 会话层和安全执行层验收后暂停并准备预览，扩展执行层不是暂停前提。本次仅同步现有开发分支，应用版本不变，无新 Release。见 [最新构建与范围](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-h011-build.md)；[逐次诊断证据](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-lower-start.md)保留。下方为历史时点。
+Agent 会话层、安全执行层、SDK26/G04 继续 OPEN，SDK 未冻结，release_eligible=false。下一步完成固定依赖与恢复包资格后再做 Windows 生命周期复验；达到两层验收后暂停准备预览，扩展执行层不是暂停前提。此提交仅更新公开进度与看板，应用版本不变。见 [资格准备与范围](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-qualification-preparation.md)；[H011 构建证据](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-h011-build.md)保留。下方为历史时点。
 <!-- C28-CURRENT-END -->
 
 <!-- C16-CURRENT-BEGIN -->

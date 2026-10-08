@@ -1,0 +1,64 @@
+{
+  "schema": "C28_WINDOWS_QUALIFICATION_PREPARATION_20261009",
+  "base_commit": "c0e70cdf0e7b63f18aafcda0b8b0b0f0c13e2162",
+  "status": "PREPARATION_ONLY_NOT_RUNTIME_OR_SDK_ACCEPTANCE",
+  "publication_scope": "SANITIZED_STATUS_DOCUMENTS_ONLY",
+  "application_runtime_changes_in_this_commit": false,
+  "host_origin_observation": {
+    "scope": "post_import_physical_file_and_command_origin_readback",
+    "commands": 23,
+    "unique_physical_files": 15,
+    "current_drift": 0,
+    "actual_exit_code": 0,
+    "receipt_sha256": "fc28a0048cfe4e7456461d07b1a839d86b35eba5e2c5dd6c40970bbbba5e162c",
+    "independent_review_sha256": "d81acb569bb0ae57b58c5ad1807fd6b9ae73e889b4d745db0a49994053465b4f",
+    "pre_import_enforcement_proven": false,
+    "in_memory_or_transitive_os_attestation_proven": false
+  },
+  "registry_acquisition_candidate": {
+    "synthetic_offline_methods": 29,
+    "actual_exit_code": 0,
+    "executed_source_before_after_equal": true,
+    "terminal_sha256": "eefd84393f2e6eb5a1dc5ab6f85383295bc2ecc662340a88cf94a59f4f4c85ff",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "2e95d08447c6d50d522223136b0981ddce0412d645f2b7a5f017f8320e4b2047",
+    "fetch_source_sha256": "7c8abaafb468571b6426110c179b9a643a684ad7d608291787a55c41580f7b0f",
+    "test_source_sha256": "6dc148f71e1bead859682e7bc49332ec739dc1e5e02023e5876c253e35c21258",
+    "earlier_16_methods_not_additive": true,
+    "post_validation_line_ending_assertion_failure_retained": true,
+    "cli": "HARD_DISABLED_EXIT_78",
+    "real_download": "NOT_RUN",
+    "git_acquisition": "NOT_IMPLEMENTED",
+    "cargo_cache_installation": "NOT_IMPLEMENTED",
+    "successor_final_independent_review": "NOT_INCLUDED_IN_THIS_SNAPSHOT"
+  },
+  "recovery_draft_review": {
+    "review_sha256": "3b4cc667c42256749e3b76db9dbe737f82b7f015195bd25751c760a912b28f20",
+    "findings": [
+      "grant_byte_and_scope_binding",
+      "independent_process_time_precision",
+      "per_effect_attempt_reservation"
+    ],
+    "status": "HARD_BLOCKED_NOT_EXECUTED",
+    "successor_final_review_and_runtime": "NOT_INCLUDED_IN_THIS_SNAPSHOT"
+  },
+  "historical_build": {
+    "scope": "H011_ISOLATED_RELEASE_BIN_ONLY",
+    "actual_exit_code": 0,
+    "executed": false
+  },
+  "public_checkout_full_build": "NOT_RUN",
+  "public_embedded_wasm_inputs": "3_MISSING_AT_CURRENT_INCLUDE_PATHS",
+  "lower_windows_library_tests": {
+    "observer": "8_NOT_RUN",
+    "runner": "3_NOT_RUN",
+    "default_backend": "1_NOT_RUN"
+  },
+  "native_start": "SEALED_UNKNOWN_OR_REJECTED_NO_REPLAY",
+  "original_owner_cleanup_join": "PENDING_DEBT_CHARGED",
+  "agent_session_acceptance": "OPEN",
+  "safe_execution_acceptance": "OPEN",
+  "sdk26_g04": "OPEN",
+  "sdk_frozen": false,
+  "release_eligible": false
+}
