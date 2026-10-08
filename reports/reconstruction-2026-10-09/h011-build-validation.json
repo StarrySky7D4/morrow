@@ -1,0 +1,52 @@
+{
+  "schema": "C28_H011_PUBLIC_BUILD_STATUS_20261009",
+  "status": "PASS_BUILD_ONLY_NOT_RUNTIME_OR_SDK_ACCEPTANCE",
+  "base_commit": "8c06f8e2cbe34b10a8a2c80bb7cc7c894975647e",
+  "build_scope": "isolated_source_candidate_release_bin",
+  "public_relative_checkout_compile": "NOT_RUN",
+  "public_harness_embedded_wasm_inputs": "3_MISSING_AT_CURRENT_INCLUDE_PATHS",
+  "locked_offline_metadata_actual_exit": 0,
+  "release_bin_compile_actual_exit": 0,
+  "captured_helpers_actual_exit": [
+    0,
+    0
+  ],
+  "fixed_source_inputs": 4299,
+  "input_drift": 0,
+  "foreign_lock_records_preserved": 837,
+  "lock_sha256": "0ea85fb5287a16b36b3802cb3c85220fabe4746625929ce5e864df16f931c704",
+  "normal_build_reachable_packages": 774,
+  "unique_routes_verified": 19,
+  "saved_artifact": {
+    "sha256": "8830a9938c173baaa1e929161e09541f80cefdc176a0a54d34f80bb4f1dbb75c",
+    "bytes": 54021632,
+    "format": "AMD64_PE32_PLUS_NON_DLL",
+    "executed": false,
+    "published": false
+  },
+  "compiler_event_sha256": "1f42968315cc161192e4a6762a1c5dabe5709ab5992c62b9f84d48a664241013",
+  "metadata_receipt_sha256": "d4fe8d778258fc1239af83e66b366d69588344127bdbf11d106476dd7e9a58ee",
+  "compile_receipt_sha256": "8086287ae29bf1bc2638b96c829cb4d2c9c5b261c72aa9936351c9726005fbd1",
+  "independent_build_review_sha256": "d1a431c9ade8062ec4e0ba4d3b9080a3418507bdcbfa4abf0e47e7acc9866e55",
+  "control_package": {
+    "status": "HARD_BLOCKED_DRAFT",
+    "powershell_51_files_parsed": 10,
+    "parse_actual_exit": 0,
+    "syntax_errors": 0,
+    "parse_receipt_sha256": "7a7674c1c168a06a083f6c167624800214b1dc1a8775c9f483af085da42b9c04",
+    "source_bodies_executed": false,
+    "static_reviews": 2,
+    "vm_execution": "NOT_RUN",
+    "published": false
+  },
+  "lower_library_tests": {
+    "observer": "8_NOT_RUN",
+    "runner": "3_NOT_RUN",
+    "default_backend": "1_NOT_RUN"
+  },
+  "native_start": "SEALED_UNKNOWN_OR_REJECTED_NO_REPLAY",
+  "original_owner_cleanup_join": "PENDING_DEBT_CHARGED",
+  "sdk_frozen": false,
+  "sdk26_g04": "OPEN",
+  "release_eligible": false
+}
