@@ -4,7 +4,7 @@ use crate::{
     BorrowedNativeResources, ProvisionedWindowsBackend, WindowsProcessProvider,
     artifact::LockedArtifact, process::block_on,
 };
-use codex_exec_server::{ExecParams, ProcessControlCapabilities, StartedExecProcess};
+use codex_exec_server::{ExecParams, ExecServerError, ProcessControlCapabilities, StartedExecProcess};
 use morrow_agent_session_exec_v1_r2::{
     Error, Intent, Result,
     authority::{Admission, SessionExecHost},
@@ -41,7 +41,94 @@ impl NativeStartDiagnostic {
             Some((old & !0xffff) | u64::from(stage) | (u64::from(class) << 8))
         });
     }
+    // Record the typed backend class and old generic pair in one packed CAS.
+    // A late backend error never overwrites a previously observed timeout.
+    fn backend_fail(&self, class: BackendErrorClass) {
+        let _ = self.0.fetch_update(Ordering::AcqRel, Ordering::Acquire, |old| {
+            let mut next = old;
+            if old & BACKEND_ERROR_MASK == 0 {
+                next |= u64::from(class as u8) << BACKEND_ERROR_SHIFT;
+            }
+            if old & 0xff00 == 0 {
+                next = (next & !0xffff) | 8 | (10 << 8);
+            }
+            (next != old).then_some(next)
+        });
+    }
     fn flag(&self, flag: u64) { self.0.fetch_or(flag << 16, Ordering::AcqRel); }
+}
+// Fixed typed variant only. Never format or retain backend payloads.
+const BACKEND_ERROR_SHIFT: u32 = 20;
+const BACKEND_ERROR_MASK: u64 = 0xff << BACKEND_ERROR_SHIFT;
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(u8)]
+enum BackendErrorClass {
+    Spawn = 1,
+    WebSocketConnectTimeout = 2,
+    WebSocketConnect = 3,
+    WebSocketConfiguration = 4,
+    InitializeTimedOut = 5,
+    ApplicationNetworkPolicy = 6,
+    Closed = 7,
+    Disconnected = 8,
+    ProvisioningFailed = 9,
+    Json = 10,
+    HttpRequest = 11,
+    Protocol = 12,
+    ProvisioningModeConflict = 13,
+    ServerInvalidRequest = 14,
+    ServerInvalidParams = 15,
+    ServerInternal = 16,
+    ServerOther = 17,
+    EnvironmentRegistryHttp = 18,
+    EnvironmentRegistryConfig = 19,
+    EnvironmentRegistryAuth = 20,
+    EnvironmentRegistryRequest = 21,
+    ConnectionAttempt = 22,
+}
+fn backend_error_class(error: &ExecServerError) -> BackendErrorClass {
+    match error {
+        ExecServerError::Spawn(_) => BackendErrorClass::Spawn,
+        ExecServerError::WebSocketConnectTimeout { .. } => BackendErrorClass::WebSocketConnectTimeout,
+        ExecServerError::WebSocketConnect { .. } => BackendErrorClass::WebSocketConnect,
+        ExecServerError::WebSocketConfiguration(_) => BackendErrorClass::WebSocketConfiguration,
+        ExecServerError::InitializeTimedOut { .. } => BackendErrorClass::InitializeTimedOut,
+        ExecServerError::ApplicationNetworkPolicy(_) => BackendErrorClass::ApplicationNetworkPolicy,
+        ExecServerError::Closed => BackendErrorClass::Closed,
+        ExecServerError::Disconnected(_) => BackendErrorClass::Disconnected,
+        ExecServerError::ProvisioningFailed(_) => BackendErrorClass::ProvisioningFailed,
+        ExecServerError::Json(_) => BackendErrorClass::Json,
+        ExecServerError::HttpRequest(_) => BackendErrorClass::HttpRequest,
+        ExecServerError::Protocol(_) => BackendErrorClass::Protocol,
+        ExecServerError::ProvisioningModeConflict { .. } => BackendErrorClass::ProvisioningModeConflict,
+        // Exact source rpc.rs categories, never the message or arbitrary code.
+        ExecServerError::Server { code, .. } => match *code {
+            -32600 => BackendErrorClass::ServerInvalidRequest,
+            -32602 => BackendErrorClass::ServerInvalidParams,
+            -32603 => BackendErrorClass::ServerInternal,
+            _ => BackendErrorClass::ServerOther,
+        },
+        ExecServerError::EnvironmentRegistryHttp { .. } => BackendErrorClass::EnvironmentRegistryHttp,
+        ExecServerError::EnvironmentRegistryConfig(_) => BackendErrorClass::EnvironmentRegistryConfig,
+        ExecServerError::EnvironmentRegistryAuth(_) => BackendErrorClass::EnvironmentRegistryAuth,
+        ExecServerError::EnvironmentRegistryRequest(_) => BackendErrorClass::EnvironmentRegistryRequest,
+        // Preserve opaque wrapper classification; never recurse into its Arc.
+        ExecServerError::ConnectionAttempt(_) => BackendErrorClass::ConnectionAttempt,
+    }
+}
+fn backend_error_name(class: u8) -> &'static str {
+    match class {
+        1 => "Spawn", 2 => "WebSocketConnectTimeout", 3 => "WebSocketConnect",
+        4 => "WebSocketConfiguration", 5 => "InitializeTimedOut",
+        6 => "ApplicationNetworkPolicy", 7 => "Closed", 8 => "Disconnected",
+        9 => "ProvisioningFailed", 10 => "Json", 11 => "HttpRequest",
+        12 => "Protocol", 13 => "ProvisioningModeConflict",
+        14 => "ServerInvalidRequest", 15 => "ServerInvalidParams",
+        16 => "ServerInternal", 17 => "ServerOther", 18 => "EnvironmentRegistryHttp",
+        19 => "EnvironmentRegistryConfig", 20 => "EnvironmentRegistryAuth",
+        21 => "EnvironmentRegistryRequest", 22 => "ConnectionAttempt",
+        _ => "NOT_OBSERVED",
+    }
 }
 fn start_stage_name(stage: u8) -> &'static str {
     match stage {
@@ -69,9 +156,10 @@ fn start_error_name(class: u8) -> &'static str {
 impl std::fmt::Debug for NativeStartDiagnostic {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let value = self.0.load(Ordering::Acquire);
-        f.debug_struct("NativeStartDiagnosticV1")
+        f.debug_struct("NativeStartDiagnosticV2")
             .field("stage", &start_stage_name(value as u8))
             .field("error_class", &start_error_name((value >> 8) as u8))
+            .field("backend_error_class", &backend_error_name((value >> BACKEND_ERROR_SHIFT) as u8))
             .field("invocation_entered_observed", &(value & (1 << 16) != 0))
             .field("backend_task_entered_observed", &(value & (2 << 16) != 0))
             .field("actual_handle_observed", &(value & (4 << 16) != 0))
@@ -281,7 +369,7 @@ impl BorrowedWindowsExecutionPort {
                         .backend
                         .start(params)
                         .await
-                        .map_err(|_| { task_diagnostic.fail(8, 10); Error::CommitUnknown });
+                        .map_err(|error| { task_diagnostic.backend_fail(backend_error_class(&error)); Error::CommitUnknown });
                     match &actual {
                         Ok(process) => { task_diagnostic.flag(4); task_diagnostic.stage(8); task_slot.started(process.process.clone()) },
                         Err(_) => task_slot.no_handle_unknown(),
@@ -480,7 +568,102 @@ mod diagnostic_tests {
     fn native_snapshot_is_bounded_and_has_no_owner_payload() {
         let trace = NativeStartDiagnostic::default(); trace.fail(15, 14); trace.flag(15);
         let text = format!("{trace:?}"); assert!(text.len() < 384);
-        assert_eq!(text, "NativeStartDiagnosticV1 { stage: \"POSTSTART_VETO\", error_class: \"PostStartVeto\", invocation_entered_observed: true, backend_task_entered_observed: true, actual_handle_observed: true, provider_ready_observed: true }");
+        assert_eq!(text, "NativeStartDiagnosticV2 { stage: \"POSTSTART_VETO\", error_class: \"PostStartVeto\", backend_error_class: \"NOT_OBSERVED\", invocation_entered_observed: true, backend_task_entered_observed: true, actual_handle_observed: true, provider_ready_observed: true }");
         assert_eq!(std::sync::Arc::strong_count(&trace.0), 1);
+    }
+
+    // Proposed pure diagnostic tests only; none executes Start or OS setup.
+    #[test]
+    fn native_typed_backend_server_codes_are_closed_and_ignore_messages() {
+        for (code, expected) in [
+            (-32600, BackendErrorClass::ServerInvalidRequest),
+            (-32602, BackendErrorClass::ServerInvalidParams),
+            (-32603, BackendErrorClass::ServerInternal),
+            (0, BackendErrorClass::ServerOther),
+            (i64::MIN, BackendErrorClass::ServerOther),
+            (i64::MAX, BackendErrorClass::ServerOther),
+        ] {
+            for message in ["synthetic-private-account-path-marker", "different-marker"] {
+                let error = ExecServerError::Server { code, message: message.into() };
+                assert_eq!(backend_error_class(&error), expected);
+                let trace = NativeStartDiagnostic::default();
+                trace.backend_fail(backend_error_class(&error));
+                let output = format!("{trace:?}");
+                assert!(!output.contains(message));
+                assert!(!output.contains(&code.to_string()));
+            }
+        }
+    }
+    #[test]
+    fn native_typed_backend_variants_ignore_payload_and_connection_inner() {
+        let errors = [
+            (ExecServerError::Spawn(std::io::Error::new(std::io::ErrorKind::PermissionDenied,
+                "synthetic-private-account-path-marker")), BackendErrorClass::Spawn),
+            (ExecServerError::WebSocketConnectTimeout { url: "synthetic-private-account-path-marker".into(),
+                timeout: Duration::from_millis(1) }, BackendErrorClass::WebSocketConnectTimeout),
+            (ExecServerError::WebSocketConfiguration("synthetic-private-account-path-marker".into()), BackendErrorClass::WebSocketConfiguration),
+            (ExecServerError::InitializeTimedOut { timeout: Duration::from_millis(1) }, BackendErrorClass::InitializeTimedOut),
+            (ExecServerError::Closed, BackendErrorClass::Closed),
+            (ExecServerError::Disconnected("synthetic-private-account-path-marker".into()), BackendErrorClass::Disconnected),
+            (ExecServerError::ProvisioningFailed("synthetic-private-account-path-marker".into()), BackendErrorClass::ProvisioningFailed),
+            (ExecServerError::HttpRequest("synthetic-private-account-path-marker".into()), BackendErrorClass::HttpRequest),
+            (ExecServerError::Protocol("synthetic-private-account-path-marker".into()), BackendErrorClass::Protocol),
+            (ExecServerError::ProvisioningModeConflict { environment_id: "synthetic-private-account-path-marker".into() }, BackendErrorClass::ProvisioningModeConflict),
+            (ExecServerError::EnvironmentRegistryHttp { status: 403u16.try_into().unwrap(),
+                code: Some("synthetic-private-account-path-marker".into()), message: "synthetic-private-account-path-marker".into() }, BackendErrorClass::EnvironmentRegistryHttp),
+            (ExecServerError::EnvironmentRegistryConfig("synthetic-private-account-path-marker".into()), BackendErrorClass::EnvironmentRegistryConfig),
+            (ExecServerError::EnvironmentRegistryAuth("synthetic-private-account-path-marker".into()), BackendErrorClass::EnvironmentRegistryAuth),
+            (ExecServerError::ConnectionAttempt(Arc::new(ExecServerError::Server { code: -32603,
+                message: "synthetic-private-account-path-marker".into() })), BackendErrorClass::ConnectionAttempt),
+        ];
+        for (error, expected) in errors {
+            assert_eq!(backend_error_class(&error), expected);
+            let trace = NativeStartDiagnostic::default();
+            trace.backend_fail(backend_error_class(&error));
+            assert!(!format!("{trace:?}").contains("synthetic-private-account-path-marker"));
+        }
+    }
+    #[test]
+    fn native_late_typed_backend_error_preserves_timeout_and_flags() {
+        let trace = NativeStartDiagnostic::default();
+        trace.fail(9, 11);
+        trace.flag(3);
+        trace.backend_fail(BackendErrorClass::ServerInternal);
+        trace.backend_fail(BackendErrorClass::Protocol);
+        trace.flag(4);
+        let value = trace.0.load(Ordering::Acquire);
+        assert_eq!(value & 0xffff, 9 | (11 << 8));
+        assert_eq!((value & BACKEND_ERROR_MASK) >> BACKEND_ERROR_SHIFT, 16);
+        assert_eq!((value >> 16) & 0xf, 7);
+        assert_eq!(Arc::strong_count(&trace.0), 1);
+    }
+    #[test]
+    fn native_first_typed_backend_error_retains_old_generic_pair() {
+        let trace = NativeStartDiagnostic::default();
+        trace.flag(3);
+        trace.backend_fail(BackendErrorClass::ServerInvalidParams);
+        let first = trace.0.load(Ordering::Acquire);
+        trace.backend_fail(BackendErrorClass::ServerInternal);
+        trace.fail(9, 11);
+        trace.stage(16);
+        assert_eq!(trace.0.load(Ordering::Acquire), first);
+        assert_eq!(first & 0xffff, 8 | (10 << 8));
+        assert_eq!((first & BACKEND_ERROR_MASK) >> BACKEND_ERROR_SHIFT, 15);
+    }
+    #[test]
+    fn native_typed_backend_format_failure_is_nonmutating() {
+        struct Refuse;
+        impl std::fmt::Write for Refuse {
+            fn write_str(&mut self, _: &str) -> std::fmt::Result { Err(std::fmt::Error) }
+        }
+        let trace = NativeStartDiagnostic::default();
+        trace.backend_fail(BackendErrorClass::EnvironmentRegistryRequest);
+        trace.flag(15);
+        let before = trace.0.load(Ordering::Acquire);
+        assert!(std::fmt::write(&mut Refuse, format_args!("{trace:?}")).is_err());
+        assert_eq!(trace.0.load(Ordering::Acquire), before);
+        let text = format!("{trace:?}");
+        assert!(text.len() < 384);
+        assert!(text.contains("backend_error_class: \"EnvironmentRegistryRequest\""));
     }
 }

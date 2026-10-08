@@ -1,0 +1,154 @@
+{
+  "schema": "C28_NATIVE_V2_PUBLIC_SCOPED_VALIDATION_20261009",
+  "status": "PASS_SCOPED_NATIVE_V2_DIAGNOSTICS_NOT_RUNTIME_OR_SDK_ACCEPTANCE",
+  "source_sha256": "e6614f754c97e51d18f9760ec070b28f79783a7b8b726be4cc99753be18fcfdf",
+  "projector_sha256": "aaa07bd01df9d39baa45c426bc7563beadcb55141492928ddfa5611029cf948c",
+  "isolated_candidate_compiled": true,
+  "public_relative_checkout_rust_compile": "NOT_RUN",
+  "test_program_sha256": "86a6c2e86096d122d33a3b92549da7cb30daa76f44dc92f95b90a5efda94f092",
+  "test_program_bytes": 30331904,
+  "source_input_pins_checked": 3437,
+  "source_or_lock_drift": false,
+  "runs": [
+    {
+      "mode": "locked-metadata",
+      "receipt_sha256": "3284976756a2c43cdbc08f168d61e1464442bb4c92e4887ea6c474c9c4d67ea2",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": []
+    },
+    {
+      "mode": "compile",
+      "receipt_sha256": "b0ce3f2fe89c274619bb3ca6cf0a54e65746a1fcbd776aec8f4e051d8e23f08f",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": []
+    },
+    {
+      "mode": "list",
+      "receipt_sha256": "485a46658fa4b485999e9a99e8a022e09c0028179c9cd14b9398b4bc280c7e5b",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": []
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "527675eae2743ac4341e4df188cb96fba719cfeb4a0a991c049524416e8450c6",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_first_error_survives_late_actual_handle_observation"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "dc3d2cd39f6a16d90ec3e156b58fe25678d24508154255536d3edd910638a079",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_original_error_classes_are_fixed_and_complete"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "6f08f44de2432022789425817dc952ba03958b2cb419171514baa27c16146660",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_format_failure_preserves_original_cell"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "cac67ffc3d0bda092613d69f5f6a8e0fb0c136ebf2738a8fd201468f03668b21",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_snapshot_is_bounded_and_has_no_owner_payload"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "9666baffe63a54cf346d2f651b2d28bc6c26a1fbed7f5bc4a10e433a3c4cc9f2",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_typed_backend_server_codes_are_closed_and_ignore_messages"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "c0c71cd9ddb971a3942b60c52d9a2afc3dfe1d573d7f73f58bda33169669ed11",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_typed_backend_variants_ignore_payload_and_connection_inner"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "b06efbcd221fa9af0d894a5e4b8d368736c83bce39faff91705dc262afa4caed",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_late_typed_backend_error_preserves_timeout_and_flags"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "537f6eb8a99bc6f666a699ef0286cecc5bac67819617ebb1c807144a8e64cc2b",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_first_typed_backend_error_retains_old_generic_pair"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "6bdf066ea405968f89460d4a7b9afd49ac6212ef6c38b36951d82cd17ee3459e",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_typed_backend_format_failure_is_nonmutating"
+      ]
+    }
+  ],
+  "distinct_pure_diagnostic_methods_passed": 9,
+  "initial_metadata_failure": {
+    "actual_cargo_exit_code": 101,
+    "classification": "sandbox_offline_git_cache_checkout",
+    "preserved": true,
+    "dependencies_downloaded": false
+  },
+  "projector_synthetic_checks": 229,
+  "projector_rejected_cli_cases": 7,
+  "native_start": "SEALED_UNKNOWN_OR_REJECTED_NO_REPLAY",
+  "cleanup_join": "PENDING_DEBT_CHARGED",
+  "new_v2_native_start_or_vm": "NOT_RUN",
+  "sdk_frozen": false,
+  "release_eligible": false
+}

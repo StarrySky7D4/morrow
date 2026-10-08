@@ -1,13 +1,13 @@
 # Morrow 当前开发状态
 
 <!-- C28-CURRENT-BEGIN -->
-## 当前开发检查点（2026-10-08，C28）
+## 当前开发检查点（2026-10-09，C28 / Native V2）
 
-本次向 `codex/windows-sdk-convergence-20261005` 同步 C11–C28 的 Agent/SDK 开发源码、相对路径构建入口与限定进度说明；应用版本保持 `0.1.9-test.58+62`，不更新 main、标签或 Release。
+本次向 `codex/windows-sdk-convergence-20261005` 同步 Native V2 固定类型诊断、独立 V1/V2 纯投影工具与限定进度说明。应用版本保持 `0.1.9-test.58+62`，不更新 main、标签或 Release；保留现有相对路径入口、冻结上游和历史报告。
 
-原 protected owner 的会话链已有有界验证，H008 编译与 8 项纯诊断测试通过；Windows 原生 Start 仍为 Unknown，清理和显式修复仍 pending，不重放不确定操作。新诊断版完整 Windows 链尚未运行，移植副本的依赖检查与既有隔离测试分别记录。Agent 接口仍 experimental，安全执行层、SDK26/G04、完整 Codex IPC、PTY/stdin/resize、完整网络隔离及其他平台资格仍 OPEN。
+Stage1 文件交付、Stage2 文件预检及同原 owner 的 session-four 已有实际有界结果；native Start 仍为 `BACKEND_START_RETURNED/BackendError` 的 Unknown，observe/join 未派发，cleanup/显式 repair 后正常回收仍未建立。不把源码或合成夹具中的 ServerInternal 当作实测，不重放旧 Unknown。V2 投影工具的 229 项内存检查通过；原隔离候选第二次 locked/offline 元数据检查退出 0，首轮失败保留。新 V2 隔离候选库编译、清单核验及九个纯诊断方法全部通过；这些限定结果不代表公开副本完整编译、原生启动或 SDK 验收。旧 H008 八项结果按原身份单独保存。
 
-优先完成新 Windows 链实测、定位 Start Unknown 并复验真实回收；会话层与安全执行层验收后暂停准备测试预览。完整范围见 [C28 同步说明](../reports/reconstruction-2026-10-08/windows-agent-sdk-c28.md)。下方报告保留各自历史时点，旧“未推送”不覆盖本次同步。
+Agent 接口仍 experimental，安全执行层、SDK26/G04、完整 Codex IPC、PTY/stdin/resize、完整网络隔离及其他平台资格仍 OPEN。当前没有达到完工暂停、SDK 冻结或预览发布条件。详见 [C28 实际进度与 V2 诊断](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-v2.md)。
 <!-- C28-CURRENT-END -->
 
 <!-- C16-CURRENT-BEGIN -->
