@@ -1,0 +1,41 @@
+{
+  "status": "ORIGINAL_BYTES_EXPERIMENTAL_NOT_FROZEN_SDK",
+  "files": [
+    {
+      "path": "capture/capture_runtime.py",
+      "sha256": "3a25b45c134a0289c3769ca1671f2ce31bf4d6229ed74a95fad1b04065079b28",
+      "bytes": 10690,
+      "origin": "original_local_qualification_source_bytes"
+    },
+    {
+      "path": "capture/synthetic_child.py",
+      "sha256": "017eb0a50b8447537903fde28c1d77caedab509bc19451e6c039db37dd6de5f5",
+      "bytes": 254,
+      "origin": "original_local_qualification_source_bytes"
+    },
+    {
+      "path": "registry/install_registry.py",
+      "sha256": "1d26777415f46bbc6b742ad05699d8e6f803170032546776e1b1d39a314a87ad",
+      "bytes": 12251,
+      "origin": "original_local_qualification_source_bytes"
+    },
+    {
+      "path": "registry/test_offline.py",
+      "sha256": "26e555690afce920e990f82c9533fcd989c3ce0be5178264cad61d641b7715f8",
+      "bytes": 6173,
+      "origin": "original_local_qualification_source_bytes"
+    },
+    {
+      "path": "git_objects/offline_pack.py",
+      "sha256": "5a4d4fd22e98a0d420b201d96a8a6691ba59c3ac64327bf391a45497e35bc7fa",
+      "bytes": 15814,
+      "origin": "original_local_qualification_source_bytes"
+    },
+    {
+      "path": "git_objects/test_offline_pack.py",
+      "sha256": "74712ec94cd840fcb7404d76113156b8d12f95861ba96177da8b3bc4d88ea27d",
+      "bytes": 16064,
+      "origin": "original_local_qualification_source_bytes"
+    }
+  ]
+}

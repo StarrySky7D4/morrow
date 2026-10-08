@@ -1,0 +1,98 @@
+{
+  "schema": "C28_OFFLINE_PREPARATION_PUBLICATION_20261009",
+  "base_commit": "7abd1498fd42a2a3de2767b27a7fa57e63e21ca5",
+  "status": "EXPERIMENTAL_QUALIFICATION_TOOLS_NOT_SDK_ACCEPTANCE",
+  "application_runtime_changed": false,
+  "published_original_byte_source_files": 6,
+  "capture": {
+    "original_synthetic_methods": 10,
+    "actual_exit_code": 0,
+    "rerun_for_publication": false,
+    "source_sha256": "3a25b45c134a0289c3769ca1671f2ce31bf4d6229ed74a95fad1b04065079b28"
+  },
+  "verified_buffer_loader": {
+    "original_methods": 1,
+    "actual_exit_code": 0,
+    "rerun_for_publication": false,
+    "validation_sha256": "0a31145ae2bd077685074de3860a6607499d8d7f84b6f213eeb07090bbdf686e"
+  },
+  "recovery_preparation": {
+    "source_only_review": "PASS_DISABLED_RECOVERY_SOURCE_PREPARATION_ONLY",
+    "four_PS51_parse_errors": 0,
+    "seven_command_parameter_sets_verified": true,
+    "source_bodies_or_VM_restore_executed": false
+  },
+  "registry_installation": {
+    "original_methods": 12,
+    "actual_exit_code": 0,
+    "toy_Cargo_offline_locked_metadata_exit": 0,
+    "toy_metadata_is_not_real_dependencies_or_build": true,
+    "cli_exit": 78,
+    "real_install": "NOT_RUN"
+  },
+  "Git_objects": {
+    "original_methods": 31,
+    "actual_exit_code": 0,
+    "cli_exit": 78,
+    "SHA1DC": "NOT_PROVEN",
+    "real_object_acquisition": "NOT_RUN"
+  },
+  "Git_transport_successor": {
+    "mock_methods": 36,
+    "actual_exit_code": 0,
+    "cli_exit": 78,
+    "independent_review": "PENDING_AT_PUBLICATION_SNAPSHOT",
+    "source_published": false,
+    "previous32_not_additive": true,
+    "real_network_TLS_Git": "NOT_RUN"
+  },
+  "relocated_public_source_tests": [
+    {
+      "suite": "git_objects",
+      "methods": 31,
+      "actual_exit_code": 0,
+      "source_before_after_equal": true,
+      "terminal_sha256": "49fa1f100094fe177ceb86988abb10e044b6659a63dbc520780c414aa52e44b0",
+      "capture_validation_sha256": "ab20a3f0f59b2678cfff4dd517f5b14eed7e4e467f3d424813dc5088191f6f64",
+      "scope": "relocated_synthetic_only_no_network_Git_Cargo_or_VM",
+      "not_additive_to_original_methods": true
+    },
+    {
+      "suite": "registry",
+      "methods": 12,
+      "actual_exit_code": 0,
+      "source_before_after_equal": true,
+      "terminal_sha256": "fed9ed76f895e27f7534b07cfb925b13b128a270bc57a8212fa543dc89a590b9",
+      "capture_validation_sha256": "fa72c2e2d8360709e61ac659e2ffc27f174c717b6d4dc7e56e55fe3892c111fc",
+      "scope": "relocated_synthetic_only_no_network_Git_Cargo_or_VM",
+      "not_additive_to_original_methods": true
+    }
+  ],
+  "receipt_hashes": {
+    "capture": "74175a4cae459b314088a16321c2670481c0da8724efcc536dd069510a226e48",
+    "recovery": "910d01c31fdbf1f39d67ac5e6d1c31887507f82164f218e307e6958379ba9d9f",
+    "recovery_review": "836082509c723b87d3f20201988586182feab876927eb13ff9542f7566d1e13d",
+    "parse": "c5999062e375541c0c62cc0b5cea819a992a3dfed46ea1a6d18f4c78b387a9e1",
+    "parameters": "47fa86e30bff2bb788c5a47bd40b99aa7f6b5216431a8d5e15a21501771413e8",
+    "registry": "d4203d1e757cf3ce0f42af42da36024a437fd4b152226f2dd952cbf3046b8604",
+    "registry_review": "c70bfde389db6ebf7b5a891cf74d6cd646bd1a3c5be5c72419cb6a8ddbb4ff7c",
+    "pack": "026b39517a3c1033f793ec9a4eb84e6e7fd09d833d38c58e81097876cf82ffa9",
+    "pack_review": "6e094bebe2139e2a741f19eb9a2a8aa38d3e0732bd658919945dc82a8e6c1026",
+    "transport": "8b03d92dbc9adb19d177e1b969f7c59a8cbd3f4f3978dec150ef540675383d32"
+  },
+  "Git_cache_adoption": "IN_PROGRESS_NOT_QUALIFIED",
+  "historical_native_start": "SEALED_UNKNOWN_OR_REJECTED_NO_REPLAY",
+  "cleanup_join": "PENDING_DEBT_CHARGED",
+  "lower_Windows_tests": {
+    "observer": "8_NOT_RUN",
+    "runner": "3_NOT_RUN",
+    "default_backend": "1_NOT_RUN"
+  },
+  "public_full_build": "NOT_RUN",
+  "embedded_Wasm_include_paths": "3_MISSING_AT_CURRENT_PATHS",
+  "agent_session_acceptance": "OPEN",
+  "safe_execution_acceptance": "OPEN",
+  "SDK26_G04": "OPEN",
+  "SDK_frozen": false,
+  "release_eligible": false
+}
