@@ -25,6 +25,18 @@ pub use codex_mxc_sandbox::is_available as windows_mxc_available;
 pub use codex_mxc_sandbox::run_main as run_windows_mxc_main;
 #[cfg(windows)]
 pub use codex_windows_sandbox::MatchedRunnerArtifact;
+#[cfg(windows)]
+pub use codex_windows_sandbox::WindowsStartAttempt;
+#[cfg(windows)]
+pub use codex_windows_sandbox::WindowsStartCompletion;
+#[cfg(windows)]
+pub use codex_windows_sandbox::WindowsStartDiagnostic;
+#[cfg(windows)]
+pub use codex_windows_sandbox::WindowsStartError;
+#[cfg(windows)]
+pub use codex_windows_sandbox::WindowsStartSnapshot;
+#[cfg(windows)]
+pub use codex_windows_sandbox::WindowsStartStage;
 pub use codex_windows_sandbox::WindowsSandboxProxySettingsMode;
 pub use denial::is_likely_executor_managed_sandbox_denied;
 pub use denial::is_likely_sandbox_denied;
@@ -59,6 +71,8 @@ pub use windows::unsupported_windows_restricted_token_sandbox_reason;
 pub use windows::windows_sandbox_uses_elevated_backend;
 #[cfg(windows)]
 pub use windows_runner_spawn::spawn_process_with_windows_runner;
+#[cfg(windows)]
+pub use windows_runner_spawn::spawn_process_with_windows_runner_diagnostics;
 
 use codex_protocol::error::CodexErr;
 

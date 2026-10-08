@@ -15,7 +15,7 @@ use crate::env::ensure_non_interactive_pager;
 use crate::env::inherit_path_env;
 use crate::env::normalize_null_device_env;
 use crate::identity::SandboxCreds;
-use crate::identity::require_logon_sandbox_creds;
+use crate::identity::require_logon_sandbox_creds_with_diagnostics;
 use crate::logging::log_start;
 use crate::path_normalization::canonicalize_path;
 use crate::resolved_permissions::ResolvedWindowsSandboxPermissions;
@@ -360,6 +360,29 @@ pub(crate) fn prepare_elevated_spawn_context_for_permissions(
     proxy_enforced: bool,
     proxy_settings_mode: crate::WindowsSandboxProxySettingsMode,
 ) -> Result<ElevatedSpawnContext> {
+    prepare_elevated_spawn_context_for_permissions_with_diagnostics(
+        permissions, codex_home, cwd, env_map, command, read_roots_override,
+        read_roots_include_platform_defaults, write_roots_override, deny_read_paths_override,
+        deny_write_paths_override, proxy_enforced, proxy_settings_mode, None,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn prepare_elevated_spawn_context_for_permissions_with_diagnostics(
+    permissions: ResolvedWindowsSandboxPermissions,
+    codex_home: &Path,
+    cwd: &Path,
+    env_map: &mut HashMap<String, String>,
+    command: &[String],
+    read_roots_override: Option<&[PathBuf]>,
+    read_roots_include_platform_defaults: bool,
+    write_roots_override: Option<&[PathBuf]>,
+    deny_read_paths_override: &[PathBuf],
+    deny_write_paths_override: &[PathBuf],
+    proxy_enforced: bool,
+    proxy_settings_mode: crate::WindowsSandboxProxySettingsMode,
+    diagnostic: Option<&crate::WindowsStartDiagnostic>,
+) -> Result<ElevatedSpawnContext> {
     normalize_null_device_env(env_map);
     ensure_non_interactive_pager(env_map);
     inherit_path_env(env_map);
@@ -367,7 +390,18 @@ pub(crate) fn prepare_elevated_spawn_context_for_permissions(
 
     // Use a temp-based log dir that the sandbox user can write.
     let sandbox_base = codex_home.join(".sandbox");
-    ensure_codex_home_exists(&sandbox_base)?;
+    if let Some(diagnostic) = diagnostic {
+        diagnostic.mark(crate::WindowsStartStage::SandboxBaseReady);
+    }
+    ensure_codex_home_exists(&sandbox_base).inspect_err(|err| {
+        if let Some(diagnostic) = diagnostic {
+            if let Some(err) = err.downcast_ref::<std::io::Error>() {
+                diagnostic.fail_io_kind(err.kind());
+            } else {
+                diagnostic.fail(crate::WindowsStartError::Unclassified);
+            }
+        }
+    })?;
     let logs_base_dir = Some(sandbox_base.clone());
     log_start(command, logs_base_dir.as_deref());
 
@@ -399,7 +433,7 @@ pub(crate) fn prepare_elevated_spawn_context_for_permissions(
     } else {
         write_roots_override
     };
-    let sandbox_creds = require_logon_sandbox_creds(
+    let sandbox_creds = require_logon_sandbox_creds_with_diagnostics(
         &permissions,
         cwd,
         env_map,
@@ -415,23 +449,40 @@ pub(crate) fn prepare_elevated_spawn_context_for_permissions(
         },
         proxy_enforced,
         proxy_settings_mode,
+        diagnostic,
     )?;
-    let caps = load_or_create_cap_sids(codex_home)?;
-    let (psid_to_use, cap_sids) = if uses_write_capabilities {
-        let cap_sids = root_capability_sids(codex_home, cwd, effective_write_roots)?
-            .into_iter()
-            .map(|root_sid| root_sid.sid_str)
-            .collect::<Vec<_>>();
-        if cap_sids.is_empty() {
-            anyhow::bail!("workspace-write sandbox has no writable root capability SIDs");
+    // CapabilityResolve covers the existing capability-loading and selection
+    // block; it does not inspect or retain capability SID values.
+    if let Some(diagnostic) = diagnostic {
+        diagnostic.mark(crate::WindowsStartStage::CapabilityResolve);
+    }
+    let (psid_to_use, cap_sids) = (|| -> Result<_> {
+        let caps = load_or_create_cap_sids(codex_home)?;
+        let (psid_to_use, cap_sids) = if uses_write_capabilities {
+            let cap_sids = root_capability_sids(codex_home, cwd, effective_write_roots)?
+                .into_iter()
+                .map(|root_sid| root_sid.sid_str)
+                .collect::<Vec<_>>();
+            if cap_sids.is_empty() {
+                anyhow::bail!("workspace-write sandbox has no writable root capability SIDs");
+            }
+            (LocalSid::from_string(&cap_sids[0])?, cap_sids)
+        } else {
+            (
+                LocalSid::from_string(&caps.readonly)?,
+                vec![caps.readonly.clone()],
+            )
+        };
+        Ok((psid_to_use, cap_sids))
+    })().inspect_err(|err| {
+        if let Some(diagnostic) = diagnostic {
+            if let Some(err) = err.downcast_ref::<std::io::Error>() {
+                diagnostic.fail_io_kind(err.kind());
+            } else {
+                diagnostic.fail(crate::WindowsStartError::Unclassified);
+            }
         }
-        (LocalSid::from_string(&cap_sids[0])?, cap_sids)
-    } else {
-        (
-            LocalSid::from_string(&caps.readonly)?,
-            vec![caps.readonly.clone()],
-        )
-    };
+    })?;
 
     unsafe {
         allow_null_device(psid_to_use.as_ptr());

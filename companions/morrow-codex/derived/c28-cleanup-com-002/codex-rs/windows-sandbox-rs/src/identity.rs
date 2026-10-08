@@ -277,6 +277,28 @@ pub fn require_logon_sandbox_creds(
     proxy_enforced: bool,
     proxy_settings_mode: crate::WindowsSandboxProxySettingsMode,
 ) -> Result<SandboxCreds> {
+    require_logon_sandbox_creds_with_diagnostics(
+        permissions, command_cwd, env_map, codex_home, read_roots_override,
+        read_roots_include_platform_defaults, write_roots_override, deny_read_paths_override,
+        deny_write_paths_override, proxy_enforced, proxy_settings_mode, None,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn require_logon_sandbox_creds_with_diagnostics(
+    permissions: &ResolvedWindowsSandboxPermissions,
+    command_cwd: &Path,
+    env_map: &HashMap<String, String>,
+    codex_home: &Path,
+    read_roots_override: Option<&[PathBuf]>,
+    read_roots_include_platform_defaults: bool,
+    write_roots_override: Option<&[PathBuf]>,
+    deny_read_paths_override: &[PathBuf],
+    deny_write_paths_override: &[PathBuf],
+    proxy_enforced: bool,
+    proxy_settings_mode: crate::WindowsSandboxProxySettingsMode,
+    diagnostic: Option<&crate::WindowsStartDiagnostic>,
+) -> Result<SandboxCreds> {
     let runtime = crate::setup::current_setup_runtime();
     let needed_read = read_roots_override
         .map(<[PathBuf]>::to_vec)
@@ -295,7 +317,16 @@ pub fn require_logon_sandbox_creds(
         codex_home,
         proxy_enforced,
     };
-    let (creds, offline_proxy_settings) = require_sandbox_account(&request, proxy_settings_mode)?;
+    // AccountSelect covers the existing account readiness helper, including its
+    // existing repair/full-setup branches; no credential inspection is added.
+    if let Some(diagnostic) = diagnostic {
+        diagnostic.mark(crate::WindowsStartStage::AccountSelect);
+    }
+    let (creds, offline_proxy_settings) = require_sandbox_account(&request, proxy_settings_mode)
+        .inspect_err(|err| observe_identity_error(diagnostic, err))?;
+    if let Some(diagnostic) = diagnostic {
+        diagnostic.mark(crate::WindowsStartStage::SetupRefresh);
+    }
     run_setup_refresh_with_overrides_and_proxy_settings(
         request,
         crate::setup::SetupRootOverrides {
@@ -306,8 +337,18 @@ pub fn require_logon_sandbox_creds(
             deny_write_paths: Some(deny_write_paths_override.to_vec()),
         },
         &offline_proxy_settings,
-    )?;
+    ).inspect_err(|err| observe_identity_error(diagnostic, err))?;
     Ok(creds)
+}
+
+fn observe_identity_error(diagnostic: Option<&crate::WindowsStartDiagnostic>, err: &anyhow::Error) {
+    if let Some(diagnostic) = diagnostic {
+        if let Some(err) = err.downcast_ref::<io::Error>() {
+            diagnostic.fail_io_kind(err.kind());
+        } else {
+            diagnostic.fail(crate::WindowsStartError::Unclassified);
+        }
+    }
 }
 
 /// Ensures the selected account is ready; launchers must refresh filesystem ACLs separately.
@@ -493,8 +534,34 @@ pub(crate) fn refresh_logon_sandbox_creds(
     proxy_enforced: bool,
     proxy_settings_mode: crate::WindowsSandboxProxySettingsMode,
 ) -> Result<SandboxCreds> {
-    remove_sandbox_users_file(codex_home, "sandbox user login failed")?;
-    require_logon_sandbox_creds(
+    refresh_logon_sandbox_creds_with_diagnostics(
+        permissions, command_cwd, env_map, codex_home, read_roots_override,
+        read_roots_include_platform_defaults, write_roots_override, deny_read_paths_override,
+        deny_write_paths_override, proxy_enforced, proxy_settings_mode, None,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn refresh_logon_sandbox_creds_with_diagnostics(
+    permissions: &ResolvedWindowsSandboxPermissions,
+    command_cwd: &Path,
+    env_map: &HashMap<String, String>,
+    codex_home: &Path,
+    read_roots_override: Option<&[PathBuf]>,
+    read_roots_include_platform_defaults: bool,
+    write_roots_override: Option<&[PathBuf]>,
+    deny_read_paths_override: &[PathBuf],
+    deny_write_paths_override: &[PathBuf],
+    proxy_enforced: bool,
+    proxy_settings_mode: crate::WindowsSandboxProxySettingsMode,
+    diagnostic: Option<&crate::WindowsStartDiagnostic>,
+) -> Result<SandboxCreds> {
+    if let Some(diagnostic) = diagnostic {
+        diagnostic.mark(crate::WindowsStartStage::SetupRefresh);
+    }
+    remove_sandbox_users_file(codex_home, "sandbox user login failed")
+        .inspect_err(|err| observe_identity_error(diagnostic, err))?;
+    require_logon_sandbox_creds_with_diagnostics(
         permissions,
         command_cwd,
         env_map,
@@ -506,6 +573,7 @@ pub(crate) fn refresh_logon_sandbox_creds(
         deny_write_paths_override,
         proxy_enforced,
         proxy_settings_mode,
+        diagnostic,
     )
 }
 

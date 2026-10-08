@@ -147,16 +147,63 @@ pub(crate) fn is_refreshable_sandbox_creds_error(err: &anyhow::Error, command: &
 pub(crate) fn retry_runner_spawn_once<T>(
     sandbox_creds: SandboxCreds,
     command: &[String],
+    spawn: impl FnMut(SandboxCreds) -> Result<T>,
+    refresh: impl FnOnce() -> Result<SandboxCreds>,
+) -> Result<T> {
+    retry_runner_spawn_once_with_diagnostics(sandbox_creds, command, spawn, refresh, None)
+}
+
+pub(crate) fn retry_runner_spawn_once_with_diagnostics<T>(
+    sandbox_creds: SandboxCreds,
+    command: &[String],
     mut spawn: impl FnMut(SandboxCreds) -> Result<T>,
     refresh: impl FnOnce() -> Result<SandboxCreds>,
+    diagnostic: Option<&crate::WindowsStartDiagnostic>,
 ) -> Result<T> {
     let result = match spawn(sandbox_creds) {
         Ok(result) => Ok(result),
-        Err(err) if is_refreshable_sandbox_creds_error(&err, command) => refresh().and_then(spawn),
+        Err(err) if is_refreshable_sandbox_creds_error(&err, command) => {
+            if let Some(diagnostic) = diagnostic {
+                diagnostic.begin_existing_retry();
+            }
+            refresh().and_then(spawn)
+        }
         Err(err) => Err(err),
     };
     super::runner_metrics::record("startup", if result.is_ok() { "success" } else { "error" });
     result
+}
+
+fn mark_start(diagnostic: Option<&crate::WindowsStartDiagnostic>, stage: crate::WindowsStartStage) {
+    if let Some(diagnostic) = diagnostic {
+        diagnostic.mark(stage);
+    }
+}
+
+fn observe_start_error(
+    diagnostic: Option<&crate::WindowsStartDiagnostic>,
+    err: &anyhow::Error,
+    fallback: crate::WindowsStartError,
+) {
+    if let Some(diagnostic) = diagnostic {
+        if let Some(err) = err.downcast_ref::<RunnerLogonError>() {
+            diagnostic.fail_os(crate::WindowsOsError::from_code(err.code));
+        } else if let Some(err) = err.downcast_ref::<RunnerStartupError>() {
+            let stage = match err.payload.stage {
+                ErrorStage::ReadSpawnRequest => crate::WindowsRunnerErrorStage::ReadSpawnRequest,
+                ErrorStage::SpawnChild => crate::WindowsRunnerErrorStage::SpawnChild,
+                ErrorStage::WriteSpawnReady => crate::WindowsRunnerErrorStage::WriteSpawnReady,
+                ErrorStage::TerminalWitness => crate::WindowsRunnerErrorStage::TerminalWitness,
+            };
+            diagnostic.fail_runner(stage, err.payload.windows_error_code
+                .map(crate::WindowsOsError::from_code)
+                .unwrap_or(crate::WindowsOsError::NotObserved));
+        } else if let Some(err) = err.downcast_ref::<std::io::Error>() {
+            diagnostic.fail_io_kind(err.kind());
+        } else {
+            diagnostic.fail(fallback);
+        }
+    }
 }
 
 impl RunnerTransport {
@@ -167,21 +214,24 @@ impl RunnerTransport {
             IPC_PROTOCOL_VERSION
         }
     }
-    fn negotiate_controls(&mut self) -> Result<()> {
+    fn negotiate_controls(&mut self, diagnostic: Option<&crate::WindowsStartDiagnostic>) -> Result<()> {
         let request = FramedMessage {
             version: CHECKED_IPC_PROTOCOL_VERSION,
             message: Message::Hello {
                 payload: self.hello.clone(),
             },
         };
-        write_frame(&mut self.pipe_write, &request)?;
+        write_frame(&mut self.pipe_write, &request)
+            .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::ControlRejected))?;
         crate::framed_io::wait_for_complete_frame(
             &self.pipe_read,
             Instant::now() + RUNNER_SPAWN_READY_TIMEOUT,
         )
-        .context("wait for matched runner control hello")?;
+        .context("wait for matched runner control hello")
+        .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::ControlRejected))?;
         let msg = read_frame(&mut self.pipe_read)?
-            .ok_or_else(|| anyhow::anyhow!("runner closed before control hello"))?;
+            .ok_or_else(|| anyhow::anyhow!("runner closed before control hello"))
+            .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::ControlRejected))?;
         anyhow::ensure!(
             msg.version == CHECKED_IPC_PROTOCOL_VERSION,
             "runner protocol mismatch before spawn"
@@ -212,11 +262,16 @@ impl RunnerTransport {
     }
 
     pub(crate) fn read_spawn_ready(&mut self) -> Result<()> {
+        self.read_spawn_ready_with_diagnostics(None)
+    }
+
+    fn read_spawn_ready_with_diagnostics(&mut self, diagnostic: Option<&crate::WindowsStartDiagnostic>) -> Result<()> {
         crate::framed_io::wait_for_complete_frame(
             &self.pipe_read,
             Instant::now() + RUNNER_SPAWN_READY_TIMEOUT,
         )
-        .context("wait for runner spawn_ready")?;
+        .context("wait for runner spawn_ready")
+        .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::ControlRejected))?;
         let msg = read_frame(&mut self.pipe_read)?
             .ok_or_else(|| anyhow::anyhow!("runner pipe closed before spawn_ready"))?;
         anyhow::ensure!(
@@ -237,7 +292,11 @@ impl RunnerTransport {
                 }
                 Ok(())
             }
-            Message::Error { payload } => Err(RunnerStartupError::new(payload).into()),
+            Message::Error { payload } => {
+                let err = anyhow::Error::from(RunnerStartupError::new(payload));
+                observe_start_error(diagnostic, &err, crate::WindowsStartError::RunnerReported);
+                Err(err)
+            }
             other => Err(anyhow::anyhow!(
                 "expected spawn_ready from runner, got {other:?}"
             )),
@@ -295,11 +354,13 @@ fn connect_pipe_with_timeout(
     h_pipe: HANDLE,
     expected_runner_pid: u32,
     pipe_label: &str,
+    diagnostic: Option<&crate::WindowsStartDiagnostic>,
 ) -> Result<()> {
     let pipe_label = pipe_label.to_string();
     let pipe_label_for_thread = pipe_label.clone();
     let (thread_handle_tx, thread_handle_rx) = mpsc::sync_channel(1);
     let (connect_result_tx, connect_result_rx) = mpsc::sync_channel(1);
+    let connect_diagnostic = diagnostic.cloned();
     let mut connect_thread = Some(
         thread::Builder::new()
             .name(format!("codex-runner-connect-{pipe_label}"))
@@ -318,9 +379,13 @@ fn connect_pipe_with_timeout(
                     )
                 };
                 if duplicate_ok == 0 {
+                    let code = unsafe { GetLastError() };
+                    if let Some(diagnostic) = &connect_diagnostic {
+                        diagnostic.fail_os(crate::WindowsOsError::from_code(code));
+                    }
                     let _ = thread_handle_tx.send(Err(anyhow::anyhow!(
                         "DuplicateHandle failed for runner {pipe_label_for_thread} connect thread: {}",
-                        unsafe { GetLastError() }
+                        code
                     )));
                     return;
                 }
@@ -331,7 +396,8 @@ fn connect_pipe_with_timeout(
 
                 let result = connect_pipe(h_pipe, expected_runner_pid)
                     .map_err(anyhow::Error::from)
-                    .context(format!("connect {pipe_label_for_thread}"));
+                    .context(format!("connect {pipe_label_for_thread}"))
+                    .inspect_err(|err| observe_start_error(connect_diagnostic.as_ref(), err, crate::WindowsStartError::Unclassified));
                 let _ = connect_result_tx.send(result);
             })?,
     );
@@ -359,6 +425,9 @@ fn connect_pipe_with_timeout(
                 if cancel_ok == 0 {
                     let err = unsafe { GetLastError() };
                     if err != ERROR_NOT_FOUND {
+                        if let Some(diagnostic) = diagnostic {
+                            diagnostic.fail_os(crate::WindowsOsError::from_code(err));
+                        }
                         Err(anyhow::anyhow!(
                             "CancelSynchronousIo failed for runner {pipe_label} connect thread: {err}"
                         ))
@@ -370,6 +439,9 @@ fn connect_pipe_with_timeout(
                     )? {
                         result
                     } else {
+                        if let Some(diagnostic) = diagnostic {
+                            diagnostic.fail_io_kind(std::io::ErrorKind::TimedOut);
+                        }
                         Err(anyhow::anyhow!(
                             "timed out after {}ms connecting runner {pipe_label}",
                             RUNNER_PIPE_CONNECT_TIMEOUT.as_millis()
@@ -379,6 +451,9 @@ fn connect_pipe_with_timeout(
                     // Do not join the helper thread on the timeout path. Parent-side cleanup will
                     // close the pipe handles, which lets the blocked connect unwind without
                     // risking another indefinite wait here.
+                    if let Some(diagnostic) = diagnostic {
+                        diagnostic.fail_io_kind(std::io::ErrorKind::TimedOut);
+                    }
                     Err(anyhow::anyhow!(
                         "timed out after {}ms connecting runner {pipe_label}",
                         RUNNER_PIPE_CONNECT_TIMEOUT.as_millis()
@@ -428,43 +503,75 @@ pub(crate) fn spawn_runner_transport_with_identity(
     cwd: &Path,
     sandbox_creds: &SandboxCreds,
     log_dir: Option<&Path>,
-    mut spawn_request: SpawnRequest,
+    spawn_request: SpawnRequest,
     desktop_policy: Option<&DesktopPolicy>,
     matched_runner: Option<std::sync::Arc<crate::MatchedRunnerArtifact>>,
 ) -> Result<RunnerTransport> {
-    let runner_exe = find_runner_exe(codex_home, log_dir)?;
+    spawn_runner_transport_with_identity_diagnostics(
+        codex_home, cwd, sandbox_creds, log_dir, spawn_request, desktop_policy, matched_runner, None,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
+    codex_home: &Path,
+    cwd: &Path,
+    sandbox_creds: &SandboxCreds,
+    log_dir: Option<&Path>,
+    mut spawn_request: SpawnRequest,
+    desktop_policy: Option<&DesktopPolicy>,
+    matched_runner: Option<std::sync::Arc<crate::MatchedRunnerArtifact>>,
+    diagnostic: Option<&crate::WindowsStartDiagnostic>,
+) -> Result<RunnerTransport> {
+    mark_start(diagnostic, crate::WindowsStartStage::RunnerResolve);
+    let runner_exe = find_runner_exe(codex_home, log_dir)
+        .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?;
     if let Some(pin) = &matched_runner {
-        pin.verify_resolved(&runner_exe)?;
+        mark_start(diagnostic, crate::WindowsStartStage::RunnerPinVerify);
+        pin.verify_resolved(&runner_exe)
+            .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::PinRejected))?;
     }
     let registered_alias = if registered_core_requested() {
+        mark_start(diagnostic, crate::WindowsStartStage::RegisteredAlias);
         Some(crate::app_package::registered_runner_alias(
             codex_home,
             &sandbox_creds.username,
-        )?)
+        ).inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::IdentityRejected))?)
     } else {
         None
     };
     if let Some(policy) = desktop_policy {
+        mark_start(diagnostic, crate::WindowsStartStage::PrivateDesktop);
         spawn_request.private_desktop_name = Some(shared_private_desktop_for_user(
             &sandbox_creds.username,
             policy,
             log_dir,
-        )?);
+        ).inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?);
     }
     let (pipe_in_name, pipe_out_name) = pipe_pair();
+    mark_start(diagnostic, crate::WindowsStartStage::PipeCreateIn);
     let pipe_write = unsafe {
         File::from_raw_handle(create_named_pipe(
             &pipe_in_name,
             PIPE_ACCESS_OUTBOUND,
             &sandbox_creds.username,
-        )? as _)
+        ).inspect_err(|err| {
+            if let Some(diagnostic) = diagnostic {
+                diagnostic.fail_io_kind(err.kind());
+            }
+        })? as _)
     };
+    mark_start(diagnostic, crate::WindowsStartStage::PipeCreateOut);
     let pipe_read = unsafe {
         File::from_raw_handle(create_named_pipe(
             &pipe_out_name,
             PIPE_ACCESS_INBOUND,
             &sandbox_creds.username,
-        )? as _)
+        ).inspect_err(|err| {
+            if let Some(diagnostic) = diagnostic {
+                diagnostic.fail_io_kind(err.kind());
+            }
+        })? as _)
     };
     let h_pipe_in = pipe_write.as_raw_handle() as HANDLE;
     let h_pipe_out = pipe_read.as_raw_handle() as HANDLE;
@@ -472,7 +579,8 @@ pub(crate) fn spawn_runner_transport_with_identity(
     let runner_cmdline = registered_alias.as_deref().unwrap_or(&runner_exe).to_str();
     let runner_cmdline = if matched_runner.is_some() {
         runner_cmdline
-            .context("matched runner launch path is not UTF-8")?
+            .context("matched runner launch path is not UTF-8")
+            .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::PinRejected))?
             .to_owned()
     } else {
         runner_cmdline
@@ -502,6 +610,7 @@ pub(crate) fn spawn_runner_transport_with_identity(
     let previous_error_mode = unsafe { SetErrorMode(RUNNER_ERROR_MODE_FLAGS) };
     // Execution aliases require the registered account's profile.
     // Other launches retain their existing profile-free behavior.
+    mark_start(diagnostic, crate::WindowsStartStage::RunnerLogon);
     let spawn_res = unsafe {
         CreateProcessWithLogonW(
             user_w.as_ptr(),
@@ -527,6 +636,9 @@ pub(crate) fn spawn_runner_transport_with_identity(
     }
     if spawn_res == 0 {
         let err = unsafe { GetLastError() };
+        if let Some(diagnostic) = diagnostic {
+            diagnostic.fail_os(crate::WindowsOsError::from_code(err));
+        }
         return Err(RunnerLogonError { code: err }.into());
     }
     // Keep the process pinned through the entire startup handshake. Pipes close
@@ -538,6 +650,12 @@ pub(crate) fn spawn_runner_transport_with_identity(
     if matched_runner.is_some() {
         use rand::{RngCore, SeedableRng};
         rand::rngs::SmallRng::from_entropy().fill_bytes(&mut nonce);
+    }
+    mark_start(diagnostic, crate::WindowsStartStage::ControlHello);
+    if matched_runner.is_some() && nonce == [0; 32] {
+        if let Some(diagnostic) = diagnostic {
+            diagnostic.fail(crate::WindowsStartError::ControlRejected);
+        }
     }
     anyhow::ensure!(
         matched_runner.is_none() || nonce != [0; 32],
@@ -557,15 +675,27 @@ pub(crate) fn spawn_runner_transport_with_identity(
         // An update can retarget the alias after setup. Check the selected image
         // and authenticate its pipes before sending it the command.
         if registered_alias.is_some() {
-            verify_registered_core_runner(pi.hProcess, &runner_exe)?;
+            mark_start(diagnostic, crate::WindowsStartStage::RegisteredImageVerify);
+            verify_registered_core_runner(pi.hProcess, &runner_exe)
+                .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::IdentityRejected))?;
         }
-        connect_pipe_with_timeout(h_pipe_in, expected_runner_pid, "pipe-in")?;
-        connect_pipe_with_timeout(h_pipe_out, expected_runner_pid, "pipe-out")?;
+        mark_start(diagnostic, crate::WindowsStartStage::PipeConnectIn);
+        connect_pipe_with_timeout(h_pipe_in, expected_runner_pid, "pipe-in", diagnostic)
+            .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?;
+        mark_start(diagnostic, crate::WindowsStartStage::PipeConnectOut);
+        connect_pipe_with_timeout(h_pipe_out, expected_runner_pid, "pipe-out", diagnostic)
+            .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?;
         if transport.matched_runner.is_some() {
-            transport.negotiate_controls()?;
+            mark_start(diagnostic, crate::WindowsStartStage::ControlHello);
+            transport.negotiate_controls(diagnostic)
+                .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::ControlRejected))?;
         }
-        transport.send_spawn_request(spawn_request)?;
-        transport.read_spawn_ready()?;
+        mark_start(diagnostic, crate::WindowsStartStage::SpawnRequestWrite);
+        transport.send_spawn_request(spawn_request)
+            .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?;
+        mark_start(diagnostic, crate::WindowsStartStage::SpawnReadyRead);
+        transport.read_spawn_ready_with_diagnostics(diagnostic)
+            .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::ControlRejected))?;
         Ok(())
     })();
     if let Err(err) = startup_result {
@@ -615,6 +745,101 @@ mod tests {
         assert_eq!(transport.protocol_version(), 6);
         assert!(!transport.controls.close_stdin && !transport.controls.resize);
         assert!(transport.into_checked_files().is_err());
+    }
+
+    fn fixture_creds() -> crate::identity::SandboxCreds {
+        crate::identity::SandboxCreds {
+            username: String::new(),
+            password: String::new(),
+        }
+    }
+
+    #[test]
+    fn observed_existing_retry_preserves_first_failure_and_recovery() {
+        let diagnostic = crate::WindowsStartDiagnostic::default();
+        let mut calls = 0;
+        let result = super::retry_runner_spawn_once_with_diagnostics(
+            fixture_creds(),
+            &[],
+            |_| {
+                calls += 1;
+                diagnostic.mark(crate::WindowsStartStage::RunnerLogon);
+                if calls == 1 {
+                    let err = anyhow::Error::from(RunnerLogonError { code: ERROR_LOGON_FAILURE });
+                    super::observe_start_error(Some(&diagnostic), &err, crate::WindowsStartError::Unclassified);
+                    Err(err)
+                } else {
+                    Ok(17)
+                }
+            },
+            || {
+                assert_eq!(diagnostic.snapshot().unwrap().attempt, 2);
+                Ok(fixture_creds())
+            },
+            Some(&diagnostic),
+        );
+        assert_eq!(result.unwrap(), 17);
+        assert_eq!(calls, 2);
+        let snapshot = diagnostic.snapshot().unwrap();
+        assert_eq!(snapshot.first_attempt.unwrap().os_class, crate::WindowsOsError::LogonFailure);
+        assert_eq!(snapshot.current.error, crate::WindowsStartError::NotObserved);
+        assert_eq!(snapshot.completion, crate::WindowsStartCompletion::InProgressOrUnwound);
+    }
+
+    #[test]
+    fn observed_existing_retry_stops_on_refresh_failure() {
+        let diagnostic = crate::WindowsStartDiagnostic::default();
+        let mut calls = 0;
+        let result: anyhow::Result<()> = super::retry_runner_spawn_once_with_diagnostics(
+            fixture_creds(),
+            &[],
+            |_| {
+                calls += 1;
+                diagnostic.mark(crate::WindowsStartStage::RunnerLogon);
+                let err = anyhow::Error::from(RunnerLogonError { code: ERROR_LOGON_FAILURE });
+                super::observe_start_error(Some(&diagnostic), &err, crate::WindowsStartError::Unclassified);
+                Err(err)
+            },
+            || {
+                let err = anyhow::Error::from(std::io::Error::from(std::io::ErrorKind::PermissionDenied));
+                super::observe_start_error(Some(&diagnostic), &err, crate::WindowsStartError::Unclassified);
+                Err(err)
+            },
+            Some(&diagnostic),
+        );
+        assert!(result.unwrap_err().downcast_ref::<std::io::Error>().is_some());
+        assert_eq!(calls, 1);
+        let snapshot = diagnostic.snapshot().unwrap();
+        assert_eq!(snapshot.current.stage, crate::WindowsStartStage::SetupRefresh);
+        assert_eq!(snapshot.current.error, crate::WindowsStartError::IoAccessDenied);
+        assert_eq!(snapshot.first_attempt.unwrap().error, crate::WindowsStartError::OsReported);
+    }
+
+    #[test]
+    fn observed_runner_error_does_not_read_message_or_retry_non_spawn_stage() {
+        let diagnostic = crate::WindowsStartDiagnostic::default();
+        let result: anyhow::Result<()> = super::retry_runner_spawn_once_with_diagnostics(
+            fixture_creds(),
+            &[],
+            |_| {
+                diagnostic.mark(crate::WindowsStartStage::SpawnReadyRead);
+                let err = anyhow::Error::from(RunnerStartupError::new(ErrorPayload {
+                    message: "fixture text must never become diagnostic data".to_owned(),
+                    stage: ErrorStage::WriteSpawnReady,
+                    windows_error_code: Some(ERROR_NO_SUCH_LOGON_SESSION),
+                }));
+                super::observe_start_error(Some(&diagnostic), &err, crate::WindowsStartError::Unclassified);
+                Err(err)
+            },
+            || panic!("non-spawn runner failure must not refresh"),
+            Some(&diagnostic),
+        );
+        assert!(result.unwrap_err().downcast_ref::<RunnerStartupError>().is_some());
+        let snapshot = diagnostic.snapshot().unwrap();
+        assert_eq!(snapshot.attempt, 1);
+        assert_eq!(snapshot.first_attempt, None);
+        assert_eq!(snapshot.current.runner_stage, crate::WindowsRunnerErrorStage::WriteSpawnReady);
+        assert_eq!(snapshot.current.os_class, crate::WindowsOsError::NoLogonSession);
     }
 
     #[test]

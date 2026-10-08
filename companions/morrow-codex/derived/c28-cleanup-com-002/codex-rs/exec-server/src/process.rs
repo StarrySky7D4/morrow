@@ -6,6 +6,8 @@ use std::sync::Mutex as StdMutex;
 
 use codex_network_proxy::NetworkPolicyDecider;
 use codex_sandboxing::SandboxType;
+#[cfg(windows)]
+use codex_sandboxing::WindowsStartDiagnostic;
 use tokio::sync::broadcast;
 use tokio::sync::watch;
 
@@ -272,6 +274,18 @@ pub type ExecProcessFuture<'a, T> =
 pub trait ExecBackend: Send + Sync {
     fn start(&self, params: ExecParams) -> ExecBackendFuture<'_>;
 
+    /// Observe one matched Windows start when the backend supports it.
+    /// The default still starts exactly once, without claiming observation.
+    #[cfg(windows)]
+    fn start_with_windows_diagnostics(
+        &self,
+        params: ExecParams,
+        diagnostic: WindowsStartDiagnostic,
+    ) -> ExecBackendFuture<'_> {
+        diagnostic.unsupported();
+        self.start(params)
+    }
+
     /// Captures a local shell snapshot without starting the requested command.
     /// Failures must remain retryable by real commands. Remote backends do not
     /// support this operation; callers should leave them on the lazy path.
@@ -299,6 +313,81 @@ pub trait ExecBackend: Send + Sync {
 
 pub type ExecBackendFuture<'a> =
     Pin<Box<dyn Future<Output = Result<StartedExecProcess, ExecServerError>> + Send + 'a>>;
+
+#[cfg(all(test, windows))]
+mod windows_start_diagnostic_tests {
+    use std::collections::HashMap;
+    use std::sync::Mutex;
+    use std::sync::atomic::AtomicUsize;
+    use std::sync::atomic::Ordering;
+
+    use codex_sandboxing::WindowsStartAttempt;
+    use codex_sandboxing::WindowsStartCompletion;
+    use codex_sandboxing::WindowsStartDiagnostic;
+    use codex_utils_path_uri::PathUri;
+
+    use super::ExecBackend;
+    use super::ExecBackendFuture;
+    use crate::ExecServerError;
+    use crate::protocol::ExecParams;
+
+    struct DefaultDiagnosticBackend {
+        starts: AtomicUsize,
+        error: Mutex<Option<ExecServerError>>,
+    }
+
+    impl ExecBackend for DefaultDiagnosticBackend {
+        fn start(&self, _params: ExecParams) -> ExecBackendFuture<'_> {
+            self.starts.fetch_add(1, Ordering::SeqCst);
+            let error = self.error.lock().expect("fake error lock").take();
+            Box::pin(async move { Err(error.expect("only one start")) })
+        }
+    }
+
+    #[tokio::test]
+    async fn default_diagnostic_entry_starts_once_and_preserves_error_without_observation() {
+        let backend = DefaultDiagnosticBackend {
+            starts: AtomicUsize::new(0),
+            error: Mutex::new(Some(ExecServerError::Server {
+                code: -32602,
+                message: "fake original error".to_string(),
+            })),
+        };
+        let params = ExecParams {
+            process_id: "fake-diagnostic-start".into(),
+            metadata: None,
+            argv: Vec::new(),
+            cwd: PathUri::parse("file:///C:/fake-diagnostic-cwd").expect("fixed fake URI"),
+            env_policy: None,
+            shell_snapshot: None,
+            env: HashMap::new(),
+            tty: false,
+            pipe_stdin: false,
+            arg0: None,
+            sandbox: None,
+            enforce_managed_network: false,
+            managed_network: None,
+            network_proxy: None,
+        };
+        let diagnostic = WindowsStartDiagnostic::default();
+        let error = backend
+            .start_with_windows_diagnostics(params, diagnostic.clone())
+            .await
+            .err()
+            .expect("fake backend error must be preserved");
+        assert_eq!(backend.starts.load(Ordering::SeqCst), 1);
+        assert!(matches!(
+            error,
+            ExecServerError::Server { code: -32602, message }
+                if message == "fake original error"
+        ));
+        let snapshot = diagnostic.snapshot().expect("unpoisoned fixed snapshot");
+        assert_eq!(snapshot.completion, WindowsStartCompletion::UnsupportedBackend);
+        assert_eq!(snapshot.current, WindowsStartAttempt::default());
+        assert_eq!(snapshot.first_attempt, None);
+        assert_eq!(snapshot.attempt, 0);
+    }
+}
 
 #[cfg(test)]
 mod tests {

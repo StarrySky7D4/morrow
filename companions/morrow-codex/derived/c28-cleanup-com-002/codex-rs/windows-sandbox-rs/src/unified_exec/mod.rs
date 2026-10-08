@@ -56,23 +56,38 @@ pub async fn spawn_windows_sandbox_session_for_level_with_runner(
     request: WindowsSandboxSessionRequest<'_>,
     runner: std::sync::Arc<crate::MatchedRunnerArtifact>,
 ) -> Result<SpawnedProcess> {
+    spawn_windows_sandbox_session_for_level_with_runner_diagnostics(request, runner, None).await
+}
+
+pub async fn spawn_windows_sandbox_session_for_level_with_runner_diagnostics(
+    request: WindowsSandboxSessionRequest<'_>,
+    runner: std::sync::Arc<crate::MatchedRunnerArtifact>,
+    diagnostic: Option<crate::WindowsStartDiagnostic>,
+) -> Result<SpawnedProcess> {
+    if let Some(diagnostic) = &diagnostic {
+        diagnostic.mark(crate::WindowsStartStage::MatchedRouteCheck);
+    }
     if !matches!(request.windows_sandbox_level, WindowsSandboxLevel::Elevated) {
+        if let Some(diagnostic) = &diagnostic {
+            diagnostic.fail(crate::WindowsStartError::RouteRejected);
+        }
         bail!("matched runner entry requires the explicitly selected elevated backend");
     }
-    spawn_windows_sandbox_session_with_desktop_and_runner(request, None, Some(runner)).await
+    spawn_windows_sandbox_session_with_desktop_and_runner(request, None, Some(runner), diagnostic).await
 }
 
 pub(crate) async fn spawn_windows_sandbox_session_with_desktop(
     request: WindowsSandboxSessionRequest<'_>,
     private_desktop_name: Option<String>,
 ) -> Result<SpawnedProcess> {
-    spawn_windows_sandbox_session_with_desktop_and_runner(request, private_desktop_name, None).await
+    spawn_windows_sandbox_session_with_desktop_and_runner(request, private_desktop_name, None, None).await
 }
 
 async fn spawn_windows_sandbox_session_with_desktop_and_runner(
     request: WindowsSandboxSessionRequest<'_>,
     private_desktop_name: Option<String>,
     runner: Option<std::sync::Arc<crate::MatchedRunnerArtifact>>,
+    diagnostic: Option<crate::WindowsStartDiagnostic>,
 ) -> Result<SpawnedProcess> {
     if matches!(request.windows_sandbox_level, WindowsSandboxLevel::Elevated) {
         backends::elevated::spawn_windows_sandbox_session_elevated_for_permission_profile(
@@ -95,6 +110,7 @@ async fn spawn_windows_sandbox_session_with_desktop_and_runner(
             request.stdin_open,
             private_desktop_name,
             runner,
+            diagnostic,
         )
         .await
     } else {
@@ -191,6 +207,7 @@ pub async fn spawn_windows_sandbox_session_elevated_for_permission_profile(
         tty,
         stdin_open,
         /*private_desktop_name*/ None,
+        None,
         None,
     )
     .await

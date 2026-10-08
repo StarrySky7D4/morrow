@@ -20,6 +20,12 @@ use codex_protocol::exec_output::ExecToolCallOutput;
 use codex_protocol::exec_output::StreamOutput;
 use codex_protocol::shell_environment;
 use codex_sandboxing::SandboxType;
+#[cfg(windows)]
+use codex_sandboxing::WindowsStartDiagnostic;
+#[cfg(windows)]
+use codex_sandboxing::WindowsStartError;
+#[cfg(windows)]
+use codex_sandboxing::WindowsStartStage;
 use codex_sandboxing::is_likely_sandbox_denied;
 use codex_utils_pty::ExecCommandSession;
 use codex_utils_pty::ProcessSignal as PtyProcessSignal;
@@ -300,10 +306,35 @@ impl LocalProcess {
     async fn start_process(
         &self,
         params: ExecParams,
+        telemetry: ProcessTelemetry,
+    ) -> Result<(ExecResponse, watch::Sender<u64>, ExecProcessEventLog), JSONRPCErrorError> {
+        self.start_process_inner(
+            params,
+            telemetry,
+            #[cfg(windows)]
+            None,
+        )
+        .await
+    }
+
+    async fn start_process_inner(
+        &self,
+        params: ExecParams,
         mut telemetry: ProcessTelemetry,
+        #[cfg(windows)] diagnostic: Option<WindowsStartDiagnostic>,
     ) -> Result<(ExecResponse, watch::Sender<u64>, ExecProcessEventLog), JSONRPCErrorError> {
         #[cfg(windows)]
-        self.validate_windows_runner_selection(&params)?;
+        {
+            if let Some(diagnostic) = &diagnostic {
+                diagnostic.mark(WindowsStartStage::RunnerSelection);
+            }
+            if let Err(error) = self.validate_windows_runner_selection(&params) {
+                if let Some(diagnostic) = &diagnostic {
+                    diagnostic.fail(WindowsStartError::RouteRejected);
+                }
+                return Err(error);
+            }
+        }
         telemetry.launch_context = telemetry.launch_context.filter(SpanContext::is_valid);
         let metadata = params.metadata.as_ref();
         telemetry.thread_id = metadata
@@ -388,6 +419,10 @@ impl LocalProcess {
                 "shell snapshots are unsupported on this platform".to_string(),
             ));
         }
+        #[cfg(windows)]
+        if let Some(diagnostic) = &diagnostic {
+            diagnostic.mark(WindowsStartStage::RequestPrepare);
+        }
         let prepared = prepare_exec_request_with_telemetry(
             &params,
             child_env(&params),
@@ -422,6 +457,10 @@ impl LocalProcess {
         };
 
         let start = Arc::new(ProcessStart);
+        #[cfg(windows)]
+        if let Some(diagnostic) = &diagnostic {
+            diagnostic.mark(WindowsStartStage::ProcessMapReserve);
+        }
         {
             let mut process_map = self.inner.processes.lock().await;
             if process_map.contains_key(&process_id) {
@@ -454,7 +493,9 @@ impl LocalProcess {
             inherited_fds: codex_utils_pty::ChildFds::Attached(&inherited_fds),
         };
         #[cfg(windows)]
-        let spawned_result = self.spawn_with_windows_runner(spawn_request).await;
+        let spawned_result = self
+            .spawn_with_windows_runner(spawn_request, diagnostic)
+            .await;
         #[cfg(not(windows))]
         let spawned_result = codex_sandboxing::spawn_process(spawn_request).await;
         #[cfg(unix)]
@@ -658,12 +699,40 @@ pub(crate) fn shell_environment_policy(env_policy: &ExecEnvPolicy) -> ShellEnvir
 
 impl LocalProcess {
     async fn start(&self, params: ExecParams) -> Result<StartedExecProcess, ExecServerError> {
-        let (response, wake_tx, events) = self
-            .start_process(params, ProcessTelemetry::default())
-            .await
-            .map_err(map_handler_error)?;
+        self.start_inner(
+            params,
+            #[cfg(windows)]
+            None,
+        )
+        .await
+    }
+
+    async fn start_inner(
+        &self,
+        params: ExecParams,
+        #[cfg(windows)] diagnostic: Option<WindowsStartDiagnostic>,
+    ) -> Result<StartedExecProcess, ExecServerError> {
+        let result = self
+            .start_process_inner(
+                params,
+                ProcessTelemetry::default(),
+                #[cfg(windows)]
+                diagnostic.clone(),
+            )
+            .await;
+        #[cfg(windows)]
+        if let (Some(diagnostic), Err(error)) = (&diagnostic, &result) {
+            diagnostic.fail(match error.code {
+                -32600 => WindowsStartError::InvalidRequest,
+                -32602 => WindowsStartError::InvalidParams,
+                -32603 => WindowsStartError::ServerInternal,
+                _ => WindowsStartError::OtherRpc,
+            });
+            diagnostic.finish_failed();
+        }
+        let (response, wake_tx, events) = result.map_err(map_handler_error)?;
         let sandbox_type = sandbox_type_from_protocol(response.sandbox_type);
-        Ok(StartedExecProcess {
+        let started = StartedExecProcess {
             process: Arc::new(LocalExecProcess {
                 process_id: response.process_id,
                 backend: self.clone(),
@@ -671,13 +740,32 @@ impl LocalProcess {
                 events,
             }),
             sandbox_type,
-        })
+        };
+        #[cfg(windows)]
+        if let Some(diagnostic) = &diagnostic {
+            diagnostic.mark(WindowsStartStage::SpawnReturned);
+            diagnostic.finish_returned_handle();
+        }
+        Ok(started)
     }
 }
 
 impl ExecBackend for LocalProcess {
     fn start(&self, params: ExecParams) -> ExecBackendFuture<'_> {
         Box::pin(LocalProcess::start(self, params))
+    }
+
+    #[cfg(windows)]
+    fn start_with_windows_diagnostics(
+        &self,
+        params: ExecParams,
+        diagnostic: WindowsStartDiagnostic,
+    ) -> ExecBackendFuture<'_> {
+        if self.windows_runner.is_none() {
+            diagnostic.unsupported();
+            return Box::pin(LocalProcess::start(self, params));
+        }
+        Box::pin(self.start_inner(params, Some(diagnostic)))
     }
 
     #[cfg(unix)]

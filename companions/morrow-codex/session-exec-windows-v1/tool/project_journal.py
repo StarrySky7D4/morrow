@@ -12,7 +12,7 @@ import re
 import stat
 import sys
 
-VERSION = "C28_NATIVE_DIAGNOSTIC_V2_SCALAR_PROJECTION_001"
+VERSION = "C28_NATIVE_DIAGNOSTIC_V3_SCALAR_PROJECTION_001"
 MAX_JOURNAL = 33554432
 MAX_RECORD = 131072
 MAX_CONTROLLER = 4096
@@ -88,6 +88,79 @@ DIAGNOSTIC_V2 = re.compile(
 )
 FIXED_NONDIAGNOSTIC = frozenset(("unexpected native start reply; Unknown", "native start timeout; Unknown; no replay"))
 
+# Exact sealed start_diagnostic.rs enums, with no arbitrary strings or numbers.
+LOWER_STAGES = frozenset("NotObserved RunnerSelection RequestPrepare ProcessMapReserve MatchedRouteCheck CodexHomeResolve PermissionResolve SandboxBaseReady AccountSelect SetupRefresh CapabilityResolve BlockingTransportTask DesktopPolicy RunnerResolve RunnerPinVerify RegisteredAlias PrivateDesktop PipeCreateIn PipeCreateOut RunnerLogon RegisteredImageVerify PipeConnectIn PipeConnectOut ControlHello SpawnRequestWrite SpawnReadyRead CheckedDriverAssemble SpawnReturned".split())
+LOWER_ERRORS = frozenset("NotObserved InvalidParams InvalidRequest ServerInternal OtherRpc RouteRejected PinRejected IdentityRejected ControlRejected IoAccessDenied IoNotFound IoInvalidInput IoTimedOut IoInterrupted IoBrokenPipe IoOther OsReported RunnerReported BlockingCancelled BlockingPanic Unclassified".split())
+RUNNER_STAGES = frozenset("NotObserved ReadSpawnRequest SpawnChild WriteSpawnReady TerminalWitness".split())
+OS_CLASSES = frozenset("NotObserved AccessDenied FileNotFound PathNotFound LogonFailure AccountDisabled NoLogonSession OperationAborted TimedOut Other".split())
+LOWER_COMPLETIONS = frozenset("NotObserved InProgressOrUnwound ReturnedError ReturnedBackendHandle UnsupportedBackend".split())
+BACKEND_HISTORY_SCOPE = "OWNER_LATEST_CALL_NOT_OPERATION_PROOF"
+U64_MAX = 18446744073709551615
+
+
+def attempt_grammar(prefix):
+    return (r"WindowsStartAttempt \{ stage: (?P<" + prefix + "stage>" + alternatives(LOWER_STAGES)
+            + r"), error: (?P<" + prefix + "error>" + alternatives(LOWER_ERRORS)
+            + r"), runner_stage: (?P<" + prefix + "runner_stage>" + alternatives(RUNNER_STAGES)
+            + r"), os_class: (?P<" + prefix + "os_class>" + alternatives(OS_CLASSES) + r") \}")
+
+
+LOWER_GRAMMAR = (
+    r"(?:None|Some\(LowerBackendCallObservation \{ call_sequence: (?P<call_sequence>[1-9][0-9]{0,19}), "
+    r"observation: WindowsStartSnapshot \{ current: " + attempt_grammar("current_")
+    + r", first_attempt: (?:None|Some\(" + attempt_grammar("first_") + r"\)), "
+    r"attempt: (?P<attempt>[012]), completion: (?P<completion>" + alternatives(LOWER_COMPLETIONS)
+    + r") \} \}\))"
+)
+# V1/V2 grammars remain unchanged. V3 is a separate whole-string grammar.
+DIAGNOSTIC_V3 = re.compile(
+    DIAGNOSTIC_V2.pattern.removesuffix(r" \}").replace("NativeStartDiagnosticV2", "NativeStartDiagnosticV3")
+    + r', backend_history_scope: "' + BACKEND_HISTORY_SCOPE
+    + r'", latest_backend_call_observation: ' + LOWER_GRAMMAR + r" \}"
+)
+
+
+def attempt_fields(fields, prefix):
+    return {name: fields[prefix + name] for name in ("stage", "error", "runner_stage", "os_class")}
+
+
+def valid_attempt_shape(attempt):
+    error = attempt["error"]
+    if error == "RunnerReported":
+        return attempt["runner_stage"] != "NotObserved"
+    if error == "OsReported":
+        return attempt["runner_stage"] == "NotObserved" and attempt["os_class"] != "NotObserved"
+    return attempt["runner_stage"] == "NotObserved" and attempt["os_class"] == "NotObserved"
+
+
+def lower_projection(fields):
+    # None is unavailable/unobserved historical data, never proof of no effect.
+    if fields["call_sequence"] is None:
+        return True, None
+    sequence = int(fields["call_sequence"])
+    if not 1 <= sequence <= U64_MAX:
+        return False, None
+    current = attempt_fields(fields, "current_")
+    first = attempt_fields(fields, "first_") if fields["first_stage"] is not None else None
+    attempt = int(fields["attempt"])
+    completion = fields["completion"]
+    default = {name: "NotObserved" for name in current}
+    if not valid_attempt_shape(current) or (first is not None and not valid_attempt_shape(first)):
+        return False, None
+    if completion in ("NotObserved", "UnsupportedBackend"):
+        valid = attempt == 0 and first is None and current == default
+    else:
+        valid = ((attempt == 1 and first is None)
+                 or (attempt == 2 and first is not None and first["error"] != "NotObserved"))
+        if completion == "ReturnedError":
+            valid = valid and current["error"] != "NotObserved"
+        elif completion == "ReturnedBackendHandle":
+            valid = valid and current == dict(default, stage="SpawnReturned")
+    if not valid:
+        return False, None
+    return True, {"call_sequence": sequence, "observation": {
+        "current": current, "first_attempt": first, "attempt": attempt, "completion": completion}}
+
 
 def safe_diagnostic(payload):
     if type(payload) is not str:
@@ -100,7 +173,18 @@ def safe_diagnostic(payload):
         match = DIAGNOSTIC_V2.fullmatch(payload)
         native_fields = NATIVE_FIELDS_V2
     if match is None:
-        return {"parse_status": "REJECTED"}
+        match = DIAGNOSTIC_V3.fullmatch(payload)
+        if match is None:
+            return {"parse_status": "REJECTED"}
+        valid, lower = lower_projection(match.groupdict())
+        if not valid:
+            return {"parse_status": "REJECTED"}
+        fields = match.groupdict()
+        command = {k: fields[k] == "true" if k.endswith("_observed") else fields[k] for k in COMMAND_FIELDS}
+        native = {k: fields[k] == "true" if k.endswith("_observed") else fields[k] for k in NATIVE_FIELDS_V2}
+        native["backend_history_scope"] = BACKEND_HISTORY_SCOPE
+        native["latest_backend_call_observation"] = lower
+        return {"parse_status": "OK", "command_diagnostic": command, "native_diagnostic": native}
     fields = match.groupdict()
     for name in COMMAND_FIELDS + native_fields:
         if name.endswith("_observed"):
@@ -322,6 +406,153 @@ def main(arguments):
     return 2 if bad else 0
 
 
+def v3_self_test(check, diagnostic, diagnostic_v2, records, row, private):
+    # All fixture text and journal/controller bytes below are synthetic memory.
+    def attempt(stage="NotObserved", error="NotObserved", runner="NotObserved", os_class="NotObserved"):
+        return ("WindowsStartAttempt { stage: " + stage + ", error: " + error
+                + ", runner_stage: " + runner + ", os_class: " + os_class + " }")
+
+    def observation(current=None, first=None, number=1, completion="InProgressOrUnwound", sequence=1):
+        return ("Some(LowerBackendCallObservation { call_sequence: " + str(sequence)
+                + ", observation: WindowsStartSnapshot { current: " + (current or attempt("RunnerSelection"))
+                + ", first_attempt: " + ("None" if first is None else "Some(" + first + ")")
+                + ", attempt: " + str(number) + ", completion: " + completion + " } })")
+
+    def diagnostic_v3(lower="None"):
+        return (diagnostic_v2.removesuffix(" }").replace("NativeStartDiagnosticV2", "NativeStartDiagnosticV3")
+                + ', backend_history_scope: "' + BACKEND_HISTORY_SCOPE
+                + '", latest_backend_call_observation: ' + lower + " }")
+
+    def accept(candidate):
+        projected = safe_diagnostic(candidate)
+        check(projected["parse_status"] == "OK")
+        check(set(projected) == {"parse_status", "command_diagnostic", "native_diagnostic"})
+        check(set(projected["command_diagnostic"]) == set(COMMAND_FIELDS))
+        check(set(projected["native_diagnostic"]) == set(NATIVE_FIELDS_V2) | {
+            "backend_history_scope", "latest_backend_call_observation"})
+        check(projected["native_diagnostic"]["backend_history_scope"] == BACKEND_HISTORY_SCOPE)
+        check(private not in json.dumps(projected))
+        return projected["native_diagnostic"]["latest_backend_call_observation"]
+
+    check(safe_diagnostic(diagnostic)["parse_status"] == "OK")
+    check(safe_diagnostic(diagnostic_v2)["parse_status"] == "OK")
+    check(accept(diagnostic_v3()) is None)
+    for completion in ("NotObserved", "UnsupportedBackend"):
+        lower = accept(diagnostic_v3(observation(attempt(), number=0, completion=completion)))
+        check(lower["observation"]["attempt"] == 0)
+        check(lower["observation"]["completion"] == completion)
+    for sequence in (1, U64_MAX):
+        lower = accept(diagnostic_v3(observation(sequence=sequence)))
+        check(lower["call_sequence"] == sequence)
+        check(type(lower["call_sequence"]) is int)
+    for stage in LOWER_STAGES:
+        lower = accept(diagnostic_v3(observation(attempt(stage))))
+        check(lower["observation"]["current"]["stage"] == stage)
+    for error in LOWER_ERRORS:
+        runner = "SpawnChild" if error == "RunnerReported" else "NotObserved"
+        os_class = "Other" if error == "OsReported" else "NotObserved"
+        completion = "InProgressOrUnwound" if error == "NotObserved" else "ReturnedError"
+        lower = accept(diagnostic_v3(observation(attempt("RunnerLogon", error, runner, os_class), completion=completion)))
+        check(lower["observation"]["current"]["error"] == error)
+    for runner in RUNNER_STAGES:
+        error = "NotObserved" if runner == "NotObserved" else "RunnerReported"
+        lower = accept(diagnostic_v3(observation(attempt("SpawnReadyRead", error, runner))))
+        check(lower["observation"]["current"]["runner_stage"] == runner)
+    for os_class in OS_CLASSES:
+        error = "NotObserved" if os_class == "NotObserved" else "OsReported"
+        lower = accept(diagnostic_v3(observation(attempt("RunnerLogon", error, os_class=os_class))))
+        check(lower["observation"]["current"]["os_class"] == os_class)
+    first = attempt("RunnerLogon", "OsReported", os_class="AccountDisabled")
+    for number, prior in ((1, None), (2, first)):
+        lower = accept(diagnostic_v3(observation(attempt("SpawnReturned"), prior, number, "ReturnedBackendHandle")))
+        check(lower["observation"]["completion"] == "ReturnedBackendHandle")
+        check(lower["observation"]["attempt"] == number)
+        # No synthesis of effects, SDK completion, operation authority or receipt.
+        check(set(lower["observation"]) == {"current", "first_attempt", "attempt", "completion"})
+    lower = accept(diagnostic_v3(observation(attempt("SetupRefresh"), first, 2)))
+    check(lower["observation"]["first_attempt"]["os_class"] == "AccountDisabled")
+    lower = accept(diagnostic_v3(observation(attempt("SetupRefresh", "IoAccessDenied"), first, 2, "ReturnedError")))
+    check(lower["observation"]["current"]["error"] == "IoAccessDenied")
+    check(lower["observation"]["first_attempt"]["error"] == "OsReported")
+    for os_class in ("AccountDisabled", "LogonFailure", "NoLogonSession"):
+        prior = attempt("SpawnReadyRead", "RunnerReported", "SpawnChild", os_class)
+        lower = accept(diagnostic_v3(observation(attempt("SetupRefresh"), prior, 2)))
+        check(lower["observation"]["first_attempt"]["os_class"] == os_class)
+    # V3 preserves every fixed upper enum and the exact lower/upper separation.
+    upper_none = diagnostic_v3()
+    for values, field, old in ((WORKER_STAGES, "worker_stage", "PORT_REJECTED"),
+                               (WORKER_ERRORS, "worker_error_class", "R2CommitUnknown"),
+                               (WORKER_STAGES, "delivery_stage", "RECEIVER_ERROR"),
+                               (WORKER_ERRORS, "delivery_error_class", "Unknown"),
+                               (NATIVE_STAGES, "stage", "BACKEND_START_RETURNED"),
+                               (NATIVE_ERRORS, "error_class", "BackendError"),
+                               (BACKEND_ERRORS, "backend_error_class", "ServerInternal")):
+        for value in values:
+            accept(upper_none.replace(field + ': "' + old + '"', field + ': "' + value + '"'))
+    for error in OUTER_ERRORS:
+        accept(upper_none.replace("delivery Unknown: Unknown;", "delivery Unknown: " + error + ";"))
+    base = diagnostic_v3(observation())
+    second = diagnostic_v3(observation(attempt("SetupRefresh"), first, 2))
+    bad_inputs = [private + base, base + private, base + "\n", base + "\x00", {"message": base}, None,
+                  base.replace("true", '"true"', 1), base.replace("false", '"false"', 1),
+                  base.replace(BACKEND_HISTORY_SCOPE, private),
+                  base.replace('backend_history_scope: "', 'backend_history_scope: "\\'),
+                  base.replace("call_sequence: 1", "call_sequence: 0"),
+                  base.replace("call_sequence: 1", "call_sequence: -1"),
+                  base.replace("call_sequence: 1", "call_sequence: 01"),
+                  base.replace("call_sequence: 1", "call_sequence: +1"),
+                  base.replace("call_sequence: 1", "call_sequence: " + str(U64_MAX + 1)),
+                  base.replace("call_sequence: 1", 'call_sequence: "1"'),
+                  base.replace("call_sequence: 1", "call_sequence: true"),
+                  base.replace("call_sequence: 1", "call_sequence: 1.0"),
+                  base.replace("attempt: 1", "attempt: 3"), base.replace("attempt: 1", "attempt: 256"),
+                  base.replace("attempt: 1", "attempt: 01"), base.replace("attempt: 1", 'attempt: "1"'),
+                  base.replace("attempt: 1", "attempt: 0"), second.replace("attempt: 2", "attempt: 1"),
+                  base.replace("attempt: 1", "attempt: 2"), second.replace(first, attempt()),
+                  base.replace("completion: InProgressOrUnwound", "completion: UnsupportedBackend"),
+                  base.replace("completion: InProgressOrUnwound", "completion: NotObserved"),
+                  base.replace("completion: InProgressOrUnwound", "completion: ReturnedError"),
+                  base.replace("completion: InProgressOrUnwound", "completion: ReturnedBackendHandle"),
+                  base.replace("runner_stage: NotObserved", "runner_stage: SpawnChild"),
+                  base.replace("os_class: NotObserved", "os_class: Other"),
+                  base.replace("error: NotObserved", "error: OsReported"),
+                  base.replace("error: NotObserved", "error: RunnerReported"),
+                  base.replace("first_attempt: None", "first_attempt: Some(None)"),
+                  base.replace("stage: RunnerSelection, error:", "error: NotObserved, stage: RunnerSelection, error:"),
+                  base.replace("call_sequence: 1, observation:", "observation:"),
+                  base.replace("call_sequence: 1, observation:", "call_sequence: 1, extra: " + private + ", observation:"),
+                  base.replace("latest_backend_call_observation:", "extra: true, latest_backend_call_observation:"),
+                  base.replace("NativeStartDiagnosticV3", "NativeStartDiagnosticV2"),
+                  base.replace("NativeStartDiagnosticV3", "NativeStartDiagnosticV1"),
+                  base.replace(" } })", " } }) }")]
+    for field, old in (("stage", "RunnerSelection"), ("error", "NotObserved"),
+                       ("runner_stage", "NotObserved"), ("os_class", "NotObserved"),
+                       ("completion", "InProgressOrUnwound")):
+        for value in (private, old.lower(), '"' + old + '"', old + "\\x00", old + "\\\"" ):
+            bad_inputs.append(base.replace(field + ": " + old, field + ": " + value))
+        bad_inputs.append(base.replace(field + ": " + old, field + ": " + old + ", " + field + ": " + old))
+    for bad in bad_inputs:
+        check(safe_diagnostic(bad) == {"parse_status": "REJECTED"})
+        rejected = project_journal(records([row(0, "SEALED_UNKNOWN_OR_REJECTED_NO_REPLAY", bad)]))
+        check(rejected["records"][0]["parse_status"] == "REJECTED")
+        check("native_diagnostic" not in rejected["records"][0])
+        check(private not in json.dumps(rejected))
+    for candidate in (upper_none, base, second,
+                      diagnostic_v3(observation(attempt("SpawnReturned"), completion="ReturnedBackendHandle"))):
+        projected = project_journal(records([
+            row(0, "ATTEMPT_RESERVED_OUTCOME_UNKNOWN", {"step": "sealed-native-start", "review": private}),
+            row(1, "SEALED_UNKNOWN_OR_REJECTED_NO_REPLAY", candidate)]))
+        check(projected["parse_status"] == "OK")
+        check(projected["records"][1]["step"] == "sealed-native-start")
+        check(projected["records"][1]["native_diagnostic"]["backend_history_scope"] == BACKEND_HISTORY_SCOPE)
+        check(private not in json.dumps(projected))
+    for bad in (base.replace("None", "null"), base.replace("WindowsStartSnapshot", private),
+                base.replace("LowerBackendCallObservation", private),
+                second.replace("first_attempt: Some(", 'first_attempt: "Some('),
+                base.replace("current: WindowsStartAttempt", "current: {message: " + private + "}, WindowsStartAttempt")):
+        check(safe_diagnostic(bad) == {"parse_status": "REJECTED"})
+
+
 def self_test():
     # Memory-only synthetic fixtures. No input/file/VM access in this branch.
     checks = 0
@@ -458,7 +689,10 @@ def self_test():
     check(project_journal(b"x" * (MAX_JOURNAL + 1)) == {"parse_status": "REJECTED", "records": []})
     check(project_journal(b'{"sequence":0,"kind":"acceptance","payload":{"nested":1,"nested":2}}\n') == {"parse_status": "REJECTED", "records": []})
     check(project_journal(records([dict(row(0, "acceptance", None), extra=private)])) == {"parse_status": "REJECTED", "records": []})
-    print(json.dumps({"schema": VERSION, "parse_status": "SYNTHETIC_TESTS_PASSED", "checks": checks}, sort_keys=True))
+    v1_v2_checks = checks
+    v3_self_test(check, diagnostic, diagnostic_v2, records, row, private)
+    print(json.dumps({"schema": VERSION, "parse_status": "SYNTHETIC_TESTS_PASSED", "checks": checks,
+                      "v1_v2_checks": v1_v2_checks, "v3_checks": checks - v1_v2_checks}, sort_keys=True))
     return 0
 
 

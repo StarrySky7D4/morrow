@@ -9,6 +9,9 @@ use codex_utils_pty::SpawnedProcess;
 use crate::MatchedRunnerArtifact;
 use crate::SandboxType;
 use crate::SpawnRequest;
+use crate::WindowsStartDiagnostic;
+use crate::WindowsStartError;
+use crate::WindowsStartStage;
 use crate::terminal_queries::respond_to_terminal_queries;
 
 /// Spawn only through the exact pinned checked runner and the original sandbox.
@@ -17,26 +20,54 @@ pub async fn spawn_process_with_windows_runner(
     request: SpawnRequest<'_>,
     runner: Arc<MatchedRunnerArtifact>,
 ) -> Result<SpawnedProcess> {
-    anyhow::ensure!(
-        request.sandbox == SandboxType::WindowsRestrictedToken,
-        "matched runner requires Windows restricted sandbox"
-    );
-    let windows = request
-        .windows_sandbox
-        .context("missing Windows sandbox spawn request")?;
-    anyhow::ensure!(
-        windows.windows_sandbox_level == WindowsSandboxLevel::Elevated,
-        "matched runner requires Elevated selection"
-    );
-    anyhow::ensure!(
-        runner.protocol_version() == 7,
-        "matched runner version mismatch"
-    );
+    spawn_process_with_windows_runner_diagnostics(request, runner, None).await
+}
+
+/// Observe the same matched route using data scoped to this invocation.
+pub async fn spawn_process_with_windows_runner_diagnostics(
+    request: SpawnRequest<'_>,
+    runner: Arc<MatchedRunnerArtifact>,
+    diagnostic: Option<WindowsStartDiagnostic>,
+) -> Result<SpawnedProcess> {
+    if let Some(diagnostic) = &diagnostic {
+        diagnostic.mark(WindowsStartStage::MatchedRouteCheck);
+    }
+    let windows = (|| {
+        anyhow::ensure!(
+            request.sandbox == SandboxType::WindowsRestrictedToken,
+            "matched runner requires Windows restricted sandbox"
+        );
+        let windows = request
+            .windows_sandbox
+            .context("missing Windows sandbox spawn request")?;
+        anyhow::ensure!(
+            windows.windows_sandbox_level == WindowsSandboxLevel::Elevated,
+            "matched runner requires Elevated selection"
+        );
+        anyhow::ensure!(
+            runner.protocol_version() == 7,
+            "matched runner version mismatch"
+        );
+        Ok(windows)
+    })()
+    .inspect_err(|_| {
+        if let Some(diagnostic) = &diagnostic {
+            diagnostic.fail(WindowsStartError::RouteRejected);
+        }
+    })?;
+    if let Some(diagnostic) = &diagnostic {
+        diagnostic.mark(WindowsStartStage::CodexHomeResolve);
+    }
     let codex_home = codex_utils_home_dir::find_codex_home()
+        .inspect_err(|error| {
+            if let Some(diagnostic) = &diagnostic {
+                diagnostic.fail_io_kind(error.kind());
+            }
+        })
         .context("windows sandbox: failed to resolve codex_home")?;
     let empty_paths = &[];
     let overrides = windows.filesystem_overrides;
-    let spawned = codex_windows_sandbox::spawn_windows_sandbox_session_for_level_with_runner(
+    let spawned = codex_windows_sandbox::spawn_windows_sandbox_session_for_level_with_runner_diagnostics(
         codex_windows_sandbox::WindowsSandboxSessionRequest {
             permission_profile: windows.permission_profile,
             workspace_roots: windows.workspace_roots,
@@ -61,6 +92,7 @@ pub async fn spawn_process_with_windows_runner(
             stdin_open: request.stdin_open,
         },
         runner,
+        diagnostic,
     )
     .await?;
     Ok(if request.tty {

@@ -5,7 +5,7 @@ use super::windows_common::start_runner_stdin_writer;
 use super::windows_common::start_runner_stdout_reader;
 use crate::desktop::DesktopPolicy;
 use crate::identity::SandboxCreds;
-use crate::identity::refresh_logon_sandbox_creds;
+use crate::identity::refresh_logon_sandbox_creds_with_diagnostics;
 use crate::ipc_framed::EmptyPayload;
 use crate::ipc_framed::FramedMessage;
 use crate::ipc_framed::IPC_PROTOCOL_VERSION;
@@ -13,8 +13,8 @@ use crate::ipc_framed::Message;
 use crate::ipc_framed::SpawnRequest;
 use crate::resolved_permissions::ResolvedWindowsSandboxPermissions;
 use crate::runner_client::RunnerTransport;
-use crate::runner_client::retry_runner_spawn_once;
-use crate::spawn_prep::prepare_elevated_spawn_context_for_permissions;
+use crate::runner_client::retry_runner_spawn_once_with_diagnostics;
+use crate::spawn_prep::prepare_elevated_spawn_context_for_permissions_with_diagnostics;
 use anyhow::Result;
 use codex_protocol::models::PermissionProfile;
 use codex_utils_absolute_path::AbsolutePathBuf;
@@ -46,7 +46,7 @@ struct RunnerTransportRequest {
 fn spawn_runner_transport_with_retry<T>(
     sandbox_creds: SandboxCreds,
     request: &RunnerTransportRequest,
-    mut spawn: impl FnMut(&Path, &Path, &SandboxCreds, Option<&Path>, SpawnRequest) -> Result<T>,
+    spawn: impl FnMut(&Path, &Path, &SandboxCreds, Option<&Path>, SpawnRequest) -> Result<T>,
     refresh: impl FnOnce(
         &ResolvedWindowsSandboxPermissions,
         &Path,
@@ -61,7 +61,29 @@ fn spawn_runner_transport_with_retry<T>(
         crate::WindowsSandboxProxySettingsMode,
     ) -> Result<SandboxCreds>,
 ) -> Result<T> {
-    retry_runner_spawn_once(
+    spawn_runner_transport_with_retry_diagnostics(sandbox_creds, request, spawn, refresh, None)
+}
+
+fn spawn_runner_transport_with_retry_diagnostics<T>(
+    sandbox_creds: SandboxCreds,
+    request: &RunnerTransportRequest,
+    mut spawn: impl FnMut(&Path, &Path, &SandboxCreds, Option<&Path>, SpawnRequest) -> Result<T>,
+    refresh: impl FnOnce(
+        &ResolvedWindowsSandboxPermissions,
+        &Path,
+        &HashMap<String, String>,
+        &Path,
+        Option<&[PathBuf]>,
+        bool,
+        Option<&[PathBuf]>,
+        &[PathBuf],
+        &[PathBuf],
+        bool,
+        crate::WindowsSandboxProxySettingsMode,
+    ) -> Result<SandboxCreds>,
+    diagnostic: Option<&crate::WindowsStartDiagnostic>,
+) -> Result<T> {
+    retry_runner_spawn_once_with_diagnostics(
         sandbox_creds,
         &request.spawn_request.command,
         |sandbox_creds| {
@@ -88,6 +110,7 @@ fn spawn_runner_transport_with_retry<T>(
                 request.proxy_settings_mode,
             )
         },
+        diagnostic,
     )
 }
 
@@ -95,8 +118,19 @@ async fn spawn_runner_transport_task(
     sandbox_creds: SandboxCreds,
     request: RunnerTransportRequest,
     matched_runner: Option<std::sync::Arc<crate::MatchedRunnerArtifact>>,
+    diagnostic: Option<crate::WindowsStartDiagnostic>,
 ) -> Result<RunnerTransport> {
+    if let Some(diagnostic) = &diagnostic {
+        diagnostic.mark(crate::WindowsStartStage::BlockingTransportTask);
+    }
+    let task_diagnostic = diagnostic.clone();
     tokio::task::spawn_blocking(move || -> Result<_> {
+        let diagnostic = task_diagnostic.as_ref();
+        if request.spawn_request.private_desktop_name.is_none() {
+            if let Some(diagnostic) = diagnostic {
+                diagnostic.mark(crate::WindowsStartStage::DesktopPolicy);
+            }
+        }
         let desktop_policy = request
             .spawn_request
             .private_desktop_name
@@ -125,12 +159,12 @@ async fn spawn_runner_transport_task(
                         .as_deref(),
                 )
             })
-            .transpose()?;
-        spawn_runner_transport_with_retry(
+            .transpose().inspect_err(|err| observe_backend_error(diagnostic, err))?;
+        spawn_runner_transport_with_retry_diagnostics(
             sandbox_creds,
             &request,
             |codex_home, cwd, sandbox_creds, log_dir, spawn_request| {
-                crate::runner_client::spawn_runner_transport_with_identity(
+                crate::runner_client::spawn_runner_transport_with_identity_diagnostics(
                     codex_home,
                     cwd,
                     sandbox_creds,
@@ -138,13 +172,42 @@ async fn spawn_runner_transport_task(
                     spawn_request,
                     desktop_policy.as_ref(),
                     matched_runner.clone(),
+                    diagnostic,
                 )
             },
-            refresh_logon_sandbox_creds,
+            |permissions, cwd, env_map, codex_home, read_roots, read_defaults, write_roots,
+             deny_read, deny_write, proxy, proxy_mode| {
+                refresh_logon_sandbox_creds_with_diagnostics(
+                    permissions, cwd, env_map, codex_home, read_roots, read_defaults,
+                    write_roots, deny_read, deny_write, proxy, proxy_mode, diagnostic,
+                )
+            },
+            diagnostic,
         )
     })
     .await
-    .map_err(|err| anyhow::anyhow!("runner handshake task failed: {err}"))?
+    .map_err(|err| {
+        if let Some(diagnostic) = &diagnostic {
+            diagnostic.fail(if err.is_cancelled() {
+                crate::WindowsStartError::BlockingCancelled
+            } else if err.is_panic() {
+                crate::WindowsStartError::BlockingPanic
+            } else {
+                crate::WindowsStartError::Unclassified
+            });
+        }
+        anyhow::anyhow!("runner handshake task failed: {err}")
+    })?
+}
+
+fn observe_backend_error(diagnostic: Option<&crate::WindowsStartDiagnostic>, err: &anyhow::Error) {
+    if let Some(diagnostic) = diagnostic {
+        if let Some(err) = err.downcast_ref::<std::io::Error>() {
+            diagnostic.fail_io_kind(err.kind());
+        } else {
+            diagnostic.fail(crate::WindowsStartError::Unclassified);
+        }
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -168,6 +231,7 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
     stdin_open: bool,
     private_desktop_name: Option<String>,
     matched_runner: Option<std::sync::Arc<crate::MatchedRunnerArtifact>>,
+    diagnostic: Option<crate::WindowsStartDiagnostic>,
 ) -> Result<SpawnedProcess> {
     let deny_read_paths_override = deny_read_paths_override
         .iter()
@@ -177,12 +241,15 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
         .iter()
         .map(AbsolutePathBuf::to_path_buf)
         .collect::<Vec<_>>();
+    if let Some(diagnostic) = &diagnostic {
+        diagnostic.mark(crate::WindowsStartStage::PermissionResolve);
+    }
     let permissions =
         ResolvedWindowsSandboxPermissions::try_from_permission_profile_for_workspace_roots(
             permission_profile,
             workspace_roots,
-        )?;
-    let elevated = prepare_elevated_spawn_context_for_permissions(
+        ).inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?;
+    let elevated = prepare_elevated_spawn_context_for_permissions_with_diagnostics(
         permissions.clone(),
         codex_home,
         cwd,
@@ -195,6 +262,7 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
         &deny_write_paths_override,
         proxy_enforced,
         proxy_settings_mode,
+        diagnostic.as_ref(),
     )?;
 
     let sandbox_creds = elevated.sandbox_creds;
@@ -228,10 +296,13 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
         proxy_settings_mode,
     };
     let checked = matched_runner.is_some();
-    let transport = spawn_runner_transport_task(sandbox_creds, request, matched_runner).await?;
+    let transport = spawn_runner_transport_task(sandbox_creds, request, matched_runner, diagnostic.clone()).await?;
     if checked {
+        if let Some(diagnostic) = &diagnostic {
+            diagnostic.mark(crate::WindowsStartStage::CheckedDriverAssemble);
+        }
         let (pipe_write, pipe_read, hello, capabilities, artifact) =
-            transport.into_checked_files()?;
+            transport.into_checked_files().inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?;
         let (writer_tx, writer_rx) = mpsc::channel::<Vec<u8>>(128);
         let (stdout_tx, stdout_rx) = broadcast::channel(256);
         let (stderr_tx, stderr_rx) = if tty {
@@ -268,6 +339,9 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
             codex_utils_pty::spawn_from_driver_with_checked_controls(driver, checked.controls);
         if !stdin_open {
             spawned.session.close_stdin();
+        }
+        if let Some(diagnostic) = &diagnostic {
+            diagnostic.mark(crate::WindowsStartStage::SpawnReturned);
         }
         return Ok(spawned);
     }

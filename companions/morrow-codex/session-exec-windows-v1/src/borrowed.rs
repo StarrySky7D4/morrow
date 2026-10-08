@@ -5,6 +5,7 @@ use crate::{
     artifact::LockedArtifact, process::block_on,
 };
 use codex_exec_server::{ExecParams, ExecServerError, ProcessControlCapabilities, StartedExecProcess};
+use codex_sandboxing::{WindowsStartDiagnostic, WindowsStartSnapshot};
 use morrow_agent_session_exec_v1_r2::{
     Error, Intent, Result,
     authority::{Admission, SessionExecHost},
@@ -14,21 +15,61 @@ use morrow_core::dispatch::{Connection, HostBinding, HostRuntime};
 use std::{
     cell::RefCell,
     sync::{
-        Arc,
+        Arc, Mutex,
         atomic::{AtomicBool, AtomicU64, Ordering},
     },
     time::{Duration, Instant},
 };
 
 
-// Original-owner historical observation only; no payloads, authority or sink.
-// Clone retains only this atomic cell, never a native resource/backend alias.
+// Original-owner historical observations only; no payloads, authority or sink.
+// The upper atomic history and latest lower call are NOT a joint snapshot or
+// proof about the requesting operation. Clones retain finite diagnostic data.
 #[derive(Clone)]
-pub(crate) struct NativeStartDiagnostic(Arc<AtomicU64>);
+pub(crate) struct NativeStartDiagnostic(Arc<AtomicU64>, Arc<Mutex<LowerBackendHistory>>);
+#[derive(Default)]
+struct LowerBackendHistory {
+    sequence: u64,
+    unavailable: bool,
+    latest: Option<(u64, WindowsStartDiagnostic)>,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+struct LowerBackendCallObservation {
+    call_sequence: u64,
+    observation: WindowsStartSnapshot,
+}
 impl Default for NativeStartDiagnostic {
-    fn default() -> Self { Self(Arc::new(AtomicU64::new(0))) }
+    fn default() -> Self {
+        Self(Arc::new(AtomicU64::new(0)), Arc::new(Mutex::new(LowerBackendHistory::default())))
+    }
 }
 impl NativeStartDiagnostic {
+    // Allocate at the original backend-call boundary, not at proposal/claim.
+    // Each invocation gets a fresh recorder even if the history is unavailable.
+    fn begin_backend_call(&self) -> WindowsStartDiagnostic {
+        let diagnostic = WindowsStartDiagnostic::default();
+        if let Ok(mut history) = self.1.lock() {
+            if !history.unavailable {
+                if let Some(next) = history.sequence.checked_add(1) {
+                    history.sequence = next;
+                    history.latest = Some((next, diagnostic.clone()));
+                } else {
+                    history.unavailable = true;
+                    history.latest = None;
+                }
+            }
+        }
+        diagnostic
+    }
+    fn latest_backend_call_snapshot(&self) -> Option<LowerBackendCallObservation> {
+        let latest = {
+            let history = self.1.lock().ok()?;
+            if history.unavailable { return None; }
+            history.latest.clone()
+        };
+        let (call_sequence, diagnostic) = latest?;
+        Some(LowerBackendCallObservation { call_sequence, observation: diagnostic.snapshot()? })
+    }
     fn stage(&self, stage: u8) {
         let _ = self.0.fetch_update(Ordering::AcqRel, Ordering::Acquire, |old| {
             if old & 0xff00 != 0 { return None; }
@@ -156,14 +197,16 @@ fn start_error_name(class: u8) -> &'static str {
 impl std::fmt::Debug for NativeStartDiagnostic {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let value = self.0.load(Ordering::Acquire);
-        f.debug_struct("NativeStartDiagnosticV2")
+        f.debug_struct("NativeStartDiagnosticV3")
             .field("stage", &start_stage_name(value as u8))
             .field("error_class", &start_error_name((value >> 8) as u8))
             .field("backend_error_class", &backend_error_name((value >> BACKEND_ERROR_SHIFT) as u8))
             .field("invocation_entered_observed", &(value & (1 << 16) != 0))
             .field("backend_task_entered_observed", &(value & (2 << 16) != 0))
             .field("actual_handle_observed", &(value & (4 << 16) != 0))
-            .field("provider_ready_observed", &(value & (8 << 16) != 0)).finish()
+            .field("provider_ready_observed", &(value & (8 << 16) != 0))
+            .field("backend_history_scope", &"OWNER_LATEST_CALL_NOT_OPERATION_PROOF")
+            .field("latest_backend_call_observation", &self.latest_backend_call_snapshot()).finish()
     }
 }
 
@@ -365,9 +408,10 @@ impl BorrowedWindowsExecutionPort {
                         task_slot.no_handle_unknown();
                         return Err(Error::CommitUnknown);
                     }
+                    let lower_diagnostic = task_diagnostic.begin_backend_call();
                     let actual = task_backend
                         .backend
-                        .start(params)
+                        .start_with_windows_diagnostics(params, lower_diagnostic)
                         .await
                         .map_err(|error| { task_diagnostic.backend_fail(backend_error_class(&error)); Error::CommitUnknown });
                     match &actual {
@@ -567,8 +611,8 @@ mod diagnostic_tests {
     #[test]
     fn native_snapshot_is_bounded_and_has_no_owner_payload() {
         let trace = NativeStartDiagnostic::default(); trace.fail(15, 14); trace.flag(15);
-        let text = format!("{trace:?}"); assert!(text.len() < 384);
-        assert_eq!(text, "NativeStartDiagnosticV2 { stage: \"POSTSTART_VETO\", error_class: \"PostStartVeto\", backend_error_class: \"NOT_OBSERVED\", invocation_entered_observed: true, backend_task_entered_observed: true, actual_handle_observed: true, provider_ready_observed: true }");
+        let text = format!("{trace:?}"); assert!(text.len() < 2048);
+        assert_eq!(text, "NativeStartDiagnosticV3 { stage: \"POSTSTART_VETO\", error_class: \"PostStartVeto\", backend_error_class: \"NOT_OBSERVED\", invocation_entered_observed: true, backend_task_entered_observed: true, actual_handle_observed: true, provider_ready_observed: true, backend_history_scope: \"OWNER_LATEST_CALL_NOT_OPERATION_PROOF\", latest_backend_call_observation: None }");
         assert_eq!(std::sync::Arc::strong_count(&trace.0), 1);
     }
 
@@ -663,7 +707,41 @@ mod diagnostic_tests {
         assert!(std::fmt::write(&mut Refuse, format_args!("{trace:?}")).is_err());
         assert_eq!(trace.0.load(Ordering::Acquire), before);
         let text = format!("{trace:?}");
-        assert!(text.len() < 384);
+        assert!(text.len() < 2048);
         assert!(text.contains("backend_error_class: \"EnvironmentRegistryRequest\""));
+    }
+    #[test]
+    fn native_lower_calls_are_fresh_and_late_old_failure_does_not_replace_latest() {
+        use codex_sandboxing::{WindowsStartError, WindowsStartStage};
+        let trace = NativeStartDiagnostic::default();
+        let first = trace.begin_backend_call();
+        first.mark(WindowsStartStage::PipeCreateIn);
+        let second = trace.begin_backend_call();
+        second.mark(WindowsStartStage::RunnerLogon);
+        first.fail(WindowsStartError::IoTimedOut);
+        first.finish_failed();
+        let latest = trace.latest_backend_call_snapshot().unwrap();
+        assert_eq!(latest.call_sequence, 2);
+        assert_eq!(latest.observation.current.stage, WindowsStartStage::RunnerLogon);
+        assert_eq!(latest.observation.current.error, WindowsStartError::NotObserved);
+        assert_eq!(first.snapshot().unwrap().current.error, WindowsStartError::IoTimedOut);
+        assert_eq!(trace.0.load(Ordering::Acquire), 0);
+    }
+    #[test]
+    fn native_lower_history_overflow_never_reuses_an_earlier_call() {
+        use codex_sandboxing::{WindowsStartError, WindowsStartStage};
+        let trace = NativeStartDiagnostic::default();
+        let first = trace.begin_backend_call();
+        trace.1.lock().unwrap().sequence = u64::MAX;
+        let second = trace.begin_backend_call();
+        second.mark(WindowsStartStage::RunnerLogon);
+        first.fail(WindowsStartError::IoTimedOut);
+        assert!(trace.latest_backend_call_snapshot().is_none());
+        assert_eq!(second.snapshot().unwrap().current.error, WindowsStartError::NotObserved);
+        assert!(trace.1.lock().unwrap().unavailable);
+        let third = trace.begin_backend_call();
+        assert!(trace.latest_backend_call_snapshot().is_none());
+        assert_eq!(third.snapshot().unwrap().attempt, 0);
+        assert_eq!(trace.0.load(Ordering::Acquire), 0);
     }
 }

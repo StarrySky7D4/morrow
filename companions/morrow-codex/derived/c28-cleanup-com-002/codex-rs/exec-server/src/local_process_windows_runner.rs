@@ -2,6 +2,7 @@
 use super::*;
 use crate::WindowsSandboxSelection;
 use codex_sandboxing::MatchedRunnerArtifact;
+use codex_sandboxing::WindowsStartDiagnostic;
 
 impl LocalProcess {
     pub(crate) fn with_windows_runner(
@@ -32,11 +33,16 @@ impl LocalProcess {
     pub(super) async fn spawn_with_windows_runner(
         &self,
         request: codex_sandboxing::SpawnRequest<'_>,
+        diagnostic: Option<WindowsStartDiagnostic>,
     ) -> anyhow::Result<codex_utils_pty::SpawnedProcess> {
         match &self.windows_runner {
             Some(runner) => {
-                codex_sandboxing::spawn_process_with_windows_runner(request, Arc::clone(runner))
-                    .await
+                codex_sandboxing::spawn_process_with_windows_runner_diagnostics(
+                    request,
+                    Arc::clone(runner),
+                    diagnostic,
+                )
+                .await
             }
             None => codex_sandboxing::spawn_process(request).await,
         }

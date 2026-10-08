@@ -1,0 +1,185 @@
+{
+  "schema": "C28_NATIVE_V3_PUBLIC_SCOPED_VALIDATION_20261009",
+  "status": "PASS_SCOPED_DIAGNOSTIC_QUALIFICATION_NOT_RUNTIME_OR_SDK_ACCEPTANCE",
+  "isolated_candidate_compiled": true,
+  "public_relative_checkout_rust_compile": "NOT_RUN",
+  "native_source_sha256": "ce65fe3793f6f9e46a27cff3e85d2e5d4b39d96b2bd0dffdd2f68432f80f812e",
+  "lower_enum_source_sha256": "62f33090028b74e72d9ac5eb62e796cf9340862ac0c5f415439b2305a94b9c08",
+  "projector_sha256": "c2478e32e33eebb8504cef0e5f80459f43e1414efaccebafdd20814ee4724122",
+  "test_program_sha256": "86fece65a0d38c401f0c968e949386037f50e33a9226720da102c8b58c490157",
+  "test_program_bytes": 30355968,
+  "source_input_pins_checked": 3994,
+  "source_or_lock_drift": false,
+  "foreign_seed_entries": 819,
+  "native_lock_sha256": "384841751237130e74638a8871a2cb63a96814436de4ae095a1a9f97ef611b24",
+  "normal_routes_verified": 12,
+  "listed_native_methods": 28,
+  "distinct_native_diagnostic_methods_passed": 11,
+  "other_native_methods_not_run": 17,
+  "lower_dependency_methods_not_run": {
+    "observer": 8,
+    "runner": 3,
+    "default_backend": 1
+  },
+  "projector_synthetic_checks": 1987,
+  "original_v1_v2_checks": 229,
+  "new_v3_checks": 1758,
+  "projector_source_ast_actual_exit": 0,
+  "projector_no_arguments_actual_exit": 2,
+  "runs": [
+    {
+      "mode": "locked-metadata",
+      "receipt_sha256": "3ea1a1bf63720fc1dcf2c0e6d9de3f13d8fcf6b0f6598e27fb46fe2dc23e134c",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": []
+    },
+    {
+      "mode": "compile",
+      "receipt_sha256": "1335b73f0503ca745c24f4ec18dea133c706b4680d6bee3989765e004887f63f",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": []
+    },
+    {
+      "mode": "list",
+      "receipt_sha256": "fe8db6db1589706594929c09eec19174bc64f78c4ace7a78102fae8b3c35a5b9",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": []
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "135b576d06b675b9a3e950688c34ee89a183ea508a42c158b4ba3047d445349f",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_first_error_survives_late_actual_handle_observation"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "39e2e34693d4475ae36dbdeda569b1e7ad5cef3e6a7fa1c8b5200474c384b47b",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_original_error_classes_are_fixed_and_complete"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "93315c7c297d77431c9f22143b506704213cff9ff6a037dfee0bd6867458ef96",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_format_failure_preserves_original_cell"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "49dff0973e30bb8ba2f18f7438f44abfea0a8b46b1b3002f0bee3cc36e5b3750",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_snapshot_is_bounded_and_has_no_owner_payload"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "eab289e17b2c00965dbd4895a50b63c36b60d8839f61547c902ee45d0ccdf76b",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_typed_backend_server_codes_are_closed_and_ignore_messages"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "f65755531543303be0af5740fa5d6a54602ce1a645509ce6e5815b3285ae7de2",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_typed_backend_variants_ignore_payload_and_connection_inner"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "4ffa1c1f3e3a61c1126860492353c095d50c7093ccdcc5a628dbeb7780a103f4",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_late_typed_backend_error_preserves_timeout_and_flags"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "68ac581e4b8791df3e45d6dd0d51cf51b9aece7f3b869c16ef4c95dac1f8b98b",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_first_typed_backend_error_retains_old_generic_pair"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "c36914a6aef9b0a0899c1d4473812ffa9645488ddd02b78ce0c59a463eb3f8df",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_typed_backend_format_failure_is_nonmutating"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "609b900c37305292a693481ef26c734d52497177b00e121753c6087456f6a7ac",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_lower_calls_are_fresh_and_late_old_failure_does_not_replace_latest"
+      ]
+    },
+    {
+      "mode": "exact-method",
+      "receipt_sha256": "3a5ad5ceecf787b49300b031ca62bba90ee8fc77106a0e48253bb6d0922f89b6",
+      "actual_exit_codes": [
+        0,
+        0
+      ],
+      "passed_methods": [
+        "borrowed::diagnostic_tests::native_lower_history_overflow_never_reuses_an_earlier_call"
+      ]
+    }
+  ],
+  "native_start": "SEALED_UNKNOWN_OR_REJECTED_NO_REPLAY",
+  "cleanup_join": "PENDING_DEBT_CHARGED",
+  "new_native_start_or_vm": "NOT_RUN",
+  "sdk_frozen": false,
+  "sdk26_g04": "OPEN",
+  "release_eligible": false
+}

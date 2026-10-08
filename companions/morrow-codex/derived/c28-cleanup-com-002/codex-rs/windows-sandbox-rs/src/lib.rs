@@ -7,6 +7,16 @@ mod checked_runner;
 #[cfg(target_os = "windows")]
 pub use checked_runner::MatchedRunnerArtifact;
 
+mod start_diagnostic;
+pub use start_diagnostic::WindowsOsError;
+pub use start_diagnostic::WindowsRunnerErrorStage;
+pub use start_diagnostic::WindowsStartDiagnostic;
+pub use start_diagnostic::WindowsStartAttempt;
+pub use start_diagnostic::WindowsStartCompletion;
+pub use start_diagnostic::WindowsStartError;
+pub use start_diagnostic::WindowsStartSnapshot;
+pub use start_diagnostic::WindowsStartStage;
+
 #[cfg(any(target_os = "windows", test))]
 mod ssh_config_dependencies;
 
@@ -1085,3 +1095,5 @@ mod stub {
 
 #[cfg(target_os = "windows")]
 pub use unified_exec::spawn_windows_sandbox_session_for_level_with_runner;
+#[cfg(target_os = "windows")]
+pub use unified_exec::spawn_windows_sandbox_session_for_level_with_runner_diagnostics;
