@@ -319,9 +319,13 @@ async fn connect(
 ) -> std::io::Result<TlsStream<tokio::net::TcpStream>> {
     let mut roots = rustls::RootCertStore::empty();
     roots.add(root.cert.der().clone()).unwrap();
-    let config = rustls::ClientConfig::builder()
-        .with_root_certificates(roots)
-        .with_no_client_auth();
+    let config = rustls::ClientConfig::builder_with_provider(Arc::new(
+        rustls::crypto::ring::default_provider(),
+    ))
+    .with_safe_default_protocol_versions()
+    .unwrap()
+    .with_root_certificates(roots)
+    .with_no_client_auth();
     let stream = tokio::net::TcpStream::connect(address).await?;
     TlsConnector::from(Arc::new(config))
         .connect(
@@ -329,6 +333,52 @@ async fn connect(
             stream,
         )
         .await
+}
+
+// This exercises the unified native dependency graph without opening Storage,
+// a protected session, DPAPI, or any non-loopback connection.
+#[test]
+fn ordinary_tls_uses_explicit_provider_with_unified_native_features() {
+    use morrow_network_node::server::{Handler, Node, Route, TlsIdentity};
+    let certificate = generate_simple_self_signed(vec!["localhost".into()]).unwrap();
+    let identity = TlsIdentity::from_pem(
+        certificate.cert.pem().as_bytes(),
+        certificate.key_pair.serialize_pem().as_bytes(),
+    )
+    .unwrap();
+    let handler: Handler = Arc::new(|request, _| {
+        Box::pin(async move {
+            assert_eq!(request.body, b"before");
+            Ok(morrow_network_node::HttpResponse {
+                status: 201,
+                headers: vec![],
+                body: b"ordinary-tls-ok".to_vec(),
+            })
+        })
+    });
+    let runtime = tokio::runtime::Runtime::new().unwrap();
+    runtime.block_on(async {
+        tokio::time::timeout(Duration::from_secs(5), async {
+            let node = Node::bind_tls(
+                "127.0.0.1:0".parse().unwrap(),
+                "ordinary-tls-synthetic-token-0123456789".into(),
+                vec![Route::new("POST", "/api", handler).unwrap()],
+                morrow_network_node::Limits::default(),
+                identity,
+            )
+            .await
+            .unwrap();
+            let mut socket = connect(node.local_addr(), &certificate, "localhost")
+                .await
+                .unwrap();
+            let reply = request(&mut socket, "ordinary-tls-synthetic-token-0123456789").await;
+            assert!(reply.starts_with(b"HTTP/1.1 201"));
+            assert!(reply.ends_with(b"ordinary-tls-ok"));
+            node.shutdown().await.unwrap();
+        })
+        .await
+        .unwrap();
+    });
 }
 
 async fn request(socket: &mut TlsStream<tokio::net::TcpStream>, token: &str) -> Vec<u8> {

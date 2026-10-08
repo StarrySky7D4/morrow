@@ -19,9 +19,11 @@ use std::{
 const SESSION: &str = "session";
 const OP: &str = "fixed-operation";
 const EXPIRES: u64 = 1000;
+const FIXED_ARTIFACT: &[u8] = b"fixed synthetic artifact for logical execution callbacks";
 struct Fixture {
     _temp: tempfile::TempDir,
     path: PathBuf,
+    artifact_path: PathBuf,
     runtime: HostRuntime,
     host: SessionExecHost,
     proposer_connection: Connection,
@@ -56,6 +58,10 @@ impl Fixture {
         Self::from_runtime(temp, path, runtime)
     }
     fn from_runtime(temp: tempfile::TempDir, path: PathBuf, mut runtime: HostRuntime) -> Self {
+        // Logical callbacks inspect immutable intent data; they never launch this artifact.
+        let artifact_path = temp.path().join("fixed-artifact.bin");
+        assert!(artifact_path.is_absolute());
+        std::fs::write(&artifact_path, FIXED_ARTIFACT).unwrap();
         let proposer_connection = runtime.connect().unwrap();
         let executor_connection = runtime.connect().unwrap();
         let host = SessionExecHost::new(&mut runtime).unwrap();
@@ -86,6 +92,7 @@ impl Fixture {
         let mut fixture = Self {
             _temp: temp,
             path,
+            artifact_path,
             runtime,
             host,
             proposer_connection,
@@ -108,10 +115,16 @@ impl Fixture {
         ));
         fixture
     }
+    #[cfg(unix)]
+    fn real_printf() -> Self {
+        let mut fixture = Self::new();
+        fixture.artifact_path = PathBuf::from("/usr/bin/printf");
+        fixture
+    }
     fn intent(&self) -> Intent {
         Intent {
             operation_id: OP.into(),
-            program: "/usr/bin/printf".into(),
+            program: self.artifact_path.to_str().unwrap().into(),
             argv: vec!["fixed-output".into()],
             cwd: self._temp.path().to_str().unwrap().into(),
             env: vec![morrow_agent_session_exec_v1_r2::Environment {
@@ -121,7 +134,7 @@ impl Fixture {
             input: b"immutable-input".to_vec(),
             execution_domain: "test-domain".into(),
             max_runtime_ms: 1000,
-            artifact_sha256: hash(&std::fs::read("/usr/bin/printf").unwrap()),
+            artifact_sha256: hash(&std::fs::read(&self.artifact_path).unwrap()),
         }
     }
     fn dispatch(&mut self, request: &Request, executor: bool, now: u64) -> Outcome {
@@ -238,6 +251,7 @@ fn proposal_and_approval_have_no_effect_and_claim_is_once() {
     .unwrap();
     rejected(f.dispatch(&request, true, 5));
     assert_eq!(count.load(Ordering::SeqCst), 0);
+    let expected_intent = f.intent();
     let observed = f
         .host
         .execute_claimed(
@@ -248,6 +262,7 @@ fn proposal_and_approval_have_no_effect_and_claim_is_once() {
             claim,
             || 6,
             |input| {
+                assert_eq!(input, &expected_intent);
                 assert_eq!(input.input, b"immutable-input");
                 count.fetch_add(1, Ordering::SeqCst);
                 Ok(facts())
@@ -1068,7 +1083,7 @@ fn reserved_terminal_capacity_survives_other_fixed_proposals_filling_the_store()
 #[cfg(unix)]
 #[test]
 fn trusted_callback_runs_one_fixed_real_process_and_reports_exit_and_output_facts() {
-    let mut f = Fixture::new();
+    let mut f = Fixture::real_printf();
     f.propose();
     let permit = f.approve();
     let claim = f.claim(permit);

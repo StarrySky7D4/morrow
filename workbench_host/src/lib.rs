@@ -33,6 +33,10 @@ pub fn host_protocol_digest() -> [u8; 32] {
     .into()
 }
 pub mod capture_provenance;
+#[cfg(not(target_arch = "wasm32"))]
+mod agent_catalog;
+#[cfg(target_os = "windows")]
+pub mod agent_tasks;
 pub mod captured_cards;
 pub mod cards_content;
 pub mod cards_edit;
@@ -130,6 +134,12 @@ pub struct Workbench {
 
 /// All authoritative business state moves together; no worker handle lives here.
 pub(crate) struct WorkbenchState {
+    #[cfg(windows)]
+    agent_session_host: Option<std::sync::Arc<morrow_agent_session_exec_v1_r2::authority::SessionExecHost>>,
+    #[cfg(windows)]
+    agent_session_host_failed: bool,
+    #[cfg(not(target_arch = "wasm32"))]
+    agent_catalog: Option<agent_catalog::Slot>,
     #[cfg(not(target_arch = "wasm32"))]
     local_channel_owner: Option<channel_binding::OwnerBinding>,
     host: storage::Storage,
@@ -206,7 +216,9 @@ impl WorkbenchState {
             initialize_manager(registry, &mut package)
         };
         let initialized = initialize();
-        Self::with_manager(host, initialized, package)
+        let mut state = Self::with_manager(host, initialized, package)?;
+        state.agent_catalog = Some(agent_catalog::Slot::new(root.join("plugin-manager/agent-wrappers")));
+        Ok(state)
     }
     fn with_manager(
         mut host: storage::Storage,
@@ -247,6 +259,12 @@ impl WorkbenchState {
         let mut query_owner = [0; 32];
         platform::random(&mut query_owner)?;
         let mut workbench = Self {
+            #[cfg(windows)]
+            agent_session_host: None,
+            #[cfg(windows)]
+            agent_session_host_failed: false,
+            #[cfg(not(target_arch = "wasm32"))]
+            agent_catalog: None,
             #[cfg(not(target_arch = "wasm32"))]
             local_channel_owner: None,
             host,
@@ -291,6 +309,12 @@ impl WorkbenchState {
         self.host.warning().or(self.plugin_warning.as_deref())
     }
     pub fn finish(&mut self) -> Result<()> {
+        #[cfg(not(target_arch = "wasm32"))]
+        if let Some(catalog) = self.agent_catalog.take() {
+            // This is a static management owner, never an OS cleanup receipt.
+            // Drop revokes live catalog authority before original storage flush.
+            drop(catalog);
+        }
         self.command_frame.clear();
         if let Some(mut external) = self.external_ui.take() {
             external.ui.close();
@@ -942,6 +966,10 @@ impl Workbench {
         self.state.request_stop();
         self.finish_channels()?;
         self.state.try_reclaim()?;
+        #[cfg(windows)]
+        if self.state.agent_preparation_debt.is_some() || self.state.agent_contexts.outstanding() {
+            return Err(io_tasks::AccessError::RecoveryRequired.into());
+        }
         self.state.local_mut()?.finish()
     }
 }

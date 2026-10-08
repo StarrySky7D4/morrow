@@ -1,0 +1,319 @@
+{
+  "stage": "C12",
+  "date": "2026-10-06",
+  "status": "PASS_SCOPED_INTERFACES_AND_WINDOWS_WASM_CHAIN",
+  "base_commit": "e83cdf1d3506b001d07ffceaaa9f98b688bcc150",
+  "base_tree": "abcdee6e582ce18954118430e514f1d0805ce095",
+  "qualification_only": true,
+  "sdk26": "OPEN",
+  "g04": "OPEN",
+  "release_eligible": false,
+  "commit": false,
+  "push": false,
+  "release": false,
+  "ci": false,
+  "validation": {
+    "combined_host": {
+      "status": "PASS_SCOPED",
+      "test_methods": 14,
+      "raw_test_process_counts": [
+        1,
+        13,
+        0
+      ],
+      "evidence": "host-runs/host-final-004",
+      "receipt_sha256": "a8dbe605393769af290e851d123e3be8fe42a0e068e3c96f7492f630e27b7823",
+      "source_before_sha256": "60687490eeed36620a07ec56657ea2ec80256c1ea56258e984e6cb20ff397061",
+      "source_after_sha256": "60687490eeed36620a07ec56657ea2ec80256c1ea56258e984e6cb20ff397061",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 509,
+        "snapshot_sha256": "cb3647b2ad14b26eb13770960803619f85145a02908da69f49b51dcc0080d909"
+      }
+    },
+    "strict_runtime_entrypoint": {
+      "status": "PASS_SCOPED",
+      "test_methods": 6,
+      "raw_test_process_counts": [
+        6
+      ],
+      "evidence": "host-runs/runtime-currentsealed-004",
+      "receipt_sha256": "1d5c67fa54b2a5da23499cdb5acf75cf5e0c79bd1c1a03b258873ef828365d20",
+      "source_before_sha256": "60687490eeed36620a07ec56657ea2ec80256c1ea56258e984e6cb20ff397061",
+      "source_after_sha256": "60687490eeed36620a07ec56657ea2ec80256c1ea56258e984e6cb20ff397061",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 509,
+        "snapshot_sha256": "cb3647b2ad14b26eb13770960803619f85145a02908da69f49b51dcc0080d909"
+      }
+    },
+    "runtime_targeted_regression": {
+      "status": "PASS_SCOPED",
+      "test_methods": 21,
+      "raw_test_process_counts": [
+        9,
+        3,
+        1,
+        2,
+        2,
+        4
+      ],
+      "evidence": "host-runs/regression-currentsealed-003",
+      "receipt_sha256": "141036f67c9b24492c4c3274f5b42e0bff2df6c03cd14bf1a44c652106a6a209",
+      "source_before_sha256": "60687490eeed36620a07ec56657ea2ec80256c1ea56258e984e6cb20ff397061",
+      "source_after_sha256": "60687490eeed36620a07ec56657ea2ec80256c1ea56258e984e6cb20ff397061",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 509,
+        "snapshot_sha256": "cb3647b2ad14b26eb13770960803619f85145a02908da69f49b51dcc0080d909"
+      }
+    },
+    "r2_current_regression": {
+      "status": "PASS_SCOPED",
+      "test_methods": 106,
+      "raw_test_process_counts": [
+        6,
+        48,
+        28,
+        24,
+        0
+      ],
+      "evidence": "host-runs/r2-regression-currentsealed-002",
+      "receipt_sha256": "b69a46335c9353368765024bb87a6ceb2cc0dd7220fd129ceb05f47a247f3fd5",
+      "source_before_sha256": "60687490eeed36620a07ec56657ea2ec80256c1ea56258e984e6cb20ff397061",
+      "source_after_sha256": "60687490eeed36620a07ec56657ea2ec80256c1ea56258e984e6cb20ff397061",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 509,
+        "snapshot_sha256": "cb3647b2ad14b26eb13770960803619f85145a02908da69f49b51dcc0080d909"
+      }
+    },
+    "r2_typed_client": {
+      "status": "PASS_SCOPED",
+      "test_methods": 10,
+      "raw_test_process_counts": [
+        10
+      ],
+      "evidence": "wasm-client-runs/client-proposal-finalsource-006",
+      "receipt_sha256": "63c09f2dfb67ffe654e1acb708e9318f62b416018c65ca2e7884452321294f22",
+      "source_before_sha256": "f4beae7ecbe9dad876384f1bd6a4b98d3a1f7a3a0ad010f8ed6095922740c235",
+      "source_after_sha256": "f4beae7ecbe9dad876384f1bd6a4b98d3a1f7a3a0ad010f8ed6095922740c235",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 307,
+        "snapshot_sha256": "857a293de4ec1248ffeb6addf8d500fc61b4e3b4e97ea9d0a69288a2a63162a0"
+      }
+    },
+    "r2_original_factory_real_wasm": {
+      "status": "PASS_SCOPED",
+      "test_methods": 6,
+      "raw_test_process_counts": [
+        6
+      ],
+      "evidence": "wasm-client-runs/qualification-proposal-finalsource-005",
+      "receipt_sha256": "aa8b3f480919471ef768893614cabcf2b997d1298b8be899682eb800274eb846",
+      "source_before_sha256": "dc954345b378948f51ae1b2c1e51990c3f33d5f17639befcad6bee0b87d5578d",
+      "source_after_sha256": "dc954345b378948f51ae1b2c1e51990c3f33d5f17639befcad6bee0b87d5578d",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 485,
+        "snapshot_sha256": "dd12e6068afc8c8f40a9e5d816dd9d1624f7b3c4ec2c6fcc68af53c78f2bfeba"
+      }
+    },
+    "process_typed_client": {
+      "status": "PASS_SCOPED",
+      "test_methods": 10,
+      "raw_test_process_counts": [
+        10
+      ],
+      "evidence": "process-client-runs/client-finalsealed-002",
+      "receipt_sha256": "b6f12e38fa1dc6a15389db4a35a3d913f8feceedcfb2518195e5675bc3847b21",
+      "source_before_sha256": "7b25c2e0e4b92b005be51c335872ba6b300e07625bc7d2d2a8f50fa878ae8470",
+      "source_after_sha256": "7b25c2e0e4b92b005be51c335872ba6b300e07625bc7d2d2a8f50fa878ae8470",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 63,
+        "snapshot_sha256": "3fdfd405f4f15a56e0763c194ca5d2b077df1fd7c5eab442a039f1f1db7975dd"
+      }
+    },
+    "process_protocol_and_host": {
+      "status": "PASS_SCOPED",
+      "test_methods": 23,
+      "evidence": "process-control-verification.json",
+      "schema_sha256": "3d94d0a1ed17ea8c7edad932150bf0eda875625f50a24a31b9a0519de9cd5527"
+    },
+    "combined_host_clippy": {
+      "status": "PASS_SCOPED",
+      "evidence": "host-runs/clippy-final-004",
+      "receipt_sha256": "d39af045c6c36d43d4644985383c1f5d45ece14029cd5664ab7850104c8a755b",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 509,
+        "snapshot_sha256": "cb3647b2ad14b26eb13770960803619f85145a02908da69f49b51dcc0080d909"
+      }
+    },
+    "proposal_guest_build": {
+      "status": "PASS_SCOPED",
+      "evidence": "proposal-guest-runs/build-001",
+      "receipt_sha256": "dd7a64e7de628a42ac135b69775d18ccdab5eb460ae4e45013b55085cf3af67c",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 307,
+        "snapshot_sha256": "857a293de4ec1248ffeb6addf8d500fc61b4e3b4e97ea9d0a69288a2a63162a0"
+      }
+    },
+    "windows_native_actual": {
+      "status": "PASS_SCOPED",
+      "test_methods": 7,
+      "evidence": "windows-provider-001/logs/native-20261006T084902",
+      "receipt_sha256": "0ee10a245b2ebbebc3fab4788173f5651b9c89c413f55e1779c42d9fed057743",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 1337,
+        "snapshot_sha256": "6608a9d73f42a09d2e04fc2801c282cbcede5e3a8b1a914ca08addff0763bf55",
+        "selected_test_target": "actual_windows.rs"
+      },
+      "raw_test_process_counts": [
+        7
+      ],
+      "executable_sha256": "0de2fbcdc241a1210fd78e06bca0e98be9088c52a3cb62f5ec9c64caeb5b0bd9"
+    },
+    "windows_registry_pure": {
+      "status": "PASS_SCOPED",
+      "test_methods": 3,
+      "evidence": "windows-provider-001/logs/registry-20261006T084725",
+      "receipt_sha256": "ec560f24c73e71c239ca5d12635cdac2bd239bb3830156314a3cb739cfad300d",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 1336,
+        "snapshot_sha256": "ca52fcd4c03bb33e6007dc2866a905257d42418805f1e7ded084b036d0d82b79",
+        "selected_test_target": "lib"
+      },
+      "raw_test_process_counts": [
+        3
+      ]
+    },
+    "windows_native_format": {
+      "status": "PASS_SCOPED",
+      "evidence": "windows-provider-001/logs/format-20261006T084645",
+      "receipt_sha256": "24ca46568309287b9de6ddab912c7a58842d8afdb4966063106aa4454fa78adc",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 10,
+        "snapshot_sha256": "898f392977d76b924fe527d77d9e80e92f07120c4c4275e5adbc213e41581596",
+        "selected_test_target": "all-targets"
+      }
+    },
+    "windows_native_clippy": {
+      "status": "PASS_SCOPED",
+      "evidence": "windows-provider-001/logs/clippy-20261006T084651",
+      "receipt_sha256": "3d623244595d062c50e294c0f5ca56cdccf7248985517a092ac644b5355f44f3",
+      "source_freshness": {
+        "status": "PASS_CURRENT_COMPILATION_INPUTS",
+        "checked_paths": 10,
+        "snapshot_sha256": "898f392977d76b924fe527d77d9e80e92f07120c4c4275e5adbc213e41581596",
+        "selected_test_target": "all-targets"
+      }
+    },
+    "windows_lifecycle_source_review": {
+      "status": "NO_AUTHORITY_LOCK_OR_LIFECYCLE_SEMANTIC_CHANGE_IN_THREE_REVIEWED_EDITS",
+      "runtime_test": false,
+      "evidence": "windows-provider-001/logs/owner-drop-lint-equivalence-review.json",
+      "receipt_sha256": "1e138a73da43b898fcb80f74a63c762a2b4434623d9116bfeca0e94fb4e4bd5a"
+    },
+    "actual_wasm_windows_coupling": {
+      "status": "PASS_SCOPED",
+      "test_methods": 3,
+      "scenarios": [
+        {
+          "status": "PASS_ACTUAL_WASM_WINDOWS_WASM",
+          "test_methods": 1,
+          "test_filter": "actual_rust_wasm_proposal_claim_windows_process_and_wasm_controls",
+          "evidence": "wasm-windows-coupled-runs/positive-final-003",
+          "receipt_sha256": "00944bd956bae7cf4820a8f47f5b34bb4ddcb312983e9d388d8ad15062258d15",
+          "source_before_sha256": "02a41ad2dcece2ab3eaa2a81ca1b764164c167611975260651a1fd118a389bad",
+          "source_after_sha256": "02a41ad2dcece2ab3eaa2a81ca1b764164c167611975260651a1fd118a389bad",
+          "source_freshness": {
+            "status": "PASS_CURRENT_COMPILATION_INPUTS",
+            "checked_paths": 5610,
+            "snapshot_sha256": "0d99f37831a16d448bba739a095dc86060b1b1dbf60862fee357659aeec72654"
+          },
+          "executable_sha256": "1e25b924e3d8569737496bc38608aa679c666bdce62027ff4d98a9cae76f5bbd"
+        },
+        {
+          "status": "PASS_ACTUAL_WASM_WINDOWS_WASM",
+          "test_methods": 1,
+          "test_filter": "expired_or_revoked_original_executor_blocks_actual_wasm_controls",
+          "evidence": "wasm-windows-coupled-runs/expiry-revoke-final-002",
+          "receipt_sha256": "23632b3cb42480145b483396190b1af5bac895ab0c03b21868e32734e83e8a0a",
+          "source_before_sha256": "02a41ad2dcece2ab3eaa2a81ca1b764164c167611975260651a1fd118a389bad",
+          "source_after_sha256": "02a41ad2dcece2ab3eaa2a81ca1b764164c167611975260651a1fd118a389bad",
+          "source_freshness": {
+            "status": "PASS_CURRENT_COMPILATION_INPUTS",
+            "checked_paths": 5610,
+            "snapshot_sha256": "0d99f37831a16d448bba739a095dc86060b1b1dbf60862fee357659aeec72654"
+          },
+          "executable_sha256": "1e25b924e3d8569737496bc38608aa679c666bdce62027ff4d98a9cae76f5bbd"
+        },
+        {
+          "status": "PASS_ACTUAL_WASM_WINDOWS_WASM",
+          "test_methods": 1,
+          "test_filter": "actual_input_effect_unknown_delivery_is_not_replayed_by_rust_wasm",
+          "evidence": "wasm-windows-coupled-runs/unknown-final-002",
+          "receipt_sha256": "07a93253c07644988d0ca315574336138af7ae76f924f77193aaa09d243ab34c",
+          "source_before_sha256": "02a41ad2dcece2ab3eaa2a81ca1b764164c167611975260651a1fd118a389bad",
+          "source_after_sha256": "02a41ad2dcece2ab3eaa2a81ca1b764164c167611975260651a1fd118a389bad",
+          "source_freshness": {
+            "status": "PASS_CURRENT_COMPILATION_INPUTS",
+            "checked_paths": 5610,
+            "snapshot_sha256": "0d99f37831a16d448bba739a095dc86060b1b1dbf60862fee357659aeec72654"
+          },
+          "executable_sha256": "1e25b924e3d8569737496bc38608aa679c666bdce62027ff4d98a9cae76f5bbd"
+        }
+      ],
+      "sealed_guest_sha256": {
+        "MORROW_PROPOSAL_GUEST": "9552e969b09c9f982914e71ea99a3c93fddc2bdd30986f5932883bcaa3ac1243",
+        "MORROW_PROCESS_GUEST": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+      },
+      "guests_rebuilt": false,
+      "child_entry_counted": false
+    }
+  },
+  "counts_are_separate_scopes": true,
+  "input_guards": {
+    "status": "PASS_INPUT_GUARDS",
+    "sdk327_count": 327,
+    "sdk_changes": {},
+    "frozen57_count": 57,
+    "frozen_changes": {},
+    "r1_r2_immutable_count": 46,
+    "unexpected_r1_r2_changes": {},
+    "intentional_additive_r2_authority_check": {
+      "expected": "d6cec6c441114e9d39d597a1e11f9aeedf8c8060e9335e57452f3883344e0b24",
+      "actual": "175e9138e79f1165228786518d37f5384512061bcd9f7a992fa97f66044ceb18"
+    },
+    "archive_changes": {},
+    "original_c11_input_changes": {},
+    "original_head": "e83cdf1d3506b001d07ffceaaa9f98b688bcc150"
+  },
+  "windows_provider": "PASS_SCOPED_NATIVE_WINDOWS",
+  "native_lock_sha256": "d2292e6e06ecf6e9df609ce53ee3d48126cb24b136ebbf0fedd4e0b8fae5d752",
+  "native_final_aggregate_sha256": "c17bcbef25e24771ee44ad2d0f42e8ebdf5316397c6dec7e63b5c3f7b3b285d8",
+  "actual_proposal_wasm_windows_process_wasm": "PASS_THREE_ACTUAL_SCENARIOS",
+  "explicit_unsupported_fixed_provider": [
+    "close_input",
+    "resize_pty",
+    "windows_pty_interrupt"
+  ],
+  "not_run": [
+    "OS sandbox",
+    "production GUI",
+    "ProtectedSession",
+    "native picker provenance",
+    "authenticated Codex transport",
+    "full Codex app injection",
+    "other platforms",
+    "full SDK26"
+  ],
+  "raw_evidence_delivery": "Bounded handoff retains original failures, zero-match runs, logs, exits, source snapshots and hashes."
+}

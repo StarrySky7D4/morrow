@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+[package]
+name = "morrow-codex-process-control-client-v1"
+version = "0.1.0-experimental.1"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+[dependencies]
+morrow-agent-process-control-v1 = { path = "../agent-process-control-v1", default-features = false }

@@ -6,7 +6,7 @@ import importlib.util
 import io
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import subprocess
 import sys
 import tarfile
@@ -446,6 +446,148 @@ class SessionExecR2Tests(unittest.TestCase):
         valid = subprocess.run([sys.executable, str(SCRIPT), "verify-r1", "--source-archive", str(self.root / gate.R1_ARCHIVE), "--json"], capture_output=True, text=True)
         self.assertEqual(valid.returncode, 0, valid.stderr)
         self.assertEqual(json.loads(valid.stdout)["recorded_tests_verified"], 81)
+
+    def portable_record_fixture(self, flavor):
+        manifest = copy.deepcopy(self.manifest)
+        evidence = manifest["evidence"]
+        anchor = flavor("C:/") if flavor is PureWindowsPath else flavor("/")
+        execution_root = anchor / "workspace/morrow"
+        evidence["execution_root"] = str(execution_root)
+        for name, record in evidence["tools"].items():
+            path = str(anchor / "toolchain" / name)
+            record["argv"][0] = path
+            record["executable"]["path"] = path
+        evidence["environment"]["RUSTC"] = evidence["tools"]["rustc"]["argv"][0]
+        evidence["environment"]["CC"] = evidence["tools"]["cc"]["argv"][0]
+        cargo = evidence["tools"]["cargo"]["argv"][0]
+        for record in evidence["tests"].values():
+            record["cwd"] = str(execution_root)
+            record["argv"][0] = cargo
+            record["argv"][7] = str(execution_root / "build/qualification")
+        consumer = evidence["consumer"]
+        consumer["cwd"] = str(anchor / "capture/independent consumer")
+        consumer["source_root"] = str(anchor / "capture/exported source")
+        consumer["argv"][0] = cargo
+        consumer["argv"][7] = str(execution_root / "build/consumer")
+        python = evidence["python_tests"]
+        python["cwd"] = str(execution_root)
+        python["argv"][0] = str(anchor / "toolchain/python3")
+        python["executable"]["path"] = python["argv"][0]
+        return manifest
+
+    def test_complete_posix_and_windows_records_verify_on_current_host(self):
+        for flavor in (PurePosixPath, PureWindowsPath):
+            self.manifest = self.portable_record_fixture(flavor)
+            self.repin()
+            with self.subTest(flavor=flavor):
+                result = self.verify(check_executables=False)
+                self.assertEqual(result["recorded_consumer_compilations_verified"], 1)
+                self.assertFalse(result["current_executable_inputs_verified"])
+
+    def test_windows_consumer_mixed_flavors_drives_and_case_aliases_fail_closed(self):
+        original = self.portable_record_fixture(PureWindowsPath)
+        for field, value in (("source_root", "/capture/exported source"), ("cwd", "C:consumer"),
+                             ("source_root", r"D:\capture\exported source"),
+                             ("target", r"c:\CAPTURE\EXPORTED SOURCE\target"),
+                             ("target", r"c:\CAPTURE\INDEPENDENT CONSUMER\target"),
+                             ("cwd", r"c:\WORKSPACE\MORROW\consumer"),
+                             ("source_root", r"C:\capture\..\exported source")):
+            self.manifest = copy.deepcopy(original)
+            consumer = self.manifest["evidence"]["consumer"]
+            if field == "target": consumer["argv"][7] = value
+            else: consumer[field] = value
+            self.repin()
+            with self.subTest(field=field, value=value), self.assertRaises(gate.FreezeError):
+                self.verify(check_executables=False)
+
+
+class RecordedPathTests(unittest.TestCase):
+    def test_absolute_paths_keep_recorded_flavor_on_either_host(self):
+        self.assertEqual(gate.recorded_absolute("/workspace/morrow"), PurePosixPath("/workspace/morrow"))
+        self.assertEqual(gate.recorded_absolute(r"C:\workspace\morrow"), PureWindowsPath(r"C:\workspace\morrow"))
+        self.assertEqual(gate.recorded_absolute("c:/workspace/morrow"), PureWindowsPath(r"C:\workspace\morrow"))
+
+    def test_ambiguous_and_traversing_absolute_paths_fail_closed(self):
+        for value in ("C:morrow", r"\workspace\morrow", r"\\server\share\morrow", "//server/share",
+                      r"\\?\C:\workspace", "/workspace/C:/morrow", r"/workspace\morrow",
+                      "/workspace/../morrow", r"C:\workspace\..\morrow", "/workspace/./morrow",
+                      r"C:\workspace\morrow.\target", r"C:\workspace\NUL\target", "/workspace/morrow\x00"):
+            with self.subTest(value=value), self.assertRaises(gate.FreezeError):
+                gate.recorded_absolute(value)
+
+    def test_mixed_flavor_absolute_paths_are_rejected(self):
+        for value, flavor in (("/workspace/morrow", PureWindowsPath), (r"C:\workspace\morrow", PurePosixPath)):
+            with self.subTest(value=value), self.assertRaisesRegex(gate.FreezeError, "mixed"):
+                gate.recorded_absolute(value, flavor)
+
+    def test_consumer_relative_dependency_resolves_without_host_abspath(self):
+        for base, dependency, expected in (("/tmp/consumer", "../source/extensions/r2", "/tmp/source/extensions/r2"),
+                                           (r"C:\tmp\consumer", "../source/extensions/r2", r"C:\tmp\source\extensions\r2"),
+                                           (r"C:\tmp\consumer", r"..\source\extensions\r2", r"C:\tmp\source\extensions\r2")):
+            with self.subTest(base=base), mock.patch.object(gate.os.path, "abspath", side_effect=AssertionError("host path access")):
+                parsed = gate.recorded_absolute(base)
+                self.assertEqual(gate.recorded_join(parsed, dependency, allow_parent=True), gate.recorded_absolute(expected))
+        with self.assertRaises(gate.FreezeError):
+            gate.recorded_join(PurePosixPath("/"), "../source", allow_parent=True)
+
+    def test_target_containment_handles_drive_case_and_prefix_boundaries(self):
+        definition = {"manifest": "core/Cargo.toml", "kind": "lib", "target": None}
+        for execution_root, accepted, rejected in (
+                ("/workspace/Morrow", "/workspace/Morrow/build/core", ("/workspace/morrow/build/core", "/workspace/Morrow/build-other/core", "/workspace/Morrow/build/../escape", r"C:\workspace\Morrow\build\core")),
+                (r"C:\workspace\Morrow", r"c:\WORKSPACE\morrow\BUILD\core", (r"D:\workspace\Morrow\build\core", r"C:\workspace\Morrow\build-other\core", r"C:\workspace\Morrow\build\..\escape", "/workspace/Morrow/build/core", r"\workspace\Morrow\build\core", r"C:build\core"))):
+            def record(target):
+                return {"cwd": execution_root, "exit_code": 0, "stdout": {}, "stderr": {},
+                        "argv": ["cargo", "test", "--locked", "--offline", "--manifest-path", "core/Cargo.toml", "--target-dir", target, "--lib"]}
+            with self.subTest(root=execution_root):
+                targets = {}
+                gate.test_command(record(accepted), definition, "cargo", execution_root, targets)
+                gate.test_command(record("build/core"), definition, "cargo", execution_root, targets)
+            for target in rejected:
+                with self.subTest(target=target), self.assertRaises(gate.FreezeError):
+                    gate.test_command(record(target), definition, "cargo", execution_root, {})
+
+    def test_foreign_executable_checks_fail_before_native_disk_access(self):
+        foreign = PurePosixPath("/foreign/bin/cargo") if os.name == "nt" else PureWindowsPath(r"C:\foreign\cargo.exe")
+        with mock.patch.object(gate, "ordinary_path", side_effect=AssertionError("native disk access")):
+            with self.assertRaisesRegex(gate.FreezeError, "foreign recorded executable"):
+                gate.native_executable(foreign)
+        record = {"argv": [str(foreign), "-V"], "executable": {"path": str(foreign), "sha256": "0" * 64},
+                  "exit_code": 0, "stdout": {}, "stderr": {}}
+        with mock.patch.object(gate, "evidence_log", return_value=b"cargo fixture\n"), mock.patch.object(gate, "ordinary_path", side_effect=AssertionError("native disk access")):
+            gate.tool_identity(record, "cargo", {}, Path("."), False)
+            with self.assertRaisesRegex(gate.FreezeError, "foreign recorded executable"):
+                gate.tool_identity(record, "cargo", {}, Path("."), True)
+
+    def test_foreign_python_executable_checks_fail_before_native_disk_access(self):
+        foreign = "/foreign/bin/python3" if os.name == "nt" else r"C:\foreign\python.exe"
+        execution_root = "/workspace/morrow" if os.name == "nt" else r"C:\workspace\morrow"
+        record = {"argv": [foreign, gate.GATE_TEST, "-v"], "cwd": execution_root, "exit_code": 0,
+                  "executable": {"path": foreign, "sha256": "0" * 64}, "expected_names": [], "stdout": {}, "stderr": {}}
+        with mock.patch.object(gate, "ordinary_path", side_effect=AssertionError("native disk access")):
+            with self.assertRaisesRegex(gate.FreezeError, "foreign recorded executable"):
+                gate.verify_python_tests(Path("."), record, execution_root, {}, True)
+
+    def test_real_linux_r2_archive_is_verified_without_rewriting_frozen_inputs(self):
+        folder = REPOSITORY / "reports/reconstruction-2026-10-05"
+        archive = folder / "session-exec-v1-r2-source.tar.gz"
+        baseline = folder / "session-exec-v1-r2-freeze.json"
+        pin = "7c86d0cfa2f5714bbaae7031a1526a08ed61a48068f3210258d4002d33aa2e6f"
+        archive_sha = "59a1a276a6e432a9bfa78c42e2b7bbe81f21e236579de5890fa96ce0593fbb8b"
+        self.assertEqual(gate.sha(archive.read_bytes()), archive_sha)
+        self.assertEqual(gate.sha(baseline.read_bytes()), pin)
+        self.assertEqual(gate.document(baseline.read_bytes())["evidence"]["execution_root"], "/workspace/morrow")
+        result = gate.verify_source_archive(archive, baseline, pin)
+        self.assertTrue(result["portable_source_archive_verified"])
+        self.assertFalse(result["current_executable_inputs_verified"])
+        self.assertEqual(result["recorded_tests_verified"], 156)
+        self.assertEqual(result["recorded_python_tests_verified"], 32)
+        self.assertEqual(result["source_files_verified"], 573)
+        command = subprocess.run([sys.executable, str(SCRIPT), "verify-archive", "--source-archive", str(archive),
+                                  "--baseline", str(baseline), "--expected-pin", pin, "--json"], capture_output=True, text=True)
+        self.assertEqual(command.returncode, 0, command.stderr)
+        self.assertEqual(json.loads(command.stdout), result)
+        self.assertEqual(gate.sha(archive.read_bytes()), archive_sha)
+        self.assertEqual(gate.sha(baseline.read_bytes()), pin)
 
 
 if __name__ == "__main__":

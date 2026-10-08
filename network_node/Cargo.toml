@@ -18,7 +18,7 @@ http = "=1.5.0"
 futures-util = "=0.3.33"
 sha2 = "=0.10.9"
 zeroize = "=1.9.0"
-rustls = { version = "=0.23.43", default-features = false, features = ["ring", "std", "tls12"] }
+rustls = { version = "=0.23.45", default-features = false, features = ["ring", "std", "tls12"] }
 tokio-rustls = { version = "=0.26.4", default-features = false, features = ["ring", "tls12"] }
 
 morrow-plugin-runtime = { path = "../plugin_runtime", features = ["packages"], optional = true }

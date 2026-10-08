@@ -4,6 +4,8 @@ import '../appearance.dart';
 import '../settings_surface.dart';
 import 'plugin_tools.dart';
 import 'plugin_library.dart';
+import 'agent_wrapper_control.dart';
+import 'agent_wrapper_library.dart';
 import 'protection_backup.dart';
 import 'workbench_backend.dart';
 
@@ -46,6 +48,19 @@ class PluginSettingsPage extends StatelessWidget {
                 p: p,
                 componentId: 'plugin-library',
                 child: PluginLibrary(
+                  backend: backend,
+                  onChanged: onChanged,
+                  ink: p.ink,
+                  muted: p.muted,
+                  line: p.line,
+                  radius: p.borderRadius(11),
+                ),
+              ),
+            if (backend is AgentWrapperControl && backend.supportsAgentWrappers)
+              Glass(
+                p: p,
+                componentId: 'agent-wrapper-library',
+                child: AgentWrapperLibrary(
                   backend: backend,
                   onChanged: onChanged,
                   ink: p.ink,

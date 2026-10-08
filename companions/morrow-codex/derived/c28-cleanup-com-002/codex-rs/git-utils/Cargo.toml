@@ -1,0 +1,112 @@
+
+["package"]
+"name" = "codex-git-utils"
+"readme" = "README.md"
+
+["package"."version"]
+"workspace" = true
+
+
+["package"."edition"]
+"workspace" = true
+
+
+["package"."license"]
+"workspace" = true
+
+
+
+["lints"]
+"workspace" = true
+
+
+["dependencies"]
+"regex" = "1"
+
+["dependencies"."anyhow"]
+"workspace" = true
+
+
+["dependencies"."chrono"]
+"workspace" = true
+
+
+["dependencies"."codex-file-system"]
+"workspace" = true
+
+
+["dependencies"."codex-protocol"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-absolute-path"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-path-uri"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-pty"]
+"workspace" = true
+
+
+["dependencies"."futures"]
+"workspace" = true
+"features" = ["alloc"]
+
+
+["dependencies"."gix"]
+"workspace" = true
+
+
+["dependencies"."once_cell"]
+"workspace" = true
+
+
+["dependencies"."schemars"]
+"workspace" = true
+
+
+["dependencies"."serde"]
+"workspace" = true
+"features" = ["derive"]
+
+
+["dependencies"."similar"]
+"workspace" = true
+
+
+["dependencies"."tempfile"]
+"workspace" = true
+
+
+["dependencies"."thiserror"]
+"workspace" = true
+
+
+["dependencies"."tokio"]
+"workspace" = true
+"features" = ["macros", "process", "rt", "time"]
+
+
+["dependencies"."ts-rs"]
+"workspace" = true
+"features" = ["uuid-impl", "serde-json-impl", "no-serde-warnings"]
+
+
+["dependencies"."walkdir"]
+"workspace" = true
+
+
+
+["dev-dependencies"]
+
+["dev-dependencies"."pretty_assertions"]
+"workspace" = true
+
+
+
+["lib"]
+"doctest" = false
+

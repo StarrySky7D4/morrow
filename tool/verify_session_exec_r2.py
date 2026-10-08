@@ -15,7 +15,7 @@ import tempfile
 import hashlib
 import json
 import os
-from pathlib import Path, PurePosixPath
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 import stat
 import sys
@@ -66,6 +66,67 @@ def relative_name(value: str) -> str:
             or any(ord(char) < 32 or ord(char) == 127 for char in value)):
         raise FreezeError("invalid relative input path")
     return value
+
+
+def recorded_absolute(value, flavor=None):
+    """Interpret historical paths lexically, never against the current host."""
+    if (not isinstance(value, str) or not value or len(value.encode()) > 4096
+            or any(ord(char) < 32 or ord(char) == 127 for char in value)):
+        raise FreezeError("invalid recorded absolute path")
+    kind = PureWindowsPath if re.match(r"^[A-Za-z]:[\\/]", value) else PurePosixPath
+    if flavor is not None and kind is not flavor:
+        raise FreezeError("mixed recorded path flavors")
+    if kind is PureWindowsPath:
+        if any(char in value[2:] for char in ':<>"|?*'):
+            raise FreezeError("unsupported recorded Windows path")
+        parts = re.split(r"[\\/]", value[3:])
+        if any(part.endswith((".", " ")) or PureWindowsPath(part).is_reserved() for part in parts if part):
+            raise FreezeError("ambiguous recorded Windows path component")
+    else:
+        if not value.startswith("/") or value.startswith("//") or "\\" in value or ":" in value:
+            raise FreezeError("unsupported recorded POSIX path")
+        parts = value[1:].split("/")
+    path = kind(value)
+    if not path.is_absolute() or any(part in (".", "..") for part in parts):
+        raise FreezeError("recorded absolute path contains traversal or lacks an anchor")
+    return path
+
+
+def recorded_join(base, value, *, allow_parent=False):
+    """Resolve relative recorded inputs with the base's recorded path flavor."""
+    if (not isinstance(value, str) or not value or len(value.encode()) > 4096
+            or any(ord(char) < 32 or ord(char) == 127 for char in value)):
+        raise FreezeError("invalid recorded relative path")
+    kind = type(base)
+    if value.startswith(("/", "\\")) or ":" in value:
+        raise FreezeError("recorded relative path replaces its anchor")
+    if kind is PurePosixPath and "\\" in value:
+        raise FreezeError("mixed recorded path flavors")
+    parts = re.split(r"[\\/]", value) if kind is PureWindowsPath else value.split("/")
+    path = base
+    for part in parts:
+        if part == ".." and allow_parent:
+            if path == path.parent:
+                raise FreezeError("recorded relative path escapes its anchor")
+            path = path.parent
+        else:
+            if part in ("", ".", ".."):
+                raise FreezeError("recorded relative path contains traversal")
+            path = recorded_absolute(str(path / part), kind)
+    return path
+
+
+def recorded_target(value, base):
+    if isinstance(value, str) and (value.startswith(("/", "\\")) or ":" in value):
+        return recorded_absolute(value, type(base))
+    return recorded_join(base, value)
+
+
+def native_executable(path):
+    native = PureWindowsPath if os.name == "nt" else PurePosixPath
+    if type(path) is not native:
+        raise FreezeError("foreign recorded executable cannot be verified on the current host")
+    return ordinary_path(Path(str(path)))
 
 
 def ordinary_path(path: Path, *, directory: bool = False) -> Path:
@@ -268,9 +329,14 @@ def source_inventory(root: Path, extra_source_roots=(), extra_inputs=()) -> dict
                         if isinstance(dependency, dict) and "path" in dependency:
                             if not isinstance(dependency["path"], str):
                                 raise FreezeError("invalid local dependency path")
-                            target = Path(os.path.abspath((root / name).parent / dependency["path"] / "Cargo.toml"))
+                            recorded_root = recorded_absolute(str(root))
+                            dependency_path = dependency["path"]
+                            base = recorded_root / PurePosixPath(name).parent
+                            target = (recorded_absolute(dependency_path, type(recorded_root))
+                                      if dependency_path.startswith(("/", "\\")) or ":" in dependency_path
+                                      else recorded_join(base, dependency_path, allow_parent=True)) / "Cargo.toml"
                             try:
-                                relative = target.relative_to(root).as_posix()
+                                relative = target.relative_to(recorded_root).as_posix()
                             except ValueError as error:
                                 raise FreezeError("local dependency escapes the source root") from error
                             if relative not in inventory:
@@ -440,14 +506,16 @@ def verify_r1_archive(path: Path) -> dict:
             "source_files_verified": 237, "recorded_tests_verified": 81}
 
 
-def tool_identity(record, name, checked, root, check_executables):
+def tool_identity(record, name, checked, root, check_executables, flavor=None):
     if not isinstance(record, dict) or set(record) != {"argv", "executable", "exit_code", "stdout", "stderr"}:
         raise FreezeError("invalid tool identity fields")
     argv = record["argv"]
     flag = {"rustc": "-Vv", "cargo": "-V", "capnp": "--version", "cc": "--version"}[name]
     if (not isinstance(argv, list) or len(argv) != 2 or not all(isinstance(arg, str) for arg in argv)
-            or (name != "cc" and Path(argv[0]).name not in (name, name + ".exe")) or not Path(argv[0]).is_absolute()
             or argv[1] != flag or type(record["exit_code"]) is not int or record["exit_code"] != 0):
+        raise FreezeError("tool requires its actual absolute executable and fixed version command")
+    recorded = recorded_absolute(argv[0], flavor)
+    if name != "cc" and recorded.name not in (name, name + ".exe"):
         raise FreezeError("tool requires its actual absolute executable and fixed version command")
     executable = record["executable"]
     if (not isinstance(executable, dict) or set(executable) != {"path", "sha256"}
@@ -455,7 +523,7 @@ def tool_identity(record, name, checked, root, check_executables):
             or not HEX.fullmatch(executable["sha256"])):
         raise FreezeError("missing actual executable input digest")
     if check_executables:
-        path = ordinary_path(Path(argv[0]))
+        path = native_executable(recorded)
         if not os.access(path, os.X_OK) or sha(read_regular(path, MAX_EXECUTABLE_BYTES)) != executable["sha256"]:
             raise FreezeError("actual executable identity mismatch")
     output = evidence_log(root, record["stdout"], checked)
@@ -471,15 +539,17 @@ def verify_consumer(root, record, cargo, inventory, checked):
     if not isinstance(record, dict) or set(record) != fields:
         raise FreezeError("invalid independent consumer fields")
     if (type(record["exit_code"]) is not int or record["exit_code"] != 0
-            or not isinstance(record["cwd"], str) or not Path(record["cwd"]).is_absolute()
-            or not isinstance(record["source_root"], str) or not Path(record["source_root"]).is_absolute()
             or record["source_inventory_before"] != inventory or record["source_inventory_after"] != inventory):
         raise FreezeError("independent consumer source drift or unsuccessful compilation")
+    flavor = type(recorded_absolute(cargo))
+    source_root = recorded_absolute(record["source_root"], flavor)
+    cwd = recorded_absolute(record["cwd"], flavor)
     argv = record["argv"]
     if (not isinstance(argv, list) or len(argv) != 8
             or argv[:7] != [cargo, "check", "--locked", "--offline", "--manifest-path", "Cargo.toml", "--target-dir"]
-            or not isinstance(argv[7], str) or not Path(argv[7]).is_absolute() or ".." in Path(argv[7]).parts):
+            or not isinstance(argv[7], str)):
         raise FreezeError("consumer requires exact locked offline default-feature check command")
+    target = recorded_absolute(argv[7], flavor)
     inputs = checked_inventory(record["inputs"])
     if len(inputs) != 3:
         raise FreezeError("consumer requires exact Cargo manifest, lock and independent source inputs")
@@ -497,10 +567,7 @@ def verify_consumer(root, record, cargo, inventory, checked):
     if set(inputs) not in ({parent + "/Cargo.toml", parent + "/Cargo.lock", parent + "/src/main.rs"},
                            {parent + "/Cargo.toml", parent + "/Cargo.lock", parent + "/src/lib.rs"}):
         raise FreezeError("unexpected independent consumer input set")
-    target = Path(argv[7])
-    source_root = Path(record["source_root"])
-    cwd = Path(record["cwd"])
-    if ".." in source_root.parts or ".." in cwd.parts or target.is_relative_to(source_root) or target.is_relative_to(cwd):
+    if target.is_relative_to(source_root) or target.is_relative_to(cwd):
         raise FreezeError("consumer target must be outside exported source and independent consumer inputs")
     consumer = tomllib.loads(blobs[manifests[0]].decode("utf-8"))
     if set(consumer) - {"package", "workspace", "dependencies", "lib", "bin"} or consumer.get("workspace", {}) not in ({}, {"resolver": "2"}):
@@ -511,8 +578,11 @@ def verify_consumer(root, record, cargo, inventory, checked):
     if (not isinstance(dependency, dict) or not isinstance(dependency.get("path"), str)
             or set(dependency) != {"path", "default-features"} or dependency["default-features"] is not False):
         raise FreezeError("consumer must import the separate reviewed R2 package")
-    actual = Path(os.path.abspath(Path(record["cwd"]) / dependency["path"]))
-    if actual != Path(record["source_root"]) / CRATE:
+    dependency_path = dependency["path"]
+    actual = (recorded_absolute(dependency_path, flavor)
+              if dependency_path.startswith(("/", "\\")) or ":" in dependency_path
+              else recorded_join(cwd, dependency_path, allow_parent=True))
+    if actual != source_root / CRATE:
         raise FreezeError("consumer dependency is not the exported R2 source")
     stdout = evidence_log(root, record["stdout"], checked)
     stderr = evidence_log(root, record["stderr"], checked)
@@ -589,15 +659,14 @@ def test_command(record, definition, cargo, execution_root, targets):
             or argv[:7] != [cargo, "test", "--locked", "--offline", "--manifest-path", definition["manifest"], "--target-dir"]
             or argv[8:] != suffix):
         raise FreezeError("requires exact locked offline lib-or-test command without extra flags")
-    target = Path(argv[7])
-    if not target.is_absolute():
-        target = Path(execution_root) / relative_name(argv[7])
-    if ".." in target.parts or not target.is_relative_to(Path(execution_root) / "build"):
+    recorded_root = recorded_absolute(execution_root)
+    target = recorded_target(argv[7], recorded_root)
+    if not target.is_relative_to(recorded_root / "build"):
         raise FreezeError("test target must be inside recorded host build directory")
     manifest = definition["manifest"]
-    if manifest in targets and targets[manifest] != str(target):
+    if manifest in targets and targets[manifest] != target:
         raise FreezeError("one test crate mixes target directories")
-    targets[manifest] = str(target)
+    targets[manifest] = target
 
 
 def python_test_names(root):
@@ -618,9 +687,11 @@ def verify_python_tests(root, record, execution_root, checked, check_executables
         raise FreezeError("invalid Python gate test evidence fields")
     argv = record["argv"]
     if (not isinstance(argv, list) or len(argv) != 3 or not all(isinstance(arg, str) for arg in argv)
-            or argv[1:] != [GATE_TEST, "-v"] or not Path(argv[0]).is_absolute()
-            or not re.fullmatch(r"python(?:3(?:\.[0-9]+)?)?(?:\.exe)?", Path(argv[0]).name)
+            or argv[1:] != [GATE_TEST, "-v"]
             or record["cwd"] != execution_root or type(record["exit_code"]) is not int or record["exit_code"] != 0):
+        raise FreezeError("Python tests require the complete fixed verbose gate suite command")
+    recorded = recorded_absolute(argv[0], type(recorded_absolute(execution_root)))
+    if not re.fullmatch(r"python(?:3(?:\.[0-9]+)?)?(?:\.exe)?", recorded.name):
         raise FreezeError("Python tests require the complete fixed verbose gate suite command")
     executable = record["executable"]
     if (not isinstance(executable, dict) or set(executable) != {"path", "sha256"}
@@ -628,7 +699,7 @@ def verify_python_tests(root, record, execution_root, checked, check_executables
             or not HEX.fullmatch(executable["sha256"])):
         raise FreezeError("missing actual Python executable input digest")
     if check_executables:
-        path = ordinary_path(Path(argv[0]))
+        path = native_executable(recorded)
         if not os.access(path, os.X_OK) or sha(read_regular(path, MAX_EXECUTABLE_BYTES)) != executable["sha256"]:
             raise FreezeError("actual Python executable identity mismatch")
     expected = python_test_names(root)
@@ -677,13 +748,12 @@ def verify_evidence(root, evidence, expected, inventory, checked, *, extra_group
     if not isinstance(evidence, dict) or set(evidence) != {"execution_root", "environment", "tools", "tests", "consumer", "python_tests", "external_qualifications"}:
         raise FreezeError("invalid R2 evidence fields")
     execution_root = evidence["execution_root"]
-    if not isinstance(execution_root, str) or not Path(execution_root).is_absolute() or ".." in Path(execution_root).parts:
-        raise FreezeError("invalid recorded execution root")
+    recorded_root = recorded_absolute(execution_root)
     tools = evidence["tools"]
     if not isinstance(tools, dict) or set(tools) != {"rustc", "cargo", "capnp", "cc"}:
         raise FreezeError("exact rustc/cargo/capnp/cc command identities required")
     for name, record in tools.items():
-        tool_identity(record, name, checked, root, check_executables)
+        tool_identity(record, name, checked, root, check_executables, type(recorded_root))
     environment = evidence["environment"]
     if not isinstance(environment, dict) or set(environment) != ENVIRONMENT_KEYS or any(value is not None and not isinstance(value, str) for value in environment.values()):
         raise FreezeError("fixed captured build environment identities required")
@@ -711,7 +781,8 @@ def verify_evidence(root, evidence, expected, inventory, checked, *, extra_group
         count += test_log(evidence_log(root, record["stdout"], checked), names)
         evidence_log(root, record["stderr"], checked)
     consumer = evidence["consumer"]
-    if Path(consumer["source_root"]).is_relative_to(Path(execution_root)) or Path(consumer["cwd"]).is_relative_to(Path(execution_root)):
+    if (recorded_absolute(consumer["source_root"], type(recorded_root)).is_relative_to(recorded_root)
+            or recorded_absolute(consumer["cwd"], type(recorded_root)).is_relative_to(recorded_root)):
         raise FreezeError("consumer must compile independently exported source")
     verify_consumer(root, consumer, tools["cargo"]["argv"][0], inventory, checked)
     python_count = verify_python_tests(root, evidence["python_tests"], execution_root, checked, check_executables)

@@ -13,6 +13,9 @@ import 'versioned_content_codec.dart';
 import 'editor_session.dart';
 import 'plugin_tools.dart';
 import 'plugin_library.dart';
+import 'agent_wrapper_models.dart';
+import 'agent_wrapper_control.dart';
+import 'agent_wrapper_native.dart';
 import 'credential_manager.dart';
 import 'endpoint_control.dart';
 import 'service_control.dart';
@@ -141,6 +144,7 @@ class RustWorkbench
         WorkbenchProtectionBackup,
         WorkbenchPluginControl,
         ExternalPluginControl,
+        AgentWrapperControl,
         ThemePackageImportControl,
         WorkbenchCredentialControl,
         WorkbenchEndpointControl,
@@ -407,6 +411,146 @@ class RustWorkbench
         available: r.pluginAvailable,
         writable: !r.readOnly,
       );
+
+  late final _agentWrappers = NativeAgentWrapperClient(
+    _exchangeAgentAdmin,
+    () =>
+        channel is NativeWorkbenchChannel ||
+        channel is SupervisedWorkbenchChannel,
+  );
+  @override
+  bool get supportsAgentWrappers => _agentWrappers.supportsAgentWrappers;
+  @override
+  bool get wrapperOutcomeUnknown => _agentWrappers.wrapperOutcomeUnknown;
+  @override
+  Future<AgentWrapperResult> wrapperState() => _agentWrappers.wrapperState();
+  @override
+  Future<AgentWrapperResult> wrapperPage(
+    AgentWrapperRevisions revisions, {
+    String cursor = '',
+  }) => _agentWrappers.wrapperPage(revisions, cursor: cursor);
+  @override
+  Future<AgentWrapperResult> inspectWrapper(
+    String path,
+    AgentWrapperRevisions revisions,
+  ) => _agentWrappers.inspectWrapper(path, revisions);
+  @override
+  Future<AgentWrapperResult> installWrapper(
+    String path,
+    AgentWrapperReview review,
+    AgentWrapperRevisions revisions,
+  ) => _agentWrappers.installWrapper(path, review, revisions);
+  @override
+  Future<AgentWrapperResult> selectWrapperBase(
+    AgentWrapperReview review,
+    AgentWrapperRevisions revisions,
+  ) => _agentWrappers.selectWrapperBase(review, revisions);
+  @override
+  Future<AgentWrapperResult> enableWrapperBase(
+    AgentWrapperReview review,
+    AgentWrapperRevisions revisions,
+    bool enabled,
+  ) => _agentWrappers.enableWrapperBase(review, revisions, enabled);
+  @override
+  Future<AgentWrapperResult> selectWrapper(
+    AgentWrapperReview review,
+    AgentWrapperRevisions revisions,
+  ) => _agentWrappers.selectWrapper(review, revisions);
+  @override
+  Future<AgentWrapperResult> approveWrapper(
+    AgentWrapperReview review,
+    AgentWrapperRevisions revisions,
+    AgentWrapperApproval approval,
+  ) => _agentWrappers.approveWrapper(review, revisions, approval);
+  @override
+  Future<AgentWrapperResult> enableWrapper(
+    AgentWrapperReview review,
+    AgentWrapperRevisions revisions,
+    bool enabled,
+  ) => _agentWrappers.enableWrapper(review, revisions, enabled);
+  @override
+  Future<AgentWrapperResult> removeWrapper(
+    AgentWrapperReview review,
+    AgentWrapperRevisions revisions,
+  ) => _agentWrappers.removeWrapper(review, revisions);
+
+  /// Fixed private management profile, sharing the original pipe slot and owner.
+  /// It never enters the business queue or forwards selected paths to a guest.
+  Future<T> _exchangeAgentAdmin<T>(
+    Uint8List frame,
+    T Function(Uint8List) decode,
+  ) {
+    if (_failure != null) return Future.error(_failure!);
+    if (!supportsAgentWrappers || _closingProcess != null) {
+      return Future.error(
+        const AgentWrapperFailure(AgentWrapperFailureKind.unavailable),
+      );
+    }
+    if (frame.isEmpty || frame.length > 128 * 1024) {
+      return Future.error(const FormatException('Catalog frame exceeds limit'));
+    }
+    final payload = Uint8List.fromList(frame);
+    final completion = Completer<T>();
+    _queue = _queue.then((_) async {
+      Completer<Uint8List>? pending;
+      Uint8List? received;
+      final elapsed = Stopwatch()..start();
+      Never timeout() {
+        final error = TimeoutException('Plugin management response timed out');
+        _fail(error);
+        unawaited(close().catchError((Object _) {}));
+        throw error;
+      }
+
+      Duration remaining() {
+        final duration = const Duration(seconds: 60) - elapsed.elapsed;
+        if (duration <= Duration.zero) timeout();
+        return duration;
+      }
+
+      try {
+        if (_failure != null) throw _failure!;
+        if (_closingProcess != null) {
+          throw const AgentWrapperFailure(AgentWrapperFailureKind.lost);
+        }
+        if (_response != null) {
+          throw StateError('Plugin management pipe slot is occupied');
+        }
+        pending = Completer<Uint8List>();
+        pending.future.ignore();
+        _response = pending;
+        await channel.send(payload).timeout(remaining(), onTimeout: timeout);
+        received = await pending.future.timeout(
+          remaining(),
+          onTimeout: timeout,
+        );
+        if (received.length > 128 * 1024) {
+          throw const FormatException('Catalog reply exceeds limit');
+        }
+        completion.complete(decode(received));
+      } catch (error, stack) {
+        if (pending != null && received == null) {
+          _fail(StateError('Plugin management outcome is unknown'));
+          unawaited(close().catchError((Object _) {}));
+        }
+        completion.completeError(error, stack);
+      } finally {
+        payload.fillRange(0, payload.length, 0);
+        if (received != null) {
+          received.fillRange(0, received.length, 0);
+        } else if (pending != null) {
+          unawaited(
+            pending.future.then<void>(
+              (bytes) => bytes.fillRange(0, bytes.length, 0),
+              onError: (Object _, StackTrace _) {},
+            ),
+          );
+        }
+      }
+    });
+    return completion.future;
+  }
+
   @override
   Future<PluginManagementState> pluginState() async =>
       _pluginState(await _call(host.Action.pluginState));

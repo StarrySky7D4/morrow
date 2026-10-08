@@ -1,0 +1,21 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "morrow-agent-catalog-owner-v1"
+version = "0.1.0-experimental.1"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+
+[dependencies]
+morrow-agent-catalog-admin-v1 = { path = "../agent-catalog-admin-v1" }
+morrow-agent-session-process-v1-host = { path = "../agent-session-process-v1-host" }
+morrow-agent-session-exec-v1-r2 = { path = "../agent-session-exec-v1-r2" }
+morrow-agent-process-control-v1 = { path = "../agent-process-control-v1" }
+morrow-core = { path = "../../core" }
+morrow-plugin-runtime = { path = "../../plugin_runtime", features = ["package-execution", "package-management"] }
+
+[dev-dependencies]
+tempfile = "=3.27.0"
+wat = "=1.239.0"

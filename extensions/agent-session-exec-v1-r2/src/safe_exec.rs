@@ -459,6 +459,28 @@ fn require_closed_observation(state: &State) -> Result<()> {
     Ok(())
 }
 impl SessionExecHost {
+    /// Validate the original live execution grant for a previously started tool.
+    /// This read-only check creates no permit, claim, callback or durable receipt.
+    /// Historical identity and a new read admission cannot restore execution rights.
+    pub fn validate_started_tool(
+        &self,
+        runtime: &HostRuntime,
+        connection: &Connection,
+        executor: &Admission,
+        expected: &ToolIdentity,
+        mut clock: impl FnMut() -> u64,
+    ) -> Result<()> {
+        let _fence = self.execution_fence()?;
+        let (_, state) = load(runtime, &expected.operation_id)?;
+        self.live_executor(runtime, connection, executor, &state, &mut clock)?;
+        if !state.invocation_started
+            || state.phase()? != ToolPhase::DispatchUnknown
+            || state.identity()? != *expected
+        {
+            return Err(Error::Denied);
+        }
+        self.live_bound_inputs(runtime, connection, executor, &state, clock())
+    }
     /// Review complete identity and record revision under current native owner
     /// authority. Historical identity is data, never restored execution authority.
     pub fn inspect_tool_record(

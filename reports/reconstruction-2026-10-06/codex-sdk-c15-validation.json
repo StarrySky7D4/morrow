@@ -1,0 +1,1273 @@
+{
+  "stage": "C15",
+  "status": "PASS_SCOPED_LOCAL",
+  "base_commit": "e83cdf1d3506b001d07ffceaaa9f98b688bcc150",
+  "base_tree": "abcdee6e582ce18954118430e514f1d0805ce095",
+  "source_sha256": {
+    "extensions/agent-catalog-admin-v1/Cargo.lock": "0e9fea5a4ef731319757a5e116fdef44789ead31b3d490a7b6161c4e6a7cc864",
+    "extensions/agent-catalog-admin-v1/Cargo.toml": "c686809f3722f521518a9cc34642fbf6682cb76bf957d8a53aa6ea19f2f5145f",
+    "extensions/agent-catalog-admin-v1/build.rs": "c9ca7cabd7c6bf5ec7d1c56547bb379fe9025c509f2798edc1f74eee276a97e1",
+    "extensions/agent-catalog-admin-v1/contracts/agent_catalog.capnp": "f0fa231af569c7f8eef0c1bde8305b592ed5e2d616af07d1ecd517eef3a03a04",
+    "extensions/agent-catalog-admin-v1/examples/vectors.rs": "4dd4858fcbcfa44139a9782071dac06aee69cf2929cd657ee4b9d9989c9fda95",
+    "extensions/agent-catalog-admin-v1/src/lib.rs": "5f4d396fb58e8013c2110126943251958e99e0b535863caeceef76957544c54f",
+    "extensions/agent-catalog-admin-v1/tests/codec.rs": "e839baec119d8d2ac2d6ad8c879d26ef70be3c479d559d30f6074fa28234a3ab",
+    "extensions/agent-catalog-admin-v1/tests/vectors/approve.reply.hex": "8bcd5725dcca0c710843ca654ef0c1439713ddfbf54b242909fb32d7c43cb562",
+    "extensions/agent-catalog-admin-v1/tests/vectors/approve.request.hex": "c5cc5dd8a2184bed87d27dc6fb895f3b67dbd33e9577b69113de265f1bc704d7",
+    "extensions/agent-catalog-admin-v1/tests/vectors/inspect_unicode.reply.hex": "dbf09d3808d270f41bf4d83d9e91bc2aafd5b04a89d89af764813e886211da96",
+    "extensions/agent-catalog-admin-v1/tests/vectors/inspect_unicode.request.hex": "30ee4e4ef0d5e284b84d78bd5263e09b11815e24d1713eb9878e027b84364132",
+    "extensions/agent-catalog-admin-v1/tests/vectors/install_max_u64.reply.hex": "236f6e471cae5cb7658843fe6cdd4ebbd2c4ca33f6dd30ab42b3972310eeb0f2",
+    "extensions/agent-catalog-admin-v1/tests/vectors/install_max_u64.request.hex": "2114ba205c954e55fb210c5c4b512dcc4d4b92a5d6904a303c74f84b0f9356c2",
+    "extensions/agent-catalog-admin-v1/tests/vectors/page.reply.hex": "ac6d6cfaf3c3e7e17fafff61e249ff27177f233e21718a944fa3a56cf7ed3c94",
+    "extensions/agent-catalog-admin-v1/tests/vectors/page.request.hex": "b1c4d70460146763c7b8dd09b1f5d5afb05322397d75bf8d55bae20ee2ce5303",
+    "extensions/agent-catalog-admin-v1/tests/vectors/state.reply.hex": "2e0786ebb2558c1239739fa1e84601c978e2f90d8801746c94747282d5f75e57",
+    "extensions/agent-catalog-admin-v1/tests/vectors/state.request.hex": "81c1a1b8c510c3961ef2efd7dcda4529fa3f898b5ff05029efacac07c33d12bd",
+    "extensions/agent-catalog-owner-v1/Cargo.lock": "49766239ef2b8d4b05a52037cb75e464a5f1bf5926eb70203974b924d752764a",
+    "extensions/agent-catalog-owner-v1/Cargo.toml": "00a18fa1ce81b4d0b687d2c28e85fbaeab28888aad98f97ae41bd3debed28382",
+    "extensions/agent-catalog-owner-v1/src/file.rs": "e98dd657d55e654f404dc826c12392f109aecf4f702fbcea0254394622edd669",
+    "extensions/agent-catalog-owner-v1/src/lib.rs": "628171079c7382fbc977bdab9d26922d085193b62dccd7162f01c3b885e283fe",
+    "extensions/agent-catalog-owner-v1/tests/owner.rs": "abca4694a67f805212cdfa2ac45ab0703941254192fd5132d78bcfab30209dbf",
+    "extensions/agent-session-process-v1-host/src/catalog.rs": "aa3b86d893b67d4117d6401e3510a398f3b88bedaf953436cb639c23edfc2002",
+    "lib/plugins/agent_wrapper_codec_native.dart": "4690d62129b3f43c1ae896b3a1ddd04dcaa88c6075012de7a323ba7af5c9334a",
+    "lib/plugins/agent_wrapper_control.dart": "07fa9e17236539d3f441b063bf46b2605d2ae0a316d6773e268f73ab6d232981",
+    "lib/plugins/agent_wrapper_library.dart": "adcf0e2d784bcdf98c3381c5d518879a62b45a4911d1df5620d723f3a841ba47",
+    "lib/plugins/agent_wrapper_models.dart": "727b65112f5d3c26b2c9254c9adcea95f6274bfdb9f8319a038017b8f75e4437",
+    "lib/plugins/agent_wrapper_native.dart": "691c930606aebe79c736b1c379535a82b76d4e25189785bd9d5e805a5065afe1",
+    "lib/plugins/plugin_settings_page.dart": "dc52ed0462f272ad18367192148486283d8f06b98ce5ab554bcea68646baf5ce",
+    "lib/plugins/workbench_native.dart": "1fc4f5eb53c729808161958aa73dfcbd124d2681ac15c5f85af0a67e1e6b5fa9",
+    "test/agent_wrapper_codec_test.dart": "07c4d103dd17ff39a7de4e8214c9b805ab679fd435020be96bba394de286c431",
+    "test/agent_wrapper_library_test.dart": "c808593a87f8052814fcfcfd88d89b667af1fd884213d3af52a6447ba41af227",
+    "test/agent_wrapper_native_test.dart": "4c1a2bfdc64e24982f4c08f597625995f12cf381c15920d7495a7145435a9566",
+    "test/agent_wrapper_rust_vectors_test.dart": "395dc0457399799b8ca5b355557e6a68774addea93a93337d05a8c9c5bd8da31",
+    "test/agent_wrapper_test_helpers.dart": "003a9a2e7c1e6efaaa8a9507885e2c586af5ec1f1c69f78e7f9e50f789518e67",
+    "test/agent_wrapper_workbench_routing_helper.dart": "3679a6235475928ae0339771fec20bf825fd4d40c8afeb94ddb9a672ac39d12d",
+    "test/agent_wrapper_workbench_routing_test.dart": "978853e15a92726c630bc2a069a4380b5ceebdab6e49ea7f9ba4434b187fe21a",
+    "workbench_host/Cargo.lock": "9c8bdafaa8f18b08528765448e021b9783adb37b5851ace05522f472a9fc8c42",
+    "workbench_host/Cargo.toml": "ebe1ca837b21decd5a1665fe68b15c3a0233ce3b2803c5ace87ecf7b928e5775",
+    "workbench_host/src/agent_catalog.rs": "26865c2e91f3543ea52a1cb6dd1ebd568bd66dc1df1e2b247caa55148e620feb",
+    "workbench_host/src/lib.rs": "42c6876210d992fe22155d5631a1b077013a8468e648aaa68ee8f2b59c2968ee",
+    "workbench_host/src/protocol.rs": "f64c0eb236170a740903c96ab77fe1a456a2c54e926abb5b7c4d7e71a0be8cb0"
+  },
+  "checks": {
+    "admin": {
+      "path": "qualification/admin-tests-002/receipt.json",
+      "sha256": "dc532509bcd174378c2ca2488eaa6bce411ec5057e831a5a3bbf334181985330",
+      "receipt": {
+        "mode": "admin",
+        "argv": [
+          "historical-local://c15/value-015",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c15/value-002",
+          "--target-dir",
+          "historical-local://c15/value-001",
+          "--",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "seconds": 0.75,
+        "source_pin_before": "b34085899dcf132c1332202f9c4aa30bd81b6b0ee84cec462e9e8a2938f797e3",
+        "source_pin_after": "b34085899dcf132c1332202f9c4aa30bd81b6b0ee84cec462e9e8a2938f797e3",
+        "source_changed_paths": [],
+        "sealed_guests": {
+          "MORROW_CODEX_COMBINED_GUEST": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e",
+          "MORROW_CODEX_PROCESS_GUEST": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+        },
+        "stdout_sha256": "4c10a9ba91330e201bd09fec78d0ab5b0bf38fc82c5de429a6c62613defb461c",
+        "stderr_sha256": "ab48bafbef745083d2bb102f10d7c9ac307d8fa7ba1227ef54b91f30d49c8169",
+        "test_results": [
+          "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+          "ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+          "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+        ],
+        "passed_test_names": [
+          "approval_limits_order_unknown_bits_and_path_limits_are_enforced",
+          "install_review_binds_full_archive_digest",
+          "reply_association_and_kind_mismatch_are_rejected",
+          "unused_action_data_cannot_smuggle_an_effect_and_can_be_rejected",
+          "page_order_budget_cursor_approval_and_revision_are_enforced",
+          "invalid_frames_never_reach_target",
+          "all_actions_roundtrip_preserve_large_revisions_and_explicit_mutations",
+          "target_runs_once_unknown_is_not_retried_and_bad_mutation_result_is_unknown",
+          "all_failure_statuses_are_correlated_and_have_no_body",
+          "maximal_legal_page_remains_single_segment_and_within_frame_budget"
+        ],
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "ProtectedSession/DPAPI",
+          "real native process provider",
+          "production OS sandbox",
+          "desktop app runtime",
+          "other platforms",
+          "complete SDK26/G04"
+        ]
+      }
+    },
+    "owner": {
+      "path": "qualification/owner-tests-003/receipt.json",
+      "sha256": "f954540687c5304dc0eac7c0addc10925f28f493fc8cbe79a71ee8d003f97035",
+      "receipt": {
+        "mode": "owner",
+        "argv": [
+          "historical-local://c15/value-015",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c15/value-007",
+          "--target-dir",
+          "historical-local://c15/value-001",
+          "--",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "seconds": 3.813,
+        "source_pin_before": "05e7f335b5b916705833a5999099bfe3b81bc0694d78a4409f2af5591e1fe1ce",
+        "source_pin_after": "05e7f335b5b916705833a5999099bfe3b81bc0694d78a4409f2af5591e1fe1ce",
+        "source_changed_paths": [],
+        "sealed_guests": {
+          "MORROW_CODEX_COMBINED_GUEST": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e",
+          "MORROW_CODEX_PROCESS_GUEST": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+        },
+        "stdout_sha256": "6ecff1f7254624ca199b9603311e9fa15a5c9161990bd8536957134f68bd1b05",
+        "stderr_sha256": "8033e20405e3ef88274b4e50414847efde84faa9d10844c2b118ebc812684977",
+        "test_results": [
+          "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+          "ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.91s",
+          "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+        ],
+        "passed_test_names": [
+          "inspection_is_read_only_and_reports_both_real_schema_and_archive_identities",
+          "installation_rereads_selected_bytes_and_rejects_replaced_or_wrong_archive_hash",
+          "mutation_id_budget_is_bounded_and_never_evicts_or_refunds_failed_confirmations",
+          "duplicate_or_changed_mutation_id_never_replays_an_old_confirmation",
+          "base_enable_does_not_approve_session_process_or_old_factory_access",
+          "durable_approval_reopens_but_never_restores_old_live_grants",
+          "known_catalog_save_failure_remains_stopped_and_does_not_retry_or_reopen_itself",
+          "approval_subset_scope_domain_and_id_digest_pairs_fail_without_revocation",
+          "full_explicit_steps_enable_only_the_reviewed_wrapper_and_borrow_original_core",
+          "catalog_commit_unknown_stops_original_core_and_never_retries_until_explicit_reopen",
+          "regular_file_bounds_reject_directory_missing_relative_network_and_oversized_input",
+          "windows_namespace_and_alternate_stream_paths_are_rejected",
+          "original_manager_commit_unknown_poison_revokes_catalog_even_for_base_step",
+          "owner_move_preserves_original_runtime_manager_and_connection_identity",
+          "pages_use_exact_dual_revision_cursor_and_base_flags_for_all_installed_wrappers",
+          "stale_dual_revisions_prevent_base_or_wrapper_changes_without_stopping_live_core",
+          "wrapper_removal_revokes_original_grants_but_keeps_explicit_base_decisions",
+          "reserved_application_ids_cannot_be_inspected_installed_selected_or_enabled"
+        ],
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "ProtectedSession/DPAPI",
+          "real native process provider",
+          "production OS sandbox",
+          "desktop app runtime",
+          "other platforms",
+          "complete SDK26/G04"
+        ]
+      }
+    },
+    "host_regression": {
+      "path": "qualification/host-regression-001/receipt.json",
+      "sha256": "84e74c98ac0db03b1f03920c55b052691763910adc8e25f2a15e2a1d7f3c7900",
+      "receipt": {
+        "mode": "host",
+        "argv": [
+          "historical-local://c15/value-015",
+          "test",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c15/value-011",
+          "--target-dir",
+          "historical-local://c15/value-001",
+          "--",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "seconds": 11.657,
+        "source_pin_before": "05e7f335b5b916705833a5999099bfe3b81bc0694d78a4409f2af5591e1fe1ce",
+        "source_pin_after": "05e7f335b5b916705833a5999099bfe3b81bc0694d78a4409f2af5591e1fe1ce",
+        "source_changed_paths": [],
+        "sealed_guests": {
+          "MORROW_CODEX_COMBINED_GUEST": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e",
+          "MORROW_CODEX_PROCESS_GUEST": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+        },
+        "stdout_sha256": "a3b4f1c8469c9b428b34ad955b0ce52b2614421a3585fb54bb2dbe30a0f296ac",
+        "stderr_sha256": "33bf457eedf46dcaf8e37b3e4eb6653569f7ef5c08ce206858f7c5fae54d90b8",
+        "test_results": [
+          "ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+          "ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.14s",
+          "ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.64s",
+          "ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.82s",
+          "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+        ],
+        "passed_test_names": [
+          "package::tests::changing_either_schema_pin_is_rejected_even_with_correct_outer_checksum",
+          "inspect_install_and_duplicate_install_do_not_approve_or_change_base_selection",
+          "invalid_digest_scope_or_stale_confirmation_cannot_stop_a_live_connection",
+          "known_save_failure_retains_disk_decision_but_never_revives_stopped_connections",
+          "base_enable_never_substitutes_for_complete_wrapper_approval_and_enable",
+          "catalog_drop_at_last_r2_precommit_clock_cannot_create_a_session",
+          "complete_wrapper_approval_reopens_but_live_connections_do_not_survive_catalog_drop",
+          "catalog_pagination_uses_its_own_revision_and_bounds_without_mutating_decisions",
+          "committed_unknown_blocks_noops_and_execution_until_reopen_reconciles_disk",
+          "externally_poisoned_manager_load_revokes_old_core_and_preserves_unknown",
+          "persisted_revision_zero_is_rejected_while_absent_snapshot_is_fresh",
+          "malformed_or_wrong_sha_wrapper_is_not_installed_or_approved",
+          "replacement_or_corruption_of_an_installed_wrapper_cannot_reopen_approval",
+          "selecting_another_wrapper_of_the_same_base_revokes_and_requires_fresh_review",
+          "manager_install_commit_unknown_immediately_revokes_original_core_and_r2_authority",
+          "persisted_metadata_does_not_authorize_an_old_connection_under_another_manager",
+          "durable_approval_executes_sealed_rust_session_wasm_on_the_same_original_runtime",
+          "wrapper_approval_disable_and_removal_revoke_without_publishing_base_decisions",
+          "legal_wrapper_larger_than_snapshot_budget_reopens_without_losing_archive_bytes",
+          "original_connection_is_retained_and_close_blocks_further_dispatch",
+          "base_selection_never_approves_a_different_wrapper_or_excess_permissions",
+          "revoked_original_executor_cannot_be_replaced_by_a_live_managed_reader",
+          "late_registration_denial_retains_the_original_handle_for_close_cleanup",
+          "rust_wasm_control_effect_followed_by_managed_stop_stays_unknown_without_replay",
+          "manager_drop_rejects_the_same_surviving_bridge",
+          "cancellation_at_r2_last_precommit_clock_cannot_create_or_append",
+          "stop_and_drop_cannot_leave_a_live_original_connection",
+          "foreign_r2_issuer_close_still_requests_original_provider_cleanup",
+          "switching_process_hosts_cannot_register_run_or_claim_successful_cleanup",
+          "last_pre_effect_clock_stop_never_calls_the_provider",
+          "stale_revision_foreign_manager_and_runtime_are_denied",
+          "disable_remove_and_upgrade_revoke_the_original_managed_control",
+          "rust_wasm_uses_original_manager_limits_and_sealed_session_continuation",
+          "reviewed_container_rejects_scope_elevation_and_corruption",
+          "original_executor_is_required_and_historical_identity_is_not_a_new_grant",
+          "expiry_after_effect_changes_delivery_to_unknown_without_reexecution",
+          "clock_advancing_during_original_authority_validation_blocks_first_effect",
+          "claim_history_alone_cannot_register_a_process_or_invoke_a_provider",
+          "changing_the_original_session_epoch_invalidates_live_process_controls",
+          "native_durable_marker_and_live_original_grant_enable_bounded_controls",
+          "compiled_rust_combined_guest_runs_original_session_flow_on_same_sqlite",
+          "compiled_rust_process_guest_discovers_and_controls_original_live_binding",
+          "denied_late_registration_remains_discoverable_for_trusted_cleanup",
+          "started_tool_validation_reads_authority_without_changing_the_record",
+          "tool_expiry_shorter_than_guest_approval_is_enforced",
+          "revoke_original_executor_proposer_or_tool_blocks_controls"
+        ],
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "ProtectedSession/DPAPI",
+          "real native process provider",
+          "production OS sandbox",
+          "desktop app runtime",
+          "other platforms",
+          "complete SDK26/G04"
+        ]
+      }
+    },
+    "admin_clippy": {
+      "path": "qualification/admin-clippy-002/receipt.json",
+      "sha256": "67ffa9a85a2b1c0116faaa70fe9e2ea331fb925592febcd8edd308c0d83f9520",
+      "receipt": {
+        "mode": "clippy-admin",
+        "argv": [
+          "historical-local://c15/value-015",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c15/value-002",
+          "--target-dir",
+          "historical-local://c15/value-001",
+          "--all-targets",
+          "--",
+          "-Dwarnings"
+        ],
+        "exit_code": 0,
+        "seconds": 0.563,
+        "source_pin_before": "b34085899dcf132c1332202f9c4aa30bd81b6b0ee84cec462e9e8a2938f797e3",
+        "source_pin_after": "b34085899dcf132c1332202f9c4aa30bd81b6b0ee84cec462e9e8a2938f797e3",
+        "source_changed_paths": [],
+        "sealed_guests": {
+          "MORROW_CODEX_COMBINED_GUEST": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e",
+          "MORROW_CODEX_PROCESS_GUEST": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+        },
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "3d19125e895728ca0ba48e78d0a2ffef1388811a07932e64f7209791c61c4ddc",
+        "test_results": [],
+        "passed_test_names": [],
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "ProtectedSession/DPAPI",
+          "real native process provider",
+          "production OS sandbox",
+          "desktop app runtime",
+          "other platforms",
+          "complete SDK26/G04"
+        ]
+      }
+    },
+    "owner_clippy": {
+      "path": "qualification/owner-clippy-001/receipt.json",
+      "sha256": "a6eff2171260afab53270a6ba99c8e756e55214d3d28c8f5ddcf36bfb5307f29",
+      "receipt": {
+        "mode": "clippy-owner",
+        "argv": [
+          "historical-local://c15/value-015",
+          "clippy",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c15/value-007",
+          "--target-dir",
+          "historical-local://c15/value-001",
+          "--all-targets",
+          "--",
+          "-Dwarnings"
+        ],
+        "exit_code": 0,
+        "seconds": 10.531,
+        "source_pin_before": "05e7f335b5b916705833a5999099bfe3b81bc0694d78a4409f2af5591e1fe1ce",
+        "source_pin_after": "05e7f335b5b916705833a5999099bfe3b81bc0694d78a4409f2af5591e1fe1ce",
+        "source_changed_paths": [],
+        "sealed_guests": {
+          "MORROW_CODEX_COMBINED_GUEST": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e",
+          "MORROW_CODEX_PROCESS_GUEST": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+        },
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "cbd8c9a902ea1b1bca92c5a51a75ea67ba030e6178fdce9e6173986a1a662f8a",
+        "test_results": [],
+        "passed_test_names": [],
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "ProtectedSession/DPAPI",
+          "real native process provider",
+          "production OS sandbox",
+          "desktop app runtime",
+          "other platforms",
+          "complete SDK26/G04"
+        ]
+      }
+    },
+    "rust_format": {
+      "path": "qualification/rust-format-001/receipt.json",
+      "sha256": "4f25746fce80310fb0387a8a61aed66012ff2469120613fcfaacc373f4ff4a51",
+      "receipt": {
+        "mode": "format",
+        "argv": [
+          "historical-local://c15/value-016",
+          "--check",
+          "--edition",
+          "2024",
+          "--config",
+          "skip_children=true",
+          "historical-local://c15/value-014",
+          "historical-local://c15/value-012",
+          "historical-local://c15/value-003",
+          "historical-local://c15/value-004",
+          "historical-local://c15/value-005",
+          "historical-local://c15/value-006",
+          "historical-local://c15/value-008",
+          "historical-local://c15/value-009",
+          "historical-local://c15/value-010"
+        ],
+        "exit_code": 0,
+        "seconds": 0.141,
+        "source_pin_before": "05e7f335b5b916705833a5999099bfe3b81bc0694d78a4409f2af5591e1fe1ce",
+        "source_pin_after": "05e7f335b5b916705833a5999099bfe3b81bc0694d78a4409f2af5591e1fe1ce",
+        "source_changed_paths": [],
+        "sealed_guests": {
+          "MORROW_CODEX_COMBINED_GUEST": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e",
+          "MORROW_CODEX_PROCESS_GUEST": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+        },
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "test_results": [],
+        "passed_test_names": [],
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "ProtectedSession/DPAPI",
+          "real native process provider",
+          "production OS sandbox",
+          "desktop app runtime",
+          "other platforms",
+          "complete SDK26/G04"
+        ]
+      }
+    },
+    "rust_vectors": {
+      "path": "qualification/rust-vectors-002/receipt.json",
+      "sha256": "ec0a1503f8bb284476b89b0a0c08a25c3d76d5b5bf05f5ea63a6fe5558fdd617",
+      "receipt": {
+        "mode": "vectors",
+        "argv": [
+          "historical-local://c15/value-015",
+          "run",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c15/value-002",
+          "--target-dir",
+          "historical-local://c15/value-001",
+          "--example",
+          "vectors"
+        ],
+        "exit_code": 0,
+        "seconds": 0.047,
+        "source_pin_before": "b34085899dcf132c1332202f9c4aa30bd81b6b0ee84cec462e9e8a2938f797e3",
+        "source_pin_after": "b34085899dcf132c1332202f9c4aa30bd81b6b0ee84cec462e9e8a2938f797e3",
+        "source_changed_paths": [],
+        "sealed_guests": {
+          "MORROW_CODEX_COMBINED_GUEST": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e",
+          "MORROW_CODEX_PROCESS_GUEST": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+        },
+        "stdout_sha256": "7cb9ac38676b98070cc7c07739fff3407c8557f549afe222db9f0843cb54bea9",
+        "stderr_sha256": "1f17701c4329971a8fbc30876afe534a53386564e57a7e09458ce5e307454351",
+        "test_results": [],
+        "passed_test_names": [],
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "ProtectedSession/DPAPI",
+          "real native process provider",
+          "production OS sandbox",
+          "desktop app runtime",
+          "other platforms",
+          "complete SDK26/G04"
+        ]
+      }
+    },
+    "workbench_check": {
+      "path": "qualification/workbench-check-002/receipt.json",
+      "sha256": "cdc4f76d902f497e3eae86ca2e88c63360d05449358f38b1098e20c4cf2ce376",
+      "receipt": {
+        "mode": "workbench",
+        "argv": [
+          "historical-local://c15/value-015",
+          "check",
+          "--locked",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c15/value-013",
+          "--target-dir",
+          "historical-local://c15/value-001",
+          "--lib",
+          "--bin",
+          "morrow-workbench-host",
+          "--target",
+          "x86_64-pc-windows-msvc"
+        ],
+        "exit_code": 0,
+        "seconds": 2.172,
+        "source_pin_before": "cc2f2244702b938ecc2c2c50523423b674e045cb83332c161b96d86cc01a10c5",
+        "source_pin_after": "cc2f2244702b938ecc2c2c50523423b674e045cb83332c161b96d86cc01a10c5",
+        "source_changed_paths": [],
+        "sealed_guests": {
+          "MORROW_CODEX_COMBINED_GUEST": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e",
+          "MORROW_CODEX_PROCESS_GUEST": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+        },
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "6d3a8a3d7aa8b02a0d1c01cf84b26e5d9e61f1f49e439a7ad88d2b32665a6e1e",
+        "test_results": [],
+        "passed_test_names": [],
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "ProtectedSession/DPAPI",
+          "real native process provider",
+          "production OS sandbox",
+          "desktop app runtime",
+          "other platforms",
+          "complete SDK26/G04"
+        ]
+      }
+    },
+    "dart_analyze": {
+      "path": "flutter-qualification/flutter-analyze-004/receipt.json",
+      "sha256": "cefdc6c38bd9d165a355bf33b7f7246325ce2b3ea03101a9f2c550d03fa980b0",
+      "receipt": {
+        "mode": "analyze",
+        "argv": [
+          "historical-local://c15/value-018",
+          "analyze",
+          "--fatal-infos",
+          "lib/plugins/agent_wrapper_models.dart",
+          "lib/plugins/agent_wrapper_control.dart",
+          "lib/plugins/agent_wrapper_codec_native.dart",
+          "lib/plugins/agent_wrapper_native.dart",
+          "lib/plugins/agent_wrapper_library.dart",
+          "lib/plugins/workbench_native.dart",
+          "lib/plugins/plugin_settings_page.dart",
+          "test/agent_wrapper_codec_test.dart",
+          "test/agent_wrapper_library_test.dart",
+          "test/agent_wrapper_native_test.dart",
+          "test/agent_wrapper_rust_vectors_test.dart",
+          "test/agent_wrapper_test_helpers.dart",
+          "test/agent_wrapper_workbench_routing_helper.dart",
+          "test/agent_wrapper_workbench_routing_test.dart"
+        ],
+        "exit_code": 0,
+        "seconds": 3.828,
+        "source_before_sha256": "fe1a17c26f3d815770c5f60939070d33281f00d38de7e4fff6e4f23a9dd16bc7",
+        "source_after_sha256": "fe1a17c26f3d815770c5f60939070d33281f00d38de7e4fff6e4f23a9dd16bc7",
+        "source_changed_paths": [],
+        "stdout_sha256": "6a9cb3e206afcc614c49186558a43421508f90fb5cdda682048983f160e4340c",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "golden_rust_stdout_sha256": "7cb9ac38676b98070cc7c07739fff3407c8557f549afe222db9f0843cb54bea9",
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "real protected content library",
+          "desktop app runtime",
+          "real native process execution",
+          "production OS sandbox",
+          "other platforms",
+          "full SDK26/G04"
+        ]
+      }
+    },
+    "dart_format": {
+      "path": "flutter-qualification/flutter-format-003/receipt.json",
+      "sha256": "1c320f4560b9f67d62c12de9f5dc8e8c407ba50015b8b889ffe8a97cac92ada1",
+      "receipt": {
+        "mode": "format",
+        "argv": [
+          "historical-local://c15/value-018",
+          "format",
+          "--output=none",
+          "--set-exit-if-changed",
+          "lib/plugins/agent_wrapper_models.dart",
+          "lib/plugins/agent_wrapper_control.dart",
+          "lib/plugins/agent_wrapper_codec_native.dart",
+          "lib/plugins/agent_wrapper_native.dart",
+          "lib/plugins/agent_wrapper_library.dart",
+          "lib/plugins/workbench_native.dart",
+          "lib/plugins/plugin_settings_page.dart",
+          "test/agent_wrapper_codec_test.dart",
+          "test/agent_wrapper_library_test.dart",
+          "test/agent_wrapper_native_test.dart",
+          "test/agent_wrapper_rust_vectors_test.dart",
+          "test/agent_wrapper_test_helpers.dart",
+          "test/agent_wrapper_workbench_routing_helper.dart",
+          "test/agent_wrapper_workbench_routing_test.dart"
+        ],
+        "exit_code": 0,
+        "seconds": 0.203,
+        "source_before_sha256": "fe1a17c26f3d815770c5f60939070d33281f00d38de7e4fff6e4f23a9dd16bc7",
+        "source_after_sha256": "fe1a17c26f3d815770c5f60939070d33281f00d38de7e4fff6e4f23a9dd16bc7",
+        "source_changed_paths": [],
+        "stdout_sha256": "4a91c1f3ff2ab6a7fdc5a2b9b1ae97f8cd10d9bc453add37eba46906f9ef08a3",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "golden_rust_stdout_sha256": "7cb9ac38676b98070cc7c07739fff3407c8557f549afe222db9f0843cb54bea9",
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "real protected content library",
+          "desktop app runtime",
+          "real native process execution",
+          "production OS sandbox",
+          "other platforms",
+          "full SDK26/G04"
+        ]
+      }
+    },
+    "dart_tests": {
+      "path": "flutter-qualification/flutter-tests-004/receipt.json",
+      "sha256": "9097e6905c29ffcfc492e053c99504a4b0fc7c655cb26297a972afb38f1dd91d",
+      "receipt": {
+        "mode": "tests",
+        "argv": [
+          "historical-local://c15/value-017",
+          "/d",
+          "/s",
+          "/c",
+          "historical-local://c15/value-020"
+        ],
+        "exit_code": 0,
+        "seconds": 6.828,
+        "source_before_sha256": "fe1a17c26f3d815770c5f60939070d33281f00d38de7e4fff6e4f23a9dd16bc7",
+        "source_after_sha256": "fe1a17c26f3d815770c5f60939070d33281f00d38de7e4fff6e4f23a9dd16bc7",
+        "source_changed_paths": [],
+        "stdout_sha256": "0e202febef73b76ad93b00b385bae66b9f89bd647d66f0e6f971805759e5d16d",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "golden_rust_stdout_sha256": "7cb9ac38676b98070cc7c07739fff3407c8557f549afe222db9f0843cb54bea9",
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "real protected content library",
+          "desktop app runtime",
+          "real native process execution",
+          "production OS sandbox",
+          "other platforms",
+          "full SDK26/G04"
+        ]
+      }
+    }
+  },
+  "independent_static_reviews": {
+    "admin-review-final/evidence.json": {
+      "sha256": "dded2786590a6a00adb17d306fc7faf002fd6fe3fb7a61008bb3ce8ae0f97bea",
+      "record": {
+        "review_type": "INDEPENDENT_STATIC_AND_EXISTING_EVIDENCE_ONLY",
+        "reviewer_runtime_tests": "NOT_RUN",
+        "timestamp_utc": "2026-10-06T11:08:52.659242+00:00",
+        "source_pins": {
+          "extensions/agent-catalog-admin-v1/src/lib.rs": "5f4d396fb58e8013c2110126943251958e99e0b535863caeceef76957544c54f",
+          "extensions/agent-catalog-admin-v1/build.rs": "c9ca7cabd7c6bf5ec7d1c56547bb379fe9025c509f2798edc1f74eee276a97e1",
+          "extensions/agent-catalog-admin-v1/contracts/agent_catalog.capnp": "f0fa231af569c7f8eef0c1bde8305b592ed5e2d616af07d1ecd517eef3a03a04",
+          "extensions/agent-catalog-admin-v1/tests/codec.rs": "e839baec119d8d2ac2d6ad8c879d26ef70be3c479d559d30f6074fa28234a3ab",
+          "extensions/agent-catalog-admin-v1/examples/vectors.rs": "4dd4858fcbcfa44139a9782071dac06aee69cf2929cd657ee4b9d9989c9fda95",
+          "lib/plugins/agent_wrapper_codec_native.dart": "4690d62129b3f43c1ae896b3a1ddd04dcaa88c6075012de7a323ba7af5c9334a",
+          "lib/plugins/agent_wrapper_models.dart": "727b65112f5d3c26b2c9254c9adcea95f6274bfdb9f8319a038017b8f75e4437",
+          "lib/plugins/agent_wrapper_native.dart": "691c930606aebe79c736b1c379535a82b76d4e25189785bd9d5e805a5065afe1",
+          "lib/plugins/workbench_native.dart": "1fc4f5eb53c729808161958aa73dfcbd124d2681ac15c5f85af0a67e1e6b5fa9",
+          "test/agent_wrapper_codec_test.dart": "07c4d103dd17ff39a7de4e8214c9b805ab679fd435020be96bba394de286c431",
+          "test/agent_wrapper_rust_vectors_test.dart": "395dc0457399799b8ca5b355557e6a68774addea93a93337d05a8c9c5bd8da31"
+        },
+        "receipts": {
+          "qualification/admin-clippy-001/receipt.json": {
+            "receipt_sha256": "484109286cb211b7ec9eec3e585c9071dd43be790244c6746a16194bb6bd6f61",
+            "mode": "clippy-admin",
+            "exit_code": 101,
+            "status": "FAIL_OR_INPUT_CHANGED",
+            "test_results": [],
+            "passed_test_names": [],
+            "raw_logs_verified": true,
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderr_sha256": "12fda85b8b548546420fc4d25c610a430b935545e7ffde56c0143b7448df2e1b",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "qualification/admin-clippy-002/receipt.json": {
+            "receipt_sha256": "67ffa9a85a2b1c0116faaa70fe9e2ea331fb925592febcd8edd308c0d83f9520",
+            "mode": "clippy-admin",
+            "exit_code": 0,
+            "status": "PASS_SCOPED",
+            "test_results": [],
+            "passed_test_names": [],
+            "raw_logs_verified": true,
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderr_sha256": "3d19125e895728ca0ba48e78d0a2ffef1388811a07932e64f7209791c61c4ddc",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "qualification/admin-tests-001/receipt.json": {
+            "receipt_sha256": "8f6ed761313e4b6abf9e37dc26904bfd70110a25ce088054a11cda9b3f38ea64",
+            "mode": "admin",
+            "exit_code": 0,
+            "status": "PASS_SCOPED",
+            "test_results": [
+              "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+              "ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+              "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+            ],
+            "passed_test_names": [
+              "install_review_binds_full_archive_digest",
+              "approval_limits_order_unknown_bits_and_path_limits_are_enforced",
+              "invalid_frames_never_reach_target",
+              "reply_association_and_kind_mismatch_are_rejected",
+              "unused_action_data_cannot_smuggle_an_effect_and_can_be_rejected",
+              "page_order_budget_cursor_approval_and_revision_are_enforced",
+              "all_actions_roundtrip_preserve_large_revisions_and_explicit_mutations",
+              "target_runs_once_unknown_is_not_retried_and_bad_mutation_result_is_unknown",
+              "all_failure_statuses_are_correlated_and_have_no_body",
+              "maximal_legal_page_remains_single_segment_and_within_frame_budget"
+            ],
+            "raw_logs_verified": true,
+            "stdout_sha256": "a5ca41897f427ab039f5aeb7987c46ee01c24507e2a6944c52a2cc32527d9527",
+            "stderr_sha256": "c0b4b843e722e1bad252e826517f4cdab2d6a8f95b58490bb6e754b4da8f1e49",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "qualification/admin-tests-002/receipt.json": {
+            "receipt_sha256": "dc532509bcd174378c2ca2488eaa6bce411ec5057e831a5a3bbf334181985330",
+            "mode": "admin",
+            "exit_code": 0,
+            "status": "PASS_SCOPED",
+            "test_results": [
+              "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+              "ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+              "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+            ],
+            "passed_test_names": [
+              "approval_limits_order_unknown_bits_and_path_limits_are_enforced",
+              "install_review_binds_full_archive_digest",
+              "reply_association_and_kind_mismatch_are_rejected",
+              "unused_action_data_cannot_smuggle_an_effect_and_can_be_rejected",
+              "page_order_budget_cursor_approval_and_revision_are_enforced",
+              "invalid_frames_never_reach_target",
+              "all_actions_roundtrip_preserve_large_revisions_and_explicit_mutations",
+              "target_runs_once_unknown_is_not_retried_and_bad_mutation_result_is_unknown",
+              "all_failure_statuses_are_correlated_and_have_no_body",
+              "maximal_legal_page_remains_single_segment_and_within_frame_budget"
+            ],
+            "raw_logs_verified": true,
+            "stdout_sha256": "4c10a9ba91330e201bd09fec78d0ab5b0bf38fc82c5de429a6c62613defb461c",
+            "stderr_sha256": "ab48bafbef745083d2bb102f10d7c9ac307d8fa7ba1227ef54b91f30d49c8169",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "qualification/host-regression-001/receipt.json": {
+            "receipt_sha256": "84e74c98ac0db03b1f03920c55b052691763910adc8e25f2a15e2a1d7f3c7900",
+            "mode": "host",
+            "exit_code": 0,
+            "status": "PASS_SCOPED",
+            "test_results": [
+              "ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+              "ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.14s",
+              "ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.64s",
+              "ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.82s",
+              "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+            ],
+            "passed_test_names": [
+              "package::tests::changing_either_schema_pin_is_rejected_even_with_correct_outer_checksum",
+              "inspect_install_and_duplicate_install_do_not_approve_or_change_base_selection",
+              "invalid_digest_scope_or_stale_confirmation_cannot_stop_a_live_connection",
+              "known_save_failure_retains_disk_decision_but_never_revives_stopped_connections",
+              "base_enable_never_substitutes_for_complete_wrapper_approval_and_enable",
+              "catalog_drop_at_last_r2_precommit_clock_cannot_create_a_session",
+              "complete_wrapper_approval_reopens_but_live_connections_do_not_survive_catalog_drop",
+              "catalog_pagination_uses_its_own_revision_and_bounds_without_mutating_decisions",
+              "committed_unknown_blocks_noops_and_execution_until_reopen_reconciles_disk",
+              "externally_poisoned_manager_load_revokes_old_core_and_preserves_unknown",
+              "persisted_revision_zero_is_rejected_while_absent_snapshot_is_fresh",
+              "malformed_or_wrong_sha_wrapper_is_not_installed_or_approved",
+              "replacement_or_corruption_of_an_installed_wrapper_cannot_reopen_approval",
+              "selecting_another_wrapper_of_the_same_base_revokes_and_requires_fresh_review",
+              "manager_install_commit_unknown_immediately_revokes_original_core_and_r2_authority",
+              "persisted_metadata_does_not_authorize_an_old_connection_under_another_manager",
+              "durable_approval_executes_sealed_rust_session_wasm_on_the_same_original_runtime",
+              "wrapper_approval_disable_and_removal_revoke_without_publishing_base_decisions",
+              "legal_wrapper_larger_than_snapshot_budget_reopens_without_losing_archive_bytes",
+              "original_connection_is_retained_and_close_blocks_further_dispatch",
+              "base_selection_never_approves_a_different_wrapper_or_excess_permissions",
+              "revoked_original_executor_cannot_be_replaced_by_a_live_managed_reader",
+              "late_registration_denial_retains_the_original_handle_for_close_cleanup",
+              "rust_wasm_control_effect_followed_by_managed_stop_stays_unknown_without_replay",
+              "manager_drop_rejects_the_same_surviving_bridge",
+              "cancellation_at_r2_last_precommit_clock_cannot_create_or_append",
+              "stop_and_drop_cannot_leave_a_live_original_connection",
+              "foreign_r2_issuer_close_still_requests_original_provider_cleanup",
+              "switching_process_hosts_cannot_register_run_or_claim_successful_cleanup",
+              "last_pre_effect_clock_stop_never_calls_the_provider",
+              "stale_revision_foreign_manager_and_runtime_are_denied",
+              "disable_remove_and_upgrade_revoke_the_original_managed_control",
+              "rust_wasm_uses_original_manager_limits_and_sealed_session_continuation",
+              "reviewed_container_rejects_scope_elevation_and_corruption",
+              "original_executor_is_required_and_historical_identity_is_not_a_new_grant",
+              "expiry_after_effect_changes_delivery_to_unknown_without_reexecution",
+              "clock_advancing_during_original_authority_validation_blocks_first_effect",
+              "claim_history_alone_cannot_register_a_process_or_invoke_a_provider",
+              "changing_the_original_session_epoch_invalidates_live_process_controls",
+              "native_durable_marker_and_live_original_grant_enable_bounded_controls",
+              "compiled_rust_combined_guest_runs_original_session_flow_on_same_sqlite",
+              "compiled_rust_process_guest_discovers_and_controls_original_live_binding",
+              "denied_late_registration_remains_discoverable_for_trusted_cleanup",
+              "started_tool_validation_reads_authority_without_changing_the_record",
+              "tool_expiry_shorter_than_guest_approval_is_enforced",
+              "revoke_original_executor_proposer_or_tool_blocks_controls"
+            ],
+            "raw_logs_verified": true,
+            "stdout_sha256": "a3b4f1c8469c9b428b34ad955b0ce52b2614421a3585fb54bb2dbe30a0f296ac",
+            "stderr_sha256": "33bf457eedf46dcaf8e37b3e4eb6653569f7ef5c08ce206858f7c5fae54d90b8",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "qualification/owner-clippy-001/receipt.json": {
+            "receipt_sha256": "a6eff2171260afab53270a6ba99c8e756e55214d3d28c8f5ddcf36bfb5307f29",
+            "mode": "clippy-owner",
+            "exit_code": 0,
+            "status": "PASS_SCOPED",
+            "test_results": [],
+            "passed_test_names": [],
+            "raw_logs_verified": true,
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderr_sha256": "cbd8c9a902ea1b1bca92c5a51a75ea67ba030e6178fdce9e6173986a1a662f8a",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "qualification/owner-tests-001/receipt.json": {
+            "receipt_sha256": "291fa8f0999de5d8ac75e7c2f53d508bde31dc8384501723738d2700ecbed589",
+            "mode": "owner",
+            "exit_code": 101,
+            "status": "FAIL_OR_INPUT_CHANGED",
+            "test_results": [
+              "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+              "FAILED. 16 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.90s"
+            ],
+            "passed_test_names": [
+              "installation_rereads_selected_bytes_and_rejects_replaced_or_wrong_archive_hash",
+              "inspection_is_read_only_and_reports_both_real_schema_and_archive_identities",
+              "mutation_id_budget_is_bounded_and_never_evicts_or_refunds_failed_confirmations",
+              "duplicate_or_changed_mutation_id_never_replays_an_old_confirmation",
+              "base_enable_does_not_approve_session_process_or_old_factory_access",
+              "full_explicit_steps_enable_only_the_reviewed_wrapper_and_borrow_original_core",
+              "durable_approval_reopens_but_never_restores_old_live_grants",
+              "approval_subset_scope_domain_and_id_digest_pairs_fail_without_revocation",
+              "known_catalog_save_failure_remains_stopped_and_does_not_retry_or_reopen_itself",
+              "catalog_commit_unknown_stops_original_core_and_never_retries_until_explicit_reopen",
+              "regular_file_bounds_reject_directory_missing_relative_network_and_oversized_input",
+              "original_manager_commit_unknown_poison_revokes_catalog_even_for_base_step",
+              "owner_move_preserves_original_runtime_manager_and_connection_identity",
+              "stale_dual_revisions_prevent_base_or_wrapper_changes_without_stopping_live_core",
+              "wrapper_removal_revokes_original_grants_but_keeps_explicit_base_decisions",
+              "reserved_application_ids_cannot_be_inspected_installed_selected_or_enabled"
+            ],
+            "raw_logs_verified": true,
+            "stdout_sha256": "bcadecbf4999ecf9d69a0d58947941e9ee40358f7f12332398c178b8b049f978",
+            "stderr_sha256": "7e5541b103beb94bc68f38c8e05e94309289fc3bfa23a13022d14a35377b9141",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "qualification/owner-tests-002/receipt.json": {
+            "receipt_sha256": "72444e5c2254e1f0b4ad17b28bd7c8147c30ce4b44f7b1d27927545b06db3f34",
+            "mode": "owner",
+            "exit_code": 0,
+            "status": "PASS_SCOPED",
+            "test_results": [
+              "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+              "ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.87s",
+              "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+            ],
+            "passed_test_names": [
+              "mutation_id_budget_is_bounded_and_never_evicts_or_refunds_failed_confirmations",
+              "inspection_is_read_only_and_reports_both_real_schema_and_archive_identities",
+              "installation_rereads_selected_bytes_and_rejects_replaced_or_wrong_archive_hash",
+              "duplicate_or_changed_mutation_id_never_replays_an_old_confirmation",
+              "base_enable_does_not_approve_session_process_or_old_factory_access",
+              "known_catalog_save_failure_remains_stopped_and_does_not_retry_or_reopen_itself",
+              "approval_subset_scope_domain_and_id_digest_pairs_fail_without_revocation",
+              "durable_approval_reopens_but_never_restores_old_live_grants",
+              "full_explicit_steps_enable_only_the_reviewed_wrapper_and_borrow_original_core",
+              "catalog_commit_unknown_stops_original_core_and_never_retries_until_explicit_reopen",
+              "regular_file_bounds_reject_directory_missing_relative_network_and_oversized_input",
+              "original_manager_commit_unknown_poison_revokes_catalog_even_for_base_step",
+              "owner_move_preserves_original_runtime_manager_and_connection_identity",
+              "windows_namespace_and_alternate_stream_paths_are_rejected",
+              "pages_use_exact_dual_revision_cursor_and_base_flags_for_all_installed_wrappers",
+              "stale_dual_revisions_prevent_base_or_wrapper_changes_without_stopping_live_core",
+              "wrapper_removal_revokes_original_grants_but_keeps_explicit_base_decisions",
+              "reserved_application_ids_cannot_be_inspected_installed_selected_or_enabled"
+            ],
+            "raw_logs_verified": true,
+            "stdout_sha256": "e349cb0a82e6d59477c9672dd629b9e2444015bd6fa82b6f90dcf42fb2aa3096",
+            "stderr_sha256": "d27a8846e8013fceef54fb547e19449daa636bad69b79cbe4f9a22aa8aa05b80",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "qualification/owner-tests-003/receipt.json": {
+            "receipt_sha256": "f954540687c5304dc0eac7c0addc10925f28f493fc8cbe79a71ee8d003f97035",
+            "mode": "owner",
+            "exit_code": 0,
+            "status": "PASS_SCOPED",
+            "test_results": [
+              "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+              "ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.91s",
+              "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+            ],
+            "passed_test_names": [
+              "inspection_is_read_only_and_reports_both_real_schema_and_archive_identities",
+              "installation_rereads_selected_bytes_and_rejects_replaced_or_wrong_archive_hash",
+              "mutation_id_budget_is_bounded_and_never_evicts_or_refunds_failed_confirmations",
+              "duplicate_or_changed_mutation_id_never_replays_an_old_confirmation",
+              "base_enable_does_not_approve_session_process_or_old_factory_access",
+              "durable_approval_reopens_but_never_restores_old_live_grants",
+              "known_catalog_save_failure_remains_stopped_and_does_not_retry_or_reopen_itself",
+              "approval_subset_scope_domain_and_id_digest_pairs_fail_without_revocation",
+              "full_explicit_steps_enable_only_the_reviewed_wrapper_and_borrow_original_core",
+              "catalog_commit_unknown_stops_original_core_and_never_retries_until_explicit_reopen",
+              "regular_file_bounds_reject_directory_missing_relative_network_and_oversized_input",
+              "windows_namespace_and_alternate_stream_paths_are_rejected",
+              "original_manager_commit_unknown_poison_revokes_catalog_even_for_base_step",
+              "owner_move_preserves_original_runtime_manager_and_connection_identity",
+              "pages_use_exact_dual_revision_cursor_and_base_flags_for_all_installed_wrappers",
+              "stale_dual_revisions_prevent_base_or_wrapper_changes_without_stopping_live_core",
+              "wrapper_removal_revokes_original_grants_but_keeps_explicit_base_decisions",
+              "reserved_application_ids_cannot_be_inspected_installed_selected_or_enabled"
+            ],
+            "raw_logs_verified": true,
+            "stdout_sha256": "6ecff1f7254624ca199b9603311e9fa15a5c9161990bd8536957134f68bd1b05",
+            "stderr_sha256": "8033e20405e3ef88274b4e50414847efde84faa9d10844c2b118ebc812684977",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "qualification/rust-format-001/receipt.json": {
+            "receipt_sha256": "4f25746fce80310fb0387a8a61aed66012ff2469120613fcfaacc373f4ff4a51",
+            "mode": "format",
+            "exit_code": 0,
+            "status": "PASS_SCOPED",
+            "test_results": [],
+            "passed_test_names": [],
+            "raw_logs_verified": true,
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "qualification/rust-vectors-001/receipt.json": {
+            "receipt_sha256": "2d6a7095ef60d695a8a09aa8a3892d8bb9a7f853d0419b71694d3477e147794b",
+            "mode": "vectors",
+            "exit_code": 0,
+            "status": "PASS_SCOPED",
+            "test_results": [],
+            "passed_test_names": [],
+            "raw_logs_verified": true,
+            "stdout_sha256": "7cb9ac38676b98070cc7c07739fff3407c8557f549afe222db9f0843cb54bea9",
+            "stderr_sha256": "8a6877742fdf864825b1d5b5ccd78fc6ad37441b5da5e16157d9d8677456c092",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "qualification/rust-vectors-002/receipt.json": {
+            "receipt_sha256": "ec0a1503f8bb284476b89b0a0c08a25c3d76d5b5bf05f5ea63a6fe5558fdd617",
+            "mode": "vectors",
+            "exit_code": 0,
+            "status": "PASS_SCOPED",
+            "test_results": [],
+            "passed_test_names": [],
+            "raw_logs_verified": true,
+            "stdout_sha256": "7cb9ac38676b98070cc7c07739fff3407c8557f549afe222db9f0843cb54bea9",
+            "stderr_sha256": "1f17701c4329971a8fbc30876afe534a53386564e57a7e09458ce5e307454351",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "qualification/workbench-check-001/receipt.json": {
+            "receipt_sha256": "19398234c4dd7a4c5f7c2b9a4d5c48565b4b1e209937b2bb52ff14280bd7d90c",
+            "mode": "workbench",
+            "exit_code": 0,
+            "status": "PASS_SCOPED",
+            "test_results": [],
+            "passed_test_names": [],
+            "raw_logs_verified": true,
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderr_sha256": "c97b8a224af174fd8fc7fadc7fcc77eabbfe720aac3eef0781976cbd5287ff5d",
+            "snapshot_before_verified": true,
+            "snapshot_after_verified": true
+          },
+          "flutter-qualification/flutter-analyze-001/receipt.json": {
+            "receipt_sha256": "9594e092755a49c779f5f25d33427571999bdf9fed8956439505ced2681f17e3",
+            "mode": "analyze",
+            "exit_code": 0,
+            "status": "PASS_SCOPED",
+            "test_results": null,
+            "passed_test_names": null,
+            "raw_logs_verified": true,
+            "stdout_sha256": "df5a8eebc974499e19dda8587faa5e030584ea78cd3ecab368c1dd078cab8d9f",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "flutter-qualification/flutter-tests-001/receipt.json": {
+            "receipt_sha256": "67a3acc1b44646636195149cdd64e47743bde5fe68fd18c2844c8552530c505f",
+            "mode": "tests",
+            "exit_code": 4294967295,
+            "status": "FAIL_OR_INPUT_CHANGED",
+            "test_results": null,
+            "passed_test_names": null,
+            "raw_logs_verified": true,
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "vectors": {
+          "state.request.hex": {
+            "raw_hex_sha256": "81c1a1b8c510c3961ef2efd7dcda4529fa3f898b5ff05029efacac07c33d12bd",
+            "frame_sha256": "410a60f4ac4e8346f04b37f7a48e5393a73c9a231ae14a69c8d6d3eff8741064",
+            "bytes": 144,
+            "one_segment": true
+          },
+          "state.reply.hex": {
+            "raw_hex_sha256": "2e0786ebb2558c1239739fa1e84601c978e2f90d8801746c94747282d5f75e57",
+            "frame_sha256": "fd6ca8574e8beea567b1b35c6345c33fc8d00ea305bf274e213b619d6d390414",
+            "bytes": 184,
+            "one_segment": true
+          },
+          "inspect_unicode.request.hex": {
+            "raw_hex_sha256": "30ee4e4ef0d5e284b84d78bd5263e09b11815e24d1713eb9878e027b84364132",
+            "frame_sha256": "b80ec25a70c5315d94be1b712173fd044e4dc80e5d02b1b46b335cfe877f9936",
+            "bytes": 176,
+            "one_segment": true
+          },
+          "inspect_unicode.reply.hex": {
+            "raw_hex_sha256": "dbf09d3808d270f41bf4d83d9e91bc2aafd5b04a89d89af764813e886211da96",
+            "frame_sha256": "4fb6856e719f002313d24210b5fa3b1d9c8ae2020707d243e6b0eb63d8a24ccf",
+            "bytes": 472,
+            "one_segment": true
+          },
+          "install_max_u64.request.hex": {
+            "raw_hex_sha256": "2114ba205c954e55fb210c5c4b512dcc4d4b92a5d6904a303c74f84b0f9356c2",
+            "frame_sha256": "035601573aea3d80afcb2cad601bbcb50b913ad278ac74f9f5a3f159fa1a2db4",
+            "bytes": 224,
+            "one_segment": true
+          },
+          "install_max_u64.reply.hex": {
+            "raw_hex_sha256": "236f6e471cae5cb7658843fe6cdd4ebbd2c4ca33f6dd30ab42b3972310eeb0f2",
+            "frame_sha256": "63ed7329addbda09c72500a011ca28d6327aab8fe7af16d344c4fb8f5956d5c0",
+            "bytes": 472,
+            "one_segment": true
+          },
+          "approve.request.hex": {
+            "raw_hex_sha256": "c5cc5dd8a2184bed87d27dc6fb895f3b67dbd33e9577b69113de265f1bc704d7",
+            "frame_sha256": "3e94764088101f9e03303d0e8962140e25766f02474d885297141086481a4ec9",
+            "bytes": 296,
+            "one_segment": true
+          },
+          "approve.reply.hex": {
+            "raw_hex_sha256": "8bcd5725dcca0c710843ca654ef0c1439713ddfbf54b242909fb32d7c43cb562",
+            "frame_sha256": "f1f7f01e06737b9bf7b09e237478f3bc59aafc647ad0712728a45cda39701929",
+            "bytes": 184,
+            "one_segment": true
+          },
+          "page.request.hex": {
+            "raw_hex_sha256": "b1c4d70460146763c7b8dd09b1f5d5afb05322397d75bf8d55bae20ee2ce5303",
+            "frame_sha256": "dadaf3a34b7cde370d14960b1d17c84fe7a1ceb46aea1d6972c00d991724c162",
+            "bytes": 160,
+            "one_segment": true
+          },
+          "page.reply.hex": {
+            "raw_hex_sha256": "ac6d6cfaf3c3e7e17fafff61e249ff27177f233e21718a944fa3a56cf7ed3c94",
+            "frame_sha256": "97538f3d1aedc3b5266190ccf31f176efe3d86463b2d1e06cd8e87d1256d4548",
+            "bytes": 664,
+            "one_segment": true
+          }
+        },
+        "legacy_boundaries": {
+          "sdk": {
+            "original_files": 327,
+            "candidate_files": 327,
+            "changed_paths": [],
+            "identical": true
+          },
+          "protocols": {
+            "original_files": 0,
+            "candidate_files": 0,
+            "changed_paths": [],
+            "identical": true
+          },
+          "contracts": {
+            "original_files": 33,
+            "candidate_files": 33,
+            "changed_paths": [],
+            "identical": true
+          },
+          "workbench_host/schemas/host.capnp": {
+            "original_sha256": "449130830930b4f24fcd93be2a0268975b2abed76122b069210937f1b306b463",
+            "candidate_sha256": "449130830930b4f24fcd93be2a0268975b2abed76122b069210937f1b306b463",
+            "identical": true
+          }
+        },
+        "normalized_schema_digest": "f0fa231af569c7f8eef0c1bde8305b592ed5e2d616af07d1ecd517eef3a03a04"
+      }
+    },
+    "owner-review-002/workbench-static-review.json": {
+      "sha256": "cd16087b0a3035a964b7b824d82c733481615865fb00a7b8358629e846be4a72",
+      "record": {
+        "utc": "2026-10-06T10:59:12.2039590Z",
+        "status": "PASS_STATIC_SCOPED",
+        "source_before": {
+          "workbench_host/src/agent_catalog.rs": "26865c2e91f3543ea52a1cb6dd1ebd568bd66dc1df1e2b247caa55148e620feb",
+          "workbench_host/src/lib.rs": "42c6876210d992fe22155d5631a1b077013a8468e648aaa68ee8f2b59c2968ee",
+          "workbench_host/src/protocol.rs": "f64c0eb236170a740903c96ab77fe1a456a2c54e926abb5b7c4d7e71a0be8cb0",
+          "extensions/agent-session-process-v1-host/src/catalog.rs": "aa3b86d893b67d4117d6401e3510a398f3b88bedaf953436cb639c23edfc2002",
+          "workbench_host/src/main.rs": "ac5534283546330b598e9389bc6b3eb4b28459979dff44d4a4e5ff9c8ef7169f",
+          "workbench_host/src/io_tasks.rs": "246d3c611536de89196f259bebcbe9dcb01839363052d5fc0d05acba4c8f1d4f",
+          "workbench_host/src/storage.rs": "d5d031ceca4ed75c4c490b5033a3416ba49d7def25f0a437dbbccb0ead6786e5",
+          "workbench_host/src/product_gate.rs": "69edfa7d6ae44489769eba51f475ac1489e38390b46c5ca6a0260bc26b53c1fc",
+          "extensions/agent-catalog-admin-v1/src/lib.rs": "966b5e3b24b1ee68e7374df135a08972f41f3815f34062efa842c2d5ec6d5b75"
+        },
+        "source_after": {
+          "workbench_host/src/agent_catalog.rs": "26865c2e91f3543ea52a1cb6dd1ebd568bd66dc1df1e2b247caa55148e620feb",
+          "workbench_host/src/lib.rs": "42c6876210d992fe22155d5631a1b077013a8468e648aaa68ee8f2b59c2968ee",
+          "workbench_host/src/protocol.rs": "f64c0eb236170a740903c96ab77fe1a456a2c54e926abb5b7c4d7e71a0be8cb0",
+          "extensions/agent-session-process-v1-host/src/catalog.rs": "aa3b86d893b67d4117d6401e3510a398f3b88bedaf953436cb639c23edfc2002",
+          "workbench_host/src/main.rs": "ac5534283546330b598e9389bc6b3eb4b28459979dff44d4a4e5ff9c8ef7169f",
+          "workbench_host/src/io_tasks.rs": "246d3c611536de89196f259bebcbe9dcb01839363052d5fc0d05acba4c8f1d4f",
+          "workbench_host/src/storage.rs": "d5d031ceca4ed75c4c490b5033a3416ba49d7def25f0a437dbbccb0ead6786e5",
+          "workbench_host/src/product_gate.rs": "69edfa7d6ae44489769eba51f475ac1489e38390b46c5ca6a0260bc26b53c1fc",
+          "extensions/agent-catalog-admin-v1/src/lib.rs": "966b5e3b24b1ee68e7374df135a08972f41f3815f34062efa842c2d5ec6d5b75"
+        },
+        "source_unchanged": true,
+        "previous_review": "../owner-review-001/workbench-static-review.json",
+        "resolved_findings": [
+          {
+            "previous": "post-prepare controller loss",
+            "resolution": "agent_catalog_request borrows same original ProductGate; after original Storage.prepare_write and before owner.execute it samples gate, drops same Slot, returns Unknown when already closed",
+            "lines": "agent_catalog.rs:75-105"
+          },
+          {
+            "previous": "controller loss during encoding",
+            "resolution": "respond captures same original gate, samples after admin::respond completes full encoding; if closed drops same Slot and builds correlated Unknown from decoded original request, never invoking Target again",
+            "lines": "agent_catalog.rs:144-161"
+          }
+        ],
+        "confirmed_static": [
+          "direct native magic lane only; nested respond_state rejects admin prefix",
+          "original StateSlot.require_writable still fences Busy/lost/cleanup/repair/ProductGate before direct management",
+          "mutation uses originalStorage.prepare_write only; State/Inspect never trigger that flush hook",
+          "original Manager borrowed mutably; no new Store/runtime/copied owner in root adapter",
+          "lazy native path holds sidecar root until first open; with_manager/browser initializes None",
+          "reserved builtin IDs sorted/deduplicated before owner initialization",
+          "failed open is sticky Storage and is not reopened; owner Unknown prevents further effects; catch_unwind drops original Catalog issued leases on panic",
+          "Catalog.invalidate is pure existing poison/stop_all; no new grants/schema/persisted publication",
+          "finish drops Catalog Slot before attempting original seal; normal Drop retains same original ownership",
+          "malformed identifiable frame gets bounded rejection; malformed unidentifiable frame returns bounded generic host failure rather than exiting ordinary pipe"
+        ],
+        "residual_limits": [
+          "source review only: no new Cargo/test/process/GUI execution",
+          "gate checks are sampled boundaries, not an atomic guarantee against a controller loss after final sample during pipe writes",
+          "native management lane has no run/start control and does not connect WindowsExecutionPort to protected runtime",
+          "ordinary synthetic owner tests cannot qualify ProtectedSession/DPAPI/account-bound data or full sandbox"
+        ],
+        "independent_execution": "NOT_RUN",
+        "cargo": "NOT_RUN",
+        "source_edits": false,
+        "protected_session": "NOT_QUALIFIED",
+        "gui": "NOT_QUALIFIED"
+      }
+    }
+  },
+  "input_guards": {
+    "status": "PASS_UNCHANGED_INPUTS",
+    "sdk327_stage": {},
+    "sdk327_original": {},
+    "frozen57_stage": {},
+    "frozen57_original": {},
+    "original_contracts_linux_stage": {},
+    "original_contracts_linux_original": {},
+    "archives_stage": {},
+    "archives_original": {},
+    "old_c12_handoff_sha256": "edbf6eb40c836d7d6cd96ffa5139bfa0cb0d2c000af92cd05820b59bc2a5988a"
+  },
+  "flutter_offline_preparation": {
+    "exit_code": 0,
+    "seconds": 4.6560000000172295,
+    "argv": [
+      "historical-local://c15/value-017",
+      "/d",
+      "/s",
+      "/c",
+      "historical-local://c15/value-019"
+    ],
+    "before": {
+      "pubspec.yaml": "f3d8eaa63118dfc3a834da9206f3812c792bbf9b3aed21ad1bdcfb74cadcf509",
+      "pubspec.lock": "03a47cd3a89bf5c4b804286bbede18949094f402de82c8825733edf0bdb62b90"
+    },
+    "after": {
+      "pubspec.yaml": "f3d8eaa63118dfc3a834da9206f3812c792bbf9b3aed21ad1bdcfb74cadcf509",
+      "pubspec.lock": "03a47cd3a89bf5c4b804286bbede18949094f402de82c8825733edf0bdb62b90"
+    },
+    "stdout_sha256": "430f54b1a777690e7682ecb3cd6809f52c5cec63707c3f29962e7279ea917153",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "PASS_OFFLINE_LOCKED_PREPARATION",
+    "system_settings_changed": false,
+    "runtime_qualification": "NOT_RUN"
+  },
+  "historic_failures": [
+    "flutter-preparation-001: launcher quoting failed before preparation; preserved, corrected invocation succeeded",
+    "owner-tests-001: 16/18; Windows namespace rejection order and invalid typed-request wire assertion corrected narrowly",
+    "admin-clippy-001: exit101, three new style diagnostics; equivalent narrow fixes, final strict check passed",
+    "flutter-analyze-001: exit0 with 28 info; owned fixes, final fatal-infos analysis clean",
+    "flutter-tests-001: no test child, cache-lock launcher loop; exact identified owned launcher stopped, exit4294967295, empty logs retained",
+    "flutter-tests-002: 16 passed/1 failed; new controlled routing fixture temporary directory did not match safe cleanup prefix; corrected fixture only"
+  ],
+  "prior_qualified_generation": {
+    "receipt": "flutter-qualification/flutter-tests-003/receipt.json",
+    "methods": 17,
+    "status": "HISTORIC_PASS_NOT_CURRENT_AFTER_INSPECT_PREVIEW_FIX"
+  },
+  "not_run": [
+    "Production ProtectedSession/native execution port and original worker integration",
+    "Real desktop installation/approval/execution flow or real content database",
+    "Production OS sandbox/managed network/authenticated Codex accounts or transport",
+    "Native close-input/PTY resize/PTY interrupt qualification",
+    "Complete durable blob/history/upload/watch/rename/conditional Replace and recovery",
+    "Other platforms and full SDK26/G04 freeze"
+  ],
+  "new_os_execution_qualification": false,
+  "commit": false,
+  "push": false,
+  "main": false,
+  "tag": false,
+  "release": false,
+  "ci": false,
+  "_public_redaction": {
+    "kind": "PUBLIC_PATH_REDACTED_HISTORICAL_DERIVATIVE_NOT_CURRENT_QUALIFICATION",
+    "original_full_sha256": "1f8cfb9ea8e168520171039aad815d66fa1f2edd6a99032d07a83dd009b4be01",
+    "original_bytes": 72049,
+    "redacted_string_occurrences": 37,
+    "original_drive_prefix_occurrences": 37,
+    "path_values": [
+      {
+        "logical_value": "historical-local://c15/value-001",
+        "original_value_sha256": "133a8cf00796aebd8bb671399b695dc2113ebaabaeb49a38734d481a8945527c"
+      },
+      {
+        "logical_value": "historical-local://c15/value-002",
+        "original_value_sha256": "7473442f9eb791c8a62d9a7716ac9f52c64b971ff00c128768794a8dd94b8881"
+      },
+      {
+        "logical_value": "historical-local://c15/value-003",
+        "original_value_sha256": "c3720a378a10e1860c572d9617a765337bc6830e6f4ed121e86652849dab1116"
+      },
+      {
+        "logical_value": "historical-local://c15/value-004",
+        "original_value_sha256": "eb16fceab8dd3c5cb92d145860c22b4e9cc4577999f742918b8f6f9cc9479d05"
+      },
+      {
+        "logical_value": "historical-local://c15/value-005",
+        "original_value_sha256": "aef6a1b99888dcc5b641b922d160aea130799076b278db7c34946fc2cfed9d99"
+      },
+      {
+        "logical_value": "historical-local://c15/value-006",
+        "original_value_sha256": "44173774be664aee9deeb48b48dd1c3df15a24e80e9e66134bcee72bdfbd298e"
+      },
+      {
+        "logical_value": "historical-local://c15/value-007",
+        "original_value_sha256": "6734a41399ad2927d36a6418e78d3d277f621fd14abcf0d537ba6d3fd6839289"
+      },
+      {
+        "logical_value": "historical-local://c15/value-008",
+        "original_value_sha256": "3ea6719b965394823c81dd899d7e549a802f8257948c3f72bc4311d542eeb9dd"
+      },
+      {
+        "logical_value": "historical-local://c15/value-009",
+        "original_value_sha256": "5963f3beb9c8b11f1487106cb3245065a7228ccfb9d6d0c0aec49ad7acdc6c88"
+      },
+      {
+        "logical_value": "historical-local://c15/value-010",
+        "original_value_sha256": "13121dd80980477c42b1d5c87fe6b958d2e708bd8123fc30c62ba3c7e9f6761b"
+      },
+      {
+        "logical_value": "historical-local://c15/value-011",
+        "original_value_sha256": "2cf02fff5f6cc939b837732ebacb7186242c01c05fad2b42ecc9bb678fefef10"
+      },
+      {
+        "logical_value": "historical-local://c15/value-012",
+        "original_value_sha256": "5842e032060af98d8a82949f3b33aeae1f8b459da6b7e918b12cd815edc95a0b"
+      },
+      {
+        "logical_value": "historical-local://c15/value-013",
+        "original_value_sha256": "4642fe2900877430fd2edf3422ec2638572f1480bb7ca5232fa90674e6195ab2"
+      },
+      {
+        "logical_value": "historical-local://c15/value-014",
+        "original_value_sha256": "d567139fc0d7d6a8ca16e664bc16f22b9ea66a110d05801860d9c13858c80ca4"
+      },
+      {
+        "logical_value": "historical-local://c15/value-015",
+        "original_value_sha256": "a8a749f39a70449170dca1279c189663d6d4df967e7fb36103acda9aa1522f86"
+      },
+      {
+        "logical_value": "historical-local://c15/value-016",
+        "original_value_sha256": "0570a1b569a490586ca33fe782f2783af946916e9244456051602fab05476959"
+      },
+      {
+        "logical_value": "historical-local://c15/value-017",
+        "original_value_sha256": "07442caeec7e9ea8cff838f97a11f3c721e8b344d288c4848a8bbaa7470fb229"
+      },
+      {
+        "logical_value": "historical-local://c15/value-018",
+        "original_value_sha256": "e1c31e6b39177c8a9f25bd2faa26162e69832bd085146640e20653137401772f"
+      },
+      {
+        "logical_value": "historical-local://c15/value-019",
+        "original_value_sha256": "febebfa6c340fd752b421f157695fc605cac33b5784c76e4a142a3a9d922aba3"
+      },
+      {
+        "logical_value": "historical-local://c15/value-020",
+        "original_value_sha256": "7452e8a085364cfd79828df3b4819ef7c0e23e30d58cbceeb48b6c038420f32f"
+      }
+    ],
+    "policy": "Only strings or keys containing local drive paths are replaced by stable logical identifiers, including path-bearing recorded command text. All other original values remain identical. These identifiers are not executable/restorable paths; no new test run or source qualification is inferred.",
+    "provenance_document": "PUBLIC_VALIDATION_PROVENANCE.md"
+  }
+}

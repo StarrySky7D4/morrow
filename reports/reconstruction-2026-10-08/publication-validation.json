@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-08",
+  "base_commit": "e83cdf1d3506b001d07ffceaaa9f98b688bcc150",
+  "metadata": [
+    {
+      "root": "workbench",
+      "actual_exit_code": 0,
+      "normal_build_local_packages": 55,
+      "manifest_sha256": "505dc840a44fbef8db027ebd6320b75495491c01791d1bf2f8e5ce7b55de23de",
+      "lock_sha256": "738c53c2a28f73a12a5996db62bb1d3cfd6638cc0fd2374a8d03b3ab0ae053cd",
+      "manifest_unchanged": true,
+      "lock_unchanged": true,
+      "raw_metadata_sha256": "f9fc3efda8ac7cca89857280ec9706cc7ed7e56d36a5db37c0637aa6042580ca",
+      "scope": "locked/offline Windows dependency metadata; no compile or runtime"
+    },
+    {
+      "root": "native",
+      "actual_exit_code": 0,
+      "normal_build_local_packages": 43,
+      "manifest_sha256": "a55da19ed942f77320fef655c48543b2f1ab207f713764829c9ac7b9601c29ba",
+      "lock_sha256": "384841751237130e74638a8871a2cb63a96814436de4ae095a1a9f97ef611b24",
+      "manifest_unchanged": true,
+      "lock_unchanged": true,
+      "raw_metadata_sha256": "af594931fc30d15740e14b39faa899cb3f3fd2b23747fd59fd05c9142820ab25",
+      "scope": "locked/offline Windows dependency metadata; no compile or runtime"
+    },
+    {
+      "root": "harness",
+      "actual_exit_code": 0,
+      "normal_build_local_packages": 56,
+      "manifest_sha256": "1a9dd4515065ac7f958027edc6cb4505678b5381c814b80b539df05e97493b3a",
+      "lock_sha256": "0ea85fb5287a16b36b3802cb3c85220fabe4746625929ce5e864df16f931c704",
+      "manifest_unchanged": true,
+      "lock_unchanged": true,
+      "raw_metadata_sha256": "8c32a86c01ca8f1d5b8232980fbde9f673146d40418349b7ce00af3660cfbc8f",
+      "scope": "locked/offline Windows dependency metadata; no compile or runtime"
+    },
+    {
+      "root": "session-host",
+      "actual_exit_code": 0,
+      "normal_build_local_packages": 7,
+      "manifest_sha256": "c505bdf5b6a44518d25b3df796ff08d2ab890914ddda9414b7f05a315c757818",
+      "lock_sha256": "9e56379f04a6a2e0d304fee64026048deab5b3ef890f59f44a9b2fc77de0cd77",
+      "manifest_unchanged": true,
+      "lock_unchanged": true,
+      "raw_metadata_sha256": "abf80953a94e02f5a6735d4350102cce4d119d9300f1162f1fdd554e23a982db",
+      "scope": "locked/offline Windows dependency metadata; no compile or runtime"
+    }
+  ],
+  "synthetic_tests": [
+    {
+      "suite": "R2 verification tool",
+      "executed_or_skipped": 42,
+      "passed": 41,
+      "skipped": 1,
+      "actual_exit_code": 0,
+      "source_unchanged": true,
+      "log_sha256": "f48b72cfc5b9fdf04c79754f0d3d6c06405b3b2d8beb36b61372c14fc0e20deb",
+      "scope": "existing synthetic tool regression; no Rust/OS/other-platform qualification"
+    },
+    {
+      "suite": "directory guest sample tool",
+      "executed_or_skipped": 15,
+      "passed": 15,
+      "skipped": 0,
+      "actual_exit_code": 0,
+      "source_unchanged": true,
+      "log_sha256": "0295d2f57c3a4c859364738df44c3c7e251326204fd7283b8e74aa75164089a0",
+      "scope": "existing synthetic tool regression; no Rust/OS/other-platform qualification"
+    }
+  ],
+  "preserved_initial_failure": {
+    "suite": "R2 verification tool",
+    "actual_exit_code": 1,
+    "reason": "test temporary root was under an ancestor containing an unreviewed Cargo configuration directory",
+    "correction": "fresh dedicated synthetic temporary root; no verifier guard or global setting changed"
+  },
+  "not_run": [
+    "portable checkout Rust compilation",
+    "portable checkout Rust tests",
+    "fresh diagnostic Windows VM live sequence",
+    "Flutter product validation",
+    "Linux and other-platform product validation"
+  ],
+  "sdk_frozen": false,
+  "release_eligible": false,
+  "raw_logs_publicly_included": false
+}

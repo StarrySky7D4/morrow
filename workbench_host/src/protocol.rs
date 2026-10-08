@@ -137,6 +137,9 @@ trait ResponseTarget {
 pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     #[cfg(not(target_arch = "wasm32"))]
     {
+        if bytes.starts_with(morrow_agent_catalog_admin_v1::MAGIC) {
+            return crate::agent_catalog::respond(host, bytes);
+        }
         respond_target(host, bytes)
     }
     #[cfg(target_arch = "wasm32")]
@@ -215,6 +218,11 @@ pub fn respond_theme_package(
 /// The original owner executes business commands while a worker holds it.
 /// Scheduler commands are unavailable here, including nested HttpStart.
 pub(crate) fn respond_state(host: &mut WorkbenchState, bytes: &[u8]) -> Result<Vec<u8>> {
+    #[cfg(not(target_arch = "wasm32"))]
+    if bytes.starts_with(morrow_agent_catalog_admin_v1::MAGIC) {
+        // Agent administration is trusted UI only, never nested guest/service business.
+        return Err("agent administration requires the direct native UI lane".into());
+    }
     respond_target(host, bytes)
 }
 

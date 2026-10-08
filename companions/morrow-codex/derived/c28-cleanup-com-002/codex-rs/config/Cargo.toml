@@ -1,0 +1,242 @@
+"example" = [{ "name" = "generate-proto", "path" = "examples/generate-proto.rs" }]
+
+["package"]
+"name" = "codex-config"
+
+["package"."version"]
+"workspace" = true
+
+
+["package"."edition"]
+"workspace" = true
+
+
+["package"."license"]
+"workspace" = true
+
+
+
+["lints"]
+"workspace" = true
+
+
+["dependencies"]
+"prost" = "0.14.3"
+
+["dependencies"."anyhow"]
+"workspace" = true
+
+
+["dependencies"."base64"]
+"workspace" = true
+
+
+["dependencies"."codex-execpolicy"]
+"workspace" = true
+
+
+["dependencies"."codex-features"]
+"workspace" = true
+
+
+["dependencies"."codex-file-system"]
+"workspace" = true
+
+
+["dependencies"."codex-git-utils"]
+"workspace" = true
+
+
+["dependencies"."codex-model-provider-info"]
+"workspace" = true
+
+
+["dependencies"."codex-network-proxy"]
+"workspace" = true
+
+
+["dependencies"."codex-protocol"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-absolute-path"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-path"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-path-uri"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-redacted-string"]
+"workspace" = true
+
+
+["dependencies"."dunce"]
+"workspace" = true
+
+
+["dependencies"."futures"]
+"workspace" = true
+"features" = ["alloc", "std"]
+
+
+["dependencies"."gethostname"]
+"workspace" = true
+
+
+["dependencies"."indexmap"]
+"workspace" = true
+"features" = ["serde"]
+
+
+["dependencies"."multimap"]
+"workspace" = true
+
+
+["dependencies"."regex-lite"]
+"workspace" = true
+
+
+["dependencies"."schemars"]
+"workspace" = true
+
+
+["dependencies"."serde"]
+"workspace" = true
+"features" = ["derive"]
+
+
+["dependencies"."serde_ignored"]
+"workspace" = true
+
+
+["dependencies"."serde_json"]
+"workspace" = true
+
+
+["dependencies"."serde_path_to_error"]
+"workspace" = true
+
+
+["dependencies"."sha2"]
+"workspace" = true
+
+
+["dependencies"."thiserror"]
+"workspace" = true
+
+
+["dependencies"."tokio"]
+"workspace" = true
+"features" = ["fs"]
+
+
+["dependencies"."toml"]
+"workspace" = true
+"features" = ["preserve_order"]
+
+
+["dependencies"."toml_edit"]
+"workspace" = true
+
+
+["dependencies"."tonic"]
+"workspace" = true
+"features" = ["tls-native-roots", "tls-ring"]
+
+
+["dependencies"."tonic-prost"]
+"workspace" = true
+
+
+["dependencies"."tracing"]
+"workspace" = true
+
+
+["dependencies"."wildmatch"]
+"workspace" = true
+
+
+
+["target"]
+
+["target"."cfg(unix)"]
+
+["target"."cfg(unix)"."dependencies"]
+
+["target"."cfg(unix)"."dependencies"."dns-lookup"]
+"workspace" = true
+
+
+["target"."cfg(unix)"."dependencies"."libc"]
+"workspace" = true
+
+
+
+
+["target"."cfg(target_os = \"macos\")"]
+
+["target"."cfg(target_os = \"macos\")"."dependencies"]
+"core-foundation" = "0.9"
+
+
+
+["target"."cfg(target_os = \"windows\")"]
+
+["target"."cfg(target_os = \"windows\")"."dependencies"]
+
+["target"."cfg(target_os = \"windows\")"."dependencies"."codex-windows-sandbox"]
+"workspace" = true
+
+
+["target"."cfg(target_os = \"windows\")"."dependencies"."winapi-util"]
+"workspace" = true
+
+
+["target"."cfg(target_os = \"windows\")"."dependencies"."windows-sys"]
+"version" = "0.52"
+"features" = ["Win32_Foundation", "Win32_System_Com", "Win32_UI_Shell"]
+
+
+
+
+
+["dev-dependencies"]
+
+["dev-dependencies"."pretty_assertions"]
+"workspace" = true
+
+
+["dev-dependencies"."tempfile"]
+"workspace" = true
+
+
+["dev-dependencies"."tokio"]
+"workspace" = true
+"features" = ["full"]
+
+
+["dev-dependencies"."tokio-stream"]
+"workspace" = true
+"features" = ["net"]
+
+
+["dev-dependencies"."tonic"]
+"workspace" = true
+"features" = ["router", "transport"]
+
+
+["dev-dependencies"."tonic-prost-build"]
+"version" = "=0.14.3"
+"default-features" = false
+"features" = ["transport"]
+
+
+
+["lib"]
+"doctest" = false
+

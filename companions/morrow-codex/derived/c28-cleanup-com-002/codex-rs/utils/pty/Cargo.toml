@@ -1,0 +1,97 @@
+
+["package"]
+"name" = "codex-utils-pty"
+
+["package"."edition"]
+"workspace" = true
+
+
+["package"."license"]
+"workspace" = true
+
+
+["package"."version"]
+"workspace" = true
+
+
+
+["lints"]
+"workspace" = true
+
+
+["dependencies"]
+
+["dependencies"."anyhow"]
+"workspace" = true
+
+
+["dependencies"."portable-pty"]
+"workspace" = true
+
+
+["dependencies"."tokio"]
+"workspace" = true
+"features" = ["io-util", "macros", "net", "process", "rt-multi-thread", "signal", "sync", "time"]
+
+
+
+["dev-dependencies"]
+
+["dev-dependencies"."ctor"]
+"workspace" = true
+
+
+["dev-dependencies"."tempfile"]
+"workspace" = true
+
+
+["dev-dependencies"."pretty_assertions"]
+"workspace" = true
+
+
+
+["target"]
+
+["target"."cfg(windows)"]
+
+["target"."cfg(windows)"."dependencies"]
+"filedescriptor" = "0.8.3"
+"shared_library" = "0.1.9"
+
+["target"."cfg(windows)"."dependencies"."lazy_static"]
+"workspace" = true
+
+
+["target"."cfg(windows)"."dependencies"."log"]
+"workspace" = true
+
+
+["target"."cfg(windows)"."dependencies"."winapi"]
+"version" = "0.3.9"
+"features" = ["handleapi", "jobapi", "jobapi2", "libloaderapi", "minwinbase", "processthreadsapi", "synchapi", "winbase", "wincon", "winerror", "winnt"]
+
+
+
+["target"."cfg(windows)"."dev-dependencies"]
+
+["target"."cfg(windows)"."dev-dependencies"."winapi"]
+"version" = "=0.3.9"
+"features" = ["std"]
+
+
+
+
+["target"."cfg(unix)"]
+
+["target"."cfg(unix)"."dependencies"]
+
+["target"."cfg(unix)"."dependencies"."libc"]
+"workspace" = true
+
+
+
+
+
+["lib"]
+"doctest" = false
+

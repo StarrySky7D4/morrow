@@ -1,11 +1,15 @@
 //! Trusted native registry-to-runtime entry. Changes revoke before durable publication.
 //! A successful operation past its final authorization boundary is never promised rollback.
+mod agent_session_exec;
+mod agent_session_process;
 use crate::{
     Cancellation, Fault, Limits, Report,
     dependency::{Dependency, Endpoint, Spec},
     io_binding::{IoBinding, IoContext, MutationBudget, ServiceRunBudget},
     package::{PreparedPackage, TaskReport},
 };
+pub use agent_session_exec::ManagedAgentSessionExecInstance;
+pub use agent_session_process::ManagedAgentSessionProcessInstance;
 use morrow_core::{
     Error,
     dispatch::{Connection, ConnectionBinding, HostRuntime},
@@ -222,6 +226,8 @@ pub struct Manager {
     registry: Registry,
     limits: Limits,
     instances: BTreeMap<String, Vec<Weak<Control>>>,
+    // Same original controls; only the new exec profile has a registry-wide revision fence.
+    agent_session_exec_controls: Vec<Weak<Control>>,
     #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
     channel_cleanup: Vec<Arc<crate::channel::ChannelContext>>,
 }
@@ -233,6 +239,7 @@ impl Manager {
             registry,
             limits,
             instances: BTreeMap::new(),
+            agent_session_exec_controls: Vec::new(),
             #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
             channel_cleanup: Vec::new(),
         }
@@ -434,6 +441,15 @@ impl Manager {
         }
     }
     fn revoke_required_tree(&mut self, id: &str) {
+        // Revoke new exec grants before any selected-registry publication, including failure.
+        // Existing ordinary and process-profile revocation behavior remains below.
+        for control in self
+            .agent_session_exec_controls
+            .drain(..)
+            .filter_map(|control| control.upgrade())
+        {
+            control.stop();
+        }
         self.changes_revision.store(true, Ordering::Release);
         self.changes_revision = Arc::new(AtomicBool::new(false));
         // Snapshot the old graph before registry mutation removes or replaces its edges.

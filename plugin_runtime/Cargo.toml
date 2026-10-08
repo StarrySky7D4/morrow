@@ -10,6 +10,8 @@ license = "AGPL-3.0-only"
 package-execution = ["dep:morrow-core"]
 package-management = ["package-execution", "dep:prost"]
 packages = ["package-management", "dep:sha2", "dep:zeroize", "dep:morrow-fs-directory-v1", "dep:getrandom", "dep:morrow-fs-directory-request-v1"]
+# Explicit qualification of a separately built and hash-pinned directory guest.
+directory-guest-qualification = ["packages"]
 web-packages = ["package-management", "morrow-core/web-storage", "dep:wasm-bindgen"]
 # Process-exit boundaries in the durable Store, for crash-interruption tests only.
 fault-injection = ["packages", "morrow-core/fault-injection"]
@@ -35,6 +37,10 @@ morrow-plugin-sdk = {path = "../sdk/rust"}
 wat = "=1.239.0"
 morrow-core = {path = "../core"}
 tempfile = "=3.27.0"
+
+[[test]]
+name = "directory_sdk_guests"
+required-features = ["directory-guest-qualification"]
 
 [[example]]
 name = "qualify_package"

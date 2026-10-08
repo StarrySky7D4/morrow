@@ -1,0 +1,1734 @@
+{
+  "stage": "C16",
+  "status": "PASS_CURRENT_OWNED_SCOPES_ONLY",
+  "base_commit": "e83cdf1d3506b001d07ffceaaa9f98b688bcc150",
+  "source_delta_sha256": "cb5d0f4deff1c945ee10c934264a53d62f458332f2861d903b5896997ecf248f",
+  "guard_sha256": "c35f5c16f00f9e008322c52fd669903d1828416b80fe90e2a6401ab190e4d17f",
+  "qualified_current_paths": {
+    "companions/morrow-codex/session-exec-windows-v1/Cargo.lock": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "companions/morrow-codex/session-exec-windows-v1/Cargo.toml": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "companions/morrow-codex/session-exec-windows-v1/src/borrowed.rs": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "companions/morrow-codex/session-exec-windows-v1/src/facts.rs": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "companions/morrow-codex/session-exec-windows-v1/src/lib.rs": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "companions/morrow-codex/session-exec-windows-v1/src/process.rs": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "companions/morrow-codex/session-exec-windows-v1/src/provisioned.rs": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "companions/morrow-codex/session-exec-windows-v1/src/registry.rs": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "companions/morrow-codex/session-exec-windows-v1/tests/borrowed_owner_windows.rs": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "extensions/agent-session-process-v1-host/Cargo.toml": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-bridge-001",
+      "host-tls-001",
+      "network-tls-001",
+      "network-client-tls-001",
+      "network-authorized-tls-001",
+      "host-check-002"
+    ],
+    "extensions/agent-session-process-v1-host/src/catalog.rs": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-bridge-001",
+      "host-tls-001",
+      "network-tls-001",
+      "network-client-tls-001",
+      "network-authorized-tls-001",
+      "host-check-002"
+    ],
+    "extensions/agent-session-process-v1-host/src/lib.rs": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-bridge-001",
+      "host-tls-001",
+      "network-tls-001",
+      "network-client-tls-001",
+      "network-authorized-tls-001",
+      "host-check-002"
+    ],
+    "extensions/agent-session-process-v1-host/src/managed.rs": [
+      "native-preflight-001",
+      "native-borrowed-003",
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-bridge-001",
+      "host-tls-001",
+      "network-tls-001",
+      "network-client-tls-001",
+      "network-authorized-tls-001",
+      "host-check-002"
+    ],
+    "extensions/agent-session-process-v1-host/Cargo.lock": [
+      "worker-002",
+      "coupled-worker-003",
+      "native-owned-001-parse-correction",
+      "gate-regression-002",
+      "host-bridge-001",
+      "host-tls-001",
+      "network-tls-001",
+      "network-client-tls-001",
+      "network-authorized-tls-001",
+      "host-check-002"
+    ],
+    "network_node/Cargo.lock": [
+      "worker-002",
+      "coupled-worker-003",
+      "gate-regression-002",
+      "host-tls-001",
+      "network-tls-001",
+      "network-client-tls-001",
+      "network-authorized-tls-001",
+      "host-check-002"
+    ],
+    "network_node/Cargo.toml": [
+      "worker-002",
+      "coupled-worker-003",
+      "gate-regression-002",
+      "host-tls-001",
+      "network-tls-001",
+      "network-client-tls-001",
+      "network-authorized-tls-001",
+      "host-check-002"
+    ],
+    "workbench_host/Cargo.lock": [
+      "worker-002",
+      "coupled-worker-003",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "workbench_host/Cargo.toml": [
+      "worker-002",
+      "coupled-worker-003",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "workbench_host/src/agent_catalog.rs": [
+      "worker-002",
+      "coupled-worker-003",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "workbench_host/src/agent_tasks.rs": [
+      "worker-002",
+      "coupled-worker-003",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "workbench_host/src/agent_tasks/commands.rs": [
+      "worker-002",
+      "coupled-worker-003",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "workbench_host/src/agent_tasks/worker.rs": [
+      "worker-002",
+      "coupled-worker-003",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "workbench_host/src/io_tasks.rs": [
+      "worker-002",
+      "coupled-worker-003",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "workbench_host/src/lib.rs": [
+      "worker-002",
+      "coupled-worker-003",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "workbench_host/src/product_gate.rs": [
+      "worker-002",
+      "coupled-worker-003",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "workbench_host/src/service_tls_tests.rs": [
+      "worker-002",
+      "coupled-worker-003",
+      "gate-regression-002",
+      "host-tls-001",
+      "host-check-002"
+    ],
+    "workbench_host/tests/agent_borrowed_wasm_windows.rs": [
+      "coupled-worker-003"
+    ]
+  },
+  "results": {
+    "native-preflight-001": {
+      "receipt_sha256": "65aa0f72c7711a2ba8129741634368eebe011565dbf40461d1963034ab68099b",
+      "receipt": {
+        "mode": "test-native-preflight",
+        "status": "PASS_SCOPED",
+        "argv": [
+          "historical-local://c16/value-007",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c16/value-003",
+          "--locked",
+          "--target-dir",
+          "historical-local://c16/value-001",
+          "--lib",
+          "production_preflight_tests::",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "input_scope": "selected component scope including test inputs",
+        "seconds": 20.031,
+        "cargo_home": "historical-local://c16/value-008",
+        "target": "historical-local://c16/value-001",
+        "source_before_sha256": "a0ebf4ad3377f378ca9d6f8f46545ab5c29e2902520cd7ab1218840e08c24911",
+        "source_after_sha256": "a0ebf4ad3377f378ca9d6f8f46545ab5c29e2902520cd7ab1218840e08c24911",
+        "changed_paths": [],
+        "stdout_sha256": "2cf94fc5b9823c7888b870b97746fed15e19366c799d42ffe623b07219e5f4b9",
+        "stderr_sha256": "f73baa927e51b9f61211bbacb42d63f3bce8912faa6b77df4633d33ade38584f",
+        "lock_before_sha256": "5fbb8547e3a42874220a3872364d23074340b17e6060aa9f601af0ed608fef8f",
+        "lock_after_sha256": "5fbb8547e3a42874220a3872364d23074340b17e6060aa9f601af0ed608fef8f",
+        "checksum_drift": [],
+        "novel_registry_or_git_packages": [],
+        "removed_registry_or_git_packages": [],
+        "test_results": [
+          "ok. 10 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s"
+        ],
+        "passed_methods": [
+          "provisioned::production_preflight_tests::empty_argv_is_invalid",
+          "provisioned::production_preflight_tests::expected_backend_family_must_match_selection",
+          "provisioned::production_preflight_tests::foreign_command_policy_and_workspace_paths_are_invalid",
+          "provisioned::production_preflight_tests::missing_or_disabled_sandbox_is_denied",
+          "provisioned::production_preflight_tests::mxc_custom_arg0_is_denied",
+          "provisioned::production_preflight_tests::mxc_does_not_validate_unused_managed_network_context",
+          "provisioned::production_preflight_tests::mxc_keeps_supported_full_access_profiles",
+          "provisioned::production_preflight_tests::mxc_requires_valid_dedicated_managed_network_context",
+          "provisioned::production_preflight_tests::token_backends_reject_upstream_unsupported_full_access_profiles",
+          "provisioned::production_preflight_tests::unelevated_token_cannot_enforce_managed_network"
+        ],
+        "reviewed_tls_alignment_removals": [],
+        "unreviewed_removals": [],
+        "network": false,
+        "protected_user_database": "NOT_RUN",
+        "DPAPI": "NOT_RUN",
+        "production_sandbox": "NOT_RUN",
+        "desktop_runtime": "NOT_RUN",
+        "SDK26_G04": "OPEN"
+      }
+    },
+    "native-borrowed-003": {
+      "receipt_sha256": "2a6244decb1b5da562871447eb161f756e695b366bf8437411cc54fc7f77ca97",
+      "receipt": {
+        "mode": "test-native",
+        "status": "PASS_SCOPED",
+        "argv": [
+          "historical-local://c16/value-007",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c16/value-003",
+          "--locked",
+          "--target-dir",
+          "historical-local://c16/value-001",
+          "--features",
+          "qualification-harness",
+          "--test",
+          "borrowed_owner_windows",
+          "--",
+          "--nocapture",
+          "--test-threads=1",
+          "--skip",
+          "borrowed_owner_child_entry"
+        ],
+        "exit_code": 0,
+        "input_scope": "selected component scope including test inputs",
+        "seconds": 120.906,
+        "cargo_home": "historical-local://c16/value-008",
+        "target": "historical-local://c16/value-001",
+        "source_before_sha256": "a0ebf4ad3377f378ca9d6f8f46545ab5c29e2902520cd7ab1218840e08c24911",
+        "source_after_sha256": "a0ebf4ad3377f378ca9d6f8f46545ab5c29e2902520cd7ab1218840e08c24911",
+        "changed_paths": [],
+        "stdout_sha256": "432c1ab5b12379376f6f1a1246a9a50db3e9a582fa104d00ecdfe05f69f3bb07",
+        "stderr_sha256": "40d43646dcba00a1a50dfd9803ad63491227bcdc4e028d140d74f6af2dc4f4da",
+        "lock_before_sha256": "5fbb8547e3a42874220a3872364d23074340b17e6060aa9f601af0ed608fef8f",
+        "lock_after_sha256": "5fbb8547e3a42874220a3872364d23074340b17e6060aa9f601af0ed608fef8f",
+        "checksum_drift": [],
+        "novel_registry_or_git_packages": [],
+        "removed_registry_or_git_packages": [],
+        "test_results": [
+          "ok. 10 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 106.20s"
+        ],
+        "passed_methods": [
+          "borrowed_foreign_runtime_or_replaced_r2_issuer_cannot_use_owner_resources",
+          "borrowed_gate_loss_after_actual_start_returns_unknown_without_replay",
+          "borrowed_late_actual_start_is_unknown_charged_and_never_replayed",
+          "borrowed_ports_share_sixteen_actual_process_reservations",
+          "borrowed_real_facts_survive_cas_conflict_and_executor_revocation",
+          "borrowed_real_write_stop_preserves_exit_and_closed_and_cleanup_accounting",
+          "borrowed_revoked_claim_and_closed_gate_have_zero_backend_calls",
+          "borrowed_same_core_owner_moves_and_real_exit_eof_facts_return",
+          "borrowed_stop_before_start_is_sticky_and_has_no_native_effect",
+          "borrowed_wrong_artifact_and_undriven_scheduler_are_rejected"
+        ],
+        "reviewed_tls_alignment_removals": [],
+        "unreviewed_removals": [],
+        "network": false,
+        "protected_user_database": "NOT_RUN",
+        "DPAPI": "NOT_RUN",
+        "production_sandbox": "NOT_RUN",
+        "desktop_runtime": "NOT_RUN",
+        "SDK26_G04": "OPEN"
+      }
+    },
+    "worker-002": {
+      "receipt_sha256": "3aee91b463cf8a4b95c740bbe29e6a89619944f1796e0af9a38e209a220e1caf",
+      "receipt": {
+        "mode": "test-worker",
+        "status": "PASS_SCOPED",
+        "argv": [
+          "historical-local://c16/value-007",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c16/value-006",
+          "--locked",
+          "--target-dir",
+          "historical-local://c16/value-001",
+          "--lib",
+          "agent_tasks::worker::tests::",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "input_scope": "library/bin inputs; integration tests excluded",
+        "seconds": 39.016,
+        "cargo_home": "historical-local://c16/value-008",
+        "target": "historical-local://c16/value-001",
+        "source_before_sha256": "e3a83bb67e503669adf63e24da87c0b439d90384b076f348ce2995366e4ad187",
+        "source_after_sha256": "e3a83bb67e503669adf63e24da87c0b439d90384b076f348ce2995366e4ad187",
+        "changed_paths": [],
+        "stdout_sha256": "8a45a706134bf6945ffc8f92969bc3bbde641a7c0bd28f93fb3b776d391457a9",
+        "stderr_sha256": "5924fa3c3eb35b4d50ef569115f0ae7ca4b50211e161222ce5fa8d9206d97a41",
+        "lock_before_sha256": "3e78a5499983305b4af6c5e7f67f05df0580c0cbb841662a851fcb4bd72f4610",
+        "lock_after_sha256": "3e78a5499983305b4af6c5e7f67f05df0580c0cbb841662a851fcb4bd72f4610",
+        "checksum_drift": [],
+        "novel_registry_or_git_packages": [],
+        "removed_registry_or_git_packages": [],
+        "test_results": [
+          "ok. 9 passed; 0 failed; 0 ignored; 0 measured; 223 filtered out; finished in 2.90s"
+        ],
+        "passed_methods": [
+          "agent_tasks::worker::tests::external_scheduler_arc_keeps_joined_original_owner_pending",
+          "agent_tasks::worker::tests::failed_original_maintenance_prevents_first_import_effect_and_returns_owner",
+          "agent_tasks::worker::tests::maintenance_repair_does_not_reclose_confirmed_original_connections",
+          "agent_tasks::worker::tests::original_owner_moves_and_maintains_each_import_without_io_carrier",
+          "agent_tasks::worker::tests::repeated_unused_contexts_release_their_keepalive_without_native_effects",
+          "agent_tasks::worker::tests::scheduler_debt_is_bounded_visible_and_explicitly_reaped_without_core_copy",
+          "agent_tasks::worker::tests::sole_scheduler_is_synchronously_retired_after_actual_worker_join",
+          "agent_tasks::worker::tests::tokio_context_cannot_retire_scheduler_or_return_joined_owner",
+          "agent_tasks::worker::tests::unused_context_and_lease_keep_async_runtime_alias_until_explicit_reap"
+        ],
+        "reviewed_tls_alignment_removals": [],
+        "unreviewed_removals": [],
+        "network": false,
+        "protected_user_database": "NOT_RUN",
+        "DPAPI": "NOT_RUN",
+        "production_sandbox": "NOT_RUN",
+        "desktop_runtime": "NOT_RUN",
+        "SDK26_G04": "OPEN"
+      }
+    },
+    "coupled-worker-003": {
+      "receipt_sha256": "6bf6d9457193fe94ae76f14462d9d0f405cb0db17e80cd34ecc279652c02685c",
+      "receipt": {
+        "mode": "test-coupled-worker",
+        "status": "PASS_SCOPED",
+        "argv": [
+          "historical-local://c16/value-007",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c16/value-006",
+          "--locked",
+          "--target-dir",
+          "historical-local://c16/value-001",
+          "--test",
+          "agent_borrowed_wasm_windows",
+          "--",
+          "--nocapture",
+          "--test-threads=1",
+          "--skip",
+          "borrowed_coupled_child_entry"
+        ],
+        "exit_code": 0,
+        "input_scope": "selected component scope including test inputs",
+        "seconds": 72.109,
+        "cargo_home": "historical-local://c16/value-008",
+        "target": "historical-local://c16/value-001",
+        "source_before_sha256": "049064966e3aa65157c0f5edf08618855f9f12712b23eda927ee70a88b16fbec",
+        "source_after_sha256": "049064966e3aa65157c0f5edf08618855f9f12712b23eda927ee70a88b16fbec",
+        "changed_paths": [],
+        "stdout_sha256": "92532bf516d528858ee2497a345bf6269e08cd33f6632be00c15bec75d1c9a6b",
+        "stderr_sha256": "7a91a9e3b583e61b8ef06972aa7b192693b1144b9925eeb2d624992e12f5df0d",
+        "lock_before_sha256": "3e78a5499983305b4af6c5e7f67f05df0580c0cbb841662a851fcb4bd72f4610",
+        "lock_after_sha256": "3e78a5499983305b4af6c5e7f67f05df0580c0cbb841662a851fcb4bd72f4610",
+        "checksum_drift": [],
+        "novel_registry_or_git_packages": [],
+        "removed_registry_or_git_packages": [],
+        "test_results": [
+          "ok. 3 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 24.36s"
+        ],
+        "passed_methods": [
+          "actual_native_process_without_attached_port_rejects_worker_and_recovers_same_owner",
+          "sealed_process_real_write_lost_delivery_keeps_unknown_and_trusted_cleanup",
+          "sealed_rust_wasm_borrowed_actual_worker_process_and_original_owner_return"
+        ],
+        "failed_methods": [],
+        "failed_method_count": 0,
+        "reviewed_tls_alignment_removals": [],
+        "unreviewed_removals": [],
+        "network": false,
+        "protected_user_database": "NOT_RUN",
+        "DPAPI": "NOT_RUN",
+        "production_sandbox": "NOT_RUN",
+        "desktop_runtime": "NOT_RUN",
+        "SDK26_G04": "OPEN"
+      }
+    },
+    "native-owned-001-parse-correction": {
+      "receipt_sha256": "679c0ba653d811f6c22ffef6e6ea0a7684e7fddb5f2d3c8a416034bfe842d32a",
+      "receipt": {
+        "mode": "test-native-owned",
+        "status": "PASS_ACTUAL_RAW_LOG_REPARSED",
+        "argv": [
+          "historical-local://c16/value-007",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c16/value-003",
+          "--locked",
+          "--target-dir",
+          "historical-local://c16/value-001",
+          "--test",
+          "catalog_codex_wasm_windows",
+          "--",
+          "--nocapture",
+          "--test-threads=1",
+          "--skip",
+          "catalog_wasm_coupled_child_entry"
+        ],
+        "exit_code": 0,
+        "input_scope": "selected component scope including test inputs",
+        "seconds": 31.813,
+        "cargo_home": "historical-local://c16/value-008",
+        "target": "historical-local://c16/value-001",
+        "source_before_sha256": "42d005a6a7f1ed2a139d700bb35d9ff8d794230b8f7a70d14ce56f6af97652de",
+        "source_after_sha256": "42d005a6a7f1ed2a139d700bb35d9ff8d794230b8f7a70d14ce56f6af97652de",
+        "changed_paths": [],
+        "stdout_sha256": "acbb5b2c2c5c14b618c5da1fe51fdc75901c2dcfbf90d55a7cda35efc09d89a8",
+        "stderr_sha256": "032049bebc7cd223e04a3dd5ea1c6b79e22f7d79a1e09d8f5ac4cf17ddb12410",
+        "lock_before_sha256": "5fbb8547e3a42874220a3872364d23074340b17e6060aa9f601af0ed608fef8f",
+        "lock_after_sha256": "5fbb8547e3a42874220a3872364d23074340b17e6060aa9f601af0ed608fef8f",
+        "checksum_drift": [],
+        "novel_registry_or_git_packages": [],
+        "removed_registry_or_git_packages": [],
+        "test_results": [
+          "ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 7.89s"
+        ],
+        "passed_methods": [
+          "durable_catalog_rust_wasm_proposal_claim_windows_process_and_wasm_controls"
+        ],
+        "reviewed_tls_alignment_removals": [],
+        "unreviewed_removals": [],
+        "network": false,
+        "protected_user_database": "NOT_RUN",
+        "DPAPI": "NOT_RUN",
+        "production_sandbox": "NOT_RUN",
+        "desktop_runtime": "NOT_RUN",
+        "SDK26_G04": "OPEN",
+        "original_receipt_sha256": "8a541887cda9a0528c4afde70057f16682bfa4b085a93af098a22e1b69c4c7b9",
+        "correction": "nocapture evidence splits method status across lines; no runtime rerun or original receipt mutation",
+        "helper": "FILTERED_NOT_CREDITED"
+      }
+    },
+    "gate-regression-002": {
+      "receipt_sha256": "4a438d83d98774e641becea14edc4b21e7ffc08518651af2504f7f6b98184bdf",
+      "receipt": {
+        "mode": "test-gate",
+        "status": "PASS_SCOPED",
+        "argv": [
+          "historical-local://c16/value-007",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c16/value-006",
+          "--locked",
+          "--target-dir",
+          "historical-local://c16/value-001",
+          "--lib",
+          "product_gate::tests::",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "input_scope": "library/bin inputs; integration tests excluded",
+        "seconds": 2.375,
+        "cargo_home": "historical-local://c16/value-008",
+        "target": "historical-local://c16/value-001",
+        "source_before_sha256": "e3a83bb67e503669adf63e24da87c0b439d90384b076f348ce2995366e4ad187",
+        "source_after_sha256": "e3a83bb67e503669adf63e24da87c0b439d90384b076f348ce2995366e4ad187",
+        "changed_paths": [],
+        "stdout_sha256": "b2ee391431b4a20b5bb355b0684f116040199c34c49b941d7e5a2804f1c1a640",
+        "stderr_sha256": "3596cd40df39be2ad470772d43ca966365ba271581fef06dd0ba1544bcd2fcaa",
+        "lock_before_sha256": "3e78a5499983305b4af6c5e7f67f05df0580c0cbb841662a851fcb4bd72f4610",
+        "lock_after_sha256": "3e78a5499983305b4af6c5e7f67f05df0580c0cbb841662a851fcb4bd72f4610",
+        "checksum_drift": [],
+        "novel_registry_or_git_packages": [],
+        "removed_registry_or_git_packages": [],
+        "test_results": [
+          "ok. 4 passed; 0 failed; 0 ignored; 0 measured; 228 filtered out; finished in 0.00s"
+        ],
+        "passed_methods": [
+          "product_gate::tests::failing_primary_stop_still_notifies_scoped_original_owner",
+          "product_gate::tests::lost_gate_cancels_original_and_late_workers",
+          "product_gate::tests::scoped_budget_is_reusable_and_late_registration_stops_without_retention",
+          "product_gate::tests::scoped_stop_preserves_primary_and_drops_only_its_own_identity"
+        ],
+        "failed_methods": [],
+        "failed_method_count": 0,
+        "reviewed_tls_alignment_removals": [],
+        "unreviewed_removals": [],
+        "network": false,
+        "protected_user_database": "NOT_RUN",
+        "DPAPI": "NOT_RUN",
+        "production_sandbox": "NOT_RUN",
+        "desktop_runtime": "NOT_RUN",
+        "SDK26_G04": "OPEN"
+      }
+    },
+    "host-bridge-001": {
+      "receipt_sha256": "4b336bd676b591e899a724021997933c40fe43323891ce0449b2edeae0802241",
+      "receipt": {
+        "mode": "test-host-bridge",
+        "status": "PASS_SCOPED",
+        "argv": [
+          "historical-local://c16/value-007",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c16/value-004",
+          "--locked",
+          "--target-dir",
+          "historical-local://c16/value-001",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "input_scope": "selected component scope including test inputs",
+        "seconds": 49.407,
+        "cargo_home": "historical-local://c16/value-008",
+        "target": "historical-local://c16/value-001",
+        "source_before_sha256": "f411c452d4031dd02ba7ab2163a17ae3d9d45e6f281d619bf7af4c6724cfb1bf",
+        "source_after_sha256": "f411c452d4031dd02ba7ab2163a17ae3d9d45e6f281d619bf7af4c6724cfb1bf",
+        "changed_paths": [],
+        "stdout_sha256": "a23188a2b522d30be2643b99d56fa08786827256a048a062b04cde88285a3a15",
+        "stderr_sha256": "bb2706ba532dfef544eaf5a9bbafc67b00c81ca7dda8b927db9592993b27d40f",
+        "lock_before_sha256": "9e56379f04a6a2e0d304fee64026048deab5b3ef890f59f44a9b2fc77de0cd77",
+        "lock_after_sha256": "9e56379f04a6a2e0d304fee64026048deab5b3ef890f59f44a9b2fc77de0cd77",
+        "checksum_drift": [],
+        "novel_registry_or_git_packages": [],
+        "removed_registry_or_git_packages": [],
+        "test_results": [
+          "ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+          "ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.61s",
+          "ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.49s",
+          "ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.26s",
+          "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+        ],
+        "passed_methods": [
+          "package::tests::changing_either_schema_pin_is_rejected_even_with_correct_outer_checksum",
+          "base_enable_never_substitutes_for_complete_wrapper_approval_and_enable",
+          "catalog_drop_at_last_r2_precommit_clock_cannot_create_a_session",
+          "catalog_pagination_uses_its_own_revision_and_bounds_without_mutating_decisions",
+          "committed_unknown_blocks_noops_and_execution_until_reopen_reconciles_disk",
+          "complete_wrapper_approval_reopens_but_live_connections_do_not_survive_catalog_drop",
+          "durable_approval_executes_sealed_rust_session_wasm_on_the_same_original_runtime",
+          "externally_poisoned_manager_load_revokes_old_core_and_preserves_unknown",
+          "inspect_install_and_duplicate_install_do_not_approve_or_change_base_selection",
+          "invalid_digest_scope_or_stale_confirmation_cannot_stop_a_live_connection",
+          "known_save_failure_retains_disk_decision_but_never_revives_stopped_connections",
+          "legal_wrapper_larger_than_snapshot_budget_reopens_without_losing_archive_bytes",
+          "malformed_or_wrong_sha_wrapper_is_not_installed_or_approved",
+          "manager_install_commit_unknown_immediately_revokes_original_core_and_r2_authority",
+          "persisted_metadata_does_not_authorize_an_old_connection_under_another_manager",
+          "persisted_revision_zero_is_rejected_while_absent_snapshot_is_fresh",
+          "replacement_or_corruption_of_an_installed_wrapper_cannot_reopen_approval",
+          "selecting_another_wrapper_of_the_same_base_revokes_and_requires_fresh_review",
+          "wrapper_approval_disable_and_removal_revoke_without_publishing_base_decisions",
+          "base_selection_never_approves_a_different_wrapper_or_excess_permissions",
+          "cancellation_at_r2_last_precommit_clock_cannot_create_or_append",
+          "disable_remove_and_upgrade_revoke_the_original_managed_control",
+          "foreign_r2_issuer_close_still_requests_original_provider_cleanup",
+          "last_pre_effect_clock_stop_never_calls_the_provider",
+          "late_registration_denial_retains_the_original_handle_for_close_cleanup",
+          "manager_drop_rejects_the_same_surviving_bridge",
+          "original_connection_is_retained_and_close_blocks_further_dispatch",
+          "revoked_original_executor_cannot_be_replaced_by_a_live_managed_reader",
+          "rust_wasm_control_effect_followed_by_managed_stop_stays_unknown_without_replay",
+          "rust_wasm_uses_original_manager_limits_and_sealed_session_continuation",
+          "stale_revision_foreign_manager_and_runtime_are_denied",
+          "stop_and_drop_cannot_leave_a_live_original_connection",
+          "switching_process_hosts_cannot_register_run_or_claim_successful_cleanup",
+          "changing_the_original_session_epoch_invalidates_live_process_controls",
+          "claim_history_alone_cannot_register_a_process_or_invoke_a_provider",
+          "clock_advancing_during_original_authority_validation_blocks_first_effect",
+          "compiled_rust_combined_guest_runs_original_session_flow_on_same_sqlite",
+          "compiled_rust_process_guest_discovers_and_controls_original_live_binding",
+          "denied_late_registration_remains_discoverable_for_trusted_cleanup",
+          "expiry_after_effect_changes_delivery_to_unknown_without_reexecution",
+          "native_durable_marker_and_live_original_grant_enable_bounded_controls",
+          "original_executor_is_required_and_historical_identity_is_not_a_new_grant",
+          "reviewed_container_rejects_scope_elevation_and_corruption",
+          "revoke_original_executor_proposer_or_tool_blocks_controls",
+          "started_tool_validation_reads_authority_without_changing_the_record",
+          "tool_expiry_shorter_than_guest_approval_is_enforced"
+        ],
+        "failed_methods": [],
+        "failed_method_count": 0,
+        "reviewed_tls_alignment_removals": [],
+        "unreviewed_removals": [],
+        "network": false,
+        "protected_user_database": "NOT_RUN",
+        "DPAPI": "NOT_RUN",
+        "production_sandbox": "NOT_RUN",
+        "desktop_runtime": "NOT_RUN",
+        "SDK26_G04": "OPEN"
+      }
+    },
+    "host-tls-001": {
+      "receipt_sha256": "4ecbf3f9cea2f1c37391f52a010ede7990048a319e2ba1affc7d71398c9d3238",
+      "receipt": {
+        "mode": "test-host-tls",
+        "status": "PASS_SCOPED",
+        "argv": [
+          "historical-local://c16/value-007",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c16/value-006",
+          "--locked",
+          "--target-dir",
+          "historical-local://c16/value-001",
+          "--lib",
+          "ordinary_tls_uses_explicit_provider_with_unified_native_features",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "input_scope": "library/bin inputs; integration tests excluded",
+        "seconds": 17.453,
+        "cargo_home": "historical-local://c16/value-008",
+        "target": "historical-local://c16/value-001",
+        "source_before_sha256": "e3a83bb67e503669adf63e24da87c0b439d90384b076f348ce2995366e4ad187",
+        "source_after_sha256": "e3a83bb67e503669adf63e24da87c0b439d90384b076f348ce2995366e4ad187",
+        "changed_paths": [],
+        "stdout_sha256": "81e8e054da526431a13d65b1ad6471dfbc9ba0b3cd62b34b1a19a3c253ca2418",
+        "stderr_sha256": "d8369c270c48424f36b9ef41a1350be06ecd697a19dd9826e8decfecb82f6be9",
+        "lock_before_sha256": "3e78a5499983305b4af6c5e7f67f05df0580c0cbb841662a851fcb4bd72f4610",
+        "lock_after_sha256": "3e78a5499983305b4af6c5e7f67f05df0580c0cbb841662a851fcb4bd72f4610",
+        "checksum_drift": [],
+        "novel_registry_or_git_packages": [],
+        "removed_registry_or_git_packages": [],
+        "test_results": [
+          "ok. 1 passed; 0 failed; 0 ignored; 0 measured; 231 filtered out; finished in 0.01s"
+        ],
+        "passed_methods": [
+          "io_tasks::service::tests::tls_tests::ordinary_tls_uses_explicit_provider_with_unified_native_features"
+        ],
+        "failed_methods": [],
+        "failed_method_count": 0,
+        "reviewed_tls_alignment_removals": [],
+        "unreviewed_removals": [],
+        "network": false,
+        "protected_user_database": "NOT_RUN",
+        "DPAPI": "NOT_RUN",
+        "production_sandbox": "NOT_RUN",
+        "desktop_runtime": "NOT_RUN",
+        "SDK26_G04": "OPEN"
+      }
+    },
+    "network-tls-001": {
+      "receipt_sha256": "9615ee6385f7b134effa449d26d25e5eb42b72ee3b104e650f0078769af9f066",
+      "receipt": {
+        "mode": "test-network-tls",
+        "status": "PASS_SCOPED",
+        "argv": [
+          "historical-local://c16/value-007",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c16/value-005",
+          "--locked",
+          "--target-dir",
+          "historical-local://c16/value-001",
+          "--test",
+          "tls",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "input_scope": "selected component scope including test inputs",
+        "seconds": 19.593,
+        "cargo_home": "historical-local://c16/value-008",
+        "target": "historical-local://c16/value-001",
+        "source_before_sha256": "89ca0f5c0e223f1d4a60a7a9ee446c63bbdbf4176005d99de7cd88b51fcfd7ca",
+        "source_after_sha256": "89ca0f5c0e223f1d4a60a7a9ee446c63bbdbf4176005d99de7cd88b51fcfd7ca",
+        "changed_paths": [],
+        "stdout_sha256": "601958d554cc6c2e8eba57cd3cd4fb5f4f17bbb2d85482711550339042946911",
+        "stderr_sha256": "32f217f3d1a62bdcd568d3fcd14100bc6fc5ea76760851374a06ed2412303141",
+        "lock_before_sha256": "45b1e9a8d2c2a03eb182a230ae63f9b4c63a4e9387c9c4e6e96aa0dcf089b59d",
+        "lock_after_sha256": "45b1e9a8d2c2a03eb182a230ae63f9b4c63a4e9387c9c4e6e96aa0dcf089b59d",
+        "checksum_drift": [],
+        "novel_registry_or_git_packages": [],
+        "removed_registry_or_git_packages": [],
+        "test_results": [
+          "ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.06s"
+        ],
+        "passed_methods": [
+          "half_handshakes_do_not_block_normal_tls_and_expire_without_shutdown",
+          "pem_input_is_bounded_and_private_key_must_match",
+          "shutdown_and_drop_close_half_tls_connections_and_release_port",
+          "trusted_https_preserves_authentication_routes_and_exact_response",
+          "untrusted_ca_and_wrong_hostname_never_reach_handler"
+        ],
+        "failed_methods": [],
+        "failed_method_count": 0,
+        "reviewed_tls_alignment_removals": [],
+        "unreviewed_removals": [],
+        "network": false,
+        "protected_user_database": "NOT_RUN",
+        "DPAPI": "NOT_RUN",
+        "production_sandbox": "NOT_RUN",
+        "desktop_runtime": "NOT_RUN",
+        "SDK26_G04": "OPEN"
+      }
+    },
+    "network-client-tls-001": {
+      "receipt_sha256": "622672d5a8eb2f2c67dbfdf4fc75d09d7cb6792359d98fbc79c916beb530c24e",
+      "receipt": {
+        "mode": "test-network-client-tls",
+        "status": "PASS_SCOPED",
+        "argv": [
+          "historical-local://c16/value-007",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c16/value-005",
+          "--locked",
+          "--target-dir",
+          "historical-local://c16/value-001",
+          "--test",
+          "client_tls",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "input_scope": "selected component scope including test inputs",
+        "seconds": 4.14,
+        "cargo_home": "historical-local://c16/value-008",
+        "target": "historical-local://c16/value-001",
+        "source_before_sha256": "89ca0f5c0e223f1d4a60a7a9ee446c63bbdbf4176005d99de7cd88b51fcfd7ca",
+        "source_after_sha256": "89ca0f5c0e223f1d4a60a7a9ee446c63bbdbf4176005d99de7cd88b51fcfd7ca",
+        "changed_paths": [],
+        "stdout_sha256": "50ce3cf1aa2611d7587d21f485759eb1fe7a3eb90b43d21f772b7989b493a039",
+        "stderr_sha256": "3f9e5c513f3aa5be174d8a08e9ece2e83b10057f61be2a091158e868cfa03a60",
+        "lock_before_sha256": "45b1e9a8d2c2a03eb182a230ae63f9b4c63a4e9387c9c4e6e96aa0dcf089b59d",
+        "lock_after_sha256": "45b1e9a8d2c2a03eb182a230ae63f9b4c63a4e9387c9c4e6e96aa0dcf089b59d",
+        "checksum_drift": [],
+        "novel_registry_or_git_packages": [],
+        "removed_registry_or_git_packages": [],
+        "test_results": [
+          "ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.56s"
+        ],
+        "passed_methods": [
+          "adding_root_does_not_disable_certificate_hostname_validation",
+          "explicit_root_and_matching_hostname_preserve_actual_https_body_and_status",
+          "local_https_is_explicit_and_single_root_input_is_bounded",
+          "untrusted_certificate_and_wrong_root_fail_before_node_handler"
+        ],
+        "failed_methods": [],
+        "failed_method_count": 0,
+        "reviewed_tls_alignment_removals": [],
+        "unreviewed_removals": [],
+        "network": false,
+        "protected_user_database": "NOT_RUN",
+        "DPAPI": "NOT_RUN",
+        "production_sandbox": "NOT_RUN",
+        "desktop_runtime": "NOT_RUN",
+        "SDK26_G04": "OPEN"
+      }
+    },
+    "network-authorized-tls-001": {
+      "receipt_sha256": "c73fe90cea45ab1a4e2d8b4d5ba7c352458ff4bf5ba15b2a11ab22c51235d014",
+      "receipt": {
+        "mode": "test-network-authorized-tls",
+        "status": "PASS_SCOPED",
+        "argv": [
+          "historical-local://c16/value-007",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c16/value-005",
+          "--locked",
+          "--target-dir",
+          "historical-local://c16/value-001",
+          "--test",
+          "principal_server",
+          "tls",
+          "--",
+          "--nocapture",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "input_scope": "selected component scope including test inputs",
+        "seconds": 3.141,
+        "cargo_home": "historical-local://c16/value-008",
+        "target": "historical-local://c16/value-001",
+        "source_before_sha256": "89ca0f5c0e223f1d4a60a7a9ee446c63bbdbf4176005d99de7cd88b51fcfd7ca",
+        "source_after_sha256": "89ca0f5c0e223f1d4a60a7a9ee446c63bbdbf4176005d99de7cd88b51fcfd7ca",
+        "changed_paths": [],
+        "stdout_sha256": "6b23e8bcf2dda2ea57bd88dab27b49c7b750ab38dae6783700c2dd3b02427b74",
+        "stderr_sha256": "1c096077c2c5981cc668823af15cc73924d3be9f3610cb3485ba7f7fd168f736",
+        "lock_before_sha256": "45b1e9a8d2c2a03eb182a230ae63f9b4c63a4e9387c9c4e6e96aa0dcf089b59d",
+        "lock_after_sha256": "45b1e9a8d2c2a03eb182a230ae63f9b4c63a4e9387c9c4e6e96aa0dcf089b59d",
+        "checksum_drift": [],
+        "novel_registry_or_git_packages": [],
+        "removed_registry_or_git_packages": [],
+        "test_results": [
+          "ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.32s"
+        ],
+        "passed_methods": [
+          "authorized_tls_uses_the_same_authenticated_principal_dispatch"
+        ],
+        "failed_methods": [],
+        "failed_method_count": 0,
+        "reviewed_tls_alignment_removals": [],
+        "unreviewed_removals": [],
+        "network": false,
+        "protected_user_database": "NOT_RUN",
+        "DPAPI": "NOT_RUN",
+        "production_sandbox": "NOT_RUN",
+        "desktop_runtime": "NOT_RUN",
+        "SDK26_G04": "OPEN"
+      }
+    },
+    "host-check-002": {
+      "receipt_sha256": "63cfd1d506b9eb8bb0e2a15d33ab706f342fdda4371b7127009712a8a3a8e616",
+      "receipt": {
+        "mode": "check-host",
+        "status": "PASS_SCOPED",
+        "argv": [
+          "historical-local://c16/value-007",
+          "check",
+          "--offline",
+          "--manifest-path",
+          "historical-local://c16/value-006",
+          "--locked",
+          "--target-dir",
+          "historical-local://c16/value-001",
+          "--lib",
+          "--bin",
+          "morrow-workbench-host"
+        ],
+        "exit_code": 0,
+        "input_scope": "library/bin inputs; integration tests excluded",
+        "seconds": 6.406,
+        "cargo_home": "historical-local://c16/value-008",
+        "target": "historical-local://c16/value-001",
+        "source_before_sha256": "e3a83bb67e503669adf63e24da87c0b439d90384b076f348ce2995366e4ad187",
+        "source_after_sha256": "e3a83bb67e503669adf63e24da87c0b439d90384b076f348ce2995366e4ad187",
+        "changed_paths": [],
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "c8046a8a365e41cf5a826bf2cfc72a5bfad1f574540a7f7e36d64c57fabec8b0",
+        "lock_before_sha256": "3e78a5499983305b4af6c5e7f67f05df0580c0cbb841662a851fcb4bd72f4610",
+        "lock_after_sha256": "3e78a5499983305b4af6c5e7f67f05df0580c0cbb841662a851fcb4bd72f4610",
+        "checksum_drift": [],
+        "novel_registry_or_git_packages": [],
+        "removed_registry_or_git_packages": [],
+        "test_results": [],
+        "passed_methods": [],
+        "failed_methods": [],
+        "failed_method_count": 0,
+        "reviewed_tls_alignment_removals": [],
+        "unreviewed_removals": [],
+        "network": false,
+        "protected_user_database": "NOT_RUN",
+        "DPAPI": "NOT_RUN",
+        "production_sandbox": "NOT_RUN",
+        "desktop_runtime": "NOT_RUN",
+        "SDK26_G04": "OPEN"
+      }
+    }
+  },
+  "independent_static_reviews": {
+    "native-reviewer-002": {
+      "sha256": "c8a6a58fb89163e60f279be4ecfcd042341bc22c160dff14c402b1805dd967e5",
+      "record": {
+        "status": "P1_CLOSED_STATIC_REVIEW_RUNTIME_QUALIFICATION_PENDING",
+        "source_pins": {
+          "workbench_host/src/agent_tasks.rs": "a4d5451fad51ebb9093a6a41f085c376349a336b2b5de564684db2e288e7c5c1",
+          "workbench_host/src/agent_tasks/worker.rs": "8125f50748734523c8f142c516d0b6c02388ac07f90a72076e3b1ce1d3f0f746",
+          "workbench_host/src/agent_tasks/commands.rs": "a8602b4050859dcfe6da272ef68c61685215605052e790727620a07f7dc882b6",
+          "workbench_host/src/io_tasks.rs": "3f20e6457bba10e89b53086c20d6178e3d5c87b4ea7fc9b6fc3a5b41dd8571e6",
+          "workbench_host/tests/agent_borrowed_wasm_windows.rs": "88657b82c27ff9f9ff3ae9acd263a6cc72f6414d095a594cd49f8bf081096ce7"
+        },
+        "author_preimage_sha256": "18e529626ff71a9fca384a09f6c12f558f66523052c63d039a89094bf759602c",
+        "closed_finding": {
+          "priority": "P1",
+          "initial_review": "native-reviewer-001",
+          "before": "18e529626ff71a9fca384a09f6c12f558f66523052c63d039a89094bf759602c",
+          "after": "8125f50748734523c8f142c516d0b6c02388ac07f90a72076e3b1ce1d3f0f746",
+          "reason": "Unused release now applies synchronous unique-Arc barrier; non-unique anchor remains in bounded debt and explicit reap"
+        },
+        "new_tests": {
+          "defined_worker_methods": 9,
+          "added_regression": "unused_context_and_lease_keep_async_runtime_alias_until_explicit_reap",
+          "reviewer_execution": "NOT_RUN",
+          "root_worker002": "PENDING_AT_RECORD",
+          "coupled_three": "PENDING_ROOT_QUALIFICATION_AT_RECORD"
+        },
+        "existing_evidence": {
+          "worker001": "Actual8PASS_PRE_REPAIR_ONLY",
+          "native_borrowed002": "HISTORICAL10_NOT_FINAL_SOURCE",
+          "source_helper_lock_updates": "SEPARATE_FROM_PRODUCTION_SOURCE"
+        },
+        "independence": "Reviewed other-author repair; own provisioned preflight excluded",
+        "remaining_bounds": [
+          "ProtectedSession_NOT_RUN",
+          "DPAPI_NOT_RUN",
+          "ProductionWorkbench_NOT_RUN",
+          "OSsandbox_NOT_RUN",
+          "SynchronousRuntimeDrop_not_bounded_latency",
+          "Unknown_jobs_facts_or_lost_owner_may_remain_retained"
+        ],
+        "commands_run": "READONLY_AND_PRIVATE_REVIEW_RECORD_WRITES_ONLY"
+      }
+    },
+    "native-reviewer-003": {
+      "sha256": "31b2468bb72c54ba8917197aac91fa87ec6055b29a7ae4adad170d90cb1ec02c",
+      "record": {
+        "status": "STATIC_REPAIR_REVIEW_NO_NEW_FINDING_RUNTIME_PENDING",
+        "pins": {
+          "source/workbench_host/tests/agent_borrowed_wasm_windows.rs": "4a685f5ea0b5bb3905063bd2ffcf0ff48e47894bf3b9ea777675ff3426d6817b",
+          "source/workbench_host/src/agent_tasks/worker.rs": "8125f50748734523c8f142c516d0b6c02388ac07f90a72076e3b1ce1d3f0f746",
+          "fixture-review/compile-repair001/preimage.rs": "88657b82c27ff9f9ff3ae9acd263a6cc72f6414d095a594cd49f8bf081096ce7",
+          "fixture-review/compile-repair001/repair.diff": "0b2228497b6579ec098f601c260f6519478333bcaf08cd88083ec5c6fdbd84c0",
+          "fixture-review/compile-repair001/receipt.json": "7bf0b28c1ce7c579d55713df7fdaa496e24103d59a6216566138fe1afc26c31e",
+          "qualification/coupled-worker-001/receipt.json": "7ca460460807604825cb812dc767b211678cf960c0790c2811024f22d32564d5",
+          "qualification/coupled-worker-001/stderr.log": "1d4d479bb1827314c5fa447206e64f57954e81764a1db5a87349b960d3cdf730"
+        },
+        "changes": [
+          "process binding mutable for actual register_process",
+          "remove unused mut from unexpected successful-worker stop branch",
+          "retain AgentReply and borrow TaskRun to preserve Drop completion erasure"
+        ],
+        "new_findings": [],
+        "historical_failure": {
+          "run": "coupled-worker-001",
+          "status": "FAIL_NO_EXECUTED_METHODS",
+          "exit_code": 101,
+          "executed_methods": 0,
+          "retained": true
+        },
+        "qualification": {
+          "coupled_worker002": "PENDING_ROOT_RUNTIME_AT_RECORD",
+          "reviewer_tests": "NOT_RUN",
+          "new_fixture_methods": 3,
+          "child_helper_excluded": true,
+          "format_only": "IMPLEMENTER_EXIT0_NOT_RUNTIME_PASS",
+          "protected_session": "NOT_RUN",
+          "DPAPI": "NOT_RUN",
+          "production_workbench": "NOT_RUN",
+          "OS_sandbox": "NOT_RUN"
+        },
+        "activity": "READONLY_PLUS_PRIVATE_REVIEW_ARTIFACT_WRITE",
+        "source_lock_cache_changed": false
+      }
+    },
+    "native-reviewer-004": {
+      "sha256": "5fa2a8851a419905dc62a59d4cf9d60b27e0f6c2edad1983fe6dad405b6c1fbf",
+      "record": {
+        "status": "FIXTURE_PREMATURE_PROPOSER_REVOCATION_IDENTIFIED_STATIC",
+        "reviewed_failure_fixture": "4a685f5ea0b5bb3905063bd2ffcf0ff48e47894bf3b9ea777675ff3426d6817b",
+        "pins_observed_at_record": {
+          "source/workbench_host/tests/agent_borrowed_wasm_windows.rs": "4a685f5ea0b5bb3905063bd2ffcf0ff48e47894bf3b9ea777675ff3426d6817b",
+          "source/workbench_host/src/agent_tasks/worker.rs": "8125f50748734523c8f142c516d0b6c02388ac07f90a72076e3b1ce1d3f0f746",
+          "source/companions/morrow-codex/session-exec-windows-v1/src/borrowed.rs": "94ff90b3117967a08a6730deab7a8cd5110c6d22505b108774cf9aee1a4f164a",
+          "source/extensions/agent-session-exec-v1-r2/src/safe_exec.rs": "175e9138e79f1165228786518d37f5384512061bcd9f7a992fa97f66044ceb18",
+          "source/extensions/agent-session-exec-v1-r2/src/authority.rs": "a20bcaa170b005a82da3c097810cd604b7ec2e43e63ebf8fb7ecab4b57ae5b4b",
+          "qualification/coupled-worker-002/receipt.json": "e69f7a11fe265fcb7fef498d5866579a390b95c92a059d2ddaa9bf1e1d3b152c",
+          "qualification/coupled-worker-002/stdout.log": "216220cf6ffe2dbe3b4d20893067e1b9c6756d0bb2cbfc8e473fccbae9bde22d",
+          "qualification/coupled-worker-002/stderr.log": "1b4db7f6635e0f8287557eadaba5b593517d6dcfb72bf46230503b3e5c5f1f57"
+        },
+        "actual_raw_run": {
+          "run": "coupled-worker-002",
+          "executed_meaningful_methods": 3,
+          "failed": 3,
+          "passed": 0,
+          "helper_filtered": 1,
+          "exit_code": 101,
+          "classification": "RUNTIME_FAILURE_NOT_ZERO_EXECUTED"
+        },
+        "cause": "Fixture closes and drops original proposer package before execution, while original R2 still requires its live admission",
+        "failure_chain": [
+          "proposal.close revokes bound original proposer",
+          "execute_claimed pre-marker live_executor rejects Denied",
+          "worker maps native start failure to Unknown",
+          "fixture reply unwrap panics"
+        ],
+        "second_clock_defect": "NONE_IDENTIFIED_STATIC",
+        "production_defect_for_these_failures": "NOT_ESTABLISHED",
+        "proposed_repair": "Keep actual proposer package in complete ordinary owner until start/control/facts cleanup; then explicitly close it",
+        "forbidden_workarounds": [
+          "Do not weaken original proposer/epoch/connection gates",
+          "Do not replay Unknown",
+          "Do not replace sealed/native/owner proof with mock success"
+        ],
+        "reviewer_runtime": "NOT_RUN",
+        "source_lock_cache_edits": false
+      }
+    },
+    "native-reviewer-005": {
+      "sha256": "e3dc5f78e227f3a4114b76fee1f852f73874c09b2bb033a15e5943683c03e5c3",
+      "record": {
+        "status": "FIXTURE_LIFETIME_AND_IDEMPOTENCE_CLOSED_STATIC_RUNTIME_PENDING",
+        "pins": {
+          "source/workbench_host/tests/agent_borrowed_wasm_windows.rs": "0331465c5b69b13f8d53f4e5303f9a06882b3b067efdd0eb6e75a1b291a4ea0b",
+          "source/workbench_host/src/agent_tasks/worker.rs": "8125f50748734523c8f142c516d0b6c02388ac07f90a72076e3b1ce1d3f0f746",
+          "fixture-review/proposal-lifetime-repair001/preimage.rs": "4a685f5ea0b5bb3905063bd2ffcf0ff48e47894bf3b9ea777675ff3426d6817b",
+          "fixture-review/proposal-lifetime-repair001/repair.diff": "b99fe046a931a6d041bde83aa7c512e7b16b9206eec5d1c98e5b4afc743c30d2",
+          "fixture-review/proposal-lifetime-repair001/receipt.json": "4fc4192d7da2b7967b31bc6e436bbf51d0a3977690ae929b63b8b3339f8ae3ca",
+          "fixture-review/idempotence-repair001/preimage.rs": "6842fba753d7b68445e88e354c1653c25daeee807183a6a12c7de566249294a6",
+          "fixture-review/idempotence-repair001/repair.diff": "2f112d45f8bae2f827eb5a0737681786ae7db6821898491eabbf074201601814",
+          "fixture-review/idempotence-repair001/receipt.json": "2243ccf05e982621b6422ac8d9c81a89e240cbbbee712563911c4ceb1658e43a"
+        },
+        "diagnosed_cause": "review004 premature close/drop of original proposer",
+        "repair_verified": [
+          "Actual original proposer package retained in complete original owner",
+          "Exact same original proposal ArcConnection and SessionExecHost retained",
+          "Actual first proposal ProcessHost retained; control ProcessHost remains in AgentContext",
+          "Ready plus pointer assertions before start/move/every prepare",
+          "Original committed started/exit/EOF facts checked before same-host explicit close",
+          "Option cleared and original proposal connection retirement asserted in both return paths",
+          "Repeat finish accepts None only when exact original connection retired; no repeated close/log"
+        ],
+        "root_followup": {
+          "issue": "finish_io idempotence on repeated AgentCleanup.repair",
+          "status": "CLOSED_STATIC_FINAL033146",
+          "preliminary_retained": "native-reviewer-005-preliminary-6842.*",
+          "precise_callgraph": "repair calls finish before possible scheduler Busy; StateSlot finish_maintenance only flushes pending storage"
+        },
+        "new_findings": [],
+        "preserved": [
+          "OriginalCoreStoreOwner",
+          "FrozenR2ProposerAuthorization",
+          "TTL60000_Runtime20000_Clock1",
+          "SealedGuestPins",
+          "UnknownNoReplay",
+          "ThreeMeaningfulMethods_HelperExcluded",
+          "RealExitEOFDigestsFactsAndSchedulerJoin"
+        ],
+        "qualification": {
+          "reviewer_runtime": "NOT_RUN",
+          "coupled003": "PENDING_ROOT_AT_RECORD",
+          "coupled002": "Actual3FAIL_RETAINED",
+          "coupled001": "CompileFAIL_ZeroMethods_RETAINED",
+          "production": "NOT_RUN_ORDINARY_ONLY"
+        },
+        "source_lock_cache_edits": false
+      }
+    },
+    "fixture-reviewer-001": {
+      "sha256": "63b3b8d35e97350300442c74cb7388d879aab8e1e3b3beed083da3332e43a02c",
+      "record": {
+        "kind": "C16_NATIVE_PRODUCTION_PREFLIGHT_INDEPENDENT_STATIC_REVIEW_001",
+        "reviewer": "sdk_safe_exec_windows_fixture",
+        "status": "PASS_STATIC_SCOPED_WITH_OPEN_RUNTIME_BOUNDARIES",
+        "activity": {
+          "source_edits": 0,
+          "lock_edits": 0,
+          "cache_edits": 0,
+          "cargo_commands": 0,
+          "tests_run_by_reviewer": 0,
+          "network_requests": 0,
+          "native_child_executions_by_reviewer": 0,
+          "protected_storage_access": false,
+          "credentials_access": false
+        },
+        "scope": "Native provisioned/borrowed/facts/registry/process; original R2 fence/marker and process-host control guard; Workbench agent_catalog/lib/product_gate/original Storage borrowing; explicit TLS provider seam. Worker lifecycle is contextual only and under separate current repair; own fixture is explicitly excluded from independent endorsement.",
+        "source_before": {
+          "companions/morrow-codex/session-exec-windows-v1/src/provisioned.rs": {
+            "sha256": "cd1579e6a8c896e5da35723dc2334e937743ab8233bc83dadde42d553d9c25dc",
+            "bytes": 17182
+          },
+          "companions/morrow-codex/session-exec-windows-v1/src/borrowed.rs": {
+            "sha256": "94ff90b3117967a08a6730deab7a8cd5110c6d22505b108774cf9aee1a4f164a",
+            "bytes": 12777
+          },
+          "companions/morrow-codex/session-exec-windows-v1/src/facts.rs": {
+            "sha256": "3170c06441fdfafa9b76229f8fc099592405a602ffa243a9a88fd577d48566bc",
+            "bytes": 13065
+          },
+          "companions/morrow-codex/session-exec-windows-v1/src/registry.rs": {
+            "sha256": "2a8c7eb2f69392b4bd66e9865c41616889ec5d9cb3f2213421536fc6114c32bd",
+            "bytes": 9634
+          },
+          "companions/morrow-codex/session-exec-windows-v1/src/process.rs": {
+            "sha256": "2b3577b706b5c6dc56a9f8c126aad8f09fd20a7a09fe34111c2c02850c4dcf71",
+            "bytes": 16503
+          },
+          "companions/morrow-codex/session-exec-windows-v1/src/connection.rs": {
+            "sha256": "61defeb9046516a673a4f1a7753f8295fe48a7a645c20e32ab1c80edbe5e5fbd",
+            "bytes": 12247
+          },
+          "companions/morrow-codex/session-exec-windows-v1/src/artifact.rs": {
+            "sha256": "104bbeb9e54b717825aaa918ae7e266956fac2d908384322e05ffa21a491beed",
+            "bytes": 4320
+          },
+          "workbench_host/src/agent_catalog.rs": {
+            "sha256": "0606ad10b7fc2ca194cb5c4218c96fca5a73864e877fd3cc0e0f1f4ce76be515",
+            "bytes": 8769
+          },
+          "workbench_host/src/lib.rs": {
+            "sha256": "8d66b71fa0158158543bd8a95c543954042a44c13c7a1d44aa9a71f90618fdf5",
+            "bytes": 35285
+          },
+          "workbench_host/src/product_gate.rs": {
+            "sha256": "c6349b4c59aabe16a9716cf7b11995ff068a83ac7650f455a77143a5ac33d533",
+            "bytes": 7651
+          },
+          "workbench_host/src/agent_tasks.rs": {
+            "sha256": "a4d5451fad51ebb9093a6a41f085c376349a336b2b5de564684db2e288e7c5c1",
+            "bytes": 6568
+          },
+          "workbench_host/src/agent_tasks/worker.rs": {
+            "sha256": "1e200f4268f7a1843aba0993b0f7659bc1815c701828e2d67320890110f2e875",
+            "bytes": 65662
+          },
+          "workbench_host/src/io_tasks.rs": {
+            "sha256": "3f20e6457bba10e89b53086c20d6178e3d5c87b4ea7fc9b6fc3a5b41dd8571e6",
+            "bytes": 32344
+          },
+          "workbench_host/src/storage.rs": {
+            "sha256": "d5d031ceca4ed75c4c490b5033a3416ba49d7def25f0a437dbbccb0ead6786e5",
+            "bytes": 9407
+          },
+          "workbench_host/src/service_tls_tests.rs": {
+            "sha256": "f78acf2d0db23226ace565dd053bdcc2e01285dfe337cf0d309e053688b359bf",
+            "bytes": 22715
+          },
+          "network_node/src/server.rs": {
+            "sha256": "fe7ad286c6bcf76b1b12f4318af066290e26a8157715d2373314d9787d730034",
+            "bytes": 34183
+          },
+          "extensions/agent-session-process-v1-host/src/lib.rs": {
+            "sha256": "de7386246a180f530db33cf0954bd4482d2437939e0138ac98adcf3d5ff9709b",
+            "bytes": 17994
+          },
+          "extensions/agent-session-process-v1-host/src/managed.rs": {
+            "sha256": "532eba3ffcec5590f1b76503113c8a10cae59a4e4eed8dc791b442ca3086cce9",
+            "bytes": 11892
+          },
+          "extensions/agent-session-process-v1-host/src/catalog.rs": {
+            "sha256": "86e493841bf224cc063cae4ca9a1d7caeea4bf2749e5df49365f92bae588b925",
+            "bytes": 28114
+          },
+          "extensions/agent-session-exec-v1-r2/src/safe_exec.rs": {
+            "sha256": "175e9138e79f1165228786518d37f5384512061bcd9f7a992fa97f66044ceb18",
+            "bytes": 40719
+          },
+          "companions/morrow-codex/session-exec-windows-v1/Cargo.toml": {
+            "sha256": "68b77f68cf02ffd2137fa9b495c4c52e4fad4e6cf779dfcf54d6e88c3dce62c6",
+            "bytes": 2044
+          },
+          "companions/morrow-codex/session-exec-windows-v1/Cargo.lock": {
+            "sha256": "5fbb8547e3a42874220a3872364d23074340b17e6060aa9f601af0ed608fef8f",
+            "bytes": 225535
+          },
+          "workbench_host/Cargo.toml": {
+            "sha256": "505dc840a44fbef8db027ebd6320b75495491c01791d1bf2f8e5ce7b55de23de",
+            "bytes": 3430
+          },
+          "workbench_host/Cargo.lock": {
+            "sha256": "3e78a5499983305b4af6c5e7f67f05df0580c0cbb841662a851fcb4bd72f4610",
+            "bytes": 235048
+          },
+          "network_node/Cargo.toml": {
+            "sha256": "825682e6e34d051fec51b875d3e0ba23a762338b31021c3fa3be299c9215d2dc",
+            "bytes": 1199
+          },
+          "workbench_host/tests/agent_borrowed_wasm_windows.rs": {
+            "sha256": "88657b82c27ff9f9ff3ae9acd263a6cc72f6414d095a594cd49f8bf081096ce7",
+            "bytes": 43589
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/exec-server/src/process_sandbox.rs": {
+            "sha256": "eb41dd3c879f285c796a14c1e008047f178e96d4b012cf3d9f6625358d31a853",
+            "bytes": 17199
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/exec-server/src/local_process.rs": {
+            "sha256": "3f7ede21bfa47aa7133787f2e94409a12efc20f5f47c5a37e1e1c5eafc543c62",
+            "bytes": 78400
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/exec-server/src/sandbox_selection.rs": {
+            "sha256": "8f47668b6adc311ba52763270331eee3a1c772961b01fe4eb10c8c741bc1a713",
+            "bytes": 1573
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/exec-server/src/runtime_options.rs": {
+            "sha256": "efdbed34f5806b34200466e78e782dd03f3c2743c3c092ca6af99b4c064b3559",
+            "bytes": 3200
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/sandboxing/src/manager.rs": {
+            "sha256": "a25017d49bb2876d1694a77efb30d4fb971ae0d6d8fd98a74bc08728d738c0af",
+            "bytes": 33156
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/sandboxing/src/windows.rs": {
+            "sha256": "873e260824edb519213834fc52d0c82a84f8897979f195ebbaa3609b1885c625",
+            "bytes": 16593
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/mxc-sandbox/src/lib.rs": {
+            "sha256": "692d44845a920a8ebdd7b05411d4b9e7f9bcf4d71015268110ee87ef2473de21",
+            "bytes": 3637
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/pty/src/pipe.rs": {
+            "sha256": "c147cbbf3c9bde1f15c83ded3c4641a6b5ca290f3639256b2cf5b4f7efe5d820",
+            "bytes": 10765
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/Cargo.toml": {
+            "sha256": "0bba3df88f58417fef69f8997028f150e4fccd08f0e12e38f551bdc179245172",
+            "bytes": 20543
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/Cargo.lock": {
+            "sha256": "16b915e94730a7e598182620923fc6eae19e32366d3b5ef91128002575ae24af",
+            "bytes": 406177
+          }
+        },
+        "accepted_static_checks": [
+          {
+            "id": "PREFLIGHT_BEFORE_START_PROXY",
+            "refs": [
+              "src/provisioned.rs:151",
+              "src/provisioned.rs:176",
+              "src/borrowed.rs:101",
+              "src/borrowed.rs:144",
+              "upstream/exec-server/src/process_sandbox.rs:124",
+              "upstream/exec-server/src/process_sandbox.rs:389"
+            ],
+            "conclusion": "Backend domain calls validation during review and again before original execute_claimed. It rejects missing/Disabled/wrong-family selection, empty argv, foreign native cwd/policy/workspace paths, unelevated enforced networking, unsupported token permission profiles, MXC arg0 and invalid dedicated managed-network context. These listed incompatibilities are rejected before upstream proxy.run and before a durable R2 invocation marker; validation does not perform backend.start."
+          },
+          {
+            "id": "FULL_FILESYSTEM_COMPATIBILITY",
+            "refs": [
+              "src/provisioned.rs:178",
+              "src/provisioned.rs:202",
+              "src/provisioned.rs:220",
+              "upstream/sandboxing/src/windows.rs:36",
+              "upstream/exec-server/src/sandbox_selection.rs:21",
+              "upstream/sandboxing/src/manager.rs:339"
+            ],
+            "conclusion": "RestrictedToken/Elevated reuse frozen public unsupported_windows_restricted_token_sandbox_reason. Their full-access rejection matches upstream unsupported backend, rather than a blanket product narrowing. MXC directly selects WindowsMxc and retains legitimate Managed-Unrestricted/Disabled/External permissions, still requiring trusted full policy approval. Native preflight does not convert such profiles to a weaker policy."
+          },
+          {
+            "id": "ACTUAL_BACKEND_NO_FALLBACK",
+            "refs": [
+              "src/provisioned.rs:33",
+              "src/provisioned.rs:57",
+              "src/provisioned.rs:76",
+              "src/provisioned.rs:103",
+              "src/provisioned.rs:115",
+              "src/provisioned.rs:130",
+              "src/provisioned.rs:151",
+              "src/borrowed.rs:334",
+              "workbench_host/src/agent_tasks.rs:73"
+            ],
+            "conclusion": "Production provisioning only accepts explicit WindowsRestrictedToken/WindowsMxc and actual Environment::create with retained full options/factory/locked helper. Complete ExecParams are hashed with provisioning instance identity. Qualification/decorated constructor is nonproduction and production Workbench entry rejects it. Returned actual sandbox family is checked before provider delivery. Upstream refuses required-but-None selection before child spawn; no retry with sandbox None, replacement Core, or mock Started/EOF appears in reviewed code. MXC full access is original explicit policy, not fallback."
+          },
+          {
+            "id": "ORIGINAL_MARKER_AND_EXECUTION_AUTHORITY",
+            "refs": [
+              "extensions/agent-session-exec-v1-r2/src/safe_exec.rs:1083",
+              "extensions/agent-session-exec-v1-r2/src/safe_exec.rs:1104",
+              "src/borrowed.rs:182",
+              "src/borrowed.rs:306",
+              "extensions/agent-session-process-v1-host/src/lib.rs:207",
+              "extensions/agent-session-process-v1-host/src/lib.rs:108"
+            ],
+            "conclusion": "Original R2 execution fence validates actual executor Connection/Admission and saves invocation_started before the synchronous callback can spawn actual backend.start. Callback does not reenter the R2 fence. Handoff uses exact original ToolIdentity, dynamic clock and original live executor validation; loss after start returns CommitUnknown and retains genuine cleanup ownership. Process control validates same executor before/after effects and after encoding; a lost mutation receipt becomes Unknown without replay."
+          },
+          {
+            "id": "SAME_CORE_SHARED_BUDGET",
+            "refs": [
+              "src/facts.rs:53",
+              "src/facts.rs:82",
+              "src/registry.rs:148",
+              "src/registry.rs:200",
+              "src/registry.rs:250",
+              "workbench_host/src/storage.rs:146",
+              "workbench_host/src/lib.rs:973",
+              "workbench_host/src/lib.rs:993"
+            ],
+            "conclusion": "Resources index binds exact opaque original HostBinding and returns same Arc, bounded to 128 owner entries; first exact R2 host Arc cannot be replaced. One registry charges 16 pending/active/Unknown operations across ports. Job/provider acquisition and exact retirement share entries mutex. Original Storage dereferences its original Session runtime, and complete WorkbenchState moves/borrows its original Manager/runtime; native resources own no Core, Store, protected key or lease."
+          },
+          {
+            "id": "FACTS_AND_TRUSTED_CLEANUP",
+            "refs": [
+              "src/facts.rs:159",
+              "src/facts.rs:302",
+              "src/facts.rs:321",
+              "src/facts.rs:332",
+              "src/process.rs:164",
+              "src/process.rs:185",
+              "src/process.rs:335",
+              "src/process.rs:383",
+              "src/registry.rs:194"
+            ],
+            "conclusion": "Invalid, incomplete or conflicting observations latch permanently and cannot be replaced by a later plausible fact. Background actual-process observer only enqueues complete original-sequence facts; original Core CAS is borrowed by trusted drain. CAS Conflict retains; uncertain CAS is read-reconciled only and not repeated. Historical exact invocation_started facts can be acknowledged after execution revocation without restoring grants. Actual Exited AND Closed are needed, output gaps cannot manufacture digest/EOF, and guest/deadline/Drop/trusted termination share one marker so uncertain termination is not retried."
+          },
+          {
+            "id": "WORKBENCH_GATE",
+            "refs": [
+              "workbench_host/src/agent_catalog.rs:25",
+              "workbench_host/src/agent_catalog.rs:139",
+              "workbench_host/src/agent_catalog.rs:165",
+              "workbench_host/src/agent_catalog.rs:203",
+              "workbench_host/src/product_gate.rs:53",
+              "workbench_host/src/product_gate.rs:83",
+              "workbench_host/src/io_tasks.rs:427",
+              "workbench_host/src/agent_tasks.rs:88"
+            ],
+            "conclusion": "Lazy catalog does not duplicate content owner and failed opening/panic remains sticky. Mutation borrows original Storage.prepare_write and StateSlot.require_writable. Gate checks surround administrative work and encoded delivery; late controller loss invalidates original catalog leases and emits correlated Unknown without rerunning action. Reserved IDs deduplicate. Scoped stop subscriptions are bounded, preserve original primary stop, invoke outside mutexes and keep admission closed even if a callback panics."
+          },
+          {
+            "id": "TLS_EXPLICIT_PROVIDER",
+            "refs": [
+              "workbench_host/src/service_tls_tests.rs:322",
+              "workbench_host/src/service_tls_tests.rs:341",
+              "network_node/src/server.rs:388"
+            ],
+            "conclusion": "Host loopback TLS client and network server explicitly select ring via builder_with_provider, so these seams do not depend on ambiguous process-global provider selection when the unified native graph also enables aws_lc_rs. New ordinary host TLS test generates memory keys and binds loopback without Storage or DPAPI. Source check is not a TLS runtime receipt."
+          }
+        ],
+        "static_findings": [],
+        "open_boundaries": [
+          {
+            "id": "NOT_ALL_RUNTIME_ERRORS_PREFLIGHT",
+            "conclusion": "The new validator covers the enumerated deterministic sandbox incompatibilities. It is not a promise to precompute every network-proxy config/listener error, permission/path metadata change, helper launch error, or OS failure. Frozen upstream still validates/run-prepares its real proxy. MXC availability is deliberately not probed here because availability creates a native security environment. No claim that preflight Ok establishes a sandbox."
+          },
+          {
+            "id": "RUNTIME_LIFETIME",
+            "conclusion": "Native is_clean only checks registry/mailbox; it is not task destruction or OS-worker/scheduler join. Direct trusted caller must retain the original scheduler/backend and reachable cleanup until real cleanup/facts acknowledgment and non-Tokio shutdown. Strong registry-slot retention can remain indefinitely for lost prefix, no handle or uncertain facts; it must not be advertised as globally leak-free. Worker lifecycle has a separate active repair and is not approved by this static receipt."
+          },
+          {
+            "id": "QUALIFICATION_SCOPE",
+            "conclusion": "Ordinary synthetic children, old borrowed10, pure parameter10, formatting, historical controller/SDK freeze evidence and generic worker tests do not prove current protected production execution, DPAPI/account database, GUI/device acceptance, RestrictedToken/MXC OS isolation, or complete frozen fullSDK qualification."
+          },
+          {
+            "id": "TYPED_UNSUPPORTED",
+            "conclusion": "Original actual backend still exposes no stdin close or PTY resize; provider truthfully returns Unsupported. Pipe Interrupt delegates frozen Windows kill behavior only in ordinary no-sandbox pipe case; production/sandbox and PTY capability remain false. No claim of PTY interrupt completion."
+          },
+          {
+            "id": "TLS_FEATURE_SCOPE",
+            "conclusion": "Optional plugin-adapter network test helpers retain implicit ClientConfig builders in their standalone ring graph. They are not cleared for a combined ring+aws graph by this host seam review. TLS execution remains NOT_RUN in this receipt."
+          },
+          {
+            "id": "OWN_FIXTURE",
+            "conclusion": "Reviewer authored agent_borrowed_wasm_windows.rs. Its SHA is informational only; its three candidate methods/helper are not independently endorsed or counted as runtime qualification here."
+          }
+        ],
+        "runtime_evidence_policy": "Reviewer only reads existing implementer receipts and hashes; no tests were run by reviewer. Latest native-borrowed-003 terminal not yet supplied; no pass inferred. Worker current repair excluded from current final acceptance.",
+        "dependency_review": {
+          "rustls": "Normal network/host exact0.23.45 aligns frozen upstream requirement ^0.23.45; source/checksum must remain locked. Explicit provider addresses feature-union selection only; no TLS runtime assertion.",
+          "uuid": "Normal1.27.0 aligns existing native lock; frozen upstream uuid1 does not itself require this as an API minimum. No authority/wire guarantee inferred from a semver update.",
+          "reviewer_resolution_rerun": false
+        },
+        "review_time_utc": "2026-10-06T13:17:14.869667+00:00",
+        "source_after": {
+          "companions/morrow-codex/session-exec-windows-v1/src/provisioned.rs": {
+            "sha256": "cd1579e6a8c896e5da35723dc2334e937743ab8233bc83dadde42d553d9c25dc",
+            "bytes": 17182
+          },
+          "companions/morrow-codex/session-exec-windows-v1/src/borrowed.rs": {
+            "sha256": "94ff90b3117967a08a6730deab7a8cd5110c6d22505b108774cf9aee1a4f164a",
+            "bytes": 12777
+          },
+          "companions/morrow-codex/session-exec-windows-v1/src/facts.rs": {
+            "sha256": "3170c06441fdfafa9b76229f8fc099592405a602ffa243a9a88fd577d48566bc",
+            "bytes": 13065
+          },
+          "companions/morrow-codex/session-exec-windows-v1/src/registry.rs": {
+            "sha256": "2a8c7eb2f69392b4bd66e9865c41616889ec5d9cb3f2213421536fc6114c32bd",
+            "bytes": 9634
+          },
+          "companions/morrow-codex/session-exec-windows-v1/src/process.rs": {
+            "sha256": "2b3577b706b5c6dc56a9f8c126aad8f09fd20a7a09fe34111c2c02850c4dcf71",
+            "bytes": 16503
+          },
+          "companions/morrow-codex/session-exec-windows-v1/src/connection.rs": {
+            "sha256": "61defeb9046516a673a4f1a7753f8295fe48a7a645c20e32ab1c80edbe5e5fbd",
+            "bytes": 12247
+          },
+          "companions/morrow-codex/session-exec-windows-v1/src/artifact.rs": {
+            "sha256": "104bbeb9e54b717825aaa918ae7e266956fac2d908384322e05ffa21a491beed",
+            "bytes": 4320
+          },
+          "workbench_host/src/agent_catalog.rs": {
+            "sha256": "0606ad10b7fc2ca194cb5c4218c96fca5a73864e877fd3cc0e0f1f4ce76be515",
+            "bytes": 8769
+          },
+          "workbench_host/src/lib.rs": {
+            "sha256": "8d66b71fa0158158543bd8a95c543954042a44c13c7a1d44aa9a71f90618fdf5",
+            "bytes": 35285
+          },
+          "workbench_host/src/product_gate.rs": {
+            "sha256": "c6349b4c59aabe16a9716cf7b11995ff068a83ac7650f455a77143a5ac33d533",
+            "bytes": 7651
+          },
+          "workbench_host/src/agent_tasks.rs": {
+            "sha256": "a4d5451fad51ebb9093a6a41f085c376349a336b2b5de564684db2e288e7c5c1",
+            "bytes": 6568
+          },
+          "workbench_host/src/agent_tasks/worker.rs": {
+            "sha256": "8125f50748734523c8f142c516d0b6c02388ac07f90a72076e3b1ce1d3f0f746",
+            "bytes": 65727
+          },
+          "workbench_host/src/io_tasks.rs": {
+            "sha256": "3f20e6457bba10e89b53086c20d6178e3d5c87b4ea7fc9b6fc3a5b41dd8571e6",
+            "bytes": 32344
+          },
+          "workbench_host/src/storage.rs": {
+            "sha256": "d5d031ceca4ed75c4c490b5033a3416ba49d7def25f0a437dbbccb0ead6786e5",
+            "bytes": 9407
+          },
+          "workbench_host/src/service_tls_tests.rs": {
+            "sha256": "f78acf2d0db23226ace565dd053bdcc2e01285dfe337cf0d309e053688b359bf",
+            "bytes": 22715
+          },
+          "network_node/src/server.rs": {
+            "sha256": "fe7ad286c6bcf76b1b12f4318af066290e26a8157715d2373314d9787d730034",
+            "bytes": 34183
+          },
+          "extensions/agent-session-process-v1-host/src/lib.rs": {
+            "sha256": "de7386246a180f530db33cf0954bd4482d2437939e0138ac98adcf3d5ff9709b",
+            "bytes": 17994
+          },
+          "extensions/agent-session-process-v1-host/src/managed.rs": {
+            "sha256": "532eba3ffcec5590f1b76503113c8a10cae59a4e4eed8dc791b442ca3086cce9",
+            "bytes": 11892
+          },
+          "extensions/agent-session-process-v1-host/src/catalog.rs": {
+            "sha256": "86e493841bf224cc063cae4ca9a1d7caeea4bf2749e5df49365f92bae588b925",
+            "bytes": 28114
+          },
+          "extensions/agent-session-exec-v1-r2/src/safe_exec.rs": {
+            "sha256": "175e9138e79f1165228786518d37f5384512061bcd9f7a992fa97f66044ceb18",
+            "bytes": 40719
+          },
+          "companions/morrow-codex/session-exec-windows-v1/Cargo.toml": {
+            "sha256": "68b77f68cf02ffd2137fa9b495c4c52e4fad4e6cf779dfcf54d6e88c3dce62c6",
+            "bytes": 2044
+          },
+          "companions/morrow-codex/session-exec-windows-v1/Cargo.lock": {
+            "sha256": "5fbb8547e3a42874220a3872364d23074340b17e6060aa9f601af0ed608fef8f",
+            "bytes": 225535
+          },
+          "workbench_host/Cargo.toml": {
+            "sha256": "505dc840a44fbef8db027ebd6320b75495491c01791d1bf2f8e5ce7b55de23de",
+            "bytes": 3430
+          },
+          "workbench_host/Cargo.lock": {
+            "sha256": "3e78a5499983305b4af6c5e7f67f05df0580c0cbb841662a851fcb4bd72f4610",
+            "bytes": 235048
+          },
+          "network_node/Cargo.toml": {
+            "sha256": "825682e6e34d051fec51b875d3e0ba23a762338b31021c3fa3be299c9215d2dc",
+            "bytes": 1199
+          },
+          "workbench_host/tests/agent_borrowed_wasm_windows.rs": {
+            "sha256": "88657b82c27ff9f9ff3ae9acd263a6cc72f6414d095a594cd49f8bf081096ce7",
+            "bytes": 43589
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/exec-server/src/process_sandbox.rs": {
+            "sha256": "eb41dd3c879f285c796a14c1e008047f178e96d4b012cf3d9f6625358d31a853",
+            "bytes": 17199
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/exec-server/src/local_process.rs": {
+            "sha256": "3f7ede21bfa47aa7133787f2e94409a12efc20f5f47c5a37e1e1c5eafc543c62",
+            "bytes": 78400
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/exec-server/src/sandbox_selection.rs": {
+            "sha256": "8f47668b6adc311ba52763270331eee3a1c772961b01fe4eb10c8c741bc1a713",
+            "bytes": 1573
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/exec-server/src/runtime_options.rs": {
+            "sha256": "efdbed34f5806b34200466e78e782dd03f3c2743c3c092ca6af99b4c064b3559",
+            "bytes": 3200
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/sandboxing/src/manager.rs": {
+            "sha256": "a25017d49bb2876d1694a77efb30d4fb971ae0d6d8fd98a74bc08728d738c0af",
+            "bytes": 33156
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/sandboxing/src/windows.rs": {
+            "sha256": "873e260824edb519213834fc52d0c82a84f8897979f195ebbaa3609b1885c625",
+            "bytes": 16593
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/mxc-sandbox/src/lib.rs": {
+            "sha256": "692d44845a920a8ebdd7b05411d4b9e7f9bcf4d71015268110ee87ef2473de21",
+            "bytes": 3637
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/pty/src/pipe.rs": {
+            "sha256": "c147cbbf3c9bde1f15c83ded3c4641a6b5ca290f3639256b2cf5b4f7efe5d820",
+            "bytes": 10765
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/Cargo.toml": {
+            "sha256": "0bba3df88f58417fef69f8997028f150e4fccd08f0e12e38f551bdc179245172",
+            "bytes": 20543
+          },
+          "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/Cargo.lock": {
+            "sha256": "16b915e94730a7e598182620923fc6eae19e32366d3b5ef91128002575ae24af",
+            "bytes": 406177
+          }
+        },
+        "source_changes_during_review": [
+          "workbench_host/src/agent_tasks/worker.rs"
+        ],
+        "reviewed_scope_stable": true,
+        "worker_scope": "Contextual source pin only; current final worker actively repaired separately. Not independently accepted here.",
+        "implementer_pure_parameter_receipt": {
+          "path": "historical-local://c16/value-002",
+          "sha256": "65aa0f72c7711a2ba8129741634368eebe011565dbf40461d1963034ab68099b",
+          "reported_status": "PASS_SCOPED",
+          "reported_exit": 0,
+          "raw_hash_checks": {
+            "stdout": true,
+            "stderr": true
+          },
+          "source_aggregate_checks": {
+            "before": true,
+            "after": true
+          },
+          "source_snapshots_equal": true,
+          "current_snapshot_differences": [
+            "extensions/agent-session-process-v1-host/Cargo.lock"
+          ],
+          "passed_methods": [
+            "provisioned::production_preflight_tests::empty_argv_is_invalid",
+            "provisioned::production_preflight_tests::expected_backend_family_must_match_selection",
+            "provisioned::production_preflight_tests::foreign_command_policy_and_workspace_paths_are_invalid",
+            "provisioned::production_preflight_tests::missing_or_disabled_sandbox_is_denied",
+            "provisioned::production_preflight_tests::mxc_custom_arg0_is_denied",
+            "provisioned::production_preflight_tests::mxc_does_not_validate_unused_managed_network_context",
+            "provisioned::production_preflight_tests::mxc_keeps_supported_full_access_profiles",
+            "provisioned::production_preflight_tests::mxc_requires_valid_dedicated_managed_network_context",
+            "provisioned::production_preflight_tests::token_backends_reject_upstream_unsupported_full_access_profiles",
+            "provisioned::production_preflight_tests::unelevated_token_cannot_enforce_managed_network"
+          ],
+          "meaningful_pure_parameter_methods": 10,
+          "filtered_registry_methods": 3,
+          "production_os_sandbox": "NOT_RUN",
+          "reviewer_ran": false,
+          "qualification": "Existing implementer raw logs confirm parameter tests only, not production sandbox availability/isolation or protected storage execution.",
+          "current_native_implementation_pins_match": true,
+          "full_current_snapshot_match": false,
+          "current_snapshot_exception": "The child agent-session-process-v1-host Cargo.lock differs from preflight snapshot; not promoted to full current input qualification. Reviewed native code/own root lock match; current unrelated lock equivalence not asserted."
+        },
+        "read_only_input_guards": {
+          "original_sdk327": {
+            "count": 327,
+            "mismatches": []
+          },
+          "original_frozen57": {
+            "count": 57,
+            "mismatches": []
+          },
+          "immutable_r1_r2_and_linux": {
+            "count": 46,
+            "mismatches": []
+          },
+          "original_archives": {
+            "count": 6,
+            "mismatches": []
+          },
+          "original_core_vs_R": {
+            "count": 91,
+            "mismatches": []
+          },
+          "reviewed_frozen_upstream_vs_R": {
+            "count": 10,
+            "mismatches": []
+          },
+          "existing_safe_exec_exception": "Already-delivered pure validation API SHA175e9138; no current change endorsed to original safe_exec/schema/Core/SDK."
+        }
+      }
+    }
+  },
+  "production_sandbox": "NOT_RUN",
+  "protected_session": "NOT_RUN",
+  "DPAPI": "NOT_RUN",
+  "desktop_runtime": "NOT_RUN",
+  "SDK26_G04": "OPEN",
+  "release_eligible": false,
+  "commit": false,
+  "push": false,
+  "release": false,
+  "remote": "NOT_RUN",
+  "_public_redaction": {
+    "kind": "PUBLIC_PATH_REDACTED_HISTORICAL_DERIVATIVE_NOT_CURRENT_QUALIFICATION",
+    "original_full_sha256": "638cd06075cbded33cc6c6d9549e42af8aa492ddfdbb34720cceb096e2636e62",
+    "original_bytes": 89450,
+    "redacted_string_occurrences": 61,
+    "original_drive_prefix_occurrences": 61,
+    "path_values": [
+      {
+        "logical_value": "historical-local://c16/value-001",
+        "original_value_sha256": "37d3ef45057b531f07f92d3c90144029b809b6f7019d0c1941f205637f750a68"
+      },
+      {
+        "logical_value": "historical-local://c16/value-002",
+        "original_value_sha256": "aacbb0c2ada5ebccc7f2b0782248e1d53bc91990c3a54b952febf5544c1f95f8"
+      },
+      {
+        "logical_value": "historical-local://c16/value-003",
+        "original_value_sha256": "42f628c09a7e003b34f09d1faf86f80d401b8ae39890ec516398286fcbe8e27a"
+      },
+      {
+        "logical_value": "historical-local://c16/value-004",
+        "original_value_sha256": "20a80f114f71b0328255dfd321557c079e68e65d9c4feb0c69e240e27e319101"
+      },
+      {
+        "logical_value": "historical-local://c16/value-005",
+        "original_value_sha256": "fa663c2600a38857894f5ce15ba3365f464265eb2650521aad86e730f0470a05"
+      },
+      {
+        "logical_value": "historical-local://c16/value-006",
+        "original_value_sha256": "53a8658fa2f5b3816941e8602f758ddd8f067a82feb182f71772289295e3df3f"
+      },
+      {
+        "logical_value": "historical-local://c16/value-007",
+        "original_value_sha256": "a8a749f39a70449170dca1279c189663d6d4df967e7fb36103acda9aa1522f86"
+      },
+      {
+        "logical_value": "historical-local://c16/value-008",
+        "original_value_sha256": "0c4d414efc3fdb71378d2a3ec30265fffb3828730911ae02186e203495b6b63f"
+      }
+    ],
+    "policy": "Only strings or keys containing local drive paths are replaced by stable logical identifiers, including path-bearing recorded command text. All other original values remain identical. These identifiers are not executable/restorable paths; no new test run or source qualification is inferred.",
+    "provenance_document": "PUBLIC_VALIDATION_PROVENANCE.md"
+  }
+}

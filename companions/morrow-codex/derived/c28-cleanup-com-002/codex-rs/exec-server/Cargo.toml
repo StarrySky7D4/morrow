@@ -1,0 +1,311 @@
+
+["package"]
+"name" = "codex-exec-server"
+
+["package"."version"]
+"workspace" = true
+
+
+["package"."edition"]
+"workspace" = true
+
+
+["package"."license"]
+"workspace" = true
+
+
+["package"."metadata"]
+
+["package"."metadata"."cargo-shear"]
+"ignored-paths" = ["tests/unit/client_provisioning_tests.rs", "src/discoverV2/tests/capability_watchers_tests.rs"]
+
+
+
+
+["lib"]
+"doctest" = false
+
+
+["lints"]
+"workspace" = true
+
+
+["dependencies"]
+"prost" = "0.14.3"
+
+["dependencies"."arc-swap"]
+"workspace" = true
+
+
+["dependencies"."axum"]
+"workspace" = true
+"features" = ["http1", "tokio", "ws"]
+
+
+["dependencies"."base64"]
+"workspace" = true
+
+
+["dependencies"."bytes"]
+"workspace" = true
+
+
+["dependencies"."clatter"]
+"workspace" = true
+
+
+["dependencies"."codex-api"]
+"workspace" = true
+
+
+["dependencies"."codex-build-info"]
+"workspace" = true
+
+
+["dependencies"."codex-config"]
+"workspace" = true
+
+
+["dependencies"."codex-core-plugin-common"]
+"workspace" = true
+
+
+["dependencies"."codex-http-client"]
+"workspace" = true
+
+
+["dependencies"."codex-exec-server-protocol"]
+"workspace" = true
+
+
+["dependencies"."codex-file-system"]
+"workspace" = true
+
+
+["dependencies"."codex-file-watcher"]
+"workspace" = true
+
+
+["dependencies"."codex-network-proxy"]
+"workspace" = true
+
+
+["dependencies"."codex-otel"]
+"workspace" = true
+
+
+["dependencies"."codex-protocol"]
+"workspace" = true
+
+
+["dependencies"."codex-sandboxing"]
+"workspace" = true
+
+
+["dependencies"."codex-shell-command"]
+"workspace" = true
+
+
+["dependencies"."codex-skills"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-absolute-path"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-home-dir"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-path-uri"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-pty"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-redacted-string"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-rustls-provider"]
+"workspace" = true
+
+
+["dependencies"."codex-websocket-auth"]
+"workspace" = true
+
+
+["dependencies"."codex-websocket-client"]
+"workspace" = true
+
+
+["dependencies"."dirs"]
+"workspace" = true
+
+
+["dependencies"."futures"]
+"workspace" = true
+
+
+["dependencies"."http"]
+"workspace" = true
+
+
+["dependencies"."opentelemetry"]
+"workspace" = true
+
+
+["dependencies"."serde"]
+"workspace" = true
+"features" = ["derive"]
+
+
+["dependencies"."serde_json"]
+"workspace" = true
+
+
+["dependencies"."thiserror"]
+"workspace" = true
+
+
+["dependencies"."toml"]
+"workspace" = true
+
+
+["dependencies"."tokio"]
+"workspace" = true
+"features" = ["fs", "io-std", "io-util", "macros", "net", "process", "rt-multi-thread", "sync", "time"]
+
+
+["dependencies"."tokio-util"]
+"workspace" = true
+"features" = ["io", "rt"]
+
+
+["dependencies"."tokio-tungstenite"]
+"workspace" = true
+
+
+["dependencies"."tracing"]
+"workspace" = true
+
+
+["dependencies"."url"]
+"workspace" = true
+
+
+["dependencies"."uuid"]
+"workspace" = true
+"features" = ["v4"]
+
+
+
+["target"]
+
+["target"."cfg(unix)"]
+
+["target"."cfg(unix)"."dependencies"]
+
+["target"."cfg(unix)"."dependencies"."codex-uds"]
+"workspace" = true
+
+
+["target"."cfg(unix)"."dependencies"."libc"]
+"workspace" = true
+
+
+["target"."cfg(unix)"."dependencies"."rustix"]
+"workspace" = true
+"features" = ["fs"]
+
+
+["target"."cfg(unix)"."dependencies"."tempfile"]
+"workspace" = true
+
+
+
+
+["target"."cfg(windows)"]
+
+["target"."cfg(windows)"."dependencies"]
+"anyhow" = { "workspace" = true }
+
+["target"."cfg(windows)"."dependencies"."windows-sys"]
+"version" = "0.52"
+"features" = ["Win32_Foundation", "Win32_Security", "Win32_Storage_FileSystem", "Win32_System_IO", "Win32_System_Kernel", "Win32_System_Pipes", "Win32_System_Threading"]
+
+
+
+
+
+["dev-dependencies"]
+"test-case" = "3.3.1"
+
+["dev-dependencies"."anyhow"]
+"workspace" = true
+
+
+["dev-dependencies"."codex-exec-server-test-support"]
+"workspace" = true
+
+
+["dev-dependencies"."codex-test-binary-support"]
+"workspace" = true
+
+
+["dev-dependencies"."codex-utils-cargo-bin"]
+"workspace" = true
+
+
+["dev-dependencies"."ctor"]
+"workspace" = true
+
+
+["dev-dependencies"."http"]
+"workspace" = true
+
+
+["dev-dependencies"."opentelemetry_sdk"]
+"workspace" = true
+
+
+["dev-dependencies"."pretty_assertions"]
+"workspace" = true
+
+
+["dev-dependencies"."rcgen"]
+"workspace" = true
+
+
+["dev-dependencies"."rustls"]
+"workspace" = true
+
+
+["dev-dependencies"."serial_test"]
+"workspace" = true
+
+
+["dev-dependencies"."tempfile"]
+"workspace" = true
+
+
+["dev-dependencies"."tokio"]
+"workspace" = true
+"features" = ["test-util"]
+
+
+["dev-dependencies"."tracing-opentelemetry"]
+"workspace" = true
+
+
+["dev-dependencies"."tracing-subscriber"]
+"workspace" = true
+
+
+["dev-dependencies"."wiremock"]
+"workspace" = true
+
+

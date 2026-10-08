@@ -1,0 +1,554 @@
+{
+  "stage": "C14",
+  "base_commit": "e83cdf1d3506b001d07ffceaaa9f98b688bcc150",
+  "base_tree": "abcdee6e582ce18954118430e514f1d0805ce095",
+  "status": "PASS_SCOPED_LOCAL",
+  "source_sha256": {
+    "plugin_runtime/src/manager/agent_session_process.rs": "f419b15a5e08bb333d336333d0ed39553cff3d10fa8af1cd987039b117064f03",
+    "plugin_runtime/tests/manager_agent_session_process.rs": "e5073f8c40c09b4ccf2956fc712a7ec11de7af2ba5c8a2911bcef1acd6da65b1",
+    "extensions/agent-session-process-v1-host/src/lib.rs": "d2f4c8626b13a3b48ad05f952da106a509786638097fc28ba5d8c70a0eb20371",
+    "extensions/agent-session-process-v1-host/src/package.rs": "704b7749cf43806ac8421ee527adc8f8677ff9b3717698406f8f9dcb4f6b4887",
+    "extensions/agent-session-process-v1-host/src/catalog.rs": "84c7c12aefa9f392aa13cae8e02fe25d31301ad1485817af77818206e342c4cf",
+    "extensions/agent-session-process-v1-host/src/catalog/native.rs": "0af4a54a87e52ffcb2288c2cd80a1c41cc9706afb0b80062af27fdaf4a5dc638",
+    "extensions/agent-session-process-v1-host/tests/catalog.rs": "8902b8678907cb700bec5756675f228445a44802fee3ef462e2eb7e22fa924c4",
+    "extensions/agent-session-process-v1-host/Cargo.toml": "0c0befaed6fd364f3161e0531807871d6cb13712193b2ca0a360dfaa89a298e4",
+    "extensions/agent-session-process-v1-host/Cargo.lock": "5d1da0b8924552f853dd771b0af7ee76000ae01dd38b6782f634e7c40e6e43e3",
+    "extensions/agent-session-process-v1-host/README.md": "5cd7c92998961ea6f5b25f37539b64b33c628c427a26174ba559c167f672f0bc",
+    "companions/morrow-codex/session-exec-windows-v1/tests/catalog_codex_wasm_windows.rs": "7b136531f1183d7b582d97137fc947b5d649c58d6470ab7cbeff9d1e84caf949",
+    "companions/morrow-codex/session-exec-windows-v1/Cargo.lock": "97a00fac5e4b4fd95863f403f2f83874f0d142b3dad0326d302141fcba260685"
+  },
+  "checks": {
+    "manager": {
+      "path": "qualification/managers-final-002/receipt.json",
+      "sha256": "3effc461404224eaff19aaa9391acdcfc8d7a7740003a5b8bc85d0af065feaed",
+      "receipt": {
+        "stage": "C14",
+        "mode": "managers",
+        "records": [
+          {
+            "argv": [
+              "historical-local://c14/value-018",
+              "test",
+              "--locked",
+              "--offline",
+              "--manifest-path",
+              "historical-local://c14/value-012",
+              "--target-dir",
+              "historical-local://c14/value-004",
+              "--features",
+              "packages",
+              "--test",
+              "manager_agent_session_process",
+              "--test",
+              "manager",
+              "--test",
+              "manager_storage",
+              "--test",
+              "agent_session_process_profile",
+              "--",
+              "--nocapture"
+            ],
+            "exit_code": 0,
+            "seconds": 3.828,
+            "stdout_sha256": "b2a8b240c4f817e9d716d0566e3fb8a52473635f338c7dbe14464ffc6ba5640e",
+            "stderr_sha256": "bdfe33934efca194adae0ea5f980926be5dbb4fdedba3cc4aedfe485fc6b10b7",
+            "test_results": [
+              "ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+              "ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.65s",
+              "ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.72s",
+              "ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s"
+            ],
+            "passed_test_names": [
+              "unrelated_entrypoints_cannot_drive_the_new_profile",
+              "only_explicit_new_factory_admits_the_single_import",
+              "no_second_extra_profile_or_future_abi_is_admitted",
+              "host_call_budget_is_shared_by_every_frame_and_never_refunded",
+              "negotiated_route_copies_output_once_without_granting_raw_core_exchange",
+              "cancellation_after_effect_denies_delivery_without_replaying_the_callback",
+              "stale_confirmation_does_not_stop_a_valid_instance",
+              "disable_at_read_release_refuses_late_data",
+              "failed_persistence_keeps_old_state_but_never_revives_the_stopped_instance",
+              "stopping_never_rolls_back_an_already_committed_operation",
+              "enabled_registry_approval_is_bound_to_the_real_connection",
+              "managed_guest_trap_after_commit_preserves_receipt_without_automatic_retry",
+              "close_retires_bounded_host_records_and_corrupt_package_cannot_reconnect",
+              "manager_drop_stops_escaped_instances_and_foreign_hosts_cannot_grant",
+              "revoked_pure_transform_cannot_release_results_or_use_a_new_host",
+              "switching_theme_revokes_the_previous_theme_but_keeps_business_instances",
+              "every_selection_or_approval_change_revokes_all_prior_instances",
+              "exact_selection_limits_and_original_shared_connection",
+              "wrapper_revoke_rejects_stale_or_foreign_selection_without_stopping_controls",
+              "wrapper_revoke_stops_all_original_controls_without_publishing_or_reviving_them",
+              "wrapper_revoke_conservatively_stops_an_ordinary_instance_of_the_same_base",
+              "instance_and_manager_drop_stop_the_original_shared_connection",
+              "fixed_and_ordinary_instances_share_the_original_total_quota",
+              "stale_revision_wrong_manager_and_wrong_host_cannot_validate",
+              "selection_mutations_stop_original_control_and_never_revive_it",
+              "old_imports_and_core_capabilities_cannot_mix_into_fixed_profile",
+              "unknown_publication_revokes_live_instance_and_blocks_noop_confirmation"
+            ]
+          }
+        ],
+        "source_pin_before": "c0e45475da69476708a45e1619aa2fbc666d923b242082a25fce6452e0096e78",
+        "source_pin_after": "c0e45475da69476708a45e1619aa2fbc666d923b242082a25fce6452e0096e78",
+        "source_changed_paths": [],
+        "sealed_guests_before": {
+          "MORROW_CODEX_COMBINED_GUEST": {
+            "path": "historical-local://c14/value-017",
+            "sha256": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e"
+          },
+          "MORROW_CODEX_PROCESS_GUEST": {
+            "path": "historical-local://c14/value-015",
+            "sha256": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+          }
+        },
+        "sealed_guests_after": {
+          "MORROW_CODEX_COMBINED_GUEST": {
+            "path": "historical-local://c14/value-017",
+            "sha256": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e"
+          },
+          "MORROW_CODEX_PROCESS_GUEST": {
+            "path": "historical-local://c14/value-015",
+            "sha256": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+          }
+        },
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "production protected owner",
+          "Workbench GUI",
+          "Windows native controls",
+          "production OS sandbox",
+          "other platforms",
+          "full SDK freeze"
+        ]
+      }
+    },
+    "host": {
+      "path": "qualification/host-final-002/receipt.json",
+      "sha256": "d06f8b1bee20bab0bcdc3c10c9beaf6814c562eea119f450e34928d701894a73",
+      "receipt": {
+        "stage": "C14",
+        "mode": "host",
+        "records": [
+          {
+            "argv": [
+              "historical-local://c14/value-018",
+              "test",
+              "--locked",
+              "--offline",
+              "--manifest-path",
+              "historical-local://c14/value-006",
+              "--target-dir",
+              "historical-local://c14/value-003",
+              "--",
+              "--nocapture"
+            ],
+            "exit_code": 0,
+            "seconds": 10.188,
+            "stdout_sha256": "1a891c4e66e1abb3ca2066086cd927e21f8b2e2bfa32901c4dbe23bcf4e2016e",
+            "stderr_sha256": "07701045968c0a576bcff6305cc0afb74318074b635cd3e854047a5434cb8f48",
+            "test_results": [
+              "ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+              "ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.41s",
+              "ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.82s",
+              "ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.03s",
+              "ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+            ],
+            "passed_test_names": [
+              "package::tests::changing_either_schema_pin_is_rejected_even_with_correct_outer_checksum",
+              "inspect_install_and_duplicate_install_do_not_approve_or_change_base_selection",
+              "base_enable_never_substitutes_for_complete_wrapper_approval_and_enable",
+              "invalid_digest_scope_or_stale_confirmation_cannot_stop_a_live_connection",
+              "known_save_failure_retains_disk_decision_but_never_revives_stopped_connections",
+              "externally_poisoned_manager_load_revokes_old_core_and_preserves_unknown",
+              "catalog_drop_at_last_r2_precommit_clock_cannot_create_a_session",
+              "complete_wrapper_approval_reopens_but_live_connections_do_not_survive_catalog_drop",
+              "catalog_pagination_uses_its_own_revision_and_bounds_without_mutating_decisions",
+              "committed_unknown_blocks_noops_and_execution_until_reopen_reconciles_disk",
+              "malformed_or_wrong_sha_wrapper_is_not_installed_or_approved",
+              "persisted_revision_zero_is_rejected_while_absent_snapshot_is_fresh",
+              "replacement_or_corruption_of_an_installed_wrapper_cannot_reopen_approval",
+              "selecting_another_wrapper_of_the_same_base_revokes_and_requires_fresh_review",
+              "manager_install_commit_unknown_immediately_revokes_original_core_and_r2_authority",
+              "durable_approval_executes_sealed_rust_session_wasm_on_the_same_original_runtime",
+              "persisted_metadata_does_not_authorize_an_old_connection_under_another_manager",
+              "wrapper_approval_disable_and_removal_revoke_without_publishing_base_decisions",
+              "legal_wrapper_larger_than_snapshot_budget_reopens_without_losing_archive_bytes",
+              "original_connection_is_retained_and_close_blocks_further_dispatch",
+              "base_selection_never_approves_a_different_wrapper_or_excess_permissions",
+              "late_registration_denial_retains_the_original_handle_for_close_cleanup",
+              "revoked_original_executor_cannot_be_replaced_by_a_live_managed_reader",
+              "rust_wasm_control_effect_followed_by_managed_stop_stays_unknown_without_replay",
+              "manager_drop_rejects_the_same_surviving_bridge",
+              "cancellation_at_r2_last_precommit_clock_cannot_create_or_append",
+              "stop_and_drop_cannot_leave_a_live_original_connection",
+              "foreign_r2_issuer_close_still_requests_original_provider_cleanup",
+              "switching_process_hosts_cannot_register_run_or_claim_successful_cleanup",
+              "last_pre_effect_clock_stop_never_calls_the_provider",
+              "stale_revision_foreign_manager_and_runtime_are_denied",
+              "disable_remove_and_upgrade_revoke_the_original_managed_control",
+              "rust_wasm_uses_original_manager_limits_and_sealed_session_continuation",
+              "reviewed_container_rejects_scope_elevation_and_corruption",
+              "changing_the_original_session_epoch_invalidates_live_process_controls",
+              "native_durable_marker_and_live_original_grant_enable_bounded_controls",
+              "claim_history_alone_cannot_register_a_process_or_invoke_a_provider",
+              "original_executor_is_required_and_historical_identity_is_not_a_new_grant",
+              "clock_advancing_during_original_authority_validation_blocks_first_effect",
+              "expiry_after_effect_changes_delivery_to_unknown_without_reexecution",
+              "compiled_rust_combined_guest_runs_original_session_flow_on_same_sqlite",
+              "compiled_rust_process_guest_discovers_and_controls_original_live_binding",
+              "denied_late_registration_remains_discoverable_for_trusted_cleanup",
+              "started_tool_validation_reads_authority_without_changing_the_record",
+              "tool_expiry_shorter_than_guest_approval_is_enforced",
+              "revoke_original_executor_proposer_or_tool_blocks_controls"
+            ]
+          }
+        ],
+        "source_pin_before": "79838d0e2fbcf4414645fe90fab30639057848a15e1511244ac2f83925c66cf0",
+        "source_pin_after": "79838d0e2fbcf4414645fe90fab30639057848a15e1511244ac2f83925c66cf0",
+        "source_changed_paths": [],
+        "sealed_guests_before": {
+          "MORROW_CODEX_COMBINED_GUEST": {
+            "path": "historical-local://c14/value-017",
+            "sha256": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e"
+          },
+          "MORROW_CODEX_PROCESS_GUEST": {
+            "path": "historical-local://c14/value-015",
+            "sha256": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+          }
+        },
+        "sealed_guests_after": {
+          "MORROW_CODEX_COMBINED_GUEST": {
+            "path": "historical-local://c14/value-017",
+            "sha256": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e"
+          },
+          "MORROW_CODEX_PROCESS_GUEST": {
+            "path": "historical-local://c14/value-015",
+            "sha256": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+          }
+        },
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "production protected owner",
+          "Workbench GUI",
+          "Windows native controls",
+          "production OS sandbox",
+          "other platforms",
+          "full SDK freeze"
+        ]
+      }
+    },
+    "clippy": {
+      "path": "qualification/clippy-final-001/receipt.json",
+      "sha256": "96a07b56ded74c7ced23304dfbde8723dbcbfe09e705000ef82df3a232b1b300",
+      "receipt": {
+        "stage": "C14",
+        "mode": "clippy",
+        "records": [
+          {
+            "argv": [
+              "historical-local://c14/value-018",
+              "clippy",
+              "--locked",
+              "--offline",
+              "--manifest-path",
+              "historical-local://c14/value-006",
+              "--target-dir",
+              "historical-local://c14/value-003",
+              "--all-targets",
+              "--",
+              "-Dwarnings"
+            ],
+            "exit_code": 0,
+            "seconds": 14.281,
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderr_sha256": "1d68b796cd58d2c7553bbd7b14cfc3ca16ceb62b607330f27cb1983bac17d984",
+            "test_results": [],
+            "passed_test_names": []
+          }
+        ],
+        "source_pin_before": "79838d0e2fbcf4414645fe90fab30639057848a15e1511244ac2f83925c66cf0",
+        "source_pin_after": "79838d0e2fbcf4414645fe90fab30639057848a15e1511244ac2f83925c66cf0",
+        "source_changed_paths": [],
+        "sealed_guests_before": {
+          "MORROW_CODEX_COMBINED_GUEST": {
+            "path": "historical-local://c14/value-017",
+            "sha256": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e"
+          },
+          "MORROW_CODEX_PROCESS_GUEST": {
+            "path": "historical-local://c14/value-015",
+            "sha256": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+          }
+        },
+        "sealed_guests_after": {
+          "MORROW_CODEX_COMBINED_GUEST": {
+            "path": "historical-local://c14/value-017",
+            "sha256": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e"
+          },
+          "MORROW_CODEX_PROCESS_GUEST": {
+            "path": "historical-local://c14/value-015",
+            "sha256": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+          }
+        },
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "production protected owner",
+          "Workbench GUI",
+          "Windows native controls",
+          "production OS sandbox",
+          "other platforms",
+          "full SDK freeze"
+        ]
+      }
+    },
+    "format": {
+      "path": "qualification/format-final-002/receipt.json",
+      "sha256": "67946189dd1cd5ae9946d7073cc396ebcdf125d64da459f4623d3581f37e0a1b",
+      "receipt": {
+        "stage": "C14",
+        "mode": "format",
+        "records": [
+          {
+            "argv": [
+              "historical-local://c14/value-019",
+              "--check",
+              "--edition",
+              "2024",
+              "--config",
+              "skip_children=true",
+              "historical-local://c14/value-013",
+              "historical-local://c14/value-014",
+              "historical-local://c14/value-009",
+              "historical-local://c14/value-010",
+              "historical-local://c14/value-007",
+              "historical-local://c14/value-011",
+              "historical-local://c14/value-008"
+            ],
+            "exit_code": 0,
+            "seconds": 0.078,
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "test_results": [],
+            "passed_test_names": []
+          }
+        ],
+        "source_pin_before": "79838d0e2fbcf4414645fe90fab30639057848a15e1511244ac2f83925c66cf0",
+        "source_pin_after": "79838d0e2fbcf4414645fe90fab30639057848a15e1511244ac2f83925c66cf0",
+        "source_changed_paths": [],
+        "sealed_guests_before": {
+          "MORROW_CODEX_COMBINED_GUEST": {
+            "path": "historical-local://c14/value-017",
+            "sha256": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e"
+          },
+          "MORROW_CODEX_PROCESS_GUEST": {
+            "path": "historical-local://c14/value-015",
+            "sha256": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+          }
+        },
+        "sealed_guests_after": {
+          "MORROW_CODEX_COMBINED_GUEST": {
+            "path": "historical-local://c14/value-017",
+            "sha256": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e"
+          },
+          "MORROW_CODEX_PROCESS_GUEST": {
+            "path": "historical-local://c14/value-015",
+            "sha256": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+          }
+        },
+        "status": "PASS_SCOPED",
+        "not_run": [
+          "production protected owner",
+          "Workbench GUI",
+          "Windows native controls",
+          "production OS sandbox",
+          "other platforms",
+          "full SDK freeze"
+        ]
+      }
+    },
+    "windows": {
+      "path": "native-runs/native-run-final-002/receipt.json",
+      "sha256": "f1e33a3df9caec6772473e44b2c9a05084c0aa5113efc11629bf60a2ac5905d2",
+      "receipt": {
+        "mode": "run",
+        "test_filter": "",
+        "cargo_home": "historical-local://c14/value-020",
+        "args": [
+          "historical-local://c14/value-018",
+          "test",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "historical-local://c14/value-005",
+          "--target-dir",
+          "historical-local://c14/value-001",
+          "--test",
+          "catalog_codex_wasm_windows",
+          "--",
+          "--nocapture",
+          "--test-threads=1",
+          "--skip",
+          "catalog_wasm_coupled_child_entry"
+        ],
+        "exit_code": 0,
+        "seconds": 10.63,
+        "source_before_sha256": "951ec1fdc82010de206d3922956e1bbc05d89d313a6ca05079ceccb3d4be21d8",
+        "source_after_sha256": "951ec1fdc82010de206d3922956e1bbc05d89d313a6ca05079ceccb3d4be21d8",
+        "changed_paths": [],
+        "artifacts_before": {
+          "MORROW_PROPOSAL_GUEST": {
+            "path": "historical-local://c14/value-016",
+            "sha256": "9552e969b09c9f982914e71ea99a3c93fddc2bdd30986f5932883bcaa3ac1243"
+          },
+          "MORROW_PROCESS_GUEST": {
+            "path": "historical-local://c14/value-015",
+            "sha256": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+          }
+        },
+        "artifacts_after": {
+          "MORROW_PROPOSAL_GUEST": {
+            "path": "historical-local://c14/value-016",
+            "sha256": "9552e969b09c9f982914e71ea99a3c93fddc2bdd30986f5932883bcaa3ac1243"
+          },
+          "MORROW_PROCESS_GUEST": {
+            "path": "historical-local://c14/value-015",
+            "sha256": "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36"
+          }
+        },
+        "stdout_sha256": "88b3c4ff54c97a6e090bbb53af8893b70ee9be85daab140a59336da023d03a5f",
+        "stderr_sha256": "9b1034bc0fc9f2a04497b4e880f9cddab37756f3162fb4957475e51a6fbddb64",
+        "runtime_executed": true,
+        "test_results": [
+          [
+            "ok",
+            "1",
+            "0",
+            "0"
+          ]
+        ],
+        "test_executables": [
+          {
+            "path": "historical-local://c14/value-002",
+            "sha256": "4a4d491a933667b34aa11c20fff94a6c26e921941e6c230f4c824a54f6080630"
+          }
+        ],
+        "execution": "coupling test executable started"
+      }
+    }
+  },
+  "native_observations": {
+    "proposal_wrapper_sha256": "2002892f2c3c312d515c137ac8801ce177ff73f91583f848aaa0a14ca31a8d8a",
+    "process_wrapper_sha256": "467d72e74aef58d9be6e28b239cb0373101497bcaaf35d149db5e5d71b6bfb93",
+    "sandbox": "None",
+    "observed_output": "stdout=69 stderr=24; exit Some(1); EOF true; finish and native registry empty"
+  },
+  "historic_failures": [
+    "host-final-001:17/18; monotonic clock test rewound 6 to 1, fixed only test input",
+    "native-lock-reconcile-001:101; restricted cached Git checkout, offline qualified retry preserved pins",
+    "native-build-001:build-only; host test input changed during compile, not a fixed-input runtime qualification"
+  ],
+  "not_run": [
+    "Workbench new private protocol/GUI/installation route",
+    "ProtectedSession borrowed native owner/worker",
+    "production OS sandbox and managed network",
+    "authenticated Codex transport",
+    "PTY/close-input/interrupt/resize backend",
+    "other platforms",
+    "entire 32-row proposed independent matrix as a suite; reviewer did not run tests",
+    "full SDK26/G04 freeze"
+  ],
+  "commit": false,
+  "push": false,
+  "release": false,
+  "_public_redaction": {
+    "kind": "PUBLIC_PATH_REDACTED_HISTORICAL_DERIVATIVE_NOT_CURRENT_QUALIFICATION",
+    "original_full_sha256": "a7d76d36087ba9e5bb60efcedec5292145768a1fed919ff219359ce6381b14d3",
+    "original_bytes": 29642,
+    "redacted_string_occurrences": 42,
+    "original_drive_prefix_occurrences": 42,
+    "path_values": [
+      {
+        "logical_value": "historical-local://c14/value-001",
+        "original_value_sha256": "6c00589b96465798bdc8233199213e54119a5dd00e8012d35c1e6835cf84c1ed"
+      },
+      {
+        "logical_value": "historical-local://c14/value-002",
+        "original_value_sha256": "ad2e83e62e5e2e8d5d6e62dd4e4d30f88d2e5a1f602eb51991b3a36229d0adcc"
+      },
+      {
+        "logical_value": "historical-local://c14/value-003",
+        "original_value_sha256": "0e895cf4a469bfe5cb0b6cc8654e919cab6b4a1e7496897fc6b5a1f4805ab0f7"
+      },
+      {
+        "logical_value": "historical-local://c14/value-004",
+        "original_value_sha256": "898fcb4c27fe965ca1c74af68a675606bdf7b3cdaea737f7147d4e3c39e78eb2"
+      },
+      {
+        "logical_value": "historical-local://c14/value-005",
+        "original_value_sha256": "5c70ca8c7976768a18ada730b0c7fbc17e17dd44b3cfe3708cbca2ccb531ed17"
+      },
+      {
+        "logical_value": "historical-local://c14/value-006",
+        "original_value_sha256": "ce863c1d62d55c01131aa976d0d3240453a9ae4fb5d0aa56c5c41aa0e3d187bf"
+      },
+      {
+        "logical_value": "historical-local://c14/value-007",
+        "original_value_sha256": "5586cf91cb1a90b06ed761a22592014a50241e9048cb3043de6b86fa61e6ab41"
+      },
+      {
+        "logical_value": "historical-local://c14/value-008",
+        "original_value_sha256": "eafbb5ead15488c3cfb9765a3bddda8a488152afe47988c9db4496e19bb35189"
+      },
+      {
+        "logical_value": "historical-local://c14/value-009",
+        "original_value_sha256": "7c6fa801558350007ebe36d7a6e3402ec8c7fd810735b56e504a3641ddf12579"
+      },
+      {
+        "logical_value": "historical-local://c14/value-010",
+        "original_value_sha256": "05cf6169d24ea2f6c79827430e7e6514697dea786837fa07218c69d0fb7c6a5b"
+      },
+      {
+        "logical_value": "historical-local://c14/value-011",
+        "original_value_sha256": "03b429436585e4b80e080825d2561139a32b1f91346367d24a5fd1cd5c74358b"
+      },
+      {
+        "logical_value": "historical-local://c14/value-012",
+        "original_value_sha256": "a3f2037f6e83637dab9492a05780be4e9d49db9289954bd3af9d64b27e9ab3be"
+      },
+      {
+        "logical_value": "historical-local://c14/value-013",
+        "original_value_sha256": "ca4d7872625c03fa9296923377ea77adaaf11bddce42e2d67fe4fd228da802c0"
+      },
+      {
+        "logical_value": "historical-local://c14/value-014",
+        "original_value_sha256": "b0ceb7827b8b7e46bfcc3c873652d5b43b75c8e78fdb60823adda25403e54d34"
+      },
+      {
+        "logical_value": "historical-local://c14/value-015",
+        "original_value_sha256": "17e982b894c2274430fbf640e9fcb12a69e1f48eeb7b1f96ecdf85291944f985"
+      },
+      {
+        "logical_value": "historical-local://c14/value-016",
+        "original_value_sha256": "51df02413915e02d404c41b87185b251f8223dcd37be7cbd720b5db6373ddcad"
+      },
+      {
+        "logical_value": "historical-local://c14/value-017",
+        "original_value_sha256": "38f7b77fc3f55a5a513c89383b342ee2fc115616b0a0ae6cfcf3a0b03d9c64bb"
+      },
+      {
+        "logical_value": "historical-local://c14/value-018",
+        "original_value_sha256": "a8a749f39a70449170dca1279c189663d6d4df967e7fb36103acda9aa1522f86"
+      },
+      {
+        "logical_value": "historical-local://c14/value-019",
+        "original_value_sha256": "0570a1b569a490586ca33fe782f2783af946916e9244456051602fab05476959"
+      },
+      {
+        "logical_value": "historical-local://c14/value-020",
+        "original_value_sha256": "de226fc17da6702adbc339ec7d2a757b94dc858fa740b76cf62cbc07275c5a6d"
+      }
+    ],
+    "policy": "Only strings or keys containing local drive paths are replaced by stable logical identifiers, including path-bearing recorded command text. All other original values remain identical. These identifiers are not executable/restorable paths; no new test run or source qualification is inferred.",
+    "provenance_document": "PUBLIC_VALIDATION_PROVENANCE.md"
+  }
+}

@@ -10,11 +10,28 @@ Version1 raw schema SHA256：`04bc8c556059551c320df641f28bf8da5475737534f9d161ad
 
 旧Core IO FileList仍Unsupported；page/IO schema、base与原四extension discovery不改，新记录独立置于 `experimental_extensions.directory_request_discovery`。元数据不授权，production public binding=false，Workbench routes为空。
 
-Windows codec12/helper4/package9/owner9及两个native C/C++消费者已通过。新Rust示例仅编译到wasm32-unknown-unknown；真实产物执行、C/C++ Wasm、第三方分发和产品界面均未验收。原guest/provider未重建，提供新源码不表示三语言产品资格已通过。
+此前 Windows codec 12／helper 4／package 9／owner 9 及两个 native C/C++ 消费者已通过。2026-10-06，新构建并分别核对独立 SHA256 的 **Rust／C／C++ Wasm guest** 已在原 managed owner、普通 Store 与合成 TempDir 上实际执行：`directory-windows-004` 共 **12 项通过，即三语言各四案**，覆盖 70 条目录项的三页完成、FileList 独立批准、外国 worker 的 selection 拒绝，以及 Ready 输出取消后 Unknown／不重放／字节费用不退／原 owner 实际 join。初次 `directory-windows-003` 的 3 PASS／9 FAIL 源于测试错误假设 prepare 只发生一次，原始失败记录保留。详见 [Windows C11 限定复验报告](../../reports/reconstruction-2026-10-06/windows-sdk-c11.md)。
+
+真实 guest 组须显式启用 `directory-guest-qualification` 并运行 `directory_sdk_guests`；普通 `packages` 测试不要求这些外部 Wasm 产物。复验须使用报告所绑定、经审阅的新构建记录，分别提供下列六个环境键；三个路径必须是绝对路径，三个 SHA256 必须来自独立审阅的产物身份，不能用临时重算摘要替代 pin。
+
+| 语言 | Wasm 绝对路径 | 独立 SHA256 |
+| --- | --- | --- |
+| Rust | `MORROW_RUST_DIRECTORY_REQUEST_WASM` | `MORROW_RUST_DIRECTORY_REQUEST_WASM_SHA256` |
+| C | `MORROW_C_DIRECTORY_REQUEST_WASM` | `MORROW_C_DIRECTORY_REQUEST_WASM_SHA256` |
+| C++ | `MORROW_CPP_DIRECTORY_REQUEST_WASM` | `MORROW_CPP_DIRECTORY_REQUEST_WASM_SHA256` |
+
+下面的 `$RustWasm`／`$CWasm`／`$CppWasm` 及三个 `$Reviewed…Sha256` 从同一批经过审阅的构建记录取值；`$RuntimeTarget` 为仓库外独立输出目录。先准备 Windows 工具链、Cap’n Proto 编译器及锁定离线依赖，再从候选仓库根目录执行：
 
 ```powershell
-cargo test --manifest-path extensions/fs-directory-request-v1/Cargo.toml -p morrow-fs-directory-request-v1 --target x86_64-pc-windows-msvc --release --locked --offline
-cargo build --manifest-path extensions/fs-directory-request-v1/Cargo.toml -p morrow-fs-directory-request-guest --target wasm32-unknown-unknown --release --locked --offline
+$env:MORROW_RUST_DIRECTORY_REQUEST_WASM = $RustWasm
+$env:MORROW_RUST_DIRECTORY_REQUEST_WASM_SHA256 = $ReviewedRustSha256
+$env:MORROW_C_DIRECTORY_REQUEST_WASM = $CWasm
+$env:MORROW_C_DIRECTORY_REQUEST_WASM_SHA256 = $ReviewedCSha256
+$env:MORROW_CPP_DIRECTORY_REQUEST_WASM = $CppWasm
+$env:MORROW_CPP_DIRECTORY_REQUEST_WASM_SHA256 = $ReviewedCppSha256
+cargo test --manifest-path plugin_runtime/Cargo.toml --locked --offline --features directory-guest-qualification --test directory_sdk_guests --target-dir $RuntimeTarget -- --test-threads=1 --nocapture
 ```
 
-要求对应Rust target、锁定依赖缓存和Cap’n Proto编译器可用。输出放在独立target目录，不能覆盖冻结guest/provider。命令不表示完整SDK资格。
+这 12 项只证明 Windows 合成选择上的三语言实际消费与原批准／生命周期边界。完整 SDK26／G04 仍 OPEN；生产 GUI、ProtectedSession、系统 picker 来源、真实用户数据、第三方分发与其他平台本轮 `NOT_RUN`。旧 guest/provider 未由本阶段重建，原冻结 SDK 输入与锁文件保持；本结果不构成完整 SDK、平台或产品验收。
+
+构建方法与单一Rust runtime约束见[FFI support](guests/ffi-support/README.md)。

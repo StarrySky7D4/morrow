@@ -1,0 +1,136 @@
+
+["package"]
+"name" = "codex-sandboxing"
+
+["package"."version"]
+"workspace" = true
+
+
+["package"."edition"]
+"workspace" = true
+
+
+["package"."license"]
+"workspace" = true
+
+
+
+["lib"]
+"name" = "codex_sandboxing"
+"path" = "src/lib.rs"
+"doctest" = false
+
+
+["lints"]
+"workspace" = true
+
+
+["dependencies"]
+
+["dependencies"."anyhow"]
+"workspace" = true
+
+
+["dependencies"."codex-mxc-sandbox"]
+"workspace" = true
+
+
+["dependencies"."codex-network-proxy"]
+"workspace" = true
+
+
+["dependencies"."codex-protocol"]
+"workspace" = true
+
+
+["dependencies"."codex-uds"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-absolute-path"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-path-uri"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-pty"]
+"workspace" = true
+
+
+["dependencies"."codex-windows-sandbox"]
+"workspace" = true
+
+
+["dependencies"."dunce"]
+"workspace" = true
+
+
+["dependencies"."libc"]
+"workspace" = true
+
+
+["dependencies"."serde_json"]
+"workspace" = true
+
+
+["dependencies"."regex-lite"]
+"workspace" = true
+
+
+["dependencies"."tokio"]
+"workspace" = true
+"features" = ["rt", "sync"]
+
+
+["dependencies"."tracing"]
+"workspace" = true
+"features" = ["log"]
+
+
+["dependencies"."url"]
+"workspace" = true
+
+
+["dependencies"."which"]
+"workspace" = true
+
+
+
+["target"]
+
+["target"."cfg(windows)"]
+
+["target"."cfg(windows)"."dependencies"]
+
+["target"."cfg(windows)"."dependencies"."codex-otel"]
+"workspace" = true
+
+
+["target"."cfg(windows)"."dependencies"."codex-utils-home-dir"]
+"workspace" = true
+
+
+
+
+
+["dev-dependencies"]
+
+["dev-dependencies"."anyhow"]
+"workspace" = true
+
+
+["dev-dependencies"."pretty_assertions"]
+"workspace" = true
+
+
+["dev-dependencies"."tempfile"]
+"workspace" = true
+
+
+["dev-dependencies"."tokio"]
+"workspace" = true
+"features" = ["macros", "rt", "time"]
+
+

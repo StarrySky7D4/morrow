@@ -197,6 +197,7 @@ pub struct Runner {
     channel_abi: bool,
     directory_abi: bool,
     agent_abi: bool,
+    agent_process_abi: bool,
     engine: Engine,
     module: Module,
     limits: Limits,
@@ -204,41 +205,61 @@ pub struct Runner {
 impl Runner {
     pub fn new(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
         Self::prepare(
-            bytes, limits, false, false, false, false, false, false, false,
+            bytes, limits, false, false, false, false, false, false, false, false,
         )
     }
     pub fn new_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
         Self::prepare(
-            bytes, limits, true, false, false, false, false, false, false,
+            bytes, limits, true, false, false, false, false, false, false, false,
         )
     }
     /// Task ABI with one additional fixed dependency import. The callback is host-routed;
     /// it must not re-enter this guest and cannot be supplied to ordinary task runners.
     pub fn new_dependency_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, true, false, false, false, false, false)
+        Self::prepare(
+            bytes, limits, true, true, false, false, false, false, false, false,
+        )
     }
     /// Task ABI with the fixed IO import. Combined with dependency imports is rejected.
     pub fn new_io_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false, true, false, false, false, false)
+        Self::prepare(
+            bytes, limits, true, false, true, false, false, false, false, false,
+        )
     }
     /// The separate mutation import is available only to an explicitly negotiated
     /// package frame. Ordinary synchronous Runner entry points fail closed.
     pub fn new_mutation_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false, false, true, false, false, false)
+        Self::prepare(
+            bytes, limits, true, false, false, true, false, false, false, false,
+        )
     }
     /// Independent local channel profile. Only a managed channel broker can drive it.
     pub fn new_channel_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false, false, false, true, false, false)
+        Self::prepare(
+            bytes, limits, true, false, false, false, true, false, false, false,
+        )
     }
     /// Fifth fixed extra import. Only original managed directory-owner dispatch may drive it.
     /// All legacy factories continue rejecting this import and mixed extra profiles.
     pub fn new_directory_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false, false, false, false, true, false)
+        Self::prepare(
+            bytes, limits, true, false, false, false, false, true, false, false,
+        )
     }
     /// Independent R2 agent profile. A reviewed host package drives this import;
     /// legacy task/IO factories continue to reject it.
     pub fn new_agent_session_exec_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false, false, false, false, false, true)
+        Self::prepare(
+            bytes, limits, true, false, false, false, false, false, true, false,
+        )
+    }
+    /// Explicit combined session/process profile with one extra import. Frames are
+    /// routed by a reviewed host against their independent canonical schemas.
+    /// This does not relax any legacy factory or admit mixed extra imports.
+    pub fn new_agent_session_process_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
+        Self::prepare(
+            bytes, limits, true, false, false, false, false, false, false, true,
+        )
     }
     #[allow(clippy::too_many_arguments)]
     fn prepare(
@@ -251,6 +272,7 @@ impl Runner {
         channel_abi: bool,
         directory_abi: bool,
         agent_abi: bool,
+        agent_process_abi: bool,
     ) -> Result<Self, Fault> {
         if !task_abi
             && (dependency_abi
@@ -258,13 +280,15 @@ impl Runner {
                 || mutation_abi
                 || channel_abi
                 || directory_abi
-                || agent_abi)
+                || agent_abi
+                || agent_process_abi)
             || u8::from(dependency_abi)
                 + u8::from(io_abi)
                 + u8::from(mutation_abi)
                 + u8::from(channel_abi)
                 + u8::from(directory_abi)
                 + u8::from(agent_abi)
+                + u8::from(agent_process_abi)
                 > 1
         {
             return Err(Fault::UnsupportedAbi);
@@ -306,6 +330,7 @@ impl Runner {
                 ("morrow_channel_v1", "call") if channel_abi => 4,
                 ("morrow_fs_directory_v1", "call") if directory_abi => 4,
                 ("morrow_agent_session_exec_v1", "call") if agent_abi => 4,
+                ("morrow_agent_session_process_v1", "call") if agent_process_abi => 4,
                 ("morrow_task_v1", "read_input" | "complete") if task_abi => 2,
                 _ => return Err(Fault::UnsupportedAbi),
             };
@@ -326,6 +351,9 @@ impl Runner {
             return Err(Fault::UnsupportedAbi);
         }
         if agent_abi && !imports.contains(&("morrow_agent_session_exec_v1", "call")) {
+            return Err(Fault::UnsupportedAbi);
+        }
+        if agent_process_abi && !imports.contains(&("morrow_agent_session_process_v1", "call")) {
             return Err(Fault::UnsupportedAbi);
         }
         let mut memory = false;
@@ -352,6 +380,7 @@ impl Runner {
             channel_abi,
             directory_abi,
             agent_abi,
+            agent_process_abi,
             engine,
             module,
             limits,
@@ -404,7 +433,26 @@ impl Runner {
         agent: Exchange<'a>,
         cancel: Cancellation,
     ) -> TaskRun {
-        let started = if self.agent_abi {
+        self.run_agent_route(input, agent, cancel, self.agent_abi)
+    }
+    /// Run the explicitly prepared session/process profile. The trusted router
+    /// enforces live original authority and actual provider capabilities per call.
+    pub fn run_agent_session_process_task<'a>(
+        &self,
+        input: &'a [u8],
+        route: Exchange<'a>,
+        cancel: Cancellation,
+    ) -> TaskRun {
+        self.run_agent_route(input, route, cancel, self.agent_process_abi)
+    }
+    fn run_agent_route<'a>(
+        &self,
+        input: &'a [u8],
+        agent: Exchange<'a>,
+        cancel: Cancellation,
+        negotiated: bool,
+    ) -> TaskRun {
+        let started = if negotiated {
             continuation::Execution::start(self, Some(input), cancel)
         } else {
             Err(Fault::UnsupportedAbi)
@@ -447,6 +495,7 @@ impl Runner {
             || self.channel_abi
             || self.directory_abi
             || self.agent_abi
+            || self.agent_process_abi
             || self.dependency_abi != dependency.is_some()
             || self.io_abi != io.is_some()
         {

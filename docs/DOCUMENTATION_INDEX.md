@@ -1,5 +1,70 @@
 # Morrow 文档导航与维护范围
 
+<!-- C28-CURRENT-BEGIN -->
+## 当前开发检查点（2026-10-08，C28）
+
+本次向 `codex/windows-sdk-convergence-20261005` 同步 C11–C28 的 Agent/SDK 开发源码、相对路径构建入口与限定进度说明；应用版本保持 `0.1.9-test.58+62`，不更新 main、标签或 Release。
+
+原 protected owner 的会话链已有有界验证，H008 编译与 8 项纯诊断测试通过；Windows 原生 Start 仍为 Unknown，清理和显式修复仍 pending，不重放不确定操作。新诊断版完整 Windows 链尚未运行，移植副本的依赖检查与既有隔离测试分别记录。Agent 接口仍 experimental，安全执行层、SDK26/G04、完整 Codex IPC、PTY/stdin/resize、完整网络隔离及其他平台资格仍 OPEN。
+
+优先完成新 Windows 链实测、定位 Start Unknown 并复验真实回收；会话层与安全执行层验收后暂停准备测试预览。完整范围见 [C28 同步说明](../reports/reconstruction-2026-10-08/windows-agent-sdk-c28.md)。下方报告保留各自历史时点，旧“未推送”不覆盖本次同步。
+<!-- C28-CURRENT-END -->
+
+<!-- C16-CURRENT-BEGIN -->
+2026-10-06 C16 本地实验性候选：新增可信 Rust Agent start/submit/poll/cancel/recover/acknowledge
+入口，移动完整原 owner，沿用同 Core/Store/runtime/连接；每 import 维护原 owner。
+借用执行与 scheduler 回收有界；真实 join 后仅同步唯一 Runtime 所有权可回收，别名保留 16 有界债务。
+普通无沙箱、非 ProtectedSession 的封存 Rust Wasm＋实际 Windows worker 耦合 3 项通过；各组收据见报告，
+不作为生产 GUI、真实受保护库/DPAPI 或生产沙箱资格。旧 SDK327/57、合同、Linux 与 C15 工件守卫通过。
+接口仍 experimental，SDK26/G04 OPEN；未提交、推送、Release 或 CI，不代表正式 SDK 冻结。
+见 [原生 owner 接口](PLUGIN_AGENT_NATIVE_OWNER.md) 与 [C16 报告](../reports/reconstruction-2026-10-06/codex-sdk-c16.md)；下方 C15 及更早内容保留其历史范围。
+<!-- C16-CURRENT-END -->
+
+<!-- C15-CURRENT-BEGIN -->
+2026-10-06 C15本地候选：工作台完整会话插件管理已接独立admin协议/owner与设置界面，
+借原Manager/持久catalog，保留原busy/lost/恢复门禁和顶层native管道，不改旧Core/IO。
+admin10、owner18、旧host18/14/13/1回归分别通过；Dart18（含实际Rust五对向量互验
+和原管道Busy路由）通过。新库strict Clippy、Dart fatal-infos/限定格式和Windows宿主check
+通过；不是新OS执行/真实桌面/ProtectedSession资格。327/57/旧合同/Linux/封存工件保持。
+实际native port借原runtime/worker、生产GUI、认证/sandbox、交互控制及全SDK26/G04仍OPEN。
+没有commit/push/Release/CI。详见 [C15报告](../reports/reconstruction-2026-10-06/codex-sdk-c15.md)；下方C14及更早内容保留其历史范围。
+<!-- C15-CURRENT-END -->
+
+<!-- C14-CURRENT-BEGIN -->
+2026-10-06 C14本地候选：完整Agent wrapper持久catalog/approval接口已实现，原Manager撤销seam
+和同原connection/freshadmission接线保持。新catalog18、Manager新3与其原6、原回归11/1/6、
+旧managed/route/schema14/13/1分别通过；实际Windows新1通过（helper1过滤，sandbox=None）。
+大包装不受原快照512KiB限制，static审批不恢复livegrant；保存故障/Unknown即时撤旧Core，
+旧效果不重放。327/57/旧合同/封存工件保持；Workbench新协议/GUI、ProtectedSession/native
+owner、认证transport、sandbox、交互控制/其他平台及SDK26/G04仍OPEN。未commit/push/Release。
+详见 [C14报告](../reports/reconstruction-2026-10-06/codex-sdk-c14.md)；下方C13及更早文字为各日期历史，不替代本条实际范围。
+<!-- C14-CURRENT-END -->
+
+
+<!-- C13-CURRENT-BEGIN -->
+当前 C13（2026-10-06，本地未提交）：会话/进程新入口已接原 Catalog/Registry/Manager，
+共用原实例限额、Control 与连接；基础包与完整 wrapper 仍独立批准，预算取交集。
+新增 managed host 14、Manager 6、HostIdentity 3、真实 Windows managed Wasm 2 分别通过；
+原 host 1+13、Manager 11+1、strict 6、process 18+5 回归另计，重复不累计。
+修正提交前取消、effect 后 Unknown 与错配收尾；新 host strict Clippy/限定格式通过。
+旧 327 SDK／57 冻结输入、wire/schema 与封存工件保持；新候选不继承旧冻结 pin。
+完整 wrapper 持久审批、Workbench/ProtectedSession owner、sandbox/认证/其他平台仍
+OPEN/NOT_RUN；SDK26/G04 未冻结。见 [C13 接线与实际边界](../reports/reconstruction-2026-10-06/codex-sdk-c13.md)。
+下方 C12 及更早检查点保留历史结果与当时身份；本轮现状以 C13 为准。
+<!-- C13-CURRENT-END -->
+
+<!-- C12-CURRENT-BEGIN -->
+当前 C12 接口增量（2026-10-06，本地未提交）：已补会话 Rust/Wasm 客户端、类型化进程控制、
+严格 single-import 组合运行入口和原 R2 执行权实时复验。process 合同 23、R2 客户端 10、
+旧入口真实 Wasm 6、process 客户端 10、组合 host 14、运行入口 6、定向 runtime 回归 21、
+原 R2 回归 106 分别通过，重复方法不累计。Windows 原生实际执行 7 项、纯注册表 3 项、真实 proposal Wasm→Windows→process Wasm 耦合 3 项分别通过；封存 Wasm 未重建，Unknown 不重放。
+327 SDK／57 冻结输入及旧封存归档保持；新候选不继承旧冻结 pin。
+原生 close-input／PTY resize 尚 Unsupported；完整 SDK26／G04、产品 GUI、受保护内容库、
+OS sandbox、认证 transport 和其他平台仍 OPEN／NOT_RUN。详见 [C12 接口与限定证据](../reports/reconstruction-2026-10-06/codex-sdk-c12.md)。
+
+下方 C11 及更早日期的文字保留当时的身份、结果与未运行范围；本轮现状以 C12 为准。
+<!-- C12-CURRENT-END -->
+
 当前C10检查点（2026-10-05）：本次开发分支更新收录C08–C10。C10已新增独立 `fs-directory-request-v1`、严格单import、包feature及只读discovery，复用原已批准selection和owner，不导出路径、句柄或新授权。Windows新Rust34（codec12/helper4/profile9/owner9）、既有回归191及frame5分别通过；Python33和两个原生C/C++消费者另计。新Rust Wasm仅编译通过，真实新Rust guest、C/C++ Wasm、Workbench产品／GUI、受保护Session与其他平台仍未验收。旧Core IO FileList保持Unsupported，SDK26／G04仍OPEN，无新Release。 详见[接口与实测边界](../reports/reconstruction-2026-10-05/directory-request-sdk.md)。
 
 核对日期：2026-10-05。当前版本、资格和下一阶段以[项目状态](PROJECT_STATUS.md)为准；具体任务见[开发看板](DEVELOPMENT_BOARD.md)、[路线](FUTURE_ROADMAP.md)和[SDK 门槛](../reports/reconstruction-2026-10-05/sdk-next-gates.md)。

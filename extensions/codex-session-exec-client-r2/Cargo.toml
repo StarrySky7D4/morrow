@@ -1,0 +1,17 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "morrow-codex-session-exec-client-r2"
+version = "0.1.0-experimental.1"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+
+[dependencies]
+morrow-agent-session-exec-v1-r2 = { path = "../agent-session-exec-v1-r2", default-features = false }
+
+[dev-dependencies]
+morrow-agent-session-exec-v1-r2 = { path = "../agent-session-exec-v1-r2", features = ["host"] }
+morrow-core = { path = "../../core" }
+tempfile = "=3.27.0"

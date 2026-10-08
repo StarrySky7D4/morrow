@@ -9,7 +9,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
     // Client builds bind the authoritative Core schema files without linking
     // Core's host Store and SQLite dependencies. There is no schema copy.
-    let core = std::path::Path::new("../../core");
+    let core = std::path::Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../core"));
     let runtime_source = core.join("src/runtime.rs");
     println!("cargo:rerun-if-changed={}", runtime_source.display());
     let version_source = std::fs::read_to_string(runtime_source)?;

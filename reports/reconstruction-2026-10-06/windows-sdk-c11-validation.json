@@ -1,0 +1,334 @@
+{
+  "stage": "C11",
+  "date": "2026-10-06",
+  "status": "PASS_WINDOWS_SYNTHETIC_SCOPED",
+  "source_base_commit": "e83cdf1d3506b001d07ffceaaa9f98b688bcc150",
+  "source_base_tree": "abcdee6e582ce18954118430e514f1d0805ce095",
+  "live_corrections_uncommitted": true,
+  "windows_target": "x86_64-pc-windows-msvc",
+  "rust_toolchain": "1.95.0",
+  "guest_target": "wasm32-unknown-unknown",
+  "artifacts": {
+    "rust": {
+      "sha256": "e17fc41bf5e456410735bf0fdfeef6542525d3c2831f0d65220c1035363e09df",
+      "bytes": 175621
+    },
+    "c": {
+      "sha256": "42444642fefd3adf17bb3b32877f977388cf1daacedf7fda9a30be57d75adbbc",
+      "bytes": 120188
+    },
+    "cpp": {
+      "sha256": "5b99c83fbecadce91a814f236529faeb86113f41b8d3306c3ed8d13d24c2e860",
+      "bytes": 121122
+    }
+  },
+  "fresh_meaningful_rust_methods": {
+    "session_r2": 106,
+    "directory_three_languages": 12,
+    "compatibility_and_directory_boundaries": 77
+  },
+  "python_archive_methods": {
+    "run": 102,
+    "passed": 99,
+    "skipped_posix_fifo": 3
+  },
+  "new_builder_methods": {
+    "run": 15,
+    "passed": 15
+  },
+  "original_sdk_inputs_preserved": 327,
+  "original_frozen_inputs_preserved": 57,
+  "original_guard_manifest_sha256": "d8b9499f57d35d27d5af0d4ce10d9f68539b7e7b2d5acab429e659598a532f2e",
+  "original_r1_r2_identities": {
+    "session-exec-v1-r1-source.tar.gz": "c8ca0b529f3cc33177b36a7a3c396f42168a4303532f0a93ce28fd6aa3970d0c",
+    "session-exec-v1-r2-source.tar.gz": "59a1a276a6e432a9bfa78c42e2b7bbe81f21e236579de5890fa96ce0593fbb8b",
+    "session-exec-v1-freeze.json": "2e958fde445c37671f3100e1f880875fe4d8c9173a7014519494a55f1b9c33f5",
+    "session-exec-v1-r2-freeze.json": "7c86d0cfa2f5714bbaae7031a1526a08ed61a48068f3210258d4002d33aa2e6f",
+    "session-exec-v1-freeze.sha256": "5201c29441cad1caaf03e6432302a599dc8f54662861b894d152be4159007dbb",
+    "session-exec-v1-r2-freeze.sha256": "2a99d6bf04ff2306c6fb9268ea04463a70ff3d30ad040ec13235d0980e684376"
+  },
+  "r2_archive_verification": {
+    "archive_sha256": "59a1a276a6e432a9bfa78c42e2b7bbe81f21e236579de5890fa96ce0593fbb8b",
+    "manifest_sha256": "7c86d0cfa2f5714bbaae7031a1526a08ed61a48068f3210258d4002d33aa2e6f",
+    "source_files_verified": 573,
+    "recorded_tests_verified": 156,
+    "recorded_python_tests_verified": 32,
+    "recorded_commands_verified": 19,
+    "current_reexecution": false,
+    "current_executable_inputs_verified": false,
+    "portable_source_archive_verified": true
+  },
+  "code_sha256": {
+    "extensions/agent-session-exec-v1-r2/tests/safe_exec.rs": "66eb8d5fc01defbe8c1cbb84758d85963f6c85699fab38ee5099d1c10c51e32a",
+    "plugin_runtime/Cargo.toml": "c196f0d51b5a03e9b5a274d1579c37ca0bdfe00389bf5f26785d497330c99330",
+    "plugin_runtime/tests/directory_sdk_guests.rs": "99a5b302366d2605766be465799f198ecce2f49e7d211a949f0101d939580ca4",
+    "tool/verify_session_exec_r2.py": "2f21cc48970540fc5e7b3991884f6d3538cbac01bcadc5d629e76461b7cab5d7",
+    "tool/tests/test_session_exec_r2.py": "340543485d77029bb2e3da816a97be979f3e1155dd0f4dc889c603d297838fd4",
+    "tool/build_directory_guest_samples.py": "916ec83689fcb767672d2a5aabae31639baca47dcd0d2ca9886e2bebfd8b3013",
+    "tool/tests/test_directory_guest_samples.py": "ff29aca7ab0a167aa3a91edb5dba3c33acc595fc271b2d90cf74688f2b2bb188",
+    "extensions/fs-directory-request-v1/guests/ffi-support/Cargo.toml": "ef8bb7f8d9385f32b2cedd23cd29479b74fd8d0e0d141e4d286435ad1027c024",
+    "extensions/fs-directory-request-v1/guests/ffi-support/Cargo.lock": "e07c5ef7411902144505e8f41c2f92ac8c8e0c1d9d81711f48c5ad9fd284eb3c",
+    "extensions/fs-directory-request-v1/guests/ffi-support/src/lib.rs": "356acedeb2ce6397591369c9d56b26ac36293c06ee3214a408883864505b042d"
+  },
+  "raw_evidence_hashes": {
+    "session_r2_windows": {
+      "exit_code": 0,
+      "stdout_sha256": "df526514534bfe8d888bd91f355af90c2b3634a7e580ddd01a76aea61eebffe1",
+      "stderr_sha256": "811c8165c98120d99bead6c8771e9ca2815868564bca4cc533a28ac7bcd72db5",
+      "source_input_manifest_sha256": "c47246708625751c40c36e08d12a00340888b4e47d734e102da459b39337621c",
+      "test_summaries": [
+        {
+          "status": "ok",
+          "passed": "6",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        },
+        {
+          "status": "ok",
+          "passed": "48",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        },
+        {
+          "status": "ok",
+          "passed": "28",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        },
+        {
+          "status": "ok",
+          "passed": "24",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        },
+        {
+          "status": "ok",
+          "passed": "0",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        }
+      ]
+    },
+    "directory_three_languages": {
+      "exit_code": 0,
+      "stdout_sha256": "3b8421ea525eb7a84408c68692fbc26dbc5ffe68ec90052b0346479fb7597134",
+      "stderr_sha256": "3b45a4401fcb5c202ba20b56c68fc0857a587f77a68cb4e3bae04b06c20bfdc7",
+      "source_input_manifest_sha256": "720270b32477fd0c035a57aac4b557a91de47650979ea8ba6aea0457523213f7",
+      "test_summaries": [
+        {
+          "status": "ok",
+          "passed": "12",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        }
+      ]
+    },
+    "original_and_directory_boundaries": {
+      "exit_code": 0,
+      "stdout_sha256": "68c06bf9cb7e56e88a89552c04343135e7bb954a3a5c03fb1572a2bd5ab21f9f",
+      "stderr_sha256": "837dec5e62e0841a1c3c0f7224b8d5fe0c52b49b6ada977186c08b36d965df90",
+      "source_input_manifest_sha256": "b3f7bba22c8321673da0a6e51b1d519c4a13eb0b98c3df6611836b324e1315cb",
+      "test_summaries": [
+        {
+          "status": "ok",
+          "passed": "11",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        },
+        {
+          "status": "ok",
+          "passed": "9",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        },
+        {
+          "status": "ok",
+          "passed": "9",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        },
+        {
+          "status": "ok",
+          "passed": "9",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "1"
+        },
+        {
+          "status": "ok",
+          "passed": "9",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        },
+        {
+          "status": "ok",
+          "passed": "3",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        },
+        {
+          "status": "ok",
+          "passed": "14",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        },
+        {
+          "status": "ok",
+          "passed": "2",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        },
+        {
+          "status": "ok",
+          "passed": "4",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "0"
+        }
+      ]
+    },
+    "windows_readonly_mappings": {
+      "exit_code": 0,
+      "stdout_sha256": "86d1030a21746aad1c530794ba9dbadbbce5e129ed450c4ddd93818f4b9094d3",
+      "stderr_sha256": "05542bc410cde2f85643d75a8e4ea306615f69c60d2a643b9b7f0ff3f69979eb",
+      "source_input_manifest_sha256": "b3f7bba22c8321673da0a6e51b1d519c4a13eb0b98c3df6611836b324e1315cb",
+      "test_summaries": [
+        {
+          "status": "ok",
+          "passed": "7",
+          "failed": "0",
+          "ignored": "0",
+          "measured": "0",
+          "filtered": "84"
+        }
+      ]
+    },
+    "python_archive_gates": {
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "394b577b319575265b103d04f94fcacabb62a488a3e2efd4d0d38fb7aed28889",
+      "source_input_manifest_sha256": "ee806f0003f1522c36cf1cac10e4d03a8be41bb6ff3995e9186428e4781da351",
+      "test_summaries": []
+    },
+    "r1_archive": {
+      "exit_code": 0,
+      "stdout_sha256": "cfd82562bc1d2e2d4f7ccdc034923cbac3fecdb42dd4fdf6daa8ac29f04b4066",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_input_manifest_sha256": "ee806f0003f1522c36cf1cac10e4d03a8be41bb6ff3995e9186428e4781da351",
+      "test_summaries": []
+    },
+    "r2_archive": {
+      "exit_code": 0,
+      "stdout_sha256": "9d33bc1c48b853261f6fcb1ccd10b0b569fdc4fbceeaed7c9e3f99b7c29111e3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_input_manifest_sha256": "ee806f0003f1522c36cf1cac10e4d03a8be41bb6ff3995e9186428e4781da351",
+      "test_summaries": []
+    },
+    "original_baseline": {
+      "exit_code": 0,
+      "stdout_sha256": "6e74c39d0d7be7422f0d072979529416ea0ffbaeb1b0dd69aa9189ae875c0f35",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_input_manifest_sha256": "ee806f0003f1522c36cf1cac10e4d03a8be41bb6ff3995e9186428e4781da351",
+      "test_summaries": []
+    },
+    "original_transport": {
+      "exit_code": 0,
+      "stdout_sha256": "45a815a0b477bbe047ad3d65cca2b0440a85d3830fe91c69a558ecf821610e2e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_input_manifest_sha256": "ee806f0003f1522c36cf1cac10e4d03a8be41bb6ff3995e9186428e4781da351",
+      "test_summaries": []
+    },
+    "contract_sync": {
+      "exit_code": 0,
+      "stdout_sha256": "618d3d82a4f510557775d308a43e38a4b546c31a8259f2f16778fc1c0651282d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_input_manifest_sha256": "ee806f0003f1522c36cf1cac10e4d03a8be41bb6ff3995e9186428e4781da351",
+      "test_summaries": []
+    }
+  },
+  "builder_after_review": {
+    "receipt_sha256": "a499cbb82b367372458edca4f76605e727d1c9cb8b935ae74d4fac0f7ec73dca",
+    "script_sha256": "916ec83689fcb767672d2a5aabae31639baca47dcd0d2ca9886e2bebfd8b3013",
+    "test_sha256": "ff29aca7ab0a167aa3a91edb5dba3c33acc595fc271b2d90cf74688f2b2bb188",
+    "unit_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unit_stderr_sha256": "5b379b7a42c4854123b0e678215c3e74c8927442f602fdd0d4c0c7b0ad423fa7",
+    "command_count": 12,
+    "all_exit_zero": true,
+    "unchanged_executed_artifacts": true
+  },
+  "preserved_failures": [
+    {
+      "case": "previous Windows R2 archive",
+      "cause": "native path flavor used for recorded Linux paths",
+      "status": "FIXED_SCOPED"
+    },
+    {
+      "case": "previous Windows safe-exec 28 methods",
+      "cause": "Linux-only executable read in portable logical fixture",
+      "status": "FIXED_SCOPED"
+    },
+    {
+      "case": "directory-windows-003",
+      "passed": 3,
+      "failed": 9,
+      "cause": "fixture incorrectly expected exactly one prepare hook",
+      "status": "FIXTURE_FIXED_AND_FULL_12_RETESTED"
+    },
+    {
+      "case": "build-tool-review/before",
+      "passed": 10,
+      "failed": 4,
+      "errors": 1,
+      "cause": "static Wasm memory/type/duplicate-section checks incomplete",
+      "status": "FIXED_AND_15_RETESTED"
+    }
+  ],
+  "count_limits": [
+    "Rust-only early four cases overlap the final twelve and are not added",
+    "70 boundary methods plus seven mapping cases; two child entry points are not credited",
+    "remote-reader child entry is filtered; mapping lib retains 84 filters",
+    "archive recorded tests are not current execution"
+  ],
+  "not_run": [
+    "Windows actual safe-exec process backend",
+    "Unix actual process case",
+    "ProductionGUI",
+    "ProtectedSession",
+    "system picker and provenance above anchor",
+    "third-party installation",
+    "other platform and device qualification",
+    "complete lint/build/product/CI/release"
+  ],
+  "sdk26": "OPEN",
+  "g04": "OPEN",
+  "stable_sdk_frozen": false,
+  "commit_push_release": "NOT_PERFORMED_THIS_STAGE"
+}

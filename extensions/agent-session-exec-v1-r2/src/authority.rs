@@ -67,7 +67,21 @@ pub struct Admission {
     generation: u64,
     live: Arc<Live>,
 }
+/// Revokes only this existing admission's original Live Arc without its fence.
+/// Cannot mint, extend, serialize or revive authority. Registry retirement still
+/// calls SessionExecHost::revoke on the retained original Admission.
+#[derive(Clone)]
+pub struct AdmissionRevocation {
+    live: Arc<Live>,
+}
+impl AdmissionRevocation {
+    pub fn revoke(&self) { self.live.revoked.store(true, Ordering::SeqCst); }
+    pub fn is_revoked(&self) -> bool { self.live.revoked.load(Ordering::SeqCst) }
+}
 impl Admission {
+    pub fn revocation(&self) -> AdmissionRevocation {
+        AdmissionRevocation { live: self.live.clone() }
+    }
     pub(crate) fn nonce(&self) -> [u8; 32] {
         self.live.nonce
     }
@@ -98,6 +112,16 @@ pub struct SessionExecHost {
     pub(crate) authority: Authority,
 }
 impl SessionExecHost {
+    /// Pure delivery veto on this same original admission and authority clocks.
+    /// Does not advance time, mint rights, inspect Store or replace runtime checks.
+    pub fn admission_live_at(&self, admission: &Admission, now: u64) -> bool {
+        Arc::ptr_eq(&self.authority.identity, &admission.issuer)
+            && admission.generation == self.authority.identity.generation
+            && !admission.live.revoked.load(Ordering::SeqCst)
+            && now >= admission.created && now < admission.expires
+            && now >= admission.live.last_clock.load(Ordering::SeqCst)
+            && now >= self.authority.last_clock.load(Ordering::SeqCst)
+    }
     pub fn new(runtime: &mut HostRuntime) -> Result<Self> {
         let lease = runtime
             .store_local_mut()

@@ -1,0 +1,63 @@
+
+["package"]
+"name" = "codex-exec-server-test-support"
+
+["package"."version"]
+"workspace" = true
+
+
+["package"."edition"]
+"workspace" = true
+
+
+["package"."license"]
+"workspace" = true
+
+
+
+["lib"]
+"path" = "lib.rs"
+"test" = false
+"doctest" = false
+
+
+["lints"]
+"workspace" = true
+
+
+["dependencies"]
+"prost" = "0.14.3"
+
+["dependencies"."anyhow"]
+"workspace" = true
+
+
+["dependencies"."codex-exec-server"]
+"workspace" = true
+
+
+["dependencies"."codex-http-client"]
+"workspace" = true
+
+
+["dependencies"."futures"]
+"workspace" = true
+
+
+["dependencies"."serde_json"]
+"workspace" = true
+
+
+["dependencies"."tokio"]
+"workspace" = true
+"features" = ["macros", "net", "time"]
+
+
+["dependencies"."tokio-tungstenite"]
+"workspace" = true
+
+
+["dependencies"."wiremock"]
+"workspace" = true
+
+

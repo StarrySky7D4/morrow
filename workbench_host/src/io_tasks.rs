@@ -17,11 +17,11 @@ use std::{
 #[path = "mutation_tasks.rs"]
 pub mod mutation;
 
-#[path = "file_tasks.rs"]
-pub mod file;
 #[cfg(windows)]
 #[path = "directory_tasks.rs"]
 pub mod directory;
+#[path = "file_tasks.rs"]
+pub mod file;
 #[path = "service_tasks.rs"]
 pub mod service;
 #[path = "service_commands.rs"]
@@ -173,39 +173,67 @@ struct Task {
 enum Executor {
     Io(Box<IoWorker<WorkbenchState>>),
     Service(service::ServiceExecution),
+    #[cfg(windows)]
+    Agent(Box<crate::agent_tasks::AgentWorker<WorkbenchState>>),
+}
+enum Reclaimed {
+    Original(Box<morrow_plugin_runtime::io_jobs::WorkerExit<WorkbenchState>>),
+    #[cfg(windows)]
+    Agent(Box<crate::agent_tasks::AgentExit<WorkbenchState>>),
+}
+enum Cleanup {
+    Original(ManagedInstance),
+    #[cfg(windows)]
+    Agent(Box<crate::agent_tasks::AgentCleanup>),
 }
 impl Executor {
     fn stop(&self) {
         match self {
             Self::Io(worker) => worker.stop(),
             Self::Service(worker) => worker.stop(),
+            #[cfg(windows)]
+            Self::Agent(worker) => worker.stop(),
         }
     }
-    fn try_reclaim(
-        &mut self,
-    ) -> std::result::Result<
-        Option<morrow_plugin_runtime::io_jobs::WorkerExit<WorkbenchState>>,
-        JobError,
-    > {
+    fn try_reclaim(&mut self) -> std::result::Result<Option<Reclaimed>, JobError> {
         match self {
-            Self::Io(worker) => worker.try_reclaim(),
-            Self::Service(worker) => worker.try_reclaim(),
+            Self::Io(worker) => worker
+                .try_reclaim()
+                .map(|e| e.map(|e| Reclaimed::Original(Box::new(e)))),
+            Self::Service(worker) => worker
+                .try_reclaim()
+                .map(|e| e.map(|e| Reclaimed::Original(Box::new(e)))),
+            #[cfg(windows)]
+            Self::Agent(worker) => worker
+                .try_reclaim()
+                .map(|e| e.map(|e| Reclaimed::Agent(Box::new(e))))
+                .map_err(|_| JobError::Unavailable),
         }
     }
     fn service_progress(&self) -> Option<service::Progress> {
         match self {
             Self::Io(_) => None,
             Self::Service(worker) => Some(worker.progress()),
+            #[cfg(windows)]
+            Self::Agent(_) => None,
         }
     }
 }
 /// The complete state is either local or owned by the original worker. No
 /// fallback store, partial state, or panicking Deref can mask its absence.
 pub(crate) struct StateSlot {
+    #[cfg(windows)]
+    pub(crate) agent_preparation_debt:
+        Option<crate::agent_tasks::preparation::AgentPreparationDebt>,
+    #[cfg(windows)]
+    pub(crate) agent_contexts:
+        std::sync::Arc<crate::agent_tasks::context_lifecycle::ContextLifecycleLedger>,
     pub(crate) product_gate: crate::product_gate::ProductGate,
     owner: Option<WorkbenchState>,
     task: Option<Task>,
-    cleanup: Option<ManagedInstance>,
+    cleanup: Option<Cleanup>,
+    #[cfg(windows)]
+    agent_exit: Option<(TaskKey, crate::agent_tasks::AgentExitStatus)>,
     repair_needed: bool,
     lost: bool,
     service_submissions: BTreeSet<[u8; 32]>,
@@ -218,6 +246,129 @@ pub(crate) struct StateSlot {
     pub(crate) submission: Option<[u8; 32]>,
 }
 impl StateSlot {
+    #[cfg(windows)]
+    pub(crate) fn ensure_agent_admission(&self) -> Result<()> {
+        self.require_writable()?;
+        if self.task.is_some() {
+            return Err(AccessError::UnacknowledgedTask.into());
+        }
+        Ok(())
+    }
+    #[cfg(windows)]
+    pub(crate) fn take_agent_owner(&mut self) -> Result<WorkbenchState> {
+        // Admission and preparation happened under the same exclusive borrow.
+        // Gate loss now is handled by spawn returning this exact owner/bridge.
+        if self.task.is_some() {
+            return Err(AccessError::UnacknowledgedTask.into());
+        }
+        self.owner
+            .take()
+            .ok_or_else(|| AccessError::OwnerUnavailable.into())
+    }
+    #[cfg(windows)]
+    pub(crate) fn install_agent_worker(
+        &mut self,
+        key: TaskKey,
+        worker: crate::agent_tasks::AgentWorker<WorkbenchState>,
+    ) {
+        self.agent_exit = None;
+        self.task = Some(Task {
+            key,
+            commands: Default::default(),
+            worker: Some(Executor::Agent(Box::new(worker))),
+            handle: None,
+            stopping: false,
+            exit: None,
+            service: None,
+            file: None,
+            directory: None,
+            mutation: None,
+        });
+    }
+    #[cfg(windows)]
+    pub(crate) fn restore_agent_failure(
+        &mut self,
+        key: TaskKey,
+        failure: crate::agent_tasks::AgentSpawnFailure<WorkbenchState>,
+    ) {
+        self.owner = Some(failure.owner);
+        self.cleanup = Some(Cleanup::Agent(Box::new(failure.cleanup)));
+        self.repair_needed = true;
+        let status = crate::agent_tasks::AgentExitStatus {
+            execution: Err(failure.error),
+            disconnect: Err(crate::agent_tasks::AgentError::Disconnect),
+            maintenance: Ok(()),
+        };
+        self.agent_exit = Some((key, status));
+        self.task = Some(Task {
+            key,
+            commands: Default::default(),
+            worker: None,
+            handle: None,
+            stopping: false,
+            exit: Some(ExitStatus {
+                execution: Err(JobError::Spawn),
+                disconnect: Err(JobError::Disconnect),
+                maintenance: Ok(()),
+            }),
+            service: None,
+            file: None,
+            directory: None,
+            mutation: None,
+        });
+    }
+    #[cfg(windows)]
+    pub(crate) fn check_agent_task(&self, key: TaskKey) -> Result<()> {
+        let task = self
+            .task
+            .as_ref()
+            .filter(|t| t.key == key)
+            .ok_or(AccessError::StaleTask)?;
+        if matches!(task.worker.as_ref(), Some(Executor::Agent(_)))
+            || self.agent_exit.is_some_and(|(old, _)| old == key)
+        {
+            Ok(())
+        } else {
+            Err(AccessError::StaleTask.into())
+        }
+    }
+    #[cfg(windows)]
+    pub(crate) fn agent_worker(
+        &self,
+        key: TaskKey,
+    ) -> Result<&crate::agent_tasks::AgentWorker<WorkbenchState>> {
+        self.check_agent_task(key)?;
+        match self.task.as_ref().and_then(|t| t.worker.as_ref()) {
+            Some(Executor::Agent(worker)) => Ok(worker),
+            _ => Err(AccessError::StaleTask.into()),
+        }
+    }
+    #[cfg(windows)]
+    pub(crate) fn agent_snapshot(
+        &mut self,
+        key: TaskKey,
+    ) -> Result<crate::agent_tasks::AgentSnapshot> {
+        self.check_agent_task(key)?;
+        let progress = self.agent_worker(key).ok().map(|w| w.progress());
+        let exit = self.agent_exit.filter(|(k, _)| *k == key).map(|(_, e)| e);
+        Ok(crate::agent_tasks::AgentSnapshot {
+            task: self.snapshot(),
+            progress,
+            exit,
+        })
+    }
+    #[cfg(windows)]
+    pub(crate) fn current_agent_snapshot(
+        &mut self,
+    ) -> Result<Option<crate::agent_tasks::AgentSnapshot>> {
+        let Some(key) = self.task.as_ref().map(|task| task.key) else {
+            return Ok(None);
+        };
+        if self.check_agent_task(key).is_err() {
+            return Ok(None);
+        }
+        self.agent_snapshot(key).map(Some)
+    }
     pub(crate) fn take_channel_owner(&mut self) -> Result<WorkbenchState> {
         self.require_writable()?;
         if self.task.is_some() {
@@ -247,11 +398,21 @@ impl StateSlot {
             .is_some_and(|task| task.service.is_some())
     }
     pub(crate) fn new(owner: WorkbenchState) -> Self {
+        #[cfg(windows)]
+        let agent_contexts = crate::agent_tasks::context_lifecycle::ContextLifecycleLedger::new(
+            owner.host.binding(),
+        );
         Self {
+            #[cfg(windows)]
+            agent_contexts,
+            #[cfg(windows)]
+            agent_preparation_debt: None,
             product_gate: Default::default(),
             owner: Some(owner),
             task: None,
             cleanup: None,
+            #[cfg(windows)]
+            agent_exit: None,
             repair_needed: false,
             lost: false,
             service_submissions: BTreeSet::new(),
@@ -280,6 +441,10 @@ impl StateSlot {
     pub(crate) fn require_writable(&self) -> Result<()> {
         self.product_gate.check()?;
         self.local()?;
+        #[cfg(windows)]
+        if self.agent_preparation_debt.is_some() || self.agent_contexts.needs_repair() {
+            return Err(AccessError::RecoveryRequired.into());
+        }
         if self.repair_needed {
             return Err(AccessError::RecoveryRequired.into());
         }
@@ -296,6 +461,10 @@ impl StateSlot {
         }
         if self.owner.is_none() {
             return Some("内容库正在执行后台任务。");
+        }
+        #[cfg(windows)]
+        if self.agent_preparation_debt.is_some() || self.agent_contexts.needs_repair() {
+            return Some("代理会话准备的连接清理尚未完成，请显式修复后再关闭内容库。");
         }
         if self.repair_needed || self.cleanup.is_some() {
             return Some("后台任务已退出，存储维护或连接清理需要恢复。");
@@ -325,10 +494,10 @@ impl StateSlot {
         }
         match result {
             Ok(None) => Ok(false),
-            Ok(Some(exit)) => {
+            Ok(Some(Reclaimed::Original(exit))) => {
                 // Restore the original owner before recording any fallible cleanup.
                 self.owner = Some(exit.owner);
-                self.cleanup = exit.instance;
+                self.cleanup = exit.instance.map(Cleanup::Original);
                 self.repair_needed = exit.maintenance.is_err() || exit.disconnect.is_err();
                 task.exit = Some(ExitStatus {
                     execution: exit.result,
@@ -339,6 +508,26 @@ impl StateSlot {
                 if let Some(progress) = &mut task.service {
                     progress.phase = service::ServicePhase::Exited;
                 }
+                Ok(true)
+            }
+            #[cfg(windows)]
+            Ok(Some(Reclaimed::Agent(exit))) => {
+                // AgentExit exists only after native cleanup and actual thread join.
+                let status = crate::agent_tasks::AgentExitStatus {
+                    execution: exit.execution,
+                    disconnect: exit.disconnect,
+                    maintenance: exit.maintenance,
+                };
+                self.owner = Some(exit.owner);
+                self.cleanup = exit.cleanup.map(|c| Cleanup::Agent(Box::new(c)));
+                self.repair_needed = status.disconnect.is_err() || status.maintenance.is_err();
+                self.agent_exit = Some((task.key, status));
+                task.exit = Some(ExitStatus {
+                    execution: status.execution.map_err(|_| JobError::Unavailable),
+                    disconnect: status.disconnect.map_err(|_| JobError::Disconnect),
+                    maintenance: status.maintenance.map_err(|_| JobError::Unavailable),
+                });
+                task.worker = None;
                 Ok(true)
             }
             Err(error) => {
@@ -380,7 +569,9 @@ impl StateSlot {
                     .or_else(|| {
                         #[cfg(windows)]
                         {
-                            t.directory.as_ref().and_then(directory::DirectoryTask::poll)
+                            t.directory
+                                .as_ref()
+                                .and_then(directory::DirectoryTask::poll)
                         }
                         #[cfg(not(windows))]
                         {
@@ -415,7 +606,7 @@ impl StateSlot {
             .host
             .disconnect(instance.connection());
         if let Err(error) = result {
-            self.cleanup = Some(instance);
+            self.cleanup = Some(Cleanup::Original(instance));
             self.repair_needed = true;
             return Err(error.into());
         }
@@ -466,8 +657,24 @@ impl Workbench {
         if self.state.owner.is_none() {
             return Err(AccessError::Busy.into());
         }
-        if let Some(instance) = self.state.cleanup.take() {
-            self.state.cleanup_instance(instance)?;
+        if let Some(cleanup) = self.state.cleanup.take() {
+            match cleanup {
+                Cleanup::Original(instance) => self.state.cleanup_instance(instance)?,
+                #[cfg(windows)]
+                Cleanup::Agent(mut cleanup) => {
+                    let result = cleanup.repair(
+                        self.state
+                            .owner
+                            .as_mut()
+                            .ok_or(AccessError::OwnerUnavailable)?,
+                    );
+                    if result.is_err() {
+                        self.state.cleanup = Some(Cleanup::Agent(cleanup));
+                        self.state.repair_needed = true;
+                        return Err(AccessError::RecoveryRequired.into());
+                    }
+                }
+            }
         }
         self.state.finish_maintenance()?;
         Ok(self.state.snapshot())
@@ -569,7 +776,8 @@ impl Workbench {
                 instance: &instance,
                 binding: &binding,
                 now: time,
-            })?.into();
+            })?
+            .into();
             if job.timeout().is_zero() || job.timeout() > options.lifetime {
                 return Err("invalid IO job timeout".into());
             }
@@ -676,7 +884,9 @@ impl Workbench {
             #[cfg(windows)]
             Ok(TaskSubmitted::Directory(directory)) => task.directory = Some(directory),
             #[cfg(windows)]
-            Ok(TaskSubmitted::Original(file::Submitted::Mutation(mutation))) => task.mutation = Some(mutation),
+            Ok(TaskSubmitted::Original(file::Submitted::Mutation(mutation))) => {
+                task.mutation = Some(mutation)
+            }
             Err(error) => {
                 self.state.request_stop();
                 return Err(format!(

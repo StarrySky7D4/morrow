@@ -1,0 +1,1059 @@
+
+["workspace"]
+"resolver" = "2"
+"members" = ["exec-server", "utils/pty", "sandboxing", "windows-sandbox-rs", "exec-server/tests/support", "mxc-sandbox", "config", "git-utils", "exec-server-protocol"]
+
+["workspace"."package"]
+"version" = "0.0.0"
+"edition" = "2024"
+"license" = "Apache-2.0"
+
+
+["workspace"."dependencies"]
+"age" = "0.11.1"
+"ansi-to-tui" = "8.0.1"
+"anyhow" = "1"
+"arc-swap" = "1.9.0"
+"assert_cmd" = "2"
+"assert_matches" = "1.5.0"
+"async-channel" = "2.3.1"
+"async-io" = "2.6.0"
+"async-stream" = "0.3.6"
+"aws-config" = "1"
+"aws-credential-types" = "1"
+"aws-sigv4" = "1"
+"aws-types" = "1"
+"base64" = "0.22.1"
+"bitflags" = "2.13.1"
+"blake3" = "1.8.2"
+"bm25" = "2.3.2"
+"bytes" = "1.10.1"
+"caseless" = "0.2.2"
+"chardetng" = "0.1.17"
+"chrono" = "0.4.43"
+"clap" = "4"
+"clap_complete" = "4"
+"color-eyre" = "0.6.3"
+"constant_time_eq" = "0.3.1"
+"crossbeam-channel" = "0.5.15"
+"crossterm" = "0.29.0"
+"ctor" = "0.6.3"
+"deno_core_icudata" = "0.77.0"
+"derive_more" = "2"
+"diffy" = "0.4.2"
+"dirs" = "6"
+"divan" = "0.1.21"
+"dns-lookup" = "3.0.1"
+"dotenvy" = "0.15.7"
+"dunce" = "1.0.4"
+"encoding_rs" = "0.8.35"
+"eventsource-stream" = "0.2.3"
+"flate2" = "1.1.8"
+"gethostname" = "1.1.0"
+"gix-url" = "0.35.2"
+"glob" = "0.3"
+"globset" = "0.4"
+"hmac" = "0.12.1"
+"http" = "1.3.1"
+"httpdate" = "1.0.3"
+"iana-time-zone" = "0.1.64"
+"icu_decimal" = "2.1"
+"icu_locale_core" = "2.1"
+"ignore" = "0.4.23"
+"include_dir" = "0.7.4"
+"indexmap" = "2.12.0"
+"insta" = "1.46.3"
+"inventory" = "0.3.19"
+"itertools" = "0.14.0"
+"jsonwebtoken" = "9.3.1"
+"landlock" = "0.4.4"
+"lazy_static" = "1"
+"libc" = "0.2.182"
+"log" = "0.4"
+"lru" = "0.18.2"
+"maplit" = "1.0.2"
+"memchr" = "2.7.6"
+"mime_guess" = "2.0.5"
+"multimap" = "0.10.0"
+"notify" = "8.2.0"
+"once_cell" = "1.20.2"
+"openssl-sys" = "*"
+"opentelemetry" = "0.31.0"
+"opentelemetry-appender-tracing" = "0.31.0"
+"opentelemetry-otlp" = "0.31.0"
+"opentelemetry-semantic-conventions" = "0.31.0"
+"opentelemetry_sdk" = "0.31.0"
+"os_info" = "3.12.0"
+"owo-colors" = "4.3.0"
+"pathdiff" = "0.2"
+"portable-pty" = "0.9.0"
+"predicates" = "3"
+"pretty_assertions" = "1.4.1"
+"quick-xml" = "0.41.0"
+"rand" = "0.9"
+"rand_regex" = "0.18.1"
+"ratatui-macros" = "0.7.2"
+"regex" = "1.12.3"
+"regex-lite" = "0.1.8"
+"regex-syntax" = "0.8.8"
+"rustls-native-certs" = "0.8.3"
+"rustls-pki-types" = "1.14.0"
+"schemars" = "0.8.22"
+"seccompiler" = "0.5.0"
+"semver" = "1.0"
+"sentry" = "0.46.0"
+"serde_ignored" = "0.1.14"
+"serde_json" = "1"
+"serde_path_to_error" = "0.1.20"
+"serde_with" = "3.17"
+"serde_yaml" = "0.9"
+"serial_test" = "3.2.0"
+"sha1" = "0.10.6"
+"scopeguard" = "1.2.0"
+"sha2" = "0.10"
+"shlex" = "1.3.0"
+"signal-hook" = "0.3.18"
+"similar" = "2.7.0"
+"socket2" = "0.6.1"
+"strum" = "0.27.2"
+"strum_macros" = "0.28.0"
+"supports-color" = "3.0.2"
+"syntect" = "5"
+"sys-locale" = "0.3.2"
+"system-configuration" = "0.7"
+"tempfile" = "3.23.0"
+"test-log" = "0.2.19"
+"textwrap" = "0.16.2"
+"thiserror" = "2.0.17"
+"tikv-jemallocator" = "=0.7.0"
+"time" = "0.3.47"
+"tiny_http" = "0.12"
+"tokio" = "1"
+"tokio-rustls" = "0.26.4"
+"tokio-stream" = "0.1.18"
+"tokio-test" = "0.4"
+"tokio-util" = "0.7.18"
+"toml" = "0.9.5"
+"toml_edit" = "0.24.0"
+"tracing" = "0.1.44"
+"tracing-appender" = "0.2.3"
+"tracing-opentelemetry" = "0.32.0"
+"tracing-subscriber" = "0.3.22"
+"tracing-test" = "0.2.5"
+"tonic-prost" = "0.14.3"
+"tree-sitter" = "0.25.10"
+"tree-sitter-bash" = "0.25"
+"tree-sitter-powershell" = "=0.26.4"
+"ts-rs" = "11"
+"uds_windows" = "1.1.0"
+"unicode-segmentation" = "1.12.0"
+"unicode-width" = "0.2"
+"url" = "2"
+"urlencoding" = "2.1"
+"uuid" = "1"
+"v8" = "=150.4.0"
+"vt100" = "0.16.2"
+"walkdir" = "2.5.0"
+"webbrowser" = "1.2.2"
+"which" = "8"
+"whoami" = "1.6.1"
+"wildmatch" = "2.6.1"
+"winapi-util" = "0.1.11"
+"zip" = "2.4.2"
+"zstd" = "0.13"
+"wiremock" = "0.6"
+"zeroize" = "1.8.2"
+
+["workspace"."dependencies"."codex-realtime-webrtc"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/realtime-webrtc"
+
+
+["workspace"."dependencies"."app_test_support"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/app-server/tests/common"
+
+
+["workspace"."dependencies"."codex-analytics"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/analytics"
+
+
+["workspace"."dependencies"."codex-agent-graph-store"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/agent-graph-store"
+
+
+["workspace"."dependencies"."codex-agent-identity"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/agent-identity"
+
+
+["workspace"."dependencies"."codex-agent-roles"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/agent-roles"
+
+
+["workspace"."dependencies"."codex-ansi-escape"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ansi-escape"
+
+
+["workspace"."dependencies"."codex-api"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/codex-api"
+
+
+["workspace"."dependencies"."codex-attachment-store"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/attachment-store"
+
+
+["workspace"."dependencies"."codex-aws-auth"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/aws-auth"
+
+
+["workspace"."dependencies"."codex-app-server"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/app-server"
+
+
+["workspace"."dependencies"."codex-app-server-transport"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/app-server-transport"
+
+
+["workspace"."dependencies"."codex-app-server-daemon"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/app-server-daemon"
+
+
+["workspace"."dependencies"."codex-app-server-client"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/app-server-client"
+
+
+["workspace"."dependencies"."codex-app-server-protocol"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/app-server-protocol"
+
+
+["workspace"."dependencies"."codex-app-server-protocol-noop-macros"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/app-server-protocol-noop-macros"
+
+
+["workspace"."dependencies"."codex-app-server-test-client"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/app-server-test-client"
+
+
+["workspace"."dependencies"."codex-apply-patch"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/apply-patch"
+
+
+["workspace"."dependencies"."codex-arg0"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/arg0"
+
+
+["workspace"."dependencies"."codex-async-utils"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/async-utils"
+
+
+["workspace"."dependencies"."codex-backend-client"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/backend-client"
+
+
+["workspace"."dependencies"."codex-build-info"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/build-info"
+
+
+["workspace"."dependencies"."codex-chatgpt"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/chatgpt"
+
+
+["workspace"."dependencies"."codex-client"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/codex-client"
+
+
+["workspace"."dependencies"."codex-collaboration-mode-templates"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/collaboration-mode-templates"
+
+
+["workspace"."dependencies"."codex-cloud-config"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/cloud-config"
+
+
+["workspace"."dependencies"."codex-cloud-tasks-client"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/cloud-tasks-client"
+
+
+["workspace"."dependencies"."codex-cloud-tasks-mock-client"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/cloud-tasks-mock-client"
+
+
+["workspace"."dependencies"."codex-code-mode"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/code-mode"
+
+
+["workspace"."dependencies"."codex-code-mode-protocol"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/code-mode-protocol"
+
+
+["workspace"."dependencies"."codex-code-mode-runtime"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/code-mode-runtime"
+
+
+["workspace"."dependencies"."codex-home"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/codex-home"
+
+
+["workspace"."dependencies"."codex-http-client"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/http-client"
+
+
+["workspace"."dependencies"."codex-websocket-auth"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/websocket-auth"
+
+
+["workspace"."dependencies"."codex-websocket-client"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/websocket-client"
+
+
+["workspace"."dependencies"."codex-config"]
+"path" = "config"
+
+
+["workspace"."dependencies"."codex-connectors"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/connectors"
+
+
+["workspace"."dependencies"."codex-agent-extension"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/agent"
+
+
+["workspace"."dependencies"."codex-agent-message-board-extension"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/agent-message-board"
+
+
+["workspace"."dependencies"."codex-connectors-extension"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/connectors"
+
+
+["workspace"."dependencies"."codex-context-fragments"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/context-fragments"
+
+
+["workspace"."dependencies"."codex-core"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/core"
+
+
+["workspace"."dependencies"."codex-core-api"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/core-api"
+
+
+["workspace"."dependencies"."codex-core-plugin-common"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/core-plugin-common"
+
+
+["workspace"."dependencies"."codex-core-plugins"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/core-plugins"
+
+
+["workspace"."dependencies"."codex-diagnostics"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/diagnostics"
+
+
+["workspace"."dependencies"."codex-exec"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/exec"
+
+
+["workspace"."dependencies"."codex-file-system"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/file-system"
+
+
+["workspace"."dependencies"."codex-exec-server-protocol"]
+"path" = "exec-server-protocol"
+
+
+["workspace"."dependencies"."codex-exec-server"]
+"path" = "exec-server"
+
+
+["workspace"."dependencies"."codex-exec-server-test-support"]
+"path" = "exec-server/tests/support"
+
+
+["workspace"."dependencies"."codex-execpolicy"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/execpolicy"
+
+
+["workspace"."dependencies"."codex-extension-api"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/extension-api"
+
+
+["workspace"."dependencies"."codex-extension-items"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/items"
+
+
+["workspace"."dependencies"."codex-goal-extension"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/goal"
+
+
+["workspace"."dependencies"."codex-git-attribution"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/git-attribution"
+
+
+["workspace"."dependencies"."codex-guardian-reviewer"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/guardian-reviewer"
+
+
+["workspace"."dependencies"."codex-guardian-v2"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/guardian-v2"
+
+
+["workspace"."dependencies"."codex-history-notes-extension"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/history-notes"
+
+
+["workspace"."dependencies"."codex-image-generation-extension"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/image-generation"
+
+
+["workspace"."dependencies"."codex-external-agent-migration"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/external-agent-migration"
+
+
+["workspace"."dependencies"."codex-experimental-api-macros"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/codex-experimental-api-macros"
+
+
+["workspace"."dependencies"."codex-features"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/features"
+
+
+["workspace"."dependencies"."codex-feedback"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/feedback"
+
+
+["workspace"."dependencies"."codex-install-context"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/install-context"
+
+
+["workspace"."dependencies"."codex-file-search"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/file-search"
+
+
+["workspace"."dependencies"."codex-file-watcher"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/file-watcher"
+
+
+["workspace"."dependencies"."codex-git-utils"]
+"path" = "git-utils"
+
+
+["workspace"."dependencies"."codex-guardian-context"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/guardian-context"
+
+
+["workspace"."dependencies"."codex-hooks"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/hooks"
+
+
+["workspace"."dependencies"."codex-history"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/history"
+
+
+["workspace"."dependencies"."codex-keyring-store"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/keyring-store"
+
+
+["workspace"."dependencies"."codex-linux-sandbox"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox"
+
+
+["workspace"."dependencies"."codex-lmstudio"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/lmstudio"
+
+
+["workspace"."dependencies"."codex-login"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/login"
+
+
+["workspace"."dependencies"."codex-mermaid"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/mermaid"
+
+
+["workspace"."dependencies"."codex-message-history"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/message-history"
+
+
+["workspace"."dependencies"."codex-memories-extension"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/memories"
+
+
+["workspace"."dependencies"."codex-web-search-extension"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/web-search"
+
+
+["workspace"."dependencies"."codex-memories-read"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/memories/read"
+
+
+["workspace"."dependencies"."codex-memories-write"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/memories/write"
+
+
+["workspace"."dependencies"."codex-mcp"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/codex-mcp"
+
+
+["workspace"."dependencies"."codex-mcp-extension"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/mcp"
+
+
+["workspace"."dependencies"."codex-model-provider-info"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/model-provider-info"
+
+
+["workspace"."dependencies"."codex-models-manager"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/models-manager"
+
+
+["workspace"."dependencies"."codex-mxc-sandbox"]
+"path" = "mxc-sandbox"
+
+
+["workspace"."dependencies"."codex-network-proxy"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/network-proxy"
+
+
+["workspace"."dependencies"."codex-ollama"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ollama"
+
+
+["workspace"."dependencies"."codex-otel"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/otel"
+
+
+["workspace"."dependencies"."codex-otel-trace-websocket"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/otel-trace-websocket"
+
+
+["workspace"."dependencies"."codex-plugin"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/plugin"
+
+
+["workspace"."dependencies"."codex-model-provider"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/model-provider"
+
+
+["workspace"."dependencies"."codex-process-hardening"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/process-hardening"
+
+
+["workspace"."dependencies"."codex-protocol"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/protocol"
+
+
+["workspace"."dependencies"."codex-prompts"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/prompts"
+
+
+["workspace"."dependencies"."codex-queue-extension"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/queue"
+
+
+["workspace"."dependencies"."codex-responses-api-proxy"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/responses-api-proxy"
+
+
+["workspace"."dependencies"."codex-response-debug-context"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/response-debug-context"
+
+
+["workspace"."dependencies"."codex-rmcp-client"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/rmcp-client"
+
+
+["workspace"."dependencies"."codex-rollout"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/rollout"
+
+
+["workspace"."dependencies"."codex-rollout-trace"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/rollout-trace"
+
+
+["workspace"."dependencies"."codex-sandboxing"]
+"path" = "sandboxing"
+
+
+["workspace"."dependencies"."codex-secrets"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/secrets"
+
+
+["workspace"."dependencies"."codex-shell-command"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/shell-command"
+
+
+["workspace"."dependencies"."codex-shell-escalation"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/shell-escalation"
+
+
+["workspace"."dependencies"."codex-skills-extension"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/ext/skills"
+
+
+["workspace"."dependencies"."codex-skills"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/skills"
+
+
+["workspace"."dependencies"."codex-state"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/state"
+
+
+["workspace"."dependencies"."codex-stdio-to-uds"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/stdio-to-uds"
+
+
+["workspace"."dependencies"."codex-terminal-detection"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/terminal-detection"
+
+
+["workspace"."dependencies"."codex-test-binary-support"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/test-binary-support"
+
+
+["workspace"."dependencies"."codex-thread-store"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/thread-store"
+
+
+["workspace"."dependencies"."codex-tools"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/tools"
+
+
+["workspace"."dependencies"."codex-tcp-tunnel"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/tcp-tunnel"
+
+
+["workspace"."dependencies"."codex-tui"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/tui"
+
+
+["workspace"."dependencies"."codex-uds"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/uds"
+
+
+["workspace"."dependencies"."codex-utils-absolute-path"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/absolute-path"
+
+
+["workspace"."dependencies"."codex-utils-approval-presets"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/approval-presets"
+
+
+["workspace"."dependencies"."codex-utils-audio"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/audio"
+
+
+["workspace"."dependencies"."codex-utils-cache"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/cache"
+
+
+["workspace"."dependencies"."codex-utils-cargo-bin"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/cargo-bin"
+
+
+["workspace"."dependencies"."codex-utils-cli"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/cli"
+
+
+["workspace"."dependencies"."codex-utils-elapsed"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/elapsed"
+
+
+["workspace"."dependencies"."codex-utils-fuzzy-match"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/fuzzy-match"
+
+
+["workspace"."dependencies"."codex-utils-git-discovery"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/git-discovery"
+
+
+["workspace"."dependencies"."codex-utils-home-dir"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/home-dir"
+
+
+["workspace"."dependencies"."codex-utils-image"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/image"
+
+
+["workspace"."dependencies"."codex-utils-json-to-toml"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/json-to-toml"
+
+
+["workspace"."dependencies"."codex-utils-oss"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/oss"
+
+
+["workspace"."dependencies"."codex-utils-output-truncation"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/output-truncation"
+
+
+["workspace"."dependencies"."codex-utils-path"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/path-utils"
+
+
+["workspace"."dependencies"."codex-utils-path-uri"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/path-uri"
+
+
+["workspace"."dependencies"."codex-utils-plugins"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/plugins"
+
+
+["workspace"."dependencies"."codex-utils-pty"]
+"path" = "utils/pty"
+
+
+["workspace"."dependencies"."codex-utils-redacted-string"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/redacted-string"
+
+
+["workspace"."dependencies"."codex-utils-rustls-provider"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/rustls-provider"
+
+
+["workspace"."dependencies"."codex-utils-sandbox-summary"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/sandbox-summary"
+
+
+["workspace"."dependencies"."codex-worktree"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/worktree"
+
+
+["workspace"."dependencies"."codex-utils-sleep-inhibitor"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/sleep-inhibitor"
+
+
+["workspace"."dependencies"."codex-utils-stream-parser"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/stream-parser"
+
+
+["workspace"."dependencies"."codex-utils-string"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/string"
+
+
+["workspace"."dependencies"."codex-utils-template"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/utils/template"
+
+
+["workspace"."dependencies"."codex-user-verification"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/user-verification"
+
+
+["workspace"."dependencies"."codex-v8-poc"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/v8-poc"
+
+
+["workspace"."dependencies"."codex-workload-identity"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/workload-identity"
+
+
+["workspace"."dependencies"."codex-windows-sandbox"]
+"path" = "windows-sandbox-rs"
+
+
+["workspace"."dependencies"."core_test_support"]
+"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/core/tests/common"
+
+
+["workspace"."dependencies"."learning_mode_windows"]
+"git" = "https://github.com/microsoft/mxc"
+"rev" = "6cd3d58f05d3447e67109cfb75e042803b843ca4"
+
+
+["workspace"."dependencies"."wxc_common"]
+"git" = "https://github.com/microsoft/mxc"
+"rev" = "6cd3d58f05d3447e67109cfb75e042803b843ca4"
+
+
+["workspace"."dependencies"."appcontainer_common"]
+"git" = "https://github.com/microsoft/mxc"
+"rev" = "6cd3d58f05d3447e67109cfb75e042803b843ca4"
+
+
+["workspace"."dependencies"."arboard"]
+"version" = "3"
+"features" = ["wayland-data-control"]
+
+
+["workspace"."dependencies"."aws-smithy-runtime-api"]
+"version" = "1"
+"features" = ["client", "http-1x"]
+
+
+["workspace"."dependencies"."aws-smithy-types"]
+"version" = "1"
+"features" = ["http-body-1-x"]
+
+
+["workspace"."dependencies"."axum"]
+"version" = "0.8"
+"default-features" = false
+
+
+["workspace"."dependencies"."clatter"]
+"version" = "2.2.0"
+"default-features" = false
+"features" = ["alloc", "getrandom", "use-25519", "use-aes-gcm", "use-rust-crypto-ml-kem", "use-sha"]
+
+
+["workspace"."dependencies"."crypto_box"]
+"version" = "0.9.1"
+"features" = ["seal"]
+
+
+["workspace"."dependencies"."ed25519-dalek"]
+"version" = "2.2.0"
+"features" = ["pkcs8"]
+
+
+["workspace"."dependencies"."futures"]
+"version" = "0.3"
+"default-features" = false
+
+
+["workspace"."dependencies"."gix"]
+"version" = "0.81.0"
+"default-features" = false
+"features" = ["sha1"]
+
+
+["workspace"."dependencies"."icu_provider"]
+"version" = "2.1"
+"features" = ["sync"]
+
+
+["workspace"."dependencies"."image"]
+"version" = "^0.25.9"
+"default-features" = false
+
+
+["workspace"."dependencies"."jsonptr"]
+"version" = "0.7.1"
+"default-features" = false
+
+
+["workspace"."dependencies"."keyring"]
+"version" = "3.6"
+"default-features" = false
+
+
+["workspace"."dependencies"."libsqlite3-sys"]
+"version" = "0.37"
+"default-features" = false
+
+
+["workspace"."dependencies"."nucleo"]
+"git" = "https://github.com/helix-editor/nucleo.git"
+"rev" = "4253de9faabb4e5c6d81d946a5e35a90f87347ee"
+
+
+["workspace"."dependencies"."pulldown-cmark"]
+"version" = "0.10"
+"default-features" = false
+
+
+["workspace"."dependencies"."ratatui"]
+"version" = "0.30.2"
+"default-features" = false
+"features" = ["crossterm", "layout-cache", "underline-color"]
+
+
+["workspace"."dependencies"."rcgen"]
+"version" = "0.14.7"
+"default-features" = false
+"features" = ["aws_lc_rs", "pem"]
+
+
+["workspace"."dependencies"."regex-automata"]
+"version" = "0.4.13"
+"default-features" = false
+"features" = ["std", "syntax", "unicode", "nfa-pikevm"]
+
+
+["workspace"."dependencies"."reqwest"]
+"version" = "0.12"
+"features" = ["cookies"]
+
+
+["workspace"."dependencies"."rmcp"]
+"version" = "=3.2.0"
+"default-features" = false
+
+
+["workspace"."dependencies"."runfiles"]
+"git" = "https://github.com/dzbarsky/rules_rust"
+"rev" = "b56cbaa8465e74127f1ea216f813cd377295ad81"
+
+
+["workspace"."dependencies"."rustix"]
+"version" = "1.1.4"
+"features" = ["net"]
+
+
+["workspace"."dependencies"."rustls"]
+"version" = "0.23.45"
+"default-features" = false
+"features" = ["aws_lc_rs", "std"]
+
+
+["workspace"."dependencies"."serde"]
+"version" = "1"
+"features" = ["rc"]
+
+
+["workspace"."dependencies"."symphonia"]
+"version" = "0.6.0"
+"default-features" = false
+"features" = ["isomp4", "mkv", "mp3", "ogg", "wav"]
+
+
+["workspace"."dependencies"."sqlx"]
+"version" = "=0.9.0"
+"default-features" = false
+"features" = ["chrono", "json", "migrate", "runtime-tokio", "tls-rustls", "sqlite-bundled", "time", "uuid"]
+
+
+["workspace"."dependencies"."sqlx-macros"]
+"version" = "=0.9.0"
+"default-features" = false
+"features" = ["derive", "migrate"]
+
+
+["workspace"."dependencies"."sqlx-sqlite"]
+"version" = "=0.9.0"
+"default-features" = false
+"features" = ["offline"]
+
+
+["workspace"."dependencies"."starlark"]
+"version" = "0.14.2"
+"default-features" = false
+
+
+["workspace"."dependencies"."tar"]
+"version" = "=0.4.45"
+"default-features" = false
+
+
+["workspace"."dependencies"."tokio-tungstenite"]
+"version" = "0.28.0"
+"features" = ["proxy", "rustls-tls-native-roots"]
+
+
+["workspace"."dependencies"."tonic"]
+"version" = "0.14.3"
+"default-features" = false
+"features" = ["channel", "codegen"]
+
+
+["workspace"."dependencies"."tungstenite"]
+"version" = "0.27.0"
+"features" = ["deflate", "proxy"]
+
+
+
+["workspace"."lints"]
+
+["workspace"."lints"."rust"]
+
+
+["workspace"."lints"."clippy"]
+"await_holding_invalid_type" = "deny"
+"await_holding_lock" = "deny"
+"disallowed_methods" = "deny"
+"expect_used" = "deny"
+"identity_op" = "deny"
+"manual_clamp" = "deny"
+"manual_filter" = "deny"
+"manual_find" = "deny"
+"manual_flatten" = "deny"
+"manual_map" = "deny"
+"manual_memcpy" = "deny"
+"manual_non_exhaustive" = "deny"
+"manual_ok_or" = "deny"
+"manual_range_contains" = "deny"
+"manual_retain" = "deny"
+"manual_strip" = "deny"
+"manual_try_fold" = "deny"
+"manual_unwrap_or" = "deny"
+"needless_borrow" = "deny"
+"needless_borrowed_reference" = "deny"
+"needless_collect" = "deny"
+"needless_late_init" = "deny"
+"needless_option_as_deref" = "deny"
+"needless_question_mark" = "deny"
+"needless_update" = "deny"
+"redundant_clone" = "deny"
+"redundant_closure" = "deny"
+"redundant_closure_for_method_calls" = "deny"
+"redundant_static_lifetimes" = "deny"
+"trivially_copy_pass_by_ref" = "deny"
+"uninlined_format_args" = "deny"
+"unnecessary_filter_map" = "deny"
+"unnecessary_lazy_evaluations" = "deny"
+"unnecessary_sort_by" = "deny"
+"unnecessary_to_owned" = "deny"
+"unwrap_used" = "deny"
+
+
+
+
+["patch"]
+
+["patch"."crates-io"]
+
+["patch"."crates-io"."crossterm"]
+"git" = "https://github.com/openai-oss-forks/crossterm"
+"rev" = "efa177859fd9623d57b9fe7ae9bf491ae1ac6ec4"
+
+
+["patch"."crates-io"."tokio-tungstenite"]
+"git" = "https://github.com/openai-oss-forks/tokio-tungstenite"
+"rev" = "0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186"
+
+
+["patch"."crates-io"."tungstenite"]
+"git" = "https://github.com/openai-oss-forks/tungstenite-rs"
+"rev" = "4fffad30fe373adbdcffab9545e9e9bf4f2fc19f"
+
+
+
+["patch"."ssh://git@github.com/openai-oss-forks/tungstenite-rs.git"]
+
+["patch"."ssh://git@github.com/openai-oss-forks/tungstenite-rs.git"."tungstenite"]
+"git" = "https://github.com/openai-oss-forks/tungstenite-rs"
+"rev" = "4fffad30fe373adbdcffab9545e9e9bf4f2fc19f"
+
+
+
+
+["profile"]
+
+["profile"."dev"]
+"debug" = "line-tables-only"
+
+
+["profile"."dev-small"]
+"inherits" = "dev"
+"opt-level" = 0
+"debug" = "none"
+"strip" = "symbols"
+
+
+["profile"."release"]
+"lto" = "thin"
+"debug" = "line-tables-only"
+"split-debuginfo" = "off"
+"strip" = false
+"codegen-units" = 4
+
+
+["profile"."profiling"]
+"inherits" = "release"
+"debug" = "full"
+"lto" = false
+"strip" = false
+
+
+["profile"."ci-test"]
+"inherits" = "test"
+"opt-level" = 0
+
+

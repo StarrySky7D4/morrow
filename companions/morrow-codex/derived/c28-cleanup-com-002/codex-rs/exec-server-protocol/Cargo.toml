@@ -1,0 +1,83 @@
+
+["package"]
+"name" = "codex-exec-server-protocol"
+
+["package"."version"]
+"workspace" = true
+
+
+["package"."edition"]
+"workspace" = true
+
+
+["package"."license"]
+"workspace" = true
+
+
+
+["lib"]
+"name" = "codex_exec_server_protocol"
+"path" = "src/lib.rs"
+"doctest" = false
+
+
+["lints"]
+"workspace" = true
+
+
+["dependencies"]
+
+["dependencies"."base64"]
+"workspace" = true
+
+
+["dependencies"."codex-file-system"]
+"workspace" = true
+
+
+["dependencies"."codex-network-proxy"]
+"workspace" = true
+
+
+["dependencies"."codex-protocol"]
+"workspace" = true
+
+
+["dependencies"."codex-shell-command"]
+"workspace" = true
+
+
+["dependencies"."codex-utils-path-uri"]
+"workspace" = true
+
+
+["dependencies"."serde"]
+"workspace" = true
+"features" = ["derive"]
+
+
+["dependencies"."serde_json"]
+"workspace" = true
+"features" = ["arbitrary_precision", "raw_value"]
+
+
+
+["target"]
+
+["target"."cfg(windows)"]
+
+["target"."cfg(windows)"."dependencies"]
+
+["target"."cfg(windows)"."dependencies"."codex-mxc-sandbox"]
+"workspace" = true
+
+
+
+
+
+["dev-dependencies"]
+
+["dev-dependencies"."pretty_assertions"]
+"workspace" = true
+
+
