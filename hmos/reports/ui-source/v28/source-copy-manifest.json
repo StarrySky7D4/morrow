@@ -1,0 +1,2616 @@
+{
+  "capturedUtc": "2026-10-09T01:10:32.041Z",
+  "baseline": "e4891f89788339773f6b52f926da7215fe255afa",
+  "scope": "v28 explicit pure Todo formatter/count retry with exact failed input identity; host/model and unsigned API26 build only. Native archives reused byte-for-byte from qualified v27, no new Rust test/build. v28 device acceptance NOT_RUN; separate device observations cover installed v27 only. Full Flutter/Windows parity OPEN.",
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-candidates\\dev28-todo-retry",
+  "inputs": [
+    {
+      "path": "AppScope/app.json5",
+      "bytes": 224,
+      "sha256": "954E326044E72696153B4461C85757533FC51973A28BF8B842C3C8DCF52006C0",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/AppScope/app.json5"
+      }
+    },
+    {
+      "path": "AppScope/resources/base/element/string.json",
+      "bytes": 84,
+      "sha256": "9EB7AED7FD9CE4E5CD77A691100F7E68881E7C33B4DFFC034DCCF985701BE9E3",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/AppScope/resources/base/element/string.json"
+      }
+    },
+    {
+      "path": "AppScope/resources/base/media/background.png",
+      "bytes": 91942,
+      "sha256": "497EDEAFC51AF043C73E72EE8C4FBAC4663357EF1BA275C0289F31A366B26239",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/AppScope/resources/base/media/background.png"
+      }
+    },
+    {
+      "path": "AppScope/resources/base/media/foreground.png",
+      "bytes": 8805,
+      "sha256": "57E549283F255505A649042F36A1D6793C307A69A94C9FA7E27A38AF38DDBE8C",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/AppScope/resources/base/media/foreground.png"
+      }
+    },
+    {
+      "path": "AppScope/resources/base/media/layered_image.json",
+      "bytes": 109,
+      "sha256": "3D18DCD7ED9E7D3D2C54C20CB80A44EB4877C661131C68A46E20B6E19D0BB476",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/AppScope/resources/base/media/layered_image.json"
+      }
+    },
+    {
+      "path": "build-profile.json5",
+      "bytes": 751,
+      "sha256": "810FC1E7293F5581220F36BC2383ED91A426F7697262B758D8E21BA3CCE217BF",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/build-profile.json5"
+      }
+    },
+    {
+      "path": "code-linter.json5",
+      "bytes": 854,
+      "sha256": "F557C3BCDB40C64C986BFFED9628310CC7A79FB7D2642C1C8B8D265FD92E25AD",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/code-linter.json5"
+      }
+    },
+    {
+      "path": "entry/.gitignore",
+      "bytes": 55,
+      "sha256": "C4868DBAB8112EC2283B23448AD795702A967BB55229333AB317CBEB8C3AD690",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/.gitignore"
+      }
+    },
+    {
+      "path": "entry/build-profile.json5",
+      "bytes": 611,
+      "sha256": "C5EDC06AAA8B6D84401FEE598345AC5A2C2D60156767B2319DB719D0FC9A891F",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/build-profile.json5"
+      }
+    },
+    {
+      "path": "entry/hvigorfile.ts",
+      "bytes": 305,
+      "sha256": "1EF08CF4D5A2995964B0213834DD91DE3AFB8845AAE53178016E1C56DF0844B6",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/hvigorfile.ts"
+      }
+    },
+    {
+      "path": "entry/obfuscation-rules.txt",
+      "bytes": 891,
+      "sha256": "42C563D696CDF0A0367C39F564E752D82EC15E394549F826848228680674A4EF",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/obfuscation-rules.txt"
+      }
+    },
+    {
+      "path": "entry/oh-package-lock.json5",
+      "bytes": 532,
+      "sha256": "284EC9D738E0A598A134A2EC487FB0832F3A55DF17A97D17B5E5C5892E6DA3A1",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/oh-package-lock.json5"
+      }
+    },
+    {
+      "path": "entry/oh-package.json5",
+      "bytes": 227,
+      "sha256": "BA956FB3A9090FFE90E75D7DDCD75659D202B0665799B08A1C8FBE478E9F697D",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/oh-package.json5"
+      }
+    },
+    {
+      "path": "entry/src/main/cpp/CMakeLists.txt",
+      "bytes": 634,
+      "sha256": "C603502C17ABC8306DDAF8767BBF664BCDA0F2F070A12057651713FB791AE9CD",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/cpp/CMakeLists.txt"
+      }
+    },
+    {
+      "path": "entry/src/main/cpp/bridge.cpp",
+      "bytes": 17579,
+      "sha256": "21F623A9E79B2850820E993FD60217AD5DB5D60D01D1AA102516D5323EFB4CEF",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/cpp/bridge.cpp"
+      }
+    },
+    {
+      "path": "entry/src/main/cpp/types/libmorrow/index.d.ts",
+      "bytes": 1524,
+      "sha256": "6791086C2D958F95E54733A3FC0A87D5908ACBA9BDDCAB279AA69807363526F3",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/cpp/types/libmorrow/index.d.ts"
+      }
+    },
+    {
+      "path": "entry/src/main/cpp/types/libmorrow/oh-package.json5",
+      "bytes": 65,
+      "sha256": "86A223AAE810AADB3A77342949C8D3FCD2BF2440EDE909047441BA8B514AAA25",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/cpp/types/libmorrow/oh-package.json5"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/entryability/EntryAbility.ets",
+      "bytes": 3992,
+      "sha256": "879C0E1F5D32794717DE35167156A28AE1C7B9270A9EBF5A37EB37DA3190CD10",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/entryability/EntryAbility.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/entrybackupability/EntryBackupAbility.ets",
+      "bytes": 1116,
+      "sha256": "D3636F4C9E2AF79AB59105A1846427D6967DCD31CA93EC4B0A3190B85E63CE7A",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/entrybackupability/EntryBackupAbility.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/Appearance.ets",
+      "bytes": 5126,
+      "sha256": "0FCAA587D24B1FD0A1B4D066F465BC2178FF16B830187E1E2A250E3F5B4A67B2",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/Appearance.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/AttachmentFiles.ets",
+      "bytes": 45611,
+      "sha256": "74AD85E0E6504EB97BC81D9C1983D6F3369E6C72FE0C14D81ED0F92B4B8849BB",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/AttachmentFiles.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/AttachmentFullscreen.ets",
+      "bytes": 8612,
+      "sha256": "36CCB92A53F1918C8795E31E43E6F0FD723EF61E8A718E0B88BC6FE9ECD4EE42",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/AttachmentFullscreen.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/AttachmentImageGestures.ets",
+      "bytes": 8076,
+      "sha256": "73AF8DD840BAB941C7A5ACDBC45639920E0B423912D441472C1756FC77647FC9",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/AttachmentImageGestures.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/AttachmentImportSelection.ets",
+      "bytes": 13477,
+      "sha256": "A738AA4A79BFA401BB12B69148298EE1F86E2D9ECE836EDE3F32E8E6441C5A2B",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/AttachmentImportSelection.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/AttachmentMediaGestures.ets",
+      "bytes": 7793,
+      "sha256": "7DE415764EC18953725B8E64EC2BB13F894DDE484FDAB1A15A5AC2913641D43C",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/AttachmentMediaGestures.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/AttachmentOpen.ets",
+      "bytes": 12503,
+      "sha256": "92D0C07AB7FFE5B8A5622E4DC731B07713EE6B46B5967A56249668205409506B",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/AttachmentOpen.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/AttachmentPlayback.ets",
+      "bytes": 10919,
+      "sha256": "4BDB0763E4CA6D0EC665AC9D2C7BC9BFF38E2DA8167DAB8F7E6D532FFD2FECCD",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/AttachmentPlayback.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/Attachments.ets",
+      "bytes": 3048,
+      "sha256": "7375378A85BFEE215979B271AA40AA69C351F32277DC669861A6AAC136D30B3F",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/Attachments.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/CardDataSource.ets",
+      "bytes": 2367,
+      "sha256": "D94192F38F0FD29572DA3FBC7EAB55390A9893BB65355085244FB4573236DEEB",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/CardDataSource.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/CardOrder.ets",
+      "bytes": 9120,
+      "sha256": "8ECC6057DAA4667002319AC5CBD5C85403B0D52A9254C9923384B6A9012EC384",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/CardOrder.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/ClipboardInput.ets",
+      "bytes": 19438,
+      "sha256": "0F286EA943C4D1FF5A9AF2B3739F5EF9536485051C19B0159255B8296146B90C",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/ClipboardInput.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/ClipboardPaste.ets",
+      "bytes": 11652,
+      "sha256": "98CCD0F8D25D4B3C657023EC7D8F521B7C1278083260D5A7EEAE2ED093610658",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/ClipboardPaste.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorBusiness.ets",
+      "bytes": 26878,
+      "sha256": "BBD4DE0B1E02A67E19345147EB7DE4C01622C1E015E12FB0C1431A101945C4FD",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/EditorBusiness.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorBusinessHandoff.ets",
+      "bytes": 47627,
+      "sha256": "FC2878C8F8FC2F312CF879023A1E445FE2CB3AE409755372FEB9FFBC596723F0",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/EditorBusinessHandoff.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorBusinessRecovery.ets",
+      "bytes": 10792,
+      "sha256": "6B02C274CB3B6795FB89C8457096AA2396ED22CB6F50ACDB86A1B728B92533EC",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/EditorBusinessRecovery.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorBusinessSession.ets",
+      "bytes": 40102,
+      "sha256": "58E992B7E8BDAE01F7BC07B3DEE9E66B7BCAE6712A945B5509382121E5AF52C6",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/EditorBusinessSession.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorDirectInput.ets",
+      "bytes": 11848,
+      "sha256": "A56119B3DFC3EA52E83082F0654C6BD9164383A646AF503B6D72CE2F0D7E6030",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/EditorDirectInput.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorDraft.ets",
+      "bytes": 37929,
+      "sha256": "B88A46D0371D8C6F193187D1A0E1ACF41671D4991CDBD59C451B8BCF66CF3775",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/EditorDraft.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorDraftFork.ets",
+      "bytes": 12805,
+      "sha256": "2F5CC8586D2400F99EE7598DD816970E63D9E3D4B53C5DFFBC54CB4E4062263C",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/EditorDraftFork.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorFieldPolicy.ets",
+      "bytes": 6929,
+      "sha256": "10C3162E77A947335ACF0C3DF2E464C80195D0AC2BBC2922BBB09C0A8A626842",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorInputHash.ets",
+      "bytes": 463,
+      "sha256": "C894E8F44AA1A447096A8AC12B9A9C437EEAA64DD4875AA6116E7635893BE628",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/EditorInputHash.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorInputPolicy.ets",
+      "bytes": 7887,
+      "sha256": "64C86330D3DBC8FA85F88D6F0692D9ED15C88814C711F4F2B665827B3628AE2B",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/EditorInputPolicy.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorPaste.ets",
+      "bytes": 2767,
+      "sha256": "28D54A7D02BF644D68B58AC68A4D824AB2FF3FB71B87AB0E00C279456B6D160E",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/EditorPaste.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/EditorTodos.ets",
+      "bytes": 25476,
+      "sha256": "B4DBB56401157F107C0E98E13799332B86808CBDCAF618964FE87133B281C75C",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/EditorTodos.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/Markdown.ets",
+      "bytes": 13451,
+      "sha256": "B1B173937D53F158D9D13A865A4F00D21BAFF6067D324EC5C0E2CD5089793FE9",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/Markdown.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/QueryCoordinator.ets",
+      "bytes": 3931,
+      "sha256": "2E45179BEA198F7C42EBBDF69D87F1C0C33BFF496B362F1792BCA2624D410798",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/QueryCoordinator.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/UiStrings.ets",
+      "bytes": 775172,
+      "sha256": "17801DD05B1AFD9684F452B0E5B736FFBA7C5520FB5413A8B6D002216CB1A576",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/UiStrings.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/VerifiedImages.ets",
+      "bytes": 4645,
+      "sha256": "1A04E9C53432759D9734ACA7582BC9CAE6D951EC3DFCF124686DC67ACBA50F3E",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/VerifiedImages.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/model/Workbench.ets",
+      "bytes": 2418,
+      "sha256": "6CEF4C4C9CDE5FEFE44FC65619CF7CAF8C4965B129A553D45D8AFE701B2E6547",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/model/Workbench.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/pages/AttachmentImagePreview.ets",
+      "bytes": 14047,
+      "sha256": "484076C31DCF78DDDB69B0EA27F6BB46C8FD753FC9763F0F07759CE9438442A8",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/pages/AttachmentImagePreview.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/pages/AttachmentMediaPreview.ets",
+      "bytes": 17283,
+      "sha256": "DB0E2AD65213C06CEE57BDB1F683EAFEB0DEAFBF93D10484D0F5DC0E0C315A27",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/pages/ColorWheel.ets",
+      "bytes": 2444,
+      "sha256": "1DF284CD4D29821EF53CC10891218A397D978652E9CF3F1FEF2651C542440705",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/pages/ColorWheel.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/pages/EditorTodos.ets",
+      "bytes": 25410,
+      "sha256": "00110309FF3DEE60905501D3E5AF45518AEAEB642CFC28AD3D8A2AA7CEC68870",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/pages/EditorTodos.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/pages/EditorViewLease.ets",
+      "bytes": 793,
+      "sha256": "96624FE1F3ADF1528BF188F0C7FFFBE838454833499E3EDA1BAB48E428B4CFF3",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/pages/EditorViewLease.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/pages/Index.ets",
+      "bytes": 334640,
+      "sha256": "0C1620875C82C517BEA1D8C4A3029DC851452978A323667FED8AF91E483696B6",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/pages/Index.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/pages/MarkdownPreview.ets",
+      "bytes": 8627,
+      "sha256": "8F595963475B29CF9EE3A9CFA5B3307AA3B213C61F7DC517C13DD645A3A33922",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/pages/MarkdownPreview.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/pages/StudioArtwork.ets",
+      "bytes": 6576,
+      "sha256": "9CA8D8BBC1580E1B2A0D5D9F3251765DF44A04D78BA3E0791E778FBD74E4983D",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/pages/StudioArtwork.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/ets/pages/SurfaceRelief.ets",
+      "bytes": 2969,
+      "sha256": "BB057E63CD84ACEDCA603D003D3ACECBCF250AE2E4A00636CF314C8876F80688",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/ets/pages/SurfaceRelief.ets"
+      }
+    },
+    {
+      "path": "entry/src/main/module.json5",
+      "bytes": 1349,
+      "sha256": "E5531A8A126D27E02FFD9F93B89ADD108C7772C77D9C28536A72BBE6165AF8CC",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/module.json5"
+      }
+    },
+    {
+      "path": "entry/src/main/resources/base/element/color.json",
+      "bytes": 98,
+      "sha256": "4E028F6E8A847F8A98CFEE6D37309DEF0E7E2E7290041D89E22BA3AC38A802B8",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/resources/base/element/color.json"
+      }
+    },
+    {
+      "path": "entry/src/main/resources/base/element/float.json",
+      "bytes": 92,
+      "sha256": "8DB02F7A08F7B7B73D6EB95B09A6643463D10258B757901E70F255DE0A2C83EF",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/resources/base/element/float.json"
+      }
+    },
+    {
+      "path": "entry/src/main/resources/base/element/string.json",
+      "bytes": 273,
+      "sha256": "600384A08C4A490F52DA2F897BE992F4CEF5894B57B6C765E38DCF996C045AAC",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/resources/base/element/string.json"
+      }
+    },
+    {
+      "path": "entry/src/main/resources/base/media/background.png",
+      "bytes": 91942,
+      "sha256": "497EDEAFC51AF043C73E72EE8C4FBAC4663357EF1BA275C0289F31A366B26239",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/resources/base/media/background.png"
+      }
+    },
+    {
+      "path": "entry/src/main/resources/base/media/foreground.png",
+      "bytes": 8805,
+      "sha256": "57E549283F255505A649042F36A1D6793C307A69A94C9FA7E27A38AF38DDBE8C",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/resources/base/media/foreground.png"
+      }
+    },
+    {
+      "path": "entry/src/main/resources/base/media/layered_image.json",
+      "bytes": 109,
+      "sha256": "3D18DCD7ED9E7D3D2C54C20CB80A44EB4877C661131C68A46E20B6E19D0BB476",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/resources/base/media/layered_image.json"
+      }
+    },
+    {
+      "path": "entry/src/main/resources/base/media/startIcon.png",
+      "bytes": 20093,
+      "sha256": "567C7C0C7A321CA180E010AD880F0F7519F6D351AC2B9665E2EE710E7CFE7778",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/resources/base/media/startIcon.png"
+      }
+    },
+    {
+      "path": "entry/src/main/resources/base/profile/backup_config.json",
+      "bytes": 36,
+      "sha256": "CBF358749C48AAA4AFA6819E796E71EF5C0629CC3E651E2E09A91612F1041696",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/resources/base/profile/backup_config.json"
+      }
+    },
+    {
+      "path": "entry/src/main/resources/base/profile/main_pages.json",
+      "bytes": 37,
+      "sha256": "F21984FB1D5096F0DB41314DA0BB94C573E7AD018E5AFAE3044F8D5FF71B0BFC",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/resources/base/profile/main_pages.json"
+      }
+    },
+    {
+      "path": "entry/src/main/resources/dark/element/color.json",
+      "bytes": 98,
+      "sha256": "F26F3F1E47165AE79EBE6F295A3E12593F01E90079D03FC7FF61E47CE0B366A6",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/resources/dark/element/color.json"
+      }
+    },
+    {
+      "path": "entry/src/main/resources/rawfile/materialicons.otf",
+      "bytes": 1645184,
+      "sha256": "D9865B671A09D683D13A863089D8825E0F61A37696CE5D7D448BC8023AA62453",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/resources/rawfile/materialicons.otf"
+      }
+    },
+    {
+      "path": "entry/src/main/resources/rawfile/materialicons_license.txt",
+      "bytes": 18531,
+      "sha256": "BE698262AECD042C0DE6F886CC0AF622F8DEF446462026992CC530275D8A9E74",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/entry/src/main/resources/rawfile/materialicons_license.txt"
+      }
+    },
+    {
+      "path": "hvigor/hvigor-config.json5",
+      "bytes": 1478,
+      "sha256": "D285A4721D6F20CA06A5A1A5B88AFC3CD2A6A6049C94193801405DBBDCA64AA6",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/hvigor/hvigor-config.json5"
+      }
+    },
+    {
+      "path": "hvigorfile.ts",
+      "bytes": 305,
+      "sha256": "B8882FB4B6DA475EEEEB64875E8F80A1BDFE4EA4B9D943396E91BE45478A4758",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/hvigorfile.ts"
+      }
+    },
+    {
+      "path": "oh-package-lock.json5",
+      "bytes": 1002,
+      "sha256": "738D44A280F1BEC5BBCAC8CF183D8D02C87C856D45768A02DADD2FEBA404BEEF",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/oh-package-lock.json5"
+      }
+    },
+    {
+      "path": "oh-package.json5",
+      "bytes": 201,
+      "sha256": "BC1D56F0FB813EBA28652AF4F1E960BD6AC1DA54AAED2325DFA82F142AC10686",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/oh-package.json5"
+      }
+    },
+    {
+      "path": "scripts/build-hap.ps1",
+      "bytes": 622,
+      "sha256": "39152CB98FE80B8DC71E13FF99D3B05A2793354BE2A502E47460ECC19395DC32",
+      "provenance": {
+        "kind": "frozen current repository",
+        "source": "hmos/scripts/build-hap.ps1"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/CHANGELOG.md",
+      "bytes": 112,
+      "sha256": "B8B5EA6CA3E04AA79F4F0B1546DAA344C1F4FEB44284BB42EC6A12418D719803",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/LICENSE",
+      "bytes": 10349,
+      "sha256": "9264A6B3C134511CCFCAE48ED3808320688AE6933EC4FC547476A005095FC1EF",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/README.md",
+      "bytes": 2727,
+      "sha256": "E53086DCA414F860E7B3C8B07375915753FAC7D084F388ED83D315FD63CD47FA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/build-profile.json5",
+      "bytes": 743,
+      "sha256": "4B9572FD8AD877A5A7DDE0FDC08BD8C3B33A661D499D6DEB523C55A0EAC25969",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/hvigorfile.js",
+      "bytes": 786,
+      "sha256": "CEC5E52AB2CB875D2D45AA13F2E893AFAD90F4A44888C60B53BEAC8C17CAA87B",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/hvigorfile.ts",
+      "bytes": 783,
+      "sha256": "359F492827692AB033785990A8BA8F98560FDAE67081E415F860211353F87C22",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/index.d.ts",
+      "bytes": 1720,
+      "sha256": "F0C06A4A2AB976E365CC46304A09376C48BE286E6991D16900B8DB669F648240",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/index.ets",
+      "bytes": 760,
+      "sha256": "0A0718781459A183165515D8B37DC1BECC9D53D8939AA30BE3C216F6921061E7",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/index.js",
+      "bytes": 771,
+      "sha256": "132D4BD67132C221774775FE5B3C16A9BA59BA09C4733281042205A33DEEC7E3",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/index.ts",
+      "bytes": 771,
+      "sha256": "27E919C983221C7EFFCC3193AD834388AB34A653CE5C00836F65560581D67ACA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/oh-package.json5",
+      "bytes": 889,
+      "sha256": "97402A423745059E350C17F20738D1C77157FCF590D3DCDBE1263283057C82CE",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/src/main/mock/ArgumentMatchers.js",
+      "bytes": 3016,
+      "sha256": "A302C57B2DA14AFF319805DA7AA896252A6C0384D8A52C0DE79FB0BD8E416164",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/src/main/mock/ArgumentMatchers.ts",
+      "bytes": 2999,
+      "sha256": "2E5DCE7EF3A24CABD1D6BAED8387BF6A8543EE28EABD1873D857C926B9B7CC88",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/src/main/mock/ExtendInterface.js",
+      "bytes": 1407,
+      "sha256": "19565510AB00843CA8ADF6980428C7EF3F5E4C36268446F63C3FAC45F82A4A68",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/src/main/mock/ExtendInterface.ts",
+      "bytes": 1567,
+      "sha256": "67BED08C9F1D96138FD9C3DF3BEC3D4CF2E996B03AC05FF3DEB962163D07B234",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/src/main/mock/MockKit.js",
+      "bytes": 9405,
+      "sha256": "75153D6F8295FB365D6F45E61038864110B39175B44CC783C6AF0D76F83413BA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/src/main/mock/MockKit.ts",
+      "bytes": 9892,
+      "sha256": "9D01E0E4E161F943961DE24209A3E148E505293852EC18F55A1A438389E9A102",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/src/main/mock/VerificationMode.js",
+      "bytes": 1506,
+      "sha256": "7B25709B108F6C0B90D58513123CDF3DD97B4F6F6FCC78BD1B5058CA1B3BC376",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/src/main/mock/VerificationMode.ts",
+      "bytes": 1584,
+      "sha256": "D7038655C8BC83007AEBC5D5F39E8298463B3F8F0B79B2CD3350308506049E89",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/src/main/module.json",
+      "bytes": 338,
+      "sha256": "79E2D8D7327C3CD7ABC23532F9360F781A6DC8AE9F0EA85521B5EBD68BB665EB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hamock@1.0.0/oh_modules/@ohos/hamock/src/res/schemas/mock-config-json5-schema.json",
+      "bytes": 563,
+      "sha256": "EF3D5D09E7F6F89B9CC02206957DBC59EE0F215C0E2F6D6B43C065A2D02AE124",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/BuildProfile.ets",
+      "bytes": 520,
+      "sha256": "1AA5A6E4BD1DFF9A2BC466B8ECC6770A68C015D5576A98E2AB51FB9841DD42CD",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/CHANGELOG.md",
+      "bytes": 961,
+      "sha256": "71FFF62CC2337514A59809E3C78B65277AC74CBC7A6A24619191F6FF5196BE6B",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/LICENSE",
+      "bytes": 10173,
+      "sha256": "0CEC06E0E55FBC3DC5CEE4FCA9B607F66CB8F4E4DBCF3B3C013594DD156732E9",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/README.md",
+      "bytes": 74247,
+      "sha256": "C985563956CB8B7A1D56A2477B927EF0941E9C4678DB2B4C5383AEC7A74301C2",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/build-profile.json5",
+      "bytes": 531,
+      "sha256": "59E3EBB0C982D9E89255798FC3A4D41D7349BC41F379C8FC59D55370EDF6DFCB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/consumer-rules.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/hvigorfile.ts",
+      "bytes": 227,
+      "sha256": "9FA891DAFC0E582CC4F9500547176230D4D3C5DC4C7D512C1903BE07BEBFDDF1",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/index.d.ts",
+      "bytes": 4976,
+      "sha256": "25787C003825D43E0EA9C59071417EAAC603BB125B1E3FE75DC1687D80F100BE",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/index.ets",
+      "bytes": 5474,
+      "sha256": "385E65E030C612A82352AE472636522A84AA191AEFDCB26DB1D76B0F0280A3B0",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/index.js",
+      "bytes": 11893,
+      "sha256": "B3C07FB961AA19378240D6DA7EFC48FFB073EADDF7A5B74C1FA1978CFCB3A8C0",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/index.ts",
+      "bytes": 1242,
+      "sha256": "577F852139CD6301B3E6022ECFC7491519E2981937BB6C60F5CFEE355BA156BC",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/obfuscation-rules.txt",
+      "bytes": 1008,
+      "sha256": "0091C5622EDE377A9AE1260F2499815AFC3BCC5D1AB79A3D910FF7B456C98518",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/oh-package.json5",
+      "bytes": 512,
+      "sha256": "F0C248FDD61BAD7CE450205CA525570AAE79D59D69E50674FBE544C76DA5B0F7",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/Constant.js",
+      "bytes": 3006,
+      "sha256": "FC03E09366776F209E736D3A4A13423590BD1C9EA9C17A4A249509EB7F15841E",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/core.js",
+      "bytes": 5044,
+      "sha256": "CF4E552FB4CD16D3ACE49872EC58D7AC94C1AF88D16FF8A0DE6BABA65C4A9669",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/event.js",
+      "bytes": 2555,
+      "sha256": "8DCFE19F1031BC44B426B33D783AAAAA8A4C0A74ED064F78EFEF193C2A745A34",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/interface.js",
+      "bytes": 3097,
+      "sha256": "7349F11F24440A556240AD48570B47043ABD149D941FD2CEE9B23D19DCC290FB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/ExpectExtend.js",
+      "bytes": 3818,
+      "sha256": "476D3420360ADBFC85B4F4E8A085C278BBBBEA7539B64FDFA694048BA15273C0",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertClose.js",
+      "bytes": 1400,
+      "sha256": "9C67CCE271E181BD0846DB7F4C96747DAFC53B3C130D2D8AA5F34C1C75FC9B99",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertContain.js",
+      "bytes": 1470,
+      "sha256": "CD0FC0AC5AE00743F69FE9DC608052A453BB176E18DD6BBBE402E8EA1DCAB5A2",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertFail.js",
+      "bytes": 757,
+      "sha256": "3D91752145A5197DA28E5DCADAD8CD48633BFC05324C6EF63F417BB04449E581",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertFalse.js",
+      "bytes": 947,
+      "sha256": "90A5F865C9290D99790CBFD041A36E5A5FE2E3AE1863A1F3C614929D06F045B3",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertInstanceOf.js",
+      "bytes": 1281,
+      "sha256": "08BBD71060F5EF97D27104357AB06FED2803E4D98916D3BAD3B82328F77B6ED8",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertLarger.js",
+      "bytes": 849,
+      "sha256": "95FFD9B08EB82DFCEE7F22D10F30B8CABC53E995AF0368B2734DEB64047FC0EA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertLargerOrEqual.js",
+      "bytes": 859,
+      "sha256": "E3491B44E8124E5F64E560AB99AFBE59C05EE18FFB7A40F07903FCD353978845",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertLess.js",
+      "bytes": 843,
+      "sha256": "B5C1389A182C0C20A3EABD93CB121A027C8907A622AA84A7B0BC9253FB04D0C8",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertLessOrEqual.js",
+      "bytes": 853,
+      "sha256": "90F54960E92370B8D808884B5B3C31F7157C509417987F17B878C653EFFD0A37",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertNaN.js",
+      "bytes": 941,
+      "sha256": "E2D1C9E7AFC977E5AFEFB6C8C49F8499CDBAAF53781D1A3150781C7BA7BDD81C",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertNegUnlimited.js",
+      "bytes": 989,
+      "sha256": "9AF4956B2AC92FA62F018927EF1A0987DECC4090539A50E88D1D9FEF3334B9C2",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertNull.js",
+      "bytes": 945,
+      "sha256": "806423ADC9AEF64176919E64217DDF2D62F9F82B2512318C9895D5966B732484",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertPosUnlimited.js",
+      "bytes": 990,
+      "sha256": "9B1281F77988D883FFD652EA633C12808123980A844B55E2E788C55338453A4F",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsPending.js",
+      "bytes": 1532,
+      "sha256": "9750740AC3D907B3A50CD8E1FF681E5FC4E49D8D5B139B829B81E8C59449C777",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsRejected.js",
+      "bytes": 1317,
+      "sha256": "5E1D604229980C779687637F4E466FE0E40E5808515B6BC1AD9BBC1535B16C52",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsRejectedWith.js",
+      "bytes": 1944,
+      "sha256": "A0B2B34088CCAEAF19978A3B070346669AE176233C56ED5661C502314459DFCB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsRejectedWithError.js",
+      "bytes": 3441,
+      "sha256": "D75B96758174D3914359625F2959D21599FA54641B8D3441AFB110BFDEF5775A",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsResolved.js",
+      "bytes": 1390,
+      "sha256": "4C847074534A9B39124CF3BE81E95C9CD4F3E58B4E180BAA0972AB2FDB1E315F",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsResolvedWith.js",
+      "bytes": 1934,
+      "sha256": "9FE47E8F7A705EF1026DDE4915BA94D3C1E3FBDB12B0B3DF2D769B78F28BA012",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertThrowError.js",
+      "bytes": 1659,
+      "sha256": "3762D9D57B68BA38F0E9894D37AB5FCD8121BBF6C856E366A69FE7EB634D7014",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/assertUndefined.js",
+      "bytes": 965,
+      "sha256": "6863C5C979C4BDCB850F88E023B6F9E3FF47E67437BF07A34F5C7B16BE3D301A",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/deepEquals/DeepTypeUtils.js",
+      "bytes": 3622,
+      "sha256": "1D703A09D39F32E4ED39A107F3F7C3F6DEBD374B4B02C2F3E1ED5983DB33E9A1",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/deepEquals/assertDeepEquals.js",
+      "bytes": 13926,
+      "sha256": "5ED32F71EEBE87B0FB0F471B8ABE4133F83C72BECDB66C0843E7B80A08FD040F",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/assert/isPromiseLike.js",
+      "bytes": 992,
+      "sha256": "5A8C935ACA2C2B1E6B986BCDADAC7701A1EDE785E9AFC364F8AD3919BA0D7178",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/config/DataDriver.js",
+      "bytes": 5344,
+      "sha256": "184EA77B05CFF5BD65DE7FCCC918728E1F1B25F23C9B06B836E3B709B9994041",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/config/Filter.js",
+      "bytes": 5035,
+      "sha256": "548900D55AF37E260E0D82B5FEDBC5B4DE226D8A2537E75EA113F9A6323449C5",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/config/configService.js",
+      "bytes": 11423,
+      "sha256": "01799EAE14CFF856A696803CD6BC8D92F128754323DB25FC0A40B2EF2B81F3B8",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/coverage/coverageCollect.js",
+      "bytes": 3179,
+      "sha256": "40E44171B1C11A4D350444CDD2CC89403358A989D091BF8A738EECDA98B40B5A",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/kit/SysTestKit.js",
+      "bytes": 3798,
+      "sha256": "BADF54BF47C28D0BF2175061CF4CB422592346B667A7AB2602BF2C3BFD7E52CC",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/mock/ArgumentMatchers.js",
+      "bytes": 3071,
+      "sha256": "F63F9618407490414335651A2B10B3AEC8022B32109EDA7D792C5CA309400DFA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/mock/ExtendInterface.js",
+      "bytes": 1417,
+      "sha256": "9BC744AAB008514929A2BA7379E0E664C6AA3684F4ABFEB438B4D3608A7BCBF3",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/mock/MockKit.js",
+      "bytes": 12325,
+      "sha256": "D50534C19F00D2ADB21189966F241FBB11EB53660D96AA920684D07920CE5BFB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/mock/VerificationMode.js",
+      "bytes": 1408,
+      "sha256": "F7B7EAAC810540C17C19D6815884EDE3457CEBAFE09347DAA2D7D10D34B93A17",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/report/LogExpectError.js",
+      "bytes": 2823,
+      "sha256": "5A1247E5CE25F5FF9BFB5C2688FD713866572802AF45FE1FBD2612BB35076467",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/report/OhReport.js",
+      "bytes": 11680,
+      "sha256": "08E960EEC3EFF917517FA26C223A309DD99D774C5785C917F2C0A84DF54CD2DD",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module/report/ReportExtend.js",
+      "bytes": 4848,
+      "sha256": "97DE9DAD881AC574553C5644CF59E423905A37D2A1540277D6C5620F01446FA5",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/module.json",
+      "bytes": 624,
+      "sha256": "7AD95D14FD4CA0364F6C32205389490ED47FFAE840C03DF4C0E7079DDDCD2F53",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/service.js",
+      "bytes": 49258,
+      "sha256": "FE173C08FC275C344078F9F81FFA7252697F177CE294347F929382AB59A46884",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/@ohos+hypium@1.0.25/oh_modules/@ohos/hypium/src/main/testrunner/OpenHarmonyTestRunner.ts",
+      "bytes": 3859,
+      "sha256": "7BAC33369CA6700A2685EA1D67CAA40A942440C920664AF45506A018994CEAD6",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/lock.json5",
+      "bytes": 2006,
+      "sha256": "252D3CEF32411103B41F989846FFC0AC1147651AD5A9F19F9F52FA1B8682068B",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/CHANGELOG.md",
+      "bytes": 112,
+      "sha256": "B8B5EA6CA3E04AA79F4F0B1546DAA344C1F4FEB44284BB42EC6A12418D719803",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/LICENSE",
+      "bytes": 10349,
+      "sha256": "9264A6B3C134511CCFCAE48ED3808320688AE6933EC4FC547476A005095FC1EF",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/README.md",
+      "bytes": 2727,
+      "sha256": "E53086DCA414F860E7B3C8B07375915753FAC7D084F388ED83D315FD63CD47FA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/build-profile.json5",
+      "bytes": 743,
+      "sha256": "4B9572FD8AD877A5A7DDE0FDC08BD8C3B33A661D499D6DEB523C55A0EAC25969",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/hvigorfile.js",
+      "bytes": 786,
+      "sha256": "CEC5E52AB2CB875D2D45AA13F2E893AFAD90F4A44888C60B53BEAC8C17CAA87B",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/hvigorfile.ts",
+      "bytes": 783,
+      "sha256": "359F492827692AB033785990A8BA8F98560FDAE67081E415F860211353F87C22",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/index.d.ts",
+      "bytes": 1720,
+      "sha256": "F0C06A4A2AB976E365CC46304A09376C48BE286E6991D16900B8DB669F648240",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/index.ets",
+      "bytes": 760,
+      "sha256": "0A0718781459A183165515D8B37DC1BECC9D53D8939AA30BE3C216F6921061E7",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/index.js",
+      "bytes": 771,
+      "sha256": "132D4BD67132C221774775FE5B3C16A9BA59BA09C4733281042205A33DEEC7E3",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/index.ts",
+      "bytes": 771,
+      "sha256": "27E919C983221C7EFFCC3193AD834388AB34A653CE5C00836F65560581D67ACA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/oh-package.json5",
+      "bytes": 889,
+      "sha256": "97402A423745059E350C17F20738D1C77157FCF590D3DCDBE1263283057C82CE",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/src/main/mock/ArgumentMatchers.js",
+      "bytes": 3016,
+      "sha256": "A302C57B2DA14AFF319805DA7AA896252A6C0384D8A52C0DE79FB0BD8E416164",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/src/main/mock/ArgumentMatchers.ts",
+      "bytes": 2999,
+      "sha256": "2E5DCE7EF3A24CABD1D6BAED8387BF6A8543EE28EABD1873D857C926B9B7CC88",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/src/main/mock/ExtendInterface.js",
+      "bytes": 1407,
+      "sha256": "19565510AB00843CA8ADF6980428C7EF3F5E4C36268446F63C3FAC45F82A4A68",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/src/main/mock/ExtendInterface.ts",
+      "bytes": 1567,
+      "sha256": "67BED08C9F1D96138FD9C3DF3BEC3D4CF2E996B03AC05FF3DEB962163D07B234",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/src/main/mock/MockKit.js",
+      "bytes": 9405,
+      "sha256": "75153D6F8295FB365D6F45E61038864110B39175B44CC783C6AF0D76F83413BA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/src/main/mock/MockKit.ts",
+      "bytes": 9892,
+      "sha256": "9D01E0E4E161F943961DE24209A3E148E505293852EC18F55A1A438389E9A102",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/src/main/mock/VerificationMode.js",
+      "bytes": 1506,
+      "sha256": "7B25709B108F6C0B90D58513123CDF3DD97B4F6F6FCC78BD1B5058CA1B3BC376",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/src/main/mock/VerificationMode.ts",
+      "bytes": 1584,
+      "sha256": "D7038655C8BC83007AEBC5D5F39E8298463B3F8F0B79B2CD3350308506049E89",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/src/main/module.json",
+      "bytes": 338,
+      "sha256": "79E2D8D7327C3CD7ABC23532F9360F781A6DC8AE9F0EA85521B5EBD68BB665EB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hamock/src/res/schemas/mock-config-json5-schema.json",
+      "bytes": 563,
+      "sha256": "EF3D5D09E7F6F89B9CC02206957DBC59EE0F215C0E2F6D6B43C065A2D02AE124",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/BuildProfile.ets",
+      "bytes": 520,
+      "sha256": "1AA5A6E4BD1DFF9A2BC466B8ECC6770A68C015D5576A98E2AB51FB9841DD42CD",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/CHANGELOG.md",
+      "bytes": 961,
+      "sha256": "71FFF62CC2337514A59809E3C78B65277AC74CBC7A6A24619191F6FF5196BE6B",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/LICENSE",
+      "bytes": 10173,
+      "sha256": "0CEC06E0E55FBC3DC5CEE4FCA9B607F66CB8F4E4DBCF3B3C013594DD156732E9",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/README.md",
+      "bytes": 74247,
+      "sha256": "C985563956CB8B7A1D56A2477B927EF0941E9C4678DB2B4C5383AEC7A74301C2",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/build-profile.json5",
+      "bytes": 531,
+      "sha256": "59E3EBB0C982D9E89255798FC3A4D41D7349BC41F379C8FC59D55370EDF6DFCB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/consumer-rules.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/hvigorfile.ts",
+      "bytes": 227,
+      "sha256": "9FA891DAFC0E582CC4F9500547176230D4D3C5DC4C7D512C1903BE07BEBFDDF1",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/index.d.ts",
+      "bytes": 4976,
+      "sha256": "25787C003825D43E0EA9C59071417EAAC603BB125B1E3FE75DC1687D80F100BE",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/index.ets",
+      "bytes": 5474,
+      "sha256": "385E65E030C612A82352AE472636522A84AA191AEFDCB26DB1D76B0F0280A3B0",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/index.js",
+      "bytes": 11893,
+      "sha256": "B3C07FB961AA19378240D6DA7EFC48FFB073EADDF7A5B74C1FA1978CFCB3A8C0",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/index.ts",
+      "bytes": 1242,
+      "sha256": "577F852139CD6301B3E6022ECFC7491519E2981937BB6C60F5CFEE355BA156BC",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/obfuscation-rules.txt",
+      "bytes": 1008,
+      "sha256": "0091C5622EDE377A9AE1260F2499815AFC3BCC5D1AB79A3D910FF7B456C98518",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/oh-package.json5",
+      "bytes": 512,
+      "sha256": "F0C248FDD61BAD7CE450205CA525570AAE79D59D69E50674FBE544C76DA5B0F7",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/Constant.js",
+      "bytes": 3006,
+      "sha256": "FC03E09366776F209E736D3A4A13423590BD1C9EA9C17A4A249509EB7F15841E",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/core.js",
+      "bytes": 5044,
+      "sha256": "CF4E552FB4CD16D3ACE49872EC58D7AC94C1AF88D16FF8A0DE6BABA65C4A9669",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/event.js",
+      "bytes": 2555,
+      "sha256": "8DCFE19F1031BC44B426B33D783AAAAA8A4C0A74ED064F78EFEF193C2A745A34",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/interface.js",
+      "bytes": 3097,
+      "sha256": "7349F11F24440A556240AD48570B47043ABD149D941FD2CEE9B23D19DCC290FB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/ExpectExtend.js",
+      "bytes": 3818,
+      "sha256": "476D3420360ADBFC85B4F4E8A085C278BBBBEA7539B64FDFA694048BA15273C0",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertClose.js",
+      "bytes": 1400,
+      "sha256": "9C67CCE271E181BD0846DB7F4C96747DAFC53B3C130D2D8AA5F34C1C75FC9B99",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertContain.js",
+      "bytes": 1470,
+      "sha256": "CD0FC0AC5AE00743F69FE9DC608052A453BB176E18DD6BBBE402E8EA1DCAB5A2",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertFail.js",
+      "bytes": 757,
+      "sha256": "3D91752145A5197DA28E5DCADAD8CD48633BFC05324C6EF63F417BB04449E581",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertFalse.js",
+      "bytes": 947,
+      "sha256": "90A5F865C9290D99790CBFD041A36E5A5FE2E3AE1863A1F3C614929D06F045B3",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertInstanceOf.js",
+      "bytes": 1281,
+      "sha256": "08BBD71060F5EF97D27104357AB06FED2803E4D98916D3BAD3B82328F77B6ED8",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertLarger.js",
+      "bytes": 849,
+      "sha256": "95FFD9B08EB82DFCEE7F22D10F30B8CABC53E995AF0368B2734DEB64047FC0EA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertLargerOrEqual.js",
+      "bytes": 859,
+      "sha256": "E3491B44E8124E5F64E560AB99AFBE59C05EE18FFB7A40F07903FCD353978845",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertLess.js",
+      "bytes": 843,
+      "sha256": "B5C1389A182C0C20A3EABD93CB121A027C8907A622AA84A7B0BC9253FB04D0C8",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertLessOrEqual.js",
+      "bytes": 853,
+      "sha256": "90F54960E92370B8D808884B5B3C31F7157C509417987F17B878C653EFFD0A37",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertNaN.js",
+      "bytes": 941,
+      "sha256": "E2D1C9E7AFC977E5AFEFB6C8C49F8499CDBAAF53781D1A3150781C7BA7BDD81C",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertNegUnlimited.js",
+      "bytes": 989,
+      "sha256": "9AF4956B2AC92FA62F018927EF1A0987DECC4090539A50E88D1D9FEF3334B9C2",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertNull.js",
+      "bytes": 945,
+      "sha256": "806423ADC9AEF64176919E64217DDF2D62F9F82B2512318C9895D5966B732484",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertPosUnlimited.js",
+      "bytes": 990,
+      "sha256": "9B1281F77988D883FFD652EA633C12808123980A844B55E2E788C55338453A4F",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsPending.js",
+      "bytes": 1532,
+      "sha256": "9750740AC3D907B3A50CD8E1FF681E5FC4E49D8D5B139B829B81E8C59449C777",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsRejected.js",
+      "bytes": 1317,
+      "sha256": "5E1D604229980C779687637F4E466FE0E40E5808515B6BC1AD9BBC1535B16C52",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsRejectedWith.js",
+      "bytes": 1944,
+      "sha256": "A0B2B34088CCAEAF19978A3B070346669AE176233C56ED5661C502314459DFCB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsRejectedWithError.js",
+      "bytes": 3441,
+      "sha256": "D75B96758174D3914359625F2959D21599FA54641B8D3441AFB110BFDEF5775A",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsResolved.js",
+      "bytes": 1390,
+      "sha256": "4C847074534A9B39124CF3BE81E95C9CD4F3E58B4E180BAA0972AB2FDB1E315F",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsResolvedWith.js",
+      "bytes": 1934,
+      "sha256": "9FE47E8F7A705EF1026DDE4915BA94D3C1E3FBDB12B0B3DF2D769B78F28BA012",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertThrowError.js",
+      "bytes": 1659,
+      "sha256": "3762D9D57B68BA38F0E9894D37AB5FCD8121BBF6C856E366A69FE7EB634D7014",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/assertUndefined.js",
+      "bytes": 965,
+      "sha256": "6863C5C979C4BDCB850F88E023B6F9E3FF47E67437BF07A34F5C7B16BE3D301A",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/deepEquals/DeepTypeUtils.js",
+      "bytes": 3622,
+      "sha256": "1D703A09D39F32E4ED39A107F3F7C3F6DEBD374B4B02C2F3E1ED5983DB33E9A1",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/deepEquals/assertDeepEquals.js",
+      "bytes": 13926,
+      "sha256": "5ED32F71EEBE87B0FB0F471B8ABE4133F83C72BECDB66C0843E7B80A08FD040F",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/assert/isPromiseLike.js",
+      "bytes": 992,
+      "sha256": "5A8C935ACA2C2B1E6B986BCDADAC7701A1EDE785E9AFC364F8AD3919BA0D7178",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/config/DataDriver.js",
+      "bytes": 5344,
+      "sha256": "184EA77B05CFF5BD65DE7FCCC918728E1F1B25F23C9B06B836E3B709B9994041",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/config/Filter.js",
+      "bytes": 5035,
+      "sha256": "548900D55AF37E260E0D82B5FEDBC5B4DE226D8A2537E75EA113F9A6323449C5",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/config/configService.js",
+      "bytes": 11423,
+      "sha256": "01799EAE14CFF856A696803CD6BC8D92F128754323DB25FC0A40B2EF2B81F3B8",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/coverage/coverageCollect.js",
+      "bytes": 3179,
+      "sha256": "40E44171B1C11A4D350444CDD2CC89403358A989D091BF8A738EECDA98B40B5A",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/kit/SysTestKit.js",
+      "bytes": 3798,
+      "sha256": "BADF54BF47C28D0BF2175061CF4CB422592346B667A7AB2602BF2C3BFD7E52CC",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/mock/ArgumentMatchers.js",
+      "bytes": 3071,
+      "sha256": "F63F9618407490414335651A2B10B3AEC8022B32109EDA7D792C5CA309400DFA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/mock/ExtendInterface.js",
+      "bytes": 1417,
+      "sha256": "9BC744AAB008514929A2BA7379E0E664C6AA3684F4ABFEB438B4D3608A7BCBF3",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/mock/MockKit.js",
+      "bytes": 12325,
+      "sha256": "D50534C19F00D2ADB21189966F241FBB11EB53660D96AA920684D07920CE5BFB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/mock/VerificationMode.js",
+      "bytes": 1408,
+      "sha256": "F7B7EAAC810540C17C19D6815884EDE3457CEBAFE09347DAA2D7D10D34B93A17",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/report/LogExpectError.js",
+      "bytes": 2823,
+      "sha256": "5A1247E5CE25F5FF9BFB5C2688FD713866572802AF45FE1FBD2612BB35076467",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/report/OhReport.js",
+      "bytes": 11680,
+      "sha256": "08E960EEC3EFF917517FA26C223A309DD99D774C5785C917F2C0A84DF54CD2DD",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module/report/ReportExtend.js",
+      "bytes": 4848,
+      "sha256": "97DE9DAD881AC574553C5644CF59E423905A37D2A1540277D6C5620F01446FA5",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/module.json",
+      "bytes": 624,
+      "sha256": "7AD95D14FD4CA0364F6C32205389490ED47FFAE840C03DF4C0E7079DDDCD2F53",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/service.js",
+      "bytes": 49258,
+      "sha256": "FE173C08FC275C344078F9F81FFA7252697F177CE294347F929382AB59A46884",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/.ohpm/oh_modules/@ohos/hypium/src/main/testrunner/OpenHarmonyTestRunner.ts",
+      "bytes": 3859,
+      "sha256": "7BAC33369CA6700A2685EA1D67CAA40A942440C920664AF45506A018994CEAD6",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/CHANGELOG.md",
+      "bytes": 112,
+      "sha256": "B8B5EA6CA3E04AA79F4F0B1546DAA344C1F4FEB44284BB42EC6A12418D719803",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/LICENSE",
+      "bytes": 10349,
+      "sha256": "9264A6B3C134511CCFCAE48ED3808320688AE6933EC4FC547476A005095FC1EF",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/README.md",
+      "bytes": 2727,
+      "sha256": "E53086DCA414F860E7B3C8B07375915753FAC7D084F388ED83D315FD63CD47FA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/build-profile.json5",
+      "bytes": 743,
+      "sha256": "4B9572FD8AD877A5A7DDE0FDC08BD8C3B33A661D499D6DEB523C55A0EAC25969",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/hvigorfile.js",
+      "bytes": 786,
+      "sha256": "CEC5E52AB2CB875D2D45AA13F2E893AFAD90F4A44888C60B53BEAC8C17CAA87B",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/hvigorfile.ts",
+      "bytes": 783,
+      "sha256": "359F492827692AB033785990A8BA8F98560FDAE67081E415F860211353F87C22",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/index.d.ts",
+      "bytes": 1720,
+      "sha256": "F0C06A4A2AB976E365CC46304A09376C48BE286E6991D16900B8DB669F648240",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/index.ets",
+      "bytes": 760,
+      "sha256": "0A0718781459A183165515D8B37DC1BECC9D53D8939AA30BE3C216F6921061E7",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/index.js",
+      "bytes": 771,
+      "sha256": "132D4BD67132C221774775FE5B3C16A9BA59BA09C4733281042205A33DEEC7E3",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/index.ts",
+      "bytes": 771,
+      "sha256": "27E919C983221C7EFFCC3193AD834388AB34A653CE5C00836F65560581D67ACA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/oh-package.json5",
+      "bytes": 889,
+      "sha256": "97402A423745059E350C17F20738D1C77157FCF590D3DCDBE1263283057C82CE",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/src/main/mock/ArgumentMatchers.js",
+      "bytes": 3016,
+      "sha256": "A302C57B2DA14AFF319805DA7AA896252A6C0384D8A52C0DE79FB0BD8E416164",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/src/main/mock/ArgumentMatchers.ts",
+      "bytes": 2999,
+      "sha256": "2E5DCE7EF3A24CABD1D6BAED8387BF6A8543EE28EABD1873D857C926B9B7CC88",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/src/main/mock/ExtendInterface.js",
+      "bytes": 1407,
+      "sha256": "19565510AB00843CA8ADF6980428C7EF3F5E4C36268446F63C3FAC45F82A4A68",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/src/main/mock/ExtendInterface.ts",
+      "bytes": 1567,
+      "sha256": "67BED08C9F1D96138FD9C3DF3BEC3D4CF2E996B03AC05FF3DEB962163D07B234",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/src/main/mock/MockKit.js",
+      "bytes": 9405,
+      "sha256": "75153D6F8295FB365D6F45E61038864110B39175B44CC783C6AF0D76F83413BA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/src/main/mock/MockKit.ts",
+      "bytes": 9892,
+      "sha256": "9D01E0E4E161F943961DE24209A3E148E505293852EC18F55A1A438389E9A102",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/src/main/mock/VerificationMode.js",
+      "bytes": 1506,
+      "sha256": "7B25709B108F6C0B90D58513123CDF3DD97B4F6F6FCC78BD1B5058CA1B3BC376",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/src/main/mock/VerificationMode.ts",
+      "bytes": 1584,
+      "sha256": "D7038655C8BC83007AEBC5D5F39E8298463B3F8F0B79B2CD3350308506049E89",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/src/main/module.json",
+      "bytes": 338,
+      "sha256": "79E2D8D7327C3CD7ABC23532F9360F781A6DC8AE9F0EA85521B5EBD68BB665EB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hamock/src/res/schemas/mock-config-json5-schema.json",
+      "bytes": 563,
+      "sha256": "EF3D5D09E7F6F89B9CC02206957DBC59EE0F215C0E2F6D6B43C065A2D02AE124",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/BuildProfile.ets",
+      "bytes": 520,
+      "sha256": "1AA5A6E4BD1DFF9A2BC466B8ECC6770A68C015D5576A98E2AB51FB9841DD42CD",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/CHANGELOG.md",
+      "bytes": 961,
+      "sha256": "71FFF62CC2337514A59809E3C78B65277AC74CBC7A6A24619191F6FF5196BE6B",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/LICENSE",
+      "bytes": 10173,
+      "sha256": "0CEC06E0E55FBC3DC5CEE4FCA9B607F66CB8F4E4DBCF3B3C013594DD156732E9",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/README.md",
+      "bytes": 74247,
+      "sha256": "C985563956CB8B7A1D56A2477B927EF0941E9C4678DB2B4C5383AEC7A74301C2",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/build-profile.json5",
+      "bytes": 531,
+      "sha256": "59E3EBB0C982D9E89255798FC3A4D41D7349BC41F379C8FC59D55370EDF6DFCB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/consumer-rules.txt",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/hvigorfile.ts",
+      "bytes": 227,
+      "sha256": "9FA891DAFC0E582CC4F9500547176230D4D3C5DC4C7D512C1903BE07BEBFDDF1",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/index.d.ts",
+      "bytes": 4976,
+      "sha256": "25787C003825D43E0EA9C59071417EAAC603BB125B1E3FE75DC1687D80F100BE",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/index.ets",
+      "bytes": 5474,
+      "sha256": "385E65E030C612A82352AE472636522A84AA191AEFDCB26DB1D76B0F0280A3B0",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/index.js",
+      "bytes": 11893,
+      "sha256": "B3C07FB961AA19378240D6DA7EFC48FFB073EADDF7A5B74C1FA1978CFCB3A8C0",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/index.ts",
+      "bytes": 1242,
+      "sha256": "577F852139CD6301B3E6022ECFC7491519E2981937BB6C60F5CFEE355BA156BC",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/obfuscation-rules.txt",
+      "bytes": 1008,
+      "sha256": "0091C5622EDE377A9AE1260F2499815AFC3BCC5D1AB79A3D910FF7B456C98518",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/oh-package.json5",
+      "bytes": 512,
+      "sha256": "F0C248FDD61BAD7CE450205CA525570AAE79D59D69E50674FBE544C76DA5B0F7",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/Constant.js",
+      "bytes": 3006,
+      "sha256": "FC03E09366776F209E736D3A4A13423590BD1C9EA9C17A4A249509EB7F15841E",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/core.js",
+      "bytes": 5044,
+      "sha256": "CF4E552FB4CD16D3ACE49872EC58D7AC94C1AF88D16FF8A0DE6BABA65C4A9669",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/event.js",
+      "bytes": 2555,
+      "sha256": "8DCFE19F1031BC44B426B33D783AAAAA8A4C0A74ED064F78EFEF193C2A745A34",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/interface.js",
+      "bytes": 3097,
+      "sha256": "7349F11F24440A556240AD48570B47043ABD149D941FD2CEE9B23D19DCC290FB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/ExpectExtend.js",
+      "bytes": 3818,
+      "sha256": "476D3420360ADBFC85B4F4E8A085C278BBBBEA7539B64FDFA694048BA15273C0",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertClose.js",
+      "bytes": 1400,
+      "sha256": "9C67CCE271E181BD0846DB7F4C96747DAFC53B3C130D2D8AA5F34C1C75FC9B99",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertContain.js",
+      "bytes": 1470,
+      "sha256": "CD0FC0AC5AE00743F69FE9DC608052A453BB176E18DD6BBBE402E8EA1DCAB5A2",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertFail.js",
+      "bytes": 757,
+      "sha256": "3D91752145A5197DA28E5DCADAD8CD48633BFC05324C6EF63F417BB04449E581",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertFalse.js",
+      "bytes": 947,
+      "sha256": "90A5F865C9290D99790CBFD041A36E5A5FE2E3AE1863A1F3C614929D06F045B3",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertInstanceOf.js",
+      "bytes": 1281,
+      "sha256": "08BBD71060F5EF97D27104357AB06FED2803E4D98916D3BAD3B82328F77B6ED8",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertLarger.js",
+      "bytes": 849,
+      "sha256": "95FFD9B08EB82DFCEE7F22D10F30B8CABC53E995AF0368B2734DEB64047FC0EA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertLargerOrEqual.js",
+      "bytes": 859,
+      "sha256": "E3491B44E8124E5F64E560AB99AFBE59C05EE18FFB7A40F07903FCD353978845",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertLess.js",
+      "bytes": 843,
+      "sha256": "B5C1389A182C0C20A3EABD93CB121A027C8907A622AA84A7B0BC9253FB04D0C8",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertLessOrEqual.js",
+      "bytes": 853,
+      "sha256": "90F54960E92370B8D808884B5B3C31F7157C509417987F17B878C653EFFD0A37",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertNaN.js",
+      "bytes": 941,
+      "sha256": "E2D1C9E7AFC977E5AFEFB6C8C49F8499CDBAAF53781D1A3150781C7BA7BDD81C",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertNegUnlimited.js",
+      "bytes": 989,
+      "sha256": "9AF4956B2AC92FA62F018927EF1A0987DECC4090539A50E88D1D9FEF3334B9C2",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertNull.js",
+      "bytes": 945,
+      "sha256": "806423ADC9AEF64176919E64217DDF2D62F9F82B2512318C9895D5966B732484",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertPosUnlimited.js",
+      "bytes": 990,
+      "sha256": "9B1281F77988D883FFD652EA633C12808123980A844B55E2E788C55338453A4F",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsPending.js",
+      "bytes": 1532,
+      "sha256": "9750740AC3D907B3A50CD8E1FF681E5FC4E49D8D5B139B829B81E8C59449C777",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsRejected.js",
+      "bytes": 1317,
+      "sha256": "5E1D604229980C779687637F4E466FE0E40E5808515B6BC1AD9BBC1535B16C52",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsRejectedWith.js",
+      "bytes": 1944,
+      "sha256": "A0B2B34088CCAEAF19978A3B070346669AE176233C56ED5661C502314459DFCB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsRejectedWithError.js",
+      "bytes": 3441,
+      "sha256": "D75B96758174D3914359625F2959D21599FA54641B8D3441AFB110BFDEF5775A",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsResolved.js",
+      "bytes": 1390,
+      "sha256": "4C847074534A9B39124CF3BE81E95C9CD4F3E58B4E180BAA0972AB2FDB1E315F",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertPromiseIsResolvedWith.js",
+      "bytes": 1934,
+      "sha256": "9FE47E8F7A705EF1026DDE4915BA94D3C1E3FBDB12B0B3DF2D769B78F28BA012",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertThrowError.js",
+      "bytes": 1659,
+      "sha256": "3762D9D57B68BA38F0E9894D37AB5FCD8121BBF6C856E366A69FE7EB634D7014",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/assertUndefined.js",
+      "bytes": 965,
+      "sha256": "6863C5C979C4BDCB850F88E023B6F9E3FF47E67437BF07A34F5C7B16BE3D301A",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/deepEquals/DeepTypeUtils.js",
+      "bytes": 3622,
+      "sha256": "1D703A09D39F32E4ED39A107F3F7C3F6DEBD374B4B02C2F3E1ED5983DB33E9A1",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/deepEquals/assertDeepEquals.js",
+      "bytes": 13926,
+      "sha256": "5ED32F71EEBE87B0FB0F471B8ABE4133F83C72BECDB66C0843E7B80A08FD040F",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/assert/isPromiseLike.js",
+      "bytes": 992,
+      "sha256": "5A8C935ACA2C2B1E6B986BCDADAC7701A1EDE785E9AFC364F8AD3919BA0D7178",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/config/DataDriver.js",
+      "bytes": 5344,
+      "sha256": "184EA77B05CFF5BD65DE7FCCC918728E1F1B25F23C9B06B836E3B709B9994041",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/config/Filter.js",
+      "bytes": 5035,
+      "sha256": "548900D55AF37E260E0D82B5FEDBC5B4DE226D8A2537E75EA113F9A6323449C5",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/config/configService.js",
+      "bytes": 11423,
+      "sha256": "01799EAE14CFF856A696803CD6BC8D92F128754323DB25FC0A40B2EF2B81F3B8",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/coverage/coverageCollect.js",
+      "bytes": 3179,
+      "sha256": "40E44171B1C11A4D350444CDD2CC89403358A989D091BF8A738EECDA98B40B5A",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/kit/SysTestKit.js",
+      "bytes": 3798,
+      "sha256": "BADF54BF47C28D0BF2175061CF4CB422592346B667A7AB2602BF2C3BFD7E52CC",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/mock/ArgumentMatchers.js",
+      "bytes": 3071,
+      "sha256": "F63F9618407490414335651A2B10B3AEC8022B32109EDA7D792C5CA309400DFA",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/mock/ExtendInterface.js",
+      "bytes": 1417,
+      "sha256": "9BC744AAB008514929A2BA7379E0E664C6AA3684F4ABFEB438B4D3608A7BCBF3",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/mock/MockKit.js",
+      "bytes": 12325,
+      "sha256": "D50534C19F00D2ADB21189966F241FBB11EB53660D96AA920684D07920CE5BFB",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/mock/VerificationMode.js",
+      "bytes": 1408,
+      "sha256": "F7B7EAAC810540C17C19D6815884EDE3457CEBAFE09347DAA2D7D10D34B93A17",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/report/LogExpectError.js",
+      "bytes": 2823,
+      "sha256": "5A1247E5CE25F5FF9BFB5C2688FD713866572802AF45FE1FBD2612BB35076467",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/report/OhReport.js",
+      "bytes": 11680,
+      "sha256": "08E960EEC3EFF917517FA26C223A309DD99D774C5785C917F2C0A84DF54CD2DD",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module/report/ReportExtend.js",
+      "bytes": 4848,
+      "sha256": "97DE9DAD881AC574553C5644CF59E423905A37D2A1540277D6C5620F01446FA5",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/module.json",
+      "bytes": 624,
+      "sha256": "7AD95D14FD4CA0364F6C32205389490ED47FFAE840C03DF4C0E7079DDDCD2F53",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/service.js",
+      "bytes": 49258,
+      "sha256": "FE173C08FC275C344078F9F81FFA7252697F177CE294347F929382AB59A46884",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "oh_modules/@ohos/hypium/src/main/testrunner/OpenHarmonyTestRunner.ts",
+      "bytes": 3859,
+      "sha256": "7BAC33369CA6700A2685EA1D67CAA40A942440C920664AF45506A018994CEAD6",
+      "provenance": {
+        "kind": "installed SDK dependency"
+      }
+    },
+    {
+      "path": "entry/oh_modules/libmorrow.so/index.d.ts",
+      "bytes": 1524,
+      "sha256": "6791086C2D958F95E54733A3FC0A87D5908ACBA9BDDCAB279AA69807363526F3",
+      "provenance": {
+        "kind": "local type dependency",
+        "source": "entry/src/main/cpp/types/libmorrow/index.d.ts"
+      }
+    },
+    {
+      "path": "entry/oh_modules/libmorrow.so/oh-package.json5",
+      "bytes": 65,
+      "sha256": "86A223AAE810AADB3A77342949C8D3FCD2BF2440EDE909047441BA8B514AAA25",
+      "provenance": {
+        "kind": "local type dependency",
+        "source": "entry/src/main/cpp/types/libmorrow/oh-package.json5"
+      }
+    },
+    {
+      "path": "entry/src/main/cpp/rust/arm64-v8a/libmorrow_hmos.a",
+      "bytes": 57055756,
+      "sha256": "5329F277B3F24A0AF7801FB82D5DF7D0FCDCE0FA5659BF427D3CE608B8DEEA09",
+      "provenance": {
+        "kind": "reused frozen v27 native archive",
+        "abi": "arm64-v8a",
+        "path": ".build/editor-input-native/dev27-page-recovery/arm64-v8a/libmorrow_hmos.a",
+        "bytes": 57055756,
+        "sha256": "5329F277B3F24A0AF7801FB82D5DF7D0FCDCE0FA5659BF427D3CE608B8DEEA09",
+        "production_path": "entry/src/main/cpp/rust/arm64-v8a/libmorrow_hmos.a"
+      }
+    },
+    {
+      "path": "entry/src/main/cpp/rust/x86_64/libmorrow_hmos.a",
+      "bytes": 55469756,
+      "sha256": "EB390E7F3BF4DB73F21F3AE4148CFD76294A0D3F7B7701C673966F20FB5EEFCE",
+      "provenance": {
+        "kind": "reused frozen v27 native archive",
+        "abi": "x86_64",
+        "path": ".build/editor-input-native/dev27-page-recovery/x86_64/libmorrow_hmos.a",
+        "bytes": 55469756,
+        "sha256": "EB390E7F3BF4DB73F21F3AE4148CFD76294A0D3F7B7701C673966F20FB5EEFCE",
+        "production_path": "entry/src/main/cpp/rust/x86_64/libmorrow_hmos.a"
+      }
+    }
+  ]
+}

@@ -1,0 +1,465 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "Scroll",
+        "bounds": [
+          36,
+          117,
+          1284,
+          1290
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "A LITTLE SPACE FOR BIG IDEAS",
+            "bounds": [
+              36,
+              117,
+              595,
+              144
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "让想法，自由生长。",
+            "bounds": [
+              36,
+              171,
+              747,
+              276
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "收纳日常的零碎，也留住灵光一闪。",
+            "bounds": [
+              36,
+              300,
+              613,
+              342
+            ],
+            "children": []
+          },
+          {
+            "type": "Button",
+            "bounds": [
+              990,
+              158,
+              1284,
+              296
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  1035,
+                  202,
+                  1086,
+                  253
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "新建灵感",
+                "bounds": [
+                  1107,
+                  208,
+                  1239,
+                  247
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "让可能性发生",
+            "bounds": [
+              150,
+              492,
+              323,
+              520
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "还没成形，也没关系。",
+            "bounds": [
+              114,
+              580,
+              744,
+              654
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。",
+            "bounds": [
+              114,
+              684,
+              708,
+              806
+            ],
+            "children": []
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              114,
+              866,
+              420,
+              941
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "记录此刻的想法",
+                "bounds": [
+                  114,
+                  884,
+                  345,
+                  923
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  375,
+                  881,
+                  420,
+                  926
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "最近的念头",
+            "bounds": [
+              36,
+              1152,
+              262,
+              1205
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "14",
+            "bounds": [
+              286,
+              1161,
+              321,
+              1196
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "全部",
+            "bounds": [
+              357,
+              1140,
+              483,
+              1217
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "有待办",
+            "bounds": [
+              495,
+              1140,
+              651,
+              1217
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "含附件",
+            "bounds": [
+              663,
+              1140,
+              819,
+              1217
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "仅收藏",
+            "bounds": [
+              831,
+              1140,
+              987,
+              1217
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "id": "card-sort",
+            "type": "Row",
+            "bounds": [
+              36,
+              1253,
+              1284,
+              1290
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰆨",
+                "bounds": [
+                  1062,
+                  1271,
+                  1101,
+                  1290
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "自定义顺序",
+                "bounds": [
+                  1116,
+                  1273,
+                  1266,
+                  1290
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Rect",
+        "bounds": [
+          0,
+          117,
+          1320,
+          1290
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "接住一个新想法",
+        "bounds": [
+          285,
+          117,
+          705,
+          139
+        ],
+        "children": []
+      },
+      {
+        "type": "Button",
+        "bounds": [
+          1089,
+          117,
+          1185,
+          136
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "文字、表格、图片，先放在这里。让一个念头慢慢成形。",
+        "bounds": [
+          63,
+          175,
+          1257,
+          231
+        ],
+        "children": []
+      },
+      {
+        "id": "editor-scroll",
+        "type": "Scroll",
+        "bounds": [
+          63,
+          297,
+          1257,
+          1290
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "id": "draft-title",
+            "type": "TextInput",
+            "text": "HMOS-v28-20261009-A",
+            "bounds": [
+              135,
+              297,
+              1185,
+              443
+            ],
+            "clickable": true,
+            "longClickable": true,
+            "scrollable": true,
+            "children": []
+          },
+          {
+            "id": "field-count:title",
+            "type": "Text",
+            "text": "19 / 60",
+            "bounds": [
+              135,
+              491,
+              1185,
+              526
+            ],
+            "children": []
+          },
+          {
+            "id": "editor-paste",
+            "type": "PasteButton",
+            "text": "粘贴",
+            "bounds": [
+              368,
+              574,
+              603,
+              694
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "id": "editor-import",
+            "type": "Button",
+            "bounds": [
+              627,
+              574,
+              952,
+              694
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  678,
+                  610,
+                  726,
+                  658
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "导入文件",
+                "bounds": [
+                  744,
+                  611,
+                  901,
+                  657
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "粘贴至正文 · 附件从文件选择器导入。",
+            "bounds": [
+              135,
+              742,
+              1185,
+              796
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "󰀣",
+            "bounds": [
+              186,
+              963,
+              240,
+              1017
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "正文 · Markdown",
+            "bounds": [
+              264,
+              966,
+              598,
+              1015
+            ],
+            "children": []
+          },
+          {
+            "type": "Button",
+            "bounds": [
+              1038,
+              942,
+              1134,
+              1038
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  1058,
+                  962,
+                  1115,
+                  1019
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "draft-description",
+            "type": "TextArea",
+            "text": "Body 汉字 🧪 é.\nSecond line",
+            "bounds": [
+              186,
+              1099,
+              1134,
+              1290
+            ],
+            "clickable": true,
+            "longClickable": true,
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]

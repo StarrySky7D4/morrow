@@ -1,0 +1,51 @@
+{
+  "reads": [
+    {
+      "path": "hmos/tool/editor-todos-model.test.cjs",
+      "bytes": 36277,
+      "sha256": "2761991C5EC3B316216A23F4B9943E51B4C388BCB7EEE96D7AD8534C62D92BAC"
+    },
+    {
+      "path": "hmos/tool/editor-field-test-harness.cjs",
+      "bytes": 2497,
+      "sha256": "FE8DB46B347C64FB28DF463AD335438576AEEED528B85BFCD14C70A631C96B13"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+      "bytes": 6929,
+      "sha256": "10C3162E77A947335ACF0C3DF2E464C80195D0AC2BBC2922BBB09C0A8A626842"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorDraft.ets",
+      "bytes": 37929,
+      "sha256": "B88A46D0371D8C6F193187D1A0E1ACF41671D4991CDBD59C451B8BCF66CF3775"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorTodos.ets",
+      "bytes": 25625,
+      "sha256": "72D6E76423130E183DD770C1BEF9AAD1313DC297969C9882BDC0E03AE540A440"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorPaste.ets",
+      "bytes": 2767,
+      "sha256": "28D54A7D02BF644D68B58AC68A4D824AB2FF3FB71B87AB0E00C279456B6D160E"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorInputPolicy.ets",
+      "bytes": 7887,
+      "sha256": "64C86330D3DBC8FA85F88D6F0692D9ED15C88814C711F4F2B665827B3628AE2B"
+    },
+    {
+      "path": "hmos/tool/editor-todos-retry-test-harness.cjs",
+      "bytes": 2322,
+      "sha256": "6702D4ED32E717B6D4D57DA823B9C4C603B5A80B35228410565B0635FB563836"
+    }
+  ],
+  "compiled": [
+    "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+    "hmos/entry/src/main/ets/model/EditorDraft.ets",
+    "hmos/entry/src/main/ets/model/EditorTodos.ets",
+    "hmos/entry/src/main/ets/model/EditorPaste.ets",
+    "hmos/entry/src/main/ets/model/EditorInputPolicy.ets"
+  ]
+}

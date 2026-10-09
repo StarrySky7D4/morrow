@@ -1,6 +1,14 @@
 # 持续追平 Windows 工作台
 
-2026-10-09 **v27 当前分支集成检查点**：基于 `4724f01f`，普通卡片新增从真实当前完整 format2 和迁移 Origin 验证得出的 `content_kind`。实际 Index 重新编辑先读最新全文 source，以 `current_v2` 保存正文并保留 TaskId、完成状态、顺序、退役身份、分类/阶段、收藏及未知字段；合法 `v2` / `legacy` 来源均使用该正文模式，旧 own LF 不授予新基线。当前完整子草稿重启恢复已接原严格 Session、固定计划、实际 S2 父历史及当前 S3 writer，读取不提交业务，退役/关闭仍显式核对，原 wire 和 Unknown 独立保留。
+2026-10-09 **v28 当前分支检查点**：多行待办的纯行格式检查或剩余额度计数失败后，可显式“重新检查”。已派发的格式请求保留原 old/new、剩余额度及固定 wire；计数失败则在同一 owner、revision 和完整 raw 边界内显式重算；失败行独立保留，另一行成功不会清除其错误。同一完整选区回声保留重试资格，实际选区变化仍撤销原重试；迟到结果不覆盖较新原始输入。
+
+最终实际 ETS/tool **922/922 PASS，0 fail/skip/cancel**（36 suite 文件、126 项输入前后一致，30,246.7672ms）；独立四 suite **161/161 PASS**、22 项运行输入一致，属于上述全量范围，不重复累计。最终完整 API26 **SUCCESS /17.582s**，34/34 tasks 执行，315 复制/381 仓库输入前后一致，四项包内原生库核对 PASS。最终 HAP **30,281,859B**，SHA256 `FF9C81704042FF053C2BCE6214E5AD56EDAD4A3906B2D66B06D2E9E273A1A2B5`。Rust/C++ 源码未变，双 ABI `.a` 复用冻结 v27，279 项 native 来源重新核对；本轮未新增 Rust 构建或测试。
+
+版本保持 **dev19/1000019**。v28 包 unsigned/uninstalled，设备验收 **NOT_RUN**；本轮对既有 API26/x64 上已安装 v27 的标题/正文准确可见输入仅为 **PASS_SCOPED**，业务保存与重启恢复 **NOT_RUN**，见 [限定设备记录](../reports/ui-source/v28/device/validation.md)。音乐仅完成只读源码复用审计，无音乐产品源。完整 Flutter/Windows 对齐仍 **OPEN**，仅交付 `codex/ArkTsUI`，不并入主线。详见 [v28 验证](../reports/ui-source/v28/validation.md)。
+
+以下 v27 及更早内容完整保留为历史；其中验证数字和“当前”表述仅指各自当轮范围。本轮资格以以上 v28 摘要及其验证记录为准。
+
+2026-10-09 **v27 历史分支集成检查点**：基于 `4724f01f`，普通卡片新增从真实当前完整 format2 和迁移 Origin 验证得出的 `content_kind`。实际 Index 重新编辑先读最新全文 source，以 `current_v2` 保存正文并保留 TaskId、完成状态、顺序、退役身份、分类/阶段、收藏及未知字段；合法 `v2` / `legacy` 来源均使用该正文模式，旧 own LF 不授予新基线。当前完整子草稿重启恢复已接原严格 Session、固定计划、实际 S2 父历史及当前 S3 writer，读取不提交业务，退役/关闭仍显式核对，原 wire 和 Unknown 独立保留。
 
 完整实际 ETS/tool **903/903 PASS**（36 suite 文件、125 项实际输入前后一致），SDK 窄修后 Recovery 子集 **143/143 PASS**，Native **191 library +3 binary PASS**（17 条默认条件 ignored）。新双 ABI release **PASS 并采用**，279 项 native 来源，ARM64 **57,055,756B /5329F277…**、x64 **55,469,756B /EB390E7F…**。fresh retry1 完整 API26 **SUCCESS /28.199s**，34/34 tasks 执行，315 复制/378 仓库输入前后一致，四项包内原生库核对 PASS；最终 HAP **30,267,399B /059504B9…**。版本仍 **dev19/1000019**，包 unsigned/uninstalled，新设备验收 **NOT_RUN**，完整 Flutter/Windows 对齐 **OPEN**；仅交付 `codex/ArkTsUI`，不并入主线。首轮 SDK 失败与模型旧文案失败/drift 保留为历史，不混作最终资格。详见 [v27 验证](../reports/ui-source/v27/validation.md)。
 

@@ -1,0 +1,17 @@
+C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\reports\ui-source\v28\editor-todos-retry-source-trace.cjs:18
+ts.transpileModule = function (input, options, ...args) {
+                   ^
+
+TypeError: Cannot set property transpileModule of #<Object> which has only a getter
+    at Object.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\reports\ui-source\v28\editor-todos-retry-source-trace.cjs:18:20)
+    at Module._compile (node:internal/modules/cjs/loader:1812:14)
+    at Object..js (node:internal/modules/cjs/loader:1943:10)
+    at Module.load (node:internal/modules/cjs/loader:1533:32)
+    at Module._load (node:internal/modules/cjs/loader:1335:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1556:12)
+    at node:internal/modules/cjs/loader:2104:12
+    at loadPreloadModules (node:internal/process/pre_execution:698:5)
+    at initializeModuleLoaders (node:internal/process/pre_execution:238:5)
+
+Node.js v24.14.1

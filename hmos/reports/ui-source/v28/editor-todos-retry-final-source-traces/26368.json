@@ -1,0 +1,40 @@
+{
+  "reads": [
+    {
+      "path": "hmos/tool/editor-input-policy-model.test.cjs",
+      "bytes": 8686,
+      "sha256": "13541A54BECB0D1201B30573C234F85F24E00760703020226FD48F81B27F5F61"
+    },
+    {
+      "path": "hmos/tool/editor-field-test-harness.cjs",
+      "bytes": 2497,
+      "sha256": "FE8DB46B347C64FB28DF463AD335438576AEEED528B85BFCD14C70A631C96B13"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+      "bytes": 6929,
+      "sha256": "10C3162E77A947335ACF0C3DF2E464C80195D0AC2BBC2922BBB09C0A8A626842"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorDraft.ets",
+      "bytes": 37929,
+      "sha256": "B88A46D0371D8C6F193187D1A0E1ACF41671D4991CDBD59C451B8BCF66CF3775"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorInputPolicy.ets",
+      "bytes": 7887,
+      "sha256": "64C86330D3DBC8FA85F88D6F0692D9ED15C88814C711F4F2B665827B3628AE2B"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorPaste.ets",
+      "bytes": 2767,
+      "sha256": "28D54A7D02BF644D68B58AC68A4D824AB2FF3FB71B87AB0E00C279456B6D160E"
+    }
+  ],
+  "compiled": [
+    "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+    "hmos/entry/src/main/ets/model/EditorDraft.ets",
+    "hmos/entry/src/main/ets/model/EditorInputPolicy.ets",
+    "hmos/entry/src/main/ets/model/EditorPaste.ets"
+  ]
+}

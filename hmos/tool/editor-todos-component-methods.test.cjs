@@ -3,6 +3,7 @@ const { test } = require('node:test'), assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path'), vm = require('node:vm'), crypto = require('node:crypto');
 const ts = require('C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/build-tools/ets-loader/node_modules/typescript');
 const { load, createPolicy, deferred } = require('./editor-field-test-harness.cjs');
+const { createInputWorker } = require('./editor-todos-retry-test-harness.cjs');
 const draft = load('EditorDraft'), model = load('EditorTodos'), paste = load('EditorPaste');
 const sourcePath = path.resolve(__dirname, '../entry/src/main/ets/pages/EditorTodos.ets');
 const source = fs.readFileSync(sourcePath, 'utf8').replace(/\r\n/g, '\n');
@@ -87,6 +88,87 @@ test('actual component methods source identity; builders retain full rows and no
   assert.equal(typeof EditorTodos, 'function'); assert.equal(typeof EditorTodoRowInput, 'function');
   assert.match(source, /ForEach\(this\.state\.rows/); assert.doesNotMatch(source, /\.maxLength\(/);
   assert.match(source, /\.enablePreviewText\(true\)/); assert.doesNotMatch(source, /pendingtask_add|tasksAdd\(/);
+});
+
+test('actual row retry control invokes the real model using its owner, incarnation and exact snapshot admission', async () => {
+  const worker = createInputWorker({ fail: (_, number) => number === 1 }), f = fixture('old\nother', { format: worker.format });
+  await f.view.inputFor(f.ticket(), 'candidate\rtext'); const captures = f.captures.length;
+  assert.equal(f.view.state.retry_row_id, f.ticket().id); assert.equal(f.view.state.retry_available, true);
+  assert.equal(f.statuses.at(-1).raw_capture_complete, true); assert.equal(f.statuses.at(-1).business_ready, false);
+  f.echo(); await tick(); assert.equal(worker.requests.length, 1);
+  await f.view.retryFor(f.ticket()); assert.equal(worker.requests[1], worker.requests[0]);
+  assert.equal(f.raw.text, 'candidate text\nother'); assert.equal(f.captures.length, captures + 1);
+  assert.equal(f.statuses.at(-1).business_ready, true); assert.equal(f.view.state.retry_row_id, '');
+  assert.match(source, /if \(this\.state\.retry_row_id === row\.id\)\s*\{\s*Button\(this\.t\('重新检查'\)/);
+  assert.match(source, /\.enabled\(this\.editingEnabled && this\.model\.canRetry\(ticket\)\)\.onClick\(\(\): void => \{ this\.retryFor\(ticket\); \}\)/);
+});
+
+test('remaining-count failure exposes the same explicit row recovery without dispatching a formatter before budget qualification', async () => {
+  const worker = createInputWorker(), f = fixture('old\nother', { format: worker.format }); await tick();
+  f.view.model.countCache.clear(); const originalCount = f.view.count;
+  f.view.count = async () => { throw new Error('CountUnknown'); };
+  await f.view.inputFor(f.ticket(), 'complete future');
+  assert.equal(f.raw.text, 'complete future\nother'); assert.equal(f.view.state.retry_available, true);
+  assert.equal(worker.requests.length, 0); assert.equal(f.statuses.at(-1).business_ready, false);
+  f.view.count = originalCount; await f.view.retryFor(f.ticket());
+  assert.equal(worker.requests.length, 1); assert.equal(JSON.parse(worker.requests[0]).limit, 994);
+  assert.equal(f.raw.text, 'complete future\nother'); assert.equal(f.statuses.at(-1).business_ready, true);
+});
+
+test('row retry refuses old incarnation, disabled, disappeared, new-owner and incompletely delivered revision snapshots', async () => {
+  for (const change of ['incarnation', 'disabled', 'disappeared', 'owner', 'props']) {
+    const worker = createInputWorker({ fail: () => true }), f = fixture('old', { format: worker.format });
+    await f.view.inputFor(f.ticket(), 'candidate'); const ticket = f.ticket();
+    if (change === 'incarnation') ticket.incarnation--;
+    else if (change === 'disabled') { f.view.editingEnabled = false; f.view.availabilityChanged(); }
+    else if (change === 'disappeared') f.view.aboutToDisappear();
+    else if (change === 'owner') f.switchOwner();
+    else { f.external(f.raw); f.deliver('revision'); }
+    const raw = JSON.stringify(f.raw), captures = f.captures.length;
+    await f.view.retryFor(ticket); assert.equal(worker.requests.length, 1, change);
+    assert.equal(JSON.stringify(f.raw), raw, change); assert.equal(f.captures.length, captures, change);
+  }
+});
+
+test('retry makes no capture while pending and duplicate row presses cannot start a second pure request', async () => {
+  const wait = deferred(), worker = createInputWorker({ fail: (_, number) => number === 1, wait: (_, number) => number === 2 ? wait.promise : undefined });
+  const f = fixture('old', { format: worker.format }); await f.view.inputFor(f.ticket(), 'candidate'); const captures = f.captures.length;
+  const retrying = f.view.retryFor(f.ticket()); await tick();
+  assert.equal(f.view.state.format_pending, true); assert.equal(f.view.state.retry_available, false);
+  await f.view.retryFor(f.ticket()); assert.equal(worker.requests.length, 2); assert.equal(f.captures.length, captures);
+  wait.resolve(); await retrying; assert.equal(f.statuses.at(-1).business_ready, true);
+});
+
+test('selection after failed input cannot masquerade as a successful retry or clear its saved qualification error', async () => {
+  const worker = createInputWorker({ fail: () => true }), f = fixture('old', { format: worker.format });
+  await f.view.inputFor(f.ticket(), 'candidate'); await f.view.selectionFor(f.ticket(), 3, 1);
+  assert.equal(f.raw.selection_base, 3); assert.equal(f.raw.selection_extent, 1);
+  await f.view.retryFor(f.ticket()); assert.equal(worker.requests.length, 1);
+  assert.equal(f.statuses.at(-1).business_ready, false); assert.match(f.view.state.error, /Unknown/);
+});
+
+test('repeated identical focused controller selection keeps the row retry available and its original complete wire', async () => {
+  const worker = createInputWorker({ fail: (_, number) => number === 1 }), f = fixture('old', { format: worker.format });
+  await f.view.selectionFor(f.ticket(), 2, 1); await f.view.inputFor(f.ticket(), 'candidate');
+  const captures = f.captures.length, revision = f.revision;
+  await f.view.selectionFor(f.ticket(), 2, 1); await f.view.selectionFor(f.ticket(), 2, 1);
+  assert.equal(f.captures.length, captures); assert.equal(f.revision, revision); assert.equal(f.view.state.retry_available, true);
+  assert.equal(f.statuses.at(-1).business_ready, false); await f.view.retryFor(f.ticket());
+  assert.equal(worker.requests[1], worker.requests[0]); assert.equal(f.statuses.at(-1).business_ready, true);
+});
+
+test('failed-row state disables the other actual controller and preserves its unexpected focused input event', async () => {
+  const worker = createInputWorker({ fail: (_, number) => number === 1 }), f = fixture('old\nother', { format: worker.format });
+  await f.view.inputFor(f.ticket(), 'candidate'); const notifications = [];
+  f.view.onUncaptured = (...event) => notifications.push(event);
+  const child = rowFixture({ enabled: false, value: f.view.state.rows[1].value });
+  child.view.row = f.view.state.rows[1]; child.view.owner = f.owner;
+  child.view.onUncaptured = (ticket, event) => f.view.uncapturedFor(ticket, event); child.view.rowChanged();
+  assert.equal(f.view.model.canEdit(f.ticket(1).id), false);
+  child.view.focused = true; child.view.changeFor(child.view.session, 'late other full', { value: '候', offset: 2 });
+  assert.equal(notifications.length, 1); assert.deepEqual(JSON.parse(notifications[0][2]), { kind: 'input', text: 'late other full', preview: { value: '候', offset: 2 } });
+  assert.equal(f.raw.text, 'candidate\nother'); assert.equal(worker.requests.length, 1);
+  assert.equal(f.statuses.at(-1).business_ready, false);
 });
 
 test('actual parent captures whole raw field and maps per-row selection', async () => {

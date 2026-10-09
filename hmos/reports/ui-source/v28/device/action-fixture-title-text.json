@@ -1,0 +1,12 @@
+{
+  "issuedUtc": "2026-10-09T01:01:23.497Z",
+  "device": "127.0.0.1:5555",
+  "args": [
+    "shell",
+    "sh",
+    "/data/local/tmp/morrow-v28-fixture-title-input.sh"
+  ],
+  "phase": "ACKNOWLEDGED",
+  "result": "No Error\r\n",
+  "acknowledgedUtc": "2026-10-09T01:01:24.682Z"
+}

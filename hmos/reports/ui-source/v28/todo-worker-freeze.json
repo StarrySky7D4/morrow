@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "qualification": "frozen-todo-pure-check-recovery-source",
+  "frozen_utc": "2026-10-09T01:13:10.5967929Z",
+  "production_and_tests_frozen": true,
+  "manifest_path": "hmos/reports/ui-source/v28/todo-worker-freeze.json",
+  "manifest_self_hash_omitted": true,
+  "exact_allowed_file_paths": [
+    "hmos/entry/src/main/ets/model/EditorTodos.ets",
+    "hmos/entry/src/main/ets/pages/EditorTodos.ets",
+    "hmos/reports/ui-source/v28/editor-todos-retry-final-inputs-after.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-final-inputs-before.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-final-observed-only.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-final-result.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-final-source-traces/13356.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-final-source-traces/21388.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-final-source-traces/25068.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-final-source-traces/26008.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-final-source-traces/26368.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-final.log",
+    "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-inputs-after.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-inputs-before.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-observed-only.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-result.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-source-traces/23992.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-source-traces/24848.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-source-traces/25548.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-source-traces/3688.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-source-traces/7580.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop.log",
+    "hmos/reports/ui-source/v28/editor-todos-retry-runner-stage3-inputs-after.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-runner-stage3-inputs-before.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-runner-stage3-observed-only.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-runner-stage3-result.json",
+    "hmos/reports/ui-source/v28/editor-todos-retry-runner-stage3.log",
+    "hmos/reports/ui-source/v28/editor-todos-retry-source-trace.cjs",
+    "hmos/reports/ui-source/v28/editor-todos-retry-stage1.log",
+    "hmos/reports/ui-source/v28/editor-todos-retry-stage2.log",
+    "hmos/reports/ui-source/v28/run-editor-todos-retry.cjs",
+    "hmos/reports/ui-source/v28/todo-source-parity-and-retry-audit.md",
+    "hmos/reports/ui-source/v28/todo-source-reference-inputs.json",
+    "hmos/tool/editor-todos-component-methods.test.cjs",
+    "hmos/tool/editor-todos-model.test.cjs",
+    "hmos/tool/editor-todos-retry-test-harness.cjs",
+    "hmos/reports/ui-source/v28/todo-worker-freeze.json"
+  ],
+  "inputs": [
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorTodos.ets",
+      "bytes": 25625,
+      "sha256": "72D6E76423130E183DD770C1BEF9AAD1313DC297969C9882BDC0E03AE540A440"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/EditorTodos.ets",
+      "bytes": 25410,
+      "sha256": "00110309FF3DEE60905501D3E5AF45518AEAEB642CFC28AD3D8A2AA7CEC68870"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-final-inputs-after.json",
+      "bytes": 3813,
+      "sha256": "02006602C9BABEC0B4D4D85A1ACA1DD96D49F4B9644B89BFEDE910F00E7BD9D5"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-final-inputs-before.json",
+      "bytes": 3813,
+      "sha256": "02006602C9BABEC0B4D4D85A1ACA1DD96D49F4B9644B89BFEDE910F00E7BD9D5"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-final-observed-only.json",
+      "bytes": 3322,
+      "sha256": "2BA2DE15E1E064B067D1A13150E2AB7584530FEB11E7083C70A7D98458059CE2"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-final-result.json",
+      "bytes": 952,
+      "sha256": "399ACDD9209ED0D805D0ABB25A3B1E9C8C1CD95BD909E6E3E3A133539FC6298C"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-final-source-traces/13356.json",
+      "bytes": 6862,
+      "sha256": "95F6FABBCBD11A0F511B0BAFAF5AE6FC0E2D677D2D836BB5E2D80057654CB438"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-final-source-traces/21388.json",
+      "bytes": 1758,
+      "sha256": "4EFC0197999CA73F39458D81972240A33D31D5C42CA9205530F94DD98BF26E45"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-final-source-traces/25068.json",
+      "bytes": 36,
+      "sha256": "E071B3C0AE9A2C9997CA7F809F0C51AD65A1318BA393177265930CD772680ED7"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-final-source-traces/26008.json",
+      "bytes": 1951,
+      "sha256": "B2BD2B0F991334C13AE1250325D0FFFC4CE70E64E1EDCA319BB049C8E5D7E1B9"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-final-source-traces/26368.json",
+      "bytes": 1350,
+      "sha256": "C1397E6BC2D62E239FC0FD8DF7F2E15576A15A0A64AF905C675F170F1211190F"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-final.log",
+      "bytes": 17280,
+      "sha256": "D7A333962FAA2EE498D08261E9CEB42A2EF440D4E79BB430A2926A7DCD6C439B"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-inputs-after.json",
+      "bytes": 3813,
+      "sha256": "F6E623B706B5B2995ADCCC21B4D54726ABC7A6616DA58ACF8511DF327F6FA960"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-inputs-before.json",
+      "bytes": 3813,
+      "sha256": "F6E623B706B5B2995ADCCC21B4D54726ABC7A6616DA58ACF8511DF327F6FA960"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-observed-only.json",
+      "bytes": 3322,
+      "sha256": "2BA2DE15E1E064B067D1A13150E2AB7584530FEB11E7083C70A7D98458059CE2"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-result.json",
+      "bytes": 953,
+      "sha256": "EA624E463E2606B918F6D3A26C0120BC71DD42449245308463F4C0FE85B6B14C"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-source-traces/23992.json",
+      "bytes": 1758,
+      "sha256": "25653634E772504F1F852A1AEE89E50CE85DDA7C797ED96C9705D9DD50A7F476"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-source-traces/24848.json",
+      "bytes": 1350,
+      "sha256": "C1397E6BC2D62E239FC0FD8DF7F2E15576A15A0A64AF905C675F170F1211190F"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-source-traces/25548.json",
+      "bytes": 6862,
+      "sha256": "8FD4B863508D96045D975C04548F8651A12EF9427BCE9F4F1C169D19212C8430"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-source-traces/3688.json",
+      "bytes": 36,
+      "sha256": "E071B3C0AE9A2C9997CA7F809F0C51AD65A1318BA393177265930CD772680ED7"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop-source-traces/7580.json",
+      "bytes": 1951,
+      "sha256": "2327AE88E2488840BDBA91030BF7A2E4E89906AA7A39BE76BE143D283DD9AFBA"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-pre-noop.log",
+      "bytes": 17038,
+      "sha256": "889940F7ECFD4792121F5DF124EA4F7126A346E6860CE85049E584AE9E257997"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-runner-stage3-inputs-after.json",
+      "bytes": 1888,
+      "sha256": "099982E1CFF94FBD5AAB2F69FD8060F14F3429C737DEF950107083594C9C6432"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-runner-stage3-inputs-before.json",
+      "bytes": 1888,
+      "sha256": "099982E1CFF94FBD5AAB2F69FD8060F14F3429C737DEF950107083594C9C6432"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-runner-stage3-observed-only.json",
+      "bytes": 3,
+      "sha256": "37517E5F3DC66819F61F5A7BB8ACE1921282415F10551D2DEFA5C3EB0985B570"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-runner-stage3-result.json",
+      "bytes": 957,
+      "sha256": "2369914E4313CDD176DE40206A603E233DC20DF9C9F2F8340986B912DFF90CEB"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-runner-stage3.log",
+      "bytes": 1038,
+      "sha256": "4E18042A190C95F63D0D754128046B660F8EBC47093C2CCDF95CEFBC0628131F"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-source-trace.cjs",
+      "bytes": 1775,
+      "sha256": "37FC9B107A35CC76697C101EBE02B5A481AC2CDF8A59C7C22CDAAB19EFDFAD4B"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-stage1.log",
+      "bytes": 15558,
+      "sha256": "B5B1FC12D0081F5E594AA2FE50EAC9C6E9046AC7E4E6C4644FF5669EC6709BAF"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/editor-todos-retry-stage2.log",
+      "bytes": 13807,
+      "sha256": "F37A1298712D07447ED785FA57AD14D34DDFF574E7E8627733F6F425EDDD7D5A"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/run-editor-todos-retry.cjs",
+      "bytes": 4912,
+      "sha256": "72EAC12E6E43BE9981BD7EFFF5537949DEF42DA38D131C1466B7F96085630A08"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/todo-source-parity-and-retry-audit.md",
+      "bytes": 7404,
+      "sha256": "AEF3EEBEE5FACAFB2FDE57A4562EB06BE72E15BDFB1B2B7A9331D2960D4AF1D2"
+    },
+    {
+      "path": "hmos/reports/ui-source/v28/todo-source-reference-inputs.json",
+      "bytes": 364,
+      "sha256": "6FA8276CF502D3D37CBFB3DB6FE6CC40A5E03F515771F6B874D96E721A046105"
+    },
+    {
+      "path": "hmos/tool/editor-todos-component-methods.test.cjs",
+      "bytes": 60848,
+      "sha256": "6F8731C9EF1AC3B9A20C3975461F695C2A3ADD66D295C482F8A05DC65B0A5E6D"
+    },
+    {
+      "path": "hmos/tool/editor-todos-model.test.cjs",
+      "bytes": 36277,
+      "sha256": "2761991C5EC3B316216A23F4B9943E51B4C388BCB7EEE96D7AD8534C62D92BAC"
+    },
+    {
+      "path": "hmos/tool/editor-todos-retry-test-harness.cjs",
+      "bytes": 2322,
+      "sha256": "6702D4ED32E717B6D4D57DA823B9C4C603B5A80B35228410565B0635FB563836"
+    }
+  ],
+  "final_evidence": "editor-todos-retry-final-result.json",
+  "tests": 161,
+  "pass": 161,
+  "fail": 0,
+  "skip": 0,
+  "actual_runtime_inputs": 22,
+  "source_drift": 0,
+  "observed_only_inputs": 19,
+  "sdk_device_git_actions": "NOT_RUN_BY_THIS_WORKER",
+  "full_flutter_ui_acceptance": "OPEN"
+}

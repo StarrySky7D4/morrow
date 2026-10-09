@@ -1,0 +1,12 @@
+[
+  {
+    "path": "build/win-cloud-20261005/lib/card_tips_editor.dart",
+    "bytes": 3143,
+    "sha256": "5DFFDC4DFD6F45C17E7145721815E6070976E1E687CBEEDBA572DBF17C8C4C0D"
+  },
+  {
+    "path": "build/win-cloud-20261005/lib/tip_list_editor.dart",
+    "bytes": 14941,
+    "sha256": "FEFDCE765A39CD0AC78ADF786A91F9267211ED7A844D298D5051874FE75104EA"
+  }
+]

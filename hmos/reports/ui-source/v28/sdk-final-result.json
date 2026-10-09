@@ -1,0 +1,11 @@
+{
+  "startedUtc": "2026-10-09T01:12:05.573Z",
+  "finishedUtc": "2026-10-09T01:12:24.287Z",
+  "exitCode": 0,
+  "signal": null,
+  "status": "PASS",
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-candidates\\dev28-todo-retry-final",
+  "log": "sdk-final-build.log",
+  "sha256": "2C2B2462F8CB5C50B34D9EC00A8B672A8CE57990672C2A57C83921F98F36CFB0",
+  "scope": "Complete isolated API26 unsigned debug product build; reused unchanged v27 native archives; not installed or device acceptance."
+}

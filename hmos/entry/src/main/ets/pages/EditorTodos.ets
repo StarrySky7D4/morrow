@@ -128,6 +128,9 @@ export struct EditorTodos {
     if (!this.editingEnabled) { this.uncapturedFor(ticket, todoSelectionEvent(base, extent)); return; }
     if (this.owns(ticket)) { await this.model.selection(ticket, base, extent); }
   }
+  private async retryFor(ticket: EditorTodoTicket): Promise<void> {
+    if (this.owns(ticket) && this.model.canRetry(ticket)) { await this.model.retryFormat(ticket); }
+  }
   private focusFor(ticket: EditorTodoTicket): void {
     if (!this.owns(ticket)) { return; }
     this.focusIntentChanged();
@@ -250,6 +253,11 @@ export struct EditorTodos {
         onRowFocus: (captured: EditorTodoTicket): void => this.focusFor(captured)
       })
       if (row.pending) { Text(this.t('正在检查…')).fontSize(11).fontColor(this.muted).width('100%') }
+      if (this.state.retry_row_id === row.id) {
+        Button(this.t('重新检查'), { type: ButtonType.Normal }).fontSize(12).fontColor(this.accent)
+          .backgroundColor(this.surface).borderRadius(12)
+          .enabled(this.editingEnabled && this.model.canRetry(ticket)).onClick((): void => { this.retryFor(ticket); })
+      }
     }.width('100%').padding({ left: 16, right: 12, top: 6, bottom: 14 }).alignItems(HorizontalAlign.Start)
       .backgroundColor(this.surface).borderRadius(this.radius).border({ width: 1, color: this.line })
       .onDrop((event: DragEvent): void => this.dropFor(ticket, event))

@@ -1,0 +1,1 @@
+sha256sum: /data/app/el1/bundle/public/dev.morrow.hmos/entry.hap: Permission denied

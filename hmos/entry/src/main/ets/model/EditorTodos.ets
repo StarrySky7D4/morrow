@@ -54,11 +54,30 @@ export class EditorTodosView {
   format_pending: boolean = false;
   capture_error: string = '';
   format_error: string = '';
+  retry_row_id: string = '';
+  retry_available: boolean = false;
 }
 class TodoInputIntent {
   id: string = '';
   old_value: TextValue = new TextValue();
   new_value: TextValue = new TextValue();
+}
+class TodoFormatFailure {
+  intent: TodoInputIntent = new TodoInputIntent();
+  message: string = '';
+}
+class TodoFormatRetry {
+  owner: string = '';
+  revision: number = 0;
+  version: number = 0;
+  incarnation: number = 0;
+  raw: TextValue = new TextValue();
+  intent: TodoInputIntent = new TodoInputIntent();
+  remaining: number | undefined = undefined;
+}
+function copyIntent(value: TodoInputIntent): TodoInputIntent {
+  const result = new TodoInputIntent(); result.id = value.id;
+  result.old_value = copyText(value.old_value); result.new_value = copyText(value.new_value); return result;
 }
 function cloneRow(row: EditorTodoRow): EditorTodoRow {
   const result = new EditorTodoRow(); result.id = row.id; result.value = copyText(row.value);
@@ -91,6 +110,8 @@ export class EditorTodosDraft {
   private captureError: string = '';
   private formatError: string = '';
   private pending: TodoInputIntent | undefined = undefined;
+  private failedRows: Map<string, TodoFormatFailure> = new Map<string, TodoFormatFailure>();
+  private retryIntent: TodoFormatRetry | undefined = undefined;
   private countCache: Map<string, number> = new Map<string, number>();
   private issuedIds: Set<string> = new Set<string>();
   private active: boolean = false;
@@ -103,9 +124,10 @@ export class EditorTodosDraft {
     const textChanged: boolean = !sameOwner || value.text !== this.raw.text;
     const interrupted: boolean = sameOwner && !textChanged && !!this.pending;
     this.version++; this.active = true; this.owner = owner; this.revision = revision; this.raw = copyText(value);
-    this.pending = undefined;
-    if (!sameOwner || textChanged) { this.rawComplete = true; this.captureError = ''; this.formatError = ''; }
-    else if (interrupted) { this.formatError = '待办行检查已中断，完整输入仍保留，请完成编辑后重新检查。'; }
+    if (interrupted && this.pending) { this.rememberFailure(this.pending, '待办行检查已中断，完整输入仍保留，请完成编辑后重新检查。'); }
+    this.pending = undefined; this.retryIntent = undefined;
+    if (!sameOwner || textChanged) { this.rawComplete = true; this.captureError = ''; this.formatError = ''; this.failedRows.clear(); }
+    else if (interrupted) { this.refreshFailure(); }
     this.error = this.captureError || this.formatError; this.notice = '';
     if (textChanged) {
       const previous: EditorTodoRow[] = sameOwner ? this.rows : [];
@@ -127,8 +149,8 @@ export class EditorTodosDraft {
     this.hooks.changed(); this.refreshCount();
   }
   stop(): void {
-    if (this.pending) { this.formatError = '待办行检查已停止，完整输入仍保留，请重新检查后保存。'; this.error = this.captureError || this.formatError; }
-    this.active = false; this.version++; this.pending = undefined;
+    if (this.pending) { this.rememberFailure(this.pending, '待办行检查已停止，完整输入仍保留，请重新检查后保存。'); }
+    this.active = false; this.version++; this.pending = undefined; this.retryIntent = undefined;
     for (const row of this.rows) { row.pending = false; } this.countPending = false; this.hooks.changed();
   }
   view(): EditorTodosView {
@@ -137,7 +159,13 @@ export class EditorTodosDraft {
     result.counting = this.countPending; result.focused_id = this.focusId; result.error = this.error;
     const status = this.status(); result.notice = this.notice; result.raw_capture_complete = status.raw_capture_complete;
     result.business_ready = status.business_ready; result.format_pending = status.format_pending;
-    result.capture_error = status.capture_error; result.format_error = status.format_error; return result;
+    result.capture_error = status.capture_error; result.format_error = status.format_error;
+    if (this.retryIntent) {
+      result.retry_row_id = this.retryIntent.intent.id;
+      const row = this.rows.find((item: EditorTodoRow): boolean => item.id === result.retry_row_id);
+      if (row) { result.retry_available = this.canRetry(this.ticket(row.id)); }
+    }
+    return result;
   }
   status(): EditorTodosStatus {
     const result = new EditorTodosStatus(); result.owner = this.owner; result.revision = this.revision; result.value = copyText(this.raw);
@@ -145,7 +173,8 @@ export class EditorTodosDraft {
     result.capture_error = this.captureError; result.format_error = this.formatError;
     // Readiness is a property of this exact captured value, not journal permission
     // or editor liveness. Parent must still check owner/epoch and field/backend budgets.
-    result.business_ready = !!this.owner && this.rawComplete && !this.pending && !this.captureError && !this.formatError && !composing(this.raw);
+    result.business_ready = !!this.owner && this.rawComplete && !this.pending && this.failedRows.size === 0 &&
+      !this.captureError && !this.formatError && !composing(this.raw);
     return result;
   }
   row(id: string): EditorTodoRow | undefined { const row = this.rows.find((item: EditorTodoRow): boolean => item.id === id); return row ? cloneRow(row) : undefined; }
@@ -234,12 +263,39 @@ export class EditorTodosDraft {
     if (captureIncomplete) { this.rawComplete = false; this.captureError = message; } else { this.formatError = message; }
     this.error = this.captureError || this.formatError; this.hooks.failed(this.owner, message); this.hooks.changed();
   }
+  private refreshFailure(): void {
+    let message: string = '';
+    this.failedRows.forEach((failure: TodoFormatFailure): void => { if (!message) { message = failure.message; } });
+    this.formatError = message; this.error = this.captureError || this.formatError;
+  }
+  private rememberFailure(intent: TodoInputIntent, message: string, retry: TodoFormatRetry | undefined = undefined): void {
+    const failure = new TodoFormatFailure(); failure.intent = copyIntent(intent); failure.message = message;
+    this.failedRows.set(intent.id, failure); this.retryIntent = retry;
+    this.refreshFailure(); this.hooks.failed(this.owner, message); this.hooks.changed();
+  }
+  canRetry(ticket: EditorTodoTicket): boolean {
+    const row = this.admitted(ticket), retry = this.retryIntent;
+    if (!row || !retry || this.pending || !this.rawComplete || this.captureError || composing(this.raw)) { return false; }
+    const failure: TodoFormatFailure | undefined = this.failedRows.get(row.id);
+    return retry.owner === this.owner && retry.revision === this.revision && retry.version === this.version &&
+      retry.incarnation === row.incarnation && retry.intent.id === row.id && samePasteTarget(retry.raw, this.raw) &&
+      samePasteTarget(retry.intent.new_value, row.value) && !!failure &&
+      samePasteTarget(failure.intent.old_value, retry.intent.old_value) && samePasteTarget(failure.intent.new_value, retry.intent.new_value);
+  }
+  async retryFormat(ticket: EditorTodoTicket): Promise<void> {
+    if (!this.canRetry(ticket) || !this.retryIntent) { return; }
+    const retry: TodoFormatRetry = this.retryIntent, intent = copyIntent(retry.intent);
+    this.retryIntent = undefined; this.pending = intent;
+    await this.formatIntent(intent, retry.remaining);
+  }
 
   async input(ticket: EditorTodoTicket, text: string, previewValue: string = '', previewOffset: number = -1): Promise<void> {
     const row = this.admitted(ticket); if (!row) { return; }
     if (composing(this.raw) && !composing(row.value)) { return; }
     const previous = this.pending;
-    const oldValue: TextValue = copyText(previous?.id === row.id ? previous.old_value : row.value), next: TextValue = copyText(row.value);
+    const failure: TodoFormatFailure | undefined = this.failedRows.get(row.id);
+    const oldValue: TextValue = copyText(previous?.id === row.id ? previous.old_value : failure ? failure.intent.old_value : row.value);
+    const next: TextValue = copyText(row.value); this.retryIntent = undefined;
     for (const item of this.rows) { item.pending = false; }
     if (previewValue && (!Number.isInteger(previewOffset) || previewOffset < 0 || previewOffset > text.length)) {
       row.display_text = text; this.version++; this.pending = undefined; row.pending = false;
@@ -249,23 +305,30 @@ export class EditorTodosDraft {
     next.composing_start = previewValue ? previewOffset : -1; next.composing_end = previewValue ? previewOffset + previewValue.length : -1;
     if (next.selection_base > next.text.length) { next.selection_base = -1; }
     if (next.selection_extent > next.text.length) { next.selection_extent = -1; }
-    row.display_text = text; row.value = next; this.focusId = row.id; this.error = ''; this.notice = ''; this.formatError = '';
+    row.display_text = text; row.value = next; this.focusId = row.id; this.notice = '';
+    this.refreshFailure();
     const intent = new TodoInputIntent(); intent.id = row.id; intent.old_value = oldValue; intent.new_value = copyText(next);
     this.pending = composing(next) ? undefined : intent;
     if (!this.emit(this.aggregate(row.id))) { return; }
     if (previous && previous.id !== row.id) {
-      this.pending = undefined; this.fail('前一行仍在检查，完整输入已保留，请重新核对待办草稿。'); return;
+      this.pending = undefined;
+      this.rememberFailure(previous, '前一行仍在检查，完整输入已保留，请重新核对待办草稿。');
+      this.rememberFailure(intent, '本行检查未完成，完整输入已保留，请重新核对待办草稿。'); return;
     }
     if (composing(next)) {
       row.pending = false; this.pending = undefined; this.notice = '输入法候选已保留，完成输入后继续检查。'; this.hooks.changed(); return;
     }
     await this.formatIntent(intent);
   }
-  private async formatIntent(intent: TodoInputIntent): Promise<void> {
+  private async formatIntent(intent: TodoInputIntent, fixedRemaining: number | undefined = undefined): Promise<void> {
     const row = this.rows.find((item: EditorTodoRow): boolean => item.id === intent.id); if (!row) { return; }
-    const owned = this.guard(this.version, this.revision, copyText(this.raw)); row.pending = true; this.hooks.changed();
+    const retry = new TodoFormatRetry(); retry.owner = this.owner; retry.revision = this.revision; retry.version = this.version;
+    retry.incarnation = row.incarnation; retry.raw = copyText(this.raw); retry.intent = copyIntent(intent); retry.remaining = fixedRemaining;
+    const owned = this.guard(this.version, this.revision, retry.raw); row.pending = true; this.hooks.changed();
     try {
-      const limit: number = await this.remaining(row.id, owned);
+      const limit: number = fixedRemaining === undefined ? await this.remaining(row.id, owned) : fixedRemaining;
+      retry.remaining = limit;
+      if (!owned() || this.pending !== intent) { return; }
       const result: EditorTodoFormatResult = await this.hooks.format(copyText(intent.old_value), copyText(intent.new_value), limit, owned);
       if (!owned() || this.pending !== intent) { return; }
       if (!result || !['accepted', 'retained', 'truncated'].includes(result.action) || !editingValue(result.value) ||
@@ -276,9 +339,11 @@ export class EditorTodosDraft {
       row.value = copyText(result.value); row.display_text = result.value.text; row.pending = false; this.pending = undefined;
       this.notice = result.action === 'truncated' ? '已按剩余字数保留可见字符，请核对本行。' :
         result.action === 'retained' ? '本行已达剩余字数上限，仍保留原内容。' : '';
-      this.formatError = ''; this.emit(this.aggregate(row.id));
+      this.failedRows.delete(row.id); this.retryIntent = undefined; this.refreshFailure(); this.emit(this.aggregate(row.id));
     } catch (error) {
-      if (owned() && this.pending === intent) { row.pending = false; this.pending = undefined; this.fail(String(error)); }
+      if (owned() && this.pending === intent) {
+        row.pending = false; this.pending = undefined; this.rememberFailure(intent, String(error), retry);
+      }
     }
   }
   async selection(ticket: EditorTodoTicket, base: number, extent: number): Promise<void> {
@@ -287,8 +352,9 @@ export class EditorTodosDraft {
     // An unmapped/cross-row raw composition cannot be silently cleared by a
     // different controller's selection callback. Parent raw remains complete.
     if (composing(this.raw) && !composing(row.value)) { return; }
+    if (row.value.selection_base === base && row.value.selection_extent === extent && samePasteTarget(this.aggregate(row.id), this.raw)) { return; }
     row.value.selection_base = base; row.value.selection_extent = extent; this.focusId = row.id;
-    const pending = this.pending; if (!this.emit(this.aggregate(row.id))) { return; }
+    const pending = this.pending; this.retryIntent = undefined; if (!this.emit(this.aggregate(row.id))) { return; }
     if (pending && pending.id === row.id && !composing(row.value)) {
       const next = new TodoInputIntent(); next.id = pending.id; next.old_value = copyText(pending.old_value); next.new_value = copyText(row.value);
       this.pending = next; await this.formatIntent(next);
@@ -301,6 +367,7 @@ export class EditorTodosDraft {
   }
   canEdit(id: string): boolean {
     if (composing(this.raw) && !this.rows.some((row: EditorTodoRow): boolean => row.id === id && composing(row.value))) { return false; }
+    if (this.failedRows.size > 0 && !this.failedRows.has(id)) { return false; }
     return !this.pending || this.pending.id === id;
   }
   async add(): Promise<string | undefined> {

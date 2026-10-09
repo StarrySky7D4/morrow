@@ -1,0 +1,170 @@
+✔ actual component methods source identity; builders retain full rows and no platform maxLength (1.5535ms)
+ℹ pages/EditorTodos.ets normalized SHA256 00110309ff3dee60905501d3e5af45518aeaeb642cfc28ad3d8a2aa7cec68870
+✔ actual row retry control invokes the real model using its owner, incarnation and exact snapshot admission (20.3084ms)
+✔ remaining-count failure exposes the same explicit row recovery without dispatching a formatter before budget qualification (15.1581ms)
+✔ row retry refuses old incarnation, disabled, disappeared, new-owner and incompletely delivered revision snapshots (1.9827ms)
+✔ retry makes no capture while pending and duplicate row presses cannot start a second pure request (13.1376ms)
+✔ selection after failed input cannot masquerade as a successful retry or clear its saved qualification error (1.1585ms)
+✖ failed-row state disables the other actual controller and preserves its unexpected focused input event (0.8287ms)
+✔ actual parent captures whole raw field and maps per-row selection (0.4219ms)
+✔ preview text is forwarded unchanged to model and raw composing offsets (0.2632ms)
+✔ successful Add reveals the exact owned element before its guarded focus callback (90.8989ms)
+✔ manual row focus supersedes a pending Add focus without losing the added row (15.1968ms)
+✔ external field focus revokes pending Add even before its prop watcher runs (15.0458ms)
+✔ user focus during awaited Add prevents a late focus request while retaining the row (31.9964ms)
+✔ old row incarnation area notification cannot delete the current measured area (1.2428ms)
+✔ new empty row waits for its measured incarnation before reveal/focus and retains the raw echo (123.0888ms)
+✔ API26 invisible focus error is contained and the same mounted row can become focusable later (217.3253ms)
+✔ permanently unavailable focus remains bounded without losing or deleting the added row (15.4982ms)
+✔ disable and disappear revoke pending mounted-row focus before an old callback can request it (30.9532ms)
+✔ owner switch between Add and queued focus cancels old-card focus (15.9395ms)
+✔ parent disable/disappear blocks editing and late row callbacks without borrowing a new owner (1.4432ms)
+✔ parent status distinguishes complete raw capture and pending formatting before exact reply (13.8959ms)
+✔ readonly count failure keeps full rows visible with unconfirmed counter (15.0967ms)
+✔ drop uses matching private drag token and measured window geometry to insert after target (1.3085ms)
+✔ drop before midpoint preserves moved row identity (0.5708ms)
+✔ foreign drop, malformed geometry and drag-end leave raw unchanged (0.3825ms)
+✔ drag frozen before selection change cannot reorder on late drop (0.4071ms)
+✔ drag-position callback forwards only a current drag and cancels a stale revision (0.7171ms)
+✔ actual child forwards committed string plus exact SDK preview separately (0.2069ms)
+✔ child selection only captures while focused and preserves reverse UTF16 order (0.2158ms)
+✔ child controllers are stable through refresh and restore confirmed selection after a frame (10.6001ms)
+✔ child does not attempt arbitrary composition restore or confirmed cursor during pending (30.94ms)
+✔ child old incarnation callbacks and destroyed controller queued selection are revoked (15.447ms)
+✔ same local row ID on another owner cannot admit old callbacks (0.1884ms)
+✔ actual builder uses SDK adaptive1..3 SCROLL lines with full source and Flutter row geometry (0.3112ms)
+✔ parent Unknown status keeps complete raw retain permission and separately blocks business readiness (0.4265ms)
+✔ valid preview reports complete captured composition rather than formatter failure (0.54ms)
+✔ unlocatable preview reports capture incomplete and preserves exact old raw identity (0.2564ms)
+✔ invalid new-owner source status does not borrow previous owner row state (0.1739ms)
+✔ failed nonmutating Add count does not misreport the current full raw as capture-incomplete (14.0354ms)
+✔ disable pending preserves raw retain permission but cannot turn canceled format into a confirmed receipt (15.7523ms)
+✔ disabled same-owner parent input and selection notify complete events without raw mutation or formatting (0.5089ms)
+✔ disabled current parent ticket can notify after epoch preflight is invalidated but old identity never does (0.3641ms)
+✔ disabled actual child input/selection forward raw events without changing its text or invoking normal capture (0.144ms)
+✔ disabled child refuses old owner/incarnation/disposed callbacks and current child notification reaches parent (0.2261ms)
+✔ restored disabled unfocused row initialization does not report a missing raw selection (13.7283ms)
+✔ already issued controller restoration echo remains identifiable after a focused row is disabled (15.7128ms)
+✔ disabled blur revokes current focus after a delivered genuine selection, while all text input remains observable (0.2495ms)
+✔ disabled focused invalid or absent-selection positions are retained, never mistaken for an unissued restoration (0.138ms)
+✔ old row identity cannot consume a new controller echo or blur the new incarnation (14.6613ms)
+✔ refreshing a pending row invalidates the previous incarnation controller restoration marker (15.5015ms)
+✔ actual per-prop revision-first-source self echo preserves changed-text pending formatter and exact ACK (15.3828ms)
+✔ actual per-prop source-first-revision self echo preserves changed-text pending formatter and exact ACK (14.7388ms)
+✔ actual per-prop self selection echo preserves latest same-text formatter, reverse positions and stale-reply fence (30.8828ms)
+✔ actual per-prop self composition-commit echo keeps same-text full raw and confirms only the exact formatter ACK (15.0419ms)
+✔ actual full external replacement still cancels the older formatter after mixed props are deferred (15.4112ms)
+✔ actual new-owner prop delivery cannot clear old-owner rows or areas until its complete parent snapshot arrives (0.4707ms)
+✔ actual disabled restore admits its complete parent snapshot without allowing editing or reusing an old row ticket (0.4443ms)
+✔ initial disabled display callback with exact empty-minus-one preview is acknowledged once without a raw event (0.1676ms)
+✔ an absent preview initial callback is acknowledged once on either initial enabled state (0.1118ms)
+✔ first different input consumes the initial capability and every later same-text event stays observable (0.0971ms)
+✔ nonempty, other-offset, malformed or null preview cannot acknowledge even a matching initial display (0.1202ms)
+✔ any admitted focus including disabled focus and blur revokes initial display acknowledgement (0.0622ms)
+✔ same-text input after real focus and a disabled blur remains captured as a complete unresolved event (0.0936ms)
+✔ a row refresh even with identical bytes never rearms the initial display capability (0.0604ms)
+✔ old owner or incarnation input and focus cannot consume a new instance initial display capability (0.0887ms)
+✔ complete initial raw snapshot checks every TextValue field instead of only equal text (0.1142ms)
+✔ pending, original composition or mismatched raw display do not qualify as initial display echoes (0.1407ms)
+✔ controller, display and displayed control mutations invalidate the frozen initial capability (0.1045ms)
+✔ enabled changes and repeated lifecycle appearances never create a second initial capability (0.0898ms)
+✔ matching initial display leaves complete model raw, epoch, status and prior Unknown untouched (12.8827ms)
+✔ an incomplete preview with unmatched raw/display remains observable and cannot be cleared by equal control text (0.6724ms)
+✔ actual ETS model exposes its fresh source identity and uses injected field count/formatter only (1.6205ms)
+ℹ EditorTodos.ets SHA256 3bd03723925e933db652898c1e42378dd6120270292f578259a55e2d418cb64c
+✔ LF split preserves interior/trailing blanks and CR original without trimming or normalization (1.7019ms)
+✔ empty source has zero rows but explicit Add keeps an empty local row across its same-value echo (0.9222ms)
+✔ external source sync reuses IDs by index and invalidates previous row callbacks (0.685ms)
+✔ row and view copies cannot mutate private raw state (0.3074ms)
+✔ duplicate and malformed local IDs reject instead of producing ambiguous rows (0.4112ms)
+✔ selection mapping uses UTF16 offsets across rows including a supplementary emoji (0.3913ms)
+✔ external aggregate selection maps within one row but preserves a cross-row selection only in raw (0.3042ms)
+✔ external metadata clearing does not leave stale composition on a row (0.301ms)
+✔ remaining budget subtracts other graphemes and one LF per gap, not their UTF16 lengths (0.7065ms)
+✔ zero remaining is forwarded intact to native row no-growth policy (0.9246ms)
+✔ zero retained adopts complete filtered-old invalid-selection finalize instead of demanding exact-old (0.7271ms)
+✔ zero retained keeps legal reverse UTF16 positions/affinity/direction and replaces raw CR with one space (0.7414ms)
+✔ zero retained finalizes collapsed composition but rejects any unrelated receipt position change (1.3603ms)
+✔ positive remaining retained continues to require exact old without zero-rule metadata relaxation (0.3616ms)
+✔ native CRLF-filter full result is adopted without an independent ETS replacement (0.3067ms)
+✔ complete raw future candidate is captured before any asynchronous formatter; result is visible (7.0501ms)
+✔ malformed native receipt preserves complete candidate and blocks confirmed publication (0.4709ms)
+✔ pure worker Unknown never removes or truncates the captured raw candidate (0.2829ms)
+✔ preview keeps complete text and composition in aggregate, with no native formatting until commit (0.3085ms)
+✔ unknown preview offset preserves old raw and reports capture incomplete without guessing (0.1512ms)
+✔ row selection during pending formatting invalidates old reply and rechecks exact new UTF16 selection (0.8506ms)
+✔ rapid same-row typing retains frozen last confirmed old value and rejects late candidate reply (0.476ms)
+✔ unexpected second-row input preserves complete raw candidates but cannot publish pending formatting (0.4653ms)
+✔ owner switch blocks late row formatter and old controller events (0.3968ms)
+✔ same text edit-away-and-back at parent epoch blocks a late formatter (0.3288ms)
+✔ stop revokes callbacks and preserves complete raw, while fresh bind cannot qualify canceled formatting (0.3707ms)
+✔ capture rejection restores source-consistent local rows instead of creating a second raw draft (0.1838ms)
+✔ Add includes new separator in full future count and refuses total1000 without slicing (0.5922ms)
+✔ Add caps local rows100 but restore preserves over100 existing raw rows (0.3315ms)
+✔ late Add count after changed owner cannot append a row to a new card (0.3282ms)
+✔ remove accepts blank row, joins all remaining rows, and resets aggregate selection only (0.3214ms)
+✔ up/down preserve row IDs and row UTF16 cursor metadata while changing aggregate order (0.2661ms)
+✔ private drag can insert before and after a real target with stable row identity (0.3157ms)
+✔ stale drag revision and old owner never reorder raw (0.2505ms)
+✔ pending/IME prevents remove, move, Add and beginDrag without losing raw candidate (0.2028ms)
+✔ status owns an independent full TextValue and cannot mutate row capture authority (0.1698ms)
+✔ pending count and formatter never transiently publish a captured candidate as business-ready (1.4395ms)
+✔ same exact parent echo retains pending status and full raw; epoch change cancels only formatting qualification (0.4636ms)
+✔ Unknown and incomplete capture remain separate across same raw rebind and recover after a confirmed new input (0.4589ms)
+✔ disabling a fully confirmed raw value does not make its existing formatting result incomplete (0.1922ms)
+✔ raw sentinel and cross-row composition are retained without guessing a restorable row range (0.2378ms)
+✔ other row controller callbacks cannot clear the captured active preview composition (0.2172ms)
+✔ remaining-count failure preserves complete future raw and blocks only formatter business qualification (0.2613ms)
+✔ explicit formatter retry reuses the complete original wire and fixed remaining without recapturing raw (1.56ms)
+✖ remaining-count Unknown retries only pure counts for the same complete raw before its first formatter request (1.4623ms)
+✔ a malformed receipt stays unqualified and another explicit attempt still uses the same failed wire (0.6199ms)
+✔ duplicate explicit retry cannot dispatch twice while its real pure worker is pending (2.0096ms)
+✔ zero remaining retry preserves filtered-old no-growth with exact reverse UTF16 metadata (1.5407ms)
+✔ successful other-row input cannot clear a failed row or borrow its formatting qualification (0.7846ms)
+✔ same-row input after Unknown preserves original confirmed old instead of trusting the unchecked current raw (0.3592ms)
+✔ selection-only changes invalidate exact retry but do not grant failed raw business readiness (0.3562ms)
+✔ revision rebind, stopped owner, foreign ticket and replaced source cannot reissue a failed formatter snapshot (0.6729ms)
+✔ failed-row preview invalidates pure retry and waits for commit without losing its original old baseline (0.5445ms)
+✔ late explicit-retry receipt cannot affect a changed owner or newer same-row input (1.689ms)
+ℹ tests 126
+ℹ suites 0
+ℹ pass 124
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1405.8599
+
+✖ failing tests:
+
+test at hmos\tool\editor-todos-component-methods.test.cjs:150:1
+✖ failed-row state disables the other actual controller and preserves its unexpected focused input event (0.8287ms)
+  TypeError: child.view.input is not a function
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\editor-todos-component-methods.test.cjs:158:47)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\editor-todos-model.test.cjs:385:1
+✖ remaining-count Unknown retries only pure counts for the same complete raw before its first formatter request (1.4623ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   affinity: 1,
+  -   affinity: 0,
+      composing_end: -1,
+      composing_start: -1,
+      directional: false,
+      selection_base: -1,
+      selection_extent: -1,
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\editor-todos-model.test.cjs:393:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { text: 'full candidate\n😀\n', selection_base: -1, selection_extent: -1, affinity: 1, directional: false, composing_start: -1, composing_end: -1 },
+    expected: { text: 'full candidate\n😀\n', selection_base: -1, selection_extent: -1, affinity: 0, directional: false, composing_start: -1, composing_end: -1 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

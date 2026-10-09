@@ -1,0 +1,346 @@
+{
+  "schema": 1,
+  "observed_at_utc": "2026-10-09T01:03:56.4092138Z",
+  "baseline": "e4891f89 (reported by Root; no Git command performed in this audit)",
+  "purpose": "Read-only source audit; not a native build input inventory or test qualification",
+  "source_roots": {
+    "hmos": "repository root",
+    "flutter_reference": "build/win-cloud-20261005",
+    "external_um": "C:/Users/Administrator/Desktop/CodeXProjext/um (external candidate; not imported into HMOS)"
+  },
+  "tests": "NOT_RUN",
+  "network": "NOT_RUN",
+  "device": "NOT_RUN",
+  "entries": [
+    {
+      "scope": "hmos",
+      "path": "hmos/entry/src/main/cpp/bridge.cpp",
+      "bytes": 17579,
+      "sha256": "21F623A9E79B2850820E993FD60217AD5DB5D60D01D1AA102516D5323EFB4CEF"
+    },
+    {
+      "scope": "hmos",
+      "path": "hmos/entry/src/main/ets/model/AttachmentFiles.ets",
+      "bytes": 45611,
+      "sha256": "74AD85E0E6504EB97BC81D9C1983D6F3369E6C72FE0C14D81ED0F92B4B8849BB"
+    },
+    {
+      "scope": "hmos",
+      "path": "hmos/entry/src/main/ets/model/AttachmentPlayback.ets",
+      "bytes": 10919,
+      "sha256": "4BDB0763E4CA6D0EC665AC9D2C7BC9BFF38E2DA8167DAB8F7E6D532FFD2FECCD"
+    },
+    {
+      "scope": "hmos",
+      "path": "hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets",
+      "bytes": 17283,
+      "sha256": "DB0E2AD65213C06CEE57BDB1F683EAFEB0DEAFBF93D10484D0F5DC0E0C315A27"
+    },
+    {
+      "scope": "hmos",
+      "path": "hmos/entry/src/main/ets/pages/Index.ets",
+      "bytes": 334640,
+      "sha256": "0C1620875C82C517BEA1D8C4A3029DC851452978A323667FED8AF91E483696B6"
+    },
+    {
+      "scope": "hmos",
+      "path": "hmos/rust/Cargo.toml",
+      "bytes": 919,
+      "sha256": "C3C53EB60EB751BCB3F5BD26E37EF54D26D5C906A8FBEB7FDF76887377E2BB82"
+    },
+    {
+      "scope": "hmos",
+      "path": "hmos/rust/src/lib.rs",
+      "bytes": 61286,
+      "sha256": "1D744518C81AD0C5CA23B0C9DBDD61005B5192F9E59226ABEFEF760B85ABA401"
+    },
+    {
+      "scope": "hmos",
+      "path": "hmos/shared/plugins/workbench/schemas/preferences.proto",
+      "bytes": 1591,
+      "sha256": "72232E0BD0B6D7E74468A382E05F57A333BC157788BB35D2FB6DB50227D09C63"
+    },
+    {
+      "scope": "hmos",
+      "path": "hmos/shared/plugins/workbench/schemas/studio.capnp",
+      "bytes": 2651,
+      "sha256": "F9779667CF665D7078B83203E065B2958AB5CFC601158A2719C30416A5355F9A"
+    },
+    {
+      "scope": "hmos",
+      "path": "hmos/shared/plugins/workbench/src/lib.rs",
+      "bytes": 13354,
+      "sha256": "4B0D6BE92B3DC4B33BA2DA05652CA80853DA9ADD9CA7558BFBF7C9232D3CC1EA"
+    },
+    {
+      "scope": "hmos",
+      "path": "hmos/shared/plugins/workbench/src/preferences.rs",
+      "bytes": 17744,
+      "sha256": "85C764733A9E4ACBE92C0D364ABF1CD16579C6B496EADD0BC71612042C99FC25"
+    },
+    {
+      "scope": "hmos",
+      "path": "hmos/shared/plugins/workbench/src/services.rs",
+      "bytes": 19030,
+      "sha256": "5551924E63A942B35CD8A0D9E8EE513EE9351B61347E5757C9132CA1BA593065"
+    },
+    {
+      "scope": "hmos",
+      "path": "hmos/shared/plugins/workbench/tests/services.rs",
+      "bytes": 4559,
+      "sha256": "3FD9E1B6247B42AEE3FAC7DEC44443C0775CA005E2DEDD89D2D1350DF7F91A0A"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/little_tips.dart",
+      "bytes": 6314,
+      "sha256": "CE95CA428852B773D63BDF15D772D0F2BDB677647792D641F82F9C4F802B9C8C"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/main.dart",
+      "bytes": 221628,
+      "sha256": "2CB2A519E31AC982D3A8638EB7DE95FE63D5421ED3D1B6ACDA507CD142169F06"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/media/texture_repository.dart",
+      "bytes": 1449,
+      "sha256": "13EF42CF82972F82C0BC7EBA86F9575B96A347B0F325084AB3A061C2A2952A4D"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/media/texture_storage_native.dart",
+      "bytes": 1609,
+      "sha256": "3EB9155BB4FBC80A6C765FF0B72F3708A9537898998FA248DF155A10740AEFAA"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/audio_formats.dart",
+      "bytes": 1745,
+      "sha256": "ADD17052D0B2FE299C26340DD609A2FEEAB8221E70BE104A1047EDE06FEBA9D9"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/audio_import_native.dart",
+      "bytes": 2792,
+      "sha256": "6D5CDF92C99DC93B0F82EF00CF872F41BB7B2A5860070F43C1C87630A39B4548"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/audio_import_web.dart",
+      "bytes": 2479,
+      "sha256": "3B10322F543047D44AF2A26AA9A72D9FD4AF3C5C6815F5FC9FC86360BB37BB0B"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/audio_import.dart",
+      "bytes": 1000,
+      "sha256": "6B762004558612435C573F3397030C7B528B298CE43CCCC167AD36E69558A3A3"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/embedded_tags.dart",
+      "bytes": 6283,
+      "sha256": "2C2A06BA607A771E3C1F6554B1384B98305D1EFB2FF41B4EEC0547DC5A608869"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/kugou_database.dart",
+      "bytes": 2999,
+      "sha256": "A934594B2C1163E291B1F3F89AFAA2738EE83391188B73BD4D618EBA74A2D690"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/kugou_key_native.dart",
+      "bytes": 6435,
+      "sha256": "FF32FEFE8B34D9F4B835CE9EB570DF1872C4D16F76B42F4CECA9DB2D53993DC6"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/lyrics_dialog.dart",
+      "bytes": 3734,
+      "sha256": "270801A764278FFD289FFF312C518ECEF184344B6E61A802A44F44CF87FC0BCE"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/lyrics_service.dart",
+      "bytes": 2740,
+      "sha256": "6EC99920D76595466999B85129024E247B3682F2A40BB88965DD4EC8341B26B1"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/music_context_menu.dart",
+      "bytes": 3218,
+      "sha256": "F0463FA1F4630D81B74EBAB059B9F0415B88A2BB43365F2161D8B4945A1D690A"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/music_controller.dart",
+      "bytes": 19569,
+      "sha256": "D5390E8C0435FB9B0F5D677B30B4F338971F459BB8187AA1AECE7D2F2CF13DF2"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/music_panel.dart",
+      "bytes": 31013,
+      "sha256": "6DF33C27CDE8054D3F70B5D5EBAC00831D78E212D515574CAD764D64E72D694D"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/prepared_audio.dart",
+      "bytes": 239,
+      "sha256": "33B991268AF0E72D4AB69F9C368305AA7A56396EFB2A7841104D976A38F3A889"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/track_metadata_native.dart",
+      "bytes": 2063,
+      "sha256": "9D69F1CD8BAAFFE42A35E7E567B1C229B2A9133F667AA401AB48FBE379EF0FF1"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/track_metadata_web.dart",
+      "bytes": 224,
+      "sha256": "035BDA0487666363049F1B7EC22B20FAA43A39C15A5A19CC6723353AA34064A0"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/music/track_metadata.dart",
+      "bytes": 259,
+      "sha256": "E6D22EF1376DCE8178CB9CCA05293D53F1DEED675EE8ACAA55365855A8966CBB"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/plugins/studio_backend.dart",
+      "bytes": 1103,
+      "sha256": "67A1BD98BD4F6C28D672FBE69787545E6E968DE9C588E97B4DBC44A3EC8E2E8B"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "lib/plugins/studio_native.dart",
+      "bytes": 4148,
+      "sha256": "D59C3D74D43258DF69AB821F3089D076DFDBE4CCAFEB389CB09861AFA662994A"
+    },
+    {
+      "scope": "flutter_reference",
+      "path": "pubspec.yaml",
+      "bytes": 1343,
+      "sha256": "F3D8EAA63118DFC3A834DA9206F3812C792BBF9B3AED21AD1BDCFB74CADCF509"
+    },
+    {
+      "scope": "external_um",
+      "path": "Cargo.lock",
+      "bytes": 3383,
+      "sha256": "C13D4B841B1F4537F3033A784DA16131D281DAF3D0212C5D83B06F2F6F03E0ED"
+    },
+    {
+      "scope": "external_um",
+      "path": "Cargo.toml",
+      "bytes": 305,
+      "sha256": "F0215471F816D9302036EFE9516BE7BEF62561B45E669DAC4EEE2E5AC51D1470"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt-ffi/Cargo.toml",
+      "bytes": 339,
+      "sha256": "481E243056B1832BCDF982BDFA57AB774118B8D0F0FA8188D78F11122E92B6E7"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt-ffi/src/lib.rs",
+      "bytes": 10999,
+      "sha256": "ADA89ED560A7F6E0CCE0B090EA1766C2FE172D8BE0444B749F1C1933865BA57A"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/Cargo.toml",
+      "bytes": 312,
+      "sha256": "065866044FB88C5366C0F8446719649B9B9FDEE6E35C21BC7F9E2662CFFA4276"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/src/cipher.rs",
+      "bytes": 5143,
+      "sha256": "94DD476EF3394241575BED61B493DAC1BED1021F910A8B65D51A6D0C58225F33"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/src/crypto.rs",
+      "bytes": 6832,
+      "sha256": "5C088DC53F67BD2182AF63FFD0BDC6DF0DAF571DF825FADA75FA293EAAEC6707"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/src/error.rs",
+      "bytes": 1406,
+      "sha256": "C035D5B57DF03249FCA0BA1B12A015A5CBE45F9900EE10FF824ED00ABE8D4AEE"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/src/formats.rs",
+      "bytes": 8404,
+      "sha256": "A055EBEC9B34516BD8922559595A70667EDC027D0ABB5D1A05FD2B47FF3F8DCB"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/src/lib.rs",
+      "bytes": 7153,
+      "sha256": "BE94E34F81AEF52D5C0AA97D6735B0AABACD11D612E98153F9EB9BB4A3339097"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/src/qmc_table.rs",
+      "bytes": 1584,
+      "sha256": "0916BF8A12E49A5F991CD3649E3AE24976074B9730DE5A26FF0F6893C68A53BF"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/src/qmc.rs",
+      "bytes": 3414,
+      "sha256": "FC68B43A3444EB722938F960DEF5A3CFBA7533C5831C746D79AD501F34263B90"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/src/sniff.rs",
+      "bytes": 1524,
+      "sha256": "1DB6D32B78940F59A4922E9B1D03B79A9032992D40571D480EED8E14F0CE161C"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/src/x2m_scramble_table.bin",
+      "bytes": 2048,
+      "sha256": "F47BC3EA94F109650F9753329B4FAA62B77EAB1D37DF738413C819B344838605"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/src/x3m_scramble_table.bin",
+      "bytes": 2048,
+      "sha256": "5CD0ABE24AD9B04B31262F552605B62C78549F8C4AEF3BF54E6C780D7E3DE39E"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/tests/compatibility.rs",
+      "bytes": 8569,
+      "sha256": "BD6E71C969730EABE3ECA4B0471F578D77B426F3E8B68E2A12537190376964D3"
+    },
+    {
+      "scope": "external_um",
+      "path": "crates/um-decrypt/tests/formats.rs",
+      "bytes": 7478,
+      "sha256": "2A1866AED3021DBB5DA1A6B28DF180DC81BA6546BE034D754718D9068F26E992"
+    },
+    {
+      "scope": "external_um",
+      "path": "include/um_decrypt.h",
+      "bytes": 2520,
+      "sha256": "35E36AE5E715F1225792C1A8357599C7453F3F90AF1E5F4645A97406EF992DBD"
+    },
+    {
+      "scope": "external_um",
+      "path": "LICENSE",
+      "bytes": 1074,
+      "sha256": "C9028D65D98058E7BB95DFF0980E90E1185DED1AE90591032ECF513354AB77B0"
+    }
+  ]
+}

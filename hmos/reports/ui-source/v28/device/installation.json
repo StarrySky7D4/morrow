@@ -1,0 +1,17 @@
+{
+  "checkedUtc": "2026-10-09T00:59:22.097Z",
+  "device": "127.0.0.1:5555",
+  "artifact": "hmos/.build/artifacts/dev27-page-recovery-retry1/entry-default-unsigned.hap",
+  "sha256": "059504B9BD20EB38B5DFDEC2FC75D185B41F19B86E261F0415882F6C49D26C44",
+  "bytes": 30267399,
+  "commit": "e4891f89788339773f6b52f926da7215fe255afa",
+  "installAcknowledged": true,
+  "startAcknowledged": true,
+  "versionName": "0.1.0-hmos-dev.19",
+  "versionCode": 1000019,
+  "installTimePreserved": true,
+  "beforeUpdateTime": 1791373997230,
+  "afterUpdateTime": 1791507487054,
+  "installedHashRead": "PERMISSION_DENIED_NO_WORKAROUND",
+  "qualification": "Development HAP delivery+launch only; UI/save/restart acceptance pending"
+}

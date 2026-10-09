@@ -1,0 +1,15 @@
+{
+  "issuedUtc": "2026-10-09T01:00:55.152Z",
+  "device": "127.0.0.1:5555",
+  "args": [
+    "shell",
+    "uitest",
+    "uiInput",
+    "click",
+    1173,
+    455
+  ],
+  "phase": "ACKNOWLEDGED",
+  "result": "No Error\r\n",
+  "acknowledgedUtc": "2026-10-09T01:00:55.368Z"
+}

@@ -1,0 +1,25 @@
+{
+  "startedUtc": "2026-10-09T01:10:08.626Z",
+  "finishedUtc": "2026-10-09T01:10:08.800Z",
+  "exitCode": 1,
+  "signal": null,
+  "runtime": "C:\\Program Files\\Huawei\\DevEco Studio\\tools\\node\\node.exe",
+  "suites": [
+    "editor-todos-model.test.cjs",
+    "editor-todos-component-methods.test.cjs",
+    "editor-input-policy-model.test.cjs",
+    "index-editor-todos-integration.test.cjs"
+  ],
+  "actualInputs": 11,
+  "observedOnlyInputs": 0,
+  "sourceIdentityVerified": true,
+  "tests": null,
+  "pass": null,
+  "fail": null,
+  "cancelled": null,
+  "skipped": null,
+  "durationMs": null,
+  "log": "editor-todos-retry-final.log",
+  "logSha256": "4E18042A190C95F63D0D754128046B660F8EBC47093C2CCDF95CEFBC0628131F",
+  "scope": "Actual ETS model/policy and component/Index methods with controlled pure-worker and lifecycle replies. Observed-only preloaded model sources are separately listed; no native Store, SDK build, ArkUI renderer or device acceptance."
+}

@@ -1,0 +1,10 @@
+{
+  "createdUtc": "2026-10-09T01:12:35.356Z",
+  "path": ".build/artifacts/dev28-todo-retry-final/entry-default-unsigned.hap",
+  "bytes": 30281859,
+  "sha256": "FF9C81704042FF053C2BCE6214E5AD56EDAD4A3906B2D66B06D2E9E273A1A2B5",
+  "archive_path": ".build/artifacts/dev28-todo-retry-final/entry-default-unsigned.hap",
+  "signed": false,
+  "installed": false,
+  "scope": "v28 explicit pure Todo formatter/count retry with exact failed input identity; host/model and unsigned API26 build only. Native archives reused byte-for-byte from qualified v27, no new Rust test/build. v28 device acceptance NOT_RUN; separate device observations cover installed v27 only. Full Flutter/Windows parity OPEN."
+}

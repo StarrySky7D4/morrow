@@ -4,6 +4,7 @@ const fs = require('node:fs'), crypto = require('node:crypto'), path = require('
 const { load, createPolicy, deferred } = require('./editor-field-test-harness.cjs');
 const { EditorTodosDraft } = load('EditorTodos'), { TextValue, copyText } = load('EditorDraft');
 const { editorTodoFilteredOld } = load('EditorInputPolicy');
+const { createInputWorker } = require('./editor-todos-retry-test-harness.cjs');
 const plain = value => JSON.parse(JSON.stringify(value));
 const tick = () => new Promise(resolve => setImmediate(resolve));
 function text(value, patch = {}) { return Object.assign(new TextValue(), { text: value }, patch); }
@@ -362,4 +363,136 @@ test('remaining-count failure preserves complete future raw and blocks only form
   const status = f.model.status(); assert.equal(status.value.text, 'whole future raw\nother');
   assert.equal(status.raw_capture_complete, true); assert.equal(status.business_ready, false); assert.equal(status.format_pending, false);
   assert.equal(status.capture_error, ''); assert.match(status.format_error, /CountUnknown/); assert.equal(f.formats.length, 0);
+});
+
+test('explicit formatter retry reuses the complete original wire and fixed remaining without recapturing raw', async () => {
+  const worker = createInputWorker({ fail: (_, number) => number === 1 });
+  const f = fixture('old\n😀', { format: worker.format });
+  f.bind(text(f.raw.text, { selection_base: 2, selection_extent: 0, affinity: 0, directional: true }));
+  await f.model.input(f.ticket(), 'new\rtext'); const raw = plain(f.raw), revision = f.revision, captures = f.captures.length;
+  assert.equal(f.model.canRetry(f.ticket()), true); assert.equal(f.model.view().retry_available, true);
+  assert.equal(f.model.view().retry_row_id, f.ticket().id); assert.equal(f.model.canChangeRows(), false);
+  f.echo(); assert.equal(f.model.canRetry(f.ticket()), true); assert.equal(worker.requests.length, 1);
+  await f.model.retryFormat(f.ticket());
+  assert.equal(worker.requests.length, 2); assert.equal(worker.requests[1], worker.requests[0]);
+  assert.deepEqual(worker.hashes, worker.requests); assert.equal(JSON.parse(worker.requests[1]).limit, 998);
+  assert.deepEqual(JSON.parse(worker.requests[1]).old_value, plain(text('old', { selection_base: 2, selection_extent: 0, affinity: 0, directional: true })));
+  assert.equal(raw.text, 'new\rtext\n😀'); assert.equal(f.raw.text, 'new text\n😀');
+  assert.equal(f.revision, revision + 1); assert.equal(f.captures.length, captures + 1);
+  assert.equal(f.model.status().business_ready, true); assert.equal(f.model.canRetry(f.ticket()), false);
+});
+
+test('remaining-count Unknown retries only pure counts for the same complete raw before its first formatter request', async () => {
+  const options = { countError: true }, worker = createInputWorker(); options.format = worker.format;
+  const f = fixture('old\n😀\n', options); await f.model.input(f.ticket(), 'full candidate');
+  const raw = plain(f.raw), revision = f.revision, captures = f.captures.length;
+  assert.equal(f.model.canRetry(f.ticket()), true); assert.equal(worker.requests.length, 0);
+  options.countError = false; await f.model.retryFormat(f.ticket());
+  assert.equal(worker.requests.length, 1); assert.equal(JSON.parse(worker.requests[0]).limit, 997);
+  assert.deepEqual(JSON.parse(worker.requests[0]).new_value, plain(text('full candidate')));
+  assert.deepEqual(plain(f.raw), { ...raw, affinity: 1 }); assert.equal(f.revision, revision + 1); assert.equal(f.captures.length, captures + 1);
+  assert.equal(f.model.status().business_ready, true);
+});
+
+test('a malformed receipt stays unqualified and another explicit attempt still uses the same failed wire', async () => {
+  const worker = createInputWorker({ mutate: (reply, _, number) => { if (number < 3) reply.request_sha256 = '0'.repeat(64); } });
+  const f = fixture('old', { format: worker.format }); await f.model.input(f.ticket(), 'full future');
+  await f.model.retryFormat(f.ticket()); assert.equal(f.model.canRetry(f.ticket()), true);
+  assert.equal(f.raw.text, 'full future'); assert.equal(f.model.status().business_ready, false);
+  await f.model.retryFormat(f.ticket()); assert.equal(f.model.status().business_ready, true);
+  assert.equal(worker.requests.length, 3); assert.ok(worker.requests.every(encoded => encoded === worker.requests[0]));
+});
+
+test('duplicate explicit retry cannot dispatch twice while its real pure worker is pending', async () => {
+  const wait = deferred(), worker = createInputWorker({ fail: (_, number) => number === 1, wait: (_, number) => number === 2 ? wait.promise : undefined });
+  const f = fixture('old', { format: worker.format }); await f.model.input(f.ticket(), 'future');
+  const retrying = f.model.retryFormat(f.ticket()); await tick(); const captures = f.captures.length;
+  assert.equal(f.model.status().format_pending, true); assert.equal(f.model.canRetry(f.ticket()), false);
+  await f.model.retryFormat(f.ticket()); assert.equal(worker.requests.length, 2); assert.equal(f.captures.length, captures);
+  wait.resolve(); await retrying; assert.equal(f.model.status().business_ready, true);
+});
+
+test('zero remaining retry preserves filtered-old no-growth with exact reverse UTF16 metadata', async () => {
+  const worker = createInputWorker({ fail: (_, number) => number === 1, action: () => 'retained', value: request => editorTodoFilteredOld(request.old_value) });
+  const f = fixture('x'.repeat(999) + '\na\r😀', { format: worker.format });
+  f.bind(text(f.raw.text, { selection_base: 1004, selection_extent: 1000, affinity: 0, directional: true }));
+  await f.model.input(f.ticket(1), 'growth\r😀'); assert.equal(f.raw.text.endsWith('growth\r😀'), true);
+  await f.model.retryFormat(f.ticket(1)); assert.equal(worker.requests[1], worker.requests[0]);
+  const request = JSON.parse(worker.requests[1]); assert.equal(request.limit, 0);
+  assert.deepEqual(request.old_value, plain(text('a\r😀', { selection_base: 4, selection_extent: 0, affinity: 0, directional: true })));
+  assert.equal(f.raw.text, 'x'.repeat(999) + '\na 😀'); assert.equal(f.raw.selection_base, 1004); assert.equal(f.raw.selection_extent, 1000);
+  assert.equal(f.model.status().business_ready, true);
+});
+
+test('successful other-row input cannot clear a failed row or borrow its formatting qualification', async () => {
+  const worker = createInputWorker({ fail: (_, number) => number === 1 }), f = fixture('old\nother', { format: worker.format });
+  await f.model.input(f.ticket(), 'unconfirmed'); assert.equal(f.model.canEdit(f.ticket(1).id), false);
+  await f.model.input(f.ticket(1), 'confirmed other');
+  assert.equal(f.raw.text, 'unconfirmed\nconfirmed other'); assert.equal(f.model.status().business_ready, false);
+  assert.match(f.model.status().format_error, /Unknown/); assert.equal(f.model.canChangeRows(), false);
+  assert.equal(f.model.canRetry(f.ticket()), false); assert.equal(f.model.canEdit(f.ticket().id), true);
+  await f.model.input(f.ticket(), 'checked first');
+  assert.equal(JSON.parse(worker.requests[2]).old_value.text, 'old'); assert.equal(f.model.status().business_ready, true);
+});
+
+test('same-row input after Unknown preserves original confirmed old instead of trusting the unchecked current raw', async () => {
+  const worker = createInputWorker({ fail: (_, number) => number === 1 }), f = fixture('old', { format: worker.format });
+  await f.model.input(f.ticket(), 'full unchecked\rvalue'); await f.model.input(f.ticket(), 'full unchecked\rvalue');
+  assert.equal(worker.requests[1], worker.requests[0]); assert.equal(f.raw.text, 'full unchecked value');
+  assert.equal(f.model.status().business_ready, true);
+});
+
+test('selection-only changes invalidate exact retry but do not grant failed raw business readiness', async () => {
+  const worker = createInputWorker({ fail: (_, number) => number === 1 }), f = fixture('old', { format: worker.format });
+  await f.model.input(f.ticket(), 'candidate'); await f.model.selection(f.ticket(), 3, 1);
+  assert.equal(f.model.canRetry(f.ticket()), false); await f.model.retryFormat(f.ticket());
+  assert.equal(worker.requests.length, 1); assert.equal(f.model.status().business_ready, false);
+  assert.equal(f.raw.selection_base, 3); assert.equal(f.raw.selection_extent, 1);
+  await f.model.input(f.ticket(), 'candidate'); assert.equal(JSON.parse(worker.requests[1]).old_value.text, 'old');
+  assert.equal(f.model.status().business_ready, true);
+});
+
+test('identical complete selection echo preserves the failed fixed-wire retry without recapturing or confirming', async () => {
+  const worker = createInputWorker({ fail: (_, number) => number === 1 }), f = fixture('old', { format: worker.format });
+  f.bind(text('old', { selection_base: 2, selection_extent: 1, affinity: 0, directional: true }));
+  await f.model.input(f.ticket(), 'candidate'); const raw = plain(f.raw), revision = f.revision, captures = f.captures.length;
+  await f.model.selection(f.ticket(), 2, 1); await f.model.selection(f.ticket(), 2, 1);
+  assert.deepEqual(plain(f.raw), raw); assert.equal(f.revision, revision); assert.equal(f.captures.length, captures);
+  assert.equal(f.model.canRetry(f.ticket()), true); assert.equal(f.model.status().business_ready, false);
+  await f.model.retryFormat(f.ticket()); assert.equal(worker.requests[1], worker.requests[0]); assert.equal(f.model.status().business_ready, true);
+});
+
+test('revision rebind, stopped owner, foreign ticket and replaced source cannot reissue a failed formatter snapshot', async () => {
+  for (const change of ['revision', 'stop', 'foreign', 'source', 'owner']) {
+    const worker = createInputWorker({ fail: () => true }), f = fixture('old', { format: worker.format });
+    await f.model.input(f.ticket(), 'candidate'); const old = f.ticket();
+    if (change === 'revision') f.bind();
+    else if (change === 'stop') f.model.stop();
+    else if (change === 'foreign') old.owner = 'foreign';
+    else if (change === 'source') f.external();
+    else f.switchOwner();
+    assert.equal(f.model.canRetry(old), false, change); await f.model.retryFormat(old);
+    assert.equal(worker.requests.length, 1, change);
+  }
+});
+
+test('failed-row preview invalidates pure retry and waits for commit without losing its original old baseline', async () => {
+  const worker = createInputWorker({ fail: (_, number) => number === 1 }), f = fixture('old\nother', { format: worker.format });
+  await f.model.input(f.ticket(), 'candidate'); await f.model.input(f.ticket(), 'candidate', '候', 1);
+  assert.equal(f.raw.composing_start, 1); assert.equal(f.model.canRetry(f.ticket()), false);
+  await f.model.retryFormat(f.ticket()); assert.equal(worker.requests.length, 1); assert.equal(f.model.status().business_ready, false);
+  await f.model.input(f.ticket(), 'c候andidate'); assert.equal(JSON.parse(worker.requests[1]).old_value.text, 'old');
+  assert.equal(f.model.status().business_ready, true);
+});
+
+test('late explicit-retry receipt cannot affect a changed owner or newer same-row input', async () => {
+  for (const change of ['owner', 'new-input']) {
+    const wait = deferred(), worker = createInputWorker({ fail: (_, number) => number === 1, wait: (_, number) => number === 2 ? wait.promise : undefined });
+    const f = fixture('old', { format: worker.format }); await f.model.input(f.ticket(), 'candidate');
+    const retrying = f.model.retryFormat(f.ticket()); await tick();
+    if (change === 'owner') f.switchOwner('B', text('new owner'));
+    else await f.model.input(f.ticket(), 'newer candidate');
+    const raw = plain(f.raw); wait.resolve(); await retrying; assert.deepEqual(plain(f.raw), raw, change);
+    assert.equal(f.model.status().business_ready, true, change);
+  }
 });

@@ -1,0 +1,97 @@
+[
+  {
+    "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+    "bytes": 5126,
+    "sha256": "0FCAA587D24B1FD0A1B4D066F465BC2178FF16B830187E1E2A250E3F5B4A67B2"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentFiles.ets",
+    "bytes": 45611,
+    "sha256": "74AD85E0E6504EB97BC81D9C1983D6F3369E6C72FE0C14D81ED0F92B4B8849BB"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentFullscreen.ets",
+    "bytes": 8612,
+    "sha256": "36CCB92A53F1918C8795E31E43E6F0FD723EF61E8A718E0B88BC6FE9ECD4EE42"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentImageGestures.ets",
+    "bytes": 8076,
+    "sha256": "73AF8DD840BAB941C7A5ACDBC45639920E0B423912D441472C1756FC77647FC9"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentImportSelection.ets",
+    "bytes": 13477,
+    "sha256": "A738AA4A79BFA401BB12B69148298EE1F86E2D9ECE836EDE3F32E8E6441C5A2B"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentMediaGestures.ets",
+    "bytes": 7793,
+    "sha256": "7DE415764EC18953725B8E64EC2BB13F894DDE484FDAB1A15A5AC2913641D43C"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentOpen.ets",
+    "bytes": 12503,
+    "sha256": "92D0C07AB7FFE5B8A5622E4DC731B07713EE6B46B5967A56249668205409506B"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentPlayback.ets",
+    "bytes": 10919,
+    "sha256": "4BDB0763E4CA6D0EC665AC9D2C7BC9BFF38E2DA8167DAB8F7E6D532FFD2FECCD"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/Attachments.ets",
+    "bytes": 3048,
+    "sha256": "7375378A85BFEE215979B271AA40AA69C351F32277DC669861A6AAC136D30B3F"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/CardDataSource.ets",
+    "bytes": 2367,
+    "sha256": "D94192F38F0FD29572DA3FBC7EAB55390A9893BB65355085244FB4573236DEEB"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/CardOrder.ets",
+    "bytes": 9120,
+    "sha256": "8ECC6057DAA4667002319AC5CBD5C85403B0D52A9254C9923384B6A9012EC384"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/ClipboardInput.ets",
+    "bytes": 19438,
+    "sha256": "0F286EA943C4D1FF5A9AF2B3739F5EF9536485051C19B0159255B8296146B90C"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/ClipboardPaste.ets",
+    "bytes": 11652,
+    "sha256": "98CCD0F8D25D4B3C657023EC7D8F521B7C1278083260D5A7EEAE2ED093610658"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorDirectInput.ets",
+    "bytes": 11848,
+    "sha256": "A56119B3DFC3EA52E83082F0654C6BD9164383A646AF503B6D72CE2F0D7E6030"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorInputHash.ets",
+    "bytes": 463,
+    "sha256": "C894E8F44AA1A447096A8AC12B9A9C437EEAA64DD4875AA6116E7635893BE628"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/Markdown.ets",
+    "bytes": 13451,
+    "sha256": "B1B173937D53F158D9D13A865A4F00D21BAFF6067D324EC5C0E2CD5089793FE9"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/QueryCoordinator.ets",
+    "bytes": 3931,
+    "sha256": "2E45179BEA198F7C42EBBDF69D87F1C0C33BFF496B362F1792BCA2624D410798"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/UiStrings.ets",
+    "bytes": 775172,
+    "sha256": "17801DD05B1AFD9684F452B0E5B736FFBA7C5520FB5413A8B6D002216CB1A576"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/VerifiedImages.ets",
+    "bytes": 4645,
+    "sha256": "1A04E9C53432759D9734ACA7582BC9CAE6D951EC3DFCF124686DC67ACBA50F3E"
+  }
+]

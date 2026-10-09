@@ -1,0 +1,6 @@
+{
+  "id": "draft-description",
+  "expected": "Body 汉字 🧪 é.\nSecond line",
+  "actual": "Body 汉字 🧪 é.\nSecond line",
+  "exact": true
+}
