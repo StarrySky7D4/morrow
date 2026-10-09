@@ -1,0 +1,12 @@
+{
+  "issuedUtc": "2026-10-09T04:16:13.493Z",
+  "device": "127.0.0.1:5555",
+  "args": [
+    "install",
+    "-r",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev32-glass-alignment-a1\\entry-default-unsigned.hap"
+  ],
+  "phase": "ACKNOWLEDGED",
+  "result": "[Info]App install path:C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev32-glass-alignment-a1\\entry-default-unsigned.hap msg:install bundle successfully. \r\nAppMod finish\r\n",
+  "acknowledgedUtc": "2026-10-09T04:16:14.192Z"
+}

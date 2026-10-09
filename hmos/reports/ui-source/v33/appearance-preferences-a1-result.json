@@ -1,0 +1,104 @@
+{
+  "qualification": "PASS_SCOPED_ACTUAL_ETS_APPEARANCE_PREFERENCES",
+  "observed_at": "2026-10-09T04:20:30.153Z",
+  "exit_code": 0,
+  "tests": 56,
+  "passed": 56,
+  "failed": 0,
+  "skipped": 0,
+  "cancelled": 0,
+  "duration_ms": 385.1808,
+  "input_count": 7,
+  "reference_count": 4,
+  "source_exact_before_after": true,
+  "node_version": "v24.14.1",
+  "typescript_version": "4.9.5-r4",
+  "log_sha256": "af1865882775e53bdb0259d4d53eee38aa905f0f0a419f3c1a1c0a943ce08d66",
+  "inputs": [
+    {
+      "path": "hmos/tool/run-appearance-preferences.cjs",
+      "byte_length": 5074,
+      "sha256": "b4fe95c5c57493e4869e02564fbe697adc8424428c991414ee121173dd23cc2f"
+    },
+    {
+      "path": "hmos/tool/appearance-preferences-test-harness.cjs",
+      "byte_length": 2855,
+      "sha256": "8304ebf217a71265c74db067eb610fbb9b9e421caf783107cd4dd0ae242ba30d"
+    },
+    {
+      "path": "hmos/tool/appearance-preferences.test.cjs",
+      "byte_length": 31078,
+      "sha256": "0936c8e1ebfc548f5ce3ae6f951e6f7f4358cde31abb5aa6399ae2ab9efa7d71"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+      "byte_length": 5126,
+      "sha256": "0fcaa587d24b1fd0a1b4d066f465bc2178ff16b830187e1e2a250e3f5b4a67b2"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/AppearancePreferences.ets",
+      "byte_length": 19067,
+      "sha256": "497158b595f7ef3d13bab3b9ba6cda9ac38b7e84884791bed4ae6ea96564f6e4"
+    },
+    {
+      "path": "../../../../../Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/build-tools/ets-loader/node_modules/typescript/package.json",
+      "byte_length": 3531,
+      "sha256": "74051cfeea7f6f97cf40ba81b38f0c97e39d38a4e7ae5331babac5d8bcdd45a1"
+    },
+    {
+      "path": "../../../../../Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/build-tools/ets-loader/node_modules/typescript/lib/typescript.js",
+      "byte_length": 8031399,
+      "sha256": "9475e93f3904bb0a6a83ec457cbb4926c28d02202bac7b1fb31dbc49af7d56a1"
+    }
+  ],
+  "references": [
+    {
+      "path": "build/win-cloud-20261005/lib/main.dart",
+      "byte_length": 221628,
+      "sha256": "2cb2a519e31ac982d3a8638eb7de95fe63d5421ed3d1b6acda507cd142169f06"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/storage.dart",
+      "byte_length": 1531,
+      "sha256": "c1726effe2bf4355b724a7156ebc271264e13bd8aec7dc3c5cf3de40ee2f3aa2"
+    },
+    {
+      "path": "hmos/shared/plugins/workbench/src/preferences.rs",
+      "byte_length": 17744,
+      "sha256": "85c764733a9e4acbe92c0d364abf1cd16579c6b496eadd0bc71612042c99fc25"
+    },
+    {
+      "path": "../../../../../Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.data.preferences.d.ts",
+      "byte_length": 67071,
+      "sha256": "6fd7a0b7cdfca4efad19f3a0293fcbf03137b599b3049eba99ae93dfe7c6db21"
+    }
+  ],
+  "sdk_build": "NOT_RUN",
+  "device_persistence": "NOT_RUN",
+  "index_integration": "NOT_RUN",
+  "assertions": [
+    "typed complete snapshots and legacy-only defaults",
+    "all bounded values and material graph",
+    "unreadable original blocks all writes",
+    "separate current, candidate, observed, original and issued unknown literals",
+    "literal unknown-field retention including large integers",
+    "stable material-id retention across edits/reorder/removal",
+    "serialized puts and flushes with exact source preflight/readback",
+    "put/flush/readback fault vectors stop all later queued writes",
+    "explicit reread and durable acknowledgement for unknown recovery",
+    "no automatic replay, default replacement or rollback",
+    "foreground/page owner guards and stale/disposed response suppression"
+  ],
+  "controlled_seams": [
+    "preferences read/cache/put/flush/exact readback",
+    "owned page/foreground token",
+    "deferred operation completion",
+    "UI change observer"
+  ],
+  "limitations": [
+    "The actual ETS source is transpiled and executed; the storage port is a controlled in-memory fault backend.",
+    "No ArkUI rendering, real preferences service durability, SDK build, device install, Rust business mutation or Windows parity acceptance is claimed.",
+    "The preferences port requires a single exclusive live writer; exact source preflight is not atomic cross-process CAS.",
+    "Recovery flush confirms the observed cache value after a terminal failed/unknown operation; it cannot reconcile a still-running platform call."
+  ]
+}

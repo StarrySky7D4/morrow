@@ -1,0 +1,13 @@
+{
+  "observedUtc": "2026-10-09T04:16:14.473Z",
+  "phase": "INSTALLED_AND_LAUNCHED",
+  "sourceCommit": "ada95e0f119b3d3c3273b8e5bf6da031d3b10c10",
+  "device": "127.0.0.1:5555",
+  "uuid": "01fc19c8-444a-42f1-9f70-79321a2502b3",
+  "hap": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev32-glass-alignment-a1\\entry-default-unsigned.hap",
+  "hostBytes": 31442946,
+  "hostSha256": "06342B5CFB5EDA93493BEDA13B76B6DB9D0AF32C4F95394C280B1B6448E1C4FB",
+  "versionCode": 1000022,
+  "versionName": "0.1.0-hmos-dev.22",
+  "scope": "Installed immutable v32/dev22 package, bound to exact committed source and copied build. Current v33 edits are excluded. Bundle version readback and host HAP hash do not prove protected on-device package bytes, all UI pixels or music playback."
+}

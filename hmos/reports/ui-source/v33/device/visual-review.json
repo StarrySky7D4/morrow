@@ -1,0 +1,446 @@
+{
+  "createdUtc": "2026-10-09T06:29:42.608Z",
+  "status": "PASS_SCOPED_VISUAL_OBSERVATION",
+  "reviewer": "music_import_durability",
+  "manifestAuthor": "root",
+  "method": "Independent reviewer opened all 16 listed images using view_image at original detail and reported completed observations; Root records that handoff and file hashes. Root also viewed industrial/flat home and selected other images. No device operation by the reviewer.",
+  "devicePackageIdentity": "dev22 host immutable HAP/install ACK/bundle evidence in installation-dev22.json; reviewer did not independently qualify protected on-device package bytes. dev21 is the actual earlier version observation.",
+  "reviewedCount": 16,
+  "unreviewedCount": 29,
+  "allPngCount": 45,
+  "reviewed": [
+    {
+      "path": "dev21-neumorphism-home-b.png",
+      "bytes": 1912363,
+      "sha256": "0E90A69F19BA15D4478885F3F5F228D24102D1BCAF23E26C89E9650F43C9676A",
+      "tree": {
+        "path": "dev21-neumorphism-home-b.json",
+        "bytes": 11272,
+        "sha256": "AFFD0520481100A37DEA96F5687C34111B01A7AE2A4A756B9B026C3F1D91EAFC"
+      },
+      "style": "新拟态",
+      "observedVersion": "dev21/1000021",
+      "route": "home",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "dev21首页Hero顶/右/底内侧及首卡可见顶/右边有锐灰重复轮廓；dev22对应可见区域不再有这层额外内轮廓。dev22搜索上左凹陷保留。设置前后差异不明显，不能声称设置也明确消除了同类轮廓。紫色磨砂选中框和环形装饰保留。"
+    },
+    {
+      "path": "dev22-neumorphism-home-b.png",
+      "bytes": 1888164,
+      "sha256": "2D37E83673C7F9C7987D64E7352152B5651B026BD49FC0071C34B09A2B20075C",
+      "tree": {
+        "path": "dev22-neumorphism-home-b.json",
+        "bytes": 11272,
+        "sha256": "AFFD0520481100A37DEA96F5687C34111B01A7AE2A4A756B9B026C3F1D91EAFC"
+      },
+      "style": "新拟态",
+      "observedVersion": "dev22/1000022",
+      "route": "home",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "dev21首页Hero顶/右/底内侧及首卡可见顶/右边有锐灰重复轮廓；dev22对应可见区域不再有这层额外内轮廓。dev22搜索上左凹陷保留。设置前后差异不明显，不能声称设置也明确消除了同类轮廓。紫色磨砂选中框和环形装饰保留。"
+    },
+    {
+      "path": "dev21-neumorphism-settings-b.png",
+      "bytes": 2274803,
+      "sha256": "7FA2CCC75567F271C211B322885E46A6AA20EAA53E68BCB922EA5C9438AE377B",
+      "tree": {
+        "path": "dev21-neumorphism-settings-b.json",
+        "bytes": 9066,
+        "sha256": "E578309D5683C1214E9362128D79E823FD36CBB98708513A057F80A299470D2B"
+      },
+      "style": "新拟态",
+      "observedVersion": "dev21/1000021",
+      "route": "settings",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "dev21首页Hero顶/右/底内侧及首卡可见顶/右边有锐灰重复轮廓；dev22对应可见区域不再有这层额外内轮廓。dev22搜索上左凹陷保留。设置前后差异不明显，不能声称设置也明确消除了同类轮廓。紫色磨砂选中框和环形装饰保留。"
+    },
+    {
+      "path": "dev22-neumorphism-settings-b.png",
+      "bytes": 2271423,
+      "sha256": "CAC6485A91EEAABD40564F547056D414E3EEC334CEA98830ECD019480D66B4EB",
+      "tree": {
+        "path": "dev22-neumorphism-settings-b.json",
+        "bytes": 9066,
+        "sha256": "E578309D5683C1214E9362128D79E823FD36CBB98708513A057F80A299470D2B"
+      },
+      "style": "新拟态",
+      "observedVersion": "dev22/1000022",
+      "route": "settings",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "dev21首页Hero顶/右/底内侧及首卡可见顶/右边有锐灰重复轮廓；dev22对应可见区域不再有这层额外内轮廓。dev22搜索上左凹陷保留。设置前后差异不明显，不能声称设置也明确消除了同类轮廓。紫色磨砂选中框和环形装饰保留。"
+    },
+    {
+      "path": "dev22-paper-home-b.png",
+      "bytes": 1904895,
+      "sha256": "E0BAB5C4A7EE8B03D21995ED78D4800C92A3BDCC5BBF15C54A1E660440110050",
+      "tree": {
+        "path": "dev22-paper-home-b.json",
+        "bytes": 11272,
+        "sha256": "AFFD0520481100A37DEA96F5687C34111B01A7AE2A4A756B9B026C3F1D91EAFC"
+      },
+      "style": "纸感",
+      "observedVersion": "dev22/1000022",
+      "route": "home",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "首页搜索、Hero及首卡可见部细灰边连贯，Hero下沿窄投影；设置容器、行和材质选项边框一致。可见区未见脱离组件形状的额外轮廓、异常文字重叠或显著误裁切。"
+    },
+    {
+      "path": "dev22-paper-settings-b.png",
+      "bytes": 2299933,
+      "sha256": "58CE5C23FAB7077B29A76968308BF1E26A628A52DBBC8BE89B5ED343D77B959D",
+      "tree": {
+        "path": "dev22-paper-settings-b.json",
+        "bytes": 9048,
+        "sha256": "5C6EE85753A56019850D0ED25F29F837B813F5BAF60FD2FC123C8EE302BC9C06"
+      },
+      "style": "纸感",
+      "observedVersion": "dev22/1000022",
+      "route": "settings",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "首页搜索、Hero及首卡可见部细灰边连贯，Hero下沿窄投影；设置容器、行和材质选项边框一致。可见区未见脱离组件形状的额外轮廓、异常文字重叠或显著误裁切。"
+    },
+    {
+      "path": "dev22-clay-home-b.png",
+      "bytes": 1885707,
+      "sha256": "FEA8AC8B459E66078E822AD22D21332E5D9F9B6FB7F43F0A9DCD3978B39E1D6D",
+      "tree": {
+        "path": "dev22-clay-home-b.json",
+        "bytes": 11272,
+        "sha256": "AFFD0520481100A37DEA96F5687C34111B01A7AE2A4A756B9B026C3F1D91EAFC"
+      },
+      "style": "黏土",
+      "observedVersion": "dev22/1000022",
+      "route": "home",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "圆角更大，Hero下沿单一柔和投影，搜索上左凹陷清晰。设置浅色圆角表面、磨砂紫色选中框清楚，未见旧新拟态的锐灰额外内轮廓或异常重叠。"
+    },
+    {
+      "path": "dev22-clay-settings-b.png",
+      "bytes": 2267410,
+      "sha256": "EA61C7DB2E1FEE5AD846DE5E075070A6049A55C9A1B94C7A933F53780EB72F2D",
+      "tree": {
+        "path": "dev22-clay-settings-b.json",
+        "bytes": 9048,
+        "sha256": "A12DF7D3D282B89C084DE5F265A9772F2072A49232787CCC1E30D31C958E4F7A"
+      },
+      "style": "黏土",
+      "observedVersion": "dev22/1000022",
+      "route": "settings",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "圆角更大，Hero下沿单一柔和投影，搜索上左凹陷清晰。设置浅色圆角表面、磨砂紫色选中框清楚，未见旧新拟态的锐灰额外内轮廓或异常重叠。"
+    },
+    {
+      "path": "dev22-fluent-home-b.png",
+      "bytes": 1901708,
+      "sha256": "3A0FC6BA1900B8325213AD25C3686B0CCCAB6E34FCF8E9CC314947EF2DC7F00A",
+      "tree": {
+        "path": "dev22-fluent-home-b.json",
+        "bytes": 11272,
+        "sha256": "AFFD0520481100A37DEA96F5687C34111B01A7AE2A4A756B9B026C3F1D91EAFC"
+      },
+      "style": "Fluent",
+      "observedVersion": "dev22/1000022",
+      "route": "home",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "首页轻细边框、低强度下沿投影，搜索边缘与组件轮廓重合；设置细圆角边框和紫色选中框连贯。可见区未见独立第二大框或异常重叠。"
+    },
+    {
+      "path": "dev22-fluent-settings-b.png",
+      "bytes": 2289756,
+      "sha256": "8C4C3E47FE981BAA3DB31C4191205FBFDC5143C75822B9C82E05FA049E378B47",
+      "tree": {
+        "path": "dev22-fluent-settings-b.json",
+        "bytes": 9055,
+        "sha256": "934805C0A78C2A19E129C362C1CDE19F644727AF65AC184EE8EFFF9792B81AEE"
+      },
+      "style": "Fluent",
+      "observedVersion": "dev22/1000022",
+      "route": "settings",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "首页轻细边框、低强度下沿投影，搜索边缘与组件轮廓重合；设置细圆角边框和紫色选中框连贯。可见区未见独立第二大框或异常重叠。"
+    },
+    {
+      "path": "dev22-brutalist-home-b.png",
+      "bytes": 1897249,
+      "sha256": "BD88B0194885497F36E0EC972B504DD5BD7A4AF331457C8D13D8BA87A607EEF3",
+      "tree": {
+        "path": "dev22-brutalist-home-b.json",
+        "bytes": 11272,
+        "sha256": "34E5918D5BDB041E5ABD81612AFC409183723809D824D8F3EA03DBF06316E8B7"
+      },
+      "style": "粗野主义",
+      "observedVersion": "dev22/1000022",
+      "route": "home",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "首页与设置有明显厚灰边，Hero底部右下硬投影属于该形态主投影，不能作为未知框一概删除。恢复设置实际文字为粗野主义。可见内容未见明显异常重叠或误裁切。"
+    },
+    {
+      "path": "dev22-brutalist-settings-restored-b.png",
+      "bytes": 2297424,
+      "sha256": "26A7773A533CD280C0647DA89A2A7B27341FDF5611784C7379CC4BCEDDD46A49",
+      "tree": {
+        "path": "dev22-brutalist-settings-restored-b.json",
+        "bytes": 9054,
+        "sha256": "774FE1B833AF833D861E25C1B2153BCDE0FC0AB0FD38A047D9A0E834ECE3AF27"
+      },
+      "style": "粗野主义",
+      "observedVersion": "dev22/1000022",
+      "route": "settings",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "首页与设置有明显厚灰边，Hero底部右下硬投影属于该形态主投影，不能作为未知框一概删除。恢复设置实际文字为粗野主义。可见内容未见明显异常重叠或误裁切。"
+    },
+    {
+      "path": "dev22-industrial-home-b.png",
+      "bytes": 1905954,
+      "sha256": "0EC9BF1E2712050EEA171BDA2AA3252EF55C82F125FF85AC46BB7C9122642C35",
+      "tree": {
+        "path": "dev22-industrial-home-b.json",
+        "bytes": 11272,
+        "sha256": "AFFD0520481100A37DEA96F5687C34111B01A7AE2A4A756B9B026C3F1D91EAFC"
+      },
+      "style": "工业风",
+      "observedVersion": "dev22/1000022",
+      "route": "home",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "首页搜索矩形灰边和内侧窄灰带，Hero薄灰边及窄下沿投影；恢复设置实际文字为工业风，控件边框一致。未见独立于组件边框/投影的重复未知轮廓。"
+    },
+    {
+      "path": "dev22-industrial-settings-restored-b.png",
+      "bytes": 2298897,
+      "sha256": "F139861399AAB258B7B665BE9DA6189C2250200628DC98B2A939E688BF944A70",
+      "tree": {
+        "path": "dev22-industrial-settings-restored-b.json",
+        "bytes": 9051,
+        "sha256": "3E23AF19E7DBE7B6D1B17092731FCFDD6ADF7B46ACAE5E5E1EA3BB89E0D3A4D4"
+      },
+      "style": "工业风",
+      "observedVersion": "dev22/1000022",
+      "route": "settings",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "首页搜索矩形灰边和内侧窄灰带，Hero薄灰边及窄下沿投影；恢复设置实际文字为工业风，控件边框一致。未见独立于组件边框/投影的重复未知轮廓。"
+    },
+    {
+      "path": "dev22-flat-home-b.png",
+      "bytes": 1925030,
+      "sha256": "60D487E3C18A1261D34853425CEC9B4060AB13489F2425592F35121C77AA8B7E",
+      "tree": {
+        "path": "dev22-flat-home-b.json",
+        "bytes": 11272,
+        "sha256": "AFFD0520481100A37DEA96F5687C34111B01A7AE2A4A756B9B026C3F1D91EAFC"
+      },
+      "style": "扁平",
+      "observedVersion": "dev22/1000022",
+      "route": "home",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "首页圆角浅细边和低对比软投影；设置实际文字为扁平 · 默认，无立体深度区域，语言/字体/材质/独立设置按钮间隔正常。底部预览仅上部在视口内，完整预览未审；可见区未见明显异常重叠或误裁切。"
+    },
+    {
+      "path": "dev22-flat-settings-restored-b.png",
+      "bytes": 2190706,
+      "sha256": "E8C9B11B98321032B43D5FFB50FA1D9972D0AD024EAEE7531207472720501276",
+      "tree": {
+        "path": "dev22-flat-settings-restored-b.json",
+        "bytes": 8740,
+        "sha256": "070FD12B61735862FA5917FE4E288730D96FC8423A1E86AA40BEB9027B451FD9"
+      },
+      "style": "扁平",
+      "observedVersion": "dev22/1000022",
+      "route": "settings",
+      "visualStatus": "ACTUALLY_VIEWED_ORIGINAL_PIXELS",
+      "observation": "首页圆角浅细边和低对比软投影；设置实际文字为扁平 · 默认，无立体深度区域，语言/字体/材质/独立设置按钮间隔正常。底部预览仅上部在视口内，完整预览未审；可见区未见明显异常重叠或误裁切。"
+    }
+  ],
+  "unreviewed": [
+    {
+      "path": "dev21-appearance-baseline.png",
+      "bytes": 2184565,
+      "sha256": "E268F7F4F6DABBCA0477A08BDD25CF55A7C1FA591F55C438ED8305BF373FFEFC",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev21-before-v32-device.png",
+      "bytes": 2017078,
+      "sha256": "BCBB799160F2B287F90D94DC46B2D9A9B666D956FC1D32D253021D92737ABC51",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev21-home-baseline.png",
+      "bytes": 1905484,
+      "sha256": "1B0B6817700098C0D7757959B4590873EE125949ABE19E7F32E1AB7019E742D9",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev21-neumorphism-home-a.png",
+      "bytes": 1912153,
+      "sha256": "9D65AE5EBD2349F10D1A692B361EA3D1D6F8826AE65F5DA0561D4911C50A3BEA",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev21-neumorphism-settings-a.png",
+      "bytes": 2274803,
+      "sha256": "7FA2CCC75567F271C211B322885E46A6AA20EAA53E68BCB922EA5C9438AE377B",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev21-style-picker-baseline.png",
+      "bytes": 2341984,
+      "sha256": "7F85FBB6E66D11271D6E8678F99AFD420F39D1F6987219A21178E79012EDD7EE",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-brutalist-home-a.png",
+      "bytes": 1897249,
+      "sha256": "BD88B0194885497F36E0EC972B504DD5BD7A4AF331457C8D13D8BA87A607EEF3",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-brutalist-selection-observed.png",
+      "bytes": 2070343,
+      "sha256": "37885C53561DCCB82E3CD3C35886E5B2CBF89510E723F5A1B9FA2D72AE795E9F",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-brutalist-settings-a.png",
+      "bytes": 2070062,
+      "sha256": "034397805B48363C677D49307C2E28FA5C77D73A028336DA8B85871A087C44DD",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-brutalist-settings-b.png",
+      "bytes": 2070062,
+      "sha256": "034397805B48363C677D49307C2E28FA5C77D73A028336DA8B85871A087C44DD",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-brutalist-settings-restored-a.png",
+      "bytes": 2297424,
+      "sha256": "26A7773A533CD280C0647DA89A2A7B27341FDF5611784C7379CC4BCEDDD46A49",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-clay-home-a.png",
+      "bytes": 1885521,
+      "sha256": "DC25B2398D7D714825D0680E56805CBE7F3D3DFC5A3EC47DB8CDFA75156D2AB7",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-clay-settings-a.png",
+      "bytes": 2267410,
+      "sha256": "EA61C7DB2E1FEE5AD846DE5E075070A6049A55C9A1B94C7A933F53780EB72F2D",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-final-home-a.png",
+      "bytes": 1925576,
+      "sha256": "9EB16C4CFF63620A6C8A939C8779315930DC589B99F32EC1F7EBC25C0835100B",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-final-home-b.png",
+      "bytes": 1925759,
+      "sha256": "7C78817F0964A77F3B96AEF5C2D5EB3F6959B4095E06224CC6B5A05E30000D69",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-flat-home-a.png",
+      "bytes": 1925030,
+      "sha256": "60D487E3C18A1261D34853425CEC9B4060AB13489F2425592F35121C77AA8B7E",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-flat-settings-a.png",
+      "bytes": 2190706,
+      "sha256": "E8C9B11B98321032B43D5FFB50FA1D9972D0AD024EAEE7531207472720501276",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-flat-settings-b.png",
+      "bytes": 2190706,
+      "sha256": "E8C9B11B98321032B43D5FFB50FA1D9972D0AD024EAEE7531207472720501276",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-flat-settings-restored-a.png",
+      "bytes": 2190706,
+      "sha256": "E8C9B11B98321032B43D5FFB50FA1D9972D0AD024EAEE7531207472720501276",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-fluent-home-a.png",
+      "bytes": 1901708,
+      "sha256": "3A0FC6BA1900B8325213AD25C3686B0CCCAB6E34FCF8E9CC314947EF2DC7F00A",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-fluent-settings-a.png",
+      "bytes": 2289756,
+      "sha256": "8C4C3E47FE981BAA3DB31C4191205FBFDC5143C75822B9C82E05FA049E378B47",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-industrial-home-a.png",
+      "bytes": 1905954,
+      "sha256": "0EC9BF1E2712050EEA171BDA2AA3252EF55C82F125FF85AC46BB7C9122642C35",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-industrial-settings-a.png",
+      "bytes": 2070854,
+      "sha256": "572E942EBE1CA7ABB282FE7882BBFB4FABEB0C9E3E4C999AA159C5D6CB049981",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-industrial-settings-b.png",
+      "bytes": 2070854,
+      "sha256": "572E942EBE1CA7ABB282FE7882BBFB4FABEB0C9E3E4C999AA159C5D6CB049981",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-industrial-settings-restored-a.png",
+      "bytes": 2298897,
+      "sha256": "F139861399AAB258B7B665BE9DA6189C2250200628DC98B2A939E688BF944A70",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-neumorphism-home-a.png",
+      "bytes": 1888164,
+      "sha256": "2D37E83673C7F9C7987D64E7352152B5651B026BD49FC0071C34B09A2B20075C",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-neumorphism-settings-a.png",
+      "bytes": 2271423,
+      "sha256": "CAC6485A91EEAABD40564F547056D414E3EEC334CEA98830ECD019480D66B4EB",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-paper-home-a.png",
+      "bytes": 1904895,
+      "sha256": "E0BAB5C4A7EE8B03D21995ED78D4800C92A3BDCC5BBF15C54A1E660440110050",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    },
+    {
+      "path": "dev22-paper-settings-a.png",
+      "bytes": 2299384,
+      "sha256": "CAE7D437CF5EC3E7D95023A152CA263A18C3F4D179F67FE6237553D455B94852",
+      "visualStatus": "NOT_VISUALLY_REVIEWED"
+    }
+  ],
+  "conclusion": "No new obvious visual blocker found in the reviewed dev22 seven-style home/settings visible regions. Definite before/after improvement is limited to Neumorphism Hero and first card visible portion; search recess remains. Settings before/after differences are not distinct.",
+  "finalObservation": {
+    "path": "final-observation-a2.json",
+    "bytes": 8654,
+    "sha256": "B76202F4429A40D71CA1E2867869595C5AD487D5C765344F50B435478CB45E80"
+  },
+  "scopeLimits": [
+    "home first card lower portion is outside the image; not all cards or pages were inspected",
+    "29 images are not visually reviewed even where bytes duplicate a reviewed capture",
+    "no exact Flutter pixel/width/theme/material full matrix qualification",
+    "no business database/draft body losslessness proof from displayed counts",
+    "no dev23 Task/AppearancePreferences device, real music import/playback, ARM64 or signing acceptance",
+    "old offscreen-label driver assertion is preserved; not independently observed as a product failure"
+  ],
+  "dev23Device": "NOT_RUN",
+  "fullParity": "OPEN",
+  "allInterfaceFrames": "OPEN"
+}

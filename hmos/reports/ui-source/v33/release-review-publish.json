@@ -1,0 +1,528 @@
+{
+  "reviewedUtc": "2026-10-09T06:07:31.727Z",
+  "reviewer": "dev33_delivery_review",
+  "status": "PASS_SCOPED_BRANCH_ONLY_PUBLICATION",
+  "branchOnlyPublishable": true,
+  "targetBranch": "codex/ArkTsUI",
+  "baseline": "ada95e0f119b3d3c3273b8e5bf6da031d3b10c10",
+  "mainMergeAuthorized": false,
+  "gitStateCheckedByReviewer": false,
+  "releaseEligible": false,
+  "productAcceptance": "OPEN",
+  "fullAcceptance": "OPEN",
+  "blockers": [],
+  "sourceReview": {
+    "taskControls": "Completion 2 has no normal Checkbox. Both explicit directions exist in detail/editor buttons and menus; normal 0/1 uses the actual bool callback and unchanged TaskIds.",
+    "taskRequest": "Original rendered snapshot, source/revision, TaskId/text/completion, input epoch, page/editor owner and existing write/raw-draft blockers are checked before admission and after raw flush. Pending keeps the literal original wire.",
+    "taskReply": "Only task_toggle adds per-send foreground/selection/detail/editor/draft/attachment/epoch guards. Changed owners cannot install cards or clear pending. Strict committed/current DTO/canonical u64 receipt checks preserve Unknown; historical receipt may accept Native latest view.",
+    "preferenceRead": "Actual ArkData namespace/key preserved. Only positive hasSync absence supplies defaults; existing invalid/non-string/empty or failed reads block writes.",
+    "preferenceWrite": "Complete candidate validation, exact original preflight, put, flush and exact readback required. Current, candidate, original, observed and fixed issued Unknown stay separate; older ACK never resets newer UI inputs.",
+    "preferenceRetention": "Unknown JSON value spans retain literal large integers/nested values; material unknown fields follow actual stable ids. Known key spelling/format may be normalized.",
+    "preferenceHandoff": "One actual namespace live owner spans model disposal until the issued Promise terminates. New instances cannot read/put/flush/recover concurrently; terminal Unknown transfers and needs explicit recovery.",
+    "preferenceRecovery": "Explicit reread, and for issued Unknown flush ACK plus exact readback, confirms observed state only. It never puts defaults, candidate or rollback bytes. Current preview must be saved separately.",
+    "preservation": "Independently reran preservation.verify(): reversing only declared appearance changes reproduces full task frozen Index 619592C0E8483199EA1CA92AB48FA6EED9EFA25BE37051E368060E6410786664 after documented newline normalization.",
+    "taskI18nDefault": "Default task checks and bounded generator use the repository-owned actual-Flutter pinned fixture only. Exact nine locales and three keys are required; actual UiStrings lookup still executes.",
+    "taskI18nLive": "Current local Flutter source access is an explicit live mode. It verifies all 18 ARB source hashes, parts/assembled parity and pinned phrase equality; absent/drifting sources fail without fallback.",
+    "sourceInventory": "Both actual tool/fixtures JSON files are included: the new task catalog and the existing Markdown URI golden read by markdown-model.test. Observed complete publication inventory is 171, not a forced 170."
+  },
+  "inputChecks": {
+    "repository": {
+      "count": 368,
+      "checked": 368,
+      "matches": true,
+      "mismatches": []
+    },
+    "copiedBuild": {
+      "count": 325,
+      "checked": 325,
+      "matches": true,
+      "mismatches": []
+    },
+    "models": {
+      "count": 171,
+      "checked": 171,
+      "matches": true,
+      "mismatches": []
+    },
+    "native": {
+      "count": 283,
+      "checked": 283,
+      "matches": true,
+      "mismatches": []
+    },
+    "modelBeforeAfterEqual": true,
+    "copiedRepositoryProvenance": {
+      "checked": 86,
+      "matches": true
+    },
+    "buildManifest": {
+      "count": 368,
+      "matches": true,
+      "artifactMatches": true
+    }
+  },
+  "logChecks": [
+    {
+      "path": "hmos/reports/ui-source/v33/models-publish-tests.log",
+      "bytes": 141078,
+      "sha256": "23A0667310BCF38D43056079D8A0A2EB57F20B009D1C582FDC21BD1481685479",
+      "matches": true
+    },
+    {
+      "path": "hmos/reports/ui-source/v33/dev33-preferences-tasks-a1-sdk-build.log",
+      "bytes": 46185,
+      "sha256": "497BB606D17FCEA562CAFB44AC9C47ADA91934D3F16F80085A15F818ACF07792",
+      "matches": true
+    }
+  ],
+  "observedLogCounts": {
+    "modelTests": 1291,
+    "modelPassed": 1291,
+    "modelFailed": 0,
+    "modelCancelled": 0,
+    "modelSkipped": 0,
+    "modelTodo": 0,
+    "testFiles": 53,
+    "sdkBuildSuccessful": true,
+    "sdkSeconds": 36.467,
+    "sdkTasks": 34,
+    "sdkExecuted": 34,
+    "sdkUpToDate": 0,
+    "signSkipped": true,
+    "modelDurationMs": 48700.7493
+  },
+  "scopedCurrentSourceChecks": [
+    {
+      "label": "appearance-preferences-a2",
+      "tests": 61,
+      "passed": 61,
+      "inputs": {
+        "count": 7,
+        "checked": 7,
+        "matches": true,
+        "mismatches": []
+      },
+      "references": {
+        "count": 4,
+        "checked": 4,
+        "matches": true,
+        "mismatches": []
+      },
+      "sourceBeforeAfterEqual": true,
+      "logSha256": "BC4C857F4994C34785F68B67BD9603F46E1C30230351F9CF494C20F55C4E7CEB"
+    },
+    {
+      "label": "index-appearance-a1",
+      "tests": 32,
+      "passed": 32,
+      "inputs": {
+        "count": 10,
+        "checked": 10,
+        "matches": true,
+        "mismatches": []
+      },
+      "references": {
+        "count": 5,
+        "checked": 5,
+        "matches": true,
+        "mismatches": []
+      },
+      "sourceBeforeAfterEqual": true,
+      "logSha256": "86815B0A33A7639792AD7DAA282EB80103CDD8182AA00FC981A60DC50D2E674A"
+    }
+  ],
+  "nativeArchiveChecks": [
+    {
+      "abi": "arm64-v8a",
+      "bytes": 58110214,
+      "sha256": "DD86DF956795BC04CDF98BC3184625C6FAD9D0382E041E86DEAF99C44028744A",
+      "matchesRecorded": true,
+      "productionMatches": true,
+      "copiedMatches": true
+    },
+    {
+      "abi": "x86_64",
+      "bytes": 56515718,
+      "sha256": "E9C66A4974D32CD9B6C68559504F56EBA7D10CC27F1DB3CCFDC31B4FDDA4BF1E",
+      "matchesRecorded": true,
+      "productionMatches": true,
+      "copiedMatches": true
+    }
+  ],
+  "frozenArtifact": {
+    "path": ".build/artifacts/dev33-preferences-tasks-a1/entry-default-unsigned.hap",
+    "bytes": 31564598,
+    "sha256": "39F2E8A11E9C03A5AECF475539AE864BCA0609D97F48ABFFF4F65DD266545F88",
+    "matchesRecorded": true,
+    "versionName": "0.1.0-hmos-dev.23",
+    "versionCode": 1000023,
+    "packagedApp": {
+      "iconId": 16777219,
+      "minPatchAPIVersion": 0,
+      "debug": true,
+      "targetPatchAPIVersion": 0,
+      "minMinorAPIVersion": 0,
+      "minAPIVersion": 260000026,
+      "icon": "$media:layered_image",
+      "buildMode": "debug",
+      "label": "$string:app_name",
+      "bundleType": "app",
+      "versionName": "0.1.0-hmos-dev.23",
+      "versionCode": 1000023,
+      "appEnvironments": [],
+      "compileSdkType": "HarmonyOS",
+      "labelId": 16777216,
+      "compileSdkVersion": "26.0.0.105",
+      "targetAPIVersion": 260000026,
+      "vendor": "Morrow",
+      "bundleName": "dev.morrow.hmos",
+      "apiReleaseType": "Release",
+      "targetMinorAPIVersion": 0
+    },
+    "unsigned": true,
+    "installed": false
+  },
+  "packageChecks": {
+    "nativeEntries": [
+      {
+        "path": "libs/arm64-v8a/libmorrow.so",
+        "bytes": 11126440,
+        "sha256": "A192359D5BCF30D032C4C708FA85538ECC092A7456477B03E03C3BD1B6FA6754",
+        "matchesRecorded": true,
+        "matchesStrippedOutput": true
+      },
+      {
+        "path": "libs/arm64-v8a/libc++_shared.so",
+        "bytes": 1262504,
+        "sha256": "F69947AF100B652E349AE51E4A4888BCC7A327DB9085272D318176EF1782BF0F",
+        "matchesRecorded": true,
+        "matchesStrippedOutput": true
+      },
+      {
+        "path": "libs/x86_64/libmorrow.so",
+        "bytes": 11666056,
+        "sha256": "4147A7A047274A84BC38D3C0D6AA1D87919F468B9035760F716A5C812EC23ED2",
+        "matchesRecorded": true,
+        "matchesStrippedOutput": true
+      },
+      {
+        "path": "libs/x86_64/libc++_shared.so",
+        "bytes": 1294904,
+        "sha256": "09B9E3A97D3C01260B5E269E2CE15FE4D3B7C787B99DC4378295D4F35E2FA006",
+        "matchesRecorded": true,
+        "matchesStrippedOutput": true
+      }
+    ],
+    "filesInfoMatches": true,
+    "modulesCount": 11,
+    "modules": [
+      {
+        "module": "model/MusicFiles",
+        "filesInfoPresent": true,
+        "packagedRecordPresent": true,
+        "record": "entry|entry|1.0.0|src/main/ets/model/MusicFiles.ts",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "model/MusicLibrary",
+        "filesInfoPresent": true,
+        "packagedRecordPresent": true,
+        "record": "entry|entry|1.0.0|src/main/ets/model/MusicLibrary.ts",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "model/MusicPlayback",
+        "filesInfoPresent": true,
+        "packagedRecordPresent": true,
+        "record": "entry|entry|1.0.0|src/main/ets/model/MusicPlayback.ts",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "model/MusicUi",
+        "filesInfoPresent": true,
+        "packagedRecordPresent": true,
+        "record": "entry|entry|1.0.0|src/main/ets/model/MusicUi.ts",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "model/MusicWorkbench",
+        "filesInfoPresent": true,
+        "packagedRecordPresent": true,
+        "record": "entry|entry|1.0.0|src/main/ets/model/MusicWorkbench.ts",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "pages/PlatformMusicPlayer",
+        "filesInfoPresent": true,
+        "packagedRecordPresent": true,
+        "record": "entry|entry|1.0.0|src/main/ets/pages/PlatformMusicPlayer.ts",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "pages/MusicPanel",
+        "filesInfoPresent": true,
+        "packagedRecordPresent": true,
+        "record": "entry|entry|1.0.0|src/main/ets/pages/MusicPanel.ts",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "pages/MusicFooter",
+        "filesInfoPresent": true,
+        "packagedRecordPresent": true,
+        "record": "entry|entry|1.0.0|src/main/ets/pages/MusicFooter.ts",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "pages/RecessedGlassRelief",
+        "filesInfoPresent": true,
+        "packagedRecordPresent": true,
+        "record": "entry|entry|1.0.0|src/main/ets/pages/RecessedGlassRelief.ts",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "model/AppearancePreferences",
+        "filesInfoPresent": true,
+        "packagedRecordPresent": true,
+        "record": "entry|entry|1.0.0|src/main/ets/model/AppearancePreferences.ts",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "pages/Index",
+        "filesInfoPresent": true,
+        "packagedRecordPresent": true,
+        "record": "entry|entry|1.0.0|src/main/ets/pages/Index.ts",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      }
+    ],
+    "packagedAbc": {
+      "path": "ets/modules.abc",
+      "bytes": 2990540,
+      "sha256": "F6E62E4FF945A648EC20AAE4D06B8681588E1F46939DB42A29926E16C313D66B",
+      "matchesRecorded": true
+    }
+  },
+  "evidenceClarifications": [
+    "The old models-final 169-input run and release-review files are preserved unchanged as historical evidence. Current published tools use the new models-publish run: 1291/1291 in 53 files and 171 exact inputs.",
+    "The current 1291 count is one full-suite execution, not added to the old 1291 or to scoped 12/61/32/126 counts.",
+    "The isolated no-build proof executes the 12 task-i18n tests, not a complete Git clone or all 53 files in an isolated checkout. Its 7 copied repository inputs, unchanged guard, 3 process audits and 13 in-tree reads were independently checked.",
+    "The explicit live source proof and this reviewer read all 18 actual ARBs and compare 27 phrases to the pinned fixture; default tests do not require those ignored files.",
+    "SDK product input 368/copy325/native283 and the exact dev23 unsigned/uninstalled HAP remain unchanged. This tooling repair adds no new SDK build or device qualification.",
+    "Earlier task-only and i18n whole-Index snapshots predate appearance integration; final publication model and existing unchanged SDK manifests qualify the actual integrated product source."
+  ],
+  "remainingOpen": [
+    "Dev23 HAP unsigned and uninstalled. Actual Task controls/glyph/wrapping/Unknown/foreground/restart and ArkData flush/readback/reboot/power-loss acceptance NOT_RUN.",
+    "Task pending retention and preference namespace live barrier are in-process only; no new task durable intent journal or cross-process appearance CAS/crash journal.",
+    "Music real picker/grant/import/playback/seek/EOF/background/restart/audible output and complete platform persistence remain OPEN.",
+    "Font import is source/SDK design only; original assets, SFNT validation, registration budget and recovery are not implemented.",
+    "All-interface frame/pixel matrix, second outer casts/clipping, exact blur/density/theme/width/animation/optical fidelity, ARM64 runtime, signing/protected acceptance and full Flutter/Windows parity remain OPEN."
+  ],
+  "publicationScope": "Publish current source, repository fixtures, tests and qualified frozen evidence only to codex/ArkTsUI after root verifies staging/remote identities. This addendum supersedes the historical tool freeze for publication; it is not a push receipt, main merge, signed release, installation or full product acceptance.",
+  "previousReview": {
+    "json": {
+      "path": "hmos/reports/ui-source/v33/release-review.json",
+      "sha256": "D4F1C0A53C7A2EE727CB79DE1A0AE7EC3E6CF0C76845E963EA7E9B1981029CDA"
+    },
+    "markdown": {
+      "path": "hmos/reports/ui-source/v33/release-review.md",
+      "sha256": "933F3D74B4CBC6C8FF936AA8C0265A1181D992A1CCDBAA39EEF6E9F0FD704362"
+    },
+    "retainedUnchanged": true,
+    "scope": "Historical product/package/source review. Its old 169-input tool freeze is not the current publication-tool qualification."
+  },
+  "addendumScope": "Current publication qualification after repairing default task-i18n tests that depended on an ignored local Flutter worktree. Product, SDK build, Native inputs and immutable HAP are unchanged.",
+  "publicationModels": {
+    "result": "hmos/reports/ui-source/v33/models-publish-result.json",
+    "inputsBefore": "hmos/reports/ui-source/v33/models-publish-inputs-before.json",
+    "inputsAfter": "hmos/reports/ui-source/v33/models-publish-inputs-after.json",
+    "tests": 1291,
+    "passed": 1291,
+    "sourceInputs": 171,
+    "sourceBeforeAfterEqual": true,
+    "logSha256": "23A0667310BCF38D43056079D8A0A2EB57F20B009D1C582FDC21BD1481685479"
+  },
+  "publicationToolInputs": [
+    {
+      "path": "hmos/tool/task-decision-i18n.cjs",
+      "bytes": 7703,
+      "sha256": "1C906821EDEC59271FFA69B8AD8CEA5FA368B3F03139283CFE35C6FF0BCBFD69"
+    },
+    {
+      "path": "hmos/tool/task-decision-i18n.test.cjs",
+      "bytes": 2620,
+      "sha256": "B06E49EAF354029CAB01AEEB1E482B1763C761638CE7FE7133394290776C8FCF"
+    },
+    {
+      "path": "hmos/tool/run-task-decision-i18n.cjs",
+      "bytes": 7977,
+      "sha256": "F59455198DA69DEC39A73DD755E6D9B13C5073330CFC4951064A81E747E6126E"
+    },
+    {
+      "path": "hmos/tool/generate-ui-strings.cjs",
+      "bytes": 1700,
+      "sha256": "24D9F85C549354C9BC62610522690565D5573AAFFF8BCB9012EED61C9CE6797F"
+    },
+    {
+      "path": "hmos/reports/ui-source/v33/run-models.cjs",
+      "bytes": 2955,
+      "sha256": "53799294C3D744C16494E8366F60D4D871221D51A419F14E90566FB8837B5BFE"
+    },
+    {
+      "path": "hmos/tool/fixtures/flutter-markdown-uri.json",
+      "bytes": 2409,
+      "sha256": "9C754A6C96C65689820573133EC3746CEF906F96DFACFDA6AD0BE181D427D549"
+    },
+    {
+      "path": "hmos/tool/fixtures/task-decision-flutter-catalog.json",
+      "bytes": 10493,
+      "sha256": "462B23ED8E32CE23D88F06F602AF560172D8AC84FE19BA7922D4684163DB7F61"
+    }
+  ],
+  "pinnedFixtureProvenance": {
+    "fixture": {
+      "path": "hmos/tool/fixtures/task-decision-flutter-catalog.json",
+      "bytes": 10493,
+      "sha256": "462B23ED8E32CE23D88F06F602AF560172D8AC84FE19BA7922D4684163DB7F61"
+    },
+    "locales": 9,
+    "sourceKeys": [
+      "mainTaskMarkComplete",
+      "mainTaskMarkIncomplete",
+      "mainTaskAmbiguousDecision"
+    ],
+    "lookups": 27,
+    "actualArbSources": {
+      "count": 18,
+      "checked": 18,
+      "matches": true,
+      "mismatches": []
+    },
+    "partsAndAssembledMatch": true,
+    "sourceBeforeAfterEqual": true,
+    "constructedFromUiStrings": false
+  },
+  "portabilityEvidence": [
+    {
+      "label": "pinned-clean-a2",
+      "inputs": {
+        "count": 7,
+        "checked": 7,
+        "matches": true,
+        "mismatches": []
+      },
+      "sourceBeforeAfterEqual": true,
+      "tests": 12,
+      "passed": 12,
+      "logSha256": "21E5732222323941351965BF5AD66EF43A211CC1E46F091235092DE175B1DD9B",
+      "referenceMode": "pinned",
+      "liveSourceFileCount": 0,
+      "node": {
+        "path": "C:\\Program Files\\nodejs\\node.exe",
+        "version": "v24.19.0",
+        "sha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237"
+      },
+      "cleanCheckout": {
+        "root": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\morrow-task-i18n-JJh3Pm",
+        "buildDirectoryAbsent": true,
+        "copiedRepositoryInputCount": 7,
+        "guardSha256": "f4f90a6260c900f68b4a263408aa081f7ccca159599bb1a0ed7cdacd86923e57",
+        "copiedInputsUnchanged": true,
+        "externalReads": 0,
+        "auditProcessCount": 3,
+        "fileReadCount": 13,
+        "readPaths": [
+          "hmos/entry/src/main/ets/model/UiStrings.ets",
+          "hmos/entry/src/main/ets/pages/Index.ets",
+          "hmos/tool/fixtures/task-decision-flutter-catalog.json",
+          "hmos/tool/generate-ui-strings.cjs",
+          "hmos/tool/task-decision-i18n.cjs",
+          "hmos/tool/task-decision-i18n.test.cjs"
+        ],
+        "guardUnchanged": true
+      }
+    },
+    {
+      "label": "pinned-live-a1",
+      "inputs": {
+        "count": 25,
+        "checked": 25,
+        "matches": true,
+        "mismatches": []
+      },
+      "sourceBeforeAfterEqual": true,
+      "tests": 12,
+      "passed": 12,
+      "logSha256": "C89C465B506F11873661D3352977EB10407D42DDF307A62C8A64CEC162C1C9C5",
+      "referenceMode": "pinned-plus-explicit-live-check",
+      "liveSourceFileCount": 18,
+      "node": {
+        "path": "C:\\Program Files\\nodejs\\node.exe",
+        "version": "v24.19.0",
+        "sha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237"
+      },
+      "cleanCheckout": null
+    }
+  ],
+  "packageReverification": {
+    "immutableHapSameBytes": true,
+    "packageProofSameArtifact": true,
+    "emittedOutputsChecked": 22,
+    "strippedNativeOutputsChecked": 4,
+    "modules": 11,
+    "scope": "Unchanged immutable HAP identity preserves the independently inspected package records in the base review; all 22 current emit and four current strip output hashes were rechecked."
+  }
+}

@@ -1,0 +1,20 @@
+✔ task decisions use the exact Flutter design in zh (0.6432ms)
+✔ task decisions use the exact Flutter design in en (0.1139ms)
+✔ task decisions use the exact Flutter design in ja (0.0714ms)
+✔ task decisions use the exact Flutter design in ko (0.0766ms)
+✔ task decisions use the exact Flutter design in de (0.0649ms)
+✔ task decisions use the exact Flutter design in fr (0.0758ms)
+✔ task decisions use the exact Flutter design in es (0.0824ms)
+✔ task decisions use the exact Flutter design in pt (0.0613ms)
+✔ task decisions use the exact Flutter design in ru (0.0721ms)
+✔ task menu and pending row call the existing exact catalog phrases (1.5636ms)
+✔ task user text and stable protocol identities remain literal (0.1558ms)
+✔ bounded generator check verifies all nine locales without changing UiStrings (72.2433ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 167.7312

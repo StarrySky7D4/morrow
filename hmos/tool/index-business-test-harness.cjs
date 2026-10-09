@@ -43,6 +43,8 @@ const names = ['save', 'businessPending', 'businessImportsReady', 'businessCurre
 names.push('finishBusinessInput', 'continueBusinessHandoff', 'finishBusinessClose', 'refreshAfterBusiness', 'reconcileBusinessHandoff');
 for (const name of ['editorIdleForRead', 'currentEditorCardComplete', 'recoverLinkedBusinessDraft', 'recoverCurrentBusinessChild',
   'prepareCurrentBusinessRecovery', 'installRecoveredBusinessChild']) if (!names.includes(name)) names.push(name);
+for (const name of ['taskCardComplete', 'taskContextCurrent', 'canTaskAction', 'taskAction', 'taskNoCommit', 'taskReplyCurrent', 'taskReceipt', 'taskRevisionLess',
+  'taskMenu', 'detailTask', 'canChangeCard', 'moveTask', 'confirmTaskChange', 't']) if (!names.includes(name)) names.push(name);
 // Shared current Save entrypoint for the existing field/todo integration
 // suites. Every helper here is extracted verbatim from the same freeze.
 for (const name of ['editorInputChanged', 'draftTextChanged', 'restoreSelection', 'fieldCountIndex', 'setFieldCount', 'fieldCountLabel',
@@ -218,7 +220,7 @@ function harness(options = {}) {
   const pause = draft.pauseWrites.bind(draft), resume = draft.resumeWrites.bind(draft);
   draft.pauseWrites = () => { events.push({ kind: 'pause' }); return pause(); };
   draft.resumeWrites = () => { events.push({ kind: 'resume' }); return resume(); };
-  const context = vm.createContext({ exports: {}, ...m, DraftValues: m.Values, DraftTextValue: m.TextValue, Command: wb.Command,
+  const context = vm.createContext({ exports: {}, ...m, uiText: load('UiStrings').uiText, DraftValues: m.Values, DraftTextValue: m.TextValue, Command: wb.Command,
     workbench: wb.workbench, util: { generateRandomUUID: () => 'index-op-' + (++uuid) }, setTimeout: fn => { const id = ++timer; timers.set(id, fn); return id; },
     clearTimeout: id => timers.delete(id) }); vm.runInContext(pageCode, context, { filename: sourcePath }); page = new context.exports.ActualIndexBusiness();
   const fieldPolicy = new m.EditorFieldPolicy(async wire => { const request = JSON.parse(wire); events.push({ kind: 'field', request });
@@ -234,7 +236,7 @@ function harness(options = {}) {
     attachmentWorking: false, pasteWorking: false, attachmentPending: '', pendingSpools: [], importRecords: [], taskEditId: '', taskRenameText: '',
     taskRenameValue: new m.TextValue(), taskText: values.todos.text, todoBusinessReady: true, todoFormatPending: false, todoInputRevision: 0,
     title: values.title.text, description: values.description.text, hypothesis: values.hypothesis.text, conclusion: values.conclusion.text, category: values.category,
-    selected: scope.source_kind === 1 ? '' : scope.card_id, dirty: false, message: '', draftRecords: record ? [plain(record)] : [], draftSource: scope.source,
+    selected: scope.source_kind === 1 ? '' : scope.card_id, detailId: '', locale: 'zh-CN', dirty: false, message: '', draftRecords: record ? [plain(record)] : [], draftSource: scope.source,
     // These legacy source fixtures exercise their original edit/create intent
     // contracts; they do not claim the new fresh native current_v2 read grant.
     editorBusinessMode: options.mode === 'edit' ? 'edit' : 'create',

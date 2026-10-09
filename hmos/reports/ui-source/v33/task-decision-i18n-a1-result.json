@@ -1,0 +1,44 @@
+{
+  "status": "FAIL",
+  "scope": "actual uiText and task UI source/reference wiring; no layout, SDK or device proof",
+  "sourceInputCount": 24,
+  "frozenInputsUnchanged": true,
+  "summary": {
+    "tests": -1,
+    "pass": -1,
+    "fail": -1,
+    "cancelled": -1,
+    "skipped": -1
+  },
+  "durationMs": 216,
+  "exitCode": 0,
+  "signal": null,
+  "processError": "",
+  "locales": [
+    "zh",
+    "en",
+    "ja",
+    "ko",
+    "de",
+    "fr",
+    "es",
+    "pt",
+    "ru"
+  ],
+  "sourceKeys": [
+    "mainTaskMarkComplete",
+    "mainTaskMarkIncomplete",
+    "mainTaskAmbiguousDecision"
+  ],
+  "actualLookups": 27,
+  "node": {
+    "path": "C:\\Program Files\\Huawei\\DevEco Studio\\tools\\node\\node.exe",
+    "version": "v24.14.1",
+    "sha256": "58e74bf02fc5bbacc41dcb8bef089961cd5bddd37830b87784e4fc624d145d1f"
+  },
+  "logSha256": "09d46bb23dd264908d9487876ccf5c9f26790a21e2850f54ad90c1fd418b1ff8",
+  "sdk": "NOT_RUN",
+  "device": "NOT_RUN",
+  "uiStringsChanged": false,
+  "provenance": "exact current Windows main locale parts and assembled ARB catalogs; existing HMOS entries retained"
+}

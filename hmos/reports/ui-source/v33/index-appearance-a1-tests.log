@@ -1,0 +1,40 @@
+✔ real aboutToAppear restores complete preferences through actual namespace/has/get (247.4438ms)
+✔ actual missing key defaults are positively observed and never call get or put (85.9882ms)
+✔ actual existing empty or nonstring records block ordinary UI writes (388.9537ms)
+✔ actual preference open failure is retained and has no write path (79.5581ms)
+✔ actual has/get failures cannot become missing defaults (293.6763ms)
+✔ malformed and incomplete originals remain unchanged after UI controls change (277.2806ms)
+✔ actual full UI snapshot captures every preference field without shared arrays (64.6514ms)
+✔ normal actual UI save reuses one Preferences instance and confirms flush/readback (71.0202ms)
+✔ actual preview never reports saved while put/flush is pending (83.125ms)
+✔ actual rapid UI changes are serialized and older ACK never restores older UI (66.3493ms)
+✔ actual put lost ACK preserves origin and blocks later queued UI write (140.2982ms)
+✔ actual flush unknown leaves saved current separate from visible candidate (131.7286ms)
+✔ real rendered recovery button rereads without automatically putting UI candidate (131.739ms)
+✔ actual read-only recovery with no candidate applies complete repaired stored UI (146.1351ms)
+✔ actual unknown recovery confirms observed candidate with fresh flush/readback (142.8179ms)
+✔ actual repeated recovery failure does not put defaults or old confirmed bytes (72.8727ms)
+✔ initial restore result does not override newer input produced before its await (140.8631ms)
+✔ initial restore response loses owner on actual background event and cannot apply UI (143.0894ms)
+✔ actual background/foreground events do not replay unknown write or recover automatically (142.9724ms)
+✔ actual background during pending put prevents flush and later queue dispatch (141.7505ms)
+✔ actual background during pending flush preserves UI and original current after ACK (157.099ms)
+✔ actual page close disposes preference model and prevents late current/UI update (153.2545ms)
+✔ actual recovery late response cannot apply current to new foreground epoch (147.5587ms)
+✔ invalid latest UI candidate cannot be greenwashed by an older durable ACK (145.3387ms)
+✔ actual save-preview handler cannot overwrite invalid inputs (138.033ms)
+✔ original external drift blocks real Index save and preserves latest UI (213.7065ms)
+✔ actual Index narrow edits preserve original top/material future values (214.3148ms)
+✔ actual rendered status contains no unconditional saved fallback or technical raw data (71.4773ms)
+✔ busy unknown recovery button is disabled and cannot start another service operation (134.0234ms)
+✔ actual new Index page cannot read or write over old closed page live flush (140.9175ms)
+✔ actual replacement page confirms old terminal outcome before explicit new preview save (138.8949ms)
+✔ actual new page preserves old terminal unknown bytes and needs user recovery (147.3397ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6230.7914

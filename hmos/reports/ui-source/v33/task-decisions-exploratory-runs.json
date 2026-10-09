@@ -1,0 +1,16 @@
+{
+  "scope": "Exploratory direct host test runs captured in the task tool transcript; no source/runtime manifests and no artifact qualification",
+  "source_hashes": "NOT_CAPTURED_FOR_THESE_EXPLORATORY_RUNS",
+  "runs": [
+    { "exec_session": 28198, "tests": 14, "pass": 10, "fail": 4, "exit_code": 1,
+      "findings": ["Actual task write gate omitted draftRetiring", "Fixture mutated EditorDraft.current copied Values and did not register original raw todo or delay actual flush"],
+      "repair": "Added narrow task retirement guard and used actual adoptExternalInput/EditorDraft.update through harness.adopt" },
+    { "exec_session": 74554, "tests": 14, "pass": 14, "fail": 0, "exit_code": 0,
+      "qualification": "INTERMEDIATE_NON_FROZEN_HOST_ONLY" },
+    { "exec_session": 25788, "tests": 18, "pass": 10, "fail": 8, "exit_code": 1,
+      "findings": ["New reply-boundary captured draft name was shadowed by the existing later try-block draft declaration, causing TDZ errors and preserving every reply as Unknown"],
+      "repair": "Renamed task reply captures replyDraft/replyIdentity/replyEpoch without loosening receipt or ownership gates" }
+  ],
+  "qualified_run": "task-decisions-a1-result.json",
+  "raw_log_note": "The exploratory tool outputs are not reconstructed as artifact raw logs. The qualified a1 runner retains actual TAP stdout/stderr and actual read trace files."
+}

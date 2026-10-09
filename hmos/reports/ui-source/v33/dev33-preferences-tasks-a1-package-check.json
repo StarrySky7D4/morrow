@@ -1,0 +1,279 @@
+{
+  "checkedUtc": "2026-10-09T05:22:12.0903914Z",
+  "status": "PASS",
+  "artifact": "dev33-preferences-tasks-a1",
+  "artifactBytes": 31564598,
+  "artifactSha256": "39F2E8A11E9C03A5AECF475539AE864BCA0609D97F48ABFFF4F65DD266545F88",
+  "packagedApp": {
+    "iconId": 16777219,
+    "minPatchAPIVersion": 0,
+    "debug": true,
+    "targetPatchAPIVersion": 0,
+    "minMinorAPIVersion": 0,
+    "minAPIVersion": 260000026,
+    "icon": "$media:layered_image",
+    "buildMode": "debug",
+    "label": "$string:app_name",
+    "bundleType": "app",
+    "versionName": "0.1.0-hmos-dev.23",
+    "versionCode": 1000023,
+    "appEnvironments": [],
+    "compileSdkType": "HarmonyOS",
+    "labelId": 16777216,
+    "compileSdkVersion": "26.0.0.105",
+    "targetAPIVersion": 260000026,
+    "vendor": "Morrow",
+    "bundleName": "dev.morrow.hmos",
+    "apiReleaseType": "Release",
+    "targetMinorAPIVersion": 0
+  },
+  "entries": [
+    {
+      "path": "libs/arm64-v8a/libmorrow.so",
+      "bytes": 11126440,
+      "sha256": "A192359D5BCF30D032C4C708FA85538ECC092A7456477B03E03C3BD1B6FA6754",
+      "source": "entry/build/default/intermediates/stripped_native_libs/default/arm64-v8a/libmorrow.so",
+      "status": "PASS"
+    },
+    {
+      "path": "libs/arm64-v8a/libc++_shared.so",
+      "bytes": 1262504,
+      "sha256": "F69947AF100B652E349AE51E4A4888BCC7A327DB9085272D318176EF1782BF0F",
+      "source": "entry/build/default/intermediates/stripped_native_libs/default/arm64-v8a/libc++_shared.so",
+      "status": "PASS"
+    },
+    {
+      "path": "libs/x86_64/libmorrow.so",
+      "bytes": 11666056,
+      "sha256": "4147A7A047274A84BC38D3C0D6AA1D87919F468B9035760F716A5C812EC23ED2",
+      "source": "entry/build/default/intermediates/stripped_native_libs/default/x86_64/libmorrow.so",
+      "status": "PASS"
+    },
+    {
+      "path": "libs/x86_64/libc++_shared.so",
+      "bytes": 1294904,
+      "sha256": "09B9E3A97D3C01260B5E269E2CE15FE4D3B7C787B99DC4378295D4F35E2FA006",
+      "source": "entry/build/default/intermediates/stripped_native_libs/default/x86_64/libc++_shared.so",
+      "status": "PASS"
+    }
+  ],
+  "modules": [
+    {
+      "module": "model/MusicFiles",
+      "listed": true,
+      "emitted": true,
+      "packaged": true,
+      "record": "entry|entry|1.0.0|src/main/ets/model/MusicFiles.ts",
+      "outputs": [
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/model/MusicFiles.ts",
+          "bytes": 38327,
+          "sha256": "6EBB2AF67ECDB6581A9F3F78D5AF1D382A43E27B7110054C3A2EF9FF1A9579C0"
+        },
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/model/MusicFiles.protoBin",
+          "bytes": 231951,
+          "sha256": "7DDA95336CE09E8D07274CB42BBCC1C199B3B433C2881D4FCC190958EF276035"
+        }
+      ]
+    },
+    {
+      "module": "model/MusicLibrary",
+      "listed": true,
+      "emitted": true,
+      "packaged": true,
+      "record": "entry|entry|1.0.0|src/main/ets/model/MusicLibrary.ts",
+      "outputs": [
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/model/MusicLibrary.ts",
+          "bytes": 52411,
+          "sha256": "C2C149CAB7DC79782B1480645B89790F00C037122296B5B298241670703A0B51"
+        },
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/model/MusicLibrary.protoBin",
+          "bytes": 316344,
+          "sha256": "74B4113393031377236BE5CC4648505C291B7AEE1769881C3F04F2DF6DA3E38C"
+        }
+      ]
+    },
+    {
+      "module": "model/MusicPlayback",
+      "listed": true,
+      "emitted": true,
+      "packaged": true,
+      "record": "entry|entry|1.0.0|src/main/ets/model/MusicPlayback.ts",
+      "outputs": [
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/model/MusicPlayback.ts",
+          "bytes": 25640,
+          "sha256": "2941C3846B449AB9679EF138173CBF6D7F2F6592963B18DBC7D978D05EE0BA18"
+        },
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/model/MusicPlayback.protoBin",
+          "bytes": 146713,
+          "sha256": "260B2FF27906EA1D5C4C1BF6B44C169C22E464109E847987FAA915C7158C284C"
+        }
+      ]
+    },
+    {
+      "module": "model/MusicUi",
+      "listed": true,
+      "emitted": true,
+      "packaged": true,
+      "record": "entry|entry|1.0.0|src/main/ets/model/MusicUi.ts",
+      "outputs": [
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/model/MusicUi.ts",
+          "bytes": 1651,
+          "sha256": "D1679E3CF4E8763F4A1F22F64FD88E12C833CD6FAAD3AAFA26FC8BE00454A1C0"
+        },
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/model/MusicUi.protoBin",
+          "bytes": 7716,
+          "sha256": "755B50350394F6182E645A6F33AF95ED22C55C782510006FCF9FC1C28A07CFED"
+        }
+      ]
+    },
+    {
+      "module": "model/MusicWorkbench",
+      "listed": true,
+      "emitted": true,
+      "packaged": true,
+      "record": "entry|entry|1.0.0|src/main/ets/model/MusicWorkbench.ts",
+      "outputs": [
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/model/MusicWorkbench.ts",
+          "bytes": 36893,
+          "sha256": "B7B8C1BB3F767036A087749982913B814BCE7B7991EF1EAC3532E0A8D63EECFB"
+        },
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/model/MusicWorkbench.protoBin",
+          "bytes": 221127,
+          "sha256": "974F0E0E31906CFF50BEC6F2B7332EB12E35733695C88F5AC28DED6B4E3AFE61"
+        }
+      ]
+    },
+    {
+      "module": "pages/PlatformMusicPlayer",
+      "listed": true,
+      "emitted": true,
+      "packaged": true,
+      "record": "entry|entry|1.0.0|src/main/ets/pages/PlatformMusicPlayer.ts",
+      "outputs": [
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/pages/PlatformMusicPlayer.ts",
+          "bytes": 6778,
+          "sha256": "9FE3FE8979DB7F58B16C76EADC5C4618985F4F2CABB211419B8C19DE3E731E4A"
+        },
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/pages/PlatformMusicPlayer.protoBin",
+          "bytes": 44799,
+          "sha256": "FC9428A09F69E28B3F3C26A0EAC3AFE3DF03F1D0E2A2AE515FB9C8F2645DEB07"
+        }
+      ]
+    },
+    {
+      "module": "pages/MusicPanel",
+      "listed": true,
+      "emitted": true,
+      "packaged": true,
+      "record": "entry|entry|1.0.0|src/main/ets/pages/MusicPanel.ts",
+      "outputs": [
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/pages/MusicPanel.ts",
+          "bytes": 63073,
+          "sha256": "972E3D7BA30C7D54EF4EA153C27F1A9EC626CB0EA2DEE98162B34D587B877D82"
+        },
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/pages/MusicPanel.protoBin",
+          "bytes": 417567,
+          "sha256": "85EAF3EFEDE0788B43B2ACAEA1DFA8EB068E7CD6993E7AA693E9805D70D4A439"
+        }
+      ]
+    },
+    {
+      "module": "pages/MusicFooter",
+      "listed": true,
+      "emitted": true,
+      "packaged": true,
+      "record": "entry|entry|1.0.0|src/main/ets/pages/MusicFooter.ts",
+      "outputs": [
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/pages/MusicFooter.ts",
+          "bytes": 17725,
+          "sha256": "03E2D5C1540410AA5EC9145FE00ACDB6365117127C7C5032416B52F148EB0690"
+        },
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/pages/MusicFooter.protoBin",
+          "bytes": 122246,
+          "sha256": "91109F5F7F4ED5D1F2A56F3C1865F1A8C405FE0E5625956BD9C3009E91E46419"
+        }
+      ]
+    },
+    {
+      "module": "pages/RecessedGlassRelief",
+      "listed": true,
+      "emitted": true,
+      "packaged": true,
+      "record": "entry|entry|1.0.0|src/main/ets/pages/RecessedGlassRelief.ts",
+      "outputs": [
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/pages/RecessedGlassRelief.ts",
+          "bytes": 11074,
+          "sha256": "E8346637D7C224CE1AF57794F774278E96583E8B364AAFFA2BC0EAC33E001287"
+        },
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/pages/RecessedGlassRelief.protoBin",
+          "bytes": 69975,
+          "sha256": "7B1418639B0E7BFC457783498062F6A584855D96667C4B51C539FF76E5C10261"
+        }
+      ]
+    },
+    {
+      "module": "model/AppearancePreferences",
+      "listed": true,
+      "emitted": true,
+      "packaged": true,
+      "record": "entry|entry|1.0.0|src/main/ets/model/AppearancePreferences.ts",
+      "outputs": [
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/model/AppearancePreferences.ts",
+          "bytes": 26191,
+          "sha256": "88082F848B8DB005B22B88560C131DADA4DC149AB70DC6716227BFF3D1E0843C"
+        },
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/model/AppearancePreferences.protoBin",
+          "bytes": 142670,
+          "sha256": "F8EF424366A3B2B94321BD9A4FEC9BE32CB1A416AC70626FD4A7770BBE00E289"
+        }
+      ]
+    },
+    {
+      "module": "pages/Index",
+      "listed": true,
+      "emitted": true,
+      "packaged": true,
+      "record": "entry|entry|1.0.0|src/main/ets/pages/Index.ts",
+      "outputs": [
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/pages/Index.ts",
+          "bytes": 738714,
+          "sha256": "CC3318CC4F3D145EB6647D02CB798E6510AC58B28CD82E9F966137730836CF83"
+        },
+        {
+          "path": "entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/entry/src/main/ets/pages/Index.protoBin",
+          "bytes": 4311243,
+          "sha256": "BEBCE5D3152217DFBEA63D1929F19B5EE84AF9BC1DD9BDF2E44843ACB0DADF86"
+        }
+      ]
+    }
+  ],
+  "filesInfoSha256": "0679ED4C9E356135CE1EC589C3A43E2C85B9C91F3B41EEF30C4A1DB702B0A8BF",
+  "packagedAbc": {
+    "path": "ets/modules.abc",
+    "bytes": 2990540,
+    "sha256": "F6E62E4FF945A648EC20AAE4D06B8681588E1F46939DB42A29926E16C313D66B"
+  },
+  "device": "NOT_RUN",
+  "scope": "Actual complete product graph: eight music modules, shared relief, AppearancePreferences and Index; exact package identity and four compiler-stripped native libraries. No device persistence, Task rendering, playback or full parity qualification."
+}

@@ -1,5 +1,13 @@
 # 持续追平 Windows 工作台
 
+2026-10-09 **v33 当前检查点**：待确认任务在详情和现有卡编辑器均提供“确认已完成 / 确认未完成”，不再由普通勾选框推断方向。决定绑定原卡快照、实际 TaskId、CAS 与页面归属，未知结果保留原请求，迟到或不完整回执不能清除它。外观设置已接入独立 `AppearancePreferences`：读取失败禁写，保留未知 JSON 值的原 literal；保存必须通过原字节核对、put、flush 和准确读回。同 namespace 的跨页面在途调用保持屏障，未知结果须显式核对，再单独保存预览。
+
+发布前完整实际 ETS/tool **1291/1291 PASS，0 fail/skip/cancel**，53 测试文件、171 输入前后一致；完整 API26 **SUCCESS /36.467s**，34 tasks全执行，325复制/368仓库来源精确核对。九语检查改用真实 Flutter 源固定fixture，默认不依赖本地build；12项无build隔离检查PASS，整套53文件的干净clone资格未验。字体导入本轮只有实际源/SDK设计审计，尚未实施。版本 **dev23/1000023**，HAP **31,564,598B /39F2E8A1…**，未签名、未安装。产品源/SDK/HAP保持不变，283 native来源和双ABI静态库精确复用v29，本轮无新Rust构建或测试资格。完整结果见 [v33 验证](../reports/ui-source/v33/validation.md)。
+
+本轮设备观察实际安装的是已交付 v32 的 **dev22/1000022**、HAP **06342B5C…**，首页仍显示14张卡、4份草稿。新拟态首页对照确认额外内侧 raised 轮廓消失，搜索保留真实凹陷；七风格首页/设置观察单独记录。该旧包不授予 v33 新任务或外观持久化设备资格，也不证明所有页面未知框线已修复。真实音乐选择/授权/声音/seek/后台/重启、任务原请求重启持久化、全页面像素、第二外侧光阴影、签名/ARM64/protected 与完整 Flutter/Windows 对齐仍 **OPEN**。交付仅 `codex/ArkTsUI`，不并入主线。
+
+以下 v32 及更早段落保留为历史；旧段落中的“当前”、安装状态和资格仅指其当轮范围。最新资格以上述 v33、当前表及验证记录为准。
+
 2026-10-09 **v32 当前检查点**：按 Flutter `Glass` 的普通 depth=0 设计，移除普通面板及候选材质预览叠加的 raised 轮廓；搜索保留设计要求的凹陷，与音乐共用 `RecessedGlassRelief`。搜索使用自己的材质/depth/radius 与 -1 倍数，音乐内层使用全局色盘/depth/radius 与 -0.8 倍数，外层组件材质覆盖仍独立。主阴影按 SDK 物理 px 转换且 `fill=false`，候选预览按自身材质模式绘制。这是源码设计差异的修正候选，**不宣称所有界面未知框线已修复或完整 UI 追平**；第二外侧光阴影及父容器裁剪方案仍 **OPEN**。
 
 完整实际 ETS/tool **1168/1168 PASS，0 fail/skip/cancel**，49 测试文件、156 模型输入前后一致；API26 **SUCCESS /40.621s**，34 tasks 全执行，324 复制/367 仓库输入精确，九项实际产品模块均检查并 emit（含 `RecessedGlassRelief`），四项包内原生库与本次 stripped outputs 核对 PASS。283 native 来源和双 ABI 静态库精确复用 v29，本轮无新 Rust 构建或测试资格。版本 **dev22/1000022**，HAP **31,442,946B /06342B5C…**，unsigned/uninstalled。
@@ -109,18 +117,19 @@ dev.8 已接入原 `query_plan_v2` 的分页过滤、稳定排序和归并，复
 | 范围 | 当前状态 | 达标证据 / 后续工作 |
 |---|---|---|
 | 首页、导航、分类卡片、收藏、编辑器、响应布局 | dev.8 新包已验 440 vp 单列、744 vp 两列的查询、四卡间距/遍历/重排；dev.7 保留 16 张交错高度设备回归，dev.6 保留 880/1488 vp 面板与位置恢复。完整响应矩阵仍未追平 | 真实 Flutter 源码与 HMOS 在手机/平板宽度、浅/深主题逐页对照；列表、弹窗、键盘、返回流程实际可用；大库内存/帧时与隐藏节点资源资格不能用可访问性节点数替代 |
-| 七种风格、玻璃模式、深度、色盘、组件材质跟随 | v32 普通Glass移除额外raised轮廓，候选模式独立，搜索与音乐共用七风格凹陷；主阴影按物理px/fill=false。23绘制组合、1168全量模型及实际产品构建通过；dev.5 材质跟随和当轮错位边缘证据保留为历史 | dev22未安装，不宣称全部框线已修复。补第二外侧光阴影及父裁剪、七风格/材质/主题/宽度像素矩阵、过渡与控件、跟随/循环/取消/保存/重启；不能只显示风格名称 |
-| 字体、语言、背景、窗口行为 | 系统字体/部分九语/内置纹理已接；文件导入与完整文案缺失 | 字体和背景选择器、持久 URI/授权、动态文案、可访问性与宽屏实测 |
-| 卡片、TaskId、分类/阶段、回收站 | dev.11 接阅读详情、显式编辑、复制、长按/菜单及持久前后移动和独立拖动柄；dev.4 完整 TaskId 编辑保留 | 补任务迁移、详情完整任务操作、拖动边缘自动滚动和鼠标/键盘交互矩阵；保持未知字段、CAS、原操作回执、删除时间规则 |
+| 七种风格、玻璃模式、深度、色盘、组件材质跟随 | 本轮安装旧v32/dev22，首页/设置七风格PNG及实际UI树单独记录；新拟态前后确认普通卡额外内侧轮廓消失、搜索真实凹陷保留。v33无新paint；原23组合与最终1291全量/产品构建按其范围保留 | 不宣称全部界面框线已修复。补第二外侧光阴影/父裁剪、全页面/材质/主题/宽度像素矩阵、动画/shader、跟随/循环/取消/保存/重启；旧dev22不授新Task/Preferences设备资格 |
+| 字体、语言、背景、窗口行为 | v33Task九语默认固定真实Flutter源fixture，显式live独立核18份源；默认/无buildcopy及live各12项限定PASS，无buildcopy7输入/3Node/13读/外部0，整套53文件cleanclone未验。31项字体源/SDK/官方本地文档设计确认Rust FontPreference与global checked loader可复用，字体导入尚未实施 | 实施字体描述符/真实选择/20MiB完整字节与SFNT验证/私有原件/注册预算/确认偏好/重启回退；背景资产、完整文案、真实glyph/可访问性/宽屏仍OPEN |
+| 外观偏好读取、完整保存与未知结果 | v33实际Index接独立AppearancePreferences，同原namespace/key；坏/未读原值禁写、未知JSON值literal保留，preflight/put/flush/accurate readback，同namespace跨页live屏障；明确状态、显式恢复和另行保存预览。61模型/32Index及独立6交接向量限定PASS，最终全量已含 | 真实ArkData顺序/持久性、设备重启/断电NOT_RUN；进程内屏障不等于跨进程CAS或崩溃journal；不能用构建成功称数据保护已全面验收 |
+| 卡片、TaskId、分类/阶段、回收站 | v33详情/编辑器对pending TaskId显示help_outline和两向明确确认；正常Checkbox保bool，原source/CAS/owner/wire及严格receipt/current DTO核对，迟到owner不装入。新18项+既有回归126项限定PASS，最终1291另验；dev.4/dev.11历史功能保留 | 新Task实际点击/窄屏/图标/前后台/真实业务和重启持久intentNOT_RUN/OPEN；任务迁移、拖动边缘自动滚动与鼠标/键盘矩阵仍补，保持未知字段和删除时间规则 |
 | 字段字数、待办输入、完整未来粘贴 | Unicode16/formatter原对照保持，Index新卡多行1000/100行及create TaskId已接；v24 AFF普通字段恢复焦点门禁、83B一次性Todo初建能力已冻，B62旧native候选准确恢复公开D/13/1000与keep关闭限定PASS | 补新文字/IME/多行编辑和业务保存重启的设备闭环；SDK未交付事件/实时formatter/任意候选恢复/连续选择仍OPEN，恢复和保留关闭不代替保存验收 |
 | 查询、排序、大库加载 | dev.8 已接原 Rust 计划、单次完整快照、完整属性搜索与稳定排序；去抖/待发合并/过期回包丢弃，真实失败与空结果分开 | 仍限定 256 张；需 UI 响应分页、大库内存/帧时和生产 guest/捕获资格。旧“最近添加”为反向 ID 顺序，不能宣称为创建时间排序 |
 | 正式 Rust 宿主和存储会话 | 未接；当前为独立未封存开发库 | 提取平台会话接口，HUKS、稳定身份、单库所有者、审计/备份/恢复契约；禁止绕过原宿主非 Windows 拒绝规则 |
 | 持久草稿、S1/S2、未知结果核对 | v25 原请求保存、S1 close、S2/S3 source0 business handoff 保留；v27 Index 已接实际父历史/当前完整子 writer 重启恢复，读取不提交业务或生成新操作，原 Session 已知结果及各项 Unknown/wire 保留 | 新 native 保存/关闭/重启设备闭环、protected 捕获、SDK 未交付事件及跨进程全局配额资格仍 OPEN；显式核对固定退役/close，不能复活 inactive parent |
 | 严格业务、当前 V2 正文与 own 接续 | v27 ordinary CardView 已据真实 decode/Origin 分类，详情重新编辑读最新完整 source/revision 并接 current_v2，保 TaskId/元数据 bytes；active原Session仍按continued_todos接续。191库+3附件和实际两类来源/迁移/新修订Store检查通过 | 不投影 old own LF，不自动重基，不把独立 plan/child/retire/close 事务称为多对象原子；本轮事务实现未改、未重跑旧fault vectors；完整设备/任务编辑/产品资格 OPEN |
 | 附件、剪贴板、Markdown/富文本、导入导出 | dev.19在dev.17/18快照/原件/富转换基础上将完整输出改为Unicode16 grapheme≤20000，回执绑定完整UTF-16/UTF-8长度和版本；完整未来选区粘贴异步preflight及pin后重检。原source限制、SHA、64MiB/20槽/sidecar保持。独立API26双指tester编译main/test HAP与10工具模型通过，未安装/执行设备手势 | 本轮Rust106和三项条件Flutter对照fresh通过；完整ETS/HAP/native身份见v19最终验证。系统富内容/Office持久闭环、dev19字段/IME与图片手势设备NOT_RUN。RTF插件仍2Mi+64KiB，无异常fallback；严格坏编码/RTF U+FFFD、直接输入formatter行为、更严格字节预算、200MiB容量、完整格式/惯性/GIF仍有差距 |
-| 音乐、歌词、解密 | v32 音乐/搜索共用实际RecessedGlassRelief，音乐子层全局-0.8与外层覆盖分开；保留v31原wire派发前持久确认、一次picker ticket和完整原目标歌词，实际产品九模块emit。本轮实际安装dev21；两次Download后picker关闭，无音乐导入/播放 | dev22未安装；验真实提供者/声音/seek/上下首/后台/中断/重启/FD与全部样式/框线，补第二外侧光阴影/父裁剪、重启部分清理/在线/解密/metadata/封面/GC/protected/full parity，见[v32验证](../reports/ui-source/v32/validation.md) |
+| 音乐、歌词、解密 | 保留v31原wire持久确认/一次picker ticket/原目标歌词和v32共用凹陷；v33完整模型/构建保持。本轮实际安装旧dev22只观察首页/设置。旧dev21两次Download后picker关闭仍无导入播放资格 | 验真实picker/grant/codec/声音/seek/上下首/后台/中断/重启/FD与完整样式/框线，补第二外侧光阴影/父裁剪、在线/解密/metadata/封面/GC/protected/full parity，见[v33验证](../reports/ui-source/v33/validation.md) |
 | 插件包、动态 UI、HTTP/服务/文件任务 | 未接运行期宿主 | 跟进 Windows 实现与合约，接 Wasm 执行/权限/资源预算/服务与任务控制；区分 Windows 平台实现和共享业务块 |
-| 分发与资格 | dev22/1000022，仅codex/ArkTsUI、不并main。v32 1168模型/156来源一致，API26 SUCCESS40.621s/34执行任务/324复制/367仓库来源及9模块emit/4包库核对PASS；31,442,946B/06342B5C… unsigned/uninstalled。283 native来源/双ABI精确复用v29，本轮无新Rust测试/构建，见[v32验证](../reports/ui-source/v32/validation.md) | 本轮实际安装dev21并观察两次Download后picker关闭，无音乐导入/播放；dev22设备NOT_RUN，完整框线/像素、声音/seek/后台/重启、签名/ARM64运行/HUKS与完整对齐OPEN，第二外侧光阴影/父裁剪仍OPEN；旧候选证据按历史范围保留 |
+| 分发与资格 | v33/dev23/1000023，仅codex/ArkTsUI、不并main；发布前1291模型/53文件/171输入exact。产品/SDK/HAP未变，API26 SUCCESS36.467s/34执行任务/325复制/368来源精确核对；HAP31,564,598B/39F2E8A1… unsigned/uninstalled，见[v33验证](../reports/ui-source/v33/validation.md)。283 native来源/双ABI静态库精确复用v29，无新Rust测试/构建 | 本轮实际安装旧dev22并观察首页/设置，不能授新Task/Preferences设备资格；真实音乐、Task重启持久intent、全页面像素/框线、第二光阴影/父裁剪、签名/ARM64/HUKS/full parity OPEN；旧候选证据保留历史范围 |
 
 每一轮更新源码观察与实际功能证据，保护 `shared/reference.json` 的冻结来源。上游在途代码不得未经审查直接覆盖。新版本截图、测试日志和构建输入哈希分别记录，旧图不能被当成新包验收。
 

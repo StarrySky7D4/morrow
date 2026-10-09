@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "kind": "actual-ETS-controlled-two-instance-reproduction",
+  "date": "2026-10-09",
+  "model": {
+    "path": "hmos/entry/src/main/ets/model/AppearancePreferences.ets",
+    "bytes": 19067,
+    "sha256": "497158b595f7ef3d13bab3b9ba6cda9ac38b7e84884791bed4ae6ea96564f6e4"
+  },
+  "harness": {
+    "path": "hmos/tool/appearance-preferences-test-harness.cjs",
+    "sha256": "8304ebf217a71265c74db067eb610fbb9b9e421caf783107cd4dd0ae242ba30d"
+  },
+  "controlled_seam": "one shared cache/disk port; each flush captures current cache at issue and writes captured bytes after its own deferred completion",
+  "newRestore": true,
+  "newRestoreCurrent": 30,
+  "diskDuringRestore": 76,
+  "newSave": true,
+  "oldResult": false,
+  "newState": "ready",
+  "newCurrent": 50,
+  "newStatus": "✓ 外观设置已在本机确认。",
+  "cacheOpacity": 50,
+  "diskOpacity": 30,
+  "oldState": "write-unknown",
+  "oldBusy": false,
+  "calls": [
+    {
+      "kind": "put",
+      "opacity": 30
+    },
+    {
+      "kind": "flush-start",
+      "n": 1,
+      "opacity": 30
+    },
+    {
+      "kind": "put",
+      "opacity": 50
+    },
+    {
+      "kind": "flush-start",
+      "n": 2,
+      "opacity": 50
+    },
+    {
+      "kind": "flush-finish",
+      "n": 2,
+      "opacity": 50
+    },
+    {
+      "kind": "flush-finish",
+      "n": 1,
+      "opacity": 30
+    }
+  ],
+  "observed_result": "Old disposed instance cannot promote its UI current but its issued storage effect can overwrite a new instance confirmed value; new instance also reads the old unflushed cache as confirmed.",
+  "device_claim": "NOT_RUN: actual platform flush scheduling/order was not tested",
+  "sdk_build": "NOT_RUN",
+  "production_mutations": [],
+  "notified": [
+    "/root",
+    "/root/appearance_preferences"
+  ],
+  "required_fix": "namespace-level live-operation barrier and pending/unknown ownership transfer, or authoritative platform ordering contract plus actual verification sufficient to rule out this interleaving"
+}

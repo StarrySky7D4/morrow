@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: task decisions use the pinned exact Flutter design in zh
+ok 1 - task decisions use the pinned exact Flutter design in zh
+  ---
+  duration_ms: 0.67
+  type: 'test'
+  ...
+# Subtest: task decisions use the pinned exact Flutter design in en
+ok 2 - task decisions use the pinned exact Flutter design in en
+  ---
+  duration_ms: 0.1119
+  type: 'test'
+  ...
+# Subtest: task decisions use the pinned exact Flutter design in ja
+ok 3 - task decisions use the pinned exact Flutter design in ja
+  ---
+  duration_ms: 0.0663
+  type: 'test'
+  ...
+# Subtest: task decisions use the pinned exact Flutter design in ko
+ok 4 - task decisions use the pinned exact Flutter design in ko
+  ---
+  duration_ms: 0.0798
+  type: 'test'
+  ...
+# Subtest: task decisions use the pinned exact Flutter design in de
+ok 5 - task decisions use the pinned exact Flutter design in de
+  ---
+  duration_ms: 1.1162
+  type: 'test'
+  ...
+# Subtest: task decisions use the pinned exact Flutter design in fr
+ok 6 - task decisions use the pinned exact Flutter design in fr
+  ---
+  duration_ms: 0.0794
+  type: 'test'
+  ...
+# Subtest: task decisions use the pinned exact Flutter design in es
+ok 7 - task decisions use the pinned exact Flutter design in es
+  ---
+  duration_ms: 0.0556
+  type: 'test'
+  ...
+# Subtest: task decisions use the pinned exact Flutter design in pt
+ok 8 - task decisions use the pinned exact Flutter design in pt
+  ---
+  duration_ms: 0.048
+  type: 'test'
+  ...
+# Subtest: task decisions use the pinned exact Flutter design in ru
+ok 9 - task decisions use the pinned exact Flutter design in ru
+  ---
+  duration_ms: 0.1152
+  type: 'test'
+  ...
+# Subtest: task menu and pending row call the existing exact catalog phrases
+ok 10 - task menu and pending row call the existing exact catalog phrases
+  ---
+  duration_ms: 1.5954
+  type: 'test'
+  ...
+# Subtest: task user text and stable protocol identities remain literal
+ok 11 - task user text and stable protocol identities remain literal
+  ---
+  duration_ms: 0.1457
+  type: 'test'
+  ...
+# Subtest: bounded generator check verifies all nine locales without changing UiStrings
+ok 12 - bounded generator check verifies all nine locales without changing UiStrings
+  ---
+  duration_ms: 61.699
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 147.0078

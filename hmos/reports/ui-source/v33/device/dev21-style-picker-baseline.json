@@ -1,0 +1,416 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "Button",
+        "bounds": [
+          36,
+          153,
+          150,
+          267
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              57,
+              174,
+              129,
+              246
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "设置",
+        "bounds": [
+          186,
+          179,
+          294,
+          242
+        ],
+        "children": []
+      },
+      {
+        "type": "Scroll",
+        "bounds": [
+          36,
+          327,
+          1284,
+          2112
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "󰉘",
+            "bounds": [
+              132,
+              423,
+              180,
+              471
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "空间外观",
+            "bounds": [
+              240,
+              424,
+              1056,
+              470
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "打造你的风格",
+            "bounds": [
+              1080,
+              435,
+              1224,
+              460
+            ],
+            "children": []
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              555,
+              1224,
+              762
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰉘",
+                "bounds": [
+                  138,
+                  630,
+                  195,
+                  687
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "界面风格",
+                "bounds": [
+                  231,
+                  614,
+                  376,
+                  656
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "扁平 · 默认",
+                "bounds": [
+                  231,
+                  668,
+                  383,
+                  703
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "⌃",
+                "bounds": [
+                  1151,
+                  597,
+                  1182,
+                  720
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              798,
+              1224,
+              1026
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "Aa",
+                "bounds": [
+                  189,
+                  881,
+                  255,
+                  944
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "扁平 · 默认",
+                "bounds": [
+                  345,
+                  868,
+                  527,
+                  910
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "轻盈边界，清晰层次",
+                "bounds": [
+                  345,
+                  922,
+                  615,
+                  957
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "✓",
+                "bounds": [
+                  1150,
+                  875,
+                  1185,
+                  949
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              1062,
+              1224,
+              1290
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "Aa",
+                "bounds": [
+                  189,
+                  1145,
+                  255,
+                  1208
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "Neumorphism · 新拟态",
+                "bounds": [
+                  345,
+                  1132,
+                  722,
+                  1174
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "柔和双向光影，细腻浮雕触感",
+                "bounds": [
+                  345,
+                  1186,
+                  735,
+                  1221
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              1326,
+              1224,
+              1554
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "Aa",
+                "bounds": [
+                  189,
+                  1409,
+                  255,
+                  1472
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "纸感",
+                "bounds": [
+                  345,
+                  1374,
+                  418,
+                  1416
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "哑光纸面、细边框与克制的层次",
+                "bounds": [
+                  345,
+                  1428,
+                  765,
+                  1463
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "实验性",
+                "bounds": [
+                  345,
+                  1475,
+                  426,
+                  1507
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              1590,
+              1224,
+              1818
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "Aa",
+                "bounds": [
+                  189,
+                  1673,
+                  255,
+                  1736
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "黏土",
+                "bounds": [
+                  345,
+                  1638,
+                  418,
+                  1680
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "圆润造型与柔和隆起的色彩",
+                "bounds": [
+                  345,
+                  1692,
+                  705,
+                  1727
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "实验性",
+                "bounds": [
+                  345,
+                  1739,
+                  426,
+                  1771
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              1854,
+              1224,
+              2082
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "Aa",
+                "bounds": [
+                  189,
+                  1937,
+                  255,
+                  2000
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "Fluent 流畅",
+                "bounds": [
+                  345,
+                  1902,
+                  531,
+                  1944
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "半透明层次与强调色线条",
+                "bounds": [
+                  345,
+                  1956,
+                  675,
+                  1991
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "实验性",
+                "bounds": [
+                  345,
+                  2003,
+                  426,
+                  2035
+                ],
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

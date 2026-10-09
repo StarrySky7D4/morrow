@@ -1,0 +1,17 @@
+{
+  "qualification": "PASS_DECLARED_APPEARANCE_CHANGES_ONLY",
+  "baseline": {
+    "path": "hmos/.build/appearance-integration/v33/index-task-baseline.ets",
+    "byte_length": 350258,
+    "sha256": "619592c0e8483199ea1ca92ab48fa6eed9efa25be37051e368060e6410786664"
+  },
+  "current": {
+    "path": "hmos/entry/src/main/ets/pages/Index.ets",
+    "byte_length": 356113,
+    "sha256": "57a9e5aa56c647c9635bf23483a69da359867a60c1606f89f1a0348e1765c4a8"
+  },
+  "old_canonical_sha256": "619592c0e8483199ea1ca92ab48fa6eed9efa25be37051e368060e6410786664",
+  "reversed_canonical_sha256": "619592c0e8483199ea1ca92ab48fa6eed9efa25be37051e368060e6410786664",
+  "task_business_music_paint_and_other_fields_preserved": true,
+  "scope": "Reversing only the listed appearance import/fields/methods/lifecycle/UI changes reproduces the whole frozen task Index exactly after newline normalization."
+}

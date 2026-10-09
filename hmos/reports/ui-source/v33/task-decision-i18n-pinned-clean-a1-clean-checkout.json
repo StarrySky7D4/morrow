@@ -1,0 +1,19 @@
+{
+  "root": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\morrow-task-i18n-2EtBu6",
+  "buildDirectoryAbsent": true,
+  "copiedRepositoryInputCount": 7,
+  "guardSha256": "f4f90a6260c900f68b4a263408aa081f7ccca159599bb1a0ed7cdacd86923e57",
+  "copiedInputsUnchanged": true,
+  "externalReads": 0,
+  "auditProcessCount": 3,
+  "fileReadCount": 13,
+  "readPaths": [
+    "hmos/entry/src/main/ets/model/UiStrings.ets",
+    "hmos/entry/src/main/ets/pages/Index.ets",
+    "hmos/tool/fixtures/task-decision-flutter-catalog.json",
+    "hmos/tool/generate-ui-strings.cjs",
+    "hmos/tool/task-decision-i18n.cjs",
+    "hmos/tool/task-decision-i18n.test.cjs"
+  ],
+  "guardUnchanged": true
+}

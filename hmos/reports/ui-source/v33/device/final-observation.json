@@ -1,0 +1,238 @@
+{
+  "qualifiedUtc": "2026-10-09T05:37:18.239Z",
+  "status": "PASS_SCOPED_OBSERVED_VERSION_AND_DISPLAYED_COUNTS",
+  "sourceCommit": "ada95e0f119b3d3c3273b8e5bf6da031d3b10c10",
+  "device": "127.0.0.1:5555",
+  "installedVersion": "0.1.0-hmos-dev.22",
+  "versionCode": 1000022,
+  "hostHap": {
+    "bytes": 31442946,
+    "sha256": "06342B5CFB5EDA93493BEDA13B76B6DB9D0AF32C4F95394C280B1B6448E1C4FB"
+  },
+  "finalStyle": "扁平 · 默认",
+  "finalRoute": "home",
+  "displayedCards": 14,
+  "displayedDrafts": 4,
+  "acknowledgedActions": 36,
+  "inputs": [
+    {
+      "path": "installation-dev22.json",
+      "bytes": 805,
+      "sha256": "F8490A9BDF6294713C2FE026D230673343377E9D7FC53BD50673D15B675100FC"
+    },
+    {
+      "path": "bundle-after-dev22.json",
+      "bytes": 14580,
+      "sha256": "88E3183C0C5FEE1AF17A05B5FDE26E629C9024F145C6FD190DBA273D1A045117"
+    },
+    {
+      "path": "dev22-flat-settings-restored-b.json",
+      "bytes": 8740,
+      "sha256": "070FD12B61735862FA5917FE4E288730D96FC8423A1E86AA40BEB9027B451FD9"
+    },
+    {
+      "path": "dev22-flat-settings-restored-b.png",
+      "bytes": 2190706,
+      "sha256": "E8C9B11B98321032B43D5FFB50FA1D9972D0AD024EAEE7531207472720501276"
+    },
+    {
+      "path": "dev22-final-home-b.json",
+      "bytes": 11272,
+      "sha256": "AFFD0520481100A37DEA96F5687C34111B01A7AE2A4A756B9B026C3F1D91EAFC"
+    },
+    {
+      "path": "dev22-final-home-b.png",
+      "bytes": 1925759,
+      "sha256": "7C78817F0964A77F3B96AEF5C2D5EB3F6959B4095E06224CC6B5A05E30000D69"
+    },
+    {
+      "path": "action-dev21-close-settings-baseline.json",
+      "bytes": 268,
+      "sha256": "2F8BCAD88CA20E4FC5152AFAF81DA235382FB29E77496CE01B3E10145903F94E"
+    },
+    {
+      "path": "action-dev21-neumorphism-close-settings.json",
+      "bytes": 268,
+      "sha256": "BD30B3B6CD1644DD801012571C4DFD5A8728FCD4D108FAC259614228296D48E0"
+    },
+    {
+      "path": "action-dev21-open-settings-baseline.json",
+      "bytes": 270,
+      "sha256": "489C0FB321519EFF0491DBEA086AC99467DA9153FF0193D6E1B5450223193D6F"
+    },
+    {
+      "path": "action-dev21-open-style-picker.json",
+      "bytes": 269,
+      "sha256": "5A6B126173BE62C6E37EA2B119C314804CE2A8676FF2EF8FF524A92C53345C64"
+    },
+    {
+      "path": "action-dev21-select-neumorphism-baseline.json",
+      "bytes": 270,
+      "sha256": "B4CB9B793921D057BB8D9CA981D7AA410EF9512FA250CC15E2E50949263CEB41"
+    },
+    {
+      "path": "action-dev22-brutalist-open-picker.json",
+      "bytes": 269,
+      "sha256": "52AA005E6C7F2498EED375933588188AC3D4F4C098D08006A7468532BF88F6C4"
+    },
+    {
+      "path": "action-dev22-brutalist-picker-scroll-0.json",
+      "bytes": 297,
+      "sha256": "3D847AB14CEF59EFAD2B0541D47087E736C493776B50A4EB3B7EF114CE7D2CF3"
+    },
+    {
+      "path": "action-dev22-brutalist-resume-close-settings.json",
+      "bytes": 268,
+      "sha256": "1B51AC206381BA7791ADD4AB9074918CE00BD2C6ADD59A79A2F2EF6ED58DDF69"
+    },
+    {
+      "path": "action-dev22-brutalist-resume-open-settings.json",
+      "bytes": 270,
+      "sha256": "1831584FEB62572C68B1F83E76A6B6F2868911DC5021F1852611BF2729CA7CCA"
+    },
+    {
+      "path": "action-dev22-brutalist-select.json",
+      "bytes": 269,
+      "sha256": "7D113C2B56B88588A77D01AC62AFE1F07AC7FAFD4BE8E71341A385CD59B20D66"
+    },
+    {
+      "path": "action-dev22-clay-close-settings.json",
+      "bytes": 268,
+      "sha256": "F2F7CC139029178BD29E4AABBFE7495BAFBFE296DC11A1BC0BB9023AF13E5BD7"
+    },
+    {
+      "path": "action-dev22-clay-open-picker.json",
+      "bytes": 269,
+      "sha256": "1460AD623677B9675AA6BD2D81FBE045C41A5F347B6C5EE3AD462B890EA27F55"
+    },
+    {
+      "path": "action-dev22-clay-reopen-settings.json",
+      "bytes": 270,
+      "sha256": "4EF437E8FEAC1CA05730656E5C2DD79371BDCD5A84DCBF409E3C5C77EFDF8848"
+    },
+    {
+      "path": "action-dev22-clay-select.json",
+      "bytes": 270,
+      "sha256": "C1377FF426837EE05EDE4EFD6548726C48AE3E3C2B650DFE3D222DB8AAD0F698"
+    },
+    {
+      "path": "action-dev22-final-close-settings.json",
+      "bytes": 268,
+      "sha256": "6BDA369BD4AF67BF7F0DF8B023E064173B7B43D425FE1A80D0A1E9B2FA1EB86A"
+    },
+    {
+      "path": "action-dev22-flat-close-settings.json",
+      "bytes": 268,
+      "sha256": "B53A8078DC551441572658B2F7508074F53215D80AE618E5B2B756F500C5F3AA"
+    },
+    {
+      "path": "action-dev22-flat-open-picker.json",
+      "bytes": 269,
+      "sha256": "44BDB9CC2A9D660AF99339BB063B210EE2C3C2CD3F1BED0346D606AA86F3EF1B"
+    },
+    {
+      "path": "action-dev22-flat-reopen-settings.json",
+      "bytes": 270,
+      "sha256": "6587343495D3F3CBE0BAE36823859D4DD97927B7CBE7CA69AC307B3E3F561290"
+    },
+    {
+      "path": "action-dev22-flat-select.json",
+      "bytes": 269,
+      "sha256": "2D25914520AF44798C1DB0A2A92BFDDBF2A24D8391E025D4F367E0D9A11527C0"
+    },
+    {
+      "path": "action-dev22-fluent-close-settings.json",
+      "bytes": 268,
+      "sha256": "C49A1E0668BC83700B8A942C30B4F12F95159E05DC9B65C1D8B91DAEB46A35F6"
+    },
+    {
+      "path": "action-dev22-fluent-open-picker.json",
+      "bytes": 269,
+      "sha256": "E1E05DD2EF8D7139A8F00D2FA01989CD3E8133B28A2D9A470D334DBAC3118297"
+    },
+    {
+      "path": "action-dev22-fluent-reopen-settings.json",
+      "bytes": 270,
+      "sha256": "B1FA738A81CF1BD07B8A9BCA35C23CE71022DB7D292EBDDFA0C5B578ABF05E61"
+    },
+    {
+      "path": "action-dev22-fluent-select.json",
+      "bytes": 270,
+      "sha256": "182C6B103F71E2A7CA29EB28183AB5B942716639A9321763B6FCADEA9418074E"
+    },
+    {
+      "path": "action-dev22-industrial-close-settings.json",
+      "bytes": 268,
+      "sha256": "E551153C8B51BFC84274FDB1148ED3C57BD3CBE9E4E924175BF49F4A2B4CA201"
+    },
+    {
+      "path": "action-dev22-industrial-open-picker.json",
+      "bytes": 269,
+      "sha256": "2C80865D7ED3BE6DFB8F68647499E438FFDF59B33CD0EA2432FF5B36D3885133"
+    },
+    {
+      "path": "action-dev22-industrial-picker-scroll-0.json",
+      "bytes": 297,
+      "sha256": "EAB2FA0D35A1FAD3D1D6A65167EA67EA047DD2E8048C1282E63CE7A2BC2D9225"
+    },
+    {
+      "path": "action-dev22-industrial-reopen-settings.json",
+      "bytes": 270,
+      "sha256": "EE81F5DF43BBBE66589E6531234F91A5C0B4F85CCD2ED05F56A8BCE08433713C"
+    },
+    {
+      "path": "action-dev22-industrial-select.json",
+      "bytes": 269,
+      "sha256": "6FE22D458D9C92DE9D78909C22041219CF9BBE3E3148F5BBB78A2AFDB86C2502"
+    },
+    {
+      "path": "action-dev22-open-settings-neumorphism.json",
+      "bytes": 270,
+      "sha256": "EB3085516178F01121A4CCF52C9AB9C76F66BC8149A83B7BF092685B7DA4F6A1"
+    },
+    {
+      "path": "action-dev22-paper-close-settings.json",
+      "bytes": 268,
+      "sha256": "AC140D2B031D1A5C4B2D6CAF12BA5CCBEDCCC7E3BAD71ACCE8142F01A5F55CBC"
+    },
+    {
+      "path": "action-dev22-paper-open-picker.json",
+      "bytes": 269,
+      "sha256": "8AB4E1BB79F9EAEF83521C37DAD2B16562BF5EE1B9638E79F7E83EA9D4E82140"
+    },
+    {
+      "path": "action-dev22-paper-reopen-settings.json",
+      "bytes": 270,
+      "sha256": "8C7AA49032E08CE8603C25826EF69C6E84811C21464E6A911EA13642716403E2"
+    },
+    {
+      "path": "action-dev22-paper-select.json",
+      "bytes": 270,
+      "sha256": "C4430E394C01796E7EA88D0D7684CE80E2B908A4DAB9C120CC2253A3E4714493"
+    },
+    {
+      "path": "action-force-stop-dev21-before-update.json",
+      "bytes": 284,
+      "sha256": "9A8179B40AD3C5287E848CF838334CBFF4E70FE892A789EAD7E9959DA43DF49E"
+    },
+    {
+      "path": "action-install-qualified-dev22.json",
+      "bytes": 563,
+      "sha256": "C9A14F591CCA9E671570656B3C5073220860212CEABBA84DA821E7788D92A77A"
+    },
+    {
+      "path": "action-start-qualified-dev22.json",
+      "bytes": 314,
+      "sha256": "09C0822180E6CB676717637D0A5431A3553F89EA08B974FD9F9A7EC3598410EF"
+    }
+  ],
+  "interpretation": "Bundle readback plus host immutable HAP/install ACK and actual captured UI. Displayed counts do not prove all database records or draft body bytes. Pointer/navigation/style-only observations are not business-write, all-page pixel or music acceptance.",
+  "dev23TaskPreferencesDevice": "NOT_RUN",
+  "fullParity": "OPEN",
+  "unvisitedScopes": [
+    "all routes and dimensions/themes/material combinations",
+    "task decisions",
+    "Preferences crash/restart persistence",
+    "music provider URI/grant and audible playback"
+  ]
+}

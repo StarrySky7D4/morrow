@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "scope": "actual uiText and task UI source/reference wiring; no layout, SDK or device proof",
+  "sourceInputCount": 7,
+  "frozenInputsUnchanged": true,
+  "summary": {
+    "tests": 12,
+    "pass": 12,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "durationMs": 215,
+  "exitCode": 0,
+  "signal": null,
+  "processError": "",
+  "locales": [
+    "zh",
+    "en",
+    "ja",
+    "ko",
+    "de",
+    "fr",
+    "es",
+    "pt",
+    "ru"
+  ],
+  "sourceKeys": [
+    "mainTaskMarkComplete",
+    "mainTaskMarkIncomplete",
+    "mainTaskAmbiguousDecision"
+  ],
+  "actualLookups": 27,
+  "node": {
+    "path": "C:\\Program Files\\nodejs\\node.exe",
+    "version": "v24.19.0",
+    "sha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237"
+  },
+  "logSha256": "21e5732222323941351965bf5ad66ef43a211cc1e46f091235092de175b1dd9b",
+  "sdk": "NOT_RUN",
+  "device": "NOT_RUN",
+  "uiStringsChanged": false,
+  "referenceMode": "pinned",
+  "pinnedFixture": "hmos/tool/fixtures/task-decision-flutter-catalog.json",
+  "pinnedSourceFileCount": 18,
+  "liveSourceFileCount": 0,
+  "cleanCheckout": {
+    "root": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\morrow-task-i18n-JJh3Pm",
+    "buildDirectoryAbsent": true,
+    "copiedRepositoryInputCount": 7,
+    "guardSha256": "f4f90a6260c900f68b4a263408aa081f7ccca159599bb1a0ed7cdacd86923e57",
+    "copiedInputsUnchanged": true,
+    "externalReads": 0,
+    "auditProcessCount": 3,
+    "fileReadCount": 13,
+    "readPaths": [
+      "hmos/entry/src/main/ets/model/UiStrings.ets",
+      "hmos/entry/src/main/ets/pages/Index.ets",
+      "hmos/tool/fixtures/task-decision-flutter-catalog.json",
+      "hmos/tool/generate-ui-strings.cjs",
+      "hmos/tool/task-decision-i18n.cjs",
+      "hmos/tool/task-decision-i18n.test.cjs"
+    ],
+    "guardUnchanged": true
+  },
+  "provenance": "repository-owned fixture extracted from actual Flutter main parts and assembled ARB sources; existing HMOS entries retained; live source access requires --live-source"
+}

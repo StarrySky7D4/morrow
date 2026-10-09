@@ -1,0 +1,342 @@
+{
+  "schema_version": 1,
+  "kind": "readonly-source-design",
+  "stage": "v33",
+  "author_scope": "font_source_contract",
+  "date": "2026-10-09",
+  "observed_git_head": "ada95e0f119b3d3c3273b8e5bf6da031d3b10c10",
+  "production_mutations": [],
+  "test_execution": "NOT_RUN",
+  "sdk_build_execution": "NOT_RUN",
+  "device_execution": "NOT_RUN",
+  "font_import_implemented": false,
+  "whole_ui_parity_proven": false,
+  "source_manifest_count": 31,
+  "source_manifests": [
+    {
+      "path": "build/win-cloud-20261005/lib/fonts/font_choice.dart",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/win-cloud-20261005/lib/fonts/font_choice.dart",
+      "size": 1716,
+      "sha256": "eaaba733e9df91939a767c14319a4bafe8590e754ffc63e6013080fcb7d6231d",
+      "observed_at_utc": "2026-10-09T04:17:46.1257097Z"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/fonts/font_repository.dart",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/win-cloud-20261005/lib/fonts/font_repository.dart",
+      "size": 3061,
+      "sha256": "3dca5fc1fbd1ee9a7e6a2ab2bab372d5ea918efc369e29fdef795a739abee15d",
+      "observed_at_utc": "2026-10-09T04:17:46.1291848Z"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/fonts/font_storage_native.dart",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/win-cloud-20261005/lib/fonts/font_storage_native.dart",
+      "size": 1190,
+      "sha256": "5aef727e5861fe7b9286941f574586d46238d1e6ecdc3c63325e9934005c4114",
+      "observed_at_utc": "2026-10-09T04:17:46.1297725Z"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/fonts/font_settings.dart",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/win-cloud-20261005/lib/fonts/font_settings.dart",
+      "size": 5362,
+      "sha256": "723bb164fd3364dcd0e67713d65be28a16d64ef390dca6df109eab039734e98b",
+      "observed_at_utc": "2026-10-09T04:17:46.1302366Z"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/main.dart",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/win-cloud-20261005/lib/main.dart",
+      "size": 221628,
+      "sha256": "2cb2a519e31ac982d3a8638eb7de95fe63d5421ed3d1b6acda507cd142169f06",
+      "observed_at_utc": "2026-10-09T04:17:46.1309423Z"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/plugins/studio_storage.dart",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/win-cloud-20261005/lib/plugins/studio_storage.dart",
+      "size": 12933,
+      "sha256": "efe2251f3df7800c81e3a829e8d99d3e6458df69e0dbbd0bbaf256fd08e0174b",
+      "observed_at_utc": "2026-10-09T04:17:46.1314135Z"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/plugins/workbench_native.dart",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/win-cloud-20261005/lib/plugins/workbench_native.dart",
+      "size": 109243,
+      "sha256": "1fc4f5eb53c729808161958aa73dfcbd124d2681ac15c5f85af0a67e1e6b5fa9",
+      "observed_at_utc": "2026-10-09T04:17:46.1319464Z"
+    },
+    {
+      "path": "build/win-cloud-20261005/test/font_settings_test.dart",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/win-cloud-20261005/test/font_settings_test.dart",
+      "size": 5563,
+      "sha256": "fbc6929732388fb6789db0a3c74a50c2f323db12052ef5e2e4b502e688ef1d66",
+      "observed_at_utc": "2026-10-09T04:17:46.1323856Z"
+    },
+    {
+      "path": "build/win-cloud-20261005/workbench_host/src/ui_preferences.rs",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/win-cloud-20261005/workbench_host/src/ui_preferences.rs",
+      "size": 8337,
+      "sha256": "86add346d421d7a5c5a755c4bbebee6cec9ef1f7a77eb4e82d743fb72922b457",
+      "observed_at_utc": "2026-10-09T04:17:46.1328827Z"
+    },
+    {
+      "path": "build/win-cloud-20261005/workbench_host/schemas/ui_preferences.proto",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/win-cloud-20261005/workbench_host/schemas/ui_preferences.proto",
+      "size": 688,
+      "sha256": "496406606fb34045d3bccf4b8a36063e3921755bab394a955ed6e7bf1183a86a",
+      "observed_at_utc": "2026-10-09T04:17:46.1333169Z"
+    },
+    {
+      "path": "build/win-cloud-20261005/workbench_host/tests/ui_preferences.rs",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/win-cloud-20261005/workbench_host/tests/ui_preferences.rs",
+      "size": 4240,
+      "sha256": "a65cdb50e0879647b7eaae1ec63e514c77609c775b0e965f135216545532fc1d",
+      "observed_at_utc": "2026-10-09T04:17:46.1337410Z"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/Appearance.ets",
+      "size": 5126,
+      "sha256": "0fcaa587d24b1fd0a1b4d066f465bc2178ff16b830187e1e2a250e3f5b4a67b2",
+      "observed_at_utc": "2026-10-09T04:17:46.1342200Z"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicFiles.ets",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/model/MusicFiles.ets",
+      "size": 31488,
+      "sha256": "22005fbc45e6a980c86b68890c9c7c67ede4dc2e8ab1b14c9a3828cd062e7da5",
+      "observed_at_utc": "2026-10-09T04:17:46.1347656Z"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/Index.ets",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/ets/pages/Index.ets",
+      "size": 347883,
+      "sha256": "f88727e4189fd22cb490d4816d0153f185797dd34902cc2d560a899a8ee0e2ab",
+      "observed_at_utc": "2026-10-09T04:17:46.1433261Z"
+    },
+    {
+      "path": "hmos/entry/src/main/cpp/types/libmorrow/index.d.ts",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/cpp/types/libmorrow/index.d.ts",
+      "size": 1721,
+      "sha256": "69bde941bf6083fd6628e3229b50c2448327d6404de7020e3af02a946f9b1daf",
+      "observed_at_utc": "2026-10-09T04:17:46.1439041Z"
+    },
+    {
+      "path": "hmos/entry/src/main/cpp/bridge.cpp",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/cpp/bridge.cpp",
+      "size": 18417,
+      "sha256": "f95a7013da33d048dda618e1ee6e94ffa637440b348bf0add9bfb0e543eb3fec",
+      "observed_at_utc": "2026-10-09T04:17:46.1445344Z"
+    },
+    {
+      "path": "hmos/entry/src/main/cpp/CMakeLists.txt",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/entry/src/main/cpp/CMakeLists.txt",
+      "size": 634,
+      "sha256": "c603502c17abc8306ddaf8767bbf664bcda0f2f070a12057651713fb791ae9cd",
+      "observed_at_utc": "2026-10-09T04:17:46.1451606Z"
+    },
+    {
+      "path": "hmos/rust/src/file_stream.rs",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/rust/src/file_stream.rs",
+      "size": 5902,
+      "sha256": "21925dbf7dd41cac87c215c68456bf04b7937c8b92824f00968259931f9c705e",
+      "observed_at_utc": "2026-10-09T04:17:46.1456343Z"
+    },
+    {
+      "path": "hmos/rust/src/lib.rs",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/rust/src/lib.rs",
+      "size": 64423,
+      "sha256": "1cc8e44723fc69965777c0c502ebfbb88c4561bf89cd163d51e684ab1e2ca938",
+      "observed_at_utc": "2026-10-09T04:17:46.1466034Z"
+    },
+    {
+      "path": "hmos/rust/Cargo.toml",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/rust/Cargo.toml",
+      "size": 919,
+      "sha256": "c3c53eb60eb751bcb3f5bd26e37ef54d26d5c906a8fbeb7fdf76887377e2bb82",
+      "observed_at_utc": "2026-10-09T04:17:46.1470738Z"
+    },
+    {
+      "path": "hmos/shared/plugins/workbench/src/preferences.rs",
+      "absolute_path": "C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/shared/plugins/workbench/src/preferences.rs",
+      "size": 17744,
+      "sha256": "85c764733a9e4acbe92c0d364abf1cd16579c6b496eadd0bc71612042c99fc25",
+      "observed_at_utc": "2026-10-09T04:17:46.1478721Z"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.font.d.ts",
+      "absolute_path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.font.d.ts",
+      "size": 16872,
+      "sha256": "e49f5830905f0033b1cd7835415cc3aca465b9fd8beb02b69be2c70fb76b9bf4",
+      "observed_at_utc": "2026-10-09T04:17:46.1484998Z"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.arkui.UIContext.d.ts",
+      "absolute_path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.arkui.UIContext.d.ts",
+      "size": 271070,
+      "sha256": "9ca0b76ace7bb03172b9c6c066808cee7abfff7abf0c6326fa9971bd78fa377e",
+      "observed_at_utc": "2026-10-09T04:17:46.1491753Z"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.graphics.text.d.ts",
+      "absolute_path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.graphics.text.d.ts",
+      "size": 174460,
+      "sha256": "530a35ca033b05ed3d52a022b57e83db2b3efb65f6a52bb0a6e22ad955410776",
+      "observed_at_utc": "2026-10-09T04:17:46.1497959Z"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.file.picker.d.ts",
+      "absolute_path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.file.picker.d.ts",
+      "size": 43591,
+      "sha256": "abb8a0bdaa693e3c1c9fb098fa6d7a7bfc08c0030c26a4ae4ee540712d376d47",
+      "observed_at_utc": "2026-10-09T04:17:46.1502597Z"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.file.fs.d.ts",
+      "absolute_path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.file.fs.d.ts",
+      "size": 318796,
+      "sha256": "e8909d61d6724cb99ce5450d22b757516bd0b901789b3e77aa6365eb345bd3d3",
+      "observed_at_utc": "2026-10-09T04:17:46.1509571Z"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.security.cryptoFramework.d.ts",
+      "absolute_path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.security.cryptoFramework.d.ts",
+      "size": 341306,
+      "sha256": "102115155d5b8de3a0d646734d717e6c829e8495d36118cc3f67bfb713692677",
+      "observed_at_utc": "2026-10-09T04:17:46.1516891Z"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/kits/@kit.ArkGraphics2D.d.ts",
+      "absolute_path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/kits/@kit.ArkGraphics2D.d.ts",
+      "size": 1266,
+      "sha256": "0ae1460b946b5d358941e773b9ccd287ff2baed71590a9d177a903e9aad68b12",
+      "observed_at_utc": "2026-10-09T04:17:46.1520551Z"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/sysroot/usr/include/native_drawing/drawing_font_collection.h",
+      "absolute_path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/sysroot/usr/include/native_drawing/drawing_font_collection.h",
+      "size": 5423,
+      "sha256": "06ca58ae63b412ae054b58c2b97f457f1ccede55d12592df93251cde2b1afa41",
+      "observed_at_utc": "2026-10-09T04:17:46.1524179Z"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/sysroot/usr/include/native_drawing/drawing_register_font.h",
+      "absolute_path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/sysroot/usr/include/native_drawing/drawing_register_font.h",
+      "size": 7277,
+      "sha256": "f97703eacb05c12f21d2872f59a2991e8946611aa7073cc0891e7cc7816dc759",
+      "observed_at_utc": "2026-10-09T04:17:46.1530637Z"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/plugins/openharmony/ohos-info-center-view/static/hos_en/JsEtsAPIReference/en-us_topic_0000002583661148.html",
+      "absolute_path": "C:/Program Files/Huawei/DevEco Studio/plugins/openharmony/ohos-info-center-view/static/hos_en/JsEtsAPIReference/en-us_topic_0000002583661148.html",
+      "size": 433080,
+      "sha256": "ae8ccecf6c4a5355522e2395fcc89e7b2dd58e8f82279b7b55b9b5c5b506925f",
+      "observed_at_utc": "2026-10-09T04:17:46.1538190Z"
+    }
+  ],
+  "hash_recheck": {
+    "status": "UNCHANGED_DURING_MANIFEST_COLLECTION",
+    "changed_paths": [],
+    "limitation": "The root and peer agents are editing independent product areas. This is a dated source design capture, not a frozen build qualification."
+  },
+  "confirmed_contract": {
+    "descriptor_fields": [
+      "family",
+      "asset",
+      "name"
+    ],
+    "family_utf8_max": 128,
+    "name_utf8_max": 255,
+    "asset": "lowercase SHA256 hex, 64 characters",
+    "imported_family": "MorrowFont_<asset>",
+    "file_bytes_min": 12,
+    "file_bytes_max": 20971520,
+    "signatures": [
+      "00010000",
+      "4f54544f"
+    ],
+    "tables_min": 1,
+    "tables_max": 256,
+    "sfnt_range_check": "offset <= actual byte length && table length <= actual byte length - offset",
+    "session_max_imported_families": 8,
+    "session_max_source_bytes": 67108864,
+    "failed_registration_attempts_charged": true,
+    "duplicate_asset": "same stable family and shared pending/outcome",
+    "restore_asset_failure": "preserve descriptor; default active family and visible warning",
+    "preview": "Morrow · Aa 123 / 中文 · 日本語 · 한국어 · Русский",
+    "picker_cancel": "no choice mutation"
+  },
+  "source_corrections": [
+    "No UIFont contract exists in current HMOS shared modules, but the actual Windows workbench_host source contains a reusable Rust FontPreference contract and core/CAS storage.",
+    "Mobile UIContext getSystemFontList is documented to return an empty array; an empty enumeration must not reject valid typed family names.",
+    "UIContext Font.registerFont returns void while documented asynchronous and non-concurrent; normal return is not a load or glyph ACK.",
+    "API26 graphics text FontCollection.loadFontWithCheck returns a Promise with parser errors. Installed official Huawei examples show global collection and ArkUI Text.fontFamily together.",
+    "Flutter SFNT validation is bounded structural validation, not complete font semantics; zero-length tables are accepted.",
+    "Windows temp flush and rename do not establish directory fsync or every crash/close cleanup guarantee.",
+    "Core font metadata does not itself prove font asset migration or import/export support."
+  ],
+  "recommended_adapter": {
+    "module": "@kit.ArkGraphics2D",
+    "method": "text.FontCollection.getGlobalInstance().loadFontWithCheck",
+    "arguments": [
+      "MorrowFont_<asset>",
+      "file://<verified app-private absolute path>",
+      "0"
+    ],
+    "introduced_api": 23,
+    "sdk26_available": true,
+    "ack": "Promise fulfillment confirms loader completion only; real glyph rendering remains a device gate",
+    "concurrency": "single process queue with asset deduplication",
+    "resource_lifetime": "Keep global collection; do not destroy, unload, or release budgets on reset",
+    "official_example": "en-us_topic_0000002583661148.html:2626-2655"
+  },
+  "rust_reuse": {
+    "metadata": "build/win-cloud-20261005/workbench_host/src/ui_preferences.rs:108-233",
+    "schema": "build/win-cloud-20261005/workbench_host/schemas/ui_preferences.proto",
+    "transport": "native.prepareFile with explicit 20971520-byte limit, existing duplicated FD stream and sync_all",
+    "not_reused": [
+      "Music IDs",
+      "Music library mutation",
+      "150 MiB music policy",
+      "512 MiB music spool budget",
+      "20-file music selection"
+    ],
+    "new_required": "Portable font/SFNT validation and HMOS UIFont adapter with host record exclusion and exact receipt/CAS",
+    "native_alternative": "RegisterFontBufferByIndex API23 with global native font collection; requires real bridge/link/lifetime/device qualification"
+  },
+  "implementation_sequence": [
+    "Typed FontChoice and portable actual FontPreference contract",
+    "Single owned system picker and bounded private font capture",
+    "Exact SHA256/SFNT original validation and atomic private publication",
+    "Serial API26 platform loader with process family/byte reservations",
+    "Frozen core font metadata write and exact receipt/Unknown recovery",
+    "All text/input resolved family integration and full FontSettings UI",
+    "Startup readback/load fallback preserving original choice",
+    "Actual model/FD/Rust/SDK tests and device glyph/editor/lifecycle acceptance"
+  ],
+  "tests_required": [
+    "descriptor UTF8/control/shape parity",
+    "SFNT lengths/headers/tables/ranges/truncation/digest",
+    "real bounded FD capture and short I/O/fsync/close failures",
+    "private symlink/unknown target/atomic publish/deduplication",
+    "8-family and 64-MiB limits including failures",
+    "loader concurrency/deduplication/lifecycle and stale restore",
+    "independent core record invisibility and mutation exclusion",
+    "fixed exact operation/revision/choice receipts and Unknown recovery",
+    "editor controller/text/selection/composition preservation",
+    "new modules emitted in actual HAP and fresh native ABI builds if changed"
+  ],
+  "device_gates": [
+    "real provider font selection and cancellation",
+    "private actual byte/hash identity",
+    "loader ACK plus distinct actual glyph/metrics change",
+    "Latin Chinese Japanese Korean Russian numbers combining/emoji fallback",
+    "settings home list detail editor tasks music lyrics and narrow/wide layouts",
+    "MorrowIcons unaffected",
+    "font default/reset and same-asset reimport",
+    "invalid/oversize/provider/read/write failures and budget exhaustion",
+    "process restart restores actual verified private original",
+    "missing/corrupt owned fixture preserves choice with active default fallback",
+    "background foreground closed page and restore/apply races",
+    "business cards and existing drafts unchanged"
+  ],
+  "next_action": "Implement the complete font slice and tests, integrate the root AppearancePreferences through explicit confirmed interfaces, then freeze/build and verify real device behavior; no additional user approval is needed for the already authorized development scope.",
+  "report": "hmos/reports/ui-source/v33/font-import-source-design.md"
+}

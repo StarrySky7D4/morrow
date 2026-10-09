@@ -1,4 +1,14 @@
-// Run from any directory. Reads the active Flutter worktree without editing it.
+// Full regeneration reads the historical Flutter worktree without editing it.
+// Check a bounded pinned-reference slice without regenerating the historical
+// whole catalog or introducing unrelated translation changes.
+if (process.argv.includes('--check-task-decisions-live')) {
+  console.log(JSON.stringify(require('./task-decision-i18n.cjs').check('live')));
+  process.exit(0);
+}
+if (process.argv.includes('--check-task-decisions')) {
+  console.log(JSON.stringify(require('./task-decision-i18n.cjs').check()));
+  process.exit(0);
+}
 const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');

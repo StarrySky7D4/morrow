@@ -1,0 +1,11 @@
+{
+  "startedUtc": "2026-10-09T05:07:44.306Z",
+  "finishedUtc": "2026-10-09T05:08:22.903Z",
+  "exitCode": 0,
+  "signal": null,
+  "status": "PASS",
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-candidates\\dev33-preferences-tasks-a1",
+  "log": "dev33-preferences-tasks-a1-sdk-build.log",
+  "sha256": "497BB606D17FCEA562CAFB44AC9C47ADA91934D3F16F80085A15F818ACF07792",
+  "scope": "Complete live Task/AppearancePreferences API26 product graph; exact reused v29 native archives; not installed or device acceptance."
+}

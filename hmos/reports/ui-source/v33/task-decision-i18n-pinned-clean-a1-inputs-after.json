@@ -1,0 +1,37 @@
+[
+  {
+    "path": "hmos/entry/src/main/ets/model/UiStrings.ets",
+    "bytes": 775172,
+    "sha256": "17801dd05b1afd9684f452b0e5b736ffba7c5520fb5413a8b6d002216cb1a576"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/Index.ets",
+    "bytes": 356113,
+    "sha256": "57a9e5aa56c647c9635bf23483a69da359867a60c1606f89f1a0348e1765c4a8"
+  },
+  {
+    "path": "hmos/tool/fixtures/task-decision-flutter-catalog.json",
+    "bytes": 10493,
+    "sha256": "462b23ed8e32ce23d88f06f602af560172d8ac84fe19ba7922d4684163db7f61"
+  },
+  {
+    "path": "hmos/tool/generate-ui-strings.cjs",
+    "bytes": 1702,
+    "sha256": "e8df34762a25592f5484dc9fe459922e896793cbc79cc003f0201f5b43cf252f"
+  },
+  {
+    "path": "hmos/tool/run-task-decision-i18n.cjs",
+    "bytes": 7953,
+    "sha256": "89432b85ab054fbbf21368159951cc44fd37016a321da0c863c347561cb73a05"
+  },
+  {
+    "path": "hmos/tool/task-decision-i18n.cjs",
+    "bytes": 7703,
+    "sha256": "1c906821edec59271ffa69b8ad8cea5fa368b3f03139283cfe35c6ff0bcbfd69"
+  },
+  {
+    "path": "hmos/tool/task-decision-i18n.test.cjs",
+    "bytes": 2620,
+    "sha256": "b06e49eaf354029cab01aeeb1e482b1763c761638ce7fe7133394290776c8fcf"
+  }
+]

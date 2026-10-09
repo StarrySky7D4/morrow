@@ -28,6 +28,8 @@ import { pasteboard } from '@kit.BasicServicesKit';
 import { uiText } from '../model/UiStrings';
 import { preferences } from '@kit.ArkData';
 import { AppearanceSnapshot, MaterialChoice, alpha, mix, contrast, visualStyles, visualStyleLabels, styleRadiusScale, resolveMaterial, normalizeMaterials, canFollow } from '../model/Appearance';
+import { AppearancePreferences, AppearancePreferenceView, appearancePreferenceStatus, appearancePreferenceName,
+  appearancePreferenceKey, validateAppearanceCandidate } from '../model/AppearancePreferences';
 import { SurfaceRelief } from './SurfaceRelief';
 import { RecessedGlassRelief } from './RecessedGlassRelief';
 import { AmbientBackdrop, IdeaOrb, GlassRim, PaperBackdrop } from './StudioArtwork';
@@ -240,6 +242,7 @@ struct Index {
   private submittedRename: DraftTextValue | undefined = undefined;
   private submittedRenameEpoch: number = -1;
   private submittedRenameEditor: string = '';
+  private submittedTaskCard: CardView | undefined = undefined;
   private editorDraft: EditorDraftCoordinator | undefined = undefined;
   @State editorViewVisible: boolean = true;
   @State editorViewOwner: string = '';
@@ -325,8 +328,15 @@ struct Index {
       this.markdownDoc = this.markdown.doc ?? new MarkdownDoc(); this.markdownLoading = this.markdown.loading; this.markdownError = this.markdown.error;
       this.updateInlineImages();
     });
-  @State appearanceStatus: string = '';
+  @State appearanceStatus: string = '外观设置尚未读取，当前改动未保存。';
+  @State appearanceView: AppearancePreferenceView = new AppearancePreferenceView();
   private preferenceStore: preferences.Preferences | undefined = undefined;
+  private appearancePreferences: AppearancePreferences | undefined = undefined;
+  private appearancePage: string = util.generateRandomUUID(true);
+  private appearanceEpoch: number = 0;
+  private appearanceInputRevision: number = 0;
+  private appearanceInputError: string = '';
+  private appearanceOperation: Promise<void> = Promise.resolve();
   private orderStore: preferences.Preferences | undefined = undefined;
   private cardOrder: CardOrderPreferences = new CardOrderPreferences(
     async (): Promise<string | undefined> => {
@@ -345,7 +355,6 @@ struct Index {
       this.orderRevision = this.cardOrder.revision; this.orderWorking = this.cardOrder.busy || this.cardOrder.loading;
       this.orderError = this.cardOrder.error; this.updateWorkspaceCards();
     });
-  private appearanceWrites: Promise<void> = Promise.resolve();
   private settingsScroller: Scroller = new Scroller();
   private workspaceScroller: Scroller = new Scroller();
   private detailScroller: Scroller = new Scroller();
@@ -459,6 +468,8 @@ struct Index {
     return false;
   }
   aboutToDisappear(): void {
+    this.appearanceEpoch++;
+    this.appearancePreferences?.dispose();
     this.directInput.stop(); this.inputPolicy.stop(); this.todoDragPosition('', 0, false);
     this.fieldPolicy.stop(); this.editorInputEpoch++;
     this.clipboardPaste?.stop();
@@ -483,6 +494,12 @@ struct Index {
     this.mounted = false; native.releasePreview(this.preview);
   }
   private foregroundChanged(): void {
+    this.appearanceEpoch++;
+    if (this.appearancePreferences && this.pageAlive && this.foreground) {
+      this.refreshAppearanceState();
+      if (this.appearanceView.state === 'not-loaded') { this.restoreAppearance(); }
+      if (this.appearanceView.busy) { this.waitAppearanceForeground(); }
+    }
     this.musicEpoch++;
     if (!this.foreground) { this.music?.background().catch((): void => {}); }
     else { this.music?.foreground(); }
@@ -2037,19 +2054,24 @@ struct Index {
     cmd.source = (action === 'edit' && this.editorDraft) ? this.draftSource : c?.source ?? '';
     cmd.operation = util.generateRandomUUID(true); cmd.now_ms = Date.now().toString(); return cmd;
   }
-  private async submit(cmd: Command, raw?: DraftValues): Promise<void> {
+  private async submit(cmd: Command, raw?: DraftValues, taskCard?: CardView, taskOwner: string = '', taskEpoch: number = -1): Promise<void> {
     if (this.businessWorking || this.businessPending()) { this.message = '请先核对或完成原保存请求，当前输入仍保留。'; return; }
     if (cmd.action === 'create' || cmd.action === 'edit') { throw new Error('编辑器保存必须使用完整原请求日志'); }
     if (this.attachmentWorking || this.pasteWorking) { this.message = '文件或粘贴操作尚未完成，请稍候。'; return; }
     if (this.busy || this.pending.length > 0 || this.draftWorking || this.fieldValidationWorking || this.draftRetirementUnknown || this.rawFork || this.rawForkWorking || this.editorBoundary) { return; }
     if (this.taskEditId.length > 0 && cmd.action !== 'task_rename') { this.message = '请先保存或取消待办重命名'; return; }
     if (!this.inputReadyFor(cmd.action)) { this.message = '输入规则尚未确认，请完成输入或重新检查；原始草稿仍可保留。'; return; }
+    const taskSnapshot: CardView | undefined = taskCard ? JSON.parse(JSON.stringify(taskCard)) as CardView : undefined;
+    const decision = taskSnapshot?.tasks.find((value: TaskView): boolean => value.id === cmd.task_id);
+    if (cmd.action === 'task_toggle' && (!taskSnapshot || !decision || typeof cmd.flag !== 'boolean' ||
+      cmd.id !== taskSnapshot.id || cmd.source !== taskSnapshot.source || !this.canTaskAction(taskSnapshot, decision, taskOwner, taskEpoch))) { return; }
     const draft = this.editorDraft, editor = this.attachmentEditorIdentity, inputEpoch = this.editorInputEpoch;
     const selected = this.selected, task = this.taskEditId, rename = copyText(this.taskRenameValue);
     const original = JSON.stringify(cmd), frozen = raw ? copyValues(raw) : (this.editorOpen ? draft?.current : undefined);
     const owned = (): boolean => this.pageAlive && this.foreground && this.editorDraft === draft && this.attachmentEditorIdentity === editor &&
       this.editorInputEpoch === inputEpoch && this.selected === selected && this.taskEditId === task && JSON.stringify(cmd) === original &&
-      (!frozen || (!!draft && !draft.disposed && sameValues(frozen, draft.current)));
+      (!frozen || (!!draft && !draft.disposed && sameValues(frozen, draft.current))) &&
+      (!taskSnapshot || !!decision && this.taskContextCurrent(taskSnapshot, decision, taskOwner, taskEpoch));
     this.fieldValidationWorking = true;
     try {
       if (cmd.action === 'create' || cmd.action === 'edit') {
@@ -2076,6 +2098,7 @@ struct Index {
       if (!owned()) { throw new Error('保存目标已变化，完整输入已保留。'); }
     } catch (error) { if (this.pageAlive && this.attachmentEditorIdentity === editor && this.editorDraft === draft) { this.message = String(error); } return; }
     finally { this.fieldValidationWorking = false; }
+    if (cmd.action === 'task_toggle' && (!taskSnapshot || !decision || !this.canTaskAction(taskSnapshot, decision, taskOwner, taskEpoch))) { return; }
     if ((cmd.action === 'create' || cmd.action === 'edit') && this.editorDraft?.confirmed) {
       const record = this.editorDraft.confirmed;
       cmd.draft_id = record.scope.draft_id; cmd.generation = record.generation; cmd.draft_operation = record.operation_id;
@@ -2084,21 +2107,27 @@ struct Index {
     this.submittedInputEpoch = inputEpoch; this.submittedEditor = editor; this.submittedDraft = draft;
     this.submittedRename = cmd.action === 'task_rename' ? copyText(rename) : undefined;
     this.submittedRenameEpoch = inputEpoch; this.submittedRenameEditor = editor;
+    this.submittedTaskCard = cmd.action === 'task_toggle' ? taskSnapshot : undefined;
     this.pending = JSON.stringify(cmd); await this.retry();
   }
   private async retry(): Promise<void> {
     if (this.busy || this.pending.length === 0) { return; }
     const original = this.pending; const cmd = JSON.parse(original) as Command;
+    const owner = this.editorViewOwner, selected = this.selected, detail = this.detailId, open = this.editorOpen;
+    const replyDraft = this.editorDraft, replyIdentity = this.attachmentEditorIdentity, replyEpoch = this.editorInputEpoch;
+    if (cmd.action === 'task_toggle' && !this.taskReplyCurrent(original, cmd.id, owner, selected, detail, open, replyDraft, replyIdentity, replyEpoch)) { return; }
     this.busy = true;
     try {
       const result = await workbench.send(original);
+      if (cmd.action === 'task_toggle' && !this.taskReplyCurrent(original, cmd.id, owner, selected, detail, open, replyDraft, replyIdentity, replyEpoch)) { return; }
       if (!result.ok) {
-        if (result.effect === 'not_committed') {
-          this.pending = ''; this.submittedRaw = undefined; this.submittedRename = undefined; this.message = `未提交：${result.error}。请修正后再保存，输入已保留。`;
+        if (result.effect === 'not_committed' && (cmd.action !== 'task_toggle' || this.taskNoCommit(result))) {
+          this.pending = ''; this.submittedRaw = undefined; this.submittedRename = undefined; this.submittedTaskCard = undefined; this.message = `未提交：${result.error}。请修正后再保存，输入已保留。`;
         } else { this.message = `保存未确认：${result.error}。原请求与当前输入均已保留。`; }
         return;
       }
-      this.cards = result.cards; this.pending = '';
+      if (cmd.action === 'task_toggle' && !this.taskReceipt(cmd, result)) { throw new Error('原任务决策回执未确认。'); }
+      this.cards = result.cards; this.pending = ''; this.submittedTaskCard = undefined;
       const unchangedRaw = !this.draftCaptureIncomplete &&
         this.submittedInputEpoch === this.editorInputEpoch && this.submittedEditor === this.attachmentEditorIdentity && this.submittedDraft === this.editorDraft &&
         (!this.submittedRaw || !this.editorDraft || sameValues(this.editorDraft.current, this.submittedRaw));
@@ -2148,7 +2177,11 @@ struct Index {
       }
       this.submittedRaw = undefined; this.submittedRename = undefined;
       this.refreshPreview();
-    } catch (_) { this.message = '回复未确认。请用原请求核对，不会创建新的操作。'; }
+    } catch (_) {
+      if (cmd.action !== 'task_toggle' || this.taskReplyCurrent(original, cmd.id, owner, selected, detail, open, replyDraft, replyIdentity, replyEpoch)) {
+        this.message = '回复未确认。请用原请求核对，不会创建新的操作。';
+      }
+    }
     finally { this.busy = false; }
   }
   private async save(): Promise<void> {
@@ -2610,6 +2643,9 @@ struct Index {
     finally { this.businessWorking = false; this.businessChanged(); }
   }
   private mutate(action: string, task?: TaskView): void {
+    // Completion=2 is a real unresolved state. Only the snapshot-bound task
+    // entrypoint admits a direction, including normal 0/1 checkbox clicks.
+    if (action === 'task_toggle') { this.message = '请使用原任务的明确状态操作。'; return; }
     if (this.taskEditId.length > 0 && action !== 'task_rename') { this.message = '请先保存或取消待办重命名'; return; }
     if (this.dirty) { this.message = '请先保存正文编辑'; return; }
     const c = this.current(); if (!c) { return; }
@@ -2618,7 +2654,7 @@ struct Index {
     }
     const cmd = this.command(action);
     if (action === 'favorite') { cmd.flag = !c.favorite; }
-    if (task) { cmd.task_id = task.id; cmd.flag = task.completion !== 1; }
+    if (task) { cmd.task_id = task.id; }
     if (action === 'task_rename') {
       if (!task || task.id !== this.taskEditId || this.taskRenameText.trim().length === 0) { return; }
       cmd.text = this.taskRenameText.trim();
@@ -2654,7 +2690,8 @@ struct Index {
     order.splice(index, 1); order.splice(next, 0, task.id);
     const cmd = this.command('task_reorder'); cmd.order = order; this.submit(cmd);
   }
-  private confirmTaskChange(task?: TaskView): void {
+  private confirmTaskChange(task?: TaskView, snapshot?: CardView, owner: string = '', epoch: number = -1): void {
+    if (snapshot && (!task || !this.canTaskAction(snapshot, task, owner, epoch))) { return; }
     if (!this.canEditTasks()) { return; }
     const cmd = this.command(task ? 'task_remove' : 'task_complete_all');
     cmd.task_id = task?.id ?? ''; cmd.stage = this.current()?.stage ?? '';
@@ -2663,7 +2700,8 @@ struct Index {
       primaryButton: { value: this.t('取消'), action: () => {} },
       secondaryButton: { value: this.t('确认'), action: () => {
         // Confirmation belongs to this exact card revision, never a later view.
-        if (this.canEditTasks() && this.selected === cmd.id && this.current()?.source === cmd.source) { this.submit(cmd); }
+        if ((!snapshot || !!task && this.canTaskAction(snapshot, task, owner, epoch)) &&
+          this.canEditTasks() && this.selected === cmd.id && this.current()?.source === cmd.source) { this.submit(cmd); }
       } } });
   }
   private stages(): SelectOption[] {
@@ -2673,30 +2711,73 @@ struct Index {
     return labels.map((s: string): SelectOption => { return { value: s }; });
   }
 
-  private restoreAppearance(): void {
-    try {
+  private appearanceOwner(): string { return this.appearancePage + ':' + this.appearanceEpoch.toString(); }
+  private appearanceOwned(owner: string): boolean { return this.pageAlive && this.foreground && this.appearanceOwner() === owner; }
+  private appearanceStore(): preferences.Preferences {
+    if (!this.preferenceStore) {
       const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
-      this.preferenceStore = preferences.getPreferencesSync(context, { name: 'studio-appearance' });
-      const raw = this.preferenceStore.getSync('appearance-v1', '') as string;
-      if (raw.length === 0) { return; }
-      const v = JSON.parse(raw) as AppearanceSnapshot;
-      const materials = normalizeMaterials(v.materials ?? []);
-      const style = v.visualStyle ?? 'flat'; const depth = v.styleDepth ?? 1;
-      if (!visualStyles.includes(style) || !Number.isFinite(depth) || depth < 0 || depth > 2) { throw new Error('Invalid style'); }
-      this.theme = ['白色', '自定义', '深色'].includes(v.theme) ? v.theme : '白色';
-      this.mode = ['磨砂', '超透', '液体玻璃'].includes(v.mode) ? v.mode : '磨砂';
-      this.glassOpacity = Math.max(20, Math.min(100, v.opacity)); this.radius = Math.max(0, Math.min(32, v.radius));
-      this.themeColor = v.accent; this.toneGray = v.grayscale; this.lightness = v.lightness;
-      this.canvasBackground = v.background; this.solid = v.solid; this.canvasLiquid = v.canvasLiquid;
-      this.canvasBlur = v.canvasBlur; this.canvasOpacity = v.canvasOpacity;
-      this.fontFamily = v.font; this.locale = v.locale; this.daily = v.daily; this.materials = materials;
-      this.visualStyle = style; this.styleDepth = depth;
-      this.dark = this.theme === '深色' || (this.theme === '自定义' && this.lightness < 46);
-    } catch (_) { this.appearanceStatus = '外观设置未能读取，已使用默认值。'; }
+      this.preferenceStore = preferences.getPreferencesSync(context, { name: appearancePreferenceName });
+    }
+    return this.preferenceStore;
   }
-  private persistAppearance(): void {
+  private appearanceModel(): AppearancePreferences {
+    if (!this.appearancePreferences) {
+      this.appearancePreferences = new AppearancePreferences({
+        namespace: appearancePreferenceName,
+        read: async (): Promise<string | undefined> => {
+          const store = this.appearanceStore();
+          if (!store.hasSync(appearancePreferenceKey)) { return undefined; }
+          const raw = store.getSync(appearancePreferenceKey, '');
+          if (typeof raw !== 'string') { throw new Error('Stored appearance is not text'); }
+          return raw;
+        },
+        put: async (raw: string): Promise<void> => { await this.appearanceStore().put(appearancePreferenceKey, raw); },
+        flush: async (): Promise<void> => { await this.appearanceStore().flush(); }
+      }, {
+        owned: (): boolean => this.pageAlive && this.foreground,
+        owner: (): string => this.appearanceOwner(),
+        changed: (): void => { if (this.pageAlive && this.foreground) { this.refreshAppearanceState(); } }
+      });
+    }
+    return this.appearancePreferences;
+  }
+  private refreshAppearanceState(): void {
+    if (!this.pageAlive || !this.foreground || !this.appearancePreferences) { return; }
+    this.appearanceView = this.appearancePreferences.view();
+    this.appearanceStatus = this.appearanceInputError && this.appearanceView.state === 'ready' ?
+      '当前外观输入尚未通过校验，未保存。' : appearancePreferenceStatus(this.appearanceView);
+  }
+  private waitAppearanceForeground(): void {
+    const owner = this.appearanceOwner(), model = this.appearancePreferences, operation = this.appearanceOperation;
+    // This foreground observes the actual existing operation's termination.
+    // It refreshes status only; it never adopts a stale response or writes.
+    operation.then((): void => {
+      if (this.appearanceOwned(owner) && this.appearancePreferences === model) { this.refreshAppearanceState(); }
+    });
+  }
+  private applyAppearance(v: AppearanceSnapshot): void {
+    this.theme = v.theme; this.mode = v.mode; this.glassOpacity = v.opacity; this.radius = v.radius;
+    this.themeColor = v.accent; this.toneGray = v.grayscale; this.lightness = v.lightness;
+    this.canvasBackground = v.background; this.solid = v.solid; this.canvasLiquid = v.canvasLiquid;
+    this.canvasBlur = v.canvasBlur; this.canvasOpacity = v.canvasOpacity;
+    this.fontFamily = v.font; this.locale = v.locale; this.daily = v.daily; this.materials = v.materials;
+    this.visualStyle = v.visualStyle; this.styleDepth = v.styleDepth;
     this.dark = this.theme === '深色' || (this.theme === '自定义' && this.lightness < 46);
     this.refreshPreview();
+  }
+  private async restoreAppearance(): Promise<void> {
+    if (!this.pageAlive || !this.foreground) { return; }
+    const owner = this.appearanceOwner(), input = this.appearanceInputRevision, model = this.appearanceModel();
+    const operation = model.restore(); this.appearanceOperation = operation.then((): void => {}, (): void => {});
+    const restored = await operation;
+    if (!this.appearanceOwned(owner) || this.appearancePreferences !== model) { return; }
+    const view = model.view();
+    if (restored && view.current && view.candidateRevision === 0 && input === this.appearanceInputRevision && !this.appearanceInputError) {
+      this.applyAppearance(view.current);
+    }
+    this.refreshAppearanceState();
+  }
+  private appearanceUiValue(): AppearanceSnapshot {
     const v = new AppearanceSnapshot();
     v.theme = this.theme; v.mode = this.mode; v.opacity = this.glassOpacity; v.radius = this.radius;
     v.accent = this.themeColor; v.grayscale = this.toneGray; v.lightness = this.lightness;
@@ -2704,12 +2785,42 @@ struct Index {
     v.canvasBlur = this.canvasBlur; v.canvasOpacity = this.canvasOpacity;
     v.font = this.fontFamily; v.locale = this.locale; v.daily = this.daily; v.materials = this.materials;
     v.visualStyle = this.visualStyle; v.styleDepth = this.styleDepth;
-    const serialized = JSON.stringify(v);
-    this.appearanceWrites = this.appearanceWrites.then(async () => {
-      if (!this.preferenceStore) { return; }
-      await this.preferenceStore.put('appearance-v1', serialized); await this.preferenceStore.flush();
-      this.appearanceStatus = '';
-    }).catch(() => { this.appearanceStatus = '外观尚未保存，请重试。'; });
+    return v;
+  }
+  private persistAppearance(): void {
+    if (!this.pageAlive || !this.foreground) { return; }
+    const owner = this.appearanceOwner(), input = ++this.appearanceInputRevision;
+    this.appearanceInputError = '';
+    const model = this.appearanceModel();
+    try {
+      const candidate = validateAppearanceCandidate(this.appearanceUiValue());
+      this.dark = this.theme === '深色' || (this.theme === '自定义' && this.lightness < 46);
+      this.refreshPreview();
+      this.appearanceOperation = model.save(candidate).then((): void => {
+        if (this.appearanceOwned(owner) && this.appearancePreferences === model) { this.refreshAppearanceState(); }
+      }).catch((): void => {
+        if (this.appearanceOwned(owner) && this.appearancePreferences === model && input === this.appearanceInputRevision) {
+          this.appearanceInputError = '未保存'; this.refreshAppearanceState();
+        }
+      });
+    } catch (_) { this.appearanceInputError = '未保存'; this.refreshAppearanceState(); }
+  }
+  private async recoverAppearance(): Promise<void> {
+    if (!this.pageAlive || !this.foreground || !this.appearancePreferences || this.appearanceView.busy) { return; }
+    const owner = this.appearanceOwner(), input = this.appearanceInputRevision, model = this.appearancePreferences;
+    const operation = model.recover(); this.appearanceOperation = operation.then((): void => {}, (): void => {});
+    const recovered = await operation;
+    if (!this.appearanceOwned(owner) || this.appearancePreferences !== model) { return; }
+    const view = model.view();
+    if (recovered && view.current && !view.dirty && input === this.appearanceInputRevision && !this.appearanceInputError) {
+      this.applyAppearance(view.current);
+    }
+    this.refreshAppearanceState();
+  }
+  private saveAppearancePreview(): void {
+    if (this.appearanceView.state !== 'ready' || this.appearanceView.busy ||
+      (!this.appearanceView.dirty && !this.appearanceInputError)) { return; }
+    this.persistAppearance();
   }
   private backSettings(): void {
     if (this.settingsPage.startsWith('材质 /')) { this.settingsPage = '组件与卡片'; }
@@ -2841,10 +2952,130 @@ struct Index {
       if (this.pageAlive) { this.message = '已复制卡片文字'; }
     } catch (_) { if (this.pageAlive) { this.message = '卡片文字未能复制，请重试。'; } }
   }
-  private detailTask(c: CardView, task: TaskView): void {
-    if (!this.canChangeCard(c) || !c.tasks.some((t: TaskView): boolean => t.id === task.id && t.completion === task.completion)) { return; }
+  private taskCardComplete(c: CardView): boolean {
+    return this.currentEditorCardComplete(c) && c.id.length > 0 && new Set<string>(c.tasks.map((task: TaskView): string => task.id)).size === c.tasks.length &&
+      c.tasks.every((task: TaskView): boolean => [0, 1, 2].includes(task.completion));
+  }
+  private taskContextCurrent(c: CardView, task: TaskView, owner: string, epoch: number): boolean {
+    if (!this.pageAlive || !this.foreground || epoch !== this.editorInputEpoch || this.selected !== c.id || c.content_kind !== 'v2' ||
+      !this.taskCardComplete(c) || ![0, 1, 2].includes(task.completion)) { return false; }
+    const candidates = this.cards.filter((value: CardView): boolean => value.id === c.id);
+    if (candidates.length !== 1) { return false; }
+    const actual = candidates[0];
+    if (!actual || !this.taskCardComplete(actual) || actual.content_kind !== 'v2' || actual.source !== c.source || actual.revision !== c.revision || actual.deleted) { return false; }
+    if (owner ? !this.editorOpen || !this.ownsEditorView(owner) : this.editorOpen || this.detailId !== c.id) { return false; }
+    const rendered = c.tasks.find((value: TaskView): boolean => value.id === task.id);
+    const current = actual.tasks.find((value: TaskView): boolean => value.id === task.id);
+    return !!rendered && !!current && rendered.completion === task.completion && rendered.text === task.text &&
+      current.completion === task.completion && current.text === task.text;
+  }
+  private canTaskAction(c: CardView, task: TaskView, owner: string, epoch: number): boolean {
+    return this.taskContextCurrent(c, task, owner, epoch) && !this.businessWorking && !this.businessPending() &&
+      !this.rawFork && !this.rawForkWorking && !this.editorBoundary && !this.fieldValidationWorking &&
+      !this.draftRetiring && !this.draftRetirementUnknown && !this.draftRestoreInput && this.taskEditId.length === 0 &&
+      !this.draftCaptureIncomplete && !this.editorDraft?.unknown && !this.draftConflict &&
+      (!owner || !!this.editorDraft && !this.editorDraft.disposed && !this.editorDraft.conflicted && !this.editorDraft.writesPaused &&
+        this.draftRetiredIdentity !== this.editorDraft.scope.draft_id) &&
+      (owner ? this.canEditTasks() : this.canChangeCard(c));
+  }
+  private async taskAction(c: CardView, task: TaskView, complete: boolean | undefined, owner: string, epoch: number): Promise<void> {
+    if (!this.canTaskAction(c, task, owner, epoch)) { return; }
+    if (complete === undefined && task.completion === 2) { this.message = this.t('旧版同名待办的完成状态无法确定，请分别确认。'); return; }
+    if (complete !== undefined && typeof complete !== 'boolean') { return; }
     const cmd = new Command(); cmd.action = 'task_toggle'; cmd.id = c.id; cmd.source = c.source; cmd.task_id = task.id;
-    cmd.flag = task.completion !== 1; cmd.operation = util.generateRandomUUID(true); cmd.now_ms = Date.now().toString(); this.submit(cmd);
+    cmd.flag = complete === undefined ? task.completion === 0 : complete;
+    cmd.operation = util.generateRandomUUID(true); cmd.now_ms = Date.now().toString();
+    await this.submit(cmd, undefined, c, owner, epoch);
+  }
+  private detailTask(c: CardView, task: TaskView, epoch: number): Promise<void> {
+    return this.taskAction(c, task, undefined, '', epoch);
+  }
+  private taskNoCommit(reply: Reply): boolean {
+    return reply.ok === false && typeof reply.error === 'string' && reply.error.length > 0 &&
+      reply.effect === 'not_committed' && reply.receipt_revision === '';
+  }
+  private taskReplyCurrent(original: string, target: string, owner: string, selected: string, detail: string, open: boolean,
+    draft: EditorDraftCoordinator | undefined, identity: string, epoch: number): boolean {
+    return this.pageAlive && this.foreground && this.pending === original && this.selected === selected && this.detailId === detail &&
+      this.editorOpen === open && this.editorDraft === draft && this.attachmentEditorIdentity === identity && this.editorInputEpoch === epoch &&
+      (!selected || selected === target) && (!detail || detail === target) && (!open || selected === target) &&
+      (!open || this.ownsEditorView(owner));
+  }
+  private taskRevisionLess(left: string, right: string): boolean {
+    return left.length < right.length || left.length === right.length && left < right;
+  }
+  private taskReceipt(cmd: Command, reply: Reply): boolean {
+    const original = this.submittedTaskCard;
+    if (!original || !this.taskCardComplete(original) || cmd.id !== original.id || cmd.source !== original.source ||
+      !original.tasks.some((task: TaskView): boolean => task.id === cmd.task_id) || typeof cmd.flag !== 'boolean' ||
+      reply.ok !== true || reply.error !== '' || reply.effect !== 'committed' || typeof reply.receipt_revision !== 'string' ||
+      !validGeneration(reply.receipt_revision) || reply.receipt_revision === '0' || !Array.isArray(reply.cards) ||
+      !reply.cards.every((card: CardView): boolean => this.taskCardComplete(card)) ||
+      new Set<string>(reply.cards.map((card: CardView): string => card.id)).size !== reply.cards.length) { return false; }
+    const current = reply.cards.find((card: CardView): boolean => card.id === cmd.id);
+    if (!current || current.content_kind !== 'v2' || current.source === original.source ||
+      !this.taskRevisionLess(original.revision, reply.receipt_revision) || this.taskRevisionLess(current.revision, reply.receipt_revision)) { return false; }
+    // Core's receipt may be historical while self.cards() is the latest view.
+    // Accept that view as returned, including a removed task or later decision.
+    if (current.revision !== reply.receipt_revision) { return true; }
+    return !current.deleted && current.tasks.length === original.tasks.length && current.tasks.every((task: TaskView, index: number): boolean => {
+      const prior = original.tasks[index]; return task.id === prior.id && task.text === prior.text &&
+        task.completion === (task.id === cmd.task_id ? (cmd.flag ? 1 : 0) : prior.completion);
+    });
+  }
+  private taskMenu(c: CardView, task: TaskView, owner: string, epoch: number): MenuElement[] {
+    const items: MenuElement[] = [];
+    if (task.completion === 2 || task.completion === 0) {
+      items.push({ value: this.t('确认已完成'), enabled: this.canTaskAction(c, task, owner, epoch),
+        action: (): void => { this.taskAction(c, task, true, owner, epoch); } });
+    }
+    if (task.completion === 2 || task.completion === 1) {
+      items.push({ value: this.t('确认未完成'), enabled: this.canTaskAction(c, task, owner, epoch),
+        action: (): void => { this.taskAction(c, task, false, owner, epoch); } });
+    }
+    if (owner) {
+      items.push({ value: this.t('重命名'), enabled: this.canTaskAction(c, task, owner, epoch),
+        action: (): void => { if (this.canTaskAction(c, task, owner, epoch)) { this.renameTask(task); } } });
+      items.push({ value: this.t('上移'), enabled: this.canTaskAction(c, task, owner, epoch) && c.tasks[0]?.id !== task.id,
+        action: (): void => { if (this.canTaskAction(c, task, owner, epoch)) { this.moveTask(task, -1); } } });
+      items.push({ value: this.t('下移'), enabled: this.canTaskAction(c, task, owner, epoch) && c.tasks[c.tasks.length - 1]?.id !== task.id,
+        action: (): void => { if (this.canTaskAction(c, task, owner, epoch)) { this.moveTask(task, 1); } } });
+      items.push({ value: this.t('移除待办'), enabled: this.canTaskAction(c, task, owner, epoch),
+        action: (): void => { if (this.canTaskAction(c, task, owner, epoch)) { this.confirmTaskChange(task, c, owner, epoch); } } });
+    }
+    return items;
+  }
+  @Builder
+  TaskCompletionControl(c: CardView, task: TaskView, owner: string, epoch: number) {
+    if (task.completion === 0 || task.completion === 1) {
+      Checkbox({ name: task.id, group: owner ? 'editor-tasks' : 'detail-tasks' })
+        .select(task.completion === 1).width(22).height(22).selectedColor(this.accent()).unselectedColor(this.muted())
+        .id((owner ? 'editor-task:' : 'detail-task:') + task.id).accessibilityText(task.text)
+        .enabled(this.canTaskAction(c, task, owner, epoch))
+        .onChange((value: boolean) => this.taskAction(c, task, value, owner, epoch))
+    } else {
+      Text(String.fromCodePoint(0xe30b)).fontFamily('MorrowIcons').fontSize(20).fontColor(this.muted()).width(22).textAlign(TextAlign.Center)
+        .id((owner ? 'editor-task-pending:' : 'detail-task-pending:') + task.id)
+        .accessibilityText((task.completion === 2 ? this.t('旧版同名待办的完成状态无法确定，请分别确认。') : '任务状态待核对：') + task.text)
+    }
+  }
+  @Builder
+  TaskPendingDecision(c: CardView, task: TaskView, owner: string, epoch: number) {
+    if (task.completion === 2) {
+      Column({ space: 4 }) {
+        Text(this.t('旧版同名待办的完成状态无法确定，请分别确认。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted()).width('100%')
+        Flex({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.End }) {
+          Button(this.t('确认已完成'), { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+            .id((owner ? 'editor-task-complete:' : 'detail-task-complete:') + task.id)
+            .accessibilityText(this.t('确认已完成') + '：' + task.text).enabled(this.canTaskAction(c, task, owner, epoch))
+            .onClick(() => this.taskAction(c, task, true, owner, epoch))
+          Button(this.t('确认未完成'), { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+            .id((owner ? 'editor-task-incomplete:' : 'detail-task-incomplete:') + task.id)
+            .accessibilityText(this.t('确认未完成') + '：' + task.text).enabled(this.canTaskAction(c, task, owner, epoch))
+            .onClick(() => this.taskAction(c, task, false, owner, epoch))
+        }.width('100%')
+      }.width('100%').padding({ left: 32, bottom: 4 })
+    }
   }
   private pageCards(): CardView[] {
     return this.cards.filter((c: CardView): boolean => !c.deleted && (this.section === '概览' ||
@@ -3586,9 +3817,23 @@ struct Index {
       }
       Text(this.canvasBackground === '默认' ? '流动的光晕，为灵感留一点色彩。' : this.canvasBackground === '纯色' ? '一张安静的纯色画布。' : this.canvasBackground === '纹理' ? '细密的纸感网点，让空间多一点触感。' : '移动端使用主题底色；透明参数作用于应用画布。').fontFamily(this.fontFamily || 'HarmonyOS Sans')
         .fontSize(9).lineHeight(15).fontColor(this.muted()).margin({ top: 10 }).width('100%')
-      Text(this.appearanceStatus || '✓ 外观设置自动保存在本机').fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(9).fontColor(this.muted()).margin({ top: 13 }).width('100%')
+      this.AppearanceState()
     }.alignItems(HorizontalAlign.Start).padding(19).width('100%').borderRadius(this.round(22, 'appearance'))
       .backdropBlur(this.materialBlur('appearance')).linearGradient(this.gradient('appearance')).overlay(this.Rim('appearance', 22)).onAreaChange((_, area: Area) => this.rememberSurface('appearance',  22, area)).shadow(this.surfaceShadow('appearance')).border({ width: this.styleEdgeWidth(), color: this.line() })
+  }
+  @Builder
+  AppearanceState() {
+    Column({ space: 8 }) {
+      Text(this.appearanceStatus).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted()).width('100%')
+      if (this.appearanceView.state === 'read-failed' || this.appearanceView.state === 'write-unknown') {
+        Button(this.t('重新读取并核对'), { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+          .enabled(!this.appearanceView.busy).id('appearance-recover').onClick(() => this.recoverAppearance())
+      }
+      if (this.appearanceView.state === 'ready' && (this.appearanceView.dirty || this.appearanceInputError.length > 0)) {
+        Button(this.t('保存当前外观'), { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+          .enabled(!this.appearanceView.busy).id('appearance-save-preview').onClick(() => this.saveAppearancePreview())
+      }
+    }.alignItems(HorizontalAlign.Start).width('100%').margin({ top: 13 }).id('appearance-state')
   }
   @Builder
   DailyPanel() {
@@ -3803,6 +4048,7 @@ struct Index {
           else if (this.settingsPage.startsWith('材质 /')) { this.MaterialEditor() }
           else if (this.settingsPage === '字体设置') { this.FontSettings() }
           else if (this.settingsPage === '色彩罗盘') { this.ColorSettings() }
+          if (this.settingsPage !== '设置') { this.AppearanceState() }
         }.padding({ bottom: 24 }).width('100%')
       }.layoutWeight(1).scrollBar(BarState.Off).width('100%').align(Alignment.TopStart)
     }.padding(this.viewportWidth >= 760 ? 24 : 12).width('100%').constraintSize({ maxWidth: 920 }).height('100%')
@@ -3861,14 +4107,17 @@ struct Index {
           }
           if (c.tasks.length > 0) {
             Text(`待办事项 · ${c.tasks.filter((task: TaskView): boolean => task.completion === 1).length} / ${c.tasks.length}`).fontSize(12).fontColor(this.accent()).width('100%')
+            ForEach([this.editorInputEpoch], (epoch: number) => {
             ForEach(c.tasks, (task: TaskView) => {
               Row({ space: 10 }) {
-                Button(task.completion === 1 ? '✓' : task.completion === 2 ? '?' : '○', { type: ButtonType.Normal })
-                  .fontSize(18).fontColor(this.accent()).width(32).height(32).padding(0).backgroundColor(alpha(this.accent(), .08))
-                  .id('detail-task:' + task.id).enabled(this.canChangeCard(c)).onClick(() => this.detailTask(c, task))
+                this.TaskCompletionControl(c, task, '', epoch)
                 Text(task.text).fontSize(13).fontColor(this.ink()).layoutWeight(1).copyOption(CopyOptions.LocalDevice)
+                Button('···', { type: ButtonType.Normal }).fontSize(20).fontColor(this.muted()).width(36).height(36).padding(0).backgroundColor(Color.Transparent)
+                  .accessibilityText('待办操作：' + task.text).enabled(this.canTaskAction(c, task, '', epoch)).bindMenu(this.taskMenu(c, task, '', epoch))
               }.width('100%')
+              this.TaskPendingDecision(c, task, '', epoch)
             }, (task: TaskView) => task.id + ':' + task.completion)
+            }, (epoch: number): string => epoch.toString())
           }
           if (c.assets.length > 0) {
             Text('附件 · ' + c.assets.length).fontSize(12).fontColor(this.accent()).width('100%')
@@ -4231,21 +4480,17 @@ struct Index {
               Text(this.t('待办事项')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontWeight(FontWeight.Medium).fontColor(this.ink()); Blank()
               Text(this.current()?.stage ?? '').fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted())
             }.width('100%')
-            ForEach(this.current()?.tasks ?? [], (task: TaskView) => {
+            ForEach([this.current()!], (taskCard: CardView) => {
+            ForEach([this.editorInputEpoch], (epoch: number) => {
+            ForEach(taskCard.tasks, (task: TaskView) => {
               Row({ space: 10 }) {
-                Button(task.completion === 1 ? '✓' : task.completion === 2 ? '?' : '○', { type: ButtonType.Normal })
-                  .fontSize(18).fontColor(this.accent()).width(30).height(30).padding(0).backgroundColor('#147662BA').borderRadius(8)
-                  .onClick(() => this.mutate('task_toggle', task)).enabled(this.canEditTasks())
+                this.TaskCompletionControl(taskCard, task, owner, epoch)
                 Text(task.text).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).fontColor(this.ink()).layoutWeight(1)
                 Button('···', { type: ButtonType.Normal }).fontSize(20).fontColor(this.muted())
                   .width(36).height(36).padding(0).backgroundColor(Color.Transparent).accessibilityText('待办操作：' + task.text)
-                  .enabled(this.canEditTasks()).bindMenu([
-                    { value: this.t('重命名'), action: () => this.renameTask(task) },
-                    { value: this.t('上移'), enabled: this.current()?.tasks[0]?.id !== task.id, action: () => this.moveTask(task, -1) },
-                    { value: this.t('下移'), enabled: this.current()?.tasks[this.current()!.tasks.length - 1]?.id !== task.id, action: () => this.moveTask(task, 1) },
-                    { value: this.t('移除待办'), action: () => this.confirmTaskChange(task) }
-                  ])
+                  .enabled(this.canTaskAction(taskCard, task, owner, epoch)).bindMenu(this.taskMenu(taskCard, task, owner, epoch))
               }.width('100%')
+              this.TaskPendingDecision(taskCard, task, owner, epoch)
               if (this.taskEditId === task.id) {
                 ForEach([this.taskRenameOwner], (renameOwner: string) => {
                 Column({ space: 8 }) {
@@ -4266,6 +4511,8 @@ struct Index {
                 }, (renameOwner: string): string => renameOwner)
               }
             }, (task: TaskView) => task.id + ':' + task.completion.toString() + ':' + task.text)
+            }, (epoch: number): string => epoch.toString())
+            }, (taskCard: CardView): string => taskCard.source)
             if (!this.current()?.deleted) {
               Row({ space: 8 }) {
                 TextInput({ text: this.taskText, placeholder: this.t('添加一个小步骤…'), controller: this.taskController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass())

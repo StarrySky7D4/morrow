@@ -1,0 +1,122 @@
+[
+  {
+    "path": "build/win-cloud-20261005/l10n/parts/main.de.arb",
+    "bytes": 29213,
+    "sha256": "d5512dd1e3104e63734099f66c3f11841fc7184e4532eda197851cf1b1d6e67f"
+  },
+  {
+    "path": "build/win-cloud-20261005/l10n/parts/main.en.arb",
+    "bytes": 26986,
+    "sha256": "8a26cd8da24b94bb3a61c3b7f0fab2c0df7176e7fcb4886e9c8e12c6c0c82ce7"
+  },
+  {
+    "path": "build/win-cloud-20261005/l10n/parts/main.es.arb",
+    "bytes": 28519,
+    "sha256": "282246c9e27d64f4a1e536d268a19d99518c6b219ac3eac40e44976883bd5c6e"
+  },
+  {
+    "path": "build/win-cloud-20261005/l10n/parts/main.fr.arb",
+    "bytes": 29547,
+    "sha256": "3c4b71a988195dc0ae35f7fafcabcdd857f1661993d7006d005f0e8f0ed75036"
+  },
+  {
+    "path": "build/win-cloud-20261005/l10n/parts/main.ja.arb",
+    "bytes": 31395,
+    "sha256": "e4665c6da16227e511ab43bc0d3a3426a2b5467feae2ebdcdd5954358a45263f"
+  },
+  {
+    "path": "build/win-cloud-20261005/l10n/parts/main.ko.arb",
+    "bytes": 29997,
+    "sha256": "b8a27ceaadc34afb759b9906be84d3f263c8df0b95003da9b10fbfb09091fc58"
+  },
+  {
+    "path": "build/win-cloud-20261005/l10n/parts/main.pt.arb",
+    "bytes": 28450,
+    "sha256": "3b8627ad336071f79a49bc25c9addc24c2fc6cea4691ea461c205cab6359d5bd"
+  },
+  {
+    "path": "build/win-cloud-20261005/l10n/parts/main.ru.arb",
+    "bytes": 38237,
+    "sha256": "8b9bd21de62bdaa019ffb29abc1365ff4425eaf9d11446d9aaa800d8d7ed5c9b"
+  },
+  {
+    "path": "build/win-cloud-20261005/l10n/parts/main.zh.arb",
+    "bytes": 25889,
+    "sha256": "5671a3ca00e172ad0c522fc8944e745512b035ef868512e9cf20eb4e28516fbc"
+  },
+  {
+    "path": "build/win-cloud-20261005/packages/morrow_i18n/lib/l10n/app_de.arb",
+    "bytes": 110766,
+    "sha256": "b73b317bc2261116521b0fcd43776da70a62a29c4a2aef19623549a3a02ab155"
+  },
+  {
+    "path": "build/win-cloud-20261005/packages/morrow_i18n/lib/l10n/app_en.arb",
+    "bytes": 102211,
+    "sha256": "c862440ef1e84f2335ccb72876e3b2c039e17bbbc6f8d48bf1e27f1200b9b55c"
+  },
+  {
+    "path": "build/win-cloud-20261005/packages/morrow_i18n/lib/l10n/app_es.arb",
+    "bytes": 107881,
+    "sha256": "7cf1e73c85b2a4a9079b13b9c4d820fd9ee0d94c37fde5b44bb83742a8081822"
+  },
+  {
+    "path": "build/win-cloud-20261005/packages/morrow_i18n/lib/l10n/app_fr.arb",
+    "bytes": 112273,
+    "sha256": "e7375bcf8afe069276e41900607d5eb72b1996d2a733b2a309e2c87e7e52ae54"
+  },
+  {
+    "path": "build/win-cloud-20261005/packages/morrow_i18n/lib/l10n/app_ja.arb",
+    "bytes": 120098,
+    "sha256": "96816e67439ccde8dcfa06b5425c1c94d0b98c7ef4729c0c0c562aa32b9b9d81"
+  },
+  {
+    "path": "build/win-cloud-20261005/packages/morrow_i18n/lib/l10n/app_ko.arb",
+    "bytes": 112615,
+    "sha256": "3935f10c150b561ee401140573dc95824f34369c4d2631db764d23077c5d4e3a"
+  },
+  {
+    "path": "build/win-cloud-20261005/packages/morrow_i18n/lib/l10n/app_pt.arb",
+    "bytes": 107318,
+    "sha256": "c4bd824f301a841d5d0a598a14fe88ac8ab9f05044767db397b60e4682f7449f"
+  },
+  {
+    "path": "build/win-cloud-20261005/packages/morrow_i18n/lib/l10n/app_ru.arb",
+    "bytes": 144837,
+    "sha256": "42b7fc70754847aaabd8c304eb1bbb3c4b40b4a22a2e6896e8fb91d019fee781"
+  },
+  {
+    "path": "build/win-cloud-20261005/packages/morrow_i18n/lib/l10n/app_zh.arb",
+    "bytes": 96625,
+    "sha256": "13c9c3a145e3fc7c3e356314ab400565aa7fb5bfbd2abf847e154d840386018b"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/UiStrings.ets",
+    "bytes": 775172,
+    "sha256": "17801dd05b1afd9684f452b0e5b736ffba7c5520fb5413a8b6d002216cb1a576"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/Index.ets",
+    "bytes": 348426,
+    "sha256": "c84ac04725fe0fa5f4032fccb8e514047b0af9fe71183435ece72aae000f1abf"
+  },
+  {
+    "path": "hmos/tool/generate-ui-strings.cjs",
+    "bytes": 1540,
+    "sha256": "d3aed00f764a6de633f5dad744a5e22c7bfb31c79a0c9eea697843fe18b437ac"
+  },
+  {
+    "path": "hmos/tool/run-task-decision-i18n.cjs",
+    "bytes": 3344,
+    "sha256": "523a4fe96e6dcdb9bc05856bfa31bd3225fa0744b14ba78c677e090557efa507"
+  },
+  {
+    "path": "hmos/tool/task-decision-i18n.cjs",
+    "bytes": 3349,
+    "sha256": "f6470a2e0e8da04a99e1134ccdf887bd7907bb1ebb43637a14fb0e91389d884d"
+  },
+  {
+    "path": "hmos/tool/task-decision-i18n.test.cjs",
+    "bytes": 2520,
+    "sha256": "2d7ad52fd1269fa7b51ce9099b370c2145363aa0b27f70d9ab4f3486b042abd8"
+  }
+]

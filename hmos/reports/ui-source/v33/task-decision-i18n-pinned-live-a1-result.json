@@ -1,0 +1,68 @@
+{
+  "status": "PASS",
+  "scope": "actual uiText and task UI source/reference wiring; no layout, SDK or device proof",
+  "sourceInputCount": 25,
+  "frozenInputsUnchanged": true,
+  "summary": {
+    "tests": 12,
+    "pass": 12,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "durationMs": 199,
+  "exitCode": 0,
+  "signal": null,
+  "processError": "",
+  "locales": [
+    "zh",
+    "en",
+    "ja",
+    "ko",
+    "de",
+    "fr",
+    "es",
+    "pt",
+    "ru"
+  ],
+  "sourceKeys": [
+    "mainTaskMarkComplete",
+    "mainTaskMarkIncomplete",
+    "mainTaskAmbiguousDecision"
+  ],
+  "actualLookups": 27,
+  "node": {
+    "path": "C:\\Program Files\\nodejs\\node.exe",
+    "version": "v24.19.0",
+    "sha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237"
+  },
+  "logSha256": "c89c465b506f11873661d3352977eb10407d42ddf307a62c8a64cec162c1c9c5",
+  "sdk": "NOT_RUN",
+  "device": "NOT_RUN",
+  "uiStringsChanged": false,
+  "referenceMode": "pinned-plus-explicit-live-check",
+  "pinnedFixture": "hmos/tool/fixtures/task-decision-flutter-catalog.json",
+  "pinnedSourceFileCount": 18,
+  "liveSourceFileCount": 18,
+  "liveCheck": {
+    "status": "PASS",
+    "referenceMode": "live",
+    "locales": [
+      "zh",
+      "en",
+      "ja",
+      "ko",
+      "de",
+      "fr",
+      "es",
+      "pt",
+      "ru"
+    ],
+    "phraseCount": 3,
+    "lookups": 27,
+    "pinnedFixture": "hmos/tool/fixtures/task-decision-flutter-catalog.json",
+    "pinnedSourceFileCount": 18,
+    "liveSourceFileCount": 18
+  },
+  "provenance": "repository-owned fixture extracted from actual Flutter main parts and assembled ARB sources; existing HMOS entries retained; live source access requires --live-source"
+}

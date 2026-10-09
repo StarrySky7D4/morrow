@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "scope": "ACTUAL_INDEX_METHOD_AND_UI_CALLBACK_EXECUTION_WITH_CONTROLLED_NATIVE_PLATFORM_SEAMS_ONLY",
+  "base_commit": "ada95e0f119b3d3c3273b8e5bf6da031d3b10c10",
+  "started_at": "2026-10-09T04:34:53.268Z",
+  "finished_at": "2026-10-09T04:35:34.522Z",
+  "command": [
+    "--require",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\tool\\index-task-source-trace.cjs",
+    "--test",
+    "--test-reporter=tap",
+    "hmos/tool/index-task-decision-integration.test.cjs",
+    "hmos/tool/index-business-integration.test.cjs",
+    "hmos/tool/index-business-recovery-integration.test.cjs",
+    "hmos/tool/index-editor-field-integration.test.cjs",
+    "hmos/tool/index-editor-todos-integration.test.cjs",
+    "hmos/tool/index-draft-fork-integration.test.cjs"
+  ],
+  "tests": [
+    "hmos/tool/index-task-decision-integration.test.cjs",
+    "hmos/tool/index-business-integration.test.cjs",
+    "hmos/tool/index-business-recovery-integration.test.cjs",
+    "hmos/tool/index-editor-field-integration.test.cjs",
+    "hmos/tool/index-editor-todos-integration.test.cjs",
+    "hmos/tool/index-draft-fork-integration.test.cjs"
+  ],
+  "totals": {
+    "tests": 126,
+    "pass": 126,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "expected_tests": 126,
+  "duration_ms": 41091.9252,
+  "exit_code": 0,
+  "signal": "",
+  "error": "",
+  "node": "C:\\Program Files\\Huawei\\DevEco Studio\\tools\\node\\node.exe",
+  "node_version": "v24.14.1",
+  "typescript_version": "4.9.5-r4",
+  "repository_inputs": 52,
+  "actual_repository_reads": 51,
+  "all_inputs_exact": true,
+  "runtime_exact": true,
+  "model_list_unchanged": true,
+  "missing_reads": [],
+  "unqualified_reads": [],
+  "read_drift": [],
+  "log_sha256": "5A0450584E4BD64BA88BEF0B33FC71DEA453F7A3EC5299F09DCF3BCEF1078D13",
+  "trace_sha256": "A77E79A646DCE19154E8EDC1DAB942B94CBDF37E89A7FFE05267B8EFD449EADD",
+  "claims_excluded": [
+    "Native Rust/Core action execution in this run",
+    "ArkUI rendering/event delivery",
+    "OHOS lifecycle event delivery",
+    "SDK build",
+    "HAP/device validation",
+    "process crash/restart durability",
+    "full Windows/HMOS parity"
+  ],
+  "ok": true
+}

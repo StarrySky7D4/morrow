@@ -1,0 +1,82 @@
+{
+  "observed_at": "2026-10-09T05:05:09.234Z",
+  "inputs": [
+    {
+      "path": "hmos/tool/run-index-appearance.cjs",
+      "byte_length": 5269,
+      "sha256": "5eacbd3022fcd91f8e0158ed257eb152b235c23802a7b442f9c2e63fb6039cc4"
+    },
+    {
+      "path": "hmos/tool/index-appearance-test-harness.cjs",
+      "byte_length": 8306,
+      "sha256": "165222eeacf3fb23ee1a0c2aaa74331ecb0510f6361d73bc25a4431bf0f372d4"
+    },
+    {
+      "path": "hmos/tool/index-appearance.test.cjs",
+      "byte_length": 19671,
+      "sha256": "4d5ffda9f8a5fb5954f9f90f6a481cba6b71acdec7cdad57e37b9b97159dec51"
+    },
+    {
+      "path": "hmos/tool/index-appearance-preservation.cjs",
+      "byte_length": 4226,
+      "sha256": "7488385ff8bb8f23971ee02c047efe3b0bbf03fb05728bd7ef994c31f0a80788"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/Index.ets",
+      "byte_length": 356113,
+      "sha256": "57a9e5aa56c647c9635bf23483a69da359867a60c1606f89f1a0348e1765c4a8"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+      "byte_length": 5126,
+      "sha256": "0fcaa587d24b1fd0a1b4d066f465bc2178ff16b830187e1e2a250e3f5b4a67b2"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/AppearancePreferences.ets",
+      "byte_length": 22653,
+      "sha256": "849abce141efb3656db058a13bb8240e5bff04d001fe8d51558eebde6ddf41e5"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/UiStrings.ets",
+      "byte_length": 775172,
+      "sha256": "17801dd05b1afd9684f452b0e5b736ffba7c5520fb5413a8b6d002216cb1a576"
+    },
+    {
+      "path": "../../../../../Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/build-tools/ets-loader/node_modules/typescript/package.json",
+      "byte_length": 3531,
+      "sha256": "74051cfeea7f6f97cf40ba81b38f0c97e39d38a4e7ae5331babac5d8bcdd45a1"
+    },
+    {
+      "path": "../../../../../Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/build-tools/ets-loader/node_modules/typescript/lib/typescript.js",
+      "byte_length": 8031399,
+      "sha256": "9475e93f3904bb0a6a83ec457cbb4926c28d02202bac7b1fb31dbc49af7d56a1"
+    }
+  ],
+  "references": [
+    {
+      "path": "build/win-cloud-20261005/lib/main.dart",
+      "byte_length": 221628,
+      "sha256": "2cb2a519e31ac982d3a8638eb7de95fe63d5421ed3d1b6acda507cd142169f06"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/storage.dart",
+      "byte_length": 1531,
+      "sha256": "c1726effe2bf4355b724a7156ebc271264e13bd8aec7dc3c5cf3de40ee2f3aa2"
+    },
+    {
+      "path": "hmos/shared/plugins/workbench/src/preferences.rs",
+      "byte_length": 17744,
+      "sha256": "85c764733a9e4acbe92c0d364abf1cd16579c6b496eadd0bc71612042c99fc25"
+    },
+    {
+      "path": "../../../../../Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.data.preferences.d.ts",
+      "byte_length": 67071,
+      "sha256": "6fd7a0b7cdfca4efad19f3a0293fcbf03137b599b3049eba99ae93dfe7c6db21"
+    },
+    {
+      "path": "hmos/.build/appearance-integration/v33/index-task-baseline.ets",
+      "byte_length": 350258,
+      "sha256": "619592c0e8483199ea1ca92ab48fa6eed9efa25be37051e368060e6410786664"
+    }
+  ]
+}

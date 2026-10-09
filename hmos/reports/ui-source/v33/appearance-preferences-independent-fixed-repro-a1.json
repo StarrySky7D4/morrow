@@ -1,0 +1,1584 @@
+{
+  "qualification": "PASS_SCOPED_ACTUAL_ETS_INDEPENDENT_NAMESPACE_HANDOFF",
+  "observed_at": "2026-10-09T05:05:26.702Z",
+  "tests": 6,
+  "passed": 6,
+  "source_exact_before_after": true,
+  "inputs_before": [
+    {
+      "path": "hmos/entry/src/main/ets/model/AppearancePreferences.ets",
+      "byte_length": 22653,
+      "sha256": "849abce141efb3656db058a13bb8240e5bff04d001fe8d51558eebde6ddf41e5"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+      "byte_length": 5126,
+      "sha256": "0fcaa587d24b1fd0a1b4d066f465bc2178ff16b830187e1e2a250e3f5b4a67b2"
+    },
+    {
+      "path": "hmos/tool/appearance-preferences-test-harness.cjs",
+      "byte_length": 2962,
+      "sha256": "2abe0eb9e32580c713aa6ee2c7501dea74271c46b2da96857bd0fee5680e82f5"
+    }
+  ],
+  "inputs_after": [
+    {
+      "path": "hmos/entry/src/main/ets/model/AppearancePreferences.ets",
+      "byte_length": 22653,
+      "sha256": "849abce141efb3656db058a13bb8240e5bff04d001fe8d51558eebde6ddf41e5"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+      "byte_length": 5126,
+      "sha256": "0fcaa587d24b1fd0a1b4d066f465bc2178ff16b830187e1e2a250e3f5b4a67b2"
+    },
+    {
+      "path": "hmos/tool/appearance-preferences-test-harness.cjs",
+      "byte_length": 2962,
+      "sha256": "2abe0eb9e32580c713aa6ee2c7501dea74271c46b2da96857bd0fee5680e82f5"
+    }
+  ],
+  "node_version": "v24.19.0",
+  "sdk_build": "NOT_RUN",
+  "device_persistence": "NOT_RUN",
+  "controlled_seams": [
+    "Actual ETS transpilation and execution",
+    "One identical controlled backend and namespace for each old/new page pair",
+    "Deferred old preflight read, put, flush, readback, recovery flush and recovery readback completion"
+  ],
+  "assertions": [
+    "Replacement performs zero port calls while earlier actual promise is live",
+    "dispose does not release a live namespace owner",
+    "replacement does not show confirmed status while blocked",
+    "terminal unknown survives until explicit recovery",
+    "recovery only flushes observed bytes and performs no candidate put replay",
+    "unsaved latest candidate survives handoff and explicit recovery",
+    "separate later explicit save converges disk/cache/current after every old call has terminated"
+  ],
+  "vectors": [
+    {
+      "phase": "preflight-read",
+      "live": {
+        "state": "read-failed",
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "busy": true,
+        "dirty": true,
+        "error": "Earlier appearance operation is still live",
+        "revision": 3,
+        "candidateRevision": 1
+      },
+      "terminal_after_actual_completion": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 76,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 30,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": true,
+        "error": "",
+        "revision": 5,
+        "candidateRevision": 1
+      },
+      "reconciled": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 76,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": true,
+        "error": "",
+        "revision": 6,
+        "candidateRevision": 1
+      },
+      "final": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":50,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":50,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": false,
+        "error": "",
+        "revision": 9,
+        "candidateRevision": 2
+      },
+      "before_recover_counts": {
+        "reads": 2,
+        "puts": 0,
+        "flushes": 0
+      },
+      "final_counts": {
+        "reads": 5,
+        "puts": 1,
+        "flushes": 1
+      },
+      "cache_opacity": 50,
+      "disk_opacity": 50,
+      "calls": [
+        {
+          "kind": "read",
+          "n": 1
+        },
+        {
+          "kind": "read",
+          "n": 2
+        },
+        {
+          "kind": "read",
+          "n": 3
+        },
+        {
+          "kind": "read",
+          "n": 4
+        },
+        {
+          "kind": "put",
+          "n": 1,
+          "opacity": 50
+        },
+        {
+          "kind": "flush-start",
+          "n": 1,
+          "opacity": 50
+        },
+        {
+          "kind": "flush-finish",
+          "n": 1,
+          "opacity": 50
+        },
+        {
+          "kind": "read",
+          "n": 5
+        }
+      ]
+    },
+    {
+      "phase": "put",
+      "live": {
+        "state": "write-unknown",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 76,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "unknownRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": true,
+        "dirty": true,
+        "error": "Earlier appearance write requires explicit reconciliation",
+        "revision": 3,
+        "candidateRevision": 1
+      },
+      "terminal_after_actual_completion": {
+        "state": "write-unknown",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 76,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 30,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "unknownRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": true,
+        "error": "Appearance write owner changed",
+        "revision": 5,
+        "candidateRevision": 1
+      },
+      "reconciled": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 30,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": true,
+        "error": "",
+        "revision": 7,
+        "candidateRevision": 1
+      },
+      "final": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":50,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":50,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": false,
+        "error": "",
+        "revision": 10,
+        "candidateRevision": 2
+      },
+      "before_recover_counts": {
+        "reads": 2,
+        "puts": 1,
+        "flushes": 0
+      },
+      "final_counts": {
+        "reads": 6,
+        "puts": 2,
+        "flushes": 2
+      },
+      "cache_opacity": 50,
+      "disk_opacity": 50,
+      "calls": [
+        {
+          "kind": "read",
+          "n": 1
+        },
+        {
+          "kind": "read",
+          "n": 2
+        },
+        {
+          "kind": "put",
+          "n": 1,
+          "opacity": 30
+        },
+        {
+          "kind": "read",
+          "n": 3
+        },
+        {
+          "kind": "flush-start",
+          "n": 1,
+          "opacity": 30
+        },
+        {
+          "kind": "flush-finish",
+          "n": 1,
+          "opacity": 30
+        },
+        {
+          "kind": "read",
+          "n": 4
+        },
+        {
+          "kind": "read",
+          "n": 5
+        },
+        {
+          "kind": "put",
+          "n": 2,
+          "opacity": 50
+        },
+        {
+          "kind": "flush-start",
+          "n": 2,
+          "opacity": 50
+        },
+        {
+          "kind": "flush-finish",
+          "n": 2,
+          "opacity": 50
+        },
+        {
+          "kind": "read",
+          "n": 6
+        }
+      ]
+    },
+    {
+      "phase": "flush",
+      "live": {
+        "state": "write-unknown",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 76,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "unknownRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": true,
+        "dirty": true,
+        "error": "Earlier appearance write requires explicit reconciliation",
+        "revision": 3,
+        "candidateRevision": 1
+      },
+      "terminal_after_actual_completion": {
+        "state": "write-unknown",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 76,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 30,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "unknownRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": true,
+        "error": "Appearance flush owner changed",
+        "revision": 5,
+        "candidateRevision": 1
+      },
+      "reconciled": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 30,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": true,
+        "error": "",
+        "revision": 7,
+        "candidateRevision": 1
+      },
+      "final": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":50,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":50,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": false,
+        "error": "",
+        "revision": 10,
+        "candidateRevision": 2
+      },
+      "before_recover_counts": {
+        "reads": 2,
+        "puts": 1,
+        "flushes": 1
+      },
+      "final_counts": {
+        "reads": 6,
+        "puts": 2,
+        "flushes": 3
+      },
+      "cache_opacity": 50,
+      "disk_opacity": 50,
+      "calls": [
+        {
+          "kind": "read",
+          "n": 1
+        },
+        {
+          "kind": "read",
+          "n": 2
+        },
+        {
+          "kind": "put",
+          "n": 1,
+          "opacity": 30
+        },
+        {
+          "kind": "flush-start",
+          "n": 1,
+          "opacity": 30
+        },
+        {
+          "kind": "flush-finish",
+          "n": 1,
+          "opacity": 30
+        },
+        {
+          "kind": "read",
+          "n": 3
+        },
+        {
+          "kind": "flush-start",
+          "n": 2,
+          "opacity": 30
+        },
+        {
+          "kind": "flush-finish",
+          "n": 2,
+          "opacity": 30
+        },
+        {
+          "kind": "read",
+          "n": 4
+        },
+        {
+          "kind": "read",
+          "n": 5
+        },
+        {
+          "kind": "put",
+          "n": 2,
+          "opacity": 50
+        },
+        {
+          "kind": "flush-start",
+          "n": 3,
+          "opacity": 50
+        },
+        {
+          "kind": "flush-finish",
+          "n": 3,
+          "opacity": 50
+        },
+        {
+          "kind": "read",
+          "n": 6
+        }
+      ]
+    },
+    {
+      "phase": "readback",
+      "live": {
+        "state": "write-unknown",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 76,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "unknownRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": true,
+        "dirty": true,
+        "error": "Earlier appearance write requires explicit reconciliation",
+        "revision": 3,
+        "candidateRevision": 1
+      },
+      "terminal_after_actual_completion": {
+        "state": "write-unknown",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 76,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 30,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "unknownRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": true,
+        "error": "Appearance readback owner changed",
+        "revision": 5,
+        "candidateRevision": 1
+      },
+      "reconciled": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 30,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": true,
+        "error": "",
+        "revision": 7,
+        "candidateRevision": 1
+      },
+      "final": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":50,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":50,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": false,
+        "error": "",
+        "revision": 10,
+        "candidateRevision": 2
+      },
+      "before_recover_counts": {
+        "reads": 3,
+        "puts": 1,
+        "flushes": 1
+      },
+      "final_counts": {
+        "reads": 7,
+        "puts": 2,
+        "flushes": 3
+      },
+      "cache_opacity": 50,
+      "disk_opacity": 50,
+      "calls": [
+        {
+          "kind": "read",
+          "n": 1
+        },
+        {
+          "kind": "read",
+          "n": 2
+        },
+        {
+          "kind": "put",
+          "n": 1,
+          "opacity": 30
+        },
+        {
+          "kind": "flush-start",
+          "n": 1,
+          "opacity": 30
+        },
+        {
+          "kind": "flush-finish",
+          "n": 1,
+          "opacity": 30
+        },
+        {
+          "kind": "read",
+          "n": 3
+        },
+        {
+          "kind": "read",
+          "n": 4
+        },
+        {
+          "kind": "flush-start",
+          "n": 2,
+          "opacity": 30
+        },
+        {
+          "kind": "flush-finish",
+          "n": 2,
+          "opacity": 30
+        },
+        {
+          "kind": "read",
+          "n": 5
+        },
+        {
+          "kind": "read",
+          "n": 6
+        },
+        {
+          "kind": "put",
+          "n": 2,
+          "opacity": 50
+        },
+        {
+          "kind": "flush-start",
+          "n": 3,
+          "opacity": 50
+        },
+        {
+          "kind": "flush-finish",
+          "n": 3,
+          "opacity": 50
+        },
+        {
+          "kind": "read",
+          "n": 7
+        }
+      ]
+    },
+    {
+      "phase": "recovery-flush",
+      "live": {
+        "state": "write-unknown",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 76,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "unknownRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": true,
+        "dirty": true,
+        "error": "Earlier appearance write requires explicit reconciliation",
+        "revision": 3,
+        "candidateRevision": 1
+      },
+      "reconciled": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 30,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": true,
+        "error": "",
+        "revision": 7,
+        "candidateRevision": 1
+      },
+      "final": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":50,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":50,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": false,
+        "error": "",
+        "revision": 10,
+        "candidateRevision": 2
+      },
+      "final_counts": {
+        "reads": 7,
+        "puts": 2,
+        "flushes": 4
+      },
+      "disk_opacity": 50,
+      "calls": [
+        {
+          "kind": "read",
+          "n": 1
+        },
+        {
+          "kind": "read",
+          "n": 2
+        },
+        {
+          "kind": "put",
+          "opacity": 30
+        },
+        {
+          "kind": "flush-start",
+          "n": 1
+        },
+        {
+          "kind": "read",
+          "n": 3
+        },
+        {
+          "kind": "flush-start",
+          "n": 2
+        },
+        {
+          "kind": "flush-finish",
+          "n": 2
+        },
+        {
+          "kind": "read",
+          "n": 4
+        },
+        {
+          "kind": "flush-start",
+          "n": 3
+        },
+        {
+          "kind": "flush-finish",
+          "n": 3
+        },
+        {
+          "kind": "read",
+          "n": 5
+        },
+        {
+          "kind": "read",
+          "n": 6
+        },
+        {
+          "kind": "put",
+          "opacity": 50
+        },
+        {
+          "kind": "flush-start",
+          "n": 4
+        },
+        {
+          "kind": "flush-finish",
+          "n": 4
+        },
+        {
+          "kind": "read",
+          "n": 7
+        }
+      ]
+    },
+    {
+      "phase": "recovery-readback",
+      "live": {
+        "state": "write-unknown",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 76,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":76,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "unknownRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": true,
+        "dirty": true,
+        "error": "Earlier appearance write requires explicit reconciliation",
+        "revision": 3,
+        "candidateRevision": 1
+      },
+      "reconciled": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 30,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":30,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": true,
+        "error": "",
+        "revision": 7,
+        "candidateRevision": 1
+      },
+      "final": {
+        "state": "ready",
+        "current": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "candidate": {
+          "theme": "白色",
+          "mode": "磨砂",
+          "opacity": 50,
+          "radius": 20,
+          "accent": "",
+          "grayscale": 0,
+          "lightness": 88.5,
+          "background": "默认",
+          "solid": "",
+          "canvasLiquid": false,
+          "canvasBlur": 0,
+          "canvasOpacity": 0,
+          "font": "",
+          "locale": "zh",
+          "daily": [],
+          "materials": [],
+          "visualStyle": "flat",
+          "styleDepth": 1
+        },
+        "originalRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":50,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "observedRaw": "{\"theme\":\"白色\",\"mode\":\"磨砂\",\"opacity\":50,\"radius\":20,\"accent\":\"\",\"grayscale\":0,\"lightness\":88.5,\"background\":\"默认\",\"solid\":\"\",\"canvasLiquid\":false,\"canvasBlur\":0,\"canvasOpacity\":0,\"font\":\"\",\"locale\":\"zh\",\"daily\":[],\"materials\":[],\"visualStyle\":\"flat\",\"styleDepth\":1}",
+        "busy": false,
+        "dirty": false,
+        "error": "",
+        "revision": 10,
+        "candidateRevision": 2
+      },
+      "final_counts": {
+        "reads": 8,
+        "puts": 2,
+        "flushes": 4
+      },
+      "disk_opacity": 50,
+      "calls": [
+        {
+          "kind": "read",
+          "n": 1
+        },
+        {
+          "kind": "read",
+          "n": 2
+        },
+        {
+          "kind": "put",
+          "opacity": 30
+        },
+        {
+          "kind": "flush-start",
+          "n": 1
+        },
+        {
+          "kind": "read",
+          "n": 3
+        },
+        {
+          "kind": "flush-start",
+          "n": 2
+        },
+        {
+          "kind": "flush-finish",
+          "n": 2
+        },
+        {
+          "kind": "read",
+          "n": 4
+        },
+        {
+          "kind": "read",
+          "n": 5
+        },
+        {
+          "kind": "flush-start",
+          "n": 3
+        },
+        {
+          "kind": "flush-finish",
+          "n": 3
+        },
+        {
+          "kind": "read",
+          "n": 6
+        },
+        {
+          "kind": "read",
+          "n": 7
+        },
+        {
+          "kind": "put",
+          "opacity": 50
+        },
+        {
+          "kind": "flush-start",
+          "n": 4
+        },
+        {
+          "kind": "flush-finish",
+          "n": 4
+        },
+        {
+          "kind": "read",
+          "n": 8
+        }
+      ]
+    }
+  ]
+}
