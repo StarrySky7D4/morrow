@@ -1,0 +1,31 @@
+✔ actual Glass primary cast converts Flutter logical radius and offsets to SDK physical px (8.5308ms)
+✔ actual Glass primary alpha saturates at full depth without removing its designed geometry (0.5863ms)
+✔ actual flat frosted, clear and liquid preserve their distinct inherited Glass shadows (0.7451ms)
+✔ actual recessed search and default Footer suppress only their specified outer casts (0.7596ms)
+✔ actual normal Glass has no extra relief Canvas; search retains its real shared inset (3.7053ms)
+✔ actual Liquid rim remains optical and Footer/preview keep their separate material guards (0.7242ms)
+✔ actual music inner uses global Appearance while outer material keeps local radius and depth (0.8787ms)
+✔ actual candidate material preview passes its own mode instead of the saved global mode (0.7554ms)
+✔ actual inset painter covers all Flutter styles with their distinct paint operations (371.0556ms)
+✔ actual repaint clears old frames for flat, zero depth, unknown style and invalid geometry (144.819ms)
+✔ actual paper lines preserve Flutter light/dark alpha and edge orientation (28.8461ms)
+✔ actual fluent inset reverses the edge to shadow then light without filling the child (25.9938ms)
+✔ actual brutalist inset uses the requested theme ink and transparent lower edge (28.7864ms)
+✔ actual industrial inset retains all three contours, scaled wall width and theme tones (24.185ms)
+✔ actual clay inset uses blurred complement walls and the separate highlight contour (26.4983ms)
+✔ actual neumorphic inset derives both casts from the real palette surface (53.6462ms)
+✔ actual inset wall is the rounded opening complement with opposing offsets and exact unshifted clip (14.903ms)
+✔ actual depth uses -.8 times the material depth while opacity saturates separately from geometry (127.6688ms)
+✔ actual rounded geometry clamps to available size and preserves the parent radius (13.5978ms)
+✔ actual resize callbacks coalesce and disappearance cancels the pending paint (11.6806ms)
+✔ actual current and selected rows keep fill=false and relay the parent theme surface (12.443ms)
+✔ actual shared search inset uses -1 widget depth rather than the music -.8 depth (59.9103ms)
+✔ actual shared inset rejects raised, zero and corrupt multipliers without repainting a frame (57.6496ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1214.3826

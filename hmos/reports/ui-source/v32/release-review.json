@@ -1,0 +1,300 @@
+{
+  "reviewedUtc": "2026-10-09T03:55:35.3929356Z",
+  "reviewer": "dev14_delivery_review",
+  "status": "PASS_SCOPED_BRANCH_ONLY_PUBLICATION",
+  "branchOnlyPublishable": true,
+  "targetBranch": "codex/ArkTsUI",
+  "mainMergeAuthorized": false,
+  "gitStateCheckedByReviewer": false,
+  "releaseEligible": false,
+  "productAcceptance": "OPEN",
+  "blockers": [],
+  "sourceReview": {
+    "normalGlass": "Ordinary Rim and DraftRim exclude extra positive SurfaceRelief; deliberate border/cast and Liquid GlassRim remain.",
+    "search": "Search alone uses shared RecessedGlassRelief with signed -1 depth, styled/local depth and rounded radius; nonflat outer casts suppressed.",
+    "music": "Current and selected strips remain transparent with shared -.8 inset; child depth/radius/palette are global Appearance, while outer Music material still resolves local overrides.",
+    "shadow": "Available primary casts use UIContext.vp2px for SDK physical pixel radius/offsets and fill=false.",
+    "previewMode": "Candidate material preview passes previewMode into surfaceShadow before application.",
+    "lifecycle": "Inset owns Canvas, watches primitive paint props, clears prior bounds, bounds radius, saves/restores clip/filter, coalesces resize and cancels disappearance timer."
+  },
+  "inputChecks": {
+    "repository": {
+      "count": 367,
+      "checked": 367,
+      "matches": true,
+      "mismatches": []
+    },
+    "copiedBuild": {
+      "count": 324,
+      "checked": 324,
+      "matches": true,
+      "mismatches": []
+    },
+    "models": {
+      "count": 156,
+      "checked": 156,
+      "matches": true,
+      "mismatches": []
+    },
+    "native": {
+      "count": 283,
+      "checked": 283,
+      "matches": true,
+      "mismatches": []
+    },
+    "finalA2": {
+      "count": 8,
+      "checked": 8,
+      "matches": true,
+      "mismatches": []
+    },
+    "modelBeforeAfterEqual": true,
+    "a2BeforeAfterEqual": true,
+    "a2ReferenceSnapshotsEqual": true,
+    "a2ReferenceCount": 10
+  },
+  "logChecks": [
+    {
+      "path": "hmos/reports/ui-source/v32/models-final-tests.log",
+      "sha256": "1656638ACD9C6533A61AF2C3A567F8CFD7BABB2BA23176171177B50A4A4548AE",
+      "expectedSha256": "1656638ACD9C6533A61AF2C3A567F8CFD7BABB2BA23176171177B50A4A4548AE",
+      "matches": true
+    },
+    {
+      "path": "hmos/reports/ui-source/v32/dev32-glass-alignment-a1-sdk-build.log",
+      "sha256": "E51E662995681F9EEF5D6002F809B808E290416197032B249DB33371B6674580",
+      "expectedSha256": "E51E662995681F9EEF5D6002F809B808E290416197032B249DB33371B6674580",
+      "matches": true
+    },
+    {
+      "path": "hmos/reports/ui-source/v32/glass-style-alignment-a2-tests.log",
+      "sha256": "879937FE8FFD41D46D3F08259A0C70C3B23DB4F76FB269A442781D1CDF5C2273",
+      "expectedSha256": "879937fe8ffd41d46d3f08259a0c70c3b23db4f76fb269a442781d1cdf5c2273",
+      "matches": true
+    }
+  ],
+  "observedLogCounts": {
+    "modelPassed": 1168,
+    "sdkBuildSuccessful": true,
+    "a2Tests": 23,
+    "modelTests": 1168,
+    "modelFailed": 0,
+    "a2Passed": 23,
+    "signSkipped": true
+  },
+  "nativeArchiveChecks": [
+    {
+      "abi": "arm64-v8a",
+      "bytes": 58110214,
+      "sha256": "DD86DF956795BC04CDF98BC3184625C6FAD9D0382E041E86DEAF99C44028744A",
+      "matchesRecorded": true,
+      "productionMatches": true
+    },
+    {
+      "abi": "x86_64",
+      "bytes": 56515718,
+      "sha256": "E9C66A4974D32CD9B6C68559504F56EBA7D10CC27F1DB3CCFDC31B4FDDA4BF1E",
+      "matchesRecorded": true,
+      "productionMatches": true
+    }
+  ],
+  "frozenArtifact": {
+    "path": ".build/artifacts/dev32-glass-alignment-a1/entry-default-unsigned.hap",
+    "bytes": 31442946,
+    "sha256": "06342B5CFB5EDA93493BEDA13B76B6DB9D0AF32C4F95394C280B1B6448E1C4FB",
+    "matchesRecorded": true,
+    "versionName": "0.1.0-hmos-dev.22",
+    "versionCode": 1000022,
+    "packagedApp": {
+      "iconId": 16777219,
+      "minPatchAPIVersion": 0,
+      "debug": true,
+      "targetPatchAPIVersion": 0,
+      "minMinorAPIVersion": 0,
+      "minAPIVersion": 260000026,
+      "icon": "$media:layered_image",
+      "buildMode": "debug",
+      "label": "$string:app_name",
+      "bundleType": "app",
+      "versionName": "0.1.0-hmos-dev.22",
+      "versionCode": 1000022,
+      "appEnvironments": [],
+      "compileSdkType": "HarmonyOS",
+      "labelId": 16777216,
+      "compileSdkVersion": "26.0.0.105",
+      "targetAPIVersion": 260000026,
+      "vendor": "Morrow",
+      "bundleName": "dev.morrow.hmos",
+      "apiReleaseType": "Release",
+      "targetMinorAPIVersion": 0
+    },
+    "unsigned": true,
+    "installed": false
+  },
+  "packageChecks": {
+    "nativeEntries": [
+      {
+        "path": "libs/arm64-v8a/libmorrow.so",
+        "bytes": 11126440,
+        "sha256": "E4ED4B615AD6E36554C8C7D132E8AE39DBD708FB07CFE9428CDB98BE42C8EC30",
+        "matchesRecorded": true,
+        "matchesStrippedOutput": true
+      },
+      {
+        "path": "libs/arm64-v8a/libc++_shared.so",
+        "bytes": 1262504,
+        "sha256": "F69947AF100B652E349AE51E4A4888BCC7A327DB9085272D318176EF1782BF0F",
+        "matchesRecorded": true,
+        "matchesStrippedOutput": true
+      },
+      {
+        "path": "libs/x86_64/libmorrow.so",
+        "bytes": 11666056,
+        "sha256": "F24E7777198C023B327631C279CE911B229B0469815BB52D7EE54E8DCC7BA23D",
+        "matchesRecorded": true,
+        "matchesStrippedOutput": true
+      },
+      {
+        "path": "libs/x86_64/libc++_shared.so",
+        "bytes": 1294904,
+        "sha256": "09B9E3A97D3C01260B5E269E2CE15FE4D3B7C787B99DC4378295D4F35E2FA006",
+        "matchesRecorded": true,
+        "matchesStrippedOutput": true
+      }
+    ],
+    "filesInfoMatches": true,
+    "modulesCount": 9,
+    "emits": [
+      {
+        "module": "model/MusicFiles",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "model/MusicLibrary",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "model/MusicPlayback",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "model/MusicUi",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "model/MusicWorkbench",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "pages/PlatformMusicPlayer",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "pages/MusicPanel",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "pages/MusicFooter",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      },
+      {
+        "module": "pages/RecessedGlassRelief",
+        "outputs": {
+          "count": 2,
+          "checked": 2,
+          "matches": true,
+          "mismatches": []
+        }
+      }
+    ],
+    "packagedAbcRecords": [
+      {
+        "module": "model/MusicFiles",
+        "recordPathPresentInPackagedAbc": true
+      },
+      {
+        "module": "model/MusicLibrary",
+        "recordPathPresentInPackagedAbc": true
+      },
+      {
+        "module": "model/MusicPlayback",
+        "recordPathPresentInPackagedAbc": true
+      },
+      {
+        "module": "model/MusicUi",
+        "recordPathPresentInPackagedAbc": true
+      },
+      {
+        "module": "model/MusicWorkbench",
+        "recordPathPresentInPackagedAbc": true
+      },
+      {
+        "module": "pages/PlatformMusicPlayer",
+        "recordPathPresentInPackagedAbc": true
+      },
+      {
+        "module": "pages/MusicPanel",
+        "recordPathPresentInPackagedAbc": true
+      },
+      {
+        "module": "pages/MusicFooter",
+        "recordPathPresentInPackagedAbc": true
+      },
+      {
+        "module": "pages/RecessedGlassRelief",
+        "recordPathPresentInPackagedAbc": true
+      }
+    ]
+  },
+  "evidenceClarifications": [
+    "glass-style-alignment-final-* is the older 22-check pre-previewMode freeze. Final current-source scoped evidence is a2 23/23, alongside full models 1168/1168.",
+    "Historical package-check scope text names eight music modules; its actual array has nine: eight music modules plus RecessedGlassRelief. Array and independently checked packaged ABC paths govern the verified scope."
+  ],
+  "remainingOpen": [
+    "Dev22 HAP has not been installed; device all-interface frames and settled Canvas rendering remain OPEN.",
+    "Music import/native Ready selection/device playback/background/lifecycle/audible output remain OPEN; prior dev21/dev20 observations are not dev22 proof.",
+    "Secondary outer casts, parent clipping, exact blur/pixel equivalence, density/theme/width combinations, high contrast and transition/optical fidelity remain OPEN.",
+    "Signing, ARM64 physical-device/production acceptance and full Flutter/Windows parity remain OPEN."
+  ],
+  "publicationScope": "Recommend publishing source, tests and frozen scoped evidence to codex/ArkTsUI only after root verifies Git staging and remote state. This is not a merge, signed release, installation or full product acceptance."
+}

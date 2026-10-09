@@ -1,0 +1,30 @@
+✔ actual Glass primary cast converts Flutter logical radius and offsets to SDK physical px (7.9854ms)
+✔ actual Glass primary alpha saturates at full depth without removing its designed geometry (0.7737ms)
+✔ actual flat frosted, clear and liquid preserve their distinct inherited Glass shadows (0.7763ms)
+✔ actual recessed search and default Footer suppress only their specified outer casts (0.7258ms)
+✔ actual normal Glass has no extra relief Canvas; search retains its real shared inset (3.6123ms)
+✔ actual Liquid rim remains optical and Footer/preview keep their separate material guards (0.6577ms)
+✔ actual music inner uses global Appearance while outer material keeps local radius and depth (0.8517ms)
+✔ actual inset painter covers all Flutter styles with their distinct paint operations (363.6266ms)
+✔ actual repaint clears old frames for flat, zero depth, unknown style and invalid geometry (146.9033ms)
+✔ actual paper lines preserve Flutter light/dark alpha and edge orientation (27.465ms)
+✔ actual fluent inset reverses the edge to shadow then light without filling the child (24.1025ms)
+✔ actual brutalist inset uses the requested theme ink and transparent lower edge (30.0367ms)
+✔ actual industrial inset retains all three contours, scaled wall width and theme tones (24.8036ms)
+✔ actual clay inset uses blurred complement walls and the separate highlight contour (25.6067ms)
+✔ actual neumorphic inset derives both casts from the real palette surface (52.9782ms)
+✔ actual inset wall is the rounded opening complement with opposing offsets and exact unshifted clip (15.8559ms)
+✔ actual depth uses -.8 times the material depth while opacity saturates separately from geometry (122.2493ms)
+✔ actual rounded geometry clamps to available size and preserves the parent radius (10.814ms)
+✔ actual resize callbacks coalesce and disappearance cancels the pending paint (12.3464ms)
+✔ actual current and selected rows keep fill=false and relay the parent theme surface (12.6981ms)
+✔ actual shared search inset uses -1 widget depth rather than the music -.8 depth (63.4711ms)
+✔ actual shared inset rejects raised, zero and corrupt multipliers without repainting a frame (57.3387ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1209.4976

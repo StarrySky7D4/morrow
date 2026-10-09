@@ -1,0 +1,586 @@
+{
+  "schema": "morrow.hmos.next-ui-parity-source-audit.v32",
+  "generated_at": "2026-10-09T03:34:58.996Z",
+  "root": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow",
+  "scope": "READ_ONLY_CURRENT_SOURCE_GAPS_AND_MINIMUM_COMPLETE_IMPLEMENTATION_ROUTES",
+  "target": "继续追平 Windows UI 与大部分实现；音乐仅为一部分，不代替长期全范围。",
+  "source_identity": {
+    "observed_git_head": "62a8b964bb27840f0348bb6b8ef520142880b9b1",
+    "observed_branch": "codex/ArkTsUI",
+    "reference": "build/win-cloud-20261005/lib/",
+    "note": "起始 tracked source 未漂移，审计并行过程中后续只读 diff 观察到 Index.ets 改动。此 inventory 是实际磁盘快照，不代表 HEAD 冻结/编译/安装源码一致。",
+    "observed_tracked_drift": [
+      "hmos/entry/src/main/ets/pages/Index.ets"
+    ],
+    "snapshot_stable": true,
+    "changed_during_final_capture": []
+  },
+  "boundaries": {
+    "product_source_writes": "NONE_BY_THIS_AUDITOR",
+    "tests": "NOT_RUN",
+    "sdk": "NOT_RUN",
+    "device": "NOT_RUN",
+    "git_mutation": "NOT_RUN",
+    "runtime_proof": "NOT_ESTABLISHED",
+    "full_parity": "NOT_EVALUATED_AS_COMPLETE",
+    "root_music_device_proof": "SEPARATE_ROOT_OWNED_EVIDENCE_NOT_INHERITED",
+    "platform_permissions": "NONE_EXPANDED"
+  },
+  "implementation_order": [
+    "先修 typed preference 读失败覆盖和 task=2 显式决策。",
+    "完整字体 vertical slice：选择/capture/验证/保存/注册回退/UI/重启和设备 glyph。",
+    "完整本地 background vertical slice：image/GIF + video 所有权与真实 renderer/restart；在线 URL 保持明确 OPEN 直至接入。",
+    "完整 daily customization/editor/menu/write ACK/restart，并跟实际行/UI样式。",
+    "完整 detail task coordinator/actions/chosen-stage，再接 delete ACK Undo/expired UI。"
+  ],
+  "findings": [
+    {
+      "id": "APPEARANCE_READ_FAILED_OVERWRITE",
+      "priority": "foundation",
+      "state": "OPEN_SOURCE_DEFECT",
+      "current": "restoreAppearance 读取失败后仅展示错误；persistAppearance 仍会构造新快照并写入，无 read-failed 禁写或原始未知字段保留。部分字段直接取未验证值。",
+      "reference": "Flutter saveContent 在 storageReadFailed 时拒绝覆盖；Rust encode_persistent 校验旧字节并合并未知字段。",
+      "evidence": [
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 2676,
+          "needle": "private restoreAppearance()"
+        },
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 2697,
+          "needle": "private persistAppearance()"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/main.dart",
+          "line": 411,
+          "needle": "if (storageReadFailed) return;"
+        },
+        {
+          "path": "hmos/shared/plugins/workbench/src/preferences.rs",
+          "line": 400,
+          "needle": "pub fn encode_persistent("
+        }
+      ],
+      "route": [
+        "先建立有明确 owner 的 typed UI-preferences 存储，保留旧原始值、严格字段验证、读失败禁止普通写入。",
+        "保留现有写队列，但候选设置/资产引用仅在 durable write ACK 后成为已安装值；写失败保留旧状态与输入。",
+        "支持未知字段保留与显式恢复，避免后续字体、背景、清单功能覆盖无法读取的数据。"
+      ],
+      "acceptance": [
+        "坏 JSON、错误字段类型、读取失败、未来字段均不得被普通设置操作覆盖。",
+        "put/flush 失败及重启只恢复完整已确认记录，候选输入仍可重试。"
+      ]
+    },
+    {
+      "id": "FONT_FILE_IMPORT_RESTORE",
+      "priority": "next_complete_feature",
+      "state": "OPEN_NOT_IMPLEMENTED",
+      "current": "HMOS 只有本机系统字体选择。导入字体按钮 disabled；AppearanceSnapshot 只有 font:string，无 FontChoice asset/name 或导入资产恢复。",
+      "reference": "Flutter FontChoice 保存 family/asset/name，用 SHA256 稳定族名；20 MiB TTF/OTF SFNT 头和表界限验证；字体私有存储原子替换；注册预算每进程 8 个族/64 MiB（失败尝试计入）；重启加载验原字节/hash，失败保留偏好并回退。预览含中文、日文、韩文、俄文。",
+      "evidence": [
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 3746,
+          "needle": "FontSettings()"
+        },
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 3757,
+          "needle": "Button(this.t('导入字体')"
+        },
+        {
+          "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+          "line": 25,
+          "needle": "font: string"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/fonts/font_choice.dart",
+          "line": 5,
+          "needle": "class FontChoice"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/fonts/font_repository.dart",
+          "line": 10,
+          "needle": "static const maxBytes"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/fonts/font_repository.dart",
+          "line": 37,
+          "needle": "static Future<void> _register"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/fonts/font_storage_native.dart",
+          "line": 22,
+          "needle": "await pending.rename"
+        }
+      ],
+      "route": [
+        "建立独立 filesDir UI-assets/fonts 命名空间，复用 bounded FD capture/hash 与 exact picker ticket，按 20 MiB 限额完整捕获，再验证 SFNT 表与 hash。",
+        "新增 owned FontChoice/字体验证合同；已审查 Rust shared 模块没有现成 UIFont/SFNT 合同，现有 transport 不能冒称字体验证。",
+        "仅持久化稳定 hash 资产 ID/显示名，不保存 provider URI；UTF-8 family/name 校验、当前页面/操作 owner、原选择返回 foreground 的准入沿用单次 ticket 模式。",
+        "验证资产后注册稳定族名并管理进程预算；重启重新验 hash/注册，缺失或错误时保留选择记录并回退。",
+        "补全导入/取消/忙碌/错误/重置/文件名与多语言预览 UI，以实际设备字体渲染和重启证据闭环。"
+      ],
+      "acceptance": [
+        "真实 TTF/OTF、坏签名、表越界/截断/过大、hash 不符、缺资产、8 族/64 MiB 预算。",
+        "picker Promise 先于/晚于 foreground、取消、旧页面、写失败、重启。",
+        "设备实际中日韩俄文字体和数字；registerFont 调用不是 glyph 渲染证明。"
+      ]
+    },
+    {
+      "id": "BACKGROUND_TEXTURE_FILES_RENDER_RESTORE",
+      "priority": "next_complete_feature",
+      "state": "OPEN_NOT_IMPLEMENTED",
+      "current": "导入背景图片/视频 disabled，纹理模式只绘制 PaperBackdrop 纸点。AppearanceSnapshot 无 TextureSource/mediaPlaying；真实文件选择、持久化、解码、清除、动画/声音控制尚未接入。",
+      "reference": "Flutter TextureSource 保存 location/name/kind/local；本地 image/GIF 25 MiB、video/audio transport 150 MiB，私有 textures 文件；image/GIF cover fit，video 单项循环、初始静音、foreground/reduced-motion gate，player dispose 完成后释放 lease。还有 online URL 和背景声音仲裁。",
+      "evidence": [
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 3584,
+          "needle": "Button(this.t('导入背景图片 / 视频')"
+        },
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 4344,
+          "needle": "this.canvasBackground === '纹理') { if"
+        },
+        {
+          "path": "hmos/entry/src/main/ets/pages/StudioArtwork.ets",
+          "line": 104,
+          "needle": "PaperBackdrop"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/media/texture_source.dart",
+          "line": 6,
+          "needle": "class TextureSource"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/media/texture_repository.dart",
+          "line": 7,
+          "needle": "class TextureRepository"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/media/texture_backdrop.dart",
+          "line": 49,
+          "needle": "bool get shouldPlay"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/media/texture_backdrop.dart",
+          "line": 91,
+          "needle": "PlaylistMode.single"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/main.dart",
+          "line": 1003,
+          "needle": "setBackgroundSound("
+        }
+      ],
+      "route": [
+        "独立私有 UI-assets/texture 资产与 typed source，完整 capture/验证/持久化 ACK 前保留旧背景；复用 exact picker/page/operation ownership。",
+        "image/GIF 复用 generic 64 MiB helper 的 25 MiB 调用界限；video 通过明确资产归属的 150 MiB transport adapter 复用 underlying helper，不能走 music library import。当前 music ImportPolicy 确实只暴露 audio。",
+        "复用 verified image lease 与 AVPlayer factory/callback 模式，建立独立 TextureBackdrop：cover、loop、默认静音、真实 decoder 准入、生命周期/动态效果暂停、release 失败可重试。",
+        "补齐文件名、清除、错误、播放/暂停、重启恢复及实际 online URL 路径；不把纸点算作文件纹理复现。",
+        "背景视频/音乐/附件共用单一 audible-owner 仲裁；替换旧源/释放失败不得重开旧源或双播放器，unblock 不自动恢复音乐播放。"
+      ],
+      "acceptance": [
+        "image/GIF/video 选择、取消/旧页面、大小/hash/解码失败、清除/替换、重启。",
+        "设备 codec/cover fit、前后台/减弱动画、先 player release ACK 后 lease release 及重试。",
+        "背景声与音乐/附件声音交接、远程 URL 验证/失败。"
+      ]
+    },
+    {
+      "id": "DAILY_EDITOR_AND_MENU",
+      "priority": "next_complete_feature",
+      "state": "OPEN_NOT_IMPLEMENTED",
+      "current": "HMOS 持久化三个默认中文 ID 的完成状态，但 Index 固定文本/说明，缺增删改排、自定义说明、恢复默认、全部完成/全部重置与组件编辑菜单；行用文本符号且 vertical padding=4。",
+      "reference": "Flutter local TipPreferences 独立于业务插件；相同三个默认 ID，自定义 ID daily:<32 lower hex>，100 行/16000 字符校验，存储 ACK 后安装；TipListEditor 完整草稿 UI/hold reorder，组件菜单全选/重置；LittleTask vertical padding=9、Material 状态图标与凹凸动画。",
+      "evidence": [
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 3594,
+          "needle": "DailyPanel()"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/tip_preferences.dart",
+          "line": 51,
+          "needle": "class TipPreferences"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/tip_preferences.dart",
+          "line": 55,
+          "needle": "static const defaultDailyIds"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/tip_preferences.dart",
+          "line": 195,
+          "needle": "Future<void> _commit("
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/tip_list_editor.dart",
+          "line": 9,
+          "needle": "class TipListEditor"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/pages/component_menus.dart",
+          "line": 46,
+          "needle": "if (id == 'daily')"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/main.dart",
+          "line": 5118,
+          "needle": "EdgeInsets.symmetric(vertical: 9)"
+        }
+      ],
+      "route": [
+        "新增 owned local TipPreferences 与编辑草稿，完成增/改/删/排/说明/Apply/Cancel/恢复默认流程及 storage ACK。此 presentation 状态不需要新建业务卡片协议。",
+        "保留现有三个默认 ID，使已存完成态直接兼容；自定义稳定 ID，改名/排序不丢完成态，仅剪除被删除的已知 daily ID。",
+        "接全选/重置/组件设置、忙碌/错误处理，按 LittleTask 实际 insets/图标/各样式状态复现。",
+        "新存储使用 typed read-failure/write-ACK 边界；Rust Preferences.completed 已有 ID 字段，但没有自定义文本/说明合同。"
+      ],
+      "acceptance": [
+        "重启保留文本/说明/顺序/完成；改名/排不丢完成，删/恢复默认保留非 daily 状态。",
+        "100 行/16000 字符、重复/错误 ID、多行行文本、写失败保留草稿和旧状态。",
+        "设备编辑/长按排/焦点、行间距/各样式/全部完成重置。"
+      ]
+    },
+    {
+      "id": "TASK_AMBIGUITY_IMPLICIT_RESOLUTION",
+      "priority": "semantic_first",
+      "state": "OPEN_SOURCE_DEFECT",
+      "current": "editor toggleTask 与 detailTask 均用 completion !== 1 得到 true；completion=2 的历史待确认任务会被普通勾选直接写为完成。",
+      "reference": "Flutter VersionedTaskPanel 对 needsExplicitDecision 给独立提示和标为完成/标为未完成按钮。Rust 三态投影和 SetCompletion(bool) 已存在。",
+      "evidence": [
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 2621,
+          "needle": "cmd.flag = task.completion !== 1"
+        },
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 2844,
+          "needle": "private detailTask("
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/versioned_task_panel.dart",
+          "line": 404,
+          "needle": "if (task.needsExplicitDecision)"
+        },
+        {
+          "path": "hmos/shared/plugins/workbench/src/tasks_v2.rs",
+          "line": 399,
+          "needle": "Command::SetCompletion { id, complete }"
+        }
+      ],
+      "route": [
+        "两个任务界面明确展示 completion=2，普通 checkbox 不得替用户选择结果。",
+        "用现有 task_toggle/SetCompletion(bool) 分别接完成/未完成显式选择，绑定 exact task ID/source 与 accepted receipt，成功选择前保持 2。"
+      ],
+      "acceptance": [
+        "正常显示/普通勾选不会隐式消歧；两种明确选择只改变当前 owned task。",
+        "旧 source/删任务/过期详情/未知结果保留原请求与待确认状态。"
+      ]
+    },
+    {
+      "id": "DETAIL_TASK_FULL_OPERATIONS",
+      "priority": "next_complete_feature",
+      "state": "OPEN_PARTIAL",
+      "current": "详情只有完成按钮与可选任务文本；缺 Flutter inline 增删改/copy/up-down/hold reorder 和选阶段完成全部。editor 已有部分操作，但 complete-all 固定当前阶段；submit 对 add/rename 依赖 editor 冻结完整输入。",
+      "reference": "Flutter VersionedTaskPanel 有完整详情操作和阶段选择，按匹配 accepted view 安装。Rust task_add/toggle/remove/rename/reorder/complete_all/stage 与任务投影已有。",
+      "evidence": [
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 2844,
+          "needle": "private detailTask("
+        },
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 2657,
+          "needle": "private confirmTaskChange("
+        },
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 2066,
+          "needle": "cmd.action === 'task_add'"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/versioned_task_panel.dart",
+          "line": 18,
+          "needle": "class VersionedTaskPanel"
+        },
+        {
+          "path": "hmos/rust/src/lib.rs",
+          "line": 687,
+          "needle": "\"task_add\" | \"task_toggle\""
+        }
+      ],
+      "route": [
+        "建立 owned detail-task coordinator：source/task/revision 与 full TextValue/FieldPolicy 输入；不能把 detail 文本硬接缺少 editor frozen-input 的旧 submit。",
+        "复用 Rust 事务/投影/完整排序验证，补 add/rename/delete/copy/up-down/hold reorder、category 阶段 picker 与选阶段全部完成。",
+        "保留原始 IME/selection/composing、未知结果 exact original request；匹配 ACK 后才清空已提交输入/安装 UI；drag 绑定 task ID/source/generation。"
+      ],
+      "acceptance": [
+        "全部详情操作、显式消歧、选阶段 complete-all、稳定 ID 排序。",
+        "完整输入/IME/paste、source 变化/并发编辑、失败/未知 ACK 与关/重开不丢输入或归属。"
+      ]
+    },
+    {
+      "id": "DELETE_ACK_UNDO_AND_EXPIRY_UI",
+      "priority": "next_complete_feature",
+      "state": "OPEN_PARTIAL",
+      "current": "HMOS 已有真正 deleted-card page/detail、复制与附件访问，以及 8 秒 restore 命令；restore button/menu 只按 busy/pending 禁用，过期仍可点击。删除成功只通用保存消息，缺直接 Undo 通知。",
+      "reference": "Flutter WorkbenchPage 实际只有五页，没有 Trash 页。这里真正差距是 _showVersionedDeleteUndo：原标题、dispatch 前 monotonic Stopwatch、剩余 8 秒、同 backend owner、原位置；Rust 也限制 8 秒。",
+      "evidence": [
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 2935,
+          "needle": "private restoreDeleted("
+        },
+        {
+          "path": "hmos/entry/src/main/ets/pages/Index.ets",
+          "line": 3906,
+          "needle": "Button('撤销删除（8秒内）'"
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/main.dart",
+          "line": 1526,
+          "needle": "void _showVersionedDeleteUndo("
+        },
+        {
+          "path": "build/win-cloud-20261005/lib/plugins/workbench_ids.dart",
+          "line": 3,
+          "needle": "enum WorkbenchPage"
+        },
+        {
+          "path": "hmos/shared/plugins/workbench/src/cards_v2.rs",
+          "line": 166,
+          "needle": "Command::Restore { now_ms }"
+        }
+      ],
+      "route": [
+        "dispatch 前记录 source-bound delete receipt 与 monotonic 时间；仅实际 delete ACK 后显示原卡片 Undo，使用保守剩余时间。",
+        "复用 restore/source 与 CardOrder 原位置，detail/menu 过期真实禁用，foreground 时刷新期限。",
+        "维持共享 8 秒语义，不为所谓 Flutter 对齐新增永久恢复/清空回收站语义。"
+      ],
+      "acceptance": [
+        "ACK 延迟、过期前后、前后台、backend/source 变更、重复恢复、未知结果及恢复原位置。",
+        "设备实际通知/action 与过期禁用渲染。"
+      ]
+    }
+  ],
+  "reuse": [
+    {
+      "module": "native file_stream/lib.rs/index.d.ts",
+      "existing": "bounded owned FD + streaming SHA256 + sync_all；generic 64 MiB、另有当前名为 music 的 150 MiB helper。",
+      "boundary": "传输不是字体或 codec 验证，独立 UI-assets adapter/命名空间；20 MiB font、25 MiB image/GIF、150 MiB video transport。"
+    },
+    {
+      "module": "MusicWorkbench.ets + MusicFiles.ets",
+      "existing": "exact one picker ticket、page/operation owner、foreground-before/after-Promise 准入、私有 capture/hash/journal 模式。",
+      "boundary": "复用模式，不能复用 music IDs、library mutation、音乐 pending 请求来导入字体/背景。"
+    },
+    {
+      "module": "AttachmentFiles / VerifiedImages / image-media preview / AttachmentPlayback",
+      "existing": "filesDir 私有 capture、哈希、验证 lease、实际 image/AVPlayer components。",
+      "boundary": "独立背景 controller 补 cover/loop/mute/lifecycle/release ACK，不能将普通附件播放器直接算作背景功能。"
+    },
+    {
+      "module": "shared services.rs import_policy",
+      "existing": "pure 25 MiB image/GIF、150 MiB video/audio 与 remote URL 验证。",
+      "boundary": "现有 music_bridge ImportPolicy hardcodes audio；如需纯 generic policy，新增 owned native adapter，不扩权限。"
+    },
+    {
+      "module": "shared preferences.rs / preferences.proto",
+      "existing": "已有 TextureSource/completed、旧字节校验与未知字段合并。",
+      "boundary": "无 UIFont FontChoice/SFNT、自定义 daily text/caption；仅复用支持的合同与存储模式。"
+    },
+    {
+      "module": "Rust lib.rs / tasks_v2 / tasks_v2_codec / cards_v2",
+      "existing": "tasks commands、三态投影、SetCompletion(bool)、完整 reorder、complete-all chosen stage、8 秒 restore。",
+      "boundary": "补齐 UI coordinator/所有权与确认边界，无须重做业务事务。"
+    }
+  ],
+  "inventory": [
+    {
+      "path": "build/win-cloud-20261005/lib/main.dart",
+      "bytes": 221628,
+      "sha256": "2cb2a519e31ac982d3a8638eb7de95fe63d5421ed3d1b6acda507cd142169f06"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/fonts/font_choice.dart",
+      "bytes": 1716,
+      "sha256": "eaaba733e9df91939a767c14319a4bafe8590e754ffc63e6013080fcb7d6231d"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/fonts/font_repository.dart",
+      "bytes": 3061,
+      "sha256": "3dca5fc1fbd1ee9a7e6a2ab2bab372d5ea918efc369e29fdef795a739abee15d"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/fonts/font_storage_native.dart",
+      "bytes": 1190,
+      "sha256": "5aef727e5861fe7b9286941f574586d46238d1e6ecdc3c63325e9934005c4114"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/fonts/font_settings.dart",
+      "bytes": 5362,
+      "sha256": "723bb164fd3364dcd0e67713d65be28a16d64ef390dca6df109eab039734e98b"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/media/texture_source.dart",
+      "bytes": 1517,
+      "sha256": "2f1b76911f33acb94cb182376418ec08a61a7c19381cab62a6c905824d0816f1"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/media/texture_repository.dart",
+      "bytes": 1449,
+      "sha256": "13ef42cf82972f82c0bc7eba86f9575b96a347b0f325084ab3a061c2a2952a4d"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/media/texture_storage_native.dart",
+      "bytes": 1609,
+      "sha256": "3eb9155bb4fbc80a6c765ff0b72f3708a9537898998fa248df155a10740aefaa"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/media/texture_backdrop.dart",
+      "bytes": 5345,
+      "sha256": "605f698940cda7cd9e3c8c4d86c96b6ed70cae1c3940eeb5084ac667ce50847d"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/media/texture_link_dialog.dart",
+      "bytes": 3560,
+      "sha256": "5beda9b845084c2d9608c8f3b741f521604dfc17803df095536e11504f00dfc8"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/tip_preferences.dart",
+      "bytes": 7541,
+      "sha256": "82563338a1f706d64653dde84b4b4c07bb0966872e9e73c81d6117033b5f30ee"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/tip_list_editor.dart",
+      "bytes": 14941,
+      "sha256": "fefdce765a39cd0ac78adf786a91f9267211ed7a844d298d5051874fe75104ea"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/pages/component_menus.dart",
+      "bytes": 5278,
+      "sha256": "98b3d7b90ba8446b1f9fb548fb9924686f02d400be774bdedc61d805eabbe430"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/versioned_task_panel.dart",
+      "bytes": 21175,
+      "sha256": "f97ec18ec42b4f6f33963eb0eb5da15a137f2588f6e4915c7db99f7e6d40c9a3"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/plugins/workbench_ids.dart",
+      "bytes": 4811,
+      "sha256": "394c7836ea68763e1c8c431cdf1f86b8a789c5207b930ce08470967a4e7753e9"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/Index.ets",
+      "bytes": 338502,
+      "sha256": "179a9a9c8259487497027fd09a9ced08f1799d11effa3463d7af9fa4396987d3"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/StudioArtwork.ets",
+      "bytes": 6576,
+      "sha256": "9ca8d8bbc1580e1b2a0d5d9f3251765df44a04d78ba3e0791e778fbd74e4983d"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+      "bytes": 5126,
+      "sha256": "0fcaa587d24b1fd0a1b4d066f465bc2178ff16b830187e1e2a250e3f5b4a67b2"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicWorkbench.ets",
+      "bytes": 30720,
+      "sha256": "9bd2683e3356637c92b7efcfc9227ba916cd87c7aff4e57b2863cb90a432deb3"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicFiles.ets",
+      "bytes": 31488,
+      "sha256": "22005fbc45e6a980c86b68890c9c7c67ede4dc2e8ab1b14c9a3828cd062e7da5"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/AttachmentFiles.ets",
+      "bytes": 45611,
+      "sha256": "74ad85e0e6504eb97bc81d9c1983d6f3369e6c72fe0c14d81ed0f92b4b8849bb"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/VerifiedImages.ets",
+      "bytes": 4645,
+      "sha256": "1a04e9c53432759d9734aca7582bc9cae6d951ec3dfcf124686dc67acba50f3e"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/AttachmentImagePreview.ets",
+      "bytes": 14047,
+      "sha256": "484076c31dcf78dddb69b0ea27f6bb46c8fd753fc9763f0f07759ce9438442a8"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets",
+      "bytes": 17283,
+      "sha256": "db0e2ad65213c06cee57bdb1f683eafeb0deafbf93d10484d0f5dc0e0c315a27"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/AttachmentPlayback.ets",
+      "bytes": 10919,
+      "sha256": "4bdb0763e4ca6d0ec665ac9d2c7bc9bff38e2da8167dab8f7e6d532ffd2feccd"
+    },
+    {
+      "path": "hmos/entry/src/main/cpp/types/libmorrow/index.d.ts",
+      "bytes": 1721,
+      "sha256": "69bde941bf6083fd6628e3229b50c2448327d6404de7020e3af02a946f9b1daf"
+    },
+    {
+      "path": "hmos/rust/Cargo.toml",
+      "bytes": 919,
+      "sha256": "c3c53eb60eb751bcb3f5bd26e37ef54d26d5c906a8fbeb7fdf76887377e2bb82"
+    },
+    {
+      "path": "hmos/rust/src/file_stream.rs",
+      "bytes": 5902,
+      "sha256": "21925dbf7dd41cac87c215c68456bf04b7937c8b92824f00968259931f9c705e"
+    },
+    {
+      "path": "hmos/rust/src/lib.rs",
+      "bytes": 64423,
+      "sha256": "1cc8e44723fc69965777c0c502ebfbb88c4561bf89cd163d51e684ab1e2ca938"
+    },
+    {
+      "path": "hmos/rust/src/music_bridge.rs",
+      "bytes": 35936,
+      "sha256": "1003c72c11d90b6479940ea5ab65b9431c56a5beaca641bcf38660221e49b695"
+    },
+    {
+      "path": "hmos/shared/plugins/workbench/src/services.rs",
+      "bytes": 19030,
+      "sha256": "5551924e63a942b35cd8a0d9e8ee513ee9351b61347e5757c9132ca1ba593065"
+    },
+    {
+      "path": "hmos/shared/plugins/workbench/src/preferences.rs",
+      "bytes": 17744,
+      "sha256": "85c764733a9e4acbe92c0d364abf1cd16579c6b496eadd0bc71612042c99fc25"
+    },
+    {
+      "path": "hmos/shared/plugins/workbench/src/tasks_v2.rs",
+      "bytes": 16389,
+      "sha256": "43849b828b2c6f4605ea8fe677cbb4e95a64fcfb68eec4639346556e9947c70d"
+    },
+    {
+      "path": "hmos/shared/plugins/workbench/src/tasks_v2_codec.rs",
+      "bytes": 4388,
+      "sha256": "cefad95199cd2bfcb281132476bef9175f3001303c0cfdd77d3d85947792ac5f"
+    },
+    {
+      "path": "hmos/shared/plugins/workbench/src/cards_v2.rs",
+      "bytes": 6725,
+      "sha256": "ed92f85af871a1af28b6bd680217dde9f39e1a8cb5701f5de15a0ea04ac86ced"
+    },
+    {
+      "path": "hmos/shared/plugins/workbench/schemas/preferences.proto",
+      "bytes": 1591,
+      "sha256": "72232e0bd0b6d7e74468a382e05f57a333bc157788bb35d2fb6db50227d09c63"
+    }
+  ],
+  "corroboration": "子审计 daily_task_parity_readonly 未写文件；其 daily/task/Undo 核心来源已由本审计独立重读。无子任务运行证明。"
+}

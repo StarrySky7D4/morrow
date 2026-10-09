@@ -130,8 +130,25 @@ test('actual current and selected rows keep fill=false and relay the parent them
   const current = h.panelSource.slice(h.panelSource.indexOf("Text(this.t('随身听'))"), h.panelSource.indexOf("this.iconAction(0xf0193"));
   assert.match(rows, /borderRadius\(this\.round\(10\)\)\.backgroundColor\(Color\.Transparent\)/);
   assert.match(current, /borderRadius\(this\.round\(14\)\)\.backgroundColor\(Color\.Transparent\)/);
-  for (const source of [rows, current]) assert.match(source, /MusicInsetRelief\(\{ style: this\.style, depth: this\.depth, dark: this\.dark, surface: this\.surface,/);
-  const painter = h.panelSource.slice(h.panelSource.indexOf('struct MusicInsetRelief'), h.panelSource.indexOf('export struct MusicPanelContent'));
+  for (const source of [rows, current]) assert.match(source, /RecessedGlassRelief\(\{ style: this\.style, depth: this\.depth, depthMultiplier: -\.8, dark: this\.dark, surface: this\.surface,/);
+  const painter = h.reliefSource;
   assert.doesNotMatch(painter, /fillRect\(|\.backgroundColor\(|\.border\(|\.shadow\(/);
   assert.match(painter, /c\.fill\(wall, 'evenodd'\)/); assert.match(painter, /hitTestBehavior\(HitTestMode\.None\)/);
+});
+
+test('actual shared search inset uses -1 widget depth rather than the music -.8 depth', () => {
+  for (const dark of [false, true]) {
+    const industrial = paint('industrial', dark, { depthMultiplier: -1 }), [outline] = strokes(industrial);
+    assert.equal(outline.width, 2); color(outline.style, dark ? [0, 0, 0] : [55, 50, 61], dark ? .72 : .52);
+    const neumorphic = paint('neumorphism', dark, { depthMultiplier: -1 });
+    close(fills(neumorphic)[0].path[1][1][0][1], 15.25);
+    color(fills(neumorphic)[0].color, dark ? [38, 38, 38] : [64, 64, 64], dark ? .52 : .24);
+  }
+  const search = paint('industrial', false, { depthMultiplier: -1, depth: 2 }); assert.equal(strokes(search)[0].width, 4);
+});
+
+test('actual shared inset rejects raised, zero and corrupt multipliers without repainting a frame', () => {
+  for (const depthMultiplier of [0, 1, NaN, Infinity, -Infinity]) {
+    const h = paint('clay', false, { depthMultiplier }); assert.deepEqual(ops(h), ['clearRect']);
+  }
 });

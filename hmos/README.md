@@ -1,5 +1,13 @@
 # Morrow HMOS
 
+2026-10-09 **v32 当前检查点**：按 Flutter `Glass` 的普通 depth=0 设计，移除普通面板及候选材质预览叠加的 raised 轮廓；搜索保留设计要求的凹陷，与音乐共用 `RecessedGlassRelief`。搜索使用自己的材质/depth/radius 与 -1 倍数，音乐内层使用全局色盘/depth/radius 与 -0.8 倍数，外层组件材质覆盖仍独立。主阴影按 SDK 物理 px 转换且 `fill=false`，候选预览按自身材质模式绘制。这是源码设计差异的修正候选，**不宣称所有界面未知框线已修复或完整 UI 追平**；第二外侧光阴影及父容器裁剪方案仍 **OPEN**。
+
+完整实际 ETS/tool **1168/1168 PASS，0 fail/skip/cancel**，49 测试文件、156 模型输入前后一致；API26 **SUCCESS /40.621s**，34 tasks 全执行，324 复制/367 仓库输入精确，九项实际产品模块均检查并 emit（含 `RecessedGlassRelief`），四项包内原生库与本次 stripped outputs 核对 PASS。283 native 来源和双 ABI 静态库精确复用 v29，本轮无新 Rust 构建或测试资格。版本 **dev22/1000022**，HAP **31,442,946B /06342B5C…**，unsigned/uninstalled。
+
+本轮实际安装并启动的是上一轮 **dev21/1000021**；DocumentPicker 两次进入 Download 后关闭，未观察到选中文件，尚无已确认的音乐导入或播放证据。该设备观察不授予 dev22 新绘制资格，也不能据此确定提供者缺陷。dev22 全界面/全样式像素、真实声音/seek/后台/重启验收均 **NOT_RUN**；在线歌词、解密、封面、原件 GC/protected、签名/ARM64 与完整 Flutter/Windows 对齐保持 **OPEN**。仅推送 `codex/ArkTsUI`，不并入主线，见 [v32 验证](reports/ui-source/v32/validation.md)。
+
+以下 v31 及更早段落保留为历史；旧段落中的“当前”、设备状态和资格仅指其当轮范围。最新资格以上述 v32、当前表及验证记录为准。
+
 2026-10-09 **v31 当前检查点**：补齐音乐内层七种 Flutter 风格，当前曲目及选中行保持透明，flat 不增加框线；Index 传入实际色盘 surface。完整原导入请求须写入、fsync、关闭全部确认后才派发 Native begin，恢复保留原 IDs/CAS 并显式核对。同一页面的文件选择器往返使用一次性 ticket，返回前台后重读实际曲库；歌词目标变化时保留原目标下的完整原文。
 
 完整实际 ETS/tool **1158/1158 PASS，0 fail/skip/cancel**，48 测试文件、153 输入前后一致；API26 **SUCCESS /33.904s**，34 tasks 全执行，323 复制/366 仓库输入一致，八音乐模块实际检查并 emit，四项包内原生库核对 PASS。283 native 来源和双 ABI 静态库精确复用 v29，本轮没有新 Rust 构建或测试资格。版本 **dev21/1000021**，HAP **31,438,704B /92258D5D…**，unsigned/uninstalled。

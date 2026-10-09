@@ -1,5 +1,13 @@
 # 功能对齐与 Rust 复用检查
 
+2026-10-09 **v32 当前检查点**：按 Flutter `Glass` 的普通 depth=0 设计，移除普通面板及候选材质预览叠加的 raised 轮廓；搜索保留设计要求的凹陷，与音乐共用 `RecessedGlassRelief`。搜索使用自己的材质/depth/radius 与 -1 倍数，音乐内层使用全局色盘/depth/radius 与 -0.8 倍数，外层组件材质覆盖仍独立。主阴影按 SDK 物理 px 转换且 `fill=false`，候选预览按自身材质模式绘制。这是源码设计差异的修正候选，**不宣称所有界面未知框线已修复或完整 UI 追平**；第二外侧光阴影及父容器裁剪方案仍 **OPEN**。
+
+完整实际 ETS/tool **1168/1168 PASS，0 fail/skip/cancel**，49 测试文件、156 模型输入前后一致；API26 **SUCCESS /40.621s**，34 tasks 全执行，324 复制/367 仓库输入精确，九项实际产品模块均检查并 emit（含 `RecessedGlassRelief`），四项包内原生库与本次 stripped outputs 核对 PASS。283 native 来源和双 ABI 静态库精确复用 v29，本轮无新 Rust 构建或测试资格。版本 **dev22/1000022**，HAP **31,442,946B /06342B5C…**，unsigned/uninstalled。
+
+本轮实际安装并启动的是上一轮 **dev21/1000021**；DocumentPicker 两次进入 Download 后关闭，未观察到选中文件，尚无已确认的音乐导入或播放证据。该设备观察不授予 dev22 新绘制资格，也不能据此确定提供者缺陷。dev22 全界面/全样式像素、真实声音/seek/后台/重启验收均 **NOT_RUN**；在线歌词、解密、封面、原件 GC/protected、签名/ARM64 与完整 Flutter/Windows 对齐保持 **OPEN**。仅推送 `codex/ArkTsUI`，不并入主线，见 [v32 验证](../reports/ui-source/v32/validation.md)。
+
+以下 v31 及更早段落保留为历史；旧段落中的“当前”、设备状态和资格仅指其当轮范围。最新资格以上述 v32、当前表及验证记录为准。
+
 2026-10-09 **v31 当前检查点**：补齐音乐内层七种 Flutter 风格，当前曲目及选中行保持透明，flat 不增加框线；Index 传入实际色盘 surface。完整原导入请求须写入、fsync、关闭全部确认后才派发 Native begin，恢复保留原 IDs/CAS 并显式核对。同一页面的文件选择器往返使用一次性 ticket，返回前台后重读实际曲库；歌词目标变化时保留原目标下的完整原文。
 
 完整实际 ETS/tool **1158/1158 PASS，0 fail/skip/cancel**，48 测试文件、153 输入前后一致；API26 **SUCCESS /33.904s**，34 tasks 全执行，323 复制/366 仓库输入一致，八音乐模块实际检查并 emit，四项包内原生库核对 PASS。283 native 来源和双 ABI 静态库精确复用 v29，本轮没有新 Rust 构建或测试资格。版本 **dev21/1000021**，HAP **31,438,704B /92258D5D…**，unsigned/uninstalled。
@@ -102,13 +110,13 @@ dev.15 历史源码交付 `0.1.0-hmos-dev.15` / `1000015`：文件选择器按�
 | Wasm 插件解释器与包管理 | `plugin_runtime` + `sdk/rust` | SDK 随业务模块复用编译；运行期宿主权限、worker、动态包审批/UI 渲染未接入。未声称 Rust 原生直调等于 Wasm 隔离运行 |
 | HTTP/服务/TLS/凭据 | `network_node`, `workbench_host/*control`, `io_tasks` | 审查依赖与平台边界；本次未连接外部服务，未编译/运行完整网络节点；后台任务、权限、HUKS/TLS 适配待实现 |
 | 捕获/转换、富文本、表格/RTF | 原 capture 转换块，Flutter `clipboard_import.dart` / `office_clipboard.dart` / `rich_content.dart` | 保留dev.17授权快照/原件/内嵌图与dev.18来源分档、完整SHA和RTF string UTF8+BOM serialization。dev.19完整输出改为Unicode16 grapheme≤20000，回执绑定完整UTF-16/UTF-8长度和版本，无旧回执fallback；converter/output JSON各512KiB仍独立生效。正式Flutter插件RTF仍2Mi+64KiB且无异常fallback，严格坏编码/RTF U+FFFD、DOCX/XLSX/OLE包转换与捕获票据资格未等价；64MiB/20槽/sidecar不放宽。旧dev.18条件对照本轮在final Rust fresh重跑，真实系统富格式/Office提供者/原件图片持久闭环NOT_RUN，见 [dev.19字段审计](../reports/ui-source/v19/editor-field-policy-source-audit.md)与 [dev.18来源审计](../reports/ui-source/v18/clipboard-capacity-audit.md) |
-| 歌词/媒体与格式解密 | Flutter music_panel/little_tips + Native 独立曲库 | v31 原导入 wire 先持久确认、picker 单次前台接续、七种内层风格及透明 child；actual Index/八模块产品图覆盖。设备 codec/声音/拖拽/全样式/框线/崩溃恢复 NOT_RUN；重启部分清理/在线/解密/metadata/封面/GC/protected/full parity OPEN，见[v31验证](../reports/ui-source/v31/validation.md) |
+| 歌词/媒体与格式解密 | Flutter music_panel/little_tips + Native 独立曲库 | v32 音乐/搜索共用 RecessedGlassRelief，音乐内层按全局色盘/depth/radius/-0.8，外层材质覆盖独立；保留 v31 原 wire 派发前持久确认、picker 单次前台接续及完整原目标歌词。实际产品九模块emit；本轮只安装dev21，两次Download后picker关闭，无音乐导入/播放资格。dev22 codec/声音/seek/后台/拖拽/全样式/框线/崩溃恢复 NOT_RUN；第二外侧光阴影、重启部分清理/在线/解密/metadata/封面/GC/protected/full parity OPEN，见[v32验证](../reports/ui-source/v32/validation.md) |
 | 语言、字体、主题、玻璃效果、稳定瀑布流 | Flutter `morrow_i18n`, fonts/layout/shaders | dev.3 已补齐专用分类卡片、外观/独立材质/色盘/系统字体设置、基础正文预览、日常清单和音乐空状态；复用九语 ARB、外观持久保存。模拟器验证详见 UI_DESIGN_DEV3.md；折射 shader、完整九语动态文案、字体/背景文件导入、媒体与宽屏设备验收仍待完成 |
-| 七种风格、立体深度、组件材质跟随 | Flutter `appearance.dart`, `component_material_page.dart` | dev.5 基础面板圆角/边缘/阴影和完整材质引用；循环拒绝、取消/应用和重启验证通过。公共描边使用面板实测尺寸并限制绘制范围，修复跨卡片框线。控件浮起/按压动画及 shader 尚未复现；详见 dev.5 验证记录 |
+| 七种风格、立体深度、组件材质跟随 | Flutter `appearance.dart`, `component_material_page.dart` | v32 按普通Glass depth=0移除额外raised轮廓，候选预览绑定自己的材质模式；搜索保留真实凹陷，与音乐共用七风格绘制，主阴影换算物理px且fill=false。23组合/1168全量模型及产品构建通过，但dev22未安装，不宣称所有界面框线修复。第二外侧光阴影/父裁剪、完整像素/动画/shader仍OPEN。dev.5 圆角/材质引用、循环拒绝/取消/应用/重启与当轮框线修复证据保留为历史 |
 | 工作区布局与位置 | Flutter `workspace_viewport.dart` / `stable_masonry_grid.dart` / `render_stable_masonry_grid.dart` | dev.7 改为原生 LazyVWaterFlowLayout + LazyForEach；页面/卡片身份稳定，修订内容和移动位置分别失效，保留 16 张交错记录验证。dev.8 最终包新增 440/744 vp 单/双列、四卡间距/排序/遍历与查询修订刷新；dev.6 保留 880/1488 vp 面板与五页位置恢复证据。完整主题、键盘/动画及内存/帧时资格仍未完成 |
 | 图片基础手势 | Flutter `attachment_view.dart` / 实际安装 `InteractiveViewer` | dev.18修复焦点、单指/纯双指pan、pinch接管、tight边界与cancel/旧事件身份，30/30实际ETS/组件模型PASS；有效手势缩放1–2.5，按钮/双击复位为既有HMOS补充。dev.19新增独立API26真实PointerMatrix/injectMultiPointerAction测试工具，main/test HAP编译及10工具模型PASS，未安装、未执行设备手势；不增加生产手势或图片渲染资格。惯性/fling/scale-velocity未实现，GIF/损坏格式未验。见 [生产手势审计](../reports/ui-source/v18/image-gesture-source-audit.md)与 [工具审计](../reports/ui-source/v19/image-multipointer-tester-audit.md) |
 | 编辑器文字与预览 | Flutter `main.dart::_bodyEditor` / `idea_markdown.dart` | CommonMark/准确修订pin、590vp分栏与内嵌图8个/64MiB保持；v27 Index 已接当前完整子恢复及关闭后最新 source 的 current_v2 重开，真实 CardView 分类 v2/legacy 均以当前 format2 全文编辑，LF todos 为空，保 TaskId/完成/顺序/退役身份/分类阶段收藏/未知字段；old own LF 不授新基线，active原Session接续独立。B62旧native恢复/keep不替代新保存闭环，真实新输入/IME/连续选区/富文本与设备验收仍 OPEN |
-| 平台分发 | DevEco API26 | dev21/1000021，仅codex/ArkTsUI、不并main。v31 1158/1158模型、153输入一致；283 native 来源/双ABI库精确复用v29。完整产品API26 SUCCESS33.904s/34执行任务，323复制/366输入及4包库核对PASS，HAP31,438,704B/92258D5D… unsigned/uninstalled；设备仅上一轮dev20安装启动，v31新设备NOT_RUN，签名/ARM64运行/HUKS/full parity OPEN，见[v31验证](../reports/ui-source/v31/validation.md) |
+| 平台分发 | DevEco API26 | dev22/1000022，仅codex/ArkTsUI、不并main。v32 1168/1168模型、156输入一致；283 native来源/双ABI库精确复用v29，无新Rust构建/测试。实际产品API26 SUCCESS40.621s/34执行任务，324复制/367来源及九模块emit/四包库核对PASS；HAP31,442,946B/06342B5C… unsigned/uninstalled。本轮实际安装dev21并两次观察Download关闭，无音乐导入播放；dev22设备NOT_RUN，签名/ARM64运行/HUKS/full parity OPEN，见[v32验证](../reports/ui-source/v32/validation.md) |
 
 ## 后续顺序
 

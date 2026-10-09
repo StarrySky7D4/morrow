@@ -1,0 +1,13 @@
+{
+  "observedUtc": "2026-10-09T03:18:49.950Z",
+  "phase": "INSTALLED_AND_LAUNCHED",
+  "baseline": "62a8b964bb27840f0348bb6b8ef520142880b9b1",
+  "device": "127.0.0.1:5555",
+  "uuid": "01fc19c8-444a-42f1-9f70-79321a2502b3",
+  "hap": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev31-music-ui-a1\\entry-default-unsigned.hap",
+  "hostBytes": 31438704,
+  "hostSha256": "92258D5D2F38C195383FF7549D58C3876ABA1986C53F69B6BBF32A12D0AE081F",
+  "versionCode": 1000021,
+  "versionName": "0.1.0-hmos-dev.21",
+  "scope": "Acknowledged update/install and start with bundle version readback. Host package identity verified; no protected on-device package hash, music runtime or UI qualification implied."
+}

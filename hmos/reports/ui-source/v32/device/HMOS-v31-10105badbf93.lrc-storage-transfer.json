@@ -1,0 +1,12 @@
+{
+  "issuedUtc": "2026-10-09T03:32:59.538Z",
+  "phase": "TRANSFER_VERIFIED",
+  "name": "HMOS-v31-10105badbf93.lrc",
+  "remotePath": "/storage/media/100/local/files/Docs/Download/HMOS-v31-10105badbf93.lrc",
+  "bytes": 163,
+  "sha256": "e94ff0e2b8a9a1c28cad810e109ee2dcc217598afbbe4f53f2573e8722aa0ef5",
+  "response": "FileTransfer finish, Size:163, File count = 1, time:61ms rate:2.67kB/s\r\r\n",
+  "remoteBytes": 163,
+  "remoteSha256": "e94ff0e2b8a9a1c28cad810e109ee2dcc217598afbbe4f53f2573e8722aa0ef5",
+  "verifiedUtc": "2026-10-09T03:32:59.834Z"
+}

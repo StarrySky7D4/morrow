@@ -1,0 +1,80 @@
+{
+  "qualification": "PASS_SCOPED_ACTUAL_GLASS_STYLE_CALLS",
+  "sdk_build": "NOT_RUN",
+  "device_rendering": "NOT_RUN",
+  "exact_pixel_match": "NOT_RUN",
+  "secondary_outer_cast": "OPEN_SDK_SCALAR_SHADOW_AND_PARENT_CLIP",
+  "exit_code": 0,
+  "tests": 22,
+  "passed": 22,
+  "failed": 0,
+  "source_exact_before_after": true,
+  "input_count": 8,
+  "reference_count": 10,
+  "duration_ms": 1209.4976,
+  "node_version": "v24.14.1",
+  "log_sha256": "6630180d1eed61f8e31f3c53cd9b090c2be89ae15e9722016d4639a134ce5aa6",
+  "inputs": [
+    {
+      "path": "hmos/tool/run-glass-style-alignment.cjs",
+      "byte_length": 4834,
+      "sha256": "5bd3c758d3d38f1d7dfa3c7437114760c919904b3511cc74339b45775309f708"
+    },
+    {
+      "path": "hmos/tool/index-glass-style.test.cjs",
+      "byte_length": 9528,
+      "sha256": "351b5425fcc95448a6140593f18934d8acf6c571b5838d8e8a045a73ec571f47"
+    },
+    {
+      "path": "hmos/tool/music-ui-component-test-harness.cjs",
+      "byte_length": 7993,
+      "sha256": "b45b23f8bca6a2b64ef5868d0528fb7b9ba2b547763de5bb7c33268707e50709"
+    },
+    {
+      "path": "hmos/tool/music-ui-inset.test.cjs",
+      "byte_length": 10935,
+      "sha256": "35eab492f0a290dd28b091836eada8639b0dcaae6a9ebbfb3a5e08a2138bec92"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/MusicPanel.ets",
+      "byte_length": 26020,
+      "sha256": "0e0cbb65d2056de3595a9f3f7203120a0e0b689c72cf179ba6dfe080f00f5319"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/RecessedGlassRelief.ets",
+      "byte_length": 5680,
+      "sha256": "1ed9f9f5089f7a3f8ff92cf4942d379af5863ab290131e62058ea173e06c0c75"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/Index.ets",
+      "byte_length": 338502,
+      "sha256": "179a9a9c8259487497027fd09a9ced08f1799d11effa3463d7af9fa4396987d3"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+      "byte_length": 5126,
+      "sha256": "0fcaa587d24b1fd0a1b4d066f465bc2178ff16b830187e1e2a250e3f5b4a67b2"
+    }
+  ],
+  "controlled_seams": [
+    "UIContext.vp2px density conversion",
+    "ArkUI Builder child/attribute call recorder",
+    "SDK CanvasRenderingContext2D, Path2D and CanvasGradient call recorder",
+    "timers"
+  ],
+  "assertions": [
+    "seven-style light/dark shared inset paint",
+    "search -1 versus music -.8 signed widget depth",
+    "global music inner palette versus local outer material",
+    "ordinary Glass and candidate preview exclude extra raised contours",
+    "search keeps real recessed paint and nonflat outer cast suppression",
+    "primary shadow physical px, fill=false and distinct flat material modes",
+    "Footer/Liquid separate material guards",
+    "complement walls, blur VP, bounded radius, resize cancellation"
+  ],
+  "limitations": [
+    "ArkUI and Canvas APIs remain controlled seams; there is no SDK rasterization or device pixel acceptance.",
+    "SDK exposes one general shadow. A correct second outer cast needs a bounded outer wrapper that survives parent clipping.",
+    "High-contrast rendering, animation/optical refraction and exact native shadow blur equivalence remain unqualified."
+  ]
+}

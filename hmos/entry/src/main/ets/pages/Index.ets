@@ -29,6 +29,7 @@ import { uiText } from '../model/UiStrings';
 import { preferences } from '@kit.ArkData';
 import { AppearanceSnapshot, MaterialChoice, alpha, mix, contrast, visualStyles, visualStyleLabels, styleRadiusScale, resolveMaterial, normalizeMaterials, canFollow } from '../model/Appearance';
 import { SurfaceRelief } from './SurfaceRelief';
+import { RecessedGlassRelief } from './RecessedGlassRelief';
 import { AmbientBackdrop, IdeaOrb, GlassRim, PaperBackdrop } from './StudioArtwork';
 import { common } from '@kit.AbilityKit';
 import { NodeContent, LazyVWaterFlowLayout, LazyVWaterFlowLayoutAttribute, LengthMetrics, window } from '@kit.ArkUI';
@@ -2743,18 +2744,29 @@ struct Index {
   private surface(): string { return this.theme === '自定义' ? mix(this.baseColor(), this.dark ? '#FFFFFF' : '#000000', this.dark ? .065 : .015) : this.tone(this.dark ? '#292634' : '#FFFFFF'); }
   private material(id: string): MaterialChoice | undefined { return resolveMaterial(this.materials, id); }
   private depthFor(id: string = ''): number { const depth = this.material(id)?.depth ?? -1; return depth < 0 ? this.styleDepth : depth; }
-  private surfaceShadow(id: string = '', style: string = this.visualStyle, depth: number = this.depthFor(id)): ShadowOptions {
+  private surfaceShadow(id: string = '', style: string = this.visualStyle, depth: number = this.depthFor(id), mode: string = this.modeFor(id)): ShadowOptions {
     // Flutter FooterOverlay is plain content unless its material is customized.
     if (id === 'footer' && !this.material(id)) { return { radius: 0, color: Color.Transparent }; }
+    // The search Glass is recessed; _styleGlass removes its outer casts.
+    if (id === 'search' && style !== 'flat') { return { radius: 0, color: Color.Transparent }; }
     const d = depth; const opacity = Math.min(1, d);
+    // SDK ShadowOptions uses physical px; Flutter Glass casts use logical px.
+    const px = (value: number): number => this.getUIContext().vp2px(value);
     switch (style) {
-      case 'neumorphism': return { radius: 5, offsetX: 1.5 * d, offsetY: 1.5 * d, color: alpha(this.dark ? '#000000' : '#8A8299', (this.dark ? .24 : .12) * opacity) };
-      case 'paper': return { radius: 1, offsetX: 0, offsetY: 2 * d, color: alpha(this.ink(), (this.dark ? .28 : .18) * opacity) };
-      case 'clay': return { radius: 4, offsetX: d, offsetY: 2 * d, color: alpha('#000000', (this.dark ? .28 : .13) * opacity) };
-      case 'fluent': return { radius: 4, offsetX: 0, offsetY: 1.5 * d, color: alpha('#000000', (this.dark ? .22 : .07) * opacity) };
-      case 'brutalist': return { radius: 0, offsetX: 2.5 * d, offsetY: 2.5 * d, color: alpha(this.ink(), (this.dark ? .48 : .65) * opacity) };
-      case 'industrial': return { radius: 1, offsetX: 0, offsetY: 2 * d, color: alpha(this.ink(), (this.dark ? .28 : .18) * opacity) };
-      default: return { radius: 18, offsetX: 0, offsetY: 8, color: '#09716386' };
+      case 'neumorphism': return { radius: px(5), offsetX: px(1.5 * d), offsetY: px(1.5 * d), color: alpha(this.dark ? '#000000' : '#8A8299', (this.dark ? .24 : .12) * opacity), fill: false };
+      case 'paper': return { radius: px(1), offsetX: 0, offsetY: px(2 * d), color: alpha(this.ink(), (this.dark ? .28 : .18) * opacity), fill: false };
+      case 'clay': return { radius: px(4), offsetX: px(d), offsetY: px(2 * d), color: alpha('#000000', (this.dark ? .28 : .13) * opacity), fill: false };
+      case 'fluent': return { radius: px(4), offsetX: 0, offsetY: px(1.5 * d), color: alpha('#000000', (this.dark ? .22 : .07) * opacity), fill: false };
+      case 'brutalist': return { radius: 0, offsetX: px(2.5 * d), offsetY: px(2.5 * d), color: alpha(this.ink(), (this.dark ? .48 : .65) * opacity), fill: false };
+      case 'industrial': return { radius: px(1), offsetX: 0, offsetY: px(2 * d), color: alpha(this.ink(), (this.dark ? .28 : .18) * opacity), fill: false };
+      default: {
+        // LiquidGlassMaterial supplies its optical rim, without the ordinary
+        // frosted/clear BoxShadow. Explicit styles above still retain casts.
+        if (mode === '液体玻璃') { return { radius: 0, color: Color.Transparent }; }
+        const clear: boolean = mode === '超透';
+        return { radius: px(clear ? 14 : 18), offsetX: 0, offsetY: px(clear ? 4 : 8),
+          color: alpha(this.dark ? '#000000' : '#716386', clear ? .025 : .035), fill: false };
+      }
     }
   }
   private modeFor(id: string = ''): string { const m = this.material(id); return m && m.mode !== '跟随主题' ? m.mode : this.mode; }
@@ -2932,7 +2944,10 @@ struct Index {
   Rim(id: string = '', base: number = 20) {
     Stack() {
       if (id !== 'footer' || this.material(id)) {
-      SurfaceRelief({ style: this.visualStyle, depth: this.depthFor(id), dark: this.dark, radius: this.round(base, id) })
+      // Ordinary Flutter Glass has depth=0: its border and outer casts already
+      // define the edge. Search alone uses recessed:true in Flutter main.dart.
+      if (id === 'search') { RecessedGlassRelief({ style: this.visualStyle, depth: this.depthFor(id), depthMultiplier: -1,
+        dark: this.dark, surface: this.surface(), radius: this.round(base, id) }) }
       if (this.modeFor(id) === '液体玻璃') { GlassRim({ dark: this.dark, radius: this.round(base, id) }).hitTestBehavior(HitTestMode.None) }
       }
     }.width(this.surfaceAreas[id + ':' + base]?.[0] ?? 0).height(this.surfaceAreas[id + ':' + base]?.[1] ?? 0).clip(true).hitTestBehavior(HitTestMode.None)
@@ -3592,7 +3607,7 @@ struct Index {
   MusicPanel() {
     MusicPanelContent({ view: this.musicView, callbacks: this.musicCallbacks, fontFamily: this.fontFamily,
       locale: this.locale, ink: this.ink(), muted: this.muted(), accent: this.accent(), line: this.line(), dark: this.dark, surface: this.surface(),
-      style: this.visualStyle, depth: this.depthFor('music'), radiusScale: this.round(20, 'music') / 20 })
+      style: this.visualStyle, depth: this.styleDepth, radiusScale: this.round(20) / 20 })
       .padding(16).width('100%').borderRadius(this.round(22, 'music')).backdropBlur(this.materialBlur('music'))
       .linearGradient(this.gradient('music')).overlay(this.Rim('music', 22))
       .onAreaChange((_, area: Area) => this.rememberSurface('music', 22, area))
@@ -3691,7 +3706,7 @@ struct Index {
           .backdropBlur(this.previewMaterial()?.blur ?? this.materialBlur())
           .linearGradient(this.materialGradient(this.previewMaterial(), this.previewMode()))
           .border({ width: this.styleEdgeWidth(), color: this.line() })
-          .overlay(this.DraftRim()).onAreaChange((_, area: Area) => this.rememberSurface('material-preview', 0, area)).shadow(this.surfaceShadow('', this.visualStyle, this.previewDepth()))
+          .overlay(this.DraftRim()).onAreaChange((_, area: Area) => this.rememberSurface('material-preview', 0, area)).shadow(this.surfaceShadow('', this.visualStyle, this.previewDepth(), this.previewMode()))
       }.height(150).width('100%').clip(true)
       Column({ space: 18 }) {
       Select(['跟随主题', '磨砂', '超透', '液体玻璃'].map((s: string): SelectOption => { return { value: this.t(s) }; }))
@@ -3724,7 +3739,6 @@ struct Index {
   @Builder
   DraftRim() {
     Stack() {
-      SurfaceRelief({ style: this.visualStyle, depth: this.previewDepth(), dark: this.dark, radius: this.previewRadius() })
       if (this.previewMode() === '液体玻璃') { GlassRim({ dark: this.dark, radius: this.previewRadius() }) }
     }.width(this.surfaceAreas['material-preview:0']?.[0] ?? 0).height(this.surfaceAreas['material-preview:0']?.[1] ?? 0).clip(true).hitTestBehavior(HitTestMode.None)
   }

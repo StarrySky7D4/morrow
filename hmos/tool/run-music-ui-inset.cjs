@@ -2,14 +2,15 @@
 const fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto'), cp = require('node:child_process');
 const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..'), repo = path.resolve(root, '..');
-const output = path.resolve(root, 'reports/ui-source/v31'); fs.mkdirSync(output, { recursive: true });
+const output = path.resolve(root, 'reports/ui-source/v32'); fs.mkdirSync(output, { recursive: true });
 const label = process.argv[2] || 'initial'; assert.match(label, /^[A-Za-z0-9_-]+$/);
 const base = path.join(output, 'music-ui-inset-' + label);
 for (const suffix of ['-inputs-before.json', '-inputs-after.json', '-result.json', '-tests.log']) {
   assert.ok(!fs.existsSync(base + suffix), 'preserve earlier report: ' + base + suffix);
 }
 const inputs = [__filename, path.join(__dirname, 'music-ui-component-test-harness.cjs'), path.join(__dirname, 'music-ui-inset.test.cjs'),
-  path.join(root, 'entry/src/main/ets/pages/MusicPanel.ets'), path.join(root, 'entry/src/main/ets/model/Appearance.ets')];
+  path.join(root, 'entry/src/main/ets/pages/MusicPanel.ets'), path.join(root, 'entry/src/main/ets/pages/RecessedGlassRelief.ets'),
+  path.join(root, 'entry/src/main/ets/model/Appearance.ets')];
 const references = ['music/music_panel.dart', 'neumorphic_controls.dart', 'experimental_controls.dart']
   .map(name => path.join(repo, 'build/win-cloud-20261005/lib', name));
 references.push('C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/component/canvas.d.ts');
@@ -34,9 +35,9 @@ const summary = { qualification: 'PASS_SCOPED_ACTUAL_INSET_PAINT_CALLS', sdk_bui
     'paper/fluent/brutalist/industrial exact alpha, deflate and width', 'clay/neumorphism complement walls, opposite offsets and unshifted clip',
     'Gaussian filter in VP and state restoration', 'neumorphism casts use actual palette surface',
     'separate depth strength and alpha saturation', 'bounded rounded geometry', 'fill=false current and selected rows',
-    'coalesced resize and cancelled pending paint'],
+    'coalesced resize and cancelled pending paint', 'shared search -1 and music -.8 depth multipliers'],
   limitations: ['Controlled Canvas records paint calls; it does not execute SDK blur or rasterize pixels.',
     'Live SDK compilation, high contrast, style transitions and device pixel comparison are not covered.'] };
-if (result.status !== 0 || !exact || tests !== 13 || passed !== 13 || failed !== 0) summary.qualification = 'FAILED';
+if (result.status !== 0 || !exact || tests !== 15 || passed !== 15 || failed !== 0) summary.qualification = 'FAILED';
 fs.writeFileSync(base + '-result.json', JSON.stringify(summary, null, 2) + '\n');
 console.log(JSON.stringify(summary, null, 2)); if (summary.qualification === 'FAILED') process.exitCode = 1;

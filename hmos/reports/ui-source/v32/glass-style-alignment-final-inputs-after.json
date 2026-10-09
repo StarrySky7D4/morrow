@@ -1,0 +1,97 @@
+{
+  "observed_at": "2026-10-09T03:33:57.197Z",
+  "inputs": [
+    {
+      "path": "hmos/tool/run-glass-style-alignment.cjs",
+      "byte_length": 4834,
+      "sha256": "5bd3c758d3d38f1d7dfa3c7437114760c919904b3511cc74339b45775309f708"
+    },
+    {
+      "path": "hmos/tool/index-glass-style.test.cjs",
+      "byte_length": 9528,
+      "sha256": "351b5425fcc95448a6140593f18934d8acf6c571b5838d8e8a045a73ec571f47"
+    },
+    {
+      "path": "hmos/tool/music-ui-component-test-harness.cjs",
+      "byte_length": 7993,
+      "sha256": "b45b23f8bca6a2b64ef5868d0528fb7b9ba2b547763de5bb7c33268707e50709"
+    },
+    {
+      "path": "hmos/tool/music-ui-inset.test.cjs",
+      "byte_length": 10935,
+      "sha256": "35eab492f0a290dd28b091836eada8639b0dcaae6a9ebbfb3a5e08a2138bec92"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/MusicPanel.ets",
+      "byte_length": 26020,
+      "sha256": "0e0cbb65d2056de3595a9f3f7203120a0e0b689c72cf179ba6dfe080f00f5319"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/RecessedGlassRelief.ets",
+      "byte_length": 5680,
+      "sha256": "1ed9f9f5089f7a3f8ff92cf4942d379af5863ab290131e62058ea173e06c0c75"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/Index.ets",
+      "byte_length": 338502,
+      "sha256": "179a9a9c8259487497027fd09a9ced08f1799d11effa3463d7af9fa4396987d3"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+      "byte_length": 5126,
+      "sha256": "0fcaa587d24b1fd0a1b4d066f465bc2178ff16b830187e1e2a250e3f5b4a67b2"
+    }
+  ],
+  "references": [
+    {
+      "path": "build/win-cloud-20261005/lib/appearance.dart",
+      "byte_length": 29791,
+      "sha256": "8d0b6cc4898368f0988588339adf87c090c409e6df8157d8487d8b1b10e0341e"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/music/music_panel.dart",
+      "byte_length": 31013,
+      "sha256": "6df33c27cde8054d3f70b5d5ebac00831d78e212d515574cad764d64e72d694d"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/neumorphic_controls.dart",
+      "byte_length": 46032,
+      "sha256": "a80141815bb7f79fc30ebf77803aa61e7e5b354c51589a51f14cc0fc10d2df0d"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/experimental_controls.dart",
+      "byte_length": 20033,
+      "sha256": "15ed5fc306956c559a6c41c1e11bcdb52db9937d4cdf64e5cabd77bc4e2c0ccb"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/liquid_glass.dart",
+      "byte_length": 13247,
+      "sha256": "65f0fca6c8fb3809f06f734174c777f6015991f5632d69ca10e966b9be2743ad"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/surface_paint_boundary.dart",
+      "byte_length": 845,
+      "sha256": "6276d5aa2f6d08860cf18eb5de9b1a6b00cd38ebe8e2f875e6715635f6476cfc"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/main.dart",
+      "byte_length": 221628,
+      "sha256": "2cb2a519e31ac982d3a8638eb7de95fe63d5421ed3d1b6acda507cd142169f06"
+    },
+    {
+      "path": "../../../../../Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/component/canvas.d.ts",
+      "byte_length": 177413,
+      "sha256": "b46dfedb3fcfc62a9fdfacc458d9676b4dfddde76f9264433d337b202fa64ac8"
+    },
+    {
+      "path": "../../../../../Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/component/common.d.ts",
+      "byte_length": 930344,
+      "sha256": "2662a40432b2fa6efcfe387c3bc4bdc79ac9a993de1e415042b37a78d6315614"
+    },
+    {
+      "path": "../../../../../Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.arkui.UIContext.d.ts",
+      "byte_length": 271070,
+      "sha256": "9ca0b76ace7bb03172b9c6c066808cee7abfff7abf0c6326fa9971bd78fa377e"
+    }
+  ]
+}

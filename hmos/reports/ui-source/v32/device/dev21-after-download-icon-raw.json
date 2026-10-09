@@ -1,0 +1,398 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "Button",
+        "bounds": [
+          36,
+          153,
+          150,
+          267
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              57,
+              174,
+              129,
+              246
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "设置",
+        "bounds": [
+          186,
+          179,
+          294,
+          242
+        ],
+        "children": []
+      },
+      {
+        "type": "Scroll",
+        "bounds": [
+          36,
+          327,
+          1284,
+          2112
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "✓ 外观设置自动保存在本机",
+            "bounds": [
+              96,
+              348,
+              1224,
+              387
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              96,
+              567,
+              147,
+              618
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "此刻的小事",
+            "bounds": [
+              168,
+              572,
+              349,
+              614
+            ],
+            "children": []
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              654,
+              1224,
+              734
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "○",
+                "bounds": [
+                  96,
+                  666,
+                  145,
+                  722
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "给自己倒一杯水",
+                "bounds": [
+                  169,
+                  675,
+                  400,
+                  714
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              770,
+              1224,
+              850
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "○",
+                "bounds": [
+                  96,
+                  782,
+                  145,
+                  838
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "把一个想法写下来",
+                "bounds": [
+                  169,
+                  791,
+                  433,
+                  830
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              886,
+              1224,
+              966
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "○",
+                "bounds": [
+                  96,
+                  898,
+                  145,
+                  954
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "留十分钟，随便探索",
+                "bounds": [
+                  169,
+                  907,
+                  466,
+                  946
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "慢一点，也是在向前。",
+            "bounds": [
+              96,
+              1002,
+              1224,
+              1034
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              87,
+              1240,
+              138,
+              1291
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "随身听",
+            "bounds": [
+              159,
+              1244,
+              1092,
+              1286
+            ],
+            "children": []
+          },
+          {
+            "id": "music-add",
+            "type": "Button",
+            "bounds": [
+              1113,
+              1205,
+              1233,
+              1325
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  1146,
+                  1238,
+                  1200,
+                  1292
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              138,
+              1400,
+              228,
+              1490
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "留一点空间给音乐",
+            "bounds": [
+              285,
+              1400,
+              1209,
+              1446
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "导入喜欢的本地音乐",
+            "bounds": [
+              285,
+              1458,
+              1209,
+              1490
+            ],
+            "children": []
+          },
+          {
+            "id": "music-previous",
+            "type": "Button",
+            "bounds": [
+              87,
+              1577,
+              207,
+              1697
+            ],
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰆓",
+                "bounds": [
+                  114,
+                  1604,
+                  180,
+                  1670
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "music-toggle",
+            "type": "Button",
+            "bounds": [
+              429,
+              1577,
+              549,
+              1697
+            ],
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰂠",
+                "bounds": [
+                  453,
+                  1601,
+                  525,
+                  1673
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "music-next",
+            "type": "Button",
+            "bounds": [
+              771,
+              1577,
+              891,
+              1697
+            ],
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰆒",
+                "bounds": [
+                  798,
+                  1604,
+                  864,
+                  1670
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "music-playlist-toggle",
+            "type": "Button",
+            "bounds": [
+              1113,
+              1577,
+              1233,
+              1697
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰃐",
+                "bounds": [
+                  1142,
+                  1606,
+                  1205,
+                  1669
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "“",
+            "bounds": [
+              87,
+              1831,
+              150,
+              1979
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "所有有趣的东西，\n都始于一点点好奇。",
+            "bounds": [
+              87,
+              2009,
+              412,
+              2112
+            ],
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,13 @@
+# v32 branch publication review
+
+Reviewed 2026-10-09. **PASS_SCOPED_BRANCH_ONLY_PUBLICATION**. No product or frozen-evidence blocker was found. Publish only to `codex/ArkTsUI`, with root separately verifying staged Git contents and remote branch state. `releaseEligible=false`; full product acceptance remains OPEN.
+
+The current ordinary Glass and candidate-preview builders remove extra positive relief. Search keeps the shared real inset at widget depth -1; music current/selected strips use -.8, transparent centers, and global Appearance depth/radius/palette. Local music material still controls the outer Glass. The available primary shadow radius/offsets pass through `UIContext.vp2px`, and candidate preview shadow uses `previewMode()` before application. The shared Canvas helper clears prior bounds, bounds radius, saves/restores its clip/filter, coalesces resize and cancels the disappearance timer.
+
+Independent read-only verification matched 367 repository build inputs, 324 copied project inputs, 156 model inputs, 283 native source inputs and 8 final a2 drawing inputs. Before/after identities and raw log hashes match. Raw model log records 1168/1168, with zero failed/skipped/cancelled; final a2 records 23/23. The preserved older `glass-style-alignment-final-*` evidence has 22 checks and precedes the preview-mode change. The full API26 product build log reports `BUILD SUCCESSFUL` and skips signing.
+
+Frozen unsigned dev22 HAP: **31,442,946 bytes**, SHA-256 **06342B5CFB5EDA93493BEDA13B76B6DB9D0AF32C4F95394C280B1B6448E1C4FB**. Packaged `module.json` identifies `0.1.0-hmos-dev.22` / `1000022`. All four packaged native libraries match compiler stripped outputs, and reused v29 Rust archive hashes match. Nine module entries have matching TS/protoBin emits and actual record paths in packaged `ets/modules.abc`: eight music modules plus `RecessedGlassRelief`. The historical package proof's eight-module scope prose omits that ninth new module; its actual array and package records were checked without rewriting the proof.
+
+Dev22 was not installed. Device all-interface frame regression, settled Canvas paint, music import/Ready selection/playback/lifecycle and audible output remain OPEN. Secondary outer casts, parent clipping, exact native blur/pixel fidelity, density/theme/width coverage, high contrast, transitions/optics, signing and ARM64 physical-device acceptance also remain OPEN. Older dev20/dev21 observations do not qualify this package.
+
+Detailed independently observed hashes and checks are in `release-review.json`. This review used only file reads plus these two new report writes; it did not run Git, SDK compilation/tests or device actions, and changed no product/test/historical evidence files.

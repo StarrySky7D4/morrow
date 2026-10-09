@@ -1,0 +1,15 @@
+{
+  "issuedUtc": "2026-10-09T03:27:29.639Z",
+  "phase": "PUBLIC_COPY_ISSUED_UNKNOWN",
+  "temp": "/data/local/tmp/morrow-v32-fixture-HMOS-v31-10105badbf93-long.wav",
+  "destination": "/mnt/hmdfs/100/account/device_view/local/files/Docs/Download/HMOS-v31-10105badbf93-long.wav",
+  "expectedBytes": 1920044,
+  "expectedSha256": "ecda5854d3690e4f709ddc1982d1fc02e6db619d86b097a7572931900c893e62",
+  "scope": "Generated test asset only; standard shell existing file_manager group, no permission or identity changes.",
+  "tempResponse": "FileTransfer finish, Size:1920044, File count = 1, time:91ms rate:21099.38kB/s\r\r\n",
+  "copyIssuedUtc": "2026-10-09T03:27:29.816Z",
+  "copyResponse": "cp: /mnt/hmdfs/100/account/device_view/local/files/Docs/Download/HMOS-v31-10105badbf93-long.wav: No such file or directory\r\n",
+  "actualBytes": null,
+  "actualSha256": "sha256sum:",
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nNaN !== 1920044\n"
+}

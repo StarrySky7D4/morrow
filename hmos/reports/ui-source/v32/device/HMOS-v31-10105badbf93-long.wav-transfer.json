@@ -1,0 +1,10 @@
+{
+  "issuedUtc": "2026-10-09T03:23:03.617Z",
+  "phase": "ISSUED_UNKNOWN",
+  "name": "HMOS-v31-10105badbf93-long.wav",
+  "remotePath": "/data/service/el2/100/hmdfs/account/files/Docs/Download/HMOS-v31-10105badbf93-long.wav",
+  "bytes": 1920044,
+  "sha256": "ecda5854d3690e4f709ddc1982d1fc02e6db619d86b097a7572931900c893e62",
+  "response": "[Fail]Error opening file: permission denied, path:/data/service/el2/100/hmdfs/account/files/Docs/Download/HMOS-v31-10105badbf93-long.wav\r\r\n",
+  "error": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /FileTransfer finish/. Input:\n\n'[Fail]Error opening file: permission denied, path:/data/service/el2/100/hmdfs/account/files/Docs/Download/HMOS-v31-10105badbf93-long.wav\\r\\r\\n'\n"
+}

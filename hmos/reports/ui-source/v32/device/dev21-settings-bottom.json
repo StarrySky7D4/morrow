@@ -1,0 +1,454 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "Button",
+        "bounds": [
+          36,
+          153,
+          150,
+          267
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              57,
+              174,
+              129,
+              246
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "设置",
+        "bounds": [
+          186,
+          179,
+          294,
+          242
+        ],
+        "children": []
+      },
+      {
+        "type": "Scroll",
+        "bounds": [
+          36,
+          327,
+          1284,
+          2112
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "圆角",
+            "bounds": [
+              96,
+              412,
+              156,
+              447
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "20 / 32",
+            "bounds": [
+              1120,
+              410,
+              1224,
+              449
+            ],
+            "children": []
+          },
+          {
+            "type": "Slider",
+            "text": "20.000000",
+            "bounds": [
+              96,
+              449,
+              1224,
+              545
+            ],
+            "clickable": true,
+            "scrollable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "拖至 0 即为方角",
+            "bounds": [
+              96,
+              545,
+              1224,
+              577
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "背景画布",
+            "bounds": [
+              96,
+              650,
+              216,
+              685
+            ],
+            "children": []
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              715,
+              637,
+              829
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  302,
+                  750,
+                  347,
+                  795
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "默认",
+                "bounds": [
+                  365,
+                  753,
+                  431,
+                  792
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              683,
+              715,
+              1224,
+              829
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  889,
+                  750,
+                  934,
+                  795
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "纯色",
+                "bounds": [
+                  952,
+                  753,
+                  1018,
+                  792
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              853,
+              637,
+              967
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  302,
+                  888,
+                  347,
+                  933
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "纹理",
+                "bounds": [
+                  365,
+                  891,
+                  431,
+                  930
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              683,
+              853,
+              1224,
+              967
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  889,
+                  888,
+                  934,
+                  933
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "透明",
+                "bounds": [
+                  952,
+                  891,
+                  1018,
+                  930
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "液体玻璃效果",
+            "bounds": [
+              96,
+              1015,
+              313,
+              1057
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "独立于背景类型，四种画布均可开启",
+            "bounds": [
+              96,
+              1069,
+              576,
+              1104
+            ],
+            "children": []
+          },
+          {
+            "type": "Toggle",
+            "bounds": [
+              1110,
+              1030,
+              1218,
+              1090
+            ],
+            "clickable": true,
+            "checkable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "流动的光晕，为灵感留一点色彩。",
+            "bounds": [
+              96,
+              1170,
+              1224,
+              1215
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "✓ 外观设置自动保存在本机",
+            "bounds": [
+              96,
+              1254,
+              1224,
+              1293
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              96,
+              1473,
+              147,
+              1524
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "此刻的小事",
+            "bounds": [
+              168,
+              1478,
+              349,
+              1520
+            ],
+            "children": []
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              1560,
+              1224,
+              1640
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "○",
+                "bounds": [
+                  96,
+                  1572,
+                  145,
+                  1628
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "给自己倒一杯水",
+                "bounds": [
+                  169,
+                  1581,
+                  400,
+                  1620
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              1676,
+              1224,
+              1756
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "○",
+                "bounds": [
+                  96,
+                  1688,
+                  145,
+                  1744
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "把一个想法写下来",
+                "bounds": [
+                  169,
+                  1697,
+                  433,
+                  1736
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              1792,
+              1224,
+              1872
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "○",
+                "bounds": [
+                  96,
+                  1804,
+                  145,
+                  1860
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "留十分钟，随便探索",
+                "bounds": [
+                  169,
+                  1813,
+                  466,
+                  1852
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "慢一点，也是在向前。",
+            "bounds": [
+              96,
+              1908,
+              1224,
+              1940
+            ],
+            "children": []
+          },
+          {
+            "id": "music-add",
+            "type": "Button",
+            "bounds": [
+              1113,
+              2111,
+              1233,
+              2112
+            ],
+            "clickable": true,
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]

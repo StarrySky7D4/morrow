@@ -38,7 +38,7 @@ function harness() {
   }
   const ui = load('MusicUi'), strings = load('UiStrings');
   const panelSource = source('MusicPanel'), footerSource = source('MusicFooter');
-  const helperStart = panelSource.indexOf('class MusicDragTicket {'), helperEnd = panelSource.indexOf('// Flutter\'s fill=false');
+  const helperStart = panelSource.indexOf('class MusicDragTicket {'), helperEnd = panelSource.indexOf('@Component', helperStart);
   assert.ok(helperStart >= 0 && helperEnd > helperStart, 'actual drag helper classes');
   const components = panelSource.slice(helperStart, helperEnd) + '\n' + actualComponent('MusicPanelContent', panelSource, '\n  @Builder') + '\n' +
     actualComponent('MusicFooterContent', footerSource, '\n  build()') + '\n' + actualComponent('LyricsDialogContent', footerSource, '\n  build()');
@@ -85,13 +85,13 @@ function insetHarness(props = {}) {
   const filename = path.join(modelRoot, 'Appearance.ets'); usedInputs.add(filename);
   const appearance = {};
   vm.runInNewContext(compile(fs.readFileSync(filename, 'utf8'), filename), { exports: appearance }, { filename });
-  const panelSource = source('MusicPanel'), timers = new Map(); let timer = 0;
+  const panelSource = source('MusicPanel'), reliefSource = source('RecessedGlassRelief'), timers = new Map(); let timer = 0;
   const globals = { exports: {}, mix: appearance.mix, Path2D: ControlledPath, CanvasRenderingContext2D: ControlledCanvas,
     RenderingContextSettings: class {}, setTimeout: callback => { const id = ++timer; timers.set(id, callback); return id; },
     clearTimeout: id => timers.delete(id) };
-  vm.runInNewContext(compile(actualComponent('MusicInsetRelief', panelSource, '\n  build()'), path.join(pageRoot, 'MusicPanel.ets')), globals);
-  const inset = new globals.exports.MusicInsetRelief(); Object.assign(inset, props);
-  return { inset, canvas: inset.ctx, timers, panelSource,
+  vm.runInNewContext(compile(actualComponent('RecessedGlassRelief', reliefSource, '\n  build()'), path.join(pageRoot, 'RecessedGlassRelief.ets')), globals);
+  const inset = new globals.exports.RecessedGlassRelief(); Object.assign(inset, { depthMultiplier: -.8 }, props);
+  return { inset, canvas: inset.ctx, timers, panelSource, reliefSource,
     tick: () => { const pending = [...timers.values()]; timers.clear(); for (const callback of pending) callback(); } };
 }
 module.exports = { harness, insetHarness, usedInputs, source };

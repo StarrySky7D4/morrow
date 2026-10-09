@@ -1,0 +1,13 @@
+{
+  "issuedUtc": "2026-10-09T03:18:48.765Z",
+  "device": "127.0.0.1:5555",
+  "args": [
+    "shell",
+    "aa",
+    "force-stop",
+    "dev.morrow.hmos"
+  ],
+  "phase": "ACKNOWLEDGED",
+  "result": "force stop process successfully.\r\n",
+  "acknowledgedUtc": "2026-10-09T03:18:48.890Z"
+}

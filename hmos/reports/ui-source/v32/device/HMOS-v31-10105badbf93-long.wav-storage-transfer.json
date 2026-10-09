@@ -1,0 +1,12 @@
+{
+  "issuedUtc": "2026-10-09T03:32:58.667Z",
+  "phase": "TRANSFER_VERIFIED",
+  "name": "HMOS-v31-10105badbf93-long.wav",
+  "remotePath": "/storage/media/100/local/files/Docs/Download/HMOS-v31-10105badbf93-long.wav",
+  "bytes": 1920044,
+  "sha256": "ecda5854d3690e4f709ddc1982d1fc02e6db619d86b097a7572931900c893e62",
+  "response": "FileTransfer finish, Size:1920044, File count = 1, time:78ms rate:24615.95kB/s\r\r\n",
+  "remoteBytes": 1920044,
+  "remoteSha256": "ecda5854d3690e4f709ddc1982d1fc02e6db619d86b097a7572931900c893e62",
+  "verifiedUtc": "2026-10-09T03:32:59.043Z"
+}

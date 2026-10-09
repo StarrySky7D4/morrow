@@ -1,0 +1,700 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "Button",
+        "bounds": [
+          36,
+          153,
+          150,
+          267
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              57,
+              174,
+              129,
+              246
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "设置",
+        "bounds": [
+          186,
+          179,
+          294,
+          242
+        ],
+        "children": []
+      },
+      {
+        "type": "Scroll",
+        "bounds": [
+          36,
+          327,
+          1284,
+          2112
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "✓ 外观设置自动保存在本机",
+            "bounds": [
+              96,
+              348,
+              1224,
+              387
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              96,
+              567,
+              147,
+              618
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "此刻的小事",
+            "bounds": [
+              168,
+              572,
+              349,
+              614
+            ],
+            "children": []
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              654,
+              1224,
+              734
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "○",
+                "bounds": [
+                  96,
+                  666,
+                  145,
+                  722
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "给自己倒一杯水",
+                "bounds": [
+                  169,
+                  675,
+                  400,
+                  714
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              770,
+              1224,
+              850
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "○",
+                "bounds": [
+                  96,
+                  782,
+                  145,
+                  838
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "把一个想法写下来",
+                "bounds": [
+                  169,
+                  791,
+                  433,
+                  830
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              886,
+              1224,
+              966
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "○",
+                "bounds": [
+                  96,
+                  898,
+                  145,
+                  954
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "留十分钟，随便探索",
+                "bounds": [
+                  169,
+                  907,
+                  466,
+                  946
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "慢一点，也是在向前。",
+            "bounds": [
+              96,
+              1002,
+              1224,
+              1034
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              87,
+              1240,
+              138,
+              1291
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "随身听",
+            "bounds": [
+              159,
+              1244,
+              1092,
+              1286
+            ],
+            "children": []
+          },
+          {
+            "id": "music-add",
+            "type": "Button",
+            "bounds": [
+              1113,
+              1205,
+              1233,
+              1325
+            ],
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  1146,
+                  1238,
+                  1200,
+                  1292
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              138,
+              1400,
+              228,
+              1490
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "留一点空间给音乐",
+            "bounds": [
+              285,
+              1400,
+              1209,
+              1446
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "正在加载…",
+            "bounds": [
+              285,
+              1458,
+              1209,
+              1490
+            ],
+            "children": []
+          },
+          {
+            "id": "music-previous",
+            "type": "Button",
+            "bounds": [
+              87,
+              1577,
+              207,
+              1697
+            ],
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰆓",
+                "bounds": [
+                  114,
+                  1604,
+                  180,
+                  1670
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "music-toggle",
+            "type": "Button",
+            "bounds": [
+              429,
+              1577,
+              549,
+              1697
+            ],
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰂠",
+                "bounds": [
+                  453,
+                  1601,
+                  525,
+                  1673
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "music-next",
+            "type": "Button",
+            "bounds": [
+              771,
+              1577,
+              891,
+              1697
+            ],
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰆒",
+                "bounds": [
+                  798,
+                  1604,
+                  864,
+                  1670
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "music-playlist-toggle",
+            "type": "Button",
+            "bounds": [
+              1113,
+              1577,
+              1233,
+              1697
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰃐",
+                "bounds": [
+                  1142,
+                  1606,
+                  1205,
+                  1669
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Progress",
+            "text": "0.000000",
+            "bounds": [
+              87,
+              1715,
+              1233,
+              1721
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "“",
+            "bounds": [
+              87,
+              1855,
+              150,
+              2003
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "所有有趣的东西，\n都始于一点点好奇。",
+            "bounds": [
+              87,
+              2033,
+              412,
+              2112
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "SheetWrapper",
+        "bounds": [
+          0,
+          117,
+          1320,
+          2232
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "SheetPage",
+            "bounds": [
+              0,
+              141,
+              1320,
+              2232
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Column",
+                "bounds": [
+                  48,
+                  192,
+                  162,
+                  306
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "id": "left_icon",
+                    "type": "SymbolGlyph",
+                    "bounds": [
+                      78,
+                      222,
+                      132,
+                      276
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "top_title",
+                "type": "Text",
+                "text": "我的手机",
+                "bounds": [
+                  186,
+                  223,
+                  426,
+                  293
+                ],
+                "children": []
+              },
+              {
+                "id": "top_menu",
+                "type": "Column",
+                "bounds": [
+                  1020,
+                  192,
+                  1134,
+                  306
+                ],
+                "clickable": true,
+                "children": []
+              },
+              {
+                "id": "top_menu",
+                "type": "Column",
+                "bounds": [
+                  1158,
+                  192,
+                  1272,
+                  306
+                ],
+                "clickable": true,
+                "children": []
+              },
+              {
+                "type": "Column",
+                "bounds": [
+                  48,
+                  309,
+                  1272,
+                  477
+                ],
+                "clickable": true,
+                "children": [
+                  {
+                    "id": "top_search",
+                    "type": "Search",
+                    "bounds": [
+                      48,
+                      333,
+                      1272,
+                      453
+                    ],
+                    "children": [
+                      {
+                        "id": "__SearchField__top_search",
+                        "type": "SearchField",
+                        "bounds": [
+                          156,
+                          333,
+                          1164,
+                          453
+                        ],
+                        "children": []
+                      },
+                      {
+                        "id": "__SearchField__Image__top_search",
+                        "type": "SymbolGlyph",
+                        "bounds": [
+                          84,
+                          369,
+                          132,
+                          417
+                        ],
+                        "clickable": true,
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Scroll",
+                "bounds": [
+                  0,
+                  477,
+                  1320,
+                  2076
+                ],
+                "scrollable": true,
+                "children": [
+                  {
+                    "type": "Column",
+                    "bounds": [
+                      0,
+                      525,
+                      1320,
+                      574
+                    ],
+                    "longClickable": true,
+                    "children": [
+                      {
+                        "type": "Text",
+                        "text": "2 项",
+                        "bounds": [
+                          621,
+                          525,
+                          699,
+                          574
+                        ],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Grid",
+                    "bounds": [
+                      0,
+                      622,
+                      1320,
+                      2076
+                    ],
+                    "longClickable": true,
+                    "scrollable": true,
+                    "children": [
+                      {
+                        "type": "GridItem",
+                        "bounds": [
+                          48,
+                          622,
+                          343,
+                          996
+                        ],
+                        "clickable": true,
+                        "children": [
+                          {
+                            "id": "0",
+                            "type": "Column",
+                            "bounds": [
+                              48,
+                              622,
+                              343,
+                              996
+                            ],
+                            "children": [
+                              {
+                                "id": "file://docs/storage/Users/currentUser/DownloadIcon",
+                                "type": "__Common__",
+                                "bounds": [
+                                  81,
+                                  634,
+                                  309,
+                                  862
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "Download",
+                                "bounds": [
+                                  97,
+                                  874,
+                                  294,
+                                  931
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "11:33",
+                                "bounds": [
+                                  157,
+                                  943,
+                                  234,
+                                  978
+                                ],
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "GridItem",
+                        "bounds": [
+                          358,
+                          622,
+                          653,
+                          996
+                        ],
+                        "clickable": true,
+                        "children": [
+                          {
+                            "id": "1",
+                            "type": "Column",
+                            "bounds": [
+                              358,
+                              622,
+                              653,
+                              996
+                            ],
+                            "children": [
+                              {
+                                "id": "file://docs/storage/Users/currentUser/DocumentsIcon",
+                                "type": "__Common__",
+                                "bounds": [
+                                  391,
+                                  634,
+                                  619,
+                                  862
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "Documents",
+                                "bounds": [
+                                  395,
+                                  874,
+                                  616,
+                                  931
+                                ],
+                                "children": []
+                              },
+                              {
+                                "type": "Text",
+                                "text": "2026/10/05",
+                                "bounds": [
+                                  425,
+                                  943,
+                                  586,
+                                  978
+                                ],
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
