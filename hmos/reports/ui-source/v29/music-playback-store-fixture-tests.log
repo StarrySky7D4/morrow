@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: actual Store Ready immutable first track maps complete exact identity without borrowing internal ready operation
+ok 1 - actual Store Ready immutable first track maps complete exact identity without borrowing internal ready operation
+  ---
+  duration_ms: 0.9059
+  type: 'test'
+  ...
+# Subtest: actual selected and later current track retain stable blob identity across confirmed library revisions
+ok 2 - actual selected and later current track retain stable blob identity across confirmed library revisions
+  ---
+  duration_ms: 0.273
+  type: 'test'
+  ...
+# Subtest: actual full lexical pages supply both ready playlist identities while retaining pending and retired records separately
+ok 3 - actual full lexical pages supply both ready playlist identities while retaining pending and retired records separately
+  ---
+  duration_ms: 0.2872
+  type: 'test'
+  ...
+# Subtest: actual export hash and extent match current identity but its JSON response cannot mint a playback source
+ok 4 - actual export hash and extent match current identity but its JSON response cannot mint a playback source
+  ---
+  duration_ms: 0.1244
+  type: 'test'
+  ...
+# Subtest: actual Ready track source_uri cannot be fed to AVPlayer or open a descriptor without an owned MusicFiles lease
+ok 5 - actual Ready track source_uri cannot be fed to AVPlayer or open a descriptor without an owned MusicFiles lease
+  ---
+  duration_ms: 29.0472
+  type: 'test'
+  ...
+# Subtest: actual playback proposal remains read-only instruction and is not a source or platform success acknowledgement
+ok 6 - actual playback proposal remains read-only instruction and is not a source or platform success acknowledgement
+  ---
+  duration_ms: 0.1461
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 334.9317

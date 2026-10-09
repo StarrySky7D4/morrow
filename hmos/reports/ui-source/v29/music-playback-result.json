@@ -1,0 +1,18 @@
+{
+  "startedUtc": "2026-10-09T01:32:41.5393601Z",
+  "finishedUtc": "2026-10-09T01:32:42.1960208Z",
+  "exitCode": 0,
+  "tests": 50,
+  "pass": 50,
+  "fail": 0,
+  "cancelled": 0,
+  "skipped": 0,
+  "durationMs": 601.0096,
+  "suiteFiles": 3,
+  "actualSourceInputs": 6,
+  "sourceIdentityVerified": true,
+  "log": "music-playback-tests.log",
+  "logSha256": "DB3442D50F1AC3DFE4C9FD0FAEB00EBF6D97BB949893F42863D5C679F790016A",
+  "inputs": "music-playback-inputs.json",
+  "scope": "Actual MusicPlayback and PlatformMusicPlayer source executed with controlled host Files/AVPlayer seams, including their composed lifecycle. Native Store/export, SDK build, codecs, HAP and device are not qualified by this result."
+}

@@ -1,0 +1,12 @@
+{
+  "startedUtc": "2026-10-09T01:52:36.144Z",
+  "finishedUtc": "2026-10-09T01:53:03.685Z",
+  "exitCode": 0,
+  "signal": null,
+  "status": "PASS",
+  "sourceIdentityVerified": true,
+  "inputs": 319,
+  "log": "music-sdk-probe-final-build.log",
+  "sha256": "6490DCF9590C48DC187FBEAF6FD6A6D1436C13DBC247F9AC6FBAA9F239D55555",
+  "scope": "New four actual music ETS modules imported in altered uninstalled test entry. SDK compile/type checking only; not final app/music UI/device acceptance."
+}

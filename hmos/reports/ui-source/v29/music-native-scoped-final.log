@@ -1,0 +1,19 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.71s
+     Running unittests src\lib.rs (hmos\.build\music-v29-target\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 11 tests
+test music_bridge::tests::actual_process_crash_reopen_reconcile_uses_original_pending_and_owner ... ignored, explicit morrow-core/fault-injection subprocess matrix
+test music_bridge::tests::actual_store_fixture_export ... ignored, explicit actual Store DTO export requires output path
+test music_bridge::tests::music_crash_child ... ignored, subprocess only; parent owns crash setup
+test music_bridge::tests::rejected_wrong_hash_short_and_trailing_source_preserve_original_pending ... ok
+test music_bridge::tests::actual_file_reader_export_short_writer_and_owner_damage_fail_closed ... ok
+test music_bridge::tests::retained_source_reconcile_after_reopen_never_reactivates_retired_track ... ok
+test music_bridge::tests::pending_count_and_total_quotas_reject_before_retaining_bytes ... ok
+test music_bridge::tests::unknown_preferences_and_retained_track_fields_survive_real_store_edits ... ok
+test music_bridge::tests::durable_pending_ready_reopen_and_exact_verified_export ... ok
+test music_bridge::tests::pure_policy_match_and_library_page_bind_current_snapshot ... ok
+test music_bridge::tests::lyrics_complete_budget_locator_and_playlist_reorder_keep_selected_identity ... ok
+
+test result: ok. 8 passed; 0 failed; 3 ignored; 0 measured; 209 filtered out; finished in 0.77s
+

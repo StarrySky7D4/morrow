@@ -1,0 +1,160 @@
+{
+  "scope": "Actual ETS coordinator with controlled host replies and unchanged complete native Store fixture DTOs; not SDK/device/decoded music proof",
+  "executable": "C:\\Program Files\\Huawei\\DevEco Studio\\tools\\node\\node.exe",
+  "command": [
+    "--require",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\tool\\music-library-source-trace.cjs",
+    "--test",
+    "hmos/tool/music-library-model.test.cjs",
+    "hmos/tool/music-library-native-dto.test.cjs"
+  ],
+  "exit_code": 0,
+  "test_files": [
+    "hmos/tool/music-library-model.test.cjs",
+    "hmos/tool/music-library-native-dto.test.cjs"
+  ],
+  "counts": {
+    "tests": 28,
+    "pass": 28,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 512.5916
+  },
+  "inputs_before": [
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicLibrary.ets",
+      "bytes": 45568,
+      "sha256": "7317b45a6e853ff78bd0fe44d39b3b8957da3dab4ca16e014903aac70095df36"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+      "bytes": 6929,
+      "sha256": "10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorDraft.ets",
+      "bytes": 37929,
+      "sha256": "b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775"
+    },
+    {
+      "path": "hmos/tool/editor-field-test-harness.cjs",
+      "bytes": 2497,
+      "sha256": "fe8db46b347c64fb28df463ad335438576aeeed528b85bfcd14c70a631c96b13"
+    },
+    {
+      "path": "hmos/tool/music-library-test-harness.cjs",
+      "bytes": 8240,
+      "sha256": "8f083576fdb49896bea6562de4891a0a8b59ba268aca6559fd7c8b40d7e90ac2"
+    },
+    {
+      "path": "hmos/tool/music-library-model.test.cjs",
+      "bytes": 24172,
+      "sha256": "b41129f3f71ba8224b67cc7d60503db860b1affd9a64225055e37e40e502923e"
+    },
+    {
+      "path": "hmos/tool/music-library-native-dto.test.cjs",
+      "bytes": 5705,
+      "sha256": "4dd969c1251957564d8b9c411175d8bfaf2f4ac9c88fe8f86fb72f8d46e45483"
+    },
+    {
+      "path": "hmos/tool/music-library-source-trace.cjs",
+      "bytes": 1350,
+      "sha256": "479de0c257519bde75a282041cc5e5852f4966e0a9a2468bf016dca9d7584c5f"
+    },
+    {
+      "path": "hmos/tool/run-music-library.cjs",
+      "bytes": 3598,
+      "sha256": "b9ffb7c5bd28ec2fcf3e1e54a80ae16117ab8c63914d23931e3882ed403816cc"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-store-fixture-stage1.json",
+      "bytes": 12868,
+      "sha256": "b60e2ae4f0e995690fb0b1070fc5be5c5025dbba302cb8cb16a2d0d0b2fbf640"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-store-fixture.json",
+      "bytes": 65127,
+      "sha256": "da6d8df4f50f59555a4064ab29c9b302ce29b85a843deb03f2f5c9eb0d83b9b2"
+    }
+  ],
+  "inputs_after": [
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicLibrary.ets",
+      "bytes": 45568,
+      "sha256": "7317b45a6e853ff78bd0fe44d39b3b8957da3dab4ca16e014903aac70095df36"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+      "bytes": 6929,
+      "sha256": "10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorDraft.ets",
+      "bytes": 37929,
+      "sha256": "b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775"
+    },
+    {
+      "path": "hmos/tool/editor-field-test-harness.cjs",
+      "bytes": 2497,
+      "sha256": "fe8db46b347c64fb28df463ad335438576aeeed528b85bfcd14c70a631c96b13"
+    },
+    {
+      "path": "hmos/tool/music-library-test-harness.cjs",
+      "bytes": 8240,
+      "sha256": "8f083576fdb49896bea6562de4891a0a8b59ba268aca6559fd7c8b40d7e90ac2"
+    },
+    {
+      "path": "hmos/tool/music-library-model.test.cjs",
+      "bytes": 24172,
+      "sha256": "b41129f3f71ba8224b67cc7d60503db860b1affd9a64225055e37e40e502923e"
+    },
+    {
+      "path": "hmos/tool/music-library-native-dto.test.cjs",
+      "bytes": 5705,
+      "sha256": "4dd969c1251957564d8b9c411175d8bfaf2f4ac9c88fe8f86fb72f8d46e45483"
+    },
+    {
+      "path": "hmos/tool/music-library-source-trace.cjs",
+      "bytes": 1350,
+      "sha256": "479de0c257519bde75a282041cc5e5852f4966e0a9a2468bf016dca9d7584c5f"
+    },
+    {
+      "path": "hmos/tool/run-music-library.cjs",
+      "bytes": 3598,
+      "sha256": "b9ffb7c5bd28ec2fcf3e1e54a80ae16117ab8c63914d23931e3882ed403816cc"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-store-fixture-stage1.json",
+      "bytes": 12868,
+      "sha256": "b60e2ae4f0e995690fb0b1070fc5be5c5025dbba302cb8cb16a2d0d0b2fbf640"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-store-fixture.json",
+      "bytes": 65127,
+      "sha256": "da6d8df4f50f59555a4064ab29c9b302ce29b85a843deb03f2f5c9eb0d83b9b2"
+    }
+  ],
+  "drift": [],
+  "actual_observed_reads": [
+    "hmos/entry/src/main/ets/model/EditorDraft.ets",
+    "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+    "hmos/entry/src/main/ets/model/MusicLibrary.ets",
+    "hmos/reports/ui-source/v29/music-store-fixture-stage1.json",
+    "hmos/reports/ui-source/v29/music-store-fixture.json",
+    "hmos/tool/editor-field-test-harness.cjs",
+    "hmos/tool/music-library-model.test.cjs",
+    "hmos/tool/music-library-native-dto.test.cjs",
+    "hmos/tool/music-library-source-trace.cjs",
+    "hmos/tool/music-library-test-harness.cjs"
+  ],
+  "missing_reads": [],
+  "unexpected_reads": [],
+  "tooling": {
+    "typescript": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/build-tools/ets-loader/node_modules/typescript",
+    "loader": "SDK TypeScript transpile of actual ETS in a VM; not ArkTS SDK compilation"
+  },
+  "log_sha256": "36c94b2b2b642a6b26dee9dddb48bbe3e4ff5740c9ed1908ec2cd9cd88278097",
+  "trace_sha256": "936f58b21f8cdac5a34989a601ca04edd332c24157ddd3d7ed97605a0c2bb9c1"
+}

@@ -5,6 +5,7 @@ use sha2::{Digest, Sha256};
 use std::io::{Read, Write};
 
 pub const MAX_IMPORT_BYTES: u64 = 64 * 1024 * 1024;
+pub const MAX_MUSIC_IMPORT_BYTES: u64 = 150 * 1024 * 1024;
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct FileMetadata {
     pub byte_length: String,
@@ -33,7 +34,14 @@ impl FileReply {
 /// A failed copy leaves a private incomplete spool, never an admitted import.
 /// write_all handles short writes; no byte beyond the limit is written.
 pub fn prepare(reader: &mut impl Read, writer: &mut impl Write, limit: u64) -> Result<FileMetadata> {
-    if limit > MAX_IMPORT_BYTES { return Err("ImportByteLimit".into()); }
+    prepare_bounded(reader, writer, limit, MAX_IMPORT_BYTES)
+}
+/// Separate music transport; the original attachment preparation stays 64 MiB.
+pub fn prepare_music(reader: &mut impl Read, writer: &mut impl Write, limit: u64) -> Result<FileMetadata> {
+    prepare_bounded(reader, writer, limit, MAX_MUSIC_IMPORT_BYTES)
+}
+fn prepare_bounded(reader: &mut impl Read, writer: &mut impl Write, limit: u64, cap: u64) -> Result<FileMetadata> {
+    if limit > cap { return Err("ImportByteLimit".into()); }
     let mut hash = Sha256::new();
     let mut total = 0_u64;
     let mut buffer = [0_u8; 64 * 1024];
@@ -97,5 +105,18 @@ mod tests {
         }
         let reply = FileReply::from_result(prepare(&mut b"data".as_slice(), &mut Failed, 4));
         assert!(!reply.ok && reply.sha256.is_empty() && reply.byte_length.is_empty());
+    }
+    #[test]
+    fn music_cap_is_distinct_and_old_attachment_cap_is_unchanged() {
+        let data=b"captured music bytes";
+        assert!(prepare(&mut data.as_slice(), &mut Vec::new(), MAX_IMPORT_BYTES + 1).is_err());
+        let mut output=vec![];
+        let metadata=prepare_music(&mut data.as_slice(), &mut output, MAX_MUSIC_IMPORT_BYTES).unwrap();
+        assert_eq!(output, data); assert_eq!(metadata.sha256, hex(&Sha256::digest(data)));
+        assert!(prepare_music(&mut data.as_slice(), &mut Vec::new(), MAX_MUSIC_IMPORT_BYTES + 1).is_err());
+        // Exercise actual bytes across the old cap without allocating a song.
+        let mut reader=std::io::repeat(0).take(MAX_IMPORT_BYTES + 1);
+        let metadata=prepare_music(&mut reader, &mut std::io::sink(), MAX_IMPORT_BYTES + 1).unwrap();
+        assert_eq!(metadata.byte_length, (MAX_IMPORT_BYTES + 1).to_string());
     }
 }

@@ -34,8 +34,9 @@ class Workbench {
     this.tail = result.then((): void => {}, (): void => {}); return result;
   }
   send(serialized: string): Promise<Reply> {
-    return this.queue((): Promise<string> => native.request(serialized)).then((raw: string): Reply => JSON.parse(raw) as Reply);
+    return this.sendRaw(serialized).then((raw: string): Reply => JSON.parse(raw) as Reply);
   }
+  sendRaw(serialized: string): Promise<string> { return this.queue((): Promise<string> => native.request(serialized)); }
   importFd(serialized: string, fd: number): Promise<string> { return this.queue((): Promise<string> => native.importFile(serialized, fd)); }
   exportFd(serialized: string, fd: number): Promise<string> { return this.queue((): Promise<string> => native.exportFile(serialized, fd)); }
 }

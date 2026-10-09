@@ -1,0 +1,68 @@
+{
+  "scope": "Six actual product ETS/tool inputs. SDK/media/files providers controlled by host tests; no device/native/SDK build qualification.",
+  "before": [
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicPlayback.ets",
+      "bytes": 18903,
+      "sha256": "4F330274CA8C716CEA42AA576FEA1672B04636040547A6B307A470C2DB5BEC25"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/PlatformMusicPlayer.ets",
+      "bytes": 5959,
+      "sha256": "07446422A8376BA1885ED496BACDC8AE75DEA661289C649FDBE40F81C9C23A65"
+    },
+    {
+      "path": "hmos/tool/music-playback-test-harness.cjs",
+      "bytes": 5783,
+      "sha256": "7DC14297BB75CD38EBC20A9C99D559011EFD46EF190DF7BD45297EA3C3CDE03A"
+    },
+    {
+      "path": "hmos/tool/music-playback-model.test.cjs",
+      "bytes": 19035,
+      "sha256": "EDC070B349C9F0E475193429ADC04791112BB6EE3B1046F8691B1BF45D53AEBE"
+    },
+    {
+      "path": "hmos/tool/music-playback-platform.test.cjs",
+      "bytes": 7406,
+      "sha256": "5FBA2B6B3B644EF0AA6F20C75CF5EB6AE30BDF532727A04C13FA44983507EBCC"
+    },
+    {
+      "path": "hmos/tool/music-playback-integration.test.cjs",
+      "bytes": 3266,
+      "sha256": "C79BB4A6A3A41565A29B9B759A4CB21710F161A09099E0AA214624241E1C27C8"
+    }
+  ],
+  "after": [
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicPlayback.ets",
+      "bytes": 18903,
+      "sha256": "4F330274CA8C716CEA42AA576FEA1672B04636040547A6B307A470C2DB5BEC25"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/PlatformMusicPlayer.ets",
+      "bytes": 5959,
+      "sha256": "07446422A8376BA1885ED496BACDC8AE75DEA661289C649FDBE40F81C9C23A65"
+    },
+    {
+      "path": "hmos/tool/music-playback-test-harness.cjs",
+      "bytes": 5783,
+      "sha256": "7DC14297BB75CD38EBC20A9C99D559011EFD46EF190DF7BD45297EA3C3CDE03A"
+    },
+    {
+      "path": "hmos/tool/music-playback-model.test.cjs",
+      "bytes": 19035,
+      "sha256": "EDC070B349C9F0E475193429ADC04791112BB6EE3B1046F8691B1BF45D53AEBE"
+    },
+    {
+      "path": "hmos/tool/music-playback-platform.test.cjs",
+      "bytes": 7406,
+      "sha256": "5FBA2B6B3B644EF0AA6F20C75CF5EB6AE30BDF532727A04C13FA44983507EBCC"
+    },
+    {
+      "path": "hmos/tool/music-playback-integration.test.cjs",
+      "bytes": 3266,
+      "sha256": "C79BB4A6A3A41565A29B9B759A4CB21710F161A09099E0AA214624241E1C27C8"
+    }
+  ],
+  "sourceIdentityVerified": true
+}

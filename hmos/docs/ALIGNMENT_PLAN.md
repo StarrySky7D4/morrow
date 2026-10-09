@@ -1,5 +1,13 @@
 # 持续追平 Windows 工作台
 
+2026-10-09 **v29 当前音乐基础检查点**：实现独立持久曲库、标准本地原件的完整 length/hash FD 导入与导出、歌词读取/定位、持久选择/排序/退役，以及共享 Rust 的纯播放决策。新增实际 MusicLibrary、MusicFiles 和 MusicPlayback/PlatformMusicPlayer 基础，固定原请求与 Unknown 保留；Pending、retained 原件和 Ready 发布属于独立事务。**Index 音乐 UI 尚未接入**，不能据此称音乐产品闭环。
+
+最终实际 ETS/tool **1021/1021 PASS，0 fail/skip/cancel**（43 suite 文件、143 项输入前后一致，32,783.3028ms）；Native default **200 library +3 binary PASS**、20 explicit ignored，音乐子集 8 PASS、13 个真实进程中断边界和实际 Store DTO 导出分别通过。新双 ABI release PASS 并采用，283 项 native 来源；ARM64 **58,110,214B /DD86DF95…**、x64 **56,515,718B /E9C66A49…**。最终完整 API26 **SUCCESS /30.098s**，34/34 tasks 执行，319 复制/392 仓库输入前后一致，四项包内原生库核对 PASS；最终 HAP **30,842,790B**，SHA256 `4C4292881291C769B3039E01F895BF75C6C526070DB063AB78224698743015E1`。
+
+版本保持 **dev19/1000019**。独立 Music SDK probe **SUCCESS /23.545s**，四音乐模块实际严格检查并 emit；final 产品 entry graph 未引用这四模块，probe 不作为音乐 UI 或设备运行资格。本轮包 unsigned/uninstalled，设备验收 **NOT_RUN**；实际音频 codec/声音、在线歌词、解密、封面、原件 GC、protected 宿主与完整 Flutter/Windows parity 均 **OPEN**。交付分支仅 `codex/ArkTsUI`，不并入主线。详见 [v29 验证](../reports/ui-source/v29/validation.md)。
+
+以下 v28 及更早历史叙述原样保留；其中数字和“当前”只指各自当轮范围。文末音乐/分发当前表按 v29 更新，本轮资格以以上摘要及验证记录为准。
+
 2026-10-09 **v28 当前分支检查点**：多行待办的纯行格式检查或剩余额度计数失败后，可显式“重新检查”。已派发的格式请求保留原 old/new、剩余额度及固定 wire；计数失败则在同一 owner、revision 和完整 raw 边界内显式重算；失败行独立保留，另一行成功不会清除其错误。同一完整选区回声保留重试资格，实际选区变化仍撤销原重试；迟到结果不覆盖较新原始输入。
 
 最终实际 ETS/tool **922/922 PASS，0 fail/skip/cancel**（36 suite 文件、126 项输入前后一致，30,246.7672ms）；独立四 suite **161/161 PASS**、22 项运行输入一致，属于上述全量范围，不重复累计。最终完整 API26 **SUCCESS /17.582s**，34/34 tasks 执行，315 复制/381 仓库输入前后一致，四项包内原生库核对 PASS。最终 HAP **30,281,859B**，SHA256 `FF9C81704042FF053C2BCE6214E5AD56EDAD4A3906B2D66B06D2E9E273A1A2B5`。Rust/C++ 源码未变，双 ABI `.a` 复用冻结 v27，279 项 native 来源重新核对；本轮未新增 Rust 构建或测试。
@@ -86,9 +94,9 @@ dev.8 已接入原 `query_plan_v2` 的分页过滤、稳定排序和归并，复
 | 持久草稿、S1/S2、未知结果核对 | v25 原请求保存、S1 close、S2/S3 source0 business handoff 保留；v27 Index 已接实际父历史/当前完整子 writer 重启恢复，读取不提交业务或生成新操作，原 Session 已知结果及各项 Unknown/wire 保留 | 新 native 保存/关闭/重启设备闭环、protected 捕获、SDK 未交付事件及跨进程全局配额资格仍 OPEN；显式核对固定退役/close，不能复活 inactive parent |
 | 严格业务、当前 V2 正文与 own 接续 | v27 ordinary CardView 已据真实 decode/Origin 分类，详情重新编辑读最新完整 source/revision 并接 current_v2，保 TaskId/元数据 bytes；active原Session仍按continued_todos接续。191库+3附件和实际两类来源/迁移/新修订Store检查通过 | 不投影 old own LF，不自动重基，不把独立 plan/child/retire/close 事务称为多对象原子；本轮事务实现未改、未重跑旧fault vectors；完整设备/任务编辑/产品资格 OPEN |
 | 附件、剪贴板、Markdown/富文本、导入导出 | dev.19在dev.17/18快照/原件/富转换基础上将完整输出改为Unicode16 grapheme≤20000，回执绑定完整UTF-16/UTF-8长度和版本；完整未来选区粘贴异步preflight及pin后重检。原source限制、SHA、64MiB/20槽/sidecar保持。独立API26双指tester编译main/test HAP与10工具模型通过，未安装/执行设备手势 | 本轮Rust106和三项条件Flutter对照fresh通过；完整ETS/HAP/native身份见v19最终验证。系统富内容/Office持久闭环、dev19字段/IME与图片手势设备NOT_RUN。RTF插件仍2Mi+64KiB，无异常fallback；严格坏编码/RTF U+FFFD、直接输入formatter行为、更严格字节预算、200MiB容量、完整格式/惯性/GIF仍有差距 |
-| 音乐、歌词、解密 | 空状态 | 复用 Rust 解密模块，播放器、播放列表、歌词、文件权限、后台/中断恢复实测 |
+| 音乐、歌词、解密 | v29 独立 Native durable 曲库、完整原件 FD import/export、离线歌词定位与持久选曲/排序/退役；实际 Library/Files/Playback 基础和独立四模块 SDK compile/emit 已实现，Index 音乐 UI 尚未接 | 下一阶段接文件选择/播放列表/歌词/footer，再验设备真实声音/seek/上下首/后台/中断/重启及 FD 清理；在线歌词/解密/metadata/封面/原件 GC/protected/full parity OPEN，见[v29验证](../reports/ui-source/v29/validation.md) |
 | 插件包、动态 UI、HTTP/服务/文件任务 | 未接运行期宿主 | 跟进 Windows 实现与合约，接 Wasm 执行/权限/资源预算/服务与任务控制；区分 Windows 平台实现和共享业务块 |
-| 分发与资格 | dev19/1000019保持，仅codex/ArkTsUI。v27 903/903模型、修后Recovery143子集、双ABI/279来源、fresh retry1完整API26 28.199s/34执行任务/315复制/378仓库输入及4项so核对 PASS；30,267,399B/059504B9…未签未安装，见[v27验证](../reports/ui-source/v27/validation.md) | 新页面已接当前子恢复/最新源重新编辑；实际输入/业务保存/重启/渲染设备NOT_RUN，签名、ARM64、HUKS和完整对齐仍 OPEN；历史B62与首SDK失败/模型drift不代替最终资格 |
+| 分发与资格 | dev19/1000019保持，仅codex/ArkTsUI。v29 final1021模型/143输入、Native200库+3附件/20默认ignored、双ABI/283来源；完整API26 30.098s/34执行任务/319复制/392仓库输入及4包库核对PASS，30,842,790B/4C429288… unsigned/uninstalled，见[v29验证](../reports/ui-source/v29/validation.md) | 四音乐模块在独立23.545s SDK probe严格检查/emit，final产品entry未引用，Index音乐UI未接；设备NOT_RUN，签名/ARM64运行/HUKS和完整对齐OPEN；旧foundation与首probe失败只保留历史资格 |
 
 每一轮更新源码观察与实际功能证据，保护 `shared/reference.json` 的冻结来源。上游在途代码不得未经审查直接覆盖。新版本截图、测试日志和构建输入哈希分别记录，旧图不能被当成新包验收。
 

@@ -1,0 +1,31 @@
+✔ actual Library source exports only independent music DTO/coordination and exact platform import hooks (1.5026ms)
+ℹ MusicLibrary.ets SHA256=842a72ee5ff222f284bce5881d0bc1f776aa40c3850ae3a440dbd417db1840d3
+✔ real Store-produced complete Reply DTO parses without fabricated fields or empty success fallback (2.174ms)
+✔ real Native Pending to complete Ready preserves its original FD import literal and source identity (2.1106ms)
+✔ real complete lyrics and pure playback proposal use exact native read contracts (1.7622ms)
+✔ read paginates all lexical entries including Pending/Retired then orders only actual Ready playlist (6.4861ms)
+✔ read Unknown at a later page retains its exact original page and installs no partial empty playlist (2.1517ms)
+✔ mismatched cross-page revision, duplicate cursor, missing ready entry and missing DTO fail without empty fallback (4.0081ms)
+✔ strict complete DTO rejects foreign source, original wire hash, unknown keys, bounds and fabricated committed read (1.3866ms)
+✔ Pending committed receipt is not Ready, inspect never invokes an FD import, and explicit commit is exact once (1.0893ms)
+✔ import Unknown retains exact original FD literal; reconcile may qualify retained bytes without rereading a replacement file (0.7102ms)
+✔ unretained Unknown import reconciles only to Pending and permits a later explicit same-literal FD attempt (0.7598ms)
+✔ restored original local import first inspects actual Native plan and does not automatically resend FD bytes (0.4587ms)
+✔ foreign import provenance, literal changes, fake ready stage operation and wrong receipt revision cannot qualify files (1.4843ms)
+✔ stable identity navigation wraps actual ordered Ready tracks and refuses foreign or retired source tuples (1.3738ms)
+✔ select returns the actual newly confirmed revision and deletion/reorder preserve stable remaining selected source (1.9906ms)
+✔ fixed mutation Unknown cannot be discarded or replaced; explicit retry preserves original CAS and operation bytes (1.0724ms)
+✔ known CAS rejection may be explicitly discarded; late or malformed receipt remains Unknown (0.6991ms)
+✔ lyrics persist complete UTF8, independent full untimed display and footer CAS without a new source import (1.3013ms)
+✔ input limits reject full data instead of slicing 513 tracks, over150MiB audio, malformed Unicode or lyrics over49152 bytes (0.7389ms)
+✔ pure Native playback request uses string coordinates and returns only a proposal; Unknown retry is the same original literal (0.7647ms)
+✔ owner epoch roundtrip/dispose during actual read, import hash or mutation rejects late installation and keeps original intent (8.0026ms)
+✔ independent public snapshots cannot modify private track, import proposal or fixed retry bytes (0.5749ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 537.0388

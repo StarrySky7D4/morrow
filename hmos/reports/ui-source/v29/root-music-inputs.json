@@ -1,0 +1,31 @@
+{
+  "capturedUtc": "2026-10-09T01:43:56.932Z",
+  "scope": "Frozen Root music FD/NAPI/Workbench foundations and actual Files tests; UI integration OPEN",
+  "files": [
+    {
+      "path": "hmos/entry/src/main/cpp/bridge.cpp",
+      "bytes": 18417,
+      "sha256": "F95A7013DA33D048DDA618E1EE6E94FFA637440B348BF0ADD9BFB0E543EB3FEC"
+    },
+    {
+      "path": "hmos/entry/src/main/cpp/types/libmorrow/index.d.ts",
+      "bytes": 1721,
+      "sha256": "69BDE941BF6083FD6628E3229B50C2448327D6404DE7020E3AF02A946F9B1DAF"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Workbench.ets",
+      "bytes": 2502,
+      "sha256": "71582E668921776554E48F0469E1F6B323728DB076082FD22ED5AE7E4BB0B423"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicFiles.ets",
+      "bytes": 28088,
+      "sha256": "58DA1029415AF4B2C34472219323F01FBB737DF7FB2574ECAEED83C17E2D4844"
+    },
+    {
+      "path": "hmos/tool/music-files-model.test.cjs",
+      "bytes": 15610,
+      "sha256": "45BAB3DC5829E55574015EB1013DF3305CDD9264D4461F3B3BB00E995048467D"
+    }
+  ]
+}

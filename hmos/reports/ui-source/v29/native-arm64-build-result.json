@@ -1,0 +1,13 @@
+{
+  "startedUtc": "2026-10-09T01:43:57.359Z",
+  "finishedUtc": "2026-10-09T01:44:05.943Z",
+  "abi": "arm64-v8a",
+  "exitCode": 0,
+  "signal": null,
+  "status": "PASS",
+  "sourceIdentityVerified": true,
+  "inputs": 283,
+  "log": "native-arm64-build.log",
+  "sha256": "F0FC7FA243439ECDC9CD26293137C25837DB5EAED28DA57F9F263ECDF82E53E8",
+  "scope": "Fresh locked/offline OHOS release archive; compile only, no device qualification."
+}

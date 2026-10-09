@@ -974,7 +974,7 @@ fn reply(commit: CommitView, effect: &'static str) -> Result<Reply> {
         imports: vec![],
         editor_commit: Some(commit),
         editor_intents: None,
-        intent_next_after: None,
+        intent_next_after: None, music: None,
     };
     if serde_json::to_vec(&result).map_err(err)?.len() > crate::LIMIT {
         return Err("EditorReplyBytesLimit".into());

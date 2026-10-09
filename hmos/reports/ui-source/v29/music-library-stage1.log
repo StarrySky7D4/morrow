@@ -1,0 +1,146 @@
+✔ actual Library source exports only independent music DTO/coordination and exact platform import hooks (1.5579ms)
+ℹ MusicLibrary.ets SHA256=348d7a62922fce9c54c8ec787ff446f1dc6fa250e0f39646223eea55f3aefff3
+✔ real Store-produced complete Reply DTO parses without fabricated fields or empty success fallback (2.1863ms)
+✖ real Native Pending to complete Ready preserves its original FD import literal and source identity (2.6515ms)
+✖ real complete lyrics and pure playback proposal use exact native read contracts (1.3447ms)
+✔ read paginates all lexical entries including Pending/Retired then orders only actual Ready playlist (6.3215ms)
+✔ read Unknown at a later page retains its exact original page and installs no partial empty playlist (2.2121ms)
+✔ mismatched cross-page revision, duplicate cursor, missing ready entry and missing DTO fail without empty fallback (4.7914ms)
+✔ strict complete DTO rejects foreign source, original wire hash, unknown keys, bounds and fabricated committed read (1.3686ms)
+✔ Pending committed receipt is not Ready, inspect never invokes an FD import, and explicit commit is exact once (1.0545ms)
+✔ import Unknown retains exact original FD literal; reconcile may qualify retained bytes without rereading a replacement file (0.7275ms)
+✔ unretained Unknown import reconciles only to Pending and permits a later explicit same-literal FD attempt (0.664ms)
+✔ restored original local import first inspects actual Native plan and does not automatically resend FD bytes (0.4179ms)
+✖ foreign import provenance, literal changes, fake ready stage operation and wrong receipt revision cannot qualify files (0.5833ms)
+✔ stable identity navigation wraps actual ordered Ready tracks and refuses foreign or retired source tuples (1.1176ms)
+✔ select returns the actual newly confirmed revision and deletion/reorder preserve stable remaining selected source (1.6238ms)
+✖ fixed mutation Unknown cannot be discarded or replaced; explicit retry preserves original CAS and operation bytes (1.0794ms)
+✔ known CAS rejection may be explicitly discarded; late or malformed receipt remains Unknown (0.6633ms)
+✔ lyrics persist complete UTF8, independent full untimed display and footer CAS without a new source import (1.2124ms)
+✔ input limits reject full data instead of slicing 513 tracks, over150MiB audio, malformed Unicode or lyrics over49152 bytes (0.7926ms)
+✔ pure Native playback request uses string coordinates and returns only a proposal; Unknown retry is the same original literal (0.8817ms)
+✔ owner epoch roundtrip/dispose during actual read, import hash or mutation rejects late installation and keeps original intent (6.69ms)
+✔ independent public snapshots cannot modify private track, import proposal or fixed retry bytes (0.5793ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 18
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 508.9464
+
+✖ failing tests:
+
+test at hmos\tool\music-library-model.test.cjs:22:1
+✖ real Native Pending to complete Ready preserves its original FD import literal and source identity (2.6515ms)
+  AssertionError [ERR_ASSERTION]: Values have same structure but are not reference-equal:
+  
+  {
+    artist: '',
+    byte_length: '34',
+    bytes_retained: true,
+    duration_ms: '0',
+    import_operation: 'fixture-import',
+    library_revision: '2',
+    lyric_source: '',
+    lyrics_byte_length: '0',
+    name: 'fixture-track.mp3',
+    phase: 'ready',
+    request: {
+      byte_length: '34',
+      expected_revision: '0',
+      name: 'fixture-track.mp3',
+      operation_id: 'fixture-import',
+      schema_version: 1,
+      sha256: 'f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608',
+      track_id: 'fixture-track'
+    },
+    request_json: '{"action":"music_import","music":{"action":"import_file","request":{"schema_version":1,"track_id":"fixture-track","operation_id":"fixture-import","expected_revision":"0","name":"fixture-track.mp3","byte_length":"34","sha256":"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608"}}}',
+    request_sha256: 'ed5712f0142261c7c879ed4c3c64660c7d6c300d9e6830a81fd0f7d4c5dab8a7',
+    sha256: 'f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608',
+    source_uri: 'file:///morrow-music/fixture-track',
+    title: 'fixture-track',
+    track_id: 'fixture-track'
+  }
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\music-library-model.test.cjs:34:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { artist: '', byte_length: '34', bytes_retained: true, duration_ms: '0', import_operation: 'fixture-import', library_revision: '2', lyric_source: '', lyrics_byte_length: '0', name: 'fixture-track.mp3', phase: 'ready', request: { byte_length: '34', expected_revision: '0', name: 'fixture-track.mp3', operation_id: 'fixture-import', schema_version: 1, sha256: 'f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608', track_id: 'fixture-track' }, request_json: '{"action":"music_import","music":{"action":"import_file","request":{"schema_version":1,"track_id":"fixture-track","operation_id":"fixture-import","expected_revision":"0","name":"fixture-track.mp3","byte_length":"34","sha256":"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608"}}}', request_sha256: 'ed5712f0142261c7c879ed4c3c64660c7d6c300d9e6830a81fd0f7d4c5dab8a7', sha256: 'f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608', source_uri: 'file:///morrow-music/fixture-track', title: 'fixture-track', track_id: 'fixture-track' },
+    expected: { artist: '', byte_length: '34', bytes_retained: true, duration_ms: '0', import_operation: 'fixture-import', library_revision: '2', lyric_source: '', lyrics_byte_length: '0', name: 'fixture-track.mp3', phase: 'ready', request: { byte_length: '34', expected_revision: '0', name: 'fixture-track.mp3', operation_id: 'fixture-import', schema_version: 1, sha256: 'f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608', track_id: 'fixture-track' }, request_json: '{"action":"music_import","music":{"action":"import_file","request":{"schema_version":1,"track_id":"fixture-track","operation_id":"fixture-import","expected_revision":"0","name":"fixture-track.mp3","byte_length":"34","sha256":"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608"}}}', request_sha256: 'ed5712f0142261c7c879ed4c3c64660c7d6c300d9e6830a81fd0f7d4c5dab8a7', sha256: 'f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608', source_uri: 'file:///morrow-music/fixture-track', title: 'fixture-track', track_id: 'fixture-track' },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\music-library-model.test.cjs:36:1
+✖ real complete lyrics and pure playback proposal use exact native read contracts (1.3447ms)
+  AssertionError [ERR_ASSERTION]: Values have same structure but are not reference-equal:
+  
+  {
+    active_index: 0,
+    lines: [
+      {
+        text: '第一行',
+        time_ms: '1000'
+      },
+      {
+        text: '第二行',
+        time_ms: '2500'
+      }
+    ],
+    source: 'fixture local LRC',
+    text: '[00:01.00]第一行\n[00:02.50]第二行\n',
+    track_id: 'fixture-track',
+    untimed: false
+  }
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\music-library-model.test.cjs:42:46)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { active_index: 0, lines: [ [Object], [Object] ], source: 'fixture local LRC', text: '[00:01.00]第一行\n[00:02.50]第二行\n', track_id: 'fixture-track', untimed: false },
+    expected: { active_index: 0, lines: [ [Object], [Object] ], source: 'fixture local LRC', text: '[00:01.00]第一行\n[00:02.50]第二行\n', track_id: 'fixture-track', untimed: false },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\music-library-model.test.cjs:124:1
+✖ foreign import provenance, literal changes, fake ready stage operation and wrong receipt revision cannot qualify files (0.5833ms)
+  AssertionError [ERR_ASSERTION]: foreign
+  
+  true !== false
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\music-library-model.test.cjs:134:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\music-library-model.test.cjs:152:1
+✖ fixed mutation Unknown cannot be discarded or replaced; explicit retry preserves original CAS and operation bytes (1.0794ms)
+  AssertionError [ERR_ASSERTION]: Values have same structure but are not reference-equal:
+  
+  [
+    'b',
+    'a'
+  ]
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\music-library-model.test.cjs:162:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'b', 'a' ],
+    expected: [ 'b', 'a' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

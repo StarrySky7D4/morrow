@@ -1,0 +1,201 @@
+> hvigor [32mFinished :entry:clean... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreBuild... after 95 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 13 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 23 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 4 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 1 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 1 s 188 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 25 ms [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 182 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessResource... after 12 ms [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 7 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 220 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 2 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 936 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 114 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 76 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 5 ms [39m
+[31m
+FAILURE: Build completed with 1 failure.[31m[39m
+[31m
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task 'default@CompileArkTS'.
+  > Compilation error. See log for more details
+
+[31m* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+[31m[39m
+[31m================================================================================[31m[39m
+
+26 tasks in total: 26 executed, 0 up-to-date
+> hvigor [33mWARN: When performing compilation for the x86_64 architecture:
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument][33m[39m
+[39m
+> hvigor [33mWARN: When performing compilation for the arm64-v8a architecture:
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument][33m[39m
+[39m
+> hvigor [91mERROR: Failed :entry:default@CompileArkTS... [39m
+> hvigor [33mWARN: 
+[33m1 WARN: [33m[33mArkTS:WARN: For details about ArkTS syntax errors, see FAQs[39m[39m
+[33m2 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:111:52
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m3 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:112:27
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m4 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:112:55
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m5 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:112:77
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m6 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:117:30
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m7 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:117:50
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m8 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:119:27
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m9 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:123:32
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m10 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:127:16
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m11 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:151:17
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m12 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:151:41
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m13 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:152:28
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m14 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:154:29
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m15 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:155:45
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m16 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:155:62
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m17 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:157:43
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m18 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:158:19
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m19 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:159:14
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m20 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:162:53
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m21 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:167:67
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m22 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:168:19
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m23 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:168:43
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m24 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:170:36
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m25 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:171:31
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m26 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:172:81
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m27 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:172:98
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m28 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:318:33
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m29 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:320:79
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m30 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:321:19
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m31 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:321:43
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m32 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:322:36
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m33 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:323:31
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m34 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:324:39
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m35 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:324:56
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m36 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/pages/PlatformMusicPlayer.ets:53:27
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m37 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/pages/PlatformMusicPlayer.ets:54:43
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m38 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/pages/PlatformMusicPlayer.ets:55:26
+ The system capacity of this api 'media' is not supported on all devices
+[39m[39m
+[33m39 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/pages/PlatformMusicPlayer.ets:55:32
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m40 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/pages/PlatformMusicPlayer.ets:73:63
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m41 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/pages/PlatformMusicPlayer.ets:74:60
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m42 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/pages/PlatformMusicPlayer.ets:75:61
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m43 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/pages/PlatformMusicPlayer.ets:78:50
+ The system capacity of this api 'media' is not supported on all devices
+[39m[39m
+[33m44 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/pages/PlatformMusicPlayer.ets:91:66
+ Function may throw exceptions. Special handling is required.
+[39m[39m[39m
+> hvigor [91mERROR: ArkTS Compiler Error
+[31m1 ERROR: [31m10605038 ArkTS Compiler Error
+[31mError Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/model/MusicFiles.ets:350:70
+[31m[39m
+[39m
+[31m2 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev29-music-sdk-probe/entry/src/main/ets/pages/Index.ets:13:38
+[31m[39m
+[39m
+[31mCOMPILE RESULT:FAIL {ERROR:3 WARN:44}[39m
+
+[31m* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+[39m
+> hvigor [91mERROR: BUILD FAILED in 8 s 480 ms [39m
+Exception: C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\.build\device-candidates\dev29-music-sdk-probe\scripts\build-hap.ps1:10
+Line |
+  10 |    if($LASTEXITCODE) {throw 'HAP build failed'}
+     |                       ~~~~~~~~~~~~~~~~~~~~~~~~
+     | HAP build failed

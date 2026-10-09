@@ -1,0 +1,1712 @@
+{
+  "changed_request_error_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "not_committed",
+    "error": "MusicImportChanged",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": false,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "current_track_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "track",
+      "library_revision": "26",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "",
+      "operation_revision": "",
+      "order": [
+        "fixture-second",
+        "fixture-track"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-second",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": true,
+          "duration_ms": "0",
+          "import_operation": "fixture-import-second",
+          "library_revision": "26",
+          "lyric_source": "fixture local text",
+          "lyrics_byte_length": "35",
+          "name": "fixture-second.mp3",
+          "phase": "ready",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "3",
+            "name": "fixture-second.mp3",
+            "operation_id": "fixture-import-second",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-second"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-second\",\"operation_id\":\"fixture-import-second\",\"expected_revision\":\"3\",\"name\":\"fixture-second.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "0ca1ae8c745fba6b6a838f0c640a0038fe96a2f237075097ba1f73c552c8f410",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-second",
+          "title": "fixture-second",
+          "track_id": "fixture-second"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "empty_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "library",
+      "library_revision": "0",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "",
+      "operation_revision": "",
+      "order": [],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "",
+      "show_lyrics": false,
+      "tracks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "export_reply": {
+    "byte_length": "34",
+    "error": "",
+    "ok": true,
+    "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608"
+  },
+  "export_request": {
+    "action": "export",
+    "byte_length": "34",
+    "import_operation": "fixture-import-second",
+    "library_revision": "26",
+    "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+    "track_id": "fixture-second"
+  },
+  "lyrics_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "lyrics",
+      "library_revision": "3",
+      "lyrics": {
+        "active_index": 0,
+        "lines": [
+          {
+            "text": "第一行",
+            "time_ms": "1000"
+          },
+          {
+            "text": "第二行",
+            "time_ms": "2500"
+          }
+        ],
+        "source": "fixture local LRC",
+        "text": "[00:01.00]第一行\n[00:02.50]第二行\n",
+        "track_id": "fixture-track",
+        "untimed": false
+      },
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "",
+      "operation_revision": "",
+      "order": [
+        "fixture-track"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-track",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": true,
+          "duration_ms": "0",
+          "import_operation": "fixture-import",
+          "library_revision": "3",
+          "lyric_source": "fixture local LRC",
+          "lyrics_byte_length": "40",
+          "name": "fixture-track.mp3",
+          "phase": "ready",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "0",
+            "name": "fixture-track.mp3",
+            "operation_id": "fixture-import",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-track"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-track\",\"operation_id\":\"fixture-import\",\"expected_revision\":\"0\",\"name\":\"fixture-track.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "ed5712f0142261c7c879ed4c3c64660c7d6c300d9e6830a81fd0f7d4c5dab8a7",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-track",
+          "title": "fixture-track",
+          "track_id": "fixture-track"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "next_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "playback",
+      "library_revision": "26",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "",
+      "operation_revision": "",
+      "order": [
+        "fixture-second",
+        "fixture-track"
+      ],
+      "playback": {
+        "blocked": false,
+        "duration_ms": "0",
+        "index": "1",
+        "playing": false,
+        "position_ms": "0",
+        "track_id": "fixture-track",
+        "transport_effect": "open"
+      },
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-second",
+      "show_lyrics": false,
+      "tracks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "pending_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "track",
+      "library_revision": "1",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "fixture-import",
+      "operation_revision": "1",
+      "order": [],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": false,
+          "duration_ms": "0",
+          "import_operation": "fixture-import",
+          "library_revision": "1",
+          "lyric_source": "",
+          "lyrics_byte_length": "0",
+          "name": "fixture-track.mp3",
+          "phase": "pending",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "0",
+            "name": "fixture-track.mp3",
+            "operation_id": "fixture-import",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-track"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-track\",\"operation_id\":\"fixture-import\",\"expected_revision\":\"0\",\"name\":\"fixture-track.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "ed5712f0142261c7c879ed4c3c64660c7d6c300d9e6830a81fd0f7d4c5dab8a7",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-track",
+          "title": "fixture-track",
+          "track_id": "fixture-track"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "1"
+  },
+  "policy_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "playback",
+      "library_revision": "3",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "",
+      "operation_revision": "",
+      "order": [
+        "fixture-track"
+      ],
+      "playback": {
+        "blocked": false,
+        "duration_ms": "3000",
+        "index": "0",
+        "playing": true,
+        "position_ms": "0",
+        "track_id": "fixture-track",
+        "transport_effect": "play"
+      },
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-track",
+      "show_lyrics": false,
+      "tracks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "read_pages": [
+    {
+      "cards": [],
+      "drafts": [],
+      "effect": "not_committed",
+      "error": "",
+      "ids": [],
+      "imports": [],
+      "markdown": {
+        "blocks": []
+      },
+      "music": {
+        "kind": "library",
+        "library_revision": "26",
+        "next_after": "page-12",
+        "online_lyrics": false,
+        "operation_id": "",
+        "operation_revision": "",
+        "order": [
+          "fixture-second",
+          "fixture-track"
+        ],
+        "repeated": false,
+        "schema_version": 1,
+        "selected_track_id": "fixture-second",
+        "show_lyrics": false,
+        "tracks": [
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": true,
+            "duration_ms": "0",
+            "import_operation": "fixture-retain-import",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "fixture-retained.mp3",
+            "phase": "retired",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "8",
+              "name": "fixture-retained.mp3",
+              "operation_id": "fixture-retain-import",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "fixture-retained"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-retained\",\"operation_id\":\"fixture-retain-import\",\"expected_revision\":\"8\",\"name\":\"fixture-retained.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "e2aee46803590a25bbc7590e6aafe704008913841896e01591ea2e18b00f198d",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/fixture-retained",
+            "title": "fixture-retained",
+            "track_id": "fixture-retained"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": true,
+            "duration_ms": "0",
+            "import_operation": "fixture-import-second",
+            "library_revision": "26",
+            "lyric_source": "fixture local text",
+            "lyrics_byte_length": "35",
+            "name": "fixture-second.mp3",
+            "phase": "ready",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "3",
+              "name": "fixture-second.mp3",
+              "operation_id": "fixture-import-second",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "fixture-second"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-second\",\"operation_id\":\"fixture-import-second\",\"expected_revision\":\"3\",\"name\":\"fixture-second.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "0ca1ae8c745fba6b6a838f0c640a0038fe96a2f237075097ba1f73c552c8f410",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/fixture-second",
+            "title": "fixture-second",
+            "track_id": "fixture-second"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": true,
+            "duration_ms": "0",
+            "import_operation": "fixture-import",
+            "library_revision": "26",
+            "lyric_source": "fixture local LRC",
+            "lyrics_byte_length": "40",
+            "name": "fixture-track.mp3",
+            "phase": "ready",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "0",
+              "name": "fixture-track.mp3",
+              "operation_id": "fixture-import",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "fixture-track"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-track\",\"operation_id\":\"fixture-import\",\"expected_revision\":\"0\",\"name\":\"fixture-track.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "ed5712f0142261c7c879ed4c3c64660c7d6c300d9e6830a81fd0f7d4c5dab8a7",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/fixture-track",
+            "title": "fixture-track",
+            "track_id": "fixture-track"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-00",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-00.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "11",
+              "name": "page-00.mp3",
+              "operation_id": "fixture-page-00",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-00"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-00\",\"operation_id\":\"fixture-page-00\",\"expected_revision\":\"11\",\"name\":\"page-00.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "a077f395671c18b27e11e5ac533a381eeb84dcd131de9e14642884dfcf409f66",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-00",
+            "title": "page-00",
+            "track_id": "page-00"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-01",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-01.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "12",
+              "name": "page-01.mp3",
+              "operation_id": "fixture-page-01",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-01"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-01\",\"operation_id\":\"fixture-page-01\",\"expected_revision\":\"12\",\"name\":\"page-01.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "cc26beb2977577482ff8ecb1c39ef34c7add79733687817c4e8bf28096fa8693",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-01",
+            "title": "page-01",
+            "track_id": "page-01"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-02",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-02.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "13",
+              "name": "page-02.mp3",
+              "operation_id": "fixture-page-02",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-02"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-02\",\"operation_id\":\"fixture-page-02\",\"expected_revision\":\"13\",\"name\":\"page-02.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "2ed0216ca8e5b12331fb62cbb478b0d34d10055943d879fd3e1111e78f8a3f10",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-02",
+            "title": "page-02",
+            "track_id": "page-02"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-03",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-03.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "14",
+              "name": "page-03.mp3",
+              "operation_id": "fixture-page-03",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-03"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-03\",\"operation_id\":\"fixture-page-03\",\"expected_revision\":\"14\",\"name\":\"page-03.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "354d1803e51c06a96ac3d0a4424a90ddbeff275aad9e0f795c7d7c029f86e620",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-03",
+            "title": "page-03",
+            "track_id": "page-03"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-04",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-04.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "15",
+              "name": "page-04.mp3",
+              "operation_id": "fixture-page-04",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-04"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-04\",\"operation_id\":\"fixture-page-04\",\"expected_revision\":\"15\",\"name\":\"page-04.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "40bce41822e711a83be33b25d6941720ac7f94a88b886ecae58c8621fb5231f9",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-04",
+            "title": "page-04",
+            "track_id": "page-04"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-05",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-05.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "16",
+              "name": "page-05.mp3",
+              "operation_id": "fixture-page-05",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-05"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-05\",\"operation_id\":\"fixture-page-05\",\"expected_revision\":\"16\",\"name\":\"page-05.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "31f945e452734821b954e4cc9adc47337f4c3a2bb7c06b6c2dfe9bc9dc83fa3d",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-05",
+            "title": "page-05",
+            "track_id": "page-05"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-06",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-06.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "17",
+              "name": "page-06.mp3",
+              "operation_id": "fixture-page-06",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-06"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-06\",\"operation_id\":\"fixture-page-06\",\"expected_revision\":\"17\",\"name\":\"page-06.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "213945a86709742233ea8786d17b8aeef0f9f78f9b00dbe65ce86445b587fa88",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-06",
+            "title": "page-06",
+            "track_id": "page-06"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-07",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-07.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "18",
+              "name": "page-07.mp3",
+              "operation_id": "fixture-page-07",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-07"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-07\",\"operation_id\":\"fixture-page-07\",\"expected_revision\":\"18\",\"name\":\"page-07.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "1d90460fcf3449ca2bf3d325607996ca3b85ad9d8e3cddeae3c735d466c93692",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-07",
+            "title": "page-07",
+            "track_id": "page-07"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-08",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-08.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "19",
+              "name": "page-08.mp3",
+              "operation_id": "fixture-page-08",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-08"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-08\",\"operation_id\":\"fixture-page-08\",\"expected_revision\":\"19\",\"name\":\"page-08.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "6c52cec66f47dbf8907c15987ca46787e926e6edbf5d7cf962173d91daa75ba0",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-08",
+            "title": "page-08",
+            "track_id": "page-08"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-09",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-09.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "20",
+              "name": "page-09.mp3",
+              "operation_id": "fixture-page-09",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-09"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-09\",\"operation_id\":\"fixture-page-09\",\"expected_revision\":\"20\",\"name\":\"page-09.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "f0db395b1e679652162d82555d300d9161c1b8ac078773d3bdab5157ca33b80c",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-09",
+            "title": "page-09",
+            "track_id": "page-09"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-10",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-10.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "21",
+              "name": "page-10.mp3",
+              "operation_id": "fixture-page-10",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-10"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-10\",\"operation_id\":\"fixture-page-10\",\"expected_revision\":\"21\",\"name\":\"page-10.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "0f8f5c816dfb2609c5b2ae85aa0a0138bc6f9b5bb26d8bc3e7b4567d34c2c0b7",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-10",
+            "title": "page-10",
+            "track_id": "page-10"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-11",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-11.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "22",
+              "name": "page-11.mp3",
+              "operation_id": "fixture-page-11",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-11"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-11\",\"operation_id\":\"fixture-page-11\",\"expected_revision\":\"22\",\"name\":\"page-11.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "88079d2992ae887cf9b7968234ef1a8643553d88b3b42769aec8caa0de3bff5c",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-11",
+            "title": "page-11",
+            "track_id": "page-11"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-12",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-12.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "23",
+              "name": "page-12.mp3",
+              "operation_id": "fixture-page-12",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-12"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-12\",\"operation_id\":\"fixture-page-12\",\"expected_revision\":\"23\",\"name\":\"page-12.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "95bfd2df7acd84553de2f1c8744a6e86e66a8f80d8c3c1f403968364f3547dbb",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-12",
+            "title": "page-12",
+            "track_id": "page-12"
+          }
+        ]
+      },
+      "ok": true,
+      "paste_text": "",
+      "profile": "development-unsealed",
+      "receipt_revision": ""
+    },
+    {
+      "cards": [],
+      "drafts": [],
+      "effect": "not_committed",
+      "error": "",
+      "ids": [],
+      "imports": [],
+      "markdown": {
+        "blocks": []
+      },
+      "music": {
+        "kind": "library",
+        "library_revision": "26",
+        "next_after": "",
+        "online_lyrics": false,
+        "operation_id": "",
+        "operation_revision": "",
+        "order": [
+          "fixture-second",
+          "fixture-track"
+        ],
+        "repeated": false,
+        "schema_version": 1,
+        "selected_track_id": "fixture-second",
+        "show_lyrics": false,
+        "tracks": [
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-13",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-13.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "24",
+              "name": "page-13.mp3",
+              "operation_id": "fixture-page-13",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-13"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-13\",\"operation_id\":\"fixture-page-13\",\"expected_revision\":\"24\",\"name\":\"page-13.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "ca6f6e1a26412509e90b88bb735075f7a7b6dbf4bbcc8077070670f5877c755d",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-13",
+            "title": "page-13",
+            "track_id": "page-13"
+          },
+          {
+            "artist": "",
+            "byte_length": "34",
+            "bytes_retained": false,
+            "duration_ms": "0",
+            "import_operation": "fixture-page-14",
+            "library_revision": "26",
+            "lyric_source": "",
+            "lyrics_byte_length": "0",
+            "name": "page-14.mp3",
+            "phase": "pending",
+            "request": {
+              "byte_length": "34",
+              "expected_revision": "25",
+              "name": "page-14.mp3",
+              "operation_id": "fixture-page-14",
+              "schema_version": 1,
+              "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+              "track_id": "page-14"
+            },
+            "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"page-14\",\"operation_id\":\"fixture-page-14\",\"expected_revision\":\"25\",\"name\":\"page-14.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+            "request_sha256": "d81c070aac8cc15f0923e5430af8756f7c259ebb7ff1e4e9cdccbbf229bfd281",
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "source_uri": "file:///morrow-music/page-14",
+            "title": "page-14",
+            "track_id": "page-14"
+          }
+        ]
+      },
+      "ok": true,
+      "paste_text": "",
+      "profile": "development-unsealed",
+      "receipt_revision": ""
+    }
+  ],
+  "read_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "library",
+      "library_revision": "3",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "",
+      "operation_revision": "",
+      "order": [
+        "fixture-track"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-track",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": true,
+          "duration_ms": "0",
+          "import_operation": "fixture-import",
+          "library_revision": "3",
+          "lyric_source": "fixture local LRC",
+          "lyrics_byte_length": "40",
+          "name": "fixture-track.mp3",
+          "phase": "ready",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "0",
+            "name": "fixture-track.mp3",
+            "operation_id": "fixture-import",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-track"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-track\",\"operation_id\":\"fixture-import\",\"expected_revision\":\"0\",\"name\":\"fixture-track.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "ed5712f0142261c7c879ed4c3c64660c7d6c300d9e6830a81fd0f7d4c5dab8a7",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-track",
+          "title": "fixture-track",
+          "track_id": "fixture-track"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "ready_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "track",
+      "library_revision": "2",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "morrow-host-music-ready-4aa742370f41de015eb34247829f980a30b18bce8d8833fa7ce03bb1a586f97b",
+      "operation_revision": "2",
+      "order": [
+        "fixture-track"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-track",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": true,
+          "duration_ms": "0",
+          "import_operation": "fixture-import",
+          "library_revision": "2",
+          "lyric_source": "",
+          "lyrics_byte_length": "0",
+          "name": "fixture-track.mp3",
+          "phase": "ready",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "0",
+            "name": "fixture-track.mp3",
+            "operation_id": "fixture-import",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-track"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-track\",\"operation_id\":\"fixture-import\",\"expected_revision\":\"0\",\"name\":\"fixture-track.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "ed5712f0142261c7c879ed4c3c64660c7d6c300d9e6830a81fd0f7d4c5dab8a7",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-track",
+          "title": "fixture-track",
+          "track_id": "fixture-track"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "2"
+  },
+  "reconcile_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "track",
+      "library_revision": "10",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "morrow-host-music-ready-5b6095af9af13b5d80ffee6c7802129baa0620a90c02ada7cf8f940e1c14c52a",
+      "operation_revision": "10",
+      "order": [
+        "fixture-second",
+        "fixture-track",
+        "fixture-retained"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-second",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": true,
+          "duration_ms": "0",
+          "import_operation": "fixture-retain-import",
+          "library_revision": "10",
+          "lyric_source": "",
+          "lyrics_byte_length": "0",
+          "name": "fixture-retained.mp3",
+          "phase": "ready",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "8",
+            "name": "fixture-retained.mp3",
+            "operation_id": "fixture-retain-import",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-retained"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-retained\",\"operation_id\":\"fixture-retain-import\",\"expected_revision\":\"8\",\"name\":\"fixture-retained.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "e2aee46803590a25bbc7590e6aafe704008913841896e01591ea2e18b00f198d",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-retained",
+          "title": "fixture-retained",
+          "track_id": "fixture-retained"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "10"
+  },
+  "remove_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "track",
+      "library_revision": "11",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "fixture-remove-retained",
+      "operation_revision": "11",
+      "order": [
+        "fixture-second",
+        "fixture-track"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-second",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": true,
+          "duration_ms": "0",
+          "import_operation": "fixture-retain-import",
+          "library_revision": "11",
+          "lyric_source": "",
+          "lyrics_byte_length": "0",
+          "name": "fixture-retained.mp3",
+          "phase": "retired",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "8",
+            "name": "fixture-retained.mp3",
+            "operation_id": "fixture-retain-import",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-retained"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-retained\",\"operation_id\":\"fixture-retain-import\",\"expected_revision\":\"8\",\"name\":\"fixture-retained.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "e2aee46803590a25bbc7590e6aafe704008913841896e01591ea2e18b00f198d",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-retained",
+          "title": "fixture-retained",
+          "track_id": "fixture-retained"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "11"
+  },
+  "reorder_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "library",
+      "library_revision": "7",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "fixture-reorder",
+      "operation_revision": "7",
+      "order": [
+        "fixture-second",
+        "fixture-track"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-second",
+      "show_lyrics": false,
+      "tracks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "7"
+  },
+  "request": {
+    "byte_length": "34",
+    "expected_revision": "0",
+    "name": "fixture-track.mp3",
+    "operation_id": "fixture-import",
+    "schema_version": 1,
+    "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+    "track_id": "fixture-track"
+  },
+  "restore_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "playback",
+      "library_revision": "26",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "",
+      "operation_revision": "",
+      "order": [
+        "fixture-second",
+        "fixture-track"
+      ],
+      "playback": {
+        "blocked": false,
+        "duration_ms": "0",
+        "index": "0",
+        "playing": false,
+        "position_ms": "0",
+        "track_id": "fixture-second",
+        "transport_effect": "stop"
+      },
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-second",
+      "show_lyrics": false,
+      "tracks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "retained_begin_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "track",
+      "library_revision": "9",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "fixture-retain-import",
+      "operation_revision": "9",
+      "order": [
+        "fixture-second",
+        "fixture-track"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-second",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": false,
+          "duration_ms": "0",
+          "import_operation": "fixture-retain-import",
+          "library_revision": "9",
+          "lyric_source": "",
+          "lyrics_byte_length": "0",
+          "name": "fixture-retained.mp3",
+          "phase": "pending",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "8",
+            "name": "fixture-retained.mp3",
+            "operation_id": "fixture-retain-import",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-retained"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-retained\",\"operation_id\":\"fixture-retain-import\",\"expected_revision\":\"8\",\"name\":\"fixture-retained.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "e2aee46803590a25bbc7590e6aafe704008913841896e01591ea2e18b00f198d",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-retained",
+          "title": "fixture-retained",
+          "track_id": "fixture-retained"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "9"
+  },
+  "retained_pending_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "track",
+      "library_revision": "9",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "fixture-retain-import",
+      "operation_revision": "9",
+      "order": [
+        "fixture-second",
+        "fixture-track"
+      ],
+      "repeated": true,
+      "schema_version": 1,
+      "selected_track_id": "fixture-second",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": true,
+          "duration_ms": "0",
+          "import_operation": "fixture-retain-import",
+          "library_revision": "9",
+          "lyric_source": "",
+          "lyrics_byte_length": "0",
+          "name": "fixture-retained.mp3",
+          "phase": "pending",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "8",
+            "name": "fixture-retained.mp3",
+            "operation_id": "fixture-retain-import",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-retained"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-retained\",\"operation_id\":\"fixture-retain-import\",\"expected_revision\":\"8\",\"name\":\"fixture-retained.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "e2aee46803590a25bbc7590e6aafe704008913841896e01591ea2e18b00f198d",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-retained",
+          "title": "fixture-retained",
+          "track_id": "fixture-retained"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "retained_request": {
+    "byte_length": "34",
+    "expected_revision": "8",
+    "name": "fixture-retained.mp3",
+    "operation_id": "fixture-retain-import",
+    "schema_version": 1,
+    "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+    "track_id": "fixture-retained"
+  },
+  "schema_version": 1,
+  "scope": "Actual isolated development Store synthetic bytes; not decoded/audible/device/protected proof",
+  "second_ready_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "track",
+      "library_revision": "5",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "morrow-host-music-ready-f4eebbfc865d662edb47d3221228727ffaaa22f6dd138f3e52d96638bcd1a678",
+      "operation_revision": "5",
+      "order": [
+        "fixture-track",
+        "fixture-second"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-track",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": true,
+          "duration_ms": "0",
+          "import_operation": "fixture-import-second",
+          "library_revision": "5",
+          "lyric_source": "",
+          "lyrics_byte_length": "0",
+          "name": "fixture-second.mp3",
+          "phase": "ready",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "3",
+            "name": "fixture-second.mp3",
+            "operation_id": "fixture-import-second",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-second"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-second\",\"operation_id\":\"fixture-import-second\",\"expected_revision\":\"3\",\"name\":\"fixture-second.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "0ca1ae8c745fba6b6a838f0c640a0038fe96a2f237075097ba1f73c552c8f410",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-second",
+          "title": "fixture-second",
+          "track_id": "fixture-second"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "5"
+  },
+  "second_request": {
+    "byte_length": "34",
+    "expected_revision": "3",
+    "name": "fixture-second.mp3",
+    "operation_id": "fixture-import-second",
+    "schema_version": 1,
+    "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+    "track_id": "fixture-second"
+  },
+  "seek_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "playback",
+      "library_revision": "26",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "",
+      "operation_revision": "",
+      "order": [
+        "fixture-second",
+        "fixture-track"
+      ],
+      "playback": {
+        "blocked": false,
+        "duration_ms": "3000",
+        "index": "0",
+        "playing": true,
+        "position_ms": "3000",
+        "track_id": "fixture-second",
+        "transport_effect": "seek"
+      },
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-second",
+      "show_lyrics": false,
+      "tracks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "selected_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "track",
+      "library_revision": "6",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "fixture-select-second",
+      "operation_revision": "6",
+      "order": [
+        "fixture-track",
+        "fixture-second"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-second",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": true,
+          "duration_ms": "0",
+          "import_operation": "fixture-import-second",
+          "library_revision": "6",
+          "lyric_source": "",
+          "lyrics_byte_length": "0",
+          "name": "fixture-second.mp3",
+          "phase": "ready",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "3",
+            "name": "fixture-second.mp3",
+            "operation_id": "fixture-import-second",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-second"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-second\",\"operation_id\":\"fixture-import-second\",\"expected_revision\":\"3\",\"name\":\"fixture-second.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "0ca1ae8c745fba6b6a838f0c640a0038fe96a2f237075097ba1f73c552c8f410",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-second",
+          "title": "fixture-second",
+          "track_id": "fixture-second"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "6"
+  },
+  "set_lyrics_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "track",
+      "library_revision": "3",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "fixture-lyrics",
+      "operation_revision": "3",
+      "order": [
+        "fixture-track"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-track",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": true,
+          "duration_ms": "0",
+          "import_operation": "fixture-import",
+          "library_revision": "3",
+          "lyric_source": "fixture local LRC",
+          "lyrics_byte_length": "40",
+          "name": "fixture-track.mp3",
+          "phase": "ready",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "0",
+            "name": "fixture-track.mp3",
+            "operation_id": "fixture-import",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-track"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-track\",\"operation_id\":\"fixture-import\",\"expected_revision\":\"0\",\"name\":\"fixture-track.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "ed5712f0142261c7c879ed4c3c64660c7d6c300d9e6830a81fd0f7d4c5dab8a7",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-track",
+          "title": "fixture-track",
+          "track_id": "fixture-track"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "3"
+  },
+  "stale_revision_error_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "not_committed",
+    "error": "MusicRevisionConflict",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": false,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "untimed_lyrics_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "lyrics",
+      "library_revision": "8",
+      "lyrics": {
+        "active_index": -1,
+        "lines": [],
+        "source": "fixture local text",
+        "text": "完整无时间轴歌词\n第二行\n",
+        "track_id": "fixture-second",
+        "untimed": true
+      },
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "",
+      "operation_revision": "",
+      "order": [
+        "fixture-second",
+        "fixture-track"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-second",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": true,
+          "duration_ms": "0",
+          "import_operation": "fixture-import-second",
+          "library_revision": "8",
+          "lyric_source": "fixture local text",
+          "lyrics_byte_length": "35",
+          "name": "fixture-second.mp3",
+          "phase": "ready",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "3",
+            "name": "fixture-second.mp3",
+            "operation_id": "fixture-import-second",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-second"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-second\",\"operation_id\":\"fixture-import-second\",\"expected_revision\":\"3\",\"name\":\"fixture-second.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "0ca1ae8c745fba6b6a838f0c640a0038fe96a2f237075097ba1f73c552c8f410",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-second",
+          "title": "fixture-second",
+          "track_id": "fixture-second"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "untimed_set_reply": {
+    "cards": [],
+    "drafts": [],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "music": {
+      "kind": "track",
+      "library_revision": "8",
+      "next_after": "",
+      "online_lyrics": false,
+      "operation_id": "fixture-untimed",
+      "operation_revision": "8",
+      "order": [
+        "fixture-second",
+        "fixture-track"
+      ],
+      "repeated": false,
+      "schema_version": 1,
+      "selected_track_id": "fixture-second",
+      "show_lyrics": false,
+      "tracks": [
+        {
+          "artist": "",
+          "byte_length": "34",
+          "bytes_retained": true,
+          "duration_ms": "0",
+          "import_operation": "fixture-import-second",
+          "library_revision": "8",
+          "lyric_source": "fixture local text",
+          "lyrics_byte_length": "35",
+          "name": "fixture-second.mp3",
+          "phase": "ready",
+          "request": {
+            "byte_length": "34",
+            "expected_revision": "3",
+            "name": "fixture-second.mp3",
+            "operation_id": "fixture-import-second",
+            "schema_version": 1,
+            "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+            "track_id": "fixture-second"
+          },
+          "request_json": "{\"action\":\"music_import\",\"music\":{\"action\":\"import_file\",\"request\":{\"schema_version\":1,\"track_id\":\"fixture-second\",\"operation_id\":\"fixture-import-second\",\"expected_revision\":\"3\",\"name\":\"fixture-second.mp3\",\"byte_length\":\"34\",\"sha256\":\"f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608\"}}}",
+          "request_sha256": "0ca1ae8c745fba6b6a838f0c640a0038fe96a2f237075097ba1f73c552c8f410",
+          "sha256": "f5a837c22b00d9e67d86c442657822618d011867c5de320566adf9e25d958608",
+          "source_uri": "file:///morrow-music/fixture-second",
+          "title": "fixture-second",
+          "track_id": "fixture-second"
+        }
+      ]
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "8"
+  }
+}

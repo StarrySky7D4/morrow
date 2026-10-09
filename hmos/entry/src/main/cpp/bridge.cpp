@@ -23,6 +23,7 @@ extern "C" char *morrow_hmos_editor_input(const char *);
 extern "C" char *morrow_hmos_import(const char *, int owned_fd);
 extern "C" char *morrow_hmos_export(const char *, int owned_fd);
 extern "C" char *morrow_hmos_prepare(int source_owned_fd, int destination_owned_fd, uint64_t max_bytes);
+extern "C" char *morrow_hmos_music_prepare(int source_owned_fd, int destination_owned_fd, uint64_t max_bytes);
 extern "C" char *morrow_hmos_clipboard_convert(const char *, int source_owned_fd);
 extern "C" char *morrow_hmos_clipboard_image(const char *, int source_owned_fd, int destination_owned_fd, uint64_t max_bytes);
 extern "C" void morrow_hmos_free(char *);
@@ -56,7 +57,7 @@ bool ReadField(napi_env env, napi_value value, std::string &result) {
     return Read(env, value, result);
 }
 napi_value Undefined(napi_env env) { napi_value v; napi_get_undefined(env, &v); return v; }
-enum class Operation { Request, EditorField, EditorInput, Import, Export, Prepare, ClipboardConvert, ClipboardImage };
+enum class Operation { Request, EditorField, EditorInput, Import, Export, Prepare, MusicPrepare, ClipboardConvert, ClipboardImage };
 struct Work {
     napi_async_work work{};
     napi_deferred deferred{};
@@ -119,6 +120,11 @@ void Execute(napi_env, void *data) {
             const int source = std::exchange(w->source_fd, -1);
             const int destination = std::exchange(w->destination_fd, -1);
             reply = morrow_hmos_prepare(source, destination, w->max_bytes); break;
+        }
+        case Operation::MusicPrepare: {
+            const int source = std::exchange(w->source_fd, -1);
+            const int destination = std::exchange(w->destination_fd, -1);
+            reply = morrow_hmos_music_prepare(source, destination, w->max_bytes); break;
         }
     }
     if (reply) { w->reply = reply; morrow_hmos_free(reply); }
@@ -218,14 +224,15 @@ napi_value ClipboardImage(napi_env env, napi_callback_info info) {
     }
     return Queue(env, std::move(work));
 }
-napi_value PrepareFile(napi_env env, napi_callback_info info) {
+napi_value Prepare(napi_env env, napi_callback_info info, Operation operation) {
     size_t argc = 4; napi_value argv[4]; int source, destination;
     if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok) {
         napi_throw_type_error(env, "NATIVE_NOT_STARTED", "Cannot read file preparation arguments"); return nullptr;
     }
-    auto work = std::make_unique<Work>(); work->operation = Operation::Prepare;
+    auto work = std::make_unique<Work>(); work->operation = operation;
     if (argc != 3 || !ReadFd(env, argv[0], source) || !ReadFd(env, argv[1], destination) || source == destination ||
-        !ReadLimit(env, argv[2], work->max_bytes)) {
+        !ReadLimit(env, argv[2], work->max_bytes) ||
+        (operation == Operation::MusicPrepare && work->max_bytes > 150ULL * 1024 * 1024)) {
         napi_throw_type_error(env, "NATIVE_NOT_STARTED", "Expected distinct file descriptors and a limit of 1..200 MiB"); return nullptr;
     }
     work->source_fd = Duplicate(source);
@@ -235,6 +242,8 @@ napi_value PrepareFile(napi_env env, napi_callback_info info) {
     }
     return Queue(env, std::move(work));
 }
+napi_value PrepareFile(napi_env env, napi_callback_info info) { return Prepare(env, info, Operation::Prepare); }
+napi_value PrepareMusicFile(napi_env env, napi_callback_info info) { return Prepare(env, info, Operation::MusicPrepare); }
 
 ArkUI_NativeNodeAPI_1 *api = nullptr;
 struct Preview { ArkUI_NodeHandle root{}, title{}, detail{}; };
@@ -302,6 +311,7 @@ napi_value Init(napi_env env, napi_value exports) {
         {"importFile",nullptr,ImportFile,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"exportFile",nullptr,ExportFile,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"prepareFile",nullptr,PrepareFile,nullptr,nullptr,nullptr,napi_default,nullptr},
+        {"prepareMusicFile",nullptr,PrepareMusicFile,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"clipboardConvert",nullptr,ClipboardConvert,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"clipboardImage",nullptr,ClipboardImage,nullptr,nullptr,nullptr,napi_default,nullptr},
         {"renderPreview",nullptr,Render,nullptr,nullptr,nullptr,napi_default,nullptr},

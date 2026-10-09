@@ -1,0 +1,7 @@
+{
+  "status": "FAILED_BEFORE_BUILD",
+  "reason": "Capture correctly rejected changed Root-owned bridge not yet declared in capture map; no compiler/archive/adoption started.",
+  "path": "hmos/entry/src/main/cpp/bridge.cpp",
+  "actualSha256": "F95A7013DA33D048DDA618E1EE6E94FFA637440B348BF0ADD9BFB0E543EB3FEC",
+  "remedy": "Declare exact frozen Root inputs; retain unchanged shared-source checks."
+}

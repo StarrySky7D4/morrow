@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "scope": "v29 independent development music library, retained audio and pure lyrics/playback foundation",
+  "qualification": "frozen-native-source",
+  "files": [
+    {
+      "path": "hmos/rust/src/music_bridge.rs",
+      "bytes": 35936,
+      "sha256": "1003C72C11D90B6479940EA5AB65B9431C56A5BEACA641BCF38660221E49B695"
+    },
+    {
+      "path": "hmos/rust/src/music_bridge_tests.rs",
+      "bytes": 25776,
+      "sha256": "CFE927ACF80DA81FA4F392339C80D2C15D45CF4739C39198B11AC08CE1F229C4"
+    },
+    {
+      "path": "hmos/rust/src/lib.rs",
+      "bytes": 64423,
+      "sha256": "1CC8E44723FC69965777C0C502EBFBB88C4561BF89CD163D51E684AB1E2CA938"
+    },
+    {
+      "path": "hmos/rust/src/file_stream.rs",
+      "bytes": 5902,
+      "sha256": "21925DBF7DD41CAC87C215C68456BF04B7937C8B92824F00968259931F9C705E"
+    },
+    {
+      "path": "hmos/rust/src/editor_business.rs",
+      "bytes": 47805,
+      "sha256": "DB7750F82A1A44BCB300C1A424C14DE64E969B0127ED5F9BDC674A16892FBCB9"
+    }
+  ]
+}

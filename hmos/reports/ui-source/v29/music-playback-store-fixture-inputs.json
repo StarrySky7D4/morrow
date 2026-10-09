@@ -1,0 +1,58 @@
+{
+  "scope": "Five actual ETS/tool/Store fixture inputs; no FD acquisition, token minting, decoder, native call or device.",
+  "before": [
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicPlayback.ets",
+      "bytes": 18903,
+      "sha256": "4F330274CA8C716CEA42AA576FEA1672B04636040547A6B307A470C2DB5BEC25"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/PlatformMusicPlayer.ets",
+      "bytes": 5959,
+      "sha256": "07446422A8376BA1885ED496BACDC8AE75DEA661289C649FDBE40F81C9C23A65"
+    },
+    {
+      "path": "hmos/tool/music-playback-test-harness.cjs",
+      "bytes": 5783,
+      "sha256": "7DC14297BB75CD38EBC20A9C99D559011EFD46EF190DF7BD45297EA3C3CDE03A"
+    },
+    {
+      "path": "hmos/tool/music-playback-store-fixture.test.cjs",
+      "bytes": 6538,
+      "sha256": "52FC505455DCE5C8C9F9222864BC68467FE097E2CEDC52AB1DA09C297D6326AE"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-store-fixture.json",
+      "bytes": 65127,
+      "sha256": "DA6D8DF4F50F59555A4064AB29C9B302CE29B85A843DEB03F2F5C9EB0D83B9B2"
+    }
+  ],
+  "after": [
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicPlayback.ets",
+      "bytes": 18903,
+      "sha256": "4F330274CA8C716CEA42AA576FEA1672B04636040547A6B307A470C2DB5BEC25"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/PlatformMusicPlayer.ets",
+      "bytes": 5959,
+      "sha256": "07446422A8376BA1885ED496BACDC8AE75DEA661289C649FDBE40F81C9C23A65"
+    },
+    {
+      "path": "hmos/tool/music-playback-test-harness.cjs",
+      "bytes": 5783,
+      "sha256": "7DC14297BB75CD38EBC20A9C99D559011EFD46EF190DF7BD45297EA3C3CDE03A"
+    },
+    {
+      "path": "hmos/tool/music-playback-store-fixture.test.cjs",
+      "bytes": 6538,
+      "sha256": "52FC505455DCE5C8C9F9222864BC68467FE097E2CEDC52AB1DA09C297D6326AE"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-store-fixture.json",
+      "bytes": 65127,
+      "sha256": "DA6D8DF4F50F59555A4064AB29C9B302CE29B85A843DEB03F2F5C9EB0D83B9B2"
+    }
+  ],
+  "sourceIdentityVerified": true
+}

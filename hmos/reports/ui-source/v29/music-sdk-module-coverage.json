@@ -1,0 +1,61 @@
+{
+  "checkedUtc": "2026-10-09T01:53:34.077Z",
+  "status": "PASS",
+  "scope": "Dormant four music ETS modules absent from final product entry graph; all four SDK-checked and emitted only in altered uninstalled compilation probe. No device/UI runtime claim.",
+  "projects": [
+    {
+      "project": "dev29-music-foundation-final",
+      "filesInfoBytes": 14485,
+      "filesInfoSha256": "B95D6E3A0AE15506A39A44C7E30D63FE0EBC41EC057A77D2E5CCDBEC96035E8F",
+      "modules": [
+        {
+          "module": "MusicFiles",
+          "listed": false,
+          "emitted": false
+        },
+        {
+          "module": "MusicLibrary",
+          "listed": false,
+          "emitted": false
+        },
+        {
+          "module": "MusicPlayback",
+          "listed": false,
+          "emitted": false
+        },
+        {
+          "module": "PlatformMusicPlayer",
+          "listed": false,
+          "emitted": false
+        }
+      ]
+    },
+    {
+      "project": "dev29-music-sdk-probe-final",
+      "filesInfoBytes": 3094,
+      "filesInfoSha256": "33AC006B9AEABB479BD39A4C7B23BB3C8DC426F40AC1654679629B2F766C93DC",
+      "modules": [
+        {
+          "module": "MusicFiles",
+          "listed": true,
+          "emitted": true
+        },
+        {
+          "module": "MusicLibrary",
+          "listed": true,
+          "emitted": true
+        },
+        {
+          "module": "MusicPlayback",
+          "listed": true,
+          "emitted": true
+        },
+        {
+          "module": "PlatformMusicPlayer",
+          "listed": true,
+          "emitted": true
+        }
+      ]
+    }
+  ]
+}

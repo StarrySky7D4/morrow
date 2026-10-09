@@ -1,0 +1,18 @@
+{
+  "startedUtc": "2026-10-09T01:45:08.2988836Z",
+  "finishedUtc": "2026-10-09T01:45:08.6857723Z",
+  "exitCode": 0,
+  "tests": 6,
+  "pass": 6,
+  "fail": 0,
+  "cancelled": 0,
+  "skipped": 0,
+  "durationMs": 334.9317,
+  "suiteFiles": 1,
+  "actualInputs": 5,
+  "sourceIdentityVerified": true,
+  "log": "music-playback-store-fixture-tests.log",
+  "logSha256": "E6393EEABD63C199BD2F64232B74B7585C38CEC93A89EA82FCF126507AB3C6AF",
+  "inputs": "music-playback-store-fixture-inputs.json",
+  "scope": "Readonly consumption of immutable actual isolated Store Ready/current/selected/export/policy DTOs through actual playback identity/source/adapter APIs. No real FD, token mint, native call, SDK build, UI integration, decoding, audible output or device qualification."
+}

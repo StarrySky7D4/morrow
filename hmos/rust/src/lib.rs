@@ -31,6 +31,7 @@ mod create_todos;
 mod editor_business;
 mod editor_intent;
 mod editor_handoff;
+mod music_bridge;
 pub mod markdown;
 pub mod query_plan_v2;
 
@@ -81,6 +82,7 @@ pub struct Request {
     editor_intent_close: Option<editor_intent::Close>,
     business_handoff: Option<editor_handoff::Envelope>,
     business_retirement: Option<editor_handoff::Envelope>,
+    music: Option<music_bridge::Command>,
     #[serde(skip)]
     transport_json: String,
 }
@@ -130,6 +132,8 @@ pub struct Reply {
     editor_intents: Option<Vec<editor_intent::View>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     intent_next_after: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    music: Option<music_bridge::View>,
 }
 impl Reply {
     fn failure(message: String) -> Self {
@@ -145,7 +149,7 @@ impl Reply {
             profile: "development-unsealed",
             effect: "unknown",
             imports: vec![],
-            editor_commit: None, editor_intents: None, intent_next_after: None,
+            editor_commit: None, editor_intents: None, intent_next_after: None, music: None,
         }
     }
 }
@@ -178,13 +182,18 @@ impl Engine {
         Ok(Some(selected))
     }
     fn import_reply(&self, imports: Vec<editor_draft_staging::DraftImportRecord>) -> Reply {
-        Reply { ok: true, error: String::new(), cards: vec![], ids: vec![], drafts: vec![], markdown: markdown::MarkdownDoc::default(), paste_text: String::new(), receipt_revision: String::new(), profile: "development-unsealed", effect: self.effect, imports: imports.into_iter().map(Into::into).collect(), editor_commit: None, editor_intents: None, intent_next_after: None }
+        Reply { ok: true, error: String::new(), cards: vec![], ids: vec![], drafts: vec![], markdown: markdown::MarkdownDoc::default(), paste_text: String::new(), receipt_revision: String::new(), profile: "development-unsealed", effect: self.effect, imports: imports.into_iter().map(Into::into).collect(), editor_commit: None, editor_intents: None, intent_next_after: None, music: None }
     }
     pub fn import_from(&mut self, request: Request, reader: &mut impl std::io::Read) -> Result<Reply> {
         self.effect = "not_committed";
+        music_bridge::reject_other_envelope(&request)?;
         editor_business::reject_other_envelope(&request)?;
         editor_intent::reject_other_envelope(&request)?;
         editor_handoff::reject_other_envelope(&request)?;
+        if request.action == "music_import" {
+            let music_bridge::Command::ImportFile { request } = music_bridge::take_command(request)? else { return Err("MusicImportCommand".into()); };
+            return music_bridge::import_from(self, &request, reader);
+        }
         if request.action != "import_file" { return Err("UnsupportedFileAction".into()); }
         let start = self.start;
         let clock = || u64::try_from(start.elapsed().as_millis()).unwrap_or(u64::MAX - 1).saturating_add(1);
@@ -193,9 +202,14 @@ impl Engine {
     }
     pub fn export_to(&mut self, request: Request, writer: &mut impl std::io::Write) -> Result<file_stream::FileMetadata> {
         self.effect = "not_committed";
+        music_bridge::reject_other_envelope(&request)?;
         editor_business::reject_other_envelope(&request)?;
         editor_intent::reject_other_envelope(&request)?;
         editor_handoff::reject_other_envelope(&request)?;
+        if request.action == "music_export" {
+            let command = music_bridge::take_command(request)?;
+            return music_bridge::export_to(self, &command, writer);
+        }
         if request.id.starts_with("morrow-host-") { return Err("HostOwnedIdentity".into()); }
         let info = match request.action.as_str() {
             "import_export" => editor_draft_staging::export_verified(&self.host, &request.id, &request.draft_id, draft_bridge::number(&request.generation)?, &request.operation, writer).map_err(err)?,
@@ -278,6 +292,8 @@ impl Engine {
                     editor_draft_staging::validate_journal(&card).map_err(err)?;
                 } else if editor_intent::is_journal(&card) {
                     editor_intent::validate_journal(&card)?;
+                } else if music_bridge::is_library(&card) {
+                    music_bridge::validate_library(&card)?;
                 } else {
                     ids.push(id);
                 }
@@ -357,6 +373,7 @@ impl Engine {
                     continue;
                 }
                 if editor_intent::is_journal(&card) { editor_intent::validate_journal(&card)?; continue; }
+                if music_bridge::is_library(&card) { music_bridge::validate_library(&card)?; continue; }
                 if candidates.len() >= 256 {
                     return Err("DevelopmentCardLimit".into());
                 }
@@ -424,9 +441,12 @@ impl Engine {
     }
     pub fn execute(&mut self, r: Request) -> Result<Reply> {
         self.effect = "not_committed";
+        music_bridge::reject_other_envelope(&r)?;
         editor_business::reject_other_envelope(&r)?;
         editor_intent::reject_other_envelope(&r)?;
         editor_handoff::reject_other_envelope(&r)?;
+        if r.action == "music" { return music_bridge::execute(self, music_bridge::take_command(r)?); }
+        if matches!(r.action.as_str(), "music_import" | "music_export") { return Err("MusicFileDescriptorRequired".into()); }
         if matches!(r.action.as_str(), "draft_continue_business" | "draft_continue_business_retire") { return editor_handoff::execute(self, r); }
         if r.action.starts_with("editor_intent_") { return editor_intent::execute(self, r); }
         if r.action == "editor_save" || r.action == "editor_commit_inspect" { return editor_business::execute(self, r); }
@@ -469,7 +489,7 @@ impl Engine {
                 paste_text,
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
-                effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None,
+                effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None, music: None,
             });
         }
         if r.action == "query" {
@@ -485,7 +505,7 @@ impl Engine {
                 paste_text: String::new(),
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
-                effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None,
+                effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None, music: None,
             });
         }
         if r.action.starts_with("draft_") {
@@ -570,7 +590,7 @@ impl Engine {
                 paste_text: String::new(),
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
-                effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None,
+                effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None, music: None,
             };
             if history_read && serde_json::to_vec(&reply).map_err(err)?.len() > LIMIT {
                 return Err("DraftHistoryReplyBytesLimit".into());
@@ -768,7 +788,7 @@ impl Engine {
             paste_text: String::new(),
             receipt_revision: receipt,
             profile: "development-unsealed",
-            effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None,
+            effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None, music: None,
         })
     }
     fn commit_result(
@@ -835,6 +855,7 @@ pub fn dispatch(input: &str) -> String {
         }
         let mut r: Request = serde_json::from_str(input).map_err(|_| "InvalidRequest")?;
         r.transport_json = input.to_owned();
+        music_bridge::reject_other_envelope(&r)?;
         editor_business::reject_other_envelope(&r)?;
         editor_intent::reject_other_envelope(&r)?;
         editor_handoff::reject_other_envelope(&r)?;
@@ -861,7 +882,7 @@ pub fn dispatch(input: &str) -> String {
                 paste_text: String::new(),
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
-                effect: "not_committed", imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None,
+                effect: "not_committed", imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None, music: None,
             });
         }
         let engine = slot.as_mut().ok_or("NotOpen")?;
@@ -964,6 +985,27 @@ pub unsafe extern "C" fn morrow_hmos_prepare(source_fd: i32, destination_fd: i32
     })();
     c_reply(file_stream::FileReply::from_result(result))
 }
+/// Distinct music preparation; consumes both owned descriptors on every path.
+/// No pathname, provider URI or audio bytes cross the JSON request channel.
+#[cfg(unix)]
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn morrow_hmos_music_prepare(source_fd: i32, destination_fd: i32, max_bytes: u64) -> *mut c_char {
+    let source = unsafe { take_file(source_fd) };
+    let destination = if destination_fd == source_fd { Err("DistinctFileDescriptorsRequired".into()) } else { unsafe { take_file(destination_fd) } };
+    let result = (|| -> Result<file_stream::FileMetadata> {
+        let mut source = source?; let mut destination = destination?;
+        use std::{io::Seek, os::unix::fs::MetadataExt};
+        if max_bytes == 0 || max_bytes > file_stream::MAX_MUSIC_IMPORT_BYTES { return Err("ImportByteLimit".into()); }
+        let a = source.metadata().map_err(err)?; let b = destination.metadata().map_err(err)?;
+        if !a.is_file() || !b.is_file() || a.len() == 0 { return Err("MusicRegularFileRequired".into()); }
+        if a.dev() == b.dev() && a.ino() == b.ino() { return Err("SameFileRejected".into()); }
+        if a.len() > max_bytes { return Err("ImportByteLimit".into()); }
+        source.rewind().map_err(err)?; destination.set_len(0).map_err(err)?; destination.rewind().map_err(err)?;
+        let result = file_stream::prepare_music(&mut source, &mut destination, max_bytes)?;
+        destination.sync_all().map_err(err)?; Ok(result)
+    })();
+    c_reply(file_stream::FileReply::from_result(result))
+}
 #[cfg(unix)]
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn morrow_hmos_import(input: *const c_char, owned_fd: i32) -> *mut c_char {
@@ -973,7 +1015,12 @@ pub unsafe extern "C" fn morrow_hmos_import(input: *const c_char, owned_fd: i32)
         if input.is_null() { return Err("NullRequest".into()); }
         let input = unsafe { CStr::from_ptr(input) }.to_str().map_err(|_| "InvalidUtf8")?;
         if input.len() > LIMIT { return Err("RequestTooLarge".into()); }
-        let request = serde_json::from_str(input).map_err(|_| "InvalidRequest")?;
+        let request: Request = serde_json::from_str(input).map_err(|_| "InvalidRequest")?;
+        if request.action == "music_import" {
+            use std::io::Seek;
+            if !file.metadata().map_err(err)?.is_file() { return Err("MusicRegularFileRequired".into()); }
+            file.rewind().map_err(err)?;
+        }
         let mut slot = SESSION.lock().map_err(|_| "SessionUnavailable")?;
         let engine = slot.as_mut().ok_or("NotOpen")?;
         Ok(match engine.import_from(request, &mut file) { Ok(reply) => reply, Err(error) => { let mut reply = Reply::failure(error); reply.effect = engine.effect; reply } })

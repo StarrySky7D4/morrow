@@ -8,6 +8,8 @@ export const editorField: (input: string) => Promise<string>;
 export const editorInput: (input: string) => Promise<string>;
 /** Duplicates caller FDs synchronously. Rust consumes only the duplicates. */
 export const prepareFile: (sourceFd: number, destinationFd: number, maxBytes: number) => Promise<string>;
+/** Independent music capture with a 150 MiB cap; attachment limits are unchanged. */
+export const prepareMusicFile: (sourceFd: number, destinationFd: number, maxBytes: number) => Promise<string>;
 export const importFile: (input: string, sourceFd: number) => Promise<string>;
 /** Write into an app-private verification file before exposing a picker URI. */
 export const exportFile: (input: string, destinationFd: number) => Promise<string>;

@@ -1,0 +1,10 @@
+{
+  "createdUtc": "2026-10-09T01:53:33.536Z",
+  "path": ".build/artifacts/dev29-music-foundation-final/entry-default-unsigned.hap",
+  "bytes": 30842790,
+  "sha256": "4C4292881291C769B3039E01F895BF75C6C526070DB063AB78224698743015E1",
+  "archive_path": ".build/artifacts/dev29-music-foundation-final/entry-default-unsigned.hap",
+  "signed": false,
+  "installed": false,
+  "scope": "v29 music foundations: independent Core-backed library and whole-file FD stream, library coordinator, player lifecycle and private spool/cache; Index music UI integration OPEN. New dual ABI native archives and isolated unsigned API26 build are scoped checks, not device playback, signed release or full Flutter/Windows parity."
+}

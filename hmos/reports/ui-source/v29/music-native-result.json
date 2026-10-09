@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "scope": "v29 Native music foundation, actual development Store and Windows File/stream; no UI/device/codec/protected claim",
+  "source_inputs": "music-native-inputs-final.json",
+  "frozen_input_recheck": {
+    "files": 5,
+    "drift": 0
+  },
+  "target": "hmos/.build/music-v29-target",
+  "default": {
+    "exit_code": 0,
+    "library_passed": 200,
+    "library_failed": 0,
+    "library_ignored": 20,
+    "library_seconds": 90.49,
+    "attachment_passed": 3,
+    "attachment_seconds": 6.33,
+    "self_check_tests": 0,
+    "doc_tests": 0
+  },
+  "music_scoped": {
+    "exit_code": 0,
+    "passed": 8,
+    "failed": 0,
+    "ignored": 3,
+    "seconds": 0.77
+  },
+  "crash": {
+    "exit_code": 0,
+    "tests_passed": 1,
+    "actual_subprocess_boundaries": 13,
+    "child_exit_code": 86,
+    "seconds": 2.96,
+    "feature": "morrow-core/fault-injection"
+  },
+  "fixture": {
+    "exit_code": 0,
+    "passed": 1,
+    "seconds": 1.21,
+    "path": "music-store-fixture.json",
+    "bytes": 65127,
+    "sha256": "DA6D8DF4F50F59555A4064AB29C9B302CE29B85A843DEB03F2F5C9EB0D83B9B2"
+  },
+  "not_run": [
+    "OHOS raw FD ABI runtime",
+    "AVPlayer/codec/audible playback",
+    "MusicPanel Index integration",
+    "protected host",
+    "online lyrics",
+    "encrypted audio",
+    "metadata and covers",
+    "retired original release/GC",
+    "full Flutter parity"
+  ],
+  "historical_notes": [
+    "Early scoped output had one test-only invalid query conditions failure; corrected to existing actual caller conditions before final source/tests.",
+    "Early stage1 fixture remains historical; final export is a separate frozen file.",
+    "The freeze input manifest was captured while the final default suite was running and rechecked unchanged after completion; it is not a claimed separate full-repository prelaunch inventory."
+  ],
+  "evidence": [
+    {
+      "path": "hmos/reports/ui-source/v29/music-native-scoped-final.log",
+      "bytes": 1589,
+      "sha256": "B430249A4017AE0ED2DCD830ACA4CF8D2FFD570918E488CFC52E9FEAC9A7150A"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-native-crash-final.log",
+      "bytes": 2210,
+      "sha256": "759A5E8EB9BB90CFDE5A35024DB476803984214AA8623C0FA5D866EF2125E008"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-native-default-final.log",
+      "bytes": 27114,
+      "sha256": "54C68997E591D4F2748E57E849B7BA6DCCD9B0218DE3886E63C94B2E14939701"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-store-fixture-final.log",
+      "bytes": 365,
+      "sha256": "18D5914F3E01B1863E2BD7EB13F26B6B9DB0CAD2EF554FEEE6CE45C2D9DDCFF6"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-store-fixture.json",
+      "bytes": 65127,
+      "sha256": "DA6D8DF4F50F59555A4064AB29C9B302CE29B85A843DEB03F2F5C9EB0D83B9B2"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-native-inputs-final.json",
+      "bytes": 1049,
+      "sha256": "875E735E36972E7A2364B155D94A14737ACDDB2E7C78DE9ABCD46F9102D4AEB2"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-native-contract.md",
+      "bytes": 7807,
+      "sha256": "56F5A52BBA31E882B19C3D0271D32F62962E687E26653E7B5F0A75F795155AED"
+    }
+  ]
+}

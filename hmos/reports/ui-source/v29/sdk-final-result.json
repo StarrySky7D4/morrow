@@ -1,0 +1,11 @@
+{
+  "startedUtc": "2026-10-09T01:52:35.558Z",
+  "finishedUtc": "2026-10-09T01:53:09.204Z",
+  "exitCode": 0,
+  "signal": null,
+  "status": "PASS",
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-candidates\\dev29-music-foundation-final",
+  "log": "sdk-final-build.log",
+  "sha256": "A626B9F4505905E2805540B72BB8102CE29F33D91B893DFC43D221BB7197168F",
+  "scope": "Complete isolated API26 unsigned debug product build; fresh v29 dual ABI native archives; not installed or device acceptance."
+}

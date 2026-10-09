@@ -1,0 +1,50 @@
+   Compiling morrow-core v0.1.9-test.50 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\shared\core)
+   Compiling morrow-editor-draft-model v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust\editor-draft-model)
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 30.03s
+     Running unittests src\lib.rs (hmos\.build\music-v29-target\debug\deps\morrow_hmos-5dc4350283be0464.exe)
+
+running 1 test
+
+running 1 test
+music crash boundary=stage-after-allocation exit=86 revision=1 owner=false reconcile_phase="pending"
+
+running 1 test
+music crash boundary=stage-after-payload exit=86 revision=1 owner=false reconcile_phase="pending"
+
+running 1 test
+music crash boundary=stage-after-chunk exit=86 revision=1 owner=false reconcile_phase="pending"
+
+running 1 test
+music crash boundary=stage-retained-before-commit exit=86 revision=1 owner=false reconcile_phase="pending"
+
+running 1 test
+music crash boundary=stage-before-commit exit=86 revision=1 owner=false reconcile_phase="pending"
+
+running 1 test
+music crash boundary=stage-after-commit exit=86 revision=1 owner=true reconcile_phase="ready"
+
+running 1 test
+music crash boundary=after-begin exit=86 revision=1 owner=true reconcile_phase="ready"
+
+running 1 test
+music crash boundary=after-card exit=86 revision=1 owner=true reconcile_phase="ready"
+
+running 1 test
+music crash boundary=after-operation exit=86 revision=1 owner=true reconcile_phase="ready"
+
+running 1 test
+music crash boundary=after-blob-references exit=86 revision=1 owner=true reconcile_phase="ready"
+
+running 1 test
+music crash boundary=after-event exit=86 revision=1 owner=true reconcile_phase="ready"
+
+running 1 test
+music crash boundary=before-commit exit=86 revision=1 owner=true reconcile_phase="ready"
+
+running 1 test
+music crash boundary=after-commit exit=86 revision=2 owner=true reconcile_phase="ready"
+test music_bridge::tests::actual_process_crash_reopen_reconcile_uses_original_pending_and_owner ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 219 filtered out; finished in 2.96s
+

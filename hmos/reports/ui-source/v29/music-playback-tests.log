@@ -1,0 +1,310 @@
+TAP version 13
+# Subtest: real coordinator/platform composition receives actual state callbacks and releases player then FD then exact source
+ok 1 - real coordinator/platform composition receives actual state callbacks and releases player then FD then exact source
+  ---
+  duration_ms: 33.6761
+  type: 'test'
+  ...
+# Subtest: real platform release failure propagates cleanup retention through coordinator and same-source explicit retry
+ok 2 - real platform release failure propagates cleanup retention through coordinator and same-source explicit retry
+  ---
+  duration_ms: 17.731
+  type: 'test'
+  ...
+# Subtest: real failed FD close retains the exact descriptor and coordinator retry does not release AVPlayer a second time
+ok 3 - real failed FD close retains the exact descriptor and coordinator retry does not release AVPlayer a second time
+  ---
+  duration_ms: 16.5347
+  type: 'test'
+  ...
+# Subtest: actual source identity is canonical u64 CAS, bounded length and lower-case complete hash
+ok 4 - actual source identity is canonical u64 CAS, bounded length and lower-case complete hash
+  ---
+  duration_ms: 1.1585
+  type: 'test'
+  ...
+# Subtest: explicit selection prepares paused and state/time come from actual transport callbacks
+ok 5 - explicit selection prepares paused and state/time come from actual transport callbacks
+  ---
+  duration_ms: 1.7556
+  type: 'test'
+  ...
+# Subtest: select with explicit play prepares before play and does not fabricate seek position acknowledgement
+ok 6 - select with explicit play prepares before play and does not fabricate seek position acknowledgement
+  ---
+  duration_ms: 0.7257
+  type: 'test'
+  ...
+# Subtest: rapid play then pause preserves latest explicit intent without a queued unwanted play
+ok 7 - rapid play then pause preserves latest explicit intent without a queued unwanted play
+  ---
+  duration_ms: 0.4684
+  type: 'test'
+  ...
+# Subtest: a revision-only library update retains the actual same owned player and original acquisition CAS
+ok 8 - a revision-only library update retains the actual same owned player and original acquisition CAS
+  ---
+  duration_ms: 0.6943
+  type: 'test'
+  ...
+# Subtest: source byte/hash/import change with same stable track ID requires a separately acquired verified lease
+ok 9 - source byte/hash/import change with same stable track ID requires a separately acquired verified lease
+  ---
+  duration_ms: 0.6043
+  type: 'test'
+  ...
+# Subtest: next and previous acquire latest exact playlist identities after releasing old player and lease
+ok 10 - next and previous acquire latest exact playlist identities after releasing old player and lease
+  ---
+  duration_ms: 0.806
+  type: 'test'
+  ...
+# Subtest: completion advances once through playlist and stale old completion cannot advance new track
+ok 11 - completion advances once through playlist and stale old completion cannot advance new track
+  ---
+  duration_ms: 0.4589
+  type: 'test'
+  ...
+# Subtest: completed paused selection or absent next track never starts another source
+ok 12 - completed paused selection or absent next track never starts another source
+  ---
+  duration_ms: 0.7088
+  type: 'test'
+  ...
+# Subtest: background during accepted play serializes a pause and foreground never resumes automatically
+ok 13 - background during accepted play serializes a pause and foreground never resumes automatically
+  ---
+  duration_ms: 0.7633
+  type: 'test'
+  ...
+# Subtest: background before delayed preparation blocks autoplay, seek, navigation and late completed next
+ok 14 - background before delayed preparation blocks autoplay, seek, navigation and late completed next
+  ---
+  duration_ms: 0.5949
+  type: 'test'
+  ...
+# Subtest: owner invalidation rejects controls and callbacks while explicit dispose still releases exact owned resources
+ok 15 - owner invalidation rejects controls and callbacks while explicit dispose still releases exact owned resources
+  ---
+  duration_ms: 0.3577
+  type: 'test'
+  ...
+# Subtest: superseded pending acquire releases actual stale lease without creating or loading a player
+ok 16 - superseded pending acquire releases actual stale lease without creating or loading a player
+  ---
+  duration_ms: 0.4329
+  type: 'test'
+  ...
+# Subtest: close while awaiting acquire retains and releases that exact lease before resolving
+ok 17 - close while awaiting acquire retains and releases that exact lease before resolving
+  ---
+  duration_ms: 0.3899
+  type: 'test'
+  ...
+# Subtest: late factory after owner loss is released without loading before the owned source is released
+ok 18 - late factory after owner loss is released without loading before the owned source is released
+  ---
+  duration_ms: 0.2647
+  type: 'test'
+  ...
+# Subtest: close waits accepted native load and play before release, and callbacks cannot reopen closing session
+ok 19 - close waits accepted native load and play before release, and callbacks cannot reopen closing session
+  ---
+  duration_ms: 0.8153
+  type: 'test'
+  ...
+# Subtest: failed player release retains source, forbids select and close replay, retries only same lease explicitly
+ok 20 - failed player release retains source, forbids select and close replay, retries only same lease explicitly
+  ---
+  duration_ms: 0.9321
+  type: 'test'
+  ...
+# Subtest: source cleanup failure never re-releases successful player, retries same source object without minting token
+ok 21 - source cleanup failure never re-releases successful player, retries same source object without minting token
+  ---
+  duration_ms: 0.447
+  type: 'test'
+  ...
+# Subtest: concurrent close callers share cleanup and never turn a failed first close into implicit retry
+ok 22 - concurrent close callers share cleanup and never turn a failed first close into implicit retry
+  ---
+  duration_ms: 0.3997
+  type: 'test'
+  ...
+# Subtest: already queued replacement cannot bypass a cleanup failure or acquire another lease
+ok 23 - already queued replacement cannot bypass a cleanup failure or acquire another lease
+  ---
+  duration_ms: 0.4438
+  type: 'test'
+  ...
+# Subtest: malformed or unowned acquisition never creates AVPlayer and retains its exact acquired object for close
+ok 24 - malformed or unowned acquisition never creates AVPlayer and retains its exact acquired object for close
+  ---
+  duration_ms: 0.2408
+  type: 'test'
+  ...
+# Subtest: source mutations and stale tokens cannot issue controls, while view and identity snapshots cannot alter active session
+ok 25 - source mutations and stale tokens cannot issue controls, while view and identity snapshots cannot alter active session
+  ---
+  duration_ms: 0.3188
+  type: 'test'
+  ...
+# Subtest: prepare or transport error is sticky until explicit new selection and never recovered by late prepared callback
+ok 26 - prepare or transport error is sticky until explicit new selection and never recovered by late prepared callback
+  ---
+  duration_ms: 0.3146
+  type: 'test'
+  ...
+# Subtest: disposed coordinator never accepts new selection but failed cleanup remains explicitly recoverable
+ok 27 - disposed coordinator never accepts new selection but failed cleanup remains explicitly recoverable
+  ---
+  duration_ms: 0.0674
+  type: 'test'
+  ...
+# Subtest: failed command after real playing acknowledgement pauses sound while retaining the original failure and lease
+ok 28 - failed command after real playing acknowledgement pauses sound while retaining the original failure and lease
+  ---
+  duration_ms: 1.0206
+  type: 'test'
+  ...
+# Subtest: manual selection, navigation and end all await confirmed selected identity before acquiring new CAS revision
+ok 29 - manual selection, navigation and end all await confirmed selected identity before acquiring new CAS revision
+  ---
+  duration_ms: 1.7389
+  type: 'test'
+  ...
+# Subtest: Unknown/rejected selection admission never acquires or plays, and player does not retry persisted operation itself
+ok 30 - Unknown/rejected selection admission never acquires or plays, and player does not retry persisted operation itself
+  ---
+  duration_ms: 0.7456
+  type: 'test'
+  ...
+# Subtest: foreign admitted source identity is rejected before export, even if a fresh revision is valid
+ok 31 - foreign admitted source identity is rejected before export, even if a fresh revision is valid
+  ---
+  duration_ms: 0.4078
+  type: 'test'
+  ...
+# Subtest: late successful selection admission preserves its external fact but owner loss cannot acquire playback source
+ok 32 - late successful selection admission preserves its external fact but owner loss cannot acquire playback source
+  ---
+  duration_ms: 0.6329
+  type: 'test'
+  ...
+# Subtest: same stable owned track admits persisted selected revision while preserving original FD and lease CAS
+ok 33 - same stable owned track admits persisted selected revision while preserving original FD and lease CAS
+  ---
+  duration_ms: 0.7385
+  type: 'test'
+  ...
+# Subtest: mutating admission or acquire argument cannot substitute a foreign source for the immutable requested identity
+ok 34 - mutating admission or acquire argument cannot substitute a foreign source for the immutable requested identity
+  ---
+  duration_ms: 0.9002
+  type: 'test'
+  ...
+# Subtest: lost current lease during same-track admission cannot overwrite it with a new acquired lease
+ok 35 - lost current lease during same-track admission cannot overwrite it with a new acquired lease
+  ---
+  duration_ms: 0.6187
+  type: 'test'
+  ...
+# Subtest: registered source still requires a typed nonempty bounded private lease token
+ok 36 - registered source still requires a typed nonempty bounded private lease token
+  ---
+  duration_ms: 0.7153
+  type: 'test'
+  ...
+# Subtest: latest explicit play cancels a queued pause behind the in-flight accepted play
+ok 37 - latest explicit play cancels a queued pause behind the in-flight accepted play
+  ---
+  duration_ms: 0.6831
+  type: 'test'
+  ...
+# Subtest: actual AVPlayer adapter obtains owned FD and stat extent, never opens a path, and forwards platform callbacks
+ok 38 - actual AVPlayer adapter obtains owned FD and stat extent, never opens a path, and forwards platform callbacks
+  ---
+  duration_ms: 32.6931
+  type: 'test'
+  ...
+# Subtest: actual adapter rejects foreign source or arbitrary path-shaped JSON without any file or player operation
+ok 39 - actual adapter rejects foreign source or arbitrary path-shaped JSON without any file or player operation
+  ---
+  duration_ms: 16.1453
+  type: 'test'
+  ...
+# Subtest: actual descriptor must match private object identity and exact token/hash/length/nonnegative FD
+ok 40 - actual descriptor must match private object identity and exact token/hash/length/nonnegative FD
+  ---
+  duration_ms: 76.4569
+  type: 'test'
+  ...
+# Subtest: actual file stat must prove regular file and exact exported length before AVPlayer creation
+ok 41 - actual file stat must prove regular file and exact exported length before AVPlayer creation
+  ---
+  duration_ms: 22.5099
+  type: 'test'
+  ...
+# Subtest: player creation failure retains actual descriptor for explicit release
+ok 42 - player creation failure retains actual descriptor for explicit release
+  ---
+  duration_ms: 17.3793
+  type: 'test'
+  ...
+# Subtest: AVPlayer release rejection retains same descriptor and only explicit retry closes it
+ok 43 - AVPlayer release rejection retains same descriptor and only explicit retry closes it
+  ---
+  duration_ms: 10.6763
+  type: 'test'
+  ...
+# Subtest: failed descriptor close retries exact FD object without releasing already released AVPlayer twice
+ok 44 - failed descriptor close retries exact FD object without releasing already released AVPlayer twice
+  ---
+  duration_ms: 9.8606
+  type: 'test'
+  ...
+# Subtest: late platform state/time/error callbacks after close starts cannot escape callback generation guard
+ok 45 - late platform state/time/error callbacks after close starts cannot escape callback generation guard
+  ---
+  duration_ms: 9.5625
+  type: 'test'
+  ...
+# Subtest: actual source or descriptor ownership revocation blocks callbacks and every subsequent control
+ok 46 - actual source or descriptor ownership revocation blocks callbacks and every subsequent control
+  ---
+  duration_ms: 28.4532
+  type: 'test'
+  ...
+# Subtest: closing during pending owned open awaits original descriptor and prevents player creation
+ok 47 - closing during pending owned open awaits original descriptor and prevents player creation
+  ---
+  duration_ms: 9.1467
+  type: 'test'
+  ...
+# Subtest: closing during pending player creation awaits actual player then releases it before FD close
+ok 48 - closing during pending player creation awaits actual player then releases it before FD close
+  ---
+  duration_ms: 8.4473
+  type: 'test'
+  ...
+# Subtest: simultaneous platform release callers share original cleanup, including rejection
+ok 49 - simultaneous platform release callers share original cleanup, including rejection
+  ---
+  duration_ms: 12.6373
+  type: 'test'
+  ...
+# Subtest: load cannot be repeated or reopened after release, and invalid seek is never dispatched
+ok 50 - load cannot be repeated or reopened after release, and invalid seek is never dispatched
+  ---
+  duration_ms: 10.3561
+  type: 'test'
+  ...
+1..50
+# tests 50
+# suites 0
+# pass 50
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 601.0096
