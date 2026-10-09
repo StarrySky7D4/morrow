@@ -2,12 +2,39 @@
 const { test } = require('node:test'), assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path');
 const { MusicLibrary, MUSIC_TRACK_LIMIT, MUSIC_AUDIO_LIMIT, MUSIC_LYRICS_LIMIT, parseNativeMusicReply, validMusicImportRequest,
-  fixture, request, track, summary, reply, plain, sha, importLiteral, readyOperation, deferred, tick } = require('./music-library-test-harness.cjs');
+  fixture, request, track, summary, reply, plain, sha, importLiteral, musicImportWire, readyOperation, deferred, tick } = require('./music-library-test-harness.cjs');
 const sourcePath = path.resolve(__dirname, '../entry/src/main/ets/model/MusicLibrary.ets');
 test('actual Library source exports only independent music DTO/coordination and exact platform import hooks', t => {
   const source = fs.readFileSync(sourcePath); t.diagnostic('MusicLibrary.ets SHA256=' + sha(source));
   assert.equal(typeof MusicLibrary, 'function'); assert.equal(MUSIC_TRACK_LIMIT, 512); assert.equal(MUSIC_AUDIO_LIMIT, 150 * 1024 * 1024);
   assert.doesNotMatch(source.toString(), /EditorDraft|EditorBusiness|card_id|draft_id|AVPlayer|fileIo/);
+});
+test('pre-begin persistence ACK gates Native dispatch and late owner cannot dispatch a registered write', async () => {
+  const gate=deferred(), f=fixture([], {persistImport:()=>gate.promise});await f.library.load();
+  const pending=f.library.beginImport(request('durable'));await tick();
+  const original=f.library.view().import_plan;
+  assert.equal(f.wires.length,1);assert.equal(f.persisted[0].wire,original.original_import);assert.equal(original.original_import,musicImportWire(original.request));
+  f.setOwner('music-owner-2');gate.resolve();await pending;
+  assert.equal(f.wires.length,1);assert.equal(f.library.view().import_plan.original_import,original.original_import);assert.equal(f.library.view().import_plan.unknown,true);
+});
+test('failed persistence preserves both original wires; explicit begin retry cannot substitute IDs or CAS', async () => {
+  let reject=true;const f=fixture([], {persistImport:()=>{if(reject)throw Error('fsync Unknown');}});await f.library.load();await f.library.beginImport(request('durable'));
+  const original=f.library.view().import_plan;assert.equal(original.phase,'unissued');assert.equal(original.unknown,true);assert.equal(f.wires.length,1);
+  reject=false;await f.library.retryImportBegin();assert.equal(f.persisted.length,2);assert.equal(f.persisted[1].wire,original.original_import);
+  assert.equal(f.wires[1],original.original_begin);assert.deepEqual(f.library.view().import_plan.request,original.request);assert.equal(f.library.view().import_plan.phase,'pending');assert.equal(f.imports.length,0);
+});
+test('restored pre-begin literal derives exact original begin without dispatch and missing inspection does not remint it', async () => {
+  const f=fixture();await f.library.load();const r=request('restored'),literal=musicImportWire(r);f.library.restoreImportLiteral(literal);
+  const original=f.library.view().import_plan;assert.equal(original.phase,'unissued');assert.equal(original.unknown,true);assert.equal(f.wires.length,1);
+  assert.deepEqual(JSON.parse(original.original_begin),{action:'music',music:{action:'import_begin',request:plain(r)}});
+  await f.library.inspectImport();assert.equal(f.library.view().import_plan.unknown,true);assert.equal(f.imports.length,0);
+  await f.library.retryImportBegin();assert.equal(f.wires.at(-1),original.original_begin);assert.equal(f.persisted[0].wire,literal);assert.equal(f.library.view().import_plan.phase,'pending');assert.equal(f.imports.length,0);
+});
+test('canonical pre-begin FD serializer matches all actual Store-produced request_json bytes', () => {
+  const real=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../reports/ui-source/v29/music-store-fixture.json')));
+  let checked=0;for(const value of Object.values(real))for(const original of Array.isArray(value)?value:[value])for(const t of original?.music?.tracks||[]){
+    const reversed=Object.fromEntries(Object.entries(t.request).reverse());assert.equal(musicImportWire(reversed),t.request_json);checked++;
+  }assert.ok(checked>=18);
 });
 test('real Store-produced complete Reply DTO parses without fabricated fields or empty success fallback', () => {
   const filename = path.resolve(__dirname, '../reports/ui-source/v29/music-store-fixture-stage1.json');
@@ -22,6 +49,7 @@ test('real Store-produced complete Reply DTO parses without fabricated fields or
 test('real Native Pending to complete Ready preserves its original FD import literal and source identity', async () => {
   const real = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../reports/ui-source/v29/music-store-fixture-stage1.json')));
   const wires = [], imports = [], library = new MusicLibrary({ owned: () => true, owner: () => 'actual-fixture-owner', hash: async value => sha(value), changed() {},
+    async persistImport(wire) { assert.equal(wire,real.pending_reply.music.tracks[0].request_json); },
     async send(wire) { wires.push(wire); const action = JSON.parse(wire).music.action;
       return JSON.stringify(action === 'read' ? real.empty_reply : real.pending_reply); },
     async importFile(wire, r) { imports.push({ wire, request: plain(r) }); return JSON.stringify(real.ready_reply); } });
@@ -36,6 +64,7 @@ test('real Native Pending to complete Ready preserves its original FD import lit
 test('real complete lyrics and pure playback proposal use exact native read contracts', async () => {
   const real = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../reports/ui-source/v29/music-store-fixture-stage1.json')));
   const wires = [], library = new MusicLibrary({ owned: () => true, hash: async value => sha(value), changed() {}, importFile: async () => { throw Error('No import allowed'); },
+    async persistImport() { throw Error('No import allowed'); },
     async send(wire) { wires.push(wire); const action = JSON.parse(wire).music.action;
       return JSON.stringify(action === 'read' ? real.read_reply : action === 'lyrics_read' ? real.lyrics_reply : real.policy_reply); } });
   await library.load(); assert.equal(library.view().loaded, true); const id = real.request.track_id;

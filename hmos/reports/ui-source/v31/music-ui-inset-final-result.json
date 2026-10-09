@@ -1,0 +1,65 @@
+{
+  "qualification": "PASS_SCOPED_ACTUAL_INSET_PAINT_CALLS",
+  "sdk_build": "NOT_RUN",
+  "device_rendering": "NOT_RUN",
+  "exact_pixel_match": "NOT_RUN",
+  "exit_code": 0,
+  "tests": 13,
+  "passed": 13,
+  "failed": 0,
+  "source_exact_before_after": true,
+  "input_count": 5,
+  "reference_count": 4,
+  "duration_ms": 1110.4796,
+  "node_version": "v24.14.1",
+  "log_sha256": "1784df5a6842c7b85474f5e5f1e4a78a90f273b9cfecef11c0c588c35b68b345",
+  "inputs": [
+    {
+      "path": "hmos/tool/run-music-ui-inset.cjs",
+      "byte_length": 4214,
+      "sha256": "ab2695b1eeb6307a45feb1a50426d2b838671e974a1ceb6509e2e452d6c25946"
+    },
+    {
+      "path": "hmos/tool/music-ui-component-test-harness.cjs",
+      "byte_length": 7892,
+      "sha256": "2b4227bafbd35fc17e8ab22be74246ae958b33e85394e8747531d1120822c1c9"
+    },
+    {
+      "path": "hmos/tool/music-ui-inset.test.cjs",
+      "byte_length": 10030,
+      "sha256": "bec7eb04bcabdbd84ed850ea27cccc9f687b35964cbe598f90c6ee1709a4568a"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/MusicPanel.ets",
+      "byte_length": 31324,
+      "sha256": "00f88c76a6e3666f4aca62f138eaa331930ced13b6d507b6c902f7ecd20dc44b"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+      "byte_length": 5126,
+      "sha256": "0fcaa587d24b1fd0a1b4d066f465bc2178ff16b830187e1e2a250e3f5b4a67b2"
+    }
+  ],
+  "controlled_seams": [
+    "SDK CanvasRenderingContext2D call recorder",
+    "SDK Path2D call recorder",
+    "CanvasGradient call recorder",
+    "timers"
+  ],
+  "assertions": [
+    "seven styles and light/dark paint branches",
+    "zero depth and flat clear without new frame",
+    "paper/fluent/brutalist/industrial exact alpha, deflate and width",
+    "clay/neumorphism complement walls, opposite offsets and unshifted clip",
+    "Gaussian filter in VP and state restoration",
+    "neumorphism casts use actual palette surface",
+    "separate depth strength and alpha saturation",
+    "bounded rounded geometry",
+    "fill=false current and selected rows",
+    "coalesced resize and cancelled pending paint"
+  ],
+  "limitations": [
+    "Controlled Canvas records paint calls; it does not execute SDK blur or rasterize pixels.",
+    "Live SDK compilation, high contrast, style transitions and device pixel comparison are not covered."
+  ]
+}

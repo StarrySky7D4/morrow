@@ -1,0 +1,10 @@
+{
+  "observedUtc": "2026-10-09T03:07:52.830Z",
+  "installedVersionCode": 1000020,
+  "installedVersionName": "0.1.0-hmos-dev.20",
+  "currentCandidateVersionCode": 1000021,
+  "currentCandidateInstalled": false,
+  "currentCandidateDeviceQualification": "NOT_RUN",
+  "scope": "Read-only bundle identity. Existing qualified v30/dev20 installed earlier; no v31/dev21 device/music qualification.",
+  "device": "127.0.0.1:5555"
+}

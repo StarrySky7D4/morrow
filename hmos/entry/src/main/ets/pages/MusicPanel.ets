@@ -1,4 +1,4 @@
-import { alpha } from '../model/Appearance';
+import { alpha, mix } from '../model/Appearance';
 import { NativeMusicTrack } from '../model/MusicLibrary';
 import { MusicRecoveryChoice, MusicSpoolView, MusicUiCallbacks, MusicUiView } from '../model/MusicUi';
 import { uiText } from '../model/UiStrings';
@@ -16,42 +16,100 @@ class MusicRowArea {
   height: number = 0;
 }
 
-// Only the inset edge belongs to this content. Index owns the outer material.
+// Flutter's fill=false NeumorphicSurface at depth=-.8. Only the inset edge
+// belongs to this content; Index owns the palette, radius and outer material.
 @Component
 struct MusicInsetRelief {
   @Prop @Watch('draw') style: string = 'flat';
   @Prop @Watch('draw') depth: number = 1;
   @Prop @Watch('draw') dark: boolean = false;
+  @Prop @Watch('draw') surface: string = '#FFFFFF';
   @Prop @Watch('draw') radius: number = 14;
   private ctx: CanvasRenderingContext2D = new CanvasRenderingContext2D(new RenderingContextSettings(true));
   private resizeTimer: number = -1;
-  private path(inset: number): void {
-    const c = this.ctx, w: number = c.width - 2 * inset, h: number = c.height - 2 * inset;
-    const r: number = Math.max(0, Math.min(this.radius - inset, w / 2, h / 2));
-    c.beginPath(); c.moveTo(inset + r, inset); c.lineTo(inset + w - r, inset);
-    c.arcTo(inset + w, inset, inset + w, inset + r, r); c.lineTo(inset + w, inset + h - r);
-    c.arcTo(inset + w, inset + h, inset + w - r, inset + h, r); c.lineTo(inset + r, inset + h);
-    c.arcTo(inset, inset + h, inset, inset + h - r, r); c.lineTo(inset, inset + r);
-    c.arcTo(inset, inset, inset + r, inset, r); c.closePath();
+  private shape(inset: number = 0, dx: number = 0, dy: number = 0): Path2D {
+    const c = this.ctx, x: number = inset + dx, y: number = inset + dy;
+    const w: number = c.width - 2 * inset, h: number = c.height - 2 * inset;
+    const radius: number = Number.isFinite(this.radius) ? this.radius : 0;
+    const r: number = Math.max(0, Math.min(radius - inset, w / 2, h / 2));
+    const path: Path2D = new Path2D();
+    path.moveTo(x + r, y); path.lineTo(x + w - r, y);
+    path.arcTo(x + w, y, x + w, y + r, r); path.lineTo(x + w, y + h - r);
+    path.arcTo(x + w, y + h, x + w - r, y + h, r); path.lineTo(x + r, y + h);
+    path.arcTo(x, y + h, x, y + h - r, r); path.lineTo(x, y + r);
+    path.arcTo(x, y, x + r, y, r); path.closePath();
+    return path;
+  }
+  private color(value: string, opacity: number): string {
+    const rgb: number = parseInt(value.substring(1), 16);
+    return `rgba(${(rgb >> 16) & 255},${(rgb >> 8) & 255},${rgb & 255},${opacity})`;
+  }
+  private stroke(inset: number, color: string, width: number): void {
+    const c = this.ctx; c.strokeStyle = color; c.lineWidth = width; c.stroke(this.shape(inset));
+  }
+  private edge(inset: number, top: string, bottom: string, width: number): void {
+    const c = this.ctx;
+    const gradient: CanvasGradient = c.createLinearGradient(inset, inset, c.width - inset, c.height - inset);
+    gradient.addColorStop(0, top); gradient.addColorStop(.5, 'rgba(0,0,0,0)'); gradient.addColorStop(1, bottom);
+    c.strokeStyle = gradient; c.lineWidth = width; c.stroke(this.shape(inset));
+  }
+  private inset(shade: string, light: string, shift: number, blur: number): void {
+    // A blurred complement of each shifted opening produces an inner shadow.
+    // The unshifted rounded clip keeps the wall inside the exact child bounds.
+    const c = this.ctx, margin: number = blur * 5 + shift + 2;
+    c.save(); c.clip(this.shape()); c.filter = `blur(${blur}vp)`;
+    for (let index: number = 0; index < 2; index++) {
+      const offset: number = index === 0 ? shift : -shift;
+      const wall: Path2D = new Path2D();
+      wall.rect(-margin, -margin, c.width + 2 * margin, c.height + 2 * margin);
+      wall.addPath(this.shape(0, offset, offset));
+      c.fillStyle = index === 0 ? shade : light; c.fill(wall, 'evenodd');
+    }
+    c.restore();
   }
   private draw(): void {
     const c = this.ctx; c.clearRect(0, 0, c.width, c.height);
-    if (!['neumorphism', 'clay'].includes(this.style) || c.width < 8 || c.height < 8) { return; }
-    const d: number = Math.max(0, Math.min(2, this.depth)) * .8;
-    if (d === 0) { return; }
-    for (let i: number = 4; i >= 1; i--) {
-      const gradient = c.createLinearGradient(0, 0, c.width, c.height);
-      gradient.addColorStop(0, `rgba(48,45,67,${(this.dark ? .36 : .2) * Math.min(1, d) / i})`);
-      gradient.addColorStop(.5, 'rgba(48,45,67,0)');
-      gradient.addColorStop(1, `rgba(255,255,255,${(this.dark ? .08 : .5) * Math.min(1, d) / i})`);
-      c.strokeStyle = gradient; c.lineWidth = Math.max(.5, d * i); this.path(d * i / 2 + .5); c.stroke();
+    if (this.style === 'flat' || !Number.isFinite(c.width) || !Number.isFinite(c.height) || c.width < 8 || c.height < 8 ||
+      !Number.isFinite(this.depth) || this.depth <= 0) { return; }
+    const strength: number = Math.min(2, this.depth * .8), fade: number = Math.min(1, strength);
+    const darkRgb: string = this.dark ? '#000000' : '#37323D';
+    const darkEdge: string = this.color(darkRgb, (this.dark ? .72 : .52) * fade);
+    const lightEdge: string = this.color('#FFFFFF', (this.dark ? .34 : .82) * fade);
+    const shadow: string = this.color('#000000', (this.dark ? .48 : .18) * fade);
+    switch (this.style) {
+      case 'neumorphism': {
+        const surface: string = /^#[0-9a-fA-F]{6}$/.test(this.surface) ? this.surface : (this.dark ? '#292634' : '#FFFFFF');
+        const shade: string = this.color(mix(surface, '#000000', this.dark ? .85 : .75), (this.dark ? .52 : .24) * fade);
+        const light: string = this.color(mix(surface, '#FFFFFF', this.dark ? .28 : .8), (this.dark ? .20 : .82) * fade);
+        this.inset(shade, light, 1.25 * strength, 2); break;
+      }
+      case 'paper':
+        this.stroke(0, this.color(darkRgb, (this.dark ? .4 : .28) * fade), 1);
+        this.edge(1, lightEdge, darkEdge, 1); break;
+      case 'clay':
+        this.inset(shadow, lightEdge, 1.5 * strength, 4);
+        this.stroke(1, this.color('#FFFFFF', .3 * fade), 1); break;
+      case 'fluent':
+        this.stroke(0, this.color(darkRgb, .35 * fade), 1);
+        this.edge(1, shadow, lightEdge, .8); break;
+      case 'brutalist': {
+        const ink: string = this.dark ? '#FFFFFF' : '#211E26';
+        this.stroke(0, this.color(ink, fade), 1.8);
+        this.edge(1.4, this.color(ink, .45 * fade), 'rgba(0,0,0,0)', 1); break;
+      }
+      case 'industrial':
+        this.stroke(0, darkEdge, 2 * strength);
+        this.edge(1.5, shadow, lightEdge, 1.5);
+        this.stroke(3, this.color('#FFFFFF', .2 * fade), .7); break;
     }
   }
   private resized(): void {
     if (this.resizeTimer !== -1) { clearTimeout(this.resizeTimer); }
     this.resizeTimer = setTimeout((): void => { this.resizeTimer = -1; this.draw(); }, 16);
   }
-  aboutToDisappear(): void { if (this.resizeTimer !== -1) { clearTimeout(this.resizeTimer); } }
+  aboutToDisappear(): void {
+    if (this.resizeTimer !== -1) { clearTimeout(this.resizeTimer); this.resizeTimer = -1; }
+  }
   build() {
     Canvas(this.ctx).width('100%').height('100%').onReady((): void => this.draw())
       .onAreaChange((): void => this.resized()).hitTestBehavior(HitTestMode.None)
@@ -65,6 +123,7 @@ export struct MusicPanelContent {
   @Prop fontFamily: string = '';
   @Prop locale: string = 'zh';
   @Prop ink: string = '#302D43';
+  @Prop surface: string = '#FFFFFF';
   @Prop muted: string = '#787181';
   @Prop accent: string = '#AE85AB';
   @Prop line: string = '#24302D43';
@@ -295,10 +354,9 @@ export struct MusicPanelContent {
             { value: this.t('移出播放列表'), enabled: this.allowed('remove', track.track_id), action: (): void => this.issue('remove', track.track_id) }
           ])
         this.iconAction(0xf647, '移出播放列表', 'remove', 14, track.track_id)
-      }.width('100%').padding({ left: 8, right: 2 }).borderRadius(this.round(10))
-        .backgroundColor(track.track_id === this.view.library.selected_track_id ? alpha(this.ink, this.dark ? .1 : .025) : Color.Transparent)
+      }.width('100%').padding({ left: 8, right: 2 }).borderRadius(this.round(10)).backgroundColor(Color.Transparent)
       if (track.track_id === this.view.library.selected_track_id) {
-        MusicInsetRelief({ style: this.style, depth: this.depth, dark: this.dark, radius: this.round(10) })
+        MusicInsetRelief({ style: this.style, depth: this.depth, dark: this.dark, surface: this.surface, radius: this.round(10) })
       }
       if (this.dragTarget === track.track_id) {
         Divider().color(this.accent).strokeWidth(2).position({ left: 8, right: 8, top: this.dragAfter ? undefined : 0, bottom: this.dragAfter ? 0 : undefined })
@@ -374,8 +432,8 @@ export struct MusicPanelContent {
               .maxLines(2).textOverflow({ overflow: TextOverflow.Ellipsis }).width('100%')
             Text(this.status()).fontFamily(this.family()).fontSize(9).fontColor(this.muted).width('100%')
           }.layoutWeight(1).alignItems(HorizontalAlign.Start)
-        }.width('100%').padding(8).borderRadius(this.round(14)).backgroundColor(alpha(this.ink, this.dark ? .1 : .025))
-        MusicInsetRelief({ style: this.style, depth: this.depth, dark: this.dark, radius: this.round(14) })
+        }.width('100%').padding(8).borderRadius(this.round(14)).backgroundColor(Color.Transparent)
+        MusicInsetRelief({ style: this.style, depth: this.depth, dark: this.dark, surface: this.surface, radius: this.round(14) })
       }.width('100%').height(64).margin({ top: 8 })
       Row() {
         this.iconAction(0xf0193, '上一首', 'previous')

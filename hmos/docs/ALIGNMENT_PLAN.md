@@ -1,5 +1,13 @@
 # 持续追平 Windows 工作台
 
+2026-10-09 **v31 当前检查点**：补齐音乐内层七种 Flutter 风格，当前曲目及选中行保持透明，flat 不增加框线；Index 传入实际色盘 surface。完整原导入请求须写入、fsync、关闭全部确认后才派发 Native begin，恢复保留原 IDs/CAS 并显式核对。同一页面的文件选择器往返使用一次性 ticket，返回前台后重读实际曲库；歌词目标变化时保留原目标下的完整原文。
+
+完整实际 ETS/tool **1158/1158 PASS，0 fail/skip/cancel**，48 测试文件、153 输入前后一致；API26 **SUCCESS /33.904s**，34 tasks 全执行，323 复制/366 仓库输入一致，八音乐模块实际检查并 emit，四项包内原生库核对 PASS。283 native 来源和双 ABI 静态库精确复用 v29，本轮没有新 Rust 构建或测试资格。版本 **dev21/1000021**，HAP **31,438,704B /92258D5D…**，unsigned/uninstalled。
+
+新版本设备验收 **NOT_RUN**；现有模拟器已安装上一轮 dev20，旧草稿全文读回和 dev20 启动仅为限定证据。真实 picker/grant、声音/seek/后台/重启、全样式像素与所有界面框线仍待验证；在线歌词、解密、封面、原件 GC/protected 和完整 Flutter/Windows 对齐 **OPEN**。仅推送 `codex/ArkTsUI`，不并入主线，见 [v31 验证](../reports/ui-source/v31/validation.md)。
+
+以下 v30 及更早段落均为历史记录；旧段落中的“当前”、设备状态和资格仅指其当轮范围。最新资格以上述 v31 及当前表为准。
+
 2026-10-09 **v30 当前音乐界面检查点**：实际 Index 接入 MusicWorkbench、文件选择与完整原件导入、播放列表/持久选曲、播放/暂停/seek、排序/移除、离线歌词导入/全文弹层及歌词页脚。界面布局依据 Flutter 音乐面板和 little_tips 源码；外层沿用现有组件材质，默认页脚透明。恢复只读取、不创建播放器或自动播放。后台暂停保留原播放器/FD，返回不自动续播；附件媒体须先确认音乐实际暂停。Unknown 不阻止原播放器停音，原导入核对不生成新 ID；未保存全文绑定原曲目，已知部分缓存清理只重试同原对象。
 
 最终实际 ETS/tool **1118/1118 PASS，0 fail/skip/cancel**（47 suite 文件、151 项输入前后一致，29391.5177ms）；完整 API26 **SUCCESS /17.975s**，34/34 tasks 执行，323 复制/366 仓库输入一致；**八音乐模块均在实际产品 entry graph 检查并 emit**，四项包内原生库核对 PASS。Rust/C++ 实现未变，283 项 native 来源和双 ABI 静态库精确复用 v29；本轮不新增 Rust 测试/构建资格。最终 HAP **31,413,203B**，SHA256 `FB81FEF187D11B09E6DEF56B4B20280E68EED4135BD61C260638ED015408BFD1`。
@@ -102,7 +110,7 @@ dev.8 已接入原 `query_plan_v2` 的分页过滤、稳定排序和归并，复
 | 持久草稿、S1/S2、未知结果核对 | v25 原请求保存、S1 close、S2/S3 source0 business handoff 保留；v27 Index 已接实际父历史/当前完整子 writer 重启恢复，读取不提交业务或生成新操作，原 Session 已知结果及各项 Unknown/wire 保留 | 新 native 保存/关闭/重启设备闭环、protected 捕获、SDK 未交付事件及跨进程全局配额资格仍 OPEN；显式核对固定退役/close，不能复活 inactive parent |
 | 严格业务、当前 V2 正文与 own 接续 | v27 ordinary CardView 已据真实 decode/Origin 分类，详情重新编辑读最新完整 source/revision 并接 current_v2，保 TaskId/元数据 bytes；active原Session仍按continued_todos接续。191库+3附件和实际两类来源/迁移/新修订Store检查通过 | 不投影 old own LF，不自动重基，不把独立 plan/child/retire/close 事务称为多对象原子；本轮事务实现未改、未重跑旧fault vectors；完整设备/任务编辑/产品资格 OPEN |
 | 附件、剪贴板、Markdown/富文本、导入导出 | dev.19在dev.17/18快照/原件/富转换基础上将完整输出改为Unicode16 grapheme≤20000，回执绑定完整UTF-16/UTF-8长度和版本；完整未来选区粘贴异步preflight及pin后重检。原source限制、SHA、64MiB/20槽/sidecar保持。独立API26双指tester编译main/test HAP与10工具模型通过，未安装/执行设备手势 | 本轮Rust106和三项条件Flutter对照fresh通过；完整ETS/HAP/native身份见v19最终验证。系统富内容/Office持久闭环、dev19字段/IME与图片手势设备NOT_RUN。RTF插件仍2Mi+64KiB，无异常fallback；严格坏编码/RTF U+FFFD、直接输入formatter行为、更严格字节预算、200MiB容量、完整格式/惯性/GIF仍有差距 |
-| 音乐、歌词、解密 | v30 实际 Index 音乐操作、播放列表、离线歌词全文/页脚；复用实际 Library/Files/Playback 与 Rust 曲库，八音乐模块进入实际产品图，后台/Unknown 停音、原请求恢复和已知部分清理有界覆盖 | 下一阶段验真实提供者/声音/seek/上下首/后台/中断/重启/FD与全部样式渲染；补 pre-begin/重启部分清理/在线/解密/metadata/封面/GC/protected/full parity，见[v30验证](../reports/ui-source/v30/validation.md) |
+| 音乐、歌词、解密 | v31 完整原 wire 派发前持久确认、同页 picker ticket/完整原目标歌词、七种内层风格；保留实际 Library/Files/Playback/Rust 复用 | 验真实提供者/声音/seek/上下首/后台/中断/重启/FD与全部样式和框线；补重启部分清理/在线/解密/metadata/封面/GC/protected/full parity，见[v31验证](../reports/ui-source/v31/validation.md) |
 | 插件包、动态 UI、HTTP/服务/文件任务 | 未接运行期宿主 | 跟进 Windows 实现与合约，接 Wasm 执行/权限/资源预算/服务与任务控制；区分 Windows 平台实现和共享业务块 |
 | 分发与资格 | dev20/1000020，仅codex/ArkTsUI。v30 final1118模型/151来源，API26 17.975s/34执行任务/323复制/366仓库输入及8模块emit/4包库核对PASS；31,413,203B/FB81FEF1… unsigned/uninstalled；283 native 来源与双ABI精确复用v29，本轮无新Rust测试/构建，见[v30验证](../reports/ui-source/v30/validation.md) | HDC target空且模拟器进程未运行，设备NOT_RUN；签名/ARM64运行/HUKS与完整对齐OPEN；a1 SDK失败及模型final来源drift保留，资格只授 final2 + a2产品包 |
 

@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const d=require('./driver.cjs'),root=path.resolve(__dirname,'../../../..');
+const hap=path.join(root,'.build/artifacts/dev30-music-ui-a2/entry-default-unsigned.hap'),bytes=fs.readFileSync(hap),sha=crypto.createHash('sha256').update(bytes).digest('hex').toUpperCase();
+assert.equal(bytes.length,31413203);assert.equal(sha,'FB81FEF187D11B09E6DEF56B4B20280E68EED4135BD61C260638ED015408BFD1');
+const preserved=JSON.parse(fs.readFileSync(path.join(__dirname,'original-draft-preservation.json')));assert.equal(preserved.body,'Body 汉字 🧪 é.\nSecond line');
+const tree=d.read();assert.ok(!d.flat(tree).some(x=>x.n.type==='TextInput'&&x.n.id==='draft-title'));assert.equal(d.flat(tree).filter(x=>x.n.text==='草稿 4').length,1);
+const beforeRaw=d.hdc('shell','bm','dump','-n','dev.morrow.hmos'),before=JSON.parse(beforeRaw.slice(beforeRaw.indexOf('{')));assert.equal(before.applicationInfo.versionCode,1000019);
+fs.writeFileSync(path.join(__dirname,'bundle-before-v30.json'),JSON.stringify(before,null,2)+'\n',{flag:'wx'});
+d.once('force-stop-before-v30',['shell','aa','force-stop','dev.morrow.hmos']);
+d.once('install-qualified-v30',['install','-r',hap]);
+const afterRaw=d.hdc('shell','bm','dump','-n','dev.morrow.hmos'),after=JSON.parse(afterRaw.slice(afterRaw.indexOf('{')));assert.equal(after.applicationInfo.versionCode,1000020);assert.equal(after.applicationInfo.versionName,'0.1.0-hmos-dev.20');
+fs.writeFileSync(path.join(__dirname,'bundle-after-v30.json'),JSON.stringify(after,null,2)+'\n',{flag:'wx'});
+d.once('start-qualified-v30',['shell','aa','start','-a','EntryAbility','-b','dev.morrow.hmos']);
+fs.writeFileSync(path.join(__dirname,'installation-v30.json'),JSON.stringify({completedUtc:new Date().toISOString(),phase:'INSTALLED_AND_LAUNCHED',baseline:'4c04f97e6beb580d33f14f9540db98129fc50180',device:'127.0.0.1:5555',uuid:'01fc19c8-444a-42f1-9f70-79321a2502b3',hap,sha256:sha,bytes:bytes.length,versionCode:after.applicationInfo.versionCode,versionName:after.applicationInfo.versionName,installTimeBefore:before.installTime,installTimeAfter:after.installTime,scope:'Actual acknowledged install/start of immutable qualified dev20 package; original draft preflight preserved; no music runtime qualification yet.'},null,2)+'\n',{flag:'wx'});

@@ -1,0 +1,12 @@
+{
+  "observedUtc": "2026-10-09T02:57:08.704Z",
+  "draftId": "05bd650d-9f34-4259-9573-1f69c053ec45",
+  "title": "HMOS-v28-20261009-A",
+  "body": "Body 汉字 🧪 é.\nSecond line",
+  "phase": "PASS_SCOPED_READBACK_AFTER_SNAPSHOT_BOOT",
+  "businessSaved": false,
+  "retired": false,
+  "expectedDraftCount": 4,
+  "expectedBusinessCount": 14,
+  "source": "original-drafts-after-scroll.json"
+}

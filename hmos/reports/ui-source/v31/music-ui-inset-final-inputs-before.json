@@ -1,0 +1,52 @@
+{
+  "observed_at": "2026-10-09T02:59:07.958Z",
+  "inputs": [
+    {
+      "path": "hmos/tool/run-music-ui-inset.cjs",
+      "byte_length": 4214,
+      "sha256": "ab2695b1eeb6307a45feb1a50426d2b838671e974a1ceb6509e2e452d6c25946"
+    },
+    {
+      "path": "hmos/tool/music-ui-component-test-harness.cjs",
+      "byte_length": 7892,
+      "sha256": "2b4227bafbd35fc17e8ab22be74246ae958b33e85394e8747531d1120822c1c9"
+    },
+    {
+      "path": "hmos/tool/music-ui-inset.test.cjs",
+      "byte_length": 10030,
+      "sha256": "bec7eb04bcabdbd84ed850ea27cccc9f687b35964cbe598f90c6ee1709a4568a"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/MusicPanel.ets",
+      "byte_length": 31324,
+      "sha256": "00f88c76a6e3666f4aca62f138eaa331930ced13b6d507b6c902f7ecd20dc44b"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+      "byte_length": 5126,
+      "sha256": "0fcaa587d24b1fd0a1b4d066f465bc2178ff16b830187e1e2a250e3f5b4a67b2"
+    }
+  ],
+  "references": [
+    {
+      "path": "build/win-cloud-20261005/lib/music/music_panel.dart",
+      "byte_length": 31013,
+      "sha256": "6df33c27cde8054d3f70b5d5ebac00831d78e212d515574cad764d64e72d694d"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/neumorphic_controls.dart",
+      "byte_length": 46032,
+      "sha256": "a80141815bb7f79fc30ebf77803aa61e7e5b354c51589a51f14cc0fc10d2df0d"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/experimental_controls.dart",
+      "byte_length": 20033,
+      "sha256": "15ed5fc306956c559a6c41c1e11bcdb52db9937d4cdf64e5cabd77bc4e2c0ccb"
+    },
+    {
+      "path": "../../../../../Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/component/canvas.d.ts",
+      "byte_length": 177413,
+      "sha256": "b46dfedb3fcfc62a9fdfacc458d9676b4dfddde76f9264433d337b202fa64ac8"
+    }
+  ]
+}

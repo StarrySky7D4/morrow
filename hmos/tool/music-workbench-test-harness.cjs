@@ -12,12 +12,15 @@ async function settle() { for (let i=0; i<12; i++) await new Promise(resolve=>se
 
 function fixture(options = {}) {
   const nodes = new Map(), fds = new Map(), trace = [], faults = new Map(), players = [], wires = [], imports = [], histories = new Map();
-  let fd = 10, folder = 0, uuid = 0, uris = [], alive = true, foreground = true, owner = 'page-1:1', revision = options.initial?.length ? '1' : '0';
-  const records = (options.initial || []).map(plain), order = records.filter(t=>t.phase === 'ready').map(t=>t.track_id), lyrics = new Map();
+  const restart = options.restart;
+  let fd = 10, folder = restart?.folder || 0, uuid = restart?.uuid || 0, uris = [], alive = true, foreground = true, owner = 'page-1:1', revision = restart?.revision || (options.initial?.length ? '1' : '0');
+  const records = (restart?.records || options.initial || []).map(plain), order = restart?.order?.slice() || records.filter(t=>t.phase === 'ready').map(t=>t.track_id), lyrics = new Map();
   const audio = new Map(); for (const t of records) audio.set(t.track_id, Buffer.alloc(Number(t.byte_length), t.track_id.charCodeAt(0)));
-  let selected = options.selected || order[0] || '', show = options.show || false;
+  let selected = restart?.selected || options.selected || order[0] || '', show = restart?.show || options.show || false;
   const put = (name, bytes, displayName) => nodes.set(name, {kind:'file', bytes:Buffer.from(bytes), name:displayName});
   for (const p of ['/app','/app/files','/app/cache']) nodes.set(p,{kind:'directory'});
+  if(restart){for(const [p,n]of restart.nodes)nodes.set(p,{...n,bytes:n.bytes?Buffer.from(n.bytes):undefined});for(const [id,b]of restart.audio)audio.set(id,Buffer.from(b));
+    for(const [id,l]of restart.lyrics)lyrics.set(id,plain(l));for(const [id,h]of restart.histories)histories.set(id,plain(h));}
   const fail = (op,p) => { if (faults.has(op+':'+p)) throw faults.get(op+':'+p); };
   const node = p => { if (!nodes.has(p)) throw Object.assign(Error('missing controlled file'),{code:13900002}); return nodes.get(p); };
   const stat = n => ({size:n.bytes?.length||0,isFile:()=>n.kind==='file',isDirectory:()=>n.kind==='directory',isSymbolicLink:()=>n.kind==='symlink'});
@@ -31,8 +34,8 @@ function fixture(options = {}) {
     async open(p,flags) { fail('open',p); if ((flags&OpenMode.CREATE)&&!nodes.has(p)) put(p,''); const n=node(p); assert.equal(n.kind,'file');
       if (flags&OpenMode.TRUNC) n.bytes=Buffer.alloc(0); const f={fd:fd++,path:p,name:n.name||path.posix.basename(p)}; fds.set(f.fd,f); trace.push(['open',p,f.fd]); return f; },
     async close(f) { fail('close',f.path); assert.ok(fds.has(f.fd)); fds.delete(f.fd); trace.push(['close',f.path]); },
-    async write(id,b) { const n=node(fds.get(id).path),bytes=Buffer.from(b); n.bytes=Buffer.concat([n.bytes,bytes]); return bytes.length; },
-    async fsync(id) { trace.push(['fsync',fds.get(id).path]); },
+    async write(id,b) { const p=fds.get(id).path;fail('write',p);const n=node(p),bytes=Buffer.from(b);n.bytes=Buffer.concat([n.bytes,bytes]);return bytes.length; },
+    async fsync(id) { const p=fds.get(id).path;fail('fsync',p);trace.push(['fsync',p]);if(options.fsync)await options.fsync(p); },
     async readText(p) { return node(p).bytes.toString(); },
     async read(id,b,o) { const bytes=node(fds.get(id).path).bytes.subarray(o.offset,o.offset+o.length); new Uint8Array(b).set(bytes); return bytes.length; },
     async unlink(p) { fail('unlink',p); assert.equal(node(p).kind,'file'); nodes.delete(p); trace.push(['unlink',p]); },
@@ -133,6 +136,8 @@ function fixture(options = {}) {
   return {controller,api,nodes,fds,trace,faults,players,wires,imports,records,order,lyrics,audio,put,views,options,receiver,current,bump,
     select:values=>{uris=values;},setAlive:value=>{alive=value;},setForeground:value=>{foreground=value;owner='page-1:'+String(Number(owner.split(':')[1])+1);},
     setSelected:value=>{selected=value;},get revision(){return revision;},get selected(){return selected;},
+    checkpoint:()=>({nodes:[...nodes].map(([p,n])=>[p,{...n,bytes:n.bytes?Buffer.from(n.bytes):undefined}]),records:plain(records),order:order.slice(),revision,selected,show,
+      lyrics:[...lyrics].map(([id,l])=>[id,plain(l)]),audio:[...audio].map(([id,b])=>[id,Buffer.from(b)]),histories:[...histories].map(([id,h])=>[id,plain(h)]),folder,uuid}),
     async spool(name='recovered.wav',bytes=Buffer.alloc(64,7),literal=''){
       const id='music-'+String(++folder).padStart(6,'0'),dir='/app/files/hmos-music-spool/'+id;
       if(!nodes.has('/app/files/hmos-music-spool'))nodes.set('/app/files/hmos-music-spool',{kind:'directory'});nodes.set(dir,{kind:'directory'});

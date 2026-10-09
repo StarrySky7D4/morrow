@@ -1,0 +1,18 @@
+{
+  "startedUtc": "2026-10-09T03:06:29.177Z",
+  "finishedUtc": "2026-10-09T03:07:03.745Z",
+  "exitCode": 0,
+  "signal": null,
+  "testFiles": 48,
+  "tests": 1158,
+  "passed": 1158,
+  "failed": 0,
+  "cancelled": 0,
+  "skipped": 0,
+  "durationMs": 34505.2487,
+  "inputs": 153,
+  "sourceIdentityVerified": true,
+  "log": "models-final-tests.log",
+  "sha256": "8ADD22306B288D6DFA234410015535C895CE139E90EE08F2465FF7D0D4B5D906",
+  "scope": "Actual ETS/tools/Index/component methods and Store-produced DTOs; controlled provider/AVPlayer/lifecycle/render seams, not device playback or full Flutter/Windows parity."
+}

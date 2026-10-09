@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "frozen_at": "2026-10-09T03:01:30.2461272Z",
+  "base_commit": "4c04f97e6beb580d33f14f9540db98129fc50180",
+  "tests": "music-import-durability-a2-result.json",
+  "scope": "3 production ETS, related source-executed tests/harnesses and runner only",
+  "all_owned_inputs_match_tested": true,
+  "files": [
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicFiles.ets",
+      "bytes": 31488,
+      "sha256": "22005FBC45E6A980C86B68890C9C7C67EDE4DC2E8AB1B14C9A3828CD062E7DA5",
+      "matches_tested_input": true
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicLibrary.ets",
+      "bytes": 46846,
+      "sha256": "B5E043D5C7C1B5ED79C1D9FE42CBBB303DF9127391E11A9F508CA12E4454E0A6",
+      "matches_tested_input": true
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicWorkbench.ets",
+      "bytes": 30720,
+      "sha256": "9BD2683E3356637C92B7EFCFC9227BA916CD87C7AFF4E57B2863CB90A432DEB3",
+      "matches_tested_input": true
+    },
+    {
+      "path": "hmos/tool/music-files-model.test.cjs",
+      "bytes": 24643,
+      "sha256": "50E47068A1840B32927D17D7BF800E11188618D2222696AF95E153E2EA103396",
+      "matches_tested_input": true
+    },
+    {
+      "path": "hmos/tool/music-library-model.test.cjs",
+      "bytes": 27366,
+      "sha256": "BBF0AF525F612B7814E595123E998C126AA788B5943ABDDB2141F83EE25059AB",
+      "matches_tested_input": true
+    },
+    {
+      "path": "hmos/tool/music-library-native-dto.test.cjs",
+      "bytes": 5806,
+      "sha256": "935FF646667B51005DE38CC4D5A2E728199B12DDB91E1ACD951414066B5B7761",
+      "matches_tested_input": true
+    },
+    {
+      "path": "hmos/tool/music-library-test-harness.cjs",
+      "bytes": 8408,
+      "sha256": "0738415EAB96D495B598AC4FC1E8E7F43677F322068412BE6C3D0180A16826BB",
+      "matches_tested_input": true
+    },
+    {
+      "path": "hmos/tool/music-workbench-model.test.cjs",
+      "bytes": 46290,
+      "sha256": "AEAF09CA949065A6746010EFE2D7008D5C0361BA76CDE19399AA5713F4750A7A",
+      "matches_tested_input": true
+    },
+    {
+      "path": "hmos/tool/music-workbench-test-harness.cjs",
+      "bytes": 15363,
+      "sha256": "61D70DDFBB81EE3EB6EFD88D32DFA95AF3CF5718A9E6030750EA90D3F23EEA85",
+      "matches_tested_input": true
+    },
+    {
+      "path": "hmos/reports/ui-source/v31/run-music-import-durability.cjs",
+      "bytes": 5762,
+      "sha256": "BF560CC2725C97B1D9DF9D2DCAD2CEA9B06BCCED51FD619FC1C82E0D37C478BB",
+      "matches_tested_input": true
+    }
+  ]
+}

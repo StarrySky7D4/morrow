@@ -1,0 +1,16 @@
+{
+  "issuedUtc": "2026-10-09T02:58:41.701Z",
+  "device": "127.0.0.1:5555",
+  "args": [
+    "shell",
+    "aa",
+    "start",
+    "-a",
+    "EntryAbility",
+    "-b",
+    "dev.morrow.hmos"
+  ],
+  "phase": "ACKNOWLEDGED",
+  "result": "start ability successfully.\r\n",
+  "acknowledgedUtc": "2026-10-09T02:58:41.855Z"
+}

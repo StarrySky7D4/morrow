@@ -16,7 +16,8 @@ function compile(source, filename) {
 }
 function source(name) { const filename = path.join(pageRoot, name + '.ets'); usedInputs.add(filename); return fs.readFileSync(filename, 'utf8'); }
 function actualComponent(name, content, end) {
-  const marker = 'export struct ' + name + ' {', start = content.indexOf(marker);
+  const exported = 'export struct ' + name + ' {', marker = content.includes(exported) ? exported : 'struct ' + name + ' {';
+  const start = content.indexOf(marker);
   assert.ok(start >= 0, 'actual component exists: ' + name);
   const bodyStart = start + marker.length, bodyEnd = content.indexOf(end, bodyStart);
   assert.ok(bodyEnd > bodyStart, 'actual component method boundary: ' + name);
@@ -37,7 +38,7 @@ function harness() {
   }
   const ui = load('MusicUi'), strings = load('UiStrings');
   const panelSource = source('MusicPanel'), footerSource = source('MusicFooter');
-  const helperStart = panelSource.indexOf('class MusicDragTicket {'), helperEnd = panelSource.indexOf('// Only the inset edge');
+  const helperStart = panelSource.indexOf('class MusicDragTicket {'), helperEnd = panelSource.indexOf('// Flutter\'s fill=false');
   assert.ok(helperStart >= 0 && helperEnd > helperStart, 'actual drag helper classes');
   const components = panelSource.slice(helperStart, helperEnd) + '\n' + actualComponent('MusicPanelContent', panelSource, '\n  @Builder') + '\n' +
     actualComponent('MusicFooterContent', footerSource, '\n  build()') + '\n' + actualComponent('LyricsDialogContent', footerSource, '\n  build()');
@@ -56,4 +57,41 @@ function harness() {
     area: (top, height = 40) => ({ globalPosition: { x: 0, y: top }, height }),
     event: y => ({ fingerList: [{ globalY: y }] }) };
 }
-module.exports = { harness, usedInputs, source };
+// Record the SDK Canvas boundary while executing verbatim production geometry,
+// colors and paint calls. This does not rasterize blur or prove rendered pixels.
+function insetHarness(props = {}) {
+  class ControlledPath {
+    constructor() { this.commands = []; }
+    moveTo(...args) { this.commands.push(['moveTo', ...args]); }
+    lineTo(...args) { this.commands.push(['lineTo', ...args]); }
+    arcTo(...args) { this.commands.push(['arcTo', ...args]); }
+    closePath() { this.commands.push(['closePath']); }
+    rect(...args) { this.commands.push(['rect', ...args]); }
+    addPath(path) { this.commands.push(['addPath', path.commands.map(command => [...command])]); }
+  }
+  class ControlledCanvas {
+    constructor() {
+      this.width = 220; this.height = 64; this.commands = []; this.stack = []; this.filter = 'none'; this.currentClip = null;
+    }
+    clearRect(...args) { this.commands.push({ op: 'clearRect', args }); }
+    save() { this.stack.push({ filter: this.filter, currentClip: this.currentClip, fillStyle: this.fillStyle,
+      strokeStyle: this.strokeStyle, lineWidth: this.lineWidth }); this.commands.push({ op: 'save' }); }
+    restore() { assert.ok(this.stack.length, 'Canvas state has an owner'); Object.assign(this, this.stack.pop()); this.commands.push({ op: 'restore' }); }
+    clip(path) { this.currentClip = path.commands; this.commands.push({ op: 'clip', path: path.commands }); }
+    createLinearGradient(...args) { return { args, stops: [], addColorStop(offset, color) { this.stops.push([offset, color]); } }; }
+    stroke(path) { this.commands.push({ op: 'stroke', path: path.commands, style: this.strokeStyle, width: this.lineWidth, filter: this.filter }); }
+    fill(path, rule) { this.commands.push({ op: 'fill', path: path.commands, rule, color: this.fillStyle, filter: this.filter, clip: this.currentClip }); }
+  }
+  const filename = path.join(modelRoot, 'Appearance.ets'); usedInputs.add(filename);
+  const appearance = {};
+  vm.runInNewContext(compile(fs.readFileSync(filename, 'utf8'), filename), { exports: appearance }, { filename });
+  const panelSource = source('MusicPanel'), timers = new Map(); let timer = 0;
+  const globals = { exports: {}, mix: appearance.mix, Path2D: ControlledPath, CanvasRenderingContext2D: ControlledCanvas,
+    RenderingContextSettings: class {}, setTimeout: callback => { const id = ++timer; timers.set(id, callback); return id; },
+    clearTimeout: id => timers.delete(id) };
+  vm.runInNewContext(compile(actualComponent('MusicInsetRelief', panelSource, '\n  build()'), path.join(pageRoot, 'MusicPanel.ets')), globals);
+  const inset = new globals.exports.MusicInsetRelief(); Object.assign(inset, props);
+  return { inset, canvas: inset.ctx, timers, panelSource,
+    tick: () => { const pending = [...timers.values()]; timers.clear(); for (const callback of pending) callback(); } };
+}
+module.exports = { harness, insetHarness, usedInputs, source };

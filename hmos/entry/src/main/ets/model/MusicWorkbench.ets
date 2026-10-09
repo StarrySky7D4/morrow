@@ -1,6 +1,6 @@
 import { common } from '@kit.AbilityKit';
 import { util } from '@kit.ArkTS';
-import { MusicFiles, PreparedMusicFile } from './MusicFiles';
+import { MusicFiles, PreparedMusicFile, SelectedMusicLyrics } from './MusicFiles';
 import { MusicLibrary, MusicImportRequest, MusicLibraryTrackIdentity, NativeMusicTrack,
   NativeMusicLyrics, NativeMusicPlayback, MusicPlaybackPolicyRequest } from './MusicLibrary';
 import { MusicPlayback, MusicPlaybackIdentity, MusicPlaybackSource, MusicPlayer, musicPlaybackSameTrack } from './MusicPlayback';
@@ -25,6 +25,10 @@ class MusicCachedLyrics {
     this.identity = identity; this.lyrics = lyrics; this.byteLength = byteLength;
   }
 }
+class MusicPickerTicket {
+  resume: ((owner: string) => void) | undefined = undefined;
+  cancel: ((error: Error) => void) | undefined = undefined;
+}
 
 // This joins the actual durable library, selected document grants and player
 // leases. A Rust transport proposal is never used as an AVPlayer acknowledgement.
@@ -47,12 +51,15 @@ export class MusicWorkbench {
   private unsavedLyrics: string = '';
   private unsavedLyricsTrack: string = '';
   private unsavedLyricsTitle: string = '';
+  private pickerTicket: MusicPickerTicket | undefined = undefined;
+  private runOwner: string = '';
 
   constructor(context: common.UIAbilityContext, hooks: MusicWorkbenchHooks) {
     this.hooks = hooks; this.files = new MusicFiles(context);
     this.library = new MusicLibrary({
       send: (wire: string): Promise<string> => workbench.sendRaw(wire),
       hash: (wire: string): Promise<string> => editorInputHash(wire),
+      persistImport: (wire: string, request: MusicImportRequest): Promise<void> => this.persistImport(wire, request),
       importFile: (wire: string, request: MusicImportRequest): Promise<string> => this.importFile(wire, request),
       owned: (): boolean => this.available(), owner: (): string => this.hooks.owner(),
       changed: (): void => this.notify()
@@ -74,6 +81,25 @@ export class MusicWorkbench {
     if (!this.available() || owner !== this.hooks.owner()) { throw new Error('音乐页面已变化，原操作和缓存仍保留。'); }
   }
   private operation(): string { return 'music-' + util.generateRandomUUID(true); }
+  private beginPicker(): MusicPickerTicket {
+    if (!this.available() || this.pickerTicket) { throw new Error('音乐文件选择仍在处理。'); }
+    const ticket = new MusicPickerTicket(); this.pickerTicket = ticket; return ticket;
+  }
+  private async returnPicker(ticket: MusicPickerTicket): Promise<string> {
+    if (this.pickerTicket !== ticket || this.disposed || !this.hooks.owned()) { throw new Error('原文件选择页面已关闭，未派发音乐写入。'); }
+    // A system document picker may put this same page in the background. Its
+    // single explicit result can wait for foreground and bind a new epoch;
+    // ordinary Native/file work never receives this exception.
+    const owner: string = this.hooks.foreground() ? this.hooks.owner() : await new Promise<string>((resolve, reject): void => {
+      ticket.resume = resolve; ticket.cancel = reject;
+    });
+    if (this.pickerTicket !== ticket) { throw new Error('原文件选择请求已变化。'); }
+    this.guard(owner); this.pickerTicket = undefined; this.runOwner = owner;
+    return owner;
+  }
+  private endPicker(ticket: MusicPickerTicket): void {
+    if (this.pickerTicket === ticket) { this.pickerTicket = undefined; }
+  }
   private preparedMatches(file: PreparedMusicFile, request: MusicImportRequest): boolean {
     return file.name === request.name && file.byteLength === request.byte_length && file.sha256 === request.sha256;
   }
@@ -85,6 +111,11 @@ export class MusicWorkbench {
     const file = this.activeSpool;
     if (!file || this.released.has(file.spoolId) || !this.preparedMatches(file, request)) { throw new Error('原音乐导入没有匹配的完整缓存。'); }
     return this.files.importPrepared(file, wire, (original: string, fd: number): Promise<string> => workbench.importFd(original, fd));
+  }
+  private async persistImport(wire: string, request: MusicImportRequest): Promise<void> {
+    const file = this.activeSpool;
+    if (!file || this.released.has(file.spoolId) || !this.preparedMatches(file, request)) { throw new Error('原音乐导入没有匹配的完整缓存。'); }
+    await this.files.persistImport(file, wire);
   }
   private async admitSelection(identity: MusicPlaybackIdentity): Promise<MusicPlaybackIdentity> {
     const owner = this.hooks.owner(); this.guard(owner);
@@ -171,10 +202,10 @@ export class MusicWorkbench {
   }
   private async run(action: (owner: string) => Promise<void>): Promise<void> {
     if (!this.available() || this.working) { return; }
-    const owner = this.hooks.owner(); this.working = true; this.error = ''; this.notice = ''; this.notify();
+    const owner = this.hooks.owner(); this.runOwner = owner; this.working = true; this.error = ''; this.notice = ''; this.notify();
     try { await action(owner); }
-    catch (error) { if (this.available() && owner === this.hooks.owner()) { this.error = String(error); } }
-    finally { this.working = false; this.notify(); }
+    catch (error) { if (this.available() && this.runOwner === this.hooks.owner()) { this.error = String(error); } }
+    finally { this.runOwner = ''; this.working = false; this.notify(); }
   }
   private async recover(owner: string): Promise<void> {
     const spools = await this.files.recover(); this.guard(owner); this.spools = spools;
@@ -261,16 +292,20 @@ export class MusicWorkbench {
     await this.library.commitImport(); this.guard(owner);
     if (this.library.view().import_plan?.qualified_ready && !this.library.view().import_plan?.unknown) { await this.finishImport(owner); }
   }
-  private async add(owner: string): Promise<void> {
-    this.requireWrite();
+  private async add(owner: string): Promise<string> {
+    this.requireWrite(); const ticket = this.beginPicker();
     try {
-      const uris = await this.files.selectUris(20); this.guard(owner);
+      const uris = await this.files.selectUris(20); owner = await this.returnPicker(ticket);
+      if (!uris.length) { return owner; }
+      this.requireWrite();
+      await this.library.load(); this.guard(owner); this.requireWrite();
       for (const uri of uris) {
         const file = await this.files.prepareUri(uri); this.spools.push(file); this.guard(owner);
         await this.startImport(file, owner); this.guard(owner);
         if (this.library.view().import_plan || this.library.view().unknown) { break; }
       }
-    } finally { this.files.discardSelection(); }
+      return owner;
+    } finally { this.endPicker(ticket); this.files.discardSelection(); }
   }
   private async resume(spoolId: string, trackId: string, owner: string): Promise<void> {
     const state = this.library.view();
@@ -305,7 +340,7 @@ export class MusicWorkbench {
   }
   action(action: string, trackId: string = '', value: number = 0, spoolId: string = ''): Promise<void> {
     return this.run(async (owner: string): Promise<void> => {
-      if (action === 'add') { await this.add(owner); }
+      if (action === 'add') { owner = await this.add(owner); }
       else if (action === 'select' || action === 'next' || action === 'previous') {
         const order = this.library.view().order;
         if (action === 'select' && !order.includes(trackId)) { throw new Error('所选曲目不在实际播放列表。'); }
@@ -341,12 +376,19 @@ export class MusicWorkbench {
       } else if (action === 'lyrics_import') {
         this.requireWrite(); const identity = this.library.identity(trackId || this.library.view().selected_track_id);
         if (!identity) { throw new Error('请选择歌词所属曲目。'); }
-        const chosen = await this.files.pickLyrics(); this.guard(owner); if (!chosen) { return; }
+        const ticket = this.beginPicker();
+        let chosen: SelectedMusicLyrics | undefined = undefined;
+        try { chosen = await this.files.pickLyrics(); owner = await this.returnPicker(ticket); }
+        finally { this.endPicker(ticket); }
+        if (!chosen) { return; }
+        // Preserve the whole user-selected text under the original track before
+        // the fresh Store read; a changed/missing track cannot consume it.
+        this.unsavedLyrics = chosen.text; this.unsavedLyricsTrack = identity.trackId; this.lyricsTrack = identity.trackId;
+        const original = this.library.view().tracks.find((item: NativeMusicTrack): boolean => item.track_id === identity.trackId);
+        this.unsavedLyricsTitle = original ? original.title || original.name : identity.trackId; this.notify();
+        this.requireWrite(); await this.library.load(); this.guard(owner); this.requireWrite();
         const actual = this.library.identity(identity.trackId);
         if (!actual || !musicPlaybackSameTrack(actual, identity)) { throw new Error('歌词所属曲目已变化，未保存。'); }
-        this.unsavedLyrics = chosen.text; this.unsavedLyricsTrack = identity.trackId; this.lyricsTrack = identity.trackId;
-        const track = this.library.view().tracks.find((item: NativeMusicTrack): boolean => item.track_id === identity.trackId);
-        this.unsavedLyricsTitle = track ? track.title || track.name : identity.trackId; this.notify();
         await this.library.setLyrics(identity.trackId, chosen.text, chosen.name, this.operation()); this.guard(owner);
         if (!this.library.view().unknown && !this.library.view().original_mutation) { await this.readLyrics(identity.trackId, owner); }
       } else if (action === 'lyrics_view') {
@@ -397,8 +439,17 @@ export class MusicWorkbench {
     await this.playback.pause(player.token);
     if (!['idle', 'prepared', 'paused', 'completed'].includes(this.playback.view().phase)) { throw new Error('音乐播放器尚未确认暂停，未打开其他媒体。'); }
   }
-  foreground(): void { if (!this.disposed && this.hooks.owned()) { this.playback.foreground(); this.notify(); } }
+  foreground(): void {
+    if (!this.disposed && this.hooks.owned() && this.hooks.foreground()) {
+      this.playback.foreground();
+      const ticket = this.pickerTicket;
+      if (ticket?.resume) { const resume = ticket.resume; ticket.resume = undefined; ticket.cancel = undefined; resume(this.hooks.owner()); }
+      this.notify();
+    }
+  }
   async dispose(): Promise<void> {
-    this.disposed = true; this.library.dispose(); this.files.discardSelection(); await this.playback.dispose();
+    this.disposed = true;
+    if (this.pickerTicket?.cancel) { this.pickerTicket.cancel(new Error('原文件选择页面已关闭，未派发音乐写入。')); }
+    this.pickerTicket = undefined; this.library.dispose(); this.files.discardSelection(); await this.playback.dispose();
   }
 }

@@ -1,19 +1,19 @@
 {
-  "createdUtc": "2026-10-09T02:33:24.651Z",
+  "createdUtc": "2026-10-09T03:07:28.454Z",
   "artifact": {
-    "path": ".build/artifacts/dev30-music-ui-a2/entry-default-unsigned.hap",
-    "bytes": 31413203,
-    "sha256": "FB81FEF187D11B09E6DEF56B4B20280E68EED4135BD61C260638ED015408BFD1",
-    "archive_path": ".build/artifacts/dev30-music-ui-a2/entry-default-unsigned.hap",
+    "path": ".build/artifacts/dev31-music-ui-a1/entry-default-unsigned.hap",
+    "bytes": 31438704,
+    "sha256": "92258D5D2F38C195383FF7549D58C3876ABA1986C53F69B6BBF32A12D0AE081F",
+    "archive_path": ".build/artifacts/dev31-music-ui-a1/entry-default-unsigned.hap",
     "signed": false,
     "installed": false,
-    "versionName": "0.1.0-hmos-dev.20",
-    "versionCode": 1000020
+    "versionName": "0.1.0-hmos-dev.21",
+    "versionCode": 1000021
   },
   "inputs": [
     {
       "path": "AppScope/app.json5",
-      "sha256": "9D0997D284EE4864CDA2540B432EF6A98B67D4CB4A01E125B15C9AA6ED252F7F"
+      "sha256": "3380C1CC8844A64D338646AC9C5EE71244D50F9D3B07907BE3F83F976EF1F4E8"
     },
     {
       "path": "AppScope/resources/base/element/string.json",
@@ -193,11 +193,11 @@
     },
     {
       "path": "entry/src/main/ets/model/MusicFiles.ets",
-      "sha256": "93613ABDEDBBFB811BC48A0366643825A48E9FAC622FF52A275D5915BE6EC34D"
+      "sha256": "22005FBC45E6A980C86B68890C9C7C67EDE4DC2E8AB1B14C9A3828CD062E7DA5"
     },
     {
       "path": "entry/src/main/ets/model/MusicLibrary.ets",
-      "sha256": "C293488D9912F6EFDE7689E4C256BC0CFCCFE153E82A822619ECBB291037C41F"
+      "sha256": "B5E043D5C7C1B5ED79C1D9FE42CBBB303DF9127391E11A9F508CA12E4454E0A6"
     },
     {
       "path": "entry/src/main/ets/model/MusicPlayback.ets",
@@ -209,7 +209,7 @@
     },
     {
       "path": "entry/src/main/ets/model/MusicWorkbench.ets",
-      "sha256": "30B643CD380A5F4A54297C17406DCE8BBD55373A9AA09CDCF6C9255348152974"
+      "sha256": "9BD2683E3356637C92B7EFCFC9227BA916CD87C7AFF4E57B2863CB90A432DEB3"
     },
     {
       "path": "entry/src/main/ets/model/QueryCoordinator.ets",
@@ -249,7 +249,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "8AA4A20DA472A505914E159D215D42FC883C02DE34277575770B39CC8174BB98"
+      "sha256": "502FD0570D24980AF9F1CDBF8CC21D4B4DF161786BD23B3C130E11A9877085A9"
     },
     {
       "path": "entry/src/main/ets/pages/MarkdownPreview.ets",
@@ -261,7 +261,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/MusicPanel.ets",
-      "sha256": "6A627DB1B98C978908445B603A4B380D467DCE5B812EEB372C2E5DDBD386C7AF"
+      "sha256": "00F88C76A6E3666F4ACA62F138EAA331930CED13B6D507B6C902F7ECD20DC44B"
     },
     {
       "path": "entry/src/main/ets/pages/PlatformMusicPlayer.ets",
@@ -388,12 +388,12 @@
       "sha256": "6F2EC066B4090C605CECC78F0DB678B8E17007EB41833437C6C884E3F23EBB0F"
     },
     {
-      "path": "reports/ui-source/v30/checkpoint.cjs",
-      "sha256": "70BBF89588B578BD9F470B36AD012004BB540979347A5BFB3AC4F5F9B5AA259F"
+      "path": "reports/ui-source/v31/checkpoint.cjs",
+      "sha256": "B1C2FF66D871B18EE45FC3E581EFE904D5CB722F9B98EF317E202CFE22BC1FAA"
     },
     {
-      "path": "reports/ui-source/v30/run-sdk.cjs",
-      "sha256": "A91CE2E445E1B0B095FE7BF119DBB40D3FF7EF35F86E4D2BA27F3A71CF6A3B9B"
+      "path": "reports/ui-source/v31/run-sdk.cjs",
+      "sha256": "F7E39FDBEE3BE49DD6D409DDFA801D64A6ACE0A72518A67A036AA01DAE2D5494"
     },
     {
       "path": "rust/Cargo.lock",
@@ -1477,9 +1477,9 @@
     }
   ],
   "sourceIdentityVerified": true,
-  "uiValidation": "reports/ui-source/v30/validation.md",
-  "deliveryScope": "Live Index MusicWorkbench/MusicPanel/MusicFooter/Lyrics integration and background/media ownership. API26 unsigned debug SDK check; reused exact v29 Rust archives. Not device playback, signed release or full Flutter/Windows parity.",
-  "nativeInputs": "reports/ui-source/v30/dev30-music-ui-a2-native-reuse.json",
+  "uiValidation": "reports/ui-source/v31/validation.md",
+  "deliveryScope": "Music import durable original request, single-use picker lifecycle and Flutter seven-style inner decoration. API26 unsigned debug SDK check; reused exact v29 Rust archives. Not device playback, signed release or full Flutter/Windows parity.",
+  "nativeInputs": "reports/ui-source/v31/dev31-music-ui-a1-native-reuse.json",
   "nativeArchives": [
     {
       "abi": "arm64-v8a",

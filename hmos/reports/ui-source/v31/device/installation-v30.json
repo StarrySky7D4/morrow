@@ -1,0 +1,15 @@
+{
+  "completedUtc": "2026-10-09T02:58:41.856Z",
+  "phase": "INSTALLED_AND_LAUNCHED",
+  "baseline": "4c04f97e6beb580d33f14f9540db98129fc50180",
+  "device": "127.0.0.1:5555",
+  "uuid": "01fc19c8-444a-42f1-9f70-79321a2502b3",
+  "hap": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev30-music-ui-a2\\entry-default-unsigned.hap",
+  "sha256": "FB81FEF187D11B09E6DEF56B4B20280E68EED4135BD61C260638ED015408BFD1",
+  "bytes": 31413203,
+  "versionCode": 1000020,
+  "versionName": "0.1.0-hmos-dev.20",
+  "installTimeBefore": 1791183795282,
+  "installTimeAfter": 1791183795282,
+  "scope": "Actual acknowledged install/start of immutable qualified dev20 package; original draft preflight preserved; no music runtime qualification yet."
+}

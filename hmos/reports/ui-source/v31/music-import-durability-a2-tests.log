@@ -1,0 +1,695 @@
+TAP version 13
+# Subtest: music capture requires one selected grant; cancellation and unsupported extensions do not admit a spool
+ok 1 - music capture requires one selected grant; cancellation and unsupported extensions do not admit a spool
+  ---
+  duration_ms: 85.7926
+  type: 'test'
+  ...
+# Subtest: whole native capture receives music150MiB cap and actual spool metadata without a persistent provider URI
+ok 2 - whole native capture receives music150MiB cap and actual spool metadata without a persistent provider URI
+  ---
+  duration_ms: 82.8943
+  type: 'test'
+  ...
+# Subtest: explicit pre-begin persistence writes and closes exact wire without opening source or dispatching Native
+ok 3 - explicit pre-begin persistence writes and closes exact wire without opening source or dispatching Native
+  ---
+  duration_ms: 72.4312
+  type: 'test'
+  ...
+# Subtest: pre-begin fsync and close failures retain original bytes and only same original request can be acknowledged later
+ok 4 - pre-begin fsync and close failures retain original bytes and only same original request can be acknowledged later
+  ---
+  duration_ms: 64.9853
+  type: 'test'
+  ...
+# Subtest: disappeared or changed pre-begin request cannot be recreated or silently reused for FD dispatch
+ok 5 - disappeared or changed pre-begin request cannot be recreated or silently reused for FD dispatch
+  ---
+  duration_ms: 58.6111
+  type: 'test'
+  ...
+# Subtest: partial request write is preserved after restart and never appears as a complete new import source
+ok 6 - partial request write is preserved after restart and never appears as a complete new import source
+  ---
+  duration_ms: 28.2898
+  type: 'test'
+  ...
+# Subtest: exact music request is fsynced before dispatch and Unknown retains its original request and full bytes
+ok 7 - exact music request is fsynced before dispatch and Unknown retains its original request and full bytes
+  ---
+  duration_ms: 27.7358
+  type: 'test'
+  ...
+# Subtest: forged mutable spool or malformed request cannot enter FD dispatch
+ok 8 - forged mutable spool or malformed request cannot enter FD dispatch
+  ---
+  duration_ms: 62.0739
+  type: 'test'
+  ...
+# Subtest: unexpected or symlink cache is retained and blocks new admission rather than being automatically deleted
+ok 9 - unexpected or symlink cache is retained and blocks new admission rather than being automatically deleted
+  ---
+  duration_ms: 26.5502
+  type: 'test'
+  ...
+# Subtest: export mismatch cannot admit a player source and complete export returns no path or URI
+ok 10 - export mismatch cannot admit a player source and complete export returns no path or URI
+  ---
+  duration_ms: 54.9325
+  type: 'test'
+  ...
+# Subtest: registered descriptor must close before source removal; failed close retains original resource for explicit retry
+ok 11 - registered descriptor must close before source removal; failed close retains original resource for explicit retry
+  ---
+  duration_ms: 35.5096
+  type: 'test'
+  ...
+# Subtest: forged source and descriptor cannot open, close or delete the original registry-owned audio
+ok 12 - forged source and descriptor cannot open, close or delete the original registry-owned audio
+  ---
+  duration_ms: 24.503
+  type: 'test'
+  ...
+# Subtest: owned cache deletion failure retains the same token and does not affect other adapter namespaces
+ok 13 - owned cache deletion failure retains the same token and does not affect other adapter namespaces
+  ---
+  duration_ms: 23.9592
+  type: 'test'
+  ...
+# Subtest: export writer close rejection does not admit an unreachable active source; original handle remains for explicit cleanup
+ok 14 - export writer close rejection does not admit an unreachable active source; original handle remains for explicit cleanup
+  ---
+  duration_ms: 24.0258
+  type: 'test'
+  ...
+# Subtest: capture closes destination even when source close rejects and retains source handle plus complete prepared bytes
+ok 15 - capture closes destination even when source close rejects and retains source handle plus complete prepared bytes
+  ---
+  duration_ms: 23.6643
+  type: 'test'
+  ...
+# Subtest: explicit local lyrics picker reads the whole UTF8 text and rejects damaged encoding without cropping
+ok 16 - explicit local lyrics picker reads the whole UTF8 text and rejects damaged encoding without cropping
+  ---
+  duration_ms: 49.6438
+  type: 'test'
+  ...
+# Subtest: metadata close rejection retains the original FD and spool until explicit close acknowledgment
+ok 17 - metadata close rejection retains the original FD and spool until explicit close acknowledgment
+  ---
+  duration_ms: 23.2887
+  type: 'test'
+  ...
+# Subtest: request close failure prevents dispatch and symlink request is rejected without truncating the original
+ok 18 - request close failure prevents dispatch and symlink request is rejected without truncating the original
+  ---
+  duration_ms: 42.6683
+  type: 'test'
+  ...
+# Subtest: partial player open close rejection retains original FD and prevents removal until explicit retry
+ok 19 - partial player open close rejection retains original FD and prevents removal until explicit retry
+  ---
+  duration_ms: 20.2514
+  type: 'test'
+  ...
+# Subtest: partial spool metadata unlink retains exact cleanup object through retry_io and recover without replaying absent data
+ok 20 - partial spool metadata unlink retains exact cleanup object through retry_io and recover without replaying absent data
+  ---
+  duration_ms: 21.8678
+  type: 'test'
+  ...
+# Subtest: failed first unlink marks only cleanup intent and still cannot masquerade as a complete recoverable replay source
+ok 21 - failed first unlink marks only cleanup intent and still cannot masquerade as a complete recoverable replay source
+  ---
+  duration_ms: 25.1551
+  type: 'test'
+  ...
+# Subtest: late request unlink failure retains original exact bytes while already removed data and metadata stay out of recover
+ok 22 - late request unlink failure retains original exact bytes while already removed data and metadata stay out of recover
+  ---
+  duration_ms: 21.082
+  type: 'test'
+  ...
+# Subtest: empty-directory removal failure is retained through recover and only same-object explicit release retry clears it
+ok 23 - empty-directory removal failure is retained through recover and only same-object explicit release retry clears it
+  ---
+  duration_ms: 20.3823
+  type: 'test'
+  ...
+# Subtest: unexpected children added after partial cleanup are retained and block original cleanup retry
+ok 24 - unexpected children added after partial cleanup are retained and block original cleanup retry
+  ---
+  duration_ms: 25.0415
+  type: 'test'
+  ...
+# Subtest: fresh adapter cannot mint partial cleanup ownership from restart leftovers or silently delete them
+ok 25 - fresh adapter cannot mint partial cleanup ownership from restart leftovers or silently delete them
+  ---
+  duration_ms: 21.3415
+  type: 'test'
+  ...
+# Subtest: unsafe directory rejection before unlink does not mint cleanup ownership or remove an existing complete source
+ok 26 - unsafe directory rejection before unlink does not mint cleanup ownership or remove an existing complete source
+  ---
+  duration_ms: 18.7815
+  type: 'test'
+  ...
+# Subtest: actual Library source exports only independent music DTO/coordination and exact platform import hooks
+ok 27 - actual Library source exports only independent music DTO/coordination and exact platform import hooks
+  ---
+  duration_ms: 4.848
+  type: 'test'
+  ...
+# MusicLibrary.ets SHA256=b5e043d5c7c1b5ed79c1d9fe42cbbb303df9127391e11a9f508ca12e4454e0a6
+# Subtest: pre-begin persistence ACK gates Native dispatch and late owner cannot dispatch a registered write
+ok 28 - pre-begin persistence ACK gates Native dispatch and late owner cannot dispatch a registered write
+  ---
+  duration_ms: 14.2721
+  type: 'test'
+  ...
+# Subtest: failed persistence preserves both original wires; explicit begin retry cannot substitute IDs or CAS
+ok 29 - failed persistence preserves both original wires; explicit begin retry cannot substitute IDs or CAS
+  ---
+  duration_ms: 3.5161
+  type: 'test'
+  ...
+# Subtest: restored pre-begin literal derives exact original begin without dispatch and missing inspection does not remint it
+ok 30 - restored pre-begin literal derives exact original begin without dispatch and missing inspection does not remint it
+  ---
+  duration_ms: 0.743
+  type: 'test'
+  ...
+# Subtest: canonical pre-begin FD serializer matches all actual Store-produced request_json bytes
+ok 31 - canonical pre-begin FD serializer matches all actual Store-produced request_json bytes
+  ---
+  duration_ms: 1.6743
+  type: 'test'
+  ...
+# Subtest: real Store-produced complete Reply DTO parses without fabricated fields or empty success fallback
+ok 32 - real Store-produced complete Reply DTO parses without fabricated fields or empty success fallback
+  ---
+  duration_ms: 1.5262
+  type: 'test'
+  ...
+# Subtest: real Native Pending to complete Ready preserves its original FD import literal and source identity
+ok 33 - real Native Pending to complete Ready preserves its original FD import literal and source identity
+  ---
+  duration_ms: 1.1107
+  type: 'test'
+  ...
+# Subtest: real complete lyrics and pure playback proposal use exact native read contracts
+ok 34 - real complete lyrics and pure playback proposal use exact native read contracts
+  ---
+  duration_ms: 1.6831
+  type: 'test'
+  ...
+# Subtest: read paginates all lexical entries including Pending/Retired then orders only actual Ready playlist
+ok 35 - read paginates all lexical entries including Pending/Retired then orders only actual Ready playlist
+  ---
+  duration_ms: 8.3439
+  type: 'test'
+  ...
+# Subtest: read Unknown at a later page retains its exact original page and installs no partial empty playlist
+ok 36 - read Unknown at a later page retains its exact original page and installs no partial empty playlist
+  ---
+  duration_ms: 3.1156
+  type: 'test'
+  ...
+# Subtest: mismatched cross-page revision, duplicate cursor, missing ready entry and missing DTO fail without empty fallback
+ok 37 - mismatched cross-page revision, duplicate cursor, missing ready entry and missing DTO fail without empty fallback
+  ---
+  duration_ms: 4.4664
+  type: 'test'
+  ...
+# Subtest: strict complete DTO rejects foreign source, original wire hash, unknown keys, bounds and fabricated committed read
+ok 38 - strict complete DTO rejects foreign source, original wire hash, unknown keys, bounds and fabricated committed read
+  ---
+  duration_ms: 1.5526
+  type: 'test'
+  ...
+# Subtest: Pending committed receipt is not Ready, inspect never invokes an FD import, and explicit commit is exact once
+ok 39 - Pending committed receipt is not Ready, inspect never invokes an FD import, and explicit commit is exact once
+  ---
+  duration_ms: 1.4719
+  type: 'test'
+  ...
+# Subtest: import Unknown retains exact original FD literal; reconcile may qualify retained bytes without rereading a replacement file
+ok 40 - import Unknown retains exact original FD literal; reconcile may qualify retained bytes without rereading a replacement file
+  ---
+  duration_ms: 1.13
+  type: 'test'
+  ...
+# Subtest: unretained Unknown import reconciles only to Pending and permits a later explicit same-literal FD attempt
+ok 41 - unretained Unknown import reconciles only to Pending and permits a later explicit same-literal FD attempt
+  ---
+  duration_ms: 0.6766
+  type: 'test'
+  ...
+# Subtest: restored original local import first inspects actual Native plan and does not automatically resend FD bytes
+ok 42 - restored original local import first inspects actual Native plan and does not automatically resend FD bytes
+  ---
+  duration_ms: 0.4425
+  type: 'test'
+  ...
+# Subtest: foreign import provenance, literal changes, fake ready stage operation and wrong receipt revision cannot qualify files
+ok 43 - foreign import provenance, literal changes, fake ready stage operation and wrong receipt revision cannot qualify files
+  ---
+  duration_ms: 1.3788
+  type: 'test'
+  ...
+# Subtest: stable identity navigation wraps actual ordered Ready tracks and refuses foreign or retired source tuples
+ok 44 - stable identity navigation wraps actual ordered Ready tracks and refuses foreign or retired source tuples
+  ---
+  duration_ms: 1.2805
+  type: 'test'
+  ...
+# Subtest: select returns the actual newly confirmed revision and deletion/reorder preserve stable remaining selected source
+ok 45 - select returns the actual newly confirmed revision and deletion/reorder preserve stable remaining selected source
+  ---
+  duration_ms: 2.0039
+  type: 'test'
+  ...
+# Subtest: fixed mutation Unknown cannot be discarded or replaced; explicit retry preserves original CAS and operation bytes
+ok 46 - fixed mutation Unknown cannot be discarded or replaced; explicit retry preserves original CAS and operation bytes
+  ---
+  duration_ms: 1.8379
+  type: 'test'
+  ...
+# Subtest: known CAS rejection may be explicitly discarded; late or malformed receipt remains Unknown
+ok 47 - known CAS rejection may be explicitly discarded; late or malformed receipt remains Unknown
+  ---
+  duration_ms: 0.7437
+  type: 'test'
+  ...
+# Subtest: known no-write does not survive an explicit same-operation retry whose committed reply is lost
+ok 48 - known no-write does not survive an explicit same-operation retry whose committed reply is lost
+  ---
+  duration_ms: 2.3529
+  type: 'test'
+  ...
+# Subtest: invalid final page is not admitted and the exact same readonly retry can complete the original aggregate
+ok 49 - invalid final page is not admitted and the exact same readonly retry can complete the original aggregate
+  ---
+  duration_ms: 2.3315
+  type: 'test'
+  ...
+# Subtest: lyrics persist complete UTF8, independent full untimed display and footer CAS without a new source import
+ok 50 - lyrics persist complete UTF8, independent full untimed display and footer CAS without a new source import
+  ---
+  duration_ms: 1.2122
+  type: 'test'
+  ...
+# Subtest: input limits reject full data instead of slicing 513 tracks, over150MiB audio, malformed Unicode or lyrics over49152 bytes
+ok 51 - input limits reject full data instead of slicing 513 tracks, over150MiB audio, malformed Unicode or lyrics over49152 bytes
+  ---
+  duration_ms: 1.0051
+  type: 'test'
+  ...
+# Subtest: pure Native playback request uses string coordinates and returns only a proposal; Unknown retry is the same original literal
+ok 52 - pure Native playback request uses string coordinates and returns only a proposal; Unknown retry is the same original literal
+  ---
+  duration_ms: 0.6848
+  type: 'test'
+  ...
+# Subtest: owner epoch roundtrip/dispose during actual read, import hash or mutation rejects late installation and keeps original intent
+ok 53 - owner epoch roundtrip/dispose during actual read, import hash or mutation rejects late installation and keeps original intent
+  ---
+  duration_ms: 4.3988
+  type: 'test'
+  ...
+# Subtest: independent public snapshots cannot modify private track, import proposal or fixed retry bytes
+ok 54 - independent public snapshots cannot modify private track, import proposal or fixed retry bytes
+  ---
+  duration_ms: 0.5252
+  type: 'test'
+  ...
+# Subtest: final complete Store fixture identity and every original music Reply retain the exact native schema
+ok 55 - final complete Store fixture identity and every original music Reply retain the exact native schema
+  ---
+  duration_ms: 10.5356
+  type: 'test'
+  ...
+# Subtest: actual Store 16+2 pages preserve 2 Ready, 15 Pending and retained Retired with no partial or playable fallback
+ok 56 - actual Store 16+2 pages preserve 2 Ready, 15 Pending and retained Retired with no partial or playable fallback
+  ---
+  duration_ms: 2.9451
+  type: 'test'
+  ...
+# Subtest: actual retained Pending is inspected then reconciled to actual Ready without importing replacement bytes
+ok 57 - actual retained Pending is inspected then reconciled to actual Ready without importing replacement bytes
+  ---
+  duration_ms: 1.5104
+  type: 'test'
+  ...
+# Subtest: actual full current track and Rust seek/next/restore proposals preserve native contracts and cause no platform transport
+ok 58 - actual full current track and Rust seek/next/restore proposals preserve native contracts and cause no platform transport
+  ---
+  duration_ms: 2.8197
+  type: 'test'
+  ...
+# Subtest: real composed registration is gated by exact request fsync and close ACK before Native begin
+ok 59 - real composed registration is gated by exact request fsync and close ACK before Native begin
+  ---
+  duration_ms: 244.8523
+  type: 'test'
+  ...
+# Subtest: write/fsync/close persistence failure never registers Native or sends audio; recover retains original content
+ok 60 - write/fsync/close persistence failure never registers Native or sends audio; recover retains original content
+  ---
+  duration_ms: 492.9099
+  type: 'test'
+  ...
+# Subtest: controlled fresh instance recovers durable wire before begin; explicit inspect and original begin are separate from audio continuation
+ok 61 - controlled fresh instance recovers durable wire before begin; explicit inspect and original begin are separate from audio continuation
+  ---
+  duration_ms: 262.7287
+  type: 'test'
+  ...
+# Subtest: controlled fresh instance recovers lost begin result with original IDs/CAS and no implicit begin or FD replay
+ok 62 - controlled fresh instance recovers lost begin result with original IDs/CAS and no implicit begin or FD replay
+  ---
+  duration_ms: 499.0216
+  type: 'test'
+  ...
+# Subtest: controlled fresh instance inspects retained Pending/Ready and does not resend complete audio on reconciliation or finish
+ok 63 - controlled fresh instance inspects retained Pending/Ready and does not resend complete audio on reconciliation or finish
+  ---
+  duration_ms: 466.8956
+  type: 'test'
+  ...
+# Subtest: controlled fresh instance keeps unretained Pending distinct; only explicit same-wire continuation streams audio
+ok 64 - controlled fresh instance keeps unretained Pending distinct; only explicit same-wire continuation streams audio
+  ---
+  duration_ms: 231.5922
+  type: 'test'
+  ...
+# Subtest: stale original CAS after pre-begin recovery is preserved on rejected retry, with no substitute import or FD replay
+ok 65 - stale original CAS after pre-begin recovery is preserved on rejected retry, with no substitute import or FD replay
+  ---
+  duration_ms: 232.1826
+  type: 'test'
+  ...
+# Subtest: explicit audio picker ticket accepts same-page foreground return and refreshes library before capture and CAS
+ok 66 - explicit audio picker ticket accepts same-page foreground return and refreshes library before capture and CAS
+  ---
+  duration_ms: 129.0493
+  type: 'test'
+  ...
+# Subtest: picker promise returning before foreground retains ticket without writes until explicit same-page foreground event
+ok 67 - picker promise returning before foreground retains ticket without writes until explicit same-page foreground event
+  ---
+  duration_ms: 118.4529
+  type: 'test'
+  ...
+# Subtest: picker refreshed CAS uses actual changed library revision while preserving target sources
+ok 68 - picker refreshed CAS uses actual changed library revision while preserving target sources
+  ---
+  duration_ms: 121.6867
+  type: 'test'
+  ...
+# Subtest: picker rebasing reports current capture errors instead of hiding them under the obsolete epoch
+ok 69 - picker rebasing reports current capture errors instead of hiding them under the obsolete epoch
+  ---
+  duration_ms: 122.967
+  type: 'test'
+  ...
+# Subtest: ordinary Native asynchronous work cannot borrow the authorized picker epoch exception
+ok 70 - ordinary Native asynchronous work cannot borrow the authorized picker epoch exception
+  ---
+  duration_ms: 138.6087
+  type: 'test'
+  ...
+# Subtest: disposing before picker return or while waiting for foreground cancels only that ticket and prevents music writes
+ok 71 - disposing before picker return or while waiting for foreground cancels only that ticket and prevents music writes
+  ---
+  duration_ms: 231.3693
+  type: 'test'
+  ...
+# Subtest: lyrics picker normal foreground return preserves whole text and rechecks original target before Store write
+ok 72 - lyrics picker normal foreground return preserves whole text and rechecks original target before Store write
+  ---
+  duration_ms: 119.2012
+  type: 'test'
+  ...
+# Subtest: lyrics picker result received in background waits without losing full text or issuing Store writes
+ok 73 - lyrics picker result received in background waits without losing full text or issuing Store writes
+  ---
+  duration_ms: 117.1381
+  type: 'test'
+  ...
+# Subtest: changed original lyric track after picker retains full raw text with original identity/title and never writes replacement
+ok 74 - changed original lyric track after picker retains full raw text with original identity/title and never writes replacement
+  ---
+  duration_ms: 226.8415
+  type: 'test'
+  ...
+# Subtest: fresh read Unknown after picker keeps whole selected lyrics and exact read retry while withholding writes
+ok 75 - fresh read Unknown after picker keeps whole selected lyrics and exact read retry while withholding writes
+  ---
+  duration_ms: 113.4425
+  type: 'test'
+  ...
+# Subtest: rebased oversized lyrics keep complete original text and surface current write limit without any Native mutation
+ok 76 - rebased oversized lyrics keep complete original text and surface current write limit without any Native mutation
+  ---
+  duration_ms: 113.3161
+  type: 'test'
+  ...
+# Subtest: cancelled audio/lyrics picker ticket performs no fresh Store read, file capture or mutation after foreground return
+ok 77 - cancelled audio/lyrics picker ticket performs no fresh Store read, file capture or mutation after foreground return
+  ---
+  duration_ms: 228.6598
+  type: 'test'
+  ...
+# Subtest: startup reads actual durable selection and spool metadata without CAS, player creation or autoplay
+ok 78 - startup reads actual durable selection and spool metadata without CAS, player creation or autoplay
+  ---
+  duration_ms: 115.9118
+  type: 'test'
+  ...
+# Subtest: actual Library selection is committed before file export and actual AVPlayer ACK is the only playing state
+ok 79 - actual Library selection is committed before file export and actual AVPlayer ACK is the only playing state
+  ---
+  duration_ms: 114.2607
+  type: 'test'
+  ...
+# Subtest: already selected track creates no CAS and repeated same track selection retains its exact FD player
+ok 80 - already selected track creates no CAS and repeated same track selection retains its exact FD player
+  ---
+  duration_ms: 118.6791
+  type: 'test'
+  ...
+# Subtest: pure policy failure never opens a player or replaces real transport with proposed success
+ok 81 - pure policy failure never opens a player or replaces real transport with proposed success
+  ---
+  duration_ms: 113.9411
+  type: 'test'
+  ...
+# Subtest: invalid row selection cannot wrap negative policy index into a different valid track
+ok 82 - invalid row selection cannot wrap negative policy index into a different valid track
+  ---
+  duration_ms: 111.5897
+  type: 'test'
+  ...
+# Subtest: native seek proposal reaches actual player with clamped milliseconds, pause requires actual ACK
+ok 83 - native seek proposal reaches actual player with clamped milliseconds, pause requires actual ACK
+  ---
+  duration_ms: 116.5859
+  type: 'test'
+  ...
+# Subtest: previous and next use actual Native policy and durable selected CAS; EOF also admits the new stable track
+ok 84 - previous and next use actual Native policy and durable selected CAS; EOF also admits the new stable track
+  ---
+  duration_ms: 124.769
+  type: 'test'
+  ...
+# Subtest: reorder and removal of another track keep the current source FD and playing position
+ok 85 - reorder and removal of another track keep the current source FD and playing position
+  ---
+  duration_ms: 115.1082
+  type: 'test'
+  ...
+# Subtest: removing current track closes old AVPlayer and FD before opening persisted replacement; last removal stops
+ok 86 - removing current track closes old AVPlayer and FD before opening persisted replacement; last removal stops
+  ---
+  duration_ms: 122.3331
+  type: 'test'
+  ...
+# Subtest: whole multi-file batch uses captured grants, unique requests and releases spools only after matching Ready
+ok 87 - whole multi-file batch uses captured grants, unique requests and releases spools only after matching Ready
+  ---
+  duration_ms: 114.0606
+  type: 'test'
+  ...
+# Subtest: Unknown first import stops batch and preserves complete source, exact original request and plan
+ok 88 - Unknown first import stops batch and preserves complete source, exact original request and plan
+  ---
+  duration_ms: 110.3718
+  type: 'test'
+  ...
+# Subtest: explicit inspect then reconcile qualifies retained complete audio before separate finish, without FD replay
+ok 89 - explicit inspect then reconcile qualifies retained complete audio before separate finish, without FD replay
+  ---
+  duration_ms: 112.079
+  type: 'test'
+  ...
+# Subtest: Ready spool release failure keeps original cleanup identity; explicit finish retry uses same qualified receipt
+ok 90 - Ready spool release failure keeps original cleanup identity; explicit finish retry uses same qualified receipt
+  ---
+  duration_ms: 115.3434
+  type: 'test'
+  ...
+# Subtest: recovered blank sidecar lists all matching actual Pending choices; explicit selection inspects its original literal only
+ok 91 - recovered blank sidecar lists all matching actual Pending choices; explicit selection inspects its original literal only
+  ---
+  duration_ms: 112.6562
+  type: 'test'
+  ...
+# Subtest: recovered persisted request always inspects exact literal and never permits fresh start or guessed ID
+ok 92 - recovered persisted request always inspects exact literal and never permits fresh start or guessed ID
+  ---
+  duration_ms: 113.7741
+  type: 'test'
+  ...
+# Subtest: only recovered unissued cache with no Pending match permits explicit new start
+ok 93 - only recovered unissued cache with no Pending match permits explicit new start
+  ---
+  duration_ms: 111.0843
+  type: 'test'
+  ...
+# Subtest: fixed mutation Unknown blocks new writes and explicit retry reuses same operation bytes
+ok 94 - fixed mutation Unknown blocks new writes and explicit retry reuses same operation bytes
+  ---
+  duration_ms: 119.3063
+  type: 'test'
+  ...
+# Subtest: known no-write retains fixed operation and allows explicit discard, while full lyrics text remains recoverable
+ok 95 - known no-write retains fixed operation and allows explicit discard, while full lyrics text remains recoverable
+  ---
+  duration_ms: 122.3048
+  type: 'test'
+  ...
+# Subtest: oversized lyrics are fully captured and retained unsaved without cropping or dispatching native write
+ok 96 - oversized lyrics are fully captured and retained unsaved without cropping or dispatching native write
+  ---
+  duration_ms: 134.8951
+  type: 'test'
+  ...
+# Subtest: Rust parsed lyric lines are cached once; live player positions compute footer without Store reads per callback
+ok 97 - Rust parsed lyric lines are cached once; live player positions compute footer without Store reads per callback
+  ---
+  duration_ms: 119.1322
+  type: 'test'
+  ...
+# Subtest: foreground loss invalidates late selected acknowledgement even after returning; no new player is opened
+ok 98 - foreground loss invalidates late selected acknowledgement even after returning; no new player is opened
+  ---
+  duration_ms: 117.301
+  type: 'test'
+  ...
+# Subtest: background pauses real player and foreground never automatically restarts it
+ok 99 - background pauses real player and foreground never automatically restarts it
+  ---
+  duration_ms: 109.7952
+  type: 'test'
+  ...
+# Subtest: original player release failure retains actual FD and explicit close retry frees only that resource
+ok 100 - original player release failure retains actual FD and explicit close retry frees only that resource
+  ---
+  duration_ms: 124.9631
+  type: 'test'
+  ...
+# Subtest: music requests remain in its independent action/host contract and never create idea drafts or business mutations
+ok 101 - music requests remain in its independent action/host contract and never create idea drafts or business mutations
+  ---
+  duration_ms: 109.8086
+  type: 'test'
+  ...
+# Subtest: idle controls permit empty-library add and confirmed selected first toggle without startup player or CAS
+ok 102 - idle controls permit empty-library add and confirmed selected first toggle without startup player or CAS
+  ---
+  duration_ms: 219.7492
+  type: 'test'
+  ...
+# Subtest: lyrics toggle applies explicit target and repeated same target creates no extra native mutation
+ok 103 - lyrics toggle applies explicit target and repeated same target creates no extra native mutation
+  ---
+  duration_ms: 109.9559
+  type: 'test'
+  ...
+# Subtest: lyrics read Unknown cannot prevent explicit pause of already owned playing player
+ok 104 - lyrics read Unknown cannot prevent explicit pause of already owned playing player
+  ---
+  duration_ms: 113.1465
+  type: 'test'
+  ...
+# Subtest: other mutation Unknown cannot block explicit pause and held lyrics remain viewable
+ok 105 - other mutation Unknown cannot block explicit pause and held lyrics remain viewable
+  ---
+  duration_ms: 115.2525
+  type: 'test'
+  ...
+# Subtest: media exclusivity requires actual pause ACK and rejects player pause failure or missing ACK
+ok 106 - media exclusivity requires actual pause ACK and rejects player pause failure or missing ACK
+  ---
+  duration_ms: 357.843
+  type: 'test'
+  ...
+# Subtest: full snapshot recovered after lost removal ACK retires original owned player without autoplaying replacement
+ok 107 - full snapshot recovered after lost removal ACK retires original owned player without autoplaying replacement
+  ---
+  duration_ms: 111.1366
+  type: 'test'
+  ...
+# Subtest: removal committed but refresh read lost closes retired source only after exact original read is qualified
+ok 108 - removal committed but refresh read lost closes retired source only after exact original read is qualified
+  ---
+  duration_ms: 111.5561
+  type: 'test'
+  ...
+# Subtest: footer matches Flutter before first timestamp, empty timed line, untimed first line and known empty lyrics
+ok 109 - footer matches Flutter before first timestamp, empty timed line, untimed first line and known empty lyrics
+  ---
+  duration_ms: 326.8431
+  type: 'test'
+  ...
+# Subtest: viewing other track full lyrics does not replace current track cached footer timeline
+ok 110 - viewing other track full lyrics does not replace current track cached footer timeline
+  ---
+  duration_ms: 107.563
+  type: 'test'
+  ...
+# Subtest: explicit unissued begin retry preserves original operation and CAS after lost registration response
+ok 111 - explicit unissued begin retry preserves original operation and CAS after lost registration response
+  ---
+  duration_ms: 215.7642
+  type: 'test'
+  ...
+# Subtest: unsaved whole lyrics belong only to original track; another viewer does not consume or relabel them
+ok 112 - unsaved whole lyrics belong only to original track; another viewer does not consume or relabel them
+  ---
+  duration_ms: 109.9108
+  type: 'test'
+  ...
+# Subtest: actual complete Store-produced 16+2 pages reach coordinator without fabricated entries, player opens or startup writes
+ok 113 - actual complete Store-produced 16+2 pages reach coordinator without fabricated entries, player opens or startup writes
+  ---
+  duration_ms: 105.3021
+  type: 'test'
+  ...
+# Subtest: partially removed Ready source retains exact release handle through retry_io and never reappears as complete import source
+ok 114 - partially removed Ready source retains exact release handle through retry_io and never reappears as complete import source
+  ---
+  duration_ms: 108.583
+  type: 'test'
+  ...
+1..114
+# tests 114
+# suites 0
+# pass 114
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9807.4809

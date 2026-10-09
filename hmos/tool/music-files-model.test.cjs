@@ -23,8 +23,8 @@ function fixture(){
   async listFile(p){node(p);return [...nodes.keys()].filter(x=>path.posix.dirname(x)===p).map(x=>path.posix.basename(x));},
   async open(p,flags){failure('open',p);if((flags&mode.CREATE)&&!nodes.has(p))put(p,'');const n=node(p);if(n.kind!=='file')throw err(13900003);if(flags&mode.TRUNC)n.bytes=Buffer.alloc(0);const f={fd:fd++,name:n.name||path.posix.basename(p),path:p};fds.set(f.fd,f);trace.push(['open',p,f.fd]);return f;},
   async close(f){failure('close',f.path);assert.ok(fds.has(f.fd),'owned open FD');fds.delete(f.fd);trace.push(['close',f.path]);},
-  async write(id,buffer){const f=fds.get(id),n=node(f.path),b=Buffer.from(buffer);n.bytes=Buffer.concat([n.bytes,b]);return b.length;},
-  async fsync(id){trace.push(['fsync',fds.get(id).path]);},async readText(p){return node(p).bytes.toString();},
+  async write(id,buffer){const f=fds.get(id);failure('write',f.path);const n=node(f.path),b=Buffer.from(buffer);n.bytes=Buffer.concat([n.bytes,b]);return b.length;},
+  async fsync(id){const p=fds.get(id).path;failure('fsync',p);trace.push(['fsync',p]);},async readText(p){return node(p).bytes.toString();},
   async read(id,buffer,options){const n=node(fds.get(id).path),b=n.bytes.subarray(options.offset,options.offset+options.length);new Uint8Array(buffer).set(b);return b.length;},
   async unlink(p){failure('unlink',p);assert.equal(node(p).kind,'file');nodes.delete(p);trace.push(['unlink',p]);},
   async rmdir(p){failure('rmdir',p);assert.equal((await io.listFile(p)).length,0);nodes.delete(p);trace.push(['rmdir',p]);}
@@ -54,6 +54,37 @@ test('music capture requires one selected grant; cancellation and unsupported ex
 test('whole native capture receives music150MiB cap and actual spool metadata without a persistent provider URI',async()=>{
  const f=fixture(),p=await prepare(f);assert.equal(f.trace.find(x=>x[0]==='prepare')[1],150*1024*1024);assert.equal(p.byteLength,String(f.bytes.length));assert.equal(p.sha256,sha(f.bytes));assert.equal(p.requestJson,'');
  assert.equal(JSON.stringify(p).includes('content://'),false);assert.equal(f.fds.size,0);assert.equal(f.nodes.get('/app/files/hmos-music-spool/'+p.spoolId+'/data').bytes.compare(f.bytes),0);
+});
+test('explicit pre-begin persistence writes and closes exact wire without opening source or dispatching Native',async()=>{
+ const f=fixture(),p=await prepare(f),wire=f.request(p),dir='/app/files/hmos-music-spool/'+p.spoolId;
+ const from=f.trace.length;await f.files.persistImport(p,wire);assert.equal(p.requestJson,wire);assert.equal(f.fds.size,0);
+ assert.equal(f.nodes.get(dir+'/request.json').bytes.toString(),wire);assert.ok(f.trace.slice(from).some(x=>x[0]==='fsync'&&x[1]===dir+'/request.json'));
+ assert.equal(f.trace.slice(from).some(x=>x[0]==='open'&&x[1]===dir+'/data'),false);
+ const metadata=f.nodes.get(dir+'/metadata.json').bytes.toString();assert.equal(JSON.parse(metadata).requestJson,'');
+ const recovered=(await f.newFiles().recover())[0];assert.equal(recovered.requestJson,wire);
+ await f.files.persistImport(p,wire);assert.equal(f.nodes.get(dir+'/request.json').bytes.toString(),wire);assert.equal(f.fds.size,0);
+});
+test('pre-begin fsync and close failures retain original bytes and only same original request can be acknowledged later',async()=>{
+ for(const op of ['fsync','close']){
+  const f=fixture(),p=await prepare(f),wire=f.request(p),dir='/app/files/hmos-music-spool/'+p.spoolId;
+  f.faults.set(op+':'+dir+'/request.json',Error('RequestACKUnknown'));await assert.rejects(f.files.persistImport(p,wire),/RequestACKUnknown/);
+  assert.equal(p.requestJson,'');assert.equal(f.nodes.get(dir+'/request.json').bytes.toString(),wire);assert.ok(f.nodes.has(dir+'/data'));
+  f.faults.clear();await f.files.retryPendingIo();await assert.rejects(f.files.persistImport(p,wire.replace('import-1','import-2')),/不能更换/);
+  await f.files.persistImport(p,wire);assert.equal(p.requestJson,wire);assert.equal(f.fds.size,0);
+ }
+});
+test('disappeared or changed pre-begin request cannot be recreated or silently reused for FD dispatch',async()=>{
+ for(const change of ['missing','changed']){
+  const f=fixture(),p=await prepare(f),wire=f.request(p),requestPath='/app/files/hmos-music-spool/'+p.spoolId+'/request.json';await f.files.persistImport(p,wire);
+  if(change==='missing')f.nodes.delete(requestPath);else f.put(requestPath,wire.replace('import-1','import-2'));
+  let sends=0;await assert.rejects(f.files.importPrepared(p,wire,async()=>{sends++;return '';}),/缺失|不能更换/);assert.equal(sends,0);
+  assert.equal(f.nodes.has(requestPath),change!=='missing');if(change==='changed')assert.equal(f.nodes.get(requestPath).bytes.toString(),wire.replace('import-1','import-2'));
+ }
+});
+test('partial request write is preserved after restart and never appears as a complete new import source',async()=>{
+ const f=fixture(),p=await prepare(f),wire=f.request(p),dir='/app/files/hmos-music-spool/'+p.spoolId;f.faults.set('write:'+dir+'/request.json',Error('WriteUnknown'));
+ await assert.rejects(f.files.persistImport(p,wire),/WriteUnknown/);assert.ok(f.nodes.has(dir+'/request.json'));assert.equal(f.nodes.get(dir+'/request.json').bytes.length,0);
+ const fresh=f.newFiles();assert.equal((await fresh.recover()).length,0);assert.ok(f.nodes.has(dir+'/data'));assert.ok(f.nodes.has(dir+'/request.json'));assert.match(fresh.diagnostics().join(' '),/已保留/);
 });
 test('exact music request is fsynced before dispatch and Unknown retains its original request and full bytes',async()=>{
  const f=fixture(),p=await prepare(f),wire=f.request(p),directory='/app/files/hmos-music-spool/'+p.spoolId;let calls=0;

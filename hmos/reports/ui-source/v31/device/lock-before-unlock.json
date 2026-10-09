@@ -1,0 +1,430 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "id": "session16",
+        "type": "WindowScene",
+        "bounds": [
+          0,
+          117,
+          1320,
+          2232
+        ],
+        "children": [
+          {
+            "id": "ScreenLockRootComponent",
+            "type": "Stack",
+            "bounds": [
+              0,
+              117,
+              1320,
+              2232
+            ],
+            "children": [
+              {
+                "id": "BackGroundView",
+                "type": "Stack",
+                "bounds": [
+                  0,
+                  117,
+                  1320,
+                  2232
+                ],
+                "children": []
+              },
+              {
+                "id": "MainPageView_Screen_Lock_Home",
+                "type": "Stack",
+                "bounds": [
+                  0,
+                  117,
+                  1320,
+                  2232
+                ],
+                "children": [
+                  {
+                    "type": "DepthComponent",
+                    "text": "Depth Component",
+                    "bounds": [
+                      0,
+                      117,
+                      1320,
+                      2232
+                    ],
+                    "hitTestBehavior": "None",
+                    "children": [
+                      {
+                        "id": "ScreenLockWidgetView",
+                        "type": "Stack",
+                        "bounds": [
+                          0,
+                          117,
+                          1320,
+                          2232
+                        ],
+                        "children": [
+                          {
+                            "id": "ScreenLockWidgetView-RelativeContainer",
+                            "type": "RelativeContainer",
+                            "bounds": [
+                              0,
+                              117,
+                              1320,
+                              2232
+                            ],
+                            "clickable": true,
+                            "longClickable": true,
+                            "children": [
+                              {
+                                "id": "sl_clock",
+                                "type": "Stack",
+                                "bounds": [
+                                  460,
+                                  297,
+                                  860,
+                                  1097
+                                ],
+                                "clickable": true,
+                                "longClickable": true,
+                                "children": [
+                                  {
+                                    "id": "Text_Digital",
+                                    "type": "Stack",
+                                    "bounds": [
+                                      460,
+                                      297,
+                                      860,
+                                      1097
+                                    ],
+                                    "children": [
+                                      {
+                                        "id": "normal_clock",
+                                        "type": "Stack",
+                                        "bounds": [
+                                          60,
+                                          297,
+                                          1260,
+                                          1097
+                                        ],
+                                        "children": [
+                                          {
+                                            "id": "Text_Digital_Text_0_0",
+                                            "type": "Text",
+                                            "text": "1",
+                                            "bounds": [
+                                              481,
+                                              338,
+                                              662,
+                                              600
+                                            ],
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "Text_Digital_Text_0_1",
+                                            "type": "Text",
+                                            "text": "0",
+                                            "bounds": [
+                                              657,
+                                              338,
+                                              838,
+                                              600
+                                            ],
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "Text_Digital_Text_1_0",
+                                            "type": "Text",
+                                            "text": "5",
+                                            "bounds": [
+                                              481,
+                                              610,
+                                              662,
+                                              872
+                                            ],
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "Text_Digital_Text_1_1",
+                                            "type": "Text",
+                                            "text": "2",
+                                            "bounds": [
+                                              657,
+                                              610,
+                                              838,
+                                              872
+                                            ],
+                                            "children": []
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "id": "date_lunar",
+                                        "type": "Stack",
+                                        "bounds": [
+                                          60,
+                                          297,
+                                          1260,
+                                          1097
+                                        ],
+                                        "children": [
+                                          {
+                                            "id": "date_normal_multiline",
+                                            "type": "Text",
+                                            "text": "10月9日",
+                                            "bounds": [
+                                              509,
+                                              892,
+                                              663,
+                                              940
+                                            ],
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "week_multiline",
+                                            "type": "Text",
+                                            "text": "星期五",
+                                            "bounds": [
+                                              687,
+                                              892,
+                                              811,
+                                              940
+                                            ],
+                                            "children": []
+                                          },
+                                          {
+                                            "id": "lunar_multiline",
+                                            "type": "Text",
+                                            "text": "八月廿九",
+                                            "bounds": [
+                                              578,
+                                              951,
+                                              743,
+                                              999
+                                            ],
+                                            "children": []
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "sl_bottom_tools_icon",
+                                "type": "RelativeContainer",
+                                "bounds": [
+                                  0,
+                                  1932,
+                                  1320,
+                                  2232
+                                ],
+                                "children": [
+                                  {
+                                    "id": "sl_quick_tools_icon",
+                                    "type": "__Common__",
+                                    "bounds": [
+                                      48,
+                                      1932,
+                                      192,
+                                      2076
+                                    ],
+                                    "children": [
+                                      {
+                                        "id": "QuickToolsHotZone",
+                                        "type": "Stack",
+                                        "bounds": [
+                                          48,
+                                          1932,
+                                          192,
+                                          2076
+                                        ],
+                                        "longClickable": true,
+                                        "children": [
+                                          {
+                                            "id": "ScreenLock-QuickToolBar",
+                                            "type": "Column",
+                                            "bounds": [
+                                              48,
+                                              1932,
+                                              192,
+                                              2076
+                                            ],
+                                            "clickable": true,
+                                            "children": [
+                                              {
+                                                "id": "QuickToolCommon_QUICK_TOOLS_ICON_IMAGE",
+                                                "type": "SymbolGlyph",
+                                                "bounds": [
+                                                  81,
+                                                  1965,
+                                                  160,
+                                                  2043
+                                                ],
+                                                "hitTestBehavior": "Transparent",
+                                                "children": []
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "sl_camera_icon",
+                                    "type": "__Common__",
+                                    "bounds": [
+                                      1128,
+                                      1932,
+                                      1272,
+                                      2076
+                                    ],
+                                    "children": [
+                                      {
+                                        "id": "id_persist_camera_icon",
+                                        "type": "Column",
+                                        "bounds": [
+                                          1128,
+                                          1932,
+                                          1272,
+                                          2076
+                                        ],
+                                        "clickable": true,
+                                        "longClickable": true,
+                                        "hitTestBehavior": "Block",
+                                        "children": [
+                                          {
+                                            "id": "QuickToolCommon_QUICK_TOOLS_ICON_IMAGE",
+                                            "type": "SymbolGlyph",
+                                            "bounds": [
+                                              1161,
+                                              1965,
+                                              1240,
+                                              2043
+                                            ],
+                                            "hitTestBehavior": "Transparent",
+                                            "children": []
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "sl_immersive_list",
+                                "type": "__Common__",
+                                "bounds": [
+                                  0,
+                                  297,
+                                  1320,
+                                  2232
+                                ],
+                                "hitTestBehavior": "Transparent",
+                                "children": [
+                                  {
+                                    "id": "sl_immersive_list_show_area",
+                                    "type": "Stack",
+                                    "bounds": [
+                                      0,
+                                      297,
+                                      1320,
+                                      2232
+                                    ],
+                                    "hitTestBehavior": "None",
+                                    "children": [
+                                      {
+                                        "id": "sl_immersive_for_aod_layer",
+                                        "type": "Stack",
+                                        "bounds": [
+                                          48,
+                                          619,
+                                          1272,
+                                          1884
+                                        ],
+                                        "children": []
+                                      },
+                                      {
+                                        "id": "sl_immersive_for_aod",
+                                        "type": "Stack",
+                                        "bounds": [
+                                          48,
+                                          619,
+                                          1272,
+                                          1884
+                                        ],
+                                        "hitTestBehavior": "None",
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "id": "sl_immersive_card",
+                                "type": "__Common__",
+                                "bounds": [
+                                  0,
+                                  297,
+                                  1320,
+                                  1932
+                                ],
+                                "hitTestBehavior": "Transparent",
+                                "children": []
+                              },
+                              {
+                                "id": "sl_immersive_capsule",
+                                "type": "__Common__",
+                                "bounds": [
+                                  228,
+                                  1932,
+                                  1092,
+                                  2094
+                                ],
+                                "children": [
+                                  {
+                                    "id": "sl_immersive_cap_show_area",
+                                    "type": "Stack",
+                                    "bounds": [
+                                      228,
+                                      1932,
+                                      1092,
+                                      2094
+                                    ],
+                                    "children": [
+                                      {
+                                        "id": "sl_immersive_cap_for_aod",
+                                        "type": "Stack",
+                                        "bounds": [
+                                          228,
+                                          1932,
+                                          1092,
+                                          2094
+                                        ],
+                                        "hitTestBehavior": "None",
+                                        "children": []
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

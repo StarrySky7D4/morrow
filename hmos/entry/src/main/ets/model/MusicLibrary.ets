@@ -90,6 +90,7 @@ export class MusicLibraryView {
 export interface MusicLibraryHooks {
   send: (serialized: string) => Promise<string>;
   hash: (serialized: string) => Promise<string>;
+  persistImport: (originalImportLiteral: string, request: MusicImportRequest) => Promise<void>;
   importFile: (originalNativeLiteral: string, request: MusicImportRequest) => Promise<string>;
   changed: () => void;
   owned: () => boolean;
@@ -151,6 +152,12 @@ function musicKeys(value: Object, required: string[], optional: string[] = []): 
 function musicCopyRequest(value: MusicImportRequest): MusicImportRequest {
   const result = new MusicImportRequest(); result.track_id = value.track_id; result.operation_id = value.operation_id;
   result.expected_revision = value.expected_revision; result.name = value.name; result.byte_length = value.byte_length; result.sha256 = value.sha256; return result;
+}
+export function musicImportWire(request: MusicImportRequest): string {
+  if (!validMusicImportRequest(request)) { throw new Error('音乐完整原导入请求无法确认。'); }
+  // Field order matches the actual Rust ImportRequest/Transport serializer.
+  const command: MusicImportCommand = { action: 'music_import', music: { action: 'import_file', request: musicCopyRequest(request) } };
+  return JSON.stringify(command);
 }
 export function validMusicImportRequest(value: MusicImportRequest): boolean {
   return musicKeys(value, ['schema_version', 'track_id', 'operation_id', 'expected_revision', 'name', 'byte_length', 'sha256']) &&
@@ -475,7 +482,7 @@ export class MusicLibrary {
       !this.snapshot || request.expected_revision !== this.snapshot.library_revision || this.tracks.some((track: NativeMusicTrack): boolean => track.track_id === request.track_id)) {
       throw new Error('音乐导入计划或曲库版本无法确认。');
     }
-    const plan = new MusicImportPlan(); plan.request = musicCopyRequest(request);
+    const plan = new MusicImportPlan(); plan.request = musicCopyRequest(request); plan.original_import = musicImportWire(request);
     const command: MusicImportCommand = { action: 'music', music: { action: 'import_begin', request: musicCopyRequest(request) } };
     plan.original_begin = JSON.stringify(command); this.importChecks(plan); this.plan = plan;
     await this.importAction('begin');
@@ -483,7 +490,11 @@ export class MusicLibrary {
   restoreImportLiteral(serialized: string): void {
     if (!this.owned() || this.working || this.page || this.detail || this.policy || this.plan || this.mutation) { throw new Error('音乐原导入上下文不可替换。'); }
     const plan = new MusicImportPlan(); plan.request = musicImportLiteral(serialized); plan.original_import = serialized;
-    plan.phase = 'unknown'; plan.unknown = true; this.importChecks(plan); this.plan = plan; this.unknown = true; this.notify();
+    const begin: MusicImportCommand = { action: 'music', music: { action: 'import_begin', request: musicCopyRequest(plan.request) } };
+    plan.original_begin = JSON.stringify(begin);
+    // "unissued" means registration is unresolved, not proof that Native has
+    // no receipt. Inspection and a fixed original begin retry are explicit.
+    plan.phase = 'unissued'; plan.unknown = true; this.importChecks(plan); this.plan = plan; this.unknown = true; this.notify();
   }
   private importChecks(plan: MusicImportPlan): void {
     const inspect: MusicImportCommand = { action: 'music', music: { action: 'import_inspect', request: musicCopyRequest(plan.request) } };
@@ -504,6 +515,10 @@ export class MusicLibrary {
     if (action === 'file') { serialized = plan.original_import; }
     else if (action !== 'begin') { serialized = action === 'import_inspect' ? plan.original_inspect : plan.original_reconcile; }
     try {
+      if (action === 'begin') {
+        await this.hooks.persistImport(plan.original_import, musicCopyRequest(plan.request));
+        if (!this.guard(version) || this.plan !== plan) { throw new Error('音乐原请求已保存，页面已变化，未派发注册。'); }
+      }
       const raw: string = action === 'file' ? await this.hooks.importFile(serialized, musicCopyRequest(plan.request)) : await this.hooks.send(serialized);
       const value = await this.checked(raw);
       if (!this.guard(version) || this.plan !== plan || value.kind !== 'track' || value.tracks.length !== 1 || value.next_after) { throw new Error('音乐原导入回执身份已变化。'); }

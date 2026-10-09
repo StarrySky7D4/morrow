@@ -1,0 +1,34 @@
+{
+  "createdUtc": "2026-10-09T03:00:00.849Z",
+  "id": "10105badbf93",
+  "folder": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-fixtures\\v31-10105badbf93",
+  "files": [
+    {
+      "name": "HMOS-v31-10105badbf93-long.wav",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-fixtures\\v31-10105badbf93\\HMOS-v31-10105badbf93-long.wav",
+      "remotePath": "/data/service/el2/100/hmdfs/account/files/Docs/Download/HMOS-v31-10105badbf93-long.wav",
+      "bytes": 1920044,
+      "sha256": "ecda5854d3690e4f709ddc1982d1fc02e6db619d86b097a7572931900c893e62",
+      "seconds": 60,
+      "encoding": "RIFF/WAVE PCM16 mono 16000Hz; generated sine with fade; public non-sensitive test asset"
+    },
+    {
+      "name": "HMOS-v31-10105badbf93-short.wav",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-fixtures\\v31-10105badbf93\\HMOS-v31-10105badbf93-short.wav",
+      "remotePath": "/data/service/el2/100/hmdfs/account/files/Docs/Download/HMOS-v31-10105badbf93-short.wav",
+      "bytes": 128044,
+      "sha256": "3376901f3236e72aa2f1722076b8959c3d88478e47ae0c6e338ecb5f2aa8d436",
+      "seconds": 4,
+      "encoding": "RIFF/WAVE PCM16 mono 16000Hz; generated sine with fade; public non-sensitive test asset"
+    },
+    {
+      "name": "HMOS-v31-10105badbf93.lrc",
+      "localPath": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-fixtures\\v31-10105badbf93\\HMOS-v31-10105badbf93.lrc",
+      "remotePath": "/data/service/el2/100/hmdfs/account/files/Docs/Download/HMOS-v31-10105badbf93.lrc",
+      "bytes": 163,
+      "sha256": "e94ff0e2b8a9a1c28cad810e109ee2dcc217598afbbe4f53f2573e8722aa0ef5",
+      "encoding": "UTF-8 LRC with LF; generated public test asset"
+    }
+  ],
+  "scope": "Generated files only; no codec, speaker output or successful picker qualification"
+}

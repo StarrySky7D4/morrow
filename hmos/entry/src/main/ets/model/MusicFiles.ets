@@ -35,6 +35,9 @@ class MusicSpool {
   value: PreparedMusicFile;
   directory: string;
   signature: string;
+  // Fixed by this registered instance before a request write. It may authorize
+  // adopting only the same fully readable sidecar after a lost local ACK.
+  originalRequest: string = '';
   // Set only after the exact owned directory passed removal checks. This is
   // process-local cleanup ownership, never recovered from disk as replay data.
   releaseStarted: boolean = false;
@@ -282,13 +285,21 @@ export class MusicFiles implements MusicPlaybackFiles {
           const value = JSON.parse(await fs.readText(directory + '/metadata.json', { length: 4096 })) as PreparedMusicFile;
           if (Object.keys(value).sort().join(',') !== 'byteLength,name,requestJson,sha256,spoolId' || value.spoolId !== id ||
             musicName(value.name) !== value.name || !positive(value.byteLength, MUSIC_FILE_LIMIT) || !/^[0-9a-f]{64}$/.test(value.sha256) || data.size !== Number(value.byteLength) || value.requestJson !== '') { throw new Error('音乐缓存元数据无法确认'); }
+          const capturedSignature = JSON.stringify(value);
           const request = await this.present(directory + '/request.json');
           if (request) {
             if (!request.isFile() || request.isSymbolicLink() || request.size < 1 || request.size > REQUEST_LIMIT) { throw new Error('音乐原请求无法读取'); }
             value.requestJson = await fs.readText(directory + '/request.json', { length: REQUEST_LIMIT }); importLiteral(value.requestJson, value);
           }
           const old = this.entries.get(id);
-          if (old && old.signature !== JSON.stringify(value)) { throw new Error('音乐缓存身份已变化'); }
+          if (old && old.signature !== JSON.stringify(value)) {
+            if (!old.value.requestJson && old.signature === capturedSignature && old.originalRequest === value.requestJson) {
+              // Recovery finds the exact original write after an uncertain
+              // fsync/close. It does not qualify its ACK or dispatch Native;
+              // persistImport must still acknowledge these same bytes again.
+              old.value.requestJson = value.requestJson; old.signature = JSON.stringify(old.value);
+            } else { throw new Error('音乐缓存身份已变化'); }
+          }
           if (old) { result.push(old.value); } else { this.entries.set(id, new MusicSpool(value, directory)); result.push(value); }
         } catch (_) { this.entries.delete(id); this.issues.push('有音乐导入缓存需要核对，原件和原请求已保留。'); }
       }
@@ -296,23 +307,42 @@ export class MusicFiles implements MusicPlaybackFiles {
     });
   }
   diagnostics(): string[] { return this.issues.slice(); }
+  private async persistOriginal(value: PreparedMusicFile, serialized: string): Promise<void> {
+    const entry = this.checked(value); importLiteral(serialized, value);
+    if (entry.releaseStarted) { throw new Error('原音乐缓存已开始清理，只能继续原清理，不能重新导入。'); }
+    if (MusicFiles.pendingIo.has(entry.directory)) { throw new Error('音乐文件句柄尚未确认关闭，已保留原请求。'); }
+    if (value.requestJson && value.requestJson !== serialized) { throw new Error('音乐原导入未确认，不能更换请求。'); }
+    if (entry.originalRequest && entry.originalRequest !== serialized) { throw new Error('音乐原导入未确认，不能更换请求。'); }
+    const previous = await this.present(entry.directory + '/request.json');
+    if (previous) {
+      if (!previous.isFile() || previous.isSymbolicLink() || previous.size < 1 || previous.size > REQUEST_LIMIT) { throw new Error('音乐原请求已变化，已保留。'); }
+      const original = await fs.readText(entry.directory + '/request.json', { length: REQUEST_LIMIT });
+      importLiteral(original, value);
+      if (original !== serialized) { throw new Error('音乐原导入未确认，不能更换请求。'); }
+      entry.originalRequest = serialized;
+      // Reconfirm the same existing bytes without truncating an original. This
+      // also supplies a fresh fsync/close ACK after a prior uncertain write.
+      const file = await fs.open(entry.directory + '/request.json', fs.OpenMode.READ_ONLY | fs.OpenMode.NOFOLLOW);
+      try {
+        const stat = await fs.stat(file.fd);
+        if (!stat.isFile() || stat.size !== new util.TextEncoder().encodeInto(serialized).byteLength) { throw new Error('音乐原请求文件已变化，已保留。'); }
+        await fs.fsync(file.fd);
+      } finally { await this.closeOwned(entry.directory, file); }
+    } else {
+      if (value.requestJson) { throw new Error('音乐已保存原请求现已缺失，未重建或派发。'); }
+      entry.originalRequest = serialized;
+      await this.writeSmall(entry.directory + '/request.json', serialized, REQUEST_LIMIT);
+    }
+    value.requestJson = serialized; entry.signature = JSON.stringify(value);
+  }
+  // Native begin is permitted only after this exact fixed FD wire has a full
+  // write/fsync/close acknowledgement. This method never dispatches Native IO.
+  persistImport(value: PreparedMusicFile, serialized: string): Promise<void> {
+    return this.queued((): Promise<void> => this.persistOriginal(value, serialized));
+  }
   importPrepared(value: PreparedMusicFile, serialized: string, send: (wire: string, fd: number) => Promise<string>): Promise<string> {
     return this.queued(async (): Promise<string> => {
-      const entry = this.checked(value); importLiteral(serialized, value);
-      if (entry.releaseStarted) { throw new Error('原音乐缓存已开始清理，只能继续原清理，不能重新导入。'); }
-      if (MusicFiles.pendingIo.has(entry.directory)) { throw new Error('音乐文件句柄尚未确认关闭，已保留原请求。'); }
-      if (value.requestJson && value.requestJson !== serialized) { throw new Error('音乐原导入未确认，不能更换请求。'); }
-      if (!value.requestJson) {
-        const previous = await this.present(entry.directory + '/request.json');
-        if (previous) {
-          if (!previous.isFile() || previous.isSymbolicLink() || previous.size < 1 || previous.size > REQUEST_LIMIT) { throw new Error('音乐原请求已变化，已保留。'); }
-          const original = await fs.readText(entry.directory + '/request.json', { length: REQUEST_LIMIT });
-          importLiteral(original, value);
-          if (original !== serialized) { throw new Error('音乐原导入未确认，不能更换请求。'); }
-        }
-        await this.writeSmall(entry.directory + '/request.json', serialized, REQUEST_LIMIT);
-        value.requestJson = serialized; entry.signature = JSON.stringify(value);
-      }
+      await this.persistOriginal(value, serialized); const entry = this.checked(value);
       const file = await fs.open(entry.directory + '/data', fs.OpenMode.READ_ONLY | fs.OpenMode.NOFOLLOW);
       try { return await send(value.requestJson, file.fd); } finally { await this.closeOwned(entry.directory, file); }
     });

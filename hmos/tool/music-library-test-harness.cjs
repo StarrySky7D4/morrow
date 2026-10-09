@@ -32,7 +32,7 @@ function fixture(initial = [], options = {}) {
   let owned = true, owner = 'music-owner-1', revision = initial[0]?.library_revision || '0';
   const records = initial.map(plain), order = initial.filter(t => t.phase === 'ready').map(t => t.track_id);
   let selected = order[0] || '', show = false, library;
-  const wires = [], imports = [], hashes = [], snapshots = [], history = new Map(), lyrics = new Map();
+  const wires = [], imports = [], persisted = [], hashes = [], snapshots = [], history = new Map(), lyrics = new Map();
   const current = (kind = 'library', shown = []) => summary(shown, { kind, library_revision: revision, order: order.slice(), selected_track_id: selected, show_lyrics: show });
   function bump() { revision = String(Number(revision) + 1); for (const t of records) t.library_revision = revision; }
   function write(command, receive) {
@@ -93,6 +93,7 @@ function fixture(initial = [], options = {}) {
   library = new model.MusicLibrary({
     async send(wire) { wires.push(wire); return options.send ? options.send(wire, receiver, wires.length) : receiver(wire); },
     async hash(wire) { hashes.push(wire); return options.hash ? options.hash(wire) : sha(wire); },
+    async persistImport(wire, r) { persisted.push({wire,request:plain(r)}); if(options.persistImport)await options.persistImport(wire,r); },
     async importFile(wire, r) {
       imports.push({ wire, request: plain(r) });
       if (options.importFile) return options.importFile(wire, r, records);
@@ -101,7 +102,7 @@ function fixture(initial = [], options = {}) {
     },
     owned: () => owned, owner: () => owner, changed: () => { if (library) snapshots.push(library.view()); }
   });
-  return { library, wires, imports, hashes, snapshots, records, order, lyrics,
+  return { library, wires, imports, persisted, hashes, snapshots, records, order, lyrics,
     setOwned(value) { owned = value; }, setOwner(value) { owner = value; }, bump,
     get revision() { return revision; }, receiver, current, setSelected(value) { selected = value; } };
 }

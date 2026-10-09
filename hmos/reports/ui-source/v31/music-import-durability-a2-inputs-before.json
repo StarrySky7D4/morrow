@@ -1,0 +1,126 @@
+{
+  "before": [
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorDraft.ets",
+      "bytes": 37929,
+      "sha256": "B88A46D0371D8C6F193187D1A0E1ACF41671D4991CDBD59C451B8BCF66CF3775"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+      "bytes": 6929,
+      "sha256": "10C3162E77A947335ACF0C3DF2E464C80195D0AC2BBC2922BBB09C0A8A626842"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorInputHash.ets",
+      "bytes": 463,
+      "sha256": "C894E8F44AA1A447096A8AC12B9A9C437EEAA64DD4875AA6116E7635893BE628"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicFiles.ets",
+      "bytes": 31488,
+      "sha256": "22005FBC45E6A980C86B68890C9C7C67EDE4DC2E8AB1B14C9A3828CD062E7DA5"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicLibrary.ets",
+      "bytes": 46846,
+      "sha256": "B5E043D5C7C1B5ED79C1D9FE42CBBB303DF9127391E11A9F508CA12E4454E0A6"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicPlayback.ets",
+      "bytes": 21859,
+      "sha256": "9F1E29260AADBFA8E51216DAEF323C2E19A8B39CC5B95CB17A33BCC6C1D571DA"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicUi.ets",
+      "bytes": 1498,
+      "sha256": "F61772894A0E1D388C640F95230E09BDC5818E6FA1772635A739CB60531E6990"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicWorkbench.ets",
+      "bytes": 30720,
+      "sha256": "9BD2683E3356637C92B7EFCFC9227BA916CD87C7AFF4E57B2863CB90A432DEB3"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Workbench.ets",
+      "bytes": 2502,
+      "sha256": "71582E668921776554E48F0469E1F6B323728DB076082FD22ED5AE7E4BB0B423"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/PlatformMusicPlayer.ets",
+      "bytes": 5959,
+      "sha256": "07446422A8376BA1885ED496BACDC8AE75DEA661289C649FDBE40F81C9C23A65"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-store-fixture-stage1.json",
+      "bytes": 12868,
+      "sha256": "B60E2AE4F0E995690FB0B1070FC5BE5C5025DBBA302CB8CB16A2D0D0B2FBF640"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-store-fixture.json",
+      "bytes": 65127,
+      "sha256": "DA6D8DF4F50F59555A4064AB29C9B302CE29B85A843DEB03F2F5C9EB0D83B9B2"
+    },
+    {
+      "path": "hmos/reports/ui-source/v31/run-music-import-durability.cjs",
+      "bytes": 5762,
+      "sha256": "BF560CC2725C97B1D9DF9D2DCAD2CEA9B06BCCED51FD619FC1C82E0D37C478BB"
+    },
+    {
+      "path": "hmos/tool/editor-field-test-harness.cjs",
+      "bytes": 2497,
+      "sha256": "FE8DB46B347C64FB28DF463AD335438576AEEED528B85BFCD14C70A631C96B13"
+    },
+    {
+      "path": "hmos/tool/music-files-model.test.cjs",
+      "bytes": 24643,
+      "sha256": "50E47068A1840B32927D17D7BF800E11188618D2222696AF95E153E2EA103396"
+    },
+    {
+      "path": "hmos/tool/music-library-model.test.cjs",
+      "bytes": 27366,
+      "sha256": "BBF0AF525F612B7814E595123E998C126AA788B5943ABDDB2141F83EE25059AB"
+    },
+    {
+      "path": "hmos/tool/music-library-native-dto.test.cjs",
+      "bytes": 5806,
+      "sha256": "935FF646667B51005DE38CC4D5A2E728199B12DDB91E1ACD951414066B5B7761"
+    },
+    {
+      "path": "hmos/tool/music-library-test-harness.cjs",
+      "bytes": 8408,
+      "sha256": "0738415EAB96D495B598AC4FC1E8E7F43677F322068412BE6C3D0180A16826BB"
+    },
+    {
+      "path": "hmos/tool/music-workbench-model.test.cjs",
+      "bytes": 46290,
+      "sha256": "AEAF09CA949065A6746010EFE2D7008D5C0361BA76CDE19399AA5713F4750A7A"
+    },
+    {
+      "path": "hmos/tool/music-workbench-source-trace.cjs",
+      "bytes": 1592,
+      "sha256": "4F986124688C11D959786A62C10BF8370C93F0E09ABB1F99A4A9D2046583EF59"
+    },
+    {
+      "path": "hmos/tool/music-workbench-test-harness.cjs",
+      "bytes": 15363,
+      "sha256": "61D70DDFBB81EE3EB6EFD88D32DFA95AF3CF5718A9E6030750EA90D3F23EEA85"
+    }
+  ],
+  "runtimeBefore": [
+    {
+      "path": "C:\\Program Files\\Huawei\\DevEco Studio\\tools\\node\\node.exe",
+      "bytes": 91426304,
+      "sha256": "58E74BF02FC5BBACC41DCB8BEF089961CD5BDDD37830B87784E4FC624D145D1F"
+    },
+    {
+      "path": "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\node_modules\\typescript\\lib\\typescript.js",
+      "bytes": 8031399,
+      "sha256": "9475E93F3904BB0A6A83EC457CBB4926C28D02202BAC7B1FB31DBC49AF7D56A1"
+    },
+    {
+      "path": "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\node_modules\\typescript\\package.json",
+      "bytes": 3531,
+      "sha256": "74051CFEEA7F6F97CF40BA81B38F0C97E39D38A4E7AE5331BABAC5D8BCDD45A1"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "status": "RUNNER_QUALIFICATION_FAILED",
+  "test_exit_code": 0,
+  "tests": 114,
+  "pass": 114,
+  "fail": 0,
+  "error": "Runner compared uppercase stored SHA256 with lowercase trace SHA256 and falsely rejected identical repeated EditorDraft.ets reads",
+  "actual_trace_case_consistent": true,
+  "cross_process_trace_drifts": [],
+  "before_after_source_qualification": "NOT_COMPLETED_IN_A1",
+  "source_before_inventory": "NOT_WRITTEN_BEFORE_RUNNER_EXCEPTION",
+  "log_sha256": "D0257EE63653681E0B5851D4691327CE5CB87C70D9ABC11220D076DDC4C6919A",
+  "trace_sha256": "B4F41E7EC8E1B4177892C113A5C7EF93D9E6EAA64BF608946F769332B715653D",
+  "correction": "Normalize SHA256 before comparison and persist before-input evidence before launching tests; a2 is independent immutable qualified result"
+}

@@ -4,6 +4,146 @@ const {fixture,ready,settle,deferred,sha,request,track,plain}=require('./music-w
 const actions=f=>f.wires.map(w=>JSON.parse(w).music.action);
 const audioUri=(f,id,bytes=Buffer.alloc(64,7))=>{const uri='content://music/'+id;f.put(uri,bytes,id+'.wav');return uri;};
 
+test('real composed registration is gated by exact request fsync and close ACK before Native begin',async()=>{
+ let f;f=fixture({send:(wire,receive)=>{const c=JSON.parse(wire).music;if(c.action==='import_begin'){
+  const plan=f.controller.view().library.import_plan,path='/app/files/hmos-music-spool/'+f.controller.activeSpool.spoolId+'/request.json';
+  assert.equal(f.nodes.get(path).bytes.toString(),plan.original_import);assert.equal(f.controller.activeSpool.requestJson,plan.original_import);
+  const sync=f.trace.findLastIndex(t=>t[0]==='fsync'&&t[1]===path),close=f.trace.findLastIndex(t=>t[0]==='close'&&t[1]===path),begin=f.trace.findLastIndex(t=>t[0]==='request'&&t[1]==='import_begin');
+  assert.ok(sync>=0&&sync<close&&close<begin);assert.equal([...f.fds.values()].some(fd=>fd.path===path),false);
+ }return receive(wire);}});f.select([audioUri(f,'durable')]);await f.controller.load();await f.controller.action('add');
+ assert.equal(f.imports.length,1);assert.equal(f.controller.view().library.tracks.length,1);assert.equal(f.controller.view().spools.length,0);
+});
+test('write/fsync/close persistence failure never registers Native or sends audio; recover retains original content',async()=>{
+ for(const op of ['write','fsync','close']){
+  const f=fixture(),path='/app/files/hmos-music-spool/music-000001/request.json';f.faults.set(op+':'+path,Error('PersistUnknown'));
+  f.select([audioUri(f,'failure')]);await f.controller.load();await f.controller.action('add');
+  const plan=f.controller.view().library.import_plan;assert.equal(plan.phase,'unissued');assert.equal(plan.unknown,true);
+  assert.equal(actions(f).includes('import_begin'),false);assert.equal(f.imports.length,0);assert.equal(f.records.length,0);
+  assert.ok(f.nodes.has(path));assert.ok(f.nodes.has(path.replace('request.json','data')));
+  if(op!=='write'){
+   assert.equal(f.nodes.get(path).bytes.toString(),plan.original_import);f.faults.clear();await f.controller.action('retry_io');
+   await f.controller.action('begin_retry');assert.equal(f.wires.at(-1),plan.original_begin);assert.equal(f.controller.view().canContinueImport,true);assert.equal(f.imports.length,0);
+  }
+ }
+});
+test('controlled fresh instance recovers durable wire before begin; explicit inspect and original begin are separate from audio continuation',async()=>{
+ let f;f=fixture({fsync:p=>{if(p.endsWith('/request.json')){f.setForeground(false);f.setForeground(true);}}});
+ f.select([audioUri(f,'prebegin')]);await f.controller.load();await f.controller.action('add');
+ const original=f.controller.view().library.import_plan;assert.equal(actions(f).includes('import_begin'),false);assert.equal(f.imports.length,0);
+ const g=fixture({restart:f.checkpoint()});await g.controller.load();assert.deepEqual(actions(g),['read']);assert.equal(g.players.length,0);
+ const spool=g.controller.view().spools[0];assert.equal(spool.originalSaved,true);assert.equal(spool.canStart,false);
+ await g.controller.action('spool_resume','',0,spool.spoolId);assert.equal(g.controller.view().canRetryBegin,true);assert.equal(g.imports.length,0);
+ assert.equal(g.controller.view().library.import_plan.original_import,original.original_import);assert.equal(g.controller.view().library.import_plan.original_begin,original.original_begin);
+ await g.controller.action('begin_retry');assert.equal(g.wires.at(-1),original.original_begin);assert.equal(g.controller.view().canContinueImport,true);assert.equal(g.imports.length,0);
+ await g.controller.action('import_continue');assert.deepEqual(g.imports,[original.original_import]);assert.equal(g.records.length,1);assert.equal(g.controller.view().spools.length,0);
+});
+test('controlled fresh instance recovers lost begin result with original IDs/CAS and no implicit begin or FD replay',async()=>{
+ for(const committed of [false,true]){
+  const f=fixture({send:(wire,receive)=>{if(JSON.parse(wire).music.action==='import_begin'){if(committed)receive(wire);throw Error('LostBegin');}return receive(wire);}});
+  f.select([audioUri(f,'begin')]);await f.controller.load();await f.controller.action('add');const original=f.controller.view().library.import_plan;
+  const g=fixture({restart:f.checkpoint()});await g.controller.load();assert.equal(actions(g).includes('import_begin'),false);assert.equal(g.imports.length,0);
+  await g.controller.action('spool_resume','',0,g.controller.view().spools[0].spoolId);
+  assert.equal(g.controller.view().library.import_plan.original_import,original.original_import);assert.equal(g.controller.view().canContinueImport,committed);
+  if(!committed)await g.controller.action('begin_retry');
+  assert.equal(g.records.length,1);assert.deepEqual(g.records[0].request,plain(original.request));assert.equal(g.imports.length,0);
+  await g.controller.action('import_continue');assert.deepEqual(g.imports,[original.original_import]);assert.equal(g.records[0].phase,'ready');
+ }
+});
+test('controlled fresh instance inspects retained Pending/Ready and does not resend complete audio on reconciliation or finish',async()=>{
+ for(const ready of [false,true]){
+  const f=fixture({importFile:(wire,id,complete)=>{if(ready)complete();throw Error('LostAudioResult');}});
+  f.select([audioUri(f,'retained')]);await f.controller.load();await f.controller.action('add');const original=f.controller.view().library.import_plan;
+  const g=fixture({restart:f.checkpoint()});await g.controller.load();await g.controller.action('spool_resume','',0,g.controller.view().spools[0].spoolId);
+  assert.equal(g.controller.view().library.import_plan.phase,ready?'ready':'pending');assert.equal(g.imports.length,0);assert.equal(g.players.length,0);
+  if(!ready)await g.controller.action('import_reconcile');
+  assert.equal(g.controller.view().canFinishImport,true);assert.equal(g.controller.view().library.import_plan.original_import,original.original_import);
+  await g.controller.action('import_finish');assert.equal(g.imports.length,0);assert.equal(g.controller.view().spools.length,0);assert.equal(g.records.length,1);
+ }
+});
+test('controlled fresh instance keeps unretained Pending distinct; only explicit same-wire continuation streams audio',async()=>{
+ const f=fixture({importFile:(wire,id,complete,t)=>{t.bytes_retained=false;throw Error('NoRetainedAudio');}});
+ f.select([audioUri(f,'pending')]);await f.controller.load();await f.controller.action('add');const original=f.controller.view().library.import_plan;
+ const g=fixture({restart:f.checkpoint()});await g.controller.load();await g.controller.action('spool_resume','',0,g.controller.view().spools[0].spoolId);
+ await g.controller.action('import_reconcile');assert.equal(g.controller.view().canContinueImport,true);assert.equal(g.controller.view().canFinishImport,false);assert.equal(g.imports.length,0);
+ await g.controller.action('import_continue');assert.deepEqual(g.imports,[original.original_import]);assert.deepEqual(g.records[0].request,plain(original.request));
+});
+test('stale original CAS after pre-begin recovery is preserved on rejected retry, with no substitute import or FD replay',async()=>{
+ let f;f=fixture({fsync:p=>{if(p.endsWith('/request.json')){f.setForeground(false);f.setForeground(true);}}});f.select([audioUri(f,'stale')]);
+ await f.controller.load();await f.controller.action('add');const original=f.controller.view().library.import_plan;f.bump();
+ const g=fixture({restart:f.checkpoint()});await g.controller.load();await g.controller.action('spool_resume','',0,g.controller.view().spools[0].spoolId);await g.controller.action('begin_retry');
+ assert.equal(g.wires.at(-1),original.original_begin);assert.equal(g.imports.length,0);assert.equal(g.records.length,0);assert.equal(g.controller.view().library.import_plan.original_import,original.original_import);
+ await g.controller.action('spool_start','',0,g.controller.view().spools[0].spoolId);assert.equal(g.records.length,0);assert.equal(g.imports.length,0);
+});
+
+test('explicit audio picker ticket accepts same-page foreground return and refreshes library before capture and CAS',async()=>{
+ const gate=deferred(),f=fixture({picker:()=>gate.promise});f.select([audioUri(f,'picker')]);await f.controller.load();const adding=f.controller.action('add');await settle();
+ f.setForeground(false);await f.controller.background();f.setForeground(true);f.controller.foreground();gate.resolve();await adding;
+ assert.equal(f.controller.view().error,'');assert.equal(f.records.length,1);assert.equal(f.imports.length,1);assert.deepEqual(actions(f).slice(0,3),['read','read','import_begin']);
+});
+test('picker promise returning before foreground retains ticket without writes until explicit same-page foreground event',async()=>{
+ const gate=deferred(),f=fixture({picker:()=>gate.promise});f.select([audioUri(f,'early')]);await f.controller.load();const adding=f.controller.action('add');await settle();
+ f.setForeground(false);await f.controller.background();gate.resolve();await settle();assert.equal(f.controller.view().working,true);assert.equal(f.records.length,0);assert.equal(f.imports.length,0);assert.deepEqual(actions(f),['read']);
+ f.setForeground(true);f.controller.foreground();await adding;assert.equal(f.records.length,1);assert.equal(f.controller.view().error,'');
+});
+test('picker refreshed CAS uses actual changed library revision while preserving target sources',async()=>{
+ const gate=deferred(),f=fixture({initial:[ready('A')],picker:()=>gate.promise});f.select([audioUri(f,'fresh')]);await f.controller.load();const adding=f.controller.action('add');await settle();
+ f.setForeground(false);f.bump();f.setForeground(true);f.controller.foreground();gate.resolve();await adding;
+ const begin=f.wires.map(w=>JSON.parse(w).music).find(c=>c.action==='import_begin');assert.equal(begin.request.expected_revision,'2');assert.equal(f.records.length,2);
+});
+test('picker rebasing reports current capture errors instead of hiding them under the obsolete epoch',async()=>{
+ const gate=deferred(),f=fixture({picker:()=>gate.promise});const uri=audioUri(f,'broken');f.select([uri]);await f.controller.load();const adding=f.controller.action('add');await settle();
+ f.setForeground(false);f.setForeground(true);f.controller.foreground();f.faults.set('open:'+uri,Error('CapturedGrantUnavailable'));gate.resolve();await adding;
+ assert.match(f.controller.view().error,/CapturedGrantUnavailable/);assert.equal(f.imports.length,0);assert.equal(f.records.length,0);
+});
+test('ordinary Native asynchronous work cannot borrow the authorized picker epoch exception',async()=>{
+ const gate=deferred();let block=false;const f=fixture({send:async(wire,receive)=>{if(block&&JSON.parse(wire).music.action==='policy')await gate.promise;return receive(wire);}});
+ await f.controller.load();block=true;const playing=f.controller.action('toggle');await settle();f.setForeground(false);f.setForeground(true);f.controller.foreground();gate.resolve();await playing;
+ assert.equal(f.players.length,0);assert.equal(f.controller.view().library.unknown,true);assert.equal(f.controller.view().working,false);
+});
+test('disposing before picker return or while waiting for foreground cancels only that ticket and prevents music writes',async()=>{
+ for(const early of [false,true]){
+  const gate=deferred(),f=fixture({picker:()=>gate.promise});f.select([audioUri(f,'disposed')]);await f.controller.load();const adding=f.controller.action('add');await settle();f.setForeground(false);
+  if(early){gate.resolve();await settle();}await f.controller.dispose();if(!early)gate.resolve();await adding;
+  f.setForeground(true);f.controller.foreground();assert.equal(f.records.length,0);assert.equal(f.imports.length,0);assert.deepEqual(actions(f),['read']);assert.equal(f.fds.size,0);
+ }
+});
+test('lyrics picker normal foreground return preserves whole text and rechecks original target before Store write',async()=>{
+ const gate=deferred(),f=fixture({initial:[ready('A')],picker:()=>gate.promise}),text='[00:00]完整 汉字 🧪\nSecond line';f.put('content://lyrics',text,'local.lrc');f.select(['content://lyrics']);await f.controller.load();
+ const importing=f.controller.action('lyrics_import','A');await settle();f.setForeground(false);f.setForeground(true);f.controller.foreground();gate.resolve();await importing;
+ const command=f.wires.map(w=>JSON.parse(w).music).find(c=>c.action==='set_lyrics');assert.equal(command.lyrics,text);assert.equal(command.track_id,'A');assert.equal(f.controller.view().error,'');assert.equal(f.controller.view().lyricsText,text);
+});
+test('lyrics picker result received in background waits without losing full text or issuing Store writes',async()=>{
+ const gate=deferred(),f=fixture({initial:[ready('A')],picker:()=>gate.promise}),text='whole lyrics';f.put('content://lyrics',text,'local.lrc');f.select(['content://lyrics']);await f.controller.load();
+ const importing=f.controller.action('lyrics_import','A');await settle();f.setForeground(false);gate.resolve();await settle();assert.equal(actions(f).includes('set_lyrics'),false);assert.equal(f.controller.view().working,true);
+ f.setForeground(true);f.controller.foreground();await importing;assert.equal(f.controller.view().lyricsText,text);assert.equal(f.controller.view().error,'');
+});
+test('changed original lyric track after picker retains full raw text with original identity/title and never writes replacement',async()=>{
+ for(const change of ['retired','source']){
+  const gate=deferred(),f=fixture({initial:[ready('A'),ready('B')],picker:()=>gate.promise}),text='Full raw text for A';f.put('content://lyrics',text,'local.txt');f.select(['content://lyrics']);await f.controller.load();
+  const importing=f.controller.action('lyrics_import','A');await settle();f.setForeground(false);const t=f.records.find(t=>t.track_id==='A');
+  if(change==='retired'){t.phase='retired';f.order.splice(f.order.indexOf('A'),1);f.setSelected('B');}else{t.sha256='0'.repeat(64);t.request.sha256=t.sha256;t.request_json=JSON.stringify({action:'music_import',music:{action:'import_file',request:t.request}});t.request_sha256=sha(t.request_json);}
+  f.bump();f.setForeground(true);f.controller.foreground();gate.resolve();await importing;
+  assert.equal(actions(f).includes('set_lyrics'),false);assert.equal(f.controller.view().unsavedLyrics,text);assert.equal(f.controller.view().unsavedLyricsTrackId,'A');assert.equal(f.controller.view().unsavedLyricsTitle,'A');assert.match(f.controller.view().error,/曲目已变化/);
+ }
+});
+test('fresh read Unknown after picker keeps whole selected lyrics and exact read retry while withholding writes',async()=>{
+ const gate=deferred();let reads=0;const f=fixture({initial:[ready('A')],picker:()=>gate.promise,send:(wire,receive)=>{if(JSON.parse(wire).music.action==='read'&&++reads===2)throw Error('FreshReadUnknown');return receive(wire);}}),text='whole preserved lyrics';
+ f.put('content://lyrics',text,'local.txt');f.select(['content://lyrics']);await f.controller.load();const importing=f.controller.action('lyrics_import','A');await settle();f.setForeground(false);f.setForeground(true);f.controller.foreground();gate.resolve();await importing;
+ assert.equal(actions(f).includes('set_lyrics'),false);assert.equal(f.controller.view().unsavedLyrics,text);assert.equal(f.controller.view().unsavedLyricsTrackId,'A');assert.ok(f.controller.view().library.original_read);assert.equal(f.controller.view().library.unknown,true);
+});
+test('rebased oversized lyrics keep complete original text and surface current write limit without any Native mutation',async()=>{
+ const gate=deferred(),f=fixture({initial:[ready('A')],picker:()=>gate.promise}),text='界'.repeat(20000);f.put('content://lyrics',text,'large.txt');f.select(['content://lyrics']);await f.controller.load();
+ const importing=f.controller.action('lyrics_import','A');await settle();f.setForeground(false);f.setForeground(true);f.controller.foreground();gate.resolve();await importing;
+ assert.equal(f.controller.view().unsavedLyrics,text);assert.equal(f.controller.view().unsavedLyricsTrackId,'A');assert.equal(Buffer.byteLength(text),60000);assert.match(f.controller.view().error,/完整歌词/);assert.equal(actions(f).includes('set_lyrics'),false);
+});
+test('cancelled audio/lyrics picker ticket performs no fresh Store read, file capture or mutation after foreground return',async()=>{
+ for(const action of ['add','lyrics_import']){
+  const gate=deferred(),f=fixture({initial:[ready('A')],picker:()=>gate.promise});f.select([]);await f.controller.load();const picking=f.controller.action(action,'A');await settle();
+  f.setForeground(false);f.setForeground(true);f.controller.foreground();gate.resolve();await picking;
+  assert.deepEqual(actions(f),['read']);assert.equal(f.imports.length,0);assert.equal(f.controller.view().spools.length,0);assert.equal(f.controller.view().error,'');assert.equal(f.fds.size,0);
+ }
+});
+
 test('startup reads actual durable selection and spool metadata without CAS, player creation or autoplay',async()=>{
  const f=fixture({initial:[ready('A'),ready('B')],selected:'B'});await f.controller.load();await settle();
  assert.equal(f.controller.view().library.selected_track_id,'B');assert.equal(f.controller.view().playback.phase,'idle');

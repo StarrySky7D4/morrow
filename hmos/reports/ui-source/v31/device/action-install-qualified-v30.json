@@ -1,0 +1,12 @@
+{
+  "issuedUtc": "2026-10-09T02:58:40.388Z",
+  "device": "127.0.0.1:5555",
+  "args": [
+    "install",
+    "-r",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev30-music-ui-a2\\entry-default-unsigned.hap"
+  ],
+  "phase": "ACKNOWLEDGED",
+  "result": "[Info]App install path:C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\artifacts\\dev30-music-ui-a2\\entry-default-unsigned.hap msg:install bundle successfully. \r\nAppMod finish\r\n",
+  "acknowledgedUtc": "2026-10-09T02:58:41.509Z"
+}

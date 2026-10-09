@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "scope": "READ_ONLY_SOURCE_AND_LOCAL_SDK_REVIEW; NOT_DEVICE_OR_AUDIBLE_PROOF",
+  "audited_baseline": "4c04f97e6beb580d33f14f9540db98129fc50180",
+  "recorded_at": "2026-10-09T02:52:54.153Z",
+  "source_hashes": [
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicWorkbench.ets",
+      "scope": "published baseline",
+      "bytes": 27626,
+      "sha256": "30b643cd380a5f4a54297c17406dce8bbd55373a9aa09cdcf6c9255348152974"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicLibrary.ets",
+      "scope": "published baseline",
+      "bytes": 45655,
+      "sha256": "c293488d9912f6efde7689e4c256bc0cfccfe153e82a822619ecbb291037c41f"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicFiles.ets",
+      "scope": "published baseline",
+      "bytes": 29363,
+      "sha256": "93613abdedbbfb811bc48a0366643825a48e9fac622ff52a275d5915be6ec34d"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicPlayback.ets",
+      "scope": "published baseline",
+      "bytes": 21859,
+      "sha256": "9f1e29260aadbfa8e51216daef323c2e19a8b39cc5b95cb17a33bcc6c1d571da"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/PlatformMusicPlayer.ets",
+      "scope": "published baseline",
+      "bytes": 5959,
+      "sha256": "07446422a8376ba1885ed496bacdc8ae75dea661289c649fdbe40f81c9c23a65"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/MusicPanel.ets",
+      "scope": "published baseline",
+      "bytes": 28252,
+      "sha256": "6a627db1b98c978908445b603a4b380d467dce5b812eeb372c2e5ddbd386c7af"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/MusicFooter.ets",
+      "scope": "published baseline",
+      "bytes": 4805,
+      "sha256": "dacae9261a10ee6c1a7ff5a02de9b0e79a525f06f930d39d64bb9f22866be317"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/Index.ets",
+      "scope": "published baseline",
+      "bytes": 337408,
+      "sha256": "8aa4a20da472a505914e159d215d42fc883c02de34277575770b39cc8174bb98"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/entryability/EntryAbility.ets",
+      "scope": "published baseline",
+      "bytes": 3992,
+      "sha256": "879c0e1f5d32794717de35167156a28ae1c7b9270a9ebf5a37eb37da3190cd10"
+    }
+  ],
+  "reference_hashes": [
+    {
+      "path": "build/win-cloud-20261005/lib/music/music_panel.dart",
+      "bytes": 31013,
+      "sha256": "6df33c27cde8054d3f70b5d5ebac00831d78e212d515574cad764d64e72d694d"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/music/music_controller.dart",
+      "bytes": 19569,
+      "sha256": "d5390e8c0435fb9b0f5d677b30b4f338971f459bb8187aa1aece7d2f2cf13df2"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/little_tips.dart",
+      "bytes": 6314,
+      "sha256": "ce95ca428852b773d63bdf15d772d0f2bdb677647792d641f82f9c4f802b9c8c"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/neumorphic_controls.dart",
+      "bytes": 46032,
+      "sha256": "a80141815bb7f79fc30ebf77803aa61e7e5b354c51589a51f14cc0fc10d2df0d"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/experimental_controls.dart",
+      "bytes": 20033,
+      "sha256": "15ed5fc306956c559a6c41c1e11bcdb52db9937d4cdf64e5cabd77bc4e2c0ccb"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/hold_reorder.dart",
+      "bytes": 7415,
+      "sha256": "2bd70dcd16ee8bea076a7bf10b9fe1e99129d899899610d79827d7ae2ee97007"
+    },
+    {
+      "path": "C:/flutter/packages/flutter/lib/src/material/icons.dart",
+      "bytes": 1861138,
+      "sha256": "ba88e3e23962ada6537523aa113811d9719b988412815bf084f50a0aa78137f0"
+    },
+    {
+      "path": "C:/flutter/bin/cache/artifacts/material_fonts/codepoints",
+      "bytes": 228708,
+      "sha256": "e9b6f6afe11baf536baedc5fac5d30e6e45f5fc25bdb12f9f2f4bc27c4db2ae3"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.file.picker.d.ts",
+      "bytes": 43591,
+      "sha256": "abb8a0bdaa693e3c1c9fb098fa6d7a7bfc08c0030c26a4ae4ee540712d376d47"
+    },
+    {
+      "path": "C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/api/@ohos.multimedia.media.d.ts",
+      "bytes": 428071,
+      "sha256": "8a7dca59e33b0797070ca8c8e2fb3fef51980b0887a7def350171cdb43175789"
+    }
+  ],
+  "findings": [
+    {
+      "id": "PICKER_OWNER_EPOCH",
+      "status": "CHANGES_REQUIRED_BASELINE",
+      "runtime_trigger": "NOT_RUN",
+      "sources": [
+        "Index.ets:484-488",
+        "MusicWorkbench.ets:264-272",
+        "MusicWorkbench.ets:341-347",
+        "EntryAbility.ets:80-89"
+      ],
+      "detail": "Authorized DocumentViewPicker round trip is rejected after any background/foreground epoch change; normal add clears selected URI grant registry, and lyrics text is discarded before unsavedLyrics assignment. Local SDK specifies picker-page launch and promise URI result, not lifecycle ordering."
+    },
+    {
+      "id": "MISSING_STYLE_INSETS",
+      "status": "CHANGES_REQUIRED_BASELINE",
+      "sources": [
+        "MusicPanel.ets:40",
+        "music_panel.dart:274-276",
+        "music_panel.dart:516-518",
+        "experimental_controls.dart:226-328"
+      ],
+      "detail": "paper/fluent/brutalist/industrial return without painting current-track and selected-row inset. Flutter defines distinct inset painters for each."
+    },
+    {
+      "id": "UNREQUESTED_INSET_FILL",
+      "status": "CHANGES_REQUIRED_BASELINE",
+      "sources": [
+        "MusicPanel.ets:299",
+        "MusicPanel.ets:377",
+        "neumorphic_controls.dart:23",
+        "neumorphic_controls.dart:118-159"
+      ],
+      "detail": "Current track and selected row force an ink-alpha fill. Flutter NeumorphicSurface default fill=false paints no flat edge or fill, preserving outer material."
+    }
+  ],
+  "compile_graph": {
+    "path": "hmos/.build/device-candidates/dev30-music-ui-a2/entry/build/default/cache/default/default@CompileArkTS/esmodule/debug/filesInfo.txt",
+    "sha256": "87a57d37377298b7fcb623006a49c95f5d7a19c5bc4219c6ef10a4d1d9fb0387",
+    "modules": [
+      {
+        "name": "MusicWorkbench",
+        "listed": true
+      },
+      {
+        "name": "MusicUi",
+        "listed": true
+      },
+      {
+        "name": "MusicLibrary",
+        "listed": true
+      },
+      {
+        "name": "MusicFiles",
+        "listed": true
+      },
+      {
+        "name": "MusicPlayback",
+        "listed": true
+      },
+      {
+        "name": "PlatformMusicPlayer",
+        "listed": true
+      },
+      {
+        "name": "MusicPanel",
+        "listed": true
+      },
+      {
+        "name": "MusicFooter",
+        "listed": true
+      }
+    ],
+    "scope": "Existing published product compile inventory only; no compile rerun or runtime claim"
+  },
+  "font": {
+    "path": "hmos/entry/src/main/resources/rawfile/materialicons.otf",
+    "bytes": 1645184,
+    "sha256": "d9865b671a09d683d13a863089d8825e0f61a37696ce5d7d448bc8023aa62453",
+    "matches_actual_flutter_otf": true,
+    "cmap_formats": [
+      4,
+      12
+    ],
+    "glyphs": [
+      {
+        "codepoint": "f7bd",
+        "glyph_id": 3525
+      },
+      {
+        "codepoint": "f537",
+        "glyph_id": 381
+      },
+      {
+        "codepoint": "f554",
+        "glyph_id": 517
+      },
+      {
+        "codepoint": "f0193",
+        "glyph_id": 6966
+      },
+      {
+        "codepoint": "f0056",
+        "glyph_id": 5465
+      },
+      {
+        "codepoint": "f00a0",
+        "glyph_id": 5808
+      },
+      {
+        "codepoint": "f0192",
+        "glyph_id": 6962
+      },
+      {
+        "codepoint": "f00d0",
+        "glyph_id": 6041
+      },
+      {
+        "codepoint": "f6e3",
+        "glyph_id": 2460
+      },
+      {
+        "codepoint": "f647",
+        "glyph_id": 1633
+      },
+      {
+        "codepoint": "f8ed",
+        "glyph_id": 4982
+      },
+      {
+        "codepoint": "f06f9",
+        "glyph_id": 4576
+      }
+    ],
+    "scope": "Actual font cmap checked, not device font registration proof"
+  },
+  "platform_review": {
+    "seek": "SDK seek returns void; timeUpdate is actual position evidence and SDK reports it immediately after successful seek. No seekDone listener is not by itself a proven UI defect.",
+    "eof": "SDK reports completed stateChange when loop is false; coordinator handles completed once and ownership/lifecycle gates next selection.",
+    "ownership": "Source registry and exact descriptor checked before fdSrc; release ACK precedes descriptor close and source deletion; background uses retained session ownership and cancels play epoch.",
+    "runtime": "NOT_RUN"
+  },
+  "ongoing_work": "Durability agent notified and implementing exact picker ticket + current-run-owner rebinding; Root notified of inset and forced-fill differences. This report does not qualify those live changes."
+}

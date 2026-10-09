@@ -3591,7 +3591,7 @@ struct Index {
   @Builder
   MusicPanel() {
     MusicPanelContent({ view: this.musicView, callbacks: this.musicCallbacks, fontFamily: this.fontFamily,
-      locale: this.locale, ink: this.ink(), muted: this.muted(), accent: this.accent(), line: this.line(), dark: this.dark,
+      locale: this.locale, ink: this.ink(), muted: this.muted(), accent: this.accent(), line: this.line(), dark: this.dark, surface: this.surface(),
       style: this.visualStyle, depth: this.depthFor('music'), radiusScale: this.round(20, 'music') / 20 })
       .padding(16).width('100%').borderRadius(this.round(22, 'music')).backdropBlur(this.materialBlur('music'))
       .linearGradient(this.gradient('music')).overlay(this.Rim('music', 22))

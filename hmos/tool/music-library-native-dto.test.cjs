@@ -7,6 +7,7 @@ const bytes = fs.readFileSync(filename), real = JSON.parse(bytes);
 function actualLibrary(send) {
   const wires = [], imports = [];
   const library = new MusicLibrary({ owned: () => true, owner: () => 'actual-native-library-owner', changed() {}, hash: async value => sha(value),
+    async persistImport() { throw Error('No durable import authorized by this readonly fixture'); },
     async send(wire) { wires.push(wire); return JSON.stringify(await send(JSON.parse(wire).music)); },
     async importFile(wire) { imports.push(wire); throw Error('No FD dispatch authorized by this readonly fixture'); } });
   return { library, wires, imports };

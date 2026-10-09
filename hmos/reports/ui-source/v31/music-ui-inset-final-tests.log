@@ -1,0 +1,21 @@
+✔ actual inset painter covers all Flutter styles with their distinct paint operations (354.1866ms)
+✔ actual repaint clears old frames for flat, zero depth, unknown style and invalid geometry (144.8507ms)
+✔ actual paper lines preserve Flutter light/dark alpha and edge orientation (27.0482ms)
+✔ actual fluent inset reverses the edge to shadow then light without filling the child (29.0082ms)
+✔ actual brutalist inset uses the requested theme ink and transparent lower edge (27.6374ms)
+✔ actual industrial inset retains all three contours, scaled wall width and theme tones (29.5911ms)
+✔ actual clay inset uses blurred complement walls and the separate highlight contour (25.0524ms)
+✔ actual neumorphic inset derives both casts from the real palette surface (58.0741ms)
+✔ actual inset wall is the rounded opening complement with opposing offsets and exact unshifted clip (13.6751ms)
+✔ actual depth uses -.8 times the material depth while opacity saturates separately from geometry (155.8941ms)
+✔ actual rounded geometry clamps to available size and preserves the parent radius (12.2395ms)
+✔ actual resize callbacks coalesce and disappearance cancels the pending paint (14.0577ms)
+✔ actual current and selected rows keep fill=false and relay the parent theme surface (14.3025ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1110.4796
