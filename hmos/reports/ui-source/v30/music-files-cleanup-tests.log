@@ -1,0 +1,142 @@
+TAP version 13
+# Subtest: music capture requires one selected grant; cancellation and unsupported extensions do not admit a spool
+ok 1 - music capture requires one selected grant; cancellation and unsupported extensions do not admit a spool
+  ---
+  duration_ms: 60.6671
+  type: 'test'
+  ...
+# Subtest: whole native capture receives music150MiB cap and actual spool metadata without a persistent provider URI
+ok 2 - whole native capture receives music150MiB cap and actual spool metadata without a persistent provider URI
+  ---
+  duration_ms: 37.683
+  type: 'test'
+  ...
+# Subtest: exact music request is fsynced before dispatch and Unknown retains its original request and full bytes
+ok 3 - exact music request is fsynced before dispatch and Unknown retains its original request and full bytes
+  ---
+  duration_ms: 35.1747
+  type: 'test'
+  ...
+# Subtest: forged mutable spool or malformed request cannot enter FD dispatch
+ok 4 - forged mutable spool or malformed request cannot enter FD dispatch
+  ---
+  duration_ms: 68.1297
+  type: 'test'
+  ...
+# Subtest: unexpected or symlink cache is retained and blocks new admission rather than being automatically deleted
+ok 5 - unexpected or symlink cache is retained and blocks new admission rather than being automatically deleted
+  ---
+  duration_ms: 28.883
+  type: 'test'
+  ...
+# Subtest: export mismatch cannot admit a player source and complete export returns no path or URI
+ok 6 - export mismatch cannot admit a player source and complete export returns no path or URI
+  ---
+  duration_ms: 54.5642
+  type: 'test'
+  ...
+# Subtest: registered descriptor must close before source removal; failed close retains original resource for explicit retry
+ok 7 - registered descriptor must close before source removal; failed close retains original resource for explicit retry
+  ---
+  duration_ms: 25.5717
+  type: 'test'
+  ...
+# Subtest: forged source and descriptor cannot open, close or delete the original registry-owned audio
+ok 8 - forged source and descriptor cannot open, close or delete the original registry-owned audio
+  ---
+  duration_ms: 26.8354
+  type: 'test'
+  ...
+# Subtest: owned cache deletion failure retains the same token and does not affect other adapter namespaces
+ok 9 - owned cache deletion failure retains the same token and does not affect other adapter namespaces
+  ---
+  duration_ms: 25.2578
+  type: 'test'
+  ...
+# Subtest: export writer close rejection does not admit an unreachable active source; original handle remains for explicit cleanup
+ok 10 - export writer close rejection does not admit an unreachable active source; original handle remains for explicit cleanup
+  ---
+  duration_ms: 25.0243
+  type: 'test'
+  ...
+# Subtest: capture closes destination even when source close rejects and retains source handle plus complete prepared bytes
+ok 11 - capture closes destination even when source close rejects and retains source handle plus complete prepared bytes
+  ---
+  duration_ms: 26.2858
+  type: 'test'
+  ...
+# Subtest: explicit local lyrics picker reads the whole UTF8 text and rejects damaged encoding without cropping
+ok 12 - explicit local lyrics picker reads the whole UTF8 text and rejects damaged encoding without cropping
+  ---
+  duration_ms: 45.7486
+  type: 'test'
+  ...
+# Subtest: metadata close rejection retains the original FD and spool until explicit close acknowledgment
+ok 13 - metadata close rejection retains the original FD and spool until explicit close acknowledgment
+  ---
+  duration_ms: 22.7352
+  type: 'test'
+  ...
+# Subtest: request close failure prevents dispatch and symlink request is rejected without truncating the original
+ok 14 - request close failure prevents dispatch and symlink request is rejected without truncating the original
+  ---
+  duration_ms: 43.9733
+  type: 'test'
+  ...
+# Subtest: partial player open close rejection retains original FD and prevents removal until explicit retry
+ok 15 - partial player open close rejection retains original FD and prevents removal until explicit retry
+  ---
+  duration_ms: 21.1036
+  type: 'test'
+  ...
+# Subtest: partial spool metadata unlink retains exact cleanup object through retry_io and recover without replaying absent data
+ok 16 - partial spool metadata unlink retains exact cleanup object through retry_io and recover without replaying absent data
+  ---
+  duration_ms: 22.3428
+  type: 'test'
+  ...
+# Subtest: failed first unlink marks only cleanup intent and still cannot masquerade as a complete recoverable replay source
+ok 17 - failed first unlink marks only cleanup intent and still cannot masquerade as a complete recoverable replay source
+  ---
+  duration_ms: 27.0812
+  type: 'test'
+  ...
+# Subtest: late request unlink failure retains original exact bytes while already removed data and metadata stay out of recover
+ok 18 - late request unlink failure retains original exact bytes while already removed data and metadata stay out of recover
+  ---
+  duration_ms: 22.9802
+  type: 'test'
+  ...
+# Subtest: empty-directory removal failure is retained through recover and only same-object explicit release retry clears it
+ok 19 - empty-directory removal failure is retained through recover and only same-object explicit release retry clears it
+  ---
+  duration_ms: 20.8534
+  type: 'test'
+  ...
+# Subtest: unexpected children added after partial cleanup are retained and block original cleanup retry
+ok 20 - unexpected children added after partial cleanup are retained and block original cleanup retry
+  ---
+  duration_ms: 25.4093
+  type: 'test'
+  ...
+# Subtest: fresh adapter cannot mint partial cleanup ownership from restart leftovers or silently delete them
+ok 21 - fresh adapter cannot mint partial cleanup ownership from restart leftovers or silently delete them
+  ---
+  duration_ms: 20.3048
+  type: 'test'
+  ...
+# Subtest: unsafe directory rejection before unlink does not mint cleanup ownership or remove an existing complete source
+ok 22 - unsafe directory rejection before unlink does not mint cleanup ownership or remove an existing complete source
+  ---
+  duration_ms: 22.6225
+  type: 'test'
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1070.2741

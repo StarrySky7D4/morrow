@@ -4,6 +4,10 @@ import { MarkdownPreview } from './MarkdownPreview';
 import { AttachmentImagePreview } from './AttachmentImagePreview';
 import { AttachmentMediaPreview, createAttachmentPlayer } from './AttachmentMediaPreview';
 import { AttachmentPlayback, PlaybackSource, PlaybackView } from '../model/AttachmentPlayback';
+import { MusicWorkbench } from '../model/MusicWorkbench';
+import { MusicUiCallbacks, MusicUiView } from '../model/MusicUi';
+import { MusicPanelContent } from './MusicPanel';
+import { MusicFooterContent, LyricsDialogContent } from './MusicFooter';
 import { AttachmentOpen, AttachmentOpenState, attachmentOpenBlocked } from '../model/AttachmentOpen';
 import { AttachmentFullscreen, FullscreenView, FullscreenWindow, createFullscreenWindow } from '../model/AttachmentFullscreen';
 import { AttachmentImportSelection, AttachmentImportBoundary, AttachmentImportIdentity, AttachmentImportReceipt,
@@ -208,6 +212,15 @@ struct Index {
       }
     });
   @StorageLink('hmos-foreground') @Watch('foregroundChanged') foreground: boolean = true;
+  @State musicView: MusicUiView = new MusicUiView();
+  private music: MusicWorkbench | undefined = undefined;
+  private musicPage: string = util.generateRandomUUID(true);
+  private musicEpoch: number = 0;
+  private mediaToggleWorking: boolean = false;
+  private musicCallbacks: MusicUiCallbacks = {
+    action: (action: string, trackId: string, value: number, spoolId: string): void => { this.musicAction(action, trackId, value, spoolId); },
+    reorder: (trackIds: string[]): void => { this.musicReorder(trackIds); }
+  };
   @State fileOpenState: AttachmentOpenState = new AttachmentOpenState();
   private fileOpen: AttachmentOpen | undefined = undefined;
   private attachmentPreviewEpoch: number = 0;
@@ -411,6 +424,15 @@ struct Index {
   aboutToAppear(): void {
     this.pageAlive = true;
     const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+    if (!this.music) {
+      this.music = new MusicWorkbench(context, {
+        owned: (): boolean => this.pageAlive,
+        foreground: (): boolean => this.foreground,
+        owner: (): string => this.musicPage + ':' + this.musicEpoch.toString(),
+        changed: (): void => { if (this.pageAlive && this.music) { this.musicView = this.music.view(); } },
+        beforePlay: (): Promise<void> => this.beforeMusicPlay()
+      });
+    }
     if (!this.attachmentFiles) { this.attachmentFiles = new AttachmentFiles(context); }
     const files = this.attachmentFiles;
     this.fileOpen = new AttachmentOpen(context, (lease: VerifiedPreview): boolean => files.isPreviewActive(lease),
@@ -426,6 +448,7 @@ struct Index {
     this.start();
   }
   onBackPress(): boolean {
+    if (this.musicView.lyricsOpen) { this.musicAction('lyrics_close'); return true; }
     if (this.attachmentPreviewOpen && this.mediaFullscreen) { this.exitMediaFullscreen(); return true; }
     if (this.attachmentPreviewOpen) { this.closeAttachmentPreview(); return true; }
     if (this.draftsOpen) { this.draftsOpen = false; return true; }
@@ -440,6 +463,8 @@ struct Index {
     this.clipboardPaste?.stop();
     this.attachmentSelection?.stop();
     this.closeAttachmentPreview();
+    this.musicEpoch++;
+    this.music?.dispose().catch((): void => {});
     this.pageAlive = false;
     const detach = this.editorDetachResolve; this.editorDetachResolve = undefined;
     if (detach) { detach(); } // Cancels the wait; pageAlive=false rejects cleanup.
@@ -457,8 +482,43 @@ struct Index {
     this.mounted = false; native.releasePreview(this.preview);
   }
   private foregroundChanged(): void {
+    this.musicEpoch++;
+    if (!this.foreground) { this.music?.background().catch((): void => {}); }
+    else { this.music?.foreground(); }
     if (!this.foreground) { this.directInput.stop(); this.inputPolicy.stop(); this.todoDragPosition('', 0, false); this.fieldPolicy.stop(); this.editorInputEpoch++; this.clipboardPaste?.stop(); this.mediaPlayback.pauseForBackground(); this.exitMediaFullscreen(); }
     else { this.fileOpen?.reconcile(); if (this.editorOpen) { this.bindInputRules(); this.refreshFieldCounts(); } }
+  }
+  private async musicAction(action: string, trackId: string = '', value: number = 0, spoolId: string = ''): Promise<void> {
+    if (!this.pageAlive || !this.foreground || !this.music) { return; }
+    await this.music.action(action, trackId, value, spoolId);
+    if (this.pageAlive) { this.musicView = this.music.view(); }
+  }
+  private async musicReorder(trackIds: string[]): Promise<void> {
+    if (!this.pageAlive || !this.foreground || !this.music) { return; }
+    await this.music.reorder(trackIds);
+    if (this.pageAlive) { this.musicView = this.music.view(); }
+  }
+  private async beforeMusicPlay(): Promise<void> {
+    if (!this.pageAlive || !this.foreground || this.mediaToggleWorking ||
+      (this.attachmentPreviewOpen && ['audio', 'video'].includes(this.attachmentPreviewKind))) {
+      throw new Error('请先结束附件媒体预览，再播放音乐。');
+    }
+    await this.mediaPlayback.pauseForBackground();
+    if (!this.pageAlive || !this.foreground || ['playing', 'failed', 'cleanup_failed', 'closing', 'loading', 'preparing'].includes(this.mediaPlayback.view().phase)) {
+      throw new Error('附件媒体尚未确认暂停，音乐未启动。');
+    }
+  }
+  private async toggleAttachmentMedia(token: string): Promise<void> {
+    if (!this.pageAlive || !this.foreground || this.mediaToggleWorking || !this.attachmentPreviewOpen ||
+      this.attachmentPreviewClosing || !token || token !== this.mediaView.token) { return; }
+    const epoch = this.attachmentPreviewEpoch; this.mediaToggleWorking = true;
+    try {
+      await this.music?.pauseForMedia();
+      if (!this.pageAlive || !this.foreground || epoch !== this.attachmentPreviewEpoch ||
+        this.attachmentPreviewClosing || token !== this.mediaView.token) { return; }
+      await this.mediaPlayback.toggle(token);
+    } catch (error) { if (this.pageAlive && epoch === this.attachmentPreviewEpoch) { this.attachmentPreviewFailure = '媒体切换未完成：' + String(error); } }
+    finally { this.mediaToggleWorking = false; }
   }
   private async switchMediaFullscreen(token: string): Promise<void> {
     if (!this.pageAlive || !this.attachmentPreviewOpen || this.attachmentPreviewClosing || !token || token !== this.mediaView.token) { return; }
@@ -505,6 +565,7 @@ struct Index {
       this.cards = result.cards; this.ready = true; this.message = ''; this.workspaceConditionsChanged();
       await this.loadDrafts();
       await this.loadBusinessIntents();
+      await this.music?.load();
     } catch (_) { this.message = '打开失败，请重试'; }
     finally { this.busy = false; }
   }
@@ -1656,6 +1717,8 @@ struct Index {
         this.attachmentReadRequest(asset, c) !== original) { return; }
       this.attachmentPreview = verified; candidate = undefined;
       if (asset.kind === 'audio' || asset.kind === 'video') {
+        await this.music?.pauseForMedia();
+        if (!this.pageAlive || !this.foreground || epoch !== this.attachmentPreviewEpoch) { return; }
         const source = new PlaybackSource(); source.token = verified.token; source.path = verified.path;
         source.uri = verified.uri; source.kind = asset.kind; source.byteLength = Number(verified.byte_length);
         await this.mediaPlayback.open(source);
@@ -3246,12 +3309,12 @@ struct Index {
           .header(this.WorkspaceHeader).footer(this.WorkspaceFooter).width('100%')
       }.scrollBar(BarState.Off).width('100%').height('100%').align(Alignment.TopStart)
         .onAppear(() => this.restoreWorkspace()).onDidScroll(() => this.rememberWorkspace())
-      Row({ space: 9 }) {
-        Circle().width(6).height(6).fill(this.accent())
-        Text(this.t('没有紧迫的事。给好奇心一点时间。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted()).layoutWeight(1)
-        this.Glyph(() => 0xf06f9,  17, () => this.muted())
-      }.width('100%').height(48).padding({ left: 16, right: 16 }).borderRadius(this.round(14, 'footer'))
-        .backgroundColor(this.material('footer') ? alpha(this.material('footer')?.color || this.surface(), (this.material('footer')?.opacity ?? 0) / 100) : Color.Transparent).backdropBlur(this.material('footer')?.blur ?? 0).overlay(this.Rim('footer', 14)).onAreaChange((_, area: Area) => this.rememberSurface('footer', 14, area)).shadow(this.surfaceShadow('footer')).hitTestBehavior(HitTestMode.None)
+      MusicFooterContent({ view: this.musicView, callbacks: this.musicCallbacks, fontFamily: this.fontFamily,
+        locale: this.locale, accent: this.accent(), muted: this.muted() })
+        .width('100%').margin({ top: 8 }).borderRadius(this.round(14, 'footer'))
+        .backgroundColor(this.material('footer') ? alpha(this.material('footer')?.color || this.surface(), (this.material('footer')?.opacity ?? 0) / 100) : Color.Transparent)
+        .backdropBlur(this.material('footer')?.blur ?? 0).overlay(this.Rim('footer', 14))
+        .onAreaChange((_, area: Area) => this.rememberSurface('footer', 14, area)).shadow(this.surfaceShadow('footer'))
     }.layoutWeight(1).height('100%').onAreaChange((_, area: Area) => { this.contentWidth = Number(area.width); })
   }
   @Builder
@@ -3527,20 +3590,13 @@ struct Index {
   }
   @Builder
   MusicPanel() {
-    Column({ space: 12 }) {
-      Row({ space: 7 }) { this.Glyph(() => 0xf7bd,  17, () => this.accent()); Text(this.t('随身听')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).fontWeight(FontWeight.Medium).fontColor(this.ink()).layoutWeight(1); Text(this.t('+')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(22).fontColor(this.muted()).opacity(.4) }.width('100%')
-      Row({ space: 10 }) {
-        Row() { this.Glyph(() => 0xf8ed,  22, () => this.accent()) }.width(48).height(48).justifyContent(FlexAlign.Center).backgroundColor(alpha(this.accent(), .12)).borderRadius(this.round(12))
-        Column({ space: 4 }) { Text(this.t('留一点空间给音乐')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.ink()); Text(this.t('本地音乐与歌词正在适配')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(9).fontColor(this.muted()) }.alignItems(HorizontalAlign.Start).layoutWeight(1)
-      }.width('100%')
-      Row() {
-        this.Glyph(() => 0xf0193,  22, () => this.muted())
-        Row() { this.Glyph(() => 0xf00a0,  22, () => this.muted()) }.width(40).height(40).justifyContent(FlexAlign.Center).backgroundColor(alpha(this.accent(), .12)).borderRadius(this.round(12))
-        this.Glyph(() => 0xf0192,  22, () => this.muted())
-        Text(this.t('☷')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(24).fontColor(this.accent()).onClick(() => { this.playlistOpen = !this.playlistOpen; })
-      }.width('100%').justifyContent(FlexAlign.SpaceAround)
-      if (this.playlistOpen) { Divider().color(this.line()); Text(this.t('播放列表还是空的')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted()).padding(16) }
-    }.padding(16).width('100%').borderRadius(this.round(22, 'music')).backdropBlur(this.materialBlur('music')).linearGradient(this.gradient('music')).overlay(this.Rim('music', 22)).onAreaChange((_, area: Area) => this.rememberSurface('music',  22, area)).shadow(this.surfaceShadow('music')).border({ width: this.styleEdgeWidth(), color: this.line() })
+    MusicPanelContent({ view: this.musicView, callbacks: this.musicCallbacks, fontFamily: this.fontFamily,
+      locale: this.locale, ink: this.ink(), muted: this.muted(), accent: this.accent(), line: this.line(), dark: this.dark,
+      style: this.visualStyle, depth: this.depthFor('music'), radiusScale: this.round(20, 'music') / 20 })
+      .padding(16).width('100%').borderRadius(this.round(22, 'music')).backdropBlur(this.materialBlur('music'))
+      .linearGradient(this.gradient('music')).overlay(this.Rim('music', 22))
+      .onAreaChange((_, area: Area) => this.rememberSurface('music', 22, area))
+      .shadow(this.surfaceShadow('music')).border({ width: this.styleEdgeWidth(), color: this.line() })
   }
   @Builder
   Quote() {
@@ -4351,7 +4407,7 @@ struct Index {
                 contentHeight: this.mediaFullscreen ? Math.max(160, this.viewportHeight - 130) : Math.max(160, Math.min(320, this.viewportHeight - 180)),
                 ink: this.ink(), muted: this.muted(), accent: this.accent(), family: this.fontFamily || 'HarmonyOS Sans', locale: this.locale,
                 fullscreen: this.mediaFullscreen,
-                onToggle: (token: string): void => { if (!this.attachmentPreviewClosing && token === this.mediaView.token) { this.mediaPlayback.toggle(token); } },
+                onToggle: (token: string): void => { this.toggleAttachmentMedia(token); },
                 onSeek: (value: number, token: string): void => { if (!this.attachmentPreviewClosing && token === this.mediaView.token) { this.mediaPlayback.seek(value, token); } },
                 onSurface: (token: string, id: string): void => this.mediaPlayback.setSurface(token, id),
                 onSurfaceGone: (token: string, id: string): void => this.mediaPlayback.clearSurface(token, id),
@@ -4368,6 +4424,16 @@ struct Index {
               .onClick(() => this.closeAttachmentPreview()).id('attachment-preview-close')
           }.padding(18).width(this.mediaFullscreen ? this.viewportWidth : Math.min(660, this.viewportWidth - 24)).backgroundColor(this.surface()).borderRadius(this.mediaFullscreen ? 0 : this.round(18))
         }.width('100%').height('100%').id('attachment-preview-dialog')
+      }
+      if (this.musicView.lyricsOpen) {
+        Stack() {
+          Rect().width('100%').height('100%').fill('#80302D43').onClick(() => this.musicAction('lyrics_close'))
+          LyricsDialogContent({ view: this.musicView, callbacks: this.musicCallbacks, fontFamily: this.fontFamily,
+            locale: this.locale, ink: this.ink(), muted: this.muted(), accent: this.accent() })
+            .width(Math.max(180, Math.min(660, this.viewportWidth - 24)))
+            .height(Math.max(160, Math.min(760, this.viewportHeight - 40)))
+            .backgroundColor(this.surface()).borderRadius(this.round(18)).clip(true)
+        }.width('100%').height('100%').id('music-lyrics-dialog')
       }
     }.width('100%').height('100%').backgroundColor(this.canvasBackgroundColorValue())
       .onAreaChange((_, area: Area) => { this.viewportWidth = Number(area.width); this.viewportHeight = Number(area.height); })

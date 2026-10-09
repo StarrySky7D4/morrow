@@ -35,6 +35,9 @@ class MusicSpool {
   value: PreparedMusicFile;
   directory: string;
   signature: string;
+  // Set only after the exact owned directory passed removal checks. This is
+  // process-local cleanup ownership, never recovered from disk as replay data.
+  releaseStarted: boolean = false;
   constructor(value: PreparedMusicFile, directory: string) {
     this.value = value; this.directory = directory; this.signature = JSON.stringify(value);
   }
@@ -145,7 +148,7 @@ export class MusicFiles implements MusicPlaybackFiles {
       this.issues.push('音乐文件句柄关闭未确认，请显式重试清理。'); throw error as Error;
     }
   }
-  private async removeOwn(directory: string, spool: boolean): Promise<void> {
+  private async removeOwn(directory: string, spool: boolean, beforeRemoval?: () => void): Promise<void> {
     if (MusicFiles.pendingIo.has(directory)) { throw new Error('音乐文件句柄尚未确认关闭，已保留缓存。'); }
     const root = spool ? this.root : this.context.cacheDir;
     const name = directory.slice(root.length + 1);
@@ -159,6 +162,7 @@ export class MusicFiles implements MusicPlaybackFiles {
       const stat = await fs.lstat(directory + '/' + child);
       if (!allowed.includes(child) || !stat.isFile() || stat.isSymbolicLink()) { throw new Error('音乐缓存含未知内容，已保留。'); }
     }
+    if (beforeRemoval) { beforeRemoval(); }
     for (const child of names) { await fs.unlink(directory + '/' + child); }
     if ((await fs.listFile(directory)).length !== 0) { throw new Error('音乐缓存清理未确认。'); }
     await fs.rmdir(directory);
@@ -260,6 +264,14 @@ export class MusicFiles implements MusicPlaybackFiles {
     return this.queued(async (): Promise<PreparedMusicFile[]> => {
       await this.ensureRoot(); this.issues = []; const result: PreparedMusicFile[] = [];
       for (const id of await fs.listFile(this.root)) {
+        const original = this.entries.get(id);
+        if (original?.releaseStarted) {
+          // Some of data/metadata/request may already be gone. Preserve only
+          // the original registered object for explicit release retry; never
+          // present this as a complete audio source or admit another FD import.
+          this.issues.push('原音乐导入缓存已开始清理，请继续原清理；不可重新导入。');
+          continue;
+        }
         try {
           if (!/^music-[A-Za-z0-9]{6}$/.test(id)) { throw new Error('未知音乐缓存名称'); }
           const directory = this.root + '/' + id, folder = await fs.lstat(directory);
@@ -287,6 +299,7 @@ export class MusicFiles implements MusicPlaybackFiles {
   importPrepared(value: PreparedMusicFile, serialized: string, send: (wire: string, fd: number) => Promise<string>): Promise<string> {
     return this.queued(async (): Promise<string> => {
       const entry = this.checked(value); importLiteral(serialized, value);
+      if (entry.releaseStarted) { throw new Error('原音乐缓存已开始清理，只能继续原清理，不能重新导入。'); }
       if (MusicFiles.pendingIo.has(entry.directory)) { throw new Error('音乐文件句柄尚未确认关闭，已保留原请求。'); }
       if (value.requestJson && value.requestJson !== serialized) { throw new Error('音乐原导入未确认，不能更换请求。'); }
       if (!value.requestJson) {
@@ -307,7 +320,11 @@ export class MusicFiles implements MusicPlaybackFiles {
   // The library coordinator must first qualify Ready for this exact request;
   // no timeout, read failure or Unknown automatically reaches this operation.
   release(value: PreparedMusicFile): Promise<void> {
-    return this.queued(async (): Promise<void> => { const entry = this.checked(value); await this.removeOwn(entry.directory, true); this.entries.delete(value.spoolId); });
+    return this.queued(async (): Promise<void> => {
+      const entry = this.checked(value);
+      await this.removeOwn(entry.directory, true, (): void => { entry.releaseStarted = true; });
+      this.entries.delete(value.spoolId);
+    });
   }
   retryPendingIo(): Promise<void> {
     return this.queued(async (): Promise<void> => {

@@ -1,6 +1,14 @@
 # 功能对齐与 Rust 复用检查
 
-2026-10-09 **v29 当前音乐基础检查点**：实现独立持久曲库、标准本地原件的完整 length/hash FD 导入与导出、歌词读取/定位、持久选择/排序/退役，以及共享 Rust 的纯播放决策。新增实际 MusicLibrary、MusicFiles 和 MusicPlayback/PlatformMusicPlayer 基础，固定原请求与 Unknown 保留；Pending、retained 原件和 Ready 发布属于独立事务。**Index 音乐 UI 尚未接入**，不能据此称音乐产品闭环。
+2026-10-09 **v30 当前音乐界面检查点**：实际 Index 接入 MusicWorkbench、文件选择与完整原件导入、播放列表/持久选曲、播放/暂停/seek、排序/移除、离线歌词导入/全文弹层及歌词页脚。界面布局依据 Flutter 音乐面板和 little_tips 源码；外层沿用现有组件材质，默认页脚透明。恢复只读取、不创建播放器或自动播放。后台暂停保留原播放器/FD，返回不自动续播；附件媒体须先确认音乐实际暂停。Unknown 不阻止原播放器停音，原导入核对不生成新 ID；未保存全文绑定原曲目，已知部分缓存清理只重试同原对象。
+
+最终实际 ETS/tool **1118/1118 PASS，0 fail/skip/cancel**（47 suite 文件、151 项输入前后一致，29391.5177ms）；完整 API26 **SUCCESS /17.975s**，34/34 tasks 执行，323 复制/366 仓库输入一致；**八音乐模块均在实际产品 entry graph 检查并 emit**，四项包内原生库核对 PASS。Rust/C++ 实现未变，283 项 native 来源和双 ABI 静态库精确复用 v29；本轮不新增 Rust 测试/构建资格。最终 HAP **31,413,203B**，SHA256 `FB81FEF187D11B09E6DEF56B4B20280E68EED4135BD61C260638ED015408BFD1`。
+
+版本 **dev20/1000020**，包 unsigned/uninstalled，当前 HDC target 为空、模拟器进程未运行，设备验收 **NOT_RUN**。实际文件提供者/音频 codec/声音/seek/拖拽/全样式渲染、pre-begin 导入持久恢复、重启后部分清理残留、在线歌词/解密/封面/原件 GC/protected 与完整 Flutter/Windows parity 均 **OPEN**。交付仅 `codex/ArkTsUI`，不并入主线。详见 [v30 验证](../reports/ui-source/v30/validation.md)。
+
+以下 v29 及更早内容保留为历史；各轮数字和“当前”只指其当轮范围。本轮资格以上述 v30 摘要、最新表和验证记录为准。
+
+2026-10-09 **v29 历史音乐基础检查点**：实现独立持久曲库、标准本地原件的完整 length/hash FD 导入与导出、歌词读取/定位、持久选择/排序/退役，以及共享 Rust 的纯播放决策。新增实际 MusicLibrary、MusicFiles 和 MusicPlayback/PlatformMusicPlayer 基础，固定原请求与 Unknown 保留；Pending、retained 原件和 Ready 发布属于独立事务。**Index 音乐 UI 尚未接入**，不能据此称音乐产品闭环。
 
 最终实际 ETS/tool **1021/1021 PASS，0 fail/skip/cancel**（43 suite 文件、143 项输入前后一致，32,783.3028ms）；Native default **200 library +3 binary PASS**、20 explicit ignored，音乐子集 8 PASS、13 个真实进程中断边界和实际 Store DTO 导出分别通过。新双 ABI release PASS 并采用，283 项 native 来源；ARM64 **58,110,214B /DD86DF95…**、x64 **56,515,718B /E9C66A49…**。最终完整 API26 **SUCCESS /30.098s**，34/34 tasks 执行，319 复制/392 仓库输入前后一致，四项包内原生库核对 PASS；最终 HAP **30,842,790B**，SHA256 `4C4292881291C769B3039E01F895BF75C6C526070DB063AB78224698743015E1`。
 
@@ -86,7 +94,7 @@ dev.15 历史源码交付 `0.1.0-hmos-dev.15` / `1000015`：文件选择器按�
 | Wasm 插件解释器与包管理 | `plugin_runtime` + `sdk/rust` | SDK 随业务模块复用编译；运行期宿主权限、worker、动态包审批/UI 渲染未接入。未声称 Rust 原生直调等于 Wasm 隔离运行 |
 | HTTP/服务/TLS/凭据 | `network_node`, `workbench_host/*control`, `io_tasks` | 审查依赖与平台边界；本次未连接外部服务，未编译/运行完整网络节点；后台任务、权限、HUKS/TLS 适配待实现 |
 | 捕获/转换、富文本、表格/RTF | 原 capture 转换块，Flutter `clipboard_import.dart` / `office_clipboard.dart` / `rich_content.dart` | 保留dev.17授权快照/原件/内嵌图与dev.18来源分档、完整SHA和RTF string UTF8+BOM serialization。dev.19完整输出改为Unicode16 grapheme≤20000，回执绑定完整UTF-16/UTF-8长度和版本，无旧回执fallback；converter/output JSON各512KiB仍独立生效。正式Flutter插件RTF仍2Mi+64KiB且无异常fallback，严格坏编码/RTF U+FFFD、DOCX/XLSX/OLE包转换与捕获票据资格未等价；64MiB/20槽/sidecar不放宽。旧dev.18条件对照本轮在final Rust fresh重跑，真实系统富格式/Office提供者/原件图片持久闭环NOT_RUN，见 [dev.19字段审计](../reports/ui-source/v19/editor-field-policy-source-audit.md)与 [dev.18来源审计](../reports/ui-source/v18/clipboard-capacity-audit.md) |
-| 歌词/媒体与格式解密 | Flutter lyrics/media + `third_party/um_decrypt` | v29 已实现独立 Native 曲库、完整标准原件 FD import/export、离线歌词读写/定位、持久选曲/排序/退役和实际 Library/Files/Playback 平台基础；四音乐模块独立 SDK probe 严格检查/emit。Index 音乐 UI 未接，设备 codec/声音 NOT_RUN；在线歌词/解密/metadata/封面/原件 GC/protected/full parity OPEN，见[v29验证](../reports/ui-source/v29/validation.md) |
+| 歌词/媒体与格式解密 | Flutter music_panel/little_tips + Native 独立曲库 | v30 实际 Index 接 Library/Files/Playback/Platform 与面板/页脚/全文弹层，八模块产品 graph 检查/emit；离线标准原件、持久选择/排序/退役、后台/媒体互斥与 Unknown 原停音有有界主机覆盖。设备 codec/声音/拖拽/渲染 NOT_RUN；pre-begin/重启部分清理/在线/解密/metadata/封面/GC/protected/full parity OPEN，见[v30验证](../reports/ui-source/v30/validation.md) |
 | 语言、字体、主题、玻璃效果、稳定瀑布流 | Flutter `morrow_i18n`, fonts/layout/shaders | dev.3 已补齐专用分类卡片、外观/独立材质/色盘/系统字体设置、基础正文预览、日常清单和音乐空状态；复用九语 ARB、外观持久保存。模拟器验证详见 UI_DESIGN_DEV3.md；折射 shader、完整九语动态文案、字体/背景文件导入、媒体与宽屏设备验收仍待完成 |
 | 七种风格、立体深度、组件材质跟随 | Flutter `appearance.dart`, `component_material_page.dart` | dev.5 基础面板圆角/边缘/阴影和完整材质引用；循环拒绝、取消/应用和重启验证通过。公共描边使用面板实测尺寸并限制绘制范围，修复跨卡片框线。控件浮起/按压动画及 shader 尚未复现；详见 dev.5 验证记录 |
 | 工作区布局与位置 | Flutter `workspace_viewport.dart` / `stable_masonry_grid.dart` / `render_stable_masonry_grid.dart` | dev.7 改为原生 LazyVWaterFlowLayout + LazyForEach；页面/卡片身份稳定，修订内容和移动位置分别失效，保留 16 张交错记录验证。dev.8 最终包新增 440/744 vp 单/双列、四卡间距/排序/遍历与查询修订刷新；dev.6 保留 880/1488 vp 面板与五页位置恢复证据。完整主题、键盘/动画及内存/帧时资格仍未完成 |

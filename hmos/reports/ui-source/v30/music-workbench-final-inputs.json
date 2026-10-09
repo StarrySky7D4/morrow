@@ -1,0 +1,154 @@
+[
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorDraft.ets",
+    "bytes": 37929,
+    "sha256": "b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775",
+    "after_bytes": 37929,
+    "after_sha256": "b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775",
+    "exact": true
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+    "bytes": 6929,
+    "sha256": "10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842",
+    "after_bytes": 6929,
+    "after_sha256": "10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842",
+    "exact": true
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorInputHash.ets",
+    "bytes": 463,
+    "sha256": "c894e8f44aa1a447096a8ac12b9a9c437eeaa64dd4875aa6116e7635893be628",
+    "after_bytes": 463,
+    "after_sha256": "c894e8f44aa1a447096a8ac12b9a9c437eeaa64dd4875aa6116e7635893be628",
+    "exact": true
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/MusicFiles.ets",
+    "bytes": 29363,
+    "sha256": "93613abdedbbfb811bc48a0366643825a48e9fac622ff52a275d5915be6ec34d",
+    "after_bytes": 29363,
+    "after_sha256": "93613abdedbbfb811bc48a0366643825a48e9fac622ff52a275d5915be6ec34d",
+    "exact": true
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/MusicLibrary.ets",
+    "bytes": 45655,
+    "sha256": "c293488d9912f6efde7689e4c256bc0cfccfe153e82a822619ecbb291037c41f",
+    "after_bytes": 45655,
+    "after_sha256": "c293488d9912f6efde7689e4c256bc0cfccfe153e82a822619ecbb291037c41f",
+    "exact": true
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/MusicPlayback.ets",
+    "bytes": 21859,
+    "sha256": "9f1e29260aadbfa8e51216daef323c2e19a8b39cc5b95cb17a33bcc6c1d571da",
+    "after_bytes": 21859,
+    "after_sha256": "9f1e29260aadbfa8e51216daef323c2e19a8b39cc5b95cb17a33bcc6c1d571da",
+    "exact": true
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/MusicUi.ets",
+    "bytes": 1498,
+    "sha256": "f61772894a0e1d388c640f95230e09bdc5818e6fa1772635a739cb60531e6990",
+    "after_bytes": 1498,
+    "after_sha256": "f61772894a0e1d388c640f95230e09bdc5818e6fa1772635a739cb60531e6990",
+    "exact": true
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/MusicWorkbench.ets",
+    "bytes": 27626,
+    "sha256": "30b643cd380a5f4a54297c17406dce8bbd55373a9aa09cdcf6c9255348152974",
+    "after_bytes": 27626,
+    "after_sha256": "30b643cd380a5f4a54297c17406dce8bbd55373a9aa09cdcf6c9255348152974",
+    "exact": true
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/Workbench.ets",
+    "bytes": 2502,
+    "sha256": "71582e668921776554e48f0469e1f6b323728db076082fd22ed5ae7e4bb0b423",
+    "after_bytes": 2502,
+    "after_sha256": "71582e668921776554e48f0469e1f6b323728db076082fd22ed5ae7e4bb0b423",
+    "exact": true
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/PlatformMusicPlayer.ets",
+    "bytes": 5959,
+    "sha256": "07446422a8376ba1885ed496bacdc8ae75dea661289c649fdbe40f81c9c23a65",
+    "after_bytes": 5959,
+    "after_sha256": "07446422a8376ba1885ed496bacdc8ae75dea661289c649fdbe40f81c9c23a65",
+    "exact": true
+  },
+  {
+    "path": "hmos/reports/ui-source/v29/music-store-fixture-stage1.json",
+    "bytes": 12868,
+    "sha256": "b60e2ae4f0e995690fb0b1070fc5be5c5025dbba302cb8cb16a2d0d0b2fbf640",
+    "after_bytes": 12868,
+    "after_sha256": "b60e2ae4f0e995690fb0b1070fc5be5c5025dbba302cb8cb16a2d0d0b2fbf640",
+    "exact": true
+  },
+  {
+    "path": "hmos/reports/ui-source/v29/music-store-fixture.json",
+    "bytes": 65127,
+    "sha256": "da6d8df4f50f59555a4064ab29c9b302ce29b85a843deb03f2f5c9eb0d83b9b2",
+    "after_bytes": 65127,
+    "after_sha256": "da6d8df4f50f59555a4064ab29c9b302ce29b85a843deb03f2f5c9eb0d83b9b2",
+    "exact": true
+  },
+  {
+    "path": "hmos/tool/editor-field-test-harness.cjs",
+    "bytes": 2497,
+    "sha256": "fe8db46b347c64fb28df463ad335438576aeeed528b85bfcd14c70a631c96b13",
+    "after_bytes": 2497,
+    "after_sha256": "fe8db46b347c64fb28df463ad335438576aeeed528b85bfcd14c70a631c96b13",
+    "exact": true
+  },
+  {
+    "path": "hmos/tool/music-library-model.test.cjs",
+    "bytes": 24172,
+    "sha256": "b41129f3f71ba8224b67cc7d60503db860b1affd9a64225055e37e40e502923e",
+    "after_bytes": 24172,
+    "after_sha256": "b41129f3f71ba8224b67cc7d60503db860b1affd9a64225055e37e40e502923e",
+    "exact": true
+  },
+  {
+    "path": "hmos/tool/music-library-native-dto.test.cjs",
+    "bytes": 5705,
+    "sha256": "4dd969c1251957564d8b9c411175d8bfaf2f4ac9c88fe8f86fb72f8d46e45483",
+    "after_bytes": 5705,
+    "after_sha256": "4dd969c1251957564d8b9c411175d8bfaf2f4ac9c88fe8f86fb72f8d46e45483",
+    "exact": true
+  },
+  {
+    "path": "hmos/tool/music-library-test-harness.cjs",
+    "bytes": 8240,
+    "sha256": "8f083576fdb49896bea6562de4891a0a8b59ba268aca6559fd7c8b40d7e90ac2",
+    "after_bytes": 8240,
+    "after_sha256": "8f083576fdb49896bea6562de4891a0a8b59ba268aca6559fd7c8b40d7e90ac2",
+    "exact": true
+  },
+  {
+    "path": "hmos/tool/music-workbench-model.test.cjs",
+    "bytes": 29510,
+    "sha256": "fd5532b03fc4f0795f62ed8ba588a0260695702df895f4a631da76b57103023c",
+    "after_bytes": 29510,
+    "after_sha256": "fd5532b03fc4f0795f62ed8ba588a0260695702df895f4a631da76b57103023c",
+    "exact": true
+  },
+  {
+    "path": "hmos/tool/music-workbench-source-trace.cjs",
+    "bytes": 1592,
+    "sha256": "4f986124688c11d959786a62c10bf8370c93f0e09abb1f99a4a9d2046583ef59",
+    "after_bytes": 1592,
+    "after_sha256": "4f986124688c11d959786a62c10bf8370c93f0e09abb1f99a4a9d2046583ef59",
+    "exact": true
+  },
+  {
+    "path": "hmos/tool/music-workbench-test-harness.cjs",
+    "bytes": 14442,
+    "sha256": "52dd117cba4be5960ff09b13e6f0cc8e948b572c0a48708178d9d8f7db6ec2b6",
+    "after_bytes": 14442,
+    "after_sha256": "52dd117cba4be5960ff09b13e6f0cc8e948b572c0a48708178d9d8f7db6ec2b6",
+    "exact": true
+  }
+]

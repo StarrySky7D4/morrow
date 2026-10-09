@@ -1,5 +1,6 @@
 // Durable music metadata and operation coordination. Native owns the library,
 // complete blobs and import receipts; platform files/player leases stay outside.
+import { MusicPlaybackIdentity } from './MusicPlayback';
 export const MUSIC_TRACK_LIMIT: number = 512;
 export const MUSIC_AUDIO_LIMIT: number = 150 * 1024 * 1024;
 export const MUSIC_LYRICS_LIMIT: number = 49152;
@@ -52,7 +53,7 @@ interface MusicMutationRequest {
   action: string; library_revision: string; operation_id: string; track_id?: string;
   order?: string[]; flag?: boolean; lyrics?: string; lyric_source?: string;
 }
-export class MusicLibraryTrackIdentity {
+export class MusicLibraryTrackIdentity extends MusicPlaybackIdentity {
   trackId: string = '';
   libraryRevision: string = '0';
   importOperation: string = '';

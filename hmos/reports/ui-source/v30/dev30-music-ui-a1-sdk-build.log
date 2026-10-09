@@ -1,0 +1,591 @@
+> hvigor [32mFinished :entry:clean... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreBuild... after 105 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 14 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 26 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 4 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 3 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 2 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 1 s 632 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 28 ms [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 91 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 4 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessResource... after 5 ms [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 12 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 242 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 2 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 1 s 10 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 142 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 127 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 6 ms [39m
+[31m
+FAILURE: Build completed with 1 failure.[31m[39m
+[31m
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task 'default@CompileArkTS'.
+  > Compilation error. See log for more details
+
+[31m* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+[31m[39m
+[31m================================================================================[31m[39m
+
+26 tasks in total: 26 executed, 0 up-to-date
+> hvigor [33mWARN: When performing compilation for the x86_64 architecture:
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument][33m[39m
+[39m
+> hvigor [33mWARN: When performing compilation for the arm64-v8a architecture:
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument][33m[39m
+[39m
+> hvigor [91mERROR: Failed :entry:default@CompileArkTS... [39m
+> hvigor [33mWARN: 
+[33m1 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/Index.ets:3286:83
+ 'Function.bind' is not supported (arkts-no-func-bind)
+[39m[39m
+[33m2 WARN: [33m[33mArkTS:WARN: For details about ArkTS syntax errors, see FAQs[39m[39m
+[33m3 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/ClipboardInput.ets:173:32
+ To use this API, you need to apply for the permissions: ohos.permission.READ_PASTEBOARD [since 12]
+[39m[39m
+[33m4 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/ClipboardInput.ets:330:36
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m5 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:230:58
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m6 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:231:27
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m7 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:232:15
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m8 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:232:37
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m9 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:277:28
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m10 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:283:31
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m11 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:284:19
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m12 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:284:43
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m13 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:285:33
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m14 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:293:21
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m15 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:293:38
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m16 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:313:23
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m17 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:316:34
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m18 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:322:16
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m19 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:342:17
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m20 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:342:41
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m21 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:343:28
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m22 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:352:26
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m23 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:352:43
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m24 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:362:54
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m25 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:367:19
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m26 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:368:14
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m27 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:429:32
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m28 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:433:33
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m29 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:436:29
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m30 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:437:17
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m31 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:452:36
+ The system capacity of this api 'createMd' is not supported on all devices
+[39m[39m
+[33m32 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:452:36
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m33 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:459:32
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m34 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:463:20
+ The system capacity of this api 'update' is not supported on all devices
+[39m[39m
+[33m35 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:463:20
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m36 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:465:14
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m37 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:466:31
+ The system capacity of this api 'digest' is not supported on all devices
+[39m[39m
+[33m38 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:466:31
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m39 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFiles.ets:593:33
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m40 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:98:59
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m41 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:99:15
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m42 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:101:78
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m43 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:102:64
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m44 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:105:59
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m45 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:106:13
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m46 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:107:53
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m47 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:107:100
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m48 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:124:57
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m49 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:124:77
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m50 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:126:33
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m51 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:130:59
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m52 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:130:79
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m53 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentImagePreview.ets:131:31
+ This API is unavailable to phone, tablet.
+[39m[39m
+[33m54 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentMediaPreview.ets:26:26
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m55 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentMediaPreview.ets:27:27
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m56 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentMediaPreview.ets:28:15
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m57 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentMediaPreview.ets:29:26
+ The system capacity of this api 'media' is not supported on all devices
+[39m[39m
+[33m58 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentMediaPreview.ets:29:32
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m59 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentMediaPreview.ets:32:69
+ The system capacity of this api 'media' is not supported on all devices
+[39m[39m
+[33m60 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentMediaPreview.ets:43:55
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m61 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentMediaPreview.ets:44:52
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m62 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentMediaPreview.ets:45:53
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m63 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentMediaPreview.ets:46:56
+ The system capacity of this api 'media' is not supported on all devices
+[39m[39m
+[33m64 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentMediaPreview.ets:51:25
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m65 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/AttachmentMediaPreview.ets:53:31
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m66 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:116:52
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m67 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:117:27
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m68 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:117:55
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m69 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:117:77
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m70 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:122:30
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m71 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:122:50
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m72 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:124:27
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m73 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:128:32
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m74 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:132:16
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m75 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:156:17
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m76 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:156:41
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m77 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:157:28
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m78 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:159:29
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m79 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:160:45
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m80 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:160:62
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m81 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:162:43
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m82 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:163:19
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m83 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:164:14
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m84 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:167:53
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m85 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:172:67
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m86 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:173:19
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m87 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:173:43
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m88 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:175:36
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m89 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:176:31
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m90 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:177:81
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m91 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:177:98
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m92 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:323:33
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m93 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:325:79
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m94 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:326:19
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m95 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:326:43
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m96 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:327:36
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m97 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:328:31
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m98 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:329:39
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m99 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicFiles.ets:329:56
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m100 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/PlatformMusicPlayer.ets:53:27
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m101 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/PlatformMusicPlayer.ets:54:43
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m102 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/PlatformMusicPlayer.ets:55:26
+ The system capacity of this api 'media' is not supported on all devices
+[39m[39m
+[33m103 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/PlatformMusicPlayer.ets:55:32
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m104 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/PlatformMusicPlayer.ets:73:63
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m105 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/PlatformMusicPlayer.ets:74:60
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m106 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/PlatformMusicPlayer.ets:75:61
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m107 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/PlatformMusicPlayer.ets:78:50
+ The system capacity of this api 'media' is not supported on all devices
+[39m[39m
+[33m108 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/PlatformMusicPlayer.ets:91:66
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m109 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorInputHash.ets:5:34
+ The system capacity of this api 'createMd' is not supported on all devices
+[39m[39m
+[33m110 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorInputHash.ets:5:34
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m111 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorInputHash.ets:6:16
+ The system capacity of this api 'update' is not supported on all devices
+[39m[39m
+[33m112 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorInputHash.ets:6:16
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m113 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorInputHash.ets:7:31
+ The system capacity of this api 'digest' is not supported on all devices
+[39m[39m
+[33m114 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorInputHash.ets:7:31
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m115 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/MusicPanel.ets:316:10
+ 'onScroll' has been deprecated.
+[39m[39m
+[33m116 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFullscreen.ets:34:34
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m117 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFullscreen.ets:36:34
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m118 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFullscreen.ets:36:97
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m119 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFullscreen.ets:41:68
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m120 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFullscreen.ets:42:65
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m121 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFullscreen.ets:46:21
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m122 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFullscreen.ets:48:72
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m123 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFullscreen.ets:54:29
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m124 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/AttachmentFullscreen.ets:55:12
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m125 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/EditorTodos.ets:309:48
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+[39m[39m
+[33m126 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusiness.ets:107:32
+ The system capacity of this api 'createMd' is not supported on all devices
+[39m[39m
+[33m127 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusiness.ets:107:32
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m128 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusiness.ets:107:63
+ The system capacity of this api 'update' is not supported on all devices
+[39m[39m
+[33m129 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusiness.ets:107:63
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m130 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusiness.ets:108:29
+ The system capacity of this api 'digest' is not supported on all devices
+[39m[39m
+[33m131 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusiness.ets:108:29
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m132 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusinessSession.ets:172:30
+ The system capacity of this api 'createMd' is not supported on all devices
+[39m[39m
+[33m133 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusinessSession.ets:172:30
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m134 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusinessSession.ets:172:59
+ The system capacity of this api 'update' is not supported on all devices
+[39m[39m
+[33m135 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusinessSession.ets:172:59
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m136 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusinessSession.ets:172:108
+ The system capacity of this api 'digest' is not supported on all devices
+[39m[39m
+[33m137 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusinessSession.ets:172:108
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m138 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusinessHandoff.ets:144:30
+ The system capacity of this api 'createMd' is not supported on all devices
+[39m[39m
+[33m139 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusinessHandoff.ets:144:30
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m140 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusinessHandoff.ets:144:59
+ The system capacity of this api 'update' is not supported on all devices
+[39m[39m
+[33m141 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusinessHandoff.ets:144:59
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m142 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusinessHandoff.ets:144:111
+ The system capacity of this api 'digest' is not supported on all devices
+[39m[39m
+[33m143 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/EditorBusinessHandoff.ets:144:111
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33m144 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/Index.ets:266:54
+ The system capacity of this api 'TextInputController' is not supported on all devices
+[39m[39m
+[33m145 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/Index.ets:267:59
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+[39m[39m
+[33m146 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/Index.ets:268:58
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+[39m[39m
+[33m147 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/Index.ets:269:58
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+[39m[39m
+[33m148 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/Index.ets:270:53
+ The system capacity of this api 'TextInputController' is not supported on all devices
+[39m[39m
+[33m149 WARN: [33m[33mArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/Index.ets:271:59
+ The system capacity of this api 'TextInputController' is not supported on all devices
+[39m[39m[39m
+> hvigor [91mERROR: ArkTS Compiler Error
+[31m1 ERROR: [31m10605038 ArkTS Compiler Error
+[31mError Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:59:39
+[31m[39m
+[39m
+[31m2 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:65:130
+[31m[39m
+[39m
+[31m3 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:87:44
+[31m[39m
+[39m
+[31m4 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:95:47
+[31m[39m
+[39m
+[31m5 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:95:55
+[31m[39m
+[39m
+[31m6 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:96:42
+[31m[39m
+[39m
+[31m7 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:192:57
+[31m[39m
+[39m
+[31m8 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:220:83
+[31m[39m
+[39m
+[31m9 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:220:91
+[31m[39m
+[39m
+[31m10 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:282:50
+[31m[39m
+[39m
+[31m11 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:298:36
+[31m[39m
+[39m
+[31m12 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:308:38
+[31m[39m
+[39m
+[31m13 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:329:48
+[31m[39m
+[39m
+[31m14 ERROR: [31m10605030 ArkTS Compiler Error
+[31mError Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/model/MusicWorkbench.ets:329:56
+[31m[39m
+[39m
+[31m15 ERROR: [31m10605038 ArkTS Compiler Error
+[31mError Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/MusicPanel.ets:64:33
+[31m[39m
+[39m
+[31m16 ERROR: [31m10605038 ArkTS Compiler Error
+[31mError Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/MusicFooter.ets:7:33
+[31m[39m
+[39m
+[31m17 ERROR: [31m10605038 ArkTS Compiler Error
+[31mError Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/MusicFooter.ets:44:33
+[31m[39m
+[39m
+[31m18 ERROR: [31m10605038 ArkTS Compiler Error
+[31mError Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/Index.ets:220:46
+[31m[39m
+[39m
+[31m19 ERROR: [31m10505001 ArkTS Compiler Error
+[31mError Message: Property 'position' in type 'MusicPanelContent' is not assignable to the same property in base type 'CustomComponent'.
+  Type '() => number' is not assignable to type '(value: Position | Edges | LocalizedEdges) => CommonAttribute'.
+    Type 'number' is not assignable to type 'CommonAttribute'. At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/MusicPanel.ets:125:11
+[31m[39m
+[39m
+[31m20 ERROR: [31m10505001 ArkTS Compiler Error
+[31mError Message: Argument of type '{ type: ProgressType.Linear; }' is not assignable to parameter of type 'ProgressOptions<ProgressType.Linear>'.
+  Property 'value' is missing in type '{ type: ProgressType.Linear; }' but required in type 'ProgressOptions<ProgressType.Linear>'. At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev30-music-ui-a1/entry/src/main/ets/pages/MusicPanel.ets:415:94
+[31m[39m
+[39m
+[31mCOMPILE RESULT:FAIL {ERROR:21 WARN:149}[39m
+
+[31m* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+[39m
+> hvigor [91mERROR: BUILD FAILED in 16 s 849 ms [39m
+Exception: C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\.build\device-candidates\dev30-music-ui-a1\scripts\build-hap.ps1:10
+Line |
+  10 |    if($LASTEXITCODE) {throw 'HAP build failed'}
+     |                       ~~~~~~~~~~~~~~~~~~~~~~~~
+     | HAP build failed

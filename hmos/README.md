@@ -1,12 +1,20 @@
 # Morrow HMOS
 
-2026-10-09 **v29 当前音乐基础检查点**：实现独立持久曲库、标准本地原件的完整 length/hash FD 导入与导出、歌词读取/定位、持久选择/排序/退役，以及共享 Rust 的纯播放决策。新增实际 MusicLibrary、MusicFiles 和 MusicPlayback/PlatformMusicPlayer 基础，固定原请求与 Unknown 保留；Pending、retained 原件和 Ready 发布属于独立事务。**Index 音乐 UI 尚未接入**，不能据此称音乐产品闭环。
+2026-10-09 **v30 当前音乐界面检查点**：实际 Index 接入 MusicWorkbench、文件选择与完整原件导入、播放列表/持久选曲、播放/暂停/seek、排序/移除、离线歌词导入/全文弹层及歌词页脚。界面布局依据 Flutter 音乐面板和 little_tips 源码；外层沿用现有组件材质，默认页脚透明。恢复只读取、不创建播放器或自动播放。后台暂停保留原播放器/FD，返回不自动续播；附件媒体须先确认音乐实际暂停。Unknown 不阻止原播放器停音，原导入核对不生成新 ID；未保存全文绑定原曲目，已知部分缓存清理只重试同原对象。
+
+最终实际 ETS/tool **1118/1118 PASS，0 fail/skip/cancel**（47 suite 文件、151 项输入前后一致，29391.5177ms）；完整 API26 **SUCCESS /17.975s**，34/34 tasks 执行，323 复制/366 仓库输入一致；**八音乐模块均在实际产品 entry graph 检查并 emit**，四项包内原生库核对 PASS。Rust/C++ 实现未变，283 项 native 来源和双 ABI 静态库精确复用 v29；本轮不新增 Rust 测试/构建资格。最终 HAP **31,413,203B**，SHA256 `FB81FEF187D11B09E6DEF56B4B20280E68EED4135BD61C260638ED015408BFD1`。
+
+版本 **dev20/1000020**，包 unsigned/uninstalled，当前 HDC target 为空、模拟器进程未运行，设备验收 **NOT_RUN**。实际文件提供者/音频 codec/声音/seek/拖拽/全样式渲染、pre-begin 导入持久恢复、重启后部分清理残留、在线歌词/解密/封面/原件 GC/protected 与完整 Flutter/Windows parity 均 **OPEN**。交付仅 `codex/ArkTsUI`，不并入主线。详见 [v30 验证](reports/ui-source/v30/validation.md)。
+
+以下 v29 及更早内容保留为历史；各轮数字和“当前”只指其当轮范围。本轮资格以上述 v30 摘要、最新表和验证记录为准。
+
+2026-10-09 **v29 历史音乐基础检查点**：实现独立持久曲库、标准本地原件的完整 length/hash FD 导入与导出、歌词读取/定位、持久选择/排序/退役，以及共享 Rust 的纯播放决策。新增实际 MusicLibrary、MusicFiles 和 MusicPlayback/PlatformMusicPlayer 基础，固定原请求与 Unknown 保留；Pending、retained 原件和 Ready 发布属于独立事务。**Index 音乐 UI 尚未接入**，不能据此称音乐产品闭环。
 
 最终实际 ETS/tool **1021/1021 PASS，0 fail/skip/cancel**（43 suite 文件、143 项输入前后一致，32,783.3028ms）；Native default **200 library +3 binary PASS**、20 explicit ignored，音乐子集 8 PASS、13 个真实进程中断边界和实际 Store DTO 导出分别通过。新双 ABI release PASS 并采用，283 项 native 来源；ARM64 **58,110,214B /DD86DF95…**、x64 **56,515,718B /E9C66A49…**。最终完整 API26 **SUCCESS /30.098s**，34/34 tasks 执行，319 复制/392 仓库输入前后一致，四项包内原生库核对 PASS；最终 HAP **30,842,790B**，SHA256 `4C4292881291C769B3039E01F895BF75C6C526070DB063AB78224698743015E1`。
 
 版本保持 **dev19/1000019**。独立 Music SDK probe **SUCCESS /23.545s**，四音乐模块实际严格检查并 emit；final 产品 entry graph 未引用这四模块，probe 不作为音乐 UI 或设备运行资格。本轮包 unsigned/uninstalled，设备验收 **NOT_RUN**；实际音频 codec/声音、在线歌词、解密、封面、原件 GC、protected 宿主与完整 Flutter/Windows parity 均 **OPEN**。交付分支仅 `codex/ArkTsUI`，不并入主线。详见 [v29 验证](reports/ui-source/v29/validation.md)。
 
-以下 v28 及更早历史叙述原样保留；其中数字和“当前”只指各自当轮范围。文末音乐/分发当前表按 v29 更新，本轮资格以以上摘要及验证记录为准。
+以下 v28 及更早历史叙述原样保留；其中数字和“当前”只指各自当轮范围。该段仅记录 v29 历史资格。
 
 2026-10-09 **v28 当前分支检查点**：多行待办的纯行格式检查或剩余额度计数失败后，可显式“重新检查”。已派发的格式请求保留原 old/new、剩余额度及固定 wire；计数失败则在同一 owner、revision 和完整 raw 边界内显式重算；失败行独立保留，另一行成功不会清除其错误。同一完整选区回声保留重试资格，实际选区变化仍撤销原重试；迟到结果不覆盖较新原始输入。
 

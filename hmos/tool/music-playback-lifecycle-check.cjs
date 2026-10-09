@@ -1,0 +1,39 @@
+'use strict';
+// Host-only execution of actual playback sources; preserve all input identities
+// before/after and keep this result separate from SDK/device qualifications.
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),cp=require('node:child_process');
+const root=path.resolve(__dirname,'../..'),report=path.join(root,'hmos/reports/ui-source/v30');
+const label=process.argv[2]||'music-playback-lifecycle';
+if(!/^[A-Za-z0-9_-]{1,80}$/.test(label))throw new Error('Invalid evidence label');
+const suites=['lifecycle','model','platform','integration','store-fixture'].map(s=>'hmos/tool/music-playback-'+s+'.test.cjs');
+const inputs=['hmos/entry/src/main/ets/model/MusicPlayback.ets','hmos/entry/src/main/ets/pages/PlatformMusicPlayer.ets',
+  'hmos/tool/music-playback-test-harness.cjs',...suites,'hmos/reports/ui-source/v29/music-store-fixture.json',
+  'hmos/tool/music-playback-lifecycle-check.cjs'];
+const tsRoot=process.env.HMOS_TYPESCRIPT_PATH||'C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/ets/build-tools/ets-loader/node_modules/typescript';
+const external=[process.execPath,require.resolve(tsRoot),path.join(tsRoot,'package.json')];
+const hash=b=>crypto.createHash('sha256').update(b).digest('hex').toUpperCase();
+function inventory(files,local){return files.map(p=>{const absolute=local?path.join(root,p):p,s=fs.lstatSync(absolute);
+  if(!s.isFile()||s.isSymbolicLink())throw new Error('Input must be a regular file: '+p);
+  const b=fs.readFileSync(absolute);return {path:local?p:absolute,bytes:b.length,sha256:hash(b)};});}
+fs.mkdirSync(report,{recursive:true});
+const files={log:label+'-tests.log',inputs:label+'-inputs.json',result:label+'-result.json'};
+for(const p of Object.values(files))if(fs.existsSync(path.join(report,p)))throw new Error('Existing evidence retained; use a new label: '+p);
+const startedUtc=new Date().toISOString(),before=inventory(inputs,true),runtimeBefore=inventory(external,false);
+const execution=cp.spawnSync(process.execPath,['--test','--test-reporter=tap',...suites],{cwd:root,encoding:'utf8',maxBuffer:8*1024*1024});
+const log=(execution.stdout||'')+(execution.stderr||''),after=inventory(inputs,true),runtimeAfter=inventory(external,false);
+const count=name=>{const m=log.match(new RegExp('^# '+name+' (\\d+)$','m'));return m?Number(m[1]):null;};
+const same=JSON.stringify(before)===JSON.stringify(after)&&JSON.stringify(runtimeBefore)===JSON.stringify(runtimeAfter);
+const result={startedUtc,finishedUtc:new Date().toISOString(),exitCode:execution.status,signal:execution.signal||'',
+  error:execution.error?execution.error.message:'',tests:count('tests'),pass:count('pass'),fail:count('fail'),
+  cancelled:count('cancelled'),skipped:count('skipped'),todo:count('todo'),
+  durationMs:Number(log.match(/^# duration_ms ([\d.]+)$/m)?.[1]||0),suiteFiles:suites.length,
+  actualSourceInputs:inputs.length,sourceIdentityVerified:same,nodeVersion:process.version,
+  typescriptVersion:JSON.parse(fs.readFileSync(path.join(tsRoot,'package.json'),'utf8')).version,
+  log:files.log,logSha256:hash(Buffer.from(log,'utf8')),inputs:files.inputs,
+  scope:'Actual MusicPlayback, unchanged PlatformMusicPlayer and fixed actual Store DTO fixture with controlled host transport/Files/admission seams. SDK build, current Native Store/export, HAP, codecs, UI wiring and device are not qualified.'};
+result.qualified=execution.status===0&&same&&result.tests>0&&result.tests===result.pass&&result.fail===0&&result.cancelled===0&&result.skipped===0&&result.todo===0;
+fs.writeFileSync(path.join(report,files.log),log,'utf8');
+fs.writeFileSync(path.join(report,files.inputs),JSON.stringify({before,after,runtimeBefore,runtimeAfter},null,2)+'\n','utf8');
+fs.writeFileSync(path.join(report,files.result),JSON.stringify(result,null,2)+'\n','utf8');
+process.stdout.write(JSON.stringify(result,null,2)+'\n');
+if(!result.qualified)process.exitCode=1;

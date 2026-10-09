@@ -1,0 +1,11 @@
+{
+  "startedUtc": "2026-10-09T02:32:27.783Z",
+  "finishedUtc": "2026-10-09T02:32:46.923Z",
+  "exitCode": 0,
+  "signal": null,
+  "status": "PASS",
+  "project": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\.build\\device-candidates\\dev30-music-ui-a2",
+  "log": "dev30-music-ui-a2-sdk-build.log",
+  "sha256": "A3EBC8FAA8F260717870F58730CE895FFDD166C368949ABA42AA372BB5042161",
+  "scope": "Complete live Music UI API26 product graph; exact reused v29 native archives; not installed or device acceptance."
+}

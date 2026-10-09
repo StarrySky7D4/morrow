@@ -1,0 +1,12 @@
+{
+  "createdUtc": "2026-10-09T02:33:24.650Z",
+  "scope": "Live Index MusicWorkbench/MusicPanel/MusicFooter/Lyrics integration and background/media ownership. API26 unsigned debug SDK check; reused exact v29 Rust archives. Not device playback, signed release or full Flutter/Windows parity.",
+  "path": ".build/artifacts/dev30-music-ui-a2/entry-default-unsigned.hap",
+  "bytes": 31413203,
+  "sha256": "FB81FEF187D11B09E6DEF56B4B20280E68EED4135BD61C260638ED015408BFD1",
+  "archive_path": ".build/artifacts/dev30-music-ui-a2/entry-default-unsigned.hap",
+  "signed": false,
+  "installed": false,
+  "versionName": "0.1.0-hmos-dev.20",
+  "versionCode": 1000020
+}

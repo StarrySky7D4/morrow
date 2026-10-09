@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "scope": "ACTUAL_COMPOSED_HOST_MODELS_AND_STORED_NATIVE_DTO_ONLY",
+  "started_at": "2026-10-09T02:33:05.001Z",
+  "finished_at": "2026-10-09T02:33:12.171Z",
+  "node": "C:\\Program Files\\Huawei\\DevEco Studio\\tools\\node\\node.exe",
+  "node_version": "v24.14.1",
+  "tests": [
+    "hmos/tool/music-workbench-model.test.cjs",
+    "hmos/tool/music-library-model.test.cjs",
+    "hmos/tool/music-library-native-dto.test.cjs"
+  ],
+  "exit_code": 0,
+  "signal": null,
+  "passed": 65,
+  "failed": 0,
+  "count": 65,
+  "duration_ms": 7105.1614,
+  "actual_inputs": 19,
+  "all_inputs_exact": true,
+  "log_sha256": "f1bb5527db5576e7f621e046fc4aa08520f608a04df2fdd0ab00a45fe70ecc4a",
+  "claims_excluded": [
+    "new native Store execution",
+    "new Rust policy execution",
+    "SDK build",
+    "OHOS picker/FD provider",
+    "AVPlayer codec or real playback",
+    "device screenshots",
+    "full Windows/HMOS parity"
+  ],
+  "ok": true
+}

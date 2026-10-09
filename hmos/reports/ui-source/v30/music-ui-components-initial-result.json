@@ -1,0 +1,81 @@
+{
+  "qualification": "PASS_SCOPED_ACTUAL_COMPONENT_METHODS",
+  "sdk_build": "NOT_RUN",
+  "device_rendering": "NOT_RUN",
+  "actual_pointer_reorder": "NOT_RUN",
+  "avplayer_audio": "NOT_RUN",
+  "exit_code": 0,
+  "tests": 24,
+  "passed": 24,
+  "failed": 0,
+  "source_exact_before_after": true,
+  "input_count": 9,
+  "design_reference_count": 4,
+  "duration_ms": 4133.6841,
+  "log_sha256": "93058494901a3a8a08a807bf43ff8beb199860f7dc5d97dc12c46e86732f06b1",
+  "inputs": [
+    {
+      "path": "hmos/tool/run-music-ui-components.cjs",
+      "byte_length": 4083,
+      "sha256": "b437deea943ceaf0a6224e99d2643a76b33f1b4c9c3b46de446c826cad371fc6"
+    },
+    {
+      "path": "hmos/tool/music-ui-component-test-harness.cjs",
+      "byte_length": 4933,
+      "sha256": "248acbce247c536905cb28d1dde8115dd725f43d0b5c38034907c1390d7efb10"
+    },
+    {
+      "path": "hmos/tool/music-ui-components.test.cjs",
+      "byte_length": 15554,
+      "sha256": "af140caef178eaca0fb2b06dd4cca13ddd7561b4711f74d82a512e15f990ca72"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/MusicPanel.ets",
+      "byte_length": 27920,
+      "sha256": "7a8dcc1c02932c0ab75461e32d6b663da11730c33df931341b38986ced439a6e"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/MusicFooter.ets",
+      "byte_length": 4487,
+      "sha256": "4acf34b63ffbd842f1d5aaf944e00d083a43a131f25fbf42655196cd1ea4278d"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicUi.ets",
+      "byte_length": 1418,
+      "sha256": "96b2a7f214927b1788ed45ac791c1d472066283539286814ded14b96f54df1ab"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicLibrary.ets",
+      "byte_length": 45568,
+      "sha256": "7317b45a6e853ff78bd0fe44d39b3b8957da3dab4ca16e014903aac70095df36"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicPlayback.ets",
+      "byte_length": 21827,
+      "sha256": "bb659bf5fb6c528c6171aa492af7416003341d916fa0394902cb485b55feacc0"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/UiStrings.ets",
+      "byte_length": 775172,
+      "sha256": "17801dd05b1afd9684f452b0e5b736ffba7c5520fb5413a8b6d002216cb1a576"
+    }
+  ],
+  "controlled_seams": [
+    "ArkUI field props",
+    "measured Area/GestureEvent",
+    "Scroller",
+    "timers",
+    "callback delivery"
+  ],
+  "assertions": [
+    "selected stable identity and actual playing phase",
+    "selected idle explicit toggle and strict seek",
+    "owned pause survives library Unknown",
+    "originalSaved spool inspect without fabricated identity",
+    "exact pending choice, no cancel/delete",
+    "complete uncropped unsaved lyrics",
+    "revision/import/hash/order held reorder guards",
+    "collapse preserves List and Scroller",
+    "Footer default material independence"
+  ]
+}

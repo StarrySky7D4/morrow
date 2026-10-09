@@ -1,0 +1,757 @@
+[
+  {
+    "path": "hmos/entry/src/main/ets/entryability/EntryAbility.ets",
+    "bytes": 3992,
+    "sha256": "879C0E1F5D32794717DE35167156A28AE1C7B9270A9EBF5A37EB37DA3190CD10"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/entrybackupability/EntryBackupAbility.ets",
+    "bytes": 1116,
+    "sha256": "D3636F4C9E2AF79AB59105A1846427D6967DCD31CA93EC4B0A3190B85E63CE7A"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/Appearance.ets",
+    "bytes": 5126,
+    "sha256": "0FCAA587D24B1FD0A1B4D066F465BC2178FF16B830187E1E2A250E3F5B4A67B2"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentFiles.ets",
+    "bytes": 45611,
+    "sha256": "74AD85E0E6504EB97BC81D9C1983D6F3369E6C72FE0C14D81ED0F92B4B8849BB"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentFullscreen.ets",
+    "bytes": 8612,
+    "sha256": "36CCB92A53F1918C8795E31E43E6F0FD723EF61E8A718E0B88BC6FE9ECD4EE42"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentImageGestures.ets",
+    "bytes": 8076,
+    "sha256": "73AF8DD840BAB941C7A5ACDBC45639920E0B423912D441472C1756FC77647FC9"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentImportSelection.ets",
+    "bytes": 13477,
+    "sha256": "A738AA4A79BFA401BB12B69148298EE1F86E2D9ECE836EDE3F32E8E6441C5A2B"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentMediaGestures.ets",
+    "bytes": 7793,
+    "sha256": "7DE415764EC18953725B8E64EC2BB13F894DDE484FDAB1A15A5AC2913641D43C"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentOpen.ets",
+    "bytes": 12503,
+    "sha256": "92D0C07AB7FFE5B8A5622E4DC731B07713EE6B46B5967A56249668205409506B"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/AttachmentPlayback.ets",
+    "bytes": 10919,
+    "sha256": "4BDB0763E4CA6D0EC665AC9D2C7BC9BFF38E2DA8167DAB8F7E6D532FFD2FECCD"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/Attachments.ets",
+    "bytes": 3048,
+    "sha256": "7375378A85BFEE215979B271AA40AA69C351F32277DC669861A6AAC136D30B3F"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/CardDataSource.ets",
+    "bytes": 2367,
+    "sha256": "D94192F38F0FD29572DA3FBC7EAB55390A9893BB65355085244FB4573236DEEB"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/CardOrder.ets",
+    "bytes": 9120,
+    "sha256": "8ECC6057DAA4667002319AC5CBD5C85403B0D52A9254C9923384B6A9012EC384"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/ClipboardInput.ets",
+    "bytes": 19438,
+    "sha256": "0F286EA943C4D1FF5A9AF2B3739F5EF9536485051C19B0159255B8296146B90C"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/ClipboardPaste.ets",
+    "bytes": 11652,
+    "sha256": "98CCD0F8D25D4B3C657023EC7D8F521B7C1278083260D5A7EEAE2ED093610658"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorBusiness.ets",
+    "bytes": 26878,
+    "sha256": "BBD4DE0B1E02A67E19345147EB7DE4C01622C1E015E12FB0C1431A101945C4FD"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorBusinessHandoff.ets",
+    "bytes": 47627,
+    "sha256": "FC2878C8F8FC2F312CF879023A1E445FE2CB3AE409755372FEB9FFBC596723F0"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorBusinessRecovery.ets",
+    "bytes": 10792,
+    "sha256": "6B02C274CB3B6795FB89C8457096AA2396ED22CB6F50ACDB86A1B728B92533EC"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorBusinessSession.ets",
+    "bytes": 40102,
+    "sha256": "58E992B7E8BDAE01F7BC07B3DEE9E66B7BCAE6712A945B5509382121E5AF52C6"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorDirectInput.ets",
+    "bytes": 11848,
+    "sha256": "A56119B3DFC3EA52E83082F0654C6BD9164383A646AF503B6D72CE2F0D7E6030"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorDraft.ets",
+    "bytes": 37929,
+    "sha256": "B88A46D0371D8C6F193187D1A0E1ACF41671D4991CDBD59C451B8BCF66CF3775"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorDraftFork.ets",
+    "bytes": 12805,
+    "sha256": "2F5CC8586D2400F99EE7598DD816970E63D9E3D4B53C5DFFBC54CB4E4062263C"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+    "bytes": 6929,
+    "sha256": "10C3162E77A947335ACF0C3DF2E464C80195D0AC2BBC2922BBB09C0A8A626842"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorInputHash.ets",
+    "bytes": 463,
+    "sha256": "C894E8F44AA1A447096A8AC12B9A9C437EEAA64DD4875AA6116E7635893BE628"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorInputPolicy.ets",
+    "bytes": 7887,
+    "sha256": "64C86330D3DBC8FA85F88D6F0692D9ED15C88814C711F4F2B665827B3628AE2B"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorPaste.ets",
+    "bytes": 2767,
+    "sha256": "28D54A7D02BF644D68B58AC68A4D824AB2FF3FB71B87AB0E00C279456B6D160E"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorTodos.ets",
+    "bytes": 25625,
+    "sha256": "72D6E76423130E183DD770C1BEF9AAD1313DC297969C9882BDC0E03AE540A440"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/Markdown.ets",
+    "bytes": 13451,
+    "sha256": "B1B173937D53F158D9D13A865A4F00D21BAFF6067D324EC5C0E2CD5089793FE9"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/MusicFiles.ets",
+    "bytes": 29363,
+    "sha256": "93613ABDEDBBFB811BC48A0366643825A48E9FAC622FF52A275D5915BE6EC34D"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/MusicLibrary.ets",
+    "bytes": 45655,
+    "sha256": "C293488D9912F6EFDE7689E4C256BC0CFCCFE153E82A822619ECBB291037C41F"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/MusicPlayback.ets",
+    "bytes": 21859,
+    "sha256": "9F1E29260AADBFA8E51216DAEF323C2E19A8B39CC5B95CB17A33BCC6C1D571DA"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/MusicUi.ets",
+    "bytes": 1498,
+    "sha256": "F61772894A0E1D388C640F95230E09BDC5818E6FA1772635A739CB60531E6990"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/MusicWorkbench.ets",
+    "bytes": 27626,
+    "sha256": "30B643CD380A5F4A54297C17406DCE8BBD55373A9AA09CDCF6C9255348152974"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/QueryCoordinator.ets",
+    "bytes": 3931,
+    "sha256": "2E45179BEA198F7C42EBBDF69D87F1C0C33BFF496B362F1792BCA2624D410798"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/UiStrings.ets",
+    "bytes": 775172,
+    "sha256": "17801DD05B1AFD9684F452B0E5B736FFBA7C5520FB5413A8B6D002216CB1A576"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/VerifiedImages.ets",
+    "bytes": 4645,
+    "sha256": "1A04E9C53432759D9734ACA7582BC9CAE6D951EC3DFCF124686DC67ACBA50F3E"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/Workbench.ets",
+    "bytes": 2502,
+    "sha256": "71582E668921776554E48F0469E1F6B323728DB076082FD22ED5AE7E4BB0B423"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/AttachmentImagePreview.ets",
+    "bytes": 14047,
+    "sha256": "484076C31DCF78DDDB69B0EA27F6BB46C8FD753FC9763F0F07759CE9438442A8"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/AttachmentMediaPreview.ets",
+    "bytes": 17283,
+    "sha256": "DB0E2AD65213C06CEE57BDB1F683EAFEB0DEAFBF93D10484D0F5DC0E0C315A27"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/ColorWheel.ets",
+    "bytes": 2444,
+    "sha256": "1DF284CD4D29821EF53CC10891218A397D978652E9CF3F1FEF2651C542440705"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/EditorTodos.ets",
+    "bytes": 25410,
+    "sha256": "00110309FF3DEE60905501D3E5AF45518AEAEB642CFC28AD3D8A2AA7CEC68870"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/EditorViewLease.ets",
+    "bytes": 793,
+    "sha256": "96624FE1F3ADF1528BF188F0C7FFFBE838454833499E3EDA1BAB48E428B4CFF3"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/Index.ets",
+    "bytes": 337408,
+    "sha256": "8AA4A20DA472A505914E159D215D42FC883C02DE34277575770B39CC8174BB98"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/MarkdownPreview.ets",
+    "bytes": 8627,
+    "sha256": "8F595963475B29CF9EE3A9CFA5B3307AA3B213C61F7DC517C13DD645A3A33922"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/MusicFooter.ets",
+    "bytes": 4805,
+    "sha256": "DACAE9261A10EE6C1A7FF5A02DE9B0E79A525F06F930D39D64BB9F22866BE317"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/MusicPanel.ets",
+    "bytes": 28252,
+    "sha256": "6A627DB1B98C978908445B603A4B380D467DCE5B812EEB372C2E5DDBD386C7AF"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/PlatformMusicPlayer.ets",
+    "bytes": 5959,
+    "sha256": "07446422A8376BA1885ED496BACDC8AE75DEA661289C649FDBE40F81C9C23A65"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/StudioArtwork.ets",
+    "bytes": 6576,
+    "sha256": "9CA8D8BBC1580E1B2A0D5D9F3251765DF44A04D78BA3E0791E778FBD74E4983D"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/pages/SurfaceRelief.ets",
+    "bytes": 2969,
+    "sha256": "BB057E63CD84ACEDCA603D003D3ACECBCF250AE2E4A00636CF314C8876F80688"
+  },
+  {
+    "path": "hmos/reports/ui-source/v22/editor-business-store-fixture.json",
+    "bytes": 16708,
+    "sha256": "7930BBE56C010ED33D80806703B3CFF73D211FD4D631BEFD4681AE7E46D12C70"
+  },
+  {
+    "path": "hmos/reports/ui-source/v24/editor-intent-store-fixture.json",
+    "bytes": 39256,
+    "sha256": "9C8BD71EE6C42AD965A129973C5943F62A38261EEF99310FA3D12AF99A9999BB"
+  },
+  {
+    "path": "hmos/reports/ui-source/v25/editor-handoff-store-fixture.json",
+    "bytes": 91081,
+    "sha256": "9AF7CCAABAF247BBB06E60CD7302DA878F515BAA3704495735542BDB783E486F"
+  },
+  {
+    "path": "hmos/reports/ui-source/v26/editor-current-v2-store-fixture-before-body-change.json",
+    "bytes": 38546,
+    "sha256": "7E1CAD9D3F2ADB5C9F8F369D8EA3E21DFF10852B1776B72E813DAA82B80E3D1F"
+  },
+  {
+    "path": "hmos/reports/ui-source/v26/editor-current-v2-store-fixture.json",
+    "bytes": 38806,
+    "sha256": "50F9037B3A235CFF72E1423BF4CE5F30CF6B655C243373FA7F6B273BB926B301"
+  },
+  {
+    "path": "hmos/reports/ui-source/v26/editor-reopen-history-store-fixture.json",
+    "bytes": 75959,
+    "sha256": "4191624D7B2894ABC17A3874EA3005249B450E6EE270B9C880EA2F04530415DB"
+  },
+  {
+    "path": "hmos/reports/ui-source/v27/editor-card-source-store-fixture.json",
+    "bytes": 84863,
+    "sha256": "409C9ADF3FA6297AA60F9EA7130B8D39C451B37516965DA48D7C2548895449FF"
+  },
+  {
+    "path": "hmos/reports/ui-source/v29/music-playback-store-fixture-inputs.json",
+    "bytes": 2085,
+    "sha256": "FAA8370F8320692CB269C2BD9A83AE3B2172683D7F5E5DDD9A8124E6788AF2AF"
+  },
+  {
+    "path": "hmos/reports/ui-source/v29/music-playback-store-fixture-result.json",
+    "bytes": 779,
+    "sha256": "A8857A00B0DCF820D5E9270925A6BB8F2BB99ECB82BAFCE3B3A5FBF3790F6FFC"
+  },
+  {
+    "path": "hmos/reports/ui-source/v29/music-store-fixture-stage1.json",
+    "bytes": 12868,
+    "sha256": "B60E2AE4F0E995690FB0B1070FC5BE5C5025DBBA302CB8CB16A2D0D0B2FBF640"
+  },
+  {
+    "path": "hmos/reports/ui-source/v29/music-store-fixture.json",
+    "bytes": 65127,
+    "sha256": "DA6D8DF4F50F59555A4064AB29C9B302CE29B85A843DEB03F2F5C9EB0D83B9B2"
+  },
+  {
+    "path": "hmos/reports/ui-source/v30/run-models.cjs",
+    "bytes": 2891,
+    "sha256": "84A2DC9552F5B0EB82A977AC5721C1FAF4EB458665ABEB9382A57F7E5FFBC227"
+  },
+  {
+    "path": "hmos/tool/appearance-model.test.cjs",
+    "bytes": 3928,
+    "sha256": "C665A3C82CB1A437BFA72A9C5C19A45D0DF9B306F02C8E06CCE46BA282224011"
+  },
+  {
+    "path": "hmos/tool/attachment-device-check.cjs",
+    "bytes": 9831,
+    "sha256": "AD5D56DE0FE721A64DB7471F4F02326BCAC381EBE6C76A63A23AA9C2759E368F"
+  },
+  {
+    "path": "hmos/tool/attachment-files-model.test.cjs",
+    "bytes": 54460,
+    "sha256": "F455BC6C20F9DC559F1E6C861FB32EDF35C5D66316946471F599BA837AF5A94A"
+  },
+  {
+    "path": "hmos/tool/attachment-fullscreen-model.test.cjs",
+    "bytes": 10549,
+    "sha256": "A2E34F06BC57849BA0DAF0C49CB7831B7EF53EC2BA1DC4911F4CFC31FF653922"
+  },
+  {
+    "path": "hmos/tool/attachment-image-gestures-model.test.cjs",
+    "bytes": 18456,
+    "sha256": "15CCA2D9CF119F63867A8428F91A5B4205E3750C1ED3ACF8BA8D7BC0749CEA14"
+  },
+  {
+    "path": "hmos/tool/attachment-import-selection-model.test.cjs",
+    "bytes": 17227,
+    "sha256": "3563987CCFDB4CA967764E028127FE36323ADA45B548A910370CFA7333EBC81A"
+  },
+  {
+    "path": "hmos/tool/attachment-media-gestures-model.test.cjs",
+    "bytes": 13877,
+    "sha256": "15A50A898B955E78C9A0EDD671F18BA61F93B52DBC6E78718532F78244931DCD"
+  },
+  {
+    "path": "hmos/tool/attachment-open-model.test.cjs",
+    "bytes": 15495,
+    "sha256": "CEC8F9DBD7B9AF0658DE2438714528B2886A94FBB02744037314BEBC8E5BD465"
+  },
+  {
+    "path": "hmos/tool/attachment-playback-model.test.cjs",
+    "bytes": 14766,
+    "sha256": "6E39D6EC88B0B4D36FD73775083DB7E50A7741F4A267372FE32BEE10EBCBFDEC"
+  },
+  {
+    "path": "hmos/tool/build-compare.cjs",
+    "bytes": 3670,
+    "sha256": "A8BCEF25E8B0A4003E07E095934AB26874A288D379E4BDC6846D14274CAB04C8"
+  },
+  {
+    "path": "hmos/tool/card-data-source.test.cjs",
+    "bytes": 3652,
+    "sha256": "C0A3F269E47197C1FB97AE1DA89FEB3C7E157254C41E883BDEE5D24BE5AB3854"
+  },
+  {
+    "path": "hmos/tool/card-interactions-device-check.cjs",
+    "bytes": 4714,
+    "sha256": "7EEC3106FC5F65DED66DD2ADC2E1A3D351A9724B45AF71B34E77BDA012C8D438"
+  },
+  {
+    "path": "hmos/tool/card-order-model.test.cjs",
+    "bytes": 14268,
+    "sha256": "55E30B1E96C4C42185E8DFC50DE161CB2C54B51C9BBE8E1949482DF8F00256ED"
+  },
+  {
+    "path": "hmos/tool/card-workflow-device-check.cjs",
+    "bytes": 9082,
+    "sha256": "7C9BD57825E20F68C92B299912BA15E48FAAE65C14ED06E3C00F5AD9F83B03E9"
+  },
+  {
+    "path": "hmos/tool/checkpoint-sdk-smoke/prepare.cjs",
+    "bytes": 7573,
+    "sha256": "4CEC216A906852A286CAA8F04DE9262A135F1DA57A3A1FBF1B884B8500E57EFB"
+  },
+  {
+    "path": "hmos/tool/checkpoint-sdk-smoke/verify.cjs",
+    "bytes": 1990,
+    "sha256": "F8CDB982B3CC48F5ECE257CB488076F495DA674DF1921042A97572B743CBCAF8"
+  },
+  {
+    "path": "hmos/tool/clipboard-device-check.cjs",
+    "bytes": 7210,
+    "sha256": "664619F319988509E87AE42D1085766F96EE09578BC97194A26301B482DE92DB"
+  },
+  {
+    "path": "hmos/tool/clipboard-files-model.test.cjs",
+    "bytes": 24588,
+    "sha256": "C08F8AE2AD71BF4A706AD3DF97C8703041D901F7162994B59D9252136AF92D1D"
+  },
+  {
+    "path": "hmos/tool/clipboard-input-model.test.cjs",
+    "bytes": 19756,
+    "sha256": "E39D760F8C7EC8952AC5CC3E883893717460C322164B5A98C8F1C4B6B3F6E1C1"
+  },
+  {
+    "path": "hmos/tool/clipboard-paste-model.test.cjs",
+    "bytes": 10707,
+    "sha256": "CB116852341CF51EDBFE1E4C3ECC6FEFA86E182683D605D15E3E8A3CEF75F8CB"
+  },
+  {
+    "path": "hmos/tool/clipboard-test-harness.cjs",
+    "bytes": 8201,
+    "sha256": "3E8765FFF99F67CC98128AE57D4AD5B527CC8A56179D6AE49606F3263E1162A0"
+  },
+  {
+    "path": "hmos/tool/draft-device-check.cjs",
+    "bytes": 13361,
+    "sha256": "2219B6C09F4DBE683A23ECFEFD58621B064C8FF8333007F8F83B235CAD84B9B3"
+  },
+  {
+    "path": "hmos/tool/editor-business-handoff-model.test.cjs",
+    "bytes": 50979,
+    "sha256": "27AA2565DCA25BFB9E9937F523395DCD1CCBC8DD6AEC747701B2E85FEB369AC3"
+  },
+  {
+    "path": "hmos/tool/editor-business-model.test.cjs",
+    "bytes": 31934,
+    "sha256": "CAFC77CFDC2DAC380B0E166A48E861A546E354A4034E149566F5BF1156665B4E"
+  },
+  {
+    "path": "hmos/tool/editor-business-recovery-model.test.cjs",
+    "bytes": 18482,
+    "sha256": "7930D64702F5FDDCCB2EDE1CB6FAC8374EBB50F4BCA42762984070922940F00E"
+  },
+  {
+    "path": "hmos/tool/editor-business-session-model.test.cjs",
+    "bytes": 45882,
+    "sha256": "363E435D2AF0EB7B5AB3ED382FDF129F67A2A5A54283FAC7ACA50D08599F2B59"
+  },
+  {
+    "path": "hmos/tool/editor-direct-input-model.test.cjs",
+    "bytes": 20821,
+    "sha256": "FF1C0D41AC3756D4BB7BF1FD20E2C85F79D97F3FB637434202DB0AD5F6F32D19"
+  },
+  {
+    "path": "hmos/tool/editor-draft-fork-model.test.cjs",
+    "bytes": 23183,
+    "sha256": "6A22502FEA43427953DC3075CC8B6A753DD343D82F8983AD92D0599898666517"
+  },
+  {
+    "path": "hmos/tool/editor-draft-model.test.cjs",
+    "bytes": 25895,
+    "sha256": "49207C19C446216AC726FF05AD223A2ABAA216DE01B0B5EE303D772DF6A18A6F"
+  },
+  {
+    "path": "hmos/tool/editor-field-policy-model.test.cjs",
+    "bytes": 7616,
+    "sha256": "D100232B950A101031F78AF1BF69992A673D979A0C853763C90439803CA67EC0"
+  },
+  {
+    "path": "hmos/tool/editor-field-test-harness.cjs",
+    "bytes": 2497,
+    "sha256": "FE8DB46B347C64FB28DF463AD335438576AEEED528B85BFCD14C70A631C96B13"
+  },
+  {
+    "path": "hmos/tool/editor-input-policy-model.test.cjs",
+    "bytes": 8686,
+    "sha256": "13541A54BECB0D1201B30573C234F85F24E00760703020226FD48F81B27F5F61"
+  },
+  {
+    "path": "hmos/tool/editor-paste-model.test.cjs",
+    "bytes": 5162,
+    "sha256": "49A3E164140E9C3BE1A1CAABFD87267DC4BEC3FBF265B5EFA6DB458AAABCEFA6"
+  },
+  {
+    "path": "hmos/tool/editor-todos-component-methods.test.cjs",
+    "bytes": 60848,
+    "sha256": "6F8731C9EF1AC3B9A20C3975461F695C2A3ADD66D295C482F8A05DC65B0A5E6D"
+  },
+  {
+    "path": "hmos/tool/editor-todos-model.test.cjs",
+    "bytes": 36277,
+    "sha256": "2761991C5EC3B316216A23F4B9943E51B4C388BCB7EEE96D7AD8534C62D92BAC"
+  },
+  {
+    "path": "hmos/tool/editor-todos-retry-test-harness.cjs",
+    "bytes": 2322,
+    "sha256": "6702D4ED32E717B6D4D57DA823B9C4C603B5A80B35228410565B0635FB563836"
+  },
+  {
+    "path": "hmos/tool/generate-ui-strings.cjs",
+    "bytes": 1246,
+    "sha256": "49EB58759C379DA8BDF9FAD5A3C280CFEA4131345094AD926B801B7505DB74A1"
+  },
+  {
+    "path": "hmos/tool/image-device-driver.cjs",
+    "bytes": 11700,
+    "sha256": "9D34369DDFDDDC7A28E4189E3576859436BCD85842607253A17153ACA4962B11"
+  },
+  {
+    "path": "hmos/tool/image-device-driver.test.cjs",
+    "bytes": 8381,
+    "sha256": "4BD0F2B9B73A204F29512781FB981BC5B86429A2A3B5CB9FCD3BD87D1921FCF3"
+  },
+  {
+    "path": "hmos/tool/image-gesture-tester.test.cjs",
+    "bytes": 13284,
+    "sha256": "6684A909B89D8DAF191735E0C32F4E92E6547F181D29E3F92889E5B66576A813"
+  },
+  {
+    "path": "hmos/tool/image-gesture-tester/command.cjs",
+    "bytes": 2452,
+    "sha256": "9E182635D603BC5889B2F945E164D869B880396490363EF582D0AC9A61F89C9A"
+  },
+  {
+    "path": "hmos/tool/image-gesture-tester/prepare.cjs",
+    "bytes": 5542,
+    "sha256": "E1E8AEA89067BA7898CB40F9D5E411A7E3FCE8902E6A081DA8E19EC75CED1CDF"
+  },
+  {
+    "path": "hmos/tool/index-business-integration.test.cjs",
+    "bytes": 25548,
+    "sha256": "5FDF7940A24EB84169BBB29DB37970B81E9DDB5F9E4729933421B07FFC677EEB"
+  },
+  {
+    "path": "hmos/tool/index-business-recovery-integration.test.cjs",
+    "bytes": 34278,
+    "sha256": "8C990D4DADA1B0FC104422770F7BD451BE1EE026D36D1CD42830A7B2C0CA315E"
+  },
+  {
+    "path": "hmos/tool/index-business-recovery-test-harness.cjs",
+    "bytes": 11999,
+    "sha256": "7D68C464FB73E2D81FCF3B7E217EF5A98B6A9E5D343187A6CF23FB1D5614B7B8"
+  },
+  {
+    "path": "hmos/tool/index-business-test-harness.cjs",
+    "bytes": 35080,
+    "sha256": "76122ACA4AAE4D2FFB13DDC321B9E5E61CFC183FBA060396F41E6833C8DA97E9"
+  },
+  {
+    "path": "hmos/tool/index-clipboard-integration.test.cjs",
+    "bytes": 27267,
+    "sha256": "8410100F151758DA7F6E4A6FAF0F5E01A05FA4F34F31F328DA53DE09680D68A1"
+  },
+  {
+    "path": "hmos/tool/index-draft-fork-integration.test.cjs",
+    "bytes": 27950,
+    "sha256": "F62A65D75B7B9D75A241497253177CD6BB1B3455D1D460C98B55842D3B993ECA"
+  },
+  {
+    "path": "hmos/tool/index-editor-field-integration.test.cjs",
+    "bytes": 26323,
+    "sha256": "7B6F7BF9CEB321527BB025CD1D0CDA6C11E0305F006359352CF796854AD02C7D"
+  },
+  {
+    "path": "hmos/tool/index-editor-todos-integration.test.cjs",
+    "bytes": 20569,
+    "sha256": "D3974D5CBD97FBE6AC232C67285FE826536316BA2F8A99DF80F9A63693542486"
+  },
+  {
+    "path": "hmos/tool/index-music-integration.test.cjs",
+    "bytes": 7773,
+    "sha256": "1835744015190D0F1D0560F407E02CC013F2E9FB793BADAC407DD497301A75B0"
+  },
+  {
+    "path": "hmos/tool/inline-device-check.cjs",
+    "bytes": 6923,
+    "sha256": "28344561DE19C9DEC006DC740A7D37A113259F68A58332FCAA843ACA370583AE"
+  },
+  {
+    "path": "hmos/tool/inline-removal-device-check.cjs",
+    "bytes": 2844,
+    "sha256": "BA011D77E94622CFC31420952D91390A8223D711D0BBF9272E7F2F9A1F91652A"
+  },
+  {
+    "path": "hmos/tool/markdown-device-check.cjs",
+    "bytes": 10928,
+    "sha256": "B7A51EE367F60C63314E939D4BF02188F74D4069283AD6EC3D8CF98DBFA80907"
+  },
+  {
+    "path": "hmos/tool/markdown-model.test.cjs",
+    "bytes": 19463,
+    "sha256": "98CA3D5FF1188CAFDD5C282C8BE941F2D22023ED53F34F59F7876BD0B3F19C0F"
+  },
+  {
+    "path": "hmos/tool/masonry-device-check.cjs",
+    "bytes": 6865,
+    "sha256": "B27F1992346C4E5C49B0C76809FE42F2A5644BD612495B973AD39585DFDEE513"
+  },
+  {
+    "path": "hmos/tool/masonry-seed-device.cjs",
+    "bytes": 1530,
+    "sha256": "AAEB21BBDDBC222924BEFB83A60B45FBF8D540E9A6DE916ADDA1D199D95A3591"
+  },
+  {
+    "path": "hmos/tool/media-controls-device-check.cjs",
+    "bytes": 23740,
+    "sha256": "E8138980AC50CB76EEF7C6DCA28C31B52DCDD44B51D2BF257EF12D9C1FB75025"
+  },
+  {
+    "path": "hmos/tool/media-device-check.cjs",
+    "bytes": 7101,
+    "sha256": "899CA07894F2B2403692662CA05AC5FF51185885E87C944AD856D4F04ADFD8D9"
+  },
+  {
+    "path": "hmos/tool/multiselect-device-check.cjs",
+    "bytes": 31817,
+    "sha256": "0A209BC571E4DBB867E0B225E0AA15953FBC4822325D7E75B409FDE69AC8F0F4"
+  },
+  {
+    "path": "hmos/tool/music-files-cleanup-check.cjs",
+    "bytes": 3531,
+    "sha256": "81D5087CE87516A78C43CA8176382D9ABBB0D2C98098BD75E260472AC57980F5"
+  },
+  {
+    "path": "hmos/tool/music-files-model.test.cjs",
+    "bytes": 21406,
+    "sha256": "C252C5489B989C88D307F05488E22B067C35DD1812FB68F25899514C9ED146CD"
+  },
+  {
+    "path": "hmos/tool/music-library-model.test.cjs",
+    "bytes": 24172,
+    "sha256": "B41129F3F71BA8224B67CC7D60503DB860B1AFFD9A64225055E37E40E502923E"
+  },
+  {
+    "path": "hmos/tool/music-library-native-dto.test.cjs",
+    "bytes": 5705,
+    "sha256": "4DD969C1251957564D8B9C411175D8BFAF2F4AC9C88FE8F86FB72F8D46E45483"
+  },
+  {
+    "path": "hmos/tool/music-library-source-trace.cjs",
+    "bytes": 1350,
+    "sha256": "479DE0C257519BDE75A282041CC5E5852F4966E0A9A2468BF016DCA9D7584C5F"
+  },
+  {
+    "path": "hmos/tool/music-library-test-harness.cjs",
+    "bytes": 8240,
+    "sha256": "8F083576FDB49896BEA6562DE4891A0A8B59BA268ACA6559FD7C8B40D7E90AC2"
+  },
+  {
+    "path": "hmos/tool/music-playback-integration.test.cjs",
+    "bytes": 5521,
+    "sha256": "7F798DE09AB5BBF27D393455E11F29B62A0A6B45D6E692A3CD2489C232C875ED"
+  },
+  {
+    "path": "hmos/tool/music-playback-lifecycle-check.cjs",
+    "bytes": 3917,
+    "sha256": "50896030B00F4439631F216D64CCA4C0D436F0454E3E0A8269BB5FEFBE6BD2AE"
+  },
+  {
+    "path": "hmos/tool/music-playback-lifecycle.test.cjs",
+    "bytes": 13157,
+    "sha256": "F80D1E552685DB6CCFC9473B914507AF10D0708FD1CBFE715B10024EF848C7F9"
+  },
+  {
+    "path": "hmos/tool/music-playback-model.test.cjs",
+    "bytes": 19035,
+    "sha256": "EDC070B349C9F0E475193429ADC04791112BB6EE3B1046F8691B1BF45D53AEBE"
+  },
+  {
+    "path": "hmos/tool/music-playback-platform.test.cjs",
+    "bytes": 7406,
+    "sha256": "5FBA2B6B3B644EF0AA6F20C75CF5EB6AE30BDF532727A04C13FA44983507EBCC"
+  },
+  {
+    "path": "hmos/tool/music-playback-store-fixture.test.cjs",
+    "bytes": 6538,
+    "sha256": "52FC505455DCE5C8C9F9222864BC68467FE097E2CEDC52AB1DA09C297D6326AE"
+  },
+  {
+    "path": "hmos/tool/music-playback-test-harness.cjs",
+    "bytes": 5783,
+    "sha256": "7DC14297BB75CD38EBC20A9C99D559011EFD46EF190DF7BD45297EA3C3CDE03A"
+  },
+  {
+    "path": "hmos/tool/music-ui-component-test-harness.cjs",
+    "bytes": 4933,
+    "sha256": "248ACBCE247C536905CB28D1DDE8115DD725F43D0B5C38034907C1390D7EFB10"
+  },
+  {
+    "path": "hmos/tool/music-ui-components.test.cjs",
+    "bytes": 17017,
+    "sha256": "8C74578CAB30E4875B4302DAA8E1699C74D1186B31FDF4F7A546858DA31F8B43"
+  },
+  {
+    "path": "hmos/tool/music-workbench-model.test.cjs",
+    "bytes": 29278,
+    "sha256": "24D64A79EDB71CA6512369221110234E541DC2804ACD99F26B4D50BA37B1A0EB"
+  },
+  {
+    "path": "hmos/tool/music-workbench-source-trace.cjs",
+    "bytes": 1592,
+    "sha256": "4F986124688C11D959786A62C10BF8370C93F0E09ABB1F99A4A9D2046583EF59"
+  },
+  {
+    "path": "hmos/tool/music-workbench-test-harness.cjs",
+    "bytes": 14442,
+    "sha256": "52DD117CBA4BE5960FF09B13E6F0CC8E948B572C0A48708178D9D8F7DB6EC2B6"
+  },
+  {
+    "path": "hmos/tool/picker-media-inspect.cjs",
+    "bytes": 1498,
+    "sha256": "34011C368FB7D73D4E99480DBDD065C1E4CD8D94889455C7A709FB899E3A7D85"
+  },
+  {
+    "path": "hmos/tool/query-coordinator.test.cjs",
+    "bytes": 4590,
+    "sha256": "C60E27648DD22DE0B245683715FEB0816212400F196598B288CA50F4B1F4EB93"
+  },
+  {
+    "path": "hmos/tool/query-device-check.cjs",
+    "bytes": 5560,
+    "sha256": "0B18F96DD5CEB5FE8FD4929FBE3AF9DBFA6D48412CA0C7EC28D3CB55707AB2F6"
+  },
+  {
+    "path": "hmos/tool/query-layout-device-check.cjs",
+    "bytes": 5477,
+    "sha256": "574C8F502BF0B0A5960E2045F25FE7926A33BD259480696B0A60786053AAD799"
+  },
+  {
+    "path": "hmos/tool/responsive-device-check.cjs",
+    "bytes": 4343,
+    "sha256": "4D3E62272FEA6FD30330ACED15DBA6CA00D1619E65F3F41AEE8D357D7C463664"
+  },
+  {
+    "path": "hmos/tool/run-music-library.cjs",
+    "bytes": 3598,
+    "sha256": "B9FFB7C5BD28EC2FCF3E1E54A80AE16117AB8C63914D23931E3882ED403816CC"
+  },
+  {
+    "path": "hmos/tool/run-music-ui-components.cjs",
+    "bytes": 4083,
+    "sha256": "8A45AA2EB36DA4D190E9AC7A73800D72AE00796C57235058076E9D4351F1E96A"
+  },
+  {
+    "path": "hmos/tool/style-device-check.cjs",
+    "bytes": 2853,
+    "sha256": "2B5B6249DE3A89CE3C4A99222951035CF470253D8CC3ACB002419539E49706D8"
+  },
+  {
+    "path": "hmos/tool/surface-device-check.cjs",
+    "bytes": 1367,
+    "sha256": "29E7372E371E45AAEC0439BF23505369A695331B108D43A4DC3C9B1413B249D7"
+  },
+  {
+    "path": "hmos/tool/update-ui-report.cjs",
+    "bytes": 6598,
+    "sha256": "DA027C278E036CDE7BBFE4D5F6B08534824964F71150EB2EBC3E464EA73FF15F"
+  },
+  {
+    "path": "hmos/tool/verified-images-model.test.cjs",
+    "bytes": 4859,
+    "sha256": "BA72060F3CCC4444B1C04E950E897482081E747C3A786F49C8CEF4FB7566A413"
+  },
+  {
+    "path": "hmos/tool/verify-build-manifest.cjs",
+    "bytes": 1466,
+    "sha256": "3CD5B6A6023ABFEB291871D1CBC6308FA1086DEE60535DC5D2DF08E3E96DC21A"
+  }
+]

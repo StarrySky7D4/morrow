@@ -1,0 +1,72 @@
+{
+  "observed_at": "2026-10-09T02:30:25.275Z",
+  "inputs": [
+    {
+      "path": "hmos/tool/run-music-ui-components.cjs",
+      "byte_length": 4083,
+      "sha256": "8a45aa2eb36da4d190e9ac7a73800d72ae00796c57235058076e9d4351f1e96a"
+    },
+    {
+      "path": "hmos/tool/music-ui-component-test-harness.cjs",
+      "byte_length": 4933,
+      "sha256": "248acbce247c536905cb28d1dde8115dd725f43d0b5c38034907c1390d7efb10"
+    },
+    {
+      "path": "hmos/tool/music-ui-components.test.cjs",
+      "byte_length": 17017,
+      "sha256": "8c74578cab30e4875b4302daa8e1699c74d1186b31fdf4f7a546858da31f8b43"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/MusicPanel.ets",
+      "byte_length": 28252,
+      "sha256": "6a627db1b98c978908445b603a4b380d467dce5b812eeb372c2e5ddbd386c7af"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/MusicFooter.ets",
+      "byte_length": 4805,
+      "sha256": "dacae9261a10ee6c1a7ff5a02de9b0e79a525f06f930d39d64bb9f22866be317"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicUi.ets",
+      "byte_length": 1498,
+      "sha256": "f61772894a0e1d388c640f95230e09bdc5818e6fa1772635a739cb60531e6990"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicLibrary.ets",
+      "byte_length": 45655,
+      "sha256": "c293488d9912f6efde7689e4c256bc0cfccfe153e82a822619ecbb291037c41f"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicPlayback.ets",
+      "byte_length": 21859,
+      "sha256": "9f1e29260aadbfa8e51216daef323c2e19a8b39cc5b95cb17a33bcc6c1d571da"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/UiStrings.ets",
+      "byte_length": 775172,
+      "sha256": "17801dd05b1afd9684f452b0e5b736ffba7c5520fb5413a8b6d002216cb1a576"
+    }
+  ],
+  "design_references": [
+    {
+      "path": "build/win-cloud-20261005/lib/music/music_panel.dart",
+      "byte_length": 31013,
+      "sha256": "6df33c27cde8054d3f70b5d5ebac00831d78e212d515574cad764d64e72d694d"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/little_tips.dart",
+      "byte_length": 6314,
+      "sha256": "ce95ca428852b773d63bdf15d772d0f2bdb677647792d641f82f9c4f802b9c8c"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/hold_reorder.dart",
+      "byte_length": 7415,
+      "sha256": "2bd70dcd16ee8bea076a7bf10b9fe1e99129d899899610d79827d7ae2ee97007"
+    },
+    {
+      "path": "../../../../../flutter/packages/flutter/lib/src/material/icons.dart",
+      "byte_length": 1861138,
+      "sha256": "ba88e3e23962ada6537523aa113811d9719b988412815bf084f50a0aa78137f0"
+    }
+  ]
+}

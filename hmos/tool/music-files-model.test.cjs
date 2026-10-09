@@ -27,7 +27,7 @@ function fixture(){
   async fsync(id){trace.push(['fsync',fds.get(id).path]);},async readText(p){return node(p).bytes.toString();},
   async read(id,buffer,options){const n=node(fds.get(id).path),b=n.bytes.subarray(options.offset,options.offset+options.length);new Uint8Array(buffer).set(b);return b.length;},
   async unlink(p){failure('unlink',p);assert.equal(node(p).kind,'file');nodes.delete(p);trace.push(['unlink',p]);},
-  async rmdir(p){assert.equal((await io.listFile(p)).length,0);nodes.delete(p);trace.push(['rmdir',p]);}
+  async rmdir(p){failure('rmdir',p);assert.equal((await io.listFile(p)).length,0);nodes.delete(p);trace.push(['rmdir',p]);}
  };
  const fileReply=b=>JSON.stringify({ok:true,error:'',byte_length:String(b.length),sha256:sha(b)});
  const native={async prepareMusicFile(from,to,limit){trace.push(['prepare',limit]);const b=node(fds.get(from).path).bytes;if(b.length>limit)throw err(13900099);node(fds.get(to).path).bytes=Buffer.from(b);return fileReply(b);}};
@@ -119,4 +119,61 @@ test('partial player open close rejection retains original FD and prevents remov
  const f=fixture(),s=await f.files.acquire(f.identity()),p='/app/cache/'+s.token+'/data';f.faults.set('stat:'+p,Error('StatUnknown'));f.faults.set('close:'+p,Error('PartialCloseUnknown'));
  await assert.rejects(f.files.open(s),/PartialCloseUnknown/);assert.equal(f.fds.size,1);assert.equal(f.files.ownsSource(s),true);await assert.rejects(f.files.releaseSource(s),/句柄/);assert.ok(f.nodes.has(p));
  f.faults.delete('close:'+p);await f.files.retryPendingIo();assert.equal(f.fds.size,0);await f.files.releaseSource(s);assert.equal(f.files.ownsSource(s),false);
+});
+
+test('partial spool metadata unlink retains exact cleanup object through retry_io and recover without replaying absent data',async()=>{
+ const f=fixture(),p=await prepare(f),dir='/app/files/hmos-music-spool/'+p.spoolId,wire=f.request(p);let sends=0;
+ await f.files.importPrepared(p,wire,async()=>{sends++;return 'controlled Ready qualification';});
+ f.faults.set('unlink:'+dir+'/metadata.json',Error('PartialMetadataCleanup'));
+ await assert.rejects(f.files.release(p),/PartialMetadataCleanup/);assert.equal(f.nodes.has(dir+'/data'),false);
+ assert.equal(f.files.entries.get(p.spoolId).value,p);assert.equal(f.files.entries.get(p.spoolId).releaseStarted,true);
+ f.faults.clear();await f.files.retryPendingIo();assert.equal((await f.files.recover()).length,0,'partial cleanup is never presented as complete import data');
+ assert.equal(f.files.entries.get(p.spoolId).value,p);assert.equal(p.requestJson,wire);assert.match(f.files.diagnostics().join(' '),/继续原清理/);
+ await assert.rejects(f.files.importPrepared(p,wire,async()=>{sends++;return '';}),/只能继续原清理/);assert.equal(sends,1);assert.equal(f.fds.size,0);
+ await assert.rejects(f.files.release({...p}),/身份/);assert.ok(f.nodes.has(dir+'/metadata.json'));
+ await f.files.release(p);assert.equal(f.files.entries.has(p.spoolId),false);assert.equal(f.nodes.has(dir),false);assert.equal(sends,1);
+});
+
+test('failed first unlink marks only cleanup intent and still cannot masquerade as a complete recoverable replay source',async()=>{
+ const f=fixture(),p=await prepare(f),dir='/app/files/hmos-music-spool/'+p.spoolId;
+ f.faults.set('unlink:'+dir+'/data',Error('DataCleanupRejected'));await assert.rejects(f.files.release(p),/DataCleanupRejected/);
+ assert.ok(f.nodes.has(dir+'/data'));assert.equal((await f.files.recover()).length,0);assert.equal(f.files.entries.get(p.spoolId).value,p);
+ let sends=0;await assert.rejects(f.files.importPrepared(p,f.request(p),async()=>{sends++;return '';}),/只能继续原清理/);assert.equal(sends,0);
+ f.faults.clear();await f.files.release(p);assert.equal(f.nodes.has(dir),false);
+});
+
+test('late request unlink failure retains original exact bytes while already removed data and metadata stay out of recover',async()=>{
+ const f=fixture(),p=await prepare(f),wire=f.request(p),dir='/app/files/hmos-music-spool/'+p.spoolId;
+ await f.files.importPrepared(p,wire,async()=> 'controlled Ready qualification');f.faults.set('unlink:'+dir+'/request.json',Error('RequestCleanupRejected'));
+ await assert.rejects(f.files.release(p),/RequestCleanupRejected/);assert.equal(f.nodes.has(dir+'/data'),false);assert.equal(f.nodes.has(dir+'/metadata.json'),false);
+ assert.equal(f.nodes.get(dir+'/request.json').bytes.toString(),wire);assert.equal((await f.files.recover()).length,0);
+ assert.equal(f.files.entries.get(p.spoolId).value,p);f.faults.clear();await f.files.release(p);assert.equal(f.nodes.has(dir),false);assert.equal(p.requestJson,wire);
+});
+
+test('empty-directory removal failure is retained through recover and only same-object explicit release retry clears it',async()=>{
+ const f=fixture(),p=await prepare(f),dir='/app/files/hmos-music-spool/'+p.spoolId;f.faults.set('rmdir:'+dir,Error('DirectoryCleanupRejected'));
+ await assert.rejects(f.files.release(p),/DirectoryCleanupRejected/);assert.ok(f.nodes.has(dir));assert.equal([...f.nodes.keys()].filter(n=>path.posix.dirname(n)===dir).length,0);
+ assert.equal((await f.files.recover()).length,0);assert.equal(f.files.entries.get(p.spoolId).value,p);f.faults.clear();await f.files.release(p);assert.equal(f.nodes.has(dir),false);
+});
+
+test('unexpected children added after partial cleanup are retained and block original cleanup retry',async()=>{
+ const f=fixture(),p=await prepare(f),dir='/app/files/hmos-music-spool/'+p.spoolId;f.faults.set('unlink:'+dir+'/metadata.json',Error('RetainKnownSource'));
+ await assert.rejects(f.files.release(p),/RetainKnownSource/);f.faults.clear();f.put(dir+'/unknown','keep');const remaining=f.nodes.get(dir+'/metadata.json').bytes.toString();
+ assert.equal((await f.files.recover()).length,0);await assert.rejects(f.files.release(p),/未知内容/);
+ assert.equal(f.files.entries.get(p.spoolId).value,p);assert.equal(f.nodes.get(dir+'/unknown').bytes.toString(),'keep');assert.equal(f.nodes.get(dir+'/metadata.json').bytes.toString(),remaining);
+});
+
+test('fresh adapter cannot mint partial cleanup ownership from restart leftovers or silently delete them',async()=>{
+ const f=fixture(),p=await prepare(f),wire=f.request(p),dir='/app/files/hmos-music-spool/'+p.spoolId;
+ await f.files.importPrepared(p,wire,async()=> 'controlled Ready qualification');f.faults.set('unlink:'+dir+'/metadata.json',Error('RetainedPartialCleanup'));
+ await assert.rejects(f.files.release(p),/RetainedPartialCleanup/);f.faults.clear();const reopened=f.newFiles();
+ assert.equal((await reopened.recover()).length,0);assert.equal(reopened.entries.has(p.spoolId),false);await assert.rejects(reopened.release(p),/身份/);
+ assert.equal(f.nodes.get(dir+'/request.json').bytes.toString(),wire);assert.ok(f.nodes.has(dir+'/metadata.json'));assert.equal(f.nodes.has(dir+'/data'),false);
+ assert.equal((await f.files.recover()).length,0);await f.files.release(p);assert.equal(f.nodes.has(dir),false);
+});
+
+test('unsafe directory rejection before unlink does not mint cleanup ownership or remove an existing complete source',async()=>{
+ const f=fixture(),p=await prepare(f),dir='/app/files/hmos-music-spool/'+p.spoolId;f.put(dir+'/unknown','keep');
+ await assert.rejects(f.files.release(p),/未知内容/);assert.equal(f.files.entries.get(p.spoolId).releaseStarted,false);
+ assert.equal(f.nodes.get(dir+'/data').bytes.compare(f.bytes),0);assert.equal(f.nodes.get(dir+'/unknown').bytes.toString(),'keep');
 });

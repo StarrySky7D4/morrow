@@ -1,0 +1,8 @@
+{
+  "observedUtc": "2026-10-09T02:38:40.9250797Z",
+  "targetOutput": "[Empty]",
+  "emulatorProcesses": [],
+  "device": "NOT_RUN",
+  "installed": false,
+  "scope": "Read-only current environment observation; no start/reset/install or new device qualification"
+}

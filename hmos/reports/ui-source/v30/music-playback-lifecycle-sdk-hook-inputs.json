@@ -1,0 +1,140 @@
+{
+  "before": [
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicPlayback.ets",
+      "bytes": 21859,
+      "sha256": "9F1E29260AADBFA8E51216DAEF323C2E19A8B39CC5B95CB17A33BCC6C1D571DA"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/PlatformMusicPlayer.ets",
+      "bytes": 5959,
+      "sha256": "07446422A8376BA1885ED496BACDC8AE75DEA661289C649FDBE40F81C9C23A65"
+    },
+    {
+      "path": "hmos/tool/music-playback-test-harness.cjs",
+      "bytes": 5783,
+      "sha256": "7DC14297BB75CD38EBC20A9C99D559011EFD46EF190DF7BD45297EA3C3CDE03A"
+    },
+    {
+      "path": "hmos/tool/music-playback-lifecycle.test.cjs",
+      "bytes": 13157,
+      "sha256": "F80D1E552685DB6CCFC9473B914507AF10D0708FD1CBFE715B10024EF848C7F9"
+    },
+    {
+      "path": "hmos/tool/music-playback-model.test.cjs",
+      "bytes": 19035,
+      "sha256": "EDC070B349C9F0E475193429ADC04791112BB6EE3B1046F8691B1BF45D53AEBE"
+    },
+    {
+      "path": "hmos/tool/music-playback-platform.test.cjs",
+      "bytes": 7406,
+      "sha256": "5FBA2B6B3B644EF0AA6F20C75CF5EB6AE30BDF532727A04C13FA44983507EBCC"
+    },
+    {
+      "path": "hmos/tool/music-playback-integration.test.cjs",
+      "bytes": 5521,
+      "sha256": "7F798DE09AB5BBF27D393455E11F29B62A0A6B45D6E692A3CD2489C232C875ED"
+    },
+    {
+      "path": "hmos/tool/music-playback-store-fixture.test.cjs",
+      "bytes": 6538,
+      "sha256": "52FC505455DCE5C8C9F9222864BC68467FE097E2CEDC52AB1DA09C297D6326AE"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-store-fixture.json",
+      "bytes": 65127,
+      "sha256": "DA6D8DF4F50F59555A4064AB29C9B302CE29B85A843DEB03F2F5C9EB0D83B9B2"
+    },
+    {
+      "path": "hmos/tool/music-playback-lifecycle-check.cjs",
+      "bytes": 3917,
+      "sha256": "50896030B00F4439631F216D64CCA4C0D436F0454E3E0A8269BB5FEFBE6BD2AE"
+    }
+  ],
+  "after": [
+    {
+      "path": "hmos/entry/src/main/ets/model/MusicPlayback.ets",
+      "bytes": 21859,
+      "sha256": "9F1E29260AADBFA8E51216DAEF323C2E19A8B39CC5B95CB17A33BCC6C1D571DA"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/pages/PlatformMusicPlayer.ets",
+      "bytes": 5959,
+      "sha256": "07446422A8376BA1885ED496BACDC8AE75DEA661289C649FDBE40F81C9C23A65"
+    },
+    {
+      "path": "hmos/tool/music-playback-test-harness.cjs",
+      "bytes": 5783,
+      "sha256": "7DC14297BB75CD38EBC20A9C99D559011EFD46EF190DF7BD45297EA3C3CDE03A"
+    },
+    {
+      "path": "hmos/tool/music-playback-lifecycle.test.cjs",
+      "bytes": 13157,
+      "sha256": "F80D1E552685DB6CCFC9473B914507AF10D0708FD1CBFE715B10024EF848C7F9"
+    },
+    {
+      "path": "hmos/tool/music-playback-model.test.cjs",
+      "bytes": 19035,
+      "sha256": "EDC070B349C9F0E475193429ADC04791112BB6EE3B1046F8691B1BF45D53AEBE"
+    },
+    {
+      "path": "hmos/tool/music-playback-platform.test.cjs",
+      "bytes": 7406,
+      "sha256": "5FBA2B6B3B644EF0AA6F20C75CF5EB6AE30BDF532727A04C13FA44983507EBCC"
+    },
+    {
+      "path": "hmos/tool/music-playback-integration.test.cjs",
+      "bytes": 5521,
+      "sha256": "7F798DE09AB5BBF27D393455E11F29B62A0A6B45D6E692A3CD2489C232C875ED"
+    },
+    {
+      "path": "hmos/tool/music-playback-store-fixture.test.cjs",
+      "bytes": 6538,
+      "sha256": "52FC505455DCE5C8C9F9222864BC68467FE097E2CEDC52AB1DA09C297D6326AE"
+    },
+    {
+      "path": "hmos/reports/ui-source/v29/music-store-fixture.json",
+      "bytes": 65127,
+      "sha256": "DA6D8DF4F50F59555A4064AB29C9B302CE29B85A843DEB03F2F5C9EB0D83B9B2"
+    },
+    {
+      "path": "hmos/tool/music-playback-lifecycle-check.cjs",
+      "bytes": 3917,
+      "sha256": "50896030B00F4439631F216D64CCA4C0D436F0454E3E0A8269BB5FEFBE6BD2AE"
+    }
+  ],
+  "runtimeBefore": [
+    {
+      "path": "C:\\Program Files\\Huawei\\DevEco Studio\\tools\\node\\node.exe",
+      "bytes": 91426304,
+      "sha256": "58E74BF02FC5BBACC41DCB8BEF089961CD5BDDD37830B87784E4FC624D145D1F"
+    },
+    {
+      "path": "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\node_modules\\typescript\\lib\\typescript.js",
+      "bytes": 8031399,
+      "sha256": "9475E93F3904BB0A6A83EC457CBB4926C28D02202BAC7B1FB31DBC49AF7D56A1"
+    },
+    {
+      "path": "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\node_modules\\typescript\\package.json",
+      "bytes": 3531,
+      "sha256": "74051CFEEA7F6F97CF40BA81B38F0C97E39D38A4E7AE5331BABAC5D8BCDD45A1"
+    }
+  ],
+  "runtimeAfter": [
+    {
+      "path": "C:\\Program Files\\Huawei\\DevEco Studio\\tools\\node\\node.exe",
+      "bytes": 91426304,
+      "sha256": "58E74BF02FC5BBACC41DCB8BEF089961CD5BDDD37830B87784E4FC624D145D1F"
+    },
+    {
+      "path": "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\node_modules\\typescript\\lib\\typescript.js",
+      "bytes": 8031399,
+      "sha256": "9475E93F3904BB0A6A83EC457CBB4926C28D02202BAC7B1FB31DBC49AF7D56A1"
+    },
+    {
+      "path": "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\node_modules\\typescript\\package.json",
+      "bytes": 3531,
+      "sha256": "74051CFEEA7F6F97CF40BA81B38F0C97E39D38A4E7AE5331BABAC5D8BCDD45A1"
+    }
+  ]
+}

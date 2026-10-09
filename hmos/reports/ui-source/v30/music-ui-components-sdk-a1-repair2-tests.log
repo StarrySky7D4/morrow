@@ -1,0 +1,33 @@
+✔ actual component uses selected stable id and only actual playing phase (352.2895ms)
+✔ actual time display and seek clamp invalid, negative and out-of-duration input (184.2504ms)
+✔ actual callbacks use Controller contract and gate unknown, import and pending writes (145.4644ms)
+✔ actual playlist mutation rejects missing identity and out-of-range move (140.6379ms)
+✔ actual transport rejects background, owner gone, busy and failed sessions (128.6493ms)
+✔ actual selected idle track starts by explicit toggle while seek stays disabled (131.4458ms)
+✔ actual owned playing pause remains available during library Unknown and ongoing mutation (124.9211ms)
+✔ actual recovery flags bypass ordinary write gate without inventing operations (124.8922ms)
+✔ actual retained spool resume accepts only exact actual pending choice and spool (120.2156ms)
+✔ actual saved original spool has an inspect entry without a fabricated track or new request (116.8794ms)
+✔ actual resource recovery uses cleanup_failed and preserves unavailable controls (134.748ms)
+✔ actual full unsaved lyrics remain viewable while mutation is Unknown (128.7643ms)
+✔ actual unsaved original lyrics entry keeps its real track id and original title (122.9582ms)
+✔ actual lyrics status refuses the previously selected track text (120.8793ms)
+✔ actual held reorder moves by stable identities and measured target half (123.3355ms)
+✔ actual held reorder rejects revision, import identity and order drift (452.4085ms)
+✔ actual held reorder rejects removed, external and out-of-viewport target (497.8625ms)
+✔ actual drag edge scrolling shares retained scroller and stops on owner loss (121.9079ms)
+✔ actual collapse, cancellation and disappearance stop held reorder timers (109.3713ms)
+✔ actual drag refuses multiple fingers and unmeasured or corrupt geometry (127.3048ms)
+✔ actual revision-only CAS preserves fixed-row measurements; changed order discards them (156.7782ms)
+✔ actual Footer follows playing and lyrics flag, with default tips preserved (135.3958ms)
+✔ actual Footer rejects Unknown, cleanup, disabled and background persistent toggle (173.5322ms)
+✔ actual dialog preserves complete Unicode and 1 MiB candidate text without cropping (147.1425ms)
+✔ actual component source aligns Flutter scales and retained playlist layout (140.3424ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4501.8814
