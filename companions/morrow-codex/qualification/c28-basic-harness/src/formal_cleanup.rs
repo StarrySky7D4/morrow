@@ -68,6 +68,7 @@ pub(super) struct AcknowledgedCleanup {
 
 pub(super) struct Tracker<I> {
     original_owner: Option<I>,
+    start_attempted: bool,
     unknown_start: bool,
     acknowledged: Option<AcknowledgedCleanup>,
 }
@@ -75,6 +76,7 @@ impl<I> Default for Tracker<I> {
     fn default() -> Self {
         Self {
             original_owner: None,
+            start_attempted: false,
             unknown_start: false,
             acknowledged: None,
         }
@@ -104,15 +106,19 @@ impl<I: Clone + PartialEq> Tracker<I> {
     ) -> Result<TaskKey> {
         self.bind(owner)?;
         ensure!(
-            !self.unknown_start && self.acknowledged.is_none() && known_key.is_none(),
+            !self.start_attempted && !self.unknown_start && self.acknowledged.is_none() && known_key.is_none(),
             "start identity retained; no replay"
         );
         ensure!(
             owner.status()?.is_none(),
             "an existing task cannot be adopted by start"
         );
+        // A failed or unresolved call stays latched; absent status is not replay authority.
+        self.start_attempted = true;
         match owner.start(options, context) {
             Ok(key) => {
+                // A returned key fences this active task; original ACK may end this lane.
+                self.start_attempted = false;
                 *known_key = Some(key);
                 Ok(key)
             }

@@ -1,15 +1,17 @@
 # 后续编码看板
 
 <!-- C28-CURRENT-BEGIN -->
-## 当前开发检查点（2026-10-09，C28 离线工具与恢复准备）
+## 当前开发检查点（2026-10-09，C28 阶段 18）
 
-本次保存六份通用工具原字节源码、验证摘要与看板，应用版本和运行逻辑不变。捕获 10 项及同字节加载 1 项合成检查分别退出 0；禁用恢复候选完成有限独审，四份 PowerShell 5.1 源码解析无错误，七个命令参数组合核对通过，未执行脚本正文或恢复。
+开发分支同步启动防重放修正、收据解析及保留回归、固定 Wasm 测试夹具路径，并保存自主捕获工具与禁用的后继控制器源码。应用版本保持 `0.1.9-test.58+62`。
 
-registry 缓存 12 项合成检查通过，toy Cargo 离线锁定 metadata 退出 0；Git PACK 31 项通过。公开副本在新目录分别复验相同 12/31 项且源码无漂移，重复不累计。Git HTTP 后继 36 项 mock 通过，最终独审待完成，未发布该后继源码。真实依赖获取、安装、TLS/Git 接入和 Git 缓存采用未验收，不能解除底层 12 项测试阻塞。
+为避免公开本机路径，本次不附带原 session Wasm；固定夹具目录说明了另行准备和复验的前提。公开 Git 树仍缺此输入，未完成独立完整构建；本地完整载体的编译结果不能替代公开树验收。
 
-H011 仍仅隔离构建通过、程序未执行；公开完整构建 NOT_RUN，三个 Wasm include 路径尚待接线。历史 Native Start 仍 Unknown/BackendError，原 owner 的正常退出、EOF、ACK、cleanup/join 与资源债务 pending，不自动重放。Agent 会话层、安全执行层、SDK26/G04 继续 OPEN，SDK 未冻结，release_eligible=false。
+Windows 原根库与程序已离线编译，Cargo 退出 0、双 EOF 完整；外层因新 Git checkout 的后置字节守卫失败退出 1，完整构建资格尚未通过。保存产物的来源与哈希已独立读回，未执行程序、测试或 VM。阶段 16 的 20 项合成回归、阶段 17 的 7 项读取测试与两轮桥接保留各自范围，不作为新生产载体复验通过。
 
-下一步完成固定依赖、Git 缓存与恢复运行资格，再做 Windows 生命周期复验；达到两层验收后暂停准备预览，扩展执行层不是暂停前提。见 [当前结果与范围](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-offline-tools.md)和 [通用工具](../companions/morrow-codex/qualification/offline-preparation/README.md)。下方保留各历史时点。
+原生 Start 的 Unknown 不重放；owner finish、factory release、cleanup/join、真实断连及 Windows 沙箱资格仍待验收。旧 runner/setup 依赖源码与当前载体不完全一致，三程序 manifest 仍 PENDING。后续 11 项原始库测试未运行；额外 dev 依赖未补齐。`SDK26_G04=OPEN`，`release_eligible=false`，SDK 未冻结。
+
+下一步先核验 Cargo 对新 checkout 的转换及 helper 匹配来源，再准备有明确范围的 Windows 生命周期复验。会话层与安全执行层验收后暂停准备测试预览，不等待扩展执行层。见 [阶段 18 记录](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-stage18.md)与[捕获工具源码](../companions/morrow-codex/qualification/c28-autonomous-capture/README.md)。下方内容保留历史时点。
 <!-- C28-CURRENT-END -->
 
 <!-- C16-CURRENT-BEGIN -->

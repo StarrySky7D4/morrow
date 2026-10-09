@@ -1655,3 +1655,150 @@ fn explicit_generation_rollover_releases_tombstone_budget_but_rejects_original_r
         Outcome::Rejected(Error::Denied)
     );
 }
+
+// Trusted retention regressions use the original Fixture and public ledger reads.
+// The image comparison checks committed state; it does not decode private state.
+fn retention_ledger_image(f: &Fixture) -> (u64, Vec<u8>) {
+    let row = f.runtime.store_local()
+        .load_agent_ledger_local(&hash(b"morrow/agent-session-exec-v1/session/state/2"), SESSION)
+        .unwrap().unwrap();
+    (row.revision(), row.payload().to_vec())
+}
+
+#[test]
+fn compact_retains_exact_mutation_receipts_without_restoring_pruned_events() {
+    let mut f = Fixture::new();
+    f.writer();
+    let append = Request::new("retained-append", Action::Append {
+        session_id: SESSION.into(), epoch: 1, expected_tail: 0,
+        events: vec![Event { event_id: "retained-event".into(), body: b"first".to_vec() }],
+    }).unwrap();
+    let append_reply = f.request(&append);
+    assert!(matches!(&append_reply, Outcome::Session(info) if info.tail == 1));
+    assert!(matches!(f.append("second", 1, b"second".to_vec()), Outcome::Session(info) if info.tail == 2));
+    let seal = Request::new("retained-seal", Action::Checkpoint {
+        session_id: SESSION.into(), epoch: 1, expected_tail: 2,
+        state: b"retained checkpoint".to_vec(),
+    }).unwrap();
+    let seal_reply = f.request(&seal);
+    assert!(matches!(&seal_reply, Outcome::Session(info) if info.checkpoint_sealed && info.checkpoint_tail == 2));
+    let compacted = f.host.compact(&mut f.runtime, &f.connection, &f.admission, SESSION, 2, 1).unwrap();
+    assert_eq!((compacted.floor, compacted.tail), (3, 2));
+    let image = retention_ledger_image(&f);
+    assert_eq!(f.request(&append), append_reply);
+    assert_eq!(f.request(&seal), seal_reply);
+    assert_eq!(retention_ledger_image(&f), image);
+    let changed = Request::new("retained-append", Action::Append {
+        session_id: SESSION.into(), epoch: 1, expected_tail: 0,
+        events: vec![Event { event_id: "retained-event".into(), body: b"changed".to_vec() }],
+    }).unwrap();
+    assert_eq!(f.request(&changed), Outcome::Rejected(Error::Conflict));
+    assert_eq!(retention_ledger_image(&f), image);
+    for (after, gap) in [(0, true), (1, true), (2, false)] {
+        match f.snapshot(after, 16) {
+            Outcome::Snapshot(snapshot) => {
+                assert_eq!(snapshot.info, compacted);
+                assert_eq!(snapshot.gap, gap);
+                assert!(snapshot.events.is_empty());
+                assert_eq!(snapshot.checkpoint, b"retained checkpoint");
+            }
+            other => panic!("expected compacted snapshot: {other:?}"),
+        }
+    }
+    assert!(matches!(f.append("after-retention", 2, b"third".to_vec()), Outcome::Session(info) if info.tail == 3));
+    for (after, gap) in [(1, true), (2, false)] {
+        match f.snapshot(after, 16) {
+            Outcome::Snapshot(snapshot) => {
+                assert_eq!((snapshot.info.floor, snapshot.info.tail), (3, 3));
+                assert_eq!(snapshot.gap, gap);
+                assert_eq!(snapshot.events.len(), 1);
+                assert_eq!(snapshot.events[0].sequence, 3);
+                assert_eq!(snapshot.events[0].event.event_id, "after-retention");
+                assert_eq!(snapshot.events[0].event.body, b"third");
+            }
+            other => panic!("expected continued snapshot: {other:?}"),
+        }
+    }
+}
+
+#[test]
+fn compact_rejects_unsealed_wrong_tail_and_foreign_or_replaced_writer_without_commit() {
+    let mut f = Fixture::new();
+    f.writer();
+    assert!(matches!(f.append("before-fence", 0, b"event".to_vec()), Outcome::Session(info) if info.tail == 1));
+    let unsealed = retention_ledger_image(&f);
+    assert_eq!(f.host.compact(&mut f.runtime, &f.connection, &f.admission, SESSION, 1, 1), Err(Error::Conflict));
+    assert_eq!(retention_ledger_image(&f), unsealed);
+    assert!(matches!(f.send("fence-seal", Action::Checkpoint {
+        session_id: SESSION.into(), epoch: 1, expected_tail: 1, state: b"sealed".to_vec(),
+    }), Outcome::Session(info) if info.checkpoint_sealed));
+    let sealed = retention_ledger_image(&f);
+    assert_eq!(f.host.compact(&mut f.runtime, &f.connection, &f.admission, SESSION, 0, 1), Err(Error::Conflict));
+    assert_eq!(retention_ledger_image(&f), sealed);
+    let foreign = f.runtime.connect().unwrap();
+    assert_eq!(f.host.compact(&mut f.runtime, &foreign, &f.admission, SESSION, 1, 1), Err(Error::Denied));
+    assert_eq!(retention_ledger_image(&f), sealed);
+    let other = f.host.admit(&f.runtime, &f.connection, caps(), caps(),
+        vec![SESSION.into()], "synthetic-local".into(), 100, 1).unwrap();
+    assert_eq!(f.host.compact(&mut f.runtime, &f.connection, &other, SESSION, 1, 1), Err(Error::Denied));
+    assert_eq!(retention_ledger_image(&f), sealed);
+    let handoff = Request::new("retention-handoff", Action::OpenWriter {
+        session_id: SESSION.into(), expected_epoch: 1,
+    }).unwrap();
+    let bytes = f.host.dispatch(&mut f.runtime, &f.connection, &other, handoff.raw(), || 1).unwrap();
+    assert!(matches!(Reply::decode_for(&handoff, &bytes).unwrap().outcome, Outcome::Session(info) if info.epoch == 2));
+    let replaced = retention_ledger_image(&f);
+    assert_eq!(f.host.compact(&mut f.runtime, &f.connection, &f.admission, SESSION, 1, 1), Err(Error::Denied));
+    assert_eq!(f.append("stale-after-handoff", 1, b"must not commit".to_vec()), Outcome::Rejected(Error::Conflict));
+    assert_eq!(retention_ledger_image(&f), replaced);
+    let info = f.host.compact(&mut f.runtime, &f.connection, &other, SESSION, 1, 1).unwrap();
+    assert_eq!((info.epoch, info.floor, info.tail), (2, 2, 1));
+}
+
+#[test]
+fn fork_from_compacted_parent_keeps_parent_digest_when_child_checkpoint_changes() {
+    let mut f = Fixture::new();
+    f.writer();
+    assert!(matches!(f.append("parent-event", 0, b"parent".to_vec()), Outcome::Session(info) if info.tail == 1));
+    let baseline = b"fork baseline\0\xff";
+    assert!(matches!(f.send("parent-checkpoint", Action::Checkpoint {
+        session_id: SESSION.into(), epoch: 1, expected_tail: 1, state: baseline.to_vec(),
+    }), Outcome::Session(info) if info.checkpoint_sha256 == hash(baseline)));
+    f.host.compact(&mut f.runtime, &f.connection, &f.admission, SESSION, 1, 1).unwrap();
+    assert!(matches!(f.send("compacted-fork", Action::Create {
+        session_id: "child".into(), parent: Some(SESSION.into()), parent_tail: 1,
+    }), Outcome::Session(info) if info.floor == 1 && info.tail == 0 && info.checkpoint_tail == 0
+        && info.checkpoint_sha256 == hash(baseline) && info.parent_checkpoint_sha256 == Some(hash(baseline))));
+    assert!(matches!(f.send("child-writer", Action::OpenWriter {
+        session_id: "child".into(), expected_epoch: 0,
+    }), Outcome::Session(info) if info.epoch == 1));
+    assert!(matches!(f.send("child-event", Action::Append {
+        session_id: "child".into(), epoch: 1, expected_tail: 0,
+        events: vec![Event { event_id: "child-local".into(), body: b"child".to_vec() }],
+    }), Outcome::Session(info) if info.tail == 1));
+    let child_checkpoint = b"child independent checkpoint";
+    assert!(matches!(f.send("child-checkpoint", Action::Checkpoint {
+        session_id: "child".into(), epoch: 1, expected_tail: 1, state: child_checkpoint.to_vec(),
+    }), Outcome::Session(info) if info.checkpoint_sha256 == hash(child_checkpoint)
+        && info.parent_checkpoint_sha256 == Some(hash(baseline))));
+    let child_info = f.host.compact(&mut f.runtime, &f.connection, &f.admission, "child", 1, 1).unwrap();
+    assert!(matches!(f.append("parent-advance", 1, b"later".to_vec()), Outcome::Session(info) if info.tail == 2));
+    assert!(matches!(f.send("parent-new-checkpoint", Action::Checkpoint {
+        session_id: SESSION.into(), epoch: 1, expected_tail: 2, state: b"new parent baseline".to_vec(),
+    }), Outcome::Session(info) if info.checkpoint_sha256 == hash(b"new parent baseline")));
+    f.host.compact(&mut f.runtime, &f.connection, &f.admission, SESSION, 2, 1).unwrap();
+    match f.send("child-final-snapshot", Action::Snapshot { session_id: "child".into(), after: 0, limit: 16 }) {
+        Outcome::Snapshot(snapshot) => {
+            assert_eq!(snapshot.info, child_info);
+            assert_eq!((snapshot.info.floor, snapshot.info.tail, snapshot.info.checkpoint_tail), (2, 1, 1));
+            assert_eq!(snapshot.info.parent.as_deref(), Some(SESSION));
+            assert_eq!(snapshot.info.parent_tail, 1);
+            assert_eq!(snapshot.info.parent_checkpoint_sha256, Some(hash(baseline)));
+            assert_eq!(snapshot.info.checkpoint_sha256, hash(child_checkpoint));
+            assert_eq!(snapshot.checkpoint, child_checkpoint);
+            assert!(snapshot.gap);
+            assert!(snapshot.events.is_empty());
+        }
+        other => panic!("expected independent child snapshot: {other:?}"),
+    }
+}

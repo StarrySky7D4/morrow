@@ -40,6 +40,11 @@ pub fn run_combined_session(workbench: &Workbench, key: TaskKey, generation: u64
         handler: "codex.session.continue".into(), input_type: "codex.session.config.v1".into(), output_type: "codex.session.receipt.v1".into(), input,
     }).map_err(|e| format!("session task: {e:?}"))?;
     let raw = crate::controls::run_task(workbench, key, &task, 7, Instant::now() + Duration::from_secs(20))?;
+    parse_session_receipt(&raw, generation)
+}
+
+/// Parse the existing receipt format only; no host import or authority operation.
+fn parse_session_receipt(raw: &[u8], generation: u64) -> Result<SessionEvidence, String> {
     if raw.len() != 48 { return Err("session receipt length".into()) }
     let got_generation = u64::from_le_bytes(raw[..8].try_into().map_err(|_| "generation length")?);
     let checkpoint_sha256 = raw[8..40].try_into().map_err(|_| "checkpoint length")?;
@@ -212,5 +217,68 @@ impl GuestProposal {
                 None => { handle.cancel(); return Err("original approval/Claim deadline; Unknown; cleanup required".into()) }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod receipt_tests {
+    use super::parse_session_receipt;
+    use morrow_agent_session_exec_v1_r2 as r2;
+
+    fn original_receipt(generation: u64) -> Vec<u8> {
+        let mut raw = generation.to_le_bytes().to_vec();
+        raw.extend_from_slice(&r2::hash(b"sealed-state\0\xff"));
+        raw.extend_from_slice(&1u64.to_le_bytes());
+        raw
+    }
+
+    #[test]
+    fn exact_original_receipt_is_accepted() {
+        let evidence = parse_session_receipt(&original_receipt(7), 7).unwrap();
+        assert_eq!(evidence.generation, 7);
+        assert_eq!(evidence.checkpoint_sha256, r2::hash(b"sealed-state\0\xff"));
+        assert_eq!(evidence.parent_tail, 1);
+    }
+
+    #[test]
+    fn short_and_long_receipts_are_rejected_before_field_decode() {
+        let raw = original_receipt(7);
+        assert_eq!(parse_session_receipt(&raw[..47], 7).unwrap_err(), "session receipt length");
+        let mut long = raw;
+        long.push(0);
+        assert_eq!(parse_session_receipt(&long, 7).unwrap_err(), "session receipt length");
+    }
+
+    #[test]
+    fn wrong_generation_is_rejected() {
+        for generation in [0, 8, u64::MAX] {
+            assert!(parse_session_receipt(&original_receipt(generation), 7).is_err());
+        }
+    }
+
+    #[test]
+    fn one_bit_checkpoint_digest_mismatch_is_rejected() {
+        let mut raw = original_receipt(7);
+        raw[8] ^= 1;
+        assert!(parse_session_receipt(&raw, 7).is_err());
+    }
+
+    #[test]
+    fn zero_two_and_maximum_parent_tails_are_rejected() {
+        for tail in [0u64, 2, u64::MAX] {
+            let mut raw = original_receipt(7);
+            raw[40..48].copy_from_slice(&tail.to_le_bytes());
+            assert!(parse_session_receipt(&raw, 7).is_err());
+        }
+    }
+
+    #[test]
+    fn swapped_checkpoint_and_tail_fields_are_rejected() {
+        let raw = original_receipt(7);
+        let mut swapped = raw[..8].to_vec();
+        swapped.extend_from_slice(&raw[40..48]);
+        swapped.extend_from_slice(&raw[8..40]);
+        assert_eq!(swapped.len(), 48);
+        assert!(parse_session_receipt(&swapped, 7).is_err());
     }
 }

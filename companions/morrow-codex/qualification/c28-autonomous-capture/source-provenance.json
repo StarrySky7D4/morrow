@@ -1,0 +1,126 @@
+{
+  "SDK26_G04": "OPEN",
+  "base_commit": "baf8a091016947677dd4a71ad8baa5ebd39cbf63",
+  "binary_fixture_policy": "No new binary fixture published; original session Wasm omitted because its data contains private build paths. Do not mutate or infer new qualification.",
+  "files": {
+    "README.md": {
+      "bytes": 18085,
+      "kind": "current-marker-update-only",
+      "sha256": "ec33b80cca98ed5f4cfcd6e884c454bc2b2d355b5a814614c4d6896fac6f496b"
+    },
+    "companions/morrow-codex/qualification/c28-autonomous-capture/CapturePump.cs": {
+      "bytes": 20639,
+      "kind": "stage17-byte-copy",
+      "sha256": "07c92459106ce8c3146cbf0d7ef8baaf9be7cc3c417b1f2b998d7bb4af6a1cdc"
+    },
+    "companions/morrow-codex/qualification/c28-autonomous-capture/PumpTests.cs": {
+      "bytes": 15462,
+      "kind": "stage17-byte-copy",
+      "sha256": "d917d5f31f8b38036936aa2c9bc3ccbe68778d9eba459683cdc63ade7f528d23"
+    },
+    "companions/morrow-codex/qualification/c28-autonomous-capture/README.md": {
+      "bytes": 1703,
+      "kind": "public-tool-documentation",
+      "sha256": "ac1885e636e85e12424e806d12c3e75766c24ef5faa247e68216eef974b03074"
+    },
+    "companions/morrow-codex/qualification/c28-autonomous-capture/pending-stage19/Invoke-C28Live-PrivateHost.ps1": {
+      "bytes": 28121,
+      "kind": "disabled-stage19-byte-copy",
+      "sha256": "5448554686d3a84f1b2e1dafc1b09a6b9bae58846cd70fd956ce2aa25020e3b3"
+    },
+    "companions/morrow-codex/qualification/c28-autonomous-capture/pending-stage19/capture-ack-state.ps1": {
+      "bytes": 4476,
+      "kind": "disabled-stage19-byte-copy",
+      "sha256": "320d929cff684330f62cb4b3b5e7e6aea69f4ae3fa3db28ff5fd791eae9b246c"
+    },
+    "companions/morrow-codex/qualification/c28-autonomous-capture/pending-stage19/common.ps1": {
+      "bytes": 8328,
+      "kind": "disabled-stage19-byte-copy",
+      "sha256": "a569f451fa54a8dd3fd9a28f3a3068bb4498d1ab10eebcd4b9c0059a427227e8"
+    },
+    "companions/morrow-codex/qualification/c28-autonomous-capture/pending-stage19/pump-install-contract.ps1": {
+      "bytes": 7631,
+      "kind": "disabled-stage19-byte-copy",
+      "sha256": "1b2c47756768f9a28c54d5b451659ee65fc25dfdc2287c11ab2a33b32ffc2f36"
+    },
+    "companions/morrow-codex/qualification/c28-autonomous-capture/pending-stage19/remote-live-definitions.ps1": {
+      "bytes": 22560,
+      "kind": "disabled-stage19-byte-copy",
+      "sha256": "b6da22cb50db502ad8fd2ceb289d95e0f933f73c7a496459ad0ee4120e23bc56"
+    },
+    "companions/morrow-codex/qualification/c28-basic-fixtures/README.md": {
+      "bytes": 1212,
+      "kind": "explicit-external-fixture-build-requirements",
+      "sha256": "0fd9e1554f47855aa713950f0ca32d865becb041b6b935249c4ef0572581ef05"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/src/formal.rs": {
+      "bytes": 32097,
+      "kind": "existing-carrier-byte-copy",
+      "sha256": "1ceed371e3cf127431677f063f1b5fb4a785cd90aa3b731bf04d06579e72cb22"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/src/formal_cleanup.rs": {
+      "bytes": 9275,
+      "kind": "existing-carrier-byte-copy",
+      "sha256": "ba05b3a25be0df31af103bf63c691d2e0df2d13e9e474d240f728547181fe295"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/src/formal_cleanup_tests.rs": {
+      "bytes": 16837,
+      "kind": "existing-carrier-byte-copy",
+      "sha256": "d643302d854003cae6ce072d8194b3811ecbeaa2b2c8d27df6db38a096ed5e33"
+    },
+    "companions/morrow-codex/qualification/c28-basic-support/wasm/sealed.rs": {
+      "bytes": 16622,
+      "kind": "existing-carrier-byte-copy",
+      "sha256": "f0d52e3af1b79f481a92c077acc96ad53bf3168744f9a2ff7ea3221aebcd4894"
+    },
+    "docs/DEVELOPMENT_BOARD.md": {
+      "bytes": 158250,
+      "kind": "current-marker-update-only",
+      "sha256": "7e5951bb3f946b6be0eed41e63a9f333c29358b650ddb81f65a48467a6cb88fd"
+    },
+    "docs/DEVELOPMENT_BRANCH_STATUS.md": {
+      "bytes": 34084,
+      "kind": "current-marker-update-only",
+      "sha256": "c7f3706a1e7f3e4380758b6d94364949b8c87cdf521c781101fadf1180de434e"
+    },
+    "docs/DOCUMENTATION_INDEX.md": {
+      "bytes": 20226,
+      "kind": "current-marker-update-only",
+      "sha256": "9be2413c72bf6c9651fc13b762ba05081a38a98d272d2434fc3353aa8d5419ba"
+    },
+    "docs/PLUGIN_SYSTEM_STATUS.md": {
+      "bytes": 71673,
+      "kind": "current-marker-update-only",
+      "sha256": "db22ce52b15095797320934ac33535a9017a38686d10d831871d242d4ca0781c"
+    },
+    "docs/PROJECT_STATUS.md": {
+      "bytes": 18153,
+      "kind": "current-marker-update-only",
+      "sha256": "58a12542dc34df944be17adeadd672712c827424cd58c064d0861b4b16237688"
+    },
+    "extensions/agent-session-exec-v1-r2/tests/session.rs": {
+      "bytes": 57009,
+      "kind": "existing-carrier-byte-copy",
+      "sha256": "17147c9f59e50211f53fd91dc000b4f0bc19dcc6f4ce0ce789179e82569ea399"
+    },
+    "reports/reconstruction-2026-10-09/windows-agent-sdk-c28-stage18.md": {
+      "bytes": 8740,
+      "kind": "reviewed-public-status-report",
+      "sha256": "d685e8ecd03cbaf52647fde54195fc3be377b93dc5d9dc905172d58527096d50"
+    }
+  },
+  "omitted_external_input": {
+    "bytes": 427258,
+    "path": "companions/morrow-codex/qualification/c28-basic-fixtures/morrow_codex_session_exec_guest_r2.wasm",
+    "sha256": "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e",
+    "status": "LOCAL_ORIGINAL_ONLY_NOT_PUBLISHED"
+  },
+  "production_cargo_exit": 0,
+  "production_wrapper_exit": 1,
+  "public_tree_full_build": "NOT_RUN_MISSING_SESSION_FIXTURE",
+  "public_tree_self_contained": false,
+  "release_eligible": false,
+  "schema": "C28_STAGE18_PUBLIC_SOURCE_MANIFEST_V1",
+  "scope": "source-and-public-status-only",
+  "tests_rerun_for_publication": false
+}

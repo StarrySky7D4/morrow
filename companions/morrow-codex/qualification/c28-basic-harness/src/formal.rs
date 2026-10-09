@@ -25,13 +25,13 @@ use std::{
 };
 
 const SESSION: &[u8] = include_bytes!(
-    "../../../codex-sdk-completion-20261006/wasm-client-runs/wc/wasm32-unknown-unknown/release/morrow_codex_session_exec_guest_r2.wasm"
+    "../../c28-basic-fixtures/morrow_codex_session_exec_guest_r2.wasm"
 );
 const PROPOSAL: &[u8] = include_bytes!(
-    "../../../codex-sdk-completion-20261006/proposal-guest-runs/pg/wasm32-unknown-unknown/release/morrow_codex_proposal_guest_r2.wasm"
+    "../../c28-basic-fixtures/morrow_codex_proposal_guest_r2.wasm"
 );
 const PROCESS: &[u8] = include_bytes!(
-    "../../../codex-sdk-completion-20261006/process-client-runs/pw/wasm32-unknown-unknown/release/morrow_codex_process_control_guest_v1.wasm"
+    "../../c28-basic-fixtures/morrow_codex_process_control_guest_v1.wasm"
 );
 
 pub struct Workflow {

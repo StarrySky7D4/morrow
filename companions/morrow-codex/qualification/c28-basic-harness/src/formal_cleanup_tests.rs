@@ -378,3 +378,99 @@ fn disappearance_without_ack_is_not_retirement_evidence() {
     );
     assert!(owner.controls().is_empty());
 }
+
+
+#[test]
+fn failed_start_absent_status_blocks_second_start_but_keeps_empty_cleanup() {
+    let mut owner = Script::new(None);
+    let mut tracker = Tracker::default();
+    let (mut known, mut context) = (None, None);
+    assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
+    assert!(known.is_none());
+    assert!(tracker.settle_task(&mut owner, known, true, Duration::ZERO).unwrap().is_none());
+    assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
+    assert_eq!(owner.controls(), ["start"]);
+}
+
+#[test]
+fn failed_start_status_error_blocks_second_start_and_later_adoption() {
+    let mut owner = Script::new(None);
+    owner.statuses = VecDeque::from([Ok(None), Err(anyhow!("synthetic status failure"))]);
+    let mut tracker = Tracker::default();
+    let (mut known, mut context) = (None, None);
+    assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
+    owner.current = Some(snapshot(key(9), StoragePhase::Reclaimed, false));
+    assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
+    assert!(tracker.settle_task(&mut owner, known, true, Duration::ZERO).is_err());
+    assert_eq!(owner.controls(), ["start"]);
+    assert!(known.is_none());
+}
+
+#[test]
+fn failed_start_keyless_status_blocks_replay_and_blind_cleanup() {
+    let mut owner = Script::new(None);
+    let mut keyless = snapshot(key(1), StoragePhase::Running, false);
+    keyless.task.key = None;
+    owner.after_start = Some(keyless);
+    let mut tracker = Tracker::default();
+    let (mut known, mut context) = (None, None);
+    assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
+    assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
+    assert!(tracker.settle_task(&mut owner, known, true, Duration::ZERO).is_err());
+    assert_eq!(owner.controls(), ["start"]);
+    assert!(known.is_none());
+}
+
+#[test]
+fn normal_session_join_ack_allows_following_native_lane_on_same_tracker() {
+    let mut owner = Script::new(None);
+    let mut tracker = Tracker::default();
+    let (mut known, mut context) = (None, None);
+    let mut session = snapshot(key(1), StoragePhase::Reclaimed, false);
+    session.exit.as_mut().unwrap().execution = Ok(());
+    owner.start_result = Some(Ok(key(1)));
+    owner.after_start = Some(session);
+    assert_eq!(tracker.start_once(&mut owner, options(), &mut context, &mut known).unwrap(), key(1));
+    // formal.rs session-join does stop/poll/ACK directly, then clears its key.
+    let session_key = known.unwrap();
+    owner.stop(session_key).unwrap();
+    let joined = owner.poll(session_key).unwrap();
+    assert_eq!(joined.task.storage, StoragePhase::Reclaimed);
+    let exit = joined.exit.unwrap();
+    assert!(exit.execution.is_ok() && exit.disconnect.is_ok() && exit.maintenance.is_ok());
+    owner.acknowledge(session_key).unwrap();
+    known = None;
+    owner.start_result = Some(Ok(key(2)));
+    owner.after_start = Some(snapshot(key(2), StoragePhase::Running, false));
+    assert_eq!(tracker.start_once(&mut owner, options(), &mut context, &mut known).unwrap(), key(2));
+    assert_eq!(known, Some(key(2)));
+    assert_eq!(owner.controls(), ["start", "stop", "poll", "ack", "start"]);
+    assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
+    assert_eq!(owner.controls(), ["start", "stop", "poll", "ack", "start"]);
+}
+
+#[test]
+fn pre_start_existing_task_rejection_does_not_consume_attempt() {
+    let mut owner = Script::new(Some(snapshot(key(2), StoragePhase::Running, false)));
+    let mut tracker = Tracker::default();
+    let (mut known, mut context) = (None, None);
+    assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
+    assert!(owner.controls().is_empty());
+    owner.current = None;
+    owner.start_result = Some(Ok(key(1)));
+    owner.after_start = Some(snapshot(key(1), StoragePhase::Running, false));
+    assert_eq!(tracker.start_once(&mut owner, options(), &mut context, &mut known).unwrap(), key(1));
+    assert_eq!(owner.controls(), ["start"]);
+}
+
+#[test]
+fn complete_never_clears_failed_start_replay_gate() {
+    let mut owner = Script::new(None);
+    let mut tracker = Tracker::default();
+    let (mut known, mut context) = (None, None);
+    assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
+    tracker.complete();
+    assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
+    assert_eq!(owner.controls(), ["start"]);
+    assert!(tracker.settle_task(&mut owner, known, true, Duration::ZERO).unwrap().is_none());
+}

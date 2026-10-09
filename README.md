@@ -1,13 +1,17 @@
 # Morrow · 明隙
 
 <!-- C28-CURRENT-BEGIN -->
-## 当前开发检查点（2026-10-08，C28）
+## 当前开发检查点（2026-10-09，C28 阶段 18）
 
-本次向 `codex/windows-sdk-convergence-20261005` 同步 C11–C28 的 Agent/SDK 开发源码、相对路径构建入口与限定进度说明；应用版本保持 `0.1.9-test.58+62`，不更新 main、标签或 Release。
+开发分支同步启动防重放修正、收据解析及保留回归、固定 Wasm 测试夹具路径，并保存自主捕获工具与禁用的后继控制器源码。应用版本保持 `0.1.9-test.58+62`。
 
-原 protected owner 的会话链已有有界验证，H008 编译与 8 项纯诊断测试通过；Windows 原生 Start 仍为 Unknown，清理和显式修复仍 pending，不重放不确定操作。新诊断版完整 Windows 链尚未运行，移植副本的依赖检查与既有隔离测试分别记录。Agent 接口仍 experimental，安全执行层、SDK26/G04、完整 Codex IPC、PTY/stdin/resize、完整网络隔离及其他平台资格仍 OPEN。
+为避免公开本机路径，本次不附带原 session Wasm；固定夹具目录说明了另行准备和复验的前提。公开 Git 树仍缺此输入，未完成独立完整构建；本地完整载体的编译结果不能替代公开树验收。
 
-优先完成新 Windows 链实测、定位 Start Unknown 并复验真实回收；会话层与安全执行层验收后暂停准备测试预览。完整范围见 [C28 同步说明](reports/reconstruction-2026-10-08/windows-agent-sdk-c28.md)。下方报告保留各自历史时点，旧“未推送”不覆盖本次同步。
+Windows 原根库与程序已离线编译，Cargo 退出 0、双 EOF 完整；外层因新 Git checkout 的后置字节守卫失败退出 1，完整构建资格尚未通过。保存产物的来源与哈希已独立读回，未执行程序、测试或 VM。阶段 16 的 20 项合成回归、阶段 17 的 7 项读取测试与两轮桥接保留各自范围，不作为新生产载体复验通过。
+
+原生 Start 的 Unknown 不重放；owner finish、factory release、cleanup/join、真实断连及 Windows 沙箱资格仍待验收。旧 runner/setup 依赖源码与当前载体不完全一致，三程序 manifest 仍 PENDING。后续 11 项原始库测试未运行；额外 dev 依赖未补齐。`SDK26_G04=OPEN`，`release_eligible=false`，SDK 未冻结。
+
+下一步先核验 Cargo 对新 checkout 的转换及 helper 匹配来源，再准备有明确范围的 Windows 生命周期复验。会话层与安全执行层验收后暂停准备测试预览，不等待扩展执行层。见 [阶段 18 记录](reports/reconstruction-2026-10-09/windows-agent-sdk-c28-stage18.md)与[捕获工具源码](companions/morrow-codex/qualification/c28-autonomous-capture/README.md)。下方内容保留历史时点。
 <!-- C28-CURRENT-END -->
 
 <!-- C16-CURRENT-BEGIN -->
