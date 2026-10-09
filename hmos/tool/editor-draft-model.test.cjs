@@ -8,6 +8,28 @@ const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.Modu
 const plain = value => value === undefined ? undefined : JSON.parse(JSON.stringify(value));
 const settle = async () => { for (let i = 0; i < 6; i++) await Promise.resolve(); };
 
+test('settleIssued observes a paused actual in-flight save and leaves full late S2 dirty without sending it', async () => {
+  const h = harness({ existing: true, restored: { generation: '8', current_generation: '8' } });
+  h.coordinator.update(h.values('issued S1')); const issued = h.coordinator.flush(); h.coordinator.pauseWrites();
+  const later = h.values('late S2 汉字🧪', { selection_base: 4, selection_extent: 1, composing_start: 0, composing_end: 1 });
+  later.todos.text = 'all\nlate\nraw'; h.coordinator.update(later);
+  const observed = h.coordinator.settleIssued(); h.ack(0); const record = await observed; await assert.rejects(issued, /paused/);
+  assert.equal(record.values.title.text, 'issued S1'); assert.deepEqual(plain(h.coordinator.current), plain(later));
+  assert.equal(h.coordinator.dirty, true); assert.equal(h.coordinator.writesPaused, true); await h.tick(10000);
+  assert.equal(h.calls.length, 1); h.coordinator.dispose();
+});
+
+test('settleIssued preserves actual failed issued Unknown and never retries or consumes newer input while paused', async () => {
+  const h = harness({ existing: true, restored: { generation: '8', current_generation: '8' } });
+  h.coordinator.update(h.values('issued S1')); const issued = h.coordinator.flush(); h.coordinator.pauseWrites();
+  h.coordinator.update(h.values('late S2')); const observed = h.coordinator.settleIssued(); h.calls[0].reject(new Error('lost actual ACK'));
+  await assert.rejects(observed, /lost actual/); await assert.rejects(issued, /lost actual/);
+  const fixed = h.coordinator.pending; assert.equal(h.coordinator.unknown, true);
+  const current = await h.coordinator.settleIssued(); assert.equal(current.generation, '8'); assert.equal(h.coordinator.pending, fixed);
+  assert.equal(h.coordinator.current.title.text, 'late S2'); assert.equal(h.coordinator.dirty, true); assert.equal(h.coordinator.unknown, true);
+  await h.tick(10000); assert.equal(h.calls.length, 1); h.coordinator.dispose();
+});
+
 function model() {
   let now = 0, sequence = 0;
   const timers = new Map(), api = {};

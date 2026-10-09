@@ -1,0 +1,29 @@
+{
+  "start": "2026-10-08T23:44:01.505Z",
+  "finish": "2026-10-08T23:44:08.915Z",
+  "node": "v24.14.1",
+  "tests": [
+    "hmos/tool/editor-business-handoff-model.test.cjs",
+    "hmos/tool/editor-business-session-model.test.cjs",
+    "hmos/tool/editor-draft-model.test.cjs",
+    "hmos/tool/editor-draft-fork-model.test.cjs"
+  ],
+  "exit_code": 0,
+  "input_count": 11,
+  "inputs_unchanged": true,
+  "production_sdk": "NOT_RUN",
+  "device": "NOT_RUN",
+  "storage": "NOT_RUN by this model harness; uses separately generated actual Store DTO fixture",
+  "log_sha256": "3D3FBE20D6420FAEB035B60702B3F2BCCAE4226EB2DACC6F24BD7B101AE07EBA",
+  "summary": [
+    "✔ freeze guards actual parent in-flight/Unknown/import owner and pin subset authority; whole wire budgets and Unicode fail before native (420.5155ms)",
+    "✔ full UTF8 reply/transport budgets fail closed before sending and never truncate original bytes (84.8416ms)",
+    "✔ parent/predecessor, duplicate and oversized attachment selections fail before transport (0.8951ms)",
+    "✔ selection-only and composing-only changes are real generations; invalid UTF-16 offsets fail before send (1.8678ms)",
+    "ℹ tests 97",
+    "ℹ pass 97",
+    "ℹ fail 0",
+    "ℹ skipped 0",
+    "ℹ duration_ms 7368.1284"
+  ]
+}

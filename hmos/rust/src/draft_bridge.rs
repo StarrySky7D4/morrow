@@ -136,7 +136,7 @@ pub struct ViewValues {
     text: Values,
     assets: Vec<AssetSelection>,
 }
-#[derive(Default, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct Write {
     card_id: String,
@@ -290,6 +290,8 @@ pub struct View {
     request_sha256: String,
     fork_link: Option<ForkLinkView>,
     fork_retirement: Option<ForkRetirementView>,
+    business_link: Option<crate::editor_handoff::LinkView>,
+    business_retirement: Option<crate::editor_handoff::RetirementView>,
 }
 impl View {
     pub fn from_record(record: crate::editor_draft::DraftRecord) -> Result<Self> {
@@ -322,6 +324,8 @@ impl View {
             repeated: record.repeated,
             request_sha256: crate::editor_draft::request_sha256(request),
             fork_link: record.slot.development_fork_link.as_ref().map(Into::into),
+            business_link: record.slot.development_business_link.as_ref().map(crate::editor_handoff::LinkView::from_proto).transpose()?,
+            business_retirement: record.slot.development_business_retirement.as_ref().map(crate::editor_handoff::RetirementView::from_proto).transpose()?,
             fork_retirement: record
                 .slot
                 .development_fork_retirement

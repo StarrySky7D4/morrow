@@ -1,0 +1,22 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.12s
+     Running unittests src\lib.rs (hmos\rust\target\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 14 tests
+test editor_handoff::tests::actual_handoff_transaction_crashes_preserve_exact_plan_pins_and_fixed_retry ... ignored, actual subprocess transaction crashes require --features morrow-core/fault-injection
+test editor_handoff::tests::export_complete_actual_store_handoff_dto_fixture ... ignored, explicit DTO fixture export requires HMOS_HANDOFF_DTO_FIXTURE
+test editor_handoff::tests::historical_business_result_not_current_card_is_the_only_child_source ... ok
+test editor_handoff::tests::changed_first_literal_same_operation_and_ordinary_parent_save_discard_import_are_rejected ... ok
+test editor_handoff::tests::new_source0_draft_can_continue_original_wire_with_true_task_ids_after_handoff ... ok
+test editor_handoff::tests::source0_child_pin_order_aliases_and_late_confirmed_assets_survive_parent_retirement ... ok
+test editor_handoff::tests::combined_active_limit_rejects_before_plan_and_keeps_original_parent_and_intent ... ok
+test editor_handoff::tests::exact_s1_business_s2_raw_source0_child_retirement_close_and_reopen_are_distinct_durable_writes ... ok
+test editor_handoff::tests::strict_absence_malformed_proofs_and_complete_reply_budget_refuse_before_plan ... ok
+test editor_handoff::tests::full_confirmed_raw_fork_ancestor_requires_exact_retirement_and_other_session_is_not_ancestor ... ok
+test editor_handoff::tests::competing_saved_exact_and_handoff_plans_cas_one_intent_and_freeze_the_same_parent ... ok
+test editor_handoff::tests::unresolved_independent_ready_import_blocks_plan_without_releasing_any_owner ... ok
+test editor_handoff::tests::saved_exact_compares_complete_textvalue_selection_and_assets_not_just_strings ... ok
+test editor_handoff::tests::actual_31mib_parent_plan_child_logical_charge_refuses_before_freezing_or_releasing_pins ... ok
+
+test result: ok. 12 passed; 0 failed; 2 ignored; 0 measured; 176 filtered out; finished in 10.88s
+

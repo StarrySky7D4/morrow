@@ -1,0 +1,12 @@
+{
+  "startedUtc": "2026-10-08T23:47:41.659Z",
+  "finishedUtc": "2026-10-08T23:47:59.345Z",
+  "exitCode": 1,
+  "signal": null,
+  "suites": 34,
+  "inputs": 116,
+  "sourceIdentityVerified": true,
+  "log": "models-final-tests.log",
+  "sha256": "0E365928F5BF0EBD7B7B059076ACCDC79B2C07CCC2EAE5A84EBA158D65B6D970",
+  "scope": "actual-source host tool/models; native replies and SDK lifecycle seams are not device acceptance"
+}

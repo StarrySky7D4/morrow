@@ -1,0 +1,59 @@
+   Compiling morrow-core v0.1.9-test.50 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\shared\core)
+   Compiling morrow-editor-draft-model v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust\editor-draft-model)
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.89s
+     Running unittests src\lib.rs (hmos\rust\target\debug\deps\morrow_hmos-5dc4350283be0464.exe)
+
+running 1 test
+PASS handoff_plan/after-begin; fixed operation plan; independent transaction
+PASS handoff_plan/after-card; fixed operation plan; independent transaction
+PASS handoff_plan/after-operation; fixed operation plan; independent transaction
+PASS handoff_plan/after-event; fixed operation plan; independent transaction
+PASS handoff_plan/before-commit; fixed operation plan; independent transaction
+PASS handoff_plan/after-commit; fixed operation plan; independent transaction
+PASS child/after-begin; fixed operation child-first; independent transaction
+PASS child/after-card; fixed operation child-first; independent transaction
+PASS child/after-operation; fixed operation child-first; independent transaction
+PASS child/after-event; fixed operation child-first; independent transaction
+PASS child/before-commit; fixed operation child-first; independent transaction
+PASS child/after-commit; fixed operation child-first; independent transaction
+PASS retire/after-begin; fixed operation retire; independent transaction
+PASS retire/after-card; fixed operation retire; independent transaction
+PASS retire/after-operation; fixed operation retire; independent transaction
+PASS retire/after-event; fixed operation retire; independent transaction
+PASS retire/before-commit; fixed operation retire; independent transaction
+PASS retire/after-commit; fixed operation retire; independent transaction
+PASS saved_close_plan/after-begin; fixed operation morrow-host-intent-close-plan-f58c82df366a98d732a0f484de50fe8cc5a4428b2aeac7c8716bba00f646a425; independent transaction
+PASS saved_close_plan/after-card; fixed operation morrow-host-intent-close-plan-f58c82df366a98d732a0f484de50fe8cc5a4428b2aeac7c8716bba00f646a425; independent transaction
+PASS saved_close_plan/after-operation; fixed operation morrow-host-intent-close-plan-f58c82df366a98d732a0f484de50fe8cc5a4428b2aeac7c8716bba00f646a425; independent transaction
+PASS saved_close_plan/after-event; fixed operation morrow-host-intent-close-plan-f58c82df366a98d732a0f484de50fe8cc5a4428b2aeac7c8716bba00f646a425; independent transaction
+PASS saved_close_plan/before-commit; fixed operation morrow-host-intent-close-plan-f58c82df366a98d732a0f484de50fe8cc5a4428b2aeac7c8716bba00f646a425; independent transaction
+PASS saved_close_plan/after-commit; fixed operation morrow-host-intent-close-plan-f58c82df366a98d732a0f484de50fe8cc5a4428b2aeac7c8716bba00f646a425; independent transaction
+PASS saved_discard/after-begin; fixed operation exact-discard; independent transaction
+PASS saved_discard/after-card; fixed operation exact-discard; independent transaction
+PASS saved_discard/after-operation; fixed operation exact-discard; independent transaction
+PASS saved_discard/after-event; fixed operation exact-discard; independent transaction
+PASS saved_discard/before-commit; fixed operation exact-discard; independent transaction
+PASS saved_discard/after-commit; fixed operation exact-discard; independent transaction
+PASS saved_close/after-begin; fixed operation saved-close; independent transaction
+PASS saved_close/after-card; fixed operation saved-close; independent transaction
+PASS saved_close/after-operation; fixed operation saved-close; independent transaction
+PASS saved_close/after-event; fixed operation saved-close; independent transaction
+PASS saved_close/before-commit; fixed operation saved-close; independent transaction
+PASS saved_close/after-commit; fixed operation saved-close; independent transaction
+PASS handoff_close_plan/after-begin; fixed operation morrow-host-intent-close-plan-3c9dd09756983981d770785991553fbefc0c1e36bc7be5fa50a68791c197c5c2; independent transaction
+PASS handoff_close_plan/after-card; fixed operation morrow-host-intent-close-plan-3c9dd09756983981d770785991553fbefc0c1e36bc7be5fa50a68791c197c5c2; independent transaction
+PASS handoff_close_plan/after-operation; fixed operation morrow-host-intent-close-plan-3c9dd09756983981d770785991553fbefc0c1e36bc7be5fa50a68791c197c5c2; independent transaction
+PASS handoff_close_plan/after-event; fixed operation morrow-host-intent-close-plan-3c9dd09756983981d770785991553fbefc0c1e36bc7be5fa50a68791c197c5c2; independent transaction
+PASS handoff_close_plan/before-commit; fixed operation morrow-host-intent-close-plan-3c9dd09756983981d770785991553fbefc0c1e36bc7be5fa50a68791c197c5c2; independent transaction
+PASS handoff_close_plan/after-commit; fixed operation morrow-host-intent-close-plan-3c9dd09756983981d770785991553fbefc0c1e36bc7be5fa50a68791c197c5c2; independent transaction
+PASS handoff_close/after-begin; fixed operation handoff-close; independent transaction
+PASS handoff_close/after-card; fixed operation handoff-close; independent transaction
+PASS handoff_close/after-operation; fixed operation handoff-close; independent transaction
+PASS handoff_close/after-event; fixed operation handoff-close; independent transaction
+PASS handoff_close/before-commit; fixed operation handoff-close; independent transaction
+PASS handoff_close/after-commit; fixed operation handoff-close; independent transaction
+test editor_handoff::tests::actual_handoff_transaction_crashes_preserve_exact_plan_pins_and_fixed_retry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 188 filtered out; finished in 12.90s
+

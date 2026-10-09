@@ -1,0 +1,77 @@
+[
+  {
+    "path": "hmos/rust/src/editor_handoff.rs",
+    "bytes": 49593,
+    "sha256": "064227172B29B601D42F5466E9AD5EF76462A37BFD5FBCB1931FF155C161A10E"
+  },
+  {
+    "path": "hmos/rust/src/editor_handoff/tests.rs",
+    "bytes": 44550,
+    "sha256": "7827FAA68E31216BEDD38A9652A781E690E7BFB4E1BA93925CC10B0FD91E3A3B"
+  },
+  {
+    "path": "hmos/rust/src/editor_intent.rs",
+    "bytes": 39769,
+    "sha256": "A0677D1488489C8A087C8735B51E4DA954FC37AA509A8BBD7AA926120FEC94AB"
+  },
+  {
+    "path": "hmos/rust/src/editor_business.rs",
+    "bytes": 46958,
+    "sha256": "F8676601780C12403167B9E5AE892D699FDD76560D0C36D94EFB82474184F537"
+  },
+  {
+    "path": "hmos/rust/src/editor_draft.rs",
+    "bytes": 39153,
+    "sha256": "5D1DD533F819DF00293B01B290251578352124E25CC5C2530BD08C5D3D08726B"
+  },
+  {
+    "path": "hmos/rust/src/editor_draft_fork.rs",
+    "bytes": 17121,
+    "sha256": "A698DF9F433F289BFF169635B723D28BFEA073EDE943DCEB75703192E946AE8C"
+  },
+  {
+    "path": "hmos/rust/src/draft_bridge.rs",
+    "bytes": 11922,
+    "sha256": "08835D330D49648D85A3689109942EF77AACE40A65C02920599B023DCC490FB3"
+  },
+  {
+    "path": "hmos/rust/src/lib.rs",
+    "bytes": 59560,
+    "sha256": "F006266A0937E35216152284C79069C55F51A45CAFE68A153F8B16B32283590C"
+  },
+  {
+    "path": "hmos/rust/editor-draft-model/schemas/editor_draft.proto",
+    "bytes": 4381,
+    "sha256": "EA009075699127480D6DC336FD9F4F355E5684614DCCBF841C8142AE87ADA067"
+  },
+  {
+    "path": "hmos/rust/editor-draft-model/schemas/editor_intent.proto",
+    "bytes": 1636,
+    "sha256": "D5F02B81F3EB71374C4F379F2F0D89B314A8C5E34F6F46050052B2AC0BFD2C0F"
+  },
+  {
+    "path": "hmos/rust/editor-draft-model/build.rs",
+    "bytes": 480,
+    "sha256": "D9FB0310E615F8FC7BA62A760E626E449E000915E99D2B381BD65A17871592D9"
+  },
+  {
+    "path": "hmos/rust/editor-draft-model/src/lib.rs",
+    "bytes": 19964,
+    "sha256": "0518F380D0335C21EBDD031AD22B11572FCF5917024ED0AA408D092AC6E06E4E"
+  },
+  {
+    "path": "hmos/rust/Cargo.toml",
+    "bytes": 919,
+    "sha256": "C3C53EB60EB751BCB3F5BD26E37EF54D26D5C906A8FBEB7FDF76887377E2BB82"
+  },
+  {
+    "path": "hmos/rust/Cargo.lock",
+    "bytes": 43572,
+    "sha256": "99388ED4B939078A28617A7624ECBC38A3B7D527AD181AEFAC824F07562F119D"
+  },
+  {
+    "path": "hmos/reports/ui-source/v25/editor-handoff-store-fixture.json",
+    "bytes": 91081,
+    "sha256": "9AF7CCAABAF247BBB06E60CD7302DA878F515BAA3704495735542BDB783E486F"
+  }
+]

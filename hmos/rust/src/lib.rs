@@ -30,6 +30,7 @@ pub mod editor_input;
 mod create_todos;
 mod editor_business;
 mod editor_intent;
+mod editor_handoff;
 pub mod markdown;
 pub mod query_plan_v2;
 
@@ -78,6 +79,8 @@ pub struct Request {
     editor_intent_ref: Option<editor_intent::Read>,
     editor_intent_query: Option<editor_intent::Query>,
     editor_intent_close: Option<editor_intent::Close>,
+    business_handoff: Option<editor_handoff::Envelope>,
+    business_retirement: Option<editor_handoff::Envelope>,
     #[serde(skip)]
     transport_json: String,
 }
@@ -177,6 +180,7 @@ impl Engine {
         self.effect = "not_committed";
         editor_business::reject_other_envelope(&request)?;
         editor_intent::reject_other_envelope(&request)?;
+        editor_handoff::reject_other_envelope(&request)?;
         if request.action != "import_file" { return Err("UnsupportedFileAction".into()); }
         let start = self.start;
         let clock = || u64::try_from(start.elapsed().as_millis()).unwrap_or(u64::MAX - 1).saturating_add(1);
@@ -187,6 +191,7 @@ impl Engine {
         self.effect = "not_committed";
         editor_business::reject_other_envelope(&request)?;
         editor_intent::reject_other_envelope(&request)?;
+        editor_handoff::reject_other_envelope(&request)?;
         if request.id.starts_with("morrow-host-") { return Err("HostOwnedIdentity".into()); }
         let info = match request.action.as_str() {
             "import_export" => editor_draft_staging::export_verified(&self.host, &request.id, &request.draft_id, draft_bridge::number(&request.generation)?, &request.operation, writer).map_err(err)?,
@@ -413,6 +418,8 @@ impl Engine {
         self.effect = "not_committed";
         editor_business::reject_other_envelope(&r)?;
         editor_intent::reject_other_envelope(&r)?;
+        editor_handoff::reject_other_envelope(&r)?;
+        if matches!(r.action.as_str(), "draft_continue_business" | "draft_continue_business_retire") { return editor_handoff::execute(self, r); }
         if r.action.starts_with("editor_intent_") { return editor_intent::execute(self, r); }
         if r.action == "editor_save" || r.action == "editor_commit_inspect" { return editor_business::execute(self, r); }
         if r.id.starts_with("morrow-host-") { return Err("HostOwnedIdentity".into()); }
@@ -799,6 +806,7 @@ pub fn dispatch(input: &str) -> String {
         r.transport_json = input.to_owned();
         editor_business::reject_other_envelope(&r)?;
         editor_intent::reject_other_envelope(&r)?;
+        editor_handoff::reject_other_envelope(&r)?;
         let mut slot = SESSION.lock().map_err(|_| "SessionUnavailable")?;
         if r.action == "open" {
             if slot.is_some() {

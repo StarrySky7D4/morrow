@@ -1,0 +1,47 @@
+Index.ets SHA256=3b5164d9e033b246cdd582a05b5cfa0f21f6d9d85e55484233efd03274439a9d
+EditorDraft.ets SHA256=25257098b3a71e1014bef552d100617fd0e34573706c91fdfc61b2f12116e495
+EditorBusiness.ets SHA256=6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf
+EditorBusinessSession.ets SHA256=948c7b9105675a65406cf980f8a8982500954e87e33189878a5f32c58871af86
+EditorFieldPolicy.ets SHA256=10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842
+Workbench.ets SHA256=1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf
+✔ fresh actual Index/ETS source identities; controlled receiver boundaries are explicit (2.1582ms)
+✔ actual new-card Save persists complete raw before pause and durable intent before business admission (196.5643ms)
+✔ actual unchanged existing-card Save establishes publication and preserves source/tasks semantics (168.4743ms)
+✔ actual first business send synchronously admits Workbench before resuming parent debounce (143.72ms)
+✔ actual S2 during raw publication cancels unissued proposal while keeping complete input (118.0187ms)
+✔ issued-before-first-send S2 blocks auto-save; explicit read-only restore retries fixed S1 literal (118.2932ms)
+✔ actual selection-only S2 after issue cannot be consumed by same-text S1 success (115.3756ms)
+✔ actual first save Unknown retries same session and literal without reconstructing current S2 (102.7252ms)
+✔ actual committed effect with invalid DTO remains known through attempted save and failed inspection (102.3948ms)
+✔ actual list and five-part restore are read-only; same-card different draft does not bind consumption (104.4594ms)
+✔ actual failed partial restoration leaves original discovery reference and never auto-replays (103.5993ms)
+✔ actual old submit rejects create/edit and unfinished strict session blocks ordinary mutation/discard/close (106.1822ms)
+✖ actual ordinary task command remains separate from strict create/edit transport (98.7774ms)
+✔ actual Store DTO fixture through Index restore/inspect preserves original wire and full historical source (107.0549ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 13
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2115.9002
+
+✖ failing tests:
+
+test at hmos\tool\index-business-integration.test.cjs:148:1
+✖ actual ordinary task command remains separate from strict create/edit transport (98.7774ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:151:42)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

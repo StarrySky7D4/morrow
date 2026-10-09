@@ -1,0 +1,1555 @@
+✔ old material preferences retain values and inherit depth (0.7993ms)
+✔ follow resolves complete terminal material even through disabled links (0.2753ms)
+✔ all cycles rejected including disabled components, missing targets allowed (0.5254ms)
+✔ invalid material data fails before replacing accepted values (0.4021ms)
+✔ maximum chain is bounded and survives JSON restart without losing overrides (21.4208ms)
+✔ seven style radius rules match Flutter and keep a square radius square (0.3546ms)
+✔ picker opens exact authorized URI, native streams Unicode bytes, returned metadata has no path (5.639ms)
+✔ picker cancellation does not prepare or create spool (1.1965ms)
+✔ provider open denial closes caller files and removes unadmitted private directory (1.3101ms)
+✔ native over-budget partial prepare is removed (1.167ms)
+✔ unknown import retains exact original JSON and recovery supports only the same proposal (2.1663ms)
+✔ 20 retained requests block picker before provider admission (3.1145ms)
+✔ remaining quota includes reserved sidecars of unknown imports (1.3509ms)
+✔ bad native whole hash never opens save picker (1.2296ms)
+✔ verified short export truncates longer destination, syncs and checks final size (3.8113ms)
+✔ provider destination stat unsupported is explicitly unconfirmed (3.576ms)
+✔ private image preview is verified, one at a time, and token-scoped cleanup (1.6049ms)
+✔ dialog and inline previews coexist, and every original token is released independently (1.0228ms)
+✔ inline admission permits eight files then blocks before native read, including another adapter (1.5359ms)
+✔ single dialog admission is shared across adapters, while foreign release cannot delete it (2.1786ms)
+✔ inline byte quota uses immutable native metadata and restores only after release (1.9152ms)
+✔ inline refuses missing or invalid pre-admission length "" (1.0801ms)
+✔ inline refuses missing or invalid pre-admission length "-1" (2.4214ms)
+✔ inline refuses missing or invalid pre-admission length "01" (3.1982ms)
+✔ inline refuses missing or invalid pre-admission length "1.0" (3.3906ms)
+✔ inline refuses missing or invalid pre-admission length "9007199254740992" (0.6168ms)
+✔ inline refuses missing or invalid pre-admission length "67108865" (0.5215ms)
+✔ unexpected inline result length is rejected and its private partial is removed (0.7643ms)
+✔ invalid purpose does not read native bytes or create private paths (0.516ms)
+✔ preview identity rejects copied handles and every mutated display/path field (0.7694ms)
+✔ failed preview URI conversion cleans its private copy and caller descriptor (0.7522ms)
+✔ failed token cleanup retains admission and can be explicitly retried (0.9022ms)
+✔ failed cleanup remains visible without a UI handle, explicit retry restores dialog admission (1.1003ms)
+✔ same-cache new helper retries old failed cleanup, old owner release does not touch disk twice (0.9472ms)
+✔ explicit cleanup skips healthy live tokens and preserves failed quota when retry also fails (1.0422ms)
+✔ explicit retry keeps immutable inline bytes until actual removal then restores byte budget (0.9152ms)
+✔ cache-root identity isolates cleanup and quotas even for a nested cache directory (0.9733ms)
+✔ Flutter image scale range is finite and panning stays inside contained image geometry (0.7229ms)
+✔ preview length mismatch removes private copy and closes FD (0.6698ms)
+✔ unknown preview copy result removes private partial bytes without retry (0.6492ms)
+✔ provider copy failure is unconfirmed and private export is cleaned (0.7153ms)
+✔ crash after mkdtemp before data creation cleans only strict unadmitted directory (0.7409ms)
+✔ crash with partial data and undefined metadata, no request, frees quota (0.6835ms)
+✔ crash with partial data and  metadata, no request, frees quota (1.5368ms)
+✔ crash with partial data and {"spool_id": metadata, no request, frees quota (1.2895ms)
+✔ metadata write failure during live pick leaves no admitted request or caller FD (0.9359ms)
+✔ 20 crashed preparations are cleaned before a new picker request (3.6572ms)
+✔ existing corrupt request "" is retained with diagnostic and no handle (1.4297ms)
+✔ existing corrupt request "{\"action\":" is retained with diagnostic and no handle (3.8851ms)
+✔ existing corrupt request "null" is retained with diagnostic and no handle (1.1011ms)
+✔ existing corrupt request "{}" is retained with diagnostic and no handle (3.3059ms)
+✔ existing corrupt request "{\"action\":\"import_file\",\"import_request\":[]}" is retained with diagnostic and no handle (1.6378ms)
+✔ partial metadata and partial request remain visible, neither becomes an import handle (0.747ms)
+✔ missing metadata with a valid request is preserved (0.9154ms)
+✔ schema-invalid or mismatched retained request {"sha256":"0000000000000000000000000000000000000000000000000000000000000000"} is not importable (0.9298ms)
+✔ schema-invalid or mismatched retained request {"kind":"unknown"} is not importable (0.8643ms)
+✔ schema-invalid or mismatched retained request {"expected_generation":"18446744073709551616"} is not importable (0.9179ms)
+✔ schema-invalid or mismatched retained request {"operation_id":""} is not importable (1.0023ms)
+✔ symlink directory is never recursively removed or exposed (2.5814ms)
+✔ symlink data is never recursively removed or exposed (1.1136ms)
+✔ symlink metadata.json is never recursively removed or exposed (1.0829ms)
+✔ symlink request.json is never recursively removed or exposed (0.8275ms)
+✔ permission failure does not imply request absence and prevents quota admission (0.9629ms)
+✔ unexpected child directory survives recursive SDK rmdir and blocks new admission (1.0046ms)
+✔ unknown namespace is retained, diagnosed, and cannot be quota-evicted (1.0751ms)
+✔ complete preparation without request recovers an opaque handle for explicit use (1.7476ms)
+✔ corrupt cached metadata invalidates the old in-memory handle (1.8894ms)
+✔ cleanup failure remains visible and blocks the unsafe cached item (1.1673ms)
+✔ oversized corrupt journals count actual bytes and block a new picker (1.2109ms)
+✔ diagnostics are copied so caller mutation cannot hide retained review state (1.1119ms)
+✔ system open lease uses bounded safe original suffix and exact read metadata (2.9545ms)
+✔ system open requires preadmitted canonical length within 200 MiB (6.6678ms)
+✔ system open actual byte length mismatch removes unregistered candidate (1.878ms)
+✔ safe system preview filename preserves suffix under Unicode truncation (1.1745ms)
+✔ system open admission is shared but independent of image dialog and inline leases (2.4397ms)
+✔ failed system open cleanup retains immutable admission until explicit retry (2.0452ms)
+✔ named system preview cleanup refuses foreign sidecars before deleting its verified file (1.457ms)
+✔ named system preview cleanup validates its exact file is not a symlink (1.5585ms)
+✔ batch selection returns every URI in provider order and passes the exact ceiling without copying bytes (4.0087ms)
+✔ invalid batch ceilings fail before picker admission or file copying (8.9045ms)
+✔ empty batch selection grants no URI and permits another explicit picker request (3.6021ms)
+✔ an unselected URI or another helper cannot consume the selecting helper grant (11.4675ms)
+✔ discarding an unread selection revokes its URI without opening or copying it (3.3958ms)
+✔ batch rejects the whole over the caller ceiling result without granting a valid prefix or admitting native work (1.7552ms)
+✔ batch rejects the whole duplicate URIs result without granting a valid prefix or admitting native work (1.2328ms)
+✔ batch rejects the whole empty URI result without granting a valid prefix or admitting native work (1.2143ms)
+✔ batch rejects the whole non-string URI result without granting a valid prefix or admitting native work (1.262ms)
+✔ batch rejects the whole undefined URI result without granting a valid prefix or admitting native work (1.184ms)
+✔ batch rejects the whole control character in URI result without granting a valid prefix or admitting native work (1.2699ms)
+✔ batch rejects the whole DEL in URI result without granting a valid prefix or admitting native work (1.2096ms)
+✔ batch rejects the whole overlong URI result without granting a valid prefix or admitting native work (1.171ms)
+✔ batch rejects the whole sparse array result without granting a valid prefix or admitting native work (1.1466ms)
+✔ batch rejects the whole null provider result result without granting a valid prefix or admitting native work (1.7444ms)
+✔ batch rejects the whole undefined provider result result without granting a valid prefix or admitting native work (1.4562ms)
+✔ batch rejects the whole object provider result result without granting a valid prefix or admitting native work (1.2674ms)
+✔ batch rejects the whole string provider result result without granting a valid prefix or admitting native work (2.2722ms)
+✔ unread batch members block another picker until each is consumed or explicitly discarded (6.0124ms)
+✔ a pending provider reply serializes a second request and blocks it once the first grants arrive (0.961ms)
+✔ provider rejection grants no URI and requires a new explicit selection before preparation (1.0229ms)
+✔ each selected URI recalculates the shared spool byte budget including other helper preparations (2.1004ms)
+✔ a selected URI whose shared spool count fills before preparation is denied without a native read or retry (2.2589ms)
+✔ a failed selected URI is consumed once while a previously prepared spool remains usable (1.86ms)
+✔ discarding remaining grants does not delete or invalidate an already prepared spool (8.274ms)
+✔ native fullscreen hides bars and changes orientation, then restores each original value (1.912ms)
+✔ pre-existing immersive request and asymmetric bar policy survive snapshot and restoration (0.3556ms)
+✔ repeated enter neither recreates the window port nor resets an existing fullscreen session (0.2923ms)
+✔ original snapshot and UI snapshot are immutable from caller mutations (0.3034ms)
+✔ exit before pending admission avoids any native writes (0.1902ms)
+✔ exit while the app window is being resolved cancels late creation without entering (0.3359ms)
+✔ exit during an accepted layout mutation waits then restores and never subsequently hides bars (0.3121ms)
+✔ exit during accepted landscape change restores all prior values and does not reenter (0.2573ms)
+✔ rapid fullscreen toggles cancel pending enter rather than performing two hidden transitions (0.2484ms)
+✔ an enter API rejection which may already have changed the window is restored before returning failure (0.8369ms)
+✔ failed restore attempts every remaining independent setting, retains the original window and requires explicit retry (0.5234ms)
+✔ failed cancellation restore is not automatically replayed by the enter catch handler (0.3241ms)
+✔ failed original enter and failed restoration retain obligation rather than recapturing the altered window (0.2877ms)
+✔ invalid or unavailable baseline cannot mutate the window (0.262ms)
+✔ actual WindowKit adapter binds only the exact initialized app main window (1.1756ms)
+✔ actual ETS model and component-method harness expose their fresh source identity (1.2402ms)
+ℹ AttachmentImageGestures.ets SHA256 73af8dd840bab941c7a5acdbc45639920e0b423912d441472c1756fc77647fc9
+ℹ AttachmentImagePreview.ets normalized-source SHA256 484076c31dcf78dddb69b0ea27f6bb46c8fd753fc9763f0f07759ce9438442a8
+✔ tight Flutter layout box has effective scale 1 through 2.5 with clipped pan at identity (0.6109ms)
+✔ off-center pinch preserves the scene point underneath the fingers (0.1318ms)
+✔ moving two-finger focal point translates the already scaled image (0.1233ms)
+✔ pinch registration scale is normalized without a recognition-threshold jump (0.1641ms)
+✔ single-finger pan uses the contain Image layout box, including letterboxing (0.2204ms)
+✔ both directions reverse immediately after hitting a pan boundary (0.1286ms)
+✔ moving pinch focal point reverses immediately after either boundary clips it (0.1368ms)
+✔ two-finger translation works without requiring a pinch distance change (0.124ms)
+✔ two-finger pan supersedes one-finger pan and its late cancellation cannot cancel the new owner (0.1853ms)
+✔ pinch takes over both pan recognizers and parallel updates cannot double-apply translation (0.2983ms)
+✔ finished and cancelled tickets cannot update again; fresh gestures can proceed (0.185ms)
+✔ old end and cancel tickets never control a newer gesture in the same preview (0.0942ms)
+✔ replacement, including reuse of the same token, revokes old starts, updates, ends and reset (0.1444ms)
+✔ geometry changes reset the transform and reject all former geometry tickets (0.1167ms)
+✔ loading/background invalidation and disposal revoke tickets without autonomous replay (0.1527ms)
+✔ reset and button zoom invalidate any currently admitted gesture tickets (0.129ms)
+✔ invalid gesture numbers and unusable viewport sizes cannot publish a corrupt transform (0.1614ms)
+✔ returned view and scope snapshots cannot mutate the owned transform (0.0568ms)
+✔ actual component only admits status-1 decoded, finite, current exact token and URI (0.3333ms)
+✔ actual component pinch uses moving focal point and actual pan binds a separate ticket (0.3256ms)
+✔ actual component former preview callbacks cannot alter or fail the next preview (0.2265ms)
+✔ actual component geometry replacement revokes old gesture closures while retaining decode identity (0.1234ms)
+✔ actual component owner replacement changes its real ForEach key even if geometry and availability are unchanged (0.2362ms)
+✔ actual component foreground resume replaces callback owner and retains the current transform (0.151ms)
+✔ actual component read loading/failure revokes former owner without resetting to another resource (0.2157ms)
+✔ actual component current decode failure stops gestures and preserves the original verified export (0.1156ms)
+✔ actual component disappearance rejects source, gesture, reset and visibility late callbacks (0.1231ms)
+✔ actual component timestamp fences prevent queued old pan end/cancel from borrowing a new ticket (0.1143ms)
+✔ actual component timestamp fences prevent queued old pinch end/cancel from borrowing a new ticket (0.1188ms)
+✔ all three URI items are imported in order with independent frozen identities and successive generations (7.1926ms)
+✔ picker cancel creates no draft owner, operation or import (6.3286ms)
+✔ valid non-empty selection establishes generation zero owner before any provider preparation (2.9776ms)
+✔ single picker maximum uses both asset and retained import slots (2.5133ms)
+✔ no remaining slot or blocked editor opens no picker and admits no item (5.4302ms)
+✔ oversized provider return is rejected whole before confirm or first-item import (2.8959ms)
+✔ duplicate, empty, control-containing or excessively long URI selection rejects before any item (10.519ms)
+✔ sparse URI selection is rejected before owner confirmation or any first-item import (1.8697ms)
+✔ same display names and bytes at distinct URIs remain independent import items (2.4826ms)
+✔ new title or generation while the picker is open stops before owner confirmation (7.2542ms)
+✔ generation confirmation cannot adopt user changes made while await was live (6.5787ms)
+✔ rejected owner confirmation conservatively remains Unknown without reading selected provider URI (2.0298ms)
+✔ simultaneous run calls share one live handle and one picker (2.1627ms)
+✔ stop during picker waits for the same live handle then admits no provider URI (1.3124ms)
+✔ stop during issued import retains its late confirmed result and never starts next URI (1.5413ms)
+✔ Ready but unselected receipt is retained and stops all later items (0.7888ms)
+✔ known per-item failure preserves previously selected item and stops without automatic replay (0.8267ms)
+✔ Unknown returned or thrown item result does not replay and stops remaining selection (1.4128ms)
+✔ foreign receipt operation, draft, card or generation is Unknown rather than success (2.7467ms)
+✔ receipt cannot smuggle a different current boundary into the next item (3.698ms)
+✔ adapter cannot accept extra edits or replace title with text other than current title or confirmed filename (1.9556ms)
+✔ new edit after pin confirmation keeps selected result but stops before next URI (0.7863ms)
+✔ duplicate generated operation identity stops before admitting the second item (0.7739ms)
+✔ valid uint64 generations above Number safe range remain exact across all items (0.8754ms)
+✔ snapshot and callback object mutations cannot replace owned sequencing state (0.7971ms)
+✔ synchronous observer stop before first URI admission cannot start any import (0.7347ms)
+✔ empty-title proposal matches filename limit and preserves a newly non-empty title (0.536ms)
+✔ invalid generation, negative or excessive counts fail closed before picker (2.4485ms)
+✔ fullscreen horizontal seek uses actual Material whole-second duration and default 1000 vp sensitivity (1.8642ms)
+✔ horizontal gesture submits once only after finish and subsequent finish is empty (0.1958ms)
+✔ Dart negative half-second golden rounds away from zero rather than JavaScript negative zero (0.1877ms)
+✔ source-style horizontal out-of-range movements preserve last accepted delta (0.1031ms)
+✔ zero movement, unknown duration, invalid offsets and non-fullscreen never submit seek (0.1646ms)
+✔ lease replacement, fullscreen exit, background disposal and player failure cancel an accepted horizontal seek (0.1262ms)
+✔ short clips below one second and a rounded zero offset do not dispatch (0.0788ms)
+✔ double tap submits left minus 10 seconds or right plus 10 seconds after exactly 400 ms (0.9448ms)
+✔ middle third double tap and unavailable/fullscreen-disabled playback do not seek (0.5466ms)
+✔ exact equal-third outer boundaries match source and invalid coordinates cannot seek (1.2844ms)
+✔ subsequent tap increments same side by ten seconds and resets 400 ms submission timer (0.4134ms)
+✔ opposite or middle single tap does not increment pending double-tap feedback (0.1894ms)
+✔ changing double-tap direction cancels earlier side without replaying its timer (0.2044ms)
+✔ double tap follows current playback position at delayed commit and clamps to start/end (0.2947ms)
+✔ late double-tap timers never control a replacement lease even with identical duration and position (0.2034ms)
+✔ double-tap timers cancel on fullscreen exit, busy release, failure and explicit cancel (0.2662ms)
+✔ old feedback fade timer cannot erase a newer source indicator (0.1643ms)
+✔ controls start hidden and single tap toggles with exact 3-second timeout (0.42ms)
+✔ control interaction refreshes hide timer and slider drag keeps controls mounted until release (0.2553ms)
+✔ stale visibility timer and stale tap cannot control replacement or remounted fullscreen controls (0.1848ms)
+✔ token-bound toggle and seek reject delayed controls from an old attachment (3.1176ms)
+✔ destroyed surface observed before initialized is never assigned or prepared (1.421ms)
+✔ stale surface destroy cannot clear a newer exact surface or another lease (0.8339ms)
+✔ destroyed surface cancels queued prepare and replacement admits only the exact latest surface (0.4072ms)
+✔ verified private URI and SDK MIME reach the system viewer, launch never releases bytes (2.9317ms)
+✔ forged, wrong-purpose and arbitrary provider URI candidates are rejected without adopting or opening (0.9484ms)
+✔ all guarded executable families avoid system dispatch and safely release unopened lease (6.8785ms)
+✔ MIME hints follow PreviewKit values and unknown names remain unspecified (0.7742ms)
+✔ support failure or unsupported file before dispatch removes own file and does not launch (1.9283ms)
+✔ a pre-existing singleton window is never replaced or closed by candidate opening (0.8944ms)
+✔ UI navigation, foreground observation and window disappearance retain bytes for possible external readers (0.9776ms)
+✔ close and successful closure observation preserve bytes until explicit all-readers-finished action (5.7261ms)
+✔ finish refuses while the system preview is still displayed (0.9147ms)
+✔ open rejection after dispatch is unknown and never automatically replayed or removed (0.8955ms)
+✔ silent launch without observed window remains retained rather than being treated as reader completion (1.2168ms)
+✔ observation and closure failures retain the known capability and permit only explicit retry (3.0296ms)
+✔ close resolution without observed closure cannot authorize removal (1.1563ms)
+✔ failed file removal keeps original capability across adapter recreation, retry does not reopen (1.4831ms)
+✔ failed pre-dispatch cleanup does not claim ownership of unrelated singleton on later retries (0.7241ms)
+✔ mutation during support await cannot inject another file URI into dispatch (1.5356ms)
+✔ queued finish waits for dispatch settlement and never removes in-flight bytes (0.8865ms)
+✔ returned UI snapshots cannot alter retained session or expose private URI (1.2395ms)
+✔ cleanup uses original immutable token after a post-dispatch caller mutation (1.1482ms)
+✔ audio prepares paused with time controls and never starts automatically (2.1503ms)
+✔ video waits for its exact token surface and prepares once irrespective of callback order (0.6033ms)
+✔ close before awaited open admission cannot create a player or expose a deleted lease (0.2969ms)
+✔ close awaits late factory creation and releases without loading that source (0.4906ms)
+✔ close waits for pending native initialization before releasing the player (0.5584ms)
+✔ close awaits an already executing play instead of releasing its descriptor mid-command (0.4989ms)
+✔ surface observed before native initialization is used only after initialized (0.2707ms)
+✔ failed prepare remains failed with controls disabled and releasable ownership (0.5438ms)
+✔ rejected release keeps resource ownership and an explicit close can retry (0.5987ms)
+✔ reopening never bypasses a failed previous release or starts another source (0.3878ms)
+✔ concurrent close callers share one cleanup and stale events cannot update a replacement (0.6845ms)
+✔ latest concurrent opening wins with no native work from a superseded admission (0.1962ms)
+✔ controls reject invalid positions and serialize accepted actions before release (0.5405ms)
+✔ background pauses an in-flight accepted play without restoring autoplay (0.3864ms)
+✔ late disappearing-surface pause for an old token cannot pause a newly playing session (0.2784ms)
+✔ media failure is visible and callbacks cannot silently recover or automatically replay (0.1625ms)
+✔ source and view snapshots cannot be mutated to substitute another file (0.263ms)
+✔ actual SDK adapter uses readonly nofollow FD with exact byte extent, then release before fd close (24.9243ms)
+✔ actual SDK adapter retains descriptor when native release fails and retries only after explicit close (11.6024ms)
+✔ actual SDK adapter retains failed FD close after player release, retry never re-releases the player (10.8601ms)
+✔ actual SDK adapter holds partial initialization resources for cleanup and never feeds mismatched bytes to AVPlayer (49.4151ms)
+✔ same identity receives new content without invalidating unrelated cards (3.1219ms)
+✔ reordered results refresh revised retained identities and discard removed entries (0.4602ms)
+✔ moved identities invalidate positional height caches even without a content revision (1.1556ms)
+✔ page identity separates different card presentations and empty queries clear visible data (0.4544ms)
+✔ identical queries do not invalidate nodes and detached views receive no events (0.4228ms)
+✔ stable page identities include the five Flutter pages and exclude trash (1.7163ms)
+✔ restore retains source v1 schema, manual flags and page-specific orders (1.4584ms)
+✔ order projects surviving saved IDs and appends new cards without destructive pruning (0.7636ms)
+✔ moveRelative uses target identity after removal, including before/after and no-ops (0.6335ms)
+✔ filtered moves replace visible slots and leave hidden card anchors unchanged (1.0145ms)
+✔ visible query order may differ from full order and is merged into visible slots exactly (0.7265ms)
+✔ a successful move prunes removed IDs, appends new ones, and does not change other pages (0.8475ms)
+✔ disabling and enabling manual order preserves its saved identities (0.9035ms)
+✔ write failure rolls back the exact prior order/manual state and never auto-replays (1.2103ms)
+✔ failed mode selection restores the previous manual mode and retained order (0.8756ms)
+✔ busy and loading reject new changes instead of issuing concurrent writes or reads (0.8477ms)
+✔ invalid candidate identities, page, duplicates, missing targets and overflow never write (0.7312ms)
+✔ view tokens and model revision reject stale drags, even for identical identity arrays (0.7171ms)
+✔ switching pages during a write does not publish the old page mode into the current page (1.2388ms)
+✔ serialized preferences recover the acknowledged state after restart (1.2983ms)
+✔ caller mutations of input arrays, views and returned snapshots cannot change a pending request (0.6737ms)
+✔ invalid persisted JSON is rejected atomically without partially replacing prior preferences (3.6687ms)
+✔ exact 256-card candidates can be persisted without truncation (15.3497ms)
+✔ dispose prevents late read/write callbacks from updating the current UI (2.2385ms)
+✔ bounded original HTML bytes become a normal recoverable spool without raw provider data (22.8106ms)
+✔ a minted system URI can be opened once but never becomes a picker grant or persistent URI (6.6845ms)
+✔ plain URI text and forged capabilities cannot open a caller-selected path or invoke native (12.4686ms)
+✔ unreadable actual system URI gives explicit failure, consumes once and cleans private partial (11.8379ms)
+✔ changing owner during issued native URI read removes only unadmitted partial and never replays (13.283ms)
+✔ owner change during bounded-byte write invalidates the resulting spool before admission (11.3225ms)
+✔ snapshot disposal after preparation revokes only sources and does not discard a PreparedAttachment (11.2924ms)
+✔ each source uses the shared 20-slot spool cap across adapter instances (26.0659ms)
+✔ shared sidecar reserve reduces the actual binary write budget before admission (11.676ms)
+✔ PixelMap bufferSize uses actual remaining global quota and no packToFile bypass (9.7785ms)
+✔ invalid byte budget 0 does not consume a valid source (12.4456ms)
+✔ invalid byte budget -1 does not consume a valid source (14.0785ms)
+✔ invalid byte budget NaN does not consume a valid source (4.7543ms)
+✔ invalid byte budget 1.5 does not consume a valid source (4.7937ms)
+✔ invalid byte budget 67108865 does not consume a valid source (7.1459ms)
+✔ HTML over converter UTF8 byte envelope keeps exact original but cannot enter native conversion (292.1552ms)
+✔ native conversion request is exact source SHA and one of the five fields: plain (6.0734ms)
+✔ native conversion request is exact source SHA and one of the five fields: html (8.8124ms)
+✔ native conversion request is exact source SHA and one of the five fields: rtf (7.9213ms)
+✔ native conversion request is exact source SHA and one of the five fields: xml (7.9665ms)
+✔ conversion rejects foreign source SHA while preserving original spool (28.328ms)
+✔ conversion rejects foreign source length while preserving original spool (5.2812ms)
+✔ conversion rejects oversized text while preserving original spool (8.5865ms)
+✔ conversion rejects wrong warnings type while preserving original spool (6.6975ms)
+✔ conversion rejects malformed warning while preserving original spool (10.0736ms)
+✔ conversion rejects images object while preserving original spool (6.6011ms)
+✔ conversion rejects sparse images while preserving original spool (6.0785ms)
+✔ conversion rejects success with error while preserving original spool (10.7148ms)
+✔ conversion rejects failure with content while preserving original spool (7.9507ms)
+✔ native explicit conversion error keeps original bytes and exposes no forged result (5.9653ms)
+✔ issued conversion FD and original remain alive until completion even when release is queued (5.4816ms)
+✔ embedded image is extracted by exact validated converter identity and full source hash (11.1766ms)
+✔ copied or changed converter object and foreign source handles cannot extract image bytes (8.0854ms)
+✔ conversion refuses embedded duplicate ID (5.4774ms)
+✔ conversion refuses embedded foreign name (6.5747ms)
+✔ conversion refuses embedded path name (6.4321ms)
+✔ conversion refuses embedded zero length (6.6736ms)
+✔ conversion refuses embedded noncanonical decimal (9.4161ms)
+✔ conversion refuses embedded unsafe length (6.9061ms)
+✔ conversion refuses embedded uppercase hash (9.0557ms)
+✔ conversion refuses embedded too many image ID (6.4752ms)
+✔ embedded output hash or size mismatch cleans image partial and keeps original (17.6603ms)
+✔ embedded size pre-admission uses remaining source-plus-sidecar quota (12.5715ms)
+✔ releasing a converter source revokes old extraction authority (7.0488ms)
+✔ owner change during encoder cleanup removes its previously complete but unadmitted spool (6.8042ms)
+✔ encoder release failure prevents prepared image admission and cleans only its own spool (9.2652ms)
+✔ CJK plain original above the former 2MiB byte cap reaches native unchanged (125.0418ms)
+✔ native decoded-unit rejection preserves complete rich original with no successful payload (76.4308ms)
+✔ conversion byte preflight plain at envelope +0 is format-specific (13.9154ms)
+✔ conversion byte preflight plain at envelope +1 is format-specific (12.4601ms)
+✔ conversion byte preflight html at envelope +0 is format-specific (5.6574ms)
+✔ conversion byte preflight html at envelope +1 is format-specific (4.2553ms)
+✔ conversion byte preflight xml at envelope +0 is format-specific (7.9657ms)
+✔ conversion byte preflight xml at envelope +1 is format-specific (5.8455ms)
+✔ conversion byte preflight rtf at envelope +0 is format-specific (7.1823ms)
+✔ conversion byte preflight rtf at envelope +1 is format-specific (16.8438ms)
+✔ a system file URI original beyond the RTF conversion envelope still uses attachment quota (66.9682ms)
+✔ SDK Unicode RTF serialization length and SHA include the BOM throughout the native read contract (2.7589ms)
+✔ SDK RTF BOM bytes also count against the unchanged global payload plus sidecar allowance (2.7787ms)
+✔ conversion validates full native grapheme receipt for emoji above old UTF16 limit (8.9433ms)
+✔ conversion validates full native grapheme receipt for combining above old UTF16 limit (20.2008ms)
+✔ conversion validates full native grapheme receipt for family above old UTF16 limit (14.3517ms)
+✔ conversion refuses missing grapheme receipt without releasing the original or exposing partial text (5.7896ms)
+✔ conversion refuses wrong Unicode version without releasing the original or exposing partial text (6.4763ms)
+✔ conversion refuses zero nonempty count without releasing the original or exposing partial text (8.1463ms)
+✔ conversion refuses fractional count without releasing the original or exposing partial text (5.147ms)
+✔ conversion refuses wrong UTF16 count without releasing the original or exposing partial text (6.5591ms)
+✔ conversion refuses wrong UTF8 count without releasing the original or exposing partial text (6.6626ms)
+✔ conversion refuses surrogate replacement without releasing the original or exposing partial text (5.5838ms)
+✔ few graphemes cannot bypass the independent complete conversion JSON/UTF8 byte budget (16.2054ms)
+✔ actual SDK snapshot reads each requested flavor and exposes opaque capabilities (6.6496ms)
+✔ system file URI excludes text flavors and is never obtained from plain text (2.5005ms)
+✔ non-file URI is literal content without file authority (1.1514ms)
+✔ binary image wins PixelMap independent of provider order and has no duplicate binary entry (1.4428ms)
+✔ PixelMap encodes bounded PNG with explicit bufferSize and releases encoder and image (1.683ms)
+✔ dispose during encoding invalidates late bytes without releasing the live encoder early (1.7394ms)
+✔ owner change while reading a flavor invalidates the entire snapshot and does not re-read (1.318ms)
+✔ changeCount after system read rejects instead of adopting new content (1.0681ms)
+✔ changeCount before consume stops old source and a fresh read requires explicit disposal (1.3334ms)
+✔ source is one-shot while sibling flavors remain usable until snapshot disposal (1.4541ms)
+✔ copied or fabricated source metadata cannot become authority (1.265ms)
+✔ mutated source name is refused (1.4764ms)
+✔ mutated source mime is refused (1.2758ms)
+✔ mutated source kind is refused (1.0781ms)
+✔ mutated source format is refused (1.3291ms)
+✔ invalid or over-limit record count -1 does not silently truncate (1.0755ms)
+✔ invalid or over-limit record count 21 does not silently truncate (1.0754ms)
+✔ invalid or over-limit record count 1.5 does not silently truncate (1.086ms)
+✔ invalid or over-limit record count NaN does not silently truncate (3.86ms)
+✔ invalid provider MIME list is refused before flavor reads (2.2565ms)
+✔ invalid provider MIME list is refused before flavor reads (1.6515ms)
+✔ invalid provider MIME list is refused before flavor reads (2.3002ms)
+✔ invalid provider MIME list is refused before flavor reads (3.3036ms)
+✔ unrequested MIME and sparse valid-type reply do not mint capabilities (18.0454ms)
+✔ wrong value types warn without pretending the format was imported (7.7043ms)
+✔ plain CJK within the Flutter UTF16 limit is not rejected by the old 2MiB byte ceiling (24.8484ms)
+✔ snapshot buffers are copied before a provider can mutate its ArrayBuffer (3.5244ms)
+✔ PixelMap oversized dimensions stop before encoder admission and still release (2.3342ms)
+✔ PixelMap encoded overflow and rejected encoder never become output and never replay (4.601ms)
+✔ snapshot disposal revokes unread sources and does not read their providers again (2.2924ms)
+✔ late SDK PixelMap reply is released when the owner changed before flavor admission (2.2843ms)
+✔ HTML and RTF beyond their conversion unit caps preserve original capability within attachment budget (131.5724ms)
+✔ owner change during awaited encoder cleanup invalidates successful late bytes (3.3797ms)
+✔ source kinds reuse the actual attachment suffix classifier (4.631ms)
+✔ encoder release failure is explicit after pixel release and does not allow replay (9.6417ms)
+✔ disposal attempts every unused PixelMap before reporting a release failure (20.369ms)
+✔ exact Flutter plain UTF16 boundary preserves every ASCII byte (75.2438ms)
+✔ exact Flutter plain UTF16 boundary preserves every CJK byte (71.7458ms)
+✔ exact Flutter plain UTF16 boundary preserves every supplementary emoji byte (64.1838ms)
+✔ plain ASCII one UTF16 unit over the limit warns without truncating or losing a sibling (4.7486ms)
+✔ plain supplementary emoji one UTF16 unit over the limit warns without truncating or losing a sibling (4.2558ms)
+✔ plain raw binary source byte envelope boundary +0 is independent of decoded native units (11.1396ms)
+✔ plain raw binary source byte envelope boundary +1 is independent of decoded native units (1.7626ms)
+✔ binary image and file originals are not subject to either converter byte envelope (70.9011ms)
+✔ expanded text envelopes do not increase the 64MiB snapshot total (36.0578ms)
+✔ all SDK text flavors reject unpaired UTF16 before encoding: high-middle (11.7611ms)
+✔ all SDK text flavors reject unpaired UTF16 before encoding: low-middle (1.0799ms)
+✔ all SDK text flavors reject unpaired UTF16 before encoding: high-end (0.9525ms)
+✔ all SDK text flavors reject unpaired UTF16 before encoding: low-alone (1.0266ms)
+✔ all SDK text flavors reject unpaired UTF16 before encoding: two-high (0.9766ms)
+✔ SDK text preservation accepts paired supplementary emoji in every text flavor (1.1837ms)
+✔ SDK text preservation accepts intentional U+FFFD in every text flavor (1.1016ms)
+✔ SDK string validation does not reinterpret or rewrite original binary text flavors (1.1892ms)
+✔ SDK Unicode RTF string has explicit UTF8 BOM even with an ANSI codepage declaration (1.0788ms)
+✔ raw ANSI RTF ArrayBuffer keeps every original byte without adding a Unicode marker (6.2127ms)
+✔ exact pins are confirmed sequentially before portable text and caret persist (5.7376ms)
+✔ full expanded plan and final insertion budget are checked before any import (1.751ms)
+✔ target selection or raw text changing during confirmation never imports (3.6926ms)
+✔ wrong owner, operation receipt, pin ID or target cannot authorize the next import or text (8.3843ms)
+✔ Unknown stops later admissions without a native replay or placeholder insertion (0.4641ms)
+✔ stop while one native import is live observes that result and admits nothing else (13.8944ms)
+✔ copy plan metadata before awaits and refuse a text save without a new confirmed generation (1.1138ms)
+✔ complete future grapheme field is checked before the first attachment import (0.6557ms)
+✔ large emoji paste fitting the grapheme limit retains every UTF16 unit (1.1159ms)
+✔ owner, selection, generation, blocked or import inventory drift during preflight stops before confirmation (9.9749ms)
+✔ stop during preflight cannot issue any native import (3.7496ms)
+✔ actual persistent image references are checked again after pins before text (0.4347ms)
+✔ second async policy failure retains confirmed pins and does not save text or replay imports (0.3015ms)
+✔ target or owner drift during final count retains pins but never commits stale text (1.1725ms)
+✔ actual handoff freezes complete late S2, exact historical source, ordered confirmed subset and independent identities (1513.835ms)
+✔ late full S3 is installed in a real child coordinator and saved separately without replacing it with first S2 (838.017ms)
+✔ Unknown first uses one fixed literal after owner revocation; known ACK is retained but cannot install into replacement owner (546.682ms)
+✔ committed effect survives malformed DTO without qualifying first child or replaying a business request (415.396ms)
+✔ first complete DTO rejects altered raw, source, immutable link, pin bytes, origin, aliases and reply identity (6843.1518ms)
+✔ historical first with advanced or inactive current state is retained and never resurrected; explicit current read may restore its actual writer (489.3742ms)
+✔ native retirement literal is read verbatim including key order/spacing; metadata plan is not a retirement effect (253.7066ms)
+✔ fixed plan read rejects substitution and Unknown retries that exact read without creating a new child or plan (303.743ms)
+✔ retirement requires the actual installed child and latest full raw confirmation, including selection/composition generations (222.5695ms)
+✔ retirement Unknown preserves fixed literal and known business/child, explicit retry after owner revocation settles only original parent (242.9027ms)
+✔ retirement proof/full parent/pin mismatch cannot qualify cleanup and never releases or overwrites the child (1710.4784ms)
+✔ retired handoff closes only the intent, keeps child S3 and exposes the same qualified continuation baseline (297.3822ms)
+✔ exact close factory is read-only and freezes full S1, detach boundary can close without reviving the old SDK lease (251.0243ms)
+✔ exact close refuses any newer text/selection/composition/asset/order or changed fresh input cutoff before transport (1373.31ms)
+✔ exact close Unknown cannot change identity or consume late S2 by another close; original explicit reconciliation retains known effect (136.1453ms)
+✔ closed success restores original transport read-only and explicitly inspects history; it never authorizes a new save (169.9122ms)
+✔ handoff restore reads exact native literals without writes and preserves original first request for explicit reconciliation (120.1922ms)
+✔ freeze guards actual parent in-flight/Unknown/import owner and pin subset authority; whole wire budgets and Unicode fail before native (525.1132ms)
+✔ business/raw mixed lineage copy and ordinary child saves retain business15 while rejecting dual incoming/outgoing links (128.5142ms)
+✔ fresh actual Store full handoff/retirement/closed seven-part DTO restores exact plan and active native child without replay (116.3036ms)
+✔ fresh actual Store saved_exact closed context retains complete original request and inspect bytes without reactivating intent or raw (113.8971ms)
+✔ prepare freezes all raw strings, full editing publication and exact original wire before asynchronous checks (759.068ms)
+✔ native field policy, composition, exact raw and active publication are separate mandatory admission gates (2154.6219ms)
+✔ owner or input epoch revoked during asynchronous validation cannot issue a proposal (269.0121ms)
+✔ Unknown retains one complete original save wire; retry is explicit even after late raw and owner replacement (195.7898ms)
+✔ late selection/composition or same-values away/back epoch cannot consume a valid historical result (208.11ms)
+✔ initial definitive no-write failure is rejected; an Unknown retry cannot be downgraded by not_committed (484.6218ms)
+✔ full source digest and canonical framed publication independently bind strict history, including u64 over 2^53 (309.5808ms)
+✔ mismatched tuple/hash/revision/full source/common fields/duplicate identities never qualify or consume (3125.5911ms)
+✔ inspect uses only exact historical DTO even when Reply.cards is newer, missing or deleted live state (372.3586ms)
+✔ snapshot absence does not resolve uncertain original save, generate a new operation or automatically retry (246.8308ms)
+✔ Unknown inspection retains its own same wire and cannot be confused with save transport (151.6578ms)
+✔ a qualified known commit remains committed on later damaged/oversize readback and cannot become absent (168.5101ms)
+✔ restart restore preserves noncanonical JSON spacing/key order and exact retired publication history (143.0791ms)
+✔ legacy semantic-only history stays readonly and cannot acquire strict wire/publication or a continued root (173.0844ms)
+✔ continued todos derives constant original create plus latest six-field baseline through two own historical commits (233.4356ms)
+✔ foreign source/operation/owner and kind1 raw fork cannot be promoted to a business continuation (135.1917ms)
+✔ ordinary existing V2 edit rejects any nonempty legacy todos and cannot be used as an owned-root factory (326.7004ms)
+✔ complete escaped outer wire budget, not UTF16 length or inner JSON size, gates all proposals (129.5919ms)
+✔ inspect revision overflow/noncanonical identity and incomplete Unicode fail before any transport (561.5698ms)
+✔ missing editor_commit and oversized initial reply remain Unknown with exact retry, never use current cards fallback (243.8907ms)
+✔ full DTO is frozen before asynchronous source hashing, so caller mutation cannot change an admitted receipt (101.1536ms)
+✔ canonical publication supports the complete u64 range and history effect/status inconsistency is rejected (163.1779ms)
+✔ fresh actual Store create and continued_todos DTOs pass original-wire/publication/full historical-source validation (266.7921ms)
+✔ owner-only rebind retains every original byte, proof, known commit hint and Unknown after malformed actual business DTO (774.4179ms)
+✔ actual qualified receipt survives guard rebind and an in-flight rebind is rejected without moving an issued request (698.0246ms)
+✔ actual Business admission freezes raw/publication before native prepare; intent is not a business receipt (288.7319ms)
+✔ actual field/composition/full raw admission refuses a proposal before any durable mutation (1675.0847ms)
+✔ prepare Unknown retains original operation and full bytes; explicit retry after owner replacement uses the same request (371.8007ms)
+✔ a first no-write prepare failure stays known, while a no-write uncertain retry cannot erase uncertainty (568.1083ms)
+✔ metadata proof/ID/domain/current generation and business tuple mismatches never admit native issue (3775.6417ms)
+✔ issue freezes only immutable proof/gen1, requires explicit ACK and literal reads before business (257.4904ms)
+✔ issue Unknown reuses the exact CAS request and never presumes business submission (190.1884ms)
+✔ issued before first business send with late S2/owner revocation settles original S1 only after explicit five-part restore and retry (476.629ms)
+✔ late owner/epoch after prepare blocks fresh issue and late raw after issue blocks fresh save (199.1198ms)
+✔ parent queue must be paused for the exact publication before fresh preparation/issue/save, while historical retry never resumes it (428.2398ms)
+✔ an in-flight metadata request excludes another action and late raw remains live while the original ACK is retained (193.5662ms)
+✔ missing/wrong/extra native save envelope cannot be sent and explicit read retry retains one exact part request (824.7892ms)
+✔ native inspect literal is checked independently, mapped once and sent byte-for-byte even with different key order (232.4033ms)
+✔ business Unknown retries actual registered outer bytes after late selection/composition and view owner replacement (205.6486ms)
+✔ inspection Unknown keeps its native original wire; later not_committed cannot wash a known committed effect (206.7738ms)
+✔ malformed committed business DTO retains commitment hint without qualifying or consuming the result (217.7923ms)
+✔ restart reads all five parts without a mutation and preserves immutable historical publication despite later retirement (295.8609ms)
+✔ restart rejects changed literal/hash/publication text/inconsistent asset aliases/order and mixed-phase snapshots (1077.7731ms)
+✔ restored asset metadata must match actual historical business assets before receipt qualification (209.1734ms)
+✔ subsequent publication part requires full original selection, pin metadata and aliases against the frozen publication (728.6961ms)
+✔ prepared restart does not invent save/inspect plans; empty read payload is not cancellation or business absence (237.3237ms)
+✔ native cancel prepared CAS has a fixed independent literal and unknown cancellation retries exact bytes (200.1328ms)
+✔ prepared historical retry returning current issued state does not grant prepared cancel rights (151.9048ms)
+✔ intent discovery is read-only and rejects duplicate IDs, foreign card, mixed parts and invalid pagination cursor (178.3241ms)
+✔ complete native list DTO is copied before async SHA so caller mutation cannot replace its visible identity (198.0435ms)
+✔ full UTF8 reply/transport budgets fail closed before sending and never truncate original bytes (163.8977ms)
+✔ continued_todos needs an own qualified historical baseline, constant root and a real source0 publication (130.1411ms)
+✔ complete u64 expected revision is retained without Number conversion across issued restore and inspect (112.4803ms)
+✔ fresh actual Store complete intent parts restore the exact native registered save/inspect literals and qualify historical Card bytes (91.2802ms)
+✔ fresh actual Store cancel_prepared complete five-part closed context restores its original Close without inventing business plans (100.3418ms)
+✔ raw capture is already complete while a formatter is pending and confirmation alone is blocked (20.862ms)
+✔ same-turn onChange and onSelection coalesce and preserve the original old value (1.8194ms)
+✔ later selection revokes old worker and reissues against original edit, preventing selection-only bypass (12.9012ms)
+✔ a new text edit uses the immediately preceding raw value and rejects previous reply (1.6294ms)
+✔ independent fields do not invalidate one another and task rename uses separate key with todos policy (7.7767ms)
+✔ owner replacement and same-identity unbind/rebind prevent ABA adoption (5.0458ms)
+✔ stop cancels queued and running workers and stopped fields cannot confirm or capture (1.4375ms)
+✔ an uncaptured external field revision or metadata change revokes an in-flight result (4.8753ms)
+✔ active preview is fully captured and checked without adoption; commit preserves composing oldValue gate (2.5198ms)
+✔ preview flag alone blocks adoption even when SDK composing metadata is collapsed (11.533ms)
+✔ a destructive preview proposal is counted separately and never replaces complete candidate raw (1.3698ms)
+✔ positive retained adoption preserves the complete old selection and receives a new field revision (0.8693ms)
+✔ retained old active composition after commit is explicit failure, never silently cleared (1.9877ms)
+✔ worker failure retains raw, blocks confirmation and only explicit retry replays the same intent (4.5678ms)
+✔ selection after failed truncation retains original edit identity, not a same-text bypass (12.1075ms)
+✔ late failure cannot poison a newer successful field revision (7.7419ms)
+✔ apply refusal, stale adoption receipt or throwing controller cannot authorize confirmation (7.4808ms)
+✔ reentrant new raw during controller adoption cannot be overwritten by the previous result (2.9428ms)
+✔ callers cannot mutate bound values, captured snapshots, views or applied proposals into later adoption (3.5423ms)
+✔ strict Unicode and independent request budget failures preserve all original raw text (35.0744ms)
+✔ malformed receipt or invalid full metadata fails without discarding raw or automatic replay (2.8864ms)
+✔ selection-only after settled input follows the actual same-text gate and does not imply save eligibility (1.0642ms)
+✔ revision reuse, stale owners, unknown fields and inactive slots cannot issue or adopt new work (2.8785ms)
+✔ foreground stop and same-owner rebind restore every unchanged field slot (1.3346ms)
+EditorDraft.ets SHA256=b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775
+EditorDraftFork.ets SHA256=2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c
+SDK TypeScript=4.9.5
+✔ pause captures every raw field/metadata/assets without automatic or explicit writes; resume retains them (602.3937ms)
+✔ pause never cancels issued work, but prevents its completion from issuing later raw (165.3447ms)
+✔ fork freezes full source/proof/raw and selected subset order/aliases as origin4 without a business command (136.959ms)
+✔ new-card fork inherits kind1/revision0/empty source and raw legacy rows without business reconciliation (201.2799ms)
+✔ latest raw stays on paused parent during first ACK; caller updates child completely before its ordinary save (249.6633ms)
+✔ normal fork child keeps fixed lineage and source, promotes parent pins once, and exposes immutable proof (178.2214ms)
+✔ Unknown first fork preserves one original wire; late raw and explicit retry do not change its operation (161.7837ms)
+✔ known first rejection can explicitly release parent; Unknown reconciliation cannot downgrade or release (388.1875ms)
+✔ owner replacement cannot install a valid durable old fork or issue its Unknown retry (282.5191ms)
+✔ valid historical first commitment with advanced or inactive current state is conflict, never resurrected or replayed (285.0118ms)
+✔ wrong full source/operation/parent proof/raw/digest/first active state never installs a child (2463.8153ms)
+✔ receipt pin bytes/metadata and exact inventory aliases/order/identities are validated against the frozen parent (1460.3419ms)
+✔ normal-only paths still reject origin4 without a verified fork, and later receipts cannot alter lineage/source (160.2517ms)
+✔ retirement freezes explicit parent/child identity once; building it alone never sends or retires either journal (184.8297ms)
+✔ fork constructor rejects duplicate identity, wrong scope, incomplete pins and unavailable parents before transport (1364.4105ms)
+✔ development retirement marker binds the exact original parent digest and cannot revive an inactive child (126.2043ms)
+✔ fresh SDK compiler and actual fork/draft model source identities are emitted (101.2228ms)
+✔ settleIssued observes a paused actual in-flight save and leaves full late S2 dirty without sending it (13.0877ms)
+✔ settleIssued preserves actual failed issued Unknown and never retries or consumes newer input while paused (2.7938ms)
+✔ new cards durably save the initial empty snapshot; unchanged existing cards do not (6.3239ms)
+✔ successful explicit import preparation establishes an unchanged source journal once; opening does not (3.3956ms)
+✔ selected identities and aliases are immutable snapshot input; attachment-only changes save a generation (2.4236ms)
+✔ an unknown attachment save retries exact selection bytes and leaves newer removal intact (10.0606ms)
+✔ restored selected pins remain read-only and text autosave preserves origin, aliases and inventory (1.6013ms)
+✔ missing or altered stored asset evidence cannot certify a selection receipt (18.5933ms)
+✔ parent/predecessor, duplicate and oversized attachment selections fail before transport (1.93ms)
+✔ ensureConfirmed surfaces failure without silently certifying empty state or retrying it (3.7081ms)
+✔ a later receipt cannot substitute bytes for the same already confirmed asset identity (3.771ms)
+✔ all twenty selected asset identities and Unicode aliases survive serialization without truncation (5.9703ms)
+✔ debounce coalesces input and owns scope and full UTF-16 editing values (2.1682ms)
+✔ an older receipt confirms history but never replaces newer input; automatic S2 is debounced (12.3942ms)
+✔ flush waits for the issued save and then confirms all latest input before resolving (10.8849ms)
+✔ unknown outcomes preserve exact serialized bytes and explicit retry stops at original S1 (9.9136ms)
+✔ known rejection clears the proposal, surfaces flush failure and does not replay failed S1 (9.9946ms)
+✔ a different S2 already observed during rejected S1 may autosave without replaying S1 (3.2309ms)
+✔ a known rejection of retry cannot erase an already uncertain operation (1.9295ms)
+✔ restoring a confirmed draft is read-only and snapshots are detached (2.0315ms)
+✔ inactive or advanced restored journals block flush and autosave (4.2413ms)
+✔ historical or mismatched receipts cannot certify latest input (15.1093ms)
+✔ disposal stops publication and new work while leaving an issued operation uncancelled (4.0079ms)
+✔ selection-only and composing-only changes are real generations; invalid UTF-16 offsets fail before send (2.5302ms)
+✔ decimal generation increments preserve u64 precision and reject overflow/noncanonical values (1.1601ms)
+✔ pre-send generation exhaustion is an explicit error and never an unknown transport outcome (1.7918ms)
+✔ disposing before debounce prevents new writes (5.0705ms)
+✔ exact Flutter field limits use grapheme policy, including todos 1000 (4.4389ms)
+✔ emoji, combining marks, family, flags and CRLF count complete graphemes (2.3632ms)
+✔ each exact boundary is accepted and one additional grapheme is fully rejected (14.0533ms)
+✔ empty, whitespace and intentional replacement characters are never normalized (0.3281ms)
+✔ lone high or low surrogate is rejected before encoding and paired emoji survives (0.3286ms)
+✔ owner loss or stop before the worker completes rejects a late count (0.349ms)
+✔ an already closed owner is rejected without issuing a worker request (0.1214ms)
+✔ field, limit, Unicode identity and UTF16/UTF8 lengths must match the original text (0.8625ms)
+✔ invalid counts or contradictory success cannot authorize a field (0.5701ms)
+✔ a bounded native failure remains explicit and cannot become a truncated success (9.7292ms)
+✔ malformed JSON or worker rejection fails closed without a replay (0.5413ms)
+✔ full Values are frozen before awaits and all five fields are checked (1.0067ms)
+✔ raw inspect and explicitly composing raw validation preserve IME metadata (0.8997ms)
+✔ full Values validates every field and reports oversized fields without saving (8.5415ms)
+✔ owner generation drift during full Values stops subsequent workers (0.3696ms)
+✔ native request-byte failure before field parsing remains an explicit independent budget error (2.3855ms)
+✔ actual ETS keeps full Unicode text and editing metadata in the hashed request (2.5433ms)
+✔ selection-only overlimit receipt is accepted without authorizing a save (0.5057ms)
+✔ truncated native prefix requires a full boundary count and retains full request (0.4149ms)
+✔ positive-limit retained must preserve the entire old editing value (0.8535ms)
+✔ zero-budget retained validates filtered old: collapsed composition (0.5685ms)
+✔ zero-budget retained validates filtered old: invalid selection (0.3504ms)
+✔ zero-budget retained validates filtered old: CRLF replacement (0.4047ms)
+✔ accepted row validates filtering metadata as well as its text (0.4811ms)
+✔ accepted row cannot contradict a positive quota or zero-budget no-growth guard (0.5201ms)
+✔ wrong request hash, full echoes, Unicode identity and all lengths reject once (1.9748ms)
+✔ stop or owner change during hashing prevents any worker request (0.4159ms)
+✔ late worker reply cannot survive stop or a same-text owner epoch change (4.2153ms)
+✔ original full editing values are frozen and caller mutations invalidate pending results (0.5324ms)
+✔ invalid Unicode, row mode and wire budgets fail before issuing a worker (17.02ms)
+✔ explicit failure and malformed replies fail without an automatic replay (13.3515ms)
+✔ full Unicode, leading spaces and trailing LF survive an unset selection (0.9352ms)
+✔ reversed UTF16 selection replaces only the selected emoji (0.5788ms)
+✔ a caret at a valid UTF16 boundary inserts without replacing neighbors (0.2782ms)
+✔ the complete resulting field is grapheme limited, never UTF16 truncated (4.2718ms)
+✔ live composing text cannot be replaced by a clipboard result (0.2315ms)
+✔ invalid or partial selection sentinels are rejected (0.7477ms)
+✔ a surrogate cannot be split while pasting (1.3928ms)
+✔ a frozen paste target detects raw text, selection and composing drift (0.2009ms)
+✔ new editing text, selection, affinity, direction or IME after an async check prevents insertion (2.5847ms)
+✔ async paste checks the complete prefix plus inserted text plus suffix (0.4029ms)
+✔ replacing a selection can combine graphemes across the insertion boundary (4.7601ms)
+✔ policy worker failure rejects the full paste without changing the input (0.6812ms)
+✔ actual component methods source identity; builders retain full rows and no platform maxLength (1.7573ms)
+ℹ pages/EditorTodos.ets normalized SHA256 83b6c6a5c5811ead9fa14ebb23f9b5dea7f9a858fd0b5461181091e929473836
+✔ actual parent captures whole raw field and maps per-row selection (2.6478ms)
+✔ preview text is forwarded unchanged to model and raw composing offsets (0.3666ms)
+✔ successful Add reveals the exact owned element before its guarded focus callback (81.491ms)
+✔ manual row focus supersedes a pending Add focus without losing the added row (14.9573ms)
+✔ external field focus revokes pending Add even before its prop watcher runs (15.0438ms)
+✔ user focus during awaited Add prevents a late focus request while retaining the row (49.826ms)
+✔ old row incarnation area notification cannot delete the current measured area (0.4851ms)
+✔ new empty row waits for its measured incarnation before reveal/focus and retains the raw echo (124.6709ms)
+✔ API26 invisible focus error is contained and the same mounted row can become focusable later (265.6594ms)
+✔ permanently unavailable focus remains bounded without losing or deleting the added row (12.4778ms)
+✔ disable and disappear revoke pending mounted-row focus before an old callback can request it (39.5862ms)
+✔ owner switch between Add and queued focus cancels old-card focus (24.7135ms)
+✔ parent disable/disappear blocks editing and late row callbacks without borrowing a new owner (0.7545ms)
+✔ parent status distinguishes complete raw capture and pending formatting before exact reply (16.9393ms)
+✔ readonly count failure keeps full rows visible with unconfirmed counter (15.3908ms)
+✔ drop uses matching private drag token and measured window geometry to insert after target (1.6877ms)
+✔ drop before midpoint preserves moved row identity (0.2922ms)
+✔ foreign drop, malformed geometry and drag-end leave raw unchanged (0.4935ms)
+✔ drag frozen before selection change cannot reorder on late drop (0.2373ms)
+✔ drag-position callback forwards only a current drag and cancels a stale revision (0.3271ms)
+✔ actual child forwards committed string plus exact SDK preview separately (0.7095ms)
+✔ child selection only captures while focused and preserves reverse UTF16 order (0.1938ms)
+✔ child controllers are stable through refresh and restore confirmed selection after a frame (22.9416ms)
+✔ child does not attempt arbitrary composition restore or confirmed cursor during pending (30.1902ms)
+✔ child old incarnation callbacks and destroyed controller queued selection are revoked (17.1754ms)
+✔ same local row ID on another owner cannot admit old callbacks (2.1911ms)
+✔ actual builder uses SDK adaptive1..3 SCROLL lines with full source and Flutter row geometry (0.305ms)
+✔ parent Unknown status keeps complete raw retain permission and separately blocks business readiness (0.7276ms)
+✔ valid preview reports complete captured composition rather than formatter failure (3.2753ms)
+✔ unlocatable preview reports capture incomplete and preserves exact old raw identity (0.2836ms)
+✔ invalid new-owner source status does not borrow previous owner row state (0.182ms)
+✔ failed nonmutating Add count does not misreport the current full raw as capture-incomplete (30.9429ms)
+✔ disable pending preserves raw retain permission but cannot turn canceled format into a confirmed receipt (24.0584ms)
+✔ disabled same-owner parent input and selection notify complete events without raw mutation or formatting (0.4942ms)
+✔ disabled current parent ticket can notify after epoch preflight is invalidated but old identity never does (0.5664ms)
+✔ disabled actual child input/selection forward raw events without changing its text or invoking normal capture (4.3037ms)
+✔ disabled child refuses old owner/incarnation/disposed callbacks and current child notification reaches parent (0.4204ms)
+✔ restored disabled unfocused row initialization does not report a missing raw selection (12.0661ms)
+✔ already issued controller restoration echo remains identifiable after a focused row is disabled (15.7703ms)
+✔ disabled blur revokes current focus after a delivered genuine selection, while all text input remains observable (10.0671ms)
+✔ disabled focused invalid or absent-selection positions are retained, never mistaken for an unissued restoration (0.3684ms)
+✔ old row identity cannot consume a new controller echo or blur the new incarnation (8.0452ms)
+✔ refreshing a pending row invalidates the previous incarnation controller restoration marker (31.1681ms)
+✔ actual per-prop revision-first-source self echo preserves changed-text pending formatter and exact ACK (20.3268ms)
+✔ actual per-prop source-first-revision self echo preserves changed-text pending formatter and exact ACK (33.0595ms)
+✔ actual per-prop self selection echo preserves latest same-text formatter, reverse positions and stale-reply fence (42.3204ms)
+✔ actual per-prop self composition-commit echo keeps same-text full raw and confirms only the exact formatter ACK (34.3239ms)
+✔ actual full external replacement still cancels the older formatter after mixed props are deferred (21.4663ms)
+✔ actual new-owner prop delivery cannot clear old-owner rows or areas until its complete parent snapshot arrives (0.4866ms)
+✔ actual disabled restore admits its complete parent snapshot without allowing editing or reusing an old row ticket (0.474ms)
+✔ initial disabled display callback with exact empty-minus-one preview is acknowledged once without a raw event (0.179ms)
+✔ an absent preview initial callback is acknowledged once on either initial enabled state (0.1284ms)
+✔ first different input consumes the initial capability and every later same-text event stays observable (0.2711ms)
+✔ nonempty, other-offset, malformed or null preview cannot acknowledge even a matching initial display (0.2666ms)
+✔ any admitted focus including disabled focus and blur revokes initial display acknowledgement (3.7283ms)
+✔ same-text input after real focus and a disabled blur remains captured as a complete unresolved event (0.2949ms)
+✔ a row refresh even with identical bytes never rearms the initial display capability (0.2741ms)
+✔ old owner or incarnation input and focus cannot consume a new instance initial display capability (0.358ms)
+✔ complete initial raw snapshot checks every TextValue field instead of only equal text (0.3279ms)
+✔ pending, original composition or mismatched raw display do not qualify as initial display echoes (0.8997ms)
+✔ controller, display and displayed control mutations invalidate the frozen initial capability (0.283ms)
+✔ enabled changes and repeated lifecycle appearances never create a second initial capability (0.1073ms)
+✔ matching initial display leaves complete model raw, epoch, status and prior Unknown untouched (7.8121ms)
+✔ an incomplete preview with unmatched raw/display remains observable and cannot be cleared by equal control text (0.6691ms)
+✔ actual ETS model exposes its fresh source identity and uses injected field count/formatter only (1.7616ms)
+ℹ EditorTodos.ets SHA256 e7a0748f5066939ad42fa4a9b6bde3d9d9761e15df2e42403356c1277a48d710
+✔ LF split preserves interior/trailing blanks and CR original without trimming or normalization (1.8171ms)
+✔ empty source has zero rows but explicit Add keeps an empty local row across its same-value echo (12.0739ms)
+✔ external source sync reuses IDs by index and invalidates previous row callbacks (2.2135ms)
+✔ row and view copies cannot mutate private raw state (0.307ms)
+✔ duplicate and malformed local IDs reject instead of producing ambiguous rows (0.4944ms)
+✔ selection mapping uses UTF16 offsets across rows including a supplementary emoji (0.6733ms)
+✔ external aggregate selection maps within one row but preserves a cross-row selection only in raw (0.7731ms)
+✔ external metadata clearing does not leave stale composition on a row (0.6924ms)
+✔ remaining budget subtracts other graphemes and one LF per gap, not their UTF16 lengths (10.5577ms)
+✔ zero remaining is forwarded intact to native row no-growth policy (1.3859ms)
+✔ zero retained adopts complete filtered-old invalid-selection finalize instead of demanding exact-old (2.1042ms)
+✔ zero retained keeps legal reverse UTF16 positions/affinity/direction and replaces raw CR with one space (0.9534ms)
+✔ zero retained finalizes collapsed composition but rejects any unrelated receipt position change (3.0014ms)
+✔ positive remaining retained continues to require exact old without zero-rule metadata relaxation (0.3115ms)
+✔ native CRLF-filter full result is adopted without an independent ETS replacement (0.2612ms)
+✔ complete raw future candidate is captured before any asynchronous formatter; result is visible (9.4392ms)
+✔ malformed native receipt preserves complete candidate and blocks confirmed publication (0.3453ms)
+✔ pure worker Unknown never removes or truncates the captured raw candidate (0.5824ms)
+✔ preview keeps complete text and composition in aggregate, with no native formatting until commit (0.4244ms)
+✔ unknown preview offset preserves old raw and reports capture incomplete without guessing (0.1499ms)
+✔ row selection during pending formatting invalidates old reply and rechecks exact new UTF16 selection (6.9946ms)
+✔ rapid same-row typing retains frozen last confirmed old value and rejects late candidate reply (0.7706ms)
+✔ unexpected second-row input preserves complete raw candidates but cannot publish pending formatting (1.1679ms)
+✔ owner switch blocks late row formatter and old controller events (0.5714ms)
+✔ same text edit-away-and-back at parent epoch blocks a late formatter (0.8392ms)
+✔ stop revokes callbacks and preserves complete raw, while fresh bind cannot qualify canceled formatting (0.5461ms)
+✔ capture rejection restores source-consistent local rows instead of creating a second raw draft (0.2555ms)
+✔ Add includes new separator in full future count and refuses total1000 without slicing (0.6233ms)
+✔ Add caps local rows100 but restore preserves over100 existing raw rows (0.3268ms)
+✔ late Add count after changed owner cannot append a row to a new card (0.5211ms)
+✔ remove accepts blank row, joins all remaining rows, and resets aggregate selection only (0.539ms)
+✔ up/down preserve row IDs and row UTF16 cursor metadata while changing aggregate order (0.4448ms)
+✔ private drag can insert before and after a real target with stable row identity (0.3322ms)
+✔ stale drag revision and old owner never reorder raw (0.3135ms)
+✔ pending/IME prevents remove, move, Add and beginDrag without losing raw candidate (0.2421ms)
+✔ status owns an independent full TextValue and cannot mutate row capture authority (0.2784ms)
+✔ pending count and formatter never transiently publish a captured candidate as business-ready (6.2259ms)
+✔ same exact parent echo retains pending status and full raw; epoch change cancels only formatting qualification (0.9003ms)
+✔ Unknown and incomplete capture remain separate across same raw rebind and recover after a confirmed new input (0.6ms)
+✔ disabling a fully confirmed raw value does not make its existing formatting result incomplete (0.2754ms)
+✔ raw sentinel and cross-row composition are retained without guessing a restorable row range (0.3165ms)
+✔ other row controller callbacks cannot clear the captured active preview composition (0.1979ms)
+✔ remaining-count failure preserves complete future raw and blocks only formatter business qualification (0.3045ms)
+✔ install plan hashes exact standalone artifact manifests and prints only independent install commands (2.9119ms)
+✔ even a hash-matched product bundle disguised as tester filename is refused (12.3034ms)
+✔ install plans fail before execution for changed bytes, omitted hashes, guessed device and unsafe staging label (10.2567ms)
+✔ probe command uses freshly supplied identity/version/bounds and actual ETS multipointer plan (515.3973ms)
+✔ probe printer rejects missing live expectations and observe never prepares input matrix (0.2442ms)
+✔ collected report inspection records hashes/percent scope without claiming pixel displacement or private token identity (5.0832ms)
+✔ unknown input remains unknown during readonly inspection and never creates a retry command (3.0756ms)
+✔ collected success requires matching typed observations, complete artifacts and positive injection acknowledgement (18.9047ms)
+✔ actual trace generator supplies complete independent 2x9 paths inside observed px canvas (1.2983ms)
+✔ actual two-finger pure pan preserves separation while moving the focal center (0.1525ms)
+✔ invalid bounds, unknown operations and nonpercentage accessibility labels fail closed (0.4449ms)
+✔ actual runner submits one true multipointer matrix and records screenshot-only visual scope (106.8797ms)
+✔ actual readonly observe never injects a gesture or clicks reset (30.4744ms)
+✔ actual fixture name, focused foreground window, product version and supplied bounds gate input before a matrix is sent (378.0652ms)
+✔ actual failed native injection remains unknown, preserves input intent and never retries (38.1579ms)
+✔ actual repeated label, stopped runner and unprepared zoom cannot replay input (102.8398ms)
+✔ command printer validates exact fixture/bounds/version and never runs device commands (2.2321ms)
+✔ independent project preparation blocks paths outside its owned work directory (1.7812ms)
+✔ actual runner requires enabled decoded-image admission and exact image description before gesture (305.6726ms)
+✔ actual final foreground checks revoke injection when another app becomes focused during observation (84.027ms)
+✔ pure two-finger pan remains pixel-exact for irregular fresh canvas sizes (4.5199ms)
+✔ independent reverse pan stages provide an actual opposite trace for post-boundary visual review (0.3204ms)
+Index.ets SHA256=4d252d1cbf5c8c193096f0b9e61d7fe0478b0715d08d3be881559913f4a8da8a
+EditorDraft.ets SHA256=b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775
+EditorBusiness.ets SHA256=6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf
+EditorBusinessSession.ets SHA256=58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6
+EditorFieldPolicy.ets SHA256=10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842
+Workbench.ets SHA256=1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf
+ACTUAL_INDEX_SOURCE_FREEZE=[{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusiness.ets","sha256":"6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessHandoff.ets","sha256":"5454de4c88133ccd04e27be693870280f6bf9f126696b9684c3db4ae025a6a55"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessSession.ets","sha256":"58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraft.ets","sha256":"b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraftFork.ets","sha256":"2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorFieldPolicy.ets","sha256":"10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorPaste.ets","sha256":"28d54a7d02bf644d68b58ac68a4d824ab2ff3fb71b87ab0e00c279456b6d160e"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\Workbench.ets","sha256":"1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf"}]
+✔ fresh actual Index/ETS source identities; controlled receiver boundaries are explicit (2.9194ms)
+✔ actual new-card Save persists complete raw before pause and durable intent before business admission (822.7341ms)
+✔ actual unchanged existing-card Save establishes publication and preserves source/tasks semantics (914.0595ms)
+✔ actual first business send synchronously admits Workbench before resuming parent debounce (712.3119ms)
+✔ actual S2 during raw publication cancels unissued proposal while keeping complete input (451.9801ms)
+✔ first proved no-write intent prepare does not strand the complete editor behind an unprepared session (470.8601ms)
+✔ prepare ACK Unknown stays blocked and a later no-write reply cannot release that original uncertainty (462.9374ms)
+✔ actual Workbench tail orders S1 business before later complete S2 raw persistence (422.1606ms)
+✔ issued-before-first-send S2 blocks auto-save; explicit read-only restore retries fixed S1 literal (369.5754ms)
+✔ actual selection-only S2 after issue cannot be consumed by same-text S1 success (436.3326ms)
+✔ actual first save Unknown retries same session and literal without reconstructing current S2 (302.7623ms)
+✔ actual committed effect with invalid DTO remains known through attempted save and failed inspection (326.9513ms)
+✔ actual list and five-part restore are read-only; same-card different draft does not bind consumption (310.7488ms)
+✔ actual failed partial restoration leaves original discovery reference and never auto-replays (299.8352ms)
+✔ actual old submit rejects create/edit and unfinished strict session blocks ordinary mutation/discard/close (286.3252ms)
+✔ actual ordinary task command remains separate from strict create/edit transport (264.5088ms)
+✔ actual Store DTO fixture through Index restore/inspect preserves original wire and full historical source (297.1203ms)
+✔ actual planned saved_exact restore reads fixed native close and never invents or dispatches another operation (223.2473ms)
+✔ actual recovered saved_exact close rejects complete S2 before detach or fixed close replay (358.7093ms)
+✔ actual explicit recovered exact close detaches controlled lease before retrying original close literal (368.4881ms)
+✔ actual planned handoff restore preserves fixed child plan and stays read-only until explicit reconciliation (244.6538ms)
+✔ actual fresh exact S1 save runs actual close lifecycle after controlled lease detach (254.5202ms)
+✔ actual fresh late S2 then S3 uses one real child writer, confirms latest raw before retirement and fixed close (286.2085ms)
+Index.ets SHA256=4d252d1cbf5c8c193096f0b9e61d7fe0478b0715d08d3be881559913f4a8da8a; SDK TypeScript=4.9.5
+✔ actual Index methods + SDK compiler are used, with source identity emitted (1.9189ms)
+✖ text selection insertion uses actual Index + draft methods for every editable field (546.7869ms)
+✖ actual DirectInput remains current after paste adopts complete selection metadata (280.6824ms)
+✖ paste and selected-import automatic titles hand complete raw/selection to actual DirectInput (243.1633ms)
+✖ rich source and exact image pins precede portable body save (277.8303ms)
+✖ image extraction failure preserves source and uses plain fallback without dangling refs (402.8408ms)
+✖ expanded 20-slot or import-record capacity stops before any native import or text save (284.8401ms)
+✖ unknown second import preserves first confirmed pin and exact original request/spool, no body insertion (333.5307ms)
+✖ selection, IME, other field, clipboard or foreground changing during read prevents all imports/text (321.957ms)
+✖ IME candidate present before paste never reads clipboard (304.8519ms)
+✖ foreground loss during admitted native import retains its confirmed pin and admits no later import/body (216.0795ms)
+✖ plain byte flavor inserts converted text into all non-body fields (273.6783ms)
+✖ actual Index input epoch rejects text roundtrip during a delayed complete future-field count (300.9625ms)
+✖ actual Index input epoch rejects selection roundtrip during a delayed complete future-field count (286.733ms)
+✖ actual Index rejects a complete future over-limit title before any native import (237.0504ms)
+ℹ Error: Test "selection, IME, other field, clipboard or foreground changing during read prevents all imports/text" at hmos\tool\index-clipboard-integration.test.cjs:261:1 generated asynchronous activity after the test ended. This activity created the error "TypeError: this.businessPending is not a function" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+{"index_sha256":"4d252d1cbf5c8c193096f0b9e61d7fe0478b0715d08d3be881559913f4a8da8a","lease_sha256":"96624fe1f3adf1528bf188f0c7fffbe838454833499e3eda1bab48e428b4cff3","compiler":"4.9.5","scope":"controlled actual methods; no SDK queue/Store/device"}
+✔ actual Index/lease and installed compiler identities are emitted (3.0324ms)
+✔ actual view content waits for mounted admission and disappears after revocation (1.4326ms)
+✖ first fixed ACK switches writer before complete latest child flush, then retires only parent proof (294.1081ms)
+✖ first Unknown retains original wire while later full raw requires explicit same request retry (217.7472ms)
+✖ child Unknown blocks parent cleanup; exact child retry precedes latest fresh child generation (209.9965ms)
+✖ parent cleanup Unknown uses original retirement wire and preserves every later child capture (182.4929ms)
+✖ wrong first scope/fullraw/pin aliases and wrong retirement proof never authorize writer/cleanup (169.5613ms)
+✖ same raw with a different live owner cannot adopt first ACK or issue parent cleanup (217.0784ms)
+✖ an unselected Ready/Unknown import or pending spool cannot be silently left behind by fork (214.7876ms)
+✖ capture incomplete during first ACK preserves both slots and never retires parent (144.4257ms)
+✖ manual discard waits for actual lease revoke; old callbacks cannot populate a new owner (222.5546ms)
+✖ second manual discard of the live child also requires revoke and never forks or revives it (177.5974ms)
+✖ incomplete detach capture stops deletion and remounts full values under a fresh lease (127.5136ms)
+✖ exact business close waits for lease and late accepted same-value epoch creates durable fork (251.5205ms)
+✖ discard Unknown stays detached and only explicit retry resends its original wire (185.2456ms)
+✔ rename incarnation and selection restoration timer cannot borrow a replacement lease (174.2018ms)
+ℹ Error: Test "first fixed ACK switches writer before complete latest child flush, then retires only parent proof" at hmos\tool\index-draft-fork-integration.test.cjs:165:1 generated asynchronous activity after the test ended. This activity created the error "TypeError: this.businessPending is not a function" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+ℹ Error: Test "manual discard waits for actual lease revoke; old callbacks cannot populate a new owner" at hmos\tool\index-draft-fork-integration.test.cjs:252:1 generated asynchronous activity after the test ended. This activity created the error "TypeError: this.businessPending is not a function" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+Index.ets SHA256=4d252d1cbf5c8c193096f0b9e61d7fe0478b0715d08d3be881559913f4a8da8a; SDK TypeScript=4.9.5
+✔ fresh actual Index methods use installed SDK compiler; emit source hash (2.1086ms)
+✔ all five fields retain original graphemes and UTF16 range in actual raw journal (401.4066ms)
+✖ IME candidate is journaled losslessly in all fields while business admission is blocked (183.6127ms)
+✖ invalid IME offset blocks retention and leaves previous confirmed raw values intact (221.299ms)
+✔ older count cannot replace a newer edit or a newer UTF16 selection count (249.1308ms)
+✖ business validation revokes edits, selection, category, owner, command and foreground changes (230.1886ms)
+✖ later input during final raw flush prevents issuing a frozen business command (147.15ms)
+✖ over-limit title keeps every character and confirmed pins without business mutation (172.2484ms)
+✖ count worker failure never authorizes business or normalizes original input (131.9028ms)
+✖ unknown raw journal preserves exact pending request and confirmed pins, no business issue (218.912ms)
+✖ unknown business reply retains original serialized command and raw snapshot with confirmed pins (212.8214ms)
+✖ create/edit business send preserves exact source strings and binds confirmed generation (174.3485ms)
+✔ task_add validates full raw text and does not consume later text or IME (154.1373ms)
+✔ task rename validates its untrimmed original while command retains established trimming (164.9149ms)
+✔ same-value rename roundtrip after issue does not consume newer input epoch (147.1385ms)
+✔ actual cancel callback invalidates pending validation and later reopen is not consumed (135.8551ms)
+✔ unknown rename preserves original request and frozen raw identity through explicit reconciliation (149.485ms)
+✔ confirmed not-committed rename clears only frozen request, preserving user text (115.0863ms)
+✔ foreground loss after issued rename revokes successful input consumption (113.4299ms)
+✔ late IME rename callback during issued business request retains newer candidate (132.9507ms)
+✔ actual ordinary-field construction selections do not change raw or epoch before focus, including during restore (308.1766ms)
+✔ actual unfocused initialization cannot clear or overwrite an existing unknown event (116.7327ms)
+✔ actual focused invalid ranges remain exact uncaptured events in active and disabled ordinary fields (2257.276ms)
+✔ actual focused valid reverse selection preserves complete composition, UTF16 metadata and confirmed pins (105.3543ms)
+✔ actual blur excludes subsequent unfocused ranges without erasing the invalid selection already delivered (145.2439ms)
+✔ actual old or revoked leases cannot submit valid, invalid, focus or text events to a replacement editor (316.404ms)
+✔ actual disabled text and preview still retain exact events regardless of focused selection admission (246.9744ms)
+✔ actual focused valid retirement selection retains original event and local range without writing a retired raw scope (131.5839ms)
+ℹ Error: Test "business validation revokes edits, selection, category, owner, command and foreground changes" at hmos\tool\index-editor-field-integration.test.cjs:172:1 generated asynchronous activity after the test ended. This activity created the error "Error: 编辑器保存必须使用完整原请求日志" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+ℹ Error: Test "later input during final raw flush prevents issuing a frozen business command" at hmos\tool\index-editor-field-integration.test.cjs:191:1 generated asynchronous activity after the test ended. This activity created the error "Error: 编辑器保存必须使用完整原请求日志" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+Index.ets SHA256=4d252d1cbf5c8c193096f0b9e61d7fe0478b0715d08d3be881559913f4a8da8a; SDK TypeScript=4.9.5
+✖ actual Index create sends one immutable operation with complete raw todos and confirmed publication (215.8525ms)
+✔ new-card todos composition is preserved in confirmed raw but never admitted as create (181.8977ms)
+✔ complete grapheme overflow or 101 original blank rows stay raw without a partial create (485.7223ms)
+✖ unready direct-input or row formatting blocks business while exact raw remains retainable (187.7029ms)
+✖ backend known rejection preserves full todos/pins and requires an explicit new save (276.0021ms)
+✖ Unknown create retains exact wire and explicit retry does not borrow later todos (279.113ms)
+✖ raw journal Unknown reconciles only its original todos; later rows need a fresh confirmed publication (267.3373ms)
+✖ structured unconfirmed or historical committed error preserves the original create wire (239.3813ms)
+✖ late todos text/range/composition/edit-away-back revokes create input consumption (195.2396ms)
+✔ a different editor owner with identical raw values cannot be consumed by an old create receipt (166.6711ms)
+✖ successful exact create retires its full raw generation without emptying/normalizing it first (162.231ms)
+✖ late input/range/roundtrip/actual SDK callback or owner change during discard never closes the live editor (162.1427ms)
+✖ invalid discard receipt retains its original retirement request and raw editor (171.3833ms)
+✖ existing V2 edit leaves single pending task input separate and sends no legacy todos or task command (144.5436ms)
+✖ actual create admission rejects a command borrowing different raw todos (134.0329ms)
+✔ emit fresh source identity for the actual Index business boundary (8.0084ms)
+✔ enabled preview debounces and sends only latest input (2.8569ms)
+✔ pending input removes old preview; serial work coalesces later input (1.2306ms)
+✔ switching editor with identical text rejects stale success and failure (1.6472ms)
+✔ A to B to A cannot revive an earlier receipt (0.9693ms)
+✔ stale failure cannot show an error or block the latest request (0.9957ms)
+✔ failure has a nonempty error, no automatic replay, and explicit retry (1.0611ms)
+✔ corrected input schedules only the corrected text after a failure (0.8607ms)
+✔ disable cancels debounce and ignores issued work while preserving original input (0.7571ms)
+✔ closing and reopening the same editor rejects the previous request (0.9375ms)
+✔ dispose cancels debounce and late work cannot publish or schedule (1.8125ms)
+✔ 20k UTF-16 input is sent whole without trimming or clipping surrogate pairs (0.8605ms)
+✔ malformed JSON blocks, runs and tables are rejected rather than displayed (1.4419ms)
+✔ complete DTO snapshots are owned independently of transport and getter mutations (1.7444ms)
+✔ valid empty documents render without invented content (7.4864ms)
+✔ attachment paths match independent Dart URI golden results (6.6125ms)
+✔ attachment lookup matches image and GIF name, explicit location, or asset ID (0.7881ms)
+✔ first eligible match follows inventory order without preferring ID over name (0.6094ms)
+✔ numeric tokens are literal names or IDs, never attachment indexes (0.7145ms)
+✔ attachment decoding is exact once and case-sensitive without URL form decoding (0.7812ms)
+✔ unsupported, missing or malformed attachments cannot become URI or path reads (0.7872ms)
+✔ remote images remain explicit load candidates with a host and no credentials (0.7567ms)
+✔ image source collection covers tables and paragraphs without code or duplicate reads (0.8582ms)
+✔ attachment resolution does not mutate inventory and never exposes a location as an image source (0.6818ms)
+✔ obsolete reply is discarded and only latest pending page reaches the owner (45.5196ms)
+✔ typing is debounced while tabs and confirmed content refresh issue immediately (184.9723ms)
+✔ failures clear confirmed membership and explicit retry is a new read (93.0561ms)
+✔ obsolete failure, invalidation and disposal cannot publish or replay pending work (109.2411ms)
+✔ selection owns conditions and an unchanged view does not duplicate requests (63.8928ms)
+✔ same asset references deduplicate and frozen exact request survives caller mutation (3.4786ms)
+✔ replacement during native read releases late token and serializes next request (3.0436ms)
+✔ removal immediately hides prior pixels and releases only removed image (0.9698ms)
+✔ dispose releases current and subsequently completed lease without publishing (2.8639ms)
+✔ decode failure retains explicit retry and ignores an old path callback (9.9189ms)
+✔ read failure never automatically retries and does not block other image requests (1.8223ms)
+✔ malformed lease cannot publish and known token is released (0.8627ms)
+✔ caller cannot mutate display snapshot to inject an image source (0.7479ms)
+ℹ tests 855
+ℹ suites 0
+ℹ pass 807
+ℹ fail 48
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17624.3155
+
+✖ failing tests:
+
+test at hmos\tool\index-clipboard-integration.test.cjs:172:1
+✖ text selection insertion uses actual Index + draft methods for every editable field (546.7869ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at IndexPasteIntegration.pasteContent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:20:19)
+      at Object.paste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:154:32)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:175:34)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+
+test at hmos\tool\index-clipboard-integration.test.cjs:181:1
+✖ actual DirectInput remains current after paste adopts complete selection metadata (280.6824ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:183:25)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-clipboard-integration.test.cjs:199:1
+✖ paste and selected-import automatic titles hand complete raw/selection to actual DirectInput (243.1633ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at IndexPasteIntegration.pasteContent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:20:19)
+      at Object.paste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:154:32)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:207:54)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-clipboard-integration.test.cjs:226:1
+✖ rich source and exact image pins precede portable body save (277.8303ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at IndexPasteIntegration.pasteContent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:20:19)
+      at Object.paste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:154:32)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:229:32)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-clipboard-integration.test.cjs:236:1
+✖ image extraction failure preserves source and uses plain fallback without dangling refs (402.8408ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at IndexPasteIntegration.pasteContent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:20:19)
+      at Object.paste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:154:32)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:238:32)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-clipboard-integration.test.cjs:243:1
+✖ expanded 20-slot or import-record capacity stops before any native import or text save (284.8401ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at IndexPasteIntegration.pasteContent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:20:19)
+      at Object.paste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:154:32)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:247:34)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-clipboard-integration.test.cjs:253:1
+✖ unknown second import preserves first confirmed pin and exact original request/spool, no body insertion (333.5307ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at IndexPasteIntegration.pasteContent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:20:19)
+      at Object.paste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:154:32)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:255:32)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-clipboard-integration.test.cjs:261:1
+✖ selection, IME, other field, clipboard or foreground changing during read prevents all imports/text (321.957ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:265:14)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-clipboard-integration.test.cjs:276:1
+✖ IME candidate present before paste never reads clipboard (304.8519ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at IndexPasteIntegration.pasteContent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:20:19)
+      at Object.paste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:154:32)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:279:13)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-clipboard-integration.test.cjs:282:1
+✖ foreground loss during admitted native import retains its confirmed pin and admits no later import/body (216.0795ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at IndexPasteIntegration.pasteContent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:20:19)
+      at Object.paste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:154:32)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:287:32)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-clipboard-integration.test.cjs:293:1
+✖ plain byte flavor inserts converted text into all non-body fields (273.6783ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at IndexPasteIntegration.pasteContent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:20:19)
+      at Object.paste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:154:32)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:297:19)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-clipboard-integration.test.cjs:303:3
+✖ actual Index input epoch rejects text roundtrip during a delayed complete future-field count (300.9625ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at IndexPasteIntegration.pasteContent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:20:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:308:65)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-clipboard-integration.test.cjs:303:3
+✖ actual Index input epoch rejects selection roundtrip during a delayed complete future-field count (286.733ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at IndexPasteIntegration.pasteContent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:20:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:308:65)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-clipboard-integration.test.cjs:321:1
+✖ actual Index rejects a complete future over-limit title before any native import (237.0504ms)
+  TypeError: this.businessPending is not a function
+      at IndexPasteIntegration.canPaste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:10:42)
+      at IndexPasteIntegration.pasteContent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:20:19)
+      at Object.paste (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:154:32)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:324:28)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:165:1
+✖ first fixed ACK switches writer before complete latest child flush, then retires only parent proof (294.1081ms)
+  TypeError: Cannot read properties of undefined (reading 'serialized')
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:168:93)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:180:1
+✖ first Unknown retains original wire while later full raw requires explicit same request retry (217.7472ms)
+  TypeError: this.businessPending is not a function
+      at ActualIndex.beginRawFork (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:606:42)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:183:18)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:190:1
+✖ child Unknown blocks parent cleanup; exact child retry precedes latest fresh child generation (209.9965ms)
+  TypeError: this.businessPending is not a function
+      at ActualIndex.beginRawFork (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:606:42)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:193:18)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:200:1
+✖ parent cleanup Unknown uses original retirement wire and preserves every later child capture (182.4929ms)
+  TypeError: this.businessPending is not a function
+      at ActualIndex.beginRawFork (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:606:42)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:203:18)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:210:1
+✖ wrong first scope/fullraw/pin aliases and wrong retirement proof never authorize writer/cleanup (169.5613ms)
+  TypeError: this.businessPending is not a function
+      at ActualIndex.beginRawFork (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:606:42)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:222:20)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:228:1
+✖ same raw with a different live owner cannot adopt first ACK or issue parent cleanup (217.0784ms)
+  TypeError: this.businessPending is not a function
+      at ActualIndex.beginRawFork (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:606:42)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:231:24)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:236:1
+✖ an unselected Ready/Unknown import or pending spool cannot be silently left behind by fork (214.7876ms)
+  TypeError: this.businessPending is not a function
+      at ActualIndex.beginRawFork (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:606:42)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:240:20)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:244:1
+✖ capture incomplete during first ACK preserves both slots and never retires parent (144.4257ms)
+  TypeError: this.businessPending is not a function
+      at ActualIndex.beginRawFork (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:606:42)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:247:24)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:252:1
+✖ manual discard waits for actual lease revoke; old callbacks cannot populate a new owner (222.5546ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:256:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:264:1
+✖ second manual discard of the live child also requires revoke and never forks or revives it (177.5974ms)
+  TypeError: this.businessPending is not a function
+      at ActualIndex.beginRawFork (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:606:42)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:267:18)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:274:1
+✖ incomplete detach capture stops deletion and remounts full values under a fresh lease (127.5136ms)
+  TypeError: this.businessPending is not a function
+      at ActualIndex.discardDraftConfirmed (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:1037:42)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:277:54)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:285:1
+✖ exact business close waits for lease and late accepted same-value epoch creates durable fork (251.5205ms)
+  TypeError: this.businessPending is not a function
+      at ActualIndex.beginRawFork (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:606:42)
+      at ActualIndex.closeSavedEditor (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:924:32)
+      at async TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:293:22)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-draft-fork-integration.test.cjs:299:1
+✖ discard Unknown stays detached and only explicit retry resends its original wire (185.2456ms)
+  TypeError: this.businessPending is not a function
+      at ActualIndex.discardDraftConfirmed (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:1037:42)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-draft-fork-integration.test.cjs:302:24)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:143:1
+✖ IME candidate is journaled losslessly in all fields while business admission is blocked (183.6127ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:149:74)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:154:1
+✖ invalid IME offset blocks retention and leaves previous confirmed raw values intact (221.299ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:158:18)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:172:1
+✖ business validation revokes edits, selection, category, owner, command and foreground changes (230.1886ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:177:14)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-field-integration.test.cjs:191:1
+✖ later input during final raw flush prevents issuing a frozen business command (147.15ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:194:28)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-field-integration.test.cjs:199:1
+✖ over-limit title keeps every character and confirmed pins without business mutation (172.2484ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:202:18)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:207:1
+✖ count worker failure never authorizes business or normalizes original input (131.9028ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:209:75)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:214:1
+✖ unknown raw journal preserves exact pending request and confirmed pins, no business issue (218.912ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:216:79)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:222:1
+✖ unknown business reply retains original serialized command and raw snapshot with confirmed pins (212.8214ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:224:67)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:230:1
+✖ create/edit business send preserves exact source strings and binds confirmed generation (174.3485ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:233:18)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:189:1
+✖ actual Index create sends one immutable operation with complete raw todos and confirmed publication (215.8525ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:192:64)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:219:1
+✖ unready direct-input or row formatting blocks business while exact raw remains retainable (187.7029ms)
+  AssertionError [ERR_ASSERTION]: direct
+  + actual - expected
+  
+  + ''
+  - 'pending\nfull raw'
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:225:14)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: 'pending\nfull raw',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:233:1
+✖ backend known rejection preserves full todos/pins and requires an explicit new save (276.0021ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:237:28)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:245:1
+✖ Unknown create retains exact wire and explicit retry does not borrow later todos (279.113ms)
+  TypeError: Cannot read properties of undefined (reading 'serialized')
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:250:53)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:259:1
+✖ raw journal Unknown reconciles only its original todos; later rows need a fresh confirmed publication (267.3373ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:268:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:273:1
+✖ structured unconfirmed or historical committed error preserves the original create wire (239.3813ms)
+  TypeError: Cannot read properties of undefined (reading 'serialized')
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:277:55)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:284:1
+✖ late todos text/range/composition/edit-away-back revokes create input consumption (195.2396ms)
+  AssertionError [ERR_ASSERTION]: text
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:288:30)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:309:1
+✖ successful exact create retires its full raw generation without emptying/normalizing it first (162.231ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:311:41)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:319:1
+✖ late input/range/roundtrip/actual SDK callback or owner change during discard never closes the live editor (162.1427ms)
+  AssertionError [ERR_ASSERTION]: input
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:323:30)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:351:1
+✖ invalid discard receipt retains its original retirement request and raw editor (171.3833ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:356:28)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:366:1
+✖ existing V2 edit leaves single pending task input separate and sends no legacy todos or task command (144.5436ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:368:75)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:375:1
+✖ actual create admission rejects a command borrowing different raw todos (134.0329ms)
+  AssertionError [ERR_ASSERTION]: actual Index methods returned no late platform/helper error
+  + actual - expected
+  
+  + [
+  +   Error: 编辑器保存必须使用完整原请求日志
+  +       at ActualIndexTodosBusiness.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:510:19)
+  +       at page.<computed> [as submit] (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:169:35)
+  +       at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:380:18)
+  +       at Test.runInAsyncScope (node:async_hooks:228:14)
+  +       at Test.run (node:internal/test_runner/test:1118:25)
+  +       at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+  +       at Test.postRun (node:internal/test_runner/test:1247:19)
+  +       at Test.run (node:internal/test_runner/test:1175:12)
+  +       at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+  + ]
+  - []
+  
+      at finish (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:178:14)
+      at async Object.close (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:182:32)
+      at async TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:382:15)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [
+      Error: 编辑器保存必须使用完整原请求日志
+          at ActualIndexTodosBusiness.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:510:19)
+          at page.<computed> [as submit] (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:169:35)
+          at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:380:18)
+          at Test.runInAsyncScope (node:async_hooks:228:14)
+          at Test.run (node:internal/test_runner/test:1118:25)
+          at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+          at Test.postRun (node:internal/test_runner/test:1247:19)
+          at Test.run (node:internal/test_runner/test:1175:12)
+          at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+    ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

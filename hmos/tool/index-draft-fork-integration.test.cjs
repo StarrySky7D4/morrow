@@ -32,6 +32,7 @@ function compile(text, file) {
   return result.outputText;
 }
 const methods = [section('  private draftField(', '  private updateMarkdown('),
+  method('businessPending'),
   section('  private draftTextChanged(', '  private restoreSelection('),
   section('  private ownsEditorView(', '  private attachDraft('),
   method('editorInputChanged'), method('flushDraft'), method('keepDraftAndClose'), method('closeSavedEditor'),
@@ -282,7 +283,7 @@ test('incomplete detach capture stops deletion and remounts full values under a 
     assert.equal(h.page.retirementInput.get('todos:text'), '{"unknown_row":"raw event"}'); assert.equal(h.parent.disposed, false);
   } finally { h.close(); }
 });
-test('exact business close waits for lease and late accepted same-value epoch creates durable fork', async () => {
+test('legacy close helper waits for lease and late accepted same-value epoch creates durable raw fork', async () => {
   for (const late of [false, true]) {
     const h = harness();
     try {

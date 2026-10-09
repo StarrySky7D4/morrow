@@ -1,0 +1,103 @@
+Index.ets SHA256=4d252d1cbf5c8c193096f0b9e61d7fe0478b0715d08d3be881559913f4a8da8a
+EditorDraft.ets SHA256=b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775
+EditorBusiness.ets SHA256=6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf
+EditorBusinessSession.ets SHA256=58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6
+EditorFieldPolicy.ets SHA256=10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842
+Workbench.ets SHA256=1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf
+ACTUAL_INDEX_SOURCE_FREEZE=[{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusiness.ets","sha256":"6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessHandoff.ets","sha256":"5454de4c88133ccd04e27be693870280f6bf9f126696b9684c3db4ae025a6a55"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessSession.ets","sha256":"58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraft.ets","sha256":"b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraftFork.ets","sha256":"2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorFieldPolicy.ets","sha256":"10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorPaste.ets","sha256":"28d54a7d02bf644d68b58ac68a4d824ab2ff3fb71b87ab0e00c279456b6d160e"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\Workbench.ets","sha256":"1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf"}]
+✔ fresh actual Index/ETS source identities; controlled receiver boundaries are explicit (2.1906ms)
+✔ actual new-card Save persists complete raw before pause and durable intent before business admission (275.4745ms)
+✔ actual unchanged existing-card Save establishes publication and preserves source/tasks semantics (188.1495ms)
+✔ actual first business send synchronously admits Workbench before resuming parent debounce (174.24ms)
+✔ actual S2 during raw publication cancels unissued proposal while keeping complete input (155.5913ms)
+✔ first proved no-write intent prepare does not strand the complete editor behind an unprepared session (161.2853ms)
+✔ prepare ACK Unknown stays blocked and a later no-write reply cannot release that original uncertainty (149.3523ms)
+✔ actual Workbench tail orders S1 business before later complete S2 raw persistence (145.3183ms)
+✔ issued-before-first-send S2 blocks auto-save; explicit read-only restore retries fixed S1 literal (164.7098ms)
+✔ actual selection-only S2 after issue cannot be consumed by same-text S1 success (155.0019ms)
+✔ actual first save Unknown retries same session and literal without reconstructing current S2 (171.9307ms)
+✔ actual committed effect with invalid DTO remains known through attempted save and failed inspection (140.4701ms)
+✔ actual list and five-part restore are read-only; same-card different draft does not bind consumption (146.0539ms)
+✔ actual failed partial restoration leaves original discovery reference and never auto-replays (146.7456ms)
+✔ actual old submit rejects create/edit and unfinished strict session blocks ordinary mutation/discard/close (136.635ms)
+✔ actual ordinary task command remains separate from strict create/edit transport (126.4136ms)
+✔ actual Store DTO fixture through Index restore/inspect preserves original wire and full historical source (128.3197ms)
+✔ actual planned saved_exact restore reads fixed native close and never invents or dispatches another operation (131.4663ms)
+✔ actual recovered saved_exact close rejects complete S2 before detach or fixed close replay (137.5682ms)
+✔ actual explicit recovered exact close detaches controlled lease before retrying original close literal (128.881ms)
+✔ actual planned handoff restore preserves fixed child plan and stays read-only until explicit reconciliation (128.3024ms)
+✔ actual fresh exact S1 save runs actual close lifecycle after controlled lease detach (128.5318ms)
+✖ actual fresh late S2 then S3 uses one real child writer, confirms latest raw before retirement and fixed close (136.7243ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 22
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3982.5297
+
+✖ failing tests:
+
+test at hmos\tool\index-business-integration.test.cjs:306:1
+✖ actual fresh late S2 then S3 uses one real child writer, confirms latest raw before retirement and fixed close (136.7243ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" not to be reference-equal to "expected":
+  
+  EditorDraftCoordinator {
+    baseline: Values {
+      assets: [],
+      category: '灵感',
+      conclusion: TextValue {
+        affinity: 0,
+        composing_end: -1,
+        composing_start: -1,
+        directional: false,
+        selection_base: -1,
+        selection_extent: -1,
+        text: 'c'
+      },
+      description: TextValue {
+        affinity: 0,
+        composing_end: -1,
+        composing_start: -1,
+        directional: false,
+        selection_base: -1,
+        selection_extent: -1,
+        text: 'S1 原文 汉字 🧪 é.'
+      },
+      hypothesis: TextValue {
+        affinity: 0,
+        composing_end: -1,
+        composing_start: -1,
+        directional: false,
+        selection_base: -1,
+        selection_extent: -1,
+        text: 'h'
+      },
+      stage: '待整理',
+      title: TextValue {
+        affinity: 0,
+        composing_end: -1,
+        composing_start: -1,
+        directional: false,
+        selection_base: -1,
+        selection_extent: -1,
+        text: '原完整标题'
+      },
+      todos: TextValue {
+        affinity: 0,
+        composing_end: -1,
+        composing_start: -1,
+        directional: false,
+  ...
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:313:68)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [EditorDraftCoordinator],
+    expected: [EditorDraftCoordinator],
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,28 @@
+Index.ets SHA256=3b5164d9e033b246cdd582a05b5cfa0f21f6d9d85e55484233efd03274439a9d
+EditorDraft.ets SHA256=25257098b3a71e1014bef552d100617fd0e34573706c91fdfc61b2f12116e495
+EditorBusiness.ets SHA256=6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf
+EditorBusinessSession.ets SHA256=948c7b9105675a65406cf980f8a8982500954e87e33189878a5f32c58871af86
+EditorFieldPolicy.ets SHA256=10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842
+Workbench.ets SHA256=1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf
+✔ fresh actual Index/ETS source identities; controlled receiver boundaries are explicit (2.1723ms)
+✔ actual new-card Save persists complete raw before pause and durable intent before business admission (200.596ms)
+✔ actual unchanged existing-card Save establishes publication and preserves source/tasks semantics (152.5691ms)
+✔ actual first business send synchronously admits Workbench before resuming parent debounce (143.4525ms)
+✔ actual S2 during raw publication cancels unissued proposal while keeping complete input (124.4207ms)
+✔ issued-before-first-send S2 blocks auto-save; explicit read-only restore retries fixed S1 literal (125.0477ms)
+✔ actual selection-only S2 after issue cannot be consumed by same-text S1 success (110.6755ms)
+✔ actual first save Unknown retries same session and literal without reconstructing current S2 (103.3768ms)
+✔ actual committed effect with invalid DTO remains known through attempted save and failed inspection (100.5157ms)
+✔ actual list and five-part restore are read-only; same-card different draft does not bind consumption (104.1251ms)
+✔ actual failed partial restoration leaves original discovery reference and never auto-replays (108.8556ms)
+✔ actual old submit rejects create/edit and unfinished strict session blocks ordinary mutation/discard/close (103.2964ms)
+✔ actual ordinary task command remains separate from strict create/edit transport (95.6678ms)
+✔ actual Store DTO fixture through Index restore/inspect preserves original wire and full historical source (105.9268ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2107.6271

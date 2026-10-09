@@ -1,0 +1,86 @@
+Index.ets SHA256=1ab29f6a124664231e6a3bea0ae5f745625ec4f77676ffcb55f746b50ad1184f
+EditorDraft.ets SHA256=b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775
+EditorBusiness.ets SHA256=6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf
+EditorBusinessSession.ets SHA256=58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6
+EditorFieldPolicy.ets SHA256=10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842
+Workbench.ets SHA256=1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf
+ACTUAL_INDEX_SOURCE_FREEZE=[{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusiness.ets","sha256":"6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessHandoff.ets","sha256":"8f68b983fb4747360a07b59bc80b0397abe9cff8990c7f4950f2280c71f2570f"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessSession.ets","sha256":"58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraft.ets","sha256":"b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraftFork.ets","sha256":"2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorFieldPolicy.ets","sha256":"10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorPaste.ets","sha256":"28d54a7d02bf644d68b58ac68a4d824ab2ff3fb71b87ab0e00c279456b6d160e"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\Workbench.ets","sha256":"1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf"}]
+✔ fresh actual Index/ETS source identities; controlled receiver boundaries are explicit (2.0181ms)
+✔ actual new-card Save persists complete raw before pause and durable intent before business admission (463.7753ms)
+✔ actual unchanged existing-card Save establishes publication and preserves source/tasks semantics (263.0499ms)
+✔ actual first business send synchronously admits Workbench before resuming parent debounce (197.6723ms)
+✔ actual S2 during raw publication cancels unissued proposal while keeping complete input (223.0243ms)
+✔ first proved no-write intent prepare does not strand the complete editor behind an unprepared session (214.2964ms)
+✔ prepare ACK Unknown stays blocked and a later no-write reply cannot release that original uncertainty (200.8096ms)
+✔ actual Workbench tail orders S1 business before later complete S2 raw persistence (178.4704ms)
+✔ issued-before-first-send S2 blocks auto-save; explicit read-only restore retries fixed S1 literal (189.6452ms)
+✔ actual selection-only S2 after issue cannot be consumed by same-text S1 success (165.129ms)
+✔ actual first save Unknown retries same session and literal without reconstructing current S2 (166.659ms)
+✔ actual committed effect with invalid DTO remains known through attempted save and failed inspection (152.5047ms)
+✔ actual list and five-part restore are read-only; same-card different draft does not bind consumption (162.5444ms)
+✔ actual failed partial restoration leaves original discovery reference and never auto-replays (152.6343ms)
+✔ actual old submit rejects create/edit and unfinished strict session blocks ordinary mutation/discard/close (142.7497ms)
+✔ actual ordinary task command remains separate from strict create/edit transport (174.2282ms)
+✔ actual Store DTO fixture through Index restore/inspect preserves original wire and full historical source (157.0772ms)
+✔ actual planned saved_exact restore reads fixed native close and never invents or dispatches another operation (152.318ms)
+✔ actual recovered saved_exact close rejects complete S2 before detach or fixed close replay (148.6224ms)
+✔ actual explicit recovered exact close detaches controlled lease before retrying original close literal (147.0288ms)
+✔ actual planned handoff restore preserves fixed child plan and stays read-only until explicit reconciliation (144.4567ms)
+✔ actual fresh exact S1 save runs actual close lifecycle after controlled lease detach (151.8364ms)
+✔ actual fresh late S2 then S3 uses one real child writer, confirms latest raw before retirement and fixed close (150.1246ms)
+Index.ets SHA256=1ab29f6a124664231e6a3bea0ae5f745625ec4f77676ffcb55f746b50ad1184f; SDK TypeScript=4.9.5
+✔ fresh actual Index methods use installed SDK compiler; emit source hash (1.7272ms)
+✔ all five fields retain original graphemes and UTF16 range in actual raw journal (392.3132ms)
+✔ IME candidate is journaled losslessly in all fields while business admission is blocked (1142.217ms)
+✔ invalid IME offset blocks retention and leaves previous confirmed raw values intact (178.4015ms)
+✔ older count cannot replace a newer edit or a newer UTF16 selection count (180.6394ms)
+✔ complete Save validation revokes edits, selection, category, owner, assets and foreground changes (1242.2819ms)
+✔ later input during final raw flush prevents issuing a frozen business command (145.3062ms)
+✔ over-limit title keeps every character and confirmed pins without business mutation (145.4315ms)
+✔ count worker failure never authorizes business or normalizes original input (147.9689ms)
+✔ unknown raw journal preserves exact pending request and confirmed pins, no business issue (133.9789ms)
+✔ Unknown complete Save retains registered exact wire and immutable publication with confirmed pins (151.6627ms)
+✔ create/edit business send preserves exact source strings and binds confirmed generation (296.6786ms)
+✔ task_add validates full raw text and does not consume later text or IME (139.8207ms)
+✔ task rename validates its untrimmed original while command retains established trimming (135.4248ms)
+✔ same-value rename roundtrip after issue does not consume newer input epoch (129.0739ms)
+✔ actual cancel callback invalidates pending validation and later reopen is not consumed (149.6606ms)
+✔ unknown rename preserves original request and frozen raw identity through explicit reconciliation (163.6482ms)
+✔ confirmed not-committed rename clears only frozen request, preserving user text (140.9972ms)
+✔ foreground loss after issued rename revokes successful input consumption (146.3754ms)
+✔ late IME rename callback during issued business request retains newer candidate (127.8738ms)
+✔ actual ordinary-field construction selections do not change raw or epoch before focus, including during restore (280.6928ms)
+✔ actual unfocused initialization cannot clear or overwrite an existing unknown event (190.5109ms)
+✔ actual focused invalid ranges remain exact uncaptured events in active and disabled ordinary fields (2530.4065ms)
+✔ actual focused valid reverse selection preserves complete composition, UTF16 metadata and confirmed pins (118.6893ms)
+✔ actual blur excludes subsequent unfocused ranges without erasing the invalid selection already delivered (116.2449ms)
+✔ actual old or revoked leases cannot submit valid, invalid, focus or text events to a replacement editor (255.6142ms)
+✔ actual disabled text and preview still retain exact events regardless of focused selection admission (232.6803ms)
+✔ actual focused valid retirement selection retains original event and local range without writing a retired raw scope (119.8365ms)
+Index.ets SHA256=1ab29f6a124664231e6a3bea0ae5f745625ec4f77676ffcb55f746b50ad1184f; SDK TypeScript=4.9.5
+✔ actual Index create sends one immutable operation with complete raw todos and confirmed publication (518.3435ms)
+✔ new-card todos composition is preserved in confirmed raw but never admitted as create (237.5696ms)
+✔ complete grapheme overflow or 101 original blank rows stay raw without a partial create (439.5876ms)
+✔ complete Save admits exactly 100 original LF rows with full publication and no legacy create transport (245.6271ms)
+✔ continued_todos uses own root context and admits 100 rows but preserves 101 blank rows before issuing another intent (388.6096ms)
+✔ unready direct-input or row formatting blocks business while exact raw remains retainable (339.1018ms)
+✔ issued backend rejection preserves full todos/pins and requires explicit original-request retry (157.2893ms)
+✔ Unknown create retains exact wire and explicit retry does not borrow later todos (159.7895ms)
+✔ raw journal Unknown reconciles only its original todos; later rows need a fresh confirmed publication (158.0599ms)
+✔ structured unconfirmed or historical committed error preserves the original create wire (310.9715ms)
+✔ late todos text/range/composition/edit-away-back revokes create input consumption (612.6063ms)
+✔ a different editor owner with identical raw values cannot be consumed by an old create receipt (147.1194ms)
+✔ successful exact create retires its full raw generation without emptying/normalizing it first (144.3627ms)
+✔ late input/range/roundtrip or owner change during exact close preserves live input; revoked SDK lease cannot submit (729.2194ms)
+✔ invalid exact-close receipt retains its original fixed close and raw editor (173.2233ms)
+✔ existing V2 pending task blocks body Save and preserves task identity; separate raw remains retainable (151.7711ms)
+✔ legacy create command cannot borrow raw todos or bypass complete Save (141.8736ms)
+✔ emit fresh source identity for the actual Index business boundary (1.0108ms)
+ℹ tests 69
+ℹ suites 0
+ℹ pass 69
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9971.6955

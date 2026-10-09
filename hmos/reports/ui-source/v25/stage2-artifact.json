@@ -1,0 +1,10 @@
+{
+  "createdUtc": "2026-10-08T23:54:12.524Z",
+  "path": ".build/artifacts/dev25-business-handoff-checkpoint/entry-default-unsigned.hap",
+  "bytes": 30173418,
+  "sha256": "4E00DBBBD81F1690C57A79010AFB25E842035EFE6919AD888362BBDDBB1D016F",
+  "archive_path": ".build/artifacts/dev25-business-handoff-checkpoint/entry-default-unsigned.hap",
+  "signed": false,
+  "installed": false,
+  "scope": "v25 Index durable original save/recovery integration; typed business source0 child handoff, conditional parent retirement and exact close; actual-source and Store checks; restart after missing parent/advanced child, owned closed-card reopen and new-native device acceptance OPEN; full Flutter/Windows parity OPEN"
+}

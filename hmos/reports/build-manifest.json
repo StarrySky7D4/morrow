@@ -1,5 +1,5 @@
 {
-  "createdUtc": "2026-10-07T12:09:46.023Z",
+  "createdUtc": "2026-10-08T23:56:47.021Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
   "hmosVersion": "0.1.0-hmos-dev.19",
   "sdk": "HarmonyOS API26 26.0.0.105",
@@ -8,10 +8,10 @@
     "x86_64"
   ],
   "artifact": {
-    "path": ".build/artifacts/dev24-intent-checkpoint/entry-default-unsigned.hap",
-    "bytes": 29381667,
-    "sha256": "F6EEEAE2D2175A7EA54DCEF582EA1BD5D15E324D48E65583B752775B4EC8925C",
-    "archive_path": ".build/artifacts/dev24-intent-checkpoint/entry-default-unsigned.hap",
+    "path": ".build/artifacts/dev25-business-handoff-checkpoint/entry-default-unsigned.hap",
+    "bytes": 30173833,
+    "sha256": "9590D87DE2F83CE736F1BE0ED2D7CD8FA7C3A127373F53AB9F7A2A2C2288B686",
+    "archive_path": ".build/artifacts/dev25-business-handoff-checkpoint/entry-default-unsigned.hap",
     "signed": false,
     "installed": false
   },
@@ -149,8 +149,12 @@
       "sha256": "6469D1F2AF4E2DA6B9066B52917E658BC13ECECB4EF2A4E6B92FBB4AD0D996CF"
     },
     {
+      "path": "entry/src/main/ets/model/EditorBusinessHandoff.ets",
+      "sha256": "8F68B983FB4747360A07B59BC80B0397ABE9CFF8990C7F4950F2280C71F2570F"
+    },
+    {
       "path": "entry/src/main/ets/model/EditorBusinessSession.ets",
-      "sha256": "792E95BC45D5D589A08810B4A3BED24FA0C6229612FB38FDA18ABD12A9821FBD"
+      "sha256": "58E992B7E8BDAE01F7BC07B3DEE9E66B7BCAE6712A945B5509382121E5AF52C6"
     },
     {
       "path": "entry/src/main/ets/model/EditorDirectInput.ets",
@@ -158,7 +162,7 @@
     },
     {
       "path": "entry/src/main/ets/model/EditorDraft.ets",
-      "sha256": "A3AE1E99D198FCBA3CDEF741A6F138612AD16979BE42C7A8809003F00D04F965"
+      "sha256": "B88A46D0371D8C6F193187D1A0E1ACF41671D4991CDBD59C451B8BCF66CF3775"
     },
     {
       "path": "entry/src/main/ets/model/EditorDraftFork.ets",
@@ -226,7 +230,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "AFF77EB7F1C90E53DDF5D64DD89FB3A037DAB98AC0B08AE0382090A2055EFEAF"
+      "sha256": "1AB29F6A124664231E6A3BEA0AE5F745625EC4F77676FFCB55F746B50AD1184F"
     },
     {
       "path": "entry/src/main/ets/pages/MarkdownPreview.ets",
@@ -373,6 +377,22 @@
       "sha256": "A80CCFC2223F2C7D6D9AC15F652094570BAB53CA9EC5978FF4DB4C079272DE98"
     },
     {
+      "path": "reports/ui-source/v25/build-native.ps1",
+      "sha256": "801BFD6C783E860381BDFEFF57840C8CE2454604F0452E2A0BC9DAF152BF94F4"
+    },
+    {
+      "path": "reports/ui-source/v25/checkpoint.cjs",
+      "sha256": "4C14647B3AC9A8BF8D711FAB2073B79285960A7BB84C2DCCC0BC22EC9BD275F7"
+    },
+    {
+      "path": "reports/ui-source/v25/editor-handoff-store-fixture.json",
+      "sha256": "9AF7CCAABAF247BBB06E60CD7302DA878F515BAA3704495735542BDB783E486F"
+    },
+    {
+      "path": "reports/ui-source/v25/verify-package.ps1",
+      "sha256": "3469555DFB64411CD6EE54FDEE9118C63B59B633289D7C8E840A28B421692E55"
+    },
+    {
       "path": "rust/Cargo.lock",
       "sha256": "99388ED4B939078A28617A7624ECBC38A3B7D527AD181AEFAC824F07562F119D"
     },
@@ -390,11 +410,11 @@
     },
     {
       "path": "rust/editor-draft-model/schemas/editor_draft.proto",
-      "sha256": "9605A649D595B8404BB232ED81551F58ECB3BABDAF24187468AE300B7EBA7814"
+      "sha256": "EA009075699127480D6DC336FD9F4F355E5684614DCCBF841C8142AE87ADA067"
     },
     {
       "path": "rust/editor-draft-model/schemas/editor_intent.proto",
-      "sha256": "461269138817CE96A83781B7EBED34A4B10CCA497173307B8DF2BDD1416D45E0"
+      "sha256": "D5F02B81F3EB71374C4F379F2F0D89B314A8C5E34F6F46050052B2AC0BFD2C0F"
     },
     {
       "path": "rust/editor-draft-model/src/lib.rs",
@@ -462,11 +482,11 @@
     },
     {
       "path": "rust/src/draft_bridge.rs",
-      "sha256": "F73A5ED46FF45A52B40D784C8D0F3CE3A1DFF6294DF122CCD0A34B878F623CCF"
+      "sha256": "08835D330D49648D85A3689109942EF77AACE40A65C02920599B023DCC490FB3"
     },
     {
       "path": "rust/src/editor_business.rs",
-      "sha256": "C5502B47C4F78DF27D87AB7D7BD6EF7508E1A29A7E201AFAFAA5CBE63DB456EF"
+      "sha256": "F8676601780C12403167B9E5AE892D699FDD76560D0C36D94EFB82474184F537"
     },
     {
       "path": "rust/src/editor_business/tests.rs",
@@ -474,11 +494,11 @@
     },
     {
       "path": "rust/src/editor_draft.rs",
-      "sha256": "28C2409C830EDE59D852B3C46EAA77228ECF52928371A910B5C1716A8DABF59A"
+      "sha256": "5D1DD533F819DF00293B01B290251578352124E25CC5C2530BD08C5D3D08726B"
     },
     {
       "path": "rust/src/editor_draft_fork.rs",
-      "sha256": "BF5E63DCF5E6ECC89055F8857E7FC973DF98EF33636023E428CECC1A15B66F49"
+      "sha256": "A698DF9F433F289BFF169635B723D28BFEA073EDE943DCEB75703192E946AE8C"
     },
     {
       "path": "rust/src/editor_draft_fork_tests.rs",
@@ -505,6 +525,14 @@
       "sha256": "BD1BCE844DF4D3DC15D5AA934BE19CA0C7C168EBE8FB4856479539678B849E40"
     },
     {
+      "path": "rust/src/editor_handoff.rs",
+      "sha256": "064227172B29B601D42F5466E9AD5EF76462A37BFD5FBCB1931FF155C161A10E"
+    },
+    {
+      "path": "rust/src/editor_handoff/tests.rs",
+      "sha256": "7827FAA68E31216BEDD38A9652A781E690E7BFB4E1BA93925CC10B0FD91E3A3B"
+    },
+    {
       "path": "rust/src/editor_input.rs",
       "sha256": "A564A1291A15C2F60E41C9F1487332D3F8CBBB6E7357096086FB1D943047E376"
     },
@@ -514,7 +542,7 @@
     },
     {
       "path": "rust/src/editor_intent.rs",
-      "sha256": "CA722439719EF6FE19900B28BADE5273372F31075A05BE7B49733B32F95F08A3"
+      "sha256": "A0677D1488489C8A087C8735B51E4DA954FC37AA509A8BBD7AA926120FEC94AB"
     },
     {
       "path": "rust/src/editor_intent/tests.rs",
@@ -530,7 +558,7 @@
     },
     {
       "path": "rust/src/lib.rs",
-      "sha256": "E9B5F362D7F1EB32880DD4DFE948FE1D533859AB9E0CE6209EBFC14A6AF55DCE"
+      "sha256": "F006266A0937E35216152284C79069C55F51A45CAFE68A153F8B16B32283590C"
     },
     {
       "path": "rust/src/markdown.rs",
@@ -1459,37 +1487,25 @@
     {
       "path": "shared/sdk/rust/tests/ui_alignment.rs",
       "sha256": "F2666F5B832860598D199E6E1B964353F2D310FF580CD5458195CDC0A5F04FEB"
-    },
-    {
-      "path": "tool/editor-business-model.test.cjs",
-      "sha256": "27E49FF7E78E72A707F33DB41D3A54065F24CD3EE4BDEC165D6D9F9E6B5FD19C"
-    },
-    {
-      "path": "tool/editor-business-session-model.test.cjs",
-      "sha256": "F64477A60AF77857D090AC17E606CF13E9EAA3442FF9CCFBF4E9F41C60661540"
-    },
-    {
-      "path": "tool/index-draft-fork-integration.test.cjs",
-      "sha256": "749787FB04DEE1786F8F76E799B06C57A5D19D8D027EDB00455952E5AF145FB1"
     }
   ],
-  "uiValidation": "reports/ui-source/v24/validation.md",
+  "uiValidation": "reports/ui-source/v25/validation.md",
   "upstreamDrift": "reports/reference-drift.json",
-  "deliveryScope": "v24 initial Todo display echo and unfocused selection repair; native durable original-request intent and ETS session foundation; Index integration, business handoff and new-native device acceptance OPEN; full Flutter/Windows parity OPEN",
-  "nativeInputs": "reports/ui-source/v24/native-build-inputs.json",
+  "deliveryScope": "v25 Index durable original save/recovery integration; typed business source0 child handoff, conditional parent retirement and exact close; actual-source and Store checks; restart after missing parent/advanced child, owned closed-card reopen and new-native device acceptance OPEN; full Flutter/Windows parity OPEN",
+  "nativeInputs": "reports/ui-source/v25/native-build-inputs.json",
   "nativeArchives": [
     {
       "abi": "arm64-v8a",
-      "path": ".build/editor-input-native/dev24-business-intent-checkpoint/arm64-v8a/libmorrow_hmos.a",
-      "bytes": 56517238,
-      "sha256": "E416EA7FBA13BB5DE0310942AA0C0F0FF725D6C3D7AFB37CAC33A3C5E6746C80",
+      "path": ".build/editor-input-native/dev25-business-handoff-checkpoint/arm64-v8a/libmorrow_hmos.a",
+      "bytes": 57038980,
+      "sha256": "5C0C78E43A1660E803ACE768EFC19890029096A75EE51FE64D7E221A4105F90E",
       "production_path": "entry/src/main/cpp/rust/arm64-v8a/libmorrow_hmos.a"
     },
     {
       "abi": "x86_64",
-      "path": ".build/editor-input-native/dev24-business-intent-checkpoint/x86_64/libmorrow_hmos.a",
-      "bytes": 54925386,
-      "sha256": "A99CF367DFAC3F518332CA36232688617E9D576BD349DC4E98494683C74DE0CA",
+      "path": ".build/editor-input-native/dev25-business-handoff-checkpoint/x86_64/libmorrow_hmos.a",
+      "bytes": 55454248,
+      "sha256": "2559EBF39EB706B29611523998EECDF9E1700326208969C1E347EA0808D7EA2D",
       "production_path": "entry/src/main/cpp/rust/x86_64/libmorrow_hmos.a"
     }
   ]

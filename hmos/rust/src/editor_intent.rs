@@ -66,12 +66,16 @@ pub struct Close {
 }
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct CloseLiteral {
-    schema_version: u32,
-    intent: Proof,
-    expected_generation: String,
-    operation_id: String,
-    disposition: String,
+pub(crate) struct CloseLiteral {
+    pub schema_version: u32,
+    pub intent: Proof,
+    pub expected_generation: String,
+    pub operation_id: String,
+    pub disposition: String,
+    #[serde(default)]
+    pub parent: Option<crate::editor_handoff::CloseParent>,
+    #[serde(default)]
+    pub plan_operation: String,
 }
 #[derive(Debug, Serialize)]
 pub struct View {
@@ -91,12 +95,14 @@ pub struct View {
     pub close_request_json: String,
     pub close_disposition: String,
     pub issue_operation: String,
+    pub handoff_request_json: String,
+    pub retirement_request_json: String,
 }
 
-fn digest(bytes: &[u8]) -> Vec<u8> {
+pub(crate) fn digest(bytes: &[u8]) -> Vec<u8> {
     Sha256::digest(bytes).to_vec()
 }
-fn identity(value: &str) -> Result<()> {
+pub(crate) fn identity(value: &str) -> Result<()> {
     morrow_core::runtime::Command::ReadSummary {
         request_id: value.into(),
         card_id: value.into(),
@@ -130,7 +136,7 @@ fn issue_operation(slot: &proto::Slot) -> String {
         ],
     )
 }
-fn attachment(pin: &draft_proto::StoredAsset) -> Result<Attachment> {
+pub(crate) fn attachment(pin: &draft_proto::StoredAsset) -> Result<Attachment> {
     if pin.sha256.len() != 32 {
         return Err("EditorIntentPinDigest".into());
     }
@@ -146,10 +152,10 @@ fn attachment(pin: &draft_proto::StoredAsset) -> Result<Attachment> {
             .map_err(|_| "EditorIntentPinDigest")?,
     })
 }
-fn charge(slot: &proto::Slot) -> Result<u64> {
+pub(crate) fn charge(slot: &proto::Slot) -> Result<u64> {
     let mut copy = slot.clone();
     copy.active_bytes = 0;
-    let blobs = slot.assets.iter().try_fold(0_u64, |n, p| {
+    let blobs = current_pins(slot).iter().try_fold(0_u64, |n, p| {
         n.checked_add(p.byte_length)
             .ok_or("EditorIntentBytesOverflow")
     })?;
@@ -172,10 +178,12 @@ fn phase(slot: &proto::Slot) -> Result<&'static str> {
         0 => Ok("prepared"),
         1 => Ok("issued"),
         2 => Ok("closed"),
+        3 => Ok("handoff_planned"),
+        4 => Ok("close_planned"),
         _ => Err("EditorIntentPhase".into()),
     }
 }
-fn first_of(slot: &proto::Slot) -> Result<proto::Slot> {
+pub(crate) fn first_of(slot: &proto::Slot) -> Result<proto::Slot> {
     let mut first = slot.clone();
     first.generation = 1;
     first.phase = 0;
@@ -185,11 +193,17 @@ fn first_of(slot: &proto::Slot) -> Result<proto::Slot> {
     first.save_request_json.clear();
     first.inspect_request_json.clear();
     first.close_request_json.clear();
+    first.handoff_request_json.clear();
+    first.retirement_request_json.clear();
+    first.plan_assets.clear();
+    first.plan_operation.clear();
+    first.close_plan_operation.clear();
+    first.close_disposition.clear();
     first.mutation_operation = first.prepare_operation.clone();
     first.active_bytes = charge(&first)?;
     Ok(first)
 }
-fn proof(first: &proto::Slot) -> Proof {
+pub(crate) fn proof(first: &proto::Slot) -> Proof {
     Proof {
         intent_id: key(&first.card_id, &first.business_operation),
         prepare_operation: first.prepare_operation.clone(),
@@ -200,7 +214,7 @@ fn proof(first: &proto::Slot) -> Proof {
 }
 // Schema 1 fixes this native transport encoder (serde JSON object keys sorted
 // lexically; compact UTF-8). Consumers read and send the persisted literal.
-fn plans(first: &proto::Slot) -> Result<(String, String)> {
+pub(crate) fn plans(first: &proto::Slot) -> Result<(String, String)> {
     let mut save = serde_json::json!({"action":"editor_save","editor_save":{"request_json":first.request_json,"intent":proof(first)}});
     let mut inspect = serde_json::json!({"action":"editor_commit_inspect","editor_commit":{"request_json":first.request_json,"expected_revision":first.expected_revision.to_string()}});
     // Explicitly freeze schema 1 independently of serde_json preserve_order.
@@ -290,7 +304,9 @@ fn validate_body(raw: &[u8]) -> Result<proto::Slot> {
             && !slot.active
             && slot.prepared_record_sha256 == digest(&first.encode_to_vec())
             && slot.save_request_json.is_empty()
-            && slot.inspect_request_json.is_empty() =>
+            && slot.inspect_request_json.is_empty() && slot.handoff_request_json.is_empty()
+            && slot.retirement_request_json.is_empty() && slot.plan_assets.is_empty() && slot.plan_operation.is_empty()
+            && slot.close_plan_operation.is_empty() && slot.close_disposition.is_empty() =>
         {
             let close: CloseLiteral = serde_json::from_str(&slot.close_request_json)
                 .map_err(|_| "EditorIntentCloseSchema")?;
@@ -299,11 +315,18 @@ fn validate_body(raw: &[u8]) -> Result<proto::Slot> {
                 || close.expected_generation != "1"
                 || close.operation_id != slot.mutation_operation
                 || close.disposition != "cancel_prepared"
+                || close.parent.is_some() || !close.plan_operation.is_empty()
             {
                 return Err("EditorIntentCloseChanged".into());
             }
         }
+        2 | 3 | 4 => crate::editor_handoff::validate_intent_shape(&first, &slot)?,
         _ => return Err("EditorIntentPhaseShape".into()),
+    }
+    if slot.phase <= 1 && (!slot.handoff_request_json.is_empty() || !slot.retirement_request_json.is_empty()
+        || !slot.plan_assets.is_empty() || !slot.plan_operation.is_empty()
+        || !slot.close_plan_operation.is_empty() || !slot.close_disposition.is_empty()) {
+        return Err("EditorIntentUnexpectedPlan".into());
     }
     if (slot.active && slot.active_bytes != charge(&slot)?)
         || (!slot.active && slot.active_bytes != 0)
@@ -316,7 +339,7 @@ fn validate_card(card: &CardRecord) -> Result<proto::Slot> {
     let s = card.summary();
     let slot = validate_body(&card.body())?;
     let pins = if slot.active {
-        slot.assets
+        current_pins(&slot)
             .iter()
             .map(attachment)
             .collect::<Result<Vec<_>>>()?
@@ -341,7 +364,7 @@ pub fn is_journal(card: &CardRecord) -> bool {
 pub fn validate_journal(card: &CardRecord) -> Result<()> {
     validate_card(card).map(|_| ())
 }
-fn current(host: &HostRuntime, id: &str) -> Result<Option<proto::Slot>> {
+pub(crate) fn current(host: &HostRuntime, id: &str) -> Result<Option<proto::Slot>> {
     host.store_local()
         .card(id)
         .map_err(err)?
@@ -349,7 +372,7 @@ fn current(host: &HostRuntime, id: &str) -> Result<Option<proto::Slot>> {
         .map(validate_card)
         .transpose()
 }
-fn history(host: &HostRuntime, id: &str, op: &str) -> Result<Option<proto::Slot>> {
+pub(crate) fn history(host: &HostRuntime, id: &str, op: &str) -> Result<Option<proto::Slot>> {
     if matches!(host.store_local().lookup(op).map_err(err)?, Lookup::Absent) {
         return Ok(None);
     }
@@ -370,7 +393,7 @@ fn history(host: &HostRuntime, id: &str, op: &str) -> Result<Option<proto::Slot>
         Some(transaction::proto::command::Action::SetContent(change)) => {
             let slot = validate_body(&change.body)?;
             let expected = if slot.active {
-                slot.assets
+                current_pins(&slot)
                     .iter()
                     .map(attachment)
                     .collect::<Result<Vec<_>>>()?
@@ -408,7 +431,7 @@ fn history(host: &HostRuntime, id: &str, op: &str) -> Result<Option<proto::Slot>
     }
     Ok(Some(slot))
 }
-fn all(host: &HostRuntime) -> Result<Vec<proto::Slot>> {
+pub(crate) fn all(host: &HostRuntime) -> Result<Vec<proto::Slot>> {
     let mut after = PREFIX.to_string();
     let mut values = vec![];
     loop {
@@ -497,7 +520,7 @@ pub(crate) fn check_capacity(
     }
     Ok(())
 }
-fn immutable(host: &HostRuntime, proofvalue: &Proof) -> Result<(proto::Slot, proto::Slot)> {
+pub(crate) fn immutable(host: &HostRuntime, proofvalue: &Proof) -> Result<(proto::Slot, proto::Slot)> {
     identity(&proofvalue.intent_id)?;
     identity(&proofvalue.prepare_operation)?;
     let first = history(host, &proofvalue.intent_id, &proofvalue.prepare_operation)?
@@ -511,7 +534,7 @@ fn immutable(host: &HostRuntime, proofvalue: &Proof) -> Result<(proto::Slot, pro
     }
     Ok((first, live))
 }
-fn publication_record(engine: &Engine, first: &proto::Slot) -> Result<editor_draft::DraftRecord> {
+pub(crate) fn publication_record(engine: &Engine, first: &proto::Slot) -> Result<editor_draft::DraftRecord> {
     let p = first
         .publication
         .as_ref()
@@ -536,7 +559,7 @@ fn publication_record(engine: &Engine, first: &proto::Slot) -> Result<editor_dra
     }
     Ok(record)
 }
-fn make_view(
+pub(crate) fn make_view(
     engine: &Engine,
     first: &proto::Slot,
     live: &proto::Slot,
@@ -558,12 +581,12 @@ fn make_view(
         save_request_json: String::new(),
         inspect_request_json: String::new(),
         close_request_json: String::new(),
-        close_disposition: if live.phase == 2 {
+        close_disposition: if live.phase == 2 && live.close_disposition.is_empty() {
             "cancel_prepared".into()
-        } else {
-            String::new()
-        },
+        } else { live.close_disposition.clone() },
         issue_operation: issue_operation(first),
+        handoff_request_json: String::new(),
+        retirement_request_json: String::new(),
     };
     match part {
         "summary" => {}
@@ -576,11 +599,13 @@ fn make_view(
         "save" => view.save_request_json = live.save_request_json.clone(),
         "inspect" => view.inspect_request_json = live.inspect_request_json.clone(),
         "close" => view.close_request_json = live.close_request_json.clone(),
+        "handoff" => view.handoff_request_json = live.handoff_request_json.clone(),
+        "retirement" => view.retirement_request_json = live.retirement_request_json.clone(),
         _ => return Err("EditorIntentReadPart".into()),
     }
     Ok(view)
 }
-fn reply(views: Vec<View>, next: String, effect: &'static str, revision: String) -> Result<Reply> {
+pub(crate) fn reply(views: Vec<View>, next: String, effect: &'static str, revision: String) -> Result<Reply> {
     let mut result = Reply::failure(String::new());
     result.ok = true;
     result.effect = effect;
@@ -592,7 +617,7 @@ fn reply(views: Vec<View>, next: String, effect: &'static str, revision: String)
     }
     Ok(result)
 }
-fn preflight(engine: &Engine, first: &proto::Slot, live: &proto::Slot) -> Result<()> {
+pub(crate) fn preflight(engine: &Engine, first: &proto::Slot, live: &proto::Slot) -> Result<()> {
     for part in [
         "summary",
         "submission",
@@ -600,6 +625,8 @@ fn preflight(engine: &Engine, first: &proto::Slot, live: &proto::Slot) -> Result
         "save",
         "inspect",
         "close",
+        "handoff",
+        "retirement",
     ] {
         reply(
             vec![make_view(engine, first, live, part, false)?],
@@ -610,9 +637,9 @@ fn preflight(engine: &Engine, first: &proto::Slot, live: &proto::Slot) -> Result
     }
     Ok(())
 }
-fn verify_pins(host: &HostRuntime, slot: &proto::Slot) -> Result<()> {
+pub(crate) fn verify_pins(host: &HostRuntime, slot: &proto::Slot) -> Result<()> {
     let id = key(&slot.card_id, &slot.business_operation);
-    for pin in &slot.assets {
+    for pin in current_pins(slot) {
         let info = host
             .store_local()
             .export_attachment_local(&id, &pin.pin_id, &mut std::io::sink())
@@ -623,12 +650,12 @@ fn verify_pins(host: &HostRuntime, slot: &proto::Slot) -> Result<()> {
     }
     Ok(())
 }
-fn write(engine: &mut Engine, slot: &proto::Slot, previous: u64) -> Result<()> {
+pub(crate) fn write(engine: &mut Engine, slot: &proto::Slot, previous: u64) -> Result<()> {
     let body = slot.encode_to_vec();
     validate_body(&body)?;
     let id = key(&slot.card_id, &slot.business_operation);
     let pins = if slot.active {
-        slot.assets
+        current_pins(&slot)
             .iter()
             .map(attachment)
             .collect::<Result<Vec<_>>>()?
@@ -814,7 +841,10 @@ fn close(engine: &mut Engine, r: Close) -> Result<Reply> {
     }
     let c: CloseLiteral =
         serde_json::from_str(&r.request_json).map_err(|_| "EditorIntentCloseSchema")?;
-    if c.schema_version != 1 || c.expected_generation != "1" || c.disposition != "cancel_prepared" {
+    if c.disposition != "cancel_prepared" {
+        return crate::editor_handoff::close(engine, &r.request_json, c);
+    }
+    if c.parent.is_some() || !c.plan_operation.is_empty() || c.schema_version != 1 || c.expected_generation != "1" {
         return Err("EditorIntentCloseDisposition".into());
     }
     identity(&c.operation_id)?;
@@ -1039,3 +1069,7 @@ pub(crate) fn reject_legacy_business(engine: &Engine, r: &Request) -> Result<()>
 
 #[cfg(test)]
 mod tests;
+
+pub(crate) fn current_pins(slot: &proto::Slot) -> &[draft_proto::StoredAsset] {
+    if slot.handoff_request_json.is_empty() { &slot.assets } else { &slot.plan_assets }
+}

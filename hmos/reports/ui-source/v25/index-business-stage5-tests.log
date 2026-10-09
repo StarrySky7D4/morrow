@@ -1,0 +1,49 @@
+Index.ets SHA256=3b5164d9e033b246cdd582a05b5cfa0f21f6d9d85e55484233efd03274439a9d
+EditorDraft.ets SHA256=82a89ae117c46810ca630e626caeb0cfb594b5f8b801dab71e4217be36b53539
+EditorBusiness.ets SHA256=6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf
+EditorBusinessSession.ets SHA256=948c7b9105675a65406cf980f8a8982500954e87e33189878a5f32c58871af86
+EditorFieldPolicy.ets SHA256=10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842
+Workbench.ets SHA256=1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf
+ACTUAL_INDEX_SOURCE_FREEZE=[{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusiness.ets","sha256":"6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessSession.ets","sha256":"948c7b9105675a65406cf980f8a8982500954e87e33189878a5f32c58871af86"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraft.ets","sha256":"82a89ae117c46810ca630e626caeb0cfb594b5f8b801dab71e4217be36b53539"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraftFork.ets","sha256":"2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorFieldPolicy.ets","sha256":"10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorPaste.ets","sha256":"28d54a7d02bf644d68b58ac68a4d824ab2ff3fb71b87ab0e00c279456b6d160e"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\Workbench.ets","sha256":"1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf"}]
+✔ fresh actual Index/ETS source identities; controlled receiver boundaries are explicit (2.1717ms)
+✔ actual new-card Save persists complete raw before pause and durable intent before business admission (198.8887ms)
+✔ actual unchanged existing-card Save establishes publication and preserves source/tasks semantics (150.9907ms)
+✔ actual first business send synchronously admits Workbench before resuming parent debounce (125.5318ms)
+✔ actual S2 during raw publication cancels unissued proposal while keeping complete input (114.736ms)
+✖ first proved no-write intent prepare does not strand the complete editor behind an unprepared session (112.1968ms)
+✔ issued-before-first-send S2 blocks auto-save; explicit read-only restore retries fixed S1 literal (113.7109ms)
+✔ actual selection-only S2 after issue cannot be consumed by same-text S1 success (102.4972ms)
+✔ actual first save Unknown retries same session and literal without reconstructing current S2 (99.6457ms)
+✔ actual committed effect with invalid DTO remains known through attempted save and failed inspection (105.1392ms)
+✔ actual list and five-part restore are read-only; same-card different draft does not bind consumption (111.6043ms)
+✔ actual failed partial restoration leaves original discovery reference and never auto-replays (102.7939ms)
+✔ actual old submit rejects create/edit and unfinished strict session blocks ordinary mutation/discard/close (101.3823ms)
+✔ actual ordinary task command remains separate from strict create/edit transport (102.4348ms)
+✔ actual Store DTO fixture through Index restore/inspect preserves original wire and full historical source (108.1932ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 14
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2182.4319
+
+✖ failing tests:
+
+test at hmos\tool\index-business-integration.test.cjs:64:1
+✖ first proved no-write intent prepare does not strand the complete editor behind an unprepared session (112.1968ms)
+  AssertionError [ERR_ASSERTION]: proven unprepared no-write proposal must permit correction/new Save
+  
+  true !== false
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:70:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

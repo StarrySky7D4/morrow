@@ -289,8 +289,10 @@ fn set_marker(body: &[u8], identity: &Marker) -> Result<Vec<u8>> {
     Ok(out)
 }
 fn historical(engine: &Engine, card: &str, operation: &str) -> Result<Option<Historical>> {
-    let Some((commit, receipt)) = engine
-        .host
+    historical_host(&engine.host, card, operation)
+}
+fn historical_host(host: &morrow_core::dispatch::HostRuntime, card: &str, operation: &str) -> Result<Option<Historical>> {
+    let Some((commit, receipt)) = host
         .store_local()
         .operation_commit(card, operation)
         .map_err(err)?
@@ -1024,6 +1026,7 @@ pub(crate) fn route_is_empty(r: &Request) -> bool {
         && r.attachment_id.is_empty()
         && r.import_request.is_none()
         && crate::editor_intent::envelopes_empty(r)
+        && r.business_handoff.is_none() && r.business_retirement.is_none()
 }
 pub(crate) struct IntentCandidate {
     pub publication: Publication,
@@ -1330,3 +1333,20 @@ pub fn execute(engine: &mut Engine, r: Request) -> Result<Reply> {
 
 #[cfg(test)]
 mod tests;
+
+/// Resolve the actual original command/receipt against the immutable intent's
+/// strict preflight candidate. This never falls back to a current Card.
+pub(crate) fn intent_result(host: &morrow_core::dispatch::HostRuntime, first: &morrow_editor_draft_model::intent_proto::Slot) -> Result<CardRecord> {
+    let value = parse(&first.request_json)?;
+    validate_submission(&value)?;
+    let actual = historical_host(host, &first.card_id, &first.business_operation)?.ok_or("BusinessHandoffCommitAbsent")?;
+    let expected = Marker { mode:value.mode, wire:hash(first.request_json.as_bytes()), publication:publication_hash(&first.card_id, &value.publication)? };
+    if actual.receipt.revision != first.expected_revision
+        || hash(&actual.command).as_slice() != first.command_sha256
+        || hash(&actual.result.encode()).as_slice() != first.content_sha256
+        || marker(&actual.result.body())?.as_ref() != Some(&expected)
+        || actual.source.as_ref().map(CardRecord::encode).unwrap_or_default() != unhex(&value.business.source)? {
+        return Err("BusinessHandoffStrictResultMismatch".into());
+    }
+    Ok(actual.result)
+}

@@ -1,0 +1,298 @@
+Index.ets SHA256=a8dba778e44cc3771e60202595f542c71df6190956ed7145462ce2bde45e0778; SDK TypeScript=4.9.5
+✔ fresh actual Index methods use installed SDK compiler; emit source hash (1.8714ms)
+✔ all five fields retain original graphemes and UTF16 range in actual raw journal (332.1266ms)
+✔ IME candidate is journaled losslessly in all fields while business admission is blocked (1138.5897ms)
+✔ invalid IME offset blocks retention and leaves previous confirmed raw values intact (196.4095ms)
+✔ older count cannot replace a newer edit or a newer UTF16 selection count (204.8585ms)
+✔ complete Save validation revokes edits, selection, category, owner, assets and foreground changes (1602.6227ms)
+✔ later input during final raw flush prevents issuing a frozen business command (178.5431ms)
+✔ over-limit title keeps every character and confirmed pins without business mutation (222.9309ms)
+✔ count worker failure never authorizes business or normalizes original input (155.4133ms)
+✔ unknown raw journal preserves exact pending request and confirmed pins, no business issue (138.8678ms)
+✔ Unknown complete Save retains registered exact wire and immutable publication with confirmed pins (142.0477ms)
+✔ create/edit business send preserves exact source strings and binds confirmed generation (293.2149ms)
+✔ task_add validates full raw text and does not consume later text or IME (131.5656ms)
+✔ task rename validates its untrimmed original while command retains established trimming (127.7894ms)
+✔ same-value rename roundtrip after issue does not consume newer input epoch (133.6959ms)
+✔ actual cancel callback invalidates pending validation and later reopen is not consumed (130.7671ms)
+✔ unknown rename preserves original request and frozen raw identity through explicit reconciliation (150.616ms)
+✔ confirmed not-committed rename clears only frozen request, preserving user text (136.0365ms)
+✔ foreground loss after issued rename revokes successful input consumption (126.7831ms)
+✔ late IME rename callback during issued business request retains newer candidate (136.5156ms)
+✔ actual ordinary-field construction selections do not change raw or epoch before focus, including during restore (251.4482ms)
+✔ actual unfocused initialization cannot clear or overwrite an existing unknown event (124.4745ms)
+✔ actual focused invalid ranges remain exact uncaptured events in active and disabled ordinary fields (2435.8236ms)
+✔ actual focused valid reverse selection preserves complete composition, UTF16 metadata and confirmed pins (117.9567ms)
+✔ actual blur excludes subsequent unfocused ranges without erasing the invalid selection already delivered (120.0945ms)
+✔ actual old or revoked leases cannot submit valid, invalid, focus or text events to a replacement editor (270.3574ms)
+✔ actual disabled text and preview still retain exact events regardless of focused selection admission (250.1497ms)
+✔ actual focused valid retirement selection retains original event and local range without writing a retired raw scope (138.3355ms)
+Index.ets SHA256=a8dba778e44cc3771e60202595f542c71df6190956ed7145462ce2bde45e0778; SDK TypeScript=4.9.5
+✖ actual Index create sends one immutable operation with complete raw todos and confirmed publication (374.7493ms)
+✔ new-card todos composition is preserved in confirmed raw but never admitted as create (231.6037ms)
+✖ complete grapheme overflow or 101 original blank rows stay raw without a partial create (486.2025ms)
+✖ unready direct-input or row formatting blocks business while exact raw remains retainable (215.1626ms)
+✖ backend known rejection preserves full todos/pins and requires an explicit new save (227.2533ms)
+✖ Unknown create retains exact wire and explicit retry does not borrow later todos (199.4378ms)
+✖ raw journal Unknown reconciles only its original todos; later rows need a fresh confirmed publication (197.788ms)
+✖ structured unconfirmed or historical committed error preserves the original create wire (153.9716ms)
+✔ late todos text/range/composition/edit-away-back revokes create input consumption (921.4836ms)
+✔ a different editor owner with identical raw values cannot be consumed by an old create receipt (177.8152ms)
+✖ successful exact create retires its full raw generation without emptying/normalizing it first (190.2062ms)
+✖ late input/range/roundtrip/actual SDK callback or owner change during discard never closes the live editor (692.3515ms)
+✖ invalid discard receipt retains its original retirement request and raw editor (145.4806ms)
+✖ existing V2 edit leaves single pending task input separate and sends no legacy todos or task command (143.8088ms)
+✖ actual create admission rejects a command borrowing different raw todos (133.4175ms)
+✔ emit fresh source identity for the actual Index business boundary (0.9607ms)
+ℹ tests 44
+ℹ suites 0
+ℹ pass 32
+ℹ fail 12
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10323.6374
+
+✖ failing tests:
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:11:1
+✖ actual Index create sends one immutable operation with complete raw todos and confirmed publication (374.7493ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'draft-create-fixture'
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:17:66)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'draft-create-fixture',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:32:1
+✖ complete grapheme overflow or 101 original blank rows stay raw without a partial create (486.2025ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:35:43)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:41:1
+✖ unready direct-input or row formatting blocks business while exact raw remains retainable (215.1626ms)
+  AssertionError [ERR_ASSERTION]: direct
+  + actual - expected
+  
+  + ''
+  - 'pending\nfull raw'
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:47:14)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: 'pending\nfull raw',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:55:1
+✖ backend known rejection preserves full todos/pins and requires an explicit new save (227.2533ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:62:49)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:67:1
+✖ Unknown create retains exact wire and explicit retry does not borrow later todos (199.4378ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + ''
+  - ' {"editor_save":{"intent":{"intent_id":"morrow-host-editor-intent-8c4dac6c5dadb936a1e0d1b863b34763370e04b35c6847be35e2d63810c2a96e","prepare_operation":"index-op-2","generation":"1","prepared_record_sha256":"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff","request_sha256":"8d8a61e71b537c7f0387af26546b5a836d84408323db7a6d4abb043049779e37"},"request_json":"{\\"schema_version\\":1,\\"mode\\":\\"create\\",\\"business\\":{\\"action\\":\\"create\\",\\"id\\":\\"card-create-fixture\\",\\"operation\\":\\"index-op-1\\",\\"source\\":\\"\\",\\"title\\":\\"Original title\\",\\"description\\":\\"Original body\\",\\"hypothesis\\":\\"Hypothesis\\",\\"conclusion\\":\\"Conclusion\\",\\"todos\\":\\"  original\\\\nraw  \\",\\"category\\":\\"实验\\",\\"stage\\":\\"待验证\\"},\\"publication\\":{\\"draft_id\\":\\"draft-create-fixture\\",\\"generation\\":\\"1\\",\\"save_operation\\":\\"original-fixture-raw\\",\\"request_sha256\\":\\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\\"},\\"continuation\\":null}"},"action":"editor_save"}\n'
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:73:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: ' {"editor_save":{"intent":{"intent_id":"morrow-host-editor-intent-8c4dac6c5dadb936a1e0d1b863b34763370e04b35c6847be35e2d63810c2a96e","prepare_operation":"index-op-2","generation":"1","prepared_record_sha256":"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff","request_sha256":"8d8a61e71b537c7f0387af26546b5a836d84408323db7a6d4abb043049779e37"},"request_json":"{\\"schema_version\\":1,\\"mode\\":\\"create\\",\\"business\\":{\\"action\\":\\"create\\",\\"id\\":\\"card-create-fixture\\",\\"operation\\":\\"index-op-1\\",\\"source\\":\\"\\",\\"title\\":\\"Original title\\",\\"description\\":\\"Original body\\",\\"hypothesis\\":\\"Hypothesis\\",\\"conclusion\\":\\"Conclusion\\",\\"todos\\":\\"  original\\\\nraw  \\",\\"category\\":\\"实验\\",\\"stage\\":\\"待验证\\"},\\"publication\\":{\\"draft_id\\":\\"draft-create-fixture\\",\\"generation\\":\\"1\\",\\"save_operation\\":\\"original-fixture-raw\\",\\"request_sha256\\":\\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\\"},\\"continuation\\":null}"},"action":"editor_save"}\n',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:81:1
+✖ raw journal Unknown reconciles only its original todos; later rows need a fresh confirmed publication (197.788ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  undefined !== '3'
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:91:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: '3',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:95:1
+✖ structured unconfirmed or historical committed error preserves the original create wire (153.9716ms)
+  AssertionError [ERR_ASSERTION]: unknown
+  + actual - expected
+  
+  + ''
+  - ' {"editor_save":{"intent":{"intent_id":"morrow-host-editor-intent-8c4dac6c5dadb936a1e0d1b863b34763370e04b35c6847be35e2d63810c2a96e","prepare_operation":"index-op-2","generation":"1","prepared_record_sha256":"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff","request_sha256":"baeb6de72f942116404cff886c5cda0e8383ca11ef29433ac183dc90ae6c6f28"},"request_json":"{\\"schema_version\\":1,\\"mode\\":\\"create\\",\\"business\\":{\\"action\\":\\"create\\",\\"id\\":\\"card-create-fixture\\",\\"operation\\":\\"index-op-1\\",\\"source\\":\\"\\",\\"title\\":\\"Original title\\",\\"description\\":\\"Original body\\",\\"hypothesis\\":\\"Hypothesis\\",\\"conclusion\\":\\"Conclusion\\",\\"todos\\":\\"first\\\\nsecond\\",\\"category\\":\\"实验\\",\\"stage\\":\\"待验证\\"},\\"publication\\":{\\"draft_id\\":\\"draft-create-fixture\\",\\"generation\\":\\"1\\",\\"save_operation\\":\\"original-fixture-raw\\",\\"request_sha256\\":\\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\\"},\\"continuation\\":null}"},"action":"editor_save"}\n'
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:99:75)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: ' {"editor_save":{"intent":{"intent_id":"morrow-host-editor-intent-8c4dac6c5dadb936a1e0d1b863b34763370e04b35c6847be35e2d63810c2a96e","prepare_operation":"index-op-2","generation":"1","prepared_record_sha256":"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff","request_sha256":"baeb6de72f942116404cff886c5cda0e8383ca11ef29433ac183dc90ae6c6f28"},"request_json":"{\\"schema_version\\":1,\\"mode\\":\\"create\\",\\"business\\":{\\"action\\":\\"create\\",\\"id\\":\\"card-create-fixture\\",\\"operation\\":\\"index-op-1\\",\\"source\\":\\"\\",\\"title\\":\\"Original title\\",\\"description\\":\\"Original body\\",\\"hypothesis\\":\\"Hypothesis\\",\\"conclusion\\":\\"Conclusion\\",\\"todos\\":\\"first\\\\nsecond\\",\\"category\\":\\"实验\\",\\"stage\\":\\"待验证\\"},\\"publication\\":{\\"draft_id\\":\\"draft-create-fixture\\",\\"generation\\":\\"1\\",\\"save_operation\\":\\"original-fixture-raw\\",\\"request_sha256\\":\\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\\"},\\"continuation\\":null}"},"action":"editor_save"}\n',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:131:1
+✖ successful exact create retires its full raw generation without emptying/normalizing it first (190.2062ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'card-create-fixture'
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:135:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'card-create-fixture',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:141:1
+✖ late input/range/roundtrip/actual SDK callback or owner change during discard never closes the live editor (692.3515ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:153:60)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:173:1
+✖ invalid discard receipt retains its original retirement request and raw editor (145.4806ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + ''
+  - '{"action":"editor_intent_close","editor_intent_close":{"request_json":"{\\"schema_version\\":1,\\"intent\\":{\\"intent_id\\":\\"morrow-host-editor-intent-8c4dac6c5dadb936a1e0d1b863b34763370e04b35c6847be35e2d63810c2a96e\\",\\"prepare_operation\\":\\"index-op-2\\",\\"generation\\":\\"1\\",\\"prepared_record_sha256\\":\\"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\\",\\"request_sha256\\":\\"735dd0a758cdaf247d6aedf605f02b898cd6127aa80794e9ae8943477cfb6bae\\"},\\"expected_generation\\":\\"2\\",\\"operation_id\\":\\"index-op-3\\",\\"disposition\\":\\"saved_exact\\",\\"parent\\":{\\"proof\\":{\\"draft_id\\":\\"draft-create-fixture\\",\\"generation\\":\\"1\\",\\"save_operation\\":\\"original-fixture-raw\\",\\"request_sha256\\":\\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\\"},\\"discard_operation\\":\\"index-op-4\\"},\\"plan_operation\\":\\"\\"}"}}'
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:178:69)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: '{"action":"editor_intent_close","editor_intent_close":{"request_json":"{\\"schema_version\\":1,\\"intent\\":{\\"intent_id\\":\\"morrow-host-editor-intent-8c4dac6c5dadb936a1e0d1b863b34763370e04b35c6847be35e2d63810c2a96e\\",\\"prepare_operation\\":\\"index-op-2\\",\\"generation\\":\\"1\\",\\"prepared_record_sha256\\":\\"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\\",\\"request_sha256\\":\\"735dd0a758cdaf247d6aedf605f02b898cd6127aa80794e9ae8943477cfb6bae\\"},\\"expected_generation\\":\\"2\\",\\"operation_id\\":\\"index-op-3\\",\\"disposition\\":\\"saved_exact\\",\\"parent\\":{\\"proof\\":{\\"draft_id\\":\\"draft-create-fixture\\",\\"generation\\":\\"1\\",\\"save_operation\\":\\"original-fixture-raw\\",\\"request_sha256\\":\\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\\"},\\"discard_operation\\":\\"index-op-4\\"},\\"plan_operation\\":\\"\\"}"}}',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:188:1
+✖ existing V2 edit leaves single pending task input separate and sends no legacy todos or task command (143.8088ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:190:75)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:197:1
+✖ actual create admission rejects a command borrowing different raw todos (133.4175ms)
+  AssertionError [ERR_ASSERTION]: no late helper error
+  + actual - expected
+  
+  + [
+  +   Error: 编辑器保存必须使用完整原请求日志
+  +       at ActualIndexBusiness.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:344:19)
+  +       at page.<computed> [as submit] (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-test-harness.cjs:330:35)
+  +       at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:202:18)
+  +       at Test.runInAsyncScope (node:async_hooks:228:14)
+  +       at Test.run (node:internal/test_runner/test:1118:25)
+  +       at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+  +       at Test.postRun (node:internal/test_runner/test:1247:19)
+  +       at Test.run (node:internal/test_runner/test:1175:12)
+  +       at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+  + ]
+  - []
+  
+      at finish (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-test-harness.cjs:350:106)
+      at async Object.close (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-test-harness.cjs:352:32)
+      at async TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:204:15)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [
+      Error: 编辑器保存必须使用完整原请求日志
+          at ActualIndexBusiness.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:344:19)
+          at page.<computed> [as submit] (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-test-harness.cjs:330:35)
+          at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:202:18)
+          at Test.runInAsyncScope (node:async_hooks:228:14)
+          at Test.run (node:internal/test_runner/test:1118:25)
+          at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+          at Test.postRun (node:internal/test_runner/test:1247:19)
+          at Test.run (node:internal/test_runner/test:1175:12)
+          at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+    ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,61 @@
+Index.ets SHA256=a8dba778e44cc3771e60202595f542c71df6190956ed7145462ce2bde45e0778; SDK TypeScript=4.9.5
+late foreground loss: actual confirmed pin count=1; UI=粘贴已停止 · 已确认附件 1/2 Error: 已确认附件保留；粘贴目标已变化，后续附件和正文未开始加入。
+✔ actual Index methods + SDK compiler are used, with source identity emitted (2.0743ms)
+✔ text selection insertion uses actual Index + draft methods for every editable field (849.8101ms)
+✖ actual DirectInput remains current after paste adopts complete selection metadata (210.7914ms)
+✔ paste and selected-import automatic titles hand complete raw/selection to actual DirectInput (277.8322ms)
+✔ rich source and exact image pins precede portable body save (154.8964ms)
+✔ image extraction failure preserves source and uses plain fallback without dangling refs (114.4398ms)
+✔ expanded 20-slot or import-record capacity stops before any native import or text save (209.398ms)
+✔ unknown second import preserves first confirmed pin and exact original request/spool, no body insertion (95.797ms)
+✔ selection, IME, other field, clipboard or foreground changing during read prevents all imports/text (460.7721ms)
+✔ IME candidate present before paste never reads clipboard (83.0946ms)
+✔ foreground loss during admitted native import retains its confirmed pin and admits no later import/body (90.3262ms)
+✔ plain byte flavor inserts converted text into all non-body fields (360.2119ms)
+✔ actual Index input epoch rejects text roundtrip during a delayed complete future-field count (88.3627ms)
+✔ actual Index input epoch rejects selection roundtrip during a delayed complete future-field count (83.026ms)
+✔ actual Index rejects a complete future over-limit title before any native import (84.6168ms)
+{"index_sha256":"a8dba778e44cc3771e60202595f542c71df6190956ed7145462ce2bde45e0778","lease_sha256":"96624fe1f3adf1528bf188f0c7fffbe838454833499e3eda1bab48e428b4cff3","compiler":"4.9.5","scope":"controlled actual methods; no SDK queue/Store/device"}
+✔ actual Index/lease and installed compiler identities are emitted (5.3397ms)
+✔ actual view content waits for mounted admission and disappears after revocation (1.3945ms)
+✔ first fixed ACK switches writer before complete latest child flush, then retires only parent proof (199.0782ms)
+✔ first Unknown retains original wire while later full raw requires explicit same request retry (99.5641ms)
+✔ child Unknown blocks parent cleanup; exact child retry precedes latest fresh child generation (157.601ms)
+✔ parent cleanup Unknown uses original retirement wire and preserves every later child capture (99.1239ms)
+✔ wrong first scope/fullraw/pin aliases and wrong retirement proof never authorize writer/cleanup (300.7882ms)
+✔ same raw with a different live owner cannot adopt first ACK or issue parent cleanup (85.4115ms)
+✔ an unselected Ready/Unknown import or pending spool cannot be silently left behind by fork (230.4285ms)
+✔ capture incomplete during first ACK preserves both slots and never retires parent (111.7786ms)
+✔ manual discard waits for actual lease revoke; old callbacks cannot populate a new owner (86.6556ms)
+✔ second manual discard of the live child also requires revoke and never forks or revives it (75.3962ms)
+✔ incomplete detach capture stops deletion and remounts full values under a fresh lease (92.7568ms)
+✔ legacy close helper waits for lease and late accepted same-value epoch creates durable raw fork (148.6449ms)
+✔ discard Unknown stays detached and only explicit retry resends its original wire (65.2549ms)
+✔ rename incarnation and selection restoration timer cannot borrow a replacement lease (54.3112ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 30
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4050.2834
+
+✖ failing tests:
+
+test at hmos\tool\index-clipboard-integration.test.cjs:182:1
+✖ actual DirectInput remains current after paste adopts complete selection metadata (210.7914ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-clipboard-integration.test.cjs:197:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

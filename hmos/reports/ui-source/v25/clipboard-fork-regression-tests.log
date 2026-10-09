@@ -1,0 +1,42 @@
+Index.ets SHA256=a8dba778e44cc3771e60202595f542c71df6190956ed7145462ce2bde45e0778; SDK TypeScript=4.9.5
+late foreground loss: actual confirmed pin count=1; UI=粘贴已停止 · 已确认附件 1/2 Error: 已确认附件保留；粘贴目标已变化，后续附件和正文未开始加入。
+✔ actual Index methods + SDK compiler are used, with source identity emitted (2.0802ms)
+✔ text selection insertion uses actual Index + draft methods for every editable field (658.3644ms)
+✔ actual DirectInput remains current after paste adopts complete selection metadata (135.0725ms)
+✔ paste and selected-import automatic titles hand complete raw/selection to actual DirectInput (215.676ms)
+✔ rich source and exact image pins precede portable body save (105.2718ms)
+✔ image extraction failure preserves source and uses plain fallback without dangling refs (101.9444ms)
+✔ expanded 20-slot or import-record capacity stops before any native import or text save (212.1448ms)
+✔ unknown second import preserves first confirmed pin and exact original request/spool, no body insertion (88.3191ms)
+✔ selection, IME, other field, clipboard or foreground changing during read prevents all imports/text (439.3251ms)
+✔ IME candidate present before paste never reads clipboard (88.6852ms)
+✔ foreground loss during admitted native import retains its confirmed pin and admits no later import/body (92.3586ms)
+✔ plain byte flavor inserts converted text into all non-body fields (378.368ms)
+✔ actual Index input epoch rejects text roundtrip during a delayed complete future-field count (92.9413ms)
+✔ actual Index input epoch rejects selection roundtrip during a delayed complete future-field count (102.0422ms)
+✔ actual Index rejects a complete future over-limit title before any native import (85.1554ms)
+{"index_sha256":"a8dba778e44cc3771e60202595f542c71df6190956ed7145462ce2bde45e0778","lease_sha256":"96624fe1f3adf1528bf188f0c7fffbe838454833499e3eda1bab48e428b4cff3","compiler":"4.9.5","scope":"controlled actual methods; no SDK queue/Store/device"}
+✔ actual Index/lease and installed compiler identities are emitted (2.8135ms)
+✔ actual view content waits for mounted admission and disappears after revocation (1.4174ms)
+✔ first fixed ACK switches writer before complete latest child flush, then retires only parent proof (147.2047ms)
+✔ first Unknown retains original wire while later full raw requires explicit same request retry (93.9062ms)
+✔ child Unknown blocks parent cleanup; exact child retry precedes latest fresh child generation (75.9727ms)
+✔ parent cleanup Unknown uses original retirement wire and preserves every later child capture (77.56ms)
+✔ wrong first scope/fullraw/pin aliases and wrong retirement proof never authorize writer/cleanup (265.1804ms)
+✔ same raw with a different live owner cannot adopt first ACK or issue parent cleanup (69.4349ms)
+✔ an unselected Ready/Unknown import or pending spool cannot be silently left behind by fork (208.0964ms)
+✔ capture incomplete during first ACK preserves both slots and never retires parent (80.8655ms)
+✔ manual discard waits for actual lease revoke; old callbacks cannot populate a new owner (63.395ms)
+✔ second manual discard of the live child also requires revoke and never forks or revives it (56.4552ms)
+✔ incomplete detach capture stops deletion and remounts full values under a fresh lease (59.9113ms)
+✔ legacy close helper waits for lease and late accepted same-value epoch creates durable raw fork (117.5822ms)
+✔ discard Unknown stays detached and only explicit retry resends its original wire (55.022ms)
+✔ rename incarnation and selection restoration timer cannot borrow a replacement lease (61.0531ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3561.543

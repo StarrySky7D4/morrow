@@ -1,0 +1,402 @@
+> hvigor [32mFinished :entry:clean... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreBuild... after 148 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 323 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 47 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 2 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 6 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 4 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 4 ms [39m
+> hvigor WARN: CMake Warning in C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/.cxx/default/default/debug/arm64-v8a/CMakeFiles/CMakeScratch/TryCompile-asv1jg/CMakeLists.txt:
+  The object file directory
+
+    C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/.cxx/default/default/debug/arm64-v8a/CMakeFiles/CMakeScratch/TryCompile-asv1jg/CMakeFiles/cmTC_8d833.dir/./
+
+  has 228 characters.  The maximum full path to an object file is 250
+  characters (see CMAKE_OBJECT_PATH_MAX).  Object file
+
+    CMakeCXXCompilerABI.cpp.o
+
+  cannot be safely placed under this directory.  The build may not work
+  correctly.
+
+
+
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 5 s 112 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 29 ms [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 170 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessResource... after 4 ms [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 7 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 312 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 2 ms [39m
+> hvigor WARN: When performing compilation for the x86_64 architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor WARN: When performing compilation for the arm64-v8a architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Program Files/Huawei/DevEco Studio/sdk/default/openharmony/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 1 s 957 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 176 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 131 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 8 ms [39m
+> hvigor ERROR: Failed :entry:default@CompileArkTS... 
+> hvigor WARN: 
+1 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/Index.ets:3025:83
+ 'Function.bind' is not supported (arkts-no-func-bind)
+
+2 WARN: ArkTS:WARN: For details about ArkTS syntax errors, see FAQs
+3 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/ClipboardInput.ets:173:32
+ To use this API, you need to apply for the permissions: ohos.permission.READ_PASTEBOARD [since 12]
+
+4 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/ClipboardInput.ets:330:36
+ Function may throw exceptions. Special handling is required.
+
+5 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:230:58
+ Function may throw exceptions. Special handling is required.
+
+6 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:231:27
+ Function may throw exceptions. Special handling is required.
+
+7 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:232:15
+ Function may throw exceptions. Special handling is required.
+
+8 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:232:37
+ Function may throw exceptions. Special handling is required.
+
+9 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:277:28
+ Function may throw exceptions. Special handling is required.
+
+10 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:283:31
+ Function may throw exceptions. Special handling is required.
+
+11 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:284:19
+ Function may throw exceptions. Special handling is required.
+
+12 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:284:43
+ Function may throw exceptions. Special handling is required.
+
+13 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:285:33
+ Function may throw exceptions. Special handling is required.
+
+14 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:293:21
+ Function may throw exceptions. Special handling is required.
+
+15 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:293:38
+ Function may throw exceptions. Special handling is required.
+
+16 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:313:23
+ Function may throw exceptions. Special handling is required.
+
+17 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:316:34
+ Function may throw exceptions. Special handling is required.
+
+18 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:322:16
+ Function may throw exceptions. Special handling is required.
+
+19 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:342:17
+ Function may throw exceptions. Special handling is required.
+
+20 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:342:41
+ Function may throw exceptions. Special handling is required.
+
+21 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:343:28
+ Function may throw exceptions. Special handling is required.
+
+22 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:352:26
+ Function may throw exceptions. Special handling is required.
+
+23 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:352:43
+ Function may throw exceptions. Special handling is required.
+
+24 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:362:54
+ Function may throw exceptions. Special handling is required.
+
+25 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:367:19
+ Function may throw exceptions. Special handling is required.
+
+26 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:368:14
+ Function may throw exceptions. Special handling is required.
+
+27 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:429:32
+ Function may throw exceptions. Special handling is required.
+
+28 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:433:33
+ Function may throw exceptions. Special handling is required.
+
+29 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:436:29
+ Function may throw exceptions. Special handling is required.
+
+30 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:437:17
+ Function may throw exceptions. Special handling is required.
+
+31 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:452:36
+ The system capacity of this api 'createMd' is not supported on all devices
+
+32 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:452:36
+ Function may throw exceptions. Special handling is required.
+
+33 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:459:32
+ Function may throw exceptions. Special handling is required.
+
+34 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:463:20
+ The system capacity of this api 'update' is not supported on all devices
+
+35 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:463:20
+ Function may throw exceptions. Special handling is required.
+
+36 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:465:14
+ Function may throw exceptions. Special handling is required.
+
+37 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:466:31
+ The system capacity of this api 'digest' is not supported on all devices
+
+38 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:466:31
+ Function may throw exceptions. Special handling is required.
+
+39 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFiles.ets:593:33
+ Function may throw exceptions. Special handling is required.
+
+40 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:98:59
+ This API is unavailable to phone, tablet.
+
+41 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:99:15
+ This API is unavailable to phone, tablet.
+
+42 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:101:78
+ This API is unavailable to phone, tablet.
+
+43 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:102:64
+ This API is unavailable to phone, tablet.
+
+44 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:105:59
+ This API is unavailable to phone, tablet.
+
+45 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:106:13
+ This API is unavailable to phone, tablet.
+
+46 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:107:53
+ This API is unavailable to phone, tablet.
+
+47 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:107:100
+ This API is unavailable to phone, tablet.
+
+48 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:124:57
+ This API is unavailable to phone, tablet.
+
+49 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:124:77
+ This API is unavailable to phone, tablet.
+
+50 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:126:33
+ This API is unavailable to phone, tablet.
+
+51 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:130:59
+ This API is unavailable to phone, tablet.
+
+52 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:130:79
+ This API is unavailable to phone, tablet.
+
+53 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentImagePreview.ets:131:31
+ This API is unavailable to phone, tablet.
+
+54 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentMediaPreview.ets:26:26
+ Function may throw exceptions. Special handling is required.
+
+55 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentMediaPreview.ets:27:27
+ Function may throw exceptions. Special handling is required.
+
+56 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentMediaPreview.ets:28:15
+ Function may throw exceptions. Special handling is required.
+
+57 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentMediaPreview.ets:29:26
+ The system capacity of this api 'media' is not supported on all devices
+
+58 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentMediaPreview.ets:29:32
+ Function may throw exceptions. Special handling is required.
+
+59 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentMediaPreview.ets:32:69
+ The system capacity of this api 'media' is not supported on all devices
+
+60 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentMediaPreview.ets:43:55
+ Function may throw exceptions. Special handling is required.
+
+61 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentMediaPreview.ets:44:52
+ Function may throw exceptions. Special handling is required.
+
+62 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentMediaPreview.ets:45:53
+ Function may throw exceptions. Special handling is required.
+
+63 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentMediaPreview.ets:46:56
+ The system capacity of this api 'media' is not supported on all devices
+
+64 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentMediaPreview.ets:51:25
+ Function may throw exceptions. Special handling is required.
+
+65 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/AttachmentMediaPreview.ets:53:31
+ Function may throw exceptions. Special handling is required.
+
+66 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFullscreen.ets:34:34
+ Function may throw exceptions. Special handling is required.
+
+67 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFullscreen.ets:36:34
+ Function may throw exceptions. Special handling is required.
+
+68 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFullscreen.ets:36:97
+ Function may throw exceptions. Special handling is required.
+
+69 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFullscreen.ets:41:68
+ Function may throw exceptions. Special handling is required.
+
+70 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFullscreen.ets:42:65
+ Function may throw exceptions. Special handling is required.
+
+71 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFullscreen.ets:46:21
+ Function may throw exceptions. Special handling is required.
+
+72 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFullscreen.ets:48:72
+ Function may throw exceptions. Special handling is required.
+
+73 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFullscreen.ets:54:29
+ Function may throw exceptions. Special handling is required.
+
+74 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/AttachmentFullscreen.ets:55:12
+ Function may throw exceptions. Special handling is required.
+
+75 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorInputHash.ets:5:34
+ The system capacity of this api 'createMd' is not supported on all devices
+
+76 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorInputHash.ets:5:34
+ Function may throw exceptions. Special handling is required.
+
+77 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorInputHash.ets:6:16
+ The system capacity of this api 'update' is not supported on all devices
+
+78 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorInputHash.ets:6:16
+ Function may throw exceptions. Special handling is required.
+
+79 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorInputHash.ets:7:31
+ The system capacity of this api 'digest' is not supported on all devices
+
+80 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorInputHash.ets:7:31
+ Function may throw exceptions. Special handling is required.
+
+81 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/EditorTodos.ets:301:48
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+82 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusiness.ets:107:32
+ The system capacity of this api 'createMd' is not supported on all devices
+
+83 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusiness.ets:107:32
+ Function may throw exceptions. Special handling is required.
+
+84 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusiness.ets:107:63
+ The system capacity of this api 'update' is not supported on all devices
+
+85 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusiness.ets:107:63
+ Function may throw exceptions. Special handling is required.
+
+86 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusiness.ets:108:29
+ The system capacity of this api 'digest' is not supported on all devices
+
+87 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusiness.ets:108:29
+ Function may throw exceptions. Special handling is required.
+
+88 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessSession.ets:172:30
+ The system capacity of this api 'createMd' is not supported on all devices
+
+89 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessSession.ets:172:30
+ Function may throw exceptions. Special handling is required.
+
+90 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessSession.ets:172:59
+ The system capacity of this api 'update' is not supported on all devices
+
+91 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessSession.ets:172:59
+ Function may throw exceptions. Special handling is required.
+
+92 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessSession.ets:172:108
+ The system capacity of this api 'digest' is not supported on all devices
+
+93 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessSession.ets:172:108
+ Function may throw exceptions. Special handling is required.
+
+94 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessHandoff.ets:141:30
+ The system capacity of this api 'createMd' is not supported on all devices
+
+95 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessHandoff.ets:141:30
+ Function may throw exceptions. Special handling is required.
+
+96 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessHandoff.ets:141:59
+ The system capacity of this api 'update' is not supported on all devices
+
+97 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessHandoff.ets:141:59
+ Function may throw exceptions. Special handling is required.
+
+98 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessHandoff.ets:141:111
+ The system capacity of this api 'digest' is not supported on all devices
+
+99 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessHandoff.ets:141:111
+ Function may throw exceptions. Special handling is required.
+
+100 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/Index.ets:247:54
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+101 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/Index.ets:248:59
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+102 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/Index.ets:249:58
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+103 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/Index.ets:250:58
+ The system capacity of this api 'TextAreaController' is not supported on all devices
+
+104 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/Index.ets:251:53
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+105 WARN: ArkTS:WARN File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/Index.ets:252:59
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+[31m
+FAILURE: Build completed with 1 failure.[31m[39m
+> hvigor ERROR: ArkTS Compiler Error
+1 ERROR: 10605030 ArkTS Compiler Error
+Error Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessHandoff.ets:258:86
+
+
+2 ERROR: 10605144 ArkTS Compiler Error
+Error Message: Usage of standard library is restricted (arkts-limited-stdlib) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessHandoff.ets:493:44
+
+
+3 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/model/EditorBusinessHandoff.ets:493:76
+
+
+4 ERROR: 10605030 ArkTS Compiler Error
+Error Message: Structural typing is not supported (arkts-no-structural-typing) At File: C:/Users/Administrator/Desktop/CodeXProjext/morrow/hmos/.build/device-candidates/dev25-business-handoff-checkpoint/entry/src/main/ets/pages/Index.ets:2206:27
+
+
+COMPILE RESULT:FAIL {ERROR:5 WARN:105}
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+
+> hvigor ERROR: BUILD FAILED in 22 s 515 ms 
+[31m
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task 'default@CompileArkTS'.
+  > Compilation error. See log for more details
+
+[31m* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+[31m[39m
+[31m================================================================================[31m[39m
+
+26 tasks in total: 26 executed, 0 up-to-date

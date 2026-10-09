@@ -121,6 +121,31 @@ function harness({ mode = 'create', revision = '0', assets = ['A', 'B'] } = {}) 
 }
 const action = wire => JSON.parse(wire).action;
 
+test('owner-only rebind retains every original byte, proof, known commit hint and Unknown after malformed actual business DTO', async () => {
+  const h = harness(), s = await h.ready(); const wire = s.originalSave, proof = plain(s.proof), prepare = s.originalPrepare;
+  h.setIntercept((w, p, n, route) => { const result = route(); if (p.action === 'editor_save') delete result.editor_commit; return result; });
+  await assert.rejects(s.save()); assert.equal(s.committed, true); assert.equal(s.qualified, false); assert.equal(s.businessUnknown, true);
+  h.owner.current = h.owner.exact = false; const newOwner = { current: false, exact: true, ready: true }; let changed = 0;
+  s.rebindOwner({ changed: () => { changed++; }, isCurrent: () => newOwner.current, isExact: () => newOwner.exact, parentReady: () => newOwner.ready,
+    send: () => { throw new Error('foreign sender must be ignored'); }, fields: null, hash: () => 'foreign' });
+  assert.equal(s.originalSave, wire); assert.equal(s.originalPrepare, prepare); assert.deepEqual(plain(s.proof), proof);
+  assert.equal(s.committed, true); assert.equal(s.businessUnknown, true); assert.equal(changed, 1);
+  h.setIntercept(() => ({ ok: false, error: 'read failed', effect: 'not_committed', receipt_revision: '' }));
+  await assert.rejects(s.inspect()); assert.equal(s.committed, true); assert.equal(s.businessUnknown, true); assert.equal(s.inspectionUnknown, true);
+  assert.equal(h.calls.at(-1), s.originalInspect); h.setIntercept(undefined); await s.retryInspect();
+  assert.equal(s.committed, true); assert.equal(s.qualified, true); assert.equal(s.mayConsume(s.publication.values), false);
+  newOwner.current = true; assert.equal(s.mayConsume(s.publication.values), true); assert.equal(s.originalSave, wire);
+});
+
+test('actual qualified receipt survives guard rebind and an in-flight rebind is rejected without moving an issued request', async () => {
+  const h = harness(), s = await h.ready(); await s.save(); const receipt = plain(s.confirmed), original = s.originalInspect;
+  h.owner.current = false; s.rebindOwner({ changed: () => {}, isCurrent: () => true, isExact: () => false, parentReady: () => true });
+  assert.deepEqual(plain(s.confirmed), receipt); assert.equal(s.mayConsume(s.publication.values), false);
+  let release; h.setIntercept((w, p, n, route) => { const result = route(); return new Promise(resolve => { release = () => resolve(result); }); });
+  const read = s.inspect(); assert.throws(() => s.rebindOwner({ changed: () => {}, isCurrent: () => true, isExact: () => true, parentReady: () => true }), /in flight/);
+  release(); await read; assert.equal(s.originalInspect, original); assert.deepEqual(plain(s.confirmed), receipt); assert.equal(s.mayConsume(s.publication.values), false);
+});
+
 test('actual Business admission freezes raw/publication before native prepare; intent is not a business receipt', async () => {
   const h = harness(), frozen = h.freeze(); h.business.title = 'late caller'; h.record.values.title.selection_extent = 0;
   const s = await frozen; assert.equal(h.calls.length, 0); assert.equal(s.publication.values.title.selection_extent, 1);

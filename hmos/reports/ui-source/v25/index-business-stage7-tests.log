@@ -1,0 +1,50 @@
+Index.ets SHA256=4d252d1cbf5c8c193096f0b9e61d7fe0478b0715d08d3be881559913f4a8da8a
+EditorDraft.ets SHA256=b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775
+EditorBusiness.ets SHA256=6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf
+EditorBusinessSession.ets SHA256=58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6
+EditorFieldPolicy.ets SHA256=10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842
+Workbench.ets SHA256=1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf
+ACTUAL_INDEX_SOURCE_FREEZE=[{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusiness.ets","sha256":"6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessHandoff.ets","sha256":"5454de4c88133ccd04e27be693870280f6bf9f126696b9684c3db4ae025a6a55"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessSession.ets","sha256":"58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraft.ets","sha256":"b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraftFork.ets","sha256":"2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorFieldPolicy.ets","sha256":"10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorPaste.ets","sha256":"28d54a7d02bf644d68b58ac68a4d824ab2ff3fb71b87ab0e00c279456b6d160e"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\Workbench.ets","sha256":"1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf"}]
+✔ fresh actual Index/ETS source identities; controlled receiver boundaries are explicit (2.9257ms)
+✔ actual new-card Save persists complete raw before pause and durable intent before business admission (275.961ms)
+✔ actual unchanged existing-card Save establishes publication and preserves source/tasks semantics (219.5047ms)
+✔ actual first business send synchronously admits Workbench before resuming parent debounce (172.9244ms)
+✔ actual S2 during raw publication cancels unissued proposal while keeping complete input (158.1255ms)
+✔ first proved no-write intent prepare does not strand the complete editor behind an unprepared session (142.0363ms)
+✔ prepare ACK Unknown stays blocked and a later no-write reply cannot release that original uncertainty (138.51ms)
+✔ actual Workbench tail orders S1 business before later complete S2 raw persistence (142.2977ms)
+✔ issued-before-first-send S2 blocks auto-save; explicit read-only restore retries fixed S1 literal (139.2254ms)
+✔ actual selection-only S2 after issue cannot be consumed by same-text S1 success (148.3335ms)
+✔ actual first save Unknown retries same session and literal without reconstructing current S2 (140.3887ms)
+✔ actual committed effect with invalid DTO remains known through attempted save and failed inspection (122.6542ms)
+✔ actual list and five-part restore are read-only; same-card different draft does not bind consumption (126.2009ms)
+✔ actual failed partial restoration leaves original discovery reference and never auto-replays (122.3715ms)
+✔ actual old submit rejects create/edit and unfinished strict session blocks ordinary mutation/discard/close (124.5956ms)
+✔ actual ordinary task command remains separate from strict create/edit transport (120.3944ms)
+✔ actual Store DTO fixture through Index restore/inspect preserves original wire and full historical source (126.6458ms)
+✔ actual planned saved_exact restore reads fixed native close and never invents or dispatches another operation (131.3869ms)
+✔ actual recovered saved_exact close rejects complete S2 before detach or fixed close replay (125.5456ms)
+✔ actual explicit recovered exact close detaches controlled lease before retrying original close literal (152.2409ms)
+✖ actual planned handoff restore preserves fixed child plan and stays read-only until explicit reconciliation (145.3137ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 20
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3547.383
+
+✖ failing tests:
+
+test at hmos\tool\index-business-integration.test.cjs:270:1
+✖ actual planned handoff restore preserves fixed child plan and stays read-only until explicit reconciliation (145.3137ms)
+  SyntaxError: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at EditorBusinessHandoffCoordinator.validateRetirement (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\model\EditorBusinessHandoff.ets:618:28)
+      at EditorBusinessHandoffCoordinator.read (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\model\EditorBusinessHandoff.ets:589:22)
+      at async EditorBusinessHandoffCoordinator.restore (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\model\EditorBusinessHandoff.ets:841:13)
+      at async ActualIndexBusiness.finishBusinessInput (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:986:29)
+      at async TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:280:63)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)

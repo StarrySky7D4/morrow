@@ -1,6 +1,6 @@
 import { cryptoFramework } from '@kit.CryptoArchitectureKit';
 import { util } from '@kit.ArkTS';
-import { DraftRecord, Values, copyRecord, nextGeneration, validGeneration, validateRecord } from './EditorDraft';
+import { DraftBusinessProof, DraftRecord, Values, copyRecord, nextGeneration, validGeneration, validateBusinessProof, validateRecord } from './EditorDraft';
 import { EditorFieldPolicy } from './EditorFieldPolicy';
 import { EditorBusinessCoordinator, EditorBusinessFields, EditorBusinessCommit, EditorBusinessHooks,
   EditorBusinessReply } from './EditorBusiness';
@@ -19,6 +19,7 @@ export interface EditorIntentView {
   phase: string; current_generation: string; current_active: boolean; repeated: boolean; part: string;
   request_json: string; publication: DraftRecord | null; save_request_json: string; inspect_request_json: string;
   close_request_json: string; close_disposition: string; issue_operation: string;
+  handoff_request_json?: string; retirement_request_json?: string;
 }
 export interface EditorBusinessSessionReply extends EditorBusinessReply {
   editor_intents?: EditorIntentView[]; intent_next_after?: string;
@@ -30,6 +31,9 @@ export interface EditorBusinessSessionHooks {
   // Unknown or conflict in flight. This is a queue gate, not storage authority.
   parentReady: () => boolean;
   hash?: (bytes: Uint8Array) => Promise<string>;
+}
+export interface EditorBusinessSessionOwnerHooks {
+  changed: () => void; isCurrent: () => boolean; isExact: () => boolean; parentReady: () => boolean;
 }
 export interface EditorIntentPage { intents: EditorIntentView[]; nextAfter: string; }
 class PrepareBody { operation_id: string = ''; request_json: string = ''; }
@@ -44,6 +48,8 @@ class CloseBody {
   schema_version: number = 1; intent: EditorIntentProof = new EditorIntentProof(); expected_generation: string = '1';
   operation_id: string = ''; disposition: string = 'cancel_prepared';
 }
+class ExtendedCloseParent { proof: DraftBusinessProof = new DraftBusinessProof(); discard_operation: string = ''; }
+class ExtendedCloseBody extends CloseBody { parent: ExtendedCloseParent | null = null; plan_operation: string = ''; }
 class CloseWire { request_json: string = ''; }
 class CloseCommand { action: string = 'editor_intent_close'; editor_intent_close: CloseWire = new CloseWire(); }
 class RegisteredSaveBody { request_json: string = ''; intent: EditorIntentProof = new EditorIntentProof(); }
@@ -88,19 +94,34 @@ function proofEqual(a: EditorIntentProof, b: EditorIntentProof): boolean {
 function viewCopy(value: EditorIntentView): EditorIntentView { return JSON.parse(JSON.stringify(value)) as EditorIntentView; }
 function validateView(view: EditorIntentView, part: string): void {
   if (!view || !view.proof) { throw new Error('Missing complete intent view'); }
+  const keys = ['proof', 'card_id', 'business_operation', 'expected_revision', 'phase', 'current_generation', 'current_active',
+    'repeated', 'part', 'request_json', 'publication', 'save_request_json', 'inspect_request_json', 'close_request_json',
+    'close_disposition', 'issue_operation'];
+  if (view.handoff_request_json !== undefined || view.retirement_request_json !== undefined) {
+    keys.push('handoff_request_json', 'retirement_request_json');
+    scalar(view.handoff_request_json!); scalar(view.retirement_request_json!);
+  }
+  exactKeys(view, keys);
   validateProof(view.proof); id(view.card_id); id(view.business_operation);
   if (!validGeneration(view.expected_revision) || view.expected_revision === '0') { throw new Error('Invalid expected business revision'); }
-  if (!['prepared', 'issued', 'closed'].includes(view.phase) || view.part !== part || typeof view.current_active !== 'boolean' ||
-    typeof view.repeated !== 'boolean' || view.current_generation !== (view.phase === 'prepared' ? '1' : '2') ||
+  if (!['prepared', 'issued', 'handoff_planned', 'close_planned', 'closed'].includes(view.phase) || view.part !== part || typeof view.current_active !== 'boolean' ||
+    typeof view.repeated !== 'boolean' || !validGeneration(view.current_generation) ||
+    (view.phase === 'prepared' ? view.current_generation !== '1' : view.phase === 'issued' ? view.current_generation !== '2' :
+      view.phase === 'handoff_planned' ? view.current_generation !== '3' : view.phase === 'close_planned' ?
+        !['3', '4'].includes(view.current_generation) : !['2', '4', '5'].includes(view.current_generation)) ||
     view.current_active !== (view.phase !== 'closed')) { throw new Error('Intent phase/current generation differs'); }
   for (const text of [view.request_json, view.save_request_json, view.inspect_request_json, view.close_request_json,
-    view.close_disposition, view.issue_operation]) { scalar(text); }
+    view.close_disposition, view.issue_operation, view.handoff_request_json ?? '', view.retirement_request_json ?? '']) { scalar(text); }
   if (view.request_json !== '' && part !== 'submission' || view.publication !== null && part !== 'publication' ||
     view.save_request_json !== '' && part !== 'save' || view.inspect_request_json !== '' && part !== 'inspect' ||
-    view.close_request_json !== '' && part !== 'close') { throw new Error('Intent reply mixes payload parts'); }
+    view.close_request_json !== '' && part !== 'close' || (view.handoff_request_json ?? '') !== '' && part !== 'handoff' ||
+    (view.retirement_request_json ?? '') !== '' && part !== 'retirement') { throw new Error('Intent reply mixes payload parts'); }
   // This domain-derived identity is present even before issue or after cancel.
   id(view.issue_operation);
-  if (view.phase === 'closed' ? view.close_disposition !== 'cancel_prepared' : view.close_disposition !== '') {
+  if (view.phase === 'closed' ? !['cancel_prepared', 'saved_exact', 'handoff_retired'].includes(view.close_disposition) ||
+    view.current_generation !== (view.close_disposition === 'cancel_prepared' ? '2' : view.close_disposition === 'saved_exact' ? '4' : '5') :
+    view.phase === 'close_planned' ? !['saved_exact', 'handoff_retired'].includes(view.close_disposition) ||
+      view.current_generation !== (view.close_disposition === 'saved_exact' ? '3' : '4') : view.close_disposition !== '') {
     throw new Error('Unsupported intent close disposition');
   }
 }
@@ -114,7 +135,7 @@ function single(reply: EditorBusinessSessionReply, part: string): EditorIntentVi
   const value = reply.editor_intents[0]; validateView(value, part); return viewCopy(value);
 }
 function readWire(proof: EditorIntentProof, part: string): string {
-  if (!['submission', 'publication', 'save', 'inspect', 'close'].includes(part)) { throw new Error('Unsupported intent part'); }
+  if (!['submission', 'publication', 'save', 'inspect', 'close', 'handoff', 'retirement'].includes(part)) { throw new Error('Unsupported intent part'); }
   const request = new ReadCommand(); request.editor_intent_ref.intent_id = proof.intent_id;
   request.editor_intent_ref.prepare_operation = proof.prepare_operation; request.editor_intent_ref.part = part;
   const wire = JSON.stringify(request); budget(wire); return wire;
@@ -153,6 +174,13 @@ async function platformHash(bytes: Uint8Array): Promise<string> {
 }
 function failure(error: Object): Error { return error instanceof Error ? error : new Error(String(error)); }
 
+export function validateEditorIntentProof(proof: EditorIntentProof): void { validateProof(proof); }
+export function sameEditorIntentProof(a: EditorIntentProof, b: EditorIntentProof): boolean { return proofEqual(a, b); }
+export function copyEditorIntentProof(proof: EditorIntentProof): EditorIntentProof { return proofCopy(proof); }
+export function validateEditorIntentView(view: EditorIntentView, part: string): void { validateView(view, part); }
+export function editorIntentReadWire(proof: EditorIntentProof, part: string): string { validateProof(proof); return readWire(proof, part); }
+function generationBefore(a: string, b: string): boolean { return a.length < b.length || a.length === b.length && a < b; }
+
 export class EditorBusinessSessionCoordinator {
   private hooks: EditorBusinessSessionHooks;
   private model: EditorBusinessCoordinator | undefined = undefined;
@@ -165,11 +193,20 @@ export class EditorBusinessSessionCoordinator {
   private inFlight: boolean = false; private committedHint: boolean = false; private lastError: string = '';
 
   private constructor(prepareOperation: string, hooks: EditorBusinessSessionHooks) {
-    id(prepareOperation); this.prepareOperation = prepareOperation; this.hooks = hooks;
+    id(prepareOperation); this.prepareOperation = prepareOperation;
+    this.hooks = { send: hooks.send, fields: hooks.fields, changed: hooks.changed, isCurrent: hooks.isCurrent,
+      isExact: hooks.isExact, parentReady: hooks.parentReady, hash: hooks.hash };
   }
   private businessHooks(): EditorBusinessHooks {
-    return { fields: this.hooks.fields, changed: this.hooks.changed, isCurrent: this.hooks.isCurrent,
-      isExact: this.hooks.isExact, hash: this.hooks.hash, send: (wire: string): Promise<EditorBusinessReply> => this.sendBusiness(wire) };
+    return { fields: this.hooks.fields, changed: (): void => this.hooks.changed(), isCurrent: (): boolean => this.hooks.isCurrent(),
+      isExact: (): boolean => this.hooks.isExact(), hash: this.hooks.hash, send: (wire: string): Promise<EditorBusinessReply> => this.sendBusiness(wire) };
+  }
+  rebindOwner(hooks: EditorBusinessSessionOwnerHooks): void {
+    this.idle();
+    // Keep the original sender, field protocol and hash provider. A new view
+    // may only supply its explicit guards, without resetting durable facts.
+    this.hooks.changed = hooks.changed; this.hooks.isCurrent = hooks.isCurrent;
+    this.hooks.isExact = hooks.isExact; this.hooks.parentReady = hooks.parentReady; this.hooks.changed();
   }
   static async prepare(mode: string, business: EditorBusinessFields, publication: DraftRecord, prepareOperation: string,
     hooks: EditorBusinessSessionHooks): Promise<EditorBusinessSessionCoordinator> {
@@ -268,9 +305,18 @@ export class EditorBusinessSessionCoordinator {
       view.expected_revision !== nextGeneration(model.publication.scope.source_revision) ||
       view.issue_operation !== this.issueIdentity ||
       this.acknowledged && !proofEqual(view.proof, this.acknowledged.proof)) { throw new Error('Intent original identity differs'); }
-    if (this.acknowledged && this.acknowledged.phase !== 'prepared' && view.phase !== this.acknowledged.phase) {
+    if (this.acknowledged && (generationBefore(view.current_generation, this.acknowledged.current_generation) ||
+      view.current_generation === this.acknowledged.current_generation && view.phase !== this.acknowledged.phase ||
+      this.acknowledged.phase === 'closed' && view.phase !== 'closed' ||
+      this.acknowledged.close_disposition !== '' && view.close_disposition !== this.acknowledged.close_disposition)) {
       throw new Error('Intent known phase cannot be replaced');
     }
+  }
+  // Observe only a completely validated native metadata view after a handoff
+  // step. This never changes the separate qualified business receipt.
+  adoptIntentView(value: EditorIntentView): void {
+    this.idle(); const view = viewCopy(value); validateView(view, 'summary'); this.bind(view);
+    this.acknowledged = this.summary(view); this.hooks.changed();
   }
   private async mutate(wire: string, kind: string, wasUnknown: boolean): Promise<EditorIntentView> {
     this.inFlight = true; this.hooks.changed(); let noWrite = false;
@@ -313,7 +359,10 @@ export class EditorBusinessSessionCoordinator {
   }
   private summary(view: EditorIntentView): EditorIntentView {
     const copy = viewCopy(view); copy.part = 'summary'; copy.request_json = ''; copy.publication = null;
-    copy.save_request_json = ''; copy.inspect_request_json = ''; copy.close_request_json = ''; return copy;
+    copy.save_request_json = ''; copy.inspect_request_json = ''; copy.close_request_json = '';
+    if (copy.handoff_request_json !== undefined) { copy.handoff_request_json = ''; }
+    if (copy.retirement_request_json !== undefined) { copy.retirement_request_json = ''; }
+    return copy;
   }
   private validatePart(view: EditorIntentView): void {
     const model = this.business();
@@ -322,29 +371,61 @@ export class EditorBusinessSessionCoordinator {
       throw new Error('Intent complete immutable publication differs');
     }
     if (view.part === 'save') {
-      if (view.phase !== 'issued') { if (view.save_request_json !== '') { throw new Error('Unissued intent has save transport'); } return; }
+      if (view.phase === 'prepared' || view.phase === 'closed' && view.close_disposition === 'cancel_prepared') {
+        if (view.save_request_json !== '') { throw new Error('Unissued intent has save transport'); } return;
+      }
       this.validateSave(view.save_request_json, view.proof);
       if (this.registeredSave && this.registeredSave !== view.save_request_json) { throw new Error('Registered save transport changed'); }
       this.registeredSave = view.save_request_json;
     }
     if (view.part === 'inspect') {
-      if (view.phase !== 'issued') { if (view.inspect_request_json !== '') { throw new Error('Unissued intent has inspect transport'); } return; }
+      if (view.phase === 'prepared' || view.phase === 'closed' && view.close_disposition === 'cancel_prepared') {
+        if (view.inspect_request_json !== '') { throw new Error('Unissued intent has inspect transport'); } return;
+      }
       this.validateInspect(view.inspect_request_json);
       if (this.registeredInspect && this.registeredInspect !== view.inspect_request_json) { throw new Error('Registered inspect transport changed'); }
       this.registeredInspect = view.inspect_request_json;
     }
     if (view.part === 'close') {
-      if (view.phase !== 'closed') { if (view.close_request_json !== '') { throw new Error('Open intent has close transport'); } return; }
-      budget(view.close_request_json); const close = JSON.parse(view.close_request_json) as CloseBody;
-      exactKeys(close, ['schema_version', 'intent', 'expected_generation', 'operation_id', 'disposition']); validateProof(close.intent); id(close.operation_id);
-      if (close.schema_version !== 1 || close.expected_generation !== '1' || close.disposition !== 'cancel_prepared' ||
-        !proofEqual(close.intent, view.proof) || this.cancelLiteral && this.cancelLiteral !== view.close_request_json) {
-        throw new Error('Original intent cancellation differs');
+      if (view.phase !== 'closed' && view.phase !== 'close_planned') {
+        if (view.close_request_json !== '') { throw new Error('Open intent has close transport'); } return;
       }
-      if (this.committed) { throw new Error('Business commitment cannot become cancelled'); }
-      this.cancelLiteral = view.close_request_json;
-      const command = new CloseCommand(); command.editor_intent_close.request_json = this.cancelLiteral;
-      this.cancelWire = JSON.stringify(command); budget(this.cancelWire);
+      budget(view.close_request_json); const close = JSON.parse(view.close_request_json) as CloseBody;
+      validateProof(close.intent); id(close.operation_id);
+      if (close.schema_version !== 1 || !proofEqual(close.intent, view.proof) || close.disposition !== view.close_disposition) {
+        throw new Error('Original intent close differs');
+      }
+      if ([view.proof.prepare_operation, view.business_operation, model.publication.operation_id, view.issue_operation].includes(close.operation_id)) {
+        throw new Error('Original close operation is not independent');
+      }
+      if (close.disposition === 'cancel_prepared') {
+        exactKeys(close, ['schema_version', 'intent', 'expected_generation', 'operation_id', 'disposition']);
+        if (close.expected_generation !== '1' || this.cancelLiteral && this.cancelLiteral !== view.close_request_json || this.committed) {
+          throw new Error('Original intent cancellation differs');
+        }
+        this.cancelLiteral = view.close_request_json;
+        const command = new CloseCommand(); command.editor_intent_close.request_json = this.cancelLiteral;
+        this.cancelWire = JSON.stringify(command); budget(this.cancelWire);
+      } else {
+        exactKeys(close, ['schema_version', 'intent', 'expected_generation', 'operation_id', 'disposition', 'parent', 'plan_operation']);
+        if (close.expected_generation !== (close.disposition === 'saved_exact' ? '2' : '3')) { throw new Error('Original close generation differs'); }
+        const extended = close as ExtendedCloseBody; scalar(extended.plan_operation);
+        if (close.disposition === 'saved_exact') {
+          if (!extended.parent || extended.plan_operation !== '') { throw new Error('Saved-exact close lacks its exact parent'); }
+          exactKeys(extended.parent, ['proof', 'discard_operation']); validateBusinessProof(extended.parent.proof); id(extended.parent.discard_operation);
+          const original = model.submission.publication, parent = extended.parent.proof;
+          if (parent.draft_id !== original.draft_id || parent.generation !== original.generation || parent.save_operation !== original.save_operation ||
+            parent.request_sha256 !== original.request_sha256 || extended.parent.discard_operation === close.operation_id ||
+            [parent.save_operation, view.proof.prepare_operation, view.business_operation, view.issue_operation].includes(extended.parent.discard_operation)) {
+            throw new Error('Saved-exact close parent/publication differs');
+          }
+        } else if (extended.parent !== null || !extended.plan_operation) { throw new Error('Retired handoff close parent/plan differs'); }
+        else {
+          id(extended.plan_operation);
+          if ([close.operation_id, view.proof.prepare_operation, view.business_operation, model.publication.operation_id,
+            view.issue_operation].includes(extended.plan_operation)) { throw new Error('Original close plan operation differs'); }
+        }
+      }
     }
   }
   private validateSave(wire: string, proof: EditorIntentProof): void {
@@ -363,24 +444,38 @@ export class EditorBusinessSessionCoordinator {
     }
   }
   async loadTransport(): Promise<void> {
-    if (this.phase !== 'issued') { throw new Error('Only an issued intent registers business transport'); }
+    if (this.phase === 'prepared' || this.phase === 'unprepared' ||
+      this.phase === 'closed' && this.view?.close_disposition === 'cancel_prepared') { throw new Error('Only an issued intent registers business transport'); }
     await this.readPart('save'); await this.readPart('inspect');
   }
   private ready(): void {
-    this.idle(); if (this.phase !== 'issued' || this.nativeUnknown || this.readUnknown || !this.registeredSave || !this.registeredInspect) {
+    this.idle(); if (this.phase === 'prepared' || this.phase === 'unprepared' ||
+      this.phase === 'closed' && this.view?.close_disposition === 'cancel_prepared' ||
+      this.nativeUnknown || this.readUnknown || !this.registeredSave || !this.registeredInspect) {
       throw new Error('Complete issued native transport has not been read');
     }
   }
-  save(): Promise<EditorBusinessCommit | undefined> { this.ready(); this.owned(); return this.business().save(); }
-  retrySave(): Promise<EditorBusinessCommit | undefined> { this.ready(); return this.business().retrySave(); }
+  save(): Promise<EditorBusinessCommit | undefined> {
+    this.ready(); this.owned(); if (this.phase !== 'issued') { throw new Error('New business write needs the active issued intent'); }
+    return this.business().save();
+  }
+  retrySave(): Promise<EditorBusinessCommit | undefined> {
+    this.ready(); if (this.phase !== 'issued') { throw new Error('Closed/planned intent permits only historical inspection'); }
+    return this.business().retrySave();
+  }
   inspect(): Promise<EditorBusinessCommit | undefined> { this.ready(); return this.business().inspect(nextGeneration(this.publication.scope.source_revision)); }
   retryInspect(): Promise<EditorBusinessCommit | undefined> { this.ready(); return this.business().retryInspect(); }
   private async sendBusiness(wire: string): Promise<EditorBusinessReply> {
-    if (this.phase !== 'issued' || !this.registeredSave || !this.registeredInspect || this.nativeUnknown || this.readUnknown) {
+    if (this.phase === 'prepared' || this.phase === 'unprepared' ||
+      this.phase === 'closed' && this.view?.close_disposition === 'cancel_prepared' ||
+      !this.registeredSave || !this.registeredInspect || this.nativeUnknown || this.readUnknown) {
       throw new Error('Intent transport is not confirmed');
     }
     let registered = '';
-    if (wire === this.business().originalSave) { registered = this.registeredSave; }
+    if (wire === this.business().originalSave) {
+      if (this.phase !== 'issued') { throw new Error('Closed/planned intent permits only historical inspection'); }
+      registered = this.registeredSave;
+    }
     else {
       this.validateInspect(wire);
       if (this.mappedInspect && this.mappedInspect !== wire) { throw new Error('Original model inspection changed'); }

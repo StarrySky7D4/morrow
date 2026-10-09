@@ -1,0 +1,10 @@
+   Compiling morrow-core v0.1.9-test.50 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\shared\core)
+   Compiling morrow-editor-draft-model v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust\editor-draft-model)
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.85s
+   Doc-tests morrow_hmos
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

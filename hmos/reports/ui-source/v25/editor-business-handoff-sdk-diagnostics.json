@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "source": "Root first actual complete API26 product CompileArkTS attempt",
+  "build_log": "hmos/reports/ui-source/v25/hap-build.log",
+  "build_log_sha256": "5425241824459DF534C8FED90A1670C6F1886DA67C3D5C1C22E5769359DEF033",
+  "original_model": "hmos/entry/src/main/ets/model/EditorBusinessHandoff.ets",
+  "original_model_bytes": 40477,
+  "original_model_sha256": "5454DE4C88133CCD04E27BE693870280F6BF9F126696B9684C3DB4AE025A6A55",
+  "owned_diagnostics": [
+    {"line": 258, "column": 86, "code": "10605030", "rule": "arkts-no-structural-typing", "repair": "Copy five intent proof fields into existing typed DraftBusinessIntentProof instance"},
+    {"line": 493, "column": 44, "code": "10605144", "rule": "arkts-limited-stdlib", "repair": "Replace Object.assign with explicit typed DraftScope field assignments"},
+    {"line": 493, "column": 76, "code": "10605038", "rule": "arkts-no-untyped-obj-literals", "repair": "Remove the untyped object literal in DraftScope construction"}
+  ],
+  "scope": "Only SDK-diagnosed Handoff model typing and standard-library repairs; wire, contracts, native and Index unchanged by this agent",
+  "sdk_rerun_by_this_agent": "NOT_RUN",
+  "previous_97_test_evidence": "Preserved under editor-business-handoff-model-*; SDK-repair test evidence has separate filenames"
+}

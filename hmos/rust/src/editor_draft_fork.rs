@@ -47,7 +47,7 @@ pub fn validate_fork_request(
 }
 pub(crate) fn validate_slot_shape(slot: &proto::Slot) -> Result<()> {
     let request = slot.request.as_ref().ok_or("draft request missing")?;
-    if slot.development_fork_link.is_none() && request.assets.iter().any(|s| s.origin == 4) {
+    if slot.development_fork_link.is_none() && slot.development_business_link.is_none() && request.assets.iter().any(|s| s.origin == 4) {
         return Err("DraftForkPinWithoutLink".into());
     }
     if let Some(link) = &slot.development_fork_link {
@@ -200,6 +200,7 @@ fn verify_first(host: &HostRuntime, slot: &proto::Slot) -> Result<proto::Slot> {
     Ok(first)
 }
 pub(crate) fn verify_slot(host: &HostRuntime, slot: &proto::Slot) -> Result<()> {
+    crate::editor_handoff::verify_slot(host, slot)?;
     if slot.development_fork_link.is_some() {
         verify_first(host, slot)?;
     }
@@ -306,6 +307,7 @@ pub fn fork_with_effect_at(
             repeated: true,
         });
     }
+    super::require_mutable(host, &request.card_id, &link.parent_draft_id)?;
     if successor(host, &request.card_id, &link.parent_draft_id)?.is_some() {
         return Err("DraftForkParentFrozen".into());
     }
@@ -316,9 +318,8 @@ pub fn fork_with_effect_at(
     if !parent.active || parent.generation != link.parent_generation || parent != historical {
         return Err("DraftForkParentGenerationConflict".into());
     }
-    if parent.development_fork_link.is_some() {
-        require_parent_retired(host, &parent)?;
-    }
+    if parent.development_fork_link.is_some() { require_parent_retired(host, &parent)?; }
+    if parent.development_business_link.is_some() { crate::editor_handoff::require_parent_retired(host, &parent)?; }
     // No loss of an independent unselected import owner; resolve it before
     // freezing the parent. Cleanup effects are separate from this fork write.
     crate::editor_draft_staging::reconcile(

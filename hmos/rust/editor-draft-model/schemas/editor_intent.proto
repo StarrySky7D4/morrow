@@ -24,7 +24,7 @@ message EditorIntentSlot {
   bytes content_sha256 = 11;
   repeated morrow.workbench.editor_draft.v1.StoredAsset assets = 12;
   uint64 generation = 13;
-  // 0 prepared, 1 issued, 2 closed (cancel_prepared only).
+  // 0 prepared, 1 issued, 2 closed, 3 handoff_planned, 4 close_planned.
   uint32 phase = 14;
   bool active = 15;
   uint64 active_bytes = 16;
@@ -34,4 +34,12 @@ message EditorIntentSlot {
   string inspect_request_json = 19;
   string close_request_json = 20;
   string mutation_operation = 21;
+  string handoff_request_json = 22;
+  string retirement_request_json = 23;
+  // Kept separate from immutable prepared assets: only these pins are active
+  // after a handoff plan. Both metadata inventories remain charged.
+  repeated morrow.workbench.editor_draft.v1.StoredAsset plan_assets = 24;
+  string plan_operation = 25;
+  string close_plan_operation = 26;
+  string close_disposition = 27;
 }

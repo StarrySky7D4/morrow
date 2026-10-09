@@ -91,6 +91,41 @@ message DevelopmentForkRetirement {
   DevelopmentForkLink fork_link = 4;
 }
 
+// Independent development business lineage; protected fields 11/12 and raw
+// recovery fields 13/14 retain their existing meanings.
+message DevelopmentBusinessIntentProof {
+  string intent_id = 1;
+  string prepare_operation = 2;
+  uint64 generation = 3;
+  bytes prepared_record_sha256 = 4;
+  bytes request_sha256 = 5;
+}
+message DevelopmentBusinessDraftProof {
+  string draft_id = 1;
+  uint64 generation = 2;
+  string save_operation = 3;
+  bytes request_sha256 = 4;
+}
+message DevelopmentBusinessLink {
+  uint32 schema_version = 1;
+  DevelopmentBusinessDraftProof parent = 2;
+  DevelopmentBusinessIntentProof intent = 3;
+  string plan_operation = 4;
+  bytes handoff_request_sha256 = 5;
+  string child_operation = 6;
+  string committed_operation = 7;
+  uint64 committed_revision = 8;
+  bytes command_sha256 = 9;
+  bytes content_sha256 = 10;
+  bytes request_sha256 = 11;
+  bytes publication_sha256 = 12;
+}
+message DevelopmentBusinessRetirement {
+  uint32 schema_version = 1;
+  string child_draft_id = 2;
+  string operation_id = 3;
+  DevelopmentBusinessLink business_link = 4;
+}
 message Slot {
   uint32 schema_version = 1;
   WriteRequest request = 2;
@@ -108,4 +143,6 @@ message Slot {
   ParentRetirement retirement = 12;
   DevelopmentForkLink development_fork_link = 13;
   DevelopmentForkRetirement development_fork_retirement = 14;
+  DevelopmentBusinessLink development_business_link = 15;
+  DevelopmentBusinessRetirement development_business_retirement = 16;
 }

@@ -1,0 +1,10 @@
+{
+  "status": "BUILD_PASS_HISTORICAL_PRE_ROW_GUARD",
+  "archivedUtc": "2026-10-08T23:55:48.1065981Z",
+  "originalPath": ".build/artifacts/dev25-business-handoff-checkpoint/entry-default-unsigned.hap",
+  "retainedPath": ".build/artifacts/dev25-business-handoff-checkpoint-stage2/entry-default-unsigned.hap",
+  "bytes": 30173418,
+  "sha256": "4E00DBBBD81F1690C57A79010AFB25E842035EFE6919AD888362BBDDBB1D016F",
+  "installed": false,
+  "note": "Guard for raw >100 LF rows added after this source/build; final retry2 required"
+}

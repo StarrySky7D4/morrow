@@ -1,0 +1,380 @@
+Index.ets SHA256=a8dba778e44cc3771e60202595f542c71df6190956ed7145462ce2bde45e0778; SDK TypeScript=4.9.5
+✔ fresh actual Index methods use installed SDK compiler; emit source hash (2.0032ms)
+✔ all five fields retain original graphemes and UTF16 range in actual raw journal (116.3467ms)
+✖ IME candidate is journaled losslessly in all fields while business admission is blocked (89.3104ms)
+✖ invalid IME offset blocks retention and leaves previous confirmed raw values intact (89.1647ms)
+✔ older count cannot replace a newer edit or a newer UTF16 selection count (77.1171ms)
+✖ business validation revokes edits, selection, category, owner, command and foreground changes (67.5094ms)
+✖ later input during final raw flush prevents issuing a frozen business command (79.168ms)
+✖ over-limit title keeps every character and confirmed pins without business mutation (71.0969ms)
+✖ count worker failure never authorizes business or normalizes original input (68.1965ms)
+✖ unknown raw journal preserves exact pending request and confirmed pins, no business issue (66.2913ms)
+✖ unknown business reply retains original serialized command and raw snapshot with confirmed pins (67.1284ms)
+✖ create/edit business send preserves exact source strings and binds confirmed generation (65.4776ms)
+✔ task_add validates full raw text and does not consume later text or IME (56.4562ms)
+✔ task rename validates its untrimmed original while command retains established trimming (57.4397ms)
+✔ same-value rename roundtrip after issue does not consume newer input epoch (55.2258ms)
+✔ actual cancel callback invalidates pending validation and later reopen is not consumed (59.0833ms)
+✔ unknown rename preserves original request and frozen raw identity through explicit reconciliation (59.9657ms)
+✔ confirmed not-committed rename clears only frozen request, preserving user text (69.8838ms)
+✔ foreground loss after issued rename revokes successful input consumption (69.7727ms)
+✔ late IME rename callback during issued business request retains newer candidate (79.0353ms)
+✔ actual ordinary-field construction selections do not change raw or epoch before focus, including during restore (125.147ms)
+✔ actual unfocused initialization cannot clear or overwrite an existing unknown event (54.4586ms)
+✔ actual focused invalid ranges remain exact uncaptured events in active and disabled ordinary fields (1110.1901ms)
+✔ actual focused valid reverse selection preserves complete composition, UTF16 metadata and confirmed pins (51.5743ms)
+✔ actual blur excludes subsequent unfocused ranges without erasing the invalid selection already delivered (54.3568ms)
+✔ actual old or revoked leases cannot submit valid, invalid, focus or text events to a replacement editor (106.5043ms)
+✔ actual disabled text and preview still retain exact events regardless of focused selection admission (107.4617ms)
+✔ actual focused valid retirement selection retains original event and local range without writing a retired raw scope (52.4839ms)
+ℹ Error: Test "business validation revokes edits, selection, category, owner, command and foreground changes" at hmos\tool\index-editor-field-integration.test.cjs:172:1 generated asynchronous activity after the test ended. This activity created the error "Error: 编辑器保存必须使用完整原请求日志" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+ℹ Error: Test "later input during final raw flush prevents issuing a frozen business command" at hmos\tool\index-editor-field-integration.test.cjs:191:1 generated asynchronous activity after the test ended. This activity created the error "Error: 编辑器保存必须使用完整原请求日志" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+Index.ets SHA256=a8dba778e44cc3771e60202595f542c71df6190956ed7145462ce2bde45e0778; SDK TypeScript=4.9.5
+✖ actual Index create sends one immutable operation with complete raw todos and confirmed publication (146.9438ms)
+✔ new-card todos composition is preserved in confirmed raw but never admitted as create (110.0155ms)
+✔ complete grapheme overflow or 101 original blank rows stay raw without a partial create (184.6337ms)
+✖ unready direct-input or row formatting blocks business while exact raw remains retainable (94.5489ms)
+✖ backend known rejection preserves full todos/pins and requires an explicit new save (92.2977ms)
+✖ Unknown create retains exact wire and explicit retry does not borrow later todos (77.9911ms)
+✖ raw journal Unknown reconciles only its original todos; later rows need a fresh confirmed publication (83.3806ms)
+✖ structured unconfirmed or historical committed error preserves the original create wire (80.4168ms)
+✖ late todos text/range/composition/edit-away-back revokes create input consumption (68.1238ms)
+✔ a different editor owner with identical raw values cannot be consumed by an old create receipt (69.8667ms)
+✖ successful exact create retires its full raw generation without emptying/normalizing it first (67.6771ms)
+✖ late input/range/roundtrip/actual SDK callback or owner change during discard never closes the live editor (72.6876ms)
+✖ invalid discard receipt retains its original retirement request and raw editor (76.7098ms)
+✖ existing V2 edit leaves single pending task input separate and sends no legacy todos or task command (98.8365ms)
+✖ actual create admission rejects a command borrowing different raw todos (82.769ms)
+✔ emit fresh source identity for the actual Index business boundary (1.3041ms)
+ℹ tests 44
+ℹ suites 0
+ℹ pass 23
+ℹ fail 21
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3813.4416
+
+✖ failing tests:
+
+test at hmos\tool\index-editor-field-integration.test.cjs:143:1
+✖ IME candidate is journaled losslessly in all fields while business admission is blocked (89.3104ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:149:74)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:154:1
+✖ invalid IME offset blocks retention and leaves previous confirmed raw values intact (89.1647ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:158:18)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:172:1
+✖ business validation revokes edits, selection, category, owner, command and foreground changes (67.5094ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:177:14)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-field-integration.test.cjs:191:1
+✖ later input during final raw flush prevents issuing a frozen business command (79.168ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:194:28)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-field-integration.test.cjs:199:1
+✖ over-limit title keeps every character and confirmed pins without business mutation (71.0969ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:202:18)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:207:1
+✖ count worker failure never authorizes business or normalizes original input (68.1965ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:209:75)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:214:1
+✖ unknown raw journal preserves exact pending request and confirmed pins, no business issue (66.2913ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:216:79)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:222:1
+✖ unknown business reply retains original serialized command and raw snapshot with confirmed pins (67.1284ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:224:67)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-field-integration.test.cjs:230:1
+✖ create/edit business send preserves exact source strings and binds confirmed generation (65.4776ms)
+  Error: 编辑器保存必须使用完整原请求日志
+      at ActualIndexFields.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:597:19)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-field-integration.test.cjs:233:18)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:189:1
+✖ actual Index create sends one immutable operation with complete raw todos and confirmed publication (146.9438ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:192:64)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:219:1
+✖ unready direct-input or row formatting blocks business while exact raw remains retainable (94.5489ms)
+  AssertionError [ERR_ASSERTION]: direct
+  + actual - expected
+  
+  + ''
+  - 'pending\nfull raw'
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:225:14)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: 'pending\nfull raw',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:233:1
+✖ backend known rejection preserves full todos/pins and requires an explicit new save (92.2977ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:237:28)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:245:1
+✖ Unknown create retains exact wire and explicit retry does not borrow later todos (77.9911ms)
+  TypeError: Cannot read properties of undefined (reading 'serialized')
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:250:53)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:259:1
+✖ raw journal Unknown reconciles only its original todos; later rows need a fresh confirmed publication (83.3806ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:268:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:273:1
+✖ structured unconfirmed or historical committed error preserves the original create wire (80.4168ms)
+  TypeError: Cannot read properties of undefined (reading 'serialized')
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:277:55)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:284:1
+✖ late todos text/range/composition/edit-away-back revokes create input consumption (68.1238ms)
+  AssertionError [ERR_ASSERTION]: text
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:288:30)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:309:1
+✖ successful exact create retires its full raw generation without emptying/normalizing it first (67.6771ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:311:41)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:319:1
+✖ late input/range/roundtrip/actual SDK callback or owner change during discard never closes the live editor (72.6876ms)
+  AssertionError [ERR_ASSERTION]: input
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:323:30)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:351:1
+✖ invalid discard receipt retains its original retirement request and raw editor (76.7098ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:356:28)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:366:1
+✖ existing V2 edit leaves single pending task input separate and sends no legacy todos or task command (98.8365ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:368:75)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-editor-todos-integration.test.cjs:375:1
+✖ actual create admission rejects a command borrowing different raw todos (82.769ms)
+  AssertionError [ERR_ASSERTION]: actual Index methods returned no late platform/helper error
+  + actual - expected
+  
+  + [
+  +   Error: 编辑器保存必须使用完整原请求日志
+  +       at ActualIndexTodosBusiness.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:510:19)
+  +       at page.<computed> [as submit] (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:169:35)
+  +       at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:380:18)
+  +       at Test.runInAsyncScope (node:async_hooks:228:14)
+  +       at Test.run (node:internal/test_runner/test:1118:25)
+  +       at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+  +       at Test.postRun (node:internal/test_runner/test:1247:19)
+  +       at Test.run (node:internal/test_runner/test:1175:12)
+  +       at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+  + ]
+  - []
+  
+      at finish (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:178:14)
+      at async Object.close (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:182:32)
+      at async TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:382:15)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [
+      Error: 编辑器保存必须使用完整原请求日志
+          at ActualIndexTodosBusiness.submit (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:510:19)
+          at page.<computed> [as submit] (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:169:35)
+          at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-editor-todos-integration.test.cjs:380:18)
+          at Test.runInAsyncScope (node:async_hooks:228:14)
+          at Test.run (node:internal/test_runner/test:1118:25)
+          at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+          at Test.postRun (node:internal/test_runner/test:1247:19)
+          at Test.run (node:internal/test_runner/test:1175:12)
+          at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+    ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

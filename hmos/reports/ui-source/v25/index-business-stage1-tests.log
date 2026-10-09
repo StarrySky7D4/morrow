@@ -1,0 +1,141 @@
+Index.ets SHA256=cf7eeb297ddef141900e53568f8bc330e0a9b3e81a25272e20bb63cd6f28a2b6
+EditorDraft.ets SHA256=25257098b3a71e1014bef552d100617fd0e34573706c91fdfc61b2f12116e495
+EditorBusiness.ets SHA256=6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf
+EditorBusinessSession.ets SHA256=948c7b9105675a65406cf980f8a8982500954e87e33189878a5f32c58871af86
+EditorFieldPolicy.ets SHA256=10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842
+Workbench.ets SHA256=1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf
+✔ fresh actual Index/ETS source identities; controlled receiver boundaries are explicit (2.1637ms)
+✖ actual new-card Save persists complete raw before pause and durable intent before business admission (226.5968ms)
+✖ actual unchanged existing-card Save establishes publication and preserves source/tasks semantics (177.7709ms)
+✖ actual first business send synchronously admits Workbench before resuming parent debounce (134.907ms)
+✔ actual S2 during raw publication cancels unissued proposal while keeping complete input (116.0546ms)
+✖ issued-before-first-send S2 blocks auto-save; explicit read-only restore retries fixed S1 literal (124.3019ms)
+✖ actual selection-only S2 after issue cannot be consumed by same-text S1 success (114.8356ms)
+✖ actual first save Unknown retries same session and literal without reconstructing current S2 (103.2732ms)
+✖ actual committed effect with invalid DTO remains known through attempted save and failed inspection (99.5802ms)
+✖ actual list and five-part restore are read-only; same-card different draft does not bind consumption (104.1351ms)
+✖ actual failed partial restoration leaves original discovery reference and never auto-replays (106.1198ms)
+✖ actual old submit rejects create/edit and unfinished strict session blocks ordinary mutation/discard/close (101.7029ms)
+✖ actual ordinary task command remains separate from strict create/edit transport (100.5929ms)
+✔ actual Store DTO fixture through Index restore/inspect preserves original wire and full historical source (103.5154ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 3
+ℹ fail 11
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2140.9475
+
+✖ failing tests:
+
+test at hmos\tool\index-business-integration.test.cjs:18:1
+✖ actual new-card Save persists complete raw before pause and durable intent before business admission (226.5968ms)
+  TypeError: Cannot read properties of undefined (reading 'qualified')
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:21:26)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-business-integration.test.cjs:33:1
+✖ actual unchanged existing-card Save establishes publication and preserves source/tasks semantics (177.7709ms)
+  TypeError: Cannot read properties of undefined (reading 'qualified')
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:36:20)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-business-integration.test.cjs:43:1
+✖ actual first business send synchronously admits Workbench before resuming parent debounce (134.907ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(admitted >= 0 && admitted < resumed && resumed < native)
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:48:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-business-integration.test.cjs:62:1
+✖ issued-before-first-send S2 blocks auto-save; explicit read-only restore retries fixed S1 literal (124.3019ms)
+  TypeError: Cannot read properties of undefined (reading 'originalRequest')
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:68:66)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-business-integration.test.cjs:79:1
+✖ actual selection-only S2 after issue cannot be consumed by same-text S1 success (114.8356ms)
+  TypeError: Cannot read properties of undefined (reading 'qualified')
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:82:62)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-business-integration.test.cjs:88:1
+✖ actual first save Unknown retries same session and literal without reconstructing current S2 (103.2732ms)
+  TypeError: Cannot read properties of undefined (reading 'originalSave')
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:92:85)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-business-integration.test.cjs:99:1
+✖ actual committed effect with invalid DTO remains known through attempted save and failed inspection (99.5802ms)
+  TypeError: Cannot read properties of undefined (reading 'committed')
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:103:75)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-business-integration.test.cjs:110:1
+✖ actual list and five-part restore are read-only; same-card different draft does not bind consumption (104.1351ms)
+  SyntaxError: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at Object.metadataView (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-test-harness.cjs:87:20)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:113:41)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-business-integration.test.cjs:125:1
+✖ actual failed partial restoration leaves original discovery reference and never auto-replays (106.1198ms)
+  SyntaxError: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at Object.metadataView (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-test-harness.cjs:87:20)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:128:41)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at hmos\tool\index-business-integration.test.cjs:136:1
+✖ actual old submit rejects create/edit and unfinished strict session blocks ordinary mutation/discard/close (101.7029ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:144:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-business-integration.test.cjs:148:1
+✖ actual ordinary task command remains separate from strict create/edit transport (100.5929ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:151:42)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

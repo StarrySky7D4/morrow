@@ -1,0 +1,51 @@
+Index.ets SHA256=3b5164d9e033b246cdd582a05b5cfa0f21f6d9d85e55484233efd03274439a9d
+EditorDraft.ets SHA256=82a89ae117c46810ca630e626caeb0cfb594b5f8b801dab71e4217be36b53539
+EditorBusiness.ets SHA256=6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf
+EditorBusinessSession.ets SHA256=948c7b9105675a65406cf980f8a8982500954e87e33189878a5f32c58871af86
+EditorFieldPolicy.ets SHA256=10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842
+Workbench.ets SHA256=1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf
+ACTUAL_INDEX_SOURCE_FREEZE=[{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusiness.ets","sha256":"6469d1f2af4e2da6b9066b52917e658bc13ececb4ef2a4e6b92fbb4ad0d996cf"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessSession.ets","sha256":"948c7b9105675a65406cf980f8a8982500954e87e33189878a5f32c58871af86"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraft.ets","sha256":"82a89ae117c46810ca630e626caeb0cfb594b5f8b801dab71e4217be36b53539"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraftFork.ets","sha256":"2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorFieldPolicy.ets","sha256":"10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorPaste.ets","sha256":"28d54a7d02bf644d68b58ac68a4d824ab2ff3fb71b87ab0e00c279456b6d160e"},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\Workbench.ets","sha256":"1a5bcbee38ce7267b2e178fcfeffb445aaa029ab73c9074b7593b147569269bf"}]
+✔ fresh actual Index/ETS source identities; controlled receiver boundaries are explicit (2.1195ms)
+✔ actual new-card Save persists complete raw before pause and durable intent before business admission (193.9177ms)
+✔ actual unchanged existing-card Save establishes publication and preserves source/tasks semantics (148.446ms)
+✔ actual first business send synchronously admits Workbench before resuming parent debounce (122.8686ms)
+✔ actual S2 during raw publication cancels unissued proposal while keeping complete input (115.0743ms)
+✖ first proved no-write intent prepare does not strand the complete editor behind an unprepared session (117.3225ms)
+✔ prepare ACK Unknown stays blocked and a later no-write reply cannot release that original uncertainty (115.0617ms)
+✔ actual Workbench tail orders S1 business before later complete S2 raw persistence (99.3264ms)
+✔ issued-before-first-send S2 blocks auto-save; explicit read-only restore retries fixed S1 literal (99.4416ms)
+✔ actual selection-only S2 after issue cannot be consumed by same-text S1 success (96.1646ms)
+✔ actual first save Unknown retries same session and literal without reconstructing current S2 (104.8327ms)
+✔ actual committed effect with invalid DTO remains known through attempted save and failed inspection (98.9641ms)
+✔ actual list and five-part restore are read-only; same-card different draft does not bind consumption (101.3303ms)
+✔ actual failed partial restoration leaves original discovery reference and never auto-replays (97.3853ms)
+✔ actual old submit rejects create/edit and unfinished strict session blocks ordinary mutation/discard/close (105.8789ms)
+✔ actual ordinary task command remains separate from strict create/edit transport (94.4762ms)
+✔ actual Store DTO fixture through Index restore/inspect preserves original wire and full historical source (96.4865ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 16
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2337.0695
+
+✖ failing tests:
+
+test at hmos\tool\index-business-integration.test.cjs:64:1
+✖ first proved no-write intent prepare does not strand the complete editor behind an unprepared session (117.3225ms)
+  AssertionError [ERR_ASSERTION]: proven unprepared no-write proposal must permit correction/new Save
+  
+  true !== false
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-integration.test.cjs:70:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -63,6 +63,29 @@ export class DraftRecord {
   request_sha256: string = '';
   fork_link: DraftForkLink | null = null;
   fork_retirement: DraftForkRetirement | null = null;
+  business_link: DraftBusinessLink | null = null;
+  business_retirement: DraftBusinessRetirement | null = null;
+}
+
+// Separate development business lineage (native slots 15/16). These hashes
+// describe actual native history; a caller-created value grants no authority.
+export class DraftBusinessProof {
+  draft_id: string = ''; generation: string = ''; save_operation: string = ''; request_sha256: string = '';
+}
+export class DraftBusinessIntentProof {
+  intent_id: string = ''; prepare_operation: string = ''; generation: string = '1';
+  prepared_record_sha256: string = ''; request_sha256: string = '';
+}
+export class DraftBusinessLink {
+  schema_version: number = 1; parent: DraftBusinessProof = new DraftBusinessProof();
+  intent: DraftBusinessIntentProof = new DraftBusinessIntentProof(); plan_operation: string = '';
+  handoff_request_sha256: string = ''; child_operation: string = ''; committed_operation: string = '';
+  committed_revision: string = ''; command_sha256: string = ''; content_sha256: string = '';
+  request_sha256: string = ''; publication_sha256: string = '';
+}
+export class DraftBusinessRetirement {
+  schema_version: number = 1; child_draft_id: string = ''; operation_id: string = '';
+  business_link: DraftBusinessLink = new DraftBusinessLink();
 }
 
 // Independent development lineage; never a protected capture/handoff ticket.
@@ -133,7 +156,71 @@ export function copyRecord(record: DraftRecord): DraftRecord {
   result.request_sha256 = record.request_sha256 ?? '';
   result.fork_link = record.fork_link ? copyForkLink(record.fork_link) : null;
   result.fork_retirement = record.fork_retirement ? copyForkRetirement(record.fork_retirement) : null;
+  result.business_link = record.business_link ? copyBusinessLink(record.business_link) : null;
+  result.business_retirement = record.business_retirement ? copyBusinessRetirement(record.business_retirement) : null;
   return result;
+}
+
+export function copyBusinessLink(link: DraftBusinessLink): DraftBusinessLink {
+  return JSON.parse(JSON.stringify(link)) as DraftBusinessLink;
+}
+export function copyBusinessRetirement(marker: DraftBusinessRetirement): DraftBusinessRetirement {
+  return JSON.parse(JSON.stringify(marker)) as DraftBusinessRetirement;
+}
+export function sameBusinessLink(a: DraftBusinessLink, b: DraftBusinessLink): boolean {
+  return a.schema_version === b.schema_version && sameBusinessProof(a.parent, b.parent) &&
+    a.intent.intent_id === b.intent.intent_id && a.intent.prepare_operation === b.intent.prepare_operation &&
+    a.intent.generation === b.intent.generation && a.intent.prepared_record_sha256 === b.intent.prepared_record_sha256 &&
+    a.intent.request_sha256 === b.intent.request_sha256 && a.plan_operation === b.plan_operation &&
+    a.handoff_request_sha256 === b.handoff_request_sha256 && a.child_operation === b.child_operation &&
+    a.committed_operation === b.committed_operation && a.committed_revision === b.committed_revision &&
+    a.command_sha256 === b.command_sha256 && a.content_sha256 === b.content_sha256 &&
+    a.request_sha256 === b.request_sha256 && a.publication_sha256 === b.publication_sha256;
+}
+export function sameBusinessProof(a: DraftBusinessProof, b: DraftBusinessProof): boolean {
+  return a.draft_id === b.draft_id && a.generation === b.generation && a.save_operation === b.save_operation &&
+    a.request_sha256 === b.request_sha256;
+}
+function businessKeys(value: Object, keys: string[]): void {
+  if (!value || typeof value !== 'object' || Array.isArray(value) ||
+    Object.keys(value).sort().join('|') !== keys.slice().sort().join('|')) { throw new Error('Incomplete business draft relation'); }
+}
+function businessIdentity(value: string): void {
+  if (typeof value !== 'string' || !value || /[\u0000-\u001f\u007f-\u009f/\\:]/.test(value)) {
+    throw new Error('Invalid business draft identity');
+  }
+  let count = 0;
+  for (let index: number = 0; index < value.length; index++) {
+    const code = value.charCodeAt(index);
+    if (code >= 0xD800 && code <= 0xDBFF) {
+      const low = value.charCodeAt(++index); if (!(low >= 0xDC00 && low <= 0xDFFF)) { throw new Error('Incomplete business draft identity'); }
+      count += 4;
+    } else if (code >= 0xDC00 && code <= 0xDFFF) { throw new Error('Incomplete business draft identity'); }
+    else { count += code < 0x80 ? 1 : code < 0x800 ? 2 : 3; }
+  }
+  if (count > 256) { throw new Error('Business draft identity bytes limit'); }
+}
+export function validateBusinessProof(proof: DraftBusinessProof): void {
+  businessKeys(proof, ['draft_id', 'generation', 'save_operation', 'request_sha256']);
+  businessIdentity(proof.draft_id); businessIdentity(proof.save_operation);
+  if (!validGeneration(proof.generation) || proof.generation === '0' || proof.generation === '18446744073709551615' ||
+    typeof proof.request_sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(proof.request_sha256)) { throw new Error('Invalid business parent proof'); }
+}
+export function validateBusinessLink(link: DraftBusinessLink): void {
+  businessKeys(link, ['schema_version', 'parent', 'intent', 'plan_operation', 'handoff_request_sha256', 'child_operation',
+    'committed_operation', 'committed_revision', 'command_sha256', 'content_sha256', 'request_sha256', 'publication_sha256']);
+  validateBusinessProof(link.parent);
+  businessKeys(link.intent, ['intent_id', 'prepare_operation', 'generation', 'prepared_record_sha256', 'request_sha256']);
+  businessIdentity(link.intent.prepare_operation); businessIdentity(link.plan_operation);
+  businessIdentity(link.child_operation); businessIdentity(link.committed_operation);
+  if (link.schema_version !== 1 || !/^morrow-host-editor-intent-[0-9a-f]{64}$/.test(link.intent.intent_id) ||
+    link.intent.generation !== '1' || !validGeneration(link.committed_revision) || link.committed_revision === '0' ||
+    [link.intent.prepared_record_sha256, link.intent.request_sha256, link.handoff_request_sha256,
+      link.command_sha256, link.content_sha256, link.request_sha256, link.publication_sha256].some((value: string): boolean =>
+        typeof value !== 'string' || !/^[0-9a-f]{64}$/.test(value)) ||
+    link.intent.request_sha256 !== link.request_sha256 ||
+    new Set<string>([link.parent.save_operation, link.intent.prepare_operation, link.plan_operation,
+      link.child_operation, link.committed_operation]).size !== 5) { throw new Error('Invalid complete business draft link'); }
 }
 
 export function copyForkLink(link: DraftForkLink): DraftForkLink {
@@ -265,15 +352,21 @@ export function validateForkProof(link: DraftForkLink): void {
 export function validateRecord(record: DraftRecord, requireDigest: boolean = false): void {
   const link = record.fork_link;
   const marker = record.fork_retirement;
+  const business = record.business_link;
+  const retirement = record.business_retirement;
   const digest = record.request_sha256 ?? '';
   if (link !== undefined && link !== null && typeof link !== 'object' ||
-    marker !== undefined && marker !== null && typeof marker !== 'object') {
+    marker !== undefined && marker !== null && typeof marker !== 'object' ||
+    business !== undefined && business !== null && typeof business !== 'object' ||
+    retirement !== undefined && retirement !== null && typeof retirement !== 'object' ||
+    !!link && !!business || !!marker && !!retirement) {
     throw new Error('Invalid development draft fork relation');
   }
   if (typeof record.active !== 'boolean' || typeof record.current_active !== 'boolean') {
     throw new Error('Invalid draft receipt active state');
   }
-  if (record.request_sha256 === null || typeof digest !== 'string' || (requireDigest || !!link || !!marker || digest.length > 0) && !/^[0-9a-f]{64}$/.test(digest)) {
+  if (record.request_sha256 === null || typeof digest !== 'string' ||
+    (requireDigest || !!link || !!marker || !!business || !!retirement || digest.length > 0) && !/^[0-9a-f]{64}$/.test(digest)) {
     throw new Error('Invalid draft canonical request digest');
   }
   if (link) {
@@ -296,10 +389,32 @@ export function validateRecord(record: DraftRecord, requireDigest: boolean = fal
       throw new Error('Development fork retirement receipt differs');
     }
   }
-  validateValues(record.values, !!link);
+  if (business) {
+    validateBusinessLink(business);
+    if (business.parent.draft_id === record.scope.draft_id || record.scope.source_kind !== 0 ||
+      record.scope.source_revision !== business.committed_revision || !/^(?:[0-9a-f]{2})+$/.test(record.scope.source) ||
+      !validGeneration(record.generation) || record.generation === '0' ||
+      record.generation === '1' && record.operation_id !== business.child_operation) {
+      throw new Error('Business child receipt binding differs');
+    }
+  }
+  if (retirement) {
+    businessKeys(retirement, ['schema_version', 'child_draft_id', 'operation_id', 'business_link']);
+    validateBusinessLink(retirement.business_link); businessIdentity(retirement.child_draft_id); businessIdentity(retirement.operation_id);
+    const parent = retirement.business_link.parent;
+    if (retirement.schema_version !== 1 || retirement.child_draft_id === record.scope.draft_id ||
+      parent.draft_id !== record.scope.draft_id || record.active || record.generation !== nextGeneration(parent.generation) ||
+      record.operation_id !== parent.save_operation || digest !== parent.request_sha256 ||
+      [parent.save_operation, retirement.business_link.child_operation, retirement.business_link.plan_operation,
+        retirement.business_link.intent.prepare_operation, retirement.business_link.committed_operation].includes(retirement.operation_id)) {
+      throw new Error('Business parent retirement receipt differs');
+    }
+  }
+  validateValues(record.values, !!link || !!business);
   validateRecordAssets(record);
   if (record.values.assets.some((asset: AssetSelection): boolean => asset.origin === 4) &&
-    (!link || record.active && record.generation !== '1' || record.operation_id !== link.child_operation)) {
+    (!(link || business) || record.active && record.generation !== '1' ||
+      record.operation_id !== (link ? link.child_operation : business!.child_operation))) {
     throw new Error('Parent pins require the exact first development fork receipt');
   }
 }
@@ -369,7 +484,7 @@ export class EditorDraftCoordinator {
       (scope.source_kind === 0 ? scope.source_revision === '0' : scope.source_revision !== '0') ||
       !Number.isFinite(debounce) || debounce < 0) { throw new Error('Invalid draft scope'); }
     if (restored !== undefined) { validateRecord(restored); }
-    validateValues(initial, !!restored?.fork_link);
+    validateValues(initial, !!restored?.fork_link || !!restored?.business_link);
     this.ownedScope = copyScope(scope); this.ownedCurrent = copyValues(initial); this.baseline = copyValues(initial);
     this.send = send; this.changed = changed; this.operationFactory = operationFactory; this.debounce = debounce;
     if (restored !== undefined) {
@@ -378,7 +493,7 @@ export class EditorDraftCoordinator {
         restored.generation === '0' || !validGeneration(restored.current_generation)) {
         throw new Error('Invalid restored draft record');
       }
-      if (restored.fork_link && restored.scope.source !== this.ownedScope.source) { throw new Error('Restored development fork source differs'); }
+      if ((restored.fork_link || restored.business_link) && restored.scope.source !== this.ownedScope.source) { throw new Error('Restored development lineage source differs'); }
       if (initial.assets.some((asset: AssetSelection): boolean => asset.origin === 4 &&
         !restored.assets.some((pin: StoredAsset): boolean => pin.selection.asset_id === asset.asset_id))) {
         throw new Error('Restored development parent pin is not confirmed');
@@ -409,14 +524,22 @@ export class EditorDraftCoordinator {
   get disposed(): boolean { return this.stopped; }
   get writesPaused(): boolean { return this.paused; }
 
+  // Observe only work which is already issued. This may run while paused;
+  // dirty S2 stays in memory and Unknown is never replayed or cleared here.
+  async settleIssued(): Promise<DraftRecord | undefined> {
+    this.requireOpen(); const issued = this.inFlight;
+    if (issued !== undefined) { await issued; }
+    this.requireOpen(); return this.confirmed;
+  }
+
   // Pausing never cancels issued work or replaces complete current raw input.
   pauseWrites(): void { this.requireOpen(); this.paused = true; this.cancelTimer(); this.notify(); }
   resumeWrites(): void { this.requireOpen(); this.paused = false; this.schedule(); this.notify(); }
 
   update(values: Values): void {
-    this.requireOpen(); validateValues(values, !!this.ownedConfirmed?.fork_link);
+    this.requireOpen(); validateValues(values, !!this.ownedConfirmed?.fork_link || !!this.ownedConfirmed?.business_link);
     const latest = copyValues(values);
-    if (this.ownedConfirmed?.fork_link && (this.forkOriginsPromoted || !sameValues(latest, this.ownedCurrent))) {
+    if ((this.ownedConfirmed?.fork_link || this.ownedConfirmed?.business_link) && (this.forkOriginsPromoted || !sameValues(latest, this.ownedCurrent))) {
       this.promoteForkAssets(latest); this.forkOriginsPromoted = true;
     }
     if (sameValues(latest, this.ownedCurrent)) { return; }
@@ -495,7 +618,7 @@ export class EditorDraftCoordinator {
   }
 
   private freeze(): void {
-    if (this.ownedConfirmed?.fork_link) {
+    if (this.ownedConfirmed?.fork_link || this.ownedConfirmed?.business_link) {
       this.promoteForkAssets(this.ownedCurrent); this.forkOriginsPromoted = true;
     }
     this.frozen = copyValues(this.ownedCurrent); this.operation = this.operationFactory();
@@ -537,8 +660,12 @@ export class EditorDraftCoordinator {
       const record = await this.send(this.serialized as string);
       this.requireOpen(); validateRecord(record);
       const priorLink = this.ownedConfirmed?.fork_link;
+      const priorBusiness = this.ownedConfirmed?.business_link;
       if (!!priorLink !== !!record.fork_link || priorLink && record.fork_link && !sameForkLink(priorLink, record.fork_link) ||
-        priorLink && record.scope.source !== this.ownedScope.source || record.fork_retirement) {
+        priorLink && record.scope.source !== this.ownedScope.source || record.fork_retirement || record.business_retirement ||
+        !!priorBusiness !== !!record.business_link ||
+        priorBusiness && record.business_link && !sameBusinessLink(priorBusiness, record.business_link) ||
+        priorBusiness && record.scope.source !== this.ownedScope.source) {
         throw new Error('Draft receipt changed development lineage');
       }
       for (const asset of record.assets ?? []) {
@@ -586,7 +713,7 @@ export class EditorDraftCoordinator {
       if (selected.origin === 4 && !confirmed) {
         throw new Error('Development parent pin is not confirmed');
       }
-      if (this.ownedConfirmed?.fork_link && confirmed) {
+      if ((this.ownedConfirmed?.fork_link || this.ownedConfirmed?.business_link) && confirmed) {
         selected.origin = 3;
       }
     }

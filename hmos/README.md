@@ -1,6 +1,10 @@
 # Morrow HMOS
 
-2026-10-07 **v24 当前分支检查点**：普通字段恢复选区先核焦点与 lease owner；待办初建控件用一次性初始化能力确认原始显示回声，避免其被误报为未完整捕获。冻结 Index `AFF77EB7…` / Todo `83B6C6A5…`。API26/x64 的独立 UI 候选 **29,107,139 字节 / B62DBD23…** 恢复公开 D 草稿，准确读回 `first 汉字 🧪 é.` 并显示 **13/1000**；随后“保留草稿”成功关闭编辑器、草稿数仍为3，业务提交数为0，两个阶段限定 **PASS**。该候选复用旧 v22 native，不包含新 intent 后端；见 [实际阶段证据](reports/ui-source/v24/device-fixed/progress-clipboard.json)与 [安装身份](reports/ui-source/v24/device-fixed/installation.json)。此前 96C0、3116 和诊断候选的失败或未知结果保留，不以本次限定通过覆盖。
+2026-10-09 **v25 当前分支检查点**：主页面保存已接入持久原请求的 prepare/issue/save/inspect 和只读发现/恢复入口；已确认业务后，准确 S1 关闭原草稿，完整较新 S2/S3 通过 typed business source0 子草稿接续，再条件退役父草稿。Unknown 保留固定原 wire，首次 prepare 明确未写入时只释放该提案，完整输入保留。重启后已计划步骤只读恢复 native 固定 literal，需显式核对，不生成另一套操作。
+
+本轮完整实际 ETS/tool **857/857 PASS**，Rust **177 library +3 binary PASS**（13 条默认条件 ignored，文档检查单独顺序通过），新 **48 个实际 Store 崩溃边界 PASS**；fresh 双 ABI 和 API26 完整产品构建 **SUCCESS /15.363s**，未签名包 **30,173,833B /9590D87D…**。详细结果见 [v25 验证](reports/ui-source/v25/validation.md)。**新 native / 新页面流程设备验收 NOT_RUN**；父草稿已缺失或子草稿已推进后的页面重启接续、关闭后卡片重开并继续全文 owned todos、元数据/TaskId 编辑后的完整对齐仍 OPEN。未将局部检查计作完整 Flutter/Windows 功能等价。版本保持 **dev19/1000019**，只推送 `codex/ArkTsUI`，不并入主线。以下记录保留各轮历史范围。
+
+2026-10-07 **v24 历史分支检查点**：普通字段恢复选区先核焦点与 lease owner；待办初建控件用一次性初始化能力确认原始显示回声，避免其被误报为未完整捕获。冻结 Index `AFF77EB7…` / Todo `83B6C6A5…`。API26/x64 的独立 UI 候选 **29,107,139 字节 / B62DBD23…** 恢复公开 D 草稿，准确读回 `first 汉字 🧪 é.` 并显示 **13/1000**；随后“保留草稿”成功关闭编辑器、草稿数仍为3，业务提交数为0，两个阶段限定 **PASS**。该候选复用旧 v22 native，不包含新 intent 后端；见 [实际阶段证据](reports/ui-source/v24/device-fixed/progress-clipboard.json)与 [安装身份](reports/ui-source/v24/device-fixed/installation.json)。此前 96C0、3116 和诊断候选的失败或未知结果保留，不以本次限定通过覆盖。
 
 本轮另冻结独立业务 intent journal 与 `EditorBusinessSession` 基础：prepare 保留完整原 Submission/publication 和 pins，issue CAS 持久生成实际 save/inspect literal，分 part 原样读回后才显式保存；Unknown 只核对或重试固定原 wire，prepared 可条件取消、issued 不可取消。首请求签发后晚 S2/owner 失效可显式只读恢复后结算原 S1，不消费 S2。原生库 **165 PASS /11 default ignored**、附件二进制 **3 PASS**，新24个真实 Store crash 向量及完整 DTO 导出已分别执行；ETS Session **30/30 PASS**，含真实 Store issued/closed 全五 part DTO，独立 API26 public-API 编译 **PASS /9.480s**。见 [native审计](reports/ui-source/v24/editor-intent-native-audit.md)、[Session审计](reports/ui-source/v24/editor-business-session-audit.md)和 [隔离SDK](reports/ui-source/v24/session-sdk/sdk-audit.md)。阶段/元数据回执不证明业务提交，development proof 不是 protected handoff 资格。
 
@@ -120,7 +124,7 @@ dev.13 内嵌预览另限同一进程/缓存根下最多 8 个活动图片、64 
 
 dev.14 媒体对话框与系统文件预览分别只允许同一进程/缓存根下一个活动文件，各自上限 200 MiB；新增系统预览入口不放宽附件导入/草稿的 64 MiB 预算。系统预览句柄同样只在进程内保留；系统窗口状态不能证明下游应用已经释放读取。API 26 没有系统栏显示开关的读回接口，因此全屏只接受已明确建立本应用系统栏基线的同一窗口；分屏、悬浮及 2-in-1 模式仍需单独验证。
 
-**正式业务在途请求、未确认草稿保存/弃稿及附件清理请求仍只在进程内保留；尚未接原 captured S1/S2 交接及正式提交跨进程 Unknown 恢复。** 突然终止只能恢复此前已确认的草稿代次；附件原 import 请求与缓存另有持久恢复和核对入口，不能替代业务 Unknown 恢复。已成功提交的卡片可重启读回。多选/空标题、真实音频输出/完整媒体格式矩阵、任意文件默认应用打开及dev.17真实系统富剪贴板/Office提供者和附件持久闭环、跨段连续全篇选择、插件运行/管理、网络服务、TLS、音乐工作区/歌词、字体文件导入、完整九语文案、完整宽屏矩阵和备份恢复仍待验收或补齐。外观与日常清单保存于 Preferences；草稿使用 Rust 核心事务日志，详见 [功能与复用清单](docs/PARITY.md)。
+**v25 正式业务原请求已持久保留并接入主页面发现、只读恢复和显式原请求核对。** 未确认草稿保存/弃稿及附件清理的在途协调仍有进程内边界；恢复原业务请求不等于重启后已恢复当前子草稿 writer。父草稿缺失、子草稿已推进或关闭后重开 owned todos 的页面接续仍 OPEN。附件原 import 请求与缓存另有持久恢复和核对入口；成功提交的卡片可重启读回。新 native 设备闭环、多选/空标题、真实音频输出/完整媒体格式矩阵、任意文件默认应用打开、完整富剪贴板/Office 提供者、跨段连续全篇选择、插件运行/管理、网络服务、TLS、音乐工作区/歌词、字体文件导入、完整九语文案、完整宽屏矩阵和备份恢复仍待验收或补齐。外观与日常清单保存于 Preferences；草稿使用 Rust 核心事务日志，详见 [功能与复用清单](docs/PARITY.md)。
 
 ## 跟随主任务
 

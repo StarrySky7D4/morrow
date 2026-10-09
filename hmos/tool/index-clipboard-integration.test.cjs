@@ -19,6 +19,7 @@ function section(from, to) {
   return source.slice(begin, end);
 }
 const methods = [
+  section('  private businessPending():', '  private businessImportsReady():'),
   section('  private pasteTargetName():', '  private async openMarkdownLink('),
   section('  private current():', '  private refreshPreview('),
   section('  private draftField(', '  private updateMarkdown('),
@@ -193,7 +194,11 @@ test('actual DirectInput remains current after paste adopts complete selection m
       assert.equal(h.page.directInput.canConfirm(key), true, 'each stopped field resumes: ' + key);
       assert.deepEqual(plain(h.page.directInput.view(key).value), plain(h.draft.current[key]), key);
     }
-    assert.equal(h.page.inputReadyFor('edit'), true); assert.equal(h.page.canPaste(), true);
+    // Background reset requires the independent row formatter to qualify its
+    // resumed revision too. Ordinary DirectInput completion cannot stand in for it.
+    assert.equal(h.page.inputReadyFor('edit'), false); assert.equal(h.page.canPaste(), true);
+    h.page.todoBusinessReady = true; // Controlled row readiness, as at initial harness mounting.
+    assert.equal(h.page.inputReadyFor('edit'), true);
   } finally { h.page.directInput.stop(); h.close(); }
 });
 test('paste and selected-import automatic titles hand complete raw/selection to actual DirectInput', async () => {

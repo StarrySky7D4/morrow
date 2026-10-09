@@ -31,6 +31,12 @@ pub fn request_sha256(request: &proto::WriteRequest) -> String {
 }
 pub(crate) fn require_mutable(host: &HostRuntime, card: &str, draft: &str) -> Result<()> {
     if fork::successor(host, card, draft)?.is_some() { return Err("DraftForkParentFrozen".into()); }
+    crate::editor_handoff::require_mutable(host, card, draft)?;
+    Ok(())
+}
+pub(crate) fn require_incoming_parent_retired(host: &HostRuntime, slot: &proto::Slot) -> Result<()> {
+    if slot.development_fork_link.is_some() { fork::require_parent_retired(host, slot)?; }
+    if slot.development_business_link.is_some() { crate::editor_handoff::require_parent_retired(host, slot)?; }
     Ok(())
 }
 
@@ -42,7 +48,7 @@ pub struct DraftRecord {
     pub current_active: bool,
     pub repeated: bool,
 }
-fn identity(card: &str, draft: &str, operation: &str) -> Result<()> {
+pub(crate) fn identity(card: &str, draft: &str, operation: &str) -> Result<()> {
     for id in [card, draft] {
         morrow_core::runtime::Command::ReadSummary {
             request_id: operation.into(),
@@ -53,7 +59,7 @@ fn identity(card: &str, draft: &str, operation: &str) -> Result<()> {
     }
     Ok(())
 }
-fn key(card: &str, draft: &str) -> String {
+pub(crate) fn key(card: &str, draft: &str) -> String {
     let mut hasher = Sha256::new();
     hasher.update((card.len() as u64).to_le_bytes());
     hasher.update(card.as_bytes());
@@ -105,10 +111,10 @@ fn validate_source(card: &CardRecord) -> Result<()> {
     }
     Ok(())
 }
-fn asset_pin(index: usize) -> String {
+pub(crate) fn asset_pin(index: usize) -> String {
     format!("draft-asset-{index}")
 }
-fn attachment(asset: &proto::StoredAsset) -> Result<Attachment> {
+pub(crate) fn attachment(asset: &proto::StoredAsset) -> Result<Attachment> {
     Ok(Attachment {
         id: asset.pin_id.clone(),
         display_name: asset.display_name.clone(),
@@ -121,7 +127,7 @@ fn attachment(asset: &proto::StoredAsset) -> Result<Attachment> {
             .map_err(|_| "draft asset digest")?,
     })
 }
-fn charge(slot: &proto::Slot) -> Result<u64> {
+pub(crate) fn charge(slot: &proto::Slot) -> Result<u64> {
     let mut metadata = slot.clone();
     metadata.active_bytes = 0;
     let mut blobs = 0_u64;
@@ -145,7 +151,7 @@ fn charge(slot: &proto::Slot) -> Result<u64> {
     }
     Err("draft byte accounting did not converge".into())
 }
-fn decode_body(raw: &[u8]) -> Result<proto::Slot> {
+pub(crate) fn decode_body(raw: &[u8]) -> Result<proto::Slot> {
     if raw.len() > MAX_BODY_BYTES {
         return Err("draft body limit".into());
     }
@@ -157,6 +163,10 @@ fn decode_body(raw: &[u8]) -> Result<proto::Slot> {
     if let Some(link) = &slot.development_fork_link {
         if request.expected_generation == 0 { validate_fork_request(request, link)?; }
         else { phase_request(request)?; fork::validate_link(request, link)?; }
+    } else if let Some(link) = &slot.development_business_link {
+        crate::editor_handoff::validate_link(request, link)?;
+        if request.expected_generation == 0 { crate::editor_handoff::validate_first(request)?; }
+        else { phase_request(request)?; }
     } else { phase_request(request)?; }
     if slot.parent_link.is_some()
         || slot.retirement.is_some()
@@ -166,6 +176,7 @@ fn decode_body(raw: &[u8]) -> Result<proto::Slot> {
         return Err("DraftPhaseUnsupported: lineage and captured recovery".into());
     }
     fork::validate_slot_shape(&slot)?;
+    crate::editor_handoff::validate_slot_shape(&slot)?;
     if slot.generation == 0
         || (slot.active && request.expected_generation.checked_add(1) != Some(slot.generation))
     {
@@ -243,14 +254,14 @@ pub fn is_journal(card: &CardRecord) -> bool {
 pub fn validate_journal(card: &CardRecord) -> Result<()> {
     decode_card(card).map(|_| ())
 }
-fn draft_card(host: &HostRuntime, card: &str, draft: &str) -> Result<Option<proto::Slot>> {
+pub(crate) fn draft_card(host: &HostRuntime, card: &str, draft: &str) -> Result<Option<proto::Slot>> {
     identity(card, draft, "draft-read")?;
     let Some(journal) = host.store_local().card(&key(card, draft)).map_err(err)? else {
         return Ok(None);
     };
     Ok(Some(decode_card(&journal)?))
 }
-fn draft_history(host: &HostRuntime, id: &str, operation: &str) -> Result<Option<proto::Slot>> {
+pub(crate) fn draft_history(host: &HostRuntime, id: &str, operation: &str) -> Result<Option<proto::Slot>> {
     if matches!(
         host.store_local().lookup(operation).map_err(err)?,
         Lookup::Absent
@@ -316,7 +327,7 @@ fn draft_history(host: &HostRuntime, id: &str, operation: &str) -> Result<Option
     }
     Ok(Some(slot))
 }
-fn all_draft_metadata(host: &HostRuntime) -> Result<Vec<proto::Slot>> {
+pub(crate) fn all_draft_metadata(host: &HostRuntime) -> Result<Vec<proto::Slot>> {
     let mut after = PREFIX.to_owned();
     let mut result = Vec::new();
     loop {
@@ -346,7 +357,7 @@ fn all_draft_metadata(host: &HostRuntime) -> Result<Vec<proto::Slot>> {
     }
     Ok(result)
 }
-fn write_draft_journal(
+pub(crate) fn write_draft_journal(
     host: &mut HostRuntime,
     id: &str,
     operation: &str,
@@ -654,6 +665,7 @@ fn save_internal(
         assets: stored,
         consumed_imports,
         development_fork_link: fork_link.cloned().or_else(|| previous.as_ref().and_then(|p| p.development_fork_link.clone())),
+        development_business_link: previous.as_ref().and_then(|p| p.development_business_link.clone()),
         ..Default::default()
     };
     slot.active_bytes = charge(&slot)?;
@@ -731,7 +743,7 @@ pub fn list(host: &HostRuntime) -> Result<Vec<DraftRecord>> {
         })
         .collect())
 }
-fn verify_pin(
+pub(crate) fn verify_pin(
     host: &HostRuntime,
     journal: &str,
     pin: &proto::StoredAsset,
@@ -970,6 +982,7 @@ pub fn discard_with_effect_at(
         }
         *effect = "committed";
         fork::verify_slot(host, &slot)?;
+        if slot.development_business_retirement.is_some() { return Err("BusinessRetirementRequiresDedicatedAction".into()); }
         if slot.development_fork_retirement.is_some() {
             return Err("DraftForkRetirementRequiresDedicatedAction".into());
         }
@@ -995,6 +1008,7 @@ pub fn discard_with_effect_at(
     fork::verify_slot(host, &slot)?;
     require_mutable(host, card, draft)?;
     if slot.development_fork_link.is_some() { fork::require_parent_retired(host, &slot)?; }
+    if slot.development_business_link.is_some() { crate::editor_handoff::require_parent_retired(host, &slot)?; }
     if !slot.active || slot.generation != expected {
         return Err("draft discard generation conflict".into());
     }
