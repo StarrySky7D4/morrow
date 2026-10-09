@@ -1,0 +1,12 @@
+{
+  "startedUtc": "2026-10-09T00:48:30.406Z",
+  "finishedUtc": "2026-10-09T00:48:59.189Z",
+  "exitCode": 0,
+  "signal": null,
+  "suites": 36,
+  "inputs": 125,
+  "sourceIdentityVerified": true,
+  "log": "models-final-tests.log",
+  "sha256": "26C31B55D54A4A385585EDA05473D47B5EFE9FE66956B8E025ACB4C8691E9A3C",
+  "scope": "Actual-source host tool/models and Index methods using Store-produced fixture DTOs. Controlled lifecycle/transport/render seams are not device acceptance. Full Flutter/Windows parity OPEN."
+}

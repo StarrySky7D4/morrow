@@ -1,0 +1,92 @@
+[
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorBusinessRecovery.ets",
+    "bytes": 10756,
+    "sha256": "062a7a50f220e27213f24fb3601892e3ab2c797c5e71bb0bb3d6f65675f3a88e"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorBusinessHandoff.ets",
+    "bytes": 47627,
+    "sha256": "fc2878c8f8fc2f312cf879023a1e445fe2cb3ae409755372feb9ffbc596723f0"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorBusiness.ets",
+    "bytes": 26878,
+    "sha256": "bbd4de0b1e02a67e19345147eb7de4c01622c1e015e12fb0c1431a101945c4fd"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorBusinessSession.ets",
+    "bytes": 40102,
+    "sha256": "58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorDraft.ets",
+    "bytes": 37929,
+    "sha256": "b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+    "bytes": 6929,
+    "sha256": "10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842"
+  },
+  {
+    "path": "hmos/entry/src/main/ets/model/EditorDraftFork.ets",
+    "bytes": 12805,
+    "sha256": "2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c"
+  },
+  {
+    "path": "hmos/tool/editor-business-recovery-model.test.cjs",
+    "bytes": 18482,
+    "sha256": "7930d64702f5fddccb2ede1cb6fac8374ebb50f4bca42762984070922940f00e"
+  },
+  {
+    "path": "hmos/tool/editor-business-handoff-model.test.cjs",
+    "bytes": 50979,
+    "sha256": "27aa2565dca25bfb9e9937f523395dcd1ccbc8dd6aec747701b2e85feb369ac3"
+  },
+  {
+    "path": "hmos/tool/editor-business-model.test.cjs",
+    "bytes": 31934,
+    "sha256": "cafc77cfdc2dac380b0e166a48e861a546e354a4034e149566f5bf1156665b4e"
+  },
+  {
+    "path": "hmos/tool/editor-business-session-model.test.cjs",
+    "bytes": 45882,
+    "sha256": "363e435d2af0eb7b5ab3ed382fdf129f67a2a5a54283fac7aca50d08599f2b59"
+  },
+  {
+    "path": "hmos/tool/editor-draft-model.test.cjs",
+    "bytes": 25895,
+    "sha256": "49207c19c446216ac726ff05ad223a2abaa216de01b0b5ee303d772df6a18a6f"
+  },
+  {
+    "path": "hmos/tool/editor-draft-fork-model.test.cjs",
+    "bytes": 23183,
+    "sha256": "6a22502fea43427953dc3075cc8b6a753dd343d82f8983ad92d0599898666517"
+  },
+  {
+    "path": "hmos/reports/ui-source/v22/editor-business-store-fixture.json",
+    "bytes": 16708,
+    "sha256": "7930bbe56c010ed33d80806703b3cff73d211fd4d631befd4681ae7e46d12c70"
+  },
+  {
+    "path": "hmos/reports/ui-source/v24/editor-intent-store-fixture.json",
+    "bytes": 39256,
+    "sha256": "9c8bd71ee6c42ad965a129973c5943f62a38261eef99310fa3d12af99a9999bb"
+  },
+  {
+    "path": "hmos/reports/ui-source/v25/editor-handoff-store-fixture.json",
+    "bytes": 91081,
+    "sha256": "9af7ccaabaf247bbb06e60cd7302da878f515baa3704495735542bdb783e486f"
+  },
+  {
+    "path": "hmos/reports/ui-source/v26/editor-current-v2-store-fixture.json",
+    "bytes": 38806,
+    "sha256": "50f9037b3a235cff72e1423bf4ce5f30cf6b655c243373fa7f6b273bb926b301"
+  },
+  {
+    "path": "hmos/reports/ui-source/v26/editor-reopen-history-store-fixture.json",
+    "bytes": 75959,
+    "sha256": "4191624d7b2894abc17a3874ea3005249b450e6ee270b9c880ea2f04530415db"
+  }
+]

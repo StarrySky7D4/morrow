@@ -1,0 +1,15 @@
+   Compiling morrow-core v0.1.9-test.50 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\shared\core)
+   Compiling morrow-editor-draft-model v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust\editor-draft-model)
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.17s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 5 tests
+test card_source_tests::actual_store_card_source_fixture ... ignored, explicit actual-Store DTO output path required
+test card_source_tests::native_v2_classification_follows_current_revisions_and_preserves_historical_contract ... ok
+test card_source_tests::migrated_legacy_classification_follows_actual_migration_metadata_and_current_body_edits ... ok
+test card_source_tests::empty_native_and_current_editor_marker_remain_v2_without_new_continuation_authority ... ok
+test card_source_tests::unknown_type_version_and_corrupt_origin_fail_closed_without_mutation_or_read_fallback ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 203 filtered out; finished in 1.94s
+

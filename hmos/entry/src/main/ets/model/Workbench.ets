@@ -5,6 +5,7 @@ import { AssetView, ImportRequest, ImportRecord } from './Attachments';
 export interface TaskView { id: string; text: string; completion: number; }
 export interface CardView {
   id: string; revision: string; source: string; title: string; description: string;
+  content_kind?: string;
   hypothesis: string; conclusion: string; category: string; stage: string;
   favorite: boolean; deleted: boolean; deleted_at: string; tasks: TaskView[]; assets: AssetView[];
 }

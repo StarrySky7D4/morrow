@@ -1,0 +1,32 @@
+{"qualification":"actual-Index-source-only","inputs":[{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\pages\\Index.ets","sha256":"c6ea5904225aa5d08ea3071eb6dcf93a39f964f72bbb6e424b34c587cb3107a1","bytes":333942},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusiness.ets","sha256":"bbd4de0b1e02a67e19345147eb7de4c01622c1e015e12fb0c1431a101945c4fd","bytes":26878},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessHandoff.ets","sha256":"fc2878c8f8fc2f312cf879023a1e445fe2cb3ae409755372feb9ffbc596723f0","bytes":47627},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessRecovery.ets","sha256":"062a7a50f220e27213f24fb3601892e3ab2c797c5e71bb0bb3d6f65675f3a88e","bytes":10756},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessSession.ets","sha256":"58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6","bytes":40102},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDirectInput.ets","sha256":"a56119b3dfc3ea52e83082f0654c6bd9164383a646af503b6d72ce2f0d7e6030","bytes":11848},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraft.ets","sha256":"b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775","bytes":37929},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraftFork.ets","sha256":"2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c","bytes":12805},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorFieldPolicy.ets","sha256":"10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842","bytes":6929},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorInputPolicy.ets","sha256":"64c86330d3dbc8fa85f88d6f0692d9ed15c88814c711f4f2b665827b3628ae2b","bytes":7887},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorPaste.ets","sha256":"28d54a7d02bf644d68b58ac68a4d824ab2ff3fb71b87ab0e00c279456b6d160e","bytes":2767},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorTodos.ets","sha256":"e7a0748f5066939ad42fa4a9b6bde3d9d9761e15df2e42403356c1277a48d710","bytes":21509},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\Workbench.ets","sha256":"6cef4c4c9cde5fefe44fc65619cf7caf8c4965b129a553d45d8afe701b2e6547","bytes":2418}]}
+✔ actual fresh reopen installs latest full source, empty LF and a real writer without borrowing old root or task labels (336.5043ms)
+✔ actual migrated legacy classification opens current_v2 with no raw LF reconstruction (207.1961ms)
+✔ actual fresh read rejects missing or unknown content kind, regardless of task ids or editor markers (713.2863ms)
+✔ fresh card or draft list Unknown does not install, dispose or dispatch a write (320.2545ms)
+✔ late fresh read cannot overwrite a newly owned real editor or complete raw selection (180.7615ms)
+✔ fresh read cutoff refuses dirty, background and replaced opening identity independently (490.4548ms)
+✔ actual fresh open guards existing input, native pending and retirement before any read (1086.452ms)
+✔ actual metadata eligibility is restricted to mounted new-card scope, both enabled and callback use the guard (152.3927ms)
+✔ actual Index restart reads fixed S2 history and advanced current child, installs the same real paused writer without any active parent (183.7352ms)
+✔ actual closed handoff restart uses retired parent history, keeps original close readonly and does not revive its Save (178.2148ms)
+✔ actual Unknown current read is explicitly retried through the identical queue wire and never first-sends raw or business (156.8917ms)
+✔ actual Unknown fixed parent history uses original operation/generation before current child and preserves own Session facts (168.1451ms)
+✔ actual late complete editor input during current recovery response cannot be overwritten or disposed (160.3384ms)
+✔ actual foreign or inactive current child response cannot create a grant or fake writer from first ACK (466.6088ms)
+✔ actual recovery preserves full child LF with source conflict after independent metadata or TaskId advances current card (165.3224ms)
+✔ actual current card native DTOs after metadata and TaskId reopen feed current_v2 strict Save with exact full source and no continuation root (323.5939ms)
+✔ actual fresh source accepts real AssetView names and rejects incomplete card DTOs before opening (924.5664ms)
+✔ actual fresh and recovery reads reject active file, paste, raw fork and owned boundary before queue admission (1238.8332ms)
+✔ actual intent-list restore then resume with no active parent reads current child and never creates a publication S1 writer (152.665ms)
+✔ actual recovered current child only retires fixed parent after explicit page action and a close rejection preserves current writer (183.465ms)
+✔ actual install refuses a different real prepared Recovery writer instead of granting from matching detached raw values (302.5292ms)
+✔ actual install refuses stale detached scope while preserving the same actual unclaimed writer and own known facts (160.2831ms)
+✔ actual fresh details open detects linked current draft and runs exact recovery before any editor attachment (157.8743ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13115.1932

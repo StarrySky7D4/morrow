@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "qualification": "PASS_SCOPED-native-current-card-source-v27",
+  "source_inputs": 4,
+  "source_drift": 0,
+  "default_command_exit": 0,
+  "default_library": {
+    "passed": 191,
+    "failed": 0,
+    "ignored": 17,
+    "seconds": 82.34
+  },
+  "attachment_binary": {
+    "passed": 3,
+    "failed": 0,
+    "seconds": 6.56
+  },
+  "self_check": {
+    "tests": 0,
+    "exit": 0
+  },
+  "doc_tests": {
+    "tests": 0,
+    "exit": 0
+  },
+  "focused": {
+    "passed": 4,
+    "failed": 0,
+    "ignored": 1,
+    "exit": 0,
+    "seconds": 1.94
+  },
+  "dto_export": {
+    "passed": 1,
+    "failed": 0,
+    "exit": 0,
+    "seconds": 0.52,
+    "bytes": 84863,
+    "sha256": "409C9ADF3FA6297AA60F9EA7130B8D39C451B37516965DA48D7C2548895449FF"
+  },
+  "crash_retest": {
+    "status": "NOT_RUN",
+    "reason": "v27 changes current read projection only; transaction implementation unchanged; previous v25/v26 crash results historical"
+  },
+  "open": [
+    "Index current source/restart integration qualification owned by Root",
+    "OHOS native ABI/SDK adoption and device transport/renders owned by Root",
+    "Full Flutter parity/product acceptance"
+  ]
+}

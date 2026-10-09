@@ -1,5 +1,11 @@
 # 持续追平 Windows 工作台
 
+2026-10-09 **v27 当前分支集成检查点**：基于 `4724f01f`，普通卡片新增从真实当前完整 format2 和迁移 Origin 验证得出的 `content_kind`。实际 Index 重新编辑先读最新全文 source，以 `current_v2` 保存正文并保留 TaskId、完成状态、顺序、退役身份、分类/阶段、收藏及未知字段；合法 `v2` / `legacy` 来源均使用该正文模式，旧 own LF 不授予新基线。当前完整子草稿重启恢复已接原严格 Session、固定计划、实际 S2 父历史及当前 S3 writer，读取不提交业务，退役/关闭仍显式核对，原 wire 和 Unknown 独立保留。
+
+完整实际 ETS/tool **903/903 PASS**（36 suite 文件、125 项实际输入前后一致），SDK 窄修后 Recovery 子集 **143/143 PASS**，Native **191 library +3 binary PASS**（17 条默认条件 ignored）。新双 ABI release **PASS 并采用**，279 项 native 来源，ARM64 **57,055,756B /5329F277…**、x64 **55,469,756B /EB390E7F…**。fresh retry1 完整 API26 **SUCCESS /28.199s**，34/34 tasks 执行，315 复制/378 仓库输入前后一致，四项包内原生库核对 PASS；最终 HAP **30,267,399B /059504B9…**。版本仍 **dev19/1000019**，包 unsigned/uninstalled，新设备验收 **NOT_RUN**，完整 Flutter/Windows 对齐 **OPEN**；仅交付 `codex/ArkTsUI`，不并入主线。首轮 SDK 失败与模型旧文案失败/drift 保留为历史，不混作最终资格。详见 [v27 验证](../reports/ui-source/v27/validation.md)。
+
+以下完整保留各轮交付时的历史记录；旧段落的“当前”仅指其当轮范围。
+
 2026-10-09 **v26 当前分支基础检查点**：增加按真实当前全文 source/CAS 编辑 V2 正文的 `current_v2`，保留实际 TaskId、完成状态、顺序、分类/阶段、收藏和未知字段；增加固定父草稿/退役历史只读读取与模型当前子 writer 恢复。原固定请求和 Unknown 不变。真实 Store DTO 检查补修可选空游标省略时的回执解析，以及退役历史确认后仍停留在 Unknown 的状态。
 
 完整实际 ETS/tool **869/869 PASS**，Rust **187 library +3 binary PASS**（16 条默认条件 ignored；新两份 DTO 导出与7个实际崩溃边界单独通过）；双 ABI release 和最终完整 API26 **SUCCESS /27.403s**，未签名包 **30,198,963B /90C3171D…**。版本仍 **dev19/1000019**；只推送 `codex/ArkTsUI`，不并入主线。**本次新增 current-child 重启恢复/current_v2 重开尚未接入 Index，设备验收 NOT_RUN，完整 Flutter/Windows 对齐 OPEN**。详见 [v26 验证](../reports/ui-source/v26/validation.md)。以下保留各轮历史范围。
@@ -69,12 +75,12 @@ dev.8 已接入原 `query_plan_v2` 的分页过滤、稳定排序和归并，复
 | 字段字数、待办输入、完整未来粘贴 | Unicode16/formatter原对照保持，Index新卡多行1000/100行及create TaskId已接；v24 AFF普通字段恢复焦点门禁、83B一次性Todo初建能力已冻，B62旧native候选准确恢复公开D/13/1000与keep关闭限定PASS | 补新文字/IME/多行编辑和业务保存重启的设备闭环；SDK未交付事件/实时formatter/任意候选恢复/连续选择仍OPEN，恢复和保留关闭不代替保存验收 |
 | 查询、排序、大库加载 | dev.8 已接原 Rust 计划、单次完整快照、完整属性搜索与稳定排序；去抖/待发合并/过期回包丢弃，真实失败与空结果分开 | 仍限定 256 张；需 UI 响应分页、大库内存/帧时和生产 guest/捕获资格。旧“最近添加”为反向 ID 顺序，不能宣称为创建时间排序 |
 | 正式 Rust 宿主和存储会话 | 未接；当前为独立未封存开发库 | 提取平台会话接口，HUKS、稳定身份、单库所有者、审计/备份/恢复契约；禁止绕过原宿主非 Windows 拒绝规则 |
-| 持久草稿、S1/S2、未知结果核对 | v25 Index 原请求 prepare/issue/save/inspect、准确 S1 close、S2/S3 source0 business handoff 已接；v26 增加准确父/退役历史读取与无父模型当前子恢复，原 Unknown/wire 保留 | v26 页面恢复/lease 安装尚未接入；新 native 保存关闭/重启、protected 捕获、SDK 未交付事件及跨进程全局配额资格仍 OPEN |
-| 严格原子业务与owned全文todos | v25 原 strict/continued_todos 接 Index；v26 current_v2 按新真实 source/CAS 改正文并保 TaskId/元数据 bytes，187库+3附件、7实际故障边界、两份真实DTO及869全量模型检查通过 | current_v2/闭卡重开未接 Index；不投影 old own LF，不自动重基，不把独立 plan/child/retire/close 事务称为多对象原子；完整设备/产品资格 OPEN |
+| 持久草稿、S1/S2、未知结果核对 | v25 原请求保存、S1 close、S2/S3 source0 business handoff 保留；v27 Index 已接实际父历史/当前完整子 writer 重启恢复，读取不提交业务或生成新操作，原 Session 已知结果及各项 Unknown/wire 保留 | 新 native 保存/关闭/重启设备闭环、protected 捕获、SDK 未交付事件及跨进程全局配额资格仍 OPEN；显式核对固定退役/close，不能复活 inactive parent |
+| 严格业务、当前 V2 正文与 own 接续 | v27 ordinary CardView 已据真实 decode/Origin 分类，详情重新编辑读最新完整 source/revision 并接 current_v2，保 TaskId/元数据 bytes；active原Session仍按continued_todos接续。191库+3附件和实际两类来源/迁移/新修订Store检查通过 | 不投影 old own LF，不自动重基，不把独立 plan/child/retire/close 事务称为多对象原子；本轮事务实现未改、未重跑旧fault vectors；完整设备/任务编辑/产品资格 OPEN |
 | 附件、剪贴板、Markdown/富文本、导入导出 | dev.19在dev.17/18快照/原件/富转换基础上将完整输出改为Unicode16 grapheme≤20000，回执绑定完整UTF-16/UTF-8长度和版本；完整未来选区粘贴异步preflight及pin后重检。原source限制、SHA、64MiB/20槽/sidecar保持。独立API26双指tester编译main/test HAP与10工具模型通过，未安装/执行设备手势 | 本轮Rust106和三项条件Flutter对照fresh通过；完整ETS/HAP/native身份见v19最终验证。系统富内容/Office持久闭环、dev19字段/IME与图片手势设备NOT_RUN。RTF插件仍2Mi+64KiB，无异常fallback；严格坏编码/RTF U+FFFD、直接输入formatter行为、更严格字节预算、200MiB容量、完整格式/惯性/GIF仍有差距 |
 | 音乐、歌词、解密 | 空状态 | 复用 Rust 解密模块，播放器、播放列表、歌词、文件权限、后台/中断恢复实测 |
 | 插件包、动态 UI、HTTP/服务/文件任务 | 未接运行期宿主 | 跟进 Windows 实现与合约，接 Wasm 执行/权限/资源预算/服务与任务控制；区分 Windows 平台实现和共享业务块 |
-| 分发与资格 | dev19/1000019保持，仅codex/ArkTsUI。v26 869/869模型、双ABI/277来源、最终API26 27.403s/34执行任务/314复制/373仓库输入及4项so核对PASS；30198963B/90C3171D… 未签未安装，见[v26验证](../reports/ui-source/v26/validation.md) | 新页面恢复/闭卡重开、实际输入/业务保存/重启/渲染、签名、ARM64、HUKS和完整对齐仍OPEN；历史B62和中间包不代替新包设备资格 |
+| 分发与资格 | dev19/1000019保持，仅codex/ArkTsUI。v27 903/903模型、修后Recovery143子集、双ABI/279来源、fresh retry1完整API26 28.199s/34执行任务/315复制/378仓库输入及4项so核对 PASS；30,267,399B/059504B9…未签未安装，见[v27验证](../reports/ui-source/v27/validation.md) | 新页面已接当前子恢复/最新源重新编辑；实际输入/业务保存/重启/渲染设备NOT_RUN，签名、ARM64、HUKS和完整对齐仍 OPEN；历史B62与首SDK失败/模型drift不代替最终资格 |
 
 每一轮更新源码观察与实际功能证据，保护 `shared/reference.json` 的冻结来源。上游在途代码不得未经审查直接覆盖。新版本截图、测试日志和构建输入哈希分别记录，旧图不能被当成新包验收。
 

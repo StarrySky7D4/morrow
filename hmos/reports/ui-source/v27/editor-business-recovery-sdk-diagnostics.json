@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "source": "Root complete API26 first-build log; this subtask did not execute SDK",
+  "build_log": "hmos/reports/ui-source/v27/sdk-stage1/original-hap-build.log",
+  "build_log_bytes": 30442,
+  "build_log_sha256": "efd9f4f7559eb63299c0844dcac9dd943ae0e2ada435c10d3861d6abb3090126",
+  "production_file": "hmos/entry/src/main/ets/model/EditorBusinessRecovery.ets",
+  "initial_production_bytes": 10756,
+  "initial_production_sha256": "062a7a50f220e27213f24fb3601892e3ab2c797c5e71bb0bb3d6f65675f3a88e",
+  "diagnostics": [
+    { "code": "arkts-limited-throw", "line": 149, "column": 37 },
+    { "code": "arkts-limited-throw", "line": 152, "column": 111 },
+    { "code": "arkts-limited-throw", "line": 159, "column": 7 },
+    { "code": "arkts-limited-throw", "line": 167, "column": 55 }
+  ],
+  "correction": "Four throw error sites now use throw error as Error; no replacement exception or contract change",
+  "final_production_bytes": 10792,
+  "final_production_sha256": "6b02c274cb3b6795fb89c8457096aa2396ed22cb6f50acdb86a1b728b92533ec",
+  "verification": "editor-business-recovery-model-sdk-retry1-result.json: 143 pass, 0 fail, 0 skipped, 18 identical inputs",
+  "sdk_recheck": "Root-owned separate retry; not asserted by this model runner"
+}

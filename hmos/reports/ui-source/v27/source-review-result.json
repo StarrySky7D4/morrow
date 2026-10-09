@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "qualification": "PASS_SCOPED-actual-Index-source-integration-v27",
+  "exit": 0,
+  "tests": 92,
+  "passed": 92,
+  "failed": 0,
+  "cancelled": 0,
+  "skipped": 0,
+  "duration_ms": 17463.7599,
+  "test_files": 4,
+  "new_page_tests": 23,
+  "preserved_business_field_todo_tests": 69,
+  "index": {
+    "path": "hmos/entry/src/main/ets/pages/Index.ets",
+    "bytes": 334640,
+    "sha256": "0c1620875c82c517bea1d8c4a3029dc851452978a323667fed8af91e483696b6"
+  },
+  "actual_runtime_sources": 13,
+  "source_drift_during_successful_run": 0,
+  "post_run_changes": [
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorBusinessRecovery.ets",
+      "run_sha256": "062a7a50f220e27213f24fb3601892e3ab2c797c5e71bb0bb3d6f65675f3a88e",
+      "current_sha256": "6b02c274cb3b6795fb89c8457096aa2396ed22cb6f50acdb86a1b728b92533ec",
+      "change": "four as Error rethrow casts for API26 SDK; separately validated by Root final global runner; not worker92 new-hash evidence"
+    }
+  ],
+  "logs": [
+    {
+      "path": "hmos/reports/ui-source/v27/index-business-recovery-integration-stage1.log",
+      "bytes": 5794,
+      "sha256": "5cb62252824a5c12ab5f808bb12260553937f21a9ba35cd1d889af0dc5d744b3"
+    },
+    {
+      "path": "hmos/reports/ui-source/v27/index-business-recovery-integration-stage2.log",
+      "bytes": 7291,
+      "sha256": "15372794e69c6c67dd6381badc46a23a2b96cfbc2989e4e31f8f7df267c5d639"
+    },
+    {
+      "path": "hmos/reports/ui-source/v27/index-business-recovery-integration-stage3.log",
+      "bytes": 6713,
+      "sha256": "3d16663bfd478a878048895db8542e981e38b4eb787e0a1fdaee8d94ccc2e570"
+    },
+    {
+      "path": "hmos/reports/ui-source/v27/index-business-recovery-integration-stage4.log",
+      "bytes": 5885,
+      "sha256": "5cdf49a0f382ecdc4c777bba8fc0f3001561ef8879c691af9e37a68c416d5047"
+    },
+    {
+      "path": "hmos/reports/ui-source/v27/index-legacy-harness-regression-stage1.log",
+      "bytes": 78306,
+      "sha256": "c74cf70ef1161973596983c1062030e0647bc4353e20d3f40cf52f658f537a96"
+    },
+    {
+      "path": "hmos/reports/ui-source/v27/index-business-recovery-integration-final.log",
+      "bytes": 16067,
+      "sha256": "aecc0483d9215d9f64d8ad4b52e5e9d401c304d32fd5f433a4e9ba3a1c7972a5"
+    }
+  ],
+  "inputs": {
+    "path": "hmos/reports/ui-source/v27/source-review-inputs.json",
+    "bytes": 9128,
+    "sha256": "4a9f43a5c4f1e6e113d5b385d7d91d322dc9fc958329331a0dc2567cb928c778"
+  },
+  "audit": {
+    "path": "hmos/reports/ui-source/v27/source-parity-and-index-recovery-audit.md",
+    "bytes": 12575,
+    "sha256": "9cb3ab58391dab6ed0a81ebc8812a0f047aa6595852f9e16861be3ca64985976"
+  },
+  "worker_changed_tools": [
+    {
+      "path": "hmos/tool/index-business-recovery-test-harness.cjs",
+      "bytes": 11999,
+      "sha256": "7d68c464fb73e2d81fcf3b7e217ef5a98b6a9e5d343187a6cf23fb1d5614b7b8"
+    },
+    {
+      "path": "hmos/tool/index-business-recovery-integration.test.cjs",
+      "bytes": 34278,
+      "sha256": "8c990d4dada1b0fc104422770f7bd451be1ee026d36d1cd42830a7b2c0ca315e"
+    },
+    {
+      "path": "hmos/tool/index-business-test-harness.cjs",
+      "bytes": 35080,
+      "sha256": "76122aca4aae4d2ffb13ddc321b9e5e61cfc183fba060396f41e6833c8da97e9"
+    },
+    {
+      "path": "hmos/tool/index-editor-todos-integration.test.cjs",
+      "bytes": 20569,
+      "sha256": "d3974d5cbd97fbe6ac232c67285fe826536316ba2f8a99df80f9a63693542486"
+    }
+  ],
+  "not_run_by_worker": [
+    "Git",
+    "SDK/native build",
+    "native tests",
+    "emulator/service start",
+    "HDC/device",
+    "ArkUI rendering",
+    "publication"
+  ],
+  "open": [
+    "new page SDK/ABI/device integration owned by Root",
+    "reported unknown frames not proved fixed by Node tests",
+    "complete Flutter/product qualification"
+  ]
+}

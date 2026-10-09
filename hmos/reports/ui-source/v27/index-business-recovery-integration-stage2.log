@@ -1,0 +1,60 @@
+{"qualification":"actual-Index-source-only","inputs":[{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\pages\\Index.ets","sha256":"70706282e2c71501e9c6195bef1da656780f1412356576976ed2152cb85b68aa","bytes":333463},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusiness.ets","sha256":"bbd4de0b1e02a67e19345147eb7de4c01622c1e015e12fb0c1431a101945c4fd","bytes":26878},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessHandoff.ets","sha256":"fc2878c8f8fc2f312cf879023a1e445fe2cb3ae409755372feb9ffbc596723f0","bytes":47627},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessRecovery.ets","sha256":"062a7a50f220e27213f24fb3601892e3ab2c797c5e71bb0bb3d6f65675f3a88e","bytes":10756},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorBusinessSession.ets","sha256":"58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6","bytes":40102},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDirectInput.ets","sha256":"a56119b3dfc3ea52e83082f0654c6bd9164383a646af503b6d72ce2f0d7e6030","bytes":11848},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraft.ets","sha256":"b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775","bytes":37929},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorDraftFork.ets","sha256":"2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c","bytes":12805},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorFieldPolicy.ets","sha256":"10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842","bytes":6929},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorInputPolicy.ets","sha256":"64c86330d3dbc8fa85f88d6f0692d9ed15c88814c711f4f2b665827b3628ae2b","bytes":7887},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorPaste.ets","sha256":"28d54a7d02bf644d68b58ac68a4d824ab2ff3fb71b87ab0e00c279456b6d160e","bytes":2767},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\EditorTodos.ets","sha256":"e7a0748f5066939ad42fa4a9b6bde3d9d9761e15df2e42403356c1277a48d710","bytes":21509},{"path":"C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\hmos\\entry\\src\\main\\ets\\model\\Workbench.ets","sha256":"6cef4c4c9cde5fefe44fc65619cf7caf8c4965b129a553d45d8afe701b2e6547","bytes":2418}]}
+✔ actual fresh reopen installs latest full source, empty LF and a real writer without borrowing old root or task labels (407.8172ms)
+✔ actual migrated legacy classification opens current_v2 with no raw LF reconstruction (244.625ms)
+✔ actual fresh read rejects missing or unknown content kind, regardless of task ids or editor markers (791.6186ms)
+✔ fresh card or draft list Unknown does not install, dispose or dispatch a write (450.3863ms)
+✔ late fresh read cannot overwrite a newly owned real editor or complete raw selection (240.484ms)
+✔ fresh read cutoff refuses dirty, background and replaced opening identity independently (732.008ms)
+✔ actual fresh open guards existing input, native pending and retirement before any read (1236.6058ms)
+✔ actual metadata eligibility is restricted to mounted new-card scope, both enabled and callback use the guard (238.4297ms)
+✔ actual Index restart reads fixed S2 history and advanced current child, installs the same real paused writer without any active parent (210.8806ms)
+✔ actual closed handoff restart uses retired parent history, keeps original close readonly and does not revive its Save (167.9364ms)
+✔ actual Unknown current read is explicitly retried through the identical queue wire and never first-sends raw or business (197.4997ms)
+✔ actual Unknown fixed parent history uses original operation/generation before current child and preserves own Session facts (178.4862ms)
+✔ actual late complete editor input during current recovery response cannot be overwritten or disposed (180.0221ms)
+✔ actual foreign or inactive current child response cannot create a grant or fake writer from first ACK (570.784ms)
+✔ actual recovery preserves full child LF with source conflict after independent metadata or TaskId advances current card (183.1061ms)
+✔ actual current card native DTOs after metadata and TaskId reopen feed current_v2 strict Save with exact full source and no continuation root (333.5953ms)
+✖ actual fresh source accepts real AssetView names and rejects incomplete card DTOs before opening (187.097ms)
+✔ actual fresh and recovery reads reject active file, paste, raw fork and owned boundary before queue admission (1373.924ms)
+✖ actual intent-list restore then resume with no active parent reads current child and never creates a publication S1 writer (164.572ms)
+✔ actual fresh details open detects linked current draft and runs exact recovery before any editor attachment (162.3117ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 18
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13645.1761
+
+✖ failing tests:
+
+test at hmos\tool\index-business-recovery-integration.test.cjs:301:1
+✖ actual fresh source accepts real AssetView names and rejects incomplete card DTOs before opening (187.097ms)
+  AssertionError [ERR_ASSERTION]: 重新编辑未打开：Error: 当前卡片的完整版本与任务来源尚未确认。现有文字与任务未改变。
+  
+  false !== true
+  
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-recovery-integration.test.cjs:304:42)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at hmos\tool\index-business-recovery-integration.test.cjs:325:1
+✖ actual intent-list restore then resume with no active parent reads current child and never creates a publication S1 writer (164.572ms)
+  TypeError: Cannot read properties of undefined (reading 'proof')
+      at ActualIndexRecovery.restoreBusinessIntent (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\entry\src\main\ets\pages\Index.ets:3049:31)
+      at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\index-business-recovery-integration.test.cjs:327:42)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)

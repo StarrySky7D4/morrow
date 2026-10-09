@@ -95,6 +95,10 @@ pub struct CardView {
     id: String,
     revision: String,
     source: String,
+    // Current-card classification is derived only after complete schema and
+    // migration-origin validation. Historical receipts keep their exact DTO.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    content_kind: Option<&'static str>,
     title: String,
     description: String,
     hypothesis: String,
@@ -295,6 +299,9 @@ impl Engine {
                     .map_err(err)?
                     .ok_or("NotFound")?;
                 let s = card.summary();
+                if s.type_id != "idea" {
+                    return Err("UnsupportedCardType".into());
+                }
                 if s.format_version != 2 {
                     return Err("UnsupportedVersion".into());
                 }
@@ -303,6 +310,7 @@ impl Engine {
                     id,
                     revision: s.revision.to_string(),
                     source: hex(&card.encode()),
+                    content_kind: Some(if p.origin.is_some() { "legacy" } else { "v2" }),
                     title: s.title,
                     description: p.description,
                     hypothesis: p.hypothesis,
@@ -793,6 +801,8 @@ impl Engine {
 #[cfg(test)]
 #[path = "historical_retry_tests.rs"]
 mod historical_retry_tests;
+#[cfg(test)]
+mod card_source_tests;
 fn hex(bytes: &[u8]) -> String {
     bytes.iter().map(|b| format!("{b:02x}")).collect()
 }

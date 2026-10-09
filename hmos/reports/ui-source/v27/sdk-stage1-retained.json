@@ -1,0 +1,37 @@
+{
+  "capturedUtc": "2026-10-09T00:46:41.954Z",
+  "status": "FAILED",
+  "reason": "API26 limited-throw: four arbitrary catch rethrows in EditorBusinessRecovery.ets; no HAP artifact finalized.",
+  "items": [
+    {
+      "source": "build-inputs.json",
+      "preserved": "sdk-stage1/build-inputs.json",
+      "bytes": 67255,
+      "sha256": "7D0DCA9D21D41A7511D9C11A75D31C2119F23D8FA9CED3130C4989DBFFB50D38"
+    },
+    {
+      "source": "source-copy-manifest.json",
+      "preserved": "sdk-stage1/source-copy-manifest.json",
+      "bytes": 92266,
+      "sha256": "497683A1D1144DF3AA93D55DC077023CD3E4C985FA706D167C522C568C769793"
+    },
+    {
+      "source": "hap-build.log",
+      "preserved": "sdk-stage1/hap-build.log",
+      "bytes": 30442,
+      "sha256": "EFD9F4F7559EB63299C0844DCAC9DD943AE0E2ADA435C10D3861D6ABB3090126"
+    },
+    {
+      "source": "checkpoint.cjs",
+      "preserved": "sdk-stage1/checkpoint.cjs",
+      "bytes": 9332,
+      "sha256": "728FCC8DA5F81686279FE3C91088158DF2F70376CD82F6D95D2774D4DA783CCB"
+    },
+    {
+      "source": "verify-package.ps1",
+      "preserved": "sdk-stage1/verify-package.ps1",
+      "bytes": 1763,
+      "sha256": "250B2FEF39BD8477DFA3EB9E384485CF8EE956F8336A05970EBD23C6FBB355A7"
+    }
+  ]
+}

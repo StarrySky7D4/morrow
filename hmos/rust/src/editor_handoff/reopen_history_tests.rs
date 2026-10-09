@@ -13,6 +13,7 @@ fn current_card(e: &Engine) -> crate::CardView {
         id: s.id,
         revision: s.revision.to_string(),
         source: hex(&card.encode()),
+        content_kind: None,
         title: s.title,
         description: p.description,
         hypothesis: p.hypothesis,

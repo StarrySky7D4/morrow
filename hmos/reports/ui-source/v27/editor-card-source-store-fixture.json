@@ -1,0 +1,1576 @@
+{
+  "cases": [
+    {
+      "before_save_source": "0801120f636c61737369666965642d636172641a046964656120022807320e6f726967696e616c207469746c653a69080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201137461736b2d6c6f6f6b732d6d69677261746564a2011e0a0f706c61696e2d6e61746976652d6964120973616d65207465787418015200",
+      "content_kind": "v2",
+      "current_reply": {
+        "cards": [
+          {
+            "assets": [],
+            "category": "实验",
+            "conclusion": "changed conclusion",
+            "content_kind": "v2",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "changed current body 漢 🧪",
+            "favorite": true,
+            "hypothesis": "changed hypothesis",
+            "id": "classified-card",
+            "revision": "8",
+            "source": "0801120f636c61737369666965642d636172641a04696465612002280832156368616e6765642063757272656e74207469746c653afa01080238011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201137461736b2d6c6f6f6b732d6d69677261746564a2011e0a0f706c61696e2d6e61746976652d6964120973616d6520746578741801121d6368616e6765642063757272656e7420626f647920e6bca220f09fa7aa2a126368616e676564206879706f74686573697332126368616e67656420636f6e636c7573696f6e580060009ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e7631000104796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c52417a408913b93e5e4c8c97e71c7fb9eccc3c04ca6002129a897505f6b548de55200",
+            "stage": "待验证",
+            "tasks": [
+              {
+                "completion": 1,
+                "id": "plain-native-id",
+                "text": "same text"
+              }
+            ],
+            "title": "changed current title"
+          }
+        ],
+        "drafts": [],
+        "effect": "not_committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": ""
+      },
+      "initial_reply": {
+        "cards": [
+          {
+            "assets": [],
+            "category": "灵感",
+            "conclusion": "",
+            "content_kind": "v2",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "original body 汉字 🧪",
+            "favorite": false,
+            "hypothesis": "",
+            "id": "classified-card",
+            "revision": "1",
+            "source": "0801120f636c61737369666965642d636172641a046964656120022801320e6f726967696e616c207469746c653a72080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e79086a201200a137461736b2d6c6f6f6b732d6d69677261746564120973616d652074657874a2011c0a0f706c61696e2d6e61746976652d6964120973616d652074657874",
+            "stage": "待整理",
+            "tasks": [
+              {
+                "completion": 0,
+                "id": "task-looks-migrated",
+                "text": "same text"
+              },
+              {
+                "completion": 0,
+                "id": "plain-native-id",
+                "text": "same text"
+              }
+            ],
+            "title": "original title"
+          }
+        ],
+        "drafts": [],
+        "effect": "not_committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": ""
+      },
+      "inspect_reply": {
+        "cards": [],
+        "drafts": [],
+        "editor_commit": {
+          "card_id": "classified-card",
+          "command_sha256": "f59ba2b3974431a497f00a2a5a2188948bd9fd41389ef6df5005a6427788d6ff",
+          "commit_status": "committed",
+          "content_sha256": "4f824c369bb9902b981652eb69b001c8091d5a9d3720c104439332efec599259",
+          "event_id": "current-body",
+          "historical_card": {
+            "assets": [],
+            "category": "实验",
+            "conclusion": "changed conclusion",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "changed current body 漢 🧪",
+            "favorite": true,
+            "hypothesis": "changed hypothesis",
+            "id": "classified-card",
+            "revision": "8",
+            "source": "0801120f636c61737369666965642d636172641a04696465612002280832156368616e6765642063757272656e74207469746c653afa01080238011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201137461736b2d6c6f6f6b732d6d69677261746564a2011e0a0f706c61696e2d6e61746976652d6964120973616d6520746578741801121d6368616e6765642063757272656e7420626f647920e6bca220f09fa7aa2a126368616e676564206879706f74686573697332126368616e67656420636f6e636c7573696f6e580060009ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e7631000104796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c52417a408913b93e5e4c8c97e71c7fb9eccc3c04ca6002129a897505f6b548de55200",
+            "stage": "待验证",
+            "tasks": [
+              {
+                "completion": 1,
+                "id": "plain-native-id",
+                "text": "same text"
+              }
+            ],
+            "title": "changed current title"
+          },
+          "live_matches": true,
+          "live_revision": "8",
+          "operation": "current-body",
+          "publication": {
+            "draft_id": "current-draft",
+            "generation": "1",
+            "request_sha256": "7551571b2ecc7cb42f3a520e6d0d2c9e9889e18a9102cd5187ff9df693e5ff45",
+            "save_operation": "publish-current"
+          },
+          "publication_sha256": "2417a408913b93e5e4c8c97e71c7fb9eccc3c04ca6002129a897505f6b548de5",
+          "qualification": "development_editor_wire_v1",
+          "request_sha256": "796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c5",
+          "revision": "8",
+          "source_revision": "7"
+        },
+        "effect": "committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": "8"
+      },
+      "mutation_replies": [
+        {
+          "cards": [
+            {
+              "assets": [],
+              "category": "灵感",
+              "conclusion": "",
+              "content_kind": "v2",
+              "deleted": false,
+              "deleted_at": "0",
+              "description": "original body 汉字 🧪",
+              "favorite": true,
+              "hypothesis": "",
+              "id": "classified-card",
+              "revision": "2",
+              "source": "0801120f636c61737369666965642d636172641a046964656120022802320e6f726967696e616c207469746c653a74080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e79086a201200a137461736b2d6c6f6f6b732d6d69677261746564120973616d652074657874a2011c0a0f706c61696e2d6e61746976652d6964120973616d65207465787438015200",
+              "stage": "待整理",
+              "tasks": [
+                {
+                  "completion": 0,
+                  "id": "task-looks-migrated",
+                  "text": "same text"
+                },
+                {
+                  "completion": 0,
+                  "id": "plain-native-id",
+                  "text": "same text"
+                }
+              ],
+              "title": "original title"
+            }
+          ],
+          "drafts": [],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "2"
+        },
+        {
+          "cards": [
+            {
+              "assets": [],
+              "category": "实验",
+              "conclusion": "",
+              "content_kind": "v2",
+              "deleted": false,
+              "deleted_at": "0",
+              "description": "original body 汉字 🧪",
+              "favorite": true,
+              "hypothesis": "",
+              "id": "classified-card",
+              "revision": "3",
+              "source": "0801120f636c61737369666965642d636172641a046964656120022803320e6f726967696e616c207469746c653a74080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aaa201200a137461736b2d6c6f6f6b732d6d69677261746564120973616d652074657874a2011c0a0f706c61696e2d6e61746976652d6964120973616d65207465787438011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af815200",
+              "stage": "待验证",
+              "tasks": [
+                {
+                  "completion": 0,
+                  "id": "task-looks-migrated",
+                  "text": "same text"
+                },
+                {
+                  "completion": 0,
+                  "id": "plain-native-id",
+                  "text": "same text"
+                }
+              ],
+              "title": "original title"
+            }
+          ],
+          "drafts": [],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "3"
+        },
+        {
+          "cards": [
+            {
+              "assets": [],
+              "category": "实验",
+              "conclusion": "",
+              "content_kind": "v2",
+              "deleted": false,
+              "deleted_at": "0",
+              "description": "original body 汉字 🧪",
+              "favorite": true,
+              "hypothesis": "",
+              "id": "classified-card",
+              "revision": "4",
+              "source": "0801120f636c61737369666965642d636172641a046964656120022804320e6f726967696e616c207469746c653a7f080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a2012b0a137461736b2d6c6f6f6b732d6d69677261746564121472656e616d65642063757272656e74207461736ba2011c0a0f706c61696e2d6e61746976652d6964120973616d6520746578745200",
+              "stage": "待验证",
+              "tasks": [
+                {
+                  "completion": 0,
+                  "id": "task-looks-migrated",
+                  "text": "renamed current task"
+                },
+                {
+                  "completion": 0,
+                  "id": "plain-native-id",
+                  "text": "same text"
+                }
+              ],
+              "title": "original title"
+            }
+          ],
+          "drafts": [],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "4"
+        },
+        {
+          "cards": [
+            {
+              "assets": [],
+              "category": "实验",
+              "conclusion": "",
+              "content_kind": "v2",
+              "deleted": false,
+              "deleted_at": "0",
+              "description": "original body 汉字 🧪",
+              "favorite": true,
+              "hypothesis": "",
+              "id": "classified-card",
+              "revision": "5",
+              "source": "0801120f636c61737369666965642d636172641a046964656120022805320e6f726967696e616c207469746c653a8101080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a2012b0a137461736b2d6c6f6f6b732d6d69677261746564121472656e616d65642063757272656e74207461736ba2011e0a0f706c61696e2d6e61746976652d6964120973616d65207465787418015200",
+              "stage": "待验证",
+              "tasks": [
+                {
+                  "completion": 0,
+                  "id": "task-looks-migrated",
+                  "text": "renamed current task"
+                },
+                {
+                  "completion": 1,
+                  "id": "plain-native-id",
+                  "text": "same text"
+                }
+              ],
+              "title": "original title"
+            }
+          ],
+          "drafts": [],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "5"
+        },
+        {
+          "cards": [
+            {
+              "assets": [],
+              "category": "实验",
+              "conclusion": "",
+              "content_kind": "v2",
+              "deleted": false,
+              "deleted_at": "0",
+              "description": "original body 汉字 🧪",
+              "favorite": true,
+              "hypothesis": "",
+              "id": "classified-card",
+              "revision": "6",
+              "source": "0801120f636c61737369666965642d636172641a046964656120022806320e6f726967696e616c207469746c653a8101080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a2011e0a0f706c61696e2d6e61746976652d6964120973616d6520746578741801a2012b0a137461736b2d6c6f6f6b732d6d69677261746564121472656e616d65642063757272656e74207461736b5200",
+              "stage": "待验证",
+              "tasks": [
+                {
+                  "completion": 1,
+                  "id": "plain-native-id",
+                  "text": "same text"
+                },
+                {
+                  "completion": 0,
+                  "id": "task-looks-migrated",
+                  "text": "renamed current task"
+                }
+              ],
+              "title": "original title"
+            }
+          ],
+          "drafts": [],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "6"
+        },
+        {
+          "cards": [
+            {
+              "assets": [],
+              "category": "实验",
+              "conclusion": "",
+              "content_kind": "v2",
+              "deleted": false,
+              "deleted_at": "0",
+              "description": "original body 汉字 🧪",
+              "favorite": true,
+              "hypothesis": "",
+              "id": "classified-card",
+              "revision": "7",
+              "source": "0801120f636c61737369666965642d636172641a046964656120022807320e6f726967696e616c207469746c653a69080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201137461736b2d6c6f6f6b732d6d69677261746564a2011e0a0f706c61696e2d6e61746976652d6964120973616d65207465787418015200",
+              "stage": "待验证",
+              "tasks": [
+                {
+                  "completion": 1,
+                  "id": "plain-native-id",
+                  "text": "same text"
+                }
+              ],
+              "title": "original title"
+            }
+          ],
+          "drafts": [],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "7"
+        }
+      ],
+      "publication_and_intent_replies": [
+        {
+          "cards": [],
+          "drafts": [
+            {
+              "active": true,
+              "assets": [],
+              "business_link": null,
+              "business_retirement": null,
+              "consumed_imports": [],
+              "current_active": true,
+              "current_generation": "1",
+              "fork_link": null,
+              "fork_retirement": null,
+              "generation": "1",
+              "operation_id": "publish-current",
+              "repeated": false,
+              "request_sha256": "7551571b2ecc7cb42f3a520e6d0d2c9e9889e18a9102cd5187ff9df693e5ff45",
+              "scope": {
+                "card_id": "classified-card",
+                "draft_id": "current-draft",
+                "source": "0801120f636c61737369666965642d636172641a046964656120022807320e6f726967696e616c207469746c653a69080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201137461736b2d6c6f6f6b732d6d69677261746564a2011e0a0f706c61696e2d6e61746976652d6964120973616d65207465787418015200",
+                "source_kind": 0,
+                "source_revision": "7"
+              },
+              "values": {
+                "assets": [],
+                "category": "实验",
+                "conclusion": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": "changed conclusion"
+                },
+                "description": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": "changed current body 漢 🧪"
+                },
+                "hypothesis": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": "changed hypothesis"
+                },
+                "stage": "待验证",
+                "title": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": "changed current title"
+                },
+                "todos": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": ""
+                }
+              }
+            }
+          ],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": ""
+        },
+        {
+          "cards": [],
+          "drafts": [],
+          "editor_intents": [
+            {
+              "business_operation": "current-body",
+              "card_id": "classified-card",
+              "close_disposition": "",
+              "close_request_json": "",
+              "current_active": true,
+              "current_generation": "1",
+              "expected_revision": "8",
+              "handoff_request_json": "",
+              "inspect_request_json": "",
+              "issue_operation": "morrow-host-intent-issue-f9fd61c08b475134e879a07acb442105825cb86119dcd40dc314d95dd51d3f16",
+              "part": "summary",
+              "phase": "prepared",
+              "proof": {
+                "generation": "1",
+                "intent_id": "morrow-host-editor-intent-1d4fa1c11bca02cd1a35d5f204fcacd0b731ab2c8062b1563995a772ed169b49",
+                "prepare_operation": "prepare-current",
+                "prepared_record_sha256": "a81bbe525e6b79585e3f2e4cf8f5e01ef981d2907d16a44adf7a80573e61065f",
+                "request_sha256": "796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c5"
+              },
+              "publication": null,
+              "repeated": false,
+              "request_json": "",
+              "retirement_request_json": "",
+              "save_request_json": ""
+            }
+          ],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "intent_next_after": "",
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "1"
+        },
+        {
+          "cards": [],
+          "drafts": [],
+          "editor_intents": [
+            {
+              "business_operation": "current-body",
+              "card_id": "classified-card",
+              "close_disposition": "",
+              "close_request_json": "",
+              "current_active": true,
+              "current_generation": "2",
+              "expected_revision": "8",
+              "handoff_request_json": "",
+              "inspect_request_json": "",
+              "issue_operation": "morrow-host-intent-issue-f9fd61c08b475134e879a07acb442105825cb86119dcd40dc314d95dd51d3f16",
+              "part": "summary",
+              "phase": "issued",
+              "proof": {
+                "generation": "1",
+                "intent_id": "morrow-host-editor-intent-1d4fa1c11bca02cd1a35d5f204fcacd0b731ab2c8062b1563995a772ed169b49",
+                "prepare_operation": "prepare-current",
+                "prepared_record_sha256": "a81bbe525e6b79585e3f2e4cf8f5e01ef981d2907d16a44adf7a80573e61065f",
+                "request_sha256": "796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c5"
+              },
+              "publication": null,
+              "repeated": false,
+              "request_json": "",
+              "retirement_request_json": "",
+              "save_request_json": ""
+            }
+          ],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "intent_next_after": "",
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "2"
+        },
+        {
+          "cards": [],
+          "drafts": [],
+          "editor_intents": [
+            {
+              "business_operation": "current-body",
+              "card_id": "classified-card",
+              "close_disposition": "",
+              "close_request_json": "",
+              "current_active": true,
+              "current_generation": "2",
+              "expected_revision": "8",
+              "handoff_request_json": "",
+              "inspect_request_json": "",
+              "issue_operation": "morrow-host-intent-issue-f9fd61c08b475134e879a07acb442105825cb86119dcd40dc314d95dd51d3f16",
+              "part": "save",
+              "phase": "issued",
+              "proof": {
+                "generation": "1",
+                "intent_id": "morrow-host-editor-intent-1d4fa1c11bca02cd1a35d5f204fcacd0b731ab2c8062b1563995a772ed169b49",
+                "prepare_operation": "prepare-current",
+                "prepared_record_sha256": "a81bbe525e6b79585e3f2e4cf8f5e01ef981d2907d16a44adf7a80573e61065f",
+                "request_sha256": "796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c5"
+              },
+              "publication": null,
+              "repeated": false,
+              "request_json": "",
+              "retirement_request_json": "",
+              "save_request_json": "{\"action\":\"editor_save\",\"editor_save\":{\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-1d4fa1c11bca02cd1a35d5f204fcacd0b731ab2c8062b1563995a772ed169b49\",\"prepare_operation\":\"prepare-current\",\"prepared_record_sha256\":\"a81bbe525e6b79585e3f2e4cf8f5e01ef981d2907d16a44adf7a80573e61065f\",\"request_sha256\":\"796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c5\"},\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"edit\\\",\\\"category\\\":\\\"实验\\\",\\\"conclusion\\\":\\\"changed conclusion\\\",\\\"description\\\":\\\"changed current body 漢 🧪\\\",\\\"hypothesis\\\":\\\"changed hypothesis\\\",\\\"id\\\":\\\"classified-card\\\",\\\"operation\\\":\\\"current-body\\\",\\\"source\\\":\\\"0801120f636c61737369666965642d636172641a046964656120022807320e6f726967696e616c207469746c653a69080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201137461736b2d6c6f6f6b732d6d69677261746564a2011e0a0f706c61696e2d6e61746976652d6964120973616d65207465787418015200\\\",\\\"stage\\\":\\\"待验证\\\",\\\"title\\\":\\\"changed current title\\\",\\\"todos\\\":\\\"\\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"current_v2\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"current-draft\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"7551571b2ecc7cb42f3a520e6d0d2c9e9889e18a9102cd5187ff9df693e5ff45\\\",\\\"save_operation\\\":\\\"publish-current\\\"},\\\"schema_version\\\":1}\"}}"
+            }
+          ],
+          "effect": "not_committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "intent_next_after": "",
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": ""
+        }
+      ],
+      "reopened_reply": {
+        "cards": [
+          {
+            "assets": [],
+            "category": "实验",
+            "conclusion": "changed conclusion",
+            "content_kind": "v2",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "changed current body 漢 🧪",
+            "favorite": true,
+            "hypothesis": "changed hypothesis",
+            "id": "classified-card",
+            "revision": "8",
+            "source": "0801120f636c61737369666965642d636172641a04696465612002280832156368616e6765642063757272656e74207469746c653afa01080238011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201137461736b2d6c6f6f6b732d6d69677261746564a2011e0a0f706c61696e2d6e61746976652d6964120973616d6520746578741801121d6368616e6765642063757272656e7420626f647920e6bca220f09fa7aa2a126368616e676564206879706f74686573697332126368616e67656420636f6e636c7573696f6e580060009ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e7631000104796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c52417a408913b93e5e4c8c97e71c7fb9eccc3c04ca6002129a897505f6b548de55200",
+            "stage": "待验证",
+            "tasks": [
+              {
+                "completion": 1,
+                "id": "plain-native-id",
+                "text": "same text"
+              }
+            ],
+            "title": "changed current title"
+          }
+        ],
+        "drafts": [],
+        "effect": "not_committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": ""
+      },
+      "request_json": "{\"business\":{\"action\":\"edit\",\"category\":\"实验\",\"conclusion\":\"changed conclusion\",\"description\":\"changed current body 漢 🧪\",\"hypothesis\":\"changed hypothesis\",\"id\":\"classified-card\",\"operation\":\"current-body\",\"source\":\"0801120f636c61737369666965642d636172641a046964656120022807320e6f726967696e616c207469746c653a69080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201137461736b2d6c6f6f6b732d6d69677261746564a2011e0a0f706c61696e2d6e61746976652d6964120973616d65207465787418015200\",\"stage\":\"待验证\",\"title\":\"changed current title\",\"todos\":\"\"},\"continuation\":null,\"mode\":\"current_v2\",\"publication\":{\"draft_id\":\"current-draft\",\"generation\":\"1\",\"request_sha256\":\"7551571b2ecc7cb42f3a520e6d0d2c9e9889e18a9102cd5187ff9df693e5ff45\",\"save_operation\":\"publish-current\"},\"schema_version\":1}",
+      "retry_reply": {
+        "cards": [],
+        "drafts": [],
+        "editor_commit": {
+          "card_id": "classified-card",
+          "command_sha256": "f59ba2b3974431a497f00a2a5a2188948bd9fd41389ef6df5005a6427788d6ff",
+          "commit_status": "committed",
+          "content_sha256": "4f824c369bb9902b981652eb69b001c8091d5a9d3720c104439332efec599259",
+          "event_id": "current-body",
+          "historical_card": {
+            "assets": [],
+            "category": "实验",
+            "conclusion": "changed conclusion",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "changed current body 漢 🧪",
+            "favorite": true,
+            "hypothesis": "changed hypothesis",
+            "id": "classified-card",
+            "revision": "8",
+            "source": "0801120f636c61737369666965642d636172641a04696465612002280832156368616e6765642063757272656e74207469746c653afa01080238011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201137461736b2d6c6f6f6b732d6d69677261746564a2011e0a0f706c61696e2d6e61746976652d6964120973616d6520746578741801121d6368616e6765642063757272656e7420626f647920e6bca220f09fa7aa2a126368616e676564206879706f74686573697332126368616e67656420636f6e636c7573696f6e580060009ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e7631000104796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c52417a408913b93e5e4c8c97e71c7fb9eccc3c04ca6002129a897505f6b548de55200",
+            "stage": "待验证",
+            "tasks": [
+              {
+                "completion": 1,
+                "id": "plain-native-id",
+                "text": "same text"
+              }
+            ],
+            "title": "changed current title"
+          },
+          "live_matches": true,
+          "live_revision": "8",
+          "operation": "current-body",
+          "publication": {
+            "draft_id": "current-draft",
+            "generation": "1",
+            "request_sha256": "7551571b2ecc7cb42f3a520e6d0d2c9e9889e18a9102cd5187ff9df693e5ff45",
+            "save_operation": "publish-current"
+          },
+          "publication_sha256": "2417a408913b93e5e4c8c97e71c7fb9eccc3c04ca6002129a897505f6b548de5",
+          "qualification": "development_editor_wire_v1",
+          "request_sha256": "796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c5",
+          "revision": "8",
+          "source_revision": "7"
+        },
+        "effect": "committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": "8"
+      },
+      "save_reply": {
+        "cards": [],
+        "drafts": [],
+        "editor_commit": {
+          "card_id": "classified-card",
+          "command_sha256": "f59ba2b3974431a497f00a2a5a2188948bd9fd41389ef6df5005a6427788d6ff",
+          "commit_status": "committed",
+          "content_sha256": "4f824c369bb9902b981652eb69b001c8091d5a9d3720c104439332efec599259",
+          "event_id": "current-body",
+          "historical_card": {
+            "assets": [],
+            "category": "实验",
+            "conclusion": "changed conclusion",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "changed current body 漢 🧪",
+            "favorite": true,
+            "hypothesis": "changed hypothesis",
+            "id": "classified-card",
+            "revision": "8",
+            "source": "0801120f636c61737369666965642d636172641a04696465612002280832156368616e6765642063757272656e74207469746c653afa01080238011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201137461736b2d6c6f6f6b732d6d69677261746564a2011e0a0f706c61696e2d6e61746976652d6964120973616d6520746578741801121d6368616e6765642063757272656e7420626f647920e6bca220f09fa7aa2a126368616e676564206879706f74686573697332126368616e67656420636f6e636c7573696f6e580060009ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e7631000104796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c52417a408913b93e5e4c8c97e71c7fb9eccc3c04ca6002129a897505f6b548de55200",
+            "stage": "待验证",
+            "tasks": [
+              {
+                "completion": 1,
+                "id": "plain-native-id",
+                "text": "same text"
+              }
+            ],
+            "title": "changed current title"
+          },
+          "live_matches": true,
+          "live_revision": "8",
+          "operation": "current-body",
+          "publication": {
+            "draft_id": "current-draft",
+            "generation": "1",
+            "request_sha256": "7551571b2ecc7cb42f3a520e6d0d2c9e9889e18a9102cd5187ff9df693e5ff45",
+            "save_operation": "publish-current"
+          },
+          "publication_sha256": "2417a408913b93e5e4c8c97e71c7fb9eccc3c04ca6002129a897505f6b548de5",
+          "qualification": "development_editor_wire_v1",
+          "request_sha256": "796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c5",
+          "revision": "8",
+          "source_revision": "7"
+        },
+        "effect": "committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": "8"
+      },
+      "save_request_json": "{\"action\":\"editor_save\",\"editor_save\":{\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-1d4fa1c11bca02cd1a35d5f204fcacd0b731ab2c8062b1563995a772ed169b49\",\"prepare_operation\":\"prepare-current\",\"prepared_record_sha256\":\"a81bbe525e6b79585e3f2e4cf8f5e01ef981d2907d16a44adf7a80573e61065f\",\"request_sha256\":\"796da5261ce284fe2559b47ac1e978702f98789983fefacd69c1df7b8e1566c5\"},\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"edit\\\",\\\"category\\\":\\\"实验\\\",\\\"conclusion\\\":\\\"changed conclusion\\\",\\\"description\\\":\\\"changed current body 漢 🧪\\\",\\\"hypothesis\\\":\\\"changed hypothesis\\\",\\\"id\\\":\\\"classified-card\\\",\\\"operation\\\":\\\"current-body\\\",\\\"source\\\":\\\"0801120f636c61737369666965642d636172641a046964656120022807320e6f726967696e616c207469746c653a69080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201137461736b2d6c6f6f6b732d6d69677261746564a2011e0a0f706c61696e2d6e61746976652d6964120973616d65207465787418015200\\\",\\\"stage\\\":\\\"待验证\\\",\\\"title\\\":\\\"changed current title\\\",\\\"todos\\\":\\\"\\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"current_v2\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"current-draft\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"7551571b2ecc7cb42f3a520e6d0d2c9e9889e18a9102cd5187ff9df693e5ff45\\\",\\\"save_operation\\\":\\\"publish-current\\\"},\\\"schema_version\\\":1}\"}}"
+    },
+    {
+      "before_save_source": "0801120f636c61737369666965642d636172641a046964656120022808320e6f726967696e616c207469746c653afa03080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aaaa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236a201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f280118015200",
+      "content_kind": "legacy",
+      "current_reply": {
+        "cards": [
+          {
+            "assets": [],
+            "category": "实验",
+            "conclusion": "changed conclusion",
+            "content_kind": "legacy",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "changed current body 漢 🧪",
+            "favorite": true,
+            "hypothesis": "changed hypothesis",
+            "id": "classified-card",
+            "revision": "9",
+            "source": "0801120f636c61737369666965642d636172641a04696465612002280932156368616e6765642063757272656e74207469746c653a8b050802aa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236a201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f28011801121d6368616e6765642063757272656e7420626f647920e6bca220f09fa7aa2a126368616e676564206879706f74686573697332126368616e67656420636f6e636c7573696f6e580060009ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001041de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2dd8141a1562852e5d505e5de9c59a346960e7613b3efead3323739f1e9983b235200",
+            "stage": "待验证",
+            "tasks": [
+              {
+                "completion": 1,
+                "id": "task-e40b98e40a96211b101f1996748715581f13592b13178aaf173a8b7dfd1289cf",
+                "text": "two"
+              }
+            ],
+            "title": "changed current title"
+          }
+        ],
+        "drafts": [],
+        "effect": "not_committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": ""
+      },
+      "initial_reply": {
+        "cards": [
+          {
+            "assets": [],
+            "category": "灵感",
+            "conclusion": "",
+            "content_kind": "legacy",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "original body 汉字 🧪",
+            "favorite": false,
+            "hypothesis": "",
+            "id": "classified-card",
+            "revision": "2",
+            "source": "0801120f636c61737369666965642d636172641a046964656120022802320e6f726967696e616c207469746c653a8304080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e79086a201520a457461736b2d6239383361333835633666663430376331386132643262366663626662346631313663663761303566643863383936373432653030616165653562306261623612036f6e65180120012801a2014e0a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f2801aa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c65520f0a0d6d6967726174656420626f6479",
+            "stage": "待整理",
+            "tasks": [
+              {
+                "completion": 1,
+                "id": "task-b983a385c6ff407c18a2d2b6fcbfb4f116cf7a05fd8c896742e00aaee5b0bab6",
+                "text": "one"
+              },
+              {
+                "completion": 0,
+                "id": "task-e40b98e40a96211b101f1996748715581f13592b13178aaf173a8b7dfd1289cf",
+                "text": "two"
+              }
+            ],
+            "title": "original title"
+          }
+        ],
+        "drafts": [],
+        "effect": "not_committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": ""
+      },
+      "inspect_reply": {
+        "cards": [],
+        "drafts": [],
+        "editor_commit": {
+          "card_id": "classified-card",
+          "command_sha256": "c140a5733c7d793720d099b9c80763093352ef1823f5abff37b147c60caa4a4b",
+          "commit_status": "committed",
+          "content_sha256": "16d35ebcdc09b0fe8d670b18f0c7a009b8c0468b1b06539a11c18f7e13a0a9b4",
+          "event_id": "current-body",
+          "historical_card": {
+            "assets": [],
+            "category": "实验",
+            "conclusion": "changed conclusion",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "changed current body 漢 🧪",
+            "favorite": true,
+            "hypothesis": "changed hypothesis",
+            "id": "classified-card",
+            "revision": "9",
+            "source": "0801120f636c61737369666965642d636172641a04696465612002280932156368616e6765642063757272656e74207469746c653a8b050802aa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236a201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f28011801121d6368616e6765642063757272656e7420626f647920e6bca220f09fa7aa2a126368616e676564206879706f74686573697332126368616e67656420636f6e636c7573696f6e580060009ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001041de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2dd8141a1562852e5d505e5de9c59a346960e7613b3efead3323739f1e9983b235200",
+            "stage": "待验证",
+            "tasks": [
+              {
+                "completion": 1,
+                "id": "task-e40b98e40a96211b101f1996748715581f13592b13178aaf173a8b7dfd1289cf",
+                "text": "two"
+              }
+            ],
+            "title": "changed current title"
+          },
+          "live_matches": true,
+          "live_revision": "9",
+          "operation": "current-body",
+          "publication": {
+            "draft_id": "current-draft",
+            "generation": "1",
+            "request_sha256": "ec7557ec68be923d25316d131511fc059e559eeda4eb8ce78f7bcc72c0d7ed84",
+            "save_operation": "publish-current"
+          },
+          "publication_sha256": "dd8141a1562852e5d505e5de9c59a346960e7613b3efead3323739f1e9983b23",
+          "qualification": "development_editor_wire_v1",
+          "request_sha256": "1de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2",
+          "revision": "9",
+          "source_revision": "8"
+        },
+        "effect": "committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": "9"
+      },
+      "mutation_replies": [
+        {
+          "cards": [
+            {
+              "assets": [],
+              "category": "灵感",
+              "conclusion": "",
+              "content_kind": "legacy",
+              "deleted": false,
+              "deleted_at": "0",
+              "description": "original body 汉字 🧪",
+              "favorite": true,
+              "hypothesis": "",
+              "id": "classified-card",
+              "revision": "3",
+              "source": "0801120f636c61737369666965642d636172641a046964656120022803320e6f726967696e616c207469746c653a8504080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e79086a201520a457461736b2d6239383361333835633666663430376331386132643262366663626662346631313663663761303566643863383936373432653030616165653562306261623612036f6e65180120012801a2014e0a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f2801aa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538015200",
+              "stage": "待整理",
+              "tasks": [
+                {
+                  "completion": 1,
+                  "id": "task-b983a385c6ff407c18a2d2b6fcbfb4f116cf7a05fd8c896742e00aaee5b0bab6",
+                  "text": "one"
+                },
+                {
+                  "completion": 0,
+                  "id": "task-e40b98e40a96211b101f1996748715581f13592b13178aaf173a8b7dfd1289cf",
+                  "text": "two"
+                }
+              ],
+              "title": "original title"
+            }
+          ],
+          "drafts": [],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "3"
+        },
+        {
+          "cards": [
+            {
+              "assets": [],
+              "category": "实验",
+              "conclusion": "",
+              "content_kind": "legacy",
+              "deleted": false,
+              "deleted_at": "0",
+              "description": "original body 汉字 🧪",
+              "favorite": true,
+              "hypothesis": "",
+              "id": "classified-card",
+              "revision": "4",
+              "source": "0801120f636c61737369666965642d636172641a046964656120022804320e6f726967696e616c207469746c653a8504080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aaa201520a457461736b2d6239383361333835633666663430376331386132643262366663626662346631313663663761303566643863383936373432653030616165653562306261623612036f6e65180120012801a2014e0a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f2801aa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af815200",
+              "stage": "待验证",
+              "tasks": [
+                {
+                  "completion": 1,
+                  "id": "task-b983a385c6ff407c18a2d2b6fcbfb4f116cf7a05fd8c896742e00aaee5b0bab6",
+                  "text": "one"
+                },
+                {
+                  "completion": 0,
+                  "id": "task-e40b98e40a96211b101f1996748715581f13592b13178aaf173a8b7dfd1289cf",
+                  "text": "two"
+                }
+              ],
+              "title": "original title"
+            }
+          ],
+          "drafts": [],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "4"
+        },
+        {
+          "cards": [
+            {
+              "assets": [],
+              "category": "实验",
+              "conclusion": "",
+              "content_kind": "legacy",
+              "deleted": false,
+              "deleted_at": "0",
+              "description": "original body 汉字 🧪",
+              "favorite": true,
+              "hypothesis": "",
+              "id": "classified-card",
+              "revision": "5",
+              "source": "0801120f636c61737369666965642d636172641a046964656120022805320e6f726967696e616c207469746c653a9604080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aaaa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201630a457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236180120012801121472656e616d65642063757272656e74207461736ba2014e0a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f28015200",
+              "stage": "待验证",
+              "tasks": [
+                {
+                  "completion": 1,
+                  "id": "task-b983a385c6ff407c18a2d2b6fcbfb4f116cf7a05fd8c896742e00aaee5b0bab6",
+                  "text": "renamed current task"
+                },
+                {
+                  "completion": 0,
+                  "id": "task-e40b98e40a96211b101f1996748715581f13592b13178aaf173a8b7dfd1289cf",
+                  "text": "two"
+                }
+              ],
+              "title": "original title"
+            }
+          ],
+          "drafts": [],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "5"
+        },
+        {
+          "cards": [
+            {
+              "assets": [],
+              "category": "实验",
+              "conclusion": "",
+              "content_kind": "legacy",
+              "deleted": false,
+              "deleted_at": "0",
+              "description": "original body 汉字 🧪",
+              "favorite": true,
+              "hypothesis": "",
+              "id": "classified-card",
+              "revision": "6",
+              "source": "0801120f636c61737369666965642d636172641a046964656120022806320e6f726967696e616c207469746c653a9804080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aaaa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201630a457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236180120012801121472656e616d65642063757272656e74207461736ba201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f280118015200",
+              "stage": "待验证",
+              "tasks": [
+                {
+                  "completion": 1,
+                  "id": "task-b983a385c6ff407c18a2d2b6fcbfb4f116cf7a05fd8c896742e00aaee5b0bab6",
+                  "text": "renamed current task"
+                },
+                {
+                  "completion": 1,
+                  "id": "task-e40b98e40a96211b101f1996748715581f13592b13178aaf173a8b7dfd1289cf",
+                  "text": "two"
+                }
+              ],
+              "title": "original title"
+            }
+          ],
+          "drafts": [],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "6"
+        },
+        {
+          "cards": [
+            {
+              "assets": [],
+              "category": "实验",
+              "conclusion": "",
+              "content_kind": "legacy",
+              "deleted": false,
+              "deleted_at": "0",
+              "description": "original body 汉字 🧪",
+              "favorite": true,
+              "hypothesis": "",
+              "id": "classified-card",
+              "revision": "7",
+              "source": "0801120f636c61737369666965642d636172641a046964656120022807320e6f726967696e616c207469746c653a9804080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aaaa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f28011801a201630a457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236180120012801121472656e616d65642063757272656e74207461736b5200",
+              "stage": "待验证",
+              "tasks": [
+                {
+                  "completion": 1,
+                  "id": "task-e40b98e40a96211b101f1996748715581f13592b13178aaf173a8b7dfd1289cf",
+                  "text": "two"
+                },
+                {
+                  "completion": 1,
+                  "id": "task-b983a385c6ff407c18a2d2b6fcbfb4f116cf7a05fd8c896742e00aaee5b0bab6",
+                  "text": "renamed current task"
+                }
+              ],
+              "title": "original title"
+            }
+          ],
+          "drafts": [],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "7"
+        },
+        {
+          "cards": [
+            {
+              "assets": [],
+              "category": "实验",
+              "conclusion": "",
+              "content_kind": "legacy",
+              "deleted": false,
+              "deleted_at": "0",
+              "description": "original body 汉字 🧪",
+              "favorite": true,
+              "hypothesis": "",
+              "id": "classified-card",
+              "revision": "8",
+              "source": "0801120f636c61737369666965642d636172641a046964656120022808320e6f726967696e616c207469746c653afa03080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aaaa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236a201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f280118015200",
+              "stage": "待验证",
+              "tasks": [
+                {
+                  "completion": 1,
+                  "id": "task-e40b98e40a96211b101f1996748715581f13592b13178aaf173a8b7dfd1289cf",
+                  "text": "two"
+                }
+              ],
+              "title": "original title"
+            }
+          ],
+          "drafts": [],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "8"
+        }
+      ],
+      "publication_and_intent_replies": [
+        {
+          "cards": [],
+          "drafts": [
+            {
+              "active": true,
+              "assets": [],
+              "business_link": null,
+              "business_retirement": null,
+              "consumed_imports": [],
+              "current_active": true,
+              "current_generation": "1",
+              "fork_link": null,
+              "fork_retirement": null,
+              "generation": "1",
+              "operation_id": "publish-current",
+              "repeated": false,
+              "request_sha256": "ec7557ec68be923d25316d131511fc059e559eeda4eb8ce78f7bcc72c0d7ed84",
+              "scope": {
+                "card_id": "classified-card",
+                "draft_id": "current-draft",
+                "source": "0801120f636c61737369666965642d636172641a046964656120022808320e6f726967696e616c207469746c653afa03080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aaaa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236a201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f280118015200",
+                "source_kind": 0,
+                "source_revision": "8"
+              },
+              "values": {
+                "assets": [],
+                "category": "实验",
+                "conclusion": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": "changed conclusion"
+                },
+                "description": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": "changed current body 漢 🧪"
+                },
+                "hypothesis": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": "changed hypothesis"
+                },
+                "stage": "待验证",
+                "title": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": "changed current title"
+                },
+                "todos": {
+                  "affinity": 1,
+                  "composing_end": -1,
+                  "composing_start": -1,
+                  "directional": false,
+                  "selection_base": -1,
+                  "selection_extent": -1,
+                  "text": ""
+                }
+              }
+            }
+          ],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": ""
+        },
+        {
+          "cards": [],
+          "drafts": [],
+          "editor_intents": [
+            {
+              "business_operation": "current-body",
+              "card_id": "classified-card",
+              "close_disposition": "",
+              "close_request_json": "",
+              "current_active": true,
+              "current_generation": "1",
+              "expected_revision": "9",
+              "handoff_request_json": "",
+              "inspect_request_json": "",
+              "issue_operation": "morrow-host-intent-issue-f9fd61c08b475134e879a07acb442105825cb86119dcd40dc314d95dd51d3f16",
+              "part": "summary",
+              "phase": "prepared",
+              "proof": {
+                "generation": "1",
+                "intent_id": "morrow-host-editor-intent-1d4fa1c11bca02cd1a35d5f204fcacd0b731ab2c8062b1563995a772ed169b49",
+                "prepare_operation": "prepare-current",
+                "prepared_record_sha256": "ea4c767dd8f96c113899da3be588f415ab31b841687f63680f824e30d0fb9738",
+                "request_sha256": "1de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2"
+              },
+              "publication": null,
+              "repeated": false,
+              "request_json": "",
+              "retirement_request_json": "",
+              "save_request_json": ""
+            }
+          ],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "intent_next_after": "",
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "1"
+        },
+        {
+          "cards": [],
+          "drafts": [],
+          "editor_intents": [
+            {
+              "business_operation": "current-body",
+              "card_id": "classified-card",
+              "close_disposition": "",
+              "close_request_json": "",
+              "current_active": true,
+              "current_generation": "2",
+              "expected_revision": "9",
+              "handoff_request_json": "",
+              "inspect_request_json": "",
+              "issue_operation": "morrow-host-intent-issue-f9fd61c08b475134e879a07acb442105825cb86119dcd40dc314d95dd51d3f16",
+              "part": "summary",
+              "phase": "issued",
+              "proof": {
+                "generation": "1",
+                "intent_id": "morrow-host-editor-intent-1d4fa1c11bca02cd1a35d5f204fcacd0b731ab2c8062b1563995a772ed169b49",
+                "prepare_operation": "prepare-current",
+                "prepared_record_sha256": "ea4c767dd8f96c113899da3be588f415ab31b841687f63680f824e30d0fb9738",
+                "request_sha256": "1de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2"
+              },
+              "publication": null,
+              "repeated": false,
+              "request_json": "",
+              "retirement_request_json": "",
+              "save_request_json": ""
+            }
+          ],
+          "effect": "committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "intent_next_after": "",
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": "2"
+        },
+        {
+          "cards": [],
+          "drafts": [],
+          "editor_intents": [
+            {
+              "business_operation": "current-body",
+              "card_id": "classified-card",
+              "close_disposition": "",
+              "close_request_json": "",
+              "current_active": true,
+              "current_generation": "2",
+              "expected_revision": "9",
+              "handoff_request_json": "",
+              "inspect_request_json": "",
+              "issue_operation": "morrow-host-intent-issue-f9fd61c08b475134e879a07acb442105825cb86119dcd40dc314d95dd51d3f16",
+              "part": "save",
+              "phase": "issued",
+              "proof": {
+                "generation": "1",
+                "intent_id": "morrow-host-editor-intent-1d4fa1c11bca02cd1a35d5f204fcacd0b731ab2c8062b1563995a772ed169b49",
+                "prepare_operation": "prepare-current",
+                "prepared_record_sha256": "ea4c767dd8f96c113899da3be588f415ab31b841687f63680f824e30d0fb9738",
+                "request_sha256": "1de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2"
+              },
+              "publication": null,
+              "repeated": false,
+              "request_json": "",
+              "retirement_request_json": "",
+              "save_request_json": "{\"action\":\"editor_save\",\"editor_save\":{\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-1d4fa1c11bca02cd1a35d5f204fcacd0b731ab2c8062b1563995a772ed169b49\",\"prepare_operation\":\"prepare-current\",\"prepared_record_sha256\":\"ea4c767dd8f96c113899da3be588f415ab31b841687f63680f824e30d0fb9738\",\"request_sha256\":\"1de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2\"},\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"edit\\\",\\\"category\\\":\\\"实验\\\",\\\"conclusion\\\":\\\"changed conclusion\\\",\\\"description\\\":\\\"changed current body 漢 🧪\\\",\\\"hypothesis\\\":\\\"changed hypothesis\\\",\\\"id\\\":\\\"classified-card\\\",\\\"operation\\\":\\\"current-body\\\",\\\"source\\\":\\\"0801120f636c61737369666965642d636172641a046964656120022808320e6f726967696e616c207469746c653afa03080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aaaa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236a201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f280118015200\\\",\\\"stage\\\":\\\"待验证\\\",\\\"title\\\":\\\"changed current title\\\",\\\"todos\\\":\\\"\\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"current_v2\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"current-draft\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"ec7557ec68be923d25316d131511fc059e559eeda4eb8ce78f7bcc72c0d7ed84\\\",\\\"save_operation\\\":\\\"publish-current\\\"},\\\"schema_version\\\":1}\"}}"
+            }
+          ],
+          "effect": "not_committed",
+          "error": "",
+          "ids": [],
+          "imports": [],
+          "intent_next_after": "",
+          "markdown": {
+            "blocks": []
+          },
+          "ok": true,
+          "paste_text": "",
+          "profile": "development-unsealed",
+          "receipt_revision": ""
+        }
+      ],
+      "reopened_reply": {
+        "cards": [
+          {
+            "assets": [],
+            "category": "实验",
+            "conclusion": "changed conclusion",
+            "content_kind": "legacy",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "changed current body 漢 🧪",
+            "favorite": true,
+            "hypothesis": "changed hypothesis",
+            "id": "classified-card",
+            "revision": "9",
+            "source": "0801120f636c61737369666965642d636172641a04696465612002280932156368616e6765642063757272656e74207469746c653a8b050802aa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236a201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f28011801121d6368616e6765642063757272656e7420626f647920e6bca220f09fa7aa2a126368616e676564206879706f74686573697332126368616e67656420636f6e636c7573696f6e580060009ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001041de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2dd8141a1562852e5d505e5de9c59a346960e7613b3efead3323739f1e9983b235200",
+            "stage": "待验证",
+            "tasks": [
+              {
+                "completion": 1,
+                "id": "task-e40b98e40a96211b101f1996748715581f13592b13178aaf173a8b7dfd1289cf",
+                "text": "two"
+              }
+            ],
+            "title": "changed current title"
+          }
+        ],
+        "drafts": [],
+        "effect": "not_committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": ""
+      },
+      "request_json": "{\"business\":{\"action\":\"edit\",\"category\":\"实验\",\"conclusion\":\"changed conclusion\",\"description\":\"changed current body 漢 🧪\",\"hypothesis\":\"changed hypothesis\",\"id\":\"classified-card\",\"operation\":\"current-body\",\"source\":\"0801120f636c61737369666965642d636172641a046964656120022808320e6f726967696e616c207469746c653afa03080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aaaa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236a201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f280118015200\",\"stage\":\"待验证\",\"title\":\"changed current title\",\"todos\":\"\"},\"continuation\":null,\"mode\":\"current_v2\",\"publication\":{\"draft_id\":\"current-draft\",\"generation\":\"1\",\"request_sha256\":\"ec7557ec68be923d25316d131511fc059e559eeda4eb8ce78f7bcc72c0d7ed84\",\"save_operation\":\"publish-current\"},\"schema_version\":1}",
+      "retry_reply": {
+        "cards": [],
+        "drafts": [],
+        "editor_commit": {
+          "card_id": "classified-card",
+          "command_sha256": "c140a5733c7d793720d099b9c80763093352ef1823f5abff37b147c60caa4a4b",
+          "commit_status": "committed",
+          "content_sha256": "16d35ebcdc09b0fe8d670b18f0c7a009b8c0468b1b06539a11c18f7e13a0a9b4",
+          "event_id": "current-body",
+          "historical_card": {
+            "assets": [],
+            "category": "实验",
+            "conclusion": "changed conclusion",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "changed current body 漢 🧪",
+            "favorite": true,
+            "hypothesis": "changed hypothesis",
+            "id": "classified-card",
+            "revision": "9",
+            "source": "0801120f636c61737369666965642d636172641a04696465612002280932156368616e6765642063757272656e74207469746c653a8b050802aa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236a201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f28011801121d6368616e6765642063757272656e7420626f647920e6bca220f09fa7aa2a126368616e676564206879706f74686573697332126368616e67656420636f6e636c7573696f6e580060009ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001041de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2dd8141a1562852e5d505e5de9c59a346960e7613b3efead3323739f1e9983b235200",
+            "stage": "待验证",
+            "tasks": [
+              {
+                "completion": 1,
+                "id": "task-e40b98e40a96211b101f1996748715581f13592b13178aaf173a8b7dfd1289cf",
+                "text": "two"
+              }
+            ],
+            "title": "changed current title"
+          },
+          "live_matches": true,
+          "live_revision": "9",
+          "operation": "current-body",
+          "publication": {
+            "draft_id": "current-draft",
+            "generation": "1",
+            "request_sha256": "ec7557ec68be923d25316d131511fc059e559eeda4eb8ce78f7bcc72c0d7ed84",
+            "save_operation": "publish-current"
+          },
+          "publication_sha256": "dd8141a1562852e5d505e5de9c59a346960e7613b3efead3323739f1e9983b23",
+          "qualification": "development_editor_wire_v1",
+          "request_sha256": "1de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2",
+          "revision": "9",
+          "source_revision": "8"
+        },
+        "effect": "committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": "9"
+      },
+      "save_reply": {
+        "cards": [],
+        "drafts": [],
+        "editor_commit": {
+          "card_id": "classified-card",
+          "command_sha256": "c140a5733c7d793720d099b9c80763093352ef1823f5abff37b147c60caa4a4b",
+          "commit_status": "committed",
+          "content_sha256": "16d35ebcdc09b0fe8d670b18f0c7a009b8c0468b1b06539a11c18f7e13a0a9b4",
+          "event_id": "current-body",
+          "historical_card": {
+            "assets": [],
+            "category": "实验",
+            "conclusion": "changed conclusion",
+            "deleted": false,
+            "deleted_at": "0",
+            "description": "changed current body 漢 🧪",
+            "favorite": true,
+            "hypothesis": "changed hypothesis",
+            "id": "classified-card",
+            "revision": "9",
+            "source": "0801120f636c61737369666965642d636172641a04696465612002280932156368616e6765642063757272656e74207469746c653a8b050802aa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236a201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f28011801121d6368616e6765642063757272656e7420626f647920e6bca220f09fa7aa2a126368616e676564206879706f74686573697332126368616e67656420636f6e636c7573696f6e580060009ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001041de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2dd8141a1562852e5d505e5de9c59a346960e7613b3efead3323739f1e9983b235200",
+            "stage": "待验证",
+            "tasks": [
+              {
+                "completion": 1,
+                "id": "task-e40b98e40a96211b101f1996748715581f13592b13178aaf173a8b7dfd1289cf",
+                "text": "two"
+              }
+            ],
+            "title": "changed current title"
+          },
+          "live_matches": true,
+          "live_revision": "9",
+          "operation": "current-body",
+          "publication": {
+            "draft_id": "current-draft",
+            "generation": "1",
+            "request_sha256": "ec7557ec68be923d25316d131511fc059e559eeda4eb8ce78f7bcc72c0d7ed84",
+            "save_operation": "publish-current"
+          },
+          "publication_sha256": "dd8141a1562852e5d505e5de9c59a346960e7613b3efead3323739f1e9983b23",
+          "qualification": "development_editor_wire_v1",
+          "request_sha256": "1de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2",
+          "revision": "9",
+          "source_revision": "8"
+        },
+        "effect": "committed",
+        "error": "",
+        "ids": [],
+        "imports": [],
+        "markdown": {
+          "blocks": []
+        },
+        "ok": true,
+        "paste_text": "",
+        "profile": "development-unsealed",
+        "receipt_revision": "9"
+      },
+      "save_request_json": "{\"action\":\"editor_save\",\"editor_save\":{\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-1d4fa1c11bca02cd1a35d5f204fcacd0b731ab2c8062b1563995a772ed169b49\",\"prepare_operation\":\"prepare-current\",\"prepared_record_sha256\":\"ea4c767dd8f96c113899da3be588f415ab31b841687f63680f824e30d0fb9738\",\"request_sha256\":\"1de0a60712d332e1ba9435168f752a6f706640e1e082dd8043a375c9a0e341f2\"},\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"edit\\\",\\\"category\\\":\\\"实验\\\",\\\"conclusion\\\":\\\"changed conclusion\\\",\\\"description\\\":\\\"changed current body 漢 🧪\\\",\\\"hypothesis\\\":\\\"changed hypothesis\\\",\\\"id\\\":\\\"classified-card\\\",\\\"operation\\\":\\\"current-body\\\",\\\"source\\\":\\\"0801120f636c61737369666965642d636172641a046964656120022808320e6f726967696e616c207469746c653afa03080212196f726967696e616c20626f647920e6b189e5ad9720f09fa7aaaa01a9020a0f636c61737369666965642d6361726410011a205d72d694afc7499643dc8ee0cc7642f8d3156850c8fa39de591b08d70df5abe120012802323f080112196f726967696e616c20626f647920e6b189e5ad9720f09fa7aa1a06e781b5e6849f2209e5be85e695b4e7908642036f6e65420374776f4a036f6e653a4712457461736b2d623938336133383563366666343037633138613264326236666362666234663131366366376130356664386338393637343265303061616565356230626162363a49080112457461736b2d653430623938653430613936323131623130316631393936373438373135353831663133353932623133313738616166313733613862376466643132383963664209e68ea8e8bf9be4b8ad4a0e6f726967696e616c207469746c6538011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81b201457461736b2d62393833613338356336666634303763313861326432623666636266623466313136636637613035666438633839363734326530306161656535623062616236a201500a457461736b2d65343062393865343061393632313162313031663139393637343837313535383166313335393262313331373861616631373361386237646664313238396366120374776f280118015200\\\",\\\"stage\\\":\\\"待验证\\\",\\\"title\\\":\\\"changed current title\\\",\\\"todos\\\":\\\"\\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"current_v2\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"current-draft\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"ec7557ec68be923d25316d131511fc059e559eeda4eb8ce78f7bcc72c0d7ed84\\\",\\\"save_operation\\\":\\\"publish-current\\\"},\\\"schema_version\\\":1}\"}}"
+    }
+  ],
+  "qualification": "actual-development-store-card-source-v27",
+  "schema_version": 1
+}

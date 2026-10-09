@@ -1,0 +1,245 @@
+{
+  "schema_version": 1,
+  "qualification": "frozen-independent-actual-Index-source-integration",
+  "run_runtime_sources": [
+    {
+      "path": "hmos/entry/src/main/ets/pages/Index.ets",
+      "bytes": 334640,
+      "sha256": "0c1620875c82c517bea1d8c4a3029dc851452978a323667fed8af91e483696b6"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorBusiness.ets",
+      "bytes": 26878,
+      "sha256": "bbd4de0b1e02a67e19345147eb7de4c01622c1e015e12fb0c1431a101945c4fd"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorBusinessHandoff.ets",
+      "bytes": 47627,
+      "sha256": "fc2878c8f8fc2f312cf879023a1e445fe2cb3ae409755372feb9ffbc596723f0"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorBusinessRecovery.ets",
+      "bytes": 10756,
+      "sha256": "062a7a50f220e27213f24fb3601892e3ab2c797c5e71bb0bb3d6f65675f3a88e"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorBusinessSession.ets",
+      "bytes": 40102,
+      "sha256": "58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorDirectInput.ets",
+      "bytes": 11848,
+      "sha256": "a56119b3dfc3ea52e83082f0654c6bd9164383a646af503b6d72ce2f0d7e6030"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorDraft.ets",
+      "bytes": 37929,
+      "sha256": "b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorDraftFork.ets",
+      "bytes": 12805,
+      "sha256": "2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+      "bytes": 6929,
+      "sha256": "10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorInputPolicy.ets",
+      "bytes": 7887,
+      "sha256": "64c86330d3dbc8fa85f88d6f0692d9ed15c88814c711f4f2b665827b3628ae2b"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorPaste.ets",
+      "bytes": 2767,
+      "sha256": "28d54a7d02bf644d68b58ac68a4d824ab2ff3fb71b87ab0e00c279456b6d160e"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorTodos.ets",
+      "bytes": 21509,
+      "sha256": "e7a0748f5066939ad42fa4a9b6bde3d9d9761e15df2e42403356c1277a48d710"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Workbench.ets",
+      "bytes": 2418,
+      "sha256": "6cef4c4c9cde5fefe44fc65619cf7caf8c4965b129a553d45d8afe701b2e6547"
+    }
+  ],
+  "source_drift_during_successful_run": 0,
+  "post_run_review_sources": [
+    {
+      "path": "hmos/entry/src/main/ets/pages/Index.ets",
+      "bytes": 334640,
+      "sha256": "0c1620875c82c517bea1d8c4a3029dc851452978a323667fed8af91e483696b6"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorBusiness.ets",
+      "bytes": 26878,
+      "sha256": "bbd4de0b1e02a67e19345147eb7de4c01622c1e015e12fb0c1431a101945c4fd"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorBusinessHandoff.ets",
+      "bytes": 47627,
+      "sha256": "fc2878c8f8fc2f312cf879023a1e445fe2cb3ae409755372feb9ffbc596723f0"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorBusinessRecovery.ets",
+      "bytes": 10792,
+      "sha256": "6b02c274cb3b6795fb89c8457096aa2396ed22cb6f50acdb86a1b728b92533ec"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorBusinessSession.ets",
+      "bytes": 40102,
+      "sha256": "58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorDirectInput.ets",
+      "bytes": 11848,
+      "sha256": "a56119b3dfc3ea52e83082f0654c6bd9164383a646af503b6d72ce2f0d7e6030"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorDraft.ets",
+      "bytes": 37929,
+      "sha256": "b88a46d0371d8c6f193187d1a0e1acf41671d4991cdbd59c451b8bcf66cf3775"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorDraftFork.ets",
+      "bytes": 12805,
+      "sha256": "2f5cc8586d2400f99ee7598dd816970e63d9e3d4b53c5dffbc54cb4e4062263c"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorFieldPolicy.ets",
+      "bytes": 6929,
+      "sha256": "10c3162e77a947335acf0c3df2e464c80195d0ac2bbc2922bbb09c0a8a626842"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorInputPolicy.ets",
+      "bytes": 7887,
+      "sha256": "64c86330d3dbc8fa85f88d6f0692d9ed15c88814c711f4f2b665827b3628ae2b"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorPaste.ets",
+      "bytes": 2767,
+      "sha256": "28d54a7d02bf644d68b58ac68a4d824ab2ff3fb71b87ab0e00c279456b6d160e"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorTodos.ets",
+      "bytes": 21509,
+      "sha256": "e7a0748f5066939ad42fa4a9b6bde3d9d9761e15df2e42403356c1277a48d710"
+    },
+    {
+      "path": "hmos/entry/src/main/ets/model/Workbench.ets",
+      "bytes": 2418,
+      "sha256": "6cef4c4c9cde5fefe44fc65619cf7caf8c4965b129a553d45d8afe701b2e6547"
+    }
+  ],
+  "post_run_changes": [
+    {
+      "path": "hmos/entry/src/main/ets/model/EditorBusinessRecovery.ets",
+      "run_sha256": "062a7a50f220e27213f24fb3601892e3ab2c797c5e71bb0bb3d6f65675f3a88e",
+      "current_sha256": "6b02c274cb3b6795fb89c8457096aa2396ed22cb6f50acdb86a1b728b92533ec",
+      "change": "four as Error rethrow casts for API26 SDK; separately validated by Root final global runner; not worker92 new-hash evidence"
+    }
+  ],
+  "changed_tools": [
+    {
+      "path": "hmos/tool/index-business-recovery-test-harness.cjs",
+      "bytes": 11999,
+      "sha256": "7d68c464fb73e2d81fcf3b7e217ef5a98b6a9e5d343187a6cf23fb1d5614b7b8"
+    },
+    {
+      "path": "hmos/tool/index-business-recovery-integration.test.cjs",
+      "bytes": 34278,
+      "sha256": "8c990d4dada1b0fc104422770f7bd451be1ee026d36d1cd42830a7b2c0ca315e"
+    },
+    {
+      "path": "hmos/tool/index-business-test-harness.cjs",
+      "bytes": 35080,
+      "sha256": "76122aca4aae4d2ffb13ddc321b9e5e61cfc183fba060396f41e6833c8da97e9"
+    },
+    {
+      "path": "hmos/tool/index-editor-todos-integration.test.cjs",
+      "bytes": 20569,
+      "sha256": "d3974d5cbd97fbe6ac232c67285fe826536316ba2f8a99df80f9a63693542486"
+    }
+  ],
+  "other_suite_tools": [
+    {
+      "path": "hmos/tool/index-business-integration.test.cjs",
+      "bytes": 25548,
+      "sha256": "5fdf7940a24eb84169bbb29db37970b81e9ddb5f9e4729933421b07ffc677eeb"
+    },
+    {
+      "path": "hmos/tool/index-editor-field-integration.test.cjs",
+      "bytes": 26323,
+      "sha256": "7b6f7bf9ceb321527bb025cd1d0cda6c11e0305f006359352cf796854ad02c7d"
+    },
+    {
+      "path": "hmos/tool/editor-field-test-harness.cjs",
+      "bytes": 2497,
+      "sha256": "fe8db46b347c64fb28df463ad335438576aeeed528b85bfcd14c70a631c96b13"
+    }
+  ],
+  "actual_native_read_fixtures": [
+    {
+      "path": "hmos/reports/ui-source/v26/editor-reopen-history-store-fixture.json",
+      "bytes": 75959,
+      "sha256": "4191624d7b2894abc17a3874ea3005249b450e6ee270b9c880ea2f04530415db"
+    },
+    {
+      "path": "hmos/reports/ui-source/v27/editor-card-source-store-fixture.json",
+      "bytes": 84863,
+      "sha256": "409c9adf3fa6297aa60f9ea7130b8d39c451b37516965da48d7c2548895449ff"
+    }
+  ],
+  "flutter_reference": [
+    {
+      "path": "build/win-cloud-20261005/lib/main.dart",
+      "bytes": 221628,
+      "sha256": "2cb2a519e31ac982d3a8638eb7de95fe63d5421ed3d1b6acda507cd142169f06"
+    },
+    {
+      "path": "build/io-safety-refactor/lib/main.dart",
+      "bytes": 227749,
+      "sha256": "6203b7465f320dc8463dfacb5387ea8b437ec3ec1458cca7e215e44b8f65cb1e"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/plugins/versioned_editor_adapter.dart",
+      "bytes": 18194,
+      "sha256": "104e82c2573c973f8c6745010e22826bd144e1b99220a51151807b42915a8d16"
+    },
+    {
+      "path": "build/win-cloud-20261005/lib/versioned_task_panel.dart",
+      "bytes": 21175,
+      "sha256": "f97ec18ec42b4f6f33963eb0eb5da15a137f2588f6e4915c7db99f7e6d40c9a3"
+    }
+  ],
+  "flutter_main_normalized_equal": true,
+  "native_readonly_review": [
+    {
+      "path": "hmos/rust/src/lib.rs",
+      "bytes": 61286,
+      "sha256": "1d744518c81ad0c5ca23b0c9dbdd61005b5192f9e59226abefef760b85aba401"
+    },
+    {
+      "path": "hmos/rust/src/editor_business.rs",
+      "bytes": 47792,
+      "sha256": "4761e5ac4e7b3f22a93adbc28a229e171054a75186ac12524f3224769aa48f06"
+    },
+    {
+      "path": "hmos/rust/src/editor_handoff/reopen_history_tests.rs",
+      "bytes": 14954,
+      "sha256": "38bf83ae4f43e19258c719b299f615f4741cd3ab4770641196f8aed247bbfb88"
+    },
+    {
+      "path": "hmos/rust/src/card_source_tests.rs",
+      "bytes": 15967,
+      "sha256": "057e872a86cd052ecc24bc12a601bcaf23893b95eed3b9e482c25b86d1d1c4b7"
+    }
+  ],
+  "native_manifest_matches": true,
+  "external_compiler": "Huawei installed SDK TypeScript transpile only; not SDK ArkTS type/build proof"
+}

@@ -228,7 +228,7 @@ test('invalid exact-close receipt retains its original fixed close and raw edito
 test('existing V2 pending task blocks body Save and preserves task identity; separate raw remains retainable', async () => {
   const raw = 'pending single task', h = harness({ existing: true, todos: raw }); try {
     h.edit('edited existing body', 'description'); await h.save(); assert.equal(h.business().length, 0);
-    assert.equal(h.draft.current.todos.text, raw); assert.match(h.page.message, /先添加或取消/);
+    assert.equal(h.draft.current.todos.text, raw); assert.match(h.page.message, /恢复其保存上下文.*完整文字未清除/);
     assert.equal(await h.page.flushDraft(), true); assert.equal(h.draft.confirmed.values.description.text, 'edited existing body');
     assert.equal(h.page.cards[0].tasks[0].id, 'original-v2-task-id'); assert.equal(h.retirements().length, 0);
     assert.equal(h.page.editorOpen, true); assert.equal(h.draft.disposed, false);

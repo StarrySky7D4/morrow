@@ -24,10 +24,13 @@ const settle = async () => { for (let n = 0; n < 80; n++) await Promise.resolve(
 function actualMethod(name, required = true) {
   const re = new RegExp('^  private (?:async )?' + name + '\\(', 'm'), match = re.exec(source);
   if (!match) { assert.ok(!required, 'actual Index method exists: ' + name); return ''; }
-  const tail = source.slice(match.index + match[0].length);
-  const next = /^  (?:private (?:async )?\w+\(|@Builder|build\(|aboutTo\w+\()/m.exec(tail);
-  assert.ok(next, 'actual Index next method boundary: ' + name);
-  const result = source.slice(match.index, match.index + match[0].length + next.index);
+  // Actual helpers can be separated by field initializers. Select the method
+  // node end so a helper extraction cannot construct unrelated controllers.
+  const prefix = 'class Extracted {\n';
+  const parsed = ts.createSourceFile('extracted.ts', prefix + source.slice(match.index) + '\n}', ts.ScriptTarget.ES2020, true, ts.ScriptKind.TS);
+  const node = parsed.statements[0]?.members?.[0];
+  assert.ok(node && ts.isMethodDeclaration(node) && node.name.getText(parsed) === name, 'actual Index method boundary: ' + name);
+  const result = source.slice(match.index, match.index + node.end - prefix.length);
   assert.equal((result.match(re) || []).length, 1); return result;
 }
 const names = ['save', 'businessPending', 'businessImportsReady', 'businessCurrent', 'businessParentMatches',
@@ -38,6 +41,8 @@ const names = ['save', 'businessPending', 'businessImportsReady', 'businessCurre
   'draftField', 'directOwner', 'directValue', 'captureDirectInput', 'adoptExternalInput',
   'retirementCapture', 'draftSelectionChanged', 'flushDraft'];
 names.push('finishBusinessInput', 'continueBusinessHandoff', 'finishBusinessClose', 'refreshAfterBusiness', 'reconcileBusinessHandoff');
+for (const name of ['editorIdleForRead', 'currentEditorCardComplete', 'recoverLinkedBusinessDraft', 'recoverCurrentBusinessChild',
+  'prepareCurrentBusinessRecovery', 'installRecoveredBusinessChild']) if (!names.includes(name)) names.push(name);
 // Shared current Save entrypoint for the existing field/todo integration
 // suites. Every helper here is extracted verbatim from the same freeze.
 for (const name of ['editorInputChanged', 'draftTextChanged', 'restoreSelection', 'fieldCountIndex', 'setFieldCount', 'fieldCountLabel',
@@ -85,7 +90,7 @@ function harness(options = {}) {
       encodeURIComponent }, { filename: file }); return exports;
   }
   const m = { ...load('EditorDraft'), ...load('EditorFieldPolicy'), ...load('EditorBusiness'), ...load('EditorBusinessSession'),
-    ...load('EditorDraftFork'), ...load('EditorPaste'), ...load('EditorBusinessHandoff') };
+    ...load('EditorDraftFork'), ...load('EditorPaste'), ...load('EditorBusinessHandoff'), ...load('EditorBusinessRecovery') };
   const wb = load('Workbench'), actualSend = wb.workbench.send.bind(wb.workbench);
   wb.workbench.send = wire => {
     const action = JSON.parse(wire).action; calls.push(wire); events.push({ kind: 'admit', action, wire }); return actualSend(wire);
@@ -230,6 +235,9 @@ function harness(options = {}) {
     taskRenameValue: new m.TextValue(), taskText: values.todos.text, todoBusinessReady: true, todoFormatPending: false, todoInputRevision: 0,
     title: values.title.text, description: values.description.text, hypothesis: values.hypothesis.text, conclusion: values.conclusion.text, category: values.category,
     selected: scope.source_kind === 1 ? '' : scope.card_id, dirty: false, message: '', draftRecords: record ? [plain(record)] : [], draftSource: scope.source,
+    // These legacy source fixtures exercise their original edit/create intent
+    // contracts; they do not claim the new fresh native current_v2 read grant.
+    editorBusinessMode: options.mode === 'edit' ? 'edit' : 'create',
     cards: scope.source_kind === 1 ? [] : [{ id: scope.card_id, source: scope.source, revision: scope.source_revision, title: values.title.text,
       description: values.description.text, hypothesis: values.hypothesis.text, conclusion: values.conclusion.text, category: values.category, stage: values.stage,
       favorite: false, deleted: false, deleted_at: '0', tasks: [], assets: [] }],

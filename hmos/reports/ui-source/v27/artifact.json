@@ -1,0 +1,10 @@
+{
+  "createdUtc": "2026-10-09T00:49:07.458Z",
+  "path": ".build/artifacts/dev27-page-recovery-retry1/entry-default-unsigned.hap",
+  "bytes": 30267399,
+  "sha256": "059504B9BD20EB38B5DFDEC2FC75D185B41F19B86E261F0415882F6C49D26C44",
+  "archive_path": ".build/artifacts/dev27-page-recovery-retry1/entry-default-unsigned.hap",
+  "signed": false,
+  "installed": false,
+  "scope": "v27 page integration: current-source V2 body editing, full raw current-child restart recovery from original qualified requests; actual-source controlled host tests and API26 build are scoped evidence; unsigned, uninstalled, device acceptance NOT_RUN; full Flutter/Windows parity OPEN"
+}

@@ -898,6 +898,7 @@ fn card_view(card: &CardRecord) -> Result<CardView> {
         id: s.id,
         revision: s.revision.to_string(),
         source: hex(&card.encode()),
+        content_kind: None,
         title: s.title,
         description: p.description,
         hypothesis: p.hypothesis,

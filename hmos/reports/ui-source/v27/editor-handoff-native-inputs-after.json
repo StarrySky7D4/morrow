@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "scope": "v27 ordinary current CardView source classification",
+  "qualification": "frozen-native-source",
+  "files": [
+    {
+      "path": "hmos/rust/src/lib.rs",
+      "bytes": 61286,
+      "sha256": "1D744518C81AD0C5CA23B0C9DBDD61005B5192F9E59226ABEFEF760B85ABA401"
+    },
+    {
+      "path": "hmos/rust/src/editor_business.rs",
+      "bytes": 47792,
+      "sha256": "4761E5AC4E7B3F22A93ADBC28A229E171054A75186AC12524F3224769AA48F06"
+    },
+    {
+      "path": "hmos/rust/src/editor_handoff/reopen_history_tests.rs",
+      "bytes": 14954,
+      "sha256": "38BF83AE4F43E19258C719B299F615F4741CD3AB4770641196F8AED247BBFB88"
+    },
+    {
+      "path": "hmos/rust/src/card_source_tests.rs",
+      "bytes": 15967,
+      "sha256": "057E872A86CD052ECC24BC12A601BCAF23893B95EED3B9E482C25B86D1D1C4B7"
+    }
+  ]
+}

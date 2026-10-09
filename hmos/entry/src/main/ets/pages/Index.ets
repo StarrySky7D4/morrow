@@ -38,24 +38,26 @@ import { AssetView, ImportRecord, ImportCommand, attachmentKind, attachmentSize,
 import { QueryConditions, QueryState, QueryCoordinator } from '../model/QueryCoordinator';
 import { Values as DraftValues, TextValue as DraftTextValue, DraftScope, DraftRecord,
   AssetSelection, EditorDraftCoordinator, DraftSaveFailure, copyValues, copyText, copyScope, sameValues, nextGeneration,
-  validateRecord, sameForkLink } from '../model/EditorDraft';
+  validateRecord, validGeneration, sameForkLink, copyRecord } from '../model/EditorDraft';
 import { EditorDraftForkCoordinator } from '../model/EditorDraftFork';
-import { EditorBusinessFields } from '../model/EditorBusiness';
+import { EditorBusinessFields, EditorBusinessSubmission } from '../model/EditorBusiness';
 import { EditorBusinessSessionCoordinator, EditorBusinessSessionHooks, EditorBusinessSessionReply, EditorBusinessSessionOwnerHooks,
-  EditorIntentView } from '../model/EditorBusinessSession';
+  EditorIntentView, EditorIntentProof } from '../model/EditorBusinessSession';
 import { EditorBusinessHandoffCoordinator, EditorBusinessHandoffHooks, EditorBusinessHandoffReply } from '../model/EditorBusinessHandoff';
+import { EditorBusinessRecoveryCoordinator, EditorBusinessRecoveryReady } from '../model/EditorBusinessRecovery';
 
 class BusinessEditorBinding {
-  parent: EditorDraftCoordinator;
+  parent: EditorDraftCoordinator | undefined;
   liveDraft: EditorDraftCoordinator;
   identity: string;
   owner: string;
   epoch: number;
   values: DraftValues;
   publication: DraftRecord;
-  constructor(parent: EditorDraftCoordinator, identity: string, owner: string, epoch: number,
-    values: DraftValues, publication: DraftRecord) {
-    this.parent = parent; this.liveDraft = parent; this.identity = identity; this.owner = owner;
+  constructor(parent: EditorDraftCoordinator | undefined, identity: string, owner: string, epoch: number,
+    values: DraftValues, publication: DraftRecord, liveDraft?: EditorDraftCoordinator) {
+    if (!parent && !liveDraft) { throw new Error('Business editor needs a real current writer'); }
+    this.parent = parent; this.liveDraft = liveDraft ?? parent!; this.identity = identity; this.owner = owner;
     this.epoch = epoch; this.values = copyValues(values); this.publication = publication;
   }
 }
@@ -160,6 +162,10 @@ struct Index {
   private businessBinding: BusinessEditorBinding | undefined = undefined;
   private ownedTodosBaseline: EditorBusinessSessionCoordinator | undefined = undefined;
   private businessRecoveryIdentity: string = '';
+  private businessRecovery: EditorBusinessRecoveryCoordinator | undefined = undefined;
+  private businessRecoverySession: EditorBusinessSessionCoordinator | undefined = undefined;
+  private editorOpenIdentity: string = '';
+  private editorBusinessMode: string = 'edit';
   private businessHandoff: EditorBusinessHandoffCoordinator | undefined = undefined;
   private businessHandoffCloseOperation: string = '';
   private businessCloseExact: boolean = false;
@@ -442,6 +448,7 @@ struct Index {
     // No mutation is replayed on destruction. Only earlier acknowledged raw
     // journal generations are recoverable after a forced process termination.
     this.editorDraft?.dispose();
+    this.businessRecovery?.dispose();
     this.markdown.dispose();
     this.inlineImages.dispose();
     this.queries.dispose();
@@ -1282,9 +1289,20 @@ struct Index {
     } catch (error) { this.rawForkFailed(String(error)); }
     finally { this.rawForkWorking = false; this.draftChanged(); }
   }
-  private attachDraft(card?: CardView, restored?: DraftRecord, preserveFocus: boolean = false): void {
+  private attachDraft(card?: CardView, restored?: DraftRecord, preserveFocus: boolean = false,
+    preparedWriter?: EditorDraftCoordinator): void {
+    if (preparedWriter && (!restored || preparedWriter.disposed || !preparedWriter.writesPaused ||
+      preparedWriter.scope.card_id !== restored.scope.card_id || preparedWriter.scope.draft_id !== restored.scope.draft_id ||
+      preparedWriter.scope.source_kind !== restored.scope.source_kind || preparedWriter.scope.source_revision !== restored.scope.source_revision ||
+      preparedWriter.scope.source !== restored.scope.source || !sameValues(preparedWriter.current, restored.values))) {
+      throw new Error('Prepared recovery writer differs from the complete current native record');
+    }
     this.ownedTodosBaseline = undefined;
-    if (!this.businessPending()) { this.businessSession = undefined; this.businessBinding = undefined; this.businessChanged(); }
+    if (!this.businessPending()) {
+      this.businessSession = undefined; this.businessBinding = undefined;
+      if (!preparedWriter) { this.businessRecovery?.dispose(); this.businessRecovery = undefined; this.businessRecoverySession = undefined; }
+      this.businessChanged();
+    }
     this.draftRetiredIdentity = ''; this.retirementInput.clear();
     this.fieldPolicy.stop(); this.editorInputEpoch++; this.fieldCountEpochs.clear();
     this.fieldCountLabels = ['', '', '', '', '', ''];
@@ -1293,7 +1311,8 @@ struct Index {
     this.attachmentEditorIdentity = util.generateRandomUUID(true); this.attachmentEditingValues = '';
     this.editorViewOwner = this.attachmentEditorIdentity; this.editorViewRevoked = true; this.editorViewVisible = true; this.editorBoundary = '';
     this.attachmentSelectionState = { phase: 'idle', busy: false, total: 0, started: 0, selected: 0, retained: 0, error: '' };
-    this.editorDraft?.dispose(); this.draftConflict = false; this.draftStatus = '';
+    if (this.editorDraft && this.editorDraft !== preparedWriter) { this.editorDraft.dispose(); }
+    this.draftConflict = false; this.draftStatus = '';
     this.draftSelectionPending = restored ? new Set(['title', 'description', 'hypothesis', 'conclusion', 'todos']) : new Set();
     if (!preserveFocus) { this.draftFocusedFields.clear(); this.lastDraftField = 'description'; }
     this.draftRestoreInput = !!restored; this.draftCaptureBlocked.clear(); this.draftCaptureIncomplete = false;
@@ -1303,6 +1322,8 @@ struct Index {
       scope.source_kind = card ? 0 : 1; scope.source_revision = card?.revision ?? '0'; scope.source = card?.source ?? '';
     }
     this.draftSource = scope.source;
+    this.editorBusinessMode = scope.source_kind === 1 ? 'create' :
+      card?.content_kind === 'v2' || card?.content_kind === 'legacy' ? 'current_v2' : 'unknown';
     const values = restored ? copyValues(restored.values) : new DraftValues();
     if (!restored) {
       values.title.text = this.title; values.description.text = this.description;
@@ -1314,7 +1335,7 @@ struct Index {
       });
     }
     this.editorValues = values;
-    this.editorDraft = new EditorDraftCoordinator(scope, values,
+    this.editorDraft = preparedWriter ?? new EditorDraftCoordinator(scope, values,
       async (serialized: string): Promise<DraftRecord> => {
         if (this.draftRetiredIdentity === scope.draft_id) { throw new DraftSaveFailure(true, '旧草稿已清理，当前输入尚未写入新草稿'); }
         const result = await workbench.send(serialized);
@@ -1332,6 +1353,7 @@ struct Index {
   private restoreDraft(record: DraftRecord): void {
     if (this.businessWorking || this.businessPending()) { this.message = '请先核对原保存请求，当前编辑器仍保留。'; return; }
     if (this.busy || this.pending.length > 0 || this.editorOpen) { return; }
+    if (record.business_link) { this.recoverLinkedBusinessDraft(record); return; }
     this.openDraftRecord(record);
   }
   private openDraftRecord(record: DraftRecord): void {
@@ -1875,18 +1897,65 @@ struct Index {
     this.draftTextChanged(name, value, preview);
   }
   private select(c: CardView): void {
+    this.openCardEditor(c);
+  }
+  private editorIdleForRead(): boolean {
+    return !this.editorOpen && !this.dirty && !this.busy && !this.pending && !this.draftWorking &&
+      !this.draftRetiring && !this.draftRetirementUnknown && !this.attachmentWorking && !this.pasteWorking &&
+      !this.rawFork && !this.rawForkWorking && !this.editorBoundary && this.businessImportsReady();
+  }
+  private currentEditorCardComplete(card?: CardView): boolean {
+    if (!card || !['v2', 'legacy'].includes(card.content_kind ?? '') || !validGeneration(card.revision) || card.revision === '0' ||
+      typeof card.source !== 'string' || !/^(?:[0-9a-f]{2})+$/.test(card.source) ||
+      [card.id, card.title, card.description, card.hypothesis, card.conclusion, card.category, card.stage, card.deleted_at]
+        .some((value: string): boolean => typeof value !== 'string') ||
+      typeof card.favorite !== 'boolean' || typeof card.deleted !== 'boolean' || !Array.isArray(card.tasks) || !Array.isArray(card.assets)) { return false; }
+    return card.tasks.every((task: TaskView): boolean => typeof task.id === 'string' && task.id.length > 0 &&
+      typeof task.text === 'string' && Number.isInteger(task.completion)) &&
+      card.assets.every((asset: AssetView): boolean => typeof asset.id === 'string' && asset.id.length > 0 &&
+        typeof asset.name === 'string' && typeof asset.kind === 'string' && typeof asset.media_type === 'string' &&
+        typeof asset.byte_length === 'string' && typeof asset.sha256 === 'string');
+  }
+  private editorOpenCurrent(identity: string): boolean {
+    return this.pageAlive && this.foreground && this.editorOpenIdentity === identity && this.editorIdleForRead() && !this.businessPending();
+  }
+  private async openCardEditor(c: CardView): Promise<void> {
     if (this.businessWorking || this.businessPending()) { this.message = '请先核对原保存请求，当前编辑器仍保留。'; return; }
+    if (!this.editorIdleForRead()) { this.message = '当前输入或文件步骤尚未完成，请先保留并核对。'; return; }
     if (this.editorOpen || this.busy || this.draftWorking || this.draftRetiring || this.draftRetirementUnknown || this.pending.length > 0) { return; }
     if (this.dirty) { this.message = '请先保存当前编辑，输入已保留。'; return; }
     if (this.cards.find((v: CardView) => v.id === c.id)?.source !== c.source || c.deleted) { return; }
-    this.detailId = '';
-    const recovered = this.draftRecords.find((r: DraftRecord) => r.scope.card_id === c.id);
-    if (recovered) { this.restoreDraft(recovered); return; }
-    this.taskEditId = ''; this.taskText = ''; this.taskRenameText = '';
-    this.previewBody = false; this.selected = c.id; this.title = c.title; this.description = c.description;
-    this.hypothesis = c.hypothesis; this.conclusion = c.conclusion; this.category = c.category; this.editorOpen = true; this.message = ''; 
-    this.attachDraft(c);
-    this.refreshPreview();
+    const identity = util.generateRandomUUID(true); this.editorOpenIdentity = identity; this.businessWorking = true;
+    let recovered: DraftRecord | undefined = undefined;
+    try {
+      const reply = await workbench.send(JSON.stringify(new Command()));
+      if (!reply.ok || reply.error !== '' || !Array.isArray(reply.cards)) { throw new Error(reply.error || 'Current card read is incomplete'); }
+      const card = reply.cards.find((value: CardView): boolean => value.id === c.id);
+      if (!card || card.deleted || !this.currentEditorCardComplete(card)) {
+        throw new Error('当前卡片的完整版本与任务来源尚未确认');
+      }
+      const command = new Command(); command.action = 'draft_list';
+      const drafts = await workbench.send(JSON.stringify(command));
+      if (!drafts.ok || drafts.error !== '' || !Array.isArray(drafts.drafts)) { throw new Error(drafts.error || 'Current draft list is incomplete'); }
+      if (!this.editorOpenCurrent(identity)) { throw new Error('读取期间编辑归属已变化，未替换任何输入'); }
+      recovered = drafts.drafts.find((record: DraftRecord): boolean => record.scope.card_id === card.id && record.active &&
+        record.current_active && record.generation === record.current_generation);
+      if (recovered) { validateRecord(recovered, true); }
+      this.cards = reply.cards; this.draftRecords = drafts.drafts;
+      if (!recovered) {
+        this.detailId = ''; this.taskEditId = ''; this.taskText = ''; this.taskRenameText = '';
+        this.previewBody = false; this.selected = card.id; this.title = card.title; this.description = card.description;
+        this.hypothesis = card.hypothesis; this.conclusion = card.conclusion; this.category = card.category;
+        this.dirty = false; this.editorOpen = true; this.message = ''; this.attachDraft(card); this.refreshPreview();
+      }
+    } catch (error) { this.message = '重新编辑未打开：' + String(error) + '。现有文字与任务未改变。'; }
+    finally { if (this.editorOpenIdentity === identity) { this.businessWorking = false; } }
+    if (recovered && this.editorOpenCurrent(identity)) { this.detailId = ''; this.restoreDraft(recovered); }
+  }
+  private editorMetadataReady(owner: string): boolean {
+    return this.ownsEditorView(owner) && this.editorDraft?.scope.source_kind === 1 && !this.businessWorking &&
+      !this.businessPending() && !this.rawFork && !this.rawForkWorking && !this.editorBoundary && !this.pasteWorking &&
+      !this.draftWorking && !this.attachmentWorking && !this.draftRetiring && !this.draftRetirementUnknown && !this.draftRestoreInput;
   }
   private newCard(): boolean {
     if (this.businessWorking || this.businessPending()) { this.message = '请先核对原保存请求，当前编辑器仍保留。'; return false; }
@@ -2028,9 +2097,12 @@ struct Index {
     const draft = this.editorDraft;
     if (!draft || draft.unknown || draft.conflicted || draft.disposed || draft.writesPaused) { return; }
     const owner = this.editorViewOwner, identity = this.attachmentEditorIdentity, epoch = this.editorInputEpoch, values = draft.current;
-    const mode = this.ownedTodosBaseline ? 'continued_todos' : draft.scope.source_kind === 1 ? 'create' : 'edit';
+    const mode = this.ownedTodosBaseline ? 'continued_todos' : draft.scope.source_kind === 1 ? 'create' : this.editorBusinessMode;
+    if (mode !== 'create' && mode !== 'continued_todos' && mode !== 'current_v2' && mode !== 'edit') {
+      this.message = '当前完整版本来源尚未确认，请保留草稿并重新读取卡片。'; return;
+    }
     if (!this.inputReadyFor(mode === 'create' ? 'create' : 'edit')) { this.message = '请先完成文字输入或规则检查，草稿仍保留。'; return; }
-    if (mode === 'edit' && values.todos.text.length > 0) { this.message = '请先添加或取消这条待办，再保存正文。待办输入未清除。'; return; }
+    if ((mode === 'edit' || mode === 'current_v2') && values.todos.text.length > 0) { this.message = '待办文字属于原草稿接续，请恢复其保存上下文后再继续，完整文字未清除。'; return; }
     this.businessWorking = true; this.fieldValidationWorking = true;
     let binding: BusinessEditorBinding | undefined = undefined;
     try {
@@ -2040,7 +2112,7 @@ struct Index {
       if (!this.ownsEditorView(owner) || this.editorDraft !== draft || identity !== this.attachmentEditorIdentity ||
         epoch !== this.editorInputEpoch || this.draftCaptureIncomplete || !sameValues(values, draft.current) ||
         !sameValues(publication.values, values) || !this.businessImportsReady()) { throw new Error('保存前输入已变化，完整草稿仍保留。'); }
-      if (mode !== 'edit' && values.todos.text.split('\n').length > 100) {
+      if ((mode === 'create' || mode === 'continued_todos') && values.todos.text.split('\n').length > 100) {
         throw new Error('待办超过 100 行，完整草稿已保留，请调整后再保存');
       }
       draft.pauseWrites();
@@ -2054,6 +2126,7 @@ struct Index {
         await this.ownedTodosBaseline.continueTodos(business, publication, prepareOperation, hooks) :
         await EditorBusinessSessionCoordinator.prepare(mode, business, publication, prepareOperation, hooks);
       this.businessSession = session; this.businessBinding = binding; this.businessRecoveryIdentity = '';
+      this.businessRecovery?.dispose(); this.businessRecovery = undefined; this.businessRecoverySession = undefined;
       await session.prepareIntent();
       await session.issueIntent();
       await session.loadTransport();
@@ -2087,32 +2160,33 @@ struct Index {
       !binding.liveDraft.disposed && binding.identity === this.attachmentEditorIdentity && binding.owner === this.editorViewOwner;
   }
   private businessParentMatches(binding: BusinessEditorBinding): boolean {
+    if (!binding.parent) { return false; }
     const scope = binding.parent.scope, original = binding.publication.scope;
     return scope.card_id === original.card_id && scope.draft_id === original.draft_id &&
       scope.source_kind === original.source_kind && scope.source_revision === original.source_revision && scope.source === original.source;
   }
   private businessUnchanged(binding: BusinessEditorBinding): boolean {
-    return this.businessCurrent(binding) && this.businessParentMatches(binding) && !this.draftCaptureIncomplete &&
+    return !!binding.parent && this.businessCurrent(binding) && this.businessParentMatches(binding) && !this.draftCaptureIncomplete &&
       this.editorInputEpoch === binding.epoch && binding.liveDraft === binding.parent && sameValues(binding.values, binding.parent.current);
   }
   private businessExact(binding: BusinessEditorBinding): boolean {
     return this.businessUnchanged(binding) && this.ownsEditorView(binding.owner);
   }
   private businessHooks(binding?: BusinessEditorBinding, recovery: string = ''): EditorBusinessSessionHooks {
+    const parent = binding?.parent;
     return { fields: this.fieldPolicy, changed: (): void => this.businessChanged(),
       isCurrent: (): boolean => binding ? this.businessCurrent(binding) : this.pageAlive && this.businessRecoveryIdentity === recovery,
       isExact: (): boolean => !!binding && this.businessExact(binding),
-      parentReady: (): boolean => !!binding && this.businessParentMatches(binding) && binding.parent.writesPaused && !binding.parent.disposed &&
-        !binding.parent.saving && !binding.parent.unknown && !binding.parent.conflicted &&
-        binding.parent.confirmed?.generation === binding.publication.generation &&
-        binding.parent.confirmed?.request_sha256 === binding.publication.request_sha256 &&
-        sameValues(binding.parent.current, binding.publication.values),
+      parentReady: (): boolean => !!binding && !!parent && this.businessParentMatches(binding) && parent.writesPaused && !parent.disposed &&
+        !parent.saving && !parent.unknown && !parent.conflicted &&
+        parent.confirmed?.generation === binding.publication.generation &&
+        parent.confirmed?.request_sha256 === binding.publication.request_sha256 && sameValues(parent.current, binding.publication.values),
       send: (wire: string): Promise<EditorBusinessSessionReply> => {
         // Admission is synchronous into the one existing Workbench tail. Only
         // afterwards may parent debounce writes enqueue a newer raw generation.
         const queued = workbench.send(wire) as Promise<EditorBusinessSessionReply>;
-        if ((JSON.parse(wire) as Command).action === 'editor_save' && binding &&
-          !binding.parent.disposed && binding.parent.writesPaused) { binding.parent.resumeWrites(); }
+        if ((JSON.parse(wire) as Command).action === 'editor_save' && parent &&
+          !parent.disposed && parent.writesPaused) { parent.resumeWrites(); }
         return queued;
       } };
   }
@@ -2145,6 +2219,7 @@ struct Index {
           this.editorInputEpoch, this.editorDraft.current, this.editorDraft.confirmed) : undefined;
       const session = await EditorBusinessSessionCoordinator.restore(view.proof, this.businessHooks(binding, recovery));
       if (this.businessRecoveryIdentity !== recovery || !this.pageAlive) { return; }
+      this.businessRecovery?.dispose(); this.businessRecovery = undefined; this.businessRecoverySession = undefined;
       if (binding) { binding.publication = session.publication; binding.values = copyValues(session.publication.values); }
       this.businessBinding = binding && this.businessParentMatches(binding) ? binding : undefined; this.businessSession = session;
       this.message = '已读取原请求。请明确选择核对或继续保存，读取本身不会提交。';
@@ -2166,7 +2241,7 @@ struct Index {
       } else if (action === 'cancel') {
         await session.cancelPrepared(util.generateRandomUUID(true));
       } else if (action === 'issue') {
-        if (!binding) { throw new Error('请先恢复此请求所属的完整草稿，才能签发原请求。'); }
+        if (!binding?.parent) { throw new Error('请先恢复此请求所属的完整父草稿，才能签发原请求。'); }
         binding.parent.pauseWrites(); await session.issueIntent(); await session.loadTransport();
       } else if (action === 'inspect') {
         if (!session.transportReady && session.phase === 'issued') { await session.loadTransport(); }
@@ -2187,7 +2262,7 @@ struct Index {
       }
     } catch (error) { this.message = '原请求尚未完成：' + String(error) + '。当前输入仍保留。'; }
     finally {
-      if (!this.businessHandoff && binding && !binding.parent.disposed && binding.parent.writesPaused) { binding.parent.resumeWrites(); }
+      if (!this.businessHandoff && binding?.parent && !binding.parent.disposed && binding.parent.writesPaused) { binding.parent.resumeWrites(); }
       this.businessWorking = false; this.businessChanged(); await this.loadBusinessIntents();
     }
   }
@@ -2197,6 +2272,7 @@ struct Index {
     const record = this.draftRecords.find((value: DraftRecord): boolean =>
       value.scope.draft_id === session.publication.scope.draft_id && value.active && value.current_active &&
       value.current_generation === value.generation);
+    if (!record && session.phase !== 'prepared' && session.phase !== 'issued') { await this.recoverCurrentBusinessChild(); return; }
     if (!record) { this.message = '原草稿当前归属未找到，请先核对保存或接续结果。没有从卡片重建输入。'; return; }
     this.businessWorking = true;
     try {
@@ -2215,8 +2291,115 @@ struct Index {
     } catch (error) { this.message = '原保存请求恢复未完成：' + String(error) + '。草稿和原请求仍保留。'; }
     finally { this.businessWorking = false; this.businessChanged(); }
   }
+  private businessRecoveryCurrent(identity: string): boolean {
+    if (!this.pageAlive || !this.foreground || this.businessRecoveryIdentity !== identity) { return false; }
+    return this.editorOpen ? !!this.businessBinding && this.businessCurrent(this.businessBinding) : this.editorIdleForRead();
+  }
+  private businessOwnsTodos(session: EditorBusinessSessionCoordinator): boolean {
+    if (!session.qualified) { return false; }
+    const original = JSON.parse(session.originalRequest) as EditorBusinessSubmission;
+    return original.mode === 'create' || original.mode === 'continued_todos';
+  }
+  private businessRecoveryHooks(identity: string): EditorBusinessHandoffHooks {
+    return { send: (wire: string): Promise<EditorBusinessHandoffReply> => workbench.send(wire) as Promise<EditorBusinessHandoffReply>,
+      sendDraft: async (wire: string): Promise<DraftRecord> => {
+        const reply = await workbench.send(wire);
+        if (!reply.ok) { throw new DraftSaveFailure(reply.effect === 'not_committed', reply.error); }
+        if (reply.drafts.length !== 1) { throw new Error('恢复子草稿的完整回执缺失'); } return reply.drafts[0];
+      }, changed: (): void => { this.draftChanged(); this.businessChanged(); }, operation: (): string => util.generateRandomUUID(true),
+      isCurrent: (): boolean => this.businessRecoveryCurrent(identity), isExact: (): boolean => false,
+      importsReady: (): boolean => this.businessImportsReady(),
+      childCurrent: (child: EditorDraftCoordinator): boolean => !!this.businessBinding &&
+        this.businessRecoveryCurrent(identity) && this.businessBinding.liveDraft === child && this.editorDraft === child &&
+        !this.draftCaptureIncomplete && this.ownsEditorView(this.editorViewOwner) };
+  }
+  private async recoverLinkedBusinessDraft(record: DraftRecord): Promise<void> {
+    if (!record.business_link || this.businessWorking || this.businessPending() || !this.editorIdleForRead()) { return; }
+    this.businessWorking = true; const identity = util.generateRandomUUID(true); this.businessRecoveryIdentity = identity;
+    this.businessRecovery?.dispose(); this.businessRecovery = undefined; this.businessRecoverySession = undefined;
+    try {
+      const source = record.business_link.intent, proof = new EditorIntentProof();
+      proof.intent_id = source.intent_id; proof.prepare_operation = source.prepare_operation; proof.generation = source.generation;
+      proof.prepared_record_sha256 = source.prepared_record_sha256; proof.request_sha256 = source.request_sha256;
+      const session = await EditorBusinessSessionCoordinator.restore(proof, this.businessHooks(undefined, identity));
+      if (!this.businessRecoveryCurrent(identity)) { throw new Error('恢复归属已变化，未安装草稿'); }
+      this.businessSession = session; this.businessBinding = undefined;
+      await session.inspect();
+      await this.prepareCurrentBusinessRecovery(session, identity, record.scope.draft_id);
+    } catch (error) { this.message = '接续草稿恢复尚未完成：' + String(error) + '。原请求与完整草稿均保留。'; }
+    finally { this.businessWorking = false; this.businessChanged(); }
+  }
+  private async recoverCurrentBusinessChild(): Promise<void> {
+    const session = this.businessSession;
+    if (!session || this.businessWorking || session.saving || !this.editorIdleForRead()) { return; }
+    this.businessWorking = true;
+    const identity = this.businessRecovery ? this.businessRecoveryIdentity : util.generateRandomUUID(true);
+    this.businessRecoveryIdentity = identity;
+    try {
+      const owner: EditorBusinessSessionOwnerHooks = { changed: (): void => this.businessChanged(),
+        isCurrent: (): boolean => this.businessRecoveryCurrent(identity), isExact: (): boolean => false, parentReady: (): boolean => false };
+      session.rebindOwner(owner);
+      if (!session.qualified) { if (session.inspectionUnknown) { await session.retryInspect(); } else { await session.inspect(); } }
+      await this.prepareCurrentBusinessRecovery(session, identity);
+    } catch (error) { this.message = '当前接续草稿尚未恢复：' + String(error) + '。已知保存事实和原步骤均保留。'; }
+    finally { this.businessWorking = false; this.businessChanged(); }
+  }
+  private async prepareCurrentBusinessRecovery(session: EditorBusinessSessionCoordinator, identity: string, expectedDraft: string = ''): Promise<void> {
+    const reply = await workbench.send(JSON.stringify(new Command()));
+    if (!reply.ok || reply.error !== '' || !Array.isArray(reply.cards)) { throw new Error(reply.error || '当前卡片完整读取未完成'); }
+    if (!this.businessRecoveryCurrent(identity) || this.editorOpen) { throw new Error('当前恢复输入边界已变化'); }
+    this.cards = reply.cards;
+    if (!this.businessRecovery) {
+      this.businessRecovery = new EditorBusinessRecoveryCoordinator(session, this.businessRecoveryHooks(identity),
+        (): boolean => this.businessRecoveryCurrent(identity));
+      this.businessRecoverySession = session;
+    }
+    if (this.businessRecoverySession !== session) { throw new Error('恢复准备属于另一份原请求，未替换已知事实'); }
+    const recovery = this.businessRecovery;
+    const value = recovery.ready ?? (recovery.pendingRead ? await recovery.retry() : await recovery.load());
+    if (expectedDraft && value.record.scope.draft_id !== expectedDraft) { throw new Error('原草稿列表身份与固定接续计划不同'); }
+    this.installRecoveredBusinessChild(session, recovery, value, identity);
+  }
+  private installRecoveredBusinessChild(session: EditorBusinessSessionCoordinator, recovery: EditorBusinessRecoveryCoordinator,
+    value: EditorBusinessRecoveryReady, identity: string): void {
+    const ready = recovery.ready;
+    if (!this.businessRecoveryCurrent(identity) || this.editorOpen || this.businessRecovery !== recovery ||
+      this.businessSession !== session || this.businessRecoverySession !== session || session.saving || !session.qualified ||
+      !ready || ready.writer !== value.writer || ready.handoff !== value.handoff || value.handoff.saving ||
+      JSON.stringify(copyRecord(ready.record)) !== JSON.stringify(copyRecord(value.record)) ||
+      JSON.stringify(ready.parentReference) !== JSON.stringify(value.parentReference) ||
+      value.writer.disposed || !value.writer.writesPaused || !sameValues(value.writer.current, value.record.values)) {
+      throw new Error('安装前当前子草稿或界面归属已变化');
+    }
+    const record = value.record, card = this.cards.find((current: CardView): boolean => current.id === record.scope.card_id);
+    validateRecord(record, true);
+    if (card && !this.currentEditorCardComplete(card)) { throw new Error('当前卡片返回不完整，原完整草稿保留'); }
+    const ownsTodos = this.businessOwnsTodos(session);
+    const draft = recovery.claimWriter();
+    if (draft !== value.writer) { throw new Error('恢复 writer 身份已变化，未安装另一份草稿'); }
+    this.detailId = ''; this.selected = record.scope.card_id;
+    this.title = record.values.title.text; this.description = record.values.description.text;
+    this.hypothesis = record.values.hypothesis.text; this.conclusion = record.values.conclusion.text;
+    this.category = record.values.category; this.taskText = record.values.todos.text;
+    this.taskEditId = ''; this.taskRenameText = ''; this.previewBody = false; this.editorOpen = true; this.draftsOpen = false;
+    this.dirty = false; this.attachDraft(card, record, false, value.writer);
+    const binding = new BusinessEditorBinding(undefined, this.attachmentEditorIdentity, this.editorViewOwner,
+      this.editorInputEpoch, session.publication.values, session.publication, value.writer);
+    this.businessBinding = binding; this.businessSession = session;
+    const hooks = this.businessHooks(binding), owner: EditorBusinessSessionOwnerHooks = { changed: hooks.changed,
+      isCurrent: hooks.isCurrent, isExact: hooks.isExact, parentReady: hooks.parentReady };
+    session.rebindOwner(owner);
+    this.ownedTodosBaseline = ownsTodos ? session : undefined;
+    this.businessHandoff = value.handoff.closed ? undefined : value.handoff;
+    this.businessCloseExact = false; this.businessHandoffCloseOperation = '';
+    value.writer.resumeWrites(); this.bindInputRules(); this.draftChanged(); this.refreshFieldCounts();
+    setTimeout(() => { if (this.editorDraft === draft) { this.draftRestoreInput = false; } }, 16);
+    this.message = this.draftConflict ? '当前完整草稿已恢复，卡片来源另有变化；输入保留，请查看详情核对。' :
+      this.businessHandoff ? '已恢复当前完整接续草稿。原退役或关闭步骤需明确核对，读取未提交卡片。' : '已恢复当前完整草稿，可继续编辑；原已关闭保存请求保持只读。';
+  }
   private businessHandoffHooks(binding: BusinessEditorBinding, raw: DraftValues, epoch: number,
     closing: boolean = false): EditorBusinessHandoffHooks {
+    const parent = binding.parent;
     return { send: (wire: string): Promise<EditorBusinessHandoffReply> => workbench.send(wire) as Promise<EditorBusinessHandoffReply>,
       sendDraft: async (wire: string): Promise<DraftRecord> => {
         const reply = await workbench.send(wire);
@@ -2224,8 +2407,8 @@ struct Index {
         if (reply.drafts.length !== 1) { throw new Error('接续草稿回执缺失'); } return reply.drafts[0];
       }, changed: (): void => { this.draftChanged(); this.businessChanged(); }, operation: (): string => util.generateRandomUUID(true),
       isCurrent: (): boolean => this.businessCurrent(binding),
-      isExact: (): boolean => this.businessCurrent(binding) && !this.draftCaptureIncomplete && this.editorInputEpoch === epoch &&
-        binding.liveDraft === binding.parent && sameValues(raw, binding.parent.current) &&
+      isExact: (): boolean => !!parent && this.businessCurrent(binding) && !this.draftCaptureIncomplete && this.editorInputEpoch === epoch &&
+        binding.liveDraft === parent && sameValues(raw, parent.current) &&
         (closing ? this.businessUnchanged(binding) : this.ownsEditorView(binding.owner)),
       importsReady: (): boolean => this.businessImportsReady(),
       childCurrent: (child: EditorDraftCoordinator): boolean => this.businessCurrent(binding) && this.editorDraft === child &&
@@ -2235,11 +2418,12 @@ struct Index {
     if (!session.qualified || !session.confirmed?.historical_card) {
       this.message = session.committed ? '保存已提交，完整历史结果仍需核对；当前输入保留。' : '保存结果尚未确认，原请求与输入保留。'; return;
     }
-    if (!binding || !this.businessCurrent(binding) || !this.businessParentMatches(binding)) {
+    if (!binding || !this.businessCurrent(binding)) {
       this.message = '原卡片已确认保存。结果属于原会话，请从原请求入口恢复草稿后处理。'; return;
     }
     if (this.businessHandoff) { await this.continueBusinessHandoff(session, binding); return; }
     const parent = binding.parent;
+    if (!parent || !this.businessParentMatches(binding)) { throw new Error('原父草稿未安装，请从当前接续草稿入口核对'); }
     parent.pauseWrites(); await parent.settleIssued();
     if (parent.unknown || parent.conflicted || this.draftCaptureIncomplete || !this.businessImportsReady()) {
       throw new Error('请先核对草稿原操作或完整输入，已确认的业务保存不会重发');
@@ -2285,16 +2469,18 @@ struct Index {
     const handoff = this.businessHandoff;
     if (!handoff || !this.businessCurrent(binding)) { return; }
     if (this.businessCloseExact) { if (handoff.closed) { await this.finishBusinessClose(session, binding); } return; }
-    if (handoff.pendingNative || handoff.pendingRead || handoff.conflicted) { throw new Error('接续原步骤需显式核对'); }
+    if (handoff.pendingNative || handoff.pendingRead || handoff.pendingHistory || handoff.conflicted) { throw new Error('接续原步骤需显式核对'); }
     const parent = binding.parent;
-    if (binding.liveDraft === parent) {
+    if (parent && binding.liveDraft === parent) {
       const latest = parent.current, epoch = this.editorInputEpoch;
       const child = handoff.openChild(latest, (): boolean => this.businessCurrent(binding) && this.ownsEditorView(binding.owner) &&
         this.editorInputEpoch === epoch && !this.draftCaptureIncomplete && sameValues(latest, parent.current));
       // One synchronous writer/lease switch. Complete callbacks afterwards can
       // only update this child; neither the first ACK nor card strings replace S3.
       binding.liveDraft = child; this.editorDraft = child; this.editorValues = child.current; this.draftSource = child.scope.source;
-      this.selected = child.scope.card_id; this.ownedTodosBaseline = session; this.attachmentEditingValues = '';
+      this.selected = child.scope.card_id;
+      this.ownedTodosBaseline = this.businessOwnsTodos(session) ? session : undefined;
+      this.editorBusinessMode = 'current_v2'; this.attachmentEditingValues = '';
       this.draftConflict = false; this.dirty = true; this.bindInputRules(); this.draftChanged(); this.refreshFieldCounts();
     }
     const child = binding.liveDraft;
@@ -2303,15 +2489,19 @@ struct Index {
       throw new Error('接续后的最新输入尚未确认');
     }
     await handoff.loadRetirement();
-    if (!handoff.retired) { await handoff.retire(); }
+    if (!handoff.retired) {
+      if (!parent && this.businessRecovery?.parentHistory?.current_active === false) { await handoff.readRetirementHistory(); }
+      else { await handoff.retire(); }
+    }
     if (!this.businessHandoffCloseOperation) { this.businessHandoffCloseOperation = util.generateRandomUUID(true); }
     if (!handoff.closed) { await handoff.closeRetired(this.businessHandoffCloseOperation); }
-    parent.dispose(); this.businessHandoff = undefined; this.businessHandoffCloseOperation = '';
+    parent?.dispose(); this.businessHandoff = undefined; this.businessHandoffCloseOperation = '';
     this.message = '卡片已保存，较新的完整输入已接续为草稿，可继续编辑和保存。';
     await this.refreshAfterBusiness();
   }
   private async finishBusinessClose(session: EditorBusinessSessionCoordinator, binding: BusinessEditorBinding): Promise<void> {
     if (!this.businessHandoff?.closed) { return; }
+    if (!binding.parent) { throw new Error('准确关闭仅允许其真实原父草稿'); }
     if (this.businessUnchanged(binding) && this.editorViewRevoked && !this.editorViewVisible && this.editorBoundaryDraft === binding.parent) {
       binding.parent.dispose(); this.editorDraft = undefined; this.editorOpen = false; this.editorBoundary = '';
       this.dirty = false; this.taskText = ''; this.taskEditId = ''; this.taskRenameText = '';
@@ -2336,6 +2526,7 @@ struct Index {
     this.businessWorking = true;
     try {
       if (this.businessCloseExact && !handoff.closed) {
+        if (!binding.parent) { throw new Error('原准确关闭缺少真实父草稿，未派发清理'); }
         // Retrying a recovered exact close may retire its original publication.
         // Detach the owned editor only while it still contains exactly S1.
         if (!this.businessUnchanged(binding)) { throw new Error('原关闭步骤已有较新输入，请保留完整草稿并核对归属'); }
@@ -2345,7 +2536,8 @@ struct Index {
         }
         if (!this.businessUnchanged(binding)) { throw new Error('关闭边界已有新输入，未派发原关闭步骤'); }
       }
-      if (handoff.pendingRead) { await handoff.retryRead(); }
+      if (handoff.pendingHistory) { await handoff.retryHistory(); }
+      else if (handoff.pendingRead) { await handoff.retryRead(); }
       else if (handoff.pendingNative === 'handoff') { await handoff.retry(); }
       else if (handoff.pendingNative === 'retirement') { await handoff.retryRetire(); }
       else if (handoff.pendingNative === 'close') { await handoff.retryClose(); }
@@ -3693,11 +3885,15 @@ struct Index {
     if (this.businessStatus.length > 0) {
       Column({ space: 8 }) {
         Text(this.businessStatus).fontSize(11).fontColor(this.muted()).width('100%')
-        if (this.businessSession?.phase !== 'closed' || this.businessHandoff) {
-          Row({ space: 8 }) {
+        if (this.businessSession || this.businessHandoff) {
+          Flex({ wrap: FlexWrap.Wrap, alignItems: ItemAlign.Center }) {
             if (!this.editorOpen) {
               Button('恢复原草稿', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
                 .enabled(!this.businessWorking).onClick(() => this.resumeBusinessEditor()).id('business-recover-editor')
+              if (this.businessSession?.phase !== 'prepared' && this.businessSession?.phase !== 'issued') {
+                Button(this.businessRecovery?.pendingRead ? '核对原恢复读取' : '恢复当前接续草稿', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+                  .enabled(!this.businessWorking).onClick(() => this.recoverCurrentBusinessChild()).id('business-recover-current-child')
+              }
             }
             if (this.businessHandoff) {
               Button('核对草稿接续或关闭', { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
@@ -3910,33 +4106,21 @@ struct Index {
             } else if (this.previewBody) { this.BodyPreview() }
             else { this.BodyInput(owner) }
           }.padding(16).width('100%').backgroundColor('#077662BA').borderRadius(this.round(16)).border({ width: this.styleEdgeWidth(), color: this.line() })
+          if (this.editorDraft?.scope.source_kind === 1) {
           Row({ space: 12 }) {
             Text(this.t('放在哪里')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted())
             Select([{ value: '灵感' }, { value: '进行中' }, { value: '实验' }]).value(this.current()?.category ?? this.category)
               .font({ size: 12 }).fontColor(this.ink()).backgroundColor('#147662BA').borderRadius(this.round(10))
-              .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
+              .enabled(this.editorMetadataReady(owner) && !this.busy && this.pending.length === 0)
               .onSelect((_: number, value: string) => {
-                if (!this.ownsEditorView(owner) || this.rawFork || this.rawForkWorking || this.editorBoundary || this.pasteWorking || this.draftWorking || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
-                if (!this.current()) {
-                  this.editorInputEpoch++; this.category = value; this.dirty = true; this.editorValues.category = value;
-                  this.editorValues.stage = value === '进行中' ? '计划中' : value === '实验' ? '待验证' : '待整理';
-                  this.editorDraft?.update(copyValues(this.editorValues)); return;
-                }
-                if (this.dirty) { this.message = '请先保存正文编辑'; return; }
-                const cmd = this.command('category'); cmd.category = value;
-                cmd.stage = value === '进行中' ? '计划中' : value === '实验' ? '待验证' : '待整理'; this.category = value; this.submit(cmd);
+                if (!this.editorMetadataReady(owner) || !['灵感', '进行中', '实验'].includes(value)) { return; }
+                this.editorInputEpoch++; this.category = value; this.dirty = true; this.editorValues.category = value;
+                this.editorValues.stage = value === '进行中' ? '计划中' : value === '实验' ? '待验证' : '待整理';
+                this.editorDraft?.update(copyValues(this.editorValues));
               })
             Blank()
-            if (this.current()) {
-              Select(this.stages()).value(this.current()?.stage ?? '待整理').font({ size: 11 }).fontColor(this.muted()).backgroundColor(Color.Transparent)
-                .enabled(!this.pasteWorking && !this.attachmentWorking && !this.busy && !this.draftWorking && !this.draftRetiring && !this.draftRetirementUnknown && this.pending.length === 0 && !this.current()?.deleted)
-                .onSelect((_: number, value: string) => {
-                  if (!this.ownsEditorView(owner) || this.rawFork || this.rawForkWorking || this.editorBoundary || this.pasteWorking || this.draftWorking || this.attachmentWorking || this.draftRetiring || this.draftRetirementUnknown || this.draftRestoreInput) { return; }
-                  if (this.dirty) { this.message = '请先保存正文编辑'; return; }
-                  const cmd = this.command('stage'); cmd.stage = value; this.submit(cmd);
-                })
-            }
           }.width('100%')
+          }
           if (this.category === '实验') {
             TextArea({ text: this.hypothesis, placeholder: this.t('假设'), controller: this.hypothesisController }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).height(96)
               .enabled(!this.attachmentWorking && !this.pasteWorking && !this.draftRetiring && !this.draftRetirementUnknown).id('draft-hypothesis')
