@@ -1,6 +1,10 @@
 # Morrow HMOS
 
-2026-10-09 **v25 当前分支检查点**：主页面保存已接入持久原请求的 prepare/issue/save/inspect 和只读发现/恢复入口；已确认业务后，准确 S1 关闭原草稿，完整较新 S2/S3 通过 typed business source0 子草稿接续，再条件退役父草稿。Unknown 保留固定原 wire，首次 prepare 明确未写入时只释放该提案，完整输入保留。重启后已计划步骤只读恢复 native 固定 literal，需显式核对，不生成另一套操作。
+2026-10-09 **v26 当前分支基础检查点**：增加按真实当前全文 source/CAS 编辑 V2 正文的 `current_v2`，保留实际 TaskId、完成状态、顺序、分类/阶段、收藏和未知字段；增加固定父草稿/退役历史只读读取与模型当前子 writer 恢复。原固定请求和 Unknown 不变。真实 Store DTO 检查补修可选空游标省略时的回执解析，以及退役历史确认后仍停留在 Unknown 的状态。
+
+完整实际 ETS/tool **869/869 PASS**，Rust **187 library +3 binary PASS**（16 条默认条件 ignored；新两份 DTO 导出与7个实际崩溃边界单独通过）；双 ABI release 和最终完整 API26 **SUCCESS /27.403s**，未签名包 **30,198,963B /90C3171D…**。版本仍 **dev19/1000019**；只推送 `codex/ArkTsUI`，不并入主线。**本次新增 current-child 重启恢复/current_v2 重开尚未接入 Index，设备验收 NOT_RUN，完整 Flutter/Windows 对齐 OPEN**。详见 [v26 验证](reports/ui-source/v26/validation.md)。以下保留各轮历史范围。
+
+2026-10-09 **v25 历史分支检查点**：主页面保存已接入持久原请求的 prepare/issue/save/inspect 和只读发现/恢复入口；已确认业务后，准确 S1 关闭原草稿，完整较新 S2/S3 通过 typed business source0 子草稿接续，再条件退役父草稿。Unknown 保留固定原 wire，首次 prepare 明确未写入时只释放该提案，完整输入保留。重启后已计划步骤只读恢复 native 固定 literal，需显式核对，不生成另一套操作。
 
 本轮完整实际 ETS/tool **857/857 PASS**，Rust **177 library +3 binary PASS**（13 条默认条件 ignored，文档检查单独顺序通过），新 **48 个实际 Store 崩溃边界 PASS**；fresh 双 ABI 和 API26 完整产品构建 **SUCCESS /15.363s**，未签名包 **30,173,833B /9590D87D…**。详细结果见 [v25 验证](reports/ui-source/v25/validation.md)。**新 native / 新页面流程设备验收 NOT_RUN**；父草稿已缺失或子草稿已推进后的页面重启接续、关闭后卡片重开并继续全文 owned todos、元数据/TaskId 编辑后的完整对齐仍 OPEN。未将局部检查计作完整 Flutter/Windows 功能等价。版本保持 **dev19/1000019**，只推送 `codex/ArkTsUI`，不并入主线。以下记录保留各轮历史范围。
 

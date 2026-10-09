@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "kind": "captured tool diagnostic summary, not a replacement test log",
+  "initial_three_suite_result": {"tests": 87, "pass": 85, "fail": 2, "skipped": 0, "exit_code": 1},
+  "observations": [
+    {
+      "test": "fresh v26 actual Store advanced child and different immutable S2 parent restore into real writer then fixed retire/close",
+      "error": "Incomplete business handoff intent acknowledgement",
+      "production_input_sha256": "21ae6d797e1730e4f8a6b9de09468889693103531d6154d138272b94f9c6f736",
+      "fixture_sha256": "4191624d7b2894abc17a3874ea3005249b450e6ee270b9c880ea2f04530415db",
+      "cause": "Actual native draft action Reply omits optional intent_next_after; the ETS summary check incorrectly required an explicit empty string.",
+      "repair": "Summary alone accepts omitted or empty cursor, rejects null and nonempty cursor; explicit intent read/list cursor gates remain unchanged."
+    },
+    {
+      "test": "fresh v26 actual Store current_v2 registered literal and reopened result preserve real TaskIds, rename/completion/order and favorite",
+      "error": "Editor save requires its frozen live proposal",
+      "cause": "The test called fresh save on a read-only restored original proposal.",
+      "repair": "The test uses explicit original retrySave, preserving the production restore contract."
+    }
+  ],
+  "additional_stage1_evidence": "editor-business-recovery-model-stage1-tests.log and matching input/result files preserve a later 132-check 131-PASS/1-FAIL run. Its remaining failure was test-only exact JSON ordering against a new local close and an already registered fixture close. Actual fixed retirement and existing closed exact-literal restoration are tested separately."
+}

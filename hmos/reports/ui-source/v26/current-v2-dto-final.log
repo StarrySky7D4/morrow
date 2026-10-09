@@ -1,0 +1,20 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.47s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 2 tests
+
+thread 'editor_business::tests::actual_store_dto_fixture' (16860) panicked at src\editor_business\tests.rs:885:67:
+explicit output path
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test editor_business::tests::actual_store_dto_fixture ... FAILED
+test editor_business::tests::current_v2_tests::export_current_v2_actual_store_dto_fixture ... ok
+
+failures:
+
+failures:
+    editor_business::tests::actual_store_dto_fixture
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 200 filtered out; finished in 0.28s
+
+error: test failed, to rerun pass `--lib`

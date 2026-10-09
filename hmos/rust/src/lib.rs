@@ -481,6 +481,7 @@ impl Engine {
             });
         }
         if r.action.starts_with("draft_") {
+            let history_read = r.action == "draft_read_history";
             let start = self.start;
             let clock = || {
                 u64::try_from(start.elapsed().as_millis())
@@ -493,6 +494,22 @@ impl Engine {
                     .map_err(err)?
                     .into_iter()
                     .collect(),
+                "draft_read_history" => {
+                    let mut request = r;
+                    let card = std::mem::take(&mut request.id);
+                    let draft = std::mem::take(&mut request.draft_id);
+                    let operation = std::mem::take(&mut request.draft_operation);
+                    let generation = draft_bridge::number(&std::mem::take(&mut request.generation))?;
+                    if generation == 0 || !editor_business::route_is_empty(&request) {
+                        return Err("DraftHistoryOuterFields".into());
+                    }
+                    editor_draft::identity(&card, &draft, &operation)?;
+                    let record = editor_draft::read_history(&self.host, &card, &draft, &operation)?;
+                    if record.slot.generation != generation {
+                        return Err("DraftHistoryGenerationMismatch".into());
+                    }
+                    vec![record]
+                }
                 "draft_save" => {
                     let request = r.draft.ok_or("DraftRequestRequired")?.request()?;
                     vec![
@@ -532,7 +549,7 @@ impl Engine {
                 }
                 _ => return Err("UnsupportedAction".into()),
             };
-            return Ok(Reply {
+            let reply = Reply {
                 ok: true,
                 error: String::new(),
                 cards: vec![],
@@ -546,7 +563,11 @@ impl Engine {
                 receipt_revision: String::new(),
                 profile: "development-unsealed",
                 effect: self.effect, imports: vec![], editor_commit: None, editor_intents: None, intent_next_after: None,
-            });
+            };
+            if history_read && serde_json::to_vec(&reply).map_err(err)?.len() > LIMIT {
+                return Err("DraftHistoryReplyBytesLimit".into());
+            }
+            return Ok(reply);
         }
         let mut receipt = String::new();
         if r.action != "list" {

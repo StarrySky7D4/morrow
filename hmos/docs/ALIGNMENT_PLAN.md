@@ -1,6 +1,10 @@
 # 持续追平 Windows 工作台
 
-2026-10-09 **v25 当前分支检查点**：主页面保存已接入持久原请求的 prepare/issue/save/inspect 和只读发现/恢复入口；已确认业务后，准确 S1 关闭原草稿，完整较新 S2/S3 通过 typed business source0 子草稿接续，再条件退役父草稿。Unknown 保留固定原 wire，首次 prepare 明确未写入时只释放该提案，完整输入保留。重启后已计划步骤只读恢复 native 固定 literal，需显式核对，不生成另一套操作。
+2026-10-09 **v26 当前分支基础检查点**：增加按真实当前全文 source/CAS 编辑 V2 正文的 `current_v2`，保留实际 TaskId、完成状态、顺序、分类/阶段、收藏和未知字段；增加固定父草稿/退役历史只读读取与模型当前子 writer 恢复。原固定请求和 Unknown 不变。真实 Store DTO 检查补修可选空游标省略时的回执解析，以及退役历史确认后仍停留在 Unknown 的状态。
+
+完整实际 ETS/tool **869/869 PASS**，Rust **187 library +3 binary PASS**（16 条默认条件 ignored；新两份 DTO 导出与7个实际崩溃边界单独通过）；双 ABI release 和最终完整 API26 **SUCCESS /27.403s**，未签名包 **30,198,963B /90C3171D…**。版本仍 **dev19/1000019**；只推送 `codex/ArkTsUI`，不并入主线。**本次新增 current-child 重启恢复/current_v2 重开尚未接入 Index，设备验收 NOT_RUN，完整 Flutter/Windows 对齐 OPEN**。详见 [v26 验证](../reports/ui-source/v26/validation.md)。以下保留各轮历史范围。
+
+2026-10-09 **v25 历史分支检查点**：主页面保存已接入持久原请求的 prepare/issue/save/inspect 和只读发现/恢复入口；已确认业务后，准确 S1 关闭原草稿，完整较新 S2/S3 通过 typed business source0 子草稿接续，再条件退役父草稿。Unknown 保留固定原 wire，首次 prepare 明确未写入时只释放该提案，完整输入保留。重启后已计划步骤只读恢复 native 固定 literal，需显式核对，不生成另一套操作。
 
 本轮完整实际 ETS/tool **857/857 PASS**，Rust **177 library +3 binary PASS**（13 条默认条件 ignored，文档检查单独顺序通过），新 **48 个实际 Store 崩溃边界 PASS**；fresh 双 ABI 和 API26 完整产品构建 **SUCCESS /15.363s**，未签名包 **30,173,833B /9590D87D…**。详细结果见 [v25 验证](../reports/ui-source/v25/validation.md)。**新 native / 新页面流程设备验收 NOT_RUN**；父草稿已缺失或子草稿已推进后的页面重启接续、关闭后卡片重开并继续全文 owned todos、元数据/TaskId 编辑后的完整对齐仍 OPEN。未将局部检查计作完整 Flutter/Windows 功能等价。版本保持 **dev19/1000019**，只推送 `codex/ArkTsUI`，不并入主线。以下记录保留各轮历史范围。
 
@@ -65,12 +69,12 @@ dev.8 已接入原 `query_plan_v2` 的分页过滤、稳定排序和归并，复
 | 字段字数、待办输入、完整未来粘贴 | Unicode16/formatter原对照保持，Index新卡多行1000/100行及create TaskId已接；v24 AFF普通字段恢复焦点门禁、83B一次性Todo初建能力已冻，B62旧native候选准确恢复公开D/13/1000与keep关闭限定PASS | 补新文字/IME/多行编辑和业务保存重启的设备闭环；SDK未交付事件/实时formatter/任意候选恢复/连续选择仍OPEN，恢复和保留关闭不代替保存验收 |
 | 查询、排序、大库加载 | dev.8 已接原 Rust 计划、单次完整快照、完整属性搜索与稳定排序；去抖/待发合并/过期回包丢弃，真实失败与空结果分开 | 仍限定 256 张；需 UI 响应分页、大库内存/帧时和生产 guest/捕获资格。旧“最近添加”为反向 ID 顺序，不能宣称为创建时间排序 |
 | 正式 Rust 宿主和存储会话 | 未接；当前为独立未封存开发库 | 提取平台会话接口，HUKS、稳定身份、单库所有者、审计/备份/恢复契约；禁止绕过原宿主非 Windows 拒绝规则 |
-| 持久草稿、S1/S2、未知结果核对 | 原rawfork/source/CAS/lease合同保持；v24独立intent持久完整原wire/publication/pins、issue实际native计划与Session显式五part恢复/原S1重试已实现，晚S2不消费 | 接入Index原请求核对/继续入口、准确历史业务source0交接、handoff/saved_exact；fresh save阻止晚S2后不可把拒绝作为终态。protected捕获、SDK未交付事件保全及完整保存关闭/重启仍OPEN；新nativecombined16槽/64MiB/256身份与跨独立进程全局quota原子性分别核 |
-| 严格原子业务与owned全文todos | 既有strict历史业务和continued_todos基础保持；v24 intent native165库+3附件/11默认ignored、新24实际Store故障向量、Session30实际ETS及真实DTO、独立SDK9.480s通过，未接产品Index | 实现真实Index保存/Unknown原wire跨进程核对/source0接续/再次S2S3保存、准确附件与外部CAS冲突闭环。保留legacy成员与既有V2 TaskId差异；phase/紧凑marker/development proof不授予protected资格 |
+| 持久草稿、S1/S2、未知结果核对 | v25 Index 原请求 prepare/issue/save/inspect、准确 S1 close、S2/S3 source0 business handoff 已接；v26 增加准确父/退役历史读取与无父模型当前子恢复，原 Unknown/wire 保留 | v26 页面恢复/lease 安装尚未接入；新 native 保存关闭/重启、protected 捕获、SDK 未交付事件及跨进程全局配额资格仍 OPEN |
+| 严格原子业务与owned全文todos | v25 原 strict/continued_todos 接 Index；v26 current_v2 按新真实 source/CAS 改正文并保 TaskId/元数据 bytes，187库+3附件、7实际故障边界、两份真实DTO及869全量模型检查通过 | current_v2/闭卡重开未接 Index；不投影 old own LF，不自动重基，不把独立 plan/child/retire/close 事务称为多对象原子；完整设备/产品资格 OPEN |
 | 附件、剪贴板、Markdown/富文本、导入导出 | dev.19在dev.17/18快照/原件/富转换基础上将完整输出改为Unicode16 grapheme≤20000，回执绑定完整UTF-16/UTF-8长度和版本；完整未来选区粘贴异步preflight及pin后重检。原source限制、SHA、64MiB/20槽/sidecar保持。独立API26双指tester编译main/test HAP与10工具模型通过，未安装/执行设备手势 | 本轮Rust106和三项条件Flutter对照fresh通过；完整ETS/HAP/native身份见v19最终验证。系统富内容/Office持久闭环、dev19字段/IME与图片手势设备NOT_RUN。RTF插件仍2Mi+64KiB，无异常fallback；严格坏编码/RTF U+FFFD、直接输入formatter行为、更严格字节预算、200MiB容量、完整格式/惯性/GIF仍有差距 |
 | 音乐、歌词、解密 | 空状态 | 复用 Rust 解密模块，播放器、播放列表、歌词、文件权限、后台/中断恢复实测 |
 | 插件包、动态 UI、HTTP/服务/文件任务 | 未接运行期宿主 | 跟进 Windows 实现与合约，接 Wasm 执行/权限/资源预算/服务与任务控制；区分 Windows 平台实现和共享业务块 |
-| 分发与资格 | dev19/1000019保持，仅codex/ArkTsUI、不并主线。v24实际ETS807/807 PASS0skip、新双ABI/271 native来源前后PASS，完整API26产品13.893s/34 fresh任务、313复制/364仓库输入前后及4包内so PASS；最终HAP29,381,667b/F6EEEAE2…未签/未安装。首轮0任务隔离配置失败证据保留；B62旧v22 native UI候选29,107,139b仅公开D恢复和keep关闭限定PASS，见 [v24统一验证](../reports/ui-source/v24/validation.md) | 验新native准确输入/多行业务保存重启/source0交接/完整关闭；签名、ARM64真机、HUKS、富内容/手势/拒权/空间耗尽及完整目标仍OPEN，旧失败与历史build不覆盖 |
+| 分发与资格 | dev19/1000019保持，仅codex/ArkTsUI。v26 869/869模型、双ABI/277来源、最终API26 27.403s/34执行任务/314复制/373仓库输入及4项so核对PASS；30198963B/90C3171D… 未签未安装，见[v26验证](../reports/ui-source/v26/validation.md) | 新页面恢复/闭卡重开、实际输入/业务保存/重启/渲染、签名、ARM64、HUKS和完整对齐仍OPEN；历史B62和中间包不代替新包设备资格 |
 
 每一轮更新源码观察与实际功能证据，保护 `shared/reference.json` 的冻结来源。上游在途代码不得未经审查直接覆盖。新版本截图、测试日志和构建输入哈希分别记录，旧图不能被当成新包验收。
 

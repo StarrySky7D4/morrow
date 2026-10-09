@@ -1,0 +1,15 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.59s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 7 tests
+test editor_business::tests::current_v2_tests::current_v2_actual_store_process_loss_preserves_tasks_and_fixed_retry ... ignored, host-only actual subprocess Core faults require morrow-core/fault-injection
+test editor_business::tests::current_v2_tests::export_current_v2_actual_store_dto_fixture ... ignored, explicit complete current-v2 actual Store DTO export requires HMOS_CURRENT_V2_DTO_FIXTURE
+test editor_business::tests::current_v2_tests::current_v2_preserves_nested_task_outer_and_migration_unknown_bytes ... ok
+test editor_business::tests::current_v2_tests::current_v2_strict_schema_metadata_and_publication_refuse_without_task_loss ... ok
+test editor_business::tests::current_v2_tests::current_v2_event_capacity_unknown_keeps_original_wire_and_exact_retry_after_reopen ... ok
+test editor_business::tests::current_v2_tests::current_v2_full_source_cas_does_not_rebase_after_issue_or_grant_owned_lf_authority ... ok
+test editor_business::tests::current_v2_tests::current_v2_edits_actual_revision_after_metadata_and_task_commands_without_lf_replacement ... ok
+
+test result: ok. 5 passed; 0 failed; 2 ignored; 0 measured; 195 filtered out; finished in 0.51s
+

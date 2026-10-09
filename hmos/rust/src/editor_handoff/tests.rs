@@ -1032,3 +1032,5 @@ fn actual_handoff_transaction_crashes_preserve_exact_plan_pins_and_fixed_retry()
         }
     }
 }
+
+mod reopen_history_tests { include!("reopen_history_tests.rs"); }

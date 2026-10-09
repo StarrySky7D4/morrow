@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "source_inputs": 7,
+  "source_drift": 0,
+  "byte_identical_before_after": true,
+  "default_command_exit": 0,
+  "default_library": {
+    "passed": 187,
+    "failed": 0,
+    "ignored": 16,
+    "seconds": 89.09
+  },
+  "attachment_binary": {
+    "passed": 3,
+    "failed": 0,
+    "seconds": 5.65
+  },
+  "self_check": {
+    "tests": 0,
+    "exit": 0
+  },
+  "doc_tests": {
+    "tests": 0,
+    "exit": 0
+  },
+  "current_v2_crash": {
+    "exit": 0,
+    "tests": 1,
+    "vectors": 7,
+    "seconds": 1.78,
+    "feature": "morrow-core/fault-injection",
+    "host_only": true
+  },
+  "current_v2_dto": {
+    "exit": 0,
+    "tests": 1,
+    "seconds": 0.28,
+    "bytes": 38806,
+    "sha256": "50F9037B3A235CFF72E1423BF4CE5F30CF6B655C243373FA7F6B273BB926B301"
+  },
+  "reopen_history_dto": {
+    "exit": 0,
+    "tests": 1,
+    "seconds": 0.39,
+    "bytes": 75959,
+    "sha256": "4191624D7B2894ABC17A3874EA3005249B450E6EE270B9C880EA2F04530415DB"
+  },
+  "production_files_changed": 3,
+  "test_files_changed_or_added": 4,
+  "ui_index_integration": "OPEN",
+  "body_kind": "NOT_IMPLEMENTED",
+  "device": "NOT_RUN",
+  "git_mutation_by_worker": false,
+  "ndk_or_sdk_by_worker": false,
+  "old_v25_handoff_crash_vectors": "HISTORICAL_NOT_RERUN",
+  "logs": [
+    {
+      "path": "hmos/reports/ui-source/v26/rust-tests-final.log",
+      "bytes": 24873,
+      "sha256": "6456F3E8DAF76A33DF7E0EED39BFA83A40E2A0A955BE2AE16E377378145F221E"
+    },
+    {
+      "path": "hmos/reports/ui-source/v26/current-v2-crash-final.log",
+      "bytes": 976,
+      "sha256": "0B2335B01FD7D9ADC2005D0CCF01EB81C74A1F20587CD6DB2C3D988C61040C07"
+    },
+    {
+      "path": "hmos/reports/ui-source/v26/current-v2-dto-exact-final.log",
+      "bytes": 485,
+      "sha256": "6AE2AF4841CFFDBF1B624B14C4995AA31A021A2D5876020587C1D2E7C6C824E9"
+    },
+    {
+      "path": "hmos/reports/ui-source/v26/reopen-history-dto-exact-final.log",
+      "bytes": 396,
+      "sha256": "D06142EB034AA10EB45CE95B22027782BF8DCD18DF78E351A822AC54946C504C"
+    }
+  ]
+}

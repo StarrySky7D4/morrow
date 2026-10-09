@@ -1,0 +1,37 @@
+[
+  {
+    "path": "hmos/rust/src/editor_business.rs",
+    "bytes": 47764,
+    "sha256": "D979780896B73D58F204733E1952D8C776C217E14D2D4548F177828D71AC71D5"
+  },
+  {
+    "path": "hmos/rust/src/lib.rs",
+    "bytes": 60790,
+    "sha256": "BAD0FBDAEB3454B7826B9FC4BC001A73913066E97D442F3E4DD455B6D4ECF105"
+  },
+  {
+    "path": "hmos/rust/src/editor_draft.rs",
+    "bytes": 39235,
+    "sha256": "15436CCFF94A8A5C35779AA66661584281DCE48C7DB39E815E74789FCA2F4177"
+  },
+  {
+    "path": "hmos/rust/src/editor_business/tests.rs",
+    "bytes": 40050,
+    "sha256": "0ECA341202DC7A3F7AA9539F4F210CD871A5ADA7B3D6F95045406139BBC54150"
+  },
+  {
+    "path": "hmos/rust/src/editor_handoff/tests.rs",
+    "bytes": 44617,
+    "sha256": "A8F8BDCE3AF1D60B0B8AB087AF38F1C6CE48EA12DB3094612665B9601A3E6A12"
+  },
+  {
+    "path": "hmos/rust/src/editor_business/current_v2_tests.rs",
+    "bytes": 19679,
+    "sha256": "87BE87A72CDB7640ABECE7BD4C99FE8D1B743983F5C8FD56B71B1867F3553682"
+  },
+  {
+    "path": "hmos/rust/src/editor_handoff/reopen_history_tests.rs",
+    "bytes": 14927,
+    "sha256": "75F19588AF360DD7249DA7C03B00A5E48A9C1EA62C28D82918E502D1262ABDA9"
+  }
+]

@@ -1,0 +1,1706 @@
+{
+  "card_id": "handoff-card",
+  "child_current_read_reply": {
+    "cards": [],
+    "drafts": [
+      {
+        "active": true,
+        "assets": [],
+        "business_link": {
+          "child_operation": "child-first",
+          "command_sha256": "ca4a72349ed1120c461ed07030a6ac42035e0cf1b035560cee978418b163a7be",
+          "committed_operation": "original-business",
+          "committed_revision": "1",
+          "content_sha256": "b06ece6c836b03f85259d88ecd50a100a2cf773b0c00fdf4efb62aaff61e1ab7",
+          "handoff_request_sha256": "679a92c28822687117f5f0d527bb91d8922aacae0587915a0b21c121b4b4ffe7",
+          "intent": {
+            "generation": "1",
+            "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+            "prepare_operation": "prepare",
+            "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+            "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+          },
+          "parent": {
+            "draft_id": "parent",
+            "generation": "2",
+            "request_sha256": "6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463",
+            "save_operation": "late-S2"
+          },
+          "plan_operation": "plan",
+          "publication_sha256": "b4ae38cee2d3a8cebd53ceab9e2f08da4437b8df2ce6885ee5094ea901fa332d",
+          "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44",
+          "schema_version": 1
+        },
+        "business_retirement": null,
+        "consumed_imports": [],
+        "current_active": true,
+        "current_generation": "2",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "2",
+        "operation_id": "recovery-current-child",
+        "repeated": false,
+        "request_sha256": "80a777e90e2b5f66b1e0ede69836ecbeadfc701d14d93b63c6d134553074c7a8",
+        "scope": {
+          "card_id": "handoff-card",
+          "draft_id": "child",
+          "source": "0801120c68616e646f66662d636172641a046964656120022801320d68616e646f6666207469746c653a8f0308021a06e781b5e6849f2209e5be85e695b4e79086a201580a517461736b2d686d6f732d6372656174652d3730323965613832613265643834363030666134326562343864323063653634346231636161343231323536363334336134336130393466613032336561363712036f6e65a201580a517461736b2d686d6f732d6372656174652d34666263356561343837636233663335376663376535633936326631653630393131393463383761653262316534636531613936306635623236373533353839120374776f1213533120e6b189e5ad9720f09fa7aa2065cc812e2a0168320163580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e763100b448469be7486b9ce40817c3bfaff2372612562a152c238cdf5fe752d45444af9ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e763100010153eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44b4ae38cee2d3a8cebd53ceab9e2f08da4437b8df2ce6885ee5094ea901fa332d",
+          "source_kind": 0,
+          "source_revision": "1"
+        },
+        "values": {
+          "assets": [],
+          "category": "灵感",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "c"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "actual latest S3"
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "h"
+          },
+          "stage": "待整理",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "handoff title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": " one\ntwo "
+          }
+        }
+      }
+    ],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "child_current_reply": {
+    "cards": [],
+    "drafts": [
+      {
+        "active": true,
+        "assets": [],
+        "business_link": {
+          "child_operation": "child-first",
+          "command_sha256": "ca4a72349ed1120c461ed07030a6ac42035e0cf1b035560cee978418b163a7be",
+          "committed_operation": "original-business",
+          "committed_revision": "1",
+          "content_sha256": "b06ece6c836b03f85259d88ecd50a100a2cf773b0c00fdf4efb62aaff61e1ab7",
+          "handoff_request_sha256": "679a92c28822687117f5f0d527bb91d8922aacae0587915a0b21c121b4b4ffe7",
+          "intent": {
+            "generation": "1",
+            "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+            "prepare_operation": "prepare",
+            "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+            "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+          },
+          "parent": {
+            "draft_id": "parent",
+            "generation": "2",
+            "request_sha256": "6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463",
+            "save_operation": "late-S2"
+          },
+          "plan_operation": "plan",
+          "publication_sha256": "b4ae38cee2d3a8cebd53ceab9e2f08da4437b8df2ce6885ee5094ea901fa332d",
+          "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44",
+          "schema_version": 1
+        },
+        "business_retirement": null,
+        "consumed_imports": [],
+        "current_active": true,
+        "current_generation": "2",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "2",
+        "operation_id": "recovery-current-child",
+        "repeated": false,
+        "request_sha256": "80a777e90e2b5f66b1e0ede69836ecbeadfc701d14d93b63c6d134553074c7a8",
+        "scope": {
+          "card_id": "handoff-card",
+          "draft_id": "child",
+          "source": "0801120c68616e646f66662d636172641a046964656120022801320d68616e646f6666207469746c653a8f0308021a06e781b5e6849f2209e5be85e695b4e79086a201580a517461736b2d686d6f732d6372656174652d3730323965613832613265643834363030666134326562343864323063653634346231636161343231323536363334336134336130393466613032336561363712036f6e65a201580a517461736b2d686d6f732d6372656174652d34666263356561343837636233663335376663376535633936326631653630393131393463383761653262316534636531613936306635623236373533353839120374776f1213533120e6b189e5ad9720f09fa7aa2065cc812e2a0168320163580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e763100b448469be7486b9ce40817c3bfaff2372612562a152c238cdf5fe752d45444af9ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e763100010153eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44b4ae38cee2d3a8cebd53ceab9e2f08da4437b8df2ce6885ee5094ea901fa332d",
+          "source_kind": 0,
+          "source_revision": "1"
+        },
+        "values": {
+          "assets": [],
+          "category": "灵感",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "c"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "actual latest S3"
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "h"
+          },
+          "stage": "待整理",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "handoff title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": " one\ntwo "
+          }
+        }
+      }
+    ],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "child_first_history_reply": {
+    "cards": [],
+    "drafts": [
+      {
+        "active": true,
+        "assets": [],
+        "business_link": {
+          "child_operation": "child-first",
+          "command_sha256": "ca4a72349ed1120c461ed07030a6ac42035e0cf1b035560cee978418b163a7be",
+          "committed_operation": "original-business",
+          "committed_revision": "1",
+          "content_sha256": "b06ece6c836b03f85259d88ecd50a100a2cf773b0c00fdf4efb62aaff61e1ab7",
+          "handoff_request_sha256": "679a92c28822687117f5f0d527bb91d8922aacae0587915a0b21c121b4b4ffe7",
+          "intent": {
+            "generation": "1",
+            "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+            "prepare_operation": "prepare",
+            "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+            "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+          },
+          "parent": {
+            "draft_id": "parent",
+            "generation": "2",
+            "request_sha256": "6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463",
+            "save_operation": "late-S2"
+          },
+          "plan_operation": "plan",
+          "publication_sha256": "b4ae38cee2d3a8cebd53ceab9e2f08da4437b8df2ce6885ee5094ea901fa332d",
+          "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44",
+          "schema_version": 1
+        },
+        "business_retirement": null,
+        "consumed_imports": [],
+        "current_active": true,
+        "current_generation": "2",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "1",
+        "operation_id": "child-first",
+        "repeated": true,
+        "request_sha256": "a80980c55b9374f980164bc8db5118bf96f6e06f2c156fdb65386b8dc43724c3",
+        "scope": {
+          "card_id": "handoff-card",
+          "draft_id": "child",
+          "source": "0801120c68616e646f66662d636172641a046964656120022801320d68616e646f6666207469746c653a8f0308021a06e781b5e6849f2209e5be85e695b4e79086a201580a517461736b2d686d6f732d6372656174652d3730323965613832613265643834363030666134326562343864323063653634346231636161343231323536363334336134336130393466613032336561363712036f6e65a201580a517461736b2d686d6f732d6372656174652d34666263356561343837636233663335376663376535633936326631653630393131393463383761653262316534636531613936306635623236373533353839120374776f1213533120e6b189e5ad9720f09fa7aa2065cc812e2a0168320163580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e763100b448469be7486b9ce40817c3bfaff2372612562a152c238cdf5fe752d45444af9ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e763100010153eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44b4ae38cee2d3a8cebd53ceab9e2f08da4437b8df2ce6885ee5094ea901fa332d",
+          "source_kind": 0,
+          "source_revision": "1"
+        },
+        "values": {
+          "assets": [],
+          "category": "灵感",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "c"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "S2 raw\r\n\u0000漢 🧪"
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "h"
+          },
+          "stage": "待整理",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "handoff title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": " one\ntwo "
+          }
+        }
+      }
+    ],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "child_first_reply": {
+    "cards": [],
+    "drafts": [
+      {
+        "active": true,
+        "assets": [],
+        "business_link": {
+          "child_operation": "child-first",
+          "command_sha256": "ca4a72349ed1120c461ed07030a6ac42035e0cf1b035560cee978418b163a7be",
+          "committed_operation": "original-business",
+          "committed_revision": "1",
+          "content_sha256": "b06ece6c836b03f85259d88ecd50a100a2cf773b0c00fdf4efb62aaff61e1ab7",
+          "handoff_request_sha256": "679a92c28822687117f5f0d527bb91d8922aacae0587915a0b21c121b4b4ffe7",
+          "intent": {
+            "generation": "1",
+            "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+            "prepare_operation": "prepare",
+            "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+            "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+          },
+          "parent": {
+            "draft_id": "parent",
+            "generation": "2",
+            "request_sha256": "6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463",
+            "save_operation": "late-S2"
+          },
+          "plan_operation": "plan",
+          "publication_sha256": "b4ae38cee2d3a8cebd53ceab9e2f08da4437b8df2ce6885ee5094ea901fa332d",
+          "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44",
+          "schema_version": 1
+        },
+        "business_retirement": null,
+        "consumed_imports": [],
+        "current_active": true,
+        "current_generation": "1",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "1",
+        "operation_id": "child-first",
+        "repeated": false,
+        "request_sha256": "a80980c55b9374f980164bc8db5118bf96f6e06f2c156fdb65386b8dc43724c3",
+        "scope": {
+          "card_id": "handoff-card",
+          "draft_id": "child",
+          "source": "0801120c68616e646f66662d636172641a046964656120022801320d68616e646f6666207469746c653a8f0308021a06e781b5e6849f2209e5be85e695b4e79086a201580a517461736b2d686d6f732d6372656174652d3730323965613832613265643834363030666134326562343864323063653634346231636161343231323536363334336134336130393466613032336561363712036f6e65a201580a517461736b2d686d6f732d6372656174652d34666263356561343837636233663335376663376535633936326631653630393131393463383761653262316534636531613936306635623236373533353839120374776f1213533120e6b189e5ad9720f09fa7aa2065cc812e2a0168320163580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e763100b448469be7486b9ce40817c3bfaff2372612562a152c238cdf5fe752d45444af9ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e763100010153eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44b4ae38cee2d3a8cebd53ceab9e2f08da4437b8df2ce6885ee5094ea901fa332d",
+          "source_kind": 0,
+          "source_revision": "1"
+        },
+        "values": {
+          "assets": [],
+          "category": "灵感",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "c"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "S2 raw\r\n\u0000漢 🧪"
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "h"
+          },
+          "stage": "待整理",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "handoff title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": " one\ntwo "
+          }
+        }
+      }
+    ],
+    "editor_intents": [
+      {
+        "business_operation": "original-business",
+        "card_id": "handoff-card",
+        "close_disposition": "",
+        "close_request_json": "",
+        "current_active": true,
+        "current_generation": "3",
+        "expected_revision": "1",
+        "handoff_request_json": "",
+        "inspect_request_json": "",
+        "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+        "part": "summary",
+        "phase": "handoff_planned",
+        "proof": {
+          "generation": "1",
+          "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+          "prepare_operation": "prepare",
+          "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+          "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+        },
+        "publication": null,
+        "repeated": false,
+        "request_json": "",
+        "retirement_request_json": "",
+        "save_request_json": ""
+      }
+    ],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "1"
+  },
+  "close_reply": {
+    "cards": [],
+    "drafts": [],
+    "editor_intents": [
+      {
+        "business_operation": "original-business",
+        "card_id": "handoff-card",
+        "close_disposition": "handoff_retired",
+        "close_request_json": "",
+        "current_active": false,
+        "current_generation": "5",
+        "expected_revision": "1",
+        "handoff_request_json": "",
+        "inspect_request_json": "",
+        "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+        "part": "summary",
+        "phase": "closed",
+        "proof": {
+          "generation": "1",
+          "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+          "prepare_operation": "prepare",
+          "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+          "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+        },
+        "publication": null,
+        "repeated": false,
+        "request_json": "",
+        "retirement_request_json": "",
+        "save_request_json": ""
+      }
+    ],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "intent_next_after": "",
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "5"
+  },
+  "close_request": {
+    "action": "editor_intent_close",
+    "editor_intent_close": {
+      "request_json": "{\"disposition\":\"handoff_retired\",\"expected_generation\":\"3\",\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1\",\"prepare_operation\":\"prepare\",\"prepared_record_sha256\":\"572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854\",\"request_sha256\":\"53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44\"},\"operation_id\":\"handoff-close\",\"parent\":null,\"plan_operation\":\"plan\",\"schema_version\":1}"
+    }
+  },
+  "closed_parts": [
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "handoff_retired",
+      "close_request_json": "",
+      "current_active": false,
+      "current_generation": "5",
+      "expected_revision": "1",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "submission",
+      "phase": "closed",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "{\"business\":{\"action\":\"create\",\"category\":\"灵感\",\"conclusion\":\"c\",\"description\":\"S1 汉字 🧪 é.\",\"hypothesis\":\"h\",\"id\":\"handoff-card\",\"operation\":\"original-business\",\"source\":\"\",\"stage\":\"待整理\",\"title\":\"handoff title\",\"todos\":\" one\\ntwo \"},\"continuation\":null,\"mode\":\"create\",\"publication\":{\"draft_id\":\"parent\",\"generation\":\"1\",\"request_sha256\":\"9d9dec9487562bcdb8920230ece81459a1a82186807ff835129563035b38077b\",\"save_operation\":\"pub-save\"},\"schema_version\":1}",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "handoff_retired",
+      "close_request_json": "",
+      "current_active": false,
+      "current_generation": "5",
+      "expected_revision": "1",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "publication",
+      "phase": "closed",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": {
+        "active": true,
+        "assets": [],
+        "business_link": null,
+        "business_retirement": null,
+        "consumed_imports": [],
+        "current_active": false,
+        "current_generation": "3",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "1",
+        "operation_id": "pub-save",
+        "repeated": true,
+        "request_sha256": "9d9dec9487562bcdb8920230ece81459a1a82186807ff835129563035b38077b",
+        "scope": {
+          "card_id": "handoff-card",
+          "draft_id": "parent",
+          "source": "",
+          "source_kind": 1,
+          "source_revision": "0"
+        },
+        "values": {
+          "assets": [],
+          "category": "灵感",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "c"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "S1 汉字 🧪 é."
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "h"
+          },
+          "stage": "待整理",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "handoff title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": " one\ntwo "
+          }
+        }
+      },
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "handoff_retired",
+      "close_request_json": "",
+      "current_active": false,
+      "current_generation": "5",
+      "expected_revision": "1",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "save",
+      "phase": "closed",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": "{\"action\":\"editor_save\",\"editor_save\":{\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1\",\"prepare_operation\":\"prepare\",\"prepared_record_sha256\":\"572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854\",\"request_sha256\":\"53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44\"},\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"create\\\",\\\"category\\\":\\\"灵感\\\",\\\"conclusion\\\":\\\"c\\\",\\\"description\\\":\\\"S1 汉字 🧪 é.\\\",\\\"hypothesis\\\":\\\"h\\\",\\\"id\\\":\\\"handoff-card\\\",\\\"operation\\\":\\\"original-business\\\",\\\"source\\\":\\\"\\\",\\\"stage\\\":\\\"待整理\\\",\\\"title\\\":\\\"handoff title\\\",\\\"todos\\\":\\\" one\\\\ntwo \\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"create\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"parent\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"9d9dec9487562bcdb8920230ece81459a1a82186807ff835129563035b38077b\\\",\\\"save_operation\\\":\\\"pub-save\\\"},\\\"schema_version\\\":1}\"}}"
+    },
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "handoff_retired",
+      "close_request_json": "",
+      "current_active": false,
+      "current_generation": "5",
+      "expected_revision": "1",
+      "handoff_request_json": "",
+      "inspect_request_json": "{\"action\":\"editor_commit_inspect\",\"editor_commit\":{\"expected_revision\":\"1\",\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"create\\\",\\\"category\\\":\\\"灵感\\\",\\\"conclusion\\\":\\\"c\\\",\\\"description\\\":\\\"S1 汉字 🧪 é.\\\",\\\"hypothesis\\\":\\\"h\\\",\\\"id\\\":\\\"handoff-card\\\",\\\"operation\\\":\\\"original-business\\\",\\\"source\\\":\\\"\\\",\\\"stage\\\":\\\"待整理\\\",\\\"title\\\":\\\"handoff title\\\",\\\"todos\\\":\\\" one\\\\ntwo \\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"create\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"parent\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"9d9dec9487562bcdb8920230ece81459a1a82186807ff835129563035b38077b\\\",\\\"save_operation\\\":\\\"pub-save\\\"},\\\"schema_version\\\":1}\"}}",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "inspect",
+      "phase": "closed",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "handoff_retired",
+      "close_request_json": "",
+      "current_active": false,
+      "current_generation": "5",
+      "expected_revision": "1",
+      "handoff_request_json": "{\"child\":{\"assets\":[],\"card_id\":\"handoff-card\",\"draft_id\":\"child\",\"expected_generation\":\"0\",\"operation_id\":\"child-first\",\"source_kind\":0,\"source_revision\":\"1\",\"values\":{\"category\":\"灵感\",\"conclusion\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\"c\"},\"description\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\"S2 raw\\r\\n\\u0000漢 🧪\"},\"hypothesis\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\"h\"},\"stage\":\"待整理\",\"title\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\"handoff title\"},\"todos\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\" one\\ntwo \"}}},\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1\",\"prepare_operation\":\"prepare\",\"prepared_record_sha256\":\"572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854\",\"request_sha256\":\"53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44\"},\"parent\":{\"draft_id\":\"parent\",\"generation\":\"2\",\"request_sha256\":\"6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463\",\"save_operation\":\"late-S2\"},\"plan_operation\":\"plan\",\"retirement_operation\":\"retire\",\"schema_version\":1}",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "handoff",
+      "phase": "closed",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "handoff_retired",
+      "close_request_json": "",
+      "current_active": false,
+      "current_generation": "5",
+      "expected_revision": "1",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "retirement",
+      "phase": "closed",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "{\"child_draft_id\":\"child\",\"child_operation\":\"child-first\",\"child_request_sha256\":\"a80980c55b9374f980164bc8db5118bf96f6e06f2c156fdb65386b8dc43724c3\",\"handoff_request_sha256\":\"679a92c28822687117f5f0d527bb91d8922aacae0587915a0b21c121b4b4ffe7\",\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1\",\"prepare_operation\":\"prepare\",\"prepared_record_sha256\":\"572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854\",\"request_sha256\":\"53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44\"},\"operation_id\":\"retire\",\"parent\":{\"draft_id\":\"parent\",\"generation\":\"2\",\"request_sha256\":\"6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463\",\"save_operation\":\"late-S2\"},\"plan_operation\":\"plan\",\"schema_version\":1}",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "handoff_retired",
+      "close_request_json": "{\"disposition\":\"handoff_retired\",\"expected_generation\":\"3\",\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1\",\"prepare_operation\":\"prepare\",\"prepared_record_sha256\":\"572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854\",\"request_sha256\":\"53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44\"},\"operation_id\":\"handoff-close\",\"parent\":null,\"plan_operation\":\"plan\",\"schema_version\":1}",
+      "current_active": false,
+      "current_generation": "5",
+      "expected_revision": "1",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "close",
+      "phase": "closed",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    }
+  ],
+  "fixed_parent_s2": {
+    "active": true,
+    "assets": [],
+    "business_link": null,
+    "business_retirement": null,
+    "consumed_imports": [],
+    "current_active": true,
+    "current_generation": "2",
+    "fork_link": null,
+    "fork_retirement": null,
+    "generation": "2",
+    "operation_id": "late-S2",
+    "repeated": false,
+    "request_sha256": "6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463",
+    "scope": {
+      "card_id": "handoff-card",
+      "draft_id": "parent",
+      "source": "",
+      "source_kind": 1,
+      "source_revision": "0"
+    },
+    "values": {
+      "assets": [],
+      "category": "灵感",
+      "conclusion": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": "c"
+      },
+      "description": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": "S2 raw\r\n\u0000漢 🧪"
+      },
+      "hypothesis": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": "h"
+      },
+      "stage": "待整理",
+      "title": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": "handoff title"
+      },
+      "todos": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": " one\ntwo "
+      }
+    }
+  },
+  "handoff_request": {
+    "action": "draft_continue_business",
+    "business_handoff": {
+      "request_json": "{\"child\":{\"assets\":[],\"card_id\":\"handoff-card\",\"draft_id\":\"child\",\"expected_generation\":\"0\",\"operation_id\":\"child-first\",\"source_kind\":0,\"source_revision\":\"1\",\"values\":{\"category\":\"灵感\",\"conclusion\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\"c\"},\"description\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\"S2 raw\\r\\n\\u0000漢 🧪\"},\"hypothesis\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\"h\"},\"stage\":\"待整理\",\"title\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\"handoff title\"},\"todos\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\" one\\ntwo \"}}},\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1\",\"prepare_operation\":\"prepare\",\"prepared_record_sha256\":\"572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854\",\"request_sha256\":\"53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44\"},\"parent\":{\"draft_id\":\"parent\",\"generation\":\"2\",\"request_sha256\":\"6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463\",\"save_operation\":\"late-S2\"},\"plan_operation\":\"plan\",\"retirement_operation\":\"retire\",\"schema_version\":1}"
+    }
+  },
+  "kind": "actual_store_reopen_history_v26",
+  "original_inspect_reply": {
+    "cards": [],
+    "drafts": [],
+    "editor_commit": {
+      "card_id": "handoff-card",
+      "command_sha256": "ca4a72349ed1120c461ed07030a6ac42035e0cf1b035560cee978418b163a7be",
+      "commit_status": "committed",
+      "content_sha256": "b06ece6c836b03f85259d88ecd50a100a2cf773b0c00fdf4efb62aaff61e1ab7",
+      "event_id": "original-business",
+      "historical_card": {
+        "assets": [],
+        "category": "灵感",
+        "conclusion": "c",
+        "deleted": false,
+        "deleted_at": "0",
+        "description": "S1 汉字 🧪 é.",
+        "favorite": false,
+        "hypothesis": "h",
+        "id": "handoff-card",
+        "revision": "1",
+        "source": "0801120c68616e646f66662d636172641a046964656120022801320d68616e646f6666207469746c653a8f0308021a06e781b5e6849f2209e5be85e695b4e79086a201580a517461736b2d686d6f732d6372656174652d3730323965613832613265643834363030666134326562343864323063653634346231636161343231323536363334336134336130393466613032336561363712036f6e65a201580a517461736b2d686d6f732d6372656174652d34666263356561343837636233663335376663376535633936326631653630393131393463383761653262316534636531613936306635623236373533353839120374776f1213533120e6b189e5ad9720f09fa7aa2065cc812e2a0168320163580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e763100b448469be7486b9ce40817c3bfaff2372612562a152c238cdf5fe752d45444af9ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e763100010153eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44b4ae38cee2d3a8cebd53ceab9e2f08da4437b8df2ce6885ee5094ea901fa332d",
+        "stage": "待整理",
+        "tasks": [
+          {
+            "completion": 0,
+            "id": "task-hmos-create-7029ea82a2ed84600fa42eb48d20ce644b1caa4212566343a43a094fa023ea67",
+            "text": "one"
+          },
+          {
+            "completion": 0,
+            "id": "task-hmos-create-4fbc5ea487cb3f357fc7e5c962f1e6091194c87ae2b1e4ce1a960f5b26753589",
+            "text": "two"
+          }
+        ],
+        "title": "handoff title"
+      },
+      "live_matches": true,
+      "live_revision": "1",
+      "operation": "original-business",
+      "publication": {
+        "draft_id": "parent",
+        "generation": "1",
+        "request_sha256": "9d9dec9487562bcdb8920230ece81459a1a82186807ff835129563035b38077b",
+        "save_operation": "pub-save"
+      },
+      "publication_sha256": "b4ae38cee2d3a8cebd53ceab9e2f08da4437b8df2ce6885ee5094ea901fa332d",
+      "qualification": "development_editor_wire_v1",
+      "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44",
+      "revision": "1",
+      "source_revision": "0"
+    },
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "1"
+  },
+  "original_request_json": "{\"business\":{\"action\":\"create\",\"category\":\"灵感\",\"conclusion\":\"c\",\"description\":\"S1 汉字 🧪 é.\",\"hypothesis\":\"h\",\"id\":\"handoff-card\",\"operation\":\"original-business\",\"source\":\"\",\"stage\":\"待整理\",\"title\":\"handoff title\",\"todos\":\" one\\ntwo \"},\"continuation\":null,\"mode\":\"create\",\"publication\":{\"draft_id\":\"parent\",\"generation\":\"1\",\"request_sha256\":\"9d9dec9487562bcdb8920230ece81459a1a82186807ff835129563035b38077b\",\"save_operation\":\"pub-save\"},\"schema_version\":1}",
+  "parent_history_active_reply": {
+    "cards": [],
+    "drafts": [
+      {
+        "active": true,
+        "assets": [],
+        "business_link": null,
+        "business_retirement": null,
+        "consumed_imports": [],
+        "current_active": true,
+        "current_generation": "2",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "2",
+        "operation_id": "late-S2",
+        "repeated": true,
+        "request_sha256": "6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463",
+        "scope": {
+          "card_id": "handoff-card",
+          "draft_id": "parent",
+          "source": "",
+          "source_kind": 1,
+          "source_revision": "0"
+        },
+        "values": {
+          "assets": [],
+          "category": "灵感",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "c"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "S2 raw\r\n\u0000漢 🧪"
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "h"
+          },
+          "stage": "待整理",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "handoff title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": " one\ntwo "
+          }
+        }
+      }
+    ],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "parent_history_retired_reply": {
+    "cards": [],
+    "drafts": [
+      {
+        "active": true,
+        "assets": [],
+        "business_link": null,
+        "business_retirement": null,
+        "consumed_imports": [],
+        "current_active": false,
+        "current_generation": "3",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "2",
+        "operation_id": "late-S2",
+        "repeated": true,
+        "request_sha256": "6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463",
+        "scope": {
+          "card_id": "handoff-card",
+          "draft_id": "parent",
+          "source": "",
+          "source_kind": 1,
+          "source_revision": "0"
+        },
+        "values": {
+          "assets": [],
+          "category": "灵感",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "c"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "S2 raw\r\n\u0000漢 🧪"
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "h"
+          },
+          "stage": "待整理",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "handoff title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": " one\ntwo "
+          }
+        }
+      }
+    ],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "planned_parts": [
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "",
+      "close_request_json": "",
+      "current_active": true,
+      "current_generation": "3",
+      "expected_revision": "1",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "submission",
+      "phase": "handoff_planned",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "{\"business\":{\"action\":\"create\",\"category\":\"灵感\",\"conclusion\":\"c\",\"description\":\"S1 汉字 🧪 é.\",\"hypothesis\":\"h\",\"id\":\"handoff-card\",\"operation\":\"original-business\",\"source\":\"\",\"stage\":\"待整理\",\"title\":\"handoff title\",\"todos\":\" one\\ntwo \"},\"continuation\":null,\"mode\":\"create\",\"publication\":{\"draft_id\":\"parent\",\"generation\":\"1\",\"request_sha256\":\"9d9dec9487562bcdb8920230ece81459a1a82186807ff835129563035b38077b\",\"save_operation\":\"pub-save\"},\"schema_version\":1}",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "",
+      "close_request_json": "",
+      "current_active": true,
+      "current_generation": "3",
+      "expected_revision": "1",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "publication",
+      "phase": "handoff_planned",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": {
+        "active": true,
+        "assets": [],
+        "business_link": null,
+        "business_retirement": null,
+        "consumed_imports": [],
+        "current_active": false,
+        "current_generation": "3",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "1",
+        "operation_id": "pub-save",
+        "repeated": true,
+        "request_sha256": "9d9dec9487562bcdb8920230ece81459a1a82186807ff835129563035b38077b",
+        "scope": {
+          "card_id": "handoff-card",
+          "draft_id": "parent",
+          "source": "",
+          "source_kind": 1,
+          "source_revision": "0"
+        },
+        "values": {
+          "assets": [],
+          "category": "灵感",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "c"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "S1 汉字 🧪 é."
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "h"
+          },
+          "stage": "待整理",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "handoff title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": " one\ntwo "
+          }
+        }
+      },
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "",
+      "close_request_json": "",
+      "current_active": true,
+      "current_generation": "3",
+      "expected_revision": "1",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "save",
+      "phase": "handoff_planned",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": "{\"action\":\"editor_save\",\"editor_save\":{\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1\",\"prepare_operation\":\"prepare\",\"prepared_record_sha256\":\"572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854\",\"request_sha256\":\"53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44\"},\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"create\\\",\\\"category\\\":\\\"灵感\\\",\\\"conclusion\\\":\\\"c\\\",\\\"description\\\":\\\"S1 汉字 🧪 é.\\\",\\\"hypothesis\\\":\\\"h\\\",\\\"id\\\":\\\"handoff-card\\\",\\\"operation\\\":\\\"original-business\\\",\\\"source\\\":\\\"\\\",\\\"stage\\\":\\\"待整理\\\",\\\"title\\\":\\\"handoff title\\\",\\\"todos\\\":\\\" one\\\\ntwo \\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"create\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"parent\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"9d9dec9487562bcdb8920230ece81459a1a82186807ff835129563035b38077b\\\",\\\"save_operation\\\":\\\"pub-save\\\"},\\\"schema_version\\\":1}\"}}"
+    },
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "",
+      "close_request_json": "",
+      "current_active": true,
+      "current_generation": "3",
+      "expected_revision": "1",
+      "handoff_request_json": "",
+      "inspect_request_json": "{\"action\":\"editor_commit_inspect\",\"editor_commit\":{\"expected_revision\":\"1\",\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"create\\\",\\\"category\\\":\\\"灵感\\\",\\\"conclusion\\\":\\\"c\\\",\\\"description\\\":\\\"S1 汉字 🧪 é.\\\",\\\"hypothesis\\\":\\\"h\\\",\\\"id\\\":\\\"handoff-card\\\",\\\"operation\\\":\\\"original-business\\\",\\\"source\\\":\\\"\\\",\\\"stage\\\":\\\"待整理\\\",\\\"title\\\":\\\"handoff title\\\",\\\"todos\\\":\\\" one\\\\ntwo \\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"create\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"parent\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"9d9dec9487562bcdb8920230ece81459a1a82186807ff835129563035b38077b\\\",\\\"save_operation\\\":\\\"pub-save\\\"},\\\"schema_version\\\":1}\"}}",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "inspect",
+      "phase": "handoff_planned",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "",
+      "close_request_json": "",
+      "current_active": true,
+      "current_generation": "3",
+      "expected_revision": "1",
+      "handoff_request_json": "{\"child\":{\"assets\":[],\"card_id\":\"handoff-card\",\"draft_id\":\"child\",\"expected_generation\":\"0\",\"operation_id\":\"child-first\",\"source_kind\":0,\"source_revision\":\"1\",\"values\":{\"category\":\"灵感\",\"conclusion\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\"c\"},\"description\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\"S2 raw\\r\\n\\u0000漢 🧪\"},\"hypothesis\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\"h\"},\"stage\":\"待整理\",\"title\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\"handoff title\"},\"todos\":{\"affinity\":1,\"composing_end\":-1,\"composing_start\":-1,\"directional\":false,\"selection_base\":-1,\"selection_extent\":-1,\"text\":\" one\\ntwo \"}}},\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1\",\"prepare_operation\":\"prepare\",\"prepared_record_sha256\":\"572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854\",\"request_sha256\":\"53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44\"},\"parent\":{\"draft_id\":\"parent\",\"generation\":\"2\",\"request_sha256\":\"6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463\",\"save_operation\":\"late-S2\"},\"plan_operation\":\"plan\",\"retirement_operation\":\"retire\",\"schema_version\":1}",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "handoff",
+      "phase": "handoff_planned",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "",
+      "close_request_json": "",
+      "current_active": true,
+      "current_generation": "3",
+      "expected_revision": "1",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "retirement",
+      "phase": "handoff_planned",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "{\"child_draft_id\":\"child\",\"child_operation\":\"child-first\",\"child_request_sha256\":\"a80980c55b9374f980164bc8db5118bf96f6e06f2c156fdb65386b8dc43724c3\",\"handoff_request_sha256\":\"679a92c28822687117f5f0d527bb91d8922aacae0587915a0b21c121b4b4ffe7\",\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1\",\"prepare_operation\":\"prepare\",\"prepared_record_sha256\":\"572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854\",\"request_sha256\":\"53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44\"},\"operation_id\":\"retire\",\"parent\":{\"draft_id\":\"parent\",\"generation\":\"2\",\"request_sha256\":\"6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463\",\"save_operation\":\"late-S2\"},\"plan_operation\":\"plan\",\"schema_version\":1}",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "original-business",
+      "card_id": "handoff-card",
+      "close_disposition": "",
+      "close_request_json": "",
+      "current_active": true,
+      "current_generation": "3",
+      "expected_revision": "1",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+      "part": "close",
+      "phase": "handoff_planned",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+        "prepare_operation": "prepare",
+        "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+        "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    }
+  ],
+  "proof": {
+    "generation": "1",
+    "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+    "prepare_operation": "prepare",
+    "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+    "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+  },
+  "publication_s1": {
+    "active": true,
+    "assets": [],
+    "business_link": null,
+    "business_retirement": null,
+    "consumed_imports": [],
+    "current_active": true,
+    "current_generation": "1",
+    "fork_link": null,
+    "fork_retirement": null,
+    "generation": "1",
+    "operation_id": "pub-save",
+    "repeated": false,
+    "request_sha256": "9d9dec9487562bcdb8920230ece81459a1a82186807ff835129563035b38077b",
+    "scope": {
+      "card_id": "handoff-card",
+      "draft_id": "parent",
+      "source": "",
+      "source_kind": 1,
+      "source_revision": "0"
+    },
+    "values": {
+      "assets": [],
+      "category": "灵感",
+      "conclusion": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": "c"
+      },
+      "description": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": "S1 汉字 🧪 é."
+      },
+      "hypothesis": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": "h"
+      },
+      "stage": "待整理",
+      "title": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": "handoff title"
+      },
+      "todos": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": " one\ntwo "
+      }
+    }
+  },
+  "retirement_history_reply": {
+    "cards": [],
+    "drafts": [
+      {
+        "active": false,
+        "assets": [],
+        "business_link": null,
+        "business_retirement": {
+          "business_link": {
+            "child_operation": "child-first",
+            "command_sha256": "ca4a72349ed1120c461ed07030a6ac42035e0cf1b035560cee978418b163a7be",
+            "committed_operation": "original-business",
+            "committed_revision": "1",
+            "content_sha256": "b06ece6c836b03f85259d88ecd50a100a2cf773b0c00fdf4efb62aaff61e1ab7",
+            "handoff_request_sha256": "679a92c28822687117f5f0d527bb91d8922aacae0587915a0b21c121b4b4ffe7",
+            "intent": {
+              "generation": "1",
+              "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+              "prepare_operation": "prepare",
+              "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+              "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+            },
+            "parent": {
+              "draft_id": "parent",
+              "generation": "2",
+              "request_sha256": "6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463",
+              "save_operation": "late-S2"
+            },
+            "plan_operation": "plan",
+            "publication_sha256": "b4ae38cee2d3a8cebd53ceab9e2f08da4437b8df2ce6885ee5094ea901fa332d",
+            "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44",
+            "schema_version": 1
+          },
+          "child_draft_id": "child",
+          "operation_id": "retire",
+          "schema_version": 1
+        },
+        "consumed_imports": [],
+        "current_active": false,
+        "current_generation": "3",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "3",
+        "operation_id": "late-S2",
+        "repeated": true,
+        "request_sha256": "6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463",
+        "scope": {
+          "card_id": "handoff-card",
+          "draft_id": "parent",
+          "source": "",
+          "source_kind": 1,
+          "source_revision": "0"
+        },
+        "values": {
+          "assets": [],
+          "category": "灵感",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "c"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "S2 raw\r\n\u0000漢 🧪"
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "h"
+          },
+          "stage": "待整理",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "handoff title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": " one\ntwo "
+          }
+        }
+      }
+    ],
+    "effect": "not_committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": ""
+  },
+  "retirement_reply": {
+    "cards": [],
+    "drafts": [
+      {
+        "active": false,
+        "assets": [],
+        "business_link": null,
+        "business_retirement": {
+          "business_link": {
+            "child_operation": "child-first",
+            "command_sha256": "ca4a72349ed1120c461ed07030a6ac42035e0cf1b035560cee978418b163a7be",
+            "committed_operation": "original-business",
+            "committed_revision": "1",
+            "content_sha256": "b06ece6c836b03f85259d88ecd50a100a2cf773b0c00fdf4efb62aaff61e1ab7",
+            "handoff_request_sha256": "679a92c28822687117f5f0d527bb91d8922aacae0587915a0b21c121b4b4ffe7",
+            "intent": {
+              "generation": "1",
+              "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+              "prepare_operation": "prepare",
+              "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+              "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+            },
+            "parent": {
+              "draft_id": "parent",
+              "generation": "2",
+              "request_sha256": "6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463",
+              "save_operation": "late-S2"
+            },
+            "plan_operation": "plan",
+            "publication_sha256": "b4ae38cee2d3a8cebd53ceab9e2f08da4437b8df2ce6885ee5094ea901fa332d",
+            "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44",
+            "schema_version": 1
+          },
+          "child_draft_id": "child",
+          "operation_id": "retire",
+          "schema_version": 1
+        },
+        "consumed_imports": [],
+        "current_active": false,
+        "current_generation": "3",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "3",
+        "operation_id": "late-S2",
+        "repeated": false,
+        "request_sha256": "6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463",
+        "scope": {
+          "card_id": "handoff-card",
+          "draft_id": "parent",
+          "source": "",
+          "source_kind": 1,
+          "source_revision": "0"
+        },
+        "values": {
+          "assets": [],
+          "category": "灵感",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "c"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "S2 raw\r\n\u0000漢 🧪"
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "h"
+          },
+          "stage": "待整理",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "handoff title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": " one\ntwo "
+          }
+        }
+      }
+    ],
+    "editor_intents": [
+      {
+        "business_operation": "original-business",
+        "card_id": "handoff-card",
+        "close_disposition": "",
+        "close_request_json": "",
+        "current_active": true,
+        "current_generation": "3",
+        "expected_revision": "1",
+        "handoff_request_json": "",
+        "inspect_request_json": "",
+        "issue_operation": "morrow-host-intent-issue-9b1daca21551a764d4740dd1c440c392506425dd27dc1729ad1f533bd4038258",
+        "part": "summary",
+        "phase": "handoff_planned",
+        "proof": {
+          "generation": "1",
+          "intent_id": "morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1",
+          "prepare_operation": "prepare",
+          "prepared_record_sha256": "572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854",
+          "request_sha256": "53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44"
+        },
+        "publication": null,
+        "repeated": false,
+        "request_json": "",
+        "retirement_request_json": "",
+        "save_request_json": ""
+      }
+    ],
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "3"
+  },
+  "retirement_request": {
+    "action": "draft_continue_business_retire",
+    "business_retirement": {
+      "request_json": "{\"child_draft_id\":\"child\",\"child_operation\":\"child-first\",\"child_request_sha256\":\"a80980c55b9374f980164bc8db5118bf96f6e06f2c156fdb65386b8dc43724c3\",\"handoff_request_sha256\":\"679a92c28822687117f5f0d527bb91d8922aacae0587915a0b21c121b4b4ffe7\",\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-23cd32bbad83ff9684da0ebacbefd00cf88b4670b9043472f2547ded5fddf5c1\",\"prepare_operation\":\"prepare\",\"prepared_record_sha256\":\"572f3c6600b67954ae9f1c908e34c7ba85dadd8938a43ea1b694e0285ecf0854\",\"request_sha256\":\"53eb5cc02c8fe148874c8166ec84f60d67924cc3829b5e436fef5ef352788c44\"},\"operation_id\":\"retire\",\"parent\":{\"draft_id\":\"parent\",\"generation\":\"2\",\"request_sha256\":\"6bb3f5ba0bab4ad49da69b8ad36de287f5c3a41e9c431e22758ca01a7885c463\",\"save_operation\":\"late-S2\"},\"plan_operation\":\"plan\",\"schema_version\":1}"
+    }
+  },
+  "schema_version": 1
+}

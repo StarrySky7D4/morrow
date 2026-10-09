@@ -122,6 +122,31 @@ test('native field policy, composition, exact raw and active publication are sep
   await assert.rejects(bad.prepare(), /计数回执/); assert.equal(bad.calls.length, 0);
 });
 
+test('current_v2 freezes current full source and empty LF fields while parsing actual complete TaskId results without converting them', async () => {
+  const h = harness({ mode: 'current_v2', revision: '9007199254740993' }), c = await h.prepare();
+  assert.equal(c.submission.mode, 'current_v2'); assert.equal(c.submission.business.action, 'edit');
+  assert.equal(c.submission.business.todos, ''); assert.equal(c.submission.continuation, null);
+  assert.equal(c.publication.values.todos.text, ''); assert.equal(c.publication.scope.source_kind, 0);
+  assert.equal(c.publication.scope.source_revision, '9007199254740993'); assert.equal(c.submission.business.source, h.record.scope.source);
+  const original = c.originalRequest, work = c.save();
+  const tasks = [{ id: 'task-stable-乙', text: '同名', completion: 2 }, { id: 'task-stable-甲', text: '同名', completion: 1 }];
+  h.ack(c, 0, reply => reply.historical_card.tasks = plain(tasks)); await work;
+  assert.equal(c.qualified, true); assert.deepEqual(plain(c.confirmed.historical_card.tasks), tasks);
+  const next = h.successor(c); await assert.rejects(c.continueTodos(next.business, next.record), /root|baseline|continu/);
+  assert.equal(c.originalRequest, original); assert.equal(h.calls.length, 1);
+});
+
+test('current_v2 cannot admit LF todos, source mismatch, stale publication, composition or revoked owner', async () => {
+  const changes = [h => h.business.todos = h.record.values.todos.text = '真实任务不能以 LF 替换',
+    h => h.business.source = '0a01', h => h.record.scope.source_kind = 1,
+    h => h.record.current_generation = h.m.nextGeneration(h.record.generation),
+    h => h.record.values.description.composing_start = 0, h => h.owner.exact = false];
+  for (const change of changes) {
+    const h = harness({ mode: 'current_v2', revision: '7' }); change(h);
+    await assert.rejects(h.prepare()); assert.equal(h.calls.length, 0);
+  }
+});
+
 test('owner or input epoch revoked during asynchronous validation cannot issue a proposal', async () => {
   const h = harness(); let release;
   h.setFieldOverride(request => new Promise(resolve => { release = () => resolve(JSON.stringify({ ok: true, error: '', field: request.field,

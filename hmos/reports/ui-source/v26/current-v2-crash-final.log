@@ -1,0 +1,18 @@
+   Compiling morrow-core v0.1.9-test.50 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\shared\core)
+   Compiling morrow-editor-draft-model v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust\editor-draft-model)
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 19.35s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-5dc4350283be0464.exe)
+
+running 1 test
+current_v2/after-begin: PASS
+current_v2/after-card: PASS
+current_v2/after-operation: PASS
+current_v2/after-event: PASS
+current_v2/after-task-evidence: PASS
+current_v2/before-commit: PASS
+current_v2/after-commit: PASS
+test editor_business::tests::current_v2_tests::current_v2_actual_store_process_loss_preserves_tasks_and_fixed_retry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 202 filtered out; finished in 1.78s
+

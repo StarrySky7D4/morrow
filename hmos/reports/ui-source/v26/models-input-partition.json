@@ -1,0 +1,9 @@
+{
+  "checkedUtc": "2026-10-09T00:21:40.066Z",
+  "status": "PASS",
+  "total": 1720,
+  "repositoryInputs": 120,
+  "ignoredSupplementalObservedFiles": 1600,
+  "sourceIdentityVerified": true,
+  "note": "The broad before/after inventory also observed ignored tool dependencies and historical tester work outputs. Those extra files were stable, but are not claimed as compiler or test-read inputs. Stage verification uses the actual repository/model/test/fixture inputs; ignored supplemental files are not staged."
+}

@@ -720,8 +720,9 @@ pub fn read(host: &HostRuntime, card: &str, draft: &str) -> Result<Option<DraftR
         repeated: false,
     }))
 }
-/// Immutable save view for a separately verified host intent. This read does
-/// not authorize ordinary writes, exports, or reactivation of an old draft.
+/// Immutable operation view with real current-journal observations. Callers
+/// must separately verify their intent/plan proof before adopting its values.
+/// This read authorizes no ordinary writes, exports, or old-draft reactivation.
 pub(crate) fn read_history(host: &HostRuntime, card: &str, draft: &str, operation: &str) -> Result<DraftRecord> {
     let slot = draft_history(host, &key(card, draft), operation)?.ok_or("draft history missing")?;
     fork::verify_slot(host, &slot)?;

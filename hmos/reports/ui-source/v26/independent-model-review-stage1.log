@@ -1,0 +1,116 @@
+✔ actual handoff freezes complete late S2, exact historical source, ordered confirmed subset and independent identities (447.71ms)
+✔ late full S3 is installed in a real child coordinator and saved separately without replacing it with first S2 (222.1293ms)
+✔ Unknown first uses one fixed literal after owner revocation; known ACK is retained but cannot install into replacement owner (177.1866ms)
+✔ committed effect survives malformed DTO without qualifying first child or replaying a business request (149.7303ms)
+✔ first complete DTO rejects altered raw, source, immutable link, pin bytes, origin, aliases and reply identity (2077.371ms)
+✔ historical first with advanced or inactive current state is retained and never resurrected; explicit current read may restore its actual writer (260.2813ms)
+✔ native retirement literal is read verbatim including key order/spacing; metadata plan is not a retirement effect (133.0505ms)
+✔ fixed plan read rejects substitution and Unknown retries that exact read without creating a new child or plan (134.2983ms)
+✔ retirement requires the actual installed child and latest full raw confirmation, including selection/composition generations (128.1902ms)
+✔ retirement Unknown preserves fixed literal and known business/child, explicit retry after owner revocation settles only original parent (121.3094ms)
+✔ retirement proof/full parent/pin mismatch cannot qualify cleanup and never releases or overwrites the child (786.6768ms)
+✔ retired handoff closes only the intent, keeps child S3 and exposes the same qualified continuation baseline (126.865ms)
+✔ exact close factory is read-only and freezes full S1, detach boundary can close without reviving the old SDK lease (146.7959ms)
+✔ exact close refuses any newer text/selection/composition/asset/order or changed fresh input cutoff before transport (824.8404ms)
+✔ exact close Unknown cannot change identity or consume late S2 by another close; original explicit reconciliation retains known effect (124.5275ms)
+✔ closed success restores original transport read-only and explicitly inspects history; it never authorizes a new save (125.2276ms)
+✔ handoff restore reads exact native literals without writes and preserves original first request for explicit reconciliation (129.5442ms)
+✔ restart without parent writer restores exact S2 parent history, advances current S3 child and completes fixed retirement without first replay (132.552ms)
+✔ restart reads already retired immutable parent and receipt without fabricating active parent or resending retirement (140.4928ms)
+✔ immutable parent history failures retain one exact readonly request and never substitute original S1 publication (855.4021ms)
+✔ verified readonly retirement history resolves only fixed retirement Unknown and preserves separate close Unknown (123.9947ms)
+✔ restart current child rejects altered first raw, foreign lineage/source and inactive journals without erasing fixed reconciliation (1030.6287ms)
+✔ freeze guards actual parent in-flight/Unknown/import owner and pin subset authority; whole wire budgets and Unicode fail before native (532.8466ms)
+✔ business/raw mixed lineage copy and ordinary child saves retain business15 while rejecting dual incoming/outgoing links (118.5847ms)
+✔ fresh actual Store full handoff/retirement/closed seven-part DTO restores exact plan and active native child without replay (143.2857ms)
+✔ fresh actual Store saved_exact closed context retains complete original request and inspect bytes without reactivating intent or raw (116.7593ms)
+✔ prepare freezes all raw strings, full editing publication and exact original wire before asynchronous checks (272.1321ms)
+✔ native field policy, composition, exact raw and active publication are separate mandatory admission gates (809.4428ms)
+✔ current_v2 freezes current full source and empty LF fields while parsing actual complete TaskId results without converting them (67.5719ms)
+✔ current_v2 cannot admit LF todos, source mismatch, stale publication, composition or revoked owner (382.3639ms)
+✔ owner or input epoch revoked during asynchronous validation cannot issue a proposal (61.2473ms)
+✔ Unknown retains one complete original save wire; retry is explicit even after late raw and owner replacement (60.757ms)
+✔ late selection/composition or same-values away/back epoch cannot consume a valid historical result (56.5224ms)
+✔ initial definitive no-write failure is rejected; an Unknown retry cannot be downgraded by not_committed (129.1297ms)
+✔ full source digest and canonical framed publication independently bind strict history, including u64 over 2^53 (57.775ms)
+✔ mismatched tuple/hash/revision/full source/common fields/duplicate identities never qualify or consume (915.7491ms)
+✔ inspect uses only exact historical DTO even when Reply.cards is newer, missing or deleted live state (114.1932ms)
+✔ snapshot absence does not resolve uncertain original save, generate a new operation or automatically retry (54.2082ms)
+✔ Unknown inspection retains its own same wire and cannot be confused with save transport (60.5259ms)
+✔ a qualified known commit remains committed on later damaged/oversize readback and cannot become absent (56.1451ms)
+✔ restart restore preserves noncanonical JSON spacing/key order and exact retired publication history (60.1565ms)
+✔ legacy semantic-only history stays readonly and cannot acquire strict wire/publication or a continued root (58.4802ms)
+✔ continued todos derives constant original create plus latest six-field baseline through two own historical commits (66.2444ms)
+✔ foreign source/operation/owner and kind1 raw fork cannot be promoted to a business continuation (56.3945ms)
+✔ ordinary existing V2 edit rejects any nonempty legacy todos and cannot be used as an owned-root factory (136.6487ms)
+✔ complete escaped outer wire budget, not UTF16 length or inner JSON size, gates all proposals (73.9803ms)
+✔ inspect revision overflow/noncanonical identity and incomplete Unicode fail before any transport (237.361ms)
+✔ missing editor_commit and oversized initial reply remain Unknown with exact retry, never use current cards fallback (115.8682ms)
+✔ full DTO is frozen before asynchronous source hashing, so caller mutation cannot change an admitted receipt (58.8265ms)
+✔ canonical publication supports the complete u64 range and history effect/status inconsistency is rejected (55.8736ms)
+✔ fresh actual Store create and continued_todos DTOs pass original-wire/publication/full historical-source validation (124.5343ms)
+✖ current_v2 actual Session prepares, registers exact transport, saves and restores inspection without granting LF continuation (349.4632ms)
+✔ owner-only rebind retains every original byte, proof, known commit hint and Unknown after malformed actual business DTO (179.5016ms)
+✔ actual qualified receipt survives guard rebind and an in-flight rebind is rejected without moving an issued request (149.3165ms)
+✔ actual Business admission freezes raw/publication before native prepare; intent is not a business receipt (114.9957ms)
+✔ actual field/composition/full raw admission refuses a proposal before any durable mutation (512.7097ms)
+✔ prepare Unknown retains original operation and full bytes; explicit retry after owner replacement uses the same request (92.3607ms)
+✔ a first no-write prepare failure stays known, while a no-write uncertain retry cannot erase uncertainty (186.9708ms)
+✔ metadata proof/ID/domain/current generation and business tuple mismatches never admit native issue (1151.2662ms)
+✔ issue freezes only immutable proof/gen1, requires explicit ACK and literal reads before business (92.3399ms)
+✔ issue Unknown reuses the exact CAS request and never presumes business submission (85.0322ms)
+✔ issued before first business send with late S2/owner revocation settles original S1 only after explicit five-part restore and retry (169.8839ms)
+✔ late owner/epoch after prepare blocks fresh issue and late raw after issue blocks fresh save (89.9318ms)
+✔ parent queue must be paused for the exact publication before fresh preparation/issue/save, while historical retry never resumes it (178.0799ms)
+✔ an in-flight metadata request excludes another action and late raw remains live while the original ACK is retained (106.9902ms)
+✔ missing/wrong/extra native save envelope cannot be sent and explicit read retry retains one exact part request (352.1293ms)
+✔ native inspect literal is checked independently, mapped once and sent byte-for-byte even with different key order (87.7772ms)
+✔ business Unknown retries actual registered outer bytes after late selection/composition and view owner replacement (82.9728ms)
+✔ inspection Unknown keeps its native original wire; later not_committed cannot wash a known committed effect (88.847ms)
+✔ malformed committed business DTO retains commitment hint without qualifying or consuming the result (93.0644ms)
+✔ restart reads all five parts without a mutation and preserves immutable historical publication despite later retirement (96.9361ms)
+✔ restart rejects changed literal/hash/publication text/inconsistent asset aliases/order and mixed-phase snapshots (614.4012ms)
+✔ restored asset metadata must match actual historical business assets before receipt qualification (149.2413ms)
+✔ subsequent publication part requires full original selection, pin metadata and aliases against the frozen publication (347.805ms)
+✔ prepared restart does not invent save/inspect plans; empty read payload is not cancellation or business absence (90.1952ms)
+✔ native cancel prepared CAS has a fixed independent literal and unknown cancellation retries exact bytes (93.6164ms)
+✔ prepared historical retry returning current issued state does not grant prepared cancel rights (93.3783ms)
+✔ intent discovery is read-only and rejects duplicate IDs, foreign card, mixed parts and invalid pagination cursor (90.0343ms)
+✔ complete native list DTO is copied before async SHA so caller mutation cannot replace its visible identity (89.1161ms)
+✔ full UTF8 reply/transport budgets fail closed before sending and never truncate original bytes (92.6587ms)
+✔ continued_todos needs an own qualified historical baseline, constant root and a real source0 publication (87.9527ms)
+✔ complete u64 expected revision is retained without Number conversion across issued restore and inspect (91.9053ms)
+✔ fresh actual Store complete intent parts restore the exact native registered save/inspect literals and qualify historical Card bytes (92.6078ms)
+✔ fresh actual Store cancel_prepared complete five-part closed context restores its original Close without inventing business plans (84.6277ms)
+ℹ tests 84
+ℹ suites 0
+ℹ pass 83
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9537.1665
+
+✖ failing tests:
+
+test at hmos\tool\editor-business-session-model.test.cjs:124:1
+✖ current_v2 actual Session prepares, registers exact transport, saves and restores inspection without granting LF continuation (349.4632ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /root|baseline|continu/. Input:
+  
+  "TypeError: Cannot read properties of undefined (reading 'send')"
+  
+      at async TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\editor-business-session-model.test.cjs:135:3)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: TypeError: Cannot read properties of undefined (reading 'send')
+        at new EditorBusinessSessionCoordinator (evalmachine.<anonymous>:340:36)
+        at EditorBusinessSessionCoordinator.continueTodos (evalmachine.<anonymous>:367:25)
+        at TestContext.<anonymous> (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\tool\editor-business-session-model.test.cjs:135:33)
+        at async Test.run (node:internal/test_runner/test:1125:7)
+        at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3),
+    expected: /root|baseline|continu/,
+    operator: 'rejects',
+    diff: 'simple'
+  }

@@ -1,6 +1,10 @@
 # 功能对齐与 Rust 复用检查
 
-2026-10-09 **v25 当前分支检查点**：主页面保存已接入持久原请求的 prepare/issue/save/inspect 和只读发现/恢复入口；已确认业务后，准确 S1 关闭原草稿，完整较新 S2/S3 通过 typed business source0 子草稿接续，再条件退役父草稿。Unknown 保留固定原 wire，首次 prepare 明确未写入时只释放该提案，完整输入保留。重启后已计划步骤只读恢复 native 固定 literal，需显式核对，不生成另一套操作。
+2026-10-09 **v26 当前分支基础检查点**：增加按真实当前全文 source/CAS 编辑 V2 正文的 `current_v2`，保留实际 TaskId、完成状态、顺序、分类/阶段、收藏和未知字段；增加固定父草稿/退役历史只读读取与模型当前子 writer 恢复。原固定请求和 Unknown 不变。真实 Store DTO 检查补修可选空游标省略时的回执解析，以及退役历史确认后仍停留在 Unknown 的状态。
+
+完整实际 ETS/tool **869/869 PASS**，Rust **187 library +3 binary PASS**（16 条默认条件 ignored；新两份 DTO 导出与7个实际崩溃边界单独通过）；双 ABI release 和最终完整 API26 **SUCCESS /27.403s**，未签名包 **30,198,963B /90C3171D…**。版本仍 **dev19/1000019**；只推送 `codex/ArkTsUI`，不并入主线。**本次新增 current-child 重启恢复/current_v2 重开尚未接入 Index，设备验收 NOT_RUN，完整 Flutter/Windows 对齐 OPEN**。详见 [v26 验证](../reports/ui-source/v26/validation.md)。以下保留各轮历史范围。
+
+2026-10-09 **v25 历史分支检查点**：主页面保存已接入持久原请求的 prepare/issue/save/inspect 和只读发现/恢复入口；已确认业务后，准确 S1 关闭原草稿，完整较新 S2/S3 通过 typed business source0 子草稿接续，再条件退役父草稿。Unknown 保留固定原 wire，首次 prepare 明确未写入时只释放该提案，完整输入保留。重启后已计划步骤只读恢复 native 固定 literal，需显式核对，不生成另一套操作。
 
 本轮完整实际 ETS/tool **857/857 PASS**，Rust **177 library +3 binary PASS**（13 条默认条件 ignored，文档检查单独顺序通过），新 **48 个实际 Store 崩溃边界 PASS**；fresh 双 ABI 和 API26 完整产品构建 **SUCCESS /15.363s**，未签名包 **30,173,833B /9590D87D…**。详细结果见 [v25 验证](../reports/ui-source/v25/validation.md)。**新 native / 新页面流程设备验收 NOT_RUN**；父草稿已缺失或子草稿已推进后的页面重启接续、关闭后卡片重开并继续全文 owned todos、元数据/TaskId 编辑后的完整对齐仍 OPEN。未将局部检查计作完整 Flutter/Windows 功能等价。版本保持 **dev19/1000019**，只推送 `codex/ArkTsUI`，不并入主线。以下记录保留各轮历史范围。
 
@@ -65,8 +69,8 @@ dev.15 历史源码交付 `0.1.0-hmos-dev.15` / `1000015`：文件选择器按�
 | 七种风格、立体深度、组件材质跟随 | Flutter `appearance.dart`, `component_material_page.dart` | dev.5 基础面板圆角/边缘/阴影和完整材质引用；循环拒绝、取消/应用和重启验证通过。公共描边使用面板实测尺寸并限制绘制范围，修复跨卡片框线。控件浮起/按压动画及 shader 尚未复现；详见 dev.5 验证记录 |
 | 工作区布局与位置 | Flutter `workspace_viewport.dart` / `stable_masonry_grid.dart` / `render_stable_masonry_grid.dart` | dev.7 改为原生 LazyVWaterFlowLayout + LazyForEach；页面/卡片身份稳定，修订内容和移动位置分别失效，保留 16 张交错记录验证。dev.8 最终包新增 440/744 vp 单/双列、四卡间距/排序/遍历与查询修订刷新；dev.6 保留 880/1488 vp 面板与五页位置恢复证据。完整主题、键盘/动画及内存/帧时资格仍未完成 |
 | 图片基础手势 | Flutter `attachment_view.dart` / 实际安装 `InteractiveViewer` | dev.18修复焦点、单指/纯双指pan、pinch接管、tight边界与cancel/旧事件身份，30/30实际ETS/组件模型PASS；有效手势缩放1–2.5，按钮/双击复位为既有HMOS补充。dev.19新增独立API26真实PointerMatrix/injectMultiPointerAction测试工具，main/test HAP编译及10工具模型PASS，未安装、未执行设备手势；不增加生产手势或图片渲染资格。惯性/fling/scale-velocity未实现，GIF/损坏格式未验。见 [生产手势审计](../reports/ui-source/v18/image-gesture-source-audit.md)与 [工具审计](../reports/ui-source/v19/image-multipointer-tester-audit.md) |
-| 编辑器文字与预览 | Flutter `main.dart::_bodyEditor` / `idea_markdown.dart` | CommonMark/准确修订pin、590vp分栏与内嵌图8个/64MiB保持。v24 B62候选公开D文字恢复、13/1000与keep关闭限定通过，仍不证明新输入/保存全闭环；strict业务/intent/Session基础未接本编辑器，业务source0接续、IME完整行为、连续选区与完整富文本仍OPEN |
-| 平台分发 | DevEco API26 | dev19/1000019保持，仅codex/ArkTsUI、不并main。v24实际ETS807/807 PASS0skip、271 native来源及新双ABI前后PASS；完整API26产品13.893s/34 fresh任务、313复制/364仓库输入前后及4包内so PASS，最终HAP29,381,667b/F6EEEAE2…未签/未安装。首轮缺hvigor隔离副本0任务失败保留，修完整副本后retry1通过。设备仍仅B62/29,107,139b旧v22 native UI候选恢复/keep限定PASS；新native设备、签名/ARM64真机/HUKS/全目标OPEN，见 [v24统一验证](../reports/ui-source/v24/validation.md) |
+| 编辑器文字与预览 | Flutter `main.dart::_bodyEditor` / `idea_markdown.dart` | CommonMark/准确修订pin、590vp分栏与内嵌图8个/64MiB保持；v25 Index 已接持久原保存/只读恢复、准确S1关闭与S2/S3 source0业务接续。v26新增当前子/父历史恢复及current_v2正文模型基础，页面恢复/闭卡最新source重开尚未接入；B62旧native公开D恢复/keep限定证据不替代新保存闭环，真实新输入/IME/连续选区/富文本与设备验收仍OPEN |
+| 平台分发 | DevEco API26 | dev19/1000019保持，仅codex/ArkTsUI、不并main。v26实际ETS869/869 PASS0skip、277项native来源与双ABI release核对通过；最终完整API26产品27.403s/34执行任务、314复制/373仓库输入前后及4包内so PASS，HAP30,198,963B/90C3171D…未签未安装。此前native/body测试修正和SDK cursor修前候选证据保留；旧B62 UI恢复/keep不证明新native设备，签名/ARM64/HUKS和全目标OPEN，见[v26验证](../reports/ui-source/v26/validation.md) |
 
 ## 后续顺序
 

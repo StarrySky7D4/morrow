@@ -131,7 +131,7 @@ function validateProof(proof: EditorPublicationProof): void {
 }
 function validateSubmission(value: EditorBusinessSubmission): void {
   if (!value || value.schema_version !== 1 || !value.business ||
-    !['create', 'edit', 'continued_todos'].includes(value.mode)) { throw new Error('Invalid editor Submission'); }
+    !['create', 'edit', 'continued_todos', 'current_v2'].includes(value.mode)) { throw new Error('Invalid editor Submission'); }
   const field = value.business; identity(field.id); identity(field.operation);
   if (field.id.startsWith('morrow-host-')) { throw new Error('Private editor card identity'); }
   for (const text of [field.action, field.source, field.title, field.description, field.hypothesis, field.conclusion,
@@ -139,7 +139,7 @@ function validateSubmission(value: EditorBusinessSubmission): void {
   validateProof(value.publication);
   if (value.mode === 'create' ? field.action !== 'create' || field.source !== '' || value.continuation !== null :
     field.action !== 'edit' || !source(field.source)) { throw new Error('Editor mode/source differs'); }
-  if (value.mode === 'edit' && (field.todos !== '' || value.continuation !== null)) {
+  if ((value.mode === 'edit' || value.mode === 'current_v2') && (field.todos !== '' || value.continuation !== null)) {
     throw new Error('Existing V2 editor does not accept legacy todos');
   }
   if (value.mode === 'continued_todos') {
@@ -239,7 +239,7 @@ export class EditorBusinessCoordinator {
 
   static async prepare(mode: string, business: EditorBusinessFields, record: DraftRecord,
     hooks: EditorBusinessHooks): Promise<EditorBusinessCoordinator> {
-    if (mode !== 'create' && mode !== 'edit') { throw new Error('Use an own qualified commit to continue legacy todos'); }
+    if (mode !== 'create' && mode !== 'edit' && mode !== 'current_v2') { throw new Error('Use an own qualified commit to continue legacy todos'); }
     const value = new EditorBusinessSubmission(); value.mode = mode;
     value.business = JSON.parse(JSON.stringify(business)) as EditorBusinessFields;
     value.publication.draft_id = record.scope.draft_id; value.publication.generation = record.generation;
@@ -325,7 +325,7 @@ export class EditorBusinessCoordinator {
     hooks: EditorBusinessHooks): Promise<EditorBusinessCoordinator> {
     const previous = this.receipt;
     if (this.work || this.inspectUnknown || !this.qualified || !previous?.historical_card || !previous.live_matches || !this.hooks.isCurrent() ||
-      this.frozen.mode === 'edit' || business.id !== previous.card_id || business.operation === previous.operation ||
+      (this.frozen.mode === 'edit' || this.frozen.mode === 'current_v2') || business.id !== previous.card_id || business.operation === previous.operation ||
       business.source !== previous.historical_card.source) { throw new Error('Editor continuation needs its own exact live historical baseline'); }
     const value = new EditorBusinessSubmission(); value.mode = 'continued_todos';
     value.business = JSON.parse(JSON.stringify(business)) as EditorBusinessFields;

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "source": "actual production ETS with controlled transport and separately actual native Store DTO fixtures",
+  "tests": [
+    "editor-business-handoff-model",
+    "editor-business-model",
+    "editor-business-session-model",
+    "editor-draft-model",
+    "editor-draft-fork-model"
+  ],
+  "input_count": 16,
+  "stable": true,
+  "exit_code": 0,
+  "duration_ms": 9378,
+  "log_sha256": "5857ffa896e161922fbed4a3b0c056eb10303edc9041668843407c38698bba2a",
+  "tests_reported": 132,
+  "pass_reported": 132,
+  "fail_reported": 0,
+  "skipped_reported": 0,
+  "limitation": "No Index integration, SDK, device, new Store writes or full UI acceptance proven by this runner."
+}

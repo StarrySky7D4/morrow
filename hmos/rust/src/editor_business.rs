@@ -48,6 +48,7 @@ enum Mode {
     Create,
     Edit,
     ContinuedTodos,
+    CurrentV2,
 }
 impl Mode {
     fn byte(self) -> u8 {
@@ -55,6 +56,7 @@ impl Mode {
             Self::Create => 1,
             Self::Edit => 2,
             Self::ContinuedTodos => 3,
+            Self::CurrentV2 => 4,
         }
     }
     fn from_byte(value: u8) -> Result<Self> {
@@ -62,6 +64,7 @@ impl Mode {
             1 => Ok(Self::Create),
             2 => Ok(Self::Edit),
             3 => Ok(Self::ContinuedTodos),
+            4 => Ok(Self::CurrentV2),
             _ => Err("EditorMarkerMode".into()),
         }
     }
@@ -198,7 +201,8 @@ fn validate_submission(value: &Submission) -> Result<()> {
         || (value.mode == Mode::Create
             && (r.action != "create" || !r.source.is_empty() || value.continuation.is_some()))
         || (value.mode != Mode::Create && (r.action != "edit" || r.source.is_empty()))
-        || (value.mode == Mode::Edit && (!r.todos.is_empty() || value.continuation.is_some()))
+        || (matches!(value.mode, Mode::Edit | Mode::CurrentV2)
+            && (!r.todos.is_empty() || value.continuation.is_some()))
         || (value.mode == Mode::ContinuedTodos && value.continuation.is_none())
     {
         return Err("EditorSubmissionMode".into());
@@ -620,6 +624,7 @@ fn final_properties(
     r: &Business,
     selected: &[morrow_workbench_plugin::Asset],
     todos: Option<TodoProjection>,
+    preserve_metadata: bool,
 ) -> Result<Vec<u8>> {
     // Compose the COMPLETE final projection before applying its 64KiB budget.
     // Applying task/text changes one at a time can reject a final-fit request
@@ -636,7 +641,8 @@ fn final_properties(
     }
     let mut out = Vec::new();
     for (tag, _, raw, _) in fields(&original)? {
-        if matches!(tag, 2 | 3 | 4 | 5 | 6 | 10 | 11 | 12)
+        if matches!(tag, 2 | 5 | 6 | 10 | 11 | 12)
+            || matches!(tag, 3 | 4) && !preserve_metadata
             || tag == MARKER_FIELD
             || tag == 20 && todos.is_some()
         {
@@ -651,6 +657,7 @@ fn final_properties(
         (5, &r.hypothesis),
         (6, &r.conclusion),
     ] {
+        if preserve_metadata && matches!(tag, 3 | 4) { continue; }
         out.extend(length_field(tag, text.as_bytes()));
     }
     for asset in selected {
@@ -788,6 +795,13 @@ fn prepare_using(
     if p.deleted {
         return Err("EditorSourceDeleted".into());
     }
+    // Current V2 body editing derives authority only from the full source and
+    // its exact publication/Core CAS. An inherited marker is not an owned LF
+    // task baseline. Metadata commands remain separate, preserving the current
+    // category/stage bytes together with all TaskIds and task extensions.
+    if value.mode == Mode::CurrentV2 && (r.category != p.category || r.stage != p.stage) {
+        return Err("EditorCurrentV2MetadataMismatch".into());
+    }
     let todos = if value.mode == Mode::ContinuedTodos {
         let root = continuation_root(engine, value, &old)?;
         Some(project_todos(
@@ -799,7 +813,7 @@ fn prepare_using(
             &r.todos,
         )?)
     } else {
-        if marker(&old.body())?
+        if value.mode != Mode::CurrentV2 && marker(&old.body())?
             .is_some_and(|m| matches!(m.mode, Mode::Create | Mode::ContinuedTodos))
         {
             return Err("EditorOwnedTodosRequireContinuation".into());
@@ -809,7 +823,7 @@ fn prepare_using(
     // Legacy inspection rebuilds the OLD route, whose edit preserved category
     // and stage. Strict saves publish every submitted common field atomically.
     let mut body = if with_marker {
-        final_properties(&old, r, &published.assets, todos)?
+        final_properties(&old, r, &published.assets, todos, value.mode == Mode::CurrentV2)?
     } else {
         cards_v2::apply(
             &r.id,

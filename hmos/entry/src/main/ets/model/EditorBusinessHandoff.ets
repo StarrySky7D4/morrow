@@ -52,6 +52,9 @@ class LiteralBody { request_json: string = ''; }
 class HandoffCommand { action: string = 'draft_continue_business'; business_handoff: LiteralBody = new LiteralBody(); }
 class RetirementCommand { action: string = 'draft_continue_business_retire'; business_retirement: LiteralBody = new LiteralBody(); }
 class CloseCommand { action: string = 'editor_intent_close'; editor_intent_close: LiteralBody = new LiteralBody(); }
+class DraftHistoryCommand {
+  action: string = 'draft_read_history'; id: string = ''; draft_id: string = ''; draft_operation: string = ''; generation: string = '';
+}
 
 function scalar(value: string): void {
   if (typeof value !== 'string') { throw new Error('Invalid complete business handoff string'); }
@@ -128,7 +131,7 @@ function readSingle(reply: EditorBusinessHandoffReply, part: string): EditorInte
 }
 function summary(reply: EditorBusinessHandoffReply): EditorIntentView {
   if (reply.ok !== true || reply.error !== '' || !Array.isArray(reply.editor_intents) || reply.editor_intents.length !== 1 ||
-    reply.intent_next_after !== '') { throw new Error(reply.error || 'Incomplete business handoff intent acknowledgement'); }
+    reply.intent_next_after !== undefined && reply.intent_next_after !== '') { throw new Error(reply.error || 'Incomplete business handoff intent acknowledgement'); }
   const value = reply.editor_intents[0]; validateEditorIntentView(value, 'summary'); return clone(value);
 }
 function handoffPhase(view: EditorIntentView): void {
@@ -155,6 +158,8 @@ export class EditorBusinessHandoffCoordinator {
   private firstEffect: boolean = false; private retirementEffect: boolean = false; private closeEffect: boolean = false;
   private closeConfirmed: boolean = false; private inFlight: boolean = false;
   private pendingKind: string = ''; private pendingReadWire: string = ''; private pendingReadPart: string = '';
+  private parentHistoryWire: string = ''; private retirementHistoryWire: string = '';
+  private pendingHistoryWire: string = ''; private pendingHistoryKind: string = '';
   private lastError: string = ''; private firstConflict: boolean = false;
 
   private constructor(session: EditorBusinessSessionCoordinator, parent: EditorDraftCoordinator | undefined, hooks: EditorBusinessHandoffHooks) {
@@ -233,6 +238,8 @@ export class EditorBusinessHandoffCoordinator {
   get firstRaw(): Values | undefined { return this.frozenRaw ? copyValues(this.frozenRaw) : undefined; }
   get scope(): DraftScope | undefined { return this.childScope ? copyScope(this.childScope) : undefined; }
   get confirmed(): DraftRecord | undefined { return this.firstRecord ? copyRecord(this.firstRecord) : undefined; }
+  get currentConfirmed(): DraftRecord | undefined { return this.currentChildRecord ? copyRecord(this.currentChildRecord) : undefined; }
+  get parentReference(): DraftBusinessProof | undefined { return this.proposal ? clone(this.proposal.parent) : undefined; }
   get retired(): DraftRecord | undefined { return this.retiredRecord ? copyRecord(this.retiredRecord) : undefined; }
   get firstCommitted(): boolean { return this.firstEffect; }
   get retirementCommitted(): boolean { return this.retirementEffect; }
@@ -240,9 +247,10 @@ export class EditorBusinessHandoffCoordinator {
   get closed(): boolean { return this.closeConfirmed; }
   get conflicted(): boolean { return this.firstConflict; }
   get saving(): boolean { return this.inFlight; }
-  get unknown(): boolean { return !!this.pendingKind || !!this.pendingReadWire; }
+  get unknown(): boolean { return !!this.pendingKind || !!this.pendingReadWire || !!this.pendingHistoryWire; }
   get pendingNative(): string { return this.pendingKind; }
   get pendingRead(): string { return this.pendingReadWire; }
+  get pendingHistory(): string { return this.pendingHistoryWire; }
   get error(): string { return this.lastError; }
   begin(): Promise<DraftRecord> {
     this.idle(); this.requireParent(false);
@@ -277,9 +285,13 @@ export class EditorBusinessHandoffCoordinator {
     if (!this.childScope || !this.frozenRaw || !record.business_link || !sameBusinessLink(record.business_link, this.expectedLink()) ||
       !sameScope(record.scope, this.childScope) || record.fork_link || record.fork_retirement || record.business_retirement || !record.active ||
       !validGeneration(record.generation) || record.generation === '0' ||
-      first && (record.generation !== '1' || record.operation_id !== this.proposal!.child.operation_id ||
+      (first || record.generation === '1') && (record.generation !== '1' || record.operation_id !== this.proposal!.child.operation_id ||
         record.consumed_imports.length !== 0 || !sameValues(record.values, this.frozenRaw))) {
       throw new Error('Business child receipt differs from exact fixed plan/history');
+    }
+    if (record.generation === '1' && this.retirementLiteral &&
+      record.request_sha256 !== (JSON.parse(this.retirementLiteral) as BusinessRetirementLiteral).child_request_sha256) {
+      throw new Error('Current first child canonical request differs from persisted retirement proof');
     }
     if (first && this.parentRecord) {
       for (const pin of record.assets) {
@@ -338,7 +350,104 @@ export class EditorBusinessHandoffCoordinator {
     validateRaw(latestRaw); const frozen = copyRecord(record);
     this.child = new EditorDraftCoordinator(frozen.scope, latestRaw, this.hooks.sendDraft, this.hooks.changed, this.hooks.operation, frozen);
     if (!guard() || !this.hooks.isCurrent()) { this.child.dispose(); this.child = undefined; throw new Error('Current child input cutoff changed'); }
-    this.currentChildRecord = frozen; this.firstConflict = false; return this.child;
+    this.currentChildRecord = frozen; this.firstConflict = false;
+    // A verified current native business15 record proves its immutable first
+    // exists. Never replay generation1 merely to obtain a current writer.
+    this.firstEffect = true; if (frozen.generation === '1') { this.firstRecord = copyRecord(frozen); }
+    if (this.pendingKind === 'handoff') { this.pendingKind = ''; }
+    return this.child;
+  }
+  private historyWire(kind: string): string {
+    if (!this.proposal || !this.childScope) { throw new Error('Read the fixed handoff plan before its parent history'); }
+    const command = new DraftHistoryCommand(); command.id = this.childScope.card_id;
+    command.draft_id = this.proposal.parent.draft_id;
+    command.draft_operation = kind === 'parent' ? this.proposal.parent.save_operation : this.proposal.retirement_operation;
+    command.generation = kind === 'parent' ? this.proposal.parent.generation : nextGeneration(this.proposal.parent.generation);
+    const wire = JSON.stringify(command); budget(wire);
+    const previous = kind === 'parent' ? this.parentHistoryWire : this.retirementHistoryWire;
+    if (previous && previous !== wire) { throw new Error('Original handoff history read identity changed'); }
+    if (kind === 'parent') { this.parentHistoryWire = wire; } else { this.retirementHistoryWire = wire; }
+    return wire;
+  }
+  private parentScope(record: DraftRecord): boolean {
+    const original = this.session.publication.scope;
+    return !!this.proposal && record.scope.card_id === this.committed.card_id && record.scope.draft_id === this.proposal.parent.draft_id &&
+      record.scope.source_kind === original.source_kind && record.scope.source_revision === original.source_revision && record.scope.source === original.source;
+  }
+  private validateParentHistory(record: DraftRecord): void {
+    validateRecord(record, true);
+    if (!this.proposal || !this.frozenRaw || !record.active || !sameBusinessProof(proof(record), this.proposal.parent) ||
+      !this.parentScope(record) || record.fork_retirement || record.business_retirement ||
+      !validGeneration(record.current_generation) || record.current_generation === '0' ||
+      record.current_generation.length < record.generation.length ||
+      record.current_generation.length === record.generation.length && record.current_generation < record.generation ||
+      record.current_generation === record.generation && !record.current_active) {
+      throw new Error('Exact immutable handoff parent history differs');
+    }
+    selectedRaw(this.frozenRaw, record);
+    if (this.parentRecord && (!sameScope(this.parentRecord.scope, record.scope) || !sameValues(this.parentRecord.values, record.values) ||
+      this.parentRecord.request_sha256 !== record.request_sha256 || JSON.stringify(this.parentRecord.assets) !== JSON.stringify(record.assets) ||
+      JSON.stringify(this.parentRecord.consumed_imports) !== JSON.stringify(record.consumed_imports))) {
+      throw new Error('Known immutable handoff parent history changed');
+    }
+  }
+  loadParentHistory(): Promise<DraftRecord> {
+    this.idle(); return this.historyRead('parent');
+  }
+  async readRetirementHistory(): Promise<DraftRecord> {
+    this.idle(); if (!this.parentRecord) { await this.loadParentHistory(); }
+    return this.historyRead('retirement');
+  }
+  retryHistory(): Promise<DraftRecord> {
+    this.idle(); if (!this.pendingHistoryWire) { return Promise.reject(new Error('No uncertain original handoff history read')); }
+    return this.historyRead(this.pendingHistoryKind);
+  }
+  private async historyRead(kind: string): Promise<DraftRecord> {
+    this.idle();
+    const wire = this.historyWire(kind);
+    if (this.pendingHistoryWire && this.pendingHistoryWire !== wire) { throw new Error('Retry the original handoff history read explicitly'); }
+    this.inFlight = true; this.hooks.changed();
+    try {
+      const reply = full(await this.hooks.send(wire));
+      if (reply.ok !== true || reply.error !== '' || reply.effect !== 'not_committed' || reply.receipt_revision !== '' ||
+        !Array.isArray(reply.drafts) || reply.drafts.length !== 1) { throw new Error(reply.error || 'Incomplete exact handoff history read'); }
+      const record = reply.drafts[0]; if (record.repeated !== true) { throw new Error('Exact history read is not an immutable repeated record'); }
+      if (kind === 'parent') {
+        this.validateParentHistory(record); this.parentRecord = copyRecord(record);
+        if (this.firstRecord) { this.validateChild(this.firstRecord, true); }
+      } else {
+        this.validateRetirementRecord(record); this.retiredRecord = copyRecord(record); this.retirementEffect = true;
+        if (this.pendingKind === 'retirement') { this.pendingKind = ''; }
+      }
+      this.pendingHistoryWire = ''; this.pendingHistoryKind = ''; this.lastError = ''; return copyRecord(record);
+    } catch (error) {
+      this.pendingHistoryWire = wire; this.pendingHistoryKind = kind; this.lastError = errorValue(error).message; throw errorValue(error);
+    } finally { this.inFlight = false; this.hooks.changed(); }
+  }
+  observeParentRetirement(value: DraftRecord): void {
+    this.idle(); budget(JSON.stringify(value)); const record = copyRecord(value); this.validateRetirementRecord(record);
+    this.retiredRecord = record; this.retirementEffect = true;
+    // Exact history settles the same fixed retirement, never any close result.
+    if (this.pendingKind === 'retirement') { this.pendingKind = ''; }
+    if (this.pendingHistoryKind === 'retirement') { this.pendingHistoryWire = ''; this.pendingHistoryKind = ''; }
+    this.hooks.changed();
+  }
+  private validateRetirementRecord(record: DraftRecord): void {
+    validateRecord(record, true);
+    if (!this.proposal || !record.business_retirement || !sameBusinessLink(record.business_retirement.business_link, this.expectedLink()) ||
+      record.business_retirement.child_draft_id !== this.proposal.child.draft_id ||
+      record.business_retirement.operation_id !== this.proposal.retirement_operation || record.active || record.current_active ||
+      record.current_generation !== record.generation || !this.parentRecord || !sameScope(record.scope, this.parentRecord.scope) ||
+      !sameValues(record.values, this.parentRecord.values) ||
+      record.consumed_imports.length !== this.parentRecord.consumed_imports.length ||
+      record.consumed_imports.some((operation: string, index: number): boolean => operation !== this.parentRecord!.consumed_imports[index])) {
+      throw new Error('Exact parent retirement history differs');
+    }
+    for (let index: number = 0; index < record.assets.length; index++) {
+      const pin = record.assets[index], original = this.parentRecord.assets[index];
+      if (!original || pin.pin_id !== original.pin_id || pin.display_name !== original.display_name || pin.media_type !== original.media_type ||
+        pin.byte_length !== original.byte_length || pin.sha256 !== original.sha256) { throw new Error('Retired parent immutable pin metadata differs'); }
+    }
   }
   async loadRetirement(): Promise<void> {
     this.idle(); if (!this.proposal || this.pendingReadWire) { throw new Error('Resolve the original handoff plan read first'); }
@@ -390,7 +499,7 @@ export class EditorBusinessHandoffCoordinator {
     if (!record.current_active || record.current_generation !== record.generation || !sameValues(child.current, record.values)) { throw new Error('Current child journal changed'); }
   }
   retire(): Promise<DraftRecord> {
-    this.idle(); this.requireChild(); if (!this.retirementWire || this.retiredRecord || this.pendingKind || this.pendingReadWire) {
+    this.idle(); this.requireChild(); if (!this.retirementWire || !this.parentRecord || this.retiredRecord || this.pendingKind || this.pendingReadWire || this.pendingHistoryWire) {
       return Promise.reject(new Error('Read the fixed native retirement plan before retiring its exact parent'));
     }
     return this.retirement(false);
@@ -407,21 +516,7 @@ export class EditorBusinessHandoffCoordinator {
       handoffPhase(view);
       if (reply.effect !== 'committed' || !Array.isArray(reply.drafts) || reply.drafts.length !== 1 ||
         reply.receipt_revision !== nextGeneration(this.proposal!.parent.generation)) { throw new Error('Parent retirement effect/receipt differs'); }
-      const record = reply.drafts[0]; validateRecord(record, true);
-      if (!record.business_retirement || !sameBusinessLink(record.business_retirement.business_link, this.expectedLink()) ||
-        record.business_retirement.child_draft_id !== this.proposal!.child.draft_id ||
-        record.business_retirement.operation_id !== this.proposal!.retirement_operation || record.active || record.current_active ||
-        record.current_generation !== record.generation || !this.parentRecord || !sameScope(record.scope, this.parentRecord.scope) ||
-        !sameValues(record.values, this.parentRecord.values) ||
-        record.consumed_imports.length !== this.parentRecord.consumed_imports.length ||
-        record.consumed_imports.some((operation: string, index: number): boolean => operation !== this.parentRecord!.consumed_imports[index])) {
-        throw new Error('Exact parent retirement history differs');
-      }
-      for (let index: number = 0; index < record.assets.length; index++) {
-        const pin = record.assets[index], original = this.parentRecord.assets[index];
-        if (!original || pin.display_name !== original.display_name || pin.media_type !== original.media_type ||
-          pin.byte_length !== original.byte_length || pin.sha256 !== original.sha256) { throw new Error('Retired parent immutable pin metadata differs'); }
-      }
+      const record = reply.drafts[0]; this.validateRetirementRecord(record);
       this.bindView(view); this.retiredRecord = copyRecord(record); this.retirementEffect = true; this.pendingKind = ''; this.lastError = ''; return copyRecord(record);
     } catch (error) {
       // A failed cleanup never erases a separately proven business or child.
@@ -429,7 +524,7 @@ export class EditorBusinessHandoffCoordinator {
     } finally { this.inFlight = false; this.hooks.changed(); }
   }
   closeRetired(operation: string): Promise<EditorIntentView> {
-    this.idle(); if (!this.retiredRecord || !this.proposal || this.pendingKind || this.pendingReadWire || this.closeConfirmed) {
+    this.idle(); if (!this.retiredRecord || !this.proposal || this.pendingKind || this.pendingReadWire || this.pendingHistoryWire || this.closeConfirmed) {
       return Promise.reject(new Error('Intent close needs its exact confirmed parent retirement'));
     }
     this.independent([operation]);

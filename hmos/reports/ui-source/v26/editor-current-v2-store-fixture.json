@@ -1,0 +1,579 @@
+{
+  "card_id": "strict-editor-card",
+  "current_request_json": "{\"business\":{\"action\":\"edit\",\"category\":\"实验\",\"conclusion\":\"conclusion\",\"description\":\"current V2 edited 正文 🧪 é.\",\"hypothesis\":\"hypothesis\",\"id\":\"strict-editor-card\",\"operation\":\"fixture-current-body\",\"source\":\"080112127374726963742d656469746f722d636172641a046964656120022805320c737472696374207469746c653a91040802121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e76310095111298ceaa2dc90558963d784a3330ab8d0a0f4b2db2d38f296a979a7c01f99ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001014fd70804e64c7a896df86b569d11c9a7255aa4e1e01dae218af7cd8b821ec497f75c71df7f9467821338e7c5a26289869d8100b4039e1fc67798f8f542b8a4da38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201610a517461736b2d686d6f732d6372656174652d31346165653331613466323839666235376434653066656334306530663964303335326261663531363837663565393235653137313030373732633034313265120c72656e616d65642073746570a2015a0a517461736b2d686d6f732d6372656174652d64613036373236643831313234626435646334633961356132636261356638313533326532666434636164383336663834383939356138343032343464633534120374776f1801a2015a0a517461736b2d686d6f732d6372656174652d66393163623662393937323865373466333166333861363762636163633362343534373262313530393232303731396337623133636563333633366262656130120574687265655200\",\"stage\":\"待验证\",\"title\":\"current V2 edited title\",\"todos\":\"\"},\"continuation\":null,\"mode\":\"current_v2\",\"publication\":{\"draft_id\":\"fixture-current-draft\",\"generation\":\"1\",\"request_sha256\":\"26780e25c5f41a646689fd1f7cfbeffad39a4facd5def812bde125288c9f4177\",\"save_operation\":\"fixture-current-draft-save\"},\"schema_version\":1}",
+  "current_source": {
+    "assets": [],
+    "category": "实验",
+    "conclusion": "conclusion",
+    "deleted": false,
+    "deleted_at": "0",
+    "description": "raw body 汉字 🧪 é.",
+    "favorite": true,
+    "hypothesis": "hypothesis",
+    "id": "strict-editor-card",
+    "revision": "5",
+    "source": "080112127374726963742d656469746f722d636172641a046964656120022805320c737472696374207469746c653a91040802121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e76310095111298ceaa2dc90558963d784a3330ab8d0a0f4b2db2d38f296a979a7c01f99ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001014fd70804e64c7a896df86b569d11c9a7255aa4e1e01dae218af7cd8b821ec497f75c71df7f9467821338e7c5a26289869d8100b4039e1fc67798f8f542b8a4da38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201610a517461736b2d686d6f732d6372656174652d31346165653331613466323839666235376434653066656334306530663964303335326261663531363837663565393235653137313030373732633034313265120c72656e616d65642073746570a2015a0a517461736b2d686d6f732d6372656174652d64613036373236643831313234626435646334633961356132636261356638313533326532666434636164383336663834383939356138343032343464633534120374776f1801a2015a0a517461736b2d686d6f732d6372656174652d66393163623662393937323865373466333166333861363762636163633362343534373262313530393232303731396337623133636563333633366262656130120574687265655200",
+    "stage": "待验证",
+    "tasks": [
+      {
+        "completion": 0,
+        "id": "task-hmos-create-14aee31a4f289fb57d4e0fec40e0f9d0352baf51687f5e925e17100772c0412e",
+        "text": "renamed step"
+      },
+      {
+        "completion": 1,
+        "id": "task-hmos-create-da06726d81124bd5dc4c9a5a2cba5f81532e2fd4cad836f848995a840244dc54",
+        "text": "two"
+      },
+      {
+        "completion": 0,
+        "id": "task-hmos-create-f91cb6b99728e74f31f38a67bcacc3b45472b1509220719c7b13cec3636bbea0",
+        "text": "three"
+      }
+    ],
+    "title": "strict title"
+  },
+  "issued_parts": [
+    {
+      "business_operation": "fixture-current-body",
+      "card_id": "strict-editor-card",
+      "close_disposition": "",
+      "close_request_json": "",
+      "current_active": true,
+      "current_generation": "2",
+      "expected_revision": "6",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-649a8f1dd251e580d72d43e8c4094a33cfa841e59398cd0b49494ea45b25ddb6",
+      "part": "submission",
+      "phase": "issued",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-634c9677c82f02e913ac6f10498cbd87dade0d14fb567ebce48885cb3bbacf36",
+        "prepare_operation": "fixture-current-prepare",
+        "prepared_record_sha256": "59786b8498c7fb181e2022d0cf43c53aeb6b06c537213a4a706233e606e24236",
+        "request_sha256": "ab78b0168afae5858cf2693e78a2b468d1c8913d3b01fedfc11252678cbaefcc"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "{\"business\":{\"action\":\"edit\",\"category\":\"实验\",\"conclusion\":\"conclusion\",\"description\":\"current V2 edited 正文 🧪 é.\",\"hypothesis\":\"hypothesis\",\"id\":\"strict-editor-card\",\"operation\":\"fixture-current-body\",\"source\":\"080112127374726963742d656469746f722d636172641a046964656120022805320c737472696374207469746c653a91040802121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e76310095111298ceaa2dc90558963d784a3330ab8d0a0f4b2db2d38f296a979a7c01f99ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001014fd70804e64c7a896df86b569d11c9a7255aa4e1e01dae218af7cd8b821ec497f75c71df7f9467821338e7c5a26289869d8100b4039e1fc67798f8f542b8a4da38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201610a517461736b2d686d6f732d6372656174652d31346165653331613466323839666235376434653066656334306530663964303335326261663531363837663565393235653137313030373732633034313265120c72656e616d65642073746570a2015a0a517461736b2d686d6f732d6372656174652d64613036373236643831313234626435646334633961356132636261356638313533326532666434636164383336663834383939356138343032343464633534120374776f1801a2015a0a517461736b2d686d6f732d6372656174652d66393163623662393937323865373466333166333861363762636163633362343534373262313530393232303731396337623133636563333633366262656130120574687265655200\",\"stage\":\"待验证\",\"title\":\"current V2 edited title\",\"todos\":\"\"},\"continuation\":null,\"mode\":\"current_v2\",\"publication\":{\"draft_id\":\"fixture-current-draft\",\"generation\":\"1\",\"request_sha256\":\"26780e25c5f41a646689fd1f7cfbeffad39a4facd5def812bde125288c9f4177\",\"save_operation\":\"fixture-current-draft-save\"},\"schema_version\":1}",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "fixture-current-body",
+      "card_id": "strict-editor-card",
+      "close_disposition": "",
+      "close_request_json": "",
+      "current_active": true,
+      "current_generation": "2",
+      "expected_revision": "6",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-649a8f1dd251e580d72d43e8c4094a33cfa841e59398cd0b49494ea45b25ddb6",
+      "part": "publication",
+      "phase": "issued",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-634c9677c82f02e913ac6f10498cbd87dade0d14fb567ebce48885cb3bbacf36",
+        "prepare_operation": "fixture-current-prepare",
+        "prepared_record_sha256": "59786b8498c7fb181e2022d0cf43c53aeb6b06c537213a4a706233e606e24236",
+        "request_sha256": "ab78b0168afae5858cf2693e78a2b468d1c8913d3b01fedfc11252678cbaefcc"
+      },
+      "publication": {
+        "active": true,
+        "assets": [],
+        "business_link": null,
+        "business_retirement": null,
+        "consumed_imports": [],
+        "current_active": true,
+        "current_generation": "1",
+        "fork_link": null,
+        "fork_retirement": null,
+        "generation": "1",
+        "operation_id": "fixture-current-draft-save",
+        "repeated": true,
+        "request_sha256": "26780e25c5f41a646689fd1f7cfbeffad39a4facd5def812bde125288c9f4177",
+        "scope": {
+          "card_id": "strict-editor-card",
+          "draft_id": "fixture-current-draft",
+          "source": "080112127374726963742d656469746f722d636172641a046964656120022805320c737472696374207469746c653a91040802121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e76310095111298ceaa2dc90558963d784a3330ab8d0a0f4b2db2d38f296a979a7c01f99ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001014fd70804e64c7a896df86b569d11c9a7255aa4e1e01dae218af7cd8b821ec497f75c71df7f9467821338e7c5a26289869d8100b4039e1fc67798f8f542b8a4da38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201610a517461736b2d686d6f732d6372656174652d31346165653331613466323839666235376434653066656334306530663964303335326261663531363837663565393235653137313030373732633034313265120c72656e616d65642073746570a2015a0a517461736b2d686d6f732d6372656174652d64613036373236643831313234626435646334633961356132636261356638313533326532666434636164383336663834383939356138343032343464633534120374776f1801a2015a0a517461736b2d686d6f732d6372656174652d66393163623662393937323865373466333166333861363762636163633362343534373262313530393232303731396337623133636563333633366262656130120574687265655200",
+          "source_kind": 0,
+          "source_revision": "5"
+        },
+        "values": {
+          "assets": [],
+          "category": "实验",
+          "conclusion": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "conclusion"
+          },
+          "description": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "current V2 edited 正文 🧪 é."
+          },
+          "hypothesis": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "hypothesis"
+          },
+          "stage": "待验证",
+          "title": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": "current V2 edited title"
+          },
+          "todos": {
+            "affinity": 1,
+            "composing_end": -1,
+            "composing_start": -1,
+            "directional": false,
+            "selection_base": -1,
+            "selection_extent": -1,
+            "text": ""
+          }
+        }
+      },
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "fixture-current-body",
+      "card_id": "strict-editor-card",
+      "close_disposition": "",
+      "close_request_json": "",
+      "current_active": true,
+      "current_generation": "2",
+      "expected_revision": "6",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-649a8f1dd251e580d72d43e8c4094a33cfa841e59398cd0b49494ea45b25ddb6",
+      "part": "save",
+      "phase": "issued",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-634c9677c82f02e913ac6f10498cbd87dade0d14fb567ebce48885cb3bbacf36",
+        "prepare_operation": "fixture-current-prepare",
+        "prepared_record_sha256": "59786b8498c7fb181e2022d0cf43c53aeb6b06c537213a4a706233e606e24236",
+        "request_sha256": "ab78b0168afae5858cf2693e78a2b468d1c8913d3b01fedfc11252678cbaefcc"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": "{\"action\":\"editor_save\",\"editor_save\":{\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-634c9677c82f02e913ac6f10498cbd87dade0d14fb567ebce48885cb3bbacf36\",\"prepare_operation\":\"fixture-current-prepare\",\"prepared_record_sha256\":\"59786b8498c7fb181e2022d0cf43c53aeb6b06c537213a4a706233e606e24236\",\"request_sha256\":\"ab78b0168afae5858cf2693e78a2b468d1c8913d3b01fedfc11252678cbaefcc\"},\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"edit\\\",\\\"category\\\":\\\"实验\\\",\\\"conclusion\\\":\\\"conclusion\\\",\\\"description\\\":\\\"current V2 edited 正文 🧪 é.\\\",\\\"hypothesis\\\":\\\"hypothesis\\\",\\\"id\\\":\\\"strict-editor-card\\\",\\\"operation\\\":\\\"fixture-current-body\\\",\\\"source\\\":\\\"080112127374726963742d656469746f722d636172641a046964656120022805320c737472696374207469746c653a91040802121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e76310095111298ceaa2dc90558963d784a3330ab8d0a0f4b2db2d38f296a979a7c01f99ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001014fd70804e64c7a896df86b569d11c9a7255aa4e1e01dae218af7cd8b821ec497f75c71df7f9467821338e7c5a26289869d8100b4039e1fc67798f8f542b8a4da38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201610a517461736b2d686d6f732d6372656174652d31346165653331613466323839666235376434653066656334306530663964303335326261663531363837663565393235653137313030373732633034313265120c72656e616d65642073746570a2015a0a517461736b2d686d6f732d6372656174652d64613036373236643831313234626435646334633961356132636261356638313533326532666434636164383336663834383939356138343032343464633534120374776f1801a2015a0a517461736b2d686d6f732d6372656174652d66393163623662393937323865373466333166333861363762636163633362343534373262313530393232303731396337623133636563333633366262656130120574687265655200\\\",\\\"stage\\\":\\\"待验证\\\",\\\"title\\\":\\\"current V2 edited title\\\",\\\"todos\\\":\\\"\\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"current_v2\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"fixture-current-draft\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"26780e25c5f41a646689fd1f7cfbeffad39a4facd5def812bde125288c9f4177\\\",\\\"save_operation\\\":\\\"fixture-current-draft-save\\\"},\\\"schema_version\\\":1}\"}}"
+    },
+    {
+      "business_operation": "fixture-current-body",
+      "card_id": "strict-editor-card",
+      "close_disposition": "",
+      "close_request_json": "",
+      "current_active": true,
+      "current_generation": "2",
+      "expected_revision": "6",
+      "handoff_request_json": "",
+      "inspect_request_json": "{\"action\":\"editor_commit_inspect\",\"editor_commit\":{\"expected_revision\":\"6\",\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"edit\\\",\\\"category\\\":\\\"实验\\\",\\\"conclusion\\\":\\\"conclusion\\\",\\\"description\\\":\\\"current V2 edited 正文 🧪 é.\\\",\\\"hypothesis\\\":\\\"hypothesis\\\",\\\"id\\\":\\\"strict-editor-card\\\",\\\"operation\\\":\\\"fixture-current-body\\\",\\\"source\\\":\\\"080112127374726963742d656469746f722d636172641a046964656120022805320c737472696374207469746c653a91040802121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e76310095111298ceaa2dc90558963d784a3330ab8d0a0f4b2db2d38f296a979a7c01f99ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001014fd70804e64c7a896df86b569d11c9a7255aa4e1e01dae218af7cd8b821ec497f75c71df7f9467821338e7c5a26289869d8100b4039e1fc67798f8f542b8a4da38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201610a517461736b2d686d6f732d6372656174652d31346165653331613466323839666235376434653066656334306530663964303335326261663531363837663565393235653137313030373732633034313265120c72656e616d65642073746570a2015a0a517461736b2d686d6f732d6372656174652d64613036373236643831313234626435646334633961356132636261356638313533326532666434636164383336663834383939356138343032343464633534120374776f1801a2015a0a517461736b2d686d6f732d6372656174652d66393163623662393937323865373466333166333861363762636163633362343534373262313530393232303731396337623133636563333633366262656130120574687265655200\\\",\\\"stage\\\":\\\"待验证\\\",\\\"title\\\":\\\"current V2 edited title\\\",\\\"todos\\\":\\\"\\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"current_v2\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"fixture-current-draft\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"26780e25c5f41a646689fd1f7cfbeffad39a4facd5def812bde125288c9f4177\\\",\\\"save_operation\\\":\\\"fixture-current-draft-save\\\"},\\\"schema_version\\\":1}\"}}",
+      "issue_operation": "morrow-host-intent-issue-649a8f1dd251e580d72d43e8c4094a33cfa841e59398cd0b49494ea45b25ddb6",
+      "part": "inspect",
+      "phase": "issued",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-634c9677c82f02e913ac6f10498cbd87dade0d14fb567ebce48885cb3bbacf36",
+        "prepare_operation": "fixture-current-prepare",
+        "prepared_record_sha256": "59786b8498c7fb181e2022d0cf43c53aeb6b06c537213a4a706233e606e24236",
+        "request_sha256": "ab78b0168afae5858cf2693e78a2b468d1c8913d3b01fedfc11252678cbaefcc"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    },
+    {
+      "business_operation": "fixture-current-body",
+      "card_id": "strict-editor-card",
+      "close_disposition": "",
+      "close_request_json": "",
+      "current_active": true,
+      "current_generation": "2",
+      "expected_revision": "6",
+      "handoff_request_json": "",
+      "inspect_request_json": "",
+      "issue_operation": "morrow-host-intent-issue-649a8f1dd251e580d72d43e8c4094a33cfa841e59398cd0b49494ea45b25ddb6",
+      "part": "close",
+      "phase": "issued",
+      "proof": {
+        "generation": "1",
+        "intent_id": "morrow-host-editor-intent-634c9677c82f02e913ac6f10498cbd87dade0d14fb567ebce48885cb3bbacf36",
+        "prepare_operation": "fixture-current-prepare",
+        "prepared_record_sha256": "59786b8498c7fb181e2022d0cf43c53aeb6b06c537213a4a706233e606e24236",
+        "request_sha256": "ab78b0168afae5858cf2693e78a2b468d1c8913d3b01fedfc11252678cbaefcc"
+      },
+      "publication": null,
+      "repeated": false,
+      "request_json": "",
+      "retirement_request_json": "",
+      "save_request_json": ""
+    }
+  ],
+  "kind": "actual_store_current_v2_v26",
+  "original_create_commit": {
+    "card_id": "strict-editor-card",
+    "command_sha256": "e14445a480e58fe87fe5a849f26a3e51165cbf4986d98aed6deaea5a2ab633ae",
+    "commit_status": "committed",
+    "content_sha256": "d5a5bd38dea09bccc01c9fb6ce50ea5df5ba3a384665cfd816c205d51fa481f6",
+    "event_id": "strict-original-create",
+    "historical_card": {
+      "assets": [],
+      "category": "灵感",
+      "conclusion": "conclusion",
+      "deleted": false,
+      "deleted_at": "0",
+      "description": "raw body 汉字 🧪 é.",
+      "favorite": false,
+      "hypothesis": "hypothesis",
+      "id": "strict-editor-card",
+      "revision": "1",
+      "source": "080112127374726963742d656469746f722d636172641a046964656120022801320c737472696374207469746c653a840408021a06e781b5e6849f2209e5be85e695b4e79086a201580a517461736b2d686d6f732d6372656174652d3134616565333161346632383966623537643465306665633430653066396430333532626166353136383766356539323565313731303037373263303431326512036f6e65a201580a517461736b2d686d6f732d6372656174652d64613036373236643831313234626435646334633961356132636261356638313533326532666434636164383336663834383939356138343032343464633534120374776fa2015a0a517461736b2d686d6f732d6372656174652d6639316362366239393732386537346633316633386136376263616363336234353437326231353039323230373139633762313363656333363336626265613012057468726565121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e76310095111298ceaa2dc90558963d784a3330ab8d0a0f4b2db2d38f296a979a7c01f99ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001014fd70804e64c7a896df86b569d11c9a7255aa4e1e01dae218af7cd8b821ec497f75c71df7f9467821338e7c5a26289869d8100b4039e1fc67798f8f542b8a4da",
+      "stage": "待整理",
+      "tasks": [
+        {
+          "completion": 0,
+          "id": "task-hmos-create-14aee31a4f289fb57d4e0fec40e0f9d0352baf51687f5e925e17100772c0412e",
+          "text": "one"
+        },
+        {
+          "completion": 0,
+          "id": "task-hmos-create-da06726d81124bd5dc4c9a5a2cba5f81532e2fd4cad836f848995a840244dc54",
+          "text": "two"
+        },
+        {
+          "completion": 0,
+          "id": "task-hmos-create-f91cb6b99728e74f31f38a67bcacc3b45472b1509220719c7b13cec3636bbea0",
+          "text": "three"
+        }
+      ],
+      "title": "strict title"
+    },
+    "live_matches": true,
+    "live_revision": "1",
+    "operation": "strict-original-create",
+    "publication": {
+      "draft_id": "strict-root-draft",
+      "generation": "1",
+      "request_sha256": "40b4d7dcecd70ea084ddedbbe19a4724e554421bde044418d9f87c6dbcae9d71",
+      "save_operation": "strict-root-save"
+    },
+    "publication_sha256": "f75c71df7f9467821338e7c5a26289869d8100b4039e1fc67798f8f542b8a4da",
+    "qualification": "development_editor_wire_v1",
+    "request_sha256": "4fd70804e64c7a896df86b569d11c9a7255aa4e1e01dae218af7cd8b821ec497",
+    "revision": "1",
+    "source_revision": "0"
+  },
+  "original_create_inspect_after_mutations_reply": {
+    "cards": [],
+    "drafts": [],
+    "editor_commit": {
+      "card_id": "strict-editor-card",
+      "command_sha256": "e14445a480e58fe87fe5a849f26a3e51165cbf4986d98aed6deaea5a2ab633ae",
+      "commit_status": "committed",
+      "content_sha256": "d5a5bd38dea09bccc01c9fb6ce50ea5df5ba3a384665cfd816c205d51fa481f6",
+      "event_id": "strict-original-create",
+      "historical_card": {
+        "assets": [],
+        "category": "灵感",
+        "conclusion": "conclusion",
+        "deleted": false,
+        "deleted_at": "0",
+        "description": "raw body 汉字 🧪 é.",
+        "favorite": false,
+        "hypothesis": "hypothesis",
+        "id": "strict-editor-card",
+        "revision": "1",
+        "source": "080112127374726963742d656469746f722d636172641a046964656120022801320c737472696374207469746c653a840408021a06e781b5e6849f2209e5be85e695b4e79086a201580a517461736b2d686d6f732d6372656174652d3134616565333161346632383966623537643465306665633430653066396430333532626166353136383766356539323565313731303037373263303431326512036f6e65a201580a517461736b2d686d6f732d6372656174652d64613036373236643831313234626435646334633961356132636261356638313533326532666434636164383336663834383939356138343032343464633534120374776fa2015a0a517461736b2d686d6f732d6372656174652d6639316362366239393732386537346633316633386136376263616363336234353437326231353039323230373139633762313363656333363336626265613012057468726565121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e76310095111298ceaa2dc90558963d784a3330ab8d0a0f4b2db2d38f296a979a7c01f99ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001014fd70804e64c7a896df86b569d11c9a7255aa4e1e01dae218af7cd8b821ec497f75c71df7f9467821338e7c5a26289869d8100b4039e1fc67798f8f542b8a4da",
+        "stage": "待整理",
+        "tasks": [
+          {
+            "completion": 0,
+            "id": "task-hmos-create-14aee31a4f289fb57d4e0fec40e0f9d0352baf51687f5e925e17100772c0412e",
+            "text": "one"
+          },
+          {
+            "completion": 0,
+            "id": "task-hmos-create-da06726d81124bd5dc4c9a5a2cba5f81532e2fd4cad836f848995a840244dc54",
+            "text": "two"
+          },
+          {
+            "completion": 0,
+            "id": "task-hmos-create-f91cb6b99728e74f31f38a67bcacc3b45472b1509220719c7b13cec3636bbea0",
+            "text": "three"
+          }
+        ],
+        "title": "strict title"
+      },
+      "live_matches": false,
+      "live_revision": "6",
+      "operation": "strict-original-create",
+      "publication": {
+        "draft_id": "strict-root-draft",
+        "generation": "1",
+        "request_sha256": "40b4d7dcecd70ea084ddedbbe19a4724e554421bde044418d9f87c6dbcae9d71",
+        "save_operation": "strict-root-save"
+      },
+      "publication_sha256": "f75c71df7f9467821338e7c5a26289869d8100b4039e1fc67798f8f542b8a4da",
+      "qualification": "development_editor_wire_v1",
+      "request_sha256": "4fd70804e64c7a896df86b569d11c9a7255aa4e1e01dae218af7cd8b821ec497",
+      "revision": "1",
+      "source_revision": "0"
+    },
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "1"
+  },
+  "original_create_request_json": "{\"business\":{\"action\":\"create\",\"category\":\"灵感\",\"conclusion\":\"conclusion\",\"description\":\"raw body 汉字 🧪 é.\",\"hypothesis\":\"hypothesis\",\"id\":\"strict-editor-card\",\"operation\":\"strict-original-create\",\"source\":\"\",\"stage\":\"待整理\",\"title\":\"strict title\",\"todos\":\"one\\ntwo\\nthree\"},\"continuation\":null,\"mode\":\"create\",\"publication\":{\"draft_id\":\"strict-root-draft\",\"generation\":\"1\",\"request_sha256\":\"40b4d7dcecd70ea084ddedbbe19a4724e554421bde044418d9f87c6dbcae9d71\",\"save_operation\":\"strict-root-save\"},\"schema_version\":1}",
+  "proof": {
+    "generation": "1",
+    "intent_id": "morrow-host-editor-intent-634c9677c82f02e913ac6f10498cbd87dade0d14fb567ebce48885cb3bbacf36",
+    "prepare_operation": "fixture-current-prepare",
+    "prepared_record_sha256": "59786b8498c7fb181e2022d0cf43c53aeb6b06c537213a4a706233e606e24236",
+    "request_sha256": "ab78b0168afae5858cf2693e78a2b468d1c8913d3b01fedfc11252678cbaefcc"
+  },
+  "publication": {
+    "active": true,
+    "assets": [],
+    "business_link": null,
+    "business_retirement": null,
+    "consumed_imports": [],
+    "current_active": true,
+    "current_generation": "1",
+    "fork_link": null,
+    "fork_retirement": null,
+    "generation": "1",
+    "operation_id": "fixture-current-draft-save",
+    "repeated": false,
+    "request_sha256": "26780e25c5f41a646689fd1f7cfbeffad39a4facd5def812bde125288c9f4177",
+    "scope": {
+      "card_id": "strict-editor-card",
+      "draft_id": "fixture-current-draft",
+      "source": "080112127374726963742d656469746f722d636172641a046964656120022805320c737472696374207469746c653a91040802121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e76310095111298ceaa2dc90558963d784a3330ab8d0a0f4b2db2d38f296a979a7c01f99ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001014fd70804e64c7a896df86b569d11c9a7255aa4e1e01dae218af7cd8b821ec497f75c71df7f9467821338e7c5a26289869d8100b4039e1fc67798f8f542b8a4da38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201610a517461736b2d686d6f732d6372656174652d31346165653331613466323839666235376434653066656334306530663964303335326261663531363837663565393235653137313030373732633034313265120c72656e616d65642073746570a2015a0a517461736b2d686d6f732d6372656174652d64613036373236643831313234626435646334633961356132636261356638313533326532666434636164383336663834383939356138343032343464633534120374776f1801a2015a0a517461736b2d686d6f732d6372656174652d66393163623662393937323865373466333166333861363762636163633362343534373262313530393232303731396337623133636563333633366262656130120574687265655200",
+      "source_kind": 0,
+      "source_revision": "5"
+    },
+    "values": {
+      "assets": [],
+      "category": "实验",
+      "conclusion": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": "conclusion"
+      },
+      "description": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": "current V2 edited 正文 🧪 é."
+      },
+      "hypothesis": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": "hypothesis"
+      },
+      "stage": "待验证",
+      "title": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": "current V2 edited title"
+      },
+      "todos": {
+        "affinity": 1,
+        "composing_end": -1,
+        "composing_start": -1,
+        "directional": false,
+        "selection_base": -1,
+        "selection_extent": -1,
+        "text": ""
+      }
+    }
+  },
+  "registered_save_request_json": "{\"action\":\"editor_save\",\"editor_save\":{\"intent\":{\"generation\":\"1\",\"intent_id\":\"morrow-host-editor-intent-634c9677c82f02e913ac6f10498cbd87dade0d14fb567ebce48885cb3bbacf36\",\"prepare_operation\":\"fixture-current-prepare\",\"prepared_record_sha256\":\"59786b8498c7fb181e2022d0cf43c53aeb6b06c537213a4a706233e606e24236\",\"request_sha256\":\"ab78b0168afae5858cf2693e78a2b468d1c8913d3b01fedfc11252678cbaefcc\"},\"request_json\":\"{\\\"business\\\":{\\\"action\\\":\\\"edit\\\",\\\"category\\\":\\\"实验\\\",\\\"conclusion\\\":\\\"conclusion\\\",\\\"description\\\":\\\"current V2 edited 正文 🧪 é.\\\",\\\"hypothesis\\\":\\\"hypothesis\\\",\\\"id\\\":\\\"strict-editor-card\\\",\\\"operation\\\":\\\"fixture-current-body\\\",\\\"source\\\":\\\"080112127374726963742d656469746f722d636172641a046964656120022805320c737472696374207469746c653a91040802121972617720626f647920e6b189e5ad9720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060008ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e76310095111298ceaa2dc90558963d784a3330ab8d0a0f4b2db2d38f296a979a7c01f99ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e76310001014fd70804e64c7a896df86b569d11c9a7255aa4e1e01dae218af7cd8b821ec497f75c71df7f9467821338e7c5a26289869d8100b4039e1fc67798f8f542b8a4da38011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201610a517461736b2d686d6f732d6372656174652d31346165653331613466323839666235376434653066656334306530663964303335326261663531363837663565393235653137313030373732633034313265120c72656e616d65642073746570a2015a0a517461736b2d686d6f732d6372656174652d64613036373236643831313234626435646334633961356132636261356638313533326532666434636164383336663834383939356138343032343464633534120374776f1801a2015a0a517461736b2d686d6f732d6372656174652d66393163623662393937323865373466333166333861363762636163633362343534373262313530393232303731396337623133636563333633366262656130120574687265655200\\\",\\\"stage\\\":\\\"待验证\\\",\\\"title\\\":\\\"current V2 edited title\\\",\\\"todos\\\":\\\"\\\"},\\\"continuation\\\":null,\\\"mode\\\":\\\"current_v2\\\",\\\"publication\\\":{\\\"draft_id\\\":\\\"fixture-current-draft\\\",\\\"generation\\\":\\\"1\\\",\\\"request_sha256\\\":\\\"26780e25c5f41a646689fd1f7cfbeffad39a4facd5def812bde125288c9f4177\\\",\\\"save_operation\\\":\\\"fixture-current-draft-save\\\"},\\\"schema_version\\\":1}\"}}",
+  "reopened_inspect_reply": {
+    "cards": [],
+    "drafts": [],
+    "editor_commit": {
+      "card_id": "strict-editor-card",
+      "command_sha256": "a4ba62acf38b33fe3d14e109b972a09755049d93b05ec9ff3ffb6f515efca567",
+      "commit_status": "committed",
+      "content_sha256": "27fdc8fb9664999fd3d021cc070ce810f58de367079ef0d8658533dcc757b6bb",
+      "event_id": "fixture-current-body",
+      "historical_card": {
+        "assets": [],
+        "category": "实验",
+        "conclusion": "conclusion",
+        "deleted": false,
+        "deleted_at": "0",
+        "description": "current V2 edited 正文 🧪 é.",
+        "favorite": true,
+        "hypothesis": "hypothesis",
+        "id": "strict-editor-card",
+        "revision": "6",
+        "source": "080112127374726963742d656469746f722d636172641a046964656120022806321763757272656e7420563220656469746564207469746c653a9a0408028ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e76310095111298ceaa2dc90558963d784a3330ab8d0a0f4b2db2d38f296a979a7c01f938011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201610a517461736b2d686d6f732d6372656174652d31346165653331613466323839666235376434653066656334306530663964303335326261663531363837663565393235653137313030373732633034313265120c72656e616d65642073746570a2015a0a517461736b2d686d6f732d6372656174652d64613036373236643831313234626435646334633961356132636261356638313533326532666434636164383336663834383939356138343032343464633534120374776f1801a2015a0a517461736b2d686d6f732d6372656174652d6639316362366239393732386537346633316633386136376263616363336234353437326231353039323230373139633762313363656333363336626265613012057468726565122263757272656e742056322065646974656420e6ada3e6968720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060009ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e7631000104ab78b0168afae5858cf2693e78a2b468d1c8913d3b01fedfc11252678cbaefccc158af6d4282ea101b0a075dc7cb395a6463f1b2f0e5ef410af569d3298e24265200",
+        "stage": "待验证",
+        "tasks": [
+          {
+            "completion": 0,
+            "id": "task-hmos-create-14aee31a4f289fb57d4e0fec40e0f9d0352baf51687f5e925e17100772c0412e",
+            "text": "renamed step"
+          },
+          {
+            "completion": 1,
+            "id": "task-hmos-create-da06726d81124bd5dc4c9a5a2cba5f81532e2fd4cad836f848995a840244dc54",
+            "text": "two"
+          },
+          {
+            "completion": 0,
+            "id": "task-hmos-create-f91cb6b99728e74f31f38a67bcacc3b45472b1509220719c7b13cec3636bbea0",
+            "text": "three"
+          }
+        ],
+        "title": "current V2 edited title"
+      },
+      "live_matches": true,
+      "live_revision": "6",
+      "operation": "fixture-current-body",
+      "publication": {
+        "draft_id": "fixture-current-draft",
+        "generation": "1",
+        "request_sha256": "26780e25c5f41a646689fd1f7cfbeffad39a4facd5def812bde125288c9f4177",
+        "save_operation": "fixture-current-draft-save"
+      },
+      "publication_sha256": "c158af6d4282ea101b0a075dc7cb395a6463f1b2f0e5ef410af569d3298e2426",
+      "qualification": "development_editor_wire_v1",
+      "request_sha256": "ab78b0168afae5858cf2693e78a2b468d1c8913d3b01fedfc11252678cbaefcc",
+      "revision": "6",
+      "source_revision": "5"
+    },
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "6"
+  },
+  "saved_reply": {
+    "cards": [],
+    "drafts": [],
+    "editor_commit": {
+      "card_id": "strict-editor-card",
+      "command_sha256": "a4ba62acf38b33fe3d14e109b972a09755049d93b05ec9ff3ffb6f515efca567",
+      "commit_status": "committed",
+      "content_sha256": "27fdc8fb9664999fd3d021cc070ce810f58de367079ef0d8658533dcc757b6bb",
+      "event_id": "fixture-current-body",
+      "historical_card": {
+        "assets": [],
+        "category": "实验",
+        "conclusion": "conclusion",
+        "deleted": false,
+        "deleted_at": "0",
+        "description": "current V2 edited 正文 🧪 é.",
+        "favorite": true,
+        "hypothesis": "hypothesis",
+        "id": "strict-editor-card",
+        "revision": "6",
+        "source": "080112127374726963742d656469746f722d636172641a046964656120022806321763757272656e7420563220656469746564207469746c653a9a0408028ab518406d6f72726f772e686d6f732e6372656174652d746f646f732e7261772e76310095111298ceaa2dc90558963d784a3330ab8d0a0f4b2db2d38f296a979a7c01f938011a06e5ae9ee9aa8c2209e5be85e9aa8ce8af81a201610a517461736b2d686d6f732d6372656174652d31346165653331613466323839666235376434653066656334306530663964303335326261663531363837663565393235653137313030373732633034313265120c72656e616d65642073746570a2015a0a517461736b2d686d6f732d6372656174652d64613036373236643831313234626435646334633961356132636261356638313533326532666434636164383336663834383939356138343032343464633534120374776f1801a2015a0a517461736b2d686d6f732d6372656174652d6639316362366239393732386537346633316633386136376263616363336234353437326231353039323230373139633762313363656333363336626265613012057468726565122263757272656e742056322065646974656420e6ada3e6968720f09fa7aa2065cc812e2a0a6879706f746865736973320a636f6e636c7573696f6e580060009ab5185d6d6f72726f772e686d6f732e656469746f722d776972652e7631000104ab78b0168afae5858cf2693e78a2b468d1c8913d3b01fedfc11252678cbaefccc158af6d4282ea101b0a075dc7cb395a6463f1b2f0e5ef410af569d3298e24265200",
+        "stage": "待验证",
+        "tasks": [
+          {
+            "completion": 0,
+            "id": "task-hmos-create-14aee31a4f289fb57d4e0fec40e0f9d0352baf51687f5e925e17100772c0412e",
+            "text": "renamed step"
+          },
+          {
+            "completion": 1,
+            "id": "task-hmos-create-da06726d81124bd5dc4c9a5a2cba5f81532e2fd4cad836f848995a840244dc54",
+            "text": "two"
+          },
+          {
+            "completion": 0,
+            "id": "task-hmos-create-f91cb6b99728e74f31f38a67bcacc3b45472b1509220719c7b13cec3636bbea0",
+            "text": "three"
+          }
+        ],
+        "title": "current V2 edited title"
+      },
+      "live_matches": true,
+      "live_revision": "6",
+      "operation": "fixture-current-body",
+      "publication": {
+        "draft_id": "fixture-current-draft",
+        "generation": "1",
+        "request_sha256": "26780e25c5f41a646689fd1f7cfbeffad39a4facd5def812bde125288c9f4177",
+        "save_operation": "fixture-current-draft-save"
+      },
+      "publication_sha256": "c158af6d4282ea101b0a075dc7cb395a6463f1b2f0e5ef410af569d3298e2426",
+      "qualification": "development_editor_wire_v1",
+      "request_sha256": "ab78b0168afae5858cf2693e78a2b468d1c8913d3b01fedfc11252678cbaefcc",
+      "revision": "6",
+      "source_revision": "5"
+    },
+    "effect": "committed",
+    "error": "",
+    "ids": [],
+    "imports": [],
+    "markdown": {
+      "blocks": []
+    },
+    "ok": true,
+    "paste_text": "",
+    "profile": "development-unsealed",
+    "receipt_revision": "6"
+  },
+  "schema_version": 1
+}

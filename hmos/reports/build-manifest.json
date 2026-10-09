@@ -1,5 +1,5 @@
 {
-  "createdUtc": "2026-10-08T23:56:47.021Z",
+  "createdUtc": "2026-10-09T00:20:56.891Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
   "hmosVersion": "0.1.0-hmos-dev.19",
   "sdk": "HarmonyOS API26 26.0.0.105",
@@ -8,10 +8,10 @@
     "x86_64"
   ],
   "artifact": {
-    "path": ".build/artifacts/dev25-business-handoff-checkpoint/entry-default-unsigned.hap",
-    "bytes": 30173833,
-    "sha256": "9590D87DE2F83CE736F1BE0ED2D7CD8FA7C3A127373F53AB9F7A2A2C2288B686",
-    "archive_path": ".build/artifacts/dev25-business-handoff-checkpoint/entry-default-unsigned.hap",
+    "path": ".build/artifacts/dev26-recovery-foundation-retry2/entry-default-unsigned.hap",
+    "bytes": 30198963,
+    "sha256": "90C3171DE4110A4574F8B178A70133F8CA024AC4C21DBBD66D5BF6F1624AFD4D",
+    "archive_path": ".build/artifacts/dev26-recovery-foundation-retry2/entry-default-unsigned.hap",
     "signed": false,
     "installed": false
   },
@@ -146,11 +146,11 @@
     },
     {
       "path": "entry/src/main/ets/model/EditorBusiness.ets",
-      "sha256": "6469D1F2AF4E2DA6B9066B52917E658BC13ECECB4EF2A4E6B92FBB4AD0D996CF"
+      "sha256": "BBD4DE0B1E02A67E19345147EB7DE4C01622C1E015E12FB0C1431A101945C4FD"
     },
     {
       "path": "entry/src/main/ets/model/EditorBusinessHandoff.ets",
-      "sha256": "8F68B983FB4747360A07B59BC80B0397ABE9CFF8990C7F4950F2280C71F2570F"
+      "sha256": "FC2878C8F8FC2F312CF879023A1E445FE2CB3AE409755372FEB9FFBC596723F0"
     },
     {
       "path": "entry/src/main/ets/model/EditorBusinessSession.ets",
@@ -393,6 +393,18 @@
       "sha256": "3469555DFB64411CD6EE54FDEE9118C63B59B633289D7C8E840A28B421692E55"
     },
     {
+      "path": "reports/ui-source/v26/build-native.ps1",
+      "sha256": "F4F8546F24340E698C443F0657CAEFB8682B337D1FD6C6452F370269D0FB1AB2"
+    },
+    {
+      "path": "reports/ui-source/v26/checkpoint.cjs",
+      "sha256": "4660B9030E8627C869ACC913D3AEF5DB4229F3FDFF00FC8362C74E6763F51316"
+    },
+    {
+      "path": "reports/ui-source/v26/verify-package.ps1",
+      "sha256": "29EF7C38E5F0F2F42067B04763648C144F3929EF45236409FC5762F67050C6FD"
+    },
+    {
       "path": "rust/Cargo.lock",
       "sha256": "99388ED4B939078A28617A7624ECBC38A3B7D527AD181AEFAC824F07562F119D"
     },
@@ -486,15 +498,19 @@
     },
     {
       "path": "rust/src/editor_business.rs",
-      "sha256": "F8676601780C12403167B9E5AE892D699FDD76560D0C36D94EFB82474184F537"
+      "sha256": "D979780896B73D58F204733E1952D8C776C217E14D2D4548F177828D71AC71D5"
+    },
+    {
+      "path": "rust/src/editor_business/current_v2_tests.rs",
+      "sha256": "87BE87A72CDB7640ABECE7BD4C99FE8D1B743983F5C8FD56B71B1867F3553682"
     },
     {
       "path": "rust/src/editor_business/tests.rs",
-      "sha256": "AE37C89C01A126CFDA071BDB4468E798157C191C741D34A068412718F890B7EF"
+      "sha256": "0ECA341202DC7A3F7AA9539F4F210CD871A5ADA7B3D6F95045406139BBC54150"
     },
     {
       "path": "rust/src/editor_draft.rs",
-      "sha256": "5D1DD533F819DF00293B01B290251578352124E25CC5C2530BD08C5D3D08726B"
+      "sha256": "15436CCFF94A8A5C35779AA66661584281DCE48C7DB39E815E74789FCA2F4177"
     },
     {
       "path": "rust/src/editor_draft_fork.rs",
@@ -529,8 +545,12 @@
       "sha256": "064227172B29B601D42F5466E9AD5EF76462A37BFD5FBCB1931FF155C161A10E"
     },
     {
+      "path": "rust/src/editor_handoff/reopen_history_tests.rs",
+      "sha256": "75F19588AF360DD7249DA7C03B00A5E48A9C1EA62C28D82918E502D1262ABDA9"
+    },
+    {
       "path": "rust/src/editor_handoff/tests.rs",
-      "sha256": "7827FAA68E31216BEDD38A9652A781E690E7BFB4E1BA93925CC10B0FD91E3A3B"
+      "sha256": "A8F8BDCE3AF1D60B0B8AB087AF38F1C6CE48EA12DB3094612665B9601A3E6A12"
     },
     {
       "path": "rust/src/editor_input.rs",
@@ -558,7 +578,7 @@
     },
     {
       "path": "rust/src/lib.rs",
-      "sha256": "F006266A0937E35216152284C79069C55F51A45CAFE68A153F8B16B32283590C"
+      "sha256": "BAD0FBDAEB3454B7826B9FC4BC001A73913066E97D442F3E4DD455B6D4ECF105"
     },
     {
       "path": "rust/src/markdown.rs",
@@ -1489,23 +1509,23 @@
       "sha256": "F2666F5B832860598D199E6E1B964353F2D310FF580CD5458195CDC0A5F04FEB"
     }
   ],
-  "uiValidation": "reports/ui-source/v25/validation.md",
+  "uiValidation": "reports/ui-source/v26/validation.md",
   "upstreamDrift": "reports/reference-drift.json",
-  "deliveryScope": "v25 Index durable original save/recovery integration; typed business source0 child handoff, conditional parent retirement and exact close; actual-source and Store checks; restart after missing parent/advanced child, owned closed-card reopen and new-native device acceptance OPEN; full Flutter/Windows parity OPEN",
-  "nativeInputs": "reports/ui-source/v25/native-build-inputs.json",
+  "deliveryScope": "v26 foundation only: strict current V2 body editing preserving current TaskIds and metadata bytes; exact read-only parent/retirement history and current-child recovery model; Index new-mode/restart/reopen integration OPEN; unsigned, uninstalled, new-native device acceptance NOT_RUN; full Flutter/Windows parity OPEN",
+  "nativeInputs": "reports/ui-source/v26/native-build-inputs.json",
   "nativeArchives": [
     {
       "abi": "arm64-v8a",
-      "path": ".build/editor-input-native/dev25-business-handoff-checkpoint/arm64-v8a/libmorrow_hmos.a",
-      "bytes": 57038980,
-      "sha256": "5C0C78E43A1660E803ACE768EFC19890029096A75EE51FE64D7E221A4105F90E",
+      "path": ".build/editor-input-native/dev26-recovery-foundation-retry1/arm64-v8a/libmorrow_hmos.a",
+      "bytes": 57047012,
+      "sha256": "B952C7003E56BC1720E4CD7098DA4E16EAECA696E760EB65E1D1E24FC0E0958F",
       "production_path": "entry/src/main/cpp/rust/arm64-v8a/libmorrow_hmos.a"
     },
     {
       "abi": "x86_64",
-      "path": ".build/editor-input-native/dev25-business-handoff-checkpoint/x86_64/libmorrow_hmos.a",
-      "bytes": 55454248,
-      "sha256": "2559EBF39EB706B29611523998EECDF9E1700326208969C1E347EA0808D7EA2D",
+      "path": ".build/editor-input-native/dev26-recovery-foundation-retry1/x86_64/libmorrow_hmos.a",
+      "bytes": 55464482,
+      "sha256": "498C148A521551A72D001B06913579A958D98CF265AD86AEED3AB611D9D04A86",
       "production_path": "entry/src/main/cpp/rust/x86_64/libmorrow_hmos.a"
     }
   ]

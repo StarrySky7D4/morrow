@@ -121,6 +121,56 @@ function harness({ mode = 'create', revision = '0', assets = ['A', 'B'] } = {}) 
 }
 const action = wire => JSON.parse(wire).action;
 
+test('current_v2 actual Session prepares, registers exact transport, saves and restores inspection without granting LF continuation', async () => {
+  const h = harness({ mode: 'current_v2', revision: '11' }), s = await h.ready();
+  assert.equal(JSON.parse(s.originalRequest).mode, 'current_v2'); assert.equal(s.publication.values.todos.text, '');
+  await s.save(); const original = s.originalSave; assert.equal(s.qualified, true); assert.equal(s.confirmed.source_revision, '11');
+  const restored = await h.m.EditorBusinessSessionCoordinator.restore(s.proof, h.hooks);
+  assert.equal(restored.qualified, false); assert.equal(restored.originalSave, original); await restored.inspect();
+  assert.equal(restored.qualified, true); assert.equal(restored.confirmed.revision, '12');
+  const publication = plain(restored.publication); publication.scope.source_revision = '12';
+  publication.scope.source = restored.confirmed.historical_card.source; publication.scope.draft_id = 'current-v2-successor';
+  publication.operation_id = 'current-v2-next-pub'; publication.values.todos.text = 'LF';
+  const business = plain(h.business); business.operation = 'current-v2-next-business'; business.source = publication.scope.source; business.todos = 'LF';
+  await assert.rejects(restored.continueTodos(business, publication, 'next-prepare', h.hooks), /root|baseline|continu/);
+  assert.equal(h.calls.filter(w => action(w) === 'editor_save').length, 1);
+});
+
+test('fresh v26 actual Store current_v2 registered literal and reopened result preserve real TaskIds, rename/completion/order and favorite', async () => {
+  const file = path.resolve(__dirname, '../reports/ui-source/v26/editor-current-v2-store-fixture.json'), bytes = fs.readFileSync(file);
+  assert.equal(sha(bytes), '50f9037b3a235cff72e1423bf4ce5f30cf6b655c243373fa7f6b273bb926b301');
+  const fixture = JSON.parse(bytes), m = model(), calls = [];
+  const parts = new Map(fixture.issued_parts.map(part => [part.part, part]));
+  const hooks = { fields: new m.EditorFieldPolicy(async () => { throw new Error('Original native restore must not rebuild projection'); }),
+    changed: () => {}, isCurrent: () => true, isExact: () => true, parentReady: () => true,
+    async send(wire) {
+      calls.push(wire); const request = JSON.parse(wire);
+      if (request.action === 'editor_intent_read') {
+        const part = parts.get(request.editor_intent_ref.part); assert.ok(part);
+        return { ok: true, error: '', effect: 'not_committed', receipt_revision: '', editor_intents: [plain(part)], intent_next_after: '' };
+      }
+      if (request.action === 'editor_save') { assert.equal(wire, fixture.registered_save_request_json); return plain(fixture.saved_reply); }
+      if (request.action === 'editor_commit_inspect') {
+        assert.equal(wire, parts.get('inspect').inspect_request_json); return plain(fixture.reopened_inspect_reply);
+      }
+      throw new Error('Unexpected v26 actual DTO action ' + request.action);
+    } };
+  const session = await m.EditorBusinessSessionCoordinator.restore(fixture.proof, hooks);
+  assert.equal(session.originalRequest, fixture.current_request_json); assert.equal(session.originalSave, fixture.registered_save_request_json);
+  assert.equal(session.publication.scope.source, fixture.current_source.source); assert.equal(session.publication.scope.source_revision, '5');
+  assert.equal(JSON.parse(session.originalRequest).continuation, null); assert.equal(session.publication.values.todos.text, '');
+  // Restored native plans require an explicit original-operation retry; their
+  // registered literal is never promoted to a new live proposal.
+  await session.retrySave(); const result = session.confirmed.historical_card;
+  assert.deepEqual(plain(result.tasks), fixture.current_source.tasks); assert.equal(result.favorite, true);
+  assert.equal(result.title, 'current V2 edited title'); assert.equal(result.description, 'current V2 edited 正文 🧪 é.');
+  assert.notEqual(result.description, fixture.current_source.description);
+  assert.equal(result.category, '实验'); assert.equal(result.tasks[0].text, 'renamed step'); assert.equal(result.tasks[1].completion, 1);
+  assert.equal(session.confirmed.revision, '6'); await session.inspect(); assert.equal(session.confirmed.live_matches, true);
+  assert.equal(fixture.original_create_inspect_after_mutations_reply.editor_commit.live_matches, false);
+  assert.equal(calls.filter(wire => action(wire) === 'editor_save').length, 1);
+});
+
 test('owner-only rebind retains every original byte, proof, known commit hint and Unknown after malformed actual business DTO', async () => {
   const h = harness(), s = await h.ready(); const wire = s.originalSave, proof = plain(s.proof), prepare = s.originalPrepare;
   h.setIntercept((w, p, n, route) => { const result = route(); if (p.action === 'editor_save') delete result.editor_commit; return result; });

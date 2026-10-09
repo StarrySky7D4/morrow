@@ -1,0 +1,12 @@
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.02s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-d268ea5ee103bc68.exe)
+
+running 4 tests
+test editor_handoff::tests::reopen_history_tests::export_actual_store_reopen_history_dto_fixture ... ignored, explicit complete v26 Store DTO export requires HMOS_REOPEN_HISTORY_DTO_FIXTURE
+test editor_handoff::tests::reopen_history_tests::readonly_history_exact_generation_identity_shape_and_budget_fail_closed ... ok
+test editor_handoff::tests::reopen_history_tests::closed_saved_exact_original_inspect_can_qualify_fresh_owned_todos_without_new_authority_contract ... ok
+test editor_handoff::tests::reopen_history_tests::readonly_history_is_exact_s2_parent_and_actual_current_flags_before_and_after_retirement ... ok
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 196 filtered out; finished in 0.49s
+

@@ -1,0 +1,47 @@
+   Compiling morrow-editor-draft-model v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust\editor-draft-model)
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+error[E0061]: this function takes 2 arguments but 1 argument was supplied
+   --> src\editor_business\current_v2_tests.rs:137:15
+    |
+137 |     let store=Store::open(&path).unwrap().with_budget(EventBudget{max_count:0,max_bytes:0});
+    |               ^^^^^^^^^^^------- argument #2 of type `morrow_core::store::EventBudget` is missing
+    |
+note: associated function defined here
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\shared\core\src\store.rs:239:12
+    |
+239 |     pub fn open(path: &Path, budget: EventBudget) -> Result<Self> {
+    |            ^^^^
+help: provide the argument
+    |
+137 |     let store=Store::open(&path, /* morrow_core::store::EventBudget */).unwrap().with_budget(EventBudget{max_count:0,max_bytes:0});
+    |                                +++++++++++++++++++++++++++++++++++++++
+
+error[E0599]: no method named `with_budget` found for struct `morrow_core::store::Store` in the current scope
+   --> src\editor_business\current_v2_tests.rs:137:43
+    |
+137 |     let store=Store::open(&path).unwrap().with_budget(EventBudget{max_count:0,max_bytes:0});
+    |                                           ^^^^^^^^^^^ method not found in `morrow_core::store::Store`
+
+error[E0599]: no function or associated item named `open` found for struct `morrow_core::dispatch::HostRuntime` in the current scope
+   --> src\editor_business\current_v2_tests.rs:138:40
+    |
+138 |     let mut e=Engine{host:HostRuntime::open(store).unwrap(),start:std::time::Instant::now(),effect:"not_committed"};
+    |                                        ^^^^ function or associated item not found in `morrow_core::dispatch::HostRuntime`
+    |
+note: if you're trying to build a new `morrow_core::dispatch::HostRuntime`, consider using `morrow_core::dispatch::HostRuntime::new` which returns `std::result::Result<morrow_core::dispatch::HostRuntime, morrow_core::Error>`
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\shared\core\src\dispatch.rs:55:5
+    |
+ 55 |     pub fn new(store: Store) -> Result<Self> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0502]: cannot borrow `e` as immutable because it is also borrowed as mutable
+   --> src\editor_business\current_v2_tests.rs:153:107
+    |
+153 |         mutate_current(&mut e,"task_toggle","crash-current-completion",json!({"task_id":card_view(&actual(&e)).unwrap().tasks[0].id...
+    |         -------------- ------ mutable borrow occurs here                                                  ^^ immutable borrow occurs here
+    |         |
+    |         mutable borrow later used by call
+
+Some errors have detailed explanations: E0061, E0502, E0599.
+For more information about an error, try `rustc --explain E0061`.
+error: could not compile `morrow-hmos` (lib test) due to 4 previous errors

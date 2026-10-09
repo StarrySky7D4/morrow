@@ -1,0 +1,120 @@
+# v26 current-child restart and post-save editing source audit
+
+Audit started 2026-10-09, approximately 08:06 Asia/Shanghai. Scope: independently read actual Flutter and HMOS source, map existing native/model recovery APIs, and prepare new actual-Index integration checks after Root supplies its v26 entrypoints. Root exclusively owns Index; the Session/Handoff agent owns those models; the native agent owns Rust extensions. This reviewer does not edit their production or existing v25 harness/tests in this phase. No Git, SDK build, device action, emulator start, service start or top-level Root document write is performed here.
+
+Root later narrowed this delivery to a GitHub branch source checkpoint of the implemented v26 native/model foundations. Index remains at the v25 production hash. No v26 Index recovery test or harness was added against absent UI entrypoints. The later implementation review below supersedes the baseline API gaps only where the new model/native source implements them; it does not establish UI or device parity.
+
+## Fresh source identities
+
+The actual Flutter references remain unchanged from v25 after fresh SHA-256 reads:
+
+| Source | SHA-256 |
+| --- | --- |
+| `build/win-cloud-20261005/lib/main.dart` | `2cb2a519e31ac982d3a8638eb7de95fe63d5421ed3d1b6acda507cd142169f06` |
+| `build/io-safety-refactor/lib/main.dart` | `6203b7465f320dc8463dfacb5387ea8b437ec3ec1458cca7e215e44b8f65cb1e` |
+| win `plugins/versioned_editor_adapter.dart` | `104e82c2573c973f8c6745010e22826bd144e1b99220a51151807b42915a8d16` |
+| win `versioned_task_panel.dart` | `f97ec18ec42b4f6f33963eb0eb5da15a137f2588f6e4915c7db99f7e6d40c9a3` |
+
+The two main.dart copies are the same after CRLF normalization, as independently established in v25. References below use the win copy. HMOS pre-v26 production baseline: Index `1ab29f6a124664231e6a3bea0ae5f745625ec4f77676ffcb55f746b50ad1184f`, Session `58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6`, Handoff `8f68b983fb4747360a07b59bc80b0397abe9cff8990c7f4950f2280c71f2570f`, Rust lib `f006266a0937e35216152284c79069c55f51a45cafe68a153f8b16b32283590c`, Rust editor_business `f8676601780c12403167b9e5ae892d699fdd76560d0c36d94efb82474184f537`. These are audit baselines, not a later v26 implementation freeze.
+
+## Actual Flutter requirements
+
+`main.dart:5210` observes full editing values, including selection, affinity, direction and composition. `_save():5325` freezes submitted generation, original raw fields and business proposal exactly once. Unknown retry retains the original proposal. A preparation failure releases only the unsubmitted proposal. A committed result followed by refresh failure is distinguished from unknown business execution. If current raw generation differs from S1, `_continueDraft():5224` opens a verified same-target successor at the accepted historical revision, preserves complete live values and selected attachment changes, rebases only the accepted selected attachment mapping, and retains the prepared successor if alias correction fails. It does not replace S2 with S1 result strings or close the live editor.
+
+`_openConfirmedVersionedEditor():4388` reads actual V2 content at the exact accepted revision and verifies format, deletion, presentation and workspace identity before opening. Separately, the normal details-dialog Edit action at `4981-5003` reads the **latest actual content** and opens a new V2 editor at that current revision. The two paths have different authority: continuing an own save uses the exact accepted historical baseline; opening a closed card again uses its freshly read current full source. The previous request may remain known even after a later metadata/task mutation.
+
+`versioned_editor_adapter.dart:143-162` rejects changed source id/revision, category, stage, favorite, LF legacy todos/completion and raw todo input for ordinary V2 body editing. Ordinary V2 body editing saves common text/icon/color/selected assets while preserving source metadata and TaskId structures. Category/stage are edited by a separate `CardEditCommand.setCategory()` from details (`main.dart:4832`); favorite likewise uses a separate CardId command. TaskId commands update details (`4861`) before a later ordinary body editor is opened against the new revision. Therefore an owned closed card or a card after metadata/TaskId commands must support a new full body edit with empty raw LF todos without losing existing TaskIds, completion, order, retired IDs, favorite or unrecognized fields.
+
+`versionedChange():1371` retains an exact source and operation for an original pending command. An unrelated command cannot substitute for an Unknown retry. A no-commit response is released only when its id/operation/source revision correlate to that proposal; a locally unsent retry cannot erase an earlier Unknown. `VersionedTaskPanel:76-92,126-191` requires current/accepted view delivery before another command, preserves exact Unknown command identity, and avoids active/retired TaskId collisions. Rename retains TaskId, reorder submits the same IDs in their new order, and duplicate labels are distinct tasks.
+
+These source requirements do not by themselves establish restart/device parity.
+
+## Pre-v26 native and model API map
+
+| API | Baseline behavior and recovery use |
+| --- | --- |
+| `lib.rs:492` action `draft_read`, id + draft_id | Calls `editor_draft::read():713`; returns the actual current journal, including inactive current records. Current generation/active flags describe the current record rather than a historical first ACK. |
+| action `draft_list` / `editor_draft::list():732` | Only active journals; absence here does not prove that a parent never existed or was not retired. Use exact draft_read when recovering a registered plan. |
+| `EditorBusinessSession.restore():535` | Five read-only parts preserve original Submission/publication/save/inspect/close literal and durable phase. It does not auto-save or invent a new operation. |
+| fixed Session `inspect()` / `retryInspect()` | Qualifies the original historical commit with full source and immutable publication. Planned/closed phases permit historical inspection, not editor_save. |
+| `EditorBusinessHandoff.restore():472` | Reads fixed handoff/retirement/close literals, verifies own intent/history identities, reconstructs historical child scope from the own accepted full source. It does not itself establish a current child writer or retirement effect. |
+| `openChild():317` | Requires an owned active paused parent, current first receipt and a complete latest input cutoff. Appropriate to a fresh in-memory first ACK, not a restarted advanced/inactive child. |
+| `openCurrentChild():330` | Validates full child scope/source/business_link, active/current generation and current owner guard before constructing a real current writer. Never reactivates an inactive journal. |
+| original handoff/retirement/close retries | Fixed literal operations; explicit reconciliation only. A plan or read is not a write effect. |
+| native ordinary TaskId/metadata routes, `lib.rs:638-686` | Apply commands to full source bytes with their source revision and retain non-target properties. These are not LF full-task replacement commands. |
+| native strict ordinary edit, `editor_business.rs:795` | Baseline rejects any Create/ContinuedTodos marker as `EditorOwnedTodosRequireContinuation`, even with empty LF todos. This prevents normal closed-owned-card body reopening and post-TaskId body saving. Native v26 extension is separately owned. |
+| `EditorBusiness.continueTodos():325` | Requires its own strictly qualified live historical receipt, original create/root request and exact historical source. A later metadata/TaskId source cannot borrow this old baseline merely because card ID matches. |
+
+## Minimum recovery route without invented source
+
+1. Discover/read the exact durable original intent. Keep its immutable request/publication and proof separate from the current editor and card list.
+2. Perform the original fixed read-only inspection and qualify its complete accepted historical card/source. Unknown read/inspection remains explicit; do not reissue business automatically.
+3. Restore registered handoff/retirement/close literals. Do not mint another child ID, plan, retirement or close operation because RAM state disappeared.
+4. Read the registered child through exact `draft_read(card_id, child_draft_id)`. Require active == current_active == true and generation == current_generation; validate full source0 scope/source/revision, exact original intent/business link and confirmed pin metadata. A first ACK, card projection or equality of text is insufficient.
+5. Install the actual current child through `openCurrentChild()` using the record's complete raw values, or separately preserved complete live S3 only under a fresh matching owner/epoch cutoff. Switch writer, raw values and owner coherently. Never replace newer raw with first-child S2.
+6. Parent may already be retired or missing from active draft_list. Read its exact current journal or explicitly reconcile the registered retirement operation and correlate the full inactive receipt to the fixed plan.parent proof and business_link. Plan.parent may be a later confirmed S2 raw generation, not the Session's original S1 publication. Do not substitute the S1 record for that parent history. Closed `handoff_retired` metadata can establish its qualified final intent fact; it cannot revive an inactive current child.
+7. Repeat only still-unresolved fixed cleanup steps after current writer/raw completeness is proven. A current inactive child, foreign scope/link/source, deleted/stale card, uncertain receipt or changed owner must preserve existing facts and inputs and refuse installation or new business dispatch.
+
+The baseline Index `resumeBusinessEditor():2195` only searches active parent records; it has no current-child restart route. Its planned finish branch restores literal and returns to explicit reconciliation but cannot complete the missing/retired-parent and advanced-current-child cases. V26 tests will exercise Root's new actual methods once their API is available.
+
+For normal closed-card reopening, obtain the freshly read current CardView/source and open a **new** source0 draft with no LF todos and no old intent consumption binding. Ordinary metadata/TaskId mutations are committed against their own original source; then read the current card and open the body editor. The old editor may contain later complete raw input: keep its source conflict instead of swapping source strings. The baseline Index Task/metadata retry can update cards while the old source0 draft remains open and therefore becomes conflicted (`Index:2011`). `beginRawFork()` only handles raw new-card lineage. Continuing that open body without closing/preserving its raw input would require a separately authorized and validated source0 transfer contract, not a string replacement or borrowed old root.
+
+## Read-only installed emulator audit
+
+Fresh `Emulator.exe -list -details` and `devecocli.cmd emulator list --format json` both report the three existing API26 instances stopped: `Huawei_TripleFold`, `Pura X View`, `Pura X View2`. `Pura X View2` UUID is `01fc19c8-444a-42f1-9f70-79321a2502b3`. The filtered process snapshot shows no Emulator/qemu process; an existing HDC server process is present. Parent had reported HDC targets Empty; this reviewer did not perform device connection/shell queries.
+
+Installed CLI entry is `C:\Users\Administrator\AppData\Roaming\npm\devecocli.cmd` (the PowerShell shim is present too). Installed native executable is `C:\Program Files\Huawei\DevEco Studio\tools\emulator\Emulator.exe`, SHA-256 `d2519899ff02958b0391145ef58ac36450dc7be4a12934e064090972b2661f4c`. Its package declares Release `26.0.0.400`. Existing deployed parent path is `C:\Users\Administrator\AppData\Local\Huawei\Emulator\deployed`; existing instance path is its `Pura X View2` child. Installed image root is `C:\Users\Administrator\AppData\Local\Huawei\Sdk`, image subpath `system-image/HarmonyOS-7.0.0/phone_all_x86/`.
+
+The current base image sdk-pkg declares API26, Release, `7.0.0.106(SP1)` and hashes `bce1ba34adacdfd5a87a821773d5e78a209bffab6106cc4bff586afb98c35e79`. The instance config still declares `7.0.0.107`; config SHA `98b6cd6f9395909af05a5b97c3cf359a14250ef3d16635f1240d25076948ccd6` matches the v13 audit. All six named base image inputs exist: bzImage 10244992, ramdisk.img 2752488, system.img 3670016000, sys_prod.img 838860800, vendor.img 209715200, userdata.img 104857600 bytes. Existence is not image integrity or runtime-version verification.
+
+Installed CLI README documents `devecocli emulator start "Pura X View2"`. The earlier Root-authorized v13 audit records a native snapshot route when CLI image preflight returned an empty downloaded-image inventory: `Emulator.exe -hvd "Pura X View2" -path "C:\Users\Administrator\AppData\Local\Huawei\Emulator\deployed" -imageRoot "C:\Users\Administrator\AppData\Local\Huawei\Sdk" -bootmode snapshot -noWindow`. The -path argument is the deployed **parent** directory. This is a read-only startup reference; it was not executed in v26, and the earlier CLI preflight failure was not assumed to be fresh current behavior. No emulator/service was started, downloaded, reset, recreated or reconfigured by this reviewer.
+
+## Actual v26 native/model implementation review
+
+The native `draft_read_history` route now accepts only the exact card/draft/operation/generation tuple and rejects nonempty unrelated outer fields. It validates positive canonical u64 generation, reads the immutable operation record from the actual journal, correlates that record's generation, verifies native lineage, and returns the full historical record together with actual current generation/active flags. Its effect is read-only `not_committed` with no mutation receipt. The complete reply is checked against the 512 KiB limit. The API is a trusted local development read; it does not authorize reactivation, export, a new business command, or a protected producer.
+
+Handoff `loadParentHistory()` freezes an exact `draft_read_history` request for the registered plan.parent proof. It verifies the complete S2 parent raw values, source scope, operation/digest, selected pins and immutable inventory before caching it. This addresses the case where plan.parent is a later S2 confirmed generation and Session publication is S1. `readRetirementHistory()` freezes a different exact read for the registered retirement operation at parent generation plus one, verifies the full inactive retirement relation/raw/pin metadata, and qualifies retirement separately from intent phase. `retryHistory()` retains the original uncertain read wire. `openCurrentChild()` still requires the full current active child and native business lineage plus a fresh caller guard; successful writer installation clears only the restored handoff placeholder. Inactive or foreign records cannot be revived. There is no fabricated active parent coordinator and no substitution of S1 strings for S2/S3.
+
+Actual native draft action replies omit the optional pagination cursor. Handoff mutation summary accepts only an omitted or empty-string cursor; null and nonempty cursors still reject. Read-only intent `readSingle()` continues to require the complete empty-string cursor. This fixes a real DTO shape difference without reducing proof, phase, effect, full-record or literal checks.
+
+Independent review found that a successful exact retirement history read initially left an earlier uncertain `pendingKind === 'retirement'` set, unlike `observeParentRetirement()`. That unnecessarily blocked the subsequent fixed close after the retirement was fully proven. The model owner corrected only that matching retirement pending state. A close Unknown remains independent, and later retirement history/observation cannot clear it or prove close. An actual source test now covers malformed committed retirement acknowledgement, exact read-only retirement settlement, lost close acknowledgement, preserved close Unknown, and original fixed retryClose.
+
+Native and Business models now accept `current_v2` for a fresh ordinary V2 body editor. It requires empty business/publication LF todos and null continuation, a complete actual source0 publication and original full source/CAS. Native rejects changed category/stage and preserves their original raw property bytes, favorite, TaskIds, completion/order, retired IDs and non-target/opaque property and attachment bytes. It can edit a current card carrying an inherited own-todos marker without borrowing that historical root. A fresh current_v2 commit records a distinct marker; Business `continueTodos()` explicitly rejects edit/current_v2 as an owned LF baseline. Ordinary `edit` and `continued_todos` retain their previous gates. This is the model/native body foundation; Index has not selected or opened this new mode.
+
+The reviewed native focused evidence covers current V2 editing after real favorite/category/TaskId rename/toggle/reorder/remove, exact source conflict refusal, stale own continuation refusal, unknown-field preservation and original wire retry after Store reopen. The exported current fixture is actual Store data: `editor-current-v2-store-fixture.json`, 38,806 bytes, SHA-256 `50f9037b3a235cff72e1423bf4ce5f30cf6b655c243373fa7f6b273bb926b301`. The native owner improved its helper/assertions so the current body request demonstrably changes title and body, rather than only committing a new revision with the same text. The earlier 38,546-byte fixture/SHA `7e1cad9d3f2adb5c9f8f369d8ea3e21dff10852b1776b72e813daa82b80e3d1f` and earlier native evidence are preserved with before-body-change provenance; they cannot qualify the newer fixture or test hashes. The history fixture is actual Store data, 75,959 bytes, SHA-256 `4191624d7b2894abc17a3874ea3005249b450e6ee270b9c880ea2f04530415db`. This reviewer reads those artifacts and runs bounded ETS model checks; the native owner separately generated the Store fixtures and ran native tests.
+
+A separate read-only check of the final current fixture confirms source revision 5 to saved revision 6, both title and description actually changed, empty LF todos/null continuation, and equal complete TaskId projection, favorite, category and stage before/after. Its reopened inspection is `development_editor_wire_v1`; the older create baseline is explicitly `live_matches: false`. These checks inspect produced DTOs rather than rerun Store execution.
+
+`current-v2-dto-final.log` intentionally preserves a failed broad-filter export run: the new export passed, but an unrelated legacy export failed because its required output variable was absent. It is not an all-pass log. `current-v2-dto-exact-final.log` and `reopen-history-dto-exact-final.log` each run the exact intended export and show one pass with no failure. No failure was erased or counted as success.
+
+## Independent model verification
+
+`independent-model-review-stage1.log` preserves the first independent Business/Session/Handoff run: 84 tests, 83 passes, one failure, zero skipped. The new Session current_v2 negative test omitted the fourth `hooks` argument to `continueTodos()`, so the observed rejection was an undefined sender TypeError rather than the intended continued-root gate. This was reported to the model owner for a test-call correction, with no production gate relaxation. The paired input manifest also marks `source_stable: false` because the model owner was still editing during that run; this run cannot be used as final frozen-source acceptance.
+
+The final independent run executes the actual ETS Business, Session, Handoff, Draft and Fork suites: **132/132 PASS, zero failed/cancelled/skipped, 14562.2704 ms, exit 0**. The 16 owner-frozen model/test/native-fixture inputs plus Index were read before/after: **17 unchanged**, `source_stable: true`, `matches_model_owner_freeze: true`. `independent-model-review-final.log` is 16,559 bytes, SHA-256 `ac94263850bad313e1db96d62268400c347e229e3133d0b116f16cf679224b37`; its paired final input manifest is 6,965 bytes, SHA-256 `11af798cca9c5f7db792bccdefb934591ca2c92009c9626e0ce7610443a08522`.
+
+The v26 advanced-child actual Store fixture qualifies immutable S2 history, current generation-2 child installation and the original fixed retirement. It does not pretend a newly generated first-close JSON with a different key order has an already registered native literal receipt. The separately already-closed fixture qualifies original close-byte restoration, exact retired parent history and the still-active current child without reopening the intent. Existing controlled model lifecycle tests independently cover generation of a fresh close and preservation of a fixed close Unknown. The model owner's earlier failed DTO close test/log is preserved separately; its final coverage was narrowed to what the exact native artifacts actually prove.
+
+Independent read review of the native owner's final `editor-current-reopen-validation.json` and audit records **187 library passes/16 default ignored, 3 attachment binary passes, exit 0**, plus **one explicitly executed host fault-injection test covering seven current_v2 Core crash boundaries**. Seven native source inputs have zero reported drift. These are separately executed native-owner results; this reviewer did not rerun Cargo, native Store execution, NDK/SDK compilation or device interaction, and does not count the default ignored conditions as pass.
+
+Final production identities reviewed:
+
+| Source | SHA-256 |
+| --- | --- |
+| Index | `1ab29f6a124664231e6a3bea0ae5f745625ec4f77676ffcb55f746b50ad1184f` |
+| Business | `bbd4de0b1e02a67e19345147eb7de4c01622c1e015e12fb0c1431a101945c4fd` |
+| Session | `58e992b7e8bdae01f7bc07b3dee9e66b7bcae6712a945b5509382121e5af52c6` |
+| Handoff | `fc2878c8f8fc2f312cf879023a1e445fe2cb3ae409755372feb9ffbc596723f0` |
+| Rust lib | `bad0fbdaeb3454b7826b9fc4bc001a73913066e97d442f3e4dd455b6d4ecf105` |
+| Rust editor_business | `d979780896b73d58f204733e1952d8c776c217e14d2d4548f177828d71ac71d5` |
+| Rust editor_draft | `15436ccff94a8a5c35779aa66661584281dce48c7db39e815e74789fca2f4177` |
+
+No remaining blocking source defect was identified in the reviewed v26 model/native foundation. This is a bounded source/model conclusion for branch delivery. It does not change the UI or platform acceptance limits below.
+
+## UI and acceptance still open
+
+Index hash remains `1ab29f6a124664231e6a3bea0ae5f745625ec4f77676ffcb55f746b50ad1184f`. Its current recovery route still relies on an active parent. It does not yet read the exact current child, load registered S2 parent/retirement history, install the current child under its UI owner/lease cutoff, or open a new ordinary `current_v2` body editor after a closed own card or metadata/TaskId source advancement. The preexisting v25 strict Save entrypoint is wired; the missing pieces are the v26 recovery/reopen routes, not all Index business integration.
+
+Required later actual-Index checks remain: fixed read-only restore without mutation; active/retired/missing parent plus advanced current child; closed handoff_retired context; inactive/foreign/malformed current journal refusal; latest raw rather than first ACK installation; original Unknown child/parent read retention; fixed retirement/close settlement; owner/epoch replacement while reads are in flight; closed-owned-card fresh body reopening; identified task data preservation after ordinary metadata/TaskId commands; and no implicit original-business replay. Tests must exercise the actual new Index methods once those methods exist, rather than declaring model-only routes to be UI completion.
+
+No emulator was started and no HMOS runtime/device interaction was performed by this reviewer. SDK/native builds, device evidence and GitHub publication are separately owned by Root. Visual rendering, real SDK lease/composition delivery, process-restart UI recovery and complete Flutter functional parity remain OPEN in this checkpoint.

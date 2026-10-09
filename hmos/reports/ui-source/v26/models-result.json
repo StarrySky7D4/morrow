@@ -1,0 +1,12 @@
+{
+  "startedUtc": "2026-10-09T00:19:37.756Z",
+  "finishedUtc": "2026-10-09T00:20:02.064Z",
+  "exitCode": 0,
+  "signal": null,
+  "suites": 34,
+  "inputs": 1720,
+  "sourceIdentityVerified": true,
+  "log": "models-final-tests.log",
+  "sha256": "52511893632B9DC98F4DB71F41DE6EDCDBE50C9CE41303BC5F7AEA625815782C",
+  "scope": "Actual-source host tool/models with Store-produced fixture DTOs; controlled lifecycle/transport seams are not device acceptance. Index v26 recovery/new-mode integration OPEN."
+}

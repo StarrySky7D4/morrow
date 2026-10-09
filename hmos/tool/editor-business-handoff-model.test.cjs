@@ -17,10 +17,15 @@ vm.runInNewContext(sharedSource.slice(0, marker)
   '\nObject.assign(shared, { model, harness });', { require, __dirname, process, Buffer, TextEncoder, shared, setTimeout, clearTimeout });
 const settle = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
 
-async function harness(t, { dirty = true, assets = ['A', 'B'] } = {}) {
+async function harness(t, { dirty = true, assets = ['A', 'B'], advancedParent = false } = {}) {
   const base = shared.harness({ assets }), m = base.m, session = await base.ready(); await session.save();
   const parentCalls = [], childCalls = [], calls = [], owner = { current: true, exact: true, imports: true, installed: null };
   const parentRecord = m.copyRecord(base.record);
+  if (advancedParent) {
+    parentRecord.generation = parentRecord.current_generation = m.nextGeneration(parentRecord.generation);
+    parentRecord.operation_id = 'parent-confirmed-S2'; parentRecord.request_sha256 = sha('parent-confirmed-S2 full raw');
+    parentRecord.values.description.text = '已持久 S2 与业务 S1 不同';
+  }
   const parent = new m.EditorDraftCoordinator(parentRecord.scope, parentRecord.values,
     wire => new Promise((resolve, reject) => parentCalls.push({ wire, resolve, reject })), () => {}, () => 'unexpected-parent-save', parentRecord);
   parent.pauseWrites(); if (dirty) {
@@ -63,6 +68,18 @@ async function harness(t, { dirty = true, assets = ['A', 'B'] } = {}) {
   function route(wire) {
     const p = JSON.parse(wire);
     if (p.action === 'editor_intent_read') return metadata(p.editor_intent_ref.part);
+    if (p.action === 'draft_read_history') {
+      assert.equal(p.id, parentRecord.scope.card_id); assert.equal(p.draft_id, parentRecord.scope.draft_id);
+      const proposal = JSON.parse(state.literal);
+      const original = p.draft_operation === proposal.parent.save_operation ? parentRecord : state.parentRetired;
+      assert.ok(original, 'Exact historical operation has no record');
+      assert.equal(p.generation, original.generation);
+      assert.equal(p.draft_operation, original.business_retirement?.operation_id || original.operation_id);
+      const record = plain(original); record.repeated = true;
+      record.current_generation = state.parentRetired?.generation || parentRecord.generation;
+      record.current_active = !state.parentRetired;
+      return { ok: true, error: '', effect: 'not_committed', receipt_revision: '', drafts: [record] };
+    }
     if (p.action === 'draft_continue_business') {
       const literal = p.business_handoff.request_json, proposal = JSON.parse(literal);
       if (state.literal) assert.equal(literal, state.literal); else {
@@ -207,6 +224,18 @@ test('native retirement literal is read verbatim including key order/spacing; me
   assert.equal(h.calls.at(-1), model.originalRetirement); assert.equal(model.retired.active, false); assert.equal(child.confirmed.active, true);
 });
 
+test('native draft acknowledgement may omit the optional cursor but rejects null or nonempty cursors', async t => {
+  for (const value of [null, 'foreign-page']) {
+    const h = await harness(t), model = await h.freeze();
+    h.setIntercept((wire, request, route) => { const reply = route(); reply.intent_next_after = value; return reply; });
+    await assert.rejects(model.begin(), /Incomplete business handoff/);
+    assert.equal(model.firstCommitted, true); assert.equal(model.confirmed, undefined); assert.equal(model.pendingNative, 'handoff');
+  }
+  const h = await harness(t), model = await h.freeze();
+  h.setIntercept((wire, request, route) => { const reply = route(); delete reply.intent_next_after; return reply; });
+  await model.begin(); assert.equal(model.firstCommitted, true); assert.equal(model.confirmed.generation, '1');
+});
+
 test('fixed plan read rejects substitution and Unknown retries that exact read without creating a new child or plan', async t => {
   const h = await harness(t), model = await h.freeze(); await model.begin(); let lose = true;
   h.setIntercept((w, p, route) => { const r = route(); if (p.editor_intent_ref?.part === 'handoff' && lose) { lose = false; throw new Error('lost plan read'); } return r; });
@@ -308,6 +337,99 @@ test('handoff restore reads exact native literals without writes and preserves o
   await restored.retry(); assert.equal(h.state.firstWriteCount, 1); assert.equal(restored.confirmed.values.description.text, '晚 S2 🧪 é. 全原文');
 });
 
+async function restoreBusiness(h) {
+  const hooks = { ...h.base.hooks, send: async wire => {
+    const request = JSON.parse(wire);
+    if (request.action === 'editor_intent_read') return h.metadata(request.editor_intent_ref.part);
+    if (request.action === 'editor_commit_inspect') { assert.equal(wire, h.session.originalInspect); return h.base.businessReply(); }
+    throw new Error('Restart recovery cannot issue a business mutation');
+  } };
+  const session = await h.m.EditorBusinessSessionCoordinator.restore(h.session.proof, hooks);
+  await session.inspect(); return session;
+}
+
+test('restart without parent writer restores exact S2 parent history, advances current S3 child and completes fixed retirement without first replay', async t => {
+  const h = await harness(t, { advancedParent: true }), { handoff: first, child: oldChild } = await h.ready();
+  const s3 = oldChild.current; s3.title.text = '已保存 S3 🧪'; s3.todos.text += 'S3\n'; oldChild.update(s3); await oldChild.flush();
+  const actualCurrent = plain(h.state.current); oldChild.dispose(); h.parent.dispose(); h.owner.installed = null;
+  const session = await restoreBusiness(h), before = h.calls.length;
+  const model = await h.m.EditorBusinessHandoffCoordinator.restore(session, undefined, h.hooks);
+  assert.equal(model.pendingNative, 'handoff'); const parent = await model.loadParentHistory();
+  assert.equal(parent.operation_id, 'parent-confirmed-S2'); assert.notEqual(parent.generation, session.publication.generation);
+  assert.equal(parent.values.description.text, '已持久 S2 与业务 S1 不同');
+  assert.deepEqual(plain(model.parentReference), JSON.parse(first.originalHandoffLiteral).parent);
+  const history = JSON.parse(h.calls.at(-1)); assert.equal(history.action, 'draft_read_history');
+  assert.equal(history.generation, parent.generation); assert.equal(history.draft_operation, parent.operation_id);
+  const s4 = plain(actualCurrent.values); s4.title.text = '恢复后 S4 全原文'; s4.todos.text += 'S4\n';
+  const child = model.openCurrentChild(actualCurrent, s4, () => h.owner.current); h.owner.installed = child;
+  assert.equal(model.pendingNative, ''); assert.equal(model.firstCommitted, true); assert.equal(model.confirmed, undefined);
+  assert.equal(model.currentConfirmed.generation, actualCurrent.generation); assert.equal(child.dirty, true); assert.equal(child.current.title.text, s4.title.text);
+  await child.flush(); assert.equal(h.state.current.generation, h.m.nextGeneration(actualCurrent.generation)); await model.retire(); await model.closeRetired('restart-close-1');
+  assert.equal(model.closed, true); assert.equal(h.state.firstWriteCount, 1); assert.equal(h.state.retirementWriteCount, 1);
+  assert.equal(child.current.todos.text, s4.todos.text); assert.equal(child.confirmed.active, true);
+  assert.equal(model.originalRetirement, first.originalRetirement);
+  assert.equal(h.calls.slice(before).filter(w => JSON.parse(w).action === 'draft_continue_business').length, 0);
+});
+
+test('restart reads already retired immutable parent and receipt without fabricating active parent or resending retirement', async t => {
+  const h = await harness(t, { advancedParent: true }), { handoff: first, child: oldChild } = await h.ready();
+  await first.retire(); const actualCurrent = plain(h.state.current); oldChild.dispose(); h.parent.dispose(); h.owner.installed = null;
+  const session = await restoreBusiness(h), before = h.calls.length;
+  const model = await h.m.EditorBusinessHandoffCoordinator.restore(session, undefined, h.hooks);
+  const child = model.openCurrentChild(actualCurrent, actualCurrent.values, () => true); h.owner.installed = child;
+  const retired = await model.readRetirementHistory();
+  assert.equal(retired.active, false); assert.equal(retired.current_active, false); assert.equal(retired.repeated, true);
+  assert.equal(model.retirementCommitted, true); assert.equal(model.pendingNative, '');
+  const histories = h.calls.slice(before).filter(w => JSON.parse(w).action === 'draft_read_history').map(w => JSON.parse(w));
+  assert.equal(histories[0].draft_operation, 'parent-confirmed-S2'); assert.equal(histories[1].draft_operation, 'parent-retire-1');
+  assert.equal(histories[1].generation, h.m.nextGeneration(histories[0].generation));
+  await model.closeRetired('restart-close-2');
+  assert.equal(h.calls.slice(before).some(w => JSON.parse(w).action === 'draft_continue_business_retire'), false);
+  assert.equal(h.state.retirementWriteCount, 1); assert.equal(child.confirmed.active, true);
+});
+
+test('immutable parent history failures retain one exact readonly request and never substitute original S1 publication', async t => {
+  const changes = [r => r.drafts[0].generation = '1', r => r.drafts[0].scope.source_kind = 0,
+    r => r.drafts[0].values.assets[1].aliases.reverse(), r => r.drafts[0].assets[1].selection.aliases.reverse(),
+    r => r.drafts[0].repeated = false, r => r.receipt_revision = '3', r => r.effect = 'committed'];
+  for (const change of changes) {
+    const h = await harness(t, { advancedParent: true }), first = await h.freeze(); await first.begin();
+    const model = await h.m.EditorBusinessHandoffCoordinator.restore(h.session, undefined, h.hooks);
+    h.setIntercept((wire, request, route) => { const reply = route(); if (request.action === 'draft_read_history') change(reply); return reply; });
+    await assert.rejects(model.loadParentHistory()); const fixed = model.pendingHistory;
+    assert.equal(JSON.parse(fixed).draft_operation, 'parent-confirmed-S2'); assert.equal(model.retired, undefined);
+    assert.equal(model.pendingNative, 'handoff'); h.owner.current = false; h.setIntercept(undefined);
+    const actual = await model.retryHistory(); assert.equal(h.calls.at(-1), fixed); assert.equal(actual.operation_id, 'parent-confirmed-S2');
+    assert.equal(model.pendingHistory, ''); assert.equal(model.pendingNative, 'handoff'); assert.equal(h.session.qualified, true);
+  }
+});
+
+test('verified readonly retirement history resolves only fixed retirement Unknown and preserves separate close Unknown', async t => {
+  const h = await harness(t), { handoff: model } = await h.ready();
+  h.setIntercept((wire, request, route) => { const reply = route(); if (request.action === 'draft_continue_business_retire') reply.drafts[0].values.title.text += 'bad'; return reply; });
+  await assert.rejects(model.retire()); assert.equal(model.pendingNative, 'retirement'); assert.equal(model.retirementCommitted, true);
+  h.setIntercept(undefined); await model.readRetirementHistory(); assert.equal(model.pendingNative, '');
+  assert.equal(h.state.retirementWriteCount, 1);
+  h.setIntercept((wire, request, route) => { const reply = route(); if (request.action === 'editor_intent_close') throw new Error('lost final close'); return reply; });
+  await assert.rejects(model.closeRetired('history-close-1'), /lost final close/); assert.equal(model.pendingNative, 'close');
+  h.setIntercept(undefined); await model.readRetirementHistory(); assert.equal(model.pendingNative, 'close');
+  model.observeParentRetirement(h.state.parentRetired); assert.equal(model.pendingNative, 'close');
+  await model.retryClose(); assert.equal(model.closed, true); assert.equal(h.state.closeWriteCount, 1);
+});
+
+test('restart current child rejects altered first raw, foreign lineage/source and inactive journals without erasing fixed reconciliation', async t => {
+  const changes = [r => r.values.title.text += 'foreign', r => r.request_sha256 = '1'.repeat(64),
+    r => r.scope.source = '0a01', r => r.business_link.parent.save_operation = 'foreign',
+    r => r.current_active = false, r => r.current_generation = '2'];
+  for (const change of changes) {
+    const h = await harness(t), first = await h.freeze(); await first.begin();
+    const model = await h.m.EditorBusinessHandoffCoordinator.restore(h.session, undefined, h.hooks), record = plain(h.state.current); change(record);
+    assert.throws(() => model.openCurrentChild(record, record.values, () => true));
+    assert.equal(model.pendingNative, 'handoff'); assert.equal(model.firstCommitted, false); assert.equal(h.state.firstWriteCount, 1);
+    assert.equal(h.childCalls.length, 0);
+  }
+});
+
 test('freeze guards actual parent in-flight/Unknown/import owner and pin subset authority; whole wire budgets and Unicode fail before native', async t => {
   const h = await harness(t); h.owner.imports = false; await assert.rejects(h.freeze(), /imports/); assert.equal(h.calls.length, 0); h.owner.imports = true;
   const missing = h.parent.current; missing.assets[0].aliases = ['not-confirmed']; h.parent.update(missing);
@@ -383,4 +505,69 @@ test('fresh actual Store saved_exact closed context retains complete original re
   assert.equal(h.session.originalRequest, h.actual.submission_literal); assert.equal(h.session.qualified, true);
   assert.throws(() => h.session.retrySave(), /historical inspection/); assert.throws(() => model.close(), /parent/);
   assert.equal(h.calls.every(w => ['editor_intent_read', 'editor_commit_inspect'].includes(JSON.parse(w).action)), true);
+});
+
+async function nativeHistoryContext({ closed = false } = {}) {
+  const file = path.resolve(__dirname, '../reports/ui-source/v26/editor-reopen-history-store-fixture.json'), bytes = fs.readFileSync(file);
+  assert.equal(sha(bytes), '4191624d7b2894abc17a3874ea3005249b450e6ee270b9c880ea2f04530415db');
+  const actual = JSON.parse(bytes), m = shared.model(), calls = [], owner = { installed: null }, state = { retired: closed };
+  const parts = new Map((closed ? actual.closed_parts : actual.planned_parts).map(part => [part.part, part]));
+  const hooks = { fields: new m.EditorFieldPolicy(async () => { throw new Error('Native history restore must not rebuild projection'); }),
+    changed: () => {}, isCurrent: () => true, isExact: () => false, parentReady: () => false,
+    async send(wire) {
+      calls.push(wire); const request = JSON.parse(wire);
+      if (request.action === 'editor_intent_read') return nativeRead(parts.get(request.editor_intent_ref.part));
+      if (request.action === 'editor_commit_inspect') {
+        assert.equal(wire, parts.get('inspect').inspect_request_json); return plain(actual.original_inspect_reply);
+      }
+      if (request.action === 'draft_read_history') {
+        assert.equal(request.id, actual.card_id); assert.equal(request.draft_id, actual.fixed_parent_s2.scope.draft_id);
+        if (request.draft_operation === actual.fixed_parent_s2.operation_id) {
+          assert.equal(request.generation, actual.fixed_parent_s2.generation);
+          return plain(state.retired ? actual.parent_history_retired_reply : actual.parent_history_active_reply);
+        }
+        assert.equal(request.draft_operation, JSON.parse(actual.retirement_request.business_retirement.request_json).operation_id);
+        assert.equal(request.generation, m.nextGeneration(actual.fixed_parent_s2.generation));
+        assert.equal(state.retired, true); return plain(actual.retirement_history_reply);
+      }
+      if (request.action === 'draft_continue_business_retire') {
+        assert.deepEqual(request, actual.retirement_request); state.retired = true; return plain(actual.retirement_reply);
+      }
+      if (request.action === 'editor_intent_close') { assert.deepEqual(request, actual.close_request); return plain(actual.close_reply); }
+      throw new Error('Actual current-history fixture cannot mutate ' + request.action);
+    } };
+  const session = await m.EditorBusinessSessionCoordinator.restore(actual.proof, hooks); await session.inspect();
+  const handoffHooks = { ...hooks, operation: () => 'no-operation-regeneration', importsReady: () => true,
+    sendDraft: () => { throw new Error('Actual DTO qualification must not simulate a child write'); }, childCurrent: child => owner.installed === child };
+  const model = await m.EditorBusinessHandoffCoordinator.restore(session, undefined, handoffHooks);
+  return { actual, m, calls, model, session, owner };
+}
+
+test('fresh v26 actual Store advanced child and different immutable S2 parent restore into real writer then fixed retirement', async t => {
+  const h = await nativeHistoryContext(), before = h.calls.length, parent = await h.model.loadParentHistory();
+  assert.equal(parent.generation, '2'); assert.equal(h.session.publication.generation, '1');
+  assert.notEqual(parent.values.description.text, h.session.publication.values.description.text);
+  const current = h.actual.child_current_read_reply.drafts[0], first = h.actual.child_first_history_reply.drafts[0];
+  assert.equal(current.generation, '2'); assert.equal(first.generation, '1'); assert.equal(first.current_generation, '2');
+  assert.throws(() => h.model.openCurrentChild(first, first.values, () => true));
+  const child = h.model.openCurrentChild(current, current.values, () => true); h.owner.installed = child; t.after(() => child.dispose());
+  assert.equal(child.current.description.text, current.values.description.text); assert.equal(child.dirty, false);
+  assert.equal(h.model.currentConfirmed.generation, '2'); assert.equal(h.model.confirmed, undefined); assert.equal(h.model.pendingNative, '');
+  await h.model.retire(); assert.equal(h.model.retirementCommitted, true); assert.equal(child.confirmed.active, true);
+  assert.equal(h.model.originalRetirement, JSON.stringify(h.actual.retirement_request));
+  assert.equal(h.calls.slice(before).some(wire => JSON.parse(wire).action === 'draft_continue_business'), false);
+});
+
+test('fresh v26 actual closed handoff restores retired parent history and still-active current child without resurrecting old first or intent', async t => {
+  const h = await nativeHistoryContext({ closed: true }), before = h.calls.length;
+  assert.equal(h.model.closed, true); assert.equal(h.model.retirementCommitted, false);
+  assert.equal(h.model.originalClose, JSON.stringify(h.actual.close_request));
+  const parent = await h.model.loadParentHistory(); assert.equal(parent.active, true); assert.equal(parent.current_active, false);
+  assert.equal(parent.generation, '2'); assert.equal(parent.current_generation, '3');
+  const retired = await h.model.readRetirementHistory(); assert.equal(retired.active, false); assert.equal(retired.generation, '3');
+  assert.equal(h.model.retirementCommitted, true);
+  const current = h.actual.child_current_read_reply.drafts[0], child = h.model.openCurrentChild(current, current.values, () => true);
+  t.after(() => child.dispose()); h.owner.installed = child; assert.equal(child.confirmed.active, true); assert.equal(h.session.phase, 'closed');
+  assert.throws(() => h.session.retrySave(), /historical inspection/);
+  assert.equal(h.calls.slice(before).every(wire => JSON.parse(wire).action === 'draft_read_history'), true);
 });

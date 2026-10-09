@@ -1,0 +1,65 @@
+{
+  "source_stable": false,
+  "before": [
+    {
+      "Path": "hmos/entry/src/main/ets/pages/Index.ets",
+      "SHA256": "1AB29F6A124664231E6A3BEA0AE5F745625EC4F77676FFCB55F746B50AD1184F"
+    },
+    {
+      "Path": "hmos/entry/src/main/ets/model/EditorBusiness.ets",
+      "SHA256": "BBD4DE0B1E02A67E19345147EB7DE4C01622C1E015E12FB0C1431A101945C4FD"
+    },
+    {
+      "Path": "hmos/entry/src/main/ets/model/EditorBusinessSession.ets",
+      "SHA256": "58E992B7E8BDAE01F7BC07B3DEE9E66B7BCAE6712A945B5509382121E5AF52C6"
+    },
+    {
+      "Path": "hmos/entry/src/main/ets/model/EditorBusinessHandoff.ets",
+      "SHA256": "21AE6D797E1730E4F8A6B9DE09468889693103531D6154D138272B94F9C6F736"
+    },
+    {
+      "Path": "hmos/tool/editor-business-model.test.cjs",
+      "SHA256": "CAFC77CFDC2DAC380B0E166A48E861A546E354A4034E149566F5BF1156665B4E"
+    },
+    {
+      "Path": "hmos/tool/editor-business-session-model.test.cjs",
+      "SHA256": "AF99EFF5C072758A1B2776286BE604090733B5B5035CAA395C227891AA6921A7"
+    },
+    {
+      "Path": "hmos/tool/editor-business-handoff-model.test.cjs",
+      "SHA256": "E9C0C8659A52892B72F114BDB288ABB2F02F642D3C6065551C31ED520AEF4EDF"
+    }
+  ],
+  "after": [
+    {
+      "Path": "hmos/entry/src/main/ets/pages/Index.ets",
+      "SHA256": "1AB29F6A124664231E6A3BEA0AE5F745625EC4F77676FFCB55F746B50AD1184F"
+    },
+    {
+      "Path": "hmos/entry/src/main/ets/model/EditorBusiness.ets",
+      "SHA256": "BBD4DE0B1E02A67E19345147EB7DE4C01622C1E015E12FB0C1431A101945C4FD"
+    },
+    {
+      "Path": "hmos/entry/src/main/ets/model/EditorBusinessSession.ets",
+      "SHA256": "58E992B7E8BDAE01F7BC07B3DEE9E66B7BCAE6712A945B5509382121E5AF52C6"
+    },
+    {
+      "Path": "hmos/entry/src/main/ets/model/EditorBusinessHandoff.ets",
+      "SHA256": "21AE6D797E1730E4F8A6B9DE09468889693103531D6154D138272B94F9C6F736"
+    },
+    {
+      "Path": "hmos/tool/editor-business-model.test.cjs",
+      "SHA256": "CAFC77CFDC2DAC380B0E166A48E861A546E354A4034E149566F5BF1156665B4E"
+    },
+    {
+      "Path": "hmos/tool/editor-business-session-model.test.cjs",
+      "SHA256": "2CB8CF3588808675711E68D2D399A60E1DD0CA3C88658F759FEB1EE067D2BA98"
+    },
+    {
+      "Path": "hmos/tool/editor-business-handoff-model.test.cjs",
+      "SHA256": "4C8384261028ED2127509D84467F18816C16BD0F7D7DE8316FC1FF7E370C8F12"
+    }
+  ],
+  "exit_code": 1,
+  "scope": "Independent actual ETS model tests with controlled SDK/transport seams. No native build, Store execution, Index recovery execution or device proof."
+}

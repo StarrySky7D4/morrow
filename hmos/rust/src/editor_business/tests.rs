@@ -693,7 +693,7 @@ fn continued_projection_keeps_completed_task_raw_and_retired_ids_without_positio
         project_todos(CARD, "before", &old.body(), ROOT_OP, &r.operation, &r.todos).unwrap();
     assert_eq!(projected.tasks[1], completed);
     assert_eq!(projected.newly_retired, ["removed-id"]);
-    let result = final_properties(&old, &r, &[], Some(projected)).unwrap();
+    let result = final_properties(&old, &r, &[], Some(projected), false).unwrap();
     let p = tasks_v2::decode(CARD, &r.title, &result).unwrap();
     assert_eq!(p.tasks[1].id, "complete-id");
     assert_eq!(p.tasks[1].completion, 1);
@@ -1022,3 +1022,5 @@ fn actual_store_process_loss_is_all_or_nothing_and_retries_the_original_wire() {
         }
     }
 }
+
+mod current_v2_tests { include!("current_v2_tests.rs"); }

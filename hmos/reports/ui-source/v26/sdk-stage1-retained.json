@@ -1,0 +1,27 @@
+{
+  "createdUtc": "2026-10-09T00:18:21.403Z",
+  "reason": "The initial SDK product compiled successfully. A subsequent actual Store DTO test exposed Handoff summary rejecting the native serializer's omitted optional intent_next_after cursor. Preserve the pre-repair product and qualification; final retry2 will include the narrow model gate correction. Rust/archive source is unchanged and reused by verified byte identity.",
+  "retainedArtifact": ".build/artifacts/dev26-recovery-foundation-retry1/entry-default-unsigned.hap",
+  "mapping": [
+    {
+      "original": "build-inputs.json",
+      "retained": "sdk-stage1-build-inputs.json"
+    },
+    {
+      "original": "source-copy-manifest.json",
+      "retained": "sdk-stage1-source-copy-manifest.json"
+    },
+    {
+      "original": "artifact.json",
+      "retained": "sdk-stage1-artifact.json"
+    },
+    {
+      "original": "hap-build.log",
+      "retained": "sdk-stage1-hap-build.log"
+    },
+    {
+      "original": "native-package-check.json",
+      "retained": "sdk-stage1-native-package-check.json"
+    }
+  ]
+}

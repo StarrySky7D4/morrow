@@ -1,0 +1,19 @@
+{
+  "createdUtc": "2026-10-09T00:16:01.485Z",
+  "reason": "Native production source remains unchanged. Native worker strengthened current_v2 test to edit actual title/body and regenerated fixture DTOs after the first complete inventory. Final qualification will re-capture and rebuild using the final frozen source/test inventory; original archives and logs remain intact.",
+  "originalArchives": ".build/editor-input-native/dev26-recovery-foundation/",
+  "mapping": [
+    {
+      "original": "native-build-inputs.json",
+      "retained": "stage1-native-build-inputs.json"
+    },
+    {
+      "original": "native-arm64-build.log",
+      "retained": "stage1-native-arm64-build.log"
+    },
+    {
+      "original": "native-x64-build.log",
+      "retained": "stage1-native-x64-build.log"
+    }
+  ]
+}

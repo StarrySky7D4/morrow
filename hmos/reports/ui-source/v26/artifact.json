@@ -1,0 +1,10 @@
+{
+  "createdUtc": "2026-10-09T00:20:56.891Z",
+  "path": ".build/artifacts/dev26-recovery-foundation-retry2/entry-default-unsigned.hap",
+  "bytes": 30198963,
+  "sha256": "90C3171DE4110A4574F8B178A70133F8CA024AC4C21DBBD66D5BF6F1624AFD4D",
+  "archive_path": ".build/artifacts/dev26-recovery-foundation-retry2/entry-default-unsigned.hap",
+  "signed": false,
+  "installed": false,
+  "scope": "v26 foundation only: strict current V2 body editing preserving current TaskIds and metadata bytes; exact read-only parent/retirement history and current-child recovery model; Index new-mode/restart/reopen integration OPEN; unsigned, uninstalled, new-native device acceptance NOT_RUN; full Flutter/Windows parity OPEN"
+}
