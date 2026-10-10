@@ -24,8 +24,8 @@ use std::{
     time::{Duration, Instant},
 };
 
-const SESSION: &[u8] = include_bytes!(
-    "../../c28-basic-fixtures/morrow_codex_session_exec_guest_r2.wasm"
+const SESSION_PUBLIC_R2_V1: &[u8] = include_bytes!(
+    "../../c28-basic-fixtures/public-session-r2-v1/morrow_codex_session_exec_guest_r2.wasm"
 );
 const PROPOSAL: &[u8] = include_bytes!(
     "../../c28-basic-fixtures/morrow_codex_proposal_guest_r2.wasm"
@@ -202,15 +202,22 @@ impl Workflow {
                     self.session_wrapper.is_none(),
                     "session wrapper already exists"
                 );
-                self.session_wrapper = Some(ReviewedWrapper::session(
+                self.session_wrapper = Some(ReviewedWrapper::session_public_r2_v1(
                     workbench,
-                    self.wrapper_path("session"),
-                    "vm.sealed.session",
-                    SESSION,
+                    self.wrapper_path("session-public-r2-v1"),
+                    "vm.public.session.r2.v1",
+                    SESSION_PUBLIC_R2_V1,
                     &self.sid,
                     100,
                 )?);
-                Ok(self.wrapper_evidence(self.session_wrapper.as_ref().unwrap()))
+                let mut evidence = self.wrapper_evidence(self.session_wrapper.as_ref().unwrap());
+                evidence["session_fixture"] = serde_json::json!({
+                    "id":"public-session-r2-v1",
+                    "bytes":crate::sealed::PUBLIC_SESSION_R2_V1_BYTES,
+                    "module_sha256":crate::sealed::PUBLIC_SESSION_R2_V1_SHA,
+                    "historical_identity_reused":false,
+                });
+                Ok(evidence)
             }
             "session-context" => {
                 self.session_wrapper

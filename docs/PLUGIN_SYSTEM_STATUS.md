@@ -1,15 +1,15 @@
 # 插件系统当前状态
 
 <!-- C28-CURRENT-BEGIN -->
-## 当前开发检查点（2026-10-10，C28 阶段 21）
+## 当前开发检查点（2026-10-10，C28 阶段 21 会话验证）
 
-严格 checkout 第二轮来源验证与匹配 helper 第三轮离线构建已通过各自限定验收及独立读回；没有运行 helper 或真实沙箱。公开 guest 第三次后继的 metadata、编译与外层均实际退出 0，原始输入、物理集合和完整新 Cargo home 后置守卫通过。新 Wasm 为 425,912 字节，固定机器路径模式的全字节扫描无命中；这只是有界路径检查，不是通用秘密检测证明。
+新版公开 Wasm 的宿主 metadata、测试编译、单次七步合成会话测试及外层验证均实际退出 0；1 项集成测试通过，原始输入、物理集合和完整新 Cargo home 守卫通过，结果完成独立读回。七步覆盖父子会话、事件、检查点和快照，另有两次任务 ABI 调用；使用普通合成 SQLite，不注册进程 provider，也不执行 Claim、原生 Start 或虚拟机操作。
 
-独立静态核对确认新旧 Wasm 的调用接口相同，数据区与堆起点地址变化，宿主须使用动态布局。真实七步会话测试及控制器已完成源码审核，127 包原锁和现有 120 份 registry 依赖已核对；尚未执行宿主编译、Wasmi 实例化或七步行为测试。新二进制尚未接入公开 harness，不能将静态接口核对称为运行资格。
+新夹具以独立版本 `public-session-r2-v1` 接入公开 harness，SHA256 为 `cca04ebb2e787f69e84ec7260aca3e93ec895ec17b68afbb660e3c6896ae2f2b`，425,912 字节。历史 `SESSION_SHA`、旧资格检查器和收据解析保持不变；新增四项身份隔离测试尚未执行。1,654 文件的选定源码载体已完成物化与独立核对，原 20 份锁文件、60 份依赖清单未改变；这不是整个 Git 树的构建证明。
 
-本次仅更新七份脱敏进度文档，产品源码与已推提交 `98ad75dc` 一致，版本保持 `0.1.9-test.58+62`。阶段 18 仍为 Cargo 退出 0、外层退出 1；公开 Git 树完整构建保持 `NOT_RUN_MISSING_SESSION_FIXTURE`。原生 Start 的 Unknown 不重放；owner finish、factory release、cleanup/join、真实断连、生产沙箱及后续 11 项原始库测试仍待验收。`SDK26_G04=OPEN`，`release_eligible=false`，SDK 未冻结。
+本次发布限定为七份夹具及资格源码文件、六处当前状态标记和本记录，应用版本保持 `0.1.9-test.58+62`。新生产 harness 根 lib/bin 编译与完整公开 Git 树构建均为 `NOT_RUN_PENDING_ROOT_BUILD`，不再因缺少 session 夹具而阻塞。阶段 18 的历史 Cargo 退出 0、外层退出 1 结果不变。原生 Start 的 Unknown 不重放；owner finish、factory release、cleanup/join、真实断连、Windows 生产沙箱及后续 11 项原始库测试仍待验收。`SDK26_G04=OPEN`，`release_eligible=false`，SDK 未冻结。
 
-下一步实际执行已审核的单次七步会话测试，核对新 guest 的父子会话、检查点和输出；其后再推进获得明确授权的 Windows 生命周期复验。会话层与安全执行层验收后暂停准备测试预览，不等待扩展执行层。见[阶段 21 进展记录](../reports/reconstruction-2026-10-10/windows-agent-sdk-c28-stage21.md)、[阶段 20 准备记录](../reports/reconstruction-2026-10-10/windows-agent-sdk-c28-stage20.md)与[阶段 18 编译记录](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-stage18.md)。下方内容保留历史时点。
+下一步执行已审核的新生产 harness 编译，再运行四项身份隔离测试；随后在明确授权范围内推进 Windows 生命周期复验。会话层与安全执行层验收后暂停准备测试预览，不等待扩展执行层。见[七步会话与公开夹具记录](../reports/reconstruction-2026-10-10/windows-agent-sdk-c28-stage21-session.md)、[阶段 21 构建历史](../reports/reconstruction-2026-10-10/windows-agent-sdk-c28-stage21.md)与[阶段 18 编译历史](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-stage18.md)。下方内容保留历史时点。
 <!-- C28-CURRENT-END -->
 
 <!-- C16-CURRENT-BEGIN -->

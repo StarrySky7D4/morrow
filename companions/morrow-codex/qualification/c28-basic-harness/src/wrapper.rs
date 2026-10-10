@@ -50,7 +50,7 @@ impl ReviewedWrapper {
             path,
             id,
             bytes,
-            crate::sealed::PROCESS_SHA,
+            crate::sealed::GuestIdentity::HistoricalProcess,
             SessionCaps {
                 session_read: true,
                 ..Default::default()
@@ -78,7 +78,7 @@ impl ReviewedWrapper {
             path,
             id,
             bytes,
-            crate::sealed::SESSION_SHA,
+            crate::sealed::GuestIdentity::HistoricalSession,
             SessionCaps {
                 session_read: true,
                 session_write: true,
@@ -91,6 +91,36 @@ impl ReviewedWrapper {
             false,
         )
     }
+    /// New derived fixture only; the historical session entrypoint stays pinned.
+    pub fn session_public_r2_v1(
+        workbench: &mut Workbench,
+        path: PathBuf,
+        id: &str,
+        bytes: &[u8],
+        session: &str,
+        request_seed: u128,
+    ) -> Result<Self> {
+        let mut sessions = vec![session.to_owned(), format!("{session}-child")];
+        sessions.sort();
+        Self::build(
+            workbench,
+            path,
+            id,
+            bytes,
+            crate::sealed::GuestIdentity::PublicSessionR2V1,
+            SessionCaps {
+                session_read: true,
+                session_write: true,
+                ..Default::default()
+            },
+            ProcessCaps::default(),
+            sessions,
+            "session-only",
+            request_seed,
+            false,
+        )
+    }
+
     pub fn proposal(
         workbench: &mut Workbench,
         path: PathBuf,
@@ -105,7 +135,7 @@ impl ReviewedWrapper {
             path,
             id,
             bytes,
-            crate::sealed::PROPOSAL_SHA,
+            crate::sealed::GuestIdentity::HistoricalProposal,
             SessionCaps {
                 session_read: true,
                 propose: true,
@@ -127,7 +157,7 @@ impl ReviewedWrapper {
         path: PathBuf,
         id: &str,
         bytes: &[u8],
-        module_sha: &str,
+        identity: crate::sealed::GuestIdentity,
         session: SessionCaps,
         process: ProcessCaps,
         sessions: Vec<String>,
@@ -135,7 +165,7 @@ impl ReviewedWrapper {
         request_seed: u128,
         session_exec: bool,
     ) -> Result<Self> {
-        crate::sealed::check_guest(bytes, module_sha).map_err(anyhow::Error::msg)?;
+        crate::sealed::check_selected_guest(bytes, identity).map_err(anyhow::Error::msg)?;
         ensure!(request_seed != 0, "catalog request seed cannot be zero");
         let base = Package::build(
             Package::manifest_for_task(id, "1.0.0", bytes, vec![]),

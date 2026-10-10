@@ -9,6 +9,35 @@ pub const PROPOSAL_SHA: &str = "9552e969b09c9f982914e71ea99a3c93fddc2bdd30986f59
 pub const PROCESS_SHA: &str = "48e2dd065c0f6ec4971650dd34ec25f852469479344727bef93f5f90334e1b36";
 pub const SESSION_SHA: &str = "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e";
 
+/// Separately derived public fixture; never an alias for historical SESSION_SHA.
+pub const PUBLIC_SESSION_R2_V1_SHA: &str = "cca04ebb2e787f69e84ec7260aca3e93ec895ec17b68afbb660e3c6896ae2f2b";
+pub const PUBLIC_SESSION_R2_V1_BYTES: usize = 425912;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum GuestIdentity {
+    HistoricalProposal,
+    HistoricalProcess,
+    HistoricalSession,
+    PublicSessionR2V1,
+}
+
+pub fn check_public_session_r2_v1(bytes: &[u8]) -> Result<(), String> {
+    if bytes.len() != PUBLIC_SESSION_R2_V1_BYTES || !bytes.starts_with(b"\0asm\x01\0\0\0")
+        || crate::witness::hex(&r2::hash(bytes)) != PUBLIC_SESSION_R2_V1_SHA {
+        return Err("immutable public session r2 v1 identity mismatch".into());
+    }
+    Ok(())
+}
+
+pub(crate) fn check_selected_guest(bytes: &[u8], identity: GuestIdentity) -> Result<(), String> {
+    match identity {
+        GuestIdentity::HistoricalProposal => check_guest(bytes, PROPOSAL_SHA),
+        GuestIdentity::HistoricalProcess => check_guest(bytes, PROCESS_SHA),
+        GuestIdentity::HistoricalSession => check_guest(bytes, SESSION_SHA),
+        GuestIdentity::PublicSessionR2V1 => check_public_session_r2_v1(bytes),
+    }
+}
+
 pub fn check_guest(bytes: &[u8], expected: &str) -> Result<(), String> {
     if ![PROPOSAL_SHA, PROCESS_SHA, SESSION_SHA].contains(&expected)
         || bytes.len() > 4 * 1024 * 1024 || !bytes.starts_with(b"\0asm\x01\0\0\0")
@@ -280,5 +309,53 @@ mod receipt_tests {
         swapped.extend_from_slice(&raw[8..40]);
         assert_eq!(swapped.len(), 48);
         assert!(parse_session_receipt(&swapped, 7).is_err());
+    }
+}
+
+
+#[cfg(test)]
+mod public_session_identity_tests {
+    use super::*;
+
+    const PUBLIC: &[u8] = include_bytes!(
+        "../../c28-basic-fixtures/public-session-r2-v1/morrow_codex_session_exec_guest_r2.wasm"
+    );
+
+    #[test]
+    fn public_session_r2_v1_exact_bytes_select_only_new_identity() {
+        assert_eq!(PUBLIC.len(), PUBLIC_SESSION_R2_V1_BYTES);
+        check_public_session_r2_v1(PUBLIC).unwrap();
+        check_selected_guest(PUBLIC, GuestIdentity::PublicSessionR2V1).unwrap();
+        for identity in [GuestIdentity::HistoricalProposal, GuestIdentity::HistoricalProcess,
+                         GuestIdentity::HistoricalSession] {
+            assert!(check_selected_guest(PUBLIC, identity).is_err());
+        }
+    }
+
+    #[test]
+    fn legacy_hash_entrypoint_does_not_admit_public_identity() {
+        assert_eq!(SESSION_SHA, "b1f0f44ad2bbe2abc89eee0ee971683419bf3407f370194f5557df57fa45799e");
+        assert!(check_guest(PUBLIC, SESSION_SHA).is_err());
+        assert!(check_guest(PUBLIC, PUBLIC_SESSION_R2_V1_SHA).is_err());
+        assert!(check_guest(PUBLIC, "unknown").is_err());
+    }
+
+    #[test]
+    fn public_identity_rejects_short_and_appended_bytes() {
+        assert!(check_public_session_r2_v1(&PUBLIC[..PUBLIC.len() - 1]).is_err());
+        let mut appended = PUBLIC.to_vec();
+        appended.push(0);
+        assert!(check_public_session_r2_v1(&appended).is_err());
+    }
+
+    #[test]
+    fn public_identity_rejects_same_length_payload_and_magic_changes() {
+        let mut payload = PUBLIC.to_vec();
+        let last = payload.len() - 1;
+        payload[last] ^= 1;
+        assert!(check_public_session_r2_v1(&payload).is_err());
+        let mut magic = PUBLIC.to_vec();
+        magic[0] ^= 1;
+        assert!(check_public_session_r2_v1(&magic).is_err());
     }
 }
