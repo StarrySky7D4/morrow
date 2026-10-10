@@ -1,15 +1,15 @@
 # 插件系统当前状态
 
 <!-- C28-CURRENT-BEGIN -->
-## 当前开发检查点（2026-10-10，C28 阶段 20）
+## 当前开发检查点（2026-10-10，C28 阶段 21）
 
-阶段 20 完成严格 Cargo checkout 来源校验器、当前 runner/setup 匹配构建入口和可公开 session Wasm 重建方案的本地源码准备。本次仅同步脱敏进度文档；产品源码与已推提交 `bca6de99` 相同，应用版本保持 `0.1.9-test.58+62`。
+严格 checkout 第二轮来源与固定元数据验证已实际通过，并完成独立有限读回。匹配 helper 第三轮离线构建的 Cargo 与外层均退出 0，原始输入、物理集合和完整新 Cargo home 后置守卫通过，保存当前库、runner 与 setup 三个新产物；独立读回已核对三个产物与 169 个源码文件当前字节，以及日志、严格守卫报告和真实外层终端记录的交叉绑定。未运行两个程序或真实沙箱。
 
-helper 源码及现有 vendor/Git 闭包已做静态字节核对；公开 guest 的 310 个既有源码文件、原锁及 23 个 registry 包离线来源已核对。严格验证器尚未执行，helper 尚无构建 READY，新的 Cargo metadata、编译、Wasm 行为与 Windows 沙箱运行均未进行。准备与静态闭包通过不能算作运行或完整 SDK 资格通过。
+公开 guest 第一次 metadata 因解包时路径规范化权限拒绝退出 101，第二次 metadata 子进程退出 0，外层因原 27 包锁与 wasm32 过滤后 25 节点图的契约不符退出 1；仅排除两个指定目标不适用包的第三次后继已准备，metadata、编译、Wasm 隐私与行为资格均未运行。两次外层退出 1 的已知失败保留；没有新 Wasm 身份接入公开 harness。
 
-阶段 18 仍为 Cargo 退出 0、外层退出 1；旧 runner/setup 与当前依赖源码不完全匹配，公开 Git 树仍缺 session 夹具，完整构建状态保持 `NOT_RUN_MISSING_SESSION_FIXTURE`。原生 Start 的 Unknown 不重放；owner finish、factory release、cleanup/join、真实断连、生产沙箱和后续 11 项原始库测试仍待验收。`SDK26_G04=OPEN`，`release_eligible=false`，SDK 未冻结。
+本次仅更新脱敏状态文档，已选产品源码与已推提交 `58391f3c` 一致，版本保持 `0.1.9-test.58+62`。阶段 18 仍为 Cargo 退出 0、外层退出 1；公开 Git 树仍缺 session 夹具，完整构建保持 `NOT_RUN_MISSING_SESSION_FIXTURE`。原生 Start 的 Unknown 不重放；owner finish、factory release、cleanup/join、真实断连、生产沙箱及后续 11 项原始库测试仍待验收。`SDK26_G04=OPEN`，`release_eligible=false`，SDK 未冻结。
 
-下一步依次完成校验器实际读回、匹配 helper 离线构建、公开 guest 新字节隐私与会话资格，以及授权范围内的 Windows 生命周期复验。会话层与安全执行层验收后暂停准备测试预览，不等待扩展执行层。见 [阶段 20 准备记录](../reports/reconstruction-2026-10-10/windows-agent-sdk-c28-stage20.md)与[阶段 18 编译记录](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-stage18.md)。下方内容保留历史时点。
+下一步完成公开 guest 新字节与会话资格，再开展授权范围内的 Windows 生命周期复验。会话层与安全执行层验收后暂停准备测试预览，不等待扩展执行层。见 [阶段 21 进展记录](../reports/reconstruction-2026-10-10/windows-agent-sdk-c28-stage21.md)、[阶段 20 准备记录](../reports/reconstruction-2026-10-10/windows-agent-sdk-c28-stage20.md)与[阶段 18 编译记录](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-stage18.md)。下方内容保留历史时点。
 <!-- C28-CURRENT-END -->
 
 <!-- C16-CURRENT-BEGIN -->
