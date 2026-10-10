@@ -1,17 +1,15 @@
 # 后续编码看板
 
 <!-- C28-CURRENT-BEGIN -->
-## 当前开发检查点（2026-10-09，C28 阶段 18）
+## 当前开发检查点（2026-10-10，C28 阶段 20）
 
-开发分支同步启动防重放修正、收据解析及保留回归、固定 Wasm 测试夹具路径，并保存自主捕获工具与禁用的后继控制器源码。应用版本保持 `0.1.9-test.58+62`。
+阶段 20 完成严格 Cargo checkout 来源校验器、当前 runner/setup 匹配构建入口和可公开 session Wasm 重建方案的本地源码准备。本次仅同步脱敏进度文档；产品源码与已推提交 `bca6de99` 相同，应用版本保持 `0.1.9-test.58+62`。
 
-为避免公开本机路径，本次不附带原 session Wasm；固定夹具目录说明了另行准备和复验的前提。公开 Git 树仍缺此输入，未完成独立完整构建；本地完整载体的编译结果不能替代公开树验收。
+helper 源码及现有 vendor/Git 闭包已做静态字节核对；公开 guest 的 310 个既有源码文件、原锁及 23 个 registry 包离线来源已核对。严格验证器尚未执行，helper 尚无构建 READY，新的 Cargo metadata、编译、Wasm 行为与 Windows 沙箱运行均未进行。准备与静态闭包通过不能算作运行或完整 SDK 资格通过。
 
-Windows 原根库与程序已离线编译，Cargo 退出 0、双 EOF 完整；外层因新 Git checkout 的后置字节守卫失败退出 1，完整构建资格尚未通过。保存产物的来源与哈希已独立读回，未执行程序、测试或 VM。阶段 16 的 20 项合成回归、阶段 17 的 7 项读取测试与两轮桥接保留各自范围，不作为新生产载体复验通过。
+阶段 18 仍为 Cargo 退出 0、外层退出 1；旧 runner/setup 与当前依赖源码不完全匹配，公开 Git 树仍缺 session 夹具，完整构建状态保持 `NOT_RUN_MISSING_SESSION_FIXTURE`。原生 Start 的 Unknown 不重放；owner finish、factory release、cleanup/join、真实断连、生产沙箱和后续 11 项原始库测试仍待验收。`SDK26_G04=OPEN`，`release_eligible=false`，SDK 未冻结。
 
-原生 Start 的 Unknown 不重放；owner finish、factory release、cleanup/join、真实断连及 Windows 沙箱资格仍待验收。旧 runner/setup 依赖源码与当前载体不完全一致，三程序 manifest 仍 PENDING。后续 11 项原始库测试未运行；额外 dev 依赖未补齐。`SDK26_G04=OPEN`，`release_eligible=false`，SDK 未冻结。
-
-下一步先核验 Cargo 对新 checkout 的转换及 helper 匹配来源，再准备有明确范围的 Windows 生命周期复验。会话层与安全执行层验收后暂停准备测试预览，不等待扩展执行层。见 [阶段 18 记录](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-stage18.md)与[捕获工具源码](../companions/morrow-codex/qualification/c28-autonomous-capture/README.md)。下方内容保留历史时点。
+下一步依次完成校验器实际读回、匹配 helper 离线构建、公开 guest 新字节隐私与会话资格，以及授权范围内的 Windows 生命周期复验。会话层与安全执行层验收后暂停准备测试预览，不等待扩展执行层。见 [阶段 20 准备记录](../reports/reconstruction-2026-10-10/windows-agent-sdk-c28-stage20.md)与[阶段 18 编译记录](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-stage18.md)。下方内容保留历史时点。
 <!-- C28-CURRENT-END -->
 
 <!-- C16-CURRENT-BEGIN -->
