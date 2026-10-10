@@ -9,7 +9,7 @@ use morrow_codex_session_exec_windows_v1::ReviewedBorrowedInvocation;
 use morrow_plugin_runtime::TaskRun;
 use std::sync::{
     Arc,
-    atomic::{AtomicBool, AtomicU64, Ordering},
+    atomic::{AtomicBool, Ordering},
     mpsc,
 };
 use zeroize::Zeroizing;
@@ -29,41 +29,11 @@ pub enum AgentError {
 }
 
 
-// One bounded cell per original command, never a log sink or authority input.
-// The packed load is coherent; absent observations do not prove zero effects.
-#[derive(Default)]
-pub(super) struct CommandDiagnostic(AtomicU64);
-pub(super) mod diagnostic_stage {
-    pub const QUEUED: u8 = 1;
-    pub const RECEIVED: u8 = 2;
-    pub const COMMAND_STARTED: u8 = 3;
-    pub const CHECKPOINT: u8 = 4;
-    pub const OWNER_MISMATCH: u8 = 5;
-    pub const PREPARE_IO: u8 = 6;
-    pub const PORT_START: u8 = 7;
-    pub const PORT_REJECTED: u8 = 8;
-    pub const PROVIDER_OBSERVED: u8 = 9;
-    pub const REGISTER_PROCESS: u8 = 10;
-    pub const REGISTER_REJECTED: u8 = 11;
-    pub const CONTROL_VETO: u8 = 12;
-    pub const RECEIVER_ERROR: u8 = 13;
-    pub const RECEIVER_DISCONNECTED: u8 = 14;
-    pub const REPLY_SEND_FAILED: u8 = 15;
-    pub const RECEIVED_OK: u8 = 16;
-    pub const CANCELLED: u8 = 17;
-    pub const PORT_ABSENT: u8 = 18;
-}
-fn diagnostic_name(stage: u8) -> &'static str {
-    use diagnostic_stage::*;
-    match stage {
-        QUEUED => "QUEUED", RECEIVED => "RECEIVED", COMMAND_STARTED => "COMMAND_STARTED",
-        CHECKPOINT => "CHECKPOINT", OWNER_MISMATCH => "OWNER_MISMATCH", PREPARE_IO => "PREPARE_IO",
-        PORT_START => "PORT_START", PORT_REJECTED => "PORT_REJECTED", PROVIDER_OBSERVED => "PROVIDER_OBSERVED",
-        REGISTER_PROCESS => "REGISTER_PROCESS", REGISTER_REJECTED => "REGISTER_REJECTED", CONTROL_VETO => "CONTROL_VETO",
-        RECEIVER_ERROR => "RECEIVER_ERROR", RECEIVER_DISCONNECTED => "RECEIVER_DISCONNECTED", REPLY_SEND_FAILED => "REPLY_SEND_FAILED",
-        RECEIVED_OK => "RECEIVED_OK", CANCELLED => "CANCELLED", PORT_ABSENT => "PORT_ABSENT", _ => "NOT_OBSERVED",
-    }
-}
+#[path = "commands_diagnostic.rs"]
+mod diagnostic;
+pub use diagnostic::{AgentCommandErrorClass, AgentCommandSnapshot, AgentCommandStage};
+pub(super) use diagnostic::{CommandDiagnostic, diagnostic_stage};
+
 pub(super) fn diagnostic_error(error: AgentError) -> u8 {
     match error {
         AgentError::Invalid => 1, AgentError::Limit => 2, AgentError::Busy => 3,
@@ -80,39 +50,21 @@ pub(super) fn diagnostic_session_error(error: morrow_agent_session_exec_v1_r2::E
         Error::CommitUnknown => 17, Error::Storage => 18,
     }
 }
-fn diagnostic_error_name(class: u8) -> &'static str {
-    match class {
-        1=>"Invalid", 2=>"Limit", 3=>"Busy", 4=>"Cancelled", 5=>"Unknown", 6=>"Unavailable",
-        7=>"Maintenance", 8=>"Disconnect", 9=>"Unsupported", 10=>"R2Invalid", 11=>"R2Contract",
-        12=>"R2Limit", 13=>"R2Correlation", 14=>"R2Denied", 15=>"R2Conflict", 16=>"R2NotFound",
-        17=>"R2CommitUnknown", 18=>"R2Storage", 19=>"RegistrationError", _=>"NOT_OBSERVED",
-    }
-}
-impl CommandDiagnostic {
-    pub(super) fn worker(&self, stage: u8, class: u8) {
-        let _ = self.0.fetch_update(Ordering::AcqRel, Ordering::Acquire, |old| {
-            if old & 0xff00 != 0 { return None; }
-            Some((old & !0xffff) | u64::from(stage) | (u64::from(class) << 8))
-        });
-    }
-    pub(super) fn delivery(&self, stage: u8, class: u8) {
-        let _ = self.0.fetch_update(Ordering::AcqRel, Ordering::Acquire, |old| {
-            if old & 0xff00_0000 != 0 { return None; }
-            Some((old & !0xffff_0000) | (u64::from(stage) << 16) | (u64::from(class) << 24))
-        });
-    }
-    pub(super) fn flag(&self, flag: u64) { self.0.fetch_or(flag, Ordering::AcqRel); }
-}
-impl std::fmt::Debug for CommandDiagnostic {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let value = self.0.load(Ordering::Acquire);
-        f.debug_struct("CommandDiagnosticV1")
-            .field("worker_stage", &diagnostic_name(value as u8))
-            .field("worker_error_class", &diagnostic_error_name((value >> 8) as u8))
-            .field("delivery_stage", &diagnostic_name((value >> 16) as u8))
-            .field("delivery_error_class", &diagnostic_error_name((value >> 24) as u8))
-            .field("command_started_observed", &(value & (1 << 32) != 0))
-            .field("provider_observed", &(value & (1 << 33) != 0)).finish()
+
+// Pure diagnostic bookkeeping after the original receive/authority decision.
+// Borrow the original result; never consume a reply or sample Control/started.
+fn record_command_delivery(
+    diagnostic: &CommandDiagnostic,
+    result: &Result<AgentReply, AgentError>,
+    disconnected: bool,
+) {
+    match result {
+        Ok(_) => diagnostic.delivery(diagnostic_stage::RECEIVED_OK, 0),
+        Err(error) => diagnostic.delivery(
+            if disconnected { diagnostic_stage::RECEIVER_DISCONNECTED }
+            else { diagnostic_stage::RECEIVER_ERROR },
+            diagnostic_error(*error),
+        ),
     }
 }
 
@@ -243,7 +195,9 @@ pub struct AgentCommandHandle {
 impl AgentCommandHandle {
     /// One genuine receive. Disconnected post-start delivery is Unknown; no retry.
     pub(super) fn wait(mut self) -> Result<AgentReply, AgentError> {
-        let result = self.receiver.recv().unwrap_or_else(|_| Err(if self.has_started() {
+        let received = self.receiver.recv();
+        let disconnected = received.is_err();
+        let result = received.unwrap_or_else(|_| Err(if self.has_started() {
             AgentError::Unknown
         } else { AgentError::Unavailable }));
         self.consumed = true;
@@ -251,6 +205,7 @@ impl AgentCommandHandle {
             self.diagnostic.delivery(diagnostic_stage::CONTROL_VETO, diagnostic_error(AgentError::Unknown));
             return Err(AgentError::Unknown);
         }
+        record_command_delivery(&self.diagnostic, &result, disconnected);
         result
     }
     pub(super) fn pair(value: AgentCommand, control: Arc<Control>) -> (Command, Self) {
@@ -277,6 +232,12 @@ impl AgentCommandHandle {
             },
         )
     }
+    /// Read one coherent finite observation without touching Control, the
+    /// clock, Core, receiver, cancellation, provider or any authority.
+    /// NotObserved/false is not proof that an effect did not occur.
+    pub fn diagnostic_snapshot(&self) -> AgentCommandSnapshot {
+        self.diagnostic.snapshot()
+    }
     pub fn has_started(&self) -> bool {
         self.started.load(Ordering::Acquire)
     }
@@ -297,10 +258,7 @@ impl AgentCommandHandle {
                     self.diagnostic.delivery(diagnostic_stage::CONTROL_VETO, diagnostic_error(AgentError::Unknown));
                     return Err(AgentError::Unknown);
                 }
-                match &result {
-                    Ok(_) => self.diagnostic.delivery(diagnostic_stage::RECEIVED_OK, 0),
-                    Err(error) => self.diagnostic.delivery(diagnostic_stage::RECEIVER_ERROR, diagnostic_error(*error)),
-                }
+                record_command_delivery(&self.diagnostic, &result, false);
                 result.map(Some)
             }
             Err(mpsc::TryRecvError::Empty) => Ok(None),
@@ -347,7 +305,7 @@ mod diagnostic_tests {
         trace.worker(diagnostic_stage::PORT_REJECTED, 17);
         trace.delivery(diagnostic_stage::CONTROL_VETO, 5);
         trace.flag((1 << 32) | (1 << 33));
-        let value = trace.0.load(Ordering::Acquire);
+        let value = trace.packed_for_test();
         assert_eq!(value & 0xffff, 8 | (17 << 8));
         assert_eq!((value >> 16) & 0xffff, 12 | (5 << 8));
         assert!(format!("{trace:?}").contains("provider_observed: true"));
@@ -358,14 +316,42 @@ mod diagnostic_tests {
         impl std::fmt::Write for Refuse { fn write_str(&mut self, _: &str) -> std::fmt::Result { Err(std::fmt::Error) } }
         let trace = CommandDiagnostic::default();
         trace.worker(diagnostic_stage::PORT_START, 0);
-        let before = trace.0.load(Ordering::Acquire);
+        let before = trace.packed_for_test();
         assert!(std::fmt::write(&mut Refuse, format_args!("{trace:?}")).is_err());
-        assert_eq!(trace.0.load(Ordering::Acquire), before);
+        assert_eq!(trace.packed_for_test(), before);
     }
     #[test]
     fn command_debug_has_fixed_fields_and_no_payload_input() {
         let trace = CommandDiagnostic::default();
         assert_eq!(format!("{trace:?}"), "CommandDiagnosticV1 { worker_stage: \"NOT_OBSERVED\", worker_error_class: \"NOT_OBSERVED\", delivery_stage: \"NOT_OBSERVED\", delivery_error_class: \"NOT_OBSERVED\", command_started_observed: false, provider_observed: false }");
         assert_eq!(diagnostic_error(AgentError::Session(morrow_agent_session_exec_v1_r2::Error::Storage)), 18);
+    }
+
+    #[test]
+    fn delivery_recording_borrows_reply_without_consuming_sensitive_bytes() {
+        let trace = CommandDiagnostic::default();
+        let result = Ok(AgentReply::NativeSession(Zeroizing::new(b"private-test-payload".to_vec())));
+        record_command_delivery(&trace, &result, false);
+        let value = trace.snapshot();
+        assert_eq!(value.delivery_stage, AgentCommandStage::ReceivedOk);
+        assert_eq!(value.delivery_error_class, AgentCommandErrorClass::NotObserved);
+        match &result {
+            Ok(AgentReply::NativeSession(bytes)) => assert_eq!(&bytes[..], b"private-test-payload"),
+            _ => panic!("diagnostic recording changed the original reply"),
+        }
+        assert!(!format!("{value:?}").contains("private-test-payload"));
+    }
+    #[test]
+    fn delivery_recording_preserves_error_and_distinguishes_disconnect() {
+        let result: Result<AgentReply, AgentError> = Err(AgentError::Unknown);
+        let reply_error = CommandDiagnostic::default();
+        let disconnected = CommandDiagnostic::default();
+        record_command_delivery(&reply_error, &result, false);
+        record_command_delivery(&disconnected, &result, true);
+        assert!(matches!(&result, Err(AgentError::Unknown)));
+        assert_eq!(reply_error.snapshot().delivery_stage, AgentCommandStage::ReceiverError);
+        assert_eq!(disconnected.snapshot().delivery_stage, AgentCommandStage::ReceiverDisconnected);
+        assert_eq!(reply_error.snapshot().delivery_error_class, AgentCommandErrorClass::Unknown);
+        assert_eq!(disconnected.snapshot().delivery_error_class, AgentCommandErrorClass::Unknown);
     }
 }

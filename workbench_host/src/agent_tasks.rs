@@ -10,7 +10,7 @@ mod native_session;
 pub use native_session::{NativeSessionEndpoint, NativeSessionPort};
 use crate::io_tasks::{AccessError, Snapshot, TaskKey};
 use crate::{Result, Workbench, WorkbenchState, now};
-pub use commands::{AgentCommand, AgentCommandHandle, AgentError, AgentReply};
+pub use commands::{AgentCommand, AgentCommandErrorClass, AgentCommandHandle, AgentCommandSnapshot, AgentCommandStage, AgentError, AgentReply};
 use morrow_agent_catalog_admin_v1::Revisions;
 pub use preparation::{AgentPreparation, PreparedAgentContext, PreparedNativeSessionPackage};
 pub use sealed_proposal::SealedProposalSpec;

@@ -1,15 +1,23 @@
 # Morrow 当前开发状态
 
 <!-- C28-CURRENT-BEGIN -->
-## 当前开发检查点（2026-10-10，C28 阶段 21 会话验证）
+## 当前开发检查点（2026-10-10，C28 阶段 25）
 
-新版公开 Wasm 的宿主 metadata、测试编译、单次七步合成会话测试及外层验证均实际退出 0；1 项集成测试通过，原始输入、物理集合和完整新 Cargo home 守卫通过，结果完成独立读回。七步覆盖父子会话、事件、检查点和快照，另有两次任务 ABI 调用；使用普通合成 SQLite，不注册进程 provider，也不执行 Claim、原生 Start 或虚拟机操作。
+本轮四处宿主改动提供有限、只读的命令诊断快照和可选 Agent SDK discovery metadata。诊断快照包含 6 个固定字段、18 种已观察阶段及 19 种错误类别，另有 `NotObserved`；它不携带原始系统错误或命令载荷，也不能恢复句柄、授权或重放权限。Discovery 只描述原合同身份、宿主前提与上限，不打开 owner、不授予权限、不启用 Workbench route。
 
-新夹具以独立版本 `public-session-r2-v1` 接入公开 harness，SHA256 为 `cca04ebb2e787f69e84ec7260aca3e93ec895ec17b68afbb660e3c6896ae2f2b`，425,912 字节。历史 `SESSION_SHA`、旧资格检查器和收据解析保持不变；新增四项身份隔离测试尚未执行。1,654 文件的选定源码载体已完成物化与独立核对，原 20 份锁文件、60 份依赖清单未改变；这不是整个 Git 树的构建证明。
+四处改动的普通 SDK library 整合构建已实际完成：Cargo 与外层守卫均退出 0，输入前后校验通过；这不是单元测试或 SDK 冻结结果。独立 Windows 两成员验证副本生成 635-package 派生锁，并完成一次 `--locked --offline` metadata 稳定性检查。当前 metadata 的 544 packages / 544 resolve nodes、registry/vendor 来源、路径源码身份、Git 来源及选定 11 项测试的依赖投影已通过独立图审核。派生锁仅用于本地验证，原生产锁、原 900-package 验证锁、冻结插件及原测试方法源码保持原字节。
 
-本次发布限定为七份夹具及资格源码文件、六处当前状态标记和本记录，应用版本保持 `0.1.9-test.58+62`。新生产 harness 根 lib/bin 编译与完整公开 Git 树构建均为 `NOT_RUN_PENDING_ROOT_BUILD`，不再因缺少 session 夹具而阻塞。阶段 18 的历史 Cargo 退出 0、外层退出 1 结果不变。原生 Start 的 Unknown 不重放；owner finish、factory release、cleanup/join、真实断连、Windows 生产沙箱及后续 11 项原始库测试仍待验收。`SDK26_G04=OPEN`，`release_eligible=false`，SDK 未冻结。
+原始 11 项库测试已实际 `PASS`：8 项 start diagnostic 加 3 项 runner client，逐项 exact 运行，11 项全部通过；284 项清单中其余 273 项未执行。对应两成员 library `--no-run` 编译的 Cargo 与外层均退出 0；测试清单及 11 次独立运行的子进程与测试外层均退出 0，源码和 HOME 守卫通过。PTY 测试未执行。Workbench 23 项测试已实际 `PASS`：exact 6+5+12，每项一次、1 passed / 0 failed / 0 ignored；完整 library 清单 285 项，其余 262 项仅列出、未运行。library `--no-run` 编译的 Cargo 与外层均退出 0；清单及 23 次运行的捕获和测试外层均退出 0，源码、物理与严格 HOME 守卫通过，测试 HOME 前后等于成功编译的 HOMEafter。此结果不替代完整生产资格或 SDK 冻结。
 
-下一步执行已审核的新生产 harness 编译，再运行四项身份隔离测试；随后在明确授权范围内推进 Windows 生命周期复验。会话层与安全执行层验收后暂停准备测试预览，不等待扩展执行层。见[七步会话与公开夹具记录](../reports/reconstruction-2026-10-10/windows-agent-sdk-c28-stage21-session.md)、[阶段 21 构建历史](../reports/reconstruction-2026-10-10/windows-agent-sdk-c28-stage21.md)与[阶段 18 编译历史](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-stage18.md)。下方内容保留历史时点。
+Workbench 的三次入口失败继续保留：首次 preflight 将原 workspace 错误要求为空，实际原声明为 resolver 2，拒绝发生在 Cargo 启动前；后一次编译因验证载体未包含原测试公共 helper 而退出 101；再一次测试入口在清单或方法启动前，因将 64 MiB 通用读取上限误用于 71,202,816-byte 测试程序而拒绝。它们分别是入口检查、验证副本闭包和守卫读取上限失败，不能写成选定测试方法失败。
+
+后继独立测试源码副本保留原 1655 个文件字节，仅补入固定开发基线原有的 1606-byte 测试公共 helper，形成 1656 个文件；产品源码、原锁和 23 个方法保持原字节。成功编译产物随后由 tests-only 后继复用，未重编译；后继只让经过编译记录绑定的原产物和保存副本两个精确路径按原有 128 MiB PE 上限读取，其他文件仍使用原上限。旧失败与其守卫接受的历史现场均保留。
+
+编译曾在原 PTY 源码出现三处 `c_void` 类型不匹配：单成员 test-build 的实际 winapi 缺少 `std`，而原 PTY Windows dev 声明已要求该 feature。随后仅将两个原 workspace 成员一同选为 `--lib --no-run` 编译根，沿原 dev 声明得到所需 feature 并完成编译；原源码、依赖声明和锁均未改。成功编译继承失败尝试经过守卫接受的 HOMEafter，保留旧失败，没有删除或重置失败现场。此前离线 checkout 失败、图读取器协议不匹配和历史失败记录继续保留；后续成功不覆盖旧结果，未定位的原因不作因果断言。
+
+应用版本保持 `0.1.9-test.58+62`。`SDK26_G04=OPEN`，`release_eligible=false`，native 状态保持 `SEALED_UNKNOWN_OR_REJECTED_NO_REPLAY`；不重放 Unknown，不启用生产原生执行，不发布 Release。Windows 生产沙箱、owner finish、factory release、cleanup/join、真实断连与其他平台仍按各自门槛验收。
+
+本节记录已闭合的本地验证结果；提交与推送状态以实际开发分支记录为准。见[阶段 25 验证与公开范围](../reports/reconstruction-2026-10-10/windows-agent-sdk-c28-stage25.md)；[阶段 21 合成会话](../reports/reconstruction-2026-10-10/windows-agent-sdk-c28-stage21-session.md)及[阶段 18 编译历史](../reports/reconstruction-2026-10-09/windows-agent-sdk-c28-stage18.md)保持原历史结论。下方内容保留其历史时点。
 <!-- C28-CURRENT-END -->
 
 <!-- C16-CURRENT-BEGIN -->

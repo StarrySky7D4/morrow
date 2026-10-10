@@ -364,6 +364,68 @@ fn directory_request_discovery() -> Value {
         "package_preflight_required": true, "profiles": [profile]})
 }
 
+// Optional agent metadata describes existing independent contracts and ceilings.
+// It never constructs a host, opens an owner or enables a dispatch route.
+fn agent_discovery() -> Value {
+    json!({
+        "schema_version": 1,
+        "status": "compiled_metadata_only",
+        "authority": "none",
+        "package_preflight_required": true,
+        "host_platform_requirement": "windows",
+        "host_support_compiled": cfg!(target_os = "windows"),
+        "policy": "Contract identity and ceilings only; base package preflight does not validate the agent wrapper. Original owner, exact wrapper review and current separate admissions remain required. Discovery grants nothing and establishes no frozen, platform or product qualification.",
+        "profiles": agent_profiles()
+    })
+}
+
+#[cfg(target_os = "windows")]
+fn agent_profiles() -> Vec<Value> {
+    use morrow_agent_process_control_v1 as process;
+    use morrow_agent_session_exec_v1_r2 as session;
+    use morrow_agent_session_process_v1_host as host;
+    let mut session_profile = json!({
+        "id": session::PROFILE,
+        "status": "experimental",
+        "contracts": {"session_exec": {
+            "version": session::VERSION, "revision": session::REVISION,
+            "sha256": digest(session::schema_digest())
+        }},
+        "import": {"module": "morrow_agent_session_exec_v1", "name": "call"},
+        "hard_byte_limits": {"session_frame": session::MAX_FRAME_BYTES, "session_body": session::MAX_BODY_BYTES},
+        "workbench_routes": [],
+        "production_public_binding_available": false,
+        "automatic_run_available": false,
+        "frozen_original_profile": false,
+        "qualification": "not_established_by_discovery"
+    });
+    // The combined host forwards these two contracts; it has no substitute schema.
+    let mut process_profile = session_profile.clone();
+    process_profile["id"] = json!("agent-session-process-v1");
+    process_profile["host_crate"] = json!("morrow-agent-session-process-v1-host");
+    process_profile["contracts"]["process_control"] = json!({
+        "version": process::VERSION, "sha256": digest(process::schema_digest())
+    });
+    process_profile["import"] = json!({"module": "morrow_agent_session_process_v1", "name": "call"});
+    process_profile["hard_byte_limits"]["process_frame"] = json!(process::MAX_FRAME_BYTES);
+    process_profile["hard_byte_limits"]["process_body"] = json!(process::MAX_BODY_BYTES);
+    for profile in [&mut session_profile, &mut process_profile] {
+        profile["hard_byte_limits"]["wrapper_archive"] = json!(host::MAX_ARCHIVE_BYTES);
+        profile["host_prerequisites"] = json!([
+            "Original protected owner, registry-selected base and live Manager/Core connection",
+            "Exact complete immutable wrapper review, finite session scope and execution domain",
+            "Current independent session admission; process control additionally requires the original execution admission and provider binding",
+            "Cancellation, revocation and Unknown receipts remain authoritative; discovery creates no approval or replay permission"
+        ]);
+    }
+    vec![session_profile, process_profile]
+}
+
+#[cfg(not(target_os = "windows"))]
+fn agent_profiles() -> Vec<Value> {
+    Vec::new()
+}
+
 fn extension_discovery() -> Value {
     json!({
         "schema_version": 1,
@@ -432,7 +494,7 @@ pub fn descriptor() -> Value {
             "policy": "Finite package ceilings intersect the current host grant and original instance control; discovery grants nothing.",
             "task_lifecycle": "Multiple bounded frames within one fixed task; ACK, send acceptance, terminal cause and actual producer join are distinct. Unknown is not replayed."
         }],
-        "experimental_extensions": {"status": "recognized_experimental_not_fully_discovered", "feature_names": [plugin_package::io::FEATURE, plugin_package::io::SERVICE_RUN_FEATURE, plugin_package::io::SERVICE_RUN_BUDGET_FEATURE, morrow_core::service_resources::FEATURE, plugin_package::MUTATION_FEATURE, plugin_package::MUTATION_BUDGET_FEATURE], "discovery": extension_discovery(), "directory_request_discovery": directory_request_discovery()},
+        "experimental_extensions": {"status": "recognized_experimental_not_fully_discovered", "feature_names": [plugin_package::io::FEATURE, plugin_package::io::SERVICE_RUN_FEATURE, plugin_package::io::SERVICE_RUN_BUDGET_FEATURE, morrow_core::service_resources::FEATURE, plugin_package::MUTATION_FEATURE, plugin_package::MUTATION_BUDGET_FEATURE], "discovery": extension_discovery(), "directory_request_discovery": directory_request_discovery(), "agent_discovery": agent_discovery()},
         "unsupported_requirements": ["workbench_public_channel_binding", "network_sse_websocket_backend", "cloud_account_change_subscription", "arbitrary_os_access", "untrusted_native_library", "multi_version_schema_fallback"],
         "legacy_abi1": {"runtime_route_exists": true, "frozen_original_profile": false},
         "extension_policy": "New mandatory semantics require a new required feature, independent versioned contract and explicit decoder/Runner/host route. Unknown features or mismatched versions/digests are rejected; old contracts are not rewritten.",
@@ -445,6 +507,58 @@ pub fn descriptor() -> Value {
 mod tests {
     use super::*;
     use sha2::Digest;
+
+    #[test]
+    fn agent_metadata_preserves_legacy_profiles_and_grants_nothing() {
+        let value = descriptor();
+        assert_eq!(value["schema_version"], 1);
+        assert_eq!(value["profiles"].as_array().unwrap().len(), 2);
+        assert_eq!(value["experimental_extensions"]["discovery"], extension_discovery());
+        assert_eq!(value["experimental_extensions"]["directory_request_discovery"], directory_request_discovery());
+        let detail = &value["experimental_extensions"]["agent_discovery"];
+        assert_eq!(detail["schema_version"], 1);
+        assert_eq!(detail["authority"], "none");
+        assert_eq!(detail["package_preflight_required"], true);
+        assert_eq!(detail["host_support_compiled"], cfg!(target_os = "windows"));
+        assert_eq!(detail["profiles"].as_array().unwrap().len(), if cfg!(target_os = "windows") { 2 } else { 0 });
+        for profile in detail["profiles"].as_array().unwrap() {
+            assert_eq!(profile["status"], "experimental");
+            assert_eq!(profile["workbench_routes"], json!([]));
+            for key in ["production_public_binding_available", "automatic_run_available", "frozen_original_profile"] {
+                assert_eq!(profile[key], false);
+            }
+            assert_eq!(profile["qualification"], "not_established_by_discovery");
+        }
+        assert!(serde_json::to_vec(&value).unwrap().len() < 65536);
+    }
+
+    #[cfg(target_os = "windows")]
+    #[test]
+    fn agent_metadata_binds_raw_r2_and_process_schema_bytes_and_exported_limits() {
+        use morrow_agent_process_control_v1 as process;
+        use morrow_agent_session_exec_v1_r2 as session;
+        use morrow_agent_session_process_v1_host as host;
+        let profiles = agent_profiles();
+        assert_eq!(profiles[0]["id"], session::PROFILE);
+        assert_eq!(profiles[1]["id"], "agent-session-process-v1");
+        assert_eq!(profiles[0]["import"]["module"], "morrow_agent_session_exec_v1");
+        assert_eq!(profiles[1]["import"]["module"], "morrow_agent_session_process_v1");
+        for profile in &profiles {
+            let contract = &profile["contracts"]["session_exec"];
+            assert_eq!(contract["version"], session::VERSION);
+            assert_eq!(contract["revision"], 2);
+            assert_eq!(contract["sha256"], format!("{:x}", sha2::Sha256::digest(session::SCHEMA)));
+            assert_eq!(profile["hard_byte_limits"]["session_frame"], session::MAX_FRAME_BYTES);
+            assert_eq!(profile["hard_byte_limits"]["session_body"], session::MAX_BODY_BYTES);
+            assert_eq!(profile["hard_byte_limits"]["wrapper_archive"], host::MAX_ARCHIVE_BYTES);
+        }
+        let contract = &profiles[1]["contracts"]["process_control"];
+        assert_eq!(contract["version"], process::VERSION);
+        assert_eq!(contract["sha256"], format!("{:x}", sha2::Sha256::digest(process::SCHEMA)));
+        assert_eq!(profiles[1]["hard_byte_limits"]["process_frame"], process::MAX_FRAME_BYTES);
+        assert_eq!(profiles[1]["hard_byte_limits"]["process_body"], process::MAX_BODY_BYTES);
+        assert!(profiles[0]["contracts"].get("process_control").is_none());
+    }
 
     #[test]
     fn changes_payload_uses_exact_compiled_wire_identity_and_bounds() {
