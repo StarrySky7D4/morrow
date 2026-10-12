@@ -1,0 +1,50 @@
+{
+  "Cargo": "NOT_RUN",
+  "SDK26_G04": "OPEN",
+  "VM": "NOT_RUN",
+  "baseline_prepare_pin": {
+    "bytes": 22395,
+    "sha256": "ba3dd851cae7fe95a63a2eea047abc6c212ee961ea7ee5fb9ee4ecd622a1a3be"
+  },
+  "candidate_executed": false,
+  "data_preparation": "NOT_RUN",
+  "helper_count": 17,
+  "helper_names": [
+    "need",
+    "pin",
+    "unique",
+    "decode",
+    "plain",
+    "read",
+    "relative",
+    "table",
+    "save",
+    "save_json",
+    "mkdir_parents",
+    "observe",
+    "finite",
+    "routes",
+    "identity",
+    "shared_identity",
+    "read_cargo_pe"
+  ],
+  "helper_raw_bytes_unchanged": true,
+  "local_successor_prepare_pin": {
+    "bytes": 22525,
+    "sha256": "670853080471deefe4565f42d1a2fe178aaef2f9852f98a3890a52c07ae6f2c3"
+  },
+  "main_before_assignment_count": 1,
+  "main_before_assignment_type": "DictComp",
+  "namespace": "OPEN",
+  "raw_inverse_exact": true,
+  "release_eligible": false,
+  "schema": "PUBLIC_DATA_PREPARATION_CONTROL_FIX_SOURCE_CHECKS_V1",
+  "semantic_fix": "overlay-local before becomes preimage; control dictionary remains before",
+  "semantic_projection_equals_successor_after_mechanical_rebinding_removed": true,
+  "semantic_projection_pin": {
+    "bytes": 22405,
+    "sha256": "5975f12813c99dcd0fdf39f22ae4ec309a9753e2bbe42ca6df4ee0b4063ad4fd"
+  },
+  "status": "SOURCE_NOT_RUN",
+  "tests": "NOT_RUN"
+}

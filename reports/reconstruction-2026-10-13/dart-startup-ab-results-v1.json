@@ -1,0 +1,88 @@
+{
+  "schema": "PUBLIC_DART_STARTUP_AB_MEMORY_RESULTS_V1",
+  "date": "2026-10-13",
+  "version": 1,
+  "status": "PASS_BOUNDED_NEGATIVE_CONTROL_AND_SIXTEEN_MEMORY_REGRESSIONS",
+  "candidate_relative_path": "source-candidates/startup-quarantine-dart-r002",
+  "negative_control": {
+    "source": "Earlier channel implementation with the new unrequested-normal-release regression only",
+    "selected_visible_tests": 1,
+    "visible_result": "EXPECTED_FAILURE_REPRODUCED",
+    "hidden_load_success_count": 1,
+    "original_launcher_exit": 1,
+    "original_capture_status": "CLOSED_CAPTURE_FAILED",
+    "machine_done_success": false,
+    "failure_summary": "Expected WorkbenchSupervisionUnconfirmed; the earlier channel instead completed its exit Future with zero after unrequested Released.",
+    "original_failure_preserved": true,
+    "machine_stdout_pin": {
+      "bytes": 1937,
+      "sha256": "624e0c37968247419baa9b329b0669c419e167b052c9994c27ea488f7607fb4c"
+    }
+  },
+  "fixed_control": {
+    "source": "Normal-close request gates fixed; complete sixteen-case memory test suite",
+    "selected_visible_tests": 16,
+    "visible_successful_unskipped_tests": 16,
+    "hidden_load_success_count": 1,
+    "original_launcher_exit": 0,
+    "original_capture_status": "CLOSED_CAPTURE_ONLY",
+    "machine_done_success": true,
+    "machine_stdout_pin": {
+      "bytes": 7756,
+      "sha256": "41c731d407fe2df206c4309cb2af6e24ff4abf8acdbdd38a35c8e39262f72abb"
+    }
+  },
+  "observed_capture_closure": {
+    "both_original_launcher_captures_closed": true,
+    "both_original_runner_futures_closed": true,
+    "both_launcher_streams_EOF": true,
+    "capture_and_postguard_errors": [],
+    "compiler_cleanup": {
+      "each_actual_exit": -1,
+      "recorded_reason": "original-tool-cleanup",
+      "recorded_signal": "SIGTERM",
+      "delivered": true,
+      "both_streams_EOF": true
+    },
+    "tester_cleanup": {
+      "each_actual_exit": -1,
+      "recorded_reason": "original-tool-cleanup",
+      "recorded_signal": "SIGKILL",
+      "delivered": true,
+      "both_streams_EOF": true
+    },
+    "nonzero_child_exits_rewritten_to_zero": false,
+    "whole_descendant_quiescence": "NOT_PROVEN"
+  },
+  "evidence_integrity": {
+    "bounded_review_report_pin": {
+      "bytes": 7145,
+      "sha256": "0145845d9944d20e7119221c6b2cad94719896f5c1d4dc8c720552fcae1c90d4"
+    },
+    "bounded_input_table_pin": {
+      "bytes": 6389,
+      "sha256": "f4954c5d90fd0744886f46304368aa18650d0fe017539c34b2b2ded59e47e5c4"
+    },
+    "fixed_inputs": 36,
+    "full_SHA_passes": 2,
+    "input_drift": 0,
+    "review_findings": [],
+    "raw_logs": "LOCAL_ONLY_NOT_INCLUDED",
+    "internal_machine_and_process_identifiers": "NOT_INCLUDED"
+  },
+  "acceptance_boundary": {
+    "tested": "Dart channel/supervision logic using synthetic in-memory Process streams",
+    "test_imports_workbench_native_dart": false,
+    "workbench_native_dart_current_static_analysis": "NOT_RUN",
+    "full_current_Rust_and_Dart_joint_validation": "NOT_RUN",
+    "Windows_product_native_DPAPI_VM_acceptance": "NOT_RUN",
+    "production_activation": false,
+    "sealed_Unknown": "PRESERVED_NO_REPLAY",
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "namespace": "OPEN",
+    "ancestor_continuous_reparse": "OPEN",
+    "release_eligible": false
+  },
+  "history": "Earlier source-only snapshots remain historical. This report adds bounded actual memory-test evidence and does not upgrade previous product/native failures or sealed Unknown outcomes."
+}

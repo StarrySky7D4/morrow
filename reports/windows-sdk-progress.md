@@ -1,5 +1,19 @@
 # Windows SDK 限定进度（2026-10-13）
 
+## 启动隔离 A/B 实测与准备工具修正（2026-10-13）
+
+旧 channel 的新增反例已实际复现：未请求正常关闭时仍接受 Released 并返回 0。负对照保留原退出 1 与 CLOSED_CAPTURE_FAILED；修正版完整 16 项 Dart 内存回归全部成功、未跳过，原 runner 退出 0。两路捕获、runner Future 与双流 EOF 已闭合；编译器／测试器的原工具清理退出 -1 保留，不据此宣称全部后代进程静止。
+
+本轮测试只导入 channel／supervision，不导入 workbench_native.dart；该文件当前静态检查、完整 Rust 候选编译与联合运行、真实 Windows 资源回收及 VM 验收仍为 NOT_RUN。此前基线通过结果不覆盖当前候选，Stage341 仍 CLOSED_NOT_ACCEPTED，旧 sealed Unknown 保留且不重放。
+
+另修正数据准备脚本中 overlay 局部变量覆盖控制快照的问题，17 个 helper 原字节及逆差量已核对。修正版入口仍 SOURCE_NOT_RUN；公开归档仅含语义补丁和核对清单。编译捕获与 HOME 守卫已形成禁用草稿，尚未绑定真实准备记录或运行编译。
+
+SDK26／G04、namespace 与祖先目录持续 reparse 防护仍 OPEN，release_eligible=false。下一步执行修正版数据准备，再验证完整 Rust 编译、原生接线和 Windows 原资源闭合。本次同步开发分支的实际测试进度与准备工具修正，生产入口、应用版本和依赖锁不变。
+
+见[本次实际验证边界](reconstruction-2026-10-13/startup-integration-progress-v2.md)。
+
+以下是此前源码准备与验证快照；NOT_RUN 描述各自时点，不覆盖本轮实际 A/B 结果。
+
 ## 启动隔离源码与验证准备更新（2026-10-13）
 
 Dart 候选 r002 修正了正常关闭与失败启动收尾共用标记的问题：只有原通道明确请求正常关闭后，才允许接受 Released 与实际退出 0。原有 15 项测试保持原字节，另增 1 项“未请求正常关闭却收到 Released”的反例；共 16 项测试均为 `NOT_RUN`，并未据此宣称缺陷已通过运行验证。

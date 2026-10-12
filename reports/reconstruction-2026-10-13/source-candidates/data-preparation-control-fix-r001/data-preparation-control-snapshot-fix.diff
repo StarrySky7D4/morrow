@@ -1,0 +1,25 @@
+--- a/prepare.py
++++ b/prepare.py
+@@ -264,8 +264,8 @@
+     wanted = {n: {'path': str(roots['source_origin'] / relative(n)), 'pin': q} for n, q in base.items()}
+     for name, q in overlay.items():
+         current = read(ENTRY / 'overlay' / relative(name), q)
+-        before = read(ENTRY / 'preimages349' / relative(name), base[name])
+-        need(before == read(roots['source_origin'] / relative(name), base[name]), 'Exact349 preimage')
++        preimage = read(ENTRY / 'preimages349' / relative(name), base[name])
++        need(preimage == read(roots['source_origin'] / relative(name), base[name]), 'Exact349 preimage')
+         frozen = read(ENTRY / 'preimages354' / relative(name), composition['overlays'][name]['frozen354_pin'])
+         if name == 'workbench_host/src/bin/morrow-workbench-supervisor.rs':
+             removed = b'#[cfg(windows)]\n#[path = "../workbench_supervisor.rs"]\nmod supervisor;\n'
+@@ -274,9 +274,9 @@
+         else:
+             need(current == frozen, 'Other four frozen354 leaves exact')
+         if name.endswith('/workbench_supervision.rs'):
+-            need(current.startswith(before) and len(current) - len(before) == 276, 'Complete347 ledger wiring retained')
++            need(current.startswith(preimage) and len(current) - len(preimage) == 276, 'Complete347 ledger wiring retained')
+         if name.endswith('/startup_quarantine.rs'):
+-            need(current == before, 'Existing347 ledger exact')
++            need(current == preimage, 'Existing347 ledger exact')
+         wanted[name] = {'path': str(ENTRY / 'overlay' / relative(name)), 'pin': q}
+     need(rows == wanted and final == {n: row['pin'] for n, row in rows.items()}, 'Source location and planned pin maps agree')
+     need(len(plan['lock_pins']) == 20 and plan['lock_pins'] ==

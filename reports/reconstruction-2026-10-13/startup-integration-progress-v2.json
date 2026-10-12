@@ -1,0 +1,27 @@
+{
+  "schema": "PUBLIC_STARTUP_INTEGRATION_PROGRESS_V2",
+  "date": "2026-10-13",
+  "previous_snapshot": "startup-integration-progress-v1.json",
+  "negative_control": "EXPECTED_FAILURE_REPRODUCED_ORIGINAL_EXIT_1",
+  "Dart_memory_regressions": {
+    "passed": 16,
+    "skipped": 0,
+    "original_runner_exit": 0
+  },
+  "Dart_actual_results": "dart-startup-ab-results-v1.json",
+  "data_preparation_fix": "source-candidates/data-preparation-control-fix-r001/manifest.json",
+  "data_preparation_fix_execution": "NOT_RUN",
+  "compile_capture_draft": "DISABLED_NOT_DISPATCHED",
+  "full_current_Rust_compilation": "NOT_RUN",
+  "current_native_Dart_static_analysis": "NOT_RUN",
+  "full_Rust_Dart_joint_validation": "NOT_RUN",
+  "current_Windows_VM_acceptance": "NOT_RUN",
+  "historical_Stage341": "CLOSED_NOT_ACCEPTED",
+  "sealed_Unknown": "PRESERVED_NO_REPLAY",
+  "production_activation": false,
+  "SDK26_G04": "OPEN",
+  "namespace": "OPEN",
+  "ancestor_continuous_reparse": "OPEN",
+  "release_eligible": false,
+  "publication_scope": "Development branch only; no version, dependency lock, tag, main, Release or CI changes"
+}

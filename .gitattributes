@@ -310,3 +310,13 @@
 /reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/overlay/workbench_host/src/workbench_supervisor.rs -text
 /reports/reconstruction-2026-10-13/startup-integration-progress-v1.json -text
 /reports/reconstruction-2026-10-13/startup-integration-progress-v1.md -text
+
+# Bounded startup A/B results and preparation fix: exact archive bytes.
+/reports/reconstruction-2026-10-13/dart-startup-ab-results-v1.json -text
+/reports/reconstruction-2026-10-13/dart-startup-ab-results-v1.md -text
+/reports/reconstruction-2026-10-13/source-candidates/data-preparation-control-fix-r001/README.md -text
+/reports/reconstruction-2026-10-13/source-candidates/data-preparation-control-fix-r001/data-preparation-control-snapshot-fix.diff -text
+/reports/reconstruction-2026-10-13/source-candidates/data-preparation-control-fix-r001/manifest.json -text
+/reports/reconstruction-2026-10-13/source-candidates/data-preparation-control-fix-r001/source-checks.json -text
+/reports/reconstruction-2026-10-13/startup-integration-progress-v2.json -text
+/reports/reconstruction-2026-10-13/startup-integration-progress-v2.md -text

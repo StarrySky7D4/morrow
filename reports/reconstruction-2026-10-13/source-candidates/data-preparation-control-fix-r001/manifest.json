@@ -1,0 +1,36 @@
+{
+  "SDK26_G04": "OPEN",
+  "baseline_prepare_pin": {
+    "bytes": 22395,
+    "sha256": "ba3dd851cae7fe95a63a2eea047abc6c212ee961ea7ee5fb9ee4ecd622a1a3be"
+  },
+  "complete_entry_published": false,
+  "files": {
+    "README.md": {
+      "bytes": 1507,
+      "sha256": "8c500b191e4fe1d471ff730695b8717c822a2e8a1f0f07586cc5cd032d40bf62"
+    },
+    "data-preparation-control-snapshot-fix.diff": {
+      "bytes": 1788,
+      "sha256": "5cfcd3fbb4fbcdf1168e361b0415c41f49d496b323664fa43b5594559996db28"
+    },
+    "source-checks.json": {
+      "bytes": 1345,
+      "sha256": "d71aa855877188259327aaa23f0c512f407d2554e42156813faa185ba3a14694"
+    }
+  },
+  "local_successor_prepare_pin": {
+    "bytes": 22525,
+    "sha256": "670853080471deefe4565f42d1a2fe178aaef2f9852f98a3890a52c07ae6f2c3"
+  },
+  "namespace": "OPEN",
+  "patch_scope": "Four variable-use edits only; no helper, source/lock/seed, CLI, or security-gate change.",
+  "reason": "Complete entry contains machine-bound absolute paths and fixed private evidence bindings; only the path-free semantic patch is published.",
+  "release_eligible": false,
+  "schema": "PUBLIC_DATA_PREPARATION_CONTROL_FIX_MANIFEST_V1",
+  "semantic_projection_pin": {
+    "bytes": 22405,
+    "sha256": "5975f12813c99dcd0fdf39f22ae4ec309a9753e2bbe42ca6df4ee0b4063ad4fd"
+  },
+  "status": "SOURCE_NOT_RUN"
+}
