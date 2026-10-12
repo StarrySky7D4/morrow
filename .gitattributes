@@ -335,3 +335,7 @@
 /reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001/workbench_native.dart.diff -text
 /reports/reconstruction-2026-10-13/startup-integration-progress-v4.json -text
 /reports/reconstruction-2026-10-13/startup-integration-progress-v4.md -text
+
+# Fixture actual results and local bundle integrity: exact report bytes.
+/reports/reconstruction-2026-10-13/startup-integration-progress-v5.json -text
+/reports/reconstruction-2026-10-13/startup-integration-progress-v5.md -text

@@ -1,0 +1,235 @@
+{
+  "schema": "PUBLIC_STARTUP_INTEGRATION_PROGRESS_V5",
+  "date": "2026-10-13",
+  "previous_snapshot": "startup-integration-progress-v4.json",
+  "status": "PASS_FOUR_PURE_TESTS_FOUR_STATIC_TARGETS_AND_LOCAL_BUNDLE_INTEGRITY_ONLY",
+  "startup_failure_fixture": {
+    "candidate": "reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001",
+    "source_pins": {
+      "reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001/overlay/lib/plugins/workbench_native.dart": {
+        "bytes": 120739,
+        "sha256": "5931a5913256b67fde64cea0bdfca205fa4056eb3dbbac48228c468964d62691"
+      },
+      "reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001/overlay/lib/plugins/qualification_startup_failure_fixture.dart": {
+        "bytes": 1543,
+        "sha256": "a468716869cb60edde7fc7d4334d743a8f749fad1eb285c9f9b062efc197dc74"
+      },
+      "reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001/overlay/test/qualification_startup_failure_fixture_test.dart": {
+        "bytes": 1902,
+        "sha256": "1a90c6904f907762f0899b6dfc0ddc7892f3d20867537755e5821c37d0d036f3"
+      },
+      "reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001/overlay/test/workbench_startup_failure_quarantine_native_test.dart": {
+        "bytes": 12159,
+        "sha256": "ab02dd29d43e808e5feaf7ee862929d345fe5ea4a30f1d5541a9ffef42ad2996"
+      }
+    },
+    "pure_tests": {
+      "status": "PASS_FOUR_ORIGINAL_FIXTURE_PURE_TESTS_ONLY",
+      "passed": 4,
+      "skipped": 0,
+      "each_success_once": true,
+      "names": [
+        "empty fixture mode preserves ordinary startup without qualification",
+        "fixture rejects unknown mode and either missing qualification gate",
+        "selected fixture cannot report sentinel before both native barriers",
+        "selected ready fixture throws exact typed primary sentinel"
+      ],
+      "outer_exit": 0,
+      "dual_EOF": true,
+      "original_group_closed": true,
+      "original_compiler_actual_exit": -1,
+      "original_tester_actual_exit": -1,
+      "cleanup": "Original Flutter tool cleanup only; actual -1 exits preserved.",
+      "descendant_tree_quiescence": "NOT_PROVEN",
+      "input_drift": 0
+    },
+    "selected_static": {
+      "status": "PASS_FOUR_TARGET_DART_STATIC_ANALYSIS_ONLY",
+      "targets": [
+        {
+          "target": "lib/plugins/workbench_native.dart",
+          "actual_exit": 0,
+          "dual_EOF": true,
+          "original_group_closed": true,
+          "no_issues_found": true,
+          "stdout_pin": {
+            "bytes": 52,
+            "sha256": "5104f3df10aad6151450e317ea23640bfc74a9f2bb90e54b4cc35eda238837c0"
+          },
+          "stderr_pin": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "target": "lib/plugins/qualification_startup_failure_fixture.dart",
+          "actual_exit": 0,
+          "dual_EOF": true,
+          "original_group_closed": true,
+          "no_issues_found": true,
+          "stdout_pin": {
+            "bytes": 73,
+            "sha256": "74142e62a7c5dcf104df0dd8ab60b1374a2f763b1ba2c2a22db9740034f4e1ce"
+          },
+          "stderr_pin": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "target": "test/qualification_startup_failure_fixture_test.dart",
+          "actual_exit": 0,
+          "dual_EOF": true,
+          "original_group_closed": true,
+          "no_issues_found": true,
+          "stdout_pin": {
+            "bytes": 78,
+            "sha256": "95e8f23aa3d2c38fb7282d6357e643234a6d16a371d1948829c67b4117a6a78d"
+          },
+          "stderr_pin": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "target": "test/workbench_startup_failure_quarantine_native_test.dart",
+          "actual_exit": 0,
+          "dual_EOF": true,
+          "original_group_closed": true,
+          "no_issues_found": true,
+          "stdout_pin": {
+            "bytes": 84,
+            "sha256": "6aa5040b322830e54441dcb6efcd19611cc228ec5ecdc1b95f8c82e537f80b37"
+          },
+          "stderr_pin": {
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ],
+      "input_drift": 0
+    },
+    "native_fixture_execution": "NOT_RUN",
+    "production_activation": false
+  },
+  "current_normal_qualification_bundle": {
+    "status": "PASS_BOUNDED_LOCAL_DATA_INTEGRITY_ONLY",
+    "preparation_exit": 0,
+    "payload_files": 9046,
+    "ZIP_entries": 9048,
+    "payload_bytes": 937226018,
+    "source_files": 666,
+    "reused_old_leaves": 9029,
+    "ZIP_pin": {
+      "bytes": 940411294,
+      "sha256": "e12f330e6cc50a3cabbbba35d4aa4f306e5216a0e3419d08189e4e32df87a94f"
+    },
+    "complete_integrity_passes": [
+      {
+        "ZIP_full_SHA": {
+          "bytes": 940411294,
+          "sha256": "e12f330e6cc50a3cabbbba35d4aa4f306e5216a0e3419d08189e4e32df87a94f"
+        },
+        "entries": 9048,
+        "entry_SHA_CRC": "PASS",
+        "namespace": "PASS",
+        "pass": 1,
+        "physical_full_SHA": "PASS"
+      },
+      {
+        "ZIP_full_SHA": {
+          "bytes": 940411294,
+          "sha256": "e12f330e6cc50a3cabbbba35d4aa4f306e5216a0e3419d08189e4e32df87a94f"
+        },
+        "entries": 9048,
+        "entry_SHA_CRC": "PASS",
+        "namespace": "PASS",
+        "pass": 2,
+        "physical_full_SHA": "PASS"
+      }
+    ],
+    "input_drift": 0,
+    "current_Rust_roles": "Previously compiled current host and supervisor; no PE execution.",
+    "current_Dart_roles": "Three normal-path production leaves; excludes startup-failure fixture.",
+    "normal19field_contract_preserved": true,
+    "qualification_contract_pin": {
+      "bytes": 7714,
+      "sha256": "4d80a6972fd548b6bc9f36ff230ec94343a0280f7d75974739f2edca6c0179df"
+    },
+    "archive_uploaded": false,
+    "VM_transfer": "NOT_RUN",
+    "native_execution": "NOT_RUN",
+    "scope": "Local opaque data integrity only; not a standalone SDK, namespace security or product acceptance."
+  },
+  "host_carrier_source_review": {
+    "status": "PASS_BOUNDED_SOURCE_REVIEW_ONLY_ROOT_SELECTION_REQUIRED",
+    "source_inventory_pin": {
+      "bytes": 5798,
+      "sha256": "1c99d64faa54e2fc12938adaf18d7d3d7ede368f508fde61e30e3f7f798c0744"
+    },
+    "fixed_input_count": 73,
+    "input_drift": 0,
+    "collision_check": "Fixed executable names and known qualification-root prefix; unreadable required fields fail closed.",
+    "limits": "Point-in-time readiness only, not atomic quiescence or continuous namespace proof.",
+    "late_root_selection": "NOT_CREATED",
+    "VM_transfer": "NOT_RUN",
+    "native_execution": "NOT_RUN"
+  },
+  "evidence_pins": {
+    "root_fixture_actual": {
+      "bytes": 6763,
+      "sha256": "c38abfa285157c172f99f7469d26e57055518c08749fc568e5eb66ccbe65b8b2"
+    },
+    "independent_pure_review": {
+      "bytes": 3621,
+      "sha256": "2238c69479bbe6fb3834d37a0f69fe72f3596cf0385c2b1c139bbb8410f147b0"
+    },
+    "independent_static_review": {
+      "bytes": 4850,
+      "sha256": "4bf473ca0356d9c89ba25b4358c2a8cf41d702333b21da4ac4244f685883d2f7"
+    },
+    "bundle_preparation_terminal": {
+      "bytes": 6642,
+      "sha256": "67dc25eb9aaa09137cf72f3d095610e55073236af9ed87e5632569cfa3ac00ee"
+    },
+    "independent_bundle_readback": {
+      "bytes": 2473,
+      "sha256": "8d3b37636e34a4d02b96ce683e512953956980f319fa06addcbd3edff9fa05b4"
+    },
+    "root_bundle_actual": {
+      "bytes": 2829,
+      "sha256": "bfcf37897ab24aff5ec3e01efd28c3a44547dc28bd542ea82d1b8f62ff0fd11f"
+    },
+    "host_source_inventory": {
+      "bytes": 5798,
+      "sha256": "1c99d64faa54e2fc12938adaf18d7d3d7ede368f508fde61e30e3f7f798c0744"
+    },
+    "independent_host_source_review": {
+      "bytes": 2972,
+      "sha256": "9175b87d9c55762e9965adcc5b340995dd9031d87f82b26aa83830b1f94eb1d4"
+    }
+  },
+  "previous_actuals": {
+    "Rust_synthetic_passed": 14,
+    "Dart_memory_passed": 16,
+    "report": "startup-integration-progress-v3.json"
+  },
+  "full_Rust_Dart_joint_validation": "NOT_RUN",
+  "current_Windows_VM_acceptance": "NOT_RUN",
+  "healthy_native_owner_return": "NOT_RUN",
+  "DPAPI_real_acceptance": "NOT_RUN",
+  "historical_Stage341": "CLOSED_NOT_ACCEPTED",
+  "sealed_Unknown": "PRESERVED_NO_REPLAY",
+  "SDK26_G04": "OPEN",
+  "namespace": "OPEN",
+  "ancestor_continuous_reparse": "OPEN",
+  "production_activation": false,
+  "release_eligible": false,
+  "next": [
+    "Select and validate the reviewed host carrier against the actual normal-path bundle.",
+    "Complete current Windows Rust/Dart joint acceptance and original resource closure.",
+    "Validate the startup-failure native fixture separately; then finish Agent session and safe execution before preview preparation."
+  ],
+  "disclosure": "Public result projections only. No raw machine logs, VM/account/credential identifiers, operation scripts, binaries or ZIP uploads.",
+  "publication_scope": "Existing development branch only; no main/tag/Release/version/lock/workflow changes."
+}

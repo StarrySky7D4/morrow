@@ -9,9 +9,9 @@
 
 14 项精确合成回归全部实际通过、未跳过：4 项 AgentWorker 停止、5 项内存 owner 账本、5 项 supervisor 解析与心跳。每项原测试进程均退出 0、双流 EOF，守卫无错误。库测试程序已用于这 14 项测试；host／supervisor 产品程序仅编译和核对，未运行。此前 Dart 修正版 16 项内存测试通过的限定范围保持不变。
 
-后续原生接线进展：r002 的 workbench_native.dart 静态检查已实际通过（退出 0、双流 EOF、No issues found!）。新启动失败夹具 r001 仅源码归档，尚未编译或运行，不能继承该静态 PASS。Rust／Dart 联合运行、真实 Windows 沙箱及资源回收仍 NOT_RUN，SDK26／G04、namespace 与祖先目录持续 reparse 防护仍 OPEN，release_eligible=false；Stage341 仍 CLOSED_NOT_ACCEPTED，旧 sealed Unknown 保留且不重放。下一步继续 Windows 联合验收，扩展执行层后置。
+后续验证已推进：启动失败夹具 r001 的四项纯数据测试全部通过，四个选定文件静态检查通过；真实 native 夹具仍 NOT_RUN。正常路径验收包的 9,048 个 ZIP 条目通过双遍完整性回读，后继宿主载体仅源码审核通过，尚未选择或传输。Rust／Dart 联合运行、真实 Windows 沙箱及资源回收仍 NOT_RUN，SDK26／G04、namespace 与祖先目录持续 reparse 防护仍 OPEN，release_eligible=false；Stage341 仍 CLOSED_NOT_ACCEPTED，旧 sealed Unknown 保留且不重放。下一步继续 Windows 联合验收，扩展执行层后置。
 
-详见[原生静态检查与新夹具进度](reports/reconstruction-2026-10-13/startup-integration-progress-v4.md)。
+详见[原生静态检查与新夹具进度](reports/reconstruction-2026-10-13/startup-integration-progress-v5.md)。
 
 本次更新开发分支的实测报告与进度文档，保留历史失败和范围边界；生产入口、应用版本与依赖锁保持不变，不创建 Release。
 
