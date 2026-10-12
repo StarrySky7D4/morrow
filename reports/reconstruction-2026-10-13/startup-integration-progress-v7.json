@@ -1,0 +1,78 @@
+{
+  "SDK26_G04": "OPEN",
+  "ancestor_continuous_reparse": "OPEN",
+  "date": "2026-10-13",
+  "disclosure": "No raw logs, operational scripts, machine paths, VM/account/process/session identifiers, credentials, protected data, Drive information, binaries or ZIP payloads.",
+  "evidence_content_pins": {
+    "independent_key_reader": {
+      "bytes": 4866,
+      "sha256": "01768975ed908bea6fe40d65a81607218835951dd11d228fcbc1f0997258bec4"
+    },
+    "runner_static": {
+      "bytes": 5759,
+      "sha256": "47f9ba44240b2576138f140f5eb97f6e68290122351f19da4e2796cd05445b2d"
+    }
+  },
+  "extension_execution": "DEFERRED",
+  "failure_runner_static": {
+    "No_issues_found": true,
+    "VM": "NOT_RUN",
+    "actual_analyzer_exit": 0,
+    "dual_EOF": true,
+    "input_drift": 0,
+    "runner_main": "NOT_EXECUTED",
+    "scope": "One local static target with fixed tool package config; not compilation or native acceptance.",
+    "target": "guest-native-runner.dart"
+  },
+  "failure_startup_native": {
+    "evidence_content_pins": {},
+    "schema": "ROOT_STAGE445_PUBLIC_FAILURE_PROJECTION_V1",
+    "status": "PENDING_ROOT_OBSERVATION"
+  },
+  "full_SDK_frozen": false,
+  "historical_Stage324": "SEALED_UNKNOWN_PRESERVED_NO_REPLAY",
+  "historical_Stage341": "CLOSED_NOT_ACCEPTED_UNCHANGED",
+  "key_reader": {
+    "DPAPI": "NOT_RUN",
+    "Linux_original_read_expressions": "RETAINED",
+    "actual_compile_exit": 0,
+    "actual_direct_IO_tests_passed": 4,
+    "actual_test_dual_EOF": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "actual_test_exits": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "independent_full_SHA_passes": 2,
+    "input_drift": 0,
+    "new_unsafe": false,
+    "real_file_symlink_case": "PASS_NO_SKIP",
+    "scope": "Windows final-leaf same-handle cap+1 read with reparse and metadata checks; not ancestor confinement.",
+    "source": "audit/src/keys.rs",
+    "source_pin": {
+      "bytes": 24394,
+      "sha256": "9f9536bf52098893fc9b4f67501993339f19dcdf06128740d235439667f5d1fa"
+    }
+  },
+  "namespace": "OPEN",
+  "network_confinement_qualified": false,
+  "normal_path": "Prior v6 bounded normal result retained unchanged; not rerun or broadened.",
+  "previous_snapshot": "startup-integration-progress-v6.json",
+  "production_security": false,
+  "publication_preparation": "ROOT_SELECTED_SANITIZED_PROJECTION",
+  "publication_scope": "One audit source leaf plus bounded sanitized reports/current progress; no version, lockfile, workflow, tag or Release changes.",
+  "release_eligible": false,
+  "schema": "PUBLIC_STARTUP_INTEGRATION_PROGRESS_V7",
+  "source_alignment": {
+    "full_tested_source_merge": false,
+    "new_reader_in_existing398_product_binaries": false,
+    "public_Dart_production_three_leaves": "OLDER_THAN_SELECTED398_AND380_ARCHIVES_NOT_MERGED_THIS_ROUND"
+  },
+  "status": "PASS_WINDOWS_KEY_READER_FOUR_SYNTHETIC_IO_AND_RUNNER_STATIC_ONLY"
+}

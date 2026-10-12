@@ -1,13 +1,15 @@
 # 最新开发支线状态
 
 <!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
-## Windows 正常原生会话联合实测（2026-10-13）
+## Windows 密钥读取边界修正与限定验证（2026-10-13）
 
-1 项可见 native qualification test 实际通过；原 16 份公开证据文件双遍完整 SHA 核验零漂移。31 帧 trace、11 项 observations 在同一身份下记录 `Running → healthy Stopping/Reclaimed → ACK → Released`；PS30 generation 1、effects 10、consumed completions 7，原生 host 退出 0。宿主捕获退出 0、双流 EOF，独立会话关闭且 Process 临时策略恢复；原编译器／测试器工具清理退出 -1 保留，不冒充退出 0 或全部后代静止。
+本轮仅合入 `audit/src/keys.rs`：Windows 最终叶使用同句柄、有界读取并拒绝 reparse／元数据不稳定；不新增 unsafe，不修改 provider、DPAPI 或 Linux 原读取表达式。真实编译与 4 项普通合成文件 IO 测试通过，包括实际文件 symlink 的拒绝，均未跳过；独立回读零漂移。
 
-此前 14 项 Rust 合成回归、16 项 Dart 内存回归以及启动失败夹具 4 项纯测试／4 项静态检查保持各自有限范围；真实失败启动 native 夹具仍 NOT_RUN。NORMAL ONLY，完整 SDK26／G04、namespace、祖先目录持续 reparse、生产安全及网络约束仍 OPEN／未验收，release_eligible=false。历史 Stage341 CLOSED_NOT_ACCEPTED 与旧 Stage324 sealed Unknown 保留且不重放；本次通过不升级历史结果。
+失败启动 runner 的一个本机静态目标分析退出 0、双流 EOF，No issues found!；未执行 runner main，不能替代 native 验收。新的真实失败启动验收仍待闭合；本次仅保留待定状态，不作通过断言。
 
-详见[本次正常路径实际边界](../reports/reconstruction-2026-10-13/startup-integration-progress-v6.md)。Agent 会话层与安全执行层完成后暂停准备测试预览，扩展执行层延期。生产入口、版本、依赖锁与工作流不变；不创建 Release。下方旧段保留历史范围。
+公开 Dart 三个生产文件仍比实际选定的正常／失败夹具基线旧，本轮未全量合入。新读取修正也不在既有正常验收二进制中；不将旧二进制结果当作本次修正的产品验收。
+
+详见[本次源码与验证边界](../reports/reconstruction-2026-10-13/startup-integration-progress-v7.md)。旧 v1–v6、历史失败与 sealed Unknown 均保留，不重放。SDK26／G04、ancestor、namespace、生产安全与网络约束继续 OPEN／未验收，release_eligible=false；不宣称 SDK 冻结。Agent 会话层与安全执行层完成后暂停准备预览，扩展执行层延期。版本、锁、工作流、tag 与 Release 不变。
 
 <!-- C28-WINDOWS-REGRESSION-20261013-END -->
 

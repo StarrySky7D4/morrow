@@ -290,8 +290,31 @@ impl Key {
 }
 pub(crate) fn read_protected(path: &Path) -> Result<Vec<u8>> {
     #[cfg(target_os = "windows")]
-    let file = std::fs::File::open(path)?;
+    {
+        use std::os::windows::fs::{MetadataExt, OpenOptionsExt};
+        // Open the final leaf itself. This is not ancestor confinement.
+        let mut file = std::fs::OpenOptions::new().read(true).share_mode(1)
+            .custom_flags(0x00200000).open(path)?; // FILE_FLAG_OPEN_REPARSE_POINT
+        let before = file.metadata()?;
+        if !before.is_file() || before.file_attributes() & 0x400 != 0
+            || before.len() > MAX_FILE as u64 {
+            return Err(KeyError::Format);
+        }
+        let mut bytes = Vec::new();
+        (&mut file).take(MAX_FILE as u64 + 1).read_to_end(&mut bytes)?;
+        let after = file.metadata()?;
+        if bytes.len() > MAX_FILE || bytes.len() as u64 != before.len()
+            || !after.is_file() || after.file_attributes() & 0x400 != 0
+            || before.len() != after.len()
+            || before.creation_time() != after.creation_time()
+            || before.last_write_time() != after.last_write_time()
+            || before.file_attributes() != after.file_attributes() {
+            return Err(KeyError::Format);
+        }
+        Ok(bytes)
+    }
     #[cfg(target_os = "linux")]
+    {
     let file = {
         let parent = path.parent().filter(|p| !p.as_os_str().is_empty()).unwrap_or(Path::new("."));
         morrow_core::linux_storage::PrivateDirectory::open(parent, false)?
@@ -307,6 +330,7 @@ pub(crate) fn read_protected(path: &Path) -> Result<Vec<u8>> {
         return Err(KeyError::Format);
     }
     Ok(bytes)
+    }
 }
 fn unpack(bytes: &[u8], limit: usize) -> Result<Vec<u8>> {
     if bytes.len() < 4 || u32::from_le_bytes(bytes[..4].try_into().unwrap()) as usize > limit {
@@ -473,5 +497,71 @@ mod diagnostic_tests {
             assert!(matches!(returned, Err(KeyError::Protection)));
             assert!(bytes.len() <= 96 && bytes.last() == Some(&b'\n'));
         }
+    }
+}
+
+#[cfg(all(test, target_os = "windows"))]
+mod windows_reader_tests {
+    use super::*;
+    use std::{fs, path::PathBuf, sync::atomic::{AtomicU64, Ordering}};
+    static NEXT: AtomicU64 = AtomicU64::new(0);
+    fn fixture() -> PathBuf {
+        // The test runner selects a fresh owned TEMP/TMP. Retain synthetic files.
+        let root = std::env::temp_dir().join(format!("morrow-key-reader-{}-{}",
+            std::process::id(), NEXT.fetch_add(1, Ordering::Relaxed)));
+        fs::create_dir(&root).unwrap();
+        root
+    }
+    fn write_new(path: &Path, bytes: &[u8]) {
+        let mut file = fs::OpenOptions::new().write(true).create_new(true).open(path).unwrap();
+        file.write_all(bytes).unwrap();
+        file.sync_all().unwrap();
+    }
+    #[test]
+    fn ordinary_bytes_and_exact_cap_are_read_without_provider_calls() {
+        let root = fixture();
+        let path = root.join("ordinary.bin");
+        write_new(&path, b"synthetic-reader");
+        assert_eq!(read_protected(&path).unwrap(), b"synthetic-reader");
+        assert_eq!(fs::read(&path).unwrap(), b"synthetic-reader");
+        let cap = root.join("at-cap.bin");
+        let bytes = vec![0x5a; MAX_FILE];
+        write_new(&cap, &bytes);
+        assert_eq!(read_protected(&cap).unwrap(), bytes);
+    }
+    #[test]
+    fn directory_input_is_rejected_without_file_effects() {
+        let root = fixture();
+        let path = root.join("directory");
+        fs::create_dir(&path).unwrap();
+        assert!(read_protected(&path).is_err());
+        assert!(path.is_dir());
+        assert_eq!(fs::read_dir(&path).unwrap().count(), 0);
+    }
+    #[test]
+    fn over_cap_regular_file_is_rejected_and_preserved() {
+        let root = fixture();
+        let path = root.join("over-cap.bin");
+        let file = fs::OpenOptions::new().write(true).create_new(true).open(&path).unwrap();
+        file.set_len(MAX_FILE as u64 + 1).unwrap();
+        file.sync_all().unwrap();
+        drop(file);
+        assert!(matches!(read_protected(&path), Err(KeyError::Format)));
+        assert_eq!(fs::metadata(&path).unwrap().len(), MAX_FILE as u64 + 1);
+    }
+    #[test]
+    fn actual_leaf_symlink_is_rejected_without_reading_target_as_key() {
+        use std::os::windows::fs::{symlink_file, MetadataExt};
+        let root = fixture();
+        let target = root.join("target.bin");
+        let link = root.join("leaf-link.bin");
+        write_new(&target, b"synthetic-reader");
+        // A permission/setup failure is a real test failure, never a skipped PASS.
+        symlink_file(&target, &link).expect("real owned file symlink required; unavailable means NOT_COVERED");
+        assert_ne!(fs::symlink_metadata(&link).unwrap().file_attributes() & 0x400, 0);
+        assert_eq!(fs::read(&link).unwrap(), b"synthetic-reader");
+        assert!(matches!(read_protected(&link), Err(KeyError::Format)));
+        assert_eq!(fs::read(&target).unwrap(), b"synthetic-reader");
+        assert_ne!(fs::symlink_metadata(&link).unwrap().file_attributes() & 0x400, 0);
     }
 }
