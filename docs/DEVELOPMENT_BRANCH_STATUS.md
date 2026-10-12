@@ -5,7 +5,9 @@
 
 Stage496 的原 23 项 Flutter/Dart 回归在 5 个测试文件中全部通过，0 失败、0 跳过；真实语言资产已绑定，恢复页面原中文“操作结果未知”断言通过，未放松测试断言。原外层与内部 runner 均返回 0，双流 EOF／原工具组闭合已记录；编译器／测试器工具清理的实际 -1 保留，不据此宣称全部后代静止或 native 验收。
 
-Stage500 已实际应用十处生产源码／测试变更，保留现有密钥读取加固及 20 份原锁。Stage490 已完成 2394 文件源码与独立依赖种子的纯数据准备；当前组合 Rust 编译、14 项 Rust 回归、宿主／supervisor 双 binary 构建以及 Windows native 验收均未完成。
+Stage500 的十处生产源码／测试变更已提交开发分支，保留现有密钥读取加固及 20 份原锁。Stage490 的 2394 文件源码与独立依赖种子准备已完成；Stage501 当前组合 Rust 库测试编译（--lib --no-run）及宿主／supervisor 双 binary 编译均实际退出 0、双流 EOF，两次编译后的独立依赖目录严格复核均通过。原锁与源码守卫通过；双 binary 仅编译读取，未运行。
+
+Stage503 从实际库测试产物列出 345 项，仅指定的 14 项合成测试逐项执行，均为 1 通过、0 忽略、退出 0 和双流 EOF；其余 331 项仅列出未运行。这些本地结果不构成 Windows native／VM 验收。
 
 原 Stage479 的 22 通过／1 失败、Stage491003 的入口语法失败及 Stage491004 的配置引用守卫拒绝分别保留；后两次的 23 项为 NOT_RUN。原 native Unknown 保留且不重放。SDK26／G04、namespace、ancestor、生产安全与网络边界仍 OPEN，release_eligible=false；不宣称 SDK 冻结或 Release。
 
