@@ -1,13 +1,13 @@
 # 最新开发支线状态
 
 <!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
-## 失败启动时序限定回归（2026-10-13）
+## 启动回归与候选组合进度（2026-10-13）
 
-固定后 21 项 channel 内存回归逐项通过；旧 channel 的一个焦点真实失败于提前 settled 断言，原退出 1 保留。两个静态目标退出 0，channel 的 1 项 info 原样保留；工具清理 -1 不改写。
+新增 23 项内存回归实际 22 通过、1 失败：恢复页面未找到预期中文 Unknown 提示，根因待核对；原退出 1 保留，不是预期负控。启动观测 11 项、合同 7 项、channel 2 项和新增 JSON 测试均通过，supervision 一项失败。原编译器／测试器清理 -1 保留。
 
-四叶 Dart r003 仅作候选归档；配套 Rust 五叶仍在独立 r002 档案，未合入公开生产。既有 11 项启动观测与真实 open/catch 接线不属于本轮 B21。原 native Unknown 保留，不重放；本轮无新的 native／VM／DPAPI 验收。SDK26／G04、namespace、ancestor、生产安全与网络仍 OPEN，release_eligible=false；不宣称冻结。Agent 会话层与安全执行层完成后暂停，扩展执行层延期。
+新增可空快照测试候选与 Rust 三处注释增量，并完成十路径组合映射；现有读取加固与 20 份锁保留。候选尚未应用生产，当前联合构建与真实 open/catch、正常／异常关闭仍待验收。旧 native Unknown 保留，不重放。SDK26／G04、namespace、ancestor、生产安全与网络仍 OPEN，release_eligible=false；不宣称冻结。
 
-详见[本轮限定结果](../reports/reconstruction-2026-10-13/startup-integration-progress-v9.md)。旧 v1–v8、历史失败与旧候选原字节保留，版本、锁、工作流、tag 与 Release 不变。
+详见[本轮结果与待办](../reports/reconstruction-2026-10-13/startup-integration-progress-v10.md)。旧 v1–v9 与历史失败保持。Agent 会话层与安全执行层完成后暂停，扩展执行层延期；版本、tag 与 Release 不变。
 
 <!-- C28-WINDOWS-REGRESSION-20261013-END -->
 

@@ -1,0 +1,140 @@
+{
+  "SDK26_G04": "OPEN",
+  "ancestor_continuous_reparse": "OPEN",
+  "base_commit": "d0593f78b1f60e511c13257894b2e6ff02d43a7a",
+  "compiler_tester_actual_exits": [
+    {
+      "actual_exit": -1,
+      "dual_eof": true,
+      "role": "compiler"
+    },
+    {
+      "actual_exit": -1,
+      "dual_eof": true,
+      "role": "tester"
+    },
+    {
+      "actual_exit": -1,
+      "dual_eof": true,
+      "role": "tester"
+    },
+    {
+      "actual_exit": -1,
+      "dual_eof": true,
+      "role": "tester"
+    },
+    {
+      "actual_exit": -1,
+      "dual_eof": true,
+      "role": "tester"
+    },
+    {
+      "actual_exit": -1,
+      "dual_eof": true,
+      "role": "tester"
+    }
+  ],
+  "composition": {
+    "audit_key_hardening_preserved": true,
+    "comparison_to_previous_declared_2392": {
+      "different_existing": 5,
+      "missing": 1,
+      "raw_same": 2386
+    },
+    "current_declared_existing": 2391,
+    "five_Rust_and_three_Dart_sources_plus_two_tests": 10,
+    "full_projected_declared_count": 2394,
+    "map": "source-candidates/startup-quarantine-runtime-r003/composition.json",
+    "new_combined_build": "NOT_RUN",
+    "unchanged_locks": 20
+  },
+  "date": "2026-10-13",
+  "descendant_tree_quiescence": "NOT_PROVEN",
+  "disclosure": "No raw logs, machine paths, account/process/session identifiers, operational scripts, credentials, protected data, Drive information, binaries or ZIP payloads.",
+  "evidence_content_pins": {
+    "actual_memory_readback": {
+      "bytes": 10290,
+      "sha256": "86fe4ed549fa8cea16fffecce4447eef2877778123f9c52d6dd979a7794f3f3e"
+    },
+    "composition_review": {
+      "bytes": 10415,
+      "sha256": "95e5b410b81e035aa8fa3e7543f4ed4bd2a016c0e0c6fdee97fed9bd8d2bbec3"
+    },
+    "inner_terminal": {
+      "bytes": 38527,
+      "sha256": "2691fcf4414eb4d0b10cfaaceea16dda25aec409008bda43a3990e85d8794293"
+    },
+    "outer_terminal": {
+      "bytes": 3220,
+      "sha256": "42ecf8fe05a50ed073166ec801cf274a94707af131f1af163f7dd88e3ec3bfcf"
+    }
+  },
+  "existing_native_unknown": "RETAINED_UNCONFIRMED_NO_REPLAY",
+  "extension_execution": "DEFERRED",
+  "memory_regression": {
+    "assertion": "Expected one matching widget; Actual zero for Chinese Unknown message",
+    "dual_EOF": true,
+    "failed_target": "test/workbench_supervision_test.dart:109",
+    "failed_test": "wrapper crash permits window exit but keeps recovery blocked and Unknown visible",
+    "failure_is_expected": false,
+    "hidden_loader_successes": 5,
+    "inner_runner_return": 1,
+    "input_drift": 0,
+    "machine_done_success": false,
+    "original_captured_exit": 1,
+    "per_file": [
+      {
+        "failed": 0,
+        "passed": 7,
+        "selected": 7,
+        "target": "test/qualification_session_contract_test.dart"
+      },
+      {
+        "failed": 0,
+        "passed": 2,
+        "selected": 2,
+        "target": "test/workbench_channel_test.dart"
+      },
+      {
+        "failed": 0,
+        "passed": 1,
+        "selected": 1,
+        "target": "test/workbench_startup_observation_json_test.dart"
+      },
+      {
+        "failed": 0,
+        "passed": 11,
+        "selected": 11,
+        "target": "test/workbench_startup_observation_test.dart"
+      },
+      {
+        "failed": 1,
+        "passed": 1,
+        "selected": 2,
+        "target": "test/workbench_supervision_test.dart"
+      }
+    ],
+    "root_cause": "UNCONFIRMED; investigating language asset loading and test environment",
+    "selected": 23,
+    "skipped": 0,
+    "suites": 5,
+    "visible_failed_methods": 1,
+    "visible_successes": 22
+  },
+  "namespace": "OPEN",
+  "native_open_catch": "NOT_COVERED",
+  "network_constraints": "OPEN",
+  "new_native_VM_DPAPI_execution": "NOT_RUN",
+  "next": [
+    "Identify recovery-widget failure without weakening assertion, preserve original nonzero result and run corrected bounded regression",
+    "Apply reviewed coordinated source set while preserving audit hardening and original locks; fresh library/14 Rust cases/two binaries",
+    "Verify actual open/catch and normal/abnormal native closure separately; preserve existing Unknown"
+  ],
+  "original_tool_cleanup_minus_one_preserved": true,
+  "outer_inner_OS_identity_ancestry": "NOT_PROVEN",
+  "production_activated": false,
+  "production_security": "OPEN",
+  "release_eligible": false,
+  "schema": "PUBLIC_STARTUP_INTEGRATION_PROGRESS_V10",
+  "status": "CLOSED_MEMORY_REGRESSION_22_PASS_1_FAILURE"
+}

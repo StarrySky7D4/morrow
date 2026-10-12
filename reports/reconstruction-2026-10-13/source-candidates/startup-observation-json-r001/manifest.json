@@ -1,0 +1,13 @@
+{
+  "depends_on": "../startup-quarantine-dart-r003",
+  "members": {
+    "overlay/test/workbench_startup_observation_json_test.dart": {
+      "bytes": 1387,
+      "sha256": "3e24f40b916206a0b45745dfc356ef4e5b988b7fcd29f24c6baf2fd996b4f939"
+    }
+  },
+  "production_activated": false,
+  "release_eligible": false,
+  "schema": "PUBLIC_STARTUP_OBSERVATION_JSON_CANDIDATE_V1",
+  "test_result": "ONE_PASSED_WITHIN_22_PASS_1_FAILURE_RUN"
+}

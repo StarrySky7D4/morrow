@@ -1,0 +1,33 @@
+--- r002/workbench_host/src/startup_quarantine.rs
++++ overlay/workbench_host/src/startup_quarantine.rs
+@@ -1,6 +1,6 @@
+-//! Abnormal ledger confirmation only; kernel/reader observations are supplied
+-//! by a future trusted supervisor integration, not created by this module.
+-//! There is intentionally no runtime caller in this source stage.
++//! Abnormal ledger confirmation only; original child/Job/EOF/reap/join
++//! observations are supplied by the trusted supervisor runtime. This module
++//! validates durable ledger facts; it does not observe resources itself.
+ use super::{Owner, Result, decode, json, readback, recovery, schema, sha};
+ use serde_json::Value;
+ 
+@@ -19,7 +19,7 @@
+ // This is a confirmation token for one committed abnormal record. It is not
+ // normal Released, kernel proof, supervisor exit, or authority to claim again.
+ // No Clone/Debug/Deserialize or public constructor permits reconstruction.
+-#[allow(dead_code)] // Not wired until actual resource/join producers are added.
++#[allow(dead_code)] // Actual resource evidence comes from the supervisor runtime.
+ pub(crate) struct AbnormalClosurePrepared {
+     extension: Value,
+ }
+@@ -106,9 +106,9 @@
+ }
+ 
+ impl Owner {
+-    /// Future trusted producer only. These input fields must come from actual
++    /// Trusted supervisor producer only. These input fields must come from actual
+     /// original child/Job/EOF/reap/join observations; this validator cannot
+-    /// turn a caller-supplied boolean into kernel evidence. No caller is wired.
++    /// turn caller-supplied booleans into kernel evidence.
+     #[allow(dead_code)]
+     pub(crate) fn prepare_abnormal_resource_closure(
+         &mut self, record: Value,

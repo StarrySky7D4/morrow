@@ -1,0 +1,140 @@
+{
+  "application_executed": false,
+  "base_commit": "d0593f78b1f60e511c13257894b2e6ff02d43a7a",
+  "count_scope": "Finite declared source projection; not entire Git tree",
+  "fresh_combined_build": "NOT_RUN",
+  "must_preserve": {
+    "audit/src/keys.rs": {
+      "bytes": 24394,
+      "sha256": "9f9536bf52098893fc9b4f67501993339f19dcdf06128740d235439667f5d1fa"
+    }
+  },
+  "production_activated": false,
+  "projected_selected_source_count": 2394,
+  "release_eligible": false,
+  "rows": [
+    {
+      "after_pin": {
+        "bytes": 1264,
+        "sha256": "e6a7ac4dcf055c1609bfee1686184939913326965169e36dbe69d7e0b086b3af"
+      },
+      "before_pin": {
+        "bytes": 1290,
+        "sha256": "521f97200192862ce90c405319221e2f4a24820191d0cad4668bd94bd38ceb50"
+      },
+      "candidate_source": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/overlay/workbench_host/src/bin/morrow-workbench-supervisor.rs",
+      "delta": "rawexact_r002",
+      "target": "workbench_host/src/bin/morrow-workbench-supervisor.rs"
+    },
+    {
+      "after_pin": {
+        "bytes": 37590,
+        "sha256": "ccbe6e9015c01c78e6cfe7c82e7e62e996385b778ca57ca9730ddf9063966c1f"
+      },
+      "before_pin": {
+        "bytes": 37464,
+        "sha256": "268002e88e462a40eca273e7b7324dc505f0ae39f95cf261c9887a7577afa3ba"
+      },
+      "candidate_source": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/overlay/workbench_host/src/lib.rs",
+      "delta": "rawexact_r002",
+      "target": "workbench_host/src/lib.rs"
+    },
+    {
+      "after_pin": {
+        "bytes": 11938,
+        "sha256": "bc8b62e899e4aba8d3d6f0fcf82ae47b2aea64d596de28f8024d8a3708ec2861"
+      },
+      "before_pin": null,
+      "candidate_source": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r003/overlay/workbench_host/src/startup_quarantine.rs",
+      "delta": "threecommentblocks_only_whole_inverse_exact",
+      "target": "workbench_host/src/startup_quarantine.rs"
+    },
+    {
+      "after_pin": {
+        "bytes": 21344,
+        "sha256": "c61c4e0be16225f61f1558dc6f42e05eb7c3cb5a045ca0f2baba62d956620884"
+      },
+      "before_pin": {
+        "bytes": 21008,
+        "sha256": "2051b6824c03fd8c8f58f284c7084080166c1da07ee28dcb0ee35640cd6219e5"
+      },
+      "candidate_source": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/overlay/workbench_host/src/workbench_supervision.rs",
+      "delta": "rawexact_r002",
+      "target": "workbench_host/src/workbench_supervision.rs"
+    },
+    {
+      "after_pin": {
+        "bytes": 25562,
+        "sha256": "155eaabef579d185e4f243b805bf6fa3be49617aee96cd9aeba57a79cff8591b"
+      },
+      "before_pin": {
+        "bytes": 18761,
+        "sha256": "63253445d15e6d6127c988cdebfa04bac3eb45c0336f3d784c7854ef988c0070"
+      },
+      "candidate_source": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/overlay/workbench_host/src/workbench_supervisor.rs",
+      "delta": "rawexact_r002",
+      "target": "workbench_host/src/workbench_supervisor.rs"
+    },
+    {
+      "after_pin": {
+        "bytes": 15460,
+        "sha256": "ad613ecced3bcec092d4136771b133ea895d2738bd58b9a086509288ff1f11d0"
+      },
+      "before_pin": {
+        "bytes": 10698,
+        "sha256": "04e88b820e379abc5cb0b830cdc63dcb00c9ad399d0625752442c37433617726"
+      },
+      "candidate_source": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r003/overlay/lib/plugins/workbench_channel_supervised.dart",
+      "delta": "rawexact_selected_source",
+      "target": "lib/plugins/workbench_channel_supervised.dart"
+    },
+    {
+      "after_pin": {
+        "bytes": 14323,
+        "sha256": "b5fb611de44f5e614de17905a01b9d54415562315a4843770c3474313dc79ef7"
+      },
+      "before_pin": {
+        "bytes": 9397,
+        "sha256": "f1438aab5d739fc5c74ca6bb508e4b92b11b5dca9ae6df5a53d34ae2e9814910"
+      },
+      "candidate_source": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r003/overlay/lib/plugins/workbench_supervision.dart",
+      "delta": "rawexact_selected_source",
+      "target": "lib/plugins/workbench_supervision.dart"
+    },
+    {
+      "after_pin": {
+        "bytes": 120251,
+        "sha256": "940aaa1206fed9b3c4e73cb299fadf35e8280c7e18947f2a8f7b9f92664837b0"
+      },
+      "before_pin": {
+        "bytes": 119848,
+        "sha256": "b8a3070fd9ca8e4d37920db0ba32862c8811cbf0c0da8460808bba9519cad7c0"
+      },
+      "candidate_source": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r003/overlay/lib/plugins/workbench_native.dart",
+      "delta": "rawexact_selected_source",
+      "target": "lib/plugins/workbench_native.dart"
+    },
+    {
+      "after_pin": {
+        "bytes": 22153,
+        "sha256": "5e860277393a7e481c40ff0820df9b3f2e6934d0bd2888f94137b27fa03156ac"
+      },
+      "before_pin": null,
+      "candidate_source": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r003/overlay/test/workbench_startup_quarantine_test.dart",
+      "delta": "rawexact_selected_source",
+      "target": "test/workbench_startup_quarantine_test.dart"
+    },
+    {
+      "after_pin": {
+        "bytes": 1387,
+        "sha256": "3e24f40b916206a0b45745dfc356ef4e5b988b7fcd29f24c6baf2fd996b4f939"
+      },
+      "before_pin": null,
+      "candidate_source": "reports/reconstruction-2026-10-13/source-candidates/startup-observation-json-r001/overlay/test/workbench_startup_observation_json_test.dart",
+      "delta": "rawexact_selected_source",
+      "target": "test/workbench_startup_observation_json_test.dart"
+    }
+  ],
+  "schema": "PUBLIC_STARTUP_COMPOSITION10_V1",
+  "unchanged_lock_count": 20
+}

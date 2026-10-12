@@ -1,3 +1,9 @@
+## 当前 23 项内存回归与组合准备（2026-10-13）
+
+本轮 22 通过、1 失败，原退出 1 保留；恢复页面中文提示失败的根因尚待核对，不宣称已修复或全通过。新增可空 JSON 测试本项通过。十路径候选组合映射已准备，保留现有读取加固和 20 份锁；未应用生产，新的联合构建与真实正常／异常关闭待验收。
+
+原 native Unknown 不重放。SDK26／G04、namespace、ancestor、生产安全与网络仍 OPEN，release_eligible=false。详见[最新限定进度](reconstruction-2026-10-13/startup-integration-progress-v10.md)。以下旧段保留历史范围。
+
 ## 失败启动 kind4 时序修正与本地正反回归（2026-10-13）
 
 新增 r003 仅归档四个 Dart 源文件，不激活生产入口。kind4 准入同步锁存 pending；原 flush 成功或失败后才重新评估完成，失败仍保留 Unknown／无回执／不重试。相同测试源的 fixed-B 21 项逐项成功且未跳过；negative-A 使用旧 channel，只运行一个焦点，真实在原第 435 行提前 settled 断言失败（Expected false / Actual true），原非零退出保留。B 外层与内部 runner 均返回 0；A 均返回 1，双流 EOF 分别记录。

@@ -1,0 +1,18 @@
+{
+  "base": "../startup-quarantine-runtime-r002",
+  "delta": "Three comment blocks only; logic and allow attributes unchanged",
+  "fresh_combined_build": "NOT_RUN",
+  "members": {
+    "overlay/workbench_host/src/startup_quarantine.rs": {
+      "bytes": 11938,
+      "sha256": "bc8b62e899e4aba8d3d6f0fcf82ae47b2aea64d596de28f8024d8a3708ec2861"
+    },
+    "startup-quarantine-comments.diff": {
+      "bytes": 1701,
+      "sha256": "f0e47f2f58a1c9c8047cbb69b4be40d04c3b7c1c27d2020cac5d72379a53e378"
+    }
+  },
+  "production_activated": false,
+  "release_eligible": false,
+  "schema": "PUBLIC_STARTUP_QUARANTINE_RUNTIME_DELTA_R003"
+}

@@ -1,0 +1,42 @@
+{
+  "by_file": {
+    "test/qualification_session_contract_test.dart": [
+      "default compile barrier refuses opt-in before any effects",
+      "canonical plan and external pin reject ambiguous forms",
+      "fixed frames refuse foreign key/owner and wrong barrier shape",
+      "actual consumed context bit is observation, never worker success authority",
+      "reservation precedes early failure and forbids Start replay",
+      "local Start barrier rejects absent None and zero/missing startup pair",
+      "pure known-key ledger survives postdecode gate failure and consumed ACK"
+    ],
+    "test/workbench_channel_test.dart": [
+      "shared controller keeps exact revisions and never publishes an older read",
+      "uncertain send fences the channel without automatically replaying it"
+    ],
+    "test/workbench_startup_observation_json_test.dart": [
+      "default startup observation serializes nullable quarantine without release"
+    ],
+    "test/workbench_startup_observation_test.dart": [
+      "observation precedes a pending original close without acceptance",
+      "observer failure cannot skip close or replace primary and secondary",
+      "second observer failure stays separate from primary and close",
+      "private validated state ignores public notifier writes",
+      "ordinary channel cannot export qualification startup observation",
+      "foreign initial frame is excluded from startup observation",
+      "identity continuity failure preserves only last validated state",
+      "diagnostic prefix counts original bytes and snapshots are immutable",
+      "exit and EOF facts remain independent and never imply release",
+      "failure text and JSON snapshots remain bounded",
+      "snapshot failure still attempts original close"
+    ],
+    "test/workbench_supervision_test.dart": [
+      "ACK, process exit and resource proof cannot substitute for durable owner release",
+      "wrapper crash permits window exit but keeps recovery blocked and Unknown visible"
+    ]
+  },
+  "count": 23,
+  "expected_negative": false,
+  "schema": "PUBLIC_MEMORY_REGRESSION23_NAMES_V1",
+  "visible_failures": 1,
+  "visible_successes": 22
+}
