@@ -16,6 +16,13 @@ import 'plugin_library.dart';
 import 'agent_wrapper_models.dart';
 import 'agent_wrapper_control.dart';
 import 'agent_wrapper_native.dart';
+import 'agent_session_control.dart';
+import 'agent_session_native.dart';
+import 'agent_session_codec_native.dart';
+import 'agent_task_discovery.dart';
+import 'agent_session_workspace.dart';
+import 'agent_session_controller.dart';
+import 'qualification_session_contract.dart';
 import 'credential_manager.dart';
 import 'endpoint_control.dart';
 import 'service_control.dart';
@@ -41,6 +48,7 @@ import 'workbench_device_files.dart';
 import 'theme_package_import.dart';
 import 'workbench_channel_native.dart';
 import 'workbench_channel_supervised.dart';
+import 'workbench_supervision.dart';
 import 'package:morrow_plugin_ui/online.dart';
 import 'studio_native.dart';
 import 'dart:async';
@@ -73,6 +81,7 @@ part 'editor_draft_handoff_proposal_native.dart';
 part 'editor_draft_import_native.dart';
 part 'versioned_editor_native.dart';
 part 'versioned_workspace_native.dart';
+part 'qualification_session_native.dart';
 
 /// Decode package declarations for display only; no live authority is granted.
 @visibleForTesting
@@ -145,6 +154,7 @@ class RustWorkbench
         WorkbenchPluginControl,
         ExternalPluginControl,
         AgentWrapperControl,
+        WorkbenchAgentSessionSupport,
         ThemePackageImportControl,
         WorkbenchCredentialControl,
         WorkbenchEndpointControl,
@@ -161,7 +171,7 @@ class RustWorkbench
         WorkbenchEditorSupport,
         WorkbenchContentRevisionSource,
         WorkbenchMutationFailureNeedsRefresh {
-  RustWorkbench._(this.channel, this._cache, [this._nativeProcess]) {
+  RustWorkbench._(this.channel, this._cache, [this._nativeProcess, this._qualification]) {
     channel.output.listen(_receive, onError: _fail, onDone: _ended);
     _stderrDone = channel.diagnostics.listen((bytes) {
       final remaining = 4096 - _stderr.length;
@@ -276,6 +286,15 @@ class RustWorkbench
   }
 
   final Process? _nativeProcess;
+  final _QualificationSelection? _qualification;
+  QualificationSessionControl? _qualificationControl;
+  QualificationSessionControl get qualificationSession {
+    final selection = _qualification;
+    if (selection == null || !selection.openCompleted) {
+      throw StateError('Qualification requires the selected original open');
+    }
+    return _qualificationControl ??= QualificationSessionControl._(this, selection);
+  }
   final Directory? _cache;
   Process get process =>
       _nativeProcess ??
@@ -291,6 +310,7 @@ class RustWorkbench
   final _importAliases = <String, Set<String>>{};
   final _buffer = <int>[];
   Completer<Uint8List>? _response;
+  int _responseFrameCap = 256 * 1024;
   Object? _failure;
   Future<void> _queue = Future.value();
   Future<void> _businessQueue = Future.value();
@@ -310,27 +330,38 @@ class RustWorkbench
     bool managed = false,
     void Function(RustWorkbench)? onStarted,
     String? supervisorExecutable,
+    QualificationSessionConfiguration? qualification,
+    void Function(WorkbenchStartupObservation)? onQualificationStartupFailure,
   }) async {
-    await directory.create(recursive: true);
+    // Compile barrier precedes all filesystem/process effects.
+    qualification?.requireCompiled();
+    if (qualification == null && onQualificationStartupFailure != null) {
+      throw ArgumentError('Startup observation requires qualification mode');
+    }
+    final selection = qualification == null ? null : await _qualificationPreflight(
+      qualification, executable: executable, package: package, directory: directory,
+      supervisorExecutable: supervisorExecutable, managed: managed, onStarted: onStarted,
+    );
+    if (selection == null) await directory.create(recursive: true);
     final cache = Directory('${directory.path}/preview-cache');
-    await cache.create(recursive: true);
+    if (selection == null) await cache.create(recursive: true);
     final supervised = Platform.isWindows && supervisorExecutable != null;
-    final supervisorSha = supervised
+    final supervisorSha = selection?.plan.supervisor.sha256 ?? (supervised
         ? sha256
               .convert(await File(supervisorExecutable).readAsBytes())
               .toString()
-        : null;
-    final hostSha = supervised
+        : null);
+    final hostSha = selection?.plan.host.sha256 ?? (supervised
         ? sha256.convert(await File(executable).readAsBytes()).toString()
-        : null;
-    final packageSha = supervised
+        : null);
+    final packageSha = selection?.plan.package.sha256 ?? (supervised
         ? sha256.convert(await File(package).readAsBytes()).toString()
-        : null;
-    var canonicalProfile = supervised
+        : null);
+    var canonicalProfile = selection?.canonicalProfile ?? (supervised
         ? (await directory.resolveSymbolicLinks())
               .replaceAll('\\', '/')
               .toLowerCase()
-        : '';
+        : '');
     if (canonicalProfile.startsWith('//?/unc/')) {
       canonicalProfile = '//${canonicalProfile.substring(8)}';
     } else if (canonicalProfile.startsWith('//?/')) {
@@ -340,13 +371,15 @@ class RustWorkbench
         .convert(utf8.encode(canonicalProfile))
         .toString();
     final process = await Process.start(
-      supervised ? supervisorExecutable : executable,
+      selection?.plan.supervisor.path ?? (supervised ? supervisorExecutable : executable),
       [
-        if (supervised) ...[pid.toString(), executable],
+        if (supervised) ...[pid.toString(), selection?.plan.host.path ?? executable],
         if (managed) '--managed',
-        managed ? directory.path : '${directory.path}/workbench.db',
-        package,
+        managed ? directory.path : '${selection?.plan.profileRoot ?? directory.path}/workbench.db',
+        selection?.plan.package.path ?? package,
+        if (selection != null) ...selection.plan.configuration.trailer,
       ],
+      environment: selection?.plan.configuration.environment,
     );
     final result = RustWorkbench._(
       supervised
@@ -356,10 +389,12 @@ class RustWorkbench
               supervisorSha256: supervisorSha!,
               expectedProfile: expectedProfile,
               packageSha256: packageSha!,
+              qualificationStartupObservationEnabled: selection != null,
             )
           : NativeWorkbenchChannel(process),
       cache,
       process,
+      selection,
     );
     try {
       onStarted?.call(result);
@@ -367,12 +402,32 @@ class RustWorkbench
         host.Action.pageVersioned,
         configure: (r) => r.limit = 1,
       );
+      if (selection != null) {
+        if (selection.startup == null || !result._supportsPrivateControl) {
+          throw StateError('Qualification startup delivery not validated');
+        }
+        selection.openCompleted = true;
+      }
       return result;
     } catch (error, stack) {
       // Startup failures normally also make the child exit nonzero. Cleanup
       // must not replace the actionable key/identity/library error with that
       // secondary exit status. close() still waits for the process to exit.
-      if (onStarted == null) {
+      if (selection != null && onQualificationStartupFailure != null) {
+        await observeWorkbenchStartupFailure(
+          primaryFailure: error,
+          capture: ({required stage, required primaryFailure,
+              secondaryCloseFailure, observerFailure}) =>
+            (result.channel as SupervisedWorkbenchChannel)
+                .qualificationStartupObservation(
+              stage: stage, primaryFailure: primaryFailure,
+              secondaryCloseFailure: secondaryCloseFailure,
+              observerFailure: observerFailure,
+            ),
+          observe: onQualificationStartupFailure,
+          closeOriginal: result.close,
+        );
+      } else if (onStarted == null) {
         try {
           await result.close();
         } catch (_) {}
@@ -411,6 +466,165 @@ class RustWorkbench
         available: r.pluginAvailable,
         writable: !r.readOnly,
       );
+
+  NativeAgentSessionClient? _agentSessionClient;
+  final AgentSessionCodec _agentSessionCodec = AgentSessionCodec();
+
+  /// One private client on this original native owner. The fixed codec passed
+  /// actual generated Rust vector interchange; construction starts no task.
+  /// Supervised admission also requires its original validated open identity.
+  AgentSessionControl agentSessionControl() =>
+      _agentSessionClient ??= NativeAgentSessionClient(
+        _exchangeAgentSession,
+        () => _supportsPrivateControl,
+        _agentSessionCodec,
+      );
+
+  NativeAgentTaskDiscovery? _agentTaskDiscovery;
+
+  /// Explicit immutable observation on this original host; no Start or Attach.
+  AgentTaskDiscovery agentTaskDiscovery() =>
+      _agentTaskDiscovery ??= NativeAgentTaskDiscovery(
+        _exchangeAgentDiscovery,
+        () => _supportsPrivateControl,
+      );
+
+  AgentSessionWorkspace? _agentSessions;
+
+  /// One presentation session per original host; opening settings starts no RPC.
+  @override
+  AgentSessionWorkspace get agentSessions {
+    final workspace = _agentSessions ??= AgentSessionWorkspace(
+      discovery: agentTaskDiscovery(),
+      control: agentSessionControl(),
+    );
+    // A first settings visit cannot outlive this original owner. This seals
+    // presentation only; it neither sends a request nor proves remote join.
+    if (_closingProcess != null || _failure != null) {
+      workspace.dispose();
+    }
+    return workspace;
+  }
+
+  Future<T> _exchangeAgentDiscovery<T>(Uint8List frame, T Function(Uint8List) decode) =>
+      _exchangePrivate(frame, decode,
+          requestLimit: AgentTaskDiscoveryCodec.maxFrameBytes,
+          replyLimit: AgentTaskDiscoveryCodec.maxFrameBytes, qualificationProfile: 'AD31');
+
+  /// Short private RPC only. Pending work returns its token; it never occupies
+  /// the pipe while waiting for session completion or joins the business queue.
+  bool get _supportsPrivateControl =>
+      _failure == null &&
+      _closingProcess == null &&
+      (channel is NativeWorkbenchChannel ||
+          (channel is SupervisedWorkbenchChannel &&
+              (channel as SupervisedWorkbenchChannel).supportsPrivateControl));
+
+  Future<T> _exchangeAgentSession<T>(Uint8List frame, T Function(Uint8List) decode) {
+    if (_qualification?.failure != null) {
+      return Future.error(const AgentSessionFailure(AgentSessionFailureKind.unknown));
+    }
+    if (_qualification != null && _qualificationControl == null) {
+      return Future.error(StateError('Qualification requires actual Start before PS30'));
+    }
+    return _exchangePrivate(frame, decode,
+          requestLimit: NativeAgentSessionClient.maxRequestBytes,
+          replyLimit: NativeAgentSessionClient.maxReplyBytes, qualificationProfile: 'PS30',
+          qualificationBudget: _qualification == null ? null :
+              () => _qualificationControl!._remainingBusiness());
+  }
+
+  // Fixed internal profile wrappers choose these limits. This is not a public
+  // codec, channel, supervisor or authority injection point.
+  Future<T> _exchangePrivate<T>(
+    Uint8List frame,
+    T Function(Uint8List) decode, {
+    required int requestLimit,
+    required int replyLimit,
+    String? qualificationProfile,
+    bool qualificationRetainBeforeGate = false,
+    Duration Function()? qualificationBudget,
+  }) {
+    if (_failure != null) return Future.error(_failure!);
+    if (!_supportsPrivateControl) {
+      return Future.error(const AgentSessionFailure(AgentSessionFailureKind.unavailable));
+    }
+    if (frame.isEmpty || frame.length > requestLimit) {
+      return Future.error(const FormatException('Private session request exceeds limit'));
+    }
+    final payload = Uint8List.fromList(frame), completion = Completer<T>();
+    _queue = _queue.then((_) async {
+      Completer<Uint8List>? pending;
+      Uint8List? received;
+      final elapsed = Stopwatch()..start();
+      Never timeout() {
+        final error = TimeoutException('Private session response timed out');
+        _fail(error);
+        unawaited(close().catchError((Object _) {}));
+        throw error;
+      }
+      Duration remaining() {
+        final duration = const Duration(seconds: 60) - elapsed.elapsed;
+        if (duration <= Duration.zero) timeout();
+        final selected = qualificationBudget?.call();
+        if (selected != null && selected <= Duration.zero) timeout();
+        return selected != null && selected < duration ? selected : duration;
+      }
+      try {
+        if (_failure != null) throw _failure!;
+        if (!_supportsPrivateControl) {
+          throw const AgentSessionFailure(AgentSessionFailureKind.unknown);
+        }
+        if (_qualification != null && qualificationProfile != null) {
+          _qualification.requireTraceCapacity(payload.length, replyLimit);
+        }
+        if (_response != null) throw StateError('Original pipe slot occupied');
+        pending = Completer<Uint8List>();
+        pending.future.ignore();
+        _responseFrameCap = replyLimit;
+        _response = pending;
+        final selectedSendBudget = qualificationBudget == null ? null : remaining();
+        await channel.send(payload).timeout(selectedSendBudget ?? remaining(), onTimeout: timeout);
+        received = await pending.future.timeout(remaining(), onTimeout: timeout);
+        // Only the fixed qualification decoder may retain a fully validated
+        // actual key/consumed ACK before a later original gate rejects delivery.
+        T? retained;
+        if (qualificationRetainBeforeGate) retained = decode(received);
+        // A supervisor may revoke admission while this exact RPC is pending.
+        // Even a correlated frame cannot bypass that final original gate.
+        if (!_supportsPrivateControl) {
+          throw const AgentSessionFailure(AgentSessionFailureKind.unknown);
+        }
+        if (received.length > replyLimit) {
+          throw const FormatException('Private session reply exceeds limit');
+        }
+        final decoded = qualificationRetainBeforeGate ? retained as T : decode(received);
+        if (_qualification != null && qualificationProfile != null) {
+          _qualification.record(qualificationProfile, payload, received, decoded);
+        }
+        completion.complete(decoded);
+      } catch (error, stack) {
+        _qualification?.fence(error);
+        if (pending != null && received == null) {
+          _fail(StateError('Original session delivery is unknown'));
+          unawaited(close().catchError((Object _) {}));
+        }
+        completion.completeError(error, stack);
+      } finally {
+        _responseFrameCap = 256 * 1024;
+        payload.fillRange(0, payload.length, 0);
+        if (received != null) {
+          received.fillRange(0, received.length, 0);
+        } else if (pending != null) {
+          unawaited(pending.future.then<void>(
+            (bytes) => bytes.fillRange(0, bytes.length, 0),
+            onError: (Object _, StackTrace _) {},
+          ));
+        }
+      }
+    });
+    return completion.future;
+  }
 
   late final _agentWrappers = NativeAgentWrapperClient(
     _exchangeAgentAdmin,
@@ -1610,6 +1824,7 @@ class RustWorkbench
 
   void _fail(Object error) {
     _failure ??= error;
+    _agentSessions?.dispose();
     _buffer.fillRange(0, _buffer.length, 0);
     _buffer.clear();
     final pending = _response;
@@ -1620,7 +1835,8 @@ class RustWorkbench
   void _receive(List<int> bytes) {
     try {
       if (_failure != null) return;
-      if (_buffer.length + bytes.length > 256 * 1024 + 4) {
+      final cap = _response == null ? 256 * 1024 : _responseFrameCap;
+      if (_buffer.length + bytes.length > cap + 4) {
         _fail(const FormatException('内容服务消息过大'));
         return;
       }
@@ -1629,7 +1845,7 @@ class RustWorkbench
       final size = ByteData.sublistView(
         Uint8List.fromList(_buffer.take(4).toList()),
       ).getUint32(0, Endian.little);
-      if (size == 0 || size > 256 * 1024 || _buffer.length > 256 * 1024 + 4) {
+      if (size == 0 || size > cap || _buffer.length > cap + 4) {
         _fail(const FormatException('内容服务消息过大'));
         return;
       }
@@ -1759,6 +1975,7 @@ class RustWorkbench
     final completion = Completer<T>();
     _queue = _queue.then((_) async {
       Uint8List? receivedBytes;
+      Uint8List? qualificationStartupRequest;
       Uint8List? schedulerKey;
       Completer<Uint8List>? pendingReply;
       Never transportTimeout() {
@@ -1814,6 +2031,10 @@ class RustWorkbench
             }
           },
           send: (payload) async {
+            if (_qualification != null && !_qualification.openCompleted &&
+                action == host.Action.pageVersioned) {
+              qualificationStartupRequest = Uint8List.fromList(payload);
+            }
             response = _response = pendingReply = Completer<Uint8List>();
             // EOF can fail this response while send/flush is still pending.
             // Observe it immediately to avoid an unhandled asynchronous error;
@@ -1856,6 +2077,9 @@ class RustWorkbench
             _serviceRoute == null &&
             updatePresentation) {
           _checkBusinessReply(action, reply, updatePresentation: true);
+        }
+        if (qualificationStartupRequest != null) {
+          _qualification!.recordStartup(qualificationStartupRequest!, bytes);
         }
         completion.complete(decoded);
       } catch (e, stack) {
@@ -2864,6 +3088,8 @@ class RustWorkbench
   Future<void> close() => _closingProcess ??= _closeProcess();
 
   Future<void> _closeProcess() async {
+    // Seal local presentation synchronously. This is not remote detach or join.
+    _agentSessions?.dispose();
     Object? failure;
     StackTrace? failureStack;
     try {

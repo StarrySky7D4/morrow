@@ -153,7 +153,7 @@ impl Session {
             if matches!(status, AuditBindingState::Uninitialized) {
                 return Err(SessionError::KeyWithoutDatabase);
             }
-            let key = Key::load(&key_path)?;
+            let key = Key::load_existing(&key_path)?;
             if let AuditBindingState::Bound(binding) = &status {
                 let trust = key.trust();
                 if binding.log_id != trust.id || binding.public_key != *trust.key.as_bytes() {
@@ -178,7 +178,7 @@ impl Session {
             }
             // Validate/migrate old unbound data before creating any new identity.
             drop(Store::open(&database, budget)?);
-            let key = Key::create(&key_path)?;
+            let key = Key::create_initialized(&key_path)?;
             boundary("bootstrap-after-key");
             key
         };

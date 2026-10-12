@@ -38,12 +38,16 @@ fn main() {
         )
         .expect("projection schema");
     println!("cargo:rerun-if-changed=schemas/host.capnp");
+    println!("cargo:rerun-if-changed=schemas/agent_product_control.capnp");
+    println!("cargo:rerun-if-changed=schemas/agent_task_discovery.capnp");
     println!("cargo:rerun-if-changed=schemas/content_api.capnp");
     println!("cargo:rerun-if-changed=schemas/editor_draft_api.capnp");
     println!("cargo:rerun-if-changed=schemas/editor_draft_staging_api.capnp");
     capnpc::CompilerCommand::new()
         .src_prefix("schemas")
         .file("schemas/host.capnp")
+        .file("schemas/agent_product_control.capnp")
+        .file("schemas/agent_task_discovery.capnp")
         .file("schemas/content_api.capnp")
         .file("schemas/editor_draft_api.capnp")
         .file("schemas/editor_draft_staging_api.capnp")

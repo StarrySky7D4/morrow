@@ -445,36 +445,110 @@ pub(crate) fn stdio_pipe(parent_writes: bool) -> io::Result<(OwnedHandle, OwnedH
     Ok((server, client))
 }
 
-/// Read the current token's registered known folder; never trust an environment
-/// override to choose the cross-process service-authority lock namespace.
+// Shared current-primary-token candidate; namespace qualification remains OPEN.
+// No caller environment value or fallback participates in this resolver.
 fn trusted_local_app_data() -> io::Result<String> {
-    use std::os::windows::ffi::OsStringExt;
-    use windows_sys::Win32::{UI::Shell::{SHGetKnownFolderPath,FOLDERID_LocalAppData},System::Com::CoTaskMemFree};
-    let mut raw=ptr::null_mut();
-    // SAFETY: known-folder ID and writable output pointer are valid. A null token
-    // selects this process's existing token; this grants no new rights.
-    let result=unsafe{SHGetKnownFolderPath(&FOLDERID_LocalAppData,0,ptr::null_mut(),&mut raw)};
-    struct Folder(*mut u16);
-    impl Drop for Folder {fn drop(&mut self){ // SAFETY: the API output is owned and must be freed on success or failure; null is accepted.
-        unsafe{CoTaskMemFree(self.0.cast())};}}
-    let folder=Folder(raw);
-    if result<0 {return Err(io::Error::other(format!("Native local app data lookup failed: {result:#x}")));}
-    if raw.is_null(){return Err(invalid("native local app data pointer"));}
-    let mut value=Vec::new();
-    // SAFETY: successful SHGetKnownFolderPath returns a null-terminated UTF-16
-    // allocation owned by Folder; traversal stops at its terminator.
-    for index in 0..32768 {let ch=unsafe{*folder.0.add(index)};if ch==0{break;}value.push(ch);}
-    if value.is_empty()||value.len()==32768{return Err(invalid("native local app data length"));}
-    let path=std::path::PathBuf::from(std::ffi::OsString::from_wide(&value));
-    if !path.is_absolute()||!path.is_dir(){return Err(invalid("native local app data directory"));}
-    Ok(path.to_str().ok_or_else(||invalid("native local app data encoding"))?.to_owned())
+    morrow_windows_user_directories::current_process_local_app_data()
 }
+// Preserve the existing pure decoder regression names; never calls the native resolver.
+#[cfg(test)]
+use morrow_windows_user_directories::decode_token_local_app_data;
+
+/// An already encoded trusted-host environment. Private fields prevent caller
+/// blocks/profile overrides/markers. Not Clone: moved into one spawn attempt.
+pub struct PreparedTrustedHostEnvironment {
+    encoded: Vec<u16>,
+}
+impl PreparedTrustedHostEnvironment {
+    fn into_block(self) -> Vec<u16> { self.encoded }
+}
+
+/// Prepare the current-process token-derived candidate before profile/Owner/lease/Job effects.
+/// Namespace qualification remains OPEN; this one-shot prepared block grants no new authority.
+pub fn prepare_trusted_host_environment(environment: &BTreeMap<String, String>)
+    -> io::Result<PreparedTrustedHostEnvironment> {
+    prepare_trusted_host_environment_with(environment, trusted_local_app_data)
+}
+fn prepare_trusted_host_environment_with(environment: &BTreeMap<String, String>,
+    resolve: impl FnOnce() -> io::Result<String>) -> io::Result<PreparedTrustedHostEnvironment> {
+    environment_block(environment, false)?;
+    let mut trusted = environment.clone();
+    trusted.insert("LOCALAPPDATA".into(), resolve()?);
+    Ok(PreparedTrustedHostEnvironment { encoded: environment_block(&trusted, true)? })
+}
+
+#[cfg(feature = "c28-product-session-qualification")]
+pub fn prepare_qualified_host_environment(environment: &BTreeMap<String, String>,
+    plan_digest: [u8; 32]) -> io::Result<PreparedTrustedHostEnvironment> {
+    prepare_qualified_host_environment_with(environment, &plan_digest, trusted_local_app_data)
+}
+#[cfg(feature = "c28-product-session-qualification")]
+fn prepare_qualified_host_environment_with(environment: &BTreeMap<String, String>,
+    plan_digest: &[u8; 32], resolve: impl FnOnce() -> io::Result<String>)
+    -> io::Result<PreparedTrustedHostEnvironment> {
+    environment_block(environment, false)?;
+    let native_folder = resolve()?;
+    Ok(PreparedTrustedHostEnvironment {
+        encoded: qualified_environment_block(environment, &native_folder, plan_digest)?,
+    })
+}
+
 fn child_environment(environment:&BTreeMap<String,String>,trusted_host:bool)->io::Result<Vec<u16>> {
     // Validate the caller's same three-key allowlist before any augmentation.
     let ordinary=environment_block(environment,false)?;
     if !trusted_host{return Ok(ordinary);}
-    let mut trusted=environment.clone();trusted.insert("LOCALAPPDATA".into(),trusted_local_app_data()?);
-    environment_block(&trusted,true)
+    Ok(prepare_trusted_host_environment(environment)?.into_block())
+}
+
+// Internal qualified-host injection; neither ordinary caller allowlist changes.
+#[cfg(feature = "c28-product-session-qualification")]
+const QUALIFICATION_ENV: &str = "MORROW_C28_SESSION_QUALIFICATION";
+
+#[cfg(feature = "c28-product-session-qualification")]
+fn qualification_digest_hex(digest: &[u8; 32]) -> String {
+    const HEX: &[u8; 16] = b"0123456789abcdef";
+    let mut value = String::with_capacity(64);
+    for byte in digest {
+        value.push(HEX[(byte >> 4) as usize] as char);
+        value.push(HEX[(byte & 15) as usize] as char);
+    }
+    value
+}
+
+// Pure encoder; native_folder comes only from the current-process token-derived candidate.
+#[cfg(feature = "c28-product-session-qualification")]
+fn qualified_environment_block(environment: &BTreeMap<String, String>,
+    native_folder: &str, plan_digest: &[u8; 32]) -> io::Result<Vec<u16>> {
+    environment_block(environment, false)?;
+    let mut trusted = environment.clone();
+    trusted.insert("LOCALAPPDATA".into(), native_folder.into());
+    environment_block(&trusted, true)?;
+    trusted.insert(QUALIFICATION_ENV.into(), qualification_digest_hex(plan_digest));
+    let mut entries: Vec<_> = trusted.iter().map(|(key, value)|
+        (key.to_uppercase(), key, value)).collect();
+    entries.sort_by(|a, b| a.0.cmp(&b.0));
+    let mut block = Vec::new();
+    for (_, key, value) in entries {
+        block.extend(key.encode_utf16());
+        block.push(b'=' as u16);
+        block.extend(value.encode_utf16());
+        block.push(0);
+    }
+    block.push(0);
+    Ok(block)
+}
+
+#[cfg(feature = "c28-product-session-qualification")]
+fn qualified_child_environment(environment: &BTreeMap<String, String>,
+    plan_digest: &[u8; 32]) -> io::Result<Vec<u16>> {
+    Ok(prepare_qualified_host_environment(environment, *plan_digest)?.into_block())
+}
+
+#[cfg(feature = "c28-product-session-qualification")]
+pub(crate) fn spawn_qualified_host(job: &Job, job_handle: &OwnedHandle,
+    exe: &Path, args: &[String], cwd: &Path,
+    environment: &BTreeMap<String, String>, plan_digest: [u8; 32]) -> io::Result<JobChild> {
+    spawn_inner(job, job_handle, exe, args, cwd, environment, true, Some(plan_digest))
 }
 
 pub(crate) fn spawn(
@@ -486,10 +560,44 @@ pub(crate) fn spawn(
     environment: &BTreeMap<String, String>,
     trusted_host: bool,
 ) -> io::Result<JobChild> {
+    spawn_inner(job, job_handle, exe, args, cwd, environment, trusted_host, None)
+}
+
+pub(crate) fn spawn_prepared_host(job: &Job, job_handle: &OwnedHandle,
+    exe: &Path, args: &[String], cwd: &Path, prepared: PreparedTrustedHostEnvironment)
+    -> io::Result<JobChild> {
     let executable = path_wide(exe)?;
     let directory = path_wide(cwd)?;
-    let mut command = command_line(&executable, args)?;
-    let environment = child_environment(environment,trusted_host)?;
+    let command = command_line(&executable, args)?;
+    spawn_encoded(job, job_handle, executable, directory, command, prepared.into_block())
+}
+
+fn spawn_inner(job: &Job, job_handle: &OwnedHandle, exe: &Path, args: &[String],
+    cwd: &Path, environment: &BTreeMap<String, String>, trusted_host: bool,
+    qualification_digest: Option<[u8; 32]>) -> io::Result<JobChild> {
+    let executable = path_wide(exe)?;
+    let directory = path_wide(cwd)?;
+    let command = command_line(&executable, args)?;
+    let environment = match qualification_digest {
+        None => child_environment(environment, trusted_host)?,
+        Some(digest) => {
+            #[cfg(feature = "c28-product-session-qualification")]
+            {
+                if !trusted_host { return Err(input("qualification requires trusted host")); }
+                qualified_child_environment(environment, &digest)?
+            }
+            #[cfg(not(feature = "c28-product-session-qualification"))]
+            {
+                let _ = digest;
+                return Err(input("qualification host feature disabled"));
+            }
+        }
+    };
+    spawn_encoded(job, job_handle, executable, directory, command, environment)
+}
+
+fn spawn_encoded(job: &Job, job_handle: &OwnedHandle, executable: Vec<u16>,
+    directory: Vec<u16>, mut command: Vec<u16>, environment: Vec<u16>) -> io::Result<JobChild> {
     // Revalidate immutable Job policy before preparing any child process.
     if job.inheritable()?
         || job.limit_flags()?
@@ -631,4 +739,197 @@ mod trusted_environment_tests {
   assert!(child_environment(&override_env,false).is_err());assert!(child_environment(&override_env,true).is_err());
   assert!(std::path::Path::new(&trusted_local_app_data().unwrap()).is_dir());
  }
+}
+
+// Pure tests: no KnownFolder, FFI, process, profile, DB or VM call.
+#[cfg(test)]
+mod qualification_environment_policy_tests {
+    use super::*;
+    const MARKER: &str = "MORROW_C28_SESSION_QUALIFICATION";
+    fn caller(key: &str, value: &str) -> BTreeMap<String, String> {
+        BTreeMap::from([(key.into(), value.into())])
+    }
+    #[test]
+    fn ordinary_paths_reject_marker_and_folder_overrides() {
+        for key in [MARKER, "morrow_c28_session_qualification", "LOCALAPPDATA",
+            "localappdata", "PATH", "SYSTEMROOT", "SystemRoot=bad"] {
+            let env = caller(key, "0");
+            assert!(environment_block(&env, false).is_err());
+            assert!(child_environment(&env, true).is_err()); // Before OS lookup.
+        }
+    }
+    #[test]
+    fn ordinary_encoder_rejects_invalid_values_and_unknown_keys() {
+        assert!(environment_block(&caller("SystemRoot", "bad\0value"), false).is_err());
+        for key in ["", "OTHER", "SystemRoot\0", "SystemRoot="] {
+            assert!(environment_block(&caller(key, "public"), false).is_err());
+        }
+        let valid = BTreeMap::from([("SystemRoot".into(), "C:/Windows".into()),
+            ("WINDIR".into(), "C:/Windows".into()), ("COMSPEC".into(), "C:/Windows/System32/cmd.exe".into())]);
+        let text = String::from_utf16(&environment_block(&valid, false).unwrap()).unwrap();
+        assert_eq!(text, "COMSPEC=C:/Windows/System32/cmd.exe\0SystemRoot=C:/Windows\0WINDIR=C:/Windows\0\0");
+    }
+    #[cfg(not(feature = "c28-product-session-qualification"))]
+    #[test]
+    fn default_off_trusted_encoder_rejects_marker() {
+        assert!(environment_block(&caller(MARKER, &"a".repeat(64)), true).is_err());
+    }
+    #[cfg(feature = "c28-product-session-qualification")]
+    #[test]
+    fn typed_digest_has_exact_fixed_width_lower_hex() {
+        let mut digest = [0u8; 32]; digest[0] = 0xab; digest[31] = 0xef;
+        let value = qualification_digest_hex(&digest);
+        assert_eq!(value.len(), 64);
+        assert_eq!(value, format!("ab{}ef", "00".repeat(30)));
+        assert!(value.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b)));
+    }
+    #[cfg(feature = "c28-product-session-qualification")]
+    #[test]
+    fn qualified_encoder_injects_only_typed_digest_and_native_folder() {
+        let raw = qualified_environment_block(&caller("SystemRoot", "C:/Windows"),
+            "C:/native-known-folder", &[0xab;32]).unwrap();
+        let text = String::from_utf16(&raw).unwrap();
+        assert_eq!(text, format!("LOCALAPPDATA=C:/native-known-folder\0{MARKER}={}\0SystemRoot=C:/Windows\0\0", "ab".repeat(32)));
+        assert!(environment_block(&caller(MARKER, &"ab".repeat(32)), true).is_err());
+    }
+    #[cfg(feature = "c28-product-session-qualification")]
+    #[test]
+    fn qualified_encoder_rejects_caller_marker_formats_and_overrides() {
+        let values = [String::new(), "a".into(), "a".repeat(63), "a".repeat(65),
+            "A".repeat(64), "g".repeat(64), "a".repeat(64)];
+        for value in &values {
+            assert!(qualified_environment_block(&caller(MARKER, value), "C:/native", &[1;32]).is_err());
+        }
+        for key in ["LOCALAPPDATA", "localappdata", "PATH", "morrow_c28_session_qualification", "SYSTEMROOT"] {
+            assert!(qualified_environment_block(&caller(key,"public"), "C:/native", &[1;32]).is_err());
+        }
+        assert!(qualified_environment_block(&caller("SystemRoot","bad\0value"), "C:/native", &[1;32]).is_err());
+        assert!(qualified_environment_block(&BTreeMap::new(), "bad\0folder", &[1;32]).is_err());
+    }
+}
+
+// Pure injected-resolver tests: no KnownFolder, FFI, Job, profile or process.
+#[cfg(test)]
+mod prepared_environment_policy_tests {
+    use super::*;
+    use std::cell::Cell;
+    fn caller(key: &str, value: &str) -> BTreeMap<String, String> {
+        BTreeMap::from([(key.into(), value.into())])
+    }
+    #[test]
+    fn resolver_failure_returns_once_without_prepared_value_or_fallback() {
+        let calls = Cell::new(0);
+        let result = prepare_trusted_host_environment_with(&BTreeMap::new(), || {
+            calls.set(calls.get() + 1);
+            Err(io::Error::new(io::ErrorKind::PermissionDenied, "injected resolver failure"))
+        });
+        assert!(matches!(result, Err(ref error) if error.kind() == io::ErrorKind::PermissionDenied));
+        assert_eq!(calls.get(), 1);
+    }
+    #[test]
+    fn caller_overrides_and_guest_keys_reject_before_resolver() {
+        for key in ["LOCALAPPDATA", "localappdata", "MORROW_C28_SESSION_QUALIFICATION",
+            "morrow_c28_session_qualification", "PATH", "SYSTEMROOT"] {
+            let calls = Cell::new(0);
+            let env = caller(key, "public");
+            assert!(environment_block(&env, false).is_err());
+            assert!(prepare_trusted_host_environment_with(&env, || {
+                calls.set(calls.get() + 1); Ok("C:/synthetic-only".into())
+            }).is_err());
+            assert_eq!(calls.get(), 0);
+        }
+        assert_eq!(child_environment(&BTreeMap::new(), false).unwrap(), vec![0, 0]);
+    }
+    #[test]
+    fn owned_prepared_block_consumes_exact_bytes_without_second_lookup() {
+        let calls = Cell::new(0);
+        let mut env = caller("SystemRoot", "C:/Windows");
+        let prepared = prepare_trusted_host_environment_with(&env, || {
+            calls.set(calls.get() + 1); Ok("C:/synthetic-only".into())
+        }).unwrap();
+        env.insert("LOCALAPPDATA".into(), "C:/later-caller-override".into());
+        let raw = prepared.into_block(); // Same consume as spawn_prepared_host; no resolver argument.
+        assert_eq!(String::from_utf16(&raw).unwrap(),
+            "LOCALAPPDATA=C:/synthetic-only\0SystemRoot=C:/Windows\0\0");
+        assert_eq!(calls.get(), 1);
+    }
+    #[test]
+    fn invalid_resolver_value_is_rejected_without_fallback() {
+        let calls = Cell::new(0);
+        assert!(prepare_trusted_host_environment_with(&BTreeMap::new(), || {
+            calls.set(calls.get() + 1); Ok("bad\0folder".into())
+        }).is_err());
+        assert_eq!(calls.get(), 1);
+    }
+    #[cfg(feature = "c28-product-session-qualification")]
+    #[test]
+    fn qualified_resolver_failure_returns_once_without_fallback() {
+        let calls = Cell::new(0);
+        let result = prepare_qualified_host_environment_with(&BTreeMap::new(), &[1; 32], || {
+            calls.set(calls.get() + 1);
+            Err(io::Error::new(io::ErrorKind::NotFound, "injected resolver failure"))
+        });
+        assert!(matches!(result, Err(ref error) if error.kind() == io::ErrorKind::NotFound));
+        assert_eq!(calls.get(), 1);
+    }
+    #[cfg(feature = "c28-product-session-qualification")]
+    #[test]
+    fn qualified_prepared_block_preserves_digest_and_caller_admission() {
+        let calls = Cell::new(0);
+        let env = caller("SystemRoot", "C:/Windows");
+        let prepared = prepare_qualified_host_environment_with(&env, &[0xab; 32], || {
+            calls.set(calls.get() + 1); Ok("C:/synthetic-only".into())
+        }).unwrap();
+        assert_eq!(String::from_utf16(&prepared.into_block()).unwrap(), format!(
+            "LOCALAPPDATA=C:/synthetic-only\0MORROW_C28_SESSION_QUALIFICATION={}\0SystemRoot=C:/Windows\0\0", "ab".repeat(32)));
+        assert_eq!(calls.get(), 1);
+        for key in ["LOCALAPPDATA", "MORROW_C28_SESSION_QUALIFICATION"] {
+            assert!(prepare_qualified_host_environment_with(&caller(key, "public"), &[1; 32], || {
+                panic!("rejected caller must not reach resolver")
+            }).is_err());
+        }
+    }
+}
+
+// Pure UTF-16/path-shape tests: no token/userenv/FS/worker/VM/body call.
+#[cfg(test)]
+mod token_folder_decoder_tests {
+    use super::decode_token_local_app_data;
+    fn wide(value: &str) -> Vec<u16> {
+        value.encode_utf16().chain(Some(0)).collect()
+    }
+    #[test]
+    fn rejects_empty_missing_nul_and_oversized_buffers() {
+        assert!(decode_token_local_app_data(&[]).is_err());
+        assert!(decode_token_local_app_data(&[0]).is_err());
+        assert!(decode_token_local_app_data(&vec![b'x' as u16; 32768]).is_err());
+        assert!(decode_token_local_app_data(&vec![0; 32769]).is_err());
+    }
+    #[test]
+    fn rejects_invalid_utf16_before_terminator() {
+        assert!(decode_token_local_app_data(&[0xd800, 0]).is_err());
+        assert!(decode_token_local_app_data(&[0xdc00, 0]).is_err());
+    }
+    #[test]
+    fn rejects_fixed_unresolved_placeholder_and_relative_paths() {
+        for value in ["%LOCALAPPDATA%", "%localappdata%", "relative\\Local", "C:relative"] {
+            assert!(decode_token_local_app_data(&wide(value)).is_err());
+        }
+    }
+    #[test]
+    fn accepts_absolute_literal_percent_and_unicode_without_filesystem_calls() {
+        for value in [r"C:\Profiles\100%Ready\AppData\Local",
+                      r"C:\Profiles\%literal%\Local", r"C:\Profiles\研究\Local"] {
+            assert_eq!(decode_token_local_app_data(&wide(value)).unwrap(), value);
+        }
+    }
+    #[test]
+    fn terminator_must_fit_inside_fixed_capacity() {
+        let mut value = wide(r"C:\Local");
+        value.resize(32768, 0);
+        assert_eq!(decode_token_local_app_data(&value).unwrap(), r"C:\Local");
+        let mut no_end = vec![b'x' as u16; 32768];
+        no_end[..3].copy_from_slice(&[b'C' as u16, b':' as u16, b'\\' as u16]);
+        assert!(decode_token_local_app_data(&no_end).is_err());
+    }
 }

@@ -5124,6 +5124,7 @@ dependencies = [
  "ed25519-dalek",
  "libc",
  "lz4_flex",
+ "morrow-windows-user-directories",
  "prost",
  "prost-build",
  "prost-reflect",
@@ -5157,6 +5158,7 @@ dependencies = [
 name = "morrow-native-pipe-win"
 version = "0.1.0"
 dependencies = [
+ "morrow-windows-user-directories",
  "tokio",
  "windows-sys 0.61.2",
 ]
@@ -5231,6 +5233,13 @@ dependencies = [
  "tokio",
  "winapi-util",
  "zeroize",
+]
+
+[[package]]
+name = "morrow-windows-user-directories"
+version = "0.1.0"
+dependencies = [
+ "windows-sys 0.61.2",
 ]
 
 [[package]]

@@ -34,6 +34,9 @@ use windows_sys::Win32::{
 use super::{own, raw};
 
 pub use super::job_process::{JobChild, JobSpawnOutcome, spawn_error_outcome};
+pub use super::job_process::{PreparedTrustedHostEnvironment, prepare_trusted_host_environment};
+#[cfg(feature = "c28-product-session-qualification")]
+pub use super::job_process::prepare_qualified_host_environment;
 pub use super::job_stdin::{JobStdin, JobStdinProof};
 
 /// Immediate watchdog termination without Rust's process-exit stdio cleanup.
@@ -167,6 +170,27 @@ impl Job {
         &self,exe:&std::path::Path,args:&[String],cwd:&std::path::Path,
         environment:&std::collections::BTreeMap<String,String>,
     )->io::Result<JobChild>{super::job_process::spawn(self,&self.handle,exe,args,cwd,environment,true)}
+
+    /// Feature-only trusted host. The validated plan digest is separate from
+    /// the caller map, which remains strictly three-key-only.
+    #[cfg(feature = "c28-product-session-qualification")]
+    pub fn spawn_suspended_qualified_host(
+        &self, exe: &std::path::Path, args: &[String], cwd: &std::path::Path,
+        environment: &std::collections::BTreeMap<String, String>,
+        plan_digest: [u8; 32],
+    ) -> io::Result<JobChild> {
+        super::job_process::spawn_qualified_host(self, &self.handle, exe, args, cwd,
+            environment, plan_digest)
+    }
+
+    /// Consume one opaque block prepared before this Job/Owner existed.
+    /// No caller map, resolver, profile override or digest is accepted here.
+    pub fn spawn_suspended_prepared_host(
+        &self, exe: &std::path::Path, args: &[String], cwd: &std::path::Path,
+        prepared: PreparedTrustedHostEnvironment,
+    ) -> io::Result<JobChild> {
+        super::job_process::spawn_prepared_host(self, &self.handle, exe, args, cwd, prepared)
+    }
 
     pub fn new() -> io::Result<Self> {
         let security = SECURITY_ATTRIBUTES {

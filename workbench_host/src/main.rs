@@ -1,5 +1,11 @@
 #![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
 use std::io::{Read, Write};
+#[cfg(all(windows, feature="c28-product-session-qualification"))]
+mod qualification_session_bootstrap;
+#[cfg(all(windows, feature="c28-product-session-qualification"))]
+mod qualification_session_policy;
+#[cfg(all(windows, feature="c28-product-session-qualification"))]
+mod qualification_session;
 fn main() {
     // Exact diagnostic mode exits before legacy argument parsing, product gates,
     // owner supervision, database opening, package installation or guest use.
@@ -94,6 +100,20 @@ fn run() -> morrow_workbench_host::Result<()> {
     if managed {
         database = args.next().ok_or("library root")?;
     }
+    #[cfg(all(windows, feature="c28-product-session-qualification"))]
+    let qualification_package = args.next().ok_or("package path")?;
+    #[cfg(all(windows, feature="c28-product-session-qualification"))]
+    let qualification = {
+        let admission = qualification_session_bootstrap::Admission::parse(
+            &mut args, &database, std::path::Path::new(&qualification_package),
+            &std::env::current_exe()?, None, managed)?;
+        if admission.is_some() && supervised_incarnation.is_none() {
+            return Err("qualification requires original supervised owner".into());
+        }
+        // Reject unknown names before HostWatch/guard/binding reads ledger content.
+        if let Some(admission) = &admission { admission.pre_open_namespace()?; }
+        admission
+    };
     let product_gate = morrow_workbench_host::product_gate::ProductGate::default();
     #[cfg(target_os = "windows")]
     let _supervised_watch = if let Some((ref incarnation, ui, pid)) = supervised_incarnation {
@@ -155,9 +175,17 @@ fn run() -> morrow_workbench_host::Result<()> {
     } else {
         None
     };
-    let package = args.next().ok_or("package path")?;
-    if args.next().is_some() {
-        return Err("unexpected host arguments".into());
+    #[cfg(all(windows, feature="c28-product-session-qualification"))]
+    let package = qualification_package;
+    #[cfg(not(all(windows, feature="c28-product-session-qualification")))]
+    let package = {
+        let package = args.next().ok_or("package path")?;
+        if args.next().is_some() { return Err("unexpected host arguments".into()); }
+        package
+    };
+    #[cfg(all(windows, feature="c28-product-session-qualification"))]
+    if let Some(admission) = &qualification {
+        admission.pre_open(expected_binding.as_ref().ok_or("qualification binding missing")?)?;
     }
     let package = if std::path::Path::new(&package).is_file() {
         let mut package_bytes = Vec::new();
@@ -199,6 +227,12 @@ fn run() -> morrow_workbench_host::Result<()> {
     product_gate.check()?;
     let mut input = std::io::stdin().lock();
     let mut output = std::io::stdout().lock();
+    #[cfg(all(windows, feature="c28-product-session-qualification"))]
+    if let Some(admission) = qualification {
+        let mut slot = qualification_session::QualificationSlot::new(
+            admission, &host, expected_binding.as_ref().ok_or("qualification binding missing")?)?;
+        return serve_inner(&mut host, &mut input, &mut output, Some(&mut slot));
+    }
     serve(&mut host, &mut input, &mut output)
 }
 
@@ -209,7 +243,31 @@ fn serve(
     input: &mut impl Read,
     output: &mut impl Write,
 ) -> morrow_workbench_host::Result<()> {
+    #[cfg(all(windows, feature="c28-product-session-qualification"))]
+    { serve_inner(host, input, output, None) }
+    #[cfg(not(all(windows, feature="c28-product-session-qualification")))]
+    { serve_inner(host, input, output) }
+}
+fn serve_inner(
+    host: &mut morrow_workbench_host::Workbench,
+    input: &mut impl Read,
+    output: &mut impl Write,
+    #[cfg(all(windows, feature="c28-product-session-qualification"))]
+    mut qualification: Option<&mut qualification_session::QualificationSlot>,
+) -> morrow_workbench_host::Result<()> {
+    #[cfg(all(windows, feature="c28-product-session-qualification"))]
+    let transport = frames(host, input, output, qualification.as_deref_mut());
+    #[cfg(not(all(windows, feature="c28-product-session-qualification")))]
     let transport = frames(host, input, output);
+    #[cfg(all(windows, feature="c28-product-session-qualification"))]
+    let transport = {
+        if transport.is_err() { if let Some(slot) = qualification.as_deref_mut() { slot.fence(host); } }
+        let cleanup = qualification.as_deref_mut().map_or(Ok(()), |slot| slot.shutdown_context(host));
+        match (transport, cleanup) {
+            (Ok(()), result) | (result, Ok(())) => result,
+            (Err(primary), Err(cleanup)) => Err(format!("{primary}; qualification context cleanup failed: {cleanup}").into()),
+        }
+    };
     let shutdown = finish_wait(host);
     match (transport, shutdown) {
         (Ok(()), result) | (result, Ok(())) => result,
@@ -223,6 +281,8 @@ fn frames(
     host: &mut morrow_workbench_host::Workbench,
     input: &mut impl Read,
     output: &mut impl Write,
+    #[cfg(all(windows, feature="c28-product-session-qualification"))]
+    mut qualification: Option<&mut qualification_session::QualificationSlot>,
 ) -> morrow_workbench_host::Result<()> {
     loop {
         let mut header = [0; 4];
@@ -247,11 +307,37 @@ fn frames(
         let mut bytes = zeroize::Zeroizing::new(vec![0; size]);
         input.read_exact(&mut bytes)?;
         host.product_gate().check()?;
+        #[cfg(all(windows, feature="c28-product-session-qualification"))]
+        if let Some(slot) = qualification.as_deref_mut() {
+            slot.before_frame(&bytes)?;
+            if bytes.starts_with(qualification_session::MAGIC) {
+                let response = zeroize::Zeroizing::new(slot.respond(host, &bytes)?);
+                slot.deliver(host, output, &response)?;
+                continue;
+            }
+        }
         let response =
             zeroize::Zeroizing::new(morrow_workbench_host::protocol::respond(host, &bytes)?);
-        output.write_all(&(response.len() as u32).to_le_bytes())?;
-        output.write_all(&response)?;
-        output.flush()?;
+        if bytes.starts_with(morrow_workbench_host::agent_product_control::MAGIC) {
+            let gate = host.product_gate();
+            morrow_workbench_host::agent_product_control::deliver_native_reply(
+                output, &response, &gate, || host.mark_product_session_delivery_unknown(),
+            )?;
+        } else if bytes.starts_with(morrow_workbench_host::agent_task_discovery::MAGIC) {
+            let gate = host.product_gate();
+            morrow_workbench_host::agent_task_discovery::deliver_native_reply(
+                output, &response, &gate,
+            )?;
+        } else {
+            output.write_all(&(response.len() as u32).to_le_bytes())?;
+            output.write_all(&response)?;
+            output.flush()?;
+        }
+        #[cfg(all(windows, feature="c28-product-session-qualification"))]
+        if let Some(slot) = qualification.as_deref_mut() {
+            host.product_gate().check()?;
+            slot.after_delivery(host, &bytes, &response)?;
+        }
     }
 }
 

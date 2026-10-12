@@ -12,6 +12,9 @@ use zeroize::{Zeroize, Zeroizing};
 mod windows;
 #[cfg(target_os = "windows")]
 use windows as platform;
+#[cfg(target_os = "windows")]
+#[allow(unsafe_code)]
+mod windows_publication;
 #[cfg(target_os = "linux")]
 #[allow(unsafe_code)]
 mod linux;
@@ -54,6 +57,78 @@ impl From<std::io::Error> for KeyError {
     }
 }
 pub type Result<T> = std::result::Result<T, KeyError>;
+
+// Fixed failure labels only. No paths, error formatting, key material or provider output.
+// Observing a failure must return the original Result even if stderr cannot be written.
+#[derive(Clone, Copy)]
+enum KeyDiagnosticStage {
+    Initialize,
+    ExistingLoad,
+    DestinationCheck,
+    Random,
+    Protect,
+    TemporaryIo,
+    Publish,
+    PublishedSync,
+    ExistingRead,
+    ReloadRead,
+    ContainerFormat,
+    Unprotect,
+    MaterialValidate,
+}
+impl KeyDiagnosticStage {
+    fn code(self) -> &'static [u8] {
+        match self {
+            Self::Initialize => b"initialize",
+            Self::ExistingLoad => b"existing_load",
+            Self::DestinationCheck => b"destination_check",
+            Self::Random => b"random",
+            Self::Protect => b"protect",
+            Self::TemporaryIo => b"temporary_io",
+            Self::Publish => b"publish",
+            Self::PublishedSync => b"published_sync",
+            Self::ExistingRead => b"existing_read",
+            Self::ReloadRead => b"reload_read",
+            Self::ContainerFormat => b"container_format",
+            Self::Unprotect => b"unprotect",
+            Self::MaterialValidate => b"material_validate",
+        }
+    }
+}
+fn diagnostic_kind(error: &KeyError) -> &'static [u8] {
+    match error {
+        KeyError::Io(_) => b"io",
+        KeyError::Format => b"format",
+        KeyError::Protection => b"protection",
+        KeyError::Random => b"random",
+        KeyError::AlreadyExists => b"already_exists",
+        KeyError::PublishUnknown => b"publish_unknown",
+    }
+}
+fn observe_result_with<T, W: Write>(
+    stage: KeyDiagnosticStage,
+    result: Result<T>,
+    writer: &mut W,
+) -> Result<T> {
+    if let Err(error) = &result {
+        let _ = (|| -> std::io::Result<()> {
+            writer.write_all(b"MORROW_AUDIT_KEY_DIAGNOSTIC stage=")?;
+            writer.write_all(stage.code())?;
+            writer.write_all(b" kind=")?;
+            writer.write_all(diagnostic_kind(error))?;
+            writer.write_all(b"\n")
+        })();
+    }
+    result
+}
+fn observe_result<T>(stage: KeyDiagnosticStage, result: Result<T>) -> Result<T> {
+    if result.is_ok() {
+        return result;
+    }
+    let stderr = std::io::stderr();
+    let mut writer = stderr.lock();
+    observe_result_with(stage, result, &mut writer)
+}
 /// Private seed cannot be formatted, exported or passed to a guest through this API.
 pub struct Key {
     signing: SigningKey,
@@ -69,7 +144,11 @@ impl Key {
     /// Explicit provisioning only. Refuse all existing destinations, even damaged ones.
     pub fn create(path: &Path) -> Result<Self> {
         #[cfg(target_os = "windows")]
-        if path.try_exists()? { return Err(KeyError::AlreadyExists); }
+        observe_result(KeyDiagnosticStage::DestinationCheck, windows_publication::admit())?;
+        #[cfg(target_os = "windows")]
+        if observe_result(KeyDiagnosticStage::DestinationCheck, path.try_exists().map_err(KeyError::from))? {
+            return observe_result(KeyDiagnosticStage::DestinationCheck, Err(KeyError::AlreadyExists));
+        }
         #[cfg(target_os = "linux")]
         match std::fs::symlink_metadata(path) {
             Ok(_) => return Err(KeyError::AlreadyExists),
@@ -80,7 +159,7 @@ impl Key {
         #[cfg(target_os = "linux")]
         let directory = morrow_core::linux_storage::PrivateDirectory::open(parent, false)?;
         let mut random = Zeroizing::new([0u8; 48]);
-        platform::random(&mut *random)?;
+        observe_result(KeyDiagnosticStage::Random, platform::random(&mut *random))?;
         let id = format!(
             "audit-{}",
             random[32..]
@@ -88,6 +167,8 @@ impl Key {
                 .map(|v| format!("{v:02x}"))
                 .collect::<String>()
         );
+        #[cfg(target_os = "windows")]
+        let temporary_id = id.clone();
         let mut seed = Zeroizing::new([0u8; 32]);
         seed.copy_from_slice(&random[..32]);
         let public = SigningKey::from_bytes(&seed).verifying_key();
@@ -99,7 +180,7 @@ impl Key {
         };
         let plain = Zeroizing::new(material.encode_to_vec());
         let packed = Zeroizing::new(lz4_flex::block::compress_prepend_size(&plain));
-        let ciphertext = platform::protect(&packed)?;
+        let ciphertext = observe_result(KeyDiagnosticStage::Protect, platform::protect(&packed))?;
         let container = proto::ProtectedKey {
             version: 1,
             provider: PROVIDER.into(),
@@ -107,32 +188,55 @@ impl Key {
         }
         .encode_to_vec();
         let bytes = frame(&container);
-        let mut file = tempfile::NamedTempFile::new_in(parent)?;
-        file.write_all(&bytes)?;
-        file.as_file().sync_all()?;
+        #[cfg(target_os = "windows")]
+        {
+            let target = path.file_name().and_then(|v| v.to_str()).ok_or(KeyError::Format);
+            let mut publication = observe_result(KeyDiagnosticStage::TemporaryIo,
+                target.and_then(|target| windows_publication::Publication::create(parent, target, &temporary_id)))?;
+            observe_result(KeyDiagnosticStage::TemporaryIo, publication.stage(&bytes))?;
+            boundary("key-before-publish");
+            observe_result(KeyDiagnosticStage::Publish, publication.publish())?;
+            boundary("key-after-publish");
+            observe_result(KeyDiagnosticStage::PublishedSync, publication.sync_and_close())?;
+        }
+        #[cfg(target_os = "linux")]
+        {
+        let mut file = observe_result(KeyDiagnosticStage::TemporaryIo, tempfile::NamedTempFile::new_in(parent).map_err(KeyError::from))?;
+        observe_result(KeyDiagnosticStage::TemporaryIo, file.write_all(&bytes).map_err(KeyError::from))?;
+        observe_result(KeyDiagnosticStage::TemporaryIo, file.as_file().sync_all().map_err(KeyError::from))?;
         boundary("key-before-publish");
         #[cfg(target_os = "linux")]
         directory.verify()?;
-        let published = file.persist_noclobber(path).map_err(|e| {
+        let published = observe_result(KeyDiagnosticStage::Publish, file.persist_noclobber(path).map_err(|e| {
             if e.error.kind() == std::io::ErrorKind::AlreadyExists {
                 KeyError::AlreadyExists
             } else {
                 KeyError::Io(e.error)
             }
-        })?;
+        }))?;
         boundary("key-after-publish");
         #[cfg(target_os = "linux")]
         directory.verify()?;
-        published.sync_all().map_err(|_| KeyError::PublishUnknown)?;
+        observe_result(KeyDiagnosticStage::PublishedSync, published.sync_all().map_err(|_| KeyError::PublishUnknown))?;
         #[cfg(target_os = "linux")]
         directory.sync().map_err(|_| KeyError::PublishUnknown)?;
         drop(published);
+        }
         // Verify the actual published file. If this fails, never replace it on retry.
-        Self::load(path)
+        Self::load_at(path, KeyDiagnosticStage::ReloadRead)
     }
     pub fn load(path: &Path) -> Result<Self> {
-        let bytes = read_protected(path)?;
+        Self::load_at(path, KeyDiagnosticStage::ExistingRead)
+    }
+    fn load_at(path: &Path, stage: KeyDiagnosticStage) -> Result<Self> {
+        let bytes = observe_result(stage, read_protected(path))?;
         Self::from_protected(&bytes)
+    }
+    pub(crate) fn create_initialized(path: &Path) -> Result<Self> {
+        observe_result(KeyDiagnosticStage::Initialize, Self::create(path))
+    }
+    pub(crate) fn load_existing(path: &Path) -> Result<Self> {
+        observe_result(KeyDiagnosticStage::ExistingLoad, Self::load(path))
     }
     /// Read once; the validated ciphertext is exactly what recovery publishes.
     pub(crate) fn validated_copy(path: &Path) -> Result<(Self, Vec<u8>)> {
@@ -141,36 +245,36 @@ impl Key {
     }
     pub(crate) fn from_protected(bytes: &[u8]) -> Result<Self> {
         if bytes.len() > MAX_FILE || bytes.len() < 44 || !bytes.starts_with(MAGIC) {
-            return Err(KeyError::Format);
+            return observe_result(KeyDiagnosticStage::ContainerFormat, Err(KeyError::Format));
         }
         if Sha256::digest(&bytes[40..]).as_slice() != &bytes[8..40] {
-            return Err(KeyError::Format);
+            return observe_result(KeyDiagnosticStage::ContainerFormat, Err(KeyError::Format));
         }
-        let raw = unpack(&bytes[40..], MAX_FILE)?;
+        let raw = observe_result(KeyDiagnosticStage::ContainerFormat, unpack(&bytes[40..], MAX_FILE))?;
         let protected =
-            proto::ProtectedKey::decode(raw.as_slice()).map_err(|_| KeyError::Format)?;
+            observe_result(KeyDiagnosticStage::ContainerFormat, proto::ProtectedKey::decode(raw.as_slice()).map_err(|_| KeyError::Format))?;
         if protected.version != 1
             || protected.provider != PROVIDER
             || protected.ciphertext.len() > 8192
         {
-            return Err(KeyError::Format);
+            return observe_result(KeyDiagnosticStage::ContainerFormat, Err(KeyError::Format));
         }
-        let packed = platform::unprotect(&protected.ciphertext)?;
-        let plain = Zeroizing::new(unpack(&packed, 4096)?);
-        let material = proto::SecretKey::decode(plain.as_slice()).map_err(|_| KeyError::Format)?;
+        let packed = observe_result(KeyDiagnosticStage::Unprotect, platform::unprotect(&protected.ciphertext))?;
+        let plain = Zeroizing::new(observe_result(KeyDiagnosticStage::MaterialValidate, unpack(&packed, 4096))?);
+        let material = observe_result(KeyDiagnosticStage::MaterialValidate, proto::SecretKey::decode(plain.as_slice()).map_err(|_| KeyError::Format))?;
         if material.version != 1
             || material.seed.len() != 32
             || material.log_id.len() != 38
             || !material.log_id.starts_with("audit-")
             || !material.log_id[6..].bytes().all(|v| v.is_ascii_hexdigit())
         {
-            return Err(KeyError::Format);
+            return observe_result(KeyDiagnosticStage::MaterialValidate, Err(KeyError::Format));
         }
         let mut seed = Zeroizing::new([0u8; 32]);
         seed.copy_from_slice(&material.seed);
         let signing = SigningKey::from_bytes(&seed);
         if signing.verifying_key().as_bytes().as_slice() != material.public_key {
-            return Err(KeyError::Format);
+            return observe_result(KeyDiagnosticStage::MaterialValidate, Err(KeyError::Format));
         }
         let trust = TrustedLog {
             id: material.log_id.clone(),
@@ -269,5 +373,100 @@ mod tests {
         protected.ciphertext = platform::protect(&packed).unwrap();
         std::fs::write(&p, frame(&protected.encode_to_vec())).unwrap();
         assert!(matches!(Key::load(&p), Err(KeyError::Format)));
+    }
+}
+
+
+#[cfg(test)]
+mod diagnostic_tests {
+    use super::*;
+
+    struct RefusingWriter { calls: usize }
+    impl Write for RefusingWriter {
+        fn write(&mut self, _: &[u8]) -> std::io::Result<usize> {
+            self.calls += 1;
+            Err(std::io::Error::from_raw_os_error(1234))
+        }
+        fn flush(&mut self) -> std::io::Result<()> { Ok(()) }
+    }
+
+    #[test]
+    fn success_is_returned_without_diagnostic_io() {
+        let mut writer = RefusingWriter { calls: 0 };
+        let value = Box::new(17);
+        let address = &*value as *const i32;
+        let returned = observe_result_with(KeyDiagnosticStage::Initialize, Ok(value), &mut writer).unwrap();
+        assert_eq!(&*returned as *const i32, address);
+        assert_eq!(writer.calls, 0);
+    }
+
+    #[test]
+    fn diagnostic_failure_keeps_original_io_error_object() {
+        let original = std::io::Error::new(std::io::ErrorKind::Other, String::from("private-error-canary"));
+        let address = original.get_ref().unwrap() as *const _ as *const ();
+        let mut writer = RefusingWriter { calls: 0 };
+        let returned: Result<()> = observe_result_with(
+            KeyDiagnosticStage::TemporaryIo, Err(KeyError::Io(original)), &mut writer,
+        );
+        match returned {
+            Err(KeyError::Io(error)) => {
+                assert_eq!(error.get_ref().unwrap() as *const _ as *const (), address);
+                assert_eq!(error.kind(), std::io::ErrorKind::Other);
+            }
+            _ => panic!("original error was replaced"),
+        }
+        assert_eq!(writer.calls, 1); // No retry after a diagnostic write failure.
+    }
+
+    #[test]
+    fn all_error_kinds_emit_only_fixed_labels_and_preserve_variants() {
+        let errors = [
+            (KeyError::Io(std::io::Error::new(std::io::ErrorKind::Other, "private-error-canary")), b"io".as_slice()),
+            (KeyError::Format, b"format".as_slice()),
+            (KeyError::Protection, b"protection".as_slice()),
+            (KeyError::Random, b"random".as_slice()),
+            (KeyError::AlreadyExists, b"already_exists".as_slice()),
+            (KeyError::PublishUnknown, b"publish_unknown".as_slice()),
+        ];
+        for (error, label) in errors {
+            let before = std::mem::discriminant(&error);
+            let mut bytes = Vec::new();
+            let returned: Result<()> = observe_result_with(KeyDiagnosticStage::Initialize, Err(error), &mut bytes);
+            assert_eq!(std::mem::discriminant(&returned.unwrap_err()), before);
+            let mut expected = b"MORROW_AUDIT_KEY_DIAGNOSTIC stage=initialize kind=".to_vec();
+            expected.extend_from_slice(label);
+            expected.push(b'\n');
+            assert_eq!(bytes, expected);
+            assert!(!bytes.windows(b"private-error-canary".len()).any(|w| w == b"private-error-canary"));
+        }
+    }
+
+    #[test]
+    fn stage_labels_are_exact_unique_and_bounded() {
+        let stages = [
+            (KeyDiagnosticStage::Initialize, b"initialize".as_slice()),
+            (KeyDiagnosticStage::ExistingLoad, b"existing_load".as_slice()),
+            (KeyDiagnosticStage::DestinationCheck, b"destination_check".as_slice()),
+            (KeyDiagnosticStage::Random, b"random".as_slice()),
+            (KeyDiagnosticStage::Protect, b"protect".as_slice()),
+            (KeyDiagnosticStage::TemporaryIo, b"temporary_io".as_slice()),
+            (KeyDiagnosticStage::Publish, b"publish".as_slice()),
+            (KeyDiagnosticStage::PublishedSync, b"published_sync".as_slice()),
+            (KeyDiagnosticStage::ExistingRead, b"existing_read".as_slice()),
+            (KeyDiagnosticStage::ReloadRead, b"reload_read".as_slice()),
+            (KeyDiagnosticStage::ContainerFormat, b"container_format".as_slice()),
+            (KeyDiagnosticStage::Unprotect, b"unprotect".as_slice()),
+            (KeyDiagnosticStage::MaterialValidate, b"material_validate".as_slice()),
+        ];
+        let mut seen = std::collections::BTreeSet::new();
+        for (stage, label) in stages {
+            assert_eq!(stage.code(), label);
+            assert!(seen.insert(label));
+            assert!(label.len() <= 20 && label.iter().all(|b| b.is_ascii_lowercase() || *b == b'_'));
+            let mut bytes = Vec::new();
+            let returned: Result<()> = observe_result_with(stage, Err(KeyError::Protection), &mut bytes);
+            assert!(matches!(returned, Err(KeyError::Protection)));
+            assert!(bytes.len() <= 96 && bytes.last() == Some(&b'\n'));
+        }
     }
 }

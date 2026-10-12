@@ -1,7 +1,9 @@
 use morrow_native_pipe_win::{
     controller_lease::{ControllerLease, LeaseSignal},
-    job::{Job, seal_standard_handles_noninherit},
+    job::{Job, prepare_trusted_host_environment, seal_standard_handles_noninherit},
 };
+#[cfg(feature = "c28-product-session-qualification")]
+use morrow_native_pipe_win::job::prepare_qualified_host_environment;
 use morrow_workbench_host::{
     Result,
     workbench_supervision::{Owner, root_for},
@@ -20,6 +22,9 @@ use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     sync::mpsc,
 };
+#[cfg(feature="c28-product-session-qualification")]
+#[path="qualification_session_bootstrap.rs"]
+mod qualification_session_bootstrap;
 const MAX_FRAME: usize = 128 * 1024;
 async fn emit_frame(output: &mut tokio::io::Stdout, kind: u8, bytes: &[u8]) -> std::io::Result<()> {
     output
@@ -48,16 +53,39 @@ pub async fn run() -> Result<u32> {
     if let Some(code) = management().await? { return Ok(code); }
     let mut args = std::env::args().skip(1);
     let ui: u32 = args.next().ok_or("UI PID")?.parse()?;
-    let host = PathBuf::from(args.next().ok_or("host path")?).canonicalize()?;
+    let host = PathBuf::from(args.next().ok_or("host path")?);
     let mut database = args.next().ok_or("database path")?;
     let managed = database == "--managed";
     if managed {
         database = args.next().ok_or("library root")?;
     }
-    let package = PathBuf::from(args.next().ok_or("package path")?).canonicalize()?;
+    let package = PathBuf::from(args.next().ok_or("package path")?);
+    #[cfg(feature="c28-product-session-qualification")]
+    let mut qualification = qualification_session_bootstrap::Admission::parse(
+        &mut args, &database, &package, &host, Some(&std::env::current_exe()?), managed)?;
+    #[cfg(not(feature="c28-product-session-qualification"))]
     if args.next().is_some() {
         return Err("unexpected supervisor arguments".into());
     }
+    let host = host.canonicalize()?;
+    let package = package.canonicalize()?;
+    let mut environment = BTreeMap::new();
+    for name in ["SystemRoot", "WINDIR", "COMSPEC"] {
+        if let Ok(v) = std::env::var(name) {
+            environment.insert(name.into(), v);
+        }
+    }
+    // Resolve/encode once before profile, root, seal, lease, reader, Owner or Job effects.
+    // Resolver failure here precedes those effects; namespace qualification remains OPEN.
+    #[cfg(feature = "c28-product-session-qualification")]
+    let prepared_environment = match &qualification {
+        Some(admission) => prepare_qualified_host_environment(&environment, admission.plan.digest)?,
+        None => prepare_trusted_host_environment(&environment)?,
+    };
+    #[cfg(not(feature = "c28-product-session-qualification"))]
+    let prepared_environment = prepare_trusted_host_environment(&environment)?;
+    #[cfg(feature="c28-product-session-qualification")]
+    if let Some(admission) = &mut qualification { admission.create_profile_once()?; }
     let root = root_for(std::path::Path::new(&database), managed)?;
     seal_standard_handles_noninherit()?;
     let signal = LeaseSignal::default();
@@ -138,12 +166,6 @@ pub async fn run() -> Result<u32> {
         })?;
     let mut owner = Owner::claim(&root, &host, &package)?;
     let job = Job::new()?;
-    let mut environment = BTreeMap::new();
-    for name in ["SystemRoot", "WINDIR", "COMSPEC"] {
-        if let Ok(v) = std::env::var(name) {
-            environment.insert(name.into(), v);
-        }
-    }
     let initial = owner.record();
     let token = initial["incarnation"].as_str().unwrap();
     let event = morrow_native_pipe_win::job::RevocationEvent::create(token)?;
@@ -163,7 +185,12 @@ pub async fn run() -> Result<u32> {
         host_args.push(database);
     }
     host_args.push(package.to_string_lossy().into_owned());
-    let mut child = job.spawn_suspended_trusted_host(&host, &host_args, &root, &environment)?;
+    #[cfg(feature="c28-product-session-qualification")]
+    if let Some(admission) = &qualification {
+        host_args.extend(admission.trailer.iter().cloned());
+    }
+    let mut child = job.spawn_suspended_prepared_host(&host, &host_args, &root,
+        prepared_environment)?;
     let mut record = owner.record();
     record["child_pid"] = child.pid().into();
     record["child_creation_filetime"] = child.creation_filetime()?.into();

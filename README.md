@@ -1,5 +1,15 @@
 # Morrow · 明隙
 
+<!-- C28-WINDOWS-PUBLICATION-BEGIN -->
+## Windows 发布候选附注（2026-10-12）
+
+Stage338 已完成一次离线、锁定依赖的 Windows 宿主／supervisor 受限构建。Stage341 已物理闭合，但业务为 `NOT_ACCEPTED`：stop 未报告 `Stopping`，所需 `Stopping → Reclaimed` 序列未完成；实际进程关闭、Process 策略恢复与独立连接释放已分别核对，不能替代该业务序列。
+
+同句柄加载、祖先目录持续 reparse 防护、失败启动隔离与 sealed-basic 验收仍 OPEN；SDK／namespace 未冻结，`release_eligible=false`。详见[本轮限定状态](reports/reconstruction-2026-10-12/windows-key-publication-status.md)。
+
+下方阶段 25／阶段 21 及更早内容保留各自历史范围；本附注不覆盖旧失败或 Unknown，也不构成 Release 声明。
+<!-- C28-WINDOWS-PUBLICATION-END -->
+
 <!-- C28-CURRENT-BEGIN -->
 ## 当前开发检查点（2026-10-10，C28 阶段 21 会话验证）
 

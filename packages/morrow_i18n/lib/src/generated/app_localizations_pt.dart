@@ -1395,6 +1395,181 @@ class AppLocalizationsPt extends AppLocalizations {
   String get mainYesterday => 'Ontem';
 
   @override
+  String get pluginsAgentAdmitWriter => 'Admitir escritor';
+
+  @override
+  String get pluginsAgentAfter => 'Após a sequência';
+
+  @override
+  String get pluginsAgentAppend => 'Adicionar evento';
+
+  @override
+  String get pluginsAgentArchived => 'Arquivada';
+
+  @override
+  String get pluginsAgentAttach => 'Ligar controlo da sessão';
+
+  @override
+  String get pluginsAgentAttached => 'Ligado';
+
+  @override
+  String get pluginsAgentBusy => 'Ocupado';
+
+  @override
+  String get pluginsAgentCheckpoint => 'Ponto de controlo';
+
+  @override
+  String get pluginsAgentCloseWriter => 'Fechar escritor';
+
+  @override
+  String get pluginsAgentClosed => 'Vista fechada';
+
+  @override
+  String get pluginsAgentCreateSession => 'Criar sessão';
+
+  @override
+  String get pluginsAgentDetach => 'Desligar controlo da sessão';
+
+  @override
+  String get pluginsAgentDetached => 'Desligado';
+
+  @override
+  String get pluginsAgentEpoch => 'Época';
+
+  @override
+  String get pluginsAgentEventBody => 'Conteúdo do evento';
+
+  @override
+  String get pluginsAgentEventId => 'ID do evento';
+
+  @override
+  String get pluginsAgentEvents => 'Eventos';
+
+  @override
+  String get pluginsAgentExpectedEpoch => 'Época esperada';
+
+  @override
+  String get pluginsAgentFailed => 'Falhou';
+
+  @override
+  String get pluginsAgentFloor => 'Limite inferior';
+
+  @override
+  String get pluginsAgentGap => 'Lacuna';
+
+  @override
+  String get pluginsAgentInvalidInput => 'Verifique os dados.';
+
+  @override
+  String get pluginsAgentLimit => 'Limite';
+
+  @override
+  String get pluginsAgentListSessions => 'Listar sessões';
+
+  @override
+  String get pluginsAgentMarkLost => 'Marcar resultado como perdido';
+
+  @override
+  String get pluginsAgentMetadata => 'Metadados';
+
+  @override
+  String get pluginsAgentNotObserved => 'Não observada';
+
+  @override
+  String get pluginsAgentObservationNone => 'Sem tarefa atual';
+
+  @override
+  String get pluginsAgentObservationOther => 'Outra tarefa';
+
+  @override
+  String get pluginsAgentObservationRetainedExit => 'Saída da tarefa mantida';
+
+  @override
+  String get pluginsAgentObservationRunning => 'Worker mantido';
+
+  @override
+  String get pluginsAgentObserve => 'Observar tarefa';
+
+  @override
+  String get pluginsAgentObserving => 'A observar…';
+
+  @override
+  String get pluginsAgentOpen => 'Abrir controlo da sessão';
+
+  @override
+  String get pluginsAgentOpenWriter => 'Abrir escritor';
+
+  @override
+  String get pluginsAgentOpened => 'Aberto';
+
+  @override
+  String get pluginsAgentParent => 'Principal';
+
+  @override
+  String get pluginsAgentParentSession => 'Sessão principal';
+
+  @override
+  String get pluginsAgentParentTail => 'Último número da principal';
+
+  @override
+  String get pluginsAgentPending => 'Pendente';
+
+  @override
+  String get pluginsAgentRead => 'Ler resultado';
+
+  @override
+  String get pluginsAgentReadOnlyNotice =>
+      'A descoberta é só de leitura e não concede acesso. Um resultado desconhecido nunca é reenviado automaticamente.';
+
+  @override
+  String get pluginsAgentRefreshStatus => 'Atualizar estado';
+
+  @override
+  String get pluginsAgentRejected => 'Rejeitado';
+
+  @override
+  String get pluginsAgentReleaseNotice =>
+      'Fechar esta vista ou desligar o controlo da sessão não prova que a tarefa parou ou que os recursos foram libertados.';
+
+  @override
+  String get pluginsAgentRevision => 'Revisão';
+
+  @override
+  String get pluginsAgentSelectedSession => 'Sessão selecionada';
+
+  @override
+  String get pluginsAgentSessionId => 'ID da sessão';
+
+  @override
+  String get pluginsAgentSessionList => 'Sessões';
+
+  @override
+  String get pluginsAgentSnapshot => 'Ler snapshot';
+
+  @override
+  String get pluginsAgentSubmission => 'Envio';
+
+  @override
+  String get pluginsAgentSummary =>
+      'Observar a tarefa atual não a inicia nem concede acesso. «Em execução» significa apenas que o host mantém um worker; não confirma atividade no sistema operativo.';
+
+  @override
+  String get pluginsAgentTail => 'Último número';
+
+  @override
+  String get pluginsAgentTitle => 'Sessões do Agent';
+
+  @override
+  String get pluginsAgentUnavailable => 'Indisponível';
+
+  @override
+  String get pluginsAgentUnknown =>
+      'Resultado não confirmado — sem reenvio automático';
+
+  @override
+  String get pluginsAgentWriter => 'Escritor';
+
+  @override
   String get pluginsApprovalUnknown =>
       'Não foi possível confirmar a ativação ou as mudanças de permissão';
 

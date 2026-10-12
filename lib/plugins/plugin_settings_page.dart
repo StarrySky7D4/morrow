@@ -6,6 +6,8 @@ import 'plugin_tools.dart';
 import 'plugin_library.dart';
 import 'agent_wrapper_control.dart';
 import 'agent_wrapper_library.dart';
+import 'agent_session_workspace.dart';
+import 'agent_session_manager.dart';
 import 'protection_backup.dart';
 import 'workbench_backend.dart';
 
@@ -63,6 +65,18 @@ class PluginSettingsPage extends StatelessWidget {
                 child: AgentWrapperLibrary(
                   backend: backend,
                   onChanged: onChanged,
+                  ink: p.ink,
+                  muted: p.muted,
+                  line: p.line,
+                  radius: p.borderRadius(11),
+                ),
+              ),
+            if (backend is WorkbenchAgentSessionSupport)
+              Glass(
+                p: p,
+                componentId: 'agent-session-manager',
+                child: AgentSessionManager(
+                  workspace: backend.agentSessions,
                   ink: p.ink,
                   muted: p.muted,
                   line: p.line,

@@ -1,5 +1,13 @@
 # Morrow 文档导航与维护范围
 
+<!-- C28-WINDOWS-PUBLICATION-BEGIN -->
+## Windows 发布候选附注（2026-10-12）
+
+- [Windows 审计密钥发布与安全执行状态](../reports/reconstruction-2026-10-12/windows-key-publication-status.md)：Stage338 受限构建通过；Stage341 物理闭合但业务 `NOT_ACCEPTED`，stop 未报告 `Stopping`，所需 `Stopping → Reclaimed` 序列未完成。Process 策略恢复与独立连接释放已实核。SDK／namespace 仍 OPEN，`release_eligible=false`。
+
+下方阶段 25／阶段 21 及更早内容保留各自历史范围；本附注不覆盖旧失败或 Unknown，也不构成 Release 声明。
+<!-- C28-WINDOWS-PUBLICATION-END -->
+
 <!-- C28-CURRENT-BEGIN -->
 ## 当前开发检查点（2026-10-10，C28 阶段 25）
 

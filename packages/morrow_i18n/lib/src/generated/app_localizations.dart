@@ -2524,6 +2524,348 @@ abstract class AppLocalizations {
   /// **'Yesterday'**
   String get mainYesterday;
 
+  /// No description provided for @pluginsAgentAdmitWriter.
+  ///
+  /// In en, this message translates to:
+  /// **'Admit writer'**
+  String get pluginsAgentAdmitWriter;
+
+  /// No description provided for @pluginsAgentAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'After sequence'**
+  String get pluginsAgentAfter;
+
+  /// No description provided for @pluginsAgentAppend.
+  ///
+  /// In en, this message translates to:
+  /// **'Append event'**
+  String get pluginsAgentAppend;
+
+  /// No description provided for @pluginsAgentArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get pluginsAgentArchived;
+
+  /// No description provided for @pluginsAgentAttach.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach to session control'**
+  String get pluginsAgentAttach;
+
+  /// No description provided for @pluginsAgentAttached.
+  ///
+  /// In en, this message translates to:
+  /// **'Attached'**
+  String get pluginsAgentAttached;
+
+  /// No description provided for @pluginsAgentBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Busy'**
+  String get pluginsAgentBusy;
+
+  /// No description provided for @pluginsAgentCheckpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkpoint'**
+  String get pluginsAgentCheckpoint;
+
+  /// No description provided for @pluginsAgentCloseWriter.
+  ///
+  /// In en, this message translates to:
+  /// **'Close writer'**
+  String get pluginsAgentCloseWriter;
+
+  /// No description provided for @pluginsAgentClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'View closed'**
+  String get pluginsAgentClosed;
+
+  /// No description provided for @pluginsAgentCreateSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Create session'**
+  String get pluginsAgentCreateSession;
+
+  /// No description provided for @pluginsAgentDetach.
+  ///
+  /// In en, this message translates to:
+  /// **'Detach session control'**
+  String get pluginsAgentDetach;
+
+  /// No description provided for @pluginsAgentDetached.
+  ///
+  /// In en, this message translates to:
+  /// **'Detached'**
+  String get pluginsAgentDetached;
+
+  /// No description provided for @pluginsAgentEpoch.
+  ///
+  /// In en, this message translates to:
+  /// **'Epoch'**
+  String get pluginsAgentEpoch;
+
+  /// No description provided for @pluginsAgentEventBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Event body'**
+  String get pluginsAgentEventBody;
+
+  /// No description provided for @pluginsAgentEventId.
+  ///
+  /// In en, this message translates to:
+  /// **'Event ID'**
+  String get pluginsAgentEventId;
+
+  /// No description provided for @pluginsAgentEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get pluginsAgentEvents;
+
+  /// No description provided for @pluginsAgentExpectedEpoch.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected epoch'**
+  String get pluginsAgentExpectedEpoch;
+
+  /// No description provided for @pluginsAgentFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get pluginsAgentFailed;
+
+  /// No description provided for @pluginsAgentFloor.
+  ///
+  /// In en, this message translates to:
+  /// **'Floor'**
+  String get pluginsAgentFloor;
+
+  /// No description provided for @pluginsAgentGap.
+  ///
+  /// In en, this message translates to:
+  /// **'Gap'**
+  String get pluginsAgentGap;
+
+  /// No description provided for @pluginsAgentInvalidInput.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the input.'**
+  String get pluginsAgentInvalidInput;
+
+  /// No description provided for @pluginsAgentLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit'**
+  String get pluginsAgentLimit;
+
+  /// No description provided for @pluginsAgentListSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'List sessions'**
+  String get pluginsAgentListSessions;
+
+  /// No description provided for @pluginsAgentMarkLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark outcome lost'**
+  String get pluginsAgentMarkLost;
+
+  /// No description provided for @pluginsAgentMetadata.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata'**
+  String get pluginsAgentMetadata;
+
+  /// No description provided for @pluginsAgentNotObserved.
+  ///
+  /// In en, this message translates to:
+  /// **'Not observed'**
+  String get pluginsAgentNotObserved;
+
+  /// No description provided for @pluginsAgentObservationNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No current task'**
+  String get pluginsAgentObservationNone;
+
+  /// No description provided for @pluginsAgentObservationOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Another task'**
+  String get pluginsAgentObservationOther;
+
+  /// No description provided for @pluginsAgentObservationRetainedExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Task exit retained'**
+  String get pluginsAgentObservationRetainedExit;
+
+  /// No description provided for @pluginsAgentObservationRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker retained'**
+  String get pluginsAgentObservationRunning;
+
+  /// No description provided for @pluginsAgentObserve.
+  ///
+  /// In en, this message translates to:
+  /// **'Observe task'**
+  String get pluginsAgentObserve;
+
+  /// No description provided for @pluginsAgentObserving.
+  ///
+  /// In en, this message translates to:
+  /// **'Observing…'**
+  String get pluginsAgentObserving;
+
+  /// No description provided for @pluginsAgentOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open session control'**
+  String get pluginsAgentOpen;
+
+  /// No description provided for @pluginsAgentOpenWriter.
+  ///
+  /// In en, this message translates to:
+  /// **'Open writer'**
+  String get pluginsAgentOpenWriter;
+
+  /// No description provided for @pluginsAgentOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'Opened'**
+  String get pluginsAgentOpened;
+
+  /// No description provided for @pluginsAgentParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent'**
+  String get pluginsAgentParent;
+
+  /// No description provided for @pluginsAgentParentSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent session'**
+  String get pluginsAgentParentSession;
+
+  /// No description provided for @pluginsAgentParentTail.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent tail'**
+  String get pluginsAgentParentTail;
+
+  /// No description provided for @pluginsAgentPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pluginsAgentPending;
+
+  /// No description provided for @pluginsAgentRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read result'**
+  String get pluginsAgentRead;
+
+  /// No description provided for @pluginsAgentReadOnlyNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Discovery is read-only and grants no access. An unknown outcome is never resent automatically.'**
+  String get pluginsAgentReadOnlyNotice;
+
+  /// No description provided for @pluginsAgentRefreshStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh status'**
+  String get pluginsAgentRefreshStatus;
+
+  /// No description provided for @pluginsAgentRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get pluginsAgentRejected;
+
+  /// No description provided for @pluginsAgentReleaseNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Closing this view or detaching session control does not prove that the task stopped or that resources were released.'**
+  String get pluginsAgentReleaseNotice;
+
+  /// No description provided for @pluginsAgentRevision.
+  ///
+  /// In en, this message translates to:
+  /// **'Revision'**
+  String get pluginsAgentRevision;
+
+  /// No description provided for @pluginsAgentSelectedSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected session'**
+  String get pluginsAgentSelectedSession;
+
+  /// No description provided for @pluginsAgentSessionId.
+  ///
+  /// In en, this message translates to:
+  /// **'Session ID'**
+  String get pluginsAgentSessionId;
+
+  /// No description provided for @pluginsAgentSessionList.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get pluginsAgentSessionList;
+
+  /// No description provided for @pluginsAgentSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Read snapshot'**
+  String get pluginsAgentSnapshot;
+
+  /// No description provided for @pluginsAgentSubmission.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission'**
+  String get pluginsAgentSubmission;
+
+  /// No description provided for @pluginsAgentSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Observe the current task without starting it or granting access. Running means the host retains a worker; it does not confirm operating-system liveness.'**
+  String get pluginsAgentSummary;
+
+  /// No description provided for @pluginsAgentTail.
+  ///
+  /// In en, this message translates to:
+  /// **'Tail'**
+  String get pluginsAgentTail;
+
+  /// No description provided for @pluginsAgentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Agent sessions'**
+  String get pluginsAgentTitle;
+
+  /// No description provided for @pluginsAgentUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get pluginsAgentUnavailable;
+
+  /// No description provided for @pluginsAgentUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Outcome unconfirmed — no automatic resend'**
+  String get pluginsAgentUnknown;
+
+  /// No description provided for @pluginsAgentWriter.
+  ///
+  /// In en, this message translates to:
+  /// **'Writer'**
+  String get pluginsAgentWriter;
+
   /// No description provided for @pluginsApprovalUnknown.
   ///
   /// In en, this message translates to:

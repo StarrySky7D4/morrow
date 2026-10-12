@@ -29,7 +29,15 @@ dependencies = [
 name = "morrow-native-pipe-win"
 version = "0.1.0"
 dependencies = [
+ "morrow-windows-user-directories",
  "tokio",
+ "windows-sys",
+]
+
+[[package]]
+name = "morrow-windows-user-directories"
+version = "0.1.0"
+dependencies = [
  "windows-sys",
 ]
 

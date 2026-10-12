@@ -34,6 +34,16 @@ pub fn host_protocol_digest() -> [u8; 32] {
 }
 pub mod capture_provenance;
 #[cfg(not(target_arch = "wasm32"))]
+pub mod agent_task_discovery_capnp {
+    include!(concat!(env!("OUT_DIR"), "/agent_task_discovery_capnp.rs"));
+}
+#[cfg(not(target_arch = "wasm32"))]
+pub mod agent_task_discovery;
+pub mod agent_product_control_capnp {
+    include!(concat!(env!("OUT_DIR"), "/agent_product_control_capnp.rs"));
+}
+pub mod agent_product_control;
+#[cfg(not(target_arch = "wasm32"))]
 mod agent_catalog;
 #[cfg(target_os = "windows")]
 pub mod agent_tasks;
@@ -122,6 +132,8 @@ pub struct Mutation<'a> {
     pub flag: bool,
 }
 pub struct Workbench {
+    #[cfg(windows)]
+    product_session_wire: agent_product_control::NativeSlot,
     #[cfg(not(target_arch = "wasm32"))]
     channel_tasks: channel_tasks::ChannelTasks,
     #[cfg(not(target_arch = "wasm32"))]
@@ -932,6 +944,8 @@ impl Workbench {
             http_tasks: Default::default(),
             state: io_tasks::StateSlot::new(WorkbenchState::open(path, package)?),
             channel_tasks: Default::default(),
+            #[cfg(windows)]
+            product_session_wire: Default::default(),
         })
     }
     pub fn open_managed(root: &Path, package: Option<Package>) -> Result<Self> {
@@ -939,6 +953,8 @@ impl Workbench {
             http_tasks: Default::default(),
             state: io_tasks::StateSlot::new(WorkbenchState::open_managed(root, package)?),
             channel_tasks: Default::default(),
+            #[cfg(windows)]
+            product_session_wire: Default::default(),
         })
     }
     pub(crate) fn local_state(&self) -> Result<&WorkbenchState> {

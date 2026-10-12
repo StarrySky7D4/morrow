@@ -246,6 +246,23 @@ pub(crate) struct StateSlot {
     pub(crate) submission: Option<[u8; 32]>,
 }
 impl StateSlot {
+    /// Pure current-slot observation. No reclaim, progress lock or worker command.
+    pub(crate) fn observe_agent_task(&self) -> crate::agent_task_discovery::Observation {
+        let unavailable = self.lost || self.product_gate.closed();
+        let task = self.task.as_ref().map(|task| {
+            #[cfg(windows)]
+            let retained_worker = matches!(task.worker.as_ref(), Some(Executor::Agent(_)));
+            #[cfg(not(windows))]
+            let retained_worker = false;
+            #[cfg(windows)]
+            let retained_exit = self.agent_exit.is_some_and(|(key, _)| key == task.key);
+            #[cfg(not(windows))]
+            let retained_exit = false;
+            (task.key, retained_worker, retained_exit)
+        });
+        crate::agent_task_discovery::classify(unavailable, self.owner.is_some(), task)
+    }
+
     #[cfg(windows)]
     pub(crate) fn ensure_agent_admission(&self) -> Result<()> {
         self.require_writable()?;
@@ -913,3 +930,7 @@ impl Workbench {
 #[cfg(all(test, target_os = "windows"))]
 #[path = "io_tasks_tests.rs"]
 mod tests;
+
+#[cfg(all(test, target_os = "windows"))]
+#[path = "io_tasks_ad31_no_owner_tests.rs"]
+mod ad31_no_owner_tests;

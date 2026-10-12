@@ -6,6 +6,7 @@ use crate::{
     params::{self, Witness},
     preflight::Artifact,
     product::{self, ProductionBackend, RunningExecution},
+    product_observation::{self, Phase as ObservationPhase},
     provisioning::GuestLifecycle,
     sealed::{GuestClaim, GuestProposal},
     sealed_preparation::{self, PreparedNativeProposal, PreparedSessionGuest},
@@ -247,6 +248,9 @@ impl Workflow {
                     .as_mut()
                     .ok_or_else(|| anyhow!("session context absent"))?;
                 let generation = prepared.generation;
+                let ad31_before = product_observation::expect(
+                    workbench, &self.sid, ObservationPhase::SessionBeforeStart, None,
+                )?;
                 let key = self.cleanup_tracker.start_once(
                     &mut WorkbenchAdapter(&mut *workbench),
                     AgentStart {
@@ -261,7 +265,11 @@ impl Workflow {
                 )?;
                 // Keep generation as data only, not a second context/connection.
                 self.expected_intent = None;
-                Ok(serde_json::json!({"key":format!("{key:?}"),"generation":generation}))
+                let ad31_running = product_observation::expect(
+                    workbench, &self.sid, ObservationPhase::SessionRunning, Some(key),
+                )?;
+                Ok(serde_json::json!({"key":format!("{key:?}"),"generation":generation,
+                    "ad31":[ad31_before,ad31_running]}))
             }
             "session-run" => {
                 let key = self
@@ -290,11 +298,18 @@ impl Workflow {
                     .session_key
                     .ok_or_else(|| anyhow!("session worker absent"))?;
                 join_original(workbench, key)?;
+                let ad31_retained = product_observation::expect(
+                    workbench, &self.sid, ObservationPhase::SessionRetainedExit, Some(key),
+                )?;
                 workbench
                     .acknowledge_agent(key)
                     .map_err(|e| anyhow!("original session task acknowledge: {e}"))?;
                 self.session_key = None;
-                Ok(serde_json::json!({"actual_join":true,"session_persisted_in_same_owner":true}))
+                let ad31_acknowledged = product_observation::expect(
+                    workbench, &self.sid, ObservationPhase::SessionAcknowledged, Some(key),
+                )?;
+                Ok(serde_json::json!({"actual_join":true,"session_persisted_in_same_owner":true,
+                    "ad31":[ad31_retained,ad31_acknowledged]}))
             }
             "native-review" => {
                 ensure!(
@@ -431,6 +446,9 @@ impl Workflow {
                     prepared.context.is_some(),
                     "native context already transferred"
                 );
+                let ad31_before = product_observation::expect(
+                    workbench, &self.sid, ObservationPhase::NativeBeforeStart, None,
+                )?;
                 let key = self.cleanup_tracker.start_once(
                     &mut WorkbenchAdapter(&mut *workbench),
                     AgentStart {
@@ -443,7 +461,11 @@ impl Workflow {
                     &mut prepared.context,
                     &mut self.key,
                 )?;
-                Ok(serde_json::json!({"key":format!("{key:?}"),"child_started":false}))
+                let ad31_running = product_observation::expect(
+                    workbench, &self.sid, ObservationPhase::NativeRunning, Some(key),
+                )?;
+                Ok(serde_json::json!({"key":format!("{key:?}"),"child_started":false,
+                    "ad31":[ad31_before,ad31_running]}))
             }
             "propose" => {
                 let prepared = self
@@ -595,11 +617,18 @@ impl Workflow {
                     run.stop_and_verify_returned_owner(workbench, self.evidence.as_ref()
                         .ok_or_else(|| anyhow!("real Exit/EOF control evidence absent"))?)?
                 };
-                let result = serde_json::json!({"actual_join":true,"facts":format!("{:?}",observation.latest),"original_identity":format!("{:?}",observation.identity),"record_revision":observation.record_revision});
+                let ad31_retained = product_observation::expect(
+                    workbench, &self.sid, ObservationPhase::NativeRetainedExit, Some(run.key),
+                )?;
                 workbench
                     .acknowledge_agent(run.key)
                     .map_err(|e| anyhow!("original native task acknowledge: {e}"))?;
                 self.key = None;
+                let ad31_acknowledged = product_observation::expect(
+                    workbench, &self.sid, ObservationPhase::NativeAcknowledged, Some(run.key),
+                )?;
+                let result = serde_json::json!({"actual_join":true,"facts":format!("{:?}",observation.latest),"original_identity":format!("{:?}",observation.identity),"record_revision":observation.record_revision,
+                    "ad31":[ad31_retained,ad31_acknowledged]});
                 self.joined = true;
                 Ok(result)
             }

@@ -1269,6 +1269,178 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainYesterday => '昨天';
 
   @override
+  String get pluginsAgentAdmitWriter => '准入写入者';
+
+  @override
+  String get pluginsAgentAfter => '起始序号之后';
+
+  @override
+  String get pluginsAgentAppend => '追加事件';
+
+  @override
+  String get pluginsAgentArchived => '已归档';
+
+  @override
+  String get pluginsAgentAttach => '附着会话控制';
+
+  @override
+  String get pluginsAgentAttached => '已附着';
+
+  @override
+  String get pluginsAgentBusy => '忙碌';
+
+  @override
+  String get pluginsAgentCheckpoint => '检查点';
+
+  @override
+  String get pluginsAgentCloseWriter => '关闭写入者';
+
+  @override
+  String get pluginsAgentClosed => '视图已关闭';
+
+  @override
+  String get pluginsAgentCreateSession => '创建会话';
+
+  @override
+  String get pluginsAgentDetach => '解除会话控制附着';
+
+  @override
+  String get pluginsAgentDetached => '已解除附着';
+
+  @override
+  String get pluginsAgentEpoch => '纪元';
+
+  @override
+  String get pluginsAgentEventBody => '事件内容';
+
+  @override
+  String get pluginsAgentEventId => '事件 ID';
+
+  @override
+  String get pluginsAgentEvents => '事件';
+
+  @override
+  String get pluginsAgentExpectedEpoch => '预期纪元';
+
+  @override
+  String get pluginsAgentFailed => '失败';
+
+  @override
+  String get pluginsAgentFloor => '下限序号';
+
+  @override
+  String get pluginsAgentGap => '缺口';
+
+  @override
+  String get pluginsAgentInvalidInput => '请检查输入。';
+
+  @override
+  String get pluginsAgentLimit => '数量上限';
+
+  @override
+  String get pluginsAgentListSessions => '列出会话';
+
+  @override
+  String get pluginsAgentMarkLost => '标记结果丢失';
+
+  @override
+  String get pluginsAgentMetadata => '元数据';
+
+  @override
+  String get pluginsAgentNotObserved => '尚未观察';
+
+  @override
+  String get pluginsAgentObservationNone => '没有当前任务';
+
+  @override
+  String get pluginsAgentObservationOther => '其他任务';
+
+  @override
+  String get pluginsAgentObservationRetainedExit => '已保留任务退出信息';
+
+  @override
+  String get pluginsAgentObservationRunning => '仍保留工作线程';
+
+  @override
+  String get pluginsAgentObserve => '观察任务';
+
+  @override
+  String get pluginsAgentObserving => '正在观察…';
+
+  @override
+  String get pluginsAgentOpen => '打开会话控制';
+
+  @override
+  String get pluginsAgentOpenWriter => '打开写入者';
+
+  @override
+  String get pluginsAgentOpened => '已打开';
+
+  @override
+  String get pluginsAgentParent => '父项';
+
+  @override
+  String get pluginsAgentParentSession => '父会话';
+
+  @override
+  String get pluginsAgentParentTail => '父会话尾序号';
+
+  @override
+  String get pluginsAgentPending => '等待中';
+
+  @override
+  String get pluginsAgentRead => '读取结果';
+
+  @override
+  String get pluginsAgentReadOnlyNotice => '发现操作只读，不授予访问权限。结果未知时，绝不自动重发。';
+
+  @override
+  String get pluginsAgentRefreshStatus => '刷新状态';
+
+  @override
+  String get pluginsAgentRejected => '已拒绝';
+
+  @override
+  String get pluginsAgentReleaseNotice => '关闭此视图或解除会话控制附着，不能证明任务已经停止或资源已经释放。';
+
+  @override
+  String get pluginsAgentRevision => '修订号';
+
+  @override
+  String get pluginsAgentSelectedSession => '已选会话';
+
+  @override
+  String get pluginsAgentSessionId => '会话 ID';
+
+  @override
+  String get pluginsAgentSessionList => '会话列表';
+
+  @override
+  String get pluginsAgentSnapshot => '读取快照';
+
+  @override
+  String get pluginsAgentSubmission => '提交';
+
+  @override
+  String get pluginsAgentSummary =>
+      '只观察当前任务，不启动任务，也不授予访问权限。“运行中”仅表示宿主仍保留工作线程，不能证明操作系统中的任务仍然存活。';
+
+  @override
+  String get pluginsAgentTail => '尾序号';
+
+  @override
+  String get pluginsAgentTitle => 'Agent 会话';
+
+  @override
+  String get pluginsAgentUnavailable => '不可用';
+
+  @override
+  String get pluginsAgentUnknown => '结果未确认，不自动重发';
+
+  @override
+  String get pluginsAgentWriter => '写入者';
+
+  @override
   String get pluginsApprovalUnknown => '启用或权限变更未能确认';
 
   @override

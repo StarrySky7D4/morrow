@@ -1399,6 +1399,181 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mainYesterday => 'Hier';
 
   @override
+  String get pluginsAgentAdmitWriter => 'Admettre un rédacteur';
+
+  @override
+  String get pluginsAgentAfter => 'Après le numéro';
+
+  @override
+  String get pluginsAgentAppend => 'Ajouter un événement';
+
+  @override
+  String get pluginsAgentArchived => 'Archivée';
+
+  @override
+  String get pluginsAgentAttach => 'Attacher le contrôle de session';
+
+  @override
+  String get pluginsAgentAttached => 'Attaché';
+
+  @override
+  String get pluginsAgentBusy => 'Occupé';
+
+  @override
+  String get pluginsAgentCheckpoint => 'Point de contrôle';
+
+  @override
+  String get pluginsAgentCloseWriter => 'Fermer le rédacteur';
+
+  @override
+  String get pluginsAgentClosed => 'Vue fermée';
+
+  @override
+  String get pluginsAgentCreateSession => 'Créer une session';
+
+  @override
+  String get pluginsAgentDetach => 'Détacher le contrôle de session';
+
+  @override
+  String get pluginsAgentDetached => 'Détaché';
+
+  @override
+  String get pluginsAgentEpoch => 'Époque';
+
+  @override
+  String get pluginsAgentEventBody => 'Contenu de l’événement';
+
+  @override
+  String get pluginsAgentEventId => 'ID de l’événement';
+
+  @override
+  String get pluginsAgentEvents => 'Événements';
+
+  @override
+  String get pluginsAgentExpectedEpoch => 'Époque attendue';
+
+  @override
+  String get pluginsAgentFailed => 'Échec';
+
+  @override
+  String get pluginsAgentFloor => 'Borne inférieure';
+
+  @override
+  String get pluginsAgentGap => 'Lacune';
+
+  @override
+  String get pluginsAgentInvalidInput => 'Vérifiez la saisie.';
+
+  @override
+  String get pluginsAgentLimit => 'Limite';
+
+  @override
+  String get pluginsAgentListSessions => 'Lister les sessions';
+
+  @override
+  String get pluginsAgentMarkLost => 'Marquer le résultat comme perdu';
+
+  @override
+  String get pluginsAgentMetadata => 'Métadonnées';
+
+  @override
+  String get pluginsAgentNotObserved => 'Non observée';
+
+  @override
+  String get pluginsAgentObservationNone => 'Aucune tâche actuelle';
+
+  @override
+  String get pluginsAgentObservationOther => 'Autre tâche';
+
+  @override
+  String get pluginsAgentObservationRetainedExit => 'Sortie de tâche conservée';
+
+  @override
+  String get pluginsAgentObservationRunning => 'Worker conservé';
+
+  @override
+  String get pluginsAgentObserve => 'Observer la tâche';
+
+  @override
+  String get pluginsAgentObserving => 'Observation…';
+
+  @override
+  String get pluginsAgentOpen => 'Ouvrir le contrôle de session';
+
+  @override
+  String get pluginsAgentOpenWriter => 'Ouvrir le rédacteur';
+
+  @override
+  String get pluginsAgentOpened => 'Ouvert';
+
+  @override
+  String get pluginsAgentParent => 'Parent';
+
+  @override
+  String get pluginsAgentParentSession => 'Session parente';
+
+  @override
+  String get pluginsAgentParentTail => 'Dernier numéro du parent';
+
+  @override
+  String get pluginsAgentPending => 'En attente';
+
+  @override
+  String get pluginsAgentRead => 'Lire le résultat';
+
+  @override
+  String get pluginsAgentReadOnlyNotice =>
+      'La découverte est en lecture seule et n’accorde aucun accès. Un résultat inconnu n’est jamais renvoyé automatiquement.';
+
+  @override
+  String get pluginsAgentRefreshStatus => 'Actualiser l’état';
+
+  @override
+  String get pluginsAgentRejected => 'Refusé';
+
+  @override
+  String get pluginsAgentReleaseNotice =>
+      'Fermer cette vue ou détacher le contrôle de session ne prouve ni l’arrêt de la tâche ni la libération des ressources.';
+
+  @override
+  String get pluginsAgentRevision => 'Révision';
+
+  @override
+  String get pluginsAgentSelectedSession => 'Session sélectionnée';
+
+  @override
+  String get pluginsAgentSessionId => 'ID de session';
+
+  @override
+  String get pluginsAgentSessionList => 'Sessions';
+
+  @override
+  String get pluginsAgentSnapshot => 'Lire l’instantané';
+
+  @override
+  String get pluginsAgentSubmission => 'Soumission';
+
+  @override
+  String get pluginsAgentSummary =>
+      'Observer la tâche actuelle ne la démarre pas et n’accorde aucun accès. « En cours » signifie seulement que l’hôte conserve un worker, sans confirmer son activité dans le système d’exploitation.';
+
+  @override
+  String get pluginsAgentTail => 'Dernier numéro';
+
+  @override
+  String get pluginsAgentTitle => 'Sessions Agent';
+
+  @override
+  String get pluginsAgentUnavailable => 'Indisponible';
+
+  @override
+  String get pluginsAgentUnknown =>
+      'Résultat non confirmé — aucun renvoi automatique';
+
+  @override
+  String get pluginsAgentWriter => 'Rédacteur';
+
+  @override
   String get pluginsApprovalUnknown =>
       'L’activation ou les changements d’autorisations n’ont pas pu être confirmés';
 

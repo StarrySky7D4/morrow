@@ -1321,6 +1321,180 @@ class AppLocalizationsKo extends AppLocalizations {
   String get mainYesterday => '어제';
 
   @override
+  String get pluginsAgentAdmitWriter => '기록자 허용';
+
+  @override
+  String get pluginsAgentAfter => '시퀀스 이후';
+
+  @override
+  String get pluginsAgentAppend => '이벤트 추가';
+
+  @override
+  String get pluginsAgentArchived => '보관됨';
+
+  @override
+  String get pluginsAgentAttach => '세션 제어 연결';
+
+  @override
+  String get pluginsAgentAttached => '연결됨';
+
+  @override
+  String get pluginsAgentBusy => '사용 중';
+
+  @override
+  String get pluginsAgentCheckpoint => '체크포인트';
+
+  @override
+  String get pluginsAgentCloseWriter => '기록자 닫기';
+
+  @override
+  String get pluginsAgentClosed => '화면 닫힘';
+
+  @override
+  String get pluginsAgentCreateSession => '세션 만들기';
+
+  @override
+  String get pluginsAgentDetach => '세션 제어 연결 해제';
+
+  @override
+  String get pluginsAgentDetached => '연결 해제됨';
+
+  @override
+  String get pluginsAgentEpoch => '에포크';
+
+  @override
+  String get pluginsAgentEventBody => '이벤트 내용';
+
+  @override
+  String get pluginsAgentEventId => '이벤트 ID';
+
+  @override
+  String get pluginsAgentEvents => '이벤트';
+
+  @override
+  String get pluginsAgentExpectedEpoch => '예상 에포크';
+
+  @override
+  String get pluginsAgentFailed => '실패';
+
+  @override
+  String get pluginsAgentFloor => '최소 번호';
+
+  @override
+  String get pluginsAgentGap => '누락 구간';
+
+  @override
+  String get pluginsAgentInvalidInput => '입력을 확인하세요.';
+
+  @override
+  String get pluginsAgentLimit => '한도';
+
+  @override
+  String get pluginsAgentListSessions => '세션 목록 조회';
+
+  @override
+  String get pluginsAgentMarkLost => '결과 유실 표시';
+
+  @override
+  String get pluginsAgentMetadata => '메타데이터';
+
+  @override
+  String get pluginsAgentNotObserved => '관찰 안 함';
+
+  @override
+  String get pluginsAgentObservationNone => '현재 작업 없음';
+
+  @override
+  String get pluginsAgentObservationOther => '다른 작업';
+
+  @override
+  String get pluginsAgentObservationRetainedExit => '작업 종료 정보 보유';
+
+  @override
+  String get pluginsAgentObservationRunning => '워커 보유 중';
+
+  @override
+  String get pluginsAgentObserve => '작업 관찰';
+
+  @override
+  String get pluginsAgentObserving => '관찰 중…';
+
+  @override
+  String get pluginsAgentOpen => '세션 제어 열기';
+
+  @override
+  String get pluginsAgentOpenWriter => '기록자 열기';
+
+  @override
+  String get pluginsAgentOpened => '열림';
+
+  @override
+  String get pluginsAgentParent => '부모';
+
+  @override
+  String get pluginsAgentParentSession => '부모 세션';
+
+  @override
+  String get pluginsAgentParentTail => '부모의 마지막 번호';
+
+  @override
+  String get pluginsAgentPending => '대기 중';
+
+  @override
+  String get pluginsAgentRead => '결과 읽기';
+
+  @override
+  String get pluginsAgentReadOnlyNotice =>
+      '검색은 읽기 전용이며 접근 권한을 부여하지 않습니다. 결과가 불명인 작업은 절대 자동 재전송하지 않습니다.';
+
+  @override
+  String get pluginsAgentRefreshStatus => '상태 새로 고침';
+
+  @override
+  String get pluginsAgentRejected => '거부됨';
+
+  @override
+  String get pluginsAgentReleaseNotice =>
+      '이 화면을 닫거나 세션 제어 연결을 해제해도 작업 중지나 리소스 해제가 입증되지는 않습니다.';
+
+  @override
+  String get pluginsAgentRevision => '개정 번호';
+
+  @override
+  String get pluginsAgentSelectedSession => '선택한 세션';
+
+  @override
+  String get pluginsAgentSessionId => '세션 ID';
+
+  @override
+  String get pluginsAgentSessionList => '세션 목록';
+
+  @override
+  String get pluginsAgentSnapshot => '스냅샷 읽기';
+
+  @override
+  String get pluginsAgentSubmission => '제출';
+
+  @override
+  String get pluginsAgentSummary =>
+      '현재 작업을 관찰할 뿐, 시작하거나 접근 권한을 부여하지 않습니다. ‘실행 중’은 호스트가 워커를 보유한다는 뜻이며 OS에서 살아 있음을 확인하지 않습니다.';
+
+  @override
+  String get pluginsAgentTail => '마지막 번호';
+
+  @override
+  String get pluginsAgentTitle => 'Agent 세션';
+
+  @override
+  String get pluginsAgentUnavailable => '사용 불가';
+
+  @override
+  String get pluginsAgentUnknown => '결과 미확인 — 자동 재전송 없음';
+
+  @override
+  String get pluginsAgentWriter => '기록자';
+
+  @override
   String get pluginsApprovalUnknown => '활성화 또는 권한 변경을 확인하지 못했습니다';
 
   @override

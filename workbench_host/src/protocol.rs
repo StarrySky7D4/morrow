@@ -137,6 +137,12 @@ trait ResponseTarget {
 pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     #[cfg(not(target_arch = "wasm32"))]
     {
+        if bytes.starts_with(crate::agent_task_discovery::MAGIC) {
+            return crate::agent_task_discovery::respond(host, bytes);
+        }
+        if bytes.starts_with(crate::agent_product_control::MAGIC) {
+            return crate::agent_product_control::respond(host, bytes);
+        }
         if bytes.starts_with(morrow_agent_catalog_admin_v1::MAGIC) {
             return crate::agent_catalog::respond(host, bytes);
         }
@@ -218,6 +224,13 @@ pub fn respond_theme_package(
 /// The original owner executes business commands while a worker holds it.
 /// Scheduler commands are unavailable here, including nested HttpStart.
 pub(crate) fn respond_state(host: &mut WorkbenchState, bytes: &[u8]) -> Result<Vec<u8>> {
+    #[cfg(not(target_arch = "wasm32"))]
+    if bytes.starts_with(crate::agent_task_discovery::MAGIC) {
+        return Err("private Agent observation requires the direct native UI lane".into());
+    }
+    if bytes.starts_with(crate::agent_product_control::MAGIC) {
+        return Err("private product session control requires the direct native UI lane".into());
+    }
     #[cfg(not(target_arch = "wasm32"))]
     if bytes.starts_with(morrow_agent_catalog_admin_v1::MAGIC) {
         // Agent administration is trusted UI only, never nested guest/service business.

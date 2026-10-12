@@ -326,11 +326,11 @@ impl Drop for ServiceAuthorityCoordinator {
 fn lock_root() -> Result<PathBuf> {
     #[cfg(windows)]
     let path = {
-        let base = std::env::var_os("LOCALAPPDATA")
-            .filter(|v| !v.is_empty())
-            .map(PathBuf::from)
-            .ok_or(Error::UnsupportedVersion)?;
-        base.join("Morrow").join("service-authority-locks")
+        // Same zero-argument current-primary-token resolver as trusted child preparation.
+        // Failure grants no lease and never falls back to inherited LOCALAPPDATA.
+        let base = morrow_windows_user_directories::current_process_local_app_data()
+            .map_err(|_| Error::Io)?;
+        windows_lock_directory_from_resolved(&base)?
     };
     #[cfg(unix)]
     let path = {
@@ -620,5 +620,39 @@ mod tests {
             }
         }
         lease.check().unwrap();
+    }
+}
+
+#[cfg(windows)]
+fn windows_lock_directory_from_resolved(base: &str) -> Result<PathBuf> {
+    if base.is_empty() || base.contains('\0') || !std::path::Path::new(base).is_absolute() {
+        return Err(Error::Invalid("service lock root"));
+    }
+    Ok(std::path::Path::new(base).join("Morrow").join("service-authority-locks"))
+}
+
+// Pure directory-shape checks. No resolver, environment or filesystem access.
+#[cfg(all(test, windows))]
+mod windows_directory_contract_tests {
+    use super::*;
+    #[test]
+    fn resolved_base_keeps_the_existing_lock_suffix() {
+        let base = "C:/synthetic-token/Local";
+        assert_eq!(windows_lock_directory_from_resolved(base).unwrap(),
+            PathBuf::from(base).join("Morrow").join("service-authority-locks"));
+    }
+    #[test]
+    fn inherited_override_is_not_a_root_derivation_input() {
+        let inherited_override = "C:/synthetic-inherited/Local";
+        let resolved = "C:/synthetic-token/Local";
+        let root = windows_lock_directory_from_resolved(resolved).unwrap();
+        assert!(!root.starts_with(inherited_override));
+        assert!(root.starts_with(resolved));
+    }
+    #[test]
+    fn invalid_resolved_base_is_rejected_without_fallback() {
+        for base in ["", "relative/Local", "C:relative", "C:/synthetic\0/Local"] {
+            assert!(windows_lock_directory_from_resolved(base).is_err());
+        }
     }
 }

@@ -1309,6 +1309,180 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mainYesterday => '昨日';
 
   @override
+  String get pluginsAgentAdmitWriter => '書き手を許可';
+
+  @override
+  String get pluginsAgentAfter => 'この番号より後';
+
+  @override
+  String get pluginsAgentAppend => 'イベントを追加';
+
+  @override
+  String get pluginsAgentArchived => 'アーカイブ済み';
+
+  @override
+  String get pluginsAgentAttach => 'セッション制御に接続';
+
+  @override
+  String get pluginsAgentAttached => '接続済み';
+
+  @override
+  String get pluginsAgentBusy => '処理中';
+
+  @override
+  String get pluginsAgentCheckpoint => 'チェックポイント';
+
+  @override
+  String get pluginsAgentCloseWriter => '書き手を閉じる';
+
+  @override
+  String get pluginsAgentClosed => '画面を閉じました';
+
+  @override
+  String get pluginsAgentCreateSession => 'セッションを作成';
+
+  @override
+  String get pluginsAgentDetach => 'セッション制御から切断';
+
+  @override
+  String get pluginsAgentDetached => '切断済み';
+
+  @override
+  String get pluginsAgentEpoch => 'エポック';
+
+  @override
+  String get pluginsAgentEventBody => 'イベント内容';
+
+  @override
+  String get pluginsAgentEventId => 'イベント ID';
+
+  @override
+  String get pluginsAgentEvents => 'イベント';
+
+  @override
+  String get pluginsAgentExpectedEpoch => '期待するエポック';
+
+  @override
+  String get pluginsAgentFailed => '失敗';
+
+  @override
+  String get pluginsAgentFloor => '下限番号';
+
+  @override
+  String get pluginsAgentGap => '欠落';
+
+  @override
+  String get pluginsAgentInvalidInput => '入力を確認してください。';
+
+  @override
+  String get pluginsAgentLimit => '上限';
+
+  @override
+  String get pluginsAgentListSessions => 'セッション一覧';
+
+  @override
+  String get pluginsAgentMarkLost => '結果の消失を記録';
+
+  @override
+  String get pluginsAgentMetadata => 'メタデータ';
+
+  @override
+  String get pluginsAgentNotObserved => '未観察';
+
+  @override
+  String get pluginsAgentObservationNone => '現在のタスクなし';
+
+  @override
+  String get pluginsAgentObservationOther => '別のタスク';
+
+  @override
+  String get pluginsAgentObservationRetainedExit => 'タスク終了情報を保持';
+
+  @override
+  String get pluginsAgentObservationRunning => 'ワーカーを保持中';
+
+  @override
+  String get pluginsAgentObserve => 'タスクを観察';
+
+  @override
+  String get pluginsAgentObserving => '観察中…';
+
+  @override
+  String get pluginsAgentOpen => 'セッション制御を開く';
+
+  @override
+  String get pluginsAgentOpenWriter => '書き手を開く';
+
+  @override
+  String get pluginsAgentOpened => '開始済み';
+
+  @override
+  String get pluginsAgentParent => '親';
+
+  @override
+  String get pluginsAgentParentSession => '親セッション';
+
+  @override
+  String get pluginsAgentParentTail => '親の末尾番号';
+
+  @override
+  String get pluginsAgentPending => '保留中';
+
+  @override
+  String get pluginsAgentRead => '結果を読む';
+
+  @override
+  String get pluginsAgentReadOnlyNotice =>
+      '検出は読み取り専用で、アクセス権を付与しません。結果が不明な操作を自動再送することはありません。';
+
+  @override
+  String get pluginsAgentRefreshStatus => '状態を更新';
+
+  @override
+  String get pluginsAgentRejected => '拒否';
+
+  @override
+  String get pluginsAgentReleaseNotice =>
+      'この画面を閉じたりセッション制御から切断したりしても、タスクの停止やリソースの解放を証明したことにはなりません。';
+
+  @override
+  String get pluginsAgentRevision => 'リビジョン';
+
+  @override
+  String get pluginsAgentSelectedSession => '選択したセッション';
+
+  @override
+  String get pluginsAgentSessionId => 'セッション ID';
+
+  @override
+  String get pluginsAgentSessionList => 'セッション';
+
+  @override
+  String get pluginsAgentSnapshot => 'スナップショットを読む';
+
+  @override
+  String get pluginsAgentSubmission => '送信';
+
+  @override
+  String get pluginsAgentSummary =>
+      '現在のタスクを観察するだけで、起動やアクセス権の付与は行いません。「実行中」はホストがワーカーを保持していることだけを示し、OS 上での生存を保証しません。';
+
+  @override
+  String get pluginsAgentTail => '末尾番号';
+
+  @override
+  String get pluginsAgentTitle => 'Agent セッション';
+
+  @override
+  String get pluginsAgentUnavailable => '利用不可';
+
+  @override
+  String get pluginsAgentUnknown => '結果未確認 — 自動再送なし';
+
+  @override
+  String get pluginsAgentWriter => '書き手';
+
+  @override
   String get pluginsApprovalUnknown => '有効化または権限の変更を確認できませんでした';
 
   @override

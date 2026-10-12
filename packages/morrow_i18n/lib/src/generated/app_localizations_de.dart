@@ -1400,6 +1400,181 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mainYesterday => 'Gestern';
 
   @override
+  String get pluginsAgentAdmitWriter => 'Schreiber zulassen';
+
+  @override
+  String get pluginsAgentAfter => 'Nach Sequenznummer';
+
+  @override
+  String get pluginsAgentAppend => 'Ereignis anhängen';
+
+  @override
+  String get pluginsAgentArchived => 'Archiviert';
+
+  @override
+  String get pluginsAgentAttach => 'Sitzungssteuerung verbinden';
+
+  @override
+  String get pluginsAgentAttached => 'Verbunden';
+
+  @override
+  String get pluginsAgentBusy => 'Beschäftigt';
+
+  @override
+  String get pluginsAgentCheckpoint => 'Prüfpunkt';
+
+  @override
+  String get pluginsAgentCloseWriter => 'Schreiber schließen';
+
+  @override
+  String get pluginsAgentClosed => 'Ansicht geschlossen';
+
+  @override
+  String get pluginsAgentCreateSession => 'Sitzung erstellen';
+
+  @override
+  String get pluginsAgentDetach => 'Sitzungssteuerung trennen';
+
+  @override
+  String get pluginsAgentDetached => 'Getrennt';
+
+  @override
+  String get pluginsAgentEpoch => 'Epoche';
+
+  @override
+  String get pluginsAgentEventBody => 'Ereignisinhalt';
+
+  @override
+  String get pluginsAgentEventId => 'Ereignis-ID';
+
+  @override
+  String get pluginsAgentEvents => 'Ereignisse';
+
+  @override
+  String get pluginsAgentExpectedEpoch => 'Erwartete Epoche';
+
+  @override
+  String get pluginsAgentFailed => 'Fehlgeschlagen';
+
+  @override
+  String get pluginsAgentFloor => 'Untergrenze';
+
+  @override
+  String get pluginsAgentGap => 'Lücke';
+
+  @override
+  String get pluginsAgentInvalidInput => 'Eingabe prüfen.';
+
+  @override
+  String get pluginsAgentLimit => 'Limit';
+
+  @override
+  String get pluginsAgentListSessions => 'Sitzungen auflisten';
+
+  @override
+  String get pluginsAgentMarkLost => 'Ergebnis als verloren markieren';
+
+  @override
+  String get pluginsAgentMetadata => 'Metadaten';
+
+  @override
+  String get pluginsAgentNotObserved => 'Nicht beobachtet';
+
+  @override
+  String get pluginsAgentObservationNone => 'Keine aktuelle Aufgabe';
+
+  @override
+  String get pluginsAgentObservationOther => 'Andere Aufgabe';
+
+  @override
+  String get pluginsAgentObservationRetainedExit => 'Aufgabenende beibehalten';
+
+  @override
+  String get pluginsAgentObservationRunning => 'Worker beibehalten';
+
+  @override
+  String get pluginsAgentObserve => 'Aufgabe beobachten';
+
+  @override
+  String get pluginsAgentObserving => 'Wird beobachtet…';
+
+  @override
+  String get pluginsAgentOpen => 'Sitzungssteuerung öffnen';
+
+  @override
+  String get pluginsAgentOpenWriter => 'Schreiber öffnen';
+
+  @override
+  String get pluginsAgentOpened => 'Geöffnet';
+
+  @override
+  String get pluginsAgentParent => 'Vorgänger';
+
+  @override
+  String get pluginsAgentParentSession => 'Übergeordnete Sitzung';
+
+  @override
+  String get pluginsAgentParentTail => 'Letzte Nummer des Vorgängers';
+
+  @override
+  String get pluginsAgentPending => 'Ausstehend';
+
+  @override
+  String get pluginsAgentRead => 'Ergebnis lesen';
+
+  @override
+  String get pluginsAgentReadOnlyNotice =>
+      'Die Erkennung liest nur und gewährt keinen Zugriff. Bei unbekanntem Ergebnis wird nie automatisch erneut gesendet.';
+
+  @override
+  String get pluginsAgentRefreshStatus => 'Status aktualisieren';
+
+  @override
+  String get pluginsAgentRejected => 'Abgelehnt';
+
+  @override
+  String get pluginsAgentReleaseNotice =>
+      'Das Schließen dieser Ansicht oder Trennen der Sitzungssteuerung beweist weder den Stopp der Aufgabe noch die Freigabe von Ressourcen.';
+
+  @override
+  String get pluginsAgentRevision => 'Revision';
+
+  @override
+  String get pluginsAgentSelectedSession => 'Ausgewählte Sitzung';
+
+  @override
+  String get pluginsAgentSessionId => 'Sitzungs-ID';
+
+  @override
+  String get pluginsAgentSessionList => 'Sitzungen';
+
+  @override
+  String get pluginsAgentSnapshot => 'Snapshot lesen';
+
+  @override
+  String get pluginsAgentSubmission => 'Übermittlung';
+
+  @override
+  String get pluginsAgentSummary =>
+      'Das Beobachten der aktuellen Aufgabe startet sie nicht und gewährt keinen Zugriff. „Läuft“ bedeutet nur, dass der Host einen Worker behält; es bestätigt keine Aktivität im Betriebssystem.';
+
+  @override
+  String get pluginsAgentTail => 'Letzte Nummer';
+
+  @override
+  String get pluginsAgentTitle => 'Agent-Sitzungen';
+
+  @override
+  String get pluginsAgentUnavailable => 'Nicht verfügbar';
+
+  @override
+  String get pluginsAgentUnknown =>
+      'Ergebnis unbestätigt — kein automatisches Senden';
+
+  @override
+  String get pluginsAgentWriter => 'Schreiber';
+
+  @override
   String get pluginsApprovalUnknown =>
       'Aktivierung oder Berechtigungsänderungen konnten nicht bestätigt werden';
 

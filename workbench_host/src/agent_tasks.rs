@@ -7,6 +7,7 @@ mod sealed_proposal;
 mod trusted;
 mod worker;
 mod native_session;
+pub mod agent_product;
 pub use native_session::{NativeSessionEndpoint, NativeSessionPort};
 use crate::io_tasks::{AccessError, Snapshot, TaskKey};
 use crate::{Result, Workbench, WorkbenchState, now};

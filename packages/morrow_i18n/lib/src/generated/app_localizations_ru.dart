@@ -1395,6 +1395,182 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mainYesterday => 'Вчера';
 
   @override
+  String get pluginsAgentAdmitWriter => 'Допустить автора';
+
+  @override
+  String get pluginsAgentAfter => 'После номера';
+
+  @override
+  String get pluginsAgentAppend => 'Добавить событие';
+
+  @override
+  String get pluginsAgentArchived => 'В архиве';
+
+  @override
+  String get pluginsAgentAttach => 'Подключить управление сеансом';
+
+  @override
+  String get pluginsAgentAttached => 'Подключено';
+
+  @override
+  String get pluginsAgentBusy => 'Занято';
+
+  @override
+  String get pluginsAgentCheckpoint => 'Контрольная точка';
+
+  @override
+  String get pluginsAgentCloseWriter => 'Закрыть запись';
+
+  @override
+  String get pluginsAgentClosed => 'Вид закрыт';
+
+  @override
+  String get pluginsAgentCreateSession => 'Создать сеанс';
+
+  @override
+  String get pluginsAgentDetach => 'Отключить управление сеансом';
+
+  @override
+  String get pluginsAgentDetached => 'Отключено';
+
+  @override
+  String get pluginsAgentEpoch => 'Эпоха';
+
+  @override
+  String get pluginsAgentEventBody => 'Содержимое события';
+
+  @override
+  String get pluginsAgentEventId => 'ID события';
+
+  @override
+  String get pluginsAgentEvents => 'События';
+
+  @override
+  String get pluginsAgentExpectedEpoch => 'Ожидаемая эпоха';
+
+  @override
+  String get pluginsAgentFailed => 'Ошибка';
+
+  @override
+  String get pluginsAgentFloor => 'Нижняя граница';
+
+  @override
+  String get pluginsAgentGap => 'Пропуск';
+
+  @override
+  String get pluginsAgentInvalidInput => 'Проверьте ввод.';
+
+  @override
+  String get pluginsAgentLimit => 'Лимит';
+
+  @override
+  String get pluginsAgentListSessions => 'Список сеансов';
+
+  @override
+  String get pluginsAgentMarkLost => 'Отметить результат потерянным';
+
+  @override
+  String get pluginsAgentMetadata => 'Метаданные';
+
+  @override
+  String get pluginsAgentNotObserved => 'Нет наблюдения';
+
+  @override
+  String get pluginsAgentObservationNone => 'Нет текущей задачи';
+
+  @override
+  String get pluginsAgentObservationOther => 'Другая задача';
+
+  @override
+  String get pluginsAgentObservationRetainedExit =>
+      'Сведения о выходе сохранены';
+
+  @override
+  String get pluginsAgentObservationRunning => 'Рабочий поток сохранён';
+
+  @override
+  String get pluginsAgentObserve => 'Наблюдать задачу';
+
+  @override
+  String get pluginsAgentObserving => 'Наблюдение…';
+
+  @override
+  String get pluginsAgentOpen => 'Открыть управление сеансом';
+
+  @override
+  String get pluginsAgentOpenWriter => 'Открыть запись';
+
+  @override
+  String get pluginsAgentOpened => 'Открыто';
+
+  @override
+  String get pluginsAgentParent => 'Родитель';
+
+  @override
+  String get pluginsAgentParentSession => 'Родительский сеанс';
+
+  @override
+  String get pluginsAgentParentTail => 'Конечный номер родителя';
+
+  @override
+  String get pluginsAgentPending => 'Ожидание';
+
+  @override
+  String get pluginsAgentRead => 'Прочитать результат';
+
+  @override
+  String get pluginsAgentReadOnlyNotice =>
+      'Обнаружение доступно только для чтения и не предоставляет доступ. Неизвестный результат никогда не вызывает автоматическую повторную отправку.';
+
+  @override
+  String get pluginsAgentRefreshStatus => 'Обновить состояние';
+
+  @override
+  String get pluginsAgentRejected => 'Отклонено';
+
+  @override
+  String get pluginsAgentReleaseNotice =>
+      'Закрытие этого вида или отключение управления сеансом не доказывает остановку задачи или освобождение ресурсов.';
+
+  @override
+  String get pluginsAgentRevision => 'Ревизия';
+
+  @override
+  String get pluginsAgentSelectedSession => 'Выбранный сеанс';
+
+  @override
+  String get pluginsAgentSessionId => 'ID сеанса';
+
+  @override
+  String get pluginsAgentSessionList => 'Сеансы';
+
+  @override
+  String get pluginsAgentSnapshot => 'Прочитать снимок';
+
+  @override
+  String get pluginsAgentSubmission => 'Отправка';
+
+  @override
+  String get pluginsAgentSummary =>
+      'Наблюдение за текущей задачей не запускает её и не предоставляет доступ. Состояние «Выполняется» означает лишь, что хост сохраняет рабочий поток, а не подтверждает его работу в ОС.';
+
+  @override
+  String get pluginsAgentTail => 'Конечный номер';
+
+  @override
+  String get pluginsAgentTitle => 'Сеансы Agent';
+
+  @override
+  String get pluginsAgentUnavailable => 'Недоступно';
+
+  @override
+  String get pluginsAgentUnknown =>
+      'Результат не подтверждён — без автоповтора';
+
+  @override
+  String get pluginsAgentWriter => 'Автор записи';
+
+  @override
   String get pluginsApprovalUnknown =>
       'Не удалось подтвердить включение или изменение разрешений';
 

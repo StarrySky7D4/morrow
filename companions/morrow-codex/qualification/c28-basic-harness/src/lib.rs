@@ -27,6 +27,12 @@ pub mod preflight;
 #[cfg(windows)]
 pub mod product;
 #[cfg(windows)]
+mod product_observation;
+#[cfg(windows)]
+pub mod product_session_flow;
+#[cfg(windows)]
+mod product_session_wire;
+#[cfg(windows)]
 pub mod protected_owner;
 #[cfg(windows)]
 #[path = "../../c28-basic-support/provisioning/provisioning.rs"]

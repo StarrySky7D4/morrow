@@ -14,7 +14,8 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
     required this.supervisorSha256,
     required this.expectedProfile,
     required this.packageSha256,
-  }) {
+    bool qualificationStartupObservationEnabled = false,
+  }) : _qualificationStartupObservationEnabled = qualificationStartupObservationEnabled {
     unawaited(_exit.future.catchError((Object _) => -1));
     process.stdout.listen(
       _receive,
@@ -48,6 +49,7 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
     });
   }
   final Process process;
+  final bool _qualificationStartupObservationEnabled;
   final String supervisorSha256, hostSha256, packageSha256, expectedProfile;
   final supervision = ValueNotifier<WorkbenchSupervisionState?>(null);
   final _output = StreamController<List<int>>();
@@ -55,11 +57,57 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
   final _exit = Completer<int>();
   final _buffer = <int>[];
   final _diagnosticBytes = <int>[];
+  int _diagnosticBytesObserved = 0;
   void _recordDiagnostic(List<int> bytes) {
+    _diagnosticBytesObserved += bytes.length;
     _diagnosticBytes.addAll(bytes.take(8192 - _diagnosticBytes.length));
   }
 
   WorkbenchSupervisionState? _identity;
+  // Only the original receive path publishes this after all identity checks.
+  // The public presentation notifier is not an admission capability.
+  WorkbenchSupervisionState? _validatedState;
+  WorkbenchSupervisionState? _initialValidatedState;
+
+  /// Incomplete data copied only from this original private receive path.
+  /// This snapshot grants neither private control nor owner-release proof.
+  WorkbenchStartupObservation qualificationStartupObservation({
+    required String stage,
+    required Object primaryFailure,
+    Object? secondaryCloseFailure,
+    Object? observerFailure,
+  }) {
+    if (!_qualificationStartupObservationEnabled) {
+      throw StateError('Startup observation requires qualification mode');
+    }
+    return WorkbenchStartupObservation(
+      stage: stage, primaryFailure: primaryFailure,
+      initialValidatedState: _initialValidatedState,
+      latestValidatedState: _validatedState,
+      diagnosticBytes: _diagnosticBytes,
+      diagnosticBytesObserved: _diagnosticBytesObserved,
+      actualExitCode: _code, stdoutEof: _outputEnded,
+      stderrEof: _diagnosticsEnded,
+      secondaryCloseFailure: secondaryCloseFailure,
+      observerFailure: observerFailure,
+    );
+  }
+
+  /// Read-only copy of the original validated receive state. Presentation
+  /// notifier writes cannot alter this identity or grant admission.
+  Map<String, dynamic> get qualificationValidatedIdentity {
+    final state = _validatedState;
+    if (state == null) throw StateError('Original supervisor identity unavailable');
+    return Map<String, dynamic>.unmodifiable(state.record);
+  }
+
+  bool get supportsPrivateControl =>
+      !_failed &&
+      !_closing &&
+      _code == null &&
+      !_outputEnded &&
+      _validatedState?.phase == 'Running' &&
+      _validatedState?.record['gate_closed'] == false;
   Future<void> _writes = Future.value();
   Timer? _heartbeat;
   int? _code;
@@ -171,7 +219,7 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
               }
             }
           }
-          if (supervision.value?.record['gate_closed'] == true &&
+          if (_validatedState?.record['gate_closed'] == true &&
               state.record['gate_closed'] != true) {
             throw const FormatException(
               'Supervisor reopened revoked admission',
@@ -180,6 +228,8 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
           if (state.released && !_closing) {
             throw const FormatException('Unrequested normal shutdown proof');
           }
+          _initialValidatedState ??= state;
+          _validatedState = state;
           supervision.value = state;
           if (state.uncertain) {
             _output.addError(
@@ -228,7 +278,7 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
         _exit.isCompleted) {
       return;
     }
-    final proof = supervision.value;
+    final proof = _validatedState;
     if (!_failed && _code == 0 && proof?.released == true) {
       _exit.complete(0);
     } else {

@@ -1070,6 +1070,10 @@ impl<O: ManagedHostOwner> AgentWorker<O> {
             scheduler,
         })
     }
+    // Crate-internal lease only; no owner/runtime/authority is reconstructed.
+    pub(super) fn native_command_queue(&self) -> NativeCommandQueue {
+        NativeCommandQueue { sender: self.sender.clone(), control: self.control.clone() }
+    }
     pub fn submit(&self, value: AgentCommand) -> Result<AgentCommandHandle, AgentError> {
         submit_command(&self.sender, &self.control, value)
     }
@@ -2129,6 +2133,9 @@ mod tests {
         assert_eq!(exit.owner.runtime.binding(), binding);
     }
     include!("native_session_worker_tests.rs");
+    include!("agent_product_tests.rs");
+    include!("agent_product_wire_tests.rs");
+    include!("worker_ledger_lifecycle_tests.rs");
 
 
 }

@@ -1,0 +1,512 @@
+{
+  "schema": "MORROW_WINDOWS_CHECKPOINT_SOURCE_V1",
+  "base_commit": "26b5a07925daa6f4332ec9b12f07be03a5c606c8",
+  "scope": "Selected source changes from the bounded Windows qualification closure; not a complete application or SDK acceptance.",
+  "source_validation": {
+    "rust_stage338": "locked offline host and supervisor build passed",
+    "helper_stage337": "four synthetic helper modes passed",
+    "native_stage341": "NOT_ACCEPTED: final stop/Reclaimed/ACK sequence incomplete; physical closure and temporary Process policy restoration verified"
+  },
+  "release_eligible": false,
+  "sdk_status": "OPEN",
+  "selected_files": {
+    "audit/Cargo.lock": {
+      "bytes": 39219,
+      "sha256": "07081e131cb4b12a8a23be7cb7dcb022529b296cd0ef96ff909261139c2d4b75"
+    },
+    "audit/src/keys.rs": {
+      "bytes": 20075,
+      "sha256": "f06a81c05f297aa7cda101d288215bcd540cf60e89db05be6968b9e09e4afe84"
+    },
+    "audit/src/keys/windows_publication.rs": {
+      "bytes": 11780,
+      "sha256": "54e2802a38baa66d613b9716cf5307bc932ce04a31fc39ff4944ba9d8eb1ee01"
+    },
+    "audit/src/session.rs": {
+      "bytes": 7772,
+      "sha256": "98e89b9efe097c3b03a67d6a8968f070eabdec017259beedfb71aa1831b11760"
+    },
+    "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/Cargo.lock": {
+      "bytes": 234066,
+      "sha256": "31e80d65a02f2d2918ef00924345c45f9e1c2dabacc19e1ce7171b9410b659b0"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/Cargo.lock": {
+      "bytes": 234076,
+      "sha256": "20eb201397c5f5dd33b88ca5ca65c756cc7b0a301e1a2dc646ae249c33cbb711"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/Cargo.toml": {
+      "bytes": 2271,
+      "sha256": "d9bf324df3620450853c29c7e48469164f7d8dc47b15b9fdaefa73c515b7ba22"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/src/bin/ps30_session_qualification.rs": {
+      "bytes": 995,
+      "sha256": "f6ef4fcc897f2c8f8625b559cf18155dc4a42e24a6643a5c474ae661c6ef988d"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/src/formal.rs": {
+      "bytes": 34290,
+      "sha256": "11c13e2f41d7cd5b3619b0be93c1dfe777f229a9698596770faae026af4f2d4d"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/src/lib.rs": {
+      "bytes": 1141,
+      "sha256": "495e9f850031dd03a32e7b6d0e4be92cbec766568116411a47d7833182b689b5"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/src/product_observation.rs": {
+      "bytes": 5812,
+      "sha256": "fe5979671a67b65df58a2a9d0374da9b92dd4b4867b35eb98c43492ab516ff64"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/src/product_session_flow.rs": {
+      "bytes": 39820,
+      "sha256": "d396c8a9b2823e5fb5edada36ec57c614489c16f97759bb5bfa08da19de56f79"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/src/product_session_wire.rs": {
+      "bytes": 10338,
+      "sha256": "a1f6b5ea81ec9a97a8f4351c886a72e1afa2ddaea69917625359954f6e5d2608"
+    },
+    "companions/morrow-codex/session-exec-windows-v1/Cargo.lock": {
+      "bytes": 225712,
+      "sha256": "e74fdcdb2d5626962b4d9ae54342e69f48b486be4d772560f9c229461d74ef2f"
+    },
+    "core/Cargo.lock": {
+      "bytes": 24455,
+      "sha256": "7363e4d388b36abfdfb44388a6419bca4b2fd14b411ed8ab07a2edc65c54cb11"
+    },
+    "core/Cargo.toml": {
+      "bytes": 1433,
+      "sha256": "4478ac8093733ac2600aa01411cef0b7872ebdae185cbba47aba553c46972510"
+    },
+    "core/src/store/service_authority_lock.rs": {
+      "bytes": 25462,
+      "sha256": "6402a48cf9ace9b25e794459e11d189d9abecd74f6cde3d7c4b6692de12881e8"
+    },
+    "extensions/agent-catalog-owner-v1/Cargo.lock": {
+      "bytes": 29331,
+      "sha256": "db2f576fd4e9ebaf425a6fa7042e12ac51cf8dbf27616b212fc973b22248c8dc"
+    },
+    "extensions/agent-session-exec-v1-r2/Cargo.lock": {
+      "bytes": 24647,
+      "sha256": "81bb8335e2fc4bc5613c7636224a9161fcfe3a64dcd037a3ffc7875f5cfe1a78"
+    },
+    "extensions/agent-session-process-v1-host/Cargo.lock": {
+      "bytes": 29261,
+      "sha256": "bc32694f269154843e421f32f4c882ea4727cf7a4f1a89e0bb5c00b818158db4"
+    },
+    "native_pipe_win_001/Cargo.lock": {
+      "bytes": 2335,
+      "sha256": "b164d2995a50332887ce8d40af5217dce540d2aaecbc184729e600b76ef07442"
+    },
+    "native_pipe_win_001/Cargo.toml": {
+      "bytes": 813,
+      "sha256": "2d68203200297ba842616b9ea2f351150877dcbe635e43d78b63bd449d87e788"
+    },
+    "native_pipe_win_001/src/job.rs": {
+      "bytes": 25345,
+      "sha256": "9a84b188fdb64dec0ee656c3c4852019b5e1b486dc88f3d13ffc9fbf1879396b"
+    },
+    "native_pipe_win_001/src/job_process.rs": {
+      "bytes": 39219,
+      "sha256": "0794c8ca9e9bda0d9709f8e1cf3439fffa8bd224547bd8c89c4dc1d2e54c3dc6"
+    },
+    "network_node/Cargo.lock": {
+      "bytes": 71307,
+      "sha256": "8b5143ebbe597c0132389e620dd867d95d452427f0ccb1a7a4a371d2a47f275a"
+    },
+    "plugin_runtime/Cargo.lock": {
+      "bytes": 35831,
+      "sha256": "9efce7cc389491d92a5f11f5c3e204231b70616f999950f1486335ab8a9216ec"
+    },
+    "windows_user_directories/Cargo.toml": {
+      "bytes": 337,
+      "sha256": "246dd6e47e37ddc0a30dfa183f7a3d9538b432ee0db852465f7d053d9d09358f"
+    },
+    "windows_user_directories/src/lib.rs": {
+      "bytes": 6815,
+      "sha256": "756027a9da7ed0b233f37c4a84fdc40f7223d8a6cbd0419c2b4ec4de284a5715"
+    },
+    "workbench_host/Cargo.lock": {
+      "bytes": 235261,
+      "sha256": "082835d137f3752ba9ea8d29138de9e03816f43215f18edad0c073c293221013"
+    },
+    "workbench_host/Cargo.toml": {
+      "bytes": 3637,
+      "sha256": "b6e10ece7d550d11993e097e01c9a13c92a3a8dac051e3b7e2748eeff887cee6"
+    },
+    "workbench_host/build.rs": {
+      "bytes": 2704,
+      "sha256": "b42c2474cd5a683a95cb79f21898c7c488f9b59b0d2dc0c97b7fe287cec24ec6"
+    },
+    "workbench_host/schemas/agent_product_control.capnp": {
+      "bytes": 1950,
+      "sha256": "df8c44ce102983b495efe17881d2d3db67fa2c47ec7639ab6d5c7c30a542098c"
+    },
+    "workbench_host/schemas/agent_task_discovery.capnp": {
+      "bytes": 608,
+      "sha256": "9357ac5a01dc00c22551f0d3a399fa1a2498780283f7e700b0b966bbc449ddef"
+    },
+    "workbench_host/src/agent_product_control.rs": {
+      "bytes": 18126,
+      "sha256": "5e6ac97785968447a0677d60af507a3ee2450e30a6771e4d08d62ae4c4fc24b1"
+    },
+    "workbench_host/src/agent_product_control_windows.rs": {
+      "bytes": 12229,
+      "sha256": "f6a566c2d90d201ab758e5ffcbafa8acf57ec21a8d37796eb6be7eebe1fca483"
+    },
+    "workbench_host/src/agent_task_discovery.rs": {
+      "bytes": 8085,
+      "sha256": "bdbd5e5dd06985102bd558fa120af4b02e49537624671c9583cfc42a7c8657df"
+    },
+    "workbench_host/src/agent_task_discovery_tests.rs": {
+      "bytes": 8946,
+      "sha256": "54d8784fd6f660c930c7b68803492432e9264b6b6024a772e9685f59722e9772"
+    },
+    "workbench_host/src/agent_tasks.rs": {
+      "bytes": 19856,
+      "sha256": "a2c918fbc9e36843c32090fbf4e31a442c8412a2549080186fdfb658bf30d905"
+    },
+    "workbench_host/src/agent_tasks/agent_product.rs": {
+      "bytes": 18719,
+      "sha256": "a9472594f711afca6309373e2cd69cc473213b38a4c201b0a0e2ca9f618422c8"
+    },
+    "workbench_host/src/agent_tasks/agent_product_tests.rs": {
+      "bytes": 32627,
+      "sha256": "db2c3a900da3f832d21bf22378ed130bbc963e3019ac257179be7cf802295760"
+    },
+    "workbench_host/src/agent_tasks/agent_product_wire_tests.rs": {
+      "bytes": 14039,
+      "sha256": "76da68494ef4d2b23dc5d70e47a60b207207d77070fa351e1ab9d8fadbae9354"
+    },
+    "workbench_host/src/agent_tasks/worker.rs": {
+      "bytes": 87751,
+      "sha256": "db0b0d46cc4fae173f03d175f79f4aba7d23ac5d4d9cdd9f8938fb8fc828a0df"
+    },
+    "workbench_host/src/agent_tasks/worker_ledger_lifecycle_tests.rs": {
+      "bytes": 5920,
+      "sha256": "6009fc0be881dfc0423a78d4786eda18587f55cb9ea95ca801f261bb75079ea2"
+    },
+    "workbench_host/src/file_tasks_tests.rs": {
+      "bytes": 19856,
+      "sha256": "16b0956c6c278d87ee9949cd307723b4bbf3bc73c581139a89a6c4e5a6d06b5b"
+    },
+    "workbench_host/src/io_tasks.rs": {
+      "bytes": 35211,
+      "sha256": "f56ec111907b27de80d3c9e29658e6052a1f9a25f9103ffaab25f1b4b1e94b80"
+    },
+    "workbench_host/src/io_tasks_ad31_no_owner_tests.rs": {
+      "bytes": 6287,
+      "sha256": "f35dae719d216719d89169ac03f9a04bdfdd4bd09d22d558f9fb80564eb009c0"
+    },
+    "workbench_host/src/lib.rs": {
+      "bytes": 37464,
+      "sha256": "268002e88e462a40eca273e7b7324dc505f0ae39f95cf261c9887a7577afa3ba"
+    },
+    "workbench_host/src/main.rs": {
+      "bytes": 15358,
+      "sha256": "a7a4769e321de325c1d9873fa8e6724b9dfd66e11f54cd8e302bbe3ee88ff810"
+    },
+    "workbench_host/src/mutation_guest_history_tests.rs": {
+      "bytes": 18073,
+      "sha256": "54c5d6fcc7a020012915ae4ab1782894ab1eff23aacf07e91214c8e8c0e4c234"
+    },
+    "workbench_host/src/mutation_guest_tasks_tests.rs": {
+      "bytes": 26580,
+      "sha256": "89c66275d22116804c7ab5f2dc21ce52ab0813be67d35d9aba861fa2fbc3a2c5"
+    },
+    "workbench_host/src/mutation_tasks_tests.rs": {
+      "bytes": 15696,
+      "sha256": "32e802db34741a9d07c3763a39e0993cc237d3950eab695cf0251ec5675ddf3b"
+    },
+    "workbench_host/src/protocol.rs": {
+      "bytes": 75968,
+      "sha256": "f9afc69f6324c82fd7723f9027b5190fa5739b91ae8869e9f707f284dcdca654"
+    },
+    "workbench_host/src/qualification_session.rs": {
+      "bytes": 14827,
+      "sha256": "762fb091201caef5610c8d0150cce828887850b07caced90392f770649837bc6"
+    },
+    "workbench_host/src/qualification_session_bootstrap.rs": {
+      "bytes": 14424,
+      "sha256": "30b31d3d5f311c8b86e5580edc5cf07cf5e19aca12135b996cc456949a606d04"
+    },
+    "workbench_host/src/qualification_session_policy.rs": {
+      "bytes": 5114,
+      "sha256": "87073229eb1be66c0797f63619337b679fbdf1890623d6d0a19df86066c0d554"
+    },
+    "workbench_host/src/workbench_supervisor.rs": {
+      "bytes": 18761,
+      "sha256": "63253445d15e6d6127c988cdebfa04bac3eb45c0336f3d784c7854ef988c0070"
+    },
+    "workbench_host/tests/support/qualification_session.rs": {
+      "bytes": 6311,
+      "sha256": "7c1690f9b473592faaf964215f838db521e6b5022dddc768bd7ec57602b77f44"
+    },
+    "l10n/parts/plugins.de.arb": {
+      "bytes": 52937,
+      "sha256": "fcbb73fa73d5ac368f7b7d119a4efdb722d7e9077fc2e7c1e851dc48e91d2043"
+    },
+    "l10n/parts/plugins.en.arb": {
+      "bytes": 47884,
+      "sha256": "ae0ab416ee43a77f5f85e374760ce3dba10da78445e181807b1334164203c8db"
+    },
+    "l10n/parts/plugins.es.arb": {
+      "bytes": 51481,
+      "sha256": "f2fa605a8f69c7a2e8ef8f104b4e99f4e37ed932e1c72efc54eb93076da8da62"
+    },
+    "l10n/parts/plugins.fr.arb": {
+      "bytes": 54112,
+      "sha256": "594cb80cd4234f2b37ba72dbeea6773e9f7d4f9baf5df8a813ab49ddc61def1f"
+    },
+    "l10n/parts/plugins.ja.arb": {
+      "bytes": 57453,
+      "sha256": "73b89ce95f53ab0008aea46351e07028f204ba688d1ae6115e6dc3ac55a0f3ff"
+    },
+    "l10n/parts/plugins.ko.arb": {
+      "bytes": 52815,
+      "sha256": "11ff7e7d213e46f0353ca05c09ea5dd8becec90d14bcda95f11649ce386a6685"
+    },
+    "l10n/parts/plugins.pt.arb": {
+      "bytes": 50890,
+      "sha256": "16fde594e784e9e497ed027e4d41f706fb06ab5321b66ef2cd478255edaedc33"
+    },
+    "l10n/parts/plugins.ru.arb": {
+      "bytes": 71305,
+      "sha256": "ae11639a3940ddb2f879a28e4e028a0fa25993f704fe8564feb29b9c5a3ff984"
+    },
+    "l10n/parts/plugins.zh.arb": {
+      "bytes": 44842,
+      "sha256": "dccb3a3b4edd96ca2c0bd02e29be464856662a32e88b24a3f28b76acc277f8b8"
+    },
+    "lib/plugins/agent_session_codec_native.dart": {
+      "bytes": 21392,
+      "sha256": "2c0638c0418689fa5b49d8ee5adbe784de0f5349e09b6bc61e03f919d5493e40"
+    },
+    "lib/plugins/agent_session_control.dart": {
+      "bytes": 2828,
+      "sha256": "c450d3700f9affe2b4f0ff245e3627da71f329f41856f824444f76086fa0ecac"
+    },
+    "lib/plugins/agent_session_controller.dart": {
+      "bytes": 18749,
+      "sha256": "d942521dcd36b0863a24a0dd8f01be0300cafb22e3971b10e3701fb537e4ad2e"
+    },
+    "lib/plugins/agent_session_manager.dart": {
+      "bytes": 12197,
+      "sha256": "06e078bb27ed7981ccb2eb71873f4411bb57922bf8973eeef03645845a7161c3"
+    },
+    "lib/plugins/agent_session_models.dart": {
+      "bytes": 10570,
+      "sha256": "5638a0692831e43eb754a8222563cf7f1932e8fdd96a21640b7f413a3c075abf"
+    },
+    "lib/plugins/agent_session_native.dart": {
+      "bytes": 12601,
+      "sha256": "81d718178355f75c3ff3abef914c1a7fb96e55499fe562f77abbf399f1558df7"
+    },
+    "lib/plugins/agent_session_text.dart": {
+      "bytes": 3186,
+      "sha256": "d7af76d2a8f8c0b73a7f7ee265e9d99408fe6ae0c62082545e8ca73521f80e25"
+    },
+    "lib/plugins/agent_session_workspace.dart": {
+      "bytes": 14000,
+      "sha256": "2125c8c804a3d00042365e0f2c1adda555b3bf314aa65bd5be1a9f3d805b73a5"
+    },
+    "lib/plugins/agent_task_discovery.dart": {
+      "bytes": 7160,
+      "sha256": "01f6a91c108154d612e25a251a37e0921e0beeb72197ed529d3707c0a3492c7c"
+    },
+    "lib/plugins/plugin_settings_page.dart": {
+      "bytes": 3386,
+      "sha256": "5c676a56ccf360a7945da72bb3a757fc5cf6c76937023ce7d855f26960b973be"
+    },
+    "lib/plugins/qualification_session_contract.dart": {
+      "bytes": 12989,
+      "sha256": "be8e7586750fdd35f76ee4b3f5c5173169e0060a5f007ce635d7850bcfce09c5"
+    },
+    "lib/plugins/qualification_session_native.dart": {
+      "bytes": 14421,
+      "sha256": "8c68ab8c2151c328a940893a9b240f932430cdf0144c930e4ae16698228fc5bf"
+    },
+    "lib/plugins/workbench_channel_supervised.dart": {
+      "bytes": 10698,
+      "sha256": "04e88b820e379abc5cb0b830cdc63dcb00c9ad399d0625752442c37433617726"
+    },
+    "lib/plugins/workbench_native.dart": {
+      "bytes": 119848,
+      "sha256": "b8a3070fd9ca8e4d37920db0ba32862c8811cbf0c0da8460808bba9519cad7c0"
+    },
+    "lib/plugins/workbench_supervision.dart": {
+      "bytes": 9397,
+      "sha256": "f1438aab5d739fc5c74ca6bb508e4b92b11b5dca9ae6df5a53d34ae2e9814910"
+    },
+    "packages/morrow_i18n/assets/languages/de.mlang": {
+      "bytes": 103936,
+      "sha256": "1fd7e4076a50a0ce6510f8a58cb2f90eae29e76a8112ff0504f65b3d84eeb367"
+    },
+    "packages/morrow_i18n/assets/languages/en.mlang": {
+      "bytes": 94832,
+      "sha256": "89fbbd135e052ca9ab5f54ba0ba851ab10e6c6110c677e68ea48351ff4721c78"
+    },
+    "packages/morrow_i18n/assets/languages/es.mlang": {
+      "bytes": 100924,
+      "sha256": "3f293f4456f5a955ff928ae1a9e9fd7abda16018b9e0b3e899551c13d924e0b8"
+    },
+    "packages/morrow_i18n/assets/languages/fr.mlang": {
+      "bytes": 105494,
+      "sha256": "8651a10f1f18e27df297849a3da659ebfe137540532369b946d9ca4dcf77e4c1"
+    },
+    "packages/morrow_i18n/assets/languages/ja.mlang": {
+      "bytes": 113613,
+      "sha256": "f7af224ed6d717f8004f315cffa3e295c5b476e4edcf2ed648d1a073814d33df"
+    },
+    "packages/morrow_i18n/assets/languages/ko.mlang": {
+      "bytes": 105837,
+      "sha256": "48fe59d21a315e3af13036a08cb200925f6de870d8e7a7365a888b4f53f38faf"
+    },
+    "packages/morrow_i18n/assets/languages/pt.mlang": {
+      "bytes": 100308,
+      "sha256": "86d8ccff398eb626b62e99d90f5b001a75454ae6a6e931165963cf4ba724f74c"
+    },
+    "packages/morrow_i18n/assets/languages/ru.mlang": {
+      "bytes": 139415,
+      "sha256": "47ed91e84bf20aa3bdde3b05c5f7b8d28325ad604e7aa9e11846aaeb11b919c5"
+    },
+    "packages/morrow_i18n/assets/languages/zh.mlang": {
+      "bytes": 89311,
+      "sha256": "827399430383dab074531bdb73b0430b330023e5bf29c7ae1e4a4a68f67d36f6"
+    },
+    "packages/morrow_i18n/lib/l10n/app_de.arb": {
+      "bytes": 113827,
+      "sha256": "f5098c5dfafbfc4cb98bc3fbfab100d746ea77321b2cc51710c421bfa0f86d68"
+    },
+    "packages/morrow_i18n/lib/l10n/app_en.arb": {
+      "bytes": 104959,
+      "sha256": "e55b1262415f93a29d617523466f712c8b3b19f0df480c17c02f23333f6f307b"
+    },
+    "packages/morrow_i18n/lib/l10n/app_es.arb": {
+      "bytes": 110874,
+      "sha256": "8a41f5ef3d59809a873da19f9abeff08627ddbf811c31f0ca0e283b669a718dc"
+    },
+    "packages/morrow_i18n/lib/l10n/app_fr.arb": {
+      "bytes": 115383,
+      "sha256": "5df302c649ad25d97d69d3fa9bb02982c2e33acf548fb33f9cbd3f85ce7f2576"
+    },
+    "packages/morrow_i18n/lib/l10n/app_ja.arb": {
+      "bytes": 123360,
+      "sha256": "20d19aa8213bfa866240c40e414992d4fb2717c18eea9c1ced01fbce77ceaff5"
+    },
+    "packages/morrow_i18n/lib/l10n/app_ko.arb": {
+      "bytes": 115668,
+      "sha256": "5f5cadae1f14f687f80a76c26d327c4660e7e6dbf6431dbad44a34df20360dfa"
+    },
+    "packages/morrow_i18n/lib/l10n/app_pt.arb": {
+      "bytes": 110262,
+      "sha256": "617c943f10461eff8f82a34100cbb6929eba4d091bd6b927e2a916a0b3e24df1"
+    },
+    "packages/morrow_i18n/lib/l10n/app_ru.arb": {
+      "bytes": 148877,
+      "sha256": "9e6c744f92bf384ab7c557595fb26f7ff3410262a2b9079d8a40e418c1c450f1"
+    },
+    "packages/morrow_i18n/lib/l10n/app_zh.arb": {
+      "bytes": 99426,
+      "sha256": "db0025d2d70e84a87af7efd768f42434f5382cb0f560d27cf696316b08aadc4c"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations.dart": {
+      "bytes": 232446,
+      "sha256": "bd14a326263cbb345b9cd84c1e7201487ea4c19e66b1dfe96bea2b5ec0ca0ef4"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_de.dart": {
+      "bytes": 125366,
+      "sha256": "ca08b812f59eacf25a0417875cbd381abe2803bbb3d4ccafb3d68fdede560b73"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_en.dart": {
+      "bytes": 116101,
+      "sha256": "b10d8466de8fe31edffbeb4bb0a05b90e46e2b8b54d284607953d1c8d65a74d4"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_es.dart": {
+      "bytes": 122672,
+      "sha256": "67eb50d329268756535e1f088865e6ed8fdb7668529e6ececbdb8589362564e4"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_fr.dart": {
+      "bytes": 127206,
+      "sha256": "91302f04422bfec2966d6f9556ee17b43d24b509f8d0b11e05e4a5d33863d22c"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ja.dart": {
+      "bytes": 133157,
+      "sha256": "a6e30f9ea06f2be7242287c6d14abe252b42eab98bfac3a5385056644e42ad2e"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ko.dart": {
+      "bytes": 125637,
+      "sha256": "b6ebfcaf69e6d2cf7209a1a6d499171ad266b0ca069c0768168c47af96c986e4"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_pt.dart": {
+      "bytes": 121939,
+      "sha256": "71f7e32c7f30d49b1d155a4da8085f3a11038776153e9ce7c0de9418b44f864b"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ru.dart": {
+      "bytes": 160523,
+      "sha256": "15d32d32c4c6fbb4198883f22e0708c8c65fe90b6b7a0f975106f9b7e71cff9e"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_zh.dart": {
+      "bytes": 108420,
+      "sha256": "24f082f8bedf744913535d6011eb3cf8777d06e3b1bdef6561468a0a33a25cac"
+    },
+    "packages/morrow_i18n/lib/src/generated/language_pins.dart": {
+      "bytes": 1743,
+      "sha256": "7984a026e11ed23c7716c14f6e851254d0897f58780b9dbe4b2cccdf931503a4"
+    },
+    "test/agent_session_controller_cases.dart": {
+      "bytes": 22227,
+      "sha256": "c2ee1c40b7495a60d7836a83928984285838b96d6eb99ec6419ec01c3b47a5ba"
+    },
+    "test/agent_session_controller_failure_test.dart": {
+      "bytes": 9672,
+      "sha256": "badf48c9c15cd99ed30e29d9653c6706af1dd63371a2d36aa564a8408dcb4a44"
+    },
+    "test/agent_session_controller_test.dart": {
+      "bytes": 259,
+      "sha256": "c1d541032f89f6b25395494492c59edc3ba95af19eb07128b6cf43641f643b16"
+    },
+    "test/agent_session_manager_test.dart": {
+      "bytes": 19486,
+      "sha256": "7e48296dd6603dc5dd63866a44a9037a8b5c00034acdd08676215d7e07f128d9"
+    },
+    "test/agent_session_native_cases.dart": {
+      "bytes": 8994,
+      "sha256": "6831c399f1d945f602d0634a65c0d6ea4cfcfcd4e5f5408b3f80dc43aeec05c4"
+    },
+    "test/agent_session_product_routing_test.dart": {
+      "bytes": 12045,
+      "sha256": "7fcb6108a272013d514d811bc6a53b33762ac0c10bd345d0557abc88601ed9fe"
+    },
+    "test/agent_session_supervised_product_qualification_native_test.dart": {
+      "bytes": 18893,
+      "sha256": "4bb8bfa9fb2744d3c7726de7ee2b1363ed6aedcd506d6c6d659cc99ca659afab"
+    },
+    "test/agent_session_supervised_test.dart": {
+      "bytes": 26753,
+      "sha256": "2e7202aef66e63af646f9bf84eda2534742791cb6ddcdd77aad62389cd3babcf"
+    },
+    "test/agent_session_workbench_routing_helper.dart": {
+      "bytes": 10547,
+      "sha256": "86309ae7ce8345019d4e4ba75ab9f981760ec36978431f1c972d33e0be3ea827"
+    },
+    "test/agent_session_workbench_routing_test.dart": {
+      "bytes": 11585,
+      "sha256": "9b8b24789a681b689ef54111b8b5c67b26370b2363b07ae986141e4c5b6d626c"
+    },
+    "test/agent_task_discovery_test.dart": {
+      "bytes": 6462,
+      "sha256": "d30a2e12101195bd0132d688f08e39307fd96982e7507526ac6695c1e339e802"
+    },
+    "test/qualification_session_contract_test.dart": {
+      "bytes": 9160,
+      "sha256": "82b4c7cf5d572962b0bcf29ded7871c7d3f13fc98fcd7b1712c520a356f68826"
+    },
+    "test/supervised_session_fake.py": {
+      "bytes": 6849,
+      "sha256": "dcad7d47e7c4145b7920d57cb8c760d27094707a2fe7df5000ecebce4ee0ee21"
+    },
+    "test/workbench_startup_observation_test.dart": {
+      "bytes": 12022,
+      "sha256": "51adbee66137891c9cc15566bd80d20825f492f10c4d4560021137ebf9a41f01"
+    }
+  },
+  "unchanged_selected_files": 2266,
+  "remote_files_outside_selection": "preserved"
+}

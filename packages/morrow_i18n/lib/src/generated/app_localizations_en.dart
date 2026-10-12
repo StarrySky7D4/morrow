@@ -1389,6 +1389,180 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainYesterday => 'Yesterday';
 
   @override
+  String get pluginsAgentAdmitWriter => 'Admit writer';
+
+  @override
+  String get pluginsAgentAfter => 'After sequence';
+
+  @override
+  String get pluginsAgentAppend => 'Append event';
+
+  @override
+  String get pluginsAgentArchived => 'Archived';
+
+  @override
+  String get pluginsAgentAttach => 'Attach to session control';
+
+  @override
+  String get pluginsAgentAttached => 'Attached';
+
+  @override
+  String get pluginsAgentBusy => 'Busy';
+
+  @override
+  String get pluginsAgentCheckpoint => 'Checkpoint';
+
+  @override
+  String get pluginsAgentCloseWriter => 'Close writer';
+
+  @override
+  String get pluginsAgentClosed => 'View closed';
+
+  @override
+  String get pluginsAgentCreateSession => 'Create session';
+
+  @override
+  String get pluginsAgentDetach => 'Detach session control';
+
+  @override
+  String get pluginsAgentDetached => 'Detached';
+
+  @override
+  String get pluginsAgentEpoch => 'Epoch';
+
+  @override
+  String get pluginsAgentEventBody => 'Event body';
+
+  @override
+  String get pluginsAgentEventId => 'Event ID';
+
+  @override
+  String get pluginsAgentEvents => 'Events';
+
+  @override
+  String get pluginsAgentExpectedEpoch => 'Expected epoch';
+
+  @override
+  String get pluginsAgentFailed => 'Failed';
+
+  @override
+  String get pluginsAgentFloor => 'Floor';
+
+  @override
+  String get pluginsAgentGap => 'Gap';
+
+  @override
+  String get pluginsAgentInvalidInput => 'Check the input.';
+
+  @override
+  String get pluginsAgentLimit => 'Limit';
+
+  @override
+  String get pluginsAgentListSessions => 'List sessions';
+
+  @override
+  String get pluginsAgentMarkLost => 'Mark outcome lost';
+
+  @override
+  String get pluginsAgentMetadata => 'Metadata';
+
+  @override
+  String get pluginsAgentNotObserved => 'Not observed';
+
+  @override
+  String get pluginsAgentObservationNone => 'No current task';
+
+  @override
+  String get pluginsAgentObservationOther => 'Another task';
+
+  @override
+  String get pluginsAgentObservationRetainedExit => 'Task exit retained';
+
+  @override
+  String get pluginsAgentObservationRunning => 'Worker retained';
+
+  @override
+  String get pluginsAgentObserve => 'Observe task';
+
+  @override
+  String get pluginsAgentObserving => 'Observing…';
+
+  @override
+  String get pluginsAgentOpen => 'Open session control';
+
+  @override
+  String get pluginsAgentOpenWriter => 'Open writer';
+
+  @override
+  String get pluginsAgentOpened => 'Opened';
+
+  @override
+  String get pluginsAgentParent => 'Parent';
+
+  @override
+  String get pluginsAgentParentSession => 'Parent session';
+
+  @override
+  String get pluginsAgentParentTail => 'Parent tail';
+
+  @override
+  String get pluginsAgentPending => 'Pending';
+
+  @override
+  String get pluginsAgentRead => 'Read result';
+
+  @override
+  String get pluginsAgentReadOnlyNotice =>
+      'Discovery is read-only and grants no access. An unknown outcome is never resent automatically.';
+
+  @override
+  String get pluginsAgentRefreshStatus => 'Refresh status';
+
+  @override
+  String get pluginsAgentRejected => 'Rejected';
+
+  @override
+  String get pluginsAgentReleaseNotice =>
+      'Closing this view or detaching session control does not prove that the task stopped or that resources were released.';
+
+  @override
+  String get pluginsAgentRevision => 'Revision';
+
+  @override
+  String get pluginsAgentSelectedSession => 'Selected session';
+
+  @override
+  String get pluginsAgentSessionId => 'Session ID';
+
+  @override
+  String get pluginsAgentSessionList => 'Sessions';
+
+  @override
+  String get pluginsAgentSnapshot => 'Read snapshot';
+
+  @override
+  String get pluginsAgentSubmission => 'Submission';
+
+  @override
+  String get pluginsAgentSummary =>
+      'Observe the current task without starting it or granting access. Running means the host retains a worker; it does not confirm operating-system liveness.';
+
+  @override
+  String get pluginsAgentTail => 'Tail';
+
+  @override
+  String get pluginsAgentTitle => 'Agent sessions';
+
+  @override
+  String get pluginsAgentUnavailable => 'Unavailable';
+
+  @override
+  String get pluginsAgentUnknown => 'Outcome unconfirmed — no automatic resend';
+
+  @override
+  String get pluginsAgentWriter => 'Writer';
+
+  @override
   String get pluginsApprovalUnknown =>
       'Activation or permission changes could not be confirmed';
 
