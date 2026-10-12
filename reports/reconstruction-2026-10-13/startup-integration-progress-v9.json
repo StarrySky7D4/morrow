@@ -1,0 +1,125 @@
+{
+  "SDK26_G04": "OPEN",
+  "ancestor_continuous_reparse": "OPEN",
+  "candidate": "source-candidates/startup-quarantine-dart-r003",
+  "candidate_sources": {
+    "lib/plugins/workbench_channel_supervised.dart": {
+      "bytes": 15460,
+      "sha256": "ad613ecced3bcec092d4136771b133ea895d2738bd58b9a086509288ff1f11d0"
+    },
+    "lib/plugins/workbench_native.dart": {
+      "bytes": 120251,
+      "sha256": "940aaa1206fed9b3c4e73cb299fadf35e8280c7e18947f2a8f7b9f92664837b0"
+    },
+    "lib/plugins/workbench_supervision.dart": {
+      "bytes": 14323,
+      "sha256": "b5fb611de44f5e614de17905a01b9d54415562315a4843770c3474313dc79ef7"
+    },
+    "test/workbench_startup_quarantine_test.dart": {
+      "bytes": 22153,
+      "sha256": "5e860277393a7e481c40ff0820df9b3f2e6934d0bd2888f94137b27fa03156ac"
+    }
+  },
+  "compiler_tester_actual_exits": {
+    "fixed_B": [
+      {
+        "actual_exit": -1,
+        "dual_eof": true,
+        "role": "compiler"
+      },
+      {
+        "actual_exit": -1,
+        "dual_eof": true,
+        "role": "tester"
+      }
+    ],
+    "negative_A": [
+      {
+        "actual_exit": -1,
+        "dual_eof": true,
+        "role": "compiler"
+      },
+      {
+        "actual_exit": -1,
+        "dual_eof": true,
+        "role": "tester"
+      }
+    ]
+  },
+  "coverage_limits": [
+    "Existing startup observation11 not rerun by B21",
+    "B21 directly registers private channel marker; actual RustWorkbench.open catch not exercised",
+    "Rust five-leaf candidate remains archived and not merged into public production",
+    "No new native/VM/product/DPAPI/protected-data execution by ordering validation"
+  ],
+  "date": "2026-10-13",
+  "descendant_tree_quiescence": "NOT_PROVEN",
+  "disclosure": "No raw logs, operational scripts, machine paths, VM/account/process/session identifiers, credentials, protected data, Drive information, binaries or ZIP payloads.",
+  "evidence_content_pins": {
+    "fixed_B_readback": {
+      "bytes": 8237,
+      "sha256": "721fa39d6439039f5cb08b9519909d70395adc8836a05f2a0d7c34446e8f7fa6"
+    },
+    "independent_readback": {
+      "bytes": 3023,
+      "sha256": "0acbcffa3993ab0d434873a2f96c35e1683b842c64529fcdf19515b95f630dbd"
+    },
+    "negative_A_readback": {
+      "bytes": 4566,
+      "sha256": "f6212e9434112b7f1ed7d20084ccc42788546c769427b2b93dc7ad32ffa46144"
+    }
+  },
+  "existing_native_unknown": "RETAINED_UNCONFIRMED_NO_REPLAY_NO_TERMINATE",
+  "extension_execution": "DEFERRED",
+  "fixed_B": {
+    "dual_EOF": true,
+    "hidden_loader_successes": 1,
+    "inner_runner_return": 0,
+    "input_drift": 0,
+    "machine_done_success": true,
+    "original_captured_exit": 0,
+    "skipped": 0,
+    "visible_successes": 21
+  },
+  "namespace": "OPEN",
+  "negative_A": {
+    "actual_failure_preserved": true,
+    "assertion": "Expected false / Actual true at original test435:7 early flush settlement",
+    "dual_EOF": true,
+    "expected_negative_observed": true,
+    "inner_runner_return": 1,
+    "machine_done_success": false,
+    "original_captured_exit": 1,
+    "selected": 1
+  },
+  "network_constraints": "OPEN",
+  "original_tool_cleanup_minus_one_preserved": true,
+  "outer_inner_OS_identity_ancestry": "NOT_PROVEN",
+  "production_activated": false,
+  "production_security": "OPEN",
+  "release_eligible": false,
+  "schema": "PUBLIC_STARTUP_INTEGRATION_PROGRESS_V9",
+  "source_view": {
+    "current_public_exact_same": 663,
+    "files": 667,
+    "only_different_or_missing": "three production leaves and one new test",
+    "third_party_full_freeze": "NOT_PROVEN"
+  },
+  "static_analysis": [
+    {
+      "No_issues_found": false,
+      "actual_exit": 0,
+      "informational_lints": 1,
+      "stderr_bytes": 0,
+      "target": "lib/plugins/workbench_channel_supervised.dart"
+    },
+    {
+      "No_issues_found": true,
+      "actual_exit": 0,
+      "informational_lints": 0,
+      "stderr_bytes": 0,
+      "target": "test/workbench_startup_quarantine_test.dart"
+    }
+  ],
+  "status": "LOCAL_ORDERING_FIXED_AND_NEGATIVE_CONTROL_OBSERVED_ONLY"
+}

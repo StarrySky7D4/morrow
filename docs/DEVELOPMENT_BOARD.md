@@ -1,17 +1,13 @@
 # 后续编码看板
 
 <!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
-## Windows 密钥读取边界修正与限定验证（2026-10-13）
+## 失败启动时序限定回归（2026-10-13）
 
-本轮仅合入 `audit/src/keys.rs`：Windows 最终叶使用同句柄、有界读取并拒绝 reparse／元数据不稳定；不新增 unsafe，不修改 provider、DPAPI 或 Linux 原读取表达式。真实编译与 4 项普通合成文件 IO 测试通过，包括实际文件 symlink 的拒绝，均未跳过；独立回读零漂移。
+固定后 21 项 channel 内存回归逐项通过；旧 channel 的一个焦点真实失败于提前 settled 断言，原退出 1 保留。两个静态目标退出 0，channel 的 1 项 info 原样保留；工具清理 -1 不改写。
 
-此前失败启动 runner 的单目标静态分析退出 0、双流 EOF，未执行 runner main；该结果仍仅属静态检查。本次真实异常启动调用达到 1200 秒等待上限后仍未闭合；原始 Unknown 与原控制进程／读取器保留，不重放。实际退出、双流 EOF、原连接关闭与 Process 临时策略恢复均未确认，不能作 native 通过断言。
+四叶 Dart r003 仅作候选归档；配套 Rust 五叶仍在独立 r002 档案，未合入公开生产。既有 11 项启动观测与真实 open/catch 接线不属于本轮 B21。原 native Unknown 保留，不重放；本轮无新的 native／VM／DPAPI 验收。SDK26／G04、namespace、ancestor、生产安全与网络仍 OPEN，release_eligible=false；不宣称冻结。Agent 会话层与安全执行层完成后暂停，扩展执行层延期。
 
-六个关键源码的双遍完整 SHA 核对零漂移，静态字段门禁未发现确定性错配。发现 kind4 发送确认晚于退出及双 EOF 时可能导致隔离回执缺失的条件性误拒绝风险；尚未证明本次触发或构成根因，未实施修补，也未运行对应时序回归。缺失／无效最终回执时保留 Unknown 的门禁未绕过。
-
-公开 Dart 三个生产文件仍比实际选定的正常／失败夹具基线旧，本轮未全量合入。新读取修正也不在既有正常验收二进制中；不将旧二进制结果当作本次修正的产品验收。
-
-详见[本次源码与验证边界](../reports/reconstruction-2026-10-13/startup-integration-progress-v8.md)。旧 v1–v6、历史失败与 sealed Unknown 均保留，不重放。SDK26／G04、ancestor、namespace、生产安全与网络约束继续 OPEN／未验收，release_eligible=false；不宣称 SDK 冻结。Agent 会话层与安全执行层完成后暂停准备预览，扩展执行层延期。版本、锁、工作流、tag 与 Release 不变。
+详见[本轮限定结果](../reports/reconstruction-2026-10-13/startup-integration-progress-v9.md)。旧 v1–v8、历史失败与旧候选原字节保留，版本、锁、工作流、tag 与 Release 不变。
 
 <!-- C28-WINDOWS-REGRESSION-20261013-END -->
 

@@ -1,0 +1,63 @@
+{
+  "SDK26_G04": "OPEN",
+  "ancestor": "OPEN",
+  "files": {
+    "README.md": {
+      "bytes": 2362,
+      "sha256": "80f5687015436f105d32f8cf91c82ff33d97f6dbbaad24c7506a47f9576f67cb"
+    },
+    "exact-tests.json": {
+      "bytes": 1678,
+      "sha256": "aec532cccfe2647afae046c9c51ea8fb691759e8771e8951f55d46815f578afe"
+    },
+    "overlay/lib/plugins/workbench_channel_supervised.dart": {
+      "bytes": 15460,
+      "sha256": "ad613ecced3bcec092d4136771b133ea895d2738bd58b9a086509288ff1f11d0"
+    },
+    "overlay/lib/plugins/workbench_native.dart": {
+      "bytes": 120251,
+      "sha256": "940aaa1206fed9b3c4e73cb299fadf35e8280c7e18947f2a8f7b9f92664837b0"
+    },
+    "overlay/lib/plugins/workbench_supervision.dart": {
+      "bytes": 14323,
+      "sha256": "b5fb611de44f5e614de17905a01b9d54415562315a4843770c3474313dc79ef7"
+    },
+    "overlay/test/workbench_startup_quarantine_test.dart": {
+      "bytes": 22153,
+      "sha256": "5e860277393a7e481c40ff0820df9b3f2e6934d0bd2888f94137b27fa03156ac"
+    }
+  },
+  "full_crate_or_GUI_build": "NOT_RUN_BY_THIS_VALIDATION",
+  "namespace": "OPEN",
+  "native_open_catch_integration": "NOT_PROVEN_BY_MEMORY_TESTS",
+  "paired_Rust": "../startup-quarantine-runtime-r002 (archived, not active production)",
+  "production_activated": false,
+  "public_relative_root": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r003",
+  "release_eligible": false,
+  "schema": "DART_STARTUP_QUARANTINE_INERT_CANDIDATE_MANIFEST_V3",
+  "source_versions": {
+    "channel": "462 ordering correction",
+    "native": "361 unchanged",
+    "supervision": "361 unchanged",
+    "test": "462 existing16 plus5 ordering cases"
+  },
+  "sources": {
+    "lib/plugins/workbench_channel_supervised.dart": {
+      "bytes": 15460,
+      "sha256": "ad613ecced3bcec092d4136771b133ea895d2738bd58b9a086509288ff1f11d0"
+    },
+    "lib/plugins/workbench_native.dart": {
+      "bytes": 120251,
+      "sha256": "940aaa1206fed9b3c4e73cb299fadf35e8280c7e18947f2a8f7b9f92664837b0"
+    },
+    "lib/plugins/workbench_supervision.dart": {
+      "bytes": 14323,
+      "sha256": "b5fb611de44f5e614de17905a01b9d54415562315a4843770c3474313dc79ef7"
+    },
+    "test/workbench_startup_quarantine_test.dart": {
+      "bytes": 22153,
+      "sha256": "5e860277393a7e481c40ff0820df9b3f2e6934d0bd2888f94137b27fa03156ac"
+    }
+  },
+  "status": "INERT_SOURCE_ARCHIVE_LOCAL_MEMORY_ORDERING_VALIDATED_ONLY"
+}
