@@ -1,5 +1,14 @@
 # Windows SDK 限定进度（2026-10-13）
 
+## Windows 正常原生会话联合实测（2026-10-13）
+
+1 项可见 native qualification test 实际通过；原 16 份公开证据文件双遍完整 SHA 核验零漂移。31 帧 trace、11 项 observations 在同一身份下记录 `Running → healthy Stopping/Reclaimed → ACK → Released`；PS30 generation 1、effects 10、consumed completions 7，原生 host 退出 0。宿主捕获退出 0、双流 EOF，独立会话关闭且 Process 临时策略恢复；原编译器／测试器工具清理退出 -1 保留，不冒充退出 0 或全部后代静止。
+
+此前 14 项 Rust 合成回归、16 项 Dart 内存回归以及启动失败夹具 4 项纯测试／4 项静态检查保持各自有限范围；真实失败启动 native 夹具仍 NOT_RUN。NORMAL ONLY，完整 SDK26／G04、namespace、祖先目录持续 reparse、生产安全及网络约束仍 OPEN／未验收，release_eligible=false。历史 Stage341 CLOSED_NOT_ACCEPTED 与旧 Stage324 sealed Unknown 保留且不重放；本次通过不升级历史结果。
+
+详见[本次正常路径实际边界](reconstruction-2026-10-13/startup-integration-progress-v6.md)。Agent 会话层与安全执行层完成后暂停准备测试预览，扩展执行层延期。生产入口、版本、依赖锁与工作流不变；不创建 Release。下方旧段保留历史范围。
+
+
 ## 启动失败夹具实测与联合验收包进度（2026-10-13）
 
 此前归档的启动失败夹具 r001 已完成四项纯数据测试：每项成功一次、未跳过，外层退出 0、双流 EOF，独立回读零漂移。原 Flutter 编译器／测试器清理时的实际退出 -1 保留，不改写成 0，也不据此宣称全部后代进程静止。四个选定文件的静态检查均退出 0、双流 EOF、No issues found!；其中包括 120,739 字节的新 workbench_native.dart。真实 native 失败夹具仍未运行。

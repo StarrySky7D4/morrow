@@ -1,21 +1,14 @@
 # 最新开发支线状态
 
 <!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
-## 当前 Rust 候选编译与 14 项回归实测（2026-10-13）
+## Windows 正常原生会话联合实测（2026-10-13）
 
-修正版数据准备已实际成功，2,392 个源码文件、5,589 个 Git seed 文件完成字节核对，20 份依赖锁保持原字节。实际源码映射及五个 overlay 与已归档的 startup-quarantine-runtime-r002 完全对应；旧候选文件中的 NOT_RUN 保留为当时快照，本节记录后续实际结果。
+1 项可见 native qualification test 实际通过；原 16 份公开证据文件双遍完整 SHA 核验零漂移。31 帧 trace、11 项 observations 在同一身份下记录 `Running → healthy Stopping/Reclaimed → ACK → Released`；PS30 generation 1、effects 10、consumed completions 7，原生 host 退出 0。宿主捕获退出 0、双流 EOF，独立会话关闭且 Process 临时策略恢复；原编译器／测试器工具清理退出 -1 保留，不冒充退出 0 或全部后代静止。
 
-当前候选的完整 Rust 库测试目标与 host／supervisor 两个程序均完成离线、锁定依赖的 Windows AMD64 编译；两次原 Cargo 均退出 0、双流 EOF。当前两个编译后的 HOME 核验通过。复用 TARGET 已明确记录，编译警告原样保留；这不是 Flutter GUI 构建或完整 SDK 验收。
+此前 14 项 Rust 合成回归、16 项 Dart 内存回归以及启动失败夹具 4 项纯测试／4 项静态检查保持各自有限范围；真实失败启动 native 夹具仍 NOT_RUN。NORMAL ONLY，完整 SDK26／G04、namespace、祖先目录持续 reparse、生产安全及网络约束仍 OPEN／未验收，release_eligible=false。历史 Stage341 CLOSED_NOT_ACCEPTED 与旧 Stage324 sealed Unknown 保留且不重放；本次通过不升级历史结果。
 
-14 项精确合成回归全部实际通过、未跳过：4 项 AgentWorker 停止、5 项内存 owner 账本、5 项 supervisor 解析与心跳。每项原测试进程均退出 0、双流 EOF，守卫无错误。库测试程序已用于这 14 项测试；host／supervisor 产品程序仅编译和核对，未运行。此前 Dart 修正版 16 项内存测试通过的限定范围保持不变。
+详见[本次正常路径实际边界](../reports/reconstruction-2026-10-13/startup-integration-progress-v6.md)。Agent 会话层与安全执行层完成后暂停准备测试预览，扩展执行层延期。生产入口、版本、依赖锁与工作流不变；不创建 Release。下方旧段保留历史范围。
 
-后续验证已推进：启动失败夹具 r001 的四项纯数据测试全部通过，四个选定文件静态检查通过；真实 native 夹具仍 NOT_RUN。正常路径验收包的 9,048 个 ZIP 条目通过双遍完整性回读，后继宿主载体仅源码审核通过，尚未选择或传输。Rust／Dart 联合运行、真实 Windows 沙箱及资源回收仍 NOT_RUN，SDK26／G04、namespace 与祖先目录持续 reparse 防护仍 OPEN，release_eligible=false；Stage341 仍 CLOSED_NOT_ACCEPTED，旧 sealed Unknown 保留且不重放。下一步继续 Windows 联合验收，扩展执行层后置。
-
-详见[原生静态检查与新夹具进度](../reports/reconstruction-2026-10-13/startup-integration-progress-v5.md)。
-
-本次更新开发分支的实测报告与进度文档，保留历史失败和范围边界；生产入口、应用版本与依赖锁保持不变，不创建 Release。
-
-详见[Windows SDK 进度](../reports/windows-sdk-progress.md)与[本次实际验证边界](../reports/reconstruction-2026-10-13/startup-integration-progress-v3.md)。下方记录保留各自历史范围。
 <!-- C28-WINDOWS-REGRESSION-20261013-END -->
 
 

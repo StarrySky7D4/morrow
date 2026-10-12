@@ -1,0 +1,78 @@
+{
+  "SDK26_G04": "OPEN",
+  "ancestor_continuous_reparse": "OPEN",
+  "date": "2026-10-13",
+  "disclosure": "Sanitized result projection only; no raw operational logs, machine paths, VM/account identifiers, credentials, process identifiers, session identifiers, binaries or ZIP payloads.",
+  "evidence_content_pins": {
+    "independent_normal_sequence_readback": {
+      "bytes": 2451,
+      "sha256": "e0660e72f9484301351b2d284cb13063893c84dd8e2645df139efc205dbb6b96"
+    },
+    "root_actual_result": {
+      "bytes": 21605,
+      "sha256": "bf9f857de5e1645949a19a8c628d38f422a287e7f5d25450337fbf19ab081145"
+    }
+  },
+  "extension_execution": "DEFERRED",
+  "full_SDK_frozen": false,
+  "historical_Stage324": "SEALED_UNKNOWN_PRESERVED_NO_REPLAY",
+  "historical_Stage341": "CLOSED_NOT_ACCEPTED_UNCHANGED",
+  "namespace": "OPEN",
+  "network_confinement_qualified": false,
+  "next": [
+    "Complete Agent session and safe execution qualification, including separately selected failure-startup and rejection scopes.",
+    "Keep continuous ancestor/namespace and production security/network confinement open until directly proved.",
+    "Pause for preview preparation after Agent session and safe execution are complete; extension execution stays deferred."
+  ],
+  "normal_path": {
+    "PS30_consumed_completions": 7,
+    "PS30_effects": 10,
+    "PS30_generation": 1,
+    "compiler_tester_actual_exits": [
+      -1,
+      -1
+    ],
+    "compiler_tester_classification": "ACTUAL_ORIGINAL_TOOL_CLEANUP_MINUS_ONE",
+    "evidence_full_SHA_passes": 2,
+    "host_capture_actual_exit": 0,
+    "host_capture_dual_EOF": true,
+    "input_drift": 0,
+    "lifecycle": "Running -> healthy Stopping/Reclaimed -> ACK -> Released",
+    "native_host_actual_exit": 0,
+    "observations": 11,
+    "original_cleanup_preserved": true,
+    "own_session_closed": true,
+    "process_policy": {
+      "applied": "RemoteSigned",
+      "before": "Undefined",
+      "effective_before": "Restricted",
+      "effective_restored": "Restricted",
+      "persistent_scopes_changed": false,
+      "restoration_confirmed": true,
+      "restored": "Undefined",
+      "scope": "Process"
+    },
+    "public_evidence_files": 16,
+    "receipt_static_VM_marker": "Original NOT_RUN field preserved as static history; current execution is established by separately closed host/guest evidence.",
+    "same_identity": true,
+    "scope": "One visible native qualification test; not sixteen native tests or full SDK qualification.",
+    "trace_frames": 31,
+    "visible_native_tests_passed": 1,
+    "whole_OS_descendant_tree_quiescence": "NOT_PROVEN"
+  },
+  "previous_snapshot": "startup-integration-progress-v5.json",
+  "prior_scoped_results": {
+    "Dart_memory_tests_passed": 16,
+    "Rust_synthetic_tests_passed": 14,
+    "historical_report": "startup-integration-progress-v5.json",
+    "limits": "Distinct historical scopes; counts are not added to native qualification.",
+    "startup_failure_fixture_pure_tests_passed": 4,
+    "startup_failure_fixture_static_targets_passed": 4
+  },
+  "production_security": false,
+  "publication_scope": "Development-branch documentation only; no production source, version, dependency, workflow, tag or Release changes.",
+  "release_eligible": false,
+  "schema": "PUBLIC_STARTUP_INTEGRATION_PROGRESS_V6",
+  "startup_failure_native_fixture": "NOT_RUN",
+  "status": "PASS_BOUNDED_WINDOWS_NORMAL_NATIVE_SEQUENCE_ONLY"
+}
