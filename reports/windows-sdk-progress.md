@@ -1,5 +1,13 @@
 # Windows SDK 限定进度（2026-10-13）
 
+## 异常启动等待边界与静态复核（2026-10-13）
+
+本次真实异常启动调用达到 1200 秒等待上限后仍未闭合；原始 Unknown 与原控制进程／读取器保留，不重放。实际退出、双流 EOF、原连接关闭与 Process 临时策略恢复均未确认，不能作 native 通过断言。
+
+六个关键源码的双遍完整 SHA 核对零漂移，静态字段门禁未发现确定性错配。发现 kind4 发送确认晚于退出及双 EOF 时可能导致隔离回执缺失的条件性误拒绝风险；尚未证明本次触发或构成根因，未实施修补，也未运行对应时序回归。缺失／无效最终回执时保留 Unknown 的门禁未绕过。
+
+此前四项 IO 和 v6 正常路径结果保持原范围；以下 v7、v6 与更早段落保留各自时点。SDK26／G04、namespace、ancestor 与生产安全仍 OPEN，release_eligible=false。详见[最新限定状态](reconstruction-2026-10-13/startup-integration-progress-v8.md)。
+
 ## Windows 密钥读取边界修正与限定验证（2026-10-13）
 
 本轮仅合入 `audit/src/keys.rs`：Windows 最终叶使用同句柄、有界读取并拒绝 reparse／元数据不稳定；不新增 unsafe，不修改 provider、DPAPI 或 Linux 原读取表达式。真实编译与 4 项普通合成文件 IO 测试通过，包括实际文件 symlink 的拒绝，均未跳过；独立回读零漂移。

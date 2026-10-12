@@ -5,11 +5,13 @@
 
 本轮仅合入 `audit/src/keys.rs`：Windows 最终叶使用同句柄、有界读取并拒绝 reparse／元数据不稳定；不新增 unsafe，不修改 provider、DPAPI 或 Linux 原读取表达式。真实编译与 4 项普通合成文件 IO 测试通过，包括实际文件 symlink 的拒绝，均未跳过；独立回读零漂移。
 
-失败启动 runner 的一个本机静态目标分析退出 0、双流 EOF，No issues found!；未执行 runner main，不能替代 native 验收。新的真实失败启动验收仍待闭合；本次仅保留待定状态，不作通过断言。
+此前失败启动 runner 的单目标静态分析退出 0、双流 EOF，未执行 runner main；该结果仍仅属静态检查。本次真实异常启动调用达到 1200 秒等待上限后仍未闭合；原始 Unknown 与原控制进程／读取器保留，不重放。实际退出、双流 EOF、原连接关闭与 Process 临时策略恢复均未确认，不能作 native 通过断言。
+
+六个关键源码的双遍完整 SHA 核对零漂移，静态字段门禁未发现确定性错配。发现 kind4 发送确认晚于退出及双 EOF 时可能导致隔离回执缺失的条件性误拒绝风险；尚未证明本次触发或构成根因，未实施修补，也未运行对应时序回归。缺失／无效最终回执时保留 Unknown 的门禁未绕过。
 
 公开 Dart 三个生产文件仍比实际选定的正常／失败夹具基线旧，本轮未全量合入。新读取修正也不在既有正常验收二进制中；不将旧二进制结果当作本次修正的产品验收。
 
-详见[本次源码与验证边界](../reports/reconstruction-2026-10-13/startup-integration-progress-v7.md)。旧 v1–v6、历史失败与 sealed Unknown 均保留，不重放。SDK26／G04、ancestor、namespace、生产安全与网络约束继续 OPEN／未验收，release_eligible=false；不宣称 SDK 冻结。Agent 会话层与安全执行层完成后暂停准备预览，扩展执行层延期。版本、锁、工作流、tag 与 Release 不变。
+详见[本次源码与验证边界](../reports/reconstruction-2026-10-13/startup-integration-progress-v8.md)。旧 v1–v6、历史失败与 sealed Unknown 均保留，不重放。SDK26／G04、ancestor、namespace、生产安全与网络约束继续 OPEN／未验收，release_eligible=false；不宣称 SDK 冻结。Agent 会话层与安全执行层完成后暂停准备预览，扩展执行层延期。版本、锁、工作流、tag 与 Release 不变。
 
 <!-- C28-WINDOWS-REGRESSION-20261013-END -->
 
