@@ -1,19 +1,17 @@
 # 插件系统当前状态
 
 <!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
-## Windows 修正与限定验证（2026-10-13）
+## Windows 组合回归进度（2026-10-13）
 
-Stage345 的停止状态修正已完成 library 测试编译与四项 exact 合成回归，四项全部通过。Stage346 同句柄密钥读取候选已通过六种普通文件 helper 模式，以及四项原诊断测试和两项真实 observer 接线测试；它们仍是限定的本地合成验证，新修正未完成完整 audit crate 构建、真实 DPAPI 或 VM 产品复验。
+Stage349 的固定组合源码（Stage345 停止状态、Stage346 同句柄读取、Stage347 私有账本）已完成真实 Windows library 测试编译；Stage353 九项 exact 合成回归全部通过，独立回读无发现。四项覆盖受控 AgentWorker，五项覆盖内存 SQLite 账本；合成资源事实不等于 Windows 内核资源闭合。
 
-Stage341 的实际进程、策略恢复及连接已闭合，业务仍为 `NOT_ACCEPTED`；旧 sealed Unknown 继续保留且不自动重放。Stage347 五项账本测试为 `NOT_RUN`；Stage350 尚未编译、Dart 尚未接入，heartbeat 竞态处理维持保守策略，缺少真实闭合事实时不生成 prepare。两项仅作为 `SOURCE_ONLY_NOT_COMPILED_NOT_CONNECTED` 候选归档，不进入本轮生产接线。
+Stage354 修补 heartbeat 在丢失信号与异常标记之间的竞态；原函数与真实 LeaseSignal 的 std-only 摘取编译、五项原测试通过。完整 Stage350/354 runtime 的 library/bin 迁移、host／supervisor 双产品构建、Dart 接线与新 VM 产品复验仍为 `NOT_RUN`。修补仅作为源码增量归档，不激活生产运行链。
 
-`SDK26_G04=OPEN`、namespace 与祖先目录持续 reparse 防护仍 OPEN，`release_eligible=false`。本次不声明 Release、完整 SDK 或 sealed-basic 通过。
+历史 Stage341 业务仍为 `NOT_ACCEPTED`，旧 sealed Unknown 保留且不重放。`SDK26_G04=OPEN`、namespace 与祖先目录持续 reparse 防护仍 OPEN，`release_eligible=false`。此前 Stage345/346 限定验证继续保留，不升级为真实 DPAPI、完整 audit crate 或 sealed-basic 验收。
 
-详见[Windows SDK 限定进度](../reports/windows-sdk-progress.md)。
+下一步：完成精确产物绑定的 host／supervisor 构建、停止序列复验与完整 heartbeat/隔离运行链验证，再按原资源和连接证据推进 Windows 验收。应用版本不变，本次仅同步开发分支。
 
-345 与346 合并后的完整 crate 以及 host／supervisor 双产品构建仍为 `NOT_RUN`；349／351 尚未执行。各自限定测试通过不等于合并构建通过。
-
-下方带日期的记录保留各自历史范围；本节不覆盖旧失败或 Unknown。
+详见[Windows SDK 限定进度](../reports/windows-sdk-progress.md)与[组合验证摘要](../reports/reconstruction-2026-10-13/windows-integrated-validation.json)。下方历史记录保留各自的时间和范围。
 <!-- C28-WINDOWS-REGRESSION-20261013-END -->
 
 

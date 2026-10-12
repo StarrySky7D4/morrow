@@ -1,0 +1,275 @@
+{
+  "schema": "MORROW_WINDOWS_BOUNDED_VALIDATION_V1",
+  "date": "2026-10-13",
+  "status": "PASS_SCOPED_LOCAL_TESTS_ONLY",
+  "integrated_library": {
+    "source_baseline": "Stage349: Stage345 stop fixes + Stage346 same-handle audit changes + Stage347 private ledger; excludes Stage350/354 runtime relocation",
+    "target": "x86_64-pc-windows-msvc",
+    "feature": "c28-product-session-qualification",
+    "command": "cargo test --locked --offline --lib --no-run --features c28-product-session-qualification --target x86_64-pc-windows-msvc --message-format json-render-diagnostics",
+    "original_child_exit": 0,
+    "dual_EOF": true,
+    "artifact_pin": {
+      "bytes": 71944192,
+      "sha256": "5f63dc0f15dfe820379e389ca910983bbab1bfe1714c5134a9fbd053de4d1c74"
+    },
+    "source_files": 2392,
+    "lock_files": 20,
+    "source_manifest_pin": {
+      "bytes": 431446,
+      "sha256": "f9bc8b88869aaa0e501dea83761fde6b35b9961f1b86d57112113d3882f2ed2e"
+    },
+    "target_cache_reused": true,
+    "target_fresh": false,
+    "postcompile_source_HOME_and_fixed_tool_guards": "PASS",
+    "registry_metadata_files_checked": 1668,
+    "full_registry_payload_rescan": false
+  },
+  "nine_exact_tests": [
+    {
+      "name": "io_tasks::agent_stop_tests::cancel_pending_join_latches_stopping_and_keeps_ack_closed",
+      "exit": 0,
+      "dual_EOF": true,
+      "one_pass_zero_ignored": true,
+      "expected_worker_panic_preserved": true,
+      "stdout_pin": {
+        "bytes": 212,
+        "sha256": "74e841c9d41657911b230313c017858a2277ebdf61e4574d83a68f07f5c4e2ef"
+      },
+      "stderr_pin": {
+        "bytes": 360,
+        "sha256": "6a34abc48e5a1bfd4160e70a9b88e945cb50ddc3b012eccbd94040c8af79ea25"
+      }
+    },
+    {
+      "name": "io_tasks::agent_stop_tests::cancel_wrong_key_preserves_running_worker_without_stop",
+      "exit": 0,
+      "dual_EOF": true,
+      "one_pass_zero_ignored": true,
+      "expected_worker_panic_preserved": true,
+      "stdout_pin": {
+        "bytes": 209,
+        "sha256": "0c64d20be12df409a115d7e310f6e0da33fe1d10c286a6d0f1fc29f4dc20d10d"
+      },
+      "stderr_pin": {
+        "bytes": 360,
+        "sha256": "354d576441915c90d1162d66f0c67015801242849c6717cf85d8cc4653b8e9dd"
+      }
+    },
+    {
+      "name": "io_tasks::agent_stop_tests::cancel_non_agent_and_retained_exit_do_not_latch_stop",
+      "exit": 0,
+      "dual_EOF": true,
+      "one_pass_zero_ignored": true,
+      "expected_worker_panic_preserved": false,
+      "stdout_pin": {
+        "bytes": 207,
+        "sha256": "129f199f30175f1b3c927aefabcc2ced5e3eb5e317a47cef16d0afd41e51d1ba"
+      },
+      "stderr_pin": {
+        "bytes": 172,
+        "sha256": "e55b77e36c65ff3e64f2bb38e095b7e47b1a5665be9a90b40f337e5c34a42360"
+      }
+    },
+    {
+      "name": "io_tasks::agent_stop_tests::cancelled_failed_join_is_unavailable_never_reclaimed_or_acknowledged",
+      "exit": 0,
+      "dual_EOF": true,
+      "one_pass_zero_ignored": true,
+      "expected_worker_panic_preserved": true,
+      "stdout_pin": {
+        "bytes": 223,
+        "sha256": "d23db944e2edeb3447e5c081fd8ecbaccf4c0bdc5096ac9139f1ee39b4b17213"
+      },
+      "stderr_pin": {
+        "bytes": 361,
+        "sha256": "5a2645b8c0096b26509e0756d06fd6c3c0e5975e3bbe8440dca8a9152ffd6a75"
+      }
+    },
+    {
+      "name": "workbench_supervision::startup_quarantine::tests::committed_abnormal_receipt_retains_unknown_owner_and_never_claims_exit",
+      "exit": 0,
+      "dual_EOF": true,
+      "one_pass_zero_ignored": true,
+      "expected_worker_panic_preserved": false,
+      "stdout_pin": {
+        "bytes": 247,
+        "sha256": "c75067885aa7f2248e110e28bbbf1c78058585399b08a61b85dcefcfc9085b8a"
+      },
+      "stderr_pin": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "workbench_supervision::startup_quarantine::tests::each_missing_resource_or_join_fact_refuses_before_ledger_effects",
+      "exit": 0,
+      "dual_EOF": true,
+      "one_pass_zero_ignored": true,
+      "expected_worker_panic_preserved": false,
+      "stdout_pin": {
+        "bytes": 241,
+        "sha256": "05183230a0415c3995c956674d33065443e0357ea27d329da0d44d477a273e27"
+      },
+      "stderr_pin": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "workbench_supervision::startup_quarantine::tests::legacy_normal_and_changed_identity_cannot_prepare_quarantine",
+      "exit": 0,
+      "dual_EOF": true,
+      "one_pass_zero_ignored": true,
+      "expected_worker_panic_preserved": false,
+      "stdout_pin": {
+        "bytes": 237,
+        "sha256": "955b759b6b16d4a641a8d5f0f01fbae78efa5bb7d5ff421df698829ab74d1e8e"
+      },
+      "stderr_pin": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "workbench_supervision::startup_quarantine::tests::stale_original_row_and_postcommit_tamper_are_unconfirmed",
+      "exit": 0,
+      "dual_EOF": true,
+      "one_pass_zero_ignored": true,
+      "expected_worker_panic_preserved": false,
+      "stdout_pin": {
+        "bytes": 233,
+        "sha256": "eb18d31ad699e5e9bc5120f7284a5bde569a9216e0e9637becad25110148a7d4"
+      },
+      "stderr_pin": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "workbench_supervision::startup_quarantine::tests::normal_v1_v2_owner_update_paths_remain_separate",
+      "exit": 0,
+      "dual_EOF": true,
+      "one_pass_zero_ignored": true,
+      "expected_worker_panic_preserved": false,
+      "stdout_pin": {
+        "bytes": 224,
+        "sha256": "143260bab4ee95d074c7f18e01106af9c0ee78f92678753fb4f7f60f594f7b3e"
+      },
+      "stderr_pin": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "nine_test_limits": [
+    "Four controlled genuine AgentWorker tests use ordinary synthetic file SQLite stores; expected worker panic is preserved.",
+    "Five private Owner ledger tests use in-memory SQLite and synthetic resource facts, not Windows kernel observations.",
+    "Independent readback checked 68 fixed records twice with zero drift; it did not reopen the physical PE or SQLite contents."
+  ],
+  "heartbeat_revision_003": {
+    "validation": "PASS_STD_ONLY_EXTRACTED_ORIGINAL_LOGIC",
+    "whole_crate_compiled": false,
+    "source_pin": {
+      "bytes": 25562,
+      "sha256": "155eaabef579d185e4f243b805bf6fa3be49617aee96cd9aeba57a79cff8591b"
+    },
+    "provenance": "Eight exact original source extents; actual LeaseSignal struct/Default/impl; no signal stub; original five test bodies unchanged.",
+    "compiler_exit": 0,
+    "tests": [
+      {
+        "case": "workbench_supervision::supervisor_runtime::quarantine_control_tests::quarantine_terminal_is_exact_and_requires_abnormal_closing",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "stdout_pin": {
+          "bytes": 252,
+          "sha256": "e017eaba65d9252131381d5a226b2070356f226b4d74dcf16a49dbc3efded405"
+        },
+        "stderr_pin": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "case": "workbench_supervision::supervisor_runtime::quarantine_control_tests::normal_close_and_heartbeat_are_not_quarantine_terminals",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "stdout_pin": {
+          "bytes": 249,
+          "sha256": "d35515f35c759713f6a1d8d9c745df6982580d8869ee552064f0128c013789b3"
+        },
+        "stderr_pin": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "case": "workbench_supervision::supervisor_runtime::quarantine_control_tests::lost_before_abnormal_flag_keeps_reader_without_renewal",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "stdout_pin": {
+          "bytes": 248,
+          "sha256": "eb42e994cd200af876a71fe941823bf26647ae3423c0ce64ae44b1bd7fad8572"
+        },
+        "stderr_pin": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "case": "workbench_supervision::supervisor_runtime::quarantine_control_tests::loss_during_renewal_keeps_terminal_receiver_without_resetting_loss",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "stdout_pin": {
+          "bytes": 260,
+          "sha256": "3877979862ed2bd836b095d77f4ba9bffc46731db5adeb714c70133d9ae39af1"
+        },
+        "stderr_pin": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "case": "workbench_supervision::supervisor_runtime::quarantine_control_tests::ordinary_heartbeat_and_nonloss_error_preserve_original_choices",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "stdout_pin": {
+          "bytes": 256,
+          "sha256": "f26264bd7393eeda33c40b0d5e8bca75be726f269fe5dd257b0e6642a4b7f8ac"
+        },
+        "stderr_pin": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ],
+    "input_drift": 0
+  },
+  "evidence_pins": {
+    "353-postcompile-report": {
+      "bytes": 9549,
+      "sha256": "c37adba508ef31d71d2331cc9e61f9b84c3c58a1126dc1adf445c7b6588e9440"
+    },
+    "353-nine-test-independent-review": {
+      "bytes": 7673,
+      "sha256": "6e953e63df88ad60e7dbe0bda67199991c397cfff32120c76f868e557dd240b6"
+    },
+    "actual-review.json": {
+      "bytes": 4877,
+      "sha256": "347db3eefded087ebdeb523b3b7687be171da24771bd94e4d836d4b109482c7f"
+    }
+  },
+  "not_run": [
+    "New host/supervisor product build",
+    "Stage350/354 full runtime library/binary compilation",
+    "Dart/runner quarantine integration",
+    "New Windows VM product revalidation",
+    "Real DPAPI and sealed-basic acceptance",
+    "Actual original-resource closure and descendant-tree quiescence"
+  ],
+  "historical_native": "Stage341 CLOSED_NOT_ACCEPTED; earlier sealed Unknown unchanged and never replayed",
+  "SDK26_G04": "OPEN",
+  "namespace": "OPEN",
+  "sdk_frozen": false,
+  "release_eligible": false
+}

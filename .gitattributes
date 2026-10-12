@@ -260,3 +260,10 @@
 /reports/reconstruction-2026-10-13/windows-checkpoint-source.json -text
 /reports/windows-sdk-progress.md -text
 /workbench_host/src/io_tasks_agent_stop_tests.rs -text
+
+# Bounded integrated validation and inert heartbeat delta: preserve exact bytes.
+/reports/reconstruction-2026-10-13/source-candidates/quarantine-runtime-r003/354-exact-tests.json -text
+/reports/reconstruction-2026-10-13/source-candidates/quarantine-runtime-r003/README.md -text
+/reports/reconstruction-2026-10-13/source-candidates/quarantine-runtime-r003/manifest.json -text
+/reports/reconstruction-2026-10-13/source-candidates/quarantine-runtime-r003/overlay/workbench_host/src/workbench_supervisor.rs -text
+/reports/reconstruction-2026-10-13/windows-integrated-validation.json -text

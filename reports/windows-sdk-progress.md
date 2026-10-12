@@ -1,5 +1,26 @@
 # Windows SDK 限定进度（2026-10-13）
 
+## 本次开发分支更新
+
+| 验证范围 | 实际结果 | 边界 |
+| --- | --- | --- |
+| Stage349/353 组合 library | 原 Cargo 退出 0，双 EOF；固定源码与编后 HOME 检查通过 | 2,392 个源码文件、20 个锁文件；复用已有 target 缓存；不是完整 audit all-feature 或产品构建 |
+| Stage353 九项 exact | 每项 1 passed、0 ignored、退出 0、双 EOF；独立回读零漂移 | 四项真实受控 AgentWorker + 五项内存 SQLite 账本；预期 worker panic 原样保留；不是原生资源证明 |
+| Stage354 heartbeat 修补 | std-only 原函数与真实 LeaseSignal 摘取编译，五项原测试通过 | 完整 runtime/library/bin 尚未编译；无真实 Job、stdin、reader、硬截止时间或 VM 运行证据 |
+
+组合源码仅包含 Stage345/346/347；不包含 Stage350/354 的完整 supervisor 迁移。编后检查覆盖有限 HOME、原始源码、固定工具与 1,668 个 registry 元数据文件，未声称重扫所有依赖负载或整个 target。
+
+heartbeat 修补保留丢失时钟与业务门禁，只在异常标记发布前后保护原控制读取器；原始 reader 的 IO、协议、队列、panic 或期限失败仍不能生成隔离 prepare。修补以新候选增量归档，旧候选和历史失败记录保持不变。
+
+完整 host/supervisor 构建、新 VM 产品复验、Dart/runner 隔离接线、实际原资源闭合、真实 DPAPI 与 sealed-basic 仍未运行。Stage355 仅有本地未执行构建准备，不作为产品通过证据。历史 Stage341 仍为 CLOSED_NOT_ACCEPTED，旧 sealed Unknown 不重放。SDK26/G04、namespace 和祖先目录持续 reparse 防护仍 OPEN；release_eligible=false。
+
+见[脱敏验证摘要](reconstruction-2026-10-13/windows-integrated-validation.json)与[heartbeat 源码增量](reconstruction-2026-10-13/source-candidates/quarantine-runtime-r003/README.md)。应用版本不变，仅推送开发分支，不创建 Release。
+
+## 上次推送时的历史记录（Stage352）
+
+以下文字保留当时的验证范围；其中 NOT_RUN 状态仅描述 Stage352 时点，当前结果以上节为准。
+
+
 本轮生产改动限定为 Agent 停止状态修正与 Windows 审计密钥的同句柄读取。应用版本不变；开发分支源码更新不构成完整产品或 SDK 验收。
 
 345 与346 合并后的完整 crate 以及 host／supervisor 双产品构建仍为 `NOT_RUN`；349／351 尚未执行。各自限定测试通过不等于合并构建通过。

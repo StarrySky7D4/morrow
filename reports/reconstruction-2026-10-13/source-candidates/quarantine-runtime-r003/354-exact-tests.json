@@ -1,0 +1,13 @@
+{
+  "schema": "MORROW_HEARTBEAT_EXACT_TESTS_V1",
+  "status": "PASS_STD_ONLY_EXTRACTED_ORIGINAL_LOGIC",
+  "full_runtime_compilation": "NOT_RUN",
+  "tests": [
+    "workbench_supervision::supervisor_runtime::quarantine_control_tests::quarantine_terminal_is_exact_and_requires_abnormal_closing",
+    "workbench_supervision::supervisor_runtime::quarantine_control_tests::normal_close_and_heartbeat_are_not_quarantine_terminals",
+    "workbench_supervision::supervisor_runtime::quarantine_control_tests::lost_before_abnormal_flag_keeps_reader_without_renewal",
+    "workbench_supervision::supervisor_runtime::quarantine_control_tests::loss_during_renewal_keeps_terminal_receiver_without_resetting_loss",
+    "workbench_supervision::supervisor_runtime::quarantine_control_tests::ordinary_heartbeat_and_nonloss_error_preserve_original_choices"
+  ],
+  "validation_summary": "../../windows-integrated-validation.json"
+}
