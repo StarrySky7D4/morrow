@@ -1,0 +1,160 @@
+{
+  "schema": "DART_STARTUP_QUARANTINE_INERT_CANDIDATE_MANIFEST_V2",
+  "status": "SOURCE_NOT_RUN",
+  "public_relative_root": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002",
+  "files": {
+    "README.md": {
+      "bytes": 2200,
+      "sha256": "fb24e7bc6a09b941e5e5be9438871ef3dd61302717c62c48045eb5ab1959f007"
+    },
+    "changes.json": {
+      "bytes": 1351,
+      "sha256": "347bf2312a148bd3caabfd5feb7f00fba97a89db7fb46cbcbba5146761679b7d"
+    },
+    "diffs/workbench_channel_supervised.dart.diff": {
+      "bytes": 813,
+      "sha256": "70daee5723b15d7ef3643f2eb0f17e195c63bf5748aca2c50227fc1567b3744d"
+    },
+    "diffs/workbench_startup_quarantine_test.dart.diff": {
+      "bytes": 1378,
+      "sha256": "a8b96cd81d2dcf8af2211dd4ec1ba6ea93df57a39ee1bbb98f03e2ca85725444"
+    },
+    "exact-tests.json": {
+      "bytes": 1400,
+      "sha256": "3c2699dc0cb34588cb09c11cf4885d61b4f68af52df0667f42d66374835ae418"
+    },
+    "overlay/lib/plugins/workbench_channel_supervised.dart": {
+      "bytes": 15166,
+      "sha256": "7ca752599a588004be4bd1144885899df1df618add04c8dc0f9144edc7fe1ab3"
+    },
+    "overlay/lib/plugins/workbench_native.dart": {
+      "bytes": 120251,
+      "sha256": "940aaa1206fed9b3c4e73cb299fadf35e8280c7e18947f2a8f7b9f92664837b0"
+    },
+    "overlay/lib/plugins/workbench_supervision.dart": {
+      "bytes": 14323,
+      "sha256": "b5fb611de44f5e614de17905a01b9d54415562315a4843770c3474313dc79ef7"
+    },
+    "overlay/test/workbench_startup_quarantine_test.dart": {
+      "bytes": 15885,
+      "sha256": "59c2933e3a802153179a9eb82ba269472ac99945a7dd97d014652429c7b65991"
+    }
+  },
+  "source_mapping": [
+    {
+      "candidate_path": "overlay/lib/plugins/workbench_channel_supervised.dart",
+      "project_relative_path": "lib/plugins/workbench_channel_supervised.dart",
+      "frozen_source_relative_path": "c28-stage361-startup-normal-gate-source002/overlay/lib/plugins/workbench_channel_supervised.dart",
+      "pin": {
+        "bytes": 15166,
+        "sha256": "7ca752599a588004be4bd1144885899df1df618add04c8dc0f9144edc7fe1ab3"
+      }
+    },
+    {
+      "candidate_path": "overlay/lib/plugins/workbench_supervision.dart",
+      "project_relative_path": "lib/plugins/workbench_supervision.dart",
+      "frozen_source_relative_path": "c28-stage361-startup-normal-gate-source002/overlay/lib/plugins/workbench_supervision.dart",
+      "pin": {
+        "bytes": 14323,
+        "sha256": "b5fb611de44f5e614de17905a01b9d54415562315a4843770c3474313dc79ef7"
+      }
+    },
+    {
+      "candidate_path": "overlay/lib/plugins/workbench_native.dart",
+      "project_relative_path": "lib/plugins/workbench_native.dart",
+      "frozen_source_relative_path": "c28-stage361-startup-normal-gate-source002/overlay/lib/plugins/workbench_native.dart",
+      "pin": {
+        "bytes": 120251,
+        "sha256": "940aaa1206fed9b3c4e73cb299fadf35e8280c7e18947f2a8f7b9f92664837b0"
+      }
+    },
+    {
+      "candidate_path": "overlay/test/workbench_startup_quarantine_test.dart",
+      "project_relative_path": "test/workbench_startup_quarantine_test.dart",
+      "frozen_source_relative_path": "c28-stage361-startup-normal-gate-source002/overlay/test/workbench_startup_quarantine_test.dart",
+      "pin": {
+        "bytes": 15885,
+        "sha256": "59c2933e3a802153179a9eb82ba269472ac99945a7dd97d014652429c7b65991"
+      }
+    }
+  ],
+  "baseline_candidate_relative_root": "../startup-quarantine-dart-r001",
+  "baseline": {
+    "lib/plugins/workbench_channel_supervised.dart": {
+      "bytes": 15128,
+      "sha256": "10e5dc2580b12a16a72faf37944e154fb9bd5ca9a823c8489ffc183a88bd8c07"
+    },
+    "lib/plugins/workbench_supervision.dart": {
+      "bytes": 14323,
+      "sha256": "b5fb611de44f5e614de17905a01b9d54415562315a4843770c3474313dc79ef7"
+    },
+    "lib/plugins/workbench_native.dart": {
+      "bytes": 120251,
+      "sha256": "940aaa1206fed9b3c4e73cb299fadf35e8280c7e18947f2a8f7b9f92664837b0"
+    },
+    "test/workbench_startup_quarantine_test.dart": {
+      "bytes": 14791,
+      "sha256": "9cda0c518f3ca5f720cfb850a4a7df18ba3be01cfd411bc0652d29efab7ffaf8"
+    }
+  },
+  "minimal_diff_mapping": [
+    {
+      "diff_path": "diffs/workbench_channel_supervised.dart.diff",
+      "project_relative_path": "lib/plugins/workbench_channel_supervised.dart",
+      "before_pin": {
+        "bytes": 15128,
+        "sha256": "10e5dc2580b12a16a72faf37944e154fb9bd5ca9a823c8489ffc183a88bd8c07"
+      },
+      "after_pin": {
+        "bytes": 15166,
+        "sha256": "7ca752599a588004be4bd1144885899df1df618add04c8dc0f9144edc7fe1ab3"
+      },
+      "raw_unified_diff_exact": true
+    },
+    {
+      "diff_path": "diffs/workbench_startup_quarantine_test.dart.diff",
+      "project_relative_path": "test/workbench_startup_quarantine_test.dart",
+      "before_pin": {
+        "bytes": 14791,
+        "sha256": "9cda0c518f3ca5f720cfb850a4a7df18ba3be01cfd411bc0652d29efab7ffaf8"
+      },
+      "after_pin": {
+        "bytes": 15885,
+        "sha256": "59c2933e3a802153179a9eb82ba269472ac99945a7dd97d014652429c7b65991"
+      },
+      "raw_unified_diff_exact": true
+    }
+  ],
+  "frozen_source_inventory_pin": {
+    "bytes": 2378,
+    "sha256": "e506d9e24defc8f79c4317db9b726900bc1631b41cbf1cff7a7ff3f020bd9034"
+  },
+  "exact_memory_test_count": 16,
+  "original15_test_bodies": "BYTE_EXACT_R001_OUTSIDE_NEW_TEST_BLOCK",
+  "raw_overlay_and_test_bytes_unchanged": true,
+  "validation": {
+    "Dart_analyzer": "NOT_RUN",
+    "memory_tests16": "NOT_RUN",
+    "full_354_Rust_integration": "NOT_COMPILED_OR_ACCEPTED",
+    "native": "NOT_RUN",
+    "VM": "NOT_RUN"
+  },
+  "local_data_preparation": "PASS_FIXED_DATA_ONLY",
+  "AB_actual_tests": "NOT_RUN",
+  "full_354_Rust_integration": "NOT_COMPILED_OR_ACCEPTED",
+  "production_activation": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "namespace": "OPEN",
+  "release": false,
+  "release_eligible": false,
+  "not_included": [
+    "absolute local paths",
+    "operation or environment records",
+    "credentials or account values",
+    "Drive identifiers",
+    "raw logs",
+    "tool/cache payloads",
+    "VM authority or cleanup permission"
+  ]
+}

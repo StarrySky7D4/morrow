@@ -1,0 +1,33 @@
+--- 357/overlay/test/workbench_startup_quarantine_test.dart
++++ 361/overlay/test/workbench_startup_quarantine_test.dart
+@@ -364,4 +364,29 @@
+     expect(after!.failedStartupQuarantine, isNotNull);
+     expect(after!.toJson()['accepted'], false);
+   });
+-}
++  test('marked startup failure rejects unrequested Released zero with actual dual EOF', () async {
++    final f = _Fixture();
++    f.emit(_state());
++    f.markFailed();
++    // No closeInput/kind3 and no ClosingUnconfirmed state has been delivered.
++    final released = _terminal()
++      ..remove('abnormal_resource_closure_prepared')
++      ..['phase'] = 'Released'
++      ..['owner_phase'] = 'Released'
++      ..['normal_shutdown'] = true
++      ..['child_exit_code'] = 0;
++    f.emit(released);
++    await f.finish(code: 0);
++    await expectLater(f.channel.exitCode,
++        throwsA(isA<WorkbenchSupervisionUnconfirmed>()));
++    final snapshot = f.snapshot();
++    expect(snapshot.latestValidatedState!['phase'], 'Running');
++    expect(snapshot.latestValidatedState!['normal_shutdown'], false);
++    expect(snapshot.failedStartupQuarantine, isNull);
++    expect(snapshot.toJson()['accepted'], false);
++    expect(f.channel.supportsPrivateControl, false);
++    expect(f.commands.where((command) => command.kind == 3), isEmpty);
++    expect(f.commands.where((command) => command.kind == 4), isEmpty);
++  });
++
++}

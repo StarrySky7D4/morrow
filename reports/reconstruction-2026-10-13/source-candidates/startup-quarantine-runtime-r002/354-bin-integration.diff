@@ -1,0 +1,10 @@
+--- frozen354/workbench_host/src/bin/morrow-workbench-supervisor.rs
++++ integrated360/workbench_host/src/bin/morrow-workbench-supervisor.rs
+@@ -1,7 +1,4 @@
+ #![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
+-#[cfg(windows)]
+-#[path = "../workbench_supervisor.rs"]
+-mod supervisor;
+ fn main() {
+     #[cfg(windows)]
+     {

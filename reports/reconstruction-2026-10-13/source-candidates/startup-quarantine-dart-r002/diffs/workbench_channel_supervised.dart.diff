@@ -1,0 +1,20 @@
+--- 357/overlay/lib/plugins/workbench_channel_supervised.dart
++++ 361/overlay/lib/plugins/workbench_channel_supervised.dart
+@@ -286,7 +286,7 @@
+               'Supervisor reopened revoked admission',
+             );
+           }
+-          if (state.released && !_closing) {
++          if (state.released && !_normalCloseRequested) {
+             throw const FormatException('Unrequested normal shutdown proof');
+           }
+           final prepared = state.record['abnormal_resource_closure_prepared'];
+@@ -363,7 +363,7 @@
+       });
+     }
+     final proof = _validatedState;
+-    if (!_failed && _code == 0 && proof?.released == true) {
++    if (!_failed && _normalCloseRequested && _code == 0 && proof?.released == true) {
+       _exit.complete(0);
+     } else {
+       _exit.completeError(

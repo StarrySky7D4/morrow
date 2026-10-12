@@ -1,0 +1,22 @@
+{
+  "count": 14,
+  "names": [
+    "io_tasks::agent_stop_tests::cancel_pending_join_latches_stopping_and_keeps_ack_closed",
+    "io_tasks::agent_stop_tests::cancel_wrong_key_preserves_running_worker_without_stop",
+    "io_tasks::agent_stop_tests::cancel_non_agent_and_retained_exit_do_not_latch_stop",
+    "io_tasks::agent_stop_tests::cancelled_failed_join_is_unavailable_never_reclaimed_or_acknowledged",
+    "workbench_supervision::startup_quarantine::tests::committed_abnormal_receipt_retains_unknown_owner_and_never_claims_exit",
+    "workbench_supervision::startup_quarantine::tests::each_missing_resource_or_join_fact_refuses_before_ledger_effects",
+    "workbench_supervision::startup_quarantine::tests::legacy_normal_and_changed_identity_cannot_prepare_quarantine",
+    "workbench_supervision::startup_quarantine::tests::stale_original_row_and_postcommit_tamper_are_unconfirmed",
+    "workbench_supervision::startup_quarantine::tests::normal_v1_v2_owner_update_paths_remain_separate",
+    "workbench_supervision::supervisor_runtime::quarantine_control_tests::quarantine_terminal_is_exact_and_requires_abnormal_closing",
+    "workbench_supervision::supervisor_runtime::quarantine_control_tests::normal_close_and_heartbeat_are_not_quarantine_terminals",
+    "workbench_supervision::supervisor_runtime::quarantine_control_tests::lost_before_abnormal_flag_keeps_reader_without_renewal",
+    "workbench_supervision::supervisor_runtime::quarantine_control_tests::loss_during_renewal_keeps_terminal_receiver_without_resetting_loss",
+    "workbench_supervision::supervisor_runtime::quarantine_control_tests::ordinary_heartbeat_and_nonloss_error_preserve_original_choices"
+  ],
+  "schema": "STAGE360_EXACT_LOGIC_TEST_SELECTION_V1",
+  "scope": "Four genuine synthetic AgentWorker stop tests, five in-memory ledger facts, five parser/heartbeat logic tests. No actual Job/DPAPI/product/native/VM proof.",
+  "status": "NOT_COMPILED_NOT_RUN"
+}

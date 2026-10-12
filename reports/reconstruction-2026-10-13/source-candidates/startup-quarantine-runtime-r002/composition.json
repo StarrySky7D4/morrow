@@ -1,0 +1,153 @@
+{
+  "schema": "RUST_STARTUP_QUARANTINE_PUBLIC_COMPOSITION_V1",
+  "status": "SOURCE_NOT_COMPILED_NOT_RUN",
+  "base349_source_count": 2392,
+  "final360_source_count": 2392,
+  "base349_manifest_pin": {
+    "bytes": 431446,
+    "sha256": "f9bc8b88869aaa0e501dea83761fde6b35b9961f1b86d57112113d3882f2ed2e"
+  },
+  "planned360_manifest_pin": {
+    "bytes": 431446,
+    "sha256": "c5666cce296635d0cc53cda7b33d868eecfca07f8c707a2d445303d32610c5c7"
+  },
+  "frozen354_inventory_pin": {
+    "bytes": 1975,
+    "sha256": "1d1e552d6afdbf458d50dcd51cc7763d91a6b6aa95fa598256a7b499e401b174"
+  },
+  "frozen360_inventory_pin": {
+    "bytes": 5267,
+    "sha256": "e4135468458ae073a2906b2a38d7b51ccc9eb582a77e8b868df4537163d10a34"
+  },
+  "overlay_count": 5,
+  "changed_from349": 4,
+  "changed_from354": 1,
+  "raw_composition": [
+    {
+      "project_relative_path": "workbench_host/src/bin/morrow-workbench-supervisor.rs",
+      "candidate_relative_path": "overlay/workbench_host/src/bin/morrow-workbench-supervisor.rs",
+      "base349_pin": {
+        "bytes": 1290,
+        "sha256": "521f97200192862ce90c405319221e2f4a24820191d0cad4668bd94bd38ceb50"
+      },
+      "frozen354_pin": {
+        "bytes": 1335,
+        "sha256": "0c64c59b7086204e6512750e1009d72ecda3405925c568c37c15c965f50cc758"
+      },
+      "final360_pin": {
+        "bytes": 1264,
+        "sha256": "e6a7ac4dcf055c1609bfee1686184939913326965169e36dbe69d7e0b086b3af"
+      },
+      "same_as349": false,
+      "same_as354": false
+    },
+    {
+      "project_relative_path": "workbench_host/src/lib.rs",
+      "candidate_relative_path": "overlay/workbench_host/src/lib.rs",
+      "base349_pin": {
+        "bytes": 37464,
+        "sha256": "268002e88e462a40eca273e7b7324dc505f0ae39f95cf261c9887a7577afa3ba"
+      },
+      "frozen354_pin": {
+        "bytes": 37590,
+        "sha256": "ccbe6e9015c01c78e6cfe7c82e7e62e996385b778ca57ca9730ddf9063966c1f"
+      },
+      "final360_pin": {
+        "bytes": 37590,
+        "sha256": "ccbe6e9015c01c78e6cfe7c82e7e62e996385b778ca57ca9730ddf9063966c1f"
+      },
+      "same_as349": false,
+      "same_as354": true
+    },
+    {
+      "project_relative_path": "workbench_host/src/startup_quarantine.rs",
+      "candidate_relative_path": "overlay/workbench_host/src/startup_quarantine.rs",
+      "base349_pin": {
+        "bytes": 11952,
+        "sha256": "dcf9012bbc976d65f7b7e33e47a1fc56f168af32709b3954251bbcce774db587"
+      },
+      "frozen354_pin": {
+        "bytes": 11952,
+        "sha256": "dcf9012bbc976d65f7b7e33e47a1fc56f168af32709b3954251bbcce774db587"
+      },
+      "final360_pin": {
+        "bytes": 11952,
+        "sha256": "dcf9012bbc976d65f7b7e33e47a1fc56f168af32709b3954251bbcce774db587"
+      },
+      "same_as349": true,
+      "same_as354": true
+    },
+    {
+      "project_relative_path": "workbench_host/src/workbench_supervision.rs",
+      "candidate_relative_path": "overlay/workbench_host/src/workbench_supervision.rs",
+      "base349_pin": {
+        "bytes": 21068,
+        "sha256": "b80e65f3db002bf97a7c5cade3f406b6318646be58b4cbf950361673dfcd61ac"
+      },
+      "frozen354_pin": {
+        "bytes": 21344,
+        "sha256": "c61c4e0be16225f61f1558dc6f42e05eb7c3cb5a045ca0f2baba62d956620884"
+      },
+      "final360_pin": {
+        "bytes": 21344,
+        "sha256": "c61c4e0be16225f61f1558dc6f42e05eb7c3cb5a045ca0f2baba62d956620884"
+      },
+      "same_as349": false,
+      "same_as354": true
+    },
+    {
+      "project_relative_path": "workbench_host/src/workbench_supervisor.rs",
+      "candidate_relative_path": "overlay/workbench_host/src/workbench_supervisor.rs",
+      "base349_pin": {
+        "bytes": 18761,
+        "sha256": "63253445d15e6d6127c988cdebfa04bac3eb45c0336f3d784c7854ef988c0070"
+      },
+      "frozen354_pin": {
+        "bytes": 25562,
+        "sha256": "155eaabef579d185e4f243b805bf6fa3be49617aee96cd9aeba57a79cff8591b"
+      },
+      "final360_pin": {
+        "bytes": 25562,
+        "sha256": "155eaabef579d185e4f243b805bf6fa3be49617aee96cd9aeba57a79cff8591b"
+      },
+      "same_as349": false,
+      "same_as354": true
+    }
+  ],
+  "preserved349_stop_same_handle_leaves": {
+    "workbench_host/src/io_tasks.rs": {
+      "bytes": 35320,
+      "sha256": "bc046f35727bc8aaa02831b7f9db0ffb2d2af2b6cacc305ddda3835a993f3a70"
+    },
+    "workbench_host/src/agent_tasks/worker.rs": {
+      "bytes": 90119,
+      "sha256": "28ab668d90844d7f732d1636a3d06e43ef8a4a154baa7d54bdc92b0f40c7c965"
+    },
+    "workbench_host/src/io_tasks_agent_stop_tests.rs": {
+      "bytes": 7300,
+      "sha256": "14d8f4feddfc9dd42e83242be15ffbbbd6e7d6f117de182a4c5d9d3706fe4e3b"
+    },
+    "audit/src/keys.rs": {
+      "bytes": 20282,
+      "sha256": "68efb16b5ff36f539d616c539b7c1e11fa40cd96d35ec6c1a06486a8bae08e43"
+    },
+    "audit/src/keys/windows_publication.rs": {
+      "bytes": 14397,
+      "sha256": "180affade27115bfc2096f7ad162573dc963c9155859deb631042982d256d2ff"
+    }
+  },
+  "locks": {
+    "count": 20,
+    "raw_before_after_equal": true,
+    "changed": []
+  },
+  "only_new_Rust_fix": "Remove exactly the three stale binary-local module declaration lines. The binary calls the existing zero-argument library entry and does not separately compile the private runtime.",
+  "already_in349_ledger": "startup_quarantine.rs is byte-identical; complete349 workbench_supervision.rs is retained as the prefix, followed only by276 bytes of frozen354 module/export wiring.",
+  "full_crate_compile": "NOT_RUN",
+  "current_fourteen_tests": "NOT_RUN",
+  "prior_validation_boundary": "Older353/354 bounded logic tests and355 product compilation do not cover this full360 version.",
+  "normal_v1_v2_protocol": "No additional changes beyond frozen354; current full integration unverified.",
+  "SDK26_G04_namespace": "OPEN",
+  "release_eligible": false,
+  "production_activation": false
+}

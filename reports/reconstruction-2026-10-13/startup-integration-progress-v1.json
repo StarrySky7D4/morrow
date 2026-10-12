@@ -1,0 +1,83 @@
+{
+  "schema": "WINDOWS_STARTUP_INTEGRATION_PROGRESS_V1",
+  "date": "2026-10-13",
+  "status": "SOURCE_SUCCESSORS_AND_DATA_PREPARATION_ONLY",
+  "Dart_candidate": {
+    "relative_path": "source-candidates/startup-quarantine-dart-r002",
+    "status": "SOURCE_NOT_RUN",
+    "production_overlays": 3,
+    "memory_test_count": 16,
+    "new_fix": "Both normal release gates require the original explicit normal-close request.",
+    "original_fifteen_test_bodies": "RAW_UNCHANGED",
+    "static_analysis": "NOT_RUN",
+    "tests": "NOT_RUN",
+    "negative_control": "NOT_RUN",
+    "fixed_positive_control": "NOT_RUN"
+  },
+  "Rust_candidate": {
+    "relative_path": "source-candidates/startup-quarantine-runtime-r002",
+    "status": "SOURCE_NOT_COMPILED_NOT_RUN",
+    "overlay_count": 5,
+    "new_fix": "Remove exactly three legacy binary-local runtime module declaration lines.",
+    "full_crate_compile": "NOT_RUN",
+    "current_fourteen_tests": "NOT_RUN",
+    "planned_source_count": 2392,
+    "lock_count": 20,
+    "lock_changes": 0
+  },
+  "synthetic_data_preparation": {
+    "fixed-b": {
+      "status": "PASS_FIXED_DATA_ONLY",
+      "actual_data_exit": 0,
+      "source_files": 667,
+      "generated_configs": 2,
+      "test_execution": "NOT_RUN",
+      "selected_test_count": 16,
+      "terminal_pin": {
+        "bytes": 36272,
+        "sha256": "bc299ea5b344fd8698dbdb5e99f41ccb7b4a7e4e708439c8a5a82c98e5556024"
+      },
+      "source_manifest_pin": {
+        "bytes": 101875,
+        "sha256": "aa1992d6668e3ba58a010d584daf159d1be2ac766c653a19c6010fd0cb460980"
+      }
+    },
+    "negative-a": {
+      "status": "PASS_FIXED_DATA_ONLY",
+      "actual_data_exit": 0,
+      "source_files": 667,
+      "generated_configs": 2,
+      "test_execution": "NOT_RUN",
+      "selected_test_count": 1,
+      "terminal_pin": {
+        "bytes": 36272,
+        "sha256": "9fa9a5066a775c7bcb0b13c550e190033ed5f28c5511adf21c658547b8cf02ba"
+      },
+      "source_manifest_pin": {
+        "bytes": 101875,
+        "sha256": "3836062b5d7887fdf966d9b80e9cf944d0b554b939dc8a6d8af72ccccf69a9d1"
+      }
+    }
+  },
+  "historical_validation_boundaries": {
+    "Stage353": "Nine bounded regressions passed on the earlier349 source graph.",
+    "Stage354": "Five std-only extracted parser/heartbeat logic tests passed; not full runtime qualification.",
+    "Stage355": "Earlier349 baseline compilation and recovered artifact/HOME postreview only; original wrapper and first recovery failures preserved.",
+    "Stage341": "CLOSED_NOT_ACCEPTED; original failed stop/join remains recorded.",
+    "sealed_Unknown": "PRESERVED_NO_REPLAY"
+  },
+  "next_steps": [
+    "Run and inspect the one-test old-channel negative control without rewriting its real exit.",
+    "Run all sixteen tests on the fixed Dart candidate and inspect original events and closure.",
+    "Compile and test the complete current Rust graph, then qualify Rust/Dart integration.",
+    "Validate original Windows child, Job, stdin, readers and persisted owner closure."
+  ],
+  "production_activation": false,
+  "joint_execution": "NOT_RUN",
+  "new_VM_validation": "NOT_RUN",
+  "main_tag_release_CI_version": "UNCHANGED_NOT_DISPATCHED",
+  "SDK26_G04": "OPEN",
+  "namespace": "OPEN",
+  "ancestor_continuous_reparse": "OPEN",
+  "release_eligible": false
+}

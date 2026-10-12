@@ -1,0 +1,37 @@
+{
+  "schema": "DART_STARTUP_QUARANTINE_PUBLIC_CHANGE_SUMMARY_V2",
+  "status": "SOURCE_NOT_RUN",
+  "production_activation": false,
+  "base_candidate_relative_path": "../startup-quarantine-dart-r001",
+  "changes": [
+    {
+      "path": "lib/plugins/workbench_channel_supervised.dart",
+      "scope": "Require private _normalCloseRequested for both received Released and final zero exit; startup failure _closing alone is never normal-close authority."
+    },
+    {
+      "path": "test/workbench_startup_quarantine_test.dart",
+      "scope": "Add regression16: marked failed startup without kind3, same-identity Released and actual0/dualEOF remain Unconfirmed; original15 test bodies unchanged."
+    }
+  ],
+  "unchanged_leaves": [
+    "lib/plugins/workbench_supervision.dart",
+    "lib/plugins/workbench_native.dart"
+  ],
+  "wire_schema_changed": false,
+  "raw_overlay_and_test_bytes_unchanged": true,
+  "local_data_preparation": "PASS_FIXED_DATA_ONLY_TWO_INDEPENDENT_SYNTHETIC_TREES",
+  "AB_negative_one": "NOT_RUN",
+  "AB_fixed_sixteen": "NOT_RUN",
+  "validation": {
+    "Dart_analyzer": "NOT_RUN",
+    "memory_tests16": "NOT_RUN",
+    "full_354_Rust_integration": "NOT_COMPILED_OR_ACCEPTED",
+    "native": "NOT_RUN",
+    "VM": "NOT_RUN"
+  },
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "namespace": "OPEN",
+  "release": false,
+  "release_eligible": false
+}

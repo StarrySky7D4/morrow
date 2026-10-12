@@ -1,17 +1,19 @@
 # Morrow 文档导航与维护范围
 
 <!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
-## Windows 构建与启动隔离候选进度（2026-10-13）
+## 启动隔离源码与验证准备更新（2026-10-13）
 
-Stage349 固定组合基线的 Windows AMD64 host／supervisor 已实际完成离线、锁定依赖编译，原 Cargo 退出 0、双 EOF。产物读取包装器曾因 Cargo 硬链接而退出 1，首个恢复读取器也失败；两次失败保留。修正版独立恢复两个产物，并通过两个原编译时间窗的完整选定 Cargo HOME 后验，未重新编译或执行程序。这是构建与产物核验，不是 Windows 产品运行验收。
+Dart 候选 r002 修正了正常关闭与失败启动收尾共用标记的问题：只有原通道明确请求正常关闭后，才允许接受 Released 与实际退出 0。原有 15 项测试保持原字节，另增 1 项“未请求正常关闭却收到 Released”的反例；共 16 项测试均为 `NOT_RUN`，并未据此宣称缺陷已通过运行验证。
 
-Stage357 的 Dart 失败启动收尾已作为候选归档：私有失败标记关闭业务入口并停止心跳，只在原通道验证异常状态后单次请求隔离；实际退出 2 和双 EOF 才能记录单独快照，业务仍为 Unknown、owner 为 Retained。三个生产 overlay 与 15 个内存测试均未激活，Dart 静态分析和测试为 `NOT_RUN`；完整 Stage354 Rust 迁移及 Rust／Dart 联合运行仍未验证。
+Rust 候选 r002 保留此前隔离、心跳和账本改动，删除 binary 中三行遗留模块声明，由 library 持有 supervisor 实现。这是源码层最小修正；完整 crate 的编译、测试和 Rust／Dart 联合运行仍为 `NOT_RUN`。此前 Stage355 编译通过的是 Stage349 基线，不覆盖本次候选。
 
-此前 Stage353 九项合成回归、Stage354 五项原逻辑摘取测试的通过范围不变。历史 Stage341 仍为 `CLOSED_NOT_ACCEPTED`，旧 sealed Unknown 不重放。SDK26／G04、namespace 与祖先目录持续 reparse 防护仍 OPEN，`release_eligible=false`。
+Stage359 的 A／B 两套隔离测试数据准备已分别退出 0，各生成 667 个源码文件及 2 个配置文件；未运行 Dart、Flutter 或原生程序。A 计划仅运行旧 channel 的新增反例，B 计划运行修正版 16 项，计划结果不能算作实际测试结果。
 
-下一步：先完成 Dart 候选的静态分析和 15 项回归，再验证完整 Rust／Dart 源图、原资源闭合与 Windows 停止序列。应用版本不变，本次仅同步开发分支，不创建 Release。
+历史 Stage353 九项合成回归、Stage354 五项原逻辑摘取测试、Stage355 基线编译及产物核验的限定范围不变；Stage341 仍为 `CLOSED_NOT_ACCEPTED`，旧 sealed Unknown 不重放。SDK26／G04、namespace 与祖先目录持续 reparse 防护仍 OPEN，`release_eligible=false`。
 
-详见[Windows SDK 进度](../reports/windows-sdk-progress.md)、[原生构建核验](../reports/reconstruction-2026-10-13/native-build-progress-v2.md)和[Dart 候选](../reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r001/README.md)。下方记录保留各自历史范围。
+下一步：执行 A／B 对照并核对原始退出和机器测试事件，随后编译完整 Rust 候选、验证联合运行与 Windows 原资源闭合。本次仅同步开发分支的源码候选和进度，生产入口、应用版本与依赖锁不变，不创建 Release。
+
+详见[Windows SDK 进度](../reports/windows-sdk-progress.md)与[本次源码及验证边界](../reports/reconstruction-2026-10-13/startup-integration-progress-v1.md)。下方记录保留各自历史范围。
 <!-- C28-WINDOWS-REGRESSION-20261013-END -->
 
 

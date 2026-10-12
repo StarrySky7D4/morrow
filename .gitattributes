@@ -279,3 +279,34 @@
 /reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r001/overlay/lib/plugins/workbench_native.dart -text
 /reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r001/overlay/lib/plugins/workbench_supervision.dart -text
 /reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r001/overlay/test/workbench_startup_quarantine_test.dart -text
+
+# Inert startup integration successors: preserve raw source bytes.
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002/README.md -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002/changes.json -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002/diffs/workbench_channel_supervised.dart.diff -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002/diffs/workbench_startup_quarantine_test.dart.diff -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002/exact-tests.json -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002/manifest.json -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002/overlay/lib/plugins/workbench_channel_supervised.dart -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002/overlay/lib/plugins/workbench_native.dart -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002/overlay/lib/plugins/workbench_supervision.dart -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002/overlay/test/workbench_startup_quarantine_test.dart -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/349-to-360.diff -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/354-bin-integration.diff -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/README.md -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/baselines/frozen354/workbench_host/src/bin/morrow-workbench-supervisor.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/baselines/source349/workbench_host/src/bin/morrow-workbench-supervisor.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/baselines/source349/workbench_host/src/lib.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/baselines/source349/workbench_host/src/startup_quarantine.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/baselines/source349/workbench_host/src/workbench_supervision.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/baselines/source349/workbench_host/src/workbench_supervisor.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/composition.json -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/exact-tests.json -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/manifest.json -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/overlay/workbench_host/src/bin/morrow-workbench-supervisor.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/overlay/workbench_host/src/lib.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/overlay/workbench_host/src/startup_quarantine.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/overlay/workbench_host/src/workbench_supervision.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002/overlay/workbench_host/src/workbench_supervisor.rs -text
+/reports/reconstruction-2026-10-13/startup-integration-progress-v1.json -text
+/reports/reconstruction-2026-10-13/startup-integration-progress-v1.md -text

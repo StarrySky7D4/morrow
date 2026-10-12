@@ -1,0 +1,101 @@
+{
+  "schema": "RUST_STARTUP_QUARANTINE_INERT_CANDIDATE_MANIFEST_V1",
+  "status": "SOURCE_NOT_COMPILED_NOT_RUN",
+  "public_relative_root": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002",
+  "files": {
+    "349-to-360.diff": {
+      "bytes": 16296,
+      "sha256": "856f903a849133409525accc79f127460ae2cb13d14eb29ab56b50f87c9635c2"
+    },
+    "354-bin-integration.diff": {
+      "bytes": 339,
+      "sha256": "0f9f2489c17980d2a48d1bc042bc48f26efa224388eac9e1b72cd24571a6ce85"
+    },
+    "README.md": {
+      "bytes": 2426,
+      "sha256": "c8dcf6993b282190cc8085fd5667773d0cb10d0730ef1afef367a1f6df417a75"
+    },
+    "baselines/frozen354/workbench_host/src/bin/morrow-workbench-supervisor.rs": {
+      "bytes": 1335,
+      "sha256": "0c64c59b7086204e6512750e1009d72ecda3405925c568c37c15c965f50cc758"
+    },
+    "baselines/source349/workbench_host/src/bin/morrow-workbench-supervisor.rs": {
+      "bytes": 1290,
+      "sha256": "521f97200192862ce90c405319221e2f4a24820191d0cad4668bd94bd38ceb50"
+    },
+    "baselines/source349/workbench_host/src/lib.rs": {
+      "bytes": 37464,
+      "sha256": "268002e88e462a40eca273e7b7324dc505f0ae39f95cf261c9887a7577afa3ba"
+    },
+    "baselines/source349/workbench_host/src/startup_quarantine.rs": {
+      "bytes": 11952,
+      "sha256": "dcf9012bbc976d65f7b7e33e47a1fc56f168af32709b3954251bbcce774db587"
+    },
+    "baselines/source349/workbench_host/src/workbench_supervision.rs": {
+      "bytes": 21068,
+      "sha256": "b80e65f3db002bf97a7c5cade3f406b6318646be58b4cbf950361673dfcd61ac"
+    },
+    "baselines/source349/workbench_host/src/workbench_supervisor.rs": {
+      "bytes": 18761,
+      "sha256": "63253445d15e6d6127c988cdebfa04bac3eb45c0336f3d784c7854ef988c0070"
+    },
+    "composition.json": {
+      "bytes": 5797,
+      "sha256": "3f641fa1c22d04162ce084e0befd099e6f99a812204b45555b4998a66851e0b3"
+    },
+    "exact-tests.json": {
+      "bytes": 1937,
+      "sha256": "b8ef7a1c59da8c0f929c8ee7a92af033c29cd66d24ddfbd3e3f7e27d96494233"
+    },
+    "overlay/workbench_host/src/bin/morrow-workbench-supervisor.rs": {
+      "bytes": 1264,
+      "sha256": "e6a7ac4dcf055c1609bfee1686184939913326965169e36dbe69d7e0b086b3af"
+    },
+    "overlay/workbench_host/src/lib.rs": {
+      "bytes": 37590,
+      "sha256": "ccbe6e9015c01c78e6cfe7c82e7e62e996385b778ca57ca9730ddf9063966c1f"
+    },
+    "overlay/workbench_host/src/startup_quarantine.rs": {
+      "bytes": 11952,
+      "sha256": "dcf9012bbc976d65f7b7e33e47a1fc56f168af32709b3954251bbcce774db587"
+    },
+    "overlay/workbench_host/src/workbench_supervision.rs": {
+      "bytes": 21344,
+      "sha256": "c61c4e0be16225f61f1558dc6f42e05eb7c3cb5a045ca0f2baba62d956620884"
+    },
+    "overlay/workbench_host/src/workbench_supervisor.rs": {
+      "bytes": 25562,
+      "sha256": "155eaabef579d185e4f243b805bf6fa3be49617aee96cd9aeba57a79cff8591b"
+    }
+  },
+  "source_versions": {
+    "base": "349 integrated source2392",
+    "runtime": "354 r003 five overlay leaves",
+    "integration": "360 source001 with only stale binary module declaration removed"
+  },
+  "full_source_map_pins": {
+    "base349": {
+      "bytes": 431446,
+      "sha256": "f9bc8b88869aaa0e501dea83761fde6b35b9961f1b86d57112113d3882f2ed2e"
+    },
+    "planned360": {
+      "bytes": 431446,
+      "sha256": "c5666cce296635d0cc53cda7b33d868eecfca07f8c707a2d445303d32610c5c7"
+    }
+  },
+  "current_full_crate_compile": "NOT_RUN",
+  "current_exact_test_count": 14,
+  "current_tests": "NOT_RUN",
+  "production_activation": false,
+  "SDK26_G04_namespace": "OPEN",
+  "release_eligible": false,
+  "license": "Preserve original repository source notices; candidate remains under the corresponding repository source license. No additional third-party implementation.",
+  "not_included": [
+    "machine-specific source/inputs/scope files",
+    "absolute local paths or account values",
+    "credentials/private cloud identifiers",
+    "operational invocation scripts",
+    "runtime raw logs, tools or binaries",
+    "VM authority"
+  ]
+}
