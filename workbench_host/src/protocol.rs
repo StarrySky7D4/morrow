@@ -521,6 +521,86 @@ impl ResponseTarget for WorkbenchState {
         handle_business(self, r, out)
     }
 }
+// Explicitly compiled fault fixture only. No environment/run-ID switch or new wire capability.
+#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[doc(hidden)]
+#[derive(Default)]
+pub struct QualifiedStartupRpcFault { consumed: bool }
+
+#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[derive(Debug, PartialEq, Eq)]
+struct QualifiedStartupRpcFixtureError;
+#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+impl std::fmt::Display for QualifiedStartupRpcFixtureError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("C28 qualified first PageVersioned RPC fixture failure")
+    }
+}
+#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+impl std::error::Error for QualifiedStartupRpcFixtureError {}
+
+#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+fn startup_rpc_fixture_before_dispatch(
+    fault: Option<&mut QualifiedStartupRpcFault>, request: &wire::request::Reader<'_>,
+) -> Result<()> {
+    let Some(fault) = fault else { return Ok(()); };
+    if !fault.consumed && request.get_action()? == wire::Action::PageVersioned
+        && request.get_limit() == 1 {
+        // Permanent before dispatch/error allocation/encoding or any later IO failure.
+        fault.consumed = true;
+        return Err(Box::new(QualifiedStartupRpcFixtureError));
+    }
+    Ok(())
+}
+
+#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+struct StartupRpcFixtureTarget<'a, T> {
+    target: &'a mut T, fault: Option<&'a mut QualifiedStartupRpcFault>,
+}
+#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+impl<T: ResponseTarget> ResponseTarget for StartupRpcFixtureTarget<'_, T> {
+    fn response_budget(&self, action: wire::Action) -> usize { self.target.response_budget(action) }
+    fn writable(&self) -> bool { self.target.writable() }
+    fn warning(&self) -> Option<&str> { self.target.warning() }
+    fn dispatch(&mut self, request: wire::request::Reader<'_>, out: wire::response::Builder<'_>) -> Result<()> {
+        // respond_target -> handle -> validated_request runs before this method.
+        startup_rpc_fixture_before_dispatch(self.fault.as_deref_mut(), &request)?;
+        self.target.dispatch(request, out)
+    }
+}
+#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+fn respond_startup_rpc_fixture_target(
+    target: &mut impl ResponseTarget, bytes: &[u8], fault: Option<&mut QualifiedStartupRpcFault>,
+) -> Result<Vec<u8>> {
+    respond_target(&mut StartupRpcFixtureTarget { target, fault }, bytes)
+}
+
+#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+fn route_qualified_startup_rpc<T>(
+    target: &mut T, bytes: &[u8], fault: &mut QualifiedStartupRpcFault,
+    original: impl FnOnce(&mut T, &[u8]) -> Result<Vec<u8>>,
+    fixture: impl FnOnce(&mut T, &[u8], &mut QualifiedStartupRpcFault) -> Result<Vec<u8>>,
+) -> Result<Vec<u8>> {
+    // Keep the original private-lane dispatcher; never consume the RPC fault here.
+    if bytes.starts_with(crate::agent_task_discovery::MAGIC)
+        || bytes.starts_with(crate::agent_product_control::MAGIC)
+        || bytes.starts_with(morrow_agent_catalog_admin_v1::MAGIC) {
+        return original(target, bytes);
+    }
+    fixture(target, bytes, fault)
+}
+
+// Binary/lib visibility only, compiled out normally. The production call site is
+// exclusively QualificationSlot::respond_startup_rpc_fixture after original-owner checking.
+#[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+#[doc(hidden)]
+pub fn respond_qualified_startup_rpc_fixture(
+    host: &mut Workbench, bytes: &[u8], fault: &mut QualifiedStartupRpcFault,
+) -> Result<Vec<u8>> {
+    route_qualified_startup_rpc(host, bytes, fault, respond,
+        |host, bytes, fault| respond_startup_rpc_fixture_target(host, bytes, Some(fault)))
+}
+
 fn respond_target(host: &mut impl ResponseTarget, bytes: &[u8]) -> Result<Vec<u8>> {
     let mut output = Builder::new_default();
     let mut response_budget = 128 * 1024;
@@ -1857,5 +1937,133 @@ mod editor_draft_route_tests {
         ] {
             assert!(requires_writable_state(action));
         }
+    }
+}
+
+// Synthetic request/encoder tests only: no Workbench, Store, owner, process or OS IO.
+#[cfg(all(test, windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+mod startup_rpc_fixture_tests {
+    use super::*;
+    #[derive(Default)]
+    struct DispatchProbe { calls: usize }
+    impl ResponseTarget for DispatchProbe {
+        fn writable(&self) -> bool { true }
+        fn warning(&self) -> Option<&str> { None }
+        fn dispatch(&mut self, _: wire::request::Reader<'_>, mut out: wire::response::Builder<'_>) -> Result<()> {
+            self.calls += 1;
+            out.reborrow().init_ids(1).set(0, "synthetic-dispatch");
+            Ok(())
+        }
+    }
+    fn request(action: wire::Action, limit: u32, version: u16, hash: &[u8]) -> Vec<u8> {
+        let mut message = Builder::new_default();
+        { let mut r = message.init_root::<wire::request::Builder>();
+          r.set_version(version); r.set_digest(hash); r.set_action(action); r.set_limit(limit); }
+        serialize::write_message_to_words(&message)
+    }
+    fn response(raw: &[u8]) -> capnp::message::Reader<serialize::BufferSegments<&[u8]>> {
+        let mut rest = raw;
+        let result = serialize::read_message_from_flat_slice(&mut rest, ReaderOptions::new()).unwrap();
+        assert!(rest.is_empty()); result
+    }
+    #[test]
+    fn absent_qualification_state_never_injects() {
+        let mut probe = DispatchProbe::default();
+        let raw = respond_startup_rpc_fixture_target(&mut probe,
+            &request(wire::Action::PageVersioned, 1, 1, &digest()), None).unwrap();
+        let message = response(&raw); let r = message.get_root::<wire::response::Reader>().unwrap();
+        assert!(r.get_error().unwrap().is_empty()); assert_eq!(probe.calls, 1);
+    }
+    #[test]
+    fn non_page_and_other_limits_do_not_consume_once() {
+        let mut probe = DispatchProbe::default(); let mut fault = QualifiedStartupRpcFault::default();
+        for (action, limit) in [(wire::Action::Read, 1), (wire::Action::PageVersioned, 0),
+            (wire::Action::PageVersioned, 2)] {
+            let raw = respond_startup_rpc_fixture_target(&mut probe,
+                &request(action, limit, 1, &digest()), Some(&mut fault)).unwrap();
+            assert!(response(&raw).get_root::<wire::response::Reader>().unwrap().get_error().unwrap().is_empty());
+            assert!(!fault.consumed);
+        }
+        assert_eq!(probe.calls, 3);
+    }
+    #[test]
+    fn invalid_request_validation_does_not_consume_once() {
+        let mut probe = DispatchProbe::default(); let mut fault = QualifiedStartupRpcFault::default();
+        for raw in [vec![], request(wire::Action::PageVersioned, 1, 2, &digest()),
+            request(wire::Action::PageVersioned, 1, 1, &[0; 32])] {
+            let reply = respond_startup_rpc_fixture_target(&mut probe, &raw, Some(&mut fault)).unwrap();
+            assert!(!response(&reply).get_root::<wire::response::Reader>().unwrap().get_error().unwrap().is_empty());
+            assert!(!fault.consumed); assert_eq!(probe.calls, 0);
+        }
+        let _ = respond_startup_rpc_fixture_target(&mut probe,
+            &request(wire::Action::PageVersioned, 1, 1, &digest()), Some(&mut fault)).unwrap();
+        assert!(fault.consumed); assert_eq!(probe.calls, 0);
+    }
+    #[test]
+    fn first_matching_request_is_typed_and_permanently_consumed() {
+        let raw = request(wire::Action::PageVersioned, 1, 1, &digest());
+        let message = validated_request(&raw, 128 * 1024).unwrap();
+        let request = message.get_root::<wire::request::Reader>().unwrap();
+        let mut fault = QualifiedStartupRpcFault::default();
+        let error = startup_rpc_fixture_before_dispatch(Some(&mut fault), &request).unwrap_err();
+        assert_eq!(error.downcast_ref::<QualifiedStartupRpcFixtureError>(), Some(&QualifiedStartupRpcFixtureError));
+        assert!(fault.consumed);
+        assert!(startup_rpc_fixture_before_dispatch(Some(&mut fault), &request).is_ok());
+        assert!(fault.consumed);
+    }
+    #[test]
+    fn original_encoder_delivers_error_without_dispatch_then_allows_later_request() {
+        let mut probe = DispatchProbe::default(); let mut fault = QualifiedStartupRpcFault::default();
+        let raw = request(wire::Action::PageVersioned, 1, 1, &digest());
+        let first = respond_startup_rpc_fixture_target(&mut probe, &raw, Some(&mut fault)).unwrap();
+        let message = response(&first); let r = message.get_root::<wire::response::Reader>().unwrap();
+        assert_eq!(r.get_version(), 1); assert_eq!(r.get_digest().unwrap(), digest());
+        assert_eq!(r.get_error().unwrap().to_str().unwrap(), QualifiedStartupRpcFixtureError.to_string());
+        assert!(r.get_payload().unwrap().is_empty()); assert_eq!(r.get_ids().unwrap().len(), 0);
+        assert!(fault.consumed); assert_eq!(probe.calls, 0);
+        let second = respond_startup_rpc_fixture_target(&mut probe, &raw, Some(&mut fault)).unwrap();
+        let message = response(&second); let r = message.get_root::<wire::response::Reader>().unwrap();
+        assert!(r.get_error().unwrap().is_empty()); assert_eq!(r.get_ids().unwrap().len(), 1);
+        assert_eq!(probe.calls, 1); assert!(fault.consumed);
+    }
+
+    #[test]
+    fn private_magic_routes_delegate_original_without_consuming_once() {
+        // This proves routing, not the native owner or private service implementations.
+        let magics: [&[u8]; 3] = [crate::agent_task_discovery::MAGIC,
+            crate::agent_product_control::MAGIC, morrow_agent_catalog_admin_v1::MAGIC];
+        for magic in magics {
+            let mut raw = magic.to_vec(); raw.extend_from_slice(b"synthetic-route-payload");
+            let mut probe = DispatchProbe::default(); let mut fault = QualifiedStartupRpcFault::default();
+            let mut original_calls = 0; let mut fixture_calls = 0;
+            let reply = route_qualified_startup_rpc(&mut probe, &raw, &mut fault,
+                |_, bytes| { original_calls += 1; Ok(bytes.to_vec()) },
+                |target, bytes, fault| { fixture_calls += 1;
+                    respond_startup_rpc_fixture_target(target, bytes, Some(fault)) }).unwrap();
+            assert_eq!(reply, raw); assert_eq!(original_calls, 1); assert_eq!(fixture_calls, 0);
+            assert_eq!(probe.calls, 0); assert!(!fault.consumed);
+        }
+    }
+    #[test]
+    fn capnp_route_uses_original_encoder_and_consumes_once() {
+        let raw = request(wire::Action::PageVersioned, 1, 1, &digest());
+        let mut probe = DispatchProbe::default(); let mut fault = QualifiedStartupRpcFault::default();
+        let mut original_calls = 0; let mut fixture_calls = 0;
+        let first = route_qualified_startup_rpc(&mut probe, &raw, &mut fault,
+            |_, _| { original_calls += 1; Err("unexpected original private lane".into()) },
+            |target, bytes, fault| { fixture_calls += 1;
+                respond_startup_rpc_fixture_target(target, bytes, Some(fault)) }).unwrap();
+        let message = response(&first); let r = message.get_root::<wire::response::Reader>().unwrap();
+        assert_eq!(r.get_version(), 1); assert_eq!(r.get_digest().unwrap(), digest());
+        assert_eq!(r.get_error().unwrap().to_str().unwrap(), QualifiedStartupRpcFixtureError.to_string());
+        assert_eq!(original_calls, 0); assert_eq!(fixture_calls, 1);
+        assert!(fault.consumed); assert_eq!(probe.calls, 0);
+        let second = route_qualified_startup_rpc(&mut probe, &raw, &mut fault,
+            |_, _| { original_calls += 1; Err("unexpected original private lane".into()) },
+            |target, bytes, fault| { fixture_calls += 1;
+                respond_startup_rpc_fixture_target(target, bytes, Some(fault)) }).unwrap();
+        assert!(response(&second).get_root::<wire::response::Reader>().unwrap().get_error().unwrap().is_empty());
+        assert_eq!(original_calls, 0); assert_eq!(fixture_calls, 2);
+        assert!(fault.consumed); assert_eq!(probe.calls, 1);
     }
 }

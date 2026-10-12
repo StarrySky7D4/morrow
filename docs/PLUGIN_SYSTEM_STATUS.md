@@ -1,17 +1,13 @@
 # 插件系统当前状态
 
 <!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
-## 启动集成回归与生产应用状态（2026-10-13）
+## 启动 RPC 故障夹具与限定验证（2026-10-13）
 
-Stage496 的原 23 项 Flutter/Dart 回归在 5 个测试文件中全部通过，0 失败、0 跳过；真实语言资产已绑定，恢复页面原中文“操作结果未知”断言通过，未放松测试断言。原外层与内部 runner 均返回 0，双流 EOF／原工具组闭合已记录；编译器／测试器工具清理的实际 -1 保留，不据此宣称全部后代静止或 native 验收。
+本轮同步四个已编译 Rust 源文件：显式故障 feature 默认关闭，原 owner 校验、三条私有服务路由及正常路径保留。四阶段 Windows AMD64 编译与严格 HOME 后验通过；原 14 项与开启夹具后的 21 项合成回归全部通过，合计 35 次执行、21 个不同名称，其余清单条目未运行。保存的两份选定程序完成独立完整哈希／身份核对，未执行。
 
-Stage500 的十处生产源码／测试变更已提交开发分支，保留现有密钥读取加固及 20 份原锁。Stage490 的 2394 文件源码与独立依赖种子准备已完成；Stage501 当前组合 Rust 库测试编译（--lib --no-run）及宿主／supervisor 双 binary 编译均实际退出 0、双流 EOF，两次编译后的独立依赖目录严格复核均通过。原锁与源码守卫通过；双 binary 仅编译读取，未运行。
+真实 RPC 失败测试仅归档源码候选，当前组合 native／VM 验收 NOT_RUN。宿主验收工具仍为未封存禁用草稿；原 Unknown 保留且不重放。SDK26／G04、namespace、祖先目录持续 reparse、生产沙箱与网络仍 OPEN，release_eligible=false，SDK 未冻结。此前 23 项 Dart 回归保持原范围，本轮未重跑。
 
-Stage503 从实际库测试产物列出 345 项，仅指定的 14 项合成测试逐项执行，均为 1 通过、0 忽略、退出 0 和双流 EOF；其余 331 项仅列出未运行。这些本地结果不构成 Windows native／VM 验收。
-
-原 Stage479 的 22 通过／1 失败、Stage491003 的入口语法失败及 Stage491004 的配置引用守卫拒绝分别保留；后两次的 23 项为 NOT_RUN。原 native Unknown 保留且不重放。SDK26／G04、namespace、ancestor、生产安全与网络边界仍 OPEN，release_eligible=false；不宣称 SDK 冻结或 Release。
-
-详见[当前限定进度](../reports/windows-sdk-progress.md)；[前次失败记录](../reports/reconstruction-2026-10-13/startup-integration-progress-v11.md)与旧 v1–v11 保留历史范围。Agent 会话层与安全执行层完成后暂停，扩展执行层延期；版本、tag 与 Release 不变。
+详见 [v12 验证与后续任务](../reports/reconstruction-2026-10-13/startup-rpc-fault-validation-v12.md)。Agent 会话层与安全执行层完成后暂停准备预览，扩展执行层延期；版本、锁、工作流、main、标签与 Release 不变。本轮仅推送开发分支。
 <!-- C28-WINDOWS-REGRESSION-20261013-END -->
 
 

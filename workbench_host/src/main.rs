@@ -316,6 +316,12 @@ fn frames(
                 continue;
             }
         }
+        #[cfg(all(windows, feature="c28-qualified-startup-rpc-fault-fixture"))]
+        let response = zeroize::Zeroizing::new(match qualification.as_deref_mut() {
+            Some(slot) => slot.respond_startup_rpc_fixture(host, &bytes)?,
+            None => morrow_workbench_host::protocol::respond(host, &bytes)?,
+        });
+        #[cfg(not(all(windows, feature="c28-qualified-startup-rpc-fault-fixture")))]
         let response =
             zeroize::Zeroizing::new(morrow_workbench_host::protocol::respond(host, &bytes)?);
         if bytes.starts_with(morrow_workbench_host::agent_product_control::MAGIC) {

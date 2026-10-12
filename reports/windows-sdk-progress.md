@@ -1,3 +1,13 @@
+<!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
+## 启动 RPC 故障夹具与限定验证（2026-10-13）
+
+本轮同步四个已编译 Rust 源文件：显式故障 feature 默认关闭，原 owner 校验、三条私有服务路由及正常路径保留。四阶段 Windows AMD64 编译与严格 HOME 后验通过；原 14 项与开启夹具后的 21 项合成回归全部通过，合计 35 次执行、21 个不同名称，其余清单条目未运行。保存的两份选定程序完成独立完整哈希／身份核对，未执行。
+
+真实 RPC 失败测试仅归档源码候选，当前组合 native／VM 验收 NOT_RUN。宿主验收工具仍为未封存禁用草稿；原 Unknown 保留且不重放。SDK26／G04、namespace、祖先目录持续 reparse、生产沙箱与网络仍 OPEN，release_eligible=false，SDK 未冻结。此前 23 项 Dart 回归保持原范围，本轮未重跑。
+
+详见 [v12 验证与后续任务](reconstruction-2026-10-13/startup-rpc-fault-validation-v12.md)。Agent 会话层与安全执行层完成后暂停准备预览，扩展执行层延期；版本、锁、工作流、main、标签与 Release 不变。本轮仅推送开发分支。
+<!-- C28-WINDOWS-REGRESSION-20261013-END -->
+
 ## 当前 Rust 编译与 14 项指定合成回归（2026-10-13）
 
 Stage501 当前组合的库测试编译（--lib --no-run）与宿主／supervisor 双 binary 编译均实际退出 0、双流 EOF；原锁与源码守卫、两次编译后的独立依赖目录严格复核均通过。双 binary 仅编译读取，未运行。

@@ -59,6 +59,8 @@ tempfile = "=3.27.0"
 
 [features]
 c28-product-session-qualification = ["morrow-native-pipe-win/c28-product-session-qualification"]
+# Separate, default-off RPC fault fixture; never enabled by the normal product feature.
+c28-qualified-startup-rpc-fault-fixture = ["c28-product-session-qualification"]
 fault-injection = ["morrow-core/fault-injection", "morrow-audit/fault-injection", "morrow-plugin-runtime/fault-injection"]
 
 [[example]]

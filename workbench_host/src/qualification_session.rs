@@ -70,6 +70,8 @@ pub struct QualificationSlot {
     admission: b::Admission, binding: HostBinding, incarnation: [u8;32], profile: [u8;32],
     policy: Policy, reviewed: Option<policy::Reviewed>, context: Option<AgentContext>,
     key: Option<TaskKey>, acknowledged: Option<TaskKey>, started: Option<Instant>, stopping: Option<Instant>,
+    #[cfg(feature="c28-qualified-startup-rpc-fault-fixture")]
+    startup_rpc_fault: morrow_workbench_host::protocol::QualifiedStartupRpcFault,
 }
 impl QualificationSlot {
     pub fn new(admission: b::Admission, host: &Workbench, record: &serde_json::Value) -> Result<Self> {
@@ -77,7 +79,16 @@ impl QualificationSlot {
             incarnation: b::unhex(record["incarnation"].as_str().ok_or("qualification incarnation")?)?,
             profile: b::unhex(record["profile"].as_str().ok_or("qualification profile")?)?,
             admission, policy: Policy::default(), reviewed: None, context: None, key: None,
-            acknowledged: None, started: None, stopping: None })
+            acknowledged: None, started: None, stopping: None,
+            #[cfg(feature="c28-qualified-startup-rpc-fault-fixture")]
+            startup_rpc_fault: Default::default() })
+    }
+    // Only a real, admitted binary-private slot selects this fixture response.
+    #[cfg(feature="c28-qualified-startup-rpc-fault-fixture")]
+    pub fn respond_startup_rpc_fixture(&mut self, host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
+        self.original(host)?;
+        morrow_workbench_host::protocol::respond_qualified_startup_rpc_fixture(
+            host, bytes, &mut self.startup_rpc_fault)
     }
     pub fn fence(&mut self, host: &mut Workbench) {
         self.policy.fenced = true;

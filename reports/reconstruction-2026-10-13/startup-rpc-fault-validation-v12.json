@@ -1,0 +1,320 @@
+{
+  "schema": "MORROW_STARTUP_RPC_FAULT_VALIDATION_V12",
+  "date": "2026-10-13",
+  "source_base_commit": "ea8fd99f079aa3aab3eb26cfac32effbebba8007",
+  "development_ref": "refs/heads/codex/windows-sdk-convergence-20261005",
+  "source_changes": {
+    "workbench_host/Cargo.toml": {
+      "before": {
+        "bytes": 3637,
+        "sha256": "b6e10ece7d550d11993e097e01c9a13c92a3a8dac051e3b7e2748eeff887cee6"
+      },
+      "after": {
+        "bytes": 3805,
+        "sha256": "30d817f9c61b53bec53f48749950a7b1ba3e7e3f0267c043464ab9724f1cab40"
+      }
+    },
+    "workbench_host/src/main.rs": {
+      "before": {
+        "bytes": 15358,
+        "sha256": "a7a4769e321de325c1d9873fa8e6724b9dfd66e11f54cd8e302bbe3ee88ff810"
+      },
+      "after": {
+        "bytes": 15771,
+        "sha256": "7f09c3e7bd3df8cf83fdfc87e2a2a3b7916bf29b77131f167041a539f3936235"
+      }
+    },
+    "workbench_host/src/qualification_session.rs": {
+      "before": {
+        "bytes": 14827,
+        "sha256": "762fb091201caef5610c8d0150cce828887850b07caced90392f770649837bc6"
+      },
+      "after": {
+        "bytes": 15511,
+        "sha256": "e2311459aec58e9e563e53ed25485a02dad845b44e4619fbf90cac6f37df39e5"
+      }
+    },
+    "workbench_host/src/protocol.rs": {
+      "before": {
+        "bytes": 75968,
+        "sha256": "f9afc69f6324c82fd7723f9027b5190fa5739b91ae8869e9f707f284dcdca654"
+      },
+      "after": {
+        "bytes": 87816,
+        "sha256": "bfa285d4848cf71acf61f8db81550345431738cd3102a2f4d844cd409eb3ed91"
+      }
+    }
+  },
+  "feature": {
+    "name": "c28-qualified-startup-rpc-fault-fixture",
+    "default_enabled": false,
+    "normal_qualification_enables_fixture": false,
+    "scope": "Windows-only first validated PageVersioned limit=1 RPC error after original qualification owner check; three private service lanes retain original routing"
+  },
+  "compile_phases": [
+    {
+      "phase": "normal-lib",
+      "features": [
+        "c28-product-session-qualification"
+      ],
+      "actual_outer_exit": 0,
+      "capture_pin": {
+        "bytes": 911,
+        "sha256": "2b41bc9ed1e8df68de6c63e1ce4b0ed0c62a6c698d7cffb28376af67ddca741f"
+      },
+      "terminal_pin": {
+        "bytes": 3336,
+        "sha256": "096eaee8f3070132b397850367da1fbb1a05c9688f5312a454a06b53283e60c4"
+      },
+      "HOME_report_pin": {
+        "bytes": 7157,
+        "sha256": "9e696e3e7c53e9dafc4ad652e67220a07c850333d23497b933619650e74f3d83"
+      },
+      "full_stream_pins": {
+        "stdout": {
+          "bytes": 971233,
+          "sha256": "7ce6b9e7ac6517b5fe6b72effb177448515f508cd749f40a751c8ee35b86e7a4"
+        },
+        "stderr": {
+          "bytes": 37889,
+          "sha256": "e08eb21e957a19bfc8a3ed6032fbb2656c3c7891e000e3f1a2bd148e821e213e"
+        }
+      },
+      "status": "PASS_COMPILE_AND_STRICT_HOME_ONLY"
+    },
+    {
+      "phase": "normal-products",
+      "features": [
+        "c28-product-session-qualification"
+      ],
+      "actual_outer_exit": 0,
+      "capture_pin": {
+        "bytes": 909,
+        "sha256": "869a6f6d1277772cb89be28a8665e91dc44cdd26dd3c8868278cbff489744a6a"
+      },
+      "terminal_pin": {
+        "bytes": 9117,
+        "sha256": "2921e4e7e8a95a83b22506940569d328d5193260676b74ef34a72c738c217855"
+      },
+      "HOME_report_pin": {
+        "bytes": 7744,
+        "sha256": "593ef97f25304a77e0135312e22e8951573543b175275d6cb09dcf9f1fc70a7f"
+      },
+      "full_stream_pins": {
+        "stdout": {
+          "bytes": 963982,
+          "sha256": "67075f6eb67dece0aaab7c02059611b78fa233a53777ceb7f1444cc1fb6d1079"
+        },
+        "stderr": {
+          "bytes": 6463,
+          "sha256": "3279aa4d875c387c25af1c39a340338e14a3d37b236d4640c22f9885b9d72eb6"
+        }
+      },
+      "status": "PASS_COMPILE_AND_STRICT_HOME_ONLY"
+    },
+    {
+      "phase": "fixture-lib",
+      "features": [
+        "c28-product-session-qualification",
+        "c28-qualified-startup-rpc-fault-fixture"
+      ],
+      "actual_outer_exit": 0,
+      "capture_pin": {
+        "bytes": 910,
+        "sha256": "c3ff3d2f0b7063ffbc4e3f82db00091f701ea1872d823c24f5e52f9408532a8c"
+      },
+      "terminal_pin": {
+        "bytes": 3433,
+        "sha256": "c481fb9762a1233e338eb80298d19b877619aff8fb83602aa49775d95c0728de"
+      },
+      "HOME_report_pin": {
+        "bytes": 8305,
+        "sha256": "d8cb9497b88f9d552adf77816107a4e438a39b839cfdd81f36f56986a99a3d03"
+      },
+      "full_stream_pins": {
+        "stdout": {
+          "bytes": 969341,
+          "sha256": "e26dee4aab83bb75f65cc6e8ce9210176102845440a4004abcb5090f57c8bac5"
+        },
+        "stderr": {
+          "bytes": 37889,
+          "sha256": "ede98e7205f2028d9dc1b68fb8b1f1e8fb5fe166e50bad8b40a85ff16f5b7d3f"
+        }
+      },
+      "status": "PASS_COMPILE_AND_STRICT_HOME_ONLY"
+    },
+    {
+      "phase": "fixture-products",
+      "features": [
+        "c28-product-session-qualification",
+        "c28-qualified-startup-rpc-fault-fixture"
+      ],
+      "actual_outer_exit": 0,
+      "capture_pin": {
+        "bytes": 909,
+        "sha256": "decf7ef2ad5888503ed3a6c3ca0c589256232c4154a08aa796eba9de83b9c088"
+      },
+      "terminal_pin": {
+        "bytes": 9256,
+        "sha256": "76962d94bcc3d558b5f886ca94bcce09588a04e7b6f2a2c72fb78743023a0d61"
+      },
+      "HOME_report_pin": {
+        "bytes": 8894,
+        "sha256": "39fc638b0436cfea9815283a3a09805b687aa42100f84195c3b80feafa064380"
+      },
+      "full_stream_pins": {
+        "stdout": {
+          "bytes": 962186,
+          "sha256": "7e53ba542509c51f1bafcec09aac52d16093ca51f6536b91917e5d43b2e2b27c"
+        },
+        "stderr": {
+          "bytes": 6463,
+          "sha256": "21d0ab253a660a2c792772b0ea00268eae43297c5445c9669e24fa3226271bd8"
+        }
+      },
+      "status": "PASS_COMPILE_AND_STRICT_HOME_ONLY"
+    }
+  ],
+  "tests": [
+    {
+      "phase": "normal-lib",
+      "ROOT_outer_tool_facts": [
+        "4bfe69",
+        89760,
+        "4ed0c8"
+      ],
+      "actual_outer_exit": 0,
+      "terminal_pin": {
+        "bytes": 10603,
+        "sha256": "ec59a8acc277a6af39eaf864f5e100300f40a97036b883f9fbfea1363d6028c1"
+      },
+      "actual_listed": 345,
+      "actual_selected_passed": 14,
+      "nonselected": "LISTED_ONLY_NOT_RUN",
+      "ignored_selected": 0
+    },
+    {
+      "phase": "fixture-lib",
+      "ROOT_outer_tool_facts": [
+        "994e42",
+        56239,
+        "084c3d"
+      ],
+      "actual_outer_exit": 0,
+      "terminal_pin": {
+        "bytes": 14380,
+        "sha256": "3c78b893d99594fa8f0eeddca78081f309b7937bd17f96d3c0c706d14a412310"
+      },
+      "actual_listed": 352,
+      "actual_selected_passed": 21,
+      "nonselected": "LISTED_ONLY_NOT_RUN",
+      "ignored_selected": 0
+    }
+  ],
+  "test_names": {
+    "normal-lib": [
+      "io_tasks::agent_stop_tests::cancel_pending_join_latches_stopping_and_keeps_ack_closed",
+      "io_tasks::agent_stop_tests::cancel_wrong_key_preserves_running_worker_without_stop",
+      "io_tasks::agent_stop_tests::cancel_non_agent_and_retained_exit_do_not_latch_stop",
+      "io_tasks::agent_stop_tests::cancelled_failed_join_is_unavailable_never_reclaimed_or_acknowledged",
+      "workbench_supervision::startup_quarantine::tests::committed_abnormal_receipt_retains_unknown_owner_and_never_claims_exit",
+      "workbench_supervision::startup_quarantine::tests::each_missing_resource_or_join_fact_refuses_before_ledger_effects",
+      "workbench_supervision::startup_quarantine::tests::legacy_normal_and_changed_identity_cannot_prepare_quarantine",
+      "workbench_supervision::startup_quarantine::tests::stale_original_row_and_postcommit_tamper_are_unconfirmed",
+      "workbench_supervision::startup_quarantine::tests::normal_v1_v2_owner_update_paths_remain_separate",
+      "workbench_supervision::supervisor_runtime::quarantine_control_tests::quarantine_terminal_is_exact_and_requires_abnormal_closing",
+      "workbench_supervision::supervisor_runtime::quarantine_control_tests::normal_close_and_heartbeat_are_not_quarantine_terminals",
+      "workbench_supervision::supervisor_runtime::quarantine_control_tests::lost_before_abnormal_flag_keeps_reader_without_renewal",
+      "workbench_supervision::supervisor_runtime::quarantine_control_tests::loss_during_renewal_keeps_terminal_receiver_without_resetting_loss",
+      "workbench_supervision::supervisor_runtime::quarantine_control_tests::ordinary_heartbeat_and_nonloss_error_preserve_original_choices"
+    ],
+    "fixture-lib": [
+      "io_tasks::agent_stop_tests::cancel_pending_join_latches_stopping_and_keeps_ack_closed",
+      "io_tasks::agent_stop_tests::cancel_wrong_key_preserves_running_worker_without_stop",
+      "io_tasks::agent_stop_tests::cancel_non_agent_and_retained_exit_do_not_latch_stop",
+      "io_tasks::agent_stop_tests::cancelled_failed_join_is_unavailable_never_reclaimed_or_acknowledged",
+      "workbench_supervision::startup_quarantine::tests::committed_abnormal_receipt_retains_unknown_owner_and_never_claims_exit",
+      "workbench_supervision::startup_quarantine::tests::each_missing_resource_or_join_fact_refuses_before_ledger_effects",
+      "workbench_supervision::startup_quarantine::tests::legacy_normal_and_changed_identity_cannot_prepare_quarantine",
+      "workbench_supervision::startup_quarantine::tests::stale_original_row_and_postcommit_tamper_are_unconfirmed",
+      "workbench_supervision::startup_quarantine::tests::normal_v1_v2_owner_update_paths_remain_separate",
+      "workbench_supervision::supervisor_runtime::quarantine_control_tests::quarantine_terminal_is_exact_and_requires_abnormal_closing",
+      "workbench_supervision::supervisor_runtime::quarantine_control_tests::normal_close_and_heartbeat_are_not_quarantine_terminals",
+      "workbench_supervision::supervisor_runtime::quarantine_control_tests::lost_before_abnormal_flag_keeps_reader_without_renewal",
+      "workbench_supervision::supervisor_runtime::quarantine_control_tests::loss_during_renewal_keeps_terminal_receiver_without_resetting_loss",
+      "workbench_supervision::supervisor_runtime::quarantine_control_tests::ordinary_heartbeat_and_nonloss_error_preserve_original_choices",
+      "protocol::startup_rpc_fixture_tests::absent_qualification_state_never_injects",
+      "protocol::startup_rpc_fixture_tests::non_page_and_other_limits_do_not_consume_once",
+      "protocol::startup_rpc_fixture_tests::invalid_request_validation_does_not_consume_once",
+      "protocol::startup_rpc_fixture_tests::first_matching_request_is_typed_and_permanently_consumed",
+      "protocol::startup_rpc_fixture_tests::original_encoder_delivers_error_without_dispatch_then_allows_later_request",
+      "protocol::startup_rpc_fixture_tests::private_magic_routes_delegate_original_without_consuming_once",
+      "protocol::startup_rpc_fixture_tests::capnp_route_uses_original_encoder_and_consumes_once"
+    ]
+  },
+  "test_scope": "35 exact synthetic executions: normal14 + fixture21; 21 distinct names, including seven additional fixture tests. Remaining listed tests NOT_RUN.",
+  "independent_closed_record_reviews": {
+    "c28-stage509-prefix3-closed-review001/report.json": {
+      "bytes": 10375,
+      "sha256": "5b3705e794d6b8e417c75e11f2ed48373e4f68608efb32adf1955854cdc691e4"
+    },
+    "c28-stage509-prefix4-closed-review001/report.json": {
+      "bytes": 9603,
+      "sha256": "c9551e90e7275990f62ef6388d31bb2619f81f5cd6cb5aa9c0b05e676a5ac6f8"
+    },
+    "c28-stage512-fixture21-closed-review001/report.json": {
+      "bytes": 15904,
+      "sha256": "2fc3a7397f68fbc16893b6383032e3e300373e186a3096b5498373ec549dc5c5"
+    },
+    "c28-stage512-normal14-closed-review001/report.json": {
+      "bytes": 13142,
+      "sha256": "b23a8568e56670ecf0f0c66858b12e6cdecac552a5411074274d5df5bd064d12"
+    },
+    "c28-stage508-independent-review001/report.json": {
+      "bytes": 6298,
+      "sha256": "bb99a8533a80428b9761b374259d382d37acc09f76bfce7f27d2395db22630cf"
+    },
+    "c28-stage517-split-role-independent-review001/report.json": {
+      "bytes": 7831,
+      "sha256": "b37a9cfb710f4543042b49d6799a12b629028b22f95080203b630e447da436c7"
+    }
+  },
+  "selected_saved_product_roles": {
+    "host": {
+      "bytes": 62505472,
+      "sha256": "55207f9fdc34f126458390cfb1c7ff2731fc2e7d25d16185d92c4d2dc8897693"
+    },
+    "supervisor": {
+      "bytes": 27311104,
+      "sha256": "0a958eeeb132ec6cf25e41c44e465f0c0ef4dcac12afe5872cca9a9a771d5241"
+    }
+  },
+  "saved_product_verification": "Two saved AMD64 PE files full SHA256 twice with stable identity by ROOT and independent reviewer; no product execution. Full SOURCE/HOME/vendor payloads were not reread during this later PE check.",
+  "source_files_in_compiled_copy": 2394,
+  "unchanged_lock_count": 20,
+  "current_production_Dart": "UNCHANGED_THIS_PUBLICATION",
+  "native_test_candidate": "SOURCE_ARCHIVED_NOT_RUN",
+  "materializer514_guest_carrier515": "STATIC_SOURCE_REVIEW_ONLY_DISABLED_NOT_RUN",
+  "host_collector516": "INCOMPLETE_DISABLED_DRAFT_NOT_SEALED_LATEST_PATCH_NOT_REVIEWED",
+  "binding518_519": "AUTHOR_SOURCE_ONLY_NOT_GENERATED_NOT_RUN",
+  "current_combination_VM_native": "NOT_RUN",
+  "retained_original_native_results": "UNKNOWN_NO_REPLAY_NO_STOP",
+  "SDK26_G04": "OPEN",
+  "namespace": "OPEN",
+  "continuous_ancestor_reparse": "OPEN",
+  "production_sandbox_network": "OPEN",
+  "release_eligible": false,
+  "extension_execution": "DEFERRED",
+  "next": [
+    "Finish and independently review exact-bound materializer and host collector/checker.",
+    "Materialize locally and independently read back finite payload and ZIP.",
+    "Fresh VM readiness and a separately controlled real RPC-failure open/catch/quarantine validation; preserve original Unknown without replay.",
+    "Pause after Agent-session and safe-execution completion for test preview preparation."
+  ],
+  "publication_excludes": [
+    "VM effect/credential/control scripts",
+    "unfinished draft source",
+    "binaries and build/cache directories",
+    "private operation logs and packages"
+  ]
+}

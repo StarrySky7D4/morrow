@@ -1,0 +1,14 @@
+{
+  "schema": "MORROW_RPC_FAULT_NATIVE_SOURCE_CANDIDATE_V1",
+  "status": "SOURCE_ONLY_NOT_COMPILED_NOT_RUN",
+  "members": {
+    "overlay/test/workbench_startup_rpc_fault_quarantine_native_test.dart": {
+      "bytes": 12649,
+      "sha256": "676892da9e8bcb8d2c0a81140ed934a9931d0830f87f14203ea900452a30a56b"
+    }
+  },
+  "production_applied": false,
+  "VM_execution": "NOT_RUN",
+  "SDK26_G04": "OPEN",
+  "release_eligible": false
+}
