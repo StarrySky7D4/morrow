@@ -1,13 +1,13 @@
 # Morrow · 明隙
 
 <!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
-## 启动回归与候选组合进度（2026-10-13）
+## 启动集成诊断与回归入口状态（2026-10-13）
 
-新增 23 项内存回归实际 22 通过、1 失败：恢复页面未找到预期中文 Unknown 提示，根因待核对；原退出 1 保留，不是预期负控。启动观测 11 项、合同 7 项、channel 2 项和新增 JSON 测试均通过，supervision 一项失败。原编译器／测试器清理 -1 保留。
+此前 23 项回归的 22 通过／1 失败和原退出 1 保留。已确认旧测试器缺少语言资产绑定；新资源入口先因 launcher 解析失败退出 254，括号修正后的入口又在进程启动前被一处包配置哈希引用守卫拒绝。两次均未运行 23 项测试，原中文提示失败尚未确认修复。
 
-新增可空快照测试候选与 Rust 三处注释增量，并完成十路径组合映射；现有读取加固与 20 份锁保留。候选尚未应用生产，当前联合构建与真实 open/catch、正常／异常关闭仍待验收。旧 native Unknown 保留，不重放。SDK26／G04、namespace、ancestor、生产安全与网络仍 OPEN，release_eligible=false；不宣称冻结。
+已限定结束一个失败的本机记录器，保留 -1／1／1 三层原退出；不据此推断来宾释放或 native 通过。十路径候选仍未应用生产，新的联合构建及真实 open/catch、正常／异常关闭待验收。原 native Unknown 不重放；SDK26／G04、namespace、ancestor、生产安全和网络仍 OPEN，release_eligible=false。
 
-详见[本轮结果与待办](reports/reconstruction-2026-10-13/startup-integration-progress-v10.md)。旧 v1–v9 与历史失败保持。Agent 会话层与安全执行层完成后暂停，扩展执行层延期；版本、tag 与 Release 不变。
+详见[实际结果与下一步](reports/reconstruction-2026-10-13/startup-integration-progress-v11.md)。旧 v1–v10 与候选保持原字节。Agent 会话层与安全执行层完成后暂停，扩展执行层延期；版本、tag 与 Release 不变。
 
 <!-- C28-WINDOWS-REGRESSION-20261013-END -->
 

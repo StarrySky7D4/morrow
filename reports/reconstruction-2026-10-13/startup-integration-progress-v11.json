@@ -1,0 +1,98 @@
+{
+  "SDK26_G04": "OPEN",
+  "ancestor_continuous_reparse": "OPEN",
+  "asset_diagnosis": {
+    "missing_tester_asset_binding_observed": true,
+    "real_language_pack_bytes": 953670,
+    "real_language_pack_count": 9,
+    "status": "SOURCE_AND_CLOSED_LOG_EVIDENCE_ONLY",
+    "widget_failure_cause_confirmed": false
+  },
+  "base_commit": "c9c7ca2d389c7927840f9ae4cdf23517fe8f7d40",
+  "composition": {
+    "fourteen_Rust_tests": "NOT_RUN",
+    "fresh_combined_build": "NOT_RUN",
+    "map": "source-candidates/startup-quarantine-runtime-r003/composition.json",
+    "original_locks_preserved": 20,
+    "paths": 10,
+    "production_applied": false,
+    "projected_declared_source_count": 2394,
+    "two_current_binaries": "NOT_BUILT"
+  },
+  "corrected_regression_attempts": [
+    {
+      "capture_errors": [],
+      "dual_EOF": true,
+      "failure": "LAUNCHER_PARSE_FAILURE_BEFORE_MAIN",
+      "original_dart_exit": 254,
+      "outer_exit": 1,
+      "phase": "asset_bound_launcher",
+      "preparation_exit": 0,
+      "selected_tests": 23,
+      "tests": "NOT_RUN"
+    },
+    {
+      "capture_preflight_exit": 1,
+      "failure": "PACKAGE_CONFIGURATION_CONTROL_PIN_MISMATCH",
+      "fresh_run_and_capture_roots_absent_at_readback": true,
+      "mismatched_controls": 1,
+      "phase": "parenthesized_launcher",
+      "preparation_exit": 0,
+      "process_spawn": false,
+      "selected_tests": 23,
+      "tests": "NOT_RUN"
+    }
+  ],
+  "date": "2026-10-13",
+  "disclosure": "Content pins only; no raw logs, machine paths, process/session/account/VM identifiers, credentials, protected data, Drive information, operational scripts, binaries or archives.",
+  "evidence_content_pins": {
+    "launcher_failure_outer_terminal": {
+      "bytes": 3220,
+      "sha256": "740c710b9b9b829dc421ace89479e6f85ed4655f19bb89f5082063e054976241"
+    },
+    "local_actual_readback": {
+      "bytes": 5614,
+      "sha256": "967d1b076afd7381c0ca565876fea8f42c82dba28a9ee55f6cd0d8113ae064ec"
+    },
+    "package_control_preflight_readback": {
+      "bytes": 767,
+      "sha256": "5700c887dbf95c3956974c54cbaca4cb366642d17581ae4895e5f72e39822db3"
+    }
+  },
+  "existing_native_unknown": "RETAINED_UNCONFIRMED_NO_REPLAY",
+  "extension_execution": "DEFERRED",
+  "local_failed_recorder_closure": {
+    "actual_wrapper_exit": -1,
+    "guest_connection": false,
+    "guest_release": "NOT_PROVEN",
+    "native_acceptance": false,
+    "original_child_dual_EOF": true,
+    "original_child_exit": 1,
+    "original_outer_exit": 1,
+    "policy_restoration": "NOT_PROVEN",
+    "status": "LOCAL_WRAPPER_TERMINATED_ORIGINAL_CHILD_FAILURE_PRESERVED"
+  },
+  "namespace": "OPEN",
+  "native_open_catch": "NOT_COVERED",
+  "network_constraints": "OPEN",
+  "new_VM_native_DPAPI_execution": "NOT_RUN",
+  "next": [
+    "Synchronize the exact package configuration control pin, reseal the test entry and rerun the unchanged 23 methods with real language assets.",
+    "After regression passes, apply the coordinated ten-path source set, preserve current audit hardening and original locks, and perform a fresh joint Rust build and selected tests.",
+    "Validate actual RustWorkbench.open/catch and normal/abnormal native closure separately; never replay retained Unknown outcomes."
+  ],
+  "pause_after": "Agent session and safe execution completion, before preparing the next preview.",
+  "previous_memory_regression": {
+    "failed": 1,
+    "failure_is_expected": false,
+    "original_failure_preserved": true,
+    "original_outer_exit": 1,
+    "passed": 22,
+    "report": "startup-integration-progress-v10.json"
+  },
+  "production_security": "OPEN",
+  "publication_scope": "Status documentation only; production sources, old candidates, historical reports, locks, version and workflows remain unchanged.",
+  "release_eligible": false,
+  "schema": "PUBLIC_STARTUP_INTEGRATION_PROGRESS_V11",
+  "status": "LOCAL_DIAGNOSIS_AND_BLOCKED_REGRESSION_ENTRY"
+}

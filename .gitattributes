@@ -371,3 +371,7 @@
 /reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r003/startup-quarantine-comments.diff -text
 /reports/reconstruction-2026-10-13/startup-integration-progress-v10.json -text
 /reports/reconstruction-2026-10-13/startup-integration-progress-v10.md -text
+
+# Bounded status-only progress update: preserve report bytes.
+/reports/reconstruction-2026-10-13/startup-integration-progress-v11.json -text
+/reports/reconstruction-2026-10-13/startup-integration-progress-v11.md -text
