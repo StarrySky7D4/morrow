@@ -10,6 +10,8 @@ pub struct Owner {
 }
 #[path = "owner_recovery.rs"]
 pub mod recovery;
+#[path = "startup_quarantine.rs"]
+mod startup_quarantine;
 const MARKER: &[u8] = b"Morrow supervised workbench v1\n";
 fn schema(db: &Connection) -> Result<()> {
     let version: i64 = db.query_row("PRAGMA user_version", [], |r| r.get(0))?;
@@ -450,3 +452,9 @@ mod ledger_tests {
         assert!(Owner::claim(dir.path(),&host,&package).is_err());
     }
 }
+
+// Keep the trusted original resource producer in the ledger crate. Only the
+// zero-argument process entry is public; no proof/token constructor is exposed.
+#[path = "workbench_supervisor.rs"]
+mod supervisor_runtime;
+pub use supervisor_runtime::run as run_supervisor;

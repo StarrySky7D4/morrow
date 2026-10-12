@@ -15,7 +15,15 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
     required this.expectedProfile,
     required this.packageSha256,
     bool qualificationStartupObservationEnabled = false,
+    void Function(void Function())? registerQualificationStartupFailure,
   }) : _qualificationStartupObservationEnabled = qualificationStartupObservationEnabled {
+    if (!qualificationStartupObservationEnabled &&
+        registerQualificationStartupFailure != null) {
+      throw ArgumentError('Failed-startup marking requires qualification mode');
+    }
+    // Only the original open() catch retains this constructor-time closure.
+    // It is never published through the presentation notifier.
+    registerQualificationStartupFailure?.call(_markQualificationStartupFailed);
     unawaited(_exit.future.catchError((Object _) => -1));
     process.stdout.listen(
       _receive,
@@ -45,7 +53,7 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
       _finish();
     }, onError: _fail);
     _heartbeat = Timer.periodic(const Duration(milliseconds: 200), (_) {
-      if (_code == null) unawaited(_send(2, Uint8List(0)).catchError(_fail));
+      if (_code == null && (!_startupFailed || _normalCloseRequested)) unawaited(_send(2, Uint8List(0)).catchError(_fail));
     });
   }
   final Process process;
@@ -68,6 +76,55 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
   // The public presentation notifier is not an admission capability.
   WorkbenchSupervisionState? _validatedState;
   WorkbenchSupervisionState? _initialValidatedState;
+  bool _startupFailed = false, _normalCloseRequested = false;
+  bool _quarantineSent = false, _quarantineWritten = false;
+  bool _quarantineWritePending = false;
+  // Independent deeply immutable copies, never read back from public state.
+  Map<String, Object?>? _preparedQuarantine, _failedStartupQuarantine;
+
+  void _markQualificationStartupFailed() {
+    if (_startupFailed) return;
+    _startupFailed = true;
+    _closing = true; // Revoke local business admission before any await.
+    if (_normalCloseRequested) return; // Never repurpose a normal close.
+    _heartbeat?.cancel();
+    // Keep this pipe open for the one kind4 request. The original supervisor's
+    // unchanged lease clock, not a fabricated Dart status, observes loss.
+    try {
+      _requestQuarantineIfAllowed();
+    } catch (error, stack) {
+      // Preserve open()'s primary exception even if existing wire proof is bad.
+      _fail(error, stack);
+    }
+  }
+
+  void _requestQuarantineIfAllowed() {
+    final state = _validatedState;
+    final initial = _identity;
+    if (!_startupFailed || _normalCloseRequested || _quarantineSent ||
+        _failed || _code != null || initial == null || state == null ||
+        !state.uncertain ||
+        state.record['abnormal_resource_closure_protocol'] is! int ||
+        state.record['abnormal_resource_closure_protocol'] != 1 ||
+        initial.record['abnormal_resource_closure_protocol'] is! int ||
+        initial.record['abnormal_resource_closure_protocol'] != 1) return;
+    validateWorkbenchQuarantineIdentity(state.record, initial.record);
+    if (state.record['gate_closed'] != true ||
+        state.ownerPhase != 'Retained' || state.record['normal_shutdown'] == true) {
+      throw const FormatException('Invalid failed-startup closing status');
+    }
+    _quarantineSent = true; // Latch before scheduling, including write failure.
+    _quarantineWritePending = true;
+    unawaited(_send(4, Uint8List(0)).then<void>((_) {
+      _quarantineWritten = true;
+      _quarantineWritePending = false;
+      _finish();
+    }, onError: (Object error, StackTrace stack) {
+      _quarantineWritePending = false;
+      _fail(error, stack);
+      _finish();
+    }));
+  }
 
   /// Incomplete data copied only from this original private receive path.
   /// This snapshot grants neither private control nor owner-release proof.
@@ -90,6 +147,7 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
       stderrEof: _diagnosticsEnded,
       secondaryCloseFailure: secondaryCloseFailure,
       observerFailure: observerFailure,
+      failedStartupQuarantine: _failedStartupQuarantine,
     );
   }
 
@@ -123,6 +181,11 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
   Future<int> get exitCode => _exit.future;
   Future<void> _send(int kind, Uint8List bytes) {
     final next = _writes.then((_) async {
+      // Retire already queued heartbeats after the open catch marks failure.
+      if (kind == 2 && _startupFailed && !_normalCloseRequested) return;
+      if (kind == 1 && _startupFailed) {
+        throw const WorkbenchSupervisionUnconfirmed('Business admission is closed');
+      }
       if (_failed || _code != null) {
         throw const WorkbenchSupervisionUnconfirmed(
           'Supervisor connection has ended',
@@ -150,7 +213,9 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
 
   @override
   Future<void> closeInput() {
+    if (_startupFailed && !_normalCloseRequested) return _writes;
     if (_closing) return _writes;
+    _normalCloseRequested = true;
     _closing = true;
     // Explicit ordered close, not transport EOF. Heartbeats remain active while
     // the original host drains; no timeout can manufacture WorkerExit<Storage>.
@@ -177,11 +242,15 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
           if (_identity == null) {
             throw const FormatException('Host data before supervisor identity');
           }
+          if (_startupFailed) throw const FormatException('Business data after startup failure');
           _output.add(payload);
         } else if (kind == 3) {
           _recordDiagnostic(payload);
           _diagnostics.add(payload);
         } else if (kind == 2) {
+          if (_preparedQuarantine != null) {
+            throw const FormatException('Status after terminal quarantine proof');
+          }
           final state = WorkbenchSupervisionState.decode(payload);
           if (state.record['version'] != 2 ||
               state.record['supervisor_sha256'] != supervisorSha256 ||
@@ -225,12 +294,22 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
               'Supervisor reopened revoked admission',
             );
           }
-          if (state.released && !_closing) {
+          if (state.released && !_normalCloseRequested) {
             throw const FormatException('Unrequested normal shutdown proof');
+          }
+          final prepared = state.record['abnormal_resource_closure_prepared'];
+          if (prepared != null) {
+            if (!_startupFailed || !_quarantineSent || _normalCloseRequested) {
+              throw const FormatException('Unrequested quarantine proof');
+            }
+            _preparedQuarantine = validateWorkbenchQuarantinePrepared(
+              state.record, _identity!.record,
+            );
           }
           _initialValidatedState ??= state;
           _validatedState = state;
           supervision.value = state;
+          _requestQuarantineIfAllowed();
           if (state.uncertain) {
             _output.addError(
               const WorkbenchSupervisionUnconfirmed(
@@ -275,11 +354,25 @@ final class SupervisedWorkbenchChannel implements WorkbenchChannel {
     if (_code == null ||
         !_outputEnded ||
         !_diagnosticsEnded ||
+        _quarantineWritePending ||
         _exit.isCompleted) {
       return;
     }
+    // This evidence is deliberately independent of normal exitCode/release.
+    // Actual original process completion and both pipe EOFs are prerequisites.
+    if (!_failed && _startupFailed && !_normalCloseRequested &&
+        _quarantineWritten && _preparedQuarantine != null && _code == 2) {
+      _failedStartupQuarantine = Map<String, Object?>.unmodifiable({
+        'version': 1, 'kind': 'failed-startup-quarantined',
+        'prepared': _preparedQuarantine,
+        'supervisor_exit_confirmed': true, 'actual_supervisor_exit_code': 2,
+        'stdout_eof': true, 'stderr_eof': true,
+        'business_outcome': 'Unknown', 'owner_phase': 'Retained',
+        'normal_shutdown': false, 'accepted': false,
+      });
+    }
     final proof = _validatedState;
-    if (!_failed && _code == 0 && proof?.released == true) {
+    if (!_failed && _normalCloseRequested && _code == 0 && proof?.released == true) {
       _exit.complete(0);
     } else {
       _exit.completeError(

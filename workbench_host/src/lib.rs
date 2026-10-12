@@ -1,5 +1,7 @@
 //! Trusted application host. Guests have ordinary package-bound tasks and exact
 //! object grants. UI reads remain available when the package is unavailable.
+// The private supervisor runtime shares existing qualification bootstrap code.
+extern crate self as morrow_workbench_host;
 use morrow_core::{
     content::{Attachment, CardRecord},
     content_change::ContentChange,

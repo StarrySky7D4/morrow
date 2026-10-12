@@ -76,6 +76,100 @@ final class WorkbenchSupervisionState {
   }
 }
 
+// These functions validate wire data only. They cannot establish process exit
+// or issue a receipt; the original channel keeps the validated copy privately.
+const workbenchQuarantineIdentityFields = <String>[
+  'profile', 'generation', 'incarnation', 'host_sha256', 'package_sha256',
+  'supervisor_sha256', 'supervisor_pid', 'supervisor_creation_filetime',
+  'child_pid', 'child_creation_filetime', 'recovery_history_head',
+];
+
+void validateWorkbenchQuarantineIdentity(
+    Map<String, dynamic> state, Map<String, dynamic> initial) {
+  for (final key in workbenchQuarantineIdentityFields) {
+    if (state[key] != initial[key]) {
+      throw const FormatException('Quarantine session identity changed');
+    }
+  }
+  final history = initial['recovery_history_head'];
+  if (history is! String ||
+      !(history.isEmpty || RegExp(r'^[a-f0-9]{64}$').hasMatch(history))) {
+    throw const FormatException('Missing original recovery history binding');
+  }
+}
+
+Map<String, Object?> validateWorkbenchQuarantinePrepared(
+    Map<String, dynamic> state, Map<String, dynamic> initial) {
+  validateWorkbenchQuarantineIdentity(state, initial);
+  final p = state['abnormal_resource_closure_prepared'];
+  const trueFields = <String>[
+    'resource_reclaimed', 'gate_closed', 'business_gate_revoked', 'tree_empty',
+    'child_exit', 'stdout_eof', 'stderr_eof', 'control_reaped',
+  ];
+  const keys = <String>{
+    'version', 'kind', 'identity', 'committed_record_sha256', 'child_exit_code',
+    ...trueFields, 'reader_joins', 'durable_abnormal_record_confirmed',
+    'normal_shutdown', 'owner_phase', 'business_outcome', 'protocol_ack',
+    'accepted', 'supervisor_exit_confirmed',
+  };
+  if (state['version'] is! int || state['version'] != 2 ||
+      state['phase'] != 'ClosingUnconfirmed' ||
+      state['abnormal_resource_closure_protocol'] is! int ||
+      state['abnormal_resource_closure_protocol'] != 1 ||
+      initial['abnormal_resource_closure_protocol'] is! int ||
+      initial['abnormal_resource_closure_protocol'] != 1 ||
+      state['owner_phase'] != 'Retained' || state['normal_shutdown'] != false ||
+      state['durable_proof'] != true || state['business_outcome'] != 'Unknown' ||
+      state['protocol_ack'] != 'not_applicable' ||
+      state['child_exit_code'] is! int ||
+      !trueFields.every((k) => state[k] == true) ||
+      p is! Map<String, dynamic> || p.length != keys.length ||
+      !keys.every(p.containsKey) || p['version'] is! int || p['version'] != 1 ||
+      p['kind'] != 'AbnormalResourceClosurePreparedV1' ||
+      p['durable_abnormal_record_confirmed'] != true ||
+      p['normal_shutdown'] != false || p['owner_phase'] != 'Retained' ||
+      p['business_outcome'] != 'Unknown' || p['protocol_ack'] != 'not_applicable' ||
+      p['accepted'] != false || p['supervisor_exit_confirmed'] != false ||
+      p['child_exit_code'] is! int || p['child_exit_code'] != state['child_exit_code'] ||
+      !trueFields.every((k) => p[k] == true)) {
+    throw const FormatException('Invalid abnormal resource closure extension');
+  }
+  final digest = p['committed_record_sha256'];
+  final identity = p['identity'];
+  final joins = p['reader_joins'];
+  final outerJoins = state['abnormal_resource_closure_proof'];
+  const joinFields = <String>[
+    'stdout_reader_joined', 'stderr_reader_joined', 'controller_reader_joined',
+  ];
+  if (digest is! String || !RegExp(r'^[a-f0-9]{64}$').hasMatch(digest) ||
+      identity is! Map<String, dynamic> ||
+      identity.length != workbenchQuarantineIdentityFields.length ||
+      !workbenchQuarantineIdentityFields.every((k) =>
+        identity.containsKey(k) && identity[k] == initial[k]) ||
+      joins is! Map<String, dynamic> || joins.length != 4 ||
+      joins['version'] is! int || joins['version'] != 1 ||
+      !joinFields.every((k) => joins[k] == true) ||
+      outerJoins is! Map<String, dynamic> || outerJoins.length != 4 ||
+      outerJoins['version'] is! int || outerJoins['version'] != 1 ||
+      !joinFields.every((k) => outerJoins[k] == true)) {
+    throw const FormatException('Invalid quarantine identity/digest/reader joins');
+  }
+  // Copy only the exact validated shape. Public notifier consumers cannot mutate
+  // either nested proof used later by the original channel's _finish().
+  return Map<String, Object?>.unmodifiable({
+    for (final k in keys)
+      k: k == 'identity'
+        ? Map<String, Object?>.unmodifiable({
+            for (final key in workbenchQuarantineIdentityFields) key: identity[key],
+          })
+        : k == 'reader_joins'
+          ? Map<String, Object?>.unmodifiable({
+              'version': 1, for (final key in joinFields) key: true,
+            })
+          : p[k],
+  });
+}
+
 final class WorkbenchSupervisionUnconfirmed implements Exception {
   const WorkbenchSupervisionUnconfirmed(this.detail);
   final String detail;
@@ -98,6 +192,7 @@ final class WorkbenchStartupObservation {
     required this.stderrEof,
     Object? secondaryCloseFailure,
     Object? observerFailure,
+    this.failedStartupQuarantine,
   }) : initialValidatedState = _copyState(initialValidatedState),
        latestValidatedState = _copyState(latestValidatedState),
        diagnosticBytes = List<int>.unmodifiable(diagnosticBytes),
@@ -123,6 +218,7 @@ final class WorkbenchStartupObservation {
   final int diagnosticBytesObserved;
   final int? actualExitCode;
   final bool stdoutEof, stderrEof;
+  final Map<String, Object?>? failedStartupQuarantine;
   final ({String text, bool truncated}) primaryFailure;
   final ({String text, bool truncated})? secondaryCloseFailure, observerFailure;
 
@@ -194,6 +290,7 @@ final class WorkbenchStartupObservation {
     'original_close_settled': stage == 'after_original_close',
     'secondary_close_failure': secondaryCloseFailure?.text,
     'secondary_close_failure_truncated': secondaryCloseFailure?.truncated,
+    'failed_startup_quarantine': failedStartupQuarantine,
     'observer_failure': observerFailure?.text,
     'observer_failure_truncated': observerFailure?.truncated,
   });

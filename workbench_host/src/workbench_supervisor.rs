@@ -4,7 +4,7 @@ use morrow_native_pipe_win::{
 };
 #[cfg(feature = "c28-product-session-qualification")]
 use morrow_native_pipe_win::job::prepare_qualified_host_environment;
-use morrow_workbench_host::{
+use crate::{
     Result,
     workbench_supervision::{Owner, root_for},
 };
@@ -48,6 +48,27 @@ async fn emit(output:&mut tokio::io::Stdout,signal:&LeaseSignal,kind:u8,bytes:&[
 enum Command {
     Data(zeroize::Zeroizing<Vec<u8>>),
     Close,
+    QuarantineClose,
+}
+// This terminal is not a normal Close, business ACK, release or replay permit.
+#[derive(PartialEq, Eq)]
+enum ControllerReaderExit { Lost, QuarantineClose }
+fn quarantine_control_allowed(frame: &[u8], abnormal: bool) -> bool {
+    abnormal && frame == [4]
+}
+// Return whether the original reader should continue. Ignoring a heartbeat
+// does not renew the lease, clear loss, reopen the business gate, or admit kind4.
+// The second loss observation closes the race inside the original heartbeat.
+fn controller_heartbeat_continue(
+    lost_before: bool, abnormal: bool,
+    renew: impl FnOnce() -> std::io::Result<()>,
+    lost_after_error: impl FnOnce() -> bool,
+) -> bool {
+    if lost_before || abnormal { return true; }
+    match renew() {
+        Ok(()) => true,
+        Err(_) => lost_after_error(),
+    }
 }
 pub async fn run() -> Result<u32> {
     if let Some(code) = management().await? { return Ok(code); }
@@ -116,7 +137,9 @@ pub async fn run() -> Result<u32> {
     let reader_gate = gate.clone();
     let graceful = Arc::new(AtomicBool::new(false));
     let reading_graceful = graceful.clone();
-    std::thread::Builder::new()
+    let abnormal_closing = Arc::new(AtomicBool::new(false));
+    let reader_abnormal = abnormal_closing.clone();
+    let mut controller_reader = Some(std::thread::Builder::new()
         .name("workbench-supervisor-controller".into())
         .spawn(move || {
             let mut input = std::io::stdin().lock();
@@ -138,10 +161,14 @@ pub async fn run() -> Result<u32> {
                     break;
                 }
                 let command = match frame[0] {
+                    4 if quarantine_control_allowed(&frame, reader_abnormal.load(Ordering::Acquire)) => {
+                        Command::QuarantineClose
+                    }
                     2 if size == 1 => {
-                        if reader_signal.heartbeat().is_err() {
-                            break;
-                        }
+                        if !controller_heartbeat_continue(
+                            reader_signal.lost(), reader_abnormal.load(Ordering::Acquire),
+                            || reader_signal.heartbeat(), || reader_signal.lost(),
+                        ) { break; }
                         continue;
                     }
                     3 if size == 1 && !reading_graceful.swap(true, Ordering::AcqRel) => {
@@ -158,12 +185,15 @@ pub async fn run() -> Result<u32> {
                         break;
                     }
                 };
+                let terminal = matches!(command, Command::QuarantineClose);
                 if send.try_send(command).is_err() {
                     reader_signal.disconnect();
                     break;
                 }
+                if terminal { return ControllerReaderExit::QuarantineClose; }
             }
-        })?;
+            ControllerReaderExit::Lost
+        })?);
     let mut owner = Owner::claim(&root, &host, &package)?;
     let job = Job::new()?;
     let initial = owner.record();
@@ -259,6 +289,8 @@ pub async fn run() -> Result<u32> {
     let mut output = tokio::io::stdout();
     record["phase"] = "Running".into();
     record["owner_phase"] = "Active".into();
+    // Optional capability only. Existing v1/v2 consumers retain their old path.
+    record["abnormal_resource_closure_protocol"] = 1.into();
     emit(&mut output,&signal, 2, record.to_string().as_bytes()).await?;
     let mut closing = false;
     let mut fault = false;
@@ -266,6 +298,7 @@ pub async fn run() -> Result<u32> {
     let mut exit = None;
     let mut drain_at = None;
     let mut persisted_closing = false;
+    let mut quarantine_requested = false;
     loop {
         if signal.lost() && !fault {
             fault = true;
@@ -282,6 +315,8 @@ pub async fn run() -> Result<u32> {
             }
             record["owner_phase"] = "Retained".into();
             record["phase"] = "ClosingUnconfirmed".into();
+            abnormal_closing.store(true, Ordering::Release);
+            record["abnormal_resource_closure_protocol"] = 1.into();
             emit(&mut output,&signal, 2, record.to_string().as_bytes()).await?;
         }
         if fault
@@ -309,6 +344,12 @@ pub async fn run() -> Result<u32> {
                     record["business_gate_revoked"] = true.into();
                     record["gate_closed"] = true.into();
                     persisted_closing = owner.update(record.clone()).is_ok();
+                    abnormal_closing.store(true, Ordering::Release);
+                    let mut pending = record.clone();
+                    pending["phase"] = "ClosingUnconfirmed".into();
+                    pending["owner_phase"] = "Retained".into();
+                    pending["abnormal_resource_closure_protocol"] = 1.into();
+                    emit(&mut output, &signal, 2, pending.to_string().as_bytes()).await?;
                 }
                 if let Some(writer) = stdin.take() {
                     writer.reclaim_bounded(Duration::from_millis(750));
@@ -323,6 +364,9 @@ pub async fn run() -> Result<u32> {
             && outtask.is_finished()
             && errtask.is_finished()
             && job.active_processes()? == 0
+            && (!abnormal_closing.load(Ordering::Acquire)
+                || (quarantine_requested
+                    && controller_reader.as_ref().is_some_and(|reader| reader.is_finished())))
         {
             break;
         }
@@ -340,16 +384,24 @@ pub async fn run() -> Result<u32> {
         }
         tokio::select! {
          event=output_events.recv(),if !output_events.is_closed()||!output_events.is_empty()=>{if let Some((kind,bytes))=event{emit(&mut output,&signal,kind,&bytes).await?;}},
-         command=commands.recv(),if !closing=>{match command{
-          Some(Command::Data(bytes))=>{if signal.lost()||gate.load(Ordering::Acquire){continue;}let writer=stdin.as_mut().ok_or("closed host input")?;let mut frame=zeroize::Zeroizing::new(Vec::with_capacity(bytes.len()+4));frame.extend_from_slice(&(bytes.len() as u32).to_le_bytes());frame.extend_from_slice(&bytes);tokio::select!{write=writer.write_all(&frame)=>{if write.is_err(){signal.disconnect();gate.store(true,Ordering::Release);}},_=async{while !signal.lost(){tokio::time::sleep(Duration::from_millis(5)).await;}}=>{}}},
-          Some(Command::Close)=>{closing=true;gate.store(true,Ordering::Release);record=owner.record();record["phase"]="Closing".into();record["gate_closed"]=true.into();persisted_closing=owner.update(record.clone()).is_ok();if !persisted_closing{signal.disconnect();continue;}if let Some(writer)=stdin.take(){writer.reclaim_bounded(Duration::from_millis(750));}record["owner_phase"]="Closing".into();emit(&mut output,&signal,2,record.to_string().as_bytes()).await?;},
-          None=>signal.disconnect()
+         command=commands.recv(),if !closing || (abnormal_closing.load(Ordering::Acquire) && !quarantine_requested)=>{match command{
+          Some(Command::QuarantineClose) if closing && fault && abnormal_closing.load(Ordering::Acquire)=>{quarantine_requested=true;gate.store(true,Ordering::Release);},
+          Some(Command::Data(bytes)) if !closing=>{if signal.lost()||gate.load(Ordering::Acquire){continue;}let writer=stdin.as_mut().ok_or("closed host input")?;let mut frame=zeroize::Zeroizing::new(Vec::with_capacity(bytes.len()+4));frame.extend_from_slice(&(bytes.len() as u32).to_le_bytes());frame.extend_from_slice(&bytes);tokio::select!{write=writer.write_all(&frame)=>{if write.is_err(){signal.disconnect();gate.store(true,Ordering::Release);}},_=async{while !signal.lost(){tokio::time::sleep(Duration::from_millis(5)).await;}}=>{}}},
+          Some(Command::Close) if !closing=>{closing=true;gate.store(true,Ordering::Release);record=owner.record();record["phase"]="Closing".into();record["gate_closed"]=true.into();persisted_closing=owner.update(record.clone()).is_ok();if !persisted_closing{signal.disconnect();continue;}if let Some(writer)=stdin.take(){writer.reclaim_bounded(Duration::from_millis(750));}record["owner_phase"]="Closing".into();emit(&mut output,&signal,2,record.to_string().as_bytes()).await?;},
+          Some(_) | None=>signal.disconnect()
          }},
          _=tokio::time::sleep(Duration::from_millis(5))=>{}
         }
     }
     let outjoined = outtask.is_finished() && matches!(outtask.await, Ok(Ok(())));
     let errjoined = errtask.is_finished() && matches!(errtask.await, Ok(Ok(())));
+    // Never block the runtime on a live original stdin reader. A panic, live
+    // reader or nonterminal result is unconfirmed; the hard deadline remains.
+    let controller_joined = if quarantine_requested
+        && controller_reader.as_ref().is_some_and(|reader| reader.is_finished())
+    {
+        matches!(controller_reader.take().unwrap().join(), Ok(ControllerReaderExit::QuarantineClose))
+    } else { false };
     let reclaimed = exit.is_some()
         && outdone.load(Ordering::Acquire)
         && errdone.load(Ordering::Acquire)
@@ -378,7 +430,22 @@ pub async fn run() -> Result<u32> {
     record["business_outcome"] = "Unknown".into();
     record["normal_shutdown"] = normal.into();
     record["phase"] = if normal { "Released" } else { "Closing" }.into();
-    let persisted = owner.update(record.clone()).is_ok();
+    let mut abnormal_prepared = None;
+    let persisted = if !normal && fault && reclaimed && controller_joined
+        && quarantine_requested && persisted_closing
+    {
+        record["business_gate_revoked"] = true.into();
+        record["abnormal_resource_closure_proof"] = serde_json::json!({
+            "version": 1, "stdout_reader_joined": outjoined,
+            "stderr_reader_joined": errjoined, "controller_reader_joined": controller_joined,
+        });
+        match owner.prepare_abnormal_resource_closure(record.clone()) {
+            Ok(prepared) => { abnormal_prepared = Some(prepared.into_extension()); true }
+            Err(_) => false, // A possibly committed row is still Unknown; no retry.
+        }
+    } else {
+        owner.update(record.clone()).is_ok()
+    };
     record["owner_phase"] = if normal && persisted {
         "Released"
     } else {
@@ -393,6 +460,9 @@ pub async fn run() -> Result<u32> {
     .into();
     record["durable_proof"] = persisted.into();
     record["normal_shutdown"] = normal.into();
+    if let Some(prepared) = abnormal_prepared {
+        record["abnormal_resource_closure_prepared"] = prepared;
+    }
     emit(&mut output,&signal, 2, record.to_string().as_bytes()).await?;
     Ok(if normal && persisted && !signal.lost() { 0 } else { 2 })
 }
@@ -407,9 +477,9 @@ async fn management() -> Result<Option<u32>> {
     }
     let root = std::path::Path::new(&args[1]); let host = std::path::Path::new(&args[2]); let package = std::path::Path::new(&args[3]);
     let result = if mode=="--owner-preview" {
-        morrow_workbench_host::workbench_supervision::recovery::preview(root,host,package)
+        crate::workbench_supervision::recovery::preview(root,host,package)
     } else {
-        morrow_workbench_host::workbench_supervision::recovery::recover(root,host,package,&args[4],true)
+        crate::workbench_supervision::recovery::recover(root,host,package,&args[4],true)
     };
     let (code, value) = match result {
         Ok(value)=>(0,value),
@@ -419,4 +489,65 @@ async fn management() -> Result<Option<u32>> {
     let mut output = tokio::io::stdout();
     tokio::time::timeout(Duration::from_secs(2), async { output.write_all(bytes.as_bytes()).await?; output.flush().await }).await??;
     Ok(Some(code))
+}
+
+#[cfg(test)]
+mod quarantine_control_tests {
+    use super::*;
+    #[test]
+    fn quarantine_terminal_is_exact_and_requires_abnormal_closing() {
+        assert!(quarantine_control_allowed(&[4], true));
+        for frame in [&[][..], &[3][..], &[4, 0][..], &[1, 4][..]] {
+            assert!(!quarantine_control_allowed(frame, true));
+        }
+        assert!(!quarantine_control_allowed(&[4], false));
+    }
+    #[test]
+    fn lost_before_abnormal_flag_keeps_reader_without_renewal() {
+        use std::cell::Cell;
+        for (lost, abnormal) in [(true, false), (true, true), (false, true)] {
+            let calls = Cell::new(0);
+            assert!(controller_heartbeat_continue(lost, abnormal,
+                || { calls.set(calls.get() + 1); Ok(()) },
+                || panic!("ignored heartbeat must not consult renewal failure")));
+            assert_eq!(calls.get(), 0);
+        }
+        // Continuing a lost reader does not admit terminal4 before actual closing.
+        assert!(!quarantine_control_allowed(&[4], false));
+        assert!(!quarantine_control_allowed(&[1, 4], true));
+    }
+    #[test]
+    fn loss_during_renewal_keeps_terminal_receiver_without_resetting_loss() {
+        let signal = LeaseSignal::default();
+        assert!(controller_heartbeat_continue(false, false,
+            || { signal.disconnect(); signal.heartbeat() }, || signal.lost()));
+        assert!(signal.lost());
+        let original_elapsed = signal.lost_elapsed().unwrap();
+        assert!(controller_heartbeat_continue(true, false,
+            || panic!("lost heartbeat must not renew"), || false));
+        assert!(signal.lost_elapsed().unwrap() >= original_elapsed);
+        assert!(signal.heartbeat().is_err());
+        assert!(quarantine_control_allowed(&[4], true));
+    }
+    #[test]
+    fn ordinary_heartbeat_and_nonloss_error_preserve_original_choices() {
+        use std::cell::Cell;
+        let signal = LeaseSignal::default();
+        let calls = Cell::new(0);
+        assert!(controller_heartbeat_continue(false, false,
+            || { calls.set(calls.get() + 1); signal.heartbeat() }, || false));
+        assert_eq!(calls.get(), 1);
+        assert!(!signal.lost());
+        assert!(signal.lost_elapsed().is_none());
+        assert!(!controller_heartbeat_continue(false, false,
+            || Err(std::io::Error::other("synthetic nonloss heartbeat failure")),
+            || false));
+        assert!(!quarantine_control_allowed(&[3], true));
+    }
+    #[test]
+    fn normal_close_and_heartbeat_are_not_quarantine_terminals() {
+        assert!(!quarantine_control_allowed(&[2], true));
+        assert!(!quarantine_control_allowed(&[3], true));
+        assert!(ControllerReaderExit::Lost != ControllerReaderExit::QuarantineClose);
+    }
 }

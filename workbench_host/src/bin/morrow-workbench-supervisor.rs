@@ -1,7 +1,4 @@
 #![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
-#[cfg(windows)]
-#[path = "../workbench_supervisor.rs"]
-mod supervisor;
 fn main() {
     #[cfg(windows)]
     {
@@ -10,7 +7,7 @@ fn main() {
             .enable_all()
             .build()
             .unwrap();
-        let result = runtime.block_on(supervisor::run());
+        let result = runtime.block_on(morrow_workbench_host::workbench_supervision::run_supervisor());
         match result {
             Ok(code) => morrow_native_pipe_win::job::terminate_current_process(code),
             Err(e) => {

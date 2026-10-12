@@ -1,14 +1,15 @@
 # 插件系统当前状态
 
 <!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
-## 启动集成诊断与回归入口状态（2026-10-13）
+## 启动集成回归与生产应用状态（2026-10-13）
 
-此前 23 项回归的 22 通过／1 失败和原退出 1 保留。已确认旧测试器缺少语言资产绑定；新资源入口先因 launcher 解析失败退出 254，括号修正后的入口又在进程启动前被一处包配置哈希引用守卫拒绝。两次均未运行 23 项测试，原中文提示失败尚未确认修复。
+Stage496 的原 23 项 Flutter/Dart 回归在 5 个测试文件中全部通过，0 失败、0 跳过；真实语言资产已绑定，恢复页面原中文“操作结果未知”断言通过，未放松测试断言。原外层与内部 runner 均返回 0，双流 EOF／原工具组闭合已记录；编译器／测试器工具清理的实际 -1 保留，不据此宣称全部后代静止或 native 验收。
 
-已限定结束一个失败的本机记录器，保留 -1／1／1 三层原退出；不据此推断来宾释放或 native 通过。十路径候选仍未应用生产，新的联合构建及真实 open/catch、正常／异常关闭待验收。原 native Unknown 不重放；SDK26／G04、namespace、ancestor、生产安全和网络仍 OPEN，release_eligible=false。
+Stage500 已实际应用十处生产源码／测试变更，保留现有密钥读取加固及 20 份原锁。Stage490 已完成 2394 文件源码与独立依赖种子的纯数据准备；当前组合 Rust 编译、14 项 Rust 回归、宿主／supervisor 双 binary 构建以及 Windows native 验收均未完成。
 
-详见[实际结果与下一步](../reports/reconstruction-2026-10-13/startup-integration-progress-v11.md)。旧 v1–v10 与候选保持原字节。Agent 会话层与安全执行层完成后暂停，扩展执行层延期；版本、tag 与 Release 不变。
+原 Stage479 的 22 通过／1 失败、Stage491003 的入口语法失败及 Stage491004 的配置引用守卫拒绝分别保留；后两次的 23 项为 NOT_RUN。原 native Unknown 保留且不重放。SDK26／G04、namespace、ancestor、生产安全与网络边界仍 OPEN，release_eligible=false；不宣称 SDK 冻结或 Release。
 
+详见[当前限定进度](../reports/windows-sdk-progress.md)；[前次失败记录](../reports/reconstruction-2026-10-13/startup-integration-progress-v11.md)与旧 v1–v11 保留历史范围。Agent 会话层与安全执行层完成后暂停，扩展执行层延期；版本、tag 与 Release 不变。
 <!-- C28-WINDOWS-REGRESSION-20261013-END -->
 
 

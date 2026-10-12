@@ -381,6 +381,7 @@ class RustWorkbench
       ],
       environment: selection?.plan.configuration.environment,
     );
+    void Function()? markQualificationStartupFailed;
     final result = RustWorkbench._(
       supervised
           ? SupervisedWorkbenchChannel(
@@ -390,6 +391,8 @@ class RustWorkbench
               expectedProfile: expectedProfile,
               packageSha256: packageSha!,
               qualificationStartupObservationEnabled: selection != null,
+              registerQualificationStartupFailure: selection == null ? null :
+                  (mark) => markQualificationStartupFailed = mark,
             )
           : NativeWorkbenchChannel(process),
       cache,
@@ -410,6 +413,9 @@ class RustWorkbench
       }
       return result;
     } catch (error, stack) {
+      // Only this original startup catch marks the constructor-private channel.
+      // No observer, public notifier or normal close can request quarantine.
+      markQualificationStartupFailed?.call();
       // Startup failures normally also make the child exit nonzero. Cleanup
       // must not replace the actionable key/identity/library error with that
       // secondary exit status. close() still waits for the process to exit.
