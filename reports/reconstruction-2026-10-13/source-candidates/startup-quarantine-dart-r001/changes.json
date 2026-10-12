@@ -1,0 +1,35 @@
+{
+  "schema": "DART_STARTUP_QUARANTINE_PUBLIC_CHANGE_SUMMARY_V1",
+  "status": "SOURCE_NOT_RUN",
+  "production_activation": false,
+  "changes": [
+    {
+      "path": "lib/plugins/workbench_channel_supervised.dart",
+      "scope": "constructor-private failure mark; stop heartbeats on failed startup; one validated empty kind4; immutable prepared copy; independent actual-exit2/dualEOF snapshot receipt"
+    },
+    {
+      "path": "lib/plugins/workbench_supervision.dart",
+      "scope": "strict fixed prepared-extension validator and optional failed_startup_quarantine observation field"
+    },
+    {
+      "path": "lib/plugins/workbench_native.dart",
+      "scope": "constructor registrar retained in open-local variable; only original startup catch invokes it; original primary rethrow unchanged"
+    },
+    {
+      "path": "test/workbench_startup_quarantine_test.dart",
+      "scope": "15 memory-only real-channel tests; no actual process/native/filesystem/VM execution"
+    }
+  ],
+  "normal_close_and_exit_semantics": "UNCHANGED",
+  "original_unmodified_raw_spans_preserved": true,
+  "full_354_Rust_integration": "NOT_COMPILED_OR_ACCEPTED",
+  "validation": {
+    "Dart_analyzer": "NOT_RUN",
+    "memory_tests15": "NOT_RUN",
+    "VM": "NOT_RUN"
+  },
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "namespace": "OPEN",
+  "release": false
+}

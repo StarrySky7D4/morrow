@@ -1,0 +1,108 @@
+{
+  "schema": "DART_STARTUP_QUARANTINE_INERT_CANDIDATE_MANIFEST_V1",
+  "status": "SOURCE_NOT_RUN",
+  "public_relative_root": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r001",
+  "files": {
+    "README.md": {
+      "bytes": 2362,
+      "sha256": "151d5b89c36e9ace6f3a54eb4fe8bb6252fe14da0b236e2b334b32734b5baecf"
+    },
+    "changes.json": {
+      "bytes": 1332,
+      "sha256": "7f88d7e678504cf46297f379359b781e3a49abd6f369f13cbdf65c99612f5eaa"
+    },
+    "exact-tests.json": {
+      "bytes": 1266,
+      "sha256": "9af93df4253afc054ef5202abbceb0e75498d642b32fd9b532b8d7cbf06a8b72"
+    },
+    "overlay/lib/plugins/workbench_channel_supervised.dart": {
+      "bytes": 15128,
+      "sha256": "10e5dc2580b12a16a72faf37944e154fb9bd5ca9a823c8489ffc183a88bd8c07"
+    },
+    "overlay/lib/plugins/workbench_native.dart": {
+      "bytes": 120251,
+      "sha256": "940aaa1206fed9b3c4e73cb299fadf35e8280c7e18947f2a8f7b9f92664837b0"
+    },
+    "overlay/lib/plugins/workbench_supervision.dart": {
+      "bytes": 14323,
+      "sha256": "b5fb611de44f5e614de17905a01b9d54415562315a4843770c3474313dc79ef7"
+    },
+    "overlay/test/workbench_startup_quarantine_test.dart": {
+      "bytes": 14791,
+      "sha256": "9cda0c518f3ca5f720cfb850a4a7df18ba3be01cfd411bc0652d29efab7ffaf8"
+    }
+  },
+  "source_mapping": [
+    {
+      "candidate_path": "overlay/lib/plugins/workbench_channel_supervised.dart",
+      "project_relative_path": "lib/plugins/workbench_channel_supervised.dart",
+      "frozen_source_relative_path": "c28-stage357-startup-quarantine-dart-source001/overlay/lib/plugins/workbench_channel_supervised.dart",
+      "pin": {
+        "bytes": 15128,
+        "sha256": "10e5dc2580b12a16a72faf37944e154fb9bd5ca9a823c8489ffc183a88bd8c07"
+      }
+    },
+    {
+      "candidate_path": "overlay/lib/plugins/workbench_supervision.dart",
+      "project_relative_path": "lib/plugins/workbench_supervision.dart",
+      "frozen_source_relative_path": "c28-stage357-startup-quarantine-dart-source001/overlay/lib/plugins/workbench_supervision.dart",
+      "pin": {
+        "bytes": 14323,
+        "sha256": "b5fb611de44f5e614de17905a01b9d54415562315a4843770c3474313dc79ef7"
+      }
+    },
+    {
+      "candidate_path": "overlay/lib/plugins/workbench_native.dart",
+      "project_relative_path": "lib/plugins/workbench_native.dart",
+      "frozen_source_relative_path": "c28-stage357-startup-quarantine-dart-source001/overlay/lib/plugins/workbench_native.dart",
+      "pin": {
+        "bytes": 120251,
+        "sha256": "940aaa1206fed9b3c4e73cb299fadf35e8280c7e18947f2a8f7b9f92664837b0"
+      }
+    },
+    {
+      "candidate_path": "overlay/test/workbench_startup_quarantine_test.dart",
+      "project_relative_path": "test/workbench_startup_quarantine_test.dart",
+      "frozen_source_relative_path": "c28-stage357-startup-quarantine-dart-source001/overlay/test/workbench_startup_quarantine_test.dart",
+      "pin": {
+        "bytes": 14791,
+        "sha256": "9cda0c518f3ca5f720cfb850a4a7df18ba3be01cfd411bc0652d29efab7ffaf8"
+      }
+    }
+  ],
+  "baseline": {
+    "lib/plugins/workbench_channel_supervised.dart": {
+      "bytes": 10698,
+      "sha256": "04e88b820e379abc5cb0b830cdc63dcb00c9ad399d0625752442c37433617726"
+    },
+    "lib/plugins/workbench_supervision.dart": {
+      "bytes": 9397,
+      "sha256": "f1438aab5d739fc5c74ca6bb508e4b92b11b5dca9ae6df5a53d34ae2e9814910"
+    },
+    "lib/plugins/workbench_native.dart": {
+      "bytes": 119848,
+      "sha256": "b8a3070fd9ca8e4d37920db0ba32862c8811cbf0c0da8460808bba9519cad7c0"
+    }
+  },
+  "frozen_source_inventory_pin": {
+    "bytes": 4103,
+    "sha256": "04941f8a180a92230886dc740d815b9e5f862b2a97904965aed1698cc98d4802"
+  },
+  "raw_overlay_and_test_bytes_unchanged": true,
+  "exact_memory_test_count": 15,
+  "full_354_Rust_integration": "NOT_COMPILED_OR_ACCEPTED",
+  "production_activation": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "namespace": "OPEN",
+  "release": false,
+  "not_included": [
+    "absolute local paths",
+    "credentials or account values",
+    "Drive identifiers",
+    "operation records",
+    "raw logs",
+    "tool/cache payloads",
+    "VM authority or cleanup permission"
+  ]
+}

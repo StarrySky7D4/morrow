@@ -1,0 +1,24 @@
+{
+  "status": "SOURCE_ONLY_NOT_RUN",
+  "test_file": "test/workbench_startup_quarantine_test.dart",
+  "names": [
+    "only marked validated abnormal status sends one empty kind4",
+    "public notifier cannot authorize control or manufacture receipt",
+    "nested public proof mutations cannot alter private prepared copy",
+    "every original identity field including history rejects changed prepared identity",
+    "wrong history on abnormal status rejects before kind4",
+    "floating protocol capability cannot authorize kind4",
+    "unmarked extension cannot repurpose normal or nonfailure channel",
+    "fake extension flags digest reader joins and child code fail closed",
+    "missing actual EOF never creates quarantine receipt",
+    "wrong actual supervisor exit cannot accept prepared extension",
+    "duplicate terminal invalidates quarantine before actual closure",
+    "transport error retains Unknown without quarantine retry",
+    "normal close stays kind3 Released zero without quarantine receipt",
+    "legacy nonqualification normal release remains unchanged",
+    "failure observer keeps primary and actual failed close alongside separate receipt"
+  ],
+  "count": 15,
+  "real_channel_receive": true,
+  "processes_native_filesystem_vm": "NOT_RUN"
+}

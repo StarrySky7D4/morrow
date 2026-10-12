@@ -1,17 +1,17 @@
 # Morrow 文档导航与维护范围
 
 <!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
-## Windows 组合回归进度（2026-10-13）
+## Windows 构建与启动隔离候选进度（2026-10-13）
 
-Stage349 的固定组合源码（Stage345 停止状态、Stage346 同句柄读取、Stage347 私有账本）已完成真实 Windows library 测试编译；Stage353 九项 exact 合成回归全部通过，独立回读无发现。四项覆盖受控 AgentWorker，五项覆盖内存 SQLite 账本；合成资源事实不等于 Windows 内核资源闭合。
+Stage349 固定组合基线的 Windows AMD64 host／supervisor 已实际完成离线、锁定依赖编译，原 Cargo 退出 0、双 EOF。产物读取包装器曾因 Cargo 硬链接而退出 1，首个恢复读取器也失败；两次失败保留。修正版独立恢复两个产物，并通过两个原编译时间窗的完整选定 Cargo HOME 后验，未重新编译或执行程序。这是构建与产物核验，不是 Windows 产品运行验收。
 
-Stage354 修补 heartbeat 在丢失信号与异常标记之间的竞态；原函数与真实 LeaseSignal 的 std-only 摘取编译、五项原测试通过。完整 Stage350/354 runtime 的 library/bin 迁移、host／supervisor 双产品构建、Dart 接线与新 VM 产品复验仍为 `NOT_RUN`。修补仅作为源码增量归档，不激活生产运行链。
+Stage357 的 Dart 失败启动收尾已作为候选归档：私有失败标记关闭业务入口并停止心跳，只在原通道验证异常状态后单次请求隔离；实际退出 2 和双 EOF 才能记录单独快照，业务仍为 Unknown、owner 为 Retained。三个生产 overlay 与 15 个内存测试均未激活，Dart 静态分析和测试为 `NOT_RUN`；完整 Stage354 Rust 迁移及 Rust／Dart 联合运行仍未验证。
 
-历史 Stage341 业务仍为 `NOT_ACCEPTED`，旧 sealed Unknown 保留且不重放。`SDK26_G04=OPEN`、namespace 与祖先目录持续 reparse 防护仍 OPEN，`release_eligible=false`。此前 Stage345/346 限定验证继续保留，不升级为真实 DPAPI、完整 audit crate 或 sealed-basic 验收。
+此前 Stage353 九项合成回归、Stage354 五项原逻辑摘取测试的通过范围不变。历史 Stage341 仍为 `CLOSED_NOT_ACCEPTED`，旧 sealed Unknown 不重放。SDK26／G04、namespace 与祖先目录持续 reparse 防护仍 OPEN，`release_eligible=false`。
 
-下一步：完成精确产物绑定的 host／supervisor 构建、停止序列复验与完整 heartbeat/隔离运行链验证，再按原资源和连接证据推进 Windows 验收。应用版本不变，本次仅同步开发分支。
+下一步：先完成 Dart 候选的静态分析和 15 项回归，再验证完整 Rust／Dart 源图、原资源闭合与 Windows 停止序列。应用版本不变，本次仅同步开发分支，不创建 Release。
 
-详见[Windows SDK 限定进度](../reports/windows-sdk-progress.md)与[组合验证摘要](../reports/reconstruction-2026-10-13/windows-integrated-validation.json)。下方历史记录保留各自的时间和范围。
+详见[Windows SDK 进度](../reports/windows-sdk-progress.md)、[原生构建核验](../reports/reconstruction-2026-10-13/native-build-progress-v2.md)和[Dart 候选](../reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r001/README.md)。下方记录保留各自历史范围。
 <!-- C28-WINDOWS-REGRESSION-20261013-END -->
 
 

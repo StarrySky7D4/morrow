@@ -1,0 +1,98 @@
+{
+  "G04": "OPEN",
+  "SDK26": "OPEN",
+  "Windows341": "CLOSED_NOT_ACCEPTED",
+  "artifacts": {
+    "host": {
+      "architecture": "Windows AMD64",
+      "bytes": 62653952,
+      "executed": false,
+      "sha256": "7d30a4ece32daa58be7bc8bd1f3f000da6387072eb8507af28e5f4e9dbbf9bc1"
+    },
+    "supervisor": {
+      "architecture": "Windows AMD64",
+      "bytes": 27291648,
+      "executed": false,
+      "sha256": "152b4c38117b0ee7e716769e57bb6d2892a4844284e454d882ebbc74ff4b5221"
+    }
+  },
+  "build_baseline": "349 baseline; not the full 354 relocation",
+  "corrected_artifact_recovery": {
+    "exit_code": 0,
+    "status": "RECOVERED_ARTIFACT_READBACK",
+    "validation": "Two exact known aliases, common file identity across APIs, stable full metadata within each API, complete SHA-256, AMD64 header and newly saved copies. No Cargo replay or binary execution."
+  },
+  "date": "2026-10-13",
+  "evidence_boundary": "Closure facts are supplied by the original local ROOT observations. This public summary contains no raw logs or binaries and does not claim product, VM, SDK or namespace acceptance.",
+  "first_artifact_recovery": {
+    "exit_code": 1,
+    "reason": "mode/ctime representations differ between path and held-handle APIs",
+    "status": "FAILED_BEFORE_PAYLOAD_READ"
+  },
+  "namespace": "OPEN",
+  "original_cargo": {
+    "exit_code": 0,
+    "pid": 17932,
+    "stderr_EOF": true,
+    "stdout_EOF": true,
+    "two_product_bins_compiled": true
+  },
+  "original_wrapper": {
+    "exit_code": 1,
+    "reason": "The single-link reader rejected the two known Cargo hard-link aliases. The original failed wrapper result is preserved.",
+    "status": "FAILED_AFTER_CARGO_SUCCESS"
+  },
+  "release_eligible": false,
+  "schema": "MORROW_PUBLIC_NATIVE_BUILD_PROGRESS_V2",
+  "scope": "Windows AMD64 host and supervisor compile and artifact recovery only",
+  "stage357": "SOURCE_NOT_RUN",
+  "two_compiler_window_HOME_postreview": {
+    "Git": "Three declared thin repositories: frozen compressed bytes, decompressed object IDs, selected trees, tracked files and fixed local alternates checked. No index/reflog/full-history qualification.",
+    "bookkeeping": "Strict schema and integrity checks in an in-memory SQLite connection only; no disk SQLite connection.",
+    "findings": [],
+    "finite_HOME": {
+      "all_declared_contents_checked": true,
+      "directories": 873,
+      "files": 5592,
+      "namespace_before_and_after_checked": true,
+      "unknown_content_opened": false
+    },
+    "gap_admitted": false,
+    "input_drift": 0,
+    "locks": 20,
+    "original_compiler_windows": [
+      {
+        "dual_EOF": true,
+        "exit_code": 0,
+        "kind": "lib-test compile",
+        "stage": 353
+      },
+      {
+        "dual_EOF": true,
+        "exit_code": 0,
+        "kind": "product compile",
+        "stage": 355
+      }
+    ],
+    "original_wrapper_exit1_preserved": true,
+    "report_pin": {
+      "bytes": 21950,
+      "sha256": "cc7378396ce5ad3a1196edf3e310853b6c387841e8e37a1d1c9d7f4e00d2411f"
+    },
+    "scope": "Recovered product artifact and scoped thin-HOME postreview only; not product execution, VM, SDK or namespace acceptance.",
+    "source_files": 2392,
+    "status": "PASS_RECOVERED_PRODUCT_COMPILE_HOME_POSTREVIEW_ONLY",
+    "target_cache_reused": true,
+    "target_fresh": false,
+    "timestamp_membership": "Each bookkeeping timestamp must be in one of the two separately bounded original compiler UTC windows; original UTC/monotonic child boundaries are crosschecked. The intervening gap is not admitted.",
+    "vendor_metadata": {
+      "records": 1668,
+      "scope": "Lock-derived Cargo manifest and checksum metadata; endpoint verification only.",
+      "whole_payload_verified": false
+    },
+    "window_count": 2,
+    "windows_checked_separately": true
+  },
+  "update_rule": "Version1 is preserved. Version2 records the closed scoped HOME postreview; later qualification results require a new version.",
+  "version": 2
+}

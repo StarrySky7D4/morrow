@@ -1,5 +1,19 @@
 # Windows SDK 限定进度（2026-10-13）
 
+## Windows 构建与启动隔离候选进度（2026-10-13）
+
+Stage349 固定组合基线的 Windows AMD64 host／supervisor 已实际完成离线、锁定依赖编译，原 Cargo 退出 0、双 EOF。产物读取包装器曾因 Cargo 硬链接而退出 1，首个恢复读取器也失败；两次失败保留。修正版独立恢复两个产物，并通过两个原编译时间窗的完整选定 Cargo HOME 后验，未重新编译或执行程序。这是构建与产物核验，不是 Windows 产品运行验收。
+
+Stage357 的 Dart 失败启动收尾已作为候选归档：私有失败标记关闭业务入口并停止心跳，只在原通道验证异常状态后单次请求隔离；实际退出 2 和双 EOF 才能记录单独快照，业务仍为 Unknown、owner 为 Retained。三个生产 overlay 与 15 个内存测试均未激活，Dart 静态分析和测试为 `NOT_RUN`；完整 Stage354 Rust 迁移及 Rust／Dart 联合运行仍未验证。
+
+此前 Stage353 九项合成回归、Stage354 五项原逻辑摘取测试的通过范围不变。历史 Stage341 仍为 `CLOSED_NOT_ACCEPTED`，旧 sealed Unknown 不重放。SDK26／G04、namespace 与祖先目录持续 reparse 防护仍 OPEN，`release_eligible=false`。
+
+下一步：先完成 Dart 候选的静态分析和 15 项回归，再验证完整 Rust／Dart 源图、原资源闭合与 Windows 停止序列。应用版本不变，本次仅同步开发分支，不创建 Release。
+
+见[原生构建核验](reconstruction-2026-10-13/native-build-progress-v2.md)与[Dart 候选](reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r001/README.md)。
+
+以下为 Stage356 及之前的历史快照，其中 NOT_RUN 仅描述当时时点，当前状态以上节为准。
+
 ## 本次开发分支更新
 
 | 验证范围 | 实际结果 | 边界 |
