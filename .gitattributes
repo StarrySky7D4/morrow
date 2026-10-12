@@ -320,3 +320,7 @@
 /reports/reconstruction-2026-10-13/source-candidates/data-preparation-control-fix-r001/source-checks.json -text
 /reports/reconstruction-2026-10-13/startup-integration-progress-v2.json -text
 /reports/reconstruction-2026-10-13/startup-integration-progress-v2.md -text
+
+# Current Rust candidate actual results: preserve exact report bytes.
+/reports/reconstruction-2026-10-13/startup-integration-progress-v3.json -text
+/reports/reconstruction-2026-10-13/startup-integration-progress-v3.md -text

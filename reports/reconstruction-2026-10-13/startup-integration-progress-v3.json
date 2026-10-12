@@ -1,0 +1,425 @@
+{
+  "schema": "PUBLIC_STARTUP_INTEGRATION_PROGRESS_V3",
+  "date": "2026-10-13",
+  "previous_snapshot": "startup-integration-progress-v2.json",
+  "status": "PASS_CURRENT_RUST_COMPILATION_AND_FOURTEEN_SYNTHETIC_TESTS_ONLY",
+  "source": {
+    "candidate": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-runtime-r002",
+    "overlay_files": {
+      "overlay/workbench_host/src/bin/morrow-workbench-supervisor.rs": {
+        "bytes": 1264,
+        "sha256": "e6a7ac4dcf055c1609bfee1686184939913326965169e36dbe69d7e0b086b3af"
+      },
+      "overlay/workbench_host/src/lib.rs": {
+        "bytes": 37590,
+        "sha256": "ccbe6e9015c01c78e6cfe7c82e7e62e996385b778ca57ca9730ddf9063966c1f"
+      },
+      "overlay/workbench_host/src/startup_quarantine.rs": {
+        "bytes": 11952,
+        "sha256": "dcf9012bbc976d65f7b7e33e47a1fc56f168af32709b3954251bbcce774db587"
+      },
+      "overlay/workbench_host/src/workbench_supervision.rs": {
+        "bytes": 21344,
+        "sha256": "c61c4e0be16225f61f1558dc6f42e05eb7c3cb5a045ca0f2baba62d956620884"
+      },
+      "overlay/workbench_host/src/workbench_supervisor.rs": {
+        "bytes": 25562,
+        "sha256": "155eaabef579d185e4f243b805bf6fa3be49617aee96cd9aeba57a79cff8591b"
+      }
+    },
+    "candidate_manifest_pin": {
+      "bytes": 4023,
+      "sha256": "04782864090e4bf8345715c291d0c13f15a84cc63b2f6eb89371accb735f96e2"
+    },
+    "actual_source_manifest_pin": {
+      "bytes": 431446,
+      "sha256": "c5666cce296635d0cc53cda7b33d868eecfca07f8c707a2d445303d32610c5c7"
+    },
+    "files": 2392,
+    "bytes": 36311117,
+    "unchanged_lock_files": 20,
+    "whole_machine_specific_source_map_published": false,
+    "candidate_archival_NOT_RUN_fields_describe_previous_snapshot": true
+  },
+  "data_preparation": {
+    "status": "PASS_SOURCE_AND_SEED_BYTES_ONLY",
+    "input_drift": 0,
+    "source_full_SHA_verified": true,
+    "seed_full_SHA_verified": true,
+    "seed_files": 5589,
+    "seed_bytes": 28439667,
+    "repos": 3,
+    "routes": 6,
+    "target_reused": true,
+    "target_fresh": false
+  },
+  "build": {
+    "toolchain": "Rust 1.95.0 MSVC",
+    "target": "x86_64-pc-windows-msvc",
+    "package": "morrow-workbench-host",
+    "crate_version": "0.1.9-test.50",
+    "features": [
+      "c28-product-session-qualification"
+    ],
+    "offline": true,
+    "locked": true,
+    "jobs": 4,
+    "incremental": false,
+    "debug_info": 0,
+    "compiles": [
+      {
+        "phase": "lib",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "postguards_errors": [],
+        "capture_pin": {
+          "bytes": 908,
+          "sha256": "d137f85abc232fd626ff35af54b85776e4562abea57445a460e5c32e2e8277e3"
+        },
+        "terminal_pin": {
+          "bytes": 3107,
+          "sha256": "8ed4e79bcd841a68d877b5ddf92476f495d53c8bc65f844964ed39d57845237a"
+        },
+        "artifacts_pin": {
+          "bytes": 2173,
+          "sha256": "63454b6f07ff46f904de6f52ac64d02408f9e8e456b1b0f7b162ab49192958f0"
+        },
+        "stdout_pin": {
+          "bytes": 944747,
+          "sha256": "8b27871ded9af50ad53d108386dafa11278f13baa16dc632dc919a8c64734ce5"
+        },
+        "stderr_pin": {
+          "bytes": 16317,
+          "sha256": "5543cf00980b69abcfac84697b06eca17b38d8fbffde4fc28a8b81fe6b810738"
+        },
+        "warnings_retained": true
+      },
+      {
+        "phase": "product",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "postguards_errors": [],
+        "capture_pin": {
+          "bytes": 908,
+          "sha256": "f1a1b57d4ebeab5af320b7d84e678f73b05f1a6d65a953abd592c1492485acf4"
+        },
+        "terminal_pin": {
+          "bytes": 8777,
+          "sha256": "d9e5c3a4056ccc6e32a9787e2b6f1dc9ce0ef9310426aeebd9db7971202be38c"
+        },
+        "artifacts_pin": {
+          "bytes": 7549,
+          "sha256": "dcd1ca6e9b0a16babaa4b43179cc9e091667175b6608afe319f47c78ceea71da"
+        },
+        "stdout_pin": {
+          "bytes": 938450,
+          "sha256": "f16cdf584a60a17a0209c9c756d1822675291b062551d3f414229d909d4061d4"
+        },
+        "stderr_pin": {
+          "bytes": 6463,
+          "sha256": "3e64d522d51e4c1f0dd1fbece7d2ca6875f050aa167a7ce951d5821a6231eddd"
+        },
+        "warnings_retained": true
+      }
+    ],
+    "artifacts": {
+      "lib_test": {
+        "pin": {
+          "bytes": 71760384,
+          "sha256": "69dd255b2284c811bbf585eb33c1179679b05a9894fd417937258b08f418f7f3"
+        },
+        "saved_pin": {
+          "bytes": 71760384,
+          "sha256": "69dd255b2284c811bbf585eb33c1179679b05a9894fd417937258b08f418f7f3"
+        },
+        "fresh": false,
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": true
+        },
+        "execution": "FOURTEEN_EXACT_SYNTHETIC_TESTS"
+      },
+      "host": {
+        "pin": {
+          "bytes": 62456320,
+          "sha256": "5db9352d18ae4e7a9614053119a1518870191972d2f314236f577060b6e39855"
+        },
+        "saved_pin": {
+          "bytes": 62456320,
+          "sha256": "5db9352d18ae4e7a9614053119a1518870191972d2f314236f577060b6e39855"
+        },
+        "fresh": false,
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "execution": "NOT_RUN"
+      },
+      "supervisor": {
+        "pin": {
+          "bytes": 27277312,
+          "sha256": "6f8cdbd709a48b870137eeb657161a3999951f9971d688fe1108e6e10413e43c"
+        },
+        "saved_pin": {
+          "bytes": 27277312,
+          "sha256": "6f8cdbd709a48b870137eeb657161a3999951f9971d688fe1108e6e10413e43c"
+        },
+        "fresh": false,
+        "profile": {
+          "debug_assertions": true,
+          "debuginfo": 0,
+          "opt_level": "0",
+          "overflow_checks": true,
+          "test": false
+        },
+        "execution": "NOT_RUN"
+      }
+    },
+    "scope": "Current library test target and host/supervisor bins; no Flutter GUI build or full SDK qualification."
+  },
+  "HOME_checks": {
+    "lib": "PASS_CURRENT360_LIB_HOME_ONLY",
+    "product": "PASS_CURRENT360_TWO_COMPILE_HOME_ONLY",
+    "input_drift": 0,
+    "scope": "Finite selected HOME records and original compiler time windows; not full vendor payload or kernel isolation proof."
+  },
+  "Rust_synthetic_regressions": {
+    "passed": 14,
+    "ignored": 0,
+    "tests": [
+      {
+        "name": "io_tasks::agent_stop_tests::cancel_pending_join_latches_stopping_and_keeps_ack_closed",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 904,
+          "sha256": "aa65cc2f199ece4a45cd0b3fbd70387eeba1d085e2dc9d19758aa36a7d9dd842"
+        }
+      },
+      {
+        "name": "io_tasks::agent_stop_tests::cancel_wrong_key_preserves_running_worker_without_stop",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 904,
+          "sha256": "7076831006e4938e23d5f8ab5ee62cfca4606828fd01ecb5383098750ef79b92"
+        }
+      },
+      {
+        "name": "io_tasks::agent_stop_tests::cancel_non_agent_and_retained_exit_do_not_latch_stop",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 904,
+          "sha256": "01a48539dfdd3955b9715f5a3d29501094fc2fda4c322d529114e2e61fda5811"
+        }
+      },
+      {
+        "name": "io_tasks::agent_stop_tests::cancelled_failed_join_is_unavailable_never_reclaimed_or_acknowledged",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 903,
+          "sha256": "447e1b7270b71dea61430afd540fe6fb4a166443e6b8cbedcce6cf4ab642aacc"
+        }
+      },
+      {
+        "name": "workbench_supervision::startup_quarantine::tests::committed_abnormal_receipt_retains_unknown_owner_and_never_claims_exit",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 902,
+          "sha256": "095197b7ca852304f3198316ae13c77c8935f95756f90d5fabdbd44f7e764aaf"
+        }
+      },
+      {
+        "name": "workbench_supervision::startup_quarantine::tests::each_missing_resource_or_join_fact_refuses_before_ledger_effects",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 902,
+          "sha256": "5eaa66df17161603bd21304e53e3d6262ba250014b1b4c2a2f42118aacb59c48"
+        }
+      },
+      {
+        "name": "workbench_supervision::startup_quarantine::tests::legacy_normal_and_changed_identity_cannot_prepare_quarantine",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 902,
+          "sha256": "f6db3c321f3a8ef60eaec0b1483ff0423a8ebbf851e8b55a382f47e6057f778c"
+        }
+      },
+      {
+        "name": "workbench_supervision::startup_quarantine::tests::stale_original_row_and_postcommit_tamper_are_unconfirmed",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 901,
+          "sha256": "bab9b135de85d175057cf0de2707147ece8f7fb68c44f830b5efa9a7070c8539"
+        }
+      },
+      {
+        "name": "workbench_supervision::startup_quarantine::tests::normal_v1_v2_owner_update_paths_remain_separate",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 902,
+          "sha256": "e211a1e6d9a35f2576395ea9d763d3d3cc28593cc577cc4f36c2083924d64fb1"
+        }
+      },
+      {
+        "name": "workbench_supervision::supervisor_runtime::quarantine_control_tests::quarantine_terminal_is_exact_and_requires_abnormal_closing",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 902,
+          "sha256": "43a8cd8d13d399bfd392b2eeeb8d41b1890b36b56e5d2df476e7917eea9187c3"
+        }
+      },
+      {
+        "name": "workbench_supervision::supervisor_runtime::quarantine_control_tests::normal_close_and_heartbeat_are_not_quarantine_terminals",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 901,
+          "sha256": "f2ee641d656bb358eb61d3580e0b3bb963e42850104c4c97c8b299cb8a095a42"
+        }
+      },
+      {
+        "name": "workbench_supervision::supervisor_runtime::quarantine_control_tests::lost_before_abnormal_flag_keeps_reader_without_renewal",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 902,
+          "sha256": "ac83b72d8f9127cadd26d3de0c553ec805a43c23b5852b90848a42c6ce812746"
+        }
+      },
+      {
+        "name": "workbench_supervision::supervisor_runtime::quarantine_control_tests::loss_during_renewal_keeps_terminal_receiver_without_resetting_loss",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 901,
+          "sha256": "b9b649782b8d37925c6766c2979f66b95c20cac20b42e281365d450b96771017"
+        }
+      },
+      {
+        "name": "workbench_supervision::supervisor_runtime::quarantine_control_tests::ordinary_heartbeat_and_nonloss_error_preserve_original_choices",
+        "actual_exit": 0,
+        "dual_EOF": true,
+        "original_group_closed": true,
+        "named_passed": 1,
+        "ignored": 0,
+        "guard_errors": [],
+        "capture_pin": {
+          "bytes": 902,
+          "sha256": "3742d630a3004d2371112be576eaf398b9bff01f8c7874c3dd9e3a71212d46c4"
+        }
+      }
+    ],
+    "scope": "4 controlled AgentWorker stop, 5 in-memory owner ledger, 5 supervisor parser/heartbeat tests."
+  },
+  "previous_Dart_AB": {
+    "report": "dart-startup-ab-results-v1.json",
+    "fixed_passed": 16,
+    "negative_control_exit": 1,
+    "scope": "Channel/supervision memory tests only; not workbench_native.dart."
+  },
+  "evidence_pins": {
+    "root_actual_record": {
+      "bytes": 14334,
+      "sha256": "12ee6b70dd65dd788213a858ca4e57c4e57dcb14e6f9e3e25670015ebe997529"
+    },
+    "independent_actual_readback": {
+      "bytes": 26505,
+      "sha256": "c3da4728649ed3f14d6dd265bf62489cfdb17e37f349eb5e1523351b5139aa70"
+    },
+    "data_terminal": {
+      "bytes": 828,
+      "sha256": "8abf22b197a9798551cef9c58aec00782ed0deb80944e182dc55552d9bd4ce09"
+    },
+    "test_terminal": {
+      "bytes": 9404,
+      "sha256": "5cce0ca7010e18205a5531665cdf4a29f9b0c3ac29a8cdc6195a455901e93710"
+    }
+  },
+  "evidence_disclosure": "Public projections and hashes only; raw machine-specific records and binaries retained locally, not uploaded.",
+  "current_native_Dart_static_analysis": "NOT_RUN",
+  "full_Rust_Dart_joint_validation": "NOT_RUN",
+  "current_Windows_VM_acceptance": "NOT_RUN",
+  "healthy_native_owner_return": "NOT_RUN",
+  "Flutter_GUI_build": "NOT_RUN",
+  "DPAPI_real_acceptance": "NOT_RUN",
+  "historical_Stage341": "CLOSED_NOT_ACCEPTED",
+  "sealed_Unknown": "PRESERVED_NO_REPLAY",
+  "SDK26_G04": "OPEN",
+  "namespace": "OPEN",
+  "ancestor_continuous_reparse": "OPEN",
+  "production_activation": false,
+  "release_eligible": false,
+  "next": [
+    "Analyze current native Dart wiring in an independent view",
+    "Validate current Rust/Dart joint wiring",
+    "Validate current Windows sandbox and original resource closure"
+  ],
+  "publication_scope": "Existing development branch only; no main, tag, Release, version, dependency lock or workflow changes."
+}
