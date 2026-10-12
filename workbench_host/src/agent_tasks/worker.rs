@@ -2139,3 +2139,54 @@ mod tests {
 
 
 }
+
+// Test-only genuine worker: no WorkbenchState, protected owner, package, native
+// port or OS child is created. The real JoinHandle remains pending until the
+// test releases it, then panics to exercise the real failed-join branch.
+#[cfg(all(test, target_os = "windows"))]
+impl AgentWorker<crate::WorkbenchState> {
+    pub(crate) fn test_pending_join(
+        runtime: &mut morrow_core::dispatch::HostRuntime,
+    ) -> (Self, mpsc::Sender<()>, Arc<std::sync::atomic::AtomicUsize>) {
+        let executor = runtime.connect().unwrap();
+        let package = runtime.connect().unwrap();
+        let executor_revoke = runtime.revocation(&executor).unwrap();
+        let package_revoke = runtime.revocation(&package).unwrap();
+        let stop_calls = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+        let calls = stop_calls.clone();
+        let control = Arc::new(Control {
+            stopped: AtomicBool::new(false),
+            gate: ProductGate::default(),
+            package_stop: Arc::new(move || { calls.fetch_add(1, Ordering::SeqCst); }),
+            executor_revoke,
+            package_revoke,
+            sealed_revoke: None,
+            sealed_stop: None,
+            session_revoke: None,
+            session_stop: None,
+            native: BorrowedNativeResources::for_owner(runtime).unwrap(),
+            native_stop: None,
+            limits: AgentLimits::default(),
+            progress: Mutex::new(AgentProgress {
+                phase: AgentPhase::Running,
+                accepted_commands: 0,
+                reserved_bytes: 0,
+                imported_frames: 0,
+                cleanup_error: None,
+                scheduler: AgentSchedulerPhase::NotRequired,
+            }),
+            clock: Arc::new(|| 0),
+            expires: u64::MAX,
+            reconcile_requested: AtomicBool::new(false),
+            reconcile_failed: AtomicBool::new(false),
+        });
+        let (release, wait) = mpsc::channel();
+        let join = std::thread::spawn(move || -> AgentExit<crate::WorkbenchState> {
+            let _ = wait.recv();
+            panic!("synthetic AgentWorker join failure");
+        });
+        let (sender, _receiver) = mpsc::sync_channel(1);
+        (Self { sender, control, join: Some(join), pending_exit: None, scheduler: None },
+            release, stop_calls)
+    }
+}

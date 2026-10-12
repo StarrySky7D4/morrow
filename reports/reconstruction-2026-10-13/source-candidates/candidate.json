@@ -1,0 +1,91 @@
+{
+  "schema": "MORROW_SOURCE_CANDIDATE_ARCHIVE_V1",
+  "candidate": "failed-startup-quarantine",
+  "source_versions": {
+    "ledger": "347-001",
+    "runtime": "350-002"
+  },
+  "integration": "ARCHIVED_ONLY_NOT_ACTIVATED",
+  "compiled_by_source_author": false,
+  "runtime_executed": false,
+  "windows_resource_proof": "NOT_ESTABLISHED",
+  "sdk_freeze": false,
+  "execution_authority": false,
+  "release_eligible": false,
+  "license": "AGPL-3.0-only",
+  "overlay_root": "quarantine-runtime/overlay",
+  "files": [
+    {
+      "logical_path": "workbench_host/src/bin/morrow-workbench-supervisor.rs",
+      "archive_path": "quarantine-runtime/overlay/workbench_host/src/bin/morrow-workbench-supervisor.rs",
+      "pin": {
+        "bytes": 1335,
+        "sha256": "0c64c59b7086204e6512750e1009d72ecda3405925c568c37c15c965f50cc758"
+      },
+      "origin_version": "350-002"
+    },
+    {
+      "logical_path": "workbench_host/src/lib.rs",
+      "archive_path": "quarantine-runtime/overlay/workbench_host/src/lib.rs",
+      "pin": {
+        "bytes": 37590,
+        "sha256": "ccbe6e9015c01c78e6cfe7c82e7e62e996385b778ca57ca9730ddf9063966c1f"
+      },
+      "origin_version": "350-002"
+    },
+    {
+      "logical_path": "workbench_host/src/startup_quarantine.rs",
+      "archive_path": "quarantine-runtime/overlay/workbench_host/src/startup_quarantine.rs",
+      "pin": {
+        "bytes": 11952,
+        "sha256": "dcf9012bbc976d65f7b7e33e47a1fc56f168af32709b3954251bbcce774db587"
+      },
+      "origin_version": "347-001"
+    },
+    {
+      "logical_path": "workbench_host/src/workbench_supervision.rs",
+      "archive_path": "quarantine-runtime/overlay/workbench_host/src/workbench_supervision.rs",
+      "pin": {
+        "bytes": 21344,
+        "sha256": "c61c4e0be16225f61f1558dc6f42e05eb7c3cb5a045ca0f2baba62d956620884"
+      },
+      "origin_version": "350-002"
+    },
+    {
+      "logical_path": "workbench_host/src/workbench_supervisor.rs",
+      "archive_path": "quarantine-runtime/overlay/workbench_host/src/workbench_supervisor.rs",
+      "pin": {
+        "bytes": 23012,
+        "sha256": "dbc657aa673bb636496ec3d065efd17ff2b1cc6b7909cd91ebb0d647090e93d5"
+      },
+      "origin_version": "350-002"
+    }
+  ],
+  "known_gaps": [
+    {
+      "id": "HEARTBEAT_BEFORE_ABNORMAL_FLAG",
+      "status": "OPEN",
+      "detail": "After the loss signal is set but before abnormal_closing is published, an in-flight heartbeat can still exit the original controller reader through its legacy loss path. No prepared closure is emitted. This conservative failure is unresolved; it is not successful quarantine.",
+      "next_step": "Review the lost-heartbeat parser transition without renewing or clearing the original hard deadline, then add a controlled race regression."
+    },
+    {
+      "id": "DART_RUNNER_NOT_CONNECTED",
+      "status": "OPEN",
+      "detail": "The client must send the one-shot QuarantineClose only for failed startup, bind the optional preparation extension to the original identity, and independently observe original supervisor exit plus both EOFs. No client or runner acceptance branch is included."
+    },
+    {
+      "id": "RUNTIME_NOT_COMPILED_OR_EXECUTED",
+      "status": "NOT_RUN",
+      "detail": "The five-leaf combined runtime candidate has not been compiled or executed. Its library/binary relocation and parser tests need a real build. The archived ledger test list is its unchanged original source declaration, not proof of current runtime integration."
+    },
+    {
+      "id": "WINDOWS_RESOURCE_PROOF",
+      "status": "NOT_RUN",
+      "detail": "Actual original child exit, stdout/stderr reader joins, controller reader join, stdin native write reap, Job emptiness, and durable original-owner CAS plus post-commit readback require Windows integration evidence. No synthetic record is kernel or crash-durability proof."
+    }
+  ],
+  "original_test_declarations": [
+    "347-exact-tests.json",
+    "350-exact-tests.json"
+  ]
+}

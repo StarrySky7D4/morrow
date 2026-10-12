@@ -1,5 +1,22 @@
 # Morrow · 明隙
 
+<!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
+## Windows 修正与限定验证（2026-10-13）
+
+Stage345 的停止状态修正已完成 library 测试编译与四项 exact 合成回归，四项全部通过。Stage346 同句柄密钥读取候选已通过六种普通文件 helper 模式，以及四项原诊断测试和两项真实 observer 接线测试；它们仍是限定的本地合成验证，新修正未完成完整 audit crate 构建、真实 DPAPI 或 VM 产品复验。
+
+Stage341 的实际进程、策略恢复及连接已闭合，业务仍为 `NOT_ACCEPTED`；旧 sealed Unknown 继续保留且不自动重放。Stage347 五项账本测试为 `NOT_RUN`；Stage350 尚未编译、Dart 尚未接入，heartbeat 竞态处理维持保守策略，缺少真实闭合事实时不生成 prepare。两项仅作为 `SOURCE_ONLY_NOT_COMPILED_NOT_CONNECTED` 候选归档，不进入本轮生产接线。
+
+`SDK26_G04=OPEN`、namespace 与祖先目录持续 reparse 防护仍 OPEN，`release_eligible=false`。本次不声明 Release、完整 SDK 或 sealed-basic 通过。
+
+详见[Windows SDK 限定进度](reports/windows-sdk-progress.md)。
+
+345 与346 合并后的完整 crate 以及 host／supervisor 双产品构建仍为 `NOT_RUN`；349／351 尚未执行。各自限定测试通过不等于合并构建通过。
+
+下方带日期的记录保留各自历史范围；本节不覆盖旧失败或 Unknown。
+<!-- C28-WINDOWS-REGRESSION-20261013-END -->
+
+
 <!-- C28-WINDOWS-PUBLICATION-BEGIN -->
 ## Windows 发布候选附注（2026-10-12）
 

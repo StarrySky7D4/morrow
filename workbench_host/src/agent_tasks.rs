@@ -427,7 +427,8 @@ impl Workbench {
         self.state.current_agent_snapshot()
     }
     pub fn cancel_agent(&mut self, key: TaskKey) -> Result<AgentSnapshot> {
-        self.state.agent_worker(key)?.stop();
+        self.state.agent_worker(key)?;
+        self.state.request_stop();
         self.poll_agent(key)
     }
     /// Explicitly retries same-owner cleanup/facts only. No guest/start replay.

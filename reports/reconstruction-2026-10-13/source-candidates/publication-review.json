@@ -1,0 +1,79 @@
+{
+  "schema": "MORROW_SOURCE_CANDIDATE_PUBLICATION_REVIEW_V1",
+  "decision": "SUITABLE_FOR_INERT_SOURCE_ARCHIVE_ONLY",
+  "runtime_activation": "NOT_AUTHORIZED_BY_ARCHIVE",
+  "source_count": 5,
+  "original_bytes_preserved": true,
+  "ledger_duplicate": "One identical ledger leaf in the merged runtime overlay; no separate duplicate overlay",
+  "privacy_scan": {
+    "scope": "Five complete archived Rust files; fixed local-path/account/private-key/service-key/credential-value patterns plus review of keyword matches",
+    "matches": {
+      "overlay/workbench_host/src/bin/morrow-workbench-supervisor.rs": {
+        "local_drive_literal": 0,
+        "unc_path": 0,
+        "private_account_or_workspace": 0,
+        "private_key_header": 0,
+        "service_key_shape": 0,
+        "credential_value_literal": 0
+      },
+      "overlay/workbench_host/src/lib.rs": {
+        "local_drive_literal": 0,
+        "unc_path": 0,
+        "private_account_or_workspace": 0,
+        "private_key_header": 0,
+        "service_key_shape": 0,
+        "credential_value_literal": 0
+      },
+      "overlay/workbench_host/src/startup_quarantine.rs": {
+        "local_drive_literal": 0,
+        "unc_path": 0,
+        "private_account_or_workspace": 0,
+        "private_key_header": 0,
+        "service_key_shape": 0,
+        "credential_value_literal": 0
+      },
+      "overlay/workbench_host/src/workbench_supervision.rs": {
+        "local_drive_literal": 0,
+        "unc_path": 0,
+        "private_account_or_workspace": 0,
+        "private_key_header": 0,
+        "service_key_shape": 0,
+        "credential_value_literal": 0
+      },
+      "overlay/workbench_host/src/workbench_supervisor.rs": {
+        "local_drive_literal": 0,
+        "unc_path": 0,
+        "private_account_or_workspace": 0,
+        "private_key_header": 0,
+        "service_key_shape": 0,
+        "credential_value_literal": 0
+      }
+    },
+    "keyword_review": "credential_control is an existing module name; credential-bearing is a security comment; token/incarnation names are identifiers or runtime values, not recorded credential data. No observed secrets or local identity values are embedded.",
+    "limitation": "This is a bounded source review, not a repository-wide secret scan."
+  },
+  "known_gaps": [
+    {
+      "id": "HEARTBEAT_BEFORE_ABNORMAL_FLAG",
+      "status": "OPEN",
+      "detail": "After the loss signal is set but before abnormal_closing is published, an in-flight heartbeat can still exit the original controller reader through its legacy loss path. No prepared closure is emitted. This conservative failure is unresolved; it is not successful quarantine.",
+      "next_step": "Review the lost-heartbeat parser transition without renewing or clearing the original hard deadline, then add a controlled race regression."
+    },
+    {
+      "id": "DART_RUNNER_NOT_CONNECTED",
+      "status": "OPEN",
+      "detail": "The client must send the one-shot QuarantineClose only for failed startup, bind the optional preparation extension to the original identity, and independently observe original supervisor exit plus both EOFs. No client or runner acceptance branch is included."
+    },
+    {
+      "id": "RUNTIME_NOT_COMPILED_OR_EXECUTED",
+      "status": "NOT_RUN",
+      "detail": "The five-leaf combined runtime candidate has not been compiled or executed. Its library/binary relocation and parser tests need a real build. The archived ledger test list is its unchanged original source declaration, not proof of current runtime integration."
+    },
+    {
+      "id": "WINDOWS_RESOURCE_PROOF",
+      "status": "NOT_RUN",
+      "detail": "Actual original child exit, stdout/stderr reader joins, controller reader join, stdin native write reap, Job emptiness, and durable original-owner CAS plus post-commit readback require Windows integration evidence. No synthetic record is kernel or crash-durability proof."
+    }
+  ],
+  "no_runtime_or_vm_operations": true
+}

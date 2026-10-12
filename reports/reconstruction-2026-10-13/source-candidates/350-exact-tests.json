@@ -1,0 +1,9 @@
+{
+  "status": "NOT_COMPILED_NOT_RUN",
+  "tests": [
+    "workbench_supervision::supervisor_runtime::quarantine_control_tests::quarantine_terminal_is_exact_and_requires_abnormal_closing",
+    "workbench_supervision::supervisor_runtime::quarantine_control_tests::normal_close_and_heartbeat_are_not_quarantine_terminals"
+  ],
+  "inherited347_ledger_tests": "Unchanged five tests; ROOT separately builds/tests 347",
+  "scope": "Pure parser tests are not Windows Job/reader/lease/ledger integration proof"
+}

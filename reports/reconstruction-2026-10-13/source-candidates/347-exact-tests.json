@@ -1,0 +1,13 @@
+{
+  "schema": "STAGE347_EXACT_LEDGER_TESTS_V1",
+  "status": "NOT_COMPILED_NOT_RUN",
+  "names": [
+    "workbench_supervision::startup_quarantine::tests::committed_abnormal_receipt_retains_unknown_owner_and_never_claims_exit",
+    "workbench_supervision::startup_quarantine::tests::each_missing_resource_or_join_fact_refuses_before_ledger_effects",
+    "workbench_supervision::startup_quarantine::tests::legacy_normal_and_changed_identity_cannot_prepare_quarantine",
+    "workbench_supervision::startup_quarantine::tests::stale_original_row_and_postcommit_tamper_are_unconfirmed",
+    "workbench_supervision::startup_quarantine::tests::normal_v1_v2_owner_update_paths_remain_separate"
+  ],
+  "scope": "Actual Owner+rusqlite in-memory validation/CAS/readback tests; synthetic facts do not prove Windows resources or crash durability",
+  "selection": "ROOT fresh offline --locked workbench_host --lib --no-run then only each named test --exact; no test execution by this source author"
+}

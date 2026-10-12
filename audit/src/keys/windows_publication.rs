@@ -1,6 +1,6 @@
 //! Windows-only same-handle no-replace publication. Not a reparse-confinement proof.
-use super::{KeyError, Result};
-use std::{ffi::c_void, fs::{File, OpenOptions}, io::{self, Write}, mem::size_of,
+use super::{observe_result, KeyDiagnosticStage, KeyError, Result, MAX_FILE};
+use std::{ffi::c_void, fs::{File, OpenOptions}, io::{self, Read, Seek, SeekFrom, Write}, mem::size_of,
     path::Path, sync::atomic::{AtomicBool, Ordering}};
 use std::os::windows::{fs::{MetadataExt, OpenOptionsExt}, io::{AsRawHandle, IntoRawHandle}};
 static POISONED: AtomicBool = AtomicBool::new(false);
@@ -273,14 +273,61 @@ impl Publication {
             .and_then(|file| rename_same_directory(file, &self.target).map_err(io_error));
         match result { Ok(()) => { self.published = true; Ok(()) }, Err(e) => Err(self.fail(e)) }
     }
-    pub(super) fn sync_and_close(mut self) -> Result<()> {
-        if let Err(e) = admit() { return Err(self.fail(e)); }
-        if self.finished || !self.published { return Err(self.fail(KeyError::Format)); }
-        let synced = self.file.as_ref().is_some_and(|file| file.sync_all().is_ok());
+    /// Synchronize, reread and validate the original exclusive file before checked close.
+    /// No duplicate handle or path acquisition occurs here. This does not prove ancestry.
+    pub(super) fn sync_read_close<T>(mut self, validate: impl FnOnce(&[u8]) -> Result<T>) -> Result<T> {
+        if let Err(e) = observe_result(KeyDiagnosticStage::PublishedSync, admit()) {
+            return Err(self.fail(e));
+        }
+        if self.finished || !self.published {
+            let error = observe_result::<()>(KeyDiagnosticStage::PublishedSync, Err(KeyError::Format))
+                .expect_err("invalid publication state");
+            return Err(self.fail(error));
+        }
+        let verified = (|| -> Result<T> {
+            let file = observe_result(KeyDiagnosticStage::ReloadRead,
+                self.file.as_mut().ok_or(KeyError::PublishUnknown))?;
+            observe_result(KeyDiagnosticStage::PublishedSync, file.sync_all().map_err(KeyError::Io))?;
+            let reread = (|| -> Result<Vec<u8>> {
+            let before = file.metadata()?;
+            if !before.is_file() || before.file_attributes() & 0x400 != 0
+                || before.len() > MAX_FILE as u64 {
+                return Err(KeyError::Format);
+            }
+            if file.seek(SeekFrom::Start(0))? != 0 { return Err(KeyError::Format); }
+            let mut bytes = Vec::with_capacity(MAX_FILE + 1);
+            // One extra byte rejects growth/oversize while bounding all read allocation.
+            (&mut *file).take((MAX_FILE + 1) as u64).read_to_end(&mut bytes)?;
+            let after = file.metadata()?;
+            if bytes.len() > MAX_FILE || bytes.len() as u64 != before.len()
+                || !after.is_file() || after.file_attributes() != before.file_attributes()
+                || after.len() != before.len()
+                || after.creation_time() != before.creation_time()
+                || after.last_write_time() != before.last_write_time() {
+                return Err(KeyError::Format);
+            }
+            Ok(bytes)
+            })();
+            // Observe typed IO/format failure before fail() converts published uncertainty.
+            let bytes = observe_result(KeyDiagnosticStage::ReloadRead, reread)?;
+            // The callback keeps its original container/provider/material observations.
+            // Do not relabel its primary failure as a second PublishedSync failure.
+            validate(&bytes)
+        })();
+        let value = match verified {
+            Ok(value) => value,
+            // fail keeps a published target and poisons admission, even after known close.
+            Err(error) => return Err(self.fail(error)),
+        };
         let file_closed = self.file.take().is_some_and(close_created);
         let parent_closed = self.parent.take().is_some_and(close_created);
         self.finished = true;
-        if synced && file_closed && parent_closed { Ok(()) } else { Err(poison()) }
+        // Do not let a validated value escape if either original close is uncertain.
+        if file_closed && parent_closed {
+            Ok(value)
+        } else {
+            observe_result(KeyDiagnosticStage::PublishedSync, Err(poison()))
+        }
     }
 }
 impl Drop for Publication {

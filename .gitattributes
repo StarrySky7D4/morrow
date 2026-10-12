@@ -243,3 +243,20 @@
 /workbench_host/src/qualification_session_policy.rs -text
 /workbench_host/src/workbench_supervisor.rs -text
 /workbench_host/tests/support/qualification_session.rs -text
+
+# Windows bounded follow-up checkpoint: preserve new selected source bytes.
+/reports/reconstruction-2026-10-13/source-candidates/347-exact-tests.json -text
+/reports/reconstruction-2026-10-13/source-candidates/350-exact-tests.json -text
+/reports/reconstruction-2026-10-13/source-candidates/README.md -text
+/reports/reconstruction-2026-10-13/source-candidates/candidate.json -text
+/reports/reconstruction-2026-10-13/source-candidates/candidate.schema.json -text
+/reports/reconstruction-2026-10-13/source-candidates/manifest.json -text
+/reports/reconstruction-2026-10-13/source-candidates/publication-review.json -text
+/reports/reconstruction-2026-10-13/source-candidates/quarantine-runtime/overlay/workbench_host/src/bin/morrow-workbench-supervisor.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/quarantine-runtime/overlay/workbench_host/src/lib.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/quarantine-runtime/overlay/workbench_host/src/startup_quarantine.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/quarantine-runtime/overlay/workbench_host/src/workbench_supervision.rs -text
+/reports/reconstruction-2026-10-13/source-candidates/quarantine-runtime/overlay/workbench_host/src/workbench_supervisor.rs -text
+/reports/reconstruction-2026-10-13/windows-checkpoint-source.json -text
+/reports/windows-sdk-progress.md -text
+/workbench_host/src/io_tasks_agent_stop_tests.rs -text

@@ -934,3 +934,7 @@ mod tests;
 #[cfg(all(test, target_os = "windows"))]
 #[path = "io_tasks_ad31_no_owner_tests.rs"]
 mod ad31_no_owner_tests;
+
+#[cfg(all(test, target_os = "windows"))]
+#[path = "io_tasks_agent_stop_tests.rs"]
+mod agent_stop_tests;

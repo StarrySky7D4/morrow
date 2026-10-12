@@ -197,7 +197,9 @@ impl Key {
             boundary("key-before-publish");
             observe_result(KeyDiagnosticStage::Publish, publication.publish())?;
             boundary("key-after-publish");
-            observe_result(KeyDiagnosticStage::PublishedSync, publication.sync_and_close())?;
+            // Validate the actual bytes through the original exclusive publication handle.
+            // The Key is returned only after both original handles checked-close.
+            return publication.sync_read_close(Self::from_protected);
         }
         #[cfg(target_os = "linux")]
         {
@@ -222,8 +224,11 @@ impl Key {
         directory.sync().map_err(|_| KeyError::PublishUnknown)?;
         drop(published);
         }
+        #[cfg(target_os = "linux")]
+        {
         // Verify the actual published file. If this fails, never replace it on retry.
         Self::load_at(path, KeyDiagnosticStage::ReloadRead)
+        }
     }
     pub fn load(path: &Path) -> Result<Self> {
         Self::load_at(path, KeyDiagnosticStage::ExistingRead)

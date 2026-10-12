@@ -1,5 +1,16 @@
 # Morrow 文档导航与维护范围
 
+<!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
+## Windows 修正与限定验证（2026-10-13）
+
+- [Windows SDK 限定进度](../reports/windows-sdk-progress.md)：Stage345 编译与四项 exact 合成回归通过；Stage346 六种 helper 模式及四项原诊断、两项接线测试通过。Stage347／350 仅源码候选，未编译或接入；历史业务失败与 Unknown 保留。`SDK26_G04=OPEN`，`release_eligible=false`。
+
+345 与346 合并后的完整 crate 以及 host／supervisor 双产品构建仍为 `NOT_RUN`；349／351 尚未执行。各自限定测试通过不等于合并构建通过。
+
+下方带日期的记录保留各自历史范围；本节不覆盖旧失败或 Unknown。
+<!-- C28-WINDOWS-REGRESSION-20261013-END -->
+
+
 <!-- C28-WINDOWS-PUBLICATION-BEGIN -->
 ## Windows 发布候选附注（2026-10-12）
 
