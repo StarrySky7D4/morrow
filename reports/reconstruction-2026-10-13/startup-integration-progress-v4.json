@@ -1,0 +1,105 @@
+{
+  "schema": "PUBLIC_STARTUP_INTEGRATION_PROGRESS_V4",
+  "date": "2026-10-13",
+  "previous_snapshot": "startup-integration-progress-v3.json",
+  "status": "PASS_SELECTED_NATIVE_DART_STATIC_AND_LOCAL_HANDOFF_INTEGRITY_ONLY",
+  "native_Dart_static": {
+    "source": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002/overlay/lib/plugins/workbench_native.dart",
+    "source_pin": {
+      "bytes": 120251,
+      "sha256": "940aaa1206fed9b3c4e73cb299fadf35e8280c7e18947f2a8f7b9f92664837b0"
+    },
+    "actual_analyzer_exit": 0,
+    "dual_EOF": true,
+    "original_group_closed": true,
+    "timed_out": false,
+    "diagnostics": "No issues found!",
+    "stdout_pin": {
+      "bytes": 52,
+      "sha256": "5104f3df10aad6151450e317ea23640bfc74a9f2bb90e54b4cc35eda238837c0"
+    },
+    "stderr_pin": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source_config_guards": "PASS",
+    "independent_fixed_inputs": 45,
+    "input_drift": 0,
+    "project_source_files": 667,
+    "project_package_URI_remaps": 5,
+    "external_root_metadata_only": 143,
+    "third_party_payload_frozen": false,
+    "descendant_tree_quiescence": "NOT_PROVEN",
+    "scope": "Selected r002 native.dart static analysis only; no test, app-main, Rust/Dart joint runtime, GUI or VM acceptance."
+  },
+  "bounded_local_handoff": {
+    "status": "PASS_LOCAL_ARCHIVE_INTEGRITY_ONLY",
+    "archive_pin": {
+      "bytes": 3037252,
+      "sha256": "2811d673b5095b44280bc39f3d751ef1c3267f4e3045517878cc1d4001b75d35"
+    },
+    "selected_files": 220,
+    "ZIP_entries": 223,
+    "selected_bytes": 11690151,
+    "wholeZIP_fullSHA_passes": 2,
+    "all_entry_SHA_CRC_passes": 2,
+    "input_drift": 0,
+    "archive_uploaded": false,
+    "scope": "Earlier current Rust source/build/test evidence increment only; requires retained baseline and original tool/runtime context, not self-contained SDK.",
+    "later_native_static_or_new_fixture_in_this_archive": false
+  },
+  "startup_failure_fixture": {
+    "candidate": "reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001",
+    "manifest_pin": {
+      "bytes": 2157,
+      "sha256": "354b2c7cd5ba64423814e3de61c99a1693a0db3d3dbe4acc0dbcaac596772660"
+    },
+    "status": "SOURCE_NOT_RUN",
+    "pure_tests_authored": 4,
+    "native_tests_authored": 1,
+    "tests_executed": 0,
+    "production_activation": false,
+    "new_native_static_analysis": "NOT_RUN"
+  },
+  "previous_actuals": {
+    "current_Rust_build": "PASS_COMPILE_ONLY",
+    "Rust_synthetic_passed": 14,
+    "Dart_memory_passed": 16,
+    "report": "startup-integration-progress-v3.json"
+  },
+  "evidence_pins": {
+    "root_record": {
+      "bytes": 5913,
+      "sha256": "34149853a8a544138a0b0d6a1ddd0a1974e3d0b4bbafe19500aae887903ab70c"
+    },
+    "static_terminal": {
+      "bytes": 1738,
+      "sha256": "797e9fd5e92147eee0af5d135f6189cbe8f17a0438b2eae1508c98349753a3b2"
+    },
+    "independent_native_static_review": {
+      "bytes": 3427,
+      "sha256": "41c22f0301a4d3a7318459d89a19a02fcd90f0ca7a41d4b752ba93dadcd387c5"
+    },
+    "independent_local_archive_review": {
+      "bytes": 2543,
+      "sha256": "7253ebfd3a1dd7d02f6188fb706bfa034a43a5c9ce5ec25e3590df20273e975a"
+    }
+  },
+  "full_Rust_Dart_joint_validation": "NOT_RUN",
+  "current_Windows_VM_acceptance": "NOT_RUN",
+  "healthy_native_owner_return": "NOT_RUN",
+  "DPAPI_real_acceptance": "NOT_RUN",
+  "historical_Stage341": "CLOSED_NOT_ACCEPTED",
+  "sealed_Unknown": "PRESERVED_NO_REPLAY",
+  "SDK26_G04": "OPEN",
+  "namespace": "OPEN",
+  "ancestor_continuous_reparse": "OPEN",
+  "production_activation": false,
+  "release_eligible": false,
+  "next": [
+    "Validate current normal-path Rust/Dart VM carrier with original Stop/Reclaimed/ACK/Released checks",
+    "Compile and test the new failure fixture separately, then verify actual abnormal resource quarantine"
+  ],
+  "disclosure": "Public result projections and inert candidate source only. Raw local logs/configurations, machine scripts, binaries and handoff ZIP are not uploaded.",
+  "publication_scope": "Existing development branch only; no main/tag/Release/version/lock/workflow changes."
+}

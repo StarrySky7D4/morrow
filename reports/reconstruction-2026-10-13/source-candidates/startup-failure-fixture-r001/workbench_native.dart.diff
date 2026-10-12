@@ -1,0 +1,33 @@
+--- 361/workbench_native.dart
++++ 380/workbench_native.dart
+@@ -23,6 +23,7 @@
+ import 'agent_session_workspace.dart';
+ import 'agent_session_controller.dart';
+ import 'qualification_session_contract.dart';
++import 'qualification_startup_failure_fixture.dart';
+ import 'credential_manager.dart';
+ import 'endpoint_control.dart';
+ import 'service_control.dart';
+@@ -335,6 +336,11 @@
+   }) async {
+     // Compile barrier precedes all filesystem/process effects.
+     qualification?.requireCompiled();
++    final startupFailureFixture = QualificationStartupFailureFixture.select(
++      mode: qualificationStartupFailureFixtureDefine,
++      qualificationCompiled: qualificationSessionCompiled,
++      qualificationSelected: qualification != null,
++    );
+     if (qualification == null && onQualificationStartupFailure != null) {
+       throw ArgumentError('Startup observation requires qualification mode');
+     }
+@@ -409,6 +415,10 @@
+         if (selection.startup == null || !result._supportsPrivateControl) {
+           throw StateError('Qualification startup delivery not validated');
+         }
++        startupFailureFixture.reachNativeReady(
++          startupReplyValidated: selection.startup != null,
++          privateControlValidated: result._supportsPrivateControl,
++        );
+         selection.openCompleted = true;
+       }
+       return result;

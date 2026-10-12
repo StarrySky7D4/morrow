@@ -324,3 +324,14 @@
 # Current Rust candidate actual results: preserve exact report bytes.
 /reports/reconstruction-2026-10-13/startup-integration-progress-v3.json -text
 /reports/reconstruction-2026-10-13/startup-integration-progress-v3.md -text
+
+# Native static results and disabled fixture source: exact archive bytes.
+/reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001/README.md -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001/manifest.json -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001/overlay/lib/plugins/qualification_startup_failure_fixture.dart -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001/overlay/lib/plugins/workbench_native.dart -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001/overlay/test/qualification_startup_failure_fixture_test.dart -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001/overlay/test/workbench_startup_failure_quarantine_native_test.dart -text
+/reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001/workbench_native.dart.diff -text
+/reports/reconstruction-2026-10-13/startup-integration-progress-v4.json -text
+/reports/reconstruction-2026-10-13/startup-integration-progress-v4.md -text

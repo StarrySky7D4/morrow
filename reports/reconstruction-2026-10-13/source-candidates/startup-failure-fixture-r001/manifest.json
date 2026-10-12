@@ -1,0 +1,60 @@
+{
+  "schema": "PUBLIC_STARTUP_FAILURE_FIXTURE_SOURCE_V1",
+  "status": "SOURCE_NOT_RUN",
+  "public_relative_root": "reports/reconstruction-2026-10-13/source-candidates/startup-failure-fixture-r001",
+  "base_commit": "8f3fd7ea8ea8aaab9843fcb60ce0d2618e535353",
+  "base_native": {
+    "public_path": "reports/reconstruction-2026-10-13/source-candidates/startup-quarantine-dart-r002/overlay/lib/plugins/workbench_native.dart",
+    "pin": {
+      "bytes": 120251,
+      "sha256": "940aaa1206fed9b3c4e73cb299fadf35e8280c7e18947f2a8f7b9f92664837b0"
+    }
+  },
+  "files": {
+    "README.md": {
+      "bytes": 1368,
+      "sha256": "2bc3a6636b88be393ebbc21d392a4d705896711c5f9e3b1a8f783b2a74144be9"
+    },
+    "overlay/lib/plugins/qualification_startup_failure_fixture.dart": {
+      "bytes": 1543,
+      "sha256": "a468716869cb60edde7fc7d4334d743a8f749fad1eb285c9f9b062efc197dc74"
+    },
+    "overlay/lib/plugins/workbench_native.dart": {
+      "bytes": 120739,
+      "sha256": "5931a5913256b67fde64cea0bdfca205fa4056eb3dbbac48228c468964d62691"
+    },
+    "overlay/test/qualification_startup_failure_fixture_test.dart": {
+      "bytes": 1902,
+      "sha256": "1a90c6904f907762f0899b6dfc0ddc7892f3d20867537755e5821c37d0d036f3"
+    },
+    "overlay/test/workbench_startup_failure_quarantine_native_test.dart": {
+      "bytes": 12159,
+      "sha256": "ab02dd29d43e808e5feaf7ee862929d345fe5ea4a30f1d5541a9ffef42ad2996"
+    },
+    "workbench_native.dart.diff": {
+      "bytes": 1362,
+      "sha256": "cb0a8bbc5ca21ba7a5122164d3901e4d81a65deade9ad36421b13b022eb6e330"
+    }
+  },
+  "source_review": {
+    "findings": [],
+    "input_drift": 0,
+    "scope": "Static byte and boundary review only; no Dart parser/compiler/test/native/VM execution.",
+    "local_report_pin": {
+      "bytes": 4595,
+      "sha256": "c4c11b8a1cbd0068fe66cdf6074301f73fbb301298c48be006117ea0fe8bd2b0"
+    }
+  },
+  "tests_authored": {
+    "pure": 4,
+    "native": 1
+  },
+  "tests_executed": 0,
+  "Dart_analysis": "NOT_RUN_FOR_THIS_NEW_CANDIDATE",
+  "native": "NOT_RUN",
+  "VM": "NOT_RUN",
+  "production_activation": false,
+  "SDK26_G04": "OPEN",
+  "namespace": "OPEN",
+  "release_eligible": false
+}
