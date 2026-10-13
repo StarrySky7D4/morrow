@@ -30,6 +30,7 @@ use std::ptr;
 use std::sync::Mutex;
 use std::sync::OnceLock;
 use windows_sys::Win32::Foundation::CloseHandle;
+use windows_sys::Win32::Foundation::ERROR_INSUFFICIENT_BUFFER;
 use windows_sys::Win32::Foundation::ERROR_SUCCESS;
 use windows_sys::Win32::Foundation::GetLastError;
 use windows_sys::Win32::Foundation::HLOCAL;
@@ -61,7 +62,10 @@ use windows_sys::Win32::System::StationsAndDesktops::DESKTOP_SWITCHDESKTOP;
 use windows_sys::Win32::System::StationsAndDesktops::DESKTOP_WRITE_DAC;
 use windows_sys::Win32::System::StationsAndDesktops::DESKTOP_WRITE_OWNER;
 use windows_sys::Win32::System::StationsAndDesktops::DESKTOP_WRITEOBJECTS;
+use windows_sys::Win32::System::StationsAndDesktops::GetProcessWindowStation;
+use windows_sys::Win32::System::StationsAndDesktops::GetUserObjectInformationW;
 use windows_sys::Win32::System::StationsAndDesktops::OpenDesktopW;
+use windows_sys::Win32::System::StationsAndDesktops::UOI_NAME;
 
 const PRIVATE_DESKTOP_PREFIX: &str = "CodexSandboxDesktop-";
 
@@ -144,6 +148,62 @@ impl DesktopPolicy {
     }
 }
 
+// A bounded name query only: this never changes the process window station or its ACL.
+const MAX_WINDOW_STATION_NAME_UNITS: usize = 512;
+
+fn window_station_name_units(reported_bytes: u32) -> Result<usize> {
+    let bytes = reported_bytes as usize;
+    anyhow::ensure!(
+        bytes >= 2 * std::mem::size_of::<u16>()
+            && bytes % std::mem::size_of::<u16>() == 0
+            && bytes <= MAX_WINDOW_STATION_NAME_UNITS * std::mem::size_of::<u16>(),
+        "invalid window station name length"
+    );
+    Ok(bytes / std::mem::size_of::<u16>())
+}
+
+fn decode_window_station_name(buffer: &[u16], reported_bytes: u32) -> Result<String> {
+    let units = window_station_name_units(reported_bytes)?;
+    anyhow::ensure!(buffer.len() == units, "window station name length changed");
+    anyhow::ensure!(buffer.last() == Some(&0), "window station name is not terminated");
+    let name_units = &buffer[..units - 1];
+    anyhow::ensure!(!name_units.contains(&0), "window station name contains an embedded NUL");
+    let name = String::from_utf16(name_units)?;
+    anyhow::ensure!(
+        !name.chars().any(|ch| ch == '\\' || ch == '/' || ch.is_control()),
+        "invalid window station name character"
+    );
+    Ok(name)
+}
+
+fn current_window_station_name() -> Result<String> {
+    // This is a borrowed system handle; GetProcessWindowStation forbids closing it.
+    let station = unsafe { GetProcessWindowStation() };
+    anyhow::ensure!(station != 0, "GetProcessWindowStation failed: {}", unsafe { GetLastError() });
+    let mut needed = 0;
+    let size_result = unsafe {
+        GetUserObjectInformationW(station, UOI_NAME, ptr::null_mut(), 0, &mut needed)
+    };
+    let size_error = unsafe { GetLastError() };
+    anyhow::ensure!(
+        size_result == 0 && size_error == ERROR_INSUFFICIENT_BUFFER,
+        "window station name size query failed: {size_error}"
+    );
+    let units = window_station_name_units(needed)?;
+    let mut buffer = vec![u16::MAX; units];
+    let mut returned = 0;
+    let result = unsafe {
+        GetUserObjectInformationW(station, UOI_NAME, buffer.as_mut_ptr().cast(), needed, &mut returned)
+    };
+    anyhow::ensure!(result != 0, "window station name query failed: {}", unsafe { GetLastError() });
+    anyhow::ensure!(returned == needed, "window station name length changed");
+    decode_window_station_name(&buffer, returned)
+}
+
+fn qualified_desktop_name(station_name: &str, desktop_name: &str) -> Vec<u16> {
+    to_wide(format!("{station_name}\\{desktop_name}"))
+}
+
 pub struct LaunchDesktop {
     _private_desktop: PrivateDesktop,
     startup_name: Vec<u16>,
@@ -213,8 +273,9 @@ impl LaunchDesktop {
     }
 
     pub fn prepare(logs_base_dir: Option<&Path>) -> Result<Self> {
+        let station_name = current_window_station_name()?;
         let private_desktop = PrivateDesktop::create(logs_base_dir)?;
-        let startup_name = to_wide(format!("Winsta0\\{}", private_desktop.name));
+        let startup_name = qualified_desktop_name(&station_name, &private_desktop.name);
         Ok(Self {
             _private_desktop: private_desktop,
             startup_name,
@@ -233,6 +294,9 @@ impl LaunchDesktop {
         {
             anyhow::bail!("invalid private desktop name");
         }
+        // Resolve and validate the complete startup name before opening a new desktop handle.
+        let station_name = current_window_station_name()?;
+        let startup_name = qualified_desktop_name(&station_name, name);
         let name_wide = to_wide(name);
         let handle = unsafe {
             OpenDesktopW(
@@ -250,7 +314,7 @@ impl LaunchDesktop {
                 handle,
                 name: name.to_owned(),
             },
-            startup_name: to_wide(format!("Winsta0\\{name}")),
+            startup_name,
         })
     }
 
@@ -458,6 +522,63 @@ impl Drop for PrivateDesktop {
                 let _ = CloseDesktop(self.handle);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod window_station_name_tests {
+    use super::*;
+
+    fn encoded(name: &str) -> Vec<u16> {
+        name.encode_utf16().chain(std::iter::once(0)).collect()
+    }
+
+    #[test]
+    fn station_name_preserves_noninteractive_and_unicode_names() {
+        for name in ["WinSta0", "Service-0x0-3e7$", "CodexStation-0123", "隔离Station"] {
+            let raw = encoded(name);
+            assert_eq!(decode_window_station_name(&raw, (raw.len() * 2) as u32).unwrap(), name);
+        }
+    }
+
+    #[test]
+    fn station_name_rejects_empty_separators_and_controls() {
+        for name in ["", "station\\desktop", "station/desktop", "station\n", "station\u{7f}"] {
+            let raw = encoded(name);
+            assert!(decode_window_station_name(&raw, (raw.len() * 2) as u32).is_err());
+        }
+    }
+
+    #[test]
+    fn station_name_rejects_bad_utf16_and_nul_placement() {
+        for raw in [vec![0xd800, 0], vec![65, 66], vec![65, 0, 66, 0]] {
+            assert!(decode_window_station_name(&raw, (raw.len() * 2) as u32).is_err());
+        }
+    }
+
+    #[test]
+    fn station_name_rejects_changed_odd_and_over_cap_lengths() {
+        let raw = encoded("Station");
+        for bytes in [0, 2, 3, (raw.len() * 2 - 2) as u32, (raw.len() * 2 + 2) as u32, 1026, u32::MAX] {
+            assert!(decode_window_station_name(&raw, bytes).is_err());
+        }
+    }
+
+    #[test]
+    fn station_name_accepts_exact_cap_and_rejects_next_unit() {
+        let raw = encoded(&"s".repeat(MAX_WINDOW_STATION_NAME_UNITS - 1));
+        assert!(decode_window_station_name(&raw, (raw.len() * 2) as u32).is_ok());
+        let raw = encoded(&"s".repeat(MAX_WINDOW_STATION_NAME_UNITS));
+        assert!(decode_window_station_name(&raw, (raw.len() * 2) as u32).is_err());
+    }
+
+    #[test]
+    fn startup_name_uses_the_observed_station_and_one_final_nul() {
+        let desktop = "CodexSandboxDesktop-0123456789abcdef0123456789abcdef";
+        let raw = qualified_desktop_name("Service-0x0-3e7$", desktop);
+        assert_eq!(raw.last(), Some(&0));
+        assert_eq!(raw.iter().filter(|&&unit| unit == 0).count(), 1);
+        assert_eq!(String::from_utf16(&raw[..raw.len() - 1]).unwrap(), format!("Service-0x0-3e7$\\{desktop}"));
     }
 }
 

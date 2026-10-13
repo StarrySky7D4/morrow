@@ -1,6 +1,7 @@
 use crate::app_package::registered_core_requested;
 use crate::app_package::verify_registered_core_runner;
 use crate::desktop::DesktopPolicy;
+use crate::desktop::LaunchDesktop;
 use crate::desktop::shared_private_desktop_for_user;
 use crate::identity::SandboxCreds;
 use crate::ipc_framed::CHECKED_IPC_PROTOCOL_VERSION;
@@ -46,6 +47,7 @@ use windows_sys::Win32::System::IO::CancelSynchronousIo;
 use windows_sys::Win32::System::Threading::CreateProcessWithLogonW;
 use windows_sys::Win32::System::Threading::GetCurrentProcess;
 use windows_sys::Win32::System::Threading::GetCurrentThread;
+use windows_sys::Win32::System::Threading::GetExitCodeProcess;
 use windows_sys::Win32::System::Threading::LOGON_WITH_PROFILE;
 use windows_sys::Win32::System::Threading::PROCESS_INFORMATION;
 use windows_sys::Win32::System::Threading::STARTF_FORCEOFFFEEDBACK;
@@ -540,14 +542,22 @@ pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
     } else {
         None
     };
-    if let Some(policy) = desktop_policy {
+    // Hold both the private desktop and its UTF-16 startup name through runner startup.
+    // The None policy path retains its previous inherited-desktop behavior.
+    let runner_desktop = if let Some(policy) = desktop_policy {
         mark_start(diagnostic, crate::WindowsStartStage::PrivateDesktop);
-        spawn_request.private_desktop_name = Some(shared_private_desktop_for_user(
+        let desktop_name = shared_private_desktop_for_user(
             &sandbox_creds.username,
             policy,
             log_dir,
-        ).inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?);
-    }
+        ).inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?;
+        let desktop = LaunchDesktop::open_private(&desktop_name)
+            .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?;
+        spawn_request.private_desktop_name = Some(desktop_name);
+        Some(desktop)
+    } else {
+        None
+    };
     let (pipe_in_name, pipe_out_name) = pipe_pair();
     mark_start(diagnostic, crate::WindowsStartStage::PipeCreateIn);
     let pipe_write = unsafe {
@@ -605,6 +615,9 @@ pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
     let mut si: STARTUPINFOW = unsafe { std::mem::zeroed() };
     si.cb = std::mem::size_of::<STARTUPINFOW>() as u32;
     si.dwFlags = STARTF_FORCEOFFFEEDBACK;
+    if let Some(desktop) = &runner_desktop {
+        si.lpDesktop = desktop.startup_info_desktop();
+    }
     let mut pi: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
 
     let previous_error_mode = unsafe { SetErrorMode(RUNNER_ERROR_MODE_FLAGS) };
@@ -646,6 +659,10 @@ pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
     let _runner_process = unsafe { OwnedHandle::from_raw_handle(pi.hProcess as _) };
     let _runner_thread = unsafe { OwnedHandle::from_raw_handle(pi.hThread as _) };
     let expected_runner_pid = pi.dwProcessId;
+    crate::logging::log_note(
+        &format!("runner_process_created pid={expected_runner_pid}"),
+        log_dir,
+    );
     let mut nonce = [0u8; 32];
     if matched_runner.is_some() {
         use rand::{RngCore, SeedableRng};
@@ -700,6 +717,23 @@ pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
     })();
     if let Err(err) = startup_result {
         unsafe {
+            // Observe only the original process before the existing termination below.
+            let wait = WaitForSingleObject(pi.hProcess, 0);
+            if wait == WAIT_OBJECT_0 {
+                let mut raw_exit = 0;
+                if GetExitCodeProcess(pi.hProcess, &mut raw_exit) != 0 {
+                    crate::logging::log_note(
+                        &format!("runner_pre_cleanup_state=exited pid={expected_runner_pid} raw_exit=0x{raw_exit:08x}"),
+                        log_dir,
+                    );
+                } else {
+                    crate::logging::log_note("runner_pre_cleanup_state=unknown reason=exit_query_failed", log_dir);
+                }
+            } else if wait == 0x0000_0102 { // WAIT_TIMEOUT: not signaled at this observation.
+                crate::logging::log_note("runner_pre_cleanup_state=still_running exit=unknown", log_dir);
+            } else {
+                crate::logging::log_note("runner_pre_cleanup_state=unknown reason=wait_not_signaled", log_dir);
+            }
             let _ = TerminateProcess(pi.hProcess, 1);
         }
         return Err(err);

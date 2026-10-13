@@ -462,6 +462,7 @@ pub async fn run() -> Result<u32> {
     record["normal_shutdown"] = normal.into();
     if let Some(prepared) = abnormal_prepared {
         record["abnormal_resource_closure_prepared"] = prepared;
+        record["abnormal_resource_closure_protocol"] = 1.into();
     }
     emit(&mut output,&signal, 2, record.to_string().as_bytes()).await?;
     Ok(if normal && persisted && !signal.lost() { 0 } else { 2 })

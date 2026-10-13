@@ -1,13 +1,17 @@
 # Morrow · 明隙
 
 <!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->
-## 启动 RPC 故障夹具与限定验证（2026-10-13）
+## Windows 安全执行链暂停检查点（2026-10-13）
 
-本轮同步四个已编译 Rust 源文件：显式故障 feature 默认关闭，原 owner 校验、三条私有服务路由及正常路径保留。四阶段 Windows AMD64 编译与严格 HOME 后验通过；原 14 项与开启夹具后的 21 项合成回归全部通过，合计 35 次执行、21 个不同名称，其余清单条目未运行。保存的两份选定程序完成独立完整哈希／身份核对，未执行。
+按用户要求暂停开发与验收，整理源码和文档后同步现有开发分支 codex/windows-sdk-convergence-20261005；版本保持0.1.9-test.58+62，不创建标签或Release。实际提交与推送结果以Git回执及远端ref核验为准。
 
-真实 RPC 失败测试仅归档源码候选，当前组合 native／VM 验收 NOT_RUN。宿主验收工具仍为未封存禁用草稿；原 Unknown 保留且不重放。SDK26／G04、namespace、祖先目录持续 reparse、生产沙箱与网络仍 OPEN，release_eligible=false，SDK 未冻结。此前 23 项 Dart 回归保持原范围，本轮未重跑。
+首跳私有桌面绑定、实际窗口站名和原runner退出观察已接入。634 harness／runner／setup实际重新生成，三个Cargo及外层退出0、双流EOF；636独立实际读回通过，648交付复核91份固定文件无漂移。2394叶含2392原叶＋两处桌面／client修补，20原锁保持；独立目录复用依赖缓存。637 helper测试7项通过，641复核通过，仅覆盖解析边界和自身窗口站只读查询，不证明沙箱账户权限。
 
-详见 [v12 验证与后续任务](reports/reconstruction-2026-10-13/startup-rpc-fault-validation-v12.md)。Agent 会话层与安全执行层完成后暂停准备预览，扩展执行层延期；版本、锁、工作流、main、标签与 Release 不变。本轮仅推送开发分支。
+643新虚拟机campaign仍失败：39个命令通过、一次Claim、一次native Start尝试，未获ACK。649确认同一runner在原库清理前以0xc0000142退出；具体DLL与权限根因未证实。桌面接线修补未解决当前初始化故障。原执行／owner保持Unknown，不重放；暂停时未结束原控制进程或恢复检查点。详见[643修补复验与暂停记录](reports/reconstruction-2026-10-13/windows-runner-desktop-regression-643.md)。
+
+完整47步、basic文件／SID／网络见证、join／ACK、owner finish、factory release与正常owned cleanup仍待验；555正常路径未重跑，[565 RPC隔离](reports/reconstruction-2026-10-13/windows-startup-quarantine-acceptance-565.md)仅保留原限定PASS，业务UnknownRetained、normal=false、accepted=false。旧失败及历史Rust／Dart子集不升级。SDK26／G04、通用provisioning-home、namespace／持续reparse、全OS后代树与生产／跨平台资格仍OPEN，release_eligible=false，完整SDK未冻结。
+
+恢复后先核对失败现场并验证目标账户的真实启动上下文，再决定隔离窗口站keeper方案；keeper尚未实现或测试，不放宽已有窗口站ACL。Agent会话层与安全执行层完成后准备预览，扩展执行层延期。
 <!-- C28-WINDOWS-REGRESSION-20261013-END -->
 
 
