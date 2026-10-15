@@ -2,6 +2,12 @@
 use super::*;
 use codex_sandboxing::MatchedRunnerArtifact;
 
+const CHECKED_V7_SCHEMA: [u8; 32] = [
+    47, 129, 224, 48, 226, 133, 48, 72, 12, 233, 197, 28, 212, 105, 181, 9, 123, 169, 250, 219, 59,
+    123, 116, 198, 60, 193, 216, 59, 17, 20, 235, 24,
+];
+const NATIVE_CLOSE_V8_SCHEMA: [u8; 32] = *b"morrow.c28.native-close.ack-v1.\x08";
+
 impl Environment {
     /// Builds one local execution environment with an independently locked runner.
     /// This is provisioning, not approval or OS sandbox acceptance. Requests must
@@ -11,12 +17,36 @@ impl Environment {
         http_client_factory: HttpClientFactory,
         runner: Arc<MatchedRunnerArtifact>,
     ) -> Result<Self, ExecServerError> {
-        if runner.protocol_version() != 7 {
+        if runner.protocol_version() != 7 || runner.control_schema_sha256() != CHECKED_V7_SCHEMA {
             return Err(ExecServerError::Protocol(
                 "matched runner version mismatch".into(),
             ));
         }
-        Ok(Self {
+        Ok(Self::create_with_pinned_windows_runner(local_runtime_paths, http_client_factory, runner))
+    }
+
+    /// Explicit v8 opt-in on the same retained artifact. The v7 constructor
+    /// never upgrades, and neither constructor falls back to the default route.
+    /// This is local provisioning, not a startup/handshake or native-exit witness.
+    pub fn create_with_native_close_windows_runner(
+        local_runtime_paths: ExecServerRuntimeOptions,
+        http_client_factory: HttpClientFactory,
+        runner: Arc<MatchedRunnerArtifact>,
+    ) -> Result<Self, ExecServerError> {
+        if runner.protocol_version() != 8 || runner.control_schema_sha256() != NATIVE_CLOSE_V8_SCHEMA {
+            return Err(ExecServerError::Protocol(
+                "native-close runner version/schema mismatch".into(),
+            ));
+        }
+        Ok(Self::create_with_pinned_windows_runner(local_runtime_paths, http_client_factory, runner))
+    }
+
+    fn create_with_pinned_windows_runner(
+        local_runtime_paths: ExecServerRuntimeOptions,
+        http_client_factory: HttpClientFactory,
+        runner: Arc<MatchedRunnerArtifact>,
+    ) -> Self {
+        Self {
             injected_backend: None,
             remote_client: None,
             ready_info: Arc::new(ArcSwapOption::empty()),
@@ -31,6 +61,6 @@ impl Environment {
             )),
             http_client: Arc::new(RouteAwareHttpClient::new(http_client_factory)),
             local_runtime_paths: Some(local_runtime_paths),
-        })
+        }
     }
 }

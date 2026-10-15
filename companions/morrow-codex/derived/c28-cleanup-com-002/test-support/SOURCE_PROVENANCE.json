@@ -1,0 +1,730 @@
+{
+  "description": "Real immutable upstream package mirrors with byte-identical manifests, source, fixtures and tests. Binding workspace selects the current derived implementation packages explicitly, without treating them as equivalent to upstream. Original nine-member workspace retained.",
+  "packages": {
+    "codex-test-binary-support": "test-binary-support",
+    "codex-arg0": "arg0",
+    "codex-apply-patch": "apply-patch",
+    "codex-linux-sandbox": "linux-sandbox"
+  },
+  "files": [
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/test-binary-support/BUILD.bazel",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/test-binary-support/BUILD.bazel",
+      "sha256": "2936acd46be07e93ae3766861e2144e85ed1003b1708aba38fe3f45f6852bf8a"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/test-binary-support/Cargo.toml",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/test-binary-support/Cargo.toml",
+      "sha256": "72707d0f0238886c11269f3a9bf28fab63107120c13477e4e34b798add3dc9c5"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/test-binary-support/lib.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/test-binary-support/lib.rs",
+      "sha256": "4fb67850b78b8f84d7cec475b30a40f8120a2d180531814b174c47a37540c482"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/arg0/BUILD.bazel",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/arg0/BUILD.bazel",
+      "sha256": "286958a311f51454c9ed8e19c4062876785a8882b96ab62d5a5db0003162669e"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/arg0/Cargo.toml",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/arg0/Cargo.toml",
+      "sha256": "2e8868bd7755fe0abf3365b01b448000d17761c159ad8ab6a92c655decd312fe"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/arg0/src/lib.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/arg0/src/lib.rs",
+      "sha256": "8d08b6fa5da6abc7cb9b05b77a2b1f2cf353f7a2a9e7a328c51dd5dc0b0cee75"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/BUILD.bazel",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/BUILD.bazel",
+      "sha256": "f974dae299db8619864bbe3c3b55a179563bf1215508067992b847590b4082e6"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/Cargo.toml",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/Cargo.toml",
+      "sha256": "388b18e13d8e3f8aa419e30385e33fe58748b2bd972df32eb66aa1484ab3d54a"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/src/file_update.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/src/file_update.rs",
+      "sha256": "f954105ba036f1c3748fc2ed605ce9a677d619e56ce25f89bffdcad3377734f9"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/src/file_update_tests.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/src/file_update_tests.rs",
+      "sha256": "59fc1e6db897fd61be7ee865a741dc7fdb709501426c4f9603ef8a532fe08282"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/src/invocation.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/src/invocation.rs",
+      "sha256": "ab6ce54396919236a2b68a5dc33f670663c67c12fa8def3b80588933d297047a"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/src/lib.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/src/lib.rs",
+      "sha256": "5e6f736f3a4b66c1d651baa9b85ce6e6921de170faf901e6c2f78ad9a383eaf9"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/src/main.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/src/main.rs",
+      "sha256": "31de3e573a13c50c81af81d262a11fdb758540408cbab3fafb5e638c66a50117"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/src/parser.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/src/parser.rs",
+      "sha256": "6b8086467d0500f4fc9aa9a35cd33a0bce53c01bcb74b915b9efc6fcf187f7ce"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/src/seek_sequence.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/src/seek_sequence.rs",
+      "sha256": "5eced89191977d6b53b1b770ccaad6cafa2fb3ecbcd4839a88318f75e4a620e4"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/src/standalone_executable.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/src/standalone_executable.rs",
+      "sha256": "33d7979c976a21b57fbb0c576ccf45b38127fef4cca4bf7af62077ce78d0c8ab"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/src/streaming_parser.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/src/streaming_parser.rs",
+      "sha256": "5f4b8e60fd24ada7c1b6a696155de3da2b946f7b5436da90e377c9de04b1e578"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/src/text_file.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/src/text_file.rs",
+      "sha256": "35cbbdeb91e86780d99fccd097a5dba2772f048730556b73d685e94658ddc6e3"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/all.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/all.rs",
+      "sha256": "76a945d282d61edbe1dbcd9788e7bc7c2073ebecf42c934cfb4bb2f6c47fb8cd"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/.gitattributes",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/.gitattributes",
+      "sha256": "ef13f8bdcd38dc117a6b547edffe61c437da4e821443528705e85e9fc900f15b"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/README.md",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/README.md",
+      "sha256": "7f26cc800f206369db4d34a7b2fadf55a922e63c175120d94f6f23e2e910fa10"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/001_add_file/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/001_add_file/patch.txt",
+      "sha256": "aa18ebd5e858578e491321489cd17515e03da90c169eda64bbcdce7599c5261b"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/001_add_file/expected/bar.md",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/001_add_file/expected/bar.md",
+      "sha256": "dd96989d943734993ecd4dfc86a3b6809640f9690690ae5579044525316d03ef"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/002_multiple_operations/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/002_multiple_operations/patch.txt",
+      "sha256": "d3477a702074b84a8aa62fed091b40c5f8f5b4a86bb6f49894d3f9bdd12f1084"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/002_multiple_operations/expected/modify.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/002_multiple_operations/expected/modify.txt",
+      "sha256": "7c3bb4651da2a3024085602195a360e4e084aee735e236bb455f3b2687edf876"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/002_multiple_operations/expected/nested/new.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/002_multiple_operations/expected/nested/new.txt",
+      "sha256": "59134a4054b27a3fc30e1ac81d9b9168dc0561f65982151324a021fe8ce88d06"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/002_multiple_operations/input/delete.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/002_multiple_operations/input/delete.txt",
+      "sha256": "abdcccf4a6a5fae3da2c8232d6fbf33b61d5db886742c35218e724b8e5c6b0e0"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/002_multiple_operations/input/modify.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/002_multiple_operations/input/modify.txt",
+      "sha256": "2751a3a2f303ad21752038085e2b8c5f98ecff61a2e4ebbd43506a941725be80"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/003_multiple_chunks/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/003_multiple_chunks/patch.txt",
+      "sha256": "b8fb2de70747f6316cec64bb3e13d5799c4ec5c4db760ff9016a28ec1acd5e97"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/003_multiple_chunks/expected/multi.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/003_multiple_chunks/expected/multi.txt",
+      "sha256": "e32d16d64119533b3fd1521cb84c1850b15ed961381fc0dfe1d7cd9f3475e5b8"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/003_multiple_chunks/input/multi.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/003_multiple_chunks/input/multi.txt",
+      "sha256": "9a1fd5560147da610cde03a9e0cf1db3d4f93b53f46ac67e754cb42fb7fb911a"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/004_move_to_new_directory/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/004_move_to_new_directory/patch.txt",
+      "sha256": "3a3982b7bed7fe95be34c697a5b1b9d99bab69bf0387b8b5adfb10953494d730"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/004_move_to_new_directory/expected/old/other.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/004_move_to_new_directory/expected/old/other.txt",
+      "sha256": "6b48d86f459d6cab2a77f0cfccce4232d80d4047f3b5f11139a6b37fb9873a6e"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/004_move_to_new_directory/expected/renamed/dir/name.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/004_move_to_new_directory/expected/renamed/dir/name.txt",
+      "sha256": "1c3ef9a7c817b4642bcb3cb1456fbce92a6f992df2e1d6ad9d8a2dfb4fdf42f6"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/004_move_to_new_directory/input/old/name.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/004_move_to_new_directory/input/old/name.txt",
+      "sha256": "40eda80edfc38b36bdcdc408aa6ff2cc40b708e46ece9dfd2b2801a05a18a5fc"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/004_move_to_new_directory/input/old/other.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/004_move_to_new_directory/input/old/other.txt",
+      "sha256": "6b48d86f459d6cab2a77f0cfccce4232d80d4047f3b5f11139a6b37fb9873a6e"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/005_rejects_empty_patch/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/005_rejects_empty_patch/patch.txt",
+      "sha256": "20f1032ab87728c78fe8c6428c853427441ba4297dd0efac72ab470ae76e9610"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/005_rejects_empty_patch/expected/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/005_rejects_empty_patch/expected/foo.txt",
+      "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/005_rejects_empty_patch/input/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/005_rejects_empty_patch/input/foo.txt",
+      "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/006_rejects_missing_context/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/006_rejects_missing_context/patch.txt",
+      "sha256": "1f00db0e051d695801cc8607e1905d4c78b6e871bd91fad704585eaec14f2d5e"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/006_rejects_missing_context/expected/modify.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/006_rejects_missing_context/expected/modify.txt",
+      "sha256": "2751a3a2f303ad21752038085e2b8c5f98ecff61a2e4ebbd43506a941725be80"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/006_rejects_missing_context/input/modify.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/006_rejects_missing_context/input/modify.txt",
+      "sha256": "2751a3a2f303ad21752038085e2b8c5f98ecff61a2e4ebbd43506a941725be80"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/007_rejects_missing_file_delete/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/007_rejects_missing_file_delete/patch.txt",
+      "sha256": "fe9d2c5f1f4ffff1c077bb857609abafc08b83cac3f1633843daaa6704ceb8df"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/007_rejects_missing_file_delete/expected/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/007_rejects_missing_file_delete/expected/foo.txt",
+      "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/007_rejects_missing_file_delete/input/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/007_rejects_missing_file_delete/input/foo.txt",
+      "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/008_rejects_empty_update_hunk/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/008_rejects_empty_update_hunk/patch.txt",
+      "sha256": "d47d0fd818c62fcf0b9d751e7e5db78353885b6a86e6b5622a1dbe1cba23c60a"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/008_rejects_empty_update_hunk/expected/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/008_rejects_empty_update_hunk/expected/foo.txt",
+      "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/008_rejects_empty_update_hunk/input/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/008_rejects_empty_update_hunk/input/foo.txt",
+      "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/009_requires_existing_file_for_update/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/009_requires_existing_file_for_update/patch.txt",
+      "sha256": "454e38dc74d6b1943f464155c4e3c5705896941fa0f2c3116e8ccd23601387bb"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/009_requires_existing_file_for_update/expected/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/009_requires_existing_file_for_update/expected/foo.txt",
+      "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/009_requires_existing_file_for_update/input/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/009_requires_existing_file_for_update/input/foo.txt",
+      "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/010_move_overwrites_existing_destination/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/010_move_overwrites_existing_destination/patch.txt",
+      "sha256": "9328b30823e578f20d2db55d35a15a1522eade17b5970ef5c76498f3aee00a96"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/010_move_overwrites_existing_destination/expected/old/other.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/010_move_overwrites_existing_destination/expected/old/other.txt",
+      "sha256": "6b48d86f459d6cab2a77f0cfccce4232d80d4047f3b5f11139a6b37fb9873a6e"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/010_move_overwrites_existing_destination/expected/renamed/dir/name.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/010_move_overwrites_existing_destination/expected/renamed/dir/name.txt",
+      "sha256": "7aa7a5359173d05b63cfd682e3c38487f3cb4f7f1d60659fe59fab1505977d4c"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/010_move_overwrites_existing_destination/input/old/name.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/010_move_overwrites_existing_destination/input/old/name.txt",
+      "sha256": "c85090422a84ecc24a6a47260e9fd590257f6e0e02dd774ccdcfb6a9d5e798b4"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/010_move_overwrites_existing_destination/input/old/other.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/010_move_overwrites_existing_destination/input/old/other.txt",
+      "sha256": "6b48d86f459d6cab2a77f0cfccce4232d80d4047f3b5f11139a6b37fb9873a6e"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/010_move_overwrites_existing_destination/input/renamed/dir/name.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/010_move_overwrites_existing_destination/input/renamed/dir/name.txt",
+      "sha256": "d32cf044872a37e6439d9055f90a0da11f1e0b07fa4e79d6ec710764ce1e206a"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/011_add_overwrites_existing_file/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/011_add_overwrites_existing_file/patch.txt",
+      "sha256": "6d6e6470a4368781be27f651176d9d7aefddadba6fbe62faa793e662cd7ac310"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/011_add_overwrites_existing_file/expected/duplicate.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/011_add_overwrites_existing_file/expected/duplicate.txt",
+      "sha256": "1c3ef9a7c817b4642bcb3cb1456fbce92a6f992df2e1d6ad9d8a2dfb4fdf42f6"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/011_add_overwrites_existing_file/input/duplicate.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/011_add_overwrites_existing_file/input/duplicate.txt",
+      "sha256": "40eda80edfc38b36bdcdc408aa6ff2cc40b708e46ece9dfd2b2801a05a18a5fc"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/012_delete_directory_fails/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/012_delete_directory_fails/patch.txt",
+      "sha256": "d09813e03aaa691a3a0b225edba50674b536701425e3cb5a44d4d22c8a4a9c28"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/012_delete_directory_fails/expected/dir/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/012_delete_directory_fails/expected/dir/foo.txt",
+      "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/012_delete_directory_fails/input/dir/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/012_delete_directory_fails/input/dir/foo.txt",
+      "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/013_rejects_invalid_hunk_header/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/013_rejects_invalid_hunk_header/patch.txt",
+      "sha256": "c25c2ecd7e20f5e6dd846ee8f6596de766b443e9d9bdc8f0e0c391660826cc92"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/013_rejects_invalid_hunk_header/expected/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/013_rejects_invalid_hunk_header/expected/foo.txt",
+      "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/013_rejects_invalid_hunk_header/input/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/013_rejects_invalid_hunk_header/input/foo.txt",
+      "sha256": "2b92ea252be0fbc26f70317cdaa7b6411ea634b50d55338cd8c495e4dbf25d1d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/014_update_file_appends_trailing_newline/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/014_update_file_appends_trailing_newline/patch.txt",
+      "sha256": "832ebaa947ae0cd9b328be202adcd59da66c5fcf2f0a3ba624dc466e30287cac"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/014_update_file_appends_trailing_newline/expected/no_newline.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/014_update_file_appends_trailing_newline/expected/no_newline.txt",
+      "sha256": "c2097f55f01fc297fc7f4acf21438123e06e4d409a818524428534e850642f4f"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/014_update_file_appends_trailing_newline/input/no_newline.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/014_update_file_appends_trailing_newline/input/no_newline.txt",
+      "sha256": "4575dfcd1eb57fd3cf77e78f18f5bb0659ca38ace8564d5f53e42527c603629a"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/015_failure_after_partial_success_leaves_changes/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/015_failure_after_partial_success_leaves_changes/patch.txt",
+      "sha256": "65ca3527c31b486bd893f0a323507a65ce698507e6c33db31c6d9ffd401f6ad0"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/015_failure_after_partial_success_leaves_changes/expected/created.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/015_failure_after_partial_success_leaves_changes/expected/created.txt",
+      "sha256": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/016_pure_addition_update_chunk/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/016_pure_addition_update_chunk/patch.txt",
+      "sha256": "888228c23cf6db16ad3194af46d2b6b7567dac7691053c0b67be1f5df179acd9"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/016_pure_addition_update_chunk/expected/input.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/016_pure_addition_update_chunk/expected/input.txt",
+      "sha256": "013834138420c9775178b8fcbcd6b03488b704fed7d44bf37dc385d53e443913"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/016_pure_addition_update_chunk/input/input.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/016_pure_addition_update_chunk/input/input.txt",
+      "sha256": "2751a3a2f303ad21752038085e2b8c5f98ecff61a2e4ebbd43506a941725be80"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/017_whitespace_padded_hunk_header/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/017_whitespace_padded_hunk_header/patch.txt",
+      "sha256": "49a76c72c335007415680f75399e2f74c5bccd6b4c4b34a7d4c3174bffbfee48"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/017_whitespace_padded_hunk_header/expected/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/017_whitespace_padded_hunk_header/expected/foo.txt",
+      "sha256": "7aa7a5359173d05b63cfd682e3c38487f3cb4f7f1d60659fe59fab1505977d4c"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/017_whitespace_padded_hunk_header/input/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/017_whitespace_padded_hunk_header/input/foo.txt",
+      "sha256": "01d09d19c2139a46aebfb577780d123d7396e97201bc7ead210a2ebff8239dee"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/018_whitespace_padded_patch_markers/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/018_whitespace_padded_patch_markers/patch.txt",
+      "sha256": "2307c079befb8bccd3dd81d9f31b6fc2352a91c37a96a5117f5a5375312f78c4"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/018_whitespace_padded_patch_markers/expected/file.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/018_whitespace_padded_patch_markers/expected/file.txt",
+      "sha256": "27dd8ed44a83ff94d557f9fd0412ed5a8cbca69ea04922d88c01184a07300a5a"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/018_whitespace_padded_patch_markers/input/file.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/018_whitespace_padded_patch_markers/input/file.txt",
+      "sha256": "2c8b08da5ce60398e1f19af0e5dccc744df274b826abe585eaba68c525434806"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/019_unicode_simple/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/019_unicode_simple/patch.txt",
+      "sha256": "950630eb84c42a5c347636fcc49678e34667dd7976e19d70a7c0ed03d61fa8b4"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/019_unicode_simple/expected/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/019_unicode_simple/expected/foo.txt",
+      "sha256": "e9014b085eebfaaf1ff77d8e6017f9ca544e21667e2a8516563eaab2fdb1262f"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/019_unicode_simple/input/foo.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/019_unicode_simple/input/foo.txt",
+      "sha256": "6bc89526aeb4d8014b8e8afac4e7f1814bbab23e45ae6f8e37ef626da9f285ec"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/020_delete_file_success/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/020_delete_file_success/patch.txt",
+      "sha256": "b80ae683dfd6e0cebe67997c81561a3d9ef9f55ef74673e327928677e7628b4f"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/020_delete_file_success/expected/keep.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/020_delete_file_success/expected/keep.txt",
+      "sha256": "f660a7996deacfbc7560e4240054a8ad82eb02fe25a95064257e07084bcacb85"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/020_delete_file_success/input/keep.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/020_delete_file_success/input/keep.txt",
+      "sha256": "f660a7996deacfbc7560e4240054a8ad82eb02fe25a95064257e07084bcacb85"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/020_delete_file_success/input/obsolete.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/020_delete_file_success/input/obsolete.txt",
+      "sha256": "abdcccf4a6a5fae3da2c8232d6fbf33b61d5db886742c35218e724b8e5c6b0e0"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/020_whitespace_padded_patch_marker_lines/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/020_whitespace_padded_patch_marker_lines/patch.txt",
+      "sha256": "9ef1cc2e027d30b90db84ee02ff23bcb16382d490e554125d5fee89b272c2a31"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/020_whitespace_padded_patch_marker_lines/expected/file.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/020_whitespace_padded_patch_marker_lines/expected/file.txt",
+      "sha256": "27dd8ed44a83ff94d557f9fd0412ed5a8cbca69ea04922d88c01184a07300a5a"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/020_whitespace_padded_patch_marker_lines/input/file.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/020_whitespace_padded_patch_marker_lines/input/file.txt",
+      "sha256": "2c8b08da5ce60398e1f19af0e5dccc744df274b826abe585eaba68c525434806"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/021_update_file_deletion_only/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/021_update_file_deletion_only/patch.txt",
+      "sha256": "19bec424380bc552ab1149500047502e9e6dd06952c6615553600df01e50d4b3"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/021_update_file_deletion_only/expected/lines.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/021_update_file_deletion_only/expected/lines.txt",
+      "sha256": "28387b210ad33ee091c9bc2b099fe33db9be20ef6c8de8427cec615cd87f775c"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/021_update_file_deletion_only/input/lines.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/021_update_file_deletion_only/input/lines.txt",
+      "sha256": "66663af9c7aa341431a8ee2ff27b72abd06c9218f517bb6fef948e4803c19e03"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/022_update_file_end_of_file_marker/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/022_update_file_end_of_file_marker/patch.txt",
+      "sha256": "350b3b8a57211b8bf0d2a09a573b4bb69e3765979c94cb4fca00307ed7192f3c"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/022_update_file_end_of_file_marker/expected/tail.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/022_update_file_end_of_file_marker/expected/tail.txt",
+      "sha256": "b8074f984c9d414b623d1ea91f01912de5972a208a962cd66bf7ae0b467f6cd5"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/022_update_file_end_of_file_marker/input/tail.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/022_update_file_end_of_file_marker/input/tail.txt",
+      "sha256": "dbea9325179efe46ea2add94f7b6b745ca983fabb208dc6d34aa064623d7ee23"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/023_preserves_crlf_line_endings/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/023_preserves_crlf_line_endings/patch.txt",
+      "sha256": "d8b35b612e3c7ca94af39ceea7512e5682432b9b83d8704890cfff65fa11c441"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/023_preserves_crlf_line_endings/expected/lines.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/023_preserves_crlf_line_endings/expected/lines.txt",
+      "sha256": "0847510cfb20fcb37de9401eba3e8c713ff1917a8007ac5861f7dd4ccaaeff10"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/023_preserves_crlf_line_endings/input/lines.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/023_preserves_crlf_line_endings/input/lines.txt",
+      "sha256": "9fc4c6bdc7e5374b75e38fa9e1097577399bb74f1ccc33b1712d53a26d02c09a"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/024_preserves_mixed_line_endings/patch.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/024_preserves_mixed_line_endings/patch.txt",
+      "sha256": "d2c9ac73cf59eb8536aaa3dc7b28b824328033a72a6950fb03cb269c8164cf51"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/024_preserves_mixed_line_endings/expected/lines.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/024_preserves_mixed_line_endings/expected/lines.txt",
+      "sha256": "915a2863bd4f19cfbf67805353bd92575b0615cd2f6d2efe47936986620f4981"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/fixtures/scenarios/024_preserves_mixed_line_endings/input/lines.txt",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/fixtures/scenarios/024_preserves_mixed_line_endings/input/lines.txt",
+      "sha256": "92c50a656c2cff73369c78e3f770a652f8744db7074beb76a357135bcc35a811"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/suite/cli.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/suite/cli.rs",
+      "sha256": "0c847c8407f2aa3bdd0d41aade65a50f2a688598252ae6cee53a0f075015de91"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/suite/mod.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/suite/mod.rs",
+      "sha256": "e8fe0eb6c25b1e70ff16ae10201f32696ac8f942c6fbfc917a619c8d818e89f9"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/suite/no_follow.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/suite/no_follow.rs",
+      "sha256": "5d1a208f292318128a54f8d24bf1efc49fccb23faf64d69a1f4cf629944e81af"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/suite/scenarios.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/suite/scenarios.rs",
+      "sha256": "e813c9cad4f69550b8df20e0956076a671d5bab6babe3c2779544c5cdef715bd"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/apply-patch/tests/suite/tool.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/apply-patch/tests/suite/tool.rs",
+      "sha256": "1c6c784d9f4d1bca2bd3275b7143d228ac0a3930eadfa2de62d6a94fc9d4160f"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/BUILD.bazel",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/BUILD.bazel",
+      "sha256": "7294bdcc184358fddee74ccc5cdcf2ff21780cf06925eb4c66ffb83f08cca3b2"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/build.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/build.rs",
+      "sha256": "9a58f252be8ae4baabc9ebc1db9f9923d1a9345cd44bce3ce7b76c94942743bb"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/Cargo.toml",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/Cargo.toml",
+      "sha256": "9e0f2aabd5e0b529f8af9cd39c0116b356662ab1aa8950525b6820581ac59e11"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/README.md",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/README.md",
+      "sha256": "22e242b40374ff3dd9538e955aa0f05c8813e9010c42747050ff6a215ba19c15"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/bazel_bwrap.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/bazel_bwrap.rs",
+      "sha256": "63446fa2e9999474235867059d26eef74990505f13e84266677389c4e4f207eb"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/bundled_bwrap.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/bundled_bwrap.rs",
+      "sha256": "6d57a035029048db8aeabed4a56c18f7fc72017dafb9ce61a53bd1b384e49566"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/bwrap.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/bwrap.rs",
+      "sha256": "1d3dfe853f9b5f1cafd7283cf760e38ff739eb7c1ac54650ae2ed510b92b870a"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/bwrap_wslg_tests.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/bwrap_wslg_tests.rs",
+      "sha256": "1da7d01e626a69b58fdf7487ead7d3ecb0ea2438e7b1a80699aa2aa786b251d2"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/daemon_mounts.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/daemon_mounts.rs",
+      "sha256": "bc929ea13aabdb363ed0bea9235bce795867df6c85995649a26ede327efc0352"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/daemon_mounts_tests.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/daemon_mounts_tests.rs",
+      "sha256": "00f55ab9832d481ddac271cab645135a747a107596404f2d24332c0decd7b416"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/exec_util.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/exec_util.rs",
+      "sha256": "6bf01ef0e7094f6e82c7bf495b0b334d4a6fa229616e1a260b3e8813b0278a8b"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/fd_mount.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/fd_mount.rs",
+      "sha256": "ee727c53d7031377e8adec3d08cd102e083d9e1219a2604e8821820eabaa3ec3"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/fd_mount_tests.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/fd_mount_tests.rs",
+      "sha256": "96c01afaec44003acbc88d6e1d02c0fab8049924b3abf61ff431b71a0755e28f"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/landlock.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/landlock.rs",
+      "sha256": "4f92e49f44694d2c946ab2cb96fa4293daf52023b674a63332a863bb00c1370d"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/launcher.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/launcher.rs",
+      "sha256": "f3c07fa29232a04627b84189801ffd2e4af4d335835333a70a7530d975042d85"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/lib.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/lib.rs",
+      "sha256": "242787f4c2d3f21b9b0705a6776238de9a41d66e7c384a283b9fd9ebb726dda0"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/linux_run_main.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/linux_run_main.rs",
+      "sha256": "0dd784f70ff95b16c97dd9e8420c30db2ff39002a57e357c6da686c353464270"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/linux_run_main_tests.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/linux_run_main_tests.rs",
+      "sha256": "023b9d0f3521daa1e002c5acfd3d7317c92b0f47960224b70291110974a25d3b"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/main.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/main.rs",
+      "sha256": "48e33740760200bf423fc11fde551c3196ff7bc43f103defdc1cf701c98eafbb"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/proxy_lifecycle.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/proxy_lifecycle.rs",
+      "sha256": "6fced7cdf83cc5d461f0a327a83d6fc14e14e8d6d9f7f4d4ac58d91434e6e97a"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/proxy_lifecycle_tests.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/proxy_lifecycle_tests.rs",
+      "sha256": "a76b8b573067d75543bfb1a6ab1dea22e7dfab724721d4d2c95d809571893b71"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/proxy_routing.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/proxy_routing.rs",
+      "sha256": "e6665eb0a9f88e6dd78e321da6a760287344fb88b08780a55a129a0d087239a1"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/wslg.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/wslg.rs",
+      "sha256": "99d39b9d0c7abbd5a09d1f99cbb135db5059e440b5377a214b2112b2534fa36c"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/src/wslg_tests.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/src/wslg_tests.rs",
+      "sha256": "0a5922d6436844dfeb49b1c540ebf9fc33ac2c3b8bb60837139e15d6cc44eb50"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/tests/all.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/tests/all.rs",
+      "sha256": "f484e46e22db99bab05787768d047b60251f6ba95e24387f75034c1dfa1980a3"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/tests/suite/bundled_bwrap.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/tests/suite/bundled_bwrap.rs",
+      "sha256": "d6a3bd49cdf044d9f50a7ffe0c2e680479f0148336ee9fc03e5c4f364cbc4570"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/tests/suite/daemon_sockets_tests.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/tests/suite/daemon_sockets_tests.rs",
+      "sha256": "e46d4454f0e8552b314c41af2a9994985ef771269d389c7560fb2309f0821bf1"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/tests/suite/landlock.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/tests/suite/landlock.rs",
+      "sha256": "7baaa8f0448645f25bd08ff6c9cfcfdb6396707cdd2e6aa0ae3a85f94513d0bb"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/tests/suite/managed_proxy.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/tests/suite/managed_proxy.rs",
+      "sha256": "1500cd55e884a4ea7f8d2e25556370fcd7fc6cf36344ba9cd52a2a0fe31933f5"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/tests/suite/managed_proxy_unix_sockets_tests.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/tests/suite/managed_proxy_unix_sockets_tests.rs",
+      "sha256": "021c86c0aed79f3a0c72319b76665f148ebd5b0e8f3066e9392ff0b9a78a2fee"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/tests/suite/mod.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/tests/suite/mod.rs",
+      "sha256": "e4a49351f9aa5d1bcb69d4feaddb4d166228e209b77bfd26697149e6fe952efe"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/tests/suite/nested_metadata_tests.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/tests/suite/nested_metadata_tests.rs",
+      "sha256": "c1464bd44f1ed87abc6620194be974e0b30d3f32b66118546cc4104dd2bbb19f"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/tests/suite/root_metadata_tests.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/tests/suite/root_metadata_tests.rs",
+      "sha256": "1613c2bbc377e8d203ce71e4445a37e1ea25da979ac3d6c12183e1a726384764"
+    },
+    {
+      "source": "companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox/tests/suite/wslg_tests.rs",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/linux-sandbox/tests/suite/wslg_tests.rs",
+      "sha256": "b0e31282daf6604c2296ab8baf6000778d3631b9c82dfb368c63c5463c6902b9"
+    },
+    {
+      "source": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/LICENSE",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/LICENSE",
+      "sha256": "d17f227e4df5da1600391338865ce0f3055211760a36688f816941d58232d8dc"
+    },
+    {
+      "source": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/NOTICE",
+      "mirror": "companions/morrow-codex/derived/c28-cleanup-com-002/test-support/NOTICE",
+      "sha256": "9d71575ecfd9a843fc1677b0efb08053c6ba9fd686a0de1a6f5382fd3c220915"
+    }
+  ],
+  "binding_workspace_source": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/Cargo.toml",
+  "license": "Apache-2.0; LICENSE and NOTICE copied from retained derived source distribution",
+  "Cargo_resolution": "NOT_RUN",
+  "locks_modified": false
+}

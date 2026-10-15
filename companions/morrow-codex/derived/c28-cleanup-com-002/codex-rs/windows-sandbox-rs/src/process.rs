@@ -36,11 +36,74 @@ use windows_sys::Win32::System::Threading::STARTF_USESTDHANDLES;
 use windows_sys::Win32::System::Threading::STARTUPINFOEXW;
 use windows_sys::Win32::System::Threading::STARTUPINFOW;
 
+/// Operation evidence captured at the CreateProcessAsUserW boundary. The private
+/// representation prevents a caller from interpreting an arbitrary zero handle as
+/// proof that no process was created.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ProcessCreationEvidence(ProcessCreationDisposition);
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ProcessCreationDisposition {
+    NotInvoked,
+    Rejected { os_error: i32 },
+    Created,
+    Uncertain,
+}
+
+/// Positive absence evidence, distinct from an exit or CloseHandle witness.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ProcessNotCreated(ProcessCreationDisposition);
+
+impl ProcessCreationEvidence {
+    pub(crate) fn not_invoked() -> Self {
+        Self(ProcessCreationDisposition::NotInvoked)
+    }
+
+    // Called only with the original return value and original zero-initialized PI.
+    // An unsuccessful call with unexpected outputs is retained as uncertain.
+    pub(crate) fn returned(ok: i32, pi: &PROCESS_INFORMATION, os_error: i32) -> Self {
+        Self(if ok != 0 {
+            ProcessCreationDisposition::Created
+        } else if Self::empty_originals(pi) {
+            ProcessCreationDisposition::Rejected { os_error }
+        } else {
+            ProcessCreationDisposition::Uncertain
+        })
+    }
+
+    fn empty_originals(pi: &PROCESS_INFORMATION) -> bool {
+        pi.hProcess == 0 && pi.hThread == 0 && pi.dwProcessId == 0 && pi.dwThreadId == 0
+    }
+
+    pub fn not_created_for(&self, pi: &PROCESS_INFORMATION) -> Option<ProcessNotCreated> {
+        if Self::empty_originals(pi) && matches!(self.0,
+            ProcessCreationDisposition::NotInvoked | ProcessCreationDisposition::Rejected { .. }) {
+            Some(ProcessNotCreated(self.0))
+        } else { None }
+    }
+}
+
+impl ProcessNotCreated {
+    pub fn reason(&self) -> &'static str {
+        match self.0 {
+            ProcessCreationDisposition::NotInvoked => "CreateProcessAsUserW was not invoked",
+            ProcessCreationDisposition::Rejected { .. } => "CreateProcessAsUserW explicitly rejected creation",
+            _ => unreachable!("absence proof has a private, checked constructor"),
+        }
+    }
+
+    pub fn rejection_os_error(&self) -> Option<i32> {
+        match self.0 { ProcessCreationDisposition::Rejected { os_error } => Some(os_error), _ => None }
+    }
+}
+
 pub struct CreatedProcess {
     pub process_info: PROCESS_INFORMATION,
     pub startup_info: STARTUPINFOW,
     pub(crate) job: Arc<JobObject>,
     _desktop: LaunchDesktop,
+    launch_error: Option<anyhow::Error>,
+    creation_evidence: ProcessCreationEvidence,
 }
 
 /// Controls console creation for pipe-backed child processes.
@@ -99,6 +162,21 @@ pub unsafe fn create_process_as_user(
     stdio: Option<(HANDLE, HANDLE, HANDLE)>,
     console_mode: ConsoleMode,
     desktop: LaunchDesktop,
+) -> Result<CreatedProcess> {
+    create_process_as_user_impl(h_token, argv, cwd, env_map, logs_base_dir, stdio, console_mode, desktop, false)
+}
+
+#[allow(clippy::too_many_arguments)]
+unsafe fn create_process_as_user_impl(
+    h_token: HANDLE,
+    argv: &[String],
+    cwd: &Path,
+    env_map: &HashMap<String, String>,
+    logs_base_dir: Option<&Path>,
+    stdio: Option<(HANDLE, HANDLE, HANDLE)>,
+    console_mode: ConsoleMode,
+    desktop: LaunchDesktop,
+    retain_on_launch_error: bool,
 ) -> Result<CreatedProcess> {
     let cmdline_str = argv_to_command_line(argv);
     let mut cmdline: Vec<u16> = to_wide(&cmdline_str);
@@ -179,8 +257,14 @@ pub unsafe fn create_process_as_user(
             si.StartupInfo.dwFlags,
             creation_flags,
         );
-        logging::debug_log(&msg, logs_base_dir);
-        return Err(std::io::Error::from_raw_os_error(err)).context(msg);
+        if !retain_on_launch_error { logging::debug_log(&msg, logs_base_dir); }
+        let first_error = anyhow::Error::from(std::io::Error::from_raw_os_error(err)).context(msg);
+        if retain_on_launch_error {
+            return Ok(CreatedProcess { process_info: pi, startup_info: si.StartupInfo,
+                job, _desktop: desktop, launch_error: Some(first_error),
+                creation_evidence: ProcessCreationEvidence::returned(ok, &pi, err) });
+        }
+        return Err(first_error);
     }
 
     Ok(CreatedProcess {
@@ -188,6 +272,8 @@ pub unsafe fn create_process_as_user(
         startup_info: si.StartupInfo,
         job,
         _desktop: desktop,
+        launch_error: None,
+        creation_evidence: ProcessCreationEvidence::returned(ok, &pi, 0),
     })
 }
 
@@ -207,6 +293,10 @@ pub enum StderrMode {
 
 /// Handles returned by `spawn_process_with_pipes`.
 #[allow(dead_code)]
+/// Uncertain numeric close evidence, never an owned/retryable HANDLE.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PipeHandleCloseDebt { pub raw_handle: usize, pub os_error: i32 }
+
 pub struct PipeSpawnHandles {
     pub process: PROCESS_INFORMATION,
     job: Arc<JobObject>,
@@ -214,9 +304,21 @@ pub struct PipeSpawnHandles {
     pub stdout_read: HANDLE,
     pub stderr_read: Option<HANDLE>,
     pub(crate) desktop: LaunchDesktop,
+    close_debts: [Option<PipeHandleCloseDebt>; 4],
+    launch_error: Option<anyhow::Error>,
+    creation_evidence: ProcessCreationEvidence,
 }
 
 impl PipeSpawnHandles {
+    pub fn creation_evidence(&self) -> ProcessCreationEvidence { self.creation_evidence }
+
+    pub fn launch_error(&self) -> Option<&anyhow::Error> { self.launch_error.as_ref() }
+
+    pub fn close_debts(&self) -> &[Option<PipeHandleCloseDebt>; 4] { &self.close_debts }
+    pub fn primary_close_error(&self) -> Option<i32> {
+        self.close_debts.iter().flatten().next().map(|debt| debt.os_error)
+    }
+
     /// Returns the Job Object containing the spawned process.
     pub fn job(&self) -> Arc<JobObject> {
         Arc::clone(&self.job)
@@ -235,6 +337,41 @@ pub fn spawn_process_with_pipes(
     console_mode: ConsoleMode,
     desktop: LaunchDesktop,
     logs_base_dir: Option<&Path>,
+) -> Result<PipeSpawnHandles> {
+    spawn_process_with_pipes_impl(h_token, argv, cwd, env_map, stdin_mode, stderr_mode, console_mode, desktop, logs_base_dir, false)
+}
+
+/// Checked path: atomic Job admission via PROC_THREAD_ATTRIBUTE_JOB_LIST avoids
+/// fallible post-CreateProcess assign/resume cleanup. Every returned process/thread,
+/// parent pipe, desktop and Job original plus post-launch child-pipe close debt is
+/// transferred together. The caller must anchor before fallible validation.
+#[allow(clippy::too_many_arguments)]
+pub fn spawn_process_with_pipes_retaining(
+    h_token: HANDLE,
+    argv: &[String],
+    cwd: &Path,
+    env_map: &HashMap<String, String>,
+    stdin_mode: StdinMode,
+    stderr_mode: StderrMode,
+    console_mode: ConsoleMode,
+    desktop: LaunchDesktop,
+    logs_base_dir: Option<&Path>,
+) -> Result<PipeSpawnHandles> {
+    spawn_process_with_pipes_impl(h_token, argv, cwd, env_map, stdin_mode, stderr_mode, console_mode, desktop, logs_base_dir, true)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn spawn_process_with_pipes_impl(
+    h_token: HANDLE,
+    argv: &[String],
+    cwd: &Path,
+    env_map: &HashMap<String, String>,
+    stdin_mode: StdinMode,
+    stderr_mode: StderrMode,
+    console_mode: ConsoleMode,
+    desktop: LaunchDesktop,
+    logs_base_dir: Option<&Path>,
+    retain_close_debt: bool,
 ) -> Result<PipeSpawnHandles> {
     let mut in_r: HANDLE = 0;
     let mut in_w: HANDLE = 0;
@@ -269,7 +406,7 @@ pub fn spawn_process_with_pipes(
 
     let stdio = Some((in_r, out_w, stderr_handle));
     let spawn_result = unsafe {
-        create_process_as_user(
+        create_process_as_user_impl(
             h_token,
             argv,
             cwd,
@@ -278,6 +415,7 @@ pub fn spawn_process_with_pipes(
             stdio,
             console_mode,
             desktop,
+            retain_close_debt,
         )
     };
     let created = match spawn_result {
@@ -300,17 +438,20 @@ pub fn spawn_process_with_pipes(
         process_info: pi,
         job,
         _desktop: desktop,
+        launch_error,
+        creation_evidence,
         ..
     } = created;
 
-    unsafe {
-        CloseHandle(in_r);
-        CloseHandle(out_w);
-        if matches!(stderr_mode, StderrMode::Separate) {
-            CloseHandle(err_w);
-        }
-        if matches!(stdin_mode, StdinMode::Closed) {
-            CloseHandle(in_w);
+    let mut close_debts = [None; 4];
+    let handles = [in_r, out_w,
+        if matches!(stderr_mode, StderrMode::Separate) { err_w } else { 0 },
+        if matches!(stdin_mode, StdinMode::Closed) { in_w } else { 0 }];
+    for (index, handle) in handles.into_iter().enumerate() {
+        if handle != 0 && unsafe { CloseHandle(handle) } == 0 && retain_close_debt {
+            close_debts[index] = Some(PipeHandleCloseDebt {
+                raw_handle: handle as usize, os_error: std::io::Error::last_os_error().raw_os_error().unwrap_or(0),
+            });
         }
     }
 
@@ -327,6 +468,9 @@ pub fn spawn_process_with_pipes(
             StderrMode::MergeStdout => None,
         },
         desktop,
+        close_debts,
+        launch_error,
+        creation_evidence,
     })
 }
 
@@ -394,4 +538,35 @@ where
         return Err(std::io::Error::last_os_error());
     }
     result
+}
+
+
+#[cfg(test)]
+mod creation_evidence_tests {
+    use super::*;
+
+    #[test]
+    fn creation_evidence_distinguishes_not_invoked_rejected_created_and_uncertain() {
+        let empty: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
+        let before = ProcessCreationEvidence::not_invoked();
+        assert!(before.not_created_for(&empty).is_some());
+        let rejected = ProcessCreationEvidence::returned(0, &empty, 5);
+        assert_eq!(rejected.not_created_for(&empty).unwrap().rejection_os_error(), Some(5));
+        // Even a successful call with missing originals must never become absence.
+        assert!(ProcessCreationEvidence::returned(1, &empty, 0).not_created_for(&empty).is_none());
+        for changed in 0..4 {
+            let mut unexpected = empty;
+            match changed {
+                0 => unexpected.hProcess = 123,
+                1 => unexpected.hThread = 456,
+                2 => unexpected.dwProcessId = 789,
+                _ => unexpected.dwThreadId = 101,
+            }
+            assert!(before.not_created_for(&unexpected).is_none());
+            assert!(rejected.not_created_for(&unexpected).is_none());
+            let uncertain = ProcessCreationEvidence::returned(0, &unexpected, 5);
+            assert!(uncertain.not_created_for(&unexpected).is_none());
+            assert!(uncertain.not_created_for(&empty).is_none(), "cannot erase uncertain original outputs");
+        }
+    }
 }

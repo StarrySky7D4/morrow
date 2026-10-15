@@ -469,8 +469,43 @@ fn complete_never_clears_failed_start_replay_gate() {
     let mut tracker = Tracker::default();
     let (mut known, mut context) = (None, None);
     assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
+    assert!(tracker.require_physically_closed(&mut owner, known).is_err());
     tracker.complete();
+    // Calling complete() without settle_task does not prove physical closure.
+    assert!(tracker.require_physically_closed(&mut owner, known).is_err());
     assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
     assert_eq!(owner.controls(), ["start"]);
     assert!(tracker.settle_task(&mut owner, known, true, Duration::ZERO).unwrap().is_none());
+    tracker.complete();
+    assert!(tracker.require_physically_closed(&mut owner, known).is_ok());
+    // Sticky noReplay remains latched even after physical closure is proven.
+    assert!(tracker.start_once(&mut owner, options(), &mut context, &mut known).is_err());
 }
+
+#[test]
+fn require_physically_closed_rejects_active_uncompleted_or_unknown_and_accepts_settled_finish() {
+    let mut owner = Script::new(None);
+    let mut tracker = Tracker::default();
+    let (mut known, mut context) = (None, None);
+    owner.start_result = Some(Ok(key(1)));
+    owner.after_start = Some(snapshot(key(1), StoragePhase::Running, false));
+    assert_eq!(tracker.start_once(&mut owner, options(), &mut context, &mut known).unwrap(), key(1));
+
+    // Active task key or running owner status cannot pass physical closure.
+    assert!(tracker.require_physically_closed(&mut owner, known).is_err());
+
+    // precheck observes the original running task; the actual Script::stop
+    // returns its current same-key settled status. ACK must still occur once.
+    owner.statuses.push_back(Ok(owner.current));
+    owner.current = Some(snapshot(key(1), StoragePhase::Reclaimed, false));
+    assert!(tracker.settle_task(&mut owner, known, false, Duration::ZERO).unwrap().is_some());
+    assert_eq!(owner.controls(), ["start", "stop", "ack"]);
+    assert!(owner.current.is_none());
+    // Acknowledged but not yet completed (native proposal / facts not yet dropped) cannot pass.
+    assert!(tracker.require_physically_closed(&mut owner, known).is_err());
+
+    known = None;
+    tracker.complete();
+    assert!(tracker.require_physically_closed(&mut owner, known).is_ok());
+}
+

@@ -10,16 +10,36 @@ use std::path::{Component, Path, PathBuf, Prefix};
 pub struct MatchedRunnerArtifact {
     path: PathBuf,
     expected_sha256: [u8; 32],
+    native_close_v8: bool,
     _handles: Vec<File>,
+    // Forking an opt-in view preserves THIS acquired lock/instance, rather than
+    // replacing it with a later path/hash equality test or duplicating handles.
+    _parent: Option<std::sync::Arc<MatchedRunnerArtifact>>,
+    instance: std::sync::Arc<()>,
 }
 impl MatchedRunnerArtifact {
+    pub fn native_close_view(self:&std::sync::Arc<Self>)->std::sync::Arc<Self> {
+        std::sync::Arc::new(Self {path:self.path.clone(),expected_sha256:self.expected_sha256,
+            native_close_v8:true,_handles:Vec::new(),_parent:Some(std::sync::Arc::clone(self)),
+            instance:std::sync::Arc::clone(&self.instance)})
+    }
+    /// Instance relation only; never a native completion or cleanup authority.
+    pub fn shares_original_pin(&self,other:&Self)->bool {std::sync::Arc::ptr_eq(&self.instance,&other.instance)}
     /// Protocol compatibility metadata; not binary identity or pipe authentication.
     pub fn protocol_version(&self) -> u32 {
-        u32::from(crate::ipc_framed::CHECKED_IPC_PROTOCOL_VERSION)
+        if self.native_close_v8 {8} else {u32::from(crate::ipc_framed::CHECKED_IPC_PROTOCOL_VERSION)}
     }
     pub fn control_schema_sha256(&self) -> [u8; 32] {
-        crate::ipc_framed::CHECKED_CONTROL_SCHEMA
+        if self.native_close_v8 {crate::elevated::native_close_protocol::NATIVE_CLOSE_PROTOCOL_SCHEMA}
+        else {crate::ipc_framed::CHECKED_CONTROL_SCHEMA}
     }
+    /// Explicit opt-in on the SAME reviewed independent artifact. Existing acquire
+    /// remains v7 and legacy callers are never upgraded by metadata alone.
+    pub fn acquire_native_close_v8(expected_path:&Path, expected_sha256:[u8;32])->Result<Self> {
+        let mut artifact=Self::acquire(expected_path,expected_sha256)?;
+        artifact.native_close_v8=true;Ok(artifact)
+    }
+    pub(crate) fn native_close_v8(&self)->bool {self.native_close_v8}
     pub fn acquire(expected_path: &Path, expected_sha256: [u8; 32]) -> Result<Self> {
         let mut components = expected_path.components();
         ensure!(
@@ -102,7 +122,10 @@ impl MatchedRunnerArtifact {
         Ok(Self {
             path,
             expected_sha256,
+            native_close_v8: false,
             _handles: handles,
+            _parent: None,
+            instance: std::sync::Arc::new(()),
         })
     }
     pub fn path(&self) -> &Path {

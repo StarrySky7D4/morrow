@@ -21,22 +21,32 @@ pub fn expected_stderr(nonce: &str) -> Vec<u8> {
     format!("C28-BASIC-STDERR {nonce}\n").into_bytes()
 }
 
-pub fn run_child_if_requested(args: &[String]) -> io::Result<Option<i32>> {
-    if args.first().map(String::as_str) != Some("--witness-basic") { return Ok(None); }
-    if args.len() != 8 || !crate::witness::valid_nonce(&args[1]) {
+pub(crate) fn security_from_args(args:&[String])->io::Result<Option<crate::basic_security::SecuritySpec>> {
+    use crate::basic_security::IdentitySource;
+    let native=match args.first().map(String::as_str) {
+        Some("--witness-basic")=>false,Some("--witness-basic-v8-primary")=>true,_=>return Ok(None),
+    };
+    if args.len() != (if native {6}else{8}) || !crate::witness::valid_nonce(&args[1]) {
         return Err(io::Error::new(io::ErrorKind::InvalidInput, "basic arguments"));
     }
+    let (source,sid_index,port_index)=if native {(IdentitySource::CurrentPrimaryTokenV8,4,5)}else{
+        (IdentitySource::Whoami(crate::preflight::Artifact {path:PathBuf::from(&args[4]),
+            sha256:crate::preflight::digest(&args[5]).map_err(io::Error::other)?}),6,7)
+    };
     let security = crate::basic_security::SecuritySpec {
-        query: crate::preflight::Artifact { path: PathBuf::from(&args[4]),
-            sha256: crate::preflight::digest(&args[5]).map_err(io::Error::other)? },
-        expected_sid: args[6].clone(),
-        port: args[7].parse::<u16>().map_err(io::Error::other)?,
+        source,expected_sid:args[sid_index].clone(),
+        port:args[port_index].parse::<u16>().map_err(io::Error::other)?,
     };
     if !crate::basic_security::valid_sid(&security.expected_sid) || security.port == 0
-        || security.port.to_string() != args[7] {
+        || security.port.to_string() != args[port_index] {
         return Err(io::Error::new(io::ErrorKind::InvalidInput, "basic security identity/port"));
     }
-    let _query_pin = crate::basic_security::pin_query(&security.query).map_err(io::Error::other)?;
+    Ok(Some(security))
+}
+pub fn run_child_if_requested(args: &[String]) -> io::Result<Option<i32>> {
+    let Some(security)=security_from_args(args)? else{return Ok(None)};
+    let _query_pin=security.source.legacy_query().map(crate::basic_security::pin_query)
+        .transpose().map_err(io::Error::other)?;
     let allowed = PathBuf::from(&args[2]);
     let denied = PathBuf::from(&args[3]);
     let root = allowed.parent().and_then(Path::parent)
@@ -79,11 +89,13 @@ pub fn run_child_if_requested(args: &[String]) -> io::Result<Option<i32>> {
     if denied.try_exists()? {
         return Err(io::Error::new(io::ErrorKind::Other, "denied target appeared"));
     }
-    crate::basic_security::query_actual_sid(&security, allowed.parent().unwrap(), &args[1])
+    let identity=crate::basic_security::observe_actual_identity(&security, allowed.parent().unwrap(), &args[1])
         .map_err(io::Error::other)?;
     crate::basic_security::observe_child_denial(security.port).map_err(io::Error::other)?;
     let mut stdout = io::stdout().lock(); let mut stderr = io::stderr().lock();
-    stdout.write_all(&expected_security_stdout(&args[1], &security))?;
+    stdout.write_all(&expected_stdout(&args[1]))?;
+    stdout.write_all(&identity.stdout(&args[1]))?;
+    stdout.write_all(&crate::basic_security::network_stdout(&args[1],security.port))?;
     stderr.write_all(&expected_stderr(&args[1]))?;
     stdout.flush()?; stderr.flush()?;
     Ok(Some(0))
@@ -116,8 +128,8 @@ mod tests {
     #[test]
     fn security_output_binds_original_sid_image_hash_and_listener_port() {
         let spec = crate::basic_security::SecuritySpec {
-            query: crate::preflight::Artifact { path: PathBuf::from(crate::basic_security::SYSTEM_QUERY),
-                sha256: crate::preflight::digest(crate::basic_security::SYSTEM_QUERY_SHA256).unwrap() },
+            source: crate::basic_security::IdentitySource::Whoami(crate::preflight::Artifact { path: PathBuf::from(crate::basic_security::SYSTEM_QUERY),
+                sha256: crate::preflight::digest(crate::basic_security::SYSTEM_QUERY_SHA256).unwrap() }),
             expected_sid: "S-1-5-21-1-2-3-1001".into(), port: 23456,
         };
         let bytes = expected_security_stdout(NONCE, &spec);
@@ -127,7 +139,8 @@ mod tests {
         assert_ne!(bytes, expected_security_stdout(NONCE, &other));
         other = spec.clone(); other.expected_sid = "S-1-5-21-1-2-3-1002".into();
         assert_ne!(bytes, expected_security_stdout(NONCE, &other));
-        other = spec; other.query.sha256[0] ^= 1;
+        other = spec;
+        if let crate::basic_security::IdentitySource::Whoami(query)=&mut other.source {query.sha256[0] ^= 1;}else{panic!("original whoami fixture");}
         assert_ne!(bytes, expected_security_stdout(NONCE, &other));
     }
     #[test]
@@ -136,5 +149,19 @@ mod tests {
         assert!(run_child_if_requested(&["--witness-basic".into(), "wrong".into(),
             "relative/workspace/basic.bin".into(), "relative/outside.bin".into()]).is_err());
         assert_eq!(run_child_if_requested(&["--phase".into(), "preflight".into()]).unwrap(), None);
+    }
+    #[test]
+    fn primary_mode_rejects_mixed_shape_bad_sid_and_noncanonical_port_before_effects() {
+        let original=vec!["--witness-basic-v8-primary".into(),NONCE.into(),
+            r"C:\memory\workspace\allow.bin".into(),r"C:\memory\basic-outside\deny.bin".into(),
+            "S-1-5-21-1-2-3-1001".into(),"23456".into()];
+        let parsed=security_from_args(&original).unwrap().unwrap();
+        assert!(parsed.source.is_native_v8());assert!(parsed.source.legacy_query().is_none());
+        let mut mixed=original.clone();mixed.push("unused-whoami-path".into());mixed.push("unused-image-hash".into());
+        assert!(security_from_args(&mixed).is_err());
+        mixed=original.clone();mixed[0]="--witness-basic".into();assert!(security_from_args(&mixed).is_err());
+        mixed=original.clone();mixed[4]="S-1-5-18".into();assert!(security_from_args(&mixed).is_err());
+        mixed=original;mixed[5]="023456".into();assert!(security_from_args(&mixed).is_err());
+        assert!(run_child_if_requested(&["--witness-basic-v8-primary".into(),NONCE.into()]).is_err());
     }
 }

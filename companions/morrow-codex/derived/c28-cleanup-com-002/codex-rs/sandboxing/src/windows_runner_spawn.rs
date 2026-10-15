@@ -45,9 +45,11 @@ pub async fn spawn_process_with_windows_runner_diagnostics(
             "matched runner requires Elevated selection"
         );
         anyhow::ensure!(
-            runner.protocol_version() == 7,
+            matches!(runner.protocol_version(),7|8),
             "matched runner version mismatch"
         );
+        anyhow::ensure!(runner.protocol_version()!=8 || !request.tty,
+            "v8 native completion currently requires noninteractive pipe mode");
         Ok(windows)
     })()
     .inspect_err(|_| {

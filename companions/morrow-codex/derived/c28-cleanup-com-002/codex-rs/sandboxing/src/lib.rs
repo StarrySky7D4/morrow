@@ -26,6 +26,10 @@ pub use codex_mxc_sandbox::run_main as run_windows_mxc_main;
 #[cfg(windows)]
 pub use codex_windows_sandbox::MatchedRunnerArtifact;
 #[cfg(windows)]
+pub use codex_windows_sandbox::NativeHostCompletion;
+#[cfg(windows)]
+pub use codex_windows_sandbox::{NativeSchedulerThreads,NativeSchedulerClosed};
+#[cfg(windows)]
 pub use codex_windows_sandbox::WindowsStartAttempt;
 #[cfg(windows)]
 pub use codex_windows_sandbox::WindowsStartCompletion;

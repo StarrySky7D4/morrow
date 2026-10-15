@@ -216,3 +216,89 @@ fn profile_cleanup_preserves_account_until_profile_can_be_deleted() -> Result<()
     fixture.user.remove()?;
     Ok(())
 }
+
+#[test]
+fn owned_principals_verification_rejects_sid_mismatch_and_undisabled_accounts() {
+    use super::ObservedHiddenUserEntry;
+    use super::ObservedPrincipalState;
+    use super::verify_owned_hidden_user_entries_plan;
+    use super::verify_owned_principals_after_disable;
+    use super::verify_owned_principals_before_disable;
+    use crate::setup::OFFLINE_USERNAME;
+    use crate::setup::ONLINE_USERNAME;
+    use crate::setup_provisioning::OwnedHiddenUsersProof;
+    use crate::setup_provisioning::OwnedPrincipalsProof;
+    use crate::setup_provisioning::OwnedUserPrincipalProof;
+    use crate::setup_provisioning::WINLOGON_USERLIST_KEY_PATH;
+
+    let proof = OwnedPrincipalsProof {
+        group_name: "CodexSandboxUsers".to_string(),
+        group_sid: "S-1-5-21-1-1-1-500".to_string(),
+        group_sid_bytes: vec![1, 2, 3, 4],
+        offline_user: OwnedUserPrincipalProof {
+            username: OFFLINE_USERNAME.to_string(),
+            sid: "S-1-5-21-1-1-1-1001".to_string(),
+            sid_bytes: vec![1, 2, 3, 5],
+            initial_flags: network::UF_NORMAL_ACCOUNT,
+        },
+        online_user: OwnedUserPrincipalProof {
+            username: ONLINE_USERNAME.to_string(),
+            sid: "S-1-5-21-1-1-1-1002".to_string(),
+            sid_bytes: vec![1, 2, 3, 6],
+            initial_flags: network::UF_NORMAL_ACCOUNT,
+        },
+    };
+
+    let valid_before = ObservedPrincipalState {
+        offline_flags: Some(network::UF_NORMAL_ACCOUNT),
+        offline_sid_bytes: Some(vec![1, 2, 3, 5]),
+        online_flags: Some(network::UF_NORMAL_ACCOUNT),
+        online_sid_bytes: Some(vec![1, 2, 3, 6]),
+        group_sid_bytes: Some(vec![1, 2, 3, 4]),
+    };
+    assert!(verify_owned_principals_before_disable(&proof, &valid_before).is_ok());
+
+    let mut wrong_offline_sid = valid_before.clone();
+    wrong_offline_sid.offline_sid_bytes = Some(vec![9, 9, 9, 9]);
+    assert!(verify_owned_principals_before_disable(&proof, &wrong_offline_sid).is_err());
+
+    let mut missing_group = valid_before.clone();
+    missing_group.group_sid_bytes = None;
+    assert!(verify_owned_principals_before_disable(&proof, &missing_group).is_err());
+
+    assert!(
+        verify_owned_principals_after_disable(&proof, &valid_before).is_err(),
+        "undisabled account must fail post-disable verification"
+    );
+
+    let valid_after = ObservedPrincipalState {
+        offline_flags: Some(network::UF_NORMAL_ACCOUNT | network::UF_ACCOUNTDISABLE),
+        online_flags: Some(network::UF_NORMAL_ACCOUNT | network::UF_ACCOUNTDISABLE),
+        ..valid_before
+    };
+    assert!(verify_owned_principals_after_disable(&proof, &valid_after).is_ok());
+
+    let hidden_proof = OwnedHiddenUsersProof {
+        key_path: WINLOGON_USERLIST_KEY_PATH,
+        usernames: [OFFLINE_USERNAME.to_string(), ONLINE_USERNAME.to_string()],
+        expected_dword_value: 0,
+    };
+    let valid_hidden = vec![
+        ObservedHiddenUserEntry {
+            username: OFFLINE_USERNAME.to_string(),
+            reg_type: Some(registry::REG_DWORD),
+            reg_dword_value: Some(0),
+        },
+        ObservedHiddenUserEntry {
+            username: ONLINE_USERNAME.to_string(),
+            reg_type: Some(registry::REG_DWORD),
+            reg_dword_value: Some(0),
+        },
+    ];
+    assert!(verify_owned_hidden_user_entries_plan(&hidden_proof, &valid_hidden).is_ok());
+
+    let mut altered_hidden = valid_hidden;
+    altered_hidden[0].reg_dword_value = Some(1);
+    assert!(verify_owned_hidden_user_entries_plan(&hidden_proof, &altered_hidden).is_err());
+}
+

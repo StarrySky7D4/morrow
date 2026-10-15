@@ -36,6 +36,7 @@ const PROCESS: &[u8] = include_bytes!(
 );
 
 pub struct Workflow {
+    cleanup_scope:Option<crate::provisioning::ExecutionCleanupScope>,
     root: PathBuf,
     sid: String,
     operation: String,
@@ -73,6 +74,7 @@ impl Workflow {
         identity.extend_from_slice(&helper.sha256);
         let nonce = crate::preflight::hex(&morrow_agent_session_exec_v1_r2::hash(&identity)[..16]);
         Ok(Self {
+            cleanup_scope:None,
             root: root.into(),
             sid: format!("vm-{nonce}"),
             operation: format!("vm-{nonce}-child"),
@@ -107,6 +109,11 @@ impl Workflow {
         workflow.basic = true;
         Ok(workflow)
     }
+    pub fn new_basic_native_v8(lifecycle:&GuestLifecycle,helper:&Artifact)->Result<Self> {
+        let mut workflow=Self::new(lifecycle.synthetic_root(),helper,false)?;
+        workflow.basic_fixture=Some(crate::basic::Fixture::create_native_v8(lifecycle,&workflow.nonce)?);
+        workflow.basic=true;Ok(workflow)
+    }
     fn caps(&self) -> Capabilities {
         Capabilities {
             read: true,
@@ -119,6 +126,15 @@ impl Workflow {
     }
     pub fn finished(&self) -> bool {
         self.joined
+    }
+    pub(crate) fn take_normal_cleanup_parts(&mut self)->Result<(crate::provisioning::ExecutionCleanupScope,
+        morrow_codex_session_exec_windows_v1::NativeExecutionCompletion)> {
+        ensure!(self.joined && self.key.is_none() && self.session_key.is_none(),"original native/task ACK incomplete");
+        ensure!(self.native.as_ref().is_some_and(|n|n.context.is_none()),"original native context not returned");
+        let run=self.running.as_mut().ok_or_else(||anyhow!("same running invocation absent"))?;
+        let completion=run.take_native_execution_completion()?;
+        let scope=self.cleanup_scope.take().ok_or_else(||anyhow!("pre-execution cleanup scope absent or consumed"))?;
+        Ok((scope,completion))
     }
     /// Explicit same-owner cleanup only. This never repeats a guest, claim,
     /// child start, close, write or resize. Cleanup is not execution acceptance.
@@ -319,6 +335,10 @@ impl Workflow {
                 let backend = factory
                     .as_ref()
                     .ok_or_else(|| anyhow!("production factory absent"))?;
+                if self.basic {
+                    let source=&self.basic_fixture.as_ref().ok_or_else(||anyhow!("basic security fixture absent"))?.security.source;
+                    crate::basic_security::require_identity_route(source,backend.is_native_close_v8())?;
+                }
                 let params = params::witness_params(
                     lifecycle,
                     helper,
@@ -346,7 +366,9 @@ impl Workflow {
                 self.expected_intent = Some(intent.clone());
                 drop(reviewed); // No preview backend alias survives native task cleanup.
                 Ok(
-                    serde_json::json!({"operation":intent.operation_id,"domain":intent.execution_domain,"intent_sha256":crate::preflight::hex(&intent.digest()?)}),
+                    serde_json::json!({"operation":intent.operation_id,"domain":intent.execution_domain,"intent_sha256":crate::preflight::hex(&intent.digest()?),
+                        "basic_identity_source":self.basic_fixture.as_ref().map(|fixture|fixture.security.source.label()),
+                        "identity_metadata_is_authority":false}),
                 )
             }
             "controls-review" => {
@@ -415,11 +437,14 @@ impl Workflow {
                     proposal,
                     pair,
                 )?;
+                if let Some(review)=prepared.reviewed.as_ref().and_then(|r|r.native_completion_binding()) {
+                    self.cleanup_scope=Some(lifecycle.bind_reviewed_execution(review)?);
+                }
                 self.native = Some(prepared);
                 // The actual prepared Context/port/SchedulerLease now holds this
                 // exact runtime. Release only these external strong aliases;
                 // its original Worker owns final synchronous shutdown/join.
-                let ProductionBackend { backend, scheduler } = factory
+                let ProductionBackend { backend, scheduler,.. } = factory
                     .take()
                     .ok_or_else(|| anyhow!("factory transfer absent"))?;
                 drop(backend);
@@ -524,6 +549,8 @@ impl Workflow {
                     .reviewed
                     .take()
                     .ok_or_else(|| anyhow!("reviewed invocation already consumed"))?;
+                let runner_history = reviewed.runner_observation();
+                let native_binding=reviewed.native_completion_binding();
                 let mut handle = product::submit_once(
                     workbench,
                     key,
@@ -561,9 +588,16 @@ impl Workflow {
                     prepared.host.clone(),
                     prepared.intent.clone(),
                     prepared.resources.clone(),
+                    runner_history,
+                    native_binding,
                 ));
+                // The original running owner is installed before this data-only read.
+                let runner_owner = self.running.as_ref()
+                    .map(|run| run.runner_observation(&observation.identity));
                 Ok(
-                    serde_json::json!({"actual_started_handle":format!("{process:?}"),"claim_replay_allowed":false}),
+                    serde_json::json!({"actual_started_handle":format!("{process:?}"),"claim_replay_allowed":false,
+                        "native_observation":crate::native_observation::NativeObservation::started(&observation, process)
+                            .with_runner_owner(runner_owner)}),
                 )
             }
             "basic-observe" => {
@@ -578,8 +612,13 @@ impl Workflow {
                     "workspace_write_observed":true,"outside_write_permission_denied_observed":true,
                     "guest_commands":evidence.guest_commands,"imports":evidence.host_calls,
                     "actual_offline_sid_observed":true,"actual_offline_sid":fixture.security.expected_sid,
-                    "sid_query_path":fixture.security.query.path,"sid_query_sha256":crate::preflight::hex(&fixture.security.query.sha256),
-                    "token_restricted_flags_read":false,"network_explicit_denial_observed":true,
+                    "identity_source":fixture.security.source.label(),
+                    "sid_query_path":fixture.security.source.legacy_query().map(|q|q.path.clone()),
+                    "sid_query_sha256":fixture.security.source.legacy_query().map(|q|crate::preflight::hex(&q.sha256)),
+                    "token_restricted_flags_read":fixture.security.source.is_native_v8(),
+                    "primary_token_has_restrictions":fixture.security.source.is_native_v8().then_some(true),
+                    "primary_token_elevated":fixture.security.source.is_native_v8().then_some(false),
+                    "identity_evidence_is_authority":false,"network_explicit_denial_observed":true,
                     "network_raw_error":10013,"owned_loopback_port":fixture.security.port,
                     "network_positive_baseline_before_and_after":true,"full_network_isolation_qualified":false});
                 self.basic_evidence = Some(evidence);
@@ -628,7 +667,11 @@ impl Workflow {
                     workbench, &self.sid, ObservationPhase::NativeAcknowledged, Some(run.key),
                 )?;
                 let result = serde_json::json!({"actual_join":true,"facts":format!("{:?}",observation.latest),"original_identity":format!("{:?}",observation.identity),"record_revision":observation.record_revision,
-                    "ad31":[ad31_retained,ad31_acknowledged]});
+                    "ad31":[ad31_retained,ad31_acknowledged],
+                    "native_v8_completion":run.native_v8_completion_evidence(),
+                    "native_observation":crate::native_observation::NativeObservation::joined(
+                        &observation, run.handle, run.verified_owner_join())
+                            .with_runner_owner(Some(run.runner_observation(&observation.identity)))});
                 self.joined = true;
                 Ok(result)
             }

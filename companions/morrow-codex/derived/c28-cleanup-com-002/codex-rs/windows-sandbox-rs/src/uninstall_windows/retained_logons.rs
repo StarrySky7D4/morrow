@@ -74,6 +74,18 @@ impl RetainedLogons {
     pub(super) fn contains_sid(&self, sid: &[u8]) -> bool {
         self.sids.iter().any(|held| held == sid)
     }
+
+    pub(super) fn none_for_normal_cleanup() -> Self {
+        Self::default()
+    }
+
+    pub(super) fn verify_empty_for_normal_cleanup(&self) -> Result<()> {
+        ensure!(
+            self._tokens.is_empty() && self.ids.is_empty() && self.sids.is_empty(),
+            "normal non-forceful sandbox cleanup does not admit retained logon tokens"
+        );
+        Ok(())
+    }
 }
 
 #[cfg(test)]

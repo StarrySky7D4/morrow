@@ -26,7 +26,7 @@ impl Drop for ReadAclMutexGuard {
     }
 }
 
-pub(super) fn read_acl_mutex_exists() -> Result<bool> {
+pub(crate) fn read_acl_mutex_exists() -> Result<bool> {
     let name = to_wide(OsStr::new(READ_ACL_MUTEX_NAME));
     let handle = unsafe { OpenMutexW(MUTEX_ALL_ACCESS, 0, name.as_ptr()) };
     if handle == 0 {

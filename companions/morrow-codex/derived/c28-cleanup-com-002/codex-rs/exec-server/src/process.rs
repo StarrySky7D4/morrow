@@ -71,6 +71,9 @@ pub enum ExecProcessEvent {
 /// against a few very large output chunks.
 #[derive(Clone)]
 pub(crate) struct ExecProcessEventLog {
+    #[cfg(windows)]
+    native_completion: Option<Arc<crate::local_process::native_completion::NativeProcessCompletion>>,
+    runner_history: codex_utils_pty::RunnerObservationReader,
     inner: Arc<ExecProcessEventLogInner>,
 }
 
@@ -110,9 +113,18 @@ impl ExecProcessEvent {
 }
 
 impl ExecProcessEventLog {
+    #[cfg(windows)]
+    pub(crate) fn with_native_completion(mut self,native:Option<Arc<crate::local_process::native_completion::NativeProcessCompletion>>)->Self {
+        self.native_completion=native;self
+    }
+    #[cfg(windows)]
+    pub(crate) fn native_completion(&self)->Option<Arc<crate::local_process::native_completion::NativeProcessCompletion>> {self.native_completion.clone()}
     pub(crate) fn new(event_capacity: usize, byte_capacity: usize) -> Self {
         let (live_tx, _live_rx) = broadcast::channel(event_capacity);
         Self {
+            runner_history: codex_utils_pty::RunnerObservationReader::unsupported(),
+            #[cfg(windows)]
+            native_completion: None,
             inner: Arc::new(ExecProcessEventLogInner {
                 history: StdMutex::new(ExecProcessEventHistory::default()),
                 live_tx,
@@ -120,6 +132,14 @@ impl ExecProcessEventLog {
                 byte_capacity,
             }),
         }
+    }
+
+    pub(crate) fn with_runner_history(mut self, reader: codex_utils_pty::RunnerObservationReader) -> Self {
+        self.runner_history = reader;
+        self
+    }
+    pub(crate) fn runner_history(&self) -> codex_utils_pty::RunnerObservationReader {
+        self.runner_history.clone()
     }
 
     pub(crate) fn publish(&self, event: ExecProcessEvent) {
@@ -221,6 +241,17 @@ pub enum ProcessControlOutcome {
 /// buffered output, while `subscribe_events` is the streaming API for callers
 /// that want output and lifecycle changes delivered as they happen.
 pub trait ExecProcess: Send + Sync {
+    /// Consume-only LOCAL original completion; default and remote processes
+    /// cannot construct the concrete capability held by the original owner.
+    #[cfg(windows)]
+    fn take_native_host_completion(&self,_deadline:std::time::Instant)->ExecProcessFuture<'_,codex_sandboxing::NativeHostCompletion> {
+        Box::pin(async {Err(ExecServerError::Protocol("native completion unsupported".into()))})
+    }
+    /// Data-only local owner history. Sync, nonblocking, no future/cancellation effect.
+    /// Remote and undecorated implementations do not obtain observation support.
+    fn runner_observation(&self) -> codex_utils_pty::RunnerObservationReader {
+        codex_utils_pty::RunnerObservationReader::unsupported()
+    }
     fn process_id(&self) -> &ProcessId;
 
     fn subscribe_wake(&self) -> watch::Receiver<u64>;
@@ -270,6 +301,31 @@ mod checked_control_tests;
 
 pub type ExecProcessFuture<'a, T> =
     Pin<Box<dyn Future<Output = Result<T, ExecServerError>> + Send + 'a>>;
+
+#[cfg(all(test,windows))]
+mod native_completion_default_tests {
+    use super::*;
+    struct NoNativeProcess {id:ProcessId,wake:watch::Sender<u64>}
+    fn forbidden<'a,T:Send+'a>()->ExecProcessFuture<'a,T>{Box::pin(async {panic!("default native observation may not invoke process IO/control")})}
+    impl ExecProcess for NoNativeProcess {
+        fn process_id(&self)->&ProcessId{&self.id}
+        fn subscribe_wake(&self)->watch::Receiver<u64>{self.wake.subscribe()}
+        fn subscribe_events(&self)->ExecProcessEventReceiver{panic!("no synthetic EOF or event subscriber")}
+        fn read(&self,_:Option<u64>,_:Option<usize>,_:Option<u64>)->ExecProcessFuture<'_,ReadResponse>{forbidden()}
+        fn write(&self,_:Vec<u8>)->ExecProcessFuture<'_,WriteResponse>{forbidden()}
+        fn signal(&self,_:ProcessSignal)->ExecProcessFuture<'_,()>{forbidden()}
+        fn terminate(&self)->ExecProcessFuture<'_,()>{forbidden()}
+    }
+    #[tokio::test]
+    async fn undecorated_and_remote_default_cannot_make_local_native_capability_or_issue_effects() {
+        let (wake,_)=watch::channel(0);
+        let process:Arc<dyn ExecProcess>=Arc::new(NoNativeProcess {id:ProcessId::new("unsupported-memory"),wake});
+        // Covers the default trait implementation inherited by remote adapters.
+        // This fixture neither creates a native process nor claims remote EOF.
+        let error=process.take_native_host_completion(std::time::Instant::now()).await.err().unwrap();
+        assert!(matches!(error,ExecServerError::Protocol(message) if message=="native completion unsupported"));
+    }
+}
 
 pub trait ExecBackend: Send + Sync {
     fn start(&self, params: ExecParams) -> ExecBackendFuture<'_>;

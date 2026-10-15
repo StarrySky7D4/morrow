@@ -47,6 +47,10 @@ pub(crate) fn read_frame<R: Read, T: DeserializeOwned>(mut reader: R) -> Result<
 }
 
 pub(crate) fn wait_for_complete_frame(pipe: &File, deadline: Instant) -> io::Result<()> {
+    wait_for_complete_frame_with_cap(pipe,deadline,MAX_FRAME_LEN)
+}
+
+pub(crate) fn wait_for_complete_frame_with_cap(pipe:&File,deadline:Instant,max_frame_len:usize)->io::Result<()> {
     let mut len_buf = [0_u8; 4];
 
     loop {
@@ -68,7 +72,7 @@ pub(crate) fn wait_for_complete_frame(pipe: &File, deadline: Instant) -> io::Res
 
         if bytes_read == len_buf.len() as u32 {
             let frame_len = u32::from_le_bytes(len_buf) as usize;
-            if frame_len > MAX_FRAME_LEN {
+            if frame_len > max_frame_len {
                 return Err(io::Error::new(
                     io::ErrorKind::InvalidData,
                     format!("frame too large: {frame_len}"),

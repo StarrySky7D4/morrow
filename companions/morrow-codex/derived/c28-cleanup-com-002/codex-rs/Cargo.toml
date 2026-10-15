@@ -233,11 +233,11 @@
 
 
 ["workspace"."dependencies"."codex-apply-patch"]
-"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/apply-patch"
+"path" = "../test-support/apply-patch"
 
 
 ["workspace"."dependencies"."codex-arg0"]
-"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/arg0"
+"path" = "../test-support/arg0"
 
 
 ["workspace"."dependencies"."codex-async-utils"]
@@ -453,7 +453,7 @@
 
 
 ["workspace"."dependencies"."codex-linux-sandbox"]
-"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/linux-sandbox"
+"path" = "../test-support/linux-sandbox"
 
 
 ["workspace"."dependencies"."codex-lmstudio"]
@@ -605,7 +605,7 @@
 
 
 ["workspace"."dependencies"."codex-test-binary-support"]
-"path" = "../../../upstream/p02-integration-004/codex-work/codex-rs/test-binary-support"
+"path" = "../test-support/test-binary-support"
 
 
 ["workspace"."dependencies"."codex-thread-store"]

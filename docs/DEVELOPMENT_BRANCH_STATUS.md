@@ -1,3 +1,13 @@
+<!-- C28-SOURCE-CHECKPOINT-036-20261016-BEGIN -->
+## Windows SDK 开发检查点（2026-10-16）
+
+036 原生执行链源码已同步开发分支；原生库 53 项、SDK 40 项、harness 18 项指定回归分别通过。当前 Windows 应用五角色构建、3 项 Rust／Wasm／Flutter 集成、自检及约 140 毫秒普通窗口关闭通过。这些结果均为限定范围，不能替代生产受限执行、同次资源清理和完整虚拟机验收。
+
+应用版本保持 `0.1.9-test.58+62`。SDK26／G04／SDK_FREEZE 仍 OPEN，`release_eligible=false`；历史失败与 Unknown 保留，不自动重放。扩展执行层延期；本次不创建标签或 Release。
+
+[完整验证范围与待办](../reports/reconstruction-2026-10-16/windows-sdk-source-checkpoint-036.md)。
+<!-- C28-SOURCE-CHECKPOINT-036-20261016-END -->
+
 # 最新开发支线状态
 
 <!-- C28-WINDOWS-REGRESSION-20261013-BEGIN -->

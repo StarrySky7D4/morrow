@@ -15,6 +15,8 @@ pub mod evidence;
 #[cfg(windows)]
 pub mod formal;
 #[cfg(windows)]
+pub mod native_observation;
+#[cfg(windows)]
 mod formal_cleanup;
 #[cfg(windows)]
 pub mod guest_identity;

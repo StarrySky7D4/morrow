@@ -89,6 +89,7 @@ impl WindowsProcessProvider {
         sandbox_type: Option<SandboxType>,
         on_complete: impl FnOnce(ExecutionFacts) + Send + 'static,
         slot: Arc<crate::registry::ExecutionSlot>,
+        #[cfg(windows)] native_binding:Option<crate::ReviewedNativeCompletion>,
     ) -> Self {
         let observed = Arc::new(Observed {
             log: Mutex::new(Log {
@@ -105,7 +106,11 @@ impl WindowsProcessProvider {
         let monitor_keepalive = keepalive.clone();
         let monitor_slot = slot.clone();
         let monitor_job = slot.job();
-        runtime.spawn(async move {
+        #[cfg(windows)]
+        let monitor_native_binding=native_binding.clone();
+        #[cfg(windows)]
+        let monitor_native_identity=identity.clone();
+        let original_monitor=runtime.spawn(async move {
             let _keepalive = monitor_keepalive; let _monitor_job = monitor_job;
             let mut stdout = Sha256::new(); let mut stderr = Sha256::new();
             let mut stdout_bytes = 0u64; let mut stderr_bytes = 0u64;
@@ -189,9 +194,20 @@ impl WindowsProcessProvider {
                 };
                 monitor.changed.notify_all();
                 if let Some(exit_code) = terminal {
+                    #[cfg(windows)]
+                    if let Some(binding)=&monitor_native_binding {
+                        if !complete_prefix {binding.fail();monitor_slot.unknown();break;}
+                        let native=original.take_native_host_completion(std::time::Instant::now()+Duration::from_secs(20)).await;
+                        match native {
+                            Ok(native)=>if binding.retain_actual_native(&monitor_native_identity,native).is_err(){monitor_slot.unknown();break;},
+                            Err(_)=>{binding.fail();monitor_slot.unknown();break;},
+                        }
+                    }
                     monitor_slot.terminal();
                     if complete_prefix {
                         let facts = ExecutionFacts { exit_code, output_closed: true, stdout_sha256: stdout.finalize().into(), stderr_sha256: stderr.finalize().into(), stdout_bytes, stderr_bytes };
+                        #[cfg(windows)]
+                        if monitor_native_binding.is_some(){on_complete(facts);break;}
                         let completion_job=monitor_slot.job();
                         tokio::task::spawn_blocking(move || { let _completion_job=completion_job; on_complete(facts); });
                     }
@@ -200,6 +216,8 @@ impl WindowsProcessProvider {
                 if !complete_prefix && !stopped { let _ = terminate_once(&original, &monitor_slot).await; stopped = true; cleanup.as_mut().reset(tokio::time::Instant::now() + Duration::from_secs(5)); }
             }
         });
+        #[cfg(windows)]
+        if let Some(binding)=native_binding {binding.install_original_monitor(original_monitor);}
         Self {
             process,
             runtime,
@@ -380,6 +398,10 @@ impl ProcessProvider for WindowsProcessProvider {
 }
 impl Drop for WindowsProcessProvider {
     fn drop(&mut self) {
+        if self.slot.is_native_bound() {
+            self.slot.provider(false);
+            return;
+        }
         let process = self.process.clone();
         let slot = self.slot.clone();
         let job = slot.job();
@@ -394,6 +416,7 @@ pub(crate) async fn cleanup_actual(
     process: Arc<dyn ExecProcess>,
     slot: &Arc<crate::registry::ExecutionSlot>,
 ) {
+    if slot.is_native_bound(){slot.unknown();return;}
     let _ = terminate_once(&process, slot).await;
     let deadline = tokio::time::Instant::now() + Duration::from_secs(5);
     while tokio::time::Instant::now() < deadline {
@@ -420,6 +443,7 @@ async fn terminate_once(
     process: &Arc<dyn ExecProcess>,
     slot: &Arc<crate::registry::ExecutionSlot>,
 ) -> Option<bool> {
+    if slot.is_native_bound(){slot.unknown();return None;}
     if !slot.claim_cleanup() {
         return None;
     }

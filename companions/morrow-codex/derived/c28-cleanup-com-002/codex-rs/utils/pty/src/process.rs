@@ -29,6 +29,30 @@ mod checked_driver;
 #[cfg(windows)]
 pub use checked_driver::CheckedDriverControls;
 #[cfg(windows)]
+pub use checked_driver::CheckedOwnerFinalization;
+/// Additive v8-only ownership seam. The erased payload is transport only: its
+/// concrete capability has private fields in the original native owner crate.
+/// Legacy/default drivers never acquire this interface or completion support.
+#[cfg(windows)]
+pub trait NativeCloseDriver: Send+Sync {
+    fn native_phase(&self,deadline:std::time::Instant)->std::pin::Pin<Box<dyn std::future::Future<Output=io::Result<i32>>+Send+'_>>;
+    fn take_native_completion(&self,deadline:std::time::Instant)->std::pin::Pin<Box<dyn std::future::Future<Output=io::Result<Box<dyn std::any::Any+Send>>>+Send+'_>>;
+    fn retain_outer_failure(&self);
+    fn retain_original_forwarders(&self,originals:Vec<JoinHandle<()>>);
+}
+#[cfg(windows)]
+struct NativeForwardState {
+    configured:[bool;4],
+    joined:[bool;4],
+    active:bool,
+    failed:bool,
+    completed:bool,
+    outcomes:[Option<NativeForwardOutcome>;4],
+}
+#[cfg(windows)]
+#[derive(Clone,Copy,Debug,PartialEq,Eq)]
+enum NativeForwardOutcome {JoinedTimely,JoinedLate,Cancelled,Panicked}
+#[cfg(windows)]
 #[path = "windows_lifecycle.rs"]
 pub(crate) mod windows_lifecycle;
 
@@ -150,6 +174,12 @@ pub struct ProcessHandle {
     #[cfg(windows)]
     checked_driver: Option<Arc<dyn CheckedDriverControls>>,
     #[cfg(windows)]
+    native_driver:Option<Arc<dyn NativeCloseDriver>>,
+    #[cfg(windows)]
+    native_stderr_join:StdMutex<Option<JoinHandle<()>>>,
+    #[cfg(windows)]
+    native_forward_state:StdMutex<NativeForwardState>,
+    #[cfg(windows)]
     pub(crate) ordinary_lifecycle: Option<windows_lifecycle::Lifecycle>,
     // Optional resize hook for driver-backed sessions that proxy PTY control to
     // another backend instead of owning local PTY handles.
@@ -163,6 +193,71 @@ impl fmt::Debug for ProcessHandle {
 }
 
 impl ProcessHandle {
+    #[cfg(windows)]
+    pub fn has_native_close_driver(&self)->bool {self.native_driver.is_some()}
+    #[cfg(windows)]
+    pub fn record_native_outer_failure(&self){if let Some(driver)=&self.native_driver{driver.retain_outer_failure();}}
+
+    #[cfg(windows)]
+    async fn join_original_forwarder(&self,index:usize,slot:&StdMutex<Option<JoinHandle<()>>>,deadline:std::time::Instant)->io::Result<()> {
+        {
+            let state=self.native_forward_state.lock().map_err(|_|io::Error::other("original forwarding state poisoned"))?;
+            if !state.configured[index] || state.joined[index] {return Ok(());}
+        }
+        struct Loan<'a> {slot:&'a StdMutex<Option<JoinHandle<()>>>,original:Option<JoinHandle<()>>}
+        impl Drop for Loan<'_> {
+            fn drop(&mut self){if let Some(original)=self.original.take(){
+                let mut slot=self.slot.lock().unwrap_or_else(|poison|poison.into_inner());
+                // Exclusive native completion admission owns this exact slot.
+                assert!(slot.is_none());*slot=Some(original);
+            }}
+        }
+        let original=slot.lock().map_err(|_|io::Error::other("original forwarding handle slot poisoned"))?.take()
+            .ok_or_else(||io::Error::other("original forwarding handle missing or loaned"))?;
+        let mut loan=Loan {slot,original:Some(original)};
+        let remaining=deadline.saturating_duration_since(std::time::Instant::now());
+        if remaining.is_zero(){return Err(io::Error::new(io::ErrorKind::TimedOut,"original forwarding deadline"));}
+        let result=tokio::time::timeout(remaining,loan.original.as_mut().unwrap()).await
+            .map_err(|_|io::Error::new(io::ErrorKind::TimedOut,"original forwarding handle retained"))?;
+        loan.original.take();
+        let timely=std::time::Instant::now()<deadline;
+        {
+            let mut state=self.native_forward_state.lock().map_err(|_|io::Error::other("original forwarding state poisoned after join"))?;
+            state.joined[index]=true;
+            state.outcomes[index]=Some(match &result {Ok(()) if timely=>NativeForwardOutcome::JoinedTimely,
+                Ok(())=>NativeForwardOutcome::JoinedLate,Err(e) if e.is_cancelled()=>NativeForwardOutcome::Cancelled,
+                Err(_)=>NativeForwardOutcome::Panicked});
+        }
+        result.map_err(|_|io::Error::other("original forwarding task panicked or cancelled"))?;
+        if !timely{return Err(io::Error::new(io::ErrorKind::TimedOut,"original forwarding joined late"));}
+        Ok(())
+    }
+
+    /// Real original forwarding joins precede the native owner's consume-only
+    /// concrete completion. No default/ordinary implementation has a capability.
+    #[cfg(windows)]
+    pub async fn take_native_completion(&self,deadline:std::time::Instant)->io::Result<Box<dyn std::any::Any+Send>> {
+        let driver=self.native_driver.as_ref().ok_or_else(||io::Error::from(io::ErrorKind::Unsupported))?;
+        {
+            let mut state=self.native_forward_state.lock().map_err(|_|io::Error::other("original forwarding state poisoned"))?;
+            if state.failed || state.completed {return Err(io::Error::other("native completion sealed or consumed"));}
+            if state.active {return Err(io::Error::new(io::ErrorKind::WouldBlock,"same original forwarding joins loaned"));}
+            state.active=true;
+        }
+        struct Admission<'a>{handle:&'a ProcessHandle,driver:&'a dyn NativeCloseDriver,done:bool}
+        impl Drop for Admission<'_>{fn drop(&mut self){
+            let mut state=self.handle.native_forward_state.lock().unwrap_or_else(|poison|poison.into_inner());
+            state.active=false;if !self.done {state.failed=true;drop(state);self.driver.retain_outer_failure();}
+        }}
+        let mut admission=Admission {handle:self,driver:&**driver,done:false};
+        for (index,slot) in [&self.reader_handle,&self.native_stderr_join,&self.writer_handle,&self.wait_handle].into_iter().enumerate(){
+            self.join_original_forwarder(index,slot,deadline).await?;
+        }
+        let completion=driver.take_native_completion(deadline).await?;
+        self.native_forward_state.lock().map_err(|_|io::Error::other("native completion poisoned after original joins"))?.completed=true;
+        admission.done=true;
+        Ok(completion)
+    }
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn new(
         writer_tx: mpsc::Sender<Vec<u8>>,
@@ -193,6 +288,12 @@ impl ProcessHandle {
             checked_input: None,
             #[cfg(windows)]
             checked_driver: None,
+            #[cfg(windows)]
+            native_driver:None,
+            #[cfg(windows)]
+            native_stderr_join:StdMutex::new(None),
+            #[cfg(windows)]
+            native_forward_state:StdMutex::new(NativeForwardState {configured:[false;4],joined:[false;4],active:false,failed:false,completed:false,outcomes:[None;4]}),
             #[cfg(windows)]
             ordinary_lifecycle: None,
             resizer: StdMutex::new(resizer),
@@ -267,6 +368,27 @@ impl ProcessHandle {
                     .as_ref()
                     .map(windows_lifecycle::Lifecycle::receiver)
             })
+    }
+
+    #[cfg(windows)]
+    pub async fn finalize_checked_owner(
+        &self,
+        wait_until: std::time::Instant,
+    ) -> io::Result<CheckedOwnerFinalization> {
+        let driver = self.checked_driver.as_ref().ok_or_else(|| {
+            io::Error::new(
+                io::ErrorKind::Unsupported,
+                "checked owner finalization is unavailable",
+            )
+        })?;
+        driver.finalize_checked_owner(wait_until).await
+    }
+
+    /// Data-only per-attempt history. No session/process lock or native query.
+    pub fn runner_observation(&self) -> crate::RunnerObservationReader {
+        #[cfg(windows)]
+        if let Some(driver) = &self.checked_driver { return driver.runner_observation(); }
+        crate::RunnerObservationReader::unsupported()
     }
 
     /// Discover only controls with an actual local completion acknowledgement.
@@ -431,6 +553,13 @@ impl ProcessHandle {
     pub fn terminate(&self) {
         self.request_terminate();
 
+        #[cfg(windows)]
+        if self.checked_driver.is_some()
+            && let Ok(mut writer_tx) = self.writer_tx.lock()
+        {
+            writer_tx.take();
+        }
+
         if let Ok(mut h) = self.reader_handle.lock()
             && let Some(handle) = h.take()
         {
@@ -444,6 +573,13 @@ impl ProcessHandle {
         if let Ok(mut h) = self.writer_handle.lock()
             && let Some(handle) = h.take()
         {
+            #[cfg(windows)]
+            if self.checked_driver.is_some() {
+                drop(handle);
+            } else {
+                handle.abort();
+            }
+            #[cfg(not(windows))]
             handle.abort();
         }
         if let Ok(mut h) = self.wait_handle.lock()
@@ -457,6 +593,22 @@ impl ProcessHandle {
 
 impl Drop for ProcessHandle {
     fn drop(&mut self) {
+        #[cfg(windows)]
+        if let Some(driver)=self.native_driver.as_ref() {
+            let completed=self.native_forward_state.get_mut().map(|state|state.completed).unwrap_or(false);
+            if !completed {
+                driver.retain_outer_failure();
+                let mut originals=Vec::with_capacity(4);
+                for slot in [&mut self.reader_handle,&mut self.native_stderr_join,&mut self.writer_handle,&mut self.wait_handle] {
+                    let slot=slot.get_mut().unwrap_or_else(|poison|poison.into_inner());
+                    if let Some(original)=slot.take(){originals.push(original);}
+                }
+                driver.retain_original_forwarders(originals);
+            }
+            // Never implicitly kill/abort/replay a v8 original on Drop. The
+            // original checked owner retains any unsettled forwarding handles.
+            return;
+        }
         self.terminate();
     }
 }
@@ -561,6 +713,20 @@ pub struct ProcessDriver {
 
 /// Build a `SpawnedProcess` from a driver that supplies stdin/output/exit channels.
 pub fn spawn_from_driver(driver: ProcessDriver) -> SpawnedProcess {
+    spawn_from_driver_inner(
+        driver,
+        #[cfg(windows)]
+        None,
+        #[cfg(windows)]
+        None,
+    )
+}
+
+fn spawn_from_driver_inner(
+    driver: ProcessDriver,
+    #[cfg(windows)] checked_driver: Option<Arc<dyn CheckedDriverControls>>,
+    #[cfg(windows)] native_driver: Option<Arc<dyn NativeCloseDriver>>,
+) -> SpawnedProcess {
     let ProcessDriver {
         writer_tx,
         stdout_rx: stdout_driver_rx,
@@ -616,18 +782,67 @@ pub fn spawn_from_driver(driver: ProcessDriver) -> SpawnedProcess {
             })
         };
     let reader_handle = spawn_stream_reader(stdout_driver_rx, stdout_tx, exit_seen_rx.clone());
-    let stderr_reader_handle = stderr_driver_rx
+    let mut stderr_reader_handle = stderr_driver_rx
         .take()
         .map(|rx| spawn_stream_reader(rx, stderr_tx, exit_seen_rx));
-
-    let writer_handle = writer_handle.unwrap_or_else(|| tokio::spawn(async {}));
 
     let (exit_tx, exit_rx_out) = oneshot::channel::<i32>();
     let exit_status = Arc::new(AtomicBool::new(false));
     let wait_exit_status = Arc::clone(&exit_status);
     let exit_code = Arc::new(StdMutex::new(None));
     let wait_exit_code = Arc::clone(&exit_code);
+    #[cfg(windows)]
+    let wait_checked_driver = checked_driver.clone();
+    #[cfg(windows)]
+    let wait_native_driver=native_driver.clone();
+    #[cfg(windows)]
+    let native_configured=[true,stderr_reader_handle.is_some(),writer_handle.is_some(),true];
     let wait_handle = tokio::spawn(async move {
+        #[cfg(windows)]
+        if let Some(controls) = wait_checked_driver {
+            controls.wait_ready_to_finalize().await;
+            tokio::task::yield_now().await;
+            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
+            if let Some(native)=wait_native_driver {
+                // This is actual native closure, explicitly OUTER-PENDING; it
+                // never goes through the legacy CleanRelease result.
+                let Ok(code)=native.native_phase(deadline).await else{return;};
+                let Ok(original_code)=exit_rx.await else{native.retain_outer_failure();return;};
+                if original_code!=code {native.retain_outer_failure();return;}
+                wait_exit_status.store(true,std::sync::atomic::Ordering::SeqCst);
+                if let Ok(mut original)=wait_exit_code.lock(){*original=Some(code);}else{native.retain_outer_failure();return;}
+                let _=exit_seen_tx.send(true);let _=exit_tx.send(code);return;
+            }
+            let finalized_code = loop {
+                match controls.finalize_checked_owner(deadline).await {
+                    Ok(CheckedOwnerFinalization::CleanRelease { exit_code }) => {
+                        break exit_code;
+                    }
+                    Ok(CheckedOwnerFinalization::PhysicallyReapedWithStickyUnknown { .. }) => {
+                        return;
+                    }
+                    Err(err)
+                        if err.kind() == io::ErrorKind::WouldBlock
+                            && std::time::Instant::now() < deadline
+                            && controls.lifecycle_failure().is_none() =>
+                    {
+                        tokio::task::yield_now().await;
+                    }
+                    Err(_) => {
+                        return;
+                    }
+                }
+            };
+            let code = exit_rx.await.unwrap_or(finalized_code);
+            wait_exit_status.store(true, std::sync::atomic::Ordering::SeqCst);
+            if let Ok(mut guard) = wait_exit_code.lock() {
+                *guard = Some(code);
+            }
+            let _ = exit_seen_tx.send(true);
+            let _ = exit_tx.send(code);
+            return;
+        }
+
         let code = exit_rx.await.unwrap_or(-1);
         wait_exit_status.store(true, std::sync::atomic::Ordering::SeqCst);
         if let Ok(mut guard) = wait_exit_code.lock() {
@@ -637,25 +852,44 @@ pub fn spawn_from_driver(driver: ProcessDriver) -> SpawnedProcess {
         let _ = exit_tx.send(code);
     });
 
-    let handle = ProcessHandle::new(
-        writer_tx,
-        Box::new(ClosureTerminator {
+    #[cfg(windows)]
+    let native_stderr=if native_driver.is_some(){stderr_reader_handle.take()}else{None};
+    let handle = ProcessHandle {
+        writer_tx: StdMutex::new(Some(writer_tx)),
+        killer: StdMutex::new(Some(Box::new(ClosureTerminator {
             inner: terminator,
             #[cfg(windows)]
             interrupt_terminates,
-        }),
-        reader_handle,
-        stderr_reader_handle
-            .map(|handle| handle.abort_handle())
-            .into_iter()
-            .collect(),
-        writer_handle,
-        wait_handle,
+        }))),
+        reader_handle: StdMutex::new(Some(reader_handle)),
+        reader_abort_handles: StdMutex::new(
+            stderr_reader_handle
+                .map(|handle| handle.abort_handle())
+                .into_iter()
+                .collect(),
+        ),
+        writer_handle: StdMutex::new(writer_handle),
+        wait_handle: StdMutex::new(Some(wait_handle)),
         exit_status,
         exit_code,
-        /*pty_handles*/ None,
-        resizer,
-    );
+        #[cfg(windows)]
+        _pty_handles: Arc::new(StdMutex::new(None)),
+        #[cfg(not(windows))]
+        _pty_handles: StdMutex::new(None),
+        #[cfg(windows)]
+        checked_input: None,
+        #[cfg(windows)]
+        checked_driver,
+        #[cfg(windows)]
+        native_driver,
+        #[cfg(windows)]
+        native_stderr_join:StdMutex::new(native_stderr),
+        #[cfg(windows)]
+        native_forward_state:StdMutex::new(NativeForwardState {configured:native_configured,joined:[false;4],active:false,failed:false,completed:false,outcomes:[None;4]}),
+        #[cfg(windows)]
+        ordinary_lifecycle: None,
+        resizer: StdMutex::new(resizer),
+    };
 
     SpawnedProcess {
         session: handle,
@@ -672,9 +906,13 @@ pub fn spawn_from_driver_with_checked_controls(
     driver: ProcessDriver,
     controls: Arc<dyn CheckedDriverControls>,
 ) -> SpawnedProcess {
-    let mut spawned = spawn_from_driver(driver);
-    spawned.session.checked_driver = Some(controls);
-    spawned
+    spawn_from_driver_inner(driver, Some(controls),None)
+}
+
+#[cfg(windows)]
+pub fn spawn_from_driver_with_native_close(driver:ProcessDriver,controls:Arc<dyn CheckedDriverControls>,native:Arc<dyn NativeCloseDriver>)->SpawnedProcess {
+    assert!(!driver.tty,"v8 native completion currently supports noninteractive pipe only");
+    spawn_from_driver_inner(driver,Some(controls),Some(native))
 }
 
 #[cfg(all(test, windows))]
@@ -684,3 +922,7 @@ mod capability_discovery_tests;
 #[cfg(all(test, windows))]
 #[path = "checked_driver_tests.rs"]
 mod checked_driver_tests;
+
+#[cfg(all(test, windows))]
+#[path = "native_completion_tests.rs"]
+mod native_completion_tests;

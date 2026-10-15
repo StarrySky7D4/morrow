@@ -15,7 +15,7 @@ use morrow_core::dispatch::{Connection, HostBinding, HostRuntime};
 use std::{
     cell::RefCell,
     sync::{
-        Arc, Mutex,
+        Arc, Mutex, OnceLock,
         atomic::{AtomicBool, AtomicU64, Ordering},
     },
     time::{Duration, Instant},
@@ -26,7 +26,45 @@ use std::{
 // The upper atomic history and latest lower call are NOT a joint snapshot or
 // proof about the requesting operation. Clones retain finite diagnostic data.
 #[derive(Clone)]
-pub(crate) struct NativeStartDiagnostic(Arc<AtomicU64>, Arc<Mutex<LowerBackendHistory>>);
+pub(crate) struct NativeStartDiagnostic(Arc<AtomicU64>, Arc<Mutex<LowerBackendHistory>>, Arc<ReviewedStartProjection>);
+
+#[derive(Default)]
+struct ReviewedStartData {
+    lower: OnceLock<WindowsStartDiagnostic>,
+    claimed: AtomicBool,
+    invalid: AtomicBool,
+}
+/// Data only, allocated with the original reviewed invocation. No owner, task,
+/// process handle, claim, lease or callback is retained. Never a latest lookup.
+#[derive(Clone, Default)]
+pub struct ReviewedStartObservation(Arc<ReviewedStartData>);
+impl ReviewedStartObservation {
+    fn bind_lower(&self, lower: WindowsStartDiagnostic) {
+        if self.0.claimed.compare_exchange(false, true, Ordering::AcqRel, Ordering::Acquire).is_err()
+            || self.0.lower.set(lower).is_err()
+        {
+            self.0.invalid.store(true, Ordering::Release);
+        }
+    }
+    pub fn snapshot(&self) -> Option<WindowsStartSnapshot> {
+        if self.0.invalid.load(Ordering::Acquire) { return None; }
+        self.0.lower.get()?.snapshot()
+    }
+}
+impl std::fmt::Debug for ReviewedStartObservation {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.snapshot() {
+            Some(snapshot) => f.debug_struct("SameReviewedInvocationStartDataOnly").field("snapshot", &snapshot).finish(),
+            None => f.write_str("ReviewedInvocationStartUnboundOrUnavailable"),
+        }
+    }
+}
+#[derive(Default)]
+struct ReviewedStartProjection {
+    first: OnceLock<ReviewedStartObservation>,
+    claimed: AtomicBool,
+    ambiguous: AtomicBool,
+}
 #[derive(Default)]
 struct LowerBackendHistory {
     sequence: u64,
@@ -40,10 +78,21 @@ struct LowerBackendCallObservation {
 }
 impl Default for NativeStartDiagnostic {
     fn default() -> Self {
-        Self(Arc::new(AtomicU64::new(0)), Arc::new(Mutex::new(LowerBackendHistory::default())))
+        Self(Arc::new(AtomicU64::new(0)), Arc::new(Mutex::new(LowerBackendHistory::default())),
+            Arc::new(ReviewedStartProjection::default()))
     }
 }
 impl NativeStartDiagnostic {
+    fn bind_reviewed_call(&self, original: ReviewedStartObservation) {
+        // Existing resource Debug is consumed by the actual harness error path.
+        // Project only a unique original review; resource reuse is ambiguous,
+        // never silently replaced by the owner's latest invocation.
+        if self.2.claimed.compare_exchange(false, true, Ordering::AcqRel, Ordering::Acquire).is_err()
+            || self.2.first.set(original).is_err()
+        {
+            self.2.ambiguous.store(true, Ordering::Release);
+        }
+    }
     // Allocate at the original backend-call boundary, not at proposal/claim.
     // Each invocation gets a fresh recorder even if the history is unavailable.
     fn begin_backend_call(&self) -> WindowsStartDiagnostic {
@@ -197,7 +246,8 @@ fn start_error_name(class: u8) -> &'static str {
 impl std::fmt::Debug for NativeStartDiagnostic {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let value = self.0.load(Ordering::Acquire);
-        f.debug_struct("NativeStartDiagnosticV3")
+        let mut debug = f.debug_struct("NativeStartDiagnosticV3");
+        debug
             .field("stage", &start_stage_name(value as u8))
             .field("error_class", &start_error_name((value >> 8) as u8))
             .field("backend_error_class", &backend_error_name((value >> BACKEND_ERROR_SHIFT) as u8))
@@ -206,11 +256,20 @@ impl std::fmt::Debug for NativeStartDiagnostic {
             .field("actual_handle_observed", &(value & (4 << 16) != 0))
             .field("provider_ready_observed", &(value & (8 << 16) != 0))
             .field("backend_history_scope", &"OWNER_LATEST_CALL_NOT_OPERATION_PROOF")
-            .field("latest_backend_call_observation", &self.latest_backend_call_snapshot()).finish()
+            .field("latest_backend_call_observation", &self.latest_backend_call_snapshot());
+        if self.2.ambiguous.load(Ordering::Acquire) {
+            debug.field("reviewed_invocation_start", &"AMBIGUOUS_UNAVAILABLE");
+        } else if let Some(original) = self.2.first.get() {
+            debug.field("reviewed_invocation_start", original);
+        }
+        debug.finish()
     }
 }
 
 pub struct ReviewedBorrowedInvocation {
+    startup_observation: ReviewedStartObservation,
+    native_completion:Option<crate::ReviewedNativeCompletion>,
+    runner_history: crate::ReviewedRunnerObservation,
     intent: Intent,
     params: ExecParams,
     artifact: Arc<LockedArtifact>,
@@ -218,6 +277,11 @@ pub struct ReviewedBorrowedInvocation {
     binding: HostBinding,
 }
 impl ReviewedBorrowedInvocation {
+    pub fn startup_observation(&self) -> ReviewedStartObservation { self.startup_observation.clone() }
+    pub fn native_completion_binding(&self)->Option<crate::ReviewedNativeCompletion>{self.native_completion.clone()}
+    pub fn runner_observation(&self) -> crate::ReviewedRunnerObservation {
+        self.runner_history.clone()
+    }
     pub fn intent(&self) -> &Intent {
         &self.intent
     }
@@ -297,6 +361,9 @@ impl BorrowedWindowsExecutionPort {
             &intent.cwd,
         )?);
         Ok(ReviewedBorrowedInvocation {
+            startup_observation: ReviewedStartObservation::default(),
+            native_completion:crate::ReviewedNativeCompletion::new(&self.resources,&self.backend,&intent.operation_id),
+            runner_history: crate::ReviewedRunnerObservation::new(self.owner_binding()),
             intent,
             params,
             artifact,
@@ -328,9 +395,12 @@ impl BorrowedWindowsExecutionPort {
         }
         self.host.generation(runtime)?;
         let ReviewedBorrowedInvocation {
+            startup_observation,
+            native_completion,
             intent,
             params,
             artifact,
+            runner_history,
             ..
         } = reviewed;
         if intent.execution_domain != self.backend.domain(&params)? {
@@ -353,6 +423,9 @@ impl BorrowedWindowsExecutionPort {
                 _backend: self.backend.clone(),
             }),
         )?;
+        if let Some(binding)=native_completion.as_ref() {
+            if let Err(error)=binding.bind_started(&identity,&slot,&self.resources,&self.backend){slot.unstarted();return Err(error);}
+        }
         let Some(_handoff) = slot.job() else {
             slot.unstarted();
             return Err(Error::Storage);
@@ -395,11 +468,15 @@ impl BorrowedWindowsExecutionPort {
                 // Never inspect/reenter the original R2 fence from here.
                 let job = slot.job().ok_or(Error::Storage)?;
                 invoked = true;
+                diagnostic.bind_reviewed_call(startup_observation.clone());
                 diagnostic.stage(6);
                 diagnostic.flag(1);
                 let task_slot = slot.clone();
                 let task_backend = backend.clone();
                 let task_diagnostic = diagnostic.clone();
+                let task_startup_observation = startup_observation.clone();
+                let task_runner_history = runner_history.clone();
+                let task_runner_identity = identity.clone();
                 let mut task = handle.spawn(async move {
                     task_diagnostic.stage(7);
                     task_diagnostic.flag(2);
@@ -409,13 +486,18 @@ impl BorrowedWindowsExecutionPort {
                         return Err(Error::CommitUnknown);
                     }
                     let lower_diagnostic = task_diagnostic.begin_backend_call();
+                    task_startup_observation.bind_lower(lower_diagnostic.clone());
                     let actual = task_backend
                         .backend
                         .start_with_windows_diagnostics(params, lower_diagnostic)
                         .await
                         .map_err(|error| { task_diagnostic.backend_fail(backend_error_class(&error)); Error::CommitUnknown });
                     match &actual {
-                        Ok(process) => { task_diagnostic.flag(4); task_diagnostic.stage(8); task_slot.started(process.process.clone()) },
+                        Ok(process) => {
+                            // Exactly this returned instance; data clone only, no owner query.
+                            task_runner_history.bind_actual(&task_runner_identity, process.process.runner_observation());
+                            task_diagnostic.flag(4); task_diagnostic.stage(8); task_slot.started(process.process.clone())
+                        },
                         Err(_) => task_slot.no_handle_unknown(),
                     }
                     match actual {
@@ -449,6 +531,7 @@ impl BorrowedWindowsExecutionPort {
                         let late_resources = self.resources.clone();
                         let late_backend = backend.clone();
                         let late_identity = identity.clone();
+                        let late_native_completion=native_completion.clone();
                         let job = slot.job();
                         handle.spawn(async move {
                             let _job = job;
@@ -465,6 +548,7 @@ impl BorrowedWindowsExecutionPort {
                                     interruptible,
                                     0,
                                     late_slot.clone(),
+                                    late_native_completion,
                                 );
                                 if let Some(provider) = provider {
                                     drop(provider);
@@ -514,6 +598,7 @@ impl BorrowedWindowsExecutionPort {
             interruptible,
             remaining,
             slot.clone(),
+            native_completion,
         ) else {
             diagnostic.fail(12, 13);
             slot.unknown();
@@ -562,6 +647,7 @@ fn observer(
     interruptible: bool,
     deadline: u64,
     slot: Arc<crate::registry::ExecutionSlot>,
+    native_completion:Option<crate::ReviewedNativeCompletion>,
 ) -> Option<WindowsProcessProvider> {
     if actual.sandbox_type != Some(backend.expected) {
         slot.unknown();
@@ -579,12 +665,55 @@ fn observer(
         actual.sandbox_type,
         move |facts| resources.publish(&monitor_identity, facts),
         slot,
+        native_completion,
     ))
 }
 
 #[cfg(test)]
 mod diagnostic_tests {
     use super::*;
+    #[test]
+    fn reviewed_start_link_keeps_its_original_backend_recorder_after_owner_latest_changes() {
+        // Binding/forwarding only. These labelled stage values assert no native
+        // process, handshake, claim, completion or cleanup authority.
+        let owner_history = NativeStartDiagnostic::default();
+        let original = ReviewedStartObservation::default();
+        let retained = original.clone();
+        assert!(original.snapshot().is_none());
+        owner_history.bind_reviewed_call(original.clone());
+        let first = owner_history.begin_backend_call();
+        original.bind_lower(first.clone());
+        first.mark(codex_sandboxing::WindowsStartStage::PipeConnectIn);
+        let other = ReviewedStartObservation::default();
+        let second = owner_history.begin_backend_call();
+        other.bind_lower(second.clone());
+        second.mark(codex_sandboxing::WindowsStartStage::ControlHello);
+        assert_eq!(owner_history.latest_backend_call_snapshot().unwrap().call_sequence, 2);
+        assert_eq!(retained.snapshot().unwrap().current.stage, codex_sandboxing::WindowsStartStage::PipeConnectIn);
+        assert_eq!(other.snapshot().unwrap().current.stage, codex_sandboxing::WindowsStartStage::ControlHello);
+        assert!(format!("{owner_history:?}").contains("SameReviewedInvocationStartDataOnly"));
+        owner_history.bind_reviewed_call(other);
+        assert!(format!("{owner_history:?}").contains("AMBIGUOUS_UNAVAILABLE"));
+        assert_eq!(retained.snapshot().unwrap().current.stage, codex_sandboxing::WindowsStartStage::PipeConnectIn);
+        drop(owner_history);
+        first.fail_io_kind(std::io::ErrorKind::TimedOut);
+        assert_eq!(retained.snapshot().unwrap().current.error, codex_sandboxing::WindowsStartError::IoTimedOut);
+    }
+
+    #[test]
+    fn reviewed_start_duplicate_binding_never_replaces_the_original_or_recovers_unavailable_data() {
+        let original = ReviewedStartObservation::default();
+        let first = WindowsStartDiagnostic::default();
+        original.bind_lower(first.clone());
+        original.bind_lower(WindowsStartDiagnostic::default());
+        first.mark(codex_sandboxing::WindowsStartStage::SpawnReturned);
+        assert!(original.snapshot().is_none());
+        assert_eq!(format!("{original:?}"), "ReviewedInvocationStartUnboundOrUnavailable");
+        // Changing an unrelated recorder cannot turn unavailable into clean.
+        original.bind_lower(WindowsStartDiagnostic::default());
+        assert!(original.snapshot().is_none());
+    }
+
     #[test]
     fn native_first_error_survives_late_actual_handle_observation() {
         let trace = NativeStartDiagnostic::default();

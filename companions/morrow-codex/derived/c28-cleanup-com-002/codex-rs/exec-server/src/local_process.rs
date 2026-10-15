@@ -199,6 +199,9 @@ pub(crate) struct LocalProcess {
 #[cfg(windows)]
 #[path = "local_process_windows_runner.rs"]
 mod windows_runner;
+#[cfg(windows)]
+#[path="local_native_completion.rs"]
+pub(crate) mod native_completion;
 
 struct LocalExecProcess {
     process_id: ProcessId,
@@ -518,11 +521,17 @@ impl LocalProcess {
 
         let output_notify = Arc::new(Notify::new());
         let (wake_tx, _wake_rx) = watch::channel(0);
+        // The original session's data-only carrier is fixed BEFORE map installation.
+        let session=Arc::new(spawned.session);
+        #[cfg(windows)]
+        let native_completion=session.has_native_close_driver().then(||native_completion::NativeProcessCompletion::new(Arc::clone(&session)));
         let events = ExecProcessEventLog::new(
             PROCESS_EVENT_CHANNEL_CAPACITY,
             RETAINED_OUTPUT_BYTES_PER_PROCESS,
-        );
-        let lifecycle = checked_lifecycle::LifecycleEvidence::from_session(&spawned.session);
+        ).with_runner_history(session.runner_observation());
+        #[cfg(windows)]
+        let events=events.with_native_completion(native_completion.clone());
+        let lifecycle = checked_lifecycle::LifecycleEvidence::from_session(&session);
         let failure_watch = lifecycle.receiver();
         {
             let mut process_map = self.inner.processes.lock().await;
@@ -531,7 +540,10 @@ impl LocalProcess {
                 Some(ProcessEntry::Starting(current)) if Arc::ptr_eq(current, &start)
             ) {
                 drop(process_map);
-                spawned.session.terminate();
+                #[cfg(windows)]
+                if !session.has_native_close_driver(){session.terminate();}
+                #[cfg(not(windows))]
+                session.terminate();
                 metrics.finish("terminated");
                 return Err(invalid_request(format!(
                     "process {process_id} start was cancelled"
@@ -540,7 +552,7 @@ impl LocalProcess {
             process_map.insert(
                 process_id.clone(),
                 ProcessEntry::Running(Box::new(RunningProcess {
-                    session: Arc::new(spawned.session),
+                    session: Arc::clone(&session),
                     lifecycle,
                     tty: params.tty,
                     pipe_stdin: params.pipe_stdin,
@@ -570,14 +582,16 @@ impl LocalProcess {
                 checked_lifecycle::veto(process, &wake_tx);
             }
         }
-        checked_lifecycle::start_watcher(
+        let lifecycle_original=checked_lifecycle::start_watcher(
             process_id.clone(),
             wake_tx.clone(),
             failure_watch,
             Arc::clone(&self.inner),
         );
+        #[cfg(windows)]
+        if let (Some(native),Some(original))=(&native_completion,lifecycle_original){native.install(3,original);}
         telemetry.log(ProcessTelemetryEvent::Start, prepared.sandbox);
-        tokio::spawn(stream_output(
+        let stdout_original=tokio::spawn(stream_output(
             process_id.clone(),
             if params.tty {
                 ExecOutputStream::Pty
@@ -589,7 +603,9 @@ impl LocalProcess {
             Arc::clone(&self.inner),
             Arc::clone(&output_notify),
         ));
-        tokio::spawn(stream_output(
+        #[cfg(windows)]
+        if let Some(native)=&native_completion {native.install(0,stdout_original);}
+        let stderr_original=tokio::spawn(stream_output(
             process_id.clone(),
             if params.tty {
                 ExecOutputStream::Pty
@@ -601,8 +617,10 @@ impl LocalProcess {
             Arc::clone(&self.inner),
             Arc::clone(&output_notify),
         ));
+        #[cfg(windows)]
+        if let Some(native)=&native_completion {native.install(1,stderr_original);}
         // Keep the subscriber, but let the request span close independently of process completion.
-        tokio::spawn(
+        let exit_original=tokio::spawn(
             watch_exit(
                 process_id.clone(),
                 spawned.exit_rx,
@@ -613,6 +631,8 @@ impl LocalProcess {
             )
             .with_current_subscriber(),
         );
+        #[cfg(windows)]
+        if let Some(native)=&native_completion {native.install(2,exit_original);}
 
         Ok((
             ExecResponse {
@@ -842,6 +862,17 @@ impl LocalExecProcess {
 }
 
 impl ExecProcess for LocalExecProcess {
+    #[cfg(windows)]
+    fn take_native_host_completion(&self,deadline:std::time::Instant)->ExecProcessFuture<'_,codex_sandboxing::NativeHostCompletion> {
+        Box::pin(async move {
+            let native=self.events.native_completion().ok_or_else(||ExecServerError::Protocol("native completion unsupported".into()))?;
+            native.complete(&self.process_id,&self.wake_tx,&self.backend.inner,deadline).await
+                .map_err(|_|ExecServerError::Protocol("original native completion retained or unproven".into()))
+        })
+    }
+    fn runner_observation(&self) -> codex_utils_pty::RunnerObservationReader {
+        self.events.runner_history()
+    }
     fn process_id(&self) -> &ProcessId {
         &self.process_id
     }
@@ -1209,7 +1240,7 @@ async fn maybe_emit_closed(
     expected_wake: watch::Sender<u64>,
     inner: Arc<Inner>,
 ) {
-    let (notification, output_notify, network_proxy_handle) = {
+    let (notification, output_notify, network_proxy_handle, completion_source) = {
         let mut processes = inner.processes.lock().await;
         let Some(ProcessEntry::Running(process)) = processes.get_mut(&process_id) else {
             return;
@@ -1224,6 +1255,7 @@ async fn maybe_emit_closed(
         }
 
         process.closed = true;
+        let policy_task_was_present=process.network_policy_shutdown.is_some();
         if let Some(network_policy_shutdown) = process.network_policy_shutdown.take() {
             network_policy_shutdown.cancel();
         }
@@ -1238,19 +1270,32 @@ async fn maybe_emit_closed(
             },
             Arc::clone(&process.output_notify),
             process.network_proxy_handle.take(),
+            (process.events.clone(),policy_task_was_present),
         )
     };
 
-    if let Some(network_proxy_handle) = network_proxy_handle
-        && let Err(err) = network_proxy_handle.shutdown().await
-    {
-        tracing::warn!("failed to shut down executor network proxy: {err}");
+    let mut network_shutdown_ok=true;
+    if let Some(network_proxy_handle)=network_proxy_handle {
+        if let Err(err)=network_proxy_handle.shutdown().await {
+            network_shutdown_ok=false;
+            tracing::warn!("failed to shut down executor network proxy: {err}");
+        }
+    }
+    #[cfg(windows)]
+    if let Some(native)=completion_source.0.native_completion() {
+        // Cancellation alone is not a joined network-policy task. This preview
+        // route refuses its capability when that additional task was configured.
+        native.network_returned(network_shutdown_ok && !completion_source.1);
     }
 
     output_notify.notify_waiters();
     let cleanup_process_id = process_id.clone();
     let cleanup_inner = Arc::clone(&inner);
-    tokio::spawn(async move {
+    #[cfg(windows)]
+    let schedule_retention=completion_source.0.native_completion().is_none();
+    #[cfg(not(windows))]
+    let schedule_retention=true;
+    if schedule_retention {tokio::spawn(async move {
         tokio::time::sleep(EXITED_PROCESS_RETENTION).await;
         let mut processes = cleanup_inner.processes.lock().await;
         match processes.entry(cleanup_process_id) {
@@ -1267,7 +1312,7 @@ async fn maybe_emit_closed(
             }
             Entry::Vacant(_) => {}
         }
-    });
+    });}
 
     if let Some(notifications) = notification_sender(&inner) {
         let _ = notifications

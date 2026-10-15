@@ -71,6 +71,8 @@ pub(super) struct Tracker<I> {
     start_attempted: bool,
     unknown_start: bool,
     acknowledged: Option<AcknowledgedCleanup>,
+    settled_cleanly: bool,
+    cleanup_completed: bool,
 }
 impl<I> Default for Tracker<I> {
     fn default() -> Self {
@@ -79,6 +81,8 @@ impl<I> Default for Tracker<I> {
             start_attempted: false,
             unknown_start: false,
             acknowledged: None,
+            settled_cleanly: false,
+            cleanup_completed: false,
         }
     }
 }
@@ -115,6 +119,8 @@ impl<I: Clone + PartialEq> Tracker<I> {
         );
         // A failed or unresolved call stays latched; absent status is not replay authority.
         self.start_attempted = true;
+        self.settled_cleanly = false;
+        self.cleanup_completed = false;
         match owner.start(options, context) {
             Ok(key) => {
                 // A returned key fences this active task; original ACK may end this lane.
@@ -180,9 +186,11 @@ impl<I: Clone + PartialEq> Tracker<I> {
     ) -> Result<Option<AcknowledgedCleanup>> {
         let status = self.precheck(owner, known_key)?;
         if let Some(receipt) = self.acknowledged {
+            self.settled_cleanly = true;
             return Ok(Some(receipt));
         }
         let Some(mut status) = status else {
+            self.settled_cleanly = true;
             return Ok(None);
         };
         let key = known_key.ok_or_else(|| anyhow!("known cleanup key absent"))?;
@@ -229,6 +237,7 @@ impl<I: Clone + PartialEq> Tracker<I> {
             explicit_recovery: recovery && action_needed,
         };
         self.acknowledged = Some(receipt);
+        self.settled_cleanly = true;
         Ok(Some(receipt))
     }
 
@@ -236,6 +245,41 @@ impl<I: Clone + PartialEq> Tracker<I> {
     /// have independently passed their original checks. Failures keep receipt.
     pub fn complete(&mut self) {
         self.acknowledged = None;
+        if self.settled_cleanly && !self.unknown_start {
+            self.cleanup_completed = true;
+        }
+    }
+
+    /// Verifies that the formal task lane has physically closed all owner-managed
+    /// execution/storage state and completed cleanup settlement, without clearing
+    /// sticky `start_attempted` (`noReplay`) or `unknown_start`.
+    pub fn require_physically_closed<O: Owner<Identity = I>>(
+        &mut self,
+        owner: &mut O,
+        known_key: Option<TaskKey>,
+    ) -> Result<()> {
+        self.bind(owner)?;
+        ensure!(
+            !self.unknown_start,
+            "formal start identity is Unknown; physical closure not proven"
+        );
+        ensure!(
+            self.acknowledged.is_none(),
+            "acknowledged formal task cleanup is not yet completed; physical closure not proven"
+        );
+        ensure!(
+            known_key.is_none(),
+            "formal task key still active; physical closure not proven"
+        );
+        ensure!(
+            !self.start_attempted || self.cleanup_completed,
+            "attempted formal start has not completed cleanup settlement; physical closure not proven"
+        );
+        ensure!(
+            owner.status()?.is_none(),
+            "original owner still reports an active or unacknowledged task; physical closure not proven"
+        );
+        Ok(())
     }
 }
 

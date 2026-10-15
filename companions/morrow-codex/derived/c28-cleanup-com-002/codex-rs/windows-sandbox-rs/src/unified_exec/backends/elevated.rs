@@ -123,8 +123,22 @@ async fn spawn_runner_transport_task(
     if let Some(diagnostic) = &diagnostic {
         diagnostic.mark(crate::WindowsStartStage::BlockingTransportTask);
     }
+    let mut checked_reservation = match &matched_runner {
+        Some(artifact) => Some(
+            crate::checked_owner::reserve_checked_startup_before_launch(
+                std::sync::Arc::clone(artifact),
+                diagnostic.clone(),
+            )
+            .map_err(anyhow::Error::from)
+            .inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?,
+        ),
+        None => None,
+    };
+    let caller_guard = checked_reservation
+        .as_ref()
+        .map(crate::checked_owner::CheckedStartupReservation::caller_guard);
     let task_diagnostic = diagnostic.clone();
-    tokio::task::spawn_blocking(move || -> Result<_> {
+    let transport = tokio::task::spawn_blocking(move || -> Result<_> {
         let diagnostic = task_diagnostic.as_ref();
         if request.spawn_request.private_desktop_name.is_none() {
             if let Some(diagnostic) = diagnostic {
@@ -159,12 +173,13 @@ async fn spawn_runner_transport_task(
                         .as_deref(),
                 )
             })
-            .transpose().inspect_err(|err| observe_backend_error(diagnostic, err))?;
+            .transpose()
+            .inspect_err(|err| observe_backend_error(diagnostic, err))?;
         spawn_runner_transport_with_retry_diagnostics(
             sandbox_creds,
             &request,
             |codex_home, cwd, sandbox_creds, log_dir, spawn_request| {
-                crate::runner_client::spawn_runner_transport_with_identity_diagnostics(
+                crate::runner_client::spawn_runner_transport_with_checked_reservation(
                     codex_home,
                     cwd,
                     sandbox_creds,
@@ -173,6 +188,7 @@ async fn spawn_runner_transport_task(
                     desktop_policy.as_ref(),
                     matched_runner.clone(),
                     diagnostic,
+                    checked_reservation.as_mut(),
                 )
             },
             |permissions, cwd, env_map, codex_home, read_roots, read_defaults, write_roots,
@@ -197,7 +213,13 @@ async fn spawn_runner_transport_task(
             });
         }
         anyhow::anyhow!("runner handshake task failed: {err}")
-    })?
+    })??;
+    if let Some(guard) = caller_guard {
+        guard
+            .acknowledge_returned(&transport)
+            .inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?;
+    }
+    Ok(transport)
 }
 
 fn observe_backend_error(diagnostic: Option<&crate::WindowsStartDiagnostic>, err: &anyhow::Error) {
@@ -301,8 +323,9 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
         if let Some(diagnostic) = &diagnostic {
             diagnostic.mark(crate::WindowsStartStage::CheckedDriverAssemble);
         }
-        let (pipe_write, pipe_read, hello, capabilities, artifact) =
-            transport.into_checked_files().inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?;
+        let checked_io = transport
+            .into_checked_files()
+            .inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?;
         let (writer_tx, writer_rx) = mpsc::channel::<Vec<u8>>(128);
         let (stdout_tx, stdout_rx) = broadcast::channel(256);
         let (stderr_tx, stderr_rx) = if tty {
@@ -312,18 +335,16 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
             (Some(tx), Some(rx))
         };
         let (exit_tx, exit_rx) = oneshot::channel();
-        let checked = super::windows_common::start_checked_runner(
-            pipe_write,
-            pipe_read,
-            hello,
-            capabilities,
-            artifact,
+        let checked = super::windows_common::start_checked_runner_with_io(
+            checked_io,
             writer_rx,
             tty,
             stdout_tx,
             stderr_tx,
             exit_tx,
-        );
+        )
+        .map_err(anyhow::Error::from)
+        .inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?;
         let terminator_controls = checked.controls.clone();
         let driver = ProcessDriver {
             writer_tx,
@@ -331,12 +352,14 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
             stderr_rx,
             exit_rx,
             terminator: Some(Box::new(move || terminator_controls.terminate())),
-            writer_handle: Some(checked.writer),
+            writer_handle: None,
             resizer: None,
             tty,
         };
-        let spawned =
-            codex_utils_pty::spawn_from_driver_with_checked_controls(driver, checked.controls);
+        let spawned = if checked.controls.native_close_enabled() {
+            anyhow::ensure!(!tty,"v8 native completion currently requires pipe mode");
+            codex_utils_pty::spawn_from_driver_with_native_close(driver,checked.controls.clone(),checked.controls)
+        }else{codex_utils_pty::spawn_from_driver_with_checked_controls(driver, checked.controls)};
         if !stdin_open {
             spawned.session.close_stdin();
         }
@@ -345,7 +368,9 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
         }
         return Ok(spawned);
     }
-    let (pipe_write, pipe_read) = transport.into_files();
+    let (pipe_write, pipe_read) = transport
+        .into_files()
+        .inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?;
 
     let (writer_tx, writer_rx) = mpsc::channel::<Vec<u8>>(128);
     let (stdout_tx, stdout_rx) = broadcast::channel::<Vec<u8>>(256);
@@ -356,7 +381,7 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
     };
     let (exit_tx, exit_rx) = oneshot::channel::<i32>();
 
-    let outbound_tx = start_runner_pipe_writer(pipe_write);
+    let (outbound_tx, input_owner) = start_runner_pipe_writer(pipe_write);
     let writer_handle = start_runner_stdin_writer(writer_rx, outbound_tx.clone(), tty, stdin_open);
     let terminator = {
         let outbound_tx = outbound_tx.clone();
@@ -370,12 +395,14 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
         }) as Box<dyn FnMut() + Send + Sync>)
     };
 
-    start_runner_stdout_reader(
+    let reader = start_runner_stdout_reader(
         pipe_read,
+        input_owner,
         stdout_tx,
         stderr_rx.as_ref().map(|(tx, _rx)| tx.clone()),
         exit_tx,
     );
+    let writer_handle = super::windows_common::observe_runner_workers(writer_handle, reader);
 
     Ok(finish_driver_spawn(
         ProcessDriver {

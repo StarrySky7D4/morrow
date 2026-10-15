@@ -2,7 +2,11 @@ mod filter_specs;
 
 use crate::to_wide;
 use anyhow::Result;
+use anyhow::bail;
+use anyhow::ensure;
+use serde::Serialize;
 use std::ffi::OsStr;
+use std::ffi::c_void;
 use std::mem::zeroed;
 use std::ptr::null;
 use std::ptr::null_mut;
@@ -44,10 +48,14 @@ use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmEngineC
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmEngineOpen0;
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmFilterAdd0;
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmFilterDeleteByKey0;
+use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmFilterGetByKey0;
+use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmFreeMemory0;
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmProviderAdd0;
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmProviderDeleteByKey0;
+use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmProviderGetByKey0;
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmSubLayerAdd0;
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmSubLayerDeleteByKey0;
+use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmSubLayerGetByKey0;
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmTransactionAbort0;
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmTransactionBegin0;
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FwpmTransactionCommit0;
@@ -69,12 +77,105 @@ const PROVIDER_NAME: &str = "Codex Windows Sandbox WFP";
 const PROVIDER_DESCRIPTION: &str = "Persistent WFP provider for Codex Windows sandbox filters";
 const SUBLAYER_NAME: &str = "Codex Windows Sandbox WFP";
 const SUBLAYER_DESCRIPTION: &str = "Persistent WFP sublayer for Codex Windows sandbox filters";
+const FWP_E_IN_USE_CODE: u32 = 0x8032_0017;
 
 // WFP identifies persistent providers, sublayers, and filters by stable GUIDs.
 // These values are Codex-owned identities; do not regenerate them unless we
 // intentionally want to orphan old objects and create a new WFP namespace.
 const PROVIDER_KEY: GUID = GUID::from_u128(0x2e31d31c_3948_4753_9117_e5d1a6496f41);
 const SUBLAYER_KEY: GUID = GUID::from_u128(0xe65054fd_4d32_4c7c_95ef_621f0cf6431a);
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub(crate) struct WfpGuid {
+    pub(crate) data1: u32,
+    pub(crate) data2: u16,
+    pub(crate) data3: u16,
+    pub(crate) data4: [u8; 8],
+}
+
+impl From<GUID> for WfpGuid {
+    fn from(value: GUID) -> Self {
+        Self {
+            data1: value.data1,
+            data2: value.data2,
+            data3: value.data3,
+            data4: value.data4,
+        }
+    }
+}
+
+impl From<WfpGuid> for GUID {
+    fn from(value: WfpGuid) -> Self {
+        Self {
+            data1: value.data1,
+            data2: value.data2,
+            data3: value.data3,
+            data4: value.data4,
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) enum OwnedWfpConditionSpec {
+    UserSd(Vec<u8>),
+    Protocol(u8),
+    RemotePort(u16),
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct OwnedWfpFilterProof {
+    pub(crate) name: &'static str,
+    pub(crate) key: WfpGuid,
+    pub(crate) filter_id: u64,
+    pub(crate) layer_key: WfpGuid,
+    pub(crate) sublayer_key: WfpGuid,
+    pub(crate) provider_key: WfpGuid,
+    pub(crate) expected_conditions: Vec<OwnedWfpConditionSpec>,
+    pub(crate) expected_sd_blob: Vec<u8>,
+    pub(crate) offline_sid_bytes: Vec<u8>,
+}
+
+/// Non-deserializable proof of WFP objects created during a specific owned setup run.
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct OwnedWfpProof {
+    pub(crate) provider_key: WfpGuid,
+    pub(crate) sublayer_key: WfpGuid,
+    pub(crate) provider_created: bool,
+    pub(crate) sublayer_created: bool,
+    pub(crate) offline_sid: String,
+    pub(crate) offline_sid_bytes: Vec<u8>,
+    pub(crate) filters: Vec<OwnedWfpFilterProof>,
+}
+
+/// Bounded typed summary of scoped WFP retirement during normal cleanup.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct WfpRetirementReport {
+    pub verified_filter_count: usize,
+    pub retired_filter_ids: Vec<u64>,
+    pub sublayer_retired: bool,
+    pub sublayer_retained_shared: bool,
+    pub provider_retired: bool,
+    pub provider_retained_shared: bool,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct ObservedWfpFilter {
+    pub(crate) key: WfpGuid,
+    pub(crate) filter_id: u64,
+    pub(crate) layer_key: WfpGuid,
+    pub(crate) sublayer_key: WfpGuid,
+    pub(crate) provider_key: Option<WfpGuid>,
+    pub(crate) flags: u32,
+    pub(crate) action_type: u32,
+    pub(crate) conditions: Vec<OwnedWfpConditionSpec>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct ObservedWfpState {
+    pub(crate) provider_present_and_persistent: bool,
+    pub(crate) sublayer_present_and_linked: bool,
+    pub(crate) filters: Vec<ObservedWfpFilter>,
+}
 
 /// Installs the persistent Codex WFP filters for `account`.
 ///
@@ -97,6 +198,240 @@ pub fn install_wfp_filters_for_account(account: &str) -> Result<usize> {
 
     transaction.commit()?;
     Ok(installed_filter_count)
+}
+
+/// Installs persistent Codex WFP filters for a newly created owned sandbox offline account,
+/// refusing to overwrite pre-existing filters and recording exact runtime `filterId` and
+/// security descriptor proof inside a single native WFP transaction.
+pub(crate) fn install_owned_wfp_filters_for_account(
+    account: &str,
+    offline_sid: &str,
+    offline_sid_bytes: &[u8],
+) -> Result<OwnedWfpProof> {
+    ensure!(
+        !offline_sid.is_empty() && !offline_sid_bytes.is_empty(),
+        "owned WFP installation requires non-empty offline SID proof"
+    );
+    let engine = Engine::open(INFINITE)?;
+    let mut transaction = engine.begin_transaction()?;
+    let provider_created = ensure_or_observe_provider(engine.handle)?;
+    let sublayer_created = ensure_or_observe_sublayer(engine.handle)?;
+
+    let user_condition = UserMatchCondition::for_account(account)?;
+    let condition_sd_bytes = unsafe {
+        std::slice::from_raw_parts(
+            user_condition.blob.data,
+            user_condition.blob.size as usize,
+        )
+    };
+    let (mask, extracted_sid) = extract_wfp_sd_single_allowed_sid(condition_sd_bytes)?;
+    ensure!(
+        mask == FWP_ACTRL_MATCH_FILTER && extracted_sid.as_slice() == offline_sid_bytes,
+        "WFP user match condition security descriptor SID does not match created offline SID"
+    );
+
+    let mut filters = Vec::with_capacity(FILTER_SPECS.len());
+    for spec in FILTER_SPECS {
+        ensure!(
+            observe_wfp_filter(engine.handle, &spec.key)?.is_none(),
+            "pre-existing WFP filter {} present before owned setup; refusing to overwrite or adopt",
+            spec.name
+        );
+        let filter_id = add_filter_returning_id(engine.handle, spec, &user_condition)?;
+        ensure!(
+            filter_id != 0,
+            "FwpmFilterAdd0({}) returned zero filterId",
+            spec.name
+        );
+        let observed = observe_wfp_filter(engine.handle, &spec.key)?.ok_or_else(|| {
+            anyhow::anyhow!("newly added WFP filter {} could not be read back", spec.name)
+        })?;
+        ensure!(
+            observed.filter_id == filter_id,
+            "newly added WFP filter {} filterId mismatch ({} != {filter_id})",
+            spec.name,
+            observed.filter_id
+        );
+        let observed_sd = extract_single_user_sd(&observed.conditions)?;
+        let (obs_mask, obs_sid) = extract_wfp_sd_single_allowed_sid(&observed_sd)?;
+        ensure!(
+            obs_mask == FWP_ACTRL_MATCH_FILTER && obs_sid.as_slice() == offline_sid_bytes,
+            "newly added WFP filter {} security descriptor SID mismatch",
+            spec.name
+        );
+        let expected_conditions = expected_conditions_for_spec(spec.conditions, &observed_sd);
+        ensure!(
+            observed.conditions == expected_conditions,
+            "newly added WFP filter {} conditions do not match specification",
+            spec.name
+        );
+        filters.push(OwnedWfpFilterProof {
+            name: spec.name,
+            key: WfpGuid::from(spec.key),
+            filter_id,
+            layer_key: WfpGuid::from(spec.layer_key),
+            sublayer_key: WfpGuid::from(SUBLAYER_KEY),
+            provider_key: WfpGuid::from(PROVIDER_KEY),
+            expected_conditions,
+            expected_sd_blob: observed_sd,
+            offline_sid_bytes: offline_sid_bytes.to_vec(),
+        });
+    }
+
+    transaction.commit()?;
+    Ok(OwnedWfpProof {
+        provider_key: WfpGuid::from(PROVIDER_KEY),
+        sublayer_key: WfpGuid::from(SUBLAYER_KEY),
+        provider_created,
+        sublayer_created,
+        offline_sid: offline_sid.to_string(),
+        offline_sid_bytes: offline_sid_bytes.to_vec(),
+        filters,
+    })
+}
+
+pub(crate) fn build_owned_wfp_proof_from_receipt_specs(
+    provider_created: bool,
+    sublayer_created: bool,
+    offline_sid: &str,
+    offline_sid_bytes: &[u8],
+    reported_filters: &[(String, u64, Vec<u8>)],
+) -> Result<OwnedWfpProof> {
+    ensure!(
+        !offline_sid.is_empty() && !offline_sid_bytes.is_empty(),
+        "owned WFP receipt binding requires non-empty offline SID proof"
+    );
+    ensure!(
+        reported_filters.len() == FILTER_SPECS.len(),
+        "owned WFP receipt filter count {} does not match FILTER_SPECS ({})",
+        reported_filters.len(),
+        FILTER_SPECS.len()
+    );
+    let mut filters = Vec::with_capacity(FILTER_SPECS.len());
+    for (spec, (reported_name, filter_id, expected_sd_blob)) in
+        FILTER_SPECS.iter().zip(reported_filters.iter())
+    {
+        ensure!(
+            reported_name == spec.name,
+            "owned WFP receipt filter name {} does not match expected spec {}",
+            reported_name,
+            spec.name
+        );
+        ensure!(
+            *filter_id != 0,
+            "owned WFP receipt filter {} has zero filterId",
+            spec.name
+        );
+        let (mask, sid_bytes) = extract_wfp_sd_single_allowed_sid(expected_sd_blob)?;
+        ensure!(
+            mask == FWP_ACTRL_MATCH_FILTER && sid_bytes.as_slice() == offline_sid_bytes,
+            "owned WFP receipt filter {} security descriptor SID does not match offline SID",
+            spec.name
+        );
+        let expected_conditions = expected_conditions_for_spec(spec.conditions, expected_sd_blob);
+        filters.push(OwnedWfpFilterProof {
+            name: spec.name,
+            key: WfpGuid::from(spec.key),
+            filter_id: *filter_id,
+            layer_key: WfpGuid::from(spec.layer_key),
+            sublayer_key: WfpGuid::from(SUBLAYER_KEY),
+            provider_key: WfpGuid::from(PROVIDER_KEY),
+            expected_conditions,
+            expected_sd_blob: expected_sd_blob.clone(),
+            offline_sid_bytes: offline_sid_bytes.to_vec(),
+        });
+    }
+    Ok(OwnedWfpProof {
+        provider_key: WfpGuid::from(PROVIDER_KEY),
+        sublayer_key: WfpGuid::from(SUBLAYER_KEY),
+        provider_created,
+        sublayer_created,
+        offline_sid: offline_sid.to_string(),
+        offline_sid_bytes: offline_sid_bytes.to_vec(),
+        filters,
+    })
+}
+
+/// Independently queries the live WFP engine in the parent process and verifies that every
+/// filter reported by the pinned `codex-windows-sandbox-setup.exe` child exists in the OS with
+/// the exact runtime `filterId`, security descriptor, and offline SID before constructing
+/// `OwnedWfpProof`.
+pub(crate) fn verify_and_bind_live_owned_wfp_proof(
+    provider_created: bool,
+    sublayer_created: bool,
+    offline_sid: &str,
+    offline_sid_bytes: &[u8],
+    reported_filters: &[(String, u64, Vec<u8>)],
+) -> Result<OwnedWfpProof> {
+    let candidate = build_owned_wfp_proof_from_receipt_specs(
+        provider_created,
+        sublayer_created,
+        offline_sid,
+        offline_sid_bytes,
+        reported_filters,
+    )?;
+    let engine = Engine::open(INFINITE)?;
+    let observed = observe_wfp_state(engine.handle, &candidate)?;
+    let _verified_ids = verify_owned_wfp_state(&candidate, &observed)?;
+    Ok(candidate)
+}
+
+/// Verifies and retires only the exact WFP filters proven to belong to `proof` inside a single
+/// native WFP transaction. Shared provider/sublayer objects not created by this setup (or still
+/// referenced by other WFP objects) are retained rather than globally deleted.
+pub(crate) fn retire_owned_wfp_filters(proof: &OwnedWfpProof) -> Result<WfpRetirementReport> {
+    let engine = Engine::open(INFINITE)?;
+    let mut transaction = engine.begin_transaction()?;
+    let observed = observe_wfp_state(engine.handle, proof)?;
+    let verified_ids = verify_owned_wfp_state(proof, &observed)?;
+
+    for filter_proof in &proof.filters {
+        let key: GUID = filter_proof.key.into();
+        let result = unsafe { FwpmFilterDeleteByKey0(engine.handle, &key) };
+        ensure_success(
+            result,
+            &format!("FwpmFilterDeleteByKey0({})", filter_proof.name),
+        )?;
+    }
+
+    let (sublayer_retired, sublayer_retained_shared) = if proof.sublayer_created {
+        let result = unsafe { FwpmSubLayerDeleteByKey0(engine.handle, &SUBLAYER_KEY) };
+        if result == 0 {
+            (true, false)
+        } else if result == FWP_E_IN_USE_CODE {
+            (false, true)
+        } else {
+            ensure_success(result, "FwpmSubLayerDeleteByKey0")?;
+            unreachable!()
+        }
+    } else {
+        (false, true)
+    };
+
+    let (provider_retired, provider_retained_shared) =
+        if proof.provider_created && sublayer_retired {
+            let result = unsafe { FwpmProviderDeleteByKey0(engine.handle, &PROVIDER_KEY) };
+            if result == 0 {
+                (true, false)
+            } else if result == FWP_E_IN_USE_CODE {
+                (false, true)
+            } else {
+                ensure_success(result, "FwpmProviderDeleteByKey0")?;
+                unreachable!()
+            }
+        } else {
+            (false, true)
+        };
+
+    transaction.commit()?;
+    Ok(WfpRetirementReport {
+        verified_filter_count: verified_ids.len(),
+        retired_filter_ids: verified_ids,
+        sublayer_retired,
+        sublayer_retained_shared,
+        provider_retired,
+        provider_retained_shared,
+    })
 }
 
 pub(crate) fn remove_wfp_filters() -> Result<()> {
@@ -271,6 +606,49 @@ fn ensure_provider(engine: HANDLE) -> Result<()> {
     ensure_success_or(result, "FwpmProviderAdd0", &[FWP_E_ALREADY_EXISTS as u32])
 }
 
+/// Checks whether the persistent Codex WFP provider already exists; if absent, creates it and
+/// returns `true`. If present, verifies its persistent flag and returns `false` (shared).
+fn ensure_or_observe_provider(engine: HANDLE) -> Result<bool> {
+    let mut existing: *mut FWPM_PROVIDER0 = null_mut();
+    let get_result = unsafe { FwpmProviderGetByKey0(engine, &PROVIDER_KEY, &mut existing) };
+    if get_result == 0 {
+        ensure!(
+            !existing.is_null(),
+            "FwpmProviderGetByKey0 returned null provider"
+        );
+        let flags = unsafe { (*existing).flags };
+        let key = unsafe { WfpGuid::from((*existing).providerKey) };
+        let mut raw: *mut c_void = existing.cast();
+        unsafe { FwpmFreeMemory0(&mut raw) };
+        ensure!(
+            key == WfpGuid::from(PROVIDER_KEY) && (flags & FWPM_PROVIDER_FLAG_PERSISTENT) != 0,
+            "existing WFP provider has unexpected key or non-persistent flags"
+        );
+        return Ok(false);
+    }
+    ensure_success_or(
+        get_result,
+        "FwpmProviderGetByKey0",
+        &[FWP_E_PROVIDER_NOT_FOUND as u32, FWP_E_NOT_FOUND as u32],
+    )?;
+
+    let provider_name = to_wide(OsStr::new(PROVIDER_NAME));
+    let provider_description = to_wide(OsStr::new(PROVIDER_DESCRIPTION));
+    let provider = FWPM_PROVIDER0 {
+        providerKey: PROVIDER_KEY,
+        displayData: FWPM_DISPLAY_DATA0 {
+            name: provider_name.as_ptr() as *mut _,
+            description: provider_description.as_ptr() as *mut _,
+        },
+        flags: FWPM_PROVIDER_FLAG_PERSISTENT,
+        providerData: empty_blob(),
+        serviceName: null_mut(),
+    };
+    let add_result = unsafe { FwpmProviderAdd0(engine, &provider, null_mut()) };
+    ensure_success(add_result, "FwpmProviderAdd0")?;
+    Ok(true)
+}
+
 /// Ensures the persistent Codex sublayer exists under the Codex provider.
 fn ensure_sublayer(engine: HANDLE) -> Result<()> {
     let sublayer_name = to_wide(OsStr::new(SUBLAYER_NAME));
@@ -292,12 +670,76 @@ fn ensure_sublayer(engine: HANDLE) -> Result<()> {
     ensure_success_or(result, "FwpmSubLayerAdd0", &[FWP_E_ALREADY_EXISTS as u32])
 }
 
+/// Checks whether the persistent Codex sublayer already exists; if absent, creates it and
+/// returns `true`. If present, verifies its persistent flag and provider link and returns `false`.
+fn ensure_or_observe_sublayer(engine: HANDLE) -> Result<bool> {
+    let mut existing: *mut FWPM_SUBLAYER0 = null_mut();
+    let get_result = unsafe { FwpmSubLayerGetByKey0(engine, &SUBLAYER_KEY, &mut existing) };
+    if get_result == 0 {
+        ensure!(
+            !existing.is_null(),
+            "FwpmSubLayerGetByKey0 returned null sublayer"
+        );
+        let flags = unsafe { (*existing).flags };
+        let key = unsafe { WfpGuid::from((*existing).subLayerKey) };
+        let provider_key = unsafe {
+            if (*existing).providerKey.is_null() {
+                None
+            } else {
+                Some(WfpGuid::from(*(*existing).providerKey))
+            }
+        };
+        let mut raw: *mut c_void = existing.cast();
+        unsafe { FwpmFreeMemory0(&mut raw) };
+        ensure!(
+            key == WfpGuid::from(SUBLAYER_KEY)
+                && (flags & FWPM_SUBLAYER_FLAG_PERSISTENT) != 0
+                && provider_key == Some(WfpGuid::from(PROVIDER_KEY)),
+            "existing WFP sublayer has unexpected key, flags, or provider link"
+        );
+        return Ok(false);
+    }
+    ensure_success_or(
+        get_result,
+        "FwpmSubLayerGetByKey0",
+        &[FWP_E_SUBLAYER_NOT_FOUND as u32, FWP_E_NOT_FOUND as u32],
+    )?;
+
+    let sublayer_name = to_wide(OsStr::new(SUBLAYER_NAME));
+    let sublayer_description = to_wide(OsStr::new(SUBLAYER_DESCRIPTION));
+    let provider_key = PROVIDER_KEY;
+    let sublayer = FWPM_SUBLAYER0 {
+        subLayerKey: SUBLAYER_KEY,
+        displayData: FWPM_DISPLAY_DATA0 {
+            name: sublayer_name.as_ptr() as *mut _,
+            description: sublayer_description.as_ptr() as *mut _,
+        },
+        flags: FWPM_SUBLAYER_FLAG_PERSISTENT,
+        providerKey: &provider_key as *const _ as *mut _,
+        providerData: empty_blob(),
+        weight: 0x8000,
+    };
+    let add_result = unsafe { FwpmSubLayerAdd0(engine, &sublayer, null_mut()) };
+    ensure_success(add_result, "FwpmSubLayerAdd0")?;
+    Ok(true)
+}
+
 /// Adds one blocking WFP filter from the static filter spec list.
 fn add_filter(
     engine: HANDLE,
     spec: &FilterSpec,
     user_condition: &UserMatchCondition,
 ) -> Result<()> {
+    let _ = add_filter_returning_id(engine, spec, user_condition)?;
+    Ok(())
+}
+
+/// Adds one blocking WFP filter and returns its runtime `filterId`.
+fn add_filter_returning_id(
+    engine: HANDLE,
+    spec: &FilterSpec,
+    user_condition: &UserMatchCondition,
+) -> Result<u64> {
     let filter_name = to_wide(OsStr::new(spec.name));
     let filter_description = to_wide(OsStr::new(spec.description));
     let mut filter_conditions = build_conditions(spec.conditions, user_condition);
@@ -330,7 +772,341 @@ fn add_filter(
 
     let mut filter_id = 0_u64;
     let result = unsafe { FwpmFilterAdd0(engine, &filter, null_mut(), &mut filter_id) };
-    ensure_success(result, &format!("FwpmFilterAdd0({})", spec.name))
+    ensure_success(result, &format!("FwpmFilterAdd0({})", spec.name))?;
+    Ok(filter_id)
+}
+
+fn observe_wfp_filter(engine: HANDLE, key: &GUID) -> Result<Option<ObservedWfpFilter>> {
+    let mut raw_filter: *mut FWPM_FILTER0 = null_mut();
+    let result = unsafe { FwpmFilterGetByKey0(engine, key, &mut raw_filter) };
+    if result == FWP_E_FILTER_NOT_FOUND as u32 || result == FWP_E_NOT_FOUND as u32 {
+        return Ok(None);
+    }
+    ensure_success(result, "FwpmFilterGetByKey0")?;
+    ensure!(
+        !raw_filter.is_null(),
+        "FwpmFilterGetByKey0 returned null filter pointer"
+    );
+
+    let parse_result = unsafe {
+        let f = &*raw_filter;
+        let provider_key = if f.providerKey.is_null() {
+            None
+        } else {
+            Some(WfpGuid::from(*f.providerKey))
+        };
+        let count = f.numFilterConditions as usize;
+        let mut conditions = Vec::with_capacity(count);
+        if count > 0 {
+            ensure!(
+                !f.filterCondition.is_null(),
+                "WFP filter has non-zero condition count with null condition pointer"
+            );
+            let slice = std::slice::from_raw_parts(f.filterCondition, count);
+            for cond in slice {
+                ensure!(
+                    cond.matchType == FWP_MATCH_EQUAL,
+                    "unexpected WFP condition matchType {}",
+                    cond.matchType
+                );
+                let field_key = WfpGuid::from(cond.fieldKey);
+                if field_key == WfpGuid::from(FWPM_CONDITION_ALE_USER_ID) {
+                    ensure!(
+                        cond.conditionValue.r#type == FWP_SECURITY_DESCRIPTOR_TYPE,
+                        "ALE_USER_ID condition does not have security descriptor type"
+                    );
+                    let sd_blob = cond.conditionValue.Anonymous.sd;
+                    ensure!(
+                        !sd_blob.is_null() && !(*sd_blob).data.is_null() && (*sd_blob).size > 0,
+                        "ALE_USER_ID condition has empty security descriptor blob"
+                    );
+                    let sd_bytes =
+                        std::slice::from_raw_parts((*sd_blob).data, (*sd_blob).size as usize)
+                            .to_vec();
+                    conditions.push(OwnedWfpConditionSpec::UserSd(sd_bytes));
+                } else if field_key == WfpGuid::from(FWPM_CONDITION_IP_PROTOCOL) {
+                    ensure!(
+                        cond.conditionValue.r#type == FWP_UINT8,
+                        "IP_PROTOCOL condition does not have uint8 type"
+                    );
+                    conditions.push(OwnedWfpConditionSpec::Protocol(
+                        cond.conditionValue.Anonymous.uint8,
+                    ));
+                } else if field_key == WfpGuid::from(FWPM_CONDITION_IP_REMOTE_PORT) {
+                    ensure!(
+                        cond.conditionValue.r#type == FWP_UINT16,
+                        "IP_REMOTE_PORT condition does not have uint16 type"
+                    );
+                    conditions.push(OwnedWfpConditionSpec::RemotePort(
+                        cond.conditionValue.Anonymous.uint16,
+                    ));
+                } else {
+                    bail!("unexpected WFP filter condition fieldKey {field_key:?}");
+                }
+            }
+        }
+        Ok(ObservedWfpFilter {
+            key: WfpGuid::from(f.filterKey),
+            filter_id: f.filterId,
+            layer_key: WfpGuid::from(f.layerKey),
+            sublayer_key: WfpGuid::from(f.subLayerKey),
+            provider_key,
+            flags: f.flags,
+            action_type: f.action.r#type,
+            conditions,
+        })
+    };
+
+    let mut raw: *mut c_void = raw_filter.cast();
+    unsafe { FwpmFreeMemory0(&mut raw) };
+    parse_result.map(Some)
+}
+
+fn observe_wfp_state(engine: HANDLE, proof: &OwnedWfpProof) -> Result<ObservedWfpState> {
+    let provider_present_and_persistent = {
+        let mut existing: *mut FWPM_PROVIDER0 = null_mut();
+        let res = unsafe { FwpmProviderGetByKey0(engine, &PROVIDER_KEY, &mut existing) };
+        if res == 0 && !existing.is_null() {
+            let flags = unsafe { (*existing).flags };
+            let key = unsafe { WfpGuid::from((*existing).providerKey) };
+            let mut raw: *mut c_void = existing.cast();
+            unsafe { FwpmFreeMemory0(&mut raw) };
+            key == WfpGuid::from(PROVIDER_KEY) && (flags & FWPM_PROVIDER_FLAG_PERSISTENT) != 0
+        } else if res == FWP_E_PROVIDER_NOT_FOUND as u32 || res == FWP_E_NOT_FOUND as u32 {
+            false
+        } else {
+            ensure_success(res, "FwpmProviderGetByKey0")?;
+            false
+        }
+    };
+
+    let sublayer_present_and_linked = {
+        let mut existing: *mut FWPM_SUBLAYER0 = null_mut();
+        let res = unsafe { FwpmSubLayerGetByKey0(engine, &SUBLAYER_KEY, &mut existing) };
+        if res == 0 && !existing.is_null() {
+            let flags = unsafe { (*existing).flags };
+            let key = unsafe { WfpGuid::from((*existing).subLayerKey) };
+            let provider_key = unsafe {
+                if (*existing).providerKey.is_null() {
+                    None
+                } else {
+                    Some(WfpGuid::from(*(*existing).providerKey))
+                }
+            };
+            let mut raw: *mut c_void = existing.cast();
+            unsafe { FwpmFreeMemory0(&mut raw) };
+            key == WfpGuid::from(SUBLAYER_KEY)
+                && (flags & FWPM_SUBLAYER_FLAG_PERSISTENT) != 0
+                && provider_key == Some(WfpGuid::from(PROVIDER_KEY))
+        } else if res == FWP_E_SUBLAYER_NOT_FOUND as u32 || res == FWP_E_NOT_FOUND as u32 {
+            false
+        } else {
+            ensure_success(res, "FwpmSubLayerGetByKey0")?;
+            false
+        }
+    };
+
+    let mut filters = Vec::with_capacity(proof.filters.len());
+    for filter_proof in &proof.filters {
+        let key: GUID = filter_proof.key.into();
+        if let Some(observed) = observe_wfp_filter(engine, &key)? {
+            filters.push(observed);
+        }
+    }
+
+    Ok(ObservedWfpState {
+        provider_present_and_persistent,
+        sublayer_present_and_linked,
+        filters,
+    })
+}
+
+pub(crate) fn verify_owned_wfp_state(
+    proof: &OwnedWfpProof,
+    observed: &ObservedWfpState,
+) -> Result<Vec<u64>> {
+    ensure!(
+        proof.provider_key == WfpGuid::from(PROVIDER_KEY)
+            && proof.sublayer_key == WfpGuid::from(SUBLAYER_KEY),
+        "owned WFP proof has invalid provider or sublayer key"
+    );
+    ensure!(
+        !proof.offline_sid.is_empty() && !proof.offline_sid_bytes.is_empty(),
+        "owned WFP proof is missing offline SID identity"
+    );
+    ensure!(
+        proof.filters.len() == FILTER_SPECS.len(),
+        "owned WFP proof filter count {} does not match FILTER_SPECS ({})",
+        proof.filters.len(),
+        FILTER_SPECS.len()
+    );
+    ensure!(
+        observed.provider_present_and_persistent,
+        "WFP provider missing or no longer persistent; refusing scoped WFP retirement"
+    );
+    ensure!(
+        observed.sublayer_present_and_linked,
+        "WFP sublayer missing or no longer linked to provider; refusing scoped WFP retirement"
+    );
+    ensure!(
+        observed.filters.len() == proof.filters.len(),
+        "observed WFP filter count {} does not match owned proof count {}; refusing retirement",
+        observed.filters.len(),
+        proof.filters.len()
+    );
+
+    let mut verified_ids = Vec::with_capacity(proof.filters.len());
+    for ((spec, filter_proof), actual) in FILTER_SPECS
+        .iter()
+        .zip(proof.filters.iter())
+        .zip(observed.filters.iter())
+    {
+        ensure!(
+            filter_proof.name == spec.name
+                && filter_proof.key == WfpGuid::from(spec.key)
+                && filter_proof.layer_key == WfpGuid::from(spec.layer_key)
+                && filter_proof.sublayer_key == WfpGuid::from(SUBLAYER_KEY)
+                && filter_proof.provider_key == WfpGuid::from(PROVIDER_KEY)
+                && filter_proof.filter_id != 0
+                && filter_proof.offline_sid_bytes == proof.offline_sid_bytes,
+            "owned WFP filter proof for {} is internally inconsistent",
+            spec.name
+        );
+        ensure!(
+            actual.key == filter_proof.key,
+            "WFP filter {} key mismatch",
+            filter_proof.name
+        );
+        ensure!(
+            actual.filter_id == filter_proof.filter_id,
+            "WFP filter {} runtime filterId changed ({} != {}); object was replaced",
+            filter_proof.name,
+            actual.filter_id,
+            filter_proof.filter_id
+        );
+        ensure!(
+            actual.layer_key == filter_proof.layer_key
+                && actual.sublayer_key == filter_proof.sublayer_key
+                && actual.provider_key == Some(filter_proof.provider_key),
+            "WFP filter {} layer/sublayer/provider association changed",
+            filter_proof.name
+        );
+        ensure!(
+            (actual.flags & FWPM_FILTER_FLAG_PERSISTENT) != 0
+                && actual.action_type == FWP_ACTION_BLOCK,
+            "WFP filter {} flags or block action changed",
+            filter_proof.name
+        );
+        let expected_conditions =
+            expected_conditions_for_spec(spec.conditions, &filter_proof.expected_sd_blob);
+        ensure!(
+            filter_proof.expected_conditions == expected_conditions
+                && actual.conditions == filter_proof.expected_conditions,
+            "WFP filter {} conditions do not match owned setup proof",
+            filter_proof.name
+        );
+        let actual_sd = extract_single_user_sd(&actual.conditions)?;
+        ensure!(
+            actual_sd == filter_proof.expected_sd_blob,
+            "WFP filter {} user security descriptor blob changed",
+            filter_proof.name
+        );
+        let (mask, sid_bytes) = extract_wfp_sd_single_allowed_sid(&actual_sd)?;
+        ensure!(
+            mask == FWP_ACTRL_MATCH_FILTER && sid_bytes == proof.offline_sid_bytes,
+            "WFP filter {} user security descriptor SID does not match owned offline SID",
+            filter_proof.name
+        );
+        verified_ids.push(actual.filter_id);
+    }
+
+    Ok(verified_ids)
+}
+
+fn expected_conditions_for_spec(
+    specs: &[ConditionSpec],
+    user_sd: &[u8],
+) -> Vec<OwnedWfpConditionSpec> {
+    specs
+        .iter()
+        .map(|spec| match spec {
+            ConditionSpec::User => OwnedWfpConditionSpec::UserSd(user_sd.to_vec()),
+            ConditionSpec::Protocol(protocol) => OwnedWfpConditionSpec::Protocol(*protocol),
+            ConditionSpec::RemotePort(port) => OwnedWfpConditionSpec::RemotePort(*port),
+        })
+        .collect()
+}
+
+fn extract_single_user_sd(conditions: &[OwnedWfpConditionSpec]) -> Result<Vec<u8>> {
+    let mut found: Option<Vec<u8>> = None;
+    for cond in conditions {
+        if let OwnedWfpConditionSpec::UserSd(sd) = cond {
+            ensure!(
+                found.is_none(),
+                "WFP filter has multiple ALE_USER_ID conditions"
+            );
+            found = Some(sd.clone());
+        }
+    }
+    found.ok_or_else(|| anyhow::anyhow!("WFP filter is missing ALE_USER_ID condition"))
+}
+
+/// Parses a self-relative Windows `SECURITY_DESCRIPTOR` and verifies that its DACL contains
+/// exactly one `ACCESS_ALLOWED_ACE` with `AceFlags == 0`, returning `(access_mask, sid_bytes)`.
+pub(crate) fn extract_wfp_sd_single_allowed_sid(sd_bytes: &[u8]) -> Result<(u32, Vec<u8>)> {
+    const SE_DACL_PRESENT: u16 = 0x0004;
+    const SE_SELF_RELATIVE: u16 = 0x8000;
+    const ACCESS_ALLOWED_ACE_TYPE: u8 = 0;
+
+    ensure!(
+        sd_bytes.len() >= 20,
+        "WFP security descriptor shorter than 20-byte self-relative header"
+    );
+    let revision = sd_bytes[0];
+    let control = u16::from_le_bytes([sd_bytes[2], sd_bytes[3]]);
+    ensure!(
+        revision == 1 && (control & SE_SELF_RELATIVE) != 0 && (control & SE_DACL_PRESENT) != 0,
+        "WFP security descriptor is not a self-relative descriptor with DACL"
+    );
+    let dacl_offset = u32::from_le_bytes([sd_bytes[16], sd_bytes[17], sd_bytes[18], sd_bytes[19]])
+        as usize;
+    ensure!(
+        dacl_offset >= 20 && dacl_offset + 8 <= sd_bytes.len(),
+        "WFP security descriptor DACL offset out of bounds"
+    );
+
+    let acl = &sd_bytes[dacl_offset..];
+    let acl_size = u16::from_le_bytes([acl[2], acl[3]]) as usize;
+    let ace_count = u16::from_le_bytes([acl[4], acl[5]]) as usize;
+    ensure!(
+        acl_size >= 8 && acl_size <= acl.len() && ace_count == 1,
+        "WFP security descriptor DACL must contain exactly 1 ACE (found {ace_count})"
+    );
+
+    let ace = &acl[8..acl_size];
+    ensure!(
+        ace.len() >= 16,
+        "WFP security descriptor ACE shorter than minimum ACCESS_ALLOWED_ACE"
+    );
+    let ace_type = ace[0];
+    let ace_flags = ace[1];
+    let ace_size = u16::from_le_bytes([ace[2], ace[3]]) as usize;
+    ensure!(
+        ace_type == ACCESS_ALLOWED_ACE_TYPE && ace_flags == 0 && ace_size >= 16 && ace_size <= ace.len(),
+        "WFP security descriptor ACE has unexpected type ({ace_type}), flags ({ace_flags}), or size ({ace_size})"
+    );
+    let mask = u32::from_le_bytes([ace[4], ace[5], ace[6], ace[7]]);
+    let sid_slice = &ace[8..ace_size];
+    let sid_revision = sid_slice[0];
+    let sub_authority_count = sid_slice[1] as usize;
+    let expected_sid_len = 8 + 4 * sub_authority_count;
+    ensure!(
+        sid_revision == 1
+            && (1..=15).contains(&sub_authority_count)
+            && expected_sid_len <= sid_slice.len(),
+        "WFP security descriptor ACE contains invalid binary SID"
+    );
+    Ok((mask, sid_slice[..expected_sid_len].to_vec()))
 }
 
 /// Converts our compact condition specs into WFP filter conditions.
@@ -421,8 +1197,107 @@ fn zero_guid() -> GUID {
 #[cfg(test)]
 mod tests {
     use super::FILTER_SPECS;
+    use super::FWP_ACTION_BLOCK;
+    use super::FWP_ACTRL_MATCH_FILTER;
+    use super::FWPM_FILTER_FLAG_PERSISTENT;
+    use super::ObservedWfpFilter;
+    use super::ObservedWfpState;
+    use super::OwnedWfpConditionSpec;
+    use super::OwnedWfpFilterProof;
+    use super::OwnedWfpProof;
+    use super::PROVIDER_KEY;
+    use super::SUBLAYER_KEY;
+    use super::WfpGuid;
+    use super::expected_conditions_for_spec;
+    use super::extract_wfp_sd_single_allowed_sid;
+    use super::verify_owned_wfp_state;
     use pretty_assertions::assert_eq;
     use std::collections::BTreeSet;
+
+    fn synthetic_sid(rid: u32) -> Vec<u8> {
+        let mut sid = vec![
+            1, // Revision
+            5, // SubAuthorityCount
+            0, 0, 0, 0, 0, 5, // NT Authority
+        ];
+        for sub in [21_u32, 111, 222, 333, rid] {
+            sid.extend_from_slice(&sub.to_le_bytes());
+        }
+        sid
+    }
+
+    fn synthetic_self_relative_sd(mask: u32, sid: &[u8]) -> Vec<u8> {
+        let ace_size = (8 + sid.len()) as u16;
+        let acl_size = 8 + ace_size;
+        let mut sd = Vec::with_capacity(20 + acl_size as usize);
+        sd.push(1); // Revision
+        sd.push(0); // Sbz1
+        sd.extend_from_slice(&(0x8004_u16).to_le_bytes()); // SE_SELF_RELATIVE | SE_DACL_PRESENT
+        sd.extend_from_slice(&0_u32.to_le_bytes()); // Owner
+        sd.extend_from_slice(&0_u32.to_le_bytes()); // Group
+        sd.extend_from_slice(&0_u32.to_le_bytes()); // Sacl
+        sd.extend_from_slice(&20_u32.to_le_bytes()); // Dacl offset
+        // ACL header
+        sd.push(2); // AclRevision
+        sd.push(0); // Sbz1
+        sd.extend_from_slice(&acl_size.to_le_bytes());
+        sd.extend_from_slice(&1_u16.to_le_bytes()); // AceCount = 1
+        sd.extend_from_slice(&0_u16.to_le_bytes()); // Sbz2
+        // ACCESS_ALLOWED_ACE
+        sd.push(0); // ACCESS_ALLOWED_ACE_TYPE
+        sd.push(0); // AceFlags = 0
+        sd.extend_from_slice(&ace_size.to_le_bytes());
+        sd.extend_from_slice(&mask.to_le_bytes());
+        sd.extend_from_slice(sid);
+        sd
+    }
+
+    fn sample_owned_proof_and_state() -> (OwnedWfpProof, ObservedWfpState) {
+        let sid_bytes = synthetic_sid(1001);
+        let sd_blob = synthetic_self_relative_sd(FWP_ACTRL_MATCH_FILTER, &sid_bytes);
+        let mut proof_filters = Vec::new();
+        let mut observed_filters = Vec::new();
+        for (idx, spec) in FILTER_SPECS.iter().enumerate() {
+            let filter_id = 5000 + idx as u64;
+            let expected_conditions = expected_conditions_for_spec(spec.conditions, &sd_blob);
+            proof_filters.push(OwnedWfpFilterProof {
+                name: spec.name,
+                key: WfpGuid::from(spec.key),
+                filter_id,
+                layer_key: WfpGuid::from(spec.layer_key),
+                sublayer_key: WfpGuid::from(SUBLAYER_KEY),
+                provider_key: WfpGuid::from(PROVIDER_KEY),
+                expected_conditions: expected_conditions.clone(),
+                expected_sd_blob: sd_blob.clone(),
+                offline_sid_bytes: sid_bytes.clone(),
+            });
+            observed_filters.push(ObservedWfpFilter {
+                key: WfpGuid::from(spec.key),
+                filter_id,
+                layer_key: WfpGuid::from(spec.layer_key),
+                sublayer_key: WfpGuid::from(SUBLAYER_KEY),
+                provider_key: Some(WfpGuid::from(PROVIDER_KEY)),
+                flags: FWPM_FILTER_FLAG_PERSISTENT,
+                action_type: FWP_ACTION_BLOCK,
+                conditions: expected_conditions,
+            });
+        }
+        let proof = OwnedWfpProof {
+            provider_key: WfpGuid::from(PROVIDER_KEY),
+            sublayer_key: WfpGuid::from(SUBLAYER_KEY),
+            provider_created: true,
+            sublayer_created: true,
+            offline_sid: "S-1-5-21-111-222-333-1001".to_string(),
+            offline_sid_bytes: sid_bytes,
+            filters: proof_filters,
+        };
+        let state = ObservedWfpState {
+            provider_present_and_persistent: true,
+            sublayer_present_and_linked: true,
+            filters: observed_filters,
+        };
+        (proof, state)
+    }
 
     #[test]
     fn filter_keys_are_unique() {
@@ -447,5 +1322,93 @@ mod tests {
             .map(|spec| spec.name)
             .collect::<BTreeSet<_>>();
         assert_eq!(names.len(), FILTER_SPECS.len());
+    }
+
+    #[test]
+    fn owned_wfp_verification_accepts_exact_owned_filters() -> anyhow::Result<()> {
+        let (proof, state) = sample_owned_proof_and_state();
+        let ids = verify_owned_wfp_state(&proof, &state)?;
+        assert_eq!(ids.len(), FILTER_SPECS.len());
+        assert_eq!(ids[0], 5000);
+        let (mask, sid) = extract_wfp_sd_single_allowed_sid(&proof.filters[0].expected_sd_blob)?;
+        assert_eq!(mask, FWP_ACTRL_MATCH_FILTER);
+        assert_eq!(sid, proof.offline_sid_bytes);
+        Ok(())
+    }
+
+    #[test]
+    fn owned_wfp_verification_rejects_replaced_filter_id_or_foreign_sid() {
+        let (proof, mut state) = sample_owned_proof_and_state();
+        state.filters[3].filter_id += 1;
+        assert!(verify_owned_wfp_state(&proof, &state).is_err());
+
+        let (proof, mut state) = sample_owned_proof_and_state();
+        let foreign_sid = synthetic_sid(9999);
+        let foreign_sd = synthetic_self_relative_sd(FWP_ACTRL_MATCH_FILTER, &foreign_sid);
+        state.filters[0].conditions[0] = OwnedWfpConditionSpec::UserSd(foreign_sd);
+        assert!(verify_owned_wfp_state(&proof, &state).is_err());
+    }
+
+    #[test]
+    fn owned_wfp_verification_rejects_missing_provider_sublayer_or_altered_condition() {
+        let (proof, mut state) = sample_owned_proof_and_state();
+        state.provider_present_and_persistent = false;
+        assert!(verify_owned_wfp_state(&proof, &state).is_err());
+
+        let (proof, mut state) = sample_owned_proof_and_state();
+        state.sublayer_present_and_linked = false;
+        assert!(verify_owned_wfp_state(&proof, &state).is_err());
+
+        let (proof, mut state) = sample_owned_proof_and_state();
+        state.filters[4].conditions[1] = OwnedWfpConditionSpec::RemotePort(5353);
+        assert!(verify_owned_wfp_state(&proof, &state).is_err());
+    }
+
+    #[test]
+    fn owned_wfp_verification_rejects_altered_action_type_and_bad_receipt_specs()
+    -> anyhow::Result<()> {
+        let (proof, mut state) = sample_owned_proof_and_state();
+        state.filters[0].action_type = FWP_ACTION_BLOCK ^ 1;
+        assert!(verify_owned_wfp_state(&proof, &state).is_err());
+
+        let reported = proof
+            .filters
+            .iter()
+            .map(|f| (f.name.to_string(), f.filter_id, f.expected_sd_blob.clone()))
+            .collect::<Vec<_>>();
+        let rebuilt = super::build_owned_wfp_proof_from_receipt_specs(
+            proof.provider_created,
+            proof.sublayer_created,
+            &proof.offline_sid,
+            &proof.offline_sid_bytes,
+            &reported,
+        )?;
+        assert_eq!(rebuilt, proof);
+
+        let mut zero_id_reported = reported.clone();
+        zero_id_reported[0].1 = 0;
+        assert!(
+            super::build_owned_wfp_proof_from_receipt_specs(
+                true,
+                true,
+                &proof.offline_sid,
+                &proof.offline_sid_bytes,
+                &zero_id_reported,
+            )
+            .is_err()
+        );
+
+        let foreign_sid = synthetic_sid(9999);
+        assert!(
+            super::build_owned_wfp_proof_from_receipt_specs(
+                true,
+                true,
+                &proof.offline_sid,
+                &foreign_sid,
+                &reported,
+            )
+            .is_err()
+        );
+        Ok(())
     }
 }

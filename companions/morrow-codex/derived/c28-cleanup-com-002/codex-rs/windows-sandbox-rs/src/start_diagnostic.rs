@@ -61,6 +61,8 @@ pub enum WindowsStartError {
     RunnerReported,
     BlockingCancelled,
     BlockingPanic,
+    OriginalRunnerExitedBeforeConnect,
+    OriginalRunnerWaitUnavailable,
     Unclassified,
 }
 
@@ -116,12 +118,32 @@ pub enum WindowsStartCompletion {
     UnsupportedBackend,
 }
 
+/// Historical observation of the original RUNNER, never the business child.
+/// No HANDLE, nonce, account, command line or operational authority is retained.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum WindowsStartRunnerState {
+    RunningAtObservation,
+    Exited { raw_dword: u32 },
+    SignaledExitQueryFailed { os_class: WindowsOsError },
+    WaitFailed { os_class: WindowsOsError },
+    UnexpectedWait { wait_result: u32 },
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct WindowsStartRunnerObservation {
+    pub startup_id: u64,
+    pub runner_pid: u32,
+    pub runner_creation_filetime_100ns: u64,
+    pub state: WindowsStartRunnerState,
+}
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct WindowsStartAttempt {
     pub stage: WindowsStartStage,
     pub error: WindowsStartError,
     pub runner_stage: WindowsRunnerErrorStage,
     pub os_class: WindowsOsError,
+    pub original_runner: Option<WindowsStartRunnerObservation>,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -133,11 +155,29 @@ pub struct WindowsStartSnapshot {
     pub completion: WindowsStartCompletion,
 }
 
-/// Contains finite enum data only, with no callback, executable or resource owner.
+/// Finite enums and original-runner historical scalars only: no callback,
+/// executable, HANDLE or resource owner.
 #[derive(Clone, Default)]
 pub struct WindowsStartDiagnostic(Arc<Mutex<WindowsStartSnapshot>>);
 
 impl WindowsStartDiagnostic {
+    pub(crate) fn observe_original_runner(&self, observed: WindowsStartRunnerObservation) {
+        self.record(|state| {
+            if let Some(original) = state.current.original_runner {
+                if (original.startup_id, original.runner_pid, original.runner_creation_filetime_100ns)
+                    != (observed.startup_id, observed.runner_pid, observed.runner_creation_filetime_100ns)
+                {
+                    if state.current.error == WindowsStartError::NotObserved {
+                        state.current.error = WindowsStartError::IdentityRejected;
+                    }
+                    return; // Never replace a different original with a later query.
+                }
+                if matches!(original.state, WindowsStartRunnerState::Exited { .. }) { return; }
+            }
+            state.current.original_runner = Some(observed);
+        });
+    }
+
     fn record(&self, change: impl FnOnce(&mut WindowsStartSnapshot)) {
         if let Ok(mut state) = self.0.lock() {
             if matches!(
@@ -253,6 +293,31 @@ impl fmt::Debug for WindowsStartDiagnostic {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn startup_runner_history_preserves_same_identity_full_dword_first_error_and_terminal_state() {
+        // Labelled historical data only; not OS observations or a native receipt.
+        let d = WindowsStartDiagnostic::default();
+        d.mark(WindowsStartStage::PipeConnectIn);
+        let original = WindowsStartRunnerObservation { startup_id: 35, runner_pid: 71,
+            runner_creation_filetime_100ns: 12345, state: WindowsStartRunnerState::RunningAtObservation };
+        d.observe_original_runner(original);
+        d.fail_io_kind(ErrorKind::TimedOut);
+        let mut exited = original;
+        exited.state = WindowsStartRunnerState::Exited { raw_dword: 0x80000007 };
+        d.observe_original_runner(exited);
+        d.observe_original_runner(original);
+        assert_eq!(d.snapshot().unwrap().current.original_runner, Some(exited));
+        assert_eq!(d.snapshot().unwrap().current.error, WindowsStartError::IoTimedOut);
+        let mut foreign = original;
+        foreign.startup_id += 1;
+        foreign.runner_pid += 1;
+        d.observe_original_runner(foreign);
+        assert_eq!(d.snapshot().unwrap().current.original_runner, Some(exited));
+        d.finish_failed();
+        assert_eq!(d.snapshot().unwrap().completion, WindowsStartCompletion::ReturnedError);
+        assert!(format!("{d:?}").len() < 2048);
+    }
 
     #[test]
     fn separate_invocations_do_not_share_failure_or_stage() {

@@ -79,7 +79,9 @@ impl RawConPty {
     }
 
     pub fn pseudoconsole_handle(&self) -> RawHandle {
-        self.con.raw_handle()
+        // winapi/std may use a distinct c_void. Cast this borrowed pointer
+        // only; the original value and ownership remain with self.con.
+        self.con.raw_handle().cast::<std::ffi::c_void>()
     }
 
     pub fn into_handles(self) -> (PsuedoCon, FileDescriptor, FileDescriptor) {

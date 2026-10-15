@@ -17,7 +17,59 @@ pub const SYSTEM_QUERY_BYTES: u64 = 94208;
 pub const QUERY_ARGS: [&str; 4] = ["/user", "/fo", "csv", "/nh"];
 const QUERY_OUTPUT_MAX: u64 = 16384;
 #[derive(Clone)]
-pub struct SecuritySpec { pub query: Artifact, pub expected_sid: String, pub port: u16 }
+pub enum IdentitySource { Whoami(Artifact), CurrentPrimaryTokenV8 }
+impl IdentitySource {
+    pub fn legacy_query(&self)->Option<&Artifact>{match self {Self::Whoami(query)=>Some(query),Self::CurrentPrimaryTokenV8=>None}}
+    pub fn is_native_v8(&self)->bool {matches!(self,Self::CurrentPrimaryTokenV8)}
+    pub fn label(&self)->&'static str {match self {Self::Whoami(_)=>"fixed_guest_whoami_child",Self::CurrentPrimaryTokenV8=>"current_process_primary_token"}}
+    pub fn witness_flag(&self)->&'static str {if self.is_native_v8(){"--witness-basic-v8-primary"}else{"--witness-basic"}}
+}
+#[derive(Clone)]
+pub struct SecuritySpec { pub source: IdentitySource, pub expected_sid: String, pub port: u16 }
+pub fn require_identity_route(source:&IdentitySource,native_close_v8:bool)->Result<()> {
+    ensure!(source.is_native_v8()==native_close_v8,"basic identity mode differs from original production factory");
+    Ok(())
+}
+
+/// Finite public output, not an execution/native/cleanup authority. Only the
+/// actual query path below builds it; the expected-output template is separate.
+pub struct IdentityObservation {
+    sid:String,query_sha256:Option<[u8;32]>,primary:Option<bool>,
+    has_restrictions:Option<bool>,elevated:Option<bool>,
+}
+impl IdentityObservation {
+    pub fn stdout(&self,nonce:&str)->Vec<u8> {
+        if let Some(hash)=self.query_sha256 {
+            format!("C28-SID {nonce} {} {}\n",self.sid,crate::preflight::hex(&hash)).into_bytes()
+        }else{
+            format!("C28-SID-TOKEN {nonce} source=current_process_primary_token user_sid={} primary={} has_restrictions={} elevated={}\n",
+                self.sid,u8::from(self.primary==Some(true)),u8::from(self.has_restrictions==Some(true)),
+                u8::from(self.elevated==Some(true))).into_bytes()
+        }
+    }
+}
+fn checked_primary_observation(actual_sid:&str,primary:bool,has_restrictions:bool,elevated:bool,expected_sid:&str)->Result<IdentityObservation> {
+    ensure!(valid_sid(actual_sid) && valid_sid(expected_sid) && actual_sid==expected_sid,
+        "actual current primary user differs from setup Offline SID");
+    ensure!(primary && has_restrictions && !elevated,"actual primary token is not the required restricted non-elevated token");
+    Ok(IdentityObservation {sid:actual_sid.to_owned(),query_sha256:None,primary:Some(primary),
+        has_restrictions:Some(has_restrictions),elevated:Some(elevated)})
+}
+fn select_identity_source<T>(source:&IdentitySource,legacy:impl FnOnce(&Artifact)->Result<T>,primary:impl FnOnce()->Result<T>)->Result<T> {
+    match source {IdentitySource::Whoami(query)=>legacy(query),IdentitySource::CurrentPrimaryTokenV8=>primary()}
+}
+pub fn observe_actual_identity(spec:&SecuritySpec,workspace:&Path,nonce:&str)->Result<IdentityObservation> {
+    ensure!(crate::witness::valid_nonce(nonce) && valid_sid(&spec.expected_sid),"identity observation binding");
+    select_identity_source(&spec.source,|query| {
+        let sid=query_actual_sid(spec,workspace,nonce)?;
+        Ok(IdentityObservation {sid,query_sha256:Some(query.sha256),primary:None,has_restrictions:None,elevated:None})
+    },|| {
+        // Executed inside the BUSINESS witness process, never by the host
+        // fixture/template. This safe API has no expected SID/PID/handle input.
+        let actual=codex_windows_sandbox::current_process_primary_token_identity()?;
+        checked_primary_observation(actual.user_sid(),actual.is_primary(),actual.has_restrictions(),actual.is_elevated(),&spec.expected_sid)
+    })
+}
 
 pub fn valid_sid(sid: &str) -> bool {
     let pieces: Vec<_> = sid.split('-').collect();
@@ -101,13 +153,14 @@ fn prepare_reader<R: Read + Send + 'static>() -> std::io::Result<(SyncSender<R>,
 pub fn query_actual_sid(spec: &SecuritySpec, workspace: &Path, nonce: &str) -> Result<String> {
     ensure!(crate::witness::valid_nonce(nonce) && valid_sid(&spec.expected_sid), "SID query binding");
     crate::preflight::no_reparse_ancestors(workspace)?;
-    let _guard = pin_query(&spec.query)?;
+    let query=spec.source.legacy_query().ok_or_else(||anyhow::anyhow!("whoami query forbidden for current primary-token v8 mode"))?;
+    let _guard = pin_query(query)?;
     let (out_send, out_join) = prepare_reader::<std::process::ChildStdout>()?;
     let (err_send, err_join) = match prepare_reader::<std::process::ChildStderr>() {
         Ok(reader) => reader,
         Err(error) => { drop(out_send); let _ = out_join.join(); return Err(error.into()); }
     };
-    let mut command = Command::new(&spec.query.path);
+    let mut command = Command::new(&query.path);
     command.args(QUERY_ARGS).current_dir(workspace).stdin(Stdio::null()).stdout(Stdio::piped())
         .stderr(Stdio::piped()).creation_flags(0x08000000);
     let mut child = match command.spawn() {
@@ -199,14 +252,60 @@ pub fn observe_child_denial(port: u16) -> Result<()> {
     }
 }
 pub fn security_stdout(nonce: &str, spec: &SecuritySpec) -> Vec<u8> {
-    format!("C28-SID {nonce} {} {}\nC28-NET {nonce} 127.0.0.1 {} denied=10013\n",
-        spec.expected_sid, crate::preflight::hex(&spec.query.sha256), spec.port).into_bytes()
+    // EXPECTED template only. The business child emits IdentityObservation from
+    // its actual query, and the parent still requires original Exit/EOF + bytes.
+    let mut raw=match &spec.source {
+        IdentitySource::Whoami(query)=>format!("C28-SID {nonce} {} {}\n",spec.expected_sid,crate::preflight::hex(&query.sha256)).into_bytes(),
+        IdentitySource::CurrentPrimaryTokenV8=>format!("C28-SID-TOKEN {nonce} source=current_process_primary_token user_sid={} primary=1 has_restrictions=1 elevated=0\n",spec.expected_sid).into_bytes(),
+    };
+    raw.extend(network_stdout(nonce,spec.port));raw
 }
+pub fn network_stdout(nonce:&str,port:u16)->Vec<u8>{format!("C28-NET {nonce} 127.0.0.1 {port} denied=10013\n").into_bytes()}
 
 #[cfg(test)]
 mod tests {
     use super::*;
     const NONCE: &str = "00112233445566778899aabbccddeeff";
+    #[test]
+    fn native_primary_mode_never_dispatches_identity_child_and_legacy_is_not_upgraded() {
+        let legacy=IdentitySource::Whoami(Artifact {path:SYSTEM_QUERY.into(),sha256:[1;32]});
+        let primary_calls=std::cell::Cell::new(0);
+        let value=select_identity_source(&IdentitySource::CurrentPrimaryTokenV8,
+            |_|->Result<u8>{panic!("v8 must never spawn/query a whoami child")},
+            ||{primary_calls.set(primary_calls.get()+1);Ok(7)}).unwrap();
+        assert_eq!(value,7);assert_eq!(primary_calls.get(),1);
+        let legacy_calls=std::cell::Cell::new(0);
+        select_identity_source(&legacy,|query|{assert_eq!(query.path,Path::new(SYSTEM_QUERY));legacy_calls.set(1);Ok(())},
+            ||->Result<()>{panic!("legacy default must not be silently upgraded to primary-token mode")}).unwrap();
+        assert_eq!(legacy_calls.get(),1);
+        assert!(require_identity_route(&legacy,false).is_ok());
+        assert!(require_identity_route(&legacy,true).is_err());
+        assert!(require_identity_route(&IdentitySource::CurrentPrimaryTokenV8,false).is_err());
+        assert!(require_identity_route(&IdentitySource::CurrentPrimaryTokenV8,true).is_ok());
+    }
+    #[test]
+    fn expected_sid_and_public_output_cannot_replace_actual_restricted_primary_identity() {
+        // Explicit scalar validation model only: this is not a Windows token,
+        // native completion, normal cleanup permission or VM isolation proof.
+        let actual="S-1-5-21-1-2-3-1001";let wrong="S-1-5-21-1-2-3-1002";
+        assert!(checked_primary_observation(actual,true,true,false,wrong).is_err());
+        assert!(checked_primary_observation(wrong,true,true,false,actual).is_err());
+        for (primary,restricted,elevated) in [(false,true,false),(true,false,false),(true,true,true)] {
+            assert!(checked_primary_observation(actual,primary,restricted,elevated,actual).is_err());
+        }
+        let observed=checked_primary_observation(actual,true,true,false,actual).unwrap();
+        let spec=SecuritySpec {source:IdentitySource::CurrentPrimaryTokenV8,expected_sid:actual.into(),port:23456};
+        let mut measured=observed.stdout(NONCE);measured.extend(network_stdout(NONCE,spec.port));
+        assert_eq!(measured,security_stdout(NONCE,&spec));
+        let mut forged=spec;forged.expected_sid=wrong.into();
+        assert_ne!(measured,security_stdout(NONCE,&forged));
+        assert!(std::str::from_utf8(&measured).unwrap().contains("source=current_process_primary_token"));
+        assert!(!std::str::from_utf8(&measured).unwrap().contains("whoami"));
+        // Even a well-formed expected stdout cannot make the mismatch validator
+        // issue an actual observation, much less a native/SDK capability.
+        let _public_only=security_stdout(NONCE,&forged);
+        assert!(checked_primary_observation(actual,true,true,false,&forged.expected_sid).is_err());
+    }
     #[test]
     fn sid_csv_requires_one_correlated_canonical_account() {
         assert_eq!(parse_sid_csv(b"\"vm\\user\",\"S-1-5-21-1-2-3-1001\"\r\n").unwrap(), "S-1-5-21-1-2-3-1001");

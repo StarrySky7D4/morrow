@@ -244,7 +244,7 @@ mod windows_impl {
                     )
                 },
             )?;
-            let (pipe_write, mut pipe_read) = transport.into_files();
+            let (pipe_write, mut pipe_read) = transport.into_files()?;
             let cancel_writer = spawn_cancel_writer(&pipe_write, cancellation)?;
 
             let mut stdout = Vec::new();

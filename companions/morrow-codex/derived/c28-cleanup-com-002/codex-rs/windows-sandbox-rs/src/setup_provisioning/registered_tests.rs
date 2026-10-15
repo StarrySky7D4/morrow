@@ -70,6 +70,7 @@ fn helper_account_gate_covers_actual_provisioning_modes() {
         (super::SetupMode::InteractiveProvision, [true, true]),
         (super::SetupMode::ProvisionOnly, [true, true]),
         (super::SetupMode::ReadAclsOnly, [false, false]),
+        (super::SetupMode::OwnedFull, [true, false]),
     ] {
         assert_eq!(
             [false, true].map(|refresh_only| mode.provisions_accounts(refresh_only)),

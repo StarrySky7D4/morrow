@@ -17,17 +17,68 @@ pub struct LiveConfig {
     pub inventory_shell: Artifact,
     pub expected_guest_uuid: String,
 }
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+struct NormalCleanupAdmissionState {
+    owner_opened: bool,
+    owner_finished: bool,
+    factory_created: bool,
+    factory_released: bool,
+    backend_present: bool,
+    retained_scheduler_present: bool,
+    formal_physically_closed: bool,
+    formal_unsettled_failure: bool,
+    phase_eligible: bool,
+    proof_or_guard_held: bool,
+}
+
+fn verify_normal_cleanup_admission(state: &NormalCleanupAdmissionState) -> Result<()> {
+    ensure!(
+        state.phase_eligible,
+        "lifecycle is not in an eligible setup/runner/cleanup-prepared phase; preserve Unknown"
+    );
+    ensure!(
+        state.proof_or_guard_held,
+        "non-forgeable setup or prepared-cleanup ownership proof absent; STOP cleanup"
+    );
+    ensure!(
+        state.owner_opened && state.owner_finished,
+        "keep original owner/native resources until actual finish; original protected owner must have been opened and genuinely finished"
+    );
+    ensure!(
+        state.factory_created
+            && state.factory_released
+            && !state.backend_present
+            && !state.retained_scheduler_present,
+        "keep original owner/native resources until actual finish; production factory and its unique scheduler must be genuinely released"
+    );
+    ensure!(
+        state.formal_physically_closed && !state.formal_unsettled_failure,
+        "formal workflow has unjoined tasks, undisposed contexts, or unsettled failure; physical closure required before normal cleanup"
+    );
+    Ok(())
+}
+
 pub struct Session {
+    native_factory_retirement:Option<morrow_codex_session_exec_windows_v1::NativeFactoryRetirement>,
+    native_factory_completion:Option<morrow_codex_session_exec_windows_v1::NativeFactoryCompletion>,
+    normal_native_parts:Option<(provisioning::ExecutionCleanupScope,morrow_codex_session_exec_windows_v1::NativeExecutionCompletion)>,
     lifecycle: GuestLifecycle,
     journal: Journal,
     files: Config,
     sid_query: Option<Artifact>,
     owner: Option<ProtectedOwner>,
+    owner_open_attempted: bool,
     backend: Option<ProductionBackend>,
+    factory_acquire_attempted: bool,
+    factory_created: bool,
+    factory_transferred: bool,
+    factory_released: bool,
     retained_scheduler: Option<Arc<tokio::runtime::Runtime>>,
     reap_attempts: u8,
     blocked: bool,
     formal: Option<crate::formal::Workflow>,
+    formal_physically_closed: bool,
+    formal_unsettled_failure: bool,
     cleanup_attempts: u8,
 }
 
@@ -67,24 +118,75 @@ impl Session {
         journal.record("guest-identity-validated", &observed.identity)?;
         journal.record("lifecycle-initial", &lifecycle.manifest())?;
         Ok(Box::new(Self {
+            native_factory_retirement:None,
+            native_factory_completion:None,
+            normal_native_parts:None,
             lifecycle,
             journal,
             files: config.files,
             sid_query: config.sid_query,
             owner: None,
+            owner_open_attempted: false,
             backend: None,
+            factory_acquire_attempted: false,
+            factory_created: false,
+            factory_transferred: false,
+            factory_released: false,
             retained_scheduler: None,
             reap_attempts: 0,
             blocked: false,
             formal: None,
+            formal_physically_closed: true,
+            formal_unsettled_failure: false,
             cleanup_attempts: 0,
         }))
     }
-    fn finish_backend(&mut self) -> Result<()> {
-        if let Some(owner) = &mut self.owner {
-            owner.require_idle()?;
+    fn cleanup_admission_state(&self, for_finish_cleanup: bool) -> NormalCleanupAdmissionState {
+        let manifest = self.lifecycle.manifest();
+        let (phase_eligible, proof_or_guard_held) = if for_finish_cleanup {
+            (
+                self.lifecycle.phase() == provisioning::Phase::CleanupPrepared,
+                manifest.cleanup_guard_held,
+            )
+        } else {
+            (
+                matches!(
+                    self.lifecycle.phase(),
+                    provisioning::Phase::SetupReturnedOk | provisioning::Phase::RunnerMaterialized
+                        | provisioning::Phase::ExecutionCleanupAdmitted
+                ),
+                manifest.owned_setup_proof_held,
+            )
+        };
+        NormalCleanupAdmissionState {
+            owner_opened: self.owner_open_attempted && self.owner.is_some(),
+            owner_finished: self.owner.as_ref().is_some_and(ProtectedOwner::finished),
+            factory_created: self.factory_acquire_attempted && self.factory_created,
+            factory_released: self.factory_released,
+            backend_present: self.backend.is_some(),
+            retained_scheduler_present: self.retained_scheduler.is_some(),
+            formal_physically_closed: self.formal_physically_closed,
+            formal_unsettled_failure: self.formal_unsettled_failure,
+            phase_eligible,
+            proof_or_guard_held,
         }
-        if let Some(ProductionBackend { backend, scheduler }) = self.backend.take() {
+    }
+    fn finish_backend(&mut self) -> Result<()> {
+        if self.native_factory_retirement.is_some(){return self.finish_native_backend();}
+        ensure!(
+            self.factory_acquire_attempted && self.factory_created,
+            "production factory was not acquired"
+        );
+        let owner = self
+            .owner
+            .as_mut()
+            .ok_or_else(|| anyhow!("original protected owner absent"))?;
+        owner.require_idle()?;
+        ensure!(
+            self.formal_physically_closed && !self.formal_unsettled_failure,
+            "formal workflow has unjoined tasks, undisposed contexts, or unsettled failure; retain factory"
+        );
+        if let Some(ProductionBackend { backend, scheduler,.. }) = self.backend.take() {
             ensure!(
                 self.retained_scheduler.is_none(),
                 "one factory scheduler only"
@@ -95,6 +197,11 @@ impl Session {
             drop(backend);
         }
         let Some(scheduler) = self.retained_scheduler.take() else {
+            ensure!(
+                self.factory_transferred || self.factory_released,
+                "factory scheduler absent without transfer or prior release"
+            );
+            self.factory_released = true;
             return Ok(());
         };
         if tokio::runtime::Handle::try_current().is_ok() {
@@ -104,6 +211,7 @@ impl Session {
         match Arc::try_unwrap(scheduler) {
             Ok(runtime) => {
                 drop(runtime);
+                self.factory_released = true;
                 Ok(())
             } // Synchronous shutdown outside Tokio; never shutdown_timeout as proof.
             Err(scheduler) => {
@@ -113,6 +221,30 @@ impl Session {
                 bail!("factory scheduler still aliased; original Arc retained for explicit reap");
             }
         }
+    }
+    fn finish_native_backend(&mut self)->Result<()> {
+        ensure!(self.formal_physically_closed && !self.formal_unsettled_failure,
+            "same native/formal owner not physically closed");
+        let owner=self.owner.as_mut().ok_or_else(||anyhow!("original owner absent"))?;
+        if !owner.finished(){owner.require_idle()?;}
+        if let Some(ProductionBackend {backend,scheduler,..})=self.backend.take(){
+            ensure!(self.retained_scheduler.is_none(),"one original scheduler only");
+            self.retained_scheduler=Some(scheduler);drop(backend);
+        }
+        // Staging aliases is not a release proof. Native thread verification is
+        // deferred until this exact protected owner's real finish/flush.
+        if !owner.finished(){return Ok(());}
+          ensure!(tokio::runtime::Handle::try_current().is_err(),"original scheduler shutdown requires acquiring thread");
+          if let Some(scheduler)=self.retained_scheduler.take(){
+            match Arc::try_unwrap(scheduler){
+                Ok(runtime)=>drop(runtime),
+                Err(scheduler)=>{self.retained_scheduler=Some(scheduler);bail!("same original scheduler still aliased; retained");}
+            }
+        }
+        ensure!(self.native_factory_completion.is_none() && !self.factory_released,"native factory completion already consumed");
+        let completion=self.native_factory_retirement.as_mut().unwrap().finish_after_shutdown()?;
+        self.native_factory_completion=Some(completion);self.factory_released=true;
+        Ok(())
     }
     fn perform(&mut self, command: &str, reader: &mut impl BufRead) -> Result<()> {
         if let Some(step) = command.strip_prefix("sealed-") {
@@ -143,6 +275,10 @@ impl Session {
                 "CREATE_REAL_CHECKED_PRODUCTION_FACTORY_WITHOUT_STARTING_CHILD",
                 "Construct real checked backend and its two-worker scheduler; no guest/child is started.",
             ),
+            "production-factory-v8" => (
+                "CREATE_REAL_EXPLICIT_V8_NATIVE_CLOSE_FACTORY_WITHOUT_STARTING_CHILD",
+                "Pin the same materialized image for the explicit v8 handshake/native-close route; no child or cleanup authority is created.",
+            ),
             "release-factory" => (
                 "RELEASE_IDLE_FACTORY_AND_SYNCHRONOUSLY_JOIN_ITS_UNIQUE_SCHEDULER",
                 "Require original owner idle, then release factory and join only an actually unique scheduler. An aliased scheduler stays reachable.",
@@ -157,11 +293,11 @@ impl Session {
             ),
             "prepare-cleanup" => (
                 provisioning::PREPARE_CLEANUP_CONFIRMATION,
-                "Disable only recorded sandbox identities and stop their processes using original cleanup guard.",
+                "Disable only setup-proved sandbox identities and verify zero live processes or retained logons without PROCESS_TERMINATE.",
             ),
             "finish-cleanup" => (
                 provisioning::FINISH_CLEANUP_CONFIRMATION,
-                "Remove only original guard-owned VM sandbox resources; preserve original cleanup notes.",
+                "Retire only setup-proved WFP filters, firewall rules, principals, and sandbox-home artifacts; preserve shared protections and cleanup report.",
             ),
             "sealed-flow" => bail!(
                 "DEPENDENT_GATE_OPEN: original sealed proposal wrapper approval/lease and multi-guest Worker bridge are under separate review; no host Propose substitution or ordinary fallback"
@@ -181,12 +317,9 @@ impl Session {
             "earlier outcome Unknown; only explicit original cleanup remains allowed"
         );
         if matches!(command, "prepare-cleanup" | "finish-cleanup") {
-            ensure!(
-                self.backend.is_none()
-                    && self.retained_scheduler.is_none()
-                    && self.owner.as_ref().is_none_or(ProtectedOwner::finished),
-                "keep original owner/native resources until actual finish; no system cleanup can stand in for facts/join"
-            );
+            verify_normal_cleanup_admission(
+                &self.cleanup_admission_state(command == "finish-cleanup"),
+            )?;
         }
         interaction::confirm(reader, confirmation, description)?;
         let step = if command == "reap-factory-scheduler" {
@@ -218,6 +351,14 @@ impl Session {
         }
         match result {
             Ok(()) => {
+                if command == "finish-cleanup" {
+                    if let Some(report) = self.lifecycle.normal_cleanup_report() {
+                        if let Err(error) = self.journal.record("normal-cleanup-retired", report) {
+                            self.blocked = true;
+                            return Err(error);
+                        }
+                    }
+                }
                 if let Err(error) = self
                     .journal
                     .record("STEP_RETURNED_OK_NOT_FULL_ACCEPTANCE", &command)
@@ -251,7 +392,11 @@ impl Session {
                 .materialize_checked_runner(provisioning::MATERIALIZE_CONFIRMATION)?,
             "open-owner" => {
                 self.lifecycle.runner()?;
-                ensure!(self.owner.is_none(), "original owner already exists");
+                ensure!(
+                    !self.owner_open_attempted && self.owner.is_none(),
+                    "original owner already exists or was already attempted"
+                );
+                self.owner_open_attempted = true;
                 self.owner = Some(ProtectedOwner::open(self.lifecycle.synthetic_root())?);
                 ensure!(
                     self.owner
@@ -263,9 +408,11 @@ impl Session {
                     "original protected maintenance requires recovery; same owner retained"
                 );
             }
-            "production-factory" => {
+            "production-factory" | "production-factory-v8" => {
                 ensure!(
                     self.owner.is_some()
+                        && !self.factory_acquire_attempted
+                        && !self.factory_created
                         && self.backend.is_none()
                         && self.retained_scheduler.is_none(),
                     "one original protected owner/factory only"
@@ -277,17 +424,51 @@ impl Session {
                 );
                 owner.require_idle()?;
                 let actual = self.lifecycle.runner()?;
-                self.backend = Some(create_checked_backend_materialized(&self.files, actual)?);
+                self.factory_acquire_attempted = true;
+                self.backend = Some(if command=="production-factory-v8" {
+                    self.native_factory_retirement=Some(morrow_codex_session_exec_windows_v1::NativeFactoryRetirement::new());
+                    crate::product::create_native_close_backend_materialized(&self.files,actual,
+                        self.native_factory_retirement.as_mut().unwrap())?
+                }else{create_checked_backend_materialized(&self.files,actual)?});
+                self.factory_created = true;
             }
             "release-factory" | "reap-factory-scheduler" => self.finish_backend()?,
             "finish-owner" => {
                 ensure!(
-                    self.backend.is_none() && self.retained_scheduler.is_none(),
-                    "release factory and all real scheduler aliases before protected finish"
+                    self.factory_acquire_attempted
+                        && self.factory_created
+                        && self.backend.is_none()
+                        && self.retained_scheduler.is_none()
+                        && self.formal_physically_closed
+                        && !self.formal_unsettled_failure,
+                    "release factory, settle formal tasks, and clear all real scheduler aliases before protected finish"
                 );
-                if let Some(owner) = &mut self.owner {
-                    owner.finish()?;
+                if self.native_factory_retirement.is_some() && self.normal_native_parts.is_none(){
+                    self.normal_native_parts=Some(self.formal.as_mut().ok_or_else(||anyhow!("same native formal workflow absent"))?
+                        .take_normal_cleanup_parts()?);
                 }
+                let owner = self
+                    .owner
+                    .as_mut()
+                    .ok_or_else(|| anyhow!("original protected owner absent"))?;
+                owner.finish()?;
+                if self.native_factory_retirement.is_some(){
+                    self.finish_backend()?;
+                    let (scope,execution)=self.normal_native_parts.take().ok_or_else(||anyhow!("same sealed native completion absent"))?;
+                    let factory=self.native_factory_completion.take().ok_or_else(||anyhow!("real factory native completion absent"))?;
+                    let retired=execution.retire_factory(factory)?;
+                    let owner=self.owner.as_mut().unwrap().take_finished_receipt()?;
+                    let admission=provisioning::BoundExecutionCleanupAdmission::from_original_completion(scope,retired,owner)?;
+                    self.lifecycle.admit_execution_cleanup(provisioning::ADMIT_EXECUTION_CLEANUP_CONFIRMATION,admission)?;
+                    return Ok(());
+                }
+                if self.factory_transferred {
+                    self.factory_released = true;
+                }
+                ensure!(
+                    self.factory_released,
+                    "production factory release not confirmed before protected finish"
+                );
             }
             "prepare-cleanup" => self
                 .lifecycle
@@ -343,7 +524,27 @@ impl Session {
             &serde_json::json!({"step":step,"SDK26_G04":"OPEN"}),
         ) {
             self.blocked = true;
+            self.formal_unsettled_failure = true;
+            self.formal_physically_closed = false;
             return Err(e);
+        }
+        if !cleanup
+            && matches!(
+                step,
+                "session-context"
+                    | "session-worker"
+                    | "session-run"
+                    | "native-context"
+                    | "native-worker"
+                    | "propose"
+                    | "trusted-review"
+                    | "trusted-approve-claim"
+                    | "native-start"
+                    | "basic-observe"
+                    | "sealed-controls"
+            )
+        {
+            self.formal_physically_closed = false;
         }
         let result = (|| -> Result<serde_json::Value> {
             if matches!(step, "basic" | "pipe" | "pty") {
@@ -351,14 +552,20 @@ impl Session {
                     self.formal.is_none() && self.backend.is_some(),
                     "one witness workflow per fresh lifecycle/factory"
                 );
-                self.formal = Some(if step == "basic" {
+                let native_basic=step=="basic" && self.backend.as_ref().is_some_and(ProductionBackend::is_native_close_v8);
+                self.formal = Some(if native_basic {
+                    crate::formal::Workflow::new_basic_native_v8(&self.lifecycle,&self.files.helper)?
+                }else if step == "basic" {
                     crate::formal::Workflow::new_basic(&self.lifecycle, &self.files.helper,
                         self.sid_query.as_ref().ok_or_else(|| anyhow!("guest whoami full path/SHA NOT_READY; no basic effects"))?)?
                 } else {
                     crate::formal::Workflow::new(self.lifecycle.synthetic_root(), &self.files.helper, step == "pty")?
                 });
                 return Ok(
-                    serde_json::json!({"witness":step,"authority_created":false,"system_test_executed":false,"fresh_basic_sentinel_files_created":step == "basic", "owned_loopback_listener_baseline":step == "basic", "guest_sid_query_pin":self.sid_query.as_ref().map(|pin| serde_json::json!({"path":pin.path,"sha256":crate::preflight::hex(&pin.sha256)})), "token_restricted_flags_read":false}),
+                    serde_json::json!({"witness":step,"authority_created":false,"system_test_executed":false,"fresh_basic_sentinel_files_created":step == "basic", "owned_loopback_listener_baseline":step == "basic",
+                        "identity_source":if step!="basic" {None}else if native_basic {Some("current_process_primary_token")}else{Some("fixed_guest_whoami_child")},
+                        "guest_sid_query_pin":if native_basic || step!="basic" {None}else{self.sid_query.as_ref().map(|pin|serde_json::json!({"path":pin.path,"sha256":crate::preflight::hex(&pin.sha256)}))},
+                        "token_restricted_flags_read":false}),
                 );
             }
             let workflow = self
@@ -378,8 +585,35 @@ impl Session {
                 )
             }
         })();
-        if result.is_err() {
-            self.blocked = true;
+        match &result {
+            Ok(_) if cleanup => {
+                self.formal_unsettled_failure = false;
+                self.formal_physically_closed = true;
+            }
+            Ok(_) => {
+                if step == "native-context" {
+                    self.factory_transferred = true;
+                    self.formal_physically_closed = false;
+                } else if step == "session-join"
+                    && !self.factory_transferred
+                    && !self.formal_unsettled_failure
+                {
+                    self.formal_physically_closed = true;
+                } else if step == "native-join"
+                    && !self.formal_unsettled_failure
+                    && self
+                        .formal
+                        .as_ref()
+                        .is_some_and(crate::formal::Workflow::finished)
+                {
+                    self.formal_physically_closed = true;
+                }
+            }
+            Err(_) => {
+                self.blocked = true;
+                self.formal_unsettled_failure = true;
+                self.formal_physically_closed = false;
+            }
         }
         match result {
             Ok(evidence) => {
@@ -400,8 +634,9 @@ impl Session {
         }
     }
     pub fn interact(&mut self, reader: &mut impl BufRead) -> Result<()> {
+        println!("Explicit native-close preview: select production-factory-v8 before sealed-basic; its fixed business witness reads its own primary token without whoami or a SID-query image. Use the same existing catalog/claim/start/observe/native-join sequence. After its real native/task ACK, release-factory stages only original aliases; finish-owner performs original finish/flush, verifies original scheduler native shutdown, and consumes the pre-bound admission. Only then prepare-cleanup, finish-cleanup, exit. Every failure remains Unknown/noReplay; ordinary production-factory stays v7.");
         println!(
-            "Evidence: {}. Commands: inventory roots setup materialize open-owner production-factory; sealed-basic (fixed noninteractive child, pinned guest SID query, fresh owned filesystem sentinels and loopback challenge), or deferred sealed-pipe/sealed-pty, then independent sealed-session/controls/proposal review/install/base-select/base-enable/wrapper-select/approve/wrapper-enable; sealed-session-context/worker/run/join; sealed-native-review/context/worker, sealed-propose, sealed-trusted-review, sealed-trusted-approve-claim, sealed-native-start, sealed-basic-observe (basic) or sealed-controls (deferred), sealed-native-join. Explicit sealed-cleanup/repair-cleanup preserve Unknown. status release-factory reap-factory-scheduler finish-owner prepare-cleanup finish-cleanup exit. No automatic effect/retry.",
+            "Evidence: {}. Commands: inventory roots setup materialize open-owner production-factory; sealed-basic (fixed noninteractive child; v7 pinned guest whoami or explicit v8 current primary token; fresh owned filesystem sentinels and loopback challenge), or deferred sealed-pipe/sealed-pty, then independent sealed-session/controls/proposal review/install/base-select/base-enable/wrapper-select/approve/wrapper-enable; sealed-session-context/worker/run/join; sealed-native-review/context/worker, sealed-propose, sealed-trusted-review, sealed-trusted-approve-claim, sealed-native-start, sealed-basic-observe (basic) or sealed-controls (deferred), sealed-native-join. Explicit sealed-cleanup/repair-cleanup preserve Unknown. status release-factory reap-factory-scheduler finish-owner prepare-cleanup finish-cleanup exit. No automatic effect/retry.",
             self.journal.directory().display()
         );
         loop {
@@ -421,12 +656,28 @@ impl Session {
             } else if command == "exit" {
                 ensure!(
                     self.lifecycle.phase() == provisioning::Phase::Finished
+                        && self.lifecycle.normal_cleanup_report().is_some()
+                        && self.owner_open_attempted
+                        && self.owner.as_ref().is_some_and(ProtectedOwner::finished)
+                        && self.factory_acquire_attempted
+                        && self.factory_created
+                        && self.factory_released
                         && self.backend.is_none()
                         && self.retained_scheduler.is_none()
-                        && self.owner.as_ref().is_none_or(ProtectedOwner::finished),
+                        && self.formal_physically_closed
+                        && !self.formal_unsettled_failure,
                     "unfinished/Unknown resources are held; no automatic cleanup or evidence-based authority restore"
                 );
-                self.journal.record("FINISHED_EXPLICIT_WORKFLOW_NOT_FULL_ACCEPTANCE", &serde_json::json!({"sealed_native_observed":self.formal.as_ref().is_some_and(crate::formal::Workflow::finished),"production_qualification":"NOT_AUTOMATICALLY_GRANTED","SDK26_G04":"OPEN"}))?;
+                self.journal.record(
+                    "FINISHED_EXPLICIT_WORKFLOW_NOT_FULL_ACCEPTANCE",
+                    &serde_json::json!({
+                        "sealed_native_observed": self.formal.as_ref().is_some_and(crate::formal::Workflow::finished) && !self.blocked,
+                        "prior_business_or_step_blocked": self.blocked,
+                        "normal_cleanup_report": self.lifecycle.normal_cleanup_report(),
+                        "production_qualification": "NOT_AUTOMATICALLY_GRANTED",
+                        "SDK26_G04": "OPEN"
+                    }),
+                )?;
                 return Ok(());
             } else if let Err(error) = self.perform(&command, reader) {
                 eprintln!("{error}; original same-process state retained. No automatic retry.");
@@ -451,3 +702,70 @@ impl Session {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn valid_admission_state() -> NormalCleanupAdmissionState {
+        NormalCleanupAdmissionState {
+            owner_opened: true,
+            owner_finished: true,
+            factory_created: true,
+            factory_released: true,
+            backend_present: false,
+            retained_scheduler_present: false,
+            formal_physically_closed: true,
+            formal_unsettled_failure: false,
+            phase_eligible: true,
+            proof_or_guard_held: true,
+        }
+    }
+
+    #[test]
+    fn normal_cleanup_admission_requires_finished_owner_released_factory_and_closed_formal() {
+        let base = valid_admission_state();
+        assert!(verify_normal_cleanup_admission(&base).is_ok());
+
+        let mut unopened_owner = base;
+        unopened_owner.owner_opened = false;
+        assert!(verify_normal_cleanup_admission(&unopened_owner).is_err());
+
+        let mut unfinished_owner = base;
+        unfinished_owner.owner_finished = false;
+        assert!(verify_normal_cleanup_admission(&unfinished_owner).is_err());
+
+        let mut no_factory = base;
+        no_factory.factory_created = false;
+        assert!(verify_normal_cleanup_admission(&no_factory).is_err());
+
+        let mut unreleased_factory = base;
+        unreleased_factory.factory_released = false;
+        assert!(verify_normal_cleanup_admission(&unreleased_factory).is_err());
+
+        let mut live_backend = base;
+        live_backend.backend_present = true;
+        assert!(verify_normal_cleanup_admission(&live_backend).is_err());
+
+        let mut retained_sched = base;
+        retained_sched.retained_scheduler_present = true;
+        assert!(verify_normal_cleanup_admission(&retained_sched).is_err());
+
+        let mut unclosed_formal = base;
+        unclosed_formal.formal_physically_closed = false;
+        assert!(verify_normal_cleanup_admission(&unclosed_formal).is_err());
+
+        let mut unsettled_failure = base;
+        unsettled_failure.formal_unsettled_failure = true;
+        assert!(verify_normal_cleanup_admission(&unsettled_failure).is_err());
+
+        let mut missing_proof = base;
+        missing_proof.proof_or_guard_held = false;
+        assert!(verify_normal_cleanup_admission(&missing_proof).is_err());
+
+        let mut wrong_phase = base;
+        wrong_phase.phase_eligible = false;
+        assert!(verify_normal_cleanup_admission(&wrong_phase).is_err());
+    }
+}
+

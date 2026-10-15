@@ -106,6 +106,10 @@ pub(crate) struct RunnerTransport {
     hello: crate::ipc_framed::ControlHello,
     controls: crate::ipc_framed::RunnerControlCapabilities,
     matched_runner: Option<std::sync::Arc<crate::MatchedRunnerArtifact>>,
+    checked_lease: Option<super::checked_owner::CheckedTransportLease>,
+    startup_deadline: Instant,
+    native_close_runtime: Option<std::sync::Arc<super::native_close_runtime::NativeCloseRuntime>>,
+    native_startup_owner: Option<std::sync::Arc<super::checked_owner::CheckedRunnerOwner>>,
 }
 
 fn is_refreshable_windows_error(code: u32) -> bool {
@@ -127,6 +131,10 @@ fn command_targets_windows_apps(command: &[String]) -> bool {
 }
 
 pub(crate) fn is_refreshable_sandbox_creds_error(err: &anyhow::Error, command: &[String]) -> bool {
+    if super::checked_owner::is_error_marked_non_refreshable(err) {
+        return false;
+    }
+
     if err
         .downcast_ref::<RunnerLogonError>()
         .is_some_and(|err| is_refreshable_windows_error(err.code))
@@ -209,8 +217,14 @@ fn observe_start_error(
 }
 
 impl RunnerTransport {
+    pub(crate) fn startup_id(&self) -> Option<super::checked_owner::StartupId> {
+        self.checked_lease
+            .as_ref()
+            .map(super::checked_owner::CheckedTransportLease::startup_id)
+    }
+
     fn protocol_version(&self) -> u8 {
-        if self.matched_runner.is_some() {
+        if self.native_close_runtime.is_some() {8} else if self.matched_runner.is_some() {
             CHECKED_IPC_PROTOCOL_VERSION
         } else {
             IPC_PROTOCOL_VERSION
@@ -223,19 +237,24 @@ impl RunnerTransport {
                 payload: self.hello.clone(),
             },
         };
-        write_frame(&mut self.pipe_write, &request)
-            .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::ControlRejected))?;
-        crate::framed_io::wait_for_complete_frame(
+        if self.native_close_runtime.is_none() {
+            write_frame(&mut self.pipe_write,&request)
+                .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::ControlRejected))?;
+        }
+        (if self.native_close_runtime.is_some() {Ok(())}else{crate::framed_io::wait_for_complete_frame(
             &self.pipe_read,
-            Instant::now() + RUNNER_SPAWN_READY_TIMEOUT,
-        )
+            self.startup_deadline,
+        )})
         .context("wait for matched runner control hello")
         .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::ControlRejected))?;
-        let msg = read_frame(&mut self.pipe_read)?
-            .ok_or_else(|| anyhow::anyhow!("runner closed before control hello"))
+        let read = if let Some(runtime)=self.native_close_runtime.as_ref() {
+            self.native_startup_owner.as_ref().context("original native startup reader owner absent")?
+                .read_native_startup(|file| {let mut reader=file;runtime.read_message(&mut reader)})?.flatten()
+        }else{read_frame(&mut self.pipe_read)?};
+        let msg = read.ok_or_else(|| anyhow::anyhow!("runner closed before control hello"))
             .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::ControlRejected))?;
         anyhow::ensure!(
-            msg.version == CHECKED_IPC_PROTOCOL_VERSION,
+            msg.version == self.protocol_version(),
             "runner protocol mismatch before spawn"
         );
         match msg.message {
@@ -260,7 +279,11 @@ impl RunnerTransport {
                 payload: Box::new(request),
             },
         };
-        write_frame(&mut self.pipe_write, &spawn_request)
+        if let Some(runtime)=self.native_close_runtime.clone() {
+            self.native_startup_owner.as_ref().context("same original native startup owner absent")?
+                .write_native_startup(1,move |file| {let mut writer=file;runtime.write_message(&mut writer,&spawn_request)})?;
+            Ok(())
+        }else{write_frame(&mut self.pipe_write,&spawn_request)}
     }
 
     pub(crate) fn read_spawn_ready(&mut self) -> Result<()> {
@@ -268,14 +291,17 @@ impl RunnerTransport {
     }
 
     fn read_spawn_ready_with_diagnostics(&mut self, diagnostic: Option<&crate::WindowsStartDiagnostic>) -> Result<()> {
-        crate::framed_io::wait_for_complete_frame(
+        (if self.native_close_runtime.is_some() {Ok(())}else{crate::framed_io::wait_for_complete_frame(
             &self.pipe_read,
-            Instant::now() + RUNNER_SPAWN_READY_TIMEOUT,
-        )
+            self.startup_deadline,
+        )})
         .context("wait for runner spawn_ready")
         .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::ControlRejected))?;
-        let msg = read_frame(&mut self.pipe_read)?
-            .ok_or_else(|| anyhow::anyhow!("runner pipe closed before spawn_ready"))?;
+        let read = if let Some(runtime)=self.native_close_runtime.as_ref() {
+            self.native_startup_owner.as_ref().context("original native startup reader owner absent")?
+                .read_native_startup(|file| {let mut reader=file;runtime.read_message(&mut reader)})?.flatten()
+        }else{read_frame(&mut self.pipe_read)?};
+        let msg = read.ok_or_else(|| anyhow::anyhow!("runner pipe closed before spawn_ready"))?;
         anyhow::ensure!(
             msg.version == self.protocol_version(),
             "runner spawn_ready version mismatch"
@@ -307,27 +333,35 @@ impl RunnerTransport {
 
     pub(crate) fn into_checked_files(
         self,
-    ) -> Result<(
-        File,
-        File,
-        crate::ipc_framed::ControlHello,
-        crate::ipc_framed::RunnerControlCapabilities,
-        std::sync::Arc<crate::MatchedRunnerArtifact>,
-    )> {
+    ) -> Result<super::checked_owner::CheckedRunnerIo> {
         let pin = self
             .matched_runner
             .context("checked runner requires retained independent artifact")?;
-        Ok((
-            self.pipe_write,
-            self.pipe_read,
-            self.hello,
-            self.controls,
-            pin,
-        ))
+        let lease = self
+            .checked_lease
+            .context("checked runner requires retained startup owner lease")?;
+        let (owner, identity, thread_disposition) = lease.into_io_token()?;
+        Ok(super::checked_owner::CheckedRunnerIo {
+            pipe_write: self.pipe_write,
+            pipe_read: self.pipe_read,
+            hello: self.hello,
+            capabilities: self.controls,
+            artifact: pin,
+            identity,
+            thread_disposition,
+            owner,
+        })
     }
 
-    pub(crate) fn into_files(self) -> (File, File) {
-        (self.pipe_write, self.pipe_read)
+    pub(crate) fn into_files(self) -> Result<(File, File)> {
+        if let Some(ref lease) = self.checked_lease {
+            lease.reject_legacy_conversion();
+            anyhow::bail!("checked runner transport cannot be converted into legacy raw files");
+        }
+        if self.matched_runner.is_some() {
+            anyhow::bail!("matched runner transport cannot be converted into legacy raw files");
+        }
+        Ok((self.pipe_write, self.pipe_read))
     }
 }
 
@@ -520,11 +554,67 @@ pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
     cwd: &Path,
     sandbox_creds: &SandboxCreds,
     log_dir: Option<&Path>,
-    mut spawn_request: SpawnRequest,
+    spawn_request: SpawnRequest,
     desktop_policy: Option<&DesktopPolicy>,
     matched_runner: Option<std::sync::Arc<crate::MatchedRunnerArtifact>>,
     diagnostic: Option<&crate::WindowsStartDiagnostic>,
 ) -> Result<RunnerTransport> {
+    let mut local_reservation = match &matched_runner {
+        Some(pin) => Some(
+            super::checked_owner::reserve_checked_startup_before_launch(
+                std::sync::Arc::clone(pin),
+                diagnostic.cloned(),
+            )
+            .inspect_err(|err| {
+                if let Some(diagnostic) = diagnostic {
+                    diagnostic.fail_io_kind(err.kind());
+                }
+            })?,
+        ),
+        None => None,
+    };
+    spawn_runner_transport_with_checked_reservation(
+        codex_home,
+        cwd,
+        sandbox_creds,
+        log_dir,
+        spawn_request,
+        desktop_policy,
+        matched_runner,
+        diagnostic,
+        local_reservation.as_mut(),
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn spawn_runner_transport_with_checked_reservation(
+    codex_home: &Path,
+    cwd: &Path,
+    sandbox_creds: &SandboxCreds,
+    log_dir: Option<&Path>,
+    mut spawn_request: SpawnRequest,
+    desktop_policy: Option<&DesktopPolicy>,
+    matched_runner: Option<std::sync::Arc<crate::MatchedRunnerArtifact>>,
+    diagnostic: Option<&crate::WindowsStartDiagnostic>,
+    mut checked_reservation: Option<&mut super::checked_owner::CheckedStartupReservation>,
+) -> Result<RunnerTransport> {
+    if matched_runner.is_some() {
+        let Some(res) = checked_reservation.as_deref() else {
+            anyhow::bail!("checked runner launch requires a pre-launch startup owner reservation");
+        };
+        res.owner().ensure_can_advance().inspect_err(|err| {
+            if let Some(diagnostic) = diagnostic {
+                diagnostic.fail_io_kind(err.kind());
+            }
+        })?;
+    }
+    let startup_deadline = checked_reservation
+        .as_deref()
+        .map_or_else(
+            || Instant::now() + RUNNER_SPAWN_READY_TIMEOUT,
+            super::checked_owner::CheckedStartupReservation::startup_deadline,
+        );
+
     mark_start(diagnostic, crate::WindowsStartStage::RunnerResolve);
     let runner_exe = find_runner_exe(codex_home, log_dir)
         .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?;
@@ -544,7 +634,15 @@ pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
     };
     // Hold both the private desktop and its UTF-16 startup name through runner startup.
     // The None policy path retains its previous inherited-desktop behavior.
-    let runner_desktop = if let Some(policy) = desktop_policy {
+    let native_runner_desktop = if matched_runner.as_ref().is_some_and(|runner|runner.native_close_v8()) {
+        anyhow::ensure!(desktop_policy.is_some(),"v8 requires an owned original desktop policy");
+        mark_start(diagnostic,crate::WindowsStartStage::PrivateDesktop);
+        let owner=checked_reservation.as_deref().context("v8 original startup reservation absent")?.owner();
+        let desktop=owner.create_native_desktop(&sandbox_creds.username,log_dir)?;
+        spawn_request.private_desktop_name=Some(desktop.lock().map_err(|_|anyhow::anyhow!("original desktop poisoned"))?.name().to_owned());
+        Some(desktop)
+    }else{None};
+    let runner_desktop = if native_runner_desktop.is_some() {None} else if let Some(policy) = desktop_policy {
         mark_start(diagnostic, crate::WindowsStartStage::PrivateDesktop);
         let desktop_name = shared_private_desktop_for_user(
             &sandbox_creds.username,
@@ -604,7 +702,9 @@ pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
         quote_windows_arg(&format!("--pipe-out={pipe_out_name}"))
     );
     if matched_runner.is_some() {
-        runner_full_cmd.push_str(" --checked-controls-v7");
+        runner_full_cmd.push_str(if matched_runner.as_ref().is_some_and(|pin|pin.native_close_v8()) {
+            " --native-close-v8"
+        }else{" --checked-controls-v7"});
     }
     let mut cmdline_vec = to_wide(&runner_full_cmd);
     let exe_w = to_wide(&runner_cmdline);
@@ -618,7 +718,30 @@ pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
     if let Some(desktop) = &runner_desktop {
         si.lpDesktop = desktop.startup_info_desktop();
     }
+    if let Some(desktop)=&native_runner_desktop {
+        si.lpDesktop=desktop.lock().map_err(|_|anyhow::anyhow!("original desktop poisoned"))?.startup_info_desktop();
+    }
     let mut pi: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
+
+    let mut nonce = [0u8; 32];
+    if matched_runner.is_some() {
+        use rand::{RngCore, SeedableRng};
+        if matched_runner.as_ref().is_some_and(|pin|pin.native_close_v8()) {
+            rand::rngs::OsRng.try_fill_bytes(&mut nonce).map_err(|_|anyhow::anyhow!("v8 startup entropy unavailable"))?;
+        }else{rand::rngs::SmallRng::from_entropy().fill_bytes(&mut nonce);}
+    }
+    let hello = crate::ipc_framed::ControlHello {
+        nonce,
+        schema: crate::ipc_framed::CHECKED_CONTROL_SCHEMA,
+    };
+    if let Some(res) = checked_reservation.as_deref_mut() {
+        res.stage_pre_launch_context(&pipe_write, &pipe_read, hello.clone())
+            .inspect_err(|err| {
+                if let Some(diagnostic) = diagnostic {
+                    diagnostic.fail_io_kind(err.kind());
+                }
+            })?;
+    }
 
     let previous_error_mode = unsafe { SetErrorMode(RUNNER_ERROR_MODE_FLAGS) };
     // Execution aliases require the registered account's profile.
@@ -644,49 +767,83 @@ pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
             &mut pi,
         )
     };
+    let spawn_err = if spawn_res == 0 {
+        Some(unsafe { GetLastError() })
+    } else {
+        None
+    };
     unsafe {
         SetErrorMode(previous_error_mode);
     }
-    if spawn_res == 0 {
-        let err = unsafe { GetLastError() };
+    if let Some(err) = spawn_err {
         if let Some(diagnostic) = diagnostic {
             diagnostic.fail_os(crate::WindowsOsError::from_code(err));
         }
         return Err(RunnerLogonError { code: err }.into());
     }
-    // Keep the process pinned through the entire startup handshake. Pipes close
-    // automatically on every error, including failure to create the second pipe.
-    let _runner_process = unsafe { OwnedHandle::from_raw_handle(pi.hProcess as _) };
-    let _runner_thread = unsafe { OwnedHandle::from_raw_handle(pi.hThread as _) };
+    // Immediately capture and anchor the original process and thread handles in the
+    // pre-admitted owner before any logging, cancellation check, or fallible operation.
+    let runner_process = unsafe { OwnedHandle::from_raw_handle(pi.hProcess as _) };
+    let runner_thread = unsafe { OwnedHandle::from_raw_handle(pi.hThread as _) };
     let expected_runner_pid = pi.dwProcessId;
+    let expected_runner_tid = pi.dwThreadId;
+    let mut _legacy_runner_process = None;
+    let mut _legacy_runner_thread = None;
+    let install_result = if let Some(res) = checked_reservation.as_deref_mut() {
+        Some(res.install_launched_process(
+            runner_process,
+            expected_runner_pid,
+            runner_thread,
+            expected_runner_tid,
+            &pipe_write,
+            &pipe_read,
+            hello.clone(),
+        ))
+    } else {
+        _legacy_runner_process = Some(runner_process);
+        _legacy_runner_thread = Some(runner_thread);
+        None
+    };
     crate::logging::log_note(
         &format!("runner_process_created pid={expected_runner_pid}"),
         log_dir,
     );
-    let mut nonce = [0u8; 32];
-    if matched_runner.is_some() {
-        use rand::{RngCore, SeedableRng};
-        rand::rngs::SmallRng::from_entropy().fill_bytes(&mut nonce);
+    if let (Some(res), Some(diagnostic)) = (checked_reservation.as_deref(), diagnostic) {
+        // Publish only an identity already captured by this anchored owner,
+        // including when a later installation check reports an error.
+        res.owner().observe_startup_runner(diagnostic);
     }
+    if let (Some(res), Some(Err(err))) = (checked_reservation.as_deref_mut(), install_result) {
+        if let Some(diagnostic) = diagnostic {
+            diagnostic.fail_io_kind(err.kind());
+        }
+        return Err(super::checked_owner::mark_error_non_refreshable(
+            err.into(),
+            res.startup_id(),
+        ));
+    }
+
     mark_start(diagnostic, crate::WindowsStartStage::ControlHello);
     if matched_runner.is_some() && nonce == [0; 32] {
         if let Some(diagnostic) = diagnostic {
             diagnostic.fail(crate::WindowsStartError::ControlRejected);
         }
+        let err = anyhow::anyhow!("runner hello nonce unavailable");
+        if let Some(res) = checked_reservation.as_deref_mut() {
+            return Err(res.fail_after_launch(err));
+        }
+        return Err(err);
     }
-    anyhow::ensure!(
-        matched_runner.is_none() || nonce != [0; 32],
-        "runner hello nonce unavailable"
-    );
     let mut transport = RunnerTransport {
         pipe_write,
         pipe_read,
-        hello: crate::ipc_framed::ControlHello {
-            nonce,
-            schema: crate::ipc_framed::CHECKED_CONTROL_SCHEMA,
-        },
+        hello,
         controls: crate::ipc_framed::RunnerControlCapabilities::default(),
         matched_runner,
+        checked_lease: None,
+        startup_deadline,
+        native_close_runtime: None,
+        native_startup_owner: None,
     };
     let startup_result = (|| -> Result<()> {
         // An update can retarget the alias after setup. Check the selected image
@@ -697,11 +854,33 @@ pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
                 .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::IdentityRejected))?;
         }
         mark_start(diagnostic, crate::WindowsStartStage::PipeConnectIn);
-        connect_pipe_with_timeout(h_pipe_in, expected_runner_pid, "pipe-in", diagnostic)
-            .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?;
+        if let Some(res) = checked_reservation.as_deref_mut() {
+            res.connect_pipe_step(&transport.pipe_write, "pipe-in", diagnostic)?;
+        } else {
+            connect_pipe_with_timeout(h_pipe_in, expected_runner_pid, "pipe-in", diagnostic)
+                .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?;
+        }
         mark_start(diagnostic, crate::WindowsStartStage::PipeConnectOut);
-        connect_pipe_with_timeout(h_pipe_out, expected_runner_pid, "pipe-out", diagnostic)
-            .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?;
+        if let Some(res) = checked_reservation.as_deref_mut() {
+            res.connect_pipe_step(&transport.pipe_read, "pipe-out", diagnostic)?;
+        } else {
+            connect_pipe_with_timeout(h_pipe_out, expected_runner_pid, "pipe-out", diagnostic)
+                .inspect_err(|err| observe_start_error(diagnostic, err, crate::WindowsStartError::Unclassified))?;
+        }
+        if transport.matched_runner.as_ref().is_some_and(|pin|pin.native_close_v8()) {
+            let owner=checked_reservation.as_deref().ok_or_else(||anyhow::anyhow!("v8 original reservation absent"))?.owner();
+            let bootstrap=owner.prepare_native_close_runtime(nonce)?;
+            let runtime=owner.native_close_runtime().ok_or_else(||anyhow::anyhow!("v8 original binding absent"))?;
+            transport.hello=runtime.control_hello();
+            // Initial Hello is the explicit private bootstrap, never a v7 Hello.
+            owner.write_native_startup(0,move |file| {
+                let mut writer=file;
+                super::native_close_protocol::write_v8_wire_frame_bounded(&mut writer,&bootstrap)
+                    .map(|_|()).map_err(std::io::Error::other)
+            })?;
+            transport.native_close_runtime=Some(runtime);
+            transport.native_startup_owner=Some(std::sync::Arc::clone(owner));
+        }
         if transport.matched_runner.is_some() {
             mark_start(diagnostic, crate::WindowsStartStage::ControlHello);
             transport.negotiate_controls(diagnostic)
@@ -717,7 +896,7 @@ pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
     })();
     if let Err(err) = startup_result {
         unsafe {
-            // Observe only the original process before the existing termination below.
+            // Observe only the original process before cleanup or retention below.
             let wait = WaitForSingleObject(pi.hProcess, 0);
             if wait == WAIT_OBJECT_0 {
                 let mut raw_exit = 0;
@@ -734,9 +913,21 @@ pub(crate) fn spawn_runner_transport_with_identity_diagnostics(
             } else {
                 crate::logging::log_note("runner_pre_cleanup_state=unknown reason=wait_not_signaled", log_dir);
             }
+        }
+        if let Some(res) = checked_reservation.as_deref_mut() {
+            // Checked startup failure retains the original process handle and owner lease
+            // without calling TerminateProcess and claiming normal cleanup.
+            return Err(res.fail_after_launch(err));
+        }
+        unsafe {
             let _ = TerminateProcess(pi.hProcess, 1);
         }
         return Err(err);
+    }
+
+    if let Some(res) = checked_reservation {
+        let lease = res.commit_transport_lease(transport.controls)?;
+        transport.checked_lease = Some(lease);
     }
 
     if registered_alias.is_some() {
@@ -759,6 +950,8 @@ mod tests {
     use crate::ipc_framed::ErrorPayload;
     use crate::ipc_framed::ErrorStage;
     use pretty_assertions::assert_eq;
+    use std::os::windows::io::FromRawHandle;
+    use std::time::Instant;
     use windows_sys::Win32::Foundation::ERROR_ACCOUNT_DISABLED;
     use windows_sys::Win32::Foundation::ERROR_LOGON_FAILURE;
     use windows_sys::Win32::Foundation::ERROR_NO_SUCH_LOGON_SESSION;
@@ -775,6 +968,10 @@ mod tests {
             },
             controls: crate::ipc_framed::RunnerControlCapabilities::default(),
             matched_runner: None,
+            checked_lease: None,
+            native_close_runtime: None,
+        native_startup_owner: None,
+            startup_deadline: Instant::now() + super::RUNNER_SPAWN_READY_TIMEOUT,
         };
         assert_eq!(transport.protocol_version(), 6);
         assert!(!transport.controls.close_stdin && !transport.controls.resize);
@@ -931,4 +1128,133 @@ mod tests {
             [false, false]
         );
     }
+
+    #[test]
+    fn checked_unknown_or_post_launch_error_is_non_refreshable_and_preserves_primary_error() {
+        let primary = anyhow::Error::new(RunnerStartupError::new(ErrorPayload {
+            message: "spawn child failed after checked launch".to_owned(),
+            stage: ErrorStage::SpawnChild,
+            windows_error_code: Some(ERROR_NO_SUCH_LOGON_SESSION),
+        }));
+        assert!(is_refreshable_sandbox_creds_error(
+            &primary,
+            &["cmd.exe".to_owned()]
+        ));
+
+        let non_refreshable = super::super::checked_owner::mark_error_non_refreshable(
+            primary,
+            super::super::checked_owner::StartupId(42),
+        );
+        assert!(
+            !is_refreshable_sandbox_creds_error(&non_refreshable, &["cmd.exe".to_owned()]),
+            "checked post-launch or Unknown startup errors must never trigger credential refresh"
+        );
+        assert!(
+            non_refreshable
+                .downcast_ref::<RunnerStartupError>()
+                .is_some(),
+            "primary RunnerStartupError must remain downcastable for diagnostics"
+        );
+    }
+
+    #[test]
+    fn checked_transport_rejects_legacy_into_files_without_dropping_owner() {
+        static REGISTRY: super::super::checked_owner::CheckedOwnerRegistry =
+            super::super::checked_owner::CheckedOwnerRegistry::new();
+        static CONNECT_OWNER: super::super::owned_connect_worker::Owner =
+            super::super::owned_connect_worker::Owner::new();
+
+        use sha2::Digest;
+        let exe = std::env::current_exe().expect("current_exe");
+        let sha: [u8; 32] = sha2::Sha256::digest(std::fs::read(&exe).expect("read exe")).into();
+        let artifact = std::sync::Arc::new(
+            crate::MatchedRunnerArtifact::acquire(&exe, sha).expect("acquire matched artifact"),
+        );
+        let mut res = super::super::checked_owner::reserve_in_registry(
+            &REGISTRY,
+            Some(&CONNECT_OWNER),
+            std::sync::Arc::clone(&artifact),
+            None,
+            std::time::Duration::from_secs(5),
+        )
+        .expect("reserve startup");
+        let comspec = std::env::var("COMSPEC").unwrap_or_else(|_| "cmd.exe".to_owned());
+        let mut child = std::process::Command::new(comspec)
+            .args(["/C", "exit", "0"])
+            .stdin(std::process::Stdio::null())
+            .stdout(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null())
+            .spawn()
+            .expect("spawn child");
+        let pid = child.id();
+        let _ = child.wait().expect("wait child");
+        let proc_handle: std::os::windows::io::OwnedHandle = child.into();
+        let mut raw_thread: windows_sys::Win32::Foundation::HANDLE = 0;
+        let current_proc = unsafe { windows_sys::Win32::System::Threading::GetCurrentProcess() };
+        let current_thread = unsafe { windows_sys::Win32::System::Threading::GetCurrentThread() };
+        let dup_ok = unsafe {
+            windows_sys::Win32::Foundation::DuplicateHandle(
+                current_proc,
+                current_thread,
+                current_proc,
+                &mut raw_thread,
+                0,
+                0,
+                windows_sys::Win32::Foundation::DUPLICATE_SAME_ACCESS,
+            )
+        };
+        assert_ne!(dup_ok, 0);
+        let thread_handle =
+            unsafe { std::os::windows::io::OwnedHandle::from_raw_handle(raw_thread as _) };
+        let pipe_w = tempfile::tempfile().expect("pipe_w");
+        let pipe_r = tempfile::tempfile().expect("pipe_r");
+        let hello = crate::ipc_framed::ControlHello {
+            nonce: [7; 32],
+            schema: crate::ipc_framed::CHECKED_CONTROL_SCHEMA,
+        };
+        res.install_launched_process(proc_handle, pid, thread_handle, 9, &pipe_w, &pipe_r, hello.clone())
+            .expect("install process");
+        res.connect_pipe_step_with(&pipe_w, "pipe-in", None, |_| Ok(()))
+            .expect("connect pipe-in");
+        res.connect_pipe_step_with(&pipe_r, "pipe-out", None, |_| Ok(()))
+            .expect("connect pipe-out");
+        let lease = res
+            .commit_transport_lease(crate::ipc_framed::RunnerControlCapabilities {
+                close_stdin: true,
+                resize: true,
+            })
+            .expect("commit transport lease");
+        let owner = std::sync::Arc::clone(lease.owner());
+        let transport = super::RunnerTransport {
+            pipe_write: pipe_w,
+            pipe_read: pipe_r,
+            hello,
+            controls: crate::ipc_framed::RunnerControlCapabilities {
+                close_stdin: true,
+                resize: true,
+            },
+            matched_runner: Some(artifact),
+            checked_lease: Some(lease),
+            startup_deadline: res.startup_deadline(),
+            native_close_runtime: None,
+            native_startup_owner: None,
+        };
+
+        assert!(
+            transport.into_files().is_err(),
+            "checked transport must reject legacy into_files()"
+        );
+        assert!(owner.is_no_replay_sealed());
+        assert_eq!(
+            owner.sticky_unknown_reason(),
+            Some(super::super::checked_owner::StickyUnknownReason::WrongLegacyConversion)
+        );
+        assert_eq!(REGISTRY.active_count().expect("retained in registry"), 1);
+
+        owner
+            .finalize(Instant::now() + std::time::Duration::from_secs(1))
+            .expect("reap retained owner");
+        assert_eq!(REGISTRY.active_count().expect("reaped from registry"), 0);
+    }
 }
+

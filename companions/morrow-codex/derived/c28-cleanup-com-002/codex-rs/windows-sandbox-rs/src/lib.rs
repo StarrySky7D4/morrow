@@ -15,6 +15,7 @@ pub use start_diagnostic::WindowsStartAttempt;
 pub use start_diagnostic::WindowsStartCompletion;
 pub use start_diagnostic::WindowsStartError;
 pub use start_diagnostic::WindowsStartSnapshot;
+pub use start_diagnostic::{WindowsStartRunnerObservation, WindowsStartRunnerState};
 pub use start_diagnostic::WindowsStartStage;
 
 #[cfg(any(target_os = "windows", test))]
@@ -215,6 +216,10 @@ mod unified_exec;
 mod wrapper;
 
 #[cfg(target_os = "windows")]
+pub(crate) use elevated::checked_owner;
+#[cfg(target_os = "windows")]
+pub(crate) use elevated::owned_connect_worker;
+#[cfg(target_os = "windows")]
 pub(crate) use elevated::ipc_framed;
 
 #[cfg(target_os = "windows")]
@@ -269,6 +274,8 @@ pub use cap::workspace_write_root_overlaps_path;
 pub use conpty::ConptyInstance;
 #[cfg(target_os = "windows")]
 pub use conpty::spawn_conpty_process_as_user;
+#[cfg(windows)]
+pub use conpty::spawn_conpty_process_as_user_retaining;
 #[cfg(target_os = "windows")]
 pub use deny_read_acl::apply_deny_read_acls;
 #[cfg(target_os = "windows")]
@@ -323,6 +330,8 @@ pub use ipc_framed::ControlResult;
 #[cfg(target_os = "windows")]
 pub use ipc_framed::ControlStatus;
 #[cfg(target_os = "windows")]
+pub use ipc_framed::EmptyPayload;
+#[cfg(target_os = "windows")]
 pub use ipc_framed::ErrorPayload;
 #[cfg(target_os = "windows")]
 pub use ipc_framed::RunnerControlCapabilities;
@@ -348,6 +357,8 @@ pub use ipc_framed::ResizePayload;
 pub use ipc_framed::SpawnReady;
 #[cfg(target_os = "windows")]
 pub use ipc_framed::SpawnRequest;
+#[cfg(target_os = "windows")]
+pub use ipc_framed::StdinPayload;
 #[cfg(target_os = "windows")]
 pub use ipc_framed::decode_bytes;
 #[cfg(target_os = "windows")]
@@ -385,6 +396,8 @@ pub use process::ConsoleMode;
 #[cfg(target_os = "windows")]
 pub use process::PipeSpawnHandles;
 #[cfg(target_os = "windows")]
+pub use process::{ProcessCreationEvidence, ProcessNotCreated};
+#[cfg(target_os = "windows")]
 pub use process::StderrMode;
 #[cfg(target_os = "windows")]
 pub use process::StdinMode;
@@ -395,6 +408,8 @@ pub use process::read_handle_loop;
 pub use process::read_handle_loop_checked;
 #[cfg(target_os = "windows")]
 pub use process::spawn_process_with_pipes;
+#[cfg(windows)]
+pub use process::spawn_process_with_pipes_retaining;
 #[cfg(target_os = "windows")]
 pub use provisioning_client::WindowsSandboxProvisioningOutcome;
 #[cfg(target_os = "windows")]
@@ -457,6 +472,20 @@ pub use setup::run_elevated_provisioning_setup;
 pub use setup::run_elevated_provisioning_setup_with_retained_handles;
 #[cfg(target_os = "windows")]
 pub use setup::run_elevated_setup;
+/// Runs fresh elevated sandbox setup through the matched `codex-windows-sandbox-setup.exe`
+/// helper executable (`SetupMode::OwnedFull`) with full read/write/deny-read/deny-write/proxy
+/// policy semantics and returns a live, non-deserializable [`OwnedWindowsSandboxSetup`]
+/// ownership proof for normal non-forceful cleanup.
+///
+/// Scope and unobtained evidence:
+/// - Requires the caller to already run elevated in a fresh guest without pre-existing
+///   sandbox accounts, groups, Winlogon hidden-user entries, firewall rules, or WFP filters.
+/// - Does not qualify out-of-process UAC / service provisioning routes or adopt existing
+///   `Unknown` / packaged installations.
+#[cfg(target_os = "windows")]
+pub use setup::run_owned_elevated_setup;
+#[cfg(target_os = "windows")]
+pub use setup::run_owned_elevated_setup_with_matched_helper;
 #[cfg(target_os = "windows")]
 pub use setup::run_setup_refresh;
 #[cfg(target_os = "windows")]
@@ -486,6 +515,8 @@ pub use setup_error::write_setup_error_report;
 #[cfg(target_os = "windows")]
 pub use setup_mutex::acquire_sandbox_setup_lock;
 #[cfg(target_os = "windows")]
+pub use setup_provisioning::OwnedWindowsSandboxSetup;
+#[cfg(target_os = "windows")]
 pub use stdio_bridge::forward_sandbox_session_stdio;
 #[cfg(target_os = "windows")]
 #[doc(hidden)]
@@ -511,6 +542,8 @@ pub use token::token_groups;
 #[cfg(target_os = "windows")]
 pub use token_user::get_user_sid_bytes;
 #[cfg(target_os = "windows")]
+pub use token_user::{current_process_primary_token_identity,CurrentPrimaryTokenIdentity};
+#[cfg(target_os = "windows")]
 pub use unified_exec::WindowsSandboxSessionRequest;
 #[cfg(target_os = "windows")]
 pub use unified_exec::spawn_windows_sandbox_session_elevated_for_permission_profile;
@@ -519,13 +552,21 @@ pub use unified_exec::spawn_windows_sandbox_session_for_level;
 #[cfg(target_os = "windows")]
 pub use unified_exec::spawn_windows_sandbox_session_legacy;
 #[cfg(target_os = "windows")]
+pub use uninstall_windows::PreparedOwnedWindowsSandboxCleanup;
+#[cfg(target_os = "windows")]
 pub use uninstall_windows::PreparedWindowsSandboxCleanup;
 #[cfg(target_os = "windows")]
+pub use uninstall_windows::WindowsSandboxNormalCleanupReport;
+#[cfg(target_os = "windows")]
 pub use uninstall_windows::clean_up_packaged_windows_sandbox;
+#[cfg(target_os = "windows")]
+pub use uninstall_windows::prepare_owned_windows_sandbox_cleanup;
 #[cfg(target_os = "windows")]
 pub use uninstall_windows::prepare_packaged_windows_sandbox_cleanup;
 #[cfg(target_os = "windows")]
 pub use uninstall_windows::prepare_packaged_windows_sandbox_cleanup_with_retained_tokens;
+#[cfg(target_os = "windows")]
+pub use wfp::WfpRetirementReport;
 #[cfg(target_os = "windows")]
 pub use wfp::install_wfp_filters_for_account;
 #[cfg(target_os = "windows")]
@@ -1097,3 +1138,16 @@ mod stub {
 pub use unified_exec::spawn_windows_sandbox_session_for_level_with_runner;
 #[cfg(target_os = "windows")]
 pub use unified_exec::spawn_windows_sandbox_session_for_level_with_runner_diagnostics;
+
+#[cfg(target_os = "windows")]
+#[doc(hidden)]
+pub use elevated::native_close_runtime::{NativeCloseRuntime, RuntimeRunnerIdentity, write_runtime_message, wait_native_runtime_frame};
+#[cfg(target_os = "windows")]
+#[doc(hidden)]
+pub use elevated::native_close_protocol as native_close_wire;
+#[cfg(target_os = "windows")]
+pub use elevated::native_completion::NativeHostCompletion;
+#[cfg(target_os="windows")]
+mod native_scheduler;
+#[cfg(target_os="windows")]
+pub use native_scheduler::{NativeSchedulerThreads,NativeSchedulerClosed};

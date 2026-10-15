@@ -2,11 +2,12 @@
 //!
 //! This module encapsulates ConPTY creation and process spawn with the required
 //! `PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE` plumbing. It is shared by both the legacy
-//! restricted‑token path and the elevated runner path when unified_exec runs with
+//! restricted闁炽儲鍞竜ken path and the elevated runner path when unified_exec runs with
 //! `tty=true`. The helpers are not tied to the IPC layer and can be reused by other
 //! Windows sandbox flows that need a PTY.
 
 use crate::desktop::LaunchDesktop;
+use crate::process::ProcessCreationEvidence;
 use crate::proc_thread_attr::ProcThreadAttributeList;
 use crate::winutil::format_last_error;
 use crate::winutil::quote_windows_arg;
@@ -97,6 +98,18 @@ pub fn create_conpty(cols: i16, rows: i16) -> Result<ConptyInstance> {
     })
 }
 
+/// Checked launch uses atomic Job + ConPTY attributes and transfers the live
+/// primary thread. No post-create assign/resume or CloseHandle boundary is hidden
+/// inside this API. The receiver installs the originals before validating them.
+pub fn spawn_conpty_process_as_user_retaining<R>(
+    h_token: HANDLE, argv: &[String], cwd: &Path, env_map: &HashMap<String, String>,
+    desktop: LaunchDesktop,
+    receive: impl FnOnce(PROCESS_INFORMATION, ConptyInstance, ProcessCreationEvidence, Option<anyhow::Error>) -> R,
+) -> Result<R> {
+    let (process, console, evidence, first_error) = spawn_conpty_process_as_user_impl(h_token, argv, cwd, env_map, desktop, true)?;
+    Ok(receive(process, console, evidence, first_error))
+}
+
 /// Spawn a process under `h_token` with ConPTY attached.
 ///
 /// This is the main shared ConPTY entry point and is used by both the legacy/direct path
@@ -108,6 +121,18 @@ pub fn spawn_conpty_process_as_user(
     env_map: &HashMap<String, String>,
     desktop: LaunchDesktop,
 ) -> Result<(PROCESS_INFORMATION, ConptyInstance)> {
+    let (pi, console, _, _) = spawn_conpty_process_as_user_impl(h_token, argv, cwd, env_map, desktop, false)?;
+    Ok((pi, console))
+}
+
+fn spawn_conpty_process_as_user_impl(
+    h_token: HANDLE,
+    argv: &[String],
+    cwd: &Path,
+    env_map: &HashMap<String, String>,
+    desktop: LaunchDesktop,
+    retain_on_launch_error: bool,
+) -> Result<(PROCESS_INFORMATION, ConptyInstance, ProcessCreationEvidence, Option<anyhow::Error>)> {
     let cmdline_str = argv
         .iter()
         .map(|arg| quote_windows_arg(arg))
@@ -134,42 +159,98 @@ pub fn spawn_conpty_process_as_user(
         job: Some(Arc::clone(&job)),
         _desktop: Some(desktop),
     };
-    let preserve_app_context = crate::app_package::current_process_has_package_identity()?;
-    let mut attrs = ProcThreadAttributeList::new(2 + u32::from(preserve_app_context))?;
-    attrs.set_pseudoconsole(hpc)?;
-    attrs.set_job(job.as_raw_handle() as HANDLE)?;
-    if preserve_app_context {
-        attrs.preserve_desktop_app_context()?;
-    }
-    si.lpAttributeList = attrs.as_mut_ptr();
+    let attributes: Result<ProcThreadAttributeList> = (|| {
+        let preserve_app_context = crate::app_package::current_process_has_package_identity()?;
+        let mut attrs = ProcThreadAttributeList::new(2 + u32::from(preserve_app_context))?;
+        attrs.set_pseudoconsole(hpc)?;
+        attrs.set_job(job.as_raw_handle() as HANDLE)?;
+        if preserve_app_context { attrs.preserve_desktop_app_context()?; }
+        Ok(attrs)
+    })();
+    with_conpty_launch_attributes(attributes, conpty, retain_on_launch_error, |mut attrs, conpty| {
+        si.lpAttributeList = attrs.as_mut_ptr();
 
-    let mut pi: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
-    let ok = unsafe {
-        CreateProcessAsUserW(
-            h_token,
-            std::ptr::null(),
-            cmdline.as_mut_ptr(),
-            std::ptr::null_mut(),
-            std::ptr::null_mut(),
-            0,
-            EXTENDED_STARTUPINFO_PRESENT | CREATE_UNICODE_ENVIRONMENT,
-            env_block.as_ptr() as *mut c_void,
-            to_wide(cwd).as_ptr(),
-            &si.StartupInfo,
-            &mut pi,
-        )
-    };
-    if ok == 0 {
-        let err = unsafe { GetLastError() } as i32;
-        let message = format!(
-            "CreateProcessAsUserW failed: {} ({}) | cwd={} | cmd={} | env_u16_len={}",
-            err,
-            format_last_error(err),
-            cwd.display(),
-            cmdline_str,
-            env_block.len()
-        );
-        return Err(std::io::Error::from_raw_os_error(err)).context(message);
+        let mut pi: PROCESS_INFORMATION = unsafe { std::mem::zeroed() };
+        let ok = unsafe {
+            CreateProcessAsUserW(
+                h_token,
+                std::ptr::null(),
+                cmdline.as_mut_ptr(),
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                0,
+                EXTENDED_STARTUPINFO_PRESENT | CREATE_UNICODE_ENVIRONMENT,
+                env_block.as_ptr() as *mut c_void,
+                to_wide(cwd).as_ptr(),
+                &si.StartupInfo,
+                &mut pi,
+            )
+        };
+        if ok == 0 {
+            let err = unsafe { GetLastError() } as i32;
+            let message = format!(
+                "CreateProcessAsUserW failed: {} ({}) | cwd={} | cmd={} | env_u16_len={}",
+                err,
+                format_last_error(err),
+                cwd.display(),
+                cmdline_str,
+                env_block.len()
+            );
+            let first_error = anyhow::Error::from(std::io::Error::from_raw_os_error(err)).context(message);
+            if retain_on_launch_error { return Ok((pi, conpty, ProcessCreationEvidence::returned(ok, &pi, err), Some(first_error))); }
+            return Err(first_error);
+        }
+        Ok((pi, conpty, ProcessCreationEvidence::returned(ok, &pi, 0), None))
+    })
+}
+
+// This seam is also used by the regression: an attribute error cannot invoke
+// `launch`, and the original allocated resources plus first error leave together.
+type RetainedConptyLaunch = (PROCESS_INFORMATION, ConptyInstance, ProcessCreationEvidence, Option<anyhow::Error>);
+fn with_conpty_launch_attributes(
+    attributes: Result<ProcThreadAttributeList>,
+    conpty: ConptyInstance,
+    retain_on_launch_error: bool,
+    launch: impl FnOnce(ProcThreadAttributeList, ConptyInstance) -> Result<RetainedConptyLaunch>,
+) -> Result<RetainedConptyLaunch> {
+    match attributes {
+        Ok(attrs) => launch(attrs, conpty),
+        Err(error) if retain_on_launch_error => Ok((unsafe { std::mem::zeroed() }, conpty,
+            ProcessCreationEvidence::not_invoked(), Some(error))),
+        Err(error) => Err(error),
     }
-    Ok((pi, conpty))
+}
+
+#[cfg(test)]
+mod retaining_launch_tests {
+    use super::*;
+    use std::os::windows::io::FromRawHandle;
+
+    #[test]
+    fn attribute_failure_retains_real_conpty_job_and_first_error_without_invoking_create() {
+        let mut console = create_conpty(80, 24).expect("real ConPTY");
+        let job = Arc::new(JobObject::create().expect("real empty Job"));
+        console.job = Some(Arc::clone(&job));
+        let first = anyhow::Error::from(std::io::Error::from_raw_os_error(87))
+            .context("injected attribute setup failure before CreateProcessAsUserW");
+        let (pi, mut retained, evidence, error) = with_conpty_launch_attributes(
+            Err(first), console, true, |_, _| panic!("CreateProcess branch must remain unreachable"),
+        ).expect("retain the original resources");
+        let proof = evidence.not_created_for(&pi).expect("explicit not-invoked proof");
+        assert_eq!(proof.rejection_os_error(), None);
+        assert!(proof.reason().contains("not invoked"));
+        let error = error.expect("original first error");
+        assert_eq!(error.downcast_ref::<std::io::Error>().unwrap().raw_os_error(), Some(87));
+        assert!(error.to_string().contains("attribute setup failure"));
+        assert!(Arc::ptr_eq(&retained.job().unwrap(), &job));
+        assert_eq!(job.query_accounting_and_process_ids().unwrap().1, 0);
+        // Retire the SAME real endpoints and ConPTY. No process/thread close
+        // witness can exist on this branch. No account/token/desktop is needed.
+        let input = unsafe { std::fs::File::from_raw_handle(retained.take_input_write() as _) };
+        let output = unsafe { std::fs::File::from_raw_handle(retained.take_output_read() as _) };
+        drop(input);
+        drop(retained);
+        drop(output);
+        assert_eq!(Arc::strong_count(&job), 1);
+    }
 }

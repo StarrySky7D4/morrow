@@ -19,6 +19,60 @@ pub struct NativeExecutionRegistry {
 #[cfg(test)]
 mod tests {
     use super::*;
+    struct MemoryProcess {id:codex_exec_server::ProcessId,wake:tokio::sync::watch::Sender<u64>}
+    fn no_native<'a,T:Send+'a>()->codex_exec_server::ExecProcessFuture<'a,T>{
+        Box::pin(async{Err(codex_exec_server::ExecServerError::Protocol("memory ownership fixture has no native effects or EOF".into()))})
+    }
+    impl ExecProcess for MemoryProcess {
+        fn process_id(&self)->&codex_exec_server::ProcessId{&self.id}
+        fn subscribe_wake(&self)->tokio::sync::watch::Receiver<u64>{self.wake.subscribe()}
+        fn subscribe_events(&self)->codex_exec_server::ExecProcessEventReceiver{codex_exec_server::ExecProcessEventReceiver::empty()}
+        fn read(&self,_:Option<u64>,_:Option<usize>,_:Option<u64>)->codex_exec_server::ExecProcessFuture<'_,codex_exec_server::ReadResponse>{no_native()}
+        fn write(&self,_:Vec<u8>)->codex_exec_server::ExecProcessFuture<'_,codex_exec_server::WriteResponse>{no_native()}
+        fn signal(&self,_:codex_exec_server::ProcessSignal)->codex_exec_server::ExecProcessFuture<'_,()>{no_native()}
+        fn terminate(&self)->codex_exec_server::ExecProcessFuture<'_,()>{no_native()}
+    }
+    fn poison_native_retirement_slot(process_poison:bool) {
+        // Registry-only memory fixture. No native process/IO completion is
+        // fabricated; even its scalar terminal marker must not release capacity.
+        let registry=Arc::new(NativeExecutionRegistry::default());
+        let memory=Arc::new(());let original_memory=Arc::downgrade(&memory);
+        let slot=registry.reserve("same-native-memory".into(),memory.clone()).unwrap();
+        let (wake,_)=tokio::sync::watch::channel(0);
+        let process=Arc::new(MemoryProcess {id:codex_exec_server::ProcessId::new("same-native-memory"),wake});
+        let original_process=Arc::downgrade(&process);
+        slot.started(process.clone());drop(process);
+        drop(memory);slot.bind_native_completion().unwrap();
+        let job=slot.job().unwrap();slot.provider(true);slot.unstarted();
+        let _=std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            if process_poison {let _guard=slot.process.lock().unwrap();panic!("intentional process-slot poison");}
+            else{let _guard=slot._keepalive.lock().unwrap();panic!("intentional keepalive-slot poison");}
+        }));
+        slot.provider(false);drop(job);
+        let statuses=registry.statuses().unwrap();
+        assert_eq!(statuses.len(),1);assert!(statuses[0].unknown);
+        assert!(!slot.original_retired.load(Ordering::SeqCst));
+        assert!(matches!(slot.require_retired_original(),Err(Error::CommitUnknown)));
+        assert!(Arc::ptr_eq(registry.entries.lock().unwrap().get("same-native-memory").unwrap(),&slot));
+        assert!(original_memory.upgrade().is_some());
+        assert!(original_process.upgrade().is_some());
+        let mut others=Vec::new();
+        for i in 1..MAX_NATIVE_EXECUTIONS{others.push(registry.reserve(format!("other-{i}"),Arc::new(())).unwrap());}
+        assert_eq!(registry.statuses().unwrap().len(),MAX_NATIVE_EXECUTIONS);
+        assert!(matches!(registry.reserve("over-budget".into(),Arc::new(())),Err(Error::Limit)));
+        assert!(original_memory.upgrade().is_some());
+        assert!(original_process.upgrade().is_some());
+        assert!(registry.entries.lock().unwrap().contains_key("same-native-memory"));
+        // Only provably uninvoked independent reservations may retire.
+        for other in others{other.unstarted();}
+        assert_eq!(registry.statuses().unwrap().len(),1);
+        assert!(original_memory.upgrade().is_some());
+        assert!(original_process.upgrade().is_some());
+    }
+    #[test]
+    fn native_retirement_keeps_original_entry_capacity_and_resources_when_process_lock_is_poisoned(){poison_native_retirement_slot(true);}
+    #[test]
+    fn native_retirement_keeps_original_entry_capacity_and_resources_when_keepalive_lock_is_poisoned(){poison_native_retirement_slot(false);}
     #[test]
     fn shared_registry_bounds_pending_and_unknown_work() {
         let registry = Arc::new(NativeExecutionRegistry::default());
@@ -111,7 +165,9 @@ pub(crate) struct ExecutionSlot {
     // callers must keep a cleanup port/runtime reachable for unresolved work.
     registry: Arc<NativeExecutionRegistry>,
     pub process: Mutex<Option<Arc<dyn ExecProcess>>>,
-    _keepalive: Arc<dyn Send + Sync>,
+    _keepalive: Mutex<Option<Arc<dyn Send + Sync>>>,
+    native_bound: AtomicBool,
+    original_retired: AtomicBool,
     pending: AtomicBool,
     unknown: AtomicBool,
     terminal: AtomicBool,
@@ -161,7 +217,9 @@ impl NativeExecutionRegistry {
             operation: operation.clone(),
             registry: self.clone(),
             process: Mutex::new(None),
-            _keepalive: keepalive,
+            _keepalive: Mutex::new(Some(keepalive)),
+            native_bound: AtomicBool::new(false),
+            original_retired: AtomicBool::new(false),
             pending: AtomicBool::new(true),
             unknown: AtomicBool::new(false),
             terminal: AtomicBool::new(false),
@@ -185,6 +243,21 @@ impl NativeExecutionRegistry {
     }
 }
 impl ExecutionSlot {
+    pub(crate) fn is_native_bound(&self)->bool {self.native_bound.load(Ordering::SeqCst)}
+    pub(crate) fn native_terminal(&self)->bool {self.is_native_bound() && self.terminal.load(Ordering::SeqCst) && !self.is_unknown()}
+    pub(crate) fn bind_native_completion(&self)->Result<()> {
+        if self.native_bound.swap(true,Ordering::SeqCst) {self.unknown();return Err(Error::Denied);}
+        Ok(())
+    }
+    pub(crate) fn require_retired_original(&self)->Result<()> {
+        if !self.native_bound.load(Ordering::SeqCst) || !self.original_retired.load(Ordering::SeqCst)
+            || self.pending.load(Ordering::SeqCst) || self.unknown.load(Ordering::SeqCst)
+            || !self.terminal.load(Ordering::SeqCst) || self.provider.load(Ordering::SeqCst)
+            || self.jobs.load(Ordering::SeqCst)!=0 {
+            return Err(Error::CommitUnknown);
+        }
+        Ok(())
+    }
     pub(crate) fn request_stop(&self) {
         self.stop_requested.store(true, Ordering::SeqCst);
     }
@@ -248,6 +321,7 @@ impl ExecutionSlot {
         self.maybe_retire();
     }
     fn maybe_retire(&self) {
+        let mut retired_resources=None;
         {
             let registry = &self.registry;
             if let Ok(mut entries) = registry.entries.lock() {
@@ -256,6 +330,7 @@ impl ExecutionSlot {
                     || !self.terminal.load(Ordering::SeqCst)
                     || self.provider.load(Ordering::SeqCst)
                     || self.jobs.load(Ordering::SeqCst) != 0
+                    || (self.native_bound.load(Ordering::SeqCst) && self.unknown.load(Ordering::SeqCst))
                 {
                     return;
                 }
@@ -263,9 +338,25 @@ impl ExecutionSlot {
                     .get(&self.operation)
                     .is_some_and(|current| std::ptr::eq(Arc::as_ptr(current), self))
                 {
-                    entries.remove(&self.operation);
+                    if self.native_bound.load(Ordering::SeqCst) {
+                        // Acquire BOTH fallible original resource slots before
+                        // taking either resource or committing registration.
+                        // No IO/wait/callback or resource Drop under these locks.
+                        let mut process=match self.process.try_lock(){Ok(p)=>p,Err(_)=>{self.unknown();return;}};
+                        let mut keepalive=match self._keepalive.try_lock(){Ok(p)=>p,Err(_)=>{self.unknown();return;}};
+                        if keepalive.is_none() || self.unknown.load(Ordering::SeqCst) {self.unknown();return;}
+                        retired_resources=Some((process.take(),keepalive.take()));
+                        // No fallible step follows before the same entry commits.
+                        entries.remove(&self.operation);
+                        self.original_retired.store(true,Ordering::SeqCst);
+                    }else{
+                        // Preserve the old default/v7 retirement and lifetime.
+                        entries.remove(&self.operation);
+                        self.original_retired.store(true,Ordering::SeqCst);
+                    }
                 }
             }
         }
+        drop(retired_resources);
     }
 }

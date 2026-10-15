@@ -42,6 +42,20 @@ impl Drop for SandboxSetupLock {
 
 /// Waits up to `timeout_ms` for exclusive access by LocalSystem or an elevated administrator.
 pub fn acquire_sandbox_setup_lock(timeout_ms: u32) -> Result<SandboxSetupLock> {
+    acquire_sandbox_setup_lock_inner(timeout_ms, None)
+}
+
+/// Same original mutex, but compute remaining time AFTER creating its handle,
+/// immediately before the actual wait. This does not make CreateMutex or other
+/// native APIs cancellable; the caller also checks its deadline after return.
+pub(crate) fn acquire_sandbox_setup_lock_until(deadline: std::time::Instant) -> Result<SandboxSetupLock> {
+    crate::setup_provisioning::owned_setup_remaining_lock_ms(deadline, std::time::Instant::now())?;
+    acquire_sandbox_setup_lock_inner(0, Some(deadline))
+}
+
+fn acquire_sandbox_setup_lock_inner(
+    timeout_ms: u32, deadline: Option<std::time::Instant>,
+) -> Result<SandboxSetupLock> {
     let sddl = to_wide("D:P(A;;GA;;;SY)(A;;GA;;;BA)");
     let mut descriptor = null_mut();
     if unsafe {
@@ -71,12 +85,20 @@ pub fn acquire_sandbox_setup_lock(timeout_ms: u32) -> Result<SandboxSetupLock> {
     };
     unsafe { LocalFree(descriptor as HLOCAL) };
     let handle = result.context("open sandbox setup mutex")?;
+    let timeout_ms = match deadline {
+        Some(deadline) => crate::setup_provisioning::owned_setup_remaining_lock_ms(
+            deadline, std::time::Instant::now(),
+        )?,
+        None => timeout_ms,
+    };
     match unsafe { WaitForSingleObject(handle.as_raw_handle() as HANDLE, timeout_ms) } {
         // A crashed owner releases the lock; setup still repairs any incomplete account changes.
         WAIT_OBJECT_0 | WAIT_ABANDONED => Ok(SandboxSetupLock {
             handle,
             _thread_bound: PhantomData,
         }),
+        WAIT_TIMEOUT if deadline.is_some() => Err(io::Error::new(io::ErrorKind::TimedOut,
+            format!("timed out waiting for sandbox setup mutex after {timeout_ms} ms"))).context("owned setup validation mutex"),
         WAIT_TIMEOUT => bail!("timed out waiting for sandbox setup mutex after {timeout_ms} ms"),
         _ => Err(io::Error::last_os_error()).context("wait for sandbox setup mutex"),
     }

@@ -21,10 +21,12 @@
 use super::psuedocon::HPCON;
 use anyhow::Error;
 use anyhow::ensure;
-use std::ffi::c_void;
 use std::io::Error as IoError;
 use std::mem;
 use std::ptr;
+// Match the native API pointee even when winapi/std is absent and its
+// c_void is distinct from std::ffi::c_void. No pointee is dereferenced.
+use winapi::ctypes::c_void;
 use winapi::shared::minwindef::DWORD;
 use winapi::um::processthreadsapi::*;
 use winapi::um::winnt::HANDLE;

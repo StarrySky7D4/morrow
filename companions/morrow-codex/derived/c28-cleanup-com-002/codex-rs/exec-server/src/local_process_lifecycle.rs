@@ -96,9 +96,9 @@ pub(super) fn start_watcher(
     expected: watch::Sender<u64>,
     failure: Option<watch::Receiver<Option<String>>>,
     inner: Arc<Inner>,
-) {
-    let Some(mut failure) = failure else { return };
-    tokio::spawn(async move {
+) -> Option<tokio::task::JoinHandle<()>> {
+    let Some(mut failure) = failure else { return None };
+    Some(tokio::spawn(async move {
         let mut wake = expected.subscribe();
         loop {
             {
@@ -124,7 +124,7 @@ pub(super) fn start_watcher(
                 }
             }
         }
-    });
+    }))
 }
 
 #[cfg(test)]

@@ -14,6 +14,18 @@ mod borrowed;
 #[cfg(windows)]
 mod facts;
 #[cfg(windows)]
+mod runner_observation;
+#[cfg(windows)]
+mod native_completion;
+#[cfg(windows)]
+pub use native_completion::{ReviewedNativeCompletion,NativeExecutionCompletion};
+#[cfg(windows)]
+mod native_factory;
+#[cfg(windows)]
+pub use native_factory::{NativeFactoryRetirement,NativeFactoryCompletion,RetiredExecutionCompletion};
+#[cfg(windows)]
+pub use runner_observation::ReviewedRunnerObservation;
+#[cfg(windows)]
 mod provisioned;
 mod state;
 #[cfg(windows)]
@@ -21,6 +33,8 @@ mod windows_runner;
 
 #[cfg(windows)]
 pub use borrowed::{BorrowedStopHandle, BorrowedWindowsExecutionPort, ReviewedBorrowedInvocation};
+#[cfg(windows)]
+pub use borrowed::ReviewedStartObservation;
 pub use codex_exec_server::{
     ExecBackend, ExecParams, ExecServerRuntimeOptions, ProcessId, StartedExecProcess,
 };

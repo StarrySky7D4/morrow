@@ -44,6 +44,10 @@ pub struct RunningExecution {
     pub intent: Intent,
     pub resources: Arc<morrow_codex_session_exec_windows_v1::BorrowedNativeResources>,
     stop_attempted: bool,
+    runner_history: morrow_codex_session_exec_windows_v1::ReviewedRunnerObservation,
+    verified_owner_join: Option<crate::native_observation::VerifiedOwnerJoin>,
+    native_binding:Option<morrow_codex_session_exec_windows_v1::ReviewedNativeCompletion>,
+    native_completion:Option<morrow_codex_session_exec_windows_v1::NativeExecutionCompletion>,
 }
 
 /// Consumes the reviewed one-shot claim exactly once. Caller has completed all
@@ -81,6 +85,8 @@ pub fn start_execution(
         .reviewed
         .take()
         .ok_or_else(|| anyhow!("reviewed invocation already consumed; no replay"))?;
+    let runner_history = reviewed.runner_observation();
+    let native_binding=reviewed.native_completion_binding();
     let claim = std::mem::replace(&mut prepared.claim, [0; 32]);
     ensure!(claim != [0; 32], "claim already consumed; no replay");
     let mut command = submit_once(
@@ -123,16 +129,52 @@ pub fn start_execution(
         intent,
         resources,
         stop_attempted: false,
+        runner_history,
+        verified_owner_join: None,
+        native_binding,
+        native_completion:None,
     })
 }
 
 impl RunningExecution {
+    /// Serialize-only bounded history from this invocation's actual sealed
+    /// completion. Distinct from the legacy logical observation and business
+    /// child facts; it cannot reconstruct the capability consumed at finish.
+    pub(crate) fn native_v8_completion_evidence(&self)->Option<serde_json::Value> {
+        self.native_completion.as_ref().map(|actual|serde_json::json!({
+            "schema":"C28_SAME_INVOCATION_V8_NATIVE_SDK_COMPLETION_V1",
+            "identity_scope":"RUNNER_NOT_BUSINESS_CHILD",
+            "runner_pid":actual.runner_pid(),
+            "runner_creation_filetime_100ns":actual.runner_creation_filetime().to_string(),
+            "runner_get_exit_code_process_raw_dword":actual.runner_raw_dword(),
+            "startup_attempt":actual.startup_attempt(),
+            "authenticated_terminal_close_ack":actual.terminal_close_ack_verified(),
+            "original_host_and_forwarder_joins_complete":true,
+            "same_sdk_monitor_joined_and_slot_retired":true,
+            "scope":"SAME_ORIGINAL_INVOCATION_ONLY",
+            "protected_owner_finish":"PENDING",
+            "factory_native_shutdown":"PENDING",
+            "cleanup_authority":false
+        }))
+    }
+    pub(crate) fn take_native_execution_completion(&mut self)->Result<morrow_codex_session_exec_windows_v1::NativeExecutionCompletion> {
+        self.native_completion.take().ok_or_else(||anyhow!("original native completion absent or consumed"))
+    }
+    pub(crate) fn runner_observation(&self, identity: &morrow_agent_session_exec_v1_r2::safe_exec::ToolIdentity)
+        -> codex_exec_server::RunnerObservation {
+        self.resources.runner_observation(&self.runner_history, identity)
+    }
+    pub(crate) fn verified_owner_join(&self) -> Option<&crate::native_observation::VerifiedOwnerJoin> {
+        self.verified_owner_join.as_ref()
+    }
     pub(crate) fn from_started(
         key: TaskKey,
         handle: Handle,
         host: Arc<SessionExecHost>,
         intent: Intent,
         resources: Arc<morrow_codex_session_exec_windows_v1::BorrowedNativeResources>,
+        runner_history: morrow_codex_session_exec_windows_v1::ReviewedRunnerObservation,
+        native_binding:Option<morrow_codex_session_exec_windows_v1::ReviewedNativeCompletion>,
     ) -> Self {
         Self {
             key,
@@ -141,6 +183,10 @@ impl RunningExecution {
             intent,
             resources,
             stop_attempted: false,
+            runner_history,
+            verified_owner_join: None,
+            native_binding,
+            native_completion:None,
         }
     }
     /// Caller must first drop its backend/scheduler aliases synchronously. This
@@ -175,9 +221,13 @@ impl RunningExecution {
             "stop already requested; use explicit same-owner recovery, never repeat controls"
         );
         self.stop_attempted = true;
+        if let Some(binding)=&self.native_binding {
+            // No Core borrow/owner lock while awaiting this exact original task.
+            binding.join_original_monitor_blocking(Instant::now()+Duration::from_secs(20))?;
+        }
         stop_original(workbench, self.key)?;
         let deadline = Instant::now() + Duration::from_secs(20);
-        loop {
+        let joined_task_results = loop {
             let snapshot = poll_original(workbench, self.key)?;
             if snapshot.task.storage == StoragePhase::Reclaimed {
                 let exit = snapshot
@@ -187,16 +237,20 @@ impl RunningExecution {
                     exit.execution.is_ok() && exit.disconnect.is_ok() && exit.maintenance.is_ok(),
                     "original joined task cleanup or protected maintenance failed"
                 );
-                break;
+                break (exit.execution.is_ok(), exit.disconnect.is_ok(), exit.maintenance.is_ok());
             }
             ensure!(
                 Instant::now() < deadline,
                 "original owner/OS join unresolved; retained debt, no synthetic clean result"
             );
             std::thread::sleep(Duration::from_millis(5));
-        }
+        };
+        let resource_tables_clean_observed = self.resources.is_clean()?;
+        // Preserve the original short-circuit and error order; no additional query.
+        let pending_fact_table_empty_observed =
+            resource_tables_clean_observed && self.resources.pending_facts()?.is_empty();
         ensure!(
-            self.resources.is_clean()? && self.resources.pending_facts()?.is_empty(),
+            resource_tables_clean_observed && pending_fact_table_empty_observed,
             "original native resource/fact debt remains charged"
         );
         let observation = workbench
@@ -220,6 +274,13 @@ impl RunningExecution {
                 && facts.stderr_sha256 == morrow_agent_session_exec_v1_r2::hash(stderr),
             "original terminal facts differ from real sealed-guest observations"
         );
+        if let Some(binding)=&self.native_binding {
+            self.native_completion=Some(self.resources.take_native_execution_completion(binding)?);
+        }
+        self.verified_owner_join = Some(crate::native_observation::VerifiedOwnerJoin::captured(
+            joined_task_results.0, joined_task_results.1, joined_task_results.2,
+            resource_tables_clean_observed, pending_fact_table_empty_observed,
+        ));
         Ok(observation)
     }
 }
@@ -343,8 +404,12 @@ pub fn prepare_execution(
 /// Retains the actual configured scheduler through worker/context cleanup.
 /// Resource emptiness alone is not proof that native tasks or threads joined.
 pub struct ProductionBackend {
+    native_close_v8:bool,
     pub backend: Arc<ProvisionedWindowsBackend>,
     pub scheduler: Arc<tokio::runtime::Runtime>,
+}
+impl ProductionBackend {
+    pub(crate) fn is_native_close_v8(&self)->bool {self.native_close_v8}
 }
 
 pub fn create_checked_backend(config: &Config) -> Result<ProductionBackend> {
@@ -375,6 +440,24 @@ pub fn create_checked_backend_materialized(
 
 fn checked_backend(config: &Config, runner: &Artifact) -> Result<ProductionBackend> {
     let spec = WindowsRunnerProvisioningSpec::acquire(&runner.path, runner.sha256)?;
+    checked_backend_spec(config,spec)
+}
+
+/// Separate explicit preview route; the default production-factory remains v7.
+/// The lifecycle keeps its original materialized image lock while this exact
+/// independently acquired v8 pin is installed in the real local backend.
+pub fn create_native_close_backend_materialized(config:&Config,actual:Arc<MatchedRunnerArtifact>,
+    retirement:&mut morrow_codex_session_exec_windows_v1::NativeFactoryRetirement)->Result<ProductionBackend> {
+    let materialized=Artifact {path:actual.path().to_path_buf(),sha256:actual.sha256()};
+    observe_materialized_images(config,&materialized)?;
+    let spec=WindowsRunnerProvisioningSpec::from_locked_native_close_v8(actual.native_close_view())?;
+    let (backend,scheduler)=ProvisionedWindowsBackend::production_with_native_close_runner(
+        ExecServerRuntimeOptions::new(config.helper.path.clone(),None)?,
+        HttpClientFactory::new(OutboundProxyPolicy::ReqwestDefault),config.helper.sha256,spec,retirement)?;
+    Ok(ProductionBackend {backend,scheduler,native_close_v8:true})
+}
+
+fn checked_backend_spec(config:&Config,spec:WindowsRunnerProvisioningSpec)->Result<ProductionBackend> {
     let scheduler = Arc::new(
         tokio::runtime::Builder::new_multi_thread()
             .worker_threads(2)
@@ -392,7 +475,7 @@ fn checked_backend(config: &Config, runner: &Artifact) -> Result<ProductionBacke
         backend.is_production(),
         "production constructor returned a qualification backend"
     );
-    Ok(ProductionBackend { backend, scheduler })
+    Ok(ProductionBackend { backend, scheduler,native_close_v8:false })
 }
 
 /// Exactly one command submission. Errors after submission remain Unknown;

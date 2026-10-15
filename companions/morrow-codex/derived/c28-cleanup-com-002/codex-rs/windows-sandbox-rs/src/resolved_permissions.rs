@@ -142,6 +142,15 @@ impl ResolvedWindowsSandboxPermissions {
             .collect()
     }
 
+    pub(crate) fn deny_read_paths_for_cwd(&self, command_cwd: &Path) -> Result<Vec<PathBuf>> {
+        let mut file_system = self.file_system.clone();
+        file_system.remove_skip_missing_path_entries();
+        let command_cwd = AbsolutePathBuf::from_absolute_path(command_cwd)?;
+        crate::deny_read_resolver::resolve_windows_deny_read_paths(&file_system, &command_cwd)
+            .map(|paths| paths.into_iter().map(AbsolutePathBuf::into_path_buf).collect())
+            .map_err(anyhow::Error::msg)
+    }
+
     pub(crate) fn uses_write_capabilities_for_cwd(
         &self,
         cwd: &Path,
@@ -610,4 +619,35 @@ mod tests {
                 .contains("full-disk filesystem writes, which cannot be enforced")
         );
     }
+    #[test]
+    fn deny_conversion_preserves_all_exact_roots_even_before_they_exist() {
+        let tmp = TempDir::new().unwrap();
+        let denied = [tmp.path().join("absent-a"), tmp.path().join("absent-b")];
+        let permissions = ResolvedWindowsSandboxPermissions {
+            file_system: FileSystemSandboxPolicy::restricted(denied.iter().map(|path| FileSystemSandboxEntry {
+                path: FileSystemPath::Path { path: AbsolutePathBuf::from_absolute_path(path).unwrap().into() },
+                access: FileSystemAccessMode::Deny, missing_path_behavior: None,
+            }).collect()), network: NetworkSandboxPolicy::Restricted,
+        };
+        let actual = permissions.deny_read_paths_for_cwd(tmp.path()).unwrap();
+        assert_eq!(actual.len(), 2);
+        let actual = actual.into_iter().collect::<std::collections::HashSet<_>>();
+        let expected = denied.iter().map(|p| dunce::simplified(p).to_path_buf()).collect::<std::collections::HashSet<_>>();
+        assert_eq!(actual, expected);
+    }
+    #[test]
+    fn deny_conversion_preserves_the_complete_original_resolver_error() {
+        let tmp = TempDir::new().unwrap();
+        let policy = FileSystemSandboxPolicy::restricted(vec![FileSystemSandboxEntry {
+            path: FileSystemPath::GlobPattern { pattern: format!("{}/**/[z-a]", tmp.path().display()) },
+            access: FileSystemAccessMode::Deny, missing_path_behavior: None,
+        }]);
+        let cwd = AbsolutePathBuf::from_absolute_path(tmp.path()).unwrap();
+        let expected = crate::deny_read_resolver::resolve_windows_deny_read_paths(&policy, &cwd).unwrap_err();
+        let permissions = ResolvedWindowsSandboxPermissions { file_system: policy, network: NetworkSandboxPolicy::Restricted };
+        let actual = permissions.deny_read_paths_for_cwd(tmp.path()).unwrap_err();
+        assert_eq!(actual.to_string(), expected);
+        assert!(actual.to_string().contains("invalid range"));
+    }
+
 }

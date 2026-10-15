@@ -69,6 +69,78 @@ fn copy_token_sid(buffer: &[u8], pointer: *mut c_void) -> Result<Vec<u8>> {
     Ok(buffer[offset..offset + length].to_vec())
 }
 
+/// Bounded public data about the calling PROCESS's primary token. No HANDLE,
+/// expected identity, caller-supplied token, process selector or authority.
+#[derive(Clone,Debug)]
+pub struct CurrentPrimaryTokenIdentity {
+    user_sid:String,
+    token_type:u32,
+    has_restrictions:bool,
+    elevated:bool,
+}
+impl CurrentPrimaryTokenIdentity {
+    pub fn user_sid(&self)->&str {&self.user_sid}
+    pub fn is_primary(&self)->bool {self.token_type==windows_sys::Win32::Security::TokenPrimary as u32}
+    pub fn has_restrictions(&self)->bool {self.has_restrictions}
+    pub fn is_elevated(&self)->bool {self.elevated}
+}
+fn sid_text(sid:&[u8])->Result<String> {
+    ensure!(sid.len()>=8 && sid[0]==1 && sid[1]<=15,"invalid owned SID header");
+    ensure!(sid.len()==8+usize::from(sid[1])*4,"invalid owned SID length");
+    let authority=u64::from_be_bytes([0,0,sid[2],sid[3],sid[4],sid[5],sid[6],sid[7]]);
+    let mut text=format!("S-1-{authority}");
+    for part in sid[8..].chunks_exact(4) {
+        text.push('-');text.push_str(&u32::from_le_bytes(part.try_into()?).to_string());
+    }
+    Ok(text)
+}
+// Windows SDK GetCurrentProcessToken() borrowed pseudo-handle, not a numeric
+// owned handle supplied by an external caller or an external PID lookup.
+const CURRENT_PROCESS_PRIMARY_TOKEN:HANDLE=-4;
+fn current_primary_dword(class:windows_sys::Win32::Security::TOKEN_INFORMATION_CLASS)->Result<u32> {
+    let mut value=0u32;let mut needed=0u32;
+    // Windows SDK GetCurrentProcessToken() pseudo-handle (-4):
+    // always THIS process primary token, even on an impersonating thread.
+    // Borrowed, query-only; never wrap/duplicate/close it. Supported by the
+    // fixed Windows 11 guest (the SDK contract is Windows 8.1 and later).
+    if unsafe{GetTokenInformation(CURRENT_PROCESS_PRIMARY_TOKEN,class,(&mut value as *mut u32).cast(),4,&mut needed)}==0 {
+        return Err(std::io::Error::last_os_error().into());
+    }
+    ensure!(needed==4,"invalid fixed primary-token scalar size");Ok(value)
+}
+fn current_primary_has_restrictions()->Result<bool> {
+    // TokenHasRestrictions returns a native BOOLEAN (one byte), unlike the
+    // DWORD-sized TokenType and TOKEN_ELEVATION results. The output pointer
+    // nevertheless needs DWORD alignment. Capacity4 below is bounded aligned
+    // storage, not a claim that the effective result/minimum capacity is4.
+    let mut storage=0xA5A5A5A5u32;let mut needed=u32::MAX;
+    if unsafe{GetTokenInformation(CURRENT_PROCESS_PRIMARY_TOKEN,
+        windows_sys::Win32::Security::TokenHasRestrictions,
+        (&mut storage as *mut u32).cast(),4,&mut needed)}==0 {
+        return Err(std::io::Error::last_os_error().into());
+    }
+    ensure!(needed==1,"invalid primary-token restriction BOOLEAN size");
+    // Read only the first returned byte. The initialized high three sentinel
+    // bytes are storage, never a DWORD token result. This pointer is valid for
+    // one byte for the lifetime of this same initialized aligned local.
+    let value=unsafe{(&storage as *const u32).cast::<u8>().read()};
+    ensure!(value<=1,"invalid primary-token restriction BOOLEAN value");
+    Ok(value==1)
+}
+/// Reads ONLY the current process primary token. No child process, thread-token
+/// fallback, external PID, token mutation, privilege adjustment or handle lease.
+/// The result is observation data, never a native/SDK/cleanup capability.
+pub fn current_process_primary_token_identity()->Result<CurrentPrimaryTokenIdentity> {
+    use windows_sys::Win32::Security::{TokenType,TokenPrimary,TokenElevation};
+    let token_type=current_primary_dword(TokenType)?;
+    ensure!(token_type==TokenPrimary as u32,"current process token is not primary");
+    let sid=unsafe{get_user_sid_bytes(CURRENT_PROCESS_PRIMARY_TOKEN)}?;
+    let restrictions=current_primary_has_restrictions()?;
+    let elevated=current_primary_dword(TokenElevation)?;
+    ensure!(elevated<=1,"invalid primary-token elevation scalar");
+    Ok(CurrentPrimaryTokenIdentity {user_sid:sid_text(&sid)?,token_type,has_restrictions:restrictions,elevated:elevated==1})
+}
+
 #[cfg(test)]
 #[path = "token_user_tests.rs"]
 mod tests;

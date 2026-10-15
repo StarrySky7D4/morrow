@@ -17,6 +17,14 @@ use tokio::runtime::{Runtime, RuntimeFlavor};
 
 static NEXT_PROVISIONING: AtomicU64 = AtomicU64::new(1);
 
+/// Host-selected construction route, never inferred from a request or upgraded
+/// from the legacy create entry. Each route requires its exact pinned metadata.
+#[derive(Clone, Copy)]
+pub(crate) enum RunnerEnvironmentKind {
+    CheckedV7,
+    NativeCloseV8,
+}
+
 /// Holds the actual configured factory, helper lock and scheduler for the
 /// complete execution lifetime. Its digest binds this exact factory instance;
 /// it is deliberately not a portable authorization or a hash of secret cookies.
@@ -29,7 +37,7 @@ pub struct ProvisionedWindowsBackend {
     _options: ExecServerRuntimeOptions,
     _factory: HttpClientFactory,
     _helper: Arc<LockedArtifact>,
-    _runner: Option<WindowsRunnerProvisioningSpec>,
+    pub(crate) _runner: Option<WindowsRunnerProvisioningSpec>,
 }
 impl ProvisionedWindowsBackend {
     pub fn production(
@@ -106,6 +114,22 @@ impl ProvisionedWindowsBackend {
         runner: Option<WindowsRunnerProvisioningSpec>,
         decorate: impl FnOnce(Arc<dyn ExecBackend>) -> Arc<dyn ExecBackend>,
     ) -> Result<Arc<Self>> {
+        Self::create_in_runner_environment(options, factory, helper_sha256, runtime,
+            expected, production, runner, RunnerEnvironmentKind::CheckedV7, decorate)
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn create_in_runner_environment(
+        options: ExecServerRuntimeOptions,
+        factory: HttpClientFactory,
+        helper_sha256: [u8; 32],
+        runtime: Arc<Runtime>,
+        expected: SandboxType,
+        production: bool,
+        runner: Option<WindowsRunnerProvisioningSpec>,
+        runner_environment: RunnerEnvironmentKind,
+        decorate: impl FnOnce(Arc<dyn ExecBackend>) -> Arc<dyn ExecBackend>,
+    ) -> Result<Arc<Self>> {
         if runtime.handle().runtime_flavor() != RuntimeFlavor::MultiThread
             || runtime.handle().metrics().num_workers() < 2
             || options.codex_linux_sandbox_exe.is_some()
@@ -113,10 +137,16 @@ impl ProvisionedWindowsBackend {
             return Err(Error::Invalid);
         }
         if let Some(runner) = &runner {
-            runner.validate_metadata()?;
+            match runner_environment {
+                RunnerEnvironmentKind::CheckedV7 => runner.validate_checked_metadata()?,
+                RunnerEnvironmentKind::NativeCloseV8 => runner.validate_native_close_metadata()?,
+            }
             if !production || expected != SandboxType::WindowsRestrictedToken {
                 return Err(Error::Denied);
             }
+        } else if matches!(runner_environment, RunnerEnvironmentKind::NativeCloseV8) {
+            // An explicit v8 selection cannot become a default/None backend.
+            return Err(Error::Denied);
         }
         let path = options.codex_self_exe.as_path();
         let helper = path.to_str().ok_or(Error::Invalid)?;
@@ -142,13 +172,19 @@ impl ProvisionedWindowsBackend {
             Sha256::digest(serde_json::to_vec(&config).map_err(|_| Error::Invalid)?).into();
         let backend = {
             let _entered = runtime.enter();
-            let environment = match &runner {
-                Some(runner) => Environment::create_with_windows_runner(
+            let environment = match (&runner, runner_environment) {
+                (Some(runner), RunnerEnvironmentKind::CheckedV7) => Environment::create_with_windows_runner(
                     options.clone(),
                     factory.clone(),
                     runner.artifact(),
                 ),
-                None => Environment::create(None, options.clone(), factory.clone()),
+                (Some(runner), RunnerEnvironmentKind::NativeCloseV8) => Environment::create_with_native_close_windows_runner(
+                    options.clone(),
+                    factory.clone(),
+                    runner.artifact(),
+                ),
+                (None, RunnerEnvironmentKind::CheckedV7) => Environment::create(None, options.clone(), factory.clone()),
+                (None, RunnerEnvironmentKind::NativeCloseV8) => return Err(Error::Denied),
             }
             .map_err(|_| Error::Storage)?;
             decorate(environment.get_exec_backend())

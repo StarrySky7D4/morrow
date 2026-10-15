@@ -292,6 +292,7 @@ impl WindowsExecutionPort {
                 });
             },
             slot,
+            None,
         );
         let live = NativeR2State::with_state(&self.state, |state| {
             state.host.validate_started_tool(

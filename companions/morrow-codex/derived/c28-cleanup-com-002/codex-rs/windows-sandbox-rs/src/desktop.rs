@@ -340,6 +340,16 @@ pub(crate) fn shared_private_desktop_for_user(
         return Ok(desktop.name.clone());
     }
 
+    let desktop = create_private_desktop_for_sid(&sandbox_sid,logs_base_dir)?;
+    let name=desktop.name.clone();
+    desktops.insert(key,desktop);
+    Ok(name)
+}
+
+// Shared legacy and one-invocation v8 desktops use the same existing DACL.
+// The v8 instance never enters SHARED_PRIVATE_DESKTOPS.
+fn create_private_desktop_for_sid(sandbox_sid:&str,logs_base_dir:Option<&Path>)->Result<PrivateDesktop> {
+
     let owner_user_sid = unsafe {
         let token = get_current_token_for_restriction()?;
         let sid = get_user_sid_bytes(token);
@@ -347,6 +357,11 @@ pub(crate) fn shared_private_desktop_for_user(
         sid?
     };
     let owner_user_sid = string_from_sid_bytes(&owner_user_sid).map_err(anyhow::Error::msg)?;
+    create_private_desktop_for_sids(sandbox_sid,&owner_user_sid,logs_base_dir,None)?
+        .ok_or_else(||anyhow::anyhow!("shared desktop creation owner missing"))
+}
+fn create_private_desktop_for_sids(sandbox_sid:&str,owner_user_sid:&str,logs_base_dir:Option<&Path>,
+    mut retained:Option<&mut OwnedLaunchDesktop>)->Result<Option<PrivateDesktop>> {
     // CreateProcessWithLogonW shares the caller's logon SID with the sandbox account.
     // Grant ACL-management rights to the caller's user SID instead.
     // https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprocesswithlogonw
@@ -368,6 +383,7 @@ pub(crate) fn shared_private_desktop_for_user(
             unsafe { GetLastError() }
         );
     }
+    if let Some(owner)=retained.as_deref_mut(){owner.security_descriptor=Some(security_descriptor as isize);}
 
     let attributes = SECURITY_ATTRIBUTES {
         nLength: std::mem::size_of::<SECURITY_ATTRIBUTES>() as u32,
@@ -388,8 +404,17 @@ pub(crate) fn shared_private_desktop_for_user(
         )
     };
     let error = unsafe { GetLastError() };
-    unsafe {
-        LocalFree(security_descriptor as HLOCAL);
+    if let Some(owner)=retained.as_deref_mut(){
+        if handle!=0 {owner.desktop=Some(std::mem::ManuallyDrop::new(PrivateDesktop {handle,name:name.clone()}));}
+        // The actual descriptor and any newly created desktop were anchored
+        // before checking LocalFree; an uncertain free is retained, never retried.
+        if !unsafe{LocalFree(security_descriptor as HLOCAL)}.is_null() {
+            let close_error=std::io::Error::last_os_error();
+            owner.descriptor_close_error=Some(close_error.raw_os_error().unwrap_or(0));
+            if handle!=0{return Err(close_error.into());}
+        }else{owner.security_descriptor=None;}
+    }else{
+        unsafe{LocalFree(security_descriptor as HLOCAL);}
     }
     if handle == 0 {
         logging::debug_log(
@@ -399,16 +424,108 @@ pub(crate) fn shared_private_desktop_for_user(
         anyhow::bail!("CreateDesktopW failed for shared private desktop: {error}");
     }
 
-    // Retain ownership across runner exits and idle gaps; different policies stay on separate
-    // desktops so GUI hooks do not automatically cross those policies.
-    desktops.insert(
-        key,
-        PrivateDesktop {
-            handle,
-            name: name.clone(),
-        },
-    );
-    Ok(name)
+    if retained.is_some(){Ok(None)}else{Ok(Some(PrivateDesktop {handle,name}))}
+}
+
+/// Original invocation-owned desktop. No Drop close: its checked CloseDesktop
+/// attempt and uncertain raw debt remain with the original checked owner.
+pub(crate) struct OwnedLaunchDesktop {
+    desktop:Option<std::mem::ManuallyDrop<PrivateDesktop>>,
+    name:String,
+    startup_name:Vec<u16>,
+    creation_attempted:bool,
+    source_token:Option<isize>,
+    source_token_close_error:Option<i32>,
+    security_descriptor:Option<isize>,
+    descriptor_close_error:Option<i32>,
+    close_attempted:bool,
+    close_error:Option<i32>,
+    closed:bool,
+}
+impl OwnedLaunchDesktop {
+    /// Installed in the original checked owner BEFORE any resource allocation.
+    pub(crate) fn new_attempt()->Self {Self {desktop:None,name:String::new(),startup_name:Vec::new(),
+        creation_attempted:false,source_token:None,source_token_close_error:None,
+        security_descriptor:None,descriptor_close_error:None,
+        close_attempted:false,close_error:None,closed:false}}
+    pub(crate) fn create_once(&mut self,sandbox_username:&str,logs_base_dir:Option<&Path>)->Result<()> {
+        anyhow::ensure!(!self.creation_attempted,"original desktop creation already attempted");
+        self.creation_attempted=true;
+        let sid=string_from_sid_bytes(&resolve_sid(sandbox_username)?).map_err(anyhow::Error::msg)?;
+        // Resolve station before allocating the original desktop.
+        let station=current_window_station_name()?;
+        let token=unsafe{get_current_token_for_restriction()?};
+        self.source_token=Some(token);
+        let owner_sid=unsafe{get_user_sid_bytes(token)};
+        let closed=unsafe{CloseHandle(token)};
+        let close_error=if closed==0 {let error=std::io::Error::last_os_error();
+            self.source_token_close_error=Some(error.raw_os_error().unwrap_or(0));Some(error)
+        }else{self.source_token=None;None};
+        // Preserve the original SID-query error first, while any checked token
+        // close debt remains anchored in THIS same preinstalled resource owner.
+        let owner_sid=owner_sid?;
+        if let Some(error)=close_error{return Err(error.into());}
+        let owner_sid=string_from_sid_bytes(&owner_sid).map_err(anyhow::Error::msg)?;
+        create_private_desktop_for_sids(&sid,&owner_sid,logs_base_dir,Some(self))?;
+        let desktop=self.desktop.as_ref().ok_or_else(||anyhow::anyhow!("actual owned desktop absent"))?;
+        let startup_name=qualified_desktop_name(&station,&desktop.name);
+        let name=desktop.name.clone();
+        self.name=name;self.startup_name=startup_name;Ok(())
+    }
+    pub(crate) fn startup_info_desktop(&self)->*mut u16 {self.startup_name.as_ptr() as *mut u16}
+    pub(crate) fn name(&self)->&str {&self.name}
+    pub(crate) fn close_debt_target(&self)->Option<crate::elevated::native_close_protocol::CloseDebtTarget> {
+        use crate::elevated::native_close_protocol::CloseDebtTarget;
+        if self.source_token.is_some(){Some(CloseDebtTarget::HostDesktopToken)}
+        else if self.security_descriptor.is_some(){Some(CloseDebtTarget::HostDesktopSecurityDescriptor)}
+        else if self.close_error.is_some(){Some(CloseDebtTarget::HostDesktopHandle)}else{None}
+    }
+    pub(crate) fn close_once(&mut self)->std::io::Result<()> {
+        if self.closed {return Ok(());}
+        if self.source_token.is_some(){return Err(self.source_token_close_error.map(std::io::Error::from_raw_os_error)
+            .unwrap_or_else(||std::io::Error::other("original desktop token close debt retained")));}
+        if self.security_descriptor.is_some(){return Err(self.descriptor_close_error.map(std::io::Error::from_raw_os_error)
+            .unwrap_or_else(||std::io::Error::other("original desktop descriptor free debt retained")));}
+        if !self.creation_attempted {return Err(std::io::Error::other("original desktop creation not observed"));}
+        if self.close_attempted {
+            return Err(self.close_error.map(std::io::Error::from_raw_os_error)
+                .unwrap_or_else(||std::io::Error::other("original desktop close uncertain; no replay")));
+        }
+        self.close_attempted=true;
+        // Absence is from this actual one-shot prelaunch creation path, never
+        // inferred from a public numeric handle or foreign launch attempt.
+        let Some(desktop)=self.desktop.as_mut() else{self.closed=true;return Ok(())};
+        if unsafe{CloseDesktop(desktop.handle)}==0 {
+            let error=std::io::Error::last_os_error();self.close_error=error.raw_os_error();
+            return Err(error);
+        }
+        desktop.handle=0;self.closed=true;
+        // The successful OS close precedes dropping only inert allocation data.
+        let mut desktop=self.desktop.take().unwrap();
+        unsafe{std::mem::ManuallyDrop::drop(&mut desktop)};
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod owned_native_debt_tests {
+    use super::*;
+    #[test]
+    fn uninitialized_or_retained_transient_desktop_debt_cannot_be_reported_closed_or_retried() {
+        let mut uninitialized=OwnedLaunchDesktop::new_attempt();
+        assert!(uninitialized.close_once().is_err());assert!(!uninitialized.closed);
+        // Labelled scalar debt-negative fixture. Its guard rejects BEFORE any
+        // OS call; neither value is used as a real handle or close witness.
+        for token in [true,false] {
+            let mut owner=OwnedLaunchDesktop::new_attempt();owner.creation_attempted=true;
+            if token {owner.source_token=Some(1234);owner.source_token_close_error=Some(5);}
+            else {owner.security_descriptor=Some(2345);owner.descriptor_close_error=Some(5);}
+            for _ in 0..2 {assert_eq!(owner.close_once().unwrap_err().raw_os_error(),Some(5));}
+            assert!(!owner.closed);assert!(!owner.close_attempted);
+            assert_eq!(owner.source_token.is_some(),token);assert_eq!(owner.security_descriptor.is_some(),!token);
+            assert!(owner.close_debt_target().is_some());
+        }
+    }
 }
 
 struct PrivateDesktop {

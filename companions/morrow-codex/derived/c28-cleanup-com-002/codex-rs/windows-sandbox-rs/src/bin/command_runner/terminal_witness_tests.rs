@@ -12,18 +12,22 @@ fn timeout_failed_wait_and_failed_exit_code_never_authorize_terminal() {
 
 #[test]
 fn output_reader_panic_and_io_failure_cannot_be_eof() {
+    let admission = super::checked_lifecycle::reserve_output_reader_slot().unwrap();
     let failed = std::thread::spawn(|| Err(io::Error::other("synthetic reader failure")));
-    assert!(join_output_reader(failed, Instant::now() + Duration::from_secs(1)).is_err());
+    assert!(join_output_reader(admission, failed, Instant::now() + Duration::from_secs(1)).is_err());
+    let admission = super::checked_lifecycle::reserve_output_reader_slot().unwrap();
     let panicked = std::thread::spawn(|| -> io::Result<()> { panic!("synthetic reader panic") });
-    assert!(join_output_reader(panicked, Instant::now() + Duration::from_secs(1)).is_err());
+    assert!(join_output_reader(admission, panicked, Instant::now() + Duration::from_secs(1)).is_err());
+    let admission = super::checked_lifecycle::reserve_output_reader_slot().unwrap();
     let eof = std::thread::spawn(|| Ok(()));
-    assert!(join_output_reader(eof, Instant::now() + Duration::from_secs(1)).is_ok());
+    assert!(join_output_reader(admission, eof, Instant::now() + Duration::from_secs(1)).is_ok());
 }
 
 #[test]
 fn absent_output_eof_is_bounded_and_never_joined_as_success() {
     let (release, wait) = std::sync::mpsc::channel();
     let (finished, done) = std::sync::mpsc::channel();
+    let admission = super::checked_lifecycle::reserve_output_reader_slot().unwrap();
     let reader = std::thread::spawn(move || {
         wait.recv_timeout(Duration::from_secs(2)).unwrap();
         finished.send(()).unwrap();
@@ -31,7 +35,7 @@ fn absent_output_eof_is_bounded_and_never_joined_as_success() {
     });
     let started = Instant::now();
     assert_eq!(
-        join_output_reader(reader, started + Duration::from_millis(20))
+        join_output_reader(admission, reader, started + Duration::from_millis(20))
             .unwrap_err()
             .kind(),
         io::ErrorKind::TimedOut,

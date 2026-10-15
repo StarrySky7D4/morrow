@@ -1,10 +1,19 @@
+use anyhow::Context;
+#[path = "owned_setup_capture.rs"]
+mod owned_setup_capture;
+
 pub use crate::runtime_ownership::SetupRuntime;
+use rand::RngCore;
 use serde::Deserialize;
 use serde::Serialize;
+use sha2::Digest;
+use sha2::Sha256;
 use std::collections::BTreeSet;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::ffi::OsStr;
 use std::ffi::c_void;
+use std::os::windows::io::AsHandle;
 use std::os::windows::io::BorrowedHandle;
 use std::os::windows::process::CommandExt;
 use std::path::Path;
@@ -363,6 +372,7 @@ fn run_setup_refresh_inner(
         mode: SetupMode::Full,
         runtime,
         refresh_only: true,
+        owned_invocation: None,
     };
     let json = serde_json::to_vec(&payload)?;
     let b64 = BASE64_STANDARD.encode(json);
@@ -720,14 +730,17 @@ struct ElevationPayload {
     runtime: SetupRuntime,
     #[serde(default)]
     refresh_only: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    owned_invocation: Option<crate::setup_provisioning::OwnedSetupInvocationWire>,
 }
 
-#[derive(Clone, Copy, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "kebab-case")]
 enum SetupMode {
     Full,
     InteractiveProvision,
     ProvisionOnly,
+    OwnedFull,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -1069,6 +1082,277 @@ pub fn run_elevated_setup(request: SandboxSetupRequest<'_>) -> Result<()> {
     run_elevated_setup_inner(request, /*offline_proxy_settings_override*/ None)
 }
 
+#[allow(clippy::too_many_arguments)]
+fn build_owned_elevation_payload(
+    request: &SandboxSetupRequest<'_>,
+    real_user: String,
+    real_user_sid: String,
+    parent_pid: u32,
+    expected_setup_exe_sha256: [u8; 32],
+    invocation_nonce: [u8; 32],
+    codex_home_identity: crate::setup_provisioning::OwnedFileIdentity,
+    sandbox_dir_identity: crate::setup_provisioning::OwnedFileIdentity,
+    sandbox_secrets_dir_identity: crate::setup_provisioning::OwnedFileIdentity,
+    sandbox_bin_dir_identity: crate::setup_provisioning::OwnedFileIdentity,
+) -> Result<(
+    ElevationPayload,
+    crate::setup_provisioning::OwnedAppliedPolicyProof,
+    [u8; 32],
+)> {
+    anyhow::ensure!(
+        invocation_nonce != [0_u8; 32],
+        "owned setup invocation nonce must not be all zeros"
+    );
+    let explicit_deny_read_paths = request
+        .permissions
+        .deny_read_paths_for_cwd(request.command_cwd)?;
+    let overrides = SetupRootOverrides {
+        deny_read_paths: Some(explicit_deny_read_paths),
+        ..SetupRootOverrides::default()
+    };
+    let (read_roots, write_roots) =
+        build_payload_roots(request, &overrides, SetupRuntime::Legacy);
+    let deny_read_paths = build_payload_deny_read_paths(overrides.deny_read_paths);
+    let deny_write_paths = build_payload_deny_write_paths(request, overrides.deny_write_paths);
+    let offline_proxy_settings = offline_proxy_settings_for_request(request, None);
+    let request_policy_sha256 = crate::setup_provisioning::compute_owned_setup_policy_sha256(
+        SETUP_VERSION,
+        OFFLINE_USERNAME,
+        ONLINE_USERNAME,
+        request.codex_home,
+        request.command_cwd,
+        &read_roots,
+        &write_roots,
+        &deny_read_paths,
+        &deny_write_paths,
+        &offline_proxy_settings.proxy_ports,
+        offline_proxy_settings.allow_local_binding,
+        &real_user,
+        &real_user_sid,
+        codex_home_identity,
+        sandbox_dir_identity,
+        sandbox_secrets_dir_identity,
+        sandbox_bin_dir_identity,
+    );
+    let owned_invocation = crate::setup_provisioning::OwnedSetupInvocationWire {
+        schema_version: crate::setup_provisioning::OWNED_SETUP_PROTOCOL_SCHEMA_V1,
+        nonce_b64: BASE64_STANDARD.encode(invocation_nonce),
+        parent_pid,
+        expected_setup_exe_sha256,
+        request_policy_sha256,
+        real_user_sid,
+        codex_home_identity,
+        sandbox_dir_identity,
+        sandbox_secrets_dir_identity,
+        sandbox_bin_dir_identity,
+    };
+    let policy = crate::setup_provisioning::OwnedAppliedPolicyProof {
+        command_cwd: request.command_cwd.to_path_buf(),
+        read_roots: read_roots.clone(),
+        write_roots: write_roots.clone(),
+        deny_read_paths: deny_read_paths.clone(),
+        deny_write_paths: deny_write_paths.clone(),
+        proxy_ports: offline_proxy_settings.proxy_ports.clone(),
+        allow_local_binding: offline_proxy_settings.allow_local_binding,
+    };
+    let payload = ElevationPayload {
+        version: SETUP_VERSION,
+        offline_username: OFFLINE_USERNAME.to_string(),
+        online_username: ONLINE_USERNAME.to_string(),
+        codex_home: request.codex_home.to_path_buf(),
+        command_cwd: request.command_cwd.to_path_buf(),
+        read_roots,
+        write_roots,
+        deny_read_paths,
+        deny_write_paths,
+        proxy_ports: offline_proxy_settings.proxy_ports,
+        allow_local_binding: offline_proxy_settings.allow_local_binding,
+        otel: None,
+        real_user,
+        mode: SetupMode::OwnedFull,
+        runtime: SetupRuntime::Legacy,
+        refresh_only: false,
+        owned_invocation: Some(owned_invocation),
+    };
+    Ok((payload, policy, request_policy_sha256))
+}
+
+/// Runs an already-elevated, fresh owned sandbox setup through the pinned
+/// `codex-windows-sandbox-setup.exe` helper executable (`SetupMode::OwnedFull`) with full
+/// read/write/deny-read/deny-write/proxy policy semantics, and returns the
+/// non-deserializable `OwnedWindowsSandboxSetup` ownership capability proof after
+/// verifying the nonce-bound child process receipt and live OS objects.
+pub fn run_owned_elevated_setup_with_matched_helper(
+    request: SandboxSetupRequest<'_>,
+    matched_setup_exe: &crate::checked_runner::MatchedRunnerArtifact,
+) -> Result<crate::setup_provisioning::OwnedWindowsSandboxSetup> {
+    anyhow::ensure!(
+        !registered_core_requested(),
+        "owned sandbox setup cannot run when registered Core is requested"
+    );
+    anyhow::ensure!(
+        crate::runtime_ownership::load_installation()?.is_none(),
+        "owned sandbox setup requires no existing installation registration"
+    );
+    anyhow::ensure!(
+        !crate::setup_provisioning::read_acl_mutex_exists()?,
+        "owned sandbox setup cannot run while Local\\CodexSandboxReadAcl is active"
+    );
+    request
+        .permissions
+        .validate_elevated_filesystem_policy(request.command_cwd)?;
+    let elevated = is_elevated().map_err(|err| {
+        failure(
+            SetupErrorCode::OrchestratorElevationCheckFailed,
+            format!("failed to determine elevation state: {err}"),
+        )
+    })?;
+    anyhow::ensure!(
+        elevated,
+        "owned sandbox setup requires an already-elevated caller; UAC ShellExecuteExW fallback is not permitted"
+    );
+    anyhow::ensure!(
+        matched_setup_exe
+            .path()
+            .file_name()
+            .is_some_and(|name| name.eq_ignore_ascii_case(OsStr::new(SETUP_EXE_FILENAME))),
+        "matched setup artifact must be {SETUP_EXE_FILENAME}, got {}",
+        matched_setup_exe.path().display()
+    );
+    let current_exe = std::env::current_exe()
+        .map_err(|err| anyhow!("failed to resolve current_exe for owned setup: {err}"))?;
+    let resolved_setup_exe = find_setup_exe_for_current_exe(&current_exe).ok_or_else(|| {
+        anyhow!(
+            "failed to resolve bundled {SETUP_EXE_FILENAME} adjacent to {}; bare PATH fallback is not permitted",
+            current_exe.display()
+        )
+    })?;
+    matched_setup_exe.verify_resolved(&resolved_setup_exe)?;
+
+    let capture_admission = owned_setup_capture::Admission::reserve()?;
+    let real_user = crate::runtime_ownership::current_setup_user()?;
+    let real_user_sid_bytes = crate::winutil::resolve_sid(&real_user)?;
+    let real_user_sid =
+        crate::winutil::string_from_sid_bytes(&real_user_sid_bytes).map_err(anyhow::Error::msg)?;
+    let pinned_dirs = crate::setup_provisioning::pin_fresh_owned_setup_directories(
+        request.codex_home,
+        real_user.clone(),
+        real_user_sid.clone(),
+    )?;
+
+    let mut invocation_nonce = [0_u8; 32];
+    rand::rngs::OsRng.fill_bytes(&mut invocation_nonce);
+    if invocation_nonce == [0_u8; 32] {
+        invocation_nonce[0] = 1;
+    }
+    let parent_pid = std::process::id();
+    let (payload, policy, request_policy_sha256) = build_owned_elevation_payload(
+        &request,
+        real_user,
+        real_user_sid,
+        parent_pid,
+        matched_setup_exe.sha256(),
+        invocation_nonce,
+        pinned_dirs.codex_home_identity,
+        pinned_dirs.sandbox_dir_identity,
+        pinned_dirs.sandbox_secrets_dir_identity,
+        pinned_dirs.sandbox_bin_dir_identity,
+    )?;
+
+    let cleared_report = match clear_setup_error_report(request.codex_home) {
+        Ok(()) => true,
+        Err(err) => {
+            log_note(
+                &format!(
+                    "owned setup orchestrator: failed to clear setup_error.json before launch: {err}"
+                ),
+                Some(&sandbox_dir(request.codex_home)),
+            );
+            false
+        }
+    };
+    let payload_json = serde_json::to_string(&payload).map_err(|err| {
+        failure(
+            SetupErrorCode::OrchestratorPayloadSerializeFailed,
+            format!("failed to serialize owned elevation payload: {err}"),
+        )
+    })?;
+    let payload_b64 = BASE64_STANDARD.encode(payload_json.as_bytes());
+
+    let mut command = Command::new(matched_setup_exe.path());
+    crate::launch_environment::configure_command(&mut command, &payload_b64)?;
+    let retained_handles = [
+        pinned_dirs.codex_home_handle.as_handle(),
+        pinned_dirs.sandbox_dir_handle.as_handle(),
+        pinned_dirs.sandbox_secrets_dir_handle.as_handle(),
+        pinned_dirs.sandbox_bin_dir_handle.as_handle(),
+    ];
+    let spawned =
+        crate::setup_launch::spawn_owned_setup_with_retained_handles_and_pipes(
+            &mut command,
+            matched_setup_exe,
+            &retained_handles,
+        )
+        .map_err(|err| {
+            failure(
+                SetupErrorCode::OrchestratorHelperLaunchFailed,
+                format!("failed to launch owned setup helper (non-elevated): {err}"),
+            )
+        })?;
+    // Anchor all originals before either reader can start/fail. Unknown retains
+    // this exact child, pipes, directory pins and native reader handles; no retry.
+    let mut capture = owned_setup_capture::Capture::new(spawned, pinned_dirs, policy, capture_admission);
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(120);
+    capture.observe(deadline).context("owned setup original process/pipe capture")?;
+    let child_pid = capture.child_pid();
+    let status = capture.status();
+    let stdout_bytes = capture.stdout_bytes().to_vec();
+
+    capture.validate(deadline, |validation| {
+        if !status.success() {
+            return Err(report_helper_failure(request.codex_home, cleared_report, status.code()));
+        }
+        crate::setup_provisioning::verify_and_bind_owned_windows_sandbox_setup(
+            matched_setup_exe, parent_pid, child_pid, status.code(), invocation_nonce,
+            request_policy_sha256, &stdout_bytes, validation, deadline,
+        )?;
+        // Postcheck is inside the same armed owner, before its only commit.
+        verify_setup_completed(request.codex_home)?;
+        if let Err(err) = clear_setup_error_report(request.codex_home) {
+            log_note(&format!("owned setup orchestrator: failed to clear setup_error.json after success: {err}"),
+                Some(&sandbox_dir(request.codex_home)));
+        }
+        Ok(())
+    })?;
+    Ok(capture.commit())
+}
+
+/// Resolves and pins the bundled `codex-windows-sandbox-setup.exe` helper executable
+/// adjacent to `current_exe()` (never falling back to bare `PATH`), executes it in
+/// `SetupMode::OwnedFull`, and returns the verified `OwnedWindowsSandboxSetup` proof.
+pub fn run_owned_elevated_setup(
+    request: SandboxSetupRequest<'_>,
+) -> Result<crate::setup_provisioning::OwnedWindowsSandboxSetup> {
+    let current_exe = std::env::current_exe()
+        .map_err(|err| anyhow!("failed to resolve current_exe for owned setup: {err}"))?;
+    let setup_exe = find_setup_exe_for_current_exe(&current_exe).ok_or_else(|| {
+        anyhow!(
+            "failed to resolve bundled {SETUP_EXE_FILENAME} adjacent to {}; bare PATH fallback is not permitted",
+            current_exe.display()
+        )
+    })?;
+    let setup_bytes = std::fs::read(&setup_exe).map_err(|err| {
+        anyhow!(
+            "failed to read bundled {SETUP_EXE_FILENAME} at {}: {err}",
+            setup_exe.display()
+        )
+    })?;
+    let setup_sha256 = <[u8; 32]>::from(Sha256::digest(&setup_bytes));
+    let matched_setup_exe =
+        crate::checked_runner::MatchedRunnerArtifact::acquire(&setup_exe, setup_sha256)?;
+    run_owned_elevated_setup_with_matched_helper(request, &matched_setup_exe)
+}
+
 pub(crate) fn run_elevated_setup_with_proxy_settings(
     request: SandboxSetupRequest<'_>,
     offline_proxy_settings: &OfflineProxySettings,
@@ -1162,6 +1446,7 @@ fn elevated_provisioning_payload(
         mode: SetupMode::InteractiveProvision,
         runtime: SetupRuntime::Legacy,
         refresh_only: false,
+        owned_invocation: None,
     }
 }
 
@@ -1242,6 +1527,7 @@ pub fn run_elevated_provisioning_setup_with_retained_handles(
         mode: SetupMode::ProvisionOnly,
         runtime,
         refresh_only: false,
+        owned_invocation: None,
     };
     run_setup_exe(
         &payload,
@@ -1461,6 +1747,7 @@ fn filter_sensitive_write_roots(mut roots: Vec<PathBuf>, codex_home: &Path) -> V
 
 #[cfg(test)]
 mod tests {
+    use base64::Engine;
     use super::WINDOWS_PLATFORM_DEFAULT_READ_ROOTS;
     use super::WINDOWS_SANDBOX_PROXY_PORTS_ENV_KEY;
     use super::build_payload_roots;
@@ -2735,6 +3022,129 @@ mod tests {
         assert_eq!(
             super::build_payload_deny_read_paths(Some(vec![existing.clone(), missing.clone()])),
             vec![existing, missing]
+        );
+    }
+
+    #[test]
+    fn owned_elevation_payload_transfers_full_read_write_deny_and_proxy_policy_and_preserves_legacy_json() {
+        let tmp = TempDir::new().expect("tempdir");
+        let codex_home = tmp.path().join("codex-home");
+        let workspace = tmp.path().join("workspace");
+        let docs = tmp.path().join("docs");
+        let secret_dir = workspace.join("private");
+        let git_dir = workspace.join(".git");
+        fs::create_dir_all(&codex_home).expect("create codex home");
+        fs::create_dir_all(&workspace).expect("create workspace");
+        fs::create_dir_all(&docs).expect("create docs");
+        fs::create_dir_all(&secret_dir).expect("create private");
+        fs::create_dir_all(&git_dir).expect("create .git");
+
+        let permission_profile = PermissionProfile::Managed {
+            file_system: ManagedFileSystemPermissions::Restricted {
+                entries: vec![
+                    FileSystemSandboxEntry::new(
+                        FileSystemPath::Special {
+                            value: FileSystemSpecialPath::Root,
+                        },
+                        FileSystemAccessMode::Read,
+                    ),
+                    FileSystemSandboxEntry::new(
+                        AbsolutePathBuf::from_absolute_path(&docs)
+                            .expect("abs docs")
+                            .into(),
+                        FileSystemAccessMode::Read,
+                    ),
+                    FileSystemSandboxEntry::new(
+                        AbsolutePathBuf::from_absolute_path(&workspace)
+                            .expect("abs workspace")
+                            .into(),
+                        FileSystemAccessMode::Write,
+                    ),
+                    FileSystemSandboxEntry::new(
+                        AbsolutePathBuf::from_absolute_path(&secret_dir)
+                            .expect("abs secret_dir")
+                            .into(),
+                        FileSystemAccessMode::Deny,
+                    ),
+                ],
+                glob_scan_max_depth: None,
+            },
+            network: NetworkSandboxPolicy::Restricted,
+        };
+        let workspace_roots = workspace_roots_for(&workspace);
+        let permissions = permissions_for(&permission_profile, &workspace_roots);
+        let env_map = HashMap::from([
+            (
+                "HTTP_PROXY".to_string(),
+                "http://127.0.0.1:8888".to_string(),
+            ),
+            (
+                "CODEX_NETWORK_ALLOW_LOCAL_BINDING".to_string(),
+                "0".to_string(),
+            ),
+        ]);
+        let request = super::SandboxSetupRequest {
+            permissions: &permissions,
+            command_cwd: &workspace,
+            env_map: &env_map,
+            codex_home: &codex_home,
+            proxy_enforced: true,
+        };
+        let dir_id = |low: u32| crate::setup_provisioning::OwnedFileIdentity {
+            volume_serial_number: 1,
+            file_index_high: 0,
+            file_index_low: low,
+            is_directory: true,
+        };
+        let nonce = [0x5A_u8; 32];
+        let (payload, policy, policy_sha256) = super::build_owned_elevation_payload(
+            &request,
+            r"VM\Admin".to_string(),
+            "S-1-5-21-1-2-3-500".to_string(),
+            1234,
+            [0x11_u8; 32],
+            nonce,
+            dir_id(10),
+            dir_id(11),
+            dir_id(12),
+            dir_id(13),
+        )
+        .expect("build owned elevation payload");
+
+        assert_eq!(payload.mode, super::SetupMode::OwnedFull);
+        assert!(!payload.refresh_only);
+        assert_eq!(payload.command_cwd, workspace);
+        assert_eq!(payload.proxy_ports, vec![8888]);
+        assert!(!payload.allow_local_binding);
+        let canonical_workspace = dunce::canonicalize(&workspace).expect("canonical workspace");
+        let canonical_docs = dunce::canonicalize(&docs).expect("canonical docs");
+        let canonical_git = dunce::canonicalize(&git_dir).expect("canonical .git");
+        let canonical_secret = dunce::canonicalize(&secret_dir).expect("canonical secret");
+        assert!(payload.write_roots.contains(&canonical_workspace));
+        assert!(payload.read_roots.contains(&canonical_docs));
+        assert!(!payload.read_roots.contains(&canonical_secret));
+        assert!(payload.deny_read_paths.contains(&canonical_secret));
+        assert!(payload.deny_write_paths.contains(&canonical_git));
+        assert_eq!(policy.read_roots, payload.read_roots);
+        assert_eq!(policy.write_roots, payload.write_roots);
+        assert_eq!(policy.deny_read_paths, payload.deny_read_paths);
+        assert_eq!(policy.deny_write_paths, payload.deny_write_paths);
+        assert_eq!(policy.proxy_ports, vec![8888]);
+        let invocation = payload
+            .owned_invocation
+            .as_ref()
+            .expect("owned invocation present");
+        assert_eq!(invocation.request_policy_sha256, policy_sha256);
+        assert!(
+            !format!("{invocation:?}").contains(&super::BASE64_STANDARD.encode(nonce)),
+            "Debug on OwnedSetupInvocationWire must redact nonce"
+        );
+
+        let legacy = super::elevated_provisioning_payload(&request, None, r"VM\Admin".to_string());
+        let legacy_json = serde_json::to_string(&legacy).expect("serialize legacy payload");
+        assert!(
+            !legacy_json.contains("owned_invocation"),
+            "legacy ElevationPayload JSON must omit owned_invocation"
         );
     }
 }

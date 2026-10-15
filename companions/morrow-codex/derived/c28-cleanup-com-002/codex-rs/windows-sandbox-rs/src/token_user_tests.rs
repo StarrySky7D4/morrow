@@ -73,6 +73,23 @@ fn queries_current_user_and_rejects_invalid_token() -> Result<()> {
     let _token = unsafe { OwnedHandle::from_raw_handle(raw as _) };
     let user = unsafe { get_user_sid_bytes(raw) }?;
     assert!(unsafe { IsValidSid(user.as_ptr() as _) } != 0);
+    let primary=current_process_primary_token_identity()?;
+    assert!(primary.is_primary());
+    assert_eq!(primary.user_sid(),sid_text(&user)?);
     assert!(unsafe { get_user_sid_bytes(0) }.is_err());
     Ok(())
+}
+
+#[test]
+fn owned_sid_text_preserves_actual_subauthorities_and_rejects_malformed_lengths()->Result<()> {
+    let mut sid=vec![1,5,0,0,0,0,0,5];
+    for part in [21u32,1,2,3,1001] {sid.extend_from_slice(&part.to_le_bytes());}
+    assert_eq!(sid_text(&sid)?,"S-1-5-21-1-2-3-1001");
+    let mut other=sid.clone();other[24..28].copy_from_slice(&1002u32.to_le_bytes());
+    assert_eq!(sid_text(&other)?,"S-1-5-21-1-2-3-1002");
+    assert_ne!(sid_text(&sid)?,sid_text(&other)?);
+    assert!(sid_text(&sid[..27]).is_err());
+    let mut excess=sid.clone();excess.push(0);assert!(sid_text(&excess).is_err());
+    let mut malformed=sid;malformed[1]=16;assert!(sid_text(&malformed).is_err());
+    assert!(sid_text(&[]).is_err());Ok(())
 }

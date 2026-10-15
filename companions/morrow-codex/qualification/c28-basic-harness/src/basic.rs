@@ -51,7 +51,7 @@ pub struct Fixture {
     pub allowed: PathBuf, pub denied: PathBuf,
     baseline: PathBuf, _directory: File, _baseline: File,
     pub security: crate::basic_security::SecuritySpec,
-    _query_pin: codex_windows_sandbox::MatchedRunnerArtifact,
+    _query_pin: Option<codex_windows_sandbox::MatchedRunnerArtifact>,
     network: crate::basic_security::NetworkFixture,
 }
 impl Fixture {
@@ -59,9 +59,17 @@ impl Fixture {
     /// No overwrite, rollback, adoption or automatic delete after a partial failure.
     pub fn create(lifecycle: &crate::provisioning::GuestLifecycle, nonce: &str,
         query: &crate::preflight::Artifact) -> Result<Self> {
+        Self::create_with_source(lifecycle,nonce,crate::basic_security::IdentitySource::Whoami(query.clone()))
+    }
+    pub fn create_native_v8(lifecycle:&crate::provisioning::GuestLifecycle,nonce:&str)->Result<Self> {
+        Self::create_with_source(lifecycle,nonce,crate::basic_security::IdentitySource::CurrentPrimaryTokenV8)
+    }
+    fn create_with_source(lifecycle:&crate::provisioning::GuestLifecycle,nonce:&str,
+        source:crate::basic_security::IdentitySource)->Result<Self> {
         let root = lifecycle.synthetic_root();
         // Validate and retain the exact guest-system image before fixture effects.
-        let query_pin = crate::basic_security::pin_query(query)?;
+        // Native v8 queries its own primary token, with no identity child/image.
+        let query_pin = source.legacy_query().map(crate::basic_security::pin_query).transpose()?;
         let identities = lifecycle.owned_identities().ok_or_else(|| anyhow::anyhow!("actual setup inventory absent"))?;
         let users: Vec<_> = identities.users.iter().filter(|u| u.name == "CodexSandboxOffline").collect();
         ensure!(users.len() == 1 && crate::basic_security::valid_sid(&users[0].sid), "actual unique Offline SID absent");
@@ -81,7 +89,7 @@ impl Fixture {
         positive.write_all(b"C28-TRUSTED-POSITIVE\n")?;
         positive.sync_all()?;
         let network = crate::basic_security::NetworkFixture::create(nonce)?;
-        let security = crate::basic_security::SecuritySpec { query: query.clone(), expected_sid, port: network.port };
+        let security = crate::basic_security::SecuritySpec { source, expected_sid, port: network.port };
         Ok(Self { allowed, denied, baseline, _directory: directory, _baseline: positive,
             security, _query_pin: query_pin, network })
     }

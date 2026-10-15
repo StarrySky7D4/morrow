@@ -7,7 +7,11 @@ pub struct ProtectedOwner {
     pub workbench: Workbench,
     finish_attempted: bool,
     finished: bool,
+    finish_receipt_taken:bool,
+    original_binding:morrow_core::dispatch::HostBinding,
 }
+pub(crate) struct FinishedOwnerReceipt {binding:morrow_core::dispatch::HostBinding}
+impl FinishedOwnerReceipt {pub(crate) fn binding(&self)->morrow_core::dispatch::HostBinding {self.binding}}
 impl ProtectedOwner {
     pub fn open(synthetic_root: &Path) -> Result<Self> {
         crate::preflight::plain_absolute(synthetic_root)?;
@@ -27,10 +31,13 @@ impl ProtectedOwner {
             .map_err(|e| anyhow!("original protected Workbench open: {e}"))?;
         // Return the same owner even if original maintenance requires recovery.
         // The caller stores it before consulting the original warning/gates.
+        let original_binding=workbench.agent_owner_binding();
         Ok(Self {
             workbench,
             finish_attempted: false,
             finished: false,
+            finish_receipt_taken:false,
+            original_binding,
         })
     }
     pub fn finished(&self) -> bool {
@@ -71,6 +78,7 @@ impl ProtectedOwner {
             "original finish already attempted; no blind maintenance retry"
         );
         self.require_idle()?;
+        ensure!(self.workbench.agent_owner_binding()==self.original_binding,"original protected owner instance changed");
         self.finish_attempted = true;
         self.workbench
             .finish()
@@ -81,5 +89,11 @@ impl ProtectedOwner {
         );
         self.finished = true;
         Ok(())
+    }
+    pub(crate) fn take_finished_receipt(&mut self)->Result<FinishedOwnerReceipt> {
+        ensure!(self.finished && !self.finish_receipt_taken,"original successful finish receipt absent or consumed");
+        ensure!(self.workbench.agent_owner_binding()==self.original_binding && self.workbench.maintenance_warning().is_none(),
+            "original protected finish changed or maintenance unresolved");
+        self.finish_receipt_taken=true;Ok(FinishedOwnerReceipt {binding:self.original_binding})
     }
 }

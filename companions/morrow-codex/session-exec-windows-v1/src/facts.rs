@@ -78,6 +78,11 @@ impl BorrowedNativeResources {
         owners.push((binding, Arc::downgrade(&owner)));
         Ok(owner)
     }
+    /// No pending-map/registry/native query, and no lease or slot effect.
+    pub fn runner_observation(&self, history: &crate::ReviewedRunnerObservation,
+                              identity: &ToolIdentity) -> codex_exec_server::RunnerObservation {
+        history.read_for(self.binding, identity)
+    }
     pub fn owner_binding(&self) -> HostBinding {
         self.binding
     }
@@ -222,6 +227,12 @@ impl BorrowedNativeResources {
         slot: Arc<ExecutionSlot>,
         process: Arc<dyn codex_exec_server::ExecProcess>,
     ) {
+        if slot.is_native_bound() {
+            // Normal stop after native completion only returns the provider and
+            // drains the original fact ACK. Never repeat controls on v8 exit.
+            if !slot.native_terminal(){slot.unknown();}
+            return;
+        }
         if !slot.claim_cleanup_job() {
             return;
         }

@@ -87,10 +87,280 @@ impl Drop for FirewallComApartment {
     }
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct OwnedFirewallRuleProof {
+    pub(crate) internal_name: &'static str,
+    pub(crate) friendly_desc: String,
+    pub(crate) direction: i32,
+    pub(crate) action: i32,
+    pub(crate) enabled: bool,
+    pub(crate) profiles: i32,
+    pub(crate) protocol: i32,
+    pub(crate) local_user_authorized_list: String,
+    pub(crate) offline_sid: String,
+    pub(crate) remote_addresses: String,
+    pub(crate) remote_ports: Option<String>,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct OwnedFirewallProof {
+    pub(crate) offline_sid: String,
+    pub(crate) rules: Vec<OwnedFirewallRuleProof>,
+}
+
+pub(crate) fn canonical_owned_firewall_rule_name(name: &str) -> Result<&'static str> {
+    match name {
+        OFFLINE_BLOCK_RULE_NAME => Ok(OFFLINE_BLOCK_RULE_NAME),
+        OFFLINE_BLOCK_INBOUND_RULE_NAME => Ok(OFFLINE_BLOCK_INBOUND_RULE_NAME),
+        OFFLINE_BLOCK_LOOPBACK_TCP_RULE_NAME => Ok(OFFLINE_BLOCK_LOOPBACK_TCP_RULE_NAME),
+        OFFLINE_BLOCK_LOOPBACK_UDP_RULE_NAME => Ok(OFFLINE_BLOCK_LOOPBACK_UDP_RULE_NAME),
+        _ => anyhow::bail!("unexpected or uncreated firewall rule name in owned proof: {name}"),
+    }
+}
+
 // Keep apartment initialization and all COM objects in the synchronous calling thread.
-pub(crate) fn with_firewall_com_apartment(operation: impl FnOnce() -> Result<()>) -> Result<()> {
+pub(crate) fn with_firewall_com_apartment<T>(operation: impl FnOnce() -> Result<T>) -> Result<T> {
     let _apartment = FirewallComApartment::initialize()?;
     operation()
+}
+
+pub(crate) fn provision_owned_offline_firewall_rules(
+    offline_sid: &str,
+    proxy_ports: &[u16],
+    allow_local_binding: bool,
+    log: &mut dyn Write,
+) -> Result<OwnedFirewallProof> {
+    anyhow::ensure!(
+        !offline_sid.is_empty(),
+        "owned firewall provisioning requires non-empty offline SID"
+    );
+    let local_user_spec = format!("O:LSD:(A;;CC;;;{offline_sid})");
+    let _apartment = FirewallComApartment::initialize()?;
+
+    unsafe {
+        let policy: INetFwPolicy2 = CoCreateInstance(&NetFwPolicy2, None, CLSCTX_INPROC_SERVER)
+            .map_err(|err| {
+                anyhow::Error::new(SetupFailure::new(
+                    SetupErrorCode::HelperFirewallPolicyAccessFailed,
+                    format!("CoCreateInstance NetFwPolicy2 failed: {err:?}"),
+                ))
+            })?;
+        ensure_local_policy_rules_take_effect(&policy)?;
+        let rules = policy.Rules().map_err(|err| {
+            anyhow::Error::new(SetupFailure::new(
+                SetupErrorCode::HelperFirewallPolicyAccessFailed,
+                format!("INetFwPolicy2::Rules failed: {err:?}"),
+            ))
+        })?;
+
+        for candidate in [
+            OFFLINE_BLOCK_RULE_NAME,
+            OFFLINE_BLOCK_INBOUND_RULE_NAME,
+            OFFLINE_BLOCK_LOOPBACK_TCP_RULE_NAME,
+            OFFLINE_BLOCK_LOOPBACK_UDP_RULE_NAME,
+            OFFLINE_PROXY_ALLOW_RULE_NAME,
+        ] {
+            let candidate_bstr = BSTR::from(candidate);
+            if rules.Item(&candidate_bstr).is_ok() {
+                anyhow::bail!(
+                    "pre-existing firewall rule {candidate} found before owned setup; refusing to overwrite or adopt"
+                );
+            }
+        }
+
+        let blocked_tcp_ports = if allow_local_binding {
+            None
+        } else {
+            blocked_loopback_tcp_remote_ports(proxy_ports)
+        };
+
+        let mut specs = Vec::new();
+        if !allow_local_binding {
+            specs.push(BlockRuleSpec {
+                internal_name: OFFLINE_BLOCK_LOOPBACK_UDP_RULE_NAME,
+                friendly_desc: OFFLINE_BLOCK_LOOPBACK_UDP_RULE_FRIENDLY,
+                direction: NET_FW_RULE_DIR_OUT,
+                protocol: NET_FW_IP_PROTOCOL_UDP.0,
+                local_user_spec: &local_user_spec,
+                offline_sid,
+                remote_addresses: Some(LOOPBACK_REMOTE_ADDRESSES),
+                remote_ports: None,
+            });
+            specs.push(BlockRuleSpec {
+                internal_name: OFFLINE_BLOCK_LOOPBACK_TCP_RULE_NAME,
+                friendly_desc: OFFLINE_BLOCK_LOOPBACK_TCP_RULE_FRIENDLY,
+                direction: NET_FW_RULE_DIR_OUT,
+                protocol: NET_FW_IP_PROTOCOL_TCP.0,
+                local_user_spec: &local_user_spec,
+                offline_sid,
+                remote_addresses: Some(LOOPBACK_REMOTE_ADDRESSES),
+                remote_ports: blocked_tcp_ports.as_deref(),
+            });
+        }
+        specs.push(BlockRuleSpec {
+            internal_name: OFFLINE_BLOCK_RULE_NAME,
+            friendly_desc: OFFLINE_BLOCK_RULE_FRIENDLY,
+            direction: NET_FW_RULE_DIR_OUT,
+            protocol: NET_FW_IP_PROTOCOL_ANY.0,
+            local_user_spec: &local_user_spec,
+            offline_sid,
+            remote_addresses: Some(NON_LOOPBACK_REMOTE_ADDRESSES),
+            remote_ports: None,
+        });
+        specs.push(BlockRuleSpec {
+            internal_name: OFFLINE_BLOCK_INBOUND_RULE_NAME,
+            friendly_desc: OFFLINE_BLOCK_INBOUND_RULE_FRIENDLY,
+            direction: NET_FW_RULE_DIR_IN,
+            protocol: NET_FW_IP_PROTOCOL_ANY.0,
+            local_user_spec: &local_user_spec,
+            offline_sid,
+            remote_addresses: Some(NON_LOOPBACK_REMOTE_ADDRESSES),
+            remote_ports: None,
+        });
+
+        let mut created_rules = Vec::with_capacity(specs.len());
+        for spec in &specs {
+            let name = BSTR::from(spec.internal_name);
+            anyhow::ensure!(
+                rules.Item(&name).is_err(),
+                "firewall rule {} appeared concurrently before Add",
+                spec.internal_name
+            );
+            let new_rule: INetFwRule3 =
+                CoCreateInstance(&NetFwRule, None, CLSCTX_INPROC_SERVER).map_err(|err| {
+                    anyhow::Error::new(SetupFailure::new(
+                        SetupErrorCode::HelperFirewallRuleCreateOrAddFailed,
+                        format!("CoCreateInstance NetFwRule failed: {err:?}"),
+                    ))
+                })?;
+            new_rule.SetName(&name).map_err(|err| {
+                anyhow::Error::new(SetupFailure::new(
+                    SetupErrorCode::HelperFirewallRuleCreateOrAddFailed,
+                    format!("SetName failed: {err:?}"),
+                ))
+            })?;
+            configure_rule(&new_rule, spec)?;
+            rules.Add(&new_rule).map_err(|err| {
+                anyhow::Error::new(SetupFailure::new(
+                    SetupErrorCode::HelperFirewallRuleCreateOrAddFailed,
+                    format!("Rules::Add failed: {err:?}"),
+                ))
+            })?;
+
+            let added_rule = rules.Item(&name).map_err(|err| {
+                anyhow::Error::new(SetupFailure::new(
+                    SetupErrorCode::HelperFirewallRuleVerifyFailed,
+                    format!(
+                        "read-back of added firewall rule {} failed: {err:?}",
+                        spec.internal_name
+                    ),
+                ))
+            })?;
+            let added: INetFwRule3 = added_rule.cast().map_err(|err| {
+                anyhow::Error::new(SetupFailure::new(
+                    SetupErrorCode::HelperFirewallRuleVerifyFailed,
+                    format!(
+                        "INetFwRule3 cast of added firewall rule {} failed: {err:?}",
+                        spec.internal_name
+                    ),
+                ))
+            })?;
+            let actual_desc = added
+                .Description()
+                .map_err(|err| anyhow::anyhow!("read firewall rule Description failed: {err:?}"))?
+                .to_string();
+            let actual_dir = added
+                .Direction()
+                .map_err(|err| anyhow::anyhow!("read firewall rule Direction failed: {err:?}"))?
+                .0;
+            let actual_action = added
+                .Action()
+                .map_err(|err| anyhow::anyhow!("read firewall rule Action failed: {err:?}"))?
+                .0;
+            let actual_enabled = added
+                .Enabled()
+                .map_err(|err| anyhow::anyhow!("read firewall rule Enabled failed: {err:?}"))?
+                == VARIANT_TRUE;
+            let actual_profiles = added
+                .Profiles()
+                .map_err(|err| anyhow::anyhow!("read firewall rule Profiles failed: {err:?}"))?;
+            let actual_protocol = added
+                .Protocol()
+                .map_err(|err| anyhow::anyhow!("read firewall rule Protocol failed: {err:?}"))?;
+            let actual_local_users = added
+                .LocalUserAuthorizedList()
+                .map_err(|err| {
+                    anyhow::anyhow!("read firewall rule LocalUserAuthorizedList failed: {err:?}")
+                })?
+                .to_string();
+            let actual_remote_addrs = added
+                .RemoteAddresses()
+                .map_err(|err| {
+                    anyhow::anyhow!("read firewall rule RemoteAddresses failed: {err:?}")
+                })?
+                .to_string();
+            let actual_remote_ports = if spec.remote_ports.is_some() {
+                Some(
+                    added
+                        .RemotePorts()
+                        .map_err(|err| {
+                            anyhow::anyhow!("read firewall rule RemotePorts failed: {err:?}")
+                        })?
+                        .to_string(),
+                )
+            } else {
+                None
+            };
+
+            anyhow::ensure!(
+                actual_desc == spec.friendly_desc
+                    && actual_dir == spec.direction.0
+                    && actual_action == NET_FW_ACTION_BLOCK.0
+                    && actual_enabled
+                    && actual_profiles == NET_FW_PROFILE2_ALL.0
+                    && actual_protocol == spec.protocol
+                    && actual_local_users.contains(offline_sid)
+                    && !actual_remote_addrs.is_empty(),
+                "read-back verification of newly added firewall rule {} failed",
+                spec.internal_name
+            );
+
+            let remote_addresses_log = spec.remote_addresses.unwrap_or("*");
+            let remote_ports_log = spec.remote_ports.unwrap_or("*");
+            log_line(
+                log,
+                &format!(
+                    "owned firewall rule created name={} protocol={} RemoteAddresses={remote_addresses_log} RemotePorts={remote_ports_log} LocalUserAuthorizedList={actual_local_users}",
+                    spec.internal_name, spec.protocol
+                ),
+            )?;
+
+            created_rules.push(OwnedFirewallRuleProof {
+                internal_name: match spec.internal_name {
+                    OFFLINE_BLOCK_RULE_NAME => OFFLINE_BLOCK_RULE_NAME,
+                    OFFLINE_BLOCK_INBOUND_RULE_NAME => OFFLINE_BLOCK_INBOUND_RULE_NAME,
+                    OFFLINE_BLOCK_LOOPBACK_TCP_RULE_NAME => OFFLINE_BLOCK_LOOPBACK_TCP_RULE_NAME,
+                    OFFLINE_BLOCK_LOOPBACK_UDP_RULE_NAME => OFFLINE_BLOCK_LOOPBACK_UDP_RULE_NAME,
+                    _ => unreachable!("unexpected firewall rule spec name"),
+                },
+                friendly_desc: actual_desc,
+                direction: actual_dir,
+                action: actual_action,
+                enabled: actual_enabled,
+                profiles: actual_profiles,
+                protocol: actual_protocol,
+                local_user_authorized_list: actual_local_users,
+                offline_sid: offline_sid.to_string(),
+                remote_addresses: actual_remote_addrs,
+                remote_ports: actual_remote_ports,
+            });
+        }
+
+        Ok(OwnedFirewallProof {
+            offline_sid: offline_sid.to_string(),
+            rules: created_rules,
+        })
+    }
 }
 
 pub fn ensure_offline_proxy_allowlist(

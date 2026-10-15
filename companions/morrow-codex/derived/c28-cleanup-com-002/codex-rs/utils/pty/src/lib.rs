@@ -10,6 +10,8 @@ pub use child_command::SpawnFallback;
 mod linux_fds;
 pub mod pipe;
 mod process;
+mod runner_observation;
+pub use runner_observation::*;
 pub mod process_group;
 pub mod pty;
 pub use pty::ChildFds;
@@ -74,4 +76,8 @@ mod spawn_helper_tests;
 #[cfg(windows)]
 pub use process::CheckedDriverControls;
 #[cfg(windows)]
+pub use process::CheckedOwnerFinalization;
+#[cfg(windows)]
 pub use process::spawn_from_driver_with_checked_controls;
+#[cfg(windows)]
+pub use process::{NativeCloseDriver,spawn_from_driver_with_native_close};

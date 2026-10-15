@@ -191,3 +191,88 @@ fn retry_uses_original_unified_exec_request_and_stops_after_second_failure() {
     );
     assert_eq!(vec![expected_refresh], *refresh_observations.borrow());
 }
+
+#[test]
+fn checked_post_launch_unknown_never_refreshes_or_replays_in_unified_exec_retry() {
+    let workspace_root = AbsolutePathBuf::from_absolute_path(PathBuf::from(r"C:\workspace"))
+        .expect("absolute workspace root");
+    let permission_profile = PermissionProfile::workspace_write();
+    let permissions =
+        ResolvedWindowsSandboxPermissions::try_from_permission_profile_for_workspace_roots(
+            &permission_profile,
+            std::slice::from_ref(&workspace_root),
+        )
+        .expect("resolved permissions");
+    let env_map = HashMap::new();
+    let request = RunnerTransportRequest {
+        permissions,
+        codex_home: PathBuf::from(r"C:\Users\codex"),
+        cwd: PathBuf::from(r"C:\workspace"),
+        env_map: env_map.clone(),
+        logs_base_dir: None,
+        spawn_request: SpawnRequest {
+            command: vec!["cmd.exe".to_string(), "/C".to_string(), "echo".to_string()],
+            cwd: PathBuf::from(r"C:\workspace"),
+            env: env_map,
+            permission_profile,
+            workspace_roots: vec![workspace_root],
+            codex_home: PathBuf::from(r"C:\Users\codex\.sandbox"),
+            real_codex_home: PathBuf::from(r"C:\Users\codex"),
+            cap_sids: vec![],
+            network_proxy_restricting_sid: None,
+            timeout_ms: Some(5_000),
+            tty: false,
+            stdin_open: false,
+            private_desktop_name: None,
+        },
+        read_roots_override: None,
+        read_roots_include_platform_defaults: true,
+        write_roots_override: None,
+        deny_read_paths_override: vec![],
+        deny_write_paths_override: vec![],
+        proxy_enforced: false,
+        proxy_settings_mode: WindowsSandboxProxySettingsMode::Preserve,
+    };
+
+    let spawn_attempts = Cell::new(0);
+    let result = spawn_runner_transport_with_retry(
+        SandboxCreds {
+            username: "checked_user".to_string(),
+            password: "checked_password".to_string(),
+        },
+        &request,
+        |_codex_home, _cwd, _sandbox_creds, _logs_base_dir, _spawn_request| {
+            spawn_attempts.set(spawn_attempts.get() + 1);
+            let primary = anyhow::Error::new(RunnerStartupError::new(ErrorPayload {
+                message: "checked child launch failed after process creation".to_string(),
+                stage: ErrorStage::SpawnChild,
+                windows_error_code: Some(ERROR_NO_SUCH_LOGON_SESSION),
+            }));
+            Err::<(), _>(crate::checked_owner::mark_error_non_refreshable(
+                primary,
+                crate::checked_owner::StartupId(7),
+            ))
+        },
+        |_permissions,
+         _cwd,
+         _env_map,
+         _codex_home,
+         _read_roots_override,
+         _read_roots_include_platform_defaults,
+         _write_roots_override,
+         _deny_read_paths_override,
+         _deny_write_paths_override,
+         _proxy_enforced,
+         _proxy_settings_mode| {
+            panic!("checked post-launch failure must never refresh credentials or replay launch");
+        },
+    );
+
+    let err = result.expect_err("checked post-launch failure must return Err without retry");
+    assert_eq!(spawn_attempts.get(), 1);
+    assert_eq!(
+        "runner failed during SpawnChild: checked child launch failed after process creation (Windows error 1312)",
+        err.to_string()
+    );
+}
+

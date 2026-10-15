@@ -136,6 +136,11 @@ pub use noise_channel::NoiseChannelPublicKey;
 pub use process::ExecBackend;
 pub use process::ExecBackendFuture;
 pub use process::ExecProcess;
+pub use codex_utils_pty::{
+    RunnerObservationReader, RunnerObservation, RunnerObservationKey, RunnerObservationAvailability,
+    RunnerOwnerSnapshot, RunnerWorkerHistory, RunnerWorkerPlacement, RunnerLifecycle,
+    RunnerFailure, RunnerFinalization, RunnerThreadDisposition,
+};
 pub use process::ExecProcessEvent;
 pub use process::ExecProcessEventReceiver;
 pub use process::ExecProcessFuture;

@@ -161,3 +161,39 @@ async fn explicit_process_controls_are_object_safe_and_keep_the_same_process() {
     );
     assert_eq!(inner.effects.load(Ordering::SeqCst), 2);
 }
+
+#[test]
+fn default_observation_and_original_event_log_generation_are_data_only() {
+    let process=ControlledMock{id:ProcessId::from("pure-observation"),effects:AtomicUsize::new(0)};
+    assert_eq!(process.runner_observation().read().availability,
+        codex_utils_pty::RunnerObservationAvailability::Unsupported);
+    assert_eq!(process.effects.load(Ordering::SeqCst),0);
+    let first=codex_utils_pty::RunnerObservationPublisher::new(20);
+    let second=codex_utils_pty::RunnerObservationPublisher::new(20);
+    let events=super::ExecProcessEventLog::new(2,64).with_runner_history(first.reader());
+    let original=events.clone();
+    let replacement=super::ExecProcessEventLog::new(2,64).with_runner_history(second.reader());
+    assert_eq!(events.runner_history().key(),original.runner_history().key());
+    assert_ne!(events.runner_history().key(),replacement.runner_history().key());
+    drop(events);first.retire();drop(first);
+    assert_eq!(original.runner_history().key(),original.runner_history().read().key);
+}
+struct ObservationForwarder(ExistingDecorator,codex_utils_pty::RunnerObservationReader);
+impl ExecProcess for ObservationForwarder {
+    fn runner_observation(&self)->codex_utils_pty::RunnerObservationReader {self.1.clone()}
+    fn process_id(&self)->&ProcessId {self.0.process_id()}
+    fn subscribe_wake(&self)->watch::Receiver<u64> {self.0.subscribe_wake()}
+    fn subscribe_events(&self)->ExecProcessEventReceiver {self.0.subscribe_events()}
+    fn read(&self,s:Option<u64>,b:Option<usize>,w:Option<u64>)->ExecProcessFuture<'_,ReadResponse>{self.0.read(s,b,w)}
+    fn write(&self,b:Vec<u8>)->ExecProcessFuture<'_,WriteResponse>{self.0.write(b)}
+    fn signal(&self,s:ProcessSignal)->ExecProcessFuture<'_,()>{self.0.signal(s)}
+    fn terminate(&self)->ExecProcessFuture<'_,()>{self.0.terminate()}
+}
+#[test]
+fn explicit_observation_forwarder_preserves_only_original_data_instance() {
+    let inner=Arc::new(ControlledMock{id:ProcessId::from("data-only"),effects:AtomicUsize::new(0)});
+    let publisher=codex_utils_pty::RunnerObservationPublisher::new(21);
+    let forward=ObservationForwarder(ExistingDecorator(inner.clone()),publisher.reader());
+    assert_eq!(forward.runner_observation().key(),publisher.reader().key());
+    assert_eq!(inner.effects.load(Ordering::SeqCst),0);
+}
