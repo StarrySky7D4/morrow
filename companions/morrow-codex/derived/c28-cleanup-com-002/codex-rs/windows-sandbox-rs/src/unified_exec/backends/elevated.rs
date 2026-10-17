@@ -140,6 +140,13 @@ async fn spawn_runner_transport_task(
     let task_diagnostic = diagnostic.clone();
     let transport = tokio::task::spawn_blocking(move || -> Result<_> {
         let diagnostic = task_diagnostic.as_ref();
+        if matched_runner.as_ref().is_some_and(|runner|runner.asuser_binding().is_some()) {
+            // The selected original A1 carrier has exactly one native route.
+            // Do not create the legacy desktop or enter its refresh closure.
+            return crate::runner_client::spawn_runner_transport_with_checked_reservation(
+                &request.codex_home,&request.cwd,&sandbox_creds,request.logs_base_dir.as_deref(),
+                request.spawn_request,None,matched_runner,diagnostic,checked_reservation.as_mut());
+        }
         if request.spawn_request.private_desktop_name.is_none() {
             if let Some(diagnostic) = diagnostic {
                 diagnostic.mark(crate::WindowsStartStage::DesktopPolicy);
@@ -271,7 +278,13 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
             permission_profile,
             workspace_roots,
         ).inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?;
-    let elevated = prepare_elevated_spawn_context_for_permissions_with_diagnostics(
+    let elevated = if let Some(binding)=matched_runner.as_ref().and_then(|runner|runner.asuser_binding()) {
+        // Actual setup is already owned by this exact materializer/factory.
+        // The A1 launch cannot invoke automatic account repair/setup refresh,
+        // create capabilities or mutate the global null-device ACL here.
+        crate::spawn_prep::prepare_asuser_spawn_context(&binding,&permissions,codex_home,cwd,&mut env_map,
+            read_roots_override,write_roots_override,&deny_read_paths_override,&deny_write_paths_override,proxy_enforced)?
+    }else{prepare_elevated_spawn_context_for_permissions_with_diagnostics(
         permissions.clone(),
         codex_home,
         cwd,
@@ -285,7 +298,7 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
         proxy_enforced,
         proxy_settings_mode,
         diagnostic.as_ref(),
-    )?;
+    )?};
 
     let sandbox_creds = elevated.sandbox_creds;
     let request = RunnerTransportRequest {

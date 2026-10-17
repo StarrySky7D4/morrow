@@ -16,12 +16,14 @@ pub struct MatchedRunnerArtifact {
     // replacing it with a later path/hash equality test or duplicating handles.
     _parent: Option<std::sync::Arc<MatchedRunnerArtifact>>,
     instance: std::sync::Arc<()>,
+    precreation:Option<std::sync::Arc<crate::asuser_a1_helper::parent_native::OriginGuard>>,
+    asuser:Option<std::sync::Arc<crate::AsUserFactoryBinding>>,
 }
 impl MatchedRunnerArtifact {
     pub fn native_close_view(self:&std::sync::Arc<Self>)->std::sync::Arc<Self> {
         std::sync::Arc::new(Self {path:self.path.clone(),expected_sha256:self.expected_sha256,
             native_close_v8:true,_handles:Vec::new(),_parent:Some(std::sync::Arc::clone(self)),
-            instance:std::sync::Arc::clone(&self.instance)})
+            instance:std::sync::Arc::clone(&self.instance),precreation:self.precreation.clone(),asuser:self.asuser.clone()})
     }
     /// Instance relation only; never a native completion or cleanup authority.
     pub fn shares_original_pin(&self,other:&Self)->bool {std::sync::Arc::ptr_eq(&self.instance,&other.instance)}
@@ -126,13 +128,40 @@ impl MatchedRunnerArtifact {
             _handles: handles,
             _parent: None,
             instance: std::sync::Arc::new(()),
+            precreation:None,
+            asuser:None,
         })
     }
     pub fn path(&self) -> &Path {
         &self.path
     }
+    // Called ONLY by the native authenticated P->C inlet after all original
+    // inherited file capabilities and actual creator/process identity checks.
+    // The same guard, not a later path-acquire, retains these C prebirth pins.
+    pub(crate) fn from_parent_original(path:PathBuf,expected_sha256:[u8;32],
+        original:std::sync::Arc<crate::asuser_a1_helper::parent_native::OriginGuard>)->Self {
+        Self{path,expected_sha256,native_close_v8:false,_handles:Vec::new(),_parent:None,
+            instance:std::sync::Arc::new(()),precreation:Some(original),asuser:None}
+    }
+    pub(crate) fn asuser_view(self:&std::sync::Arc<Self>,binding:std::sync::Arc<crate::AsUserFactoryBinding>)->std::sync::Arc<Self> {
+        std::sync::Arc::new(Self{path:self.path.clone(),expected_sha256:self.expected_sha256,native_close_v8:true,
+            _handles:Vec::new(),_parent:Some(self.clone()),instance:self.instance.clone(),precreation:self.precreation.clone(),asuser:Some(binding)})
+    }
+    pub(crate) fn asuser_binding(&self)->Option<std::sync::Arc<crate::AsUserFactoryBinding>>{self.asuser.clone()}
     pub fn sha256(&self) -> [u8; 32] {
         self.expected_sha256
+    }
+    /// Inspect only the original held S file, including an opt-in view's
+    /// original parent. Does not reacquire a path or create a role capability.
+    pub(crate) fn asuser_s_table(&self)->std::io::Result<crate::asuser_a1_protocol::RoleTable> {
+        let mut original=self;
+        for _ in 0..32 {
+            if let Some(file)=original._handles.last() {
+                return crate::asuser_a1_table::from_held_file(file);
+            }
+            original=original._parent.as_deref().ok_or_else(||std::io::Error::other("A1 original S pin absent"))?;
+        }
+        Err(std::io::Error::other("A1 artifact view ancestry bound exceeded"))
     }
     pub(crate) fn verify_resolved(&self, resolved: &Path) -> Result<()> {
         ensure!(

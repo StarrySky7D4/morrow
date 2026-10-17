@@ -111,6 +111,20 @@ pub(crate) struct RunnerTransport {
     native_close_runtime: Option<std::sync::Arc<super::native_close_runtime::NativeCloseRuntime>>,
     native_startup_owner: Option<std::sync::Arc<super::checked_owner::CheckedRunnerOwner>>,
 }
+impl Drop for RunnerTransport {
+    fn drop(&mut self) {
+        if let Some(owner)=self.native_startup_owner.as_ref().filter(|owner|owner.has_asuser_a1()) {
+            // This exact A1 pair has not been transferred to the original IO
+            // workers. Returning from Drop would silently CloseHandle the
+            // originals on handshake failure/await cancellation. Keep THIS
+            // struct, files, owner and aliases on the same original stack.
+            // No original-handle close/cancel/wait/finalize/retry or allocation.
+            owner.record_runtime_lifecycle_failure();
+            loop {std::thread::park();}
+        }
+        // Every non-A1 path keeps its original ordinary field-drop behavior.
+    }
+}
 
 fn is_refreshable_windows_error(code: u32) -> bool {
     matches!(
@@ -332,20 +346,27 @@ impl RunnerTransport {
     }
 
     pub(crate) fn into_checked_files(
-        self,
+        mut self,
     ) -> Result<super::checked_owner::CheckedRunnerIo> {
         let pin = self
-            .matched_runner
+            .matched_runner.take()
             .context("checked runner requires retained independent artifact")?;
         let lease = self
-            .checked_lease
+            .checked_lease.take()
             .context("checked runner requires retained startup owner lease")?;
         let (owner, identity, thread_disposition) = lease.into_io_token()?;
+        // Only genuine lease adoption suppresses the A1 failure-retention Drop.
+        // All other owned fields keep their original ordinary release here;
+        // these three originals move once into CheckedRunnerIo, without clone.
+        self.native_startup_owner.take();self.native_close_runtime.take();
+        let original=std::mem::ManuallyDrop::new(self);
+        let (pipe_write,pipe_read,hello)=unsafe{(std::ptr::read(&original.pipe_write),
+            std::ptr::read(&original.pipe_read),std::ptr::read(&original.hello))};
         Ok(super::checked_owner::CheckedRunnerIo {
-            pipe_write: self.pipe_write,
-            pipe_read: self.pipe_read,
-            hello: self.hello,
-            capabilities: self.controls,
+            pipe_write,
+            pipe_read,
+            hello,
+            capabilities: original.controls,
             artifact: pin,
             identity,
             thread_disposition,
@@ -353,7 +374,7 @@ impl RunnerTransport {
         })
     }
 
-    pub(crate) fn into_files(self) -> Result<(File, File)> {
+    pub(crate) fn into_files(mut self) -> Result<(File, File)> {
         if let Some(ref lease) = self.checked_lease {
             lease.reject_legacy_conversion();
             anyhow::bail!("checked runner transport cannot be converted into legacy raw files");
@@ -361,7 +382,10 @@ impl RunnerTransport {
         if self.matched_runner.is_some() {
             anyhow::bail!("matched runner transport cannot be converted into legacy raw files");
         }
-        Ok((self.pipe_write, self.pipe_read))
+        self.native_startup_owner.take();self.native_close_runtime.take();
+        let original=std::mem::ManuallyDrop::new(self);
+        drop(unsafe{std::ptr::read(&original.hello)});
+        Ok(unsafe{(std::ptr::read(&original.pipe_write),std::ptr::read(&original.pipe_read))})
     }
 }
 
@@ -598,6 +622,11 @@ pub(crate) fn spawn_runner_transport_with_checked_reservation(
     diagnostic: Option<&crate::WindowsStartDiagnostic>,
     mut checked_reservation: Option<&mut super::checked_owner::CheckedStartupReservation>,
 ) -> Result<RunnerTransport> {
+    if let Some(binding)=matched_runner.as_ref().and_then(|runner|runner.asuser_binding()) {
+        let res=checked_reservation.as_deref_mut().context("A1 original reservation absent")?;
+        let runner=matched_runner.as_ref().unwrap().clone();
+        return spawn_asuser_runner_transport(binding,runner,sandbox_creds,spawn_request,diagnostic,res);
+    }
     if matched_runner.is_some() {
         let Some(res) = checked_reservation.as_deref() else {
             anyhow::bail!("checked runner launch requires a pre-launch startup owner reservation");
@@ -607,6 +636,10 @@ pub(crate) fn spawn_runner_transport_with_checked_reservation(
                 diagnostic.fail_io_kind(err.kind());
             }
         })?;
+        // A1 has one original-token AsUser path. It must never enter the
+        // WithLogon/profile/registered-alias launch or its legacy refresh retry.
+        anyhow::ensure!(!res.owner().has_asuser_a1(),
+            "A1 original reservation cannot fall through legacy runner launch");
     }
     let startup_deadline = checked_reservation
         .as_deref()
@@ -743,6 +776,40 @@ pub(crate) fn spawn_runner_transport_with_checked_reservation(
             })?;
     }
 
+    let logon_flags=if registered_alias.is_some() {LOGON_WITH_PROFILE} else {0};
+    let creation_flags=windows_sys::Win32::System::Threading::CREATE_NO_WINDOW
+        |windows_sys::Win32::System::Threading::CREATE_UNICODE_ENVIRONMENT;
+    let environment:*const std::ffi::c_void=ptr::null();
+    if let (Some(desktop),Some(res))=(&native_runner_desktop,checked_reservation.as_deref()) {
+        use crate::start_diagnostic::{ContextFact,ContextUnavailable,StartupApplicationSource,StartupCallParameters};
+        match desktop.try_lock() {
+            Ok(mut desktop)=>{
+                let call=StartupCallParameters {
+                    creation_flags,logon_flags,registered_profile_branch:registered_alias.is_some(),
+                    environment_is_null_user_profile_source:environment.is_null(),
+                    application_source:if registered_alias.is_some() {
+                        StartupApplicationSource::RegisteredAliasNotYetVerified
+                    }else{StartupApplicationSource::VerifiedResolvedPinnedImage},
+                    cwd_equals_request_cwd:cwd==spawn_request.cwd.as_path(),
+                    cwd_under_request_workspace_root:if spawn_request.workspace_roots.len()>64 {
+                        ContextFact::NotObserved(ContextUnavailable::BoundExceeded)
+                    }else{ContextFact::Observed(spawn_request.workspace_roots.iter()
+                        .any(|root|cwd.starts_with(root.as_path())))},
+                    desktop_pointer_is_same_owned_qualified_name:!si.lpDesktop.is_null()
+                        && si.lpDesktop==desktop.startup_info_desktop(),
+                    station_still_same_borrowed_object:ContextFact::NotObserved(ContextUnavailable::NotAttempted),
+                };
+                let context=desktop.record_startup_call(res.startup_id().0,call);
+                if let Some(diagnostic)=diagnostic {diagnostic.observe_startup_context(context);}
+            }
+            Err(std::sync::TryLockError::WouldBlock)=>{
+                if let Some(diagnostic)=diagnostic {diagnostic.startup_context_unavailable(res.startup_id().0,ContextUnavailable::Busy);}
+            }
+            Err(std::sync::TryLockError::Poisoned(_))=>{
+                if let Some(diagnostic)=diagnostic {diagnostic.startup_context_unavailable(res.startup_id().0,ContextUnavailable::Poisoned);}
+            }
+        }
+    }
     let previous_error_mode = unsafe { SetErrorMode(RUNNER_ERROR_MODE_FLAGS) };
     // Execution aliases require the registered account's profile.
     // Other launches retain their existing profile-free behavior.
@@ -752,16 +819,11 @@ pub(crate) fn spawn_runner_transport_with_checked_reservation(
             user_w.as_ptr(),
             domain_w.as_ptr(),
             password_w.as_ptr(),
-            if registered_alias.is_some() {
-                LOGON_WITH_PROFILE
-            } else {
-                0
-            },
+            logon_flags,
             exe_w.as_ptr(),
             cmdline_vec.as_mut_ptr(),
-            windows_sys::Win32::System::Threading::CREATE_NO_WINDOW
-                | windows_sys::Win32::System::Threading::CREATE_UNICODE_ENVIRONMENT,
-            ptr::null(),
+            creation_flags,
+            environment,
             cwd_w.as_ptr(),
             &si,
             &mut pi,
@@ -808,10 +870,16 @@ pub(crate) fn spawn_runner_transport_with_checked_reservation(
         &format!("runner_process_created pid={expected_runner_pid}"),
         log_dir,
     );
-    if let (Some(res), Some(diagnostic)) = (checked_reservation.as_deref(), diagnostic) {
+    let query_before=if let (Some(res), Some(diagnostic)) = (checked_reservation.as_deref(), diagnostic) {
         // Publish only an identity already captured by this anchored owner,
         // including when a later installation check reports an error.
-        res.owner().observe_startup_runner(diagnostic);
+        res.owner().sample_startup_runner_for_context(Some(diagnostic))
+    }else{crate::start_diagnostic::ContextFact::NotObserved(
+        crate::start_diagnostic::ContextUnavailable::OriginalUnavailable)};
+    if native_runner_desktop.is_some() {
+        if let Some(res)=checked_reservation.as_deref() {
+            res.owner().observe_startup_context_with_sample(diagnostic,query_before);
+        }
     }
     if let (Some(res), Some(Err(err))) = (checked_reservation.as_deref_mut(), install_result) {
         if let Some(diagnostic) = diagnostic {
@@ -940,6 +1008,59 @@ pub(crate) fn spawn_runner_transport_with_checked_reservation(
     }
 
     Ok(transport)
+}
+
+/// Separate private-T AsUser route. Reuses the REAL v8 peer authentication,
+/// original connect workers/bootstrap/hello/spawn request/lease, never the
+/// legacy WithLogon profile/alias/refresh/error-mode branch above.
+fn spawn_asuser_runner_transport(binding:std::sync::Arc<crate::AsUserFactoryBinding>,
+    runner:std::sync::Arc<crate::MatchedRunnerArtifact>,creds:&SandboxCreds,mut request:SpawnRequest,
+    diagnostic:Option<&crate::WindowsStartDiagnostic>,res:&mut super::checked_owner::CheckedStartupReservation)
+    ->Result<RunnerTransport> {
+    anyhow::ensure!(runner.native_close_v8()&&request.private_desktop_name.is_none(),"A1 requires its original private GUI selection");
+    res.reserve_asuser_a1()?;
+    let owner=std::sync::Arc::clone(res.owner());
+    let result=(||->Result<RunnerTransport>{
+        let admission=owner.with_asuser_a1(|original|binding.admission(original.consume_caller()?,res.startup_id().0,&runner))?;
+        let (input,output)=pipe_pair();let command=admission.command(&input,&output)?;
+        let mut nonce=[0u8;32];{use rand::RngCore;rand::rngs::OsRng.try_fill_bytes(&mut nonce)
+            .map_err(|_|anyhow::anyhow!("A1 original startup entropy unavailable"))?;}
+        anyhow::ensure!(nonce!=[0;32],"A1 zero startup entropy rejected");
+        let hello=crate::ipc_framed::ControlHello{nonce,schema:crate::ipc_framed::CHECKED_CONTROL_SCHEMA};
+        owner.with_asuser_a1(|original|{
+            original.bind_admission(admission,&runner)?;original.set_pipe_names(input,output)?;
+            original.start(command,&to_wide(&creds.username),&to_wide(&creds.password),
+                |write,read|res.stage_pre_launch_context(write,read,hello.clone()))
+        })?;
+        let (pipe_write,pipe_read)=owner.with_asuser_a1(|original|{
+            request.private_desktop_name=Some(original.desktop_name()?);original.transport_files()
+        })?;
+        let mut transport=RunnerTransport{pipe_write,pipe_read,hello,
+            controls:crate::ipc_framed::RunnerControlCapabilities::default(),matched_runner:Some(runner),
+            checked_lease:None,startup_deadline:res.startup_deadline(),native_close_runtime:None,native_startup_owner:Some(owner.clone())};
+        owner.with_asuser_a1(|original|original.transfer_to_owner(|process,pid,thread,tid|{
+            // Native core preanchors BOTH outputs before these conversions.
+            // install_launched_process immediately anchors them in THIS owner,
+            // including original primary-thread checked-close debt.
+            res.install_launched_process(unsafe{OwnedHandle::from_raw_handle(process as _)},pid,
+                unsafe{OwnedHandle::from_raw_handle(thread as _)},tid,&transport.pipe_write,&transport.pipe_read,transport.hello.clone()).map(|_|())
+        }))?;
+        res.connect_pipe_step(&transport.pipe_write,"pipe-in",diagnostic)?;
+        res.connect_pipe_step(&transport.pipe_read,"pipe-out",diagnostic)?;
+        let bootstrap=owner.prepare_native_close_runtime(nonce)?;
+        let runtime=owner.native_close_runtime().context("A1 original v8 runtime absent")?;
+        transport.hello=runtime.control_hello();
+        owner.write_native_startup(0,move|file|{
+            let mut writer=file;super::native_close_protocol::write_v8_wire_frame_bounded(&mut writer,&bootstrap)
+                .map(|_|()).map_err(std::io::Error::other)
+        })?;
+        transport.native_close_runtime=Some(runtime);transport.native_startup_owner=Some(owner.clone());
+        transport.negotiate_controls(diagnostic)?;
+        transport.send_spawn_request(request)?;
+        transport.read_spawn_ready_with_diagnostics(diagnostic)?;
+        transport.checked_lease=Some(res.commit_transport_lease(transport.controls)?);Ok(transport)
+    })();
+    result.map_err(|error|res.fail_after_launch(error))
 }
 
 #[cfg(test)]

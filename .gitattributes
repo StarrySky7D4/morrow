@@ -1151,3 +1151,6 @@
 "/workbench_host/src/versioned_record.rs" -text
 "/workbench_host/tests/common/mod.rs" -text
 "/workbench_host/tests/support/cli_shutdown.rs" -text
+
+# Exact 047 qualified inputs: preserve validated source bytes across checkouts.
+"/workbench_host/src/asuser_parent_original.rs" -text

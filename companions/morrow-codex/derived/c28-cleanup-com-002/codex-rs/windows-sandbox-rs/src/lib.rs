@@ -2,12 +2,70 @@
 // from the eventual unsafe cleanup.
 #![allow(unsafe_op_in_unsafe_fn)]
 
+// Independent private A1 implementation. No old launch entry is redirected and
+// no A0/v6/v7/v8 frame or completion semantics are reinterpreted.
+#[cfg(target_os = "windows")]
+mod asuser_a1_protocol;
+#[cfg(target_os = "windows")]
+mod asuser_a1_policy;
+#[cfg(target_os = "windows")]
+mod asuser_a1_rights;
+#[cfg(target_os = "windows")]
+mod asuser_a1_security;
+#[cfg(target_os = "windows")]
+mod asuser_a1_native;
+#[cfg(target_os = "windows")]
+mod asuser_parent_record;
+#[cfg(target_os = "windows")]
+mod asuser_a1_helper;
+#[cfg(target_os = "windows")]
+mod asuser_a1_table;
+#[cfg(windows)]
+mod asuser_a1_route;
+#[cfg(windows)]
+pub use asuser_a1_route::{AsUserMaterialization,AsUserFactoryBinding,AsUserOriginRetirement};
+#[cfg(target_os = "windows")]
+#[doc(hidden)]
+pub use asuser_a1_helper::dispatch as asuser_a1_dispatch;
+#[cfg(windows)]
+#[doc(hidden)]
+pub use asuser_a1_helper::parent_native::{parent_dispatch as asuser_parent_dispatch,AsUserParentOrigin,
+    ParentOriginalProcess,ParentCreate,ParentChildIdentity,ParentNativeExit,ParentCClosed};
+
+#[cfg(target_os = "windows")]
+mod caller_prerequisites;
+#[cfg(target_os = "windows")]
+pub use caller_prerequisites::{CallerPrerequisiteAttempt, CallerPrerequisiteSnapshot,
+    CALLER_PREREQUISITE_OUTPUT_BYTES};
+
 #[cfg(target_os = "windows")]
 mod checked_runner;
 #[cfg(target_os = "windows")]
 pub use checked_runner::MatchedRunnerArtifact;
 
+#[cfg(target_os = "windows")]
+mod station_broker;
+#[cfg(target_os = "windows")]
+pub use station_broker::{station_broker_a0_dispatch,StationBrokerA0,
+    StationBrokerResourceOnlyClosed,StationBrokerSnapshot,StationBrokerPhase,
+    StationBrokerHandle,StationBrokerDebt,StationBrokerFailure,StationBrokerErrorKind,StationBrokerSlots,
+    StationBrokerConnectRelease,StationBrokerRegistryRelease,StationBrokerUnavailable,
+    StationBrokerOutput,StationBrokerDelivery,StationBrokerReportedCreation,
+    StationBrokerParentObservation,StationBrokerObservation,
+    StationBrokerDiagnosticRead,StationBrokerDiagnosticSnapshot,StationBrokerHelperDiagnosticClose,
+    STATION_BROKER_DIAGNOSTIC_BYTES,STATION_BROKER_DIAGNOSTIC_FIXTURE_SWITCH,
+    STATION_BROKER_A0_SWITCH,STATION_BROKER_A0_FIXTURE_SWITCH};
+
 mod start_diagnostic;
+pub use start_diagnostic::{
+    ContextFact, ContextUnavailable, QueryHandleClose, StartupAccessResult,
+    StartupApplicationSource, StartupCallParameters, StartupObjectObservation,
+    StartupTokenRelations, WindowsStartupContext,
+    ContextApiStage, ContextFailure, TokenOpenPurpose, TokenOutputAllocation,
+    TokenAllocationObservation, TokenOpenObservation, PrimaryTokenReadResults, StartupQueryStages,
+    AuthzAllocation, AuthzRetirement, AuthzResourceObservation, AuthzDaclProjection,
+    AuthzObjectObservation, AuthzObjectState, AuthzObjectMapping,
+};
 pub use start_diagnostic::WindowsOsError;
 pub use start_diagnostic::WindowsRunnerErrorStage;
 pub use start_diagnostic::WindowsStartDiagnostic;

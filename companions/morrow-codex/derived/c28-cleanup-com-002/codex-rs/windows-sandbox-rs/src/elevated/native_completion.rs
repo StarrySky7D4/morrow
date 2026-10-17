@@ -26,6 +26,10 @@ impl NativeHostCompletion {
     /// formal/owner/factory or cleanup completion. The original owner remains
     /// retained if checked local registry retirement fails.
     pub fn retire_local(self)->io::Result<()> {self.owner.retire_native_local_slot()}
+    pub fn retire_local_with_asuser_origin(self)->io::Result<Option<crate::AsUserOriginRetirement>> {
+        self.owner.retire_native_local_slot()?;
+        self.owner.take_asuser_origin_retirement()
+    }
 }
 
 impl CheckedRunnerOwner {

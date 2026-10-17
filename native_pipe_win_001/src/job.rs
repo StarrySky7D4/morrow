@@ -38,6 +38,20 @@ pub use super::job_process::{PreparedTrustedHostEnvironment, prepare_trusted_hos
 #[cfg(feature = "c28-product-session-qualification")]
 pub use super::job_process::prepare_qualified_host_environment;
 pub use super::job_stdin::{JobStdin, JobStdinProof};
+pub use super::job_process::{
+    DEFAULT_MAX_OBSERVATION_POLLS, JOB_LIST_HANDLE_COUNT, MAX_ATTRIBUTE_LIST_BYTES,
+    MAX_CLOSE_CALLS_PER_HANDLE, MAX_COMMAND_LINE_UTF16_UNITS, MAX_CREATE_PROCESS_CALLS,
+    MAX_ENV_BLOCK_UTF16_UNITS, MAX_OBSERVATION_POLLS_LIMIT, MAX_ORIGINAL_HANDLE_BORROWS,
+    MAX_PATH_UTF16_UNITS, MAX_POST_CREATE_VALIDATION_CALLS, MAX_RESUME_THREAD_CALLS,
+    MAX_RETAINED_INHERITED_HANDLES, OriginalJobHandleBorrow, OriginalProcessHandleBorrow,
+    OriginalThreadHandleBorrow, OuterLifecycleEvidence, PreparedChildLaunch,
+    PrimaryThreadResumeOutcome, PrimaryThreadResumeSlot, RetainedBorrowedHandleSlot,
+    RetainedBootstrapDuplicationSlot, RetainedCallBudgets, RetainedChildIdentity,
+    RetainedChildStdio, RetainedDisposition, RetainedErrorRecord, RetainedHandleSlot,
+    RetainedHandleState, RetainedJobOwner, RetainedKernelObservations, RetainedOperationStage,
+    RetainedPhase, RetainedRawProcessInformation, RetainedRetirementReceipt, STDIO_HANDLE_COUNT,
+    set_borrowed_handle_inheritable, set_owned_handle_inheritable,
+};
 
 /// Immediate watchdog termination without Rust's process-exit stdio cleanup.
 pub fn terminate_current_process(code: u32) -> ! {
@@ -190,6 +204,18 @@ impl Job {
         prepared: PreparedTrustedHostEnvironment,
     ) -> io::Result<JobChild> {
         super::job_process::spawn_prepared_host(self, &self.handle, exe, args, cwd, prepared)
+    }
+
+    /// Transfer this Job into a preinstallable `RetainedJobOwner` before any child
+    /// `CreateProcessW` call. Consumes `self` without closing its kernel handle so
+    /// ordinary `Job` `Drop` cannot close the final `KILL_ON_JOB_CLOSE` handle.
+    pub fn into_retained_owner(self) -> RetainedJobOwner {
+        RetainedJobOwner::from_job(self)
+    }
+
+    pub(crate) fn into_raw_handle(self) -> HANDLE {
+        use std::os::windows::io::IntoRawHandle;
+        self.handle.into_raw_handle()
     }
 
     pub fn new() -> io::Result<Self> {
@@ -567,3 +593,8 @@ impl RevocationEvent {
  }
  pub fn is_revoked(&self)->io::Result<bool>{exited(&self.handle)}
 }
+
+#[cfg(test)]
+#[path = "job_retained_tests.rs"]
+mod job_retained_tests;
+

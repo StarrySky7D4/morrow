@@ -26,6 +26,14 @@ use tokio::{
 #[path="qualification_session_bootstrap.rs"]
 mod qualification_session_bootstrap;
 const MAX_FRAME: usize = 128 * 1024;
+// Source047 uses the existing supervisor binary as P, but enters before this
+// module's async runtime/Owner ledger/controller lease/legacy JobChild path.
+#[path="asuser_parent_original.rs"]
+mod asuser_parent_original;
+#[doc(hidden)]
+pub fn run_asuser_parent(arguments:&[String])->Option<u32> {
+    morrow_codex_session_exec_windows_v1::asuser_parent_dispatch(arguments,asuser_parent_original::allocation_only)
+}
 async fn emit_frame(output: &mut tokio::io::Stdout, kind: u8, bytes: &[u8]) -> std::io::Result<()> {
     output
         .write_all(&((bytes.len() + 1) as u32).to_le_bytes())

@@ -263,6 +263,22 @@ fn select_identity(
     }))
 }
 
+/// A1 uses ONLY the actual already-owned setup's existing offline record and
+/// the unchanged private DPAPI decoder above. No logon probe, readiness repair,
+/// password reset, automatic service/UAC provisioning or refresh is reachable.
+/// The author never invokes this function; it is future same-C source only.
+pub(crate) fn existing_owned_asuser_creds(setup:&crate::OwnedWindowsSandboxSetup)->Result<SandboxCreds> {
+    crate::setup_provisioning::verify_owned_home_continuity(&setup.home)?;
+    for path in [setup_marker_path(setup.codex_home()),sandbox_users_path(setup.codex_home())] {
+        let metadata=fs::metadata(path)?;ensure!(metadata.is_file()&&metadata.len()<=131072,"owned A1 identity record bound");
+    }
+    let identity=select_identity(SandboxNetworkIdentity::Offline,setup.codex_home())?
+        .context("actual owned offline identity absent; no refresh/replay")?;
+    ensure!(identity.username==setup.offline_username(),"actual owned offline identity mismatch");
+    crate::setup_provisioning::verify_owned_home_continuity(&setup.home)?;
+    Ok(SandboxCreds{username:identity.username,password:identity.password})
+}
+
 #[allow(clippy::too_many_arguments)]
 pub fn require_logon_sandbox_creds(
     permissions: &ResolvedWindowsSandboxPermissions,

@@ -47,6 +47,7 @@ pub struct NativeExecutionCompletion {
     runner_raw_dword:u32,
     attempt:u64,
     terminal_close_ack_verified:bool,
+    pub(crate) asuser_origin:Option<codex_sandboxing::AsUserOriginRetirement>,
 }
 impl std::fmt::Debug for NativeExecutionCompletion {
     fn fmt(&self,f:&mut std::fmt::Formatter<'_>)->std::fmt::Result {f.write_str("NativeExecutionCompletion([CONSUME_ONLY])")}
@@ -200,8 +201,8 @@ impl BorrowedNativeResources {
         let terminal_close_ack_verified=native.terminal_close_ack_verified();
         // This real lower obligation is consumed only after this SDK slot and
         // durable original facts have actually retired. No outer boolean input.
-        native.retire_local().map_err(|_|Error::CommitUnknown)?;
+        let asuser_origin=native.retire_local_with_asuser_origin().map_err(|_|Error::CommitUnknown)?;
         Ok(NativeExecutionCompletion {binding:binding.clone(),runner_pid:runner.process_id,
-            runner_creation_filetime:runner.creation_filetime_100ns,runner_raw_dword,attempt,terminal_close_ack_verified})
+            runner_creation_filetime:runner.creation_filetime_100ns,runner_raw_dword,attempt,terminal_close_ack_verified,asuser_origin})
     }
 }

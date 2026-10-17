@@ -58,7 +58,27 @@ fn verify_normal_cleanup_admission(state: &NormalCleanupAdmissionState) -> Resul
     Ok(())
 }
 
+// A prior command permanently consumes the probe-only entry, even if it was
+// status, unknown, failed, or produced no native resources.
+#[derive(Default)]
+struct CallerCommandOrder { seen_any: bool, first_probe: bool }
+impl CallerCommandOrder {
+    fn record(&mut self, command: &str) -> bool {
+        self.first_probe = !self.seen_any && command == "caller-prerequisites-once";
+        self.seen_any = true;
+        self.first_probe
+    }
+}
+#[derive(Clone, Copy)]
+struct CallerProbeReturnState { first_probe: bool, pristine: bool, known_closed: bool, blocked: bool }
+fn caller_probe_return_allowed(state: CallerProbeReturnState) -> bool {
+    state.first_probe && state.pristine && state.known_closed && !state.blocked
+}
+
 pub struct Session {
+    caller_prerequisites: Box<codex_windows_sandbox::CallerPrerequisiteAttempt>,
+    caller_command_order: CallerCommandOrder,
+    caller_output: Box<[u8; codex_windows_sandbox::CALLER_PREREQUISITE_OUTPUT_BYTES]>,
     native_factory_retirement:Option<morrow_codex_session_exec_windows_v1::NativeFactoryRetirement>,
     native_factory_completion:Option<morrow_codex_session_exec_windows_v1::NativeFactoryCompletion>,
     normal_native_parts:Option<(provisioning::ExecutionCleanupScope,morrow_codex_session_exec_windows_v1::NativeExecutionCompletion)>,
@@ -90,18 +110,31 @@ fn pin(artifact: &Artifact) -> ArtifactSpec {
 }
 impl Session {
     pub fn begin(config: LiveConfig, reader: &mut impl BufRead) -> Result<Box<Self>> {
+        Self::begin_inner(config,reader,None)
+    }
+    pub fn begin_asuser(config:LiveConfig,reader:&mut impl BufRead,origin:Arc<codex_windows_sandbox::AsUserParentOrigin>)->Result<Box<Self>> {
+        Self::begin_inner(config,reader,Some(origin))
+    }
+    fn begin_inner(config:LiveConfig,reader:&mut impl BufRead,origin:Option<Arc<codex_windows_sandbox::AsUserParentOrigin>>)->Result<Box<Self>> {
+        // Actual read-only C admission BEFORE setup/account/factory effects.
+        // Its SAME box remains in the imported owner on failure. The later
+        // native-start box is fresh on that actual thread, not a diagnostic
+        // replay or an expired observation reinterpreted as a current permit.
+        if let Some(original)=&origin{original.validate_before_setup()?;}
         ensure!(
             guest_identity::valid_uuid(&config.expected_guest_uuid),
             "explicit approved guest firmware UUID required"
         );
         crate::preflight::preflight(&config.files)?;
-        let lifecycle = GuestLifecycle::preflight(ProvisioningConfig {
+        let provisioning=ProvisioningConfig {
             synthetic_root: config.files.synthetic_root.clone(),
             harness: pin(&config.files.helper),
             runner: pin(&config.files.runner),
             setup: pin(&config.files.setup),
             inventory_shell: pin(&config.inventory_shell),
-        })?;
+        };
+        let lifecycle=if let Some(origin)=origin {GuestLifecycle::preflight_asuser(provisioning,origin)?}
+            else{GuestLifecycle::preflight(provisioning)?};
         interaction::confirm(
             reader,
             guest_identity::CONFIRMATION,
@@ -118,6 +151,9 @@ impl Session {
         journal.record("guest-identity-validated", &observed.identity)?;
         journal.record("lifecycle-initial", &lifecycle.manifest())?;
         Ok(Box::new(Self {
+            caller_prerequisites: codex_windows_sandbox::CallerPrerequisiteAttempt::new(),
+            caller_command_order: CallerCommandOrder::default(),
+            caller_output: Box::new([0; codex_windows_sandbox::CALLER_PREREQUISITE_OUTPUT_BYTES]),
             native_factory_retirement:None,
             native_factory_completion:None,
             normal_native_parts:None,
@@ -246,7 +282,64 @@ impl Session {
         self.native_factory_completion=Some(completion);self.factory_released=true;
         Ok(())
     }
+    fn caller_pristine(&self) -> bool {
+        let manifest = self.lifecycle.manifest();
+        self.lifecycle.phase() == provisioning::Phase::PreflightOnly
+            && manifest.owned_identities.is_none() && !manifest.owned_setup_proof_held
+            && manifest.setup_child_pid.is_none() && manifest.execution_cleanup_admission.is_none()
+            && !manifest.cleanup_guard_held && manifest.normal_cleanup_report.is_none()
+            && manifest.actual_runner.is_none() && manifest.staged_runner.is_none()
+            && manifest.cleanup_notes.is_empty()
+            && self.owner.is_none() && !self.owner_open_attempted
+            && self.backend.is_none() && !self.factory_acquire_attempted
+            && !self.factory_created && !self.factory_transferred && !self.factory_released
+            && self.retained_scheduler.is_none() && self.reap_attempts == 0
+            && self.formal.is_none() && self.formal_physically_closed
+            && !self.formal_unsettled_failure && self.cleanup_attempts == 0
+            && self.native_factory_retirement.is_none() && self.native_factory_completion.is_none()
+            && self.normal_native_parts.is_none() && !self.blocked
+    }
+    fn caller_prerequisites_only(&mut self, reader: &mut impl BufRead, first: bool) -> Result<()> {
+        ensure!(!self.lifecycle.has_asuser_origin(),"A1 parent C0 requires full original47/9; pure diagnostic cannot consume it");
+        let result: Result<()> = (|| {
+            if !(first && self.caller_command_order.first_probe && self.caller_pristine()
+                && !self.caller_prerequisites.unresolved()) {
+                self.caller_prerequisites.retain_admission_failure();
+                bail!("caller prerequisite command must be first on the original pristine Session");
+            }
+            interaction::confirm(reader, "OBSERVE_ORIGINAL_HARNESS_CALLER_PREREQUISITES_ONCE",
+                "Read only this original harness caller's finite token facts once. No login, privilege change, child, setup, owner, factory or business cleanup. Unknown retains this same Session.")?;
+            ensure!(self.caller_prerequisites.reserve(), "caller prerequisite attempt unavailable; no replay");
+            self.journal.before("caller-prerequisites-once", &serde_json::json!({
+                "scope":"ORIGINAL_HARNESS_CALLER_PREREQUISITES_ONLY", "deadline_seconds":10,
+                "A1_target_token":"NOT_PROVEN", "production_qualified":false}))?;
+            let snapshot = self.caller_prerequisites.observe_once();
+            let count = snapshot.write_json(&mut self.caller_output[..])
+                .map_err(|error| anyhow!(error))?;
+            self.journal.raw("caller-prerequisites046.json", &self.caller_output[..count])?;
+            ensure!(caller_probe_return_allowed(CallerProbeReturnState {
+                first_probe: self.caller_command_order.first_probe,
+                pristine: self.caller_pristine(), known_closed: self.caller_prerequisites.known_closed(),
+                blocked: self.blocked,
+            }), "caller prerequisite observation not known closed; original Session retained; no replay");
+            self.journal.record("CALLER_PREREQUISITES_ONLY_NORMAL_RETURN_NOT_BUSINESS_COMPLETION",
+                &serde_json::json!({"scope":"ORIGINAL_HARNESS_CALLER_PREREQUISITES_ONLY",
+                    "A1_target_token":"NOT_PROVEN", "production_qualified":false,
+                    "business_cleanup_performed":false, "SDK26_G04":"OPEN"}))?;
+            Ok(())
+        })();
+        if let Err(error) = &result {
+            self.blocked = true;
+            let raw = error.downcast_ref::<std::io::Error>().and_then(std::io::Error::raw_os_error);
+            self.caller_prerequisites.retain_delivery_failure(raw);
+        }
+        // Preserve finite original numeric facts in the attempt, never emit an
+        // arbitrary OS/journal/exception body through the existing main handler.
+        result.map_err(|_| anyhow!("CALLER046_RETAINED_ORIGINAL_SESSION_NO_REPLAY"))
+    }
     fn perform(&mut self, command: &str, reader: &mut impl BufRead) -> Result<()> {
+        ensure!(!self.caller_prerequisites.unresolved(),
+            "caller prerequisite originals retained; no replay or normal cleanup");
         if let Some(step) = command.strip_prefix("sealed-") {
             return self.formal_step(step, reader);
         }
@@ -409,6 +502,8 @@ impl Session {
                 );
             }
             "production-factory" | "production-factory-v8" => {
+                ensure!(!self.lifecycle.has_asuser_origin()||command=="production-factory-v8",
+                    "original A1 inlet cannot fall back to v7/WithLogon factory");
                 ensure!(
                     self.owner.is_some()
                         && !self.factory_acquire_attempted
@@ -427,8 +522,11 @@ impl Session {
                 self.factory_acquire_attempted = true;
                 self.backend = Some(if command=="production-factory-v8" {
                     self.native_factory_retirement=Some(morrow_codex_session_exec_windows_v1::NativeFactoryRetirement::new());
-                    crate::product::create_native_close_backend_materialized(&self.files,actual,
-                        self.native_factory_retirement.as_mut().unwrap())?
+                    if self.lifecycle.has_asuser_origin(){
+                        crate::product::create_asuser_native_close_backend_materialized(&self.files,&self.lifecycle,
+                            self.native_factory_retirement.as_mut().unwrap())?
+                    }else{crate::product::create_native_close_backend_materialized(&self.files,actual,
+                        self.native_factory_retirement.as_mut().unwrap())?}
                 }else{create_checked_backend_materialized(&self.files,actual)?});
                 self.factory_created = true;
             }
@@ -481,6 +579,8 @@ impl Session {
         Ok(())
     }
     fn formal_step(&mut self, step: &str, reader: &mut impl BufRead) -> Result<()> {
+        ensure!(!self.lifecycle.has_asuser_origin()||!matches!(step,"pipe"|"pty"),
+            "A1 parent qualification requires the original sealed-basic chain; extensions remain deferred");
         let cleanup = matches!(step, "cleanup" | "repair-cleanup");
         ensure!(
             !self.blocked || cleanup,
@@ -641,6 +741,12 @@ impl Session {
         );
         loop {
             let command = interaction::line(reader)?;
+            let first_probe = self.caller_command_order.record(&command);
+            if command == "caller-prerequisites-once" {
+                // This return is scoped observation only, never Finished/cleanup.
+                // Any Err goes directly to main's existing retaining Session path.
+                return self.caller_prerequisites_only(reader, first_probe);
+            }
             if command == "status" {
                 self.journal
                     .record("lifecycle-observed", &self.lifecycle.manifest())?;
@@ -654,6 +760,9 @@ impl Session {
                     self.blocked
                 );
             } else if command == "exit" {
+                ensure!(!self.lifecycle.has_asuser_origin()
+                    ||(self.formal.as_ref().is_some_and(crate::formal::Workflow::finished)&&!self.blocked),
+                    "A1 original normal return requires its real joined sealed-basic workflow without an unsettled step");
                 ensure!(
                     self.lifecycle.phase() == provisioning::Phase::Finished
                         && self.lifecycle.normal_cleanup_report().is_some()
@@ -665,7 +774,8 @@ impl Session {
                         && self.backend.is_none()
                         && self.retained_scheduler.is_none()
                         && self.formal_physically_closed
-                        && !self.formal_unsettled_failure,
+                        && !self.formal_unsettled_failure
+                        && !self.caller_prerequisites.unresolved(),
                     "unfinished/Unknown resources are held; no automatic cleanup or evidence-based authority restore"
                 );
                 self.journal.record(
@@ -678,6 +788,7 @@ impl Session {
                         "SDK26_G04": "OPEN"
                     }),
                 )?;
+                self.lifecycle.finish_asuser_origin()?;
                 return Ok(());
             } else if let Err(error) = self.perform(&command, reader) {
                 eprintln!("{error}; original same-process state retained. No automatic retry.");
@@ -766,6 +877,41 @@ mod tests {
         let mut wrong_phase = base;
         wrong_phase.phase_eligible = false;
         assert!(verify_normal_cleanup_admission(&wrong_phase).is_err());
+    }
+
+    #[test]
+    fn caller046_first_command_tombstone_never_reopens_after_status_unknown_or_probe() {
+        for prior in ["status", "not-a-command", "inventory", "caller-prerequisites-once"] {
+            let mut order = CallerCommandOrder::default();
+            assert_eq!(order.record(prior), prior == "caller-prerequisites-once");
+            assert!(!order.record("caller-prerequisites-once"));
+            assert!(!order.record("caller-prerequisites-once"));
+            assert!(order.seen_any);
+        }
+        let mut original = CallerCommandOrder::default();
+        assert!(original.record("caller-prerequisites-once"));
+        assert!(original.first_probe);
+    }
+
+    #[test]
+    fn caller046_probe_return_cannot_replace_business_cleanup_or_accept_unknown_debt() {
+        let original = CallerProbeReturnState {
+            first_probe: true, pristine: true, known_closed: true, blocked: false,
+        };
+        // Known negative is intentionally allowed once its SAME originals closed.
+        assert!(caller_probe_return_allowed(original));
+        assert!(!caller_probe_return_allowed(CallerProbeReturnState { first_probe: false, ..original }));
+        assert!(!caller_probe_return_allowed(CallerProbeReturnState { pristine: false, ..original }));
+        assert!(!caller_probe_return_allowed(CallerProbeReturnState { known_closed: false, ..original }));
+        assert!(!caller_probe_return_allowed(CallerProbeReturnState { blocked: true, ..original }));
+        // The separate diagnostic return never satisfies normal owner/factory cleanup.
+        let business = NormalCleanupAdmissionState {
+            owner_opened: false, owner_finished: false, factory_created: false,
+            factory_released: false, backend_present: false, retained_scheduler_present: false,
+            formal_physically_closed: true, formal_unsettled_failure: false,
+            phase_eligible: false, proof_or_guard_held: false,
+        };
+        assert!(verify_normal_cleanup_admission(&business).is_err());
     }
 }
 

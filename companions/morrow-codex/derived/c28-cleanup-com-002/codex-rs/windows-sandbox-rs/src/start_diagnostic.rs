@@ -5,6 +5,288 @@ use std::io::ErrorKind;
 use std::sync::Arc;
 use std::sync::Mutex;
 
+#[cfg(windows)]
+#[path = "startup_context.rs"]
+pub(crate) mod context_query;
+
+/// Finite historical scalars only. No SID, name, descriptor, token or callback.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ContextUnavailable {
+    NotAttempted, NotApplicable, OriginalUnavailable, Busy, Poisoned,
+    BoundExceeded, InvalidBuffer, Win32 { code: u32 },
+    /// The named upstream operation prevented this operation from running.
+    /// This is not a return value from the downstream API.
+    Upstream { stage: ContextApiStage, reason: ContextFailure },
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ContextFailure {
+    NotAttempted, NotApplicable, OriginalUnavailable, Busy, Poisoned,
+    BoundExceeded, InvalidBuffer, Win32 { code: u32 },
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(u8)]
+pub enum ContextApiStage {
+    QueryPrimaryOpen, QueryUser, QueryLogonGroups, QuerySession,
+    QueryRestrictions, QueryAppContainer, QueryPrimaryClose,
+    CallerUser, CallerLogonGroups, CallerSession, IntendedSid,
+    DuplicateSourceOpen, DuplicateToken, StationDescriptor, DesktopDescriptor,
+    StationVisibility, DesktopVisibility,
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum TokenOpenPurpose { #[default] NotRequested, PrimaryQuery, DuplicationSource }
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TokenOutputAllocation { NotAllocated, AllocatedOriginal, UncertainOutput }
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct TokenAllocationObservation {
+    pub api_returned_success: bool,
+    pub allocation: TokenOutputAllocation,
+    pub win32_error: Option<u32>,
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct TokenOpenObservation {
+    pub purpose: TokenOpenPurpose,
+    /// Actual passed mask when result is Observed; zero if the API was skipped.
+    pub requested_mask: u32,
+    /// Observed means the API was called; its success/failure is inside.
+    pub result: ContextFact<TokenAllocationObservation>,
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct PrimaryTokenReadResults {
+    pub user: ContextFact<()>,
+    pub logon_groups: ContextFact<()>,
+    pub session: ContextFact<()>,
+    pub restrictions: ContextFact<()>,
+    pub app_container: ContextFact<()>,
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct StartupQueryStages {
+    pub primary_open: TokenOpenObservation,
+    pub primary_reads: PrimaryTokenReadResults,
+    pub duplicate_source_open: TokenOpenObservation,
+    /// DuplicateToken at SecurityIdentification; never used for impersonation.
+    pub impersonation_duplicate: ContextFact<TokenAllocationObservation>,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ContextFact<T> { Observed(T), NotObserved(ContextUnavailable) }
+impl<T> Default for ContextFact<T> {
+    fn default() -> Self { Self::NotObserved(ContextUnavailable::NotAttempted) }
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum StartupApplicationSource { VerifiedResolvedPinnedImage, RegisteredAliasNotYetVerified }
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct StartupCallParameters {
+    pub creation_flags: u32,
+    pub logon_flags: u32,
+    pub registered_profile_branch: bool,
+    /// NULL asks CreateProcessWithLogonW for the specified user's profile environment.
+    /// No claim that profile loading or particular environment values were observed.
+    pub environment_is_null_user_profile_source: bool,
+    pub application_source: StartupApplicationSource,
+    pub cwd_equals_request_cwd: bool,
+    /// Lexical relation to request roots, not an independent root source attestation.
+    pub cwd_under_request_workspace_root: ContextFact<bool>,
+    pub desktop_pointer_is_same_owned_qualified_name: bool,
+    pub station_still_same_borrowed_object: ContextFact<bool>,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum QueryHandleClose { NotAllocated, Held, ClosedVerified, CloseFailed { code: u32 } }
+impl Default for QueryHandleClose { fn default()->Self { Self::NotAllocated } }
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct StartupTokenRelations {
+    pub user_equals_intended_sandbox: ContextFact<bool>,
+    pub user_equals_caller_user: ContextFact<bool>,
+    pub logon_sid_equals_caller_logon_sid: ContextFact<bool>,
+    pub runner_logon_group_attributes: ContextFact<u32>,
+    pub session_equals_caller_session: ContextFact<bool>,
+    pub has_restrictions: ContextFact<bool>,
+    pub is_app_container: ContextFact<bool>,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct StartupAccessResult {
+    pub access_status: bool,
+    pub granted_mask: u32,
+    pub denial_win32_error: Option<u32>,
+}
+/// Local Authz only: never an object-open, MIC/SACL/CAP, native-start or ACK proof.
+/// Explicit byte tags keep the two-attempt Copy history bounded. Error numbers
+/// are meaningful only for the corresponding Failed state, never a boolean PASS.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[repr(u8)]
+pub enum AuthzAllocation {
+    #[default] NotAttempted, InFlight, FailedNoOutput, Held,
+    FailedUncertainOutput, InvalidSuccessOutput,
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[repr(u8)]
+pub enum AuthzRetirement {
+    #[default] NotAllocated, Held, InFlight, FreedVerified, Failed,
+    BlockedByContext, Uncertain,
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct AuthzResourceObservation {
+    pub allocation: AuthzAllocation,
+    pub retirement: AuthzRetirement,
+    pub initialization_error: u32,
+    pub retirement_error: u32,
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[repr(u8)]
+pub enum AuthzObjectState {
+    #[default] NotAttempted, PrimaryUnavailable, RestrictedToken, AppContainer,
+    ResourceManagerUnavailable, ContextUnavailable, ObjectIdentityUnavailable,
+    DescriptorUnavailable, VisibilityUnavailable, InvalidBuffer, BoundExceeded,
+    NullOrAbsentDacl, OverlappingLayout, UnsupportedAce, PrincipalSelf,
+    InFlight, ApiFailed, ReplyReturned,
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[repr(u8)]
+pub enum AuthzObjectMapping {
+    #[default] NotSelected, NoninteractiveStation, VisibleStation, Desktop,
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct AuthzObjectObservation {
+    pub state: AuthzObjectState,
+    pub mapping: AuthzObjectMapping,
+    /// ApiFailed: immediate Win32 error. ReplyReturned: reply.Error[0].
+    /// DescriptorUnavailable: original descriptor Win32 error, if any; its full
+    /// classified reason remains in the original object's descriptor_read.
+    pub error: u32,
+    /// Defined only for ReplyReturned; never consumed on API failure/unwind.
+    pub granted_mask: u32,
+}
+#[derive(Clone, Copy, Default, PartialEq, Eq)]
+#[repr(C)]
+pub struct AuthzDaclProjection {
+    // Init order is RM -> context; failure stops initialization. Free order is
+    // context -> RM; failure blocks the dependency. Thus at most ONE init error
+    // and ONE free error can exist, independently. Sharing each number loses no
+    // returned error; the typed tags identify which API actually returned it.
+    initialization_error:u32, retirement_error:u32,
+    station_error:u32, station_mask:u32, desktop_error:u32, desktop_mask:u32,
+    manager_allocation:AuthzAllocation, context_allocation:AuthzAllocation,
+    manager_retirement:AuthzRetirement, context_retirement:AuthzRetirement,
+    station_state:AuthzObjectState, station_mapping:AuthzObjectMapping,
+    desktop_state:AuthzObjectState, desktop_mapping:AuthzObjectMapping,
+}
+const _: ()=assert!(std::mem::size_of::<AuthzDaclProjection>()==32);
+impl AuthzDaclProjection {
+    pub(crate) fn from_observations(manager:AuthzResourceObservation,context:AuthzResourceObservation,
+        station:AuthzObjectObservation,desktop:AuthzObjectObservation)->Self {
+        let init_failed=|v|matches!(v,AuthzAllocation::FailedNoOutput|AuthzAllocation::FailedUncertainOutput);
+        // Only the original sequential producer calls this constructor. It never
+        // initializes context after RM failure or frees RM after context failure.
+        Self {initialization_error:if init_failed(manager.allocation) {manager.initialization_error}
+                else{context.initialization_error},
+            retirement_error:if context.retirement==AuthzRetirement::Failed {context.retirement_error}
+                else{manager.retirement_error},
+            station_error:station.error,station_mask:station.granted_mask,
+            desktop_error:desktop.error,desktop_mask:desktop.granted_mask,
+            manager_allocation:manager.allocation,context_allocation:context.allocation,
+            manager_retirement:manager.retirement,context_retirement:context.retirement,
+            station_state:station.state,station_mapping:station.mapping,
+            desktop_state:desktop.state,desktop_mapping:desktop.mapping}
+    }
+    pub fn resource_manager(&self)->AuthzResourceObservation {
+        self.resource(self.manager_allocation,self.manager_retirement)
+    }
+    pub fn context(&self)->AuthzResourceObservation {
+        self.resource(self.context_allocation,self.context_retirement)
+    }
+    fn resource(&self,allocation:AuthzAllocation,retirement:AuthzRetirement)->AuthzResourceObservation {
+        AuthzResourceObservation {allocation,retirement,
+            initialization_error:if matches!(allocation,AuthzAllocation::FailedNoOutput|AuthzAllocation::FailedUncertainOutput)
+                {self.initialization_error}else{0},
+            retirement_error:if retirement==AuthzRetirement::Failed {self.retirement_error}else{0}}
+    }
+    pub fn station(&self)->AuthzObjectObservation {
+        AuthzObjectObservation {state:self.station_state,mapping:self.station_mapping,
+            error:self.station_error,granted_mask:self.station_mask}
+    }
+    pub fn desktop(&self)->AuthzObjectObservation {
+        AuthzObjectObservation {state:self.desktop_state,mapping:self.desktop_mapping,
+            error:self.desktop_error,granted_mask:self.desktop_mask}
+    }
+    /// Fixed operation order, evaluated from retained facts, without another query.
+    /// None is not a permission or native-completion proof. Missing evidence stays
+    /// visible in the individual states rather than being converted into error 0.
+    pub fn first_failure(&self)->Option<(&'static str,Option<u32>)> {
+        for (name,value) in [("InitializeResourceManager",self.resource_manager()),
+            ("InitializeContextFromToken",self.context())] {
+            match value.allocation {
+                AuthzAllocation::FailedNoOutput|AuthzAllocation::FailedUncertainOutput=>
+                    return Some((name,Some(value.initialization_error))),
+                AuthzAllocation::InFlight|AuthzAllocation::InvalidSuccessOutput=>return Some((name,None)),
+                _=>{},
+            }
+        }
+        for (name,value) in [("StationAuthzAccessCheck",self.station()),("DesktopAuthzAccessCheck",self.desktop())] {
+            match value.state {
+                AuthzObjectState::ApiFailed=>return Some((name,Some(value.error))),
+                AuthzObjectState::ReplyReturned if value.error!=0=>return Some((name,Some(value.error))),
+                AuthzObjectState::ReplyReturned if value.granted_mask==0=>return Some((name,None)),
+                AuthzObjectState::InFlight=>return Some((name,None)),
+                _=>{},
+            }
+        }
+        for (name,value) in [("FreeContext",self.context()),("FreeResourceManager",self.resource_manager())] {
+            match value.retirement {
+                AuthzRetirement::Failed=>return Some((name,Some(value.retirement_error))),
+                AuthzRetirement::InFlight|AuthzRetirement::Uncertain=>return Some((name,None)),
+                _=>{},
+            }
+        }
+        None
+    }
+}
+impl fmt::Debug for AuthzDaclProjection {
+    fn fmt(&self,f:&mut fmt::Formatter<'_>)->fmt::Result {
+        f.debug_struct("AuthzDaclProjection")
+            .field("scope",&"QUERY8_LOCAL_RM5_MAPPED_SIMPLE_DACL_ONLY_MIC_SACL_CAP_NATIVE_NOT_PROVEN")
+            .field("resource_manager",&self.resource_manager()).field("context",&self.context())
+            .field("station",&self.station()).field("desktop",&self.desktop())
+            .field("first_failure",&self.first_failure()).finish()
+    }
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct StartupObjectObservation {
+    pub name_equals_creation_object: ContextFact<bool>,
+    pub visible: ContextFact<bool>,
+    /// Desktop UOI_IO only; independent of station WSF_VISIBLE and access.
+    pub receiving_user_input: ContextFact<bool>,
+    pub descriptor_owner_equals_runner_user: ContextFact<bool>,
+    pub descriptor_group_equals_runner_logon_sid: ContextFact<bool>,
+    pub dacl_present: ContextFact<bool>,
+    pub dacl_null: ContextFact<bool>,
+    pub descriptor_read: ContextFact<()>,
+    pub access_check_invoked: bool,
+    /// AccessCheck(MAXIMUM_ALLOWED), not a startup/ACK/cleanup permission.
+    pub access: ContextFact<StartupAccessResult>,
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct WindowsStartupContext {
+    pub startup_id: u64,
+    pub call: ContextFact<StartupCallParameters>,
+    pub original_runner_identity: Option<(u32, u64)>,
+    /// Legacy entry marker only, not a successful token/API observation.
+    pub query_status: ContextFact<()>,
+    pub query_stages: StartupQueryStages,
+    /// Latched original pre-query sample, independent of later connect updates.
+    pub runner_before_token_query: ContextFact<WindowsStartRunnerObservation>,
+    /// One original zero-wait sample after this finite query sequence.
+    /// Neither sample is an atomic interval or proof user code started.
+    pub runner_after_token_query: ContextFact<WindowsStartRunnerObservation>,
+    pub token: StartupTokenRelations,
+    pub station: StartupObjectObservation,
+    pub desktop: StartupObjectObservation,
+    /// Retained two-slot projection for existing readers: primary QUERY, derived token.
+    /// Normal retirement checks ALL THREE real slots, never this projection.
+    pub query_handle_closes: [QueryHandleClose; 2],
+    /// Independent primary QUERY, DUP source, derived impersonation slots.
+    pub query_slot_closes: [QueryHandleClose; 3],
+    /// Same original QUERY, independently labelled, finite non-operational history.
+    pub authz_dacl: AuthzDaclProjection,
+}
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum WindowsStartStage {
     #[default]
@@ -144,6 +426,7 @@ pub struct WindowsStartAttempt {
     pub runner_stage: WindowsRunnerErrorStage,
     pub os_class: WindowsOsError,
     pub original_runner: Option<WindowsStartRunnerObservation>,
+    pub startup_context: Option<WindowsStartupContext>,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -161,6 +444,65 @@ pub struct WindowsStartSnapshot {
 pub struct WindowsStartDiagnostic(Arc<Mutex<WindowsStartSnapshot>>);
 
 impl WindowsStartDiagnostic {
+    pub(crate) fn observe_startup_context(&self, mut observed: WindowsStartupContext) {
+        // Observation must not wait for a data reader or a poisoned recorder.
+        if let Ok(mut state) = self.0.try_lock() {
+            if !matches!(state.completion,WindowsStartCompletion::NotObserved
+                |WindowsStartCompletion::InProgressOrUnwound) {return;}
+            for sample in [observed.runner_before_token_query,observed.runner_after_token_query] {
+                if let ContextFact::Observed(sample)=sample {
+                    if sample.startup_id!=observed.startup_id
+                        || observed.original_runner_identity!=Some((
+                            sample.runner_pid,sample.runner_creation_filetime_100ns)) {return;}
+                }
+            }
+            if let Some(original)=state.current.original_runner {
+                if original.startup_id!=observed.startup_id
+                    || observed.original_runner_identity.is_some_and(|identity|identity!=(
+                        original.runner_pid,original.runner_creation_filetime_100ns))
+                {return;}
+            }
+            if let Some(prior) = state.current.startup_context {
+                if prior.startup_id != observed.startup_id
+                    || (prior.original_runner_identity.is_some()
+                        && prior.original_runner_identity != observed.original_runner_identity)
+                { return; }
+                // The first completed finite sequence is historical. Later
+                // connect samples must never replace its before/after window.
+                if matches!(prior.query_status,ContextFact::Observed(())) {return;}
+                if observed.call==ContextFact::NotObserved(ContextUnavailable::NotAttempted) {
+                    observed.call=prior.call;
+                }
+            }
+            // Exactly one pre-call and one anchored post-call projection.
+            // Never turn query failures into the execution's sticky first error.
+            state.current.startup_context = Some(observed);
+        }
+    }
+    pub(crate) fn startup_context_unavailable(&self,startup_id:u64,reason:ContextUnavailable) {
+        if let Ok(mut state)=self.0.try_lock() {
+            if !matches!(state.completion,WindowsStartCompletion::NotObserved
+                |WindowsStartCompletion::InProgressOrUnwound) {return;}
+            let context=state.current.startup_context.get_or_insert_with(WindowsStartupContext::default);
+            if context.startup_id!=0 && context.startup_id!=startup_id {return;}
+            if matches!(context.query_status,ContextFact::Observed(())) {return;}
+            if context.call==ContextFact::NotObserved(ContextUnavailable::NotAttempted) {
+                context.call=ContextFact::NotObserved(reason);
+            }
+            context.startup_id=startup_id;context.query_status=ContextFact::NotObserved(reason);
+            context.token=StartupTokenRelations {
+                user_equals_intended_sandbox:ContextFact::NotObserved(reason),
+                user_equals_caller_user:ContextFact::NotObserved(reason),
+                logon_sid_equals_caller_logon_sid:ContextFact::NotObserved(reason),
+                runner_logon_group_attributes:ContextFact::NotObserved(reason),
+                session_equals_caller_session:ContextFact::NotObserved(reason),
+                has_restrictions:ContextFact::NotObserved(reason),
+                is_app_container:ContextFact::NotObserved(reason),
+            };
+            context.station.access=ContextFact::NotObserved(reason);
+            context.desktop.access=ContextFact::NotObserved(reason);
+        }
+    }
     pub(crate) fn observe_original_runner(&self, observed: WindowsStartRunnerObservation) {
         self.record(|state| {
             if let Some(original) = state.current.original_runner {
@@ -293,6 +635,124 @@ impl fmt::Debug for WindowsStartDiagnostic {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn query_samples_are_latched_independently_of_later_connect_and_survive_data_owner_drop() {
+        // Labelled historical data model, not native process/ACK evidence.
+        let d=WindowsStartDiagnostic::default();
+        d.mark(WindowsStartStage::RunnerLogon);
+        d.fail_io_kind(ErrorKind::TimedOut);
+        let before=WindowsStartRunnerObservation{startup_id:39,runner_pid:4,
+            runner_creation_filetime_100ns:99,state:WindowsStartRunnerState::RunningAtObservation};
+        d.observe_original_runner(before);
+        let context=WindowsStartupContext {startup_id:39,original_runner_identity:Some((4,99)),
+            query_status:ContextFact::Observed(()),runner_before_token_query:ContextFact::Observed(before),
+            runner_after_token_query:ContextFact::Observed(before),..WindowsStartupContext::default()};
+        d.observe_startup_context(context);
+        let mut connect=before;
+        connect.state=WindowsStartRunnerState::Exited{raw_dword:0xc0000142};
+        d.observe_original_runner(connect);
+        let mut late=context;late.runner_before_token_query=ContextFact::Observed(connect);
+        d.observe_startup_context(late);
+        let retained=d.clone();d.finish_failed();drop(d);
+        let snapshot=retained.snapshot().unwrap();
+        assert_eq!(snapshot.current.original_runner,Some(connect));
+        assert_eq!(snapshot.current.startup_context,Some(context));
+        assert_eq!(snapshot.current.error,WindowsStartError::IoTimedOut);
+        assert_eq!(snapshot.completion,WindowsStartCompletion::ReturnedError);
+    }
+
+    #[test]
+    fn foreign_query_sample_identity_or_generation_is_rejected_without_changing_first_error() {
+        let d=WindowsStartDiagnostic::default();d.mark(WindowsStartStage::RunnerLogon);
+        d.fail_io_kind(ErrorKind::Interrupted);
+        let original=WindowsStartRunnerObservation{startup_id:39,runner_pid:4,
+            runner_creation_filetime_100ns:99,state:WindowsStartRunnerState::RunningAtObservation};
+        d.observe_original_runner(original);
+        let mut foreign=original;foreign.runner_creation_filetime_100ns+=1;
+        let mut context=WindowsStartupContext {startup_id:39,original_runner_identity:Some((4,99)),
+            query_status:ContextFact::Observed(()),runner_before_token_query:ContextFact::Observed(foreign),
+            ..WindowsStartupContext::default()};
+        d.observe_startup_context(context);
+        assert_eq!(d.snapshot().unwrap().current.startup_context,None);
+        context.runner_before_token_query=ContextFact::Observed(original);
+        foreign=original;foreign.startup_id+=1;
+        context.runner_after_token_query=ContextFact::Observed(foreign);
+        d.observe_startup_context(context);
+        assert_eq!(d.snapshot().unwrap().current.startup_context,None);
+        context.runner_after_token_query=ContextFact::Observed(original);
+        d.observe_startup_context(context);
+        assert_eq!(d.snapshot().unwrap().current.startup_context,Some(context));
+        assert_eq!(d.snapshot().unwrap().current.error,WindowsStartError::IoInterrupted);
+    }
+
+    #[test]
+    fn startup_context_is_same_invocation_data_only_and_preserves_first_error_after_drop() {
+        let diagnostic=WindowsStartDiagnostic::default();
+        diagnostic.mark(WindowsStartStage::RunnerLogon);
+        diagnostic.fail_io_kind(ErrorKind::TimedOut);
+        let history=diagnostic.clone();
+        let mut context=WindowsStartupContext{startup_id:38,..WindowsStartupContext::default()};
+        context.original_runner_identity=Some((42,12345));
+        context.query_status=ContextFact::Observed(());
+        context.token.user_equals_intended_sandbox=ContextFact::NotObserved(ContextUnavailable::Win32{code:5});
+        diagnostic.observe_startup_context(context);
+        let mut foreign=context;foreign.startup_id=39;
+        diagnostic.observe_startup_context(foreign);
+        assert_eq!(diagnostic.snapshot().unwrap().current.startup_context,Some(context));
+        assert_eq!(diagnostic.snapshot().unwrap().current.original_runner,None);
+        // Neither logical ReturnedError nor access data becomes native DWORD.
+        diagnostic.finish_failed();drop(diagnostic);
+        let snapshot=history.snapshot().unwrap();
+        assert_eq!(snapshot.current.error,WindowsStartError::IoTimedOut);
+        assert_eq!(snapshot.current.startup_context,Some(context));
+        assert_eq!(snapshot.current.original_runner,None);
+        history.startup_context_unavailable(38,ContextUnavailable::Busy);
+        assert_eq!(history.snapshot(),Some(snapshot));
+        assert!(std::mem::size_of::<WindowsStartSnapshot>()<=2048);
+    }
+
+    #[test]
+    fn startup_context_busy_and_poison_never_create_observed_grants_or_block() {
+        let d=WindowsStartDiagnostic::default();
+        {
+            let _busy=d.0.lock().unwrap();
+            d.observe_startup_context(WindowsStartupContext{startup_id:38,..WindowsStartupContext::default()});
+            d.startup_context_unavailable(38,ContextUnavailable::Busy);
+        }
+        assert_eq!(d.snapshot().unwrap().current.startup_context,None);
+        d.startup_context_unavailable(38,ContextUnavailable::Busy);
+        let context=d.snapshot().unwrap().current.startup_context.unwrap();
+        assert_eq!(context.query_status,ContextFact::NotObserved(ContextUnavailable::Busy));
+        assert_eq!(context.station.access,ContextFact::NotObserved(ContextUnavailable::Busy));
+        let other=d.clone();
+        assert!(std::thread::spawn(move||{
+            let _guard=other.0.lock().unwrap();panic!("labelled recorder poison");
+        }).join().is_err());
+        d.observe_startup_context(context);
+        d.startup_context_unavailable(38,ContextUnavailable::Poisoned);
+        assert_eq!(d.snapshot(),None);
+    }
+
+    #[test]
+    fn startup_context_cannot_replace_a_different_original_or_cross_an_existing_refresh_attempt() {
+        let d=WindowsStartDiagnostic::default();
+        let original=WindowsStartRunnerObservation{startup_id:38,runner_pid:4,
+            runner_creation_filetime_100ns:99,state:WindowsStartRunnerState::RunningAtObservation};
+        d.observe_original_runner(original);
+        let mut context=WindowsStartupContext{startup_id:38,original_runner_identity:Some((5,99)),
+            ..WindowsStartupContext::default()};
+        d.observe_startup_context(context);
+        assert_eq!(d.snapshot().unwrap().current.startup_context,None);
+        context.original_runner_identity=Some((4,100));d.observe_startup_context(context);
+        assert_eq!(d.snapshot().unwrap().current.startup_context,None);
+        context.original_runner_identity=Some((4,99));d.observe_startup_context(context);
+        d.begin_existing_retry();
+        let s=d.snapshot().unwrap();
+        assert_eq!(s.first_attempt.unwrap().startup_context,Some(context));
+        assert_eq!(s.current.startup_context,None);
+        assert_eq!(s.current.original_runner,None);
+    }
 
     #[test]
     fn startup_runner_history_preserves_same_identity_full_dword_first_error_and_terminal_state() {

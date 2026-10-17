@@ -12,6 +12,34 @@ use windows_sys::Win32::System::Pipes::{
 };
 use windows_sys::Win32::System::Threading::{GetCurrentProcess, GetCurrentProcessId};
 
+#[test]
+fn a0_strict_release_requires_same_reserved_id_and_retains_on_late_busy_or_poison() {
+    use crate::station_broker::{CommitClock,StationBrokerConnectRelease as R};
+    let owner=Owner::new();let early=Instant::now();let deadline=early+Duration::from_secs(1);
+    let mut clock=CommitClock::scripted([early;8],None);
+    assert_eq!(owner.release_startup_reservation_strict(StartupId(7),deadline,&mut clock),R::Missing);
+    owner.reserve_for_startup(StartupId(7)).unwrap();
+    assert_eq!(owner.release_startup_reservation_strict(StartupId(8),deadline,&mut clock),R::Mismatch);
+    assert_eq!(strict_release_ready(Some(StartupId(7)),true,StartupId(7)),Err(R::Active));
+    {
+        let held=owner.slot.lock().unwrap();
+        assert_eq!(owner.release_startup_reservation_strict(StartupId(7),deadline,&mut clock),R::Busy);
+        assert_eq!(held.reserved_startup,Some(StartupId(7)));
+    }
+    assert_eq!(owner.release_startup_reservation_strict(StartupId(7),deadline,
+        &mut CommitClock::scripted([early,deadline,deadline,deadline,deadline,deadline,deadline,deadline],None)),R::LateRetained);
+    assert_eq!(owner.slot.lock().unwrap().reserved_startup,Some(StartupId(7)));
+    assert_eq!(owner.release_startup_reservation_strict(StartupId(7),deadline,&mut clock),R::ReleasedSameStartupId);
+    assert_eq!(owner.release_startup_reservation_strict(StartupId(7),deadline,&mut clock),R::Missing);
+    let poisoned=Owner::new();poisoned.reserve_for_startup(StartupId(9)).unwrap();
+    assert!(std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let _held=poisoned.slot.lock().unwrap();panic!("pure injected connect metadata poison");
+    })).is_err());
+    assert_eq!(poisoned.release_startup_reservation_strict(StartupId(9),deadline,&mut clock),R::Poisoned);
+    assert_eq!(poisoned.slot.lock().err().expect("original metadata mutex poisoned")
+        .into_inner().reserved_startup,Some(StartupId(9)));
+}
+
 fn fixture() -> (File, OwnedHandle) {
     let mut file = tempfile::tempfile().unwrap();
     file.write_all(b"owned-pipe-object").unwrap();

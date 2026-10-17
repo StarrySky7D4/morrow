@@ -1,3 +1,13 @@
+<!-- C28-SOURCE-CHECKPOINT-047-20261017-BEGIN -->
+## Windows SDK 最新检查点（2026-10-17）
+
+047 固定源码已同步。P／C／R／S 与六个测试目标编译通过，原虚拟机 288 项限定回归通过；47 步驱动编译及 62 项纯测试通过。部署／权限编排尚未冻结，A1 所需权限尚未申请或授予，实际 Apply／Restore 为 0。真实 47 步尚未执行，9 项门禁未通过。
+
+五个应用 Release 角色编译通过，但最新 047 应用自检退出码 1，桌面合成及渲染面创建失败；执行环境为非交互 Session 0，交互桌面验收待完成。历史 036 通过结果不代表当前 047 通过。SDK26／G04／SDK_FREEZE 仍 OPEN，`release_eligible=false`。此次为开发分支更新，不创建标签或 Release。
+
+[完整结果、限制与待办](reports/reconstruction-2026-10-17/windows-sdk-source-checkpoint-047.md)。
+<!-- C28-SOURCE-CHECKPOINT-047-20261017-END -->
+
 <!-- C28-SOURCE-CHECKPOINT-036-20261016-BEGIN -->
 ## Windows SDK 开发检查点（2026-10-16）
 

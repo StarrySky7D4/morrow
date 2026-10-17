@@ -456,6 +456,17 @@ pub fn create_native_close_backend_materialized(config:&Config,actual:Arc<Matche
         HttpClientFactory::new(OutboundProxyPolicy::ReqwestDefault),config.helper.sha256,spec,retirement)?;
     Ok(ProductionBackend {backend,scheduler,native_close_v8:true})
 }
+pub fn create_asuser_native_close_backend_materialized(config:&Config,lifecycle:&crate::provisioning::GuestLifecycle,
+    retirement:&mut morrow_codex_session_exec_windows_v1::NativeFactoryRetirement)->Result<ProductionBackend> {
+    let actual=lifecycle.runner()?;
+    let materialized=Artifact{path:actual.path().to_owned(),sha256:actual.sha256()};
+    observe_materialized_images(config,&materialized)?;
+    let original=lifecycle.asuser_materialization()?;
+    let (backend,scheduler)=ProvisionedWindowsBackend::production_with_asuser_native_close_runner(
+        ExecServerRuntimeOptions::new(config.helper.path.clone(),None)?,
+        HttpClientFactory::new(OutboundProxyPolicy::ReqwestDefault),config.helper.sha256,original,retirement)?;
+    Ok(ProductionBackend{backend,scheduler,native_close_v8:true})
+}
 
 fn checked_backend_spec(config:&Config,spec:WindowsRunnerProvisioningSpec)->Result<ProductionBackend> {
     let scheduler = Arc::new(

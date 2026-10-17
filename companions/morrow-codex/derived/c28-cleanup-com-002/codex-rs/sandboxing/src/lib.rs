@@ -26,6 +26,14 @@ pub use codex_mxc_sandbox::run_main as run_windows_mxc_main;
 #[cfg(windows)]
 pub use codex_windows_sandbox::MatchedRunnerArtifact;
 #[cfg(windows)]
+#[doc(hidden)]
+pub use codex_windows_sandbox::{asuser_parent_dispatch,AsUserParentOrigin};
+#[cfg(windows)]
+#[doc(hidden)]
+pub use codex_windows_sandbox::{ParentOriginalProcess,ParentCreate,ParentChildIdentity,ParentNativeExit,ParentCClosed};
+#[cfg(windows)]
+pub use codex_windows_sandbox::{AsUserMaterialization,AsUserFactoryBinding,AsUserOriginRetirement};
+#[cfg(windows)]
 pub use codex_windows_sandbox::NativeHostCompletion;
 #[cfg(windows)]
 pub use codex_windows_sandbox::{NativeSchedulerThreads,NativeSchedulerClosed};
@@ -39,6 +47,16 @@ pub use codex_windows_sandbox::WindowsStartDiagnostic;
 pub use codex_windows_sandbox::WindowsStartError;
 #[cfg(windows)]
 pub use codex_windows_sandbox::WindowsStartSnapshot;
+#[cfg(windows)]
+pub use codex_windows_sandbox::{
+    ContextFact, ContextUnavailable, QueryHandleClose, StartupAccessResult,
+    StartupApplicationSource, StartupCallParameters, StartupObjectObservation,
+    StartupTokenRelations, WindowsStartupContext,
+    ContextApiStage, ContextFailure, TokenOpenPurpose, TokenOutputAllocation,
+    TokenAllocationObservation, TokenOpenObservation, PrimaryTokenReadResults, StartupQueryStages,
+    AuthzAllocation, AuthzRetirement, AuthzResourceObservation, AuthzDaclProjection,
+    AuthzObjectObservation, AuthzObjectState, AuthzObjectMapping,
+};
 #[cfg(windows)]
 pub use codex_windows_sandbox::WindowsStartStage;
 pub use codex_windows_sandbox::WindowsSandboxProxySettingsMode;

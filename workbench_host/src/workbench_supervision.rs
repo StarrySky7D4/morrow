@@ -458,3 +458,5 @@ mod ledger_tests {
 #[path = "workbench_supervisor.rs"]
 mod supervisor_runtime;
 pub use supervisor_runtime::run as run_supervisor;
+#[doc(hidden)]
+pub use supervisor_runtime::run_asuser_parent;

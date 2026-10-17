@@ -213,12 +213,12 @@ pub struct GuestLifecycle {
     source_runner: Arc<MatchedRunnerArtifact>,
     actual_runner: Option<Arc<MatchedRunnerArtifact>>,
     actual_runner_identity: Option<ArtifactSpec>,
-    _harness: MatchedRunnerArtifact,
-    _actual_exe: MatchedRunnerArtifact,
+    _harness: Arc<MatchedRunnerArtifact>,
+    _actual_exe: Arc<MatchedRunnerArtifact>,
     staged_runner: Option<MatchedRunnerArtifact>,
     staged_runner_identity: Option<ArtifactSpec>,
     resolver_source_metadata: RunnerSourceMetadata,
-    setup: MatchedRunnerArtifact,
+    setup: Arc<MatchedRunnerArtifact>,
     setup_child_pid: Option<u32>,
     execution_cleanup_admission: Option<ExecutionCleanupAdmissionEvidence>,
     shell: MatchedRunnerArtifact,
@@ -227,7 +227,9 @@ pub struct GuestLifecycle {
     materialization_handles: Vec<File>,
     owner_marker: Option<File>,
     owned: Option<Inventory>,
-    owned_setup: Option<OwnedWindowsSandboxSetup>,
+    owned_setup: Option<Arc<OwnedWindowsSandboxSetup>>,
+    asuser_origin:Option<Arc<codex_windows_sandbox::AsUserParentOrigin>>,
+    asuser_retirement:Option<codex_windows_sandbox::AsUserOriginRetirement>,
     cleanup: Option<PreparedOwnedWindowsSandboxCleanup>,
     normal_cleanup_report: Option<WindowsSandboxNormalCleanupReport>,
     cleanup_notes: Vec<String>,
@@ -459,6 +461,12 @@ impl GuestLifecycle {
     }
     /// File-only: no process/shell execution, directory creation, setup, DPAPI, ACL, or WFP.
     pub fn preflight(config: ProvisioningConfig) -> Result<Self> {
+        Self::preflight_inner(config,None)
+    }
+    pub fn preflight_asuser(config:ProvisioningConfig,origin:Arc<codex_windows_sandbox::AsUserParentOrigin>)->Result<Self> {
+        Self::preflight_inner(config,Some(origin))
+    }
+    fn preflight_inner(config:ProvisioningConfig,asuser_origin:Option<Arc<codex_windows_sandbox::AsUserParentOrigin>>)->Result<Self> {
         ensure!(!registered_core_requested(),
             "standalone dedicated-VM lifecycle cannot adopt a registered runtime request");
         validate_path(&config.synthetic_root)?;
@@ -470,8 +478,12 @@ impl GuestLifecycle {
         let exe = std::env::current_exe()?;
         // Canonical equality alone is insufficient: original resolver reuses this lexical path.
         validate_path(&exe)?;
-        let actual_exe = MatchedRunnerArtifact::acquire(&exe, config.harness.sha256)?;
-        let harness = MatchedRunnerArtifact::acquire(&config.harness.path, config.harness.sha256)?;
+        let actual_exe = if let Some(origin)=&asuser_origin {origin.caller_artifact()?}
+            else {Arc::new(MatchedRunnerArtifact::acquire(&exe, config.harness.sha256)?)};
+        let harness = if asuser_origin.is_some(){actual_exe.clone()}
+            else {Arc::new(MatchedRunnerArtifact::acquire(&config.harness.path, config.harness.sha256)?)};
+        ensure!(actual_exe.sha256()==config.harness.sha256&&actual_exe.path()==dunce::canonicalize(&exe)?
+            &&harness.path()==dunce::canonicalize(&config.harness.path)?,"actual original C prebirth pin/config mismatch");
         ensure!(harness.path() == actual_exe.path(), "configured harness is not actual current_exe");
         let exe_parent = exe.parent().context("main executable parent")?;
         // This direct sibling is the original resolver's first choice, with no PATH fallback.
@@ -481,7 +493,8 @@ impl GuestLifecycle {
         ensure!(source_runner.path() == dunce::canonicalize(exe_parent.join("codex-command-runner.exe"))?,
             "source runner must be the exact original resolver first sibling, no resource/PATH route");
         let resolver_source_metadata = runner_source_metadata(source_runner.path())?;
-        let setup = MatchedRunnerArtifact::acquire(&config.setup.path, config.setup.sha256)?;
+        let setup = Arc::new(MatchedRunnerArtifact::acquire(&config.setup.path, config.setup.sha256)?);
+        if let Some(origin)=&asuser_origin {origin.validate_independent_role_pins(&setup,&source_runner)?;}
         let shell = MatchedRunnerArtifact::acquire(&config.inventory_shell.path, config.inventory_shell.sha256)?;
         let mut parents = config.synthetic_root.ancestors().skip(1).collect::<Vec<_>>();
         parents.reverse();
@@ -492,11 +505,27 @@ impl GuestLifecycle {
             staged_runner_identity: None, resolver_source_metadata, setup, setup_child_pid: None,
             execution_cleanup_admission: None, shell,
             ancestors, root_handles: Vec::new(), materialization_handles: Vec::new(), owner_marker: None,
-            owned: None, owned_setup: None, cleanup: None, cleanup_notes: Vec::new(),
+            owned: None, owned_setup: None, asuser_origin,asuser_retirement:None,cleanup: None, cleanup_notes: Vec::new(),
             normal_cleanup_report: None })
     }
 
     pub fn phase(&self) -> Phase { self.phase }
+    pub fn has_asuser_origin(&self)->bool {self.asuser_origin.is_some()}
+    pub fn asuser_materialization(&self)->Result<Arc<codex_windows_sandbox::AsUserMaterialization>> {
+        ensure!(self.phase==Phase::RunnerMaterialized,"real materializer phase required");
+        Ok(codex_windows_sandbox::AsUserMaterialization::from_originals(
+            self.asuser_origin.as_ref().context("original P inlet absent")?.clone(),
+            self.owned_setup.as_ref().context("actual original owned setup absent")?.clone(),
+            self.setup.clone(),self.runner()?,self.execution_instance.clone())?)
+    }
+    pub fn finish_asuser_origin(&mut self)->Result<()> {
+        if let Some(origin)=&self.asuser_origin {
+            ensure!(self.phase==Phase::Finished&&self.normal_cleanup_report.is_some()
+                &&self.execution_cleanup_admission.is_some(),"outer lifecycle/setup normal finish required before P origin closes");
+            let retired=self.asuser_retirement.take().context("same original native/factory origin retirement missing")?;
+            origin.close_after_finished_lifecycle(retired)?;
+        }Ok(())
+    }
 
     /// Caller records this outside the synthetic home after each genuine terminal API result.
     /// An Unknown result must keep this same object/handles reachable; this is not a resume token.
@@ -616,7 +645,7 @@ impl GuestLifecycle {
             let codex_home = self.codex_home();
             let setup = &self.setup;
             let shell = &self.shell;
-            let after = retain_setup_before_postcheck(&mut self.owned_setup, owned_setup, |owned_setup| {
+            let after = retain_setup_before_postcheck(&mut self.owned_setup, Arc::new(owned_setup), |owned_setup| {
                 ensure!(
                     owned_setup.setup_exe_path() == setup.path()
                         && owned_setup.setup_exe_sha256() == setup.sha256()
@@ -831,7 +860,7 @@ impl GuestLifecycle {
     pub fn admit_execution_cleanup(
         &mut self,
         confirmation: &str,
-        admission: BoundExecutionCleanupAdmission,
+        mut admission: BoundExecutionCleanupAdmission,
     ) -> Result<()> {
         ensure!(confirmation==ADMIT_EXECUTION_CLEANUP_CONFIRMATION && self.phase==Phase::RunnerMaterialized
             && self.execution_cleanup_admission.is_none(),"normal cleanup admission phase/one-shot confirmation");
@@ -859,7 +888,10 @@ impl GuestLifecycle {
             close_ack_verified:admission.completion.terminal_close_ack_verified(),
             owner_finished:true,factory_released:true,
         };
-        drop(bound);drop(admission);
+        drop(bound);
+        let retired=admission.completion.take_asuser_origin_retirement();
+        ensure!(self.asuser_origin.is_some()==retired.is_some(),"A1 origin/completion path mismatch; no scalar substitution");
+        self.asuser_retirement=retired;drop(admission);
         self.execution_cleanup_admission=Some(evidence);self.phase=Phase::ExecutionCleanupAdmitted;
         Ok(())
     }
@@ -887,6 +919,11 @@ impl GuestLifecycle {
             .take()
             .context("missing non-forgeable OwnedWindowsSandboxSetup proof; STOP cleanup")?;
         self.phase = Phase::CleanupPreparing;
+        // A1 holds the SAME proof through its actual factory. Only after real
+        // SDK/owner/factory retirement may the unique original be consumed by
+        // the existing cleanup implementation. Never clone/replace the proof.
+        let owned_setup=match Arc::try_unwrap(owned_setup){Ok(original)=>original,Err(original)=>{
+            self.owned_setup=Some(original);bail!("original A1 setup still aliased; retain without cleanup");}};
         match prepare_owned_windows_sandbox_cleanup(owned_setup) {
             Ok(guard) => {
                 self.cleanup = Some(guard);

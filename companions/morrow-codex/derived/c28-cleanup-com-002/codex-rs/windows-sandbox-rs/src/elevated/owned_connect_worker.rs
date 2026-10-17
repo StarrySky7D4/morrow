@@ -118,6 +118,24 @@ impl RunnerWatch<'_> {
 }
 
 impl Owner {
+    /// A0-only witness; the legacy idempotent release below is unchanged.
+    /// No I/O/native calls, waiting, allocation or arbitrary callback under slot.
+    pub(crate) fn release_startup_reservation_strict(
+        &self,startup_id:StartupId,deadline:Instant,clock:&mut crate::station_broker::CommitClock,
+    )->crate::station_broker::StationBrokerConnectRelease {
+        use crate::station_broker::{StationBrokerConnectRelease as R,take_timely,TimelyTakeError};
+        let mut slot=match self.slot.try_lock() {
+            Ok(slot)=>slot,
+            Err(std::sync::TryLockError::WouldBlock)=>return R::Busy,
+            Err(std::sync::TryLockError::Poisoned(_))=>return R::Poisoned,
+        };
+        if let Err(reason)=strict_release_ready(slot.reserved_startup,slot.active.is_some(),startup_id){return reason;}
+        match take_timely(&mut slot.reserved_startup,deadline,clock) {
+            Ok(_)=>R::ReleasedSameStartupId,
+            Err(TimelyTakeError::Empty)=>R::Missing,
+            Err(TimelyTakeError::Late)=>R::LateRetained,
+        }
+    }
     pub(crate) const fn new() -> Self {
         Self {
             slot: Mutex::new(Slot {
@@ -496,6 +514,13 @@ impl Owner {
         slot.active = None;
         Ok(())
     }
+}
+
+fn strict_release_ready(reserved:Option<StartupId>,active:bool,expected:StartupId)
+    ->Result<(),crate::station_broker::StationBrokerConnectRelease> {
+    use crate::station_broker::StationBrokerConnectRelease as R;
+    match reserved {None=>return Err(R::Missing),Some(actual) if actual!=expected=>return Err(R::Mismatch),_=>{}}
+    if active {return Err(R::Active);}Ok(())
 }
 
 fn retain_runner_unknown(pending: &mut Pending, reason: UnknownReason)

@@ -3,6 +3,8 @@
 use anyhow::{Context, Result, bail, ensure};
 use morrow_protected_checked_vm_harness::preflight::{self, Artifact, Config, digest};
 use std::{collections::BTreeMap, path::PathBuf};
+#[cfg(windows)]
+mod a1_parent_anchor;
 
 struct Arguments {
     files: Config,
@@ -11,8 +13,8 @@ struct Arguments {
     sid_query: Option<Artifact>,
     expected_uuid: Option<String>,
 }
-fn arguments() -> Result<Arguments> {
-    let mut args = std::env::args().skip(1);
+fn arguments_from(input:&[String]) -> Result<Arguments> {
+    let mut args = input.iter().cloned();
     let mut values = BTreeMap::new();
     while let Some(key) = args.next() {
         ensure!(
@@ -92,15 +94,35 @@ fn arguments() -> Result<Arguments> {
 fn run() -> Result<()> {
     let child_args: Vec<_> = std::env::args().skip(1).collect();
     #[cfg(windows)]
-    if let Some(code) = morrow_protected_checked_vm_harness::basic_witness::run_child_if_requested(&child_args)? {
-        std::process::exit(code);
+    if let Some((origin,args))=codex_windows_sandbox::AsUserParentOrigin::import_arguments(&child_args,a1_parent_anchor::P_IMAGE_SHA256)? {
+        let original=std::sync::Arc::new(origin);
+        let result=std::panic::catch_unwind(std::panic::AssertUnwindSafe(||run_inner(args,Some(original.clone()))));
+        return match result {Ok(Ok(()))=>Ok(()),_=>original.retain_after_failure()};
     }
-    if let Some(code) =
+    #[cfg(windows)]
+    {run_inner(child_args,None)}
+    #[cfg(not(windows))]
+    {run_inner(child_args)}
+}
+fn run_inner(child_args:Vec<String>,#[cfg(windows)] origin:Option<std::sync::Arc<codex_windows_sandbox::AsUserParentOrigin>>)->Result<()> {
+    #[cfg(windows)]
+    let allow_child_fixture=origin.is_none();
+    #[cfg(not(windows))]
+    let allow_child_fixture=true;
+    #[cfg(windows)]
+    if allow_child_fixture {
+        if let Some(code) = morrow_protected_checked_vm_harness::basic_witness::run_child_if_requested(&child_args)? {
+            std::process::exit(code);
+        }
+    }
+    if allow_child_fixture {if let Some(code) =
         morrow_protected_checked_vm_harness::witness::run_child_if_requested(&child_args)?
     {
         std::process::exit(code);
-    }
-    let args = arguments()?;
+    }}
+    let args = arguments_from(&child_args)?;
+    #[cfg(windows)]
+    ensure!(origin.is_none()||args.phase=="live-guest-interactive","A1 original bootstrap cannot become a preflight/fixture success");
     // This branch never creates an owner, scheduler, backend, shell or VM connection.
     if args.phase == "preflight" {
         ensure!(
@@ -132,7 +154,8 @@ fn run() -> Result<()> {
         };
         let stdin = std::io::stdin();
         let mut input = stdin.lock();
-        let mut session = Session::begin(config, &mut input)?;
+        let mut session = if let Some(original)=origin {Session::begin_asuser(config,&mut input,original)?}
+            else {Session::begin(config, &mut input)?};
         match session.interact(&mut input) {
             Ok(()) => Ok(()),
             Err(error) => session.retain_after_disconnect(&error),

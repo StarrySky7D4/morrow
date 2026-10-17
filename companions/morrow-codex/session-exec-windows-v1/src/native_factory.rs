@@ -15,22 +15,27 @@ pub struct NativeFactoryRetirement {
     // The caller installs this attempt before creation. A subsequent helper/
     // factory error retains its SAME runtime and original thread anchors here.
     failed_creation_runtime:Option<Arc<Runtime>>,
+    asuser:Option<Arc<codex_sandboxing::AsUserFactoryBinding>>,
+    failed_asuser_backend:Option<Arc<ProvisionedWindowsBackend>>,
 }
 pub struct NativeFactoryCompletion {backend:Weak<ProvisionedWindowsBackend>,_threads:NativeSchedulerClosed}
 /// Still not an owner-finish or guest-setup cleanup permission.
 pub struct RetiredExecutionCompletion {execution:NativeExecutionCompletion,_factory:NativeFactoryCompletion}
 impl NativeFactoryRetirement {
     pub fn new()->Self {Self {backend:Weak::new(),runtime:Weak::new(),threads:NativeSchedulerThreads::new(),
-        attempted:false,creation_started:false,creation_succeeded:false,failed_creation_runtime:None}}
+        attempted:false,creation_started:false,creation_succeeded:false,failed_creation_runtime:None,asuser:None,failed_asuser_backend:None}}
     /// Called after synchronous shutdown of this factory's original Runtime.
     /// Weak absence is ONLY a precondition; original native waits and checked
     /// thread closes below supply the actual scheduler completion proof.
     pub fn finish_after_shutdown(&mut self)->Result<NativeFactoryCompletion> {
-        if self.attempted || !self.creation_succeeded || self.failed_creation_runtime.is_some(){return Err(Error::CommitUnknown);}
+        if self.attempted || !self.creation_succeeded || self.failed_creation_runtime.is_some()||self.failed_asuser_backend.is_some(){return Err(Error::CommitUnknown);}
         if self.backend.upgrade().is_some() || self.runtime.upgrade().is_some(){return Err(Error::Conflict);}
         self.attempted=true;
         let threads=self.threads.verify_native_shutdown(Instant::now()+Duration::from_secs(15))
             .map_err(|_|Error::CommitUnknown)?;
+        // Only after the ORIGINAL backend/runtime are gone and original native
+        // scheduler threads checked-closed may its real setup/R/S pins retire.
+        self.asuser.take();
         Ok(NativeFactoryCompletion {backend:self.backend.clone(),_threads:threads})
     }
 }
@@ -41,6 +46,9 @@ impl NativeExecutionCompletion {
     }
 }
 impl RetiredExecutionCompletion {
+    pub fn take_asuser_origin_retirement(&mut self)->Option<codex_sandboxing::AsUserOriginRetirement> {
+        self.execution.asuser_origin.take()
+    }
     pub fn is_for_review(&self,review:&ReviewedNativeCompletion)->bool {self.execution.is_for_review(review)}
     pub fn is_for_owner(&self,owner:morrow_core::dispatch::HostBinding)->bool {self.execution.is_for_owner(owner)}
     pub fn runner_pid(&self)->u32 {self.execution.runner_pid()}
@@ -50,6 +58,19 @@ impl RetiredExecutionCompletion {
     pub fn terminal_close_ack_verified(&self)->bool {self.execution.terminal_close_ack_verified()}
 }
 impl ProvisionedWindowsBackend {
+    pub fn production_with_asuser_native_close_runner(options:ExecServerRuntimeOptions,factory:HttpClientFactory,
+        helper_sha256:[u8;32],original:Arc<codex_sandboxing::AsUserMaterialization>,retirement:&mut NativeFactoryRetirement)
+        ->Result<(Arc<Self>,Arc<Runtime>)> {
+        if retirement.creation_started||retirement.asuser.is_some(){return Err(Error::CommitUnknown);}
+        let binding=codex_sandboxing::AsUserFactoryBinding::new(original);
+        let spec=WindowsRunnerProvisioningSpec::from_locked_native_close_v8(binding.runner_view())?;
+        retirement.asuser=Some(binding.clone());
+        let (backend,runtime)=Self::production_with_native_close_runner(options,factory,helper_sha256,spec,retirement)?;
+        retirement.failed_asuser_backend=Some(backend.clone());retirement.failed_creation_runtime=Some(runtime.clone());
+        binding.bind_original_backend(&backend).map_err(|_|Error::CommitUnknown)?;
+        retirement.failed_asuser_backend.take();retirement.failed_creation_runtime.take();
+        Ok((backend,runtime))
+    }
     /// Host-only explicit v8 selection; the ordinary constructor and supplied
     /// runtime route retain their existing v7/default behavior.
     pub fn production_with_native_close_runner(options:ExecServerRuntimeOptions,factory:HttpClientFactory,

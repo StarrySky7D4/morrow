@@ -2,6 +2,14 @@
 fn main() {
     #[cfg(windows)]
     {
+        // Source047 private A1 P path precedes the legacy runtime, lease
+        // callback, kill-on-drop JobChild and unconditional TerminateProcess.
+        // Its own failure core parks; normal C/native closure returns normally.
+        let arguments=std::env::args().skip(1).collect::<Vec<_>>();
+        if let Some(code)=morrow_workbench_host::workbench_supervision::run_asuser_parent(&arguments) {
+            if code==0{return;}
+            std::process::exit(code as i32); // invalid static selector, no effects
+        }
         let runtime = tokio::runtime::Builder::new_multi_thread()
             .worker_threads(2)
             .enable_all()

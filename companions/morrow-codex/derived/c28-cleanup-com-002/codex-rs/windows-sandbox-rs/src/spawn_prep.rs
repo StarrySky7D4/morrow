@@ -55,6 +55,55 @@ pub(crate) struct ElevatedSpawnContext {
     pub(crate) cap_sids: Vec<String>,
 }
 
+/// The A1 factory already owns its actual setup. Preparing a business request
+/// must not call require_sandbox_account/setup refresh or mutate a global NUL
+/// ACL/capability file. Reuse ONLY its existing applied roots and existing caps.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn prepare_asuser_spawn_context(binding:&crate::AsUserFactoryBinding,
+    permissions:&ResolvedWindowsSandboxPermissions,codex_home:&Path,cwd:&Path,
+    env:&mut HashMap<String,String>,read_roots:Option<&[PathBuf]>,write_roots:Option<&[PathBuf]>,
+    deny_read:&[PathBuf],deny_write:&[PathBuf],proxy_enforced:bool)->Result<ElevatedSpawnContext> {
+    let setup=binding.original_setup();permissions.validate_elevated_filesystem_policy(cwd)?;
+    anyhow::ensure!(permissions.should_apply_network_block()&&!proxy_enforced&&setup.proxy_ports().is_empty()
+        &&!setup.allow_local_binding(),"A1 currently requires the actual owned sealed offline setup");
+    anyhow::ensure!(dunce::canonicalize(codex_home)?==setup.codex_home()
+        &&dunce::canonicalize(cwd)?==setup.command_cwd(),"A1 request differs from actual owned setup home/workspace");
+    normalize_null_device_env(env);ensure_non_interactive_pager(env);inherit_path_env(env);inject_git_safe_directory(env,cwd);
+    let normalize=|paths:&[PathBuf]|->Result<Vec<String>>{
+        anyhow::ensure!(paths.len()<=64,"A1 applied-root bound");
+        // This compares declared policy paths to the actual applied proof; it
+        // does not create a file-origin capability. Deny paths may legitimately
+        // be absent. Use the SAME canonical key/fallback as original setup.
+        anyhow::ensure!(paths.iter().all(|p|p.is_absolute()&&p.to_string_lossy().len()<=32700),"A1 policy path bound");
+        let mut result=paths.iter().map(|p|crate::path_normalization::canonical_path_key(p)).collect::<Vec<_>>();
+        result.sort();result.dedup();Ok(result)};
+    let AllowDenyPaths{allow,deny}=compute_allow_paths_for_permissions(permissions,cwd,env);
+    let allowed=allow.into_iter().collect::<Vec<_>>();
+    let requested=write_roots.unwrap_or(&allowed);
+    let effective=effective_write_roots_for_permissions(permissions,cwd,env,codex_home,Some(requested));
+    anyhow::ensure!(normalize(&effective)?==normalize(setup.write_roots())?,"A1 write policy changed after owned setup");
+    anyhow::ensure!(normalize(deny_read)?==normalize(setup.deny_read_paths())?,"A1 read-deny policy differs from setup");
+    let computed_deny=deny.into_iter().collect::<Vec<_>>();let deny_write=if deny_write.is_empty(){&computed_deny[..]}else{deny_write};
+    anyhow::ensure!(normalize(deny_write)?==normalize(setup.deny_write_paths())?,"A1 write-deny policy differs from setup");
+    let needed_read=read_roots.map(<[PathBuf]>::to_vec).unwrap_or_else(||
+        crate::setup::gather_read_roots(cwd,permissions,env,codex_home,crate::setup::current_setup_runtime()));
+    anyhow::ensure!(normalize(&needed_read)?==normalize(setup.read_roots())?,"A1 read roots differ from setup");
+    let caps=crate::cap::load_existing_asuser_caps(codex_home)?;
+    let mut cap_sids=Vec::with_capacity(effective.len());
+    if permissions.uses_write_capabilities_for_cwd(cwd,env) {
+        for root in effective {
+            let key=crate::path_normalization::canonical_path_key(&root);
+            let sid=if key==crate::path_normalization::canonical_path_key(cwd){caps.workspace_by_cwd.get(&key)}
+                else{caps.writable_root_by_path.get(&key)};
+            let sid=sid.context("actual setup capability absent; no create/refresh")?;
+            crate::asuser_a1_policy::Sid::from_text(sid)?;cap_sids.push(sid.clone());
+        }
+    }else{crate::asuser_a1_policy::Sid::from_text(&caps.readonly)?;cap_sids.push(caps.readonly);}
+    anyhow::ensure!(!cap_sids.is_empty()&&cap_sids.len()<=64,"A1 active capability count");
+    let sandbox_creds=crate::identity::existing_owned_asuser_creds(setup)?;
+    Ok(ElevatedSpawnContext{sandbox_base:setup.home.sandbox_dir.clone(),logs_base_dir:Some(setup.home.sandbox_dir.clone()),sandbox_creds,cap_sids})
+}
+
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct SpawnPrepOptions {
     pub(crate) inherit_path: bool,

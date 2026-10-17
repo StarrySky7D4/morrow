@@ -64,21 +64,8 @@ impl OriginalProcessIdentity {
     pub(crate) fn observe_startup_process(&self, process: &OwnedHandle, startup_id: StartupId)
         -> crate::WindowsStartRunnerObservation
     {
-        use crate::WindowsStartRunnerState as S;
-        let raw = process.as_raw_handle() as HANDLE;
-        let wait = unsafe { WaitForSingleObject(raw, 0) };
-        let state = match wait {
-            WAIT_OBJECT_0 => {
-                let mut raw_dword = 0u32;
-                if unsafe { GetExitCodeProcess(raw, &mut raw_dword) } != 0 { S::Exited { raw_dword } }
-                else { S::SignaledExitQueryFailed { os_class: crate::WindowsOsError::from_code(unsafe { GetLastError() }) } }
-            }
-            258 => S::RunningAtObservation,
-            u32::MAX => S::WaitFailed { os_class: crate::WindowsOsError::from_code(unsafe { GetLastError() }) },
-            wait_result => S::UnexpectedWait { wait_result },
-        };
-        crate::WindowsStartRunnerObservation { startup_id: startup_id.0, runner_pid: self.pid,
-            runner_creation_filetime_100ns: self.creation_filetime, state }
+        crate::start_diagnostic::context_query::sample_runner(
+            process.as_raw_handle() as HANDLE,startup_id.0,self.pid,self.creation_filetime)
     }
 
     pub(crate) fn from_live_process(
@@ -1014,6 +1001,9 @@ pub(crate) struct CheckedRunnerOwner {
     native_startup_writer: std::sync::OnceLock<super::native_close_startup::NativeStartupWriter>,
     native_startup_reader: std::sync::OnceLock<super::native_close_startup::NativeStartupReader>,
     native_desktop: std::sync::OnceLock<Arc<Mutex<crate::desktop::OwnedLaunchDesktop>>>,
+    // A0-only fixed companion on THIS admission, never a business-native fact.
+    pub(crate) station_broker: std::sync::OnceLock<crate::station_broker::BrokerCell>,
+    asuser_a1: std::sync::OnceLock<crate::asuser_a1_native::Cell>,
     native_desktop_claimed: std::sync::atomic::AtomicBool,
     native_forwarders: Mutex<native_forwarders::NativeForwarderRetention>,
     pub(super) native_completion_taken: std::sync::atomic::AtomicBool,
@@ -1031,16 +1021,122 @@ impl fmt::Debug for CheckedRunnerOwner {
 }
 
 impl CheckedRunnerOwner {
+    /// Reserve finite A1 slots on this original admission before any token/native
+    /// allocation. Does not mint provenance or authorize an A1 login by itself.
+    fn reserve_asuser_a1(&self)->io::Result<()> {
+        {
+            let state=self.state.try_lock().map_err(|_|io::Error::new(io::ErrorKind::WouldBlock,"A1 owner busy or poisoned"))?;
+            if state.no_replay_seal||state.sticky_unknown.is_some()||state.process.is_some()
+                ||state.actor_adopted||self.station_broker.get().is_some()
+                ||!state.artifact.as_ref().is_some_and(|pin|pin.native_close_v8()) {
+                return Err(io::Error::other("A1 requires original unused v8 reservation"));
+            }
+        }
+        // Allocation occurs outside owner/registry locks. This is only a finite
+        // local companion; it cannot acquire another lane or execution slot.
+        let cell=crate::asuser_a1_native::Cell::new(self.startup_id.0,self.startup_deadline);
+        self.asuser_a1.set(cell).map_err(|_|io::Error::other("A1 already reserved; no replay"))
+    }
+    pub(crate) fn has_asuser_a1(&self)->bool {self.asuser_a1.get().is_some()}
+    pub(crate) fn take_asuser_origin_retirement(&self)->io::Result<Option<crate::AsUserOriginRetirement>> {
+        let Some(cell)=self.asuser_a1.get() else{return Ok(None);};
+        // This is a one-time post-native retirement, not startup admission.
+        // Do not reuse the expired startup deadline after arbitrary business.
+        if !self.native_local_retired.load(std::sync::atomic::Ordering::Acquire)
+            ||self.is_sticky_unknown()||self.is_no_replay_sealed(){return Err(io::Error::other("A1 local retirement not proven"));}
+        cell.with(|original|original.take_origin_retirement()).map(Some)
+    }
+    pub(crate) fn with_asuser_a1<T>(&self,f:impl FnOnce(&mut crate::asuser_a1_native::Attempt)->io::Result<T>)->io::Result<T> {
+        self.ensure_can_advance()?;
+        let result=self.asuser_a1.get().ok_or_else(||io::Error::other("A1 original reservation missing"))?.with(f);
+        if result.is_err(){self.seal_unknown(StickyUnknownReason::RuntimeLifecycleFailure);}
+        result
+    }
+    fn check_asuser_native_adopted(&self)->io::Result<()> {
+        if let Some(cell)=self.asuser_a1.get() {
+            let result=cell.with(|original|if original.native_adopted(){Ok(())}
+                else{Err(io::Error::other("A1 original native transfer not proven"))});
+            if result.is_err(){self.seal_unknown(StickyUnknownReason::RuntimeLifecycleFailure);}
+            result?;
+        }
+        Ok(())
+    }
+
+    pub(crate) fn check_station_broker_owner(&self)->io::Result<()> {
+        let state=self.state.try_lock().map_err(|_|io::Error::new(io::ErrorKind::WouldBlock,"A0 owner busy or poisoned"))?;
+        if state.no_replay_seal || state.sticky_unknown.is_some() || state.process.is_some()
+            || state.actor_adopted || self.station_broker.get().is_none() || self.asuser_a1.get().is_some() {
+            return Err(io::Error::other("A0 original owner unavailable or sealed"));
+        }
+        Ok(())
+    }
+    /// One synchronous bounded query from the SAME anchored HPROCESS. Dedicated
+    /// desktop resource lock only; no state/registry/Core guard crosses Win32.
+    pub(crate) fn observe_startup_context(&self, diagnostic: Option<&crate::WindowsStartDiagnostic>) {
+        self.observe_startup_context_with_sample(diagnostic,
+            crate::start_diagnostic::ContextFact::NotObserved(
+                crate::start_diagnostic::ContextUnavailable::NotAttempted));
+    }
+    pub(crate) fn observe_startup_context_with_sample(&self, diagnostic: Option<&crate::WindowsStartDiagnostic>,
+        before:crate::start_diagnostic::ContextFact<crate::WindowsStartRunnerObservation>) {
+        use crate::start_diagnostic::ContextUnavailable as U;
+        let unavailable=|reason| {
+            if let Some(diagnostic)=diagnostic {
+                diagnostic.startup_context_unavailable(self.startup_id.0,reason);
+            }
+        };
+        let original=match self.state.try_lock() {
+            Ok(state)=>{
+                if !state.artifact.as_ref().is_some_and(|pin|pin.native_close_v8()) {return;}
+                state.process.as_ref().zip(state.identity)
+                    .map(|(process,identity)|(Arc::clone(process),identity))
+            }
+            Err(std::sync::TryLockError::WouldBlock)=>{unavailable(U::Busy);return;}
+            Err(std::sync::TryLockError::Poisoned(error))=>{drop(error);unavailable(U::Poisoned);return;}
+        };
+        let Some(original)=original else {unavailable(U::OriginalUnavailable);return;};
+        let Some(desktop)=self.native_desktop.get() else {unavailable(U::OriginalUnavailable);return;};
+        let (context,unresolved)=match desktop.try_lock() {
+            Ok(mut desktop)=>{
+                let context=desktop.observe_original_token_context_with_sample(original.0.as_raw_handle() as HANDLE,
+                    self.startup_id.0,original.1.pid,original.1.creation_filetime,before);
+                (context,desktop.has_unresolved_startup_queries())
+            }
+            Err(std::sync::TryLockError::WouldBlock)=>{unavailable(U::Busy);return;}
+            Err(std::sync::TryLockError::Poisoned(error))=>{drop(error);unavailable(U::Poisoned);return;}
+        };
+        drop(original);
+        if let Some(diagnostic)=diagnostic {diagnostic.observe_startup_context(context);}
+        if unresolved {
+            // Query unavailability is diagnostic only; a real new close debt is
+            // an actual ownership failure and cannot permit normal release.
+            self.seal_unknown(StickyUnknownReason::RuntimeLifecycleFailure);
+        }
+    }
     /// Original owner pin/identity are copied under the lock; OS observation is
     /// outside it. No reopen, duplication, blocking wait, join/finalize or close.
     pub(crate) fn observe_startup_runner(&self, diagnostic: &crate::WindowsStartDiagnostic) {
-        let original = self.state.lock().ok().and_then(|state| {
-            if !state.artifact.as_ref().is_some_and(|pin| pin.native_close_v8()) { return None; }
-            Some((Arc::clone(state.process.as_ref()?), state.identity?))
-        });
-        if let Some((process, identity)) = original {
-            diagnostic.observe_original_runner(identity.observe_startup_process(&process, self.startup_id));
-        }
+        let _=self.sample_startup_runner_for_context(Some(diagnostic));
+    }
+    /// Return this actual pre-query observation directly; never reconstruct it
+    /// from the recorder that later connect watches can update.
+    pub(crate) fn sample_startup_runner_for_context(&self, diagnostic:Option<&crate::WindowsStartDiagnostic>)
+        ->crate::start_diagnostic::ContextFact<crate::WindowsStartRunnerObservation> {
+        use crate::start_diagnostic::{ContextFact as F,ContextUnavailable as U};
+        let original=match self.state.try_lock() {
+            Ok(state)=>{
+                if !state.artifact.as_ref().is_some_and(|pin|pin.native_close_v8()) {
+                    return F::NotObserved(U::NotApplicable);
+                }
+                state.process.as_ref().zip(state.identity).map(|(p,i)|(Arc::clone(p),i))
+            }
+            Err(std::sync::TryLockError::WouldBlock)=>return F::NotObserved(U::Busy),
+            Err(std::sync::TryLockError::Poisoned(error))=>{drop(error);return F::NotObserved(U::Poisoned);}
+        };
+        let Some((process,identity))=original else {return F::NotObserved(U::OriginalUnavailable);};
+        let observed=identity.observe_startup_process(&process,self.startup_id);
+        if let Some(diagnostic)=diagnostic {diagnostic.observe_original_runner(observed);}
+        F::Observed(observed)
     }
 
     fn new(
@@ -1131,6 +1227,8 @@ impl CheckedRunnerOwner {
             native_startup_writer: std::sync::OnceLock::new(),
             native_startup_reader: std::sync::OnceLock::new(),
             native_desktop: std::sync::OnceLock::new(),
+            station_broker: std::sync::OnceLock::new(),
+            asuser_a1: std::sync::OnceLock::new(),
             native_desktop_claimed: std::sync::atomic::AtomicBool::new(false),
             native_forwarders:Mutex::new(native_forwarders::NativeForwarderRetention::new()),
             native_completion_taken: std::sync::atomic::AtomicBool::new(false),
@@ -1223,6 +1321,8 @@ impl CheckedRunnerOwner {
             native_startup_writer: std::sync::OnceLock::new(),
             native_startup_reader: std::sync::OnceLock::new(),
             native_desktop: std::sync::OnceLock::new(),
+            station_broker: std::sync::OnceLock::new(),
+            asuser_a1: std::sync::OnceLock::new(),
             native_desktop_claimed: std::sync::atomic::AtomicBool::new(false),
             native_forwarders:Mutex::new(native_forwarders::NativeForwarderRetention::new()),
             native_completion_taken: std::sync::atomic::AtomicBool::new(false),
@@ -1258,6 +1358,19 @@ impl CheckedRunnerOwner {
         Ok(original)
     }
     pub(super) fn close_owned_native_desktop(&self)->io::Result<()> {
+        if let Some(cell)=self.asuser_a1.get() {
+            if !self.native_close_runtime.get().is_some_and(|runtime|runtime.terminal_ack_written()) {
+                self.seal_unknown(StickyUnknownReason::RuntimeLifecycleFailure);
+                return Err(io::Error::other("A1 original authenticated terminal ACK absent"));
+            }
+            let result=cell.with(|original|original.close_gui_after_native());
+            {
+                let mut state=self.state.lock().map_err(|_|io::Error::other("A1 owner poisoned after GUI close"))?;
+                match &result {Ok(())=>state.native_desktop_closed=true,
+                    Err(error)=>if state.native_desktop_close_debt.is_none(){state.native_desktop_close_debt=Some(error.raw_os_error().unwrap_or(0));}}
+            }
+            if result.is_err(){self.seal_unknown(StickyUnknownReason::RuntimeLifecycleFailure);}return result;
+        }
         let original=self.native_desktop.get().ok_or_else(||io::Error::other("owned invocation desktop not observed"))?;
         // Dedicated resource lock only: no Core/state/registry lock across OS close.
         let (result,debt_target)=match original.try_lock() {
@@ -1278,6 +1391,12 @@ impl CheckedRunnerOwner {
     }
     pub(super) fn retire_native_local_slot(&self)->io::Result<()> {
         if self.is_sticky_unknown() || self.is_no_replay_sealed(){return Err(io::Error::other("native original owner Unknown"));}
+        if let Some(cell)=self.asuser_a1.get() {
+            if let Err(error)=cell.with(|original|original.retire_after_native()) {
+                self.seal_unknown(StickyUnknownReason::RuntimeLifecycleFailure);
+                return Err(error);
+            }
+        }
         let result=self.registry.ok_or_else(||io::Error::other("original local registry absent"))?
             .retire_native_original_checked(self.startup_id);
         match result {
@@ -2369,6 +2488,13 @@ impl CheckedRunnerOwner {
                 return Ok(outcome);
             }
         }
+        if self.has_asuser_a1() {
+            // Physical IO/process reap, including late sticky Unknown, does
+            // not discharge private T/GUI/default-template/origin obligations.
+            // Keep the SAME registry anchor until the genuine native+SDK local
+            // retirement consumes them. Preserve the actual outcome unchanged.
+            return Ok(outcome);
+        }
         if let Some(registry) = self.registry {
             registry.release_slot_after_physical_close(self.startup_id);
         }
@@ -2382,6 +2508,10 @@ impl CheckedRunnerOwner {
     /// registry slot releases outside `self.state` and `registry.inner` locks while
     /// keeping every original handle strongly anchored across errors and unwinds.
     pub(crate) fn finalize(&self, wait_until: Instant) -> io::Result<CheckedFinalizationOutcome> {
+        if self.station_broker.get().is_some() {
+            return Err(io::Error::other("A0 requires resource-only retirement; no business completion"));
+        }
+        self.check_asuser_native_adopted()?;
         let cap = Instant::now()
             .checked_add(CONNECT_TIMEOUT)
             .ok_or_else(|| io::Error::other("finalization deadline overflow"))?;
@@ -2401,6 +2531,10 @@ impl CheckedRunnerOwner {
         &self,
         wait_until: Instant,
     ) -> io::Result<CheckedFinalizationOutcome> {
+        if self.station_broker.get().is_some() {
+            return Err(io::Error::other("A0 requires resource-only retirement; no business completion"));
+        }
+        self.check_asuser_native_adopted()?;
         let cap = Instant::now()
             .checked_add(CONNECT_TIMEOUT)
             .ok_or_else(|| io::Error::other("finalization deadline overflow"))?;
@@ -2658,6 +2792,7 @@ pub(crate) fn reserve_in_registry(
         registry,
         custom_connect_owner,
         committed_to_transport: false,
+        broker_resource_only_retired: false,
     })
 }
 
@@ -2713,9 +2848,119 @@ pub(crate) struct CheckedStartupReservation {
     registry: &'static CheckedOwnerRegistry,
     custom_connect_owner: Option<&'static owned_connect_worker::Owner>,
     committed_to_transport: bool,
+    broker_resource_only_retired: bool,
 }
 
 impl CheckedStartupReservation {
+    pub(crate) fn reserve_asuser_a1(&mut self)->io::Result<()> {
+        if self.committed_to_transport||self.broker_resource_only_retired {
+            return Err(io::Error::other("A1 original startup reservation already consumed"));
+        }
+        self.owner.reserve_asuser_a1()
+    }
+    /// No native calls, wait, callback or I/O while state/registry locks are held.
+    /// Only A0's actual checked-closed fixed slots may release this original
+    /// local admission. This does not publish a native/business completion.
+    pub(crate) fn finish_station_broker_resource_only(&mut self)->io::Result<crate::StationBrokerSnapshot> {
+        let mut clock=crate::station_broker::CommitClock::new();
+        let result=std::panic::catch_unwind(std::panic::AssertUnwindSafe(||self.finish_station_broker_inner(&mut clock)));
+        let result=match result {
+            Ok(result)=>result,
+            Err(_)=>{
+                if let Some(cell)=self.owner.station_broker.get() {
+                    if let Ok(mut core)=cell.try_borrow(){core.admission_unwound();}
+                }
+                Err(io::Error::other("A0 admission transaction unwound; original retained"))
+            },
+        };
+        if let Err(error)=&result {
+            if let Some(cell)=self.owner.station_broker.get() {
+                if let Ok(mut core)=cell.try_borrow() {core.admission_failed(error);}
+            }
+            self.owner.seal_unknown(StickyUnknownReason::RuntimeLifecycleFailure);
+        }
+        result
+    }
+    fn finish_station_broker_inner(&mut self,clock:&mut crate::station_broker::CommitClock)
+        ->io::Result<crate::StationBrokerSnapshot> {
+        use crate::station_broker::{budget_available,take_timely,TimelyTakeError,
+            StationBrokerConnectRelease as C,StationBrokerRegistryRelease as R};
+        let deadline=self.owner.startup_deadline();
+        if self.committed_to_transport || self.broker_resource_only_retired || self.owner.has_asuser_a1() {
+            return Err(io::Error::other("A0 original reservation already consumed"));
+        }
+        let broker=self.owner.station_broker.get().ok_or_else(||io::Error::other("A0 unbound"))?;
+        let mut core=broker.try_borrow()?;
+        if !budget_available(deadline,clock) {
+            core.record_registry_release(R::RetainedLate);
+            return Err(io::Error::from(io::ErrorKind::TimedOut));
+        }
+        if !core.resource_only_closed() || core.snapshot().connect_release!=C::NotAttempted {
+            return Err(io::Error::other("A0 original resource debt remains"));
+        }
+        {
+            let state=self.owner.state.try_lock().map_err(|_|io::Error::other("A0 owner busy or poisoned"))?;
+            if state.process.is_some() || state.identity.is_some() || state.thread_close_debt.is_some()
+                || state.helper_attempts.iter().any(Option::is_some) || state.actor_adopted
+                || state.worker_admission_active || state.no_replay_seal || state.sticky_unknown.is_some()
+                || state.first_error_fact.is_some() || state.hello.is_some() || state.negotiated_handshake.is_some()
+                || state.startup_pipe_write.is_some() || state.startup_pipe_read.is_some()
+                || state.finalization_in_progress || state.finalized_outcome.is_some()
+                || self.owner.native_close_runtime.get().is_some() || self.owner.native_desktop.get().is_some() {
+                return Err(io::Error::other("A0 is not an isolated pristine business reservation"));
+            }
+        }
+        if !budget_available(deadline,clock) {
+            core.record_registry_release(R::RetainedLate);
+            return Err(io::Error::from(io::ErrorKind::TimedOut));
+        }
+        core.record_connect_release(C::InFlight);
+        let connect=self.custom_connect_owner.unwrap_or(&owned_connect_worker::CONNECT_OWNER);
+        let released=connect.release_startup_reservation_strict(self.owner.startup_id(),deadline,clock);
+        core.record_connect_release(released);
+        if released!=C::ReleasedSameStartupId {
+            if released==C::LateRetained {core.record_registry_release(R::RetainedLate);}
+            return Err(io::Error::from(if released==C::LateRetained {io::ErrorKind::TimedOut}else{io::ErrorKind::WouldBlock}));
+        }
+        // A genuine same-ID release is now a permanent historical fact, even
+        // if later admission remains charged. Never retry or label it active.
+        if !budget_available(deadline,clock) {
+            core.record_registry_release(R::RetainedLate);
+            return Err(io::Error::from(io::ErrorKind::TimedOut));
+        }
+        let removed={
+            let mut registry=match self.registry.inner.try_lock() {
+                Ok(registry)=>registry,
+                Err(std::sync::TryLockError::WouldBlock)=>{
+                    core.record_registry_release(R::RetainedBusy);return Err(io::Error::from(io::ErrorKind::WouldBlock));
+                },
+                Err(std::sync::TryLockError::Poisoned(_))=>{
+                    core.record_registry_release(R::RetainedPoisoned);return Err(io::Error::from(io::ErrorKind::Other));
+                },
+            };
+            let slot=registry.slots.iter_mut().find(|slot|slot.as_ref().is_some_and(|owner|
+                Arc::ptr_eq(owner,&self.owner) && owner.startup_id()==self.owner.startup_id()));
+            let Some(slot)=slot else {
+                core.record_registry_release(R::RetainedMismatch);return Err(io::Error::from(io::ErrorKind::NotFound));
+            };
+            core.record_registry_release(R::InFlight);
+            match take_timely(slot,deadline,clock) {
+                Ok(original)=>{
+                    core.record_registry_release(R::TimelyCommitted);
+                    self.broker_resource_only_retired=true;
+                    original
+                },
+                Err(TimelyTakeError::Late)=>{
+                    core.record_registry_release(R::RetainedLate);return Err(io::Error::from(io::ErrorKind::TimedOut));
+                },
+                Err(TimelyTakeError::Empty)=>{
+                    core.record_registry_release(R::RetainedMismatch);return Err(io::Error::from(io::ErrorKind::NotFound));
+                },
+            }
+        }; // No other admission could see the temporary take before its sample.
+        drop(removed); // This reservation still anchors the SAME original Arc.
+        Ok(core.snapshot())
+    }
     pub(crate) fn owner(&self) -> &Arc<CheckedRunnerOwner> {
         &self.owner
     }
@@ -3328,7 +3573,25 @@ impl CheckedStartupReservation {
 
 impl Drop for CheckedStartupReservation {
     fn drop(&mut self) {
-        if self.committed_to_transport {
+        if self.committed_to_transport || self.broker_resource_only_retired {
+            return;
+        }
+        if self.owner.has_asuser_a1() {
+            // An A1 attempt may own original T, GUI/helper/IO and even partial
+            // PI outputs before state.process is installed. That absence is
+            // never a prelaunch release proof. Keep THIS original registry and
+            // connect admission on cancellation/unwind; only the genuine native
+            // plus SDK retirement path may retire the installed A1 cell.
+            self.owner.seal_unknown(StickyUnknownReason::StartupUnwound);
+            return;
+        }
+        if let Some(broker)=self.owner.station_broker.get() {
+            // No prelaunch shortcut: A0 can own native objects without a
+            // business runner. Preserve BOTH original lane and registry charge.
+            if let Ok(mut core)=broker.try_borrow() {
+                core.fail(crate::station_broker::StationBrokerDebt::Unwind,None);
+            }
+            self.owner.seal_unknown(StickyUnknownReason::StartupUnwound);
             return;
         }
         let can_release_pre_launch = self.owner.state.lock().map_or(false, |state| {
@@ -3532,3 +3795,79 @@ impl CheckedRunnerIo {
 #[cfg(test)]
 #[path = "checked_owner_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+mod asuser_preprocess_retention_tests {
+    use super::*;
+    #[test] fn dropping_installed_a1_before_process_publication_keeps_original_registry_and_connect_charge() {
+        static REGISTRY:CheckedOwnerRegistry=CheckedOwnerRegistry::new();
+        static CONNECT:owned_connect_worker::Owner=owned_connect_worker::Owner::new();
+        let startup=StartupId(47);
+        let deadline=Instant::now()+Duration::from_secs(1);
+        CONNECT.reserve_for_startup(startup).unwrap();
+        let owner=Arc::new(CheckedRunnerOwner::new(startup,deadline,None,None,&CONNECT,Some(&REGISTRY)));
+        // Script only the installed A1 phase. No artifact, permit, native T,
+        // login, process, IO worker, OS query or release capability is made.
+        assert!(owner.asuser_a1.set(crate::asuser_a1_native::Cell::new(startup.0,deadline)).is_ok());
+        REGISTRY.inner.lock().unwrap().slots[0]=Some(owner.clone());
+        let reservation=CheckedStartupReservation{owner:owner.clone(),registry:&REGISTRY,
+            custom_connect_owner:Some(&CONNECT),committed_to_transport:false,broker_resource_only_retired:false};
+        assert!(owner.state.lock().unwrap().process.is_none());
+        drop(reservation);
+        assert!(owner.is_sticky_unknown());assert!(owner.is_no_replay_sealed());
+        assert!(REGISTRY.inner.lock().unwrap().slots[0].as_ref().is_some_and(|original|Arc::ptr_eq(original,&owner)));
+        assert_eq!(CONNECT.reserve_for_startup(StartupId(48)).unwrap_err().kind(),io::ErrorKind::WouldBlock);
+        let state=owner.state.lock().unwrap();
+        assert!(state.process.is_none());assert!(state.identity.is_none());
+        assert!(state.finalized_outcome.is_none());assert!(!owner.native_local_retired.load(std::sync::atomic::Ordering::Acquire));
+        assert!(matches!(state.sticky_unknown,Some(StickyUnknownReason::StartupUnwound)));
+    }
+}
+
+#[cfg(test)]
+mod startup_context_owner_tests {
+    use super::*;
+    use crate::start_diagnostic::{ContextFact as F,ContextUnavailable as U};
+    #[test]
+    fn prequery_sampler_never_uses_existing_diagnostic_latest_as_an_original_process() {
+        static CONNECT:owned_connect_worker::Owner=owned_connect_worker::Owner::new();
+        let owner=CheckedRunnerOwner::new(StartupId(39),Instant::now()+Duration::from_secs(1),
+            None,None,&CONNECT,None);
+        let diagnostic=crate::WindowsStartDiagnostic::default();
+        let labelled=crate::WindowsStartRunnerObservation{startup_id:39,runner_pid:123,
+            runner_creation_filetime_100ns:456,state:crate::WindowsStartRunnerState::Exited{raw_dword:7}};
+        diagnostic.observe_original_runner(labelled);
+        assert_eq!(owner.sample_startup_runner_for_context(Some(&diagnostic)),F::NotObserved(U::NotApplicable));
+        assert_eq!(diagnostic.snapshot().unwrap().current.original_runner,Some(labelled));
+        {
+            let _guard=owner.state.lock().unwrap();
+            assert_eq!(owner.sample_startup_runner_for_context(Some(&diagnostic)),F::NotObserved(U::Busy));
+        }
+        assert_eq!(diagnostic.snapshot().unwrap().current.startup_context,None);
+    }
+    #[test]
+    fn same_owner_busy_and_poison_are_explicit_without_os_queries_or_grant_defaults() {
+        static CONNECT:owned_connect_worker::Owner=owned_connect_worker::Owner::new();
+        let owner=Arc::new(CheckedRunnerOwner::new(StartupId(38),Instant::now()+Duration::from_secs(1),
+            None,None,&CONNECT,None));
+        let diagnostic=crate::WindowsStartDiagnostic::default();
+        {
+            let _busy=owner.state.lock().unwrap();
+            owner.observe_startup_context(Some(&diagnostic));
+        }
+        let context=diagnostic.snapshot().unwrap().current.startup_context.unwrap();
+        assert_eq!(context.startup_id,38);
+        assert_eq!(context.query_status,F::NotObserved(U::Busy));
+        assert_eq!(context.original_runner_identity,None);
+        assert_eq!(context.desktop.access,F::NotObserved(U::Busy));
+        let other=Arc::clone(&owner);
+        assert!(std::thread::spawn(move||{
+            let _guard=other.state.lock().unwrap();panic!("labelled owner poison");
+        }).join().is_err());
+        owner.observe_startup_context(Some(&diagnostic));
+        let context=diagnostic.snapshot().unwrap().current.startup_context.unwrap();
+        assert_eq!(context.query_status,F::NotObserved(U::Poisoned));
+        assert_eq!(context.station.access,F::NotObserved(U::Poisoned));
+        assert!(owner.is_sticky_unknown());
+    }
+}

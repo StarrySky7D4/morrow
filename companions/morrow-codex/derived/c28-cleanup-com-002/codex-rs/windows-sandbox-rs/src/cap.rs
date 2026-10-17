@@ -35,6 +35,25 @@ pub struct CapSids {
 pub fn cap_sid_file(codex_home: &Path) -> PathBuf {
     codex_home.join("cap_sid")
 }
+/// A1 never upgrades legacy text, generates a SID or persists a capability.
+/// Only the current actual owned setup's finite existing JSON is usable.
+pub(crate) fn load_existing_asuser_caps(home:&Path)->Result<CapSids> {
+    use std::io::Read;use std::os::windows::fs::OpenOptionsExt;
+    let mut file=std::fs::OpenOptions::new().read(true).share_mode(1).custom_flags(0x00200000).open(cap_sid_file(home))?;
+    use std::os::windows::fs::MetadataExt;
+    let before=file.metadata()?;
+    anyhow::ensure!(before.is_file()&&before.file_attributes()&0x400==0&&before.len()<=131072,"actual A1 cap file bound/plain type");
+    let mut bytes=Vec::with_capacity(before.len() as usize);(&mut file).take(131073).read_to_end(&mut bytes)?;
+    anyhow::ensure!(bytes.len() as u64==before.len(),"A1 cap file size changed");
+    let caps:CapSids=serde_json::from_slice(&bytes)?;
+    anyhow::ensure!(caps.workspace_by_cwd.len()<=64&&caps.writable_root_by_path.len()<=64,"A1 capability map bound");
+    for (key,sid) in caps.workspace_by_cwd.iter().chain(caps.writable_root_by_path.iter()) {
+        anyhow::ensure!(key.len()<=32700&&sid.len()<=184,"A1 capability entry bound");
+    }
+    let after=file.metadata()?;anyhow::ensure!(before.file_size()==after.file_size()&&before.last_write_time()==after.last_write_time()
+        &&before.creation_time()==after.creation_time()&&before.file_attributes()==after.file_attributes(),"A1 capability changed during read");
+    Ok(caps)
+}
 
 fn make_random_cap_sid_string() -> String {
     let mut rng = SmallRng::from_entropy();
