@@ -6,6 +6,7 @@ import 'plugins/application_shutdown.dart';
 import 'plugins/workbench_self_check.dart';
 import 'plugins/canvas_self_check.dart';
 import 'dart:io';
+import 'dart:ui' show FrameTiming, FramePhase;
 import 'plugins/startup_probe.dart';
 import 'plugins/workbench_startup.dart';
 import 'package:flutter/material.dart';
@@ -149,13 +150,92 @@ Future<void> _initializeApplicationWindow() async {
   }
 }
 
+// Passive QA observation only. No self-check, business request, timer-based
+// readiness, file output or automatic exit. Default startup creates no observer.
+_NormalStartReady1825? _normalStartReady1825;
+class _NormalStartReady1825 {
+  static const ready = 'C28_NORMAL_START_READY1825_V1';
+  static const failed = 'C28_NORMAL_START_READY1825_FAILED';
+  int? _generation, _targetFrame, _rasterFrame;
+  bool _begun = false, _armed = false, _reserved = false, _failed = false;
+  _NormalStartReady1825() {
+    final previous = FlutterError.onError;
+    FlutterError.onError = (details) {
+      fail();
+      previous?.call(details);
+    };
+  }
+  void begin(int generation) {
+    if (_begun) { fail(); return; }
+    _begun = true;
+    _generation = generation;
+  }
+  bool get _current => !_failed && _begun &&
+      _sessions.generation == _generation &&
+      _sessions.phase == SessionPhase.active && !_applicationClose.requested;
+  void arm() {
+    if (!_current || _armed || _reserved) { fail(); return; }
+    _armed = true;
+    WidgetsBinding.instance.addTimingsCallback(_frames);
+  }
+  void firstFrame() {
+    if (!_current || !_armed || _targetFrame != null) { fail(); return; }
+    _targetFrame = WidgetsBinding.instance.platformDispatcher.frameData.frameNumber;
+    _tryEmit();
+  }
+  void _frames(List<FrameTiming> frames) {
+    if (!_current) { fail(); return; }
+    for (final frame in frames) {
+      if (frame.timestampInMicroseconds(FramePhase.rasterFinish) > 0 &&
+          (_rasterFrame == null || frame.frameNumber > _rasterFrame!)) {
+        _rasterFrame = frame.frameNumber;
+      }
+    }
+    _tryEmit();
+  }
+  void _tryEmit() {
+    if (!_current || !_armed || _reserved || _targetFrame == null ||
+        _rasterFrame == null || _rasterFrame! < _targetFrame!) return;
+    _reserved = true; // One emission attempt, including on output failure.
+    WidgetsBinding.instance.removeTimingsCallback(_frames);
+    _armed = false;
+    unawaited(_emit());
+  }
+  Future<void> _emit() async {
+    try {
+      if (!_current) { fail(); return; }
+      stdout.write('$ready\n');
+      await stdout.flush();
+    } catch (_) { fail(); }
+  }
+  void fail() {
+    if (_failed) return;
+    _failed = true;
+    if (_armed) WidgetsBinding.instance.removeTimingsCallback(_frames);
+    _armed = false;
+    try {
+      stderr.write('$failed\n');
+      unawaited(stderr.flush().catchError((Object _) {}));
+    } catch (_) {} // Never invent readiness or retry broken output.
+  }
+}
+
 Future<void> main(List<String> arguments) async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows &&
+      arguments.where((v) => v == '--qa-normal-start-ready1825').length == 1 &&
+      !arguments.any((v) => v == '--self-check' || v.startsWith('--self-check=') ||
+          v == '--startup-check' || v.startsWith('--startup-check=') ||
+          v == '--canvas-check' || v.startsWith('--canvas-check='))) {
+    _normalStartReady1825 = _NormalStartReady1825();
+  }
   _desktopInitialization ??= _initializeApplicationWindow();
   await _sessions.run(() => _startSession(arguments));
 }
 
 Future<void> _startSession(List<String> arguments) async {
+  final normalReady = _normalStartReady1825;
+  normalReady?.begin(_sessions.generation);
   _sessionArguments = List.unmodifiable(arguments);
   _ownerManager = null;
   _ownerRecoveryGeneration = null;
@@ -293,6 +373,8 @@ Future<void> _startSession(List<String> arguments) async {
       return;
     }
     _sessions.active();
+    // Reached only after desktop/close listener + original host RPC + storage.
+    normalReady?.arm();
     startup.mark('storage');
     final boundary = GlobalKey();
     startup.mark('runApp');
@@ -309,6 +391,7 @@ Future<void> _startSession(List<String> arguments) async {
             onFirstFrame: () {
               startup.workbenchPainted();
               workbenchReady.value = true;
+              normalReady?.firstFrame();
             },
             initialLocale: previewLocale,
             workbench: backend,
@@ -340,6 +423,7 @@ Future<void> _startSession(List<String> arguments) async {
       });
     }
   } catch (error, stack) {
+    normalReady?.fail();
     // Render recovery immediately. Waiting for a worker is owned and observed
     // outside the ordinary RPC lane, and does not authorize another writer.
     unawaited(_sessions.close().catchError((Object _) {}));
