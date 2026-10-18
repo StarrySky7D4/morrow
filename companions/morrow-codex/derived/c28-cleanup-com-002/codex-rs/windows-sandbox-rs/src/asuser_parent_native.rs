@@ -20,6 +20,10 @@ const P_NAME:&str="morrow-workbench-supervisor.exe";
 const R_NAME:&str="codex-command-runner.exe";
 const S_NAME:&str="codex-windows-sandbox-setup.exe";
 const LOCAL_FILES:usize=24;
+// Bootstrap direction contract: P writes, C inherits a read-only client.
+// Preserve OVERLAPPED | FIRST_PIPE_INSTANCE; never widen this pipe to duplex.
+const BOOTSTRAP_OUTBOUND_SERVER_OPEN_MODE:u32=0x40000000|0x00080000|0x00000002;
+const BOOTSTRAP_READ_ONLY_CLIENT_ACCESS:u32=0x80000000;
 /// The existing workbench P supplies ONE concrete retained native-pipe owner.
 /// This dependency-inverted seam adds no Cargo edge from codex back to Morrow.
 /// Cross-version HANDLE values never masquerade as a shared Rust HANDLE type:
@@ -247,7 +251,7 @@ impl Parent {
         let ok=unsafe{ConvertStringSecurityDescriptorToSecurityDescriptorW(text.as_ptr(),1,&mut raw,ptr::null_mut())};
         let error=if ok==0{unsafe{GetLastError()}}else{0};self.sd.captured(ok!=0,raw as isize,error)?;
         self.bootstrap.event()?;self.bootstrap.pipe.begin()?;
-        let raw=unsafe{CreateNamedPipeW(wide(&name).as_ptr(),0x40080001,14,1,BYTES as u32,BYTES as u32,0,&attributes(self.sd.raw,false))};
+        let raw=unsafe{CreateNamedPipeW(wide(&name).as_ptr(),BOOTSTRAP_OUTBOUND_SERVER_OPEN_MODE,14,1,BYTES as u32,BYTES as u32,0,&attributes(self.sd.raw,false))};
         let error=if raw == -1||raw==0{unsafe{GetLastError()}}else{0};
         self.bootstrap.pipe.captured(raw!=0&&raw != -1,raw,error)?;
         self.bootstrap.pending=true;
@@ -255,7 +259,7 @@ impl Parent {
         if ok!=0{self.bootstrap.pending=false;}else{match unsafe{GetLastError()} {
             997=>{},535=>self.bootstrap.pending=false,v=>return Err(io::Error::from_raw_os_error(v as i32))}}
         self.reader.begin()?;
-        let raw=unsafe{CreateFileW(wide(&name).as_ptr(),0x80000000,0,&attributes(0,true),3,0x40100000,0)};
+        let raw=unsafe{CreateFileW(wide(&name).as_ptr(),BOOTSTRAP_READ_ONLY_CLIENT_ACCESS,0,&attributes(0,true),3,0x40100000,0)};
         let error=if raw == -1||raw==0{unsafe{GetLastError()}}else{0};self.reader.captured(raw!=0&&raw != -1,raw,error)?;
         if self.bootstrap.pending{self.bootstrap.completed(self.deadline)?;}
         Parent::duplicate(&mut self.parent,unsafe{GetCurrentProcess()},crate::asuser_a1_rights::PROCESS_MANAGEMENT)?;
