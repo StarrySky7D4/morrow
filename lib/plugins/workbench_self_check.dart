@@ -130,8 +130,8 @@ Future<void> finishQualification(
       // Wait for evidence with a deadline instead of assuming 500 ms is enough.
       final playbackDeadline = Stopwatch()..start();
       while (player.error == null &&
-          (player.position == Duration.zero ||
-              player.duration == Duration.zero) &&
+          (player.position.inMilliseconds <= 0 ||
+              player.duration.inMilliseconds <= 0) &&
           playbackDeadline.elapsed < const Duration(seconds: 5)) {
         await Future<void>.delayed(const Duration(milliseconds: 100));
       }
