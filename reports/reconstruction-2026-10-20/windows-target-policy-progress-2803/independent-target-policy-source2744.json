@@ -1,0 +1,228 @@
+{
+  "schema": "ROOT_TARGET_POLICY_SOURCE_REVIEW2744",
+  "utc": "2026-10-19T20:58:29.454826+00:00",
+  "freeze": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-review2744\\ROOT_FREEZE2744.json",
+    "bytes": 714683,
+    "sha256": "6a21060ddad9d991e9a4acc34601c2b712a1b036705c65613fe0a97c36c0da29"
+  },
+  "all3321_files_exact": true,
+  "all_original3311_paths_retained": true,
+  "source_members": 3288,
+  "changed_source_members": [
+    "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_native.rs",
+    "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_policy.rs",
+    "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/lib.rs",
+    "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/start_diagnostic.rs"
+  ],
+  "unchanged_source_members": 3284,
+  "unchanged_groups": {
+    "Cargo_manifests": 83,
+    "Cargo_locks": 20,
+    "Dart": 574,
+    "upstream": 1211
+  },
+  "ordered17_edits_forward_inverse_raw_exact": true,
+  "original_policy_functions_raw_exact": {
+    "validate": true,
+    "validate_runner": true,
+    "validate_with_mask": true
+  },
+  "original_rejection_constructor_raw_exact": true,
+  "ordered31_predicate_expressions_raw_normalized_exact": true,
+  "ordered_predicates": [
+    {
+      "expression": "f.initial!=f.final_stats",
+      "reason": "StatisticsChanged"
+    },
+    {
+      "expression": "!f.initial.primary",
+      "reason": "NotPrimary"
+    },
+    {
+      "expression": "f.initial.token==0",
+      "reason": "TokenIdentityZero"
+    },
+    {
+      "expression": "f.initial.auth==0",
+      "reason": "AuthenticationIdentityZero"
+    },
+    {
+      "expression": "f.initial.auth==self.caller_auth",
+      "reason": "AuthenticationEqualsCaller"
+    },
+    {
+      "expression": "f.initial.token==self.caller_token",
+      "reason": "TokenIdentityEqualsCaller"
+    },
+    {
+      "expression": "f.initial.modified==0",
+      "reason": "ModifiedIdentityZero"
+    },
+    {
+      "expression": "f.granted&required!=required",
+      "reason": "RequiredGrantMissing"
+    },
+    {
+      "expression": "f.user!=self.managed_user",
+      "reason": "UserNotManaged"
+    },
+    {
+      "expression": "f.user==self.caller",
+      "reason": "UserEqualsCaller"
+    },
+    {
+      "expression": "f.user.is_logon()",
+      "reason": "UserIsLogonSid"
+    },
+    {
+      "expression": "f.logon_count!=1",
+      "reason": "LogonGroupCountNotOne"
+    },
+    {
+      "expression": "!f.logon.is_logon()",
+      "reason": "LogonSidInvalid"
+    },
+    {
+      "expression": "f.logon==self.caller_logon",
+      "reason": "LogonEqualsCaller"
+    },
+    {
+      "expression": "f.logon_attributes&0xc000_0004!=0xc000_0004",
+      "reason": "LogonAttributesMissing"
+    },
+    {
+      "expression": "f.logon_attributes&0x10!=0",
+      "reason": "LogonDenyOnly"
+    },
+    {
+      "expression": "f.session!=self.session",
+      "reason": "SessionMismatch"
+    },
+    {
+      "expression": "f.integrity_rid!=self.integrity_rid",
+      "reason": "IntegrityMismatch"
+    },
+    {
+      "expression": "f.integrity_rid>0x2000",
+      "reason": "IntegrityAboveMedium"
+    },
+    {
+      "expression": "f.elevated",
+      "reason": "Elevated"
+    },
+    {
+      "expression": "f.elevation_type==2",
+      "reason": "FullElevationType"
+    },
+    {
+      "expression": "!matches!(f.elevation_type,1|3)",
+      "reason": "UnsupportedElevationType"
+    },
+    {
+      "expression": "f.restricted",
+      "reason": "Restricted"
+    },
+    {
+      "expression": "f.app_container",
+      "reason": "AppContainer"
+    },
+    {
+      "expression": "f.ui_access",
+      "reason": "UiAccess"
+    },
+    {
+      "expression": "f.virtualization",
+      "reason": "Virtualization"
+    },
+    {
+      "expression": "f.mandatory_policy&1==0",
+      "reason": "MandatoryNoWriteUpMissing"
+    },
+    {
+      "expression": "f.mandatory_policy&!3!=0",
+      "reason": "MandatoryPolicyUnsupportedBits"
+    },
+    {
+      "expression": "f.privilege_count>64",
+      "reason": "PrivilegeCountExceeded"
+    },
+    {
+      "expression": "f.unsafe_privileges!=0",
+      "reason": "UnsafePrivilegesPresent"
+    },
+    {
+      "expression": "f.admin_membership",
+      "reason": "AdministratorMembership"
+    }
+  ],
+  "original_test_names_preserved": [
+    {
+      "file": "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_native.rs",
+      "original_test_names_preserved": 11
+    },
+    {
+      "file": "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_policy.rs",
+      "original_test_names_preserved": 7
+    },
+    {
+      "file": "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/lib.rs",
+      "original_test_names_preserved": 4
+    },
+    {
+      "file": "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/start_diagnostic.rs",
+      "original_test_names_preserved": 23
+    }
+  ],
+  "original_native_test_tail_raw_exact_once": true,
+  "seven_new_test_sources": [
+    {
+      "file": "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_native.rs",
+      "name": "accepted_facts_do_not_manufacture_a_rejection_or_native_success"
+    },
+    {
+      "file": "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_native.rs",
+      "name": "later_target_classification_cannot_relabel_an_earlier_first_failure"
+    },
+    {
+      "file": "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_native.rs",
+      "name": "same_original_guard_err_has_one_reason_no_raw_os_code_or_resource_operation"
+    },
+    {
+      "file": "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_policy.rs",
+      "name": "diagnostic_mirror_is_ordered_and_not_an_admission_or_runner_query_alias"
+    },
+    {
+      "file": "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_policy.rs",
+      "name": "diagnostic_mirror_names_every_original_reject_without_changing_error_or_policy"
+    },
+    {
+      "file": "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/start_diagnostic.rs",
+      "name": "bounded_reason_requires_the_same_guard_and_remains_first_and_frozen"
+    },
+    {
+      "file": "source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/start_diagnostic.rs",
+      "name": "busy_poison_and_legacy_observation_never_fabricate_clean_or_a_reason"
+    }
+  ],
+  "independent_diff": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\target-policy-independent-diff2744.patch",
+    "bytes": 24364,
+    "sha256": "51590fcf2f61b604f9a9a5e770065419ec5fb783b926e69b945471e1f4b10f99"
+  },
+  "review": [
+    "Original validate executes once first, returns its same Result; classification uses only the same already captured facts on Err. No accepting fallback or retry.",
+    "Finite reason is retained with original first Failure and filtered by same Token/TargetPolicyGuard/internal PermissionDenied with absent raw codes. Legacy and unobserved remain None.",
+    "Recorder keeps existing try_lock/first/completion behavior. No extra native API, token/account access, output of raw identity/handles/SIDs/paths, native ownership or cleanup operation.",
+    "31 pure diagnostic predicates match original OR order; unchanged validate_with_mask remains sole admission guard. Exact original failing predicate still unobserved.",
+    "Existing debug consumer needs fresh build/pure tests and current runtime proof; finite reason is diagnostic, not a causal fix or release acceptance."
+  ],
+  "parse_compiler_tests": "NOT_RUN",
+  "Host_product_PE_DLL_VM_execution": 0,
+  "original_case60677": "UNKNOWN_NO_QUERY_POLL_REPLAY_ADOPT_CONTROL_DISPOSE_KILL",
+  "source_accepted": false,
+  "release_eligible": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN"
+}

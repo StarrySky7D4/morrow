@@ -582,13 +582,22 @@ pub(crate) fn current_setup_runtime() -> SetupRuntime {
     }
 }
 
-fn gather_helper_read_roots(codex_home: &Path, runtime: SetupRuntime) -> Vec<PathBuf> {
+// Path calculation only; A1 validation must not create/repair the helper tree.
+fn helper_read_root_paths(codex_home: &Path, runtime: SetupRuntime) -> Vec<PathBuf> {
     if runtime == SetupRuntime::Registered {
-        return Vec::new();
+        Vec::new()
+    } else {
+        vec![helper_bin_dir(codex_home)]
     }
-    let helper_dir = helper_bin_dir(codex_home);
-    let _ = std::fs::create_dir_all(&helper_dir);
-    vec![helper_dir]
+}
+
+fn gather_helper_read_roots(codex_home: &Path, runtime: SetupRuntime) -> Vec<PathBuf> {
+    let roots = helper_read_root_paths(codex_home, runtime);
+    // Preserve the existing setup-only Legacy creation (Registered has no roots).
+    for root in &roots {
+        let _ = std::fs::create_dir_all(root);
+    }
+    roots
 }
 
 fn gather_full_read_roots_for_permissions(
@@ -598,7 +607,17 @@ fn gather_full_read_roots_for_permissions(
     codex_home: &Path,
     runtime: SetupRuntime,
 ) -> Vec<PathBuf> {
-    let mut roots = gather_helper_read_roots(codex_home, runtime);
+    gather_full_read_roots_with_helpers(
+        command_cwd, permissions, env_map, gather_helper_read_roots(codex_home, runtime),
+    )
+}
+
+fn gather_full_read_roots_with_helpers(
+    command_cwd: &Path,
+    permissions: &ResolvedWindowsSandboxPermissions,
+    env_map: &HashMap<String, String>,
+    mut roots: Vec<PathBuf>,
+) -> Vec<PathBuf> {
     roots.extend(
         WINDOWS_PLATFORM_DEFAULT_READ_ROOTS
             .iter()
@@ -640,7 +659,20 @@ pub(crate) fn gather_read_roots(
         );
     }
 
-    let mut roots = gather_helper_read_roots(codex_home, runtime);
+    gather_read_roots_with_helpers(
+        command_cwd, permissions, env_map, gather_helper_read_roots(codex_home, runtime),
+    )
+}
+
+fn gather_read_roots_with_helpers(
+    command_cwd: &Path,
+    permissions: &ResolvedWindowsSandboxPermissions,
+    env_map: &HashMap<String, String>,
+    mut roots: Vec<PathBuf>,
+) -> Vec<PathBuf> {
+    if permissions.has_symbolic_root_read_access(command_cwd) {
+        return gather_full_read_roots_with_helpers(command_cwd, permissions, env_map, roots);
+    }
     if permissions.include_platform_defaults() {
         roots.extend(
             WINDOWS_PLATFORM_DEFAULT_READ_ROOTS
@@ -1549,26 +1581,50 @@ pub(crate) fn build_payload_roots(
         request.codex_home,
         overrides.write_roots.as_deref(),
     );
-    let mut read_roots = if let Some(roots) = overrides.read_roots.as_deref() {
-        // An explicit override is the split policy's complete readable set. Keep only the
-        // helper/platform roots the elevated setup needs; do not re-add legacy cwd/full-read roots.
-        let mut read_roots = gather_helper_read_roots(request.codex_home, runtime);
-        if overrides.read_roots_include_platform_defaults {
-            read_roots.extend(
-                WINDOWS_PLATFORM_DEFAULT_READ_ROOTS
-                    .iter()
-                    .map(PathBuf::from),
-            );
-        }
-        read_roots.extend(roots.iter().cloned());
-        canonical_existing(&read_roots)
+    let read_roots = build_payload_read_roots(
+        request,
+        overrides.read_roots.as_deref(),
+        overrides.read_roots_include_platform_defaults,
+        overrides.deny_read_paths.as_deref().unwrap_or_default(),
+        &write_roots,
+        gather_helper_read_roots(request.codex_home, runtime),
+    );
+    (read_roots, write_roots)
+}
+
+/// Recompute THIS request using the same payload policy as owned setup. The only
+/// OwnedFull constructor builds/validates SetupRuntime::Legacy (not ambient
+/// current_setup_runtime). Existing helper paths are data only: no mkdir,
+/// account/setup refresh, capability creation, or use of setup.read_roots().
+pub(crate) fn read_roots_for_owned_request(
+    request: &SandboxSetupRequest<'_>,
+    read_roots: Option<&[PathBuf]>,
+    include_platform_defaults: bool,
+    deny_read_paths: &[PathBuf],
+    write_roots: &[PathBuf],
+) -> Vec<PathBuf> {
+    build_payload_read_roots(
+        request, read_roots, include_platform_defaults, deny_read_paths, write_roots,
+        helper_read_root_paths(request.codex_home, SetupRuntime::Legacy),
+    )
+}
+
+fn build_payload_read_roots(
+    request: &SandboxSetupRequest<'_>,
+    read_roots_override: Option<&[PathBuf]>,
+    include_platform_defaults: bool,
+    deny_read_paths: &[PathBuf],
+    write_roots: &[PathBuf],
+    helper_roots: Vec<PathBuf>,
+) -> Vec<PathBuf> {
+    let mut read_roots = if let Some(roots) = read_roots_override {
+        // The override replaces the readable set; it does not re-add cwd/full-read.
+        let mut read_roots = explicit_payload_read_roots(helper_roots, roots, include_platform_defaults);
+        read_roots = canonical_existing(&read_roots);
+        read_roots
     } else {
-        gather_read_roots(
-            request.command_cwd,
-            request.permissions,
-            request.env_map,
-            request.codex_home,
-            runtime,
+        gather_read_roots_with_helpers(
+            request.command_cwd, request.permissions, request.env_map, helper_roots,
         )
     };
     read_roots = expand_user_profile_root(read_roots);
@@ -1576,26 +1632,44 @@ pub(crate) fn build_payload_roots(
     read_roots = filter_user_profile_root_exclusions(read_roots);
     read_roots = filter_ssh_config_dependency_roots(read_roots);
     let write_root_set: HashSet<PathBuf> = write_roots.iter().cloned().collect();
-    let deny_read_keys: Vec<String> = overrides
-        .deny_read_paths
-        .as_deref()
-        .unwrap_or_default()
+    let deny_read_keys: Vec<String> = deny_read_paths
         .iter()
         .map(|path| canonical_path_key(path))
         .collect();
     read_roots.retain(|root| {
-        if write_root_set.contains(root) {
-            return false;
-        }
-        if deny_read_keys.is_empty() {
-            return true;
-        }
-        let root_key = canonical_path_key(root);
-        !deny_read_keys
-            .iter()
-            .any(|denied| Path::new(&root_key).starts_with(denied))
+        payload_read_root_is_allowed(root, &write_root_set, &deny_read_keys, canonical_path_key)
     });
-    (read_roots, write_roots)
+    read_roots
+}
+
+// Pure assembly; canonical/existence/profile/SSH filtering follows at the shared
+// call site. Preserve helper -> optional platform defaults -> explicit roots order.
+fn explicit_payload_read_roots(
+    mut helper_roots: Vec<PathBuf>,
+    roots: &[PathBuf],
+    include_platform_defaults: bool,
+) -> Vec<PathBuf> {
+    if include_platform_defaults {
+        helper_roots.extend(WINDOWS_PLATFORM_DEFAULT_READ_ROOTS.iter().map(PathBuf::from));
+    }
+    helper_roots.extend(roots.iter().cloned());
+    helper_roots
+}
+
+fn payload_read_root_is_allowed(
+    root: &Path,
+    write_root_set: &HashSet<PathBuf>,
+    deny_read_keys: &[String],
+    key: impl FnOnce(&Path) -> String,
+) -> bool {
+    if write_root_set.contains(root) {
+        return false;
+    }
+    if deny_read_keys.is_empty() {
+        return true;
+    }
+    let root_key = key(root);
+    !deny_read_keys.iter().any(|denied| Path::new(&root_key).starts_with(denied))
 }
 
 pub(crate) fn build_payload_deny_write_paths(
@@ -3146,5 +3220,69 @@ mod tests {
             !legacy_json.contains("owned_invocation"),
             "legacy ElevationPayload JSON must omit owned_invocation"
         );
+    }
+}
+
+#[cfg(test)]
+mod owned_read_root_policy_tests2508 {
+    use super::{explicit_payload_read_roots, helper_read_root_paths, payload_read_root_is_allowed};
+    use std::collections::HashSet;
+    use std::path::{Path, PathBuf};
+
+    // All labels stay in memory; no mkdir, canonicalize, environment or OS query.
+    #[test]
+    fn legacy_owned_helper_path_selection_is_data_not_provisioning() {
+        let home = Path::new(r"C:\memory-only2508\home");
+        assert_eq!(helper_read_root_paths(home, super::SetupRuntime::Legacy),
+            vec![home.join(".sandbox-bin")]);
+        assert!(helper_read_root_paths(home, super::SetupRuntime::Registered).is_empty());
+    }
+
+    #[test]
+    fn explicit_override_preserves_helper_and_only_requested_platform_defaults() {
+        let helper = PathBuf::from(r"C:\memory-only2508\home\.sandbox-bin");
+        let explicit = PathBuf::from(r"C:\memory-only2508\docs");
+        let roots = vec![explicit.clone()];
+        assert_eq!(explicit_payload_read_roots(vec![helper.clone()], &roots, false),
+            vec![helper.clone(), explicit.clone()]);
+        let with_defaults = explicit_payload_read_roots(vec![helper.clone()], &roots, true);
+        let expected = std::iter::once(helper)
+            .chain(super::WINDOWS_PLATFORM_DEFAULT_READ_ROOTS.iter().map(PathBuf::from))
+            .chain(std::iter::once(explicit)).collect::<Vec<_>>();
+        assert_eq!(with_defaults, expected);
+        assert_eq!(roots.len(), 1); // Request never overwritten by applied roots.
+    }
+
+    #[test]
+    fn empty_explicit_override_does_not_become_default_or_full_read() {
+        let helper = PathBuf::from(r"C:\memory-only2508\home\.sandbox-bin");
+        assert_eq!(explicit_payload_read_roots(vec![helper.clone()], &[], false), vec![helper]);
+        assert!(explicit_payload_read_roots(Vec::new(), &[], false).is_empty());
+    }
+
+    #[test]
+    fn writable_roots_are_not_readded_as_read_acl_roots() {
+        let write = PathBuf::from(r"C:\memory-only2508\workspace");
+        let set = HashSet::from([write.clone()]);
+        assert!(!payload_read_root_is_allowed(&write, &set, &[], |_| {
+            panic!("written roots are rejected before canonical-key work")
+        }));
+        assert!(payload_read_root_is_allowed(Path::new(r"C:\memory-only2508\docs"),
+            &set, &[], |_| panic!("no deny keys requires no path-key work")));
+    }
+
+    #[test]
+    fn deny_subtree_is_excluded_but_not_a_similarly_named_sibling() {
+        let set = HashSet::new();
+        let deny = vec!["c:/memory-only2508/denied".to_string()];
+        for (root, allowed) in [
+            ("c:/memory-only2508/denied", false),
+            ("c:/memory-only2508/denied/child", false),
+            ("c:/memory-only2508/denied-other", true),
+            ("c:/memory-only2508/docs", true),
+        ] {
+            assert_eq!(payload_read_root_is_allowed(Path::new(root), &set, &deny,
+                |p| p.to_str().unwrap().to_string()), allowed);
+        }
     }
 }

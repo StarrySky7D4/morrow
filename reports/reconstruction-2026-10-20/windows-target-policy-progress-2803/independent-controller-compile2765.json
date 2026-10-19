@@ -1,0 +1,191 @@
+{
+  "schema": "ROOT_TARGET_POLICY_CONTROLLER_COMPILER_REVIEW2765",
+  "utc": "2026-10-19T21:36:57.265856+00:00",
+  "review_script": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\review-controller-compile2765.py",
+    "bytes": 8283,
+    "sha256": "e0e38de7de50404eebdcf4580f7bfb069d93f40394365743b74f9b51b095112d"
+  },
+  "source_freeze": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-controller-review2764\\ROOT_FREEZE2764.json",
+    "bytes": 18740,
+    "sha256": "0f7f63260a2ceab9444fe81b37e263c01b6d9097ea6eed4e96c7d8c1426192a8"
+  },
+  "source_QA": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\independent-controller-source2764.json",
+    "bytes": 3280,
+    "sha256": "0f3f7b83fd5ddc2ba8b1044ace6c812bc45c0072e2381b637879c8136e8af1e5"
+  },
+  "compiler_evidence_freeze": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-controller-build-review2765\\ROOT_FREEZE2765.json",
+    "bytes": 5262,
+    "sha256": "f684fc49a1d69a4dfa392b4df06869210032ce7f64e2c7f8308a1e5b178cc31b"
+  },
+  "author_report": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-controller-build2763\\report.json",
+    "bytes": 6984,
+    "sha256": "f9732af1f9390385c4fa51cf4c66ef1a649eb405684e2153f58128136f26e13e"
+  },
+  "runtime_leaf_bridge": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-controller-review2764\\ROOT_RUNTIME_FREEZE2765.json",
+    "bytes": 6398,
+    "sha256": "9219edf19dd7fbe67731f2bdc1555f828128200ee15c1453dd0050b2e57fea3e"
+  },
+  "actual_original_Csc_returns": [
+    0,
+    0,
+    0
+  ],
+  "original_compiler_EOF2_join2": true,
+  "all17_sources_and_bridge_before_after_current": true,
+  "all79_frozen_source_files_rehashed": true,
+  "raw_warnings_same2612_after_source_path_only": true,
+  "reviewer_correction": "Current source/report/manifest pins selected explicitly; original comparison changes only3 source folder components in compiler warnings. Author recipe remains UNBOUND; ROOT separately selects checked compiler records without modifying it. No compiler or test replay.",
+  "compiler_rows": [
+    {
+      "kind": "library",
+      "actual_original_Csc_exit": 0,
+      "pid": 29288,
+      "EOF2_reader_join2": true,
+      "stdout_same2612_after_source_path_only": true,
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-controller-build2763\\library\\RootTargetPolicyLibrary2763.dll",
+        "bytes": 164352,
+        "sha256": "5521f6f573c5609ab1c19f90cd8cc599bea8e12f8637e830d23eaea1bf787bce"
+      }
+    },
+    {
+      "kind": "controller",
+      "actual_original_Csc_exit": 0,
+      "pid": 25800,
+      "EOF2_reader_join2": true,
+      "stdout_same2612_after_source_path_only": true,
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-controller-build2763\\controller\\RootTargetPolicyController2763.exe",
+        "bytes": 164864,
+        "sha256": "1e516ef5b6072ef40f613705c24895e4d4552a1b51a765e3ccfb448bea5c9f3c"
+      }
+    },
+    {
+      "kind": "pure85",
+      "actual_original_Csc_exit": 0,
+      "pid": 30100,
+      "EOF2_reader_join2": true,
+      "stdout_same2612_after_source_path_only": true,
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-controller-build2763\\pure85\\RootTargetPolicyPure852763.exe",
+        "bytes": 165888,
+        "sha256": "eccbda22503baf09dc0de65b19cdf4b31647e45fdd4c19ba1869f3114281c814"
+      }
+    }
+  ],
+  "compiled_outputs": {
+    "library": {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-controller-build-review2765\\library\\RootTargetPolicyLibrary2763.dll",
+      "bytes": 164352,
+      "sha256": "5521f6f573c5609ab1c19f90cd8cc599bea8e12f8637e830d23eaea1bf787bce"
+    },
+    "controller": {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-controller-build-review2765\\controller\\RootTargetPolicyController2763.exe",
+      "bytes": 164864,
+      "sha256": "1e516ef5b6072ef40f613705c24895e4d4552a1b51a765e3ccfb448bea5c9f3c"
+    },
+    "pure85": {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-controller-build-review2765\\pure85\\RootTargetPolicyPure852763.exe",
+      "bytes": 165888,
+      "sha256": "eccbda22503baf09dc0de65b19cdf4b31647e45fdd4c19ba1869f3114281c814"
+    }
+  },
+  "expected_pure85_names": [
+    "RootPromptAll2187::ControllerPureTests1725::begin_requires_probe0_and_current_uuid_source_fields",
+    "RootPromptAll2187::ControllerPureTests1725::cached_exception_diagnostic_is_bounded_sticky_and_never_exports_body",
+    "RootPromptAll2187::ControllerPureTests1725::cached_failure_diagnostic_keeps_first_guard_and_actual_or_unobserved_return_fields",
+    "RootPromptAll2187::ControllerPureTests1725::default_or_arbitrary_invocation_denies_without_native",
+    "RootPromptAll2187::ControllerPureTests1725::exact_failure_kinds_stop_future_progress_without_text_guessing",
+    "RootPromptAll2187::ControllerPureTests1725::exit_needs_actual_cleanup_and_unblocked_sealed_payload_not_a_generic_ok",
+    "RootPromptAll2187::ControllerPureTests1725::fixed_plan_preserves_begin_exit_and_47_to_92_shape",
+    "RootPromptAll2187::ControllerPureTests1725::full_known_role_and_shell_pins_are_data_not_mutation_or_vm_authority",
+    "RootPromptAll2187::ControllerPureTests1725::half_line_is_not_parsed_until_real_newline_and_valid_utf8",
+    "RootPromptAll2187::ControllerPureTests1725::malformed_utf8_duplicate_case_keys_and_noninteger_sequence_reject",
+    "RootPromptAll2187::ControllerPureTests1725::missing_return_keeps_pending_and_prevents_next_step",
+    "RootPromptAll2187::ControllerPureTests1725::ordinary_return_closes_exact_pending_once_not_all_gates",
+    "RootPromptAll2187::ControllerPureTests1725::original_prefix_rewrite_poison_is_sticky_and_never_reparsed",
+    "RootPromptAll2187::ControllerPureTests1725::primary_privilege_bad_layout_duplicate_or_colliding_luids_never_qualify",
+    "RootPromptAll2187::ControllerPureTests1725::primary_privilege_default_is_unobserved_but_disabled_present_is_eligible",
+    "RootPromptAll2187::ControllerPureTests1725::primary_privilege_presence_uses_full_actual_luid_not_enabled_or_low_word",
+    "RootPromptAll2187::ControllerPureTests1725::reservation_unknown_is_pending_not_failure_and_banner_text_is_not_a_gate",
+    "RootPromptAll2187::ControllerPureTests1725::sealed_return_is_linked_to_one_exact_pending_reservation",
+    "RootPromptAll2187::ControllerPureTests1725::shrink_and_out_of_order_or_duplicate_sequence_fail",
+    "RootPromptAll2187::ControllerPureTests1725::wrong_command_or_return_without_reservation_is_not_success",
+    "RootPromptAll2187::ControllerPureTests1725::wrong_or_duplicate_reservation_rejects_before_success",
+    "RootPromptAll2187::FirstPromptPureTests2169::a_matched_scalar_cannot_hide_rewritten_original_prompt_bytes",
+    "RootPromptAll2187::FirstPromptPureTests2169::all_split_boundaries_and_crlf_boundary_preserve_byte_match",
+    "RootPromptAll2187::FirstPromptPureTests2169::arbitrary_stdout_or_embedded_prompt_is_not_a_full_line",
+    "RootPromptAll2187::FirstPromptPureTests2169::complete_crlf_line_after_description_is_allowed",
+    "RootPromptAll2187::FirstPromptPureTests2169::complete_lf_line_at_stream_start_is_required",
+    "RootPromptAll2187::FirstPromptPureTests2169::each_single_byte_increment_is_examined_once_not_full_rescan",
+    "RootPromptAll2187::FirstPromptPureTests2169::fixed_buffer_size_and_fresh_initial_state_are_required",
+    "RootPromptAll2187::FirstPromptPureTests2169::foreign_buffer_old_cursor_and_out_of_range_are_sticky_rejections",
+    "RootPromptAll2187::FirstPromptPureTests2169::missing_character_or_trailing_newline_cannot_be_ready",
+    "RootPromptAll2187::FirstPromptPureTests2169::missing_prompt_with_full_capacity_scans_only_new_bytes",
+    "RootPromptAll2187::FirstPromptPureTests2169::separate_controller_cannot_reuse_other_attempt_seen_or_cursor",
+    "RootPromptAll2187::FirstPromptPureTests2169::stderr_only_537_byte_diagnostic_never_enters_stdout_gate",
+    "RootPromptAll2187::InputPureTests1701::actual_c_retained_failure_marker_blocks_without_an_exception_body_or_fake_success",
+    "RootPromptAll2187::InputPureTests1701::begin_is_confirmation_only_and_exit_cannot_be_submitted_early",
+    "RootPromptAll2187::InputPureTests1701::command_review_after_real_write_return_does_not_fabricate_journal_stage_success",
+    "RootPromptAll2187::InputPureTests1701::confirmation_requires_complete_exact_actual_stdout_line_not_generic_prompt",
+    "RootPromptAll2187::InputPureTests1701::exact_current047_shape_is_47_steps_92_individual_crlf_lines_3523_bytes",
+    "RootPromptAll2187::InputPureTests1701::exception_inflight_or_root_withhold_preserves_buffer_and_no_return_is_not_zero_success",
+    "RootPromptAll2187::InputPureTests1701::expiry_or_poison_does_not_clear_original_pipe_or_make_missing_native_dword_clean",
+    "RootPromptAll2187::InputPureTests1701::false_partial_write_retains_original_bytes_raw_count_and_cannot_append_retry",
+    "RootPromptAll2187::InputPureTests1701::full_return_after_poison_records_actual_delivery_without_resurrecting_clean_state",
+    "RootPromptAll2187::InputPureTests1701::full_writes_do_not_by_themselves_prove_thread_end_or_product_execution",
+    "RootPromptAll2187::InputPureTests1701::line_limit_includes_crlf_and_no_blank_multiline_nonascii_or_secret_freeform",
+    "RootPromptAll2187::InputPureTests1701::native_input_completion_cannot_substitute_for_original_output_eof_primary_or_p",
+    "RootPromptAll2187::InputPureTests1701::no_post_exit_frame_replay_or_second_native_write",
+    "RootPromptAll2187::InputPureTests1701::seal_requires_all_actual_frames_and_exact_final_exit_not_an_eof_shortcut",
+    "RootPromptAll2187::InputPureTests1701::second_frame_is_never_queued_while_first_queued_or_write_inflight",
+    "RootPromptAll2187::InputPureTests1701::true_short_write_counts_only_reported_bytes_but_never_delivers_line",
+    "RootPromptAll2187::InputPureTests1701::wrong_context_stale_or_reused_ticket_cannot_be_reconstructed_from_data",
+    "RootPromptAll2187::MetadataPureTests1718::actual1717_directory_lastwrite_change_and_size_change_preserve_identity",
+    "RootPromptAll2187::MetadataPureTests1718::directory_content_fields_are_observed_not_normalized_or_identity_keys",
+    "RootPromptAll2187::MetadataPureTests1718::equal_file_metadata_is_only_metadata_and_preserves_original_values",
+    "RootPromptAll2187::MetadataPureTests1718::final_digest_attachment_keeps_all_actual_final_metadata_not_initial_data",
+    "RootPromptAll2187::MetadataPureTests1718::fixed_shell_requires_exactly_two_links_and_rejects_link_drift",
+    "RootPromptAll2187::MetadataPureTests1718::fixed_shell_still_rejects_stable_identity_or_mtime_drift",
+    "RootPromptAll2187::MetadataPureTests1718::fixed_shell_two_links_is_metadata_not_digest_admission",
+    "RootPromptAll2187::MetadataPureTests1718::fixed_shell_wrong_digest_path_size_or_attributes_is_rejected",
+    "RootPromptAll2187::MetadataPureTests1718::id_volume_or_creation_drift_is_rejected_for_directory_and_file",
+    "RootPromptAll2187::MetadataPureTests1718::null_or_unobserved_path_and_invalid_stable_fields_fail_closed",
+    "RootPromptAll2187::MetadataPureTests1718::ordinary_file_lastwrite_change_is_still_rejected",
+    "RootPromptAll2187::MetadataPureTests1718::ordinary_file_size_change_is_still_rejected",
+    "RootPromptAll2187::MetadataPureTests1718::other_pe_and_directory_two_links_are_still_rejected",
+    "RootPromptAll2187::MetadataPureTests1718::path_change_rejects_and_windows_case_comparison_does_not_rewrite_observation",
+    "RootPromptAll2187::MetadataPureTests1718::reparse_type_link_and_other_attribute_changes_are_rejected",
+    "RootPromptAll2187::MetadataPureTests1718::shell_digest_attachment_preserves_actual_metadata_without_normalization",
+    "RootPromptAll2187::PureTests1682::canonical_fixed_role_selection_does_not_accept_extra_paths_or_commands",
+    "RootPromptAll2187::PureTests1682::default_unbound_denies_before_installing_or_attempting_owner",
+    "RootPromptAll2187::PureTests1682::expiry_is_strict_and_does_not_retire_an_open_original",
+    "RootPromptAll2187::PureTests1682::failed_alias_close_retains_value_error_and_forbids_second_close",
+    "RootPromptAll2187::PureTests1682::false_partial_pi_and_unknown_return_preserve_both_original_values",
+    "RootPromptAll2187::PureTests1682::first_error_is_sticky_and_empty_resources_are_not_a_native_close_witness",
+    "RootPromptAll2187::PureTests1682::fixed_namespace_and_fresh_nonzero_tag_cannot_select_credential_or_foreign_root",
+    "RootPromptAll2187::PureTests1682::fixed_shell_selector_requires_full_digest_size_attributes_and_two_links",
+    "RootPromptAll2187::PureTests1682::full_dword_is_unsigned_observed_only_and_never_business_exit",
+    "RootPromptAll2187::PureTests1682::logical_exit_zero_and_missing_eof_or_native_signal_never_complete",
+    "RootPromptAll2187::PureTests1682::malformed_acl_lengths_sid_ranges_and_ace_counts_fail_closed",
+    "RootPromptAll2187::PureTests1682::other_role_and_directory_two_links_fail_complete_selector",
+    "RootPromptAll2187::PureTests1682::primary_statistics_or_default_policy_drift_is_not_equal",
+    "RootPromptAll2187::PureTests1682::protected_install_directory_rejects_untrusted_child_or_dacl_writer",
+    "RootPromptAll2187::PureTests1682::successful_close_keeps_historical_value_but_never_reopens_it",
+    "RootPromptAll2187::PureTests1682::thread_token_absence_requires_actual_error_no_token_and_zero_output",
+    "RootPromptAll2187::PureTests1682::token_pointer_parser_requires_in_buffer_aligned_complete_sid",
+    "RootPromptAll2187::PureTests1682::unsafe_null_broad_inherited_or_owner_rights_default_acl_is_rejected",
+    "RootPromptAll2187::PureTests1682::unverified_shell_shape_cannot_become_a_complete_selector"
+  ],
+  "pure85_current_execution": "NOT_RUN_YET",
+  "Host_PE_DLL_VM_execution": 0,
+  "actual47": "NOT_RUN_CURRENT2744",
+  "source_accepted": false,
+  "release_eligible": false
+}

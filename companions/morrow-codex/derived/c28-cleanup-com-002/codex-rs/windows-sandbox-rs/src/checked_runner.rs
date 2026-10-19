@@ -148,6 +148,13 @@ impl MatchedRunnerArtifact {
             _handles:Vec::new(),_parent:Some(self.clone()),instance:self.instance.clone(),precreation:self.precreation.clone(),asuser:Some(binding)})
     }
     pub(crate) fn asuser_binding(&self)->Option<std::sync::Arc<crate::AsUserFactoryBinding>>{self.asuser.clone()}
+    /// Borrow only the home held by THIS original A1 setup/factory binding.
+    /// A path is data, not admission, identity, completion or cleanup authority.
+    /// No lookup, reacquisition, environment read or new owner is performed.
+    #[doc(hidden)]
+    pub fn asuser_setup_codex_home(&self) -> Option<&Path> {
+        self.asuser.as_ref().map(|binding| binding.original_setup().codex_home())
+    }
     pub fn sha256(&self) -> [u8; 32] {
         self.expected_sha256
     }

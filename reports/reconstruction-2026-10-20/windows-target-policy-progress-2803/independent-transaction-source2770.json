@@ -1,0 +1,174 @@
+{
+  "schema": "ROOT_TARGET_POLICY_TRANSACTION_SOURCE_REVIEW2770",
+  "freeze": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-transaction-review2770\\ROOT_FREEZE2770.json",
+    "bytes": 22524,
+    "sha256": "4af33778a0be0490d7bff6d04851f9884810a96fe625c1e2662ba77314a5de1c"
+  },
+  "all133_members_exact_before_after": true,
+  "baseline94_plus_two_freezes_historical_raw_exact": true,
+  "mapped16_files91_steps111_byte_and_UTF16_positions_full_raw_forward_inverse": true,
+  "nine_core_changed4": [
+    "Common1737.ps1",
+    "Guest-Readiness1737.ps1",
+    "Guest-Transaction1737.ps1",
+    "Invoke-Transaction1737.ps1"
+  ],
+  "other5core_raw_exact": true,
+  "protected5_files_raw_exact": [
+    {
+      "file": "Clear-Private1728.txt",
+      "bytes": 466,
+      "sha256": "3d0622ca4a93ef89236a8be55b136d9b305dd9042c83ef235f78a510a56686d8",
+      "embedded_before": {
+        "Common1737.ps1": 0,
+        "FixedTarget-NullBinding1883.PureTests.ps1": 0,
+        "Guest-Readiness1737.ps1": 0,
+        "Guest-Transaction1737.ps1": 0,
+        "Invoke-Transaction1737.ps1": 1,
+        "RootTransactionCapture1737.cs": 0,
+        "RootTransactionCapture1737.Metadata.cs": 0,
+        "Wire-Ledger1909.Pure.ps1": 0,
+        "Wire-Ledger1909.PureTests.ps1": 0
+      },
+      "embedded_after": {
+        "Common1737.ps1": 0,
+        "FixedTarget-NullBinding1883.PureTests.ps1": 0,
+        "Guest-Readiness1737.ps1": 0,
+        "Guest-Transaction1737.ps1": 0,
+        "Invoke-Transaction1737.ps1": 1,
+        "RootTransactionCapture1737.cs": 0,
+        "RootTransactionCapture1737.Metadata.cs": 0,
+        "Wire-Ledger1909.Pure.ps1": 0,
+        "Wire-Ledger1909.PureTests.ps1": 0
+      }
+    },
+    {
+      "file": "COM-Original1728.txt",
+      "bytes": 1068,
+      "sha256": "0d024b4c7771a020dcd9c0aa280a6c789ac08baacfe32d5f58eeafb79dd96b62",
+      "embedded_before": {
+        "Common1737.ps1": 0,
+        "FixedTarget-NullBinding1883.PureTests.ps1": 0,
+        "Guest-Readiness1737.ps1": 1,
+        "Guest-Transaction1737.ps1": 0,
+        "Invoke-Transaction1737.ps1": 0,
+        "RootTransactionCapture1737.cs": 0,
+        "RootTransactionCapture1737.Metadata.cs": 0,
+        "Wire-Ledger1909.Pure.ps1": 0,
+        "Wire-Ledger1909.PureTests.ps1": 0
+      },
+      "embedded_after": {
+        "Common1737.ps1": 0,
+        "FixedTarget-NullBinding1883.PureTests.ps1": 0,
+        "Guest-Readiness1737.ps1": 1,
+        "Guest-Transaction1737.ps1": 0,
+        "Invoke-Transaction1737.ps1": 0,
+        "RootTransactionCapture1737.cs": 0,
+        "RootTransactionCapture1737.Metadata.cs": 0,
+        "Wire-Ledger1909.Pure.ps1": 0,
+        "Wire-Ledger1909.PureTests.ps1": 0
+      }
+    },
+    {
+      "file": "Plain-Parents1728.txt",
+      "bytes": 397,
+      "sha256": "2e18fcfcdd58fd273147e57f2462939ad01484f5f7c882f31decbeb62eab7afd",
+      "embedded_before": {
+        "Common1737.ps1": 0,
+        "FixedTarget-NullBinding1883.PureTests.ps1": 0,
+        "Guest-Readiness1737.ps1": 0,
+        "Guest-Transaction1737.ps1": 0,
+        "Invoke-Transaction1737.ps1": 1,
+        "RootTransactionCapture1737.cs": 0,
+        "RootTransactionCapture1737.Metadata.cs": 0,
+        "Wire-Ledger1909.Pure.ps1": 0,
+        "Wire-Ledger1909.PureTests.ps1": 0
+      },
+      "embedded_after": {
+        "Common1737.ps1": 0,
+        "FixedTarget-NullBinding1883.PureTests.ps1": 0,
+        "Guest-Readiness1737.ps1": 0,
+        "Guest-Transaction1737.ps1": 0,
+        "Invoke-Transaction1737.ps1": 1,
+        "RootTransactionCapture1737.cs": 0,
+        "RootTransactionCapture1737.Metadata.cs": 0,
+        "Wire-Ledger1909.Pure.ps1": 0,
+        "Wire-Ledger1909.PureTests.ps1": 0
+      }
+    },
+    {
+      "file": "Private-Adapter1728.txt",
+      "bytes": 1726,
+      "sha256": "9432168c01b9a76950f03931cb416efe84aff6b6c3fe322650c3bc0bb3229ae3",
+      "embedded_before": {
+        "Common1737.ps1": 0,
+        "FixedTarget-NullBinding1883.PureTests.ps1": 0,
+        "Guest-Readiness1737.ps1": 0,
+        "Guest-Transaction1737.ps1": 0,
+        "Invoke-Transaction1737.ps1": 2,
+        "RootTransactionCapture1737.cs": 0,
+        "RootTransactionCapture1737.Metadata.cs": 0,
+        "Wire-Ledger1909.Pure.ps1": 0,
+        "Wire-Ledger1909.PureTests.ps1": 0
+      },
+      "embedded_after": {
+        "Common1737.ps1": 0,
+        "FixedTarget-NullBinding1883.PureTests.ps1": 0,
+        "Guest-Readiness1737.ps1": 0,
+        "Guest-Transaction1737.ps1": 0,
+        "Invoke-Transaction1737.ps1": 2,
+        "RootTransactionCapture1737.cs": 0,
+        "RootTransactionCapture1737.Metadata.cs": 0,
+        "Wire-Ledger1909.Pure.ps1": 0,
+        "Wire-Ledger1909.PureTests.ps1": 0
+      }
+    },
+    {
+      "file": "Readiness17-Original1728.txt",
+      "bytes": 11236,
+      "sha256": "030d8ca5f4519e90261ab9e8e186ca0fae0ce7f9f7d512683ca84b5f5285c389",
+      "embedded_before": {
+        "Common1737.ps1": 0,
+        "FixedTarget-NullBinding1883.PureTests.ps1": 0,
+        "Guest-Readiness1737.ps1": 0,
+        "Guest-Transaction1737.ps1": 0,
+        "Invoke-Transaction1737.ps1": 0,
+        "RootTransactionCapture1737.cs": 0,
+        "RootTransactionCapture1737.Metadata.cs": 0,
+        "Wire-Ledger1909.Pure.ps1": 0,
+        "Wire-Ledger1909.PureTests.ps1": 0
+      },
+      "embedded_after": {
+        "Common1737.ps1": 0,
+        "FixedTarget-NullBinding1883.PureTests.ps1": 0,
+        "Guest-Readiness1737.ps1": 0,
+        "Guest-Transaction1737.ps1": 0,
+        "Invoke-Transaction1737.ps1": 0,
+        "RootTransactionCapture1737.cs": 0,
+        "RootTransactionCapture1737.Metadata.cs": 0,
+        "Wire-Ledger1909.Pure.ps1": 0,
+        "Wire-Ledger1909.PureTests.ps1": 0
+      }
+    }
+  ],
+  "readiness17_reference_limit": "Historical protected file remains raw. Active readiness differs only two2692->2769 namespace literals; whole old17+COM block embedding not claimed.",
+  "all194_dependency_rows_checked": {
+    "static": 178,
+    "unbound": 16
+  },
+  "all29_code_literal_SHA_occurrences_and_actual_leaves_checked": true,
+  "guest_fixed_expectations": "NOT_HOST_OBSERVED",
+  "empty_SHA": "CONSTANT_NOT_RUNTIME_EOF",
+  "bootstrap_actual_Common_pin": {
+    "bytes": 33724,
+    "sha256": "01f803312a15005b0b506099e39c9d7a7c9542da31bcbe23282bffe29704cdbc"
+  },
+  "two7slot_size_arrays_match": true,
+  "runtime16_unbound_exact": true,
+  "actual_full_entry_public": "NOT_RUN_MANDATORY_BEFORE_VM",
+  "GUI": "Current2775/default2776 in preparation; old2679 reports not current proof.",
+  "Host_PE_DLL_VM_private_policy_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

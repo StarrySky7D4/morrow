@@ -1,0 +1,40 @@
+{
+  "schema": "ROOT_APP048_INDEPENDENT_NORMAL2796_V1",
+  "utc": "2026-10-19T22:34:37.195237+00:00",
+  "ordinary_tool": "41808",
+  "actual_completion_chunk": "52afb9",
+  "ordinary_exit": 0,
+  "bundle_manifest": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-app-bundle2775\\bundle-manifest.json",
+    "bytes": 31144,
+    "sha256": "5971a33648583ab10143064b9cdf0656701e6d3ac7a0d8994f4c7a0260b5d9a9"
+  },
+  "source_freeze": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-review2790\\ROOT_FREEZE2790.json",
+    "bytes": 17626,
+    "sha256": "eba296942318d6a2044d373f9494a68a810037ffdc758e3f909a367b69f78901"
+  },
+  "terminal": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-vm2776\\normal\\run\\terminal.json",
+    "bytes": 304,
+    "sha256": "40a551d92e4e41985d8f40656d4cbfc46b08c23afc4a763968b57d21885be5e6"
+  },
+  "capture_readback": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-vm2776\\normal\\run\\app-normal-close.json",
+    "bytes": 4956,
+    "sha256": "9dec5bfc814517d84be999363fe6bc0780e0b175908b5f6a3cc83317449ee005"
+  },
+  "same_original_app_pid": 2212,
+  "full_creation_filetime": "134369228631542150",
+  "actual_native_DWORD": 0,
+  "EOF2_checked_native_closes_and_managed_joins": true,
+  "ready_line_and_one_WM_CLOSE_same_HWND_identity": true,
+  "actual_User_interactive_session": 2,
+  "own_task_finished_unchanged_and_removed": true,
+  "new_VM_session_and_inputs_closed": true,
+  "outer_native_wrapper_closure": "NOT_PROVEN_BY_ORDINARY_TOOL_EXIT_OR_SCHEDULER_STATE",
+  "native_reader_TLS": "NOT_CLAIMED_BY_MANAGED_JOIN",
+  "scope": "Current2744 native/default2775/bundle2775 andQA2776 GUI normal ready and one real WM_CLOSE subset only; no native47 SDK or release acceptance",
+  "source_accepted": false,
+  "release_eligible": false
+}

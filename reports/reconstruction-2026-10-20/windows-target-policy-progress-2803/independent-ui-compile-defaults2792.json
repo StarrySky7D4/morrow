@@ -1,0 +1,77 @@
+{
+  "schema": "ROOT_CURRENT_GUI_COMPILER_DEFAULT_PREPARATION_REVIEW2792",
+  "utc": "2026-10-19T22:33:04.441962+00:00",
+  "review_script": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\review-ui-compile-defaults2792.py",
+    "bytes": 3832,
+    "sha256": "becfb380bf81cd03f9c3a80e384621fcb46fbc6879848e18a64cb396f20586d9"
+  },
+  "source_QA": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\independent-ui-source2790.json",
+    "bytes": 2197,
+    "sha256": "b212911dab725e31a5502bd3b26da88d87dc376ce9ef30262353c3b821a8a2d5"
+  },
+  "runtime_source": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-review2790\\ROOT_RUNTIME_SOURCE2790.json",
+    "bytes": 3507,
+    "sha256": "2c17b26065c5e994dbfaecf1573cb24a27ba803f62a5150bd1eff64fb0af3880"
+  },
+  "actual_compile_tool": "73eed2:exit0",
+  "compiler_report": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-compile2791\\report.json",
+    "bytes": 8021,
+    "sha256": "9cbc1be5fc1c4aa14321549a2a855d8110a30c0bcabb02c91772a9d66433bdfa"
+  },
+  "actual_Csc_exits": [
+    0,
+    0
+  ],
+  "compiler_rows": [
+    {
+      "phase": "normal",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-vm2776\\normal\\RootVMNormalClose2776N.cs",
+        "sha256": "db74b1af6e64ed10679017d03dc8631af4252b55d8e4f35f8fe16dcbb4eabcb4",
+        "bytes": 25459
+      },
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-vm2776\\normal\\build\\RootVMNormalClose2776N.dll",
+        "sha256": "0d8c5f355e4eee63910c44099f023fad5cd2b998e61d60db19c096d89c908cad",
+        "bytes": 31232
+      },
+      "original_compiler_pid": 14392,
+      "actual_Csc_exit": 0,
+      "original_managed_return_and_stream_copy": true
+    },
+    {
+      "phase": "selfcheck",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-vm2776\\selfcheck\\Root-VM-Capture2776S.cs",
+        "sha256": "ebc47adad45e78a4da3cc4fb243f7c18813a77657cf3e0db471c5281ef252526",
+        "bytes": 9099
+      },
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-compile2791\\RootVMCapture2776S.dll",
+        "sha256": "21b7049f77a0f9e373a18aa0a5aa3ca14ffd728038b6b9ce1f4bc42f20c5dee8",
+        "bytes": 13312
+      },
+      "original_compiler_pid": 8816,
+      "actual_Csc_exit": 0,
+      "original_managed_return_and_stream_copy": true
+    }
+  ],
+  "default_tool": "f250e4:exit0",
+  "default_report": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\ui-ps5-entry-defaults2792.json",
+    "bytes": 9430,
+    "sha256": "9c2fbc2a4dbdd2f5a33651fce96e6cb9fc020155e802b13a23871327afdaac9f"
+  },
+  "PS5_AST0_actual_default78_count": 9,
+  "all17_source_before_after_pins_current": true,
+  "Host_product_or_QA_PE_DLL_execution": 0,
+  "VM_execution": 0,
+  "GUI_current": "WAIT_GENUINE_USER_ACTIVE_DESKTOP_REPLY_THEN_FRESH_WTS_AND_SELECTION",
+  "no_new_account_or47_authority": true,
+  "source_accepted": false,
+  "release_eligible": false
+}

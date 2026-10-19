@@ -318,7 +318,72 @@ pub enum WindowsStartStage {
     SpawnReadyRead,
     CheckedDriverAssemble,
     SpawnReturned,
+    // Original AsUser preparation boundaries, not proof of native absence.
+    AsUserFilesystemPolicy,
+    AsUserOfflinePolicy,
+    AsUserHomeAndCwdIdentity,
+    AsUserWriteRoots,
+    AsUserReadDeny,
+    AsUserWriteDeny,
+    AsUserReadRoots,
+    AsUserExistingCapabilities,
+    AsUserCapabilitySid,
+    AsUserCapabilityCount,
+    AsUserOwnedCredentials,
+    // Same-call read-root derivation/validation only; not native absence or completion.
+    AsUserReadRootsOverride,
+    AsUserReadRootsDefault,
+    AsUserReadRootsRequestNormalize,
+    AsUserReadRootsAppliedNormalize,
+    AsUserReadRootsEquality,
+    // Same-invocation attempted transport boundaries, never native absence,
+    // successful completion, permission or cleanup/replay authority.
+    CheckedStartupReserve,
+    BlockingTransportDispatch,
+    BlockingTransportEntered,
+    CheckedTransportCallerAck,
+    AsUserTransportReservation,
+    AsUserTransportPolicy,
+    AsUserNativeReservation,
+    AsUserCallerAdmission,
+    AsUserCommandPrepare,
+    AsUserStartupEntropy,
+    AsUserNativeStart,
+    AsUserAdmissionBind,
+    AsUserPipeNames,
+    AsUserTransportFiles,
+    AsUserNativeTransfer,
+    AsUserConnectInput,
+    AsUserConnectOutput,
+    AsUserBootstrapPrepare,
+    AsUserRuntimeLookup,
+    AsUserBootstrapWrite,
+    AsUserControlsHandshake,
+    AsUserSpawnRequestWrite,
+    AsUserSpawnReadyRead,
+    AsUserTransportLeaseCommit,
 }
+
+/// Finite resolver rejection, with the original public error text preserved.
+/// No policy path, account, capability or request content is retained.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum PermissionProfileResolveError {
+    ManagedProfileRequired,
+    RestrictedFilesystemRequired,
+}
+
+impl std::fmt::Display for PermissionProfileResolveError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Self::ManagedProfileRequired =>
+                "only managed permission profiles can be enforced by the Windows sandbox",
+            Self::RestrictedFilesystemRequired =>
+                "only restricted managed filesystem permissions can be enforced by the Windows sandbox",
+        })
+    }
+}
+
+impl std::error::Error for PermissionProfileResolveError {}
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum WindowsStartError {
@@ -346,6 +411,8 @@ pub enum WindowsStartError {
     OriginalRunnerExitedBeforeConnect,
     OriginalRunnerWaitUnavailable,
     Unclassified,
+    ManagedProfileRequired,
+    RestrictedFilesystemRequired,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -419,6 +486,182 @@ pub struct WindowsStartRunnerObservation {
     pub state: WindowsStartRunnerState,
 }
 
+/// Same original A1 owner's saved first-failure stage, not an exact Win32 API.
+/// These historical tags confer no HANDLE, retry, cleanup or admission authority.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(u8)]
+pub enum WindowsAsUserNativeStage {
+    Admission, ThreadToken, Login, Grant, Token, TokenSecurity, Broker,
+    ProcessSd, ThreadSd, Create, ProcessReadback, ThreadReadback,
+    Transfer, Retirement, Unwind, Deadline,
+}
+/// Source operation in the same saved first failure. Result sites include the
+/// existing output-slot validation. Only an actual saved raw error at a direct
+/// call/result site can identify that call's reported code. Boundary sites
+/// (notably subject/query/descriptor/channel/readback) may contain several APIs;
+/// None never proves an API rejection, a successful call, or process absence.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[repr(u8)]
+pub enum WindowsAsUserNativeSite {
+    #[default]
+    NotObserved,
+    AdmissionBind,
+    PipeNamesGuard,
+    StartCommandGuard,
+    LoginInputGuard,
+    LoginCallerIdentity,
+    LoginCallerBinding,
+    ResolveObjectQuery,
+    ThreadTokenReservation,
+    OpenThreadTokenResult,
+    ThreadTokenAbsenceGuard,
+    PrepareCaller,
+    LoginReservation,
+    LogonUserResult,
+    TokenHandleInformation,
+    TokenInheritanceGuard,
+    TargetFacts,
+    TargetPolicyGuard,
+    TokenSecurity,
+    DefaultInitialization,
+    TransportPipeInputs,
+    TransportPipeDescriptor,
+    TransportPipeReservation,
+    CreateNamedPipeResult,
+    TransportPipeCheckpoint,
+    StageOriginalTransport,
+    BrokerInputs,
+    BrokerStart,
+    TargetBeforeCreate,
+    CreateInputGuard,
+    ProcessDescriptor,
+    ThreadDescriptor,
+    CallerBeforeCreate,
+    CreateCommandGuard,
+    CreateReservation,
+    CreateProcessAsUserResult,
+    CreateOutputIdentityGuard,
+    CallerAfterCreate,
+    NativeReadback,
+    DeadlineGuard,
+    Unwind,
+    BrokerInputGuard,
+    BrokerDeadline,
+    BrokerCallerIdentity,
+    BrokerOriginalBinding,
+    BrokerTableGuard,
+    BrokerNoImpersonation,
+    BrokerCallerSubject,
+    BrokerEntropy,
+    BrokerNonceGuard,
+    BrokerDescriptor,
+    BrokerPipeReservation,
+    BrokerCreateNamedPipeResult,
+    BrokerChannelPrepare,
+    BrokerSpawn,
+    BrokerConnect,
+    BrokerGetClientPidResult,
+    BrokerPeerPidGuard,
+    BrokerPeerSubject,
+    BrokerPeerContextGuard,
+    BrokerBinding,
+    BrokerHelloSend,
+    BrokerOfferReceive,
+    BrokerPullStation,
+    BrokerPullDesktop,
+    BrokerGuiIdentity,
+    BrokerAcceptSend,
+    BrokerClosedReceive,
+    BrokerProcessWait,
+    BrokerProcessExitCodeResult,
+    BrokerProcessExitGuard,
+    BrokerThreadWait,
+    BrokerThreadExitCodeResult,
+    BrokerThreadExitGuard,
+    BrokerReaderWait,
+    BrokerReaderExitCodeResult,
+    BrokerReaderCapture,
+    BrokerReaderCompletionGuard,
+    BrokerReaderClose,
+    BrokerOriginalClose,
+    BrokerCompletion,
+    HelperSpawnDeadline,
+    HelperStdoutPipePair,
+    HelperStderrPipePair,
+    HelperNulReservation,
+    HelperCreateNulResult,
+    HelperParentReservation,
+    HelperDuplicateParentResult,
+    HelperAttributeList,
+    HelperCommandGuard,
+    HelperProcessDescriptor,
+    HelperThreadDescriptor,
+    HelperCreateReservation,
+    HelperCreateProcessResult,
+    HelperIdentity,
+    HelperIdentityGuard,
+    HelperImageReadback,
+    HelperPrivateClose,
+    HelperReaderReservation,
+    HelperCreateReaderResult,
+    HelperReaderIdGuard,
+}
+
+/// Bounded diagnostic reasons for the FIRST matching original target-policy
+/// predicate, never a token fact, OS error, SID/path or admission capability.
+/// None in WindowsAsUserNativeFailure means not observed; no clean inference.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(u8)]
+pub enum WindowsTargetPolicyRejection {
+    /// Guard denied but the diagnostic mirror could not classify it. Stay denied.
+    UnclassifiedGuardRejection,
+    StatisticsChanged,
+    NotPrimary,
+    TokenIdentityZero,
+    AuthenticationIdentityZero,
+    AuthenticationEqualsCaller,
+    TokenIdentityEqualsCaller,
+    ModifiedIdentityZero,
+    RequiredGrantMissing,
+    UserNotManaged,
+    UserEqualsCaller,
+    UserIsLogonSid,
+    LogonGroupCountNotOne,
+    LogonSidInvalid,
+    LogonEqualsCaller,
+    LogonAttributesMissing,
+    LogonDenyOnly,
+    SessionMismatch,
+    IntegrityMismatch,
+    IntegrityAboveMedium,
+    Elevated,
+    FullElevationType,
+    UnsupportedElevationType,
+    Restricted,
+    AppContainer,
+    UiAccess,
+    Virtualization,
+    MandatoryNoWriteUpMissing,
+    MandatoryPolicyUnsupportedBits,
+    PrivilegeCountExceeded,
+    UnsafePrivilegesPresent,
+    AdministratorMembership,
+}
+
+/// Values copied from the owner's already captured first Failure only.
+/// IoAccessDenied is an ErrorKind classification; absent raw codes stay absent.
+/// A raw code identifies no specific API when the retained stage covers several.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct WindowsAsUserNativeFailure {
+    pub owner_stage: WindowsAsUserNativeStage,
+    pub site: WindowsAsUserNativeSite,
+    /// Same original target guard failure only; never reconstructed from IoAccessDenied.
+    pub target_policy_rejection: Option<WindowsTargetPolicyRejection>,
+    pub error: WindowsStartError,
+    pub win32: Option<i32>,
+    pub ntstatus: Option<i32>,
+}
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct WindowsStartAttempt {
     pub stage: WindowsStartStage,
@@ -427,6 +670,7 @@ pub struct WindowsStartAttempt {
     pub os_class: WindowsOsError,
     pub original_runner: Option<WindowsStartRunnerObservation>,
     pub startup_context: Option<WindowsStartupContext>,
+    pub asuser_native_failure: Option<WindowsAsUserNativeFailure>,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -444,6 +688,44 @@ pub struct WindowsStartSnapshot {
 pub struct WindowsStartDiagnostic(Arc<Mutex<WindowsStartSnapshot>>);
 
 impl WindowsStartDiagnostic {
+    /// Same invocation only; observation never waits or modifies native ownership.
+    pub(crate) fn observe_asuser_native_failure(&self, owner_stage: WindowsAsUserNativeStage,
+        site: WindowsAsUserNativeSite, kind: ErrorKind, win32: Option<i32>, ntstatus: Option<i32>) {
+        self.observe_asuser_native_failure_with_target_policy(owner_stage,site,kind,win32,ntstatus,None);
+    }
+    /// Copy only the same original first failure's finite reason. No wait/query,
+    /// callback, native ownership, retry or overwrite of completed/first history.
+    pub(crate) fn observe_asuser_native_failure_with_target_policy(&self,
+        owner_stage: WindowsAsUserNativeStage, site: WindowsAsUserNativeSite,
+        kind: ErrorKind, win32: Option<i32>, ntstatus: Option<i32>,
+        target_policy_rejection: Option<WindowsTargetPolicyRejection>) {
+        let target_policy_rejection=if owner_stage==WindowsAsUserNativeStage::Token
+            &&site==WindowsAsUserNativeSite::TargetPolicyGuard
+            &&kind==ErrorKind::PermissionDenied&&win32.is_none()&&ntstatus.is_none()
+            {target_policy_rejection}else{None};
+        if let Ok(mut state)=self.0.try_lock() {
+            if !matches!(state.completion,WindowsStartCompletion::NotObserved
+                |WindowsStartCompletion::InProgressOrUnwound)
+                ||state.current.error!=WindowsStartError::NotObserved
+                ||state.current.asuser_native_failure.is_some() {return;}
+            state.current.asuser_native_failure=Some(WindowsAsUserNativeFailure {
+                owner_stage,site,target_policy_rejection,error:Self::io_error_class(kind),win32,ntstatus,
+            });
+        }
+    }
+    /// Finite substeps inside the existing single native-cell borrow. A busy or
+    /// poisoned recorder drops this optional observation, never blocks the owner.
+    pub(crate) fn observe_asuser_progress(&self, stage: WindowsStartStage) {
+        if !matches!(stage,WindowsStartStage::AsUserAdmissionBind
+            |WindowsStartStage::AsUserPipeNames|WindowsStartStage::AsUserNativeStart) {return;}
+        if let Ok(mut state)=self.0.try_lock() {
+            if matches!(state.completion,WindowsStartCompletion::NotObserved
+                |WindowsStartCompletion::InProgressOrUnwound)
+                &&state.current.error==WindowsStartError::NotObserved {
+                state.current.stage=stage;
+            }
+        }
+    }
     pub(crate) fn observe_startup_context(&self, mut observed: WindowsStartupContext) {
         // Observation must not wait for a data reader or a poisoned recorder.
         if let Ok(mut state) = self.0.try_lock() {
@@ -573,8 +855,27 @@ impl WindowsStartDiagnostic {
         );
     }
 
-    pub fn fail_io_kind(&self, kind: ErrorKind) {
-        self.fail(match kind {
+    /// Classify only the error already returned by the same backend call.
+    /// Never format the error chain or retain its paths/credentials/free text.
+    pub(crate) fn observe_backend_error(&self, error: &anyhow::Error) {
+        if let Some(cause) = error.downcast_ref::<PermissionProfileResolveError>() {
+            self.fail(match cause {
+                PermissionProfileResolveError::ManagedProfileRequired =>
+                    WindowsStartError::ManagedProfileRequired,
+                PermissionProfileResolveError::RestrictedFilesystemRequired =>
+                    WindowsStartError::RestrictedFilesystemRequired,
+            });
+        } else if let Some(error) = error.downcast_ref::<std::io::Error>() {
+            // Ordinary IO preserves the baseline finite ErrorKind category.
+            // It is not a runner/native OS observation.
+            self.fail_io_kind(error.kind());
+        } else {
+            self.fail(WindowsStartError::Unclassified);
+        }
+    }
+
+    fn io_error_class(kind: ErrorKind) -> WindowsStartError {
+        match kind {
             ErrorKind::PermissionDenied => WindowsStartError::IoAccessDenied,
             ErrorKind::NotFound => WindowsStartError::IoNotFound,
             ErrorKind::InvalidInput => WindowsStartError::IoInvalidInput,
@@ -582,7 +883,11 @@ impl WindowsStartDiagnostic {
             ErrorKind::Interrupted => WindowsStartError::IoInterrupted,
             ErrorKind::BrokenPipe => WindowsStartError::IoBrokenPipe,
             _ => WindowsStartError::IoOther,
-        });
+        }
+    }
+
+    pub fn fail_io_kind(&self, kind: ErrorKind) {
+        self.fail(Self::io_error_class(kind));
     }
 
     pub fn fail_os(&self, class: WindowsOsError) {
@@ -635,6 +940,73 @@ impl fmt::Debug for WindowsStartDiagnostic {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn asuser_error2357_is_same_call_first_error_and_not_rpc_or_native_evidence() {
+        let d = WindowsStartDiagnostic::default();
+        d.mark(WindowsStartStage::PermissionResolve);
+        d.mark(WindowsStartStage::AsUserHomeAndCwdIdentity);
+        let error = anyhow::Error::new(std::io::Error::new(ErrorKind::PermissionDenied, "labelled io"))
+            .context("labelled secret path that must never be exported");
+        d.observe_backend_error(&error);
+        d.fail(WindowsStartError::ServerInternal);
+        d.finish_failed();
+        let snapshot = d.snapshot().unwrap();
+        assert_eq!(snapshot.current.stage, WindowsStartStage::AsUserHomeAndCwdIdentity);
+        assert_eq!(snapshot.current.error, WindowsStartError::IoAccessDenied);
+        assert_eq!(snapshot.current.os_class, WindowsOsError::NotObserved);
+        assert_eq!(snapshot.current.original_runner, None);
+        assert_eq!(snapshot.current.startup_context, None);
+        assert_eq!(snapshot.completion, WindowsStartCompletion::ReturnedError);
+        let output = format!("{snapshot:?}");
+        assert!(!output.contains("labelled secret"));
+        assert!(!output.contains("path that"));
+        d.mark(WindowsStartStage::RunnerLogon);
+        d.observe_backend_error(&anyhow::anyhow!("later error"));
+        assert_eq!(d.snapshot(), Some(snapshot));
+        assert!(std::mem::size_of::<WindowsStartSnapshot>() <= 2048);
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn returned_io2364_keeps_baseline_kind_without_native_os_inference() {
+        let d = WindowsStartDiagnostic::default();
+        d.mark(WindowsStartStage::AsUserHomeAndCwdIdentity);
+        d.observe_backend_error(&anyhow::Error::new(std::io::Error::from_raw_os_error(5)));
+        let snapshot = d.snapshot().unwrap();
+        assert_eq!(snapshot.current.error, WindowsStartError::IoAccessDenied);
+        assert_eq!(snapshot.current.os_class, WindowsOsError::NotObserved);
+        assert_eq!(snapshot.current.original_runner, None);
+    }
+
+    #[test]
+    fn resolver_error2357_survives_context_and_success_stages_do_not_create_error() {
+        for (cause, expected) in [
+            (PermissionProfileResolveError::ManagedProfileRequired,
+                WindowsStartError::ManagedProfileRequired),
+            (PermissionProfileResolveError::RestrictedFilesystemRequired,
+                WindowsStartError::RestrictedFilesystemRequired),
+        ] {
+            let d = WindowsStartDiagnostic::default();
+            d.mark(WindowsStartStage::PermissionResolve);
+            d.observe_backend_error(&anyhow::Error::new(cause).context("private context"));
+            d.fail(WindowsStartError::ServerInternal);
+            assert_eq!(d.snapshot().unwrap().current.stage, WindowsStartStage::PermissionResolve);
+            assert_eq!(d.snapshot().unwrap().current.error, expected);
+        }
+        let d = WindowsStartDiagnostic::default();
+        d.mark(WindowsStartStage::PermissionResolve);
+        d.mark(WindowsStartStage::AsUserFilesystemPolicy);
+        d.mark(WindowsStartStage::AsUserOwnedCredentials);
+        let snapshot = d.snapshot().unwrap();
+        assert_eq!(snapshot.current.error, WindowsStartError::NotObserved);
+        assert_eq!(snapshot.current.original_runner, None);
+        let error = anyhow::anyhow!("unclassified private value");
+        d.observe_backend_error(&error);
+        assert_eq!(d.snapshot().unwrap().current.error, WindowsStartError::Unclassified);
+        assert_eq!(d.snapshot().unwrap().current.stage, WindowsStartStage::AsUserOwnedCredentials);
+        assert!(!format!("{:?}", d.snapshot()).contains("private value"));
+    }
 
     #[test]
     fn query_samples_are_latched_independently_of_later_connect_and_survive_data_owner_drop() {
@@ -930,5 +1302,139 @@ mod tests {
             )
         ));
         assert_eq!(s.current.stage, WindowsStartStage::SpawnReadyRead);
+    }
+}
+
+#[cfg(test)]
+mod transport_stage_recorder_tests2586 {
+    use super::*;
+    #[test]
+    fn completed_snapshot_and_first_error_remain_frozen_for_new_transport_markers() {
+        let d=WindowsStartDiagnostic::default();
+        d.mark(WindowsStartStage::AsUserCallerAdmission);
+        d.fail(WindowsStartError::IoInvalidInput);d.finish_failed();
+        let before=d.snapshot();
+        for stage in [WindowsStartStage::BlockingTransportEntered,
+            WindowsStartStage::AsUserNativeStart,WindowsStartStage::AsUserTransportLeaseCommit] {
+            d.mark(stage);d.fail(WindowsStartError::ServerInternal);
+        }
+        assert_eq!(d.snapshot(),before);
+    }
+    #[test]
+    fn poisoned_recorder_is_unavailable_never_a_clean_transport_or_native_result() {
+        let d=WindowsStartDiagnostic::default();
+        let poison=std::panic::catch_unwind(std::panic::AssertUnwindSafe(||{
+            let _held=d.0.lock().unwrap();
+            std::panic::resume_unwind(Box::new("synthetic recorder poison"));
+        }));
+        assert!(poison.is_err());
+        d.mark(WindowsStartStage::BlockingTransportEntered);
+        d.observe_backend_error(&anyhow::Error::new(std::io::Error::from(std::io::ErrorKind::TimedOut)));
+        d.finish_failed();
+        assert_eq!(d.snapshot(),None);
+        assert_eq!(format!("{d:?}"),"WindowsStartDiagnosticUnavailable");
+    }
+}
+
+#[cfg(test)]
+mod asuser_first_failure_observation_tests2659 {
+    use super::*;
+    #[test]
+    fn internal_permission_denial_has_no_invented_win32_or_native_identity() {
+        let d=WindowsStartDiagnostic::default();d.mark(WindowsStartStage::AsUserAdmissionBind);
+        d.observe_asuser_native_failure(WindowsAsUserNativeStage::Admission,WindowsAsUserNativeSite::NotObserved,ErrorKind::PermissionDenied,None,None);
+        let s=d.snapshot().unwrap();
+        assert_eq!(s.current.asuser_native_failure,Some(WindowsAsUserNativeFailure {
+            owner_stage:WindowsAsUserNativeStage::Admission,site:WindowsAsUserNativeSite::NotObserved,error:WindowsStartError::IoAccessDenied,
+            win32:None,ntstatus:None,target_policy_rejection:None,
+        }));
+        assert_eq!(s.current.error,WindowsStartError::NotObserved);
+        assert_eq!(s.current.original_runner,None);assert_eq!(s.current.startup_context,None);
+        assert_eq!(s.current.os_class,WindowsOsError::NotObserved);
+    }
+    #[test]
+    fn raw_first_failure_is_finite_sticky_and_freezes_with_original_completion() {
+        let d=WindowsStartDiagnostic::default();d.mark(WindowsStartStage::AsUserNativeStart);
+        // Synthetic saved values, not an API invocation or OS qualification.
+        d.observe_asuser_native_failure(WindowsAsUserNativeStage::Create,WindowsAsUserNativeSite::NotObserved,ErrorKind::PermissionDenied,Some(1314),None);
+        let first=d.snapshot().unwrap().current.asuser_native_failure;
+        d.observe_asuser_native_failure(WindowsAsUserNativeStage::Retirement,WindowsAsUserNativeSite::NotObserved,ErrorKind::Other,Some(5),Some(-1));
+        assert_eq!(d.snapshot().unwrap().current.asuser_native_failure,first);
+        d.fail_io_kind(ErrorKind::PermissionDenied);d.finish_failed();let before=d.snapshot();
+        d.observe_asuser_native_failure(WindowsAsUserNativeStage::Broker,WindowsAsUserNativeSite::NotObserved,ErrorKind::Other,None,Some(-2));
+        d.observe_asuser_progress(WindowsStartStage::AsUserPipeNames);
+        assert_eq!(d.snapshot(),before);
+        assert_eq!(first.unwrap().win32,Some(1314));assert_eq!(first.unwrap().ntstatus,None);
+    }
+    #[test]
+    fn busy_poison_and_prior_error_never_turn_missing_observation_into_zero_codes() {
+        let d=WindowsStartDiagnostic::default();
+        {let held=d.0.lock().unwrap();
+            d.observe_asuser_native_failure(WindowsAsUserNativeStage::Broker,WindowsAsUserNativeSite::NotObserved,ErrorKind::Other,Some(5),None);
+            d.observe_asuser_progress(WindowsStartStage::AsUserPipeNames);
+            assert_eq!(held.current.asuser_native_failure,None);
+            assert_eq!(held.current.stage,WindowsStartStage::NotObserved);
+        }
+        d.fail_io_kind(ErrorKind::TimedOut);
+        d.observe_asuser_native_failure(WindowsAsUserNativeStage::Broker,WindowsAsUserNativeSite::NotObserved,ErrorKind::Other,Some(5),None);
+        assert_eq!(d.snapshot().unwrap().current.asuser_native_failure,None);
+        let poison=std::panic::catch_unwind(std::panic::AssertUnwindSafe(||{
+            let _held=d.0.lock().unwrap();std::panic::resume_unwind(Box::new("synthetic diagnostic poison"));
+        }));
+        assert!(poison.is_err());
+        d.observe_asuser_native_failure(WindowsAsUserNativeStage::Unwind,WindowsAsUserNativeSite::NotObserved,ErrorKind::Other,None,None);
+        d.observe_asuser_progress(WindowsStartStage::AsUserNativeStart);
+        assert_eq!(d.snapshot(),None);
+    }
+    #[test]
+    fn existing_retry_history_keeps_first_projection_separate_and_does_not_invoke_retry() {
+        let d=WindowsStartDiagnostic::default();d.mark(WindowsStartStage::AsUserNativeStart);
+        d.observe_asuser_native_failure(WindowsAsUserNativeStage::Token,WindowsAsUserNativeSite::NotObserved,ErrorKind::Other,None,Some(-1073741790));
+        let first=d.snapshot().unwrap().current;d.begin_existing_retry();
+        let s=d.snapshot().unwrap();assert_eq!(s.first_attempt,Some(first));
+        assert_eq!(s.current.asuser_native_failure,None);assert_eq!(s.current.original_runner,None);
+        d.observe_asuser_progress(WindowsStartStage::AsUserPipeNames);
+        assert_eq!(d.snapshot().unwrap().current.stage,WindowsStartStage::AsUserPipeNames);
+        d.observe_asuser_progress(WindowsStartStage::SpawnReturned);
+        assert_eq!(d.snapshot().unwrap().current.stage,WindowsStartStage::AsUserPipeNames);
+    }
+}
+
+#[cfg(test)]
+mod target_policy_recorder_tests2740 {
+    use super::*;
+    fn record(d:&WindowsStartDiagnostic,site:WindowsAsUserNativeSite,reason:WindowsTargetPolicyRejection) {
+        d.observe_asuser_native_failure_with_target_policy(WindowsAsUserNativeStage::Token,site,
+            ErrorKind::PermissionDenied,None,None,Some(reason));
+    }
+    #[test] fn bounded_reason_requires_the_same_guard_and_remains_first_and_frozen() {
+        let d=WindowsStartDiagnostic::default();
+        record(&d,WindowsAsUserNativeSite::TargetFacts,WindowsTargetPolicyRejection::Restricted);
+        assert_eq!(d.snapshot().unwrap().current.asuser_native_failure.unwrap().target_policy_rejection,None);
+        let d=WindowsStartDiagnostic::default();
+        record(&d,WindowsAsUserNativeSite::TargetPolicyGuard,WindowsTargetPolicyRejection::Restricted);
+        let first=d.snapshot().unwrap().current.asuser_native_failure;
+        assert_eq!(first.unwrap().target_policy_rejection,Some(WindowsTargetPolicyRejection::Restricted));
+        record(&d,WindowsAsUserNativeSite::TargetPolicyGuard,WindowsTargetPolicyRejection::AdministratorMembership);
+        assert_eq!(d.snapshot().unwrap().current.asuser_native_failure,first);
+        d.fail_io_kind(ErrorKind::PermissionDenied);d.finish_failed();let frozen=d.snapshot();
+        record(&d,WindowsAsUserNativeSite::TargetPolicyGuard,WindowsTargetPolicyRejection::Virtualization);
+        assert_eq!(d.snapshot(),frozen);
+        assert!(std::mem::size_of::<WindowsTargetPolicyRejection>()<=1);
+    }
+    #[test] fn busy_poison_and_legacy_observation_never_fabricate_clean_or_a_reason() {
+        let d=WindowsStartDiagnostic::default();
+        let held=d.0.lock().unwrap();
+        record(&d,WindowsAsUserNativeSite::TargetPolicyGuard,WindowsTargetPolicyRejection::Restricted);
+        drop(held);assert_eq!(d.snapshot().unwrap().current.asuser_native_failure,None);
+        d.observe_asuser_native_failure(WindowsAsUserNativeStage::Token,
+            WindowsAsUserNativeSite::TargetPolicyGuard,ErrorKind::PermissionDenied,None,None);
+        assert_eq!(d.snapshot().unwrap().current.asuser_native_failure.unwrap().target_policy_rejection,None);
+        let d=WindowsStartDiagnostic::default();
+        let poison=std::panic::catch_unwind(std::panic::AssertUnwindSafe(||{
+            let _held=d.0.lock().unwrap();std::panic::resume_unwind(Box::new("synthetic recorder poison"));
+        }));assert!(poison.is_err());
+        record(&d,WindowsAsUserNativeSite::TargetPolicyGuard,WindowsTargetPolicyRejection::Restricted);
+        assert_eq!(d.snapshot(),None);
     }
 }

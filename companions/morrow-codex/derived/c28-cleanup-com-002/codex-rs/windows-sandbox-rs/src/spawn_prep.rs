@@ -61,33 +61,54 @@ pub(crate) struct ElevatedSpawnContext {
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn prepare_asuser_spawn_context(binding:&crate::AsUserFactoryBinding,
     permissions:&ResolvedWindowsSandboxPermissions,codex_home:&Path,cwd:&Path,
-    env:&mut HashMap<String,String>,read_roots:Option<&[PathBuf]>,write_roots:Option<&[PathBuf]>,
-    deny_read:&[PathBuf],deny_write:&[PathBuf],proxy_enforced:bool)->Result<ElevatedSpawnContext> {
-    let setup=binding.original_setup();permissions.validate_elevated_filesystem_policy(cwd)?;
+    env:&mut HashMap<String,String>,read_roots:Option<&[PathBuf]>,read_roots_include_platform_defaults:bool,
+    write_roots:Option<&[PathBuf]>,
+    deny_read:&[PathBuf],deny_write:&[PathBuf],proxy_enforced:bool,
+    diagnostic:Option<&crate::WindowsStartDiagnostic>)->Result<ElevatedSpawnContext> {
+    // Same original call/check order. These finite stages are diagnostic data,
+    // never absence, permission grants, completion or replay authority.
+    let mark=|stage| {if let Some(diagnostic)=diagnostic {diagnostic.mark(stage);}};
+    let setup=binding.original_setup();
+    mark(crate::WindowsStartStage::AsUserFilesystemPolicy);
+    permissions.validate_elevated_filesystem_policy(cwd)?;
+    mark(crate::WindowsStartStage::AsUserOfflinePolicy);
     anyhow::ensure!(permissions.should_apply_network_block()&&!proxy_enforced&&setup.proxy_ports().is_empty()
         &&!setup.allow_local_binding(),"A1 currently requires the actual owned sealed offline setup");
+    mark(crate::WindowsStartStage::AsUserHomeAndCwdIdentity);
     anyhow::ensure!(dunce::canonicalize(codex_home)?==setup.codex_home()
         &&dunce::canonicalize(cwd)?==setup.command_cwd(),"A1 request differs from actual owned setup home/workspace");
     normalize_null_device_env(env);ensure_non_interactive_pager(env);inherit_path_env(env);inject_git_safe_directory(env,cwd);
     let normalize=|paths:&[PathBuf]|->Result<Vec<String>>{
-        anyhow::ensure!(paths.len()<=64,"A1 applied-root bound");
+        validate_asuser_policy_path_bounds(paths)?;
         // This compares declared policy paths to the actual applied proof; it
         // does not create a file-origin capability. Deny paths may legitimately
         // be absent. Use the SAME canonical key/fallback as original setup.
-        anyhow::ensure!(paths.iter().all(|p|p.is_absolute()&&p.to_string_lossy().len()<=32700),"A1 policy path bound");
         let mut result=paths.iter().map(|p|crate::path_normalization::canonical_path_key(p)).collect::<Vec<_>>();
         result.sort();result.dedup();Ok(result)};
+    mark(crate::WindowsStartStage::AsUserWriteRoots);
     let AllowDenyPaths{allow,deny}=compute_allow_paths_for_permissions(permissions,cwd,env);
     let allowed=allow.into_iter().collect::<Vec<_>>();
     let requested=write_roots.unwrap_or(&allowed);
     let effective=effective_write_roots_for_permissions(permissions,cwd,env,codex_home,Some(requested));
     anyhow::ensure!(normalize(&effective)?==normalize(setup.write_roots())?,"A1 write policy changed after owned setup");
+    mark(crate::WindowsStartStage::AsUserReadDeny);
     anyhow::ensure!(normalize(deny_read)?==normalize(setup.deny_read_paths())?,"A1 read-deny policy differs from setup");
+    mark(crate::WindowsStartStage::AsUserWriteDeny);
     let computed_deny=deny.into_iter().collect::<Vec<_>>();let deny_write=if deny_write.is_empty(){&computed_deny[..]}else{deny_write};
     anyhow::ensure!(normalize(deny_write)?==normalize(setup.deny_write_paths())?,"A1 write-deny policy differs from setup");
-    let needed_read=read_roots.map(<[PathBuf]>::to_vec).unwrap_or_else(||
-        crate::setup::gather_read_roots(cwd,permissions,env,codex_home,crate::setup::current_setup_runtime()));
-    anyhow::ensure!(normalize(&needed_read)?==normalize(setup.read_roots())?,"A1 read roots differ from setup");
+    mark(crate::WindowsStartStage::AsUserReadRoots);
+    mark(if read_roots.is_some(){crate::WindowsStartStage::AsUserReadRootsOverride}
+        else{crate::WindowsStartStage::AsUserReadRootsDefault});
+    // Validate an explicit declaration before canonical_existing can resolve or
+    // drop it. Payload filtering must not hide relative/oversize override input.
+    if let Some(paths)=read_roots {validate_asuser_policy_path_bounds(paths)?;}
+    // Independently derive the request's actual payload policy. Never substitute
+    // setup.read_roots(), refresh setup, or create a missing helper directory.
+    let needed_read=crate::setup::read_roots_for_owned_request(
+        &crate::setup::SandboxSetupRequest{permissions,command_cwd:cwd,env_map:env,codex_home,proxy_enforced},
+        read_roots,read_roots_include_platform_defaults,deny_read,&effective);
+    validate_asuser_read_roots(&needed_read,setup.read_roots(),normalize,diagnostic)?;
+    mark(crate::WindowsStartStage::AsUserExistingCapabilities);
     let caps=crate::cap::load_existing_asuser_caps(codex_home)?;
     let mut cap_sids=Vec::with_capacity(effective.len());
     if permissions.uses_write_capabilities_for_cwd(cwd,env) {
@@ -95,13 +116,43 @@ pub(crate) fn prepare_asuser_spawn_context(binding:&crate::AsUserFactoryBinding,
             let key=crate::path_normalization::canonical_path_key(&root);
             let sid=if key==crate::path_normalization::canonical_path_key(cwd){caps.workspace_by_cwd.get(&key)}
                 else{caps.writable_root_by_path.get(&key)};
+            mark(crate::WindowsStartStage::AsUserCapabilitySid);
             let sid=sid.context("actual setup capability absent; no create/refresh")?;
             crate::asuser_a1_policy::Sid::from_text(sid)?;cap_sids.push(sid.clone());
         }
-    }else{crate::asuser_a1_policy::Sid::from_text(&caps.readonly)?;cap_sids.push(caps.readonly);}
+    }else{
+        mark(crate::WindowsStartStage::AsUserCapabilitySid);
+        crate::asuser_a1_policy::Sid::from_text(&caps.readonly)?;cap_sids.push(caps.readonly);
+    }
+    mark(crate::WindowsStartStage::AsUserCapabilityCount);
     anyhow::ensure!(!cap_sids.is_empty()&&cap_sids.len()<=64,"A1 active capability count");
+    mark(crate::WindowsStartStage::AsUserOwnedCredentials);
     let sandbox_creds=crate::identity::existing_owned_asuser_creds(setup)?;
     Ok(ElevatedSpawnContext{sandbox_base:setup.home.sandbox_dir.clone(),logs_base_dir:Some(setup.home.sandbox_dir.clone()),sandbox_creds,cap_sids})
+}
+
+fn validate_asuser_policy_path_bounds(paths: &[PathBuf]) -> Result<()> {
+    anyhow::ensure!(paths.len()<=64,"A1 applied-root bound");
+    anyhow::ensure!(paths.iter().all(|p|p.is_absolute()&&p.to_string_lossy().len()<=32700),"A1 policy path bound");
+    Ok(())
+}
+
+// The independent expected/applied comparison stays strict. Finite substages
+// identify only this call's failing boundary; no root strings/counts are exported.
+fn validate_asuser_read_roots(
+    requested: &[PathBuf],
+    applied: &[PathBuf],
+    normalize: impl Fn(&[PathBuf]) -> Result<Vec<String>>,
+    diagnostic: Option<&crate::WindowsStartDiagnostic>,
+) -> Result<()> {
+    let mark=|stage| {if let Some(diagnostic)=diagnostic {diagnostic.mark(stage);}};
+    mark(crate::WindowsStartStage::AsUserReadRootsRequestNormalize);
+    let requested=normalize(requested)?;
+    mark(crate::WindowsStartStage::AsUserReadRootsAppliedNormalize);
+    let applied=normalize(applied)?;
+    mark(crate::WindowsStartStage::AsUserReadRootsEquality);
+    anyhow::ensure!(requested==applied,"A1 read roots differ from setup");
+    Ok(())
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -815,5 +866,126 @@ mod tests {
         assert!(roots.contains(&dunce::canonicalize(&active_root).expect("active root")));
         assert!(!roots.contains(&dunce::canonicalize(&codex_home).expect("codex home")));
         assert!(!roots.contains(&dunce::canonicalize(&sandbox_root).expect("sandbox root")));
+    }
+}
+
+#[cfg(test)]
+mod asuser_read_root_comparison_tests2508 {
+    use super::validate_asuser_read_roots;
+    use crate::{WindowsStartDiagnostic, WindowsStartStage, WindowsStartError,
+        WindowsStartCompletion, WindowsOsError, WindowsRunnerErrorStage};
+    use std::cell::Cell;
+    use std::path::PathBuf;
+
+    fn labels(paths: &[PathBuf]) -> anyhow::Result<Vec<String>> {
+        // Synthetic already-normalized labels only. No filesystem or env work.
+        let mut keys=paths.iter().map(|p|p.to_str().unwrap().to_owned()).collect::<Vec<_>>();
+        keys.sort();keys.dedup();Ok(keys)
+    }
+    fn returned_error(d: &WindowsStartDiagnostic, error: &anyhow::Error) -> crate::WindowsStartSnapshot {
+        // The actual elevated backend uses this same existing observer.
+        d.observe_backend_error(error);d.finish_failed();
+        d.snapshot().unwrap()
+    }
+
+    #[test]
+    fn unequal_request_is_rejected_without_replacing_it_with_applied_roots() {
+        let request=vec![PathBuf::from("requested-root")];
+        let applied=vec![PathBuf::from("unrelated-applied-root")];
+        let d=WindowsStartDiagnostic::default();
+        let err=validate_asuser_read_roots(&request,&applied,labels,Some(&d)).unwrap_err();
+        assert_eq!(err.to_string(),"A1 read roots differ from setup");
+        assert_eq!(request,vec![PathBuf::from("requested-root")]);
+        let s=returned_error(&d,&err);
+        assert_eq!(s.current.stage,WindowsStartStage::AsUserReadRootsEquality);
+        assert_eq!(s.current.error,WindowsStartError::Unclassified);
+        assert_eq!(s.current.os_class,WindowsOsError::NotObserved);
+        assert_eq!(s.current.runner_stage,WindowsRunnerErrorStage::NotObserved);
+        assert_eq!(s.current.original_runner,None);
+        assert_eq!(s.current.startup_context,None);
+        assert_eq!(s.completion,WindowsStartCompletion::ReturnedError);
+    }
+
+    #[test]
+    fn request_normalization_failure_does_not_read_applied_or_lose_original_error() {
+        let calls=Cell::new(0);
+        let d=WindowsStartDiagnostic::default();
+        let err=validate_asuser_read_roots(&[],&[],|_| {
+            calls.set(calls.get()+1);
+            Err(std::io::Error::new(std::io::ErrorKind::InvalidInput,"labelled request bound").into())
+        },Some(&d)).unwrap_err();
+        assert_eq!(calls.get(),1);
+        assert_eq!(err.downcast_ref::<std::io::Error>().unwrap().kind(),std::io::ErrorKind::InvalidInput);
+        assert_eq!(err.to_string(),"labelled request bound");
+        let s=returned_error(&d,&err);
+        assert_eq!(s.current.stage,WindowsStartStage::AsUserReadRootsRequestNormalize);
+        assert_eq!(s.current.error,WindowsStartError::IoInvalidInput);
+        assert!(!format!("{s:?}").contains("labelled request bound"));
+    }
+
+    #[test]
+    fn applied_normalization_failure_is_distinct_and_does_not_claim_equality() {
+        let calls=Cell::new(0);
+        let d=WindowsStartDiagnostic::default();
+        let err=validate_asuser_read_roots(&[],&[],|p| {
+            calls.set(calls.get()+1);
+            if calls.get()==2 {anyhow::bail!("labelled applied bound");}
+            labels(p)
+        },Some(&d)).unwrap_err();
+        assert_eq!(calls.get(),2);
+        assert_eq!(err.to_string(),"labelled applied bound");
+        let s=returned_error(&d,&err);
+        assert_eq!(s.current.stage,WindowsStartStage::AsUserReadRootsAppliedNormalize);
+        assert_eq!(s.current.error,WindowsStartError::Unclassified);
+        assert_eq!(s.current.original_runner,None);
+    }
+
+    #[test]
+    fn normalized_equality_does_not_claim_native_start_exit_or_completion() {
+        let requested=vec![PathBuf::from("b"),PathBuf::from("a"),PathBuf::from("a")];
+        let applied=vec![PathBuf::from("a"),PathBuf::from("b")];
+        let d=WindowsStartDiagnostic::default();
+        validate_asuser_read_roots(&requested,&applied,labels,Some(&d)).unwrap();
+        let s=d.snapshot().unwrap();
+        assert_eq!(s.current.stage,WindowsStartStage::AsUserReadRootsEquality);
+        assert_eq!(s.current.error,WindowsStartError::NotObserved);
+        assert_eq!(s.current.original_runner,None);
+        assert_eq!(s.current.os_class,WindowsOsError::NotObserved);
+        assert_eq!(s.completion,WindowsStartCompletion::InProgressOrUnwound);
+    }
+
+    #[test]
+    fn recorded_first_error_and_stage_are_not_replaced_by_comparison_progress() {
+        let d=WindowsStartDiagnostic::default();
+        d.mark(WindowsStartStage::AsUserWriteDeny);
+        d.fail(WindowsStartError::IdentityRejected);
+        let error=validate_asuser_read_roots(&[PathBuf::from("a")],&[PathBuf::from("b")],
+            labels,Some(&d)).unwrap_err();
+        let s=returned_error(&d,&error);
+        assert_eq!(s.current.stage,WindowsStartStage::AsUserWriteDeny);
+        assert_eq!(s.current.error,WindowsStartError::IdentityRejected);
+        assert_eq!(s.completion,WindowsStartCompletion::ReturnedError);
+    }
+}
+
+#[cfg(test)]
+mod asuser_raw_override_bound_tests2508 {
+    use super::validate_asuser_policy_path_bounds;
+    use std::path::PathBuf;
+
+    #[test]
+    fn explicit_raw_input_bounds_cannot_be_hidden_by_payload_filtering() {
+        for relative in ["", "relative", r"C:drive-relative", r"\root-relative"] {
+            let error=validate_asuser_policy_path_bounds(&[PathBuf::from(relative)]).unwrap_err();
+            assert_eq!(error.to_string(),"A1 policy path bound");
+        }
+        let too_many=vec![PathBuf::from(r"C:\memory-only2508\same");65];
+        assert_eq!(validate_asuser_policy_path_bounds(&too_many).unwrap_err().to_string(),
+            "A1 applied-root bound");
+        let too_long=PathBuf::from(format!("C:\\{}", "x".repeat(32701)));
+        assert_eq!(validate_asuser_policy_path_bounds(&[too_long]).unwrap_err().to_string(),
+            "A1 policy path bound");
+        // Bounds alone do not canonicalize or grant equality/admission.
+        validate_asuser_policy_path_bounds(&vec![PathBuf::from(r"C:\memory-only2508\same");64]).unwrap();
     }
 }

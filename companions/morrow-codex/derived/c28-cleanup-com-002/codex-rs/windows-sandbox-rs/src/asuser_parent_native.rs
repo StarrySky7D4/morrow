@@ -4,6 +4,10 @@
 //! No Drop/TerminateProcess/job termination, retry, alternate identity or wire.
 use super::*;
 use crate::asuser_parent_record::{Record,FileIdentity,BYTES,MAX_FILES};
+use crate::asuser_parent_diagnostic::{Capture,Scope,Stage,Api};
+use crate::asuser_startup_observation::{StartupCarrier,StartupObservation,SdkStage};
+use crate::asuser_error_diagnostic::{ErrorDiagnosticRole,StartupFailureTrigger};
+use crate::asuser_error_diagnostic_native::RetainedErrorDiagnostic;
 use std::{path::{Path,PathBuf,Component,Prefix},sync::{Arc,atomic::{AtomicBool,Ordering}},
     fs::File,mem::ManuallyDrop,os::windows::{io::{FromRawHandle,AsRawHandle,BorrowedHandle},fs::FileExt}};
 use windows_sys::Win32::Foundation::{CompareObjectHandles,GetHandleInformation};
@@ -164,32 +168,42 @@ fn inherited(raw:isize)->io::Result<()> {
 // The 2048-byte transfer has its OWN stable allocation; a 512-byte A1 Channel
 // is never repurposed, and pending I/O is never cancelled/reused/freed.
 struct Bootstrap {pipe:Slot,event:Slot,operation:OVERLAPPED,bytes:[u8;BYTES],pending:bool,used:bool}
+fn observed_check(diagnostic:&mut Capture,api:Api,returned:i32)->io::Result<()> {
+    // check is the SAME existing GetLastError path, once. Never re-query for diagnostics.
+    let result=check(returned);
+    diagnostic.native(api,returned!=0,result.as_ref().err().and_then(io::Error::raw_os_error));
+    result
+}
 impl Bootstrap {
     fn new()->Box<Self>{Box::new(Self{pipe:Slot::new(CloseKind::Kernel),event:Slot::new(CloseKind::Kernel),
         operation:unsafe{mem::zeroed()},bytes:[0;BYTES],pending:false,used:false})}
-    fn event(&mut self)->io::Result<()> {
+    fn event(&mut self,diagnostic:&mut Capture)->io::Result<()> {
         self.event.begin()?;let raw=unsafe{CreateEventW(ptr::null(),1,0,ptr::null())};let error=if raw==0{unsafe{GetLastError()}}else{0};
+        diagnostic.native(Api::CreateEvent,raw!=0,if raw==0{Some(error as i32)}else{None});
         self.event.captured(raw!=0,raw,error)?;self.operation.hEvent=raw;Ok(())
     }
-    fn completed(&mut self,deadline:Instant)->io::Result<u32>{
+    fn completed(&mut self,deadline:Instant,diagnostic:&mut Capture)->io::Result<u32>{
         wait(self.event.raw,deadline)?;let mut length=0;
-        check(unsafe{GetOverlappedResult(self.pipe.raw,&mut self.operation,&mut length,0)})?;
+        observed_check(diagnostic,Api::GetOverlappedResult,unsafe{GetOverlappedResult(self.pipe.raw,&mut self.operation,&mut length,0)})?;
         self.pending=false;Ok(length)
     }
-    fn transfer(&mut self,write:bool,deadline:Instant)->io::Result<()> {
+    fn transfer(&mut self,write:bool,deadline:Instant,diagnostic:&mut Capture)->io::Result<()> {
         remaining(deadline)?;if self.used||self.pending{return Err(bad());}self.used=true;
-        check(unsafe{ResetEvent(self.event.raw)})?;self.pending=true;
+        observed_check(diagnostic,Api::ResetEvent,unsafe{ResetEvent(self.event.raw)})?;self.pending=true;
         self.operation=unsafe{mem::zeroed()};self.operation.hEvent=self.event.raw;let mut length=0;
         let ok=unsafe{if write {WriteFile(self.pipe.raw,self.bytes.as_ptr(),BYTES as u32,&mut length,&mut self.operation)}
             else {ReadFile(self.pipe.raw,self.bytes.as_mut_ptr(),BYTES as u32,&mut length,&mut self.operation)}};
-        if ok==0 {let error=unsafe{GetLastError()};if error!=997{return Err(io::Error::from_raw_os_error(error as i32));}
-            length=self.completed(deadline)?;}else{self.pending=false;}
+        if ok==0 {let error=unsafe{GetLastError()};diagnostic.native(if write{Api::WriteFile}else{Api::ReadFile},false,Some(error as i32));if error!=997{return Err(io::Error::from_raw_os_error(error as i32));}
+            length=self.completed(deadline,diagnostic)?;}else{diagnostic.native(if write{Api::WriteFile}else{Api::ReadFile},true,None);self.pending=false;}
         if length!=BYTES as u32{return Err(bad());}remaining(deadline)?;Ok(())
     }
     fn close(&mut self)->io::Result<()> {if self.pending{return Err(bad());}self.pipe.close()?;self.event.close()}
 }
 
 struct Parent {
+    diagnostic:Capture,
+    // Independent stable frame/out-DWORD; no native handle and no data-Arc lease.
+    error_output:RetainedErrorDiagnostic,
     files:[Slot;LOCAL_FILES],identities:[FileIdentity;MAX_FILES],paths:Vec<PathBuf>,count:usize,
     original_child:Box<dyn ParentOriginalProcess>,parent:Slot,stdio:[Slot;3],reader:Slot,token:Slot,
     thread_token:Slot,sd:Slot,bootstrap:Box<Bootstrap>,
@@ -200,7 +214,7 @@ struct Parent {
     namespace_sd:Slot,namespace:Slot,namespace_creation_started:bool,namespace_created:bool,precreate_token:Slot,
 }
 impl Parent {
-    fn new(original_child:Box<dyn ParentOriginalProcess>)->Box<Self>{Box::new(Self{files:std::array::from_fn(|_|Slot::new(CloseKind::Kernel)),
+    fn new(original_child:Box<dyn ParentOriginalProcess>)->Box<Self>{Box::new(Self{diagnostic:Capture::new(Scope::Parent),error_output:RetainedErrorDiagnostic::prepare(),files:std::array::from_fn(|_|Slot::new(CloseKind::Kernel)),
         identities:[FileIdentity::EMPTY;MAX_FILES],paths:Vec::with_capacity(MAX_FILES),count:0,
         original_child,
         parent:Slot::new(CloseKind::Kernel),stdio:std::array::from_fn(|_|Slot::new(CloseKind::Kernel)),
@@ -216,57 +230,84 @@ impl Parent {
         let slot=&mut self.files[index];slot.begin()?;
         let raw=unsafe{CreateFileW(wide(path.to_str().ok_or_else(bad)?).as_ptr(),0x80000000,1,
             &attributes(0,true),3,0x00200000|if kind==5{0x02000000}else{0},0)};
-        let error=if raw==0||raw == -1{unsafe{GetLastError()}}else{0};slot.captured(raw!=0&&raw != -1,raw,error)?;
+        let error=if raw==0||raw == -1{unsafe{GetLastError()}}else{0};self.diagnostic.native(Api::CreateFile,raw!=0&&raw != -1,if raw==0||raw == -1{Some(error as i32)}else{None});slot.captured(raw!=0&&raw != -1,raw,error)?;
         let first=file_identity(raw,kind)?;if file_path(raw)?!=path{return Err(bad());}
         self.identities[index]=first;Ok(())
     }
-    fn duplicate(slot:&mut Slot,source:isize,desired:u32)->io::Result<()> {
+    fn duplicate(slot:&mut Slot,source:isize,desired:u32,diagnostic:&mut Capture)->io::Result<()> {
         slot.begin()?;let mut raw=0;
         let ok=unsafe{DuplicateHandle(GetCurrentProcess(),source,GetCurrentProcess(),&mut raw,desired,1,0)};
-        let error=if ok==0{unsafe{GetLastError()}}else{0};slot.captured(ok!=0,raw,error)
+        let error=if ok==0{unsafe{GetLastError()}}else{0};diagnostic.native(Api::DuplicateHandle,ok!=0,if ok==0{Some(error as i32)}else{None});slot.captured(ok!=0,raw,error)
     }
     fn checkpoint(&self)->io::Result<()> {remaining(self.deadline)?;Ok(())}
     fn run(&mut self,selection:Selection)->io::Result<()> {
         // Actual P prebirth remains ROOT's independently pinned original launch
         // obligation. This admission is not a late JSON/hash substitute for it.
+        self.diagnostic.enter(Stage::ParentSubject);
         no_impersonation(&mut self.thread_token)?;
         let before=identity(unsafe{GetCurrentProcess()})?;
         let (context,caller,integrity)=subject(unsafe{GetCurrentProcess()},&mut self.token,&mut self.defaults)?;
         if integrity!=0x3000{return Err(bad());}
+        self.diagnostic.completed(Stage::ParentSubject);
+        self.diagnostic.enter(Stage::ParentImage);
         let p=image_path(unsafe{GetCurrentProcess()})?;absolute(&p)?;
         if p.file_name().is_none_or(|name|name!=P_NAME){return Err(bad());}
         let directory=p.parent().ok_or_else(bad)?;let c=directory.join(C_NAME);
         let parents=directory.ancestors().collect::<Vec<_>>();if parents.len()+2>MAX_FILES{return Err(bad());}
+        self.diagnostic.completed(Stage::ParentImage);
+        self.diagnostic.enter(Stage::ParentPins);
         for ancestor in parents.iter().rev(){self.pin(ancestor,5)?;}
         self.pin(&p,3)?;self.pin(&c,1)?;
+        self.diagnostic.completed(Stage::ParentPins);
+        self.diagnostic.enter(Stage::ParentDigests);
         file_digest(self.files[self.count-2].raw,selection.p)?;
         file_digest(self.files[self.count-1].raw,selection.c)?;
         self.checkpoint()?;
+        self.diagnostic.completed(Stage::ParentDigests);
         // Named bootstrap is one instance, local only, CUser only; no nonce or
         // credential in argv/record. Original inherited parent capability and
         // C-only compiled P table provide first authorization, not pipe EOF.
+        self.diagnostic.enter(Stage::BootstrapRandom);
         let mut nonce=[0u8;32];{use rand::RngCore;rand::rngs::OsRng.try_fill_bytes(&mut nonce).map_err(|_|bad())?;}
         if nonce==[0;32]{return Err(bad());}let name=format!(r"\\.\pipe\C28ParentA1-{}",hex_text(nonce));
+        self.diagnostic.completed(Stage::BootstrapRandom);
+        self.diagnostic.enter(Stage::BootstrapSecurity);
         self.sd.begin()?;let mut raw=ptr::null_mut();let text=wide(&format!("D:P(A;;GRGWRC;;;{})(A;;RC;;;OW)",sid_text(&caller)?));
         let ok=unsafe{ConvertStringSecurityDescriptorToSecurityDescriptorW(text.as_ptr(),1,&mut raw,ptr::null_mut())};
-        let error=if ok==0{unsafe{GetLastError()}}else{0};self.sd.captured(ok!=0,raw as isize,error)?;
-        self.bootstrap.event()?;self.bootstrap.pipe.begin()?;
+        let error=if ok==0{unsafe{GetLastError()}}else{0};self.diagnostic.native(Api::SecurityDescriptor,ok!=0,if ok==0{Some(error as i32)}else{None});self.sd.captured(ok!=0,raw as isize,error)?;
+        self.diagnostic.completed(Stage::BootstrapSecurity);
+        self.diagnostic.enter(Stage::BootstrapEvent);
+        self.bootstrap.event(&mut self.diagnostic)?;
+        self.diagnostic.completed(Stage::BootstrapEvent);self.diagnostic.enter(Stage::BootstrapServer);
+        self.bootstrap.pipe.begin()?;
         let raw=unsafe{CreateNamedPipeW(wide(&name).as_ptr(),BOOTSTRAP_OUTBOUND_SERVER_OPEN_MODE,14,1,BYTES as u32,BYTES as u32,0,&attributes(self.sd.raw,false))};
         let error=if raw == -1||raw==0{unsafe{GetLastError()}}else{0};
-        self.bootstrap.pipe.captured(raw!=0&&raw != -1,raw,error)?;
+        self.diagnostic.native(Api::CreateNamedPipe,raw!=0&&raw != -1,if raw==0||raw == -1{Some(error as i32)}else{None});self.bootstrap.pipe.captured(raw!=0&&raw != -1,raw,error)?;
+        self.diagnostic.completed(Stage::BootstrapServer);
+        self.diagnostic.enter(Stage::BootstrapConnect);
         self.bootstrap.pending=true;
         let ok=unsafe{ConnectNamedPipe(self.bootstrap.pipe.raw,&mut self.bootstrap.operation)};
-        if ok!=0{self.bootstrap.pending=false;}else{match unsafe{GetLastError()} {
+        if ok!=0{self.diagnostic.native(Api::ConnectNamedPipe,true,None);self.bootstrap.pending=false;}else{let error=unsafe{GetLastError()};self.diagnostic.native(Api::ConnectNamedPipe,false,Some(error as i32));match error {
             997=>{},535=>self.bootstrap.pending=false,v=>return Err(io::Error::from_raw_os_error(v as i32))}}
+        self.diagnostic.completed(Stage::BootstrapConnect);
+        self.diagnostic.enter(Stage::BootstrapReader);
         self.reader.begin()?;
         let raw=unsafe{CreateFileW(wide(&name).as_ptr(),BOOTSTRAP_READ_ONLY_CLIENT_ACCESS,0,&attributes(0,true),3,0x40100000,0)};
-        let error=if raw == -1||raw==0{unsafe{GetLastError()}}else{0};self.reader.captured(raw!=0&&raw != -1,raw,error)?;
-        if self.bootstrap.pending{self.bootstrap.completed(self.deadline)?;}
-        Parent::duplicate(&mut self.parent,unsafe{GetCurrentProcess()},crate::asuser_a1_rights::PROCESS_MANAGEMENT)?;
+        let error=if raw == -1||raw==0{unsafe{GetLastError()}}else{0};self.diagnostic.native(Api::CreateFile,raw!=0&&raw != -1,if raw==0||raw == -1{Some(error as i32)}else{None});self.reader.captured(raw!=0&&raw != -1,raw,error)?;
+        self.diagnostic.completed(Stage::BootstrapReader);
+        self.diagnostic.enter(Stage::BootstrapConnected);
+        if self.bootstrap.pending{self.bootstrap.completed(self.deadline,&mut self.diagnostic)?;}
+        self.diagnostic.completed(Stage::BootstrapConnected);
+        self.diagnostic.enter(Stage::ParentAlias);
+        Parent::duplicate(&mut self.parent,unsafe{GetCurrentProcess()},crate::asuser_a1_rights::PROCESS_MANAGEMENT,&mut self.diagnostic)?;
+        self.diagnostic.completed(Stage::ParentAlias);
+        self.diagnostic.enter(Stage::StdioAliases);
         for (index,std) in [STD_INPUT_HANDLE,STD_OUTPUT_HANDLE,STD_ERROR_HANDLE].into_iter().enumerate(){
             let original=unsafe{GetStdHandle(std)};if original==0||original == -1{return Err(bad());}
-            Parent::duplicate(&mut self.stdio[index],original,if index==0{0x80000000}else{0x40000000})?;
+            Parent::duplicate(&mut self.stdio[index],original,if index==0{0x80000000}else{0x40000000},&mut self.diagnostic)?;
         }
+        self.diagnostic.completed(Stage::StdioAliases);
+        self.diagnostic.enter(Stage::NamespaceInputs);
         let mut handles=self.files[..self.count].iter().map(|slot|slot.raw).collect::<Vec<_>>();
         handles.extend([self.parent.raw,self.reader.raw]);
         if handles.len()+4>32{return Err(bad());} // three stdio + one remote self capability
@@ -284,36 +325,50 @@ impl Parent {
             "--helper-sha256".into(),hex_text(selection.c),"--phase".into(),"live-guest-interactive".into(),
             "--inventory-shell".into(),shell,"--inventory-shell-sha256".into(),hex_text(selection.shell),
             "--expected-guest-uuid".into(),"b2dd7c5f-88ee-4d69-8aeb-d0290e60950e".into()];
+        self.diagnostic.completed(Stage::NamespaceInputs);
         // C is the SAME trusted high caller role, not private T. Its NULL
         // creation SAs use this P's independently observed safe primary-token
         // default DACL/TokenOwner; do not demand T's three-RC-ACE template on P.
         // Initial R process/thread explicit protected SAs remain mandatory.
+        self.diagnostic.enter(Stage::NamespaceSecurity);
         let c_sid=crate::asuser_a1_policy::Sid::from_bytes(&caller)?;
         self.namespace_sd.begin()?;let mut namespace_sd=ptr::null_mut();
         let text=wide(&format!("D:P(A;OICI;FA;;;{})(A;OICI;RC;;;OW)",c_sid.text()));
         let ok=unsafe{ConvertStringSecurityDescriptorToSecurityDescriptorW(text.as_ptr(),1,&mut namespace_sd,ptr::null_mut())};
-        let error=if ok==0{unsafe{GetLastError()}}else{0};self.namespace_sd.captured(ok!=0,namespace_sd as isize,error)?;
+        let error=if ok==0{unsafe{GetLastError()}}else{0};self.diagnostic.native(Api::SecurityDescriptor,ok!=0,if ok==0{Some(error as i32)}else{None});self.namespace_sd.captured(ok!=0,namespace_sd as isize,error)?;
+        self.diagnostic.completed(Stage::NamespaceSecurity);
+        self.diagnostic.enter(Stage::NamespaceCreate);
         self.namespace_creation_started=true;
-        check(unsafe{windows_sys::Win32::Storage::FileSystem::CreateDirectoryW(wide(&namespace).as_ptr(),&attributes(self.namespace_sd.raw,false))})?;
-        self.namespace_created=true;self.namespace.begin()?;
+        observed_check(&mut self.diagnostic,Api::CreateDirectory,unsafe{windows_sys::Win32::Storage::FileSystem::CreateDirectoryW(wide(&namespace).as_ptr(),&attributes(self.namespace_sd.raw,false))})?;
+        self.namespace_created=true;
+        self.diagnostic.completed(Stage::NamespaceCreate);self.diagnostic.enter(Stage::NamespacePin);
+        self.namespace.begin()?;
         let raw=unsafe{CreateFileW(wide(&namespace).as_ptr(),0x80000000,1,ptr::null(),3,0x02200000,0)};
-        let error=if raw==0||raw == -1{unsafe{GetLastError()}}else{0};self.namespace.captured(raw!=0&&raw != -1,raw,error)?;
+        let error=if raw==0||raw == -1{unsafe{GetLastError()}}else{0};self.diagnostic.native(Api::CreateFile,raw!=0&&raw != -1,if raw==0||raw == -1{Some(error as i32)}else{None});self.namespace.captured(raw!=0&&raw != -1,raw,error)?;
         if file_path(raw)?!=PathBuf::from(&namespace){return Err(bad());}file_identity(raw,5)?;
+        self.diagnostic.completed(Stage::NamespacePin);
+        self.diagnostic.enter(Stage::PrecreateSubject);
         let mut before_create_defaults=None;
         let (before_create,_,before_create_il)=subject(unsafe{GetCurrentProcess()},&mut self.precreate_token,&mut before_create_defaults)?;
         if before_create!=context||before_create_il!=0x3000||before_create_defaults!=self.defaults{return Err(bad());}
-        self.checkpoint()?;self.created=true;
+        self.checkpoint()?;
+        self.diagnostic.completed(Stage::PrecreateSubject);self.diagnostic.enter(Stage::ChildCreate);
+        self.created=true;
         let inherited=handles.iter().map(|raw|unsafe{BorrowedHandle::borrow_raw(*raw as *mut c_void)}).collect::<Vec<_>>();
         let stdio=std::array::from_fn(|index|unsafe{BorrowedHandle::borrow_raw(self.stdio[index].raw as *mut c_void)});
         // EXACTLY ONE child creator: existing native-pipe retained owner from
         // workbench's adapter. It retains the original Job/PI even on Err/unwind.
         let created=self.original_child.create_suspended(ParentCreate{application:&c,cwd:directory,arguments:&arguments,environment:&environment,deadline:self.deadline,
             extra_inherited:&inherited,stdio})?;
+        self.diagnostic.completed(Stage::ChildCreate);
+        self.diagnostic.enter(Stage::ChildIdentity);
         let process=self.original_child.original_process()?.as_raw_handle() as isize;
         let child=identity(process)?;
         if child.0!=created.pid||child.1!=created.creation_filetime||created.thread_id==0
             ||before!=identity(unsafe{GetCurrentProcess()})? {return Err(bad());}
-        self.checkpoint()?;self.remote_transfer_started=true;
+        self.checkpoint()?;
+        self.diagnostic.completed(Stage::ChildIdentity);self.diagnostic.enter(Stage::ChildSelfAlias);
+        self.remote_transfer_started=true;
         let duplicate=self.original_child.begin_bootstrap_duplication(unsafe{BorrowedHandle::borrow_raw(process as *mut c_void)})?;
         let mut remote=0;let ok=unsafe{DuplicateHandle(GetCurrentProcess(),process,process,
             &mut remote,crate::asuser_a1_rights::PROCESS_MANAGEMENT,0,0)};
@@ -321,25 +376,40 @@ impl Parent {
         // Capture remote output before any fallible operation. It belongs to C,
         // not P; failure with unexpected output is retained as remote debt.
         if remote!=0{self.remote_self=Some(remote as u64);}
+        self.diagnostic.native(Api::DuplicateHandle,ok!=0,if ok==0{Some(error as i32)}else{None});
         self.original_child.complete_bootstrap_duplication(duplicate,if ok==0{Err(io::Error::from_raw_os_error(error as i32))}
             else if remote<=0{Err(bad())}else{Ok(())})?;
         let remote=self.remote_self.ok_or_else(bad)?;
+        self.diagnostic.completed(Stage::ChildSelfAlias);
+        self.diagnostic.enter(Stage::RecordEncode);
         let (now,frequency)=counter()?;let deadline=now.checked_add(frequency.checked_mul(25).ok_or_else(bad)?).ok_or_else(bad)?;
         self.bootstrap.bytes=Record{generation:now,parent_pid:before.0,parent_time:before.1,
             child_pid:child.0,child_time:child.1,deadline,parent_alias:self.parent.raw as u64,self_alias:remote,
             reader_alias:self.reader.raw as u64,parent_image:selection.p,child_image:selection.c,
             files:self.identities,count:self.count as u8}.encode()?;
+        self.diagnostic.completed(Stage::RecordEncode);
+        self.diagnostic.enter(Stage::RevalidatePins);
         for (index,path) in self.paths.iter().enumerate(){
-            if file_identity(self.files[index].raw,self.identities[index].kind)?!=self.identities[index]
+            if !self.identities[index].same_held_observation(file_identity(self.files[index].raw,self.identities[index].kind)?)
                 ||file_path(self.files[index].raw)?!=*path{return Err(bad());}
         }
-        self.checkpoint()?;self.resume_started=true;
+        self.checkpoint()?;
+        self.diagnostic.completed(Stage::RevalidatePins);self.diagnostic.enter(Stage::ChildResume);
+        self.resume_started=true;
         self.original_child.resume_original_once()?;
-        self.bootstrap.transfer(true,self.deadline)?;self.bootstrap.close()?;
+        self.diagnostic.completed(Stage::ChildResume);
+        self.diagnostic.enter(Stage::BootstrapWrite);
+        self.bootstrap.transfer(true,self.deadline,&mut self.diagnostic)?;
+        self.diagnostic.completed(Stage::BootstrapWrite);self.diagnostic.enter(Stage::BootstrapAliasClose);
+        self.bootstrap.close()?;
+        self.diagnostic.completed(Stage::BootstrapAliasClose);
         // Close only P's extra inherited aliases after the fixed record is
         // delivered. Root's actual stdout/stderr original readers remain ROOT's.
+        self.diagnostic.enter(Stage::InheritedAliasClose);
         self.reader.close()?;self.parent.close()?;for slot in &mut self.stdio{slot.close()?;}
         self.sd.close()?;self.namespace_sd.close()?;
+        self.diagnostic.completed(Stage::InheritedAliasClose);
+        self.diagnostic.enter(Stage::WaitChild);
         self.deadline=Instant::now()+Duration::from_secs(90*60);
         let process=self.original_child.original_process()?.as_raw_handle() as isize;
         let milliseconds=self.deadline.checked_duration_since(Instant::now()).ok_or_else(bad)?.as_millis()
@@ -347,6 +417,8 @@ impl Parent {
         match unsafe{WaitForSingleObject(process,milliseconds)} {
             0 if Instant::now()<self.deadline=>{},258|0=>return Err(io::Error::new(io::ErrorKind::TimedOut,"A1 original C native lifetime budget")),
             _=>return Err(os_error())}
+        self.diagnostic.completed(Stage::WaitChild);
+        self.diagnostic.enter(Stage::ObserveChild);
         if identity(process)?!=(created.pid,created.creation_filetime){return Err(bad());}
         let mut observed=self.original_child.observe_original_exit(self.deadline)?;
         // The retained library supplies its actual existing signal/DWORD
@@ -363,17 +435,22 @@ impl Parent {
         observed.job_active=accounting.ActiveProcesses;observed.job_terminated=Some(accounting.TotalTerminatedProcesses);
         observed.job_total=Some(accounting.TotalProcesses);
         let proof=parent_c_closed(created,observed,self.bootstrap.used&&!self.bootstrap.pending)?;
+        self.diagnostic.completed(Stage::ObserveChild);
         // The original source locks remain HELD through the actual C signal.
         // Individually checked closes happen before the provider is told its
         // borrowed parent copies are discharged. Failure leaves its same Job,
         // process and primary thread retained; no boolean can skip a close.
+        self.diagnostic.enter(Stage::ResourceClose);
         if self.files[..self.count].iter().any(|slot|slot.state!=HandleState::Held){return Err(bad());}
         self.checkpoint()?;self.namespace.close()?;self.checkpoint()?;
         for index in 0..self.files.len(){self.files[index].close()?;self.checkpoint()?;}
         self.token.close()?;self.checkpoint()?;self.precreate_token.close()?;self.checkpoint()?;
         self.thread_token.close()?;self.checkpoint()?;
         let proof=proof.after_original_alias_closes(self)?;
+        self.diagnostic.completed(Stage::ResourceClose);
+        self.diagnostic.enter(Stage::RetireChild);
         self.original_child.close_after_natural_c(proof)?;self.child_retired=true;
+        self.diagnostic.completed(Stage::RetireChild);
         Ok(())
     }
 }
@@ -398,14 +475,29 @@ pub fn parent_dispatch(args:&[String],make_original:impl FnOnce()->Box<dyn Paren
     if ATTEMPTED.swap(true,Ordering::AcqRel){return Some(78);}
     let core=Box::leak(Parent::new(make_original()));
     let result=std::panic::catch_unwind(std::panic::AssertUnwindSafe(||core.run(selection)));
-    match result {Ok(Ok(()))=>Some(0),Ok(Err(error))=>{core.first=Some(error);park()},
-        Err(_)=>{if core.first.is_none(){core.first=Some(io::Error::other("A1 original P unwind"));}park()}}
+    match result {Ok(Ok(()))=>{core.diagnostic.returned_ok();Some(0)},Ok(Err(error))=>{core.diagnostic.latch_io(&error);core.first=Some(error);
+            // SAFETY: only the reviewed Root anonymous-pipe stderr qualification
+            // chain (Root ErrWrite -> P -> retained stdio -> C) may select this
+            // fixed path. This is an external source/PE binding precondition,
+            // not a mode inferred from a handle/bool; stable slot is preinstalled.
+            unsafe{core.error_output.legacy(ErrorDiagnosticRole::Parent,core.diagnostic.snapshot().encode(),StartupFailureTrigger::ReturnedError);}park()},
+        Err(_)=>{core.diagnostic.latch_unwind();if core.first.is_none(){core.first=Some(io::Error::other("A1 original P unwind"));}
+            // SAFETY: only the reviewed Root anonymous-pipe stderr qualification
+            // chain (Root ErrWrite -> P -> retained stdio -> C) may select this
+            // fixed path. This is an external source/PE binding precondition,
+            // not a mode inferred from a handle/bool; stable slot is preinstalled.
+            unsafe{core.error_output.legacy(ErrorDiagnosticRole::Parent,core.diagnostic.snapshot().encode(),StartupFailureTrigger::CaughtUnwind);}park()}}
 }
 
 // Import core is retained by this invocation, never a global latest-PID table.
 // A failed import parks the C process with the SAME allocation. No capabilities
 // are reconstructed from public Record data or a late path lock.
 pub(crate) struct ImportCore {
+    diagnostic:Capture,
+    // Kept separately from the data-only Startup Arc, including pending IO.
+    error_output:RetainedErrorDiagnostic,
+    // Separate data-only Arc, allocated before import; never owns an alias/lease.
+    startup:StartupCarrier,
     files:[Slot;MAX_FILES],parent:Slot,child:Slot,bootstrap:Box<Bootstrap>,
     token:Slot,peer_token:Slot,thread_token:Slot,record:Option<Record>,first:Option<io::Error>,
     verified:bool,closed:bool,busy:AtomicBool,
@@ -417,21 +509,28 @@ pub(crate) struct ImportCore {
 unsafe impl Send for ImportCore {}
 unsafe impl Sync for ImportCore {}
 impl ImportCore {
-    fn new()->Box<Self>{Box::new(Self{files:std::array::from_fn(|_|Slot::new(CloseKind::Kernel)),
+    fn new()->Box<Self>{Box::new(Self{diagnostic:Capture::new(Scope::Import),error_output:RetainedErrorDiagnostic::prepare(),startup:StartupCarrier::new(),files:std::array::from_fn(|_|Slot::new(CloseKind::Kernel)),
         parent:Slot::new(CloseKind::Kernel),child:Slot::new(CloseKind::Kernel),bootstrap:Bootstrap::new(),
         token:Slot::new(CloseKind::Kernel),peer_token:Slot::new(CloseKind::Kernel),thread_token:Slot::new(CloseKind::Kernel),
         record:None,first:None,verified:false,closed:false,busy:AtomicBool::new(false),
         defaults:std::array::from_fn(|_|None),auth_files:std::array::from_fn(|_|Slot::new(CloseKind::Kernel)),
         auth_count:0,caller_identity:None,early_caller:None,early_admitted:false})}
     fn import(&mut self,parent:isize,reader:isize,anchor:[u8;32])->io::Result<(PathBuf,[u8;32])> {
+        self.diagnostic.enter(Stage::ImportAliases);
         self.parent.begin()?;self.parent.captured(true,parent,0)?;
         self.bootstrap.pipe.begin()?;self.bootstrap.pipe.captured(true,reader,0)?;
         inherited(parent)?;inherited(reader)?;
+        self.diagnostic.completed(Stage::ImportAliases);
+        self.diagnostic.enter(Stage::ImportParentIdentity);
         no_impersonation(&mut self.thread_token)?;
         let parent_identity=identity(parent)?;let current=identity(unsafe{GetCurrentProcess()})?;
         if current_creator()?!=parent_identity.0||unsafe{WaitForSingleObject(parent,0)}!=258{return Err(bad());}
+        self.diagnostic.completed(Stage::ImportParentIdentity);
+        self.diagnostic.enter(Stage::ImportServerIdentity);
         let mut server=0;check(unsafe{GetNamedPipeServerProcessId(reader,&mut server)})?;
         if server!=parent_identity.0{return Err(bad());}
+        self.diagnostic.completed(Stage::ImportServerIdentity);
+        self.diagnostic.enter(Stage::ImportParentImage);
         let parent_path=image_path(parent)?;
         if parent_path.file_name().is_none_or(|v|v!=P_NAME){return Err(bad());}
         // Independent C-only compiled P digest is checked BEFORE record data.
@@ -440,15 +539,21 @@ impl ImportCore {
         // under its original reviewed file/ancestor guards.
         absolute(&parent_path)?;let auth_paths=parent_path.ancestors().collect::<Vec<_>>();
         if auth_paths.len()>MAX_FILES{return Err(bad());}
+        self.diagnostic.completed(Stage::ImportParentImage);
+        self.diagnostic.enter(Stage::ImportAuthPins);
         for path in auth_paths.iter().rev(){
             let index=self.auth_count;self.auth_count+=1;let slot=&mut self.auth_files[index];
             slot.begin()?;let directory=*path!=parent_path;
             let raw=unsafe{CreateFileW(wide(path.to_str().ok_or_else(bad)?).as_ptr(),0x80000000,1,ptr::null(),3,
                 0x00200000|if directory{0x02000000}else{0},0)};
-            let error=if raw==0||raw == -1{unsafe{GetLastError()}}else{0};slot.captured(raw!=0&&raw != -1,raw,error)?;
+            let error=if raw==0||raw == -1{unsafe{GetLastError()}}else{0};self.diagnostic.native(Api::CreateFile,raw!=0&&raw != -1,if raw==0||raw == -1{Some(error as i32)}else{None});slot.captured(raw!=0&&raw != -1,raw,error)?;
             file_identity(raw,if directory{5}else{3})?;if file_path(raw)?.as_path()!=*path{return Err(bad());}
         }
+        self.diagnostic.completed(Stage::ImportAuthPins);
+        self.diagnostic.enter(Stage::ImportParentDigest);
         file_digest(self.auth_files[self.auth_count-1].raw,anchor)?;
+        self.diagnostic.completed(Stage::ImportParentDigest);
+        self.diagnostic.enter(Stage::ImportToken);
         self.token.begin()?;let ok=unsafe{OpenProcessToken(GetCurrentProcess(),8,&mut self.token.raw)};
         let error=if ok==0{unsafe{GetLastError()}}else{0};self.token.captured(ok!=0,self.token.raw,error)?;
         let stats=stable_statistics(self.token.raw)?;let current_subject=retained_subject(self.token.raw)?;
@@ -456,20 +561,30 @@ impl ImportCore {
         let (session_bytes,session_length)=token_buffer(self.token.raw,TokenSessionId)?;
         if session_length!=4||stable_statistics(self.token.raw)?!=stats{return Err(bad());}
         let session=session_bytes[0] as u32;
+        self.diagnostic.completed(Stage::ImportToken);
+        self.diagnostic.enter(Stage::ImportSubject);
         let (own,sid,own_il)=(current_subject.hash,current_subject.sid,current_subject.integrity);
         self.caller_identity=Some((sid.clone(),stats[1],session,stats[0]));
         let (peer,_,peer_il)=subject(parent,&mut self.peer_token,&mut self.defaults[1])?;
         if own_il!=0x3000||peer_il!=0x3000||own!=peer{return Err(bad());}
-        self.bootstrap.event()?;let deadline=Instant::now()+Duration::from_secs(25);
-        self.bootstrap.transfer(false,deadline)?;
+        self.diagnostic.completed(Stage::ImportSubject);
+        self.diagnostic.enter(Stage::ImportRead);
+        self.bootstrap.event(&mut self.diagnostic)?;let deadline=Instant::now()+Duration::from_secs(25);
+        self.bootstrap.transfer(false,deadline,&mut self.diagnostic)?;
+        self.diagnostic.completed(Stage::ImportRead);
+        self.diagnostic.enter(Stage::ImportDecode);
         let record=Record::decode(&self.bootstrap.bytes)?;
+        self.diagnostic.completed(Stage::ImportDecode);
         // Capture ALL transferred original values before interpreting any of
         // their identities. A later failure never closes an unverified alias.
+        self.diagnostic.enter(Stage::ImportTransferredAliases);
         self.child.begin()?;self.child.captured(true,record.self_alias as isize,0)?;
         for (index,file) in record.files[..usize::from(record.count)].iter().enumerate(){
             self.files[index].begin()?;self.files[index].captured(true,file.alias as isize,0)?;
         }
         self.record=Some(record);
+        self.diagnostic.completed(Stage::ImportTransferredAliases);
+        self.diagnostic.enter(Stage::ImportRecordIdentity);
         let (now,frequency)=counter()?;shared_remaining(record.deadline,now,frequency)?;
         if record.parent_alias!=parent as u64||record.reader_alias!=reader as u64
             ||(record.parent_pid,record.parent_time)!=parent_identity
@@ -478,10 +593,12 @@ impl ImportCore {
             ||identity(self.child.raw)?!=current||unsafe{WaitForSingleObject(parent,0)}!=258 {return Err(bad());}
         let current_path=image_path(unsafe{GetCurrentProcess()})?;absolute(&current_path)?;
         if current_path.file_name().is_none_or(|v|v!=C_NAME)||parent_path.parent()!=current_path.parent(){return Err(bad());}
+        self.diagnostic.completed(Stage::ImportRecordIdentity);
+        self.diagnostic.enter(Stage::ImportFiles);
         let mut paths=Vec::with_capacity(MAX_FILES);let mut c_leaf=false;let mut p_leaf=false;
         for (index,expected) in record.files[..usize::from(record.count)].iter().enumerate(){
             let raw=self.files[index].raw;inherited(raw)?;
-            if file_identity(raw,expected.kind)?!=*expected{return Err(bad());}
+            if !expected.same_held_observation(file_identity(raw,expected.kind)?){return Err(bad());}
             let path=file_path(raw)?;
             match expected.kind {
                 1=>{if c_leaf||path!=current_path{return Err(bad());}file_digest(raw,record.child_image)?;c_leaf=true;},
@@ -495,17 +612,23 @@ impl ImportCore {
         }
         if !c_leaf||!p_leaf||!current_path.ancestors().skip(1).all(|p|paths.iter().any(|v|v==p))
             ||paths.len()!=current_path.ancestors().skip(1).count()+2{return Err(bad());}
+        self.diagnostic.completed(Stage::ImportFiles);
         // Repeat actual same-original identities after all bounded reads.
+        self.diagnostic.enter(Stage::ImportRevalidate);
         for (index,expected) in record.files[..usize::from(record.count)].iter().enumerate(){
-            if file_identity(self.files[index].raw,expected.kind)?!=*expected{return Err(bad());}
+            if !expected.same_held_observation(file_identity(self.files[index].raw,expected.kind)?){return Err(bad());}
         }
         if identity(parent)?!=parent_identity||identity(unsafe{GetCurrentProcess()})?!=current{return Err(bad());}
+        self.diagnostic.completed(Stage::ImportRevalidate);
+        self.diagnostic.enter(Stage::ImportAliasClose);
         let _=sid;self.bootstrap.close()?;self.token.close()?;self.peer_token.close()?;self.thread_token.close()?;
-        self.verified=true;Ok((current_path,record.child_image))
+        self.verified=true;
+        self.diagnostic.completed(Stage::ImportAliasClose);Ok((current_path,record.child_image))
     }
 }
 
 pub(crate) struct OriginGuard {core:std::cell::UnsafeCell<&'static mut ImportCore>,busy:AtomicBool,
+    startup:StartupCarrier,
     native_generation:std::sync::atomic::AtomicU64,unknown:AtomicBool}
 unsafe impl Send for OriginGuard {}
 unsafe impl Sync for OriginGuard {}
@@ -517,18 +640,21 @@ impl OriginGuard {
         Ok(())
     }
     fn with<T>(&self,f:impl FnOnce(&mut ImportCore)->io::Result<T>)->io::Result<T> {
-        if self.unknown.load(Ordering::Acquire){return Err(bad());}
+        if self.unknown.load(Ordering::Acquire){self.startup.unavailable();return Err(bad());}
         if self.busy.compare_exchange(false,true,Ordering::AcqRel,Ordering::Acquire).is_err(){
             self.unknown.store(true,Ordering::Release);
-            return Err(io::Error::new(io::ErrorKind::WouldBlock,"A1 original origin borrowed"));}
+            let error=io::Error::new(io::ErrorKind::WouldBlock,"A1 original origin borrowed");
+            self.startup.unavailable();return Err(error);}
         struct Borrow<'a>(&'a AtomicBool);impl Drop for Borrow<'_>{fn drop(&mut self){self.0.store(false,Ordering::Release);}}
         let _borrow=Borrow(&self.busy);let core=unsafe{&mut **self.core.get()};
-        if core.first.is_some(){return Err(io::Error::other("A1 original origin first failure retained"));}
+        if core.first.is_some(){self.startup.unavailable();return Err(io::Error::other("A1 original origin first failure retained"));}
         match std::panic::catch_unwind(std::panic::AssertUnwindSafe(||f(core))) {
-            Ok(Ok(value))=>if self.unknown.load(Ordering::Acquire){Err(bad())}else{Ok(value)},
-            Ok(Err(error))=>{if core.first.is_none(){core.first=Some(error);}self.unknown.store(true,Ordering::Release);
+            Ok(Ok(value))=>if self.unknown.load(Ordering::Acquire){self.startup.unavailable();Err(bad())}else{Ok(value)},
+            Ok(Err(error))=>{self.startup.sdk_io_current(&error);
+                if core.first.is_none(){core.first=Some(error);}self.unknown.store(true,Ordering::Release);
                 Err(io::Error::other("A1 original origin failed; retained"))},
-            Err(_)=>{if core.first.is_none(){core.first=Some(io::Error::other("A1 original origin unwind"));}
+            Err(_)=>{self.startup.sdk_unwind_current();
+                if core.first.is_none(){core.first=Some(io::Error::other("A1 original origin unwind"));}
                 self.unknown.store(true,Ordering::Release);Err(io::Error::other("A1 original origin unwind; retained"))}}
     }
     pub(crate) fn require_live(&self,pid:u32,creation:u64)->io::Result<()> {
@@ -562,30 +688,49 @@ pub struct AsUserParentOrigin {
     pub(crate) pid:u32,pub(crate) creation:u64,pub(crate) generation:u64,
 }
 impl AsUserParentOrigin {
+    /// Sealed same-generation DATA only. No origin/core borrow, native query,
+    /// control callback or ownership extension occurs when reading history.
+    pub fn startup_observation(&self)->StartupObservation {
+        self.guard.startup.observation(self.generation)
+    }
     /// Original preflight checks S's compiled C/R table before any owned setup
     /// effect. This is compatibility/role admission, never a setup proof.
     pub fn validate_independent_role_pins(&self,s:&crate::MatchedRunnerArtifact,r:&crate::MatchedRunnerArtifact)->io::Result<()> {
-        self.guard.require_admitted(self.pid,self.creation)?;
-        let table=s.asuser_s_table()?;
+        let step=self.startup_observation().sdk_enter(SdkStage::RolePins);
+        let admitted=self.guard.require_admitted(self.pid,self.creation);
+        if let Err(error)=&admitted{step.io_error(error);return admitted;}
+        let table=match s.asuser_s_table(){Ok(table)=>table,Err(error)=>{step.io_error(&error);return Err(error);}};
         if table.c!=self.c.sha256()||table.r!=r.sha256()||s.sha256()==r.sha256()
             ||self.c.sha256()==s.sha256()||self.c.sha256()==r.sha256()
-            ||self.c.shares_original_pin(s)||self.c.shares_original_pin(r)||s.shares_original_pin(r){return Err(bad());}
-        Ok(())
+            ||self.c.shares_original_pin(s)||self.c.shares_original_pin(r)||s.shares_original_pin(r){
+                let error=bad();step.io_error(&error);return Err(error);}
+        step.returned();Ok(())
     }
     pub fn validate_before_setup(&self)->io::Result<()> {
-        self.guard.require_live(self.pid,self.creation)?;
+        let observation=self.startup_observation();
+        let live=observation.sdk_enter(SdkStage::OriginLive);
+        self.guard.require_live(self.pid,self.creation)?;live.returned();
         self.guard.with(|core|{
+            let install=observation.sdk_enter(SdkStage::EarlyInstall);
             if core.early_caller.is_some(){return Err(bad());}
             core.early_caller=Some(crate::CallerPrerequisiteAttempt::new());
-            let original=core.early_caller.as_mut().ok_or_else(bad)?;
-            if !original.reserve(){return Err(bad());}original.observe_once();
+            let original=core.early_caller.as_mut().ok_or_else(bad)?;install.returned();
+            let reserve=observation.sdk_enter(SdkStage::EarlyReserve);
+            if !original.reserve(){return Err(bad());}reserve.returned();
+            let observe=observation.sdk_enter(SdkStage::EarlyObserve);
+            original.observe_once();observe.returned_void();
+            let require=observation.sdk_enter(SdkStage::EarlyRequire);
             let (sid,auth,session,token)=core.caller_identity.as_ref().ok_or_else(bad)?;
-            original.require_asuser_preflight(self.pid,self.creation,sid,*auth,*session,*token)?;
-            core.early_admitted=true;Ok(())
+            original.require_asuser_preflight(self.pid,self.creation,sid,*auth,*session,*token)?;require.returned();
+            let admitted=observation.sdk_enter(SdkStage::EarlyAdmitted);
+            core.early_admitted=true;admitted.returned();Ok(())
         })
     }
     pub fn caller_artifact(&self)->io::Result<Arc<crate::MatchedRunnerArtifact>> {
-        self.guard.require_admitted(self.pid,self.creation)?;Ok(self.c.clone())
+        let step=self.startup_observation().sdk_enter(SdkStage::CallerArtifact);
+        let admitted=self.guard.require_admitted(self.pid,self.creation);
+        if let Err(error)=admitted{step.io_error(&error);return Err(error);}
+        let artifact=self.c.clone();step.returned();Ok(artifact)
     }
     /// Original H keeps this object reachable on EVERY post-import failure.
     /// No error text, token, handle, key or claim is exported by this path.
@@ -612,13 +757,27 @@ impl AsUserParentOrigin {
         if IMPORTED.swap(true,Ordering::AcqRel){return Err(bad());}
         let core=Box::leak(ImportCore::new());
         let result=std::panic::catch_unwind(std::panic::AssertUnwindSafe(||core.import(parent,reader,compiled_parent)));
-        let (path,sha)=match result {Ok(Ok(value))=>value,Ok(Err(error))=>{core.first=Some(error);park()},
-            Err(_)=>{core.first=Some(io::Error::other("A1 original import unwind"));park()}};
+        let (path,sha)=match result {Ok(Ok(value))=>{core.diagnostic.returned_ok();value},Ok(Err(error))=>{core.diagnostic.latch_io(&error);core.first=Some(error);
+                // SAFETY: only the reviewed Root anonymous-pipe stderr qualification
+                // chain (Root ErrWrite -> P -> retained stdio -> C) may select this
+                // fixed path. This is an external source/PE binding precondition,
+                // not a mode inferred from a handle/bool; stable slot is preinstalled.
+                unsafe{core.error_output.legacy(ErrorDiagnosticRole::Import,core.diagnostic.snapshot().encode(),StartupFailureTrigger::ReturnedError);}park()},
+            Err(_)=>{core.diagnostic.latch_unwind();core.first=Some(io::Error::other("A1 original import unwind"));
+                // SAFETY: only the reviewed Root anonymous-pipe stderr qualification
+                // chain (Root ErrWrite -> P -> retained stdio -> C) may select this
+                // fixed path. This is an external source/PE binding precondition,
+                // not a mode inferred from a handle/bool; stable slot is preinstalled.
+                unsafe{core.error_output.legacy(ErrorDiagnosticRole::Import,core.diagnostic.snapshot().encode(),StartupFailureTrigger::CaughtUnwind);}park()}};
         let record=match core.record{Some(value)=>value,None=>park()};
-        let guard=Arc::new(OriginGuard{core:std::cell::UnsafeCell::new(core),busy:AtomicBool::new(false),
+        core.startup.bind(record.generation);
+        let startup=core.startup.clone();
+        let suffix=startup.observation(record.generation).sdk_enter(SdkStage::ImportSuffix);
+        let guard=Arc::new(OriginGuard{core:std::cell::UnsafeCell::new(core),busy:AtomicBool::new(false),startup,
             native_generation:std::sync::atomic::AtomicU64::new(0),unknown:AtomicBool::new(false)});
         let c=Arc::new(crate::MatchedRunnerArtifact::from_parent_original(path,sha,guard.clone()));
-        Ok(Some((Self{guard,c,pid:record.child_pid,creation:record.child_time,generation:record.generation},args[3..].to_vec())))
+        let arguments=args[3..].to_vec();suffix.returned();
+        Ok(Some((Self{guard,c,pid:record.child_pid,creation:record.child_time,generation:record.generation},arguments)))
     }
 }
 
@@ -680,7 +839,9 @@ mod tests {
             if field==7{assert_eq!(parent.first.as_ref().unwrap().raw_os_error(),Some(123));}
         }
     }
-    fn guard()->Arc<OriginGuard>{Arc::new(OriginGuard{core:std::cell::UnsafeCell::new(Box::leak(ImportCore::new())),
+    fn guard()->Arc<OriginGuard>{
+        let core=Box::leak(ImportCore::new());let startup=core.startup.clone();
+        Arc::new(OriginGuard{core:std::cell::UnsafeCell::new(core),startup,
         busy:AtomicBool::new(false),native_generation:std::sync::atomic::AtomicU64::new(0),unknown:AtomicBool::new(false)})}
     #[test] fn one_original_parent_origin_cannot_issue_two_native_generations_or_hide_busy_first_error() {
         let original=guard();assert!(original.claim_native_attempt(0).is_err());

@@ -1,0 +1,187 @@
+{
+  "schema": "ROOT_FOUR_ROLE_INDEPENDENT_COMPILER_REVIEW2760",
+  "utc": "2026-10-19T21:29:31.865906+00:00",
+  "review_script": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\review-four-roles2760.py",
+    "bytes": 14758,
+    "sha256": "2df522571f3f265ea6b900ff07162fb266efa8d6e49ae1df06b8cd3a88927bd6"
+  },
+  "review_freeze": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-role-review2760\\ROOT_FREEZE2760.json",
+    "bytes": 10972,
+    "sha256": "70bc5b8f353d3ca22e772b3d3a0d47836c2e00cf9e30271ee60f8c556e1adf1a"
+  },
+  "canonical_freeze": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-review2744\\ROOT_FREEZE2744.json",
+    "bytes": 714683,
+    "sha256": "6a21060ddad9d991e9a4acc34601c2b712a1b036705c65613fe0a97c36c0da29"
+  },
+  "author_report": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-four-role-build2757\\four-role-build2757.json",
+    "bytes": 4785,
+    "sha256": "31d8df35a93e492517663d2c2f3613df73b0cedf4ed7a2862dcda09d5b49d833"
+  },
+  "actual_original_Cargo_returns": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "roles": [
+    {
+      "role": "P",
+      "actual_original_Cargo_return": 0,
+      "pid": 22560,
+      "elapsed_seconds": 188.426,
+      "EOF2_original_reader_join2": true,
+      "current_target_fresh": false,
+      "features": [
+        "c28-product-session-qualification"
+      ],
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-four-role-build2757\\roles\\morrow-workbench-supervisor.exe",
+        "bytes": 27771392,
+        "sha256": "c421b1485f8a866535b41bcd3f88da06bf831dfd77fb0d970e12380617e2a559"
+      },
+      "report": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-four-role-build2757\\role-P\\report.json",
+        "bytes": 3576,
+        "sha256": "affd0cfb19d1b29aa923f369ba7886c8bf8cef96ce165e294115337964474224"
+      },
+      "dependency_graph_separation_checked": true
+    },
+    {
+      "role": "C",
+      "actual_original_Cargo_return": 0,
+      "pid": 28000,
+      "elapsed_seconds": 178.683,
+      "EOF2_original_reader_join2": true,
+      "current_target_fresh": false,
+      "features": [],
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-four-role-build2757\\roles\\morrow-protected-checked-vm-harness.exe",
+        "bytes": 100175360,
+        "sha256": "e6911f0bb785567fd672e965ad4bcf51793c74f104da120fd16e10faeee8ddb6"
+      },
+      "report": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-four-role-build2757\\role-C\\report.json",
+        "bytes": 3681,
+        "sha256": "aecfdfc725ff26b0d6fe4b3df7b7a792532b7178fd7241c21efc2b9c91062b4d"
+      },
+      "dependency_graph_separation_checked": true
+    },
+    {
+      "role": "R",
+      "actual_original_Cargo_return": 0,
+      "pid": 17720,
+      "elapsed_seconds": 4.24,
+      "EOF2_original_reader_join2": true,
+      "current_target_fresh": false,
+      "features": [],
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-four-role-build2757\\roles\\codex-command-runner.exe",
+        "bytes": 27374080,
+        "sha256": "d9df30acb30c8c7bbcb71225927e9414403a5041c9cfbf49662ad2cebb910104"
+      },
+      "report": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-four-role-build2757\\role-R\\report.json",
+        "bytes": 3683,
+        "sha256": "7fb27f72220e142902172db173f00e20ba380a45327d6ddc49165fb7cbdfc598"
+      },
+      "dependency_graph_separation_checked": true
+    },
+    {
+      "role": "S",
+      "actual_original_Cargo_return": 0,
+      "pid": 18220,
+      "elapsed_seconds": 68.15,
+      "EOF2_original_reader_join2": true,
+      "current_target_fresh": false,
+      "features": [],
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-four-role-build2757\\roles\\codex-windows-sandbox-setup.exe",
+        "bytes": 38667776,
+        "sha256": "4b8b89a5b513457fe1054e6842dd316870ffab18d56445499c0c01acdb0c5c82"
+      },
+      "report": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-four-role-build2757\\role-S\\report.json",
+        "bytes": 3712,
+        "sha256": "d9eff6212d1ca786d36e47b4dabe2e33cc54197a11be68baef1cc324a781c945"
+      },
+      "dependency_graph_separation_checked": true
+    }
+  ],
+  "mechanical_changes": [
+    {
+      "path": "companions/morrow-codex/qualification/c28-basic-harness/src/a1_parent_anchor.rs",
+      "before": {
+        "bytes": 362,
+        "sha256": "451492f2f0e58940d249c8fea967d68f6de4ebca528534343920363387e7355f"
+      },
+      "after": {
+        "bytes": 517,
+        "sha256": "3d6417125caad384c44011eac85e2bcec1a37f0f4f1bacc2e0b0c5bafc02b909"
+      },
+      "forward_and_inverse_raw_exact": true
+    },
+    {
+      "path": "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/bin/setup_main/a1_allow_table.rs",
+      "before": {
+        "bytes": 399,
+        "sha256": "992473209868a1b45cb1d8c23722b17d751033de47261e90b5a160d7b407499d"
+      },
+      "after": {
+        "bytes": 793,
+        "sha256": "eb31bda1c6b5f650fbcfb9fb6fe941115cdf92aa8cd4efd7ff15b2e64376c5a2"
+      },
+      "forward_and_inverse_raw_exact": true
+    }
+  ],
+  "all3_source_graphs_3288_current_SHA_verified": true,
+  "all3321_canonical_frozen_members_SHA_verified": true,
+  "production_manifests": 83,
+  "production_locks": 20,
+  "Dart_files": 574,
+  "no_manifest_lock_Dart_change": true,
+  "S_actual_readonly_section": {
+    "name": ".c28a1",
+    "virtual_bytes": 80,
+    "raw_bytes": 512,
+    "raw_offset": 38521856,
+    "flags": 1073741888
+  },
+  "S_80byte_CR_SHA_table_and_zero_padding_exact": true,
+  "old_seed_provenance": [
+    {
+      "original": "C:\\c28h2746p\\git",
+      "members": 2862,
+      "author_after_record": {
+        "original": "C:\\c28h2746p\\git",
+        "members": 2862,
+        "all_original_member_SHA_unchanged": true
+      }
+    },
+    {
+      "original": "C:\\c28t2746p",
+      "members": 23087,
+      "author_after_record": {
+        "original": "C:\\c28t2746p",
+        "members": 23087,
+        "all_original_member_SHA_unchanged": true
+      }
+    }
+  ],
+  "old_seed_limit": "Author fixed before/copy/after inventories and post-compiler after records checked. ROOT did not independently observe old caches before the copy and makes no broader cache/history claim.",
+  "compiler_capture_scope": "Original compiler return/EOF/readers only; not product native IO/readerTLS/Job/lease witnesses.",
+  "Host_product_test_PE_DLL_execution": 0,
+  "VM_execution": 0,
+  "actual47": "NOT_RUN_CURRENT2744",
+  "Nine": "NOT_PROVEN",
+  "default_release_scope": "Current default bundle not built or accepted by this qualification compiler review; qualification P cannot substitute for default P.",
+  "startup_rootcause_or_fix": "NOT_PROVEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN"
+}

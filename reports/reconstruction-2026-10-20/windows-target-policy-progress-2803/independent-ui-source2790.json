@@ -1,0 +1,49 @@
+{
+  "schema": "ROOT_CURRENT_GUI_SOURCE_REVIEW2790",
+  "utc": "2026-10-19T22:31:54.062394+00:00",
+  "review_script": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\review-ui-source2790.py",
+    "bytes": 14403,
+    "sha256": "192c63f68ba1f87177a48113d13dd533c1314aadb08961119b7428f1452c2b12"
+  },
+  "freeze": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-review2790\\ROOT_FREEZE2790.json",
+    "bytes": 17626,
+    "sha256": "eba296942318d6a2044d373f9494a68a810037ffdc758e3f909a367b69f78901"
+  },
+  "source17_count": 17,
+  "all_public_members_exact": 93,
+  "ordered_steps": 161,
+  "byte_positions": 494,
+  "all_forward_inverse_raw_exact": true,
+  "code13_independent_literal_whitelist_exact": true,
+  "JSON4_keys_arrays_shape_and_independent_expected_values_exact": true,
+  "protected6_raw_exact": true,
+  "readiness17_only_namespace_changed": true,
+  "two_desktop_sources_raw_exact": true,
+  "bundle_manifest": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-app-bundle2775\\bundle-manifest.json",
+    "bytes": 31144,
+    "sha256": "5971a33648583ab10143064b9cdf0656701e6d3ac7a0d8994f4c7a0260b5d9a9"
+  },
+  "bundle71_rehashed": true,
+  "default_bundle_QA": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\independent-default-bundle2787.json",
+    "bytes": 4829,
+    "sha256": "8e8097285f5a15b7bf39950f561a03449f0548f68f0581e6c59ffa3ac58a759a"
+  },
+  "projection": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-review2790\\baseline-restore-public-projection2776.json",
+    "bytes": 2788,
+    "sha256": "8e78877ecbdac9766cee05cd4838452c2088c3d3c9f914b9e0f762eddde20162"
+  },
+  "recovery": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\independent-recovery-result2745.json",
+    "bytes": 7859,
+    "sha256": "49e8e66e676e2564e3e136452d6a6d2adeba2713a7b85d418a646491434f5829"
+  },
+  "GUI_current": "NOT_RUN",
+  "Host_PE_DLL_VM_execution": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

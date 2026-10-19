@@ -120,12 +120,24 @@ impl Session {
         // Its SAME box remains in the imported owner on failure. The later
         // native-start box is fresh on that actual thread, not a diagnostic
         // replay or an expired observation reinterpreted as a current permit.
-        if let Some(original)=&origin{original.validate_before_setup()?;}
+        let startup=origin.as_ref().map(|value|value.startup_observation()).unwrap_or_default();
+        let validate=startup.enter(codex_windows_sandbox::FrontendStage::ValidateBeforeSetup);
+        if let Some(original)=&origin{
+            match original.validate_before_setup() {
+                Ok(())=>{},
+                Err(error)=>{validate.io_error(&error);return Err(error.into());}
+            }
+        }
+        validate.returned();
+        let uuid=startup.enter(codex_windows_sandbox::FrontendStage::FirmwareUuidCheck);
         ensure!(
             guest_identity::valid_uuid(&config.expected_guest_uuid),
             "explicit approved guest firmware UUID required"
         );
-        crate::preflight::preflight(&config.files)?;
+        uuid.returned();
+        let preflight=startup.enter(codex_windows_sandbox::FrontendStage::ConfigPreflight);
+        crate::preflight::preflight(&config.files)?;preflight.returned();
+        let provisioning_step=startup.enter(codex_windows_sandbox::FrontendStage::ProvisioningConfigBuild);
         let provisioning=ProvisioningConfig {
             synthetic_root: config.files.synthetic_root.clone(),
             harness: pin(&config.files.helper),
@@ -133,12 +145,17 @@ impl Session {
             setup: pin(&config.files.setup),
             inventory_shell: pin(&config.inventory_shell),
         };
+        provisioning_step.returned();
+        // Outer call boundary only: provisioning internals/authority unchanged.
+        let lifecycle_step=startup.enter(codex_windows_sandbox::FrontendStage::LifecyclePreflight);
         let lifecycle=if let Some(origin)=origin {GuestLifecycle::preflight_asuser(provisioning,origin)?}
             else{GuestLifecycle::preflight(provisioning)?};
-        interaction::confirm(
+        lifecycle_step.returned();
+        interaction::confirm_first_observed(
             reader,
             guest_identity::CONFIRMATION,
             "Dedicated guest only. Read pinned local OS inventory and create fresh public evidence beside the new synthetic root. This does not authorize setup. Do not enter passwords.",
+            &startup,
         )?;
         let mut journal = Journal::create(&config.files.synthetic_root)?;
         journal.before("guest-identity", &serde_json::json!({"expected_uuid":config.expected_guest_uuid,

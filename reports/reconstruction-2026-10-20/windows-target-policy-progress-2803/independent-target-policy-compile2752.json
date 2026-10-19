@@ -1,0 +1,394 @@
+{
+  "schema": "ROOT_TARGET_POLICY_COMPILER_QA2752",
+  "utc": "2026-10-19T21:09:22.030495+00:00",
+  "report": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\report.json",
+    "bytes": 22953,
+    "sha256": "18632a6dea90a3d527e1a25fb43c857453bf5c8f4312f8e3e1bd0caf671bae11"
+  },
+  "handoff": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\CODING_HANDOFF.json",
+    "bytes": 20253,
+    "sha256": "f694cee15cf0a5cc9e38cf2dedfe18c440549ae9a9ba7c45ad72f6df040fda79"
+  },
+  "output_manifest": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\SOURCE_OUTPUT_SHA256.json",
+    "bytes": 8290,
+    "sha256": "7238a8f4dabb75dd8a58fdb14ad956942a11810376ef755492f1ea0c78495d03"
+  },
+  "public_evidence_members": 55,
+  "freeze": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-review2744\\ROOT_FREEZE2744.json",
+    "bytes": 714683,
+    "sha256": "6a21060ddad9d991e9a4acc34601c2b712a1b036705c65613fe0a97c36c0da29"
+  },
+  "source_QA": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\independent-target-policy-source2744.json",
+    "bytes": 8392,
+    "sha256": "b2b147d5f734d58effb94977532e745f0efe79cb72efa8dcbeec94830c7af566"
+  },
+  "source_before": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\source-before.json",
+    "bytes": 1325333,
+    "sha256": "cffaea2067cabb73af73d074ef4cb4e89c921476ae803262d8d6e393fefac6cd"
+  },
+  "source_after": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\source-after.json",
+    "bytes": 1325624,
+    "sha256": "4490f20fc8f09c76bc391ea064adfe85b358fcb86c6572ccb0f9d1be2c967f17"
+  },
+  "actual_compilers": [
+    {
+      "role": "check-P",
+      "actual_exit": 0,
+      "warning_count": 47,
+      "capture": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\check-P\\capture.json",
+        "bytes": 1191,
+        "sha256": "16e6cb1e3038feecb48b7171a47c462460795dd30b18bbebd4352470fe3309e1"
+      },
+      "invocation": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\check-P\\invocation.json",
+        "bytes": 7565,
+        "sha256": "be00c2ce653cae5ec9777bcd2d6e6a588e42dee303b84d1df9d2cb6a096e0621"
+      },
+      "stdout": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\check-P\\stdout.ndjson",
+        "bytes": 876572,
+        "sha256": "abd90efd301e270ad0df1451d85eea65959921b69de3baef114c02c6a000f483"
+      },
+      "stderr": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\check-P\\stderr.log",
+        "bytes": 9384,
+        "sha256": "1e61af9b2dcc7b7370e8c859ea90f173191e55f8d4245ba99bb6a9457d795c9e"
+      },
+      "target": {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///C:/c28s2746p/source-native/workbench_host#morrow-workbench-host@0.1.9-test.50",
+        "manifest_path": "C:\\c28s2746p\\source-native\\workbench_host\\Cargo.toml",
+        "target": {
+          "kind": [
+            "bin"
+          ],
+          "crate_types": [
+            "bin"
+          ],
+          "name": "morrow-workbench-supervisor",
+          "src_path": "C:\\c28s2746p\\source-native\\workbench_host\\src\\bin\\morrow-workbench-supervisor.rs",
+          "edition": "2024",
+          "doc": true,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "0",
+          "debuginfo": 0,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": false
+        },
+        "features": [
+          "c28-product-session-qualification"
+        ],
+        "filenames": [
+          "C:\\c28t2746p\\x86_64-pc-windows-msvc\\debug\\deps\\libmorrow_workbench_supervisor-ef89d17b7a1f32e0.rmeta"
+        ],
+        "executable": null,
+        "fresh": false
+      },
+      "native": {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///C:/c28s2746p/source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs#codex-windows-sandbox@0.0.0",
+        "manifest_path": "C:\\c28s2746p\\source-native\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\Cargo.toml",
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "codex_windows_sandbox",
+          "src_path": "C:\\c28s2746p\\source-native\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\lib.rs",
+          "edition": "2024",
+          "doc": true,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "0",
+          "debuginfo": 0,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": false
+        },
+        "features": [],
+        "filenames": [
+          "C:\\c28t2746p\\x86_64-pc-windows-msvc\\debug\\deps\\libcodex_windows_sandbox-4a9266f4e6ce0390.rmeta"
+        ],
+        "executable": null,
+        "fresh": false
+      },
+      "selected_artifact": null
+    },
+    {
+      "role": "check-C",
+      "actual_exit": 0,
+      "warning_count": 46,
+      "capture": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\check-C\\capture.json",
+        "bytes": 1189,
+        "sha256": "c8708ce0bf56e489aa2b682e381ba9560abe623226405e145e105066fa4b36ac"
+      },
+      "invocation": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\check-C\\invocation.json",
+        "bytes": 7572,
+        "sha256": "90d5162849f389b8e41e2aae016a70acf3ed38551fb11270e324b59166fdb2ab"
+      },
+      "stdout": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\check-C\\stdout.ndjson",
+        "bytes": 876291,
+        "sha256": "dacf02138b12286a79eaa7cc6468309dae10bdfeba66ad4566340cf541733d13"
+      },
+      "stderr": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\check-C\\stderr.log",
+        "bytes": 634,
+        "sha256": "19139306aa035f285ca6293adeec16c773f5a0e2712fe1f5cb0a012b85c2655d"
+      },
+      "target": {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///C:/c28s2746p/source-native/companions/morrow-codex/qualification/c28-basic-harness#morrow-protected-checked-vm-harness@0.0.0",
+        "manifest_path": "C:\\c28s2746p\\source-native\\companions\\morrow-codex\\qualification\\c28-basic-harness\\Cargo.toml",
+        "target": {
+          "kind": [
+            "bin"
+          ],
+          "crate_types": [
+            "bin"
+          ],
+          "name": "morrow-protected-checked-vm-harness",
+          "src_path": "C:\\c28s2746p\\source-native\\companions\\morrow-codex\\qualification\\c28-basic-harness\\src\\main.rs",
+          "edition": "2024",
+          "doc": true,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "0",
+          "debuginfo": 0,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": false
+        },
+        "features": [],
+        "filenames": [
+          "C:\\c28t2746p\\x86_64-pc-windows-msvc\\debug\\deps\\libmorrow_protected_checked_vm_harness-16d2e1fe4c44e37e.rmeta"
+        ],
+        "executable": null,
+        "fresh": false
+      },
+      "native": {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///C:/c28s2746p/source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs#codex-windows-sandbox@0.0.0",
+        "manifest_path": "C:\\c28s2746p\\source-native\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\Cargo.toml",
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "codex_windows_sandbox",
+          "src_path": "C:\\c28s2746p\\source-native\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\lib.rs",
+          "edition": "2024",
+          "doc": true,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "0",
+          "debuginfo": 0,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": false
+        },
+        "features": [],
+        "filenames": [
+          "C:\\c28t2746p\\x86_64-pc-windows-msvc\\debug\\deps\\libcodex_windows_sandbox-4a9266f4e6ce0390.rmeta"
+        ],
+        "executable": null,
+        "fresh": true
+      },
+      "selected_artifact": null
+    },
+    {
+      "role": "unit-no-run",
+      "actual_exit": 0,
+      "warning_count": 83,
+      "capture": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\unit-no-run\\capture.json",
+        "bytes": 1199,
+        "sha256": "8291fe1814457ef9eb0077847c60c13b0f722d01e0321a8fe09ec6414d493578"
+      },
+      "invocation": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\unit-no-run\\invocation.json",
+        "bytes": 7578,
+        "sha256": "3ad43fd08454e824d95cded56aa9f746f78c6b313df684608e4083e0caa1d052"
+      },
+      "stdout": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\unit-no-run\\stdout.ndjson",
+        "bytes": 723891,
+        "sha256": "8f2b96cd883af5b6f7021c4079a6adfc1b7903df7c38f9b360a8cbcb847f4b10"
+      },
+      "stderr": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\unit-no-run\\stderr.log",
+        "bytes": 4335,
+        "sha256": "ffb9058496fa740b68fa76210afe52004ade62e5af715f271d6370277b9ec449"
+      },
+      "target": {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///C:/c28s2746u/source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs#codex-windows-sandbox@0.0.0",
+        "manifest_path": "C:\\c28s2746u\\source-native\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\Cargo.toml",
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "codex_windows_sandbox",
+          "src_path": "C:\\c28s2746u\\source-native\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\lib.rs",
+          "edition": "2024",
+          "doc": true,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "0",
+          "debuginfo": 0,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [],
+        "filenames": [
+          "C:\\c28t2746u\\x86_64-pc-windows-msvc\\debug\\deps\\codex_windows_sandbox-dc640609002ab27a.exe",
+          "C:\\c28t2746u\\x86_64-pc-windows-msvc\\debug\\deps\\codex_windows_sandbox-dc640609002ab27a.pdb"
+        ],
+        "executable": "C:\\c28t2746u\\x86_64-pc-windows-msvc\\debug\\deps\\codex_windows_sandbox-dc640609002ab27a.exe",
+        "fresh": false
+      },
+      "native": {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///C:/c28s2746u/source-native/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs#codex-windows-sandbox@0.0.0",
+        "manifest_path": "C:\\c28s2746u\\source-native\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\Cargo.toml",
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "codex_windows_sandbox",
+          "src_path": "C:\\c28s2746u\\source-native\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\lib.rs",
+          "edition": "2024",
+          "doc": true,
+          "doctest": false,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "0",
+          "debuginfo": 0,
+          "debug_assertions": true,
+          "overflow_checks": true,
+          "test": true
+        },
+        "features": [],
+        "filenames": [
+          "C:\\c28t2746u\\x86_64-pc-windows-msvc\\debug\\deps\\codex_windows_sandbox-dc640609002ab27a.exe",
+          "C:\\c28t2746u\\x86_64-pc-windows-msvc\\debug\\deps\\codex_windows_sandbox-dc640609002ab27a.pdb"
+        ],
+        "executable": "C:\\c28t2746u\\x86_64-pc-windows-msvc\\debug\\deps\\codex_windows_sandbox-dc640609002ab27a.exe",
+        "fresh": false
+      },
+      "selected_artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\unit-no-run\\selected-native-unit-tests.exe",
+        "bytes": 39781376,
+        "sha256": "4cc39a92a30f7586c8992f36fd7f6596aa62ba85b7bc5de1b99713deb241a65a"
+      }
+    }
+  ],
+  "all3321_frozen_and3288_source_each_track_current_exact": true,
+  "production_all20locks_raw_unchanged": true,
+  "unit_private_dev_lock_only": {
+    "path": "C:\\c28s2746u\\source-native\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\Cargo.lock",
+    "bytes": 223979,
+    "sha256": "020ea1e6fc4d581e483550abc6351f44911fe8597e7a6cf5962e5ae3c127971f"
+  },
+  "private_lock_graph_diff": {
+    "removed": 74,
+    "added": 37,
+    "changed": 35
+  },
+  "dev_lock_diff": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\dev-lock-differences.json",
+    "bytes": 99919,
+    "sha256": "a858861231741ba29b221f2f83ba7b54700f920191f34f578d7f56ab5f1b5c52"
+  },
+  "cache_limit": "ROOT verified pinned seed manifests and reported before/copy/after equality; no runtime inference from compiler cache. All current targets fresh=false; C/native reuses same current P metadata.",
+  "unit_PE": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-compiler2746\\unit-no-run\\selected-native-unit-tests.exe",
+    "bytes": 39781376,
+    "sha256": "4cc39a92a30f7586c8992f36fd7f6596aa62ba85b7bc5de1b99713deb241a65a"
+  },
+  "AMD64_PE32plus": true,
+  "selected_exact_methods": [
+    "setup::owned_read_root_policy_tests2508::legacy_owned_helper_path_selection_is_data_not_provisioning",
+    "setup::owned_read_root_policy_tests2508::explicit_override_preserves_helper_and_only_requested_platform_defaults",
+    "setup::owned_read_root_policy_tests2508::empty_explicit_override_does_not_become_default_or_full_read",
+    "setup::owned_read_root_policy_tests2508::writable_roots_are_not_readded_as_read_acl_roots",
+    "setup::owned_read_root_policy_tests2508::deny_subtree_is_excluded_but_not_a_similarly_named_sibling",
+    "spawn_prep::asuser_read_root_comparison_tests2508::unequal_request_is_rejected_without_replacing_it_with_applied_roots",
+    "spawn_prep::asuser_read_root_comparison_tests2508::request_normalization_failure_does_not_read_applied_or_lose_original_error",
+    "spawn_prep::asuser_read_root_comparison_tests2508::applied_normalization_failure_is_distinct_and_does_not_claim_equality",
+    "spawn_prep::asuser_read_root_comparison_tests2508::normalized_equality_does_not_claim_native_start_exit_or_completion",
+    "spawn_prep::asuser_read_root_comparison_tests2508::recorded_first_error_and_stage_are_not_replaced_by_comparison_progress",
+    "spawn_prep::asuser_raw_override_bound_tests2508::explicit_raw_input_bounds_cannot_be_hidden_by_payload_filtering",
+    "elevated::runner_client::transport_step_diagnostic_tests2586::returned_inner_io_error_keeps_exact_stage_before_generic_rpc_fallback",
+    "elevated::runner_client::transport_step_diagnostic_tests2586::opaque_original_error_is_returned_without_format_or_replacement",
+    "elevated::runner_client::transport_step_diagnostic_tests2586::absent_diagnostic_does_not_change_single_callback_result_or_error",
+    "elevated::runner_client::transport_step_diagnostic_tests2586::same_call_clone_is_observed_outside_recorder_lock_without_touching_other_call",
+    "elevated::runner_client::transport_step_diagnostic_tests2586::earlier_first_error_or_completed_record_is_never_overwritten_by_step",
+    "elevated::runner_client::transport_step_diagnostic_tests2586::original_unwind_is_not_caught_converted_replayed_or_made_native_absence",
+    "elevated::runner_client::transport_step_diagnostic_tests2586::already_typed_runner_payload_uses_existing_finite_observer_without_body",
+    "start_diagnostic::transport_stage_recorder_tests2586::completed_snapshot_and_first_error_remain_frozen_for_new_transport_markers",
+    "start_diagnostic::transport_stage_recorder_tests2586::poisoned_recorder_is_unavailable_never_a_clean_transport_or_native_result",
+    "start_diagnostic::asuser_first_failure_observation_tests2659::internal_permission_denial_has_no_invented_win32_or_native_identity",
+    "start_diagnostic::asuser_first_failure_observation_tests2659::raw_first_failure_is_finite_sticky_and_freezes_with_original_completion",
+    "start_diagnostic::asuser_first_failure_observation_tests2659::busy_poison_and_prior_error_never_turn_missing_observation_into_zero_codes",
+    "start_diagnostic::asuser_first_failure_observation_tests2659::existing_retry_history_keeps_first_projection_separate_and_does_not_invoke_retry",
+    "asuser_a1_native::first_failure_projection_tests2659::same_original_internal_denial_is_recorded_once_without_inventing_os_access_denied",
+    "asuser_a1_native::first_failure_projection_tests2659::original_raw_first_error_survives_later_error_and_ignored_error_return_paths",
+    "asuser_a1_native::first_failure_projection_tests2659::saved_signed_ntstatus_is_preserved_without_win32_substitution_or_native_query",
+    "asuser_a1_native::first_failure_projection_tests2659::busy_original_cell_does_not_call_callback_or_fabricate_first_failure",
+    "asuser_a1_native::first_failure_projection_tests2659::unwind_preserves_original_slots_and_first_stage_without_closing_or_replaying",
+    "asuser_a1_policy::tests::diagnostic_mirror_names_every_original_reject_without_changing_error_or_policy",
+    "asuser_a1_policy::tests::diagnostic_mirror_is_ordered_and_not_an_admission_or_runner_query_alias",
+    "asuser_a1_native::target_policy_observation_tests2740::same_original_guard_err_has_one_reason_no_raw_os_code_or_resource_operation",
+    "asuser_a1_native::target_policy_observation_tests2740::accepted_facts_do_not_manufacture_a_rejection_or_native_success",
+    "asuser_a1_native::target_policy_observation_tests2740::later_target_classification_cannot_relabel_an_earlier_first_failure",
+    "start_diagnostic::target_policy_recorder_tests2740::bounded_reason_requires_the_same_guard_and_remains_first_and_frozen",
+    "start_diagnostic::target_policy_recorder_tests2740::busy_poison_and_legacy_observation_never_fabricate_clean_or_a_reason"
+  ],
+  "embedded_labels_count": 36,
+  "embedded_labels_not_runtime_matching_proof": true,
+  "actual_pure36": "NOT_RUN",
+  "Host_product_test_PE_DLL_execution": 0,
+  "VM_actions": 0,
+  "causal_fix": false,
+  "original_case60677": "UNKNOWN_NO_QUERY_POLL_REPLAY_ADOPT_CONTROL_DISPOSE_KILL",
+  "source_accepted": false,
+  "release_eligible": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN"
+}

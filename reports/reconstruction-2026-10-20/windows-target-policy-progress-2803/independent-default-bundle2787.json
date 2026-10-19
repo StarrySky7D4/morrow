@@ -1,0 +1,113 @@
+{
+  "schema": "ROOT_DEFAULT_RELEASE_AND_71_BUNDLE_REVIEW2787",
+  "utc": "2026-10-19T22:30:58.139470+00:00",
+  "review_script": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\review-default-bundle2787.py",
+    "bytes": 11163,
+    "sha256": "9d23f33e45f15eda82fea27398eaeb164cb805124b043341396eca701103df7d"
+  },
+  "review_freeze": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-default-review2787\\ROOT_FREEZE2787.json",
+    "bytes": 19147,
+    "sha256": "7a6bfffef3dbe792cddc004e645d1615197c1b250aba2520bdfe440314a637d8"
+  },
+  "author_report": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-default-build2775\\report.json",
+    "bytes": 13484,
+    "sha256": "0591dc414f3defc93805fc8e259601cdf996912fedba57354e16730d0715377c"
+  },
+  "author_output_manifest": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-default-build2775\\SOURCE_OUTPUT_SHA256.json",
+    "bytes": 6091,
+    "sha256": "43f32efac230feebded90613bbbfe552e7584b4fabe6cd16f439684de46688f3"
+  },
+  "bundle_manifest": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-app-bundle2775\\bundle-manifest.json",
+    "bytes": 31144,
+    "sha256": "5971a33648583ab10143064b9cdf0656701e6d3ac7a0d8994f4c7a0260b5d9a9"
+  },
+  "canonical_source_freeze": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-review2744\\ROOT_FREEZE2744.json",
+    "bytes": 714683,
+    "sha256": "6a21060ddad9d991e9a4acc34601c2b712a1b036705c65613fe0a97c36c0da29"
+  },
+  "original_Cargo_return": 0,
+  "original_compiler_PID": 32624,
+  "elapsed_seconds": 2268.886,
+  "EOF2_original_reader_join2": true,
+  "full3288_source_and3321_frozen_members_rehashed": true,
+  "production83_manifests20_locks574_Dart_unchanged": true,
+  "actual_five_default_Release_x64_non_test_features_empty_fresh_false": true,
+  "default_five": [
+    {
+      "name": "morrow-workbench-host",
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-default-build2775\\morrow-workbench-host.exe",
+        "bytes": 30480896,
+        "sha256": "6a12862907c7e36377dd24f01913421bfb88816314dd493fea1d57a467f25bb5"
+      }
+    },
+    {
+      "name": "morrow-workbench-supervisor",
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-default-build2775\\morrow-workbench-supervisor.exe",
+        "bytes": 14128640,
+        "sha256": "aa16bfd6a1648af278c105961608ec5e70ddba82d23395415d08e00e9b210689"
+      }
+    },
+    {
+      "name": "package",
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-default-build2775\\package.exe",
+        "bytes": 3167232,
+        "sha256": "a44d02c09f3256d1247805943d82238ac900adf169e317d90f70470b7ce3301e"
+      }
+    },
+    {
+      "name": "morrow-content-replay",
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-default-build2775\\morrow-content-replay.exe",
+        "bytes": 16701440,
+        "sha256": "21295f99d12bad7f8f89d58992f9cf6e1a1e7e453db1b091c61d3e91e3caeb08"
+      }
+    },
+    {
+      "name": "morrow-migrate-library",
+      "artifact": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-default-build2775\\morrow-migrate-library.exe",
+        "bytes": 20193792,
+        "sha256": "f907353096e3c62ea036485d22fa2210f0e20e7e4c24de77ad2351f93833b825"
+      }
+    }
+  ],
+  "all5_dependency_graphs_current": true,
+  "qualification_P_substitution": false,
+  "bundle_members": 71,
+  "replaced_default_three": [
+    "morrow-migrate-library.exe",
+    "morrow-workbench-host.exe",
+    "morrow-workbench-supervisor.exe"
+  ],
+  "reused68_original_UI_assets_vendor_inputs_exact": true,
+  "UI_input": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-app-ready-build1839\\source-input.json",
+    "bytes": 662330,
+    "sha256": "2c34e8defe41d6858906b0b29d142566739a3e46abf7b70f41473f8812b23eaa"
+  },
+  "UI_build": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-app-ready-build1839\\report.json",
+    "bytes": 8892,
+    "sha256": "cd7b29777d7c4fa78d091a1e2e20b05c1505cd085dc220c2bc3af1fc6e2d2c94"
+  },
+  "thirdparty_limit": "Opaque original pinned unchanged inputs; no new vendor/SDK conformance or broader ancestry proof.",
+  "Host_product_test_PE_DLL_execution": 0,
+  "VM_execution": 0,
+  "runtime": "NOT_RUN_NEW_COMBINATION",
+  "actual47_Nine": "NOT_PROVEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "published": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN"
+}

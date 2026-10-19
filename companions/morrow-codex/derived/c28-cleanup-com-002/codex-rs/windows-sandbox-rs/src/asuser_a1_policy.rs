@@ -225,6 +225,45 @@ impl TargetPolicy {
         self.validate_with_mask(f,0x00020008)?;
         if f.logon!=logon||f.initial.auth!=auth{return Err(reject());}Ok(())
     }
+    /// Pure bounded diagnostic mirror. Called ONLY after the unchanged
+    /// original validate has returned Err, on that same captured TargetFacts.
+    /// This cannot admit, query/mutate a token, derive a raw OS error or retry.
+    pub(super) fn first_rejection(&self,f:&TargetFacts)->Option<crate::WindowsTargetPolicyRejection> {
+        use crate::WindowsTargetPolicyRejection as R;
+        let required=TOKEN_REQUIRED;
+        if f.initial!=f.final_stats {return Some(R::StatisticsChanged);}
+        if !f.initial.primary {return Some(R::NotPrimary);}
+        if f.initial.token==0 {return Some(R::TokenIdentityZero);}
+        if f.initial.auth==0 {return Some(R::AuthenticationIdentityZero);}
+        if f.initial.auth==self.caller_auth {return Some(R::AuthenticationEqualsCaller);}
+        if f.initial.token==self.caller_token {return Some(R::TokenIdentityEqualsCaller);}
+        if f.initial.modified==0 {return Some(R::ModifiedIdentityZero);}
+        if f.granted&required!=required {return Some(R::RequiredGrantMissing);}
+        if f.user!=self.managed_user {return Some(R::UserNotManaged);}
+        if f.user==self.caller {return Some(R::UserEqualsCaller);}
+        if f.user.is_logon() {return Some(R::UserIsLogonSid);}
+        if f.logon_count!=1 {return Some(R::LogonGroupCountNotOne);}
+        if !f.logon.is_logon() {return Some(R::LogonSidInvalid);}
+        if f.logon==self.caller_logon {return Some(R::LogonEqualsCaller);}
+        if f.logon_attributes&0xc000_0004!=0xc000_0004 {return Some(R::LogonAttributesMissing);}
+        if f.logon_attributes&0x10!=0 {return Some(R::LogonDenyOnly);}
+        if f.session!=self.session {return Some(R::SessionMismatch);}
+        if f.integrity_rid!=self.integrity_rid {return Some(R::IntegrityMismatch);}
+        if f.integrity_rid>0x2000 {return Some(R::IntegrityAboveMedium);}
+        if f.elevated {return Some(R::Elevated);}
+        if f.elevation_type==2 {return Some(R::FullElevationType);}
+        if !matches!(f.elevation_type,1|3) {return Some(R::UnsupportedElevationType);}
+        if f.restricted {return Some(R::Restricted);}
+        if f.app_container {return Some(R::AppContainer);}
+        if f.ui_access {return Some(R::UiAccess);}
+        if f.virtualization {return Some(R::Virtualization);}
+        if f.mandatory_policy&1==0 {return Some(R::MandatoryNoWriteUpMissing);}
+        if f.mandatory_policy&!3!=0 {return Some(R::MandatoryPolicyUnsupportedBits);}
+        if f.privilege_count>64 {return Some(R::PrivilegeCountExceeded);}
+        if f.unsafe_privileges!=0 {return Some(R::UnsafePrivilegesPresent);}
+        if f.admin_membership {return Some(R::AdministratorMembership);}
+        None
+    }
     fn validate_with_mask(&self,f:&TargetFacts,required:u32)->io::Result<()> {
         if f.initial!=f.final_stats || !f.initial.primary || f.initial.token==0 || f.initial.auth==0
             || f.initial.auth==self.caller_auth || f.initial.token==self.caller_token||f.initial.modified==0
@@ -323,6 +362,64 @@ mod tests {
         assert!(d.contains("(A;;0x20000;;;OW)"));assert!(d.ends_with("S:(ML;;NW;;;ME)"));assert!(!d.contains(&f.user.text()));
         assert!(d.contains(&format!("(A;;0x100000;;;{})",f.logon.text())));
         assert!(process_thread_sddl(policy.caller,f.user,false).is_err());
+    }
+    #[test] fn diagnostic_mirror_names_every_original_reject_without_changing_error_or_policy() {
+        use crate::WindowsTargetPolicyRejection as R;
+        let cases:[(R,fn(&mut TargetPolicy,&mut TargetFacts));31]=[
+            (R::StatisticsChanged,|p,f|{f.final_stats.modified+=1;}),
+            (R::NotPrimary,|p,f|{f.initial.primary=false;f.final_stats=f.initial;}),
+            (R::TokenIdentityZero,|p,f|{f.initial.token=0;f.final_stats=f.initial;}),
+            (R::AuthenticationIdentityZero,|p,f|{f.initial.auth=0;f.final_stats=f.initial;}),
+            (R::AuthenticationEqualsCaller,|p,f|{f.initial.auth=p.caller_auth;f.final_stats=f.initial;}),
+            (R::TokenIdentityEqualsCaller,|p,f|{f.initial.token=p.caller_token;f.final_stats=f.initial;}),
+            (R::ModifiedIdentityZero,|p,f|{f.initial.modified=0;f.final_stats=f.initial;}),
+            (R::RequiredGrantMissing,|p,f|{f.granted&=!2;}),
+            (R::UserNotManaged,|p,f|{f.user=sid(&[21,7,8,9,1003]);}),
+            (R::UserEqualsCaller,|p,f|{p.managed_user=p.caller;f.user=p.caller;}),
+            (R::UserIsLogonSid,|p,f|{p.managed_user=f.logon;f.user=f.logon;}),
+            (R::LogonGroupCountNotOne,|p,f|{f.logon_count=2;}),
+            (R::LogonSidInvalid,|p,f|{f.logon=f.user;}),
+            (R::LogonEqualsCaller,|p,f|{f.logon=p.caller_logon;}),
+            (R::LogonAttributesMissing,|p,f|{f.logon_attributes&=!4;}),
+            (R::LogonDenyOnly,|p,f|{f.logon_attributes|=0x10;}),
+            (R::SessionMismatch,|p,f|{f.session=p.session+1;}),
+            (R::IntegrityMismatch,|p,f|{f.integrity_rid=0x1000;}),
+            (R::IntegrityAboveMedium,|p,f|{p.integrity_rid=0x3000;f.integrity_rid=0x3000;}),
+            (R::Elevated,|p,f|{f.elevated=true;}),
+            (R::FullElevationType,|p,f|{f.elevation_type=2;}),
+            (R::UnsupportedElevationType,|p,f|{f.elevation_type=0;}),
+            (R::Restricted,|p,f|{f.restricted=true;}),
+            (R::AppContainer,|p,f|{f.app_container=true;}),
+            (R::UiAccess,|p,f|{f.ui_access=true;}),
+            (R::Virtualization,|p,f|{f.virtualization=true;}),
+            (R::MandatoryNoWriteUpMissing,|p,f|{f.mandatory_policy=0;}),
+            (R::MandatoryPolicyUnsupportedBits,|p,f|{f.mandatory_policy=5;}),
+            (R::PrivilegeCountExceeded,|p,f|{f.privilege_count=65;}),
+            (R::UnsafePrivilegesPresent,|p,f|{f.unsafe_privileges=1;}),
+            (R::AdministratorMembership,|p,f|{f.admin_membership=true;}),
+        ];
+        for (reason,mutate) in cases {
+            let (mut policy,mut f)=facts();mutate(&mut policy,&mut f);
+            let error=policy.validate(&f).unwrap_err();
+            assert_eq!(error.kind(),io::ErrorKind::PermissionDenied);
+            assert_eq!(error.raw_os_error(),None);
+            assert_eq!(error.to_string(),"A1 original security admission rejected");
+            assert_eq!(policy.first_rejection(&f),Some(reason));
+        }
+    }
+    #[test] fn diagnostic_mirror_is_ordered_and_not_an_admission_or_runner_query_alias() {
+        use crate::WindowsTargetPolicyRejection as R;
+        let (policy,mut f)=facts();assert_eq!(policy.first_rejection(&f),None);
+        assert!(policy.validate(&f).is_ok());f.mandatory_policy=3;
+        assert!(policy.validate(&f).is_ok());assert_eq!(policy.first_rejection(&f),None);
+        f.app_container=true;f.unsafe_privileges=1;
+        assert_eq!(policy.first_rejection(&f),Some(R::AppContainer));
+        f.final_stats.modified+=1;
+        assert_eq!(policy.first_rejection(&f),Some(R::StatisticsChanged));
+        let (policy,mut f)=facts();let logon=f.logon;let auth=f.initial.auth;
+        f.granted=0x20008;assert!(policy.validate_runner(&f,logon,auth).is_ok());
+        assert!(policy.validate(&f).is_err());
+        assert_eq!(policy.first_rejection(&f),Some(R::RequiredGrantMissing));
     }
     #[test] fn explicit_environment_is_finite_double_nul_and_case_unique() {
         let env=Environment::new(&[("B","2"),("A","1")]).unwrap();

@@ -1,0 +1,37 @@
+{
+  "schema": "ROOT_TRANSPORT_INDEPENDENT_PREAUTH_BIND2784_V1",
+  "tag": "74397ac11acd48e38834c2faf5844f37",
+  "ordinary_PS5_exit": 0,
+  "actual_completed_tool_chunk": "678ad0",
+  "bind_receipt": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-root-vm-transaction2769-74397ac11acd48e38834c2faf5844f37-bind\\bind-receipt.json",
+    "bytes": 3900,
+    "sha256": "181ae3a785927c5c5775952a4937085fbbcd3886f8d96eb88354dfab1b8169d1"
+  },
+  "terminal": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-root-vm-transaction2769-74397ac11acd48e38834c2faf5844f37-bind\\terminal.json",
+    "bytes": 259,
+    "sha256": "c9b542bcc0abaee009cf226e7225e8dc36f90eae8c6d7f01c29c09f15d42abf5"
+  },
+  "exact_original_binding_bytes": 3763,
+  "binding_sha256": "3e6a6430e37ce18303213f12ad2855a32503d53b67ab447976317581390415ee",
+  "binding_original_native_identity": {
+    "path": "C:\\Morrow-C28-Root47-1725-binding-74397ac11acd48e38834c2faf5844f37.json",
+    "volume": "3768066395919363068",
+    "file_id": "bc0100000000d5000000000000000000",
+    "bytes": "3763",
+    "creation": "134369206037823700",
+    "modified": "134369206037823700",
+    "attributes": 32,
+    "links": 1
+  },
+  "all_seven_staged_image_identities_exact": true,
+  "fresh_own_high_primary_readonly_closed": true,
+  "actual_preflight17_COM_name0": true,
+  "global_WFP_emptiness": "NOT_PROVEN",
+  "known_closed_new_bind_session_and_readonly_holds": true,
+  "account_policy_and_P_T_actions": 0,
+  "privilege_grant_authorized": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

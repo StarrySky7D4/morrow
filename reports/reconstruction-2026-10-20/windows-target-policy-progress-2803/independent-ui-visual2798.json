@@ -1,0 +1,24 @@
+{
+  "schema": "ROOT_CURRENT_GUI_VISUAL2798",
+  "utc": "2026-10-19T22:35:58.776361+00:00",
+  "actual_current_PNG": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-vm2776\\selfcheck\\run\\self-check.png",
+    "bytes": 677970,
+    "sha256": "bf06bf3e8d1b98863b3b2fbe42153415102ee850c592f72ca11a53a868c60797"
+  },
+  "runtime_QA": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\independent-current-ui2797.json",
+    "bytes": 2841,
+    "sha256": "918c2b29fe4eccbb67779e15c87b627ae9f412873c0a8f4c31c8e54dab5b8c07"
+  },
+  "inspection": "ROOT actually inspected this PNG with tools.view_image in the current turn",
+  "observed": [
+    "1280x720 Morrow window; Simplified Chinese workspace overview rendered",
+    "Left navigation, central idea cards and right appearance panel visible",
+    "No obvious blank surface, Flutter error page or blocking error dialog in this capture"
+  ],
+  "scope": "One current same-run image only; no blur pixel equivalence, all-screen usability, audio audibility or full product/47/Nine/release acceptance claim.",
+  "visual_bounded_check": "PASS",
+  "source_accepted": false,
+  "release_eligible": false
+}

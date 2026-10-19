@@ -89,8 +89,8 @@ DIAGNOSTIC_V2 = re.compile(
 FIXED_NONDIAGNOSTIC = frozenset(("unexpected native start reply; Unknown", "native start timeout; Unknown; no replay"))
 
 # Exact sealed start_diagnostic.rs enums, with no arbitrary strings or numbers.
-LOWER_STAGES = frozenset("NotObserved RunnerSelection RequestPrepare ProcessMapReserve MatchedRouteCheck CodexHomeResolve PermissionResolve SandboxBaseReady AccountSelect SetupRefresh CapabilityResolve BlockingTransportTask DesktopPolicy RunnerResolve RunnerPinVerify RegisteredAlias PrivateDesktop PipeCreateIn PipeCreateOut RunnerLogon RegisteredImageVerify PipeConnectIn PipeConnectOut ControlHello SpawnRequestWrite SpawnReadyRead CheckedDriverAssemble SpawnReturned".split())
-LOWER_ERRORS = frozenset("NotObserved InvalidParams InvalidRequest ServerInternal OtherRpc RouteRejected PinRejected IdentityRejected ControlRejected IoAccessDenied IoNotFound IoInvalidInput IoTimedOut IoInterrupted IoBrokenPipe IoOther OsReported RunnerReported BlockingCancelled BlockingPanic Unclassified".split())
+LOWER_STAGES = frozenset("NotObserved RunnerSelection RequestPrepare ProcessMapReserve MatchedRouteCheck CodexHomeResolve PermissionResolve SandboxBaseReady AccountSelect SetupRefresh CapabilityResolve BlockingTransportTask DesktopPolicy RunnerResolve RunnerPinVerify RegisteredAlias PrivateDesktop PipeCreateIn PipeCreateOut RunnerLogon RegisteredImageVerify PipeConnectIn PipeConnectOut ControlHello SpawnRequestWrite SpawnReadyRead CheckedDriverAssemble SpawnReturned AsUserFilesystemPolicy AsUserOfflinePolicy AsUserHomeAndCwdIdentity AsUserWriteRoots AsUserReadDeny AsUserWriteDeny AsUserReadRoots AsUserExistingCapabilities AsUserCapabilitySid AsUserCapabilityCount AsUserOwnedCredentials".split())
+LOWER_ERRORS = frozenset("NotObserved InvalidParams InvalidRequest ServerInternal OtherRpc RouteRejected PinRejected IdentityRejected ControlRejected IoAccessDenied IoNotFound IoInvalidInput IoTimedOut IoInterrupted IoBrokenPipe IoOther OsReported RunnerReported BlockingCancelled BlockingPanic Unclassified ManagedProfileRequired RestrictedFilesystemRequired".split())
 RUNNER_STAGES = frozenset("NotObserved ReadSpawnRequest SpawnChild WriteSpawnReady TerminalWitness".split())
 OS_CLASSES = frozenset("NotObserved AccessDenied FileNotFound PathNotFound LogonFailure AccountDisabled NoLogonSession OperationAborted TimedOut Other".split())
 LOWER_COMPLETIONS = frozenset("NotObserved InProgressOrUnwound ReturnedError ReturnedBackendHandle UnsupportedBackend".split())
@@ -162,6 +162,383 @@ def lower_projection(fields):
         "current": current, "first_attempt": first, "attempt": attempt, "completion": completion}}
 
 
+#2364: separate, exact current DTO branch. Legacy four-field V3 is unchanged.
+# Descriptors are reviewed source constants, never inferred from input text.
+def _closed2364(values):
+    return ("enum", {v: None for v in values.split()})
+
+
+def _struct2364(name, fields):
+    return ("struct", name, fields)
+
+
+def _option2364(value):
+    return ("option", value)
+
+
+def _fact2364(value):
+    return ("enum", {"Observed": ("value", value),
+                     "NotObserved": ("value", "ContextUnavailable")})
+
+
+_U32_2364 = ("uint", 4294967295)
+_U64_2364 = ("uint", U64_MAX)
+_BOOL_2364 = ("bool",)
+_UNIT_2364 = ("unit",)
+_SCHEMA2364 = {}
+_SCHEMA2364["ContextApiStage"] = _closed2364(
+    "QueryPrimaryOpen QueryUser QueryLogonGroups QuerySession QueryRestrictions "
+    "QueryAppContainer QueryPrimaryClose CallerUser CallerLogonGroups CallerSession "
+    "IntendedSid DuplicateSourceOpen DuplicateToken StationDescriptor DesktopDescriptor "
+    "StationVisibility DesktopVisibility")
+_failure2364 = {v: None for v in
+    "NotAttempted NotApplicable OriginalUnavailable Busy Poisoned BoundExceeded InvalidBuffer".split()}
+_failure2364["Win32"] = ("fields", (("code", _U32_2364),))
+_SCHEMA2364["ContextFailure"] = ("enum", dict(_failure2364))
+_unavailable2364 = dict(_failure2364)
+_unavailable2364["Upstream"] = ("fields", (
+    ("stage", "ContextApiStage"), ("reason", "ContextFailure")))
+_SCHEMA2364["ContextUnavailable"] = ("enum", _unavailable2364)
+_SCHEMA2364["TokenOpenPurpose"] = _closed2364("NotRequested PrimaryQuery DuplicationSource")
+_SCHEMA2364["TokenOutputAllocation"] = _closed2364("NotAllocated AllocatedOriginal UncertainOutput")
+_SCHEMA2364["TokenAllocationObservation"] = _struct2364("TokenAllocationObservation", (
+    ("api_returned_success", _BOOL_2364), ("allocation", "TokenOutputAllocation"),
+    ("win32_error", _option2364(_U32_2364))))
+_SCHEMA2364["TokenOpenObservation"] = _struct2364("TokenOpenObservation", (
+    ("purpose", "TokenOpenPurpose"), ("requested_mask", _U32_2364),
+    ("result", _fact2364("TokenAllocationObservation"))))
+_SCHEMA2364["PrimaryTokenReadResults"] = _struct2364("PrimaryTokenReadResults", tuple(
+    (name, _fact2364(_UNIT_2364)) for name in
+    ("user", "logon_groups", "session", "restrictions", "app_container")))
+_SCHEMA2364["StartupQueryStages"] = _struct2364("StartupQueryStages", (
+    ("primary_open", "TokenOpenObservation"), ("primary_reads", "PrimaryTokenReadResults"),
+    ("duplicate_source_open", "TokenOpenObservation"),
+    ("impersonation_duplicate", _fact2364("TokenAllocationObservation"))))
+_SCHEMA2364["StartupApplicationSource"] = _closed2364(
+    "VerifiedResolvedPinnedImage RegisteredAliasNotYetVerified")
+_SCHEMA2364["StartupCallParameters"] = _struct2364("StartupCallParameters", (
+    ("creation_flags", _U32_2364), ("logon_flags", _U32_2364),
+    ("registered_profile_branch", _BOOL_2364),
+    ("environment_is_null_user_profile_source", _BOOL_2364),
+    ("application_source", "StartupApplicationSource"), ("cwd_equals_request_cwd", _BOOL_2364),
+    ("cwd_under_request_workspace_root", _fact2364(_BOOL_2364)),
+    ("desktop_pointer_is_same_owned_qualified_name", _BOOL_2364),
+    ("station_still_same_borrowed_object", _fact2364(_BOOL_2364))))
+_close2364 = {v: None for v in "NotAllocated Held ClosedVerified".split()}
+_close2364["CloseFailed"] = ("fields", (("code", _U32_2364),))
+_SCHEMA2364["QueryHandleClose"] = ("enum", _close2364)
+_SCHEMA2364["StartupTokenRelations"] = _struct2364("StartupTokenRelations", tuple(
+    (name, _fact2364(_U32_2364 if name == "runner_logon_group_attributes" else _BOOL_2364))
+    for name in ("user_equals_intended_sandbox", "user_equals_caller_user",
+                 "logon_sid_equals_caller_logon_sid", "runner_logon_group_attributes",
+                 "session_equals_caller_session", "has_restrictions", "is_app_container")))
+_SCHEMA2364["StartupAccessResult"] = _struct2364("StartupAccessResult", (
+    ("access_status", _BOOL_2364), ("granted_mask", _U32_2364),
+    ("denial_win32_error", _option2364(_U32_2364))))
+_SCHEMA2364["AuthzAllocation"] = _closed2364(
+    "NotAttempted InFlight FailedNoOutput Held FailedUncertainOutput InvalidSuccessOutput")
+_SCHEMA2364["AuthzRetirement"] = _closed2364(
+    "NotAllocated Held InFlight FreedVerified Failed BlockedByContext Uncertain")
+_SCHEMA2364["AuthzResourceObservation"] = _struct2364("AuthzResourceObservation", (
+    ("allocation", "AuthzAllocation"), ("retirement", "AuthzRetirement"),
+    ("initialization_error", _U32_2364), ("retirement_error", _U32_2364)))
+_SCHEMA2364["AuthzObjectState"] = _closed2364(
+    "NotAttempted PrimaryUnavailable RestrictedToken AppContainer ResourceManagerUnavailable "
+    "ContextUnavailable ObjectIdentityUnavailable DescriptorUnavailable VisibilityUnavailable "
+    "InvalidBuffer BoundExceeded NullOrAbsentDacl OverlappingLayout UnsupportedAce PrincipalSelf "
+    "InFlight ApiFailed ReplyReturned")
+_SCHEMA2364["AuthzObjectMapping"] = _closed2364("NotSelected NoninteractiveStation VisibleStation Desktop")
+_SCHEMA2364["AuthzObjectObservation"] = _struct2364("AuthzObjectObservation", (
+    ("state", "AuthzObjectState"), ("mapping", "AuthzObjectMapping"),
+    ("error", _U32_2364), ("granted_mask", _U32_2364)))
+_AUTHZ_SCOPE2364 = "QUERY8_LOCAL_RM5_MAPPED_SIMPLE_DACL_ONLY_MIC_SACL_CAP_NATIVE_NOT_PROVEN"
+_SCHEMA2364["AuthzDaclProjection"] = _struct2364("AuthzDaclProjection", (
+    ("scope", ("string", (_AUTHZ_SCOPE2364,))),
+    ("resource_manager", "AuthzResourceObservation"), ("context", "AuthzResourceObservation"),
+    ("station", "AuthzObjectObservation"), ("desktop", "AuthzObjectObservation"),
+    ("first_failure", _option2364(("tuple", (
+        ("string", ("InitializeResourceManager", "InitializeContextFromToken",
+                    "StationAuthzAccessCheck", "DesktopAuthzAccessCheck",
+                    "FreeContext", "FreeResourceManager")),
+        _option2364(_U32_2364)))))))
+_SCHEMA2364["StartupObjectObservation"] = _struct2364("StartupObjectObservation", (
+    *((name, _fact2364(_BOOL_2364)) for name in (
+        "name_equals_creation_object", "visible", "receiving_user_input",
+        "descriptor_owner_equals_runner_user", "descriptor_group_equals_runner_logon_sid",
+        "dacl_present", "dacl_null")),
+    ("descriptor_read", _fact2364(_UNIT_2364)), ("access_check_invoked", _BOOL_2364),
+    ("access", _fact2364("StartupAccessResult"))))
+_SCHEMA2364["WindowsStartupContext"] = _struct2364("WindowsStartupContext", (
+    ("startup_id", _U64_2364), ("call", _fact2364("StartupCallParameters")),
+    ("original_runner_identity", _option2364(("tuple", (_U32_2364, _U64_2364)))),
+    ("query_status", _fact2364(_UNIT_2364)), ("query_stages", "StartupQueryStages"),
+    ("runner_before_token_query", _fact2364("WindowsStartRunnerObservation")),
+    ("runner_after_token_query", _fact2364("WindowsStartRunnerObservation")),
+    ("token", "StartupTokenRelations"), ("station", "StartupObjectObservation"),
+    ("desktop", "StartupObjectObservation"),
+    ("query_handle_closes", ("array", "QueryHandleClose", 2)),
+    ("query_slot_closes", ("array", "QueryHandleClose", 3)),
+    ("authz_dacl", "AuthzDaclProjection")))
+_SCHEMA2364["WindowsOsError"] = ("enum", {v: None for v in OS_CLASSES})
+_SCHEMA2364["WindowsStartRunnerState"] = ("enum", {
+    "RunningAtObservation": None, "Exited": ("fields", (("raw_dword", _U32_2364),)),
+    "SignaledExitQueryFailed": ("fields", (("os_class", "WindowsOsError"),)),
+    "WaitFailed": ("fields", (("os_class", "WindowsOsError"),)),
+    "UnexpectedWait": ("fields", (("wait_result", _U32_2364),))})
+_SCHEMA2364["WindowsStartRunnerObservation"] = _struct2364("WindowsStartRunnerObservation", (
+    ("startup_id", _U64_2364), ("runner_pid", _U32_2364),
+    ("runner_creation_filetime_100ns", _U64_2364), ("state", "WindowsStartRunnerState")))
+_SCHEMA2364["LowerStage"] = ("enum", {v: None for v in LOWER_STAGES})
+_SCHEMA2364["LowerError"] = ("enum", {v: None for v in LOWER_ERRORS})
+_SCHEMA2364["RunnerStage"] = ("enum", {v: None for v in RUNNER_STAGES})
+_SCHEMA2364["LowerCompletion"] = ("enum", {v: None for v in LOWER_COMPLETIONS})
+_SCHEMA2364["WindowsStartAttempt"] = _struct2364("WindowsStartAttempt", (
+    ("stage", "LowerStage"), ("error", "LowerError"), ("runner_stage", "RunnerStage"),
+    ("os_class", "WindowsOsError"),
+    ("original_runner", _option2364("WindowsStartRunnerObservation")),
+    ("startup_context", _option2364("WindowsStartupContext"))))
+_SCHEMA2364["WindowsStartSnapshot"] = _struct2364("WindowsStartSnapshot", (
+    ("current", "WindowsStartAttempt"), ("first_attempt", _option2364("WindowsStartAttempt")),
+    ("attempt", ("uint", 2)), ("completion", "LowerCompletion")))
+_SCHEMA2364["LowerBackendCallObservation"] = _struct2364("LowerBackendCallObservation", (
+    ("call_sequence", _U64_2364), ("observation", "WindowsStartSnapshot")))
+_SCHEMA2364["SameReviewedInvocationStartDataOnly"] = _struct2364(
+    "SameReviewedInvocationStartDataOnly", (("snapshot", "WindowsStartSnapshot"),))
+
+
+class _CurrentReader2364:
+    def __init__(self, text):
+        if type(text) is not str or not 1 <= len(text) <= 65536:
+            raise Rejected()
+        self.text, self.pos, self.nodes = text, 0, 0
+
+    def take(self, literal):
+        if not self.text.startswith(literal, self.pos):
+            raise Rejected()
+        self.pos += len(literal)
+
+    def name(self):
+        match = re.compile(r"[A-Za-z_][A-Za-z_0-9]{0,79}").match(self.text, self.pos)
+        if match is None:
+            raise Rejected()
+        self.pos = match.end()
+        return match.group()
+
+    def fields(self, fields, depth):
+        self.take(" { ")
+        result = {}
+        for index, (name, descriptor) in enumerate(fields):
+            if index:
+                self.take(", ")
+            self.take(name + ": ")
+            result[name] = self.read(descriptor, depth + 1)
+        self.take(" }")
+        return result
+
+    def read(self, descriptor, depth=0):
+        self.nodes += 1
+        if depth > 32 or self.nodes > 8192:
+            raise Rejected()
+        if type(descriptor) is str:
+            descriptor = _SCHEMA2364[descriptor]
+        tag = descriptor[0]
+        if tag == "uint":
+            match = re.compile(r"(?:0|[1-9][0-9]{0,19})(?![0-9])").match(self.text, self.pos)
+            if match is None:
+                raise Rejected()
+            self.pos = match.end()
+            result = int(match.group())
+            if result > descriptor[1]:
+                raise Rejected()
+            return result
+        if tag == "bool":
+            name = self.name()
+            if name not in ("true", "false"):
+                raise Rejected()
+            return name == "true"
+        if tag == "unit":
+            self.take("()")
+            return None
+        if tag == "string":
+            for value in descriptor[1]:
+                literal = '"' + value + '"'
+                if self.text.startswith(literal, self.pos):
+                    self.take(literal)
+                    return value
+            raise Rejected()
+        if tag == "option":
+            name = self.name()
+            if name == "None":
+                return None
+            if name != "Some":
+                raise Rejected()
+            self.take("(")
+            result = self.read(descriptor[1], depth + 1)
+            self.take(")")
+            return result
+        if tag in ("tuple", "array"):
+            values = descriptor[1] if tag == "tuple" else (descriptor[1],) * descriptor[2]
+            self.take("(" if tag == "tuple" else "[")
+            result = []
+            for index, value in enumerate(values):
+                if index:
+                    self.take(", ")
+                result.append(self.read(value, depth + 1))
+            self.take(")" if tag == "tuple" else "]")
+            return result
+        if tag == "enum":
+            name = self.name()
+            if name not in descriptor[1]:
+                raise Rejected()
+            branch = descriptor[1][name]
+            if branch is None:
+                return name
+            if branch[0] == "value":
+                self.take("(")
+                value = self.read(branch[1], depth + 1)
+                self.take(")")
+                return {"variant": name, "value": value}
+            return {"variant": name, **self.fields(branch[1], depth)}
+        if tag == "struct":
+            self.take(descriptor[1])
+            result = self.fields(descriptor[2], depth)
+            _validate2364(descriptor[1], result)
+            return result
+        raise Rejected()
+
+
+def _observed2364(value):
+    return type(value) is dict and value.get("variant") == "Observed"
+
+
+def _authz_first2364(value):
+    for name, resource in (("InitializeResourceManager", value["resource_manager"]),
+                           ("InitializeContextFromToken", value["context"])):
+        if resource["allocation"] in ("FailedNoOutput", "FailedUncertainOutput"):
+            return [name, resource["initialization_error"]]
+        if resource["allocation"] in ("InFlight", "InvalidSuccessOutput"):
+            return [name, None]
+    for name, obj in (("StationAuthzAccessCheck", value["station"]),
+                      ("DesktopAuthzAccessCheck", value["desktop"])):
+        if obj["state"] == "ApiFailed" or (obj["state"] == "ReplyReturned" and obj["error"] != 0):
+            return [name, obj["error"]]
+        if obj["state"] == "InFlight" or (obj["state"] == "ReplyReturned" and obj["granted_mask"] == 0):
+            return [name, None]
+    for name, resource in (("FreeContext", value["context"]),
+                           ("FreeResourceManager", value["resource_manager"])):
+        if resource["retirement"] == "Failed":
+            return [name, resource["retirement_error"]]
+        if resource["retirement"] in ("InFlight", "Uncertain"):
+            return [name, None]
+    return None
+
+
+def _validate2364(kind, value):
+    if kind == "WindowsStartRunnerObservation":
+        if not all(value[k] > 0 for k in
+                   ("startup_id", "runner_pid", "runner_creation_filetime_100ns")):
+            raise Rejected()
+    elif kind == "TokenAllocationObservation":
+        if value["api_returned_success"] == (value["win32_error"] is not None):
+            raise Rejected()
+        if not value["api_returned_success"] and value["allocation"] == "AllocatedOriginal":
+            raise Rejected()
+    elif kind == "TokenOpenObservation":
+        if _observed2364(value["result"]) and (
+                value["purpose"] == "NotRequested" or value["requested_mask"] == 0):
+            raise Rejected()
+        if value["purpose"] == "NotRequested" and value["requested_mask"] != 0:
+            raise Rejected()
+    elif kind == "AuthzResourceObservation":
+        if (value["allocation"] not in ("FailedNoOutput", "FailedUncertainOutput")
+                and value["initialization_error"] != 0):
+            raise Rejected()
+        if value["retirement"] != "Failed" and value["retirement_error"] != 0:
+            raise Rejected()
+    elif kind == "AuthzDaclProjection":
+        if value["first_failure"] != _authz_first2364(value):
+            raise Rejected()
+    elif kind == "WindowsStartupContext":
+        identity = value["original_runner_identity"]
+        if identity is not None and (identity[0] == 0 or identity[1] == 0):
+            raise Rejected()
+        for field in ("runner_before_token_query", "runner_after_token_query"):
+            sample = value[field]
+            if _observed2364(sample):
+                sample = sample["value"]
+                if (sample["startup_id"] != value["startup_id"]
+                        or identity != [sample["runner_pid"], sample["runner_creation_filetime_100ns"]]):
+                    raise Rejected()
+    elif kind == "WindowsStartAttempt":
+        if not valid_attempt_shape(value):
+            raise Rejected()
+        original, context = value["original_runner"], value["startup_context"]
+        if original is not None and context is not None:
+            if (original["startup_id"] != context["startup_id"]
+                    or context["original_runner_identity"] not in (
+                        None, [original["runner_pid"], original["runner_creation_filetime_100ns"]])):
+                raise Rejected()
+    elif kind == "WindowsStartSnapshot":
+        # Keep the existing mutually exclusive attempt/completion rules.
+        fields = {"call_sequence": "1", "attempt": str(value["attempt"]),
+                  "completion": value["completion"], "first_stage": None}
+        for prefix, attempt in (("current_", value["current"]), ("first_", value["first_attempt"])):
+            if attempt is not None:
+                fields.update({prefix + k: attempt[k] for k in
+                               ("stage", "error", "runner_stage", "os_class")})
+        if not lower_projection(fields)[0]:
+            raise Rejected()
+        if value["completion"] in ("NotObserved", "UnsupportedBackend"):
+            if value["current"]["original_runner"] is not None or value["current"]["startup_context"] is not None:
+                raise Rejected()
+    elif kind == "LowerBackendCallObservation" and value["call_sequence"] == 0:
+        raise Rejected()
+
+
+_CURRENT_PREFIX2364 = re.compile(
+    DIAGNOSTIC_V2.pattern.removesuffix(r" \}").replace("NativeStartDiagnosticV2", "NativeStartDiagnosticV3")
+    + r', backend_history_scope: "' + BACKEND_HISTORY_SCOPE
+    + r'", latest_backend_call_observation: (?P<full_tail2364>[\s\S]{1,65536})')
+
+
+def current_diagnostic2364(payload):
+    if type(payload) is not str or len(payload) > MAX_RECORD:
+        return {"parse_status": "REJECTED"}
+    match = _CURRENT_PREFIX2364.fullmatch(payload)
+    if match is None:
+        return {"parse_status": "REJECTED"}
+    try:
+        reader = _CurrentReader2364(match.group("full_tail2364"))
+        lower = reader.read(_option2364("LowerBackendCallObservation"))
+        reviewed = "FIELD_ABSENT"
+        if reader.text.startswith(", reviewed_invocation_start: ", reader.pos):
+            reader.take(", reviewed_invocation_start: ")
+            if reader.text.startswith('"AMBIGUOUS_UNAVAILABLE"', reader.pos):
+                reader.take('"AMBIGUOUS_UNAVAILABLE"')
+                reviewed = "AMBIGUOUS_UNAVAILABLE"
+            elif reader.text.startswith("ReviewedInvocationStartUnboundOrUnavailable", reader.pos):
+                reader.take("ReviewedInvocationStartUnboundOrUnavailable")
+                reviewed = "ReviewedInvocationStartUnboundOrUnavailable"
+            else:
+                reviewed = {"SameReviewedInvocationStartDataOnly":
+                            reader.read("SameReviewedInvocationStartDataOnly")}
+        reader.take(" }")
+        if reader.pos != len(reader.text):
+            raise Rejected()
+        fields = match.groupdict()
+        command = {k: fields[k] == "true" if k.endswith("_observed") else fields[k]
+                   for k in COMMAND_FIELDS}
+        native = {k: fields[k] == "true" if k.endswith("_observed") else fields[k]
+                  for k in NATIVE_FIELDS_V2}
+        native.update({"backend_history_scope": BACKEND_HISTORY_SCOPE,
+                       "latest_backend_call_observation": lower,
+                       "reviewed_invocation_start": reviewed,
+                       "projection_format": "CURRENT_FULL_SNAPSHOT_DATA_ONLY"})
+        return {"parse_status": "OK", "command_diagnostic": command, "native_diagnostic": native}
+    except (Rejected, KeyError, TypeError, ValueError, RecursionError):
+        return {"parse_status": "REJECTED"}
+
+
 def safe_diagnostic(payload):
     if type(payload) is not str:
         return {"parse_status": "REJECTED"}
@@ -175,7 +552,7 @@ def safe_diagnostic(payload):
     if match is None:
         match = DIAGNOSTIC_V3.fullmatch(payload)
         if match is None:
-            return {"parse_status": "REJECTED"}
+            return current_diagnostic2364(payload)
         valid, lower = lower_projection(match.groupdict())
         if not valid:
             return {"parse_status": "REJECTED"}
@@ -406,6 +783,179 @@ def main(arguments):
     return 2 if bad else 0
 
 
+def current_self_test2364(check, records, row):
+    # Exact public payload saved by ROOT2356; source-only data fixture.
+    # It remains an Unknown failure. No original object is queried or executed.
+    actual2356 = "native start delivery Unknown: Unknown; diagnostic=CommandDiagnosticV1 { worker_stage: \"PORT_REJECTED\", worker_error_class: \"R2CommitUnknown\", delivery_stage: \"RECEIVER_DISCONNECTED\", delivery_error_class: \"Unknown\", command_started_observed: true, provider_observed: false }; native=NativeStartDiagnosticV3 { stage: \"BACKEND_START_RETURNED\", error_class: \"BackendError\", backend_error_class: \"ServerInternal\", invocation_entered_observed: true, backend_task_entered_observed: true, actual_handle_observed: false, provider_ready_observed: false, backend_history_scope: \"OWNER_LATEST_CALL_NOT_OPERATION_PROOF\", latest_backend_call_observation: Some(LowerBackendCallObservation { call_sequence: 1, observation: WindowsStartSnapshot { current: WindowsStartAttempt { stage: PermissionResolve, error: ServerInternal, runner_stage: NotObserved, os_class: NotObserved, original_runner: None, startup_context: None }, first_attempt: None, attempt: 1, completion: ReturnedError } }), reviewed_invocation_start: SameReviewedInvocationStartDataOnly { snapshot: WindowsStartSnapshot { current: WindowsStartAttempt { stage: PermissionResolve, error: ServerInternal, runner_stage: NotObserved, os_class: NotObserved, original_runner: None, startup_context: None }, first_attempt: None, attempt: 1, completion: ReturnedError } } }"
+    parsed = safe_diagnostic(actual2356)
+    check(parsed["parse_status"] == "OK")
+    native = parsed["native_diagnostic"]
+    check(native["projection_format"] == "CURRENT_FULL_SNAPSHOT_DATA_ONLY")
+    check(parsed["command_diagnostic"]["worker_error_class"] == "R2CommitUnknown")
+    check(native["error_class"] == "BackendError")
+    check(native["backend_error_class"] == "ServerInternal")
+    check(native["actual_handle_observed"] is False)
+    check(native["provider_ready_observed"] is False)
+    snap = native["latest_backend_call_observation"]["observation"]
+    check(snap["current"]["stage"] == "PermissionResolve")
+    check(snap["current"]["error"] == "ServerInternal")
+    check(snap["current"]["original_runner"] is None)
+    check(snap["current"]["startup_context"] is None)
+    check(native["reviewed_invocation_start"]["SameReviewedInvocationStartDataOnly"]["snapshot"] == snap)
+    check("release_eligible" not in native and "native_complete" not in native)
+    projected = project_journal(records([
+        row(0, "SEALED_UNKNOWN_OR_REJECTED_NO_REPLAY", actual2356)]))
+    check(projected["records"][0]["kind"] == "SEALED_UNKNOWN_OR_REJECTED_NO_REPLAY")
+    check(projected["records"][0]["native_diagnostic"]["actual_handle_observed"] is False)
+
+    def attempt(stage="AsUserWriteRoots", error="Unclassified", original="None", context="None"):
+        return ("WindowsStartAttempt { stage: " + stage + ", error: " + error
+                + ", runner_stage: NotObserved, os_class: NotObserved, original_runner: "
+                + original + ", startup_context: " + context + " }")
+
+    def snapshot(current, first="None", number="1", completion="ReturnedError"):
+        return ("WindowsStartSnapshot { current: " + current + ", first_attempt: "
+                + first + ", attempt: " + number + ", completion: " + completion + " }")
+
+    def fixture(current_snapshot, reviewed=None):
+        prefix = actual2356.split(", latest_backend_call_observation: ", 1)[0]
+        tail = ("Some(LowerBackendCallObservation { call_sequence: 1, observation: "
+                + current_snapshot + " })")
+        if reviewed is not None:
+            tail += ", reviewed_invocation_start: " + reviewed
+        return prefix + ", latest_backend_call_observation: " + tail + " }"
+
+    def accepts(text):
+        value = safe_diagnostic(text)
+        check(value["parse_status"] == "OK")
+        check(value["native_diagnostic"]["actual_handle_observed"] is False)
+        check(value["native_diagnostic"]["provider_ready_observed"] is False)
+        return value["native_diagnostic"]
+
+    first = snapshot(attempt())
+    accepts(fixture(first))
+    for reviewed in ('"AMBIGUOUS_UNAVAILABLE"', "ReviewedInvocationStartUnboundOrUnavailable",
+                     "SameReviewedInvocationStartDataOnly { snapshot: " + first + " }"):
+        accepts(fixture(first, reviewed))
+    prior = "Some(" + attempt("PermissionResolve", "ManagedProfileRequired") + ")"
+    accepts(fixture(snapshot(attempt(), prior, "2")))
+    for error in ("ManagedProfileRequired", "RestrictedFilesystemRequired", "IoAccessDenied"):
+        value = accepts(fixture(snapshot(attempt("AsUserOfflinePolicy", error))))
+        check(value["latest_backend_call_observation"]["observation"]["current"]["error"] == error)
+
+    unobserved = "NotObserved(NotAttempted)"
+    opening = ("TokenOpenObservation { purpose: NotRequested, requested_mask: 0, result: "
+               + unobserved + " }")
+    reads = "PrimaryTokenReadResults { " + ", ".join(
+        name + ": " + unobserved for name in
+        ("user", "logon_groups", "session", "restrictions", "app_container")) + " }"
+    queries = ("StartupQueryStages { primary_open: " + opening + ", primary_reads: " + reads
+               + ", duplicate_source_open: " + opening
+               + ", impersonation_duplicate: " + unobserved + " }")
+    token = "StartupTokenRelations { " + ", ".join(
+        name + ": " + unobserved for name in (
+            "user_equals_intended_sandbox", "user_equals_caller_user",
+            "logon_sid_equals_caller_logon_sid", "runner_logon_group_attributes",
+            "session_equals_caller_session", "has_restrictions", "is_app_container")) + " }"
+    obj = ("StartupObjectObservation { " + ", ".join(
+        name + ": " + unobserved for name in (
+            "name_equals_creation_object", "visible", "receiving_user_input",
+            "descriptor_owner_equals_runner_user", "descriptor_group_equals_runner_logon_sid",
+            "dacl_present", "dacl_null", "descriptor_read"))
+           + ", access_check_invoked: false, access: " + unobserved + " }")
+    resource = ("AuthzResourceObservation { allocation: NotAttempted, retirement: NotAllocated, "
+                "initialization_error: 0, retirement_error: 0 }")
+    authz_obj = ("AuthzObjectObservation { state: NotAttempted, mapping: NotSelected, "
+                 "error: 0, granted_mask: 0 }")
+    authz = ('AuthzDaclProjection { scope: "' + _AUTHZ_SCOPE2364
+             + '", resource_manager: ' + resource + ", context: " + resource
+             + ", station: " + authz_obj + ", desktop: " + authz_obj + ", first_failure: None }")
+    context = ("WindowsStartupContext { startup_id: 7, call: " + unobserved
+               + ", original_runner_identity: Some((9, 11)), query_status: " + unobserved
+               + ", query_stages: " + queries + ", runner_before_token_query: " + unobserved
+               + ", runner_after_token_query: " + unobserved + ", token: " + token
+               + ", station: " + obj + ", desktop: " + obj
+               + ", query_handle_closes: [NotAllocated, NotAllocated], "
+               "query_slot_closes: [NotAllocated, NotAllocated, NotAllocated], authz_dacl: " + authz + " }")
+    original = ("WindowsStartRunnerObservation { startup_id: 7, runner_pid: 9, "
+                "runner_creation_filetime_100ns: 11, state: Exited { raw_dword: 4294967295 } }")
+    full = fixture(snapshot(attempt(original="Some(" + original + ")", context="Some(" + context + ")")))
+    value = accepts(full)
+    current = value["latest_backend_call_observation"]["observation"]["current"]
+    check(current["original_runner"]["state"] == {"variant": "Exited", "raw_dword": 4294967295})
+    check(current["startup_context"]["call"] == {"variant": "NotObserved", "value": "NotAttempted"})
+    check(current["startup_context"]["query_slot_closes"] == ["NotAllocated"] * 3)
+    # Native scalar is explicitly runner-labelled; a logical child Exit cannot
+    # replace the DTO or become a runner DWORD.
+    rejects = [
+        actual2356 + " trailing", actual2356.replace("ServerInternal", "ServerInternalFuture"),
+        actual2356.replace("original_runner: None", "original_runner: null"),
+        actual2356.replace("startup_context: None", "extra: 0, startup_context: None"),
+        actual2356.replace("attempt: 1", "attempt: true"),
+        actual2356.replace("attempt: 1", "attempt: 2"),
+        actual2356.replace("attempt: 1", "attempt: 0"),
+        actual2356.replace("ReturnedError", "ReturnedBackendHandle"),
+        actual2356.replace("SameReviewedInvocationStartDataOnly", "SameReviewedInvocationStartDataOnlyFuture"),
+        actual2356.replace("snapshot: WindowsStartSnapshot", "snapshot: WindowsStartSnapshotExtra"),
+        actual2356.replace("call_sequence: 1", "call_sequence: 0"),
+        actual2356.replace("call_sequence: 1", "call_sequence: 18446744073709551616"),
+        full.replace("raw_dword: 4294967295", "raw_dword: 4294967296"),
+        full.replace("raw_dword: 4294967295", "raw_dword: -1"),
+        full.replace("raw_dword: 4294967295", "raw_dword: true"),
+        full.replace("runner_pid: 9", "runner_pid: 0"),
+        full.replace("original_runner_identity: Some((9, 11))", "original_runner_identity: Some((10, 11))"),
+        full.replace("startup_id: 7, call:", "startup_id: 8, call:"),
+        full.replace("Exited { raw_dword: 4294967295 }", "Message::Exit { code: 0 }"),
+        full.replace("NotObserved(NotAttempted)", "Observed(true)", 1),
+        full.replace("NotAllocated, NotAllocated, NotAllocated", "NotAllocated, NotAllocated"),
+        full.replace("retirement_error: 0", "retirement_error: 5", 1),
+        full.replace("first_failure: None", 'first_failure: Some(("FreeContext", Some(5)))'),
+        full.replace("dacl_null: NotObserved(NotAttempted)", "dacl_null: NotObserved(Unlisted)"),
+        full.replace(_AUTHZ_SCOPE2364, "arbitrary private text"),
+        full.replace("authz_dacl:", "unknown_field: 1, authz_dacl:"),
+        fixture(snapshot(attempt("AsUserWriteRoots", "Unclassified")).replace(
+            "os_class: NotObserved", "os_class: AccessDenied")),
+    ]
+    for bad in rejects:
+        check(safe_diagnostic(bad) == {"parse_status": "REJECTED"})
+        rejected = project_journal(records([row(0, "SEALED_UNKNOWN_OR_REJECTED_NO_REPLAY", bad)]))
+        check(rejected["records"][0]["parse_status"] == "REJECTED")
+        check("native_diagnostic" not in rejected["records"][0])
+    # Pure exact DTO grammar coverage beyond the absent-context real2356 record.
+    for reason in ("NotAttempted", "NotApplicable", "OriginalUnavailable", "Busy", "Poisoned",
+                   "BoundExceeded", "InvalidBuffer", "Win32 { code: 4294967295 }",
+                   "Upstream { stage: QueryUser, reason: Win32 { code: 5 } }"):
+        accepts(full.replace("call: NotObserved(NotAttempted)", "call: NotObserved(" + reason + ")", 1))
+    for state in ("RunningAtObservation", "SignaledExitQueryFailed { os_class: AccessDenied }",
+                  "WaitFailed { os_class: Other }", "UnexpectedWait { wait_result: 258 }"):
+        accepts(full.replace("Exited { raw_dword: 4294967295 }", state))
+    for text, descriptor in (
+        ("Observed(())", _fact2364(_UNIT_2364)),
+        ("Observed(false)", _fact2364(_BOOL_2364)),
+        ("CloseFailed { code: 5 }", "QueryHandleClose"),
+        ("TokenAllocationObservation { api_returned_success: false, allocation: NotAllocated, "
+         "win32_error: Some(5) }", "TokenAllocationObservation"),
+        ("TokenAllocationObservation { api_returned_success: true, allocation: AllocatedOriginal, "
+         "win32_error: None }", "TokenAllocationObservation"),
+    ):
+        reader = _CurrentReader2364(text)
+        reader.read(descriptor)
+        check(reader.pos == len(text))
+    for text in (
+        "TokenAllocationObservation { api_returned_success: false, allocation: AllocatedOriginal, win32_error: Some(5) }",
+        "TokenAllocationObservation { api_returned_success: true, allocation: AllocatedOriginal, win32_error: Some(5) }",
+        "TokenAllocationObservation { api_returned_success: false, allocation: NotAllocated, win32_error: None }",
+    ):
+        rejected = False
+        try:
+            _CurrentReader2364(text).read("TokenAllocationObservation")
+        except Rejected:
+            rejected = True
+        check(rejected)
+    # Fixed parser byte/node/depth bounds, no arbitrary strings or side effects.
+    check(current_diagnostic2364("x" * (MAX_RECORD + 1)) == {"parse_status": "REJECTED"})
+
+
 def v3_self_test(check, diagnostic, diagnostic_v2, records, row, private):
     # All fixture text and journal/controller bytes below are synthetic memory.
     def attempt(stage="NotObserved", error="NotObserved", runner="NotObserved", os_class="NotObserved"):
@@ -454,6 +1004,58 @@ def v3_self_test(check, diagnostic, diagnostic_v2, records, row, private):
         completion = "InProgressOrUnwound" if error == "NotObserved" else "ReturnedError"
         lower = accept(diagnostic_v3(observation(attempt("RunnerLogon", error, runner, os_class), completion=completion)))
         check(lower["observation"]["current"]["error"] == error)
+    #2357: precise appended labels only, in both original attempt slots.
+    # These are synthetic four-field V3 records, not actual VM/native witnesses.
+    asuser_stages2357 = (
+        "AsUserFilesystemPolicy",
+        "AsUserOfflinePolicy",
+        "AsUserHomeAndCwdIdentity",
+        "AsUserWriteRoots",
+        "AsUserReadDeny",
+        "AsUserWriteDeny",
+        "AsUserReadRoots",
+        "AsUserExistingCapabilities",
+        "AsUserCapabilitySid",
+        "AsUserCapabilityCount",
+        "AsUserOwnedCredentials",
+    )
+    for stage in asuser_stages2357:
+        for error in ("Unclassified", "IoInvalidInput"):
+            current = attempt(stage, error)
+            lower = accept(diagnostic_v3(observation(current, completion="ReturnedError")))
+            check(lower["observation"]["current"] == {
+                "stage": stage, "error": error,
+                "runner_stage": "NotObserved", "os_class": "NotObserved"})
+            prior = attempt(stage, error)
+            lower = accept(diagnostic_v3(observation(
+                attempt("SetupRefresh", "Unclassified"), prior, 2, "ReturnedError")))
+            check(lower["observation"]["first_attempt"]["stage"] == stage)
+        for invalid in (stage.lower(), '"' + stage + '"', stage + "Future",
+                        stage + ", stage: " + stage):
+            check(safe_diagnostic(diagnostic_v3(observation(
+                attempt(invalid, "Unclassified"), completion="ReturnedError")))
+                == {"parse_status": "REJECTED"})
+    for error in ("ManagedProfileRequired", "RestrictedFilesystemRequired"):
+        lower = accept(diagnostic_v3(observation(
+            attempt("PermissionResolve", error), completion="ReturnedError")))
+        check(lower["observation"]["current"]["error"] == error)
+        for invalid in (error.lower(), '"' + error + '"', error + "Future"):
+            check(safe_diagnostic(diagnostic_v3(observation(
+                attempt("PermissionResolve", invalid), completion="ReturnedError")))
+                == {"parse_status": "REJECTED"})
+    # Do not infer a new grammar/OS relationship from new enum membership.
+    # The old projection deliberately still rejects these unsupported shapes.
+    for current in (
+        attempt("AsUserWriteRoots", "IoInvalidInput", os_class="AccessDenied"),
+        attempt("AsUserWriteRoots", "Unclassified", runner="SpawnChild"),
+    ):
+        check(safe_diagnostic(diagnostic_v3(observation(
+            current, completion="ReturnedError"))) == {"parse_status": "REJECTED"})
+        rejected = project_journal(records([
+            row(0, "SEALED_UNKNOWN_OR_REJECTED_NO_REPLAY",
+                diagnostic_v3(observation(current, completion="ReturnedError")))]))
+        check(rejected["records"][0]["parse_status"] == "REJECTED")
+        check("native_diagnostic" not in rejected["records"][0])
     for runner in RUNNER_STAGES:
         error = "NotObserved" if runner == "NotObserved" else "RunnerReported"
         lower = accept(diagnostic_v3(observation(attempt("SpawnReadyRead", error, runner))))
@@ -691,6 +1293,7 @@ def self_test():
     check(project_journal(records([dict(row(0, "acceptance", None), extra=private)])) == {"parse_status": "REJECTED", "records": []})
     v1_v2_checks = checks
     v3_self_test(check, diagnostic, diagnostic_v2, records, row, private)
+    current_self_test2364(check, records, row)
     print(json.dumps({"schema": VERSION, "parse_status": "SYNTHETIC_TESTS_PASSED", "checks": checks,
                       "v1_v2_checks": v1_v2_checks, "v3_checks": checks - v1_v2_checks}, sort_keys=True))
     return 0

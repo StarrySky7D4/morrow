@@ -123,6 +123,11 @@ async fn spawn_runner_transport_task(
     if let Some(diagnostic) = &diagnostic {
         diagnostic.mark(crate::WindowsStartStage::BlockingTransportTask);
     }
+    if matched_runner.is_some() {
+        if let Some(diagnostic) = &diagnostic {
+            diagnostic.mark(crate::WindowsStartStage::CheckedStartupReserve);
+        }
+    }
     let mut checked_reservation = match &matched_runner {
         Some(artifact) => Some(
             crate::checked_owner::reserve_checked_startup_before_launch(
@@ -138,8 +143,14 @@ async fn spawn_runner_transport_task(
         .as_ref()
         .map(crate::checked_owner::CheckedStartupReservation::caller_guard);
     let task_diagnostic = diagnostic.clone();
+    if let Some(diagnostic) = &diagnostic {
+        diagnostic.mark(crate::WindowsStartStage::BlockingTransportDispatch);
+    }
     let transport = tokio::task::spawn_blocking(move || -> Result<_> {
         let diagnostic = task_diagnostic.as_ref();
+        if let Some(diagnostic) = diagnostic {
+            diagnostic.mark(crate::WindowsStartStage::BlockingTransportEntered);
+        }
         if matched_runner.as_ref().is_some_and(|runner|runner.asuser_binding().is_some()) {
             // The selected original A1 carrier has exactly one native route.
             // Do not create the legacy desktop or enter its refresh closure.
@@ -220,8 +231,14 @@ async fn spawn_runner_transport_task(
             });
         }
         anyhow::anyhow!("runner handshake task failed: {err}")
-    })??;
+    })?
+    // Observe the ORIGINAL inner Err before the exec-server's generic -32603
+    // conversion. No formatting, retry, fallback, cleanup or changed Err.
+    .inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?;
     if let Some(guard) = caller_guard {
+        if let Some(diagnostic) = &diagnostic {
+            diagnostic.mark(crate::WindowsStartStage::CheckedTransportCallerAck);
+        }
         guard
             .acknowledge_returned(&transport)
             .inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?;
@@ -231,11 +248,7 @@ async fn spawn_runner_transport_task(
 
 fn observe_backend_error(diagnostic: Option<&crate::WindowsStartDiagnostic>, err: &anyhow::Error) {
     if let Some(diagnostic) = diagnostic {
-        if let Some(err) = err.downcast_ref::<std::io::Error>() {
-            diagnostic.fail_io_kind(err.kind());
-        } else {
-            diagnostic.fail(crate::WindowsStartError::Unclassified);
-        }
+        diagnostic.observe_backend_error(err);
     }
 }
 
@@ -283,7 +296,8 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
         // The A1 launch cannot invoke automatic account repair/setup refresh,
         // create capabilities or mutate the global null-device ACL here.
         crate::spawn_prep::prepare_asuser_spawn_context(&binding,&permissions,codex_home,cwd,&mut env_map,
-            read_roots_override,write_roots_override,&deny_read_paths_override,&deny_write_paths_override,proxy_enforced)?
+            read_roots_override,read_roots_include_platform_defaults,write_roots_override,&deny_read_paths_override,&deny_write_paths_override,proxy_enforced,
+            diagnostic.as_ref()).inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?
     }else{prepare_elevated_spawn_context_for_permissions_with_diagnostics(
         permissions.clone(),
         codex_home,
@@ -439,3 +453,58 @@ pub(crate) async fn spawn_windows_sandbox_session_elevated_for_permission_profil
 #[cfg(test)]
 #[path = "elevated_tests.rs"]
 mod tests;
+
+// Labelled pure error-boundary tests: no setup, filesystem, credential or OS call.
+#[cfg(test)]
+mod diagnostic_boundary_tests2357 {
+    use super::observe_backend_error;
+    use crate::{WindowsStartDiagnostic, WindowsStartStage, WindowsStartError,
+        WindowsStartCompletion, WindowsOsError};
+
+    #[test]
+    fn each_asuser_boundary2357_retains_original_rejection_and_first_finite_class() {
+        let stages = [
+            WindowsStartStage::AsUserFilesystemPolicy,
+            WindowsStartStage::AsUserOfflinePolicy,
+            WindowsStartStage::AsUserHomeAndCwdIdentity,
+            WindowsStartStage::AsUserWriteRoots,
+            WindowsStartStage::AsUserReadDeny,
+            WindowsStartStage::AsUserWriteDeny,
+            WindowsStartStage::AsUserReadRoots,
+            WindowsStartStage::AsUserExistingCapabilities,
+            WindowsStartStage::AsUserCapabilitySid,
+            WindowsStartStage::AsUserCapabilityCount,
+            WindowsStartStage::AsUserOwnedCredentials,
+        ];
+        for stage in stages {
+            for io_error in [false, true] {
+                let d = WindowsStartDiagnostic::default();
+                d.mark(WindowsStartStage::PermissionResolve);
+                d.mark(stage);
+                let original = if io_error {
+                    anyhow::Error::new(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput, "labelled original rejection"))
+                } else { anyhow::anyhow!("labelled original rejection") };
+                // Exercise the actual production observer without changing the
+                // original Err. These labels do NOT prove any VM check failed.
+                let result: anyhow::Result<()> = Err(original);
+                let error = result.inspect_err(|error|observe_backend_error(Some(&d), error))
+                    .unwrap_err();
+                assert_eq!(error.to_string(), "labelled original rejection");
+                assert_eq!(error.downcast_ref::<std::io::Error>().is_some(), io_error);
+                d.fail(WindowsStartError::ServerInternal);
+                d.finish_failed();
+                let snapshot = d.snapshot().unwrap();
+                assert_eq!(snapshot.current.stage, stage);
+                assert_eq!(snapshot.current.error, if io_error {
+                    WindowsStartError::IoInvalidInput
+                } else { WindowsStartError::Unclassified });
+                assert_eq!(snapshot.current.os_class, WindowsOsError::NotObserved);
+                assert_eq!(snapshot.current.original_runner, None);
+                assert_eq!(snapshot.current.startup_context, None);
+                assert_eq!(snapshot.completion, WindowsStartCompletion::ReturnedError);
+                assert!(!format!("{snapshot:?}").contains("labelled original rejection"));
+            }
+        }
+    }
+}

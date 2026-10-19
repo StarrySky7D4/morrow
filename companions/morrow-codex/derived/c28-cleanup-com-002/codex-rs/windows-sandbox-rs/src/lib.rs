@@ -16,6 +16,26 @@ mod asuser_a1_security;
 mod asuser_a1_native;
 #[cfg(target_os = "windows")]
 mod asuser_parent_record;
+// Private cached startup data only; no diagnostic transport is installed.
+#[cfg(any(target_os = "windows", test))]
+mod asuser_parent_diagnostic;
+// Pure process-local history only; no transport or native capability.
+mod asuser_startup_observation;
+#[cfg(any(windows,test))]
+mod asuser_error_diagnostic;
+#[cfg(windows)]
+mod asuser_error_diagnostic_native;
+#[cfg(any(windows,test))]
+#[doc(hidden)]
+pub use asuser_error_diagnostic::{decode_error_only_record,ErrorDiagnosticRecord,ErrorCodecError,
+    ErrorDiagnosticRole,StartupFailureTrigger,MAX_ERROR_RECORD_BYTES};
+#[cfg(windows)]
+#[doc(hidden)]
+pub use asuser_error_diagnostic_native::{RetainedErrorDiagnostic,ErrorOnlyWriteState,ErrorOnlyWriteReport};
+#[doc(hidden)]
+pub use asuser_startup_observation::{StartupObservation,StartupHistory,StartupSnapshot,
+    StartupTrace,StartupEvent,StartupStage,StartupOutcome,StartupSeal,StartupUnavailable,
+    FrontendStage,SdkStage,StartupStep,StartupPrompt,STARTUP_HISTORY_PER_TRACE};
 #[cfg(target_os = "windows")]
 mod asuser_a1_helper;
 #[cfg(target_os = "windows")]
@@ -75,6 +95,7 @@ pub use start_diagnostic::WindowsStartError;
 pub use start_diagnostic::WindowsStartSnapshot;
 pub use start_diagnostic::{WindowsStartRunnerObservation, WindowsStartRunnerState};
 pub use start_diagnostic::WindowsStartStage;
+pub use start_diagnostic::{WindowsAsUserNativeFailure, WindowsAsUserNativeStage, WindowsAsUserNativeSite, WindowsTargetPolicyRejection};
 
 #[cfg(any(target_os = "windows", test))]
 mod ssh_config_dependencies;

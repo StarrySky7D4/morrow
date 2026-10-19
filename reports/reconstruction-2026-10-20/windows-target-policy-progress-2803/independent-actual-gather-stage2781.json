@@ -1,0 +1,83 @@
+{
+  "schema": "ROOT_TRANSPORT_INDEPENDENT_GATHER_STAGE2781_V1",
+  "tag": "74397ac11acd48e38834c2faf5844f37",
+  "ordinary_tool_session": 84393,
+  "ordinary_tool_final_chunk": "39c7ef",
+  "ordinary_exit": 0,
+  "raw_binding": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-root-vm-transaction2769-74397ac11acd48e38834c2faf5844f37-stage\\gathered-binding.original.json",
+    "bytes": 3763,
+    "sha256": "3e6a6430e37ce18303213f12ad2855a32503d53b67ab447976317581390415ee"
+  },
+  "stage_receipt": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-root-vm-transaction2769-74397ac11acd48e38834c2faf5844f37-stage\\stage-receipt.json",
+    "bytes": 10162,
+    "sha256": "c9d77709f7fc9bc4cba52f0d5fee5c6aec2ddad75b9ef4a18a9399e5e3918b3b"
+  },
+  "terminal": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-root-vm-transaction2769-74397ac11acd48e38834c2faf5844f37-stage\\terminal.json",
+    "bytes": 1369,
+    "sha256": "3105df00471475d49ac740b848534cd958e458d80a4ebd4efa01155c029b4818"
+  },
+  "actual_gather_original_pid": 1020,
+  "original_creation_filetime_100ns": "134369204757554736",
+  "actual_DWORD0_signal_EOF2_checked_closes_managed_joins": true,
+  "eleven_selector_pins_and_seven_image_pins_exact": true,
+  "original_raw_bytes_no_reserialization": true,
+  "actual_fixed_system_shell_links": 2,
+  "other_files_directories_links": 1,
+  "fresh_original17_COM_and_name0": true,
+  "native_reader_TLS": "NOT_CLAIMED_BY_MANAGED_THREAD_JOIN",
+  "known_closed_own_stage_session_and_readonly_holds": true,
+  "only_new_install_4ACE_verified": true,
+  "P_T_policy_actions": 0,
+  "human_privilege_authorization": false,
+  "next": "Read-only bind only next. Current2779 stage84393 closed0/39c7ef; no Add/Remove/P/T/47. Current36 and85 pass scoped; current2775default/2776GUI pending. Fresh7439 case requires new single account47 approval only after currentGUI and full bind.2732/2742 consumed. All oldUnknowns untouched, no query/control/adoption/replay.",
+  "source_accepted": false,
+  "release_eligible": false,
+  "source_review": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\independent-transaction-source2770.json",
+    "bytes": 6599,
+    "sha256": "5cb43acc73a173ad552532d592a03ca7908aa5f01d60b5dcb2ec0509005ab787"
+  },
+  "public_review": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\stage-public2779-result.json",
+    "bytes": 1806,
+    "sha256": "51a4ed92033365c6a44b22bf9683bf9f94e3e8918d7012c43e9bfa86cba174d9"
+  },
+  "actual_source_freeze": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-transaction-review2770\\ROOT_RUNTIME_FREEZE2770.json",
+    "bytes": 3365,
+    "sha256": "0cb5e769681c90ea15a46fe03a5b7ac497837933ab0f3deabd4689c01d5282df"
+  },
+  "actual_native_capture": {
+    "status": "CLOSED_NEW_ORIGINAL_0_OR_ASSERTION_RESULT_NOT_PRODUCT_ACCEPTANCE",
+    "pid": 1020,
+    "creation_filetime_100ns": 134369204757554736,
+    "original_native_handle": 3724,
+    "original_image_path": "C:\\Morrow-C28-RootP1701-bin-74397ac11acd48e38834c2faf5844f37\\Root47Controller1725.exe",
+    "actual_native_dword": 0,
+    "exit_raw_buffer": 0,
+    "exit_query_returned": true,
+    "exit_query_error": 0,
+    "original_process_signaled": true,
+    "record_directory_created": true,
+    "record_directory_error": 0,
+    "stdout_EOF": true,
+    "stderr_EOF": true,
+    "no_replay": false,
+    "reason": null,
+    "process_close": "CLOSED_VERIFIED",
+    "stdout_native_close": "CLOSED_VERIFIED",
+    "stderr_native_close": "CLOSED_VERIFIED",
+    "elapsed_ms": 522,
+    "reader_native_TLS": "NOT_CLAIMED_BY_MANAGED_THREAD_JOIN",
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "managed_readers_joined": true,
+    "managed_streams_closed": true,
+    "original_process_disposed_after_checked_native_close": true
+  }
+}

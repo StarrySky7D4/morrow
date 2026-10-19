@@ -623,9 +623,12 @@ pub(crate) fn spawn_runner_transport_with_checked_reservation(
     mut checked_reservation: Option<&mut super::checked_owner::CheckedStartupReservation>,
 ) -> Result<RunnerTransport> {
     if let Some(binding)=matched_runner.as_ref().and_then(|runner|runner.asuser_binding()) {
-        let res=checked_reservation.as_deref_mut().context("A1 original reservation absent")?;
+        mark_start(diagnostic,crate::WindowsStartStage::AsUserTransportReservation);
+        let res=checked_reservation.as_deref_mut().context("A1 original reservation absent")
+            .inspect_err(|error|observe_start_error(diagnostic,error,crate::WindowsStartError::Unclassified))?;
         let runner=matched_runner.as_ref().unwrap().clone();
-        return spawn_asuser_runner_transport(binding,runner,sandbox_creds,spawn_request,diagnostic,res);
+        return spawn_asuser_runner_transport(binding,runner,sandbox_creds,spawn_request,diagnostic,res)
+            .inspect_err(|error|observe_start_error(diagnostic,error,crate::WindowsStartError::Unclassified));
     }
     if matched_runner.is_some() {
         let Some(res) = checked_reservation.as_deref() else {
@@ -1013,53 +1016,98 @@ pub(crate) fn spawn_runner_transport_with_checked_reservation(
 /// Separate private-T AsUser route. Reuses the REAL v8 peer authentication,
 /// original connect workers/bootstrap/hello/spawn request/lease, never the
 /// legacy WithLogon profile/alias/refresh/error-mode branch above.
+// Records only a finite stage and the existing finite error classes from this
+// same synchronous call. Recorder locks end BEFORE step(), and step() runs once.
+// No catch/unwind conversion, original error formatting, native query or effect.
+fn observe_asuser_transport_step<T>(
+    diagnostic:Option<&crate::WindowsStartDiagnostic>,stage:crate::WindowsStartStage,
+    step:impl FnOnce()->Result<T>,
+)->Result<T> {
+    mark_start(diagnostic,stage);
+    step().inspect_err(|error|observe_start_error(
+        diagnostic,error,crate::WindowsStartError::Unclassified))
+}
+
 fn spawn_asuser_runner_transport(binding:std::sync::Arc<crate::AsUserFactoryBinding>,
     runner:std::sync::Arc<crate::MatchedRunnerArtifact>,creds:&SandboxCreds,mut request:SpawnRequest,
     diagnostic:Option<&crate::WindowsStartDiagnostic>,res:&mut super::checked_owner::CheckedStartupReservation)
     ->Result<RunnerTransport> {
-    anyhow::ensure!(runner.native_close_v8()&&request.private_desktop_name.is_none(),"A1 requires its original private GUI selection");
-    res.reserve_asuser_a1()?;
+    use crate::WindowsStartStage as S;
+    observe_asuser_transport_step(diagnostic,S::AsUserTransportPolicy,||{
+        anyhow::ensure!(runner.native_close_v8()&&request.private_desktop_name.is_none(),"A1 requires its original private GUI selection");
+        Ok(())
+    })?;
+    observe_asuser_transport_step(diagnostic,S::AsUserNativeReservation,||
+        res.reserve_asuser_a1().map_err(anyhow::Error::from))?;
     let owner=std::sync::Arc::clone(res.owner());
     let result=(||->Result<RunnerTransport>{
-        let admission=owner.with_asuser_a1(|original|binding.admission(original.consume_caller()?,res.startup_id().0,&runner))?;
-        let (input,output)=pipe_pair();let command=admission.command(&input,&output)?;
-        let mut nonce=[0u8;32];{use rand::RngCore;rand::rngs::OsRng.try_fill_bytes(&mut nonce)
-            .map_err(|_|anyhow::anyhow!("A1 original startup entropy unavailable"))?;}
-        anyhow::ensure!(nonce!=[0;32],"A1 zero startup entropy rejected");
+        let admission=observe_asuser_transport_step(diagnostic,S::AsUserCallerAdmission,||
+            owner.with_asuser_a1(|original|binding.admission(original.consume_caller()?,res.startup_id().0,&runner))
+                .map_err(anyhow::Error::from))?;
+        let (input,output,command)=observe_asuser_transport_step(diagnostic,S::AsUserCommandPrepare,||{
+            let (input,output)=pipe_pair();
+            let command=admission.command(&input,&output)?;
+            Ok((input,output,command))
+        })?;
+        let mut nonce=[0u8;32];
+        observe_asuser_transport_step(diagnostic,S::AsUserStartupEntropy,||{
+            use rand::RngCore;
+            rand::rngs::OsRng.try_fill_bytes(&mut nonce)
+                .map_err(|_|anyhow::anyhow!("A1 original startup entropy unavailable"))?;
+            anyhow::ensure!(nonce!=[0;32],"A1 zero startup entropy rejected");
+            Ok(())
+        })?;
         let hello=crate::ipc_framed::ControlHello{nonce,schema:crate::ipc_framed::CHECKED_CONTROL_SCHEMA};
-        owner.with_asuser_a1(|original|{
-            original.bind_admission(admission,&runner)?;original.set_pipe_names(input,output)?;
-            original.start(command,&to_wide(&creds.username),&to_wide(&creds.password),
-                |write,read|res.stage_pre_launch_context(write,read,hello.clone()))
-        })?;
-        let (pipe_write,pipe_read)=owner.with_asuser_a1(|original|{
-            request.private_desktop_name=Some(original.desktop_name()?);original.transport_files()
-        })?;
+        observe_asuser_transport_step(diagnostic,S::AsUserAdmissionBind,||
+            owner.with_asuser_a1_observed(diagnostic,|original|{
+                original.bind_admission(admission,&runner)?;
+                if let Some(diagnostic)=diagnostic {diagnostic.observe_asuser_progress(S::AsUserPipeNames);}
+                original.set_pipe_names(input,output)?;
+                if let Some(diagnostic)=diagnostic {diagnostic.observe_asuser_progress(S::AsUserNativeStart);}
+                original.start(command,&to_wide(&creds.username),&to_wide(&creds.password),
+                    |write,read|res.stage_pre_launch_context(write,read,hello.clone()))
+            }).map_err(anyhow::Error::from))?;
+        let (pipe_write,pipe_read)=observe_asuser_transport_step(diagnostic,S::AsUserTransportFiles,||
+            owner.with_asuser_a1(|original|{
+                request.private_desktop_name=Some(original.desktop_name()?);original.transport_files()
+            }).map_err(anyhow::Error::from))?;
         let mut transport=RunnerTransport{pipe_write,pipe_read,hello,
             controls:crate::ipc_framed::RunnerControlCapabilities::default(),matched_runner:Some(runner),
             checked_lease:None,startup_deadline:res.startup_deadline(),native_close_runtime:None,native_startup_owner:Some(owner.clone())};
-        owner.with_asuser_a1(|original|original.transfer_to_owner(|process,pid,thread,tid|{
-            // Native core preanchors BOTH outputs before these conversions.
-            // install_launched_process immediately anchors them in THIS owner,
-            // including original primary-thread checked-close debt.
-            res.install_launched_process(unsafe{OwnedHandle::from_raw_handle(process as _)},pid,
-                unsafe{OwnedHandle::from_raw_handle(thread as _)},tid,&transport.pipe_write,&transport.pipe_read,transport.hello.clone()).map(|_|())
-        }))?;
-        res.connect_pipe_step(&transport.pipe_write,"pipe-in",diagnostic)?;
-        res.connect_pipe_step(&transport.pipe_read,"pipe-out",diagnostic)?;
-        let bootstrap=owner.prepare_native_close_runtime(nonce)?;
-        let runtime=owner.native_close_runtime().context("A1 original v8 runtime absent")?;
+        observe_asuser_transport_step(diagnostic,S::AsUserNativeTransfer,||
+            owner.with_asuser_a1(|original|original.transfer_to_owner(|process,pid,thread,tid|{
+                // Native core preanchors BOTH outputs before these conversions.
+                // install_launched_process immediately anchors them in THIS owner,
+                // including original primary-thread checked-close debt.
+                res.install_launched_process(unsafe{OwnedHandle::from_raw_handle(process as _)},pid,
+                    unsafe{OwnedHandle::from_raw_handle(thread as _)},tid,&transport.pipe_write,&transport.pipe_read,transport.hello.clone()).map(|_|())
+            })).map_err(anyhow::Error::from))?;
+        observe_asuser_transport_step(diagnostic,S::AsUserConnectInput,||
+            res.connect_pipe_step(&transport.pipe_write,"pipe-in",diagnostic).map_err(anyhow::Error::from))?;
+        observe_asuser_transport_step(diagnostic,S::AsUserConnectOutput,||
+            res.connect_pipe_step(&transport.pipe_read,"pipe-out",diagnostic).map_err(anyhow::Error::from))?;
+        let bootstrap=observe_asuser_transport_step(diagnostic,S::AsUserBootstrapPrepare,||
+            owner.prepare_native_close_runtime(nonce).map_err(anyhow::Error::from))?;
+        let runtime=observe_asuser_transport_step(diagnostic,S::AsUserRuntimeLookup,||
+            owner.native_close_runtime().context("A1 original v8 runtime absent"))?;
         transport.hello=runtime.control_hello();
-        owner.write_native_startup(0,move|file|{
-            let mut writer=file;super::native_close_protocol::write_v8_wire_frame_bounded(&mut writer,&bootstrap)
-                .map(|_|()).map_err(std::io::Error::other)
-        })?;
+        observe_asuser_transport_step(diagnostic,S::AsUserBootstrapWrite,||
+            owner.write_native_startup(0,move|file|{
+                let mut writer=file;super::native_close_protocol::write_v8_wire_frame_bounded(&mut writer,&bootstrap)
+                    .map(|_|()).map_err(std::io::Error::other)
+            }).map_err(anyhow::Error::from))?;
         transport.native_close_runtime=Some(runtime);transport.native_startup_owner=Some(owner.clone());
-        transport.negotiate_controls(diagnostic)?;
-        transport.send_spawn_request(request)?;
-        transport.read_spawn_ready_with_diagnostics(diagnostic)?;
-        transport.checked_lease=Some(res.commit_transport_lease(transport.controls)?);Ok(transport)
+        observe_asuser_transport_step(diagnostic,S::AsUserControlsHandshake,||
+            transport.negotiate_controls(diagnostic))?;
+        observe_asuser_transport_step(diagnostic,S::AsUserSpawnRequestWrite,||
+            transport.send_spawn_request(request))?;
+        observe_asuser_transport_step(diagnostic,S::AsUserSpawnReadyRead,||
+            transport.read_spawn_ready_with_diagnostics(diagnostic))?;
+        transport.checked_lease=Some(observe_asuser_transport_step(diagnostic,S::AsUserTransportLeaseCommit,||
+            res.commit_transport_lease(transport.controls))?);
+        Ok(transport)
     })();
+    // Preserve the original error sealing/connect-lane/owner retention exactly.
     result.map_err(|error|res.fail_after_launch(error))
 }
 
@@ -1379,3 +1427,156 @@ mod tests {
     }
 }
 
+
+#[cfg(test)]
+mod transport_step_diagnostic_tests2586 {
+    use super::observe_asuser_transport_step;
+    use crate::{WindowsStartDiagnostic,WindowsStartStage as S,WindowsStartError as E,
+        WindowsStartCompletion,WindowsOsError,WindowsRunnerErrorStage};
+    use std::{cell::Cell,fmt,io,sync::Arc};
+
+    const STEPS: &[S] = &[
+        S::CheckedStartupReserve,S::BlockingTransportDispatch,S::BlockingTransportEntered,
+        S::CheckedTransportCallerAck,S::AsUserTransportReservation,S::AsUserTransportPolicy,
+        S::AsUserNativeReservation,S::AsUserCallerAdmission,S::AsUserCommandPrepare,
+        S::AsUserStartupEntropy,S::AsUserNativeStart,S::AsUserTransportFiles,
+        S::AsUserNativeTransfer,S::AsUserConnectInput,S::AsUserConnectOutput,
+        S::AsUserBootstrapPrepare,S::AsUserRuntimeLookup,S::AsUserBootstrapWrite,
+        S::AsUserControlsHandshake,S::AsUserSpawnRequestWrite,S::AsUserSpawnReadyRead,
+        S::AsUserTransportLeaseCommit,
+    ];
+
+    #[test]
+    fn returned_inner_io_error_keeps_exact_stage_before_generic_rpc_fallback() {
+        for &stage in STEPS {
+            let diagnostic=WindowsStartDiagnostic::default();
+            let calls=Cell::new(0);
+            let result: anyhow::Result<()> = observe_asuser_transport_step(Some(&diagnostic),stage,||{
+                calls.set(calls.get()+1);
+                Err(io::Error::new(io::ErrorKind::PermissionDenied,"labelled synthetic private body").into())
+            });
+            let error=result.unwrap_err();
+            assert_eq!(calls.get(),1);
+            assert_eq!(error.downcast_ref::<io::Error>().unwrap().kind(),io::ErrorKind::PermissionDenied);
+            assert_eq!(error.to_string(),"labelled synthetic private body");
+            diagnostic.fail(E::ServerInternal);
+            diagnostic.finish_failed();
+            let s=diagnostic.snapshot().unwrap();
+            assert_eq!(s.current.stage,stage);
+            assert_eq!(s.current.error,E::IoAccessDenied);
+            assert_eq!(s.current.os_class,WindowsOsError::NotObserved);
+            assert_eq!(s.current.runner_stage,WindowsRunnerErrorStage::NotObserved);
+            assert_eq!(s.current.original_runner,None);
+            assert_eq!(s.current.startup_context,None);
+            assert_eq!(s.first_attempt,None);
+            assert_eq!(s.attempt,1);
+            assert_eq!(s.completion,WindowsStartCompletion::ReturnedError);
+            assert!(!format!("{s:?}").contains("labelled synthetic private body"));
+        }
+    }
+
+    #[derive(Debug)]
+    struct OpaqueBody {original: Arc<()>}
+    impl fmt::Display for OpaqueBody {
+        fn fmt(&self,_:&mut fmt::Formatter<'_>)->fmt::Result {
+            panic!("new diagnostic must not format an original error body");
+        }
+    }
+    impl std::error::Error for OpaqueBody {}
+
+    #[test]
+    fn opaque_original_error_is_returned_without_format_or_replacement() {
+        let original=Arc::new(());
+        let diagnostic=WindowsStartDiagnostic::default();
+        let result:anyhow::Result<()>=observe_asuser_transport_step(Some(&diagnostic),
+            S::AsUserCommandPrepare,||Err(anyhow::Error::new(OpaqueBody{original:original.clone()})));
+        let error=result.err().unwrap();
+        assert!(Arc::ptr_eq(&error.downcast_ref::<OpaqueBody>().unwrap().original,&original));
+        diagnostic.fail(E::ServerInternal);diagnostic.finish_failed();
+        let snapshot=diagnostic.snapshot().unwrap();
+        assert_eq!(snapshot.current.error,E::Unclassified);
+        assert_eq!(snapshot.current.stage,S::AsUserCommandPrepare);
+        assert!(!format!("{snapshot:?}").contains("OpaqueBody"));
+    }
+
+    #[test]
+    fn absent_diagnostic_does_not_change_single_callback_result_or_error() {
+        let calls=Cell::new(0);let value=Arc::new(());
+        let actual=observe_asuser_transport_step(None,S::AsUserTransportPolicy,||{
+            calls.set(calls.get()+1);Ok(value.clone())
+        }).unwrap();
+        assert!(Arc::ptr_eq(&value,&actual));assert_eq!(calls.get(),1);
+        let result:anyhow::Result<()>=observe_asuser_transport_step(None,S::AsUserTransportPolicy,||{
+            calls.set(calls.get()+1);Err(io::Error::from(io::ErrorKind::TimedOut).into())
+        });
+        assert_eq!(calls.get(),2);
+        assert_eq!(result.unwrap_err().downcast_ref::<io::Error>().unwrap().kind(),io::ErrorKind::TimedOut);
+    }
+
+    #[test]
+    fn same_call_clone_is_observed_outside_recorder_lock_without_touching_other_call() {
+        let diagnostic=WindowsStartDiagnostic::default();
+        let same=diagnostic.clone();let unrelated=WindowsStartDiagnostic::default();
+        let before=unrelated.snapshot();
+        let result:anyhow::Result<()>=observe_asuser_transport_step(Some(&same),S::AsUserCallerAdmission,||{
+            // Would deadlock if a recorder guard crossed the original callback.
+            assert_eq!(diagnostic.snapshot().unwrap().current.stage,S::AsUserCallerAdmission);
+            Err(io::Error::from(io::ErrorKind::InvalidInput).into())
+        });
+        assert!(result.is_err());
+        assert_eq!(diagnostic.snapshot().unwrap().current.error,E::IoInvalidInput);
+        assert_eq!(unrelated.snapshot(),before);
+    }
+
+    #[test]
+    fn earlier_first_error_or_completed_record_is_never_overwritten_by_step() {
+        let diagnostic=WindowsStartDiagnostic::default();
+        diagnostic.mark(S::AsUserReadRootsEquality);diagnostic.fail(E::IdentityRejected);
+        let calls=Cell::new(0);
+        let result:anyhow::Result<()>=observe_asuser_transport_step(Some(&diagnostic),S::AsUserNativeStart,||{
+            calls.set(calls.get()+1);Err(io::Error::from(io::ErrorKind::TimedOut).into())
+        });
+        assert!(result.is_err());assert_eq!(calls.get(),1);
+        let s=diagnostic.snapshot().unwrap();
+        assert_eq!(s.current.stage,S::AsUserReadRootsEquality);assert_eq!(s.current.error,E::IdentityRejected);
+        diagnostic.finish_failed();let frozen=diagnostic.snapshot();
+        observe_asuser_transport_step(Some(&diagnostic),S::AsUserTransportLeaseCommit,||Ok(())).unwrap();
+        assert_eq!(diagnostic.snapshot(),frozen);
+    }
+
+    #[test]
+    fn original_unwind_is_not_caught_converted_replayed_or_made_native_absence() {
+        let diagnostic=WindowsStartDiagnostic::default();let calls=Cell::new(0);
+        let failed=std::panic::catch_unwind(std::panic::AssertUnwindSafe(||{
+            let _:anyhow::Result<()>=observe_asuser_transport_step(Some(&diagnostic),S::AsUserNativeStart,||{
+                calls.set(calls.get()+1);std::panic::resume_unwind(Box::new("synthetic original unwind"));
+            });
+        }));
+        assert!(failed.is_err());assert_eq!(calls.get(),1);
+        assert_eq!(diagnostic.snapshot().unwrap().current.error,E::NotObserved);
+        // The existing outer JoinError observer supplies the actual panic class.
+        diagnostic.fail(E::BlockingPanic);diagnostic.fail(E::ServerInternal);diagnostic.finish_failed();
+        let s=diagnostic.snapshot().unwrap();
+        assert_eq!(s.current.stage,S::AsUserNativeStart);assert_eq!(s.current.error,E::BlockingPanic);
+        assert_eq!(s.current.original_runner,None);
+        assert_eq!(s.current.os_class,WindowsOsError::NotObserved);
+    }
+
+    #[test]
+    fn already_typed_runner_payload_uses_existing_finite_observer_without_body() {
+        let diagnostic=WindowsStartDiagnostic::default();
+        let result:anyhow::Result<()>=observe_asuser_transport_step(Some(&diagnostic),S::AsUserSpawnReadyRead,||{
+            Err(super::RunnerStartupError::new(crate::ipc_framed::ErrorPayload{
+                stage:crate::ipc_framed::ErrorStage::SpawnChild,
+                message:"labelled private runner message".to_owned(),windows_error_code:Some(5),
+            }).into())
+        });
+        assert!(result.unwrap_err().is::<super::RunnerStartupError>());
+        diagnostic.fail(E::ServerInternal);diagnostic.finish_failed();
+        let s=diagnostic.snapshot().unwrap();
+        assert_eq!(s.current.error,E::RunnerReported);
+        assert_eq!(s.current.runner_stage,WindowsRunnerErrorStage::SpawnChild);
+        assert_eq!(s.current.os_class,WindowsOsError::AccessDenied);
+        assert!(!format!("{s:?}").contains("labelled private runner message"));
+    }
+}

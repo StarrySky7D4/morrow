@@ -783,18 +783,27 @@ impl Broker {
         let ok=unsafe{ConvertStringSecurityDescriptorToSecurityDescriptorW(text.as_ptr(),1,&mut raw,ptr::null_mut())};
         let error=if ok==0{unsafe{GetLastError()}}else{0};slot.captured(ok!=0,raw as isize,error)
     }
-    fn spawn(&mut self,name:&str,sid:&[u8],environment:&mut crate::asuser_a1_policy::Environment)->io::Result<(u32,u64)> {
+    fn spawn(&mut self,name:&str,sid:&[u8],environment:&mut crate::asuser_a1_policy::Environment,site:&mut crate::WindowsAsUserNativeSite)->io::Result<(u32,u64)> {
+        use crate::WindowsAsUserNativeSite as Site;
+        *site=Site::HelperSpawnDeadline;
         remaining(self.deadline)?;
+        *site=Site::HelperStdoutPipePair;
         Self::pipe_pair(&mut self.originals.stdout,&mut self.originals.child_out)?;
+        *site=Site::HelperStderrPipePair;
         Self::pipe_pair(&mut self.originals.stderr,&mut self.originals.child_err)?;
+        *site=Site::HelperNulReservation;
         self.originals.nul.begin()?;let sa=attributes(0,true);
+        *site=Site::HelperCreateNulResult;
         let raw=unsafe{CreateFileW(wide("NUL").as_ptr(),0x80000000,3,&sa,3,0,0)};
         let error=if raw == -1{unsafe{GetLastError()}}else{0};self.originals.nul.captured(raw != -1,raw,error)?;
+        *site=Site::HelperParentReservation;
         self.originals.parent.begin()?;
+        *site=Site::HelperDuplicateParentResult;
         let ok=unsafe{DuplicateHandle(GetCurrentProcess(),GetCurrentProcess(),GetCurrentProcess(),
             &mut self.originals.parent.raw,0x00101000,1,0)};
         let error=if ok==0{unsafe{GetLastError()}}else{0};
         self.originals.parent.captured(ok!=0,self.originals.parent.raw,error)?;
+        *site=Site::HelperAttributeList;
         self.attributes=Some(crate::proc_thread_attr::ProcThreadAttributeList::new(1)?);
         let attrs=self.attributes.as_mut().ok_or_else(bad)?;
         attrs.set_handle_list(vec![self.originals.child_out.raw,self.originals.child_err.raw,self.originals.nul.raw,self.originals.parent.raw])?;
@@ -802,23 +811,32 @@ impl Broker {
         si.StartupInfo.dwFlags=0x100;si.StartupInfo.hStdInput=self.originals.nul.raw;
         si.StartupInfo.hStdOutput=self.originals.child_out.raw;si.StartupInfo.hStdError=self.originals.child_err.raw;
         si.lpAttributeList=attrs.as_mut_ptr();
+        *site=Site::HelperCommandGuard;
         let app=self.bundle.s.path().to_str().ok_or_else(bad)?.to_owned();
         if app.contains('"')||app.contains('\0'){return Err(bad());}
         let cwd=self.bundle.s.path().parent().and_then(|p|p.to_str()).ok_or_else(bad)?.to_owned();
         let mut command=wide(&format!("\"{app}\" {A1_HELPER_SWITCH} {name} {}",self.originals.parent.raw));
         // Both S objects have protected creation-time DACLs, C-only management.
+        *site=Site::HelperProcessDescriptor;
         Self::caller_sd(&mut self.originals.helper_process_sd,sid,crate::asuser_a1_policy::PROCESS_MANAGEMENT)?;
+        *site=Site::HelperThreadDescriptor;
         Self::caller_sd(&mut self.originals.helper_thread_sd,sid,crate::asuser_a1_policy::THREAD_MANAGEMENT)?;
         let process_sa=attributes(self.originals.helper_process_sd.raw,false);let thread_sa=attributes(self.originals.helper_thread_sd.raw,false);
+        *site=Site::HelperCreateReservation;
         self.originals.process.begin()?;self.originals.thread.begin()?;remaining(self.deadline)?;
+        *site=Site::HelperCreateProcessResult;
         let ok=unsafe{CreateProcessW(wide(&app).as_ptr(),command.as_mut_ptr(),&process_sa,&thread_sa,1,
             0x08080000|0x00000400,environment.as_mut_ptr(),wide(&cwd).as_ptr(),&si.StartupInfo,&mut self.originals.pi)};
         let error=if ok==0{unsafe{GetLastError()}}else{0};
         self.originals.capture_child(ok!=0,error)?;
+        *site=Site::HelperIdentity;
         let original=identity(self.originals.process.raw)?;
         let pi=&self.originals.pi;
+        *site=Site::HelperIdentityGuard;
         if original.0!=pi.dwProcessId||pi.dwThreadId==0||pi.hProcess==pi.hThread{return Err(bad());}
+        *site=Site::HelperImageReadback;
         self.bundle.s.verify_resolved(&image_path(self.originals.process.raw)?).map_err(|_|bad())?;
+        *site=Site::HelperPrivateClose;
         self.attributes.take(); // initialized list has no native pending IO
         self.originals.helper_thread_sd.close()?;self.originals.helper_process_sd.close()?;
         self.originals.child_out.close()?;self.originals.child_err.close()?;
@@ -826,66 +844,110 @@ impl Broker {
         for i in 0..2 {
             remaining(self.deadline)?;
             self.readers[i].pipe=if i==0{self.originals.stdout.raw}else{self.originals.stderr.raw};
+            *site=Site::HelperReaderReservation;
             self.originals.readers[i].begin()?;let mut tid=0;
+            *site=Site::HelperCreateReaderResult;
             let raw=unsafe{CreateThread(ptr::null(),0,Some(read_original),(&mut *self.readers[i] as *mut Reader).cast(),0,&mut tid)};
             let error=if raw==0{unsafe{GetLastError()}}else{0};self.originals.readers[i].captured(raw!=0,raw,error)?;
+            *site=Site::HelperReaderIdGuard;
             if tid==0{return Err(bad());}
         }
         Ok(original)
     }
     pub(crate) fn start(&mut self,logon:crate::asuser_a1_policy::Sid,
-        environment:&mut crate::asuser_a1_policy::Environment)->io::Result<&str> {
+        environment:&mut crate::asuser_a1_policy::Environment,site:&mut crate::WindowsAsUserNativeSite)->io::Result<&str> {
+        use crate::WindowsAsUserNativeSite as Site;
+        *site=Site::BrokerInputGuard;
         if self.started||!logon.is_logon(){return Err(bad());}
+        *site=Site::BrokerDeadline;
         self.started=true;remaining(self.deadline)?;
-        let c=identity(unsafe{GetCurrentProcess()})?;self.bundle.verify_originals(c.0,c.1)?;
+        *site=Site::BrokerCallerIdentity;
+        let c=identity(unsafe{GetCurrentProcess()})?;*site=Site::BrokerOriginalBinding;
+        self.bundle.verify_originals(c.0,c.1)?;
+        *site=Site::BrokerTableGuard;
         let table=self.bundle.s.asuser_s_table()?;
         if table.c!=self.bundle.c.sha256()||table.r!=self.bundle.r.sha256(){return Err(bad());}
+        *site=Site::BrokerNoImpersonation;
         no_impersonation(&mut self.originals.caller_thread_token)?;
+        *site=Site::BrokerCallerSubject;
         let (own,sid,own_il)=subject(unsafe{GetCurrentProcess()},&mut self.originals.own_token,&mut self.originals.primary_defaults[0])?;
         let mut nonce=[0u8;32];
+        *site=Site::BrokerEntropy;
         {use rand::RngCore;rand::rngs::OsRng.try_fill_bytes(&mut nonce).map_err(|_|bad())?;}
+        *site=Site::BrokerNonceGuard;
         if nonce==[0;32]{return Err(bad());}let name=endpoint(&nonce);
+        *site=Site::BrokerDescriptor;
         Self::caller_sd(&mut self.originals.sd,&sid,0x0012019f)?;
+        *site=Site::BrokerPipeReservation;
         let sa=attributes(self.originals.sd.raw,false);self.channel.pipe.begin()?;
+        *site=Site::BrokerCreateNamedPipeResult;
         let raw=unsafe{CreateNamedPipeW(wide(&name).as_ptr(),0x40080003,0x0000000e,1,512,512,0,&sa)};
         let error=if raw == -1{unsafe{GetLastError()}}else{0};self.channel.pipe.captured(raw != -1,raw,error)?;
+        *site=Site::BrokerChannelPrepare;
         self.originals.sd.close()?;self.channel.events()?;self.channel.connect_server()?;
-        let helper=self.spawn(&name,&sid,environment)?;
+        *site=Site::BrokerSpawn;
+        let helper=self.spawn(&name,&sid,environment,site)?;
+        *site=Site::BrokerConnect;
         self.channel.connected(self.deadline)?;
+        *site=Site::BrokerGetClientPidResult;
         let mut peer=0;check(unsafe{GetNamedPipeClientProcessId(self.channel.pipe.raw,&mut peer)})?;
+        *site=Site::BrokerPeerPidGuard;
         if peer!=helper.0{return Err(bad());}
+        *site=Site::BrokerPeerSubject;
         let (peer_context,_,peer_il)=subject(self.originals.process.raw,&mut self.originals.peer_token,&mut self.originals.primary_defaults[1])?;
+        *site=Site::BrokerPeerContextGuard;
         if own!=peer_context||own_il!=0x3000||peer_il!=0x3000{return Err(bad());}
+        *site=Site::BrokerBinding;
         let mut logon_bytes=[0u8;68];logon_bytes[..logon.bytes().len()].copy_from_slice(logon.bytes());
         let binding=Binding{generation:self.generation,c_pid:c.0,c_time:c.1,s_pid:helper.0,s_time:helper.1,
             deadline_ticks:shared_deadline(self.deadline)?,c_image:self.bundle.c.sha256(),
             s_image:self.bundle.s.sha256(),r_image:self.bundle.r.sha256(),nonce,logon_sid:logon_bytes,sid_len:logon.bytes().len() as u8};
         self.binding=Some(binding);
+        *site=Site::BrokerHelloSend;
         self.channel.send(message(HELLO,binding),self.deadline)?;
+        *site=Site::BrokerOfferReceive;
         let offer=self.channel.receive(OFFER,Some(binding),self.deadline)?;
+        *site=Site::BrokerPullStation;
         self.pull(offer.station,false)?;
+        *site=Site::BrokerPullDesktop;
         self.pull(offer.desktop,true)?;
         let digest=Sha256::digest(nonce);
         let suffix=digest[..16].iter().map(|v|format!("{v:02x}")).collect::<String>();
         let station=format!("C28StationA1-{}-{suffix}",self.generation);let desktop=format!("C28DesktopA1-{suffix}");
+        *site=Site::BrokerGuiIdentity;
         if object_text(self.originals.station.raw,2)?!=station||object_text(self.originals.desktop.raw,2)?!=desktop
             ||gui_descriptor(&mut self.originals.gui_reads[0],self.originals.station.raw,&sid,logon.bytes(),false)?!=offer.station_sd
             ||gui_descriptor(&mut self.originals.gui_reads[1],self.originals.desktop.raw,&sid,logon.bytes(),true)?!=offer.desktop_sd{return Err(bad());}
+        *site=Site::BrokerAcceptSend;
         self.channel.send(message(ACCEPT,binding),self.deadline)?;
+        *site=Site::BrokerClosedReceive;
         self.channel.receive(CLOSED,Some(binding),self.deadline)?;
+        *site=Site::BrokerProcessWait;
         wait(self.originals.process.raw,self.deadline)?;let mut code=0;
-        check(unsafe{GetExitCodeProcess(self.originals.process.raw,&mut code)})?;if code!=0{return Err(bad());}
+        *site=Site::BrokerProcessExitCodeResult;
+        check(unsafe{GetExitCodeProcess(self.originals.process.raw,&mut code)})?;*site=Site::BrokerProcessExitGuard;
+        if code!=0{return Err(bad());}
+        *site=Site::BrokerThreadWait;
         wait(self.originals.thread.raw,self.deadline)?;
-        check(unsafe{GetExitCodeThread(self.originals.thread.raw,&mut code)})?;if code!=0{return Err(bad());}
+        *site=Site::BrokerThreadExitCodeResult;
+        check(unsafe{GetExitCodeThread(self.originals.thread.raw,&mut code)})?;*site=Site::BrokerThreadExitGuard;
+        if code!=0{return Err(bad());}
         for i in 0..2 {
+            *site=Site::BrokerReaderWait;
             wait(self.originals.readers[i].raw,self.deadline)?;
+            *site=Site::BrokerReaderExitCodeResult;
             check(unsafe{GetExitCodeThread(self.originals.readers[i].raw,&mut code)})?;
+            *site=Site::BrokerReaderCapture;
             let capture=self.readers[i].result.lock().map_err(|_|bad())?.ok_or_else(bad)?;
+            *site=Site::BrokerReaderCompletionGuard;
             if !reader_completed(code,capture){return Err(bad());}
+            *site=Site::BrokerReaderClose;
             self.originals.readers[i].close()?;
         }
+        *site=Site::BrokerOriginalClose;
         self.originals.stdout.close()?;self.originals.stderr.close()?;
         self.originals.thread.close()?;self.originals.process.close()?;self.channel.close()?;
+        *site=Site::BrokerCompletion;
         remaining(self.deadline)?;self.helper_closed=true;
         self.qualified=Some(format!("{station}\\{desktop}"));self.qualified.as_deref().ok_or_else(bad)
     }

@@ -2,6 +2,7 @@
 //! No Drop closes. This module is not a launch authority: it requires the
 //! original native P->C inlet and same materializer/factory pre-login admission.
 //! The default/v7/v8 spawn path is deliberately not redirected into this core.
+use crate::WindowsAsUserNativeSite as Site;
 use std::{cell::UnsafeCell,ffi::c_void,io,mem,ptr,sync::atomic::{AtomicBool,Ordering},time::Instant};
 use windows_sys::Win32::Foundation::{CloseHandle,GetLastError,GetHandleInformation,HANDLE,LocalFree,LUID};
 use windows_sys::Win32::Security::{LogonUserW,GetTokenInformation,SetTokenInformation,LookupPrivilegeValueW,
@@ -71,7 +72,8 @@ fn bad()->io::Error {io::Error::new(io::ErrorKind::PermissionDenied,"A1 original
 enum Stage {Admission,ThreadToken,Login,Grant,Token,TokenSecurity,Broker,ProcessSd,ThreadSd,Create,
     ProcessReadback,ThreadReadback,Transfer,Retirement,Unwind,Deadline}
 #[derive(Clone,Copy)]
-struct Failure {stage:Stage,kind:io::ErrorKind,win32:Option<i32>,ntstatus:Option<i32>}
+struct Failure {stage:Stage,site:Site,kind:io::ErrorKind,win32:Option<i32>,ntstatus:Option<i32>,
+    target_policy_rejection:Option<crate::WindowsTargetPolicyRejection>}
 #[derive(Clone,Copy)]
 struct ObjectReply {status:i32,returned:u32,granted:Option<u32>}
 #[derive(Clone,Copy,Debug,PartialEq,Eq)]
@@ -153,7 +155,8 @@ impl Admission {
     }
 }
 pub(crate) struct Attempt {
-    phase:Phase,first:Option<Failure>,stage:Stage,deadline:Instant,generation:u64,
+    phase:Phase,first:Option<Failure>,stage:Stage,site:Site,deadline:Instant,generation:u64,
+    target_policy_rejection:Option<crate::WindowsTargetPolicyRejection>,
     token:Slot,thread_token:Slot,r_token:Slot,caller_token:Slot,post_thread_token:Slot,process_sd:Slot,thread_sd:Slot,
     process:Slot,thread:Slot,pi:PROCESS_INFORMATION,
     calls:[u8;13], // thread-open, login, token-query, SD-query, AsUser,
@@ -181,7 +184,8 @@ pub(crate) struct Attempt {
 }
 impl Attempt {
     pub(crate) fn reserved(generation:u64,deadline:Instant)->Self {
-        Self{phase:Phase::Reserved,first:None,stage:Stage::Admission,deadline,generation,
+        Self{phase:Phase::Reserved,first:None,stage:Stage::Admission,site:Site::NotObserved,deadline,generation,
+            target_policy_rejection:None,
             token:Slot::new(false),thread_token:Slot::new(false),r_token:Slot::new(false),caller_token:Slot::new(false),post_thread_token:Slot::new(false),process_sd:Slot::new(true),thread_sd:Slot::new(true),
             process:Slot::new(false),thread:Slot::new(false),pi:unsafe{mem::zeroed()},
             calls:[0;13],object_replies:[None;3],buffer:Box::new([0;BUFFER_BYTES/8]),token_sd:Box::new([0;BUFFER_BYTES/8]),
@@ -195,9 +199,34 @@ impl Attempt {
             object_query:None,logon:None,admission:None,broker:None,command:None,
             caller_attempt:Some(crate::CallerPrerequisiteAttempt::new()),origin_retirement_taken:false}
     }
+    fn observe_first_failure(&self, diagnostic:Option<&crate::WindowsStartDiagnostic>) {
+        let (Some(first),Some(diagnostic))=(self.first,diagnostic) else{return;};
+        use crate::WindowsAsUserNativeStage as Observed;
+        let stage=match first.stage {
+            Stage::Admission=>Observed::Admission,
+            Stage::ThreadToken=>Observed::ThreadToken,
+            Stage::Login=>Observed::Login,
+            Stage::Grant=>Observed::Grant,
+            Stage::Token=>Observed::Token,
+            Stage::TokenSecurity=>Observed::TokenSecurity,
+            Stage::Broker=>Observed::Broker,
+            Stage::ProcessSd=>Observed::ProcessSd,
+            Stage::ThreadSd=>Observed::ThreadSd,
+            Stage::Create=>Observed::Create,
+            Stage::ProcessReadback=>Observed::ProcessReadback,
+            Stage::ThreadReadback=>Observed::ThreadReadback,
+            Stage::Transfer=>Observed::Transfer,
+            Stage::Retirement=>Observed::Retirement,
+            Stage::Unwind=>Observed::Unwind,
+            Stage::Deadline=>Observed::Deadline,
+        };
+        // No second OS query, GetLastError, formatting or ownership transfer.
+        diagnostic.observe_asuser_native_failure_with_target_policy(stage,first.site,first.kind,first.win32,first.ntstatus,first.target_policy_rejection);
+    }
     fn fail(&mut self,e:&io::Error) {
-        if self.first.is_none(){self.first=Some(Failure{stage:self.stage,kind:e.kind(),win32:e.raw_os_error(),
-            ntstatus:e.get_ref().and_then(|inner|inner.downcast_ref::<NativeQueryFailure>()).map(|reply|reply.status)});}
+        if self.first.is_none(){self.first=Some(Failure{stage:self.stage,site:self.site,kind:e.kind(),win32:e.raw_os_error(),
+            ntstatus:e.get_ref().and_then(|inner|inner.downcast_ref::<NativeQueryFailure>()).map(|reply|reply.status),
+            target_policy_rejection:if self.site==Site::TargetPolicyGuard {self.target_policy_rejection}else{None}});}
         self.phase=Phase::Unknown;
     }
     pub(crate) fn consume_caller(&mut self)->io::Result<AsUserCaller> {
@@ -215,6 +244,7 @@ impl Attempt {
         self.stage=stage;
         if self.first.is_some(){return Err(bad());}
         if Instant::now()>=self.deadline {
+            self.site=Site::DeadlineGuard;
             let e=io::Error::new(io::ErrorKind::TimedOut,"A1 original budget expired");self.fail(&e);return Err(e);
         }
         Ok(())
@@ -310,34 +340,58 @@ impl Attempt {
             || user.last()!=Some(&0)||password.last()!=Some(&0)
             || user[..user.len()-1].contains(&0)||password[..password.len()-1].contains(&0) {return Err(bad());}
         if !user.iter().copied().eq(a.bundle.target_username().encode_utf16().chain(Some(0))) {return Err(bad());}
+        self.site=Site::LoginCallerIdentity;
         let (pid,creation)=Self::current_identity()?;
+        self.site=Site::LoginCallerBinding;
         a.caller.require_original(pid,creation)?;
         a.bundle.verify_originals(pid,creation)?;
+        self.site=Site::ResolveObjectQuery;
         self.resolve_query()?;
+        self.site=Site::ThreadTokenReservation;
         self.call(0,1,Stage::ThreadToken)?;self.thread_token.begin()?;
+        self.site=Site::OpenThreadTokenResult;
         let ok=unsafe{OpenThreadToken(GetCurrentThread(),8,1,&mut self.thread_token.raw)};
         let error=if ok==0 {unsafe{GetLastError()}}else{0};
         let captured=self.thread_token.capture(ok!=0,error);
         if !(ok==0&&error==1008&&self.thread_token.state==State::Rejected&&self.thread_token.raw==0) {
-            captured?;return Err(bad());
+            captured?;self.site=Site::ThreadTokenAbsenceGuard;return Err(bad());
         }
         self.checkpoint(Stage::ThreadToken)?;
+        self.site=Site::PrepareCaller;
         self.prepare_caller(a)?;
+        self.site=Site::LoginReservation;
         self.call(1,1,Stage::Login)?;self.token.begin()?;self.phase=Phase::LoginInFlight;
         // Exactly one INTERACTIVE/DEFAULT login; original output is preinstalled.
         let domain=[b'.' as u16,0];
+        self.site=Site::LogonUserResult;
         let ok=unsafe{LogonUserW(user.as_ptr(),domain.as_ptr(),password.as_ptr(),2,0,&mut self.token.raw)};
         let error=if ok==0 {unsafe{GetLastError()}}else{0};
         self.token.capture(ok!=0,error)?;
         self.phase=Phase::TokenHeld;self.checkpoint(Stage::Login)?;
         let mut flags=0;
+        self.site=Site::TokenHandleInformation;
         if unsafe{GetHandleInformation(self.token.raw,&mut flags)}==0{return Err(io::Error::last_os_error());}
+        self.site=Site::TokenInheritanceGuard;
         if flags&1!=0{return Err(bad());} // no repair/SetHandleInformation on T
+        self.site=Site::TargetFacts;
         let facts=self.target_facts()?;
-        a.target.validate(&facts)?;
+        self.site=Site::TargetPolicyGuard;
+        self.validate_target_policy(&a.target,&facts)?;
+        self.site=Site::TokenSecurity;
         self.capture_token_security(facts.integrity_rid,a.caller.integrity_rid()?)?;
+        self.site=Site::DefaultInitialization;
         self.initialize_default(a,&facts)?;
         self.logon=Some(facts.logon);self.phase=Phase::TokenValidated;Ok(())
+    }
+    /// Diagnostic-only edge on the original Err, using only the facts already
+    /// captured by this Attempt. Return the SAME error; never change admission.
+    fn validate_target_policy(&mut self,policy:&TargetPolicy,facts:&TargetFacts)->io::Result<()> {
+        let result=policy.validate(facts);
+        if result.is_err()&&self.target_policy_rejection.is_none() {
+            self.target_policy_rejection=Some(policy.first_rejection(facts)
+                .unwrap_or(crate::WindowsTargetPolicyRejection::UnclassifiedGuardRejection));
+        }
+        result
     }
     fn verify_target_before_create(&mut self)->io::Result<()> {
         let observed=self.statistics()?;
@@ -531,27 +585,34 @@ impl Attempt {
         let error=if ok==0{unsafe{GetLastError()}}else{0};slot.raw=raw as isize;slot.capture(ok!=0,error)
     }
     fn create_inner(&mut self,a:&Admission)->io::Result<()> {
+        self.site=Site::CreateInputGuard;
         self.checkpoint(Stage::Create)?;
         if self.phase!=Phase::TokenValidated||self.calls[4]!=0||self.generation!=a.generation{return Err(bad());}
         let logon=self.logon.ok_or_else(bad)?;
+        self.site=Site::ProcessDescriptor;
         self.checkpoint(Stage::ProcessSd)?;
         Self::descriptor(&mut self.process_sd,&policy::process_thread_sddl(a.target.caller,logon,false)?)?;
+        self.site=Site::ThreadDescriptor;
         self.checkpoint(Stage::ThreadSd)?;
         Self::descriptor(&mut self.thread_sd,&policy::process_thread_sddl(a.target.caller,logon,true)?)?;
         let attrs=|slot:&Slot|SECURITY_ATTRIBUTES{nLength:mem::size_of::<SECURITY_ATTRIBUTES>() as u32,
             lpSecurityDescriptor:slot.raw as *mut c_void,bInheritHandle:0};
         let process_sa=attrs(&self.process_sd);let thread_sa=attrs(&self.thread_sd);
+        self.site=Site::CallerBeforeCreate;
         self.caller_window(1,a)?;
+        self.site=Site::CreateCommandGuard;
         let command=self.command.as_mut().ok_or_else(bad)?;
         let (application,cmd,environment,cwd,desktop)=(command.application.as_ptr(),command.command.as_mut_ptr(),
             command.environment.as_mut_ptr(),command.cwd.as_ptr(),command.desktop.as_mut_ptr());
         let mut si:STARTUPINFOW=unsafe{mem::zeroed()};si.cb=mem::size_of::<STARTUPINFOW>() as u32;
         si.lpDesktop=desktop;
+        self.site=Site::CreateReservation;
         self.call(4,1,Stage::Create)?;self.phase=Phase::CreateInFlight;
         self.process.begin()?;self.thread.begin()?;
         // No inheritance: R uses the existing by-name authenticated pipe
         // transport. Token, SD, keys, parent/control and GUI aliases are absent
         // from the runner's handle table. No profile, suspended start or repair.
+        self.site=Site::CreateProcessAsUserResult;
         let ok=unsafe{CreateProcessAsUserW(self.token.raw,application,cmd,
             &process_sa,&thread_sa,0,0x08000000|0x00000400,environment,cwd,&si,&mut self.pi)};
         let error=if ok==0{unsafe{GetLastError()}}else{0};
@@ -562,8 +623,10 @@ impl Attempt {
             self.phase=Phase::Rejected;return Err(io::Error::from_raw_os_error(error as i32));
         }
         process?;thread?;
+        self.site=Site::CreateOutputIdentityGuard;
         if self.pi.dwProcessId==0||self.pi.dwThreadId==0||self.process.raw==self.thread.raw{return Err(bad());}
         self.phase=Phase::Created;self.checkpoint(Stage::Create)?;
+        self.site=Site::CallerAfterCreate;
         self.caller_after_api(a)
     }
     fn readback(&mut self,a:&Admission)->io::Result<()> {
@@ -634,6 +697,7 @@ impl Attempt {
         let proof=bundle.origin_retirement(self.generation);self.origin_retirement_taken=true;Ok(proof)
     }
     pub(crate) fn bind_admission(&mut self,a:std::sync::Arc<Admission>,runner:&crate::MatchedRunnerArtifact)->io::Result<()> {
+        self.site=Site::AdmissionBind;
         let result=self.bind_inner(a,runner);if let Err(error)=&result{self.fail(error);}result
     }
     fn bind_inner(&mut self,a:std::sync::Arc<Admission>,runner:&crate::MatchedRunnerArtifact)->io::Result<()> {
@@ -644,6 +708,7 @@ impl Attempt {
         self.admission=Some(a);Ok(())
     }
     pub(crate) fn set_pipe_names(&mut self,input:String,output:String)->io::Result<()> {
+        self.site=Site::PipeNamesGuard;
         if self.phase!=Phase::Reserved||self.pipe_names.is_some()||input==output||input.len()>160||output.len()>160
             ||![&input,&output].iter().all(|v|v.starts_with(r"\\.\pipe\")){return Err(bad());}
         self.pipe_names=Some((input,output));Ok(())
@@ -654,39 +719,53 @@ impl Attempt {
     }
     fn start_inner(&mut self,command:Command,user:&[u16],password:&[u16],
         stage:impl FnOnce(&std::fs::File,&std::fs::File)->io::Result<()>)->io::Result<()> {
+        self.site=Site::StartCommandGuard;
         if self.command.is_some(){return Err(bad());}
         // All UTF-16/env/CWD locks remain on this SAME original owner through
         // native rejection, cancellation, transfer failure, deadline or unwind.
         self.command=Some(command);
         let admission=self.admission.as_ref().cloned().ok_or_else(bad)?;
+        self.site=Site::LoginInputGuard;
         self.login_inner(&admission,user,password)?;
+        self.site=Site::TransportPipeInputs;
         self.create_transport_pipes(&admission)?;
+        self.site=Site::StageOriginalTransport;
         {use std::os::windows::io::FromRawHandle;
             let write=mem::ManuallyDrop::new(unsafe{std::fs::File::from_raw_handle(self.pipe_slots[0].raw as _)});
             let read=mem::ManuallyDrop::new(unsafe{std::fs::File::from_raw_handle(self.pipe_slots[1].raw as _)});
             stage(&write,&read)?;}
+        self.site=Site::BrokerInputs;
         self.checkpoint(Stage::Broker)?;
         let command=self.command.as_mut().ok_or_else(bad)?;
-        let desktop=self.broker.as_mut().ok_or_else(bad)?.start(self.logon.ok_or_else(bad)?,&mut command.environment)?;
+        self.site=Site::BrokerStart;
+        let desktop=self.broker.as_mut().ok_or_else(bad)?.start(self.logon.ok_or_else(bad)?,&mut command.environment,&mut self.site)?;
         command.desktop=desktop.encode_utf16().chain(Some(0)).collect();
         self.checkpoint(Stage::Broker)?;
+        self.site=Site::TargetBeforeCreate;
         self.verify_target_before_create()?;
+        self.site=Site::CreateInputGuard;
         self.create_inner(&admission)?;
+        self.site=Site::NativeReadback;
         self.readback(&admission)
     }
     fn create_transport_pipes(&mut self,a:&Admission)->io::Result<()> {
+        self.site=Site::TransportPipeInputs;
         let names=self.pipe_names.as_ref().ok_or_else(bad)?.clone();let logon=self.logon.ok_or_else(bad)?;
         for (index,name) in [names.0,names.1].into_iter().enumerate(){
             let text=format!("D:P(A;;GRGWRC;;;{})(A;;GRGW;;;{})(A;;RC;;;OW)",a.target.caller.text(),logon.text());
+            self.site=Site::TransportPipeDescriptor;
             Self::descriptor(&mut self.pipe_sds[index],&text)?;
             let sa=SECURITY_ATTRIBUTES{nLength:mem::size_of::<SECURITY_ATTRIBUTES>() as u32,
                 lpSecurityDescriptor:self.pipe_sds[index].raw as _,bInheritHandle:0};
             let name=name.encode_utf16().chain(Some(0)).collect::<Vec<_>>();
+            self.site=Site::TransportPipeReservation;
             self.pipe_slots[index].begin()?;
+            self.site=Site::CreateNamedPipeResult;
             let raw=unsafe{windows_sys::Win32::System::Pipes::CreateNamedPipeW(name.as_ptr(),
                 if index==0{2|0x80000}else{1|0x80000},8,1,65536,65536,0,&sa)};
             let error=if raw==0||raw == -1{unsafe{GetLastError()}}else{0};
             self.pipe_slots[index].raw=raw;self.pipe_slots[index].capture(raw!=0&&raw != -1,error)?;
+            self.site=Site::TransportPipeCheckpoint;
             self.checkpoint(Stage::TokenSecurity)?;
         }Ok(())
     }
@@ -735,6 +814,10 @@ impl Cell {
         Self{busy:AtomicBool::new(false),original:UnsafeCell::new(Attempt::reserved(generation,deadline))}
     }
     pub(crate) fn with<T>(&self,f:impl FnOnce(&mut Attempt)->io::Result<T>)->io::Result<T> {
+        self.with_observed(None,f)
+    }
+    pub(crate) fn with_observed<T>(&self,diagnostic:Option<&crate::WindowsStartDiagnostic>,
+        f:impl FnOnce(&mut Attempt)->io::Result<T>)->io::Result<T> {
         if self.busy.compare_exchange(false,true,Ordering::AcqRel,Ordering::Acquire).is_err() {
             return Err(io::Error::new(io::ErrorKind::WouldBlock,"A1 original cell borrowed"));
         }
@@ -745,6 +828,7 @@ impl Cell {
         let original=unsafe{&mut *self.original.get()};
         match std::panic::catch_unwind(std::panic::AssertUnwindSafe(||f(original))) {
             Ok(Ok(value))=>{
+                original.observe_first_failure(diagnostic);
                 if let Some(first)=original.first {
                     if let Some(code)=first.win32{return Err(io::Error::from_raw_os_error(code));}
                     if let Some(status)=first.ntstatus {
@@ -756,6 +840,7 @@ impl Cell {
                 Ok(value)
             },Ok(Err(error))=>{
                 original.fail(&error);
+                original.observe_first_failure(diagnostic);
                 if let Some(first)=original.first {
                     if let Some(code)=first.win32{return Err(io::Error::from_raw_os_error(code));}
                     if let Some(status)=first.ntstatus{return Err(io::Error::other(NativeQueryFailure{status,
@@ -763,8 +848,8 @@ impl Cell {
                     return Err(io::Error::new(first.kind,"A1 original first failure retained"));
                 }Err(error)
             },
-            Err(_)=>{original.stage=Stage::Unwind;let error=io::Error::other("A1 original native unwind");
-                original.fail(&error);Err(error)}
+            Err(_)=>{original.stage=Stage::Unwind;original.site=Site::Unwind;let error=io::Error::other("A1 original native unwind");
+                original.fail(&error);original.observe_first_failure(diagnostic);Err(error)}
         }
     }
 }
@@ -857,5 +942,146 @@ mod caller_window_tests {
         assert!(!after.restored_after_api(&before));
         let mut after=window();after.initial.auth=99;after.final_stats=after.initial;
         assert!(!after.restored_after_api(&before));
+    }
+}
+
+#[cfg(test)]
+mod first_failure_projection_tests2659 {
+    use super::*;
+    use crate::{WindowsAsUserNativeStage as S,WindowsStartDiagnostic,
+        WindowsStartError as E,WindowsStartStage};
+    fn cell()->Cell {Cell::new(2659,Instant::now()+std::time::Duration::from_secs(1))}
+    #[test]
+    fn same_original_internal_denial_is_recorded_once_without_inventing_os_access_denied() {
+        let cell=cell();let d=WindowsStartDiagnostic::default();let mut calls=0;
+        d.mark(WindowsStartStage::AsUserAdmissionBind);
+        let result=cell.with_observed::<()>(Some(&d),|a|{
+            calls+=1;a.stage=Stage::Admission;a.site=Site::LoginInputGuard;Err(bad())
+        });
+        assert_eq!(calls,1);assert_eq!(result.unwrap_err().kind(),io::ErrorKind::PermissionDenied);
+        let saved=d.snapshot().unwrap().current.asuser_native_failure.unwrap();
+        assert_eq!(saved.owner_stage,S::Admission);assert_eq!(saved.error,E::IoAccessDenied);
+        assert_eq!(saved.site,Site::LoginInputGuard);
+        assert_eq!((saved.win32,saved.ntstatus),(None,None));
+        let a=unsafe{&*cell.original.get()};
+        assert_eq!(a.phase,Phase::Unknown);assert_eq!(a.first.unwrap().win32,None);
+        assert_eq!(a.first.unwrap().stage,Stage::Admission);assert!(!a.native_adopted());
+    }
+    #[test]
+    fn original_raw_first_error_survives_later_error_and_ignored_error_return_paths() {
+        let cell=cell();let d=WindowsStartDiagnostic::default();
+        let error=cell.with_observed::<()>(Some(&d),|a|{
+            a.stage=Stage::Create;a.site=Site::CreateProcessAsUserResult;a.fail(&io::Error::from_raw_os_error(1314));
+            a.stage=Stage::Retirement;a.site=Site::CallerAfterCreate;Err(io::Error::from_raw_os_error(5))
+        }).unwrap_err();
+        assert_eq!(error.raw_os_error(),Some(1314));
+        let saved=d.snapshot().unwrap().current.asuser_native_failure.unwrap();
+        assert_eq!(saved.owner_stage,S::Create);assert_eq!(saved.win32,Some(1314));
+        assert_eq!(saved.site,Site::CreateProcessAsUserResult);
+        assert_eq!(saved.ntstatus,None);
+        // An ignored original error still cannot become success; no OS call here.
+        assert_eq!(cell.with_observed(Some(&d),|_|Ok(())).unwrap_err().raw_os_error(),Some(1314));
+        assert_eq!(d.snapshot().unwrap().current.asuser_native_failure,Some(saved));
+        assert_eq!(unsafe{&*cell.original.get()}.first.unwrap().stage,Stage::Create);
+    }
+    #[test]
+    fn saved_signed_ntstatus_is_preserved_without_win32_substitution_or_native_query() {
+        let cell=cell();let d=WindowsStartDiagnostic::default();let status=-1073741790i32;
+        let error=cell.with_observed::<()>(Some(&d),|a|{
+            a.stage=Stage::Token;a.site=Site::TargetFacts;
+            a.object_replies[0]=Some(ObjectReply{status,returned:12,granted:None});
+            Err(io::Error::other(NativeQueryFailure{status,returned:12}))
+        }).unwrap_err();
+        assert_eq!(error.raw_os_error(),None);
+        let reply=error.get_ref().unwrap().downcast_ref::<NativeQueryFailure>().unwrap();
+        assert_eq!((reply.status,reply.returned),(status,12));
+        let saved=d.snapshot().unwrap().current.asuser_native_failure.unwrap();
+        assert_eq!(saved.owner_stage,S::Token);assert_eq!(saved.error,E::IoOther);
+        assert_eq!((saved.win32,saved.ntstatus),(None,Some(status)));
+    }
+    #[test]
+    fn busy_original_cell_does_not_call_callback_or_fabricate_first_failure() {
+        let cell=cell();let d=WindowsStartDiagnostic::default();
+        cell.busy.store(true,Ordering::Release);
+        let result=cell.with_observed(Some(&d),|_|->io::Result<()> {panic!("borrow must reject before callback")});
+        assert_eq!(result.unwrap_err().kind(),io::ErrorKind::WouldBlock);
+        cell.busy.store(false,Ordering::Release);
+        assert_eq!(d.snapshot().unwrap().current.asuser_native_failure,None);
+        assert!(unsafe{&*cell.original.get()}.first.is_none());
+        assert_eq!(unsafe{&*cell.original.get()}.phase,Phase::Reserved);
+    }
+    #[test]
+    fn unwind_preserves_original_slots_and_first_stage_without_closing_or_replaying() {
+        let cell=cell();let d=WindowsStartDiagnostic::default();
+        let result=cell.with_observed::<()>(Some(&d),|a|{
+            a.token.raw=77;a.token.state=State::Held;
+            std::panic::resume_unwind(Box::new("synthetic projection unwind"));
+        });
+        assert_eq!(result.unwrap_err().kind(),io::ErrorKind::Other);
+        let a=unsafe{&*cell.original.get()};
+        assert_eq!(a.phase,Phase::Unknown);assert_eq!(a.token.raw,77);assert_eq!(a.token.state,State::Held);
+        assert_eq!(a.first.unwrap().stage,Stage::Unwind);
+        let saved=d.snapshot().unwrap().current.asuser_native_failure.unwrap();
+        assert_eq!(saved.owner_stage,S::Unwind);assert_eq!(saved.site,Site::Unwind);
+        assert_eq!((saved.win32,saved.ntstatus),(None,None));assert!(!a.native_adopted());
+    }
+}
+
+#[cfg(test)]
+mod target_policy_observation_tests2740 {
+    use super::*;
+    use crate::{WindowsStartDiagnostic,WindowsTargetPolicyRejection as R};
+    fn input()->(TargetPolicy,TargetFacts) {
+        let sid=|v:&str|Sid::from_text(v).unwrap();
+        let user=sid("S-1-5-21-1-2-3-1001");let caller=sid("S-1-5-21-1-2-3-1002");
+        let stats=Statistics{token:1,auth:2,modified:3,primary:true};
+        (TargetPolicy{managed_user:user,caller,session:1,caller_auth:4,
+            caller_logon:sid("S-1-5-5-9-10"),caller_token:5,integrity_rid:0x2000},
+         TargetFacts{initial:stats,final_stats:stats,granted:policy::TOKEN_REQUIRED,user,owner:user,
+            context:[0;32],logon:sid("S-1-5-5-11-12"),logon_attributes:0xc0000004,logon_count:1,
+            session:1,integrity_rid:0x2000,elevated:false,elevation_type:1,restricted:false,
+            app_container:false,ui_access:false,virtualization:false,mandatory_policy:1,
+            privilege_count:1,unsafe_privileges:0,admin_membership:false})
+    }
+    #[test] fn same_original_guard_err_has_one_reason_no_raw_os_code_or_resource_operation() {
+        let (policy,mut facts)=input();facts.virtualization=true;
+        let cell=Cell::new(2740,Instant::now()+std::time::Duration::from_secs(1));
+        let diagnostic=WindowsStartDiagnostic::default();
+        let error=cell.with_observed::<()>(Some(&diagnostic),|a|{
+            a.stage=Stage::Token;a.site=Site::TargetPolicyGuard;
+            a.token.raw=77;a.token.state=State::Held;
+            let error=a.validate_target_policy(&policy,&facts).unwrap_err();
+            assert_eq!(error.to_string(),"A1 original security admission rejected");
+            assert_eq!(error.raw_os_error(),None);Err(error)
+        }).unwrap_err();
+        assert_eq!(error.kind(),io::ErrorKind::PermissionDenied);
+        assert_eq!(error.raw_os_error(),None);
+        let observed=diagnostic.snapshot().unwrap().current.asuser_native_failure.unwrap();
+        assert_eq!(observed.target_policy_rejection,Some(R::Virtualization));
+        assert_eq!((observed.win32,observed.ntstatus),(None,None));
+        let a=unsafe{&*cell.original.get()};
+        assert_eq!(a.phase,Phase::Unknown);assert_eq!(a.token.raw,77);
+        assert_eq!(a.token.state,State::Held);assert_eq!(a.calls,[0;13]);
+        assert_eq!(a.first.unwrap().target_policy_rejection,Some(R::Virtualization));
+        assert!(!a.native_adopted());
+    }
+    #[test] fn accepted_facts_do_not_manufacture_a_rejection_or_native_success() {
+        let (policy,facts)=input();let mut a=Attempt::reserved(2740,Instant::now());
+        assert!(a.validate_target_policy(&policy,&facts).is_ok());
+        assert_eq!(a.target_policy_rejection,None);assert!(a.first.is_none());
+        assert_eq!(a.phase,Phase::Reserved);assert_eq!(a.calls,[0;13]);
+        assert!(!a.native_adopted());
+    }
+    #[test] fn later_target_classification_cannot_relabel_an_earlier_first_failure() {
+        let (policy,mut facts)=input();facts.admin_membership=true;
+        let mut a=Attempt::reserved(2740,Instant::now());
+        a.stage=Stage::Token;a.site=Site::TargetFacts;
+        a.fail(&io::Error::from_raw_os_error(5));
+        a.site=Site::TargetPolicyGuard;
+        let error=a.validate_target_policy(&policy,&facts).unwrap_err();a.fail(&error);
+        let diagnostic=WindowsStartDiagnostic::default();a.observe_first_failure(Some(&diagnostic));
+        let first=diagnostic.snapshot().unwrap().current.asuser_native_failure.unwrap();
+        assert_eq!(first.site,Site::TargetFacts);assert_eq!(first.win32,Some(5));
+        assert_eq!(first.target_policy_rejection,None);assert_eq!(a.phase,Phase::Unknown);
     }
 }

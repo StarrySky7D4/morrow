@@ -1047,8 +1047,12 @@ impl CheckedRunnerOwner {
         cell.with(|original|original.take_origin_retirement()).map(Some)
     }
     pub(crate) fn with_asuser_a1<T>(&self,f:impl FnOnce(&mut crate::asuser_a1_native::Attempt)->io::Result<T>)->io::Result<T> {
+        self.with_asuser_a1_observed(None,f)
+    }
+    pub(crate) fn with_asuser_a1_observed<T>(&self,diagnostic:Option<&crate::WindowsStartDiagnostic>,
+        f:impl FnOnce(&mut crate::asuser_a1_native::Attempt)->io::Result<T>)->io::Result<T> {
         self.ensure_can_advance()?;
-        let result=self.asuser_a1.get().ok_or_else(||io::Error::other("A1 original reservation missing"))?.with(f);
+        let result=self.asuser_a1.get().ok_or_else(||io::Error::other("A1 original reservation missing"))?.with_observed(diagnostic,f);
         if result.is_err(){self.seal_unknown(StickyUnknownReason::RuntimeLifecycleFailure);}
         result
     }

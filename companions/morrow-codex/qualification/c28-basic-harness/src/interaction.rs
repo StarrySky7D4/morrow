@@ -35,8 +35,29 @@ pub fn line(reader: &mut impl BufRead) -> Result<String> {
 }
 
 pub fn confirm(reader: &mut impl BufRead, expected: &str, description: &str) -> Result<()> {
+    confirm_inner(reader, expected, description, #[cfg(windows)] None)
+}
+
+#[cfg(windows)]
+pub(crate) fn confirm_first_observed(reader: &mut impl BufRead, expected: &str, description: &str,
+    startup: &codex_windows_sandbox::StartupObservation) -> Result<()> {
+    confirm_inner(reader, expected, description, Some(startup.first_prompt()))
+}
+
+fn confirm_inner(reader: &mut impl BufRead, expected: &str, description: &str,
+    #[cfg(windows)] mut prompt: Option<codex_windows_sandbox::StartupPrompt>) -> Result<()> {
+    #[cfg(windows)]
+    let write=prompt.as_mut().map(|value|value.write_entered());
+    // Exactly the original write/flush calls and panic/error propagation.
     println!("{description}\nType exactly: {expected}");
-    std::io::stdout().flush()?;
+    #[cfg(windows)]
+    if let Some(write)=write{write.returned();}
+    #[cfg(windows)]
+    let flush=prompt.as_mut().map(|value|value.flush_entered());
+    let result=std::io::stdout().flush();
+    #[cfg(windows)]
+    if let (Some(prompt),Some(flush))=(prompt.as_mut(),flush){prompt.flush_result(flush,&result);}
+    result?;
     ensure!(
         line(reader)? == expected,
         "confirmation not supplied; no action authorized"

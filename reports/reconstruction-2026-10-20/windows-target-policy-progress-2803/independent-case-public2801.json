@@ -1,0 +1,59 @@
+{
+  "schema": "ROOT_FULL_OUTER_PUBLIC_ONLY_REVIEW2801",
+  "utc": "2026-10-19T22:37:54.336476+00:00",
+  "review_script": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\audit-case-public2801.py",
+    "bytes": 2265,
+    "sha256": "0d9bf94e11299f2acb6710808a381cd8102d8b47912fffc682f639a0e3fbfc5f"
+  },
+  "actual_tool": "d58298:exit0",
+  "actual_PS5_outer_exit": 0,
+  "actual_original_child_pid": 4100,
+  "actual_child_exit": 0,
+  "public_pins_held": 82,
+  "result": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\case-launch2800-public-only-result.json",
+    "bytes": 460,
+    "sha256": "1642c5866cb6b05eed5d742c8582bb432b928280a52055e253f556ce31cd78e8"
+  },
+  "actual_stdout": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\case-launch2800-public-only-stdout.log",
+    "bytes": 60,
+    "sha256": "55f9cbaa96f856a004cd812317c6cb73c31b60121d7cfd9659659e80079d7ca8"
+  },
+  "actual_stderr": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\case-launch2800-public-only-stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "actual_stdout_marker": "ROOT1737_PUBLIC_PINS_ONLY_NO_VM_PRIVATE_POLICY_OR_APPROVAL",
+  "preparation": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\case-launcher-preparation2800.json",
+    "bytes": 12546,
+    "sha256": "53e613363f82df3860e8812e8274daf8df6b069bd399c360a3840f8d3d048618"
+  },
+  "launcher": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\invoke-transaction-case2800.ps1",
+    "bytes": 9875,
+    "sha256": "cff01dff9174208949191e6659baca3d7bc7d1a95b3f4efa60042535b9604f94"
+  },
+  "proposal": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\single-native47-account-right-approval2800.md",
+    "bytes": 5385,
+    "sha256": "4260d2a3edf6658a39637a8d89e159eb5c51f6868b4339801848fb09d3f7293e"
+  },
+  "selection": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\case-selection2784.json",
+    "bytes": 1549,
+    "sha256": "52f1164ddf7fbf01f73b53669e69fb82c0b54b2dc064f11f22ca1b8f0a95f2c9"
+  },
+  "case_plan": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-transaction-review2770\\case-plan.json",
+    "bytes": 7019,
+    "sha256": "30fee0e7b9f534b5d14666b96a5ec6901460c33a64873fa880362700e7bbd264"
+  },
+  "human_authorization": "NOT_REQUESTED_NOT_GRANTED",
+  "Guest_or_private_or_policy_or47_effects": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

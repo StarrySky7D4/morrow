@@ -1,0 +1,58 @@
+{
+  "schema": "ROOT_APP048_INDEPENDENT_GUI2797_V1",
+  "utc": "2026-10-19T22:35:23.089951+00:00",
+  "ordinary_tool": "58206",
+  "actual_completion_chunk": "521d6f",
+  "ordinary_exit": 0,
+  "bundle_manifest": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-app-bundle2775\\bundle-manifest.json",
+    "bytes": 31144,
+    "sha256": "5971a33648583ab10143064b9cdf0656701e6d3ac7a0d8994f4c7a0260b5d9a9"
+  },
+  "same_original_app_pid": 8352,
+  "full_creation_filetime": "134369228956577689",
+  "actual_native_DWORD": 0,
+  "actual_User_interactive_session": 2,
+  "actual_checks": [
+    "Desktop composition blur 0/1/12/40/0 API result only, no pixel equivalence claim",
+    "Silent WAV decoder and advancing playback clock",
+    "Seek, exclusion and restore without autoplay",
+    "Actual Release Rust-backed workspace render without Flutter error"
+  ],
+  "actual_PNG": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-vm2776\\selfcheck\\run\\self-check.png",
+    "bytes": 677970,
+    "sha256": "bf06bf3e8d1b98863b3b2fbe42153415102ee850c592f72ca11a53a868c60797"
+  },
+  "root_visual_review": "PENDING_ROOT_INSPECTION_CURRENT2775_CAPTURE_NO_INHERITED_VISUAL_PASS",
+  "notes": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-vm2776\\selfcheck\\run\\self-check.md",
+    "bytes": 424,
+    "sha256": "9959cdb457229f2bfb01ecb99e915510a8b4360fbe9bd96b73e8545edf83fd56"
+  },
+  "readback": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-vm2776\\selfcheck\\run\\app-self-check.json",
+    "bytes": 2119,
+    "sha256": "7c4ba3c863676f79f89614b51c115ccc300495f131ec10461a10a2cf40ccc266"
+  },
+  "terminal": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-ui-vm2776\\selfcheck\\run\\terminal.json",
+    "bytes": 309,
+    "sha256": "67affffb245fe50ad2d0660621536dd9572e6420ec9bb77e8f3c8e6161da7734"
+  },
+  "normal_close": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\independent-normal-close2796.json",
+    "bytes": 1928,
+    "sha256": "fcc63764c69d42c6d5361a15593bd7a89dfa4168a66c42a7f6ec08a5558260bc"
+  },
+  "EOF2_three_checked_native_closes_and_managed_joins": true,
+  "own_task_finished_and_only_owned_task_removed": true,
+  "new_VM_session_inputs_closed": true,
+  "native_reader_TLS": "NOT_CLAIMED_BY_MANAGED_JOIN",
+  "outer_native_wrapper_closure": "NOT_PROVEN_BY_ORDINARY_TOOL_EXIT_OR_SCHEDULER_STATE",
+  "native47_and_Nine": "NOT_RUN",
+  "scope": "Current2744 native/default2775/bundle2775 andQA2776 actual71 GUI bounded checks only; no actual47 or complete SDK/release qualification",
+  "policy_VHDX_checkpoint_changes": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

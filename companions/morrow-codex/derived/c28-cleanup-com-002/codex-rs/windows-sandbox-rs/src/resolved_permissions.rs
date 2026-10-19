@@ -1,3 +1,4 @@
+use crate::start_diagnostic::PermissionProfileResolveError;
 use anyhow::Result;
 use codex_protocol::models::PermissionProfile;
 use codex_protocol::permissions::FileSystemPath;
@@ -63,15 +64,11 @@ pub fn token_mode_for_permission_profile(
 impl ResolvedWindowsSandboxPermissions {
     pub fn try_from_permission_profile(permission_profile: &PermissionProfile) -> Result<Self> {
         if !matches!(permission_profile, PermissionProfile::Managed { .. }) {
-            anyhow::bail!(
-                "only managed permission profiles can be enforced by the Windows sandbox"
-            );
+            return Err(PermissionProfileResolveError::ManagedProfileRequired.into());
         }
         let (file_system, network) = permission_profile.to_runtime_permissions();
         if !matches!(file_system.kind, FileSystemSandboxKind::Restricted) {
-            anyhow::bail!(
-                "only restricted managed filesystem permissions can be enforced by the Windows sandbox"
-            );
+            return Err(PermissionProfileResolveError::RestrictedFilesystemRequired.into());
         }
         Ok(Self {
             file_system,
@@ -240,6 +237,29 @@ mod tests {
     use codex_protocol::permissions::project_roots_glob_pattern;
     use pretty_assertions::assert_eq;
     use tempfile::TempDir;
+
+    #[test]
+    fn resolver_rejections2357_keep_original_text_and_typed_cause_without_io() {
+        let profiles = [
+            (PermissionProfile::Disabled, PermissionProfileResolveError::ManagedProfileRequired,
+                "only managed permission profiles can be enforced by the Windows sandbox"),
+            (PermissionProfile::Managed {
+                file_system: ManagedFileSystemPermissions::Unrestricted,
+                network: NetworkSandboxPolicy::Restricted,
+            }, PermissionProfileResolveError::RestrictedFilesystemRequired,
+                "only restricted managed filesystem permissions can be enforced by the Windows sandbox"),
+        ];
+        for (profile, cause, text) in profiles {
+            let error = ResolvedWindowsSandboxPermissions::try_from_permission_profile_for_workspace_roots(
+                &profile, &[]).unwrap_err();
+            assert_eq!(error.downcast_ref::<PermissionProfileResolveError>(), Some(&cause));
+            assert_eq!(error.to_string(), text);
+            assert!(error.downcast_ref::<std::io::Error>().is_none());
+        }
+        // Successful restricted resolution is still the real resolver, not a substitute.
+        assert!(ResolvedWindowsSandboxPermissions::try_from_permission_profile_for_workspace_roots(
+            &permission_profile_with_entries(vec![]), &[]).is_ok());
+    }
 
     fn workspace_roots_for(root: &Path) -> Vec<AbsolutePathBuf> {
         vec![AbsolutePathBuf::from_absolute_path(root).expect("absolute workspace root")]
