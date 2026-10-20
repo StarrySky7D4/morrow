@@ -40,6 +40,7 @@ pub(crate) const DESKTOP_OBSERVE:u32=DESKTOP_READ_CONTROL|DESKTOP_READOBJECTS;
 mod tests {
     use super::*;
     #[test] fn target_never_receives_original_token_or_security_management_rights() {
+        assert_eq!(TOKEN_REQUIRED,crate::asuser_a1_target::TOKEN_REQUIRED);
         assert_eq!(PROCESS_TARGET&PROCESS_QUERY_LIMITED_INFORMATION,0);
         assert_eq!(THREAD_TARGET&THREAD_QUERY_LIMITED_INFORMATION,0);
         for mask in [STATION_TARGET,DESKTOP_TARGET,OWNER_READ_CONTROL] {

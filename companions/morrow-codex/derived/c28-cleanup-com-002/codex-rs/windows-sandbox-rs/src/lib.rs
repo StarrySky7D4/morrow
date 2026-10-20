@@ -76,6 +76,9 @@ pub use station_broker::{station_broker_a0_dispatch,StationBrokerA0,
     STATION_BROKER_DIAGNOSTIC_BYTES,STATION_BROKER_DIAGNOSTIC_FIXTURE_SWITCH,
     STATION_BROKER_A0_SWITCH,STATION_BROKER_A0_FIXTURE_SWITCH};
 
+#[cfg(any(windows,test))]
+mod asuser_attempt_outcome;
+mod asuser_a1_target;
 mod start_diagnostic;
 pub use start_diagnostic::{
     ContextFact, ContextUnavailable, QueryHandleClose, StartupAccessResult,
@@ -415,6 +418,7 @@ pub use ipc_framed::ErrorPayload;
 #[cfg(target_os = "windows")]
 pub use ipc_framed::RunnerControlCapabilities;
 
+#[cfg(target_os = "windows")]
 pub use ipc_framed::CHECKED_IPC_PROTOCOL_VERSION;
 #[cfg(target_os = "windows")]
 pub use ipc_framed::ErrorStage;
@@ -484,6 +488,7 @@ pub use process::StdinMode;
 pub use process::create_process_as_user;
 #[cfg(target_os = "windows")]
 pub use process::read_handle_loop;
+#[cfg(target_os = "windows")]
 pub use process::read_handle_loop_checked;
 #[cfg(target_os = "windows")]
 pub use process::spawn_process_with_pipes;

@@ -231,18 +231,23 @@ fn create_fresh_sandbox_user(
             )));
         }
 
-        if let Ok(group_name) = lookup_account_name_for_sid(SID_USERS) {
+        {
+            let group_name = lookup_account_name_for_sid(SID_USERS)?;
             let group = to_wide(OsStr::new(&group_name));
             let member = LOCALGROUP_MEMBERS_INFO_3 {
                 lgrmi3_domainandname: name_w.as_ptr() as *mut u16,
             };
-            let _ = NetLocalGroupAddMembers(
+            let member_status = NetLocalGroupAddMembers(
                 std::ptr::null(),
                 group.as_ptr(),
                 3,
                 &member as *const _ as *mut u8,
                 1,
             );
+            // NetUserAdd may already have installed the default Users group.
+            // Other failures must not silently produce an unsupported account.
+            ensure!(member_status == NERR_Success || member_status == windows_sys::Win32::Foundation::ERROR_MEMBER_IN_ALIAS,
+                "NetLocalGroupAddMembers(Users, {username}) failed with code {member_status}");
         }
 
         let group_w = to_wide(OsStr::new(SANDBOX_USERS_GROUP));

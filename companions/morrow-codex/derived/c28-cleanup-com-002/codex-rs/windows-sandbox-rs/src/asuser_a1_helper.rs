@@ -355,7 +355,7 @@ fn sid_from_token_buffer(words:&[u64],len:usize,sid:*mut c_void,minimum:usize)->
     Ok(bytes.get(start..end).ok_or_else(bad)?.to_vec())
 }
 pub(super) struct Subject {
-    pub(super) hash:[u8;32],pub(super) sid:Vec<u8>,pub(super) integrity:u32,
+    pub(super) hash:[u8;32],pub(super) security_context:[u8;32],pub(super) sid:Vec<u8>,pub(super) integrity:u32,
     pub(super) privileges:Vec<(u32,i32,u32)>,
 }
 fn subject(process:isize,slot:&mut Slot,defaults:&mut Option<TrustedDefaults>)->io::Result<([u8;32],Vec<u8>,u32)> {
@@ -461,6 +461,7 @@ pub(super) fn retained_subject(token:isize)->io::Result<Subject> {
     }
     let (b,len)=token_buffer(token,TokenHasRestrictions)?;
     let restricted=match len {1=>b[0]&255!=0,4=>b[0] as u32!=0,_=>return Err(bad())};
+    let mut security_context=hash.clone();
     hash.update([u8::from(restricted)]);
     // Same SID/LUID/elevation alone is insufficient when groups or privileges
     // were removed without a different integrity level. Compare finite actual
@@ -477,7 +478,12 @@ pub(super) fn retained_subject(token:isize)->io::Result<Subject> {
         groups.push((sid_from_token_buffer(&b,len,entry.Sid,array_end)?,entry.Attributes));
     }
     groups.sort();hash.update((groups.len() as u32).to_le_bytes());
-    for (sid,attributes) in groups {hash.update((sid.len() as u32).to_le_bytes());hash.update(sid);hash.update(attributes.to_le_bytes());}
+    security_context.update((groups.len() as u32).to_le_bytes());
+    for (sid,attributes) in groups {
+        for digest in [&mut hash,&mut security_context] {
+            digest.update((sid.len() as u32).to_le_bytes());digest.update(&sid);digest.update(attributes.to_le_bytes());
+        }
+    }
     }
     let (b,len)=token_buffer(token,TokenPrivileges)?;if len<4 {return Err(bad());}let count=b[0] as u32 as usize;
     let offset=mem::offset_of!(TOKEN_PRIVILEGES,Privileges);
@@ -489,7 +495,7 @@ pub(super) fn retained_subject(token:isize)->io::Result<Subject> {
     }
     privileges.sort();hash.update((privileges.len() as u32).to_le_bytes());
     for (low,high,attributes) in &privileges {hash.update(low.to_le_bytes());hash.update(high.to_le_bytes());hash.update(attributes.to_le_bytes());}
-    Ok(Subject {hash:hash.finalize().into(),sid,integrity,privileges})
+    Ok(Subject {hash:hash.finalize().into(),security_context:security_context.finalize().into(),sid,integrity,privileges})
 }
 fn sid_text(sid:&[u8])->io::Result<String> {
     if sid.len()<8 || sid[0]!=1 || sid.len()!=8+sid[1] as usize*4 {return Err(bad());}

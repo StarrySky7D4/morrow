@@ -605,48 +605,10 @@ pub enum WindowsAsUserNativeSite {
     HelperReaderReservation,
     HelperCreateReaderResult,
     HelperReaderIdGuard,
+    LaunchTokenDerivation,
 }
 
-/// Bounded diagnostic reasons for the FIRST matching original target-policy
-/// predicate, never a token fact, OS error, SID/path or admission capability.
-/// None in WindowsAsUserNativeFailure means not observed; no clean inference.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-#[repr(u8)]
-pub enum WindowsTargetPolicyRejection {
-    /// Guard denied but the diagnostic mirror could not classify it. Stay denied.
-    UnclassifiedGuardRejection,
-    StatisticsChanged,
-    NotPrimary,
-    TokenIdentityZero,
-    AuthenticationIdentityZero,
-    AuthenticationEqualsCaller,
-    TokenIdentityEqualsCaller,
-    ModifiedIdentityZero,
-    RequiredGrantMissing,
-    UserNotManaged,
-    UserEqualsCaller,
-    UserIsLogonSid,
-    LogonGroupCountNotOne,
-    LogonSidInvalid,
-    LogonEqualsCaller,
-    LogonAttributesMissing,
-    LogonDenyOnly,
-    SessionMismatch,
-    IntegrityMismatch,
-    IntegrityAboveMedium,
-    Elevated,
-    FullElevationType,
-    UnsupportedElevationType,
-    Restricted,
-    AppContainer,
-    UiAccess,
-    Virtualization,
-    MandatoryNoWriteUpMissing,
-    MandatoryPolicyUnsupportedBits,
-    PrivilegeCountExceeded,
-    UnsafePrivilegesPresent,
-    AdministratorMembership,
-}
+pub use crate::asuser_a1_target::WindowsTargetPolicyRejection;
 
 /// Values copied from the owner's already captured first Failure only.
 /// IoAccessDenied is an ErrorKind classification; absent raw codes stay absent.
