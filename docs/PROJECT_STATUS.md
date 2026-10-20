@@ -1,3 +1,14 @@
+<!-- STRUCTURAL-REPAIR-CURRENT-BEGIN -->
+## 当前修复分支（2026-10-20）
+
+`codex/structural-blockers-20261020` 已开始整体修复。当前状态统一见
+[机器可读状态](qualification/current.json)和[实现、验收入口及未完成项](qualification/STRUCTURAL_REPAIRS.md)。
+令牌生成契约、原生测试依赖图和原生平台依赖已修复并接受本地限定验证；
+Windows 实际启动、完整事务退休、正式编辑器持久接线和完整 SDK 资格仍未通过。
+`source_accepted=false`，`release_eligible=false`。以下内容是带日期的历史检查点，
+不代表本分支当前验收结果。
+<!-- STRUCTURAL-REPAIR-CURRENT-END -->
+
 <!-- C28-SOURCE-CHECKPOINT-047-20261017-BEGIN -->
 ## Windows SDK 最新检查点（2026-10-17）
 

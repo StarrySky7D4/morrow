@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "branch": "codex/structural-blockers-20261020",
+  "base_commit": "abae8bfd568d95d5230de57082149e8b645e90b6",
+  "updated": "2026-10-20",
+  "release_eligible": false,
+  "source_accepted": false,
+  "ci_authorization": "after overall repair; intermediate commits use [skip ci]",
+  "repairs": [
+    {"id":"TOKEN_CONTRACT","state":"IMPLEMENTED_RUNTIME_PENDING","detail":"Separate login source and one privilege-deleted launch token; shared admission evaluator; same owner retains both originals."},
+    {"id":"FAILURE_OWNERSHIP","state":"PARTIAL","detail":"Dispatch, observation and local resource state separated; known login failures close token/query handles once. Full factory/account/registry retirement remains unqualified."},
+    {"id":"HOST_PLATFORM_DEPENDENCIES","state":"LOCALLY_VERIFIED","detail":"Native catalog dependency declared for all native platforms; Linux host unit tests pass."},
+    {"id":"NATIVE_TEST_LOCK","state":"LOCALLY_VERIFIED","detail":"Restore native workspace test dependency graph; production package identities retained; native Windows tests cross-check succeeds."},
+    {"id":"REPRODUCIBLE_ACCEPTANCE","state":"PARTIAL","detail":"Repository-relative portable/Windows entry and exact-source gate report available; original full47 driver sources absent."},
+    {"id":"EDITOR_PERSISTENCE","state":"OPEN","detail":"Formal NewIdeaDialog autosave/complete successor handoff remains unwired; do not enable S1 cleanup without complete S2 durable proof."}
+  ],
+  "gates": {
+    "L0_TOKEN":"NOT_RUN",
+    "L1_RUNNER":"NOT_RUN",
+    "L2_BUSINESS_AND_RETIREMENT":"NOT_RUN",
+    "L3_FULL47_NINE":"BLOCKED_MISSING_DRIVER_AND_INTERACTIVE_WINDOWS",
+    "EDITOR_PERSISTENCE":"OPEN",
+    "SDK26":"OPEN",
+    "G04":"OPEN",
+    "SDK_FREEZE":"OPEN"
+  },
+  "missing_acceptance_inputs": [
+    "Common1737.ps1",
+    "Guest-Readiness1737.ps1",
+    "Guest-Transaction1737.ps1",
+    "Invoke-Transaction1737.ps1",
+    "RootTransactionCapture1737.cs",
+    "RootTransactionCapture1737.Metadata.cs",
+    "invoke-transaction-case2800.ps1",
+    "single-native47-account-right-approval2800.md"
+  ],
+  "historical_evidence": "reports/reconstruction-2026-10-20/windows-target-policy-progress-2803/README.md"
+}
