@@ -1,0 +1,77 @@
+name: Structural repair acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/structural-blockers-20261020]
+permissions:
+  contents: read
+concurrency:
+  group: structural-acceptance-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  RUSTUP_TOOLCHAIN: 1.96.0
+  CARGO_TERM_COLOR: never
+jobs:
+  portable:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install build prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y capnproto pkg-config libssl-dev
+          rustup toolchain install 1.96.0 --profile minimal
+      - name: Portable policy, gate, and host regressions
+        run: python tool/verify_structural_repairs.py --mode portable
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: structural-portable
+          path: build/structural-acceptance/
+  windows-token:
+    runs-on: windows-2025
+    timeout-minutes: 60
+    env:
+      MORROW_DISPOSABLE_WINDOWS_TEST: '1'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned Rust toolchain
+        shell: pwsh
+        run: |
+          rustup toolchain install 1.96.0 --profile minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Rust installation failed' }
+      - name: Native A1 regressions and disposable account token contract
+        run: python tool/verify_structural_repairs.py --mode windows --disposable-windows
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: structural-windows-token
+          path: build/structural-acceptance/
+  editor-regressions:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.4'
+          channel: stable
+      - run: flutter pub get --enforce-lockfile
+      - name: Editor ownership, capture, persistence and handoff regression
+        run: >-
+          flutter test --no-pub
+          test/editor_draft_session_test.dart
+          test/editor_draft_workspace_test.dart
+          test/editor_draft_binding_test.dart
+          test/editor_draft_capture_barrier_test.dart
+          test/editor_draft_assets_test.dart
+          test/editor_draft_handoff_assets_test.dart
+          test/editor_draft_handoff_coordinator_test.dart
+          test/editor_draft_import_session_test.dart
