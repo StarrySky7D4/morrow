@@ -1,3 +1,17 @@
+<!-- MORROW-BLOCKERS-CALLCHAINS-20261021-BEGIN -->
+## 当前开发结论与调用链（2026-10-21）
+
+审查分支为 `codex/local-continue-20261020`，固定源码基准为 [`f8ef33ec`](https://github.com/StarrySky7D4/morrow/commit/f8ef33ec091a82d68f3c2745dde950f8762d8878)。当前主要卡点分为三条独立推进线：
+
+- **Windows 受限执行：**R 已创建，但在打开自身主令牌时报告 `OpenOriginalToken / AccessDenied`；实际拒绝子机制尚未证实，L1 仍为 Unknown。
+- **完整资源退役：**native、registry、SDK、factory、account/setup 的可证明干净拒绝与额度归还尚未贯通；局部关闭不等于整次尝试已清理。
+- **编辑器恢复：**正式保存、S1→S2 与只读恢复已有实现；可编辑重启、退役预检及部分 ACK/close 恢复分支、256 个历史 journal 身份的维护仍待闭合。
+
+**报告入口：**[结论与四张调用图（Markdown）](reports/reconstruction-2026-10-21/morrow-blockers-callchains.md) · [完整可视化网页（HTML）](reports/reconstruction-2026-10-21/morrow-blockers-callchains.html)。HTML 为自包含文件，下载后用浏览器打开即可查看，无需构建或外部脚本。
+
+本次为源码只读审查与既有证据归档，不新增产品通过结论。`source_accepted=false`、`release_eligible=false`；SDK26／G04／SDK_FREEZE 仍 OPEN。没有运行 Windows 验收或 CI；提交使用 `[skip ci]`。后续状态以 [资格台账](docs/qualification/current.json) 与 [本地续作记录](docs/qualification/LOCAL_CONTINUATION.md) 为准，以下较早检查点保留各自历史范围。
+<!-- MORROW-BLOCKERS-CALLCHAINS-20261021-END -->
+
 <!-- C28-SOURCE-CHECKPOINT-047-20261017-BEGIN -->
 ## Windows SDK 最新检查点（2026-10-17）
 
@@ -205,6 +219,8 @@ flutter build web --no-web-resources-cdn
 
 ## 文档
 
+- [2026-10-21 当前卡点与调用链结论](reports/reconstruction-2026-10-21/morrow-blockers-callchains.md)
+- [2026-10-21 可视化分析网页（下载后打开）](reports/reconstruction-2026-10-21/morrow-blockers-callchains.html)
 - [项目当前状态（统一入口）](docs/PROJECT_STATUS.md)
 - [本版发布说明与验证](reports/0.1.9-test.56-release.md)
 - [开发看板与后续任务](docs/DEVELOPMENT_BOARD.md)
