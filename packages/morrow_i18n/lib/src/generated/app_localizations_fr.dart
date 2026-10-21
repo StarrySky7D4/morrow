@@ -481,6 +481,37 @@ class AppLocalizationsFr extends AppLocalizations {
       'Vérifier les décisions sur les pièces jointes';
 
   @override
+  String get mainDraftJournalEmpty => 'Aucun brouillon enregistré.';
+
+  @override
+  String get mainDraftJournalExport => 'Exporter la copie de récupération';
+
+  @override
+  String get mainDraftJournalExportFailed =>
+      'Impossible d’exporter la copie de récupération complète.';
+
+  @override
+  String get mainDraftJournalExported => 'Copie de récupération exportée.';
+
+  @override
+  String get mainDraftJournalRetire => 'Retirer le brouillon enregistré';
+
+  @override
+  String get mainDraftJournalRetireConfirm =>
+      'Retirer ce brouillon et libérer ses copies de pièces jointes ? Exportez une copie de récupération si nécessaire. Le contenu enregistré et les résultats non confirmés restent inchangés.';
+
+  @override
+  String get mainDraftJournalRetireUnknown =>
+      'Le retrait n’est pas confirmé. Vérifiez l’opération initiale sans la soumettre à nouveau.';
+
+  @override
+  String get mainDraftJournalReview =>
+      'Cette copie de récupération est en lecture seule. Le texte brut, les pièces jointes et les captures sont conservés ; la consulter ne reprend pas un enregistrement précédent.';
+
+  @override
+  String get mainDraftJournalTitle => 'Brouillons enregistrés';
+
+  @override
   String get mainEdit => 'Modifier';
 
   @override

@@ -101,9 +101,8 @@ unsafe fn set_default_dacl(h_token: HANDLE, logon_sid: *mut c_void) -> Result<()
         if !p_new_dacl.is_null() {
             LocalFree(p_new_dacl as HLOCAL);
         }
-        return Err(anyhow!(
-            "SetTokenInformation(TokenDefaultDacl) failed: {err}",
-        ));
+        return Err(anyhow::Error::from(std::io::Error::from_raw_os_error(err as i32))
+            .context(crate::RunnerStartupSite::SetRestrictedDefaultDacl));
     }
     if !p_new_dacl.is_null() {
         LocalFree(p_new_dacl as HLOCAL);
@@ -191,9 +190,49 @@ pub unsafe fn get_current_token_for_restriction() -> Result<HANDLE> {
     }
     let ok = unsafe { OpenProcessToken(GetCurrentProcess(), desired, &mut h) };
     if ok == 0 {
-        return Err(anyhow!("OpenProcessToken failed: {}", GetLastError()));
+        return Err(anyhow::Error::from(std::io::Error::last_os_error()).context("OpenProcessToken failed"));
     }
     Ok(h)
+}
+
+/// Open only a read/duplicate handle to the unchanged current primary token.
+/// Initialization rights belong to a newly derived object, not this original.
+///
+/// # Safety
+/// The caller must retain ownership and check closure of the returned handle.
+pub unsafe fn open_current_token_for_query_duplicate() -> Result<HANDLE> {
+    let mut token = 0;
+    if windows_sys::Win32::System::Threading::OpenProcessToken(
+        GetCurrentProcess(), TOKEN_QUERY | TOKEN_DUPLICATE, &mut token,
+    ) == 0 {
+        return Err(anyhow::Error::from(std::io::Error::last_os_error())
+            .context("OpenProcessToken(query duplicate) failed"));
+    }
+    Ok(token)
+}
+
+/// Make an independent primary token for capability restriction. A medium token
+/// may have a high-labeled original kernel object; requesting adjustment access
+/// while opening that object fails MIC even though duplication is permitted.
+/// DuplicateTokenEx creates a new object using the current caller's default SD.
+/// No original token, object DACL, integrity label or default DACL is modified.
+///
+/// # Safety
+/// `source` must remain valid with TOKEN_DUPLICATE. The caller must retain the
+/// returned original handle and check its closure. No handle is inheritable.
+pub unsafe fn duplicate_token_for_restriction(source: HANDLE) -> Result<HANDLE> {
+    let desired = TOKEN_QUERY | TOKEN_DUPLICATE | TOKEN_ASSIGN_PRIMARY
+        | TOKEN_ADJUST_DEFAULT | TOKEN_ADJUST_PRIVILEGES;
+    let mut token = 0;
+    if windows_sys::Win32::Security::DuplicateTokenEx(
+        source, desired, std::ptr::null(),
+        windows_sys::Win32::Security::SecurityImpersonation,
+        windows_sys::Win32::Security::TokenPrimary, &mut token,
+    ) == 0 {
+        return Err(anyhow::Error::from(std::io::Error::last_os_error())
+            .context("DuplicateTokenEx(restriction source) failed"));
+    }
+    Ok(token)
 }
 
 /// An owned token group, including attributes such as enabled and deny-only.
@@ -343,7 +382,8 @@ unsafe fn enable_single_privilege(h_token: HANDLE, name: &str) -> Result<()> {
     };
     let ok = LookupPrivilegeValueW(std::ptr::null(), to_wide(name).as_ptr(), &mut luid);
     if ok == 0 {
-        return Err(anyhow!("LookupPrivilegeValueW failed: {}", GetLastError()));
+        return Err(anyhow::Error::from(std::io::Error::last_os_error())
+            .context(crate::RunnerStartupSite::EnableChangeNotifyPrivilege));
     }
     let mut tp: TOKEN_PRIVILEGES = std::mem::zeroed();
     tp.PrivilegeCount = 1;
@@ -358,11 +398,13 @@ unsafe fn enable_single_privilege(h_token: HANDLE, name: &str) -> Result<()> {
         std::ptr::null_mut(),
     );
     if ok2 == 0 {
-        return Err(anyhow!("AdjustTokenPrivileges failed: {}", GetLastError()));
+        return Err(anyhow::Error::from(std::io::Error::last_os_error())
+            .context(crate::RunnerStartupSite::EnableChangeNotifyPrivilege));
     }
     let err = GetLastError();
     if err != 0 {
-        return Err(anyhow!("AdjustTokenPrivileges error {err}"));
+        return Err(anyhow::Error::from(std::io::Error::from_raw_os_error(err as i32))
+            .context(crate::RunnerStartupSite::EnableChangeNotifyPrivilege));
     }
     Ok(())
 }
@@ -510,7 +552,7 @@ unsafe fn create_token_with_caps_from(
         &mut new_token,
     );
     if ok == 0 {
-        return Err(anyhow!("CreateRestrictedToken failed: {}", GetLastError()));
+        return Err(anyhow::Error::from(std::io::Error::last_os_error()).context(crate::RunnerStartupSite::CreateRestrictedToken));
     }
 
     // Filesystem and route capabilities may be shared between launches. They
@@ -531,3 +573,7 @@ mod tests;
 #[cfg(test)]
 #[path = "token_groups_tests.rs"]
 mod token_groups_tests;
+
+#[cfg(test)]
+#[path = "token_derivation_tests.rs"]
+mod token_derivation_tests;

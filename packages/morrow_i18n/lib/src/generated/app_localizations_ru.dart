@@ -478,6 +478,39 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mainDraftImportRecoveryTitle => 'Проверка решений по вложениям';
 
   @override
+  String get mainDraftJournalEmpty => 'Нет сохранённых черновиков.';
+
+  @override
+  String get mainDraftJournalExport =>
+      'Экспортировать копию для восстановления';
+
+  @override
+  String get mainDraftJournalExportFailed =>
+      'Не удалось экспортировать полную копию для восстановления.';
+
+  @override
+  String get mainDraftJournalExported =>
+      'Копия для восстановления экспортирована.';
+
+  @override
+  String get mainDraftJournalRetire => 'Завершить сохранённый черновик';
+
+  @override
+  String get mainDraftJournalRetireConfirm =>
+      'Завершить этот черновик и освободить закреплённые копии вложений? При необходимости сначала экспортируйте копию для восстановления. Сохранённые данные и неподтверждённые результаты не изменятся.';
+
+  @override
+  String get mainDraftJournalRetireUnknown =>
+      'Завершение не подтверждено. Проверьте исходную операцию, не отправляя её повторно.';
+
+  @override
+  String get mainDraftJournalReview =>
+      'Эта копия для восстановления доступна только для чтения. Исходный текст, вложения и история захвата сохранены; просмотр не возобновляет предыдущее сохранение.';
+
+  @override
+  String get mainDraftJournalTitle => 'Сохранённые черновики';
+
+  @override
   String get mainEdit => 'Изменить';
 
   @override

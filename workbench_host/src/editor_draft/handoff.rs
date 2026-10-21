@@ -16,6 +16,9 @@ pub struct EditorDraftLineage {
 
 fn complete_snapshot(parent: &proto::Slot, child: &proto::WriteRequest) -> Result<()> {
     let request = parent.request.as_ref().ok_or("parent request missing")?;
+    if !request.capture_scope.is_empty() && child.capture_scope.is_empty() {
+        return Err("child must retain the complete parent capture lineage".into());
+    }
     if child.values != request.values || child.assets.len() != parent.assets.len() {
         return Err("handoff must preserve the complete parent snapshot".into());
     }
@@ -69,6 +72,9 @@ impl WorkbenchState {
             )?
             .ok_or("parent save was not committed")?;
         let original = parent.request.as_ref().ok_or("parent request missing")?;
+        if !original.commit_operation.is_empty() && original.commit_operation != link.committed_operation {
+            return Err("handoff changed the parent's original business operation".into());
+        }
         if !parent.active
             || parent.generation != link.parent_generation
             || original.card_id != request.card_id

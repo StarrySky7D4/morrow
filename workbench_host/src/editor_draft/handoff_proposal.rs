@@ -571,12 +571,25 @@ impl WorkbenchState {
             source_card: source.encode(),
             predecessor_card: Vec::new(),
             predecessor_evidence_bytes: 0,
+            capture: None,
             assets: Vec::new(),
             active_bytes: 0,
             consumed_imports: Vec::new(),
             parent_link: Some(link.clone()),
             retirement: None,
+            discard_operation: String::new(),
         };
+        let parent_bytes = if parent.capture.is_some() {
+            let (card, actual) = self.draft_card(&request.card_id, &link.parent_draft_id)?
+                .ok_or("capture parent journal missing")?;
+            self.read_draft_capture(&card, &actual)?
+        } else { Vec::new() };
+        if let Some(bytes) = self.compose_draft_capture(request, parent_bytes)? {
+            estimated.capture = Some(model::proto::CapturePin {
+                scope: request.capture_scope.clone(), events: request.capture_events,
+                byte_length: bytes.len() as u64, sha256: Sha256::digest(&bytes).to_vec(),
+            });
+        }
         for (index, (selection, original)) in request.assets.iter().zip(&parent.assets).enumerate()
         {
             estimated.assets.push(model::proto::StoredAsset {

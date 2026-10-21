@@ -606,6 +606,7 @@ pub enum WindowsAsUserNativeSite {
     HelperCreateReaderResult,
     HelperReaderIdGuard,
     LaunchTokenDerivation,
+    LaunchObjectCreation,
 }
 
 pub use crate::asuser_a1_target::WindowsTargetPolicyRejection;
@@ -630,6 +631,7 @@ pub struct WindowsStartAttempt {
     pub error: WindowsStartError,
     pub runner_stage: WindowsRunnerErrorStage,
     pub os_class: WindowsOsError,
+    pub runner_site: crate::RunnerStartupSite,
     pub original_runner: Option<WindowsStartRunnerObservation>,
     pub startup_context: Option<WindowsStartupContext>,
     pub asuser_native_failure: Option<WindowsAsUserNativeFailure>,
@@ -861,7 +863,23 @@ impl WindowsStartDiagnostic {
     }
 
     pub fn fail_runner(&self, stage: WindowsRunnerErrorStage, os_class: WindowsOsError) {
-        self.failure(WindowsStartError::RunnerReported, stage, os_class);
+        self.fail_runner_at(stage, os_class, crate::RunnerStartupSite::NotObserved);
+    }
+
+    /// Only a finite site from the same authenticated error packet. This is
+    /// diagnostic data and never native completion or cleanup authority.
+    pub(crate) fn fail_runner_at(&self, stage: WindowsRunnerErrorStage,
+        os_class: WindowsOsError, site: crate::RunnerStartupSite) {
+        self.record(|state| {
+            if state.current.error == WindowsStartError::NotObserved {
+                state.current.error = WindowsStartError::RunnerReported;
+                state.current.runner_stage = stage;
+                state.current.os_class = os_class;
+                state.current.runner_site = site;
+            }
+            state.attempt = state.attempt.max(1);
+            state.completion = WindowsStartCompletion::InProgressOrUnwound;
+        });
     }
 
     /// Observe an already selected original refresh branch; does not invoke it.

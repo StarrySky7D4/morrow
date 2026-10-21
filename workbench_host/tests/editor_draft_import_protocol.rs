@@ -15,8 +15,8 @@ const CARD: &str = "import-wire-new-card";
 const DRAFT: &str = "import-wire-draft";
 const DATA: &[u8] = b"durable bytes from a deleted original file\x00\xff";
 type Message = capnp::message::Reader<serialize::OwnedSegments>;
-fn message(bytes: &[u8]) -> Message {
-    serialize::read_message(&mut bytes.as_ref(), ReaderOptions::new()).unwrap()
+fn message(mut bytes: &[u8]) -> Message {
+    serialize::read_message(&mut bytes, ReaderOptions::new()).unwrap()
 }
 fn text() -> TextValue {
     TextValue {
@@ -38,6 +38,8 @@ fn draft(op: &str, generation: u64) -> WriteRequest {
         expected_generation: generation,
         source_revision: 0,
         source_kind: 1,
+        commit_operation: String::new(),
+            capture_scope: String::new(), capture_events: 0,
         predecessor_operation: String::new(),
         predecessor_sha256: vec![],
         assets: vec![],

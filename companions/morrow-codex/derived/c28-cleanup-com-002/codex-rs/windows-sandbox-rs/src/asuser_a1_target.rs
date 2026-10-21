@@ -50,6 +50,7 @@ pub enum WindowsTargetPolicyRejection {
     AdministratorMembership,
     DerivedIdentityUnchanged,
     DerivedContextChanged,
+    DerivedGrantChanged,
     DerivedPrivilegeMismatch,
 }
 
@@ -186,11 +187,11 @@ impl TargetPolicy {
         if source.security_context!=launch.security_context
             || source.initial.auth!=launch.initial.auth
             || source.user!=launch.user || source.owner!=launch.owner
-            || source.granted!=launch.granted
             || source.logon!=launch.logon || source.logon_attributes!=launch.logon_attributes
             || source.session!=launch.session || source.integrity_rid!=launch.integrity_rid
             || source.mandatory_policy!=launch.mandatory_policy
             || source.elevation_type!=launch.elevation_type {return Some(R::DerivedContextChanged);}
+        if source.granted!=launch.granted{return Some(R::DerivedGrantChanged);}
         if source.change_notify!=launch.change_notify
             || Some(launch.privilege_count)!=source.privilege_count.checked_sub(source.unsafe_privileges)
             || launch.privilege_count>1 {return Some(R::DerivedPrivilegeMismatch);}
@@ -255,6 +256,19 @@ mod tests {
         assert!(policy.validate_launched_runner(&runner,&launch).is_err());
         runner=launch.clone();runner.context[0]^=1;
         assert!(policy.validate_launched_runner(&runner,&launch).is_err());
+    }
+    #[test] fn exact_original_grant_still_rejects_security_right_loss_or_extra_rights() {
+        let (policy,mut source)=facts();source.granted=0x000f01ff;
+        let mut launch=source.clone();launch.initial.token=91;launch.final_stats=launch.initial;
+        launch.restricted=true;
+        assert!(policy.validate_launch(&source,&launch).is_ok());
+        launch.granted=0x000301ff;
+        assert_eq!(policy.launch_rejection(&source,&launch),Some(WindowsTargetPolicyRejection::DerivedGrantChanged));
+        assert!(policy.validate_launch(&source,&launch).is_err());
+        source.granted=TOKEN_REQUIRED;launch.granted=0x000f01ff;
+        assert_eq!(policy.launch_rejection(&source,&launch),Some(WindowsTargetPolicyRejection::DerivedGrantChanged));
+        launch.security_context[0]^=1;
+        assert_eq!(policy.launch_rejection(&source,&launch),Some(WindowsTargetPolicyRejection::DerivedContextChanged));
     }
     #[test] fn target_identity_is_fresh_enabled_logon_not_stable_user_or_caller_restriction() {
         let (policy,mut f)=facts();assert!(policy.validate(&f).is_ok());

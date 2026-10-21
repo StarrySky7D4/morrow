@@ -73,6 +73,7 @@ Future<void>? _desktopInitialization;
 final _applicationClose = _ApplicationClose();
 final _closingViewRevision = ValueNotifier(0);
 bool _retireWorkbench = false;
+RustWorkbench? _draftWorkbench;
 
 void _renderApplication(Widget child) => runApp(
   ValueListenableBuilder<int>(
@@ -118,12 +119,20 @@ class _ApplicationClose with WindowListener {
       // Freeze interaction without disposing live editors mid-commit. Retire
       // their scopes only after admitted writes have completed.
       await pendingUiWrites.drain();
+      final draftWorkbench = _draftWorkbench;
+      final preparation = await draftWorkbench?.prepareEditorDraftClose();
+      if (!identical(draftWorkbench, _draftWorkbench)) {
+        throw StateError('Draft workbench changed during application close');
+      }
       _retireWorkbench = true;
       _closingViewRevision.value++;
       await WidgetsBinding.instance.endOfFrame.timeout(
         const Duration(milliseconds: 100),
         onTimeout: () {},
       );
+      if (preparation != null) {
+        await draftWorkbench!.finishEditorDraftClose(preparation);
+      }
     },
     showClosing: () => _closingViewRevision.value++,
     hideWindow: windowManager.hide,
@@ -332,6 +341,7 @@ Future<void> _startSession(List<String> arguments) async {
         managed: managed,
         onStarted: (backend) {
           opened = backend;
+          _draftWorkbench = backend;
           _sessions.attach(
             process: backend.process,
             library: directory.absolute.path,

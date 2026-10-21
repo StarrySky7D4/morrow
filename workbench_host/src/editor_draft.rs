@@ -3,6 +3,7 @@
 #[cfg(test)]
 mod accounting_tests;
 mod handoff;
+mod capture;
 mod handoff_proof;
 mod handoff_proposal;
 pub mod model;
@@ -10,6 +11,7 @@ use crate::{Result, Workbench, WorkbenchState, captured_cards, now};
 pub use handoff::EditorDraftLineage;
 pub use handoff_proposal::{HandoffProposalRecord, HandoffProposalStatus};
 use model::{MAX_BODY_BYTES, proto, validate_request};
+use capture::{capture_attachment, validate_pin};
 use morrow_core::{
     content::{Attachment, CardRecord},
     content_change::ContentChange,
@@ -96,6 +98,9 @@ fn charge(slot: &proto::Slot) -> Result<u64> {
     let mut metadata = slot.clone();
     metadata.active_bytes = 0;
     let mut blobs = slot.predecessor_evidence_bytes;
+    if let Some(pin) = &slot.capture {
+        blobs = blobs.checked_add(pin.byte_length).ok_or("draft capture byte count overflow")?;
+    }
     for asset in &slot.assets {
         blobs = blobs
             .checked_add(asset.byte_length)
@@ -128,6 +133,16 @@ fn decode_body(raw: &[u8]) -> Result<proto::Slot> {
     }
     let request = slot.request.as_ref().ok_or("draft request missing")?;
     validate_request(request)?;
+    validate_pin(&slot)?;
+    if !slot.discard_operation.is_empty() {
+        identity(&request.card_id, &request.draft_id, &slot.discard_operation)?;
+        if slot.active || slot.retirement.is_some()
+            || slot.discard_operation == request.operation_id
+            || slot.discard_operation == request.commit_operation
+        {
+            return Err("invalid ordinary draft retirement receipt".into());
+        }
+    }
     if let Some(link) = &slot.parent_link {
         model::validate_parent_link(request, link)?;
         if request.expected_generation != 0 && request.assets.iter().any(|asset| asset.origin == 4)
@@ -252,6 +267,7 @@ fn decode_card(card: &CardRecord) -> Result<proto::Slot> {
             }
             expected.push(evidence);
         }
+        if let Some(pin) = &slot.capture { expected.push(capture_attachment(pin)?); }
     }
     if card.attachments() != expected {
         return Err("draft pin list changed".into());
@@ -269,6 +285,9 @@ impl WorkbenchState {
             return Ok(None);
         };
         let slot = decode_card(&card)?;
+        if slot.active && slot.capture.is_some() {
+            self.read_draft_capture(&card, &slot)?;
+        }
         if slot.active && slot.predecessor_evidence_bytes != 0 {
             let request = slot.request.as_ref().expect("validated request");
             let mut bytes = Vec::with_capacity(slot.predecessor_evidence_bytes as usize);
@@ -357,7 +376,8 @@ impl WorkbenchState {
                 }
                 let values = change.attachments.expect("checked").items;
                 let expected_len =
-                    refs.len() + usize::from(slot.active && slot.predecessor_evidence_bytes != 0);
+                    refs.len() + usize::from(slot.active && slot.predecessor_evidence_bytes != 0)
+                    + usize::from(slot.active && slot.capture.is_some());
                 if values.len() != expected_len {
                     return Err("draft historical pins mismatch".into());
                 }
@@ -371,8 +391,8 @@ impl WorkbenchState {
                         return Err("draft historical asset mismatch".into());
                     }
                 }
-                if expected_len > refs.len() {
-                    let value = values.last().expect("evidence ref");
+                if slot.active && slot.predecessor_evidence_bytes != 0 {
+                    let value = &values[refs.len()];
                     if value.id != EVIDENCE
                         || value.byte_length != slot.predecessor_evidence_bytes
                         || value.display_name != "Draft predecessor evidence"
@@ -380,6 +400,16 @@ impl WorkbenchState {
                         || value.sha256.len() != 32
                     {
                         return Err("draft historical evidence mismatch".into());
+                    }
+                }
+                if slot.active {
+                    if let Some(pin) = &slot.capture {
+                        let expected = capture_attachment(pin)?;
+                        let value = values.last().ok_or("draft historical capture missing")?;
+                        if value.id != expected.id || value.display_name != expected.display_name
+                            || value.media_type != expected.media_type || value.byte_length != expected.byte_length
+                            || value.sha256 != expected.sha256
+                        { return Err("draft historical capture mismatch".into()); }
                     }
                 }
                 slot
@@ -574,6 +604,9 @@ impl WorkbenchState {
             }
             let original = slot.request.as_ref().expect("validated request");
             if original.source_kind != request.source_kind
+                || original.commit_operation != request.commit_operation
+                || original.capture_scope != request.capture_scope
+                || original.capture_events > request.capture_events
                 || original.source_revision != request.source_revision
                 || original.predecessor_operation != request.predecessor_operation
                 || original.predecessor_sha256 != request.predecessor_sha256
@@ -748,6 +781,22 @@ impl WorkbenchState {
             .map(|b| b.len() as u64)
             .or_else(|| evidence_pin.as_ref().map(|a| a.byte_length))
             .unwrap_or(0);
+        let inherited_capture = if let Some((card, slot)) = &previous {
+            if slot.capture.is_some() {
+                let raw = self.read_draft_capture(card, slot)?;
+                proto::CaptureArchive::decode(raw.as_slice())?.parent_archive
+            } else { Vec::new() }
+        } else if let Some(link) = parent_link {
+            let (card, slot) = self.draft_card(&request.card_id, &link.parent_draft_id)?
+                .ok_or("capture parent journal missing")?;
+            if slot.capture.is_some() { self.read_draft_capture(&card, &slot)? }
+            else { Vec::new() }
+        } else { Vec::new() };
+        let capture_bytes = self.compose_draft_capture(request, inherited_capture)?;
+        let capture = capture_bytes.as_ref().map(|bytes| proto::CapturePin {
+            scope: request.capture_scope.clone(), events: request.capture_events,
+            byte_length: bytes.len() as u64, sha256: Sha256::digest(bytes).to_vec(),
+        });
         let mut slot = proto::Slot {
             schema_version: 1,
             request: Some(request.clone()),
@@ -763,6 +812,8 @@ impl WorkbenchState {
             consumed_imports,
             parent_link: inherited_link,
             retirement: None,
+            discard_operation: String::new(),
+            capture,
         };
         slot.active_bytes = charge(&slot)?;
         decode_body(&slot.encode_to_vec())?;
@@ -813,6 +864,14 @@ impl WorkbenchState {
             });
         } else if let Some(pin) = evidence_pin {
             pins.push(pin);
+        }
+        if let Some(bytes) = capture_bytes {
+            self.host.prepare_write()?;
+            let pin = slot.capture.as_ref().expect("archive pin");
+            self.host.store_local_mut().stage_blob(&mut Cursor::new(&bytes), pin.byte_length,
+                Some(pin.sha256.as_slice().try_into().map_err(|_| "capture digest")?),
+                crate::platform::unix_millis()?)?;
+            pins.push(capture_attachment(pin)?);
         }
         self.write_draft_journal(&id, &request.operation_id, generation, &slot, pins)?;
         self.retire_draft_imports(request);
@@ -873,6 +932,7 @@ impl WorkbenchState {
             .checked_add(1)
             .ok_or("draft generation exhausted")?;
         slot.active = false;
+        slot.discard_operation = op.into();
         slot.active_bytes = 0;
         self.write_draft_journal(&id, op, expected, &slot, Vec::new())?;
         self.draft_staged

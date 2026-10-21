@@ -10,10 +10,14 @@ final class EditorDraftSnapshot {
   EditorDraftSnapshot({
     required this.values,
     required List<EditorDraftAssetSelection> assets,
+    this.captureScope = '',
+    this.captureEvents = 0,
   }) : assets = List.unmodifiable(assets);
 
   final EditorDraftValues values;
   final List<EditorDraftAssetSelection> assets;
+  final String captureScope;
+  final int captureEvents;
 
   /// Raw editing state and ordered asset provenance both participate.
   bool sameAs(EditorDraftSnapshot other) => _sameSnapshot(this, other);
@@ -44,6 +48,8 @@ bool _sameSnapshot(EditorDraftSnapshot a, EditorDraftSnapshot b) {
   final x = a.values;
   final y = b.values;
   if (!_sameText(x.title, y.title) ||
+      a.captureScope != b.captureScope ||
+      a.captureEvents != b.captureEvents ||
       !_sameText(x.description, y.description) ||
       !_sameText(x.hypothesis, y.hypothesis) ||
       !_sameText(x.conclusion, y.conclusion) ||
@@ -68,7 +74,12 @@ bool _sameBytes(List<int> a, List<int> b) {
 }
 
 EditorDraftSnapshot _requestSnapshot(EditorDraftWriteRequest request) =>
-    EditorDraftSnapshot(values: request.values, assets: request.assets);
+    EditorDraftSnapshot(
+      values: request.values,
+      assets: request.assets,
+      captureScope: request.captureScope,
+      captureEvents: request.captureEvents,
+    );
 
 bool _sameRequest(EditorDraftWriteRequest a, EditorDraftWriteRequest b) =>
     a.cardId == b.cardId &&
@@ -77,9 +88,23 @@ bool _sameRequest(EditorDraftWriteRequest a, EditorDraftWriteRequest b) =>
     a.expectedGeneration == b.expectedGeneration &&
     a.sourceRevision == b.sourceRevision &&
     a.sourceKind == b.sourceKind &&
+    a.commitOperation == b.commitOperation &&
     a.predecessorOperation == b.predecessorOperation &&
     _sameBytes(a.predecessorDigest, b.predecessorDigest) &&
     _sameSnapshot(_requestSnapshot(a), _requestSnapshot(b));
+
+/// A local reservation for one original, fully durable session. It grants no
+/// host mutation or capture permission and cannot be reconstructed from a log.
+final class EditorDraftRetirementReservation {
+  EditorDraftRetirementReservation._(
+    this._session, this._record, this._operation, this._localGeneration,
+  );
+  final EditorDraftSession _session;
+  final EditorDraftRecord _record;
+  final String _operation;
+  final int _localGeneration;
+  bool _consumed = false;
+}
 
 /// Coordinates durable draft generations. No method here submits a business
 /// edit, revives a capture scope, or grants access to a plugin.
@@ -90,6 +115,7 @@ final class EditorDraftSession extends ChangeNotifier {
     required this.draftId,
     required this.sourceRevision,
     this.sourceKind = EditorDraftSourceKind.existingCard,
+    this.commitOperation = '',
     required EditorDraftSnapshot initialSnapshot,
     required this._operationFactory,
     required this._isCurrent,
@@ -115,6 +141,7 @@ final class EditorDraftSession extends ChangeNotifier {
        draftId = record.request.draftId,
        sourceRevision = record.request.sourceRevision,
        sourceKind = record.request.sourceKind,
+       commitOperation = record.request.commitOperation,
        _predecessorOperation = record.request.predecessorOperation,
        _predecessorDigest = List.unmodifiable(record.request.predecessorDigest),
        _current = _requestSnapshot(record.request),
@@ -143,6 +170,7 @@ final class EditorDraftSession extends ChangeNotifier {
   final String _predecessorOperation;
   final List<int> _predecessorDigest;
   final String cardId, draftId;
+  final String commitOperation;
   final BigInt sourceRevision;
   final EditorDraftSourceKind sourceKind;
 
@@ -155,12 +183,75 @@ final class EditorDraftSession extends ChangeNotifier {
   int? _frozenLocalGeneration;
   EditorDraftSaveFailure? _lastFailure;
   Future<EditorDraftRecord>? _inFlight;
+  Future<EditorDraftRecord?>? _inspection;
   Timer? _timer;
   int _localGeneration = 0;
   bool _unknown = false;
   bool _conflicted = false;
   bool _disposed = false;
   bool _autoSavePaused = false;
+  EditorDraftRetirementReservation? _retirement;
+  bool get retirementFrozen => _retirement != null;
+
+  void _requireMutable() {
+    if (retirementFrozen) {
+      throw StateError('Original draft retirement retains this session');
+    }
+  }
+
+  /// Reserve before any asynchronous retirement IO. No view or import may
+  /// attach after this point; a lost reply keeps the same reservation frozen.
+  EditorDraftRetirementReservation reserveRetirement(
+    EditorDraftRecord original, String operation,
+  ) {
+    _requireMutable();
+    final confirmed = _confirmed;
+    if (_disposed || !_fresh || saving || dirty || _unknown || _conflicted ||
+        _pending != null || confirmed == null || operation.isEmpty ||
+        operation == original.request.operation ||
+        operation == original.request.commitOperation ||
+        original.requestSha256.length != 32 || !original.active ||
+        !original.currentActive || original.repeated ||
+        original.generation != original.currentGeneration ||
+        confirmed.generation != original.generation ||
+        !_sameBytes(confirmed.requestSha256, original.requestSha256) ||
+        !_sameRequest(confirmed.request, original.request)) {
+      throw StateError('Latest durable draft cannot be reserved for retirement');
+    }
+    final reservation = EditorDraftRetirementReservation._(
+      this, original, operation, _localGeneration,
+    );
+    _retirement = reservation;
+    _autoSavePaused = true;
+    _cancelTimer();
+    // No listener callback can reenter between reservation and publication by
+    // the root owner. The original snapshot remains available for inspection.
+    return reservation;
+  }
+
+  bool ownsRetirement(EditorDraftRetirementReservation original) =>
+      identical(_retirement, original) &&
+      identical(original._session, this) && !original._consumed;
+
+  /// Called by the retaining workspace only after the original retirement
+  /// coordinator verified both the inactive journal and its empty import set.
+  void completeRetirement(
+    EditorDraftRetirementReservation original, EditorDraftRecord retired,
+  ) {
+    if (!ownsRetirement(original) || _disposed || !_fresh || saving || dirty ||
+        _unknown || _conflicted ||
+        _localGeneration != original._localGeneration ||
+        retired.active || retired.currentActive || retired.retirement != null ||
+        retired.generation != original._record.generation + BigInt.one ||
+        retired.currentGeneration != retired.generation ||
+        retired.discardOperation != original._operation ||
+        !_sameBytes(retired.requestSha256, original._record.requestSha256) ||
+        !_sameRequest(retired.request, original._record.request)) {
+      throw StateError('Original session retirement is not confirmed');
+    }
+    original._consumed = true;
+    dispose();
+  }
   Object? _captureFailure;
 
   /// The view has newer input whose complete metadata is not yet available.
@@ -177,7 +268,7 @@ final class EditorDraftSession extends ChangeNotifier {
       captureBlocked ||
       (sourceKind == EditorDraftSourceKind.newCard && _confirmed == null) ||
       !_sameSnapshot(_current, _confirmedSnapshot);
-  bool get saving => _inFlight != null;
+  bool get saving => _inFlight != null || _inspection != null;
   bool get unknown => _unknown;
   bool get conflicted => _conflicted;
   bool get disposed => _disposed;
@@ -218,6 +309,7 @@ final class EditorDraftSession extends ChangeNotifier {
 
   void _scheduleAuto() {
     _cancelTimer();
+    if (retirementFrozen) return;
     if (_debounce == null ||
         _autoSavePaused ||
         _disposed ||
@@ -260,6 +352,7 @@ final class EditorDraftSession extends ChangeNotifier {
   /// Restores the configured debounce policy. Unknown and conflicted saves
   /// remain blocked; this never retries a frozen operation.
   void resumeAutoSave() {
+    _requireMutable();
     if (_disposed) throw StateError('Editor draft session is disposed');
     if (!_fresh) throw StateError('Editor draft workspace changed');
     if (!_autoSavePaused) return;
@@ -272,6 +365,7 @@ final class EditorDraftSession extends ChangeNotifier {
   /// the identity of an already sent operation. Even after a view detaches,
   /// workspace close/eviction must retain this session until capture succeeds.
   void markCaptureIncomplete(Object cause) {
+    _requireMutable();
     if (_disposed) throw StateError('Editor draft session is disposed');
     final firstFailure = !captureBlocked;
     _captureFailure = cause;
@@ -279,6 +373,32 @@ final class EditorDraftSession extends ChangeNotifier {
     _cancelTimer();
     // Repeated failing capture must not create a synchronous listener loop.
     if (firstFailure) _notify();
+  }
+
+  /// Retain newly typed raw values even when metadata cannot yet be resolved.
+  /// Existing metadata stays explicitly incomplete and cannot be saved.
+  void observeIncompleteValues(EditorDraftValues values, Object cause) {
+    final snapshot = EditorDraftSnapshot(
+      values: values,
+      assets: _current.assets,
+      captureScope: _current.captureScope,
+      captureEvents: _current.captureEvents,
+    );
+    observeIncomplete(snapshot, cause);
+  }
+
+  void observeIncomplete(EditorDraftSnapshot snapshot, Object cause) {
+    _requireMutable();
+    if (_disposed || !_fresh) {
+      throw StateError('Editor draft workspace changed');
+    }
+    final changed = !_sameSnapshot(snapshot, _current);
+    _current = snapshot;
+    final wasBlocked = captureBlocked;
+    _captureFailure = cause;
+    if (changed || !wasBlocked) _localGeneration++;
+    _cancelTimer();
+    if (changed || !wasBlocked) _notify();
   }
 
   void _requireCompleteCapture() {
@@ -293,6 +413,7 @@ final class EditorDraftSession extends ChangeNotifier {
   /// structurally equal retry still resolves the completeness barrier, without
   /// changing or replaying any pending/unknown host operation.
   void observe(EditorDraftSnapshot snapshot) {
+    _requireMutable();
     if (_disposed) throw StateError('Editor draft session is disposed');
     if (!_fresh) throw StateError('Editor draft workspace changed');
     final wasBlocked = captureBlocked;
@@ -316,6 +437,9 @@ final class EditorDraftSession extends ChangeNotifier {
       expectedGeneration: _journalGeneration,
       sourceRevision: sourceRevision,
       sourceKind: sourceKind,
+      commitOperation: commitOperation,
+      captureScope: _current.captureScope,
+      captureEvents: _current.captureEvents,
       predecessorOperation: _predecessorOperation,
       predecessorDigest: _predecessorDigest,
       values: _current.values,
@@ -411,6 +535,7 @@ final class EditorDraftSession extends ChangeNotifier {
   /// it does not rewrite the acknowledged request or submit anything.
   /// Callers must update their attachment catalog before capturing the view.
   void adoptConfirmedAssetPins(EditorDraftRecord record) {
+    _requireMutable();
     if (_disposed) throw StateError('Editor draft session is disposed');
     if (!_fresh) throw StateError('Editor draft workspace changed');
     if (!identical(_confirmed, record) ||
@@ -451,7 +576,12 @@ final class EditorDraftSession extends ChangeNotifier {
               : asset,
         );
       }
-      return EditorDraftSnapshot(values: snapshot.values, assets: assets);
+      return EditorDraftSnapshot(
+        values: snapshot.values,
+        assets: assets,
+        captureScope: snapshot.captureScope,
+        captureEvents: snapshot.captureEvents,
+      );
     }
 
     // Compute both replacements before changing either field. Repeating this
@@ -463,6 +593,7 @@ final class EditorDraftSession extends ChangeNotifier {
   }
 
   Future<EditorDraftRecord> _startSave() {
+    _requireMutable();
     final request = _freeze();
     _inFlight = _send(request, retry: false);
     _notify();
@@ -474,9 +605,11 @@ final class EditorDraftSession extends ChangeNotifier {
   /// exists this returns its confirmed generation; newer local input remains
   /// dirty and can be saved separately. It never retries an unknown request.
   Future<EditorDraftRecord> ensureJournal() async {
+    _requireMutable();
     if (_disposed) throw StateError('Editor draft session is disposed');
     if (!_fresh) throw StateError('Editor draft workspace changed');
     _requireCompleteCapture();
+    if (_inspection != null) throw StateError('Draft inspection is in flight');
     if (_inFlight case final flight?) return flight;
     if (_conflicted) throw StateError('Editor draft journal changed');
     if (_unknown) {
@@ -495,6 +628,7 @@ final class EditorDraftSession extends ChangeNotifier {
   Future<EditorDraftRecord?> flushLatestVisible({
     required Duration timeout,
   }) async {
+    _requireMutable();
     if (timeout <= Duration.zero) {
       throw ArgumentError.value(timeout, 'timeout', 'Must be positive');
     }
@@ -536,9 +670,11 @@ final class EditorDraftSession extends ChangeNotifier {
   /// Save the current snapshot once. If another generation is already in
   /// flight, this awaits that same operation and does not submit newer edits.
   Future<EditorDraftRecord?> flush() async {
+    _requireMutable();
     if (_disposed) throw StateError('Editor draft session is disposed');
     if (!_fresh) throw StateError('Editor draft workspace changed');
     _requireCompleteCapture();
+    if (_inspection != null) throw StateError('Draft inspection is in flight');
     _cancelTimer();
     if (_inFlight case final flight?) return flight;
     if (_conflicted) throw StateError('Editor draft journal changed');
@@ -552,8 +688,10 @@ final class EditorDraftSession extends ChangeNotifier {
   /// Resend only the frozen operation after an unknown outcome. Newer local
   /// input remains in [current] and requires a later explicit save/observe.
   Future<EditorDraftRecord> retryPending() async {
+    _requireMutable();
     if (_disposed) throw StateError('Editor draft session is disposed');
     if (!_fresh) throw StateError('Editor draft workspace changed');
+    if (_inspection != null) throw StateError('Draft inspection is in flight');
     _cancelTimer();
     if (_inFlight case final flight?) return flight;
     if (_conflicted) throw StateError('Editor draft journal changed');
@@ -566,11 +704,61 @@ final class EditorDraftSession extends ChangeNotifier {
     return _inFlight!;
   }
 
+  /// Read the original journal without resending its unknown write. Only an
+  /// exact current receipt can settle it. Absence or another generation does
+  /// not prove rollback; the original request and newer live S2 stay owned.
+  /// Inspection never schedules a new save, including after a lost S1 reply.
+  Future<EditorDraftRecord?> inspectPending() {
+    _requireMutable();
+    if (_disposed || !_fresh) {
+      throw StateError('Editor draft workspace is unavailable');
+    }
+    if (_inspection case final inspection?) return inspection;
+    if (_inFlight != null || !_unknown || _pending == null || _conflicted) {
+      throw StateError('No settled unknown draft operation to inspect');
+    }
+    _cancelTimer();
+    final request = _pending!;
+    _inspection = _inspectPending(request).whenComplete(() {
+      _inspection = null;
+      _notify();
+    });
+    _notify();
+    return _inspection!;
+  }
+
+  Future<EditorDraftRecord?> _inspectPending(
+    EditorDraftWriteRequest request,
+  ) async {
+    final record = await _control.read(cardId, draftId);
+    if (_disposed || !_fresh || !identical(_pending, request)) {
+      throw StateError('Editor draft changed during inspection');
+    }
+    if (record == null ||
+        !_sameRequest(record.request, request) ||
+        !record.active ||
+        record.generation != request.expectedGeneration + BigInt.one ||
+        !record.currentActive ||
+        record.currentGeneration != record.generation) {
+      return null;
+    }
+    _confirmed = record;
+    _confirmedSnapshot = _frozenSnapshot!;
+    _journalGeneration = record.generation;
+    _pending = null;
+    _frozenSnapshot = null;
+    _frozenLocalGeneration = null;
+    _lastFailure = null;
+    _unknown = false;
+    return record;
+  }
+
   /// View owners remove their own listeners. Detaching a view does not mute
   /// other observers or stop durable saves owned by this session.
   void detachUI() {}
 
   void attachUI() {
+    _requireMutable();
     if (_disposed) throw StateError('Editor draft session is disposed');
     _notify();
   }

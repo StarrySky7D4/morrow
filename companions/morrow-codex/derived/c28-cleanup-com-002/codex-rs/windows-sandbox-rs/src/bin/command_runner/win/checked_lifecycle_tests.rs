@@ -2820,6 +2820,185 @@ fn failed_v8_precontext_writer_retains_same_memory_owner_after_actual_native_joi
 }
 
 
+
+// Actual anonymous pipes and the production authenticated codec; no child,
+// account, token, Job, ACL, firewall or product setup is created by this fixture.
+struct NativeStartupPipeFixture {
+    host: Arc<codex_windows_sandbox::NativeCloseRuntime>,
+    guest: Arc<codex_windows_sandbox::NativeCloseRuntime>,
+    input: Arc<File>,
+    output: Arc<StdMutex<File>>,
+    host_input: File,
+    host_output: Option<File>,
+}
+
+fn close_startup_fixture_file(file: File) {
+    use std::os::windows::io::IntoRawHandle;
+    let handle = file.into_raw_handle();
+    assert_ne!(unsafe { windows_sys::Win32::Foundation::CloseHandle(handle as HANDLE) }, 0);
+}
+
+impl NativeStartupPipeFixture {
+    fn new(attempt: u64) -> Self {
+        use codex_windows_sandbox::{ControlHelloAck, NativeCloseRuntime, RunnerControlCapabilities, RuntimeRunnerIdentity};
+        let (input, host_input) = create_anonymous_pipe_files().unwrap();
+        let (mut host_output, output) = create_anonymous_pipe_files().unwrap();
+        let input = Arc::new(input);
+        let output = Arc::new(StdMutex::new(output));
+        let identity = RuntimeRunnerIdentity {process_id: 271, thread_id: 272, creation_filetime_100ns: 273};
+        let (host, bootstrap) = NativeCloseRuntime::host([41; 32], attempt, identity).unwrap();
+        let guest = NativeCloseRuntime::runner_bootstrap(bootstrap, identity).unwrap();
+        let peer = Arc::clone(&guest);
+        checked_lifecycle::send_native_precontext_frame_with(&output, Instant::now() + Duration::from_secs(3), move |writer| {
+            peer.write_message(writer, &FramedMessage {version: 8, message: Message::HelloAck {payload: ControlHelloAck {
+                hello: peer.control_hello(), controls: RunnerControlCapabilities {close_stdin: true, resize: true}
+            }}})
+        }).unwrap();
+        let Some(Some(hello)) = host.read_message(&mut host_output).unwrap() else {panic!("authenticated hello")};
+        assert!(matches!(hello.message, Message::HelloAck {..}));
+        checked_lifecycle::retain_native_transport_before_child(&guest, Arc::clone(&input), Arc::clone(&output)).unwrap();
+        Self {host, guest, input, output, host_input, host_output: Some(host_output)}
+    }
+
+    fn fail_original_reservation(&self) -> String {
+        let mut reservation = reserve_attempt_context_slot().unwrap();
+        reservation.latch_unresolved_cancellation("pipe fixture original startup failure");
+        drop(reservation);
+        reserve_attempt_context_slot().unwrap_err().to_string()
+    }
+
+    fn report_and_read(&mut self) {
+        let cause = anyhow::Error::from(io::Error::from_raw_os_error(5))
+            .context("OpenProcessToken failed").context("original startup");
+        let code = super::windows_error_code(&cause);
+        assert_eq!(code, Some(5));
+        super::send_native_retained_startup_error(&self.output, Some(&self.guest), code,
+            codex_windows_sandbox::RunnerStartupSite::NotObserved, Instant::now() + Duration::from_secs(3)).unwrap();
+        let Some(Some(error)) = self.host.read_message(self.host_output.as_mut().unwrap()).unwrap() else {panic!("authenticated startup error")};
+        let Message::Error {payload} = error.message else {panic!("error frame")};
+        assert_eq!(payload.stage, codex_windows_sandbox::ErrorStage::SpawnChild);
+        assert_eq!(payload.windows_error_code, Some(5));
+        assert_eq!(payload.message, "v8 operation rejected; original owner retained");
+    }
+
+    fn finish(self) {
+        // This exact fixture has no product resources. The helper asserts that
+        // its original writer joined and only removes these same pipe anchors.
+        checked_lifecycle::release_startup_failure_pipe_fixture_for_test(&self.input, &self.output);
+        close_startup_fixture_file(Arc::try_unwrap(self.input).expect("only the original input fixture"));
+        close_startup_fixture_file(Arc::try_unwrap(self.output).expect("only the original output fixture").into_inner().unwrap());
+        close_startup_fixture_file(self.host_input);
+        if let Some(mut reader) = self.host_output {
+            let mut trailing = Vec::new();
+            reader.read_to_end(&mut trailing).unwrap();
+            assert!(trailing.is_empty(), "no second report or bare bytes");
+            close_startup_fixture_file(reader);
+        }
+        assert!(!has_unresolved_attempt_slot_entries());
+    }
+}
+
+#[test]
+fn v8_retained_startup_error_reports_once_on_original_pipe_without_clearing_unknown() {
+    let _serial = lock_attempt_slot_test_serial();
+    reset_attempt_slot_for_test();
+    let mut fixture = NativeStartupPipeFixture::new(410);
+    let original_error = fixture.fail_original_reservation();
+    assert!(super::send_native_precontext_error(&fixture.output, Some(&fixture.guest),
+        codex_windows_sandbox::ErrorStage::SpawnChild, Some(5), Instant::now() + Duration::from_secs(3)).is_err());
+    fixture.report_and_read();
+    assert!(has_unresolved_attempt_slot_entries());
+    assert_eq!(reserve_attempt_context_slot().unwrap_err().to_string(), original_error);
+    assert!(checked_lifecycle::send_native_startup_failure_frame_with(&fixture.output, &fixture.guest,
+        Instant::now() + Duration::from_secs(3), |_| panic!("second diagnostic write forbidden")).is_err());
+    assert_eq!(reserve_attempt_context_slot().unwrap_err().to_string(), original_error);
+    fixture.finish();
+}
+
+#[test]
+fn v8_exact_startup_site_survives_authenticated_original_pipe_without_releasing_unknown() {
+    let _serial = lock_attempt_slot_test_serial();
+    reset_attempt_slot_for_test();
+    let mut fixture = NativeStartupPipeFixture::new(418);
+    let first = fixture.fail_original_reservation();
+    let site = codex_windows_sandbox::RunnerStartupSite::OpenOriginalToken;
+    super::send_native_retained_startup_error(&fixture.output, Some(&fixture.guest), Some(5), site,
+        Instant::now() + Duration::from_secs(3)).unwrap();
+    let Some(Some(frame)) = fixture.host.read_message(fixture.host_output.as_mut().unwrap()).unwrap()
+        else { panic!("original authenticated error packet") };
+    let Message::Error {payload} = frame.message else { panic!("error frame") };
+    assert_eq!(payload.stage, codex_windows_sandbox::ErrorStage::SpawnChild);
+    assert_eq!(payload.windows_error_code, Some(5));
+    assert_eq!(payload.message, site.wire_message());
+    assert_eq!(codex_windows_sandbox::RunnerStartupSite::from_wire_message(&payload.message), site);
+    assert_eq!(reserve_attempt_context_slot().unwrap_err().to_string(), first);
+    assert!(super::send_native_retained_startup_error(&fixture.output, Some(&fixture.guest), Some(2),
+        codex_windows_sandbox::RunnerStartupSite::CreateProcessAsUser,
+        Instant::now() + Duration::from_secs(3)).is_err());
+    assert_eq!(reserve_attempt_context_slot().unwrap_err().to_string(), first);
+    fixture.finish();
+}
+
+#[test]
+fn v8_retained_startup_error_rejects_unbound_live_and_expired_writers_without_consuming_report() {
+    let _serial = lock_attempt_slot_test_serial();
+    reset_attempt_slot_for_test();
+    let mut fixture = NativeStartupPipeFixture::new(411);
+    assert!(checked_lifecycle::send_native_startup_failure_frame_with(&fixture.output, &fixture.guest,
+        Instant::now() + Duration::from_secs(3), |_| panic!("no failed reservation yet")).is_err());
+    let reservation = reserve_attempt_context_slot().unwrap();
+    assert!(checked_lifecycle::send_native_startup_failure_frame_with(&fixture.output, &fixture.guest,
+        Instant::now() + Duration::from_secs(3), |_| panic!("live reservation is not a failed original")).is_err());
+    drop(reservation);
+    let original_error = reserve_attempt_context_slot().unwrap_err().to_string();
+    // Even an otherwise valid runtime with the SAME scalar attempt may not
+    // take the original authenticated channel's one diagnostic reservation.
+    for wrong_attempt in [411, 412] {
+        use codex_windows_sandbox::{NativeCloseRuntime, RuntimeRunnerIdentity};
+        let identity = RuntimeRunnerIdentity {process_id: 271, thread_id: 272, creation_filetime_100ns: 273};
+        let (_, bootstrap) = NativeCloseRuntime::host([42; 32], wrong_attempt, identity).unwrap();
+        let foreign = NativeCloseRuntime::runner_bootstrap(bootstrap, identity).unwrap();
+        assert!(checked_lifecycle::send_native_startup_failure_frame_with(&fixture.output, &foreign,
+            Instant::now() + Duration::from_secs(3), |_| panic!("foreign runtime cannot write")).is_err());
+    }
+    let (wrong_read, wrong_write) = create_anonymous_pipe_files().unwrap();
+    let wrong_write = Arc::new(StdMutex::new(wrong_write));
+    assert!(checked_lifecycle::send_native_startup_failure_frame_with(&wrong_write, &fixture.guest,
+        Instant::now() + Duration::from_secs(3), |_| panic!("wrong original pipe cannot write")).is_err());
+    close_startup_fixture_file(Arc::try_unwrap(wrong_write).unwrap().into_inner().unwrap());
+    close_startup_fixture_file(wrong_read);
+    assert!(checked_lifecycle::send_native_startup_failure_frame_with(&fixture.output, &fixture.guest,
+        Instant::now() - Duration::from_millis(1), |_| panic!("expired report cannot write")).is_err());
+    assert!(super::send_native_retained_startup_error(&fixture.output, None, Some(5),
+        codex_windows_sandbox::RunnerStartupSite::NotObserved, Instant::now() + Duration::from_secs(3)).is_err());
+    assert_eq!(reserve_attempt_context_slot().unwrap_err().to_string(), original_error);
+    fixture.report_and_read();
+    assert_eq!(reserve_attempt_context_slot().unwrap_err().to_string(), original_error);
+    fixture.finish();
+}
+
+#[test]
+fn v8_retained_startup_error_broken_original_pipe_keeps_first_failure_and_forbids_retry() {
+    let _serial = lock_attempt_slot_test_serial();
+    reset_attempt_slot_for_test();
+    let mut fixture = NativeStartupPipeFixture::new(413);
+    let original_error = fixture.fail_original_reservation();
+    close_startup_fixture_file(fixture.host_output.take().unwrap());
+    assert!(super::send_native_retained_startup_error(&fixture.output, Some(&fixture.guest), Some(5),
+        codex_windows_sandbox::RunnerStartupSite::OpenOriginalToken,
+        Instant::now() + Duration::from_secs(3)).is_err());
+    assert!(has_unresolved_attempt_slot_entries());
+    assert_eq!(reserve_attempt_context_slot().unwrap_err().to_string(), original_error);
+    assert!(checked_lifecycle::send_native_startup_failure_frame_with(&fixture.output, &fixture.guest,
+        Instant::now() + Duration::from_secs(3), |_| panic!("failed writer cannot be replayed")).is_err());
+    // Reads only this synthetic pipe fixture's disposition. There is no child,
+    // historical owner, or product session and no acceptance receipt is minted.
+    assert!(matches!(reap_unresolved_attempt_slot_bounded(Instant::now() + Duration::from_secs(3)),
+        RunnerExitDisposition::MustHoldProcessAlive {running_workers: 0, active_job_processes: 0, ..}));
+    assert_eq!(reserve_attempt_context_slot().unwrap_err().to_string(), original_error);
+    fixture.finish();
+}
+
 #[test]
 fn v8_public_ledger_cannot_authorize_a_receipt_without_original_operation_order() {
     let _serial=lock_attempt_slot_test_serial();reset_attempt_slot_for_test();

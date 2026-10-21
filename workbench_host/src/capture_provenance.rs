@@ -273,6 +273,40 @@ fn bundle(scope: &Scope) -> Result<Bundle> {
     })
 }
 impl WorkbenchState {
+    /// Archive actual adopted observations under the original live binding.
+    /// No client-supplied evidence is accepted and no ticket is minted here.
+    pub(crate) fn archive_draft_capture(
+        &mut self,
+        request: &crate::editor_draft::model::proto::WriteRequest,
+    ) -> Result<Vec<u8>> {
+        self.check_capture_scope(&request.capture_scope, true)?;
+        let scope = &self.capture_scopes.scopes[&request.capture_scope];
+        if scope.target != request.card_id || scope.revision != request.source_revision
+            || scope.events.len() as u64 != request.capture_events
+        {
+            return Err("draft capture original scope or paste generation changed".into());
+        }
+        let actual = bundle(scope)?;
+        let archive = crate::editor_draft::model::proto::CaptureArchive {
+            version: 1,
+            scope: request.capture_scope.clone(),
+            card_id: scope.target.clone(),
+            source_revision: scope.revision,
+            source_format: scope.format_version,
+            source_sha256: scope.prior.map_or_else(Vec::new, |v| v.to_vec()),
+            package_archive: actual.archive.to_vec(),
+            observations: actual.observations.iter().map(Message::encode_to_vec).collect(),
+            parents: actual.parents.iter().map(Message::encode_to_vec).collect(),
+            applications: actual.applications.iter().map(Message::encode_to_vec).collect(),
+            parent_archive: Vec::new(),
+        };
+        let bytes = archive.encode_to_vec();
+        if bytes.len() > MAX_SCOPE_BYTES {
+            return Err("draft capture archive exceeds its byte limit".into());
+        }
+        Ok(bytes)
+    }
+
     fn capture_binding(&self) -> Result<Binding> {
         if !self.writable() {
             return Err("capture scope is unavailable while host or plugin is read only".into());

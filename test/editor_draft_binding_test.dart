@@ -238,7 +238,7 @@ void main() {
     },
   );
 
-  test('metadata failure keeps raw view and reports uncaptured changes', () {
+  test('metadata failure retains raw input in the owner but prevents saving', () async {
     final h = _Harness(_snapshot());
     addTearDown(h.dispose);
     h.binding.attach();
@@ -247,7 +247,9 @@ void main() {
     expect(h.binding.hasUncapturedChanges, isTrue);
     expect(h.binding.captureFailure, isA<StateError>());
     expect(h.controllers[0].text, 'never drop this input');
-    expect(h.session.current.values.title.text, 'draft');
+    expect(h.session.current.values.title.text, 'never drop this input');
+    expect(h.session.captureBlocked, isTrue);
+    await expectLater(h.session.flush(), throwsStateError);
     h.metadataError = false;
     h.metadata = EditorDraftMetadata(
       category: 'changed',

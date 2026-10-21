@@ -480,6 +480,37 @@ class AppLocalizationsPt extends AppLocalizations {
   String get mainDraftImportRecoveryTitle => 'Rever decisões de anexos';
 
   @override
+  String get mainDraftJournalEmpty => 'Não há rascunhos guardados.';
+
+  @override
+  String get mainDraftJournalExport => 'Exportar cópia de recuperação';
+
+  @override
+  String get mainDraftJournalExportFailed =>
+      'Não foi possível exportar a cópia de recuperação completa.';
+
+  @override
+  String get mainDraftJournalExported => 'Cópia de recuperação exportada.';
+
+  @override
+  String get mainDraftJournalRetire => 'Retirar rascunho salvo';
+
+  @override
+  String get mainDraftJournalRetireConfirm =>
+      'Retirar este rascunho e liberar suas cópias de anexos? Exporte primeiro uma cópia de recuperação se precisar. O conteúdo salvo e os resultados não confirmados permanecem inalterados.';
+
+  @override
+  String get mainDraftJournalRetireUnknown =>
+      'A retirada não foi confirmada. Consulte a operação original sem enviá-la novamente.';
+
+  @override
+  String get mainDraftJournalReview =>
+      'Esta cópia de recuperação é só de leitura. O texto original, os anexos e o histórico de captura são preservados; a visualização não retoma uma gravação anterior.';
+
+  @override
+  String get mainDraftJournalTitle => 'Rascunhos guardados';
+
+  @override
   String get mainEdit => 'Editar';
 
   @override

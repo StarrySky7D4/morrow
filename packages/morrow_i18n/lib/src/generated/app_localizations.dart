@@ -892,6 +892,60 @@ abstract class AppLocalizations {
   /// **'Review attachment decisions'**
   String get mainDraftImportRecoveryTitle;
 
+  /// No description provided for @mainDraftJournalEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved drafts.'**
+  String get mainDraftJournalEmpty;
+
+  /// No description provided for @mainDraftJournalExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export recovery copy'**
+  String get mainDraftJournalExport;
+
+  /// No description provided for @mainDraftJournalExportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not export the complete recovery copy.'**
+  String get mainDraftJournalExportFailed;
+
+  /// No description provided for @mainDraftJournalExported.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery copy exported.'**
+  String get mainDraftJournalExported;
+
+  /// No description provided for @mainDraftJournalRetire.
+  ///
+  /// In en, this message translates to:
+  /// **'Retire saved draft'**
+  String get mainDraftJournalRetire;
+
+  /// No description provided for @mainDraftJournalRetireConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Retire this exact saved draft and release its attachment pins? Export a recovery copy first if you need it. Saved business content and uncertain save results are unchanged.'**
+  String get mainDraftJournalRetireConfirm;
+
+  /// No description provided for @mainDraftJournalRetireUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Retirement is not confirmed. Inspect the original operation; do not submit it again.'**
+  String get mainDraftJournalRetireUnknown;
+
+  /// No description provided for @mainDraftJournalReview.
+  ///
+  /// In en, this message translates to:
+  /// **'This recovery copy is read-only. Raw text, attachments and capture history are preserved; viewing does not resume a previous save.'**
+  String get mainDraftJournalReview;
+
+  /// No description provided for @mainDraftJournalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved drafts'**
+  String get mainDraftJournalTitle;
+
   /// No description provided for @mainEdit.
   ///
   /// In en, this message translates to:

@@ -90,6 +90,9 @@ fn decode_request(value: wire::write_request::Reader<'_>) -> Result<proto::Write
         expected_generation: value.get_expected_generation(),
         source_revision: value.get_source_revision(),
         source_kind: u32::from(value.get_source_kind()),
+        commit_operation: text(value.get_commit_operation())?,
+        capture_scope: text(value.get_capture_scope())?,
+        capture_events: value.get_capture_events(),
         predecessor_operation: text(value.get_predecessor_operation())?,
         predecessor_sha256: value.get_predecessor_digest()?.to_vec(),
         values: Some(values(value.get_values()?)?),
@@ -265,6 +268,9 @@ fn request_reply(
     out.set_expected_generation(value.expected_generation);
     out.set_source_revision(value.source_revision);
     out.set_source_kind(value.source_kind.try_into()?);
+    out.set_commit_operation(&value.commit_operation);
+    out.set_capture_scope(&value.capture_scope);
+    out.set_capture_events(value.capture_events);
     out.set_predecessor_operation(&value.predecessor_operation);
     out.set_predecessor_digest(&value.predecessor_sha256);
     values_reply(
@@ -306,6 +312,7 @@ fn record_reply(
     let request = slot.request.as_ref().ok_or("draft request missing")?;
     request_reply(request, out.reborrow().init_request())?;
     out.set_request_sha256(&Sha256::digest(request.encode_to_vec()));
+    out.set_discard_operation(&slot.discard_operation);
     out.set_generation(slot.generation);
     out.set_active(slot.active);
     out.set_current_generation(record.current_generation);
@@ -618,6 +625,7 @@ pub(crate) fn is_action(action: host_capnp::Action) -> bool {
             | Action::DiscardEditorDraft
             | Action::ImportEditorDraftAsset
             | Action::ExportEditorDraftAsset
+            | Action::ExportEditorDraftCapture
             | Action::FinishEditorDraftHandoff
             | Action::RetireEditorDraftParent
             | Action::ListEditorDraftLineages
@@ -643,6 +651,7 @@ pub(crate) fn reply_correlation(
             | Action::DiscardEditorDraft
             | Action::ImportEditorDraftAsset
             | Action::ExportEditorDraftAsset
+            | Action::ExportEditorDraftCapture
             | Action::BeginEditorDraftImport
             | Action::CompleteEditorDraftImport
             | Action::InspectEditorDraftImport
@@ -982,10 +991,14 @@ pub(crate) fn handle(
             let download = envelope_chunk(host, out, bytes, r.get_revision())?;
             bind_reply(host, &reply_owner, download);
         }
-        Action::ExportEditorDraftAsset => {
+        Action::ExportEditorDraftAsset | Action::ExportEditorDraftCapture => {
             let asset_id = text(r.get_name())?;
-            let bytes =
-                host.export_editor_draft_asset(&card, &draft, r.get_revision(), &asset_id)?;
+            let bytes = if action == Action::ExportEditorDraftCapture {
+                if !asset_id.is_empty() { return Err("capture export has no asset selector".into()); }
+                host.export_editor_draft_capture(&card, &draft, r.get_revision())?
+            } else {
+                host.export_editor_draft_asset(&card, &draft, r.get_revision(), &asset_id)?
+            };
             let selected = text(r.get_selected_path())?;
             let destination = Path::new(&selected);
             if !destination.parent().is_some_and(Path::is_dir) {
@@ -1115,6 +1128,8 @@ mod tests {
             expected_generation: 0,
             source_revision: 1,
             source_kind: 0,
+            commit_operation: String::new(),
+            capture_scope: String::new(), capture_events: 0,
             predecessor_operation: String::new(),
             predecessor_sha256: Vec::new(),
             values: Some(proto::Values {

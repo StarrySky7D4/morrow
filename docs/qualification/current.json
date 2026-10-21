@@ -1,38 +1,778 @@
 {
   "schema": 1,
-  "branch": "codex/structural-blockers-20261020",
-  "base_commit": "abae8bfd568d95d5230de57082149e8b645e90b6",
-  "updated": "2026-10-20",
+  "branch": "codex/local-continue-20261020",
+  "base_commit": "116d1eb9beffa1675a48eb5ab06d1abc79137ae2",
+  "updated": "2026-10-21",
   "release_eligible": false,
   "source_accepted": false,
   "ci_authorization": "after overall repair; intermediate commits use [skip ci]",
   "repairs": [
-    {"id":"TOKEN_CONTRACT","state":"IMPLEMENTED_RUNTIME_PENDING","detail":"Separate login source and one privilege-deleted launch token; shared admission evaluator; same owner retains both originals."},
-    {"id":"FAILURE_OWNERSHIP","state":"PARTIAL","detail":"Dispatch, observation and local resource state separated; known login failures close token/query handles once. Full factory/account/registry retirement remains unqualified."},
-    {"id":"HOST_PLATFORM_DEPENDENCIES","state":"LOCALLY_VERIFIED","detail":"Native catalog dependency declared for all native platforms; Linux host unit tests pass."},
-    {"id":"NATIVE_TEST_LOCK","state":"LOCALLY_VERIFIED","detail":"Restore native workspace test dependency graph; production package identities retained; native Windows tests cross-check succeeds."},
-    {"id":"REPRODUCIBLE_ACCEPTANCE","state":"PARTIAL","detail":"Repository-relative portable/Windows entry and exact-source gate report available; original full47 driver sources absent."},
-    {"id":"EDITOR_PERSISTENCE","state":"OPEN","detail":"Formal NewIdeaDialog autosave/complete successor handoff remains unwired; do not enable S1 cleanup without complete S2 durable proof."}
+    {
+      "id": "TOKEN_CONTRACT",
+      "state": "L0_SCOPED_PASS_L1_UNKNOWN_AT_SPAWN_READY",
+      "detail": "Roles011/case014 passed the current native target policy and created R, then sealed Unknown at step40 with the authenticated same-attempt OpenOriginalToken / AccessDenied report. The original token-open repair is not product-proven; the actual denial submechanism remains NOT_YET_OBSERVED. Thirty-five scoped native regressions and byte-bound role builds remain bounded evidence. Independent phase016 owned-process fixtures observed a newly created process primary-token object DACL derived from the launch default template, distinct from the prelaunch token object DACL. Their child initialization failed with 0xC0000142; neither these readbacks nor the proposed initialization experiment prove product L1. Phase016 changed no product source or token policy. Full P2/P3/Windows SDK remain OPEN and acceptance is paused by the user."
+    },
+    {
+      "id": "FAILURE_OWNERSHIP",
+      "state": "PARTIAL",
+      "detail": "The original staged runtime can now finish its protected owner before actual scheduler shutdown; two focused ordering tests pass. Local token closure remains distinct from full retirement. Proven-clean refusal through native/registry/SDK/factory/account/setup and the >16 boundary are still unimplemented/unqualified."
+    },
+    {
+      "id": "HOST_PLATFORM_DEPENDENCIES",
+      "state": "WINDOWS_LOCALLY_VERIFIED_OTHER_PLATFORMS_HISTORICAL",
+      "detail": "Native catalog dependency declared for all native platforms; fresh Windows host tests pass. Linux host evidence is historical and has not been rerun on this working tree."
+    },
+    {
+      "id": "NATIVE_TEST_LOCK",
+      "state": "COMPILES_DANGEROUS_TESTS_DEFAULT_SKIPPED_BROAD_FAILURE_RETAINED",
+      "detail": "The historical 617/13/8 broad suite remains FAILED. Nine previously automatic legacy provisioning tests are now ignored by default; all ten legacy process tests require explicit MORROW_DISPOSABLE_WINDOWS_TEST=1 before setup. The current runner and library test binaries compile. Ten exact default invocations verified one ignored test each, with zero provisioning test bodies executed. No host rollback or pre-incident baseline is claimed."
+    },
+    {
+      "id": "REPRODUCIBLE_ACCEPTANCE",
+      "state": "PARTIAL",
+      "detail": "Fresh roles, actual P/C/R/S hashes, S allow-table, compiled controller inputs and parent/VM firmware are now mechanically bound. Historical stale-controller and mismatched-firmware plans are rejected before dispatch. The latest original47 case remains Unknown at step40, with original policy restoration verified. No Unknown was replayed or cleared."
+    },
+    {
+      "id": "EDITOR_PERSISTENCE",
+      "state": "PARTIAL",
+      "detail": "Saved and original live-owner retirement preserve the exact draft/request identity and submit each original mutation once. Synchronous reservation freezes new work before retirement and the original capture-close future is retained after a lost reply. 82 focused tests passed. Four separate actual Windows clients passed seed, read-only recovery/export, saved retirement and live retirement, including 18 actual live-owner retirements with capture/import closure and zero business operations. The exact unchanged source manifests for that run precede the native stdio patch. Editable restart, historical maintenance, the complete fault matrix and physical input remain open."
+    }
   ],
   "gates": {
-    "L0_TOKEN":"NOT_RUN",
-    "L1_RUNNER":"NOT_RUN",
-    "L2_BUSINESS_AND_RETIREMENT":"NOT_RUN",
-    "L3_FULL47_NINE":"BLOCKED_MISSING_DRIVER_AND_INTERACTIVE_WINDOWS",
-    "EDITOR_PERSISTENCE":"OPEN",
-    "SDK26":"OPEN",
-    "G04":"OPEN",
-    "SDK_FREEZE":"OPEN"
+    "L0_TOKEN": "PASS_SCOPED_NATIVE_SNAPSHOT",
+    "L1_RUNNER": "UNKNOWN_CASE014_OPEN_ORIGINAL_TOKEN_ACCESS_DENIED",
+    "L2_BUSINESS_AND_RETIREMENT": "NOT_RUN",
+    "L3_FULL47_NINE": "UNKNOWN_STEP40_NO_REPLAY",
+    "EDITOR_PERSISTENCE": "PARTIAL_NOT_ACCEPTED",
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "SDK_FREEZE": "OPEN",
+    "HOST_EXECUTION_INCIDENT": "NO_PRETEST_BASELINE_AFTER_INCIDENT_CONFIG_BACKUP_RETAINED_NO_ROLLBACK",
+    "NATIVE_LIBRARY_REGRESSION": "FAILED_617_PASSED_13_FAILED_8_IGNORED"
   },
-  "missing_acceptance_inputs": [
-    "Common1737.ps1",
-    "Guest-Readiness1737.ps1",
-    "Guest-Transaction1737.ps1",
-    "Invoke-Transaction1737.ps1",
-    "RootTransactionCapture1737.cs",
-    "RootTransactionCapture1737.Metadata.cs",
-    "invoke-transaction-case2800.ps1",
-    "single-native47-account-right-approval2800.md"
+  "missing_acceptance_inputs": [],
+  "historical_evidence": "reports/reconstruction-2026-10-20/windows-target-policy-progress-2803/README.md",
+  "candidate_state": "PAUSED_DEVELOPMENT_SNAPSHOT_NOT_ACCEPTED",
+  "local_continuation": "docs/qualification/LOCAL_CONTINUATION.md",
+  "local_evidence": "build/local-continuation/qualification-evidence-007.json",
+  "retained_attempts": [
+    {
+      "tag": "f3c10aa8de444403bcced1892ac480d0",
+      "state": "UNKNOWN_OR_REJECTED_NO_REPLAY",
+      "connected_or_pending": false,
+      "known_add0": false,
+      "restore_attempted": false,
+      "source": "original local failure.json; retained without replay, adoption, polling or termination"
+    },
+    {
+      "tag": "da9d561f9650435686884c33fb037e64",
+      "state": "UNKNOWN_ORIGINAL_CASE_AND_SESSION_RETAINED",
+      "known_add0": true,
+      "restore_attempted": true,
+      "restore_verified": true,
+      "policy_clean": true,
+      "case_clean": false,
+      "source": "Original retained.json and journal sequence88; no replay, owner query, adoption or termination"
+    },
+    {
+      "tag": "03d8d451acee4092a988bae867a3dbf0",
+      "vm_id": "d9771bc8-4045-4e14-af84-2a80264e9b30",
+      "state": "UNKNOWN_ORIGINAL_CASE_AND_SESSION_RETAINED",
+      "known_add0": true,
+      "restore_attempted": true,
+      "restore_verified": true,
+      "policy_clean": true,
+      "case_clean": false,
+      "source": "Original retained.json and journal sequence88; no replay, owner query, adoption or termination after Unknown."
+    },
+    {
+      "tag": "8632c036e5ce42e4a6198d5292c5f101",
+      "vm_id": "15852ed5-530b-46e7-bf98-f4102916a166",
+      "status": "UNKNOWN_ORIGINAL_CASE_AND_SESSION_RETAINED_NO_REPLAY",
+      "policy_clean": true,
+      "case_clean": false,
+      "original_case_session_retained": true,
+      "owner_replayed": false,
+      "owner_polled": false
+    },
+    {
+      "tag": "0e590bd6aadf4236842d6b41df93be23",
+      "vm_id": "e40574fd-188a-4b7a-927c-2bb4549c133d",
+      "status": "UNKNOWN_ORIGINAL_CASE_AND_SESSION_RETAINED_NO_REPLAY",
+      "policy_clean": true,
+      "case_clean": false,
+      "original_case_session_retained": true,
+      "owner_replayed": false,
+      "owner_polled": false
+    },
+    {
+      "tag": "02903603ea254a84b5a3944a4b078601",
+      "vm_id": "a0ebd82e-2b76-497e-a917-baf44a308ef2",
+      "state": "GATHER_UNKNOWN_OR_REJECTED_NO_REPLAY",
+      "product_case_executed": false,
+      "account_right_mutations": 0
+    },
+    {
+      "tag": "45e623a2bb9c4ed9988d89ee070179f4",
+      "vm_id": "0f803abf-36f1-4abc-9504-38035bae32f9",
+      "state": "UNKNOWN_STEP40_ORIGINALS_RETAINED_NO_REPLAY",
+      "source_digest": "481bcc976827f12edfaf330b115010be2b00bc860e52485e90f02059c6c7db5f",
+      "roles": "D:\\build_cache\\_audit\\windows-acceptance-20261021-008\\roles-006\\result.json",
+      "policy_clean": true,
+      "case_clean": false,
+      "account_right_add_calls": 1,
+      "account_right_remove_calls": 1,
+      "restore_verified": true,
+      "original_policy_resources_retired": 10,
+      "original_case_session_retained": true,
+      "retained_exec_session_do_not_query_or_terminate": 14496,
+      "original_owner_replayed": false,
+      "original_owner_polled": false,
+      "diagnostic_transport_closed": true,
+      "diagnostic": "AsUserSpawnReadyRead START_WAIT_TIMEOUT; original runner RunningAtObservation; no SpawnReady or business completion",
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-acceptance-20261021-008\\c28-root-vm-transaction2769-45e623a2bb9c4ed9988d89ee070179f4-case\\retained.json",
+        "bytes": 3985,
+        "sha256": "e1e052ca9d50783cb78db382967154a918fde67a5ff08ef423061db1843a1df4"
+      }
+    },
+    {
+      "status": "UNKNOWN_STEP40_WITH_AUTHENTICATED_RUNNER_SPAWNCHILD_ACCESS_DENIED",
+      "tag": "8e55fa4e74e24f9cb7ca9d9deb6e17b0",
+      "vm_id": "14acf5d4-1b11-4c44-9b8a-11fb55bb6a17",
+      "source_digest": "9616f990a5d6ef30cdc1af67704a90f4d450a3943a4d6f00d2da5e3d30806c6b",
+      "roles": {
+        "path": "D:\\build_cache\\_audit\\windows-startup-observation-20261021-010\\roles-007\\result.json",
+        "bytes": 1625,
+        "sha256": "8323db441757a051596d3a4e449eb6d12fea489422e37f9b7e2bc5299eb3ef8a"
+      },
+      "original_steps_returned": 39,
+      "reserved_step": 40,
+      "diagnostic_runner_pid": 4024,
+      "diagnostic_runner_creation_filetime": 134370898460942661,
+      "reported_stage": "SpawnChild",
+      "reported_os_class": "AccessDenied",
+      "actual_failing_api": "NOT_YET_OBSERVED",
+      "policy_clean": true,
+      "case_clean": false,
+      "one_add_ntstatus": 0,
+      "one_remove_ntstatus": 0,
+      "original_policy_resources_closed": 10,
+      "original_case_session_retained": true,
+      "retained_exec_session_do_not_query_or_terminate": 1833,
+      "case_replayed": false,
+      "original_owner_contacted": false,
+      "snapshot_transport_closed": true,
+      "prelogin_diagnostic_name_guard_failure_preserved": "D:\\build_cache\\_audit\\windows-startup-observation-20261021-010\\vm-case-diagnostic-010\\safe-failure.json",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-startup-observation-20261021-010\\c28-root-vm-transaction2769-8e55fa4e74e24f9cb7ca9d9deb6e17b0-case\\retained.json",
+          "bytes": 3985,
+          "sha256": "f941132d46eae50e5ac0eb1609ec3b6fb5c547fc3664c13d1d7d92e57fd5a0d5"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-startup-observation-20261021-010\\vm-case-diagnostic-010b\\result.json",
+          "bytes": 202,
+          "sha256": "a2f1803e2056726333e62d7f622343e4c40b99973a26cbf3642f277e4fa54087"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-startup-observation-20261021-010\\vm-case-diagnostic-010b\\manifest.json",
+          "bytes": 2068,
+          "sha256": "754557c8e44c7968ed6b5f7e41b7819495e0952521aeb7f822374cc9b7d619f7"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-startup-observation-20261021-010\\vm-case-diagnostic-010b\\04-journal.jsonl",
+          "bytes": 50466,
+          "sha256": "3e1a12b7bf5577b1e3892c7616e9a8e354c1f5199e4686c71d2a7555f9e80626"
+        }
+      ],
+      "source_accepted": false,
+      "release_eligible": false,
+      "L1": "OPEN",
+      "P2": "OPEN",
+      "P3": "OPEN",
+      "SDK26": "OPEN",
+      "G04": "OPEN",
+      "SDK_FREEZE": "OPEN"
+    },
+    {
+      "status": "UNKNOWN_STEP40_WITH_AUTHENTICATED_RUNNER_SPAWNCHILD_ACCESS_DENIED",
+      "tag": "85e6d573f14e40329bf683c917eefe22",
+      "vm_id": "40553dbf-f7c5-47bb-931f-97d66c22d098",
+      "source_digest": "b63ecf930e55ada6fba24e6bdb370236c62840b532f29597c5502e25edb5acc4",
+      "roles": {
+        "path": "D:\\build_cache\\_audit\\windows-token-derivation-20261021-012\\roles-008\\result.json",
+        "bytes": 1613,
+        "sha256": "8cc3a715cb7470a25642098ed9ffe9ca7bd2cadb6faf029c60b7b2e166b11928"
+      },
+      "original_steps_returned": 39,
+      "reserved_step": 40,
+      "diagnostic_runner_pid": 5392,
+      "diagnostic_runner_creation_filetime": 134370927387121302,
+      "reported_stage": "SpawnChild",
+      "reported_os_class": "AccessDenied",
+      "actual_failing_api": "NOT_YET_OBSERVED",
+      "token_derivation_fixture_does_not_prove_product_cause": true,
+      "policy_clean": true,
+      "case_clean": false,
+      "one_add_ntstatus": 0,
+      "one_remove_ntstatus": 0,
+      "original_policy_resources_closed": 10,
+      "original_case_session_retained": true,
+      "retained_exec_session_do_not_query_or_terminate": 70767,
+      "case_replayed": false,
+      "original_owner_contacted": false,
+      "snapshot_transport_closed": true,
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-token-derivation-20261021-012\\c28-root-vm-transaction2769-85e6d573f14e40329bf683c917eefe22-case\\retained.json",
+          "bytes": 3985,
+          "sha256": "ee6a41f0fd576a432d1cf7721478e36bd7aa55d4268ceca49adce120f1d78ef0"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-token-derivation-20261021-012\\vm-case-diagnostic-011\\result.json",
+          "bytes": 202,
+          "sha256": "a2f1803e2056726333e62d7f622343e4c40b99973a26cbf3642f277e4fa54087"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-token-derivation-20261021-012\\vm-case-diagnostic-011\\manifest.json",
+          "bytes": 2052,
+          "sha256": "fb5f93446ab1c71673488531cede26089425a885dc5eeb5c938e0054ef103ae0"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-token-derivation-20261021-012\\vm-case-diagnostic-011\\04-journal.jsonl",
+          "bytes": 50352,
+          "sha256": "1abbd2813e2e7a1fdfe0d69dc80ae1ee4c56d9b37ff17ea4812ea68f30f68925"
+        }
+      ],
+      "source_accepted": false,
+      "release_eligible": false,
+      "L1": "OPEN",
+      "P2": "OPEN",
+      "P3": "OPEN",
+      "SDK26": "OPEN",
+      "G04": "OPEN",
+      "SDK_FREEZE": "OPEN"
+    },
+    {
+      "status": "UNKNOWN_STEP40_WITH_AUTHENTICATED_RUNNER_SPAWNCHILD_ACCESS_DENIED",
+      "tag": "f44697c1c9f8421eae013971481c0a54",
+      "vm_id": "c9639f41-8073-4869-9699-3180ec16871b",
+      "source_digest": "31608de2cb4392b79fd2040b77b0f20d2dc36f34919795cc431a2830cada6e15",
+      "roles": {
+        "path": "D:\\build_cache\\_audit\\windows-runner-site-20261021-013\\roles-009\\result.json",
+        "bytes": 1593,
+        "sha256": "718f243b7929e1b6b9410fd1738f2aea00fc356b19fc9a0dcfd52a042a3ff940"
+      },
+      "original_steps_returned": 39,
+      "reserved_step": 40,
+      "diagnostic_runner_pid": 5396,
+      "diagnostic_runner_creation_filetime": 134370956842297977,
+      "reported_stage": "SpawnChild",
+      "reported_os_class": "AccessDenied",
+      "reported_site": "OpenOriginalToken",
+      "actual_failing_api": "OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY | TOKEN_DUPLICATE)",
+      "access_denial_submechanism": "NOT_YET_OBSERVED",
+      "token_derivation_fixture_does_not_prove_product_cause": true,
+      "policy_clean": true,
+      "case_clean": false,
+      "one_add_ntstatus": 0,
+      "one_remove_ntstatus": 0,
+      "original_policy_resources_closed": 10,
+      "original_case_session_retained": true,
+      "retained_exec_session_do_not_query_or_terminate": 88014,
+      "case_replayed": false,
+      "original_owner_contacted": false,
+      "snapshot_transport_closed": true,
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-runner-site-20261021-013\\c28-root-vm-transaction2769-f44697c1c9f8421eae013971481c0a54-case\\retained.json",
+          "bytes": 3985,
+          "sha256": "adc9642c800742c0db6b1cf67959b5d1dc406e94f7d65badd87dd90f08f6720a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-runner-site-20261021-013\\vm-case-diagnostic-012\\result.json",
+          "bytes": 202,
+          "sha256": "a2f1803e2056726333e62d7f622343e4c40b99973a26cbf3642f277e4fa54087"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-runner-site-20261021-013\\vm-case-diagnostic-012\\manifest.json",
+          "bytes": 2032,
+          "sha256": "7e3dd5c0712502aed6f79f49a28535fabe8ddf9fdb50ef506f2705ab1ed00931"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-runner-site-20261021-013\\vm-case-diagnostic-012\\04-journal.jsonl",
+          "bytes": 50448,
+          "sha256": "352a51095fba49d0aa831a4a95d74b497e1bfeea94c5ea096e97414bc71c3ed5"
+        }
+      ],
+      "source_accepted": false,
+      "release_eligible": false,
+      "L1": "OPEN",
+      "P2": "OPEN",
+      "P3": "OPEN",
+      "SDK26": "OPEN",
+      "G04": "OPEN",
+      "SDK_FREEZE": "OPEN"
+    },
+    {
+      "status": "UNKNOWN_STEP40_DERIVED_CONTEXT_CHANGED_BEFORE_RUNNER",
+      "tag": "2dbf8923092d46c581f9c93e3ae9a599",
+      "vm_id": "2ee06093-619f-47be-b730-5b9b24e35a9a",
+      "source_digest": "1455f44da7b7582cdd933a8f151c35bd59fac653a5f67b8264ea880f1d57a3b8",
+      "roles": {
+        "path": "D:\\build_cache\\_audit\\windows-token-object-20261021-014\\roles-010\\result.json",
+        "bytes": 1597,
+        "sha256": "380e343ac8244219c401d331137b964729ab696cc083b41dee38d18bfac2963f"
+      },
+      "original_steps_returned": 39,
+      "reserved_step": 40,
+      "reported_site": "TargetPolicyGuard",
+      "target_policy_rejection": "DerivedContextChanged",
+      "actual_changed_field": "NOT_YET_OBSERVED",
+      "original_runner_observed": false,
+      "original_token_open_repair_product_proven": false,
+      "policy_clean": true,
+      "case_clean": false,
+      "one_add_ntstatus": 0,
+      "one_remove_ntstatus": 0,
+      "original_policy_resources_closed": 10,
+      "original_case_session_retained": true,
+      "retained_exec_session_do_not_query_or_terminate": 25672,
+      "case_replayed": false,
+      "original_owner_contacted": false,
+      "snapshot_transport_closed": true,
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-token-object-20261021-014\\c28-root-vm-transaction2769-2dbf8923092d46c581f9c93e3ae9a599-case\\retained.json",
+          "bytes": 3985,
+          "sha256": "1d58e3cce1f42867d0995a148b94b6ab224f5578c549fd5a678c06251c7bfde3"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-token-object-20261021-014\\vm-case-diagnostic-013\\result.json",
+          "bytes": 202,
+          "sha256": "a2f1803e2056726333e62d7f622343e4c40b99973a26cbf3642f277e4fa54087"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-token-object-20261021-014\\vm-case-diagnostic-013\\manifest.json",
+          "bytes": 2036,
+          "sha256": "b80b4bb57ca1f5f02644e0479f50c4d6fbbfdf0ddfd59e843890f0f825ed5e1b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-token-object-20261021-014\\vm-case-diagnostic-013\\04-journal.jsonl",
+          "bytes": 50548,
+          "sha256": "81e49233d17e47eef5f60f639228de71dd1eacdbcbb8db46b43c6831d4eef35e"
+        }
+      ],
+      "source_accepted": false,
+      "release_eligible": false,
+      "L1": "OPEN",
+      "P2": "OPEN",
+      "P3": "OPEN",
+      "SDK26": "OPEN",
+      "G04": "OPEN",
+      "SDK_FREEZE": "OPEN"
+    },
+    {
+      "status": "UNKNOWN_STEP40_RUNNER_OPEN_ORIGINAL_TOKEN_ACCESS_DENIED",
+      "tag": "57c4426218574c938258ae6989dd662a",
+      "vm_id": "b6221378-e3a4-4ce9-b81e-2fcd7574e327",
+      "source_digest": "7b630726aa48b5645c396ca9b73bfeaf1389d9a0cb73f0e33245cccf0d262ac8",
+      "roles": {
+        "path": "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\roles-011\\result.json",
+        "bytes": 1593,
+        "sha256": "f4e91cc1af9a17f8b46e98ab9671cc532048fd996c5cd4dacfe78e43b44f32dd"
+      },
+      "original_steps_returned": 39,
+      "reserved_step": 40,
+      "reported_site": "OpenOriginalToken",
+      "os_class": "AccessDenied",
+      "native_target_policy_passed_in_current_case": true,
+      "actual_token_access_submechanism": "NOT_YET_OBSERVED",
+      "original_runner_observed": true,
+      "runner_pid": 4852,
+      "runner_creation_filetime_100ns": "134371075272009927",
+      "original_token_open_repair_product_proven": false,
+      "policy_clean": true,
+      "case_clean": false,
+      "one_add_ntstatus": 0,
+      "one_remove_ntstatus": 0,
+      "original_policy_resources_closed": 10,
+      "original_case_session_retained": true,
+      "retained_exec_session_do_not_query_or_terminate": 65290,
+      "case_replayed": false,
+      "original_owner_contacted": false,
+      "snapshot_transport_closed": true,
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\c28-root-vm-transaction2769-57c4426218574c938258ae6989dd662a-case\\retained.json",
+          "bytes": 3985,
+          "sha256": "7bef9357727309e205718fe70b670732d9772c3350fbe15bc3b3e5a25b34e49e"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\vm-case-diagnostic-014\\result.json",
+          "bytes": 202,
+          "sha256": "a2f1803e2056726333e62d7f622343e4c40b99973a26cbf3642f277e4fa54087"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\vm-case-diagnostic-014\\manifest.json",
+          "bytes": 2032,
+          "sha256": "6d4df91d79a8a1a17fcb1b0da8a6d2a36afd6ec9e649265f2c639034521e4d7a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\vm-case-diagnostic-014\\04-journal.jsonl",
+          "bytes": 50380,
+          "sha256": "b4f5eb836b869b5a5f3bed1c08342522b46b8fce2969117cf1e2c6a45f525849"
+        }
+      ],
+      "source_accepted": false,
+      "release_eligible": false,
+      "L1": "OPEN",
+      "P2": "OPEN",
+      "P3": "OPEN",
+      "SDK26": "OPEN",
+      "G04": "OPEN",
+      "SDK_FREEZE": "OPEN"
+    }
   ],
-  "historical_evidence": "reports/reconstruction-2026-10-20/windows-target-policy-progress-2803/README.md"
+  "previous_local_stage": {
+    "tag": "da9d561f9650435686884c33fb037e64",
+    "state": "CASE_UNKNOWN_POLICY_RESTORE_VERIFIED",
+    "readiness_checks": 17,
+    "readiness_failed": 0,
+    "staged_images": 7,
+    "binding_sha256": "d317bdcfeabe525178a8706bdb1c3b5fb1b56402d75639de69a62b52784fa80e",
+    "own_stage_session_closed": true,
+    "own_bind_session_closed": true,
+    "case_plan_sha256": "5f44541a0444cf330a6b11eba6ab70e86cc6e1d97718bf45dfa6c1b4dc0ba59f",
+    "case_execution": "ONE_RUN_UNKNOWN_STEP40_NO_REPLAY",
+    "account_right_mutations": 2,
+    "source": "Direct human approval, original apply/run/restore/release replies and retained.json; diagnostic file snapshot collected through a separate closed read-only transport",
+    "account_right_add_calls": 1,
+    "account_right_remove_calls": 1,
+    "known_add0": true,
+    "restore_verified": true,
+    "original_holder_set_restored": true,
+    "own_policy_session_closed": true,
+    "original_case_session_retained": true
+  },
+  "local_stage": {
+    "tag": "0e590bd6aadf4236842d6b41df93be23",
+    "vm_id": "e40574fd-188a-4b7a-927c-2bb4549c133d",
+    "state": "CASE_UNKNOWN_POLICY_RESTORE_VERIFIED",
+    "readiness_checks": 17,
+    "readiness_failed": 0,
+    "staged_images": 7,
+    "binding_sha256": "7c16f44c6eec4b037cb72308ccde8bd1522fc45dde0bfb925b12ec88b0a73e41",
+    "case_plan_sha256": "4cfe44020fba88f42b231de250739d1dfcc6d0e0dad7f60bae1ddaf14e5deab6",
+    "own_stage_session_closed": true,
+    "own_bind_session_closed": true,
+    "own_policy_session_closed": true,
+    "case_execution": "ONE_RUN_UNKNOWN_STEP40_NO_REPLAY",
+    "account_right_add_calls": 1,
+    "account_right_remove_calls": 1,
+    "known_add0": true,
+    "restore_verified": true,
+    "original_holder_set_restored": true,
+    "original_case_session_retained": true,
+    "original_runner_state": "RunningAtObservation",
+    "original_stage": "AsUserSpawnReadyRead",
+    "source": "Original saved case/policy receipts and four public files collected once through a separate closed read-only transport"
+  },
+  "acceptance_scope": "WINDOWS_ONLY_PER_CURRENT_DIRECT_HUMAN_INSTRUCTION",
+  "other_platforms": "DEFERRED_NOT_ACCEPTED_NOT_REQUIRED_FOR_THIS_WINDOWS_RUN",
+  "disk_cleanup": "D:\\build_cache\\_audit\\morrow-20261021\\result.json",
+  "windows_sdk_subset": {
+    "status": "WINDOWS_NATIVE_SDK_AND_STANDALONE_CONSUMERS_SCOPED_PASS",
+    "rust_passed": 92,
+    "native_executable_runs": 14,
+    "standalone_consumer_runs": 3,
+    "scope": "Current unchanged SDK/core-schema/tool inputs on Windows x64; not full modified host/native runner/product UI or other-platform qualification"
+  },
+  "previous_local_stages": [
+    {
+      "tag": "da9d561f9650435686884c33fb037e64",
+      "state": "CASE_UNKNOWN_POLICY_RESTORE_VERIFIED",
+      "readiness_checks": 17,
+      "readiness_failed": 0,
+      "staged_images": 7,
+      "binding_sha256": "d317bdcfeabe525178a8706bdb1c3b5fb1b56402d75639de69a62b52784fa80e",
+      "own_stage_session_closed": true,
+      "own_bind_session_closed": true,
+      "case_plan_sha256": "5f44541a0444cf330a6b11eba6ab70e86cc6e1d97718bf45dfa6c1b4dc0ba59f",
+      "case_execution": "ONE_RUN_UNKNOWN_STEP40_NO_REPLAY",
+      "account_right_mutations": 2,
+      "source": "Direct human approval, original apply/run/restore/release replies and retained.json; diagnostic file snapshot collected through a separate closed read-only transport",
+      "account_right_add_calls": 1,
+      "account_right_remove_calls": 1,
+      "known_add0": true,
+      "restore_verified": true,
+      "original_holder_set_restored": true,
+      "own_policy_session_closed": true,
+      "original_case_session_retained": true
+    },
+    {
+      "tag": "03d8d451acee4092a988bae867a3dbf0",
+      "vm_id": "d9771bc8-4045-4e14-af84-2a80264e9b30",
+      "state": "CASE_UNKNOWN_POLICY_RESTORE_VERIFIED",
+      "readiness_checks": 17,
+      "readiness_failed": 0,
+      "staged_images": 7,
+      "binding_sha256": "f8910698949f562649897f90fb18cdb61e9f318a75dea577c852e15ca929933e",
+      "own_stage_session_closed": true,
+      "own_bind_session_closed": true,
+      "case_plan_sha256": "b11c0923305202eccc6af04880631e3b049f211855786a56e13187fe8473b22e",
+      "case_execution": "ONE_RUN_UNKNOWN_STEP40_NO_REPLAY",
+      "account_right_add_calls": 1,
+      "account_right_remove_calls": 1,
+      "known_add0": true,
+      "restore_verified": true,
+      "original_holder_set_restored": true,
+      "own_policy_session_closed": true,
+      "original_case_session_retained": true,
+      "original_runner_exit_hex": "0xC0000142",
+      "source": "Original new-clone apply/run/restore/release replies and retained.json; separate read-only file snapshot closed itself."
+    }
+  ],
+  "retained_exec_sessions_do_not_query_or_terminate": [
+    1833,
+    9929,
+    14496,
+    20804,
+    21716,
+    25258,
+    25672,
+    35294,
+    40760,
+    48363,
+    54562,
+    65290,
+    65383,
+    66705,
+    70767,
+    71420,
+    82424,
+    88014
+  ],
+  "execution_state": "PAUSED_BY_USER_FOR_GITHUB_SNAPSHOT",
+  "host_incident": "build/local-continuation/host-legacy-incident-001.json",
+  "windows_editor_subset": {
+    "status": "NATIVE_WINDOWS_FORMAL_DRAFT_LIFECYCLE_SCOPED_PASS",
+    "phases": 4,
+    "live_owner_retirements": 18,
+    "focused_unit_tests_passed": 82,
+    "evidence": "build/local-continuation/draft-windows-004/result.json",
+    "physical_input_accepted": false,
+    "editable_restart_accepted": false,
+    "full_P3_accepted": false,
+    "source_scope": "Original before/after manifests from draft-windows-004; predates the native stdio patch"
+  },
+  "host_current_configuration_backup": "D:\\build_cache\\VMBack\\host-config-after-incident-20261021",
+  "backup_is_preincident_baseline": false,
+  "build_cache_root": "D:\\build_cache",
+  "cache_migration": "COMPLETE_HASH_VERIFIED_ALL_TOOL_DEFAULTS_AND_OLD_CACHE_PATHS_ON_D",
+  "latest_local_stage": {
+    "status": "UNKNOWN_STEP40_RUNNER_OPEN_ORIGINAL_TOKEN_ACCESS_DENIED",
+    "tag": "57c4426218574c938258ae6989dd662a",
+    "vm_id": "b6221378-e3a4-4ce9-b81e-2fcd7574e327",
+    "source_digest": "7b630726aa48b5645c396ca9b73bfeaf1389d9a0cb73f0e33245cccf0d262ac8",
+    "roles": {
+      "path": "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\roles-011\\result.json",
+      "bytes": 1593,
+      "sha256": "f4e91cc1af9a17f8b46e98ab9671cc532048fd996c5cd4dacfe78e43b44f32dd"
+    },
+    "original_steps_returned": 39,
+    "reserved_step": 40,
+    "reported_site": "OpenOriginalToken",
+    "os_class": "AccessDenied",
+    "native_target_policy_passed_in_current_case": true,
+    "actual_token_access_submechanism": "NOT_YET_OBSERVED",
+    "original_runner_observed": true,
+    "runner_pid": 4852,
+    "runner_creation_filetime_100ns": "134371075272009927",
+    "original_token_open_repair_product_proven": false,
+    "policy_clean": true,
+    "case_clean": false,
+    "one_add_ntstatus": 0,
+    "one_remove_ntstatus": 0,
+    "original_policy_resources_closed": 10,
+    "original_case_session_retained": true,
+    "retained_exec_session_do_not_query_or_terminate": 65290,
+    "case_replayed": false,
+    "original_owner_contacted": false,
+    "snapshot_transport_closed": true,
+    "evidence": [
+      {
+        "path": "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\c28-root-vm-transaction2769-57c4426218574c938258ae6989dd662a-case\\retained.json",
+        "bytes": 3985,
+        "sha256": "7bef9357727309e205718fe70b670732d9772c3350fbe15bc3b3e5a25b34e49e"
+      },
+      {
+        "path": "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\vm-case-diagnostic-014\\result.json",
+        "bytes": 202,
+        "sha256": "a2f1803e2056726333e62d7f622343e4c40b99973a26cbf3642f277e4fa54087"
+      },
+      {
+        "path": "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\vm-case-diagnostic-014\\manifest.json",
+        "bytes": 2032,
+        "sha256": "6d4df91d79a8a1a17fcb1b0da8a6d2a36afd6ec9e649265f2c639034521e4d7a"
+      },
+      {
+        "path": "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\vm-case-diagnostic-014\\04-journal.jsonl",
+        "bytes": 50380,
+        "sha256": "b4f5eb836b869b5a5f3bed1c08342522b46b8fce2969117cf1e2c6a45f525849"
+      }
+    ],
+    "source_accepted": false,
+    "release_eligible": false,
+    "L1": "OPEN",
+    "P2": "OPEN",
+    "P3": "OPEN",
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "SDK_FREEZE": "OPEN"
+  },
+  "startup_error_report_regressions": {
+    "evidence": "D:\\build_cache\\_audit\\windows-startup-observation-20261021-010\\pipe-tests-003\\result.json",
+    "passed": 6,
+    "scope": "ACTUAL_ANONYMOUS_PIPES_AND_MEMORY_WRITERS_ONLY",
+    "product_accepted": false
+  },
+  "default_provisioning_test_skip": {
+    "evidence": "D:\\build_cache\\_audit\\windows-startup-observation-20261021-010\\default-skip-verification-001\\result.json",
+    "skipped": 10,
+    "executed_bodies": 0
+  },
+  "token_derivation_regressions": {
+    "evidence": "D:\\build_cache\\_audit\\windows-token-derivation-20261021-012\\regressions-001\\result.json",
+    "passed": 13,
+    "actual_local_preparations": 20,
+    "actual_product_api_cause": "NOT_YET_OBSERVED",
+    "product_accepted": false
+  },
+  "startup_site_regressions": {
+    "evidence": "D:\\build_cache\\_audit\\windows-runner-site-20261021-013\\regressions-001\\result.json",
+    "passed": 18,
+    "actual_original_authenticated_pipe": true,
+    "site_atoms_only": true,
+    "arbitrary_body_redacted": true,
+    "product_failing_api": "NOT_YET_OBSERVED",
+    "product_accepted": false
+  },
+  "launch_object_regressions": {
+    "evidence": "D:\\build_cache\\_audit\\windows-token-object-20261021-014\\regressions-001\\result.json",
+    "passed": 31,
+    "owned_object_fixtures": "D:\\build_cache\\_audit\\windows-token-object-20261021-014\\owned-object-fixture-001\\result.json",
+    "product_submechanism_proven": false,
+    "product_accepted": false
+  },
+  "additional_cache_cleanup": {
+    "evidence": [
+      "D:\\build_cache\\_audit\\windows-token-object-20261021-014\\cache-cleanup-001\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-object-20261021-014\\cache-cleanup-002\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-object-20261021-014\\cache-cleanup-003\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-object-20261021-014\\cache-cleanup-004\\result.json"
+    ],
+    "deleted_files": 29783,
+    "logical_bytes": 52642058828,
+    "sources_deleted": 0,
+    "vm_changes": 0
+  },
+  "owned_fixture_unknown": {
+    "evidence": "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\owned-grant-fixture-001\\stdout.json",
+    "exec_session": 9929,
+    "stage": "READ_ONLY_CURRENT_SOURCE",
+    "error_win32": 24,
+    "known_handles": 1,
+    "mutations_before_failure": 0,
+    "retained_no_poll_no_termination": true
+  },
+  "launch_grant_regressions": {
+    "evidence": "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\regressions-001\\result.json",
+    "passed": 35,
+    "historical_product_changed_field": "NOT_YET_OBSERVED",
+    "product_accepted": false
+  },
+  "additional_cache_cleanup_015": {
+    "evidence": [
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-001\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-002\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-003\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-004\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-005\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-006\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-007\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-008\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-009\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-010\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-011\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-012\\result.json",
+      "D:\\build_cache\\_audit\\windows-token-grant-20261021-015\\cache-cleanup-013\\result.json"
+    ],
+    "deleted_files": 15477,
+    "logical_bytes": 32450192796,
+    "source_deletions": 0,
+    "vm_changes": 0,
+    "plan014_not_applied": "Archived visualization qualification cache retained; its alias differs from these Morron roots"
+  },
+  "pause": {
+    "date": "2026-10-21",
+    "reason": "Direct user instruction to pause the task and push to GitHub",
+    "branch": "codex/local-continue-20261020",
+    "scope": "Current corrected source, tests, generated language assets and qualification handoff",
+    "ci_requested": false,
+    "release_requested": false,
+    "acceptance_resumption": "Requires a later user instruction; existing VM authorizations are retained",
+    "retained_owners": "Preserve all historical Unknown owners without replay, adoption, polling or termination"
+  },
+  "owned_process_fixture_continuation": {
+    "evidence_root": "D:\\build_cache\\_audit\\windows-token-label-20261021-016",
+    "scope": "Independent newly owned token/process objects; not product admission",
+    "product_source_changes": 0,
+    "product_policy_changes": 0,
+    "bounded_observation": "Actual new process primary-token object DACL differed from the prelaunch token object DACL and reflected the launch TokenDefaultDacl",
+    "successful_parent_readback_is_not_child_startup": true,
+    "actual_child_main_report": "NOT_OBSERVED_IN_RESTRICTED_PROCESS_FIXTURES",
+    "known_child_initialization_exit": "0xC0000142",
+    "debug_event_limit": "Event7 is UNLOAD_DLL_DEBUG_EVENT, not a debug string; no valid OutputDebugString claim",
+    "retained_fixtures": [
+      {
+        "fixture": "owned-process-access-002",
+        "exec_session": 65383,
+        "state": "RETAINED_NO_REPLAY_NO_QUERY_NO_TERMINATION"
+      },
+      {
+        "fixture": "owned-process-access-003",
+        "exec_session": 71420,
+        "state": "RETAINED_NO_REPLAY_NO_QUERY_NO_TERMINATION"
+      },
+      {
+        "fixture": "owned-process-access-009",
+        "exec_session": 48363,
+        "state": "RETAINED_DEBUG_EVENT_UNCONTINUED_NO_REPLAY_NO_QUERY_NO_TERMINATION"
+      }
+    ],
+    "proposed_primary_token_initialization": "UNIMPLEMENTED_IN_PRODUCT_AND_UNQUALIFIED",
+    "product_L1_accepted": false
+  },
+  "prepared_l1_environment": {
+    "state": "PREPARED_NOT_EXECUTED_PAUSED",
+    "vm_id": "83c0b161-623e-4a53-8e82-c1d31443e9ad",
+    "vm_name": "Morrow Windows L1 20261021 015",
+    "vm_root": "C:\\MorrowQA\\windows-l1-20261021-015",
+    "creation_receipt": "C:\\MorrowQA\\windows-l1-20261021-015\\clone-result.json",
+    "creation_receipt_sha256": "80ad193753669e1035c8a6cb862ba61af6b3dbd6d4e455995c80a878a41c5f7b",
+    "network_disconnected_at_creation": true,
+    "memory_bytes": 4294967296,
+    "processors": 4,
+    "guest_login_performed": false,
+    "guest_fixture_executed": false,
+    "guest_account_or_privilege_mutations": 0,
+    "prepared_bundle": "D:\\build_cache\\_audit\\windows-token-label-20261021-016\\managed-fixture-package.zip",
+    "prepared_bundle_sha256": "6cc141859fd36117f7c5d861852308400ce0f454ee24d9d2ec6dc005ea168217",
+    "prepared_fixture_sha256": "6d439f29acf4e1443f8ffb868f8d2c975aad610c0937e8c5b8fe0b976ca170e1",
+    "prepared_child_sha256": "621fb3bca9b99c513119bfebb560494579bb3f7d7ba4132c1d72bbc9b05cfb6a",
+    "host_build_outputs_on_D": true,
+    "qualification": "No L1/full47/P2/P3/SDK acceptance evidence"
+  }
 }

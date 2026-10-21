@@ -2,6 +2,13 @@ import 'theme_plugins/theme_plugin_controller.dart';
 import 'theme_plugins/theme_artwork.dart';
 import 'editor_draft_handoff_recovery_dialog.dart';
 import 'plugins/editor_draft.dart';
+import 'plugins/editor_draft_owner.dart';
+import 'plugins/editor_draft_session.dart';
+import 'plugins/editor_draft_review.dart';
+import 'plugins/editor_draft_retirement.dart';
+import 'editor_draft_recovery_dialog.dart';
+import 'plugins/editor_draft_binding.dart';
+import 'plugins/editor_draft_workspace.dart';
 import 'plugins/editor_draft_handoff_coordinator.dart';
 import 'editor_draft_import_recovery_dialog.dart';
 import 'plugins/editor_draft_import.dart';
@@ -908,6 +915,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   EditorDraftHandoffCoordinator? _draftHandoffRecovery;
   EditorDraftHandoffCoordinator? _draftHandoffDialogOwner;
   DialogRoute<void>? _draftHandoffRoute;
+  Route<dynamic>? _draftJournalRoute;
 
   AppLocalizations get l => L10n.of(context);
   WorkbenchPage section = WorkbenchPage.overview;
@@ -2220,7 +2228,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       else
         Expanded(child: searchField()),
       const SizedBox(width: 8),
-      if (widget.workbench is WorkbenchEditorDraftHandoffProposalSupport ||
+      if (widget.workbench is WorkbenchEditorDraftRecovery ||
+          widget.workbench is WorkbenchEditorDraftHandoffProposalSupport ||
           (widget.workbench is WorkbenchEditorRecovery &&
               widget.workbench is WorkbenchEditorDraftImportSupport))
         PopupMenuButton<String>(
@@ -2228,7 +2237,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
           tooltip: l.mainEditorRecoveryTitle,
           icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
           onSelected: (value) {
-            if (value == 'handoffs') {
+            if (value == 'drafts') {
+              unawaited(reviewDraftJournal());
+            } else if (value == 'handoffs') {
               unawaited(reviewDraftHandoffRecovery());
             } else if (value == 'imports') {
               unawaited(reviewDraftImportRecovery());
@@ -2237,6 +2248,12 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             }
           },
           itemBuilder: (_) => [
+            if (widget.workbench is WorkbenchEditorDraftRecovery)
+              PopupMenuItem(
+                key: const ValueKey('editor-recovery-menu-drafts'),
+                value: 'drafts',
+                child: Text(l.mainDraftJournalTitle),
+              ),
             if (widget.workbench is WorkbenchEditorRecovery)
               PopupMenuItem(
                 key: const ValueKey('editor-recovery-menu-edits'),
@@ -4385,6 +4402,47 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     return null;
   }
 
+  Future<EditorDraftOwner?> _retainEditorDraft(
+    WorkbenchBackend? backend,
+    WorkbenchEditorSession? editor, {
+    Idea? idea,
+    required String category,
+  }) async {
+    if (backend is! WorkbenchEditorDraftRuntime || editor == null) return null;
+    EditorDraftTextValue raw(String value) => EditorDraftTextValue(
+      text: value,
+      selectionBase: -1,
+      selectionExtent: -1,
+      affinity: 1,
+      directional: false,
+      composingStart: -1,
+      composingEnd: -1,
+    );
+    return (backend as WorkbenchEditorDraftRuntime).createEditorDraftOwner(
+      editor: editor,
+      create: idea == null,
+      attachments: idea?.attachments ?? const [],
+      initial: EditorDraftSnapshot(
+        values: EditorDraftValues(
+          title: raw(idea?.title ?? ''),
+          description: raw(idea?.description ?? ''),
+          hypothesis: raw(idea?.hypothesis ?? ''),
+          conclusion: raw(idea?.conclusion ?? ''),
+          todos: raw(idea?.todos.join('\n') ?? ''),
+          category: idea?.category ?? category,
+          stage:
+              idea?.stage ??
+              (category == '进行中'
+                  ? '推进中'
+                  : category == '实验'
+                  ? '待验证'
+                  : '待整理'),
+        ),
+        assets: const [],
+      ),
+    );
+  }
+
   Future<WorkbenchEditorSession> _openConfirmedVersionedEditor(
     WorkbenchBackend backend,
     Idea confirmed,
@@ -4524,14 +4582,26 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     final backend = widget.workbench;
     final target = Idea.nextId();
     WorkbenchEditorSession? editor;
+    EditorDraftOwner? draftOwner;
+    final category = switch (section) {
+      WorkbenchPage.projects => '进行中',
+      WorkbenchPage.laboratory => '实验',
+      _ => '灵感',
+    };
     try {
       editor = await _openEditor(target, true);
+      draftOwner = await _retainEditorDraft(
+        backend,
+        editor,
+        category: category,
+      );
     } catch (error) {
+      if (draftOwner == null) await editor?.close();
       _editorOpenError(error);
       return;
     }
     if (!mounted || !identical(widget.workbench, backend)) {
-      await editor?.close();
+      if (draftOwner == null) await editor?.close();
       return;
     }
     final result = await showStudioDialog<Idea>(
@@ -4539,14 +4609,14 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       builder: (_) => NewIdeaDialog(
         targetId: target,
         editor: editor,
+        draftOwner: draftOwner,
+        draftRuntime: backend is WorkbenchEditorDraftRuntime
+            ? backend as WorkbenchEditorDraftRuntime
+            : null,
         isCurrent: () => mounted && identical(widget.workbench, backend),
         initialFavorite: section == WorkbenchPage.favorites,
         plugin: widget.workbench?.studio,
-        initialCategory: switch (section) {
-          WorkbenchPage.projects => '进行中',
-          WorkbenchPage.laboratory => '实验',
-          _ => '灵感',
-        },
+        initialCategory: category,
       ),
     );
     if (!mounted || !identical(widget.workbench, backend)) return;
@@ -4586,6 +4656,13 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   }
 
   void _dismissDraftHandoffRoute() {
+    final journal = _draftJournalRoute;
+    _draftJournalRoute = null;
+    if (journal != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (journal.isActive) journal.navigator?.removeRoute(journal);
+      });
+    }
     final route = _draftHandoffRoute;
     _draftHandoffRoute = null;
     if (route == null) return;
@@ -4653,6 +4730,82 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       if (identical(_draftHandoffDialogOwner, coordinator)) {
         _draftHandoffDialogOwner = null;
       }
+    }
+  }
+
+  Future<void> reviewDraftJournal() async {
+    final backend = widget.workbench;
+    if (backend is! WorkbenchEditorDraftRecovery ||
+        _draftJournalRoute != null) {
+      return;
+    }
+    final runtime = backend as WorkbenchEditorDraftRecovery;
+    bool current() => mounted && identical(widget.workbench, backend);
+    final route = DialogRoute<EditorDraftReview>(
+      context: context,
+      builder: (_) =>
+          EditorDraftRecoveryDialog(runtime: runtime, isCurrent: current),
+    );
+    _draftJournalRoute = route;
+    final review = await Navigator.of(context, rootNavigator: true).push(route);
+    if (identical(_draftJournalRoute, route)) _draftJournalRoute = null;
+    if (review == null || !mounted || !current()) return;
+    EditorDraftOwner? retained;
+    if (backend is WorkbenchEditorDraftRuntime) {
+      try {
+        final original = (backend as WorkbenchEditorDraftRuntime)
+            .retainedEditorDraft(review.record.request.cardId);
+        if (original?.session.draftId == review.record.request.draftId) {
+          retained = original;
+        }
+      } catch (_) {
+        // Inspection/export remain available when a live view cannot attach.
+      }
+    }
+    final editor = DialogRoute<bool>(
+      context: context,
+      builder: (_) => NewIdeaDialog(
+        savedDraft: review,
+        recoveryRuntime: runtime,
+        canResumeSavedDraft: retained != null,
+        isCurrent: current,
+      ),
+    );
+    _draftJournalRoute = editor;
+    bool? resume;
+    try {
+      resume = await Navigator.of(context, rootNavigator: true).push(editor);
+    } finally {
+      if (identical(_draftJournalRoute, editor)) _draftJournalRoute = null;
+    }
+    if (resume != true || !mounted || !current() || retained == null) return;
+    final owner = retained;
+    final drafts = backend as WorkbenchEditorDraftRuntime;
+    try {
+      if (!identical(drafts.retainedEditorDraft(owner.session.cardId), owner)) {
+        throw StateError('Original live draft owner changed');
+      }
+      final live = DialogRoute<Idea>(
+        context: context,
+        builder: (_) => NewIdeaDialog(
+          initialIdea: owner.baseline,
+          editor: owner.editor,
+          draftOwner: owner,
+          draftRuntime: drafts,
+          isCurrent: current,
+        ),
+      );
+      _draftJournalRoute = live;
+      final result = await Navigator.of(
+        context,
+        rootNavigator: true,
+      ).push(live);
+      if (identical(_draftJournalRoute, live)) _draftJournalRoute = null;
+      if (!current()) return;
+      if (result != null) _acceptEditorResult(result, backend);
+      await _refreshAfterEditorClose(backend);
+    } catch (error) {
+      _editorOpenError(error);
     }
   }
 
@@ -4973,8 +5126,16 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     if (!mounted || !identical(widget.workbench, backend)) return;
     if (action == 'edit') {
       WorkbenchEditorSession? editor;
+      EditorDraftOwner? draftOwner;
       try {
-        if (idea.versioned != null) {
+        if (backend is WorkbenchEditorDraftRuntime) {
+          draftOwner = (backend as WorkbenchEditorDraftRuntime)
+              .retainedEditorDraft(idea.id);
+        }
+        if (draftOwner != null) {
+          editor = draftOwner.editor;
+          idea = draftOwner.baseline ?? idea;
+        } else if (idea.versioned != null) {
           if (backend is! WorkbenchVersionedContent ||
               backend is! WorkbenchVersionedEditorSupport ||
               backend is! WorkbenchMixedContent ||
@@ -4999,16 +5160,25 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             isCurrent: () => mounted && identical(widget.workbench, backend),
             reopen: (confirmed) =>
                 _openConfirmedVersionedEditor(backend, confirmed),
+            deferRecoveryAcknowledgement:
+                backend is WorkbenchEditorDraftRuntime,
           );
         } else {
           editor = await _openEditor(idea.id, false);
         }
+        draftOwner ??= await _retainEditorDraft(
+          backend,
+          editor,
+          idea: idea,
+          category: idea.category,
+        );
       } catch (error) {
+        if (draftOwner == null) await editor?.close();
         _editorOpenError(error);
         return;
       }
       if (!mounted || !identical(widget.workbench, backend)) {
-        await editor?.close();
+        if (draftOwner == null) await editor?.close();
         return;
       }
       final edited = await showStudioDialog<Idea>(
@@ -5016,6 +5186,10 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
         builder: (_) => NewIdeaDialog(
           initialIdea: idea,
           editor: editor,
+          draftOwner: draftOwner,
+          draftRuntime: backend is WorkbenchEditorDraftRuntime
+              ? backend as WorkbenchEditorDraftRuntime
+              : null,
           isCurrent: () => mounted && identical(widget.workbench, backend),
           plugin: widget.workbench?.studio,
         ),
@@ -5159,6 +5333,11 @@ class NewIdeaDialog extends StatefulWidget {
     this.importAttachment,
     this.plugin,
     this.editor,
+    this.draftOwner,
+    this.draftRuntime,
+    this.savedDraft,
+    this.recoveryRuntime,
+    this.canResumeSavedDraft = false,
     this.targetId,
     this.initialFavorite = false,
     this.isCurrent,
@@ -5168,6 +5347,11 @@ class NewIdeaDialog extends StatefulWidget {
   final bool initialFavorite;
   final bool Function()? isCurrent;
   final WorkbenchEditorSession? editor;
+  final EditorDraftOwner? draftOwner;
+  final WorkbenchEditorDraftRuntime? draftRuntime;
+  final EditorDraftReview? savedDraft;
+  final WorkbenchEditorDraftRecovery? recoveryRuntime;
+  final bool canResumeSavedDraft;
   final String initialCategory;
   final Future<PastedContent> Function()? readClipboard;
   final Future<IdeaAttachment> Function(XFile)? importAttachment;
@@ -5206,6 +5390,223 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
   int? _submittedGeneration;
   bool _hasUnsavedSuccessor = false;
   final _lastFieldValues = <TextEditingController, TextEditingValue>{};
+  EditorDraftBinding? _draftBinding;
+  EditorDraftViewLease? _draftLease;
+  EditorDraftOwner? _draftOwner;
+  EditorDraftCommitAttempt? _ownedCommit;
+  EditorDraftRetirementAttempt? _journalRetirement;
+  bool get _readOnly => widget.savedDraft != null;
+
+  Future<void> _retireSavedDraft() async {
+    final review = widget.savedDraft;
+    final runtime = widget.recoveryRuntime;
+    if (review == null || runtime is! WorkbenchEditorDraftMaintenance ||
+        importing || saving || !(widget.isCurrent?.call() ?? true)) {
+      return;
+    }
+    final maintenance = runtime as WorkbenchEditorDraftMaintenance;
+    try {
+      final attempt = _journalRetirement ??= maintenance.retirementFor(review);
+      if (!attempt.dispatched) {
+        final approved = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l.mainDraftJournalRetire),
+            content: Text(l.mainDraftJournalRetireConfirm),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false),
+                  child: Text(l.mainNotNow)),
+              FilledButton(key: const ValueKey('idea-confirm-retire-draft'),
+                  onPressed: () => Navigator.pop(context, true),
+                  child: Text(l.mainDraftJournalRetire)),
+            ],
+          ),
+        );
+        if (approved != true || !mounted ||
+            !(widget.isCurrent?.call() ?? true)) {
+          return;
+        }
+      }
+      setState(() => saving = true);
+      await pendingUiWrites.track(
+          attempt.dispatched ? attempt.inspect() : attempt.start());
+      if (mounted && (widget.isCurrent?.call() ?? true)) {
+        Navigator.pop(context, false);
+      }
+    } catch (_) {
+      if (mounted) setState(() => saveError = l.mainDraftJournalRetireUnknown);
+    } finally {
+      if (mounted) setState(() => saving = false);
+    }
+  }
+
+
+  void _applyRawDraft(EditorDraftValues raw) {
+    title.value = EditorDraftBinding.editingValue(raw.title);
+    description.value = EditorDraftBinding.editingValue(raw.description);
+    hypothesis.value = EditorDraftBinding.editingValue(raw.hypothesis);
+    conclusion.value = EditorDraftBinding.editingValue(raw.conclusion);
+    todos.value = EditorDraftBinding.editingValue(raw.todos);
+    category = raw.category;
+    stage = raw.stage;
+  }
+
+  void _attachDraftOwner(EditorDraftOwner owner) {
+    final binding = EditorDraftBinding(
+      session: owner.session,
+      title: title,
+      description: description,
+      hypothesis: hypothesis,
+      conclusion: conclusion,
+      todos: todos,
+      isCurrent: widget.isCurrent,
+      readMetadata: () => owner.metadata(
+        category: category,
+        stage: stage,
+        selected: attachments,
+      ),
+    );
+    _draftOwner = owner;
+    _draftBinding = binding;
+    _draftLease = owner.attach(binding);
+    owner.session.addListener(_draftChanged);
+  }
+
+  void _detachDraftOwner() {
+    _draftOwner?.session.removeListener(_draftChanged);
+    _draftBinding?.capture();
+    _draftBinding?.dispose();
+    _draftLease?.release();
+    _draftBinding = null;
+    _draftLease = null;
+  }
+
+  Future<void> _saveOwned() async {
+    final owner = _draftOwner!;
+    if (owner.pendingCommit == null && title.text.trim().isEmpty) {
+      setState(() => invalid = true);
+      return;
+    }
+    setState(() {
+      saving = true;
+      _submitFrozen = true;
+      saveError = '';
+    });
+    try {
+      final template = Idea(
+        title.text,
+        description.text,
+        category,
+        _baseline?.icon ?? Icons.auto_awesome_outlined,
+        _baseline?.color ?? const Color(0xFF9D87D4),
+        id: _targetId,
+        favorite: _baseline?.favorite ?? widget.initialFavorite,
+        time: _baseline?.time ?? '刚刚',
+        completed: Set.of(_baseline?.completed ?? <String>{}),
+        contentOwner: _baseline?.contentOwner,
+        contentRevision: _baseline?.contentRevision,
+        versioned: _baseline?.versioned,
+      );
+      final attempt = _ownedCommit ??=
+          owner.pendingCommit ??
+          widget.draftRuntime!.beginEditorDraftCommit(owner, template);
+      await pendingUiWrites.track(
+        attempt.failure == null
+            ? attempt.start()
+            : attempt.inspectAndContinue(),
+      );
+      // A disposed route releases its lease. Its original root can still finish
+      // the durable handoff; no widget state is needed by the business future.
+      if (!attempt.viewTransferred) {
+        attempt.transferView((child) {
+          if (!mounted) return;
+          _detachDraftOwner();
+          _editor = child.editor;
+          _attachDraftOwner(child);
+        });
+      }
+      await pendingUiWrites.track(attempt.finish());
+      if (!mounted || !(widget.isCurrent?.call() ?? true)) return;
+      _baseline = attempt.confirmed;
+      _ownedCommit = null;
+      if (attempt.hasSuccessorChanges || _draftOwner!.session.dirty) {
+        setState(() {
+          _submitFrozen = false;
+          _hasUnsavedSuccessor = true;
+          saveError = '';
+        });
+      } else {
+        saved = true;
+        Navigator.pop(context, attempt.confirmed);
+      }
+    } catch (_) {
+      if (mounted) setState(() => saveError = l.mainSaveUnknown);
+    } finally {
+      if (mounted) setState(() => saving = false);
+    }
+  }
+
+  void _draftChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _captureDraftMetadata() {
+    _draftBinding?.capture();
+  }
+
+  Future<void> _exportSavedDraft() async {
+    final review = widget.savedDraft;
+    final runtime = widget.recoveryRuntime;
+    if (review == null ||
+        runtime == null ||
+        importing ||
+        saving ||
+        !(widget.isCurrent?.call() ?? true)) {
+      return;
+    }
+    setState(() => importing = true);
+    try {
+      final selected = await getDirectoryPath();
+      if (selected == null || !mounted || !(widget.isCurrent?.call() ?? true)) {
+        return;
+      }
+      final destination = await runtime.exportEditorDraft(review, selected);
+      if (mounted && (widget.isCurrent?.call() ?? true)) {
+        setState(() {
+          pasteNotice = '${l.mainDraftJournalExported}\n$destination';
+          saveError = '';
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => saveError = l.mainDraftJournalExportFailed);
+    } finally {
+      if (mounted) setState(() => importing = false);
+    }
+  }
+
+  Future<void> _inspectDraftImport() async {
+    final owner = _draftOwner;
+    if (owner == null || importing || saving) return;
+    setState(() => importing = true);
+    try {
+      final view = await pendingUiWrites.track(owner.inspectOriginalImport());
+      if (!mounted ||
+          !(widget.isCurrent?.call() ?? true) ||
+          !identical(owner, _draftOwner)) {
+        return;
+      }
+      setState(() {
+        attachments.add(view.attachment);
+        _editGeneration++;
+        saveError = '';
+      });
+      _captureDraftMetadata();
+    } catch (_) {
+      if (mounted) setState(() => saveError = l.mainSaveUnknown);
+    } finally {
+      if (mounted) setState(() => importing = false);
+    }
+  }
 
   void _observeDraft(TextEditingController controller) {
     final previous = _lastFieldValues[controller];
@@ -5295,25 +5696,30 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
     int? atStart,
     int? atEnd,
   }) async {
+    if (_readOnly) return;
     final before = target.text;
     final selection = target.selection;
     final start =
         atStart ?? (selection.isValid ? selection.start : before.length);
     final end = atEnd ?? (selection.isValid ? selection.end : before.length);
     final after = before.replaceRange(start, end, inserted);
-    await _editor?.recordPaste(
-      PasteInsertion(
-        id: 'paste-${DateTime.now().microsecondsSinceEpoch}-${_pasteSequence++}',
-        field: _field(target),
-        before: before,
-        startUtf16: start,
-        endUtf16: end,
-        parts: List.unmodifiable(
-          parts.isEmpty ? [PastePart.literal(inserted)] : parts,
-        ),
-        after: after,
+    final insertion = PasteInsertion(
+      id: 'paste-${DateTime.now().microsecondsSinceEpoch}-${_pasteSequence++}',
+      field: _field(target),
+      before: before,
+      startUtf16: start,
+      endUtf16: end,
+      parts: List.unmodifiable(
+        parts.isEmpty ? [PastePart.literal(inserted)] : parts,
       ),
+      after: after,
     );
+    if (_draftOwner case final owner?) {
+      await owner.recordPaste(insertion);
+      return;
+    } else {
+      await _editor?.recordPaste(insertion);
+    }
     if (!mounted) return;
     if (target.text != before) throw StateError(l.mainPasteChanged);
     target.value = TextEditingValue(
@@ -5323,11 +5729,13 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
   }
 
   Future<void> _save() async {
+    if (_readOnly) return;
     if (importing || saving) return;
     if (!(widget.isCurrent?.call() ?? true)) {
       setState(() => saveError = l.mainEditorUnavailable);
       return;
     }
+    if (_draftOwner != null) return _saveOwned();
     if (_confirmedAwaitingContinuation != null) {
       setState(() {
         saving = true;
@@ -5430,6 +5838,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
   }
 
   void webPaste(ClipboardReadEvent event) {
+    if (_readOnly) return;
     if (ModalRoute.of(context)?.isCurrent != true) return;
     unawaited(
       safely(() async => insertPaste(await event.getClipboardReader())),
@@ -5437,6 +5846,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
   }
 
   Future<void> importFiles(List<XFile> files) async {
+    if (_readOnly) return;
     for (final file in files) {
       if (attachments.length >= 20) {
         throw FormatException(l.mainAttachmentLimit);
@@ -5446,18 +5856,25 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
         await file.length(),
         attachment: true,
       );
-      final item = await (widget.importAttachment ?? IdeaAttachment.import)(
-        file,
-      );
-      created.add(item);
+      final draftOwner = _draftOwner;
+      final item = draftOwner == null
+          ? await (widget.importAttachment ?? IdeaAttachment.import)(file)
+          : await widget.draftRuntime!.importEditorDraftFile(
+              draftOwner,
+              path: file.path,
+              name: file.name,
+              kind: IdeaAttachment.kindFor(file.name).name,
+            );
+      if (draftOwner == null) created.add(item);
       if (!mounted) {
-        await TextureRepository.remove(item.source);
+        if (draftOwner == null) await TextureRepository.remove(item.source);
         return;
       }
       setState(() {
         attachments.add(item);
         _editGeneration++;
       });
+      _captureDraftMetadata();
       if (title.text.trim().isEmpty) {
         final name = item.source.name.length > 60
             ? item.source.name.substring(0, 60)
@@ -5474,7 +5891,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
   }
 
   Future<void> safely(Future<void> Function() work) async {
-    if (importing || saving || _submitFrozen) return;
+    if (importing || saving || _submitFrozen || _readOnly) return;
     setState(() => importing = true);
     try {
       await work();
@@ -5500,7 +5917,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
     final editor = TextField(
       key: const ValueKey('idea-description'),
       controller: description,
-      readOnly: importing,
+      readOnly: importing || _readOnly,
       focusNode: descriptionFocus,
       minLines: 4,
       maxLines: 8,
@@ -5594,6 +6011,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       safely(() => insertPaste(reader));
 
   Future<void> insertPaste(ClipboardReader? reader) async {
+    if (_readOnly) return;
     final target = titleFocus.hasFocus
         ? title
         : todosFocus.hasFocus
@@ -5680,7 +6098,11 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
     _editor = widget.editor;
     _baseline = widget.initialIdea;
     _targetId =
-        _editor?.targetId ?? _baseline?.id ?? widget.targetId ?? Idea.nextId();
+        _editor?.targetId ??
+        _baseline?.id ??
+        widget.savedDraft?.record.request.cardId ??
+        widget.targetId ??
+        Idea.nextId();
     if (kIsWeb) ClipboardEvents.instance?.registerPasteEventListener(webPaste);
     attachments.addAll(_baseline?.attachments ?? []);
     stage =
@@ -5697,6 +6119,29 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
     description.text = idea?.description ?? '';
     category = idea?.category ?? widget.initialCategory;
     todos.text = idea?.todos.join('\n') ?? '';
+    final retained = widget.draftOwner;
+    if (retained != null) {
+      // A replacement view starts from its root's latest complete raw values,
+      // including detached S2 and Ready imports, before listeners are attached.
+      _applyRawDraft(retained.session.current.values);
+      attachments
+        ..clear()
+        ..addAll(
+          retained.catalog
+              .viewsForSelections(retained.session.current.assets)
+              .map((view) => view.attachment),
+        );
+    }
+    final review = widget.savedDraft;
+    if (review != null) {
+      if (_editor != null || widget.draftOwner != null) {
+        throw StateError('Read-only recovery cannot share a live editor');
+      }
+      _applyRawDraft(review.record.request.values);
+      attachments
+        ..clear()
+        ..addAll(review.views.map((view) => view.attachment));
+    }
     for (final controller in [
       title,
       description,
@@ -5707,13 +6152,32 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       _lastFieldValues[controller] = controller.value;
       controller.addListener(() => _observeDraft(controller));
     }
+    final owner = widget.draftOwner;
+    if (owner != null) {
+      if (!identical(owner.editor, _editor) || widget.draftRuntime == null) {
+        throw StateError('Draft view does not belong to its original editor');
+      }
+      _attachDraftOwner(owner);
+      // Includes empty-title new cards. Failures remain in the original owner.
+      unawaited(
+        owner.session.ensureJournal().then<void>(
+          (_) {},
+          onError: (Object _) {},
+        ),
+      );
+    }
   }
 
   @override
   void dispose() {
-    unawaited(_editor?.close().catchError((_) {}));
-    if (!identical(_preparedSuccessor, _editor)) {
-      unawaited(_preparedSuccessor?.close().catchError((_) {}));
+    final owner = _draftOwner;
+    if (owner == null) {
+      unawaited(_editor?.close().catchError((_) {}));
+      if (!identical(_preparedSuccessor, _editor)) {
+        unawaited(_preparedSuccessor?.close().catchError((_) {}));
+      }
+    } else {
+      _detachDraftOwner();
     }
     if (kIsWeb) {
       ClipboardEvents.instance?.unregisterPasteEventListener(webPaste);
@@ -5751,8 +6215,12 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       child: StudioDialog(
         canClose: !saving && !importing,
         width: 820,
-        title: _baseline == null ? l.mainNewIdeaTitle : l.mainEditIdeaTitle,
-        subtitle: l.mainEditorSubtitle,
+        title: _readOnly
+            ? l.mainDraftJournalTitle
+            : _baseline == null
+            ? l.mainNewIdeaTitle
+            : l.mainEditIdeaTitle,
+        subtitle: _readOnly ? l.mainDraftJournalReview : l.mainEditorSubtitle,
         content: AbsorbPointer(
           absorbing: importing,
           child: SizedBox(
@@ -5764,9 +6232,9 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                   TextField(
                     key: const ValueKey('idea-title'),
                     controller: title,
-                    readOnly: importing,
+                    readOnly: importing || _readOnly,
                     focusNode: titleFocus,
-                    autofocus: true,
+                    autofocus: !_readOnly,
                     maxLength: 60,
                     style: const TextStyle(
                       fontSize: 23,
@@ -5784,7 +6252,8 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                     children: [
                       FilledButton.tonalIcon(
                         key: const ValueKey('idea-paste'),
-                        onPressed: importing || saving || _submitFrozen
+                        onPressed:
+                            importing || saving || _submitFrozen || _readOnly
                             ? null
                             : () => paste(),
                         icon: const Icon(Icons.content_paste, size: 16),
@@ -5792,7 +6261,8 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                       ),
                       OutlinedButton.icon(
                         key: const ValueKey('idea-add-files'),
-                        onPressed: importing || saving || _submitFrozen
+                        onPressed:
+                            importing || saving || _submitFrozen || _readOnly
                             ? null
                             : () => safely(
                                 () async => importFiles(await openFiles()),
@@ -5822,7 +6292,11 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                   const SizedBox(height: 12),
                   _bodyEditor(context),
                   const SizedBox(height: 14),
-                  if (_baseline?.versioned == null)
+                  if (_readOnly)
+                    SelectableText(
+                      '${l.mainCategoryPrompt}: $category\n${l.mainTaskStagePrompt}: $stage',
+                    ),
+                  if (_baseline?.versioned == null && !_readOnly)
                     DropdownButtonFormField<String>(
                       isExpanded: true,
                       initialValue: category,
@@ -5843,34 +6317,38 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                             ),
                           )
                           .toList(),
-                      onChanged: (v) => setState(() {
-                        _editGeneration++;
-                        category = v!;
-                        stage = category == '进行中'
-                            ? '推进中'
-                            : category == '实验'
-                            ? '待验证'
-                            : '待整理';
-                      }),
+                      onChanged: _readOnly
+                          ? null
+                          : (v) => setState(() {
+                              _editGeneration++;
+                              category = v!;
+                              stage = category == '进行中'
+                                  ? '推进中'
+                                  : category == '实验'
+                                  ? '待验证'
+                                  : '待整理';
+                              _captureDraftMetadata();
+                            }),
                     ),
                   const SizedBox(height: 12),
                   ...attachments.map(
                     (item) => AttachmentTile(
                       attachment: item,
-                      onRemove: importing
+                      onRemove: importing || _readOnly
                           ? null
                           : () => setState(() {
                               attachments.remove(item);
                               _editGeneration++;
+                              _captureDraftMetadata();
                             }),
                     ),
                   ),
-                  if (category == '实验') ...[
+                  if (category == '实验' || _readOnly) ...[
                     const SizedBox(height: 16),
                     TextField(
                       key: const ValueKey('experiment-hypothesis'),
                       controller: hypothesis,
-                      readOnly: importing,
+                      readOnly: importing || _readOnly,
                       focusNode: hypothesisFocus,
                       minLines: 2,
                       maxLines: 4,
@@ -5883,7 +6361,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                     TextField(
                       key: const ValueKey('experiment-conclusion'),
                       controller: conclusion,
-                      readOnly: importing,
+                      readOnly: importing || _readOnly,
                       focusNode: conclusionFocus,
                       minLines: 2,
                       maxLines: 5,
@@ -5898,7 +6376,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                     CardTipsEditor(
                       key: const ValueKey('idea-todos'),
                       controller: todos,
-                      enabled: !importing,
+                      enabled: !importing && !_readOnly,
                       focusNode: todosFocus,
                       title: l.mainTodosPrompt,
                     ),
@@ -5908,7 +6386,23 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
           ),
         ),
         actions: [
-          if (_submitFrozen || _hasUnsavedSuccessor || saveError.isNotEmpty)
+          if (_readOnly && widget.recoveryRuntime != null)
+            OutlinedButton(
+              key: const ValueKey('idea-export-draft'),
+              onPressed: importing ? null : _exportSavedDraft,
+              child: Text(l.mainDraftJournalExport),
+            ),
+          if (_draftOwner?.hasUnresolvedImports == true)
+            TextButton(
+              key: const ValueKey('idea-inspect-draft-import'),
+              onPressed: importing || saving ? null : _inspectDraftImport,
+              child: Text(l.mainDraftHandoffRecoveryInspect),
+            ),
+          if (_submitFrozen ||
+              _hasUnsavedSuccessor ||
+              saveError.isNotEmpty ||
+              _draftOwner?.session.dirty == true ||
+              _draftOwner?.session.unknown == true)
             SizedBox(
               width: double.infinity,
               child: ConstrainedBox(
@@ -5932,6 +6426,18 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                             color: Theme.of(context).colorScheme.error,
                           ),
                         ),
+                      if (_draftOwner case final owner?)
+                        if (owner.session.dirty || owner.session.unknown)
+                          Text(
+                            owner.session.unknown
+                                ? l.mainSaveUnknown
+                                : owner.session.captureBlocked
+                                ? l.mainSaveNotSubmitted
+                                : owner.session.saving
+                                ? l.mainSaving
+                                : l.mainEditorNewerDraft,
+                            key: const ValueKey('idea-durable-draft-status'),
+                          ),
                     ],
                   ),
                 ),
@@ -5943,23 +6449,41 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                 : () => Navigator.pop(context),
             child: Text(l.mainNotNow),
           ),
-          FilledButton(
-            key: const ValueKey('idea-save'),
-            // Keep focus while a save is pending. Disabling the focused Web
-            // button returns focus to the autofocus title field and changes
-            // its selection, falsely creating a successor draft. _save guards
-            // repeated activation while saving; actual edits remain tracked.
-            onPressed: importing ? null : _save,
-            child: Text(
-              saving
-                  ? l.mainSaving
-                  : _confirmedAwaitingContinuation != null
-                  ? l.mainEditorContinueDraft
-                  : _submitFrozen
-                  ? l.mainRetrySave
-                  : l.mainSaveIdea,
+          if (_readOnly &&
+              widget.recoveryRuntime is WorkbenchEditorDraftMaintenance)
+            TextButton(
+              key: const ValueKey('idea-retire-saved-draft'),
+              onPressed: importing || saving ? null : _retireSavedDraft,
+              child: Text(_journalRetirement?.unknown == true
+                  ? l.mainDraftHandoffRecoveryInspect : l.mainDraftJournalRetire),
             ),
-          ),
+          if (_readOnly && widget.canResumeSavedDraft)
+            FilledButton(
+              key: const ValueKey('idea-resume-live-draft'),
+              onPressed: importing || saving || _journalRetirement?.started == true
+                  ? null : () => Navigator.pop(context, true),
+              child: Text(l.mainEditorContinueDraft),
+            ),
+          if (!_readOnly)
+            FilledButton(
+              key: const ValueKey('idea-save'),
+              // Keep focus while a save is pending. Disabling the focused Web
+              // button returns focus to the autofocus title field and changes
+              // its selection, falsely creating a successor draft. _save guards
+              // repeated activation while saving; actual edits remain tracked.
+              onPressed: importing ? null : _save,
+              child: Text(
+                saving
+                    ? l.mainSaving
+                    : _confirmedAwaitingContinuation != null
+                    ? l.mainEditorContinueDraft
+                    : _submitFrozen
+                    ? (_draftOwner == null
+                          ? l.mainRetrySave
+                          : l.mainEditorContinueDraft)
+                    : l.mainSaveIdea,
+              ),
+            ),
         ],
       ),
     ),

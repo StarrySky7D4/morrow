@@ -153,7 +153,10 @@ pub(crate) fn process_thread_sddl(caller:Sid,logon:Sid,thread:bool)->io::Result<
     if caller==logon || caller.is_logon() || !logon.is_logon(){return Err(reject());}
     let management=if thread{THREAD_MANAGEMENT}else{PROCESS_MANAGEMENT};
     let target=if thread{THREAD_TARGET}else{PROCESS_TARGET};
-    Ok(format!("D:P(A;;0x{management:x};;;{})(A;;0x{target:x};;;{})(A;;0x{OWNER_READ_CONTROL:x};;;OW)S:(ML;;NW;;;ME)",
+    // Process/thread objects receive NO_READ_UP as well as NO_WRITE_UP from
+    // Windows. Request both explicitly so creation and original readback use
+    // the same stricter MIC contract; this does not alter the three DACL ACEs.
+    Ok(format!("D:P(A;;0x{management:x};;;{})(A;;0x{target:x};;;{})(A;;0x{OWNER_READ_CONTROL:x};;;OW)S:(ML;;NWNR;;;ME)",
         caller.text(),logon.text()))
 }
 
@@ -176,7 +179,7 @@ mod tests {
     #[test] fn creation_dacl_has_owner_rights_but_no_stable_target_write_or_arbitrary_owner() {
         let (policy,f)=facts();let d=process_thread_sddl(policy.caller,f.logon,false).unwrap();
         assert!(d.starts_with("D:P"));assert!(!d.starts_with("O:"));
-        assert!(d.contains("(A;;0x20000;;;OW)"));assert!(d.ends_with("S:(ML;;NW;;;ME)"));assert!(!d.contains(&f.user.text()));
+        assert!(d.contains("(A;;0x20000;;;OW)"));assert!(d.ends_with("S:(ML;;NWNR;;;ME)"));assert!(!d.contains(&f.user.text()));
         assert!(d.contains(&format!("(A;;0x100000;;;{})",f.logon.text())));
         assert!(process_thread_sddl(policy.caller,f.user,false).is_err());
     }

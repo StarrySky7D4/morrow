@@ -120,6 +120,8 @@ fn draft(operation: &str, generation: u64, assets: Vec<AssetSelection>) -> Write
         predecessor_operation: String::new(),
         predecessor_sha256: vec![],
         source_kind: 0,
+        commit_operation: String::new(),
+            capture_scope: String::new(), capture_events: 0,
         values: Some(Values {
             title: Some(text("")),
             description: Some(text("raw, unsubmitted")),

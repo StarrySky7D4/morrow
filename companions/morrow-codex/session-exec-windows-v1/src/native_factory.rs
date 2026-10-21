@@ -24,6 +24,17 @@ pub struct RetiredExecutionCompletion {execution:NativeExecutionCompletion,_fact
 impl NativeFactoryRetirement {
     pub fn new()->Self {Self {backend:Weak::new(),runtime:Weak::new(),threads:NativeSchedulerThreads::new(),
         attempted:false,creation_started:false,creation_succeeded:false,failed_creation_runtime:None,asuser:None,failed_asuser_backend:None}}
+    /// Precondition for finishing the protected owner while this SAME scheduler
+    /// is staged. This is not scheduler shutdown or any cleanup capability.
+    pub fn verify_staged_runtime_for_owner_finish(&self,runtime:&Arc<Runtime>)->Result<()> {
+        if self.attempted || !self.creation_succeeded || self.failed_creation_runtime.is_some()
+            || self.failed_asuser_backend.is_some() {
+            return Err(Error::CommitUnknown);
+        }
+        let original=self.runtime.upgrade().ok_or(Error::CommitUnknown)?;
+        if !Arc::ptr_eq(&original,runtime){return Err(Error::Denied);}
+        Ok(())
+    }
     /// Called after synchronous shutdown of this factory's original Runtime.
     /// Weak absence is ONLY a precondition; original native waits and checked
     /// thread closes below supply the actual scheduler completion proof.
@@ -97,6 +108,24 @@ impl ProvisionedWindowsBackend {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn owner_finish_accepts_only_its_staged_live_runtime_without_minting_shutdown() {
+        let runtime=Arc::new(tokio::runtime::Builder::new_current_thread().build().unwrap());
+        let foreign=Arc::new(tokio::runtime::Builder::new_current_thread().build().unwrap());
+        let mut original=NativeFactoryRetirement::new();
+        assert!(original.verify_staged_runtime_for_owner_finish(&runtime).is_err());
+        original.creation_started=true;original.creation_succeeded=true;
+        original.runtime=Arc::downgrade(&runtime);
+        original.verify_staged_runtime_for_owner_finish(&runtime).unwrap();
+        assert!(matches!(original.verify_staged_runtime_for_owner_finish(&foreign),Err(Error::Denied)));
+        // A live original is suitable for owner flush, but cannot prove shutdown.
+        assert!(matches!(original.finish_after_shutdown(),Err(Error::Conflict)));
+        assert!(!original.attempted);
+        original.failed_creation_runtime=Some(runtime.clone());
+        assert!(original.verify_staged_runtime_for_owner_finish(&runtime).is_err());
+        original.failed_creation_runtime.take();original.attempted=true;
+        assert!(original.verify_staged_runtime_for_owner_finish(&runtime).is_err());
+    }
     #[test]
     fn unstarted_or_failed_factory_attempt_cannot_mint_shutdown_from_absent_weak_values() {
         let mut original=NativeFactoryRetirement::new();

@@ -5,7 +5,7 @@
 use crate::WindowsAsUserNativeSite as Site;
 use std::{cell::UnsafeCell,ffi::c_void,io,mem,ptr,sync::atomic::{AtomicBool,Ordering},time::Instant};
 use windows_sys::Win32::Foundation::{CloseHandle,GetLastError,GetHandleInformation,HANDLE,LocalFree,LUID};
-use windows_sys::Win32::Security::{LogonUserW,CreateRestrictedToken,GetTokenInformation,SetTokenInformation,LookupPrivilegeValueW,
+use windows_sys::Win32::Security::{LogonUserW,CreateRestrictedToken,DuplicateTokenEx,SecurityImpersonation,TokenPrimary,GetTokenInformation,SetTokenInformation,LookupPrivilegeValueW,
     GetKernelObjectSecurity,SECURITY_ATTRIBUTES,
     TokenUser,TokenStatistics,TokenGroups,TokenPrivileges,TokenSessionId,
     TokenIntegrityLevel,TokenElevation,TokenElevationType,TokenHasRestrictions,TokenDefaultDacl,TokenOwner,
@@ -75,8 +75,8 @@ enum Stage {Admission,ThreadToken,Login,Grant,Token,TokenSecurity,Broker,Process
 // In particular, deriving a token must not consume its default-DACL mutation.
 #[derive(Clone,Copy)]
 enum NativeCall {ThreadToken,Login,TokenQuery,SecurityDescriptor,Create,Retirement,ObjectQuery,
-    PrivilegeLookup,RunnerToken,CallerToken,CallerWindow,PostThreadToken,DefaultInitialization,LaunchTokenDerivation}
-const NATIVE_CALL_COUNT:usize=NativeCall::LaunchTokenDerivation as usize+1;
+    PrivilegeLookup,RunnerToken,CallerToken,CallerWindow,PostThreadToken,DefaultInitialization,LaunchTokenDerivation,LaunchObjectCreation}
+const NATIVE_CALL_COUNT:usize=NativeCall::LaunchObjectCreation as usize+1;
 #[derive(Clone,Copy)]
 struct Failure {stage:Stage,site:Site,kind:io::ErrorKind,win32:Option<i32>,ntstatus:Option<i32>,
     target_policy_rejection:Option<crate::WindowsTargetPolicyRejection>}
@@ -163,12 +163,13 @@ impl Admission {
 pub(crate) struct Attempt {
     outcome:crate::asuser_attempt_outcome::AttemptOutcome,phase:Phase,first:Option<Failure>,stage:Stage,site:Site,deadline:Instant,generation:u64,
     target_policy_rejection:Option<crate::WindowsTargetPolicyRejection>,
-    login_token:Slot,source_facts:Option<TargetFacts>,token:Slot,thread_token:Slot,r_token:Slot,caller_token:Slot,post_thread_token:Slot,process_sd:Slot,thread_sd:Slot,
+    login_token:Slot,source_facts:Option<TargetFacts>,restricted_token:Slot,token:Slot,thread_token:Slot,r_token:Slot,caller_token:Slot,post_thread_token:Slot,process_sd:Slot,thread_sd:Slot,
     process:Slot,thread:Slot,pi:PROCESS_INFORMATION,
     calls:[u8;NATIVE_CALL_COUNT],
     object_replies:[Option<ObjectReply>;4],
     buffer:Box<[u64;BUFFER_BYTES/8]>,
     token_sd:Box<[u64;BUFFER_BYTES/8]>,token_sd_len:usize,
+    launch_creation:Box<[u64;512]>,launch_creation_identity:Option<(Sid,Sid)>,
     token_security:Option<crate::asuser_a1_security::TokenLayout>,
     // Original T's actual default-object template, separately captured from
     // its TOKEN OBJECT descriptor. Addendum1625 permits exactly the bounded
@@ -190,10 +191,10 @@ impl Attempt {
     pub(crate) fn reserved(generation:u64,deadline:Instant)->Self {
         Self{outcome:crate::asuser_attempt_outcome::AttemptOutcome::reserved(),phase:Phase::Reserved,first:None,stage:Stage::Admission,site:Site::NotObserved,deadline,generation,
             target_policy_rejection:None,
-            login_token:Slot::new(false),source_facts:None,token:Slot::new(false),thread_token:Slot::new(false),r_token:Slot::new(false),caller_token:Slot::new(false),post_thread_token:Slot::new(false),process_sd:Slot::new(true),thread_sd:Slot::new(true),
+            login_token:Slot::new(false),source_facts:None,restricted_token:Slot::new(false),token:Slot::new(false),thread_token:Slot::new(false),r_token:Slot::new(false),caller_token:Slot::new(false),post_thread_token:Slot::new(false),process_sd:Slot::new(true),thread_sd:Slot::new(true),
             process:Slot::new(false),thread:Slot::new(false),pi:unsafe{mem::zeroed()},
             calls:[0;NATIVE_CALL_COUNT],object_replies:[None;4],buffer:Box::new([0;BUFFER_BYTES/8]),token_sd:Box::new([0;BUFFER_BYTES/8]),
-            token_sd_len:0,token_security:None,default_acl:Box::new([0;4096]),default_acl_len:0,
+            token_sd_len:0,launch_creation:Box::new([0;512]),launch_creation_identity:None,token_security:None,default_acl:Box::new([0;4096]),default_acl_len:0,
             default_initialization:DefaultInitialization::new(),default_reads:0,
             default_creation:Box::new([0;512]),post_default:None,
             before_default_acl:Box::new([0;4096]),before_default_len:0,
@@ -391,7 +392,7 @@ impl Attempt {
             self.target_policy_rejection=a.target.source_rejection(&source);return Err(error);
         }
         self.source_facts=Some(source.clone());
-        self.derive_launch_token(&source)?;
+        self.derive_launch_token(&source,a.target.caller)?;
         self.site=Site::TargetFacts;
         let facts=self.target_facts()?;
         self.site=Site::TargetPolicyGuard;
@@ -406,7 +407,7 @@ impl Attempt {
     }
     /// One derivation, no fallback to the login token. Both outputs are in the
     /// original owner before any fallible work; failed/partial outputs stay owned.
-    fn derive_launch_token(&mut self,source:&TargetFacts)->io::Result<()> {
+    fn derive_launch_token(&mut self,source:&TargetFacts,caller:Sid)->io::Result<()> {
         self.site=Site::LaunchTokenDerivation;
         let subject=crate::asuser_a1_helper::retained_subject(self.login_token.raw)?;
         if subject.hash!=source.context||self.statistics()?!=source.final_stats{return Err(bad());}
@@ -418,16 +419,39 @@ impl Attempt {
             *low!=allowed.LowPart||*high!=allowed.HighPart).map(|(low,high,_)|
             LUID_AND_ATTRIBUTES{Luid:LUID{LowPart:*low,HighPart:*high},Attributes:0}).collect::<Vec<_>>();
         if deleted.len()!=usize::from(source.unsafe_privileges)||deleted.len()>64{return Err(bad());}
-        self.call(NativeCall::LaunchTokenDerivation,1,Stage::Token)?;self.token.begin()?;
+        self.call(NativeCall::LaunchTokenDerivation,1,Stage::Token)?;self.restricted_token.begin()?;
         // Explicit deletion, not DISABLE_MAX_PRIVILEGE; no SID filtering,
         // SANDBOX_INERT or LUA_TOKEN. The postcondition checks the actual result.
         let ok=unsafe{CreateRestrictedToken(self.login_token.raw,0,0,ptr::null(),
-            deleted.len() as u32,deleted.as_mut_ptr(),0,ptr::null(),&mut self.token.raw)};
+            deleted.len() as u32,deleted.as_mut_ptr(),0,ptr::null(),&mut self.restricted_token.raw)};
+        let error=if ok==0{unsafe{GetLastError()}}else{0};
+        self.restricted_token.capture(ok!=0,error)?;
+        let mut flags=0;
+        if unsafe{GetHandleInformation(self.restricted_token.raw,&mut flags)}==0{return Err(io::Error::last_os_error());}
+        if flags&1!=0||self.restricted_token.raw==self.login_token.raw{return Err(bad());}
+        self.create_launch_object(caller,source.logon)
+    }
+    fn create_launch_object(&mut self,caller:Sid,logon:Sid)->io::Result<()> {
+        self.site=Site::LaunchObjectCreation;
+        if self.restricted_token.state!=State::Held||self.launch_creation_identity.is_some(){return Err(bad());}
+        let template=super::asuser_a1_security::launch_token_template(caller,logon)?;
+        if template.len()>4096{return Err(bad());}
+        let bytes=unsafe{std::slice::from_raw_parts_mut(self.launch_creation.as_mut_ptr().cast::<u8>(),4096)};
+        bytes[..template.len()].copy_from_slice(&template);
+        self.launch_creation_identity=Some((caller,logon));
+        let attributes=SECURITY_ATTRIBUTES{nLength:mem::size_of::<SECURITY_ATTRIBUTES>() as u32,
+            lpSecurityDescriptor:self.launch_creation.as_mut_ptr().cast(),bInheritHandle:0};
+        self.call(NativeCall::LaunchObjectCreation,1,Stage::Token)?;self.token.begin()?;
+        // Same granted access as the private restricted intermediate. The new
+        // object receives this exact creation DACL; neither existing token is
+        // relabeled or has its security descriptor changed. No fallback token.
+        let ok=unsafe{DuplicateTokenEx(self.restricted_token.raw,0,&attributes,
+            SecurityImpersonation,TokenPrimary,&mut self.token.raw)};
         let error=if ok==0{unsafe{GetLastError()}}else{0};
         self.token.capture(ok!=0,error)?;
         let mut flags=0;
         if unsafe{GetHandleInformation(self.token.raw,&mut flags)}==0{return Err(io::Error::last_os_error());}
-        if flags&1!=0||self.token.raw==self.login_token.raw{return Err(bad());}
+        if flags&1!=0||self.token.raw==self.login_token.raw||self.token.raw==self.restricted_token.raw{return Err(bad());}
         Ok(())
     }
     /// Diagnostic-only edge on the original Err, using only the facts already
@@ -623,8 +647,8 @@ impl Attempt {
         // Readback storage is retained with T, not a hash-to-authority shortcut.
         // Policy for token-object reachability is part of original pre-login
         // admission; a token ACL alone cannot prove the inaccessible C handles.
-        let layout=super::asuser_a1_security::token_layout(bytes)?;
-        if layout.integrity_rid<minimum_integrity||layout.integrity_rid>caller_integrity{return Err(bad());}
+        let (caller,logon)=self.launch_creation_identity.ok_or_else(bad)?;
+        let layout=super::asuser_a1_security::launch_token(bytes,caller,logon,minimum_integrity,caller_integrity)?;
         self.token_security=Some(layout);
         self.token_sd_len=len as usize;self.checkpoint(Stage::TokenSecurity)
     }
@@ -707,8 +731,8 @@ impl Attempt {
         self.r_token.close()?;self.checkpoint(Stage::Token)?;
         Ok(())
     }
-    fn slots(&self)->[&Slot;14] {
-        [&self.login_token,&self.token,&self.thread_token,&self.r_token,&self.caller_token,&self.post_thread_token,
+    fn slots(&self)->[&Slot;15] {
+        [&self.login_token,&self.restricted_token,&self.token,&self.thread_token,&self.r_token,&self.caller_token,&self.post_thread_token,
             &self.process_sd,&self.thread_sd,&self.process,&self.thread,&self.pipe_slots[0],&self.pipe_slots[1],
             &self.pipe_sds[0],&self.pipe_sds[1]]
     }
@@ -739,6 +763,7 @@ impl Attempt {
         self.post_thread_token.close()?;self.checkpoint(Stage::Retirement)?;
         self.caller_token.close()?;self.checkpoint(Stage::Retirement)?;
         self.token.close()?;self.checkpoint(Stage::Retirement)?;
+        self.restricted_token.close()?;self.checkpoint(Stage::Retirement)?;
         self.login_token.close()?;self.checkpoint(Stage::Retirement)?;
         if self.outstanding(){return Err(bad());}self.phase=Phase::Closed;self.outcome.closed();Ok(())
     }
@@ -817,7 +842,7 @@ impl Attempt {
         let Some(deadline)=Instant::now().checked_add(std::time::Duration::from_secs(1)) else {
             self.outcome.lost();return;
         };
-        for slot in [&mut self.token,&mut self.login_token,&mut self.thread_token,&mut self.caller_token] {
+        for slot in [&mut self.token,&mut self.restricted_token,&mut self.login_token,&mut self.thread_token,&mut self.caller_token] {
             if Instant::now()>=deadline||slot.close().is_err() {self.outcome.lost();return;}
         }
         // Keep factory/account, path pins and original registry ownership. A
@@ -943,9 +968,10 @@ mod tests {
         assert_eq!(attempt.outcome.resources,crate::asuser_attempt_outcome::LocalResources::RetainedUnknown);
     }
     #[test] fn token_derivation_and_default_initialization_have_independent_one_shot_budgets() {
-        for repeated in [NativeCall::LaunchTokenDerivation,NativeCall::DefaultInitialization] {
+        for repeated in [NativeCall::LaunchTokenDerivation,NativeCall::LaunchObjectCreation,NativeCall::DefaultInitialization] {
             let mut attempt=Attempt::reserved(1,Instant::now()+std::time::Duration::from_secs(5));
             attempt.call(NativeCall::LaunchTokenDerivation,1,Stage::Token).unwrap();
+            attempt.call(NativeCall::LaunchObjectCreation,1,Stage::Token).unwrap();
             attempt.call(NativeCall::DefaultInitialization,1,Stage::TokenSecurity).unwrap();
             assert_eq!(attempt.calls[NativeCall::LaunchTokenDerivation as usize],1);
             assert_eq!(attempt.calls[NativeCall::DefaultInitialization as usize],1);
@@ -1238,7 +1264,7 @@ mod login_launch_contract_windows {
                 caller_logon:caller.logon,caller_token:caller.initial.token,integrity_rid:0x2000};
             assert_eq!(policy.source_rejection(&source),None,"source token policy");
             attempt.source_facts=Some(source.clone());
-            attempt.derive_launch_token(&source).unwrap();
+            attempt.derive_launch_token(&source,caller.user).unwrap();
             let launch=attempt.target_facts().unwrap();
             assert_eq!(policy.launch_rejection(&source,&launch),None,"derived token policy");
             attempt.capture_token_security(launch.integrity_rid,caller.integrity_rid)
@@ -1251,11 +1277,174 @@ mod login_launch_contract_windows {
             assert_eq!(attempt.calls[NativeCall::Create as usize],0); // no CreateProcessAsUser
             assert_eq!(attempt.calls[NativeCall::LaunchTokenDerivation as usize],1);
         }));
-        for slot in [&mut attempt.r_token,&mut attempt.token,&mut attempt.login_token] {
+        for slot in [&mut attempt.r_token,&mut attempt.token,&mut attempt.restricted_token,&mut attempt.login_token] {
             slot.close().expect("fixture token close must be observed");
         }
         assert_eq!(unsafe{NetUserDel(ptr::null(),account.0.as_ptr())},0);
         account.1=true;
         if let Err(error)=result {std::panic::resume_unwind(error);}
+    }
+}
+
+/// Opt-in OS representation regression. This creates only a current-user cmd
+/// that exits immediately. It borrows no C28 admission, never logs on another
+/// account or changes LSA, and cannot establish original runner qualification.
+#[cfg(test)]
+mod creation_descriptor_windows {
+    use super::*;
+    use windows_sys::Win32::System::Threading::{CreateProcessW,WaitForSingleObject,
+        GetExitCodeProcess,GetExitCodeThread};
+
+    #[test]
+    #[ignore = "real current-user process fixture; explicit local Windows opt-in"]
+    fn current_user_child_has_exact_original_process_and_thread_descriptors() {
+        assert_eq!(std::env::var("MORROW_LOCAL_DESCRIPTOR_TEST").as_deref(),Ok("1"));
+        let mut attempt=Attempt::reserved(1,Instant::now()+std::time::Duration::from_secs(30));
+        attempt.resolve_query().unwrap();attempt.r_token.begin().unwrap();
+        let ok=unsafe{OpenProcessToken(GetCurrentProcess(),0x20008,&mut attempt.r_token.raw)};
+        let error=if ok==0{unsafe{GetLastError()}}else{0};
+        attempt.r_token.capture(ok!=0,error).unwrap();
+        let facts=attempt.target_facts();attempt.r_token.close().unwrap();let facts=facts.unwrap();
+        for (slot,thread) in [(&mut attempt.process_sd,false),(&mut attempt.thread_sd,true)] {
+            Attempt::descriptor(slot,&policy::process_thread_sddl(facts.user,facts.logon,thread).unwrap()).unwrap();
+        }
+        let attrs=|slot:&Slot|SECURITY_ATTRIBUTES{nLength:mem::size_of::<SECURITY_ATTRIBUTES>() as u32,
+            lpSecurityDescriptor:slot.raw as *mut c_void,bInheritHandle:0};
+        let process_sa=attrs(&attempt.process_sd);let thread_sa=attrs(&attempt.thread_sd);
+        let system=NativeSystemDirectory::read().unwrap().into_root();
+        let image=format!("{system}\\System32\\cmd.exe");
+        let wide=|s:&str|s.encode_utf16().chain(Some(0)).collect::<Vec<_>>();
+        let application=wide(&image);let mut command=wide(&format!("\"{image}\" /d /q /c exit 0"));
+        let mut si:STARTUPINFOW=unsafe{mem::zeroed()};si.cb=mem::size_of::<STARTUPINFOW>() as u32;
+        attempt.process.begin().unwrap();attempt.thread.begin().unwrap();
+        let ok=unsafe{CreateProcessW(application.as_ptr(),command.as_mut_ptr(),&process_sa,&thread_sa,
+            0,0x08000000,ptr::null(),ptr::null(),&si,&mut attempt.pi)};
+        let error=if ok==0{unsafe{GetLastError()}}else{0};
+        attempt.process.raw=attempt.pi.hProcess;attempt.thread.raw=attempt.pi.hThread;
+        let process=attempt.process.capture(ok!=0,error);let thread=attempt.thread.capture(ok!=0,error);
+        if process.is_err()||thread.is_err() {
+            if attempt.process.state==State::Rejected&&attempt.thread.state==State::Rejected {
+                attempt.thread_sd.close().unwrap();attempt.process_sd.close().unwrap();
+                panic!("fixture CreateProcess rejected: {error}");
+            }
+            retain("noncanonical creation outputs");
+        }
+        // Preserve the first assertion while still observing normal completion
+        // of this disposable fixture through its original handles. No kill/PID
+        // lookup or production Unknown retirement is introduced here.
+        let validation=std::panic::catch_unwind(std::panic::AssertUnwindSafe(||{
+            for thread in [false,true] {
+                attempt.buffer.fill(0);let mut length=0;
+                let raw=if thread{attempt.thread.raw}else{attempt.process.raw};
+                assert_ne!(unsafe{GetKernelObjectSecurity(raw,0x15,attempt.buffer.as_mut_ptr().cast(),
+                    BUFFER_BYTES as u32,&mut length)},0,"original descriptor read");
+                assert!((20..=BUFFER_BYTES).contains(&(length as usize)));
+                let observed=crate::asuser_a1_security::creation(attempt.bytes(length as usize),
+                    facts.user,facts.logon,thread,0x2000).expect("exact original process/thread policy");
+                assert_eq!(observed.integrity_rid,0x2000);
+            }
+        }));
+        for raw in [attempt.process.raw,attempt.thread.raw] {
+            if unsafe{WaitForSingleObject(raw,10_000)}!=0 {retain("original fixture did not signal");}
+        }
+        let mut process_code=0;let mut thread_code=0;
+        if unsafe{GetExitCodeProcess(attempt.process.raw,&mut process_code)}==0
+            ||unsafe{GetExitCodeThread(attempt.thread.raw,&mut thread_code)}==0 {retain("original exit query failed");}
+        for slot in [&mut attempt.thread,&mut attempt.process,&mut attempt.thread_sd,&mut attempt.process_sd] {
+            if slot.close().is_err(){retain("original fixture close failed");}
+        }
+        assert!(!attempt.outstanding());assert_eq!((process_code,thread_code),(0,0));
+        if let Err(error)=validation{std::panic::resume_unwind(error);}
+    }
+    fn retain(reason:&str)->! {
+        eprintln!("DESCRIPTOR_FIXTURE_UNKNOWN_NO_RETRY: {reason}");
+        loop{std::thread::park_timeout(std::time::Duration::from_secs(1));}
+    }
+}
+
+#[cfg(test)]
+mod launch_object_tests {
+    use super::*;
+    #[test]
+    fn intermediate_unknown_and_partial_final_output_keep_the_original_charge() {
+        for partial_final in [false,true] {
+            let mut a=Attempt::reserved(1,Instant::now()+std::time::Duration::from_secs(2));
+            a.restricted_token.begin().unwrap();
+            a.restricted_token.raw=44;
+            a.restricted_token.capture(true,0).unwrap();
+            if partial_final {
+                a.token.begin().unwrap();a.token.raw=48;
+                assert!(a.token.capture(false,5).is_err());
+            } else {a.restricted_token.state=State::InFlight;}
+            a.fail(&io::Error::from_raw_os_error(5));
+            a.close_rejected_login_handles();
+            assert_eq!(a.calls[NativeCall::Retirement as usize],0);
+            assert_eq!(a.restricted_token.raw,44);assert!(a.outcome.observation_lost);
+            assert!(a.outstanding());assert_eq!(a.phase,Phase::Unknown);
+            assert_eq!(a.calls[NativeCall::Create as usize],0);
+        }
+    }
+    // Current-process read handle and two NEW token objects only. This does not
+    // log on, mutate accounts/existing ACLs, impersonate or start any process.
+    #[test]
+    fn owned_creation_uses_production_descriptor_and_preserves_source_and_grant() {
+        owned_creation(crate::asuser_a1_rights::TOKEN_INITIALIZATION);
+    }
+    #[test]
+    fn owned_creation_preserves_full_logon_style_grant_without_gifting_it_to_runner() {
+        // Newly duplicated fixture token only; the existing process token is
+        // opened for QUERY|DUPLICATE|READ_CONTROL and never mutated.
+        owned_creation(0x000f01ff);
+    }
+    fn owned_creation(requested:u32) {
+        let mut a=Attempt::reserved(1,Instant::now()+std::time::Duration::from_secs(10));
+        let result=std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            a.resolve_query().unwrap();a.login_token.begin().unwrap();
+            let ok=unsafe{OpenProcessToken(GetCurrentProcess(),0x2000a,&mut a.login_token.raw)};
+            let error=if ok==0{unsafe{GetLastError()}}else{0};a.login_token.capture(ok!=0,error).unwrap();
+            let source=a.target_facts().unwrap();
+            let before=crate::asuser_a1_helper::retained_subject(a.login_token.raw).unwrap();
+            a.restricted_token.begin().unwrap();
+            let ok=unsafe{DuplicateTokenEx(a.login_token.raw,requested,
+                ptr::null(),SecurityImpersonation,TokenPrimary,&mut a.restricted_token.raw)};
+            let error=if ok==0{unsafe{GetLastError()}}else{0};a.restricted_token.capture(ok!=0,error).unwrap();
+            let grant=|h| {
+                let mut b=[0u32;14];let mut n=0;
+                assert!(unsafe{a.object_query.unwrap()(h,0,b.as_mut_ptr().cast(),56,&mut n)}>=0);
+                assert_eq!(n,56);b[1]
+            };
+            let expected_grant=grant(a.restricted_token.raw);
+            a.create_launch_object(source.user,source.logon).unwrap();
+            let final_facts=a.target_facts().unwrap();
+            assert_eq!(final_facts.granted,expected_grant);
+            assert_eq!(final_facts.context,source.context);
+            assert_eq!(final_facts.security_context,source.security_context);
+            assert_eq!(final_facts.owner,source.owner);assert_eq!(final_facts.user,source.user);
+            assert_eq!(final_facts.initial.auth,source.initial.auth);
+            assert_ne!(final_facts.initial.token,source.initial.token);
+            a.capture_token_security(source.integrity_rid,source.integrity_rid).unwrap();
+            let bytes=unsafe{std::slice::from_raw_parts(a.token_sd.as_ptr().cast::<u8>(),a.token_sd_len)};
+            for (offset,mask) in [(0usize,0xe008bu32),(1,0x0000000a),(2,0x00020000)] {
+                let mut changed=bytes.to_vec();
+                let mut at=u32::from_le_bytes(changed[16..20].try_into().unwrap()) as usize+8;
+                for _ in 0..offset{at+=u16::from_le_bytes(changed[at+2..at+4].try_into().unwrap()) as usize;}
+                assert_eq!(u32::from_le_bytes(changed[at+4..at+8].try_into().unwrap()),mask);
+                changed[at+4..at+8].copy_from_slice(&(mask|0x20).to_le_bytes());
+                assert!(crate::asuser_a1_security::launch_token(&changed,source.user,source.logon,
+                    source.integrity_rid,source.integrity_rid).is_err());
+            }
+            let after=crate::asuser_a1_helper::retained_subject(a.login_token.raw).unwrap();
+            assert_eq!(before.hash,after.hash);assert_eq!(before.security_context,after.security_context);
+            assert_eq!(a.calls[NativeCall::LaunchObjectCreation as usize],1);
+            assert!(a.create_launch_object(source.user,source.logon).is_err());
+            assert_eq!(a.calls[NativeCall::LaunchObjectCreation as usize],1);
+            assert_eq!(a.calls[NativeCall::Create as usize],0);
+            assert_eq!(a.calls[NativeCall::DefaultInitialization as usize],0);
+        }));
+        for slot in [&mut a.token,&mut a.restricted_token,&mut a.login_token] {
+            slot.close().expect("checked fixture close on original owner");
+        }
+        assert!(a.slots().iter().all(|s|s.retired()));
+        if let Err(error)=result{std::panic::resume_unwind(error);}
     }
 }

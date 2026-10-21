@@ -151,6 +151,18 @@ abstract final class EditorDraftCodec {
     _identity(request.cardId);
     _identity(request.draftId);
     _identity(request.operation);
+    if (request.commitOperation.isNotEmpty) {
+      _identity(request.commitOperation);
+      if (request.commitOperation == request.operation ||
+          request.commitOperation == request.predecessorOperation) {
+        throw const FormatException('Draft and business operations must differ');
+      }
+    }
+    if (request.captureScope.isNotEmpty) _identity(request.captureScope);
+    if (request.captureEvents < 0 || request.captureEvents > 1024 ||
+        (request.captureScope.isEmpty && request.captureEvents != 0)) {
+      throw const FormatException('Invalid draft capture identity');
+    }
     _u64(request.expectedGeneration, canBeMax: false);
     final isNewCard = request.sourceKind == EditorDraftSourceKind.newCard;
     _u64(request.sourceRevision, positive: !isNewCard);
@@ -231,6 +243,9 @@ abstract final class EditorDraftCodec {
     out.expectedGenerationBigInt = request.expectedGeneration;
     out.sourceRevisionBigInt = request.sourceRevision;
     out.sourceKind = request.sourceKind.index;
+    out.commitOperation = request.commitOperation;
+    out.captureScope = request.captureScope;
+    out.captureEventsBigInt = BigInt.from(request.captureEvents);
     out.predecessorOperation = request.predecessorOperation;
     out.predecessorDigest = Uint8List.fromList(request.predecessorDigest);
     _writeValues(out.initValues(), request.values);
@@ -514,6 +529,11 @@ abstract final class EditorDraftCodec {
       expectedGeneration: expected,
       sourceRevision: value.sourceRevisionBigInt,
       sourceKind: sourceKind,
+      commitOperation: value.commitOperation ?? '',
+      captureScope: value.captureScope ?? '',
+      captureEvents: value.captureEventsBigInt > BigInt.from(1024)
+          ? throw const FormatException('Draft capture event count overflow')
+          : value.captureEventsBigInt.toInt(),
       predecessorOperation: value.predecessorOperation!,
       predecessorDigest: value.predecessorDigest!,
       values: _decodeValues(value.values),
@@ -735,6 +755,14 @@ abstract final class EditorDraftCodec {
             value.active,
           );
 
+    final discard = value.discardOperation ?? '';
+    if (discard.isNotEmpty) {
+      _identity(discard);
+      if (value.active || retirement != null ||
+          discard == request.operation || discard == request.commitOperation) {
+        throw const FormatException('Invalid ordinary draft retirement receipt');
+      }
+    }
     return EditorDraftRecord(
       request: request,
       generation: generation,
@@ -751,6 +779,7 @@ abstract final class EditorDraftCodec {
       requestSha256: value.requestSha256!,
       parentLink: parentLink,
       retirement: retirement,
+      discardOperation: discard,
     );
   }
 

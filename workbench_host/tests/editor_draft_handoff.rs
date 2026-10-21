@@ -125,6 +125,8 @@ fn request(
         expected_generation,
         source_revision: 2,
         source_kind: 0,
+        commit_operation: String::new(),
+            capture_scope: String::new(), capture_events: 0,
         predecessor_operation: String::new(),
         predecessor_sha256: vec![],
         values: Some(Values {
@@ -167,6 +169,9 @@ fn source_fields(host: &Workbench) -> Fields {
 }
 
 fn parent_with_asset(host: &mut Workbench) -> (WriteRequest, String) {
+    parent_with_asset_and_capture(host, "", 0)
+}
+fn parent_with_asset_and_capture(host: &mut Workbench, scope: &str, events: u64) -> (WriteRequest, String) {
     let asset = host
         .import_editor_draft_asset(
             CARD,
@@ -179,6 +184,8 @@ fn parent_with_asset(host: &mut Workbench) -> (WriteRequest, String) {
         )
         .unwrap();
     let mut parent = request("parent-s2-save", 0, "Still unfinished S2");
+    parent.capture_scope = scope.into();
+    parent.capture_events = events;
     parent.assets.push(AssetSelection {
         origin: 2,
         asset_id: asset.id.clone(),
@@ -255,6 +262,52 @@ fn link(parent: &WriteRequest, child: &WriteRequest, digest: &[u8; 32]) -> Paren
         committed_sha256: digest.to_vec(),
         child_operation: child.operation_id.clone(),
     }
+}
+
+#[test]
+fn rich_capture_lineage_is_copied_before_parent_retirement_and_survives_child_updates() {
+    use morrow_workbench_host::capture_provenance::{PasteEvent, PastePart};
+    use morrow_workbench_host::editor_draft::model::proto::CaptureArchive;
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("db");
+    let mut host = seed(&path);
+    let parent_scope = host.open_capture_scope(CARD, 2).unwrap();
+    host.record_paste(&parent_scope, PasteEvent {
+        id: "parent-paste".into(), field: "description".into(), before: "".into(),
+        start_utf16: 0, end_utf16: 0,
+        parts: vec![PastePart { ticket: "".into(), literal: "raw body".into(), selection: "".into() }],
+        after: "raw body".into(),
+    }).unwrap();
+    let (parent, asset) = parent_with_asset_and_capture(&mut host, &parent_scope, 1);
+    let parent_archive = host.export_editor_draft_capture(CARD, DRAFT, 1).unwrap();
+    let proof = commit_real_s1(&mut host);
+    let mut child = child_from(&parent, &asset);
+    child.capture_scope = host.open_capture_scope(CARD, 3).unwrap();
+    child.commit_operation = "original-child-business".into();
+    let binding = link(&parent, &child, &proof);
+    let mut omitted = child.clone();
+    omitted.capture_scope.clear();
+    assert!(host.handoff_editor_draft(&omitted, &binding).is_err());
+    let prepared = host.prepare_editor_draft_handoff_proposal(&child, &binding, "retire-rich-parent").unwrap();
+    assert_eq!(prepared.status, morrow_workbench_host::editor_draft::HandoffProposalStatus::Pending);
+    host.complete_editor_draft_handoff_proposal(CARD, DRAFT, &child.operation_id).unwrap();
+    let before = host.export_editor_draft_capture(CARD, CHILD, 1).unwrap();
+    assert_eq!(CaptureArchive::decode(before.as_slice()).unwrap().parent_archive, parent_archive);
+    host.retire_editor_draft_handoff_proposal(CARD, DRAFT, &child.operation_id).unwrap();
+    assert!(host.export_editor_draft_capture(CARD, DRAFT, 2).is_err());
+    let mut latest = child.clone();
+    latest.operation_id = "latest-rich-child".into();
+    latest.expected_generation = 1;
+    latest.assets.iter_mut().for_each(|asset| asset.origin = 3);
+    latest.values.as_mut().unwrap().title = Some(text_value("S2 typed after child was committed"));
+    host.save_editor_draft(&latest).unwrap();
+    let after = host.export_editor_draft_capture(CARD, CHILD, 2).unwrap();
+    assert_eq!(CaptureArchive::decode(after.as_slice()).unwrap().parent_archive, parent_archive);
+    drop(host);
+    let host = Workbench::open(&path, None).unwrap();
+    assert_eq!(host.export_editor_draft_capture(CARD, CHILD, 2).unwrap(), after);
+    assert_eq!(host.read_editor_draft(CARD, CHILD).unwrap().unwrap().slot.request, Some(latest));
+    assert_eq!(host.export_editor_draft_asset(CARD, CHILD, 2, &asset).unwrap(), FILE_BYTES);
 }
 #[test]
 fn captured_s1_handoff_retains_parent_pins_across_restart_and_retires_conditionally() {

@@ -151,6 +151,7 @@ enum Action {
   channelStatus,
   channelClose,
   channelReadSent,
+  exportEditorDraftCapture,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -484,6 +485,11 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'channelStatus', codeOrder: 143, ordinal: 143),
     EnumerantSchemaInfo(name: 'channelClose', codeOrder: 144, ordinal: 144),
     EnumerantSchemaInfo(name: 'channelReadSent', codeOrder: 145, ordinal: 145),
+    EnumerantSchemaInfo(
+      name: 'exportEditorDraftCapture',
+      codeOrder: 146,
+      ordinal: 146,
+    ),
   ],
 );
 

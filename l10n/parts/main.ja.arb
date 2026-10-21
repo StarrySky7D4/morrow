@@ -578,5 +578,14 @@
   "mainDraftHandoffRecoverySelection": "記録を選択すると、下書き全体を確認できます。",
   "mainStyleDepth": "立体感の深さ",
   "mainStyleDepthGuide": "ガラスの不透明度を変えずに、浮き上がりとくぼみの強さを調整します。",
-  "mainStyleDepthReset": "100% に戻す"
+  "mainStyleDepthReset": "100% に戻す",
+  "mainDraftJournalTitle": "保存済みの下書き",
+  "mainDraftJournalReview": "この復元用コピーは読み取り専用です。元のテキスト、添付ファイル、キャプチャ履歴を保持します。表示しても前回の保存は再開されません。",
+  "mainDraftJournalEmpty": "保存済みの下書きはありません。",
+  "mainDraftJournalExport": "復元用コピーをエクスポート",
+  "mainDraftJournalExported": "復元用コピーをエクスポートしました。",
+  "mainDraftJournalExportFailed": "完全な復元用コピーをエクスポートできませんでした。",
+  "mainDraftJournalRetire": "保存済み下書きを終了",
+  "mainDraftJournalRetireConfirm": "この下書きを終了し、添付ファイルの固定コピーを解放しますか？必要なら先に復元用コピーを書き出してください。保存済みの内容と未確認の保存結果は変わりません。",
+  "mainDraftJournalRetireUnknown": "終了結果は未確認です。再送信せず、元の操作を確認してください。"
 }

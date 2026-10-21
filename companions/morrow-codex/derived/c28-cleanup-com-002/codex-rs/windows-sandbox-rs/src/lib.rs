@@ -79,6 +79,8 @@ pub use station_broker::{station_broker_a0_dispatch,StationBrokerA0,
 #[cfg(any(windows,test))]
 mod asuser_attempt_outcome;
 mod asuser_a1_target;
+mod runner_startup_site;
+pub use runner_startup_site::RunnerStartupSite;
 mod start_diagnostic;
 pub use start_diagnostic::{
     ContextFact, ContextUnavailable, QueryHandleClose, StartupAccessResult,
@@ -621,6 +623,8 @@ pub use token::create_workspace_write_token_with_caps_and_user_from;
 pub use token::create_workspace_write_token_with_caps_from;
 #[cfg(target_os = "windows")]
 pub use token::get_current_token_for_restriction;
+#[cfg(target_os = "windows")]
+pub use token::{open_current_token_for_query_duplicate, duplicate_token_for_restriction};
 #[cfg(target_os = "windows")]
 pub use token::token_groups;
 #[cfg(target_os = "windows")]

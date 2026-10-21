@@ -130,6 +130,8 @@ fn request(
         expected_generation,
         source_revision: 2,
         source_kind: 0,
+        commit_operation: String::new(),
+            capture_scope: String::new(), capture_events: 0,
         predecessor_operation: String::new(),
         predecessor_sha256: vec![],
         values: Some(Values {
@@ -275,8 +277,8 @@ fn frame(
     fill(out);
     protocol::respond(host, &serialize::write_message_to_words(&message)).unwrap()
 }
-fn response(bytes: &[u8]) -> capnp::message::Reader<serialize::OwnedSegments> {
-    serialize::read_message(&mut bytes.as_ref(), ReaderOptions::default()).unwrap()
+fn response(mut bytes: &[u8]) -> capnp::message::Reader<serialize::OwnedSegments> {
+    serialize::read_message(&mut bytes, ReaderOptions::default()).unwrap()
 }
 fn error(bytes: &[u8]) -> String {
     response(bytes)
@@ -437,8 +439,8 @@ fn download(host: &mut Workbench, first: &[u8]) -> Vec<u8> {
     assert_eq!(Sha256::digest(&bytes).as_slice(), digest);
     bytes
 }
-fn record(bytes: &[u8]) -> capnp::message::Reader<serialize::OwnedSegments> {
-    serialize::read_message(&mut bytes.as_ref(), ReaderOptions::default()).unwrap()
+fn record(mut bytes: &[u8]) -> capnp::message::Reader<serialize::OwnedSegments> {
+    serialize::read_message(&mut bytes, ReaderOptions::default()).unwrap()
 }
 
 #[test]

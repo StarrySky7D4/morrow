@@ -3,7 +3,7 @@ part of 'workbench_native.dart';
 /// Serializes whole draft transfers, independently of settings transfers.
 /// Operation identities belong to the caller's frozen proposal. This adapter
 /// never invents a replacement operation or submits business card edits.
-final class NativeEditorDraftControl implements EditorDraftControl {
+final class NativeEditorDraftControl implements EditorDraftControl, EditorDraftCaptureExport {
   NativeEditorDraftControl(this._owner);
   final RustWorkbench _owner;
   Future<void> _tail = Future.value();
@@ -295,6 +295,7 @@ final class NativeEditorDraftControl implements EditorDraftControl {
     final record = _record(envelope, revision);
     if (record.active ||
         record.currentActive ||
+        record.discardOperation != operation ||
         record.generation != expectedGeneration + BigInt.one) {
       throw const FormatException('Editor draft discard receipt mismatch');
     }
@@ -354,6 +355,21 @@ final class NativeEditorDraftControl implements EditorDraftControl {
     if (envelope.kind != EditorDraftResultKind.exported ||
         revision != generation) {
       throw const FormatException('Invalid editor draft export response');
+    }
+  });
+
+  @override
+  Future<void> exportCapture(String cardId, String draftId, BigInt generation, String path) => _job(() async {
+    final (envelope, revision) = await _requestEnvelope(
+      host.Action.exportEditorDraftCapture,
+      configure: (request) {
+        _identity(request, cardId, draftId, generation);
+        request.selectedPath = path;
+      },
+    );
+    _context(envelope, cardId, draftId, '', generation);
+    if (envelope.kind != EditorDraftResultKind.exported || revision != generation) {
+      throw const FormatException('Invalid draft capture export response');
     }
   });
 }

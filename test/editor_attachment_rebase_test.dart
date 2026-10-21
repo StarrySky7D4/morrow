@@ -28,6 +28,23 @@ IdeaAttachment stored(String id, String name, {int size = 4}) =>
     );
 
 void main() {
+  test('rewrites a mixed-separator Windows path encoded as one URL', () {
+    final original = local(
+      r'C:\Users\ADMINI~1\AppData\Local\Temp\draft-test/file.bin',
+      'file.bin',
+    );
+    final committed = stored('asset-file', 'file.bin');
+    final rebased = rebaseEditorAttachments(
+      submitted: [original],
+      confirmed: [committed],
+      selected: [original],
+      description: TextEditingValue(
+        text:
+            'S2 [asset](attachment:${Uri.encodeComponent(original.source.location)})',
+      ),
+    );
+    expect(rebased.description.text, 'S2 [asset](attachment:asset-file)');
+  });
   test('rebinds selected S1 local in S2 order without changing text state', () {
     final original = local('C:/a.bin', 'a.bin');
     final committed = stored('asset-a', 'a.bin');

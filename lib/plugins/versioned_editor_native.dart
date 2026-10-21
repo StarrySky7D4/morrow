@@ -36,7 +36,9 @@ final class _NativeVersionedEditorSession
         VersionedEditorSession,
         VersionedEditorAcknowledgement,
         VersionedEditorCommitObservation,
-        EditorDraftPredecessorSource {
+        EditorDraftPredecessorSource,
+        WorkbenchEditorOperationIdentity,
+        WorkbenchEditorDraftCaptureIdentity {
   _NativeVersionedEditorSession(
     this.owner,
     this.targetId,
@@ -48,7 +50,17 @@ final class _NativeVersionedEditorSession
   @override
   final String targetId;
   final BigInt revision;
+  @override
+  BigInt get sourceRevision => revision;
   final String scope;
+  final _draftCapture = _DraftCaptureTracker();
+  @override
+  ({String scope, int events, bool complete}) get draftCapture =>
+      (scope: scope, events: _draftCapture.events,
+       complete: !_closed && _draftCapture.complete);
+  @override
+  late final String commitOperation =
+      'editor-v2-${DateTime.now().microsecondsSinceEpoch}-${owner._sequence++}';
   @override
   late final RustStudioPlugin studio = RustStudioPlugin(
     owner,
@@ -99,11 +111,11 @@ final class _NativeVersionedEditorSession
       parts[i].literal = part.literal;
       parts[i].selection = part.selection;
     }
-    await owner._captureUpload(
+    await _draftCapture.record(insertion.id, () => owner._captureUpload(
       insertion.id,
       message.serialize(),
       host.Action.finishPaste,
-    );
+    ));
   }
 
   @override
@@ -164,8 +176,7 @@ final class _NativeVersionedEditorSession
       );
     }
     _fingerprint ??= fingerprint;
-    _operation ??=
-        'editor-v2-${DateTime.now().microsecondsSinceEpoch}-${owner._sequence++}';
+    _operation ??= commitOperation;
     _fields ??= CardEditFields(
       title: fields.title,
       description: fields.description,

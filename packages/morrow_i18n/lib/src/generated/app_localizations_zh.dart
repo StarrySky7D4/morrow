@@ -419,6 +419,34 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainDraftImportRecoveryTitle => '核对附件放弃决定';
 
   @override
+  String get mainDraftJournalEmpty => '没有已保存的草稿。';
+
+  @override
+  String get mainDraftJournalExport => '导出恢复副本';
+
+  @override
+  String get mainDraftJournalExportFailed => '无法导出完整恢复副本。';
+
+  @override
+  String get mainDraftJournalExported => '恢复副本已导出。';
+
+  @override
+  String get mainDraftJournalRetire => '退役已存草稿';
+
+  @override
+  String get mainDraftJournalRetireConfirm =>
+      '退役这份已存草稿并释放其附件固定副本？如需保留，请先导出恢复副本。已保存的业务内容及未确认的保存结果不变。';
+
+  @override
+  String get mainDraftJournalRetireUnknown => '尚未确认退役结果。请核对原操作，不要再次提交。';
+
+  @override
+  String get mainDraftJournalReview => '这是只读恢复副本。原始文本、附件和捕获记录均保留；查看不会继续上一笔保存。';
+
+  @override
+  String get mainDraftJournalTitle => '已保存的草稿';
+
+  @override
   String get mainEdit => '编辑';
 
   @override

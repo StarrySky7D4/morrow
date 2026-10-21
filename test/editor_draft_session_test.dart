@@ -81,6 +81,9 @@ final class _PendingSave {
 final class _DraftControl implements EditorDraftControl {
   final saves = <_PendingSave>[];
   Object? synchronousError;
+  EditorDraftRecord? inspectedRecord;
+  Completer<EditorDraftRecord?>? heldRead;
+  int reads = 0;
 
   @override
   Future<EditorDraftRecord> save(EditorDraftWriteRequest request) {
@@ -91,7 +94,10 @@ final class _DraftControl implements EditorDraftControl {
   }
 
   @override
-  Future<EditorDraftRecord?> read(String cardId, String draftId) async => null;
+  Future<EditorDraftRecord?> read(String cardId, String draftId) async {
+    reads++;
+    return heldRead == null ? inspectedRecord : heldRead!.future;
+  }
 
   @override
   Future<List<EditorDraftSummary>> list() async => const [];
@@ -150,6 +156,75 @@ EditorDraftSession _session(
 Future<void> _tick() => Future<void>.delayed(Duration.zero);
 
 void main() {
+  test('read-only lost-reply inspection keeps newer S2 and never resends', () async {
+    final control = _DraftControl();
+    final session = _session(control);
+    addTearDown(session.dispose);
+    session.observe(_snapshot('S1'));
+    final saving = session.flush();
+    final failed = expectLater(saving, throwsA(isA<EditorDraftSaveFailure>()));
+    final original = control.saves.single;
+    session.observe(_snapshot('S2', base: 1, extent: 2));
+    original.completion.completeError(StateError('reply lost'));
+    await failed;
+    control.inspectedRecord = _receipt(original.request);
+    expect(await session.inspectPending(), same(control.inspectedRecord));
+    expect(control.reads, 1);
+    expect(control.saves, hasLength(1));
+    expect(session.unknown, isFalse);
+    expect(session.dirty, isTrue);
+    expect(session.current.values.title.text, 'S2');
+    expect(session.current.values.title.selectionExtent, 2);
+    expect(session.pendingRequest, isNull);
+    await _tick();
+    expect(control.saves, hasLength(1));
+  });
+
+  test('absence and stale scope cannot settle an unknown draft', () async {
+    final control = _DraftControl();
+    var current = true;
+    final session = _session(control, isCurrent: () => current);
+    addTearDown(session.dispose);
+    session.observe(_snapshot('S1'));
+    final saving = session.flush();
+    final failed = expectLater(saving, throwsA(isA<EditorDraftSaveFailure>()));
+    final original = control.saves.single;
+    original.completion.completeError(StateError('reply lost'));
+    await failed;
+    expect(await session.inspectPending(), isNull);
+    expect(session.unknown, isTrue);
+    expect(session.pendingRequest, same(original.request));
+    control.heldRead = Completer<EditorDraftRecord?>();
+    final inspection = session.inspectPending();
+    expect(session.inspectPending(), same(inspection));
+    await expectLater(session.retryPending(), throwsStateError);
+    current = false;
+    control.heldRead!.complete(_receipt(original.request));
+    await expectLater(inspection, throwsStateError);
+    expect(session.unknown, isTrue);
+    expect(session.pendingRequest, same(original.request));
+    expect(control.saves, hasLength(1));
+  });
+
+  test('another or retired generation retains the original unknown', () async {
+    final control = _DraftControl();
+    final session = _session(control);
+    addTearDown(session.dispose);
+    session.observe(_snapshot('S1'));
+    final saving = session.flush();
+    final failed = expectLater(saving, throwsA(isA<EditorDraftSaveFailure>()));
+    final original = control.saves.single;
+    original.completion.completeError(StateError('reply lost'));
+    await failed;
+    control.inspectedRecord = _receipt(original.request, currentGeneration: BigInt.two);
+    expect(await session.inspectPending(), isNull);
+    control.inspectedRecord = _receipt(original.request, currentActive: false);
+    expect(await session.inspectPending(), isNull);
+    expect(session.unknown, isTrue);
+    expect(session.pendingRequest, same(original.request));
+    expect(control.saves, hasLength(1));
+  });
+
   test(
     'delayed S1 keeps newer text, selection, and IME state for explicit S2',
     () async {

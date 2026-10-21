@@ -131,7 +131,9 @@ void main() {
         expect(binding.hasUncapturedChanges, isTrue);
         expect(binding.captureFailure, same(metadataFailure));
         expect(session.captureBlocked, isTrue);
-        expect(session.current.values.title.text, '  S1 raw \n');
+        expect(session.current.values.title.text, '  S2😀原文 \n');
+        expect(session.current.values.title.selectionBase, 6);
+        expect(session.current.values.title.composingEnd, 6);
         await expectLater(session.flush(), throwsStateError);
         await expectLater(
           workspace.prepareClose(timeout: const Duration(seconds: 2)),

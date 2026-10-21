@@ -31,6 +31,12 @@ abstract interface class EditorDraftControl {
   );
 }
 
+/// Read-only export of host-generated archival evidence. This never restores
+/// a live capture scope or executes the archived plugin.
+abstract interface class EditorDraftCaptureExport {
+  Future<void> exportCapture(String cardId, String draftId, BigInt generation, String path);
+}
+
 /// Keep [request] unchanged after an uncertain save; a transport abort is not
 /// evidence that the host journal transaction was rolled back.
 final class EditorDraftSaveFailure implements Exception {
@@ -162,6 +168,9 @@ final class EditorDraftWriteRequest {
     required this.expectedGeneration,
     required this.sourceRevision,
     this.sourceKind = EditorDraftSourceKind.existingCard,
+    this.commitOperation = '',
+    this.captureScope = '',
+    this.captureEvents = 0,
     required this.predecessorOperation,
     required List<int> predecessorDigest,
     required this.values,
@@ -170,6 +179,11 @@ final class EditorDraftWriteRequest {
        assets = List.unmodifiable(assets);
 
   final String cardId, draftId, operation, predecessorOperation;
+  /// Original business operation, persisted before it can be submitted.
+  /// This identifies read-only commit inspection; it never authorizes replay.
+  final String commitOperation;
+  final String captureScope;
+  final int captureEvents;
   final BigInt expectedGeneration, sourceRevision;
   final EditorDraftSourceKind sourceKind;
   final List<int> predecessorDigest;
@@ -292,6 +306,7 @@ final class EditorDraftRecord {
     List<int> requestSha256 = const [],
     this.parentLink,
     this.retirement,
+    this.discardOperation = '',
   }) : sourceSha256 = List.unmodifiable(sourceSha256),
        predecessorSha256 = List.unmodifiable(predecessorSha256),
        assets = List.unmodifiable(assets),
@@ -307,6 +322,7 @@ final class EditorDraftRecord {
   final List<int> requestSha256;
   final EditorDraftParentLink? parentLink;
   final EditorDraftParentRetirement? retirement;
+  final String discardOperation;
 }
 
 final class EditorDraftSummary {

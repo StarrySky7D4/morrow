@@ -578,5 +578,14 @@
   "mainDraftHandoffRecoverySelection": "Wählen Sie einen Eintrag, um den vollständigen Entwurf anzuzeigen.",
   "mainStyleDepth": "Relieftiefe",
   "mainStyleDepthGuide": "Stärke von Erhebungen und Vertiefungen anpassen, ohne die Glasdeckkraft zu ändern.",
-  "mainStyleDepthReset": "Auf 100 % zurücksetzen"
+  "mainStyleDepthReset": "Auf 100 % zurücksetzen",
+  "mainDraftJournalTitle": "Gespeicherte Entwürfe",
+  "mainDraftJournalReview": "Diese Wiederherstellungskopie ist schreibgeschützt. Originaltext, Anhänge und Erfassungsverlauf bleiben erhalten; die Ansicht setzt keinen früheren Speichervorgang fort.",
+  "mainDraftJournalEmpty": "Keine gespeicherten Entwürfe.",
+  "mainDraftJournalExport": "Wiederherstellungskopie exportieren",
+  "mainDraftJournalExported": "Wiederherstellungskopie exportiert.",
+  "mainDraftJournalExportFailed": "Die vollständige Wiederherstellungskopie konnte nicht exportiert werden.",
+  "mainDraftJournalRetire": "Gespeicherten Entwurf abschließen",
+  "mainDraftJournalRetireConfirm": "Diesen gespeicherten Entwurf abschließen und seine Anhangskopien freigeben? Exportieren Sie bei Bedarf zuerst eine Wiederherstellungskopie. Gespeicherte Inhalte und unbestätigte Speicherergebnisse bleiben unverändert.",
+  "mainDraftJournalRetireUnknown": "Der Abschluss ist nicht bestätigt. Prüfen Sie den ursprünglichen Vorgang, ohne ihn erneut zu senden."
 }

@@ -578,5 +578,14 @@
   "mainDraftHandoffRecoverySelection": "Selecciona un registro para ver el borrador completo.",
   "mainStyleDepth": "Profundidad del relieve",
   "mainStyleDepthGuide": "Ajusta el relieve y las hendiduras sin cambiar la opacidad del vidrio.",
-  "mainStyleDepthReset": "Restablecer al 100 %"
+  "mainStyleDepthReset": "Restablecer al 100 %",
+  "mainDraftJournalTitle": "Borradores guardados",
+  "mainDraftJournalReview": "Esta copia de recuperación es de solo lectura. Se conservan el texto original, los adjuntos y el historial de captura; verla no reanuda un guardado anterior.",
+  "mainDraftJournalEmpty": "No hay borradores guardados.",
+  "mainDraftJournalExport": "Exportar copia de recuperación",
+  "mainDraftJournalExported": "Copia de recuperación exportada.",
+  "mainDraftJournalExportFailed": "No se pudo exportar la copia de recuperación completa.",
+  "mainDraftJournalRetire": "Retirar borrador guardado",
+  "mainDraftJournalRetireConfirm": "¿Retirar este borrador y liberar sus copias de adjuntos? Exporte primero una copia de recuperación si la necesita. El contenido guardado y los resultados sin confirmar no cambian.",
+  "mainDraftJournalRetireUnknown": "La retirada no está confirmada. Consulte la operación original sin volver a enviarla."
 }

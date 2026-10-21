@@ -32,6 +32,8 @@ fn blank_draft() -> WriteRequest {
         expected_generation: 0,
         source_revision: 0,
         source_kind: 1,
+        commit_operation: String::new(),
+            capture_scope: String::new(), capture_events: 0,
         predecessor_operation: String::new(),
         predecessor_sha256: vec![],
         values: Some(Values {

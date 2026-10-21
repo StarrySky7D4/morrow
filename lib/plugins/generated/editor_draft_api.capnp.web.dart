@@ -279,6 +279,15 @@ final class WriteRequestReader extends StructReader {
   );
 
   int get sourceKind => getUint16Field(2);
+
+  String? get commitOperation => getTextField(8);
+
+  String? get captureScope => getTextField(9);
+
+  int get captureEvents => _checkedWireInt(captureEventsBigInt);
+  BigInt get captureEventsBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
 }
 
 final class WriteRequestBuilder extends StructBuilder {
@@ -366,14 +375,38 @@ final class WriteRequestBuilder extends StructBuilder {
   set sourceKind(int v) {
     setUint16Field(2, v);
   }
+
+  set commitOperation(String? v) {
+    setTextField(8, v);
+  }
+
+  set captureScope(String? v) {
+    setTextField(9, v);
+  }
+
+  set captureEvents(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    captureEventsBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set captureEventsBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field captureEvents');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
 }
 
 final class _WriteRequestFactory
     extends StructFactory<WriteRequestReader, WriteRequestBuilder> {
   @override
-  int get dataWords => 3;
+  int get dataWords => 4;
   @override
-  int get ptrWords => 8;
+  int get ptrWords => 10;
   @override
   WriteRequestReader fromRawReader(RawStructReader r) => WriteRequestReader(r);
   @override
@@ -579,7 +612,7 @@ final class HandoffRequestBuilder extends StructBuilder {
   }
 
   WriteRequestBuilder initRequest() {
-    return initStructFieldWith(1, (r) => WriteRequestBuilder(r), 3, 8);
+    return initStructFieldWith(1, (r) => WriteRequestBuilder(r), 4, 10);
   }
 
   bool hasRequest() => hasPointerField(1);
@@ -647,7 +680,7 @@ final class HandoffProposalBuilder extends StructBuilder {
   }
 
   WriteRequestBuilder initRequest() {
-    return initStructFieldWith(1, (r) => WriteRequestBuilder(r), 3, 8);
+    return initStructFieldWith(1, (r) => WriteRequestBuilder(r), 4, 10);
   }
 
   bool hasRequest() => hasPointerField(1);
@@ -1039,6 +1072,8 @@ final class RecordReader extends StructReader {
   );
 
   Uint8List? get requestSha256 => getDataField(6);
+
+  String? get discardOperation => getTextField(7);
 }
 
 final class RecordBuilder extends StructBuilder {
@@ -1048,7 +1083,7 @@ final class RecordBuilder extends StructBuilder {
   RecordReader asReader() => RecordReader(rawToReader());
 
   WriteRequestBuilder initRequest() {
-    return initStructFieldWith(0, (r) => WriteRequestBuilder(r), 3, 8);
+    return initStructFieldWith(0, (r) => WriteRequestBuilder(r), 4, 10);
   }
 
   bool hasRequest() => hasPointerField(0);
@@ -1166,13 +1201,17 @@ final class RecordBuilder extends StructBuilder {
   set requestSha256(Uint8List? v) {
     setDataField(6, v);
   }
+
+  set discardOperation(String? v) {
+    setTextField(7, v);
+  }
 }
 
 final class _RecordFactory extends StructFactory<RecordReader, RecordBuilder> {
   @override
   int get dataWords => 5;
   @override
-  int get ptrWords => 7;
+  int get ptrWords => 8;
   @override
   RecordReader fromRawReader(RawStructReader r) => RecordReader(r);
   @override
@@ -1544,7 +1583,7 @@ final class EnvelopeBuilder extends StructBuilder {
   }
 
   RecordBuilder initRecord() {
-    return initStructFieldWith(4, (r) => RecordBuilder(r), 5, 7);
+    return initStructFieldWith(4, (r) => RecordBuilder(r), 5, 8);
   }
 
   bool hasRecord() => hasPointerField(4);

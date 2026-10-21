@@ -445,6 +445,36 @@ class AppLocalizationsKo extends AppLocalizations {
   String get mainDraftImportRecoveryTitle => '첨부 파일 결정 검토';
 
   @override
+  String get mainDraftJournalEmpty => '저장된 초안이 없습니다.';
+
+  @override
+  String get mainDraftJournalExport => '복구 사본 내보내기';
+
+  @override
+  String get mainDraftJournalExportFailed => '완전한 복구 사본을 내보내지 못했습니다.';
+
+  @override
+  String get mainDraftJournalExported => '복구 사본을 내보냈습니다.';
+
+  @override
+  String get mainDraftJournalRetire => '저장된 초안 종료';
+
+  @override
+  String get mainDraftJournalRetireConfirm =>
+      '이 초안을 종료하고 첨부 파일의 고정 복사본을 해제할까요? 필요하면 먼저 복구 사본을 내보내세요. 저장된 내용과 미확인 저장 결과는 변경되지 않습니다.';
+
+  @override
+  String get mainDraftJournalRetireUnknown =>
+      '종료 결과가 확인되지 않았습니다. 다시 제출하지 말고 원래 작업을 확인하세요.';
+
+  @override
+  String get mainDraftJournalReview =>
+      '이 복구 사본은 읽기 전용입니다. 원본 텍스트, 첨부 파일, 캡처 기록이 보존되며, 열어도 이전 저장 작업이 재개되지 않습니다.';
+
+  @override
+  String get mainDraftJournalTitle => '저장된 초안';
+
+  @override
   String get mainEdit => '편집';
 
   @override

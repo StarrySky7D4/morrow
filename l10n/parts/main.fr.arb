@@ -578,5 +578,14 @@
   "mainDraftHandoffRecoverySelection": "Sélectionnez un enregistrement pour voir le brouillon complet.",
   "mainStyleDepth": "Profondeur du relief",
   "mainStyleDepthGuide": "Réglez les reliefs et les creux sans modifier l’opacité du verre.",
-  "mainStyleDepthReset": "Rétablir 100 %"
+  "mainStyleDepthReset": "Rétablir 100 %",
+  "mainDraftJournalTitle": "Brouillons enregistrés",
+  "mainDraftJournalReview": "Cette copie de récupération est en lecture seule. Le texte brut, les pièces jointes et les captures sont conservés ; la consulter ne reprend pas un enregistrement précédent.",
+  "mainDraftJournalEmpty": "Aucun brouillon enregistré.",
+  "mainDraftJournalExport": "Exporter la copie de récupération",
+  "mainDraftJournalExported": "Copie de récupération exportée.",
+  "mainDraftJournalExportFailed": "Impossible d’exporter la copie de récupération complète.",
+  "mainDraftJournalRetire": "Retirer le brouillon enregistré",
+  "mainDraftJournalRetireConfirm": "Retirer ce brouillon et libérer ses copies de pièces jointes ? Exportez une copie de récupération si nécessaire. Le contenu enregistré et les résultats non confirmés restent inchangés.",
+  "mainDraftJournalRetireUnknown": "Le retrait n’est pas confirmé. Vérifiez l’opération initiale sans la soumettre à nouveau."
 }

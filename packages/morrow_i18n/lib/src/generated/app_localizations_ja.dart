@@ -442,6 +442,35 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mainDraftImportRecoveryTitle => '添付ファイルの決定を確認';
 
   @override
+  String get mainDraftJournalEmpty => '保存済みの下書きはありません。';
+
+  @override
+  String get mainDraftJournalExport => '復元用コピーをエクスポート';
+
+  @override
+  String get mainDraftJournalExportFailed => '完全な復元用コピーをエクスポートできませんでした。';
+
+  @override
+  String get mainDraftJournalExported => '復元用コピーをエクスポートしました。';
+
+  @override
+  String get mainDraftJournalRetire => '保存済み下書きを終了';
+
+  @override
+  String get mainDraftJournalRetireConfirm =>
+      'この下書きを終了し、添付ファイルの固定コピーを解放しますか？必要なら先に復元用コピーを書き出してください。保存済みの内容と未確認の保存結果は変わりません。';
+
+  @override
+  String get mainDraftJournalRetireUnknown => '終了結果は未確認です。再送信せず、元の操作を確認してください。';
+
+  @override
+  String get mainDraftJournalReview =>
+      'この復元用コピーは読み取り専用です。元のテキスト、添付ファイル、キャプチャ履歴を保持します。表示しても前回の保存は再開されません。';
+
+  @override
+  String get mainDraftJournalTitle => '保存済みの下書き';
+
+  @override
   String get mainEdit => '編集';
 
   @override

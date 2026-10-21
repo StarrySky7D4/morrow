@@ -230,6 +230,48 @@ final class FakeImportControl implements EditorDraftImportControl {
 }
 
 void main() {
+  test(
+    'only current retained Ready inspection resolves a lost complete',
+    () async {
+      final request = proposal();
+      final fake = FakeImportControl()
+        ..onComplete = (_, _) async => throw StateError('reply lost');
+      final session = EditorDraftImportSession(
+        control: fake,
+        request: request,
+        isCurrent: () => true,
+      );
+      await expectLater(
+        session.complete(selectedPath: 'original.bin'),
+        throwsA(isA<EditorDraftImportFailure>()),
+      );
+      for (final phase in [
+        null,
+        EditorDraftImportPhase.pending,
+        EditorDraftImportPhase.ready,
+      ]) {
+        fake.inspection = snapshot(
+          request,
+          phase,
+          expectedGeneration: BigInt.zero,
+        );
+        await expectLater(session.inspectReady(), throwsStateError);
+        expect(session.unknown, isTrue);
+        expect(fake.writes, hasLength(1));
+      }
+      fake.inspection = snapshot(
+        request,
+        EditorDraftImportPhase.ready,
+        retained: true,
+        expectedGeneration: BigInt.zero,
+      );
+      final ready = await session.inspectReady();
+      expect(ready.request, same(request));
+      expect(session.unknown, isFalse);
+      expect(fake.writes, hasLength(1));
+      expect(() => session.retryOriginal(), throwsStateError);
+    },
+  );
   test('lost complete, pending inspection, and exact explicit retry', () async {
     final request = proposal();
     final fake = FakeImportControl();

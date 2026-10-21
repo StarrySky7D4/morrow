@@ -587,5 +587,14 @@
   "mainStyleDepthReset": "Reset to 100%",
   "@mainStyleDepthReset": {
     "description": "Visual style relief depth control"
-  }
+  },
+  "mainDraftJournalTitle": "Saved drafts",
+  "mainDraftJournalReview": "This recovery copy is read-only. Raw text, attachments and capture history are preserved; viewing does not resume a previous save.",
+  "mainDraftJournalEmpty": "No saved drafts.",
+  "mainDraftJournalExport": "Export recovery copy",
+  "mainDraftJournalExported": "Recovery copy exported.",
+  "mainDraftJournalExportFailed": "Could not export the complete recovery copy.",
+  "mainDraftJournalRetire": "Retire saved draft",
+  "mainDraftJournalRetireConfirm": "Retire this exact saved draft and release its attachment pins? Export a recovery copy first if you need it. Saved business content and uncertain save results are unchanged.",
+  "mainDraftJournalRetireUnknown": "Retirement is not confirmed. Inspect the original operation; do not submit it again."
 }

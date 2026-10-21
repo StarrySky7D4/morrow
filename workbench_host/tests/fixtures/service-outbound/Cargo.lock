@@ -418,7 +418,9 @@ dependencies = [
  "capnp",
  "capnpc",
  "ed25519-dalek",
+ "libc",
  "lz4_flex",
+ "morrow-windows-user-directories",
  "prost",
  "prost-build",
  "prost-reflect",
@@ -434,6 +436,13 @@ name = "morrow-service-outbound-test-guest"
 version = "0.0.0"
 dependencies = [
  "morrow-core",
+]
+
+[[package]]
+name = "morrow-windows-user-directories"
+version = "0.1.0"
+dependencies = [
+ "windows-sys",
 ]
 
 [[package]]

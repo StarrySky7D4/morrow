@@ -48,5 +48,11 @@ with tempfile.TemporaryDirectory(prefix="workbench-codegen-",dir=ROOT/"build") a
         generated=(Path(directory)/name).read_text(encoding="utf-8");target=TARGET/name
         if "--check" in sys.argv:
             if not target.exists() or target.read_text(encoding="utf-8")!=generated:raise SystemExit("Stale binding: "+name)
-        else:target.write_text(generated,encoding="utf-8")
+        else:
+            # Generated files predate a single repository-wide EOL policy.
+            # Preserve each existing file's bytes outside the actual schema
+            # change; Windows text-mode writes must not churn every binding.
+            previous = target.read_bytes() if target.exists() else b""
+            newline = "\r\n" if previous and previous.count(b"\r\n") == previous.count(b"\n") else "\n"
+            target.write_bytes(generated.replace("\n", newline).encode("utf-8"))
 print("Verified workbench bindings" if "--check" in sys.argv else "Generated workbench bindings")

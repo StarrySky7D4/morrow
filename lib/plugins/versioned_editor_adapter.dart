@@ -27,6 +27,8 @@ final class VersionedWorkbenchEditorAdapter
     implements
         WorkbenchEditorSession,
         WorkbenchEditorContinuation,
+        WorkbenchEditorOperationIdentity,
+        WorkbenchEditorDraftCaptureIdentity,
         EditorDraftPredecessorSource,
         VersionedEditorDeferredAcknowledgement {
   VersionedWorkbenchEditorAdapter(
@@ -50,8 +52,8 @@ final class VersionedWorkbenchEditorAdapter
   final bool Function()? isCurrent;
   final Future<WorkbenchEditorSession> Function(Idea confirmed)? reopen;
 
-  /// Opt in only when a durable successor handoff owns cleanup. The formal
-  /// editor currently uses the default immediate acknowledgement.
+  /// Opt in only when a durable successor handoff owns cleanup. Native formal
+  /// editor routes enable this together with their workbench-owned draft.
   final bool deferRecoveryAcknowledgement;
   bool get _active => !_closed && !_continued && (isCurrent?.call() ?? true);
   final Map<IdeaAttachment, Future<VersionedAsset>> _staged =
@@ -72,6 +74,25 @@ final class VersionedWorkbenchEditorAdapter
 
   @override
   String get targetId => _session.targetId;
+  @override
+  BigInt get sourceRevision => _source.revision;
+  @override
+  ({String scope, int events, bool complete}) get draftCapture {
+    final original = _session;
+    if (original is! WorkbenchEditorDraftCaptureIdentity) {
+      throw UnsupportedError('Original capture scope is unavailable');
+    }
+    return (original as WorkbenchEditorDraftCaptureIdentity).draftCapture;
+  }
+
+  @override
+  String get commitOperation {
+    final session = _session;
+    if (session is! WorkbenchEditorOperationIdentity) {
+      throw UnsupportedError('Original editor operation identity is unavailable');
+    }
+    return (session as WorkbenchEditorOperationIdentity).commitOperation;
+  }
 
   @override
   EditorRecovery? get draftPredecessor {

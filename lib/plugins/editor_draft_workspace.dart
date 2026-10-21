@@ -4,9 +4,10 @@ import 'editor_draft_session.dart';
 /// A view lease owns only attachment to the view. Releasing it never abandons
 /// a draft, cancels an operation or disposes the workspace's only live S2.
 final class EditorDraftViewLease {
-  EditorDraftViewLease._(this._workspace, this.session);
+  EditorDraftViewLease._(this._workspace, this.session, this._capture);
   final EditorDraftWorkspace _workspace;
   final EditorDraftSession session;
+  final bool Function()? _capture;
   bool _released = false;
   bool get released => _released;
   void release() {
@@ -55,6 +56,66 @@ final class EditorDraftWorkspace {
   int get attachedViews => _leases.length;
   List<EditorDraftSession> get sessions => List.unmodifiable(_sessions.values);
 
+  bool hasView(EditorDraftSession session) =>
+      _leases.any((lease) => identical(lease.session, session));
+
+  /// Releases only a transferred, host-retired parent cache. The child remains
+  /// retained even when it receives further input during S1 acknowledgement.
+  void releaseRetiredParent(
+    EditorDraftSession parent,
+    EditorDraftSession child,
+    EditorDraftHandoffProposalRecord retired, {
+    required int expectedLocalGeneration,
+  }) {
+    _check();
+    final summary = retired.summary;
+    final link = retired.proposal.handoff.parentLink;
+    if (_closing ||
+        hasView(parent) ||
+        parent.saving ||
+        parent.unknown ||
+        parent.captureBlocked ||
+        parent.localGeneration != expectedLocalGeneration ||
+        !identical(find(parent.cardId, parent.draftId), parent) ||
+        !identical(find(child.cardId, child.draftId), child) ||
+        child.disposed ||
+        child.unknown ||
+        child.conflicted ||
+        child.confirmed == null ||
+        summary.status != EditorDraftHandoffProposalStatus.parentRetired ||
+        summary.parentActive ||
+        !summary.childActive ||
+        summary.cardId != parent.cardId ||
+        child.cardId != parent.cardId ||
+        summary.parentDraftId != parent.draftId ||
+        summary.childDraftId != child.draftId ||
+        link.parentGeneration != parent.confirmed?.generation ||
+        link.parentSaveOperation != parent.confirmed?.request.operation ||
+        child.confirmed!.parentLink?.childOperation != link.childOperation) {
+      throw StateError('Original parent retirement cannot release this cache');
+    }
+    _sessions.remove((parent.cardId, parent.draftId));
+    parent.dispose();
+  }
+
+  /// Release exactly the original local reservation after host retirement.
+  /// This never evicts an active, dirty, attached or unknown draft to make room.
+  void releaseRetiredDraft(
+    EditorDraftSession session,
+    EditorDraftRetirementReservation reservation,
+    EditorDraftRecord retired,
+  ) {
+    _check();
+    final key = (session.cardId, session.draftId);
+    if (_closing || _attaching || hasView(session) ||
+        !identical(_sessions[key], session) ||
+        !session.ownsRetirement(reservation)) {
+      throw StateError('Original draft cannot leave this workspace');
+    }
+    session.completeRetirement(reservation, retired);
+    _sessions.remove(key);
+  }
+
   void _check() {
     if (_disposed || !isCurrent()) {
       throw StateError('Draft workspace is unavailable');
@@ -66,11 +127,32 @@ final class EditorDraftWorkspace {
     return _sessions[(cardId, draftId)];
   }
 
+  /// Retain a workbench-owned session before its first view is constructed.
+  /// A failed or cancelled route must not orphan an already admitted owner.
+  void retain(EditorDraftSession session) {
+    _check();
+    if (_closing || _attaching || session.disposed || session.retirementFrozen) {
+      throw StateError('Draft workspace cannot retain a session');
+    }
+    final key = (session.cardId, session.draftId);
+    final existing = _sessions[key];
+    if (existing != null && !identical(existing, session)) {
+      throw StateError('A live draft already owns this scope');
+    }
+    if (existing == null && _sessions.length >= capacity) {
+      throw StateError('Draft workspace session capacity reached');
+    }
+    _sessions[key] = session;
+  }
+
   /// Adopts exactly one session per scope. A new widget must reuse this session
   /// rather than replace it with a stale record read while a save was pending.
-  EditorDraftViewLease attach(EditorDraftSession session) {
+  EditorDraftViewLease attach(
+    EditorDraftSession session, {
+    bool Function()? capture,
+  }) {
     _check();
-    if (_closing || _attaching || session.disposed) {
+    if (_closing || _attaching || session.disposed || session.retirementFrozen) {
       throw StateError('Draft workspace cannot attach');
     }
     final key = (session.cardId, session.draftId);
@@ -84,7 +166,7 @@ final class EditorDraftWorkspace {
     if (existing == null && _sessions.length >= capacity) {
       throw StateError('Draft workspace session capacity reached');
     }
-    final lease = EditorDraftViewLease._(this, session);
+    final lease = EditorDraftViewLease._(this, session, capture);
     _sessions[key] = session;
     _leases.add(lease);
     _attaching = true;
@@ -111,6 +193,27 @@ final class EditorDraftWorkspace {
     lease.session.detachUI();
   }
 
+  /// Capture the real attached views before close, including metadata that
+  /// does not notify a text controller. A failed or throwing capture keeps
+  /// its session dirty; an older successful receipt cannot authorize EOF.
+  void captureViews() {
+    _check();
+    for (final lease in List<EditorDraftViewLease>.of(_leases)) {
+      if (lease.released || lease._capture == null) continue;
+      try {
+        if (!lease._capture()) {
+          throw StateError('Draft view could not capture its complete state');
+        }
+      } catch (error) {
+        if (!lease.session.captureBlocked) {
+          lease.session.markCaptureIncomplete(error);
+        }
+        rethrow;
+      }
+      _check();
+    }
+  }
+
   /// Eviction is explicit and only releases a reconstructible view/session
   /// cache. It never discards the host journal or an unconfirmed local proposal.
   bool evictDurable(String cardId, String draftId) {
@@ -120,7 +223,8 @@ final class EditorDraftWorkspace {
     final session = _sessions[key];
     if (session == null) return true;
     final confirmed = session.confirmed;
-    if (_leases.any((lease) => identical(lease.session, session)) ||
+    if (session.retirementFrozen ||
+        _leases.any((lease) => identical(lease.session, session)) ||
         session.saving ||
         session.dirty ||
         session.unknown ||
@@ -158,6 +262,7 @@ final class EditorDraftWorkspace {
         _pausedBefore[session] = session.autoSavePaused;
         session.pauseAutoSave();
       }
+      captureViews();
       for (final session in sessions) {
         _check();
         final remaining = timeout - timer.elapsed;
@@ -172,6 +277,7 @@ final class EditorDraftWorkspace {
         if (record != null) records.add(record);
         generations[session] = session.localGeneration;
       }
+      captureViews();
       _validate(generations);
       return EditorDraftClosePreparation._(
         this,

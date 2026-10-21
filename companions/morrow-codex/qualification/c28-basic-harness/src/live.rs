@@ -553,11 +553,17 @@ impl Session {
                     self.factory_acquire_attempted
                         && self.factory_created
                         && self.backend.is_none()
-                        && self.retained_scheduler.is_none()
                         && self.formal_physically_closed
                         && !self.formal_unsettled_failure,
-                    "release factory, settle formal tasks, and clear all real scheduler aliases before protected finish"
+                    "stage the original factory and settle formal tasks before protected finish"
                 );
+                if let Some(factory)=self.native_factory_retirement.as_ref() {
+                    let original=self.retained_scheduler.as_ref()
+                        .ok_or_else(||anyhow!("original native scheduler was not staged"))?;
+                    factory.verify_staged_runtime_for_owner_finish(original)?;
+                } else {
+                    ensure!(self.retained_scheduler.is_none(),"legacy factory scheduler still retained");
+                }
                 if self.native_factory_retirement.is_some() && self.normal_native_parts.is_none(){
                     self.normal_native_parts=Some(self.formal.as_mut().ok_or_else(||anyhow!("same native formal workflow absent"))?
                         .take_normal_cleanup_parts()?);

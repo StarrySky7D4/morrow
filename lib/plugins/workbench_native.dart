@@ -2,6 +2,12 @@ import 'editor_commit_proof.dart';
 import 'editor_commit_proof_codec.dart';
 import 'editor_recovery.dart';
 import 'editor_draft.dart';
+import 'editor_draft_owner.dart';
+import 'editor_draft_review.dart';
+import 'editor_draft_retirement.dart';
+import 'editor_draft_assets.dart';
+import 'editor_draft_session.dart';
+import 'editor_draft_workspace.dart';
 import 'editor_draft_codec.dart';
 import 'editor_draft_import.dart';
 import 'editor_draft_import_codec.dart';
@@ -9,6 +15,7 @@ import 'versioned_content.dart';
 import 'versioned_content_scan.dart';
 import 'versioned_idea_view.dart';
 import 'versioned_editor.dart';
+import 'versioned_editor_adapter.dart';
 import 'versioned_content_codec.dart';
 import 'editor_session.dart';
 import 'plugin_tools.dart';
@@ -76,6 +83,8 @@ part 'service_business_routing_native.dart';
 part 'versioned_content_native.dart';
 part 'editor_recovery_native.dart';
 part 'editor_draft_native.dart';
+part 'editor_draft_owner_native.dart';
+part 'editor_draft_review_native.dart';
 part 'editor_draft_handoff_native.dart';
 part 'editor_draft_handoff_proposal_native.dart';
 part 'editor_draft_import_native.dart';
@@ -147,6 +156,9 @@ class RustWorkbench
         WorkbenchEditorRecovery,
         WorkbenchEditorCommitInspection,
         WorkbenchEditorDraftSupport,
+        WorkbenchEditorDraftRuntime,
+        WorkbenchEditorDraftRecovery,
+        WorkbenchEditorDraftMaintenance,
         WorkbenchEditorDraftHandoffSupport,
         WorkbenchEditorDraftHandoffProposalSupport,
         WorkbenchEditorDraftImportSupport,
@@ -171,7 +183,12 @@ class RustWorkbench
         WorkbenchEditorSupport,
         WorkbenchContentRevisionSource,
         WorkbenchMutationFailureNeedsRefresh {
-  RustWorkbench._(this.channel, this._cache, [this._nativeProcess, this._qualification]) {
+  RustWorkbench._(
+    this.channel,
+    this._cache, [
+    this._nativeProcess,
+    this._qualification,
+  ]) {
     channel.output.listen(_receive, onError: _fail, onDone: _ended);
     _stderrDone = channel.diagnostics.listen((bytes) {
       final remaining = 4096 - _stderr.length;
@@ -197,6 +214,218 @@ class RustWorkbench
   @override
   late final EditorDraftImportControl editorDraftImports =
       NativeEditorDraftImportControl(this);
+
+  final _draftOwners = <EditorDraftOwner>[];
+  final _draftRetirements = <(String, String), EditorDraftRetirementAttempt>{};
+  @override
+  EditorDraftRetirementAttempt retirementFor(EditorDraftReview review) {
+    final record = review.record;
+    final key = (record.request.cardId, record.request.draftId);
+    bool current() => _closingProcess == null && _failure == null;
+    if (!current()) throw StateError('Retirement workspace is unavailable');
+    final retained = _draftRetirements[key];
+    if (retained != null) {
+      if (retained.original.generation != record.generation ||
+          !_same(retained.original.requestSha256, record.requestSha256)) {
+        throw StateError('An earlier retirement is retained for this draft');
+      }
+      return retained;
+    }
+    final owners = _draftOwners.where((owner) =>
+        owner.session.cardId == key.$1 && owner.session.draftId == key.$2 &&
+        !owner.captureClosed).toList();
+    if (owners.length > 1) throw StateError('Ambiguous original draft owner');
+    final owner = owners.isEmpty ? null : owners.single;
+    final operation =
+        'draft-retire-${DateTime.now().microsecondsSinceEpoch}-${_sequence++}';
+    EditorDraftRetirementReservation? reservation;
+    return _draftRetirements[key] = EditorDraftRetirementAttempt(
+      original: record,
+      operation: operation,
+      control: editorDrafts,
+      imports: editorDraftImports,
+      isCurrent: () => current() && (owner?.isCurrent() ?? true),
+      // Merely opening/cancelling confirmation does not freeze the live owner.
+      // start reserves synchronously before its first asynchronous observation.
+      reserveOwner: () {
+        final actual = _draftOwners.where((candidate) =>
+            candidate.session.cardId == key.$1 &&
+            candidate.session.draftId == key.$2 && !candidate.captureClosed)
+            .toList();
+        if (actual.length != (owner == null ? 0 : 1) ||
+            (owner != null && !identical(actual.single, owner))) {
+          throw StateError('Original draft owner changed before retirement');
+        }
+        if (owner != null) {
+          reservation = owner.reserveRetirement(record, operation);
+        }
+      },
+      finishOwner: owner == null ? null : (retired) =>
+          owner.finishRetirement(reservation!, retired),
+    );
+  }
+
+  @override
+  EditorDraftOwner? retainedEditorDraft(String cardId) {
+    final owners = _draftOwners
+        .where(
+          (owner) =>
+              owner.session.cardId == cardId &&
+              !owner.retired &&
+              !owner.session.disposed &&
+              owner.commit?.viewTransferred != true,
+        )
+        .toList();
+    if (owners.isEmpty) return null;
+    if (owners.length != 1 ||
+        !owners.single.isCurrent() ||
+        owners.single.captureClosed ||
+        owners.single.session.retirementFrozen ||
+        editorDraftWorkspace.hasView(owners.single.session)) {
+      throw StateError('Original editor draft cannot acquire another view');
+    }
+    return owners.single;
+  }
+
+  @override
+  Future<EditorDraftReview> inspectEditorDraft(EditorDraftSummary original) =>
+      _inspectEditorDraft(this, original);
+  @override
+  Future<String> exportEditorDraft(
+    EditorDraftReview review,
+    String selectedDirectory,
+  ) => _exportEditorDraft(this, review, selectedDirectory);
+
+  @override
+  EditorDraftCommitAttempt beginEditorDraftCommit(
+    EditorDraftOwner owner,
+    Idea template,
+  ) {
+    return owner.beginCommit(template, editorDraftCommitServices(owner));
+  }
+
+  EditorDraftCommitServices editorDraftCommitServices(EditorDraftOwner owner) {
+    if (!_draftOwners.contains(owner) || !writable) {
+      throw StateError('Original draft owner is unavailable');
+    }
+    return EditorDraftCommitServices(
+      drafts: editorDrafts,
+      proposals: editorDraftHandoffProposals,
+      readSource: versionedContent.read,
+      retain: _draftOwners.add,
+      presentSource: workspaceRecord,
+      inspectCommit: (editor) async {
+        if (editor is WorkbenchEditorCommitSource) {
+          return (editor as WorkbenchEditorCommitSource)
+              .inspectCommittedSource();
+        }
+        if (editor is EditorDraftPredecessorSource) {
+          final original =
+              (editor as EditorDraftPredecessorSource).draftPredecessor;
+          if (original != null) {
+            return EditorDraftCommitEvidence.fromRecovery(original);
+          }
+        }
+        throw StateError('Original S1 proof is unavailable');
+      },
+      openSuccessor: (confirmed) async {
+        if (confirmed.versioned == null) {
+          return _openLegacyEditor(
+            confirmed.id,
+            create: false,
+            expectedRevision: confirmed.contentRevision,
+          );
+        }
+        final current = await versionedContent.read(confirmed.id);
+        if (current.revision != confirmed.contentRevision ||
+            current.deleted ||
+            current.formatVersion != 2) {
+          throw StateError('Successor baseline changed');
+        }
+        final presented = await workspaceRecord(current);
+        final native = await openVersionedEditor(
+          confirmed.id,
+          expectedRevision: current.revision,
+        );
+        return VersionedWorkbenchEditorAdapter(
+          native,
+          presented.versioned!,
+          workspaceRecord,
+          isCurrent: owner.isCurrent,
+          deferRecoveryAcknowledgement: true,
+        );
+      },
+      acknowledge: (editor, proof) async {
+        if (editor is VersionedEditorDeferredAcknowledgement) {
+          await (editor as VersionedEditorDeferredAcknowledgement)
+              .acknowledgeAccepted(
+                VersionedCommitReceipt(
+                  id: proof.id,
+                  operation: proof.operation,
+                  revision: proof.committedRevision,
+                  repeated: false,
+                ),
+              );
+        }
+      },
+    );
+  }
+
+  EditorDraftWorkspace? _draftWorkspace;
+  EditorDraftClosePreparation? _draftClosePreparation;
+
+  @override
+  EditorDraftWorkspace get editorDraftWorkspace =>
+      _draftWorkspace ??= EditorDraftWorkspace(
+        isCurrent: () => _closingProcess == null && _failure == null,
+      );
+
+  @override
+  Future<EditorDraftOwner> createEditorDraftOwner({
+    required WorkbenchEditorSession editor,
+    required EditorDraftSnapshot initial,
+    required List<IdeaAttachment> attachments,
+    required bool create,
+  }) => _createEditorDraftOwner(this, editor, initial, attachments, create);
+
+  @override
+  Future<IdeaAttachment> importEditorDraftFile(
+    EditorDraftOwner owner, {
+    required String path,
+    required String name,
+    required String kind,
+  }) => _importEditorDraftFile(this, owner, path, name, kind);
+
+  @override
+  Future<EditorDraftClosePreparation> prepareEditorDraftClose() async {
+    if (_draftOwners.any(
+      (owner) =>
+          (owner.commit != null && !owner.commit!.finished) ||
+          owner.importing ||
+          owner.hasUnresolvedImports ||
+          (!owner.captureClosed && !owner.captureIdentity.complete),
+    )) {
+      throw StateError('Original draft imports still need resolution');
+    }
+    return _draftClosePreparation ??= await editorDraftWorkspace.prepareClose(
+      timeout: const Duration(seconds: 20),
+    );
+  }
+
+  @override
+  Future<void> finishEditorDraftClose(
+    EditorDraftClosePreparation preparation,
+  ) async {
+    if (!identical(preparation, _draftClosePreparation)) {
+      throw StateError('Draft close preparation belongs to another workbench');
+    }
+    if (!editorDraftWorkspace.disposed) {
+      editorDraftWorkspace.finishClose(preparation);
+    }
+    for (final owner in _draftOwners) {
+      await owner.closeCaptureAfterDrafts();
+    }
+  }
 
   @override
   Future<VersionedEditorSession> openVersionedEditor(
@@ -293,8 +522,12 @@ class RustWorkbench
     if (selection == null || !selection.openCompleted) {
       throw StateError('Qualification requires the selected original open');
     }
-    return _qualificationControl ??= QualificationSessionControl._(this, selection);
+    return _qualificationControl ??= QualificationSessionControl._(
+      this,
+      selection,
+    );
   }
+
   final Directory? _cache;
   Process get process =>
       _nativeProcess ??
@@ -338,30 +571,45 @@ class RustWorkbench
     if (qualification == null && onQualificationStartupFailure != null) {
       throw ArgumentError('Startup observation requires qualification mode');
     }
-    final selection = qualification == null ? null : await _qualificationPreflight(
-      qualification, executable: executable, package: package, directory: directory,
-      supervisorExecutable: supervisorExecutable, managed: managed, onStarted: onStarted,
-    );
+    final selection = qualification == null
+        ? null
+        : await _qualificationPreflight(
+            qualification,
+            executable: executable,
+            package: package,
+            directory: directory,
+            supervisorExecutable: supervisorExecutable,
+            managed: managed,
+            onStarted: onStarted,
+          );
     if (selection == null) await directory.create(recursive: true);
     final cache = Directory('${directory.path}/preview-cache');
     if (selection == null) await cache.create(recursive: true);
     final supervised = Platform.isWindows && supervisorExecutable != null;
-    final supervisorSha = selection?.plan.supervisor.sha256 ?? (supervised
-        ? sha256
-              .convert(await File(supervisorExecutable).readAsBytes())
-              .toString()
-        : null);
-    final hostSha = selection?.plan.host.sha256 ?? (supervised
-        ? sha256.convert(await File(executable).readAsBytes()).toString()
-        : null);
-    final packageSha = selection?.plan.package.sha256 ?? (supervised
-        ? sha256.convert(await File(package).readAsBytes()).toString()
-        : null);
-    var canonicalProfile = selection?.canonicalProfile ?? (supervised
-        ? (await directory.resolveSymbolicLinks())
-              .replaceAll('\\', '/')
-              .toLowerCase()
-        : '');
+    final supervisorSha =
+        selection?.plan.supervisor.sha256 ??
+        (supervised
+            ? sha256
+                  .convert(await File(supervisorExecutable).readAsBytes())
+                  .toString()
+            : null);
+    final hostSha =
+        selection?.plan.host.sha256 ??
+        (supervised
+            ? sha256.convert(await File(executable).readAsBytes()).toString()
+            : null);
+    final packageSha =
+        selection?.plan.package.sha256 ??
+        (supervised
+            ? sha256.convert(await File(package).readAsBytes()).toString()
+            : null);
+    var canonicalProfile =
+        selection?.canonicalProfile ??
+        (supervised
+            ? (await directory.resolveSymbolicLinks())
+                  .replaceAll('\\', '/')
+                  .toLowerCase()
+            : '');
     if (canonicalProfile.startsWith('//?/unc/')) {
       canonicalProfile = '//${canonicalProfile.substring(8)}';
     } else if (canonicalProfile.startsWith('//?/')) {
@@ -371,11 +619,17 @@ class RustWorkbench
         .convert(utf8.encode(canonicalProfile))
         .toString();
     final process = await Process.start(
-      selection?.plan.supervisor.path ?? (supervised ? supervisorExecutable : executable),
+      selection?.plan.supervisor.path ??
+          (supervised ? supervisorExecutable : executable),
       [
-        if (supervised) ...[pid.toString(), selection?.plan.host.path ?? executable],
+        if (supervised) ...[
+          pid.toString(),
+          selection?.plan.host.path ?? executable,
+        ],
         if (managed) '--managed',
-        managed ? directory.path : '${selection?.plan.profileRoot ?? directory.path}/workbench.db',
+        managed
+            ? directory.path
+            : '${selection?.plan.profileRoot ?? directory.path}/workbench.db',
         selection?.plan.package.path ?? package,
         if (selection != null) ...selection.plan.configuration.trailer,
       ],
@@ -391,8 +645,9 @@ class RustWorkbench
               expectedProfile: expectedProfile,
               packageSha256: packageSha!,
               qualificationStartupObservationEnabled: selection != null,
-              registerQualificationStartupFailure: selection == null ? null :
-                  (mark) => markQualificationStartupFailed = mark,
+              registerQualificationStartupFailure: selection == null
+                  ? null
+                  : (mark) => markQualificationStartupFailed = mark,
             )
           : NativeWorkbenchChannel(process),
       cache,
@@ -422,14 +677,19 @@ class RustWorkbench
       if (selection != null && onQualificationStartupFailure != null) {
         await observeWorkbenchStartupFailure(
           primaryFailure: error,
-          capture: ({required stage, required primaryFailure,
-              secondaryCloseFailure, observerFailure}) =>
-            (result.channel as SupervisedWorkbenchChannel)
-                .qualificationStartupObservation(
-              stage: stage, primaryFailure: primaryFailure,
-              secondaryCloseFailure: secondaryCloseFailure,
-              observerFailure: observerFailure,
-            ),
+          capture:
+              ({
+                required stage,
+                required primaryFailure,
+                secondaryCloseFailure,
+                observerFailure,
+              }) => (result.channel as SupervisedWorkbenchChannel)
+                  .qualificationStartupObservation(
+                    stage: stage,
+                    primaryFailure: primaryFailure,
+                    secondaryCloseFailure: secondaryCloseFailure,
+                    observerFailure: observerFailure,
+                  ),
           observe: onQualificationStartupFailure,
           closeOriginal: result.close,
         );
@@ -512,10 +772,16 @@ class RustWorkbench
     return workspace;
   }
 
-  Future<T> _exchangeAgentDiscovery<T>(Uint8List frame, T Function(Uint8List) decode) =>
-      _exchangePrivate(frame, decode,
-          requestLimit: AgentTaskDiscoveryCodec.maxFrameBytes,
-          replyLimit: AgentTaskDiscoveryCodec.maxFrameBytes, qualificationProfile: 'AD31');
+  Future<T> _exchangeAgentDiscovery<T>(
+    Uint8List frame,
+    T Function(Uint8List) decode,
+  ) => _exchangePrivate(
+    frame,
+    decode,
+    requestLimit: AgentTaskDiscoveryCodec.maxFrameBytes,
+    replyLimit: AgentTaskDiscoveryCodec.maxFrameBytes,
+    qualificationProfile: 'AD31',
+  );
 
   /// Short private RPC only. Pending work returns its token; it never occupies
   /// the pipe while waiting for session completion or joins the business queue.
@@ -526,18 +792,30 @@ class RustWorkbench
           (channel is SupervisedWorkbenchChannel &&
               (channel as SupervisedWorkbenchChannel).supportsPrivateControl));
 
-  Future<T> _exchangeAgentSession<T>(Uint8List frame, T Function(Uint8List) decode) {
+  Future<T> _exchangeAgentSession<T>(
+    Uint8List frame,
+    T Function(Uint8List) decode,
+  ) {
     if (_qualification?.failure != null) {
-      return Future.error(const AgentSessionFailure(AgentSessionFailureKind.unknown));
+      return Future.error(
+        const AgentSessionFailure(AgentSessionFailureKind.unknown),
+      );
     }
     if (_qualification != null && _qualificationControl == null) {
-      return Future.error(StateError('Qualification requires actual Start before PS30'));
+      return Future.error(
+        StateError('Qualification requires actual Start before PS30'),
+      );
     }
-    return _exchangePrivate(frame, decode,
-          requestLimit: NativeAgentSessionClient.maxRequestBytes,
-          replyLimit: NativeAgentSessionClient.maxReplyBytes, qualificationProfile: 'PS30',
-          qualificationBudget: _qualification == null ? null :
-              () => _qualificationControl!._remainingBusiness());
+    return _exchangePrivate(
+      frame,
+      decode,
+      requestLimit: NativeAgentSessionClient.maxRequestBytes,
+      replyLimit: NativeAgentSessionClient.maxReplyBytes,
+      qualificationProfile: 'PS30',
+      qualificationBudget: _qualification == null
+          ? null
+          : () => _qualificationControl!._remainingBusiness(),
+    );
   }
 
   // Fixed internal profile wrappers choose these limits. This is not a public
@@ -553,10 +831,14 @@ class RustWorkbench
   }) {
     if (_failure != null) return Future.error(_failure!);
     if (!_supportsPrivateControl) {
-      return Future.error(const AgentSessionFailure(AgentSessionFailureKind.unavailable));
+      return Future.error(
+        const AgentSessionFailure(AgentSessionFailureKind.unavailable),
+      );
     }
     if (frame.isEmpty || frame.length > requestLimit) {
-      return Future.error(const FormatException('Private session request exceeds limit'));
+      return Future.error(
+        const FormatException('Private session request exceeds limit'),
+      );
     }
     final payload = Uint8List.fromList(frame), completion = Completer<T>();
     _queue = _queue.then((_) async {
@@ -569,6 +851,7 @@ class RustWorkbench
         unawaited(close().catchError((Object _) {}));
         throw error;
       }
+
       Duration remaining() {
         final duration = const Duration(seconds: 60) - elapsed.elapsed;
         if (duration <= Duration.zero) timeout();
@@ -576,6 +859,7 @@ class RustWorkbench
         if (selected != null && selected <= Duration.zero) timeout();
         return selected != null && selected < duration ? selected : duration;
       }
+
       try {
         if (_failure != null) throw _failure!;
         if (!_supportsPrivateControl) {
@@ -589,9 +873,16 @@ class RustWorkbench
         pending.future.ignore();
         _responseFrameCap = replyLimit;
         _response = pending;
-        final selectedSendBudget = qualificationBudget == null ? null : remaining();
-        await channel.send(payload).timeout(selectedSendBudget ?? remaining(), onTimeout: timeout);
-        received = await pending.future.timeout(remaining(), onTimeout: timeout);
+        final selectedSendBudget = qualificationBudget == null
+            ? null
+            : remaining();
+        await channel
+            .send(payload)
+            .timeout(selectedSendBudget ?? remaining(), onTimeout: timeout);
+        received = await pending.future.timeout(
+          remaining(),
+          onTimeout: timeout,
+        );
         // Only the fixed qualification decoder may retain a fully validated
         // actual key/consumed ACK before a later original gate rejects delivery.
         T? retained;
@@ -604,9 +895,16 @@ class RustWorkbench
         if (received.length > replyLimit) {
           throw const FormatException('Private session reply exceeds limit');
         }
-        final decoded = qualificationRetainBeforeGate ? retained as T : decode(received);
+        final decoded = qualificationRetainBeforeGate
+            ? retained as T
+            : decode(received);
         if (_qualification != null && qualificationProfile != null) {
-          _qualification.record(qualificationProfile, payload, received, decoded);
+          _qualification.record(
+            qualificationProfile,
+            payload,
+            received,
+            decoded,
+          );
         }
         completion.complete(decoded);
       } catch (error, stack) {
@@ -622,10 +920,12 @@ class RustWorkbench
         if (received != null) {
           received.fillRange(0, received.length, 0);
         } else if (pending != null) {
-          unawaited(pending.future.then<void>(
-            (bytes) => bytes.fillRange(0, bytes.length, 0),
-            onError: (Object _, StackTrace _) {},
-          ));
+          unawaited(
+            pending.future.then<void>(
+              (bytes) => bytes.fillRange(0, bytes.length, 0),
+              onError: (Object _, StackTrace _) {},
+            ),
+          );
         }
       }
     });
@@ -2037,7 +2337,8 @@ class RustWorkbench
             }
           },
           send: (payload) async {
-            if (_qualification != null && !_qualification.openCompleted &&
+            if (_qualification != null &&
+                !_qualification.openCompleted &&
                 action == host.Action.pageVersioned) {
               qualificationStartupRequest = Uint8List.fromList(payload);
             }
@@ -3091,7 +3392,16 @@ class RustWorkbench
     }
   }
 
-  Future<void> close() => _closingProcess ??= _closeProcess();
+  Future<void> close() {
+    if (_draftOwners.isNotEmpty &&
+        (_draftWorkspace?.disposed != true ||
+            _draftOwners.any((owner) => !owner.captureClosed))) {
+      return Future.error(
+        StateError('Capture and detach drafts before host EOF'),
+      );
+    }
+    return _closingProcess ??= _closeProcess();
+  }
 
   Future<void> _closeProcess() async {
     // Seal local presentation synchronously. This is not remote detach or join.
@@ -3248,11 +3558,34 @@ class _WorkbenchUiTransport implements PluginUiTransport {
   }
 }
 
+final class _DraftCaptureTracker {
+  final _events = <String>{};
+  bool busy = false;
+  Object? failure;
+  bool get complete => !busy && failure == null;
+  int get events => _events.length;
+  Future<void> record(String id, Future<void> Function() submit) async {
+    if (!complete) throw StateError('Original paste requires reconciliation');
+    busy = true;
+    try {
+      await submit();
+      _events.add(id);
+    } catch (error) {
+      failure = error;
+      rethrow;
+    } finally {
+      busy = false;
+    }
+  }
+}
+
 class _NativeEditorSession
     implements
         WorkbenchEditorSession,
         WorkbenchEditorContinuation,
-        WorkbenchEditorCommitSource {
+        WorkbenchEditorCommitSource,
+        WorkbenchEditorOperationIdentity,
+        WorkbenchEditorDraftCaptureIdentity {
   _NativeEditorSession(
     this.owner,
     this.targetId,
@@ -3265,7 +3598,19 @@ class _NativeEditorSession
   final String targetId;
   final BigInt revision;
   final String scope;
+  final _draftCapture = _DraftCaptureTracker();
+  @override
+  ({String scope, int events, bool complete}) get draftCapture => (
+    scope: scope,
+    events: _draftCapture.events,
+    complete: !_closed && _draftCapture.complete,
+  );
   final bool create;
+  @override
+  BigInt get sourceRevision => revision;
+  @override
+  late final String commitOperation =
+      'editor-${DateTime.now().microsecondsSinceEpoch}-${owner._sequence++}';
   @override
   late final RustStudioPlugin studio = RustStudioPlugin(
     owner,
@@ -3337,10 +3682,13 @@ class _NativeEditorSession
       parts[i].literal = part.literal;
       parts[i].selection = part.selection;
     }
-    await owner._captureUpload(
+    await _draftCapture.record(
       insertion.id,
-      message.serialize(),
-      host.Action.finishPaste,
+      () => owner._captureUpload(
+        insertion.id,
+        message.serialize(),
+        host.Action.finishPaste,
+      ),
     );
   }
 
@@ -3363,8 +3711,7 @@ class _NativeEditorSession
     }
     if (draft.id != targetId) return Future.error(StateError('编辑器目标不匹配。'));
     _fingerprint ??= fingerprint;
-    _operation ??=
-        'editor-${DateTime.now().microsecondsSinceEpoch}-${owner._sequence++}';
+    _operation ??= commitOperation;
     _fields ??= fields;
     _draft ??= Idea(
       draft.title,

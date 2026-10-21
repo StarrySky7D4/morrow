@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:morrow_studio/main.dart';
 import 'package:morrow_studio/attachments/attachment.dart';
 import 'package:morrow_studio/media/texture_source.dart';
@@ -289,7 +290,11 @@ void main() {
           tester,
           () =>
               reopenedScopes == 1 &&
-              (tester.widget<FilledButton>(save).onPressed != null ||
+              // Save keeps its callback while pending to preserve focus. The
+              // public label changes only after the original successor/close
+              // and atomic attachment rebase have actually finished.
+              ((tester.widget<FilledButton>(save).child as Text).data ==
+                      L10n.of(tester.element(save)).mainSaveIdea ||
                   find
                       .byKey(const ValueKey('idea-save-error'))
                       .evaluate()
@@ -357,9 +362,14 @@ void main() {
           await tester.pump();
         }
         await tester.pumpWidget(const SizedBox());
+        // Closing the original session may be queued behind widget work in the
+        // fake zone. Keep pumping it while native I/O progresses; runAsync alone
+        // can deadlock here and hide the assertion that caused teardown.
+        if (initialSession != null) {
+          await _hostFuture(tester, initialSession!.close());
+        }
+        if (host != null) await _hostFuture(tester, host!.close());
         await tester.runAsync(() async {
-          await initialSession?.close();
-          await host?.close();
           await directory.delete(recursive: true);
         });
       }

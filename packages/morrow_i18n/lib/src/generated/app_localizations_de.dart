@@ -482,6 +482,37 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mainDraftImportRecoveryTitle => 'Anhangentscheidungen prüfen';
 
   @override
+  String get mainDraftJournalEmpty => 'Keine gespeicherten Entwürfe.';
+
+  @override
+  String get mainDraftJournalExport => 'Wiederherstellungskopie exportieren';
+
+  @override
+  String get mainDraftJournalExportFailed =>
+      'Die vollständige Wiederherstellungskopie konnte nicht exportiert werden.';
+
+  @override
+  String get mainDraftJournalExported => 'Wiederherstellungskopie exportiert.';
+
+  @override
+  String get mainDraftJournalRetire => 'Gespeicherten Entwurf abschließen';
+
+  @override
+  String get mainDraftJournalRetireConfirm =>
+      'Diesen gespeicherten Entwurf abschließen und seine Anhangskopien freigeben? Exportieren Sie bei Bedarf zuerst eine Wiederherstellungskopie. Gespeicherte Inhalte und unbestätigte Speicherergebnisse bleiben unverändert.';
+
+  @override
+  String get mainDraftJournalRetireUnknown =>
+      'Der Abschluss ist nicht bestätigt. Prüfen Sie den ursprünglichen Vorgang, ohne ihn erneut zu senden.';
+
+  @override
+  String get mainDraftJournalReview =>
+      'Diese Wiederherstellungskopie ist schreibgeschützt. Originaltext, Anhänge und Erfassungsverlauf bleiben erhalten; die Ansicht setzt keinen früheren Speichervorgang fort.';
+
+  @override
+  String get mainDraftJournalTitle => 'Gespeicherte Entwürfe';
+
+  @override
   String get mainEdit => 'Bearbeiten';
 
   @override

@@ -51,6 +51,8 @@ static TEST_HOME_COUNTER: AtomicU64 = AtomicU64::new(0);
 static LEGACY_PROCESS_TEST_LOCK: Mutex<()> = Mutex::new(());
 
 fn legacy_process_test_guard() -> MutexGuard<'static, ()> {
+    assert_eq!(std::env::var("MORROW_DISPOSABLE_WINDOWS_TEST").as_deref(),Ok("1"),
+        "sandbox process tests may provision accounts, firewall and ACLs; explicit disposable Windows VM scope is required");
     LEGACY_PROCESS_TEST_LOCK
         .lock()
         .expect("legacy Windows sandbox process test lock poisoned")
@@ -261,6 +263,7 @@ fn restricted_token_rejects_managed_network_before_spawn() {
 }
 
 #[test]
+#[ignore = "may provision accounts, firewall and ACLs; requires MORROW_DISPOSABLE_WINDOWS_TEST=1 in an explicitly disposable Windows VM"]
 fn legacy_non_tty_cmd_emits_output() {
     let _guard = legacy_process_test_guard();
     let runtime = current_thread_runtime();
@@ -299,6 +302,7 @@ fn legacy_non_tty_cmd_emits_output() {
 }
 
 #[test]
+#[ignore = "may provision accounts, firewall and ACLs; requires MORROW_DISPOSABLE_WINDOWS_TEST=1 in an explicitly disposable Windows VM"]
 fn elevated_non_tty_cmd_forwards_env_output_and_exit() {
     let _guard = legacy_process_test_guard();
     let runtime = current_thread_runtime();
@@ -403,6 +407,7 @@ fn registered_non_tty_cmd_forwards_env_output_and_exit() {
 }
 
 #[test]
+#[ignore = "may provision accounts, firewall and ACLs; requires MORROW_DISPOSABLE_WINDOWS_TEST=1 in an explicitly disposable Windows VM"]
 fn legacy_non_tty_cmd_rejects_deny_read_overrides() {
     let _guard = legacy_process_test_guard();
     let runtime = current_thread_runtime();
@@ -441,6 +446,7 @@ fn legacy_non_tty_cmd_rejects_deny_read_overrides() {
 }
 
 #[test]
+#[ignore = "may provision accounts, firewall and ACLs; requires MORROW_DISPOSABLE_WINDOWS_TEST=1 in an explicitly disposable Windows VM"]
 fn legacy_non_tty_powershell_interrupt_terminates_process() {
     let Some(pwsh) = pwsh_path() else {
         return;
@@ -661,6 +667,7 @@ fn runner_resizer_sends_resize_frame() {
 }
 
 #[test]
+#[ignore = "may provision accounts, firewall and ACLs; requires MORROW_DISPOSABLE_WINDOWS_TEST=1 in an explicitly disposable Windows VM"]
 fn legacy_capture_emits_output_and_preserves_descendant_after_normal_exit() {
     let Some(pwsh) = pwsh_path() else {
         return;
@@ -731,6 +738,7 @@ fn legacy_capture_emits_output_and_preserves_descendant_after_normal_exit() {
 }
 
 #[test]
+#[ignore = "may provision accounts, firewall and ACLs; requires MORROW_DISPOSABLE_WINDOWS_TEST=1 in an explicitly disposable Windows VM"]
 fn legacy_workspace_write_delete_is_limited_to_writable_roots() {
     let _guard = legacy_process_test_guard();
     let runtime = current_thread_runtime();
@@ -840,6 +848,7 @@ fn legacy_workspace_write_delete_is_limited_to_writable_roots() {
 }
 
 #[test]
+#[ignore = "may provision accounts, firewall and ACLs; requires MORROW_DISPOSABLE_WINDOWS_TEST=1 in an explicitly disposable Windows VM"]
 fn legacy_capture_cancellation_terminates_descendants_without_timeout() {
     let Some(pwsh) = pwsh_path() else {
         eprintln!("skipping cancellation regression test: PowerShell 7 is not installed");
@@ -1017,6 +1026,7 @@ async fn assert_legacy_tty_descendant_lifecycle(
 }
 
 #[test]
+#[ignore = "may provision accounts, firewall and ACLs; requires MORROW_DISPOSABLE_WINDOWS_TEST=1 in an explicitly disposable Windows VM"]
 fn legacy_tty_job_terminates_and_preserves_descendants() {
     let Some(pwsh) = pwsh_path() else {
         eprintln!("skipping sandbox ConPTY lifecycle test: PowerShell 7 is not installed");
@@ -1031,6 +1041,7 @@ fn legacy_tty_job_terminates_and_preserves_descendants() {
 }
 
 #[test]
+#[ignore = "may provision accounts, firewall and ACLs; requires MORROW_DISPOSABLE_WINDOWS_TEST=1 in an explicitly disposable Windows VM"]
 fn legacy_tty_powershell_emits_output_and_accepts_input() {
     let Some(pwsh) = pwsh_path() else {
         return;
@@ -1088,6 +1099,7 @@ fn legacy_tty_powershell_emits_output_and_accepts_input() {
 #[test]
 #[ignore = "TODO: legacy ConPTY cmd.exe exits with STATUS_DLL_INIT_FAILED in CI"]
 fn legacy_tty_cmd_emits_output_and_accepts_input() {
+    let _guard = legacy_process_test_guard();
     let runtime = current_thread_runtime();
     runtime.block_on(async move {
         let cwd = sandbox_cwd();

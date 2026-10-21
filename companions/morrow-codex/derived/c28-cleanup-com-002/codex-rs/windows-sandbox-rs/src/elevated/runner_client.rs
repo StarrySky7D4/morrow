@@ -76,11 +76,19 @@ impl std::error::Error for RunnerLogonError {}
 #[derive(Debug)]
 pub(crate) struct RunnerStartupError {
     payload: ErrorPayload,
+    site: crate::RunnerStartupSite,
 }
 
 impl RunnerStartupError {
     pub(crate) fn new(payload: ErrorPayload) -> Self {
-        Self { payload }
+        Self { payload, site: crate::RunnerStartupSite::NotObserved }
+    }
+    // Called only after read_message authenticated this original runtime packet.
+    fn from_authenticated_packet(payload: ErrorPayload) -> Self {
+        let site = if payload.stage == ErrorStage::SpawnChild {
+            crate::RunnerStartupSite::from_wire_message(&payload.message)
+        } else { crate::RunnerStartupSite::NotObserved };
+        Self { payload, site }
     }
 }
 
@@ -99,6 +107,48 @@ impl std::fmt::Display for RunnerStartupError {
 }
 
 impl std::error::Error for RunnerStartupError {}
+
+#[cfg(test)]
+mod startup_site_observation_tests {
+    use super::*;
+    use crate::{RunnerStartupSite as Site, WindowsStartDiagnostic, WindowsStartError,
+        WindowsOsError, WindowsRunnerErrorStage};
+
+    fn payload(stage: ErrorStage, message: &str) -> ErrorPayload {
+        ErrorPayload { stage, message: message.into(), windows_error_code: Some(5) }
+    }
+
+    #[test]
+    fn legacy_or_wrong_stage_or_free_body_cannot_claim_an_authenticated_site() {
+        let marker = Site::OpenOriginalToken.wire_message();
+        for error in [
+            RunnerStartupError::new(payload(ErrorStage::SpawnChild, marker)),
+            RunnerStartupError::from_authenticated_packet(payload(ErrorStage::ReadSpawnRequest, marker)),
+            RunnerStartupError::from_authenticated_packet(payload(ErrorStage::SpawnChild,
+                "v8 startup site: OpenOriginalToken password=private")),
+        ] {
+            let diagnostic = WindowsStartDiagnostic::default();
+            observe_start_error(Some(&diagnostic), &anyhow::Error::new(error), WindowsStartError::Unclassified);
+            assert_eq!(diagnostic.snapshot().unwrap().current.runner_site, Site::NotObserved);
+        }
+    }
+
+    #[test]
+    fn authenticated_site_and_os_class_are_sticky_same_packet_facts() {
+        let diagnostic = WindowsStartDiagnostic::default();
+        let error = RunnerStartupError::from_authenticated_packet(payload(ErrorStage::SpawnChild,
+            Site::OpenOriginalToken.wire_message()));
+        observe_start_error(Some(&diagnostic), &anyhow::Error::new(error), WindowsStartError::Unclassified);
+        let first = diagnostic.snapshot().unwrap();
+        assert_eq!(first.current.runner_site, Site::OpenOriginalToken);
+        assert_eq!(first.current.runner_stage, WindowsRunnerErrorStage::SpawnChild);
+        assert_eq!(first.current.os_class, WindowsOsError::AccessDenied);
+        let later = RunnerStartupError::from_authenticated_packet(payload(ErrorStage::SpawnChild,
+            Site::CreateProcessAsUser.wire_message()));
+        observe_start_error(Some(&diagnostic), &anyhow::Error::new(later), WindowsStartError::Unclassified);
+        assert_eq!(diagnostic.snapshot(), Some(first));
+    }
+}
 
 pub(crate) struct RunnerTransport {
     pipe_write: File,
@@ -219,9 +269,9 @@ fn observe_start_error(
                 ErrorStage::WriteSpawnReady => crate::WindowsRunnerErrorStage::WriteSpawnReady,
                 ErrorStage::TerminalWitness => crate::WindowsRunnerErrorStage::TerminalWitness,
             };
-            diagnostic.fail_runner(stage, err.payload.windows_error_code
+            diagnostic.fail_runner_at(stage, err.payload.windows_error_code
                 .map(crate::WindowsOsError::from_code)
-                .unwrap_or(crate::WindowsOsError::NotObserved));
+                .unwrap_or(crate::WindowsOsError::NotObserved), err.site);
         } else if let Some(err) = err.downcast_ref::<std::io::Error>() {
             diagnostic.fail_io_kind(err.kind());
         } else {
@@ -335,7 +385,10 @@ impl RunnerTransport {
                 Ok(())
             }
             Message::Error { payload } => {
-                let err = anyhow::Error::from(RunnerStartupError::new(payload));
+                let error = if self.native_close_runtime.is_some() {
+                    RunnerStartupError::from_authenticated_packet(payload)
+                } else { RunnerStartupError::new(payload) };
+                let err = anyhow::Error::from(error);
                 observe_start_error(diagnostic, &err, crate::WindowsStartError::RunnerReported);
                 Err(err)
             }

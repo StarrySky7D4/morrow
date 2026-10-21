@@ -59,3 +59,16 @@ fn charge_rejects_u64_overflow() {
     let slot = slot_with_asset(u64::MAX, 1);
     assert!(charge(&slot).is_err());
 }
+
+#[test]
+fn capture_archive_is_charged_and_cannot_escape_the_active_budget() {
+    let mut slot = slot_with_asset(3, 5);
+    slot.capture = Some(proto::CapturePin { scope: "original-capture".into(), events: 1,
+        byte_length: 1024, sha256: vec![9; 32] });
+    slot.active_bytes = charge(&slot).unwrap();
+    assert_eq!(slot.active_bytes, slot.encoded_len() as u64 + 3 + 5 + 1024);
+    slot.capture.as_mut().unwrap().byte_length = MAX_ACTIVE_BYTES;
+    assert!(charge(&slot).is_err());
+    slot.capture.as_mut().unwrap().byte_length = u64::MAX;
+    assert!(charge(&slot).is_err());
+}

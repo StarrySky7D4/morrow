@@ -36,6 +36,9 @@ struct WriteRequest {
   values @9 :Values;
   assets @10 :List(AssetSelection);
   sourceKind @11 :UInt16;
+  commitOperation @12 :Text;
+  captureScope @13 :Text;
+  captureEvents @14 :UInt64;
 }
 struct ParentLink {
   parentDraftId @0 :Text;
@@ -105,6 +108,7 @@ struct Record {
   parentLink @12 :ParentLink;
   retirement @13 :ParentRetirement;
   requestSha256 @14 :Data;
+  discardOperation @15 :Text;
 }
 struct Summary {
   cardId @0 :Text;

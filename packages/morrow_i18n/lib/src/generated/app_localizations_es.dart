@@ -482,6 +482,37 @@ class AppLocalizationsEs extends AppLocalizations {
       'Revisar decisiones sobre adjuntos';
 
   @override
+  String get mainDraftJournalEmpty => 'No hay borradores guardados.';
+
+  @override
+  String get mainDraftJournalExport => 'Exportar copia de recuperación';
+
+  @override
+  String get mainDraftJournalExportFailed =>
+      'No se pudo exportar la copia de recuperación completa.';
+
+  @override
+  String get mainDraftJournalExported => 'Copia de recuperación exportada.';
+
+  @override
+  String get mainDraftJournalRetire => 'Retirar borrador guardado';
+
+  @override
+  String get mainDraftJournalRetireConfirm =>
+      '¿Retirar este borrador y liberar sus copias de adjuntos? Exporte primero una copia de recuperación si la necesita. El contenido guardado y los resultados sin confirmar no cambian.';
+
+  @override
+  String get mainDraftJournalRetireUnknown =>
+      'La retirada no está confirmada. Consulte la operación original sin volver a enviarla.';
+
+  @override
+  String get mainDraftJournalReview =>
+      'Esta copia de recuperación es de solo lectura. Se conservan el texto original, los adjuntos y el historial de captura; verla no reanuda un guardado anterior.';
+
+  @override
+  String get mainDraftJournalTitle => 'Borradores guardados';
+
+  @override
   String get mainEdit => 'Editar';
 
   @override

@@ -135,11 +135,42 @@ pub(crate) fn token_layout(bytes:&[u8])->io::Result<TokenLayout> {
     if label.len()!=12||label[..8]!=[1,1,0,0,0,0,0,16]{return Err(bad());}
     Ok(TokenLayout{owner,integrity_rid:u32_at(label,8)?,explicit_label:true})
 }
+/// Descriptor supplied only at creation of the final private launch token.
+/// No owner or SACL is supplied: the kernel selects them, and original-handle
+/// readback checks the result before launch. In particular, supplying a SACL to
+/// DuplicateTokenEx must not silently add ACCESS_SYSTEM_SECURITY to the handle.
+pub(crate) fn launch_token_template(caller:Sid,logon:Sid)->io::Result<Vec<u8>> {
+    use crate::asuser_a1_rights::{TOKEN_OBJECT_CREATOR,TOKEN_RUNNER_READ};
+    if caller.is_logon()||!logon.is_logon()||caller==logon{return Err(bad());}
+    let owner=Sid::from_bytes(&[1,1,0,0,0,0,0,3,4,0,0,0])?;
+    let mut bytes=vec![1,0,4,0x90,0,0,0,0,0,0,0,0,0,0,0,0,20,0,0,0];
+    let mut acl=vec![2,0,0,0,3,0,0,0];
+    for (sid,mask) in [(caller,TOKEN_OBJECT_CREATOR),(logon,TOKEN_RUNNER_READ),(owner,OWNER_READ_CONTROL)] {
+        acl.extend([0,0]);acl.extend(((8+sid.bytes().len()) as u16).to_le_bytes());
+        acl.extend(mask.to_le_bytes());acl.extend(sid.bytes());
+    }
+    let length=acl.len() as u16;acl[2..4].copy_from_slice(&length.to_le_bytes());bytes.extend(acl);Ok(bytes)
+}
+/// Actual final token-object readback, independent of TokenDefaultDacl. The
+/// protected three-ACE policy grants no token adjustment/assignment to R and
+/// suppresses implicit owner WRITE_DAC. Reachability admission remains required.
+pub(crate) fn launch_token(bytes:&[u8],caller:Sid,logon:Sid,minimum:u32,maximum:u32)->io::Result<TokenLayout> {
+    use crate::asuser_a1_rights::{TOKEN_OBJECT_CREATOR,TOKEN_RUNNER_READ};
+    let (h,_)=exact_dacl(bytes,caller,logon,TOKEN_OBJECT_CREATOR,TOKEN_RUNNER_READ)?;
+    let layout=token_layout(bytes)?;
+    if minimum>maximum||layout.integrity_rid<minimum||layout.integrity_rid>maximum{return Err(bad());}
+    // A higher NO_READ_UP object would deny R's intended read-only open.
+    // Default kernel object labels are captured, never lowered or repaired.
+    if !matches!(effective_label(bytes,h.sacl)?,EffectiveLabel::AbsentMediumNoWriteUp|
+        EffectiveLabel::Explicit{mask:1,..}){return Err(bad());}
+    Ok(layout)
+}
 /// Every allow ACE must be one of the exact three creation-time ACEs. This
 /// rules out generic rights, inherited/broad/stable-account write management.
 /// No explicit owner is demanded; OWNER_RIGHTS suppression is owner-agnostic.
 /// MIC is independent: an actual original LABEL_SECURITY_INFORMATION readback
-/// must carry a single NO_WRITE_UP mandatory label at the expected integrity.
+/// must carry a single NO_WRITE_UP | NO_READ_UP mandatory label at the expected
+/// integrity. Process/thread MIC is separate from the GUI object's NW policy.
 pub(crate) fn creation(bytes:&[u8],caller:Sid,logon:Sid,thread:bool,integrity:u32)->io::Result<CreationReadback> {
     let management=if thread{THREAD_MANAGEMENT}else{PROCESS_MANAGEMENT};
     let target=if thread{THREAD_TARGET}else{PROCESS_TARGET};
@@ -147,7 +178,7 @@ pub(crate) fn creation(bytes:&[u8],caller:Sid,logon:Sid,thread:bool,integrity:u3
     let label=effective_label(bytes,h.sacl)?;
     // Explicit creation label supplied for R process/thread; no process/thread
     // relabel is performed or permitted by the GUI exception.
-    if label!=(EffectiveLabel::Explicit{rid:integrity,mask:1}){return Err(bad());}
+    if label!=(EffectiveLabel::Explicit{rid:integrity,mask:3}){return Err(bad());}
     Ok(CreationReadback{owner:h.owner,integrity_rid:integrity})
 }
 #[derive(Clone,Copy,Debug,PartialEq,Eq)]
@@ -201,11 +232,14 @@ fn effective_label(bytes:&[u8],offset:usize)->io::Result<EffectiveLabel> {
     if u16_at(bytes,2)?&0x10==0{return Err(bad());}
     let (sacl,count)=acl(bytes,offset)?;
     if count==0&&sacl.len()==8{return Ok(EffectiveLabel::AbsentMediumNoWriteUp);}
-    if count!=1||sacl.len()!=28||sacl[8]!=0x11||sacl[9]!=0||u16_at(sacl,10)?!=20
-        ||u32_at(sacl,12)?!=1{return Err(bad());}
+    if count!=1||sacl.len()!=28||sacl[8]!=0x11||sacl[9]!=0||u16_at(sacl,10)?!=20{return Err(bad());}
+    // Decode only the two explicit policies used here. The object-specific
+    // caller still demands its exact mask; GUI label lowering remains NW-only.
+    let mask=u32_at(sacl,12)?;
+    if !matches!(mask,1|3){return Err(bad());}
     let sid=Sid::from_bytes(&sacl[16..])?;let sid=sid.bytes();
     if sid.len()!=12||sid[..8]!=[1,1,0,0,0,0,0,16]{return Err(bad());}
-    Ok(EffectiveLabel::Explicit{rid:u32_at(sid,8)?,mask:1})
+    Ok(EffectiveLabel::Explicit{rid:u32_at(sid,8)?,mask})
 }
 pub(crate) fn medium_sacl_offset(bytes:&[u8])->io::Result<usize> {
     if bytes.len()<20||bytes.len()>65536||bytes[0]!=1||u16_at(bytes,2)?&0x8010!=0x8010{return Err(bad());}
@@ -278,8 +312,39 @@ mod tests {
         }
         let len=a.len() as u16;a[2..4].copy_from_slice(&len.to_le_bytes());b.extend(a);
         let s=b.len();b[12..16].copy_from_slice(&(s as u32).to_le_bytes());
-        b.extend([2,0,28,0,1,0,0,0,0x11,0,20,0,1,0,0,0,1,1,0,0,0,0,0,16,0,32,0,0]);
+        b.extend([2,0,28,0,1,0,0,0,0x11,0,20,0,3,0,0,0,1,1,0,0,0,0,0,16,0,32,0,0]);
         (b,c,l)
+    }
+    #[test] fn process_and_thread_mic_require_exact_nwnr_without_changing_gui_policy() {
+        let (b,c,l)=descriptor();let s=u32_at(&b,12).unwrap() as usize;
+        for mask in [0u32,1,2,4,5,6,7,8,u32::MAX] {
+            let mut changed=b.clone();changed[s+12..s+16].copy_from_slice(&mask.to_le_bytes());
+            assert!(creation(&changed,c,l,false,0x2000).is_err(),"mask {mask}");
+        }
+        let mut thread=b.clone();let d=u32_at(&thread,16).unwrap() as usize;
+        thread[d+12..d+16].copy_from_slice(&THREAD_MANAGEMENT.to_le_bytes());
+        assert!(creation(&thread,c,l,true,0x2000).is_ok());
+        assert!(creation(&thread,c,l,false,0x2000).is_err());
+        assert!(medium_sacl_offset(&b).is_err()); // GUI repair input stays NW-only.
+        for (offset,value) in [(s+4,2),(s+9,0x10),(s+10,19),(s+25,0)] {
+            let mut changed=b.clone();changed[offset]=value;
+            assert!(creation(&changed,c,l,false,0x2000).is_err());
+        }
+    }
+    #[test] fn windows_kernel_creation_shape_keeps_system_owner_and_exact_ace_policy() {
+        let (mut b,c,l)=descriptor();
+        // Successful Windows original-handle reads can set SACL_AUTO_INHERITED
+        // and select Administrators as owner. Neither grants implicit WRITE_DAC
+        // because the exact OWNER_RIGHTS RC ACE remains required.
+        b[2..4].copy_from_slice(&0x9814u16.to_le_bytes());
+        let owner=Sid::from_bytes(&[1,2,0,0,0,0,0,5,32,0,0,0,32,2,0,0]).unwrap();
+        b[20..20+owner.bytes().len()].copy_from_slice(owner.bytes());
+        assert_eq!(creation(&b,c,l,false,0x2000).unwrap().owner,owner);
+        let d=u32_at(&b,16).unwrap() as usize;
+        for mask in [PROCESS_MANAGEMENT|0x20,PROCESS_MANAGEMENT|0x40000,0x10000000] {
+            let mut changed=b.clone();changed[d+12..d+16].copy_from_slice(&mask.to_le_bytes());
+            assert!(creation(&changed,c,l,false,0x2000).is_err());
+        }
     }
     #[test] fn owner_readback_is_not_token_user_and_never_gifts_implicit_write_dac() {
         let (mut b,c,l)=descriptor();let original=creation(&b,c,l,false,0x2000).unwrap();
@@ -355,14 +420,16 @@ mod gui_policy_tests {
         let mut b=vec![1,parts.len() as u8,0,0,0,0,0,5];
         for p in parts{b.extend(p.to_le_bytes());}Sid::from_bytes(&b).unwrap()
     }
-    fn gui(label:Option<(u32,u32)>)->(Vec<u8>,Sid,Sid) {
+    fn gui(label:Option<(u32,u32)>)->(Vec<u8>,Sid,Sid) { gui_for(label,false) }
+    fn gui_for(label:Option<(u32,u32)>,desktop:bool)->(Vec<u8>,Sid,Sid) {
         let c=sid(&[21,1,2,3,1001]);let l=sid(&[5,7,8]);
         let ow=Sid::from_bytes(&[1,1,0,0,0,0,0,3,4,0,0,0]).unwrap();
         let mut b=vec![1,0,4,0x90];b.extend(20u32.to_le_bytes());b.extend([0;12]);b.extend(c.bytes());
         let d=b.len();b[16..20].copy_from_slice(&(d as u32).to_le_bytes());
         let mut acl=vec![2,0,0,0,3,0,0,0];
-        for (s,m) in [(c,crate::asuser_a1_rights::STATION_MANAGEMENT),
-            (l,crate::asuser_a1_rights::STATION_TARGET),(ow,OWNER_READ_CONTROL)] {
+        let management=if desktop{crate::asuser_a1_rights::DESKTOP_MANAGEMENT}else{crate::asuser_a1_rights::STATION_MANAGEMENT};
+        let target=if desktop{crate::asuser_a1_rights::DESKTOP_TARGET}else{crate::asuser_a1_rights::STATION_TARGET};
+        for (s,m) in [(c,management),(l,target),(ow,OWNER_READ_CONTROL)] {
             acl.extend([0,0]);acl.extend(((8+s.bytes().len()) as u16).to_le_bytes());
             acl.extend(m.to_le_bytes());acl.extend(s.bytes());
         }
@@ -373,6 +440,29 @@ mod gui_policy_tests {
             b.extend([1,1,0,0,0,0,0,16]);b.extend(rid.to_le_bytes());
         }
         (b,c,l)
+    }
+    #[test] fn user32_station_read_control_is_required_but_desktop_contract_stays_exact() {
+        for (desktop,expected,rejected) in [(false,0x0002037fu32,0x0000037fu32),(true,0x000001ff,0x000201ff)] {
+            let (bytes,caller,logon)=gui_for(Some((0x2000,1)),desktop);
+            let acl=u32_at(&bytes,16).unwrap() as usize;
+            let target_mask=acl+8+8+caller.bytes().len()+4;
+            assert_eq!(u32_at(&bytes,target_mask).unwrap(),expected);
+            assert!(gui_observed(&bytes,caller,logon,desktop).is_ok());
+            let mut wrong=bytes.clone();wrong[target_mask..target_mask+4].copy_from_slice(&rejected.to_le_bytes());
+            assert!(gui_observed(&wrong,caller,logon,desktop).is_err());
+        }
+    }
+    #[test] fn gui_runtime_read_access_never_authorizes_security_mutation_or_generic_masks() {
+        for desktop in [false,true] {
+            let (bytes,caller,logon)=gui_for(Some((0x2000,1)),desktop);
+            let acl=u32_at(&bytes,16).unwrap() as usize;
+            let target_mask=acl+8+8+caller.bytes().len()+4;
+            let exact=u32_at(&bytes,target_mask).unwrap();
+            for forbidden in [0x00040000u32,0x00080000,0x01000000,0x10000000,0x80000000] {
+                let mut wrong=bytes.clone();wrong[target_mask..target_mask+4].copy_from_slice(&(exact|forbidden).to_le_bytes());
+                assert!(gui_observed(&wrong,caller,logon,desktop).is_err());
+            }
+        }
     }
     #[test] fn exact_medium_and_observed_absence_need_zero_mutations_but_not_an_omitted_query() {
         for label in [None,Some((0x2000,1))] {

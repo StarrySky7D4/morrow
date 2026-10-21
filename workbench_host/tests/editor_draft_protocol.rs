@@ -122,8 +122,8 @@ fn frame(
     fill(out);
     protocol::respond(host, &serialize::write_message_to_words(&message)).unwrap()
 }
-fn response(bytes: &[u8]) -> capnp::message::Reader<serialize::OwnedSegments> {
-    serialize::read_message(&mut bytes.as_ref(), ReaderOptions::new()).unwrap()
+fn response(mut bytes: &[u8]) -> capnp::message::Reader<serialize::OwnedSegments> {
+    serialize::read_message(&mut bytes, ReaderOptions::new()).unwrap()
 }
 fn error(bytes: &[u8]) -> String {
     response(bytes)
@@ -260,8 +260,8 @@ fn finish_outer(
         r.set_revision(generation);
     })
 }
-fn envelope(bytes: &[u8]) -> capnp::message::Reader<serialize::OwnedSegments> {
-    serialize::read_message(&mut bytes.as_ref(), ReaderOptions::new()).unwrap()
+fn envelope(mut bytes: &[u8]) -> capnp::message::Reader<serialize::OwnedSegments> {
+    serialize::read_message(&mut bytes, ReaderOptions::new()).unwrap()
 }
 
 fn download(host: &mut Workbench, first: &[u8]) -> Vec<u8> {

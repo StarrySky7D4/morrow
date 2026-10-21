@@ -312,6 +312,7 @@ fn requires_writable_state(action: wire::Action) -> bool {
             | wire::Action::AbortEditorDraftTransfer
             | wire::Action::ListEditorDrafts
             | wire::Action::ExportEditorDraftAsset
+            | wire::Action::ExportEditorDraftCapture
             | wire::Action::InspectEditorDraftImport
             | wire::Action::ListEditorDraftImports
             | wire::Action::ExportEditorDraftImport
@@ -776,6 +777,7 @@ fn handle_business(
                 | wire::Action::ExportFile
                 | wire::Action::ImportEditorDraftAsset
                 | wire::Action::ExportEditorDraftAsset
+            | wire::Action::ExportEditorDraftCapture
                 | wire::Action::CompleteEditorDraftImport
                 | wire::Action::ExportEditorDraftImport
         ) {
@@ -1583,6 +1585,7 @@ fn handle_business(
         | wire::Action::DiscardEditorDraft
         | wire::Action::ImportEditorDraftAsset
         | wire::Action::ExportEditorDraftAsset
+            | wire::Action::ExportEditorDraftCapture
         | wire::Action::BeginEditorDraftImport
         | wire::Action::CompleteEditorDraftImport
         | wire::Action::InspectEditorDraftImport
@@ -1909,6 +1912,7 @@ mod editor_draft_route_tests {
             wire::Action::ReadEditorDraftPart,
             wire::Action::ListEditorDrafts,
             wire::Action::ExportEditorDraftAsset,
+            wire::Action::ExportEditorDraftCapture,
             wire::Action::AbortEditorDraftTransfer,
             wire::Action::InspectEditorDraftImport,
             wire::Action::ListEditorDraftImports,

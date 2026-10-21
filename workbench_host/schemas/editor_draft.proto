@@ -44,6 +44,36 @@ message WriteRequest {
   repeated AssetSelection assets = 10;
   // 0 existing card (compatible default), 1 new card with no source record.
   uint32 source_kind = 11;
+  // Reserved identity of the original business edit. Discovery only: neither
+  // a commit receipt nor permission to replay. Immutable within this draft.
+  string commit_operation = 12;
+  // Live original scope and exact adopted paste count. The host derives the
+  // archive itself; these correlation fields confer no capture authority.
+  string capture_scope = 13;
+  uint64 capture_events = 14;
+}
+
+// Host-generated archival evidence, never an executable capture ticket.
+message CaptureArchive {
+  uint32 version = 1;
+  string scope = 2;
+  string card_id = 3;
+  uint64 source_revision = 4;
+  uint32 source_format = 5;
+  bytes source_sha256 = 6;
+  bytes package_archive = 7;
+  repeated bytes observations = 8;
+  repeated bytes parents = 9;
+  repeated bytes applications = 10;
+  // Exact complete archival bytes from the parent journal named by ParentLink.
+  // Inherited by the host, never supplied as new live capture authority.
+  bytes parent_archive = 11;
+}
+message CapturePin {
+  string scope = 1;
+  uint64 events = 2;
+  uint64 byte_length = 3;
+  bytes sha256 = 4;
 }
 
 message StoredAsset {
@@ -89,4 +119,7 @@ message Slot {
   repeated string consumed_imports = 10;
   ParentLink parent_link = 11;
   ParentRetirement retirement = 12;
+  CapturePin capture = 13;
+  // Exact ordinary discard receipt. Empty on legacy records is not proof.
+  string discard_operation = 14;
 }

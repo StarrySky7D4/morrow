@@ -380,6 +380,12 @@ impl LaunchDesktop {
         })
     }
 
+    /// Classification of an already opened original alias, not name-based
+    /// authority. open_private validated the complete A1 name/current station.
+    pub(crate) fn uses_a1_stdio_security(&self) -> bool {
+        self._private_desktop.name.starts_with("C28DesktopA1-")
+    }
+
     pub fn startup_info_desktop(&self) -> *mut u16 {
         self.startup_name.as_ptr() as *mut u16
     }

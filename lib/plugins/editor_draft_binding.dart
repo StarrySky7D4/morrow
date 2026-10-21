@@ -10,9 +10,15 @@ final class EditorDraftMetadata {
     required this.category,
     required this.stage,
     required List<EditorDraftAssetSelection> assets,
+    this.captureScope = '',
+    this.captureEvents = 0,
+    this.incomplete,
   }) : assets = List.unmodifiable(assets);
   final String category, stage;
   final List<EditorDraftAssetSelection> assets;
+  final String captureScope;
+  final int captureEvents;
+  final Object? incomplete;
 }
 
 /// Attaches a replaceable view to a longer-lived draft session. Attaching never
@@ -54,7 +60,7 @@ final class EditorDraftBinding extends ChangeNotifier {
   ];
 
   void attach() {
-    if (_disposed || session.disposed) {
+    if (_disposed || session.disposed || session.retirementFrozen) {
       throw StateError('The draft binding or session was disposed');
     }
     if (_attached) return;
@@ -101,9 +107,13 @@ final class EditorDraftBinding extends ChangeNotifier {
       if (!(isCurrent?.call() ?? true)) {
         throw StateError('The draft view belongs to an inactive workspace');
       }
-      final snapshot = _readSnapshot();
+      final observation = _readSnapshot();
       if (serial != _captureSerial) return false;
-      session.observe(snapshot);
+      if (observation.incomplete case final failure?) {
+        session.observeIncomplete(observation.snapshot, failure);
+      } else {
+        session.observe(observation.snapshot);
+      }
       // Session listeners may synchronously capture newer input or a metadata
       // failure. Do not overwrite their result with this older observation.
       if (serial != _captureSerial) {
@@ -126,26 +136,51 @@ final class EditorDraftBinding extends ChangeNotifier {
     }
   }
 
-  EditorDraftSnapshot _readSnapshot() {
+  ({EditorDraftSnapshot snapshot, Object? incomplete}) _readSnapshot() {
     final metadata = readMetadata();
-    return EditorDraftSnapshot(
-      values: EditorDraftValues(
-        title: _read(title),
-        description: _read(description),
-        hypothesis: _read(hypothesis),
-        conclusion: _read(conclusion),
-        todos: _read(todos),
-        category: metadata.category,
-        stage: metadata.stage,
+    return (
+      snapshot: EditorDraftSnapshot(
+        values: EditorDraftValues(
+          title: _read(title),
+          description: _read(description),
+          hypothesis: _read(hypothesis),
+          conclusion: _read(conclusion),
+          todos: _read(todos),
+          category: metadata.category,
+          stage: metadata.stage,
+        ),
+        assets: metadata.assets,
+        captureScope: metadata.captureScope,
+        captureEvents: metadata.captureEvents,
       ),
-      assets: metadata.assets,
+      incomplete: metadata.incomplete,
     );
   }
 
   void _markIncomplete(Object error) {
     _uncaptured = true;
     _captureFailure = error;
-    if (!session.disposed) session.markCaptureIncomplete(error);
+    if (!session.disposed) {
+      final previous = session.current.values;
+      try {
+        session.observeIncompleteValues(
+          EditorDraftValues(
+            title: _read(title),
+            description: _read(description),
+            hypothesis: _read(hypothesis),
+            conclusion: _read(conclusion),
+            todos: _read(todos),
+            category: previous.category,
+            stage: previous.stage,
+          ),
+          error,
+        );
+      } catch (_) {
+        // A stale workspace cannot adopt new values; it still retains the
+        // unresolved capture barrier instead of throwing from a UI listener.
+        session.markCaptureIncomplete(error);
+      }
+    }
     notifyListeners();
   }
 
@@ -176,6 +211,37 @@ final class EditorDraftBinding extends ChangeNotifier {
     );
   }
 
+  /// Validates and converts an archival raw value without attaching an owner,
+  /// registering a listener or dispatching any host request.
+  static TextEditingValue editingValue(EditorDraftTextValue raw) => _value(raw);
+
+  /// Apply an original root-owned paste while suppressing only this binding's
+  /// capture listener. Other UI listeners still observe the real new value.
+  void applyPaste(
+    String field,
+    String expectedBefore,
+    EditorDraftTextValue value,
+  ) {
+    if (_disposed || !_attached) throw StateError('Paste view is detached');
+    final controller = switch (field) {
+      'title' => title,
+      'description' => description,
+      'hypothesis' => hypothesis,
+      'conclusion' => conclusion,
+      'todos' => todos,
+      _ => throw const FormatException('Unknown paste field'),
+    };
+    if (controller.text != expectedBefore) {
+      throw StateError('Paste view changed');
+    }
+    _applying = true;
+    try {
+      controller.value = _value(value);
+    } finally {
+      _applying = false;
+    }
+  }
+
   /// Explicitly restore the session's current raw values. Validate every field
   /// before changing the view; suppress listeners until the whole view is set.
   /// [applyMetadata] must synchronously apply the supplied selection as a unit.
@@ -201,6 +267,8 @@ final class EditorDraftBinding extends ChangeNotifier {
         category: fields.category,
         stage: fields.stage,
         assets: current.assets,
+        captureScope: current.captureScope,
+        captureEvents: current.captureEvents,
       );
       _applying = true;
       try {
@@ -216,12 +284,12 @@ final class EditorDraftBinding extends ChangeNotifier {
       // clearing an old failure. This also supports explicit restore before
       // attaching listeners without treating a partial restore as complete.
       final restored = _readSnapshot();
-      if (!restored.sameAs(current)) {
+      if (restored.incomplete != null || !restored.snapshot.sameAs(current)) {
         throw StateError('Restored draft differs from the complete snapshot');
       }
       _captureFailure = null;
       _uncaptured = false;
-      session.observe(restored);
+      session.observe(restored.snapshot);
       if (session.captureBlocked) {
         throw session.captureFailure ??
             StateError('Restored draft became incomplete');

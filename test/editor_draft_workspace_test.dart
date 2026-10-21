@@ -126,6 +126,49 @@ Future<EditorDraftRecord> _confirmInitial(
 }
 
 void main() {
+  test('close captures real view metadata before flush and rechecks it', () async {
+    final control = _Control();
+    final workspace = EditorDraftWorkspace(isCurrent: () => true);
+    final session = _session(control, 'capture', isCurrent: () => true);
+    addTearDown(session.dispose);
+    var title = 'complete visible snapshot';
+    var captures = 0;
+    final lease = workspace.attach(session, capture: () {
+      captures++;
+      session.observe(_snapshot(title));
+      return true;
+    });
+    final closing = workspace.prepareClose(timeout: const Duration(seconds: 1));
+    await _tick();
+    expect(control.saves.single.request.values.title.text, title);
+    // Metadata changed without a text-controller notification while awaiting IO.
+    title = 'newer visible snapshot';
+    control.saves.single.completion.complete(_receipt(control.saves.single.request));
+    await expectLater(closing, throwsStateError);
+    expect(captures, 2);
+    expect(session.dirty, isTrue);
+    expect(workspace.preparingClose, isFalse);
+    expect(workspace.disposed, isFalse);
+    lease.release();
+  });
+
+  test('failed attached capture blocks close without saving an old subset', () async {
+    final control = _Control();
+    final workspace = EditorDraftWorkspace(isCurrent: () => true);
+    final session = _session(control, 'capture', isCurrent: () => true);
+    addTearDown(session.dispose);
+    final lease = workspace.attach(session, capture: () => false);
+    await expectLater(
+      workspace.prepareClose(timeout: const Duration(seconds: 1)),
+      throwsStateError,
+    );
+    expect(control.saves, isEmpty);
+    expect(session.captureBlocked, isTrue);
+    expect(workspace.disposed, isFalse);
+    expect(workspace.attachedViews, 1);
+    lease.release();
+  });
+
   test('releasing a view retains newer S2 and an unknown original', () async {
     final control = _Control();
     final workspace = EditorDraftWorkspace(isCurrent: () => true);

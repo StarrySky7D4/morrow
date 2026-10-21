@@ -37,6 +37,8 @@ fn draft(op: &str, generation: u64, assets: Vec<AssetSelection>) -> WriteRequest
         expected_generation: generation,
         source_revision: 0,
         source_kind: 1,
+        commit_operation: String::new(),
+            capture_scope: String::new(), capture_events: 0,
         predecessor_operation: String::new(),
         predecessor_sha256: vec![],
         values: Some(Values {

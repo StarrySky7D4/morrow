@@ -125,6 +125,8 @@ fn request(
         expected_generation,
         source_revision: 2,
         source_kind: 0,
+        commit_operation: String::new(),
+            capture_scope: String::new(), capture_events: 0,
         predecessor_operation: String::new(),
         predecessor_sha256: vec![],
         values: Some(Values {

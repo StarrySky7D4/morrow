@@ -122,6 +122,8 @@ fn request(
         expected_generation,
         source_revision: 2,
         source_kind: 0,
+        commit_operation: String::new(),
+            capture_scope: String::new(), capture_events: 0,
         predecessor_operation: String::new(),
         predecessor_sha256: vec![],
         values: Some(Values {
@@ -135,6 +137,116 @@ fn request(
         }),
         assets: vec![],
     }
+}
+
+#[test]
+fn original_business_operation_is_durable_and_cannot_be_replaced() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("workbench.db");
+    let mut host = Workbench::open(&path, Some(package())).unwrap();
+    let mut original = request("first-draft-save", 0, "");
+    original.source_kind = 1;
+    original.source_revision = 0;
+    original.commit_operation = "original-first-create".into();
+    host.save_editor_draft(&original).unwrap();
+    assert!(host.read_versioned(CARD).is_err());
+    drop(host);
+    let mut host = Workbench::open(&path, None).unwrap();
+    let scopes = host.list_editor_drafts().unwrap();
+    assert_eq!(scopes.len(), 1);
+    let restored = host.read_editor_draft(&scopes[0].card_id, &scopes[0].draft_id)
+        .unwrap().unwrap();
+    assert_eq!(restored.slot.request.as_ref().unwrap().commit_operation,
+        "original-first-create");
+    let mut next = original.clone();
+    next.operation_id = "second-draft-save".into();
+    next.expected_generation = 1;
+    next.commit_operation = "replacement-create".into();
+    assert!(host.save_editor_draft(&next).is_err());
+    next.commit_operation.clear();
+    assert!(host.save_editor_draft(&next).is_err());
+    let current = host.read_editor_draft(CARD, DRAFT).unwrap().unwrap();
+    assert_eq!(current.slot.generation, 1);
+    assert_eq!(current.slot.request.as_ref(), Some(&original));
+}
+
+#[test]
+fn raw_fields_and_actual_capture_archive_survive_restart_without_reviving_scope() {
+    use capnp::{message::Builder, serialize};
+    use morrow_workbench_plugin::{capture, capture_capnp};
+    use morrow_workbench_host::capture_provenance::{PasteEvent, PastePart};
+    use morrow_workbench_host::editor_draft::model::proto::CaptureArchive;
+    use prost::Message;
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("db");
+    let mut host = seed(&path);
+    let scope = host.open_capture_scope(CARD, 2).unwrap();
+    let mut message = Builder::new_default();
+    let mut capture_input = message.init_root::<capture_capnp::request::Builder>();
+    capture_input.set_version(1);
+    capture_input.set_digest(&capture::digest());
+    capture_input.set_format("plain");
+    capture_input.set_source("captured text");
+    let (ticket, _) = host.capture_scoped(&scope, serialize::write_message_to_words(&message), "").unwrap();
+    host.record_paste(&scope, PasteEvent {
+        id: "original-paste".into(), field: "description".into(), before: "raw body".into(),
+        start_utf16: 0, end_utf16: 8,
+        parts: vec![PastePart { ticket, literal: String::new(), selection: "outputMarkdown".into() }],
+        after: "captured text".into(),
+    }).unwrap();
+    let mut proposal = request("capture-draft-save", 0, "");
+    proposal.capture_scope = scope.clone();
+    proposal.capture_events = 1;
+    proposal.commit_operation = "original-captured-business".into();
+    let value = proposal.values.as_mut().unwrap().description.as_mut().unwrap();
+    value.text = "captured text edited 😀".into();
+    value.selection_base = 21;
+    value.selection_extent = 23;
+    value.composing_start = 21;
+    value.composing_end = 23;
+    value.directional = true;
+    value.affinity = 1;
+    let receipt = host.save_editor_draft(&proposal).unwrap();
+    let raw = host.export_editor_draft_capture(CARD, DRAFT, 1).unwrap();
+    let archive = CaptureArchive::decode(raw.as_slice()).unwrap();
+    assert_eq!(archive.observations.len(), 1);
+    assert_eq!(archive.applications.len(), 1);
+    assert_eq!(archive.package_archive, package().archive());
+    assert_eq!(archive.scope, scope);
+    assert!(receipt.slot.active_bytes > raw.len() as u64);
+    drop(host);
+    // Read archival data without a loaded plugin. The old scope grants nothing.
+    let mut host = Workbench::open(&path, None).unwrap();
+    assert_eq!(host.export_editor_draft_capture(CARD, DRAFT, 1).unwrap(), raw);
+    let restored = host.read_editor_draft(CARD, DRAFT).unwrap().unwrap();
+    assert_eq!(restored.slot.request.as_ref(), Some(&proposal));
+    let mut stale = proposal.clone();
+    stale.operation_id = "new-save-from-dead-scope".into();
+    stale.expected_generation = 1;
+    assert!(host.save_editor_draft(&stale).is_err());
+    assert_eq!(host.read_editor_draft(CARD, DRAFT).unwrap().unwrap().slot.generation, 1);
+    assert!(host.export_editor_draft_capture(CARD, DRAFT, 2).is_err());
+    // Exact delivery is historical, even though the live scope is gone.
+    assert!(host.save_editor_draft(&proposal).unwrap().repeated);
+}
+
+#[test]
+fn capture_scope_and_count_cannot_be_substituted_or_omitted_from_a_live_draft() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut host = seed(&directory.path().join("db"));
+    let scope = host.open_capture_scope(CARD, 2).unwrap();
+    let mut proposal = request("capture-empty-save", 0, "");
+    proposal.capture_scope = scope.clone();
+    host.save_editor_draft(&proposal).unwrap();
+    for (scope, count) in [(String::new(), 0), (scope.clone(), 1), ("foreign-scope".into(), 0)] {
+        let mut changed = proposal.clone();
+        changed.operation_id = "refused-capture-change".into();
+        changed.expected_generation = 1;
+        changed.capture_scope = scope;
+        changed.capture_events = count;
+        assert!(host.save_editor_draft(&changed).is_err());
+    }
+    assert_eq!(host.read_editor_draft(CARD, DRAFT).unwrap().unwrap().slot.generation, 1);
 }
 
 #[test]
@@ -379,11 +491,14 @@ fn discard_is_exact_idempotent_and_foreign_operation_cannot_clear_slot() {
     let discarded = host
         .discard_editor_draft(CARD, DRAFT, 1, "discard-exact")
         .unwrap();
+    assert_eq!(discarded.slot.discard_operation, "discard-exact");
     assert!(!discarded.slot.active);
     assert!(!discarded.current_active);
     assert_eq!(business_revision(&host), 2);
     drop(host);
     let mut host = Workbench::open(&path, Some(package())).unwrap();
+    let read_only = host.read_editor_draft(CARD, DRAFT).unwrap().unwrap();
+    assert_eq!(read_only.slot.discard_operation, "discard-exact");
     let repeated = host
         .discard_editor_draft(CARD, DRAFT, 1, "discard-exact")
         .unwrap();
@@ -427,6 +542,35 @@ fn active_slot_limit_is_enforced_and_discard_frees_capacity() {
         .unwrap();
     let saved = host.save_editor_draft(&overflow).unwrap();
     assert_eq!(saved.slot.generation, 1);
+    assert_eq!(business_revision(&host), 2);
+}
+
+#[test]
+fn explicit_retirement_reuses_active_capacity_without_reviving_old_identities() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("workbench.db");
+    let mut host = seed(&path);
+    for index in 0..33 {
+        let mut draft = request(&format!("retirement-save-{index}"), 0, "raw data");
+        draft.draft_id = format!("retirement-draft-{index}");
+        host.save_editor_draft(&draft).unwrap();
+        let operation = format!("retirement-discard-{index}");
+        host.discard_editor_draft(CARD, &draft.draft_id, 1, &operation).unwrap();
+        // Restart sees the actual discard operation without submitting it.
+        drop(host);
+        host = Workbench::open(&path, Some(package())).unwrap();
+        let receipt = host.read_editor_draft(CARD, &draft.draft_id).unwrap().unwrap();
+        assert_eq!(receipt.slot.discard_operation, operation);
+        assert_eq!(receipt.slot.active_bytes, 0);
+        assert!(!receipt.current_active);
+        let old = host.save_editor_draft(&draft).unwrap();
+        assert!(old.repeated && old.slot.active && !old.current_active);
+        draft.operation_id = format!("cannot-revive-{index}");
+        draft.expected_generation = 2;
+        assert!(host.save_editor_draft(&draft).is_err());
+    }
+    let rows = host.list_editor_drafts().unwrap();
+    assert!(rows.is_empty());
     assert_eq!(business_revision(&host), 2);
 }
 

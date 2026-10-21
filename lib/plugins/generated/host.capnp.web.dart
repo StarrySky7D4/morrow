@@ -155,6 +155,7 @@ enum Action {
   channelStatus,
   channelClose,
   channelReadSent,
+  exportEditorDraftCapture,
 }
 
 Action? actionFromUint16(int v) =>

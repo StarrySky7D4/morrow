@@ -268,9 +268,10 @@ impl NativeCloseRuntime {
         };
         let mut frame=message.clone();frame.version=NATIVE_CLOSE_IPC_PROTOCOL_VERSION;
         if let Message::Error{payload}=&mut frame.message {
-            // Error stage/OS code are bounded facts. Free error bodies can carry
-            // command, path, nonce or credentials and never cross the v8 wire.
-            payload.message="v8 operation rejected; original owner retained".to_owned();
+            // Only exact finite diagnostic atoms may cross the authenticated
+            // wire. All free bodies, including near-matches, are still redacted.
+            payload.message=crate::RunnerStartupSite::from_wire_message(&payload.message)
+                .wire_message().to_owned();
         }
         let mut value=serde_json::to_value(&frame).map_err(|_| rejected())?;Self::strip_secrets(&mut value);
         self.send_packet(w,value,event)?;

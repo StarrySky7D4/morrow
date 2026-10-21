@@ -1,3 +1,6 @@
+#[path = "process/asuser_stdio.rs"]
+mod asuser_stdio;
+
 use crate::desktop::LaunchDesktop;
 use crate::logging;
 use crate::proc_thread_attr::ProcThreadAttributeList;
@@ -181,7 +184,7 @@ unsafe fn create_process_as_user_impl(
     let cmdline_str = argv_to_command_line(argv);
     let mut cmdline: Vec<u16> = to_wide(&cmdline_str);
     let env_block = make_env_block(env_map);
-    let job = Arc::new(JobObject::create().context("create process job")?);
+    let job = Arc::new(JobObject::create().context(crate::RunnerStartupSite::CreateProcessJob)?);
     let mut pi: PROCESS_INFORMATION = std::mem::zeroed();
     let cwd_wide = to_wide(cwd);
     let env_block_len = env_block.len();
@@ -191,12 +194,14 @@ unsafe fn create_process_as_user_impl(
         | (None, ConsoleMode::Inherit)
         | (None, ConsoleMode::NoWindow) => 0,
     };
-    let preserve_app_context = crate::app_package::current_process_has_package_identity()?;
+    let preserve_app_context = crate::app_package::current_process_has_package_identity()
+        .context(crate::RunnerStartupSite::QueryAppPackage)?;
     let attr_count = if stdio.is_some() { 2 } else { 1 } + u32::from(preserve_app_context);
-    let mut attrs = ProcThreadAttributeList::new(attr_count)?;
-    attrs.set_job(job.as_raw_handle() as HANDLE)?;
+    let mut attrs = ProcThreadAttributeList::new(attr_count)
+        .context(crate::RunnerStartupSite::AllocateProcessAttributes)?;
+    attrs.set_job(job.as_raw_handle() as HANDLE).context(crate::RunnerStartupSite::SetProcessJobAttribute)?;
     if preserve_app_context {
-        attrs.preserve_desktop_app_context()?;
+        attrs.preserve_desktop_app_context().context(crate::RunnerStartupSite::PreserveDesktopAppContext)?;
     }
 
     let mut si: STARTUPINFOEXW = std::mem::zeroed();
@@ -217,13 +222,11 @@ unsafe fn create_process_as_user_impl(
             }
             for &handle in &inherited_handles {
                 if SetHandleInformation(handle, HANDLE_FLAG_INHERIT, HANDLE_FLAG_INHERIT) == 0 {
-                    return Err(anyhow!(
-                        "SetHandleInformation failed for stdio handle: {}",
-                        GetLastError()
-                    ));
+                    return Err(anyhow::Error::from(std::io::Error::last_os_error())
+                        .context(crate::RunnerStartupSite::SetStdioInherit));
                 }
             }
-            attrs.set_handle_list(inherited_handles)?;
+            attrs.set_handle_list(inherited_handles).context(crate::RunnerStartupSite::SetInheritedHandleList)?;
         }
         None => {
             ensure_inheritable_stdio(&mut si.StartupInfo)?;
@@ -258,7 +261,8 @@ unsafe fn create_process_as_user_impl(
             creation_flags,
         );
         if !retain_on_launch_error { logging::debug_log(&msg, logs_base_dir); }
-        let first_error = anyhow::Error::from(std::io::Error::from_raw_os_error(err)).context(msg);
+        let first_error = anyhow::Error::from(std::io::Error::from_raw_os_error(err))
+            .context(msg).context(crate::RunnerStartupSite::CreateProcessAsUser);
         if retain_on_launch_error {
             return Ok(CreatedProcess { process_info: pi, startup_info: si.StartupInfo,
                 job, _desktop: desktop, launch_error: Some(first_error),
@@ -373,6 +377,16 @@ fn spawn_process_with_pipes_impl(
     logs_base_dir: Option<&Path>,
     retain_close_debt: bool,
 ) -> Result<PipeSpawnHandles> {
+    // A1 deliberately keeps the trusted runner token's default DACL RC-only.
+    // CreatePipe opens both anonymous endpoints and cannot use that template
+    // for data IO. Supply creation-only rights for this original child's logon;
+    // the token template and legacy/default routes remain unchanged.
+    let mut security = if desktop.uses_a1_stdio_security() {
+        Some(asuser_stdio::StdioSecurity::for_original_token(h_token)
+            .map_err(|error| crate::RunnerStartupSite::PrepareStdioSecurity.context(error))?)
+    } else { None };
+    let attributes = security.as_mut().map(|value| value.attributes());
+    let pipe_attributes = attributes.as_ref().map_or(ptr::null(), |value| value as *const _);
     let mut in_r: HANDLE = 0;
     let mut in_w: HANDLE = 0;
     let mut out_r: HANDLE = 0;
@@ -380,22 +394,24 @@ fn spawn_process_with_pipes_impl(
     let mut err_r: HANDLE = 0;
     let mut err_w: HANDLE = 0;
     unsafe {
-        if CreatePipe(&mut in_r, &mut in_w, ptr::null_mut(), 0) == 0 {
-            return Err(anyhow!("CreatePipe stdin failed: {}", GetLastError()));
+        if CreatePipe(&mut in_r, &mut in_w, pipe_attributes, 0) == 0 {
+            return Err(anyhow::Error::from(std::io::Error::last_os_error()).context(crate::RunnerStartupSite::CreateStdinPipe));
         }
-        if CreatePipe(&mut out_r, &mut out_w, ptr::null_mut(), 0) == 0 {
+        if CreatePipe(&mut out_r, &mut out_w, pipe_attributes, 0) == 0 {
+            let error = std::io::Error::last_os_error();
             CloseHandle(in_r);
             CloseHandle(in_w);
-            return Err(anyhow!("CreatePipe stdout failed: {}", GetLastError()));
+            return Err(anyhow::Error::from(error).context(crate::RunnerStartupSite::CreateStdoutPipe));
         }
         if matches!(stderr_mode, StderrMode::Separate)
-            && CreatePipe(&mut err_r, &mut err_w, ptr::null_mut(), 0) == 0
+            && CreatePipe(&mut err_r, &mut err_w, pipe_attributes, 0) == 0
         {
+            let error = std::io::Error::last_os_error();
             CloseHandle(in_r);
             CloseHandle(in_w);
             CloseHandle(out_r);
             CloseHandle(out_w);
-            return Err(anyhow!("CreatePipe stderr failed: {}", GetLastError()));
+            return Err(anyhow::Error::from(error).context(crate::RunnerStartupSite::CreateStderrPipe));
         }
     }
 

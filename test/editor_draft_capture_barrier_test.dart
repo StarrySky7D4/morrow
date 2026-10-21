@@ -188,7 +188,7 @@ void main() {
     expect(h.binding.hasUncapturedChanges, isTrue);
     expect(h.session.captureBlocked, isTrue);
     expect(h.session.captureFailure, same(h.metadataFailure));
-    expect(h.session.current.values.title.text, 'captured S1');
+    expect(h.session.current.values.title.text, 'raw S2');
     expect(h.session.dirty, isTrue);
     await Future<void>.delayed(const Duration(milliseconds: 60));
     expect(h.control.saves, isEmpty);
@@ -305,7 +305,7 @@ void main() {
       await retry;
       expect(h.session.unknown, isFalse);
       expect(h.session.captureBlocked, isTrue);
-      expect(h.session.current.values.title.text, 'S1');
+      expect(h.session.current.values.title.text, 'raw S2');
       expect(h.session.dirty, isTrue);
       await expectLater(h.session.flush(), throwsStateError);
       await expectLater(

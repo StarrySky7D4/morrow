@@ -475,6 +475,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainDraftImportRecoveryTitle => 'Review attachment decisions';
 
   @override
+  String get mainDraftJournalEmpty => 'No saved drafts.';
+
+  @override
+  String get mainDraftJournalExport => 'Export recovery copy';
+
+  @override
+  String get mainDraftJournalExportFailed =>
+      'Could not export the complete recovery copy.';
+
+  @override
+  String get mainDraftJournalExported => 'Recovery copy exported.';
+
+  @override
+  String get mainDraftJournalRetire => 'Retire saved draft';
+
+  @override
+  String get mainDraftJournalRetireConfirm =>
+      'Retire this exact saved draft and release its attachment pins? Export a recovery copy first if you need it. Saved business content and uncertain save results are unchanged.';
+
+  @override
+  String get mainDraftJournalRetireUnknown =>
+      'Retirement is not confirmed. Inspect the original operation; do not submit it again.';
+
+  @override
+  String get mainDraftJournalReview =>
+      'This recovery copy is read-only. Raw text, attachments and capture history are preserved; viewing does not resume a previous save.';
+
+  @override
+  String get mainDraftJournalTitle => 'Saved drafts';
+
+  @override
   String get mainEdit => 'Edit';
 
   @override

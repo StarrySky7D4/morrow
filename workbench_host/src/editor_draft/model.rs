@@ -70,6 +70,24 @@ pub fn validate_request(request: &proto::WriteRequest) -> Result<()> {
     identity(&request.card_id)?;
     identity(&request.draft_id)?;
     identity(&request.operation_id)?;
+    if request.capture_scope.is_empty() {
+        if request.capture_events != 0 {
+            return Err("draft capture events require the original scope".into());
+        }
+    } else {
+        identity(&request.capture_scope)?;
+        if request.capture_events > crate::projection_v2::MAX_APPLICATIONS as u64 {
+            return Err("draft capture application limit".into());
+        }
+    }
+    if !request.commit_operation.is_empty() {
+        identity(&request.commit_operation)?;
+        if request.commit_operation == request.operation_id
+            || request.commit_operation == request.predecessor_operation
+        {
+            return Err("draft and business operations must differ".into());
+        }
+    }
 
     let has_predecessor = match (
         request.predecessor_operation.is_empty(),
@@ -166,6 +184,9 @@ pub fn validate_parent_link(request: &proto::WriteRequest, link: &proto::ParentL
     if request.expected_generation == 0 && link.child_operation != request.operation_id {
         return Err("first child draft operation does not match parent link".into());
     }
+    if !request.commit_operation.is_empty() && request.commit_operation == link.committed_operation {
+        return Err("child requires a distinct original business operation".into());
+    }
     Ok(())
 }
 
@@ -194,6 +215,8 @@ mod tests {
             expected_generation: 0,
             source_revision: 1,
             source_kind: 0,
+            commit_operation: String::new(),
+            capture_scope: String::new(), capture_events: 0,
             predecessor_operation: String::new(),
             predecessor_sha256: Vec::new(),
             values: Some(proto::Values {

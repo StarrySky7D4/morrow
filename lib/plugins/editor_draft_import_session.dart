@@ -228,6 +228,34 @@ final class EditorDraftImportSession {
     resolvesUnknown: false,
   );
 
+  /// Explicitly accepts only an exact, still-owned Ready result. This read does
+  /// not retry Begin/Complete or interpret Pending/absence as a clean failure.
+  Future<EditorDraftImportRecord> inspectReady() async {
+    _check();
+    if (_abandonIntent != null || _decisionUnknown) {
+      throw StateError('Original import abandonment still needs resolution');
+    }
+    final snapshot = await inspect();
+    _check();
+    final record = snapshot.record;
+    if (record == null ||
+        record.phase != EditorDraftImportPhase.ready ||
+        !record.currentActive ||
+        !record.bytesRetained ||
+        !record.mainActive ||
+        record.currentGeneration != request.expectedGeneration ||
+        !EditorDraftImportCodec.sameRequest(record.request, request)) {
+      throw StateError(
+        'Original import is not a current retained Ready result',
+      );
+    }
+    _confirmed = snapshot;
+    _pendingAction = null;
+    _importUnknown = false;
+    _failure = null;
+    return record;
+  }
+
   EditorDraftImportDecision _decision(
     EditorDraftImportSnapshot snapshot,
     EditorDraftImportAbandon intent,

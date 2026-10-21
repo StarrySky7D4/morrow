@@ -12,11 +12,14 @@ import 'fixtures/editor_draft_handoff_proposal_fixture.dart';
 final hostPath = Platform.environment['MORROW_WORKBENCH_HOST'];
 final packagePath = Platform.environment['MORROW_WORKBENCH_PACKAGE'];
 Future<void> waitFor(WidgetTester t, bool Function() ready) async {
-  for (var i = 0; i < 120; i++) {
+  final deadline = DateTime.now().add(const Duration(seconds: 45));
+  while (DateTime.now().isBefore(deadline)) {
     await t.runAsync(
       () => Future<void>.delayed(const Duration(milliseconds: 20)),
     );
     await t.pump(const Duration(milliseconds: 50));
+    final error = t.takeException();
+    if (error != null) throw error;
     if (ready()) return;
   }
   expect(ready(), isTrue, reason: 'Native handoff recovery UI did not settle');
@@ -50,6 +53,14 @@ Future<T> native<T>(WidgetTester t, Future<T> Function() action) async {
 
 Future<void> tapNative(WidgetTester t, String key) async {
   final target = find.byKey(ValueKey(key));
+  // A retained detail can be visible while read-only refresh still owns the
+  // coordinator. Click only when the real button is enabled, not after a fixed
+  // sleep that varies with host startup and parallel test load.
+  await waitFor(t, () {
+    if (target.evaluate().length != 1) return false;
+    final widget = t.widget(target);
+    return widget is! ButtonStyleButton || widget.onPressed != null;
+  });
   await t.ensureVisible(target);
   await t.tap(target);
   await t.pump();

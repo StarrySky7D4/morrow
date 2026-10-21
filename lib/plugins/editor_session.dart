@@ -27,6 +27,20 @@ abstract interface class WorkbenchEditorContinuation {
   Future<WorkbenchEditorSession> continueAfterCommit(Idea confirmed);
 }
 
+/// Reserved by the original native editor before any business submission, so
+/// its workbench draft can durably identify a lost first Create receipt.
+/// The identity is for inspection, never authority to replay after restart.
+abstract interface class WorkbenchEditorOperationIdentity {
+  String get commitOperation;
+  BigInt get sourceRevision;
+}
+
+/// Observed identity of this original live capture scope. An archived draft
+/// never reconstructs this capability from its persisted strings.
+abstract interface class WorkbenchEditorDraftCaptureIdentity {
+  ({String scope, int events, bool complete}) get draftCapture;
+}
+
 /// No captured-save request was sent. The draft may safely be changed before a new attempt.
 class EditorPreparationException implements Exception {
   const EditorPreparationException(this.cause);

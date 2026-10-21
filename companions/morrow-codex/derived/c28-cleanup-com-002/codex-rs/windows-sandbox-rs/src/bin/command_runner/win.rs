@@ -101,11 +101,12 @@ use codex_windows_sandbox::SpawnRequest;
 use codex_windows_sandbox::StderrMode;
 use codex_windows_sandbox::StdinMode;
 use codex_windows_sandbox::WindowsSandboxTokenMode;
+use codex_windows_sandbox::RunnerStartupSite;
 use codex_windows_sandbox::allow_null_device;
 use codex_windows_sandbox::create_readonly_token_with_caps_and_user_from;
 use codex_windows_sandbox::create_workspace_write_token_with_caps_and_user_from;
 use codex_windows_sandbox::encode_bytes;
-use codex_windows_sandbox::get_current_token_for_restriction;
+use codex_windows_sandbox::{open_current_token_for_query_duplicate, duplicate_token_for_restriction};
 use codex_windows_sandbox::hide_current_user_profile_dir;
 use codex_windows_sandbox::log_note;
 use codex_windows_sandbox::read_frame;
@@ -213,6 +214,21 @@ fn send_native_precontext_error<W: std::io::Write+Send+'static>(
         move |writer|runtime.write_message(writer,&frame)).map_err(Into::into)
 }
 
+fn send_native_retained_startup_error(
+    writer:&Arc<StdMutex<File>>,runtime:Option<&Arc<codex_windows_sandbox::NativeCloseRuntime>>,
+    windows_error_code:Option<u32>,site:RunnerStartupSite,deadline:std::time::Instant,
+)->Result<()> {
+    let runtime=runtime.ok_or_else(||anyhow::anyhow!("no authenticated original v8 runtime"))?;
+    anyhow::ensure!(!runtime.is_sealed(),"original v8 error channel sealed; no replay");
+    let original_runtime=Arc::clone(runtime);
+    let frame=FramedMessage {version:8,message:Message::Error {payload:ErrorPayload {
+        message:site.wire_message().to_owned(),
+        stage:ErrorStage::SpawnChild,windows_error_code,
+    }}};
+    checked_lifecycle::send_native_startup_failure_frame_with(writer,runtime,deadline,
+        move |writer|original_runtime.write_message(writer,&frame)).map_err(Into::into)
+}
+
 fn windows_error_code(err: &anyhow::Error) -> Option<u32> {
     err.chain().find_map(|cause| {
         cause
@@ -279,11 +295,18 @@ fn effective_cwd(req_cwd: &Path, log_dir: Option<&Path>) -> PathBuf {
     }
 }
 
+fn close_preparation_after_spawn(mut context: RetainedRunnerContext) -> Result<RetainedRunnerContext> {
+    // On any close failure the context Drop parks the SAME admitted originals.
+    context.close_preparation_token_after_spawn()
+        .map_err(|error| RunnerStartupSite::CloseRestrictedToken.context(error.into()))?;
+    Ok(context)
+}
+
 fn spawn_ipc_process(req: &SpawnRequest, checked_controls: bool) -> Result<RetainedRunnerContext> {
     // Hold a real bounded pre-effect reservation guard and validate request preconditions
     // before creating any native token, ACL, junction, desktop, Job, or child process effects.
     let mut reservation =
-        reserve_attempt_context_slot().context("reserve bounded runner attempt context")?;
+        reserve_attempt_context_slot().context(RunnerStartupSite::ReserveAttempt)?;
     if req.command.is_empty() {
         anyhow::bail!("runner: empty command in spawn_request");
     }
@@ -300,12 +323,12 @@ fn spawn_ipc_process(req: &SpawnRequest, checked_controls: bool) -> Result<Retai
         &req.cwd,
         &req.env,
     )
-    .context("resolve permission profile token mode")?;
+    .context(RunnerStartupSite::ResolveTokenMode)?;
     let mut cap_psids: Vec<LocalSid> = Vec::with_capacity(req.cap_sids.len());
     for sid in &req.cap_sids {
         cap_psids.push(
             LocalSid::from_string(sid)
-                .context("ConvertStringSidToSidW failed for capability SID")?,
+                .context(RunnerStartupSite::ParseCapabilitySid)?,
         );
     }
     let network_proxy_restricting_sid = req
@@ -313,11 +336,11 @@ fn spawn_ipc_process(req: &SpawnRequest, checked_controls: bool) -> Result<Retai
         .as_deref()
         .map(LocalSid::from_string)
         .transpose()
-        .context("ConvertStringSidToSidW failed for network proxy restricting SID")?;
+        .context(RunnerStartupSite::ParseProxySid)?;
 
     let fallback_job = Arc::new(
         codex_utils_pty::JobObject::create()
-            .context("create pre-launch fallback JobObject holder")?,
+            .context(RunnerStartupSite::CreateFallbackJob)?,
     );
 
     let log_dir = req.codex_home.clone();
@@ -331,25 +354,32 @@ fn spawn_ipc_process(req: &SpawnRequest, checked_controls: bool) -> Result<Retai
         .iter()
         .map(LocalSid::as_ptr)
         .collect();
-    let base = OwnedWinHandle::new(unsafe { get_current_token_for_restriction()? });
-    let h_token = OwnedWinHandle::new(unsafe {
+    let original = reservation.create_preparation_token(0, || unsafe {
+        open_current_token_for_query_duplicate()
+    }).map_err(|error| RunnerStartupSite::OpenOriginalToken.context(error))?;
+    let base = reservation.create_preparation_token(1, || unsafe {
+        duplicate_token_for_restriction(original)
+    }).map_err(|error| RunnerStartupSite::DuplicateRestrictionToken.context(error))?;
+    let h_token = reservation.create_preparation_token(2, || unsafe {
         match token_mode {
             WindowsSandboxTokenMode::ReadOnlyCapability => {
                 create_readonly_token_with_caps_and_user_from(
-                    base.raw(),
+                    base,
                     &cap_psid_ptrs,
                     &additional_restricting_sid_ptrs,
                 )
             }
             WindowsSandboxTokenMode::WritableRootsCapability => {
                 create_workspace_write_token_with_caps_and_user_from(
-                    base.raw(),
+                    base,
                     &cap_psid_ptrs,
                     &additional_restricting_sid_ptrs,
                 )
             }
         }
-    }?);
+    }).map_err(|error| RunnerStartupSite::CreateCapabilityToken.context(error))?;
+    reservation.close_preparation_token(0).context(RunnerStartupSite::CloseOriginalQueryToken)?;
+    reservation.close_preparation_token(1).context(RunnerStartupSite::CloseIntermediateToken)?;
     unsafe {
         // These ACL adjustments need the raw SID values, but ownership stays with `cap_psids`.
         // We do not manually `LocalFree` anything here; the wrappers handle every return path.
@@ -360,7 +390,8 @@ fn spawn_ipc_process(req: &SpawnRequest, checked_controls: bool) -> Result<Retai
     }
 
     let effective_cwd = effective_cwd(&req.cwd, Some(log_dir.as_path()));
-    let desktop = LaunchDesktop::open_private(private_desktop_name)?;
+    let desktop = LaunchDesktop::open_private(private_desktop_name)
+        .map_err(|error| RunnerStartupSite::OpenPrivateDesktop.context(error))?;
 
     // Mark entry into the native launch boundary so any error or unwind inside or after
     // the lower-level spawn call latches `ParkedUnresolved` (`no_replay=true`).
@@ -369,7 +400,7 @@ fn spawn_ipc_process(req: &SpawnRequest, checked_controls: bool) -> Result<Retai
     if req.tty {
         if checked_controls {
             return codex_windows_sandbox::spawn_conpty_process_as_user_retaining(
-                h_token.raw(), &req.command, &effective_cwd, &req.env, desktop,
+                h_token, &req.command, &effective_cwd, &req.env, desktop,
                 |pi, mut conpty, creation_evidence, first_error| {
                     let input = conpty.take_input_write();
                     let output = conpty.take_output_read();
@@ -385,10 +416,11 @@ fn spawn_ipc_process(req: &SpawnRequest, checked_controls: bool) -> Result<Retai
                     }
                     context.validate_captured_originals(pi, req.stdin_open).map_err(anyhow::Error::from)
                 },
-            )?.context("validate checked retaining ConPTY launch");
+            ).map_err(|error| RunnerStartupSite::SpawnConptyChild.context(error))?
+                .context(RunnerStartupSite::AdmitChildContext).and_then(close_preparation_after_spawn);
         }
         let (pi, mut conpty) = codex_windows_sandbox::spawn_conpty_process_as_user(
-            h_token.raw(),
+            h_token,
             &req.command,
             &effective_cwd,
             &req.env,
@@ -410,7 +442,7 @@ fn spawn_ipc_process(req: &SpawnRequest, checked_controls: bool) -> Result<Retai
                 Some(conpty),
                 None,
             )
-            .context("validate retained ConPTY child context after launch")
+            .context(RunnerStartupSite::AdmitChildContext).and_then(close_preparation_after_spawn)
     } else {
         let stdin_mode = if req.stdin_open {
             StdinMode::Open
@@ -421,7 +453,7 @@ fn spawn_ipc_process(req: &SpawnRequest, checked_controls: bool) -> Result<Retai
             codex_windows_sandbox::spawn_process_with_pipes_retaining
         } else { spawn_process_with_pipes };
         let spawned_pipes: PipeSpawnHandles = spawn_pipes(
-            h_token.raw(),
+            h_token,
             &req.command,
             &effective_cwd,
             &req.env,
@@ -430,7 +462,7 @@ fn spawn_ipc_process(req: &SpawnRequest, checked_controls: bool) -> Result<Retai
             ConsoleMode::NoWindow,
             desktop,
             Some(log_dir.as_path()),
-        )?;
+        ).map_err(|error| RunnerStartupSite::SpawnStdioChild.context(error))?;
         let pi = spawned_pipes.process;
         let stdout_handle = spawned_pipes.stdout_read;
         let stderr_handle = spawned_pipes.stderr_read.unwrap_or(INVALID_HANDLE_VALUE);
@@ -449,7 +481,7 @@ fn spawn_ipc_process(req: &SpawnRequest, checked_controls: bool) -> Result<Retai
                 None,
                 Some(spawned_pipes),
             )
-            .context("validate retained pipe child context after launch")
+            .context(RunnerStartupSite::AdmitChildContext).and_then(close_preparation_after_spawn)
     }
 }
 
@@ -782,14 +814,14 @@ fn run_main_inner() -> Result<i32> {
     let mut legacy_pipe_read=Some(pipe_read);
     if let Some(runtime)=native_close_runtime.as_ref() {
         let original=Arc::new(legacy_pipe_read.take().unwrap());
-        checked_lifecycle::retain_native_transport_before_child(runtime.attempt(),original,Arc::clone(&pipe_write))?;
+        checked_lifecycle::retain_native_transport_before_child(runtime,original,Arc::clone(&pipe_write))?;
     }
     let mut context = match spawn_ipc_process(&req, checked_controls) {
         Ok(value) => value,
         Err(err) => {
             if native_close_v8 {
-                let _=send_native_precontext_error(&pipe_write,native_close_runtime.as_ref(),
-                    ErrorStage::SpawnChild,windows_error_code(&err),native_startup_deadline);
+                let _=send_native_retained_startup_error(&pipe_write,native_close_runtime.as_ref(),
+                    windows_error_code(&err),RunnerStartupSite::from_error(&err),native_startup_deadline);
             }else{
             let _ = send_error(
                 None,

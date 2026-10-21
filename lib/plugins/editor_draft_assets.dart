@@ -611,6 +611,49 @@ final class EditorDraftAssetCatalog {
     return List<EditorDraftAssetSelection>.unmodifiable(result);
   }
 
+  /// Resolve the frozen save's views, not whatever the user selects while its
+  /// receipt is in flight. Removed S1 attachments still belong to that save.
+  List<EditorDraftAssetView> viewsForSelections(
+    List<EditorDraftAssetSelection> selections,
+  ) => List.unmodifiable([
+    for (final selection in selections)
+      (() {
+        final matches = _entries.where(
+          (entry) => _selectionEqual(entry.selection, selection),
+        );
+        if (matches.length != 1) {
+          throw const FormatException('Frozen draft attachment is unavailable');
+        }
+        return matches.single.view;
+      })(),
+  ]);
+
+  /// Admit only a host-confirmed durable import for this exact live journal.
+  /// A selected path or an attachment ID cannot introduce a new source.
+  EditorDraftAssetCatalog withReadyImport(
+    EditorDraftRecord previous,
+    EditorDraftImportRecord imported,
+    EditorDraftAssetView view,
+  ) {
+    if (previous.request.cardId != cardId ||
+        previous.request.draftId != draftId ||
+        previous.generation != confirmedGeneration ||
+        !previous.active ||
+        !previous.currentActive ||
+        previous.currentGeneration != previous.generation ||
+        _handoffLink != null ||
+        _entries.any((entry) =>
+            identical(entry.view.attachment, view.attachment) ||
+            entry.selection.assetId == imported.assetId)) {
+      throw const FormatException('Draft import catalog baseline changed');
+    }
+    return EditorDraftAssetCatalog._(
+      cardId, draftId, sourceKind, sourceRevision, predecessorOperation,
+      predecessorDigest, confirmedGeneration,
+      [..._entries, ..._ready(cardId, draftId, previous, [imported], [view])],
+    );
+  }
+
   /// Once a save has an exact confirmed record, its pinned assets may serve
   /// as previousDraft inputs for the same card and draft at the next generation.
   /// This deliberately cannot inherit pins from another draft ID.

@@ -4632,11 +4632,27 @@ pub(crate) enum RunnerExitDisposition {
 
 const MAX_PARKED_OUTPUT_READERS: usize = 8;
 
+/// Fixed pre-admitted slots for the three token originals. An admitted native
+/// call or uncertain close is never retried, inferred closed, or dropped away.
+#[derive(Debug)]
+enum PreparationToken {
+    Unused,
+    Creating,
+    Owned(OwnedWinHandle),
+}
+impl PreparationToken {
+    fn settled(&self) -> bool {
+        matches!(self, Self::Unused)
+            || matches!(self, Self::Owned(handle) if handle.is_closed_verified())
+    }
+}
+
 struct AttemptSlotInner {
     state: AttemptSlotState,
     reservation_generation: u64,
     reap_in_progress: bool,
     unanchored_native_boundary: bool,
+    preparation_tokens: [PreparationToken; 3],
     standalone_reserved: [bool; MAX_PARKED_OUTPUT_READERS],
     precontext_writer_reserved: bool,
     precontext_pipe_anchor: Option<Arc<dyn std::any::Any+Send+Sync>>,
@@ -4657,6 +4673,7 @@ fn lock_attempt_slot() -> std::sync::MutexGuard<'static, AttemptSlotInner> {
             reservation_generation: 0,
             reap_in_progress: false,
             unanchored_native_boundary: false,
+            preparation_tokens: std::array::from_fn(|_| PreparationToken::Unused),
             standalone_reserved: [false; MAX_PARKED_OUTPUT_READERS],
             precontext_writer_reserved: false,
             precontext_pipe_anchor: None,
@@ -4685,6 +4702,61 @@ pub(crate) struct AttemptReservationGuard {
 }
 
 impl AttemptReservationGuard {
+    /// The fixed slot is charged before the native call. A failure/unwind keeps
+    /// Creating, while a successful result is installed before further checks.
+    pub(crate) fn create_preparation_token(
+        &mut self, index: usize, create: impl FnOnce() -> anyhow::Result<HANDLE>,
+    ) -> anyhow::Result<HANDLE> {
+        let mut slot = lock_attempt_slot();
+        if slot.reservation_generation != self.generation
+            || slot.state != AttemptSlotState::ReservedPreEffect
+            || slot.unresolved_sticky_error.is_some()
+            || !matches!(slot.preparation_tokens.get(index), Some(PreparationToken::Unused)) {
+            return Err(anyhow::anyhow!("original token preparation slot unavailable; no replay"));
+        }
+        slot.preparation_tokens[index] = PreparationToken::Creating;
+        let raw = create()?;
+        // The API success contract supplies one original handle, owned here.
+        slot.preparation_tokens[index] = PreparationToken::Owned(OwnedWinHandle::new(raw));
+        if raw == 0 || raw == INVALID_HANDLE_VALUE {
+            return Err(anyhow::anyhow!("successful token preparation returned an invalid original"));
+        }
+        Ok(raw)
+    }
+
+    pub(crate) fn close_preparation_token(&mut self, index: usize) -> io::Result<()> {
+        self.close_preparation_token_with(index, |handle| {
+            if unsafe { CloseHandle(handle) } == 0 { Err(io::Error::last_os_error()) }
+            else { Ok(()) }
+        })
+    }
+
+    fn close_preparation_token_with(
+        &mut self, index: usize, close: impl FnOnce(HANDLE) -> io::Result<()>,
+    ) -> io::Result<()> {
+        let mut slot = lock_attempt_slot();
+        if slot.reservation_generation != self.generation || slot.reap_in_progress
+            || !matches!(slot.state, AttemptSlotState::ReservedPreEffect | AttemptSlotState::ActiveAdmitted)
+            || slot.unresolved_sticky_error.is_some() {
+            return Err(io::Error::other("original token preparation owner unavailable; no retry"));
+        }
+        let Some(PreparationToken::Owned(handle)) = slot.preparation_tokens.get_mut(index) else {
+            return Err(io::Error::other("original token preparation handle unavailable"));
+        };
+        let result = handle.close_checked_with("runner preparation token", close);
+        if let Err(error) = &result {
+            slot.state = AttemptSlotState::ParkedUnresolved;
+            if slot.unresolved_sticky_error.is_none() {
+                slot.unresolved_sticky_error = Some(StickyUnknownError::new(
+                    StickyUnknownKind::StartupValidationFailed,
+                    format!("original preparation token close unresolved: {error}"),
+                ));
+            }
+        }
+        result
+    }
+
+
     /// Marks that the attempt is entering or has crossed the native child/ConPTY/Job launch
     /// boundary so any subsequent drop, error, or unwind without `complete_clean_attempt`
     /// latches sticky `Unknown` (`no_replay=true`) in `ATTEMPT_SLOT`.
@@ -4713,8 +4785,9 @@ impl AttemptReservationGuard {
     /// Marks the attempt as cleanly completed after all required worker joins, handle
     /// closes, and Job active-zero drain have succeeded.
     pub(crate) fn complete_clean_attempt(&mut self) {
-        self.completed_cleanly = true;
         let mut guard = lock_attempt_slot();
+        if !guard.preparation_tokens.iter().all(PreparationToken::settled) { return; }
+        self.completed_cleanly = true;
         if guard.reservation_generation == self.generation
             && guard.primary_context.is_none()
             && !guard.reap_in_progress
@@ -4732,8 +4805,9 @@ impl AttemptReservationGuard {
         if self.post_launch_admitted || self.cancelled_unresolved {
             return;
         }
-        self.released_pre_effect = true;
         let mut guard = lock_attempt_slot();
+        if !guard.preparation_tokens.iter().all(PreparationToken::settled) { return; }
+        self.released_pre_effect = true;
         if guard.reservation_generation == self.generation
             && guard.state == AttemptSlotState::ReservedPreEffect
             && guard.primary_context.is_none()
@@ -4846,6 +4920,10 @@ pub(crate) fn reserve_attempt_context_slot() -> io::Result<AttemptReservationGua
             ),
         ));
     }
+    if !guard.preparation_tokens.iter().all(PreparationToken::settled) {
+        return Err(io::Error::other("original preparation token debt; no replay"));
+    }
+    guard.preparation_tokens = std::array::from_fn(|_| PreparationToken::Unused);
     guard.reservation_generation = guard.reservation_generation.wrapping_add(1);
     let generation = guard.reservation_generation;
     guard.state = AttemptSlotState::ReservedPreEffect;
@@ -4862,25 +4940,34 @@ pub(crate) fn reserve_attempt_context_slot() -> io::Result<AttemptReservationGua
 /// A single pre-admitted writer slot is independent of the single child attempt.
 struct NativeTransportEndpoints {
     attempt:u64,generation:u64,input:Arc<File>,output:Arc<StdMutex<File>>,
+    startup_failure_reported:bool,runtime:Arc<codex_windows_sandbox::NativeCloseRuntime>,
 }
 pub(crate) fn retain_native_transport_before_child(
-    attempt:u64,input:Arc<File>,output:Arc<StdMutex<File>>,
+    runtime:&Arc<codex_windows_sandbox::NativeCloseRuntime>,input:Arc<File>,output:Arc<StdMutex<File>>,
 )->io::Result<()> {
+    let attempt=runtime.attempt();
     let mut slot=lock_attempt_slot();
-    if attempt==0 || slot.native_transport.is_some() || slot.primary_context.is_some()
+    if attempt==0 || runtime.is_sealed() || slot.native_transport.is_some() || slot.primary_context.is_some()
         || slot.state!=AttemptSlotState::Empty || slot.precontext_writer_reserved
         || slot.precontext_writer.is_some() || slot.unresolved_sticky_error.is_some() {
         return Err(io::Error::other("v8 original transport admission unavailable; no replay"));
     }
     let generation=slot.reservation_generation.wrapping_add(1);
-    slot.native_transport=Some(NativeTransportEndpoints {attempt,generation,input,output});Ok(())
+    slot.native_transport=Some(NativeTransportEndpoints {attempt,generation,input,output,startup_failure_reported:false,runtime:Arc::clone(runtime)});Ok(())
 }
 impl RetainedRunnerContext {
+    pub(crate) fn close_preparation_token_after_spawn(&mut self) -> io::Result<()> {
+        self.attempt_reservation.as_mut()
+            .ok_or_else(|| io::Error::other("original token preparation reservation absent"))?
+            .close_preparation_token(2)
+    }
+
     pub(crate) fn adopt_native_transport(&mut self,attempt:u64)->io::Result<()> {
         let generation=self.attempt_reservation.as_ref().ok_or_else(||io::Error::other("same original attempt admission absent"))?.generation;
         let mut slot=lock_attempt_slot();
         let anchors=slot.native_transport.as_ref().ok_or_else(||io::Error::other("same original IPC anchors absent"))?;
-        if anchors.attempt!=attempt || anchors.generation!=generation {
+        if anchors.attempt!=attempt || anchors.generation!=generation
+            || self.native_close_runtime.as_ref().is_none_or(|runtime| !Arc::ptr_eq(runtime,&anchors.runtime)) {
             return Err(io::Error::other("v8 original IPC attempt/generation mismatch"));
         }
         let anchors=slot.native_transport.take().unwrap();
@@ -4918,21 +5005,54 @@ pub(crate) fn send_precontext_error_frame_checked<W: Write + Send + 'static>(
 pub(crate) fn send_precontext_frame_with<W: Write + Send + 'static, F>(
     pipe: &Arc<StdMutex<W>>, deadline: Instant, write: F,
 ) -> io::Result<()> where F: FnOnce(&mut W)->io::Result<()> + Send + 'static {
-    send_precontext_frame_owned(pipe,deadline,false,write)
+    send_precontext_frame_owned(pipe,deadline,false,None,write)
 }
 pub(crate) fn send_native_precontext_frame_with<W: Write+Send+'static,F>(
     pipe:&Arc<StdMutex<W>>,deadline:Instant,write:F,
 )->io::Result<()> where F:FnOnce(&mut W)->io::Result<()>+Send+'static {
-    send_precontext_frame_owned(pipe,deadline,true,write)
+    send_precontext_frame_owned(pipe,deadline,true,None,write)
+}
+/// Diagnostic only: the exact pre-child transport remains owned and charged.
+/// Reserving this one error frame cannot retire, replay or release its attempt.
+struct NativeStartupFailureBinding {
+    attempt:u64,output:std::sync::Weak<StdMutex<File>>,
+    runtime:std::sync::Weak<codex_windows_sandbox::NativeCloseRuntime>,
+}
+pub(crate) fn send_native_startup_failure_frame_with<F>(
+    pipe:&Arc<StdMutex<File>>,runtime:&Arc<codex_windows_sandbox::NativeCloseRuntime>,deadline:Instant,write:F,
+)->io::Result<()> where F:FnOnce(&mut File)->io::Result<()>+Send+'static {
+    let binding=NativeStartupFailureBinding {attempt:runtime.attempt(),output:Arc::downgrade(pipe),runtime:Arc::downgrade(runtime)};
+    send_precontext_frame_owned(pipe,deadline,true,Some(binding),write)
 }
 fn send_precontext_frame_owned<W: Write+Send+'static,F>(
-    pipe:&Arc<StdMutex<W>>,deadline:Instant,native:bool,write:F,
+    pipe:&Arc<StdMutex<W>>,deadline:Instant,native:bool,binding:Option<NativeStartupFailureBinding>,write:F,
 )->io::Result<()> where F:FnOnce(&mut W)->io::Result<()>+Send+'static {
     {
         let mut slot = lock_attempt_slot();
         if Instant::now() >= deadline || slot.reap_in_progress || slot.precontext_writer_reserved
             || slot.precontext_writer.is_some()
         { return Err(io::Error::new(io::ErrorKind::WouldBlock, "pre-context writer unavailable")); }
+        if let Some(binding)=binding {
+            // A failure returned from the same original spawn reservation. The
+            // still-held endpoints supply identity; a scalar attempt is not enough.
+            let original=slot.native_transport.as_ref().ok_or_else(||
+                io::Error::other("original pre-child transport absent"))?;
+            if binding.attempt==0 || original.attempt!=binding.attempt
+                || original.generation!=slot.reservation_generation
+                || !std::sync::Weak::ptr_eq(&Arc::downgrade(&original.output),&binding.output)
+                || !std::sync::Weak::ptr_eq(&Arc::downgrade(&original.runtime),&binding.runtime)
+                || original.runtime.is_sealed() || original.startup_failure_reported
+                || slot.state!=AttemptSlotState::ParkedUnresolved
+                || slot.unresolved_sticky_error.is_none()
+                || slot.precontext_pipe_anchor.is_some()
+                || slot.standalone_readers.iter().any(Option::is_some)
+                || slot.standalone_reserved.iter().any(|value|*value) {
+                return Err(io::Error::other("original startup failure writer binding rejected; no replay"));
+            }
+            // Reserve before spawning or any fallible write. A failed or late
+            // report cannot obtain a second attempt and never clears first error.
+            slot.native_transport.as_mut().unwrap().startup_failure_reported=true;
+        }
         slot.precontext_writer_reserved = true;
     }
     // Construct the owner before invoking the native spawner so unwind clears only
@@ -5062,6 +5182,7 @@ pub(crate) fn has_unresolved_attempt_slot_entries() -> bool {
     guard.state == AttemptSlotState::ParkedUnresolved
         || guard.primary_context.is_some()
         || guard.native_transport.is_some() || guard.precontext_pipe_anchor.is_some()
+        || !guard.preparation_tokens.iter().all(PreparationToken::settled)
         || guard.precontext_writer_reserved || guard.precontext_writer.is_some()
         || guard.reap_in_progress
         || guard.unanchored_native_boundary
@@ -5118,6 +5239,7 @@ pub(crate) fn reap_unresolved_attempt_slot_bounded(deadline: Instant) -> RunnerE
             && slot.unresolved_sticky_error.is_none() && !slot.reap_in_progress && !slot.unanchored_native_boundary
             && !slot.precontext_writer_reserved && slot.precontext_writer.is_none()
             && slot.native_transport.is_none() && slot.precontext_pipe_anchor.is_none()
+            && slot.preparation_tokens.iter().all(PreparationToken::settled)
             && !slot.standalone_reserved.iter().any(|v| *v)
         { return RunnerExitDisposition::CleanNoUnresolvedAttempt; }
         let sticky = slot.unresolved_sticky_error.clone().unwrap_or_else(|| {
@@ -5150,7 +5272,9 @@ pub(crate) fn reap_unresolved_attempt_slot_bounded(deadline: Instant) -> RunnerE
         running_workers += usize::from(reader.has_retained_join_handle());
     }
     let mut active_job_processes = u32::from(lock_attempt_slot().unanchored_native_boundary);
-    let mut native_io_unsettled={let slot=lock_attempt_slot();slot.native_transport.is_some() || slot.precontext_pipe_anchor.is_some()};
+    let mut native_io_unsettled={let slot=lock_attempt_slot();slot.native_transport.is_some()
+        || slot.precontext_pipe_anchor.is_some()
+        || !slot.preparation_tokens.iter().all(PreparationToken::settled)};
     if let Some(context) = loan.context.as_mut() {
         let (running, active) = context.reap_unresolved_originals_bounded(deadline);
         running_workers += running;
@@ -5213,6 +5337,8 @@ pub(crate) fn reset_attempt_slot_for_test() {
     let (context, readers, writer) = {
         let mut slot = lock_attempt_slot();
         assert!(!slot.reap_in_progress);
+        assert!(slot.preparation_tokens.iter().all(PreparationToken::settled));
+        slot.preparation_tokens = std::array::from_fn(|_| PreparationToken::Unused);
         let taken = (slot.primary_context.take(),
             std::mem::replace(&mut slot.standalone_readers, std::array::from_fn(|_| None)), slot.precontext_writer.take());
         slot.state = AttemptSlotState::Empty;
@@ -5225,6 +5351,29 @@ pub(crate) fn reset_attempt_slot_for_test() {
     };
     // Supplied fixtures must quiesce their threads before calling this helper.
     drop((context, readers, writer));
+}
+
+/// Release only this test's pipe-only fixture after its original writer joined.
+/// No process, Job, native admission, business owner or completion is fabricated.
+#[cfg(test)]
+pub(crate) fn release_startup_failure_pipe_fixture_for_test(input:&Arc<File>,output:&Arc<StdMutex<File>>) {
+    let held={
+        let mut slot=lock_attempt_slot();
+        assert!(!slot.reap_in_progress && !slot.precontext_writer_reserved);
+        assert!(!slot.unanchored_native_boundary && slot.primary_context.is_none());
+        assert!(slot.standalone_readers.iter().all(Option::is_none));
+        assert!(!slot.standalone_reserved.iter().any(|value|*value));
+        let original=slot.native_transport.as_ref().expect("exact pipe-only fixture");
+        assert!(Arc::ptr_eq(&original.input,input) && Arc::ptr_eq(&original.output,output));
+        if let Some(writer)=slot.precontext_writer.as_ref(){assert!(!writer.has_retained_join_handle());}
+        if let Some(anchor)=slot.precontext_pipe_anchor.as_ref(){
+            let same=anchor.downcast_ref::<Arc<StdMutex<File>>>().expect("original File writer");
+            assert!(Arc::ptr_eq(same,output));
+        }
+        (slot.native_transport.take(),slot.precontext_writer.take(),slot.precontext_pipe_anchor.take())
+    };
+    drop(held);
+    reset_attempt_slot_for_test();
 }
 
 /// Only a test-owned memory writer of the exact supplied concrete type. This
@@ -5275,4 +5424,94 @@ mod native_close_sender;
 
 fn runtime_frame_io_error(error:anyhow::Error)->io::Error {
     match error.downcast::<io::Error>() {Ok(original)=>original,Err(original)=>io::Error::other(original)}
+}
+
+#[cfg(test)]
+mod preparation_token_tests {
+    use super::*;
+
+    #[test]
+    fn twenty_owned_token_preparations_close_originals_before_local_slot_reuse() {
+        reset_attempt_slot_for_test();
+        for _ in 0..20 {
+            let mut reservation = reserve_attempt_context_slot().unwrap();
+            let source = reservation.create_preparation_token(0, || unsafe {
+                codex_windows_sandbox::open_current_token_for_query_duplicate()
+            }).unwrap();
+            let base = reservation.create_preparation_token(1, || unsafe {
+                codex_windows_sandbox::duplicate_token_for_restriction(source)
+            }).unwrap();
+            let capability = codex_windows_sandbox::LocalSid::from_string("S-1-5-21-10-20-30-40").unwrap();
+            reservation.create_preparation_token(2, || unsafe {
+                codex_windows_sandbox::create_readonly_token_with_caps_and_user_from(
+                    base, &[capability.as_ptr()], &[],
+                )
+            }).unwrap();
+            assert!(has_unresolved_attempt_slot_entries());
+            for index in 0..3 { reservation.close_preparation_token(index).unwrap(); }
+            assert!(lock_attempt_slot().preparation_tokens.iter().all(PreparationToken::settled));
+            reservation.release_pre_effect_if_uncommitted();
+            assert_eq!(lock_attempt_slot().state, AttemptSlotState::Empty);
+            drop(reservation);
+            assert!(!has_unresolved_attempt_slot_entries());
+        }
+        reset_attempt_slot_for_test();
+    }
+
+    #[test]
+    fn synthetic_preparation_close_debt_retains_charge_and_never_retries() {
+        reset_attempt_slot_for_test();
+        let mut reservation = reserve_attempt_context_slot().unwrap();
+        const FIXTURE: HANDLE = 42;
+        reservation.create_preparation_token(0, || Ok(FIXTURE)).unwrap();
+        let mut calls = 0;
+        let result = reservation.close_preparation_token_with(0, |raw| {
+            assert_eq!(raw, FIXTURE); calls += 1;
+            Err(io::Error::from_raw_os_error(5))
+        });
+        assert_eq!(result.unwrap_err().raw_os_error(), Some(5));
+        assert!(reservation.close_preparation_token_with(0, |_| {
+            calls += 1; Ok(())
+        }).is_err());
+        assert_eq!(calls, 1);
+        assert!(reserve_attempt_context_slot().is_err());
+        assert!(matches!(reap_unresolved_attempt_slot_bounded(Instant::now()),
+            RunnerExitDisposition::MustHoldProcessAlive { .. }));
+        reservation.release_pre_effect_if_uncommitted();
+        assert!(!reservation.released_pre_effect);
+        drop(reservation);
+        // This is a numeric mock only: no native API was called for FIXTURE.
+        // Do not use this removal for an actual uncertain original handle.
+        {
+            let mut slot = lock_attempt_slot();
+            let PreparationToken::Owned(handle) = &slot.preparation_tokens[0] else { panic!() };
+            assert_eq!(handle.raw(), 0);
+            assert_eq!(handle.close_debt().unwrap().raw_handle, FIXTURE as usize);
+            slot.preparation_tokens[0] = PreparationToken::Unused;
+        }
+        reset_attempt_slot_for_test();
+    }
+
+    #[test]
+    fn synthetic_preparation_unwind_keeps_pre_native_charge() {
+        reset_attempt_slot_for_test();
+        let mut reservation = reserve_attempt_context_slot().unwrap();
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _ = reservation.create_preparation_token(0, || panic!("synthetic before API"));
+        }));
+        assert!(result.is_err());
+        reservation.release_pre_effect_if_uncommitted();
+        assert!(!reservation.released_pre_effect);
+        drop(reservation);
+        assert!(reserve_attempt_context_slot().is_err());
+        assert!(matches!(reap_unresolved_attempt_slot_bounded(Instant::now()),
+            RunnerExitDisposition::MustHoldProcessAlive { .. }));
+        {
+            let mut slot = lock_attempt_slot();
+            assert!(matches!(slot.preparation_tokens[0], PreparationToken::Creating));
+            // The synthetic closure panicked before issuing any native call.
+            slot.preparation_tokens[0] = PreparationToken::Unused;
+        }
+        reset_attempt_slot_for_test();
+    }
 }

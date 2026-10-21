@@ -578,5 +578,14 @@
   "mainDraftHandoffRecoverySelection": "Selecione um registo para ver o rascunho completo.",
   "mainStyleDepth": "Profundidade do relevo",
   "mainStyleDepthGuide": "Ajuste as elevações e reentrâncias sem alterar a opacidade do vidro.",
-  "mainStyleDepthReset": "Restaurar 100%"
+  "mainStyleDepthReset": "Restaurar 100%",
+  "mainDraftJournalTitle": "Rascunhos guardados",
+  "mainDraftJournalReview": "Esta cópia de recuperação é só de leitura. O texto original, os anexos e o histórico de captura são preservados; a visualização não retoma uma gravação anterior.",
+  "mainDraftJournalEmpty": "Não há rascunhos guardados.",
+  "mainDraftJournalExport": "Exportar cópia de recuperação",
+  "mainDraftJournalExported": "Cópia de recuperação exportada.",
+  "mainDraftJournalExportFailed": "Não foi possível exportar a cópia de recuperação completa.",
+  "mainDraftJournalRetire": "Retirar rascunho salvo",
+  "mainDraftJournalRetireConfirm": "Retirar este rascunho e liberar suas cópias de anexos? Exporte primeiro uma cópia de recuperação se precisar. O conteúdo salvo e os resultados não confirmados permanecem inalterados.",
+  "mainDraftJournalRetireUnknown": "A retirada não foi confirmada. Consulte a operação original sem enviá-la novamente."
 }
