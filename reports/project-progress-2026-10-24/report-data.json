@@ -1,0 +1,888 @@
+{
+  "schema": 1,
+  "title": "Morrow 项目进度全览",
+  "as_of": "2026-10-24T07:16:11.584746+08:00",
+  "scope": "READ_ONLY_PROGRESS_REPORT_WINDOWS_ACCEPTANCE_PAUSED",
+  "commit": "1eaf699ae200b54250232a4971875182f2d5cb80",
+  "branch": "codex/local-continue-20261020",
+  "version": "0.1.9-test.58+62",
+  "remote_refs": {
+    "refs/heads/codex/local-continue-20261020": "1eaf699ae200b54250232a4971875182f2d5cb80",
+    "refs/heads/main": "4de7fe2dbc2504e8342598fabea37ae41fa3d583"
+  },
+  "source_accepted": false,
+  "release_eligible": false,
+  "modules": [
+    [
+      "M0–M2",
+      "内容内核与持久存储",
+      "bounded",
+      "内容身份、修订/CAS、操作回执、受保护存储和工作台写入链已有实现及分期证据。新编辑器实测进一步覆盖真实持久化与重开。",
+      "真实旧资料迁移、完整命令/生命周期、规模性能及最终候选综合验收仍缺完整证据。",
+      "E15 E06"
+    ],
+    [
+      "M3",
+      "插件运行、依赖与权限",
+      "bounded",
+      "Rust / C / C++ Wasm、包安装/批准、有限依赖、撤权和原 owner 回收已有有界运行；冻结原包兼容复验通过。",
+      "通用异步依赖、长时双向跨插件服务、完整第三方生命周期尚未闭合。",
+      "E09 E02 E13"
+    ],
+    [
+      "M4–M5",
+      "审计、封存与重放",
+      "partial",
+      "原字节、操作身份、归档/核对/不重发的机制及历史限定验证保留；编辑器维护保留 journal、回执与父子来源。",
+      "完整 A→B→IO→内容→封存→隔离重放、故障/因果矩阵与最终源绑定尚无整体通过。",
+      "E15 E06"
+    ],
+    [
+      "M6 / P3",
+      "正式编辑器与草稿恢复",
+      "bounded",
+      "自动保存、可编辑重启、S1/S2 交接、回执丢失恢复、父退休失败、满盘、容量、切库及人工输入已各有实测。",
+      "剩余故障/像素检查及最终同一候选上的完整 P3 验收仍开放。",
+      "E06 E07 E08"
+    ],
+    [
+      "Windows",
+      "受限执行正常路径",
+      "bounded",
+      "原 47 步、92 行、九组门槛通过 284 项复核；业务子进程、原生/SDK/owner/factory/setup 的该次正常收尾有证据。",
+      "只覆盖 case041/source77f；不外推完整网络隔离、所有异常路径或新发布快照整体验收。",
+      "E01"
+    ],
+    [
+      "P2",
+      "异常拒绝与资源退役",
+      "partial",
+      "实际 LogonUser 拒绝、source-policy 拒绝的单次闭环有各自证据；共享 SDK 原 owner 连续 17 guest 与 125 项原生回归通过。",
+      "完整 17 次原生拒绝链 case042 为 Unknown，不能据此确认配额回收和全链退休。",
+      "E02 E03 E04"
+    ],
+    [
+      "IPC",
+      "内部二进制协议",
+      "bounded",
+      "Windows 父进程 ↔ Runner 与 v8 原生关闭链改为类型化 Cap’n Proto；目录/编辑器扩展继续沿受控协议。",
+      "限定链已验证；不能表述为全项目 JSON 已移除。外部审计/验收记录仍可使用 JSON。",
+      "E01 E17"
+    ],
+    [
+      "Network",
+      "HTTP / 服务 / 流",
+      "bounded",
+      "冻结三语言原件已完成真实回环 HTTP/service、回环 TLS 和 DPAPI 重开；SSE/WS 保留实验性扩展。",
+      "公网生产提供者、OAuth、完整流恢复、生产批准 UI 与稳定 SDK 产品承诺仍开放。",
+      "E10 E11 E13"
+    ],
+    [
+      "Filesystem",
+      "目录与附件",
+      "bounded",
+      "三语言目录 guest 在原受保护 Workbench 中实际执行；70 个条目、4 次 import，批准/撤销/取消/关闭及重开经过限定验证。",
+      "原生选择器来源、根以上祖先、blob 耐久历史、通用上传/watch/rename、条件 Replace 尚未整体验收。",
+      "E12"
+    ],
+    [
+      "Cloud",
+      "账号、同步与业务扩展",
+      "open",
+      "已有内容 CAS、有限 HTTP、变化 metadata 等基础积木；Cloud 定位仍是可选普通服务/插件。",
+      "完整账号/OAuth、长期订阅、同步冲突/检查点/附件上传及真实业务迁移不是当前完成能力。",
+      "E13 E15"
+    ],
+    [
+      "Platform",
+      "多平台产品",
+      "deferred",
+      "本轮仅 Windows；Linux/Android/Web/HarmonyOS 等保留各分支和历史成果。",
+      "其他平台未复验，不继承 Windows 结果，也不是本轮 Windows 收尾的新增前置要求。",
+      "E16 E17"
+    ],
+    [
+      "Release",
+      "源码同步与发行",
+      "paused",
+      "278 文件开发快照已推送，当前开发分支远端与本地一致；工作区干净。",
+      "SDK26 / G04 / SDK_FREEZE、source_accepted、release_eligible 均未达到发布条件。",
+      "E16 E17"
+    ]
+  ],
+  "editor": [
+    [
+      "无标题草稿 / 原始字段 / 选区与来源",
+      "限定通过",
+      "正式 owner 保存草稿，不自动制造业务提交；来源、附件与原始字段保持。",
+      "组合003 + 人工004",
+      "E06 E07"
+    ],
+    [
+      "跨进程继续编辑",
+      "限定通过",
+      "使用新的编辑/捕获授权恢复；保留旧来源与附件，验证后续修改和重开。",
+      "组合003",
+      "E06"
+    ],
+    [
+      "S1 提交 / S2 新输入交接",
+      "限定通过",
+      "原业务提交与后继草稿分开，恢复不重复业务提交。",
+      "组合003",
+      "E06"
+    ],
+    [
+      "五类成功写入后的丢回执",
+      "限定通过",
+      "business / Prepare / Complete / child-update / parent-retirement，核对原操作。",
+      "组合003；早期独立5客户端",
+      "E06"
+    ],
+    [
+      "真实退休失败 / 双活重启",
+      "限定通过",
+      "精确父记录事务失败后保留父子；后续原退休操作恢复，新进程核验。",
+      "组合003；独立3客户端",
+      "E06"
+    ],
+    [
+      "真实磁盘耗尽",
+      "限定通过",
+      "Windows ERROR_DISK_FULL 112；Unknown 不当作回滚；保留 S2 与更新 S3。",
+      "组合003；专用容量卷",
+      "E06"
+    ],
+    [
+      "附件重选 / 原导入清理",
+      "限定通过",
+      "沿原来源/pins 核对，清理确认与晚到结果保持身份边界。",
+      "组合003",
+      "E06"
+    ],
+    [
+      "切库 / 语言和字体上下文",
+      "限定通过",
+      "旧工作区待决状态不污染新库；已有上下文切换样例通过。",
+      "组合003",
+      "E06"
+    ],
+    [
+      "主/辅助归档与旧 v1 维护",
+      "限定通过",
+      "实际 4096 主记录、4096 辅助记录、64 MiB 预算；重复维护不重复释放额度。",
+      "组合003",
+      "E06"
+    ],
+    [
+      "16 活动 / 256 未归档身份",
+      "限定通过",
+      "到达原生产限额；显式维护后恢复准入，原记录及拒绝结果可核对。",
+      "组合003及容量记录",
+      "E06"
+    ],
+    [
+      "真实粘贴 / 中文 IME / 自然自动保存",
+      "限定通过",
+      "人工004：最终 generation21，真实 composing；新进程精确恢复，无业务提交。",
+      "f3d23c4b…",
+      "E07"
+    ],
+    [
+      "Num Lock 关闭时 Ctrl+小键盘 Home",
+      "限定通过",
+      "人工005：光标回到全文开头，选中首空格；generation3 与新进程恢复一致。预填文字。",
+      "b8cc7d0c…",
+      "E08"
+    ],
+    [
+      "像素 / 设备身份 / 未覆盖故障组合",
+      "仍开放",
+      "不能把成功的数据/选区观察等同渲染像素或所有设备验收；未定义故障空间不宣称覆盖完毕。",
+      "最终候选待完整验证",
+      "E06 E07 E08"
+    ],
+    [
+      "最终 P3 整体门槛",
+      "仍开放",
+      "组合003、人工004/005、后续原生修复有不同源码绑定，尚未形成同一最终候选的完整通过。",
+      "full_P3_accepted=false",
+      "E16"
+    ]
+  ],
+  "capabilities": [
+    [
+      "F01",
+      "卡片读 / 创建 / 编辑 / 提交核对",
+      "bounded",
+      "有界 Runtime 命令、修订和原操作关联；工作台真实写入已用于当前编辑器验证。",
+      "完整产品授权、全部规模和生命周期仍按各自门槛验收。"
+    ],
+    [
+      "F02",
+      "有界结构化 / JSON 语义转换",
+      "bounded",
+      "Transform 可承载已授权原字节，单次输入/输出 64 KiB。",
+      "外部 JSON 内容转换不改变内部 IPC 必须使用 Cap’n Proto 的要求。"
+    ],
+    [
+      "F03",
+      "SSE 逐事件与工具参数增量",
+      "partial",
+      "独立 managed SSE / 三语言类型化 payload 有实验性限定证据。",
+      "生产批准入口、认证、流恢复和完整终态未整体完成。"
+    ],
+    [
+      "F04",
+      "WebSocket 消息 / 子协议 / 关闭",
+      "partial",
+      "独立 managed WS 和三语言消息扩展已有；旧 Core connect 仍 Unsupported。",
+      "公开产品接线、完整网络/账号/故障资格未闭合。"
+    ],
+    [
+      "F05",
+      "任务 / 文件引用取消与到期",
+      "bounded",
+      "原 host 持有有界任务取消、引用 Read/Finish/Cancel。",
+      "不是任意网络请求或所有 OS 任务的通用取消 API。"
+    ],
+    [
+      "F06",
+      "长流 credit / 暂停 / deadline / join",
+      "partial",
+      "实验 channel 有 Receive/Send/credit/ACK 与原 Control。",
+      "通用异步 resume、生产网络绑定和各终态证据仍不足。"
+    ],
+    [
+      "F07",
+      "内容变化订阅 / cursor / ACK",
+      "partial",
+      "有限固定 card 集合 changes metadata 与三语言 guest 已有。",
+      "长期 watch、gap/retention 与跨进程 cursor 恢复仍开放。"
+    ],
+    [
+      "F08",
+      "profile / 路由发现",
+      "bounded",
+      "可信 host 的只读 discovery、静态 preflight、独立诊断已提供。",
+      "发现信息不授予权限，不替代生产功能或 SDK 冻结。"
+    ],
+    [
+      "F09",
+      "结构化 bytes 输入输出",
+      "bounded",
+      "typeId + Data 的有界 Transform / dependency；保留原字节。",
+      "不是无限 payload、通用流或零拷贝承诺。"
+    ],
+    [
+      "F10",
+      "跨插件大对象 / 公共零拷贝 lease",
+      "open",
+      "内部 SharedObject/映射结构存在。",
+      "公开 guest 大对象/映射 lease API 尚不能作稳定能力承诺。"
+    ],
+    [
+      "F11",
+      "选择目标后的分块 Create/Delete",
+      "partial",
+      "独立 mutation 与预算扩展已实现，阶段和执行分离。",
+      "完整生产选择来源、恢复/授权/平台资格仍需分别证明。"
+    ],
+    [
+      "F12",
+      "批准 slot 的纯转换 / 有界依赖图",
+      "bounded",
+      "同步纯转换与有界多层图已有实际兼容/执行证据。",
+      "不等同通用异步组合或长时双向服务。"
+    ],
+    [
+      "F13",
+      "跨插件长时双向服务总线",
+      "open",
+      "现有 dependency 主要是同步纯转换；入站网络 service 另有合同。",
+      "公共发现/依赖启动/长时服务生命周期尚未完整提供。"
+    ],
+    [
+      "F14",
+      "有界 HTTP / 认证服务 / 有限运行",
+      "bounded",
+      "冻结原件回环 HTTP/service、真实 TLS 和 DPAPI 已分别验证。",
+      "有限服务（≤1h）不是无限 daemon；公网产品运维未验收。"
+    ],
+    [
+      "F15",
+      "完整 Cloud 同步插件",
+      "open",
+      "内容 CAS、回执、HTTP 和有限变化 metadata 已提供基础。",
+      "账号、长期游标、附件上传、冲突/批量/停用全链尚未完成。"
+    ],
+    [
+      "F16",
+      "纯处理后提交卡片",
+      "bounded",
+      "Transform + 内容命令及捕获/查询证据链已有。",
+      "授权来源、生产 UI 与复杂业务场景仍有独立门槛。"
+    ],
+    [
+      "F17",
+      "基础声明式表单 / 状态 / 业务动作",
+      "bounded",
+      "六类 UI 节点、受限文档和快照；冻结基础 UI 原件复验通过。",
+      "完整第三方安装/审批/动作/撤权仍需产品级资格。"
+    ],
+    [
+      "F18",
+      "富 Markdown / 表格 / 绘制 / 媒体窗口",
+      "open",
+      "基础 UI 不等于完整富 UI；没有公开 Flutter Widget/原生窗口句柄能力。",
+      "富控件、fallback、资源租约与平台窗口协议未完整交付。"
+    ],
+    [
+      "F19",
+      "安全执行 / PTY / 原生进程回收",
+      "partial",
+      "后续独立 Agent/session-exec 路径已推进，case041 正常受限执行通过。",
+      "旧 Core ABI 不是通用 exec；PTY/stdin/resize/signal 扩展及全 P2 未完成。"
+    ],
+    [
+      "F20",
+      "多轮会话 / 模型与 auth / writer",
+      "partial",
+      "Agent/session wrapper、catalog 和原 owner 接线已有；共享 SDK17 轮已验。",
+      "完整 Codex 多轮模型/认证/事件/存储产品链尚未资格通过。"
+    ],
+    [
+      "F21",
+      "OAuth / 多账号 / 刷新 / 签名",
+      "open",
+      "Windows DPAPI 的已批准单端点凭据注入已实测。",
+      "账号选择、PKCE、刷新/轮换/撤权、cookie/signer 和多账号 SDK 未完成。"
+    ],
+    [
+      "F22",
+      "目录 / blob / 上传 / watch / rename",
+      "partial",
+      "新版独立目录请求已通过三语言受保护 Workbench 实测，更新了旧“仅 check”状态。",
+      "picker/根以上来源、blob耐久后端、通用上传/watch/rename/条件 Replace 仍开放。"
+    ],
+    [
+      "F23",
+      "历史核对 / Unknown / 资源恢复",
+      "bounded",
+      "单操作、HTTP/service、编辑器恢复各有独立合同和实际故障验证。",
+      "不承诺任意外部效果恰好一次；Unknown 不自动重发。"
+    ],
+    [
+      "F24",
+      "长期后台 / 切库 / 被杀后的归还",
+      "partial",
+      "有限租约、原 worker/owner 回收结构存在，正常路径有实际证据。",
+      "无限后台、移动后台政策和完整被杀/重开矩阵未完成。"
+    ],
+    [
+      "F25",
+      "新能力与旧三语言包共存",
+      "bounded",
+      "固定 import/版本摘要/feature；原包执行和冻结输入保持性复验已通过。",
+      "静态兼容/候选清单不等于所有新能力冻结或任意动态协商。"
+    ],
+    [
+      "F26",
+      "任意原生 ABI / 动态库稳定承诺",
+      "open",
+      "本地可信 adapter 的回调/指针受原生命周期限制。",
+      "当前目标是受限 Wasm；不承诺 Rust ABI/STL/原生插件隔离与分发稳定性。"
+    ]
+  ],
+  "gates": [
+    [
+      "G01",
+      "生产 channel / 批准 UI",
+      "open",
+      "底层原 owner、队列及批准结构已有。",
+      "最终 catalog → owner → Flutter 批准与撤权/关闭故障矩阵。"
+    ],
+    [
+      "G02",
+      "网络流与三语言分发",
+      "partial",
+      "SSE/WS 扩展、原件真实 HTTP/TLS 已分项验证。",
+      "真正第三方安装/审批、生产流入口和完整网络恢复。"
+    ],
+    [
+      "G03",
+      "HTTP / 账户 / 认证",
+      "partial",
+      "实际 TLS 回环、Windows DPAPI 重开与正负证书场景通过。",
+      "OAuth/多账号、流请求正文、认证租约、cookie/signer/目的地策略。"
+    ],
+    [
+      "G04",
+      "目录 / 附件完整资格",
+      "partial",
+      "原受保护 Workbench 上三个语言 guest 实测通过。",
+      "原生 picker/祖先来源、blob durable/history、上传/watch/rename/Replace。"
+    ],
+    [
+      "G05",
+      "异步依赖组合",
+      "open",
+      "同步有限依赖与原限制保留。",
+      "根 deadline、取消/双方撤权、原子预算、队列/重入和真正 join。"
+    ],
+    [
+      "G06",
+      "长期变化订阅 / Cloud",
+      "open",
+      "有限 changes source、三语言 metadata 与 ACK 已有。",
+      "watch/retention/gap/cursor/跨进程恢复及当前授权。"
+    ],
+    [
+      "G07",
+      "历史与故障恢复",
+      "partial",
+      "编辑器多类真实故障、HTTP/service Unknown 重开不重发已有。",
+      "各扩展跨进程故障窗口、原身份推进和资源释放完整矩阵。"
+    ],
+    [
+      "G08",
+      "UI / 第三方产品",
+      "open",
+      "基础声明式 UI 和正式编辑器分别有证据。",
+      "独立开发者安装到关闭全链；富 UI/fallback/租约逐项验收。"
+    ],
+    [
+      "G09",
+      "平台矩阵",
+      "deferred",
+      "本轮用户限定 Windows x64。",
+      "其他 OS×架构×profile 延期；既不标通过，也不自动扩大本轮范围。"
+    ],
+    [
+      "G10",
+      "冻结 / 独立分发",
+      "open",
+      "原件/manifest/来源摘要、开发快照和兼容复验已保存。",
+      "最终同一候选的目标验收、完整 SDK 合同、第三方可用性与发行门禁。"
+    ]
+  ],
+  "blockers": [
+    [
+      "B1",
+      "受限执行无法贯通",
+      "已取得限定正常通过",
+      "case041 的真实业务与正常收尾通过；旧 case014 的失败不再等于最新正常路径仍失败。",
+      "E01"
+    ],
+    [
+      "B2",
+      "干净拒绝无法贯穿全部资源层",
+      "仍未闭合",
+      "单次 LogonUser/source-policy 拒绝通过；SDK17 轮通过；实际共享原生17轮 case042 为 Unknown。",
+      "E02 E04"
+    ],
+    [
+      "B3",
+      "重启后只能只读查看",
+      "已补可编辑恢复并实测",
+      "新捕获授权、后继与附件来源链已经用于正式客户端重启验证。",
+      "E06"
+    ],
+    [
+      "B4",
+      "提交/退休故障恢复不完整",
+      "多个原故障已限定验证",
+      "成功效果后丢回执、真实退休失败及双活重启已验；不能扩写为所有 ACK/close/崩溃组合完成。",
+      "E06"
+    ],
+    [
+      "B5",
+      "活动槽 / 历史身份长期占满",
+      "已补维护及原限额实测",
+      "16/256 准入、4096 主/辅助与64MiB、旧v1维护已验证；不代表无限历史或所有数据库页均有界。",
+      "E06"
+    ],
+    [
+      "B6",
+      "SDK冻结 / 最终候选 / 发行",
+      "仍开放",
+      "局部成功具有不同源码绑定；SDK26/G04/FREEZE 及 source/release 仍未接受。",
+      "E16 E17"
+    ]
+  ],
+  "risks": [
+    [
+      "01",
+      "case042 没有完整关闭证明",
+      "Unknown 已保存；只确认原策略 owner 撤销其新增权限。policy_clean 不等于 case_clean，也不代表已签发令牌撤销。",
+      "先只读检查冻结源码和已有公开材料；新完整实测须使用新独立 case/干净环境，不复用已封存 owner。"
+    ],
+    [
+      "02",
+      "完整 P2 连续拒绝门槛未过",
+      "SDK 层 17 guest、125 回归和一次正常47步均不能替代17次真实跨层拒绝。",
+      "同一个原 parent/Workbench/SDK registry，超过16次确定干净拒绝，每次 join/ACK/retirement，最终共同资源关闭。"
+    ],
+    [
+      "03",
+      "不同快照不能拼成最终 P3 通过",
+      "组合003、人工004、键盘005和后续原生改动有独立摘要。",
+      "冻结最终候选，覆盖剩余故障、实际输入/像素及编辑器/库切换关闭边界，核对全部原记录。"
+    ],
+    [
+      "04",
+      "SDK 尚有实施与产品资格缺口",
+      "不仅是多跑一遍测试：账号/异步/长期watch/富UI等仍有能力或完整接线缺口。",
+      "按命名 Windows profile 逐项关闭 G01–G10 相关合同、原包兼容、第三方安装和生命周期。"
+    ],
+    [
+      "05",
+      "宿主事故缺少事前基线",
+      "历史 legacy 测试误触宿主配置；事后备份保留，不能证明全部副作用或恢复到事前。",
+      "保留原事故记录和事后备份；危险旧测试默认忽略/需要显式一次性 VM 开关。没有宣称回滚成功。"
+    ],
+    [
+      "06",
+      "环境与构建容量限制",
+      "4/4 VM；三个验收 VM 保存 Unknown，原 VM 仍运行且其历史现场需保留。D盘本次读取仅余约6.32GiB。",
+      "维持四台上限；仅回收已确认无用资源。继续前规划新干净环境与 D 盘容量，不能为腾空间删除 Unknown 证据。"
+    ]
+  ],
+  "evidence": [
+    {
+      "id": "E01",
+      "title": "原 47 步 / 九组验收",
+      "repo": "docs/qualification/evidence/pause-20261024/case041-nine-review.json",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/evidence/pause-20261024/case041-nine-review.json",
+      "local": "C:\\ms1020\\docs\\qualification\\evidence\\pause-20261024\\case041-nine-review.json",
+      "bytes": 25756,
+      "sha256": "ad8be08b0c5afc106d79924acba701736ef20f4cdb6c36ecfb0ebff1c79ccfa8",
+      "status": "PASS_SCOPED_ORIGINAL47_AND_NINE_REQUIRED_GROUPS",
+      "source": "77f509c00f7963e4c576c82c0e69c0d78b22df2d27dc210c4c6768f9befde082",
+      "fresh_read": true
+    },
+    {
+      "id": "E02",
+      "title": "共享原 owner / 17 轮 SDK guest",
+      "repo": "docs/qualification/evidence/pause-20261024/shared-sdk-owner-009.json",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/evidence/pause-20261024/shared-sdk-owner-009.json",
+      "local": "C:\\ms1020\\docs\\qualification\\evidence\\pause-20261024\\shared-sdk-owner-009.json",
+      "bytes": 2336,
+      "sha256": "708becaf4dd239449d44d8633411103bde52a0a39198d94c6493c8ac354ecb68",
+      "status": "PASS_SCOPED_SEVENTEEN_FROZEN_GUESTS_SHARED_PROTECTED_OWNER",
+      "source": "77f509c00f7963e4c576c82c0e69c0d78b22df2d27dc210c4c6768f9befde082",
+      "fresh_read": true
+    },
+    {
+      "id": "E03",
+      "title": "125 项原生回归",
+      "repo": "docs/qualification/evidence/pause-20261024/native-regression-010.json",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/evidence/pause-20261024/native-regression-010.json",
+      "local": "C:\\ms1020\\docs\\qualification\\evidence\\pause-20261024\\native-regression-010.json",
+      "bytes": 14670,
+      "sha256": "9d877b877a2953e6145bbf995776fd649203b6fe3f0f5118addab61a297475df",
+      "status": "PASS_SCOPED_PARENT_SESSION_SOURCE_POLICY_LOGON_AND_NATIVE_PROTOCOL_REGRESSION",
+      "source": "77f509c00f7963e4c576c82c0e69c0d78b22df2d27dc210c4c6768f9befde082",
+      "fresh_read": true
+    },
+    {
+      "id": "E04",
+      "title": "case042 原 Unknown 记录",
+      "repo": "docs/qualification/evidence/pause-20261024/case042-retained.json",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/evidence/pause-20261024/case042-retained.json",
+      "local": "C:\\ms1020\\docs\\qualification\\evidence\\pause-20261024\\case042-retained.json",
+      "bytes": 3985,
+      "sha256": "dc1fad598403b579c5b68871be43ad23cb439fe10fd8335181212f23b8439cab",
+      "status": "DOCUMENT_SCOPE",
+      "source": null,
+      "fresh_read": true
+    },
+    {
+      "id": "E05",
+      "title": "暂停与 VM 保存",
+      "repo": "docs/qualification/evidence/pause-20261024/case042-vm-saved.json",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/evidence/pause-20261024/case042-vm-saved.json",
+      "local": "C:\\ms1020\\docs\\qualification\\evidence\\pause-20261024\\case042-vm-saved.json",
+      "bytes": 960,
+      "sha256": "c81a2ed9c819fbd63e2b3c0752502a77ab36657c85382401a145506cc522138b",
+      "status": "PAUSED_UNKNOWN_VM_MEMORY_AND_DISK_RETAINED_NO_REPLAY",
+      "source": null,
+      "fresh_read": true
+    },
+    {
+      "id": "E06",
+      "title": "P3 组合验证",
+      "repo": "docs/qualification/P3_COMBINED_WINDOWS_20261024.md",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/P3_COMBINED_WINDOWS_20261024.md",
+      "local": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-003\\result.json",
+      "bytes": 26186,
+      "sha256": "6d0bd63d3c01c3f82b087f707803e6cc0e2aa698290631d1d2ad6873304b2ca0",
+      "status": "PASS_SCOPED_COMBINED_SOURCE_WINDOWS_EDITOR_MATRIX",
+      "source": "44aa16ab4a4dcbd45ea6051bc932bd17f782414196d9bd2ae3628d95ee846409",
+      "fresh_read": true
+    },
+    {
+      "id": "E07",
+      "title": "人工文字与 IME 004",
+      "repo": "docs/qualification/MANUAL_INPUT_WINDOWS_20261024.md",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/MANUAL_INPUT_WINDOWS_20261024.md",
+      "local": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-manual-input-windows-004\\result.json",
+      "bytes": 5865,
+      "sha256": "308ddf6234f438246161309f3d3aa243ab6ff164170ce58b8d879524d5355e06",
+      "status": "PASS_SCOPED_WINDOWS_MANUAL_INPUT_DURABLE_IME_AUTOSAVE_AND_RESTART",
+      "source": "f3d23c4b20777d6d7697cbce5ee6f5c8182e4a440c29d7eecd02b7bbd249037a",
+      "fresh_read": true
+    },
+    {
+      "id": "E08",
+      "title": "原生小键盘 005",
+      "repo": "docs/qualification/MANUAL_INPUT_WINDOWS_20261024.md",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/MANUAL_INPUT_WINDOWS_20261024.md",
+      "local": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-manual-keypad-windows-005\\result.json",
+      "bytes": 4324,
+      "sha256": "173bfb5e44de65b70c3db63bbef8ed59436abd6f5be468d32a4668054d688d0c",
+      "status": "PASS_SCOPED_WINDOWS_NATIVE_KEYPAD_HOME_AUTOSAVE_AND_RESTART",
+      "source": "b8cc7d0c65d567599c80a1dd2a513d29849e7ce0ba48038654108b502b8f5f7f",
+      "fresh_read": true
+    },
+    {
+      "id": "E09",
+      "title": "冻结 SDK 原件兼容",
+      "repo": "docs/qualification/SDK_FROZEN_WINDOWS_20261023.md",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/SDK_FROZEN_WINDOWS_20261023.md",
+      "local": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-frozen-windows-001\\result.json",
+      "bytes": 2539,
+      "sha256": "cab427b168a8fce5796945abd4727eb916c665172db21310cf7efa9b6648ac57",
+      "status": "PASS_SELECTED_FROZEN_SDK_WINDOWS_REGRESSION",
+      "source": "b370a18afd1f6c6b1ba995209399d26ff432b9cff663b2b49a3c22a37e604566",
+      "fresh_read": true
+    },
+    {
+      "id": "E10",
+      "title": "原件 HTTP / service 实测",
+      "repo": "docs/qualification/SDK_FROZEN_TRANSPORT_WINDOWS.md",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/SDK_FROZEN_TRANSPORT_WINDOWS.md",
+      "local": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-frozen-transport-windows-001\\result.json",
+      "bytes": 6867,
+      "sha256": "7022c00f47e7c9885d0accfd52660c648fce957f94f0626f776c2d10eeb66f70",
+      "status": "PASS_SCOPED_FROZEN_TRANSPORT_REAL_WINDOWS_LOOPBACK",
+      "source": "051fe4cd898c7a5b91bca6de3d3f96099789da714869c35542c05ef1b3f3550e",
+      "fresh_read": true
+    },
+    {
+      "id": "E11",
+      "title": "原件 TLS / Windows DPAPI",
+      "repo": "docs/qualification/SDK_FROZEN_TLS_DPAPI_WINDOWS.md",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/SDK_FROZEN_TLS_DPAPI_WINDOWS.md",
+      "local": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-frozen-tls-dpapi-windows-003\\result.json",
+      "bytes": 3863,
+      "sha256": "5d293b71bdc5020f08691013e6d10800299312b2dd89c756a4091b8c0ade8ab6",
+      "status": "PASS_SCOPED_FROZEN_PACKAGES_WINDOWS_TLS_DPAPI",
+      "source": "67ff5ebeefd97e5e74e64a7c5e9850c5afa4acf4fe24cf4eeeb0e67169df20c3",
+      "fresh_read": true
+    },
+    {
+      "id": "E12",
+      "title": "受保护 Workbench 目录 guest",
+      "repo": "docs/qualification/SDK_PROTECTED_DIRECTORY_WINDOWS.md",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/SDK_PROTECTED_DIRECTORY_WINDOWS.md",
+      "local": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-protected-windows-002\\result.json",
+      "bytes": 13696,
+      "sha256": "7fee0c33a893d84e0ffb1b70b1dbaf8f564ff4230e7a8ab9e9d199e937f218b6",
+      "status": "PASS_SCOPED_WINDOWS_PROTECTED_WORKBENCH_DIRECTORY_THREE_LANGUAGE",
+      "source": "44aa16ab4a4dcbd45ea6051bc932bd17f782414196d9bd2ae3628d95ee846409",
+      "fresh_read": true
+    },
+    {
+      "id": "E13",
+      "title": "26 项 SDK 能力定义",
+      "repo": "docs/PLUGIN_SDK_CAPABILITY_MATRIX.md",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/PLUGIN_SDK_CAPABILITY_MATRIX.md",
+      "local": "C:\\ms1020\\docs\\PLUGIN_SDK_CAPABILITY_MATRIX.md",
+      "bytes": 35967,
+      "sha256": "4ad56f56c162fd914299cedc1ab2b63ed2a653efe9280f7d3055d988e7037387",
+      "status": "DOCUMENT_SCOPE",
+      "source": null,
+      "fresh_read": true
+    },
+    {
+      "id": "E14",
+      "title": "G01–G10 门槛定义（历史文档）",
+      "repo": "reports/reconstruction-2026-10-05/sdk-next-gates.md",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/reports/reconstruction-2026-10-05/sdk-next-gates.md",
+      "local": "C:\\ms1020\\reports\\reconstruction-2026-10-05\\sdk-next-gates.md",
+      "bytes": 22057,
+      "sha256": "8011441bd08ae87e0683790ee89ec311ff454cc2518fe34a34b5e4fc0efc8152",
+      "status": "DOCUMENT_SCOPE",
+      "source": null,
+      "fresh_read": true
+    },
+    {
+      "id": "E15",
+      "title": "M0–M7 项目路线定义（历史文档）",
+      "repo": "docs/FUTURE_ROADMAP.md",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/FUTURE_ROADMAP.md",
+      "local": "C:\\ms1020\\docs\\FUTURE_ROADMAP.md",
+      "bytes": 98876,
+      "sha256": "c4d7611fc941afdd8c106e0d4f3280fd6055e59b9bb2cc7298a12b0ed33b5c1f",
+      "status": "DOCUMENT_SCOPE",
+      "source": null,
+      "fresh_read": true
+    },
+    {
+      "id": "E16",
+      "title": "当前机器可读资格",
+      "repo": "docs/qualification/current.json",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/current.json",
+      "local": "C:\\ms1020\\docs\\qualification\\current.json",
+      "bytes": 170738,
+      "sha256": "9698de5ae410f6bfee9149be960f1b870caf353c105b752eacee4d8d8608c893",
+      "status": "DOCUMENT_SCOPE",
+      "source": null,
+      "fresh_read": true
+    },
+    {
+      "id": "E17",
+      "title": "暂停交接与剩余工作",
+      "repo": "docs/qualification/PAUSED_WINDOWS_20261024.md",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/PAUSED_WINDOWS_20261024.md",
+      "local": "C:\\ms1020\\docs\\qualification\\PAUSED_WINDOWS_20261024.md",
+      "bytes": 7048,
+      "sha256": "bec9dd97d678eb125e23f233812f878065bb9928cf6c39b6480c1da2412397aa",
+      "status": "DOCUMENT_SCOPE",
+      "source": null,
+      "fresh_read": true
+    },
+    {
+      "id": "E18",
+      "title": "缓存清理原回执",
+      "repo": "docs/qualification/evidence/pause-20261024/cache-cleanup012.json",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/evidence/pause-20261024/cache-cleanup012.json",
+      "local": "C:\\ms1020\\docs\\qualification\\evidence\\pause-20261024\\cache-cleanup012.json",
+      "bytes": 382,
+      "sha256": "76f347bf09042edf0fce21a02efa6c05f3b6a724cc82b0994545a5fe96960536",
+      "status": "VERIFIED_OLD_UNUSED_CARGO_LEAVES_REMOVED",
+      "source": null,
+      "fresh_read": true
+    },
+    {
+      "id": "E19",
+      "title": "宿主事故 / 备份边界",
+      "repo": "docs/qualification/LOCAL_CONTINUATION.md",
+      "url": "https://github.com/StarrySky7D4/morrow/blob/1eaf699ae200b54250232a4971875182f2d5cb80/docs/qualification/LOCAL_CONTINUATION.md",
+      "local": "C:\\ms1020\\docs\\qualification\\LOCAL_CONTINUATION.md",
+      "bytes": 80780,
+      "sha256": "4b28dea98a4f2024a81e39ecce82a50102dbcb9b740905b7fb8c4b5c082db8d4",
+      "status": "DOCUMENT_SCOPE",
+      "source": null,
+      "fresh_read": true
+    }
+  ],
+  "worktrees": [
+    [
+      "主目录 / HarmonyOS线",
+      "codex/ArkTsUI",
+      "4f631104",
+      0
+    ],
+    [
+      "历史 C28 短路径",
+      "detached C:/c28p1592",
+      "69d1c4e6",
+      27
+    ],
+    [
+      "历史 C28 发行复核",
+      "detached C:/c28p1814",
+      "abae8bfd",
+      0
+    ],
+    [
+      "本次 Windows 实现",
+      "codex/local-continue-20261020",
+      "1eaf699a",
+      0
+    ],
+    [
+      "历史 c28pub1094",
+      "detached",
+      "1a31bbc2",
+      868
+    ],
+    [
+      "历史 c28pub344",
+      "detached",
+      "1a31bbc2",
+      786
+    ],
+    [
+      "Kilo morrow",
+      "morrow",
+      "0e93e49f",
+      0
+    ],
+    [
+      "Kilo morrow-v2",
+      "morrow-v2",
+      "0e93e49f",
+      0
+    ],
+    [
+      "Kilo morrow-v3",
+      "morrow-v3",
+      "0e93e49f",
+      0
+    ],
+    [
+      "Kilo morrow-v4",
+      "morrow-v4",
+      "0e93e49f",
+      0
+    ],
+    [
+      "Drive review",
+      "codex/drive-review-807b9cd",
+      "b9225f64",
+      0
+    ],
+    [
+      "Track A",
+      "codex/integrate-track-a-current",
+      "457e0235",
+      0
+    ],
+    [
+      "IO safety",
+      "codex/m03-stream-revocation-backpressure",
+      "925fb8ca",
+      43
+    ],
+    [
+      "Windows cloud convergence",
+      "codex/windows-sdk-convergence-20261005",
+      "e83cdf1d",
+      70
+    ],
+    [
+      "Windows SDK reconstruction",
+      "codex/windows-sdk-qualification-20261003",
+      "20669f67",
+      99
+    ]
+  ],
+  "registered_vms": 4,
+  "free_bytes_snapshot": {
+    "C": 646849990656,
+    "D": 6789693440
+  },
+  "method": "Fresh Git/worktree/VM/storage reads, existing public result receipts and versioned source documents. No tests, builds, guest owner contacts or acceptance resumption. No numeric whole-project completion rate.",
+  "publication": {
+    "scope": "REPORT_ARCHIVE_ONLY_NO_PRODUCT_ACCEPTANCE_RESUMPTION",
+    "branch": "codex/local-continue-20261020",
+    "product_snapshot_commit": "1eaf699ae200b54250232a4971875182f2d5cb80",
+    "report_snapshot_time": "2026-10-24T07:16:11.584746+08:00",
+    "requested_by_user": true,
+    "archive_directory": "reports/project-progress-2026-10-24",
+    "note": "Archive commit is later than the reported product snapshot; the report does not claim new runtime qualification."
+  }
+}

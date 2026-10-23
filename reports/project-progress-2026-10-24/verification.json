@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "scope": "REPORT_ARTIFACT_ONLY",
+  "original_report_snapshot": "2026-10-24T07:16:11.584746+08:00",
+  "original_html_pin": {
+    "bytes": 109753,
+    "sha256": "d697e5f435cba7e4a96a336e369a56a02f742f9ab5d51160f0c6da0ac712a3ce"
+  },
+  "original_ui_qa": {
+    "status": "PASS_REPORT_UI_AND_DATA_CHECKS",
+    "sdk_rows": 26,
+    "gates": 10,
+    "evidence_entries": 19,
+    "broken_internal_links": [],
+    "desktop_overflow": false,
+    "mobile_overflow": false,
+    "search_filter_reset": true,
+    "navigation_active_section": true,
+    "data_download": true,
+    "page_errors": [],
+    "print_pdf_generated": true,
+    "artifact_only_no_product_tests": true
+  },
+  "archive_checks": {
+    "css_identical": true,
+    "interactive_javascript_identical": true,
+    "embedded_json_matches_sidecar": true,
+    "product_snapshot_unchanged": true,
+    "report_only_publication": true
+  },
+  "product_tests_run": 0,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

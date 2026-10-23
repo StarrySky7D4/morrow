@@ -1,3 +1,14 @@
+<!-- MORROW-PROGRESS-20261024-BEGIN -->
+## 完整项目进度汇报（2026-10-24）
+
+**[HTML 完整展示](reports/project-progress-2026-10-24/index.html) · [阅读说明与证据范围](reports/project-progress-2026-10-24/README.md) · [结构化数据](reports/project-progress-2026-10-24/report-data.json)**
+
+报告固定于产品快照 `1eaf699a`，覆盖12个模块、26项SDK能力、10道门槛及19个证据入口。HTML下载后可离线打开，支持搜索、筛选和打印。
+Windows case041原47步/九组已限定通过；P3组合与人工输入、三语言SDK均有新增实测。
+完整P2/P3与SDK26/G04/SDK_FREEZE仍开放；case042保留Unknown，项目继续暂停，`source_accepted=false`、`release_eligible=false`。
+下方10月21日及更早记录保留历史范围；其中受限启动、只读恢复和历史维护等旧结论，应结合新报告中的后续证据阅读。
+<!-- MORROW-PROGRESS-20261024-END -->
+
 <!-- MORROW-BLOCKERS-CALLCHAINS-20261021-BEGIN -->
 ## 当前开发结论与调用链（2026-10-21）
 

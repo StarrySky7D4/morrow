@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "scope": "PUBLIC_PROGRESS_REPORT_ARCHIVE",
+  "product_snapshot_commit": "1eaf699ae200b54250232a4971875182f2d5cb80",
+  "branch": "codex/local-continue-20261020",
+  "report_snapshot_time": "2026-10-24T07:16:11.584746+08:00",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "index.html",
+      "bytes": 110321,
+      "sha256": "4046b6980f2ac29d044f36a4413eb26fe2c1041f636a6bdb2180ad2ed9b75cc2"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2049,
+      "sha256": "4653ded18559332859286274a54205d99a46253937df0f3dd0fbc6897f35cec7"
+    },
+    {
+      "path": "report-data.json",
+      "bytes": 34799,
+      "sha256": "af21f793d69c1eff1892736079ea207dab0a313a5e61d02d28d7d70391f2bc98"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 1002,
+      "sha256": "16fb666d7085f3fe089197575fcb87504cc46a1b07518fb4aa2a98310af4d652"
+    }
+  ],
+  "original_inputs": [
+    {
+      "path": "index.html",
+      "bytes": 109753,
+      "sha256": "d697e5f435cba7e4a96a336e369a56a02f742f9ab5d51160f0c6da0ac712a3ce"
+    },
+    {
+      "path": "report-data.json",
+      "bytes": 34298,
+      "sha256": "1dddee9aed4298549fe9a3ea2bde0bcd20fd6c9e9b1941e62f28889aba648ebb"
+    }
+  ],
+  "raw_vm_images_credentials_and_caches_included": false
+}
