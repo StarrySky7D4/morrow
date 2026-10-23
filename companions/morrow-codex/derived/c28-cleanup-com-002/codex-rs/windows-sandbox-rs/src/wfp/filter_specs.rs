@@ -1,5 +1,7 @@
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FWPM_LAYER_ALE_AUTH_CONNECT_V4;
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FWPM_LAYER_ALE_AUTH_CONNECT_V6;
+use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4;
+use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6;
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FWPM_LAYER_ALE_RESOURCE_ASSIGNMENT_V4;
 use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::FWPM_LAYER_ALE_RESOURCE_ASSIGNMENT_V6;
 use windows_sys::Win32::Networking::WinSock::IPPROTO_ICMP;
@@ -21,6 +23,41 @@ pub(super) struct FilterSpec {
     pub(super) layer_key: GUID,
     pub(super) conditions: &'static [ConditionSpec],
 }
+
+// Owned full-offline setup must block the actual account at ALE. The COM
+// LocalUserAuthorizedList property alone does not enforce this for ordinary
+// restricted processes. Keep separate keys so legacy cleanup cannot adopt or
+// retire these filters, and do not install them for proxy/local-binding policy.
+pub(super) const FULL_OFFLINE_FILTER_SPECS: &[FilterSpec] = &[
+    FilterSpec {
+        key: GUID::from_u128(0x95e2936a_a05e_47df_918e_a749c7ee2c62),
+        name: "codex_wfp_owned_offline_connect_v4",
+        description: "Block owned offline-account outbound IPv4",
+        layer_key: FWPM_LAYER_ALE_AUTH_CONNECT_V4,
+        conditions: &[ConditionSpec::User],
+    },
+    FilterSpec {
+        key: GUID::from_u128(0xe8933f95_b99c_40f0_91e7_ac8935bca372),
+        name: "codex_wfp_owned_offline_connect_v6",
+        description: "Block owned offline-account outbound IPv6",
+        layer_key: FWPM_LAYER_ALE_AUTH_CONNECT_V6,
+        conditions: &[ConditionSpec::User],
+    },
+    FilterSpec {
+        key: GUID::from_u128(0xb910b6f9_05cd_466e_a0ea_dbf2502dbcc7),
+        name: "codex_wfp_owned_offline_receive_v4",
+        description: "Block owned offline-account inbound IPv4",
+        layer_key: FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4,
+        conditions: &[ConditionSpec::User],
+    },
+    FilterSpec {
+        key: GUID::from_u128(0x0d990bc6_dc97_4340_a1be_6fa9f9e68bc1),
+        name: "codex_wfp_owned_offline_receive_v6",
+        description: "Block owned offline-account inbound IPv6",
+        layer_key: FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6,
+        conditions: &[ConditionSpec::User],
+    },
+];
 
 pub(super) const FILTER_SPECS: &[FilterSpec] = &[
     FilterSpec {

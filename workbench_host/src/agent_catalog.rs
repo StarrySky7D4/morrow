@@ -15,6 +15,13 @@ pub(crate) struct Slot {
     failure: Option<admin::Status>,
 }
 impl Slot {
+    #[cfg(windows)]
+    pub(crate) fn require_healthy_attempt_finish(&self) -> Result<()> {
+        if self.failure.is_some() || self.owner.is_none() {
+            return Err("original agent catalog unresolved or unopened".into());
+        }
+        Ok(())
+    }
     pub(crate) fn new(root: PathBuf) -> Self {
         Self {
             root,

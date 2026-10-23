@@ -1,0 +1,9 @@
+{
+  "status": "PASS_PURE_GUEST_ROUND_READER_NOT_RUNTIME",
+  "methods": 28,
+  "exit_code": 0,
+  "exact_function_sha256": "0b663cca84b2dcb2c611b11a23cf2b69d6bf8a9f0a1f052c8d6042a2d8d27be7",
+  "stage_guest_sha256": "0f5dd9733a5e148125ae6f8191f70e4d8c00af5bcc26895ea945366c75c5a726",
+  "VM_calls": 0,
+  "product_executions": 0
+}

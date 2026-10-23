@@ -31,6 +31,17 @@ use sha2::{Digest, Sha256};
 const REPARSE: u32 = 0x400;
 const USERS: [&str; 2] = ["CodexSandboxOffline", "CodexSandboxOnline"];
 const GROUP: &str = "CodexSandboxUsers";
+
+// Explicit business environment, bound into the original ExecParams/Intent.
+// Winsock provider loading needs SystemRoot; use the native system query rather
+// than ambient environment values. Workspace temp stays inside the sandbox.
+fn fixed_business_environment(workspace: &Path) -> Result<HashMap<String, String>> {
+    let temp = workspace.join("temp").into_os_string().into_string()
+        .map_err(|_| anyhow::anyhow!("business temp path must be Unicode"))?;
+    let system = codex_windows_sandbox::native_system_windows_directory()?;
+    Ok(HashMap::from([("TEMP".into(), temp.clone()), ("TMP".into(), temp),
+        ("SystemRoot".into(), system)]))
+}
 // Exact version of the frozen derived codex-windows-sandbox library, not this harness.
 const RESOLVER_LIBRARY_VERSION: &str = "0.0.0";
 pub const CREATE_CONFIRMATION: &str = "CREATE_ONLY_FRESH_SYNTHETIC_VM_ROOT";
@@ -125,6 +136,8 @@ pub struct ExecutionCleanupAdmissionEvidence {
     pub quota_settled: bool,
     pub close_ack_verified: bool,
     pub owner_finished: bool,
+    pub owner_attempt_finished: bool,
+    pub shared_owner_retained: bool,
     pub factory_released: bool,
 }
 
@@ -135,6 +148,43 @@ pub struct BoundExecutionCleanupAdmission {
     scope:ExecutionCleanupScope,
     completion:morrow_codex_session_exec_windows_v1::RetiredExecutionCompletion,
     owner:crate::protected_owner::FinishedOwnerReceipt,
+}
+#[derive(Clone,Debug,PartialEq,Eq,Serialize)]
+pub struct RefusalCleanupAdmissionEvidence {
+    pub runner_path:PathBuf,
+    pub runner_sha256:[u8;32],
+    pub setup_child_pid:u32,
+    pub startup_attempt:u64,
+    pub outcome:&'static str,
+    #[serde(skip_serializing_if="Option::is_none")]
+    pub win32_error:Option<u32>,
+    #[serde(skip_serializing_if="Option::is_none")]
+    pub native_start_handles_closed:Option<bool>,
+    pub native_caller_handles_closed:bool,
+    pub original_blocking_return_acknowledged:bool,
+    pub local_and_sdk_slots_retired:bool,
+    pub original_worker_joined:bool,
+    pub owner_finished:bool,
+    pub owner_attempt_finished:bool,
+    pub shared_owner_retained:bool,
+    pub factory_released:bool,
+    pub runner_was_started:bool,
+    pub normal_terminal_ack_claimed:bool,
+}
+pub struct BoundRefusalCleanupAdmission {
+    scope:ExecutionCleanupScope,
+    completion:morrow_codex_session_exec_windows_v1::RetiredExecutionRefusal,
+    owner:crate::protected_owner::FinishedOwnerReceipt,
+}
+impl BoundRefusalCleanupAdmission {
+    pub(crate) fn from_original_refusal(scope:ExecutionCleanupScope,
+        completion:morrow_codex_session_exec_windows_v1::RetiredExecutionRefusal,
+        owner:crate::protected_owner::FinishedOwnerReceipt)->Result<Self> {
+        ensure!(completion.is_for_review(&scope.review) && completion.is_for_owner(owner.binding())
+            && owner.is_for(&scope.lifecycle),
+            "foreign refusal review/owner/factory completion");
+        Ok(Self{scope,completion,owner})
+    }
 }
 impl std::fmt::Debug for BoundExecutionCleanupAdmission {
     fn fmt(&self,f:&mut std::fmt::Formatter<'_>)->std::fmt::Result{f.write_str("BoundExecutionCleanupAdmission([SEALED_CONSUME_ONLY])")}
@@ -153,7 +203,8 @@ impl BoundExecutionCleanupAdmission {
     pub(crate) fn from_original_completion(scope:ExecutionCleanupScope,
         completion:morrow_codex_session_exec_windows_v1::RetiredExecutionCompletion,
         owner:crate::protected_owner::FinishedOwnerReceipt)->Result<Self> {
-        ensure!(completion.is_for_review(&scope.review) && completion.is_for_owner(owner.binding()),
+        ensure!(completion.is_for_review(&scope.review) && completion.is_for_owner(owner.binding())
+            && owner.is_for(&scope.lifecycle),
             "foreign review/owner/factory completion; no cleanup right");
         ensure!(completion.terminal_close_ack_verified(),"actual same-attempt authenticated terminal closeACK missing");
         Ok(Self {scope,completion,owner})
@@ -192,6 +243,7 @@ pub struct LifecycleManifest {
     pub owned_setup_proof_held: bool,
     pub setup_child_pid: Option<u32>,
     pub execution_cleanup_admission: Option<ExecutionCleanupAdmissionEvidence>,
+    pub refusal_cleanup_admission:Option<RefusalCleanupAdmissionEvidence>,
     pub cleanup_guard_held: bool,
     pub normal_cleanup_report: Option<WindowsSandboxNormalCleanupReport>,
     pub inventory_script_sha256: &'static str,
@@ -221,6 +273,7 @@ pub struct GuestLifecycle {
     setup: Arc<MatchedRunnerArtifact>,
     setup_child_pid: Option<u32>,
     execution_cleanup_admission: Option<ExecutionCleanupAdmissionEvidence>,
+    refusal_cleanup_admission:Option<RefusalCleanupAdmissionEvidence>,
     shell: MatchedRunnerArtifact,
     ancestors: Vec<File>,
     root_handles: Vec<File>,
@@ -228,8 +281,10 @@ pub struct GuestLifecycle {
     owner_marker: Option<File>,
     owned: Option<Inventory>,
     owned_setup: Option<Arc<OwnedWindowsSandboxSetup>>,
-    asuser_origin:Option<Arc<codex_windows_sandbox::AsUserParentOrigin>>,
+    asuser_origin:Option<AsUserInlet>,
+    parent_attempt_retired:bool,
     asuser_retirement:Option<codex_windows_sandbox::AsUserOriginRetirement>,
+    asuser_refusal_retirement:Option<codex_windows_sandbox::AsUserOriginRefusalRetirement>,
     cleanup: Option<PreparedOwnedWindowsSandboxCleanup>,
     normal_cleanup_report: Option<WindowsSandboxNormalCleanupReport>,
     cleanup_notes: Vec<String>,
@@ -448,7 +503,52 @@ fn verify_owned_inventory_against_proof(
     Ok(())
 }
 
+/// Nominal inlet selection. A session attempt never enters legacy whole-origin
+/// close or the one-shot privilege-reduction qualification path.
+pub(crate) enum AsUserInlet {
+    Single(Arc<codex_windows_sandbox::AsUserParentOrigin>),
+    Attempt(Arc<codex_windows_sandbox::AsUserParentAttempt>),
+}
+impl AsUserInlet {
+    pub(crate) fn startup_observation(&self) -> codex_windows_sandbox::StartupObservation {
+        match self { Self::Single(value) => value.startup_observation(), Self::Attempt(value) => value.startup_observation() }
+    }
+    pub(crate) fn validate_before_setup(&self) -> std::io::Result<()> {
+        match self { Self::Single(value) => value.validate_before_setup(), Self::Attempt(value) => value.validate_before_setup() }
+    }
+    fn caller_artifact(&self) -> std::io::Result<Arc<MatchedRunnerArtifact>> {
+        match self { Self::Single(value) => value.caller_artifact(), Self::Attempt(value) => value.caller_artifact() }
+    }
+    fn validate_independent_role_pins(&self, setup: &MatchedRunnerArtifact, runner: &MatchedRunnerArtifact) -> std::io::Result<()> {
+        match self {
+            Self::Single(value) => value.validate_independent_role_pins(setup, runner),
+            Self::Attempt(value) => value.validate_independent_role_pins(setup, runner),
+        }
+    }
+}
+
+/// Issued only after this lifecycle consumed the exact original native/factory
+/// retirement and its actual setup cleanup returned. No clone or wire format.
+pub(crate) struct CompletedParentAttempt {
+    lifecycle: Arc<()>,
+    _original: Arc<codex_windows_sandbox::AsUserParentAttempt>,
+}
+impl CompletedParentAttempt {
+    pub(crate) fn is_for(&self, scope: &crate::protected_owner::OwnerAttemptScope) -> bool {
+        scope.is_for(&self.lifecycle)
+    }
+    pub(crate) fn shares_original_parent(&self, next: &GuestLifecycle) -> bool {
+        match &next.asuser_origin {
+            Some(AsUserInlet::Attempt(attempt)) => self._original.shares_original_parent(attempt),
+            _ => false,
+        }
+    }
+}
+
 impl GuestLifecycle {
+    pub(crate) fn owner_attempt_scope(&self) -> crate::protected_owner::OwnerAttemptScope {
+        crate::protected_owner::OwnerAttemptScope::for_lifecycle(self.execution_instance.clone(),self.has_parent_attempt())
+    }
     pub fn bind_reviewed_execution(&self,review:morrow_codex_session_exec_windows_v1::ReviewedNativeCompletion)->Result<ExecutionCleanupScope> {
         ensure!(self.phase==Phase::RunnerMaterialized && self.owned_setup.is_some(),"real setup/materialized phase required before execution binding");
         let runner=self.actual_runner.as_ref().context("original materialized runner missing")?;
@@ -464,9 +564,12 @@ impl GuestLifecycle {
         Self::preflight_inner(config,None)
     }
     pub fn preflight_asuser(config:ProvisioningConfig,origin:Arc<codex_windows_sandbox::AsUserParentOrigin>)->Result<Self> {
+        Self::preflight_inner(config,Some(AsUserInlet::Single(origin)))
+    }
+    pub(crate) fn preflight_with_inlet(config:ProvisioningConfig,origin:AsUserInlet)->Result<Self> {
         Self::preflight_inner(config,Some(origin))
     }
-    fn preflight_inner(config:ProvisioningConfig,asuser_origin:Option<Arc<codex_windows_sandbox::AsUserParentOrigin>>)->Result<Self> {
+    fn preflight_inner(config:ProvisioningConfig,asuser_origin:Option<AsUserInlet>)->Result<Self> {
         ensure!(!registered_core_requested(),
             "standalone dedicated-VM lifecycle cannot adopt a registered runtime request");
         validate_path(&config.synthetic_root)?;
@@ -503,28 +606,68 @@ impl GuestLifecycle {
             config, phase: Phase::PreflightOnly, source_runner, actual_runner: None,
             actual_runner_identity: None, _harness: harness, _actual_exe: actual_exe, staged_runner: None,
             staged_runner_identity: None, resolver_source_metadata, setup, setup_child_pid: None,
-            execution_cleanup_admission: None, shell,
+            execution_cleanup_admission: None,refusal_cleanup_admission:None, shell,
             ancestors, root_handles: Vec::new(), materialization_handles: Vec::new(), owner_marker: None,
-            owned: None, owned_setup: None, asuser_origin,asuser_retirement:None,cleanup: None, cleanup_notes: Vec::new(),
+            owned: None, owned_setup: None, asuser_origin,parent_attempt_retired:false,asuser_retirement:None,asuser_refusal_retirement:None,cleanup: None, cleanup_notes: Vec::new(),
             normal_cleanup_report: None })
     }
 
     pub fn phase(&self) -> Phase { self.phase }
     pub fn has_asuser_origin(&self)->bool {self.asuser_origin.is_some()}
+    pub fn qualify_missing_assign_once(&self)->Result<serde_json::Value> {
+        ensure!(self.phase==Phase::RunnerMaterialized && self.owned_setup.is_some()
+            && self.bound_execution.try_borrow().map_err(|_|anyhow::anyhow!("original review busy"))?.is_some(),
+            "qualification requires actual original setup, materializer and prebound review");
+        let AsUserInlet::Single(original)=self.asuser_origin.as_ref().context("original P->C qualification inlet required")?
+            else { bail!("single-inlet caller privilege qualification cannot mutate a shared parent session"); };
+        Ok(serde_json::to_value(original.qualify_missing_assign_once()?)?)
+    }
     pub fn asuser_materialization(&self)->Result<Arc<codex_windows_sandbox::AsUserMaterialization>> {
         ensure!(self.phase==Phase::RunnerMaterialized,"real materializer phase required");
-        Ok(codex_windows_sandbox::AsUserMaterialization::from_originals(
-            self.asuser_origin.as_ref().context("original P inlet absent")?.clone(),
-            self.owned_setup.as_ref().context("actual original owned setup absent")?.clone(),
-            self.setup.clone(),self.runner()?,self.execution_instance.clone())?)
+        let setup=self.owned_setup.as_ref().context("actual original owned setup absent")?.clone();
+        let runner=self.runner()?;
+        Ok(match self.asuser_origin.as_ref().context("original P inlet absent")? {
+            AsUserInlet::Single(origin) => codex_windows_sandbox::AsUserMaterialization::from_originals(
+                origin.clone(),setup,self.setup.clone(),runner,self.execution_instance.clone())?,
+            AsUserInlet::Attempt(attempt) => codex_windows_sandbox::AsUserMaterialization::from_parent_attempt(
+                attempt.clone(),setup,self.setup.clone(),runner,self.execution_instance.clone())?,
+        })
     }
     pub fn finish_asuser_origin(&mut self)->Result<()> {
-        if let Some(origin)=&self.asuser_origin {
+        if let Some(inlet)=&self.asuser_origin {
+            let AsUserInlet::Single(origin)=inlet else {bail!("shared attempt cannot close the common parent origin");};
             ensure!(self.phase==Phase::Finished&&self.normal_cleanup_report.is_some()
-                &&self.execution_cleanup_admission.is_some(),"outer lifecycle/setup normal finish required before P origin closes");
-            let retired=self.asuser_retirement.take().context("same original native/factory origin retirement missing")?;
-            origin.close_after_finished_lifecycle(retired)?;
+                &&(self.execution_cleanup_admission.is_some() ^ self.refusal_cleanup_admission.is_some()),
+                "outer lifecycle/setup finish and exactly one original completion required before P origin closes");
+            if self.refusal_cleanup_admission.is_some() {
+                let retired=self.asuser_refusal_retirement.take().context("same original refusal/factory origin retirement missing")?;
+                origin.close_after_finished_refusal(retired)?;
+            } else {
+                let retired=self.asuser_retirement.take().context("same original native/factory origin retirement missing")?;
+                origin.close_after_finished_lifecycle(retired)?;
+            }
         }Ok(())
+    }
+    pub(crate) fn has_parent_attempt(&self)->bool {
+        matches!(self.asuser_origin,Some(AsUserInlet::Attempt(_)))
+    }
+    pub(crate) fn finish_parent_attempt(&mut self)->Result<CompletedParentAttempt> {
+        let Some(AsUserInlet::Attempt(original))=&self.asuser_origin
+            else {bail!("genuine parent-session attempt required");};
+        ensure!(!self.parent_attempt_retired && self.phase==Phase::Finished
+            && self.normal_cleanup_report.is_some()
+            && (self.execution_cleanup_admission.is_some() ^ self.refusal_cleanup_admission.is_some()),
+            "original attempt setup/native retirement incomplete or consumed");
+        // Reserve before consuming an original capability; a failure never retries.
+        self.parent_attempt_retired=true;
+        if self.refusal_cleanup_admission.is_some() {
+            original.retire_after_finished_refusal(self.asuser_refusal_retirement.take()
+                .context("same original refusal/factory attempt retirement missing")?)?;
+        } else {
+            original.retire_after_finished_lifecycle(self.asuser_retirement.take()
+                .context("same original native/factory attempt retirement missing")?)?;
+        }
+        Ok(CompletedParentAttempt {lifecycle:self.execution_instance.clone(),_original:original.clone()})
     }
 
     /// Caller records this outside the synthetic home after each genuine terminal API result.
@@ -536,6 +679,7 @@ impl GuestLifecycle {
             owned_setup_proof_held: self.owned_setup.is_some(),
             setup_child_pid: self.setup_child_pid,
             execution_cleanup_admission: self.execution_cleanup_admission.clone(),
+            refusal_cleanup_admission:self.refusal_cleanup_admission.clone(),
             cleanup_guard_held: self.cleanup.is_some(),
             inventory_script_sha256: inventory_script_sha256(),
             actual_runner: self.actual_runner_identity.clone(), cleanup_notes: self.cleanup_notes.clone(),
@@ -570,9 +714,8 @@ impl GuestLifecycle {
     pub fn synthetic_root(&self) -> &Path { &self.config.synthetic_root }
     pub fn codex_home(&self) -> PathBuf { self.config.synthetic_root.join("codex-home") }
     pub fn workspace(&self) -> PathBuf { self.config.synthetic_root.join("workspace") }
-    pub fn environment(&self) -> HashMap<String, String> {
-        let temp = self.workspace().join("temp").to_string_lossy().into_owned();
-        HashMap::from([("TEMP".into(), temp.clone()), ("TMP".into(), temp)])
+    pub fn environment(&self) -> Result<HashMap<String, String>> {
+        fixed_business_environment(&self.workspace())
     }
     pub fn permission_profile(&self) -> Result<PermissionProfile> {
         Ok(PermissionProfile::Managed {
@@ -625,12 +768,13 @@ impl GuestLifecycle {
                 std::slice::from_ref(&workspace_abs),
             )?;
         permissions.validate_elevated_filesystem_policy(&self.workspace())?;
+        let environment = self.environment()?;
         self.phase = Phase::SetupAttempted; // Latch before the first original system effect.
         let result = run_owned_elevated_setup_with_matched_helper(
             SandboxSetupRequest {
                 permissions: &permissions,
                 command_cwd: &self.workspace(),
-                env_map: &self.environment(),
+                env_map: &environment,
                 codex_home: &self.codex_home(),
                 proxy_enforced: false,
             },
@@ -824,34 +968,7 @@ impl GuestLifecycle {
     /// This check is never sufficient proof of execution-owner completion; when a runner is
     /// materialized, `admit_execution_cleanup` must first supply bound execution-owner facts.
     fn verify_and_repinnable_runner_released(&mut self, reacquire: bool) -> Result<()> {
-        if let Some(pin) = self.actual_runner.take() {
-            match Arc::try_unwrap(pin) {
-                Ok(artifact) => drop(artifact),
-                Err(pin) => {
-                    self.actual_runner = Some(pin);
-                    bail!("actual runner still borrowed; preserve Unknown and all cleanup state");
-                }
-            }
-        }
-        if let Some(spec) = self.actual_runner_identity.as_ref() {
-            let probe = OpenOptions::new()
-                .access_mode(0x0001_0000 | 0x0080)
-                .share_mode(1 | 2 | 4)
-                .custom_flags(0x0020_0000)
-                .open(&spec.path);
-            if reacquire {
-                if let Ok(reacquired) = MatchedRunnerArtifact::acquire(&spec.path, spec.sha256) {
-                    self.actual_runner = Some(Arc::new(reacquired));
-                }
-            }
-            probe.context(
-                "actual runner still held by active backend or process without FILE_SHARE_DELETE; preserve Unknown and all cleanup state",
-            )?;
-            if reacquire && self.actual_runner.is_none() {
-                bail!("failed to re-pin materialized runner after share check; preserve Unknown");
-            }
-        }
-        Ok(())
+        verify_and_repin_runner_file(&mut self.actual_runner, self.actual_runner_identity.as_ref(), reacquire)
     }
 
     /// Admit only the private pre-bound relation and consumed actual runtime,
@@ -863,7 +980,7 @@ impl GuestLifecycle {
         mut admission: BoundExecutionCleanupAdmission,
     ) -> Result<()> {
         ensure!(confirmation==ADMIT_EXECUTION_CLEANUP_CONFIRMATION && self.phase==Phase::RunnerMaterialized
-            && self.execution_cleanup_admission.is_none(),"normal cleanup admission phase/one-shot confirmation");
+            && self.execution_cleanup_admission.is_none() && self.refusal_cleanup_admission.is_none(),"normal cleanup admission phase/one-shot confirmation");
         ensure!(same_owned_instances(&admission.scope.lifecycle,&admission.scope.setup,
                 &self.execution_instance,self.setup_instance.as_ref())
             && self.owned_setup.is_some(),"foreign lifecycle or actual owned setup instance");
@@ -886,13 +1003,45 @@ impl GuestLifecycle {
             quota_scope:"SAME_NATIVE_EXECUTION_REGISTRY_SLOT_ONLY",
             input_closed:true,keeper_joined:true,quota_settled:true,
             close_ack_verified:admission.completion.terminal_close_ack_verified(),
-            owner_finished:true,factory_released:true,
+            owner_finished:admission.owner.whole_owner_finished(),owner_attempt_finished:true,
+            shared_owner_retained:!admission.owner.whole_owner_finished(),factory_released:true,
         };
         drop(bound);
         let retired=admission.completion.take_asuser_origin_retirement();
         ensure!(self.asuser_origin.is_some()==retired.is_some(),"A1 origin/completion path mismatch; no scalar substitution");
         self.asuser_retirement=retired;drop(admission);
         self.execution_cleanup_admission=Some(evidence);self.phase=Phase::ExecutionCleanupAdmitted;
+        Ok(())
+    }
+
+    pub fn admit_refusal_cleanup(&mut self,mut admission:BoundRefusalCleanupAdmission)->Result<()> {
+        ensure!(self.phase==Phase::RunnerMaterialized && self.execution_cleanup_admission.is_none()
+            && self.refusal_cleanup_admission.is_none() && self.asuser_origin.is_some(),"refusal admission phase/path consumed");
+        ensure!(same_owned_instances(&admission.scope.lifecycle,&admission.scope.setup,
+            &self.execution_instance,self.setup_instance.as_ref()),"foreign refusal lifecycle/setup instance");
+        let setup=self.owned_setup.as_ref().context("original owned setup missing")?;
+        let bound=self.bound_execution.try_borrow().map_err(|_|anyhow::anyhow!("original refusal review borrowed"))?;
+        ensure!(bound.as_ref().is_some_and(|review|review.same_review(&admission.scope.review))
+            && admission.completion.is_for_review(&admission.scope.review)
+            && admission.completion.is_for_owner(admission.owner.binding()),"foreign refusal/owner/factory capability");
+        let runner=self.actual_runner_identity.as_ref().context("original materialized runner missing")?;
+        let evidence=RefusalCleanupAdmissionEvidence {
+            runner_path:runner.path.clone(),runner_sha256:runner.sha256,
+            setup_child_pid:self.setup_child_pid.context("original setup child missing")?,
+            startup_attempt:admission.completion.startup_attempt(),outcome:admission.completion.reason().closed_label(),
+            win32_error:admission.completion.reason().win32_error(),
+            native_start_handles_closed:admission.completion.reason().win32_error().map(|_|true),
+            native_caller_handles_closed:true,original_blocking_return_acknowledged:true,
+            local_and_sdk_slots_retired:true,original_worker_joined:true,
+            owner_finished:admission.owner.whole_owner_finished(),owner_attempt_finished:true,
+            shared_owner_retained:!admission.owner.whole_owner_finished(),factory_released:true,
+            runner_was_started:false,normal_terminal_ack_claimed:false,
+        };
+        let retired=admission.completion.take_asuser_origin_retirement().context("original refusal origin receipt missing")?;
+        ensure!(retired.is_for_original_setup(setup),"refusal receipt belongs to a different owned setup");
+        drop(bound);drop(admission);
+        self.asuser_refusal_retirement=Some(retired);self.refusal_cleanup_admission=Some(evidence);
+        self.phase=Phase::ExecutionCleanupAdmitted;
         Ok(())
     }
 
@@ -910,7 +1059,7 @@ impl GuestLifecycle {
         validate_prepare_cleanup_phase_and_admission(
             initial_phase,
             self.actual_runner_identity.is_some() || self.staged_runner_identity.is_some(),
-            self.execution_cleanup_admission.is_some(),
+            self.execution_cleanup_admission.is_some() ^ self.refusal_cleanup_admission.is_some(),
         )?;
         self.validate_owned()?;
         self.verify_and_repinnable_runner_released(true)?;
@@ -944,7 +1093,7 @@ impl GuestLifecycle {
         self.phase = Phase::Unknown;
         if self.actual_runner_identity.is_some() || self.staged_runner_identity.is_some() {
             ensure!(
-                self.execution_cleanup_admission.is_some(),
+                self.execution_cleanup_admission.is_some() ^ self.refusal_cleanup_admission.is_some(),
                 "finish_cleanup requires bound execution cleanup admission when a runner was materialized"
             );
         }
@@ -980,6 +1129,46 @@ impl GuestLifecycle {
     pub fn held_ancestor_count(&self) -> usize { self.ancestors.len() }
 }
 
+// Supplementary file sharing only. This cannot mint execution cleanup authority.
+fn verify_and_repin_runner_file(
+    actual_runner: &mut Option<Arc<MatchedRunnerArtifact>>,
+    identity: Option<&ArtifactSpec>,
+    reacquire: bool,
+) -> Result<()> {
+    if let Some(pin) = actual_runner.take() {
+        match Arc::try_unwrap(pin) {
+            Ok(artifact) => drop(artifact),
+            Err(pin) => {
+                *actual_runner = Some(pin);
+                bail!("actual runner still borrowed; preserve Unknown and all cleanup state");
+            }
+        }
+    }
+    if let Some(spec) = identity {
+        let probe = OpenOptions::new()
+            .access_mode(0x0001_0000 | 0x0080)
+            .share_mode(1 | 2 | 4)
+            .custom_flags(0x0020_0000)
+            .open(&spec.path)
+            // DELETE access conflicts with the read-sharing-only replacement
+            // pin until this temporary probe is closed. This is supplementary
+            // sharing evidence, never execution or cleanup authority.
+            .map(drop);
+        if reacquire {
+            if let Ok(reacquired) = MatchedRunnerArtifact::acquire(&spec.path, spec.sha256) {
+                *actual_runner = Some(Arc::new(reacquired));
+            }
+        }
+        probe.context(
+            "actual runner still held by active backend or process without FILE_SHARE_DELETE; preserve Unknown and all cleanup state",
+        )?;
+        if reacquire && actual_runner.is_none() {
+            bail!("failed to re-pin materialized runner after share check; preserve Unknown");
+        }
+    }
+    Ok(())
+}
+
 fn validate_prepare_cleanup_phase_and_admission(
     phase: Phase,
     has_materialized_runner: bool,
@@ -1012,6 +1201,99 @@ fn validate_prepare_cleanup_phase_and_admission(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // These fixtures open only fresh local PE-shaped files. They never execute
+    // a child or construct a provisioning/setup/cleanup owner.
+    struct RunnerShareFixture { directory: PathBuf, spec: ArtifactSpec }
+    impl RunnerShareFixture {
+        fn new() -> Self {
+            static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+            let directory = std::env::temp_dir().join(format!("morrow-runner-share-{}-{}",
+                std::process::id(), NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)));
+            fs::create_dir(&directory).unwrap();
+            let path = directory.join("runner.exe");
+            let mut bytes = vec![0u8; 128];
+            bytes[..2].copy_from_slice(b"MZ");
+            bytes[60..64].copy_from_slice(&64u32.to_le_bytes());
+            bytes[64..68].copy_from_slice(b"PE\0\0");
+            use std::io::Write;
+            let mut file = OpenOptions::new().write(true).create_new(true).open(&path).unwrap();
+            file.write_all(&bytes).unwrap();file.sync_all().unwrap();drop(file);
+            Self { directory, spec: ArtifactSpec { path, sha256: Sha256::digest(&bytes).into() } }
+        }
+        fn pin(&self) -> Arc<MatchedRunnerArtifact> {
+            Arc::new(MatchedRunnerArtifact::acquire(&self.spec.path, self.spec.sha256).unwrap())
+        }
+        fn remove(self) {
+            fs::remove_file(&self.spec.path).unwrap();fs::remove_dir(&self.directory).unwrap();
+        }
+    }
+
+    #[test]
+    fn runner_share_probe_closes_its_delete_handle_before_read_only_repin() {
+        let fixture = RunnerShareFixture::new();
+        let mut held = Some(fixture.pin());
+        verify_and_repin_runner_file(&mut held, Some(&fixture.spec), true).unwrap();
+        assert_eq!(held.as_ref().unwrap().sha256(), fixture.spec.sha256);
+        assert!(OpenOptions::new().write(true).share_mode(7).open(&fixture.spec.path).is_err());
+        assert!(OpenOptions::new().access_mode(0x10000).share_mode(7).open(&fixture.spec.path).is_err());
+        verify_and_repin_runner_file(&mut held, Some(&fixture.spec), false).unwrap();
+        assert!(held.is_none());
+        drop(OpenOptions::new().write(true).share_mode(7).open(&fixture.spec.path).unwrap());
+        fixture.remove();
+    }
+
+    #[test]
+    fn runner_share_probe_rejects_borrowed_original_and_preserves_same_pin() {
+        let fixture = RunnerShareFixture::new();
+        let original = fixture.pin();let mut held = Some(original.clone());
+        let error = verify_and_repin_runner_file(&mut held, Some(&fixture.spec), true).unwrap_err();
+        assert!(error.to_string().contains("actual runner still borrowed"));
+        assert!(Arc::ptr_eq(held.as_ref().unwrap(), &original));
+        drop(held);drop(original);fixture.remove();
+    }
+
+    #[test]
+    fn runner_share_probe_rejects_external_lock_and_restores_own_pin() {
+        let fixture = RunnerShareFixture::new();
+        let external = fixture.pin();let mut held = Some(fixture.pin());
+        let error = verify_and_repin_runner_file(&mut held, Some(&fixture.spec), true).unwrap_err();
+        assert!(error.to_string().contains("without FILE_SHARE_DELETE"));
+        assert_eq!(error.downcast_ref::<std::io::Error>().unwrap().raw_os_error(), Some(32));
+        assert!(held.is_some());
+        drop(held);drop(external);fixture.remove();
+    }
+
+    #[test]
+    fn runner_share_probe_does_not_adopt_mismatched_reacquired_bytes() {
+        let fixture = RunnerShareFixture::new();
+        let mut spec = fixture.spec.clone();spec.sha256[0] ^= 1;
+        let mut held = None;
+        let error = verify_and_repin_runner_file(&mut held, Some(&spec), true).unwrap_err();
+        assert!(error.to_string().contains("failed to re-pin materialized runner"));
+        assert!(held.is_none());fixture.remove();
+    }
+
+    #[test]
+    fn business_environment_has_native_system_root_and_only_local_temp_paths() {
+        let workspace = Path::new(r"D:\memory-only-environment\workspace");
+        let env = fixed_business_environment(workspace).unwrap();
+        let actual_system = codex_windows_sandbox::native_system_windows_directory().unwrap();
+        assert!(Path::new(&actual_system).is_absolute());
+        assert_eq!(env["SystemRoot"], actual_system);
+        assert_eq!(Path::new(&env["TEMP"]), workspace.join("temp"));
+        assert_eq!(env["TMP"], env["TEMP"]);
+        let mut keys = env.keys().map(String::as_str).collect::<Vec<_>>();
+        keys.sort_unstable();
+        assert_eq!(keys, ["SystemRoot", "TEMP", "TMP"]);
+    }
+
+    #[test]
+    fn business_environment_rejects_non_unicode_temp_without_lossy_substitution() {
+        use std::os::windows::ffi::OsStringExt;
+        let path = PathBuf::from(std::ffi::OsString::from_wide(&[68,58,92,0xd800]));
+        assert!(fixed_business_environment(&path).is_err());
+    }
 
     #[test]
     fn review_inventory_sha256_binds_exact_embedded033_bytes_without_stale_metadata() {

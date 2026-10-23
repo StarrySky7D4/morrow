@@ -1,0 +1,23 @@
+{
+  "status": "PAUSED_UNKNOWN_VM_MEMORY_AND_DISK_RETAINED_NO_REPLAY",
+  "utc": "2026-10-23T22:55:40.3762118Z",
+  "vm_id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+  "tag": "4659faf07c9b4352adcb79db7fade6f8",
+  "state": "Saved",
+  "case_clean": false,
+  "policy_clean": true,
+  "issued_token_revocation_claimed": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "disk": "C:\\MorrowQA\\windows-acceptance-20261023-030\\acceptance.vhdx",
+  "disk_bytes": 36291215360,
+  "runtime_state_path": "C:\\MorrowQA\\windows-acceptance-20261023-030\\vm\\Morrow Windows Acceptance 20261023 030\\Virtual Machines\\0BC007BF-8F66-4462-BA44-B957459CFD6D.VMRS",
+  "runtime_state_bytes": 1714278400,
+  "guest_owner_contacts": 0,
+  "stop_vm_calls": 0,
+  "automatic_resume": false,
+  "other_vms_unchanged": true,
+  "registered_vms": 4,
+  "host_session": "56421 retained; no polling or termination after Unknown",
+  "host_original_pid": 12972
+}

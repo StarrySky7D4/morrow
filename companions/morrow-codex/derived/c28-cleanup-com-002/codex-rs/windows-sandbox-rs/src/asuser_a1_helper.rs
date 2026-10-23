@@ -188,11 +188,14 @@ impl Originals {
         let process=self.process.captured(ok,self.pi.hProcess,error);
         let thread=self.thread.captured(ok,self.pi.hThread,error);process.and(thread)
     }
-    fn all_retired(&self)->bool {
+    fn slots(&self)->[&Slot;24] {
         [&self.process,&self.thread,&self.stdout,&self.stderr,&self.child_out,&self.child_err,
             &self.nul,&self.parent,&self.own_token,&self.peer_token,&self.caller_thread_token,&self.sd,&self.desktop_sd,&self.station,&self.desktop,
             &self.readers[0],&self.readers[1],&self.helper_process_sd,&self.helper_thread_sd,&self.label_sd,
-            &self.gui_reads[0],&self.gui_reads[1],&self.gui_reads[2],&self.gui_reads[3]].iter().all(|v|v.retired())
+            &self.gui_reads[0],&self.gui_reads[1],&self.gui_reads[2],&self.gui_reads[3]]
+    }
+    fn all_retired(&self)->bool {
+        self.slots().iter().all(|v|v.retired())
     }
 }
 
@@ -771,6 +774,21 @@ pub(crate) struct Broker {
     attributes:Option<crate::proc_thread_attr::ProcThreadAttributeList>,
 }
 impl Broker {
+    /// Only the untouched pre-start allocation can accompany a LogonUser
+    /// refusal. This never queries, joins or closes any helper or channel.
+    pub(crate) fn pristine_before_start(&self)->bool {
+        !self.started && !self.helper_closed && !self.aliases_closed
+            && self.binding.is_none() && self.qualified.is_none() && self.attributes.is_none()
+            && self.originals.pi.hProcess==0 && self.originals.pi.hThread==0
+            && self.originals.pi.dwProcessId==0 && self.originals.pi.dwThreadId==0
+            && self.originals.primary_defaults.iter().all(Option::is_none)
+            && self.originals.slots().iter().all(|slot|slot.raw==0&&slot.state==HandleState::NotAllocated)
+            && [&self.channel.pipe,&self.channel.read_event,&self.channel.write_event]
+                .iter().all(|slot|slot.raw==0&&slot.state==HandleState::NotAllocated)
+            && !self.channel.read_pending && !self.channel.write_pending
+            && self.readers.iter().all(|reader|reader.pipe==0
+                &&reader.result.try_lock().is_ok_and(|result|result.is_none()))
+    }
     pub(crate) fn new(bundle:std::sync::Arc<crate::asuser_a1_policy::Bundle>,generation:u64,deadline:Instant)->Box<Self> {
         Box::new(Self{originals:Originals::new(),channel:Channel::new(),readers:[Reader::new(),Reader::new()],
             bundle,generation,deadline,started:false,helper_closed:false,aliases_closed:false,

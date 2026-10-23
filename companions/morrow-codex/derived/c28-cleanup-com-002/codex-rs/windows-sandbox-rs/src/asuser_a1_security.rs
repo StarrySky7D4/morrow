@@ -58,26 +58,26 @@ pub(crate) fn default_layout(bytes:&[u8])->io::Result<()> {
     if offset!=bytes.len(){return Err(bad());}Ok(())
 }
 /// TokenDefaultDacl is an object-creation TEMPLATE, not the token object's SD.
-/// Addendum1625 permits one private-T initialization to this exact policy.
-/// Both its zero-mutation branch and actual post-call readback accept only a
-/// real bounded ACL whose EVERY allow is RC for C, this LogonSID or OWNER_RIGHTS.
-/// OWNER_RIGHTS must occur: otherwise the system-selected owner could receive
-/// implicit WRITE_DAC on later NULL-SA R threads. No guessed object-specific
-/// masks (e.g. token QUERY == thread GET_CONTEXT numerically) are safe here.
+/// C alone receives the finite new-primary initialization rights. R and
+/// OWNER_RIGHTS receive only READ_CONTROL; token QUERY bits must never be
+/// granted to R through this template because they also mean thread context
+/// access. The actual new primary-token object is initialized separately.
 pub(crate) fn default_objects(acl_bytes:&[u8],caller:Sid,logon:Sid)->io::Result<()> {
     if acl_bytes.len()<8||acl_bytes.len()>4096||acl_bytes[0]!=2||acl_bytes[1]!=0
         ||acl_bytes[6]!=0||acl_bytes[7]!=0||u16_at(acl_bytes,2)? as usize!=acl_bytes.len()
         ||!logon.is_logon()||caller.is_logon()||caller==logon{return Err(bad());}
     let count=u16_at(acl_bytes,4)?;if count!=3{return Err(bad());}
     let owner=Sid::from_bytes(&[1,1,0,0,0,0,0,3,4,0,0,0])?;
-    let allowed=[caller,logon,owner];let mut seen=[false;3];let mut offset=8;
+    let allowed=[(caller,crate::asuser_a1_rights::RUNNER_TOKEN_INITIALIZATION),
+        (logon,OWNER_READ_CONTROL),(owner,OWNER_READ_CONTROL)];
+    let mut seen=[false;3];let mut offset=8;
     for _ in 0..count {
         let size=u16_at(acl_bytes,offset+2)? as usize;
         if size<16||size%4!=0{return Err(bad());}
         let ace=acl_bytes.get(offset..offset.checked_add(size).ok_or_else(bad)?).ok_or_else(bad)?;
-        if ace[0]!=0||ace[1]!=0||u32_at(ace,4)?!=OWNER_READ_CONTROL{return Err(bad());}
-        let sid=Sid::from_bytes(&ace[8..])?;
-        let index=allowed.iter().position(|v|*v==sid).ok_or_else(bad)?;
+        if ace[0]!=0||ace[1]!=0{return Err(bad());}
+        let sid=Sid::from_bytes(&ace[8..])?;let mask=u32_at(ace,4)?;
+        let index=allowed.iter().position(|v|*v==(sid,mask)).ok_or_else(bad)?;
         if seen[index]{return Err(bad());}seen[index]=true;offset+=size;
     }
     if offset!=acl_bytes.len()||seen!=[true;3]{return Err(bad());}Ok(())
@@ -86,9 +86,10 @@ pub(crate) fn default_template(caller:Sid,logon:Sid)->io::Result<Vec<u8>> {
     if caller.is_logon()||!logon.is_logon()||caller==logon{return Err(bad());}
     let owner=Sid::from_bytes(&[1,1,0,0,0,0,0,3,4,0,0,0])?;
     let mut bytes=vec![2,0,0,0,3,0,0,0];
-    for sid in [caller,logon,owner] {
+    for (sid,mask) in [(caller,crate::asuser_a1_rights::RUNNER_TOKEN_INITIALIZATION),
+        (logon,OWNER_READ_CONTROL),(owner,OWNER_READ_CONTROL)] {
         bytes.extend([0,0]);bytes.extend(((8+sid.bytes().len()) as u16).to_le_bytes());
-        bytes.extend(OWNER_READ_CONTROL.to_le_bytes());bytes.extend(sid.bytes());
+        bytes.extend(mask.to_le_bytes());bytes.extend(sid.bytes());
     }
     let length=bytes.len() as u16;bytes[2..4].copy_from_slice(&length.to_le_bytes());
     default_objects(&bytes,caller,logon)?;Ok(bytes)
@@ -390,15 +391,13 @@ mod tests {
         assert!(token_layout(&null_dacl).is_err());
     }
     #[test] fn default_template_never_confuses_token_query_with_thread_context_or_owner_authority() {
-        let (b,c,l)=descriptor();let offset=u32_at(&b,16).unwrap() as usize;
-        let (source,_)=acl(&b,offset).unwrap();let mut template=source.to_vec();
-        let mut at=8;
-        for _ in 0..3 {template[at+4..at+8].copy_from_slice(&OWNER_READ_CONTROL.to_le_bytes());
-            at+=u16_at(&template,at+2).unwrap() as usize;}
+        let (_,c,l)=descriptor();let template=default_template(c,l).unwrap();
         assert!(default_objects(&template,c,l).is_ok());
-        for mask in [8u32,OWNER_READ_CONTROL|8,0x100000,0x40000,0x10000000] {
-            let mut unsafe_acl=template.clone();unsafe_acl[12..16].copy_from_slice(&mask.to_le_bytes());
-            assert!(default_objects(&unsafe_acl,c,l).is_err());
+        for offset in [8,8+8+c.bytes().len(),8+8+c.bytes().len()+8+l.bytes().len()] {
+            for mask in [8u32,OWNER_READ_CONTROL|8,0x100000,0x40000,0x10000000] {
+                let mut unsafe_acl=template.clone();unsafe_acl[offset+4..offset+8].copy_from_slice(&mask.to_le_bytes());
+                assert!(default_objects(&unsafe_acl,c,l).is_err());
+            }
         }
         let mut inherited=template.clone();inherited[9]=0x10;
         assert!(default_objects(&inherited,c,l).is_err());
@@ -501,6 +500,112 @@ mod gui_policy_tests {
         let(b,c,l)=gui(Some((0x2000,1)));let s=u32_at(&b,12).unwrap() as usize;
         for (offset,value) in [(s+4,2),(s+8,0),(s+9,0x10),(s+10,19),(s+17,2)] {
             let mut changed=b.clone();changed[offset]=value;assert!(gui_observed(&changed,c,l,false).is_err());
+        }
+    }
+}
+
+/// Identity/security fields which the single new-primary DACL initialization
+/// cannot change. A protected DACL is required only after initialization;
+/// Windows' newly allocated primary object initially has a default DACL.
+#[derive(Clone,Copy,Debug,PartialEq,Eq)]
+pub(crate) struct RunnerTokenReadback {owner:Sid,group:Option<Sid>,label:EffectiveLabel,control:u16}
+fn runner_aces(caller:Sid,logon:Sid,initialized:bool)->io::Result<[(Sid,u32);4]> {
+    use crate::asuser_a1_rights::*;
+    let owner=Sid::from_text("S-1-3-4")?;let admin=Sid::from_text("S-1-5-32-544")?;
+    if caller.is_logon()||!logon.is_logon()||[owner,admin,logon].contains(&caller){return Err(bad());}
+    Ok([(caller,if initialized{RUNNER_TOKEN_OBSERVE}else{RUNNER_TOKEN_INITIALIZATION}),
+        (logon,if initialized{RUNNER_TOKEN_DERIVE}else{OWNER_READ_CONTROL}),
+        (owner,OWNER_READ_CONTROL),(admin,windows_sys::Win32::Security::TOKEN_QUERY)])
+}
+pub(crate) fn runner_token_template(caller:Sid,logon:Sid)->io::Result<Vec<u8>> {
+    let mut result=vec![1,0,4,0x90,0,0,0,0,0,0,0,0,0,0,0,0,20,0,0,0];
+    let mut dacl=vec![2,0,0,0,4,0,0,0];
+    for (sid,mask) in runner_aces(caller,logon,true)? {
+        dacl.extend([0,0]);dacl.extend(((8+sid.bytes().len()) as u16).to_le_bytes());
+        dacl.extend(mask.to_le_bytes());dacl.extend(sid.bytes());
+    }
+    let len=dacl.len() as u16;dacl[2..4].copy_from_slice(&len.to_le_bytes());result.extend(dacl);Ok(result)
+}
+pub(crate) fn runner_token_object(bytes:&[u8],caller:Sid,logon:Sid,user:Sid,initialized:bool)->io::Result<RunnerTokenReadback> {
+    let layout=token_layout(bytes)?;let control=u16_at(bytes,2)?;
+    if layout.owner!=user||user==caller||user.is_logon()
+        ||control&0x1008!=if initialized{0x1000}else{0}{return Err(bad());}
+    let group_offset=u32_at(bytes,8)? as usize;
+    let group=if group_offset==0{None}else{Some(sid_at(bytes,group_offset)?.0)};
+    let label=effective_label(bytes,u32_at(bytes,12)? as usize)?;
+    if !label.medium(){return Err(bad());}
+    let (dacl,count)=acl(bytes,u32_at(bytes,16)? as usize)?;
+    let expected=runner_aces(caller,logon,initialized)?;
+    if count!=4{return Err(bad());}let mut seen=[false;4];let mut at=8;
+    for _ in 0..count {
+        let size=u16_at(dacl,at+2)? as usize;
+        if size<16||size%4!=0{return Err(bad());}
+        let ace=dacl.get(at..at.checked_add(size).ok_or_else(bad)?).ok_or_else(bad)?;
+        if ace[0]!=0||ace[1]!=0{return Err(bad());}
+        let sid=Sid::from_bytes(&ace[8..])?;let mask=u32_at(ace,4)?;
+        let index=expected.iter().position(|entry|*entry==(sid,mask)).ok_or_else(bad)?;
+        if seen[index]{return Err(bad());}seen[index]=true;at+=size;
+    }
+    if at!=dacl.len()||seen!=[true;4]{return Err(bad());}
+    Ok(RunnerTokenReadback{owner:layout.owner,group,label,control:control&!0x1000})
+}
+
+#[cfg(test)]
+mod runner_primary_tests {
+    use super::*;
+    fn descriptor(initialized:bool)->(Vec<u8>,Sid,Sid,Sid) {
+        let c=Sid::from_text("S-1-5-21-1-2-3-1001").unwrap();
+        let r=Sid::from_text("S-1-5-5-8-9").unwrap();
+        let u=Sid::from_text("S-1-5-21-1-2-3-1002").unwrap();
+        let mut b=vec![1,0,0x14,if initialized{0x98}else{0x88}];
+        b.extend(20u32.to_le_bytes());b.extend([0;12]);b.extend(u.bytes());
+        let offset=b.len();b[16..20].copy_from_slice(&(offset as u32).to_le_bytes());
+        let mut a=vec![2,0,0,0,4,0,0,0];
+        for (sid,mask) in runner_aces(c,r,initialized).unwrap() {
+            a.extend([0,0]);a.extend(((8+sid.bytes().len()) as u16).to_le_bytes());
+            a.extend(mask.to_le_bytes());a.extend(sid.bytes());
+        }
+        let length=a.len() as u16;a[2..4].copy_from_slice(&length.to_le_bytes());b.extend(a);
+        let offset=b.len();b[12..16].copy_from_slice(&(offset as u32).to_le_bytes());
+        b.extend([2,0,28,0,1,0,0,0,0x11,0,20,0,1,0,0,0,1,1,0,0,0,0,0,16,0,32,0,0]);
+        (b,c,r,u)
+    }
+    #[test] fn actual_primary_initialization_preserves_owner_group_label_and_kernel_query_ace() {
+        let (before,c,r,u)=descriptor(false);let (after,_,_,_)=descriptor(true);
+        assert_eq!(runner_token_object(&before,c,r,u,false).unwrap(),runner_token_object(&after,c,r,u,true).unwrap());
+        assert!(runner_token_object(&before,c,r,u,true).is_err());
+        assert!(runner_token_object(&after,c,r,u,false).is_err());
+        assert!(runner_token_object(&after,c,r,c,true).is_err());
+        let template=runner_token_template(c,r).unwrap();
+        let offset=u32_at(&after,16).unwrap() as usize;
+        assert_eq!(&template[20..],acl(&after,offset).unwrap().0);
+    }
+    #[test] fn actual_primary_rejects_each_extra_right_duplicate_inheritance_and_label_drift() {
+        for initialized in [false,true] {
+            let (b,c,r,u)=descriptor(initialized);let offset=u32_at(&b,16).unwrap() as usize;
+            let mut at=offset+8;
+            for _ in 0..4 {
+                let mask=u32_at(&b,at+4).unwrap();
+                for bit in [1,2,4,8,0x20,0x80,0x40000,0x80000,0x10000000] {
+                    if mask&bit==0 {
+                        let mut altered=b.clone();altered[at+4..at+8].copy_from_slice(&(mask|bit).to_le_bytes());
+                        assert!(runner_token_object(&altered,c,r,u,initialized).is_err());
+                    }
+                }
+                let mut inherited=b.clone();inherited[at+1]=0x10;
+                assert!(runner_token_object(&inherited,c,r,u,initialized).is_err());
+                at+=u16_at(&b,at+2).unwrap() as usize;
+            }
+            let mut count=b.clone();count[offset+4..offset+6].copy_from_slice(&3u16.to_le_bytes());
+            assert!(runner_token_object(&count,c,r,u,initialized).is_err());
+            let mut duplicate=b.clone();let last=at-24;
+            duplicate[last+8..last+24].copy_from_slice(Sid::from_text("S-1-5-32-545").unwrap().bytes());
+            assert!(runner_token_object(&duplicate,c,r,u,initialized).is_err());
+            let label=u32_at(&b,12).unwrap() as usize;
+            for (where_,value) in [(label+12,3u32),(label+24,0x3000)] {
+                let mut altered=b.clone();altered[where_..where_+4].copy_from_slice(&value.to_le_bytes());
+                assert!(runner_token_object(&altered,c,r,u,initialized).is_err());
+            }
         }
     }
 }

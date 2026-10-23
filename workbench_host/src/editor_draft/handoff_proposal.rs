@@ -204,6 +204,7 @@ impl WorkbenchState {
     fn all_proposals(&self) -> Result<Vec<(String, proto::Slot)>> {
         let mut after = PREFIX.to_owned();
         let mut result = Vec::new();
+        let mut observed_bytes = 0u64;
         loop {
             let ids = self.host.store_local().card_ids_local(&after, 32)?;
             if ids.is_empty() {
@@ -219,9 +220,13 @@ impl WorkbenchState {
                     .store_local()
                     .card(&id)?
                     .ok_or("handoff proposal disappeared")?;
+                observed_bytes = observed_bytes.checked_add(card.encode().len() as u64).ok_or("proposal scan bytes overflow")?;
+                if observed_bytes > super::archive_auxiliary::MAX_AUXILIARY_SCAN_BYTES {
+                    return Err("proposal scan byte limit".into());
+                }
                 let slot = decode_card(&card)?;
                 result.push((id.clone(), slot));
-                if result.len() > MAX_IDENTITIES {
+                if result.len() > MAX_IDENTITIES + super::archive_auxiliary::MAX_ARCHIVED_AUXILIARY {
                     return Err("handoff proposal identity capacity changed".into());
                 }
                 after = id;
@@ -231,6 +236,19 @@ impl WorkbenchState {
             }
         }
         Ok(result)
+    }
+    pub(crate) fn draft_archive_proposal_records(&self) -> Result<Vec<super::archive_auxiliary::Record>> {
+        use super::archive_auxiliary::{Kind, Record};
+        self.all_proposals()?.into_iter().map(|(id, raw)| {
+            let request = raw.request.as_ref().ok_or("archive proposal request missing")?;
+            let slot = self.checked_proposal(&request.operation_id)?.ok_or("archive proposal missing")?;
+            let source = self.host.store_local().card(&id)?.ok_or("archive proposal card missing")?;
+            if slot != raw || decode_card(&source)? != slot { return Err("archive proposal changed".into()); }
+            let link = slot.parent_link.as_ref().ok_or("archive proposal parent missing")?;
+            let status = self.handoff_proposal_record(&slot)?.status;
+            Ok(Record::checked(Kind::Proposal, &request.card_id, &link.parent_draft_id, &source,
+                matches!(status, HandoffProposalStatus::ParentRetired | HandoffProposalStatus::Cancelled)))
+        }).collect()
     }
     pub(super) fn proposal_for_parent(
         &self,
@@ -558,7 +576,7 @@ impl WorkbenchState {
         }
         let (parent, source) = self.prepare_draft_handoff(request, link)?;
         let metadata = self.all_draft_metadata()?;
-        if metadata.len() >= MAX_JOURNALS
+        if self.unarchived_draft_count(&metadata)? >= MAX_JOURNALS
             || metadata.iter().filter(|s| s.active).count() >= MAX_SLOTS
         {
             return Err("draft handoff capacity reached".into());
@@ -576,6 +594,7 @@ impl WorkbenchState {
             active_bytes: 0,
             consumed_imports: Vec::new(),
             parent_link: Some(link.clone()),
+            resume_link: None,
             retirement: None,
             discard_operation: String::new(),
         };
@@ -616,13 +635,15 @@ impl WorkbenchState {
             return Err("draft active capacity reached".into());
         }
         let existing = self.all_proposals()?;
-        if existing.len() >= MAX_IDENTITIES {
+        let archived = self.archived_draft_auxiliary_keys(super::archive_auxiliary::Kind::Proposal)?;
+        if existing.iter().filter(|(id, _)| !archived.contains(id)).count() >= MAX_IDENTITIES {
             return Err("handoff proposal identity capacity reached".into());
         }
         // Reserve space for every proposal's cancellation revision as well.
         let proposal_total =
             existing
                 .iter()
+                .filter(|(id, _)| !archived.contains(id))
                 .try_fold(candidate.encoded_len() as u64 + 2, |n, (_, s)| {
                     n.checked_add(s.encoded_len() as u64 + u64::from(!s.cancelled) * 2)
                         .ok_or("proposal bytes overflow")
@@ -650,7 +671,7 @@ impl WorkbenchState {
             .ok_or("handoff proposal missing")?;
         match record.status {
             HandoffProposalStatus::Pending => {
-                self.save_editor_draft_linked(&record.request, Some(&record.parent_link), true)?;
+                self.save_editor_draft_linked(&record.request, Some(&record.parent_link), None, true)?;
                 self.handoff_proposal_record(&slot)
             }
             HandoffProposalStatus::ChildCommitted | HandoffProposalStatus::ParentRetired => {

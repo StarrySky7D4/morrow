@@ -431,6 +431,62 @@ class AppLocalizationsFr extends AppLocalizations {
       'Le résultat de l’opération n’est pas encore confirmé. Vérifiez l’enregistrement initial ; ne répétez pas l’opération.';
 
   @override
+  String get mainDraftHistoryArchive => 'Archiver cet enregistrement';
+
+  @override
+  String get mainDraftHistoryArchived => 'Archivé';
+
+  @override
+  String mainDraftHistoryCapacity(int archived, int current) {
+    return 'Enregistrements courants : $current/256 ; archivés : $archived/4096';
+  }
+
+  @override
+  String get mainDraftHistoryCategoryField => 'Catégorie';
+
+  @override
+  String get mainDraftHistoryDescriptionField => 'Description';
+
+  @override
+  String get mainDraftHistoryExport => 'Exporter l’enregistrement';
+
+  @override
+  String get mainDraftHistoryFirst => 'Première page';
+
+  @override
+  String get mainDraftHistoryMaintain => 'Archiver les entrées associées';
+
+  @override
+  String get mainDraftHistoryMaintainHelp =>
+      'Conserver tout l’historique et libérer de la capacité pour les brouillons.';
+
+  @override
+  String get mainDraftHistoryMaintained => 'Entrées associées archivées';
+
+  @override
+  String get mainDraftHistoryNext => 'Page suivante';
+
+  @override
+  String get mainDraftHistoryNotice =>
+      'Seuls les brouillons retirés sont affichés. L’archivage conserve le texte et sa provenance et libère une place. Les fichiers joints libérés et les autorisations de capture ne sont pas restaurés. Les enregistrements archivés sont aussi limités à 64 Mio.';
+
+  @override
+  String get mainDraftHistoryRetired => 'Retiré';
+
+  @override
+  String get mainDraftHistoryStageField => 'Étape';
+
+  @override
+  String get mainDraftHistoryTitle => 'Historique des brouillons';
+
+  @override
+  String get mainDraftHistoryTitleField => 'Titre';
+
+  @override
+  String get mainDraftHistoryUnconfirmed =>
+      'Le résultat de l’archivage est non confirmé. Actualisez pour vérifier l’enregistrement original.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       'Après l’annulation, la demande d’abandon initiale ne sera plus exécutée. Cela ne supprime pas la pièce jointe et n’annule pas les autres modifications.';
 
@@ -510,6 +566,12 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get mainDraftJournalTitle => 'Brouillons enregistrés';
+
+  @override
+  String get mainDraftWriteInspect => 'Vérifier le brouillon';
+
+  @override
+  String get mainDraftWriteRetry => 'Réessayer de sauvegarder le brouillon';
 
   @override
   String get mainEdit => 'Modifier';

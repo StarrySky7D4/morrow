@@ -1,8 +1,9 @@
 # Local continuation, 2026-10-21
 
-Status: **paused by the user for a GitHub development snapshot; source and release are not accepted**.
+Status: **paused by direct user instruction on 2026-10-24; four VMs retained; source and release are not accepted**.
+See [the current pause and publication handoff](PAUSED_WINDOWS_20261024.md). Historical results below retain their original source and VM-state boundaries.
 Working checkout: `C:\ms1020`, branch `codex/local-continue-20261020`, base
-`116d1eb9beffa1675a48eb5ab06d1abc79137ae2`. This document accompanies the paused development snapshot. Current acceptance scope is Windows only by direct user instruction; other platforms are deferred and not accepted. The original
+`116d1eb9beffa1675a48eb5ab06d1abc79137ae2`. This document records the development continuation and its historical snapshots. Current acceptance scope is Windows only by direct user instruction; other platforms are deferred and not accepted. The original
 `morrow` checkout and its unrelated work were not used as the implementation tree.
 
 ## Verified work
@@ -613,3 +614,457 @@ local audit remains under `D:\build_cache\_audit`, including phase016
 contains an after-incident backup, not a pre-incident baseline. No rollback is
 claimed. Resume only after a later user instruction, preserving existing VM
 authorizations and all historical Unknown owners.
+
+
+## Resume and bounded VM resources, 2026-10-22
+
+The user resumed Windows acceptance from pushed commit `f8ef33ec091a82d68f3c2745dde950f8762d8878` and authorized automatic reclamation of surplus unused VMs with at most four retained. Nine superseded, already-offline acceptance VMs with no checkpoints were unregistered and their exclusive disks reclaimed. The operation preserved 101 verified configuration/public-evidence files, the shared clean parent and the topology of the four retained VMs. It contacted no guest owner and called no VM stop. Historical case outcomes remain Unknown; resource reclamation is not product cleanup, retirement or acceptance. The older no-reclamation instructions are superseded only for obsolete VM resources by this direct user instruction.
+
+The four retained VMs are the original development VM, the unclassified pre-existing VM, case014 and the new L1 fixture VM015. Before every future clone, the workflow checks total VM count and must retire an obsolete owned environment before taking a new slot. Shared parents, source, logs, original VM checkpoints and the after-incident backup remain protected. Audit: `D:\build_cache\_audit\windows-resume-20261022-017\vm-reclamation-003\result.json`.
+
+VM015 was started and a fresh protected-adapter identity/readiness probe passed all original17 checks and closed its own transport. This probe created no guest account, changed no policy and ran no product process. The later phase017 continuation below records the fresh experiments and their limits.
+
+
+## Actual primary-token initialization, phase017 continuation
+
+The fresh standard-user fixture baseline now matches the product runner's Windows GUI PE subsystem. Earlier console fixtures failed in KERNELBASE initialization; a named-event synchronization artifact also returned AccessDenied before the intended token probe. These fixture failures do not explain product case014. A finite, fresh owned-file barrier isolates the token experiment without changing the product protocol.
+
+Fixture016 reproduced own-primary TOKEN_QUERY / TOKEN_DUPLICATE rejection under the existing strict default template. Fixture017 initialized only the distinct newly created primary object through its original process handle. Fixture018 repeated the design with actual implicit-thread probes and exact TOKEN_STATISTICS before/after comparison. Query/duplicate/impersonate opens and original duplicate/restrict succeeded, while direct token adjustment/WRITE_DAC/WRITE_OWNER opens were denied to R. Initial and NULL-SA implicit threads allowed READ_CONTROL but denied context, query and WRITE_DAC. C could not reopen WRITE_DAC after its checked original initialization handle was closed. These are bounded independent VM fixtures, not L1/full47 acceptance.
+
+The current product source now keeps R/OWNER_RIGHTS default-template ACEs at READ_CONTROL and gives only C the finite new-primary initialization rights. It accepts only a distinct actual primary token with the exact kernel-generated four-ACE baseline, changes that object's DACL once, preserves owner/group/label/default and token statistics, verifies the source launch descriptor/statistics unchanged, and closes the original write-capable handle before transport or native-owner publication. New failure sites and one-shot budgets retain the original owner on uncertain effects. The original nonsuspended CreateProcessAsUser and authenticated startup protocol remain in place.
+
+Compilation and 41 exact scoped regressions passed from this working tree. No broad legacy host-provisioning suite was executed. The new source still requires fresh clean-VM L1/full47 acceptance; P2, P3 and Windows SDK gates remain open. Evidence: `D:\build_cache\_audit\windows-resume-20261022-017\result.json` and `managed-fixture-summary.json`.
+
+There were 17 fresh VM diagnostic attempts: 15 checked resource/account/transport closures and two retained Unknowns (fixture010 exec5716, fixture013 exec23716). All 17 temporary policy assignments were restored by the same original owner. Do not query, replay, adopt or terminate either Unknown owner. VM015 was subsequently observed Off through Hyper-V metadata; this was not a stop action by this continuation and is not a cleanup proof. A fresh acceptance environment must satisfy the four-VM cap before creation.
+
+## 2026-10-22: current product child admission and bounded diagnostic repair
+
+Fresh role set012 (canonical digest d25211d1c80b7e6b3734155319c60c93f36d642d360de3e01cce1d2b7f56bd9a)
+ran once in clean VM016 under case c69077fb00d140d18e98f33d7fd3a76f. The original
+39 steps returned and step40 was reserved. The authenticated original runner
+reported AdmitChildContext / NotObserved, with no AsUser native failure. The
+new actual-primary initialization and original runner token-open path were
+passed, but full child launch/validation was not accepted. Original exec45149
+remains Unknown and must not be polled, adopted, replayed or terminated. The
+same original policy owner restored its one added right and closed all ten
+owned resources; that does not clean the product case.
+
+Source review found that retained child launch errors were converted to plain
+strings during context admission, losing their typed site and native code.
+The repair copies only finite typed diagnostic facts, keeps the original error
+and resources with their original owner, and distinguishes validation failures.
+Compilation and43 exact scoped regressions pass, including the actual original
+authenticated-pipe test through the repaired io-error boundary. No diagnostic
+change is claimed to fix the underlying child-launch failure. New VM execution
+of this candidate remains pending; L1/full47/P2/P3/Windows SDK remain OPEN.
+
+VM015 was already Off and its completed diagnostic design work was superseded
+by case015. Its17 public fixture records (including two Unknown attempts),
+native observations and configuration were archived in185 pinned backup files
+before its registered VM and34,890,317,824-byte child disk were reclaimed.
+No guest owner was contacted, no VM was stopped and no Unknown was reclassified.
+Three VMs remain at this build seal; the next clean clone must make exactly four.
+Public evidence: D:\build_cache\_audit\windows-child-admission-20261022-018.
+
+## 2026-10-22: restricted-token lineage, phase019
+
+Case016 on fresh VM017 returned39 original steps and retained step40 Unknown.
+Its authenticated diagnostic now identifies CreateProcessAsUser / Other. It
+does not export the exact native number. Original exec44531 remains retained;
+the same policy owner restored its right and closed all ten original resources.
+
+Fresh fixture019 used the wrong SID namespace, failed token restriction with87,
+and remains Unknown at exec49426; it never reached child creation. Fixture020
+matched the product's NT-authority capability SID and observed child-create1314.
+Fixture021 changed only the token derivation order: restrict the actual primary
+first, then duplicate the restricted token for initialization. The child was
+created and exited0 without added runner privileges. Fixture022 linked the
+actual newly compiled product token functions and repeated that success, also
+verifying unchanged source TOKEN_STATISTICS and default ACL. These three known
+fixtures closed all owned handles, deleted their fresh accounts, closed their
+transports and restored temporary policy through the same original owner.
+The legacy fixture envelope's product_calls field is hardcoded, not a measured
+counter; fixture022 invoked four actual product token helpers. No full product
+session, Job-list launch or inherited-stdio acceptance is claimed by these probes.
+
+The product runner now captures the uninitialized restriction directly from
+its actual primary, captures an independent duplicate of that restriction,
+then initializes only that final owned token. Failures retain the same original
+attempt and source token rights remain QUERY|DUPLICATE. Compilation and43 scoped
+regressions pass, including20 real token preparations with original checked
+closure and source-descriptor/statistics preservation. Full47, P2, P3 and the
+Windows SDK gates remain OPEN until independent current-source evidence exists.
+
+Four VMs are registered at this seal. Both active acceptance VMs retain Unknown
+cases. No fifth VM may be created; original VM/checkpoints and the pre-existing
+unclassified VM remain protected. Evidence is under
+D:\build_cache\_audit\windows-restriction-lineage-20261022-019 and phase018.
+
+
+## Current private basic witness boundary repair, 2026-10-22
+
+Case017 returned steps1-40 and remains Unknown at step41; policy restoration is
+verified. The separate fresh fixture025 observed actual business exit DWORD1,
+complete stdout/stderr EOF and `artifact ancestor metadata unavailable`. Its
+original Job drained with total2/active0/terminated0, so strict single-process
+retirement was refused. Fixtures024/025 remain retained without replay or owner
+queries. These facts do not retroactively identify case017's exact predicate.
+
+The native-v8 witness now reads an immutable nonce-bound positive file in its
+granted workspace. C retains the private ancestor/owner handles, outside baseline
+and absence checks; no private ACL was broadened. Both positive files remain held
+through terminal review. Eight scoped harness tests passed, including actual
+Windows denial of rewriting/deleting the positive file while C's original handle
+is held. The later main-entry change selects the Windows subsystem with inherited
+explicit pipes, to test the implicit-console hypothesis for the extra Job member.
+Its runtime behavior and complete L1/full47 still require fresh evidence.
+
+Evidence: `D:\build_cache\_audit\windows-restriction-lineage-20261022-019`:
+`case017-summary.json`, `basic-private-fixtures024-025.json`, and
+`basic-private-boundary-tests/result.json`. P2/P3/SDK26/G04/SDK_FREEZE remain OPEN.
+
+
+## Case018 and bounded network diagnosis, 2026-10-22
+
+Case018 used byte-bound roles015 and returned the original40 steps before step41
+remained Unknown. The original runner history now records physical reaping,
+physical output EOF and joined input/output workers, while protocol business
+exit1, sticky failure and no-replay remain. These are runner facts, not a business
+native-completion or SDK retirement proof. Only fixed public file snapshots were
+read afterward; the exact business failure was not observed. Exec73209 is retained.
+
+Independent fixtures026/029 verified the repaired private file boundary and
+Windows-subsystem pipe/Job behavior: actual business Job total1/active0, EOF and
+original process exit. Fixture029 used a retained listener with positive parent
+round trips; without a SID-scoped rule, the restricted child connected to it.
+Network denial is still open. Fixture031 failed during fresh COM rule preparation
+before business creation and remains Unknown at exec24300; no native COM cleanup
+or original case acceptance is inferred. All known temporary policy restorations
+were verified. New fixtures never query or adopt old owners.
+
+The rejection path now exports only bounded finite failure categories and byte
+hashes from the page already returned. Four exact regression tests pass; failure
+and gap pages still accept no terminal evidence, and no second read is issued.
+Full47, P2/P3, SDK26/G04 and SDK_FREEZE remain OPEN.
+
+VM017 was independently already Off; its configuration was archived and both
+disks retained before registration removal. No live-memory preservation is
+claimed for that Off VM. Four VMs remain registered; no fifth may be created.
+The scoped old incremental-cache cleanup removed14,368 files (7,334,337,355
+logical bytes); observed D free-space gain was7,370,399,744 bytes.55 unrelated
+cache roots and all source/executable/library/report/VM artifacts were preserved.
+Evidence: phase019 case018-summary.json, network-fixtures027-031.json,
+basic-rejected-page-tests/result.json, vm-archive-008/result.json, and
+cache-incremental-001/result.json.
+
+
+## Owned full-offline WFP repair, 2026-10-22
+
+Independent fixture033 reproduced a connection through the production-shaped
+COM LocalUserAuthorizedList loopback block rule. Fixture034 added a fresh,
+exact-account ALE_AUTH_CONNECT_V4 WFP filter and the actual current business
+witness returned native DWORD0 and WSAEACCES10013. Positive parent listener
+round trips before and after, Job total1/active0 and physical output EOF were
+observed. The original candidate filter and sublayer were removed, absence
+verified, engine close checked and SD allocation freed. This is a bounded
+diagnostic, not product native-completion or full47 acceptance. Fixture032
+remains Unknown (exec77319), with no replay or cleanup claim. The legacy
+diagnostic firewall_mutations/product_calls counters are not measured counters.
+
+Owned product setup now derives a private WFP profile from its original request.
+An empty proxy list with local binding disabled retains the original12 filters
+and adds4 user-only BLOCK filters at outbound/connect and inbound/receive ALE
+layers for IPv4 and IPv6. New stable keys keep these separate from legacy
+cleanup. Parent receipt binding independently derives the same requested profile
+and verifies exact rule identities, actual account SDs and runtime IDs. Original
+owned proof carries this profile into scoped retirement. Missing, substituted,
+narrowed, foreign-SID or wrong-profile receipts/state are rejected.10 exact pure
+WFP tests pass; no host account or policy operation was run. Proxy/local-binding
+enforcement and full47/P2/P3/SDK gates remain open pending actual evidence.
+
+Evidence: phase019 owned-offline-wfp-tests/result.json and
+network-fixtures032-034.json. Fresh roles016 will bind the repaired source;
+historical cases and outcomes are unchanged.
+
+
+## Case019 and explicit business SystemRoot, 2026-10-22
+
+Case019 used the byte-bound roles016 full-offline WFP implementation. Original
+steps1-40 returned; step41 remains sealed Unknown, exec82870 retained. The runner
+was physically reaped, but business/native-completion/SDK retirement were not
+proved. The already-exported280-byte stderr hash exactly matched the finite
+Winsock10106 error envelope. Fresh independent fixture035 reproduced those exact
+bytes with the formal business TEMP/TMP-only environment. Fixture036 used the
+same helper binary, roles016 C, token restrictions and exact-SID/port WFP fixture,
+adding only SystemRoot from GetSystemWindowsDirectoryW. The actual business
+process returned native DWORD0, explicit network10013, correct restricted SID,
+non-elevation and file-boundary results. Parent listener positives before/after
+and original Job total1/active0/EOF were observed. Both fixtures removed their
+original new filters, accounts and one-right additions; original transport and
+engine closes were checked. Library Job/Desktop Drop outcomes were not observed,
+so these independent fixtures do not supply product completion authority.
+
+The formal harness now passes only TEMP/TMP plus the native-read SystemRoot;
+the same map is bound into the original request/intent. Unicode conversion and
+native query errors propagate before setup dispatch. No ambient environment,
+profile load, additional permission or relaxed denial predicate was introduced.
+Two environment regression tests and the parameter-binding test pass. Fresh
+P/C/R/S roles017 are required before another clean full47 run. P2/P3, SDK26/G04
+and SDK_FREEZE remain OPEN; Windows is the only requested target for this work.
+
+VM018 and VM019 were independently found Off and archived under VMBack; their
+configuration copies and retained disk hashes were verified before removing
+registration. No live-memory, historical cleanup or acceptance is claimed. The
+latest archive010 leaves3 registered VMs; the next clean clone may fill the
+fourth slot only. Source, reports, disks and prior Unknown evidence are retained.
+Evidence: phase019 case019-summary.json, environment-fixtures035-036.json,
+business-environment-tests/result.json and vm-archive-009/010 result.json.
+
+
+## Case020 and original runner wait/exit facts, 2026-10-22
+
+Case020 used byte-bound roles017 with native SystemRoot. Original steps1-40
+returned; step41 remains Unknown. Original runner history records native DWORD0,
+protocol business exit0, physical EOF and clean timely IO joins. The bounded
+50-byte stderr hash matches the expected nonce witness. These are bounded runner
+facts, not an accepted business native-completion/SDK receipt. Exec43164 and the
+original owner remain retained with no replay; policy restoration was verified.
+
+Source review found that finalization performed the original WaitForSingleObject
+and GetExitCodeProcess calls but never populated runner_wait_and_exit_fact, so
+the native protocol projection had no exit proof. Two process-only regressions
+failed on the original source; after wiring facts at the native call sites, all
+three tests pass. They cover actual0,259 and high-bit DWORD exits, wrong creation
+identity and absence without minting completion.16 existing protocol/projection/
+retention tests also pass. Wait/query failure and late result dispositions remain
+unproven; close/GUI/registry/SDK predicates are unchanged. Fresh full47 with
+mechanically bound roles018 is pending. P2/P3, SDK26/G04/FREEZE remain OPEN.
+
+VM020 was independently already Off. Archive011 verified its configuration,
+retained disk and clean parent before removing only registration, leaving3 VMs.
+Its historical Unknown status is unchanged and no live-memory preservation is
+claimed. VM021 retains case020. The pre-existing July VM has a73GiB disk and was
+not classified as disposable. Maximum4 registered VMs remains enforced.
+
+Two guarded cache cleanups removed3,296 old compiled rlib/rmeta files, totaling
+15,445,364,514 logical bytes; observed free-space gain was15,452,311,552 bytes.
+Current roles017 compiler outputs, executables, DLL/PDB/Wasm, source, reports,
+dependencies and VM disks were retained. All builds/caches remain on D.
+Evidence: phase019 case020-summary.json, runner-exit-tests-before/after,
+vm-public-path-snapshot-021, vm-archive-011 and cache-libraries-002/003.
+
+
+## Case021 and transferred original scheduler, 2026-10-23
+
+Roles018 completed original steps1-43 in clean VM023. The actual restricted
+business witness returned exit0 and EOF, workspace success, outside denial and
+network WSAEACCES10013 with positive baselines. Original task join/ACK, native
+runner DWORD0 and the authenticated v8 terminal-close ACK were returned. The
+full case remains Unknown at step44: finish-owner required an outer scheduler
+that native-context had already transferred to the original Worker. Exec68710
+is never replayed, polled, adopted or killed. Policy restoration was verified.
+
+The corrected path uses actual original native thread waits and checked closes
+after the Worker's synchronous runtime shutdown. Protected finish requires that
+same opaque factory completion; a missing Weak/Arc alone cannot authorize it.
+The separate held-runtime path still stages its original before owner finish.
+Four focused tests pass using real production constructors and native scheduler
+threads, including foreign completion, unstarted factory and double retirement
+rejection. The first test invocation matched zero tests and was rejected, then
+the exact binary-listed module names were executed. No child, account, policy
+or network operation was submitted by these regressions.
+
+VM022 hit Disk Full before any readiness probe or case. Its exact unused child
+disk was reclaimed after config/event archiving; no product owner existed there.
+VM021 was already Off; its disk and full configuration were verified and retained
+before removing registration. VM023 retains case021 and was saved with Hyper-V
+to preserve its memory/disk scene while stopping background writes. Save returned
+Saved; the actual1,812,316,160-byte VMRS and configuration hashes were recorded.
+An initial assumption that VMRS must be at least configured RAM was rejected;
+no second Save or automatic resume was issued. Registration count is3, cap4.
+
+Inactive PDB compression verified740 files without changing their content or
+mtimes. After reclaiming unused VM022, free space reached81,554,513,920 bytes;
+later compiler and guest writes consume additional space. New clones require
+64GiB free and all build caches stay on D. Cache/VM work is not acceptance.
+
+Fresh roles019/full47 are pending. P2 clean refusal, P3 editable restart and
+fault matrix, Windows SDK26/G04/FREEZE remain OPEN. Other platforms remain
+deferred by direct user scope. Evidence is under phase019 case021-summary.json,
+transferred-scheduler-tests, vm-archive-012 and vm023-saved-state.
+
+
+## Case022 and supplementary runner repin, 2026-10-23
+
+Roles019 returned original steps1-44 in clean VM024. Actual basic checks and
+original native ACK/join passed, followed by original native factory shutdown,
+protected owner finish and bound execution cleanup admission. Step45 remained
+Unknown: the supplementary sharing probe retained DELETE access while attempting
+to reacquire the read-sharing-only runner pin. Exec33381 is retained without
+replay, polling, adoption or termination. The same policy owner restored its
+single added right and verified closure. This is not full47 or Nine acceptance.
+
+The exact production file-sharing block was extracted unchanged for regression
+coverage. A fresh PE-shaped local file reproduced the same repin failure before
+the fix; three rejection tests passed. Closing the temporary probe before repin
+made all four actual Windows file tests pass, along with the original bound
+cleanup-admission test. No test launched a child, provisioned an account or called
+a VM. Borrowed originals, external locks and byte mismatch still reject. A file
+sharing observation never grants execution cleanup authority.
+
+VM024 was saved promptly, retaining its memory and4,151,312,384-byte child disk.
+The older VM023 saved memory/configuration was copied and SHA-verified, and both
+its child disk and clean parent remain pinned in place. Only its registration
+was removed after a zero-incompatibility comparison; no memory resume was tested.
+Registered VM count is3 and every future creation checks the maximum4 limit.
+
+Inactive compiler compression006 verified1,580 files and36,624,221,131 logical
+bytes without deleting files or changing file content/mtime. The observed free
+increase was20,152,299,520 bytes, including concurrent VM writes. Build caches
+remain on D. Current mr25t output directories inherit NTFS compression.
+
+Fresh roles020 and full47/Nine remain pending. P2 clean refusal, P3 editable
+restart and fault matrix, Windows SDK26/G04/FREEZE remain OPEN. Evidence is in
+phase019 case022-summary.json, runner-repin-tests-before/after, vm024-saved-state,
+vm-archive-013 and cache-compression-006. Other platforms remain deferred by user.
+
+
+## Case023: original47 and nine required groups, 2026-10-23
+
+The original47 completed on isolated VM025 with byte-bound roles020 and source
+`93144acd7caea95e50b9547ede5bd7a8cf76022de0455ea1f7715e58e56d6da4`.
+All47 steps returned,92 original input frames delivered3523 bytes, and107
+contiguous journal records were cross-checked against their original controller
+offsets and hashes. A separate283-check review found all nine original required
+groups satisfied for this exact Windows invocation. See
+[case023 evidence and limits](CASE023_WINDOWS_ORIGINAL47.md).
+
+Original native and business joins, authenticated ACK, SDK slot retirement,
+original scheduler/factory and protected owner finish, owned account/setup/WFP
+retirement and outer P/controller native exit0/EOF/joins/disposal all closed.
+The same policy owner removed only its new SeAssignPrimaryTokenPrivilege holder
+and closed both original transports. The supplementary file-sharing probe now
+passes in the full workflow. Historical Unknown cases remain unchanged.
+
+VM025 was saved after closure, retaining4,195,352,576 disk bytes and1,623,531,520
+memory-state bytes. Four VMs remain registered, with all other VM states unchanged.
+P2 clean refusal across all owners and more than16 consecutive refusals, P3
+editable restart/history/fault matrix, and Windows SDK26/G04/FREEZE remain OPEN.
+Full network isolation and other platforms are not accepted. Source and release
+acceptance stay false. The tested candidate is immutable historical evidence;
+subsequent implementation changes require their own fresh qualification.
+
+
+## 2026-10-23: P2 caller-refusal path implemented; acceptance still open
+
+The independent case023 source93144 original47/nine acceptance remains sealed.
+The newer candidate adds a distinct consume-only refusal path for a genuinely
+missing caller privilege before LogonUser, pipes, GUI or runner creation. The
+original caller box/closed handles, native cell, actual blocking return ACK,
+same local registry/connect reservation and exact factory binding carry the
+proof. SDK receipt retirement requires the actual start-task return, same
+review/operation/slot and original pending fact. Normal exit/EOF/ACK is neither
+invented nor accepted from this refusal. The durable spent R2 DispatchUnknown
+marker remains unchanged and grants no retry. The original P native generation
+is consumed once even on this known refusal.
+
+The local native fixture completed 17 actual refusals in one production local
+registry without reset, retained all original cells and observed 34 token
+closes. Seven cancellation, deadline, contention, unwind and foreign-caller
+controls retained the same original entry. Separately,14 scoped SDK/factory
+regressions and13 outer cleanup guards passed. Reports and exact source digests
+are in D:\build_cache\_audit\windows-restriction-lineage-20261022-019 under
+p2-local-refusal-tests-001,p2-sdk-refusal-tests-001,p2-outer-refusal-tests-001.
+
+Subsequent source adds a disposable-guest-only explicit qualification command
+on the actual admitted C origin. It removes only C's existing AssignPrimary
+privilege after original setup/review, verifies the same original token and
+unchanged other privileges, and checked-closes its query/adjust handle. It does
+not edit LSA policy or enable anything. This code has not yet been executed.
+The current source still needs combined validation, fresh role binding and VM
+refusal cleanup, SDK >16 actual capacity and post-logon refusal coverage. P2,
+P3 and Windows SDK26/G04/FREEZE remain OPEN. Four registered VMs are retained;
+VM024 Unknown and VM025 clean-case memory are Saved. No push was performed.
+
+
+## Cases026/027 and P3 history continuation, 2026-10-23
+
+[Cases026/027](CASE026_027_WINDOWS.md) supersede the earlier pending-refusal status above for the exact roles022/source bd69 candidate. One actual full-owner refusal passed 355 checks; a subsequent normal original47/nine run passed 284 checks. SDK >16 full-path capacity and post-logon refusal remain open. Case024/025 stay Unknown. Four VMs are registered; VM026 is Saved Unknown and VM027 is Saved after both clean runs. Archive014/015 retained historical memory/configuration and disks while reclaiming registrations.
+
+P3 now has explicit retired-journal archive/history APIs and a localized view/export/archive UI. Archive admission preserves every original journal, receipt and parent-child relationship; it never reactivates old identities or grants capture/business authority. Limits remain 16 active, 256 unarchived and separately 4096 archived identities/64 MiB current snapshot plus marker bytes. This is not a total database or transaction-history size limit. Unretired imports, retained import bytes and a live original capture scope must block archiving. Import/decision/proposal capacity and editable restart remain unfinished.
+
+The first six-process Windows attempt stopped before application launch because the immutable theme packager rejected changed bytes under the same version. The unchanged source snapshot and failed result are retained at phase019/p3-history-windows-001. Explicit byte-pinned retention now preserves the original theme package while compiling the new guest separately, as with the retained workbench package. This does not qualify those old guest bytes as newly built source. Current host-resource validation and a fresh native run are pending. Codec regressions passed 24 tests and static analysis found no issues.
+
+
+P3 follow-up: 22 actual host draft tests and 11 handoff tests now pass, including resource refusal, restart, retained bytes and exact lineage. An initial test exposed that the public import phase projects Retired whenever the main draft is inactive; archive now requires actual staging reconcile/prune rather than that display status. The failed test remains retained. All 24 codec tests and static analysis pass.
+
+The second six-process attempt built successfully but could not start the engine: CMake copied the D-cache junction as an invalid NT-path symlink, leaving the installed kernel inaccessible. Source snapshots were unchanged and no phase passed. The install helper now resolves the junction after assembly and installs actual directory contents within the owned application bundle. A fresh synthetic install/reinstall test verified source preservation; the driver also compares installed/assembled kernel hashes. Native acceptance remains pending a fresh run.
+
+
+[Fresh native history result](P3_HISTORY_WINDOWS.md): all six independent Windows clients passed on frozen source `f5ba873268fe7a9e97114cfadda073fc079e7a5205087ef325605722b8ce3f80` with unchanged before/after manifests. The real host/capture/import/history chain and installed kernel byte checks passed; 33 host/handoff and 24 codec tests are separately retained. Editable restart, full P3 and SDK remain OPEN.
+
+
+[Editable restart result](P3_EDITABLE_RESTART_WINDOWS.md): eight original Windows clients passed on frozen source `d5551c6ad3eaf4e5fd75ded7f3096f4a5bf13a94b8c4773a2e9c21d5e0f9b8a2`. New and V2 cards preserve raw input and attachments across two restarts, submit once through formal Save, and verify in a fourth process. The first failed close run is retained. Full P3/P2/Windows SDK remain OPEN.
+
+
+[Formal receipt-loss result](P3_RECEIPT_LOSS_WINDOWS.md): five original Windows clients passed on frozen source `670fb6c3c06e1eef040b2bb3efdf30488c59e954f7666c5704455b68dd962106`. Each real business submission, Prepare, Complete, Retire and acknowledgement occurred once; original inspection retained newer S2 and durable pins. Actual failed retirement and other P3 matrix cells remain open.
+
+
+[Actual retirement failure and restart](P3_RETIREMENT_FAILURE_WINDOWS.md): three native clients passed on frozen source `c12d29f3185666a620de6fba4fb862c926663e22ed7e3f0bedd51e9d08dfe666`. Exact-parent SQLite rejection preserved both active snapshots; formal next-process recovery consumed the original retirement operation and preserved editable S2 and pins without business replay. Normal close was correctly refused before intentional transport loss. Full P3/P2/Windows SDK remain open.
+
+## Cap'n Proto continuation, 2026-10-23
+
+The selected derived parent/Runner and v8 native-close chains now use typed Cap'n Proto. The frozen fe7de7d5 source passed 43 pure tests and case028 original47/nine (284 checks). Case029 later latched an outer parent ObserveChild InvalidData and remains Unknown, despite the inner P2 workflow reaching its final journal record. No old owner was replayed or polled after failure. Same-owner policy restoration is not observed. New finite exit diagnostics preserve all acceptance predicates and have no native acceptance yet. See [the bound report](WINDOWS_CAPNP_CASE028_029.md). Windows P2/P3 and SDK26/G04/FREEZE remain open.
+
+
+2026-10-23 continuation: roles024/source51fba032 passed actual caller-refusal case030 (355 checks) and normal case031 original47/nine (284 checks). Four VMs remain registered; VM028 Saved, prior Unknowns retained. P3 draft-write recovery UI and bounded real disk-full verification are in progress. P2/P3/SDK/source/release remain open. See WINDOWS_CAPNP_CASE028_029.md.
+
+
+[Real disk-full recovery](P3_DISK_FULL_WINDOWS.md): two native clients passed on source894ada3b. Windows112/zero free space, CommitUnknown retention, unchanged S1, exact S2 retry with S3 preserved, one business Save and exact next-process evidence were observed. Failed fixture attempts001/002 remain retained. Full P3/P2/SDK and combined-source acceptance remain open.
+
+
+[Formal parent archive and original import cleanup](P3_PARENT_ARCHIVE_WINDOWS.md): nine native clients passed on source 3de6d36972c40752f978cd5ec019b6f5a0c62e732e659f2fae546d201aed6144. Completed original proposals now allow archive while preserving lineage fences; formal commit cleans its retired parent imports before acknowledging. Lost cleanup reply uses one original dispatch and one inspection; all five previous reply-loss cases passed through the updated flow. Earlier actual host 28+12 methods and failed native attempts001/002 are retained with their own sources. Long-term auxiliary history and full P2/P3/SDK gates remain open.
+
+
+[Bound auxiliary archive](P3_AUXILIARY_ARCHIVE_WINDOWS.md): 44 actual host methods and four native clients passed on source 5747c341ec49c0c089c9bcc0729899b866bba669de8abcd3efc67cd222fb4ee3. Actual 256-entry histories regain admission only through explicit bound archive; original records and operation fences survive. Current reader opens an unchanged original version 1 copy. Legacy accounting maintenance and full gates remain open.
+
+
+[Case032 checked directory closure](WINDOWS_CWD_CLOSURE_CASE032.md): new original47/nine passed 284 checks after 93 selected regressions on source 051fe4cd898c7a5b91bca6de3d3f96099789da714869c35542c05ef1b3f3550e. Directory pins now require checked native closes before original completion. [Frozen Windows transport](SDK_FROZEN_TRANSPORT_WINDOWS.md): six actual original methods exercise all six untouched C/C++/Rust packages through loopback HTTP/service and durable outcomes. Historical Unknowns retained; VM028 Saved and registered count four. Full P2/P3/SDK/source/release gates remain open.
+
+
+[Pending editor context and Windows TLS/DPAPI](P3_CONTEXT_AND_WINDOWS_TLS.md): one real native client preserves the original pending commit and raw newer input through two locale/font changes; eleven actual Windows methods qualify bounded loopback TLS and DPAPI. Source a7a956a726d88a09b79b4ae8475cb552cf4f10e01001bb68a66f1f954f3cb975. Preferences/pixels/physical input, workspace transition, complete P2/P3/SDK and source/release acceptance remain open.
+
+
+[Two-workspace handoff](P3_WORKSPACE_WINDOWS.md): native client20984 passed on source b8d8095bc2d39f15efce5327b18faa426ebaabf267d839f889ec41aacf5a93a1. A pending parent-retirement confirmation disappears on switching to an actual second library; both original active records remain on A, B stays empty, and explicit confirmation after returning retires only the original parent. Exact raw child bytes and business revision survive reopen. Full gates remain open.
+
+
+[Case033 retained](WINDOWS_LOGON_REFUSAL_CASE033.md): the first39 steps returned; the logon-input fixture incorrectly queried an outer factory slot already transferred to the original Worker. Actual LogonUser was not reached. Same-owner policy restoration completed, but product cleanup did not. Session20924 and VM028 remain Unknown without replay. A Weak reference correction is pending new independent VM acceptance. No verified clean VM is available under the four-VM cap; independent SDK qualification continues.
+
+
+[Frozen SDK TLS/DPAPI](SDK_FROZEN_TLS_DPAPI_WINDOWS.md): source 67ff5ebeefd97e5e74e64a7c5e9850c5afa4acf4fe24cf4eeeb0e67169df20c3 passed three methods/nine Rust-C-C++ scenarios using original unchanged IO packages, actual TLS and reopened Windows DPAPI credentials. Correct root/hostname yields exact durable response; wrong root or hostname never reaches the handler and remains Unknown with unavailable response evidence across reopen. Full Windows SDK and product gates remain open.
+
+
+[Cases035/036](WINDOWS_LOGON_AND_NORMAL_CASE035_036.md): source47a9b9ce passed one actual LogonUser1326 refusal through the complete original cleanup chain (355 checks), then original47/nine (284 checks). VM029 is Saved clean, four VMs registered. VM028 was already Off; only its registration was reclaimed, with configuration and disks retained. Historical Unknown owners were not contacted. Full P2/P3 and Windows SDK gates remain open.
+
+
+[Windows capacity](P3_CAPACITY_WINDOWS.md): two original-limit host methods and two independent formal native clients passed archive exhaustion, retained original-operation recovery, history maintenance and restart checks. The unused offline VM registration was archived with its original disk/config retained; three VMs remain. Full P2/P3 and Windows SDK gates remain open.
+
+
+[Cases039/040](WINDOWS_SOURCE_POLICY_AND_NORMAL_CASE039_040.md): source3c779ec5 passed one actual post-logon source-token policy refusal through the original cleanup chain (355 checks), then original47/nine (284 checks). Case037 remains Unknown in saved VM029 after a controller optional-field mismatch; no old owner was replayed. VM030 is Saved clean and four VMs are registered. Full P2/P3 and Windows SDK gates remain open.
+
+## 2026-10-24 main archive count
+
+[Windows capacity](P3_CAPACITY_WINDOWS.md) now records the actual4096-main limit, refused4097th record, exact original retry and complete retained-store restart verification on source70e8. Legacy auxiliary maintenance is a newly applied candidate with a distinct immutable receipt and Cap'n Proto transport; its canonical and original-library native acceptance is pending. Full P2/P3 and SDK26/G04/SDK_FREEZE remain open.
+
+## 2026-10-24 legacy auxiliary maintenance
+
+[Legacy maintenance](P3_LEGACY_AUXILIARY_MAINTENANCE_WINDOWS.md) passed three protected host compatibility methods and two actual Windows clients. The latter use a byte-identical original v1 library copy; original marker, complete history and source library remain unchanged. Maintenance uses a distinct immutable receipt and Cap'n Proto IPC, cannot double-credit quota, and survives restart. The four-VM inventory is unchanged. Full P2/P3 and SDK26/G04/SDK_FREEZE remain open; source/release acceptance is false.
+
+## 2026-10-24 protected directory SDK
+
+[Protected Workbench directory SDK](SDK_PROTECTED_DIRECTORY_WINDOWS.md) passed three actual Rust/C/C++ guest methods on sourcea7bcc25b: original protected Session/worker ownership, explicit FileList approval/refusal/revocation, exact final page, checked join/disconnect/maintenance, native handle closure and approval persistence across reopen. These synthetic nominated-root tests do not establish picker or GUI provenance, full G04, SDK26 or SDK_FREEZE. Full gates remain open.
+
+
+## Paused publication checkpoint, 2026-10-24
+
+Case041 passed the original47/nine review (284 checks) on roles029/source77f509c0. Shared SDK owner009 passed 15 methods including 17 frozen guests; native010 passed 125 selected methods. Case042 then ended Unknown after the observer stopped; no completed round count or final native closure is claimed. Its original same-owner policy restore is verified. VM030 memory and disk are saved, all four VM registrations remain, and the original host session56421/PID12972 is retained without querying or terminating it. Full P2/P3 and Windows SDK remain open. See [the pause handoff](PAUSED_WINDOWS_20261024.md) and its committed public evidence. No acceptance work is scheduled or resumed by this publication.

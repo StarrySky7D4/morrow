@@ -587,5 +587,34 @@
   "mainDraftJournalExportFailed": "Não foi possível exportar a cópia de recuperação completa.",
   "mainDraftJournalRetire": "Retirar rascunho salvo",
   "mainDraftJournalRetireConfirm": "Retirar este rascunho e liberar suas cópias de anexos? Exporte primeiro uma cópia de recuperação se precisar. O conteúdo salvo e os resultados não confirmados permanecem inalterados.",
-  "mainDraftJournalRetireUnknown": "A retirada não foi confirmada. Consulte a operação original sem enviá-la novamente."
+  "mainDraftJournalRetireUnknown": "A retirada não foi confirmada. Consulte a operação original sem enviá-la novamente.",
+  "mainDraftHistoryTitle": "Histórico de rascunhos",
+  "mainDraftHistoryNotice": "Só aparecem rascunhos encerrados. Arquivar preserva o texto e a origem e liberta uma vaga. Os ficheiros anexos libertados e as permissões de captura não são restaurados. Os registos arquivados também têm um limite de 64 MiB.",
+  "mainDraftHistoryCapacity": "Registos atuais: {current}/256; arquivados: {archived}/4096",
+  "mainDraftHistoryUnconfirmed": "O resultado do arquivo não está confirmado. Atualize para verificar o registo original.",
+  "mainDraftHistoryRetired": "Encerrado",
+  "mainDraftHistoryArchived": "Arquivado",
+  "mainDraftHistoryFirst": "Primeira página",
+  "mainDraftHistoryNext": "Página seguinte",
+  "mainDraftHistoryExport": "Exportar registo do histórico",
+  "mainDraftHistoryArchive": "Arquivar este registo",
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "archived": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDraftHistoryTitleField": "Título",
+  "mainDraftHistoryDescriptionField": "Descrição",
+  "mainDraftHistoryCategoryField": "Categoria",
+  "mainDraftHistoryStageField": "Fase",
+  "mainDraftWriteInspect": "Verificar o rascunho",
+  "mainDraftWriteRetry": "Tentar salvar o rascunho novamente",
+  "mainDraftHistoryMaintain": "Arquivar registos relacionados",
+  "mainDraftHistoryMaintainHelp": "Preservar todo o histórico e libertar capacidade para registos de rascunhos.",
+  "mainDraftHistoryMaintained": "Registos relacionados arquivados"
 }

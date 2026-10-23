@@ -6,7 +6,7 @@ use crate::WindowsAsUserNativeSite as Site;
 use std::{cell::UnsafeCell,ffi::c_void,io,mem,ptr,sync::atomic::{AtomicBool,Ordering},time::Instant};
 use windows_sys::Win32::Foundation::{CloseHandle,GetLastError,GetHandleInformation,HANDLE,LocalFree,LUID};
 use windows_sys::Win32::Security::{LogonUserW,CreateRestrictedToken,DuplicateTokenEx,SecurityImpersonation,TokenPrimary,GetTokenInformation,SetTokenInformation,LookupPrivilegeValueW,
-    GetKernelObjectSecurity,SECURITY_ATTRIBUTES,
+    GetKernelObjectSecurity,SetKernelObjectSecurity,SECURITY_ATTRIBUTES,
     TokenUser,TokenStatistics,TokenGroups,TokenPrivileges,TokenSessionId,
     TokenIntegrityLevel,TokenElevation,TokenElevationType,TokenHasRestrictions,TokenDefaultDacl,TokenOwner,
     TokenIsAppContainer,TokenUIAccess,TokenVirtualizationEnabled,TokenMandatoryPolicy,
@@ -18,6 +18,17 @@ use windows_sys::Win32::System::Threading::{CreateProcessAsUserW,GetCurrentThrea
 use windows_sys::Win32::System::LibraryLoader::{GetModuleHandleW,GetProcAddress};
 use super::asuser_a1_policy::{self as policy,Bundle,Command,Sid,Statistics,TargetFacts,TargetPolicy};
 use super::caller_prerequisites::AsUserCaller;
+#[path="asuser_logon_refusal.rs"]
+mod logon_refusal;
+#[path="asuser_source_policy_refusal.rs"]
+mod source_policy_refusal;
+
+/// Read the Windows installation directory from the native system query.
+/// This returns path data only, never a startup, identity or cleanup capability.
+/// It neither reads nor inherits the caller's environment or user profile.
+pub fn native_system_windows_directory()->io::Result<String> {
+    NativeSystemDirectory::read().map(NativeSystemDirectory::into_root)
+}
 
 pub(crate) const BUFFER_BYTES:usize=65536;
 /// Opaque result of the fixed native system-directory query. No constructor
@@ -39,7 +50,16 @@ impl NativeSystemDirectory {
 }
 #[derive(Clone,Copy,Debug,PartialEq,Eq)]
 pub(crate) enum Phase {Reserved,LoginInFlight,TokenHeld,TokenValidated,CreateInFlight,Created,
-    TransferInFlight,Transferred,Retiring,Rejected,Closed,Unknown}
+    TransferInFlight,Transferred,Retiring,Rejected,Closed,CallerRefused,CallerRefusalRetired,Unknown}
+/// The refusal variant is an original resource capability, not an error-code
+/// classification. Its matching closed caller allocation stays in this exact
+/// cell; a later typed Logon refusal also requires checked query/CWD closure.
+pub(crate) enum CallerAdmission {Ready(AsUserCaller),Refused(NativeCallerRefusal)}
+#[derive(Clone,Copy,Debug,PartialEq,Eq)]
+enum RefusalKind {Caller,Logon,SourcePolicy}
+pub(crate) struct NativeCallerRefusal {anchor:std::sync::Arc<()>,generation:u64,kind:RefusalKind}
+pub(crate) enum NativeStart {Started,Refused(NativeCallerRefusal)}
+enum LoginResult {Ready,Rejected,SourcePolicyRejected}
 #[derive(Clone,Copy,Debug,PartialEq,Eq)]
 enum State {Empty,InFlight,Held,Rejected,Transferred,Closed,Unknown,CloseFailed(u32)}
 #[derive(Clone,Copy)]
@@ -75,13 +95,15 @@ enum Stage {Admission,ThreadToken,Login,Grant,Token,TokenSecurity,Broker,Process
 // In particular, deriving a token must not consume its default-DACL mutation.
 #[derive(Clone,Copy)]
 enum NativeCall {ThreadToken,Login,TokenQuery,SecurityDescriptor,Create,Retirement,ObjectQuery,
-    PrivilegeLookup,RunnerToken,CallerToken,CallerWindow,PostThreadToken,DefaultInitialization,LaunchTokenDerivation,LaunchObjectCreation}
-const NATIVE_CALL_COUNT:usize=NativeCall::LaunchObjectCreation as usize+1;
+    PrivilegeLookup,RunnerToken,CallerToken,CallerWindow,PostThreadToken,DefaultInitialization,LaunchTokenDerivation,LaunchObjectCreation,RunnerObjectSecurity,RunnerObjectInitialization}
+const NATIVE_CALL_COUNT:usize=NativeCall::RunnerObjectInitialization as usize+1;
 #[derive(Clone,Copy)]
 struct Failure {stage:Stage,site:Site,kind:io::ErrorKind,win32:Option<i32>,ntstatus:Option<i32>,
     target_policy_rejection:Option<crate::WindowsTargetPolicyRejection>}
 #[derive(Clone,Copy)]
 struct ObjectReply {status:i32,returned:u32,granted:Option<u32>}
+#[derive(Clone,Copy,Debug,PartialEq,Eq)]
+enum RunnerObjectPhase {Unobserved,InFlight,SetSucceeded,Verified,Unknown}
 #[derive(Clone,Copy,Debug,PartialEq,Eq)]
 enum DefaultPhase {Unobserved,SafeWithoutMutation,SetInFlight,SetSucceeded,Verified,Unknown}
 struct DefaultInitialization {phase:DefaultPhase,status:Option<u32>}
@@ -166,11 +188,13 @@ pub(crate) struct Attempt {
     login_token:Slot,source_facts:Option<TargetFacts>,restricted_token:Slot,token:Slot,thread_token:Slot,r_token:Slot,caller_token:Slot,post_thread_token:Slot,process_sd:Slot,thread_sd:Slot,
     process:Slot,thread:Slot,pi:PROCESS_INFORMATION,
     calls:[u8;NATIVE_CALL_COUNT],
-    object_replies:[Option<ObjectReply>;4],
+    object_replies:[Option<ObjectReply>;5],
     buffer:Box<[u64;BUFFER_BYTES/8]>,
     token_sd:Box<[u64;BUFFER_BYTES/8]>,token_sd_len:usize,
     launch_creation:Box<[u64;512]>,launch_creation_identity:Option<(Sid,Sid)>,
     token_security:Option<crate::asuser_a1_security::TokenLayout>,
+    runner_object_phase:RunnerObjectPhase,runner_object_status:Option<u32>,
+    runner_creation:Box<[u64;512]>,runner_before:Box<[u64;512]>,runner_before_len:usize,
     // Original T's actual default-object template, separately captured from
     // its TOKEN OBJECT descriptor. Addendum1625 permits exactly the bounded
     // private-T default initialization below; the TOKEN OBJECT SD is read-only.
@@ -185,6 +209,9 @@ pub(crate) struct Attempt {
     broker:Option<Box<crate::asuser_a1_helper::Broker>>,
     command:Option<Command>,
     caller_attempt:Option<Box<crate::CallerPrerequisiteAttempt>>,
+    caller_refusal:Option<crate::caller_prerequisites::ClosedIneligibleCaller>,
+    refusal_anchor:Option<std::sync::Arc<()>>,
+    refusal_kind:Option<RefusalKind>,refusal_fact:Option<Failure>,
     origin_retirement_taken:bool,
 }
 impl Attempt {
@@ -193,8 +220,9 @@ impl Attempt {
             target_policy_rejection:None,
             login_token:Slot::new(false),source_facts:None,restricted_token:Slot::new(false),token:Slot::new(false),thread_token:Slot::new(false),r_token:Slot::new(false),caller_token:Slot::new(false),post_thread_token:Slot::new(false),process_sd:Slot::new(true),thread_sd:Slot::new(true),
             process:Slot::new(false),thread:Slot::new(false),pi:unsafe{mem::zeroed()},
-            calls:[0;NATIVE_CALL_COUNT],object_replies:[None;4],buffer:Box::new([0;BUFFER_BYTES/8]),token_sd:Box::new([0;BUFFER_BYTES/8]),
-            token_sd_len:0,launch_creation:Box::new([0;512]),launch_creation_identity:None,token_security:None,default_acl:Box::new([0;4096]),default_acl_len:0,
+            calls:[0;NATIVE_CALL_COUNT],object_replies:[None;5],buffer:Box::new([0;BUFFER_BYTES/8]),token_sd:Box::new([0;BUFFER_BYTES/8]),
+            token_sd_len:0,launch_creation:Box::new([0;512]),launch_creation_identity:None,token_security:None,runner_object_phase:RunnerObjectPhase::Unobserved,runner_object_status:None,
+            runner_creation:Box::new([0;512]),runner_before:Box::new([0;512]),runner_before_len:0,default_acl:Box::new([0;4096]),default_acl_len:0,
             default_initialization:DefaultInitialization::new(),default_reads:0,
             default_creation:Box::new([0;512]),post_default:None,
             before_default_acl:Box::new([0;4096]),before_default_len:0,
@@ -202,10 +230,13 @@ impl Attempt {
             pipe_names:None,gui_closed:false,
             target_statistics:None,caller_windows:std::array::from_fn(|_|None),caller_privileges:None,
             object_query:None,logon:None,admission:None,broker:None,command:None,
-            caller_attempt:Some(crate::CallerPrerequisiteAttempt::new()),origin_retirement_taken:false}
+            caller_attempt:Some(crate::CallerPrerequisiteAttempt::new()),caller_refusal:None,refusal_anchor:None,
+            refusal_kind:None,refusal_fact:None,origin_retirement_taken:false}
     }
     fn observe_first_failure(&self, diagnostic:Option<&crate::WindowsStartDiagnostic>) {
-        let (Some(first),Some(diagnostic))=(self.first,diagnostic) else{return;};
+        // An explicit returned LogonUser refusal is an expected typed outcome,
+        // but remains the first native diagnostic even if its later close fails.
+        let (Some(first),Some(diagnostic))=(self.refusal_fact.or(self.first),diagnostic) else{return;};
         use crate::WindowsAsUserNativeStage as Observed;
         let stage=match first.stage {
             Stage::Admission=>Observed::Admission,
@@ -235,13 +266,15 @@ impl Attempt {
         // Error reporting and physical ownership are independent. A denied
         // source token has no runner, but still owns its login/query handles.
         if matches!(self.stage,Stage::Unwind|Stage::Deadline)||self.site==Site::DeadlineGuard
+            || self.command.as_ref().is_some_and(|command|command.cwd_pins.uncertain())
+            || matches!(self.runner_object_phase,RunnerObjectPhase::InFlight|RunnerObjectPhase::SetSucceeded|RunnerObjectPhase::Unknown)
             || self.slots().iter().any(|slot|matches!(slot.state,State::InFlight|State::Unknown|State::CloseFailed(_))) {
             self.outcome.lost();
         }
         self.phase=Phase::Unknown;
     }
     pub(crate) fn consume_caller(&mut self)->io::Result<AsUserCaller> {
-        if self.phase!=Phase::Reserved||self.admission.is_some(){return Err(bad());}
+        if self.phase!=Phase::Reserved||self.admission.is_some()||self.caller_refusal.is_some(){return Err(bad());}
         // This cell is reserved in the actual blocking C native-start thread.
         // The thread-affine 046 box is never moved from H's interactive thread
         // and never reruns H's separate diagnostic observation.
@@ -249,7 +282,83 @@ impl Attempt {
         if !original.reserve(){return Err(bad());}original.observe_once();
         let original=self.caller_attempt.take().ok_or_else(bad)?;
         match original.consume_for_asuser(){Ok(value)=>Ok(value),Err(original)=>{
-            self.caller_attempt=Some(original);Err(bad())}}
+            match original.consume_closed_ineligible() {
+                Ok(closed)=>{
+                    // Caller-local closure alone never releases an owner,
+                    // registry charge, factory or setup. Keep this exact proof
+                    // for the separate consume-only refusal transaction.
+                    debug_assert!(closed.original_handles_closed());
+                    self.caller_refusal=Some(closed);
+                },
+                Err(original)=>self.caller_attempt=Some(original),
+            }
+            Err(bad())}}
+    }
+    pub(crate) fn take_caller_admission(&mut self)->io::Result<CallerAdmission> {
+        self.checkpoint(Stage::Admission)?;
+        match self.consume_caller() {
+            Ok(caller)=>Ok(CallerAdmission::Ready(caller)),
+            Err(_) if self.phase==Phase::Reserved && self.refusal_anchor.is_none()
+                && self.caller_refusal_resources_closed() && Instant::now()<self.deadline=>{
+                let anchor=std::sync::Arc::new(());
+                self.refusal_anchor=Some(anchor.clone());
+                self.refusal_kind=Some(RefusalKind::Caller);
+                self.phase=Phase::CallerRefused;
+                Ok(CallerAdmission::Refused(NativeCallerRefusal{anchor,generation:self.generation,kind:RefusalKind::Caller}))
+            },
+            Err(error)=>Err(error),
+        }
+    }
+    fn caller_refusal_resources_closed(&self)->bool {
+        self.first.is_none() && self.refusal_fact.is_none() && !self.outcome.observation_lost
+            && self.outcome.dispatch==crate::asuser_attempt_outcome::RunnerDispatch::NotAttempted
+            && self.caller_attempt.is_none()
+            && self.caller_refusal.as_ref().is_some_and(|proof|proof.original_handles_closed())
+            && self.slots().iter().all(|slot|slot.state==State::Empty && slot.raw==0)
+            && self.calls.iter().all(|count|*count==0)
+            && self.pi.hProcess==0 && self.pi.hThread==0 && self.pi.dwProcessId==0 && self.pi.dwThreadId==0
+            && self.admission.is_none() && self.command.is_none() && self.broker.is_none()
+            && self.pipe_names.is_none() && self.runner_object_phase==RunnerObjectPhase::Unobserved
+            && self.default_initialization.phase==DefaultPhase::Unobserved
+    }
+    pub(crate) fn require_caller_refusal(&self,proof:&NativeCallerRefusal)->io::Result<()> {
+        if self.phase!=Phase::CallerRefused || self.generation!=proof.generation
+            || self.refusal_kind!=Some(proof.kind)
+            || !self.refusal_anchor.as_ref().is_some_and(|anchor|std::sync::Arc::ptr_eq(anchor,&proof.anchor))
+            || !self.refusal_resources_closed(proof.kind) || Instant::now()>=self.deadline {return Err(bad());}
+        Ok(())
+    }
+    fn refusal_resources_closed(&self,kind:RefusalKind)->bool {
+        match kind {RefusalKind::Caller=>self.caller_refusal_resources_closed(),
+            RefusalKind::Logon=>self.logon_refusal_resources_closed(),
+            RefusalKind::SourcePolicy=>self.source_policy_refusal_resources_closed()}
+    }
+    /// Only metadata follows the caller's checked native closes. Called at the
+    /// same-owner registry commit point, without native calls or resource Drop.
+    pub(crate) fn commit_caller_refusal(&mut self) {
+        self.phase=Phase::CallerRefusalRetired;
+        self.outcome.closed();
+    }
+    pub(crate) fn caller_refusal_retired(&self,proof:&NativeCallerRefusal)->bool {
+        self.phase==Phase::CallerRefusalRetired && self.generation==proof.generation
+            && self.refusal_kind==Some(proof.kind)
+            && self.refusal_anchor.as_ref().is_some_and(|anchor|std::sync::Arc::ptr_eq(anchor,&proof.anchor))
+            && self.refusal_resources_closed(proof.kind)
+            && self.outcome.resources==crate::asuser_attempt_outcome::LocalResources::Closed
+    }
+    pub(crate) fn refusal_reason(&self,proof:&NativeCallerRefusal)->io::Result<crate::AsUserRefusalReason> {
+        if !self.caller_refusal_retired(proof){return Err(bad());}
+        Ok(match proof.kind {
+            RefusalKind::Caller=>crate::AsUserRefusalReason::MissingCallerPrivilege,
+            RefusalKind::Logon=>crate::AsUserRefusalReason::LogonRejected(
+                self.refusal_fact.and_then(|fact|fact.win32).ok_or_else(bad)? as u32),
+            RefusalKind::SourcePolicy=>crate::AsUserRefusalReason::SourcePolicyRejected(
+                self.refusal_fact.and_then(|fact|fact.target_policy_rejection).ok_or_else(bad)?),
+        })
+    }
+    #[cfg(test)]
+    pub(crate) fn caller_refusal_snapshot(&self)->Option<crate::caller_prerequisites::CallerPrerequisiteSnapshot> {
+        self.caller_refusal.as_ref().map(|proof|proof.snapshot())
     }
     fn checkpoint(&mut self,stage:Stage)->io::Result<()> {
         self.stage=stage;
@@ -345,7 +454,7 @@ impl Attempt {
         }
         self.caller_window(2,a)
     }
-    fn login_inner(&mut self,a:&Admission,user:&[u16],password:&[u16])->io::Result<()> {
+    fn login_inner(&mut self,a:&Admission,user:&[u16],password:&[u16])->io::Result<LoginResult> {
         self.checkpoint(Stage::Admission)?;
         if self.phase!=Phase::Reserved||self.generation!=a.generation||self.calls[NativeCall::Login as usize]!=0
             || user.len()<2||user.len()>257||password.is_empty()||password.len()>1025
@@ -378,7 +487,9 @@ impl Attempt {
         self.site=Site::LogonUserResult;
         let ok=unsafe{LogonUserW(user.as_ptr(),domain.as_ptr(),password.as_ptr(),2,0,&mut self.login_token.raw)};
         let error=if ok==0 {unsafe{GetLastError()}}else{0};
-        self.login_token.capture(ok!=0,error)?;
+        if matches!(self.capture_login_result(ok!=0,error)?,LoginResult::Rejected) {
+            return Ok(LoginResult::Rejected);
+        }
         self.phase=Phase::TokenHeld;self.checkpoint(Stage::Login)?;
         let mut flags=0;
         self.site=Site::TokenHandleInformation;
@@ -389,7 +500,8 @@ impl Attempt {
         let source=self.target_facts()?;
         self.site=Site::TargetPolicyGuard;
         if let Err(error)=a.target.validate_source(&source) {
-            self.target_policy_rejection=a.target.source_rejection(&source);return Err(error);
+            self.target_policy_rejection=a.target.source_rejection(&source);
+            return self.capture_source_policy_rejection(source,&error);
         }
         self.source_facts=Some(source.clone());
         self.derive_launch_token(&source,a.target.caller)?;
@@ -403,7 +515,7 @@ impl Attempt {
         self.capture_token_security(facts.integrity_rid,a.caller.integrity_rid()?)?;
         self.site=Site::DefaultInitialization;
         self.initialize_default(&a.target,&facts)?;
-        self.logon=Some(facts.logon);self.phase=Phase::TokenValidated;Ok(())
+        self.logon=Some(facts.logon);self.phase=Phase::TokenValidated;Ok(LoginResult::Ready)
     }
     /// One derivation, no fallback to the login token. Both outputs are in the
     /// original owner before any fallible work; failed/partial outputs stay owned.
@@ -413,7 +525,7 @@ impl Attempt {
         if subject.hash!=source.context||self.statistics()?!=source.final_stats{return Err(bad());}
         let name:Vec<u16>="SeChangeNotifyPrivilege".encode_utf16().chain(Some(0)).collect();
         let mut allowed:LUID=unsafe{mem::zeroed()};
-        self.call(NativeCall::PrivilegeLookup,7,Stage::Token)?;
+        self.call(NativeCall::PrivilegeLookup,8,Stage::Token)?;
         if unsafe{LookupPrivilegeValueW(ptr::null(),name.as_ptr(),&mut allowed)}==0{return Err(io::Error::last_os_error());}
         let mut deleted=subject.privileges.iter().filter(|(low,high,_)|
             *low!=allowed.LowPart||*high!=allowed.HighPart).map(|(low,high,_)|
@@ -563,7 +675,7 @@ impl Attempt {
         Ok(Statistics{token:luid(s.TokenId),auth:luid(s.AuthenticationId),modified:luid(s.ModifiedId),primary:s.TokenType==1})
     }
     fn target_facts(&mut self)->io::Result<TargetFacts> {
-        self.call(NativeCall::ObjectQuery,4,Stage::Grant)?;
+        self.call(NativeCall::ObjectQuery,5,Stage::Grant)?;
         let mut basic=[0u32;14];let mut returned=0;
         let raw=if self.r_token.state==State::Held{self.r_token.raw}else if self.token.state==State::Held{self.token.raw}else{self.login_token.raw};
         let status=unsafe{self.object_query.ok_or_else(bad)?(raw,0,basic.as_mut_ptr().cast(),56,&mut returned)};
@@ -611,7 +723,7 @@ impl Attempt {
         let mandatory_policy=self.scalar(TokenMandatoryPolicy)?;
         let name:Vec<u16>="SeChangeNotifyPrivilege".encode_utf16().chain(Some(0)).collect();
         let mut allowed:LUID=unsafe{mem::zeroed()};
-        self.call(NativeCall::PrivilegeLookup,7,Stage::Token)?;
+        self.call(NativeCall::PrivilegeLookup,8,Stage::Token)?;
         if unsafe{LookupPrivilegeValueW(ptr::null(),name.as_ptr(),&mut allowed)}==0{return Err(io::Error::last_os_error());}
         let len=self.query(TokenPrivileges)?;if len<4{return Err(bad());}
         let count=u32::from_le_bytes(self.bytes(4).try_into().unwrap()) as usize;
@@ -676,6 +788,7 @@ impl Attempt {
         self.caller_window(1,a)?;
         self.site=Site::CreateCommandGuard;
         let command=self.command.as_mut().ok_or_else(bad)?;
+        if !command.cwd_pins.ready(){return Err(bad());}
         let (application,cmd,environment,cwd,desktop)=(command.application.as_ptr(),command.command.as_mut_ptr(),
             command.environment.as_mut_ptr(),command.cwd.as_ptr(),command.desktop.as_mut_ptr());
         let mut si:STARTUPINFOW=unsafe{mem::zeroed()};si.cb=mem::size_of::<STARTUPINFOW>() as u32;
@@ -704,7 +817,7 @@ impl Attempt {
         self.caller_after_api(a)
     }
     fn readback(&mut self,a:&Admission)->io::Result<()> {
-        if self.phase!=Phase::Created{return Err(bad());}
+        if self.phase!=Phase::Created||self.runner_object_phase!=RunnerObjectPhase::Unobserved{return Err(bad());}
         for thread in [false,true] {
             self.call(NativeCall::SecurityDescriptor,4,if thread{Stage::ThreadReadback}else{Stage::ProcessReadback})?;
             self.buffer.fill(0);let mut length=0;
@@ -720,16 +833,74 @@ impl Attempt {
         self.checkpoint(Stage::Token)?;
         self.call(NativeCall::RunnerToken,1,Stage::Token)?;
         self.r_token.begin()?;
-        let ok=unsafe{OpenProcessToken(self.process.raw,0x00020008,&mut self.r_token.raw)};
+        self.site=Site::RunnerTokenOpen;
+        let ok=unsafe{OpenProcessToken(self.process.raw,crate::asuser_a1_rights::RUNNER_TOKEN_INITIALIZATION,&mut self.r_token.raw)};
         let error=if ok==0{unsafe{GetLastError()}}else{0};self.r_token.capture(ok!=0,error)?;
-        let actual_runner=self.target_facts()?;
-        let baseline=self.post_default.as_ref().ok_or_else(bad)?;
-        a.target.validate_launched_runner(&actual_runner,baseline)?;
-        if actual_runner.owner!=baseline.owner||actual_runner.context!=baseline.context{return Err(bad());}
-        self.default_objects(a.target.caller,actual_runner.logon,true)?;
-        if self.statistics()?!=actual_runner.final_stats{return Err(bad());}
+        let before=self.target_facts()?;
+        let baseline=self.post_default.as_ref().ok_or_else(bad)?.clone();
+        a.target.validate_runner_initialization(&before,&baseline)?;
+        self.site=Site::RunnerTokenBefore;
+        let old=self.runner_object_security(a,false,before.user)?;
+        let template=super::asuser_a1_security::runner_token_template(a.target.caller,before.logon)?;
+        if template.len()>4096||self.runner_object_phase!=RunnerObjectPhase::Unobserved{return Err(bad());}
+        let output=unsafe{std::slice::from_raw_parts_mut(self.runner_creation.as_mut_ptr().cast::<u8>(),4096)};
+        output[..template.len()].copy_from_slice(&template);
+        self.site=Site::RunnerTokenInitialization;
+        self.call(NativeCall::RunnerObjectInitialization,1,Stage::TokenSecurity)?;
+        self.runner_object_phase=RunnerObjectPhase::InFlight;
+        // Only the new actual R primary, never the input launch token. No
+        // owner/label/default change; the existing kernel BA-query ACE stays.
+        let ok=unsafe{SetKernelObjectSecurity(self.r_token.raw,0x80000004,self.runner_creation.as_mut_ptr().cast())};
+        let error=if ok==0{unsafe{GetLastError()}}else{0};
+        self.runner_object_status=Some(error);
+        self.runner_object_phase=if ok!=0{RunnerObjectPhase::SetSucceeded}else{RunnerObjectPhase::Unknown};
+        if ok==0{return Err(io::Error::from_raw_os_error(error as i32));}
+        self.site=Site::RunnerTokenAfter;
+        if self.runner_object_security(a,true,before.user)?!=old{return Err(bad());}
+        let after=self.target_facts()?;
+        a.target.validate_runner_initialization(&after,&baseline)?;
+        if after!=before{return Err(bad());}
+        self.default_objects(a.target.caller,after.logon,true)?;
+        if self.statistics()?!=after.final_stats{return Err(bad());}
+        // Re-read the input token's object descriptor via its original handle.
+        // Its prelaunch descriptor is immutable despite the distinct R init.
+        self.call(NativeCall::SecurityDescriptor,5,Stage::TokenSecurity)?;
+        self.buffer.fill(0);let mut length=0;
+        if unsafe{GetKernelObjectSecurity(self.token.raw,0x15,self.buffer.as_mut_ptr().cast(),BUFFER_BYTES as u32,&mut length)}==0 {
+            return Err(io::Error::last_os_error());
+        }
+        let original=unsafe{std::slice::from_raw_parts(self.token_sd.as_ptr().cast::<u8>(),self.token_sd_len)};
+        if length as usize!=self.token_sd_len||original!=self.bytes(length as usize){return Err(bad());}
+        self.call(NativeCall::TokenQuery,128,Stage::TokenSecurity)?;
+        let mut launch:TOKEN_STATISTICS=unsafe{mem::zeroed()};let mut returned=0;
+        if unsafe{GetTokenInformation(self.token.raw,TokenStatistics,(&mut launch as *mut TOKEN_STATISTICS).cast(),
+            mem::size_of::<TOKEN_STATISTICS>() as u32,&mut returned)}==0{return Err(io::Error::last_os_error());}
+        let luid=|v:LUID|(u64::from(v.HighPart as u32)<<32)|u64::from(v.LowPart);
+        let unchanged=Statistics{token:luid(launch.TokenId),auth:luid(launch.AuthenticationId),
+            modified:luid(launch.ModifiedId),primary:launch.TokenType==1};
+        if returned as usize!=mem::size_of::<TOKEN_STATISTICS>()||Some(unchanged)!=self.target_statistics{return Err(bad());}
+        self.runner_object_phase=RunnerObjectPhase::Verified;
+        self.site=Site::RunnerTokenClose;
         self.r_token.close()?;self.checkpoint(Stage::Token)?;
         Ok(())
+    }
+    fn runner_object_security(&mut self,a:&Admission,initialized:bool,user:Sid)->io::Result<super::asuser_a1_security::RunnerTokenReadback> {
+        if self.r_token.state!=State::Held{return Err(bad());}
+        self.call(NativeCall::RunnerObjectSecurity,2,Stage::TokenSecurity)?;
+        self.buffer.fill(0);let mut length=0;
+        // OWNER|GROUP|DACL|LABEL, from the actual original primary handle.
+        if unsafe{GetKernelObjectSecurity(self.r_token.raw,0x17,self.buffer.as_mut_ptr().cast(),BUFFER_BYTES as u32,&mut length)}==0 {
+            return Err(io::Error::last_os_error());
+        }
+        if length<20||length>4096{return Err(bad());}
+        let facts=super::asuser_a1_security::runner_token_object(self.bytes(length as usize),a.target.caller,
+            self.logon.ok_or_else(bad)?,user,initialized)?;
+        if !initialized {
+            if self.runner_before_len!=0{return Err(bad());}
+            let before=unsafe{std::slice::from_raw_parts_mut(self.runner_before.as_mut_ptr().cast::<u8>(),4096)};
+            before[..length as usize].copy_from_slice(self.bytes(length as usize));self.runner_before_len=length as usize;
+        }
+        Ok(facts)
     }
     fn slots(&self)->[&Slot;15] {
         [&self.login_token,&self.restricted_token,&self.token,&self.thread_token,&self.r_token,&self.caller_token,&self.post_thread_token,
@@ -738,6 +909,7 @@ impl Attempt {
     }
     pub(crate) fn outstanding(&self)->bool {
         !self.slots().iter().all(|s|s.retired())
+            || self.command.as_ref().is_some_and(|command|command.cwd_pins.outstanding())
             || matches!(self.phase,Phase::LoginInFlight|Phase::CreateInFlight|Phase::TransferInFlight|Phase::Unknown)
     }
     /// SDK/registry caller must already hold the real original native completion
@@ -765,6 +937,8 @@ impl Attempt {
         self.token.close()?;self.checkpoint(Stage::Retirement)?;
         self.restricted_token.close()?;self.checkpoint(Stage::Retirement)?;
         self.login_token.close()?;self.checkpoint(Stage::Retirement)?;
+        self.command.as_mut().ok_or_else(bad)?.cwd_pins.close_once(self.deadline)?;
+        self.checkpoint(Stage::Retirement)?;
         if self.outstanding(){return Err(bad());}self.phase=Phase::Closed;self.outcome.closed();Ok(())
     }
     pub(crate) fn native_adopted(&self)->bool {
@@ -793,22 +967,28 @@ impl Attempt {
         self.pipe_names=Some((input,output));Ok(())
     }
     pub(crate) fn start(&mut self,command:Command,user:&[u16],password:&[u16],
-        stage:impl FnOnce(&std::fs::File,&std::fs::File)->io::Result<()>)->io::Result<()> {
+        stage:impl FnOnce(&std::fs::File,&std::fs::File)->io::Result<()>)->io::Result<NativeStart> {
         let result=self.start_inner(command,user,password,stage);if let Err(error)=&result{self.fail(error);}result
     }
     fn start_inner(&mut self,command:Command,user:&[u16],password:&[u16],
-        stage:impl FnOnce(&std::fs::File,&std::fs::File)->io::Result<()>)->io::Result<()> {
+        stage:impl FnOnce(&std::fs::File,&std::fs::File)->io::Result<()>)->io::Result<NativeStart> {
         self.site=Site::StartCommandGuard;
         if self.command.is_some(){return Err(bad());}
         // All UTF-16/env/CWD locks remain on this SAME original owner through
         // native rejection, cancellation, transfer failure, deadline or unwind.
         self.command=Some(command);
+        self.command.as_mut().ok_or_else(bad)?.pin_cwd_once(self.deadline)?;
         let admission=self.admission.as_ref().cloned().ok_or_else(bad)?;
         self.site=Site::LoginInputGuard;
-        if let Err(error)=self.login_inner(&admission,user,password) {
-            self.fail(&error);
-            self.close_rejected_login_handles();
-            return Err(error);
+        match self.login_inner(&admission,user,password) {
+            Ok(LoginResult::Ready)=>{},
+            Ok(LoginResult::Rejected)=>return self.close_known_logon_refusal().map(NativeStart::Refused),
+            Ok(LoginResult::SourcePolicyRejected)=>return self.close_known_source_policy_refusal().map(NativeStart::Refused),
+            Err(error)=>{
+                self.fail(&error);
+                self.close_rejected_login_handles();
+                return Err(error);
+            },
         }
         self.site=Site::TransportPipeInputs;
         self.create_transport_pipes(&admission)?;
@@ -829,7 +1009,7 @@ impl Attempt {
         self.site=Site::CreateInputGuard;
         self.create_inner(&admission)?;
         self.site=Site::NativeReadback;
-        self.readback(&admission)
+        self.readback(&admission)?;Ok(NativeStart::Started)
     }
     fn close_rejected_login_handles(&mut self) {
         use crate::asuser_attempt_outcome::RunnerDispatch;
@@ -872,13 +1052,13 @@ impl Attempt {
     }
     pub(crate) fn transport_files(&mut self)->io::Result<(std::fs::File,std::fs::File)> {
         use std::os::windows::io::FromRawHandle;
-        if self.phase!=Phase::Created||self.pipe_slots.iter().any(|v|v.state!=State::Held){return Err(bad());}
+        if self.phase!=Phase::Created||!self.runner_initialization_closed()||self.pipe_slots.iter().any(|v|v.state!=State::Held){return Err(bad());}
         let raw=[self.pipe_slots[0].raw,self.pipe_slots[1].raw];
         for slot in &mut self.pipe_slots{slot.raw=0;slot.state=State::Transferred;}
         Ok(unsafe{(std::fs::File::from_raw_handle(raw[0] as _),std::fs::File::from_raw_handle(raw[1] as _))})
     }
     pub(crate) fn desktop_name(&self)->io::Result<String> {
-        if self.phase!=Phase::Created{return Err(bad());}
+        if self.phase!=Phase::Created||!self.runner_initialization_closed(){return Err(bad());}
         let desktop=&self.command.as_ref().ok_or_else(bad)?.desktop;
         let units=desktop.strip_suffix(&[0]).ok_or_else(bad)?;
         String::from_utf16(units).map_err(|_|bad())
@@ -897,12 +1077,18 @@ impl Attempt {
     fn transfer_inner(&mut self,
         install:impl FnOnce(HANDLE,u32,HANDLE,u32)->io::Result<()>)->io::Result<()> {
         self.checkpoint(Stage::Transfer)?;
-        if self.phase!=Phase::Created||self.process.state!=State::Held||self.thread.state!=State::Held{return Err(bad());}
+        if self.phase!=Phase::Created||!self.runner_initialization_closed()
+            ||self.process.state!=State::Held||self.thread.state!=State::Held{return Err(bad());}
         self.phase=Phase::TransferInFlight;
         install(self.process.raw,self.pi.dwProcessId,self.thread.raw,self.pi.dwThreadId)?;
         self.process.raw=0;self.thread.raw=0;
         self.process.state=State::Transferred;self.thread.state=State::Transferred;
         self.phase=Phase::Transferred;self.outcome.adopted();self.checkpoint(Stage::Transfer)
+    }
+    fn runner_initialization_closed(&self)->bool {
+        self.first.is_none()&&self.runner_object_phase==RunnerObjectPhase::Verified
+            &&self.runner_object_status==Some(0)&&self.calls[NativeCall::RunnerObjectInitialization as usize]==1
+            &&self.runner_before_len>0&&self.r_token.state==State::Closed&&self.r_token.raw==0
     }
 }
 /// Preinstalled on the existing original CheckedRunnerOwner; never a new global
@@ -968,11 +1154,12 @@ mod tests {
         assert_eq!(attempt.outcome.resources,crate::asuser_attempt_outcome::LocalResources::RetainedUnknown);
     }
     #[test] fn token_derivation_and_default_initialization_have_independent_one_shot_budgets() {
-        for repeated in [NativeCall::LaunchTokenDerivation,NativeCall::LaunchObjectCreation,NativeCall::DefaultInitialization] {
+        for repeated in [NativeCall::LaunchTokenDerivation,NativeCall::LaunchObjectCreation,NativeCall::DefaultInitialization,NativeCall::RunnerObjectInitialization] {
             let mut attempt=Attempt::reserved(1,Instant::now()+std::time::Duration::from_secs(5));
             attempt.call(NativeCall::LaunchTokenDerivation,1,Stage::Token).unwrap();
             attempt.call(NativeCall::LaunchObjectCreation,1,Stage::Token).unwrap();
             attempt.call(NativeCall::DefaultInitialization,1,Stage::TokenSecurity).unwrap();
+            attempt.call(NativeCall::RunnerObjectInitialization,1,Stage::TokenSecurity).unwrap();
             assert_eq!(attempt.calls[NativeCall::LaunchTokenDerivation as usize],1);
             assert_eq!(attempt.calls[NativeCall::DefaultInitialization as usize],1);
             assert!(attempt.call(repeated,1,Stage::Token).is_err());
@@ -993,6 +1180,33 @@ mod tests {
         init.returned(true,0).unwrap();init.verified().unwrap();assert_eq!(init.phase,DefaultPhase::Verified);
         assert!(init.returned(true,0).is_err());
     }
+    #[test] fn runner_initialization_cannot_publish_until_its_original_write_handle_is_checked_closed() {
+        let mut a=Attempt::reserved(1,Instant::now()+std::time::Duration::from_secs(5));
+        a.phase=Phase::Created;a.runner_object_phase=RunnerObjectPhase::Verified;
+        a.runner_object_status=Some(0);a.calls[NativeCall::RunnerObjectInitialization as usize]=1;
+        a.runner_before_len=20;a.r_token.raw=44;a.r_token.state=State::Held;
+        assert!(!a.runner_initialization_closed());assert!(a.transport_files().is_err());
+        assert!(a.desktop_name().is_err());
+        assert!(a.transfer_inner(|_,_,_,_|panic!("must not publish")).is_err());
+        // State fixture only: no OS call or fake handle close is performed.
+        a.r_token.raw=0;a.r_token.state=State::Closed;assert!(a.runner_initialization_closed());
+        a.runner_object_status=Some(5);assert!(!a.runner_initialization_closed());
+        a.runner_object_status=Some(0);a.runner_before_len=0;assert!(!a.runner_initialization_closed());
+    }
+    #[test] fn uncertain_runner_initialization_keeps_original_owner_and_forbids_retry() {
+        for phase in [RunnerObjectPhase::InFlight,RunnerObjectPhase::SetSucceeded,RunnerObjectPhase::Unknown] {
+            let mut a=Attempt::reserved(1,Instant::now()+std::time::Duration::from_secs(5));
+            a.phase=Phase::Created;a.runner_object_phase=phase;
+            a.r_token.raw=44;a.r_token.state=State::Held;
+            a.calls[NativeCall::RunnerObjectInitialization as usize]=1;
+            a.site=Site::RunnerTokenAfter;a.stage=Stage::TokenSecurity;
+            a.fail(&io::Error::from_raw_os_error(5));
+            assert!(a.outcome.observation_lost);assert_eq!(a.phase,Phase::Unknown);
+            assert_eq!(a.r_token.raw,44);assert_eq!(a.r_token.state,State::Held);
+            assert!(a.call(NativeCall::RunnerObjectInitialization,1,Stage::TokenSecurity).is_err());
+            assert_eq!(a.calls[NativeCall::RunnerObjectInitialization as usize],1);
+        }
+    }
     #[test] fn failed_outputs_are_retained_unless_actual_rejection_has_canonical_null_output() {
         let mut slot=Slot::new(false);slot.begin().unwrap();slot.raw=44;
         assert!(slot.capture(false,5).is_err());assert_eq!(slot.raw,44);assert_eq!(slot.state,State::Unknown);
@@ -1008,6 +1222,9 @@ mod tests {
         let result=cell.with(|a|{
             a.phase=Phase::Created;a.process.raw=44;a.process.state=State::Held;
             a.thread.raw=48;a.thread.state=State::Held;
+            a.runner_object_phase=RunnerObjectPhase::Verified;a.runner_object_status=Some(0);
+            a.calls[NativeCall::RunnerObjectInitialization as usize]=1;a.runner_before_len=20;
+            a.r_token.state=State::Closed;
             a.pi.dwProcessId=4;a.pi.dwThreadId=8;
             a.transfer_to_owner(|p,pid,t,tid|{
                 assert_eq!((p,t),(44,48));assert_eq!((pid,tid),(4,8));

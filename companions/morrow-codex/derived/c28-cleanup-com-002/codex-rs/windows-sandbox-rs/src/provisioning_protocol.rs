@@ -80,10 +80,13 @@ pub fn write_provisioning_frame<W: Write>(
     writer: W,
     message: &FramedProvisioningMessage,
 ) -> Result<()> {
-    crate::framed_io::write_frame(writer, message)
+    // Separate legacy service contract; never used by the parent/Runner codec.
+    let bytes = serde_json::to_vec(message)?;
+    crate::framed_io::write_payload(writer, &bytes, 8 * 1024 * 1024)
 }
 
 /// Read a length-prefixed provisioning-service message, returning `None` on EOF.
 pub fn read_provisioning_frame<R: Read>(reader: R) -> Result<Option<FramedProvisioningMessage>> {
-    crate::framed_io::read_frame(reader)
+    crate::framed_io::read_payload(reader, 8 * 1024 * 1024)?
+        .map(|bytes| Ok(serde_json::from_slice(&bytes)?)).transpose()
 }

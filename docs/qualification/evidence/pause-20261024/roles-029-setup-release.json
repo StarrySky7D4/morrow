@@ -1,0 +1,68 @@
+{
+  "role": "S",
+  "command": [
+    "cargo",
+    "build",
+    "--release",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-029\\inputs\\S\\windows-sandbox-rs\\Cargo.toml",
+    "-p",
+    "codex-windows-sandbox",
+    "--bin",
+    "codex-windows-sandbox-setup",
+    "--target-dir",
+    "D:\\build_cache\\mr25t",
+    "--message-format=json",
+    "--jobs",
+    "1"
+  ],
+  "cwd": "C:\\ms1020",
+  "exit_code": 0,
+  "seconds": 254.891,
+  "source_unchanged": true,
+  "runtime": "NOT_RUN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "profile": "release",
+  "input_manifest_sha256": "b44ef8832be10557ab88c327a39154e50153e8d5e244353bec6eb037a330441f",
+  "artifact": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-029\\S-release\\codex-windows-sandbox-setup.exe",
+    "bytes": 17356288,
+    "sha256": "5593463e5c97ec23c1db7dca6ac728fcb29a9180a38acb38bf1ac0b35e37d4c2"
+  },
+  "compiler_artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///D:/build_cache/_audit/windows-restriction-lineage-20261022-019/roles-029/inputs/S/windows-sandbox-rs#codex-windows-sandbox@0.0.0",
+    "manifest_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-029\\inputs\\S\\windows-sandbox-rs\\Cargo.toml",
+    "target": {
+      "kind": [
+        "bin"
+      ],
+      "crate_types": [
+        "bin"
+      ],
+      "name": "codex-windows-sandbox-setup",
+      "src_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-029\\inputs\\S\\windows-sandbox-rs\\src\\bin\\setup_main\\main.rs",
+      "edition": "2024",
+      "doc": true,
+      "doctest": false,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": "line-tables-only",
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": false
+    },
+    "features": [],
+    "filenames": [
+      "D:\\build_cache\\mr25t\\release\\codex-windows-sandbox-setup.exe",
+      "D:\\build_cache\\mr25t\\release\\codex_windows_sandbox_setup.pdb"
+    ],
+    "executable": "D:\\build_cache\\mr25t\\release\\codex-windows-sandbox-setup.exe",
+    "fresh": false
+  }
+}

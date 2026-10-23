@@ -136,6 +136,34 @@ fn decode_parent_link(value: wire::parent_link::Reader<'_>) -> Result<proto::Par
     })
 }
 
+pub(crate) fn decode_resume(bytes: &[u8]) -> Result<(proto::WriteRequest, proto::ResumeLink)> {
+    if bytes.is_empty() || bytes.len() > MAX_WRITE_FRAME {
+        return Err("editor draft resume wire frame budget".into());
+    }
+    let mut cursor = Cursor::new(bytes);
+    let message = serialize::read_message(&mut cursor, ReaderOptions {
+        traversal_limit_in_words: Some(4 * 1024 * 1024), nesting_limit: 20,
+    })?;
+    if cursor.position() != bytes.len() as u64 { return Err("trailing editor draft resume bytes".into()); }
+    let value = message.get_root::<wire::resume_request::Reader>()?;
+    if value.get_version() != 1 || value.get_digest()? != digest()
+        || !value.has_request() || !value.has_resume_link() {
+        return Err("editor draft resume contract or identity missing".into());
+    }
+    let request = decode_request(value.get_request()?)?;
+    let value = value.get_resume_link()?;
+    let link = proto::ResumeLink {
+        parent_draft_id: text(value.get_parent_draft_id())?, parent_generation: value.get_parent_generation(),
+        parent_save_operation: text(value.get_parent_save_operation())?,
+        parent_request_sha256: value.get_parent_request_sha256()?.to_vec(),
+        parent_business_operation: text(value.get_parent_business_operation())?,
+        retirement_operation: text(value.get_retirement_operation())?,
+    };
+    editor_draft::model::validate_resume_link(&request, &link)?;
+    if request.expected_generation != 0 { return Err("resume requires first child generation".into()); }
+    Ok((request, link))
+}
+
 pub(crate) fn decode_handoff(bytes: &[u8]) -> Result<(proto::WriteRequest, proto::ParentLink)> {
     if bytes.is_empty() || bytes.len() > MAX_WRITE_FRAME {
         return Err("editor draft handoff wire frame budget".into());
@@ -354,6 +382,15 @@ fn record_reply(
     if let Some(link) = &slot.parent_link {
         parent_link_reply(link, out.reborrow().init_parent_link());
     }
+    if let Some(link) = &slot.resume_link {
+        let mut value = out.reborrow().init_resume_link();
+        value.set_parent_draft_id(&link.parent_draft_id);
+        value.set_parent_generation(link.parent_generation);
+        value.set_parent_save_operation(&link.parent_save_operation);
+        value.set_parent_request_sha256(&link.parent_request_sha256);
+        value.set_parent_business_operation(&link.parent_business_operation);
+        value.set_retirement_operation(&link.retirement_operation);
+    }
     if let Some(retirement) = &slot.retirement {
         retirement_reply(retirement, out.reborrow().init_retirement());
     }
@@ -445,6 +482,86 @@ fn lineages_envelope(
         return Err("editor draft lineage envelope budget".into());
     }
     Ok(bytes)
+}
+
+fn archive_envelope(card: &str, draft: &str, operation: &str, generation: u64,
+    archive: Option<&editor_draft::EditorDraftArchive>) -> Result<Vec<u8>> {
+    let mut message = Builder::new_default();
+    let mut out = message.init_root::<wire::envelope::Builder>();
+    out.set_version(1); out.set_digest(&digest()); out.set_kind(wire::ResultKind::Archive);
+    out.set_card_id(card); out.set_draft_id(draft); out.set_operation(operation);
+    out.set_expected_generation(generation);
+    if let Some(value) = archive {
+        let mut item = out.init_archive();
+        item.set_card_id(&value.card_id); item.set_draft_id(&value.draft_id);
+        item.set_generation(value.generation); item.set_request_sha256(&value.request_sha256);
+        item.set_slot_sha256(&value.slot_sha256); item.set_operation(&value.operation);
+        item.set_repeated(value.repeated);
+        item.set_archive_version(value.version); item.set_archive_sha256(&value.archive_sha256);
+        item.set_legacy_auxiliary_count(value.legacy_auxiliary_count);
+    }
+    Ok(serialize::write_message_to_words(&message))
+}
+
+fn maintenance_request_reply(value: &editor_draft::EditorDraftArchiveMaintenanceRequest,
+    mut out: wire::archive_maintenance_request::Builder<'_>) {
+    out.set_version(1); out.set_digest(&digest()); out.set_card_id(&value.card_id);
+    out.set_draft_id(&value.draft_id); out.set_generation(value.generation);
+    out.set_request_sha256(&value.request_sha256); out.set_archive_operation(&value.archive_operation);
+    out.set_archive_sha256(&value.archive_sha256); out.set_operation(&value.operation);
+}
+
+fn decode_maintenance(bytes: &[u8]) -> Result<editor_draft::EditorDraftArchiveMaintenanceRequest> {
+    if bytes.is_empty() || bytes.len() > 4096 { return Err("draft maintenance request budget".into()); }
+    let mut cursor = Cursor::new(bytes);
+    let message = serialize::read_message(&mut cursor, ReaderOptions {
+        traversal_limit_in_words: Some(1024), nesting_limit: 12,
+    })?;
+    if cursor.position() != bytes.len() as u64 { return Err("draft maintenance trailing bytes".into()); }
+    let value = message.get_root::<wire::archive_maintenance_request::Reader<'_>>()?;
+    if value.get_version() != 1 || value.get_digest()? != digest() {
+        return Err("draft maintenance schema changed".into());
+    }
+    Ok(editor_draft::EditorDraftArchiveMaintenanceRequest {
+        card_id: text(value.get_card_id())?, draft_id: text(value.get_draft_id())?,
+        generation: value.get_generation(), request_sha256: value.get_request_sha256()?.to_vec(),
+        archive_operation: text(value.get_archive_operation())?,
+        archive_sha256: value.get_archive_sha256()?.to_vec(), operation: text(value.get_operation())?,
+    })
+}
+
+fn maintenance_envelope(card: &str, draft: &str, operation: &str, generation: u64,
+    receipt: Option<&editor_draft::EditorDraftArchiveMaintenance>) -> Result<Vec<u8>> {
+    let mut message = Builder::new_default();
+    let mut out = message.init_root::<wire::envelope::Builder>();
+    out.set_version(1); out.set_digest(&digest()); out.set_kind(wire::ResultKind::ArchiveMaintenance);
+    out.set_card_id(card); out.set_draft_id(draft); out.set_operation(operation);
+    out.set_expected_generation(generation);
+    if let Some(receipt) = receipt {
+        let mut item = out.init_archive_maintenance();
+        maintenance_request_reply(&receipt.request, item.reborrow().init_request());
+        item.set_auxiliary_count(receipt.auxiliary_count); item.set_auxiliary_bytes(receipt.auxiliary_bytes);
+        item.set_auxiliary_sha256(&receipt.auxiliary_sha256); item.set_repeated(receipt.repeated);
+    }
+    Ok(serialize::write_message_to_words(&message))
+}
+
+fn history_envelope(page: &editor_draft::EditorDraftHistoryPage, cursor: &str, limit: u32) -> Result<Vec<u8>> {
+    let mut message = Builder::new_default();
+    let mut out = message.init_root::<wire::envelope::Builder>();
+    out.set_version(1); out.set_digest(&digest()); out.set_kind(wire::ResultKind::History);
+    out.set_card_id(""); out.set_draft_id(""); out.set_operation("");
+    out.set_request_cursor(cursor); out.set_request_limit(limit); out.set_next_cursor(&page.next_cursor);
+    out.set_unarchived_count(page.unarchived); out.set_archived_count(page.archived);
+    out.set_archived_bytes(page.archived_bytes);
+    let mut rows = out.init_history(page.rows.len().try_into()?);
+    for (index, row) in page.rows.iter().enumerate() {
+        let mut item = rows.reborrow().get(index as u32);
+        item.set_card_id(&row.card_id); item.set_draft_id(&row.draft_id); item.set_generation(row.generation);
+        item.set_request_sha256(&row.request_sha256); item.set_archive_operation(&row.archive_operation);
+        item.set_cursor(&row.cursor); item.set_title(&row.title); item.set_preview(&row.preview);
+    }
+    Ok(serialize::write_message_to_words(&message))
 }
 
 fn proposal_summary_reply(
@@ -626,6 +743,15 @@ pub(crate) fn is_action(action: host_capnp::Action) -> bool {
             | Action::ImportEditorDraftAsset
             | Action::ExportEditorDraftAsset
             | Action::ExportEditorDraftCapture
+            | Action::RetireEditorDraftResumeParent
+            | Action::StageEditorDraftAssets
+            | Action::ArchiveEditorDraft
+            | Action::MaintainEditorDraftArchive
+            | Action::InspectEditorDraftArchiveMaintenance
+            | Action::InspectEditorDraftArchive
+            | Action::ListEditorDraftHistory
+            | Action::ExportEditorDraftHistory
+            | Action::FinishEditorDraftResume
             | Action::FinishEditorDraftHandoff
             | Action::RetireEditorDraftParent
             | Action::ListEditorDraftLineages
@@ -652,6 +778,14 @@ pub(crate) fn reply_correlation(
             | Action::ImportEditorDraftAsset
             | Action::ExportEditorDraftAsset
             | Action::ExportEditorDraftCapture
+            | Action::RetireEditorDraftResumeParent
+            | Action::StageEditorDraftAssets
+            | Action::ArchiveEditorDraft
+            | Action::MaintainEditorDraftArchive
+            | Action::InspectEditorDraftArchiveMaintenance
+            | Action::InspectEditorDraftArchive
+            | Action::ListEditorDraftHistory
+            | Action::ExportEditorDraftHistory
             | Action::BeginEditorDraftImport
             | Action::CompleteEditorDraftImport
             | Action::InspectEditorDraftImport
@@ -678,13 +812,21 @@ pub(crate) fn reply_correlation(
     if matches!(
         action,
         Action::InspectEditorDraftHandoffProposal
+            | Action::RetireEditorDraftResumeParent
+            | Action::StageEditorDraftAssets
+            | Action::ArchiveEditorDraft
+            | Action::MaintainEditorDraftArchive
+            | Action::InspectEditorDraftArchiveMaintenance
+            | Action::InspectEditorDraftArchive
+            | Action::ListEditorDraftHistory
+            | Action::ExportEditorDraftHistory
             | Action::ListEditorDraftHandoffProposals
             | Action::CompleteEditorDraftHandoffProposal
             | Action::RetireEditorDraftHandoffProposal
             | Action::CancelEditorDraftHandoffProposal
     ) && key.is_empty()
     {
-        return Err("editor draft proposal reply correlation missing".into());
+        return Err("editor draft maintenance reply correlation missing".into());
     }
     if key.is_empty() {
         return Ok(key); // Compatibility for callers predating reply correlations.
@@ -801,6 +943,50 @@ pub(crate) fn handle(
             let record = host.handoff_editor_draft(&request, &link)?;
             let reply_token = record_chunk(host, out, &card, &draft, &operation, 0, &record)?;
             bind_reply(host, &upload_token, reply_token);
+        }
+        Action::FinishEditorDraftResume => {
+            let operation = text(r.get_operation())?;
+            let upload = text(r.get_transfer())?;
+            let (uploaded_operation, bytes) = host.draft_transfers.finish(&upload, now)?;
+            let (request, link) = decode_resume(&bytes)?;
+            if uploaded_operation != request.operation_id || operation != request.operation_id
+                || card != request.card_id || draft != request.draft_id || r.get_revision() != 0
+                || !r.get_payload()?.is_empty() || !text(r.get_selected_path())?.is_empty()
+                || !text(r.get_name())?.is_empty() || !text(r.get_kind())?.is_empty()
+                || !text(r.get_cursor())?.is_empty() || r.get_limit() != 0 {
+                return Err("editor draft resume outer binding changed".into());
+            }
+            let record = host.resume_editor_draft(&request, &link)?;
+            let reply = record_chunk(host, out, &card, &draft, &operation, 0, &record)?;
+            bind_reply(host, &upload, reply);
+        }
+        Action::StageEditorDraftAssets => {
+            let operation = text(r.get_operation())?;
+            if !r.get_payload()?.is_empty() || !text(r.get_selected_path())?.is_empty()
+                || !text(r.get_name())?.is_empty() || !text(r.get_kind())?.is_empty()
+                || !text(r.get_cursor())?.is_empty() || r.get_limit() != 0 {
+                return Err("draft asset staging outer fields changed".into());
+            }
+            let record = host.stage_editor_draft_assets(&card, &draft, r.get_revision(),
+                &operation, &text(r.get_capture_scope())?)?;
+            let reply = record_chunk(host, out, &card, &draft, &operation, r.get_revision(), &record)?;
+            bind_reply(host, &reply_owner, reply);
+        }
+        Action::RetireEditorDraftResumeParent => {
+            let operation = text(r.get_operation())?;
+            let parent = text(r.get_name())?;
+            let expected = r.get_revision();
+            let (_, child) = host.draft_card(&card, &draft)?.ok_or("resumed child missing")?;
+            let link = child.resume_link.as_ref().ok_or("resume link missing")?;
+            if parent != link.parent_draft_id || expected != link.parent_generation
+                || text(r.get_kind())? != link.parent_business_operation
+                || operation != link.retirement_operation || !r.get_payload()?.is_empty()
+                || !text(r.get_selected_path())?.is_empty() || !text(r.get_cursor())?.is_empty() || r.get_limit() != 0 {
+                return Err("editor draft resume retirement outer binding changed".into());
+            }
+            let record = host.retire_resumed_editor_draft_parent(&card, &draft, &operation)?;
+            let reply = record_chunk(host, out, &card, &parent, &operation, expected, &record)?;
+            bind_reply(host, &reply_owner, reply);
         }
         Action::PrepareEditorDraftHandoffProposal => {
             proposal_outer_fields(r, false)?;
@@ -960,6 +1146,65 @@ pub(crate) fn handle(
             let download = record_chunk(host, out, &card, &draft, &operation, expected, &record)?;
             bind_reply(host, &reply_owner, download);
         }
+        Action::MaintainEditorDraftArchive | Action::InspectEditorDraftArchiveMaintenance => {
+            let operation = text(r.get_operation())?;
+            let generation = r.get_revision();
+            if !text(r.get_selected_path())?.is_empty() || !text(r.get_cursor())?.is_empty()
+                || r.get_limit() != 0 || !r.get_sha256()?.is_empty() {
+                return Err("draft maintenance outer fields".into());
+            }
+            let receipt = if action == Action::MaintainEditorDraftArchive {
+                let request = decode_maintenance(r.get_payload()?)?;
+                if request.card_id != card || request.draft_id != draft
+                    || request.operation != operation || request.generation != generation {
+                    return Err("draft maintenance outer correlation changed".into());
+                }
+                Some(host.maintain_editor_draft_archive(&request)?)
+            } else {
+                if !operation.is_empty() || generation != 0 || !r.get_payload()?.is_empty() {
+                    return Err("draft maintenance inspection outer fields".into());
+                }
+                host.inspect_editor_draft_archive_maintenance(&card, &draft)?
+            };
+            let bytes = maintenance_envelope(&card, &draft, &operation, generation, receipt.as_ref())?;
+            let revision = receipt.as_ref().map_or(0, |value| value.request.generation);
+            let download = envelope_chunk(host, out, bytes, revision)?;
+            bind_reply(host, &reply_owner, download);
+        }
+        Action::ArchiveEditorDraft | Action::InspectEditorDraftArchive => {
+            let operation = text(r.get_operation())?;
+            let generation = r.get_revision();
+            let hash = r.get_sha256()?;
+            if !text(r.get_selected_path())?.is_empty() || !r.get_payload()?.is_empty()
+                || !text(r.get_cursor())?.is_empty() || r.get_limit() != 0 {
+                return Err("draft archive outer fields".into());
+            }
+            let archive = if action == Action::ArchiveEditorDraft {
+                Some(host.archive_editor_draft(&card, &draft, generation, hash, &operation)?)
+            } else {
+                if !operation.is_empty() || generation != 0 || !hash.is_empty() {
+                    return Err("draft archive inspection outer fields".into());
+                }
+                host.inspect_editor_draft_archive(&card, &draft)?
+            };
+            let bytes = archive_envelope(&card, &draft, &operation, generation, archive.as_ref())?;
+            let revision = archive.as_ref().map_or(0, |value| value.generation);
+            let download = envelope_chunk(host, out, bytes, revision)?;
+            bind_reply(host, &reply_owner, download);
+        }
+        Action::ListEditorDraftHistory => {
+            let cursor = text(r.get_cursor())?;
+            let limit = r.get_limit();
+            if !card.is_empty() || !draft.is_empty() || !text(r.get_operation())?.is_empty()
+                || r.get_revision() != 0 || !r.get_payload()?.is_empty()
+                || !text(r.get_selected_path())?.is_empty() {
+                return Err("draft history outer fields".into());
+            }
+            let page = host.list_editor_draft_history(&cursor, limit)?;
+            let bytes = history_envelope(&page, &cursor, limit)?;
+            let download = envelope_chunk(host, out, bytes, 0)?;
+            bind_reply(host, &reply_owner, download);
+        }
         Action::ImportEditorDraftAsset => {
             let path = text(r.get_selected_path())?;
             let mut file = std::fs::File::open(&path)?;
@@ -991,9 +1236,12 @@ pub(crate) fn handle(
             let download = envelope_chunk(host, out, bytes, r.get_revision())?;
             bind_reply(host, &reply_owner, download);
         }
-        Action::ExportEditorDraftAsset | Action::ExportEditorDraftCapture => {
+        Action::ExportEditorDraftAsset | Action::ExportEditorDraftCapture | Action::ExportEditorDraftHistory => {
             let asset_id = text(r.get_name())?;
-            let bytes = if action == Action::ExportEditorDraftCapture {
+            let bytes = if action == Action::ExportEditorDraftHistory {
+                if !asset_id.is_empty() { return Err("history export has no asset selector".into()); }
+                host.export_editor_draft_history(&card, &draft, r.get_revision())?
+            } else if action == Action::ExportEditorDraftCapture {
                 if !asset_id.is_empty() { return Err("capture export has no asset selector".into()); }
                 host.export_editor_draft_capture(&card, &draft, r.get_revision())?
             } else {

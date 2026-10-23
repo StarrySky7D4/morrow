@@ -28,6 +28,7 @@
 
 
 ["dependencies"]
+"capnp" = { "version" = "=0.24.1", "features" = ["unaligned"] }
 "sha2" = { "workspace" = true }
 "anyhow" = "1.0"
 "dunce" = "1.0"
@@ -121,5 +122,9 @@
 
 ["dev-dependencies"."pretty_assertions"]
 "workspace" = true
+
+["build-dependencies"]
+"capnpc" = "=0.24.0"
+"sha2" = "0.10"
 
 

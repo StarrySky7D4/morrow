@@ -201,7 +201,7 @@ impl AgentCommandHandle {
             AgentError::Unknown
         } else { AgentError::Unavailable }));
         self.consumed = true;
-        if result.is_ok() && !self.control.live() {
+        if (result.is_ok() || matches!(&result, Err(AgentError::Session(morrow_agent_session_exec_v1_r2::Error::Denied)))) && !self.control.live() {
             self.diagnostic.delivery(diagnostic_stage::CONTROL_VETO, diagnostic_error(AgentError::Unknown));
             return Err(AgentError::Unknown);
         }
@@ -254,7 +254,7 @@ impl AgentCommandHandle {
         match self.receiver.try_recv() {
             Ok(result) => {
                 self.consumed = true;
-                if result.is_ok() && !self.control.live() {
+                if (result.is_ok() || matches!(&result, Err(AgentError::Session(morrow_agent_session_exec_v1_r2::Error::Denied)))) && !self.control.live() {
                     self.diagnostic.delivery(diagnostic_stage::CONTROL_VETO, diagnostic_error(AgentError::Unknown));
                     return Err(AgentError::Unknown);
                 }

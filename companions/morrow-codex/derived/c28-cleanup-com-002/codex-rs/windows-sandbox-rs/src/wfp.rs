@@ -70,6 +70,7 @@ use windows_sys::core::GUID;
 
 use filter_specs::ConditionSpec;
 use filter_specs::FILTER_SPECS;
+use filter_specs::FULL_OFFLINE_FILTER_SPECS;
 use filter_specs::FilterSpec;
 
 const SESSION_NAME: &str = "Codex Windows Sandbox WFP";
@@ -135,9 +136,40 @@ pub(crate) struct OwnedWfpFilterProof {
     pub(crate) offline_sid_bytes: Vec<u8>,
 }
 
+/// Derived from the original requested policy in both the helper and its parent.
+/// Receipt length or filter names must never select the enforcement profile.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum OwnedWfpProfile {
+    Supplemental,
+    FullOffline,
+}
+
+impl OwnedWfpProfile {
+    pub(crate) fn for_network_policy(proxy_ports: &[u16], allow_local_binding: bool) -> Self {
+        if proxy_ports.is_empty() && !allow_local_binding {
+            Self::FullOffline
+        } else {
+            Self::Supplemental
+        }
+    }
+
+    fn specs(self) -> impl Iterator<Item = &'static FilterSpec> {
+        let additional = match self {
+            Self::Supplemental => &[][..],
+            Self::FullOffline => FULL_OFFLINE_FILTER_SPECS,
+        };
+        FILTER_SPECS.iter().chain(additional.iter())
+    }
+
+    fn filter_count(self) -> usize {
+        self.specs().count()
+    }
+}
+
 /// Non-deserializable proof of WFP objects created during a specific owned setup run.
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct OwnedWfpProof {
+    profile: OwnedWfpProfile,
     pub(crate) provider_key: WfpGuid,
     pub(crate) sublayer_key: WfpGuid,
     pub(crate) provider_created: bool,
@@ -204,6 +236,7 @@ pub fn install_wfp_filters_for_account(account: &str) -> Result<usize> {
 /// refusing to overwrite pre-existing filters and recording exact runtime `filterId` and
 /// security descriptor proof inside a single native WFP transaction.
 pub(crate) fn install_owned_wfp_filters_for_account(
+    profile: OwnedWfpProfile,
     account: &str,
     offline_sid: &str,
     offline_sid_bytes: &[u8],
@@ -230,8 +263,8 @@ pub(crate) fn install_owned_wfp_filters_for_account(
         "WFP user match condition security descriptor SID does not match created offline SID"
     );
 
-    let mut filters = Vec::with_capacity(FILTER_SPECS.len());
-    for spec in FILTER_SPECS {
+    let mut filters = Vec::with_capacity(profile.filter_count());
+    for spec in profile.specs() {
         ensure!(
             observe_wfp_filter(engine.handle, &spec.key)?.is_none(),
             "pre-existing WFP filter {} present before owned setup; refusing to overwrite or adopt",
@@ -280,6 +313,7 @@ pub(crate) fn install_owned_wfp_filters_for_account(
 
     transaction.commit()?;
     Ok(OwnedWfpProof {
+        profile,
         provider_key: WfpGuid::from(PROVIDER_KEY),
         sublayer_key: WfpGuid::from(SUBLAYER_KEY),
         provider_created,
@@ -291,6 +325,7 @@ pub(crate) fn install_owned_wfp_filters_for_account(
 }
 
 pub(crate) fn build_owned_wfp_proof_from_receipt_specs(
+    profile: OwnedWfpProfile,
     provider_created: bool,
     sublayer_created: bool,
     offline_sid: &str,
@@ -302,14 +337,14 @@ pub(crate) fn build_owned_wfp_proof_from_receipt_specs(
         "owned WFP receipt binding requires non-empty offline SID proof"
     );
     ensure!(
-        reported_filters.len() == FILTER_SPECS.len(),
-        "owned WFP receipt filter count {} does not match FILTER_SPECS ({})",
+        reported_filters.len() == profile.filter_count(),
+        "owned WFP receipt filter count {} does not match requested profile ({})",
         reported_filters.len(),
-        FILTER_SPECS.len()
+        profile.filter_count()
     );
-    let mut filters = Vec::with_capacity(FILTER_SPECS.len());
+    let mut filters = Vec::with_capacity(profile.filter_count());
     for (spec, (reported_name, filter_id, expected_sd_blob)) in
-        FILTER_SPECS.iter().zip(reported_filters.iter())
+        profile.specs().zip(reported_filters.iter())
     {
         ensure!(
             reported_name == spec.name,
@@ -342,6 +377,7 @@ pub(crate) fn build_owned_wfp_proof_from_receipt_specs(
         });
     }
     Ok(OwnedWfpProof {
+        profile,
         provider_key: WfpGuid::from(PROVIDER_KEY),
         sublayer_key: WfpGuid::from(SUBLAYER_KEY),
         provider_created,
@@ -357,6 +393,7 @@ pub(crate) fn build_owned_wfp_proof_from_receipt_specs(
 /// the exact runtime `filterId`, security descriptor, and offline SID before constructing
 /// `OwnedWfpProof`.
 pub(crate) fn verify_and_bind_live_owned_wfp_proof(
+    profile: OwnedWfpProfile,
     provider_created: bool,
     sublayer_created: bool,
     offline_sid: &str,
@@ -364,6 +401,7 @@ pub(crate) fn verify_and_bind_live_owned_wfp_proof(
     reported_filters: &[(String, u64, Vec<u8>)],
 ) -> Result<OwnedWfpProof> {
     let candidate = build_owned_wfp_proof_from_receipt_specs(
+        profile,
         provider_created,
         sublayer_created,
         offline_sid,
@@ -935,10 +973,10 @@ pub(crate) fn verify_owned_wfp_state(
         "owned WFP proof is missing offline SID identity"
     );
     ensure!(
-        proof.filters.len() == FILTER_SPECS.len(),
-        "owned WFP proof filter count {} does not match FILTER_SPECS ({})",
+        proof.filters.len() == proof.profile.filter_count(),
+        "owned WFP proof filter count {} does not match requested profile ({})",
         proof.filters.len(),
-        FILTER_SPECS.len()
+        proof.profile.filter_count()
     );
     ensure!(
         observed.provider_present_and_persistent,
@@ -956,8 +994,8 @@ pub(crate) fn verify_owned_wfp_state(
     );
 
     let mut verified_ids = Vec::with_capacity(proof.filters.len());
-    for ((spec, filter_proof), actual) in FILTER_SPECS
-        .iter()
+    for ((spec, filter_proof), actual) in proof.profile
+        .specs()
         .zip(proof.filters.iter())
         .zip(observed.filters.iter())
     {
@@ -1205,6 +1243,7 @@ mod tests {
     use super::OwnedWfpConditionSpec;
     use super::OwnedWfpFilterProof;
     use super::OwnedWfpProof;
+    use super::OwnedWfpProfile;
     use super::PROVIDER_KEY;
     use super::SUBLAYER_KEY;
     use super::WfpGuid;
@@ -1253,11 +1292,15 @@ mod tests {
     }
 
     fn sample_owned_proof_and_state() -> (OwnedWfpProof, ObservedWfpState) {
+        sample_profile_proof_and_state(OwnedWfpProfile::Supplemental)
+    }
+
+    fn sample_profile_proof_and_state(profile: OwnedWfpProfile) -> (OwnedWfpProof, ObservedWfpState) {
         let sid_bytes = synthetic_sid(1001);
         let sd_blob = synthetic_self_relative_sd(FWP_ACTRL_MATCH_FILTER, &sid_bytes);
         let mut proof_filters = Vec::new();
         let mut observed_filters = Vec::new();
-        for (idx, spec) in FILTER_SPECS.iter().enumerate() {
+        for (idx, spec) in profile.specs().enumerate() {
             let filter_id = 5000 + idx as u64;
             let expected_conditions = expected_conditions_for_spec(spec.conditions, &sd_blob);
             proof_filters.push(OwnedWfpFilterProof {
@@ -1283,6 +1326,7 @@ mod tests {
             });
         }
         let proof = OwnedWfpProof {
+            profile,
             provider_key: WfpGuid::from(PROVIDER_KEY),
             sublayer_key: WfpGuid::from(SUBLAYER_KEY),
             provider_created: true,
@@ -1377,6 +1421,7 @@ mod tests {
             .map(|f| (f.name.to_string(), f.filter_id, f.expected_sd_blob.clone()))
             .collect::<Vec<_>>();
         let rebuilt = super::build_owned_wfp_proof_from_receipt_specs(
+            proof.profile,
             proof.provider_created,
             proof.sublayer_created,
             &proof.offline_sid,
@@ -1389,6 +1434,7 @@ mod tests {
         zero_id_reported[0].1 = 0;
         assert!(
             super::build_owned_wfp_proof_from_receipt_specs(
+                proof.profile,
                 true,
                 true,
                 &proof.offline_sid,
@@ -1401,6 +1447,7 @@ mod tests {
         let foreign_sid = synthetic_sid(9999);
         assert!(
             super::build_owned_wfp_proof_from_receipt_specs(
+                proof.profile,
                 true,
                 true,
                 &proof.offline_sid,
@@ -1410,5 +1457,83 @@ mod tests {
             .is_err()
         );
         Ok(())
+    }
+
+    #[test]
+    fn full_offline_profile_is_selected_only_without_requested_network_exceptions() {
+        for (ports, local_binding, expected) in [
+            (&[][..], false, OwnedWfpProfile::FullOffline),
+            (&[][..], true, OwnedWfpProfile::Supplemental),
+            (&[8080][..], false, OwnedWfpProfile::Supplemental),
+            (&[8080][..], true, OwnedWfpProfile::Supplemental),
+        ] {
+            assert_eq!(OwnedWfpProfile::for_network_policy(ports, local_binding), expected);
+        }
+    }
+
+    #[test]
+    fn full_offline_profile_covers_both_directions_and_address_families_for_only_the_user() {
+        use windows_sys::Win32::NetworkManagement::WindowsFilteringPlatform::{
+            FWPM_LAYER_ALE_AUTH_CONNECT_V4, FWPM_LAYER_ALE_AUTH_CONNECT_V6,
+            FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4, FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6,
+        };
+        let (proof, state) = sample_profile_proof_and_state(OwnedWfpProfile::FullOffline);
+        assert_eq!(verify_owned_wfp_state(&proof, &state).unwrap().len(), 16);
+        let expected_layers = [FWPM_LAYER_ALE_AUTH_CONNECT_V4, FWPM_LAYER_ALE_AUTH_CONNECT_V6,
+            FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V4, FWPM_LAYER_ALE_AUTH_RECV_ACCEPT_V6]
+            .map(WfpGuid::from).into_iter().collect::<BTreeSet<_>>();
+        let added = &proof.filters[12..];
+        assert_eq!(added.iter().map(|f| f.layer_key).collect::<BTreeSet<_>>(), expected_layers);
+        for filter in added {
+            assert_eq!(filter.expected_conditions,
+                vec![OwnedWfpConditionSpec::UserSd(filter.expected_sd_blob.clone())]);
+            assert_eq!(extract_wfp_sd_single_allowed_sid(&filter.expected_sd_blob).unwrap().1,
+                proof.offline_sid_bytes);
+        }
+        assert_eq!(proof.filters.iter().map(|f| f.key).collect::<BTreeSet<_>>().len(), 16);
+        assert_eq!(proof.filters.iter().map(|f| f.name).collect::<BTreeSet<_>>().len(), 16);
+    }
+
+    #[test]
+    fn full_offline_receipt_cannot_downgrade_or_select_the_requested_profile() {
+        let (proof, _) = sample_profile_proof_and_state(OwnedWfpProfile::FullOffline);
+        let reported = proof.filters.iter()
+            .map(|f| (f.name.to_string(), f.filter_id, f.expected_sd_blob.clone()))
+            .collect::<Vec<_>>();
+        let bind = |profile, rows: &[(String, u64, Vec<u8>)]| {
+            super::build_owned_wfp_proof_from_receipt_specs(profile, true, true,
+                &proof.offline_sid, &proof.offline_sid_bytes, rows)
+        };
+        assert_eq!(bind(OwnedWfpProfile::FullOffline, &reported).unwrap(), proof);
+        assert!(bind(OwnedWfpProfile::FullOffline, &reported[..12]).is_err());
+        assert!(bind(OwnedWfpProfile::Supplemental, &reported).is_err());
+        let mut swapped = reported.clone();
+        swapped.swap(12, 13);
+        assert!(bind(OwnedWfpProfile::FullOffline, &swapped).is_err());
+        let mut duplicate = reported.clone();
+        duplicate[15] = duplicate[12].clone();
+        assert!(bind(OwnedWfpProfile::FullOffline, &duplicate).is_err());
+        let mut extra = reported;
+        extra.push(extra[12].clone());
+        assert!(bind(OwnedWfpProfile::FullOffline, &extra).is_err());
+    }
+
+    #[test]
+    fn full_offline_live_verification_rejects_narrowed_or_replaced_owned_rules() {
+        for index in 12..16 {
+            let (proof, mut state) = sample_profile_proof_and_state(OwnedWfpProfile::FullOffline);
+            state.filters[index].conditions.push(OwnedWfpConditionSpec::RemotePort(443));
+            assert!(verify_owned_wfp_state(&proof, &state).is_err());
+            let (proof, mut state) = sample_profile_proof_and_state(OwnedWfpProfile::FullOffline);
+            state.filters[index].filter_id += 100;
+            assert!(verify_owned_wfp_state(&proof, &state).is_err());
+            let (proof, mut state) = sample_profile_proof_and_state(OwnedWfpProfile::FullOffline);
+            state.filters[index].conditions[0] = OwnedWfpConditionSpec::UserSd(
+                synthetic_self_relative_sd(FWP_ACTRL_MATCH_FILTER, &synthetic_sid(9999)));
+            assert!(verify_owned_wfp_state(&proof, &state).is_err());
+            let (proof, mut state) = sample_profile_proof_and_state(OwnedWfpProfile::FullOffline);
+            state.filters.remove(index);
+            assert!(verify_owned_wfp_state(&proof, &state).is_err());
+        }
     }
 }

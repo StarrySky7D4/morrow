@@ -56,6 +56,16 @@
       }
     }
   },
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "archived": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
   "@mainFavoriteTooltip": {
     "placeholders": {
       "title": {
@@ -1077,6 +1087,23 @@
   "mainDraftHandoffRecoverySelection": "Wählen Sie einen Eintrag, um den vollständigen Entwurf anzuzeigen.",
   "mainDraftHandoffRecoveryTitle": "Wiederherstellung der Entwurfsübergabe",
   "mainDraftHandoffRecoveryUnknown": "Das Ergebnis des Vorgangs ist noch nicht bestätigt. Prüfen Sie den ursprünglichen Eintrag und wiederholen Sie den Vorgang nicht.",
+  "mainDraftHistoryArchive": "Diesen Eintrag archivieren",
+  "mainDraftHistoryArchived": "Archiviert",
+  "mainDraftHistoryCapacity": "Aktuelle Datensätze: {current}/256; archiviert: {archived}/4096",
+  "mainDraftHistoryCategoryField": "Kategorie",
+  "mainDraftHistoryDescriptionField": "Beschreibung",
+  "mainDraftHistoryExport": "Verlaufseintrag exportieren",
+  "mainDraftHistoryFirst": "Erste Seite",
+  "mainDraftHistoryMaintain": "Zugehörige Einträge archivieren",
+  "mainDraftHistoryMaintainHelp": "Den gesamten Verlauf behalten und Platz für Entwurfseinträge freigeben.",
+  "mainDraftHistoryMaintained": "Zugehörige Einträge archiviert",
+  "mainDraftHistoryNext": "Nächste Seite",
+  "mainDraftHistoryNotice": "Hier erscheinen nur stillgelegte Entwürfe. Archivieren erhält Text und Herkunft und gibt einen Entwurfsplatz frei. Freigegebene Anhangdateien und Erfassungsrechte werden nicht wiederhergestellt. Für archivierte Datensätze gilt außerdem eine Grenze von 64 MiB.",
+  "mainDraftHistoryRetired": "Stillgelegt",
+  "mainDraftHistoryStageField": "Phase",
+  "mainDraftHistoryTitle": "Entwurfsverlauf",
+  "mainDraftHistoryTitleField": "Titel",
+  "mainDraftHistoryUnconfirmed": "Das Archivierungsergebnis ist unbestätigt. Aktualisieren Sie die Ansicht, um den Originaleintrag zu prüfen.",
   "mainDraftImportRecoveryCancelBody": "Nach dem Abbruch wird die ursprüngliche Verzichtsanfrage nicht mehr ausgeführt. Dadurch wird der Anhang nicht gelöscht und andere Änderungen werden nicht rückgängig gemacht.",
   "mainDraftImportRecoveryCancelDecision": "Verzichtsanfrage abbrechen",
   "mainDraftImportRecoveryCancelTitle": "Diese Verzichtsanfrage abbrechen?",
@@ -1099,6 +1126,8 @@
   "mainDraftJournalRetireUnknown": "Der Abschluss ist nicht bestätigt. Prüfen Sie den ursprünglichen Vorgang, ohne ihn erneut zu senden.",
   "mainDraftJournalReview": "Diese Wiederherstellungskopie ist schreibgeschützt. Originaltext, Anhänge und Erfassungsverlauf bleiben erhalten; die Ansicht setzt keinen früheren Speichervorgang fort.",
   "mainDraftJournalTitle": "Gespeicherte Entwürfe",
+  "mainDraftWriteInspect": "Entwurfsspeicherung prüfen",
+  "mainDraftWriteRetry": "Entwurf erneut speichern",
   "mainEdit": "Bearbeiten",
   "mainEditIdeaTitle": "Gib deiner Idee mehr Klarheit",
   "mainEditorClosedUnknown": "Der Editor ist geschlossen, das Speichern aber nicht bestätigt. Öffne den Arbeitsbereich zur Prüfung, bevor du eine weitere Kopie erstellst.",

@@ -3,12 +3,233 @@ part of 'workbench_native.dart';
 /// Serializes whole draft transfers, independently of settings transfers.
 /// Operation identities belong to the caller's frozen proposal. This adapter
 /// never invents a replacement operation or submits business card edits.
-final class NativeEditorDraftControl implements EditorDraftControl, EditorDraftCaptureExport {
+final class NativeEditorDraftControl
+    implements
+        EditorDraftControl,
+        EditorDraftCaptureExport,
+        EditorDraftHistoryControl,
+        EditorDraftArchiveMaintenanceControl {
   NativeEditorDraftControl(this._owner);
   final RustWorkbench _owner;
   Future<void> _tail = Future.value();
   static const _maxBytes = 8 * 1024 * 1024;
   static const _chunkBytes = 32768;
+  final _archivePending = <(String, String), String>{};
+  final _maintenancePending = <(String, String), String>{};
+
+  @override
+  Future<EditorDraftHistoryPage> history({
+    String cursor = '',
+    int limit = 32,
+  }) => _job(() async {
+    final (envelope, revision) = await _requestEnvelope(
+      host.Action.listEditorDraftHistory,
+      configure: (request) {
+        request.cursor = cursor;
+        request.limit = limit;
+      },
+    );
+    _context(envelope, '', '', '', BigInt.zero);
+    final page = envelope.history;
+    if (envelope.kind != EditorDraftResultKind.history ||
+        revision != BigInt.zero ||
+        page == null ||
+        page.requestCursor != cursor ||
+        page.requestLimit != limit) {
+      throw const FormatException('Draft history reply changed request');
+    }
+    return page;
+  });
+
+  Future<EditorDraftArchiveReceipt?> _inspectArchive(
+    String cardId,
+    String draftId,
+  ) async {
+    final (envelope, revision) = await _requestEnvelope(
+      host.Action.inspectEditorDraftArchive,
+      configure: (request) => _identity(request, cardId, draftId, BigInt.zero),
+    );
+    _context(envelope, cardId, draftId, '', BigInt.zero);
+    if (envelope.kind != EditorDraftResultKind.archive ||
+        revision != (envelope.archive?.generation ?? BigInt.zero)) {
+      throw const FormatException('Invalid draft archive inspection');
+    }
+    return envelope.archive;
+  }
+
+  @override
+  Future<EditorDraftArchiveReceipt?> inspectArchive(
+    String cardId,
+    String draftId,
+  ) => _job(() => _inspectArchive(cardId, draftId));
+
+  @override
+  Future<EditorDraftArchiveReceipt> archive(
+    EditorDraftRecord original,
+  ) => _job(() async {
+    if (original.active ||
+        original.currentActive ||
+        original.currentGeneration != original.generation ||
+        original.requestSha256.length != 32 ||
+        (original.discardOperation.isEmpty && original.retirement == null)) {
+      throw StateError('Only the exact retired draft may be archived');
+    }
+    final card = original.request.cardId, draft = original.request.draftId;
+    // Deterministic within the frozen retired snapshot, so a restarted client
+    // cannot replace an archive operation whose reply was lost.
+    final operation =
+        'draft-archive-${sha256.convert(utf8.encode(jsonEncode([card, draft, original.generation.toString(), original.requestSha256])))}';
+    void verify(EditorDraftArchiveReceipt receipt) {
+      if (receipt.cardId != card ||
+          receipt.draftId != draft ||
+          receipt.operation != operation ||
+          receipt.generation != original.generation ||
+          !RustWorkbench._same(receipt.requestSha256, original.requestSha256)) {
+        throw const FormatException(
+          'Draft archive changed the frozen retirement',
+        );
+      }
+    }
+
+    final previous = await _inspectArchive(card, draft);
+    if (previous != null) {
+      verify(previous);
+      return previous;
+    }
+    if (_archivePending.containsKey((card, draft))) {
+      throw StateError(
+        'Archive outcome remains unknown; inspect the original operation',
+      );
+    }
+    _archivePending[(card, draft)] = operation;
+    final (envelope, revision) = await _requestEnvelope(
+      host.Action.archiveEditorDraft,
+      configure: (request) {
+        _identity(request, card, draft, original.generation);
+        request.operation = operation;
+        request.sha256 = Uint8List.fromList(original.requestSha256);
+      },
+    );
+    _context(envelope, card, draft, operation, original.generation);
+    final receipt = envelope.archive;
+    if (envelope.kind != EditorDraftResultKind.archive ||
+        receipt == null ||
+        revision != original.generation) {
+      throw const FormatException('Invalid draft archive completion');
+    }
+    verify(receipt);
+    return receipt;
+  });
+
+  Future<EditorDraftArchiveMaintenanceReceipt?> _inspectArchiveMaintenance(
+    String card,
+    String draft,
+  ) async {
+    final (envelope, revision) = await _requestEnvelope(
+      host.Action.inspectEditorDraftArchiveMaintenance,
+      configure: (request) => _identity(request, card, draft, BigInt.zero),
+    );
+    _context(envelope, card, draft, '', BigInt.zero);
+    if (envelope.kind != EditorDraftResultKind.archiveMaintenance ||
+        revision != (envelope.archiveMaintenance?.generation ?? BigInt.zero)) {
+      throw const FormatException('Invalid archive maintenance inspection');
+    }
+    return envelope.archiveMaintenance;
+  }
+
+  @override
+  Future<EditorDraftArchiveMaintenanceReceipt?> inspectArchiveMaintenance(
+    String cardId,
+    String draftId,
+  ) => _job(() => _inspectArchiveMaintenance(cardId, draftId));
+
+  @override
+  Future<EditorDraftArchiveMaintenanceReceipt> maintainArchive(
+    EditorDraftRecord original,
+    EditorDraftArchiveReceipt archive,
+  ) => _job(() async {
+    final operation =
+        'draft-maintenance-${sha256.convert([...utf8.encode('morrow.editor-history-maintenance.v1\u0000'), ...archive.archiveSha256])}';
+    final bytes = EditorDraftCodec.encodeArchiveMaintenance(
+      original,
+      archive,
+      operation,
+    );
+    final card = archive.cardId, draft = archive.draftId;
+    void verify(EditorDraftArchiveMaintenanceReceipt receipt) {
+      if (receipt.cardId != card ||
+          receipt.draftId != draft ||
+          receipt.generation != archive.generation ||
+          receipt.archiveOperation != archive.operation ||
+          receipt.operation != operation ||
+          !RustWorkbench._same(receipt.requestSha256, archive.requestSha256) ||
+          !RustWorkbench._same(receipt.archiveSha256, archive.archiveSha256)) {
+        throw const FormatException('Maintenance changed the original archive');
+      }
+    }
+
+    final previous = await _inspectArchiveMaintenance(card, draft);
+    if (previous != null) {
+      verify(previous);
+      return previous;
+    }
+    if (_maintenancePending.containsKey((card, draft))) {
+      throw StateError(
+        'Maintenance outcome remains unknown; inspect the original operation',
+      );
+    }
+    _maintenancePending[(card, draft)] = operation;
+    final (envelope, revision) = await _requestEnvelope(
+      host.Action.maintainEditorDraftArchive,
+      configure: (request) {
+        _identity(request, card, draft, archive.generation);
+        request.operation = operation;
+        request.payload = bytes;
+      },
+    );
+    _context(envelope, card, draft, operation, archive.generation);
+    final receipt = envelope.archiveMaintenance;
+    if (envelope.kind != EditorDraftResultKind.archiveMaintenance ||
+        receipt == null ||
+        revision != archive.generation) {
+      throw const FormatException('Invalid archive maintenance completion');
+    }
+    verify(receipt);
+    return receipt;
+  });
+
+  @override
+  Future<void> exportHistory(EditorDraftRecord original, String path) =>
+      _job(() async {
+        if (original.active ||
+            original.currentActive ||
+            original.currentGeneration != original.generation) {
+          throw StateError('History export requires a retired draft');
+        }
+        final (envelope, revision) = await _requestEnvelope(
+          host.Action.exportEditorDraftHistory,
+          configure: (request) {
+            _identity(
+              request,
+              original.request.cardId,
+              original.request.draftId,
+              original.generation,
+            );
+            request.selectedPath = path;
+          },
+        );
+        _context(
+          envelope,
+          original.request.cardId,
+          original.request.draftId,
+          '',
+          original.generation,
+        );
+        if (envelope.kind != EditorDraftResultKind.exported ||
+            revision != original.generation) {
+          throw const FormatException('Invalid draft history export receipt');
+        }
+      });
 
   Future<T> _job<T>(Future<T> Function() run) {
     final result = Completer<T>();
@@ -359,7 +580,12 @@ final class NativeEditorDraftControl implements EditorDraftControl, EditorDraftC
   });
 
   @override
-  Future<void> exportCapture(String cardId, String draftId, BigInt generation, String path) => _job(() async {
+  Future<void> exportCapture(
+    String cardId,
+    String draftId,
+    BigInt generation,
+    String path,
+  ) => _job(() async {
     final (envelope, revision) = await _requestEnvelope(
       host.Action.exportEditorDraftCapture,
       configure: (request) {
@@ -368,7 +594,8 @@ final class NativeEditorDraftControl implements EditorDraftControl, EditorDraftC
       },
     );
     _context(envelope, cardId, draftId, '', generation);
-    if (envelope.kind != EditorDraftResultKind.exported || revision != generation) {
+    if (envelope.kind != EditorDraftResultKind.exported ||
+        revision != generation) {
       throw const FormatException('Invalid draft capture export response');
     }
   });

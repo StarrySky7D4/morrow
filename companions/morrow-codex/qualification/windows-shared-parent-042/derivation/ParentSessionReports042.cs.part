@@ -1,0 +1,47 @@
+  List<object> RoundSteps(){
+   var steps=new List<object>();foreach(Step1725 step in Gate.Steps)steps.Add(D("ordinal",step.Ordinal,"command",step.Command,
+    "reservation",step.ReservationSequence.HasValue?(object)step.ReservationSequence.Value:null,"returned",step.ReturnSequence.Value));return steps;
+  }
+  void WriteRound(){
+   Io.Need(CurrentRound.Completed&&CurrentRound.ReportSummary==null,"ROUND_REPORT_ONCE_AFTER_ACTUAL_CLOSURE");
+   var frames=new List<object>();
+   for(int i=LineOffset;i<LineOffset+92;i++){
+    InputFrameObservation1701 f=Last.Input.Frames[i];byte[] expected=InputProtocol1701.Wire(i);
+    Io.Need(f.Ordinal==i+1&&f.State=="Delivered"&&f.NativeReturned==true&&f.Error==0&&f.RawWritten==expected.Length&&f.Sha256==InputRules1701.Hash(expected),"ROUND_ORIGINAL_FRAME");
+    frames.Add(D("ordinal",f.Ordinal,"wire_bytes",f.WireBytes,"sha256",f.Sha256,"state",f.State,"native_returned",f.NativeReturned,"raw_written",f.RawWritten,"error",f.Error,
+     "reviewed_stdout",f.ReviewedStdout,"reviewed_stderr",f.ReviewedStderr,"write_start_stdout",f.NativeWriteStartStdout,"write_start_stderr",f.NativeWriteStartStderr));
+   }
+   string reportPath=CollectorPath+"\\attempt-"+(RoundIndex+1).ToString("D2")+".json";
+   var body=D("schema","ORIGINAL_SHARED_PARENT_ROUND042_V1","attempt",RoundIndex+1,
+    "steps",RoundSteps(),"first_line",LineOffset+1,"last_line",LineOffset+92,"input_bytes",3557,"frames",frames,
+    "journal_path",JournalPath,"journal_bytes",Prefix.Length,"journal_sha256",HashPrefix(Prefix.Bytes,Prefix.Length),"journal_records",Prefix.Records,
+    "original_attempt_closed_sequence",CurrentRound.AttemptSequence,"original_common_owner_closed_sequence",CurrentRound.CommonSequence,
+    "prompt_native_write_baseline",CurrentRound.PromptBaseline,"same_original_parent_pid",Last.Capture.Pid,
+    "same_original_parent_creation",Last.Capture.CreationFileTime,"parent_lifetime_closed",false,"source_accepted",false,"release_eligible",false);
+   byte[] raw=new UTF8Encoding(false,true).GetBytes(Json1725.Encode(body)+"\n");
+   Io.Open(CurrentRound.Report,reportPath,false,0x40000000,1,1,false);Io.Write(CurrentRound.Report,raw,131073);
+   Io.Need(RootPPrebirth.Native.FlushFileBuffers(CurrentRound.Report.Handle.Raw),"ROUND_REPORT_FLUSH");
+   CurrentRound.ReportSummary=D("attempt",RoundIndex+1,"path",reportPath,"bytes",raw.Length,"sha256",InputRules1701.Hash(raw),
+    "journal_path",JournalPath,"journal_bytes",Prefix.Length,"journal_sha256",HashPrefix(Prefix.Bytes,Prefix.Length),"journal_records",Prefix.Records,
+    "first_line",LineOffset+1,"last_line",LineOffset+92,"original_attempt_closed_sequence",CurrentRound.AttemptSequence,
+    "original_common_owner_closed_sequence",CurrentRound.CommonSequence);
+  }
+  void WriteTerminal(){
+   var rounds=new List<object>();foreach(SharedRound042 round in Rounds){
+    Io.Need(round.Completed&&!round.Failed&&round.ReportSummary!=null,"ALL_SEVENTEEN_ORIGINAL_ROUNDS_CLOSED");rounds.Add(round.ReportSummary);
+   }
+   // All earlier journals remain pinned and append-only. Re-read each original
+   // handle after final P0, rejecting any late record or rewrite since its report.
+   for(RoundIndex=0;RoundIndex<17;RoundIndex++){
+    PollJournal();Io.Need(Prefix.Parsed==Prefix.Length&&HashPrefix(Prefix.Bytes,Prefix.Length)==Json1725.Str(CurrentRound.ReportSummary["journal_sha256"]),"FINAL_ORIGINAL_ROUND_JOURNAL_STABLE");
+   }
+   RoundIndex=16;
+   Io.Open(Io.Terminal,CollectorPath+@"\terminal.json",false,0x40000000,1,1,false);
+   Io.Write(Io.Terminal,new UTF8Encoding(false,true).GetBytes(Json1725.Encode(D("status",InputProtocol1701.TerminalStatus,
+    "attempts",17,"steps_total",799,"rounds",rounds,"delivered",Delivered,"input_bytes",InputProtocol1701.NormalBytes,
+    "stdout_bytes",OutLength,"stderr_bytes",ErrLength,"stdout_sha256",HashPrefix(Stdout,OutLength),"stderr_sha256",HashPrefix(Stderr,ErrLength),
+    "primary_token_preflight",Preflight.Data(),"original_helper",FinalData(),"controller_resources_before_own_close",Io.ResourceData(),
+    "self_close_witness","NOT_IN_THIS_PRE_CLOSE_FILE_ROOT_MUST_VERIFY_ORIGINAL_CONTROLLER_EXIT0",
+    "source_accepted",false,"release_eligible",false,"SDK26_G04_SDK_FREEZE","OPEN"))+"\n"),131073);
+   Io.Need(RootPPrebirth.Native.FlushFileBuffers(Io.Terminal.Handle.Raw),"TERMINAL_FLUSH");
+  }

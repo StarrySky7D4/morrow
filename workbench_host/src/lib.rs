@@ -329,6 +329,9 @@ impl WorkbenchState {
             // Drop revokes live catalog authority before original storage flush.
             drop(catalog);
         }
+        self.finish_content_and_flush()
+    }
+    fn finish_content_and_flush(&mut self) -> Result<()> {
         self.command_frame.clear();
         if let Some(mut external) = self.external_ui.take() {
             external.ui.close();
@@ -979,6 +982,33 @@ impl Workbench {
     }
     pub fn product_gate(&self) -> crate::product_gate::ProductGate {
         self.state.product_gate.clone()
+    }
+    /// Complete an idle agent attempt while retaining this original catalog and
+    /// session authority. Final owner shutdown must still call `finish`.
+    #[cfg(windows)]
+    pub fn finish_agent_attempt(
+        &mut self,
+        resources: &std::sync::Arc<morrow_codex_session_exec_windows_v1::BorrowedNativeResources>,
+    ) -> Result<()> {
+        self.state.ensure_agent_admission()?;
+        if self.state.agent_preparation_debt.is_some() || self.state.agent_contexts.outstanding() {
+            return Err(io_tasks::AccessError::RecoveryRequired.into());
+        }
+        self.finish_channels()?;
+        self.state.try_reclaim()?;
+        self.state.ensure_agent_admission()?;
+        let state = self.state.local_mut()?;
+        state.agent_catalog.as_ref().ok_or("original agent catalog absent")?
+            .require_healthy_attempt_finish()?;
+        if state.agent_session_host_failed || state.agent_session_host.is_none()
+            || resources.owner_binding() != state.host.binding() || !resources.is_clean()? {
+            return Err("original agent resources unresolved or foreign".into());
+        }
+        let original = morrow_codex_session_exec_windows_v1::BorrowedNativeResources::for_owner(&state.host)?;
+        if !std::sync::Arc::ptr_eq(&original, resources) {
+            return Err("original agent registry replaced".into());
+        }
+        state.finish_content_and_flush()
     }
     pub fn finish(&mut self) -> Result<()> {
         self.state.request_stop();

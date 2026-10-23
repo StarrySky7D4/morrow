@@ -24,6 +24,8 @@ pub mod interaction;
 #[cfg(windows)]
 pub mod live;
 #[cfg(windows)]
+pub mod parent_session;
+#[cfg(windows)]
 pub mod params;
 pub mod preflight;
 #[cfg(windows)]

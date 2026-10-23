@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'plugins/editor_draft.dart';
 import 'plugins/editor_draft_review.dart';
+import 'editor_draft_history_dialog.dart';
 
 /// Discovery and selection only. This route does not create a live editor or
 /// decide whether a previous business operation may be submitted again.
@@ -140,6 +141,25 @@ class _EditorDraftRecoveryDialogState extends State<EditorDraftRecoveryDialog> {
         ),
       ),
       actions: [
+        if (widget.runtime.editorDrafts is EditorDraftHistoryControl)
+          TextButton(
+            onPressed: _busy
+                ? null
+                : () async {
+                    if (!current) return;
+                    await showDialog<void>(
+                      context: context,
+                      builder: (_) => EditorDraftHistoryDialog(
+                        control: widget.runtime.editorDrafts,
+                        history:
+                            widget.runtime.editorDrafts
+                                as EditorDraftHistoryControl,
+                        isCurrent: widget.isCurrent,
+                      ),
+                    );
+                  },
+            child: Text(l.mainDraftHistoryTitle),
+          ),
         TextButton(
           onPressed: _busy ? null : _refresh,
           child: Text(l.pluginsRefreshList),

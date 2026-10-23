@@ -56,6 +56,16 @@
       }
     }
   },
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "archived": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
   "@mainFavoriteTooltip": {
     "placeholders": {
       "title": {
@@ -1077,6 +1087,23 @@
   "mainDraftHandoffRecoverySelection": "Selecione um registo para ver o rascunho completo.",
   "mainDraftHandoffRecoveryTitle": "Recuperação da transferência de rascunhos",
   "mainDraftHandoffRecoveryUnknown": "O resultado da operação ainda não foi confirmado. Reveja o registo original; não repita a operação.",
+  "mainDraftHistoryArchive": "Arquivar este registo",
+  "mainDraftHistoryArchived": "Arquivado",
+  "mainDraftHistoryCapacity": "Registos atuais: {current}/256; arquivados: {archived}/4096",
+  "mainDraftHistoryCategoryField": "Categoria",
+  "mainDraftHistoryDescriptionField": "Descrição",
+  "mainDraftHistoryExport": "Exportar registo do histórico",
+  "mainDraftHistoryFirst": "Primeira página",
+  "mainDraftHistoryMaintain": "Arquivar registos relacionados",
+  "mainDraftHistoryMaintainHelp": "Preservar todo o histórico e libertar capacidade para registos de rascunhos.",
+  "mainDraftHistoryMaintained": "Registos relacionados arquivados",
+  "mainDraftHistoryNext": "Página seguinte",
+  "mainDraftHistoryNotice": "Só aparecem rascunhos encerrados. Arquivar preserva o texto e a origem e liberta uma vaga. Os ficheiros anexos libertados e as permissões de captura não são restaurados. Os registos arquivados também têm um limite de 64 MiB.",
+  "mainDraftHistoryRetired": "Encerrado",
+  "mainDraftHistoryStageField": "Fase",
+  "mainDraftHistoryTitle": "Histórico de rascunhos",
+  "mainDraftHistoryTitleField": "Título",
+  "mainDraftHistoryUnconfirmed": "O resultado do arquivo não está confirmado. Atualize para verificar o registo original.",
   "mainDraftImportRecoveryCancelBody": "Após o cancelamento, o pedido original de abandono já não será executado. Isto não elimina o anexo nem desfaz outras alterações.",
   "mainDraftImportRecoveryCancelDecision": "Cancelar pedido de abandono",
   "mainDraftImportRecoveryCancelTitle": "Cancelar este pedido de abandono?",
@@ -1099,6 +1126,8 @@
   "mainDraftJournalRetireUnknown": "A retirada não foi confirmada. Consulte a operação original sem enviá-la novamente.",
   "mainDraftJournalReview": "Esta cópia de recuperação é só de leitura. O texto original, os anexos e o histórico de captura são preservados; a visualização não retoma uma gravação anterior.",
   "mainDraftJournalTitle": "Rascunhos guardados",
+  "mainDraftWriteInspect": "Verificar o rascunho",
+  "mainDraftWriteRetry": "Tentar salvar o rascunho novamente",
   "mainEdit": "Editar",
   "mainEditIdeaTitle": "Dê clareza à sua ideia",
   "mainEditorClosedUnknown": "O editor fechou, mas o salvamento não foi confirmado. Reabra o espaço de trabalho e verifique antes de criar outra cópia.",

@@ -1,7 +1,7 @@
 //! Private A1 policy. Public facts are not admission capabilities.
 //! No wire, getter or serialized record can construct PrecreationOrigin.
 //! The native creator/immutable bootstrap inlet is deliberately still required.
-use std::{io, fs::{File,OpenOptions}, os::windows::fs::{OpenOptionsExt,MetadataExt},
+use std::{io,
     path::{Component,Path,PathBuf,Prefix}, sync::Arc};
 use crate::MatchedRunnerArtifact;
 use crate::asuser_a1_protocol::{RoleTable};
@@ -104,7 +104,8 @@ impl Environment {
 pub(crate) struct Command {
     pub(super) application:Vec<u16>,pub(super) command:Vec<u16>,
     pub(super) cwd:Vec<u16>,pub(super) desktop:Vec<u16>,
-    pub(super) environment:Environment,_cwd_path:PathBuf,_cwd_pins:Vec<File>,
+    pub(super) environment:Environment,cwd_paths:Vec<PathBuf>,
+    pub(super) cwd_pins:crate::asuser_cwd_pins::CwdPins,
 }
 impl Command {
     /// Only the pinned R plus the existing fixed runner transport arguments.
@@ -128,21 +129,18 @@ impl Command {
             ||!components.all(|c|matches!(c,Component::Normal(s) if !s.to_string_lossy().contains(':'))) {
             return Err(reject());
         }
-        let parents=cwd.ancestors().collect::<Vec<_>>();
+        let parents=cwd.ancestors().map(Path::to_path_buf).collect::<Vec<_>>();
         if parents.len()>32{return Err(reject());}
-        let mut cwd_pins=Vec::with_capacity(parents.len());
-        for path in parents.iter().rev() {
-            let file=OpenOptions::new().read(true).share_mode(1).custom_flags(0x02000000|0x00200000).open(path)?;
-            let metadata=file.metadata()?;
-            if !metadata.is_dir()||metadata.file_attributes()&0x400!=0{return Err(reject());}
-            cwd_pins.push(file);
-        }
         let app=bundle.r.path().to_str().ok_or_else(reject)?;
         if app.contains('"')||app.contains('\0'){return Err(reject());}
         let text=format!("\"{app}\" --pipe-in={input} --pipe-out={output} --native-close-v8");
         let wide=|v:&str|v.encode_utf16().chain(Some(0)).collect();
         Ok(Self{application:wide(app),command:wide(&text),cwd:wide(cwd.to_str().ok_or_else(reject)?),
-            desktop:Vec::new(),environment,_cwd_path:cwd.to_path_buf(),_cwd_pins:cwd_pins})
+            desktop:Vec::new(),environment,cwd_paths:parents.into_iter().rev().collect(),
+            cwd_pins:crate::asuser_cwd_pins::CwdPins::new()})
+    }
+    pub(super) fn pin_cwd_once(&mut self,deadline:std::time::Instant)->io::Result<()> {
+        self.cwd_pins.open_once(&self.cwd_paths,deadline)
     }
 }
 

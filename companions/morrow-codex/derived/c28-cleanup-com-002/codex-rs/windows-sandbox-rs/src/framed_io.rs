@@ -1,8 +1,6 @@
-//! Shared length-prefixed JSON framing for independent Windows sandbox IPC protocols.
+//! Bounded byte transport. Serialization belongs to the typed protocol module.
 
 use anyhow::Result;
-use serde::Serialize;
-use serde::de::DeserializeOwned;
 use std::fs::File;
 use std::io;
 use std::io::Read;
@@ -17,33 +15,35 @@ use windows_sys::Win32::System::Pipes::PeekNamedPipe;
 const MAX_FRAME_LEN: usize = 8 * 1024 * 1024;
 const FRAME_POLL_INTERVAL: Duration = Duration::from_millis(5);
 
-pub(crate) fn write_frame<W: Write, T: Serialize>(mut writer: W, message: &T) -> Result<()> {
-    let payload = serde_json::to_vec(message)?;
-    if payload.len() > MAX_FRAME_LEN {
-        anyhow::bail!("frame too large: {}", payload.len());
-    }
+pub(crate) fn write_payload<W: Write>(mut writer: W, payload: &[u8], cap: usize) -> Result<()> {
+    anyhow::ensure!(!payload.is_empty() && payload.len() <= cap && payload.len() <= u32::MAX as usize, "IPC frame size rejected");
     let len = payload.len() as u32;
     writer.write_all(&len.to_le_bytes())?;
-    writer.write_all(&payload)?;
+    writer.write_all(payload)?;
     writer.flush()?;
     Ok(())
 }
 
-pub(crate) fn read_frame<R: Read, T: DeserializeOwned>(mut reader: R) -> Result<Option<T>> {
+pub(crate) fn read_payload<R: Read>(mut reader: R, cap: usize) -> Result<Option<Vec<u8>>> {
     let mut len_buf = [0u8; 4];
-    match reader.read_exact(&mut len_buf) {
-        Ok(()) => {}
-        Err(err) if err.kind() == std::io::ErrorKind::UnexpectedEof => return Ok(None),
-        Err(err) => return Err(err.into()),
+    // Only an empty stream is EOF. Even one consumed prefix byte is a failed
+    // frame, never physical completion evidence.
+    loop {
+        match reader.read(&mut len_buf[..1]) {
+            Ok(0) => return Ok(None),
+            Ok(_) => break,
+            Err(err) if err.kind() == io::ErrorKind::Interrupted => continue,
+            Err(err) => return Err(err.into()),
+        }
     }
+    reader.read_exact(&mut len_buf[1..])?;
     let len = u32::from_le_bytes(len_buf) as usize;
-    if len > MAX_FRAME_LEN {
+    if len == 0 || len > cap {
         anyhow::bail!("frame too large: {len}");
     }
     let mut payload = vec![0u8; len];
     reader.read_exact(&mut payload)?;
-    let message = serde_json::from_slice(&payload)?;
-    Ok(Some(message))
+    Ok(Some(payload))
 }
 
 pub(crate) fn wait_for_complete_frame(pipe: &File, deadline: Instant) -> io::Result<()> {

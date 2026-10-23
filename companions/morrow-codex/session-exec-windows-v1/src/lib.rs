@@ -18,11 +18,11 @@ mod runner_observation;
 #[cfg(windows)]
 mod native_completion;
 #[cfg(windows)]
-pub use native_completion::{ReviewedNativeCompletion,NativeExecutionCompletion};
+pub use native_completion::{ReviewedNativeCompletion,NativeExecutionCompletion,NativeExecutionRefusal};
 #[cfg(windows)]
 mod native_factory;
 #[cfg(windows)]
-pub use native_factory::{NativeFactoryRetirement,NativeFactoryCompletion,RetiredExecutionCompletion};
+pub use native_factory::{NativeFactoryRetirement,NativeFactoryCompletion,RetiredExecutionCompletion,RetiredExecutionRefusal};
 #[cfg(windows)]
 pub use runner_observation::ReviewedRunnerObservation;
 #[cfg(windows)]
@@ -54,7 +54,7 @@ pub use codex_sandboxing::SandboxType;
 pub use codex_sandboxing::{asuser_parent_dispatch,AsUserParentOrigin};
 #[cfg(windows)]
 #[doc(hidden)]
-pub use codex_sandboxing::{ParentOriginalProcess,ParentCreate,ParentChildIdentity,ParentNativeExit,ParentCClosed};
+pub use codex_sandboxing::{ParentOriginalProcess,ParentCreate,ParentChildIdentity,ParentNativeExit,ParentCClosed,ParentExitPredicate,ParentExitFailure};
 #[cfg(windows)]
 pub use codex_sandboxing::{AsUserMaterialization,AsUserFactoryBinding};
 #[cfg(windows)]

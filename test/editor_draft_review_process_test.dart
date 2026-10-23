@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:morrow_studio/main.dart';
 import 'package:morrow_studio/editor_draft_recovery_dialog.dart';
+import 'package:morrow_studio/editor_draft_history_dialog.dart';
 import 'package:morrow_studio/card_tips_editor.dart';
 import 'package:morrow_studio/plugins/editor_draft.dart';
 import 'package:morrow_studio/plugins/editor_draft_binding.dart';
@@ -30,16 +31,25 @@ final available =
     hostPath != null &&
     packagePath != null &&
     rootPath != null &&
-    ['seed', 'recover', 'retire', 'live-retire'].contains(phase);
+    [
+      'seed',
+      'recover',
+      'retire',
+      'archive',
+      'history',
+      'live-retire',
+    ].contains(phase);
 
 Future<void> waitFor(WidgetTester t, bool Function() ready) async {
   final end = DateTime.now().add(const Duration(seconds: 45));
   while (!ready()) {
-    final dialog = find.byType(EditorDraftRecoveryDialog);
-    if (dialog.evaluate().isNotEmpty) {
-      final dynamic state = t.state(dialog);
-      if (state.lastError != null) {
-        throw StateError('Fixture recovery read failed: ${state.lastError}');
+    for (final type in [EditorDraftRecoveryDialog, EditorDraftHistoryDialog]) {
+      final dialog = find.byType(type);
+      if (dialog.evaluate().isNotEmpty) {
+        final dynamic state = t.state(dialog);
+        if (state.lastError != null) {
+          throw StateError('Fixture recovery read failed: ${state.lastError}');
+        }
       }
     }
     if (DateTime.now().isAfter(end)) {
@@ -168,6 +178,10 @@ void main({Future<void> Function(WidgetTester)? prepareWindow}) {
           storage = await RustStudioStorage.open(host!);
         }
       });
+      if (phase == 'archive' || phase == 'history') {
+        await _historyMaintenance(t, root, host!);
+        return;
+      }
       if (freshOwner) {
         await t.pumpWidget(
           MaterialApp(
@@ -253,15 +267,23 @@ void main({Future<void> Function(WidgetTester)? prepareWindow}) {
         final unselected = File('${root.path}/unselected.bin');
         await t.runAsync(() => unselected.writeAsBytes([7, 8, 9], flush: true));
         final import = EditorDraftImportRequest(
-          cardId: stored.request.cardId, draftId: stored.request.draftId,
+          cardId: stored.request.cardId,
+          draftId: stored.request.draftId,
           operation: 'retirement-unselected-import',
           expectedGeneration: stored.generation,
-          name: 'unselected.bin', kind: 'file', bytes: BigInt.from(3),
+          name: 'unselected.bin',
+          kind: 'file',
+          bytes: BigInt.from(3),
           sha256: sha256.convert([7, 8, 9]).bytes,
         );
         await native(t, host!.editorDraftImports.begin(import));
-        await native(t, host!.editorDraftImports.complete(import,
-            selectedPath: unselected.path));
+        await native(
+          t,
+          host!.editorDraftImports.complete(
+            import,
+            selectedPath: unselected.path,
+          ),
+        );
         await t.runAsync(unselected.delete);
         await native(t, host!.close());
         await t.runAsync(
@@ -401,26 +423,48 @@ void main({Future<void> Function(WidgetTester)? prepareWindow}) {
           await tapVisible(t, 'idea-retire-saved-draft');
           await tapVisible(t, 'idea-confirm-retire-draft');
           await waitFor(t, () => find.byType(NewIdeaDialog).evaluate().isEmpty);
-          final retired = (await native(t, host!.editorDrafts.read(
-              original.cardId, original.draftId)))!;
+          final retired = (await native(
+            t,
+            host!.editorDrafts.read(original.cardId, original.draftId),
+          ))!;
           expect(retired.discardOperation, isNotEmpty);
           expect(retired.active, isFalse);
           expect(retired.generation, before.generation + BigInt.one);
-          expect(EditorDraftCodec.encodeWrite(retired.request),
-              EditorDraftCodec.encodeWrite(before.request));
-          final imports = await native(t, host!.editorDraftImports.list(
-              original.cardId, original.draftId));
+          expect(
+            EditorDraftCodec.encodeWrite(retired.request),
+            EditorDraftCodec.encodeWrite(before.request),
+          );
+          final imports = await native(
+            t,
+            host!.editorDraftImports.list(original.cardId, original.draftId),
+          );
           expect(imports.records, isEmpty);
-          final oldImport = await native(t, host!.editorDraftImports.inspect(
-              original.cardId, original.draftId, 'retirement-unselected-import'));
+          final oldImport = await native(
+            t,
+            host!.editorDraftImports.inspect(
+              original.cardId,
+              original.draftId,
+              'retirement-unselected-import',
+            ),
+          );
           expect(oldImport.record!.phase, EditorDraftImportPhase.retired);
           expect(oldImport.record!.bytesRetained, isFalse);
           expect(await native(t, host!.editorDrafts.list()), isEmpty);
           expect(await native(t, host!.loadWorkspaceContent()), isEmpty);
-          await t.runAsync(() => File('${root.path}/retire.json').writeAsString(
-            jsonEncode({'pid': pid, 'complete': true, 'operation': retired.discardOperation,
-              'generation': retired.generation.toString(), 'imports_closed': true,
-              'business_operations': 0, 'complete_export': output}), flush: true));
+          await t.runAsync(
+            () => File('${root.path}/retire.json').writeAsString(
+              jsonEncode({
+                'pid': pid,
+                'complete': true,
+                'operation': retired.discardOperation,
+                'generation': retired.generation.toString(),
+                'imports_closed': true,
+                'business_operations': 0,
+                'complete_export': output,
+              }),
+              flush: true,
+            ),
+          );
         }
         await t.pumpWidget(const SizedBox());
         await native(t, host!.close());
@@ -445,12 +489,163 @@ void main({Future<void> Function(WidgetTester)? prepareWindow}) {
   );
 }
 
+Future<void> _historyMaintenance(
+  WidgetTester t,
+  Directory root,
+  RustWorkbench host,
+) async {
+  final history = host.editorDrafts as EditorDraftHistoryControl;
+  final page = await native(t, history.history());
+  expect(page.rows, hasLength(1));
+  expect(page.unarchivedCount, phase == 'archive' ? 1 : 0);
+  expect(page.archivedCount, phase == 'archive' ? 0 : 1);
+  final row = page.rows.single;
+  final before = (await native(
+    t,
+    host.editorDrafts.read(row.cardId, row.draftId),
+  ))!;
+  final snapshot = EditorDraftCodec.encodeWrite(before.request);
+  expect(before.active, isFalse);
+  expect(before.currentActive, isFalse);
+  expect(before.request.values.title.text, isEmpty);
+  expect(row.title, isEmpty);
+  expect(row.preview, isNotEmpty);
+  await t.pumpWidget(
+    MaterialApp(
+      locale: const Locale('en'),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: Scaffold(
+        body: EditorDraftRecoveryDialog(runtime: host, isCurrent: () => true),
+      ),
+    ),
+  );
+  await waitFor(
+    t,
+    () =>
+        find.text('Draft history').hitTestable().evaluate().length == 1 &&
+        find.byType(LinearProgressIndicator).evaluate().isEmpty,
+  );
+  await t.tap(find.text('Draft history'));
+  await t.pump();
+  await waitFor(
+    t,
+    () => find.byType(EditorDraftHistoryDialog).evaluate().length == 1,
+  );
+  await tapVisible(t, 'draft-history-${row.draftId}');
+  await waitFor(
+    t,
+    () =>
+        find.byType(LinearProgressIndicator).evaluate().isEmpty &&
+        find.byType(SelectableText).evaluate().isNotEmpty,
+  );
+  expect(find.text(row.draftId), findsNothing);
+  expect(find.text('Title'), findsOneWidget);
+  final archiveButton = find.byKey(const ValueKey('draft-history-archive'));
+  if (phase == 'archive') {
+    expect(t.widget<TextButton>(archiveButton).onPressed, isNotNull);
+    await t.tap(archiveButton);
+    await t.pump();
+    await waitFor(
+      t,
+      () =>
+          find.byType(LinearProgressIndicator).evaluate().isEmpty &&
+          find.text('Archived').evaluate().isNotEmpty,
+    );
+  }
+  expect(t.widget<TextButton>(archiveButton).onPressed, isNull);
+  final receipt = (await native(
+    t,
+    history.inspectArchive(row.cardId, row.draftId),
+  ))!;
+  expect(receipt.generation, before.generation);
+  expect(receipt.requestSha256, before.requestSha256);
+  final after = (await native(
+    t,
+    host.editorDrafts.read(row.cardId, row.draftId),
+  ))!;
+  expect(EditorDraftCodec.encodeWrite(after.request), snapshot);
+  expect(after.generation, before.generation);
+  expect(after.discardOperation, before.discardOperation);
+  final repeated = await native(t, history.archive(after));
+  expect(repeated.operation, receipt.operation);
+  expect(repeated.repeated, isTrue);
+  final exported = File('${root.path}/history-$phase.json');
+  await native(t, history.exportHistory(after, exported.path));
+  await t.runAsync(() async {
+    final data = jsonDecode(await exported.readAsString()) as Map;
+    expect(data['active'], isFalse);
+    expect(data['released_blobs_included'], isFalse);
+    expect(data['capture_authority'], isFalse);
+    expect(data['business_replay_authority'], isFalse);
+    expect((data['values'] as Map)['title']['text'], '');
+    expect(
+      data['request_sha256'],
+      receipt.requestSha256
+          .map((b) => b.toRadixString(16).padLeft(2, '0'))
+          .join(),
+    );
+    expect(data['archive_operation'], receipt.operation);
+    final seed =
+        jsonDecode(await File('${root.path}/seed.json').readAsString()) as Map;
+    expect(seed['pid'], isNot(pid));
+    if (phase == 'history') {
+      final previous =
+          jsonDecode(await File('${root.path}/archive.json').readAsString())
+              as Map;
+      expect(previous['pid'], isNot(pid));
+      expect(previous['operation'], receipt.operation);
+      expect(previous['request_sha256'], data['request_sha256']);
+    }
+  });
+  final finalPage = await native(t, history.history());
+  expect((finalPage.unarchivedCount, finalPage.archivedCount), (0, 1));
+  expect(await native(t, host.loadWorkspaceContent()), isEmpty);
+  expect(host.editorDraftWorkspace.sessions, isEmpty);
+  await t.pumpWidget(const SizedBox());
+  await native(t, host.close());
+  await t.runAsync(
+    () => File('${root.path}/$phase.json').writeAsString(
+      jsonEncode({
+        'pid': pid,
+        'complete': true,
+        'operation': receipt.operation,
+        'generation': receipt.generation.toString(),
+        'request_sha256': receipt.requestSha256
+            .map((b) => b.toRadixString(16).padLeft(2, '0'))
+            .join(),
+        'original_journal_unchanged': true,
+        'formal_history_dialog': true,
+        'unarchived_count': finalPage.unarchivedCount,
+        'archived_count': finalPage.archivedCount,
+        'history_export': exported.path,
+        'capture_authority_restored': false,
+        'released_blobs_restored': false,
+        'business_operations': 0,
+      }),
+      flush: true,
+    ),
+  );
+}
+
 // The first retirement goes through the formal recovery menu while the same
 // client still owns the capture. Additional fresh owners exercise slot reuse.
-Future<void> _retireLiveOwner(WidgetTester t, Directory root, Directory store,
-    RustWorkbench host, EditorDraftOwner owner) async {
-  final before = (await native(t, owner.session.flushLatestVisible(
-      timeout: const Duration(seconds: 20))))!;
+Future<void> _retireLiveOwner(
+  WidgetTester t,
+  Directory root,
+  Directory store,
+  RustWorkbench host,
+  EditorDraftOwner owner,
+) async {
+  final before = (await native(
+    t,
+    owner.session.flushLatestVisible(timeout: const Duration(seconds: 20)),
+  ))!;
   expect(before.assets, hasLength(1));
   expect(before.request.captureEvents, 1);
   await t.pumpWidget(const SizedBox());
@@ -458,41 +653,73 @@ Future<void> _retireLiveOwner(WidgetTester t, Directory root, Directory store,
   expect(owner.captureClosed, isFalse);
   expect(host.editorDraftWorkspace.hasView(owner.session), isFalse);
   final storage = await native(t, RustStudioStorage.open(host));
-  await t.pumpWidget(MorrowApp(storage: storage, workbench: host,
-      initialLocale: const Locale('en'), libraryDirectory: store.path));
+  await t.pumpWidget(
+    MorrowApp(
+      storage: storage,
+      workbench: host,
+      initialLocale: const Locale('en'),
+      libraryDirectory: store.path,
+    ),
+  );
   await tapVisible(t, 'editor-recovery-open');
   await tapVisible(t, 'editor-recovery-menu-drafts');
   await tapVisible(t, 'draft-journal-${owner.session.draftId}');
   await waitFor(t, () => find.byType(NewIdeaDialog).evaluate().isNotEmpty);
-  expect(t.widget<NewIdeaDialog>(find.byType(NewIdeaDialog)).canResumeSavedDraft,
-      isTrue);
+  expect(
+    t.widget<NewIdeaDialog>(find.byType(NewIdeaDialog)).canResumeSavedDraft,
+    isTrue,
+  );
   await tapVisible(t, 'idea-retire-saved-draft');
   expect(owner.session.retirementFrozen, isFalse);
   await tapVisible(t, 'idea-confirm-retire-draft');
   await waitFor(t, () => find.byType(NewIdeaDialog).evaluate().isEmpty);
-  final retired = (await native(t, host.editorDrafts.read(
-      owner.session.cardId, owner.session.draftId)))!;
+  final retired = (await native(
+    t,
+    host.editorDrafts.read(owner.session.cardId, owner.session.draftId),
+  ))!;
   expect(retired.discardOperation, isNotEmpty);
   expect(retired.currentActive, isFalse);
   expect(retired.generation, before.generation + BigInt.one);
-  expect(EditorDraftCodec.encodeWrite(retired.request),
-      EditorDraftCodec.encodeWrite(before.request));
+  expect(
+    EditorDraftCodec.encodeWrite(retired.request),
+    EditorDraftCodec.encodeWrite(before.request),
+  );
   expect(owner.retired, isTrue);
   expect(owner.captureClosed, isTrue);
   expect(owner.session.disposed, isTrue);
   expect(host.editorDraftWorkspace.sessions, isEmpty);
-  final imports = await native(t, host.editorDraftImports.list(
-      owner.session.cardId, owner.session.draftId));
+  final imports = await native(
+    t,
+    host.editorDraftImports.list(owner.session.cardId, owner.session.draftId),
+  );
   expect(imports.records, isEmpty);
   await t.pumpWidget(const SizedBox());
   for (var index = 0; index < 17; index++) {
-    final editor = await native(t, host.openEditor('live-retire-$index', create: true));
-    final next = await native(t, host.createEditorDraftOwner(editor: editor,
-        initial: initial(), attachments: const [], create: true));
+    final editor = await native(
+      t,
+      host.openEditor('live-retire-$index', create: true),
+    );
+    final next = await native(
+      t,
+      host.createEditorDraftOwner(
+        editor: editor,
+        initial: initial(),
+        attachments: const [],
+        create: true,
+      ),
+    );
     final record = await native(t, next.session.ensureJournal());
-    final review = await native(t, host.inspectEditorDraft(EditorDraftSummary(
-        cardId: record.request.cardId, draftId: record.request.draftId,
-        generation: record.generation, active: true)));
+    final review = await native(
+      t,
+      host.inspectEditorDraft(
+        EditorDraftSummary(
+          cardId: record.request.cardId,
+          draftId: record.request.draftId,
+          generation: record.generation,
+          active: true,
+        ),
+      ),
+    );
     final attempt = host.retirementFor(review);
     await native(t, attempt.start());
     expect(next.captureClosed, isTrue);
@@ -505,10 +732,20 @@ Future<void> _retireLiveOwner(WidgetTester t, Directory root, Directory store,
   final closing = await native(t, host.prepareEditorDraftClose());
   await native(t, host.finishEditorDraftClose(closing));
   await native(t, host.close());
-  await t.runAsync(() => File('${root.path}/live-retire.json').writeAsString(
-      jsonEncode({'pid': pid, 'complete': true, 'live_retirements': 18,
-        'formal_dialog_retirements': 1, 'capture_closed': true,
-        'imports_closed': true, 'business_operations': 0,
+  await t.runAsync(
+    () => File('${root.path}/live-retire.json').writeAsString(
+      jsonEncode({
+        'pid': pid,
+        'complete': true,
+        'live_retirements': 18,
+        'formal_dialog_retirements': 1,
+        'capture_closed': true,
+        'imports_closed': true,
+        'business_operations': 0,
         'operation': retired.discardOperation,
-        'generation': retired.generation.toString()}), flush: true));
+        'generation': retired.generation.toString(),
+      }),
+      flush: true,
+    ),
+  );
 }

@@ -426,6 +426,62 @@ class AppLocalizationsEn extends AppLocalizations {
       'The operation result is not confirmed. Review the original record; do not repeat the operation.';
 
   @override
+  String get mainDraftHistoryArchive => 'Archive this record';
+
+  @override
+  String get mainDraftHistoryArchived => 'Archived';
+
+  @override
+  String mainDraftHistoryCapacity(int archived, int current) {
+    return 'Current records: $current/256; archived: $archived/4096';
+  }
+
+  @override
+  String get mainDraftHistoryCategoryField => 'Category';
+
+  @override
+  String get mainDraftHistoryDescriptionField => 'Description';
+
+  @override
+  String get mainDraftHistoryExport => 'Export history record';
+
+  @override
+  String get mainDraftHistoryFirst => 'First page';
+
+  @override
+  String get mainDraftHistoryMaintain => 'Archive related records';
+
+  @override
+  String get mainDraftHistoryMaintainHelp =>
+      'Preserve all history and free draft record capacity.';
+
+  @override
+  String get mainDraftHistoryMaintained => 'Related records archived';
+
+  @override
+  String get mainDraftHistoryNext => 'Next page';
+
+  @override
+  String get mainDraftHistoryNotice =>
+      'Only retired drafts appear here. Archiving preserves text and provenance and frees a journal slot. Released attachment files and capture permissions are not restored. Archived records also have a 64 MiB limit.';
+
+  @override
+  String get mainDraftHistoryRetired => 'Retired';
+
+  @override
+  String get mainDraftHistoryStageField => 'Stage';
+
+  @override
+  String get mainDraftHistoryTitle => 'Draft history';
+
+  @override
+  String get mainDraftHistoryTitleField => 'Title';
+
+  @override
+  String get mainDraftHistoryUnconfirmed =>
+      'Archive outcome is unconfirmed. Refresh to inspect the original record.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       'After cancellation, the original abandonment request will no longer run. This does not delete the attachment or undo other changes.';
 
@@ -504,6 +560,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mainDraftJournalTitle => 'Saved drafts';
+
+  @override
+  String get mainDraftWriteInspect => 'Check draft save';
+
+  @override
+  String get mainDraftWriteRetry => 'Retry draft save';
 
   @override
   String get mainEdit => 'Edit';

@@ -14,7 +14,7 @@ pub struct EditorDraftLineage {
     pub cursor: String,
 }
 
-fn complete_snapshot(parent: &proto::Slot, child: &proto::WriteRequest) -> Result<()> {
+pub(super) fn complete_snapshot(parent: &proto::Slot, child: &proto::WriteRequest) -> Result<()> {
     let request = parent.request.as_ref().ok_or("parent request missing")?;
     if !request.capture_scope.is_empty() && child.capture_scope.is_empty() {
         return Err("child must retain the complete parent capture lineage".into());
@@ -43,11 +43,7 @@ impl WorkbenchState {
         let mut found = None;
         for slot in self.all_draft_metadata()? {
             let request = slot.request.as_ref().ok_or("draft request missing")?;
-            if request.card_id == card
-                && slot
-                    .parent_link
-                    .as_ref()
-                    .is_some_and(|link| link.parent_draft_id == parent)
+            if request.card_id == card && draft_parent_id(&slot) == Some(parent)
             {
                 if found.is_some() {
                     return Err("ambiguous durable draft successors".into());
@@ -111,9 +107,9 @@ impl WorkbenchState {
         {
             return Err("parent draft changed before handoff".into());
         }
-        if let Some(ancestor) = &current.parent_link {
+        if let Some(ancestor) = draft_parent_id(&current) {
             let (_, upstream) = self
-                .draft_card(&request.card_id, &ancestor.parent_draft_id)?
+                .draft_card(&request.card_id, ancestor)?
                 .ok_or("ancestor draft missing")?;
             if upstream.active {
                 return Err("retire the ancestor before handing off its child".into());
@@ -144,6 +140,7 @@ impl WorkbenchState {
     /// Check the audited first child and exact parent, not just untrusted links.
     /// Neither a later business edit nor an inactive parent invalidates history.
     pub(super) fn verify_draft_lineage(&self, slot: &proto::Slot) -> Result<()> {
+        if slot.resume_link.is_some() { return self.verify_resumed_draft_lineage(slot); }
         let request = slot.request.as_ref().ok_or("child request missing")?;
         let link = slot
             .parent_link
@@ -287,7 +284,7 @@ impl Workbench {
         parent: &proto::ParentLink,
     ) -> Result<EditorDraftRecord> {
         self.local_state_mut()?
-            .save_editor_draft_linked(request, Some(parent), false)
+            .save_editor_draft_linked(request, Some(parent), None, false)
     }
     pub fn retire_editor_draft_parent(
         &mut self,
@@ -309,7 +306,7 @@ impl WorkbenchState {
         request: &proto::WriteRequest,
         parent: &proto::ParentLink,
     ) -> Result<EditorDraftRecord> {
-        self.save_editor_draft_linked(request, Some(parent), false)
+        self.save_editor_draft_linked(request, Some(parent), None, false)
     }
     /// Read-only discovery includes inactive parents/children and never retries.
     pub(crate) fn list_editor_draft_lineages(&self) -> Result<Vec<EditorDraftLineage>> {

@@ -38,7 +38,8 @@ final class _NativeVersionedEditorSession
         VersionedEditorCommitObservation,
         EditorDraftPredecessorSource,
         WorkbenchEditorOperationIdentity,
-        WorkbenchEditorDraftCaptureIdentity {
+        WorkbenchEditorDraftCaptureIdentity,
+        WorkbenchEditorDraftAssetBinding {
   _NativeVersionedEditorSession(
     this.owner,
     this.targetId,
@@ -53,6 +54,15 @@ final class _NativeVersionedEditorSession
   @override
   BigInt get sourceRevision => revision;
   final String scope;
+  late final _DraftAssetBinding _draftAssets = _DraftAssetBinding(owner, targetId, revision, scope, commitOperation);
+  @override
+  Future<void> bindDraftAssets(EditorDraftRecord record, List<IdeaAttachment> selected) async {
+    final assets = await _draftAssets.bind(record, selected);
+    if (_closed || _operation != null) throw StateError('Original editor changed before draft asset binding');
+    for (var i = 0; i < assets.length; i++) {
+      _staged[assets[i].id] = _StagedVersionedAsset(assets[i], selected[i]);
+    }
+  }
   final _draftCapture = _DraftCaptureTracker();
   @override
   ({String scope, int events, bool complete}) get draftCapture =>

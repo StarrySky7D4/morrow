@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "captured_utc": "2026-10-23T22:58:53.495415+00:00",
+  "files": [
+    {
+      "path": "shared-sdk-owner-009.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-shared-sdk-owner-009\\qualification-003\\result.json",
+      "bytes": 2336,
+      "sha256": "708becaf4dd239449d44d8633411103bde52a0a39198d94c6493c8ac354ecb68"
+    },
+    {
+      "path": "native-regression-010.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-010\\result.json",
+      "bytes": 14670,
+      "sha256": "9d877b877a2953e6145bbf995776fd649203b6fe3f0f5118addab61a297475df"
+    },
+    {
+      "path": "roles-029.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-029\\result.json",
+      "bytes": 2018,
+      "sha256": "eee61e6a26e44a47cd4d023809d5e29f3538447e99e95fd4f8bd4597c9201e94"
+    },
+    {
+      "path": "roles-029-setup-release.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-029\\S-release\\result.json",
+      "bytes": 2312,
+      "sha256": "092edc72deaeebb37960e70ea5e2b0f626ae1f77947dc38f0f6733c0e809c825"
+    },
+    {
+      "path": "case041-summary.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case041-summary.json",
+      "bytes": 975,
+      "sha256": "5332b1d7fd8f528e7621ecb8c94cc0245c57b278dc2c93bfd7643a22022d399a"
+    },
+    {
+      "path": "case041-nine-review.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case041-nine-review\\result.json",
+      "bytes": 25756,
+      "sha256": "ad8be08b0c5afc106d79924acba701736ef20f4cdb6c36ecfb0ebff1c79ccfa8"
+    },
+    {
+      "path": "case042-run-reply.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-4659faf07c9b4352adcb79db7fade6f8-case\\guest-reply-05-run.json",
+      "bytes": 1157,
+      "sha256": "8ad6a30e36fd5cc7264ed7c3bc6f779091ca9d257fd332af3e01fc6991fbd2cb"
+    },
+    {
+      "path": "case042-retained.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-4659faf07c9b4352adcb79db7fade6f8-case\\retained.json",
+      "bytes": 3985,
+      "sha256": "dc1fad598403b579c5b68871be43ad23cb439fe10fd8335181212f23b8439cab"
+    },
+    {
+      "path": "case042-original-policy-restore.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-4659faf07c9b4352adcb79db7fade6f8-case\\restore-original.json",
+      "bytes": 3524,
+      "sha256": "06bc02a9773b1b8c529295491ae4de0001176d28cf4b773f8d9ecb05c8f19f10"
+    },
+    {
+      "path": "case042-vm-saved.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm030-case042-paused-20261024\\result.json",
+      "bytes": 960,
+      "sha256": "c81a2ed9c819fbd63e2b3c0752502a77ab36657c85382401a145506cc522138b"
+    },
+    {
+      "path": "controller042-pure.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-controller-042-qualification-002\\result.json",
+      "bytes": 2209,
+      "sha256": "6fb4ae1bf554d71da0d18e83548c91e2c27ab5f5dd791ba6695f07b2a664513a"
+    },
+    {
+      "path": "guest-reader042-pure.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared-guest-reader-042-pure\\result.json",
+      "bytes": 332,
+      "sha256": "71861c03e286dd09b2b71b2f60e31a8ca75305dba97e724caf48dff055624138"
+    },
+    {
+      "path": "cache-cleanup010.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\abandoned-setup-debug-cache-010\\result.json",
+      "bytes": 348,
+      "sha256": "c5fbb83e9e9c79fc78ab32e4bc7dd7142136ffb337525837b1db8c38d76de816"
+    },
+    {
+      "path": "cache-cleanup012.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\cargo-release-cache-cleanup-012\\result.json",
+      "bytes": 382,
+      "sha256": "76f347bf09042edf0fce21a02efa6c05f3b6a724cc82b0994545a5fe96960536"
+    }
+  ],
+  "scope": "Existing public results copied without contacting guest owners; no acceptance rerun"
+}

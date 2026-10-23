@@ -24,7 +24,7 @@ use std::time::{Duration, Instant};
 use tokio::task::JoinHandle as TokioJoinHandle;
 use windows_sys::Win32::Foundation::{
     CloseHandle, DUPLICATE_SAME_ACCESS, DuplicateHandle, ERROR_INVALID_HANDLE, FILETIME,
-    GetLastError, HANDLE, INVALID_HANDLE_VALUE, WAIT_OBJECT_0,
+    GetLastError, HANDLE, INVALID_HANDLE_VALUE, WAIT_FAILED, WAIT_OBJECT_0,
 };
 use windows_sys::Win32::System::Threading::{
     GetCurrentProcess, GetExitCodeProcess, GetProcessId, GetProcessTimes, WaitForSingleObject,
@@ -732,6 +732,9 @@ impl OwnerState {
 
 #[path="checked_owner_forwarders.rs"]
 mod native_forwarders;
+#[path="checked_owner_refusal.rs"]
+mod caller_refusal;
+pub(crate) use caller_refusal::{PendingCallerRefusal,LocalCallerRefusal};
 
 /// Exclusive, unwind-safe finalization ownership claim guard across sync `finalize`,
 /// async `finalize_async`, and opportunistic `try_poll_input_worker_now`.
@@ -2320,7 +2323,10 @@ impl CheckedRunnerOwner {
             (state.process.clone(), state.identity)
         };
         if let Some(process) = process_arc {
+            use super::native_close_protocol::{OriginalProcessWaitProof, RawProcessExitCodeDword, TimeoutDisposition};
             let Some(identity) = maybe_identity else {
+                self.state.lock().map_err(|_| io::Error::other("checked owner state lock poisoned"))?
+                    .runner_wait_and_exit_fact = HostOriginalRunnerProcessWaitAndExitFact::IdentityVerificationFailedBeforeWait { os_error: None };
                 self.seal_unknown(StickyUnknownReason::IdentityValidationFailed(
                     "missing original process identity".to_owned(),
                 ));
@@ -2330,6 +2336,11 @@ impl CheckedRunnerOwner {
                 ));
             };
             if let Err(err) = identity.verify_same_process(&process) {
+                {
+                    let mut state = self.state.lock().map_err(|_| io::Error::other("checked owner state lock poisoned"))?;
+                    state.identity_failure = Some(HostIdentityFailureRecord { expected_pid: identity.pid, os_error: err.raw_os_error() });
+                    state.runner_wait_and_exit_fact = HostOriginalRunnerProcessWaitAndExitFact::IdentityVerificationFailedBeforeWait { os_error: err.raw_os_error() };
+                }
                 self.seal_unknown(StickyUnknownReason::IdentityValidationFailed(
                     err.to_string(),
                 ));
@@ -2342,7 +2353,12 @@ impl CheckedRunnerOwner {
             let wait_ms = finite_wait_ms(deadline.saturating_duration_since(Instant::now()));
             let raw = process.as_raw_handle() as HANDLE;
             let wait = unsafe { WaitForSingleObject(raw, wait_ms) };
+            let wait_error = if wait == WAIT_FAILED { Some(unsafe { GetLastError() } as i32) } else { None };
             if wait != WAIT_OBJECT_0 {
+                self.state.lock().map_err(|_| io::Error::other("checked owner state lock poisoned"))?
+                    .runner_wait_and_exit_fact = HostOriginalRunnerProcessWaitAndExitFact::WaitTimedOutOrFailed {
+                        wait_return_dword: wait, os_error: wait_error,
+                    };
                 self.seal_unknown(StickyUnknownReason::ProcessWaitExpiredOrFailed);
                 return Err(io::Error::new(
                     io::ErrorKind::WouldBlock,
@@ -2357,6 +2373,11 @@ impl CheckedRunnerOwner {
             let ok = unsafe { GetExitCodeProcess(raw, &mut raw_exit) };
             if ok == 0 {
                 let err = io::Error::last_os_error();
+                self.state.lock().map_err(|_| io::Error::other("checked owner state lock poisoned"))?
+                    .runner_wait_and_exit_fact = HostOriginalRunnerProcessWaitAndExitFact::GetExitCodeFailedAfterWaitSignal {
+                        os_error: err.raw_os_error(),
+                        signal_timeout_disposition: if post_signal_in_time { TimeoutDisposition::CompletedWithinBudget } else { TimeoutDisposition::TimedOut },
+                    };
                 self.seal_unknown(StickyUnknownReason::ProcessWaitExpiredOrFailed);
                 return Err(err);
             }
@@ -2367,6 +2388,13 @@ impl CheckedRunnerOwner {
                 .lock()
                 .map_err(|_| io::Error::other("checked owner state lock poisoned"))?;
             state.native_process_exit_code = Some(raw_exit);
+            // Record the SAME original wait/query at its native observation
+            // site. A protocol Exit or an absent handle cannot create this fact.
+            state.runner_wait_and_exit_fact = HostOriginalRunnerProcessWaitAndExitFact::SignaledAndExitCodeObservedOnOriginalHandle {
+                raw_exit_code_dword: RawProcessExitCodeDword(raw_exit),
+                wait_proof: OriginalProcessWaitProof::SignaledExitedOnOriginalHandle,
+                timeout_disposition: if post_exit_code_in_time { TimeoutDisposition::CompletedWithinBudget } else { TimeoutDisposition::TimedOut },
+            };
             if !post_exit_code_in_time {
                 state.no_replay_seal = true;
                 if state.sticky_unknown.is_none() {
@@ -2797,6 +2825,7 @@ pub(crate) fn reserve_in_registry(
         custom_connect_owner,
         committed_to_transport: false,
         broker_resource_only_retired: false,
+        caller_refusal_pending: false,
     })
 }
 
@@ -2853,11 +2882,12 @@ pub(crate) struct CheckedStartupReservation {
     custom_connect_owner: Option<&'static owned_connect_worker::Owner>,
     committed_to_transport: bool,
     broker_resource_only_retired: bool,
+    caller_refusal_pending: bool,
 }
 
 impl CheckedStartupReservation {
     pub(crate) fn reserve_asuser_a1(&mut self)->io::Result<()> {
-        if self.committed_to_transport||self.broker_resource_only_retired {
+        if self.committed_to_transport||self.broker_resource_only_retired||self.caller_refusal_pending {
             return Err(io::Error::other("A1 original startup reservation already consumed"));
         }
         self.owner.reserve_asuser_a1()
@@ -3106,6 +3136,7 @@ impl CheckedStartupReservation {
             } else {
                 state.stage = OwnerLifecycleStage::ProcessLaunchedInHandshake;
                 state.process = Some(Arc::clone(&process_arc));
+                state.runner_wait_and_exit_fact = HostOriginalRunnerProcessWaitAndExitFact::HandleRetainedWaitNotYetAttempted;
                 state.thread_disposition = Some(thread_disposition);
                 state.thread_close_debt = thread_close_debt;
                 if let Some(debt) = thread_close_debt {
@@ -3119,8 +3150,12 @@ impl CheckedStartupReservation {
                     }
                 }
                 state.hello = Some(hello);
-                if let Ok(identity) = identity_result {
-                    state.identity = Some(identity);
+                match &identity_result {
+                    Ok(identity) => state.identity = Some(*identity),
+                    Err(error) => {
+                        state.identity_failure = Some(HostIdentityFailureRecord { expected_pid, os_error: error.raw_os_error() });
+                        state.runner_wait_and_exit_fact = HostOriginalRunnerProcessWaitAndExitFact::IdentityVerificationFailedBeforeWait { os_error: error.raw_os_error() };
+                    }
                 }
                 let needs_clones =
                     state.startup_pipe_write.is_none() || state.startup_pipe_read.is_none();
@@ -3577,7 +3612,7 @@ impl CheckedStartupReservation {
 
 impl Drop for CheckedStartupReservation {
     fn drop(&mut self) {
-        if self.committed_to_transport || self.broker_resource_only_retired {
+        if self.committed_to_transport || self.broker_resource_only_retired || self.caller_refusal_pending {
             return;
         }
         if self.owner.has_asuser_a1() {
@@ -3815,7 +3850,7 @@ mod asuser_preprocess_retention_tests {
         assert!(owner.asuser_a1.set(crate::asuser_a1_native::Cell::new(startup.0,deadline)).is_ok());
         REGISTRY.inner.lock().unwrap().slots[0]=Some(owner.clone());
         let reservation=CheckedStartupReservation{owner:owner.clone(),registry:&REGISTRY,
-            custom_connect_owner:Some(&CONNECT),committed_to_transport:false,broker_resource_only_retired:false};
+            custom_connect_owner:Some(&CONNECT),committed_to_transport:false,broker_resource_only_retired:false,caller_refusal_pending:false};
         assert!(owner.state.lock().unwrap().process.is_none());
         drop(reservation);
         assert!(owner.is_sticky_unknown());assert!(owner.is_no_replay_sealed());

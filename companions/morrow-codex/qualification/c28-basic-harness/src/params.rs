@@ -70,7 +70,7 @@ pub fn witness_params(
         cwd,
         env_policy: None,
         shell_snapshot: None,
-        env: lifecycle.environment(),
+        env: lifecycle.environment()?,
         tty,
         pipe_stdin: !basic,
         arg0: None,

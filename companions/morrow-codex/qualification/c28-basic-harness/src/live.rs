@@ -11,6 +11,7 @@ use crate::{
 use anyhow::{Result, anyhow, bail, ensure};
 use std::{io::BufRead, sync::Arc};
 
+#[derive(Clone)]
 pub struct LiveConfig {
     pub files: Config,
     pub sid_query: Option<Artifact>,
@@ -82,11 +83,14 @@ pub struct Session {
     native_factory_retirement:Option<morrow_codex_session_exec_windows_v1::NativeFactoryRetirement>,
     native_factory_completion:Option<morrow_codex_session_exec_windows_v1::NativeFactoryCompletion>,
     normal_native_parts:Option<(provisioning::ExecutionCleanupScope,morrow_codex_session_exec_windows_v1::NativeExecutionCompletion)>,
+    refusal_native_parts:Option<(provisioning::ExecutionCleanupScope,morrow_codex_session_exec_windows_v1::NativeExecutionRefusal)>,
     lifecycle: GuestLifecycle,
     journal: Journal,
     files: Config,
     sid_query: Option<Artifact>,
     owner: Option<ProtectedOwner>,
+    shared_owner_attached: bool,
+    completed_parent_attempt: Option<provisioning::CompletedParentAttempt>,
     owner_open_attempted: bool,
     backend: Option<ProductionBackend>,
     factory_acquire_attempted: bool,
@@ -113,9 +117,53 @@ impl Session {
         Self::begin_inner(config,reader,None)
     }
     pub fn begin_asuser(config:LiveConfig,reader:&mut impl BufRead,origin:Arc<codex_windows_sandbox::AsUserParentOrigin>)->Result<Box<Self>> {
-        Self::begin_inner(config,reader,Some(origin))
+        Self::begin_inner(config,reader,Some(provisioning::AsUserInlet::Single(origin)))
     }
-    fn begin_inner(config:LiveConfig,reader:&mut impl BufRead,origin:Option<Arc<codex_windows_sandbox::AsUserParentOrigin>>)->Result<Box<Self>> {
+    pub fn begin_parent_attempt(config:LiveConfig,reader:&mut impl BufRead,attempt:Arc<codex_windows_sandbox::AsUserParentAttempt>)->Result<Box<Self>> {
+        Self::begin_inner(config,reader,Some(provisioning::AsUserInlet::Attempt(attempt)))
+    }
+    /// Transfer the same boxed Workbench and its SDK anchors only after the
+    /// previous lifecycle has issued its non-reconstructible completion.
+    pub fn attach_completed_owner(&mut self, previous:&mut Self)->Result<()> {
+        ensure!(self.lifecycle.has_parent_attempt() && previous.lifecycle.has_parent_attempt()
+            && self.owner.is_none() && !self.owner_open_attempted && !self.shared_owner_attached,
+            "fresh same-parent attempt required for original owner transfer");
+        ensure!(!previous.blocked && previous.formal_physically_closed && !previous.formal_unsettled_failure
+            && previous.backend.is_none() && previous.retained_scheduler.is_none()
+            && previous.completed_parent_attempt.is_some() && previous.owner.as_ref().is_some_and(ProtectedOwner::finished),
+            "prior original owner attempt did not complete");
+        ensure!(previous.completed_parent_attempt.as_ref().unwrap().shares_original_parent(&self.lifecycle),
+            "completed owner cannot transfer to a foreign parent lifetime");
+        // Retain both original objects on this Session before any fallible check.
+        self.owner=previous.owner.take();
+        self.completed_parent_attempt=previous.completed_parent_attempt.take();
+        self.shared_owner_attached=true;
+        let completed=self.completed_parent_attempt.take().unwrap();
+        self.owner.as_mut().unwrap().begin_next_attempt(completed,self.lifecycle.owner_attempt_scope())
+    }
+    pub(crate) fn require_closed_parent_refusal(&mut self, previous:usize)->Result<()> {
+        ensure!(self.completed_parent_attempt.is_some() && !self.blocked && self.formal_physically_closed
+            && !self.formal_unsettled_failure && self.lifecycle.manifest().refusal_cleanup_admission.is_some(),
+            "fixed repeated-refusal qualification requires the genuine closed refusal path");
+        self.owner.as_mut().ok_or_else(||anyhow!("same protected owner absent"))?
+            .require_parent_history(previous)?;
+        self.journal.record("ORIGINAL_PARENT_ATTEMPT_REFUSAL_CLOSED", &serde_json::json!({
+            "attempt":previous+1,"same_protected_owner":true,"same_sdk_resources":true,
+            "common_parent_closed":false,"native_replay":false,"full_P2_accepted":false
+        }))?;
+        Ok(())
+    }
+    pub(crate) fn finish_common_owner_lifetime(&mut self, attempts:usize)->Result<()> {
+        ensure!(attempts>0 && self.completed_parent_attempt.is_some(),"original final attempt receipt absent");
+        self.owner.as_mut().ok_or_else(||anyhow!("original final protected owner absent"))?
+            .finish_common_lifetime(attempts)?;
+        self.journal.record("ORIGINAL_SHARED_PROTECTED_OWNER_FINISHED", &serde_json::json!({
+            "closed_attempts":attempts,"same_protected_owner":true,"same_sdk_resources":true,
+            "common_parent_closed":false,"full_P2_accepted":false
+        }))?;
+        Ok(())
+    }
+    fn begin_inner(config:LiveConfig,reader:&mut impl BufRead,origin:Option<provisioning::AsUserInlet>)->Result<Box<Self>> {
         // Actual read-only C admission BEFORE setup/account/factory effects.
         // Its SAME box remains in the imported owner on failure. The later
         // native-start box is fresh on that actual thread, not a diagnostic
@@ -148,7 +196,7 @@ impl Session {
         provisioning_step.returned();
         // Outer call boundary only: provisioning internals/authority unchanged.
         let lifecycle_step=startup.enter(codex_windows_sandbox::FrontendStage::LifecyclePreflight);
-        let lifecycle=if let Some(origin)=origin {GuestLifecycle::preflight_asuser(provisioning,origin)?}
+        let lifecycle=if let Some(origin)=origin {GuestLifecycle::preflight_with_inlet(provisioning,origin)?}
             else{GuestLifecycle::preflight(provisioning)?};
         lifecycle_step.returned();
         interaction::confirm_first_observed(
@@ -173,12 +221,13 @@ impl Session {
             caller_output: Box::new([0; codex_windows_sandbox::CALLER_PREREQUISITE_OUTPUT_BYTES]),
             native_factory_retirement:None,
             native_factory_completion:None,
-            normal_native_parts:None,
+            normal_native_parts:None,refusal_native_parts:None,
             lifecycle,
             journal,
             files: config.files,
             sid_query: config.sid_query,
             owner: None,
+            shared_owner_attached: false,completed_parent_attempt: None,
             owner_open_attempted: false,
             backend: None,
             factory_acquire_attempted: false,
@@ -284,9 +333,14 @@ impl Session {
             ensure!(self.retained_scheduler.is_none(),"one original scheduler only");
             self.retained_scheduler=Some(scheduler);drop(backend);
         }
-        // Staging aliases is not a release proof. Native thread verification is
-        // deferred until this exact protected owner's real finish/flush.
-        if !owner.finished(){return Ok(());}
+        // A locally held original runtime stays alive until protected finish.
+        // When native-context transferred it to the original Worker, that
+        // Worker already had to join and shut it down before require_idle.
+        // Verify its original native thread anchors instead of requiring a
+        // replacement strong Runtime reference after that completed transfer.
+        if !owner.finished() && self.retained_scheduler.is_some(){return Ok(());}
+        ensure!(owner.finished() || self.factory_transferred,
+            "missing original scheduler without a completed transfer");
           ensure!(tokio::runtime::Handle::try_current().is_err(),"original scheduler shutdown requires acquiring thread");
           if let Some(scheduler)=self.retained_scheduler.take(){
             match Arc::try_unwrap(scheduler){
@@ -314,7 +368,7 @@ impl Session {
             && self.formal.is_none() && self.formal_physically_closed
             && !self.formal_unsettled_failure && self.cleanup_attempts == 0
             && self.native_factory_retirement.is_none() && self.native_factory_completion.is_none()
-            && self.normal_native_parts.is_none() && !self.blocked
+            && self.normal_native_parts.is_none() && self.refusal_native_parts.is_none() && !self.blocked
     }
     fn caller_prerequisites_only(&mut self, reader: &mut impl BufRead, first: bool) -> Result<()> {
         ensure!(!self.lifecycle.has_asuser_origin(),"A1 parent C0 requires full original47/9; pure diagnostic cannot consume it");
@@ -503,11 +557,14 @@ impl Session {
             "open-owner" => {
                 self.lifecycle.runner()?;
                 ensure!(
-                    !self.owner_open_attempted && self.owner.is_none(),
+                    !self.owner_open_attempted && (self.owner.is_none() || self.shared_owner_attached),
                     "original owner already exists or was already attempted"
                 );
                 self.owner_open_attempted = true;
-                self.owner = Some(ProtectedOwner::open(self.lifecycle.synthetic_root())?);
+                if !self.shared_owner_attached {
+                    self.owner = Some(ProtectedOwner::open(self.lifecycle.synthetic_root())?);
+                    self.owner.as_mut().unwrap().bind_first_attempt(self.lifecycle.owner_attempt_scope())?;
+                }
                 ensure!(
                     self.owner
                         .as_ref()
@@ -558,15 +615,22 @@ impl Session {
                     "stage the original factory and settle formal tasks before protected finish"
                 );
                 if let Some(factory)=self.native_factory_retirement.as_ref() {
-                    let original=self.retained_scheduler.as_ref()
-                        .ok_or_else(||anyhow!("original native scheduler was not staged"))?;
-                    factory.verify_staged_runtime_for_owner_finish(original)?;
+                    if let Some(completion)=self.native_factory_completion.as_ref() {
+                        ensure!(self.factory_transferred && self.factory_released && self.retained_scheduler.is_none(),
+                            "original transferred scheduler retirement is inconsistent");
+                        factory.verify_completed_factory_for_owner_finish(completion)?;
+                    } else {
+                        let original=self.retained_scheduler.as_ref()
+                            .ok_or_else(||anyhow!("original native scheduler was neither staged nor verified closed"))?;
+                        factory.verify_staged_runtime_for_owner_finish(original)?;
+                    }
                 } else {
                     ensure!(self.retained_scheduler.is_none(),"legacy factory scheduler still retained");
                 }
-                if self.native_factory_retirement.is_some() && self.normal_native_parts.is_none(){
-                    self.normal_native_parts=Some(self.formal.as_mut().ok_or_else(||anyhow!("same native formal workflow absent"))?
-                        .take_normal_cleanup_parts()?);
+                if self.native_factory_retirement.is_some() && self.normal_native_parts.is_none() && self.refusal_native_parts.is_none(){
+                    let workflow=self.formal.as_mut().ok_or_else(||anyhow!("same native formal workflow absent"))?;
+                    if workflow.has_native_refusal() {self.refusal_native_parts=Some(workflow.take_refusal_cleanup_parts()?);}
+                    else {self.normal_native_parts=Some(workflow.take_normal_cleanup_parts()?);}
                 }
                 let owner = self
                     .owner
@@ -574,13 +638,20 @@ impl Session {
                     .ok_or_else(|| anyhow!("original protected owner absent"))?;
                 owner.finish()?;
                 if self.native_factory_retirement.is_some(){
-                    self.finish_backend()?;
-                    let (scope,execution)=self.normal_native_parts.take().ok_or_else(||anyhow!("same sealed native completion absent"))?;
+                    if self.native_factory_completion.is_none(){self.finish_backend()?;}
                     let factory=self.native_factory_completion.take().ok_or_else(||anyhow!("real factory native completion absent"))?;
-                    let retired=execution.retire_factory(factory)?;
                     let owner=self.owner.as_mut().unwrap().take_finished_receipt()?;
-                    let admission=provisioning::BoundExecutionCleanupAdmission::from_original_completion(scope,retired,owner)?;
-                    self.lifecycle.admit_execution_cleanup(provisioning::ADMIT_EXECUTION_CLEANUP_CONFIRMATION,admission)?;
+                    if let Some((scope,execution))=self.refusal_native_parts.take() {
+                        ensure!(self.normal_native_parts.is_none(),"mixed normal and refusal capabilities rejected");
+                        let retired=execution.retire_factory(factory)?;
+                        let admission=provisioning::BoundRefusalCleanupAdmission::from_original_refusal(scope,retired,owner)?;
+                        self.lifecycle.admit_refusal_cleanup(admission)?;
+                    } else {
+                        let (scope,execution)=self.normal_native_parts.take().ok_or_else(||anyhow!("same sealed native completion absent"))?;
+                        let retired=execution.retire_factory(factory)?;
+                        let admission=provisioning::BoundExecutionCleanupAdmission::from_original_completion(scope,retired,owner)?;
+                        self.lifecycle.admit_execution_cleanup(provisioning::ADMIT_EXECUTION_CLEANUP_CONFIRMATION,admission)?;
+                    }
                     return Ok(());
                 }
                 if self.factory_transferred {
@@ -695,17 +766,23 @@ impl Session {
                 .formal
                 .as_mut()
                 .ok_or_else(|| anyhow!("explicit sealed-basic, sealed-pipe or sealed-pty selection required"))?;
-            let owner = &mut self.owner.as_mut().unwrap().workbench;
+            let protected = self.owner.as_mut().unwrap();
+            let owner = &mut protected.workbench;
             if cleanup {
                 workflow.cleanup(owner, step == "repair-cleanup")
             } else {
-                workflow.step(
+                let result=workflow.step(
                     step,
                     owner,
                     &self.lifecycle,
                     &self.files.helper,
                     &mut self.backend,
-                )
+                );
+                if result.is_ok() && step=="native-context" {
+                    let (resources,host)=workflow.original_native_owner_resources()?;
+                    protected.retain_original_native_resources(resources,host)?;
+                }
+                result
             }
         })();
         match &result {
@@ -722,7 +799,7 @@ impl Session {
                     && !self.formal_unsettled_failure
                 {
                     self.formal_physically_closed = true;
-                } else if step == "native-join"
+                } else if matches!(step,"native-join"|"refusal-join")
                     && !self.formal_unsettled_failure
                     && self
                         .formal
@@ -811,7 +888,11 @@ impl Session {
                         "SDK26_G04": "OPEN"
                     }),
                 )?;
-                self.lifecycle.finish_asuser_origin()?;
+                if self.lifecycle.has_parent_attempt() {
+                    self.completed_parent_attempt=Some(self.lifecycle.finish_parent_attempt()?);
+                } else {
+                    self.lifecycle.finish_asuser_origin()?;
+                }
                 return Ok(());
             } else if let Err(error) = self.perform(&command, reader) {
                 eprintln!("{error}; original same-process state retained. No automatic retry.");

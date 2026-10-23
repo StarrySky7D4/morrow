@@ -5,6 +5,8 @@ import 'plugins/editor_draft.dart';
 import 'plugins/editor_draft_owner.dart';
 import 'plugins/editor_draft_session.dart';
 import 'plugins/editor_draft_review.dart';
+import 'plugins/editor_draft_resume.dart';
+import 'windows_editor_shortcuts.dart';
 import 'plugins/editor_draft_retirement.dart';
 import 'editor_draft_recovery_dialog.dart';
 import 'plugins/editor_draft_binding.dart';
@@ -4767,7 +4769,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       builder: (_) => NewIdeaDialog(
         savedDraft: review,
         recoveryRuntime: runtime,
-        canResumeSavedDraft: retained != null,
+        canResumeSavedDraft: retained != null || backend is WorkbenchEditorDraftResumeSupport,
         isCurrent: current,
       ),
     );
@@ -4778,10 +4780,11 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     } finally {
       if (identical(_draftJournalRoute, editor)) _draftJournalRoute = null;
     }
-    if (resume != true || !mounted || !current() || retained == null) return;
-    final owner = retained;
+    if (resume != true || !mounted || !current()) return;
     final drafts = backend as WorkbenchEditorDraftRuntime;
     try {
+      final owner = retained ?? await (backend as WorkbenchEditorDraftResumeSupport).resumeEditorDraft(review);
+      if (!mounted || !current()) return;
       if (!identical(drafts.retainedEditorDraft(owner.session.cardId), owner)) {
         throw StateError('Original live draft owner changed');
       }
@@ -5474,7 +5477,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
 
   void _detachDraftOwner() {
     _draftOwner?.session.removeListener(_draftChanged);
-    _draftBinding?.capture();
+    _draftBinding?.captureBeforeDetach(_draftLease);
     _draftBinding?.dispose();
     _draftLease?.release();
     _draftBinding = null;
@@ -5543,6 +5546,46 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       if (mounted) setState(() => saveError = l.mainSaveUnknown);
     } finally {
       if (mounted) setState(() => saving = false);
+    }
+  }
+
+  bool get _canRecoverDraftWrite {
+    final owner = _draftOwner;
+    final lease = _draftLease;
+    final commit = _ownedCommit ?? owner?.pendingCommit;
+    return !_readOnly && owner != null && lease != null && !lease.released &&
+        identical(lease.session, owner.session) && owner.isCurrent() &&
+        (widget.isCurrent?.call() ?? true) &&
+        !owner.workspace.disposed && !owner.workspace.preparingClose &&
+        !owner.session.disposed && owner.session.unknown &&
+        owner.session.pendingRequest != null && !owner.session.conflicted &&
+        (commit == null || (commit.stage == 'parent' &&
+            identical(commit.parent, owner) && commit.failure != null));
+  }
+
+  Future<void> _recoverDraftWrite({required bool retry}) async {
+    if (!_canRecoverDraftWrite || saving || importing ||
+        _draftOwner!.session.saving) {
+      return;
+    }
+    final owner = _draftOwner!;
+    final lease = _draftLease!;
+    setState(() => saving = true);
+    bool sameView() => mounted && identical(owner, _draftOwner) &&
+        identical(lease, _draftLease) && !lease.released &&
+        owner.isCurrent() && (widget.isCurrent?.call() ?? true);
+    try {
+      // Only this frozen draft write is inspected/retried. Business Save and
+      // commit continuation require their separate existing user action.
+      await pendingUiWrites.track(retry
+          ? owner.session.retryPending() : owner.session.inspectPending());
+      if (sameView()) {
+        setState(() => saveError = owner.session.unknown ? l.mainSaveUnknown : '');
+      }
+    } catch (_) {
+      if (sameView()) setState(() => saveError = l.mainSaveUnknown);
+    } finally {
+      if (sameView()) setState(() => saving = false);
     }
   }
 
@@ -5859,10 +5902,9 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       final draftOwner = _draftOwner;
       final item = draftOwner == null
           ? await (widget.importAttachment ?? IdeaAttachment.import)(file)
-          : await widget.draftRuntime!.importEditorDraftFile(
+          : await widget.draftRuntime!.importEditorDraftSource(
               draftOwner,
-              path: file.path,
-              name: file.name,
+              source: file,
               kind: IdeaAttachment.kindFor(file.name).name,
             );
       if (draftOwner == null) created.add(item);
@@ -6201,7 +6243,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
   }
 
   @override
-  Widget build(BuildContext context) => PopScope(
+  Widget build(BuildContext context) => WindowsEditorShortcuts(child: PopScope(
     canPop: !saving && !importing,
     child: Actions(
       actions: <Type, Action<Intent>>{
@@ -6398,6 +6440,20 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
               onPressed: importing || saving ? null : _inspectDraftImport,
               child: Text(l.mainDraftHandoffRecoveryInspect),
             ),
+          if (_canRecoverDraftWrite) ...[
+            TextButton(
+              key: const ValueKey('idea-inspect-draft-write'),
+              onPressed: saving || importing || _draftOwner!.session.saving
+                  ? null : () => _recoverDraftWrite(retry: false),
+              child: Text(l.mainDraftWriteInspect),
+            ),
+            OutlinedButton(
+              key: const ValueKey('idea-retry-draft-write'),
+              onPressed: saving || importing || _draftOwner!.session.saving
+                  ? null : () => _recoverDraftWrite(retry: true),
+              child: Text(l.mainDraftWriteRetry),
+            ),
+          ],
           if (_submitFrozen ||
               _hasUnsavedSuccessor ||
               saveError.isNotEmpty ||
@@ -6487,7 +6543,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
         ],
       ),
     ),
-  );
+  ));
 }
 
 class AmbientPainter extends CustomPainter {

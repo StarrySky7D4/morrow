@@ -6,6 +6,7 @@ final class EditorDraftCommitServices {
   const EditorDraftCommitServices({
     required this.drafts,
     required this.proposals,
+    required this.imports,
     required this.inspectCommit,
     required this.readSource,
     required this.openSuccessor,
@@ -15,6 +16,7 @@ final class EditorDraftCommitServices {
   });
   final EditorDraftControl drafts;
   final EditorDraftHandoffProposalControl proposals;
+  final EditorDraftImportControl imports;
   final Future<EditorDraftCommitEvidence> Function(WorkbenchEditorSession)
   inspectCommit;
   final Future<VersionedContentRecord> Function(String) readSource;
@@ -35,6 +37,8 @@ final class EditorDraftCommitAttempt {
   final Idea template;
   Future<EditorDraftOwner>? _starting;
   Future<void>? _finishing;
+  Future<EditorDraftImportSnapshot>? _parentImportReconcile;
+  bool _parentImportsClosed = false;
   EditorDraftRecord? frozenParent;
   EditorDraftSnapshot? submittedSnapshot;
   List<EditorDraftAssetView>? submittedViews;
@@ -132,6 +136,18 @@ final class EditorDraftCommitAttempt {
     );
     if (draft.id != parent.session.cardId || draft.title.isEmpty) {
       throw const FormatException('Business save needs this card and a title');
+    }
+    if (draft.attachments.isNotEmpty) {
+      final editor = parent.editor;
+      if (editor is! WorkbenchEditorDraftAssetBinding) {
+        throw UnsupportedError('Native draft attachment binding is required');
+      }
+      stage = 'assets';
+      await (editor as WorkbenchEditorDraftAssetBinding).bindDraftAssets(
+        record,
+        draft.attachments,
+      );
+      _current();
     }
     stage = 'business';
     confirmed = await parent.editor.save(
@@ -372,7 +388,9 @@ final class EditorDraftCommitAttempt {
       if (_transferred) _finishing = null;
       return next;
     }
-    if (failedStage == 'retire' && _transferred && child != null) {
+    if ((failedStage == 'retire' || failedStage == 'imports') &&
+        _transferred &&
+        child != null) {
       final observed = await inspectProposal();
       if (observed == null ||
           observed.summary.status !=
@@ -382,6 +400,14 @@ final class EditorDraftCommitAttempt {
         throw StateError('Original parent retirement remains unresolved');
       }
       proposalRecord = observed;
+      if (failedStage == 'imports') {
+        final pins = await services.imports.list(
+          parent.session.cardId,
+          parent.session.draftId,
+        );
+        _current();
+        _acceptParentImports(pins);
+      }
       if (child!.session.unknown) await child!.session.inspectPending();
       if (child!.session.unknown) {
         throw StateError('Latest S2 remains unresolved');
@@ -393,6 +419,21 @@ final class EditorDraftCommitAttempt {
     throw StateError(
       'This original stage requires separate explicit resolution: $failedStage',
     );
+  }
+
+  void _acceptParentImports(EditorDraftImportSnapshot pins) {
+    final link = proposal!.handoff.parentLink;
+    if ((pins.kind != EditorDraftImportResultKind.list &&
+            pins.kind != EditorDraftImportResultKind.reconciled) ||
+        pins.cardId != parent.session.cardId ||
+        pins.draftId != link.parentDraftId ||
+        pins.currentGeneration != link.parentGeneration + BigInt.one ||
+        pins.mainActive ||
+        pins.records == null ||
+        pins.records!.isNotEmpty) {
+      throw StateError('Original parent import retirement is not confirmed');
+    }
+    _parentImportsClosed = true;
   }
 
   static bool _equal(List<int> a, List<int> b) =>
@@ -538,6 +579,19 @@ final class EditorDraftCommitAttempt {
         retired.summary.parentActive ||
         !retired.summary.childActive) {
       throw StateError('Original parent retirement is not confirmed');
+    }
+    stage = 'imports';
+    if (!_parentImportsClosed) {
+      // The original future owns an ambiguous cleanup reply. Explicit recovery
+      // inspects its durable result; it never dispatches this cleanup again.
+      final pins = await (_parentImportReconcile ??= Future.sync(
+        () => services.imports.reconcile(
+          parent.session.cardId,
+          parent.session.draftId,
+        ),
+      ));
+      _current();
+      _acceptParentImports(pins);
     }
     // Input arriving while retirement was in flight still belongs to the child.
     captureChild();

@@ -1094,9 +1094,16 @@ fn spawn_asuser_runner_transport(binding:std::sync::Arc<crate::AsUserFactoryBind
         res.reserve_asuser_a1().map_err(anyhow::Error::from))?;
     let owner=std::sync::Arc::clone(res.owner());
     let result=(||->Result<RunnerTransport>{
-        let admission=observe_asuser_transport_step(diagnostic,S::AsUserCallerAdmission,||
-            owner.with_asuser_a1(|original|binding.admission(original.consume_caller()?,res.startup_id().0,&runner))
-                .map_err(anyhow::Error::from))?;
+        let caller=observe_asuser_transport_step(diagnostic,S::AsUserCallerAdmission,||
+            owner.with_asuser_a1(|original|original.take_caller_admission()).map_err(anyhow::Error::from))?;
+        let admission=match caller {
+            crate::asuser_a1_native::CallerAdmission::Ready(caller)=>
+                owner.with_asuser_a1(|_|binding.admission(caller,res.startup_id().0,&runner))?,
+            crate::asuser_a1_native::CallerAdmission::Refused(proof)=>{
+                binding.claim_caller_refusal(&runner,res.startup_id().0)?;
+                return Err(res.pending_caller_refusal(binding.clone(),proof)?.into());
+            },
+        };
         let (input,output,command)=observe_asuser_transport_step(diagnostic,S::AsUserCommandPrepare,||{
             let (input,output)=pipe_pair();
             let command=admission.command(&input,&output)?;
@@ -1111,15 +1118,23 @@ fn spawn_asuser_runner_transport(binding:std::sync::Arc<crate::AsUserFactoryBind
             Ok(())
         })?;
         let hello=crate::ipc_framed::ControlHello{nonce,schema:crate::ipc_framed::CHECKED_CONTROL_SCHEMA};
-        observe_asuser_transport_step(diagnostic,S::AsUserAdmissionBind,||
+        let started=observe_asuser_transport_step(diagnostic,S::AsUserAdmissionBind,||
             owner.with_asuser_a1_observed(diagnostic,|original|{
                 original.bind_admission(admission,&runner)?;
                 if let Some(diagnostic)=diagnostic {diagnostic.observe_asuser_progress(S::AsUserPipeNames);}
                 original.set_pipe_names(input,output)?;
                 if let Some(diagnostic)=diagnostic {diagnostic.observe_asuser_progress(S::AsUserNativeStart);}
-                original.start(command,&to_wide(&creds.username),&to_wide(&creds.password),
+                let password=binding.logon_password(&creds.password)?;
+                original.start(command,&to_wide(&creds.username),&password,
                     |write,read|res.stage_pre_launch_context(write,read,hello.clone()))
             }).map_err(anyhow::Error::from))?;
+        if let crate::asuser_a1_native::NativeStart::Refused(proof)=started {
+            // This original factory was claimed by admission before LogonUser.
+            // The typed result proves checked closure before any pipe/helper/R
+            // dispatch. It still requires the original blocking return and all
+            // existing registry, SDK, factory and setup retirement capabilities.
+            return Err(res.pending_caller_refusal(binding.clone(),proof)?.into());
+        }
         let (pipe_write,pipe_read)=observe_asuser_transport_step(diagnostic,S::AsUserTransportFiles,||
             owner.with_asuser_a1(|original|{
                 request.private_desktop_name=Some(original.desktop_name()?);original.transport_files()
@@ -1160,8 +1175,10 @@ fn spawn_asuser_runner_transport(binding:std::sync::Arc<crate::AsUserFactoryBind
             res.commit_transport_lease(transport.controls))?);
         Ok(transport)
     })();
-    // Preserve the original error sealing/connect-lane/owner retention exactly.
-    result.map_err(|error|res.fail_after_launch(error))
+    // Only the original typed refusal awaits the real blocking caller ACK.
+    // Every other failure retains the existing sticky-Unknown behavior.
+    result.map_err(|error|if error.is::<super::checked_owner::PendingCallerRefusal>() {error}
+        else{res.fail_after_launch(error)})
 }
 
 #[cfg(test)]

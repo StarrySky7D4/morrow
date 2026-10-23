@@ -134,7 +134,9 @@ pub fn validate_request(request: &proto::WriteRequest) -> Result<()> {
             1 if request.source_kind == 0 && has_predecessor => {}
             2 => {}
             3 if request.expected_generation > 0 => {}
-            4 if request.source_kind == 0 => {}
+            // Either source kind may inherit pins through an explicit,
+            // independently verified first-child handoff or resume.
+            4 => {}
             _ => return Err("invalid editor draft asset origin".into()),
         }
         if asset.aliases.len() > MAX_ALIASES
@@ -187,6 +189,31 @@ pub fn validate_parent_link(request: &proto::WriteRequest, link: &proto::ParentL
     if !request.commit_operation.is_empty() && request.commit_operation == link.committed_operation {
         return Err("child requires a distinct original business operation".into());
     }
+    Ok(())
+}
+
+/// Shape only. The storage owner proves the original parent, current source,
+/// fresh scope and actual atomic reservation; these fields carry no authority.
+pub fn validate_resume_link(request: &proto::WriteRequest, link: &proto::ResumeLink) -> Result<()> {
+    validate_request(request)?;
+    for value in [&link.parent_draft_id, &link.parent_save_operation,
+        &link.parent_business_operation, &link.retirement_operation] {
+        if value.is_empty() { return Err("resume identity missing".into()); }
+        identity(value)?;
+    }
+    if link.parent_draft_id == request.draft_id || link.parent_generation == 0
+        || link.parent_generation == u64::MAX || link.parent_request_sha256.len() != 32
+        || link.parent_business_operation == link.parent_save_operation
+        || link.retirement_operation == link.parent_business_operation
+        || link.retirement_operation == link.parent_save_operation
+        || request.commit_operation.is_empty()
+        || request.commit_operation == link.parent_business_operation
+        || request.commit_operation == link.retirement_operation
+        || request.capture_scope.is_empty()
+        || !request.predecessor_operation.is_empty() || !request.predecessor_sha256.is_empty()
+        || (request.expected_generation == 0
+            && (request.operation_id != link.parent_business_operation || request.capture_events != 0))
+    { return Err("invalid fresh-session resume link".into()); }
     Ok(())
 }
 
@@ -440,7 +467,7 @@ mod tests {
     }
 
     #[test]
-    fn new_card_has_no_source_or_predecessor_and_only_draft_assets() {
+    fn new_card_shape_rejects_source_assets_but_allows_owner_verified_parent_pins() {
         let mut request = valid();
         request.source_kind = 1;
         assert!(validate_request(&request).is_err());
@@ -470,7 +497,10 @@ mod tests {
         request.assets[0].origin = 3;
         assert!(validate_request(&request).is_err());
         request.assets[0].origin = 4;
-        assert!(validate_request(&request).is_err());
+        // Shape admits an explicit resume's first-child parent selection. The
+        // storage owner must still prove its original durable parent relation;
+        // ordinary save cannot gain authority from this numeric origin.
+        assert!(validate_request(&request).is_ok());
         request.assets[0].origin = 3;
         request.expected_generation = 1;
         assert!(validate_request(&request).is_ok());

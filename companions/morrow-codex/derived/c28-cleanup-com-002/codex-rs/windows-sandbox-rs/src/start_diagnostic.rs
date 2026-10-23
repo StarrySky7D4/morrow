@@ -607,6 +607,11 @@ pub enum WindowsAsUserNativeSite {
     HelperReaderIdGuard,
     LaunchTokenDerivation,
     LaunchObjectCreation,
+    RunnerTokenOpen,
+    RunnerTokenBefore,
+    RunnerTokenInitialization,
+    RunnerTokenAfter,
+    RunnerTokenClose,
 }
 
 pub use crate::asuser_a1_target::WindowsTargetPolicyRejection;

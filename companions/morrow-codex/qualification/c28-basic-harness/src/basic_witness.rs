@@ -1,6 +1,6 @@
 //! Fixed self-terminating child; no owner, input, PTY or process controls.
 #![forbid(unsafe_code)]
-use std::{fs::OpenOptions, io::{self, Write}, path::{Path, PathBuf}};
+use std::{fs::OpenOptions, io::{self, Read, Write}, path::{Path, PathBuf}};
 
 pub fn paths(root: &Path, nonce: &str) -> io::Result<(PathBuf, PathBuf)> {
     if !crate::witness::valid_nonce(nonce) {
@@ -8,6 +8,51 @@ pub fn paths(root: &Path, nonce: &str) -> io::Result<(PathBuf, PathBuf)> {
     }
     Ok((root.join("workspace").join(format!("basic-write-{nonce}.bin")),
         root.join("basic-outside").join(format!("denied-{nonce}.bin"))))
+}
+
+/// Native child-visible positive evidence is in the already granted workspace.
+/// C retains this newly created file without write/delete sharing until review.
+pub fn readable_positive_path(root: &Path, nonce: &str) -> io::Result<PathBuf> {
+    paths(root, nonce)?;
+    Ok(root.join("workspace").join(format!("trusted-positive-{nonce}.bin")))
+}
+
+fn native_root(root: &Path) -> io::Result<()> {
+    let text = root.to_str().unwrap_or("");
+    let tag = text.strip_prefix(r"C:\Morrow-C28-A1-047-")
+        .and_then(|text| text.strip_suffix(r"\case"));
+    if !tag.is_some_and(crate::witness::valid_nonce) {
+        return Err(io::Error::new(io::ErrorKind::InvalidInput, "native basic namespace"));
+    }
+    Ok(())
+}
+
+fn plain_leaf(path: &Path, directory: bool) -> io::Result<std::fs::Metadata> {
+    let metadata = std::fs::symlink_metadata(path)?;
+    let mut reparse = metadata.file_type().is_symlink();
+    #[cfg(windows)] {
+        use std::os::windows::fs::MetadataExt;
+        reparse |= metadata.file_attributes() & 0x400 != 0;
+    }
+    if reparse || (if directory { !metadata.is_dir() } else { !metadata.is_file() }) {
+        return Err(io::Error::new(io::ErrorKind::InvalidInput, "basic plain leaf required"));
+    }
+    Ok(metadata)
+}
+
+pub(crate) fn verify_readable_positive(root: &Path, nonce: &str) -> io::Result<()> {
+    plain_leaf(&root.join("workspace"), true)?;
+    let path = readable_positive_path(root, nonce)?;
+    if plain_leaf(&path, false)?.len() != 21 {
+        return Err(io::Error::new(io::ErrorKind::InvalidData, "readable positive size"));
+    }
+    let mut file = std::fs::File::open(path)?;
+    let mut bytes = Vec::new();
+    Read::by_ref(&mut file).take(22).read_to_end(&mut bytes)?;
+    if bytes != b"C28-TRUSTED-POSITIVE\n" {
+        return Err(io::Error::new(io::ErrorKind::InvalidData, "readable positive mismatch"));
+    }
+    Ok(())
 }
 
 pub fn file_bytes(nonce: &str) -> Vec<u8> {
@@ -56,22 +101,31 @@ pub fn run_child_if_requested(args: &[String]) -> io::Result<Option<i32>> {
         return Err(io::Error::new(io::ErrorKind::InvalidInput, "basic fixed path mismatch"));
     }
     crate::preflight::plain_absolute(root).map_err(io::Error::other)?;
-    for parent in [allowed.parent().unwrap(), denied.parent().unwrap()] {
-        crate::preflight::no_reparse_ancestors(parent).map_err(io::Error::other)?;
+    let native = security.source.is_native_v8();
+    if native {
+        native_root(root)?;
+        // C already verified and retains the private ancestor/owner handles.
+        // The restricted child can inspect only its granted workspace leaves.
+        // It must never read the private owner marker or outside baseline.
+        verify_readable_positive(root, &args[1])?;
+    } else {
+        for parent in [allowed.parent().unwrap(), denied.parent().unwrap()] {
+            crate::preflight::no_reparse_ancestors(parent).map_err(io::Error::other)?;
+        }
+        let marker = std::fs::symlink_metadata(root.join("vm-harness-owner.lock"))?;
+        if !marker.is_file() || marker.file_type().is_symlink() {
+            return Err(io::Error::new(io::ErrorKind::InvalidInput, "owned lifecycle marker absent"));
+        }
+        let baseline = denied.parent().unwrap().join("trusted-positive.bin");
+        crate::preflight::no_reparse_ancestors(&baseline).map_err(io::Error::other)?;
+        if std::fs::metadata(&baseline)?.len() != 21
+            || std::fs::read(&baseline)? != b"C28-TRUSTED-POSITIVE\n" {
+            return Err(io::Error::new(io::ErrorKind::InvalidData, "trusted positive sentinel mismatch"));
+        }
     }
-    let marker = std::fs::symlink_metadata(root.join("vm-harness-owner.lock"))?;
-    if !marker.is_file() || marker.file_type().is_symlink() {
-        return Err(io::Error::new(io::ErrorKind::InvalidInput, "owned lifecycle marker absent"));
-    }
-    let baseline = denied.parent().unwrap().join("trusted-positive.bin");
-    crate::preflight::no_reparse_ancestors(&baseline).map_err(io::Error::other)?;
-    if std::fs::metadata(&baseline)?.len() != 21
-        || std::fs::read(&baseline)? != b"C28-TRUSTED-POSITIVE\n" {
-        return Err(io::Error::new(io::ErrorKind::InvalidData, "trusted positive sentinel mismatch"));
-    }
-    // Parent owns fresh directories, retains ancestor locks and reviewed these
-    // exact argv paths. Do not read personal files or adopt an existing target.
-    if allowed.try_exists()? || denied.try_exists()? {
+    // Outside absence is checked by C before launch and after terminal review.
+    // A denied metadata read is not an absence proof for the restricted child.
+    if allowed.try_exists()? || (!native && denied.try_exists()?) {
         return Err(io::Error::new(io::ErrorKind::AlreadyExists, "basic target collision"));
     }
     let mut file = OpenOptions::new().write(true).create_new(true).open(&allowed)?;
@@ -86,7 +140,7 @@ pub fn run_child_if_requested(args: &[String]) -> io::Result<Option<i32>> {
             return Err(io::Error::new(io::ErrorKind::Other, "outside write unexpectedly succeeded"));
         }
     }
-    if denied.try_exists()? {
+    if !native && denied.try_exists()? {
         return Err(io::Error::new(io::ErrorKind::Other, "denied target appeared"));
     }
     let identity=crate::basic_security::observe_actual_identity(&security, allowed.parent().unwrap(), &args[1])
@@ -117,6 +171,42 @@ fn emit(nonce: &str, stdout: &mut impl Write, stderr: &mut impl Write) -> io::Re
 mod tests {
     use super::*;
     const NONCE: &str = "00112233445566778899aabbccddeeff";
+    #[test]
+    fn native_namespace_is_exact_and_positive_is_nonce_bound() {
+        let root = Path::new(r"C:\Morrow-C28-A1-047-00112233445566778899aabbccddeeff\case");
+        native_root(root).unwrap();
+        for wrong in [r"D:\Morrow-C28-A1-047-00112233445566778899aabbccddeeff\case",
+            r"C:\Morrow-C28-A1-047-00112233445566778899aabbccddeeff\case\extra",
+            r"C:\Morrow-C28-A1-047-00112233445566778899AABBCCDDEEFF\case",
+            r"C:\arbitrary\case"] {
+            assert!(native_root(Path::new(wrong)).is_err());
+        }
+        assert_ne!(readable_positive_path(root, NONCE).unwrap(),
+            readable_positive_path(root, "11112233445566778899aabbccddeeff").unwrap());
+        assert!(readable_positive_path(root, "../private").is_err());
+    }
+    #[cfg(windows)]
+    #[test]
+    fn readable_positive_is_immutable_while_original_parent_handle_is_held() {
+        use std::os::windows::fs::OpenOptionsExt;
+        let unique = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos();
+        let root = std::env::temp_dir().join(format!("c28-positive-{}-{unique}", std::process::id()));
+        std::fs::create_dir(&root).unwrap();
+        std::fs::create_dir(root.join("workspace")).unwrap();
+        let path = readable_positive_path(&root, NONCE).unwrap();
+        assert!(verify_readable_positive(&root, NONCE).is_err());
+        let mut original = OpenOptions::new().read(true).write(true).create_new(true).share_mode(1).open(&path).unwrap();
+        original.write_all(b"C28-TRUSTED-POSITIVE\n").unwrap(); original.sync_all().unwrap();
+        verify_readable_positive(&root, NONCE).unwrap();
+        assert!(OpenOptions::new().write(true).open(&path).is_err());
+        assert!(std::fs::remove_file(&path).is_err());
+        assert!(verify_readable_positive(&root, "11112233445566778899aabbccddeeff").is_err());
+        drop(original);
+        std::fs::write(&path, b"Z28-TRUSTED-POSITIVE\n").unwrap();
+        assert!(verify_readable_positive(&root, NONCE).is_err());
+        std::fs::remove_file(path).unwrap();
+        std::fs::remove_dir(root.join("workspace")).unwrap(); std::fs::remove_dir(root).unwrap();
+    }
     #[test]
     fn fixed_basic_output_is_noninteractive_and_nonce_bound() {
         let (mut out, mut err) = (Vec::new(), Vec::new());

@@ -156,6 +156,15 @@ enum Action {
   channelClose,
   channelReadSent,
   exportEditorDraftCapture,
+  archiveEditorDraft,
+  inspectEditorDraftArchive,
+  listEditorDraftHistory,
+  exportEditorDraftHistory,
+  finishEditorDraftResume,
+  retireEditorDraftResumeParent,
+  stageEditorDraftAssets,
+  maintainEditorDraftArchive,
+  inspectEditorDraftArchiveMaintenance,
 }
 
 Action? actionFromUint16(int v) =>

@@ -587,5 +587,34 @@
   "mainDraftJournalExportFailed": "No se pudo exportar la copia de recuperación completa.",
   "mainDraftJournalRetire": "Retirar borrador guardado",
   "mainDraftJournalRetireConfirm": "¿Retirar este borrador y liberar sus copias de adjuntos? Exporte primero una copia de recuperación si la necesita. El contenido guardado y los resultados sin confirmar no cambian.",
-  "mainDraftJournalRetireUnknown": "La retirada no está confirmada. Consulte la operación original sin volver a enviarla."
+  "mainDraftJournalRetireUnknown": "La retirada no está confirmada. Consulte la operación original sin volver a enviarla.",
+  "mainDraftHistoryTitle": "Historial de borradores",
+  "mainDraftHistoryNotice": "Solo se muestran borradores retirados. Archivar conserva el texto y la procedencia y libera una plaza. No se restauran los archivos adjuntos liberados ni los permisos de captura. Los registros archivados también tienen un límite de 64 MiB.",
+  "mainDraftHistoryCapacity": "Registros actuales: {current}/256; archivados: {archived}/4096",
+  "mainDraftHistoryUnconfirmed": "El resultado del archivo no está confirmado. Actualiza para revisar el registro original.",
+  "mainDraftHistoryRetired": "Retirado",
+  "mainDraftHistoryArchived": "Archivado",
+  "mainDraftHistoryFirst": "Primera página",
+  "mainDraftHistoryNext": "Página siguiente",
+  "mainDraftHistoryExport": "Exportar registro del historial",
+  "mainDraftHistoryArchive": "Archivar este registro",
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "archived": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDraftHistoryTitleField": "Título",
+  "mainDraftHistoryDescriptionField": "Descripción",
+  "mainDraftHistoryCategoryField": "Categoría",
+  "mainDraftHistoryStageField": "Etapa",
+  "mainDraftWriteInspect": "Comprobar el borrador",
+  "mainDraftWriteRetry": "Reintentar guardar el borrador",
+  "mainDraftHistoryMaintain": "Archivar registros relacionados",
+  "mainDraftHistoryMaintainHelp": "Conservar todo el historial y liberar capacidad para registros de borradores.",
+  "mainDraftHistoryMaintained": "Registros relacionados archivados"
 }

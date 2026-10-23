@@ -6,8 +6,8 @@
 //!   live envelope on original runner/host IO. Receipt fact validation remains pure;
 //!   only actual original owners supply physical postconditions. SDK/outer keeper,
 //!   quota and factory permission remain separate and pending.
-//! - **Existing v6/v7 preserved byte-for-byte**: `IPC_PROTOCOL_VERSION` (6),
-//!   `CHECKED_IPC_PROTOCOL_VERSION` (7), `Message`, and `ControlHello` remain untouched.
+//! - **Separate control semantics**: `IPC_PROTOCOL_VERSION` (6),
+//!   `CHECKED_IPC_PROTOCOL_VERSION` (7) remain distinct; derived wire encoding and schema pins changed to Cap'n Proto.
 //! - **Caller-supplied facts remain fact data**: Wire payloads contain no public
 //!   deserializable `bool` fields and never confer resource/cleanup authority by
 //!   deserialization alone.
@@ -32,11 +32,11 @@
 
 #![allow(dead_code)]
 
-use serde::Deserialize;
-use serde::Serialize;
-use serde::de::{self, DeserializeSeed, MapAccess, SeqAccess, Visitor};
+#[path = "native_close_codec.rs"]
+pub(crate) mod native_close_codec;
+
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::collections::BTreeSet;
 use std::fmt;
 use std::num::{NonZeroU32, NonZeroU64};
 
@@ -45,14 +45,15 @@ use std::num::{NonZeroU32, NonZeroU64};
 pub const NATIVE_CLOSE_IPC_PROTOCOL_VERSION: u8 = 8;
 
 /// Compatibility schema pin for the v8 native-close evidence protocol.
+/// Pinned at build time from `schemas/runner_ipc.capnp` and `schemas/native_close.capnp`.
 /// Distinct from `CHECKED_CONTROL_SCHEMA` and never all-zeros.
-pub const NATIVE_CLOSE_PROTOCOL_SCHEMA: [u8; 32] = *b"morrow.c28.native-close.ack-v1.\x08";
+pub const NATIVE_CLOSE_PROTOCOL_SCHEMA: [u8; 32] = crate::wire_schema_pins::NATIVE_CLOSE_SCHEMA;
 
 /// Hard upper bound on serialized byte length of any single v8 wire frame payload.
 pub const MAX_NATIVE_CLOSE_FRAME_BYTES: usize = 16 * 1024;
 
-/// Maximum JSON nesting depth permitted by the strict v8 wire validator.
-pub const MAX_NATIVE_CLOSE_JSON_DEPTH: usize = 16;
+/// Maximum Cap'n Proto pointer nesting depth permitted by the strict v8 wire validator.
+pub const MAX_NATIVE_CLOSE_CAPNP_DEPTH: usize = 16;
 
 /// Maximum number of output stream frames permitted in one v8 attempt before business `Exit`.
 pub const MAX_OUTPUT_FRAMES_PER_ATTEMPT: u32 = 65_536;
@@ -1203,7 +1204,7 @@ fn compute_receipt_auth_tag(
     facts: &ReportedNativeCloseFacts,
 ) -> WireAuthTag {
     let canonical_facts_bytes =
-        serde_json::to_vec(facts).expect("ReportedNativeCloseFacts serialization is infallible");
+        native_close_codec::encode_reported_facts_canonical(facts);
     let mut hasher = Sha256::new();
     hasher.update(b"morrow.c28.v8.native_close_receipt\0");
     hasher.update(nonce.as_bytes());
@@ -1216,67 +1217,21 @@ fn compute_receipt_auth_tag(
 }
 
 // ============================================================================
-// Pure Bounded Wire Codec & Strict JSON Structure Validator
+// Pure Bounded Cap'n Proto Wire Codec
 // ============================================================================
 
-/// Redacted structural location for a duplicate JSON object key.
-/// Never retains or echoes untrusted key names or field values.
+/// Finite error categories never retain untrusted bytes, strings or secrets.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct DuplicateFieldError {
-    pub line: usize,
-    pub column: usize,
+pub enum MalformedCapnpKind {
+    NonCapnpOrJsonInput, TruncatedSegment, InvalidSegmentTable, InvalidPointer,
+    InvalidDataFieldLength, NonCanonicalEncoding, InvalidEmbeddedRunnerFrame,
+    UnredactedWireNonce,
 }
-
-/// Bounded structural category for an unrecognized schema token.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum UnknownSchemaKind {
-    Field,
-    Variant,
-}
-
-/// Redacted structural details for an unknown JSON field or enum variant.
-/// Never retains or echoes untrusted field or variant names.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct UnknownSchemaError {
-    pub kind: UnknownSchemaKind,
-    pub line: usize,
-    pub column: usize,
-}
-
-/// Bounded structural category for malformed or type-invalid JSON payloads.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum MalformedJsonKind {
-    NonObjectRootEnvelope,
-    SyntaxError,
-    UnexpectedEof,
-    InvalidType,
-    InvalidValue,
-    InvalidLength,
-    MissingField,
-    DataContractError,
-    IoError,
-}
-
-/// Redacted structural details for malformed or type-invalid JSON payloads.
-/// Never retains or echoes untrusted field names, variant names, or literal values.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct MalformedJsonError {
-    pub kind: MalformedJsonKind,
-    pub line: usize,
-    pub column: usize,
-}
-
-/// Bounded structural category for JSON frame encoding failures.
-/// Never retains or echoes raw payload strings.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum EncodeErrorKind {
-    SerializationFailed,
+    SerializationFailed, InvalidEmbeddedRunnerFrame, RecursiveRuntimePacket,
+    UnredactedWireNonce,
 }
-
-/// Wire framing and JSON decoding errors for the v8 codec.
-///
-/// Stores only bounded structural categories and numeric byte/line/column positions;
-/// never retains raw strings from `serde_json::Error` or untrusted wire payloads.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum NativeCloseCodecError {
     EmptyFrame,
@@ -1285,284 +1240,28 @@ pub enum NativeCloseCodecError {
     FrameTooLarge { len: usize, max: usize },
     TrailingBytesAfterFrame { trailing_bytes: usize },
     TrailingBytesInPayload,
-    MaxJsonDepthExceeded { max_depth: usize },
-    DuplicateField(DuplicateFieldError),
-    UnknownField(UnknownSchemaError),
-    MalformedJson(MalformedJsonError),
+    MaxCapnpDepthExceeded { max_depth: usize },
+    TraversalLimitExceeded,
+    UnknownSchemaVariant,
+    UnknownWireIdentity,
+    MalformedCapnp(MalformedCapnpKind),
     EncodeFailed(EncodeErrorKind),
     StreamIoError { os_error: Option<i32> },
 }
-
 impl fmt::Display for NativeCloseCodecError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::EmptyFrame => f.write_str("empty v8 wire frame"),
-            Self::PartialHeader { bytes_read } => {
-                write!(f, "partial v8 frame header ({bytes_read} bytes read)")
-            }
-            Self::PartialPayload {
-                expected,
-                available,
-            } => write!(
-                f,
-                "partial v8 frame payload (expected {expected} bytes, available {available} bytes)"
-            ),
-            Self::FrameTooLarge { len, max } => {
-                write!(f, "v8 frame length {len} exceeds maximum {max}")
-            }
-            Self::TrailingBytesAfterFrame { trailing_bytes } => {
-                write!(f, "v8 frame followed by {trailing_bytes} trailing bytes")
-            }
-            Self::TrailingBytesInPayload => f.write_str("v8 JSON payload contains trailing bytes"),
-            Self::MaxJsonDepthExceeded { max_depth } => {
-                write!(f, "v8 JSON payload exceeded maximum nesting depth {max_depth}")
-            }
-            Self::DuplicateField(info) => write!(
-                f,
-                "duplicate JSON object field at line {}, column {}",
-                info.line, info.column
-            ),
-            Self::UnknownField(info) => write!(
-                f,
-                "unknown JSON schema {:?} at line {}, column {}",
-                info.kind, info.line, info.column
-            ),
-            Self::MalformedJson(info) => write!(
-                f,
-                "malformed JSON ({:?}) at line {}, column {}",
-                info.kind, info.line, info.column
-            ),
-            Self::EncodeFailed(kind) => write!(f, "v8 JSON frame encode failed ({kind:?})"),
-            Self::StreamIoError { os_error } => {
-                write!(f, "v8 stream I/O error (os_error={os_error:?})")
-            }
-        }
+        write!(f, "v8 Cap'n Proto wire rejected: {self:?}")
     }
 }
-
 impl std::error::Error for NativeCloseCodecError {}
-
-struct DepthAndDuplicateChecker {
-    depth: usize,
-    max_depth: usize,
-}
-
-impl<'de> DeserializeSeed<'de> for DepthAndDuplicateChecker {
-    type Value = ();
-
-    fn deserialize<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        if self.depth > self.max_depth {
-            return Err(de::Error::custom(format!(
-                "max_json_depth_exceeded:{}",
-                self.max_depth
-            )));
-        }
-        deserializer.deserialize_any(StrictValueVisitor {
-            depth: self.depth,
-            max_depth: self.max_depth,
-        })
-    }
-}
-
-struct StrictValueVisitor {
-    depth: usize,
-    max_depth: usize,
-}
-
-impl<'de> Visitor<'de> for StrictValueVisitor {
-    type Value = ();
-
-    fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        formatter.write_str("any valid JSON value without duplicate object keys")
-    }
-
-    fn visit_bool<E>(self, _v: bool) -> Result<Self::Value, E> {
-        Ok(())
-    }
-
-    fn visit_i64<E>(self, _v: i64) -> Result<Self::Value, E> {
-        Ok(())
-    }
-
-    fn visit_u64<E>(self, _v: u64) -> Result<Self::Value, E> {
-        Ok(())
-    }
-
-    fn visit_f64<E>(self, _v: f64) -> Result<Self::Value, E> {
-        Ok(())
-    }
-
-    fn visit_str<E>(self, _v: &str) -> Result<Self::Value, E> {
-        Ok(())
-    }
-
-    fn visit_string<E>(self, _v: String) -> Result<Self::Value, E> {
-        Ok(())
-    }
-
-    fn visit_unit<E>(self) -> Result<Self::Value, E> {
-        Ok(())
-    }
-
-    fn visit_none<E>(self) -> Result<Self::Value, E> {
-        Ok(())
-    }
-
-    fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        DepthAndDuplicateChecker {
-            depth: self.depth + 1,
-            max_depth: self.max_depth,
-        }
-        .deserialize(deserializer)
-    }
-
-    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
-    where
-        A: SeqAccess<'de>,
-    {
-        if self.depth + 1 > self.max_depth {
-            return Err(de::Error::custom(format!(
-                "max_json_depth_exceeded:{}",
-                self.max_depth
-            )));
-        }
-        while seq
-            .next_element_seed(DepthAndDuplicateChecker {
-                depth: self.depth + 1,
-                max_depth: self.max_depth,
-            })?
-            .is_some()
-        {}
-        Ok(())
-    }
-
-    fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
-    where
-        A: MapAccess<'de>,
-    {
-        if self.depth + 1 > self.max_depth {
-            return Err(de::Error::custom(format!(
-                "max_json_depth_exceeded:{}",
-                self.max_depth
-            )));
-        }
-        let mut seen_keys = BTreeSet::new();
-        while let Some(key) = map.next_key::<String>()? {
-            if !seen_keys.insert(key) {
-                return Err(de::Error::custom("duplicate_object_key"));
-            }
-            map.next_value_seed(DepthAndDuplicateChecker {
-                depth: self.depth + 1,
-                max_depth: self.max_depth,
-            })?;
-        }
-        Ok(())
-    }
-}
-
-fn classify_serde_json_error(err: serde_json::Error) -> NativeCloseCodecError {
-    let line = err.line();
-    let column = err.column();
-    let category = err.classify();
-    let msg = err.to_string();
-    if msg.contains("max_json_depth_exceeded:") {
-        NativeCloseCodecError::MaxJsonDepthExceeded {
-            max_depth: MAX_NATIVE_CLOSE_JSON_DEPTH,
-        }
-    } else if msg.contains("duplicate_object_key") || msg.starts_with("duplicate field") {
-        NativeCloseCodecError::DuplicateField(DuplicateFieldError { line, column })
-    } else if msg.starts_with("unknown field") {
-        NativeCloseCodecError::UnknownField(UnknownSchemaError {
-            kind: UnknownSchemaKind::Field,
-            line,
-            column,
-        })
-    } else if msg.starts_with("unknown variant") {
-        NativeCloseCodecError::UnknownField(UnknownSchemaError {
-            kind: UnknownSchemaKind::Variant,
-            line,
-            column,
-        })
-    } else if msg.contains("trailing characters") {
-        NativeCloseCodecError::TrailingBytesInPayload
-    } else {
-        let kind = match category {
-            serde_json::error::Category::Io => MalformedJsonKind::IoError,
-            serde_json::error::Category::Eof => MalformedJsonKind::UnexpectedEof,
-            serde_json::error::Category::Syntax => MalformedJsonKind::SyntaxError,
-            serde_json::error::Category::Data => {
-                if msg.starts_with("missing field") {
-                    MalformedJsonKind::MissingField
-                } else if msg.starts_with("invalid type") {
-                    MalformedJsonKind::InvalidType
-                } else if msg.starts_with("invalid value") {
-                    MalformedJsonKind::InvalidValue
-                } else if msg.starts_with("invalid length") {
-                    MalformedJsonKind::InvalidLength
-                } else {
-                    MalformedJsonKind::DataContractError
-                }
-            }
-        };
-        NativeCloseCodecError::MalformedJson(MalformedJsonError { kind, line, column })
-    }
-}
-
-/// Validates and decodes a single unframed JSON payload slice into a `Version8WireFrame`.
-///
-/// Rejects empty payloads, oversize payloads, leading/trailing whitespace or trailing bytes,
-/// duplicate keys at any nesting level, unknown fields/variants, and malformed JSON.
-pub fn decode_v8_json_payload_exact(
-    payload: &[u8],
-) -> Result<Version8WireFrame, NativeCloseCodecError> {
-    if payload.is_empty() {
-        return Err(NativeCloseCodecError::EmptyFrame);
-    }
-    if payload.len() > MAX_NATIVE_CLOSE_FRAME_BYTES {
-        return Err(NativeCloseCodecError::FrameTooLarge {
-            len: payload.len(),
-            max: MAX_NATIVE_CLOSE_FRAME_BYTES,
-        });
-    }
-    // Reject leading or trailing whitespace/garbage around the root JSON object.
-    if payload.first() != Some(&b'{') || payload.last() != Some(&b'}') {
-        if payload.first() == Some(&b'{') {
-            return Err(NativeCloseCodecError::TrailingBytesInPayload);
-        }
-        return Err(NativeCloseCodecError::MalformedJson(MalformedJsonError {
-            kind: MalformedJsonKind::NonObjectRootEnvelope,
-            line: 1,
-            column: 1,
-        }));
-    }
-
-    // Pass 1: Verify nesting depth, duplicate keys at every object level, and absence of trailing tokens.
-    let mut raw_de = serde_json::Deserializer::from_slice(payload);
-    DepthAndDuplicateChecker {
-        depth: 0,
-        max_depth: MAX_NATIVE_CLOSE_JSON_DEPTH,
-    }
-    .deserialize(&mut raw_de)
-    .map_err(classify_serde_json_error)?;
-    raw_de.end().map_err(classify_serde_json_error)?;
-
-    // Pass 2: Deserialize into strongly typed structs/enums with `#[serde(deny_unknown_fields)]`.
-    serde_json::from_slice::<Version8WireFrame>(payload).map_err(classify_serde_json_error)
-}
+pub use native_close_codec::decode_v8_capnp_payload_exact;
 
 /// Encodes a `Version8WireFrame` into a 4-byte little-endian length-prefixed byte vector,
 /// enforcing `MAX_NATIVE_CLOSE_FRAME_BYTES`.
 pub fn encode_v8_length_prefixed_frame(
     frame: &Version8WireFrame,
 ) -> Result<Vec<u8>, NativeCloseCodecError> {
-    let payload = serde_json::to_vec(frame)
-        .map_err(|_err| NativeCloseCodecError::EncodeFailed(EncodeErrorKind::SerializationFailed))?;
+    let payload = native_close_codec::encode_v8_capnp_payload(frame)?;
     if payload.is_empty() {
         return Err(NativeCloseCodecError::EmptyFrame);
     }
@@ -1581,7 +1280,7 @@ pub fn encode_v8_length_prefixed_frame(
 
 /// Decodes an exact 4-byte length-prefixed `Version8WireFrame`, rejecting any trailing
 /// bytes after the single frame as well as partial headers, truncated payloads, oversize
-/// frames, unknown fields, duplicate fields, and malformed JSON.
+/// frames, unknown schema fields and malformed Cap'n Proto.
 pub fn decode_v8_length_prefixed_frame_exact(
     framed_bytes: &[u8],
 ) -> Result<Version8WireFrame, NativeCloseCodecError> {
@@ -1617,7 +1316,7 @@ pub fn decode_v8_length_prefixed_frame_exact(
             trailing_bytes: available - len,
         });
     }
-    decode_v8_json_payload_exact(&framed_bytes[4..4 + len])
+    decode_v8_capnp_payload_exact(&framed_bytes[4..4 + len])
 }
 
 /// Reads the next length-prefixed `Version8WireFrame` from an in-memory byte slice cursor,
@@ -1654,7 +1353,7 @@ pub fn decode_next_v8_frame_from_cursor(
     }
     let payload = &cursor[4..4 + len];
     *cursor = &cursor[4 + len..];
-    let frame = decode_v8_json_payload_exact(payload)?;
+    let frame = decode_v8_capnp_payload_exact(payload)?;
     Ok(Some(frame))
 }
 
@@ -1728,7 +1427,7 @@ pub fn read_v8_wire_frame_bounded<R: std::io::Read>(
             }
         }
     }
-    let frame = decode_v8_json_payload_exact(&payload)?;
+    let frame = decode_v8_capnp_payload_exact(&payload)?;
     Ok(Some(frame))
 }
 
@@ -3791,15 +3490,15 @@ pub(crate) mod tests {
         // 1. Unknown field rejected.
         let unknown_json = br#"{"version":8,"message":{"type":"business_exit","payload":{"exit_code":0,"timeout_disposition":"completed_within_budget","extra_unknown":1}}}"#;
         assert!(matches!(
-            decode_v8_json_payload_exact(unknown_json),
-            Err(NativeCloseCodecError::UnknownField(_))
+            decode_v8_capnp_payload_exact(unknown_json),
+            Err(NativeCloseCodecError::MalformedCapnp(MalformedCapnpKind::NonCapnpOrJsonInput))
         ));
 
         // 2. Duplicate field rejected.
         let duplicate_json = br#"{"version":8,"version":8,"message":{"type":"business_exit","payload":{"exit_code":0,"timeout_disposition":"completed_within_budget"}}}"#;
         assert!(matches!(
-            decode_v8_json_payload_exact(duplicate_json),
-            Err(NativeCloseCodecError::DuplicateField(_))
+            decode_v8_capnp_payload_exact(duplicate_json),
+            Err(NativeCloseCodecError::MalformedCapnp(MalformedCapnpKind::NonCapnpOrJsonInput))
         ));
 
         // 3. Trailing bytes in payload or after length-prefixed frame rejected.
@@ -3816,10 +3515,10 @@ pub(crate) mod tests {
             Err(NativeCloseCodecError::TrailingBytesAfterFrame { trailing_bytes: 1 })
         );
 
-        let mut payload_with_trailing = serde_json::to_vec(&valid_frame).unwrap();
+        let mut payload_with_trailing = native_close_codec::encode_v8_capnp_payload(&valid_frame).unwrap();
         payload_with_trailing.push(b' ');
         assert_eq!(
-            decode_v8_json_payload_exact(&payload_with_trailing),
+            decode_v8_capnp_payload_exact(&payload_with_trailing),
             Err(NativeCloseCodecError::TrailingBytesInPayload)
         );
 
@@ -4530,15 +4229,8 @@ pub(crate) mod tests {
             r#"{{"version":8,"message":{{"type":"business_exit","payload":{{"exit_code":0,"timeout_disposition":"completed_within_budget","{MARKER_UNKNOWN_KEY}":"{MARKER_UNKNOWN_VAL}"}}}}}}"#
         );
         let err_unknown_field =
-            decode_v8_json_payload_exact(unknown_field_payload.as_bytes()).unwrap_err();
-        assert!(matches!(
-            err_unknown_field,
-            NativeCloseCodecError::UnknownField(UnknownSchemaError {
-                kind: UnknownSchemaKind::Field,
-                line: 1,
-                column,
-            }) if column > 0
-        ));
+            decode_v8_capnp_payload_exact(unknown_field_payload.as_bytes()).unwrap_err();
+        assert_eq!(err_unknown_field, NativeCloseCodecError::MalformedCapnp(MalformedCapnpKind::NonCapnpOrJsonInput));
         assert_redacted(err_unknown_field, unknown_field_payload.as_bytes());
 
         // 2. Unknown enum variant containing synthetic private marker.
@@ -4546,15 +4238,8 @@ pub(crate) mod tests {
             r#"{{"version":8,"message":{{"type":"{MARKER_UNKNOWN_VARIANT}","payload":{{"exit_code":0,"timeout_disposition":"completed_within_budget"}}}}}}"#
         );
         let err_unknown_variant =
-            decode_v8_json_payload_exact(unknown_variant_payload.as_bytes()).unwrap_err();
-        assert!(matches!(
-            err_unknown_variant,
-            NativeCloseCodecError::UnknownField(UnknownSchemaError {
-                kind: UnknownSchemaKind::Variant,
-                line: 1,
-                column,
-            }) if column > 0
-        ));
+            decode_v8_capnp_payload_exact(unknown_variant_payload.as_bytes()).unwrap_err();
+        assert_eq!(err_unknown_variant, NativeCloseCodecError::MalformedCapnp(MalformedCapnpKind::NonCapnpOrJsonInput));
         assert_redacted(err_unknown_variant, unknown_variant_payload.as_bytes());
 
         // 3. Duplicate field key and value containing synthetic private markers.
@@ -4562,14 +4247,8 @@ pub(crate) mod tests {
             r#"{{"version":8,"{MARKER_DUP_KEY}":"{MARKER_DUP_VAL}","{MARKER_DUP_KEY}":"{MARKER_DUP_VAL}","message":{{"type":"business_exit","payload":{{"exit_code":0,"timeout_disposition":"completed_within_budget"}}}}}}"#
         );
         let err_duplicate_field =
-            decode_v8_json_payload_exact(duplicate_field_payload.as_bytes()).unwrap_err();
-        assert!(matches!(
-            err_duplicate_field,
-            NativeCloseCodecError::DuplicateField(DuplicateFieldError {
-                line: 1,
-                column,
-            }) if column > 0
-        ));
+            decode_v8_capnp_payload_exact(duplicate_field_payload.as_bytes()).unwrap_err();
+        assert_eq!(err_duplicate_field, NativeCloseCodecError::MalformedCapnp(MalformedCapnpKind::NonCapnpOrJsonInput));
         assert_redacted(err_duplicate_field, duplicate_field_payload.as_bytes());
 
         // 4. Invalid-type payload (string marker where integer exit_code is expected).
@@ -4577,30 +4256,16 @@ pub(crate) mod tests {
             r#"{{"version":8,"message":{{"type":"business_exit","payload":{{"exit_code":"{MARKER_INVALID_TYPE_VAL}","timeout_disposition":"completed_within_budget"}}}}}}"#
         );
         let err_invalid_type =
-            decode_v8_json_payload_exact(invalid_type_payload.as_bytes()).unwrap_err();
-        assert!(matches!(
-            err_invalid_type,
-            NativeCloseCodecError::MalformedJson(MalformedJsonError {
-                kind: MalformedJsonKind::InvalidType,
-                line: 1,
-                column,
-            }) if column > 0
-        ));
+            decode_v8_capnp_payload_exact(invalid_type_payload.as_bytes()).unwrap_err();
+        assert_eq!(err_invalid_type, NativeCloseCodecError::MalformedCapnp(MalformedCapnpKind::NonCapnpOrJsonInput));
         assert_redacted(err_invalid_type, invalid_type_payload.as_bytes());
 
         // 5. Malformed JSON syntax payload containing synthetic private marker.
         let malformed_syntax_payload =
             format!(r#"{{"version":8,"message":"{MARKER_MALFORMED_SYNTAX}",}}"#);
         let err_malformed_syntax =
-            decode_v8_json_payload_exact(malformed_syntax_payload.as_bytes()).unwrap_err();
-        assert!(matches!(
-            err_malformed_syntax,
-            NativeCloseCodecError::MalformedJson(MalformedJsonError {
-                kind: MalformedJsonKind::SyntaxError,
-                line: 1,
-                column,
-            }) if column > 0
-        ));
+            decode_v8_capnp_payload_exact(malformed_syntax_payload.as_bytes()).unwrap_err();
+        assert_eq!(err_malformed_syntax, NativeCloseCodecError::MalformedCapnp(MalformedCapnpKind::NonCapnpOrJsonInput));
         assert_redacted(err_malformed_syntax, malformed_syntax_payload.as_bytes());
     }
 }

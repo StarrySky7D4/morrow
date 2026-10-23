@@ -587,5 +587,34 @@
   "mainDraftJournalExportFailed": "无法导出完整恢复副本。",
   "mainDraftJournalRetire": "退役已存草稿",
   "mainDraftJournalRetireConfirm": "退役这份已存草稿并释放其附件固定副本？如需保留，请先导出恢复副本。已保存的业务内容及未确认的保存结果不变。",
-  "mainDraftJournalRetireUnknown": "尚未确认退役结果。请核对原操作，不要再次提交。"
+  "mainDraftJournalRetireUnknown": "尚未确认退役结果。请核对原操作，不要再次提交。",
+  "mainDraftHistoryTitle": "草稿历史",
+  "mainDraftHistoryNotice": "仅显示已停用的草稿。归档保留文本和来源记录，释放日常草稿名额；已释放的附件文件和捕获权限不会恢复。归档另有 64 MiB 的记录上限。",
+  "mainDraftHistoryCapacity": "日常记录：{current}/256；归档记录：{archived}/4096",
+  "mainDraftHistoryUnconfirmed": "归档结果尚未确认，请刷新核对原记录。",
+  "mainDraftHistoryRetired": "已停用",
+  "mainDraftHistoryArchived": "已归档",
+  "mainDraftHistoryFirst": "第一页",
+  "mainDraftHistoryNext": "下一页",
+  "mainDraftHistoryExport": "导出历史记录",
+  "mainDraftHistoryArchive": "归档此记录",
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "archived": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDraftHistoryTitleField": "标题",
+  "mainDraftHistoryDescriptionField": "描述",
+  "mainDraftHistoryCategoryField": "分类",
+  "mainDraftHistoryStageField": "阶段",
+  "mainDraftWriteInspect": "检查草稿保存",
+  "mainDraftWriteRetry": "重试草稿保存",
+  "mainDraftHistoryMaintain": "归档关联记录",
+  "mainDraftHistoryMaintainHelp": "保留全部历史记录，并释放草稿记录额度。",
+  "mainDraftHistoryMaintained": "关联记录已归档"
 }

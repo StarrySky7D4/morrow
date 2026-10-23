@@ -8,6 +8,8 @@ const schemaIds = <String, String>{
   'writeRequestSchema': '905784bd64bdaed0',
   'parentLinkSchema': '88f7526340d0a69a',
   'parentRetirementSchema': 'f93699e1a8ee50ca',
+  'resumeLinkSchema': 'e82d03befaa2c35e',
+  'resumeRequestSchema': '941b321243ee85c1',
   'handoffRequestSchema': '884d2439a9bcc84f',
   'handoffProposalSchema': '8d16afa329001ea8',
   'handoffProposalSummarySchema': 'e3eae6cbc02ef559',
@@ -17,6 +19,10 @@ const schemaIds = <String, String>{
   'summarySchema': 'e1456d698ae74e4d',
   'lineageSchema': '9071fc961ae69c42',
   'importedAssetSchema': 'd19f2513e7a9f101',
+  'archiveReceiptSchema': '8dc893c1f94f6484',
+  'historySummarySchema': 'fd81d8d06936e96a',
   'envelopeSchema': '9504015d5dee5396',
+  'archiveMaintenanceRequestSchema': 'f4e685cf5afba92f',
+  'archiveMaintenanceReceiptSchema': '894be70c09da765b',
 };
 BigInt schemaId(String name) => BigInt.parse(schemaIds[name]!, radix: 16);

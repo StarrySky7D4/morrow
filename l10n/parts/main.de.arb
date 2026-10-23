@@ -587,5 +587,34 @@
   "mainDraftJournalExportFailed": "Die vollständige Wiederherstellungskopie konnte nicht exportiert werden.",
   "mainDraftJournalRetire": "Gespeicherten Entwurf abschließen",
   "mainDraftJournalRetireConfirm": "Diesen gespeicherten Entwurf abschließen und seine Anhangskopien freigeben? Exportieren Sie bei Bedarf zuerst eine Wiederherstellungskopie. Gespeicherte Inhalte und unbestätigte Speicherergebnisse bleiben unverändert.",
-  "mainDraftJournalRetireUnknown": "Der Abschluss ist nicht bestätigt. Prüfen Sie den ursprünglichen Vorgang, ohne ihn erneut zu senden."
+  "mainDraftJournalRetireUnknown": "Der Abschluss ist nicht bestätigt. Prüfen Sie den ursprünglichen Vorgang, ohne ihn erneut zu senden.",
+  "mainDraftHistoryTitle": "Entwurfsverlauf",
+  "mainDraftHistoryNotice": "Hier erscheinen nur stillgelegte Entwürfe. Archivieren erhält Text und Herkunft und gibt einen Entwurfsplatz frei. Freigegebene Anhangdateien und Erfassungsrechte werden nicht wiederhergestellt. Für archivierte Datensätze gilt außerdem eine Grenze von 64 MiB.",
+  "mainDraftHistoryCapacity": "Aktuelle Datensätze: {current}/256; archiviert: {archived}/4096",
+  "mainDraftHistoryUnconfirmed": "Das Archivierungsergebnis ist unbestätigt. Aktualisieren Sie die Ansicht, um den Originaleintrag zu prüfen.",
+  "mainDraftHistoryRetired": "Stillgelegt",
+  "mainDraftHistoryArchived": "Archiviert",
+  "mainDraftHistoryFirst": "Erste Seite",
+  "mainDraftHistoryNext": "Nächste Seite",
+  "mainDraftHistoryExport": "Verlaufseintrag exportieren",
+  "mainDraftHistoryArchive": "Diesen Eintrag archivieren",
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "archived": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDraftHistoryTitleField": "Titel",
+  "mainDraftHistoryDescriptionField": "Beschreibung",
+  "mainDraftHistoryCategoryField": "Kategorie",
+  "mainDraftHistoryStageField": "Phase",
+  "mainDraftWriteInspect": "Entwurfsspeicherung prüfen",
+  "mainDraftWriteRetry": "Entwurf erneut speichern",
+  "mainDraftHistoryMaintain": "Zugehörige Einträge archivieren",
+  "mainDraftHistoryMaintainHelp": "Den gesamten Verlauf behalten und Platz für Entwurfseinträge freigeben.",
+  "mainDraftHistoryMaintained": "Zugehörige Einträge archiviert"
 }

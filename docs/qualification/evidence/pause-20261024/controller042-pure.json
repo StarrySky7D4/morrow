@@ -1,0 +1,60 @@
+{
+  "status": "PASS_PURE_SHARED_PARENT_CONTROLLER_NOT_RUNTIME",
+  "rows": [
+    {
+      "profile": "original85",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-controller-042-qualification-002\\bin\\original85.exe",
+        "bytes": 166400,
+        "sha256": "61f0c08d0092c4ac3540da1be135b9537cd5f66456886f6fea19a20fe015a60a"
+      },
+      "compiler_exit": 0,
+      "runtime": "NOT_RUN",
+      "pure_methods": 85,
+      "pure_exit": 0
+    },
+    {
+      "profile": "single_refusal70",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-controller-042-qualification-002\\bin\\single_refusal70.exe",
+        "bytes": 174592,
+        "sha256": "d13f7e1af401123205dd92fed165d620ffa2b9352cc159a9a31b1c55e011666a"
+      },
+      "compiler_exit": 0,
+      "runtime": "NOT_RUN",
+      "pure_methods": 70,
+      "pure_exit": 0
+    },
+    {
+      "profile": "shared",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-controller-042-qualification-002\\bin\\shared.exe",
+        "bytes": 191488,
+        "sha256": "30c3aa5fb8510e92dd7e0412c0c8d579ea27269cdf5565cac825a891cb3d243a"
+      },
+      "compiler_exit": 0,
+      "runtime": "NOT_RUN",
+      "pure_methods": 17,
+      "pure_exit": 0
+    },
+    {
+      "profile": "controller",
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-controller-042-qualification-002\\bin\\controller.exe",
+        "bytes": 191488,
+        "sha256": "d87d7dfe34003a3a0343119ca11191533fc3049a58910b08c3f2dcb025ba88a0"
+      },
+      "compiler_exit": 0,
+      "runtime": "NOT_RUN"
+    }
+  ],
+  "derivation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-controller-042-qualification-002\\parent-session-controller-derivation.json",
+    "bytes": 12570,
+    "sha256": "ea2cad76ba3a21a7672eb629542df4ec24b77e9a9baf0b281cc23b78a0584784"
+  },
+  "VM_calls": 0,
+  "product_executions": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

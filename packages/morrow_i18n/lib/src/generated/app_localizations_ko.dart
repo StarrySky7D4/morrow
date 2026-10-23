@@ -401,6 +401,61 @@ class AppLocalizationsKo extends AppLocalizations {
       '작업 결과가 아직 확인되지 않았습니다. 원래 기록을 확인하고 작업을 반복하지 마세요.';
 
   @override
+  String get mainDraftHistoryArchive => '이 기록 보관';
+
+  @override
+  String get mainDraftHistoryArchived => '보관됨';
+
+  @override
+  String mainDraftHistoryCapacity(int archived, int current) {
+    return '현재 기록: $current/256; 보관됨: $archived/4096';
+  }
+
+  @override
+  String get mainDraftHistoryCategoryField => '분류';
+
+  @override
+  String get mainDraftHistoryDescriptionField => '설명';
+
+  @override
+  String get mainDraftHistoryExport => '기록 내보내기';
+
+  @override
+  String get mainDraftHistoryFirst => '첫 페이지';
+
+  @override
+  String get mainDraftHistoryMaintain => '관련 기록 보관';
+
+  @override
+  String get mainDraftHistoryMaintainHelp => '전체 이력을 유지하고 초안 기록의 여유 용량을 확보합니다.';
+
+  @override
+  String get mainDraftHistoryMaintained => '관련 기록 보관됨';
+
+  @override
+  String get mainDraftHistoryNext => '다음 페이지';
+
+  @override
+  String get mainDraftHistoryNotice =>
+      '종료된 초안만 표시됩니다. 보관하면 텍스트와 출처가 유지되고 일반 초안 자리가 확보됩니다. 해제된 첨부 파일과 캡처 권한은 복원되지 않습니다. 보관 기록에는 64 MiB 제한도 적용됩니다.';
+
+  @override
+  String get mainDraftHistoryRetired => '종료됨';
+
+  @override
+  String get mainDraftHistoryStageField => '단계';
+
+  @override
+  String get mainDraftHistoryTitle => '초안 기록';
+
+  @override
+  String get mainDraftHistoryTitleField => '제목';
+
+  @override
+  String get mainDraftHistoryUnconfirmed =>
+      '보관 결과가 확인되지 않았습니다. 새로고침하여 원래 기록을 확인하세요.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       '취소하면 원래 포기 요청은 더 이상 실행되지 않습니다. 첨부 파일이 삭제되거나 다른 변경 사항이 되돌려지지는 않습니다.';
 
@@ -473,6 +528,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get mainDraftJournalTitle => '저장된 초안';
+
+  @override
+  String get mainDraftWriteInspect => '초안 저장 확인';
+
+  @override
+  String get mainDraftWriteRetry => '초안 저장 다시 시도';
 
   @override
   String get mainEdit => '편집';

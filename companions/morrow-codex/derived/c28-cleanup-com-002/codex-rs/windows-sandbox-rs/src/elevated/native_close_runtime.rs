@@ -3,7 +3,6 @@
 use super::native_close_protocol::*;
 use crate::ipc_framed::*;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use sha2::{Digest, Sha256};
 use std::fmt;
 use std::io::{self, Read, Write};
@@ -72,22 +71,21 @@ pub struct RuntimePacketWire {
     pub sequence: u64,
     pub direction: RuntimeDirection,
     pub event: Option<Box<Version8WireFrame>>,
-    pub content: Value,
+    pub content: RuntimePacketContent,
     /// Present only on the final receipt, binding the ACK actually authenticated
     /// by the original input reader. Not an ACK-writer join or close assertion.
     pub terminal_close_ack: Option<WireAuthTag>,
     pub tag: WireAuthTag,
 }
 
-#[derive(Clone,PartialEq,Eq,Serialize,Deserialize)]
-#[serde(deny_unknown_fields)]
-struct TerminalAckBody {
-    child:WireChildIdentity,
-    raw_child_exit_dword:u32,
+/// An explicitly typed internal packet; the embedded runner frame uses its own
+/// pinned Cap'n Proto schema and never serializes the session nonce.
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum RuntimePacketContent {
+    Empty,
+    Message(Box<FramedMessage>),
+    TerminalAck { child: WireChildIdentity, raw_child_exit_dword: u32 },
 }
-#[derive(Clone,PartialEq,Eq,Serialize,Deserialize)]
-#[serde(deny_unknown_fields)]
-struct TerminalAckContent { native_close_ack:TerminalAckBody }
 #[derive(Default)]
 struct TerminalState {
     exit:Option<i32>,deadline:Option<Instant>,
@@ -193,28 +191,33 @@ impl NativeCloseRuntime {
         if slot.is_some() {return Err(rejected());}*slot=Some(child);Ok(())
     }
     fn packet_tag(&self,p:&RuntimePacketWire)->io::Result<WireAuthTag> {
-        let body=serde_json::to_vec(&(p.schema,p.attempt,p.sequence,p.direction,&p.event,&p.content,&p.terminal_close_ack)).map_err(|_| rejected())?;
+        let body=codec(native_close_codec::encode_runtime_packet_auth_body(p))?;
         let mut h=Sha256::new();h.update(b"c28.v8.live.packet\0");h.update(self.binding.session_nonce().as_bytes());
         h.update((body.len() as u64).to_le_bytes());h.update(body);h.update(self.binding.session_nonce().as_bytes());
         Ok(WireAuthTag::from_bytes(h.finalize().into()))
     }
-    fn strip_secrets(value:&mut Value) {
-        if let Some(payload)=value.get_mut("payload") {
-            if let Some(hello)=payload.get_mut("hello").and_then(Value::as_object_mut) {hello.remove("nonce");}
-            if let Some(request)=payload.get_mut("request").and_then(Value::as_object_mut) {request.remove("nonce");}
-            if let Some(object)=payload.as_object_mut() {object.remove("nonce");}
+    fn strip_secrets(frame:&mut FramedMessage) {
+        match &mut frame.message {
+            Message::Hello {payload} => payload.nonce=[0;32],
+            Message::HelloAck {payload} => payload.hello.nonce=[0;32],
+            Message::ControlRequest {payload} => payload.nonce=[0;32],
+            Message::ControlResult {payload} => payload.request.nonce=[0;32],
+            _=>{}
         }
     }
-    fn restore_secrets(&self,value:&mut Value)->io::Result<()> {
-        let kind=value.get("type").and_then(Value::as_str).ok_or_else(rejected)?.to_owned();
-        let payload=value.get_mut("payload").ok_or_else(rejected)?;
-        let nonce=serde_json::to_value(self.control_hello().nonce).map_err(|_| rejected())?;
-        match kind.as_str() {
-            "hello_ack"=>{payload.get_mut("hello").and_then(Value::as_object_mut).ok_or_else(rejected)?.insert("nonce".into(),nonce);}
-            "control_result"=>{payload.get_mut("request").and_then(Value::as_object_mut).ok_or_else(rejected)?.insert("nonce".into(),nonce);}
-            "control_request"=>{payload.as_object_mut().ok_or_else(rejected)?.insert("nonce".into(),nonce);}
-            _=>{}
-        }Ok(())
+    fn restore_secrets(&self,frame:&mut FramedMessage)->io::Result<()> {
+        let nonce=match &mut frame.message {
+            Message::Hello {..} => return Err(rejected()),
+            Message::HelloAck {payload} => Some(&mut payload.hello.nonce),
+            Message::ControlRequest {payload} => Some(&mut payload.nonce),
+            Message::ControlResult {payload} => Some(&mut payload.request.nonce),
+            _=>None,
+        };
+        if let Some(value)=nonce {
+            if *value!=[0;32] {return Err(rejected());}
+            *value=self.control_hello().nonce;
+        }
+        Ok(())
     }
     fn event(&self,message:&Message)->io::Result<Option<Version8WireFrame>> {
         let event=match message {
@@ -236,7 +239,7 @@ impl NativeCloseRuntime {
             _=>return Err(rejected()),
         };Ok(Some(Version8WireFrame::new(event)))
     }
-    fn send_packet<W:Write>(&self,w:&mut W,content:Value,event:Option<Version8WireFrame>)->io::Result<()> {
+    fn send_packet<W:Write>(&self,w:&mut W,content:RuntimePacketContent,event:Option<Version8WireFrame>)->io::Result<()> {
         if self.failed.load(Ordering::SeqCst) {return Err(rejected());}
         let sequence=self.send_sequence.fetch_add(1,Ordering::SeqCst).checked_add(1).ok_or_else(rejected)?;
         if sequence>u64::from(MAX_TOTAL_FRAMES_PER_ATTEMPT)+MAX_CONTROL_FRAMES_PER_ATTEMPT as u64 {return Err(rejected());}
@@ -273,8 +276,8 @@ impl NativeCloseRuntime {
             payload.message=crate::RunnerStartupSite::from_wire_message(&payload.message)
                 .wire_message().to_owned();
         }
-        let mut value=serde_json::to_value(&frame).map_err(|_| rejected())?;Self::strip_secrets(&mut value);
-        self.send_packet(w,value,event)?;
+        Self::strip_secrets(&mut frame);
+        self.send_packet(w,RuntimePacketContent::Message(Box::new(frame)),event)?;
         if matches!(message.message, Message::ControlResult{..}) {self.controls_written.fetch_add(1,Ordering::SeqCst);}
         Ok(())
     }
@@ -282,7 +285,7 @@ impl NativeCloseRuntime {
         if self.role!=RuntimeDirection::RunnerToHost || self.receipt_attempted.swap(true,Ordering::SeqCst) {
             self.latch_transport_failure();return Err(rejected());
         }
-        let result=self.send_packet(w,Value::Null,Some(Version8WireFrame::new(Version8Message::NativeCloseReceipt(
+        let result=self.send_packet(w,RuntimePacketContent::Empty,Some(Version8WireFrame::new(Version8Message::NativeCloseReceipt(
             Box::new(NativeCloseReceiptWire::new_signed(&self.binding,facts))))));
         if result.is_err(){self.latch_transport_failure();}result
     }
@@ -299,8 +302,7 @@ impl NativeCloseRuntime {
                 (state.exit.ok_or_else(rejected)?,state.deadline.ok_or_else(rejected)?)
             };
             if Instant::now()>=deadline{return Err(io::Error::new(io::ErrorKind::TimedOut,"original terminal ACK deadline"));}
-            let content=serde_json::to_value(TerminalAckContent {native_close_ack:TerminalAckBody {
-                child:child.to_wire(),raw_child_exit_dword:exit as u32}}).map_err(|_|rejected())?;
+            let content=RuntimePacketContent::TerminalAck {child:child.to_wire(),raw_child_exit_dword:exit as u32};
             // Compute the same exact authenticated packet tag that send_packet
             // will write; only this original writer owns the send sequence.
             let mut packet=RuntimePacketWire {schema:NATIVE_CLOSE_PROTOCOL_SCHEMA,attempt:self.attempt(),
@@ -334,16 +336,14 @@ impl NativeCloseRuntime {
         let expected=self.receive_sequence.load(Ordering::SeqCst).checked_add(1).ok_or_else(rejected)?;
         if p.schema!=NATIVE_CLOSE_PROTOCOL_SCHEMA || p.attempt!=self.attempt() || p.sequence!=expected
             || p.direction==self.role || self.packet_tag(&p)?!=p.tag {return Err(rejected());}
-        let result=if p.content.get("native_close_ack").is_some() {
+        let result=if let RuntimePacketContent::TerminalAck {child:ack_child,raw_child_exit_dword}=&p.content {
             if self.role!=RuntimeDirection::RunnerToHost || p.event.is_some() || p.terminal_close_ack.is_some() {return Err(rejected());}
-            let body:TerminalAckContent=serde_json::from_value(p.content.clone()).map_err(|_|rejected())?;
-            if serde_json::to_value(&body).map_err(|_|rejected())?!=p.content{return Err(rejected());}
             let child=self.child.try_lock().map_err(|_|rejected())?.ok_or_else(rejected)?;
             let mut state=self.terminal.try_lock().map_err(|_|rejected())?;
-            if state.ack_received || state.ack_attempted || state.exit.map(|v|v as u32)!=Some(body.native_close_ack.raw_child_exit_dword)
-                || child.to_wire()!=body.native_close_ack.child || Instant::now()>=state.deadline.ok_or_else(rejected)? {return Err(rejected());}
+            if state.ack_received || state.ack_attempted || state.exit.map(|v|v as u32)!=Some(*raw_child_exit_dword)
+                || child.to_wire()!=*ack_child || Instant::now()>=state.deadline.ok_or_else(rejected)? {return Err(rejected());}
             state.ack_received=true;state.ack_tag=Some(p.tag.clone());None
-        }else if p.content.is_null() {
+        }else if p.content==RuntimePacketContent::Empty {
             if self.role!=RuntimeDirection::HostToRunner {return Err(rejected());}
             {let state=self.terminal.try_lock().map_err(|_|rejected())?;
                 if !state.ack_written || p.terminal_close_ack!=state.ack_tag
@@ -356,11 +356,11 @@ impl NativeCloseRuntime {
         }else{
             if p.terminal_close_ack.is_some(){return Err(rejected());}
             if self.role==RuntimeDirection::RunnerToHost && self.terminal.try_lock().map_err(|_|rejected())?.ack_received {return Err(rejected());}
-            let mut restored=p.content.clone();self.restore_secrets(&mut restored)?;
-            let message:FramedMessage=serde_json::from_value(restored).map_err(|_| rejected())?;
+            let RuntimePacketContent::Message(original)=&p.content else{return Err(rejected())};
+            let mut message=original.as_ref().clone();self.restore_secrets(&mut message)?;
             if message.version!=NATIVE_CLOSE_IPC_PROTOCOL_VERSION {return Err(rejected());}
-            let mut exact=serde_json::to_value(&message).map_err(|_| rejected())?;Self::strip_secrets(&mut exact);
-            if exact!=p.content {return Err(rejected());} // unknown/default-omitted fields rejected
+            let mut exact=message.clone();Self::strip_secrets(&mut exact);
+            if exact!=**original {return Err(rejected());} // exact typed restoration only
             if self.role==RuntimeDirection::HostToRunner {
                 if let Some(event)=&p.event {
                     if let Version8Message::SpawnReady(ready)=&event.message {
@@ -484,14 +484,14 @@ mod tests {
             let Version8Message::RuntimePacket(p)=&mut frame.message else{unreachable!()};
             match kind {
                 0=>p.attempt+=1,
-                1=>p.content["native_close_ack"]["child"]["pid"]=serde_json::json!(999),
-                2=>p.content["native_close_ack"]["raw_child_exit_dword"]=serde_json::json!(0),
+                1=>if let RuntimePacketContent::TerminalAck{child,..}=&mut p.content{child.pid=999}else{unreachable!()},
+                2=>if let RuntimePacketContent::TerminalAck{raw_child_exit_dword,..}=&mut p.content{*raw_child_exit_dword=0}else{unreachable!()},
                 3=>p.direction=RuntimeDirection::RunnerToHost,
                 4=>p.schema=*b"morrow.c28.native-close.schema.\x08",
                 5=>{},6=>p.sequence+=1,
-                7=>p.content["unreviewed"]=Value::Bool(true),
-                8=>p.content["native_close_ack"]["child"]["thread_id"]=serde_json::json!(999),
-                _=>p.content["native_close_ack"]["child"]["creation_filetime_100ns"]=serde_json::json!(999),
+                7=>p.content=RuntimePacketContent::Empty,
+                8=>if let RuntimePacketContent::TerminalAck{child,..}=&mut p.content{child.thread_id=999}else{unreachable!()},
+                _=>if let RuntimePacketContent::TerminalAck{child,..}=&mut p.content{child.creation_filetime_100ns=999}else{unreachable!()},
             }
             p.tag=if kind==5 {WireAuthTag::from_bytes([0;32])}else{host.packet_tag(p).unwrap()};
             assert!(guest.read_message(&mut Cursor::new(encode_v8_length_prefixed_frame(&frame).unwrap())).is_err());
@@ -512,15 +512,14 @@ mod tests {
         assert!(guest.write_receipt(&mut Vec::new(),sample_clean_facts(271,child(),7,0)).is_err());
         let (host,guest)=pair();guest.set_child(child()).unwrap();
         let mut early=Vec::new();
-        host.send_packet(&mut early,serde_json::to_value(TerminalAckContent {native_close_ack:TerminalAckBody {
-            child:child().to_wire(),raw_child_exit_dword:7}}).unwrap(),None).unwrap();
+        host.send_packet(&mut early,RuntimePacketContent::TerminalAck {
+            child:child().to_wire(),raw_child_exit_dword:7},None).unwrap();
         assert!(guest.read_message(&mut Cursor::new(early)).is_err());assert!(guest.is_sealed());
         for replay in [false,true] {
             let (host,guest,ack)=awaiting_ack(7);
             assert!(matches!(guest.read_message(&mut Cursor::new(ack.clone())),Ok(Some(None))));
             let duplicate=if replay {ack}else{
-                let mut duplicate=Vec::new();host.send_packet(&mut duplicate,serde_json::to_value(TerminalAckContent {
-                    native_close_ack:TerminalAckBody {child:child().to_wire(),raw_child_exit_dword:7}}).unwrap(),None).unwrap();duplicate
+                let mut duplicate=Vec::new();host.send_packet(&mut duplicate,RuntimePacketContent::TerminalAck {child:child().to_wire(),raw_child_exit_dword:7},None).unwrap();duplicate
             };
             assert!(guest.read_message(&mut Cursor::new(duplicate)).is_err());assert!(guest.is_sealed());
         }
@@ -612,7 +611,7 @@ mod tests {
         // Deliberately hostile peer bypasses its public one-shot sender API.
         let duplicate=Version8WireFrame::new(Version8Message::NativeCloseReceipt(Box::new(
             NativeCloseReceiptWire::new_signed(&guest.binding,sample_clean_facts(271,child(),7,1)))));
-        guest.send_packet(&mut bytes,Value::Null,Some(duplicate)).unwrap();
+        guest.send_packet(&mut bytes,RuntimePacketContent::Empty,Some(duplicate)).unwrap();
         assert!(drain(&host,bytes).is_err());
         assert_eq!(host.receiver.lock().unwrap().primary_error(),Some(&NativeCloseProtocolError::DuplicateReceipt));
         let (host,guest,mut bytes,_)=streamed(7,false);
@@ -634,7 +633,11 @@ mod tests {
             let mut frame=read_v8_wire_frame_bounded(&mut cursor).unwrap().unwrap();
             let Version8Message::RuntimePacket(packet)=&mut frame.message else{unreachable!()};
             match kind {0=>packet.attempt+=1,1=>packet.sequence+=1,2=>packet.schema=[1;32],
-                3=>packet.direction=RuntimeDirection::HostToRunner,4=>packet.content["payload"]["controls"]["resize"]=Value::Bool(false),_=>{}}
+                3=>packet.direction=RuntimeDirection::HostToRunner,4=>{
+                    let RuntimePacketContent::Message(frame)=&mut packet.content else{unreachable!()};
+                    let Message::HelloAck {payload}=&mut frame.message else{unreachable!()};
+                    payload.controls.resize=false;
+                },_=>{}}
             let bad=encode_v8_length_prefixed_frame(&frame).unwrap();
             assert!(host.read_message(&mut Cursor::new(bad)).is_err());
             assert!(host.receiver.lock().unwrap().no_replay_sealed());
@@ -662,12 +665,16 @@ mod tests {
         }
     }
     #[test]
-    fn legacy_exit_wire_goldens_remain_exact_and_v7_hello_cannot_negotiate_v8() {
+    fn control_versions_use_capnp_and_v7_hello_cannot_negotiate_v8() {
         for (version,golden) in [(6u8,br#"{"version":6,"type":"exit","payload":{"exit_code":-1,"timed_out":false}}"#.as_slice()),
             (7u8,br#"{"version":7,"type":"exit","payload":{"exit_code":-1,"timed_out":false}}"#.as_slice())] {
             let mut wire=Vec::new();write_runtime_message(&mut wire,&FramedMessage {version,message:Message::Exit {
                 payload:ExitPayload {exit_code:-1,timed_out:false}}},None).unwrap();
-            assert_eq!(&wire[4..],golden);assert_eq!(&wire[..4],&(golden.len() as u32).to_le_bytes());
+            assert_ne!(&wire[4..],golden);
+            let decoded=read_frame(wire.as_slice()).unwrap().unwrap();assert_eq!(decoded.version,version);
+            assert!(matches!(decoded.message,Message::Exit{payload:ExitPayload{exit_code:-1,timed_out:false}}));
+            let mut old_json=(golden.len() as u32).to_le_bytes().to_vec();old_json.extend(golden);
+            assert!(read_frame(old_json.as_slice()).is_err());
         }
         let mut old=Vec::new();write_frame(&mut old,&FramedMessage {version:7,message:Message::Hello {payload:ControlHello {
             nonce:[27;32],schema:CHECKED_CONTROL_SCHEMA}}}).unwrap();

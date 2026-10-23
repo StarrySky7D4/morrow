@@ -4,7 +4,7 @@
 //! No Drop/TerminateProcess/job termination, retry, alternate identity or wire.
 use super::*;
 use crate::asuser_parent_record::{Record,FileIdentity,BYTES,MAX_FILES};
-use crate::asuser_parent_diagnostic::{Capture,Scope,Stage,Api};
+use crate::asuser_parent_diagnostic::{Capture,Scope,Stage,Api,ParentExitPredicate,ParentExitFailure};
 use crate::asuser_startup_observation::{StartupCarrier,StartupObservation,SdkStage};
 use crate::asuser_error_diagnostic::{ErrorDiagnosticRole,StartupFailureTrigger};
 use crate::asuser_error_diagnostic_native::RetainedErrorDiagnostic;
@@ -16,8 +16,14 @@ use windows_sys::Win32::Storage::FileSystem::{GetFileInformationByHandleEx,FileI
 use windows_sys::Win32::System::JobObjects::{QueryInformationJobObject,JobObjectBasicAccountingInformation,
     JOBOBJECT_BASIC_ACCOUNTING_INFORMATION};
 use windows_sys::Win32::System::Console::{GetStdHandle,STD_INPUT_HANDLE,STD_OUTPUT_HANDLE,STD_ERROR_HANDLE};
+#[path="asuser_refusal_qualification.rs"]
+mod refusal_qualification;
+pub use refusal_qualification::CallerRefusalQualification;
+#[path="asuser_parent_session_admission.rs"]
+mod session_admission;
 
 const PREFIX:&str="--c28-parent-launch-p1";
+const SESSION_PREFIX:&str="--c28-parent-refusal-session-p1";
 const IMPORT:&str="--c28-parent-origin-p1";
 const C_NAME:&str="morrow-protected-checked-vm-harness.exe";
 const P_NAME:&str="morrow-workbench-supervisor.exe";
@@ -96,11 +102,17 @@ pub trait ParentOriginalProcess {
     fn close_after_natural_c(&mut self,proof:ParentCClosed)->io::Result<()>;
 }
 fn parent_c_closed(original:ParentChildIdentity,actual:ParentNativeExit,delivered:bool)->io::Result<ParentC0Observed> {
-    if !delivered||!actual.process_signaled||!actual.thread_signaled||actual.process_dword!=0||actual.thread_dword!=Some(0)
-        ||original.pid==0||original.thread_id==0||original.creation_filetime==0
-        ||actual.identity.pid!=original.pid||actual.identity.thread_id!=original.thread_id
-        ||actual.identity.creation_filetime!=original.creation_filetime||actual.job_active!=0||actual.job_terminated!=Some(0)
-        ||!actual.job_total.is_some_and(|value|value>0){return Err(bad());}
+    use ParentExitPredicate::*;
+    // Same acceptance predicates, now retaining the first actually rejected one.
+    for (passed,predicate) in [
+        (delivered,BootstrapDelivered),(actual.process_signaled,ProcessSignal),
+        (actual.thread_signaled,PrimaryThreadSignal),(actual.process_dword==0,ProcessExitNotZero),
+        (actual.thread_dword==Some(0),PrimaryThreadExitNotZero),
+        (original.pid!=0&&original.thread_id!=0&&original.creation_filetime!=0,OriginalIdentity),
+        (actual.identity==original,ChildIdentity),(actual.job_active==0,JobStillActive),
+        (actual.job_terminated==Some(0),JobLimitedTermination),
+        (actual.job_total.is_some_and(|value|value>0),JobTotalMissingOrZero),
+    ] {if !passed{return Err(ParentExitFailure::error(predicate));}}
     // MAX32 limits the transferred ORIGINAL aliases, not the number of real
     // processes ever observed in this Job. Setup/inventory and the full fixed
     // business sequence may naturally create more than32 lifetime processes.
@@ -322,7 +334,8 @@ impl Parent {
             "--guest-root".into(),root,"--runner".into(),directory.join(R_NAME).to_str().ok_or_else(bad)?.into(),
             "--runner-sha256".into(),hex_text(selection.r),"--setup".into(),directory.join(S_NAME).to_str().ok_or_else(bad)?.into(),
             "--setup-sha256".into(),hex_text(selection.s),"--helper".into(),c.to_str().ok_or_else(bad)?.into(),
-            "--helper-sha256".into(),hex_text(selection.c),"--phase".into(),"live-guest-interactive".into(),
+            "--helper-sha256".into(),hex_text(selection.c),"--phase".into(),
+            if selection.refusal_session {"live-guest-refusal-session-interactive".into()}else{"live-guest-interactive".into()},
             "--inventory-shell".into(),shell,"--inventory-shell-sha256".into(),hex_text(selection.shell),
             "--expected-guest-uuid".into(),"b2dd7c5f-88ee-4d69-8aeb-d0290e60950e".into()];
         self.diagnostic.completed(Stage::NamespaceInputs);
@@ -419,23 +432,27 @@ impl Parent {
             _=>return Err(os_error())}
         self.diagnostic.completed(Stage::WaitChild);
         self.diagnostic.enter(Stage::ObserveChild);
-        if identity(process)?!=(created.pid,created.creation_filetime){return Err(bad());}
+        if identity(process)?!=(created.pid,created.creation_filetime){return Err(ParentExitFailure::error(ParentExitPredicate::ChildIdentity));}
+        self.diagnostic.completed(Stage::ObserveChild);self.diagnostic.enter(Stage::ObserveRetainedChild);
         let mut observed=self.original_child.observe_original_exit(self.deadline)?;
         // The retained library supplies its actual existing signal/DWORD
         // captures. These two additional read-only queries use ORIGINAL borrows
         // for fields its API does not yet expose; no PID reopen/duplicate/wait.
-        if !observed.thread_signaled{return Err(bad());}
+        if !observed.thread_signaled{return Err(ParentExitFailure::error(ParentExitPredicate::PrimaryThreadSignal));}
+        self.diagnostic.completed(Stage::ObserveRetainedChild);self.diagnostic.enter(Stage::ObserveThreadExit);
         let thread=self.original_child.original_primary_thread()?.as_raw_handle() as isize;
         let mut thread_dword=0;check(unsafe{GetExitCodeThread(thread,&mut thread_dword)})?;observed.thread_dword=Some(thread_dword);
+        self.diagnostic.completed(Stage::ObserveThreadExit);self.diagnostic.enter(Stage::ObserveJobAccounting);
         let job=self.original_child.original_job()?.as_raw_handle() as isize;
         let mut accounting:JOBOBJECT_BASIC_ACCOUNTING_INFORMATION=unsafe{mem::zeroed()};let mut returned=0;
         check(unsafe{QueryInformationJobObject(job,JobObjectBasicAccountingInformation,
             (&mut accounting as *mut JOBOBJECT_BASIC_ACCOUNTING_INFORMATION).cast(),mem::size_of_val(&accounting) as u32,&mut returned)})?;
-        if returned as usize!=mem::size_of_val(&accounting){return Err(bad());}
+        if returned as usize!=mem::size_of_val(&accounting){return Err(ParentExitFailure::error(ParentExitPredicate::JobAccountingLength));}
         observed.job_active=accounting.ActiveProcesses;observed.job_terminated=Some(accounting.TotalTerminatedProcesses);
         observed.job_total=Some(accounting.TotalProcesses);
+        self.diagnostic.completed(Stage::ObserveJobAccounting);self.diagnostic.enter(Stage::ValidateChildExit);
         let proof=parent_c_closed(created,observed,self.bootstrap.used&&!self.bootstrap.pending)?;
-        self.diagnostic.completed(Stage::ObserveChild);
+        self.diagnostic.completed(Stage::ValidateChildExit);
         // The original source locks remain HELD through the actual C signal.
         // Individually checked closes happen before the provider is told its
         // borrowed parent copies are discharged. Failure leaves its same Job,
@@ -455,11 +472,11 @@ impl Parent {
     }
 }
 
-struct Selection {p:[u8;32],c:[u8;32],r:[u8;32],s:[u8;32],shell:[u8;32],tag:String}
+struct Selection {p:[u8;32],c:[u8;32],r:[u8;32],s:[u8;32],shell:[u8;32],tag:String,refusal_session:bool}
 impl Selection {
     fn parse(args:&[String])->io::Result<Self> {
-        if args.len()!=7||args[0]!=PREFIX||args[6].len()!=32||!args[6].bytes().all(|v|v.is_ascii_digit()||(b'a'..=b'f').contains(&v)) {return Err(bad());}
-        let result=Self{p:hex(&args[1])?,c:hex(&args[2])?,r:hex(&args[3])?,s:hex(&args[4])?,shell:hex(&args[5])?,tag:args[6].clone()};
+        if args.len()!=7||!matches!(args[0].as_str(),PREFIX|SESSION_PREFIX)||args[6].len()!=32||!args[6].bytes().all(|v|v.is_ascii_digit()||(b'a'..=b'f').contains(&v)) {return Err(bad());}
+        let result=Self{p:hex(&args[1])?,c:hex(&args[2])?,r:hex(&args[3])?,s:hex(&args[4])?,shell:hex(&args[5])?,tag:args[6].clone(),refusal_session:args[0]==SESSION_PREFIX};
         let roles=[result.p,result.c,result.r,result.s];
         for i in 0..roles.len(){if roles[..i].contains(&roles[i]){return Err(bad());}}Ok(result)
     }
@@ -505,6 +522,7 @@ pub(crate) struct ImportCore {
     caller_identity:Option<(Vec<u8>,u64,u32,u64)>,
     early_caller:Option<Box<crate::CallerPrerequisiteAttempt>>,
     early_admitted:bool,
+    refusal_fixture:refusal_qualification::Fixture,
 }
 unsafe impl Send for ImportCore {}
 unsafe impl Sync for ImportCore {}
@@ -514,7 +532,7 @@ impl ImportCore {
         token:Slot::new(CloseKind::Kernel),peer_token:Slot::new(CloseKind::Kernel),thread_token:Slot::new(CloseKind::Kernel),
         record:None,first:None,verified:false,closed:false,busy:AtomicBool::new(false),
         defaults:std::array::from_fn(|_|None),auth_files:std::array::from_fn(|_|Slot::new(CloseKind::Kernel)),
-        auth_count:0,caller_identity:None,early_caller:None,early_admitted:false})}
+        auth_count:0,caller_identity:None,early_caller:None,early_admitted:false,refusal_fixture:refusal_qualification::Fixture::new()})}
     fn import(&mut self,parent:isize,reader:isize,anchor:[u8;32])->io::Result<(PathBuf,[u8;32])> {
         self.diagnostic.enter(Stage::ImportAliases);
         self.parent.begin()?;self.parent.captured(true,parent,0)?;
@@ -627,35 +645,62 @@ impl ImportCore {
     }
 }
 
-pub(crate) struct OriginGuard {core:std::cell::UnsafeCell<&'static mut ImportCore>,busy:AtomicBool,
+pub(crate) struct OriginGuard {core:Option<std::cell::UnsafeCell<&'static mut ImportCore>>,busy:AtomicBool,
     startup:StartupCarrier,
-    native_generation:std::sync::atomic::AtomicU64,unknown:AtomicBool}
+    native_generation:std::sync::atomic::AtomicU64,unknown:AtomicBool,
+    // Only the consume-only parent-session inlet creates a derived attempt.
+    // P/C handles and prebirth pins stay charged to the common original parent
+    // until the session's final close. Every attempt has a fresh one-shot guard.
+    shared_parent:Option<Arc<OriginGuard>>,
+    session_reservation:Option<session_admission::Reservation>,
+    // The boxed address/thread identity belongs to this attempt. Access is
+    // serialized by this guard's original atomic borrow, never a copied flag.
+    session_caller:Option<std::cell::UnsafeCell<Box<crate::CallerPrerequisiteAttempt>>>,
+    session_preflight:AtomicBool,session_closed:AtomicBool}
+struct OriginalAttemptRetired {original:Arc<OriginGuard>}
 unsafe impl Send for OriginGuard {}
 unsafe impl Sync for OriginGuard {}
 impl OriginGuard {
+    fn retain_unknown(&self) {
+        self.unknown.store(true,Ordering::Release);
+        if let Some(reservation)=&self.session_reservation {
+            let _=reservation.ledger.retain_unknown(reservation);
+        }
+    }
     pub(crate) fn claim_native_attempt(&self,generation:u64)->io::Result<()> {
-        if self.unknown.load(Ordering::Acquire)||generation==0{return Err(bad());}
+        if self.unknown.load(Ordering::Acquire)||self.session_closed.load(Ordering::Acquire)||generation==0{return Err(bad());}
+        if self.shared_parent.is_some()&&!self.session_preflight.load(Ordering::Acquire){return Err(bad());}
         if self.native_generation.compare_exchange(0,generation,Ordering::AcqRel,Ordering::Acquire).is_err(){
-            self.unknown.store(true,Ordering::Release);return Err(bad());}
+            self.retain_unknown();return Err(bad());}
         Ok(())
     }
     fn with<T>(&self,f:impl FnOnce(&mut ImportCore)->io::Result<T>)->io::Result<T> {
-        if self.unknown.load(Ordering::Acquire){self.startup.unavailable();return Err(bad());}
+        if self.unknown.load(Ordering::Acquire)||self.session_closed.load(Ordering::Acquire){self.startup.unavailable();return Err(bad());}
         if self.busy.compare_exchange(false,true,Ordering::AcqRel,Ordering::Acquire).is_err(){
-            self.unknown.store(true,Ordering::Release);
+            self.retain_unknown();
             let error=io::Error::new(io::ErrorKind::WouldBlock,"A1 original origin borrowed");
             self.startup.unavailable();return Err(error);}
         struct Borrow<'a>(&'a AtomicBool);impl Drop for Borrow<'_>{fn drop(&mut self){self.0.store(false,Ordering::Release);}}
-        let _borrow=Borrow(&self.busy);let core=unsafe{&mut **self.core.get()};
+        let _borrow=Borrow(&self.busy);
+        if let Some(parent)=&self.shared_parent {
+            // Parent's original atomic borrow still serializes access to the
+            // same ImportCore. There is no copied mutable core or second lock.
+            return match parent.with(f) {
+                Ok(value) if !self.unknown.load(Ordering::Acquire)=>Ok(value),
+                _=>{self.retain_unknown();self.startup.unavailable();Err(bad())},
+            };
+        }
+        let original=self.core.as_ref().ok_or_else(bad)?;
+        let core=unsafe{&mut **original.get()};
         if core.first.is_some(){self.startup.unavailable();return Err(io::Error::other("A1 original origin first failure retained"));}
         match std::panic::catch_unwind(std::panic::AssertUnwindSafe(||f(core))) {
             Ok(Ok(value))=>if self.unknown.load(Ordering::Acquire){self.startup.unavailable();Err(bad())}else{Ok(value)},
             Ok(Err(error))=>{self.startup.sdk_io_current(&error);
-                if core.first.is_none(){core.first=Some(error);}self.unknown.store(true,Ordering::Release);
+                if core.first.is_none(){core.first=Some(error);}self.retain_unknown();
                 Err(io::Error::other("A1 original origin failed; retained"))},
             Err(_)=>{self.startup.sdk_unwind_current();
                 if core.first.is_none(){core.first=Some(io::Error::other("A1 original origin unwind"));}
-                self.unknown.store(true,Ordering::Release);Err(io::Error::other("A1 original origin unwind; retained"))}}
+                self.retain_unknown();Err(io::Error::other("A1 original origin unwind; retained"))}}
     }
     pub(crate) fn require_live(&self,pid:u32,creation:u64)->io::Result<()> {
         self.with(|core|{
@@ -666,19 +711,116 @@ impl OriginGuard {
                 ||unsafe{WaitForSingleObject(core.parent.raw,0)}!=258{return Err(bad());}Ok(())})
     }
     pub(crate) fn require_admitted(&self,pid:u32,creation:u64)->io::Result<()> {
+        // A common parent's earlier admission does not admit a fresh attempt.
+        // Reject before touching that parent's original native resources.
+        if self.shared_parent.is_some()&&!self.session_preflight.load(Ordering::Acquire){return Err(bad());}
         self.require_live(pid,creation)?;
         self.with(|core|if core.early_admitted&&core.early_caller.as_ref().is_some_and(|v|v.known_closed()) {Ok(())}else{Err(bad())})
     }
     // Called only after the original consumed SDK/owner/factory/setup normal
     // path, never from Drop/EOF/timers/public scalar predicates.
-    pub(crate) fn close_normal(&self)->io::Result<()> {
+    pub(crate) fn close_normal(self:&Arc<Self>)->io::Result<()> {
+        if self.shared_parent.is_some() {
+            // The caller already consumed the exact native/SDK retirement and
+            // verified its original factory/setup association. This releases
+            // only this attempt's admission, never common parent native pins.
+            if self.busy.compare_exchange(false,true,Ordering::AcqRel,Ordering::Acquire).is_err(){
+                self.retain_unknown();return Err(bad());
+            }
+            struct Borrow<'a>(&'a AtomicBool);impl Drop for Borrow<'_>{fn drop(&mut self){self.0.store(false,Ordering::Release);}}
+            let _borrow=Borrow(&self.busy);
+            if self.unknown.load(Ordering::Acquire)
+                || !self.session_preflight.load(Ordering::Acquire)
+                || self.native_generation.load(Ordering::Acquire)==0 {return Err(bad());}
+            let caller=self.session_caller.as_ref().ok_or_else(bad)?;
+            if !unsafe{&**caller.get()}.known_closed(){self.retain_unknown();return Err(bad());}
+            if self.session_closed.compare_exchange(false,true,Ordering::AcqRel,Ordering::Acquire).is_err(){return Err(bad());}
+            let reservation=self.session_reservation.as_ref().ok_or_else(bad)?;
+            if reservation.ledger.accept_original_close(reservation,OriginalAttemptRetired{original:self.clone()}).is_err() {
+                self.retain_unknown();return Err(bad());
+            }
+            return Ok(());
+        }
         self.with(|core|{
             if !core.verified||core.closed||!core.early_admitted
-                ||!core.early_caller.as_ref().is_some_and(|v|v.known_closed()){return Err(bad());}
+                ||!core.early_caller.as_ref().is_some_and(|v|v.known_closed())
+                ||!core.refusal_fixture.ready_for_origin_close(){return Err(bad());}
             core.bootstrap.close()?;core.child.close()?;
             for slot in &mut core.files{slot.close()?;}
             for slot in &mut core.auth_files{slot.close()?;}
             core.parent.close()?;core.closed=true;Ok(())})
+    }
+}
+/// One genuine imported P/C lifetime, consumed before any native attempt.
+/// Common original native handles remain charged through every derived attempt.
+/// No public constructor accepts handles, hashes, booleans or serialized data.
+pub struct AsUserParentSession {
+    original:AsUserParentOrigin,
+    ledger:Arc<session_admission::Ledger>,
+    final_close_attempted:bool,
+}
+impl AsUserParentSession {
+    pub fn begin_attempt(&mut self)->io::Result<Arc<AsUserParentAttempt>> {
+        if self.final_close_attempted {return Err(bad());}
+        self.original.guard.require_admitted(self.original.pid,self.original.creation)?;
+        let reservation=self.ledger.reserve().map_err(|_|bad())?;
+        let startup=StartupCarrier::new();startup.bind(self.original.generation);
+        let guard=Arc::new(OriginGuard{core:None,busy:AtomicBool::new(false),startup,
+            native_generation:std::sync::atomic::AtomicU64::new(0),unknown:AtomicBool::new(false),
+            shared_parent:Some(self.original.guard.clone()),session_reservation:Some(reservation),
+            session_caller:Some(std::cell::UnsafeCell::new(crate::CallerPrerequisiteAttempt::new())),
+            session_preflight:AtomicBool::new(false),session_closed:AtomicBool::new(false)});
+        let reservation=guard.session_reservation.as_ref().ok_or_else(bad)?;
+        self.ledger.install(reservation,guard.clone()).map_err(|_|bad())?;
+        let c=Arc::new(crate::MatchedRunnerArtifact::from_parent_original(
+            self.original.c.path().to_path_buf(),self.original.c.sha256(),guard.clone()));
+        let origin=Arc::new(AsUserParentOrigin{guard,c,pid:self.original.pid,
+            creation:self.original.creation,generation:self.original.generation});
+        Ok(Arc::new(AsUserParentAttempt{origin}))
+    }
+    /// Downward-only failure retention for this live original attempt. It can
+    /// never release quota, reconstruct a completion or touch an OS resource.
+    pub fn retain_unknown(&self,attempt:&Arc<AsUserParentAttempt>)->io::Result<()> {
+        let original=&attempt.origin;
+        let reservation=original.guard.session_reservation.as_ref().ok_or_else(bad)?;
+        if !Arc::ptr_eq(&self.ledger,&reservation.ledger){return Err(bad());}
+        self.ledger.retain_unknown(reservation).map_err(|_|bad())?;
+        original.guard.unknown.store(true,Ordering::Release);Ok(())
+    }
+    /// Every issued attempt must have consumed its actual original retirement.
+    /// Reserve once before any OS close. Failure retains the same parent and
+    /// prevents another close attempt; no missing Arc or empty public table is
+    /// accepted as a substitute for the ledger's sealed original capabilities.
+    pub fn finish(&mut self)->io::Result<()> {
+        if self.final_close_attempted {return Err(bad());}
+        self.ledger.reserve_final_close().map_err(|_|bad())?;
+        self.final_close_attempted=true;
+        self.original.guard.close_normal()
+    }
+}
+/// A fresh bounded attempt borrowing the original parent session's native
+/// handles. It deliberately cannot be passed to the legacy imported-origin
+/// constructor or reported as closing those common native resources.
+pub struct AsUserParentAttempt {pub(crate) origin:Arc<AsUserParentOrigin>}
+impl AsUserParentAttempt {
+    pub fn shares_original_parent(&self,other:&Self)->bool {
+        match (&self.origin.guard.shared_parent,&other.origin.guard.shared_parent) {
+            (Some(original),Some(candidate))=>Arc::ptr_eq(original,candidate),
+            _=>false,
+        }
+    }
+    pub fn validate_before_setup(&self)->io::Result<()> {self.origin.validate_before_setup()}
+    pub fn validate_independent_role_pins(&self,s:&crate::MatchedRunnerArtifact,r:&crate::MatchedRunnerArtifact)->io::Result<()> {
+        self.origin.validate_independent_role_pins(s,r)
+    }
+    pub fn caller_artifact(&self)->io::Result<Arc<crate::MatchedRunnerArtifact>> {self.origin.caller_artifact()}
+    pub fn startup_observation(&self)->StartupObservation {self.origin.startup_observation()}
+    pub fn retain_after_failure(&self)->! {park()}
+    pub fn retire_after_finished_lifecycle(&self,completion:crate::AsUserOriginRetirement)->io::Result<()> {
+        self.origin.retire_exact_lifecycle(completion)
+    }
+    pub fn retire_after_finished_refusal(&self,completion:crate::AsUserOriginRefusalRetirement)->io::Result<()> {
+        self.origin.retire_exact_refusal(completion)
     }
 }
 /// Consume-only original same-attempt inlet. There is no constructor from a
@@ -688,6 +830,27 @@ pub struct AsUserParentOrigin {
     pub(crate) pid:u32,pub(crate) creation:u64,pub(crate) generation:u64,
 }
 impl AsUserParentOrigin {
+    pub(crate) fn is_session_attempt(&self)->bool {self.guard.shared_parent.is_some()}
+    /// Consume the genuine inlet, keeping it returnable on admission failure.
+    /// Existing one-attempt callers retain their original behavior unchanged.
+    pub fn into_parent_session(self)->std::result::Result<AsUserParentSession,(Self,io::Error)> {
+        if self.guard.shared_parent.is_some() || self.guard.native_generation.load(Ordering::Acquire)!=0 {
+            return Err((self,bad()));
+        }
+        if let Err(error)=self.guard.require_admitted(self.pid,self.creation){return Err((self,error));}
+        Ok(AsUserParentSession{original:self,ledger:session_admission::Ledger::new(),final_close_attempted:false})
+    }
+    /// Explicit qualification only, after this genuine P->C inlet was admitted.
+    /// It reduces only C's own original token and never edits account rights.
+    #[doc(hidden)]
+    pub fn qualify_missing_assign_once(&self)->io::Result<CallerRefusalQualification> {
+        self.guard.require_admitted(self.pid,self.creation)?;
+        if self.guard.native_generation.load(Ordering::Acquire)!=0 {return Err(bad());}
+        self.guard.with(|core|{
+            let (_,auth,_,token)=core.caller_identity.as_ref().ok_or_else(bad)?;
+            core.refusal_fixture.remove_assign_once(*token,*auth)
+        })
+    }
     /// Sealed same-generation DATA only. No origin/core borrow, native query,
     /// control callback or ownership extension occurs when reading history.
     pub fn startup_observation(&self)->StartupObservation {
@@ -707,6 +870,28 @@ impl AsUserParentOrigin {
         step.returned();Ok(())
     }
     pub fn validate_before_setup(&self)->io::Result<()> {
+        if let Some(parent)=&self.guard.shared_parent {
+            // The common inlet is necessary but cannot replace this attempt's
+            // fresh original caller observation before any setup side effects.
+            if self.guard.unknown.load(Ordering::Acquire)||self.guard.session_closed.load(Ordering::Acquire){return Err(bad());}
+            if self.guard.session_preflight.load(Ordering::Acquire){self.guard.retain_unknown();return Err(bad());}
+            parent.require_admitted(self.pid,self.creation)?;
+            let observation=self.startup_observation();
+            return self.guard.with(|core|{
+                let install=observation.sdk_enter(SdkStage::EarlyInstall);
+                let cell=self.guard.session_caller.as_ref().ok_or_else(bad)?;
+                let original=unsafe{&mut **cell.get()};install.returned();
+                let reserve=observation.sdk_enter(SdkStage::EarlyReserve);
+                if !original.reserve(){return Err(bad());}reserve.returned();
+                let observe=observation.sdk_enter(SdkStage::EarlyObserve);
+                original.observe_once();observe.returned_void();
+                let require=observation.sdk_enter(SdkStage::EarlyRequire);
+                let (sid,auth,session,token)=core.caller_identity.as_ref().ok_or_else(bad)?;
+                original.require_asuser_preflight(self.pid,self.creation,sid,*auth,*session,*token)?;require.returned();
+                let admitted=observation.sdk_enter(SdkStage::EarlyAdmitted);
+                self.guard.session_preflight.store(true,Ordering::Release);admitted.returned();Ok(())
+            });
+        }
         let observation=self.startup_observation();
         let live=observation.sdk_enter(SdkStage::OriginLive);
         self.guard.require_live(self.pid,self.creation)?;live.returned();
@@ -738,8 +923,22 @@ impl AsUserParentOrigin {
     // This crate's Q consumer calls only after genuine normal lifecycle
     // completion; no Drop or arbitrary public boolean can close the origin.
     pub fn close_after_finished_lifecycle(&self,completion:crate::AsUserOriginRetirement)->io::Result<()> {
+        if self.is_session_attempt(){return Err(bad());}
+        self.retire_exact_lifecycle(completion)
+    }
+    fn retire_exact_lifecycle(&self,completion:crate::AsUserOriginRetirement)->io::Result<()> {
         if !Arc::ptr_eq(&completion.origin,&self.guard)||completion.factory.upgrade().is_some()
             ||completion.startup==0||self.guard.native_generation.load(Ordering::Acquire)!=completion.startup{return Err(bad());}
+        self.guard.close_normal()
+    }
+    pub fn close_after_finished_refusal(&self,completion:crate::AsUserOriginRefusalRetirement)->io::Result<()> {
+        if self.is_session_attempt(){return Err(bad());}
+        self.retire_exact_refusal(completion)
+    }
+    fn retire_exact_refusal(&self,completion:crate::AsUserOriginRefusalRetirement)->io::Result<()> {
+        if !Arc::ptr_eq(&completion.origin,&self.guard) || completion.factory.upgrade().is_some()
+            || completion.setup.upgrade().is_some() || completion.startup==0
+            || self.guard.native_generation.load(Ordering::Acquire)!=completion.startup {return Err(bad());}
         self.guard.close_normal()
     }
     pub(crate) fn caller_identity(&self)->io::Result<(Vec<u8>,u64,u32,u64,crate::asuser_a1_policy::Sid)> {
@@ -773,8 +972,9 @@ impl AsUserParentOrigin {
         core.startup.bind(record.generation);
         let startup=core.startup.clone();
         let suffix=startup.observation(record.generation).sdk_enter(SdkStage::ImportSuffix);
-        let guard=Arc::new(OriginGuard{core:std::cell::UnsafeCell::new(core),busy:AtomicBool::new(false),startup,
-            native_generation:std::sync::atomic::AtomicU64::new(0),unknown:AtomicBool::new(false)});
+        let guard=Arc::new(OriginGuard{core:Some(std::cell::UnsafeCell::new(core)),busy:AtomicBool::new(false),startup,
+            native_generation:std::sync::atomic::AtomicU64::new(0),unknown:AtomicBool::new(false),
+            shared_parent:None,session_reservation:None,session_caller:None,session_preflight:AtomicBool::new(false),session_closed:AtomicBool::new(false)});
         let c=Arc::new(crate::MatchedRunnerArtifact::from_parent_original(path,sha,guard.clone()));
         let arguments=args[3..].to_vec();suffix.returned();
         Ok(Some((Self{guard,c,pid:record.child_pid,creation:record.child_time,generation:record.generation},arguments)))
@@ -839,10 +1039,24 @@ mod tests {
             if field==7{assert_eq!(parent.first.as_ref().unwrap().raw_os_error(),Some(123));}
         }
     }
-    fn guard()->Arc<OriginGuard>{
+    pub(super) fn guard()->Arc<OriginGuard>{
         let core=Box::leak(ImportCore::new());let startup=core.startup.clone();
-        Arc::new(OriginGuard{core:std::cell::UnsafeCell::new(core),startup,
-        busy:AtomicBool::new(false),native_generation:std::sync::atomic::AtomicU64::new(0),unknown:AtomicBool::new(false)})}
+        Arc::new(OriginGuard{core:Some(std::cell::UnsafeCell::new(core)),startup,
+        busy:AtomicBool::new(false),native_generation:std::sync::atomic::AtomicU64::new(0),unknown:AtomicBool::new(false),
+        shared_parent:None,session_reservation:None,session_caller:None,session_preflight:AtomicBool::new(false),session_closed:AtomicBool::new(false)})}
+    #[test] fn fresh_session_attempt_cannot_borrow_or_claim_before_its_own_preflight() {
+        let parent=guard();
+        let attempt=Arc::new(OriginGuard{core:None,startup:StartupCarrier::new(),
+            busy:AtomicBool::new(false),native_generation:std::sync::atomic::AtomicU64::new(0),
+            unknown:AtomicBool::new(false),shared_parent:Some(parent.clone()),session_reservation:None,
+            session_caller:None,
+            session_preflight:AtomicBool::new(false),session_closed:AtomicBool::new(false)});
+        assert!(attempt.require_admitted(0,0).is_err());
+        assert!(attempt.claim_native_attempt(1).is_err());
+        assert_eq!(attempt.native_generation.load(Ordering::Acquire),0);
+        assert!(!parent.unknown.load(Ordering::Acquire));
+        assert!(unsafe{&**parent.core.as_ref().unwrap().get()}.first.is_none());
+    }
     #[test] fn one_original_parent_origin_cannot_issue_two_native_generations_or_hide_busy_first_error() {
         let original=guard();assert!(original.claim_native_attempt(0).is_err());
         original.claim_native_attempt(7).unwrap();assert!(original.claim_native_attempt(7).is_err());
@@ -854,7 +1068,7 @@ mod tests {
         let original=guard();original.claim_native_attempt(7).unwrap();
         assert!(original.with::<()>(|_|Err(io::Error::from_raw_os_error(123))).is_err());
         assert!(original.with(|_|Ok(())).is_err());
-        assert_eq!(unsafe{&**original.core.get()}.first.as_ref().unwrap().raw_os_error(),Some(123));
+        assert_eq!(unsafe{&**original.core.as_ref().unwrap().get()}.first.as_ref().unwrap().raw_os_error(),Some(123));
         assert_eq!(original.native_generation.load(Ordering::Acquire),7);
     }
     #[test] fn parent_normal_proof_requires_original_both_signals_dwords_job_and_completed_delivery() {
@@ -870,7 +1084,12 @@ mod tests {
             3=>bad.thread_dword=Some(259),4=>bad.identity.pid+=1,5=>bad.identity.thread_id+=1,
             6=>bad.identity.creation_filetime+=1,7=>bad.job_active=1,8=>bad.job_terminated=Some(1),
             _=>bad.job_total=Some(0)}
-            assert!(parent_c_closed(original,bad,true).is_err());
+            let error=parent_c_closed(original,bad,true).err().unwrap();
+            let predicate=error.get_ref().unwrap().downcast_ref::<ParentExitFailure>().unwrap().predicate();
+            use ParentExitPredicate::*;
+            assert_eq!(predicate,match field {0=>ProcessSignal,1=>PrimaryThreadSignal,2=>ProcessExitNotZero,
+                3=>PrimaryThreadExitNotZero,4|5|6=>ChildIdentity,7=>JobStillActive,
+                8=>JobLimitedTermination,_=>JobTotalMissingOrZero});
         }
         for field in 0..3 {let mut absent=good;match field {
             0=>absent.thread_dword=None,1=>absent.job_terminated=None,_=>absent.job_total=None}
@@ -887,9 +1106,35 @@ mod tests {
     }
     #[test] fn public_selection_cannot_swap_roles_expand_paths_commands_or_reuse_zero_binding() {
         let args=vec![PREFIX.into(),"01".repeat(32),"02".repeat(32),"03".repeat(32),"04".repeat(32),"05".repeat(32),"ab".repeat(16)];
-        assert!(Selection::parse(&args).is_ok());let mut bad=args.clone();bad[2]=bad[1].clone();
+        assert!(!Selection::parse(&args).unwrap().refusal_session);
+        let mut session=args.clone();session[0]=SESSION_PREFIX.into();
+        assert!(Selection::parse(&session).unwrap().refusal_session);
+        session.push("18".into());assert!(Selection::parse(&session).is_err());
+        let mut bad=args.clone();bad[0]="--c28-parent-refusal-session-p2".into();
+        assert!(Selection::parse(&bad).is_err());let mut bad=args.clone();bad[2]=bad[1].clone();
         assert!(Selection::parse(&bad).is_err());let mut bad=args.clone();bad.push("--command".into());
         assert!(Selection::parse(&bad).is_err());let mut bad=args;bad[6]="..\\old".into();
         assert!(Selection::parse(&bad).is_err());
+    }
+    #[test] fn equal_public_metadata_cannot_substitute_a_different_original_parent() {
+        fn attempt(parent:Arc<OriginGuard>)->AsUserParentAttempt {
+            let guard=Arc::new(OriginGuard{core:None,startup:StartupCarrier::new(),
+                busy:AtomicBool::new(false),native_generation:std::sync::atomic::AtomicU64::new(0),
+                unknown:AtomicBool::new(false),shared_parent:Some(parent),session_reservation:None,
+                session_caller:None,session_preflight:AtomicBool::new(false),session_closed:AtomicBool::new(false)});
+            let c=Arc::new(crate::MatchedRunnerArtifact::from_parent_original(
+                PathBuf::from(r"C:\synthetic-metadata-only.exe"),[7;32],guard.clone()));
+            AsUserParentAttempt{origin:Arc::new(AsUserParentOrigin{guard,c,pid:11,creation:13,generation:17})}
+        }
+        let original=guard();let first=attempt(original.clone());let next=attempt(original);
+        let foreign=attempt(guard());
+        assert!(first.shares_original_parent(&next));
+        assert!(!first.shares_original_parent(&foreign));
+        assert!(!foreign.shares_original_parent(&next));
+        assert_eq!(first.origin.pid,foreign.origin.pid);
+        assert_eq!(first.origin.creation,foreign.origin.creation);
+        assert_eq!(first.origin.generation,foreign.origin.generation);
+        assert_eq!(first.origin.c.sha256(),foreign.origin.c.sha256());
+        assert!(first.origin.guard.claim_native_attempt(1).is_err());
     }
 }

@@ -3,10 +3,7 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 
 /// Compatibility identity, never a substitute for the retained executable pin.
-pub const CHECKED_CONTROL_SCHEMA: [u8; 32] = [
-    47, 129, 224, 48, 226, 133, 48, 72, 12, 233, 197, 28, 212, 105, 181, 9, 123, 169, 250, 219, 59,
-    123, 116, 198, 60, 193, 216, 59, 17, 20, 235, 24,
-];
+pub const CHECKED_CONTROL_SCHEMA: [u8; 32] = crate::wire_schema_pins::RUNNER_SCHEMA;
 pub const MAX_CONTROL_IDS: usize = 256;
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]

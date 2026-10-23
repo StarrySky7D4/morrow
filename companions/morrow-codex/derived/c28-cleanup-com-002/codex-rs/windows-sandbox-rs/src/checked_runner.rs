@@ -148,6 +148,23 @@ impl MatchedRunnerArtifact {
             _handles:Vec::new(),_parent:Some(self.clone()),instance:self.instance.clone(),precreation:self.precreation.clone(),asuser:Some(binding)})
     }
     pub(crate) fn asuser_binding(&self)->Option<std::sync::Arc<crate::AsUserFactoryBinding>>{self.asuser.clone()}
+    #[doc(hidden)]
+    pub fn qualify_asuser_logon_rejection_for<T:std::any::Any+Send+Sync>(&self,backend:&std::sync::Arc<T>)
+        ->std::io::Result<()> {
+        self.asuser.as_ref().ok_or_else(||std::io::Error::from(std::io::ErrorKind::PermissionDenied))?
+            .qualify_logon_rejection_for(backend)
+    }
+    #[doc(hidden)]
+    pub fn qualify_asuser_source_policy_rejection_for<T:std::any::Any+Send+Sync>(&self,backend:&std::sync::Arc<T>)
+        ->std::io::Result<()> {
+        self.asuser.as_ref().ok_or_else(||std::io::Error::from(std::io::ErrorKind::PermissionDenied))?
+            .qualify_source_policy_rejection_for(backend)
+    }
+    #[doc(hidden)]
+    pub fn take_asuser_caller_refusal_for<T:std::any::Any+Send+Sync>(&self,backend:&std::sync::Arc<T>)
+        ->std::io::Result<Option<crate::AsUserCallerRefusal>> {
+        match self.asuser.as_ref(){Some(binding)=>binding.take_caller_refusal_for(backend),None=>Ok(None)}
+    }
     /// Borrow only the home held by THIS original A1 setup/factory binding.
     /// A path is data, not admission, identity, completion or cleanup authority.
     /// No lookup, reacquisition, environment read or new owner is performed.

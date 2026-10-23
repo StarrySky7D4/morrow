@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:file_selector/file_selector.dart';
 
 import '../attachments/attachment.dart';
 import '../main.dart' show Idea;
@@ -11,6 +12,7 @@ import 'editor_draft_session.dart';
 import 'editor_draft_workspace.dart';
 import 'editor_session.dart';
 import 'editor_draft_codec.dart';
+import 'editor_draft_submission.dart';
 import 'versioned_content.dart';
 
 part 'editor_draft_commit.dart';
@@ -30,6 +32,11 @@ abstract interface class WorkbenchEditorDraftRuntime {
     EditorDraftOwner owner, {
     required String path,
     required String name,
+    required String kind,
+  });
+  Future<IdeaAttachment> importEditorDraftSource(
+    EditorDraftOwner owner, {
+    required XFile source,
     required String kind,
   });
   Future<void> finishEditorDraftClose(EditorDraftClosePreparation preparation);
@@ -111,12 +118,21 @@ final class EditorDraftOwner {
   Future<void>? _retirementFinish;
 
   EditorDraftRetirementReservation reserveRetirement(
-    EditorDraftRecord original, String operation,
+    EditorDraftRecord original,
+    String operation,
   ) {
-    if (commitFrozen || _retired || captureClosed || _close != null ||
-        importing || hasUnresolvedImports || !captureIdentity.complete ||
-        _pasteIntent != null || !isCurrent() || workspace.preparingClose ||
-        workspace.disposed || workspace.hasView(session) ||
+    if (commitFrozen ||
+        _retired ||
+        captureClosed ||
+        _close != null ||
+        importing ||
+        hasUnresolvedImports ||
+        !captureIdentity.complete ||
+        _pasteIntent != null ||
+        !isCurrent() ||
+        workspace.preparingClose ||
+        workspace.disposed ||
+        workspace.hasView(session) ||
         _view?.attached == true ||
         !identical(workspace.find(session.cardId, session.draftId), session)) {
       throw StateError('Original editor resources cannot begin retirement');
@@ -125,7 +141,8 @@ final class EditorDraftOwner {
   }
 
   Future<void> finishRetirement(
-    EditorDraftRetirementReservation reservation, EditorDraftRecord retired,
+    EditorDraftRetirementReservation reservation,
+    EditorDraftRecord retired,
   ) {
     if (!identical(_retirement, reservation)) {
       throw StateError('Retirement belongs to another original editor');
@@ -144,7 +161,8 @@ final class EditorDraftOwner {
       _commit ?? (_incoming?.finished == false ? _incoming : null);
   bool get commitFrozen =>
       session.retirementFrozen ||
-      _commit != null || (_incoming != null && !_incoming!.finished);
+      _commit != null ||
+      (_incoming != null && !_incoming!.finished);
   bool get retired => _retired;
 
   EditorDraftOwner._handoff({
@@ -158,6 +176,61 @@ final class EditorDraftOwner {
     required this.operationFactory,
     required this.baseline,
   }) : _catalog = catalog.afterConfirmedDraft(record, views) {
+    session = EditorDraftSession.restore(
+      control: control,
+      record: record,
+      operationFactory: operationFactory,
+      isCurrent: isCurrent,
+    );
+    session.adoptConfirmedAssetPins(record);
+    _adopted = record;
+    _adoptedViews = List.unmodifiable(views);
+    session.addListener(_settlePins);
+    workspace.retain(session);
+  }
+
+  /// Attach only the freshly created resume child to its still-live original
+  /// editor. Restoring persisted scope strings never creates this capability.
+  EditorDraftOwner.resumed({
+    required this.workspace,
+    required EditorDraftControl control,
+    required this.editor,
+    required EditorDraftRecord record,
+    required List<EditorDraftAssetView> views,
+    required this.isCurrent,
+    required this.operationFactory,
+    required this.baseline,
+  }) : _catalog = EditorDraftAssetCatalog.restore(
+         record,
+         views,
+         promoteConfirmedPins: true,
+       ) {
+    final identity = editor;
+    final capture = captureIdentity;
+    if (record.resumeLink == null ||
+        record.parentLink != null ||
+        record.generation != BigInt.one ||
+        record.currentGeneration != BigInt.one ||
+        !record.active ||
+        !record.currentActive ||
+        identity is! WorkbenchEditorOperationIdentity ||
+        (identity as WorkbenchEditorOperationIdentity).commitOperation !=
+            record.request.commitOperation ||
+        (identity as WorkbenchEditorOperationIdentity).sourceRevision !=
+            record.request.sourceRevision ||
+        editor.targetId != record.request.cardId ||
+        !capture.complete ||
+        capture.scope != record.request.captureScope ||
+        capture.events != 0 ||
+        (record.request.sourceKind == EditorDraftSourceKind.newCard
+            ? baseline != null
+            : baseline == null ||
+                  baseline!.id != record.request.cardId ||
+                  baseline!.contentRevision != record.request.sourceRevision)) {
+      throw StateError(
+        'Resume requires its original fresh editor and exact first receipt',
+      );
+    }
     session = EditorDraftSession.restore(
       control: control,
       record: record,

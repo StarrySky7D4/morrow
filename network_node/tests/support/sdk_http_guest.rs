@@ -255,3 +255,122 @@ async fn dropped_response_is_unknown_not_retried_and_survives_store_reopen() {
         assert_eq!(server.calls.load(Ordering::SeqCst), 1);
     }
 }
+
+
+// Prepared outside the source tree while the native candidate is frozen.
+// Actual original package -> managed owner -> TLS -> Windows DPAPI -> receipt.
+#[cfg(target_os = "windows")]
+async fn frozen_tls_dpapi_case(trusted_root: bool, matching_hostname: bool) {
+    for SdkGuest { language, wasm, package } in guests() {
+        let package = package.expect("this qualification requires the original frozen package");
+        let key = rcgen::generate_simple_self_signed(vec!["localhost".into()]).unwrap();
+        let wrong = rcgen::generate_simple_self_signed(vec!["localhost".into()]).unwrap();
+        let calls = Arc::new(AtomicUsize::new(0));
+        let counter = calls.clone();
+        let handler: Handler = Arc::new(move |request, _| {
+            counter.fetch_add(1, Ordering::SeqCst);
+            Box::pin(async move {
+                assert_eq!(request.body, b"\0\xffinput");
+                Ok(HttpResponse { status: 201, headers: vec![], body: request.body })
+            })
+        });
+        let identity = TlsIdentity::from_pem(
+            key.cert.pem().as_bytes(), key.key_pair.serialize_pem().as_bytes(),
+        ).unwrap();
+        let node = Node::bind_tls(
+            SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), 0), TOKEN.into(),
+            vec![Route::new("POST", "/api", handler).unwrap()], limits(), identity,
+        ).await.unwrap();
+        let hostname = if matching_hostname { "localhost" } else { "127.0.0.1" };
+        let mut config = approval(&format!("https://{hostname}:{}", node.local_addr().port()));
+        config.profile = NetworkProfile::LoopbackHttps;
+        config.root_certificate = Some(if trusted_root {
+            key.cert.der().to_vec()
+        } else { wrong.cert.der().to_vec() });
+
+        let mut setup = stored_setup(true);
+        let credential = morrow_audit::credentials::seal(
+            STORED_CREDENTIAL, 1, 1000, 61_000, "authorization", &format!("Bearer {TOKEN}"),
+        ).unwrap();
+        assert!(!credential.container().windows(TOKEN.len()).any(|p| p == TOKEN.as_bytes()));
+        setup.credential = Some(credential);
+        setup.windows_provider = true;
+        let synthetic_provider_calls = setup.provider_calls.clone();
+        // This constructor closes and reopens the original database before
+        // loading the stored endpoint, pinned TLS root and DPAPI ciphertext.
+        let mut run = Running::build_with_package(
+            config, true, false, Some(setup), None, Some(&wasm), Some(&package),
+        ).unwrap();
+        let operation = "frozen-tls-dpapi";
+        let mut input = submission(&run.endpoint, operation);
+        input.credential = credential_wire_reference();
+        let (request, mut job) = run.submit(&input);
+        let report = consume(&mut job).await;
+        assert!(!request.bytes().windows(TOKEN.len()).any(|p| p == TOKEN.as_bytes()));
+        assert_eq!(synthetic_provider_calls.load(Ordering::SeqCst), 0);
+        let host = run.finish().await;
+        let success = trusted_root && matching_hostname;
+        if success {
+            assert_eq!(report.task.execution.outcome, Ok(0), "{language}");
+            assert!(!report.unknown);
+            let response = report.http_response.as_ref().unwrap();
+            assert_eq!(response.status, Status::Completed);
+            assert_eq!(response.http_status, 201);
+            assert_eq!(response.body, input.body);
+            assert_eq!(calls.load(Ordering::SeqCst), 1);
+            assert_observed(&host, &request, operation, &report);
+        } else {
+            assert!(report.task.execution.outcome.is_err() && report.unknown, "{language}");
+            assert!(report.http_response.is_none());
+            assert_eq!(calls.load(Ordering::SeqCst), 0);
+            assert_unknown(&host, operation);
+        }
+        let stored_request = host.store_local().io_material(ID, operation, Kind::Request).unwrap().unwrap();
+        assert_eq!(stored_request.payload(), request.bytes());
+        assert!(!stored_request.payload().windows(TOKEN.len()).any(|p| p == TOKEN.as_bytes()));
+        if success {
+            let material = host.store_local().io_material(ID, operation, Kind::Response).unwrap().unwrap();
+            assert!(!material.payload().windows(TOKEN.len()).any(|p| p == TOKEN.as_bytes()));
+        } else {
+            // Failed TLS has an owned request and Unknown history, but no
+            // response material. Unavailable evidence is not an empty response.
+            assert!(matches!(host.store_local().io_material(ID, operation, Kind::Response),
+                Err(morrow_core::Error::EvidenceUnavailable)));
+        }
+        drop(host);
+        let reopened = HostRuntime::new(
+            Store::open_existing(&run._dir.path().join("db"), EventBudget::default()).unwrap(),
+        ).unwrap();
+        if success {
+            assert_observed(&reopened, &request, operation, &report);
+        } else {
+            assert_unknown(&reopened, operation);
+            assert!(matches!(reopened.store_local().io_material(ID, operation, Kind::Response),
+                Err(morrow_core::Error::EvidenceUnavailable)));
+        }
+        assert_eq!(calls.load(Ordering::SeqCst), usize::from(success));
+        node.shutdown().await.unwrap();
+        eprintln!("frozen_sdk_tls_dpapi language={language} trusted_root={trusted_root} matching_hostname={matching_hostname} exact_package=true actual_windows_dpapi=true original_worker_joined=true");
+    }
+}
+
+#[cfg(target_os = "windows")]
+#[tokio::test]
+#[ignore = "requires three independently pinned original frozen IO packages"]
+async fn frozen_packages_preserve_real_tls_dpapi_and_durable_exact_response() {
+    frozen_tls_dpapi_case(true, true).await;
+}
+
+#[cfg(target_os = "windows")]
+#[tokio::test]
+#[ignore = "requires three independently pinned original frozen IO packages"]
+async fn frozen_packages_reject_wrong_tls_root_before_application_dispatch() {
+    frozen_tls_dpapi_case(false, true).await;
+}
+
+#[cfg(target_os = "windows")]
+#[tokio::test]
+#[ignore = "requires three independently pinned original frozen IO packages"]
+async fn frozen_packages_reject_wrong_tls_hostname_before_application_dispatch() {
+    frozen_tls_dpapi_case(true, false).await;
+}

@@ -163,6 +163,31 @@ impl BorrowedNativeResources {
             }
         }
     }
+    /// This actual invocation ran its callback but rejected before dispatch.
+    /// Its spent R2 marker is preserved as-is; no exit/EOF or normal execution
+    /// observation is manufactured to retire native capacity.
+    pub(crate) fn acknowledge_native_refusal(&self,runtime:&mut HostRuntime,host:&SessionExecHost,
+        identity:&ToolIdentity,binding:&crate::ReviewedNativeCompletion)->Result<()> {
+        self.check(runtime)?;self.check_host(host)?;host.generation(runtime)?;
+        let current=host.inspect_tool_record(runtime,&identity.operation_id)?;
+        if current.identity!=*identity || !current.invocation_started || current.latest.is_some()
+            || current.accepted_report.is_some()
+            || current.phase!=morrow_agent_session_exec_v1_r2::ToolPhase::DispatchUnknown {
+            binding.fail();return Err(Error::CommitUnknown);
+        }
+        let mut pending=self.pending.lock().map_err(|_|Error::Storage)?;
+        let entry=pending.get(&identity.operation_id).ok_or(Error::NotFound)?;
+        if entry.identity!=*identity || entry.uncertain_cas || entry.invalid_facts || entry.facts.is_some()
+            || entry.slot.is_unknown() || entry.slot.stop_requested() {
+            binding.fail();return Err(Error::CommitUnknown);
+        }
+        let ack=binding.acknowledge_refusal_fact(identity,&entry.slot)?;
+        entry.slot.accept_original_refusal(ack)?;
+        let acknowledged=pending.remove(&identity.operation_id);
+        drop(pending);
+        drop(acknowledged); // original fact job, outside every metadata/Core lock
+        Ok(())
+    }
     pub(crate) fn publish(&self, identity: &ToolIdentity, facts: ExecutionFacts) {
         if let Ok(mut pending) = self.pending.lock()
             && let Some(entry) = pending.get_mut(&identity.operation_id)

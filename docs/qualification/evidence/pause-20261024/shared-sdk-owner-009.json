@@ -1,0 +1,112 @@
+{
+  "status": "PASS_SCOPED_SEVENTEEN_FROZEN_GUESTS_SHARED_PROTECTED_OWNER",
+  "source_digest": "77f509c00f7963e4c576c82c0e69c0d78b22df2d27dc210c4c6768f9befde082",
+  "source_unchanged": true,
+  "phases": [
+    {
+      "phase": "harness-check",
+      "exit_code": 0,
+      "seconds": 1.016
+    },
+    {
+      "phase": "harness-test-build",
+      "exit_code": 0,
+      "seconds": 15.843
+    },
+    {
+      "phase": "harness-methods",
+      "exit_code": 0,
+      "seconds": 0.562
+    },
+    {
+      "phase": "test-00",
+      "exit_code": 0,
+      "seconds": 0.204
+    },
+    {
+      "phase": "test-01",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "phase": "test-02",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "phase": "test-03",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "phase": "test-04",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "phase": "test-05",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "phase": "test-06",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "phase": "test-07",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "phase": "test-08",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "phase": "test-09",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "phase": "test-10",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "phase": "test-11",
+      "exit_code": 0,
+      "seconds": 0.204
+    },
+    {
+      "phase": "test-12",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "phase": "test-13",
+      "exit_code": 0,
+      "seconds": 0.406
+    },
+    {
+      "phase": "test-14",
+      "exit_code": 0,
+      "seconds": 96.859
+    }
+  ],
+  "failure": null,
+  "retained": null,
+  "actual_methods": 15,
+  "actual_frozen_guest_rounds": 17,
+  "same_original_protected_owner": true,
+  "same_original_SDK_resources": true,
+  "same_original_session_host": true,
+  "outstanding_context_checkpoint_rejected": true,
+  "common_final_close": true,
+  "actual_native_refusal_loop": false,
+  "VM_accepted": false,
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

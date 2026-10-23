@@ -56,6 +56,16 @@
       }
     }
   },
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "archived": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
   "@mainFavoriteTooltip": {
     "placeholders": {
       "title": {
@@ -1077,6 +1087,23 @@
   "mainDraftHandoffRecoverySelection": "Sélectionnez un enregistrement pour voir le brouillon complet.",
   "mainDraftHandoffRecoveryTitle": "Récupération du transfert de brouillon",
   "mainDraftHandoffRecoveryUnknown": "Le résultat de l’opération n’est pas encore confirmé. Vérifiez l’enregistrement initial ; ne répétez pas l’opération.",
+  "mainDraftHistoryArchive": "Archiver cet enregistrement",
+  "mainDraftHistoryArchived": "Archivé",
+  "mainDraftHistoryCapacity": "Enregistrements courants : {current}/256 ; archivés : {archived}/4096",
+  "mainDraftHistoryCategoryField": "Catégorie",
+  "mainDraftHistoryDescriptionField": "Description",
+  "mainDraftHistoryExport": "Exporter l’enregistrement",
+  "mainDraftHistoryFirst": "Première page",
+  "mainDraftHistoryMaintain": "Archiver les entrées associées",
+  "mainDraftHistoryMaintainHelp": "Conserver tout l’historique et libérer de la capacité pour les brouillons.",
+  "mainDraftHistoryMaintained": "Entrées associées archivées",
+  "mainDraftHistoryNext": "Page suivante",
+  "mainDraftHistoryNotice": "Seuls les brouillons retirés sont affichés. L’archivage conserve le texte et sa provenance et libère une place. Les fichiers joints libérés et les autorisations de capture ne sont pas restaurés. Les enregistrements archivés sont aussi limités à 64 Mio.",
+  "mainDraftHistoryRetired": "Retiré",
+  "mainDraftHistoryStageField": "Étape",
+  "mainDraftHistoryTitle": "Historique des brouillons",
+  "mainDraftHistoryTitleField": "Titre",
+  "mainDraftHistoryUnconfirmed": "Le résultat de l’archivage est non confirmé. Actualisez pour vérifier l’enregistrement original.",
   "mainDraftImportRecoveryCancelBody": "Après l’annulation, la demande d’abandon initiale ne sera plus exécutée. Cela ne supprime pas la pièce jointe et n’annule pas les autres modifications.",
   "mainDraftImportRecoveryCancelDecision": "Annuler la demande d’abandon",
   "mainDraftImportRecoveryCancelTitle": "Annuler cette demande d’abandon ?",
@@ -1099,6 +1126,8 @@
   "mainDraftJournalRetireUnknown": "Le retrait n’est pas confirmé. Vérifiez l’opération initiale sans la soumettre à nouveau.",
   "mainDraftJournalReview": "Cette copie de récupération est en lecture seule. Le texte brut, les pièces jointes et les captures sont conservés ; la consulter ne reprend pas un enregistrement précédent.",
   "mainDraftJournalTitle": "Brouillons enregistrés",
+  "mainDraftWriteInspect": "Vérifier le brouillon",
+  "mainDraftWriteRetry": "Réessayer de sauvegarder le brouillon",
   "mainEdit": "Modifier",
   "mainEditIdeaTitle": "Précisez votre idée",
   "mainEditorClosedUnknown": "L’éditeur est fermé, mais l’enregistrement n’est pas confirmé. Rouvrez l’espace de travail pour vérifier avant de créer une copie.",

@@ -265,6 +265,94 @@ fn link(parent: &WriteRequest, child: &WriteRequest, digest: &[u8; 32]) -> Paren
 }
 
 #[test]
+fn actual_256_cancelled_proposals_require_archive_and_keep_original_operation_fences() {
+    use morrow_workbench_host::editor_draft::HandoffProposalStatus;
+    let dir = tempfile::tempdir().unwrap(); let path = dir.path().join("workbench.db");
+    let mut host = seed(&path);
+    let (parent, asset) = parent_with_asset(&mut host);
+    let other_asset = host.import_editor_draft_asset(CARD, "other-parent", 0, "unfinished-only.bin", "file", &mut &FILE_BYTES[..], FILE_BYTES.len() as u64).unwrap();
+    let mut other = parent.clone(); other.draft_id = "other-parent".into(); other.operation_id = "other-parent-save".into();
+    other.assets[0].asset_id = other_asset.id.clone(); host.save_editor_draft(&other).unwrap();
+    let proof = commit_real_s1(&mut host);
+    for index in 0..256 {
+        let mut child = child_from(&parent, &asset);
+        child.draft_id = format!("cancelled-child-{index}"); child.operation_id = format!("cancelled-child-write-{index}");
+        let binding = link(&parent, &child, &proof);
+        assert_eq!(host.prepare_editor_draft_handoff_proposal(&child, &binding, &format!("cancelled-retire-{index}")).unwrap().status, HandoffProposalStatus::Pending);
+        assert_eq!(host.cancel_editor_draft_handoff_proposal(CARD, DRAFT, &child.operation_id).unwrap().status, HandoffProposalStatus::Cancelled);
+    }
+    let mut fresh = child_from(&other, &other_asset.id); fresh.draft_id = "fresh-other-child".into(); fresh.operation_id = "fresh-other-child-write".into();
+    let binding = link(&other, &fresh, &proof);
+    assert!(host.prepare_editor_draft_handoff_proposal(&fresh, &binding, "fresh-other-retire").unwrap_err().to_string().contains("capacity"));
+    host.discard_editor_draft(CARD, DRAFT, 1, "cancelled-parent-discard").unwrap();
+    let digest = Sha256::digest(parent.encode_to_vec());
+    host.archive_editor_draft(CARD, DRAFT, 2, &digest, "cancelled-parent-archive").unwrap();
+    drop(host);
+    let mut host = Workbench::open(&path, Some(package())).unwrap();
+    assert_eq!(host.prepare_editor_draft_handoff_proposal(&fresh, &binding, "fresh-other-retire").unwrap().status, HandoffProposalStatus::Pending);
+    for index in 0..256 {
+        let old = host.inspect_editor_draft_handoff_proposal(CARD, DRAFT, &format!("cancelled-child-write-{index}")).unwrap().unwrap();
+        assert_eq!(old.status, HandoffProposalStatus::Cancelled);
+        assert!(host.handoff_editor_draft(&old.request, &old.parent_link).is_err());
+    }
+    assert!(host.inspect_editor_draft_archive(CARD, DRAFT).unwrap().is_some());
+    assert_eq!(business_revision(&host), 3);
+}
+
+#[test]
+fn completed_original_proposal_allows_archive_without_releasing_lineage_fences() {
+    use morrow_workbench_host::editor_draft::HandoffProposalStatus;
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("workbench.db");
+    let mut host = seed(&path);
+    let (parent, asset) = parent_with_asset(&mut host);
+    let evidence = commit_real_s1(&mut host);
+    let child = child_from(&parent, &asset);
+    let binding = link(&parent, &child, &evidence);
+    let digest = Sha256::digest(parent.encode_to_vec());
+    let prepared = host
+        .prepare_editor_draft_handoff_proposal(&child, &binding, "retire-archive-parent")
+        .unwrap();
+    assert_eq!(prepared.status, HandoffProposalStatus::Pending);
+    assert!(host.archive_editor_draft(CARD, DRAFT, 1, &digest, "archive-pending").is_err());
+    let completed = host.complete_editor_draft_handoff_proposal(CARD, DRAFT, &child.operation_id).unwrap();
+    assert_eq!(completed.status, HandoffProposalStatus::ChildCommitted);
+    assert!(host.archive_editor_draft(CARD, DRAFT, 1, &digest, "archive-child-only").is_err());
+    let retired = host.retire_editor_draft_handoff_proposal(CARD, DRAFT, &child.operation_id).unwrap();
+    assert_eq!(retired.status, HandoffProposalStatus::ParentRetired);
+    let parent_before = host.read_editor_draft(CARD, DRAFT).unwrap().unwrap().slot;
+    let child_before = host.read_editor_draft(CARD, CHILD).unwrap().unwrap().slot;
+    let archived = host.archive_editor_draft(CARD, DRAFT, 2, &digest, "archive-completed-parent").unwrap();
+    assert!(!archived.repeated);
+    drop(host);
+
+    let mut host = Workbench::open(&path, Some(package())).unwrap();
+    let receipt = host.inspect_editor_draft_archive(CARD, DRAFT).unwrap().unwrap();
+    assert_eq!(receipt.operation, archived.operation);
+    assert_eq!(receipt.slot_sha256, Sha256::digest(parent_before.encode_to_vec()).to_vec());
+    assert_eq!(host.read_editor_draft(CARD, DRAFT).unwrap().unwrap().slot, parent_before);
+    assert_eq!(host.read_editor_draft(CARD, CHILD).unwrap().unwrap().slot, child_before);
+    let retained = host.inspect_editor_draft_handoff_proposal(CARD, DRAFT, &child.operation_id).unwrap().unwrap();
+    assert_eq!(retained.status, HandoffProposalStatus::ParentRetired);
+    assert_eq!(retained.request, retired.request);
+    assert_eq!(retained.parent_link, retired.parent_link);
+    let mut late = parent.clone();
+    late.expected_generation = 2;
+    late.operation_id = "late-parent-after-proposal-archive".into();
+    assert!(host.save_editor_draft(&late).is_err());
+    let mut competing = child.clone();
+    competing.draft_id = "competing-child-after-archive".into();
+    competing.operation_id = "competing-child-write-after-archive".into();
+    let mut competing_link = binding.clone();
+    competing_link.child_operation = competing.operation_id.clone();
+    assert!(host.prepare_editor_draft_handoff_proposal(&competing, &competing_link, "competing-retirement").is_err());
+    assert_eq!(host.export_editor_draft_asset(CARD, CHILD, 1, &asset).unwrap(), FILE_BYTES);
+    let page = host.list_editor_draft_history("", 32).unwrap();
+    assert_eq!((page.unarchived, page.archived), (1, 1));
+    assert_eq!(business_revision(&host), 3);
+}
+
+#[test]
 fn rich_capture_lineage_is_copied_before_parent_retirement_and_survives_child_updates() {
     use morrow_workbench_host::capture_provenance::{PasteEvent, PastePart};
     use morrow_workbench_host::editor_draft::model::proto::CaptureArchive;
@@ -793,6 +881,26 @@ fn child_discard_requires_retired_parent_and_cannot_authorize_fresh_retirement()
     let mut changed_link = binding.clone();
     changed_link.committed_sha256[0] ^= 1;
     assert!(host.handoff_editor_draft(&child, &changed_link).is_err());
+    // Explicit archival must not hide the retired child from uniqueness checks
+    // or mutate the exact parent retirement generation used by its lineage.
+    for (draft, operation) in [(DRAFT, "archive-linked-parent"), (CHILD, "archive-linked-child")] {
+        let original = host.read_editor_draft(CARD, draft).unwrap().unwrap();
+        let digest = Sha256::digest(original.slot.request.as_ref().unwrap().encode_to_vec());
+        host.archive_editor_draft(CARD, draft, original.slot.generation, digest.as_slice(), operation).unwrap();
+    }
+    drop(host);
+    let mut host = Workbench::open(&path, Some(package())).unwrap();
+    let mut fork = child.clone();
+    fork.draft_id = "second-child-after-archive".into();
+    fork.operation_id = "second-child-write-after-archive".into();
+    let mut fork_link = binding.clone();
+    fork_link.child_operation = fork.operation_id.clone();
+    assert!(host.handoff_editor_draft(&fork, &fork_link).is_err());
+    let mut late_parent = parent.clone();
+    late_parent.expected_generation = 2;
+    late_parent.operation_id = "late-parent-save-after-archive".into();
+    assert!(host.save_editor_draft(&late_parent).is_err());
+    assert_eq!(host.list_editor_draft_history("", 32).unwrap().archived, 2);
     let lineage = host.list_editor_draft_lineages().unwrap();
     assert_eq!(lineage.len(), 1);
     assert!(!lineage[0].parent_active);

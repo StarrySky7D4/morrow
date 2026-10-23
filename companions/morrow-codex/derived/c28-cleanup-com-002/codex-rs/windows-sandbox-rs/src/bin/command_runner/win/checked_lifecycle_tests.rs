@@ -782,6 +782,30 @@ fn post_exit_input_eof_closes_stdin_once_and_never_calls_terminate_or_uses_close
 }
 
 #[test]
+fn checked_input_capnp_reader_rejects_json_and_partial_boundaries_without_native_resources() {
+    for version in [6, 7, 8] {
+        let frame = FramedMessage {version, message: Message::Stdin {
+            payload: StdinPayload {data_b64: encode_bytes(&[0, 255, 128, 0])},
+        }};
+        let mut bytes = Vec::new(); write_frame(&mut bytes, &frame).unwrap();
+        let mut cursor = Cursor::new(&bytes);
+        assert_eq!(read_input_frame_checked(&mut cursor).unwrap(), Some(frame));
+        assert!(read_input_frame_checked(&mut cursor).unwrap().is_none());
+        for end in 1..bytes.len() {
+            assert!(read_input_frame_checked(&mut Cursor::new(&bytes[..end])).is_err());
+        }
+    }
+    let marker = b"{\"version\":7,\"SECRET_INPUT_MARKER\":true}";
+    let mut old = (marker.len() as u32).to_le_bytes().to_vec(); old.extend_from_slice(marker);
+    let error = read_input_frame_checked(&mut Cursor::new(old)).unwrap_err();
+    assert!(matches!(error, InputFrameReadError::MalformedCapnp));
+    let sticky = error.into_sticky_error();
+    assert_eq!(sticky.kind, StickyUnknownKind::InputMalformedFrame);
+    assert!(!sticky.detail.contains("SECRET_INPUT_MARKER"));
+    assert!(matches!(read_input_frame_checked(&mut Cursor::new([0; 4])), Err(InputFrameReadError::MalformedCapnp)));
+}
+
+#[test]
 fn input_partial_frame_protocol_violation_and_premature_eof_latch_sticky_unknown() {
     // 1. Clean 0-byte boundary EOF returns Ok(None).
     let mut empty = Cursor::new(Vec::<u8>::new());
@@ -2921,8 +2945,15 @@ fn v8_exact_startup_site_survives_authenticated_original_pipe_without_releasing_
     reset_attempt_slot_for_test();
     let mut fixture = NativeStartupPipeFixture::new(418);
     let first = fixture.fail_original_reservation();
-    let site = codex_windows_sandbox::RunnerStartupSite::OpenOriginalToken;
-    super::send_native_retained_startup_error(&fixture.output, Some(&fixture.guest), Some(5), site,
+    let original = anyhow::Error::from(io::Error::from_raw_os_error(5))
+        .context("private launch arguments remain with the original owner")
+        .context(codex_windows_sandbox::RunnerStartupSite::CreateProcessAsUser);
+    let retained = codex_windows_sandbox::RunnerStartupSite::retained_io_error(&original);
+    let admitted = anyhow::Error::from(retained)
+        .context(codex_windows_sandbox::RunnerStartupSite::AdmitChildContext);
+    let site = codex_windows_sandbox::RunnerStartupSite::from_error(&admitted);
+    assert_eq!(site, codex_windows_sandbox::RunnerStartupSite::CreateProcessAsUser);
+    super::send_native_retained_startup_error(&fixture.output, Some(&fixture.guest), super::windows_error_code(&admitted), site,
         Instant::now() + Duration::from_secs(3)).unwrap();
     let Some(Some(frame)) = fixture.host.read_message(fixture.host_output.as_mut().unwrap()).unwrap()
         else { panic!("original authenticated error packet") };
@@ -2930,6 +2961,7 @@ fn v8_exact_startup_site_survives_authenticated_original_pipe_without_releasing_
     assert_eq!(payload.stage, codex_windows_sandbox::ErrorStage::SpawnChild);
     assert_eq!(payload.windows_error_code, Some(5));
     assert_eq!(payload.message, site.wire_message());
+    assert!(!payload.message.contains("private"));
     assert_eq!(codex_windows_sandbox::RunnerStartupSite::from_wire_message(&payload.message), site);
     assert_eq!(reserve_attempt_context_slot().unwrap_err().to_string(), first);
     assert!(super::send_native_retained_startup_error(&fixture.output, Some(&fixture.guest), Some(2),

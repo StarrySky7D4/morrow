@@ -131,6 +131,7 @@ impl WorkbenchState {
     fn all_decisions(&self) -> Result<Vec<(String, proto::Slot)>> {
         let mut after = PREFIX.to_owned();
         let mut result = Vec::new();
+        let mut observed_bytes = 0u64;
         loop {
             let ids = self.host.store_local().card_ids_local(&after, 32)?;
             if ids.is_empty() {
@@ -146,8 +147,12 @@ impl WorkbenchState {
                     .store_local()
                     .card(&id)?
                     .ok_or("decision journal missing")?;
+                observed_bytes = observed_bytes.checked_add(card.encode().len() as u64).ok_or("decision scan bytes overflow")?;
+                if observed_bytes > crate::editor_draft::archive_auxiliary::MAX_AUXILIARY_SCAN_BYTES {
+                    return Err("decision scan byte limit".into());
+                }
                 result.push((id.clone(), decode_card(&card)?));
-                if result.len() > MAX_IDENTITIES {
+                if result.len() > MAX_IDENTITIES + crate::editor_draft::archive_auxiliary::MAX_ARCHIVED_AUXILIARY {
                     return Err("import decision identity capacity changed".into());
                 }
                 after = id;
@@ -157,6 +162,18 @@ impl WorkbenchState {
             }
         }
         Ok(result)
+    }
+    pub(crate) fn draft_archive_decision_records(&self) -> Result<Vec<crate::editor_draft::archive_auxiliary::Record>> {
+        use crate::editor_draft::archive_auxiliary::{Kind, Record};
+        self.all_decisions()?.into_iter().map(|(id, raw)| {
+            let slot = self.checked_decision(&raw.operation_id)?.ok_or("archive decision missing")?;
+            let source = self.host.store_local().card(&id)?.ok_or("archive decision card missing")?;
+            if slot != raw || decode_card(&source)? != slot { return Err("archive decision changed".into()); }
+            let status = self.decision_record(&slot)?.status;
+            let request = slot.request.as_ref().ok_or("archive decision request missing")?;
+            Ok(Record::checked(Kind::Decision, &request.card_id, &request.draft_id, &source,
+                matches!(status, DecisionStatus::Committed | DecisionStatus::Cancelled)))
+        }).collect()
     }
     fn decision_history(&self, decision_key: &str, operation: &str) -> Result<Option<proto::Slot>> {
         let Some((commit, receipt)) = self
@@ -414,6 +431,9 @@ impl WorkbenchState {
         {
             return Ok(record); // Exact historical retry precedes all current-state checks.
         }
+        if self.inspect_editor_draft_archive(card, draft)?.is_some() {
+            return Err("archived draft cannot acquire a new import decision".into());
+        }
         if self.unresolved_handoff_proposal_for_parent(card, draft)? {
             return Err("parent imports are frozen by a prepared handoff".into());
         }
@@ -455,7 +475,8 @@ impl WorkbenchState {
                 return Err("import no longer matches decision baseline".into());
             }
         }
-        if self.all_decisions()?.len() >= MAX_IDENTITIES {
+        let archived = self.archived_draft_auxiliary_keys(crate::editor_draft::archive_auxiliary::Kind::Decision)?;
+        if self.all_decisions()?.iter().filter(|(id, _)| !archived.contains(id)).count() >= MAX_IDENTITIES {
             if let Some(committed_revision) = committed {
                 // The only capacity exception is an already audited legacy stage
                 // commit. Revision zero explicitly means no decision journal exists.

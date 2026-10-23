@@ -13,6 +13,15 @@ const CARD: &str = "draft-card";
 const DRAFT: &str = "draft-one";
 const FILE_BYTES: &[u8] = b"draft file survives removed source\x00\xff";
 
+#[path = "editor_draft/history.rs"]
+mod history;
+
+#[path = "editor_draft/archive_capacity.rs"]
+mod archive_capacity;
+
+#[path = "editor_draft/resume.rs"]
+mod resume;
+
 fn package() -> Package {
     let module = std::fs::read(
         std::env::var("MORROW_WORKBENCH_WASM").expect("real compiled Rust guest path"),
@@ -137,6 +146,31 @@ fn request(
         }),
         assets: vec![],
     }
+}
+
+#[test]
+fn ordinary_new_card_save_cannot_admit_unproven_parent_asset() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("workbench.db");
+    let mut host = Workbench::open(&path, Some(package())).unwrap();
+    let mut forged = request("unproven-parent-save", 0, "new card");
+    forged.source_kind = 1;
+    forged.source_revision = 0;
+    forged.assets.push(morrow_workbench_host::editor_draft::model::proto::AssetSelection {
+        origin: 4,
+        asset_id: "unproven-parent-asset".into(),
+        aliases: vec!["input.dat".into()],
+    });
+    morrow_workbench_host::editor_draft::model::validate_request(&forged).unwrap();
+    let error = host.save_editor_draft(&forged).unwrap_err().to_string();
+    assert_eq!(error, "parent pins require an explicit first handoff");
+    assert!(host.read_editor_draft(CARD, DRAFT).unwrap().is_none());
+    assert!(host.read_versioned(CARD).is_err());
+    host.finish().unwrap();
+    drop(host);
+    let host = Workbench::open(&path, None).unwrap();
+    assert!(host.read_editor_draft(CARD, DRAFT).unwrap().is_none());
+    assert!(host.read_versioned(CARD).is_err());
 }
 
 #[test]

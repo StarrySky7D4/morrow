@@ -276,6 +276,20 @@ pub struct ReviewedBorrowedInvocation {
     backend: Arc<ProvisionedWindowsBackend>,
     binding: HostBinding,
 }
+enum StartTaskOutcome {
+    Started(StartedExecProcess,ProcessControlCapabilities),
+    Refused(codex_sandboxing::AsUserCallerRefusal),
+}
+struct RefusalReturnGuard {
+    slot:Arc<crate::registry::ExecutionSlot>,
+    binding:crate::ReviewedNativeCompletion,
+    returned:bool,
+}
+impl Drop for RefusalReturnGuard {
+    fn drop(&mut self) {
+        if !self.returned {self.binding.fail();self.slot.unknown();}
+    }
+}
 impl ReviewedBorrowedInvocation {
     pub fn startup_observation(&self) -> ReviewedStartObservation { self.startup_observation.clone() }
     pub fn native_completion_binding(&self)->Option<crate::ReviewedNativeCompletion>{self.native_completion.clone()}
@@ -448,6 +462,7 @@ impl BorrowedWindowsExecutionPort {
         let clock = RefCell::new(clock);
         let mut invoked = false;
         let mut started = None;
+        let mut refused = None;
         diagnostic.stage(5);
         let result = self.host.execute_claimed(
             runtime,
@@ -498,7 +513,7 @@ impl BorrowedWindowsExecutionPort {
                             task_runner_history.bind_actual(&task_runner_identity, process.process.runner_observation());
                             task_diagnostic.flag(4); task_diagnostic.stage(8); task_slot.started(process.process.clone())
                         },
-                        Err(_) => task_slot.no_handle_unknown(),
+                        Err(_) => {},
                     }
                     match actual {
                         Ok(actual) => {
@@ -514,16 +529,22 @@ impl BorrowedWindowsExecutionPort {
                             .ok()
                             .and_then(std::result::Result::ok)
                             .unwrap_or_default();
-                            Ok((actual, controls))
+                            Ok(StartTaskOutcome::Started(actual,controls))
                         }
-                        Err(error) => Err(error),
+                        Err(error) => {
+                            match task_backend.take_caller_refusal() {
+                                Ok(Some(original))=>Ok(StartTaskOutcome::Refused(original)),
+                                _=>{task_slot.no_handle_unknown();Err(error)},
+                            }
+                        },
                     }
                 });
                 match block_on(&handle, async {
                     tokio::time::timeout(Duration::from_millis(deadline_ms.min(10_000)), &mut task)
                         .await
                 }) {
-                    Ok(Ok(Ok(actual))) => started = Some(actual),
+                    Ok(Ok(Ok(StartTaskOutcome::Started(actual,controls)))) => started = Some((actual,controls)),
+                    Ok(Ok(Ok(StartTaskOutcome::Refused(original)))) => refused = Some(original),
                     Err(_) => {
                         diagnostic.fail(9, 11);
                         slot.unknown();
@@ -535,7 +556,7 @@ impl BorrowedWindowsExecutionPort {
                         let job = slot.job();
                         handle.spawn(async move {
                             let _job = job;
-                            if let Ok(Ok((actual, controls))) = task.await {
+                            if let Ok(Ok(StartTaskOutcome::Started(actual, controls))) = task.await {
                                 // Attach the actual event observer before trusted
                                 // cleanup; prefix gaps keep the receipt Unknown.
                                 let provider = observer(
@@ -576,6 +597,19 @@ impl BorrowedWindowsExecutionPort {
             diagnostic.fail(11, start_error_class(result.as_ref().err().copied().unwrap_or(Error::CommitUnknown)));
             self.resources.cancel_unstarted(&identity);
             return Err(result.err().unwrap_or(Error::CommitUnknown));
+        }
+        if let Some(original)=refused {
+            let Some(binding)=native_completion.as_ref() else{slot.no_handle_unknown();return Err(Error::CommitUnknown);};
+            let mut returned=RefusalReturnGuard{slot:slot.clone(),binding:binding.clone(),returned:false};
+            if result!=Err(Error::CommitUnknown) || self.stopped.load(Ordering::SeqCst) || slot.stop_requested()
+                || binding.retain_joined_caller_refusal(&identity,&slot,&self.backend,original).is_err()
+                || self.resources.acknowledge_native_refusal(runtime,&self.host,&identity,binding).is_err() {
+                binding.fail();slot.no_handle_unknown();return Err(Error::CommitUnknown);
+            }
+            // Dropping the real handoff job on return completes the SDK slot.
+            // This is a refusal, never a provider, exit code or terminal ACK.
+            returned.returned=true;
+            return Err(Error::Denied);
         }
         let Some((actual, controls)) = started else {
             diagnostic.fail(10, 12);

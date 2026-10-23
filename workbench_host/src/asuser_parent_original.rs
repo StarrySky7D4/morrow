@@ -2,7 +2,7 @@
 //! P's fixed owner installs this allocation BEFORE effects. This path never
 //! enters Tokio, ControllerLease, legacy JobChild, kill, or owning raw facades.
 use morrow_codex_session_exec_windows_v1::{ParentCClosed,ParentChildIdentity,ParentCreate,
-    ParentNativeExit,ParentOriginalProcess};
+    ParentNativeExit,ParentOriginalProcess,ParentExitPredicate,ParentExitFailure};
 use morrow_native_pipe_win::job::{Job,RetainedJobOwner,RetainedChildStdio,RetainedChildIdentity,
     RetainedKernelObservations,RetainedDisposition,RetainedPhase,OuterLifecycleEvidence,
     prepare_trusted_host_environment};
@@ -23,13 +23,19 @@ fn native_identity(actual:RetainedChildIdentity)->io::Result<ParentChildIdentity
     Ok(ParentChildIdentity{pid:actual.pid,thread_id:actual.primary_thread_id,creation_filetime:actual.creation_filetime})
 }
 fn observed_exit(original:ParentChildIdentity,actual:RetainedKernelObservations)->io::Result<ParentNativeExit> {
-    if actual.verified_pid!=Some(original.pid)||actual.verified_tid!=Some(original.thread_id)
-        ||actual.creation_filetime!=Some(original.creation_filetime)||!actual.job_member_confirmed
-        ||!actual.process_noninherited_confirmed||!actual.thread_noninherited_confirmed
-        ||!actual.process_signaled||!actual.thread_signaled||!actual.post_exit_job_empty_observed
-        ||actual.last_active_processes!=Some(0){return Err(bad());}
+    use ParentExitPredicate::*;
+    for (passed,predicate) in [
+        (actual.verified_pid==Some(original.pid)&&actual.verified_tid==Some(original.thread_id)
+            &&actual.creation_filetime==Some(original.creation_filetime),RetainedIdentity),
+        (actual.job_member_confirmed,RetainedJobMembership),
+        (actual.process_noninherited_confirmed&&actual.thread_noninherited_confirmed,RetainedNoninheritance),
+        (actual.process_signaled,ProcessSignal),(actual.thread_signaled,PrimaryThreadSignal),
+        (actual.last_active_processes.is_some(),JobActiveMissing),
+        (actual.last_active_processes==Some(0),JobStillActive),
+        (actual.post_exit_job_empty_observed,PostExitJobEmpty),
+    ] {if !passed{return Err(ParentExitFailure::error(predicate));}}
     Ok(ParentNativeExit{identity:original,process_signaled:actual.process_signaled,thread_signaled:actual.thread_signaled,
-        process_dword:actual.exit_code.ok_or_else(bad)?,job_active:actual.last_active_processes.ok_or_else(bad)?,
+        process_dword:actual.exit_code.ok_or_else(||ParentExitFailure::error(ParentExitPredicate::ProcessExitMissing))?,job_active:actual.last_active_processes.ok_or_else(||ParentExitFailure::error(ParentExitPredicate::JobActiveMissing))?,
         // No substitute zeros: N must query these through the SAME original
         // hThread/Job borrows before minting its consume-only ParentCClosed.
         thread_dword:None,job_terminated:None,job_total:None})
@@ -229,7 +235,12 @@ mod tests {
             6=>changed.last_active_processes=None,7=>changed.last_active_processes=Some(1),
             8=>changed.post_exit_job_empty_observed=false,9=>changed.job_member_confirmed=false,
             _=>changed.thread_noninherited_confirmed=false}
-            assert!(observed_exit(identity,changed).is_err());
+            let error=observed_exit(identity,changed).err().unwrap();
+            let predicate=error.get_ref().unwrap().downcast_ref::<ParentExitFailure>().unwrap().predicate();
+            use ParentExitPredicate::*;
+            assert_eq!(predicate,match field {0|1|2=>RetainedIdentity,3=>ProcessSignal,4=>ProcessExitMissing,
+                5=>PrimaryThreadSignal,6=>JobActiveMissing,7=>JobStillActive,8=>PostExitJobEmpty,
+                9=>RetainedJobMembership,_=>RetainedNoninheritance});
         }
         let mut real_259=actual;real_259.exit_code=Some(259);
         assert_eq!(observed_exit(identity,real_259).unwrap().process_dword,259);

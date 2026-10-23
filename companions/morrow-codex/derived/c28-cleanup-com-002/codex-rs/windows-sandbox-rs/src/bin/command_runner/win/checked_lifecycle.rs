@@ -1962,13 +1962,13 @@ impl StickyUnknownLatch {
 
 /// Strict frame reader for the runner's input pipe that distinguishes clean 0-byte
 /// frame-boundary EOF from partial headers, truncated payloads, oversized frames,
-/// cancelled IO (`ERROR_OPERATION_ABORTED`), and malformed JSON.
+/// cancelled IO (`ERROR_OPERATION_ABORTED`), and malformed Cap'n Proto.
 #[derive(Debug)]
 pub(crate) enum InputFrameReadError {
     PartialHeader { bytes_read: usize },
     PartialPayload { expected: usize, bytes_read: usize },
     FrameTooLarge { len: usize },
-    MalformedJson(String),
+    MalformedCapnp,
     OperationAborted(io::Error),
     Io(io::Error),
 }
@@ -1993,9 +1993,9 @@ impl InputFrameReadError {
                 StickyUnknownKind::InputFrameTooLarge,
                 format!("input frame exceeds maximum length: {len}"),
             ),
-            Self::MalformedJson(err) => StickyUnknownError::new(
+            Self::MalformedCapnp => StickyUnknownError::new(
                 StickyUnknownKind::InputMalformedFrame,
-                format!("input frame JSON decode failed: {err}"),
+                "input Cap'n Proto frame rejected".to_owned(),
             ),
             Self::OperationAborted(err) => StickyUnknownError::new(
                 StickyUnknownKind::InputIoError,
@@ -2075,8 +2075,8 @@ pub(crate) fn read_input_frame_checked<R: Read>(
         }
     }
 
-    let frame = serde_json::from_slice::<FramedMessage>(&payload)
-        .map_err(|err| InputFrameReadError::MalformedJson(err.to_string()))?;
+    let frame = codex_windows_sandbox::decode_frame_payload(&payload)
+        .map_err(|_| InputFrameReadError::MalformedCapnp)?;
     Ok(Some(frame))
 }
 
@@ -3148,48 +3148,50 @@ impl RetainedRunnerContext {
         let mut context = self;
         let validation_res: io::Result<()> = (|| {
             if let Some(error) = context._pipe_handles.as_ref().and_then(PipeSpawnHandles::launch_error) {
-                return Err(io::Error::other(error.to_string()));
+                return Err(codex_windows_sandbox::RunnerStartupSite::retained_io_error(error));
             }
             if let Some(code) = context._pipe_handles.as_ref().and_then(PipeSpawnHandles::primary_close_error) {
-                return Err(io::Error::from_raw_os_error(code));
+                return Err(codex_windows_sandbox::RunnerStartupSite::CloseChildPipe.io_context(io::Error::from_raw_os_error(code)));
             }
             if !stdin_open {
                 if let Some(ref mut stdin_owner) = context.stdin_owner
                     && stdin_owner.is_open()
                 {
-                    stdin_owner.close_once()?;
+                    stdin_owner.close_once().map_err(|error| codex_windows_sandbox::RunnerStartupSite::CloseUnusedChildStdin.io_context(error))?;
                 }
             }
             if !context.job_present {
-                return Err(io::Error::new(
+                return Err(codex_windows_sandbox::RunnerStartupSite::AdmitChildJob.io_context(io::Error::new(
                     io::ErrorKind::InvalidData,
                     "spawned ConPTY is missing its process job",
-                ));
+                )));
             }
             if !context.process_owner.has_open_process_handle() {
-                return Err(io::Error::new(
+                return Err(codex_windows_sandbox::RunnerStartupSite::AdmitChildProcess.io_context(io::Error::new(
                     io::ErrorKind::InvalidInput,
                     "child process handle is null or invalid",
-                ));
+                )));
             }
             if !context.thread_disposition.is_open() {
-                return Err(io::Error::new(
+                return Err(codex_windows_sandbox::RunnerStartupSite::AdmitChildThread.io_context(io::Error::new(
                     io::ErrorKind::InvalidInput,
                     "child primary thread handle is null or invalid",
-                ));
+                )));
             }
             if !context
                 .stdout_owner
                 .as_ref()
                 .is_some_and(OwnedWinHandle::is_open)
             {
-                return Err(io::Error::new(
+                return Err(codex_windows_sandbox::RunnerStartupSite::AdmitChildStdout.io_context(io::Error::new(
                     io::ErrorKind::InvalidInput,
                     "child stdout handle is null or invalid",
-                ));
+                )));
             }
-            let identity = ChildProcessIdentity::validate_from_spawn(&pi, &context.job)?;
-            context.process_owner.set_validated_identity(identity)?;
+            let identity = ChildProcessIdentity::validate_from_spawn(&pi, &context.job)
+                .map_err(|error| codex_windows_sandbox::RunnerStartupSite::ValidateChildIdentity.io_context(error))?;
+            context.process_owner.set_validated_identity(identity)
+                .map_err(|error| codex_windows_sandbox::RunnerStartupSite::BindChildIdentity.io_context(error))?;
             Ok(())
         })();
 
@@ -5438,15 +5440,16 @@ mod preparation_token_tests {
             let source = reservation.create_preparation_token(0, || unsafe {
                 codex_windows_sandbox::open_current_token_for_query_duplicate()
             }).unwrap();
-            let base = reservation.create_preparation_token(1, || unsafe {
-                codex_windows_sandbox::duplicate_token_for_restriction(source)
-            }).unwrap();
             let capability = codex_windows_sandbox::LocalSid::from_string("S-1-5-21-10-20-30-40").unwrap();
-            reservation.create_preparation_token(2, || unsafe {
-                codex_windows_sandbox::create_readonly_token_with_caps_and_user_from(
-                    base, &[capability.as_ptr()], &[],
+            let restricted = reservation.create_preparation_token(1, || unsafe {
+                codex_windows_sandbox::derive_uninitialized_restriction_with_caps_and_user_from(
+                    source, &[capability.as_ptr()], &[],
                 )
             }).unwrap();
+            let final_token = reservation.create_preparation_token(2, || unsafe {
+                codex_windows_sandbox::duplicate_token_for_restriction(restricted)
+            }).unwrap();
+            unsafe { codex_windows_sandbox::initialize_owned_restricted_token(final_token) }.unwrap();
             assert!(has_unresolved_attempt_slot_entries());
             for index in 0..3 { reservation.close_preparation_token(index).unwrap(); }
             assert!(lock_attempt_slot().preparation_tokens.iter().all(PreparationToken::settled));

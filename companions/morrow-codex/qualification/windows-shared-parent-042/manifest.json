@@ -1,0 +1,174 @@
+{
+  "schema": 1,
+  "profile": "P2_SHARED_PARENT_REFUSAL_SESSION",
+  "state": "PAUSED_CASE042_UNKNOWN_NOT_ACCEPTED",
+  "qualified_product_source": "77f509c00f7963e4c576c82c0e69c0d78b22df2d27dc210c4c6768f9befde082",
+  "case_tag": "4659faf07c9b4352adcb79db7fade6f8",
+  "artifacts": [
+    {
+      "path": "controller/ParentSession042.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\ParentSession042.cs",
+      "bytes": 4557,
+      "sha256": "bdc84306cf569ea6bd386c017ec04cfabdafe62c9657539ecc08eac624d8b2d3"
+    },
+    {
+      "path": "controller/ParentSessionPure042.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\ParentSessionPure042.cs",
+      "bytes": 7833,
+      "sha256": "b2c3138cf6ea76f13d03029e8838ee04e2639a3bc772af264153fc793df2ea9d"
+    },
+    {
+      "path": "controller/Root47-QA1855.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\Root47-QA1855.cs",
+      "bytes": 2757,
+      "sha256": "6e45c5789b29ee11d8926b3a97ed7174504b1c3db19f143a1f3f8cc85977c2f0"
+    },
+    {
+      "path": "controller/Root47Controller1725.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\Root47Controller1725.cs",
+      "bytes": 50627,
+      "sha256": "611e28b56e42a85801366339bdeea14cd2a284d448f2f737b095242062a5381a"
+    },
+    {
+      "path": "controller/Root47Controller1725.IO.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\Root47Controller1725.IO.cs",
+      "bytes": 14760,
+      "sha256": "7e67f22bbbae328726005e86488f53cfb6d191e20152e9ae43171a05a2176e1e"
+    },
+    {
+      "path": "controller/Root47Controller1725.Privileges.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\Root47Controller1725.Privileges.cs",
+      "bytes": 5905,
+      "sha256": "382bb416b90fca44c5f3e7ee161c197805d846c7ad43243f273d27224223d908"
+    },
+    {
+      "path": "controller/Root47Controller1725.Pure.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\Root47Controller1725.Pure.cs",
+      "bytes": 16037,
+      "sha256": "84004df9275499c75bf2b8a5434a0d624139d82edd97050faa5a4b36ed35aacb"
+    },
+    {
+      "path": "controller/Root47Controller1725.PureTests.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\Root47Controller1725.PureTests.cs",
+      "bytes": 13693,
+      "sha256": "e2dd5f583970a619d22a8433ff8379c077aa2e2702909d20377a20b0d05436ee"
+    },
+    {
+      "path": "controller/Root47FirstPrompt2169.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\Root47FirstPrompt2169.cs",
+      "bytes": 3147,
+      "sha256": "4b6c7f7fd51aed61896e115bd224bd515fe651f7c3f01d0ef8a4f1130ffac3cb"
+    },
+    {
+      "path": "controller/Root47FirstPrompt2169.PureEntry.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\Root47FirstPrompt2169.PureEntry.cs",
+      "bytes": 2386,
+      "sha256": "c9b15243ad91feaea1e87d18ab0f8f43d96fc7bd817c30f18772cd6db9e40d91"
+    },
+    {
+      "path": "controller/Root47FirstPrompt2169.PureTests.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\Root47FirstPrompt2169.PureTests.cs",
+      "bytes": 6173,
+      "sha256": "2b5a4005d36051c279fb9f987fb37174990cdc551b6df1d035fccd34584aed5a"
+    },
+    {
+      "path": "controller/RootP2SourcePolicy039.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\RootP2SourcePolicy039.cs",
+      "bytes": 8077,
+      "sha256": "2f08b79c0f69cd3ccb2bd50349e3f601dbb298abfd3444c511682c0fa3348d3d"
+    },
+    {
+      "path": "controller/RootPPrebirth1682.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\RootPPrebirth1682.cs",
+      "bytes": 37847,
+      "sha256": "428ecba7f5e2a7f161875485aac53fe48f3493824bef7c5eb8b9c31b91d6a49b"
+    },
+    {
+      "path": "controller/RootPPrebirth1682.Pure.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\RootPPrebirth1682.Pure.cs",
+      "bytes": 13857,
+      "sha256": "e2804b84bc7fc157326eb2f70020994ce63a95bb17515afb07d7ce32048c5b34"
+    },
+    {
+      "path": "controller/RootPPrebirth1682.PureTests.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\RootPPrebirth1682.PureTests.cs",
+      "bytes": 13754,
+      "sha256": "b9c0eb10b14525efb53e2852e1680d7f82433e1db921b3570b33cb4bb496a187"
+    },
+    {
+      "path": "controller/RootPPrebirth1701.Input.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\RootPPrebirth1701.Input.cs",
+      "bytes": 17738,
+      "sha256": "664c389a38174a4c3aac222d081ab4b6fcaf36f3025d702855d6668afca6274d"
+    },
+    {
+      "path": "controller/RootPPrebirth1701.InputPureTests.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\RootPPrebirth1701.InputPureTests.cs",
+      "bytes": 9396,
+      "sha256": "f4995733af8c9ebe5881eff616b63d2e726d30acb3a1731b250f533435a72d4d"
+    },
+    {
+      "path": "controller/RootPPrebirth1701.Protocol.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\RootPPrebirth1701.Protocol.cs",
+      "bytes": 9207,
+      "sha256": "bc2690c206bacb476cc20dc605cc81e5fa9c5097f85e9b091b2f6501b6882fa4"
+    },
+    {
+      "path": "controller/RootPPrebirth1718.Metadata.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\RootPPrebirth1718.Metadata.cs",
+      "bytes": 2798,
+      "sha256": "b6bc62d5999844b369b80554d6472b73ccd16972c71d4e95091518abaa8e4ebd"
+    },
+    {
+      "path": "controller/RootPPrebirth1718.MetadataPureTests.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\RootPPrebirth1718.MetadataPureTests.cs",
+      "bytes": 9796,
+      "sha256": "15a2216bffaba40481755a41507057601d17452f9cd0210e2376eff40aecc57b"
+    },
+    {
+      "path": "controller/RoundPrompt042.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller-source\\RoundPrompt042.cs",
+      "bytes": 3046,
+      "sha256": "4a29018f1c119effcad10db2994de4c31f771ff8068dd4206cca1fd8dac69e77"
+    },
+    {
+      "path": "controller/RootPromptAllQA2187.cs",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-4659faf07c9b4352adcb79db7fade6f8\\controller\\RootPromptAllQA2187.cs",
+      "bytes": 1400,
+      "sha256": "e71f95e7b3e5b0b1daf48a658853662ea0e02e28bd3cba9bb90d03344383ce13"
+    },
+    {
+      "path": "derivation/derive_parent_session_controller_042.py",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\derive_parent_session_controller_042.py",
+      "bytes": 10467,
+      "sha256": "aae145b4406d77b5ef602dc8159f789d2962c7c1a4c84c7d691858a1013320d1"
+    },
+    {
+      "path": "derivation/derive_parent_session_stage_042.py",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\derive_parent_session_stage_042.py",
+      "bytes": 7802,
+      "sha256": "cbd03d71f3bf41634dd515cc316767149af0cf69ea931897c5207352a9979ffe"
+    },
+    {
+      "path": "derivation/ParentSessionReports042.cs.part",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\ParentSessionReports042.cs.part",
+      "bytes": 4329,
+      "sha256": "982e8339286b0d6fafc66b727297dd0c4b10a3a68ecd9c503a668498d0a8feea"
+    },
+    {
+      "path": "derivation/qualify_parent_controller_042.py",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\qualify_parent_controller_042.py",
+      "bytes": 3260,
+      "sha256": "7221746aa87805af2249c24adc1d12ed914be621753ba11d7299434c4e13ea33"
+    },
+    {
+      "path": "derivation/qualify_shared_guest_reader_042.py",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\qualify_shared_guest_reader_042.py",
+      "bytes": 4616,
+      "sha256": "14dac080543c36e421487ebfce156daf484b521b79848b651a5ed9c421e8c8bd"
+    }
+  ],
+  "credentials_included": false,
+  "binaries_included": false,
+  "automatic_execution": false
+}

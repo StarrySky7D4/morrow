@@ -5,6 +5,8 @@ import 'dart:convert';
 import '../attachments/attachment.dart';
 import '../main.dart' show Idea;
 import 'editor_session.dart';
+import 'editor_draft.dart';
+import 'editor_draft_submission.dart';
 import 'editor_recovery.dart';
 import 'studio_backend.dart';
 import 'versioned_content.dart';
@@ -30,7 +32,8 @@ final class VersionedWorkbenchEditorAdapter
         WorkbenchEditorOperationIdentity,
         WorkbenchEditorDraftCaptureIdentity,
         EditorDraftPredecessorSource,
-        VersionedEditorDeferredAcknowledgement {
+        VersionedEditorDeferredAcknowledgement,
+        WorkbenchEditorDraftAssetBinding {
   VersionedWorkbenchEditorAdapter(
     this._session,
     this._source,
@@ -58,6 +61,20 @@ final class VersionedWorkbenchEditorAdapter
   bool get _active => !_closed && !_continued && (isCurrent?.call() ?? true);
   final Map<IdeaAttachment, Future<VersionedAsset>> _staged =
       HashMap<IdeaAttachment, Future<VersionedAsset>>.identity();
+  final _draftAssets = <String, VersionedAsset>{};
+  @override
+  Future<void> bindDraftAssets(EditorDraftRecord record, List<IdeaAttachment> selected) async {
+    if (!_active || _intent != null || _session is! WorkbenchEditorDraftAssetBinding) {
+      throw StateError('Original versioned editor cannot bind draft pins');
+    }
+    await (_session as WorkbenchEditorDraftAssetBinding).bindDraftAssets(record, selected);
+    if (!_active || _intent != null) throw StateError('Editor changed during draft binding');
+    for (final asset in selected) {
+      final id = asset.pluginId;
+      if (id == null) throw const FormatException('Bound draft asset has no identity');
+      _draftAssets[id] = VersionedAsset(id: id, name: asset.source.name, kind: asset.source.kind.name, bytes: asset.byteLength);
+    }
+  }
 
   String? _intent;
   _FrozenEdit? _frozen;
@@ -183,7 +200,7 @@ final class VersionedWorkbenchEditorAdapter
         draft.conclusion != editor.conclusion.trim()) {
       throw const FormatException('V2 editor common fields changed');
     }
-    final known = {for (final asset in _source.assets) asset.id: asset};
+    final known = {for (final asset in _source.assets) asset.id: asset, ..._draftAssets};
     final seenIds = <String>{};
     final seenLocal = HashSet<IdeaAttachment>.identity();
     for (final attachment in draft.attachments) {
@@ -308,7 +325,9 @@ final class VersionedWorkbenchEditorAdapter
           if (!selectedIds.add(id)) {
             throw const FormatException('Duplicate selected V2 attachment');
           }
-          assets.add(_source.assets.firstWhere((asset) => asset.id == id));
+          final bound = _draftAssets[id];
+          assets.add(bound ?? _source.assets.firstWhere((asset) => asset.id == id));
+          if (bound != null) aliases.add((source: attachment, asset: bound));
         } else {
           final staged = await _stageOnce(attachment);
           if (staged.id.isEmpty ||

@@ -17,6 +17,9 @@ use std::sync::Arc;
 pub struct PreparedSessionGuest {
     pub context: Option<AgentContext>,
     pub host: Arc<SessionExecHost>,
+    /// Keep the same native registry alive between this session-only context
+    /// and the later native review/context on the original protected owner.
+    pub resources: Arc<BorrowedNativeResources>,
     pub generation: u64,
 }
 
@@ -38,6 +41,7 @@ pub fn prepare_session_guest(workbench: &mut Workbench, sid: &str) -> Result<Pre
     let context = workbench
         .prepare_agent_context(|owner| {
             let host = owner.session_host()?;
+            let resources = owner.resources()?;
             let connection = owner.connect()?;
             let caps = Capabilities {
                 session_read: true,
@@ -56,15 +60,16 @@ pub fn prepare_session_guest(workbench: &mut Workbench, sid: &str) -> Result<Pre
                 expires,
             )?;
             let generation = owner.generation(&host)?;
-            captured = Some((host, generation));
+            captured = Some((host, resources, generation));
             owner.context(Default::default(), None)
         })
         .map_err(|e| anyhow!("original session guest context preparation: {e}"))?;
-    let (host, generation) =
+    let (host, resources, generation) =
         captured.ok_or_else(|| anyhow!("original session context capture absent"))?;
     Ok(PreparedSessionGuest {
         context: Some(context),
         host,
+        resources,
         generation,
     })
 }

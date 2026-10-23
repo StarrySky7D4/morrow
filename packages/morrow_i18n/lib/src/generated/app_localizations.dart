@@ -814,6 +814,108 @@ abstract class AppLocalizations {
   /// **'The operation result is not confirmed. Review the original record; do not repeat the operation.'**
   String get mainDraftHandoffRecoveryUnknown;
 
+  /// No description provided for @mainDraftHistoryArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive this record'**
+  String get mainDraftHistoryArchive;
+
+  /// No description provided for @mainDraftHistoryArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get mainDraftHistoryArchived;
+
+  /// No description provided for @mainDraftHistoryCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Current records: {current}/256; archived: {archived}/4096'**
+  String mainDraftHistoryCapacity(int archived, int current);
+
+  /// No description provided for @mainDraftHistoryCategoryField.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get mainDraftHistoryCategoryField;
+
+  /// No description provided for @mainDraftHistoryDescriptionField.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get mainDraftHistoryDescriptionField;
+
+  /// No description provided for @mainDraftHistoryExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export history record'**
+  String get mainDraftHistoryExport;
+
+  /// No description provided for @mainDraftHistoryFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'First page'**
+  String get mainDraftHistoryFirst;
+
+  /// No description provided for @mainDraftHistoryMaintain.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive related records'**
+  String get mainDraftHistoryMaintain;
+
+  /// No description provided for @mainDraftHistoryMaintainHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Preserve all history and free draft record capacity.'**
+  String get mainDraftHistoryMaintainHelp;
+
+  /// No description provided for @mainDraftHistoryMaintained.
+  ///
+  /// In en, this message translates to:
+  /// **'Related records archived'**
+  String get mainDraftHistoryMaintained;
+
+  /// No description provided for @mainDraftHistoryNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next page'**
+  String get mainDraftHistoryNext;
+
+  /// No description provided for @mainDraftHistoryNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Only retired drafts appear here. Archiving preserves text and provenance and frees a journal slot. Released attachment files and capture permissions are not restored. Archived records also have a 64 MiB limit.'**
+  String get mainDraftHistoryNotice;
+
+  /// No description provided for @mainDraftHistoryRetired.
+  ///
+  /// In en, this message translates to:
+  /// **'Retired'**
+  String get mainDraftHistoryRetired;
+
+  /// No description provided for @mainDraftHistoryStageField.
+  ///
+  /// In en, this message translates to:
+  /// **'Stage'**
+  String get mainDraftHistoryStageField;
+
+  /// No description provided for @mainDraftHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft history'**
+  String get mainDraftHistoryTitle;
+
+  /// No description provided for @mainDraftHistoryTitleField.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get mainDraftHistoryTitleField;
+
+  /// No description provided for @mainDraftHistoryUnconfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive outcome is unconfirmed. Refresh to inspect the original record.'**
+  String get mainDraftHistoryUnconfirmed;
+
   /// No description provided for @mainDraftImportRecoveryCancelBody.
   ///
   /// In en, this message translates to:
@@ -945,6 +1047,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saved drafts'**
   String get mainDraftJournalTitle;
+
+  /// No description provided for @mainDraftWriteInspect.
+  ///
+  /// In en, this message translates to:
+  /// **'Check draft save'**
+  String get mainDraftWriteInspect;
+
+  /// No description provided for @mainDraftWriteRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry draft save'**
+  String get mainDraftWriteRetry;
 
   /// No description provided for @mainEdit.
   ///

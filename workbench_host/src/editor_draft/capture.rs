@@ -79,11 +79,13 @@ impl WorkbenchState {
     fn validate_capture_lineage(&self, raw: &[u8], slot: &proto::Slot) -> Result<()> {
         let mut bytes = raw.to_vec();
         let mut current = slot.clone();
-        for _ in 0..MAX_JOURNALS {
+        for _ in 0..(MAX_JOURNALS + archive::MAX_ARCHIVED_JOURNALS) {
             let archive = validate_archive_part(&bytes, &current)?;
             let request = current.request.as_ref().ok_or("capture lineage request missing")?;
-            let parent = current.parent_link.as_ref()
-                .map(|link| self.parent_history(request, link)).transpose()?;
+            let parent = if let Some(link) = &current.resume_link {
+                Some(self.resume_parent_history(request, link)?)
+            } else { current.parent_link.as_ref()
+                .map(|link| self.parent_history(request, link)).transpose()? };
             if let Some(parent) = parent.filter(|parent| parent.capture.is_some()) {
                 if archive.parent_archive.is_empty() {
                     return Err("parent capture archive missing from child".into());

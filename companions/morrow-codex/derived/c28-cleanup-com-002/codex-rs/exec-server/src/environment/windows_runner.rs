@@ -2,11 +2,8 @@
 use super::*;
 use codex_sandboxing::MatchedRunnerArtifact;
 
-const CHECKED_V7_SCHEMA: [u8; 32] = [
-    47, 129, 224, 48, 226, 133, 48, 72, 12, 233, 197, 28, 212, 105, 181, 9, 123, 169, 250, 219, 59,
-    123, 116, 198, 60, 193, 216, 59, 17, 20, 235, 24,
-];
-const NATIVE_CLOSE_V8_SCHEMA: [u8; 32] = *b"morrow.c28.native-close.ack-v1.\x08";
+const CHECKED_V7_SCHEMA: [u8; 32] = codex_sandboxing::WINDOWS_RUNNER_SCHEMA;
+const NATIVE_CLOSE_V8_SCHEMA: [u8; 32] = codex_sandboxing::WINDOWS_NATIVE_CLOSE_SCHEMA;
 
 impl Environment {
     /// Builds one local execution environment with an independently locked runner.

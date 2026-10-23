@@ -55,6 +55,20 @@ struct ParentRetirement {
   operation @2 :Text;
   parentGeneration @3 :UInt64;
 }
+struct ResumeLink {
+  parentDraftId @0 :Text;
+  parentGeneration @1 :UInt64;
+  parentSaveOperation @2 :Text;
+  parentRequestSha256 @3 :Data;
+  parentBusinessOperation @4 :Text;
+  retirementOperation @5 :Text;
+}
+struct ResumeRequest {
+  version @0 :UInt16;
+  digest @1 :Data;
+  request @2 :WriteRequest;
+  resumeLink @3 :ResumeLink;
+}
 struct HandoffRequest {
   version @0 :UInt16;
   digest @1 :Data;
@@ -109,6 +123,7 @@ struct Record {
   retirement @13 :ParentRetirement;
   requestSha256 @14 :Data;
   discardOperation @15 :Text;
+  resumeLink @16 :ResumeLink;
 }
 struct Summary {
   cardId @0 :Text;
@@ -132,7 +147,29 @@ struct ImportedAsset {
   kind @2 :Text;
   bytes @3 :UInt64;
 }
-enum ResultKind { absent @0; record @1; list @2; imported @3; exported @4; lineages @5; handoffProposal @6; handoffProposals @7; }
+struct ArchiveReceipt {
+  cardId @0 :Text;
+  draftId @1 :Text;
+  generation @2 :UInt64;
+  requestSha256 @3 :Data;
+  slotSha256 @4 :Data;
+  operation @5 :Text;
+  repeated @6 :Bool;
+  archiveVersion @7 :UInt32;
+  archiveSha256 @8 :Data;
+  legacyAuxiliaryCount @9 :UInt32;
+}
+struct HistorySummary {
+  cardId @0 :Text;
+  draftId @1 :Text;
+  generation @2 :UInt64;
+  requestSha256 @3 :Data;
+  archiveOperation @4 :Text;
+  cursor @5 :Text;
+  title @6 :Text;
+  preview @7 :Text;
+}
+enum ResultKind { absent @0; record @1; list @2; imported @3; exported @4; lineages @5; handoffProposal @6; handoffProposals @7; archive @8; history @9; archiveMaintenance @10; }
 struct Envelope {
   version @0 :UInt16;
   digest @1 :Data;
@@ -150,4 +187,30 @@ struct Envelope {
   requestLimit @13 :UInt32;
   handoffProposal @14 :HandoffProposalRecord;
   handoffProposalSummaries @15 :List(HandoffProposalSummary);
+  archive @16 :ArchiveReceipt;
+  history @17 :List(HistorySummary);
+  unarchivedCount @18 :UInt32;
+  archivedCount @19 :UInt32;
+  archivedBytes @20 :UInt64;
+  archiveMaintenance @21 :ArchiveMaintenanceReceipt;
+}
+
+# Separate immutable accounting receipt; it never replaces the original archive.
+struct ArchiveMaintenanceRequest {
+  version @0 :UInt16;
+  digest @1 :Data;
+  cardId @2 :Text;
+  draftId @3 :Text;
+  generation @4 :UInt64;
+  requestSha256 @5 :Data;
+  archiveOperation @6 :Text;
+  archiveSha256 @7 :Data;
+  operation @8 :Text;
+}
+struct ArchiveMaintenanceReceipt {
+  request @0 :ArchiveMaintenanceRequest;
+  auxiliaryCount @1 :UInt32;
+  auxiliaryBytes @2 :UInt64;
+  auxiliarySha256 @3 :Data;
+  repeated @4 :Bool;
 }

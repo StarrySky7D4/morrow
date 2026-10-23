@@ -587,5 +587,34 @@
   "mainDraftJournalExportFailed": "Impossible d’exporter la copie de récupération complète.",
   "mainDraftJournalRetire": "Retirer le brouillon enregistré",
   "mainDraftJournalRetireConfirm": "Retirer ce brouillon et libérer ses copies de pièces jointes ? Exportez une copie de récupération si nécessaire. Le contenu enregistré et les résultats non confirmés restent inchangés.",
-  "mainDraftJournalRetireUnknown": "Le retrait n’est pas confirmé. Vérifiez l’opération initiale sans la soumettre à nouveau."
+  "mainDraftJournalRetireUnknown": "Le retrait n’est pas confirmé. Vérifiez l’opération initiale sans la soumettre à nouveau.",
+  "mainDraftHistoryTitle": "Historique des brouillons",
+  "mainDraftHistoryNotice": "Seuls les brouillons retirés sont affichés. L’archivage conserve le texte et sa provenance et libère une place. Les fichiers joints libérés et les autorisations de capture ne sont pas restaurés. Les enregistrements archivés sont aussi limités à 64 Mio.",
+  "mainDraftHistoryCapacity": "Enregistrements courants : {current}/256 ; archivés : {archived}/4096",
+  "mainDraftHistoryUnconfirmed": "Le résultat de l’archivage est non confirmé. Actualisez pour vérifier l’enregistrement original.",
+  "mainDraftHistoryRetired": "Retiré",
+  "mainDraftHistoryArchived": "Archivé",
+  "mainDraftHistoryFirst": "Première page",
+  "mainDraftHistoryNext": "Page suivante",
+  "mainDraftHistoryExport": "Exporter l’enregistrement",
+  "mainDraftHistoryArchive": "Archiver cet enregistrement",
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "archived": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDraftHistoryTitleField": "Titre",
+  "mainDraftHistoryDescriptionField": "Description",
+  "mainDraftHistoryCategoryField": "Catégorie",
+  "mainDraftHistoryStageField": "Étape",
+  "mainDraftWriteInspect": "Vérifier le brouillon",
+  "mainDraftWriteRetry": "Réessayer de sauvegarder le brouillon",
+  "mainDraftHistoryMaintain": "Archiver les entrées associées",
+  "mainDraftHistoryMaintainHelp": "Conserver tout l’historique et libérer de la capacité pour les brouillons.",
+  "mainDraftHistoryMaintained": "Entrées associées archivées"
 }

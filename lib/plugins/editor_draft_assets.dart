@@ -548,8 +548,9 @@ final class EditorDraftAssetCatalog {
   /// view must be supplied in stored order with a measured SHA-256 digest.
   factory EditorDraftAssetCatalog.restore(
     EditorDraftRecord record,
-    List<EditorDraftAssetView> views,
-  ) {
+    List<EditorDraftAssetView> views, {
+    bool promoteConfirmedPins = false,
+  }) {
     final request = record.request;
     return EditorDraftAssetCatalog._(
       request.cardId,
@@ -559,7 +560,7 @@ final class EditorDraftAssetCatalog {
       request.predecessorOperation,
       request.predecessorDigest,
       record.generation,
-      _stored(record, views, promote: false),
+      _stored(record, views, promote: promoteConfirmedPins),
     );
   }
 
@@ -642,15 +643,25 @@ final class EditorDraftAssetCatalog {
         !previous.currentActive ||
         previous.currentGeneration != previous.generation ||
         _handoffLink != null ||
-        _entries.any((entry) =>
-            identical(entry.view.attachment, view.attachment) ||
-            entry.selection.assetId == imported.assetId)) {
+        _entries.any(
+          (entry) =>
+              identical(entry.view.attachment, view.attachment) ||
+              entry.selection.assetId == imported.assetId,
+        )) {
       throw const FormatException('Draft import catalog baseline changed');
     }
     return EditorDraftAssetCatalog._(
-      cardId, draftId, sourceKind, sourceRevision, predecessorOperation,
-      predecessorDigest, confirmedGeneration,
-      [..._entries, ..._ready(cardId, draftId, previous, [imported], [view])],
+      cardId,
+      draftId,
+      sourceKind,
+      sourceRevision,
+      predecessorOperation,
+      predecessorDigest,
+      confirmedGeneration,
+      [
+        ..._entries,
+        ..._ready(cardId, draftId, previous, [imported], [view]),
+      ],
     );
   }
 

@@ -13,12 +13,9 @@ use crate::ProvisionedWindowsBackend;
 
 const CHECKED_PROTOCOL_VERSION: u32 = 7;
 const NATIVE_CLOSE_PROTOCOL_VERSION: u32 = 8;
-const NATIVE_CLOSE_SCHEMA: [u8;32] = *b"morrow.c28.native-close.ack-v1.\x08";
+const NATIVE_CLOSE_SCHEMA: [u8;32] = codex_sandboxing::WINDOWS_NATIVE_CLOSE_SCHEMA;
 // Pin of the independent derived runner control layout, never a Core wire copy.
-const CHECKED_SCHEMA_SHA256: [u8; 32] = [
-    47, 129, 224, 48, 226, 133, 48, 72, 12, 233, 197, 28, 212, 105, 181, 9, 123, 169, 250, 219, 59,
-    123, 116, 198, 60, 193, 216, 59, 17, 20, 235, 24,
-];
+const CHECKED_SCHEMA_SHA256: [u8; 32] = codex_sandboxing::WINDOWS_RUNNER_SCHEMA;
 
 #[derive(Clone)]
 struct RunnerIdentity {

@@ -21,6 +21,7 @@ pub struct NativeFactoryRetirement {
 pub struct NativeFactoryCompletion {backend:Weak<ProvisionedWindowsBackend>,_threads:NativeSchedulerClosed}
 /// Still not an owner-finish or guest-setup cleanup permission.
 pub struct RetiredExecutionCompletion {execution:NativeExecutionCompletion,_factory:NativeFactoryCompletion}
+pub struct RetiredExecutionRefusal {execution:crate::NativeExecutionRefusal,_factory:NativeFactoryCompletion}
 impl NativeFactoryRetirement {
     pub fn new()->Self {Self {backend:Weak::new(),runtime:Weak::new(),threads:NativeSchedulerThreads::new(),
         attempted:false,creation_started:false,creation_succeeded:false,failed_creation_runtime:None,asuser:None,failed_asuser_backend:None}}
@@ -33,6 +34,18 @@ impl NativeFactoryRetirement {
         }
         let original=self.runtime.upgrade().ok_or(Error::CommitUnknown)?;
         if !Arc::ptr_eq(&original,runtime){return Err(Error::Denied);}
+        Ok(())
+    }
+    /// The original Worker may have synchronously retired this factory's
+    /// scheduler before protected storage finish. Require its actual consumed
+    /// native thread-close capability; missing Runtime Arcs alone prove nothing.
+    pub fn verify_completed_factory_for_owner_finish(&self,completion:&NativeFactoryCompletion)->Result<()> {
+        if !self.attempted || !self.creation_succeeded || self.failed_creation_runtime.is_some()
+            || self.failed_asuser_backend.is_some() {return Err(Error::CommitUnknown);}
+        if !Weak::ptr_eq(&self.backend,&completion.backend){return Err(Error::Denied);}
+        if self.backend.upgrade().is_some() || self.runtime.upgrade().is_some() || self.asuser.is_some() {
+            return Err(Error::CommitUnknown);
+        }
         Ok(())
     }
     /// Called after synchronous shutdown of this factory's original Runtime.
@@ -55,6 +68,21 @@ impl NativeExecutionCompletion {
         if !self.is_original_factory(&factory.backend){return Err(Error::Denied);}
         Ok(RetiredExecutionCompletion {execution:self,_factory:factory})
     }
+}
+impl crate::NativeExecutionRefusal {
+    pub fn retire_factory(self,factory:NativeFactoryCompletion)->Result<RetiredExecutionRefusal> {
+        if !self.is_original_factory(&factory.backend){return Err(Error::Denied);}
+        Ok(RetiredExecutionRefusal {execution:self,_factory:factory})
+    }
+}
+impl RetiredExecutionRefusal {
+    pub fn reason(&self)->codex_sandboxing::AsUserRefusalReason {self.execution.reason()}
+    pub fn take_asuser_origin_retirement(&mut self)->Option<codex_sandboxing::AsUserOriginRefusalRetirement> {
+        self.execution.asuser_origin.take()
+    }
+    pub fn is_for_review(&self,review:&ReviewedNativeCompletion)->bool {self.execution.is_for_review(review)}
+    pub fn is_for_owner(&self,owner:morrow_core::dispatch::HostBinding)->bool {self.execution.is_for_owner(owner)}
+    pub fn startup_attempt(&self)->u64 {self.execution.startup_attempt()}
 }
 impl RetiredExecutionCompletion {
     pub fn take_asuser_origin_retirement(&mut self)->Option<codex_sandboxing::AsUserOriginRetirement> {

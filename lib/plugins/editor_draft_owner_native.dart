@@ -86,8 +86,9 @@ Future<IdeaAttachment> _importEditorDraftFile(
   EditorDraftOwner owner,
   String path,
   String name,
-  String kind,
-) async {
+  String kind, {
+  Future<void> Function(File)? stageInput,
+}) async {
   if (!host._draftOwners.contains(owner)) {
     throw StateError('Draft belongs to another workbench');
   }
@@ -96,6 +97,7 @@ Future<IdeaAttachment> _importEditorDraftFile(
     selectedPath: path,
     prepare: (record) async {
       final file = File(path);
+      if (stageInput != null) await stageInput(file);
       final length = await file.length();
       if (length < 0 || length > IdeaAttachment.maxSize) {
         throw const FormatException('Draft attachment byte limit');
@@ -154,4 +156,60 @@ Future<IdeaAttachment> _importEditorDraftFile(
     },
   );
   return view.attachment;
+}
+
+Future<IdeaAttachment> _importEditorDraftSource(
+  RustWorkbench host,
+  EditorDraftOwner owner,
+  XFile source,
+  String kind,
+) {
+  // XFile may own in-memory clipboard bytes. Its path can be only a display
+  // name, so never treat that property as an actual selected filesystem path.
+  final path =
+      '${host.cache.path}/draft-input-${DateTime.now().microsecondsSinceEpoch}-${host._sequence++}.bin';
+  return _importEditorDraftFile(
+    host,
+    owner,
+    path,
+    source.name,
+    kind,
+    stageInput: (file) async {
+      // importAsset has already retained the original admission before any
+      // await or source read. Materialize only inside this host's own cache.
+      final expected = await source.length();
+      if (expected < 0 || expected > IdeaAttachment.maxSize) {
+        throw const FormatException('Draft attachment byte limit');
+      }
+      await file.create(exclusive: true);
+      host._draftInputFiles.add(file.path);
+      final output = await file.open(mode: FileMode.writeOnly);
+      Object? failure;
+      StackTrace? failureStack;
+      try {
+        var count = 0;
+        await for (final chunk in source.openRead()) {
+          count += chunk.length;
+          if (count > expected || count > IdeaAttachment.maxSize) {
+            throw const FormatException('Draft attachment source changed');
+          }
+          await output.writeFrom(chunk);
+        }
+        if (count != expected) {
+          throw const FormatException('Draft attachment source changed');
+        }
+        await output.flush();
+      } catch (error, stack) {
+        failure = error;
+        failureStack = stack;
+      }
+      try {
+        await output.close();
+      } catch (error, stack) {
+        failure ??= error;
+        failureStack ??= stack;
+      }
+      if (failure != null) Error.throwWithStackTrace(failure, failureStack!);
+    },
+  );
 }

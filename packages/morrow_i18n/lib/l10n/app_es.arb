@@ -56,6 +56,16 @@
       }
     }
   },
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "archived": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
   "@mainFavoriteTooltip": {
     "placeholders": {
       "title": {
@@ -1077,6 +1087,23 @@
   "mainDraftHandoffRecoverySelection": "Selecciona un registro para ver el borrador completo.",
   "mainDraftHandoffRecoveryTitle": "Recuperación del traspaso de borradores",
   "mainDraftHandoffRecoveryUnknown": "El resultado de la operación aún no está confirmado. Revisa el registro original; no repitas la operación.",
+  "mainDraftHistoryArchive": "Archivar este registro",
+  "mainDraftHistoryArchived": "Archivado",
+  "mainDraftHistoryCapacity": "Registros actuales: {current}/256; archivados: {archived}/4096",
+  "mainDraftHistoryCategoryField": "Categoría",
+  "mainDraftHistoryDescriptionField": "Descripción",
+  "mainDraftHistoryExport": "Exportar registro del historial",
+  "mainDraftHistoryFirst": "Primera página",
+  "mainDraftHistoryMaintain": "Archivar registros relacionados",
+  "mainDraftHistoryMaintainHelp": "Conservar todo el historial y liberar capacidad para registros de borradores.",
+  "mainDraftHistoryMaintained": "Registros relacionados archivados",
+  "mainDraftHistoryNext": "Página siguiente",
+  "mainDraftHistoryNotice": "Solo se muestran borradores retirados. Archivar conserva el texto y la procedencia y libera una plaza. No se restauran los archivos adjuntos liberados ni los permisos de captura. Los registros archivados también tienen un límite de 64 MiB.",
+  "mainDraftHistoryRetired": "Retirado",
+  "mainDraftHistoryStageField": "Etapa",
+  "mainDraftHistoryTitle": "Historial de borradores",
+  "mainDraftHistoryTitleField": "Título",
+  "mainDraftHistoryUnconfirmed": "El resultado del archivo no está confirmado. Actualiza para revisar el registro original.",
   "mainDraftImportRecoveryCancelBody": "Después de cancelar, la solicitud original de abandono ya no se ejecutará. Esto no elimina el adjunto ni deshace otros cambios.",
   "mainDraftImportRecoveryCancelDecision": "Cancelar solicitud de abandono",
   "mainDraftImportRecoveryCancelTitle": "¿Cancelar esta solicitud de abandono?",
@@ -1099,6 +1126,8 @@
   "mainDraftJournalRetireUnknown": "La retirada no está confirmada. Consulte la operación original sin volver a enviarla.",
   "mainDraftJournalReview": "Esta copia de recuperación es de solo lectura. Se conservan el texto original, los adjuntos y el historial de captura; verla no reanuda un guardado anterior.",
   "mainDraftJournalTitle": "Borradores guardados",
+  "mainDraftWriteInspect": "Comprobar el borrador",
+  "mainDraftWriteRetry": "Reintentar guardar el borrador",
   "mainEdit": "Editar",
   "mainEditIdeaTitle": "Aclara tu idea",
   "mainEditorClosedUnknown": "El editor se cerró, pero el guardado no está confirmado. Reabre el espacio de trabajo y compruébalo antes de crear otra copia.",

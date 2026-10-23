@@ -9,6 +9,8 @@ use crate::{BorrowedNativeResources,ProvisionedWindowsBackend};
 struct State {
     identity:Option<ToolIdentity>,
     native:Option<NativeHostCompletion>,
+    refusal:Option<codex_sandboxing::AsUserCallerRefusal>,
+    refusal_acknowledged:bool,
     slot:Option<Arc<crate::registry::ExecutionSlot>>,
     failed:bool,
     taken:bool,
@@ -21,7 +23,8 @@ struct State {
 enum MonitorJoin {JoinedTimely,JoinedLate,Cancelled,Panicked}
 impl State {
     fn accepts_original_native_identity(&self,identity:&ToolIdentity)->bool {
-        !self.failed && !self.taken && self.native.is_none() && self.identity.as_ref()==Some(identity)
+        !self.failed && !self.taken && self.native.is_none() && self.refusal.is_none()
+            && !self.refusal_acknowledged && self.identity.as_ref()==Some(identity)
     }
 }
 struct Bound {
@@ -49,6 +52,34 @@ pub struct NativeExecutionCompletion {
     terminal_close_ack_verified:bool,
     pub(crate) asuser_origin:Option<codex_sandboxing::AsUserOriginRetirement>,
 }
+/// Separate from exit/EOF/terminal ACK. Only the actual joined start task and
+/// closed pre-dispatch native owner can make this consume-only completion.
+pub struct NativeExecutionRefusal {
+    binding:ReviewedNativeCompletion,
+    attempt:u64,
+    reason:codex_sandboxing::AsUserRefusalReason,
+    pub(crate) asuser_origin:Option<codex_sandboxing::AsUserOriginRefusalRetirement>,
+}
+pub(crate) struct NativeRefusalAck {
+    binding:ReviewedNativeCompletion,
+    slot:Arc<crate::registry::ExecutionSlot>,
+}
+impl NativeRefusalAck {
+    pub(crate) fn is_for_slot(&self,slot:&crate::registry::ExecutionSlot)->bool {
+        std::ptr::eq(Arc::as_ptr(&self.slot),slot)
+    }
+    pub(crate) fn mark_failed(&self){self.binding.fail();}
+}
+impl std::fmt::Debug for NativeExecutionRefusal {
+    fn fmt(&self,f:&mut std::fmt::Formatter<'_>)->std::fmt::Result {f.write_str("NativeExecutionRefusal([CONSUME_ONLY_NO_RUNNER])")}
+}
+impl NativeExecutionRefusal {
+    pub fn reason(&self)->codex_sandboxing::AsUserRefusalReason {self.reason}
+    pub(crate) fn is_original_factory(&self,backend:&Weak<ProvisionedWindowsBackend>)->bool {Weak::ptr_eq(&self.binding.bound.backend,backend)}
+    pub fn is_for_owner(&self,owner:HostBinding)->bool {self.binding.bound.owner==owner}
+    pub fn is_for_review(&self,binding:&ReviewedNativeCompletion)->bool {self.binding.same_review(binding)}
+    pub fn startup_attempt(&self)->u64 {self.attempt}
+}
 impl std::fmt::Debug for NativeExecutionCompletion {
     fn fmt(&self,f:&mut std::fmt::Formatter<'_>)->std::fmt::Result {f.write_str("NativeExecutionCompletion([CONSUME_ONLY])")}
 }
@@ -58,7 +89,7 @@ impl ReviewedNativeCompletion {
         let artifact=backend.native_close_artifact()?;
         Some(Self {bound:Arc::new(Bound {owner:resources.owner_binding(),operation:operation.to_owned(),
             artifact:Arc::downgrade(&artifact),backend:Arc::downgrade(backend),resources:Arc::downgrade(resources),
-            state:Mutex::new(State {identity:None,native:None,slot:None,failed:false,taken:false,
+            state:Mutex::new(State {identity:None,native:None,refusal:None,refusal_acknowledged:false,slot:None,failed:false,taken:false,
                 monitor:None,monitor_joined:false,monitor_loaned:false,monitor_outcome:None})})})
     }
     /// Must be used before invocation, while the original lifecycle still owns
@@ -85,6 +116,29 @@ impl ReviewedNativeCompletion {
             state.failed=true;return Err(Error::CommitUnknown);
         }
         state.native=Some(native);Ok(())
+    }
+    pub(crate) fn retain_joined_caller_refusal(&self,identity:&ToolIdentity,slot:&Arc<crate::registry::ExecutionSlot>,
+        backend:&Arc<ProvisionedWindowsBackend>,native:codex_sandboxing::AsUserCallerRefusal)->Result<()> {
+        let mut state=self.bound.state.lock().map_err(|_|Error::Storage)?;
+        if !state.accepts_original_native_identity(identity) || state.monitor.is_some() || state.monitor_loaned
+            || state.monitor_joined || slot.is_unknown() || slot.stop_requested()
+            || !state.slot.as_ref().is_some_and(|original|Arc::ptr_eq(original,slot))
+            || !self.bound.backend.upgrade().is_some_and(|original|Arc::ptr_eq(&original,backend))
+            || !native.is_for_original_backend(backend) {
+            state.failed=true;return Err(Error::CommitUnknown);
+        }
+        state.refusal=Some(native);Ok(())
+    }
+    pub(crate) fn acknowledge_refusal_fact(&self,identity:&ToolIdentity,slot:&Arc<crate::registry::ExecutionSlot>)
+        ->Result<NativeRefusalAck> {
+        let mut state=self.bound.state.lock().map_err(|_|Error::Storage)?;
+        if state.failed || state.taken || state.refusal.is_none() || state.refusal_acknowledged
+            || state.identity.as_ref()!=Some(identity) || state.native.is_some() || state.monitor.is_some()
+            || !state.slot.as_ref().is_some_and(|original|Arc::ptr_eq(original,slot)) {
+            state.failed=true;return Err(Error::CommitUnknown);
+        }
+        state.refusal_acknowledged=true;
+        Ok(NativeRefusalAck{binding:self.clone(),slot:slot.clone()})
     }
     pub(crate) fn fail(&self) {if let Ok(mut state)=self.bound.state.lock(){state.failed=true;}}
     pub(crate) fn install_original_monitor(&self,original:tokio::task::JoinHandle<()>) {
@@ -126,7 +180,7 @@ mod identity_tests {
     fn identity()->ToolIdentity {ToolIdentity {operation_id:"same-reviewed-operation".into(),proposal_sha256:[1;32],
         intent_sha256:[2;32],execution_domain:"labelled-memory-only".into(),session_id:"original".into(),
         session_epoch:3,generation:4,original_issuer_nonce:[5;32]}}
-    fn uncompleted(identity:ToolIdentity)->State {State {identity:Some(identity),native:None,slot:None,
+    fn uncompleted(identity:ToolIdentity)->State {State {identity:Some(identity),native:None,refusal:None,refusal_acknowledged:false,slot:None,
         failed:false,taken:false,monitor:None,monitor_joined:false,monitor_loaned:false,monitor_outcome:None}}
     #[test]
     fn native_capability_lane_requires_full_original_operation_generation_and_issuer() {
@@ -153,6 +207,14 @@ mod identity_tests {
         state.failed=false;state.identity=None;assert!(!state.accepts_original_native_identity(&original));
         assert!(state.native.is_none());
     }
+    #[test]
+    fn acknowledged_refusal_lane_cannot_receive_a_normal_native_completion() {
+        let original=identity();let mut state=uncompleted(original.clone());
+        state.refusal_acknowledged=true;
+        assert!(!state.accepts_original_native_identity(&original));
+        assert!(state.native.is_none());assert!(state.monitor.is_none());
+        assert!(!state.monitor_joined);
+    }
 }
 impl NativeExecutionCompletion {
     pub(crate) fn is_original_factory(&self,backend:&Weak<ProvisionedWindowsBackend>)->bool {Weak::ptr_eq(&self.binding.bound.backend,backend)}
@@ -165,12 +227,57 @@ impl NativeExecutionCompletion {
     pub fn terminal_close_ack_verified(&self)->bool {self.terminal_close_ack_verified}
 }
 impl ProvisionedWindowsBackend {
+    /// Explicit original-factory disposable-VM input qualification. This does
+    /// not create a native refusal or release any SDK capacity.
+    #[doc(hidden)]
+    pub fn qualify_logon_rejection_once(self:&Arc<Self>)->Result<()> {
+        let artifact=self.native_close_artifact().ok_or(Error::Denied)?;
+        artifact.qualify_asuser_logon_rejection_for(self).map_err(|_|Error::Denied)
+    }
+    /// Explicit denial-only source policy input on this original factory.
+    #[doc(hidden)]
+    pub fn qualify_source_policy_rejection_once(self:&Arc<Self>)->Result<()> {
+        let artifact=self.native_close_artifact().ok_or(Error::Denied)?;
+        artifact.qualify_asuser_source_policy_rejection_for(self).map_err(|_|Error::Denied)
+    }
+    pub(crate) fn take_caller_refusal(self:&Arc<Self>)->Result<Option<codex_sandboxing::AsUserCallerRefusal>> {
+        let Some(artifact)=self.native_close_artifact() else{return Ok(None);};
+        artifact.take_asuser_caller_refusal_for(self).map_err(|_|Error::CommitUnknown)
+    }
     pub(crate) fn native_close_artifact(&self)->Option<Arc<MatchedRunnerArtifact>> {
         let artifact=self._runner.as_ref()?.artifact();
         (artifact.protocol_version()==8).then_some(artifact)
     }
 }
 impl BorrowedNativeResources {
+    /// The rejected invocation remains durably spent in R2. It has no invented
+    /// exit code, EOF, normal terminal ACK or permission to retry that operation.
+    pub fn take_native_execution_refusal(&self,binding:&ReviewedNativeCompletion)->Result<NativeExecutionRefusal> {
+        if binding.bound.owner!=self.owner_binding()
+            || !binding.bound.resources.upgrade().is_some_and(|original|std::ptr::eq(Arc::as_ptr(&original),self)) {
+            return Err(Error::Denied);
+        }
+        let (identity,slot)={
+            let state=binding.bound.state.lock().map_err(|_|Error::Storage)?;
+            if state.failed || state.taken || !state.refusal_acknowledged || state.refusal.is_none()
+                || state.native.is_some() || state.monitor.is_some() || state.monitor_joined || state.monitor_loaned {
+                return Err(Error::CommitUnknown);
+            }
+            (state.identity.clone().ok_or(Error::Denied)?,state.slot.clone().ok_or(Error::CommitUnknown)?)
+        };
+        if self.pending_facts()?.iter().any(|entry|entry.identity==identity){return Err(Error::CommitUnknown);}
+        slot.require_retired_refusal()?;
+        let native={
+            let mut state=binding.bound.state.lock().map_err(|_|Error::Storage)?;
+            if state.failed || state.taken{return Err(Error::CommitUnknown);}
+            let native=state.refusal.take().ok_or(Error::CommitUnknown)?;
+            state.taken=true;native
+        };
+        let attempt=native.startup_attempt();
+        let origin=native.retire_local().map_err(|_|Error::CommitUnknown)?;
+        let reason=origin.reason();let asuser_origin=Some(origin);
+        Ok(NativeExecutionRefusal {binding:binding.clone(),attempt,reason,asuser_origin})
+    }
     /// Invoked on the synchronous original owner after real task/IO return and
     /// acknowledged facts. A review binding alone can never make this succeed.
     pub fn take_native_execution_completion(&self,binding:&ReviewedNativeCompletion)

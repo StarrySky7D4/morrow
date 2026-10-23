@@ -99,21 +99,29 @@ fn medium_rc_only_source_derives_restricted_token_without_original_mutation() {
         let old_ok = OpenThreadToken(GetCurrentThread(), 0x1ab, 0, &mut legacy);
         let old_error = if old_ok == 0 { GetLastError() } else { Token(legacy).close(); 0 };
         if starting_integrity > 0x2000 { assert_eq!(old_error, 5); }
-        let derived = Token(duplicate_token_for_restriction(readonly.0).unwrap());
+        let capability = LocalSid::from_string("S-1-5-21-10-20-30-40").unwrap();
+        let restricted = Token(derive_uninitialized_restriction_with_caps_and_user_from(
+            readonly.0, &[capability.as_ptr()], &[],
+        ).unwrap());
+        // The intermediate inherits only QUERY/DUPLICATE, so adjustment is
+        // denied even though this is a newly owned object. No source is widened.
+        let unchanged = TOKEN_DEFAULT_DACL { DefaultDacl: template.as_mut_ptr().cast() };
+        assert_eq!(SetTokenInformation(restricted.0, TokenDefaultDacl,
+            (&unchanged as *const TOKEN_DEFAULT_DACL).cast(), std::mem::size_of_val(&unchanged) as u32), 0);
+        assert_eq!(GetLastError(), 5);
+        let derived = Token(duplicate_token_for_restriction(restricted.0).unwrap());
+        initialize_owned_restricted_token(derived.0).unwrap();
         assert_eq!(integrity(derived.0), 0x2000);
         let mut flags = 0;
         assert_ne!(GetHandleInformation(derived.0, &mut flags), 0);
         assert_eq!(flags & HANDLE_FLAG_INHERIT, 0);
-        let capability = LocalSid::from_string("S-1-5-21-10-20-30-40").unwrap();
-        let restricted = Token(create_readonly_token_with_caps_and_user_from(
-            derived.0, &[capability.as_ptr()], &[],
-        ).unwrap());
         assert_eq!(integrity(restricted.0), 0x2000);
-        let restricting = info(restricted.0, windows_sys::Win32::Security::TokenRestrictedSids);
+        assert_ne!(default_acl(derived.0), default_before);
+        let restricting = info(derived.0, windows_sys::Win32::Security::TokenRestrictedSids);
         let groups = &*(restricting.as_ptr() as *const TOKEN_GROUPS);
         let entries = std::slice::from_raw_parts(groups.Groups.as_ptr(), groups.GroupCount as usize);
         assert!(entries.iter().any(|entry| windows_sys::Win32::Security::EqualSid(entry.Sid, capability.as_ptr()) != 0));
-        assert!(info(restricted.0, TokenPrivileges)[0] as u32 <= 1);
+        assert!(info(derived.0, TokenPrivileges)[0] as u32 <= 1);
         assert_eq!(default_acl(original.0), default_before);
         assert_eq!(info(original.0, TokenStatistics), statistics_before);
         assert_eq!(info(original.0, TokenPrivileges), privileges_before);

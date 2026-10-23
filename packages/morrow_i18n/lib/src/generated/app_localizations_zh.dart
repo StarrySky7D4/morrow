@@ -378,6 +378,60 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainDraftHandoffRecoveryUnknown => '操作结果尚未确认。请核对原记录，不要重复操作。';
 
   @override
+  String get mainDraftHistoryArchive => '归档此记录';
+
+  @override
+  String get mainDraftHistoryArchived => '已归档';
+
+  @override
+  String mainDraftHistoryCapacity(int archived, int current) {
+    return '日常记录：$current/256；归档记录：$archived/4096';
+  }
+
+  @override
+  String get mainDraftHistoryCategoryField => '分类';
+
+  @override
+  String get mainDraftHistoryDescriptionField => '描述';
+
+  @override
+  String get mainDraftHistoryExport => '导出历史记录';
+
+  @override
+  String get mainDraftHistoryFirst => '第一页';
+
+  @override
+  String get mainDraftHistoryMaintain => '归档关联记录';
+
+  @override
+  String get mainDraftHistoryMaintainHelp => '保留全部历史记录，并释放草稿记录额度。';
+
+  @override
+  String get mainDraftHistoryMaintained => '关联记录已归档';
+
+  @override
+  String get mainDraftHistoryNext => '下一页';
+
+  @override
+  String get mainDraftHistoryNotice =>
+      '仅显示已停用的草稿。归档保留文本和来源记录，释放日常草稿名额；已释放的附件文件和捕获权限不会恢复。归档另有 64 MiB 的记录上限。';
+
+  @override
+  String get mainDraftHistoryRetired => '已停用';
+
+  @override
+  String get mainDraftHistoryStageField => '阶段';
+
+  @override
+  String get mainDraftHistoryTitle => '草稿历史';
+
+  @override
+  String get mainDraftHistoryTitleField => '标题';
+
+  @override
+  String get mainDraftHistoryUnconfirmed => '归档结果尚未确认，请刷新核对原记录。';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       '取消后，原来的放弃请求将失效。这不会删除附件，也不会撤销其他修改。';
 
@@ -445,6 +499,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mainDraftJournalTitle => '已保存的草稿';
+
+  @override
+  String get mainDraftWriteInspect => '检查草稿保存';
+
+  @override
+  String get mainDraftWriteRetry => '重试草稿保存';
 
   @override
   String get mainEdit => '编辑';

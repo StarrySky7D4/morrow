@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'editor_draft.dart';
 import 'editor_draft_session.dart';
+import 'editor_draft_workspace.dart';
 
 /// Only already resolved draft asset selections belong here. A caller must
 /// surface a pending/failed import instead of omitting an unresolved selection.
@@ -82,6 +83,29 @@ final class EditorDraftBinding extends ChangeNotifier {
 
   void _changed() {
     if (!_applying) capture();
+  }
+
+  /// A parent widget can already be unmounted during child disposal. The
+  /// original prepared lease authorizes only an unchanged complete snapshot;
+  /// late input, metadata failures and cancelled preparations still capture
+  /// normally and therefore keep the close barrier if the view is stale.
+  bool captureBeforeDetach(EditorDraftViewLease? lease) {
+    if (!_disposed &&
+        _attached &&
+        !_applying &&
+        !_uncaptured &&
+        identical(lease?.session, session)) {
+      try {
+        final observation = _readSnapshot();
+        if (observation.incomplete == null &&
+            lease!.acceptsPreparedSnapshot(observation.snapshot)) {
+          return true;
+        }
+      } catch (_) {
+        // Use normal capture to retain the original incomplete state.
+      }
+    }
+    return capture();
   }
 
   static EditorDraftTextValue _read(TextEditingController controller) {

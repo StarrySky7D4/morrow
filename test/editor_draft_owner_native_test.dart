@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'fixtures/editor_draft_reply_faults.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -11,169 +12,12 @@ import 'package:morrow_studio/plugins/editor_draft.dart';
 import 'package:morrow_studio/plugins/editor_draft_binding.dart';
 import 'package:morrow_studio/plugins/editor_draft_owner.dart';
 import 'package:morrow_studio/plugins/editor_draft_session.dart';
-import 'package:morrow_studio/plugins/editor_commit_proof.dart';
 import 'package:morrow_studio/plugins/editor_session.dart';
-import 'package:morrow_studio/plugins/studio_backend.dart';
 import 'package:morrow_studio/plugins/workbench_native.dart';
 
 final _host = Platform.environment['MORROW_WORKBENCH_HOST'];
 final _package = Platform.environment['MORROW_WORKBENCH_PACKAGE'];
 final _available = Platform.isWindows && _host != null && _package != null;
-
-final class _LostBusinessReply
-    implements
-        WorkbenchEditorSession,
-        WorkbenchEditorOperationIdentity,
-        WorkbenchEditorDraftCaptureIdentity,
-        WorkbenchEditorCommitSource {
-  _LostBusinessReply(this.original);
-  final WorkbenchEditorSession original;
-  int saves = 0;
-  @override
-  String get targetId => original.targetId;
-  @override
-  StudioBackend get studio => original.studio;
-  @override
-  String get commitOperation =>
-      (original as WorkbenchEditorOperationIdentity).commitOperation;
-  @override
-  BigInt get sourceRevision =>
-      (original as WorkbenchEditorOperationIdentity).sourceRevision;
-  @override
-  ({String scope, int events, bool complete}) get draftCapture =>
-      (original as WorkbenchEditorDraftCaptureIdentity).draftCapture;
-  @override
-  Future<void> recordPaste(PasteInsertion insertion) =>
-      original.recordPaste(insertion);
-  @override
-  Future<void> close() => original.close();
-  @override
-  Future<EditorDraftCommitEvidence> inspectCommittedSource() =>
-      (original as WorkbenchEditorCommitSource).inspectCommittedSource();
-  @override
-  Future<Idea> save(Idea draft, EditorFields fields) async {
-    saves++;
-    await original.save(draft, fields);
-    throw StateError('test withheld the original business receipt');
-  }
-}
-
-final class _LostProposalReply implements EditorDraftHandoffProposalControl {
-  _LostProposalReply(this.original, this.lostStage);
-  final EditorDraftHandoffProposalControl original;
-  final String lostStage;
-  final calls = <String, int>{};
-  void Function()? afterComplete;
-  Future<EditorDraftHandoffProposalRecord> _dispatch(
-    String stage,
-    Future<EditorDraftHandoffProposalRecord> Function() work,
-  ) async {
-    calls[stage] = (calls[stage] ?? 0) + 1;
-    final result = await work();
-    if (stage == 'complete') afterComplete?.call();
-    if (stage == lostStage) {
-      throw StateError('test withheld original $stage receipt');
-    }
-    return result;
-  }
-
-  @override
-  Future<EditorDraftHandoffProposalRecord> prepare(
-    EditorDraftHandoffProposal proposal,
-  ) => _dispatch('prepare', () => original.prepare(proposal));
-  @override
-  Future<EditorDraftHandoffProposalRecord> complete({
-    required String cardId,
-    required String parentDraftId,
-    required String childOperation,
-  }) => _dispatch(
-    'complete',
-    () => original.complete(
-      cardId: cardId,
-      parentDraftId: parentDraftId,
-      childOperation: childOperation,
-    ),
-  );
-  @override
-  Future<EditorDraftHandoffProposalRecord> retire({
-    required String cardId,
-    required String parentDraftId,
-    required String childOperation,
-  }) => _dispatch(
-    'retire',
-    () => original.retire(
-      cardId: cardId,
-      parentDraftId: parentDraftId,
-      childOperation: childOperation,
-    ),
-  );
-  @override
-  Future<EditorDraftHandoffProposalRecord?> inspect({
-    required String cardId,
-    required String parentDraftId,
-    required String childOperation,
-  }) => original.inspect(
-    cardId: cardId,
-    parentDraftId: parentDraftId,
-    childOperation: childOperation,
-  );
-  @override
-  Future<EditorDraftHandoffProposalRecord> cancel({
-    required String cardId,
-    required String parentDraftId,
-    required String childOperation,
-  }) => original.cancel(
-    cardId: cardId,
-    parentDraftId: parentDraftId,
-    childOperation: childOperation,
-  );
-  @override
-  Future<EditorDraftHandoffProposalPage> page({
-    String cursor = '',
-    int limit = 32,
-  }) => original.page(cursor: cursor, limit: limit);
-  @override
-  Future<List<EditorDraftHandoffProposalSummary>> discover({
-    int pageSize = 32,
-  }) => original.discover(pageSize: pageSize);
-}
-
-final class _LostChildReply implements EditorDraftControl {
-  _LostChildReply(this.original);
-  final EditorDraftControl original;
-  final operations = <String>[];
-  @override
-  Future<EditorDraftRecord> save(EditorDraftWriteRequest request) async {
-    operations.add(request.operation);
-    final record = await original.save(request);
-    if (operations.length == 1) {
-      throw StateError('test withheld original child update receipt');
-    }
-    return record;
-  }
-
-  @override
-  Future<EditorDraftRecord?> read(String cardId, String draftId) =>
-      original.read(cardId, draftId);
-  @override
-  Future<List<EditorDraftSummary>> list() => original.list();
-  @override
-  Future<EditorDraftRecord> discard(String c, String d, BigInt g, String o) =>
-      original.discard(c, d, g, o);
-  @override
-  Future<EditorDraftImportedAsset> importAsset(
-    String c,
-    String d,
-    BigInt g,
-    String p,
-    String n,
-    String k,
-    BigInt b,
-  ) => original.importAsset(c, d, g, p, n, k, b);
-  @override
-  Future<void> exportAsset(String c, String d, BigInt g, String a, String p) =>
-      original.exportAsset(c, d, g, a, p);
-}
 
 EditorDraftTextValue _text(String value) => EditorDraftTextValue(
   text: value,
@@ -243,7 +87,7 @@ void main() {
           );
           final native = await host.openEditor('lost-$lost', create: true);
           final editor = lost == 'business'
-              ? _LostBusinessReply(native)
+              ? LostBusinessReply(native)
               : native;
           final initial = _snapshot().values;
           final owner = await host.createEditorDraftOwner(
@@ -264,8 +108,8 @@ void main() {
             create: true,
           );
           final base = host.editorDraftCommitServices(owner);
-          final proposals = _LostProposalReply(base.proposals, lost);
-          final lostChild = _LostChildReply(base.drafts);
+          final proposals = LostProposalReply(base.proposals, lost);
+          final lostChild = LostChildReply(base.drafts);
           void input(EditorDraftOwner target, String body) {
             final raw = target.session.current;
             target.session.observe(
@@ -294,6 +138,7 @@ void main() {
           final services = EditorDraftCommitServices(
             drafts: lost == 'child' ? lostChild : base.drafts,
             proposals: proposals,
+            imports: base.imports,
             inspectCommit: base.inspectCommit,
             readSource: base.readSource,
             presentSource: base.presentSource,
@@ -336,7 +181,7 @@ void main() {
           expect(attempt.finished, isTrue);
           expect(acknowledgements, 1);
           expect(proposals.calls, {'prepare': 1, 'complete': 1, 'retire': 1});
-          if (editor is _LostBusinessReply) expect(editor.saves, 1);
+          if (editor is LostBusinessReply) expect(editor.saves, 1);
           if (lost == 'child') {
             expect(lostChild.operations.length, 2);
             expect(

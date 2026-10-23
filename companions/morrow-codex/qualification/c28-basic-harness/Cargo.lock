@@ -1567,6 +1567,8 @@ dependencies = [
 name = "codex-windows-sandbox"
 version = "0.0.0"
 dependencies = [
+ "capnpc",
+ "capnp",
  "anyhow",
  "base64 0.22.1",
  "chrono",

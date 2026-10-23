@@ -7,6 +7,50 @@ pub(crate) const BYTES: usize = 256;
 const MAGIC: &[u8; 8] = b"C28PSD01";
 const HISTORY: usize = 16;
 
+// Finite diagnostic data only: no handle, PID, callback or retirement permit.
+// The value identifies a predicate that actually rejected an existing capture;
+// it never substitutes for an exit observation or authorizes another operation.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(u8)]
+pub enum ParentExitPredicate {
+    RetainedIdentity = 1, RetainedJobMembership = 2, RetainedNoninheritance = 3,
+    ProcessSignal = 4, PrimaryThreadSignal = 5, PostExitJobEmpty = 6,
+    JobActiveMissing = 7, JobStillActive = 8, ProcessExitMissing = 9,
+    BootstrapDelivered = 10, OriginalIdentity = 11, ChildIdentity = 12,
+    ProcessExitNotZero = 13, PrimaryThreadExitNotZero = 14,
+    JobAccountingLength = 15, JobLimitedTermination = 16, JobTotalMissingOrZero = 17,
+}
+impl TryFrom<u8> for ParentExitPredicate {
+    type Error = ();
+    fn try_from(value:u8)->Result<Self,Self::Error> {
+        use ParentExitPredicate::*;
+        Ok(match value {
+            1=>RetainedIdentity,2=>RetainedJobMembership,3=>RetainedNoninheritance,
+            4=>ProcessSignal,5=>PrimaryThreadSignal,6=>PostExitJobEmpty,
+            7=>JobActiveMissing,8=>JobStillActive,9=>ProcessExitMissing,
+            10=>BootstrapDelivered,11=>OriginalIdentity,12=>ChildIdentity,
+            13=>ProcessExitNotZero,14=>PrimaryThreadExitNotZero,
+            15=>JobAccountingLength,16=>JobLimitedTermination,17=>JobTotalMissingOrZero,
+            _=>return Err(()),
+        })
+    }
+}
+#[derive(Debug)]
+pub struct ParentExitFailure { predicate:ParentExitPredicate }
+impl ParentExitFailure {
+    pub fn error(predicate:ParentExitPredicate)->io::Error {
+        io::Error::new(io::ErrorKind::InvalidData,Self{predicate})
+    }
+    pub fn predicate(&self)->ParentExitPredicate {self.predicate}
+}
+impl std::fmt::Display for ParentExitFailure {
+    fn fmt(&self,f:&mut std::fmt::Formatter<'_>)->std::fmt::Result {
+        write!(f,"A1 original P exit predicate rejected: {:?}",self.predicate)
+    }
+}
+impl std::error::Error for ParentExitFailure {}
+
+
 macro_rules! byte_enum {
     ($name:ident { $($variant:ident = $value:literal),+ $(,)? }) => {
         #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -34,6 +78,8 @@ byte_enum!(Stage {
     RevalidatePins = 23, ChildResume = 24, BootstrapWrite = 25,
     BootstrapAliasClose = 26, InheritedAliasClose = 27, WaitChild = 28,
     ObserveChild = 29, ResourceClose = 30, RetireChild = 31,
+    ObserveRetainedChild = 32, ObserveThreadExit = 33, ObserveJobAccounting = 34,
+    ValidateChildExit = 35,
     ImportAliases = 64, ImportParentIdentity = 65, ImportServerIdentity = 66,
     ImportParentImage = 67, ImportAuthPins = 68, ImportParentDigest = 69,
     ImportToken = 70, ImportSubject = 71, ImportRead = 72, ImportDecode = 73,
@@ -43,7 +89,7 @@ byte_enum!(Stage {
 impl Stage {
     fn belongs(self, scope: Scope) -> bool {
         self == Self::NotObserved || match scope {
-            Scope::Parent => (1..=31).contains(&(self as u8)),
+            Scope::Parent => (1..=35).contains(&(self as u8)),
             Scope::Import => (64..=78).contains(&(self as u8)),
         }
     }
@@ -93,6 +139,7 @@ pub(crate) enum CodecError { Length, Magic, Version, Reserved, Enum, Inconsisten
 pub(crate) struct Snapshot {
     scope: Scope, status: Status, stage: Stage, completed: Stage, in_flight: bool,
     first: Option<Failure>, last_native: Option<Native>,
+    exit_predicate: Option<ParentExitPredicate>,
     events: [Event; HISTORY], len: u8, serial: u32,
     history_truncated: bool, sequence_saturated: bool, inconsistent: bool,
 }
@@ -103,7 +150,7 @@ impl Capture {
     pub(crate) fn new(scope: Scope) -> Self {
         Self { value: Snapshot { scope, status: Status::Recording,
             stage: Stage::NotObserved, completed: Stage::NotObserved, in_flight: false,
-            first: None, last_native: None, events: [Event::EMPTY; HISTORY], len: 0, serial: 0,
+            first: None, last_native: None, exit_predicate: None, events: [Event::EMPTY; HISTORY], len: 0, serial: 0,
             history_truncated: false, sequence_saturated: false, inconsistent: false } }
     }
     fn recording(&self) -> bool { self.value.status == Status::Recording && !self.value.inconsistent }
@@ -151,6 +198,7 @@ impl Capture {
         if self.value.status != Status::Recording { return; }
         self.value.first = Some(Failure { stage: self.value.stage,
             kind: Kind::from_io(error.kind()), raw: error.raw_os_error() });
+        self.value.exit_predicate=error.get_ref().and_then(|e|e.downcast_ref::<ParentExitFailure>()).map(|e|e.predicate());
         self.value.status = Status::IoErrorLatched;
     }
     pub(crate) fn latch_unwind(&mut self) {
@@ -183,6 +231,10 @@ impl Snapshot {
             (Status::UnwindLatched, Some(f)) if f.kind == Kind::Unwind && f.raw.is_none() && f.stage == self.stage => {},
             _ => return bad(),
         }
+        if self.exit_predicate.is_some() && (self.scope!=Scope::Parent
+            || self.status!=Status::IoErrorLatched || !self.in_flight
+            || !matches!(self.stage,Stage::ObserveChild|Stage::ObserveRetainedChild|Stage::ObserveThreadExit|Stage::ObserveJobAccounting|Stage::ValidateChildExit)
+            || self.first.is_none_or(|f|f.kind!=Kind::InvalidData||f.raw.is_some())) {return bad();}
         if self.status == Status::FunctionReturnedOk && (self.in_flight || self.stage == Stage::NotObserved) { return bad(); }
         if self.sequence_saturated && (!self.history_truncated || self.serial != u32::MAX) { return bad(); }
         if !self.history_truncated && self.serial != u32::from(self.len) { return bad(); }
@@ -247,13 +299,14 @@ impl Snapshot {
     }
     pub(crate) fn encode(&self) -> Result<[u8; BYTES], CodecError> {
         self.validate()?;
-        let mut out = [0u8; BYTES];out[..8].copy_from_slice(MAGIC);out[8]=1;
+        let mut out = [0u8; BYTES];out[..8].copy_from_slice(MAGIC);out[8]=2;
         out[9]=self.scope as u8;out[10]=self.status as u8;out[11]=self.stage as u8;
         out[12]=self.completed as u8;out[13]=self.len;
         out[14]=u8::from(self.history_truncated)|(u8::from(self.sequence_saturated)<<1)|(u8::from(self.in_flight)<<2);
         put32(&mut out[16..20],self.serial);
         if let Some(f)=self.first {out[20]=f.stage as u8;out[21]=f.kind as u8;out[22]=u8::from(f.raw.is_some());put32(&mut out[24..28],f.raw.unwrap_or(0) as u32);}
         if let Some(n)=self.last_native {out[28]=n.api as u8;out[29]=n.stage as u8;out[30]=if n.succeeded{1}else{2};out[31]=u8::from(n.raw.is_some());put32(&mut out[32..36],n.raw.unwrap_or(0) as u32);}
+        out[36]=self.exit_predicate.map_or(0,|p|p as u8);
         for (i,e) in self.events[..self.len as usize].iter().enumerate() {
             let at=64+i*12;out[at]=e.kind;out[at+1]=e.stage as u8;out[at+2]=e.api;out[at+3]=e.flags;
             put32(&mut out[at+4..at+8],e.sequence);put32(&mut out[at+8..at+12],e.raw as u32);
@@ -263,9 +316,10 @@ impl Snapshot {
     pub(crate) fn decode(bytes:&[u8]) -> Result<Self,CodecError> {
         if bytes.len()!=BYTES{return Err(CodecError::Length);}
         if &bytes[..8]!=MAGIC{return Err(CodecError::Magic);}
-        if bytes[8]!=1{return Err(CodecError::Version);}
-        if bytes[14]&!7!=0||bytes[15]!=0||bytes[23]!=0||bytes[36..64].iter().any(|v|*v!=0)
+        if bytes[8]!=1&&bytes[8]!=2{return Err(CodecError::Version);}
+        if bytes[14]&!7!=0||bytes[15]!=0||bytes[23]!=0||bytes[37..64].iter().any(|v|*v!=0)||(bytes[8]==1&&bytes[36]!=0)
             ||bytes[22]>1||bytes[31]>1{return Err(CodecError::Reserved);}
+        let exit_predicate=if bytes[36]==0{None}else{Some(ParentExitPredicate::try_from(bytes[36]).map_err(|_|CodecError::Enum)?)};
         let status=Status::try_from(bytes[10])?;let stage=Stage::try_from(bytes[11])?;
         let completed=Stage::try_from(bytes[12])?;
         let first=if bytes[21]==0 {
@@ -289,7 +343,7 @@ impl Snapshot {
             *e=Event{kind:bytes[at],stage:Stage::try_from(bytes[at+1])?,api:bytes[at+2],flags:bytes[at+3],
                 sequence:u32_at(bytes,at+4),raw:u32_at(bytes,at+8) as i32};
         }
-        let value=Self{scope:Scope::try_from(bytes[9])?,status,stage,completed,first,last_native,events,
+        let value=Self{scope:Scope::try_from(bytes[9])?,status,stage,completed,first,last_native,exit_predicate,events,
             len:bytes[13],serial:u32_at(bytes,16),history_truncated:bytes[14]&1!=0,
             sequence_saturated:bytes[14]&2!=0,in_flight:bytes[14]&4!=0,inconsistent:false};
         value.validate()?;Ok(value)
@@ -394,6 +448,31 @@ mod tests {
         let b=failed().encode().unwrap();let mut x=b;x[12]=Stage::ParentPins as u8;assert!(Snapshot::decode(&x).is_err());
         let mut x=b;x[11]=Stage::ParentPins as u8;x[20]=Stage::ParentPins as u8;assert!(Snapshot::decode(&x).is_err());
         let mut c=pending();c.completed(Stage::BootstrapReader);let mut x=c.snapshot().encode().unwrap();x[14]|=4;assert!(Snapshot::decode(&x).is_err());
+    }
+    #[test] fn exit_diagnostic_v2_roundtrips_each_actual_predicate_and_freezes_without_queries(){
+        for code in 1..=17 {
+            let predicate=ParentExitPredicate::try_from(code).unwrap();
+            let mut c=Capture::new(Scope::Parent);c.enter(Stage::ObserveRetainedChild);
+            c.latch_io(&ParentExitFailure::error(predicate));let s=c.snapshot();
+            assert_eq!(s.exit_predicate,Some(predicate));assert_eq!(s.first.unwrap().raw,None);
+            let encoded=s.encode().unwrap();assert_eq!(encoded[8],2);assert_eq!(encoded[36],code);
+            assert_eq!(Snapshot::decode(&encoded).unwrap(),s);
+            c.latch_io(&ParentExitFailure::error(ParentExitPredicate::ProcessSignal));
+            c.completed(Stage::ObserveRetainedChild);assert_eq!(c.snapshot(),s);
+        }
+    }
+    #[test] fn exit_diagnostic_keeps_v1_readable_and_rejects_unobserved_or_wrong_scope_predicates(){
+        let original=failed();let mut legacy=original.encode().unwrap();legacy[8]=1;
+        assert_eq!(Snapshot::decode(&legacy).unwrap(),original);
+        for version in [1,2] {let mut malformed=legacy;malformed[8]=version;malformed[36]=255;assert!(Snapshot::decode(&malformed).is_err());}
+        let mut c=Capture::new(Scope::Parent);c.enter(Stage::ValidateChildExit);
+        c.latch_io(&ParentExitFailure::error(ParentExitPredicate::JobStillActive));
+        let encoded=c.snapshot().encode().unwrap();let mut v1=encoded;v1[8]=1;assert!(Snapshot::decode(&v1).is_err());
+        let mut fabricated=c.snapshot();fabricated.status=Status::Recording;fabricated.first=None;assert!(fabricated.encode().is_err());
+        let mut wrong=Capture::new(Scope::Import);wrong.enter(Stage::ImportRead);
+        wrong.latch_io(&ParentExitFailure::error(ParentExitPredicate::JobStillActive));assert!(wrong.snapshot().encode().is_err());
+        let mut opaque=pending();opaque.latch_io(&io::Error::new(io::ErrorKind::InvalidData,"private free text"));
+        assert_eq!(opaque.snapshot().exit_predicate,None);
     }
     #[test] fn d2103_22_retained_history_cannot_invent_overlapping_operations(){
         let mut c=pending();c.native(Api::CreateFile,false,Some(2));let b=c.snapshot().encode().unwrap();

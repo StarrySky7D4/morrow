@@ -26,13 +26,18 @@ pub use codex_mxc_sandbox::run_main as run_windows_mxc_main;
 #[cfg(windows)]
 pub use codex_windows_sandbox::MatchedRunnerArtifact;
 #[cfg(windows)]
+pub use codex_windows_sandbox::CHECKED_CONTROL_SCHEMA as WINDOWS_RUNNER_SCHEMA;
+#[cfg(windows)]
+pub use codex_windows_sandbox::native_close_wire::NATIVE_CLOSE_PROTOCOL_SCHEMA as WINDOWS_NATIVE_CLOSE_SCHEMA;
+#[cfg(windows)]
 #[doc(hidden)]
 pub use codex_windows_sandbox::{asuser_parent_dispatch,AsUserParentOrigin};
 #[cfg(windows)]
 #[doc(hidden)]
-pub use codex_windows_sandbox::{ParentOriginalProcess,ParentCreate,ParentChildIdentity,ParentNativeExit,ParentCClosed};
+pub use codex_windows_sandbox::{ParentOriginalProcess,ParentCreate,ParentChildIdentity,ParentNativeExit,ParentCClosed,ParentExitPredicate,ParentExitFailure};
 #[cfg(windows)]
-pub use codex_windows_sandbox::{AsUserMaterialization,AsUserFactoryBinding,AsUserOriginRetirement};
+pub use codex_windows_sandbox::{AsUserMaterialization,AsUserFactoryBinding,AsUserOriginRetirement,
+    AsUserCallerRefusal,AsUserOriginRefusalRetirement,AsUserRefusalReason};
 #[cfg(windows)]
 pub use codex_windows_sandbox::NativeHostCompletion;
 #[cfg(windows)]

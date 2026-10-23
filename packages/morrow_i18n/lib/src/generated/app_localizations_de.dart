@@ -432,6 +432,62 @@ class AppLocalizationsDe extends AppLocalizations {
       'Das Ergebnis des Vorgangs ist noch nicht bestätigt. Prüfen Sie den ursprünglichen Eintrag und wiederholen Sie den Vorgang nicht.';
 
   @override
+  String get mainDraftHistoryArchive => 'Diesen Eintrag archivieren';
+
+  @override
+  String get mainDraftHistoryArchived => 'Archiviert';
+
+  @override
+  String mainDraftHistoryCapacity(int archived, int current) {
+    return 'Aktuelle Datensätze: $current/256; archiviert: $archived/4096';
+  }
+
+  @override
+  String get mainDraftHistoryCategoryField => 'Kategorie';
+
+  @override
+  String get mainDraftHistoryDescriptionField => 'Beschreibung';
+
+  @override
+  String get mainDraftHistoryExport => 'Verlaufseintrag exportieren';
+
+  @override
+  String get mainDraftHistoryFirst => 'Erste Seite';
+
+  @override
+  String get mainDraftHistoryMaintain => 'Zugehörige Einträge archivieren';
+
+  @override
+  String get mainDraftHistoryMaintainHelp =>
+      'Den gesamten Verlauf behalten und Platz für Entwurfseinträge freigeben.';
+
+  @override
+  String get mainDraftHistoryMaintained => 'Zugehörige Einträge archiviert';
+
+  @override
+  String get mainDraftHistoryNext => 'Nächste Seite';
+
+  @override
+  String get mainDraftHistoryNotice =>
+      'Hier erscheinen nur stillgelegte Entwürfe. Archivieren erhält Text und Herkunft und gibt einen Entwurfsplatz frei. Freigegebene Anhangdateien und Erfassungsrechte werden nicht wiederhergestellt. Für archivierte Datensätze gilt außerdem eine Grenze von 64 MiB.';
+
+  @override
+  String get mainDraftHistoryRetired => 'Stillgelegt';
+
+  @override
+  String get mainDraftHistoryStageField => 'Phase';
+
+  @override
+  String get mainDraftHistoryTitle => 'Entwurfsverlauf';
+
+  @override
+  String get mainDraftHistoryTitleField => 'Titel';
+
+  @override
+  String get mainDraftHistoryUnconfirmed =>
+      'Das Archivierungsergebnis ist unbestätigt. Aktualisieren Sie die Ansicht, um den Originaleintrag zu prüfen.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       'Nach dem Abbruch wird die ursprüngliche Verzichtsanfrage nicht mehr ausgeführt. Dadurch wird der Anhang nicht gelöscht und andere Änderungen werden nicht rückgängig gemacht.';
 
@@ -511,6 +567,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get mainDraftJournalTitle => 'Gespeicherte Entwürfe';
+
+  @override
+  String get mainDraftWriteInspect => 'Entwurfsspeicherung prüfen';
+
+  @override
+  String get mainDraftWriteRetry => 'Entwurf erneut speichern';
 
   @override
   String get mainEdit => 'Bearbeiten';

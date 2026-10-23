@@ -56,6 +56,16 @@
       }
     }
   },
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "archived": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
   "@mainFavoriteTooltip": {
     "placeholders": {
       "title": {
@@ -1077,6 +1087,23 @@
   "mainDraftHandoffRecoverySelection": "記録を選択すると、下書き全体を確認できます。",
   "mainDraftHandoffRecoveryTitle": "下書き引き継ぎの復旧",
   "mainDraftHandoffRecoveryUnknown": "操作結果はまだ確認できていません。元の記録を確認し、操作を繰り返さないでください。",
+  "mainDraftHistoryArchive": "この記録をアーカイブ",
+  "mainDraftHistoryArchived": "アーカイブ済み",
+  "mainDraftHistoryCapacity": "通常の記録：{current}/256、アーカイブ：{archived}/4096",
+  "mainDraftHistoryCategoryField": "分類",
+  "mainDraftHistoryDescriptionField": "説明",
+  "mainDraftHistoryExport": "履歴の記録をエクスポート",
+  "mainDraftHistoryFirst": "最初のページ",
+  "mainDraftHistoryMaintain": "関連記録をアーカイブ",
+  "mainDraftHistoryMaintainHelp": "すべての履歴を保持し、下書き記録の空き枠を確保します。",
+  "mainDraftHistoryMaintained": "関連記録をアーカイブしました",
+  "mainDraftHistoryNext": "次のページ",
+  "mainDraftHistoryNotice": "終了済みの下書きのみ表示します。アーカイブはテキストと出所を保持し、通常の下書き枠を空けます。解放済みの添付ファイルやキャプチャ権限は復元されません。アーカイブには 64 MiB の記録上限もあります。",
+  "mainDraftHistoryRetired": "終了済み",
+  "mainDraftHistoryStageField": "段階",
+  "mainDraftHistoryTitle": "下書きの履歴",
+  "mainDraftHistoryTitleField": "タイトル",
+  "mainDraftHistoryUnconfirmed": "アーカイブ結果は未確認です。更新して元の記録を確認してください。",
   "mainDraftImportRecoveryCancelBody": "取り消すと、元の破棄要求は無効になります。添付ファイルは削除されず、ほかの変更も元に戻りません。",
   "mainDraftImportRecoveryCancelDecision": "破棄要求を取り消す",
   "mainDraftImportRecoveryCancelTitle": "この破棄要求を取り消しますか？",
@@ -1099,6 +1126,8 @@
   "mainDraftJournalRetireUnknown": "終了結果は未確認です。再送信せず、元の操作を確認してください。",
   "mainDraftJournalReview": "この復元用コピーは読み取り専用です。元のテキスト、添付ファイル、キャプチャ履歴を保持します。表示しても前回の保存は再開されません。",
   "mainDraftJournalTitle": "保存済みの下書き",
+  "mainDraftWriteInspect": "下書きの保存を確認",
+  "mainDraftWriteRetry": "下書きの保存を再試行",
   "mainEdit": "編集",
   "mainEditIdeaTitle": "アイデアをより明確に",
   "mainEditorClosedUnknown": "エディターを閉じましたが、保存結果は未確認です。別のコピーを作る前にワークスペースを開き直して確認してください。",

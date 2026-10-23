@@ -19,6 +19,31 @@ pub struct NativeExecutionRegistry {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    #[cfg(windows)]
+    fn normal_terminal_and_unstarted_metadata_cannot_satisfy_native_refusal_retirement() {
+        let registry=Arc::new(NativeExecutionRegistry::default());
+        let slot=registry.reserve("normal-not-refusal".into(),Arc::new(())).unwrap();
+        slot.bind_native_completion().unwrap();
+        slot.unstarted();
+        assert!(registry.statuses().unwrap().is_empty());
+        assert!(slot.require_retired_original().is_ok());
+        assert!(matches!(slot.require_retired_refusal(),Err(Error::CommitUnknown)));
+    }
+    #[test]
+    #[cfg(windows)]
+    fn unknown_refusal_metadata_cannot_release_original_registry_or_keepalive() {
+        // Memory-only negative control: even a synthetic refusal bit cannot
+        // make an Unknown slot clean. No native proof is made or accepted.
+        let registry=Arc::new(NativeExecutionRegistry::default());
+        let resource=Arc::new(());let weak=Arc::downgrade(&resource);
+        let slot=registry.reserve("unknown-refusal-metadata".into(),resource).unwrap();
+        slot.bind_native_completion().unwrap();slot.no_handle_unknown();
+        slot.refused.store(true,Ordering::SeqCst);slot.maybe_retire();
+        assert_eq!(registry.statuses().unwrap().len(),1);assert!(weak.upgrade().is_some());
+        assert!(matches!(slot.require_retired_refusal(),Err(Error::CommitUnknown)));
+        assert!(!slot.original_retired.load(Ordering::SeqCst));
+    }
     struct MemoryProcess {id:codex_exec_server::ProcessId,wake:tokio::sync::watch::Sender<u64>}
     fn no_native<'a,T:Send+'a>()->codex_exec_server::ExecProcessFuture<'a,T>{
         Box::pin(async{Err(codex_exec_server::ExecServerError::Protocol("memory ownership fixture has no native effects or EOF".into()))})
@@ -155,6 +180,7 @@ pub struct NativeExecutionStatus {
     pub start_pending: bool,
     pub unknown: bool,
     pub exited_and_closed: bool,
+    pub closed_before_dispatch: bool,
     pub provider_active: bool,
     pub pending_jobs: usize,
 }
@@ -171,6 +197,7 @@ pub(crate) struct ExecutionSlot {
     pending: AtomicBool,
     unknown: AtomicBool,
     terminal: AtomicBool,
+    refused: AtomicBool,
     provider: AtomicBool,
     jobs: AtomicUsize,
     stop_requested: AtomicBool,
@@ -196,6 +223,7 @@ impl NativeExecutionRegistry {
                 start_pending: s.pending.load(Ordering::SeqCst),
                 unknown: s.unknown.load(Ordering::SeqCst),
                 exited_and_closed: s.terminal.load(Ordering::SeqCst),
+                closed_before_dispatch: s.refused.load(Ordering::SeqCst),
                 provider_active: s.provider.load(Ordering::SeqCst),
                 pending_jobs: s.jobs.load(Ordering::SeqCst),
             })
@@ -223,6 +251,7 @@ impl NativeExecutionRegistry {
             pending: AtomicBool::new(true),
             unknown: AtomicBool::new(false),
             terminal: AtomicBool::new(false),
+            refused: AtomicBool::new(false),
             provider: AtomicBool::new(false),
             jobs: AtomicUsize::new(0),
             stop_requested: AtomicBool::new(false),
@@ -243,6 +272,36 @@ impl NativeExecutionRegistry {
     }
 }
 impl ExecutionSlot {
+    #[cfg(windows)]
+    pub(crate) fn accept_original_refusal(&self,ack:crate::native_completion::NativeRefusalAck)->Result<()> {
+        let result=(||{
+            let entries=self.registry.entries.try_lock().map_err(|_|Error::Storage)?;
+            if !ack.is_for_slot(self) || !entries.get(&self.operation).is_some_and(|entry|std::ptr::eq(Arc::as_ptr(entry),self))
+                || !self.is_native_bound() || !self.pending.load(Ordering::SeqCst) || self.is_unknown()
+                || self.stop_requested() || self.provider.load(Ordering::SeqCst) || self.terminal.load(Ordering::SeqCst)
+                || self.refused.load(Ordering::SeqCst) || self.original_retired.load(Ordering::SeqCst)
+                || self.jobs.load(Ordering::SeqCst)==0 {
+                return Err(Error::CommitUnknown);
+            }
+            let process=self.process.try_lock().map_err(|_|Error::Storage)?;
+            if process.is_some(){return Err(Error::CommitUnknown);}
+            self.refused.store(true,Ordering::SeqCst);
+            self.pending.store(false,Ordering::SeqCst);
+            Ok(())
+        })();
+        if result.is_err(){self.unknown();ack.mark_failed();}
+        result
+    }
+    #[cfg(windows)]
+    pub(crate) fn require_retired_refusal(&self)->Result<()> {
+        if !self.native_bound.load(Ordering::SeqCst) || !self.original_retired.load(Ordering::SeqCst)
+            || self.pending.load(Ordering::SeqCst) || self.is_unknown()
+            || !self.refused.load(Ordering::SeqCst) || self.terminal.load(Ordering::SeqCst)
+            || self.provider.load(Ordering::SeqCst) || self.jobs.load(Ordering::SeqCst)!=0 {
+            return Err(Error::CommitUnknown);
+        }
+        Ok(())
+    }
     pub(crate) fn is_native_bound(&self)->bool {self.native_bound.load(Ordering::SeqCst)}
     pub(crate) fn native_terminal(&self)->bool {self.is_native_bound() && self.terminal.load(Ordering::SeqCst) && !self.is_unknown()}
     pub(crate) fn bind_native_completion(&self)->Result<()> {
@@ -327,7 +386,7 @@ impl ExecutionSlot {
             if let Ok(mut entries) = registry.entries.lock() {
                 // Occupancy acquisition and retirement share this exact mutex.
                 if self.pending.load(Ordering::SeqCst)
-                    || !self.terminal.load(Ordering::SeqCst)
+                    || !(self.terminal.load(Ordering::SeqCst) || self.refused.load(Ordering::SeqCst))
                     || self.provider.load(Ordering::SeqCst)
                     || self.jobs.load(Ordering::SeqCst) != 0
                     || (self.native_bound.load(Ordering::SeqCst) && self.unknown.load(Ordering::SeqCst))

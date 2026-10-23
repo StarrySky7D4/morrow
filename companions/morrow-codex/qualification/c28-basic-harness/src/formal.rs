@@ -12,7 +12,7 @@ use crate::{
     sealed_preparation::{self, PreparedNativeProposal, PreparedSessionGuest},
     wrapper::{ReviewedWrapper, SelectionStep},
 };
-use anyhow::{Result, anyhow, bail, ensure};
+use anyhow::{Context, Result, anyhow, bail, ensure};
 use morrow_agent_process_control_v1::{Capabilities, host::Budget};
 use morrow_agent_session_exec_v1_r2::Intent;
 use morrow_workbench_host::{
@@ -37,12 +37,15 @@ const PROCESS: &[u8] = include_bytes!(
 
 pub struct Workflow {
     cleanup_scope:Option<crate::provisioning::ExecutionCleanupScope>,
+    native_refusal:Option<morrow_codex_session_exec_windows_v1::NativeExecutionRefusal>,
+    refusal_identity:Option<morrow_agent_session_exec_v1_r2::safe_exec::ToolIdentity>,
     root: PathBuf,
     sid: String,
     operation: String,
     nonce: String,
     tty: bool,
     basic: bool,
+    shared_parent_session: bool,
     basic_fixture: Option<crate::basic::Fixture>,
     basic_evidence: Option<crate::basic::TerminalEvidence>,
     session_wrapper: Option<ReviewedWrapper>,
@@ -55,6 +58,10 @@ pub struct Workflow {
     expected_intent: Option<Intent>,
     native_params: Option<morrow_codex_session_exec_windows_v1::ExecParams>,
     native: Option<PreparedNativeProposal>,
+    // A non-owning reference to the exact backend transferred to the original
+    // Context/Worker. A fixture must not depend on the consumed outer factory
+    // slot, nor keep a strong alias alive across scheduler retirement.
+    qualification_backend: std::sync::Weak<morrow_codex_session_exec_windows_v1::ProvisionedWindowsBackend>,
     key: Option<TaskKey>,
     proposal: Option<GuestProposal>,
     claim: Option<GuestClaim>,
@@ -74,13 +81,14 @@ impl Workflow {
         identity.extend_from_slice(&helper.sha256);
         let nonce = crate::preflight::hex(&morrow_agent_session_exec_v1_r2::hash(&identity)[..16]);
         Ok(Self {
-            cleanup_scope:None,
+            cleanup_scope:None,native_refusal:None,refusal_identity:None,
             root: root.into(),
             sid: format!("vm-{nonce}"),
             operation: format!("vm-{nonce}-child"),
             nonce,
             tty,
             basic: false,
+            shared_parent_session: false,
             basic_fixture: None,
             basic_evidence: None,
             session_wrapper: None,
@@ -93,6 +101,7 @@ impl Workflow {
             expected_intent: None,
             native_params: None,
             native: None,
+            qualification_backend: std::sync::Weak::new(),
             key: None,
             proposal: None,
             claim: None,
@@ -111,6 +120,7 @@ impl Workflow {
     }
     pub fn new_basic_native_v8(lifecycle:&GuestLifecycle,helper:&Artifact)->Result<Self> {
         let mut workflow=Self::new(lifecycle.synthetic_root(),helper,false)?;
+        workflow.shared_parent_session=lifecycle.has_parent_attempt();
         workflow.basic_fixture=Some(crate::basic::Fixture::create_native_v8(lifecycle,&workflow.nonce)?);
         workflow.basic=true;Ok(workflow)
     }
@@ -126,6 +136,22 @@ impl Workflow {
     }
     pub fn finished(&self) -> bool {
         self.joined
+    }
+    pub(crate) fn original_native_owner_resources(&self)->Result<(
+        std::sync::Arc<morrow_codex_session_exec_windows_v1::BorrowedNativeResources>,
+        std::sync::Arc<morrow_agent_session_exec_v1_r2::authority::SessionExecHost>)> {
+        let native=self.native.as_ref().ok_or_else(||anyhow!("original native preparation absent"))?;
+        Ok((native.resources.clone(),native.host.clone()))
+    }
+    pub(crate) fn has_native_refusal(&self)->bool {self.native_refusal.is_some()}
+    pub(crate) fn take_refusal_cleanup_parts(&mut self)->Result<(crate::provisioning::ExecutionCleanupScope,
+        morrow_codex_session_exec_windows_v1::NativeExecutionRefusal)> {
+        ensure!(self.joined && self.key.is_none() && self.session_key.is_none() && self.running.is_none(),
+            "original refusal task return/join/ACK incomplete");
+        ensure!(self.native.as_ref().is_some_and(|native|native.context.is_none()),"original refusal context not returned");
+        let completion=self.native_refusal.take().ok_or_else(||anyhow!("original refusal capability absent or consumed"))?;
+        let scope=self.cleanup_scope.take().ok_or_else(||anyhow!("original refusal cleanup scope absent or consumed"))?;
+        Ok((scope,completion))
     }
     pub(crate) fn take_normal_cleanup_parts(&mut self)->Result<(crate::provisioning::ExecutionCleanupScope,
         morrow_codex_session_exec_windows_v1::NativeExecutionCompletion)> {
@@ -197,6 +223,16 @@ impl Workflow {
     fn wrapper_path(&self, name: &str) -> PathBuf {
         self.root.join(format!("{name}.mrowasp1"))
     }
+    fn catalog_package_id(&self, base:&str)->String {
+        if self.shared_parent_session {format!("{base}.{}",self.nonce)} else {base.to_owned()}
+    }
+    fn catalog_request_seed(&self, ordinal:u16)->Result<u128> {
+        if !self.shared_parent_session {return Ok(u128::from(ordinal));}
+        // A fresh attempt retains its own request range. The low sixteen bits
+        // are reserved for bounded catalog calls; prior durable IDs stay spent.
+        let nonce=u128::from_str_radix(&self.nonce,16).context("attempt catalog nonce encoding")?;
+        Ok(((nonce>>16)<<16)|u128::from(ordinal))
+    }
     /// A positive confirmation is not authority. Every method below still uses
     /// original catalog/HostRuntime/gate checks and the original same owner.
     pub fn step(
@@ -222,10 +258,10 @@ impl Workflow {
                 self.session_wrapper = Some(ReviewedWrapper::session_public_r2_v1(
                     workbench,
                     self.wrapper_path("session-public-r2-v1"),
-                    "vm.public.session.r2.v1",
+                    &self.catalog_package_id("vm.public.session.r2.v1"),
                     SESSION_PUBLIC_R2_V1,
                     &self.sid,
-                    100,
+                    self.catalog_request_seed(100)?,
                 )?);
                 let mut evidence = self.wrapper_evidence(self.session_wrapper.as_ref().unwrap());
                 evidence["session_fixture"] = serde_json::json!({
@@ -258,7 +294,7 @@ impl Workflow {
                     .session_wrapper
                     .as_ref()
                     .ok_or_else(|| anyhow!("session wrapper absent"))?;
-                let pair = ReviewedWrapper::current_pair(workbench, &[wrapper], 200)?;
+                let pair = ReviewedWrapper::current_pair(workbench, &[wrapper], self.catalog_request_seed(200)?)?;
                 let prepared = self
                     .session_context
                     .as_mut()
@@ -379,12 +415,12 @@ impl Workflow {
                 self.controls_wrapper = Some(ReviewedWrapper::controls(
                     workbench,
                     self.wrapper_path("controls"),
-                    "vm.sealed.controls",
+                    &self.catalog_package_id("vm.sealed.controls"),
                     PROCESS,
                     &self.sid,
                     &intent.execution_domain,
                     self.caps(),
-                    300,
+                    self.catalog_request_seed(300)?,
                 )?);
                 Ok(self.wrapper_evidence(self.controls_wrapper.as_ref().unwrap()))
             }
@@ -400,11 +436,11 @@ impl Workflow {
                 self.proposal_wrapper = Some(ReviewedWrapper::proposal(
                     workbench,
                     self.wrapper_path("proposal"),
-                    "vm.sealed.proposal",
+                    &self.catalog_package_id("vm.sealed.proposal"),
                     PROPOSAL,
                     &self.sid,
                     &intent.execution_domain,
-                    400,
+                    self.catalog_request_seed(400)?,
                 )?);
                 Ok(self.wrapper_evidence(self.proposal_wrapper.as_ref().unwrap()))
             }
@@ -417,7 +453,7 @@ impl Workflow {
                     .proposal_wrapper
                     .as_ref()
                     .ok_or_else(|| anyhow!("proposal wrapper absent"))?;
-                let pair = ReviewedWrapper::current_pair(workbench, &[controls, proposal], 500)?;
+                let pair = ReviewedWrapper::current_pair(workbench, &[controls, proposal], self.catalog_request_seed(500)?)?;
                 let backend = factory
                     .as_ref()
                     .ok_or_else(|| anyhow!("production factory absent"))?;
@@ -447,6 +483,7 @@ impl Workflow {
                 let ProductionBackend { backend, scheduler,.. } = factory
                     .take()
                     .ok_or_else(|| anyhow!("factory transfer absent"))?;
+                self.qualification_backend = std::sync::Arc::downgrade(&backend);
                 drop(backend);
                 drop(scheduler);
                 Ok(
@@ -530,6 +567,44 @@ impl Workflow {
                 );
                 Ok(serde_json::json!({"one_shot_claim_received":true,"child_started":false}))
             }
+            "qualify-caller-refusal" => {
+                ensure!(self.key.is_some() && self.claim.is_some() && self.running.is_none()
+                    && !self.attempts.contains("qualify-logon-refusal")
+                    && !self.attempts.contains("qualify-source-policy-refusal")
+                    && self.native_refusal.is_none() && !self.joined
+                    && self.native.as_ref().is_some_and(|native|native.reviewed.is_some()),
+                    "one original reviewed/claimed invocation required for caller-refusal qualification");
+                lifecycle.qualify_missing_assign_once()
+            }
+            "qualify-logon-refusal" => {
+                ensure!(self.key.is_some() && self.claim.is_some() && self.running.is_none()
+                    && self.native_refusal.is_none() && !self.joined
+                    && !self.attempts.contains("qualify-caller-refusal")
+                    && !self.attempts.contains("qualify-source-policy-refusal")
+                    && self.native.as_ref().is_some_and(|native|native.reviewed.is_some()),
+                    "one original reviewed/claimed invocation required for logon-refusal qualification");
+                ensure!(factory.is_none(), "original factory must already belong to its Context/Worker");
+                let backend = self.qualification_backend.upgrade()
+                    .context("original transferred production backend no longer live")?;
+                backend.qualify_logon_rejection_once().map_err(anyhow::Error::msg)?;
+                Ok(serde_json::json!({"original_factory_input_armed":true,"stored_password_changed":false,
+                    "account_changed":false,"native_logon_observed":false,"cleanup_authority":false}))
+            }
+            "qualify-source-policy-refusal" => {
+                ensure!(self.key.is_some() && self.claim.is_some() && self.running.is_none()
+                    && self.native_refusal.is_none() && !self.joined
+                    && !self.attempts.contains("qualify-caller-refusal")
+                    && !self.attempts.contains("qualify-logon-refusal")
+                    && self.native.as_ref().is_some_and(|native|native.reviewed.is_some()),
+                    "one original reviewed/claimed invocation required for source-policy qualification");
+                ensure!(factory.is_none(), "original factory must already belong to its Context/Worker");
+                let backend=self.qualification_backend.upgrade()
+                    .context("original transferred production backend no longer live")?;
+                backend.qualify_source_policy_rejection_once().map_err(anyhow::Error::msg)?;
+                Ok(serde_json::json!({"original_factory_input_armed":true,"denial_only_policy":true,
+                    "stored_password_changed":false,"account_changed":false,"native_logon_observed":false,
+                    "cleanup_authority":false}))
+            }
             "native-start" => {
                 let key = self.key()?;
                 let caps = self.caps();
@@ -563,10 +638,31 @@ impl Workflow {
                 )?;
                 let deadline = Instant::now() + Duration::from_secs(35);
                 let process = loop {
-                    match handle
-                        .try_read()
-                        .map_err(|e| anyhow!("native start delivery Unknown: {}; diagnostic={handle:?}; native={:?}", native_start_error_name(e), prepared.resources))?
-                    {
+                    let reply=match handle.try_read() {
+                        Ok(reply)=>reply,
+                        Err(morrow_workbench_host::agent_tasks::AgentError::Session(morrow_agent_session_exec_v1_r2::Error::Denied))
+                            if Instant::now()<deadline=>{
+                            // The actual typed command return must accompany
+                            // this same review's original native SDK capability.
+                            // An error string or missing process never suffices.
+                            let binding=native_binding.as_ref().ok_or_else(||anyhow!("native refusal review missing"))?;
+                            let original=prepared.resources.take_native_execution_refusal(binding)?;
+                            let attempt=original.startup_attempt();
+                            let reason=original.reason();
+                            self.native_refusal=Some(original);
+                            self.refusal_identity=Some(observation.identity);
+                            let mut evidence=serde_json::json!({"native_start_refused":true,
+                                "reason":reason.label(),"startup_attempt":attempt,
+                                "local_and_sdk_slots_retired":true,"actual_started_handle":null,
+                                "exit_code":null,"normal_terminal_ack_claimed":false,
+                                "claim_replay_allowed":false,"outer_worker_factory_setup_retired":false});
+                            if let Some(code)=reason.win32_error() {evidence["win32_error"]=serde_json::json!(code);}
+                            return Ok(evidence);
+                        },
+                        Err(error)=>return Err(anyhow!("native start delivery Unknown: {}; diagnostic={handle:?}; native={:?}",
+                            native_start_error_name(error),prepared.resources)),
+                    };
+                    match reply {
                         Some(reply) => {
                             let AgentReply::Started(process) = &reply else {
                                 bail!("unexpected native start reply; Unknown")
@@ -675,6 +771,28 @@ impl Workflow {
                 self.joined = true;
                 Ok(result)
             }
+            "refusal-join" => {
+                ensure!(self.native_refusal.is_some() && self.running.is_none() && !self.joined,
+                    "same closed native refusal required before original Worker join");
+                let key=self.key()?;
+                join_original(workbench,key)?;
+                let prepared=self.native.as_ref().ok_or_else(||anyhow!("original refusal context missing"))?;
+                ensure!(prepared.context.is_none() && prepared.resources.is_clean()?,"original refusal resource debt remains");
+                let original=self.refusal_identity.as_ref().ok_or_else(||anyhow!("original refusal identity missing"))?;
+                let observation=workbench.inspect_agent_tool(&prepared.host,&original.operation_id)
+                    .map_err(|error|anyhow!("original refusal tool inspection: {error}"))?;
+                ensure!(observation.identity==*original && observation.invocation_started
+                    && observation.phase==morrow_agent_session_exec_v1_r2::ToolPhase::DispatchUnknown
+                    && observation.latest.is_none() && observation.accepted_report.is_none(),
+                    "refusal must preserve the original spent R2 marker without invented output/exit facts");
+                workbench.acknowledge_agent(key).map_err(|error|anyhow!("original refusal Worker acknowledgement: {error}"))?;
+                self.key=None;self.joined=true;
+                Ok(serde_json::json!({"actual_worker_join":true,"original_task_acknowledged":true,
+                    "local_and_sdk_slots_retired":true,"no_business_process_started":true,
+                    "original_operation_id":original.operation_id,"original_record_revision":observation.record_revision,
+                    "durable_invocation_spent":true,"historical_phase":"DispatchUnknown",
+                    "execution_facts_synthesized":false,"claim_replay_allowed":false}))
+            }
             _ => self.selection_step(workbench, command),
         }
     }
@@ -760,3 +878,7 @@ fn native_start_error_name(error: morrow_workbench_host::agent_tasks::AgentError
         },
     }
 }
+
+#[cfg(test)]
+#[path="formal_shared_owner_tests.rs"]
+mod shared_owner_tests;

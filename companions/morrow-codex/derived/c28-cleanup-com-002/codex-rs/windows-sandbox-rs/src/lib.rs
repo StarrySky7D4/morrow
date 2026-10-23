@@ -9,16 +9,22 @@ mod asuser_a1_protocol;
 #[cfg(target_os = "windows")]
 mod asuser_a1_policy;
 #[cfg(target_os = "windows")]
+mod asuser_cwd_pins;
+#[cfg(target_os = "windows")]
 mod asuser_a1_rights;
 #[cfg(target_os = "windows")]
 mod asuser_a1_security;
 #[cfg(target_os = "windows")]
 mod asuser_a1_native;
 #[cfg(target_os = "windows")]
+pub use asuser_a1_native::native_system_windows_directory;
+#[cfg(target_os = "windows")]
 mod asuser_parent_record;
 // Private cached startup data only; no diagnostic transport is installed.
 #[cfg(any(target_os = "windows", test))]
 mod asuser_parent_diagnostic;
+#[doc(hidden)]
+pub use asuser_parent_diagnostic::{ParentExitPredicate,ParentExitFailure};
 // Pure process-local history only; no transport or native capability.
 mod asuser_startup_observation;
 #[cfg(any(windows,test))]
@@ -43,13 +49,14 @@ mod asuser_a1_table;
 #[cfg(windows)]
 mod asuser_a1_route;
 #[cfg(windows)]
-pub use asuser_a1_route::{AsUserMaterialization,AsUserFactoryBinding,AsUserOriginRetirement};
+pub use asuser_a1_route::{AsUserMaterialization,AsUserFactoryBinding,AsUserOriginRetirement,
+    AsUserCallerRefusal,AsUserOriginRefusalRetirement,AsUserRefusalReason};
 #[cfg(target_os = "windows")]
 #[doc(hidden)]
 pub use asuser_a1_helper::dispatch as asuser_a1_dispatch;
 #[cfg(windows)]
 #[doc(hidden)]
-pub use asuser_a1_helper::parent_native::{parent_dispatch as asuser_parent_dispatch,AsUserParentOrigin,
+pub use asuser_a1_helper::parent_native::{parent_dispatch as asuser_parent_dispatch,AsUserParentOrigin,AsUserParentSession,AsUserParentAttempt,
     ParentOriginalProcess,ParentCreate,ParentChildIdentity,ParentNativeExit,ParentCClosed};
 
 #[cfg(target_os = "windows")]
@@ -183,6 +190,18 @@ mod env;
 mod file_write;
 #[cfg(target_os = "windows")]
 mod framed_io;
+#[cfg(target_os = "windows")]
+mod runner_wire;
+#[cfg(target_os = "windows")]
+#[allow(clippy::all, dead_code)]
+mod runner_ipc_capnp { include!(concat!(env!("OUT_DIR"), "/runner_ipc_capnp.rs")); }
+#[cfg(target_os = "windows")]
+#[allow(clippy::all, dead_code)]
+mod native_close_capnp { include!(concat!(env!("OUT_DIR"), "/native_close_capnp.rs")); }
+#[cfg(target_os = "windows")]
+pub(crate) use native_close_capnp as native_close_wire_capnp;
+#[cfg(target_os = "windows")]
+mod wire_schema_pins { include!(concat!(env!("OUT_DIR"), "/wire_schema_pins.rs")); }
 #[cfg(target_os = "windows")]
 mod helper_materialization;
 #[cfg(target_os = "windows")]
@@ -447,6 +466,8 @@ pub use ipc_framed::StdinPayload;
 #[cfg(target_os = "windows")]
 pub use ipc_framed::decode_bytes;
 #[cfg(target_os = "windows")]
+pub use ipc_framed::decode_frame_payload;
+#[cfg(target_os = "windows")]
 pub use ipc_framed::encode_bytes;
 #[cfg(target_os = "windows")]
 pub use ipc_framed::read_frame;
@@ -624,7 +645,8 @@ pub use token::create_workspace_write_token_with_caps_from;
 #[cfg(target_os = "windows")]
 pub use token::get_current_token_for_restriction;
 #[cfg(target_os = "windows")]
-pub use token::{open_current_token_for_query_duplicate, duplicate_token_for_restriction};
+pub use token::{open_current_token_for_query_duplicate, duplicate_token_for_restriction,
+    derive_uninitialized_restriction_with_caps_and_user_from, initialize_owned_restricted_token};
 #[cfg(target_os = "windows")]
 pub use token::token_groups;
 #[cfg(target_os = "windows")]

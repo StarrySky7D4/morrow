@@ -1,0 +1,11 @@
+{
+  "free_before": 1817899008,
+  "files": 964,
+  "status": "VERIFIED_OWNED_ABORTED_DEBUG_INTERMEDIATES_REMOVED",
+  "source_executable_or_symbol_deletions": 0,
+  "current_role_hashes_unchanged": true,
+  "runtime_owner_contacts": 0,
+  "logical_deleted_bytes": 1777262142,
+  "observed_free_increase": 2671738880,
+  "free_after": 4489637888
+}

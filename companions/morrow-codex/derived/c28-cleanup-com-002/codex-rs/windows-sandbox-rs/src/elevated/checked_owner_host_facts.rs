@@ -630,10 +630,9 @@ impl HostNativeCloseFactsSnapshot {
     /// Projects the host-side worker joins and runner process observations into the
     /// frozen `native_close_protocol::ReceiverPhysicalCloseFacts` structure.
     ///
-    /// Note that `runner_handle_closed_verified` is honestly reported as
-    /// `ObservationProof::NotProven` (or `NotObserved` before release) because
-    /// `CheckedRunnerOwner` releases `state.process` (`Arc<OwnedHandle>`) via implicit
-    /// Rust `Drop` rather than an explicit checked `CloseHandle` call.
+    /// The v8 owner records checked CloseHandle separately from its original
+    /// wait/exit query. Legacy implicit Drop remains NotProven; neither an exit
+    /// code nor a missing handle is promoted to checked-close proof.
     pub(crate) const fn to_v8_receiver_physical_close_facts(&self) -> ReceiverPhysicalCloseFacts {
         let reader_worker_joined_timely_clean = match (
             self.runtime_workers.reader.slot_join,

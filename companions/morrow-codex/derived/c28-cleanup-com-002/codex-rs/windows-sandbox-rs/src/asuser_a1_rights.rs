@@ -2,7 +2,7 @@
 //! These are source policy; native compatibility remains independently NOT_RUN.
 use windows_sys::Win32::System::Threading::{PROCESS_READ_CONTROL,PROCESS_QUERY_LIMITED_INFORMATION,
     PROCESS_SYNCHRONIZE,THREAD_READ_CONTROL,THREAD_QUERY_LIMITED_INFORMATION,THREAD_SYNCHRONIZE};
-use windows_sys::Win32::Security::{TOKEN_QUERY,TOKEN_DUPLICATE,TOKEN_ASSIGN_PRIMARY,TOKEN_ADJUST_DEFAULT};
+use windows_sys::Win32::Security::{TOKEN_QUERY,TOKEN_DUPLICATE,TOKEN_ASSIGN_PRIMARY,TOKEN_ADJUST_DEFAULT,TOKEN_IMPERSONATE};
 use windows_sys::Win32::Storage::FileSystem::{READ_CONTROL,WRITE_DAC,WRITE_OWNER};
 use windows_sys::Win32::System::StationsAndDesktops::*;
 use windows_sys::Win32::UI::WindowsAndMessaging::*;
@@ -12,6 +12,13 @@ pub(crate) const TOKEN_INITIALIZATION:u32=TOKEN_REQUIRED|TOKEN_ADJUST_DEFAULT;
 // This is a token-object creation ACE, never an object-default template or a
 // process/thread QUERY grant to same-logon business descendants.
 pub(crate) const TOKEN_RUNNER_READ:u32=TOKEN_QUERY|TOKEN_DUPLICATE;
+// Windows creates R's actual primary-token object from TokenDefaultDacl. C's
+// one initialization handle is private and checked closed before publication.
+// R/OWNER_RIGHTS in the default template remain READ_CONTROL for implicit
+// threads. The extra token rights apply only to R's actual original primary.
+pub(crate) const RUNNER_TOKEN_INITIALIZATION:u32=READ_CONTROL|TOKEN_QUERY|WRITE_DAC;
+pub(crate) const RUNNER_TOKEN_OBSERVE:u32=READ_CONTROL|TOKEN_QUERY;
+pub(crate) const RUNNER_TOKEN_DERIVE:u32=TOKEN_QUERY|TOKEN_DUPLICATE|TOKEN_IMPERSONATE;
 // The trusted creator already owns the LogonUser handle with these security
 // rights. Windows strips them from a duplicate when the new object descriptor
 // omits them. Preserve that original grant without giving them to R or changing

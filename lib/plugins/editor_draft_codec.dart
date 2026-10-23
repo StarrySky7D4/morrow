@@ -135,7 +135,7 @@ abstract final class EditorDraftCodec {
         (asset.origin == EditorDraftAssetOrigin.previousDraft &&
             !hasPrevious) ||
         (asset.origin == EditorDraftAssetOrigin.parentDraft &&
-            (isNewCard || hasPrevious || hasPredecessor)) ||
+            (hasPrevious || hasPredecessor)) ||
         asset.aliases.length > _maxAliases) {
       throw const FormatException('Invalid editor draft asset origin');
     }
@@ -155,11 +155,14 @@ abstract final class EditorDraftCodec {
       _identity(request.commitOperation);
       if (request.commitOperation == request.operation ||
           request.commitOperation == request.predecessorOperation) {
-        throw const FormatException('Draft and business operations must differ');
+        throw const FormatException(
+          'Draft and business operations must differ',
+        );
       }
     }
     if (request.captureScope.isNotEmpty) _identity(request.captureScope);
-    if (request.captureEvents < 0 || request.captureEvents > 1024 ||
+    if (request.captureEvents < 0 ||
+        request.captureEvents > 1024 ||
         (request.captureScope.isEmpty && request.captureEvents != 0)) {
       throw const FormatException('Invalid draft capture identity');
     }
@@ -314,6 +317,106 @@ abstract final class EditorDraftCodec {
       throw const FormatException('Editor draft handoff frame limit');
     }
     return bytes;
+  }
+
+  static void _resumeLink(
+    EditorDraftWriteRequest request,
+    EditorDraftResumeLink link,
+  ) {
+    _request(request);
+    for (final id in [
+      link.parentDraftId,
+      link.parentSaveOperation,
+      link.parentBusinessOperation,
+      link.retirementOperation,
+    ]) {
+      _identity(id);
+    }
+    _u64(link.parentGeneration, positive: true, canBeMax: false);
+    _digest(link.parentRequestSha256, emptyAllowed: false);
+    if (link.parentDraftId == request.draftId ||
+        link.parentBusinessOperation == link.parentSaveOperation ||
+        link.retirementOperation == link.parentBusinessOperation ||
+        link.retirementOperation == link.parentSaveOperation ||
+        request.commitOperation.isEmpty ||
+        request.captureScope.isEmpty ||
+        request.commitOperation == link.parentBusinessOperation ||
+        request.commitOperation == link.retirementOperation ||
+        request.predecessorOperation.isNotEmpty ||
+        request.predecessorDigest.isNotEmpty ||
+        (request.expectedGeneration == BigInt.zero &&
+            (request.operation != link.parentBusinessOperation ||
+                request.captureEvents != 0))) {
+      throw const FormatException('Invalid fresh-session resume binding');
+    }
+  }
+
+  static Uint8List encodeResume(EditorDraftResumeRequest proposal) {
+    final request = proposal.request, link = proposal.resumeLink;
+    _resumeLink(request, link);
+    if (request.expectedGeneration != BigInt.zero) {
+      throw const FormatException('Resume must create a first child draft');
+    }
+    final message = MessageBuilder();
+    final out = message.initRoot(wire.resumeRequestFactory);
+    out.version = 1;
+    out.digest = Uint8List.fromList(contract.editor_draft_apiDigest);
+    _writeRequest(out.initRequest(), request);
+    final target = out.initResumeLink();
+    target.parentDraftId = link.parentDraftId;
+    target.parentGenerationBigInt = link.parentGeneration;
+    target.parentSaveOperation = link.parentSaveOperation;
+    target.parentRequestSha256 = Uint8List.fromList(link.parentRequestSha256);
+    target.parentBusinessOperation = link.parentBusinessOperation;
+    target.retirementOperation = link.retirementOperation;
+    final bytes = message.serialize();
+    if (bytes.length > maxFrameBytes) {
+      throw const FormatException('Resume frame limit');
+    }
+    return bytes;
+  }
+
+  static EditorDraftResumeLink _decodeResumeLink(
+    wire.ResumeLinkReader? value,
+    EditorDraftWriteRequest request,
+  ) {
+    if (value == null ||
+        value.parentDraftId == null ||
+        value.parentSaveOperation == null ||
+        value.parentRequestSha256 == null ||
+        value.parentBusinessOperation == null ||
+        value.retirementOperation == null) {
+      throw const FormatException('Missing fresh-session resume link');
+    }
+    final link = EditorDraftResumeLink(
+      parentDraftId: value.parentDraftId!,
+      parentGeneration: value.parentGenerationBigInt,
+      parentSaveOperation: value.parentSaveOperation!,
+      parentRequestSha256: value.parentRequestSha256!,
+      parentBusinessOperation: value.parentBusinessOperation!,
+      retirementOperation: value.retirementOperation!,
+    );
+    _resumeLink(request, link);
+    return link;
+  }
+
+  static EditorDraftResumeRequest decodeResume(Uint8List bytes) {
+    try {
+      final value = _read(bytes).getRoot(wire.resumeRequestFactory);
+      _header(value.version, value.digest);
+      final request = _decodeRequest(value.request);
+      if (request.expectedGeneration != BigInt.zero) {
+        throw const FormatException('Resume requires a first child');
+      }
+      return EditorDraftResumeRequest(
+        request: request,
+        resumeLink: _decodeResumeLink(value.resumeLink, request),
+      );
+    } on FormatException {
+      rethrow;
+    } catch (_) {
+      throw const FormatException('Malformed resume frame');
+    }
   }
 
   static void _proposal(EditorDraftHandoffProposal proposal) {
@@ -736,7 +839,16 @@ abstract final class EditorDraftCodec {
     final parentLink = value.parentLink == null
         ? null
         : _decodeParentLink(value.parentLink, request);
+    final resumeLink = value.resumeLink == null
+        ? null
+        : _decodeResumeLink(value.resumeLink, request);
+    if (parentLink != null && resumeLink != null) {
+      throw const FormatException(
+        'A child cannot have two parent relation kinds',
+      );
+    }
     if ((parentLink == null &&
+            resumeLink == null &&
             request.assets.any(
               (asset) => asset.origin == EditorDraftAssetOrigin.parentDraft,
             )) ||
@@ -758,9 +870,13 @@ abstract final class EditorDraftCodec {
     final discard = value.discardOperation ?? '';
     if (discard.isNotEmpty) {
       _identity(discard);
-      if (value.active || retirement != null ||
-          discard == request.operation || discard == request.commitOperation) {
-        throw const FormatException('Invalid ordinary draft retirement receipt');
+      if (value.active ||
+          retirement != null ||
+          discard == request.operation ||
+          discard == request.commitOperation) {
+        throw const FormatException(
+          'Invalid ordinary draft retirement receipt',
+        );
       }
     }
     return EditorDraftRecord(
@@ -778,6 +894,7 @@ abstract final class EditorDraftCodec {
       assets: assets,
       requestSha256: value.requestSha256!,
       parentLink: parentLink,
+      resumeLink: resumeLink,
       retirement: retirement,
       discardOperation: discard,
     );
@@ -1075,6 +1192,53 @@ abstract final class EditorDraftCodec {
     );
   }
 
+  static Uint8List encodeArchiveMaintenance(
+    EditorDraftRecord original,
+    EditorDraftArchiveReceipt archive,
+    String operation,
+  ) {
+    for (final id in [
+      archive.cardId,
+      archive.draftId,
+      archive.operation,
+      operation,
+    ]) {
+      _identity(id);
+    }
+    _u64(archive.generation, positive: true);
+    _digest(archive.archiveSha256, emptyAllowed: false);
+    _digest(archive.requestSha256, emptyAllowed: false);
+    if (archive.archiveVersion != 1 ||
+        operation == archive.operation ||
+        original.active ||
+        original.currentActive ||
+        original.generation != original.currentGeneration ||
+        archive.generation != original.generation ||
+        original.request.cardId != archive.cardId ||
+        original.request.draftId != archive.draftId ||
+        !_same(original.requestSha256, archive.requestSha256)) {
+      throw const FormatException(
+        'Maintenance requires the exact retired version 1 archive',
+      );
+    }
+    final message = MessageBuilder();
+    final out = message.initRoot(wire.archiveMaintenanceRequestFactory);
+    out.version = 1;
+    out.digest = Uint8List.fromList(contract.editor_draft_apiDigest);
+    out.cardId = archive.cardId;
+    out.draftId = archive.draftId;
+    out.generationBigInt = archive.generation;
+    out.requestSha256 = Uint8List.fromList(archive.requestSha256);
+    out.archiveOperation = archive.operation;
+    out.archiveSha256 = Uint8List.fromList(archive.archiveSha256);
+    out.operation = operation;
+    final bytes = message.serialize();
+    if (bytes.length > 4096) {
+      throw const FormatException('Draft maintenance request limit');
+    }
+    return bytes;
+  }
+
   static EditorDraftEnvelope decodeEnvelope(Uint8List bytes) {
     try {
       final value = _read(bytes).getRoot(wire.envelopeFactory);
@@ -1096,6 +1260,19 @@ abstract final class EditorDraftCodec {
       EditorDraftLineagePage? lineagePage;
       EditorDraftHandoffProposalRecord? handoffProposal;
       EditorDraftHandoffProposalPage? handoffProposalPage;
+      EditorDraftArchiveReceipt? archive;
+      EditorDraftHistoryPage? history;
+      EditorDraftArchiveMaintenanceReceipt? archiveMaintenance;
+      if ((kind != EditorDraftResultKind.archiveMaintenance &&
+              value.archiveMaintenance != null) ||
+          (kind != EditorDraftResultKind.archive && value.archive != null) ||
+          (kind != EditorDraftResultKind.history &&
+              (value.history != null ||
+                  value.unarchivedCount != 0 ||
+                  value.archivedCount != 0 ||
+                  value.archivedBytesBigInt != BigInt.zero))) {
+        throw const FormatException('Unexpected draft archive data');
+      }
       if (kind != EditorDraftResultKind.handoffProposal &&
           value.handoffProposal != null) {
         throw const FormatException('Unexpected editor draft proposal record');
@@ -1108,6 +1285,7 @@ abstract final class EditorDraftCodec {
       }
       if (kind != EditorDraftResultKind.lineages &&
           kind != EditorDraftResultKind.handoffProposals &&
+          kind != EditorDraftResultKind.history &&
           (value.lineages != null ||
               value.nextCursor != null ||
               value.requestCursor != null ||
@@ -1227,6 +1405,137 @@ abstract final class EditorDraftCodec {
             throw const FormatException('Invalid draft proposal page envelope');
           }
           handoffProposalPage = _decodeProposalPage(value);
+        case EditorDraftResultKind.archive:
+          _identity(cardId);
+          _identity(draftId);
+          if (operation.isNotEmpty) _identity(operation);
+          if (value.record != null ||
+              value.summaries != null ||
+              value.asset != null) {
+            throw const FormatException('Invalid draft archive envelope');
+          }
+          if (value.archive != null) {
+            final item = value.archive!;
+            if (item.cardId != cardId ||
+                item.draftId != draftId ||
+                item.operation == null ||
+                item.requestSha256 == null ||
+                item.slotSha256 == null ||
+                item.generationBigInt <= BigInt.zero ||
+                ![1, 2].contains(item.archiveVersion) ||
+                item.archiveSha256 == null ||
+                item.legacyAuxiliaryCount > 4864 ||
+                (item.archiveVersion == 2 && item.legacyAuxiliaryCount != 0)) {
+              throw const FormatException('Invalid draft archive receipt');
+            }
+            _identity(item.operation!);
+            _digest(item.requestSha256!, emptyAllowed: false);
+            _digest(item.slotSha256!, emptyAllowed: false);
+            _digest(item.archiveSha256!, emptyAllowed: false);
+            archive = EditorDraftArchiveReceipt(
+              archiveVersion: item.archiveVersion,
+              archiveSha256: item.archiveSha256!,
+              legacyAuxiliaryCount: item.legacyAuxiliaryCount,
+              cardId: cardId,
+              draftId: draftId,
+              generation: item.generationBigInt,
+              requestSha256: item.requestSha256!,
+              slotSha256: item.slotSha256!,
+              operation: item.operation!,
+              repeated: item.repeated,
+            );
+          }
+          if (operation.isEmpty
+              ? (expected != BigInt.zero ||
+                    (archive != null && !archive.repeated))
+              : (expected <= BigInt.zero ||
+                    archive == null ||
+                    archive.operation != operation ||
+                    archive.generation != expected)) {
+            throw const FormatException(
+              'Draft archive receipt changed operation',
+            );
+          }
+        case EditorDraftResultKind.archiveMaintenance:
+          _identity(cardId);
+          _identity(draftId);
+          if (operation.isNotEmpty) _identity(operation);
+          if (value.record != null ||
+              value.summaries != null ||
+              value.asset != null ||
+              value.lineages != null ||
+              value.handoffProposal != null) {
+            throw const FormatException(
+              'Unexpected draft maintenance envelope',
+            );
+          }
+          final item = value.archiveMaintenance;
+          if (item != null) {
+            final request = item.request;
+            if (request == null ||
+                request.cardId != cardId ||
+                request.draftId != draftId ||
+                request.archiveOperation == null ||
+                request.operation == null ||
+                request.requestSha256 == null ||
+                request.archiveSha256 == null ||
+                item.auxiliarySha256 == null) {
+              throw const FormatException('Missing draft maintenance binding');
+            }
+            _header(request.version, request.digest);
+            _identity(request.archiveOperation!);
+            _identity(request.operation!);
+            _digest(request.requestSha256!, emptyAllowed: false);
+            _digest(request.archiveSha256!, emptyAllowed: false);
+            _digest(item.auxiliarySha256!, emptyAllowed: false);
+            _u64(request.generationBigInt, positive: true);
+            _u64(item.auxiliaryBytesBigInt, positive: true);
+            if (request.archiveOperation == request.operation ||
+                item.auxiliaryCount == 0 ||
+                item.auxiliaryCount > 4096 ||
+                item.auxiliaryBytesBigInt > BigInt.from(64 * 1024 * 1024)) {
+              throw const FormatException(
+                'Invalid draft maintenance accounting',
+              );
+            }
+            archiveMaintenance = EditorDraftArchiveMaintenanceReceipt(
+              cardId: cardId,
+              draftId: draftId,
+              generation: request.generationBigInt,
+              requestSha256: request.requestSha256!,
+              archiveOperation: request.archiveOperation!,
+              archiveSha256: request.archiveSha256!,
+              operation: request.operation!,
+              auxiliaryCount: item.auxiliaryCount,
+              auxiliaryBytes: item.auxiliaryBytesBigInt,
+              auxiliarySha256: item.auxiliarySha256!,
+              repeated: item.repeated,
+            );
+          }
+          if (operation.isEmpty
+              ? (expected != BigInt.zero ||
+                    (archiveMaintenance != null &&
+                        !archiveMaintenance.repeated))
+              : (expected <= BigInt.zero ||
+                    archiveMaintenance == null ||
+                    archiveMaintenance.operation != operation ||
+                    archiveMaintenance.generation != expected)) {
+            throw const FormatException(
+              'Draft maintenance receipt changed operation',
+            );
+          }
+        case EditorDraftResultKind.history:
+          if (cardId.isNotEmpty ||
+              draftId.isNotEmpty ||
+              operation.isNotEmpty ||
+              expected != BigInt.zero ||
+              value.record != null ||
+              value.summaries != null ||
+              value.asset != null ||
+              value.lineages != null) {
+            throw const FormatException('Invalid draft history envelope');
+          }
+          history = _decodeHistory(value);
       }
       return EditorDraftEnvelope(
         kind: kind,
@@ -1240,11 +1549,80 @@ abstract final class EditorDraftCodec {
         lineagePage: lineagePage,
         handoffProposal: handoffProposal,
         handoffProposalPage: handoffProposalPage,
+        archive: archive,
+        history: history,
+        archiveMaintenance: archiveMaintenance,
       );
     } on FormatException {
       rethrow;
     } catch (_) {
       throw const FormatException('Malformed editor draft envelope');
     }
+  }
+
+  static EditorDraftHistoryPage _decodeHistory(wire.EnvelopeReader value) {
+    if (value.history == null ||
+        value.requestCursor == null ||
+        value.nextCursor == null ||
+        value.requestLimit < 1 ||
+        value.requestLimit > 32 ||
+        value.history!.length > value.requestLimit ||
+        !_lineageCursor(value.requestCursor!, allowEmpty: true) ||
+        !_lineageCursor(value.nextCursor!, allowEmpty: true) ||
+        value.unarchivedCount > 256 ||
+        value.archivedCount > 4096 ||
+        value.archivedBytesBigInt > BigInt.from(64 * 1024 * 1024)) {
+      throw const FormatException('Invalid draft history bounds');
+    }
+    var previous = value.requestCursor!;
+    final seen = <(String, String)>{};
+    final rows = <EditorDraftHistoryRow>[];
+    for (final row in value.history!) {
+      if (row.cardId == null ||
+          row.draftId == null ||
+          row.requestSha256 == null ||
+          row.title == null ||
+          row.preview == null ||
+          row.archiveOperation == null ||
+          row.cursor == null ||
+          row.generationBigInt <= BigInt.zero ||
+          !_lineageCursor(row.cursor!) ||
+          row.cursor!.compareTo(previous) <= 0 ||
+          !seen.add((row.cardId!, row.draftId!))) {
+        throw const FormatException('Invalid draft history row');
+      }
+      _identity(row.cardId!);
+      _identity(row.draftId!);
+      _string(row.title!, 1024);
+      _string(row.preview!, 1024);
+      if (row.archiveOperation!.isNotEmpty) _identity(row.archiveOperation!);
+      _digest(row.requestSha256!, emptyAllowed: false);
+      rows.add(
+        EditorDraftHistoryRow(
+          cardId: row.cardId!,
+          draftId: row.draftId!,
+          generation: row.generationBigInt,
+          requestSha256: row.requestSha256!,
+          archiveOperation: row.archiveOperation!,
+          title: row.title!,
+          preview: row.preview!,
+          cursor: row.cursor!,
+        ),
+      );
+      previous = row.cursor!;
+    }
+    if (value.nextCursor!.isNotEmpty &&
+        (rows.isEmpty || value.nextCursor != rows.last.cursor)) {
+      throw const FormatException('Invalid next draft history cursor');
+    }
+    return EditorDraftHistoryPage(
+      rows: rows,
+      requestCursor: value.requestCursor!,
+      nextCursor: value.nextCursor!,
+      requestLimit: value.requestLimit,
+      unarchivedCount: value.unarchivedCount,
+      archivedCount: value.archivedCount,
+      archivedBytes: value.archivedBytesBigInt,
+    );
   }
 }

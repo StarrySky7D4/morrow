@@ -152,6 +152,15 @@ enum Action {
   channelClose,
   channelReadSent,
   exportEditorDraftCapture,
+  archiveEditorDraft,
+  inspectEditorDraftArchive,
+  listEditorDraftHistory,
+  exportEditorDraftHistory,
+  finishEditorDraftResume,
+  retireEditorDraftResumeParent,
+  stageEditorDraftAssets,
+  maintainEditorDraftArchive,
+  inspectEditorDraftArchiveMaintenance,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -489,6 +498,51 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
       name: 'exportEditorDraftCapture',
       codeOrder: 146,
       ordinal: 146,
+    ),
+    EnumerantSchemaInfo(
+      name: 'archiveEditorDraft',
+      codeOrder: 147,
+      ordinal: 147,
+    ),
+    EnumerantSchemaInfo(
+      name: 'inspectEditorDraftArchive',
+      codeOrder: 148,
+      ordinal: 148,
+    ),
+    EnumerantSchemaInfo(
+      name: 'listEditorDraftHistory',
+      codeOrder: 149,
+      ordinal: 149,
+    ),
+    EnumerantSchemaInfo(
+      name: 'exportEditorDraftHistory',
+      codeOrder: 150,
+      ordinal: 150,
+    ),
+    EnumerantSchemaInfo(
+      name: 'finishEditorDraftResume',
+      codeOrder: 151,
+      ordinal: 151,
+    ),
+    EnumerantSchemaInfo(
+      name: 'retireEditorDraftResumeParent',
+      codeOrder: 152,
+      ordinal: 152,
+    ),
+    EnumerantSchemaInfo(
+      name: 'stageEditorDraftAssets',
+      codeOrder: 153,
+      ordinal: 153,
+    ),
+    EnumerantSchemaInfo(
+      name: 'maintainEditorDraftArchive',
+      codeOrder: 154,
+      ordinal: 154,
+    ),
+    EnumerantSchemaInfo(
+      name: 'inspectEditorDraftArchiveMaintenance',
+      codeOrder: 155,
+      ordinal: 155,
     ),
   ],
 );

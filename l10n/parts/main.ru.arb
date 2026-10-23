@@ -587,5 +587,34 @@
   "mainDraftJournalExportFailed": "Не удалось экспортировать полную копию для восстановления.",
   "mainDraftJournalRetire": "Завершить сохранённый черновик",
   "mainDraftJournalRetireConfirm": "Завершить этот черновик и освободить закреплённые копии вложений? При необходимости сначала экспортируйте копию для восстановления. Сохранённые данные и неподтверждённые результаты не изменятся.",
-  "mainDraftJournalRetireUnknown": "Завершение не подтверждено. Проверьте исходную операцию, не отправляя её повторно."
+  "mainDraftJournalRetireUnknown": "Завершение не подтверждено. Проверьте исходную операцию, не отправляя её повторно.",
+  "mainDraftHistoryTitle": "История черновиков",
+  "mainDraftHistoryNotice": "Показаны только закрытые черновики. Архивация сохраняет текст и происхождение и освобождает место для черновика. Освобождённые файлы вложений и разрешения захвата не восстанавливаются. Для архивных записей также действует лимит 64 МиБ.",
+  "mainDraftHistoryCapacity": "Текущие записи: {current}/256; архивные: {archived}/4096",
+  "mainDraftHistoryUnconfirmed": "Результат архивации не подтверждён. Обновите список для проверки исходной записи.",
+  "mainDraftHistoryRetired": "Закрыт",
+  "mainDraftHistoryArchived": "В архиве",
+  "mainDraftHistoryFirst": "Первая страница",
+  "mainDraftHistoryNext": "Следующая страница",
+  "mainDraftHistoryExport": "Экспортировать запись истории",
+  "mainDraftHistoryArchive": "Архивировать эту запись",
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "archived": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDraftHistoryTitleField": "Заголовок",
+  "mainDraftHistoryDescriptionField": "Описание",
+  "mainDraftHistoryCategoryField": "Категория",
+  "mainDraftHistoryStageField": "Этап",
+  "mainDraftWriteInspect": "Проверить сохранение черновика",
+  "mainDraftWriteRetry": "Повторить сохранение черновика",
+  "mainDraftHistoryMaintain": "Архивировать связанные записи",
+  "mainDraftHistoryMaintainHelp": "Сохранить всю историю и освободить место для записей черновиков.",
+  "mainDraftHistoryMaintained": "Связанные записи архивированы"
 }

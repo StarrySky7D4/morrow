@@ -320,6 +320,18 @@ impl WorkbenchState {
             package: root.package().package().digest(),
         })
     }
+    /// Archival is data maintenance and cannot close another live editor.
+    pub(crate) fn require_draft_capture_closed(&self, scope: &str) -> Result<()> {
+        if !scope.is_empty() && self.capture_scopes.scopes.contains_key(scope) {
+            return Err("close the original capture scope before archiving".into());
+        }
+        Ok(())
+    }
+    pub(crate) fn require_draft_submission_capture(&mut self, request: &crate::editor_draft::model::proto::WriteRequest) -> Result<()> {
+        self.check_capture_scope(&request.capture_scope, false)?;
+        self.archive_draft_capture(request)?;
+        Ok(())
+    }
     fn check_capture_scope(&mut self, id: &str, allow_pending: bool) -> Result<()> {
         self.capture_scopes.expire_at(Instant::now());
         let binding = match self.capture_binding() {

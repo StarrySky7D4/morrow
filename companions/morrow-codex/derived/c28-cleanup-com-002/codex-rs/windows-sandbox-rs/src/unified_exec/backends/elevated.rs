@@ -234,7 +234,18 @@ async fn spawn_runner_transport_task(
     })?
     // Observe the ORIGINAL inner Err before the exec-server's generic -32603
     // conversion. No formatting, retry, fallback, cleanup or changed Err.
-    .inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err))?;
+    .inspect_err(|err| observe_backend_error(diagnostic.as_ref(), err));
+    let transport=match transport {
+        Ok(transport)=>transport,
+        Err(error) if error.is::<crate::checked_owner::PendingCallerRefusal>()=>{
+            let original=error.downcast::<crate::checked_owner::PendingCallerRefusal>()
+                .map_err(|_|anyhow::anyhow!("A1 original refusal return mismatch"))?;
+            caller_guard.ok_or_else(||anyhow::anyhow!("A1 original refusal caller absent"))?
+                .acknowledge_caller_refusal(original)?;
+            return Err(anyhow::anyhow!("A1 caller lacks a required privilege; original local refusal closed"));
+        },
+        Err(error)=>return Err(error),
+    };
     if let Some(guard) = caller_guard {
         if let Some(diagnostic) = &diagnostic {
             diagnostic.mark(crate::WindowsStartStage::CheckedTransportCallerAck);

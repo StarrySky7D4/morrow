@@ -600,6 +600,43 @@ mod tests;
 /// from CallerPrerequisiteSnapshot; Source046's all-three-enabled predicate is
 /// unchanged. API temporary enable of already-present privileges is confined to
 /// the distinct Source047 contract, not reported as Source046 eligibility.
+/// Consume-only proof that THIS original caller observation completed with a
+/// missing required privilege and checked-closed its own token handles. It says
+/// nothing about runner, registry, factory, account or setup retirement.
+/// No public/scalar constructor, Clone, Deserialize or native Drop is provided.
+pub(crate) struct ClosedIneligibleCaller { original: Box<CallerPrerequisiteAttempt> }
+impl ClosedIneligibleCaller {
+    #[cfg(test)]
+    pub(crate) fn snapshot(&self)->CallerPrerequisiteSnapshot {self.original.snapshot()}
+    pub(crate) fn original_handles_closed(&self) -> bool {
+        self.original.anchor == (&*self.original as *const CallerPrerequisiteAttempt) as usize
+            && self.original.known_closed()
+    }
+}
+impl CallerPrerequisiteAttempt {
+    pub(crate) fn consume_closed_ineligible(self:Box<Self>)
+        -> Result<ClosedIneligibleCaller,Box<Self>> {
+        let s=&self.snapshot;
+        // Expiry, uncertain observations, removed privileges and foreign-thread
+        // use cannot be relabeled as a clean missing-privilege refusal.
+        let complete=self.same_original() && self.known_closed()
+            && s.no_thread_token==Some(true)
+            && s.native_pid.is_some_and(|v|v!=0)
+            && s.creation_filetime_100ns.is_some_and(|v|v!=0)
+            && s.initial_statistics==s.final_statistics
+            && s.initial_statistics.is_some_and(|v|v.token_type==1)
+            && s.query8.actual_granted_access.is_some_and(|v|v&8==8)
+            && s.purpose6.actual_granted_access.is_some_and(|v|v&6==6)
+            && s.privileges[..2].iter().all(|p|match p.present {
+                Some(false)=>p.attributes.is_none() && p.enabled==Some(false),
+                Some(true)=>p.attributes.is_some_and(|v|v&4==0) && p.enabled.is_some(),
+                None=>false,
+            })
+            && s.privileges[..2].iter().any(|p|p.present==Some(false))
+            && self.deadline.is_some_and(|deadline|Instant::now()<deadline);
+        if complete {Ok(ClosedIneligibleCaller{original:self})}else{Err(self)}
+    }
+}
 pub(crate) struct AsUserCaller {original:Box<CallerPrerequisiteAttempt>}
 impl CallerPrerequisiteAttempt {
     pub(crate) fn consume_for_asuser(self:Box<Self>)->Result<AsUserCaller,Box<Self>> {
@@ -628,6 +665,10 @@ impl CallerPrerequisiteAttempt {
     }
 }
 impl AsUserCaller {
+    pub(crate) fn original_handles_closed(&self)->bool {
+        self.original.anchor == (&*self.original as *const CallerPrerequisiteAttempt) as usize
+            && self.original.known_closed()
+    }
     pub(crate) fn pid(&self)->u32 {self.original.snapshot.native_pid.unwrap_or(0)}
     pub(crate) fn creation(&self)->u64 {self.original.snapshot.creation_filetime_100ns.unwrap_or(0)}
     pub(crate) fn require_original(&self,pid:u32,creation:u64)->std::io::Result<()> {
@@ -652,6 +693,103 @@ mod asuser_policy_tests {
         a.snapshot.purpose6.actual_granted_access=Some(6);
         for p in &mut a.snapshot.privileges[..2] {p.present=Some(true);p.attributes=Some(0);p.enabled=Some(false);}
         a.deadline=Some(Instant::now()+Duration::from_secs(1));a
+    }
+    fn missing_assign()->Box<CallerPrerequisiteAttempt> {
+        let mut a=closed();
+        a.snapshot.privileges[1].present=Some(false);
+        a.snapshot.privileges[1].attributes=None;
+        a.snapshot.privileges[1].enabled=Some(false);
+        a
+    }
+    #[test] fn clean_caller_refusal_consumes_exact_closed_observation_without_launch_authority() {
+        let original=missing_assign();
+        let address=(&*original as *const CallerPrerequisiteAttempt) as usize;
+        let calls=original.snapshot.call_counts;
+        let proof=match original.consume_closed_ineligible(){Ok(v)=>v,Err(_)=>panic!("closed missing privilege refused")};
+        assert_eq!((&*proof.original as *const CallerPrerequisiteAttempt) as usize,address);
+        assert_eq!(proof.original.snapshot.call_counts,calls);
+        assert!(proof.original_handles_closed());
+        assert!(!proof.original.asuser_complete());
+        assert!(proof.original.snapshot.privileges[1].present==Some(false));
+    }
+    #[test] fn clean_caller_refusal_never_accepts_unknown_live_handle_or_failed_close() {
+        for fault in 0..5 {
+            let mut a=missing_assign();
+            match fault {
+                0=>a.snapshot.phase=Phase::Unknown,
+                1=>a.slots[QUERY].raw=7,
+                2=>a.snapshot.query8.closure=Closure::CloseFailed,
+                3=>a.snapshot.first_error=Some(Failure::new(Stage::QueryClose,FailureKind::Win32)),
+                _=>a.snapshot.purpose6.closure=Closure::Uncertain,
+            }
+            let original=(&*a as *const CallerPrerequisiteAttempt) as usize;
+            let kept=match a.consume_closed_ineligible(){Ok(_)=>panic!("uncertainty minted refusal"),Err(v)=>v};
+            assert_eq!((&*kept as *const CallerPrerequisiteAttempt) as usize,original);
+        }
+    }
+    #[test] fn clean_caller_refusal_requires_complete_timely_missing_privilege_evidence() {
+        for fault in 0..9 {
+            let mut a=missing_assign();
+            match fault {
+                0=>a.deadline=Some(Instant::now()),
+                1=>a.snapshot.privileges[1].present=None,
+                2=>a.snapshot.privileges[1].attributes=Some(0),
+                3=>a.snapshot.privileges[0].attributes=Some(4),
+                4=>a.snapshot.no_thread_token=None,
+                5=>a.snapshot.final_statistics.as_mut().unwrap().modified_id+=1,
+                6=>a.snapshot.query8.actual_granted_access=None,
+                7=>a.snapshot.native_pid=Some(0),
+                _=>a.snapshot.creation_filetime_100ns=Some(0),
+            }
+            assert!(a.consume_closed_ineligible().is_err());
+        }
+        assert!(closed().consume_closed_ineligible().is_err());
+    }
+    #[test] fn clean_caller_refusal_cannot_be_minted_by_a_foreign_thread() {
+        let original=missing_assign();
+        let original=std::thread::spawn(move||match original.consume_closed_ineligible(){
+            Ok(_)=>panic!("foreign thread minted refusal"),Err(original)=>original,
+        }).join().unwrap();
+        assert!(original.consume_closed_ineligible().is_ok());
+    }
+    #[test]
+    #[ignore = "explicit read-only Windows caller fixture requires a primary token missing an AsUser privilege"]
+    fn readonly_native_missing_privilege_retains_seventeen_closed_originals() {
+        assert_eq!(std::env::var("MORROW_CALLER_REFUSAL_NATIVE_TEST").as_deref(),Ok("1"));
+        let destination=std::env::var_os("MORROW_CALLER_REFUSAL_NATIVE_REPORT")
+            .expect("fresh local report path required");
+        let mut report=std::fs::OpenOptions::new().write(true).create_new(true)
+            .open(destination).expect("fresh report already exists or is unavailable");
+        let mut proofs=Vec::new();
+        let mut addresses=std::collections::BTreeSet::new();
+        let mut observations=Vec::new();
+        for _ in 0..17 {
+            let mut original=CallerPrerequisiteAttempt::new();
+            assert!(original.reserve());
+            original.observe_once();
+            assert!(original.known_closed(),"native caller observation did not close");
+            assert_eq!(original.snapshot.query8.closure,Closure::ClosedVerified);
+            assert_eq!(original.snapshot.purpose6.closure,Closure::ClosedVerified);
+            assert_eq!(original.snapshot.call_counts[9],2);
+            assert!(addresses.insert((&*original as *const CallerPrerequisiteAttempt) as usize));
+            let proof=match original.consume_closed_ineligible() {
+                Ok(proof)=>proof,
+                Err(_)=>panic!("native fixture does not have a complete known missing-privilege refusal"),
+            };
+            assert!(proof.original_handles_closed());
+            observations.push(proof.original.snapshot());
+            proofs.push(proof);
+        }
+        assert_eq!(proofs.len(),17);
+        serde_json::to_writer(&mut report,&serde_json::json!({
+            "scope":"READONLY_ORIGINAL_CALLER_TOKEN_OBSERVATIONS_ONLY",
+            "native_observations":17,"actual_checked_token_closes":34,
+            "original_boxes_retained":17,"process_id":std::process::id(),
+            "runner_starts":0,"account_or_policy_mutations":0,
+            "registry_capacity_qualification":false,"full_P2_accepted":false,
+            "observations":observations,
+        })).unwrap();
+        report.sync_all().unwrap();
     }
     #[test] fn asuser_contract_consumes_actual_closed_attempt_without_changing_046_eligibility() {
         let a=closed();assert_eq!(a.snapshot.phase,Phase::KnownIneligible);

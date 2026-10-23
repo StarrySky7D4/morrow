@@ -56,6 +56,16 @@
       }
     }
   },
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "archived": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
   "@mainFavoriteTooltip": {
     "placeholders": {
       "title": {
@@ -1086,6 +1096,23 @@
   "mainDraftHandoffRecoverySelection": "Select a record to view the complete draft.",
   "mainDraftHandoffRecoveryTitle": "Draft handoff recovery",
   "mainDraftHandoffRecoveryUnknown": "The operation result is not confirmed. Review the original record; do not repeat the operation.",
+  "mainDraftHistoryArchive": "Archive this record",
+  "mainDraftHistoryArchived": "Archived",
+  "mainDraftHistoryCapacity": "Current records: {current}/256; archived: {archived}/4096",
+  "mainDraftHistoryCategoryField": "Category",
+  "mainDraftHistoryDescriptionField": "Description",
+  "mainDraftHistoryExport": "Export history record",
+  "mainDraftHistoryFirst": "First page",
+  "mainDraftHistoryMaintain": "Archive related records",
+  "mainDraftHistoryMaintainHelp": "Preserve all history and free draft record capacity.",
+  "mainDraftHistoryMaintained": "Related records archived",
+  "mainDraftHistoryNext": "Next page",
+  "mainDraftHistoryNotice": "Only retired drafts appear here. Archiving preserves text and provenance and frees a journal slot. Released attachment files and capture permissions are not restored. Archived records also have a 64 MiB limit.",
+  "mainDraftHistoryRetired": "Retired",
+  "mainDraftHistoryStageField": "Stage",
+  "mainDraftHistoryTitle": "Draft history",
+  "mainDraftHistoryTitleField": "Title",
+  "mainDraftHistoryUnconfirmed": "Archive outcome is unconfirmed. Refresh to inspect the original record.",
   "mainDraftImportRecoveryCancelBody": "After cancellation, the original abandonment request will no longer run. This does not delete the attachment or undo other changes.",
   "mainDraftImportRecoveryCancelDecision": "Cancel abandonment request",
   "mainDraftImportRecoveryCancelTitle": "Cancel this abandonment request?",
@@ -1108,6 +1135,8 @@
   "mainDraftJournalRetireUnknown": "Retirement is not confirmed. Inspect the original operation; do not submit it again.",
   "mainDraftJournalReview": "This recovery copy is read-only. Raw text, attachments and capture history are preserved; viewing does not resume a previous save.",
   "mainDraftJournalTitle": "Saved drafts",
+  "mainDraftWriteInspect": "Check draft save",
+  "mainDraftWriteRetry": "Retry draft save",
   "mainEdit": "Edit",
   "mainEditIdeaTitle": "Make your idea clearer",
   "mainEditorClosedUnknown": "The editor closed, but the save is not yet confirmed. Reopen the workspace to check before creating another copy.",

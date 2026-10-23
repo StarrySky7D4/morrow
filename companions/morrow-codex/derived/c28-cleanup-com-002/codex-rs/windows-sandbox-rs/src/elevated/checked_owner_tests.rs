@@ -1676,3 +1676,70 @@ async fn finalize_async_keeps_joined_but_unclean_input_distinct_from_join_failur
     let task = tokio::spawn(async { InputWorkerOutcome { clean: false } });
     assert_async_finalize_input_kind(task, None, Some(false)).await;
 }
+
+
+// These fixtures exercise only the original process wait/exit projection.
+// They create ordinary short-lived test children, no accounts, policy or GUI.
+// Missing runner/worker/protocol resources never manufacture a completion.
+fn original_finalizer_wait_fixture(code: i32, wrong_identity: bool) -> CheckedRunnerOwner {
+    use std::os::windows::process::CommandExt;
+    let command = std::path::PathBuf::from(crate::native_system_windows_directory().unwrap())
+        .join("System32").join("cmd.exe");
+    let mut child = Command::new(command)
+        .args(["/D", "/C", "exit", "/b", &code.to_string()])
+        .creation_flags(0x08000000)
+        .stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null()).spawn().unwrap();
+    let pid = child.id();
+    assert_eq!(child.wait().unwrap().code(), Some(code));
+    let original: OwnedHandle = child.into();
+    let mut identity = OriginalProcessIdentity::from_live_process(&original, pid).unwrap();
+    if wrong_identity { identity.creation_filetime ^= 1; }
+    let owner = CheckedRunnerOwner::new(StartupId(2837), Instant::now()+Duration::from_secs(10),
+        None, None, &SCOPED_CONNECT_OWNER, None);
+    {
+        let mut state = owner.state.lock().unwrap();
+        state.process = Some(Arc::new(original));
+        state.identity = Some(identity);
+        state.runner_wait_and_exit_fact = HostOriginalRunnerProcessWaitAndExitFact::HandleRetainedWaitNotYetAttempted;
+    }
+    owner
+}
+
+#[test]
+fn original_finalizer_wait_records_real_exit_dword_without_minting_completion() {
+    for code in [0, 259, i32::MIN + 7] {
+        let owner = original_finalizer_wait_fixture(code, false);
+        let outcome = owner.finalize(Instant::now()+Duration::from_secs(5)).unwrap();
+        assert!(matches!(outcome, CheckedFinalizationOutcome::PhysicallyReapedWithStickyUnknown { .. }));
+        let snapshot = owner.host_native_close_facts();
+        assert_eq!(snapshot.runner_process_wait_and_exit.verified_exited_raw_dword(),
+            Some(super::super::native_close_protocol::RawProcessExitCodeDword(code as u32)));
+        let projected = snapshot.to_v8_receiver_physical_close_facts();
+        assert_eq!(projected.runner_exit_code_dword,
+            Some(super::super::native_close_protocol::RawProcessExitCodeDword(code as u32)));
+        assert_ne!(projected.runner_handle_closed_verified,
+            super::super::native_close_protocol::ObservationProof::ProvenOnOriginal);
+        assert!(owner.is_no_replay_sealed());
+    }
+}
+
+#[test]
+fn original_finalizer_wait_rejects_foreign_identity_before_exit_proof() {
+    let owner = original_finalizer_wait_fixture(0, true);
+    assert!(owner.finalize(Instant::now()+Duration::from_secs(5)).is_err());
+    let snapshot = owner.host_native_close_facts();
+    assert!(matches!(snapshot.runner_process_wait_and_exit,
+        HostOriginalRunnerProcessWaitAndExitFact::IdentityVerificationFailedBeforeWait { .. }));
+    assert_eq!(snapshot.to_v8_receiver_physical_close_facts().runner_exit_code_dword, None);
+    assert!(owner.is_no_replay_sealed());
+}
+
+#[test]
+fn original_finalizer_wait_absence_stays_unobserved() {
+    let owner = CheckedRunnerOwner::new(StartupId(2838), Instant::now()+Duration::from_secs(10),
+        None, None, &SCOPED_CONNECT_OWNER, None);
+    assert!(owner.finalize(Instant::now()+Duration::from_secs(5)).is_ok());
+    let snapshot = owner.host_native_close_facts();
+    assert_eq!(snapshot.runner_process_wait_and_exit, HostOriginalRunnerProcessWaitAndExitFact::NoProcessHandlePresent);
+    assert_eq!(snapshot.to_v8_receiver_physical_close_facts().runner_exit_code_dword, None);
+}

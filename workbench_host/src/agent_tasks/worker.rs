@@ -1178,6 +1178,45 @@ impl<O: ManagedHostOwner> Drop for AgentWorker<O> {
         let _ = catch_unwind(AssertUnwindSafe(|| self.stop()));
     }
 }
+// A known port denial is an actual command result. It must reach the same
+// command receiver; returning from execute would silently drop that sender.
+// This error carries no native/SDK/cleanup authority. Other port failures remain
+// Unknown, and the common sender/receiver liveness gates still apply.
+fn complete_claimed_start<P>(
+    started: Result<P, morrow_agent_session_exec_v1_r2::Error>,
+    diagnostic: &super::commands::CommandDiagnostic,
+    register: impl FnOnce(P) -> Result<AgentReply, AgentError>,
+) -> Result<AgentReply, AgentError> {
+    match started {
+        Ok(provider) => register(provider).map_err(|_| AgentError::Unknown),
+        Err(error) => {
+            diagnostic.worker(super::commands::diagnostic_stage::PORT_REJECTED,
+                super::commands::diagnostic_session_error(error));
+            Err(if error == morrow_agent_session_exec_v1_r2::Error::Denied {
+                AgentError::Session(error)
+            } else { AgentError::Unknown })
+        }
+    }
+}
+fn deliver_command_result(
+    reply: &mpsc::SyncSender<Result<AgentReply, AgentError>>,
+    diagnostic: &super::commands::CommandDiagnostic,
+    control: &Control,
+    result: Result<AgentReply, AgentError>,
+) {
+    let result = if !control.live() {
+        diagnostic.worker(super::commands::diagnostic_stage::CONTROL_VETO,
+            super::commands::diagnostic_error(AgentError::Unknown));
+        Err(AgentError::Unknown)
+    } else { result };
+    let uncertain = result.as_ref().is_err_and(|error| *error == AgentError::Unknown);
+    let delivery_failed = reply.send(result).is_err();
+    if delivery_failed {
+        diagnostic.delivery(super::commands::diagnostic_stage::REPLY_SEND_FAILED,
+            super::commands::diagnostic_error(AgentError::Unknown));
+    }
+    if delivery_failed || uncertain { control.stop(); }
+}
 #[allow(clippy::too_many_arguments)]
 fn execute<O: ManagedHostOwner>(
     owner: &mut BudgetOwner<O>,
@@ -1345,7 +1384,7 @@ fn execute<O: ManagedHostOwner>(
                 control.checkpoint().map_err(|error| { command.diagnostic.worker(super::commands::diagnostic_stage::CHECKPOINT, super::commands::diagnostic_error(error)); error })?;
                 let port = context.port.as_ref().ok_or(AgentError::Unavailable)?;
                 command.diagnostic.worker(super::commands::diagnostic_stage::PORT_START, 0);
-                let provider = port
+                let started = port
                     .start_claimed(
                         owner.runtime_mut(),
                         context.executor_connection.clone(),
@@ -1354,45 +1393,35 @@ fn execute<O: ManagedHostOwner>(
                         claim,
                         checkpoint,
                         || control.live(),
-                    )
-                    .map_err(|error| { command.diagnostic.worker(super::commands::diagnostic_stage::PORT_REJECTED, super::commands::diagnostic_session_error(error)); AgentError::Unknown })?;
-                command.diagnostic.flag(1 << 33);
-                command.diagnostic.worker(super::commands::diagnostic_stage::PROVIDER_OBSERVED, 0);
-                let identity = provider.observed_identity().clone();
-                command.diagnostic.worker(super::commands::diagnostic_stage::REGISTER_PROCESS, 0);
-                owner
-                    .with_managed_runtime(|manager, runtime| {
-                        package.register_process(
-                            manager,
-                            runtime,
-                            &context.host,
-                            &mut context.processes,
-                            identity,
-                            context.executor_connection.clone(),
-                            &context.executor_admission,
-                            capabilities,
-                            budget,
-                            Box::new(provider),
-                            checkpoint,
-                        )
-                    })
+                    );
+                complete_claimed_start(started, &command.diagnostic, |provider| {
+                    command.diagnostic.flag(1 << 33);
+                    command.diagnostic.worker(super::commands::diagnostic_stage::PROVIDER_OBSERVED, 0);
+                    let identity = provider.observed_identity().clone();
+                    command.diagnostic.worker(super::commands::diagnostic_stage::REGISTER_PROCESS, 0);
+                    owner
+                        .with_managed_runtime(|manager, runtime| {
+                            package.register_process(
+                                manager,
+                                runtime,
+                                &context.host,
+                                &mut context.processes,
+                                identity,
+                                context.executor_connection.clone(),
+                                &context.executor_admission,
+                                capabilities,
+                                budget,
+                                Box::new(provider),
+                                checkpoint,
+                            )
+                        })
                     .ok_or_else(|| { command.diagnostic.worker(super::commands::diagnostic_stage::REGISTER_REJECTED, super::commands::diagnostic_error(AgentError::Unavailable)); AgentError::Unavailable })?
                     .map(AgentReply::Started)
                     .map_err(|_| { command.diagnostic.worker(super::commands::diagnostic_stage::REGISTER_REJECTED, 19); AgentError::Unknown })
+                })
             }
         };
-        let result = if !control.live() {
-            command.diagnostic.worker(super::commands::diagnostic_stage::CONTROL_VETO, super::commands::diagnostic_error(AgentError::Unknown));
-            Err(AgentError::Unknown)
-        } else {
-            result
-        };
-        let uncertain = result.as_ref().is_err_and(|e| *e == AgentError::Unknown);
-        let delivery_failed = command.reply.send(result).is_err();
-        if delivery_failed { command.diagnostic.delivery(super::commands::diagnostic_stage::REPLY_SEND_FAILED, super::commands::diagnostic_error(AgentError::Unknown)); }
-        if delivery_failed || uncertain {
-            control.stop();
-        }
+        deliver_command_result(&command.reply, &command.diagnostic, control, result);
         if !control.live() {
             break;
         }
@@ -2136,6 +2165,7 @@ mod tests {
     include!("agent_product_tests.rs");
     include!("agent_product_wire_tests.rs");
     include!("worker_ledger_lifecycle_tests.rs");
+    include!("claimed_start_delivery_tests.rs");
 
 
 }

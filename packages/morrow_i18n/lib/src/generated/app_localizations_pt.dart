@@ -431,6 +431,62 @@ class AppLocalizationsPt extends AppLocalizations {
       'O resultado da operação ainda não foi confirmado. Reveja o registo original; não repita a operação.';
 
   @override
+  String get mainDraftHistoryArchive => 'Arquivar este registo';
+
+  @override
+  String get mainDraftHistoryArchived => 'Arquivado';
+
+  @override
+  String mainDraftHistoryCapacity(int archived, int current) {
+    return 'Registos atuais: $current/256; arquivados: $archived/4096';
+  }
+
+  @override
+  String get mainDraftHistoryCategoryField => 'Categoria';
+
+  @override
+  String get mainDraftHistoryDescriptionField => 'Descrição';
+
+  @override
+  String get mainDraftHistoryExport => 'Exportar registo do histórico';
+
+  @override
+  String get mainDraftHistoryFirst => 'Primeira página';
+
+  @override
+  String get mainDraftHistoryMaintain => 'Arquivar registos relacionados';
+
+  @override
+  String get mainDraftHistoryMaintainHelp =>
+      'Preservar todo o histórico e libertar capacidade para registos de rascunhos.';
+
+  @override
+  String get mainDraftHistoryMaintained => 'Registos relacionados arquivados';
+
+  @override
+  String get mainDraftHistoryNext => 'Página seguinte';
+
+  @override
+  String get mainDraftHistoryNotice =>
+      'Só aparecem rascunhos encerrados. Arquivar preserva o texto e a origem e liberta uma vaga. Os ficheiros anexos libertados e as permissões de captura não são restaurados. Os registos arquivados também têm um limite de 64 MiB.';
+
+  @override
+  String get mainDraftHistoryRetired => 'Encerrado';
+
+  @override
+  String get mainDraftHistoryStageField => 'Fase';
+
+  @override
+  String get mainDraftHistoryTitle => 'Histórico de rascunhos';
+
+  @override
+  String get mainDraftHistoryTitleField => 'Título';
+
+  @override
+  String get mainDraftHistoryUnconfirmed =>
+      'O resultado do arquivo não está confirmado. Atualize para verificar o registo original.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       'Após o cancelamento, o pedido original de abandono já não será executado. Isto não elimina o anexo nem desfaz outras alterações.';
 
@@ -509,6 +565,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get mainDraftJournalTitle => 'Rascunhos guardados';
+
+  @override
+  String get mainDraftWriteInspect => 'Verificar o rascunho';
+
+  @override
+  String get mainDraftWriteRetry => 'Tentar salvar o rascunho novamente';
 
   @override
   String get mainEdit => 'Editar';

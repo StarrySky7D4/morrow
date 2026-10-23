@@ -1598,6 +1598,9 @@ fn handle_business(
         | wire::Action::ListEditorDraftImportDecisions
         | wire::Action::CancelEditorDraftImportDecision
         | wire::Action::ListEditorDraftImportDecisionScopes
+        | wire::Action::StageEditorDraftAssets
+        | wire::Action::FinishEditorDraftResume
+        | wire::Action::RetireEditorDraftResumeParent
         | wire::Action::FinishEditorDraftHandoff
         | wire::Action::RetireEditorDraftParent
         | wire::Action::ListEditorDraftLineages
@@ -1606,7 +1609,13 @@ fn handle_business(
         | wire::Action::ListEditorDraftHandoffProposals
         | wire::Action::CompleteEditorDraftHandoffProposal
         | wire::Action::RetireEditorDraftHandoffProposal
-        | wire::Action::CancelEditorDraftHandoffProposal => unreachable!(),
+        | wire::Action::CancelEditorDraftHandoffProposal
+        | wire::Action::ArchiveEditorDraft
+        | wire::Action::MaintainEditorDraftArchive
+        | wire::Action::InspectEditorDraftArchiveMaintenance
+        | wire::Action::InspectEditorDraftArchive
+        | wire::Action::ListEditorDraftHistory
+        | wire::Action::ExportEditorDraftHistory => unreachable!(),
     }
     Ok(())
 }

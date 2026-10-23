@@ -197,6 +197,12 @@ impl TargetPolicy {
             || launch.privilege_count>1 {return Some(R::DerivedPrivilegeMismatch);}
         None
     }
+    pub(crate) fn validate_runner_initialization(&self,f:&TargetFacts,baseline:&TargetFacts)->io::Result<()> {
+        // A distinct, kernel-created primary is mandatory; never mutate T.
+        if f.granted!=crate::asuser_a1_rights::RUNNER_TOKEN_INITIALIZATION
+            ||f.initial.token==baseline.initial.token{return Err(reject());}
+        self.validate_launched_runner(f,baseline)
+    }
     pub(crate) fn validate_launched_runner(&self,f:&TargetFacts,baseline:&TargetFacts)->io::Result<()> {
         if self.rejection(f,0x00020008,false,true).is_some()
             || f.logon!=baseline.logon || f.initial.auth!=baseline.initial.auth
@@ -208,6 +214,18 @@ impl TargetPolicy {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test] fn runner_initialization_requires_distinct_primary_and_exact_private_creator_grant() {
+        let (policy,baseline)=facts();let mut actual=baseline.clone();
+        actual.initial.token=99;actual.final_stats.token=99;
+        actual.granted=crate::asuser_a1_rights::RUNNER_TOKEN_INITIALIZATION;
+        assert!(policy.validate_runner_initialization(&actual,&baseline).is_ok());
+        for mask in [0x20008,0x6000a,0xe0008,0x10000000] {
+            let mut wrong=actual.clone();wrong.granted=mask;
+            assert!(policy.validate_runner_initialization(&wrong,&baseline).is_err());
+        }
+        actual.initial.token=baseline.initial.token;actual.final_stats.token=baseline.final_stats.token;
+        assert!(policy.validate_runner_initialization(&actual,&baseline).is_err());
+    }
     fn sid(parts:&[u32])->Sid {
         let mut b=vec![1,parts.len() as u8,0,0,0,0,0,5];
         for p in parts{b.extend(p.to_le_bytes());}Sid::from_bytes(&b).unwrap()
@@ -220,6 +238,16 @@ mod tests {
             logon_attributes:0xc000_0004,logon_count:1,session:1,integrity_rid:0x2000,
             elevated:false,elevation_type:1,restricted:false,app_container:false,ui_access:false,
             virtualization:false,mandatory_policy:1,privilege_count:1,unsafe_privileges:0,admin_membership:false})
+    }
+    #[test] fn qualification_managed_equals_caller_policy_is_denial_only() {
+        let (mut policy,mut source)=facts();
+        assert!(policy.validate_source(&source).is_ok());
+        policy.managed_user=policy.caller;
+        assert_eq!(policy.source_rejection(&source),Some(WindowsTargetPolicyRejection::UserNotManaged));
+        assert!(policy.validate_source(&source).is_err());
+        source.user=policy.caller;
+        assert_eq!(policy.source_rejection(&source),Some(WindowsTargetPolicyRejection::UserEqualsCaller));
+        assert!(policy.validate_source(&source).is_err());
     }
     #[test] fn account_privileges_are_source_only_and_must_be_deleted_before_launch() {
         let (policy,mut source)=facts();

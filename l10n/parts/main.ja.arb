@@ -587,5 +587,34 @@
   "mainDraftJournalExportFailed": "完全な復元用コピーをエクスポートできませんでした。",
   "mainDraftJournalRetire": "保存済み下書きを終了",
   "mainDraftJournalRetireConfirm": "この下書きを終了し、添付ファイルの固定コピーを解放しますか？必要なら先に復元用コピーを書き出してください。保存済みの内容と未確認の保存結果は変わりません。",
-  "mainDraftJournalRetireUnknown": "終了結果は未確認です。再送信せず、元の操作を確認してください。"
+  "mainDraftJournalRetireUnknown": "終了結果は未確認です。再送信せず、元の操作を確認してください。",
+  "mainDraftHistoryTitle": "下書きの履歴",
+  "mainDraftHistoryNotice": "終了済みの下書きのみ表示します。アーカイブはテキストと出所を保持し、通常の下書き枠を空けます。解放済みの添付ファイルやキャプチャ権限は復元されません。アーカイブには 64 MiB の記録上限もあります。",
+  "mainDraftHistoryCapacity": "通常の記録：{current}/256、アーカイブ：{archived}/4096",
+  "mainDraftHistoryUnconfirmed": "アーカイブ結果は未確認です。更新して元の記録を確認してください。",
+  "mainDraftHistoryRetired": "終了済み",
+  "mainDraftHistoryArchived": "アーカイブ済み",
+  "mainDraftHistoryFirst": "最初のページ",
+  "mainDraftHistoryNext": "次のページ",
+  "mainDraftHistoryExport": "履歴の記録をエクスポート",
+  "mainDraftHistoryArchive": "この記録をアーカイブ",
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "archived": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDraftHistoryTitleField": "タイトル",
+  "mainDraftHistoryDescriptionField": "説明",
+  "mainDraftHistoryCategoryField": "分類",
+  "mainDraftHistoryStageField": "段階",
+  "mainDraftWriteInspect": "下書きの保存を確認",
+  "mainDraftWriteRetry": "下書きの保存を再試行",
+  "mainDraftHistoryMaintain": "関連記録をアーカイブ",
+  "mainDraftHistoryMaintainHelp": "すべての履歴を保持し、下書き記録の空き枠を確保します。",
+  "mainDraftHistoryMaintained": "関連記録をアーカイブしました"
 }

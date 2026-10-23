@@ -31,10 +31,65 @@ abstract interface class EditorDraftControl {
   );
 }
 
+/// A fresh editor can inherit an uncommitted snapshot only through the host's
+/// atomic successor/fence transaction. These records do not revive old scopes.
+abstract interface class EditorDraftResumeControl {
+  Future<EditorDraftRecord> resume(EditorDraftResumeRequest request);
+  Future<EditorDraftRecord> retireResumeParent(
+    EditorDraftRetirementRequest request,
+  );
+}
+
+final class EditorDraftResumeLink {
+  EditorDraftResumeLink({
+    required this.parentDraftId,
+    required this.parentGeneration,
+    required this.parentSaveOperation,
+    required List<int> parentRequestSha256,
+    required this.parentBusinessOperation,
+    required this.retirementOperation,
+  }) : parentRequestSha256 = List.unmodifiable(parentRequestSha256);
+  final String parentDraftId,
+      parentSaveOperation,
+      parentBusinessOperation,
+      retirementOperation;
+  final BigInt parentGeneration;
+  final List<int> parentRequestSha256;
+}
+
+final class EditorDraftResumeRequest {
+  const EditorDraftResumeRequest({
+    required this.request,
+    required this.resumeLink,
+  });
+  final EditorDraftWriteRequest request;
+  final EditorDraftResumeLink resumeLink;
+}
+
+final class EditorDraftResumeFailure implements Exception {
+  const EditorDraftResumeFailure({
+    required this.request,
+    required this.outcomeUnknown,
+    required this.cause,
+  });
+  final EditorDraftResumeRequest request;
+  final bool outcomeUnknown;
+  final Object cause;
+  @override
+  String toString() => outcomeUnknown
+      ? 'Resume outcome is unknown; inspect the original successor'
+      : 'Resume was rejected before submission';
+}
+
 /// Read-only export of host-generated archival evidence. This never restores
 /// a live capture scope or executes the archived plugin.
 abstract interface class EditorDraftCaptureExport {
-  Future<void> exportCapture(String cardId, String draftId, BigInt generation, String path);
+  Future<void> exportCapture(
+    String cardId,
+    String draftId,
+    BigInt generation,
+    String path,
+  );
 }
 
 /// Keep [request] unchanged after an uncertain save; a transport abort is not
@@ -179,6 +234,7 @@ final class EditorDraftWriteRequest {
        assets = List.unmodifiable(assets);
 
   final String cardId, draftId, operation, predecessorOperation;
+
   /// Original business operation, persisted before it can be submitted.
   /// This identifies read-only commit inspection; it never authorizes replay.
   final String commitOperation;
@@ -305,6 +361,7 @@ final class EditorDraftRecord {
     required List<EditorDraftStoredAsset> assets,
     List<int> requestSha256 = const [],
     this.parentLink,
+    this.resumeLink,
     this.retirement,
     this.discardOperation = '',
   }) : sourceSha256 = List.unmodifiable(sourceSha256),
@@ -321,6 +378,7 @@ final class EditorDraftRecord {
   final List<EditorDraftStoredAsset> assets;
   final List<int> requestSha256;
   final EditorDraftParentLink? parentLink;
+  final EditorDraftResumeLink? resumeLink;
   final EditorDraftParentRetirement? retirement;
   final String discardOperation;
 }
@@ -390,6 +448,9 @@ enum EditorDraftResultKind {
   lineages,
   handoffProposal,
   handoffProposals,
+  archive,
+  history,
+  archiveMaintenance,
 }
 
 /// The caller must also compare this context with its outer host response.
@@ -406,6 +467,9 @@ final class EditorDraftEnvelope {
     this.lineagePage,
     this.handoffProposal,
     this.handoffProposalPage,
+    this.archive,
+    this.history,
+    this.archiveMaintenance,
   }) : summaries = summaries == null ? null : List.unmodifiable(summaries);
 
   final EditorDraftResultKind kind;
@@ -417,6 +481,110 @@ final class EditorDraftEnvelope {
   final EditorDraftLineagePage? lineagePage;
   final EditorDraftHandoffProposalRecord? handoffProposal;
   final EditorDraftHandoffProposalPage? handoffProposalPage;
+  final EditorDraftArchiveReceipt? archive;
+  final EditorDraftHistoryPage? history;
+  final EditorDraftArchiveMaintenanceReceipt? archiveMaintenance;
+}
+
+/// Retired journals remain data, including after explicit archival. No method
+/// restores released attachments, a capture scope or business replay authority.
+abstract interface class EditorDraftHistoryControl {
+  Future<EditorDraftHistoryPage> history({String cursor = '', int limit = 32});
+  Future<EditorDraftArchiveReceipt?> inspectArchive(
+    String cardId,
+    String draftId,
+  );
+  Future<EditorDraftArchiveReceipt> archive(EditorDraftRecord original);
+  Future<void> exportHistory(EditorDraftRecord original, String path);
+}
+
+abstract interface class EditorDraftArchiveMaintenanceControl {
+  Future<EditorDraftArchiveMaintenanceReceipt?> inspectArchiveMaintenance(
+    String cardId,
+    String draftId,
+  );
+  Future<EditorDraftArchiveMaintenanceReceipt> maintainArchive(
+    EditorDraftRecord original,
+    EditorDraftArchiveReceipt archive,
+  );
+}
+
+final class EditorDraftArchiveMaintenanceReceipt {
+  EditorDraftArchiveMaintenanceReceipt({
+    required this.cardId,
+    required this.draftId,
+    required this.generation,
+    required List<int> requestSha256,
+    required this.archiveOperation,
+    required List<int> archiveSha256,
+    required this.operation,
+    required this.auxiliaryCount,
+    required this.auxiliaryBytes,
+    required List<int> auxiliarySha256,
+    required this.repeated,
+  }) : requestSha256 = List.unmodifiable(requestSha256),
+       archiveSha256 = List.unmodifiable(archiveSha256),
+       auxiliarySha256 = List.unmodifiable(auxiliarySha256);
+  final String cardId, draftId, archiveOperation, operation;
+  final BigInt generation, auxiliaryBytes;
+  final List<int> requestSha256, archiveSha256, auxiliarySha256;
+  final int auxiliaryCount;
+  final bool repeated;
+}
+
+final class EditorDraftArchiveReceipt {
+  EditorDraftArchiveReceipt({
+    this.archiveVersion = 0,
+    this.legacyAuxiliaryCount = 0,
+    List<int> archiveSha256 = const [],
+    required this.cardId,
+    required this.draftId,
+    required this.generation,
+    required List<int> requestSha256,
+    required List<int> slotSha256,
+    required this.operation,
+    required this.repeated,
+  }) : requestSha256 = List.unmodifiable(requestSha256),
+       slotSha256 = List.unmodifiable(slotSha256),
+       archiveSha256 = List.unmodifiable(archiveSha256);
+  final int archiveVersion, legacyAuxiliaryCount;
+  final List<int> archiveSha256;
+  final String cardId, draftId, operation;
+  final BigInt generation;
+  final List<int> requestSha256, slotSha256;
+  final bool repeated;
+}
+
+final class EditorDraftHistoryRow {
+  EditorDraftHistoryRow({
+    required this.cardId,
+    required this.draftId,
+    required this.generation,
+    required List<int> requestSha256,
+    required this.archiveOperation,
+    required this.cursor,
+    required this.title,
+    required this.preview,
+  }) : requestSha256 = List.unmodifiable(requestSha256);
+  final String cardId, draftId, archiveOperation, cursor, title, preview;
+  final BigInt generation;
+  final List<int> requestSha256;
+}
+
+final class EditorDraftHistoryPage {
+  EditorDraftHistoryPage({
+    required List<EditorDraftHistoryRow> rows,
+    required this.requestCursor,
+    required this.nextCursor,
+    required this.requestLimit,
+    required this.unarchivedCount,
+    required this.archivedCount,
+    required this.archivedBytes,
+  }) : rows = List.unmodifiable(rows);
+  final List<EditorDraftHistoryRow> rows;
+  final String requestCursor, nextCursor;
+  final int requestLimit, unarchivedCount, archivedCount;
+  final BigInt archivedBytes;
 }
 
 /// A frozen first-child request with one reserved parent retirement operation.

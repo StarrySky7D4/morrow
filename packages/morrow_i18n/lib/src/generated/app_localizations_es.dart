@@ -432,6 +432,62 @@ class AppLocalizationsEs extends AppLocalizations {
       'El resultado de la operación aún no está confirmado. Revisa el registro original; no repitas la operación.';
 
   @override
+  String get mainDraftHistoryArchive => 'Archivar este registro';
+
+  @override
+  String get mainDraftHistoryArchived => 'Archivado';
+
+  @override
+  String mainDraftHistoryCapacity(int archived, int current) {
+    return 'Registros actuales: $current/256; archivados: $archived/4096';
+  }
+
+  @override
+  String get mainDraftHistoryCategoryField => 'Categoría';
+
+  @override
+  String get mainDraftHistoryDescriptionField => 'Descripción';
+
+  @override
+  String get mainDraftHistoryExport => 'Exportar registro del historial';
+
+  @override
+  String get mainDraftHistoryFirst => 'Primera página';
+
+  @override
+  String get mainDraftHistoryMaintain => 'Archivar registros relacionados';
+
+  @override
+  String get mainDraftHistoryMaintainHelp =>
+      'Conservar todo el historial y liberar capacidad para registros de borradores.';
+
+  @override
+  String get mainDraftHistoryMaintained => 'Registros relacionados archivados';
+
+  @override
+  String get mainDraftHistoryNext => 'Página siguiente';
+
+  @override
+  String get mainDraftHistoryNotice =>
+      'Solo se muestran borradores retirados. Archivar conserva el texto y la procedencia y libera una plaza. No se restauran los archivos adjuntos liberados ni los permisos de captura. Los registros archivados también tienen un límite de 64 MiB.';
+
+  @override
+  String get mainDraftHistoryRetired => 'Retirado';
+
+  @override
+  String get mainDraftHistoryStageField => 'Etapa';
+
+  @override
+  String get mainDraftHistoryTitle => 'Historial de borradores';
+
+  @override
+  String get mainDraftHistoryTitleField => 'Título';
+
+  @override
+  String get mainDraftHistoryUnconfirmed =>
+      'El resultado del archivo no está confirmado. Actualiza para revisar el registro original.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       'Después de cancelar, la solicitud original de abandono ya no se ejecutará. Esto no elimina el adjunto ni deshace otros cambios.';
 
@@ -511,6 +567,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get mainDraftJournalTitle => 'Borradores guardados';
+
+  @override
+  String get mainDraftWriteInspect => 'Comprobar el borrador';
+
+  @override
+  String get mainDraftWriteRetry => 'Reintentar guardar el borrador';
 
   @override
   String get mainEdit => 'Editar';

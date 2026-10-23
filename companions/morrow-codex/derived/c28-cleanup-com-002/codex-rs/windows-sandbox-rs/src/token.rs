@@ -211,11 +211,11 @@ pub unsafe fn open_current_token_for_query_duplicate() -> Result<HANDLE> {
     Ok(token)
 }
 
-/// Make an independent primary token for capability restriction. A medium token
-/// may have a high-labeled original kernel object; requesting adjustment access
-/// while opening that object fails MIC even though duplication is permitted.
-/// DuplicateTokenEx creates a new object using the current caller's default SD.
-/// No original token, object DACL, integrity label or default DACL is modified.
+/// Duplicate an already restricted token with the rights needed to initialize it.
+/// The elevated runner must first restrict its actual primary token: duplicating
+/// the primary before restriction can break unprivileged child creation (1314).
+/// A medium caller can duplicate a high-labeled original without requesting
+/// adjustment access to that original. No source token or descriptor is modified.
 ///
 /// # Safety
 /// `source` must remain valid with TOKEN_DUPLICATE. The caller must retain the
@@ -507,7 +507,54 @@ unsafe fn create_token_with_caps_user_and_additional_restrictions_from(
     create_token_with_caps_from(base_token, psid_capabilities, &extra_restricting_sids)
 }
 
+/// Derive a restriction directly from the caller's original primary token.
+/// The returned handle keeps the source handle's access mask and is not yet
+/// initialized for child creation. Capture it in the original attempt owner
+/// before duplicating this already restricted token for initialization.
+///
+/// # Safety
+/// All inputs must remain valid throughout the call. The caller must own and
+/// check closure of the returned original handle, including on later failure.
+pub unsafe fn derive_uninitialized_restriction_with_caps_and_user_from(
+    original: HANDLE,
+    capabilities: &[*mut c_void],
+    additional_restricting_sids: &[*mut c_void],
+) -> Result<HANDLE> {
+    let mut user = get_user_sid_bytes(original)?;
+    let mut extras = Vec::with_capacity(additional_restricting_sids.len() + 1);
+    extras.push(user.as_mut_ptr().cast());
+    extras.extend_from_slice(additional_restricting_sids);
+    create_uninitialized_token_with_caps_from(original, capabilities, &extras)
+}
+
+/// Initialize only the already owned final restricted token. Keeping this
+/// separate lets the runner retain all three original handles on failure.
+///
+/// # Safety
+/// `token` must be a newly derived, owned restricted token with TOKEN_QUERY,
+/// TOKEN_ADJUST_DEFAULT and TOKEN_ADJUST_PRIVILEGES. Never pass the source token.
+pub unsafe fn initialize_owned_restricted_token(token: HANDLE) -> Result<()> {
+    let mut logon = get_logon_sid_bytes(token)?;
+    set_default_dacl(token, logon.as_mut_ptr().cast())?;
+    enable_single_privilege(token, "SeChangeNotifyPrivilege")
+}
+
 unsafe fn create_token_with_caps_from(
+    base_token: HANDLE,
+    psid_capabilities: &[*mut c_void],
+    extra_restricting_sids: &[*mut c_void],
+) -> Result<HANDLE> {
+    let token = create_uninitialized_token_with_caps_from(
+        base_token, psid_capabilities, extra_restricting_sids,
+    )?;
+    if let Err(error) = initialize_owned_restricted_token(token) {
+        CloseHandle(token);
+        return Err(error);
+    }
+    Ok(token)
+}
+
+unsafe fn create_uninitialized_token_with_caps_from(
     base_token: HANDLE,
     psid_capabilities: &[*mut c_void],
     extra_restricting_sids: &[*mut c_void],
@@ -555,14 +602,6 @@ unsafe fn create_token_with_caps_from(
         return Err(anyhow::Error::from(std::io::Error::last_os_error()).context(crate::RunnerStartupSite::CreateRestrictedToken));
     }
 
-    // Filesystem and route capabilities may be shared between launches. They
-    // must not grant access to another launch's processes, threads, or IPC.
-    if let Err(error) = set_default_dacl(new_token, psid_logon)
-        .and_then(|()| enable_single_privilege(new_token, "SeChangeNotifyPrivilege"))
-    {
-        CloseHandle(new_token);
-        return Err(error);
-    }
     Ok(new_token)
 }
 

@@ -2129,6 +2129,9 @@ fn run_setup_owned_full(
         log,
     )?;
     let wfp = crate::wfp::install_owned_wfp_filters_for_account(
+        crate::wfp::OwnedWfpProfile::for_network_policy(
+            &payload.proxy_ports, payload.allow_local_binding,
+        ),
         &principals.offline_user.username,
         &principals.offline_user.sid,
         &principals.offline_user.sid_bytes,
@@ -2735,6 +2738,9 @@ pub(crate) fn verify_and_bind_owned_windows_sandbox_setup(
     let reported_wfp_filters = receipt.wfp.filters.iter()
         .map(|f| (f.name.clone(), f.filter_id, f.expected_sd_blob.clone())).collect::<Vec<_>>();
     validation.wfp = Some(crate::wfp::verify_and_bind_live_owned_wfp_proof(
+        crate::wfp::OwnedWfpProfile::for_network_policy(
+            &policy.proxy_ports, policy.allow_local_binding,
+        ),
         receipt.wfp.provider_created, receipt.wfp.sublayer_created,
         &principals.offline_user.sid, &principals.offline_user.sid_bytes,
         &reported_wfp_filters,

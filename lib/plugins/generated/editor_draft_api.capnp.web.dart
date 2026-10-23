@@ -17,6 +17,9 @@ enum ResultKind {
   lineages,
   handoffProposal,
   handoffProposals,
+  archive,
+  history,
+  archiveMaintenance,
 }
 
 ResultKind? resultKindFromUint16(int v) =>
@@ -579,6 +582,153 @@ final class _ParentRetirementFactory
 
 final parentRetirementFactory = _ParentRetirementFactory();
 
+final class ResumeLinkReader extends StructReader {
+  ResumeLinkReader(super.raw, {super.capabilities});
+
+  String? get parentDraftId => getTextField(0);
+
+  int get parentGeneration => _checkedWireInt(parentGenerationBigInt);
+  BigInt get parentGenerationBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get parentSaveOperation => getTextField(1);
+
+  Uint8List? get parentRequestSha256 => getDataField(2);
+
+  String? get parentBusinessOperation => getTextField(3);
+
+  String? get retirementOperation => getTextField(4);
+}
+
+final class ResumeLinkBuilder extends StructBuilder {
+  ResumeLinkBuilder(super.raw);
+
+  @override
+  ResumeLinkReader asReader() => ResumeLinkReader(rawToReader());
+
+  set parentDraftId(String? v) {
+    setTextField(0, v);
+  }
+
+  set parentGeneration(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    parentGenerationBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set parentGenerationBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field parentGeneration');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set parentSaveOperation(String? v) {
+    setTextField(1, v);
+  }
+
+  set parentRequestSha256(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set parentBusinessOperation(String? v) {
+    setTextField(3, v);
+  }
+
+  set retirementOperation(String? v) {
+    setTextField(4, v);
+  }
+}
+
+final class _ResumeLinkFactory
+    extends StructFactory<ResumeLinkReader, ResumeLinkBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 5;
+  @override
+  ResumeLinkReader fromRawReader(RawStructReader r) => ResumeLinkReader(r);
+  @override
+  ResumeLinkReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ResumeLinkReader(r, capabilities: capabilities);
+  @override
+  ResumeLinkBuilder fromRawBuilder(RawStructBuilder r) => ResumeLinkBuilder(r);
+}
+
+final resumeLinkFactory = _ResumeLinkFactory();
+
+final class ResumeRequestReader extends StructReader {
+  ResumeRequestReader(super.raw, {super.capabilities});
+
+  int get version => getUint16Field(0);
+
+  Uint8List? get digest => getDataField(0);
+
+  WriteRequestReader? get request => getStructFieldWith(
+    1,
+    (r) => WriteRequestReader(r, capabilities: capabilityTable),
+  );
+
+  ResumeLinkReader? get resumeLink => getStructFieldWith(
+    2,
+    (r) => ResumeLinkReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class ResumeRequestBuilder extends StructBuilder {
+  ResumeRequestBuilder(super.raw);
+
+  @override
+  ResumeRequestReader asReader() => ResumeRequestReader(rawToReader());
+
+  set version(int v) {
+    setUint16Field(0, v);
+  }
+
+  set digest(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  WriteRequestBuilder initRequest() {
+    return initStructFieldWith(1, (r) => WriteRequestBuilder(r), 4, 10);
+  }
+
+  bool hasRequest() => hasPointerField(1);
+
+  ResumeLinkBuilder initResumeLink() {
+    return initStructFieldWith(2, (r) => ResumeLinkBuilder(r), 1, 5);
+  }
+
+  bool hasResumeLink() => hasPointerField(2);
+}
+
+final class _ResumeRequestFactory
+    extends StructFactory<ResumeRequestReader, ResumeRequestBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 3;
+  @override
+  ResumeRequestReader fromRawReader(RawStructReader r) =>
+      ResumeRequestReader(r);
+  @override
+  ResumeRequestReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ResumeRequestReader(r, capabilities: capabilities);
+  @override
+  ResumeRequestBuilder fromRawBuilder(RawStructBuilder r) =>
+      ResumeRequestBuilder(r);
+}
+
+final resumeRequestFactory = _ResumeRequestFactory();
+
 final class HandoffRequestReader extends StructReader {
   HandoffRequestReader(super.raw, {super.capabilities});
 
@@ -1074,6 +1224,11 @@ final class RecordReader extends StructReader {
   Uint8List? get requestSha256 => getDataField(6);
 
   String? get discardOperation => getTextField(7);
+
+  ResumeLinkReader? get resumeLink => getStructFieldWith(
+    8,
+    (r) => ResumeLinkReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class RecordBuilder extends StructBuilder {
@@ -1205,13 +1360,19 @@ final class RecordBuilder extends StructBuilder {
   set discardOperation(String? v) {
     setTextField(7, v);
   }
+
+  ResumeLinkBuilder initResumeLink() {
+    return initStructFieldWith(8, (r) => ResumeLinkBuilder(r), 1, 5);
+  }
+
+  bool hasResumeLink() => hasPointerField(8);
 }
 
 final class _RecordFactory extends StructFactory<RecordReader, RecordBuilder> {
   @override
   int get dataWords => 5;
   @override
-  int get ptrWords => 8;
+  int get ptrWords => 9;
   @override
   RecordReader fromRawReader(RawStructReader r) => RecordReader(r);
   @override
@@ -1478,6 +1639,208 @@ final class _ImportedAssetFactory
 
 final importedAssetFactory = _ImportedAssetFactory();
 
+final class ArchiveReceiptReader extends StructReader {
+  ArchiveReceiptReader(super.raw, {super.capabilities});
+
+  String? get cardId => getTextField(0);
+
+  String? get draftId => getTextField(1);
+
+  int get generation => _checkedWireInt(generationBigInt);
+  BigInt get generationBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  Uint8List? get requestSha256 => getDataField(2);
+
+  Uint8List? get slotSha256 => getDataField(3);
+
+  String? get operation => getTextField(4);
+
+  bool get repeated => getBoolField(64);
+
+  int get archiveVersion => getUint32Field(12);
+
+  Uint8List? get archiveSha256 => getDataField(5);
+
+  int get legacyAuxiliaryCount => getUint32Field(16);
+}
+
+final class ArchiveReceiptBuilder extends StructBuilder {
+  ArchiveReceiptBuilder(super.raw);
+
+  @override
+  ArchiveReceiptReader asReader() => ArchiveReceiptReader(rawToReader());
+
+  set cardId(String? v) {
+    setTextField(0, v);
+  }
+
+  set draftId(String? v) {
+    setTextField(1, v);
+  }
+
+  set generation(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    generationBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set generationBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field generation');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set requestSha256(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set slotSha256(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set operation(String? v) {
+    setTextField(4, v);
+  }
+
+  set repeated(bool v) {
+    setBoolField(64, v);
+  }
+
+  set archiveVersion(int v) {
+    setUint32Field(12, v);
+  }
+
+  set archiveSha256(Uint8List? v) {
+    setDataField(5, v);
+  }
+
+  set legacyAuxiliaryCount(int v) {
+    setUint32Field(16, v);
+  }
+}
+
+final class _ArchiveReceiptFactory
+    extends StructFactory<ArchiveReceiptReader, ArchiveReceiptBuilder> {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 6;
+  @override
+  ArchiveReceiptReader fromRawReader(RawStructReader r) =>
+      ArchiveReceiptReader(r);
+  @override
+  ArchiveReceiptReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ArchiveReceiptReader(r, capabilities: capabilities);
+  @override
+  ArchiveReceiptBuilder fromRawBuilder(RawStructBuilder r) =>
+      ArchiveReceiptBuilder(r);
+}
+
+final archiveReceiptFactory = _ArchiveReceiptFactory();
+
+final class HistorySummaryReader extends StructReader {
+  HistorySummaryReader(super.raw, {super.capabilities});
+
+  String? get cardId => getTextField(0);
+
+  String? get draftId => getTextField(1);
+
+  int get generation => _checkedWireInt(generationBigInt);
+  BigInt get generationBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  Uint8List? get requestSha256 => getDataField(2);
+
+  String? get archiveOperation => getTextField(3);
+
+  String? get cursor => getTextField(4);
+
+  String? get title => getTextField(5);
+
+  String? get preview => getTextField(6);
+}
+
+final class HistorySummaryBuilder extends StructBuilder {
+  HistorySummaryBuilder(super.raw);
+
+  @override
+  HistorySummaryReader asReader() => HistorySummaryReader(rawToReader());
+
+  set cardId(String? v) {
+    setTextField(0, v);
+  }
+
+  set draftId(String? v) {
+    setTextField(1, v);
+  }
+
+  set generation(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    generationBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set generationBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field generation');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set requestSha256(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set archiveOperation(String? v) {
+    setTextField(3, v);
+  }
+
+  set cursor(String? v) {
+    setTextField(4, v);
+  }
+
+  set title(String? v) {
+    setTextField(5, v);
+  }
+
+  set preview(String? v) {
+    setTextField(6, v);
+  }
+}
+
+final class _HistorySummaryFactory
+    extends StructFactory<HistorySummaryReader, HistorySummaryBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 7;
+  @override
+  HistorySummaryReader fromRawReader(RawStructReader r) =>
+      HistorySummaryReader(r);
+  @override
+  HistorySummaryReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => HistorySummaryReader(r, capabilities: capabilities);
+  @override
+  HistorySummaryBuilder fromRawBuilder(RawStructBuilder r) =>
+      HistorySummaryBuilder(r);
+}
+
+final historySummaryFactory = _HistorySummaryFactory();
+
 final class EnvelopeReader extends StructReader {
   EnvelopeReader(super.raw, {super.capabilities});
 
@@ -1534,6 +1897,30 @@ final class EnvelopeReader extends StructReader {
         11,
         (r) => HandoffProposalSummaryReader(r, capabilities: capabilityTable),
       );
+
+  ArchiveReceiptReader? get archive => getStructFieldWith(
+    12,
+    (r) => ArchiveReceiptReader(r, capabilities: capabilityTable),
+  );
+
+  ListReader<HistorySummaryReader>? get history => getStructListFieldWith(
+    13,
+    (r) => HistorySummaryReader(r, capabilities: capabilityTable),
+  );
+
+  int get unarchivedCount => getUint32Field(16);
+
+  int get archivedCount => getUint32Field(20);
+
+  int get archivedBytes => _checkedWireInt(archivedBytesBigInt);
+  BigInt get archivedBytesBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+
+  ArchiveMaintenanceReceiptReader? get archiveMaintenance => getStructFieldWith(
+    14,
+    (r) => ArchiveMaintenanceReceiptReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class EnvelopeBuilder extends StructBuilder {
@@ -1583,7 +1970,7 @@ final class EnvelopeBuilder extends StructBuilder {
   }
 
   RecordBuilder initRecord() {
-    return initStructFieldWith(4, (r) => RecordBuilder(r), 5, 8);
+    return initStructFieldWith(4, (r) => RecordBuilder(r), 5, 9);
   }
 
   bool hasRecord() => hasPointerField(4);
@@ -1636,14 +2023,65 @@ final class EnvelopeBuilder extends StructBuilder {
       6,
     );
   }
+
+  ArchiveReceiptBuilder initArchive() {
+    return initStructFieldWith(12, (r) => ArchiveReceiptBuilder(r), 3, 6);
+  }
+
+  bool hasArchive() => hasPointerField(12);
+
+  ListBuilder<HistorySummaryBuilder> initHistory(int length) {
+    return initStructListFieldWith(
+      13,
+      length,
+      (r) => HistorySummaryBuilder(r),
+      1,
+      7,
+    );
+  }
+
+  set unarchivedCount(int v) {
+    setUint32Field(16, v);
+  }
+
+  set archivedCount(int v) {
+    setUint32Field(20, v);
+  }
+
+  set archivedBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    archivedBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set archivedBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field archivedBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+
+  ArchiveMaintenanceReceiptBuilder initArchiveMaintenance() {
+    return initStructFieldWith(
+      14,
+      (r) => ArchiveMaintenanceReceiptBuilder(r),
+      2,
+      2,
+    );
+  }
+
+  bool hasArchiveMaintenance() => hasPointerField(14);
 }
 
 final class _EnvelopeFactory
     extends StructFactory<EnvelopeReader, EnvelopeBuilder> {
   @override
-  int get dataWords => 2;
+  int get dataWords => 4;
   @override
-  int get ptrWords => 12;
+  int get ptrWords => 15;
   @override
   EnvelopeReader fromRawReader(RawStructReader r) => EnvelopeReader(r);
   @override
@@ -1656,6 +2094,204 @@ final class _EnvelopeFactory
 }
 
 final envelopeFactory = _EnvelopeFactory();
+
+final class ArchiveMaintenanceRequestReader extends StructReader {
+  ArchiveMaintenanceRequestReader(super.raw, {super.capabilities});
+
+  int get version => getUint16Field(0);
+
+  Uint8List? get digest => getDataField(0);
+
+  String? get cardId => getTextField(1);
+
+  String? get draftId => getTextField(2);
+
+  int get generation => _checkedWireInt(generationBigInt);
+  BigInt get generationBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get requestSha256 => getDataField(3);
+
+  String? get archiveOperation => getTextField(4);
+
+  Uint8List? get archiveSha256 => getDataField(5);
+
+  String? get operation => getTextField(6);
+}
+
+final class ArchiveMaintenanceRequestBuilder extends StructBuilder {
+  ArchiveMaintenanceRequestBuilder(super.raw);
+
+  @override
+  ArchiveMaintenanceRequestReader asReader() =>
+      ArchiveMaintenanceRequestReader(rawToReader());
+
+  set version(int v) {
+    setUint16Field(0, v);
+  }
+
+  set digest(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set cardId(String? v) {
+    setTextField(1, v);
+  }
+
+  set draftId(String? v) {
+    setTextField(2, v);
+  }
+
+  set generation(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    generationBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set generationBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field generation');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set requestSha256(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set archiveOperation(String? v) {
+    setTextField(4, v);
+  }
+
+  set archiveSha256(Uint8List? v) {
+    setDataField(5, v);
+  }
+
+  set operation(String? v) {
+    setTextField(6, v);
+  }
+}
+
+final class _ArchiveMaintenanceRequestFactory
+    extends
+        StructFactory<
+          ArchiveMaintenanceRequestReader,
+          ArchiveMaintenanceRequestBuilder
+        > {
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 7;
+  @override
+  ArchiveMaintenanceRequestReader fromRawReader(RawStructReader r) =>
+      ArchiveMaintenanceRequestReader(r);
+  @override
+  ArchiveMaintenanceRequestReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ArchiveMaintenanceRequestReader(r, capabilities: capabilities);
+  @override
+  ArchiveMaintenanceRequestBuilder fromRawBuilder(RawStructBuilder r) =>
+      ArchiveMaintenanceRequestBuilder(r);
+}
+
+final archiveMaintenanceRequestFactory = _ArchiveMaintenanceRequestFactory();
+
+final class ArchiveMaintenanceReceiptReader extends StructReader {
+  ArchiveMaintenanceReceiptReader(super.raw, {super.capabilities});
+
+  ArchiveMaintenanceRequestReader? get request => getStructFieldWith(
+    0,
+    (r) => ArchiveMaintenanceRequestReader(r, capabilities: capabilityTable),
+  );
+
+  int get auxiliaryCount => getUint32Field(0);
+
+  int get auxiliaryBytes => _checkedWireInt(auxiliaryBytesBigInt);
+  BigInt get auxiliaryBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get auxiliarySha256 => getDataField(1);
+
+  bool get repeated => getBoolField(32);
+}
+
+final class ArchiveMaintenanceReceiptBuilder extends StructBuilder {
+  ArchiveMaintenanceReceiptBuilder(super.raw);
+
+  @override
+  ArchiveMaintenanceReceiptReader asReader() =>
+      ArchiveMaintenanceReceiptReader(rawToReader());
+
+  ArchiveMaintenanceRequestBuilder initRequest() {
+    return initStructFieldWith(
+      0,
+      (r) => ArchiveMaintenanceRequestBuilder(r),
+      2,
+      7,
+    );
+  }
+
+  bool hasRequest() => hasPointerField(0);
+
+  set auxiliaryCount(int v) {
+    setUint32Field(0, v);
+  }
+
+  set auxiliaryBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    auxiliaryBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set auxiliaryBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field auxiliaryBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set auxiliarySha256(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set repeated(bool v) {
+    setBoolField(32, v);
+  }
+}
+
+final class _ArchiveMaintenanceReceiptFactory
+    extends
+        StructFactory<
+          ArchiveMaintenanceReceiptReader,
+          ArchiveMaintenanceReceiptBuilder
+        > {
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 2;
+  @override
+  ArchiveMaintenanceReceiptReader fromRawReader(RawStructReader r) =>
+      ArchiveMaintenanceReceiptReader(r);
+  @override
+  ArchiveMaintenanceReceiptReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ArchiveMaintenanceReceiptReader(r, capabilities: capabilities);
+  @override
+  ArchiveMaintenanceReceiptBuilder fromRawBuilder(RawStructBuilder r) =>
+      ArchiveMaintenanceReceiptBuilder(r);
+}
+
+final archiveMaintenanceReceiptFactory = _ArchiveMaintenanceReceiptFactory();
 
 int _checkedWireInt(BigInt value) {
   final signed = value.toSigned(64);

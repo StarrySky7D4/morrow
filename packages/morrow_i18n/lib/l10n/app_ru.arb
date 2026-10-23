@@ -56,6 +56,16 @@
       }
     }
   },
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "archived": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
   "@mainFavoriteTooltip": {
     "placeholders": {
       "title": {
@@ -1077,6 +1087,23 @@
   "mainDraftHandoffRecoverySelection": "Выберите запись, чтобы просмотреть черновик целиком.",
   "mainDraftHandoffRecoveryTitle": "Восстановление передачи черновика",
   "mainDraftHandoffRecoveryUnknown": "Результат операции ещё не подтверждён. Проверьте исходную запись и не повторяйте операцию.",
+  "mainDraftHistoryArchive": "Архивировать эту запись",
+  "mainDraftHistoryArchived": "В архиве",
+  "mainDraftHistoryCapacity": "Текущие записи: {current}/256; архивные: {archived}/4096",
+  "mainDraftHistoryCategoryField": "Категория",
+  "mainDraftHistoryDescriptionField": "Описание",
+  "mainDraftHistoryExport": "Экспортировать запись истории",
+  "mainDraftHistoryFirst": "Первая страница",
+  "mainDraftHistoryMaintain": "Архивировать связанные записи",
+  "mainDraftHistoryMaintainHelp": "Сохранить всю историю и освободить место для записей черновиков.",
+  "mainDraftHistoryMaintained": "Связанные записи архивированы",
+  "mainDraftHistoryNext": "Следующая страница",
+  "mainDraftHistoryNotice": "Показаны только закрытые черновики. Архивация сохраняет текст и происхождение и освобождает место для черновика. Освобождённые файлы вложений и разрешения захвата не восстанавливаются. Для архивных записей также действует лимит 64 МиБ.",
+  "mainDraftHistoryRetired": "Закрыт",
+  "mainDraftHistoryStageField": "Этап",
+  "mainDraftHistoryTitle": "История черновиков",
+  "mainDraftHistoryTitleField": "Заголовок",
+  "mainDraftHistoryUnconfirmed": "Результат архивации не подтверждён. Обновите список для проверки исходной записи.",
   "mainDraftImportRecoveryCancelBody": "После отмены исходный запрос на отказ больше не будет выполняться. Это не удаляет вложение и не отменяет другие изменения.",
   "mainDraftImportRecoveryCancelDecision": "Отменить запрос на отказ",
   "mainDraftImportRecoveryCancelTitle": "Отменить этот запрос на отказ?",
@@ -1099,6 +1126,8 @@
   "mainDraftJournalRetireUnknown": "Завершение не подтверждено. Проверьте исходную операцию, не отправляя её повторно.",
   "mainDraftJournalReview": "Эта копия для восстановления доступна только для чтения. Исходный текст, вложения и история захвата сохранены; просмотр не возобновляет предыдущее сохранение.",
   "mainDraftJournalTitle": "Сохранённые черновики",
+  "mainDraftWriteInspect": "Проверить сохранение черновика",
+  "mainDraftWriteRetry": "Повторить сохранение черновика",
   "mainEdit": "Изменить",
   "mainEditIdeaTitle": "Сделайте идею яснее",
   "mainEditorClosedUnknown": "Редактор закрыт, но сохранение не подтверждено. Откройте рабочую область и проверьте результат, прежде чем создавать копию.",

@@ -4,6 +4,8 @@ import 'editor_recovery.dart';
 import 'editor_draft.dart';
 import 'editor_draft_owner.dart';
 import 'editor_draft_review.dart';
+import 'editor_draft_resume.dart';
+import 'editor_draft_submission.dart';
 import 'editor_draft_retirement.dart';
 import 'editor_draft_assets.dart';
 import 'editor_draft_session.dart';
@@ -62,6 +64,7 @@ import 'dart:async';
 import 'package:morrow_i18n/locale_codes.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'package:file_selector/file_selector.dart';
 import '../save_recovery.dart';
 import 'dart:math' show Random;
 import 'dart:typed_data';
@@ -85,6 +88,8 @@ part 'editor_recovery_native.dart';
 part 'editor_draft_native.dart';
 part 'editor_draft_owner_native.dart';
 part 'editor_draft_review_native.dart';
+part 'editor_draft_resume_native.dart';
+part 'editor_draft_submission_native.dart';
 part 'editor_draft_handoff_native.dart';
 part 'editor_draft_handoff_proposal_native.dart';
 part 'editor_draft_import_native.dart';
@@ -158,6 +163,7 @@ class RustWorkbench
         WorkbenchEditorDraftSupport,
         WorkbenchEditorDraftRuntime,
         WorkbenchEditorDraftRecovery,
+        WorkbenchEditorDraftResumeSupport,
         WorkbenchEditorDraftMaintenance,
         WorkbenchEditorDraftHandoffSupport,
         WorkbenchEditorDraftHandoffProposalSupport,
@@ -216,6 +222,18 @@ class RustWorkbench
       NativeEditorDraftImportControl(this);
 
   final _draftOwners = <EditorDraftOwner>[];
+  final _draftResumes = <(String, String), _NativeDraftResumeAttempt>{};
+  @override
+  Future<EditorDraftOwner> resumeEditorDraft(EditorDraftReview original) {
+    final record = original.record;
+    final key = (record.request.cardId, record.request.draftId);
+    final attempt = _draftResumes.putIfAbsent(key, () => _NativeDraftResumeAttempt(this, record));
+    if (attempt.original.generation != record.generation ||
+        !_same(attempt.original.requestSha256, record.requestSha256)) {
+      return Future.error(StateError('Original resume attempt is still retained'));
+    }
+    return attempt.run();
+  }
   final _draftRetirements = <(String, String), EditorDraftRetirementAttempt>{};
   @override
   EditorDraftRetirementAttempt retirementFor(EditorDraftReview review) {
@@ -311,6 +329,7 @@ class RustWorkbench
     return EditorDraftCommitServices(
       drafts: editorDrafts,
       proposals: editorDraftHandoffProposals,
+      imports: editorDraftImports,
       readSource: versionedContent.read,
       retain: _draftOwners.add,
       presentSource: workspaceRecord,
@@ -397,7 +416,17 @@ class RustWorkbench
   }) => _importEditorDraftFile(this, owner, path, name, kind);
 
   @override
+  Future<IdeaAttachment> importEditorDraftSource(
+    EditorDraftOwner owner, {
+    required XFile source,
+    required String kind,
+  }) => _importEditorDraftSource(this, owner, source, kind);
+
+  @override
   Future<EditorDraftClosePreparation> prepareEditorDraftClose() async {
+    if (_draftResumes.values.any((attempt) => attempt.blocksClose)) {
+      throw StateError('Original draft resume still needs resolution');
+    }
     if (_draftOwners.any(
       (owner) =>
           (owner.commit != null && !owner.commit!.finished) ||
@@ -418,6 +447,9 @@ class RustWorkbench
   ) async {
     if (!identical(preparation, _draftClosePreparation)) {
       throw StateError('Draft close preparation belongs to another workbench');
+    }
+    if (_draftResumes.values.any((attempt) => attempt.blocksClose)) {
+      throw StateError('Original draft resume still needs resolution');
     }
     if (!editorDraftWorkspace.disposed) {
       editorDraftWorkspace.finishClose(preparation);
@@ -540,6 +572,7 @@ class RustWorkbench
   final _assets = <String, IdeaAttachment>{};
   final _workspaceAssetCache = <String, _WorkspaceCachedAsset>{};
   final _sessionPreviewFiles = <String>{};
+  final _draftInputFiles = <String>{};
   final _importAliases = <String, Set<String>>{};
   final _buffer = <int>[];
   Completer<Uint8List>? _response;
@@ -3393,6 +3426,9 @@ class RustWorkbench
   }
 
   Future<void> close() {
+    if (_draftResumes.values.any((attempt) => attempt.blocksClose)) {
+      return Future.error(StateError('Resolve the original draft resume before host EOF'));
+    }
     if (_draftOwners.isNotEmpty &&
         (_draftWorkspace?.disposed != true ||
             _draftOwners.any((owner) => !owner.captureClosed))) {
@@ -3446,6 +3482,12 @@ class RustWorkbench
     }
     if (failure != null) {
       Error.throwWithStackTrace(failure, failureStack!);
+    }
+    // These are original import inputs, not disposable previews. Keep them
+    // through unresolved imports and failed host shutdowns for their owner.
+    for (final path in _draftInputFiles.toList()) {
+      await File(path).delete();
+      _draftInputFiles.remove(path);
     }
   }
 }
@@ -3585,7 +3627,8 @@ class _NativeEditorSession
         WorkbenchEditorContinuation,
         WorkbenchEditorCommitSource,
         WorkbenchEditorOperationIdentity,
-        WorkbenchEditorDraftCaptureIdentity {
+        WorkbenchEditorDraftCaptureIdentity,
+        WorkbenchEditorDraftAssetBinding {
   _NativeEditorSession(
     this.owner,
     this.targetId,
@@ -3606,6 +3649,10 @@ class _NativeEditorSession
     complete: !_closed && _draftCapture.complete,
   );
   final bool create;
+  late final _DraftAssetBinding _draftAssets = _DraftAssetBinding(owner, targetId, revision, scope, commitOperation);
+  @override
+  Future<void> bindDraftAssets(EditorDraftRecord record, List<IdeaAttachment> selected) =>
+      _draftAssets.bind(record, selected).then((_) {});
   @override
   BigInt get sourceRevision => revision;
   @override

@@ -103,8 +103,7 @@ use codex_windows_sandbox::StdinMode;
 use codex_windows_sandbox::WindowsSandboxTokenMode;
 use codex_windows_sandbox::RunnerStartupSite;
 use codex_windows_sandbox::allow_null_device;
-use codex_windows_sandbox::create_readonly_token_with_caps_and_user_from;
-use codex_windows_sandbox::create_workspace_write_token_with_caps_and_user_from;
+use codex_windows_sandbox::{derive_uninitialized_restriction_with_caps_and_user_from, initialize_owned_restricted_token};
 use codex_windows_sandbox::encode_bytes;
 use codex_windows_sandbox::{open_current_token_for_query_duplicate, duplicate_token_for_restriction};
 use codex_windows_sandbox::hide_current_user_profile_dir;
@@ -357,27 +356,24 @@ fn spawn_ipc_process(req: &SpawnRequest, checked_controls: bool) -> Result<Retai
     let original = reservation.create_preparation_token(0, || unsafe {
         open_current_token_for_query_duplicate()
     }).map_err(|error| RunnerStartupSite::OpenOriginalToken.context(error))?;
-    let base = reservation.create_preparation_token(1, || unsafe {
-        duplicate_token_for_restriction(original)
-    }).map_err(|error| RunnerStartupSite::DuplicateRestrictionToken.context(error))?;
-    let h_token = reservation.create_preparation_token(2, || unsafe {
+    // Windows must see a restriction of this process's actual primary token.
+    // Capture the restricted original before duplicating it for initialization;
+    // every handle remains with this same attempt owner on any failed step.
+    let restricted = reservation.create_preparation_token(1, || unsafe {
         match token_mode {
-            WindowsSandboxTokenMode::ReadOnlyCapability => {
-                create_readonly_token_with_caps_and_user_from(
-                    base,
-                    &cap_psid_ptrs,
-                    &additional_restricting_sid_ptrs,
-                )
-            }
-            WindowsSandboxTokenMode::WritableRootsCapability => {
-                create_workspace_write_token_with_caps_and_user_from(
-                    base,
-                    &cap_psid_ptrs,
-                    &additional_restricting_sid_ptrs,
+            WindowsSandboxTokenMode::ReadOnlyCapability
+            | WindowsSandboxTokenMode::WritableRootsCapability => {
+                derive_uninitialized_restriction_with_caps_and_user_from(
+                    original, &cap_psid_ptrs, &additional_restricting_sid_ptrs,
                 )
             }
         }
     }).map_err(|error| RunnerStartupSite::CreateCapabilityToken.context(error))?;
+    let h_token = reservation.create_preparation_token(2, || unsafe {
+        duplicate_token_for_restriction(restricted)
+    }).map_err(|error| RunnerStartupSite::DuplicateRestrictionToken.context(error))?;
+    unsafe { initialize_owned_restricted_token(h_token) }
+        .map_err(|error| RunnerStartupSite::CreateCapabilityToken.context(error))?;
     reservation.close_preparation_token(0).context(RunnerStartupSite::CloseOriginalQueryToken)?;
     reservation.close_preparation_token(1).context(RunnerStartupSite::CloseIntermediateToken)?;
     unsafe {

@@ -400,6 +400,60 @@ class AppLocalizationsJa extends AppLocalizations {
       '操作結果はまだ確認できていません。元の記録を確認し、操作を繰り返さないでください。';
 
   @override
+  String get mainDraftHistoryArchive => 'この記録をアーカイブ';
+
+  @override
+  String get mainDraftHistoryArchived => 'アーカイブ済み';
+
+  @override
+  String mainDraftHistoryCapacity(int archived, int current) {
+    return '通常の記録：$current/256、アーカイブ：$archived/4096';
+  }
+
+  @override
+  String get mainDraftHistoryCategoryField => '分類';
+
+  @override
+  String get mainDraftHistoryDescriptionField => '説明';
+
+  @override
+  String get mainDraftHistoryExport => '履歴の記録をエクスポート';
+
+  @override
+  String get mainDraftHistoryFirst => '最初のページ';
+
+  @override
+  String get mainDraftHistoryMaintain => '関連記録をアーカイブ';
+
+  @override
+  String get mainDraftHistoryMaintainHelp => 'すべての履歴を保持し、下書き記録の空き枠を確保します。';
+
+  @override
+  String get mainDraftHistoryMaintained => '関連記録をアーカイブしました';
+
+  @override
+  String get mainDraftHistoryNext => '次のページ';
+
+  @override
+  String get mainDraftHistoryNotice =>
+      '終了済みの下書きのみ表示します。アーカイブはテキストと出所を保持し、通常の下書き枠を空けます。解放済みの添付ファイルやキャプチャ権限は復元されません。アーカイブには 64 MiB の記録上限もあります。';
+
+  @override
+  String get mainDraftHistoryRetired => '終了済み';
+
+  @override
+  String get mainDraftHistoryStageField => '段階';
+
+  @override
+  String get mainDraftHistoryTitle => '下書きの履歴';
+
+  @override
+  String get mainDraftHistoryTitleField => 'タイトル';
+
+  @override
+  String get mainDraftHistoryUnconfirmed => 'アーカイブ結果は未確認です。更新して元の記録を確認してください。';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       '取り消すと、元の破棄要求は無効になります。添付ファイルは削除されず、ほかの変更も元に戻りません。';
 
@@ -469,6 +523,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get mainDraftJournalTitle => '保存済みの下書き';
+
+  @override
+  String get mainDraftWriteInspect => '下書きの保存を確認';
+
+  @override
+  String get mainDraftWriteRetry => '下書きの保存を再試行';
 
   @override
   String get mainEdit => '編集';

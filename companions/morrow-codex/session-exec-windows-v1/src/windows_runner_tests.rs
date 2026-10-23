@@ -291,3 +291,35 @@ fn explicit_v8_factory_rejects_wrong_version_schema_or_identity_against_actual_l
         assert!(matches!(retirement.finish_after_shutdown(), Err(Error::CommitUnknown)));
     }
 }
+
+#[test]
+fn completed_native_factory_owner_finish_requires_same_original_thread_close_capability() {
+    fn create() -> (Arc<ProvisionedWindowsBackend>, Arc<tokio::runtime::Runtime>, crate::NativeFactoryRetirement) {
+        let (options, sha, original) = locked_constructor_test_image();
+        let spec = WindowsRunnerProvisioningSpec::from_locked_native_close_v8(original.native_close_view()).unwrap();
+        let mut retirement = crate::NativeFactoryRetirement::new();
+        let (backend, runtime) = ProvisionedWindowsBackend::production_with_native_close_runner(
+            options, constructor_http_factory(), sha, spec, &mut retirement,
+        ).unwrap();
+        (backend, runtime, retirement)
+    }
+    let (backend, runtime, mut original) = create();
+    let (other_backend, other_runtime, mut foreign) = create();
+    original.verify_staged_runtime_for_owner_finish(&runtime).unwrap();
+    assert!(matches!(original.finish_after_shutdown(), Err(Error::Conflict)));
+    drop(backend);
+    // This is the actual synchronous original-runtime shutdown performed by
+    // the Worker before its original task can return. No child Start or setup.
+    drop(Arc::try_unwrap(runtime).ok().expect("original runtime still aliased"));
+    let completion = original.finish_after_shutdown().unwrap();
+    original.verify_completed_factory_for_owner_finish(&completion).unwrap();
+    assert!(matches!(foreign.verify_completed_factory_for_owner_finish(&completion), Err(Error::CommitUnknown)));
+    drop(other_backend);
+    drop(Arc::try_unwrap(other_runtime).ok().expect("foreign runtime still aliased"));
+    let other_completion = foreign.finish_after_shutdown().unwrap();
+    assert!(matches!(original.verify_completed_factory_for_owner_finish(&other_completion), Err(Error::Denied)));
+    assert!(matches!(foreign.verify_completed_factory_for_owner_finish(&completion), Err(Error::Denied)));
+    foreign.verify_completed_factory_for_owner_finish(&other_completion).unwrap();
+    assert!(matches!(original.finish_after_shutdown(), Err(Error::CommitUnknown)));
+    assert!(matches!(crate::NativeFactoryRetirement::new().verify_completed_factory_for_owner_finish(&completion), Err(Error::CommitUnknown)));
+}

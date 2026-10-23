@@ -429,6 +429,62 @@ class AppLocalizationsRu extends AppLocalizations {
       'Результат операции ещё не подтверждён. Проверьте исходную запись и не повторяйте операцию.';
 
   @override
+  String get mainDraftHistoryArchive => 'Архивировать эту запись';
+
+  @override
+  String get mainDraftHistoryArchived => 'В архиве';
+
+  @override
+  String mainDraftHistoryCapacity(int archived, int current) {
+    return 'Текущие записи: $current/256; архивные: $archived/4096';
+  }
+
+  @override
+  String get mainDraftHistoryCategoryField => 'Категория';
+
+  @override
+  String get mainDraftHistoryDescriptionField => 'Описание';
+
+  @override
+  String get mainDraftHistoryExport => 'Экспортировать запись истории';
+
+  @override
+  String get mainDraftHistoryFirst => 'Первая страница';
+
+  @override
+  String get mainDraftHistoryMaintain => 'Архивировать связанные записи';
+
+  @override
+  String get mainDraftHistoryMaintainHelp =>
+      'Сохранить всю историю и освободить место для записей черновиков.';
+
+  @override
+  String get mainDraftHistoryMaintained => 'Связанные записи архивированы';
+
+  @override
+  String get mainDraftHistoryNext => 'Следующая страница';
+
+  @override
+  String get mainDraftHistoryNotice =>
+      'Показаны только закрытые черновики. Архивация сохраняет текст и происхождение и освобождает место для черновика. Освобождённые файлы вложений и разрешения захвата не восстанавливаются. Для архивных записей также действует лимит 64 МиБ.';
+
+  @override
+  String get mainDraftHistoryRetired => 'Закрыт';
+
+  @override
+  String get mainDraftHistoryStageField => 'Этап';
+
+  @override
+  String get mainDraftHistoryTitle => 'История черновиков';
+
+  @override
+  String get mainDraftHistoryTitleField => 'Заголовок';
+
+  @override
+  String get mainDraftHistoryUnconfirmed =>
+      'Результат архивации не подтверждён. Обновите список для проверки исходной записи.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       'После отмены исходный запрос на отказ больше не будет выполняться. Это не удаляет вложение и не отменяет другие изменения.';
 
@@ -509,6 +565,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get mainDraftJournalTitle => 'Сохранённые черновики';
+
+  @override
+  String get mainDraftWriteInspect => 'Проверить сохранение черновика';
+
+  @override
+  String get mainDraftWriteRetry => 'Повторить сохранение черновика';
 
   @override
   String get mainEdit => 'Изменить';

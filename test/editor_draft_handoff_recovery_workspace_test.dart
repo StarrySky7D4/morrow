@@ -1,16 +1,22 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/main.dart';
 import 'package:morrow_studio/editor_draft_handoff_recovery_dialog.dart';
 import 'package:morrow_studio/plugins/editor_draft.dart';
+import 'package:morrow_studio/plugins/editor_draft_codec.dart';
 import 'package:morrow_studio/plugins/studio_storage.dart';
 import 'package:morrow_studio/plugins/workbench_native.dart';
 import 'fixtures/editor_draft_handoff_proposal_fixture.dart';
 
 final hostPath = Platform.environment['MORROW_WORKBENCH_HOST'];
 final packagePath = Platform.environment['MORROW_WORKBENCH_PACKAGE'];
+final rootPath = Platform.environment['MORROW_DRAFT_REVIEW_ROOT'];
+final phase = Platform.environment['MORROW_DRAFT_REVIEW_PHASE'];
+final available = Platform.isWindows && hostPath != null && packagePath != null;
 Future<void> waitFor(WidgetTester t, bool Function() ready) async {
   final deadline = DateTime.now().add(const Duration(seconds: 45));
   while (DateTime.now().isBefore(deadline)) {
@@ -70,21 +76,35 @@ Future<void> tapNative(WidgetTester t, String key) async {
   await t.pump(const Duration(milliseconds: 500));
 }
 
-void main() {
+void main({Future<void> Function(WidgetTester)? prepareWindow}) {
   testWidgets(
     'real workspace discovers a persisted handoff and explicitly completes then retires it',
     (t) async {
-      t.view.devicePixelRatio = 1;
-      t.view.physicalSize = const Size(1180, 850);
-      addTearDown(t.view.reset);
+      if (prepareWindow != null) {
+        await prepareWindow(t);
+      } else {
+        t.view.devicePixelRatio = 1;
+        t.view.physicalSize = const Size(1180, 850);
+        addTearDown(t.view.reset);
+      }
       RustWorkbench? backend;
+      RustWorkbench? other;
       RustStudioStorage? storage;
+      RustStudioStorage? otherStorage;
+      late Directory directory;
       late EditorDraftHandoffProposal proposal;
+      var completed = false;
       try {
         await t.runAsync(() async {
-          final directory = await Directory.systemTemp.createTemp(
-            'morrow-handoff-recovery-ui-',
-          );
+          directory = rootPath == null
+              ? await Directory.systemTemp.createTemp(
+                  'morrow-handoff-recovery-ui-',
+                )
+              : Directory('$rootPath/store-a');
+          if (rootPath != null) {
+            expect(await directory.exists(), false);
+            await directory.create(recursive: true);
+          }
           backend = await RustWorkbench.open(
             executable: hostPath!,
             package: packagePath!,
@@ -99,6 +119,15 @@ void main() {
             directory: directory,
           );
           storage = await RustStudioStorage.open(backend!);
+          final otherDirectory = Directory('${directory.path}-other');
+          expect(await otherDirectory.exists(), false);
+          other = await RustWorkbench.open(
+            executable: hostPath!,
+            package: packagePath!,
+            directory: otherDirectory,
+          );
+          otherStorage = await RustStudioStorage.open(other!);
+          expect(await other!.loadWorkspaceContent(), isEmpty);
         });
         await t.pumpWidget(
           MorrowApp(
@@ -180,10 +209,35 @@ void main() {
           isTrue,
         );
         await tapNative(t, 'draft-handoff-retire');
+        expect(
+          (await native(
+            t,
+            () => backend!.editorDrafts.read(
+              proposal.handoff.request.cardId,
+              proposal.handoff.request.draftId,
+            ),
+          ))!.active,
+          isTrue,
+        );
         // Switching backend while the confirmation is open removes both owned
         // routes. It must not leave old-library raw text over the new workspace.
         await t.pumpWidget(
-          MorrowApp(storage: storage, initialLocale: const Locale('en')),
+          MorrowApp(
+            storage: otherStorage,
+            workbench: other,
+            initialLocale: const Locale('en'),
+          ),
+        );
+        expect(await native(t, () => other!.loadWorkspaceContent()), isEmpty);
+        expect(
+          await native(
+            t,
+            () => other!.editorDrafts.read(
+              proposal.handoff.request.cardId,
+              proposal.handoff.request.draftId,
+            ),
+          ),
+          isNull,
         );
         await waitFor(
           t,
@@ -263,14 +317,88 @@ void main() {
         );
         expect(source.revision, proposal.handoff.request.sourceRevision);
         expect(t.takeException(), isNull);
-      } finally {
+        final childBytes = EditorDraftCodec.encodeWrite(child.request);
         await t.pumpWidget(const SizedBox());
-        await native(t, () async {
-          await backend?.close();
-        });
+        await native(t, () => backend!.close());
+        backend = await native(
+          t,
+          () => RustWorkbench.open(
+            executable: hostPath!,
+            package: packagePath!,
+            directory: directory,
+          ),
+        );
+        final reopenedChild = await native(
+          t,
+          () => backend!.editorDrafts.read(
+            proposal.handoff.request.cardId,
+            proposal.handoff.request.draftId,
+          ),
+        );
+        final reopenedParent = await native(
+          t,
+          () => backend!.editorDrafts.read(
+            proposal.handoff.request.cardId,
+            proposal.handoff.parentLink.parentDraftId,
+          ),
+        );
+        expect(
+          EditorDraftCodec.encodeWrite(reopenedChild!.request),
+          childBytes,
+        );
+        expect(reopenedChild.active, isTrue);
+        expect(reopenedParent!.active, isFalse);
+        expect(
+          reopenedParent.retirement!.childDraftId,
+          reopenedChild.request.draftId,
+        );
+        expect(
+          (await native(
+            t,
+            () => backend!.versionedContent.read(source.id),
+          )).revision,
+          source.revision,
+        );
+        expect(await native(t, () => other!.loadWorkspaceContent()), isEmpty);
+        completed = true;
+      } finally {
+        // A failed qualification retains its owners and library for diagnosis;
+        // only the completed original scenario closes these transports.
+        if (completed) {
+          await t.pumpWidget(const SizedBox());
+          await native(t, () async {
+            await backend?.close();
+            await other?.close();
+          });
+        }
+      }
+      if (rootPath != null) {
+        await t.runAsync(
+          () => File('$rootPath/$phase.json').writeAsString(
+            jsonEncode({
+              'pid': pid,
+              'complete': true,
+              'phase': phase,
+              'two_real_workspaces': true,
+              'confirmation_removed_on_switch': true,
+              'other_workspace_content_unchanged': true,
+              'parent_and_child_active_before_switch': true,
+              'parent_retired_only_after_return_and_confirmation': true,
+              'original_child_request_sha256': sha256
+                  .convert(
+                    EditorDraftCodec.encodeWrite(proposal.handoff.request),
+                  )
+                  .toString(),
+              'reopened_raw_child_verified': true,
+              'business_revision_unchanged': true,
+              'both_original_transports_closed': true,
+            }),
+            flush: true,
+          ),
+        );
       }
     },
-    skip: !Platform.isWindows || hostPath == null || packagePath == null,
+    skip: !available,
     timeout: const Timeout(Duration(minutes: 4)),
   );
 }

@@ -4,11 +4,16 @@
 mod accounting_tests;
 mod handoff;
 mod capture;
+mod resume;
+mod business_assets;
+mod archive;
+pub(crate) mod archive_auxiliary;
 mod handoff_proof;
 mod handoff_proposal;
 pub mod model;
 use crate::{Result, Workbench, WorkbenchState, captured_cards, now};
 pub use handoff::EditorDraftLineage;
+pub use archive::{EditorDraftArchive, EditorDraftArchiveMaintenance, EditorDraftArchiveMaintenanceRequest, EditorDraftHistoryPage, EditorDraftHistoryRow};
 pub use handoff_proposal::{HandoffProposalRecord, HandoffProposalStatus};
 use model::{MAX_BODY_BYTES, proto, validate_request};
 use capture::{capture_attachment, validate_pin};
@@ -123,6 +128,11 @@ fn charge(slot: &proto::Slot) -> Result<u64> {
     Err("draft byte accounting did not converge".into())
 }
 
+fn draft_parent_id(slot: &proto::Slot) -> Option<&str> {
+    slot.parent_link.as_ref().map(|link| link.parent_draft_id.as_str())
+        .or_else(|| slot.resume_link.as_ref().map(|link| link.parent_draft_id.as_str()))
+}
+
 fn decode_body(raw: &[u8]) -> Result<proto::Slot> {
     if raw.len() > MAX_BODY_BYTES {
         return Err("draft body limit".into());
@@ -143,8 +153,12 @@ fn decode_body(raw: &[u8]) -> Result<proto::Slot> {
             return Err("invalid ordinary draft retirement receipt".into());
         }
     }
-    if let Some(link) = &slot.parent_link {
-        model::validate_parent_link(request, link)?;
+    if slot.parent_link.is_some() && slot.resume_link.is_some() {
+        return Err("draft cannot have two parent relation kinds".into());
+    }
+    if let Some(link) = &slot.parent_link { model::validate_parent_link(request, link)?; }
+    if let Some(link) = &slot.resume_link { model::validate_resume_link(request, link)?; }
+    if draft_parent_id(&slot).is_some() {
         if request.expected_generation != 0 && request.assets.iter().any(|asset| asset.origin == 4)
         {
             return Err("parent pins must be adopted by later child generations".into());
@@ -315,7 +329,7 @@ impl WorkbenchState {
                 return Err("draft predecessor proof changed".into());
             }
         }
-        if slot.parent_link.is_some() {
+        if draft_parent_id(&slot).is_some() {
             self.verify_draft_lineage(&slot)?;
         }
         Ok(Some((card, slot)))
@@ -442,7 +456,7 @@ impl WorkbenchState {
                     .ok_or("draft journal disappeared")?;
                 let slot = decode_card(&card)?;
                 result.push(slot);
-                if result.len() > MAX_JOURNALS {
+                if result.len() > MAX_JOURNALS + archive::MAX_ARCHIVED_JOURNALS {
                     return Err("draft journal identity limit".into());
                 }
                 after = id;
@@ -510,15 +524,18 @@ impl WorkbenchState {
         &mut self,
         request: &proto::WriteRequest,
     ) -> Result<EditorDraftRecord> {
-        self.save_editor_draft_linked(request, None, false)
+        self.save_editor_draft_linked(request, None, None, false)
     }
     fn save_editor_draft_linked(
         &mut self,
         request: &proto::WriteRequest,
         parent_link: Option<&proto::ParentLink>,
+        resume_link: Option<&proto::ResumeLink>,
         prepared_proposal: bool,
     ) -> Result<EditorDraftRecord> {
         validate_request(request)?;
+        if parent_link.is_some() && resume_link.is_some() { return Err("ambiguous draft parent relation".into()); }
+        if let Some(link) = resume_link { model::validate_resume_link(request, link)?; }
         if let Some(link) = parent_link {
             model::validate_parent_link(request, link)?;
         }
@@ -528,6 +545,7 @@ impl WorkbenchState {
             if !slot.active
                 || slot.request.as_ref() != Some(request)
                 || parent_link.is_some_and(|link| slot.parent_link.as_ref() != Some(link))
+                || resume_link.is_some_and(|link| slot.resume_link.as_ref() != Some(link))
             {
                 return Err("draft retry payload changed".into());
             }
@@ -576,13 +594,16 @@ impl WorkbenchState {
         {
             return Err("draft already has a durable successor".into());
         }
-        if parent_link.is_some() && (previous.is_some() || request.expected_generation != 0) {
+        if (parent_link.is_some() || resume_link.is_some()) && (previous.is_some() || request.expected_generation != 0) {
             return Err("handoff must create a new child identity".into());
         }
-        let handoff = parent_link
-            .map(|link| self.prepare_draft_handoff(request, link))
-            .transpose()?;
-        if parent_link.is_none() && request.assets.iter().any(|asset| asset.origin == 4) {
+        let handoff = if let Some(link) = resume_link {
+            Some(self.prepare_draft_resume(request, link)?)
+        } else {
+            parent_link.map(|link| self.prepare_draft_handoff(request, link)
+                .map(|(parent, source)| (parent, Some(source)))).transpose()?
+        };
+        if parent_link.is_none() && resume_link.is_none() && request.assets.iter().any(|asset| asset.origin == 4) {
             return Err("parent pins require an explicit first handoff".into());
         }
         let inherited_link = parent_link.cloned().or_else(|| {
@@ -593,6 +614,8 @@ impl WorkbenchState {
         if let Some(link) = &inherited_link {
             model::validate_parent_link(request, link)?;
         }
+        let inherited_resume = resume_link.cloned().or_else(|| previous.as_ref().and_then(|(_, slot)| slot.resume_link.clone()));
+        if let Some(link) = &inherited_resume { model::validate_resume_link(request, link)?; }
         let generation = previous.as_ref().map_or(0, |(_, slot)| slot.generation);
         if request.expected_generation != generation {
             return Err("draft generation conflict".into());
@@ -627,7 +650,7 @@ impl WorkbenchState {
                 card.attachments().into_iter().find(|a| a.id == EVIDENCE),
             )
         } else if let Some((_, source)) = &handoff {
-            (Some(source.clone()), None, None)
+            (source.clone(), None, None)
         } else if request.source_kind == 1 {
             if self.host.store_local().card(&request.card_id)?.is_some() {
                 return Err("new-card draft target already exists".into());
@@ -786,8 +809,9 @@ impl WorkbenchState {
                 let raw = self.read_draft_capture(card, slot)?;
                 proto::CaptureArchive::decode(raw.as_slice())?.parent_archive
             } else { Vec::new() }
-        } else if let Some(link) = parent_link {
-            let (card, slot) = self.draft_card(&request.card_id, &link.parent_draft_id)?
+        } else if let Some((parent, _)) = &handoff {
+            let parent_id = &parent.request.as_ref().ok_or("parent request missing")?.draft_id;
+            let (card, slot) = self.draft_card(&request.card_id, parent_id)?
                 .ok_or("capture parent journal missing")?;
             if slot.capture.is_some() { self.read_draft_capture(&card, &slot)? }
             else { Vec::new() }
@@ -811,6 +835,7 @@ impl WorkbenchState {
             active_bytes: 0,
             consumed_imports,
             parent_link: inherited_link,
+            resume_link: inherited_resume,
             retirement: None,
             discard_operation: String::new(),
             capture,
@@ -818,7 +843,7 @@ impl WorkbenchState {
         slot.active_bytes = charge(&slot)?;
         decode_body(&slot.encode_to_vec())?;
         let journals = self.all_draft_metadata()?;
-        if previous.is_none() && journals.len() >= MAX_JOURNALS {
+        if previous.is_none() && self.unarchived_draft_count(&journals)? >= MAX_JOURNALS {
             return Err("draft journal identity capacity reached".into());
         }
         let others = journals
@@ -920,9 +945,9 @@ impl WorkbenchState {
         if !slot.active || slot.generation != expected {
             return Err("draft discard generation conflict".into());
         }
-        if let Some(link) = &slot.parent_link {
+        if let Some(parent_id) = draft_parent_id(&slot) {
             let (_, parent) = self
-                .draft_card(card, &link.parent_draft_id)?
+                .draft_card(card, parent_id)?
                 .ok_or("linked parent missing")?;
             if parent.active {
                 return Err("retire the linked parent before discarding its child".into());
@@ -987,7 +1012,7 @@ impl WorkbenchState {
                 .ok_or("draft import source missing")?;
             crate::versioned_record::decode(&source)?;
         }
-        if prior.is_none() && self.all_draft_metadata()?.len() >= MAX_JOURNALS {
+        if prior.is_none() && self.unarchived_draft_count(&self.all_draft_metadata()?)? >= MAX_JOURNALS {
             return Err("draft journal identity capacity reached".into());
         }
         let used = self

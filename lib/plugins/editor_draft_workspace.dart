@@ -10,6 +10,11 @@ final class EditorDraftViewLease {
   final bool Function()? _capture;
   bool _released = false;
   bool get released => _released;
+
+  /// This exact attached view may detach without another observation only
+  /// after a completed close preparation and while its full state still agrees.
+  bool acceptsPreparedSnapshot(EditorDraftSnapshot snapshot) =>
+      _workspace._acceptsPreparedSnapshot(this, snapshot);
   void release() {
     if (_released) return;
     _released = true;
@@ -50,6 +55,7 @@ final class EditorDraftWorkspace {
   bool _attaching = false;
   bool _disposed = false;
   int _epoch = 0;
+  EditorDraftClosePreparation? _prepared;
 
   bool get preparingClose => _closing;
   bool get disposed => _disposed;
@@ -107,7 +113,9 @@ final class EditorDraftWorkspace {
   ) {
     _check();
     final key = (session.cardId, session.draftId);
-    if (_closing || _attaching || hasView(session) ||
+    if (_closing ||
+        _attaching ||
+        hasView(session) ||
         !identical(_sessions[key], session) ||
         !session.ownsRetirement(reservation)) {
       throw StateError('Original draft cannot leave this workspace');
@@ -131,7 +139,10 @@ final class EditorDraftWorkspace {
   /// A failed or cancelled route must not orphan an already admitted owner.
   void retain(EditorDraftSession session) {
     _check();
-    if (_closing || _attaching || session.disposed || session.retirementFrozen) {
+    if (_closing ||
+        _attaching ||
+        session.disposed ||
+        session.retirementFrozen) {
       throw StateError('Draft workspace cannot retain a session');
     }
     final key = (session.cardId, session.draftId);
@@ -152,7 +163,10 @@ final class EditorDraftWorkspace {
     bool Function()? capture,
   }) {
     _check();
-    if (_closing || _attaching || session.disposed || session.retirementFrozen) {
+    if (_closing ||
+        _attaching ||
+        session.disposed ||
+        session.retirementFrozen) {
       throw StateError('Draft workspace cannot attach');
     }
     final key = (session.cardId, session.draftId);
@@ -279,7 +293,7 @@ final class EditorDraftWorkspace {
       }
       captureViews();
       _validate(generations);
-      return EditorDraftClosePreparation._(
+      return _prepared = EditorDraftClosePreparation._(
         this,
         epoch,
         Map.unmodifiable(generations),
@@ -317,9 +331,28 @@ final class EditorDraftWorkspace {
     }
   }
 
+  bool _acceptsPreparedSnapshot(
+    EditorDraftViewLease lease,
+    EditorDraftSnapshot snapshot,
+  ) {
+    final prepared = _prepared;
+    if (prepared == null || lease.released || !_leases.contains(lease)) {
+      return false;
+    }
+    try {
+      _checkPreparation(prepared);
+      _validate(prepared._generations);
+      return !lease.session.captureBlocked &&
+          snapshot.sameAs(lease.session.current);
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Resume editing after a prepared close is cancelled. No journal mutation.
   void cancelClose(EditorDraftClosePreparation preparation) {
     _checkPreparation(preparation);
+    _prepared = null;
     ++_epoch;
     try {
       _restoreAutoPolicy();
@@ -380,6 +413,7 @@ final class EditorDraftWorkspace {
       session.dispose();
     }
     _sessions.clear();
+    _prepared = null;
     _pausedBefore.clear();
     _closing = false;
     _disposed = true;

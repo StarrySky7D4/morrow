@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/plugins/editor_draft.dart';
+import 'package:morrow_studio/plugins/editor_draft_binding.dart';
 import 'package:morrow_studio/plugins/editor_draft_session.dart';
 import 'package:morrow_studio/plugins/editor_draft_workspace.dart';
 
@@ -126,48 +128,137 @@ Future<EditorDraftRecord> _confirmInitial(
 }
 
 void main() {
-  test('close captures real view metadata before flush and rechecks it', () async {
-    final control = _Control();
-    final workspace = EditorDraftWorkspace(isCurrent: () => true);
-    final session = _session(control, 'capture', isCurrent: () => true);
-    addTearDown(session.dispose);
-    var title = 'complete visible snapshot';
-    var captures = 0;
-    final lease = workspace.attach(session, capture: () {
-      captures++;
-      session.observe(_snapshot(title));
-      return true;
+  for (final scenario in [
+    'unchanged',
+    'late text',
+    'late metadata',
+    'metadata failure',
+    'cancelled',
+    'workspace changed',
+    'foreign lease',
+  ]) {
+    test('prepared view detach preserves close authority: $scenario', () async {
+      var current = true, viewCurrent = true, metadataFailure = false;
+      var category = '';
+      final control = _Control();
+      final workspace = EditorDraftWorkspace(isCurrent: () => current);
+      final session = _session(control, 'detach', isCurrent: () => current);
+      addTearDown(session.dispose);
+      await _confirmInitial(session, control);
+      final fields = [
+        TextEditingController(text: 'baseline-detach'),
+        for (var i = 0; i < 4; i++) TextEditingController(),
+      ];
+      final binding = EditorDraftBinding(
+        session: session,
+        title: fields[0],
+        description: fields[1],
+        hypothesis: fields[2],
+        conclusion: fields[3],
+        todos: fields[4],
+        isCurrent: () => viewCurrent,
+        readMetadata: () {
+          if (metadataFailure) throw StateError('Unresolved selected asset');
+          return EditorDraftMetadata(category: category, stage: '', assets: []);
+        },
+      );
+      addTearDown(() {
+        binding.dispose();
+        for (final field in fields) {
+          field.dispose();
+        }
+      });
+      binding.attach();
+      final lease = workspace.attach(session, capture: binding.capture);
+      final prepared = await workspace.prepareClose(
+        timeout: const Duration(seconds: 1),
+      );
+      EditorDraftViewLease detachLease = lease;
+      if (scenario == 'late text') fields[0].text = 'newer unsaved input';
+      if (scenario == 'late metadata') category = 'unnotified category change';
+      if (scenario == 'metadata failure') metadataFailure = true;
+      if (scenario == 'cancelled') workspace.cancelClose(prepared);
+      if (scenario == 'workspace changed') current = false;
+      if (scenario == 'foreign lease') {
+        final foreign = _session(_Control(), 'foreign', isCurrent: () => true);
+        addTearDown(foreign.dispose);
+        detachLease = EditorDraftWorkspace(
+          isCurrent: () => true,
+        ).attach(foreign);
+        addTearDown(detachLease.release);
+      }
+      viewCurrent = false; // Parent is unmounted before its child disposes.
+      expect(binding.captureBeforeDetach(detachLease), scenario == 'unchanged');
+      binding.detach();
+      lease.release();
+      if (scenario == 'unchanged') {
+        expect(session.captureBlocked, false);
+        workspace.finishClose(prepared);
+        expect(workspace.disposed, true);
+      } else {
+        expect(() => workspace.finishClose(prepared), throwsStateError);
+        expect(workspace.disposed, false);
+        expect(session.captureBlocked, true);
+      }
+      expect(control.saves, hasLength(1));
     });
-    final closing = workspace.prepareClose(timeout: const Duration(seconds: 1));
-    await _tick();
-    expect(control.saves.single.request.values.title.text, title);
-    // Metadata changed without a text-controller notification while awaiting IO.
-    title = 'newer visible snapshot';
-    control.saves.single.completion.complete(_receipt(control.saves.single.request));
-    await expectLater(closing, throwsStateError);
-    expect(captures, 2);
-    expect(session.dirty, isTrue);
-    expect(workspace.preparingClose, isFalse);
-    expect(workspace.disposed, isFalse);
-    lease.release();
-  });
+  }
 
-  test('failed attached capture blocks close without saving an old subset', () async {
-    final control = _Control();
-    final workspace = EditorDraftWorkspace(isCurrent: () => true);
-    final session = _session(control, 'capture', isCurrent: () => true);
-    addTearDown(session.dispose);
-    final lease = workspace.attach(session, capture: () => false);
-    await expectLater(
-      workspace.prepareClose(timeout: const Duration(seconds: 1)),
-      throwsStateError,
-    );
-    expect(control.saves, isEmpty);
-    expect(session.captureBlocked, isTrue);
-    expect(workspace.disposed, isFalse);
-    expect(workspace.attachedViews, 1);
-    lease.release();
-  });
+  test(
+    'close captures real view metadata before flush and rechecks it',
+    () async {
+      final control = _Control();
+      final workspace = EditorDraftWorkspace(isCurrent: () => true);
+      final session = _session(control, 'capture', isCurrent: () => true);
+      addTearDown(session.dispose);
+      var title = 'complete visible snapshot';
+      var captures = 0;
+      final lease = workspace.attach(
+        session,
+        capture: () {
+          captures++;
+          session.observe(_snapshot(title));
+          return true;
+        },
+      );
+      final closing = workspace.prepareClose(
+        timeout: const Duration(seconds: 1),
+      );
+      await _tick();
+      expect(control.saves.single.request.values.title.text, title);
+      // Metadata changed without a text-controller notification while awaiting IO.
+      title = 'newer visible snapshot';
+      control.saves.single.completion.complete(
+        _receipt(control.saves.single.request),
+      );
+      await expectLater(closing, throwsStateError);
+      expect(captures, 2);
+      expect(session.dirty, isTrue);
+      expect(workspace.preparingClose, isFalse);
+      expect(workspace.disposed, isFalse);
+      lease.release();
+    },
+  );
+
+  test(
+    'failed attached capture blocks close without saving an old subset',
+    () async {
+      final control = _Control();
+      final workspace = EditorDraftWorkspace(isCurrent: () => true);
+      final session = _session(control, 'capture', isCurrent: () => true);
+      addTearDown(session.dispose);
+      final lease = workspace.attach(session, capture: () => false);
+      await expectLater(
+        workspace.prepareClose(timeout: const Duration(seconds: 1)),
+        throwsStateError,
+      );
+      expect(control.saves, isEmpty);
+      expect(session.captureBlocked, isTrue);
+      expect(workspace.disposed, isFalse);
+      expect(workspace.attachedViews, 1);
+      lease.release();
+    },
+  );
 
   test('releasing a view retains newer S2 and an unknown original', () async {
     final control = _Control();

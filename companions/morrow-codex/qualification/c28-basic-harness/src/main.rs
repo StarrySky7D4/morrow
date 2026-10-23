@@ -1,4 +1,6 @@
 //! Default file-only preflight; live guest actions require exact interactive steps.
+// P and R provide explicit pipe handles. This finite harness needs no console.
+#![cfg_attr(all(target_os = "windows", not(test)), windows_subsystem = "windows")]
 #![cfg_attr(not(windows),forbid(unsafe_code))]
 #![cfg_attr(windows,deny(unsafe_code))]
 use anyhow::{Context, Result, bail, ensure};
@@ -96,6 +98,10 @@ fn run() -> Result<()> {
     let child_args: Vec<_> = std::env::args().skip(1).collect();
     #[cfg(windows)]
     if let Some((origin,args))=codex_windows_sandbox::AsUserParentOrigin::import_arguments(&child_args,a1_parent_anchor::P_IMAGE_SHA256)? {
+        if args.windows(2).any(|pair|pair[0]=="--phase"
+            && pair[1]==morrow_protected_checked_vm_harness::parent_session::PHASE) {
+            return run_imported_parent_session(origin,args);
+        }
         let original=std::sync::Arc::new(origin);
         let startup=original.startup_observation();
         // Independent finite stable IO slot, prepared BEFORE the existing catch.
@@ -126,6 +132,31 @@ fn run() -> Result<()> {
     {run_inner(child_args,None)}
     #[cfg(not(windows))]
     {run_inner(child_args)}
+}
+#[cfg(windows)]
+fn run_imported_parent_session(original:codex_windows_sandbox::AsUserParentOrigin,args:Vec<String>)->Result<()> {
+    // Keep the genuine unwrapped inlet reachable during argument/config parsing.
+    // The session entry takes ownership only after those file-only checks pass.
+    let held=Box::leak(Box::new(Some(original)));
+    let result=std::panic::catch_unwind(std::panic::AssertUnwindSafe(||->Result<()> {
+        let args=arguments_from(&args)?;
+        ensure!(args.phase==morrow_protected_checked_vm_harness::parent_session::PHASE,
+            "fixed original-parent refusal session phase required");
+        let config=morrow_protected_checked_vm_harness::live::LiveConfig {
+            files:args.files,sid_query:args.sid_query,
+            inventory_shell:args.shell.context("fixed parent session requires original pinned shell")?,
+            expected_guest_uuid:args.expected_uuid.context("fixed parent session requires approved firmware UUID")?,
+        };
+        let stdin=std::io::stdin();let mut input=stdin.lock();
+        morrow_protected_checked_vm_harness::parent_session::run(held.take().unwrap(),config,&mut input)
+    }));
+    match result {
+        Ok(Ok(()))=>Ok(()),
+        _=>{
+            eprintln!("ORIGINAL_PARENT_SESSION_ENTRY_UNKNOWN_RETAINED");
+            loop {std::thread::park();}
+        }
+    }
 }
 fn run_inner(child_args:Vec<String>,#[cfg(windows)] origin:Option<std::sync::Arc<codex_windows_sandbox::AsUserParentOrigin>>)->Result<()> {
     #[cfg(windows)]

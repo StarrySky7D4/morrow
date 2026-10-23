@@ -1,6 +1,6 @@
 //! Framed IPC protocol used between the parent (CLI) and the elevated command runner.
 //!
-//! This module defines the JSON message schema (spawn request/ready, output, stdin,
+//! This module defines the typed message model (spawn request/ready, output, stdin,
 //! exit, error, terminate) plus length‑prefixed framing helpers for a byte stream.
 //! It is **elevated-path only**: the parent uses it to bootstrap the runner and
 //! stream unified_exec I/O over named pipes. The legacy restricted‑token path does
@@ -28,8 +28,8 @@ pub const CHECKED_IPC_PROTOCOL_VERSION: u8 = 7;
 mod checked_protocol;
 pub use checked_protocol::*;
 
-/// Length-prefixed, JSON-encoded frame.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+/// Typed frame carried by the pinned Cap'n Proto runner schema.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct FramedMessage {
     pub version: u8,
     #[serde(flatten)]
@@ -40,7 +40,7 @@ pub struct FramedMessage {
 ///
 /// `SpawnRequest`, `Stdin`, `CloseStdin`, `Resize`, and `Terminate` are parent->runner commands.
 /// `SpawnReady`, `Output`, `Exit`, and `Error` are runner->parent events/results.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Message {
     Hello { payload: ControlHello },
@@ -59,7 +59,7 @@ pub enum Message {
 }
 
 /// Spawn parameters sent from parent to runner.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct SpawnRequest {
     pub command: Vec<String>,
     pub cwd: PathBuf,
@@ -81,7 +81,7 @@ pub struct SpawnRequest {
 }
 
 /// Ack from runner after it spawns the child process.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct SpawnReady {
     pub process_id: u32,
     #[serde(default)]
@@ -89,7 +89,7 @@ pub struct SpawnReady {
 }
 
 /// Output data sent from runner to parent.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct OutputPayload {
     pub data_b64: String,
     pub stream: OutputStream,
@@ -104,27 +104,27 @@ pub enum OutputStream {
 }
 
 /// Stdin bytes sent from parent to runner.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct StdinPayload {
     pub data_b64: String,
 }
 
 /// PTY resize request sent from parent to runner.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ResizePayload {
     pub rows: u16,
     pub cols: u16,
 }
 
 /// Exit status sent from runner to parent.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ExitPayload {
     pub exit_code: i32,
     pub timed_out: bool,
 }
 
 /// Error payload sent when the runner fails to spawn or stream.
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct ErrorPayload {
     pub message: String,
     pub stage: ErrorStage,
@@ -142,7 +142,7 @@ pub enum ErrorStage {
 }
 
 /// Empty payload for control messages.
-#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq, Eq)]
 pub struct EmptyPayload {}
 
 /// Base64-encode raw bytes for IPC payloads.
@@ -155,14 +155,22 @@ pub fn decode_bytes(data: &str) -> Result<Vec<u8>> {
     Ok(STANDARD.decode(data.as_bytes())?)
 }
 
-/// Write a length-prefixed JSON frame.
+/// Write a length-prefixed Cap'n Proto frame; no JSON fallback.
 pub fn write_frame<W: Write>(writer: W, msg: &FramedMessage) -> Result<()> {
-    crate::framed_io::write_frame(writer, msg)
+    let payload = crate::runner_wire::encode_frame_payload(msg)?;
+    crate::framed_io::write_payload(writer, &payload, crate::runner_wire::MAX_FRAME_BYTES)
 }
 
-/// Read a length-prefixed JSON frame; returns `Ok(None)` on EOF.
+/// Read a length-prefixed Cap'n Proto frame; only zero-byte EOF is `None`.
 pub fn read_frame<R: Read>(reader: R) -> Result<Option<FramedMessage>> {
-    crate::framed_io::read_frame(reader)
+    crate::framed_io::read_payload(reader, crate::runner_wire::MAX_FRAME_BYTES)?
+        .map(|payload| decode_frame_payload(&payload)).transpose()
+}
+
+/// Decode an already bounded payload from an owner that separately observes EOF.
+/// The same pinned schema and strict binary checks apply to every input reader.
+pub fn decode_frame_payload(payload: &[u8]) -> Result<FramedMessage> {
+    crate::runner_wire::decode_frame_payload(payload)
 }
 
 #[cfg(test)]

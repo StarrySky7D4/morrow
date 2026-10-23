@@ -596,5 +596,34 @@
   "mainDraftJournalExportFailed": "Could not export the complete recovery copy.",
   "mainDraftJournalRetire": "Retire saved draft",
   "mainDraftJournalRetireConfirm": "Retire this exact saved draft and release its attachment pins? Export a recovery copy first if you need it. Saved business content and uncertain save results are unchanged.",
-  "mainDraftJournalRetireUnknown": "Retirement is not confirmed. Inspect the original operation; do not submit it again."
+  "mainDraftJournalRetireUnknown": "Retirement is not confirmed. Inspect the original operation; do not submit it again.",
+  "mainDraftHistoryTitle": "Draft history",
+  "mainDraftHistoryNotice": "Only retired drafts appear here. Archiving preserves text and provenance and frees a journal slot. Released attachment files and capture permissions are not restored. Archived records also have a 64 MiB limit.",
+  "mainDraftHistoryCapacity": "Current records: {current}/256; archived: {archived}/4096",
+  "mainDraftHistoryUnconfirmed": "Archive outcome is unconfirmed. Refresh to inspect the original record.",
+  "mainDraftHistoryRetired": "Retired",
+  "mainDraftHistoryArchived": "Archived",
+  "mainDraftHistoryFirst": "First page",
+  "mainDraftHistoryNext": "Next page",
+  "mainDraftHistoryExport": "Export history record",
+  "mainDraftHistoryArchive": "Archive this record",
+  "@mainDraftHistoryCapacity": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "archived": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDraftHistoryTitleField": "Title",
+  "mainDraftHistoryDescriptionField": "Description",
+  "mainDraftHistoryCategoryField": "Category",
+  "mainDraftHistoryStageField": "Stage",
+  "mainDraftWriteInspect": "Check draft save",
+  "mainDraftWriteRetry": "Retry draft save",
+  "mainDraftHistoryMaintain": "Archive related records",
+  "mainDraftHistoryMaintainHelp": "Preserve all history and free draft record capacity.",
+  "mainDraftHistoryMaintained": "Related records archived"
 }

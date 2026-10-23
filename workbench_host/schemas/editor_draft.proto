@@ -104,6 +104,18 @@ message ParentRetirement {
   uint64 parent_generation = 4;
 }
 
+// A new live session for an uncommitted parent. This is distinct from a proven
+// committed S1 handoff. The first child transaction reserves the old business
+// operation, preventing it from being dispatched after this atomic fence.
+message ResumeLink {
+  string parent_draft_id = 1;
+  uint64 parent_generation = 2;
+  string parent_save_operation = 3;
+  bytes parent_request_sha256 = 4;
+  string parent_business_operation = 5;
+  string retirement_operation = 6;
+}
+
 message Slot {
   uint32 schema_version = 1;
   WriteRequest request = 2;
@@ -122,4 +134,5 @@ message Slot {
   CapturePin capture = 13;
   // Exact ordinary discard receipt. Empty on legacy records is not proof.
   string discard_operation = 14;
+  ResumeLink resume_link = 15;
 }

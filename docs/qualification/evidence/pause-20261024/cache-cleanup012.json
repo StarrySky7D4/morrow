@@ -1,0 +1,12 @@
+{
+  "source_or_executable_or_pdb_deletions": 0,
+  "deleted_files": 252,
+  "vm_actions": 0,
+  "observed_free_change": 250990592,
+  "logical_deleted_bytes": 467402657,
+  "free_after": 6736957440,
+  "current_compiler_outputs_preserved": true,
+  "status": "VERIFIED_OLD_UNUSED_CARGO_LEAVES_REMOVED",
+  "protected_critical_hashes_unchanged": true,
+  "preserved_leaves": 4540
+}

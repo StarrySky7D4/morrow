@@ -243,6 +243,7 @@ impl WorkbenchState {
     fn all_staging_slots(&self) -> Result<Vec<proto::Slot>> {
         let mut after = PREFIX.to_owned();
         let mut result = Vec::new();
+        let mut observed_bytes = 0u64;
         loop {
             let ids = self.host.store_local().card_ids_local(&after, 32)?;
             if ids.is_empty() {
@@ -258,8 +259,12 @@ impl WorkbenchState {
                     .store_local()
                     .card(&id)?
                     .ok_or("staging journal missing")?;
+                observed_bytes = observed_bytes.checked_add(card.encode().len() as u64).ok_or("staging scan bytes overflow")?;
+                if observed_bytes > crate::editor_draft::archive_auxiliary::MAX_AUXILIARY_SCAN_BYTES {
+                    return Err("staging scan byte limit".into());
+                }
                 result.push(decode_card(&card)?);
-                if result.len() > MAX_JOURNALS {
+                if result.len() > MAX_JOURNALS + crate::editor_draft::archive_auxiliary::MAX_ARCHIVED_AUXILIARY {
                     return Err("draft import journal capacity changed".into());
                 }
                 after = id;
@@ -269,6 +274,19 @@ impl WorkbenchState {
             }
         }
         Ok(result)
+    }
+    pub(crate) fn draft_archive_import_records(&self) -> Result<Vec<crate::editor_draft::archive_auxiliary::Record>> {
+        use crate::editor_draft::archive_auxiliary::{Kind, Record};
+        self.all_staging_slots()?.into_iter().map(|slot| {
+            let source = self.host.store_local().card(&key(&slot.card_id, &slot.draft_id))?
+                .ok_or("archive import journal missing")?;
+            let last = slot.last_mutation.as_ref().ok_or("archive import mutation missing")?;
+            if decode_card(&source)? != slot
+                || self.stage_history(&slot.card_id, &slot.draft_id, &last.operation_id)?.as_ref() != Some(&slot) {
+                return Err("archive import audit binding changed".into());
+            }
+            Ok(Record::checked(Kind::Import, &slot.card_id, &slot.draft_id, &source, slot.entries.is_empty()))
+        }).collect()
     }
     pub(crate) fn stage_history(
         &self,
@@ -583,7 +601,8 @@ impl WorkbenchState {
             return Err("draft import journal capacity reached".into());
         }
         let all = self.all_staging_slots()?;
-        if slot.revision == 0 && all.len() >= MAX_JOURNALS {
+        let archived = self.archived_draft_auxiliary_keys(crate::editor_draft::archive_auxiliary::Kind::Import)?;
+        if slot.revision == 0 && all.iter().filter(|s| !archived.contains(&key(&s.card_id, &s.draft_id))).count() >= MAX_JOURNALS {
             return Err("draft import journal identity capacity reached".into());
         }
         let mut count = 1usize;
