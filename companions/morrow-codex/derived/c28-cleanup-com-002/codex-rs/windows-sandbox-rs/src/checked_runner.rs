@@ -161,6 +161,12 @@ impl MatchedRunnerArtifact {
             .qualify_source_policy_rejection_for(backend)
     }
     #[doc(hidden)]
+    pub fn qualify_asuser_after_helper_stop_for<T:std::any::Any+Send+Sync>(&self,backend:&std::sync::Arc<T>)
+        ->std::io::Result<()> {
+        self.asuser.as_ref().ok_or_else(||std::io::Error::from(std::io::ErrorKind::PermissionDenied))?
+            .qualify_after_helper_stop_for(backend)
+    }
+    #[doc(hidden)]
     pub fn take_asuser_caller_refusal_for<T:std::any::Any+Send+Sync>(&self,backend:&std::sync::Arc<T>)
         ->std::io::Result<Option<crate::AsUserCallerRefusal>> {
         match self.asuser.as_ref(){Some(binding)=>binding.take_caller_refusal_for(backend),None=>Ok(None)}

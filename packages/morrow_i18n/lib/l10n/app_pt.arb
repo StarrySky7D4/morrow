@@ -290,6 +290,13 @@
       }
     }
   },
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsEndpointCertificateSelected": {
     "placeholders": {
       "bytes": {
@@ -1509,6 +1516,14 @@
   "pluginsCredentialUnknown": "Não foi possível confirmar o resultado. O campo secreto foi limpo. Atualize o estado antes de outra alteração.",
   "pluginsDeclared": "Permissões declaradas: {permissions}",
   "pluginsDependenciesNotice": "As dependências devem ser configuradas no host. Esta página não as autoriza.",
+  "pluginsDirectoryEntries": "Entradas capturadas: {count}",
+  "pluginsDirectoryFormError": "Verifique a pasta, o plugin, os limites e a duração da tarefa.",
+  "pluginsDirectoryIntro": "Compartilha apenas nomes e metadados das entradas diretamente na pasta escolhida. Não lê arquivos nem o conteúdo de subpastas.",
+  "pluginsDirectoryLimit": "Limite de entradas (até 1024)",
+  "pluginsDirectoryMetadataLimit": "Limite de metadados (bytes, até 1 MiB)",
+  "pluginsDirectorySelectHandler": "Selecionar plugin de pasta aprovado",
+  "pluginsDirectoryStart": "Ler pasta e executar plugin",
+  "pluginsDirectoryTitle": "Conteúdo da pasta",
   "pluginsDisable": "Desativar",
   "pluginsDisableWorkbench": "Desativar plugin da área",
   "pluginsDisabled": "Desativado",

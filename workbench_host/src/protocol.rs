@@ -15,6 +15,9 @@ mod channel_task;
 #[cfg(not(target_arch = "wasm32"))]
 mod file_task;
 #[cfg(windows)]
+#[path = "directory_task_protocol.rs"]
+mod directory_task;
+#[cfg(windows)]
 #[path = "guest_mutation_protocol.rs"]
 mod guest_mutation;
 #[cfg(windows)]
@@ -288,6 +291,11 @@ fn is_scheduler_action(action: wire::Action) -> bool {
                 | wire::Action::FileChunk
                 | wire::Action::FileFinish
                 | wire::Action::FileRead
+                | wire::Action::DirectoryStart
+                | wire::Action::DirectoryRead
+                | wire::Action::DirectoryRunGuest
+                | wire::Action::DirectoryReadGuest
+                | wire::Action::DirectoryFinish
                 | wire::Action::HttpStart
                 | wire::Action::IoStatus
                 | wire::Action::IoPoll
@@ -377,6 +385,16 @@ impl ResponseTarget for Workbench {
         }
         if is_service_run_action(action) {
             return service_run::handle(self, r, out);
+        }
+        if matches!(action,
+            wire::Action::DirectoryStart | wire::Action::DirectoryRead
+            | wire::Action::DirectoryRunGuest | wire::Action::DirectoryReadGuest
+            | wire::Action::DirectoryFinish
+        ) {
+            #[cfg(windows)]
+            { return directory_task::handle(self, r, out); }
+            #[cfg(not(windows))]
+            { return Err("selected directories are unavailable on this platform".into()); }
         }
         if matches!(
             action,
@@ -917,6 +935,11 @@ fn handle_business(
         | wire::Action::FileChunk
         | wire::Action::FileFinish
         | wire::Action::FileRead
+        | wire::Action::DirectoryStart
+        | wire::Action::DirectoryRead
+        | wire::Action::DirectoryRunGuest
+        | wire::Action::DirectoryReadGuest
+        | wire::Action::DirectoryFinish
         | wire::Action::HttpStart
         | wire::Action::IoStatus
         | wire::Action::IoPoll
@@ -1748,6 +1771,7 @@ fn plugin_catalog_reply(
         row.set_available(entry.available);
         row.set_issue(entry.issue.as_str());
         row.set_mutation_supported(entry.mutation_supported);
+        row.set_directory_supported(entry.directory_supported);
         row.set_channel_supported(entry.channel_supported);
         {
             let mut values = row

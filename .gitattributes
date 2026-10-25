@@ -1154,3 +1154,6 @@
 
 # Exact 047 qualified inputs: preserve validated source bytes across checkouts.
 "/workbench_host/src/asuser_parent_original.rs" -text
+
+# Preserve the exact Windows directory SDK qualification source at the pause.
+"/workbench_host/tests/directory_protected_sdk.rs" -text

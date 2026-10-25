@@ -299,6 +299,13 @@
       }
     }
   },
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsEndpointCertificateSelected": {
     "placeholders": {
       "bytes": {
@@ -1518,6 +1525,14 @@
   "pluginsCredentialUnknown": "The result could not be confirmed. The secret field has been cleared. Refresh status before making another change.",
   "pluginsDeclared": "Declared permissions: {permissions}",
   "pluginsDependenciesNotice": "Dependencies must be configured in the host. This page does not approve them.",
+  "pluginsDirectoryEntries": "Captured entries: {count}",
+  "pluginsDirectoryFormError": "Check the folder, plugin, limits and task lifetime.",
+  "pluginsDirectoryIntro": "Share only names and metadata directly inside the selected folder. File contents and subfolders are not read.",
+  "pluginsDirectoryLimit": "Entry limit (up to 1024)",
+  "pluginsDirectoryMetadataLimit": "Metadata limit (bytes, up to 1 MiB)",
+  "pluginsDirectorySelectHandler": "Select an approved folder plugin",
+  "pluginsDirectoryStart": "Read folder and run plugin",
+  "pluginsDirectoryTitle": "Folder listing",
   "pluginsDisable": "Disable",
   "pluginsDisableWorkbench": "Disable workbench plugin",
   "pluginsDisabled": "Disabled",

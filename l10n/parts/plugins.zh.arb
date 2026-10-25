@@ -820,5 +820,20 @@
   "pluginsAgentRejected": "已拒绝",
   "pluginsAgentInvalidInput": "请检查输入。",
   "pluginsAgentReleaseNotice": "关闭此视图或解除会话控制附着，不能证明任务已经停止或资源已经释放。",
-  "pluginsAgentReadOnlyNotice": "发现操作只读，不授予访问权限。结果未知时，绝不自动重发。"
+  "pluginsAgentReadOnlyNotice": "发现操作只读，不授予访问权限。结果未知时，绝不自动重发。",
+  "pluginsDirectoryTitle": "目录读取",
+  "pluginsDirectoryIntro": "仅向插件提供所选文件夹直属条目的名称和元数据，不读取文件内容或子文件夹内的内容。",
+  "pluginsDirectoryStart": "读取目录并运行插件",
+  "pluginsDirectorySelectHandler": "选择已批准的目录插件",
+  "pluginsDirectoryLimit": "条目上限（最多 1024）",
+  "pluginsDirectoryMetadataLimit": "元数据上限（字节，最多 1 MiB）",
+  "pluginsDirectoryEntries": "已捕获条目：{count}",
+  "pluginsDirectoryFormError": "请核对文件夹、插件、上限和任务有效时间。",
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

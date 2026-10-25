@@ -820,5 +820,20 @@
   "pluginsAgentRejected": "拒否",
   "pluginsAgentInvalidInput": "入力を確認してください。",
   "pluginsAgentReleaseNotice": "この画面を閉じたりセッション制御から切断したりしても、タスクの停止やリソースの解放を証明したことにはなりません。",
-  "pluginsAgentReadOnlyNotice": "検出は読み取り専用で、アクセス権を付与しません。結果が不明な操作を自動再送することはありません。"
+  "pluginsAgentReadOnlyNotice": "検出は読み取り専用で、アクセス権を付与しません。結果が不明な操作を自動再送することはありません。",
+  "pluginsDirectoryTitle": "フォルダー一覧",
+  "pluginsDirectoryIntro": "選択したフォルダー直下の項目名とメタデータだけを共有します。ファイル内容やサブフォルダー内は読み取りません。",
+  "pluginsDirectoryStart": "フォルダーを読み取りプラグインを実行",
+  "pluginsDirectorySelectHandler": "承認済みのフォルダープラグインを選択",
+  "pluginsDirectoryLimit": "項目数の上限（最大 1024）",
+  "pluginsDirectoryMetadataLimit": "メタデータの上限（バイト、最大 1 MiB）",
+  "pluginsDirectoryEntries": "取得した項目数：{count}",
+  "pluginsDirectoryFormError": "フォルダー、プラグイン、上限、タスクの有効時間を確認してください。",
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

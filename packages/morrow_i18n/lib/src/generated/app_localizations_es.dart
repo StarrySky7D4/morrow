@@ -1860,6 +1860,36 @@ class AppLocalizationsEs extends AppLocalizations {
       'Las dependencias deben configurarse en el host. Esta página no las autoriza.';
 
   @override
+  String pluginsDirectoryEntries(String count) {
+    return 'Entradas capturadas: $count';
+  }
+
+  @override
+  String get pluginsDirectoryFormError =>
+      'Comprueba la carpeta, el complemento, los límites y la duración de la tarea.';
+
+  @override
+  String get pluginsDirectoryIntro =>
+      'Solo se comparten nombres y metadatos de las entradas directas de la carpeta elegida. No se leen archivos ni el contenido de subcarpetas.';
+
+  @override
+  String get pluginsDirectoryLimit => 'Límite de entradas (hasta 1024)';
+
+  @override
+  String get pluginsDirectoryMetadataLimit =>
+      'Límite de metadatos (bytes, hasta 1 MiB)';
+
+  @override
+  String get pluginsDirectorySelectHandler =>
+      'Elegir un complemento de carpeta autorizado';
+
+  @override
+  String get pluginsDirectoryStart => 'Leer carpeta y ejecutar complemento';
+
+  @override
+  String get pluginsDirectoryTitle => 'Contenido de la carpeta';
+
+  @override
   String get pluginsDisable => 'Desactivar';
 
   @override

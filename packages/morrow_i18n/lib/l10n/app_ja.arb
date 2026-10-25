@@ -290,6 +290,13 @@
       }
     }
   },
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsEndpointCertificateSelected": {
     "placeholders": {
       "bytes": {
@@ -1509,6 +1516,14 @@
   "pluginsCredentialUnknown": "結果を確認できませんでした。シークレット欄は消去されました。状態を更新してから次の変更を行ってください。",
   "pluginsDeclared": "宣言された権限：{permissions}",
   "pluginsDependenciesNotice": "依存関係はホストで設定する必要があります。このページでは承認されません。",
+  "pluginsDirectoryEntries": "取得した項目数：{count}",
+  "pluginsDirectoryFormError": "フォルダー、プラグイン、上限、タスクの有効時間を確認してください。",
+  "pluginsDirectoryIntro": "選択したフォルダー直下の項目名とメタデータだけを共有します。ファイル内容やサブフォルダー内は読み取りません。",
+  "pluginsDirectoryLimit": "項目数の上限（最大 1024）",
+  "pluginsDirectoryMetadataLimit": "メタデータの上限（バイト、最大 1 MiB）",
+  "pluginsDirectorySelectHandler": "承認済みのフォルダープラグインを選択",
+  "pluginsDirectoryStart": "フォルダーを読み取りプラグインを実行",
+  "pluginsDirectoryTitle": "フォルダー一覧",
   "pluginsDisable": "無効化",
   "pluginsDisableWorkbench": "ワークスペースプラグインを無効化",
   "pluginsDisabled": "無効",

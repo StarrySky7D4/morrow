@@ -2,7 +2,7 @@
   "schema": 1,
   "branch": "codex/local-continue-20261020",
   "base_commit": "116d1eb9beffa1675a48eb5ab06d1abc79137ae2",
-  "updated": "2026-10-24",
+  "updated": "2026-10-25",
   "release_eligible": false,
   "source_accepted": false,
   "ci_authorization": "after overall repair; intermediate commits use [skip ci]",
@@ -14,8 +14,8 @@
     },
     {
       "id": "FAILURE_OWNERSHIP",
-      "state": "PARTIAL",
-      "detail": "The shared-owner SDK checkpoint passed 17 frozen guests on one protected owner and 125 native regressions passed on source77f509c0. Actual VM shared-refusal case042 is Unknown; its original case and host session remain retained, while its same-owner conditional policy restoration is verified. More than sixteen complete native refusals and full P2 remain open."
+      "state": "PARTIAL_FULL_P2_OPEN",
+      "detail": "Current ab14 normal47/nine078 and fault063/079 pass within scope. Real17-refusal046 and logon048 retain a5 source bindings. Case080 never reached late create: S reused prior setup-fault library. Original Unknown owners remain retained."
     },
     {
       "id": "HOST_PLATFORM_DEPENDENCIES",
@@ -29,29 +29,33 @@
     },
     {
       "id": "REPRODUCIBLE_ACCEPTANCE",
-      "state": "ORIGINAL47_NINE_SCOPED_PASS_FULL_PRODUCT_OPEN",
-      "detail": "Case041 passes original47/nine (284 checks) on roles029/source77f509c0, with original case and policy closed. Later case042 is Unknown and VM030 is Saved with memory/disk retained; it cannot be reused as a clean VM. Full P2/P3 and Windows SDK remain open. The publication includes later handoff/documentation and public controller archives, not a newly qualified complete source snapshot."
+      "state": "ORIGINAL47_NINE_SCOPED_PASS_REJECTED_FAULT_BUILD_RETAINED",
+      "detail": "Current ab14 normal078 passed284 checks. Case080 demonstrates that manifest/source hashes plus a rebuilt binary do not prove a library was rebuilt from the intended overlay; build isolation repair is pending explicit resume."
     },
     {
       "id": "EDITOR_PERSISTENCE",
-      "state": "PARTIAL",
-      "detail": "Separate source-bound Windows results now cover editable restart, history, exact S1/S2 receipt-loss recovery, parent retirement failure, disk-full recovery, attachment reselection, workspace and locale/font transitions, completed-parent archive, original import cleanup, auxiliary maintenance and capacity. Actual host limits of 4096 main archives, 4096 auxiliary journals and 64 MiB are exercised without lowering limits; formal clients exercise 16 active and 256 live identities. Explicit legacy v1 auxiliary maintenance uses a separate immutable receipt, preserves the original marker/export, releases quota only once and survives an independent Windows client restart. Full combined-source fault qualification and physical-input/pixel checks remain open; previous results retain their own source bindings."
+      "state": "PASS_DEFINED_WINDOWS_HANDOFF_MATRIX",
+      "detail": "Matrix065 reconciles13 requirement groups,319 evidence files and345 unchanged relevant sources on ab14. Full product, other platforms and undefined fault space are not accepted."
     }
   ],
   "gates": {
     "L0_TOKEN": "PASS_SCOPED_NATIVE_SNAPSHOT",
-    "L1_RUNNER": "PASS_SCOPED_CASE041_SOURCE_77F509C0_PUBLISHED_SNAPSHOT_NOT_REQUALIFIED",
-    "L2_BUSINESS_AND_RETIREMENT": "PASS_SCOPED_CASE041_SOURCE_77F509C0_PUBLISHED_SNAPSHOT_NOT_REQUALIFIED",
-    "L3_FULL47_NINE": "PASS_SCOPED_CASE041_SOURCE_77F509C0_PUBLISHED_SNAPSHOT_NOT_REQUALIFIED",
-    "EDITOR_PERSISTENCE": "PARTIAL_NOT_ACCEPTED",
+    "L1_RUNNER": "PASS_SCOPED_CASE078_SOURCE_AB14_PUBLICATION_NOT_FULL_PRODUCT_QUALIFIED",
+    "L2_BUSINESS_AND_RETIREMENT": "PASS_SCOPED_CASE078_SOURCE_AB14_PUBLICATION_NOT_FULL_PRODUCT_QUALIFIED",
+    "L3_FULL47_NINE": "PASS_SCOPED_CASE078_SOURCE_AB14_PUBLICATION_NOT_FULL_PRODUCT_QUALIFIED",
+    "EDITOR_PERSISTENCE": "PASS_DEFINED_WINDOWS_HANDOFF_MATRIX065_SOURCE_AB14",
     "SDK26": "OPEN",
     "G04": "OPEN",
     "SDK_FREEZE": "OPEN",
     "HOST_EXECUTION_INCIDENT": "NO_PRETEST_BASELINE_AFTER_INCIDENT_CONFIG_BACKUP_RETAINED_NO_ROLLBACK",
     "NATIVE_LIBRARY_REGRESSION": "FAILED_617_PASSED_13_FAILED_8_IGNORED",
-    "P2_LOGON_REFUSAL": "PASS_SCOPED_ONE_REAL_LOGON_REJECTION_CASE035_FULL_P2_OPEN",
+    "P2_LOGON_REFUSAL": "PASS_SCOPED_CASE048_SOURCE_A5_RETAIN_ORIGINAL_BINDING",
     "P2_SOURCE_TOKEN_POLICY_REFUSAL": "PASS_SCOPED_ONE_REAL_SOURCE_POLICY_REJECTION_CASE039_FULL_P2_OPEN",
-    "P2_SHARED_SEVENTEEN_NATIVE_REFUSALS": "OPEN_CASE042_UNKNOWN_RETAINED_NO_REPLAY"
+    "P2_SHARED_SEVENTEEN_NATIVE_REFUSALS": "PASS_SCOPED_CASE046_SOURCE_A5_RETAIN_ORIGINAL_BINDING",
+    "P2": "OPEN",
+    "P2_AFTER_ACCOUNT_SETUP_FAILURE": "PASS_SCOPED_CASE079_SOURCE_AB14_UNKNOWN_RETAINED",
+    "P2_AFTER_HELPER_BEFORE_RUNNER": "PASS_SCOPED_CASE063_SOURCE_AB14_UNKNOWN_RETAINED",
+    "P2_LATE_CREATE": "OPEN_CASE080_TARGET_NOT_REACHED_REJECTED_BUILD_CACHE"
   },
   "missing_acceptance_inputs": [],
   "historical_evidence": "reports/reconstruction-2026-10-20/windows-target-policy-progress-2803/README.md",
@@ -727,7 +731,7 @@
     82424,
     88014
   ],
-  "execution_state": "PAUSED_BY_USER_CASE042_UNKNOWN_VM_SAVED_FULL_P2_P3_WINDOWS_SDK_OPEN",
+  "execution_state": "PAUSED_BY_USER_VM035_SAVED_P3_DEFINED_SCOPE_PASS_P2_SDK_OPEN",
   "host_incident": "build/local-continuation/host-legacy-incident-001.json",
   "windows_editor_subset": {
     "status": "NATIVE_WINDOWS_FORMAL_EDITABLE_RESTART_SCOPED_PASS",
@@ -779,15 +783,14 @@
   "build_cache_root": "D:\\build_cache",
   "cache_migration": "COMPLETE_HASH_VERIFIED_ALL_TOOL_DEFAULTS_AND_OLD_CACHE_PATHS_ON_D",
   "latest_local_stage": {
-    "status": "UNKNOWN_ORIGINAL_CASE_AND_SESSION_RETAINED",
-    "tag": "4659faf07c9b4352adcb79db7fade6f8",
-    "vm_id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
-    "source_digest": "77f509c00f7963e4c576c82c0e69c0d78b22df2d27dc210c4c6768f9befde082",
+    "status": "REJECTED_LATE_CREATE_NOT_REACHED_SETUP_CACHE_CONTAMINATION",
+    "tag": "ecee6d34757543929a44afa73d27b1cd",
+    "vm_id": "6ed45b94-041c-4ad7-a2b3-30f954fed66f",
+    "vm_state": "Saved",
     "case_clean": false,
     "policy_clean": true,
-    "vm_state": "Saved",
-    "evidence": "docs/qualification/evidence/pause-20261024/case042-retained.json",
-    "scope": "17 shared native refusals not accepted; no round count inferred from timeout"
+    "evidence": "docs/qualification/evidence/pause-20261025/case080-summary.json",
+    "source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee"
   },
   "startup_error_report_regressions": {
     "evidence": "D:\\build_cache\\_audit\\windows-startup-observation-20261021-010\\pipe-tests-003\\result.json",
@@ -873,15 +876,15 @@
     "plan014_not_applied": "Archived visualization qualification cache retained; its alias differs from these Morron roots"
   },
   "pause": {
-    "date": "2026-10-24",
-    "reason": "Direct user instruction: pause the task and push to GitHub",
+    "date": "2026-10-25",
+    "reason": "Direct user: 更新到github并暂停任务",
     "branch": "codex/local-continue-20261020",
-    "scope": "Current source, tests, public qualification evidence and continuation handoff",
-    "acceptance_resumption": "Requires a later direct user resume instruction",
+    "scope": "Current task source, tests, public evidence and progress report",
+    "acceptance_resumption": "Requires later explicit resume; never replay historical Unknown cases",
     "ci_requested": false,
     "release_requested": false,
-    "vm_state_evidence": "docs/qualification/evidence/pause-20261024/case042-vm-saved.json",
-    "retained_owners": "All Unknown owners retained without replay, query, adoption, polling or termination"
+    "registered_vms": 4,
+    "vm_state_evidence": "docs/qualification/evidence/pause-20261025/case080-saved-vm035.json"
   },
   "owned_process_fixture_continuation": {
     "evidence_root": "D:\\build_cache\\_audit\\windows-token-label-20261021-016",
@@ -942,7 +945,7 @@
     "instruction": "Resume acceptance; keep no more than four VMs; automatically reclaim surplus unused VMs",
     "existing_vm_authorizations_retained": true,
     "source_accepted": false,
-    "superseded_by_pause": "2026-10-24 direct user instruction"
+    "superseded_by_pause": "2026-10-25 direct user instruction"
   },
   "vm_resource_policy": {
     "maximum_registered_vms": 4,
@@ -1467,7 +1470,7 @@
     "guest_calls": 0,
     "original_owner_contacts": 0,
     "review_is_cleanup_authority": false,
-    "recorded_utc": "2026-10-22T23:28:59.142410+00:00",
+    "recorded_utc": "2026-10-23T07:28:59.14241+08:00",
     "review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case026-refusal-review\\result.json",
     "original_case_process_exit": 0,
     "original_case_session_retained": false,
@@ -1586,6 +1589,17 @@
       "original_owner_contacts": 0,
       "vm_state": "Saved",
       "scope": "Exact roles022/source bd69 candidate only. Later P3 source changes are not covered."
+    },
+    {
+      "status": "UNKNOWN_ORIGINAL_CASE_AND_SESSION_RETAINED",
+      "tag": "4659faf07c9b4352adcb79db7fade6f8",
+      "vm_id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "source_digest": "77f509c00f7963e4c576c82c0e69c0d78b22df2d27dc210c4c6768f9befde082",
+      "case_clean": false,
+      "policy_clean": true,
+      "vm_state": "Saved",
+      "evidence": "docs/qualification/evidence/pause-20261024/case042-retained.json",
+      "scope": "17 shared native refusals not accepted; no round count inferred from timeout"
     }
   ],
   "p2_refusal_progress_before_case026": {
@@ -1701,7 +1715,7 @@
     "release_eligible": false,
     "issued_tokens_revoked": false,
     "original_owner_contacts": 0,
-    "recorded_utc": "2026-10-22T22:46:20.163657+00:00",
+    "recorded_utc": "2026-10-23T06:46:20.163657+08:00",
     "summary_binding": {
       "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case024-summary.json",
       "bytes": 1681,
@@ -1746,7 +1760,7 @@
     "SDK_FREEZE": "OPEN",
     "original_owner_contacts": 0,
     "issued_tokens_revoked": false,
-    "recorded_utc": "2026-10-22T23:02:17.002120+00:00",
+    "recorded_utc": "2026-10-23T07:02:17.00212+08:00",
     "summary_binding": {
       "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case025-summary.json",
       "bytes": 2851,
@@ -2026,7 +2040,7 @@
       "guest_calls": 0,
       "original_owner_contacts": 0,
       "review_is_cleanup_authority": false,
-      "recorded_utc": "2026-10-23T06:41:48.004582+00:00",
+      "recorded_utc": "2026-10-23T14:41:48.004582+08:00",
       "review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case030-refusal-review\\result.json",
       "original_case_process_exit": 0,
       "original_case_session_retained": false
@@ -2863,7 +2877,7 @@
     "release_eligible": false,
     "guest_calls": 0,
     "original_owner_contacts": 0,
-    "recorded_utc": "2026-10-23T12:18:37.840712+00:00",
+    "recorded_utc": "2026-10-23T20:18:37.840712+08:00",
     "report": "docs/qualification/WINDOWS_LOGON_REFUSAL_CASE033.md"
   },
   "sdk_frozen_tls_dpapi_windows_20261023": {
@@ -2915,7 +2929,7 @@
     "guest_calls": 0,
     "original_owner_contacts": 0,
     "review_is_cleanup_authority": false,
-    "recorded_utc": "2026-10-23T13:13:07.044915+00:00",
+    "recorded_utc": "2026-10-23T21:13:07.044915+08:00",
     "review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case035-refusal-review\\result.json",
     "original_case_process_exit": 0,
     "original_case_session_retained": false,
@@ -3058,7 +3072,7 @@
     "release_eligible": false,
     "guest_calls": 0,
     "original_owner_contacts": 0,
-    "recorded_utc": "2026-10-23T15:55:22.865095+00:00",
+    "recorded_utc": "2026-10-23T23:55:22.865095+08:00",
     "report": "docs/qualification/WINDOWS_SOURCE_POLICY_AND_NORMAL_CASE039_040.md"
   },
   "case039_source_policy_refusal": {
@@ -3090,7 +3104,7 @@
     "guest_calls": 0,
     "original_owner_contacts": 0,
     "review_is_cleanup_authority": false,
-    "recorded_utc": "2026-10-23T16:04:42.486595+00:00",
+    "recorded_utc": "2026-10-24T00:04:42.486595+08:00",
     "review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case039-refusal-review\\result.json",
     "original_case_process_exit": 0,
     "original_case_session_retained": false,
@@ -3630,11 +3644,22 @@
       "acceptance_resumption": "Resumed by current direct user instruction; historical pause record retained",
       "retained_owners": "Preserve all historical Unknown owners without replay, adoption, polling or termination",
       "superseded_by_resume": "2026-10-22 direct user instruction"
+    },
+    {
+      "date": "2026-10-24",
+      "reason": "Direct user instruction: pause the task and push to GitHub",
+      "branch": "codex/local-continue-20261020",
+      "scope": "Current source, tests, public qualification evidence and continuation handoff",
+      "acceptance_resumption": "Requires a later direct user resume instruction",
+      "ci_requested": false,
+      "release_requested": false,
+      "vm_state_evidence": "docs/qualification/evidence/pause-20261024/case042-vm-saved.json",
+      "retained_owners": "All Unknown owners retained without replay, query, adoption, polling or termination"
     }
   ],
-  "publication_parent_commit": "c60d9be60ae0406681c3bd98e16877d3aa386f5d",
-  "publication_handoff": "docs/qualification/PAUSED_WINDOWS_20261024.md",
-  "last_qualified_source_digest": "77f509c00f7963e4c576c82c0e69c0d78b22df2d27dc210c4c6768f9befde082",
+  "publication_parent_commit": "650720269c8de658f9a1d8ae674a300e31892042",
+  "publication_handoff": "docs/qualification/PAUSED_WINDOWS_20261025.md",
+  "last_qualified_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
   "case041_original47_nine": {
     "status": "PASS_SCOPED_ORIGINAL47_AND_NINE_REQUIRED_GROUPS",
     "source_digest": "77f509c00f7963e4c576c82c0e69c0d78b22df2d27dc210c4c6768f9befde082",
@@ -3680,5 +3705,29 @@
       "docs/qualification/evidence/pause-20261024/cache-cleanup012.json"
     ],
     "sources_executables_symbols_and_vm_disks_preserved": true
+  },
+  "task_resumed": {
+    "by": "direct_user_instruction",
+    "scope": "Windows only",
+    "starting_commit": "650720269c8de658f9a1d8ae674a300e31892042",
+    "retained_unknown_replay": false,
+    "maximum_registered_vms": 4,
+    "build_cache": "D:\\build_cache"
+  },
+  "windows_pause_20261025": {
+    "runtime_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+    "publication_adds_documentation_and_evidence": true,
+    "original47": "PASS_SCOPED_CASE078_284_CHECKS_9_GROUPS",
+    "P3": "PASS_DEFINED_WINDOWS_HANDOFF_13_GROUPS",
+    "P2": "OPEN",
+    "setup_after_accounts": "PASS_SCOPED_CASE079_UNKNOWN_RETAINED",
+    "after_helper": "PASS_SCOPED_CASE063_UNKNOWN_RETAINED",
+    "late_create": "NOT_REACHED_CASE080_REJECTED",
+    "directory_approval": "PASS_SCOPED_077_THREE_CLIENTS",
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "SDK_FREEZE": "OPEN",
+    "source_accepted": false,
+    "release_eligible": false
   }
 }

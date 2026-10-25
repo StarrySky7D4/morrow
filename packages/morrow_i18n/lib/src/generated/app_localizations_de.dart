@@ -1856,6 +1856,36 @@ class AppLocalizationsDe extends AppLocalizations {
       'Abhängigkeiten müssen im Host konfiguriert werden. Diese Seite genehmigt sie nicht.';
 
   @override
+  String pluginsDirectoryEntries(String count) {
+    return 'Erfasste Einträge: $count';
+  }
+
+  @override
+  String get pluginsDirectoryFormError =>
+      'Ordner, Plugin, Grenzen und Aufgabendauer prüfen.';
+
+  @override
+  String get pluginsDirectoryIntro =>
+      'Nur Namen und Metadaten direkt im gewählten Ordner werden geteilt. Dateiinhalte und Unterordner werden nicht gelesen.';
+
+  @override
+  String get pluginsDirectoryLimit => 'Maximale Einträge (bis 1024)';
+
+  @override
+  String get pluginsDirectoryMetadataLimit =>
+      'Metadatenlimit (Bytes, bis 1 MiB)';
+
+  @override
+  String get pluginsDirectorySelectHandler =>
+      'Genehmigtes Ordner-Plugin wählen';
+
+  @override
+  String get pluginsDirectoryStart => 'Ordner lesen und Plugin ausführen';
+
+  @override
+  String get pluginsDirectoryTitle => 'Ordnerinhalt';
+
+  @override
   String get pluginsDisable => 'Deaktivieren';
 
   @override

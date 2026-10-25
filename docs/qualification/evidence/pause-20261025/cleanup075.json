@@ -1,0 +1,32 @@
+{
+  "status": "PASS_AUTHORIZED_RETIRED_UNKNOWN_VM_DATA_CLEANUP",
+  "current_vm_memory_untouched": true,
+  "protected_hashes_unchanged": 65,
+  "guest_owner_contacts": 0,
+  "registered_vms": 4,
+  "vm_start_stop_unregister_calls": 0,
+  "disk_space": [
+    {
+      "drive": "C",
+      "free_before": 160759717888,
+      "observed_free_gain": 432460308480,
+      "logical_deleted": 432460283904.0,
+      "free_after": 593220026368
+    },
+    {
+      "drive": "D",
+      "free_before": 13986623488,
+      "observed_free_gain": 292104351744,
+      "logical_deleted": 292104355840.0,
+      "free_after": 306090975232
+    }
+  ],
+  "registered_vms_unchanged": true,
+  "unknown_outcomes_reclassified": false,
+  "deleted_files": 41,
+  "clean_base_preserved": true,
+  "retired_vm_recovery_available": false,
+  "all_planned_deletions_verified": true,
+  "retired_archives": 14,
+  "new_vm_disk_and_archive_preserved": true
+}

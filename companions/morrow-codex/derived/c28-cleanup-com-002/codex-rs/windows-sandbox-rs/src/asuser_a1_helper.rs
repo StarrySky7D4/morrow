@@ -774,6 +774,18 @@ pub(crate) struct Broker {
     attributes:Option<crate::proc_thread_attr::ProcThreadAttributeList>,
 }
 impl Broker {
+    /// Read the same original allocation only. This is a fault-point guard,
+    /// never a resource-retirement capability; GUI aliases are still held.
+    pub(crate) fn completed_helper_with_live_aliases(&self)->bool {
+        self.started && self.helper_closed && !self.aliases_closed
+            && self.binding.is_some() && self.qualified.as_ref().is_some_and(|v|!v.is_empty())
+            && self.originals.process.state==HandleState::ClosedVerified
+            && self.originals.thread.state==HandleState::ClosedVerified
+            && self.originals.readers.iter().all(|v|v.state==HandleState::ClosedVerified)
+            && self.channel.retired()
+            && [&self.originals.station,&self.originals.desktop].iter()
+                .all(|v|v.raw!=0&&v.raw != -1&&v.state==HandleState::Held)
+    }
     /// Only the untouched pre-start allocation can accompany a LogonUser
     /// refusal. This never queries, joins or closes any helper or channel.
     pub(crate) fn pristine_before_start(&self)->bool {

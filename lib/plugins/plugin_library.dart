@@ -19,6 +19,9 @@ import 'guest_mutation_models.dart';
 import 'mutation_task_models.dart';
 import 'file_task_models.dart';
 import 'file_task_session.dart';
+import 'directory_task_models.dart';
+import 'directory_task_session.dart';
+import 'directory_task_manager.dart';
 import 'io_task_control.dart';
 import 'service_control.dart';
 import 'service_manager.dart';
@@ -75,6 +78,7 @@ class PluginLibraryEntry {
     this.approvedIo = const [],
     this.ioHandlers = const [],
     this.mutationSupported = false,
+    this.directorySupported = false,
     this.mutationBudget,
     this.channelSupported = false,
     this.channelHandlers = const [],
@@ -92,6 +96,7 @@ class PluginLibraryEntry {
   final List<PluginTransformHandler> handlers;
   final List<String> ioHandlers;
   final bool mutationSupported;
+  final bool directorySupported;
   final PluginMutationBudget? mutationBudget;
   final bool channelSupported;
   final List<String> channelHandlers;
@@ -1564,6 +1569,18 @@ class _PluginLibraryState extends State<PluginLibrary> {
                 onChanged: widget.onChanged,
               ),
             ),
+          if (widget.backend is DirectoryTaskBackend &&
+              widget.backend is DirectoryTaskPlatformCapabilities &&
+              (widget.backend as DirectoryTaskPlatformCapabilities).supportsSelectedDirectoryTasks &&
+              widget.backend is WorkbenchIoTaskControl)
+            _ioGroup('DirectoryTaskManager', DirectoryTaskManager(
+              backend: widget.backend as DirectoryTaskBackend,
+              ioBackend: widget.backend as WorkbenchIoTaskControl,
+              plugins: _confirmed ? _entries : const [],
+              registryRevision: _confirmed ? _revision : null,
+              ink: widget.ink, muted: widget.muted, line: widget.line,
+              radius: widget.radius, onChanged: widget.onChanged,
+            )),
           if (widget.backend is FileTaskBackend &&
               widget.backend is FileTaskPlatformCapabilities &&
               (widget.backend as FileTaskPlatformCapabilities)
@@ -1588,6 +1605,9 @@ class _PluginLibraryState extends State<PluginLibrary> {
             _ioGroup(
               'HttpTaskManager',
               HttpTaskManager(
+                directorySession: widget.backend is DirectoryTaskBackend
+                    ? DirectoryTaskSession.forBackend(widget.backend as DirectoryTaskBackend,
+                        widget.backend as WorkbenchIoTaskControl) : null,
                 fileSession: widget.backend is FileTaskBackend
                     ? FileTaskSession.forBackend(
                         widget.backend as FileTaskBackend,

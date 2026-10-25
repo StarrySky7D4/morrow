@@ -1748,6 +1748,33 @@ class AppLocalizationsJa extends AppLocalizations {
       '依存関係はホストで設定する必要があります。このページでは承認されません。';
 
   @override
+  String pluginsDirectoryEntries(String count) {
+    return '取得した項目数：$count';
+  }
+
+  @override
+  String get pluginsDirectoryFormError => 'フォルダー、プラグイン、上限、タスクの有効時間を確認してください。';
+
+  @override
+  String get pluginsDirectoryIntro =>
+      '選択したフォルダー直下の項目名とメタデータだけを共有します。ファイル内容やサブフォルダー内は読み取りません。';
+
+  @override
+  String get pluginsDirectoryLimit => '項目数の上限（最大 1024）';
+
+  @override
+  String get pluginsDirectoryMetadataLimit => 'メタデータの上限（バイト、最大 1 MiB）';
+
+  @override
+  String get pluginsDirectorySelectHandler => '承認済みのフォルダープラグインを選択';
+
+  @override
+  String get pluginsDirectoryStart => 'フォルダーを読み取りプラグインを実行';
+
+  @override
+  String get pluginsDirectoryTitle => 'フォルダー一覧';
+
+  @override
   String get pluginsDisable => '無効化';
 
   @override

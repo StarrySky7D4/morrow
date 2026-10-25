@@ -2,7 +2,11 @@
 //! paths, handles, child opens or platform fallback. Layouts: Windows SDK 26100
 //! winbase.h FILE_ID_INFO and FILE_ID_EXTD_DIR_INFO, minwinbase.h enum values.
 use super::Error;
-use std::{ffi::c_void, fs::File, os::windows::io::AsRawHandle};
+use std::{
+    ffi::c_void,
+    fs::{File, OpenOptions},
+    os::windows::{fs::OpenOptionsExt, io::AsRawHandle},
+};
 
 pub(super) const BUFFER_BYTES: usize = 16 * 1024;
 const HEADER_BYTES: usize = 88;
@@ -17,6 +21,83 @@ unsafe extern "system" {
         buffer: *mut c_void,
         size: u32,
     ) -> i32;
+    fn GetFinalPathNameByHandleW(
+        handle: *mut c_void,
+        name: *mut u16,
+        length: u32,
+        flags: u32,
+    ) -> u32;
+}
+
+/// An actual local volume root, never a SUBST directory or network alias.
+/// The fixed bounded query rejects unsupported providers and non-root paths.
+/// GetFinalPathNameByHandleW with VOLUME_NAME_GUID is documented at:
+/// https://learn.microsoft.com/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlew
+pub(super) fn open_volume_root(drive: u8) -> Result<File, Error> {
+    if !drive.is_ascii_alphabetic() {
+        return Err(Error::InvalidNativeRecord);
+    }
+    let root = OpenOptions::new()
+        .read(true)
+        .share_mode(3)
+        .custom_flags(0x0220_0000)
+        .open(format!("{}:\\", char::from(drive)))
+        .map_err(|error| Error::Io(error.kind()))?;
+    let mut name = [0u16; 128];
+    // SAFETY: original owned File remains live; the stack buffer is initialized,
+    // exclusively borrowed and exactly the stated capacity. No pointer escapes.
+    let length = unsafe {
+        GetFinalPathNameByHandleW(
+            root.as_raw_handle(),
+            name.as_mut_ptr(),
+            name.len() as u32,
+            1,
+        )
+    } as usize;
+    if length == 0 {
+        return Err(Error::Io(std::io::Error::last_os_error().kind()));
+    }
+    if length >= name.len() || !is_volume_root_name(&name[..length]) {
+        return Err(Error::UnsupportedNativeQuery);
+    }
+    Ok(root)
+}
+
+fn is_volume_root_name(name: &[u16]) -> bool {
+    let prefix: Vec<u16> = r"\\?\Volume{".encode_utf16().collect();
+    name.len() == 49
+        && name.starts_with(&prefix)
+        && name[47..] == [125, 92]
+        && name[11..47].iter().enumerate().all(|(i, unit)| {
+            if matches!(i, 8 | 13 | 18 | 23) {
+                *unit == 45
+            } else {
+                matches!(*unit, 48..=57 | 65..=70 | 97..=102)
+            }
+        })
+}
+
+#[cfg(test)]
+mod selected_root_tests {
+    use super::*;
+    #[test]
+    fn final_name_must_be_the_volume_itself_not_a_resolved_alias_below_it() {
+        let root = r"\\?\Volume{01234567-89ab-cdef-0123-456789abcdef}\";
+        assert!(is_volume_root_name(
+            &root.encode_utf16().collect::<Vec<_>>()
+        ));
+        for name in [
+            format!("{root}substituted"),
+            root.replace("abcdef", "abcdeg"),
+            root.replace("Volume", "Device"),
+            String::from(r"\\server\share\"),
+            String::from(r"C:\"),
+        ] {
+            assert!(!is_volume_root_name(
+                &name.encode_utf16().collect::<Vec<_>>()
+            ));
+        }
+    }
 }
 
 fn query(file: &File, class: i32, words: &mut [u64]) -> Result<bool, Error> {

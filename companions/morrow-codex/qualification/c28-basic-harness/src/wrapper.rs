@@ -13,9 +13,52 @@ pub enum SelectionStep {
     Install,
     BaseSelect,
     BaseEnable,
+    VerifyExistingBaseSelected,
+    VerifyExistingBaseEnabled,
     WrapperSelect,
     Approve,
     WrapperEnable,
+}
+
+#[cfg(test)]
+mod existing_base_tests {
+    use super::*;
+    use morrow_agent_catalog_admin_v1::Action;
+    const SESSION: &[u8] = include_bytes!("../../c28-basic-fixtures/public-session-r2-v1/morrow_codex_session_exec_guest_r2.wasm");
+    const PROCESS: &[u8] = include_bytes!("../../c28-basic-fixtures/morrow_codex_process_control_guest_v1.wasm");
+
+    #[test]
+    fn missing_disabled_or_different_base_read_never_falls_back_to_mutation() {
+        let stamp=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos();
+        let root=std::env::temp_dir().join(format!("morrow-base-read-{}-{stamp}",std::process::id()));
+        std::fs::create_dir(&root).unwrap();
+        for scenario in 0..3 {
+            let at=root.join(scenario.to_string());std::fs::create_dir(&at).unwrap();
+            let mut workbench=Workbench::open(&at.join("synthetic.sqlite"),None).unwrap();
+            let mut wrapper=ReviewedWrapper::session_public_r2_v1(&mut workbench,at.join("session.mrowasp1"),
+                "vm.base.read",SESSION,"fresh-session",100).unwrap();
+            wrapper.step(&mut workbench,SelectionStep::Install).unwrap();
+            if scenario>0 {wrapper.step(&mut workbench,SelectionStep::BaseSelect).unwrap();}
+            if scenario==2 {
+                for step in [SelectionStep::BaseEnable,SelectionStep::WrapperSelect,SelectionStep::Approve,SelectionStep::WrapperEnable] {
+                    wrapper.step(&mut workbench,step).unwrap();
+                }
+                wrapper=ReviewedWrapper::controls(&mut workbench,at.join("controls.mrowasp1"),
+                    "vm.base.read",PROCESS,"fresh-session","fresh-domain",ProcessCaps::default(),300).unwrap();
+                wrapper.step(&mut workbench,SelectionStep::Install).unwrap();
+            }
+            let state=|workbench:&mut Workbench|CatalogCalls::default().call(workbench,
+                &Request{id:900u128.to_le_bytes(),action:Action::State}).unwrap().outcome.revisions;
+            let before=state(&mut workbench);
+            let step=if scenario==1 {SelectionStep::VerifyExistingBaseEnabled}else{SelectionStep::VerifyExistingBaseSelected};
+            assert!(wrapper.step(&mut workbench,step).is_err());
+            assert_eq!(wrapper.next_step,u8::MAX);
+            assert!(wrapper.step(&mut workbench,SelectionStep::BaseSelect).is_err());
+            assert!(wrapper.step(&mut workbench,SelectionStep::BaseEnable).is_err());
+            assert_eq!(state(&mut workbench),before,"failed read must not select or enable any base");
+            workbench.finish().unwrap();
+        }
+    }
 }
 
 pub struct ReviewedWrapper {
@@ -320,6 +363,8 @@ impl ReviewedWrapper {
             SelectionStep::Install => 0,
             SelectionStep::BaseSelect => 1,
             SelectionStep::BaseEnable => 2,
+            SelectionStep::VerifyExistingBaseSelected => 1,
+            SelectionStep::VerifyExistingBaseEnabled => 2,
             SelectionStep::WrapperSelect => 3,
             SelectionStep::Approve => 4,
             SelectionStep::WrapperEnable => 5,
@@ -330,6 +375,14 @@ impl ReviewedWrapper {
         );
         let revisions = self.revisions;
         let full_sha256 = self.full_sha256;
+        if matches!(step, SelectionStep::VerifyExistingBaseSelected | SelectionStep::VerifyExistingBaseEnabled) {
+            // This explicit read never selects/enables a base or approves a new
+            // wrapper. A missing/changed selection is an error, not a fallback.
+            self.next_step = u8::MAX;
+            self.verify_existing_base(workbench, ordinal == 2)?;
+            self.next_step = ordinal + 1;
+            return Ok(());
+        }
         let action = match step {
             SelectionStep::Install => Action::Install {
                 path: self
@@ -366,6 +419,7 @@ impl ReviewedWrapper {
                 enabled: true,
                 revisions,
             },
+            SelectionStep::VerifyExistingBaseSelected | SelectionStep::VerifyExistingBaseEnabled => unreachable!(),
         };
         let request = self.request(action)?;
         // Mark the local stage unavailable before dispatch; even a known rejection
@@ -389,6 +443,40 @@ impl ReviewedWrapper {
         self.revisions = reply.outcome.revisions;
         self.next_step = ordinal + 1;
         Ok(())
+    }
+
+    fn verify_existing_base(&mut self, workbench: &mut Workbench, enabled: bool) -> Result<()> {
+        let pair = self.revisions;
+        let mut after = None;
+        let mut found = false;
+        for _ in 0..16 {
+            let request = self.request(Action::Page { after: after.clone(), limit: 16, revisions: pair })?;
+            let reply = self.calls.call(workbench, &request)?;
+            ensure!(reply.outcome.revisions == pair, "existing base read changed its catalog pair");
+            let Body::Page { entries, next } = reply.outcome.body else {
+                return Err(anyhow!("canonical existing-base catalog page missing"));
+            };
+            for entry in entries {
+                if entry.review.full_sha256 == self.full_sha256 {
+                    ensure!(!found && entry.review == self.review && entry.base_selected
+                        && (!enabled || entry.base_enabled)
+                        && !entry.selected && !entry.enabled && entry.approval.is_none(),
+                        "exact existing base or fresh unapproved wrapper unavailable; no mutation fallback");
+                    found = true;
+                }
+            }
+            match next {
+                None => {
+                    ensure!(found, "fresh wrapper absent from original catalog");
+                    return Ok(());
+                }
+                Some(next) => {
+                    ensure!(after.as_ref().is_none_or(|old| old < &next), "existing base page cursor did not advance");
+                    after = Some(next);
+                }
+            }
+        }
+        Err(anyhow!("existing base page budget exhausted; no selection inferred"))
     }
     pub fn approved_revisions(&self) -> Result<Revisions> {
         ensure!(
@@ -467,7 +555,7 @@ impl ReviewedWrapper {
                 return Err(anyhow!("canonical catalog page missing"));
             };
             for entry in entries {
-                if let Some(wrapper) = wrappers.iter().find(|w| w.id == entry.review.id) {
+                if let Some(wrapper) = wrappers.iter().find(|w| w.full_sha256 == entry.review.full_sha256) {
                     ensure!(
                         entry.review == wrapper.review
                             && entry.selected

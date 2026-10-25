@@ -820,5 +820,20 @@
   "pluginsAgentRejected": "Rechazado",
   "pluginsAgentInvalidInput": "Compruebe los datos.",
   "pluginsAgentReleaseNotice": "Cerrar esta vista o separar el control de sesión no demuestra que la tarea se haya detenido ni que se hayan liberado recursos.",
-  "pluginsAgentReadOnlyNotice": "El descubrimiento es de solo lectura y no concede acceso. Un resultado desconocido nunca se reenvía automáticamente."
+  "pluginsAgentReadOnlyNotice": "El descubrimiento es de solo lectura y no concede acceso. Un resultado desconocido nunca se reenvía automáticamente.",
+  "pluginsDirectoryTitle": "Contenido de la carpeta",
+  "pluginsDirectoryIntro": "Solo se comparten nombres y metadatos de las entradas directas de la carpeta elegida. No se leen archivos ni el contenido de subcarpetas.",
+  "pluginsDirectoryStart": "Leer carpeta y ejecutar complemento",
+  "pluginsDirectorySelectHandler": "Elegir un complemento de carpeta autorizado",
+  "pluginsDirectoryLimit": "Límite de entradas (hasta 1024)",
+  "pluginsDirectoryMetadataLimit": "Límite de metadatos (bytes, hasta 1 MiB)",
+  "pluginsDirectoryEntries": "Entradas capturadas: {count}",
+  "pluginsDirectoryFormError": "Comprueba la carpeta, el complemento, los límites y la duración de la tarea.",
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

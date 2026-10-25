@@ -612,6 +612,7 @@ pub enum WindowsAsUserNativeSite {
     RunnerTokenInitialization,
     RunnerTokenAfter,
     RunnerTokenClose,
+    QualificationAfterHelperBeforeRunner,
 }
 
 pub use crate::asuser_a1_target::WindowsTargetPolicyRejection;

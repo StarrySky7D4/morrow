@@ -1,0 +1,24 @@
+{
+  "original": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-032\\inputs\\S\\windows-sandbox-rs\\src\\setup_provisioning.rs",
+    "bytes": 138236,
+    "sha256": "2c74a994b09d3a69e043939f7f7161d4cb0652b503ceceefeb6f0d811692915c"
+  },
+  "derived": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-033\\inputs\\S\\windows-sandbox-rs\\src\\setup_provisioning.rs",
+    "bytes": 138999,
+    "sha256": "d523301e77c9fc60f94b3d7ff710c9dc2ce2258e5702dd49ec7c7cf8694073aa"
+  },
+  "diff": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-033\\S-after-accounts-fault.diff",
+    "bytes": 1071,
+    "sha256": "cc5a42c2a27fd649796c216e2ac99251b0847f74ce61728cb75abef459c61487"
+  },
+  "changed_files": 1,
+  "insertion_point": "After provision_owned_sandbox_users returned, before firewall/WFP/filesystem policy and creation receipt",
+  "output_marker": "MORROW_QUALIFICATION_SETUP_AFTER_OWNED_ACCOUNTS_V1",
+  "fault": "Explicit qualification error after actual OS account creation; not an injected Win32 API failure",
+  "ipc_changes": 0,
+  "canonical_edits": 0,
+  "authority_created": false
+}

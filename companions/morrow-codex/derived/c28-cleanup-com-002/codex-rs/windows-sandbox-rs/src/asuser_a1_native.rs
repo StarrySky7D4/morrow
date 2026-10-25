@@ -166,6 +166,7 @@ impl CallerWindow {
 /// instance relation. No Clone/Deserialize or constructor from public facts.
 pub(crate) struct Admission {
     caller:AsUserCaller,bundle:std::sync::Arc<Bundle>,target:TargetPolicy,generation:u64,
+    stop_after_helper:bool,
 }
 impl Admission {
     pub(crate) fn command(&self,input:&str,output:&str)->io::Result<Command> {
@@ -174,12 +175,12 @@ impl Admission {
     // Called only by the original factory after a native precreation origin has
     // been received. No safe public "trust me" origin constructor exists.
     pub(super) fn bind(caller:AsUserCaller,bundle:std::sync::Arc<Bundle>,
-        target:TargetPolicy,generation:u64)->io::Result<Self> {
+        target:TargetPolicy,generation:u64,stop_after_helper:bool)->io::Result<Self> {
         bundle.verify_originals(caller.pid(),caller.creation())?;
         caller.require_target_policy_caller(target.caller.bytes(),target.caller_auth,target.session)?;
         if caller.integrity_rid()?!=0x3000||target.integrity_rid!=0x2000{return Err(bad());}
         if generation==0{return Err(bad());}
-        Ok(Self{caller,bundle,target,generation})
+        Ok(Self{caller,bundle,target,generation,stop_after_helper})
     }
 }
 pub(crate) struct Attempt {
@@ -1005,11 +1006,35 @@ impl Attempt {
         command.desktop=desktop.encode_utf16().chain(Some(0)).collect();
         self.checkpoint(Stage::Broker)?;
         self.site=Site::TargetBeforeCreate;
+        if admission.stop_after_helper {
+            // The fault is reached only after actual login, pipe creation,
+            // helper handshake/joins and retained native desktop aliases. No
+            // resource, handle output, deadline or completion predicate changes.
+            if !self.after_helper_before_runner_outputs()
+                || !self.broker.as_ref().is_some_and(|v|v.completed_helper_with_live_aliases()) {
+                return Err(bad());
+            }
+            self.site=Site::QualificationAfterHelperBeforeRunner;
+            return Err(io::Error::other("qualified stop after original helper; retained Unknown"));
+        }
         self.verify_target_before_create()?;
         self.site=Site::CreateInputGuard;
         self.create_inner(&admission)?;
         self.site=Site::NativeReadback;
         self.readback(&admission)?;Ok(NativeStart::Started)
+    }
+    fn after_helper_before_runner_outputs(&self)->bool {
+        self.first.is_none() && self.phase==Phase::TokenValidated
+            && self.outcome.dispatch==crate::asuser_attempt_outcome::RunnerDispatch::NotAttempted
+            && !self.outcome.observation_lost && self.calls[NativeCall::Create as usize]==0
+            && self.calls[NativeCall::Retirement as usize]==0
+            && self.token.state==State::Held && self.token.raw!=0 && self.token.raw != -1
+            && self.pipe_slots.iter().all(|v|v.state==State::Held&&v.raw!=0&&v.raw != -1)
+            && self.pipe_sds.iter().all(|v|v.state==State::Held&&v.raw!=0&&v.raw != -1)
+            && self.process.state==State::Empty && self.process.raw==0
+            && self.thread.state==State::Empty && self.thread.raw==0
+            && self.pi.hProcess==0 && self.pi.hThread==0
+            && self.pi.dwProcessId==0 && self.pi.dwThreadId==0
     }
     fn close_rejected_login_handles(&mut self) {
         use crate::asuser_attempt_outcome::RunnerDispatch;
@@ -1145,6 +1170,66 @@ impl Cell {
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn before_helper_fault_outputs()->Attempt {
+        let mut a=Attempt::reserved(9,Instant::now()+std::time::Duration::from_secs(5));
+        a.phase=Phase::TokenValidated;a.token=Slot{raw:44,state:State::Held,local:false};
+        for (index,slot) in a.pipe_slots.iter_mut().enumerate(){
+            *slot=Slot{raw:48+index as isize*4,state:State::Held,local:false};
+        }
+        for (index,slot) in a.pipe_sds.iter_mut().enumerate(){
+            *slot=Slot{raw:64+index as isize*4,state:State::Held,local:true};
+        }
+        a // State model only; no native call or Drop closes these test values.
+    }
+    #[test] fn after_helper_fault_guard_rejects_every_partial_runner_output() {
+        let a=before_helper_fault_outputs();assert!(a.after_helper_before_runner_outputs());
+        for field in 0..8 {
+            let mut a=before_helper_fault_outputs();
+            match field {
+                0=>a.pi.hProcess=101,1=>a.pi.hThread=102,
+                2=>a.pi.dwProcessId=103,3=>a.pi.dwThreadId=104,
+                4=>a.process.raw=105,5=>a.thread.raw=106,
+                6=>a.process.state=State::InFlight,_=>a.thread.state=State::Unknown,
+            }
+            assert!(!a.after_helper_before_runner_outputs());
+            assert_eq!(a.calls[NativeCall::Create as usize],0);
+            assert_eq!(a.calls[NativeCall::Retirement as usize],0);
+        }
+    }
+    #[test] fn after_helper_fault_guard_rejects_missing_or_uncertain_original_transport() {
+        for field in 0..9 {
+            let mut a=before_helper_fault_outputs();
+            match field {
+                0=>a.token.raw=0,1=>a.pipe_slots[0].state=State::InFlight,
+                2=>a.pipe_slots[1].raw=0,3=>a.pipe_sds[0].state=State::CloseFailed(5),
+                4=>a.pipe_sds[1].raw=0,5=>a.calls[NativeCall::Create as usize]=1,
+                6=>a.outcome.create_entered(),7=>a.outcome.lost(),
+                _=>a.calls[NativeCall::Retirement as usize]=1,
+            }
+            assert!(!a.after_helper_before_runner_outputs());
+        }
+    }
+    #[test] fn after_helper_fault_keeps_unknown_first_error_and_original_resources() {
+        let mut a=before_helper_fault_outputs();a.site=Site::QualificationAfterHelperBeforeRunner;
+        a.fail(&io::Error::other("qualified stop after original helper"));
+        assert_eq!(a.phase,Phase::Unknown);
+        // A deterministic stop loses no observation: the original resources
+        // are still known Owned. Execution is Unknown and cannot retire them.
+        assert_eq!(a.outcome.resources,crate::asuser_attempt_outcome::LocalResources::Owned);
+        assert!(!a.outcome.observation_lost);
+        assert!(a.outstanding());
+        assert!(a.take_origin_retirement().is_err());
+        assert_eq!(a.outcome.dispatch,crate::asuser_attempt_outcome::RunnerDispatch::NotAttempted);
+        assert_eq!(a.first.unwrap().site,Site::QualificationAfterHelperBeforeRunner);
+        a.fail(&io::Error::from_raw_os_error(5));
+        assert_eq!(a.first.unwrap().kind,io::ErrorKind::Other);
+        assert_eq!(a.first.unwrap().win32,None);
+        assert!(!a.after_helper_before_runner_outputs());
+        assert!(a.pipe_slots.iter().all(|v|v.state==State::Held));
+        assert!(a.pipe_sds.iter().all(|v|v.state==State::Held));
+        assert_eq!(a.token.state,State::Held);
+        assert_eq!(a.calls[NativeCall::Retirement as usize],0);
+    }
     #[test] fn checkpoint_deadline_retains_resources_even_before_dispatch() {
         let mut attempt=Attempt::reserved(1,Instant::now());
         assert!(attempt.checkpoint(Stage::Token).is_err());

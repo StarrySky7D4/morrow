@@ -1,0 +1,49 @@
+{
+  "status": "COMPILED_BYTE_BOUND_FAULT_VARIANT_NOT_RUNTIME_ACCEPTED",
+  "source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+  "roles": {
+    "P": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-034\\P\\morrow-workbench-supervisor.exe",
+      "bytes": 30111744,
+      "sha256": "b19745bb64e797db65faa6b71776910d0db6013a84fa545dd6cf75a73b397083"
+    },
+    "C": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-034\\C\\morrow-protected-checked-vm-harness.exe",
+      "bytes": 108540928,
+      "sha256": "9a9f608add38f58c11adbac043b4f6bece3b91f4fbd00094b40f8c2acf2e6f5d"
+    },
+    "R": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-034\\R\\codex-command-runner.exe",
+      "bytes": 27000320,
+      "sha256": "89b3de4b4aba1abf67f5645b2e9cc6e2a262513472cbeb1ad163e79452e693d1"
+    },
+    "S": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-034\\S\\codex-windows-sandbox-setup.exe",
+      "bytes": 37597696,
+      "sha256": "733136500b27981fafe93fe24c84a54b593865f1c7b7e89db41f585662eae140"
+    }
+  },
+  "s_table_hex": "433238413154414201000000010000009a9f608add38f58c11adbac043b4f6bece3b91f4fbd00094b40f8c2acf2e6f5d89b3de4b4aba1abf67f5645b2e9cc6e2a262513472cbeb1ad163e79452e693d1",
+  "s_section": {
+    "virtual_bytes": 80,
+    "raw_bytes": 512,
+    "raw_offset": 37452288,
+    "flags": 1073741888
+  },
+  "source_accepted": false,
+  "release_eligible": false,
+  "L1": "NOT_RUN",
+  "full47": "NOT_APPLICABLE_EXPECTED_LATE_CREATE_FAILURE",
+  "VM_calls": 0,
+  "all_dependencies_bound_to_canonical_source": true,
+  "minimal_role_overlays": false,
+  "qualification_fault": "LATE_CREATE_OUTPUT",
+  "fault_derivation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-034\\C-fault-derivation.json",
+    "bytes": 1509,
+    "sha256": "11ac195051a3541de7bbf0f08999d46215cbfa56dd39ccde11c0566ec9dce6f3"
+  },
+  "canonical_source_edits": 0,
+  "original_PR_bytes_unchanged": true,
+  "production_acceptance": false
+}

@@ -290,6 +290,13 @@
       }
     }
   },
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsEndpointCertificateSelected": {
     "placeholders": {
       "bytes": {
@@ -1509,6 +1516,14 @@
   "pluginsCredentialUnknown": "暂时无法确认结果，秘密输入框已清空。请先刷新状态，再进行修改。",
   "pluginsDeclared": "声明权限：{permissions}",
   "pluginsDependenciesNotice": "声明了依赖，需要在宿主配置。本页不会批准依赖。",
+  "pluginsDirectoryEntries": "已捕获条目：{count}",
+  "pluginsDirectoryFormError": "请核对文件夹、插件、上限和任务有效时间。",
+  "pluginsDirectoryIntro": "仅向插件提供所选文件夹直属条目的名称和元数据，不读取文件内容或子文件夹内的内容。",
+  "pluginsDirectoryLimit": "条目上限（最多 1024）",
+  "pluginsDirectoryMetadataLimit": "元数据上限（字节，最多 1 MiB）",
+  "pluginsDirectorySelectHandler": "选择已批准的目录插件",
+  "pluginsDirectoryStart": "读取目录并运行插件",
+  "pluginsDirectoryTitle": "目录读取",
   "pluginsDisable": "停用",
   "pluginsDisableWorkbench": "停用工作台插件",
   "pluginsDisabled": "未启用",

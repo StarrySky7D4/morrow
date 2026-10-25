@@ -1,0 +1,312 @@
+{
+  "runtime_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+  "publication_parent": "650720269c8de658f9a1d8ae674a300e31892042",
+  "changed_files": 76,
+  "all_preexisting_changed_files_match_frozen_source": true,
+  "files": {
+    "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_helper.rs": {
+      "bytes": 67195,
+      "sha256": "c06cbde0394023b7e668e15cb1676a3f0d21ff090f2446302fc5b724271542a8"
+    },
+    "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_native.rs": {
+      "bytes": 116683,
+      "sha256": "ad0318b3e116479c9cdbcf27abf09d6ad60a18169338d177eee2d872d75fa867"
+    },
+    "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_route.rs": {
+      "bytes": 14830,
+      "sha256": "fe85b5ec9211e6b2e849d63abf7d15e48f466e69ddfcee7ea8bf40a19f509557"
+    },
+    "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/checked_runner.rs": {
+      "bytes": 9917,
+      "sha256": "ceb051bd181c0c27814845e289224f2d2610f742eccd9f13c9f27c1e9a22913f"
+    },
+    "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/start_diagnostic.rs": {
+      "bytes": 64588,
+      "sha256": "e4909fe9311424930b74999fa774f224e563db63dcea7804de8645c30baeaef2"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/src/formal.rs": {
+      "bytes": 49150,
+      "sha256": "3e27d125f20da3def5ea5f40a7db58e3e252ef8a8b9956ac5d4fe2e29271ffb5"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/src/formal_shared_owner_tests.rs": {
+      "bytes": 8892,
+      "sha256": "7d6bbbce016be7e5776105a06b71d00569d9c8a62089d11e8512a7b40a14ac57"
+    },
+    "companions/morrow-codex/qualification/c28-basic-harness/src/wrapper.rs": {
+      "bytes": 23157,
+      "sha256": "c9a21365fa2c6b28e3ccf8de928f3f5058823216b94ae5d06859f3d0ad21c635"
+    },
+    "companions/morrow-codex/session-exec-windows-v1/src/native_completion.rs": {
+      "bytes": 19238,
+      "sha256": "f42d46188dbb83dbcef2fc4c4ff995faa001d78db420c4d11ccf86d0f4140a11"
+    },
+    "docs/qualification/LOCAL_CONTINUATION.md": {
+      "bytes": 80831,
+      "sha256": "26638f116a706ea221d550ff8c91053f39c20e92ed7c591a3501f271c774e3bb"
+    },
+    "docs/qualification/current.json": {
+      "bytes": 174694,
+      "sha256": "3182b955829c06ed8b88ccd48dc7ec5257a30f1590deadc57cbb3de3e54d0aa6"
+    },
+    "l10n/parts/plugins.de.arb": {
+      "bytes": 53658,
+      "sha256": "df992303e9c0d9d832ee7aedbd8c44e4cb7bf88d53a26b9b7a76edb0a8174eed"
+    },
+    "l10n/parts/plugins.en.arb": {
+      "bytes": 48585,
+      "sha256": "14b84f40909ef8976c35b35147c73baa3063e629b25c03d7e46e14b30a343c88"
+    },
+    "l10n/parts/plugins.es.arb": {
+      "bytes": 52283,
+      "sha256": "15aa572644e7fd0289890ddc94073ac581402e3d984dcd7819c3781deeaed51f"
+    },
+    "l10n/parts/plugins.fr.arb": {
+      "bytes": 54930,
+      "sha256": "dcd1a31853d92b818a8c7e417cc3794273d3d77131e933552ba1af6ea0ce8de2"
+    },
+    "l10n/parts/plugins.ja.arb": {
+      "bytes": 58348,
+      "sha256": "70565c1f0ccd6f4d6afd19a173dbbf6d73feaf97ae92ff3e3bc300205dd561e2"
+    },
+    "l10n/parts/plugins.ko.arb": {
+      "bytes": 53614,
+      "sha256": "c8d4ba900eaa6e2fef358f63bd8f6dff7e3b6a8f205e967802a8f2286c96f4e4"
+    },
+    "l10n/parts/plugins.pt.arb": {
+      "bytes": 51645,
+      "sha256": "664e3cd7ad0945f17864b31c0d81c6419d3b36b48345842299efa7162cafa784"
+    },
+    "l10n/parts/plugins.ru.arb": {
+      "bytes": 72327,
+      "sha256": "2e50c04033a50b0beaa84b08c8a116146c98365f75b2cabd6a9c3e13d5584982"
+    },
+    "l10n/parts/plugins.zh.arb": {
+      "bytes": 45572,
+      "sha256": "0a67508e9137cc4a1814efe93a0046f87d8d67e764841c180a018dbbe6ef83a3"
+    },
+    "lib/plugins/directory_task_manager.dart": {
+      "bytes": 13226,
+      "sha256": "2630dc0069ff477225e94c3cc5d2453310247e81acb7ffa78997b2e88ae59527"
+    },
+    "lib/plugins/directory_task_models.dart": {
+      "bytes": 3501,
+      "sha256": "fe653a0f9d76f152a4c085fbb257395e0b4b44208e9dc8622181a0eb03e08385"
+    },
+    "lib/plugins/directory_task_native.dart": {
+      "bytes": 4801,
+      "sha256": "87a9f7945fae8f2dc5af30af38ef571da213ece3325cb6635151672bc9614281"
+    },
+    "lib/plugins/directory_task_session.dart": {
+      "bytes": 12702,
+      "sha256": "3952da8044f03971492c2914c31fce93459306af9f8cb563eff0ab7b1bab8935"
+    },
+    "lib/plugins/generated/host.capnp.ids.dart": {
+      "bytes": 2986,
+      "sha256": "5f7dab8613fda14b8addc0fa05cfe5fdf3c9d82c4ac788dda6e4f53255c3e1e6"
+    },
+    "lib/plugins/generated/host.capnp.native.dart": {
+      "bytes": 312197,
+      "sha256": "7f9ca272e2ae5ace515078d2c8c99b3bc0ba6e711520e7327177bfe2061fd995"
+    },
+    "lib/plugins/generated/host.capnp.web.dart": {
+      "bytes": 190311,
+      "sha256": "c8e81a0a61d1efc79aa3f8a0c1f43c593ec62417d142fa2946b58fac32071d03"
+    },
+    "lib/plugins/generated/identity.dart": {
+      "bytes": 2843,
+      "sha256": "c5591040e4284d8864edf9d7ea9d29eb80ade95f5e426345b7cd2ecfb3cf3210"
+    },
+    "lib/plugins/http_task_manager.dart": {
+      "bytes": 41597,
+      "sha256": "57222c58bbbb7b6804dbddd5869bc36ce2adcd0b825674195ba0fe63bbb93b7a"
+    },
+    "lib/plugins/plugin_library.dart": {
+      "bytes": 62128,
+      "sha256": "05cb7c9bc0b38414b0926d5b79d47b8947fa29f5172be72ef005d067505446c9"
+    },
+    "lib/plugins/workbench_native.dart": {
+      "bytes": 137698,
+      "sha256": "bbd3535e92894b30312d562c4711c2d86cac61968eefa3e77faf32b06324b77e"
+    },
+    "packages/morrow_i18n/assets/languages/de.mlang": {
+      "bytes": 107125,
+      "sha256": "f58f2f1acd363acbca7a93b49745db00208dbafdd3a0dbbeabcb8fb6ae904dae"
+    },
+    "packages/morrow_i18n/assets/languages/en.mlang": {
+      "bytes": 97605,
+      "sha256": "6705209aa66523ea319a2f6a70a4d14720c306995bcf0aea8f902ed48ff083d4"
+    },
+    "packages/morrow_i18n/assets/languages/es.mlang": {
+      "bytes": 104060,
+      "sha256": "f91d6f43ebc74b554905234636b8f11cfbe97c8c36e8b6fe1c5340bb58953d0b"
+    },
+    "packages/morrow_i18n/assets/languages/fr.mlang": {
+      "bytes": 108757,
+      "sha256": "9d675a3d4f7d0382af0a0470ff61b0e6d05e75125e082006c27ce0bdf6086cb1"
+    },
+    "packages/morrow_i18n/assets/languages/ja.mlang": {
+      "bytes": 117110,
+      "sha256": "bc60d4e04d227f98390bdd6f898d7f07573289b45327ea2f126fd15c564fb78e"
+    },
+    "packages/morrow_i18n/assets/languages/ko.mlang": {
+      "bytes": 108979,
+      "sha256": "0af929aedba926d88af8fb2b9cfd89826dc6c1139f20bddb2d8adbd498cd08a1"
+    },
+    "packages/morrow_i18n/assets/languages/pt.mlang": {
+      "bytes": 103407,
+      "sha256": "46f01b56fd4ecbb27b69e2287914a2ef9b55d5690cd3ac70919a2365e7db2863"
+    },
+    "packages/morrow_i18n/assets/languages/ru.mlang": {
+      "bytes": 143935,
+      "sha256": "32d79bff03cbb52b6733d2e6cc6f9d8439c39926638147afc570d8c949944f26"
+    },
+    "packages/morrow_i18n/assets/languages/zh.mlang": {
+      "bytes": 92023,
+      "sha256": "b11034adfbb6c58aadf873e650bd666ec201e9a171c137717146eb0cba33afcd"
+    },
+    "packages/morrow_i18n/lib/l10n/app_de.arb": {
+      "bytes": 117165,
+      "sha256": "1115f3256c9b121d5c375b332e9b58d355b059c36447bd894f9aac0e9458e4e1"
+    },
+    "packages/morrow_i18n/lib/l10n/app_en.arb": {
+      "bytes": 107885,
+      "sha256": "e23d1a11ebce9e483a76968254089dc85b9a96d137708c7c936708b4d92b9101"
+    },
+    "packages/morrow_i18n/lib/l10n/app_es.arb": {
+      "bytes": 114160,
+      "sha256": "c7fb6a54d4c061c172ac43bbecda02cb039555cef9dab92c07622e290ac7606d"
+    },
+    "packages/morrow_i18n/lib/l10n/app_fr.arb": {
+      "bytes": 118794,
+      "sha256": "c8c5145e87940bce526945ea45d13b9e0c58f67f33842461a41db791958483b6"
+    },
+    "packages/morrow_i18n/lib/l10n/app_ja.arb": {
+      "bytes": 127003,
+      "sha256": "6025cb679527e8d943df94b43f289ea97b201eb253bd135b127a6f98e58062fb"
+    },
+    "packages/morrow_i18n/lib/l10n/app_ko.arb": {
+      "bytes": 118959,
+      "sha256": "e5821bad05ba9dcb944d345b68d2cf47b033cdaa3aa279984dab811e9433c50b"
+    },
+    "packages/morrow_i18n/lib/l10n/app_pt.arb": {
+      "bytes": 113512,
+      "sha256": "e15e373fa0fa05951927be7d5f9f0d00d2500f8720d1960368f27cececb2eee4"
+    },
+    "packages/morrow_i18n/lib/l10n/app_ru.arb": {
+      "bytes": 153536,
+      "sha256": "b24546c0f3860368ae0a14d7ccc74c39e326e6ced0f9d8456609ada445a8635b"
+    },
+    "packages/morrow_i18n/lib/l10n/app_zh.arb": {
+      "bytes": 102292,
+      "sha256": "eecc91c1d4599f53fba223f705c0e6c938bcaed78855e222984d0a85723ebb41"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations.dart": {
+      "bytes": 239698,
+      "sha256": "4c22c76caa6cded59f62e5f2850502088e434e5e9f3ca3529f45307c94980ffa"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_de.dart": {
+      "bytes": 129411,
+      "sha256": "098e50f60d566b2dcf0199b8a66408dbe49d24db9f7d6ffd9c8a7f4244b0917a"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_en.dart": {
+      "bytes": 119734,
+      "sha256": "e0ac470f02fc0e6e0cebc0051ff2ffaca117a5415ef80b59d47b954a06234521"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_es.dart": {
+      "bytes": 126665,
+      "sha256": "a693c835a285fb88cd49212b00a4a36d78528eb7c8ea00fc511b8c74f4944eb0"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_fr.dart": {
+      "bytes": 131324,
+      "sha256": "b7cd2e5b23d71bb553a2faf6b13110815ea5c3740c88807119324024a254cbfc"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ja.dart": {
+      "bytes": 137465,
+      "sha256": "56cd4256864c6674c6ee5ecb1a6ae091ab30f66f16888941d994014a6954a00f"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ko.dart": {
+      "bytes": 129605,
+      "sha256": "d1cecb0500864c4e8a5717287d5574ab4081959c1efa31d78b7db34838fd2e30"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_pt.dart": {
+      "bytes": 125896,
+      "sha256": "e002120ba04465a1d2c69d7ab0ebb4902cedb26b28749cdd987ade4c41b8e81d"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ru.dart": {
+      "bytes": 165895,
+      "sha256": "eac220b6e6cf25eaffa0f178adb40a11fa80f920fd493e9143639315a439807b"
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_zh.dart": {
+      "bytes": 111945,
+      "sha256": "c570187459c4d56d2b0d8a33f88c66a2f68d6c8b04bc5e1b8b15da5ba9cb7e92"
+    },
+    "packages/morrow_i18n/lib/src/generated/language_pins.dart": {
+      "bytes": 1743,
+      "sha256": "a566eec0a8c120b27147023ac2eda5788b904bfc8a814523c9a641ccf8df0988"
+    },
+    "plugin_runtime/src/directory_io.rs": {
+      "bytes": 32696,
+      "sha256": "f3d784ad68f95e4bf1490aa7deccd21997ae2093ec61e82bd42cff8d032f8900"
+    },
+    "plugin_runtime/src/directory_io/native_windows.rs": {
+      "bytes": 9145,
+      "sha256": "6603ab81faa8802b5d5c67893a258f29c47ad89322e664131da541a3e40f7fc2"
+    },
+    "plugin_runtime/src/directory_io/selected_path.rs": {
+      "bytes": 3954,
+      "sha256": "e8f2231abb9d08e6aa5510eda8c96f761352511fa342ab88fd47addecf7a5cf3"
+    },
+    "plugin_runtime/src/io_jobs/directory_commands.rs": {
+      "bytes": 35653,
+      "sha256": "90cefadb9ecb9e99111d814857db87671be646ceb6d01020ba42e67394839e63"
+    },
+    "test/directory_task_manager_test.dart": {
+      "bytes": 4047,
+      "sha256": "bc414af8995a5b029a5901c2b4c08fee7eeb0bb9d8652747ee35e6dbd14f4b34"
+    },
+    "test/directory_task_session_test.dart": {
+      "bytes": 5513,
+      "sha256": "d0263222a35929e352065d4817878a9781e86649d0a58dbae8e6bfcf2e6368e2"
+    },
+    "test/directory_task_test_support.dart": {
+      "bytes": 3669,
+      "sha256": "ac321132e5b38d83733882b7c099dc420ba2965335d3394d21c4c4b86816fe34"
+    },
+    "test/http_task_manager_test.dart": {
+      "bytes": 40636,
+      "sha256": "0105e67f5ad54b9ddef7d754847d24e042d24c8c6610b5db7e91a54fa8fa791a"
+    },
+    "tool/verify_directory_lifecycle_windows.py": {
+      "bytes": 9563,
+      "sha256": "f552c47a455a9d836fd3c523f9378383a85562b031911c2a34faef0dae68f022"
+    },
+    "workbench_host/schemas/host.capnp": {
+      "bytes": 24272,
+      "sha256": "1ea7623c472bc8ea52331664e2bcc199580b8fa2eccf6a12cf48b343a49d95ee"
+    },
+    "workbench_host/src/directory_task_protocol.rs": {
+      "bytes": 4403,
+      "sha256": "c482694aa31d12eb344d46a5ab7e8ed9295ee72337b14de8514642cf5bbf4b86"
+    },
+    "workbench_host/src/directory_tasks.rs": {
+      "bytes": 13904,
+      "sha256": "72f6f9d00ddb8e04b89c7671420dd29b92d86bc2ce5f7c536a65555f5f6eb29c"
+    },
+    "workbench_host/src/plugin_catalog.rs": {
+      "bytes": 34172,
+      "sha256": "486bf1a56357808cc12b1ea4c21c5545e8a73ec601678df1d5bd05da2a8f8e97"
+    },
+    "workbench_host/src/protocol.rs": {
+      "bytes": 89520,
+      "sha256": "decc2e001f971287b7313384a37a2b8b4e0b90d2f5a2957f3e7d3b171bd836f5"
+    },
+    "workbench_host/tests/directory_protected_sdk.rs": {
+      "bytes": 31065,
+      "sha256": "f9998f17cbde67f71bcc3c6b6211c60566e6ad65450ac8819232529bd391a8e4"
+    },
+    "workbench_host/tests/support/directory_private_protocol.rs": {
+      "bytes": 11803,
+      "sha256": "7eb9273ff7bfb5144c674fa0b22e36b71a9a7089677586c24be4edafc8750fac"
+    }
+  }
+}

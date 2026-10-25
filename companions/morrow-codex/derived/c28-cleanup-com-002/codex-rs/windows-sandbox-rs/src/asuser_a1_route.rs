@@ -108,7 +108,7 @@ pub struct AsUserFactoryBinding {
     refusal:Mutex<Option<crate::elevated::checked_owner::LocalCallerRefusal>>,
     refusal_taken:AtomicBool,
     // Explicit qualification input only: 0 production, 1/2 logon armed/consumed,
-    // 3 raced/rejected, 4/5 denial-only source policy armed/consumed. One shared
+    // 3 raced/rejected, 4/5 source policy, 6/7 after-helper stop armed/consumed. One shared
     // CAS excludes competing fault inputs; no value is a completion capability.
     start_qualification:AtomicU8,
 }
@@ -153,8 +153,13 @@ impl AsUserFactoryBinding {
     pub(crate) fn qualify_source_policy_rejection_for<T:Any+Send+Sync>(&self,backend:&Arc<T>)->io::Result<()> {
         self.arm_input_qualification_for(backend,4)
     }
+    /// Stop-only disposable-VM fault on this original factory. It cannot create
+    /// a clean refusal, a completion, a replacement owner or cleanup authority.
+    pub(crate) fn qualify_after_helper_stop_for<T:Any+Send+Sync>(&self,backend:&Arc<T>)->io::Result<()> {
+        self.arm_input_qualification_for(backend,6)
+    }
     fn arm_input_qualification_for<T:Any+Send+Sync>(&self,backend:&Arc<T>,mode:u8)->io::Result<()> {
-        if !matches!(mode,1|4){return Err(bad());}
+        if !matches!(mode,1|4|6){return Err(bad());}
         let actual:Arc<dyn Any+Send+Sync>=backend.clone();
         self.materialization.origin.guard.require_admitted(
             self.materialization.origin.pid,self.materialization.origin.creation)?;
@@ -171,7 +176,7 @@ impl AsUserFactoryBinding {
     pub(crate) fn logon_password(&self,original:&str)->io::Result<Vec<u16>> {
         if !self.claimed.load(Ordering::Acquire){return Err(bad());}
         let text=match self.start_qualification.load(Ordering::Acquire) {
-            0|5=>original,
+            0|5|7=>original,
             1=>{
                 self.start_qualification.compare_exchange(1,2,Ordering::AcqRel,Ordering::Acquire).map_err(|_|bad())?;
                 // Deterministically different, non-secret input. Nothing is
@@ -218,16 +223,21 @@ impl AsUserFactoryBinding {
         let managed=Sid::from_text(original.setup.offline_sid())?;
         let mut target=TargetPolicy{managed_user:managed,caller:Sid::from_bytes(&caller_sid)?,
             session,caller_auth:auth,caller_logon,caller_token,integrity_rid:0x2000};
+        let mut stop_after_helper=false;
         match self.start_qualification.load(Ordering::Acquire) {
             0|1=>{},
             4=>{
                 self.start_qualification.compare_exchange(4,5,Ordering::AcqRel,Ordering::Acquire).map_err(|_|bad())?;
                 target.managed_user=target.caller;
             },
+            6=>{
+                self.start_qualification.compare_exchange(6,7,Ordering::AcqRel,Ordering::Acquire).map_err(|_|bad())?;
+                stop_after_helper=true;
+            },
             _=>return Err(bad()),
         }
         let bundle=Arc::new(Bundle::from_originals(original.origin.clone(),original.setup.clone(),original.s.clone(),
             original.r.clone(),original.original_materializer.clone(),self.backend.get().ok_or_else(bad)?.clone())?);
-        Ok(Arc::new(crate::asuser_a1_native::Admission::bind(caller,bundle,target,generation)?))
+        Ok(Arc::new(crate::asuser_a1_native::Admission::bind(caller,bundle,target,generation,stop_after_helper)?))
     }
 }

@@ -1,0 +1,209 @@
+{
+  "schema": 1,
+  "captured_utc": "2026-10-25T12:08:15.512062+00:00",
+  "files": [
+    {
+      "path": "source-before-pause.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\pause-publication-20261025\\source-before-pause.json",
+      "bytes": 13194,
+      "sha256": "0ff6504abfeafb0307a95d5b56199b5fb9b8555df743e311e49e4d127e28e065"
+    },
+    {
+      "path": "normal078-summary.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case078-summary.json",
+      "bytes": 975,
+      "sha256": "1e09506a3cda50b986d7ce29038ac46b664d0227a939d79b5c1913895320c4fd"
+    },
+    {
+      "path": "normal078-review.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case078-nine-review\\result.json",
+      "bytes": 25862,
+      "sha256": "1acff4ecc01ba381de70542db7da72977195cab52765b2af0b4adcd182b7253a"
+    },
+    {
+      "path": "setup079-summary.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case079-summary.json",
+      "bytes": 1619,
+      "sha256": "c0740862ac84445ce27efcfad1d34005ece7ff91622f96facad4d0449fe07705"
+    },
+    {
+      "path": "setup079-review.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case079-setup-failure-review\\result.json",
+      "bytes": 1619,
+      "sha256": "c0740862ac84445ce27efcfad1d34005ece7ff91622f96facad4d0449fe07705"
+    },
+    {
+      "path": "helper063-review.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case063-after-helper-review\\result.json",
+      "bytes": 1441,
+      "sha256": "75ae6fa6705ce66ede962cbe5a785d386a811d2d90c40ff9ab505131c5fdc313"
+    },
+    {
+      "path": "refusal046-summary.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case046-summary.json",
+      "bytes": 1332,
+      "sha256": "5b66b7a20efe98a1911c425344cc878d6e38d6e4bd486a7ac667a7d58af8c377"
+    },
+    {
+      "path": "refusal048-review.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case048-refusal-review\\result.json",
+      "bytes": 17185,
+      "sha256": "532948ccbfefb7b5d0ed277b21bcb97ebfe5a9a3d870011d88fe98bc8393adf3"
+    },
+    {
+      "path": "native060.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+      "bytes": 15002,
+      "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+    },
+    {
+      "path": "sdk061.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-refusal-current-061\\result.json",
+      "bytes": 3036,
+      "sha256": "5fe1a30299d928e8d58b1825826f7aa53be2a370b1494bb35fb85660993212c8"
+    },
+    {
+      "path": "catalog062.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-shared-catalog-062\\result.json",
+      "bytes": 3438,
+      "sha256": "e71de31738507c41e750c424033b026e8df8891482e15c3ef8d99abdb3d31531"
+    },
+    {
+      "path": "p3-matrix065.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-handoff-matrix-review-065\\result.json",
+      "bytes": 1032,
+      "sha256": "e4cd3a7b5ad5be9fc970e2368085c9daee4e1e8ea264492076a67c8cf02d4219"
+    },
+    {
+      "path": "p3-requirements065.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-handoff-matrix-review-065\\requirement-matrix.json",
+      "bytes": 4513,
+      "sha256": "95d209cf561632832e9f1f9e55b46bdb5e37c847e76eb7635731f2378dba7733"
+    },
+    {
+      "path": "p3-source-compatibility065.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-handoff-matrix-review-065\\source-compatibility.json",
+      "bytes": 44909,
+      "sha256": "9226f7f099ae214b631ae1cbf08d73914144359a36c6c86602dbb0bb94825b7c"
+    },
+    {
+      "path": "p3-verified-evidence065.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-handoff-matrix-review-065\\verified-evidence-files.json",
+      "bytes": 75484,
+      "sha256": "cb8e977ab8d3cc0519d0410c9ea48173675f97fc9a3d7f9ee9cdb5a6fd1a9162"
+    },
+    {
+      "path": "directory055.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-private-055\\result.json",
+      "bytes": 5826,
+      "sha256": "8f3bc4a79e3fa644961141a207534cab872740193b34bad4d03e143f11563d00"
+    },
+    {
+      "path": "directory057.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-formal-057\\result.json",
+      "bytes": 3750,
+      "sha256": "c8bfe16a99230ea6fb42aa5061122d98947ddca355015f8675be3b5db8cc10fa"
+    },
+    {
+      "path": "approval077.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-approval-077\\result.json",
+      "bytes": 3375,
+      "sha256": "ad227e6fda49c649acac35cac1fb3e8fb0830cf82e01d702f914b4fcc9a01adb"
+    },
+    {
+      "path": "cleanup075.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-unknown-vm-cleanup-075\\result.json",
+      "bytes": 939,
+      "sha256": "3ea2ac2d9e22f3e8b45fe2f5b44d3adffc7b1ea116ad553c34a492acbe042e93"
+    },
+    {
+      "path": "archive034.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm034-offline-archive-20261025\\result.json",
+      "bytes": 6612,
+      "sha256": "7b4109e0c6480d7c952b14d9aa8c68e251f5904a7500889a30bf16fcc07aeff2"
+    },
+    {
+      "path": "case080-summary.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case080-summary.json",
+      "bytes": 3792,
+      "sha256": "79fb5d49a7cd9b4e07a29bcacd2c3268006e1497eeb408c6c69a72a7c77cafaa"
+    },
+    {
+      "path": "case080-build-input-inspection.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case080-build-input-inspection.json",
+      "bytes": 64215,
+      "sha256": "df4ec1a4fac13f14b88b91539868fcf52698075d898f9631a8c6fc6b9c52c2d0"
+    },
+    {
+      "path": "case080-retained.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-ecee6d34757543929a44afa73d27b1cd-case\\retained.json",
+      "bytes": 3985,
+      "sha256": "ae6612c975cd2ca5bac61dcbf3a82150c2c2b4b631d08373147be0079f4d25cb"
+    },
+    {
+      "path": "case080-policy-restore.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-ecee6d34757543929a44afa73d27b1cd-case\\restore-original.json",
+      "bytes": 3524,
+      "sha256": "d323d360b694021b0cd1a2609ef34b67f8620dddf70dc2ba66bbf7cf5e1f8de0"
+    },
+    {
+      "path": "case080-saved-vm035.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm035-case080-unknown-saved-state\\result.json",
+      "bytes": 826,
+      "sha256": "33ee9067a3606939a16ebee7abdeda0fc6ab148a2ad254f9b3f0c3de4bab933c"
+    },
+    {
+      "path": "case080-diagnostic-manifest.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-080\\manifest.json",
+      "bytes": 2349,
+      "sha256": "b01efb1c9c1bf1c4650d8e79e8e68ae6073c59edb72c81e7bda1d4630b9235e8"
+    },
+    {
+      "path": "case080-original-journal.jsonl",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-080\\04-journal.jsonl",
+      "bytes": 13043,
+      "sha256": "5ef4405254a80ebb1fcd49527e39d9eea5fbcda9cc02f8fbe4288547d513e6ca"
+    },
+    {
+      "path": "case080-original-events.jsonl",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-080\\03-events.jsonl",
+      "bytes": 6092,
+      "sha256": "9321df3d3e5bf04fd6d6ff92a4739b9c9827ceecd898ad455a6c0b197a73e420"
+    },
+    {
+      "path": "roles032.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-032\\result.json",
+      "bytes": 1732,
+      "sha256": "7e08e39f46a5f4e558d3f011ab45deb28614c0296ed7fbc074b5355e0cd4f8b1"
+    },
+    {
+      "path": "roles033-fault-derivation.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-033\\S-fault-derivation.json",
+      "bytes": 1219,
+      "sha256": "72d104a7542ca79e9eba926d10a2353bdf49d71300a7f3bd255678d9535df458"
+    },
+    {
+      "path": "roles034-rejected-build.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-034\\result.json",
+      "bytes": 2189,
+      "sha256": "19682ff86caad28fe5957aea2b8ddef4da57fff010987f1e9ef2f60138358e85"
+    },
+    {
+      "path": "roles034-C-fault-derivation.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-034\\C-fault-derivation.json",
+      "bytes": 1509,
+      "sha256": "11ac195051a3541de7bbf0f08999d46215cbfa56dd39ccde11c0566ec9dce6f3"
+    },
+    {
+      "path": "p2-fault-matrix.json",
+      "derived_from": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\resume-checkpoint-20261025-006\\p2-required-fault-matrix.json",
+      "bytes": 8060,
+      "sha256": "dd487868d3e18f80ae19e532b902b6d776ad329eb44348ec36c8a74915266265"
+    }
+  ],
+  "exact_allowlist": true,
+  "credentials_included": false,
+  "binaries_included": false,
+  "VM_images_included": false,
+  "scope": "Public source-bound results; historical failed build result preserved verbatim and superseded by case080 rejection. No acceptance rerun."
+}

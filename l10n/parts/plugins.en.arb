@@ -820,5 +820,20 @@
   "pluginsAgentRejected": "Rejected",
   "pluginsAgentInvalidInput": "Check the input.",
   "pluginsAgentReleaseNotice": "Closing this view or detaching session control does not prove that the task stopped or that resources were released.",
-  "pluginsAgentReadOnlyNotice": "Discovery is read-only and grants no access. An unknown outcome is never resent automatically."
+  "pluginsAgentReadOnlyNotice": "Discovery is read-only and grants no access. An unknown outcome is never resent automatically.",
+  "pluginsDirectoryTitle": "Folder listing",
+  "pluginsDirectoryIntro": "Share only names and metadata directly inside the selected folder. File contents and subfolders are not read.",
+  "pluginsDirectoryStart": "Read folder and run plugin",
+  "pluginsDirectorySelectHandler": "Select an approved folder plugin",
+  "pluginsDirectoryLimit": "Entry limit (up to 1024)",
+  "pluginsDirectoryMetadataLimit": "Metadata limit (bytes, up to 1 MiB)",
+  "pluginsDirectoryEntries": "Captured entries: {count}",
+  "pluginsDirectoryFormError": "Check the folder, plugin, limits and task lifetime.",
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

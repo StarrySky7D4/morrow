@@ -1,0 +1,18 @@
+{
+  "status": "PASS_PAUSE_PUBLICATION_STATIC_VERIFICATION",
+  "utc": "2026-10-25T12:12:33.026050+00:00",
+  "public_evidence_files": 33,
+  "unchanged_preexisting_source_files": 74,
+  "local_links_checked": 37,
+  "JSON_valid": true,
+  "HTML_ids_unique": true,
+  "HTML_responsive_viewport": true,
+  "HTML_dynamic_code": false,
+  "changed_paths_within_current_task": true,
+  "secret_pattern_findings": 0,
+  "credentials_or_VM_data_included": false,
+  "qualification_tests_rerun": 0,
+  "builds": 0,
+  "VM_calls": 0,
+  "full_acceptance_claim": false
+}

@@ -268,9 +268,27 @@ fn final_page(bytes: &[u8], selected: SelectedDirectory, count: usize) -> FsDire
     }
     page
 }
-fn qualify(language: &str) {
+fn qualify(language: &str, absolute_selection: bool) {
     assert!(std::env::var_os("MORROW_DISPOSABLE_WINDOWS_TEST").is_none());
     let wasm = guest(language);
+    let start = |w: &mut Workbench, package: &Package, root: &Path| {
+        if !absolute_selection {
+            return start(w, package, root);
+        }
+        let mut submission = [0; 32];
+        getrandom::fill(&mut submission).unwrap();
+        w.start_selected_directory(morrow_workbench_host::io_tasks::directory::DirectoryStart {
+            submission,
+            package_id: ID.into(),
+            digest: package.digest(),
+            revision: revision(w),
+            handler: HANDLER.into(),
+            selected_path: root.join("child"),
+            max_entries: 1024,
+            max_metadata_bytes: 1024 * 1024,
+            timeout_ms: 10_000,
+        })
+    };
     // Retain all qualification data even if an assertion fails.
     let temp = tempfile::Builder::new()
         .prefix("protected-directory-")
@@ -329,6 +347,11 @@ fn qualify(language: &str) {
     assert_eq!(selected.entries, 70);
     assert!(directory(&root, 0).is_err());
     assert!(directory(&child, 0).is_err());
+    if absolute_selection {
+        // Ancestors above the former nominated anchor now remain pinned too.
+        assert!(directory(&temp, 0).is_err());
+        assert!(fs::rename(&root, temp.join("moved-root")).is_err());
+    }
     w.request_directory_guest_frame(key, Duration::from_secs(5))
         .unwrap();
     assert!(
@@ -347,6 +370,9 @@ fn qualify(language: &str) {
         "completion is once-only"
     );
     reclaim(&mut w, key, &root);
+    if absolute_selection {
+        drop(directory(&temp, 0).unwrap());
+    }
     assert_eq!(revision(&w), original_revision);
     assert!(
         Workbench::open_managed(&library, None).is_err(),
@@ -390,20 +416,403 @@ fn qualify(language: &str) {
     eprintln!(
         "PROTECTED_DIRECTORY_PASS language={language} actual_guest=true protected_session=true root_and_child_closed=true approval_reopen=true original_owner_reclaimed=true cancelled_capture_closed=true picker_provenance=false"
     );
+    if absolute_selection {
+        eprintln!(
+            "SELECTED_DIRECTORY_PASS language={language} actual_volume_root=true retained_ancestors=true original_limits=true picker_time_identity=false"
+        );
+    }
 }
 
 #[test]
 #[ignore = "explicit Windows qualification requires independently pinned actual compiled guest"]
 fn rust_directory_guest_preserves_protected_owner_through_reclaim_and_reopen() {
-    qualify("RUST");
+    qualify("RUST", false);
 }
 #[test]
 #[ignore = "explicit Windows qualification requires independently pinned actual compiled guest"]
 fn c_directory_guest_preserves_protected_owner_through_reclaim_and_reopen() {
-    qualify("C");
+    qualify("C", false);
 }
 #[test]
 #[ignore = "explicit Windows qualification requires independently pinned actual compiled guest"]
 fn cpp_directory_guest_preserves_protected_owner_through_reclaim_and_reopen() {
-    qualify("CPP");
+    qualify("CPP", false);
 }
+
+#[test]
+#[ignore = "explicit Windows qualification with pinned actual guest and shallow synthetic D root"]
+fn rust_selected_directory_guest_retains_volume_ancestors_and_original_owner() {
+    qualify("RUST", true);
+}
+#[test]
+#[ignore = "explicit Windows qualification with pinned actual guest and shallow synthetic D root"]
+fn c_selected_directory_guest_retains_volume_ancestors_and_original_owner() {
+    qualify("C", true);
+}
+#[test]
+#[ignore = "explicit Windows qualification with pinned actual guest and shallow synthetic D root"]
+fn cpp_selected_directory_guest_retains_volume_ancestors_and_original_owner() {
+    qualify("CPP", true);
+}
+
+// These cases exercise the public Workbench boundary on a real protected
+// Windows library. They do not substitute an ordinary Store or injected owner.
+struct LifecycleFixture {
+    temp: PathBuf,
+    root: PathBuf,
+    library: PathBuf,
+    package: Package,
+    workbench: Workbench,
+    revision: u64,
+}
+impl LifecycleFixture {
+    fn new() -> Self {
+        Self::new_language("RUST")
+    }
+    fn new_language(language: &str) -> Self {
+        assert!(std::env::var_os("MORROW_DISPOSABLE_WINDOWS_TEST").is_none());
+        let temp = tempfile::Builder::new()
+            .prefix("protected-directory-lifecycle-")
+            .tempdir()
+            .unwrap()
+            .keep();
+        eprintln!("PROTECTED_DIRECTORY_STORE path={}", temp.display());
+        let root = temp.join("nominated-root");
+        let library = temp.join("library");
+        fs::create_dir_all(root.join("child")).unwrap();
+        for index in 0..70 {
+            fs::write(
+                root.join("child").join(format!("entry-{index:03}")),
+                vec![0x5a; index + 1],
+            )
+            .unwrap();
+        }
+        fs::write(
+            root.join("outside-selection.txt"),
+            b"original outside bytes",
+        )
+        .unwrap();
+        let mut workbench = Workbench::open_managed(&library, None).unwrap();
+        let package = install(&mut workbench, &temp, &guest(language));
+        workbench
+            .configure_external_io(
+                ID,
+                &package.digest(),
+                revision(&workbench),
+                &["file-list".into()],
+            )
+            .unwrap();
+        let revision = revision(&workbench);
+        Self {
+            temp,
+            root,
+            library,
+            package,
+            workbench,
+            revision,
+        }
+    }
+    fn start(&mut self, leaf: &str, limits: CaptureLimits) -> TaskKey {
+        let options = StartOptions {
+            package_id: ID.into(),
+            digest: self.package.digest(),
+            revision: revision(&self.workbench),
+            capabilities: BTreeSet::from([IoCapability::FileList]),
+            lifetime: Duration::from_secs(10),
+            limits: JobLimits::default(),
+        };
+        let key = self
+            .workbench
+            .start_directory(
+                options,
+                directory(&self.root, 7).unwrap(),
+                DirectoryRelativePath::new(vec![leaf.encode_utf16().collect()]).unwrap(),
+                limits,
+                HANDLER.into(),
+            )
+            .unwrap();
+        assert!(self.workbench.catalog_page("", None).is_err());
+        assert!(Workbench::open_managed(&self.library, None).is_err());
+        key
+    }
+    fn selected_request(
+        &self,
+        submission: u8,
+        selected_path: PathBuf,
+    ) -> morrow_workbench_host::io_tasks::directory::DirectoryStart {
+        morrow_workbench_host::io_tasks::directory::DirectoryStart {
+            submission: [submission; 32],
+            package_id: ID.into(),
+            digest: self.package.digest(),
+            revision: self.revision,
+            handler: HANDLER.into(),
+            selected_path,
+            max_entries: 1024,
+            max_metadata_bytes: 1024 * 1024,
+            timeout_ms: 10_000,
+        }
+    }
+    fn reply(&mut self, key: TaskKey) -> morrow_workbench_host::Result<DirectoryResponse> {
+        let deadline = Instant::now() + WAIT;
+        loop {
+            match self.workbench.read_directory_result(key) {
+                Ok(None) => {}
+                Ok(Some(value)) => return Ok(value),
+                Err(error) => return Err(error),
+            }
+            assert!(
+                Instant::now() < deadline,
+                "original result retained; no replay"
+            );
+            thread::sleep(Duration::from_millis(1));
+        }
+    }
+    fn finish(mut self, key: TaskKey, label: &str) {
+        reclaim(&mut self.workbench, key, &self.root);
+        assert_eq!(revision(&self.workbench), self.revision);
+        assert!(Workbench::open_managed(&self.library, None).is_err());
+        self.workbench.finish().unwrap();
+        drop(self.workbench);
+        let mut reopened = Workbench::open_managed(&self.library, None).unwrap();
+        assert_eq!(revision(&reopened), self.revision);
+        assert_eq!(entry(&reopened).digest, self.package.digest());
+        assert_eq!(entry(&reopened).approved_io, ["file-list"]);
+        assert!(reopened.poll_io(key).is_err());
+        assert!(reopened.read_directory_result(key).is_err());
+        assert_eq!(
+            fs::read(self.root.join("outside-selection.txt")).unwrap(),
+            b"original outside bytes"
+        );
+        reopened.finish().unwrap();
+        drop(reopened);
+        eprintln!(
+            "PROTECTED_DIRECTORY_LIFECYCLE_PASS case={label} protected_session=true original_owner_reclaimed=true original_handles_closed=true old_task_not_revived=true store={}",
+            self.temp.display()
+        );
+    }
+}
+
+#[test]
+#[ignore = "explicit protected Windows lifecycle qualification with pinned guest"]
+fn selected_directory_stale_revision_and_repeated_submission_cannot_rebind() {
+    let mut f = LifecycleFixture::new();
+    let mut stale = f.selected_request(51, f.root.join("child"));
+    stale.revision -= 1;
+    assert!(f.workbench.start_selected_directory(stale).is_err());
+    assert_eq!(f.workbench.io_status().storage, StoragePhase::Local);
+    assert!(f.workbench.io_status().key.is_none());
+    // The rejected immutable submission stays spent even with corrected metadata.
+    assert!(
+        f.workbench
+            .start_selected_directory(f.selected_request(51, f.root.join("child")))
+            .is_err()
+    );
+    let key = f
+        .workbench
+        .start_selected_directory(f.selected_request(52, f.root.join("child")))
+        .unwrap();
+    assert_eq!(f.workbench.http_submission(), Some([52; 32]));
+    let selected = capture(&mut f.workbench, key);
+    assert_eq!(selected.entries, 70);
+    assert!(
+        f.workbench
+            .start_selected_directory(f.selected_request(53, f.root.clone()))
+            .is_err()
+    );
+    f.workbench.finish_directory(key).unwrap();
+    assert!(matches!(f.reply(key).unwrap(), DirectoryResponse::Finished));
+    reclaim(&mut f.workbench, key, &f.root);
+    assert!(
+        f.workbench
+            .start_selected_directory(f.selected_request(52, f.root.clone()))
+            .is_err()
+    );
+    let fresh = f
+        .workbench
+        .start_selected_directory(f.selected_request(54, f.root.join("child")))
+        .unwrap();
+    capture(&mut f.workbench, fresh);
+    f.workbench.cancel_io(fresh).unwrap();
+    f.finish(fresh, "selected-revision-and-submission");
+}
+
+#[test]
+#[ignore = "explicit protected Windows lifecycle qualification with a new synthetic directory symlink"]
+fn selected_directory_reparse_ancestor_is_refused_without_traversal() {
+    let mut f = LifecycleFixture::new();
+    let alias = f.temp.join("new-synthetic-alias");
+    std::os::windows::fs::symlink_dir(&f.root, &alias).unwrap();
+    let key = f
+        .workbench
+        .start_selected_directory(f.selected_request(61, alias.join("child")))
+        .unwrap();
+    let error = f.reply(key).unwrap_err().to_string();
+    assert!(error.contains("ReparsePoint"), "{error}");
+    assert!(
+        f.workbench
+            .request_directory_guest_frame(key, Duration::from_secs(5))
+            .is_err()
+    );
+    f.finish(key, "selected-reparse-refused");
+}
+
+#[test]
+#[ignore = "explicit protected Windows lifecycle qualification preserving the original eight-resource cap"]
+fn selected_directory_full_ancestor_chain_cannot_exceed_original_resource_limit() {
+    let mut f = LifecycleFixture::new();
+    let mut deep = f.root.clone();
+    for _ in 0..8 {
+        deep.push("child");
+    }
+    fs::create_dir_all(&deep).unwrap();
+    let key = f
+        .workbench
+        .start_selected_directory(f.selected_request(71, deep))
+        .unwrap();
+    let error = f.reply(key).unwrap_err().to_string();
+    assert!(error.contains("Limit"), "{error}");
+    assert!(
+        f.workbench
+            .request_directory_guest_frame(key, Duration::from_secs(5))
+            .is_err()
+    );
+    f.finish(key, "selected-original-resource-limit");
+}
+
+#[test]
+#[ignore = "explicit protected Windows lifecycle qualification with pinned guest"]
+fn missing_directory_refusal_reclaims_original_owner_and_reopens() {
+    let mut f = LifecycleFixture::new();
+    let key = f.start("missing", CaptureLimits::default());
+    let error = f.reply(key).unwrap_err().to_string();
+    assert!(error.contains("NotFound"), "{error}");
+    assert!(f.workbench.read_directory_result(key).is_err());
+    f.finish(key, "missing-directory");
+}
+
+#[test]
+#[ignore = "explicit protected Windows lifecycle qualification with pinned guest"]
+fn capture_limit_refusal_reclaims_original_owner_and_reopens() {
+    let mut f = LifecycleFixture::new();
+    let key = f.start(
+        "child",
+        CaptureLimits {
+            max_entries: 1,
+            ..CaptureLimits::default()
+        },
+    );
+    let error = f.reply(key).unwrap_err().to_string();
+    assert!(error.contains("Limit"), "{error}");
+    assert!(f.workbench.read_directory_result(key).is_err());
+    f.finish(key, "capture-limit");
+}
+
+#[test]
+#[ignore = "explicit protected Windows lifecycle qualification with pinned guest"]
+fn foreign_cursor_refusal_preserves_original_selection_and_guest() {
+    let mut f = LifecycleFixture::new();
+    let key = f.start("child", CaptureLimits::default());
+    let selected = capture(&mut f.workbench, key);
+    let mut wrong = selected.first_page();
+    wrong.selection_epoch[0] ^= 1;
+    assert!(f.workbench.request_directory_page(key, wrong).is_err());
+    assert_eq!(f.workbench.io_status().storage, StoragePhase::Running);
+    assert!(directory(&f.root.join("child"), 0).is_err());
+    f.workbench
+        .request_directory_guest_frame(key, Duration::from_secs(5))
+        .unwrap();
+    let result = completed(&mut f.workbench, key);
+    assert!(!result.unknown);
+    assert_eq!(result.execution.outcome, Ok(0));
+    assert_eq!(result.execution.host_calls, 4);
+    final_page(result.response.as_ref().unwrap(), selected, 70);
+    f.finish(key, "foreign-cursor");
+}
+
+#[test]
+#[ignore = "explicit protected Windows lifecycle qualification with pinned guest"]
+fn replayed_page_refusal_preserves_next_page_and_explicit_finish() {
+    let mut f = LifecycleFixture::new();
+    let key = f.start("child", CaptureLimits::default());
+    let selected = capture(&mut f.workbench, key);
+    f.workbench
+        .request_directory_page(key, selected.first_page())
+        .unwrap();
+    let DirectoryResponse::Page(first) = f.reply(key).unwrap() else {
+        panic!("page required")
+    };
+    assert_eq!(first.page_sequence, 1);
+    assert_eq!(first.entries.len(), 32);
+    assert!(!first.terminal);
+    assert!(
+        f.workbench
+            .request_directory_page(key, selected.first_page())
+            .is_err()
+    );
+    assert!(
+        f.workbench
+            .request_directory_guest_frame(key, Duration::from_secs(5))
+            .is_err()
+    );
+    let mut next = selected.first_page();
+    next.page_sequence = 2;
+    next.after_entry_id = Some(first.entries.last().unwrap().entry_id);
+    f.workbench.request_directory_page(key, next).unwrap();
+    let DirectoryResponse::Page(second) = f.reply(key).unwrap() else {
+        panic!("page required")
+    };
+    assert_eq!(second.page_sequence, 2);
+    assert_eq!(second.entries.len(), 32);
+    assert!(!second.terminal);
+    assert!(
+        first
+            .entries
+            .iter()
+            .all(|a| second.entries.iter().all(|b| a.entry_id != b.entry_id))
+    );
+    f.workbench.finish_directory(key).unwrap();
+    assert!(matches!(f.reply(key).unwrap(), DirectoryResponse::Finished));
+    assert!(f.workbench.read_directory_result(key).is_err());
+    f.finish(key, "page-replay-and-finish");
+}
+
+#[test]
+#[ignore = "explicit protected Windows lifecycle qualification with pinned guest"]
+fn cancel_unread_capture_reclaims_original_native_handles_and_owner() {
+    let mut f = LifecycleFixture::new();
+    let key = f.start("child", CaptureLimits::default());
+    // Do not consume Captured. Cancellation must dispose queued/running/unread
+    // ownership through the original stop/join path in any scheduling order.
+    f.workbench.cancel_io(key).unwrap();
+    f.finish(key, "cancel-unread-capture");
+}
+
+#[test]
+#[ignore = "explicit protected Windows lifecycle qualification with pinned guest"]
+fn invalid_guest_deadline_refuses_before_admission_without_losing_selection() {
+    let mut f = LifecycleFixture::new();
+    let key = f.start("child", CaptureLimits::default());
+    let selected = capture(&mut f.workbench, key);
+    assert!(
+        f.workbench
+            .request_directory_guest_frame(key, Duration::ZERO)
+            .is_err()
+    );
+    assert!(
+        f.workbench
+            .request_directory_guest_frame(key, Duration::from_secs(11))
+            .is_err()
+    );
+    assert!(directory(&f.root.join("child"), 0).is_err());
+    f.workbench
+        .request_directory_guest_frame(key, Duration::from_secs(5))
+        .unwrap();
+    let result = completed(&mut f.workbench, key);
+    assert!(!result.unknown);
+    assert_eq!(result.execution.outcome, Ok(0));
+    assert_eq!(result.execution.host_calls, 4);
+    final_page(result.response.as_ref().unwrap(), selected, 70);
+    f.finish(key, "invalid-guest-deadline");
+}
+
+include!("support/directory_private_protocol.rs");

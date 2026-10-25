@@ -290,6 +290,13 @@
       }
     }
   },
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsEndpointCertificateSelected": {
     "placeholders": {
       "bytes": {
@@ -1509,6 +1516,14 @@
   "pluginsCredentialUnknown": "Le résultat n’est pas confirmé. Le champ secret a été effacé. Actualisez l’état avant toute autre modification.",
   "pluginsDeclared": "Autorisations déclarées : {permissions}",
   "pluginsDependenciesNotice": "Les dépendances doivent être configurées dans l’hôte. Cette page ne les autorise pas.",
+  "pluginsDirectoryEntries": "Entrées capturées : {count}",
+  "pluginsDirectoryFormError": "Vérifiez le dossier, le plugin, les limites et la durée de la tâche.",
+  "pluginsDirectoryIntro": "Seuls les noms et métadonnées des éléments directement dans le dossier choisi sont partagés. Le contenu des fichiers et des sous-dossiers ne sera pas lu.",
+  "pluginsDirectoryLimit": "Nombre maximal d’entrées (1024)",
+  "pluginsDirectoryMetadataLimit": "Limite de métadonnées (octets, 1 MiB maximum)",
+  "pluginsDirectorySelectHandler": "Choisir un plugin de dossier autorisé",
+  "pluginsDirectoryStart": "Lire le dossier et exécuter le plugin",
+  "pluginsDirectoryTitle": "Contenu du dossier",
   "pluginsDisable": "Désactiver",
   "pluginsDisableWorkbench": "Désactiver l’extension de l’espace",
   "pluginsDisabled": "Désactivée",

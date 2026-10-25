@@ -165,6 +165,11 @@ enum Action {
   stageEditorDraftAssets,
   maintainEditorDraftArchive,
   inspectEditorDraftArchiveMaintenance,
+  directoryStart,
+  directoryRead,
+  directoryRunGuest,
+  directoryReadGuest,
+  directoryFinish,
 }
 
 Action? actionFromUint16(int v) =>
@@ -375,6 +380,13 @@ final class RequestReader extends StructReader {
   int get channelOffset => getUint32Field(72);
 
   int get channelLimit => getUint32Field(76);
+
+  DirectoryStartReader? get directoryStart => getStructFieldWith(
+    51,
+    (r) => DirectoryStartReader(r, capabilities: capabilityTable),
+  );
+
+  int get directoryTimeoutMs => getUint32Field(80);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -757,14 +769,24 @@ final class RequestBuilder extends StructBuilder {
   set channelLimit(int v) {
     setUint32Field(76, v);
   }
+
+  DirectoryStartBuilder initDirectoryStart() {
+    return initStructFieldWith(51, (r) => DirectoryStartBuilder(r), 3, 5);
+  }
+
+  bool hasDirectoryStart() => hasPointerField(51);
+
+  set directoryTimeoutMs(int v) {
+    setUint32Field(80, v);
+  }
 }
 
 final class _RequestFactory
     extends StructFactory<RequestReader, RequestBuilder> {
   @override
-  int get dataWords => 10;
+  int get dataWords => 11;
   @override
-  int get ptrWords => 51;
+  int get ptrWords => 52;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -974,6 +996,11 @@ final class ResponseReader extends StructReader {
   ChannelSentReader? get channelSent => getStructFieldWith(
     40,
     (r) => ChannelSentReader(r, capabilities: capabilityTable),
+  );
+
+  DirectoryResultReader? get directoryResult => getStructFieldWith(
+    41,
+    (r) => DirectoryResultReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -1344,6 +1371,12 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasChannelSent() => hasPointerField(40);
+
+  DirectoryResultBuilder initDirectoryResult() {
+    return initStructFieldWith(41, (r) => DirectoryResultBuilder(r), 4, 1);
+  }
+
+  bool hasDirectoryResult() => hasPointerField(41);
 }
 
 final class _ResponseFactory
@@ -1351,7 +1384,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 41;
+  int get ptrWords => 42;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2602,6 +2635,8 @@ final class PluginEntryReader extends StructReader {
     15,
     (r) => ChannelBudgetReader(r, capabilities: capabilityTable),
   );
+
+  bool get directorySupported => getBoolField(5);
 }
 
 final class PluginEntryBuilder extends StructBuilder {
@@ -2703,6 +2738,10 @@ final class PluginEntryBuilder extends StructBuilder {
   }
 
   bool hasChannelBudget() => hasPointerField(15);
+
+  set directorySupported(bool v) {
+    setBoolField(5, v);
+  }
 }
 
 final class _PluginEntryFactory
@@ -4800,6 +4839,217 @@ final class _FileResultFactory
 }
 
 final fileResultFactory = _FileResultFactory();
+
+final class DirectoryStartReader extends StructReader {
+  DirectoryStartReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get handler => getTextField(3);
+
+  ListReader<int>? get selectedPathUtf16 => getUint16ListField(4);
+
+  int get maxEntries => getUint32Field(8);
+
+  int get maxMetadataBytes => _checkedWireInt(maxMetadataBytesBigInt);
+  BigInt get maxMetadataBytesBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  int get timeoutMs => getUint32Field(12);
+}
+
+final class DirectoryStartBuilder extends StructBuilder {
+  DirectoryStartBuilder(super.raw);
+
+  @override
+  DirectoryStartReader asReader() => DirectoryStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set handler(String? v) {
+    setTextField(3, v);
+  }
+
+  ListBuilder<int> initSelectedPathUtf16(int length) {
+    return initUint16ListField(4, length);
+  }
+
+  set maxEntries(int v) {
+    setUint32Field(8, v);
+  }
+
+  set maxMetadataBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    maxMetadataBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set maxMetadataBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxMetadataBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(12, v);
+  }
+}
+
+final class _DirectoryStartFactory
+    extends StructFactory<DirectoryStartReader, DirectoryStartBuilder> {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 5;
+  @override
+  DirectoryStartReader fromRawReader(RawStructReader r) =>
+      DirectoryStartReader(r);
+  @override
+  DirectoryStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => DirectoryStartReader(r, capabilities: capabilities);
+  @override
+  DirectoryStartBuilder fromRawBuilder(RawStructBuilder r) =>
+      DirectoryStartBuilder(r);
+}
+
+final directoryStartFactory = _DirectoryStartFactory();
+
+final class DirectoryResultReader extends StructReader {
+  DirectoryResultReader(super.raw, {super.capabilities});
+
+  int get kind => getUint16Field(0);
+
+  int get entries => getUint32Field(4);
+
+  int get metadataBytes => _checkedWireInt(metadataBytesBigInt);
+  BigInt get metadataBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get frame => getDataField(0);
+
+  bool get unknown => getBoolField(16);
+
+  int get executionFault => getUint16Field(16);
+
+  int get exitCode => getInt32Field(20).toSigned(32);
+
+  int get hostCalls => getUint32Field(24);
+}
+
+final class DirectoryResultBuilder extends StructBuilder {
+  DirectoryResultBuilder(super.raw);
+
+  @override
+  DirectoryResultReader asReader() => DirectoryResultReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set entries(int v) {
+    setUint32Field(4, v);
+  }
+
+  set metadataBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    metadataBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set metadataBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field metadataBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set frame(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set unknown(bool v) {
+    setBoolField(16, v);
+  }
+
+  set executionFault(int v) {
+    setUint16Field(16, v);
+  }
+
+  set exitCode(int v) {
+    setInt32Field(20, v);
+  }
+
+  set hostCalls(int v) {
+    setUint32Field(24, v);
+  }
+}
+
+final class _DirectoryResultFactory
+    extends StructFactory<DirectoryResultReader, DirectoryResultBuilder> {
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 1;
+  @override
+  DirectoryResultReader fromRawReader(RawStructReader r) =>
+      DirectoryResultReader(r);
+  @override
+  DirectoryResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => DirectoryResultReader(r, capabilities: capabilities);
+  @override
+  DirectoryResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      DirectoryResultBuilder(r);
+}
+
+final directoryResultFactory = _DirectoryResultFactory();
 
 final class MutationStartReader extends StructReader {
   MutationStartReader(super.raw, {super.capabilities});

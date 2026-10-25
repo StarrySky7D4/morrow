@@ -820,5 +820,20 @@
   "pluginsAgentRejected": "Refusé",
   "pluginsAgentInvalidInput": "Vérifiez la saisie.",
   "pluginsAgentReleaseNotice": "Fermer cette vue ou détacher le contrôle de session ne prouve ni l’arrêt de la tâche ni la libération des ressources.",
-  "pluginsAgentReadOnlyNotice": "La découverte est en lecture seule et n’accorde aucun accès. Un résultat inconnu n’est jamais renvoyé automatiquement."
+  "pluginsAgentReadOnlyNotice": "La découverte est en lecture seule et n’accorde aucun accès. Un résultat inconnu n’est jamais renvoyé automatiquement.",
+  "pluginsDirectoryTitle": "Contenu du dossier",
+  "pluginsDirectoryIntro": "Seuls les noms et métadonnées des éléments directement dans le dossier choisi sont partagés. Le contenu des fichiers et des sous-dossiers ne sera pas lu.",
+  "pluginsDirectoryStart": "Lire le dossier et exécuter le plugin",
+  "pluginsDirectorySelectHandler": "Choisir un plugin de dossier autorisé",
+  "pluginsDirectoryLimit": "Nombre maximal d’entrées (1024)",
+  "pluginsDirectoryMetadataLimit": "Limite de métadonnées (octets, 1 MiB maximum)",
+  "pluginsDirectoryEntries": "Entrées capturées : {count}",
+  "pluginsDirectoryFormError": "Vérifiez le dossier, le plugin, les limites et la durée de la tâche.",
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -9,6 +9,8 @@ import 'package:morrow_studio/plugins/endpoint_control.dart';
 import 'package:morrow_studio/plugins/http_task_manager.dart';
 import 'package:morrow_studio/plugins/file_task_models.dart';
 import 'package:morrow_studio/plugins/file_task_session.dart';
+import 'package:morrow_studio/plugins/directory_task_session.dart';
+import 'directory_task_test_support.dart';
 import 'package:morrow_studio/plugins/io_task_control.dart';
 import 'package:morrow_studio/plugins/plugin_library.dart';
 
@@ -260,6 +262,7 @@ Widget page(
   bool visible = true,
   VoidCallback? onChanged,
   FileTaskSession? fileSession,
+  DirectoryTaskSession? directorySession,
 }) => MaterialApp(
   locale: Locale(locale),
   localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -270,6 +273,7 @@ Widget page(
       child: SingleChildScrollView(
         child: HttpTaskManager(
           fileSession: fileSession,
+          directorySession: directorySession,
           backend: tasks,
           endpointBackend: endpoints,
           plugins: plugins ?? [plugin()],
@@ -351,6 +355,24 @@ Future<void> disposePage(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets('unknown directory attempt suspends HTTP without changing its draft', (t) async {
+    final tasks=FakeTasks(),endpoints=FakeEndpoints();
+    final directories=DirectoryFake()..loseStart=true;
+    final session=DirectoryTaskSession(directories,tasks);
+    await session.refresh();
+    await t.pumpWidget(page(tasks,endpoints,directorySession:session));await settle(t);
+    await enter(t,'target','/keep-directory-draft');
+    await session.start(directoryRequest());await settle(t);
+    expect(session.phase,DirectoryTaskPhase.unknown);
+    expect(enabled(t,'start'),isFalse);expect(enabled(t,'read'),isFalse);expect(enabled(t,'cancel'),isFalse);
+    final statuses=tasks.statuses;await t.pump(const Duration(seconds:3));
+    expect(tasks.statuses,statuses);expect(tasks.polls,isEmpty);
+    expect(tasks.starts,isEmpty);expect(tasks.reads,isEmpty);expect(tasks.cancels,isEmpty);
+    await session.refresh();expect(session.canAbandon,isTrue);session.abandon();await settle(t);
+    expect(t.widget<TextField>(find.byKey(const ValueKey('http-task-target'))).controller!.text,'/keep-directory-draft');
+    expect(directories.starts,1);expect(session.history.single.phase,DirectoryTaskPhase.unknown);
+    await disposePage(t);
+  });
   testWidgets(
     'file attempt including Unknown suspends HTTP controls and polling without losing its draft',
     (t) async {

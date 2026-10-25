@@ -1861,6 +1861,36 @@ class AppLocalizationsFr extends AppLocalizations {
       'Les dépendances doivent être configurées dans l’hôte. Cette page ne les autorise pas.';
 
   @override
+  String pluginsDirectoryEntries(String count) {
+    return 'Entrées capturées : $count';
+  }
+
+  @override
+  String get pluginsDirectoryFormError =>
+      'Vérifiez le dossier, le plugin, les limites et la durée de la tâche.';
+
+  @override
+  String get pluginsDirectoryIntro =>
+      'Seuls les noms et métadonnées des éléments directement dans le dossier choisi sont partagés. Le contenu des fichiers et des sous-dossiers ne sera pas lu.';
+
+  @override
+  String get pluginsDirectoryLimit => 'Nombre maximal d’entrées (1024)';
+
+  @override
+  String get pluginsDirectoryMetadataLimit =>
+      'Limite de métadonnées (octets, 1 MiB maximum)';
+
+  @override
+  String get pluginsDirectorySelectHandler =>
+      'Choisir un plugin de dossier autorisé';
+
+  @override
+  String get pluginsDirectoryStart => 'Lire le dossier et exécuter le plugin';
+
+  @override
+  String get pluginsDirectoryTitle => 'Contenu du dossier';
+
+  @override
   String get pluginsDisable => 'Désactiver';
 
   @override

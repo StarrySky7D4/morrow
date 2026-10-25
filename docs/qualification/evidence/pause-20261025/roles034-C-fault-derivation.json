@@ -1,0 +1,31 @@
+{
+  "original": {
+    "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+    "bytes": 116683,
+    "sha256": "ad0318b3e116479c9cdbcf27abf09d6ad60a18169338d177eee2d872d75fa867"
+  },
+  "derived": {
+    "path": "D:\\build_cache\\m80s\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+    "bytes": 119142,
+    "sha256": "976ce8a1cc4c540d45629fd2495a678496b77f96e348e759fbaaf14f33fb868f"
+  },
+  "diff": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-034\\C-late-create-fault.diff",
+    "bytes": 3160,
+    "sha256": "a6a62b2cae2c23d43ae249c29f1d75bdba60ee55552f1e98708cafc86dc30a87"
+  },
+  "complete_source_files": 52941,
+  "changed_files": [
+    "companions/morrow-codex/qualification/c28-basic-harness/src/a1_parent_anchor.rs",
+    "companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs/src/asuser_a1_native.rs"
+  ],
+  "canonical_source_edits": 0,
+  "ipc_changes": 0,
+  "original_output_capture_preserved": true,
+  "original_deadline_preserved": true,
+  "original_timeout_checkpoint_preserved": true,
+  "authority_created": false,
+  "fault": "Delay processing after a real successful CreateProcessAsUserW return and both outputs captured; retain timeout Unknown",
+  "observation_path": "case/workspace/qualification-late-create.json",
+  "natural_os_delay_claim": false
+}

@@ -1856,6 +1856,36 @@ class AppLocalizationsPt extends AppLocalizations {
       'As dependências devem ser configuradas no host. Esta página não as autoriza.';
 
   @override
+  String pluginsDirectoryEntries(String count) {
+    return 'Entradas capturadas: $count';
+  }
+
+  @override
+  String get pluginsDirectoryFormError =>
+      'Verifique a pasta, o plugin, os limites e a duração da tarefa.';
+
+  @override
+  String get pluginsDirectoryIntro =>
+      'Compartilha apenas nomes e metadados das entradas diretamente na pasta escolhida. Não lê arquivos nem o conteúdo de subpastas.';
+
+  @override
+  String get pluginsDirectoryLimit => 'Limite de entradas (até 1024)';
+
+  @override
+  String get pluginsDirectoryMetadataLimit =>
+      'Limite de metadados (bytes, até 1 MiB)';
+
+  @override
+  String get pluginsDirectorySelectHandler =>
+      'Selecionar plugin de pasta aprovado';
+
+  @override
+  String get pluginsDirectoryStart => 'Ler pasta e executar plugin';
+
+  @override
+  String get pluginsDirectoryTitle => 'Conteúdo da pasta';
+
+  @override
   String get pluginsDisable => 'Desativar';
 
   @override

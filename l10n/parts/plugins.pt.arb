@@ -820,5 +820,20 @@
   "pluginsAgentRejected": "Rejeitado",
   "pluginsAgentInvalidInput": "Verifique os dados.",
   "pluginsAgentReleaseNotice": "Fechar esta vista ou desligar o controlo da sessão não prova que a tarefa parou ou que os recursos foram libertados.",
-  "pluginsAgentReadOnlyNotice": "A descoberta é só de leitura e não concede acesso. Um resultado desconhecido nunca é reenviado automaticamente."
+  "pluginsAgentReadOnlyNotice": "A descoberta é só de leitura e não concede acesso. Um resultado desconhecido nunca é reenviado automaticamente.",
+  "pluginsDirectoryTitle": "Conteúdo da pasta",
+  "pluginsDirectoryIntro": "Compartilha apenas nomes e metadados das entradas diretamente na pasta escolhida. Não lê arquivos nem o conteúdo de subpastas.",
+  "pluginsDirectoryStart": "Ler pasta e executar plugin",
+  "pluginsDirectorySelectHandler": "Selecionar plugin de pasta aprovado",
+  "pluginsDirectoryLimit": "Limite de entradas (até 1024)",
+  "pluginsDirectoryMetadataLimit": "Limite de metadados (bytes, até 1 MiB)",
+  "pluginsDirectoryEntries": "Entradas capturadas: {count}",
+  "pluginsDirectoryFormError": "Verifique a pasta, o plugin, os limites e a duração da tarefa.",
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

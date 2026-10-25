@@ -1864,6 +1864,35 @@ class AppLocalizationsRu extends AppLocalizations {
       'Зависимости настраиваются в хосте. Эта страница не даёт им разрешений.';
 
   @override
+  String pluginsDirectoryEntries(String count) {
+    return 'Получено записей: $count';
+  }
+
+  @override
+  String get pluginsDirectoryFormError =>
+      'Проверьте папку, плагин, ограничения и срок действия задачи.';
+
+  @override
+  String get pluginsDirectoryIntro =>
+      'Передаются только имена и метаданные объектов непосредственно в выбранной папке. Содержимое файлов и вложенных папок не читается.';
+
+  @override
+  String get pluginsDirectoryLimit => 'Лимит записей (до 1024)';
+
+  @override
+  String get pluginsDirectoryMetadataLimit =>
+      'Лимит метаданных (байты, до 1 MiB)';
+
+  @override
+  String get pluginsDirectorySelectHandler => 'Выбрать одобренный плагин папок';
+
+  @override
+  String get pluginsDirectoryStart => 'Прочитать папку и запустить плагин';
+
+  @override
+  String get pluginsDirectoryTitle => 'Содержимое папки';
+
+  @override
   String get pluginsDisable => 'Отключить';
 
   @override

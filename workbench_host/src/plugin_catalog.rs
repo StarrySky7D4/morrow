@@ -38,6 +38,7 @@ pub struct PluginEntry {
     pub io_handlers: Vec<String>,
     /// A declaration on this exact package, never a runtime approval.
     pub mutation_supported: bool,
+    pub directory_supported: bool,
     pub mutation_budget: Option<MutationBudgetDeclaration>,
     pub channel_supported: bool,
     pub channel_handlers: Vec<String>,
@@ -246,6 +247,8 @@ impl WorkbenchState {
                 .io_declaration()
                 .map_or_else(Vec::new, |d| d.handlers.clone()),
             mutation_supported: p.mutation_enabled(),
+            directory_supported: m.required_features.iter().any(|feature|
+                feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE),
             channel_supported: p.channel_declaration().is_some(),
             channel_handlers: p
                 .channel_declaration()
@@ -330,6 +333,7 @@ impl WorkbenchState {
                     declared_io: vec![],
                     io_handlers: vec![],
                     mutation_supported: false,
+                    directory_supported: false,
                     mutation_budget: None,
                     channel_supported: false,
                     channel_handlers: vec![],

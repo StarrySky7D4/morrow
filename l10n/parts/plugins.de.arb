@@ -820,5 +820,20 @@
   "pluginsAgentRejected": "Abgelehnt",
   "pluginsAgentInvalidInput": "Eingabe prüfen.",
   "pluginsAgentReleaseNotice": "Das Schließen dieser Ansicht oder Trennen der Sitzungssteuerung beweist weder den Stopp der Aufgabe noch die Freigabe von Ressourcen.",
-  "pluginsAgentReadOnlyNotice": "Die Erkennung liest nur und gewährt keinen Zugriff. Bei unbekanntem Ergebnis wird nie automatisch erneut gesendet."
+  "pluginsAgentReadOnlyNotice": "Die Erkennung liest nur und gewährt keinen Zugriff. Bei unbekanntem Ergebnis wird nie automatisch erneut gesendet.",
+  "pluginsDirectoryTitle": "Ordnerinhalt",
+  "pluginsDirectoryIntro": "Nur Namen und Metadaten direkt im gewählten Ordner werden geteilt. Dateiinhalte und Unterordner werden nicht gelesen.",
+  "pluginsDirectoryStart": "Ordner lesen und Plugin ausführen",
+  "pluginsDirectorySelectHandler": "Genehmigtes Ordner-Plugin wählen",
+  "pluginsDirectoryLimit": "Maximale Einträge (bis 1024)",
+  "pluginsDirectoryMetadataLimit": "Metadatenlimit (Bytes, bis 1 MiB)",
+  "pluginsDirectoryEntries": "Erfasste Einträge: {count}",
+  "pluginsDirectoryFormError": "Ordner, Plugin, Grenzen und Aufgabendauer prüfen.",
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

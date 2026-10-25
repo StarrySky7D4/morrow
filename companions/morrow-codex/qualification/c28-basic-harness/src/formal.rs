@@ -224,7 +224,10 @@ impl Workflow {
         self.root.join(format!("{name}.mrowasp1"))
     }
     fn catalog_package_id(&self, base:&str)->String {
-        if self.shared_parent_session {format!("{base}.{}",self.nonce)} else {base.to_owned()}
+        // The immutable guest/base identity is stable. Each full wrapper still
+        // binds this fresh attempt's exact sessions/domain and receives a new
+        // explicit selection/approval. Prior full archives remain installed.
+        base.to_owned()
     }
     fn catalog_request_seed(&self, ordinal:u16)->Result<u128> {
         if !self.shared_parent_session {return Ok(u128::from(ordinal));}
@@ -571,6 +574,7 @@ impl Workflow {
                 ensure!(self.key.is_some() && self.claim.is_some() && self.running.is_none()
                     && !self.attempts.contains("qualify-logon-refusal")
                     && !self.attempts.contains("qualify-source-policy-refusal")
+                    && !self.attempts.contains("qualify-after-helper-stop")
                     && self.native_refusal.is_none() && !self.joined
                     && self.native.as_ref().is_some_and(|native|native.reviewed.is_some()),
                     "one original reviewed/claimed invocation required for caller-refusal qualification");
@@ -581,6 +585,7 @@ impl Workflow {
                     && self.native_refusal.is_none() && !self.joined
                     && !self.attempts.contains("qualify-caller-refusal")
                     && !self.attempts.contains("qualify-source-policy-refusal")
+                    && !self.attempts.contains("qualify-after-helper-stop")
                     && self.native.as_ref().is_some_and(|native|native.reviewed.is_some()),
                     "one original reviewed/claimed invocation required for logon-refusal qualification");
                 ensure!(factory.is_none(), "original factory must already belong to its Context/Worker");
@@ -595,6 +600,7 @@ impl Workflow {
                     && self.native_refusal.is_none() && !self.joined
                     && !self.attempts.contains("qualify-caller-refusal")
                     && !self.attempts.contains("qualify-logon-refusal")
+                    && !self.attempts.contains("qualify-after-helper-stop")
                     && self.native.as_ref().is_some_and(|native|native.reviewed.is_some()),
                     "one original reviewed/claimed invocation required for source-policy qualification");
                 ensure!(factory.is_none(), "original factory must already belong to its Context/Worker");
@@ -604,6 +610,22 @@ impl Workflow {
                 Ok(serde_json::json!({"original_factory_input_armed":true,"denial_only_policy":true,
                     "stored_password_changed":false,"account_changed":false,"native_logon_observed":false,
                     "cleanup_authority":false}))
+            }
+            "qualify-after-helper-stop" => {
+                ensure!(self.key.is_some() && self.claim.is_some() && self.running.is_none()
+                    && self.native_refusal.is_none() && !self.joined
+                    && !self.attempts.contains("qualify-caller-refusal")
+                    && !self.attempts.contains("qualify-logon-refusal")
+                    && !self.attempts.contains("qualify-source-policy-refusal")
+                    && self.native.as_ref().is_some_and(|native|native.reviewed.is_some()),
+                    "one original reviewed/claimed invocation required for after-helper qualification");
+                ensure!(factory.is_none(), "original factory must already belong to its Context/Worker");
+                self.qualification_backend.upgrade()
+                    .context("original transferred production backend no longer live")?
+                    .qualify_after_helper_stop_once().map_err(anyhow::Error::msg)?;
+                Ok(serde_json::json!({"original_factory_input_armed":true,"stop_only":true,
+                    "expected_original_outcome":"Unknown","cleanup_authority":false,
+                    "native_helper_observed":false,"runner_started":false}))
             }
             "native-start" => {
                 let key = self.key()?;
@@ -825,6 +847,8 @@ impl Workflow {
             "install" => SelectionStep::Install,
             "base-select" => SelectionStep::BaseSelect,
             "base-enable" => SelectionStep::BaseEnable,
+            "base-verify-selected" if self.shared_parent_session => SelectionStep::VerifyExistingBaseSelected,
+            "base-verify-enabled" if self.shared_parent_session => SelectionStep::VerifyExistingBaseEnabled,
             "wrapper-select" => SelectionStep::WrapperSelect,
             "approve" => SelectionStep::Approve,
             "wrapper-enable" => SelectionStep::WrapperEnable,

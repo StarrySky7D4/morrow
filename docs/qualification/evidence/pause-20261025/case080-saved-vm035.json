@@ -1,0 +1,19 @@
+﻿{
+    "policy_clean":  true,
+    "runtime_state_path":  "C:\\MorrowQA\\windows-acceptance-20261025-035\\vm\\Morrow Windows Acceptance 20261025 035\\Virtual Machines\\6ED45B94-041C-4AD7-A2B3-30F954FED66F.VMRS",
+    "case_clean":  false,
+    "automatic_resume":  false,
+    "runtime_state_bytes":  1740337152,
+    "status":  "UNKNOWN_VM_MEMORY_AND_DISK_SAVED_NO_OUTCOME_RECLASSIFICATION",
+    "stop_vm_calls":  0,
+    "release_eligible":  false,
+    "disk_bytes":  33032241152,
+    "registered_vms":  4,
+    "vm_id":  "6ed45b94-041c-4ad7-a2b3-30f954fed66f",
+    "original_case_session_retained":  true,
+    "original_owner_contacts":  0,
+    "source_accepted":  false,
+    "other_vms_unchanged":  true,
+    "disk":  "C:\\MorrowQA\\windows-acceptance-20261025-035\\acceptance.vhdx",
+    "state":  "Saved"
+}

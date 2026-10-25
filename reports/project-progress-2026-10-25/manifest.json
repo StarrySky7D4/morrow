@@ -1,0 +1,25 @@
+{
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 8441,
+      "sha256": "ac87f87ea72639248a9c1d452bf91a97d3aaf00e91af0e3fb76255e7de88891d"
+    },
+    {
+      "path": "README.md",
+      "bytes": 769,
+      "sha256": "54889775c6d19abeb282b93c05c667ceb7aac3d58d58766506fe88ed4718c320"
+    },
+    {
+      "path": "report-data.json",
+      "bytes": 1771,
+      "sha256": "66d618685fd5c62889f6a65ed87711c5c9d11d1fd3378daa3878987fd42189f0"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 564,
+      "sha256": "fd38077e57c090e091f4d6a656c825e1194dfebd43dc6845cb629c28b69ed76c"
+    }
+  ],
+  "scope": "Paused report files, not product qualification"
+}

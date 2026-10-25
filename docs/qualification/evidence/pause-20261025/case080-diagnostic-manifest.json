@@ -1,0 +1,52 @@
+{
+  "tag": "ecee6d34757543929a44afa73d27b1cd",
+  "files": [
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "length_stable": true,
+      "path": "C:\\Morrow-C28-transaction2769-ecee6d34757543929a44afa73d27b1cd\\case-capture\\stdout.log",
+      "status": "COPIED_DIAGNOSTIC_ONLY",
+      "final_length": 0,
+      "local_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-080\\01-stdout.log"
+    },
+    {
+      "sha256": "2989cad2abd0c3199c469815d2544e709a38faba57f4a06159ef2faa16ee4dda",
+      "bytes": 609,
+      "length_stable": true,
+      "path": "C:\\Morrow-C28-transaction2769-ecee6d34757543929a44afa73d27b1cd\\case-capture\\stderr.log",
+      "status": "COPIED_DIAGNOSTIC_ONLY",
+      "final_length": 609,
+      "local_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-080\\02-stderr.log"
+    },
+    {
+      "sha256": "9321df3d3e5bf04fd6d6ff92a4739b9c9827ceecd898ad455a6c0b197a73e420",
+      "bytes": 6092,
+      "length_stable": true,
+      "path": "C:\\Morrow-C28-Root47-1725-run-ecee6d34757543929a44afa73d27b1cd\\events.jsonl",
+      "status": "COPIED_DIAGNOSTIC_ONLY",
+      "final_length": 6092,
+      "local_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-080\\03-events.jsonl"
+    },
+    {
+      "sha256": "5ef4405254a80ebb1fcd49527e39d9eea5fbcda9cc02f8fbe4288547d513e6ca",
+      "bytes": 13043,
+      "length_stable": true,
+      "path": "C:\\Morrow-C28-A1-047-ecee6d34757543929a44afa73d27b1cd\\case.evidence\\journal.jsonl",
+      "status": "COPIED_DIAGNOSTIC_ONLY",
+      "final_length": 13043,
+      "local_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-080\\04-journal.jsonl"
+    },
+    {
+      "path": "C:\\Morrow-C28-A1-047-ecee6d34757543929a44afa73d27b1cd\\case\\workspace\\qualification-late-create.json",
+      "status": "UNAVAILABLE_NO_RETRY",
+      "hresult": -2146233087,
+      "error_type": "System.Management.Automation.MethodInvocationException"
+    }
+  ],
+  "diagnostic_only": true,
+  "schema": "RETAINED_CASE_FILE_SNAPSHOT_V1",
+  "original_owner_contacted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

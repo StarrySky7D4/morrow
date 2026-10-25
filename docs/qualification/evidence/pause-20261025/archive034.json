@@ -1,0 +1,87 @@
+{
+    "start_stop_calls":  0,
+    "restore_compatibility_issues":  0,
+    "unregister_calls":  1,
+    "guest_contacts":  0,
+    "logical_disk_bytes_deleted":  0,
+    "memory_resume_test_performed":  false,
+    "owner_query_or_replay":  0,
+    "original_state_copies":  [
+                                  {
+                                      "path":  "C:\\MorrowQA\\windows-acceptance-20261025-034\\vm\\Morrow Windows Acceptance 20261025 034\\Virtual Machines\\6BEC05B5-4692-4556-845B-7796320781C7.vmcx",
+                                      "sha256":  "2f008b50e45a69b75222deb6455b222d2e8dc41da3f0bb9114e4ad3043349c8b",
+                                      "modified_ticks":  639285245987529226,
+                                      "bytes":  73728,
+                                      "backup":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\original-state-byte-copy\\6BEC05B5-4692-4556-845B-7796320781C7.vmcx"
+                                  },
+                                  {
+                                      "path":  "C:\\MorrowQA\\windows-acceptance-20261025-034\\vm\\Morrow Windows Acceptance 20261025 034\\Virtual Machines\\6BEC05B5-4692-4556-845B-7796320781C7.vmgs",
+                                      "sha256":  "6b1483619643688e5e3fb303c38396b15033d1e7b5e952faa4954079402c693c",
+                                      "modified_ticks":  639285233766992770,
+                                      "bytes":  4194816,
+                                      "backup":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\original-state-byte-copy\\6BEC05B5-4692-4556-845B-7796320781C7.vmgs"
+                                  },
+                                  {
+                                      "path":  "C:\\MorrowQA\\windows-acceptance-20261025-034\\vm\\Morrow Windows Acceptance 20261025 034\\Virtual Machines\\6BEC05B5-4692-4556-845B-7796320781C7.VMRS",
+                                      "sha256":  "13d369a99fae9cc8e583c9eecb2d97a637ddfb78abd97e3929a5694dbf67963e",
+                                      "modified_ticks":  639285245986251746,
+                                      "bytes":  1703022592,
+                                      "backup":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\original-state-byte-copy\\6BEC05B5-4692-4556-845B-7796320781C7.VMRS"
+                                  }
+                              ],
+    "explicit_file_delete_calls":  0,
+    "historical_unknown_unchanged":  true,
+    "saved_memory_byte_identical":  true,
+    "raw_original_disk_copy":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\original-state-byte-copy\\acceptance-original.vhdx",
+    "archive":  "C:\\MorrowQA\\retained-unknown-archives\\vm034",
+    "full_export_files":  [
+                              {
+                                  "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\export\\Morrow Windows Acceptance 20261025 034\\Virtual Hard Disks\\acceptance.vhdx",
+                                  "sha256":  "8099f6d821af744f3ae6ccd1347710bfe97ef362f197911bbe4b8614da04b5ea",
+                                  "modified_ticks":  639285248359595996,
+                                  "bytes":  34976301056
+                              },
+                              {
+                                  "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\export\\Morrow Windows Acceptance 20261025 034\\Virtual Hard Disks\\Windows 11 开发环境.vhdx",
+                                  "sha256":  "a52ba8c381818cc17635ee971b8125cdc1e8569e1314a609d70f6439a5010804",
+                                  "modified_ticks":  639276954050710514,
+                                  "bytes":  62750982144
+                              },
+                              {
+                                  "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\export\\Morrow Windows Acceptance 20261025 034\\Virtual Machines\\6BEC05B5-4692-4556-845B-7796320781C7.vmcx",
+                                  "sha256":  "07830390210f9efd8e8e54b992ace5bb6a0dd984429ce39b3cbdfe052b9adc29",
+                                  "modified_ticks":  639285248359674920,
+                                  "bytes":  40994
+                              },
+                              {
+                                  "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\export\\Morrow Windows Acceptance 20261025 034\\Virtual Machines\\6BEC05B5-4692-4556-845B-7796320781C7.vmgs",
+                                  "sha256":  "32569ac398c7030c4062f65b48d75e59c4198702032a90fd48091650347510fb",
+                                  "modified_ticks":  639285248386335501,
+                                  "bytes":  4194816
+                              },
+                              {
+                                  "path":  "C:\\MorrowQA\\retained-unknown-archives\\vm034\\export\\Morrow Windows Acceptance 20261025 034\\Virtual Machines\\6BEC05B5-4692-4556-845B-7796320781C7.VMRS",
+                                  "sha256":  "13d369a99fae9cc8e583c9eecb2d97a637ddfb78abd97e3929a5694dbf67963e",
+                                  "modified_ticks":  639285245986251746,
+                                  "bytes":  1703022592
+                              }
+                          ],
+    "registered_vms":  3,
+    "original_disks_retained":  [
+                                    {
+                                        "path":  "C:\\MorrowQA\\windows-acceptance-20261025-034\\acceptance.vhdx",
+                                        "sha256":  "4b71124dec7d085946effffd58feb9bd4cbafd39516b1d39ca51dc29012c4fec",
+                                        "modified_ticks":  639285245986172462,
+                                        "bytes":  34976301056
+                                    },
+                                    {
+                                        "path":  "C:\\MorrowQA\\isolated-candidate-20261021\\export\\Windows 11 开发环境\\Virtual Hard Disks\\Windows 11 开发环境.vhdx",
+                                        "sha256":  "a52ba8c381818cc17635ee971b8125cdc1e8569e1314a609d70f6439a5010804",
+                                        "modified_ticks":  639276954050710514,
+                                        "bytes":  62750982144
+                                    }
+                                ],
+    "status":  "SAVED_VM034_FULL_EXPORT_VERIFIED_REGISTRATION_RELEASED_ORIGINAL_DISKS_RETAINED",
+    "other_vm_states_disks_checkpoints_unchanged":  true,
+    "vm_id":  "6bec05b5-4692-4556-845b-7796320781c7"
+}

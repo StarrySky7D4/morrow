@@ -820,5 +820,20 @@
   "pluginsAgentRejected": "거부됨",
   "pluginsAgentInvalidInput": "입력을 확인하세요.",
   "pluginsAgentReleaseNotice": "이 화면을 닫거나 세션 제어 연결을 해제해도 작업 중지나 리소스 해제가 입증되지는 않습니다.",
-  "pluginsAgentReadOnlyNotice": "검색은 읽기 전용이며 접근 권한을 부여하지 않습니다. 결과가 불명인 작업은 절대 자동 재전송하지 않습니다."
+  "pluginsAgentReadOnlyNotice": "검색은 읽기 전용이며 접근 권한을 부여하지 않습니다. 결과가 불명인 작업은 절대 자동 재전송하지 않습니다.",
+  "pluginsDirectoryTitle": "폴더 목록",
+  "pluginsDirectoryIntro": "선택한 폴더 바로 아래 항목의 이름과 메타데이터만 공유합니다. 파일 내용이나 하위 폴더 내부는 읽지 않습니다.",
+  "pluginsDirectoryStart": "폴더 읽기 및 플러그인 실행",
+  "pluginsDirectorySelectHandler": "승인된 폴더 플러그인 선택",
+  "pluginsDirectoryLimit": "항목 수 한도 (최대 1024)",
+  "pluginsDirectoryMetadataLimit": "메타데이터 한도 (바이트, 최대 1 MiB)",
+  "pluginsDirectoryEntries": "수집한 항목: {count}",
+  "pluginsDirectoryFormError": "폴더, 플러그인, 한도 및 작업 유효 시간을 확인하세요.",
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

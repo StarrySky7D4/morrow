@@ -3,8 +3,8 @@
 //! lookup, guest import, fresh approval or recursion is added.
 use super::*;
 use crate::directory_io::{
-    CaptureLimits, DirectoryBroker, DirectoryClock, DirectoryRelativePath, PageRequest,
-    SelectedDirectory,
+    CaptureLimits, DirectoryAbsolutePath, DirectoryBroker, DirectoryClock, DirectoryRelativePath,
+    PageRequest, SelectedDirectory,
 };
 use morrow_fs_directory_v1::FsDirectoryPage;
 use sha2::{Digest, Sha256};
@@ -16,9 +16,9 @@ use std::{
 
 #[path = "directory_commands/guest.rs"]
 mod guest;
-pub use guest::{DirectoryGuestHandle, DirectoryGuestResult};
-pub(in crate::io_jobs) use guest::{GuestRequest, GuestReply};
 pub(super) use guest::GuestDispatch;
+pub use guest::{DirectoryGuestHandle, DirectoryGuestResult};
+pub(in crate::io_jobs) use guest::{GuestReply, GuestRequest};
 
 pub const MAX_DIRECTORY_OBSERVATIONS: usize = 8;
 const MAX_WIRE: u64 = 65536;
@@ -173,6 +173,7 @@ enum Action {
 }
 enum CaptureSource {
     Open(File),
+    SelectedPath(DirectoryAbsolutePath),
     Under {
         anchor: File,
         relative: DirectoryRelativePath,
@@ -182,6 +183,7 @@ impl CaptureSource {
     fn input_bytes(&self) -> u64 {
         match self {
             Self::Open(_) => 0,
+            Self::SelectedPath(path) => path.retained_input_bytes() as u64,
             Self::Under { relative, .. } => relative.retained_input_bytes() as u64,
         }
     }
@@ -575,6 +577,23 @@ impl<O: ManagedHostOwner> IoWorker<O> {
             }),
         )
     }
+    /// A trusted native selection resolved only on the original worker, after
+    /// FileList approval. Every component from the actual volume root shares
+    /// the existing resource cap. No picker-time or durable path claim is made.
+    pub fn capture_selected_directory(
+        &self,
+        selected: DirectoryAbsolutePath,
+        limits: CaptureLimits,
+    ) -> Result<(DirectorySession, DirectoryCommandHandle), OwnerCommandError> {
+        self.capture_directory_request(
+            CaptureSource::SelectedPath(selected),
+            limits,
+            CaptureSecret::Fresh(FreshSecret {
+                #[cfg(test)]
+                probe: None,
+            }),
+        )
+    }
     #[cfg(test)]
     fn install_entropy_probe(&self, probe: Arc<EntropyProbe>) {
         admission(&self.control).entropy_probe = Some(probe);
@@ -807,6 +826,17 @@ fn dispatch<O: ManagedHostOwner>(
             };
             let mut broker = DirectoryBroker::from_secret(secret);
             let selected = match source {
+                CaptureSource::SelectedPath(selected) => broker
+                    .grant_selected_directory_with_clock_and_cancel(
+                        manager,
+                        host,
+                        instance,
+                        &authority.binding,
+                        selected,
+                        limits,
+                        &mut clock,
+                        || ticket.lock().cancelled,
+                    )?,
                 CaptureSource::Open(file) => broker.grant_open_directory_with_clock_and_cancel(
                     manager,
                     host,

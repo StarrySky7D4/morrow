@@ -1,0 +1,87 @@
+{
+  "status": "PASS_SCOPED_CURRENT_SDK_REFUSAL_AND_FACTORY_OWNERSHIP",
+  "source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+  "source_unchanged": true,
+  "methods": [
+    {
+      "method": "native_completion::identity_tests::acknowledged_refusal_lane_cannot_receive_a_normal_native_completion",
+      "exit_code": 0,
+      "seconds": 0.016
+    },
+    {
+      "method": "native_completion::identity_tests::consumed_failed_and_unbound_identity_states_cannot_receive_a_new_native_capability",
+      "exit_code": 0,
+      "seconds": 0.016
+    },
+    {
+      "method": "native_completion::identity_tests::native_capability_lane_requires_full_original_operation_generation_and_issuer",
+      "exit_code": 0,
+      "seconds": 0.0
+    },
+    {
+      "method": "native_factory::tests::owner_finish_accepts_only_its_staged_live_runtime_without_minting_shutdown",
+      "exit_code": 0,
+      "seconds": 0.015
+    },
+    {
+      "method": "native_factory::tests::unstarted_or_failed_factory_attempt_cannot_mint_shutdown_from_absent_weak_values",
+      "exit_code": 0,
+      "seconds": 0.016
+    },
+    {
+      "method": "registry::tests::dropping_external_owners_keeps_unknown_occupancy_and_resource",
+      "exit_code": 0,
+      "seconds": 0.015
+    },
+    {
+      "method": "registry::tests::native_retirement_keeps_original_entry_capacity_and_resources_when_keepalive_lock_is_poisoned",
+      "exit_code": 0,
+      "seconds": 0.0
+    },
+    {
+      "method": "registry::tests::native_retirement_keeps_original_entry_capacity_and_resources_when_process_lock_is_poisoned",
+      "exit_code": 0,
+      "seconds": 0.016
+    },
+    {
+      "method": "registry::tests::normal_terminal_and_unstarted_metadata_cannot_satisfy_native_refusal_retirement",
+      "exit_code": 0,
+      "seconds": 0.016
+    },
+    {
+      "method": "registry::tests::shared_registry_bounds_pending_and_unknown_work",
+      "exit_code": 0,
+      "seconds": 0.015
+    },
+    {
+      "method": "registry::tests::terminal_evidence_does_not_release_live_provider_or_pending_job",
+      "exit_code": 0,
+      "seconds": 0.016
+    },
+    {
+      "method": "registry::tests::unknown_refusal_metadata_cannot_release_original_registry_or_keepalive",
+      "exit_code": 0,
+      "seconds": 0.0
+    },
+    {
+      "method": "windows_runner::tests::completed_native_factory_owner_finish_requires_same_original_thread_close_capability",
+      "exit_code": 0,
+      "seconds": 7.047
+    },
+    {
+      "method": "windows_runner::tests::explicit_v8_production_factory_constructs_same_pin_environment_and_retires_original_scheduler",
+      "exit_code": 0,
+      "seconds": 3.39
+    }
+  ],
+  "retained": null,
+  "failure": null,
+  "actual_original_scheduler_shutdown_methods": 2,
+  "VM_calls": 0,
+  "native_A1_starts": 0,
+  "sandbox_provisioning_calls": 0,
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

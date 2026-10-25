@@ -161,6 +161,11 @@ enum Action {
   stageEditorDraftAssets,
   maintainEditorDraftArchive,
   inspectEditorDraftArchiveMaintenance,
+  directoryStart,
+  directoryRead,
+  directoryRunGuest,
+  directoryReadGuest,
+  directoryFinish,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -544,6 +549,19 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
       codeOrder: 155,
       ordinal: 155,
     ),
+    EnumerantSchemaInfo(name: 'directoryStart', codeOrder: 156, ordinal: 156),
+    EnumerantSchemaInfo(name: 'directoryRead', codeOrder: 157, ordinal: 157),
+    EnumerantSchemaInfo(
+      name: 'directoryRunGuest',
+      codeOrder: 158,
+      ordinal: 158,
+    ),
+    EnumerantSchemaInfo(
+      name: 'directoryReadGuest',
+      codeOrder: 159,
+      ordinal: 159,
+    ),
+    EnumerantSchemaInfo(name: 'directoryFinish', codeOrder: 160, ordinal: 160),
   ],
 );
 
@@ -756,6 +774,13 @@ final class RequestReader extends StructReader {
   int get channelOffset => getUint32Field(72);
 
   int get channelLimit => getUint32Field(76);
+
+  DirectoryStartReader? get directoryStart => getStructFieldWith(
+    51,
+    (r) => DirectoryStartReader(r, capabilities: capabilityTable),
+  );
+
+  int get directoryTimeoutMs => getUint32Field(80);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -1120,6 +1145,16 @@ final class RequestBuilder extends StructBuilder {
   set channelLimit(int v) {
     setUint32Field(76, v);
   }
+
+  DirectoryStartBuilder initDirectoryStart() {
+    return initStructFieldWith(51, (r) => DirectoryStartBuilder(r), 3, 5);
+  }
+
+  bool hasDirectoryStart() => hasPointerField(51);
+
+  set directoryTimeoutMs(int v) {
+    setUint32Field(80, v);
+  }
 }
 
 final class _RequestFactory
@@ -1127,9 +1162,9 @@ final class _RequestFactory
   @override
   StructSchemaInfo get schema => requestSchema;
   @override
-  int get dataWords => 10;
+  int get dataWords => 11;
   @override
-  int get ptrWords => 51;
+  int get ptrWords => 52;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -1145,8 +1180,8 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   id: 0x98af3617e14b2953,
   displayName: 'host.capnp:Request',
   shortName: 'Request',
-  dataWords: 10,
-  pointerWords: 51,
+  dataWords: 11,
+  pointerWords: 52,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1676,6 +1711,22 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('UInt32'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'directoryStart',
+      codeOrder: 66,
+      body: SlotFieldSchemaInfo(
+        offset: 51,
+        type: StructRefTypeSchemaInfo(0x938d050d85ae1676),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'directoryTimeoutMs',
+      codeOrder: 67,
+      body: SlotFieldSchemaInfo(
+        offset: 20,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
   ],
 );
 
@@ -1879,6 +1930,11 @@ final class ResponseReader extends StructReader {
   ChannelSentReader? get channelSent => getStructFieldWith(
     40,
     (r) => ChannelSentReader(r, capabilities: capabilityTable),
+  );
+
+  DirectoryResultReader? get directoryResult => getStructFieldWith(
+    41,
+    (r) => DirectoryResultReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -2231,6 +2287,12 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasChannelSent() => hasPointerField(40);
+
+  DirectoryResultBuilder initDirectoryResult() {
+    return initStructFieldWith(41, (r) => DirectoryResultBuilder(r), 4, 1);
+  }
+
+  bool hasDirectoryResult() => hasPointerField(41);
 }
 
 final class _ResponseFactory
@@ -2240,7 +2302,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 41;
+  int get ptrWords => 42;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2257,7 +2319,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 7,
-  pointerWords: 41,
+  pointerWords: 42,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -2697,6 +2759,14 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 40,
         type: StructRefTypeSchemaInfo(0x9dac5e9a8392cbe8),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'directoryResult',
+      codeOrder: 55,
+      body: SlotFieldSchemaInfo(
+        offset: 41,
+        type: StructRefTypeSchemaInfo(0x98386cf72e015a24),
       ),
     ),
   ],
@@ -4740,6 +4810,8 @@ final class PluginEntryReader extends StructReader {
     15,
     (r) => ChannelBudgetReader(r, capabilities: capabilityTable),
   );
+
+  bool get directorySupported => getBoolField(5);
 }
 
 final class PluginEntryBuilder extends StructBuilder {
@@ -4841,6 +4913,10 @@ final class PluginEntryBuilder extends StructBuilder {
   }
 
   bool hasChannelBudget() => hasPointerField(15);
+
+  set directorySupported(bool v) {
+    setBoolField(5, v);
+  }
 }
 
 final class _PluginEntryFactory
@@ -5036,6 +5112,14 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 15,
         type: StructRefTypeSchemaInfo(0xdacee23e459a2f5c),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'directorySupported',
+      codeOrder: 21,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Bool'),
       ),
     ),
   ],
@@ -8464,6 +8548,372 @@ const StructSchemaInfo fileResultSchema = StructSchemaInfo(
 );
 
 final fileResultFactory = _FileResultFactory();
+
+final class DirectoryStartReader extends StructReader {
+  DirectoryStartReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = directoryStartSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => getUint64Field(0);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get handler => getTextField(3);
+
+  ListReader<int>? get selectedPathUtf16 => getUint16ListField(4);
+
+  int get maxEntries => getUint32Field(8);
+
+  int get maxMetadataBytes => getUint64Field(16);
+  BigInt get maxMetadataBytesBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  int get timeoutMs => getUint32Field(12);
+}
+
+final class DirectoryStartBuilder extends StructBuilder {
+  DirectoryStartBuilder(super.raw);
+
+  @override
+  DirectoryStartReader asReader() => DirectoryStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set handler(String? v) {
+    setTextField(3, v);
+  }
+
+  ListBuilder<int> initSelectedPathUtf16(int length) {
+    return initUint16ListField(4, length);
+  }
+
+  set maxEntries(int v) {
+    setUint32Field(8, v);
+  }
+
+  set maxMetadataBytes(int v) {
+    setUint64Field(16, v);
+  }
+
+  set maxMetadataBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxMetadataBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(12, v);
+  }
+}
+
+final class _DirectoryStartFactory
+    extends StructFactory<DirectoryStartReader, DirectoryStartBuilder> {
+  @override
+  StructSchemaInfo get schema => directoryStartSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 5;
+  @override
+  DirectoryStartReader fromRawReader(RawStructReader r) =>
+      DirectoryStartReader(r);
+  @override
+  DirectoryStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => DirectoryStartReader(r, capabilities: capabilities);
+  @override
+  DirectoryStartBuilder fromRawBuilder(RawStructBuilder r) =>
+      DirectoryStartBuilder(r);
+}
+
+const StructSchemaInfo directoryStartSchema = StructSchemaInfo(
+  id: 0x938d050d85ae1676,
+  displayName: 'host.capnp:DirectoryStart',
+  shortName: 'DirectoryStart',
+  dataWords: 3,
+  pointerWords: 5,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'handler',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'selectedPathUtf16',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('UInt16')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxEntries',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxMetadataBytes',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'timeoutMs',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final directoryStartFactory = _DirectoryStartFactory();
+
+final class DirectoryResultReader extends StructReader {
+  DirectoryResultReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = directoryResultSchema;
+
+  int get kind => getUint16Field(0);
+
+  int get entries => getUint32Field(4);
+
+  int get metadataBytes => getUint64Field(8);
+  BigInt get metadataBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get frame => getDataField(0);
+
+  bool get unknown => getBoolField(16);
+
+  int get executionFault => getUint16Field(16);
+
+  int get exitCode => getInt32Field(20);
+
+  int get hostCalls => getUint32Field(24);
+}
+
+final class DirectoryResultBuilder extends StructBuilder {
+  DirectoryResultBuilder(super.raw);
+
+  @override
+  DirectoryResultReader asReader() => DirectoryResultReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set entries(int v) {
+    setUint32Field(4, v);
+  }
+
+  set metadataBytes(int v) {
+    setUint64Field(8, v);
+  }
+
+  set metadataBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field metadataBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set frame(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set unknown(bool v) {
+    setBoolField(16, v);
+  }
+
+  set executionFault(int v) {
+    setUint16Field(16, v);
+  }
+
+  set exitCode(int v) {
+    setInt32Field(20, v);
+  }
+
+  set hostCalls(int v) {
+    setUint32Field(24, v);
+  }
+}
+
+final class _DirectoryResultFactory
+    extends StructFactory<DirectoryResultReader, DirectoryResultBuilder> {
+  @override
+  StructSchemaInfo get schema => directoryResultSchema;
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 1;
+  @override
+  DirectoryResultReader fromRawReader(RawStructReader r) =>
+      DirectoryResultReader(r);
+  @override
+  DirectoryResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => DirectoryResultReader(r, capabilities: capabilities);
+  @override
+  DirectoryResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      DirectoryResultBuilder(r);
+}
+
+const StructSchemaInfo directoryResultSchema = StructSchemaInfo(
+  id: 0x98386cf72e015a24,
+  displayName: 'host.capnp:DirectoryResult',
+  shortName: 'DirectoryResult',
+  dataWords: 4,
+  pointerWords: 1,
+  fields: [
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'entries',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'metadataBytes',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'frame',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'unknown',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 16,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'executionFault',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 8,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'exitCode',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Int32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'hostCalls',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final directoryResultFactory = _DirectoryResultFactory();
 
 final class MutationStartReader extends StructReader {
   MutationStartReader(super.raw, {super.capabilities});

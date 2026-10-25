@@ -1,0 +1,78 @@
+{
+  "status": "REJECTED_LATE_CREATE_NOT_REACHED_SETUP_CACHE_CONTAMINATION",
+  "utc": "2026-10-25T12:04:59.173284+00:00",
+  "tag": "ecee6d34757543929a44afa73d27b1cd",
+  "vm_id": "6ed45b94-041c-4ad7-a2b3-30f954fed66f",
+  "source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+  "case_clean": false,
+  "policy_clean": true,
+  "intended_profile": "P2_LATE_CREATE_OUTPUT_QUALIFICATION",
+  "late_create_accepted": false,
+  "late_create_reached": false,
+  "actual_stop": "setup",
+  "completed_steps": 3,
+  "reserved_failure_step": 4,
+  "original_journal_records": 14,
+  "actual_failure_marker": "MORROW_QUALIFICATION_SETUP_AFTER_OWNED_ACCOUNTS_V1",
+  "canonical_source_edits": 0,
+  "setup_overlay_matches_normal_source": true,
+  "setup_binary_contains_previous_fault_marker": true,
+  "compiler_reused_sandbox_library": true,
+  "shared_library_output_collision_observed": true,
+  "input_binding_review_insufficient_to_prove_executable_semantics": true,
+  "corrected_build_executed": false,
+  "automatic_replays": 0,
+  "original_owner_contacts": 0,
+  "original_case_exec_session": 98753,
+  "original_case_host_pid": 12624,
+  "original_case_session_retained": true,
+  "original_case_outcome": "UNKNOWN_RETAINED_NO_REPLAY",
+  "normal_completion_accepted": false,
+  "resource_cleanup_accepted": false,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "followup": "After explicit resume: isolate qualification variant target outputs or force verified recompilation of the changed crate, verify complete overlay diffs and reject unexpected markers; then new clean VM and new case. Never replay case080.",
+  "references": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-ecee6d34757543929a44afa73d27b1cd-case\\retained.json",
+      "bytes": 3985,
+      "sha256": "ae6612c975cd2ca5bac61dcbf3a82150c2c2b4b631d08373147be0079f4d25cb"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-080\\manifest.json",
+      "bytes": 2349,
+      "sha256": "b01efb1c9c1bf1c4650d8e79e8e68ae6073c59edb72c81e7bda1d4630b9235e8"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-080\\result.json",
+      "bytes": 202,
+      "sha256": "fd8506cad228fc6b7ac5fba9e7ec7efa7992c67602b7c02c43af969b0507f2a3"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-080\\04-journal.jsonl",
+      "bytes": 13043,
+      "sha256": "5ef4405254a80ebb1fcd49527e39d9eea5fbcda9cc02f8fbe4288547d513e6ca"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case080-build-input-inspection.json",
+      "bytes": 64215,
+      "sha256": "df4ec1a4fac13f14b88b91539868fcf52698075d898f9631a8c6fc6b9c52c2d0"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-032\\inputs\\S\\windows-sandbox-rs\\src\\setup_provisioning.rs",
+      "bytes": 138236,
+      "sha256": "2c74a994b09d3a69e043939f7f7161d4cb0652b503ceceefeb6f0d811692915c"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-034\\inputs\\S\\windows-sandbox-rs\\src\\setup_provisioning.rs",
+      "bytes": 138236,
+      "sha256": "2c74a994b09d3a69e043939f7f7161d4cb0652b503ceceefeb6f0d811692915c"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-034\\S\\codex-windows-sandbox-setup.exe",
+      "bytes": 37597696,
+      "sha256": "733136500b27981fafe93fe24c84a54b593865f1c7b7e89db41f585662eae140"
+    }
+  ]
+}

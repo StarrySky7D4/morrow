@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-25",
+  "state": "PAUSED_BY_USER",
+  "branch": "codex/local-continue-20261020",
+  "publication_parent": "650720269c8de658f9a1d8ae674a300e31892042",
+  "runtime_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+  "source_accepted": false,
+  "release_eligible": false,
+  "full_P2_accepted": false,
+  "full_P3_defined_handoff_accepted": true,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "registered_vms": 4,
+  "VM035": "Saved",
+  "latest_case": "case080",
+  "latest_case_target_reached": false,
+  "highlights": [
+    "case078 original47 and nine groups passed",
+    "case079 setup failure after actual account creation retained Unknown",
+    "P3 defined handoff13 groups passed",
+    "SDK055/057/077 scoped directory and approval paths passed"
+  ],
+  "latest_failure": "Case080 stopped at setup; S library marked fresh despite sharing the previous fault artifact path. Setup source lacked fault marker but output executable contained it.",
+  "next_after_resume": [
+    "Repair build variant isolation and verify executable content before any fresh VM run",
+    "Complete remaining P2 fault-family native evidence",
+    "Finish picker-time object identity, durable blob/upload, network approval and full Windows SDK gates"
+  ],
+  "cleanup": {
+    "retired_archives": 14,
+    "deleted_large_files": 41,
+    "C_free_gain_GiB": 402.76,
+    "D_free_gain_GiB": 272.05,
+    "new_virtual_machine_kept": true,
+    "deleted_large_data_recovery": false
+  },
+  "evidence_manifest": "../../docs/qualification/evidence/pause-20261025/manifest.json",
+  "hand_off": "../../docs/qualification/PAUSED_WINDOWS_20261025.md",
+  "publication_scope": "Source, tests and reports; paused, skip CI, no main/tag/release/deploy"
+}

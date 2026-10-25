@@ -1700,6 +1700,33 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsDependenciesNotice => '声明了依赖，需要在宿主配置。本页不会批准依赖。';
 
   @override
+  String pluginsDirectoryEntries(String count) {
+    return '已捕获条目：$count';
+  }
+
+  @override
+  String get pluginsDirectoryFormError => '请核对文件夹、插件、上限和任务有效时间。';
+
+  @override
+  String get pluginsDirectoryIntro =>
+      '仅向插件提供所选文件夹直属条目的名称和元数据，不读取文件内容或子文件夹内的内容。';
+
+  @override
+  String get pluginsDirectoryLimit => '条目上限（最多 1024）';
+
+  @override
+  String get pluginsDirectoryMetadataLimit => '元数据上限（字节，最多 1 MiB）';
+
+  @override
+  String get pluginsDirectorySelectHandler => '选择已批准的目录插件';
+
+  @override
+  String get pluginsDirectoryStart => '读取目录并运行插件';
+
+  @override
+  String get pluginsDirectoryTitle => '目录读取';
+
+  @override
   String get pluginsDisable => '停用';
 
   @override

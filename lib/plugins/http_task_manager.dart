@@ -9,6 +9,7 @@ import 'package:morrow_i18n/morrow_i18n.dart';
 import 'endpoint_control.dart';
 import 'io_task_control.dart';
 import 'file_task_session.dart';
+import 'directory_task_session.dart';
 import 'plugin_library.dart';
 import 'service_run_session.dart';
 import 'session_view_state.dart';
@@ -321,6 +322,7 @@ class HttpTaskManager extends StatefulWidget {
     this.onChanged,
     this.serviceSession,
     this.fileSession,
+    this.directorySession,
   });
   final WorkbenchIoTaskControl backend;
   final WorkbenchEndpointControl endpointBackend;
@@ -331,6 +333,7 @@ class HttpTaskManager extends StatefulWidget {
   final VoidCallback? onChanged;
   final ServiceRunSession? serviceSession;
   final FileTaskSession? fileSession;
+  final DirectoryTaskSession? directorySession;
   @override
   State<HttpTaskManager> createState() => _HttpTaskManagerState();
 }
@@ -396,7 +399,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     }
   }
 
-  bool get _fileOwnsTask => widget.fileSession?.attempt != null;
+  bool get _fileOwnsTask => widget.fileSession?.attempt != null || widget.directorySession?.attempt != null;
   bool get _otherOwnsTask => _fileOwnsTask ||
       widget.serviceSession?.service != null &&
       _equal(
@@ -481,6 +484,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     _restoreDraft();
     widget.serviceSession?.addListener(_serviceChanged);
     widget.fileSession?.addListener(_serviceChanged);
+    widget.directorySession?.addListener(_serviceChanged);
     _attach();
     unawaited(_loadEndpoints());
   }
@@ -495,6 +499,10 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     if (!identical(oldWidget.fileSession, widget.fileSession)) {
       oldWidget.fileSession?.removeListener(_serviceChanged);
       widget.fileSession?.addListener(_serviceChanged);
+    }
+    if (!identical(oldWidget.directorySession, widget.directorySession)) {
+      oldWidget.directorySession?.removeListener(_serviceChanged);
+      widget.directorySession?.addListener(_serviceChanged);
     }
     final changedBackend = !identical(oldWidget.backend, widget.backend);
     final directory = _fingerprint();
@@ -532,6 +540,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     _saveDraft(widget);
     widget.serviceSession?.removeListener(_serviceChanged);
     widget.fileSession?.removeListener(_serviceChanged);
+    widget.directorySession?.removeListener(_serviceChanged);
     _attachmentEpoch++;
     _endpointEpoch++;
     _timer?.cancel();

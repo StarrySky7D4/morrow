@@ -3346,6 +3346,54 @@ abstract class AppLocalizations {
   /// **'Dependencies must be configured in the host. This page does not approve them.'**
   String get pluginsDependenciesNotice;
 
+  /// No description provided for @pluginsDirectoryEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'Captured entries: {count}'**
+  String pluginsDirectoryEntries(String count);
+
+  /// No description provided for @pluginsDirectoryFormError.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the folder, plugin, limits and task lifetime.'**
+  String get pluginsDirectoryFormError;
+
+  /// No description provided for @pluginsDirectoryIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Share only names and metadata directly inside the selected folder. File contents and subfolders are not read.'**
+  String get pluginsDirectoryIntro;
+
+  /// No description provided for @pluginsDirectoryLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry limit (up to 1024)'**
+  String get pluginsDirectoryLimit;
+
+  /// No description provided for @pluginsDirectoryMetadataLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata limit (bytes, up to 1 MiB)'**
+  String get pluginsDirectoryMetadataLimit;
+
+  /// No description provided for @pluginsDirectorySelectHandler.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an approved folder plugin'**
+  String get pluginsDirectorySelectHandler;
+
+  /// No description provided for @pluginsDirectoryStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Read folder and run plugin'**
+  String get pluginsDirectoryStart;
+
+  /// No description provided for @pluginsDirectoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder listing'**
+  String get pluginsDirectoryTitle;
+
   /// No description provided for @pluginsDisable.
   ///
   /// In en, this message translates to:

@@ -1,0 +1,119 @@
+[
+  {
+    "id": "workspace_and_view_ownership",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "gui-workspace",
+      "gui-resume"
+    ],
+    "interpretation": "Real library switching and independent client recovery; original owners and capture scopes are not revived."
+  },
+  {
+    "id": "blank_title_five_raw_values_selection_IME_assets",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "gui-history",
+      "p3-manual-input-windows-008",
+      "p3-first-keypad-windows-010"
+    ],
+    "interpretation": "Formal UI, original durable bytes, real IME/paste and first physical Num Lock off navigation."
+  },
+  {
+    "id": "fixed_import_operation_and_durable_pins",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "gui-import-cleanup",
+      "gui-reselection"
+    ],
+    "interpretation": "Original selected paths removed; recovered attachments come from durable pins; lost cleanup receipt inspects original operation."
+  },
+  {
+    "id": "S1_lost_reply_with_live_S2",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "gui-faults"
+    ],
+    "interpretation": "One actual S1 business commit; original reply withheld; live raw S2 and original parent preserved."
+  },
+  {
+    "id": "S1_lost_reply_then_entire_client_loss",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "p3-v1-receipt-restart-069"
+    ],
+    "interpretation": "Fresh product recovery UI discovers first Create proof from durable journal before reading prior diagnostic evidence; no replay or zero-source V2 slot."
+  },
+  {
+    "id": "immutable_child_and_latest_S2_before_parent_retirement",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "gui-faults",
+      "gui-retirement"
+    ],
+    "interpretation": "Actual child write reply loss, parent retirement failure and dual-active independent restart."
+  },
+  {
+    "id": "competing_successor_and_late_parent_save",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "p3-resume-conflict-windows-004",
+      "gui-faults"
+    ],
+    "interpretation": "Overlapping original calls retain one flight; a distinct actually observed parent revision is refused before dispatch; late parent saves rejected."
+  },
+  {
+    "id": "locale_font_and_workspace_changes",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "gui-ui-context",
+      "gui-workspace",
+      "pixel-context-windows-001"
+    ],
+    "interpretation": "Original raw controllers preserved through context changes; retained native pixels and reopen views checked."
+  },
+  {
+    "id": "capture_identity_failure_barrier",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "p3-formal-capture-barrier-windows-001",
+      "p3-current-host-067"
+    ],
+    "interpretation": "Controlled loss of observation of an actual original capture blocks full draft/close; native host also rejects foreign or omitted scope/count. This does not claim destructive OS handle-loss injection."
+  },
+  {
+    "id": "disk_full_and_capacity_exhaustion",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "gui-diskfull",
+      "gui-capacity",
+      "p3-combined-windows-004"
+    ],
+    "interpretation": "Actual full private volume, formal 16/256 boundaries, retained 4096/4096/64 MiB host capacity runs; no removal of limits."
+  },
+  {
+    "id": "released_attachment_reselection",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "gui-reselection"
+    ],
+    "interpretation": "Old generation and old view rejected; a new import is pinned and survives restart after selected file removal."
+  },
+  {
+    "id": "explicit_history_export_retire_and_maintenance",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "gui-history",
+      "gui-committed-history",
+      "gui-legacy-maintenance"
+    ],
+    "interpretation": "Formal explicit history/export/retirement/maintenance, original operation reservations and finite capacity preserved."
+  },
+  {
+    "id": "original_application_close",
+    "status": "COVERED_IN_DEFINED_WINDOWS_SCOPE",
+    "evidence": [
+      "p3-actual-main-close-windows-001"
+    ],
+    "interpretation": "Canonical main_rust dirty draft close and independent raw-byte recovery; current source of the original close chain unchanged."
+  }
+]

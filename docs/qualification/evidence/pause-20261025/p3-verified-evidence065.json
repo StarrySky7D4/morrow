@@ -1,0 +1,1597 @@
+[
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\result.json",
+    "bytes": 26196,
+    "sha256": "1e7b61536ce3c3305d2764677ee4653857b672f28df81dfd59c7a119918c33d3"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft.stdout",
+    "bytes": 3396,
+    "sha256": "292ed0129397cf4367bf36aa61f4416be4565d540463f26e126cf0e0b98bd78f"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_handoff.stdout",
+    "bytes": 1225,
+    "sha256": "d65b4b1600c0f3b3e744e58002a5c06e25d1f78445903ba655f5c4191bee674e"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_handoff.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_handoff_boundaries.stdout",
+    "bytes": 343,
+    "sha256": "04be1d95dbdc691b3e4213629b44cfdaf79c2c11e1f9c904494f090a96a293ef"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_handoff_boundaries.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_handoff_proposal.stdout",
+    "bytes": 780,
+    "sha256": "5d2bad6ff9629ee06e55dafb30bcbc334d10195f12bb7dd1e3b49d32772323e0"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_handoff_proposal.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_handoff_protocol.stdout",
+    "bytes": 272,
+    "sha256": "68d64cd8c91c520e67bc324683b8539c0bbae932559975a02d1b43dcfb3fd808"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_handoff_protocol.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_handoff_proposal_protocol.stdout",
+    "bytes": 414,
+    "sha256": "d4e798d8b3e66e37064553edc5693695d45a100ae579bd1397c2795716094661"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_handoff_proposal_protocol.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_protocol.stdout",
+    "bytes": 716,
+    "sha256": "5b1b105507c035eb81f84144ffb6f332fb31c53e6be27b336a17af79ad9ebbbb"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_protocol.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_import_protocol.stdout",
+    "bytes": 714,
+    "sha256": "e360dc40e7baf31cbc8599cd83a0694314cd418fa8ed4d572202f1bbe175bc6d"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_import_protocol.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_import_decision.stdout",
+    "bytes": 614,
+    "sha256": "ab40a2b4be2d45c4eca5c031d6cd3a36fe16198ebdfb0ab9c6672d418ade873e"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_import_decision.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_staging.stdout",
+    "bytes": 775,
+    "sha256": "d5a207a794edb14078bcbf09e858e0e48d0d3b6a2b0bfa569a9f38ee2a372914"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_staging.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_staging_failures.stdout",
+    "bytes": 524,
+    "sha256": "a88152cd09cb3c0a5c71729918d6b9223802a3b41c10dc7a4efbbe32f0fb20e8"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_staging_failures.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_staging_capacity.stdout",
+    "bytes": 276,
+    "sha256": "4b643178208644c9e18200530342170bb624f3b050c180de1031e6f5cea8eca1"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-editor_draft_staging_capacity.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-morrow_workbench_host.stdout",
+    "bytes": 1899,
+    "sha256": "77b15e1eff5d443adb643f5b5bd38ec5f01abbd3c2cb3c5806c110fdf75a1a71"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\host-morrow_workbench_host.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-committed-history.stdout",
+    "bytes": 240,
+    "sha256": "0051884aca51cdb3107156469e825323f62221757cb428a87e3f14510fb61e4a"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-committed-history.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-committed-history\\result.json",
+    "bytes": 8223,
+    "sha256": "aa34180f9ed1af447f3ced326c8e41443d15a631ac2c691137df4d9390017272"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-history.stdout",
+    "bytes": 478,
+    "sha256": "ce6cda4e02ded37e6a1c3bd349da39ca00a750e35dafd3023d7d88515d0b51b1"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-history.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-history\\result.json",
+    "bytes": 12456,
+    "sha256": "2cc2403dceb0e841738a0ac17f4e317c4e3cbf97533da8a3b831913d0c03281c"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-resume.stdout",
+    "bytes": 649,
+    "sha256": "8131305b13d33c81b85b83d2e87ae0ab0c9093a2609d61943c651edab20341b2"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-resume.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-resume\\result.json",
+    "bytes": 18641,
+    "sha256": "b710d24e2d07821acf9d6a28d6153a78dab96568bda5f599311d662e44d71fff"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-faults.stdout",
+    "bytes": 396,
+    "sha256": "09cc50373b23451ad7fc4eebb5cb2bef7d2edad660f4e0028b6f5c4bb423b6ec"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-faults.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-faults\\result.json",
+    "bytes": 16719,
+    "sha256": "f3c35c7179001cf8ba83e63d8ebf694f35d3e064a18efeba3ba451b9ff6c3c54"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-retirement.stdout",
+    "bytes": 235,
+    "sha256": "70a81f336b40d44a70fb3897e5eafca8da96b9eb3258223b5c34e1bce055337c"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-retirement.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-retirement\\result.json",
+    "bytes": 7589,
+    "sha256": "ebece63002198a096f26eee55b7acbe5d48f49574dd98cecad7e412a9294a883"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-diskfull.stdout",
+    "bytes": 155,
+    "sha256": "794802e0ce217f38b8e34aefdc15aea8b16b75a6a66f659542d700a441fc7c77"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-diskfull.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-diskfull\\result.json",
+    "bytes": 6168,
+    "sha256": "e1d83d06b49332abc5bacd5bb5686f1e5ca81a44469d82cb4eb1d33bc7d8166a"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-reselection.stdout",
+    "bytes": 159,
+    "sha256": "895b0b979c0a913d96aa18d350116001b37f99ed2f9c2da1a5a5140bc3ceb4c0"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-reselection.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-reselection\\result.json",
+    "bytes": 6295,
+    "sha256": "15f4720f0078e66d72610addc0fcc1587fd63069718229cae5f6629aac3e1573"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-import-cleanup.stdout",
+    "bytes": 79,
+    "sha256": "933f93ca502eb19b7242f5f8bba1d0d77c2f51c8609248649a220db4eeb62270"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-import-cleanup.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-import-cleanup\\result.json",
+    "bytes": 4319,
+    "sha256": "044873a3d0f03703388202afd481ff5020d24db3bc760ec2ebabad5d7d2502b7"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-ui-context.stdout",
+    "bytes": 80,
+    "sha256": "a74df85e9356792dde268fd928fc113b0e96465c90eb56c0641864be72a4cd60"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-ui-context.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-ui-context\\result.json",
+    "bytes": 4507,
+    "sha256": "fead4fe92147d770da0826ac853e33f7de484f191f0630bd3286d8adfa524334"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-workspace.stdout",
+    "bytes": 82,
+    "sha256": "c9d043fdb8b77eb8f66087574d8db58e45f1f9f9e58f240c4068180f385856c7"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-workspace.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-workspace\\result.json",
+    "bytes": 3267,
+    "sha256": "90650442ef7cd0cbb5dc5af280f21d92eb5a31fdc7f8b1cbfbbe978ee03b70a0"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-capacity.stdout",
+    "bytes": 160,
+    "sha256": "6c4f59d28400678cf810cf21413def98d2dac2a497d9d40ef2c7421b54123928"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-capacity.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-capacity\\result.json",
+    "bytes": 9799,
+    "sha256": "cd21a794f2da12728097e4a01191a28d66d7d9ae5b726210ff83a5001e35c8f9"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-legacy-maintenance.stdout",
+    "bytes": 375,
+    "sha256": "7a7fc6e3be41fb7bedb35bd968b932cdfca929f4fdf0e5a6e7f15af60569d144"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\gui-legacy-maintenance.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-legacy-maintenance-windows-004\\result.json",
+    "bytes": 4547,
+    "sha256": "436dccf2eb7ff2b7047cd62e45d173b6f1d4d87c05efd8585636eb7bdb5777c6"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\capacity-actual_4096_main_archives_preserve_overflow_and_all_history_on_restart.stdout",
+    "bytes": 217,
+    "sha256": "89dfb1d1eb02ae433fa1e148c3e4b3c734bb8a21478148c897656e2f4a122c4f"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\capacity-actual_4096_main_archives_preserve_overflow_and_all_history_on_restart.stderr",
+    "bytes": 1694,
+    "sha256": "3510c44561d6e29e80c892b46440a72887261f23635254dd57530059246d2e82"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\capacity-actual_4096_archived_auxiliary_limit_preserves_rejected_history_on_restart.stdout",
+    "bytes": 221,
+    "sha256": "978a0a36b89e5926241fc0c02b982bc47bbf74b41e4b4b4e4c23459747e5f9c5"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\capacity-actual_4096_archived_auxiliary_limit_preserves_rejected_history_on_restart.stderr",
+    "bytes": 791,
+    "sha256": "a7f11dcce61381c2f0e07c8a5db8a538f26db0bc7aed998e8341ff4e45c24616"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\capacity-actual_64_mib_archive_budget_refuses_without_changing_originals.stdout",
+    "bytes": 208,
+    "sha256": "ce0d30bd4321c8553739934b2088fc131bad4df250adb81a51a00281537e21ed"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-combined-windows-004\\capacity-actual_64_mib_archive_budget_refuses_without_changing_originals.stderr",
+    "bytes": 424,
+    "sha256": "c751b51d8a45be1a15f62ed2ebe86fc76dac54d1684d78bb46cbdd914e82bc58"
+  },
+  {
+    "path": "C:\\ms1020\\build\\workbench-host\\bundle\\workbench.morrowplugin",
+    "bytes": 921431,
+    "sha256": "515a1b7a2a8dbc86391e296380d4d39ede5c0db07a68af6854bf9f0bbaea5ffa"
+  },
+  {
+    "path": "C:\\ms1020\\build\\mid-autumn-plugin\\bundle\\morrow-mid-autumn-1.0.3.morrowplugin",
+    "bytes": 701650,
+    "sha256": "c054cc96edc273a05be8a96c67b1d78fb07829ab3df9e230e43a59a3428bddcd"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-manual-input-windows-008\\result.json",
+    "bytes": 11085,
+    "sha256": "bc11f75a0841607e8d65834da57703447215615bb8f92343feb50311933241e6"
+  },
+  {
+    "path": "D:\\build_cache\\mr49q\\test\\editor_manual_input_app_007.dart",
+    "bytes": 16123,
+    "sha256": "66551cb7b829f711253eb70a72cc79abf5c94a13aa9e7907fdd97c297584c613"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-first-keypad-windows-010\\result.json",
+    "bytes": 3617,
+    "sha256": "d380bdd8c6989cc4f48f1def963d33eef66bdff930c6b79abda7542562bdca0e"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\pixel-context-windows-001\\result.json",
+    "bytes": 6569,
+    "sha256": "d3344163399b3920a90c9790e1607ed01bb3071d164e986d8c96de1450401ba7"
+  },
+  {
+    "path": "D:\\build_cache\\mr49q\\test\\editor_pixel_context_app_001.dart",
+    "bytes": 10618,
+    "sha256": "091e97c68e3b2446dce130064ea2e36139294a2cf6a7564d30364e9afd3f6ffc"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-actual-main-close-windows-001\\result.json",
+    "bytes": 1980,
+    "sha256": "93e5f3646d4519daf5733ba81699cad73ecea7ede91486af494d74085e8900cc"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-actual-main-close-windows-001\\content\\edit-before-close.json",
+    "bytes": 1709,
+    "sha256": "070ae6e8ce0912c160d23dec2fbb7362b5f298777ec7c98eb9b2038753a708ae"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-actual-main-close-windows-001\\edit-closed-original-owner.json",
+    "bytes": 1197,
+    "sha256": "1e9a21c5a1074114da4a5aa0bc53703bdc77d4bdce1bc222c178e4530ee85409"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-actual-main-close-windows-001\\content\\reopen-before-close.json",
+    "bytes": 1721,
+    "sha256": "b06fc4d1ee9905a418144782072776c388d74e7cc7298b1ef456d9434cddd984"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-actual-main-close-windows-001\\reopen-closed-original-owner.json",
+    "bytes": 1197,
+    "sha256": "9ad8455a54c189e456c8f97200102b26356308c124e7aafb85460a8b0121c1d5"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-formal-capture-barrier-windows-001\\result.json",
+    "bytes": 1234750,
+    "sha256": "e08b0fb82e4cd2b939371212ea288b6dec7b717110e8617d4c1f75d6bb9289c6"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-resume-conflict-windows-004\\result.json",
+    "bytes": 5488,
+    "sha256": "6fcf540c1e9f5ac4fe2f0c269020bc1e9c22f0f637e20c1517c2bee6e5c2ac22"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\result.json",
+    "bytes": 82663,
+    "sha256": "9346fb98f58ad56f019887873e88091413e963cd9854f0d39f89bb49fe75a646"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-000.stdout",
+    "bytes": 217,
+    "sha256": "752c61a2b5e9421a6da9b876261ac3fe563b1a31a7779a802d6946eac9d6dd92"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-000.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-001.stdout",
+    "bytes": 221,
+    "sha256": "d1583bfe22fbc11c8f709127af4bb817a2e7f4005f68e8f8ff5ccfd3d79b4ace"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-001.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-002.stdout",
+    "bytes": 227,
+    "sha256": "fc0933e83d01a38258755de0a08e916d7fee361dee504cce40b4ec0dde1eddaf"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-002.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-003.stdout",
+    "bytes": 186,
+    "sha256": "8fcb5649d338b35f57eb06bfeab1055950872c378e162abf5aaef42060d7fd5d"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-003.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-004.stdout",
+    "bytes": 264,
+    "sha256": "dfdc2134001fcf4589f7632a0564e6833cf00d89ca579cc70e62fc356b527056"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-004.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-005.stdout",
+    "bytes": 247,
+    "sha256": "d81895ab6393206fecd80bf718fae1c6e7f22587e3438ff78312c873589453f4"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-005.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-006.stdout",
+    "bytes": 250,
+    "sha256": "1c2aeddd65a36966c838a2cf3f3e8dbf4953eeed2c39c8b4efb14f71a57e6a61"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-006.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-007.stdout",
+    "bytes": 215,
+    "sha256": "ea10e75849b9867e38fd0d8257ddb290d5472975b5db65241369f5be60cea4e1"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-007.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-008.stdout",
+    "bytes": 197,
+    "sha256": "d3c57bcb11f5ccdf34c021f455d4d1f7450a7b97a3313c2b36df26ddccba8901"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-008.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-009.stdout",
+    "bytes": 199,
+    "sha256": "3e0a61c20ffd4bbd628cef7f2bd7980984bc4223e274469b5f00048389c9ef66"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-009.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-010.stdout",
+    "bytes": 212,
+    "sha256": "4e2b96bd8f0b0933ac4667c338787dfded4ea8ee423f62f53900409929f3f3df"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-010.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-011.stdout",
+    "bytes": 229,
+    "sha256": "863efa2970b3f6ada978ddfa1d00ad118f309c348723a3fa9dc8aaf85567a204"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-011.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-012.stdout",
+    "bytes": 208,
+    "sha256": "5ad7bc29610bd48472b013e8fb71ac0e704d8fc3f9969ef9f4c42ae349974397"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-012.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-013.stdout",
+    "bytes": 210,
+    "sha256": "993412ff1cc43f82a34a2a738ff73100bfb4e643cbb94e9f89b7fde3540081e1"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-013.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-014.stdout",
+    "bytes": 231,
+    "sha256": "4079bed47d9e200f52eaaaacc132b68903e299e585ba76963b32e20e7cd4e574"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-014.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-015.stdout",
+    "bytes": 204,
+    "sha256": "c1c8a65d8c948201a6c4647459f975e259c66383d422dde114c716e177ccd413"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-015.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-016.stdout",
+    "bytes": 203,
+    "sha256": "db8985d6a549d6c4ec70c8028ca073dc3a2e081604e9bad5bd54ede01b5895d6"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-016.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-017.stdout",
+    "bytes": 204,
+    "sha256": "5f582037a07e6504b33f3efc018a488f700477128d0ad2064757a14717d892c4"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-017.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-018.stdout",
+    "bytes": 182,
+    "sha256": "c4ecaa83e5e286d0c1966f17a32c14dcb4c83041585bffdeedd9926d89b68eb7"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-018.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-019.stdout",
+    "bytes": 200,
+    "sha256": "0c21cae827734327a325db2cf695cc02a085f623e3cf145d499400c2721f780d"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-019.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-020.stdout",
+    "bytes": 193,
+    "sha256": "ce4d766fa3ff426f31c47b6e11b2fe3a1791002bb94a505ceb9f258241bdf101"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-020.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-021.stdout",
+    "bytes": 152,
+    "sha256": "c25a817158965e03d894c1e7d7c5716e695d10137a065b2944cd132f7bb24cf7"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-021.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-022.stdout",
+    "bytes": 200,
+    "sha256": "96546b5be3c67ab3855feb5ff8a2d006245289966ac835831e357a978bcd70e3"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-022.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-023.stdout",
+    "bytes": 198,
+    "sha256": "77b4b8aa3392eeff424a721b4343fb35eb2f15188699e34ec194b8dc32b763ef"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-023.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-024.stdout",
+    "bytes": 191,
+    "sha256": "331aae496ee6651043b2cfd92c3147174ffc8cb48e98fcccc27d021cca6c3508"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-024.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-025.stdout",
+    "bytes": 202,
+    "sha256": "78b001d128ecff526f8d9052d9d8b21a9d8e6e25c5cb5a4540e5012e02737e8b"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-025.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-026.stdout",
+    "bytes": 225,
+    "sha256": "92fb66e97dd9a3c7c4da108e6375dbe32fc03c7906c52a009fc30bc6460f48d1"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-026.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-027.stdout",
+    "bytes": 211,
+    "sha256": "40b8256c1f58892571da1e73aaf10496d873b57fab53ae6b0400f101aa5803c8"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-027.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-028.stdout",
+    "bytes": 207,
+    "sha256": "46e9bb247321bfbbed3b5968e46432e307039bc0b227ab4df2f889e8637cf7b4"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-028.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-029.stdout",
+    "bytes": 216,
+    "sha256": "c05fac54d67e7cda18330156d34e57c9f6fbed12ae162e5b281f562f2f70b4b4"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-029.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-030.stdout",
+    "bytes": 190,
+    "sha256": "b70371b8abbd88b44ac6e34802357acc7e7ecfe3d3203c535a88b67731056f76"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-030.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-031.stdout",
+    "bytes": 195,
+    "sha256": "36396c4fb141ff0585a8aa85d0bc190a1618eaad436e5b350c900dec47690f25"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-031.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-032.stdout",
+    "bytes": 197,
+    "sha256": "36f1d8a70f2dbea2a9d8fd093b44507e9b61da9e019fd544fb911a83a5de8451"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-032.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-033.stdout",
+    "bytes": 212,
+    "sha256": "b89d52cf071b03819cf07222a020525d1696e70a725367b980feba357ec90ad7"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-033.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-034.stdout",
+    "bytes": 195,
+    "sha256": "31d2b7084878fdc108eaf2f9073f3b03a00e78bd08749c9db752fc56e9fad1ac"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-034.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-035.stdout",
+    "bytes": 198,
+    "sha256": "88f78965a182de107445a17698a0450ba656d69de20014aa37f078f6a6d6dba5"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-035.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-036.stdout",
+    "bytes": 202,
+    "sha256": "6492f7b43184f797b6629f71cfca908e8620a573b9a3c471c5cba2be9981fca0"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-036.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-037.stdout",
+    "bytes": 203,
+    "sha256": "2a30d729c8bc833a62a96c169adc894f8cd5cba74c222216502ed86ab294504b"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-037.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-038.stdout",
+    "bytes": 183,
+    "sha256": "0ba2b15f185746742f015da132818ec3136cb3ff4018e9bad2c9756021b42e2a"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-038.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-039.stdout",
+    "bytes": 187,
+    "sha256": "5f16c983b57fd597d3f572932ac7920a4643610e781414463aac60ea24b5df4f"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-039.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-040.stdout",
+    "bytes": 202,
+    "sha256": "4cd3bf448bd804a370d2d833304410f482f04b101056b89595f8fb46602c5d12"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-040.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-041.stdout",
+    "bytes": 204,
+    "sha256": "4d104cb5dc8f6ff0159afb6f4bdc1104a9cbb11e47d8763c81a92e6b58616f35"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-041.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-042.stdout",
+    "bytes": 220,
+    "sha256": "742c3f94e7452167f278f5bc1615699fa449ae7ab0514908a944ba6f63f2559c"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-042.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-043.stdout",
+    "bytes": 208,
+    "sha256": "4bc2f812aa121b6e6b6af1361032b26108449430a291ada705395e143a1ee0a6"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-043.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-044.stdout",
+    "bytes": 215,
+    "sha256": "af7db7d005ccb6a29c2af2ad77220b825e06357c0d5092d7425766d5887fddbb"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-044.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-045.stdout",
+    "bytes": 215,
+    "sha256": "d8f01c909064ea3a073762110620f088aa3b1f881f2de518a1c7f00d1eac15d1"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-045.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-046.stdout",
+    "bytes": 216,
+    "sha256": "5099395d598f68cd3cc93c2517964123a63dd7f095609a6d316b3be73ffbc492"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-046.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-047.stdout",
+    "bytes": 209,
+    "sha256": "082b4679888ce3079ca7f2373b3b1848da31a0eb5434ea9d1f74eaecd097fa14"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-047.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-048.stdout",
+    "bytes": 203,
+    "sha256": "4af57b0827e994d2f2a2f5d19851ddc27e40ac8229eec0bd30de2bcc60ff5b3a"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-048.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-049.stdout",
+    "bytes": 208,
+    "sha256": "4d93cb997e319c22e846b0d201b3305f2f146bca96c40cedb1e60db3fe355e31"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-049.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-050.stdout",
+    "bytes": 206,
+    "sha256": "c389680a1d1d63f340ab02f7ac3ddc072539fcfdcc2b19c6f1dd158a6623050b"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-050.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-051.stdout",
+    "bytes": 201,
+    "sha256": "2628fad0b76b1b3211b72435ce4c9b04e42307af543bbd4d92bb1137ffdb2fe4"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-051.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-052.stdout",
+    "bytes": 201,
+    "sha256": "660b9dc4f7ad7ec0d7a7d1cf505db5a160f887e66aec8b59798ac057828b6276"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-052.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-053.stdout",
+    "bytes": 200,
+    "sha256": "39ea714dd3b02ffcb4cf132a01bf11093de8a7bea211bcc7225fe4a2475ab6b1"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-053.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-054.stdout",
+    "bytes": 201,
+    "sha256": "9cf353689abe0178526b5bf2797f43766652179073b075c61364abb8d1588883"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-054.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-055.stdout",
+    "bytes": 205,
+    "sha256": "869011850003cd75161d33e44d5bf9b3280b9523d8194ef4931d3648839ac394"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-055.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-056.stdout",
+    "bytes": 189,
+    "sha256": "1f9def44b5c3779ce545cd847ea1685de9eb228ca7b841785e5ec88cbeebf2cf"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-056.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-057.stdout",
+    "bytes": 194,
+    "sha256": "8c0faafbaac472b89e108b0b3ce8065fd932e727e2882f07925b1f3c41cde411"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-057.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-058.stdout",
+    "bytes": 181,
+    "sha256": "6c77eaf29e6cd4c06194aec99d0bb401a55a7f82ee03580482e5c5b92fb4c4f9"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-058.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-059.stdout",
+    "bytes": 190,
+    "sha256": "390910d352ef3d9f5de76423a373dbb73463c591049fd9779dfdf44379c5ad48"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-059.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-060.stdout",
+    "bytes": 195,
+    "sha256": "c97fc8c014387e4b0b92fb4384cd84dbde8667275827fc7665717c500ff4855e"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-060.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-061.stdout",
+    "bytes": 208,
+    "sha256": "2aedd6b1b3bd05c647bcd5fcfa8f4ba317a156549d01c5c45a3920295ed6bdb8"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-061.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-062.stdout",
+    "bytes": 184,
+    "sha256": "dfa2591b47ef9146f6d36677c8dfe615e915db8a200c42319931c03579b2ddcb"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-062.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-063.stdout",
+    "bytes": 184,
+    "sha256": "46edc91f5b03bdde729563e370aee3b340cd23dc73192111d5b1eec78b691fa4"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-063.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-064.stdout",
+    "bytes": 198,
+    "sha256": "bba4227d32e1125b98412440bc3effb7c99c84d91f82334fa869a6e982a64dc5"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-064.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-065.stdout",
+    "bytes": 195,
+    "sha256": "48929dc0149b5621ead5c6785367ab8d4307cca91c0fb111a5a0ff210fb01744"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-065.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-066.stdout",
+    "bytes": 202,
+    "sha256": "336f1a792a8444d628d2d1438c144ebd4d12cc811541bb6efde9ef06b3ab2876"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-066.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-067.stdout",
+    "bytes": 196,
+    "sha256": "88bccfe291a2aac58f2a70ab5352f4a0df4c6ac0597611a6946bf2beaa62a3df"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-067.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-068.stdout",
+    "bytes": 191,
+    "sha256": "b62fd386b916b1f7ea536af9aed59f4197957ef4c98c87b4e720292eee8db9ac"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-068.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-069.stdout",
+    "bytes": 188,
+    "sha256": "31da1c923b6340851836102852c7eb9a2c065e3552074d5c2028d2d3eb66c4d9"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-069.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-070.stdout",
+    "bytes": 198,
+    "sha256": "f1c126da862b95e1bc7805bd1976aa8cf66e537371d5edc51576ee8bae2110f7"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-070.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-071.stdout",
+    "bytes": 197,
+    "sha256": "7c4f07e978418cdec742e953acadafe1af9ebbaeca0df0aae7e0f71fde5b0651"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-071.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-072.stdout",
+    "bytes": 196,
+    "sha256": "57aec7570b5893efcbe27343594a7630e4fe94f7380253f3707d373ad99da7cb"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-072.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-073.stdout",
+    "bytes": 200,
+    "sha256": "3bf008ef6a2bbf534e3975ce58af3d58dfd6617ec2d60894dcde6be4a7da1a7a"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-073.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-074.stdout",
+    "bytes": 183,
+    "sha256": "0f039da17e3e6cfb5f19265f41799c5ebf1d79fb6603ed1bb16089e04ee6f5c3"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-074.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-075.stdout",
+    "bytes": 190,
+    "sha256": "ead5c7f7506db18f0bb684b766aa6c0ce2158816dc8c9832e9114f7e55e4f244"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-075.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-076.stdout",
+    "bytes": 200,
+    "sha256": "3069d5075c5d5aa821bb394c5294922f92d362c00f273b67b4f64159384c44ec"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-076.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-077.stdout",
+    "bytes": 183,
+    "sha256": "40e6d4c43dd937c132725128fe3a2de8581ce3538da9da94d87e582e04e80585"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-077.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-078.stdout",
+    "bytes": 176,
+    "sha256": "543db7f3c50f485c350df9e55a4cc49e59123083a9a8ee837a4e286d1829af77"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-078.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-079.stdout",
+    "bytes": 201,
+    "sha256": "84bb320fed2afbe620541487be4d1ad0b2e77fa0c65b9f94a037466572dc772a"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-079.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-080.stdout",
+    "bytes": 209,
+    "sha256": "a4c791095de94251f044fa19e85dddd0ce86ab49b85de523885448a0d0d64712"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-080.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-081.stdout",
+    "bytes": 186,
+    "sha256": "fe7e937bb3b04eae2ce154b271ef7fbe06ef86dc9215e9fd2da92ff22d234525"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-081.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-082.stdout",
+    "bytes": 202,
+    "sha256": "eb9fb3d7f838b9f661b0fe88b102964b39af55a5642bb459127c1842ea41499f"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-082.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-083.stdout",
+    "bytes": 191,
+    "sha256": "31ea58373c8905a52aef8c7886e4a07db58d282d85592746bdb29289de50539c"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-083.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-084.stdout",
+    "bytes": 199,
+    "sha256": "e12d852bd08fe632d80e94b153c2cf2728635828a3bc5b94176cca67b4220273"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-084.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-085.stdout",
+    "bytes": 199,
+    "sha256": "2c68d41f343d3c5ad9020afba897dacd72defd9461ad1bb7a2a02fd70f1cd8dc"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-085.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-086.stdout",
+    "bytes": 192,
+    "sha256": "183514dee3f5c67bfaa79e386a3786b82a03ad08e74414047811076e95288730"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-086.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-087.stdout",
+    "bytes": 203,
+    "sha256": "62fb59f6d67a25358d548b089590f515e1c41f8898b2d126eb7874e0523dabd0"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-087.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-088.stdout",
+    "bytes": 196,
+    "sha256": "a8e52fd3ec05a93af4ac61bb8c1640f6dd30667b114dfca68c9be73c1cb3fa5f"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-088.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-089.stdout",
+    "bytes": 196,
+    "sha256": "2b52c6ee6be5f192d6f366cf5c33ca1b3e5e653e0b91e72e7af39cb99234664d"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-089.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-090.stdout",
+    "bytes": 199,
+    "sha256": "b32ace4cccd99b64a34e674b4f4238ddc156f87721d8ed017f827e89a12dd895"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-090.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-091.stdout",
+    "bytes": 198,
+    "sha256": "d6d76095e55ca37d66a3b73279e121be9e5087a8d8bd6fe9f54a3d2b2281e6c6"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-091.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-092.stdout",
+    "bytes": 201,
+    "sha256": "077fbc83ce61e269be2a7a2b8b513019250db9aaa4728acd367c7d58f3889e9d"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-092.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-093.stdout",
+    "bytes": 201,
+    "sha256": "6be265ad9c8612b17650f2c2857febf21db26be6ee5aca283e1fe86095eba641"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-093.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-094.stdout",
+    "bytes": 188,
+    "sha256": "9b6b22e76b0eadd9d24c6aaae984a1e0dffcaa96fdfa546e6a4bb3a4295d8fa3"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-094.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-095.stdout",
+    "bytes": 194,
+    "sha256": "93f02f9e164bd26ef1d2b69fd200c51fee67f5dc5b89ca3955247bbec65c0f78"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-095.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-096.stdout",
+    "bytes": 196,
+    "sha256": "a5354b9d46316a522f3ef7953e261b2615db19166c9c5ca870e089b64c7f0cd0"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-096.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-097.stdout",
+    "bytes": 196,
+    "sha256": "cde2a562f3fda4fd3236a43c044d317fc5992867d74b97d663a684626795a54b"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-097.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-098.stdout",
+    "bytes": 198,
+    "sha256": "396c2ad924a07af37867d775b19f97e0b0384f7c74e918ec62d58b3783070d4f"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-098.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-099.stdout",
+    "bytes": 195,
+    "sha256": "753c3502d011772c1044997445ebb28ce5f5f3c6105deebdaa36fc1b8bd84919"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-099.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-100.stdout",
+    "bytes": 188,
+    "sha256": "357d37a3af95f7e7e919c43caabc91cd53c672d84d0ccc81b48b6334bb203588"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-100.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-101.stdout",
+    "bytes": 196,
+    "sha256": "3eba53e306f3bf80fe1056ca6bbb2bf08297098d6cca4107fa9949e9c784b20a"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-101.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-102.stdout",
+    "bytes": 195,
+    "sha256": "46965352c540dae2da9051d67f8720764681ab8d879f07bd117360a4ba923ffe"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-102.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-103.stdout",
+    "bytes": 195,
+    "sha256": "c16e0eac3cdce33a6bb27bff51d9f0ddf6f2e5f8f1c63950c8b0afc7ea2f2759"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-103.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-104.stdout",
+    "bytes": 199,
+    "sha256": "18ee80ebfc77573c04884383956ebad9f48606fca6b6f9cf101c023f5309676b"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-104.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-105.stdout",
+    "bytes": 208,
+    "sha256": "660489df3dd2640b16e9a7296aba1ca912c8c765aeba235057e17f2de593e8ef"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-105.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-106.stdout",
+    "bytes": 182,
+    "sha256": "143d850996870b43cad2460a0b36a6b21b0de05ac062ea77d02171fc9aaae005"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-106.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-107.stdout",
+    "bytes": 198,
+    "sha256": "cc5345c6db6721e9c48f4371f04e4a141cdac5c274561b366ce87002fae94651"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-107.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-108.stdout",
+    "bytes": 194,
+    "sha256": "50ae465edee3275bed62a4a8dc09b67bd53e46842486524aeb7904a5768e509f"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-108.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-109.stdout",
+    "bytes": 191,
+    "sha256": "a8ceed6e201d748f60c07aa7c28e63e084c377d9941e50d41175335be73a6418"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-109.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-110.stdout",
+    "bytes": 203,
+    "sha256": "a89fd86da9fbcfecb60672e5dce4972b44f8c1bcbf746573507ab8edcc83e298"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-110.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-111.stdout",
+    "bytes": 185,
+    "sha256": "8f1a256612c764317d93334a987876c18742a4e183b3697ad11cb850e7a60e6c"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-111.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-112.stdout",
+    "bytes": 188,
+    "sha256": "2de00868e419783ad8b2311b9a6004d3df4fdba1ee34e04d11fa772ca1bf935f"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-112.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-113.stdout",
+    "bytes": 199,
+    "sha256": "b52fb4b52ec12f0bbe5469c2fa2f7bc4d6532fae98df070ecba1d7f849737da0"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-current-host-067\\test-113.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p3-v1-receipt-restart-069\\result.json",
+    "bytes": 9123,
+    "sha256": "fb4a4c9ced6ae56d695d1440e222b22ffc433dc84f8ad46f228d408ea8354f3d"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\pixel-context-windows-001\\content\\context-0.jpg",
+    "bytes": 64098,
+    "sha256": "a6060628e96be5f799b440eb58ff0c5cb465e59604deb8c346d827cea97eec0c"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\pixel-context-windows-001\\content\\context-1-bottom.jpg",
+    "bytes": 64550,
+    "sha256": "05ed6918e01c51d90c84bcc49eb1e9c63ddb0b38540589b61e45e48f08b80e81"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\pixel-context-windows-001\\content\\context-1-top.jpg",
+    "bytes": 69815,
+    "sha256": "f377b1bff12b2a5ec2b90040ea193904d866b6c80b88cad5e6d7cf668f9e1934"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\pixel-context-windows-001\\content\\context-2-top.jpg",
+    "bytes": 52141,
+    "sha256": "eac3e48aba57ded5c320a0cc2eb66b0b4144d10df376a0bdf257bba5bb1c5be5"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\pixel-context-windows-001\\content\\context-2-bottom.jpg",
+    "bytes": 49383,
+    "sha256": "7fd611ecd4a4cf9ae917432da9f505b2cc2127c2d9935cb472f15872df5be0bf"
+  },
+  {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\pixel-context-windows-001\\content\\reopen.jpg",
+    "bytes": 34189,
+    "sha256": "6f7b787721b7cd9441a94ff6b289bee80432f5539af65bdcb122350cd08ba105"
+  }
+]

@@ -290,6 +290,13 @@
       }
     }
   },
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsEndpointCertificateSelected": {
     "placeholders": {
       "bytes": {
@@ -1509,6 +1516,14 @@
   "pluginsCredentialUnknown": "No se pudo confirmar el resultado. El campo secreto se ha vaciado. Actualice el estado antes de hacer otro cambio.",
   "pluginsDeclared": "Permisos declarados: {permissions}",
   "pluginsDependenciesNotice": "Las dependencias deben configurarse en el host. Esta página no las autoriza.",
+  "pluginsDirectoryEntries": "Entradas capturadas: {count}",
+  "pluginsDirectoryFormError": "Comprueba la carpeta, el complemento, los límites y la duración de la tarea.",
+  "pluginsDirectoryIntro": "Solo se comparten nombres y metadatos de las entradas directas de la carpeta elegida. No se leen archivos ni el contenido de subcarpetas.",
+  "pluginsDirectoryLimit": "Límite de entradas (hasta 1024)",
+  "pluginsDirectoryMetadataLimit": "Límite de metadatos (bytes, hasta 1 MiB)",
+  "pluginsDirectorySelectHandler": "Elegir un complemento de carpeta autorizado",
+  "pluginsDirectoryStart": "Leer carpeta y ejecutar complemento",
+  "pluginsDirectoryTitle": "Contenido de la carpeta",
   "pluginsDisable": "Desactivar",
   "pluginsDisableWorkbench": "Desactivar complemento del espacio",
   "pluginsDisabled": "Desactivado",

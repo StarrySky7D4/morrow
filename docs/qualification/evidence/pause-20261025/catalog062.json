@@ -1,0 +1,100 @@
+{
+  "status": "PASS_SCOPED_SHARED_CATALOG_51_WRAPPERS_AND_SEVENTEEN_FROZEN_GUESTS",
+  "source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+  "source_unchanged": true,
+  "methods": [
+    {
+      "method": "provisioning::tests::cleanup_instance_relation_rejects_foreign_lifecycle_setup_and_missing_setup_without_authority",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "method": "provisioning::tests::prepare_cleanup_refuses_materialized_runner_without_bound_execution_admission",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "method": "provisioning::tests::public_complete_or_mismatched_owner_facts_never_construct_cleanup_authority",
+      "exit_code": 0,
+      "seconds": 0.188
+    },
+    {
+      "method": "provisioning::tests::every_public_boolean_combination_including_sticky_debt_remains_non_authority",
+      "exit_code": 0,
+      "seconds": 0.188
+    },
+    {
+      "method": "provisioning::tests::postcheck_failure_retains_same_returned_object_and_original_error_without_cleanup_admission",
+      "exit_code": 0,
+      "seconds": 0.188
+    },
+    {
+      "method": "provisioning::tests::postcheck_success_keeps_same_object_and_replacement_does_not_run_postcheck",
+      "exit_code": 0,
+      "seconds": 0.188
+    },
+    {
+      "method": "live::tests::caller046_first_command_tombstone_never_reopens_after_status_unknown_or_probe",
+      "exit_code": 0,
+      "seconds": 0.187
+    },
+    {
+      "method": "live::tests::caller046_probe_return_cannot_replace_business_cleanup_or_accept_unknown_debt",
+      "exit_code": 0,
+      "seconds": 0.187
+    },
+    {
+      "method": "live::tests::normal_cleanup_admission_requires_finished_owner_released_factory_and_closed_formal",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "method": "provisioning::tests::runner_share_probe_closes_its_delete_handle_before_read_only_repin",
+      "exit_code": 0,
+      "seconds": 0.203
+    },
+    {
+      "method": "provisioning::tests::runner_share_probe_does_not_adopt_mismatched_reacquired_bytes",
+      "exit_code": 0,
+      "seconds": 0.188
+    },
+    {
+      "method": "provisioning::tests::runner_share_probe_rejects_borrowed_original_and_preserves_same_pin",
+      "exit_code": 0,
+      "seconds": 0.188
+    },
+    {
+      "method": "provisioning::tests::runner_share_probe_rejects_external_lock_and_restores_own_pin",
+      "exit_code": 0,
+      "seconds": 0.188
+    },
+    {
+      "method": "protected_owner::tests::original_protected_finish_receipt_rejects_foreign_lifecycle_and_repeat",
+      "exit_code": 0,
+      "seconds": 0.188
+    },
+    {
+      "method": "wrapper::existing_base_tests::missing_disabled_or_different_base_read_never_falls_back_to_mutation",
+      "exit_code": 0,
+      "seconds": 4.016
+    },
+    {
+      "method": "formal::shared_owner_tests::seventeen_frozen_session_guests_keep_one_protected_owner_and_sdk_registry",
+      "exit_code": 0,
+      "seconds": 497.203
+    }
+  ],
+  "retained": null,
+  "failure": null,
+  "actual_frozen_guest_rounds": 17,
+  "full_wrappers": 51,
+  "immutable_bases": 3,
+  "qualification_mutations": 210,
+  "mutation_257_rejected": true,
+  "VM_calls": 0,
+  "native_factory_calls": 0,
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

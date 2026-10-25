@@ -820,5 +820,20 @@
   "pluginsAgentRejected": "Отклонено",
   "pluginsAgentInvalidInput": "Проверьте ввод.",
   "pluginsAgentReleaseNotice": "Закрытие этого вида или отключение управления сеансом не доказывает остановку задачи или освобождение ресурсов.",
-  "pluginsAgentReadOnlyNotice": "Обнаружение доступно только для чтения и не предоставляет доступ. Неизвестный результат никогда не вызывает автоматическую повторную отправку."
+  "pluginsAgentReadOnlyNotice": "Обнаружение доступно только для чтения и не предоставляет доступ. Неизвестный результат никогда не вызывает автоматическую повторную отправку.",
+  "pluginsDirectoryTitle": "Содержимое папки",
+  "pluginsDirectoryIntro": "Передаются только имена и метаданные объектов непосредственно в выбранной папке. Содержимое файлов и вложенных папок не читается.",
+  "pluginsDirectoryStart": "Прочитать папку и запустить плагин",
+  "pluginsDirectorySelectHandler": "Выбрать одобренный плагин папок",
+  "pluginsDirectoryLimit": "Лимит записей (до 1024)",
+  "pluginsDirectoryMetadataLimit": "Лимит метаданных (байты, до 1 MiB)",
+  "pluginsDirectoryEntries": "Получено записей: {count}",
+  "pluginsDirectoryFormError": "Проверьте папку, плагин, ограничения и срок действия задачи.",
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

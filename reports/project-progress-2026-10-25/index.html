@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Morrow · Windows 进度 · 2026-10-25</title>
+<style>
+:root{color-scheme:light dark;--bg:#f6f7f9;--surface:#fff;--ink:#162032;--muted:#596477;--line:#dce1e8;--accent:#2459bd;--pass:#19704f;--open:#9a5700}
+@media(prefers-color-scheme:dark){:root{--bg:#15181d;--surface:#20252d;--ink:#edf0f6;--muted:#b2bdcc;--line:#3c4655;--accent:#9abaff;--pass:#80d6ae;--open:#f0be76}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,"Microsoft YaHei",sans-serif}main{max-width:1060px;margin:auto;padding:36px 24px 60px}header{margin-bottom:28px}h1{font-size:clamp(25px,5vw,38px);font-weight:650;margin:4px 0 8px}h2{font-size:23px;margin:30px 0 12px}p{margin:8px 0 16px}.muted{color:var(--muted)}.status{font-size:14px;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:24px 0}.metric{background:var(--surface);padding:18px;border:1px solid var(--line);border-radius:12px}.metric strong{display:block;font-size:25px;font-weight:600}.pass{color:var(--pass)}.open{color:var(--open)}nav{display:flex;flex-wrap:wrap;gap:18px;padding:14px 0;border-block:1px solid var(--line)}a{color:var(--accent);text-underline-offset:3px}section{scroll-margin-top:20px}table{width:100%;border-collapse:collapse;text-align:left;font-size:15px}th,td{padding:13px 10px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}th{font-weight:600;color:var(--muted)}td:first-child{width:28%}code{font-size:.9em;overflow-wrap:anywhere}details{padding:12px 0;border-bottom:1px solid var(--line)}summary{font-weight:600;cursor:pointer}li{margin:8px 0}footer{margin-top:32px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}@media(max-width:600px){main{padding:22px 16px 40px}.metrics{grid-template-columns:1fr;gap:8px}.metric{padding:12px 16px}th,td{padding:10px 5px}td:first-child{width:34%}}@media print{body{background:white;color:black}main{max-width:none;padding:0}nav{display:none}.metrics{break-inside:avoid}section{break-inside:auto}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="status">2026 年 10 月 25 日 · Windows 验收 · 开发分支快照</div>
+<h1>Morrow：任务已暂停</h1>
+<p class="muted">保存当前源码、实测证据和 VM035 现场。等待新的恢复指令；不自动继续验收。</p>
+<div class="metrics">
+<div class="metric"><span>Windows P3 交接范围</span><strong class="pass">已通过</strong><span>13 组要求 · 319 份证据核对</span></div>
+<div class="metric"><span>完整 P2 / Windows SDK</span><strong class="open">仍开放</strong><span>局部通过不等于整体验收完成</span></div>
+<div class="metric"><span>注册虚拟机</span><strong>4 / 4</strong><span>VM035 已保存磁盘与内存状态</span></div>
+</div>
+</header>
+<nav aria-label="报告导航"><a href="#progress">已完成进度</a><a href="#latest">最新失败</a><a href="#environment">环境与磁盘</a><a href="#remaining">剩余工作</a><a href="#evidence">证据与范围</a></nav>
+<section id="progress">
+<h2>已完成进度</h2>
+<table><thead><tr><th>范围</th><th>结果与限制</th></tr></thead><tbody>
+<tr><td>原 47 步／九门槛</td><td><a href="../../docs/qualification/evidence/pause-20261025/normal078-review.json">case078</a>：当前 ab14 源码，284 项检查、107 条原始记录；正常资源退役和同 owner 权限恢复确认。</td></tr>
+<tr><td>执行故障处置</td><td>case063：helper 已建、Runner 未建；case079：真实创建两个账户和一个组后 setup 失败。均确认原错误与 Unknown 保留、临时权限恢复；不宣称资源清理完成。</td></tr>
+<tr><td>连续拒绝与登录拒绝</td><td>case046 同父进程 17 次拒绝、5,729 项检查；case048 实际 Win32 1326 及退休链。两项保留 a5 源码绑定，不改写为当前源码的新实测。</td></tr>
+<tr><td>当前原生与 SDK 检查</td><td>128 项原生检查、14 项 SDK 检查通过；共享目录验证包含 17 轮真实插件、51 份封装和原容量拒绝。</td></tr>
+<tr><td>Windows P3</td><td><a href="../../docs/qualification/evidence/pause-20261025/p3-matrix065.json">13 组交接矩阵</a>通过，319 份证据和 345 份相关源码核对。包括中文输入、粘贴、Num Lock 首次按键、自动保存、回执丢失、容量、关闭与重开。</td></tr>
+<tr><td>SDK 目录链</td><td>私有 Cap’n Proto、C/C++/Rust、分页与原始 UTF-16 通过；真实 Windows 选择器和正式任务已验证。选择时对象身份仍开放。</td></tr>
+<tr><td>SDK 正式批准与撤销</td><td><a href="../../docs/qualification/evidence/pause-20261025/approval077.json">case077</a>：三个真实客户端完成正式批准、撤销、持久重开并正常关闭。使用框架回调，不称为物理点击。</td></tr>
+</tbody></table>
+</section>
+<section id="latest">
+<h2>case080：未到达创建超时检查</h2>
+<p>该用例只完成前三步，在第四步 setup 停止。验收构建复用了上一项故障库，实际执行了“账户创建后失败”的旧故障。<strong class="open">late-create 门槛未通过。</strong></p>
+<details><summary>已核实的构建问题</summary><p>S 的当前 setup 源码与正常版本一致、没有旧故障标记，但生成的可执行文件含该标记。Cargo 将所依赖的库标为 <code>fresh=true</code>，与前一变体共用库输出路径。源码与 manifest 摘要核对不能代替对实际构建内容的核验。</p><p>本次结果已拒绝，未在暂停后重编或重试。恢复后先修正构建隔离，再使用新的干净用例。</p></details>
+<p><a href="../../docs/qualification/evidence/pause-20261025/case080-summary.json">查看拒绝记录</a> · <a href="../../docs/qualification/evidence/pause-20261025/case080-build-input-inspection.json">查看构建证据</a></p>
+</section>
+<section id="environment">
+<h2>环境与磁盘</h2>
+<table><thead><tr><th>项目</th><th>暂停状态</th></tr></thead><tbody>
+<tr><td>VM035</td><td>Saved，磁盘与内存保留；原 Unknown 会话不查询、不重放、不终止。产品未确认清理，临时权限恢复已确认。</td></tr>
+<tr><td>VM033 / VM034</td><td>完整校验后离线归档并释放注册名额，原磁盘保留。历史 Unknown 不改写。</td></tr>
+<tr><td>“新建虚拟机”</td><td>原磁盘和归档均保留，维持此前未注册状态。</td></tr>
+<tr><td>旧 Unknown 归档回收</td><td>14 组旧归档，删除 41 份大型数据文件；保留报告与配置记录。已删除的大型数据不再可恢复。</td></tr>
+<tr><td>清理时实际释放</td><td>C 盘约 402.8 GiB，D 盘约 272.1 GiB；这是清理操作的释放量，不是当前空闲容量。</td></tr>
+<tr><td>构建缓存</td><td>全部继续放在 <code>D:\build_cache</code>。</td></tr>
+</tbody></table>
+</section>
+<section id="remaining">
+<h2>恢复后继续的工作</h2>
+<ol>
+<li>修正验收变体的构建缓存隔离，完整核对 overlay 差异及可执行文件中的故障标记。</li>
+<li>在新干净环境补齐 P2 迟到创建、部分输出、token 派生、默认 DACL 和关闭失败等证据。</li>
+<li>补齐 SDK 的选择时对象身份、持久 blob／上传、网络批准和完整产品链。</li>
+</ol>
+<p>SDK26、G04、SDK_FREEZE 仍为 OPEN。其他平台按用户要求暂缓；源码整体验收与发布资格均为 false。</p>
+</section>
+<section id="evidence">
+<h2>证据与范围</h2>
+<p>开发分支：<code>codex/local-continue-20261020</code>。实测完整源码摘要：<code>ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee</code>。发布新增文档和证据，不宣称发布后的完整仓库已重新实测。</p>
+<p><a href="../../docs/qualification/PAUSED_WINDOWS_20261025.md">暂停交接</a> · <a href="../../docs/qualification/evidence/pause-20261025/manifest.json">公开证据清单</a> · <a href="report-data.json">结构化进度</a> · <a href="../project-progress-2026-10-24/index.html">历史全项目报告</a></p>
+</section>
+<footer>本次发布源码、测试和报告快照，跳过 CI；无 main 合并、标签、Release 或部署。凭据、登录适配器、构建可执行文件与虚拟机镜像不在发布内容中。</footer>
+</main>
+</body>
+</html>

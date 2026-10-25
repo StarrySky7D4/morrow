@@ -1,0 +1,104 @@
+{
+  "status": "PASS_SCOPED_NATIVE_DIRECTORY_PICKER_FORMAL_SESSION_AND_REOPEN",
+  "source_digest": "a9fdddb8100d3df230632904638e6ca8462d7c1f6a7e7595903c1688f6a36de5",
+  "source_unchanged": true,
+  "phases": [
+    {
+      "pid": 4008,
+      "phase": "run",
+      "complete": true,
+      "original_host_closed": true,
+      "native_picker_injected": false,
+      "actual_folder_selection": "D:\\build_cache\\dir57\\selected",
+      "guest_calls": 4,
+      "entries": 70,
+      "original_acknowledged": true,
+      "full_SDK_accepted": false
+    },
+    {
+      "pid": 21956,
+      "phase": "reopen",
+      "previous_pid": 4008,
+      "complete": true,
+      "original_host_closed": true,
+      "original_approval_reopened": true,
+      "old_task_refused": true,
+      "guest_reexecuted": false
+    }
+  ],
+  "processes": [
+    {
+      "phase": "host-build",
+      "pid": 5172,
+      "exit_code": 0,
+      "seconds": 1.235,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-formal-057\\host-build.stdout",
+        "bytes": 853266,
+        "sha256": "2432c2c7542c8fb3ff2869a3d4161e2fc29fd089b2171d99c29eed8808e13932"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-formal-057\\host-build.stderr",
+        "bytes": 308,
+        "sha256": "786cdce80213d957eedae7a233dce7d750340fabd2988393691765acb763f0d6"
+      }
+    },
+    {
+      "phase": "kernel-build",
+      "pid": 24408,
+      "exit_code": 0,
+      "seconds": 10.125,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-formal-057\\kernel-build.stdout",
+        "bytes": 248,
+        "sha256": "36c1bb60a154517b2cd834ed07e877d2dc9b82aedcb2a1daccb3f7d428ad4636"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-formal-057\\kernel-build.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "phase": "run",
+      "pid": 4008,
+      "exit_code": 0,
+      "seconds": 366.735,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-formal-057\\run.stdout",
+        "bytes": 124,
+        "sha256": "b4adde17436ba15922768464297b03ebbcbd966ceed6bfbeecb412aed257fe2f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-formal-057\\run.stderr",
+        "bytes": 10,
+        "sha256": "92a19969583cef404789053f0712b32f2103453b19f4a283d3c409241d9fd1b5"
+      }
+    },
+    {
+      "phase": "reopen",
+      "pid": 21956,
+      "exit_code": 0,
+      "seconds": 0.672,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-formal-057\\reopen.stdout",
+        "bytes": 124,
+        "sha256": "3b366367ce1d195ea9b7a6c1046f9c25c6395b7e6588d7a2bea0373344269d7b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-formal-057\\reopen.stderr",
+        "bytes": 10,
+        "sha256": "92a19969583cef404789053f0712b32f2103453b19f4a283d3c409241d9fd1b5"
+      }
+    }
+  ],
+  "failure": null,
+  "approval_configuration_seeded_via_original_backend": true,
+  "approval_UI_accepted": false,
+  "picker_time_native_identity_accepted": false,
+  "all_languages_formal_UI_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "vm_calls": 0
+}

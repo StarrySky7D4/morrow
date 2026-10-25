@@ -1848,6 +1848,36 @@ class AppLocalizationsEn extends AppLocalizations {
       'Dependencies must be configured in the host. This page does not approve them.';
 
   @override
+  String pluginsDirectoryEntries(String count) {
+    return 'Captured entries: $count';
+  }
+
+  @override
+  String get pluginsDirectoryFormError =>
+      'Check the folder, plugin, limits and task lifetime.';
+
+  @override
+  String get pluginsDirectoryIntro =>
+      'Share only names and metadata directly inside the selected folder. File contents and subfolders are not read.';
+
+  @override
+  String get pluginsDirectoryLimit => 'Entry limit (up to 1024)';
+
+  @override
+  String get pluginsDirectoryMetadataLimit =>
+      'Metadata limit (bytes, up to 1 MiB)';
+
+  @override
+  String get pluginsDirectorySelectHandler =>
+      'Select an approved folder plugin';
+
+  @override
+  String get pluginsDirectoryStart => 'Read folder and run plugin';
+
+  @override
+  String get pluginsDirectoryTitle => 'Folder listing';
+
+  @override
   String get pluginsDisable => 'Disable';
 
   @override

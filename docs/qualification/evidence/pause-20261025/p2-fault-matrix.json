@@ -1,0 +1,176 @@
+{
+  "source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+  "rows": [
+    {
+      "requirement": "Refusal before resource creation",
+      "status": "SCOPED_PASS_WITH_PRIOR_RUNTIME_AND_CURRENT_LOGIC",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-refusal-ledgers-050\\result.json",
+          "bytes": 5540,
+          "sha256": "77cb49299a327b0f9a08fae709c5ce5570b4ddf0a66b5850abc369b593051edf"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+          "bytes": 15002,
+          "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+        }
+      ],
+      "scope": "17 real read-only caller refusals at earlier a5 source; current native checks pass. No relabeling of historical runtime as new ab14 execution."
+    },
+    {
+      "requirement": "LogonUser explicit failure and null output",
+      "status": "PRIOR_NATIVE_PASS_CURRENT_LOGIC",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case048-refusal-review\\result.json",
+          "bytes": 17185,
+          "sha256": "532948ccbfefb7b5d0ed277b21bcb97ebfe5a9a3d870011d88fe98bc8393adf3"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+          "bytes": 15002,
+          "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+        }
+      ],
+      "scope": "Actual Win32 1326 refusal and full retirement chain at a5; current native checks retain original failure."
+    },
+    {
+      "requirement": "Partial and abnormal outputs",
+      "status": "CURRENT_LOGIC_ONLY_ACTUAL_INJECTION_OPEN",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+          "bytes": 15002,
+          "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+        }
+      ],
+      "scope": "Original partial-output and failure-debt logic tested; no newly injected OS partial output."
+    },
+    {
+      "requirement": "Token derivation and default DACL failures separately",
+      "status": "CURRENT_LOGIC_ONLY_ACTUAL_INJECTION_OPEN",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+          "bytes": 15002,
+          "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+        }
+      ],
+      "scope": "Distinct original stages and failure preservation tested; real fault coverage still open."
+    },
+    {
+      "requirement": "Setup failure after account creation",
+      "status": "CURRENT_ACTUAL_INJECTED_FAULT_PASS",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case079-setup-failure-review\\result.json",
+          "bytes": 1619,
+          "sha256": "c0740862ac84445ce27efcfad1d34005ece7ff91622f96facad4d0449fe07705"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case079-summary.json",
+          "bytes": 1619,
+          "sha256": "c0740862ac84445ce27efcfad1d34005ece7ff91622f96facad4d0449fe07705"
+        }
+      ],
+      "scope": "Real two users and one group created and SIDs read back, then qualification error injected. Unknown retained; no normal completion or cleanup claim."
+    },
+    {
+      "requirement": "Late creation result",
+      "status": "NOT_REACHED_REJECTED_BUILD_CACHE_CONTAMINATION",
+      "evidence": [
+        {
+          "path": "case080-summary.json",
+          "bytes": 3792,
+          "sha256": "79fb5d49a7cd9b4e07a29bcacd2c3268006e1497eeb408c6c69a72a7c77cafaa"
+        }
+      ],
+      "scope": "Case080 stopped in setup after three steps. The compiled S reused the previous fault library. Unknown retained; target late-create gate remains OPEN."
+    },
+    {
+      "requirement": "Handle close failure",
+      "status": "CURRENT_LOGIC_ONLY_ACTUAL_INJECTION_OPEN",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+          "bytes": 15002,
+          "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+        }
+      ],
+      "scope": "Failure retains original accounting; real injected close failure still open."
+    },
+    {
+      "requirement": "Helper and pipe created without Runner",
+      "status": "CURRENT_ACTUAL_INJECTED_FAULT_PASS",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case063-after-helper-review\\result.json",
+          "bytes": 1441,
+          "sha256": "75ae6fa6705ce66ede962cbe5a785d386a811d2d90c40ff9ab505131c5fdc313"
+        }
+      ],
+      "scope": "Original helper resources created; no Runner output; original error and Unknown retained, same-owner policy restored."
+    },
+    {
+      "requirement": "Concurrent close duplicate consume wrong generation",
+      "status": "CURRENT_SCOPED_PASS",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+          "bytes": 15002,
+          "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-refusal-current-061\\result.json",
+          "bytes": 3036,
+          "sha256": "5fe1a30299d928e8d58b1825826f7aa53be2a370b1494bb35fb85660993212c8"
+        }
+      ],
+      "scope": "Original generation and consumption checks; Unknown capacity preserved."
+    },
+    {
+      "requirement": "Normal business full join ACK factory cleanup",
+      "status": "CURRENT_ACTUAL_VM_PASS",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case078-nine-review\\result.json",
+          "bytes": 25862,
+          "sha256": "1acff4ecc01ba381de70542db7da72977195cab52765b2af0b4adcd182b7253a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case078-summary.json",
+          "bytes": 975,
+          "sha256": "1e09506a3cda50b986d7ce29038ac46b664d0227a939d79b5c1913895320c4fd"
+        }
+      ],
+      "scope": "Current ab14 original47, nine required groups,107 original records; checked complete resource retirement and same-owner policy restore."
+    },
+    {
+      "requirement": "More than 16 clean refusals; Unknown remains charged",
+      "status": "PRIOR_RUNTIME_AND_CURRENT_LEDGER_PASS",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case046-summary.json",
+          "bytes": 1332,
+          "sha256": "5b66b7a20efe98a1911c425344cc878d6e38d6e4bd486a7ac667a7d58af8c377"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-refusal-current-061\\result.json",
+          "bytes": 3036,
+          "sha256": "5fe1a30299d928e8d58b1825826f7aa53be2a370b1494bb35fb85660993212c8"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-shared-catalog-062\\result.json",
+          "bytes": 3438,
+          "sha256": "e71de31738507c41e750c424033b026e8df8891482e15c3ef8d99abdb3d31531"
+        }
+      ],
+      "scope": "17 actual a5 refusals share same parent; current SDK/ledger checks retain Unknown and refuse overflow. No discarded history restores capacity."
+    }
+  ],
+  "full_P2_accepted": false,
+  "old_unknown_owner_contacts": 0,
+  "automatic_replays": 0,
+  "status": "PAUSED_BY_USER"
+}

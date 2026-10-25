@@ -290,6 +290,13 @@
       }
     }
   },
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsEndpointCertificateSelected": {
     "placeholders": {
       "bytes": {
@@ -1509,6 +1516,14 @@
   "pluginsCredentialUnknown": "Результат не подтверждён. Поле секрета очищено. Обновите состояние перед следующим изменением.",
   "pluginsDeclared": "Заявленные разрешения: {permissions}",
   "pluginsDependenciesNotice": "Зависимости настраиваются в хосте. Эта страница не даёт им разрешений.",
+  "pluginsDirectoryEntries": "Получено записей: {count}",
+  "pluginsDirectoryFormError": "Проверьте папку, плагин, ограничения и срок действия задачи.",
+  "pluginsDirectoryIntro": "Передаются только имена и метаданные объектов непосредственно в выбранной папке. Содержимое файлов и вложенных папок не читается.",
+  "pluginsDirectoryLimit": "Лимит записей (до 1024)",
+  "pluginsDirectoryMetadataLimit": "Лимит метаданных (байты, до 1 MiB)",
+  "pluginsDirectorySelectHandler": "Выбрать одобренный плагин папок",
+  "pluginsDirectoryStart": "Прочитать папку и запустить плагин",
+  "pluginsDirectoryTitle": "Содержимое папки",
   "pluginsDisable": "Отключить",
   "pluginsDisableWorkbench": "Отключить плагин пространства",
   "pluginsDisabled": "Выключен",

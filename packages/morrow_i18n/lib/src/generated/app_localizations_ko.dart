@@ -1763,6 +1763,33 @@ class AppLocalizationsKo extends AppLocalizations {
       '종속성은 호스트에서 구성해야 합니다. 이 페이지에서는 승인하지 않습니다.';
 
   @override
+  String pluginsDirectoryEntries(String count) {
+    return '수집한 항목: $count';
+  }
+
+  @override
+  String get pluginsDirectoryFormError => '폴더, 플러그인, 한도 및 작업 유효 시간을 확인하세요.';
+
+  @override
+  String get pluginsDirectoryIntro =>
+      '선택한 폴더 바로 아래 항목의 이름과 메타데이터만 공유합니다. 파일 내용이나 하위 폴더 내부는 읽지 않습니다.';
+
+  @override
+  String get pluginsDirectoryLimit => '항목 수 한도 (최대 1024)';
+
+  @override
+  String get pluginsDirectoryMetadataLimit => '메타데이터 한도 (바이트, 최대 1 MiB)';
+
+  @override
+  String get pluginsDirectorySelectHandler => '승인된 폴더 플러그인 선택';
+
+  @override
+  String get pluginsDirectoryStart => '폴더 읽기 및 플러그인 실행';
+
+  @override
+  String get pluginsDirectoryTitle => '폴더 목록';
+
+  @override
   String get pluginsDisable => '비활성화';
 
   @override

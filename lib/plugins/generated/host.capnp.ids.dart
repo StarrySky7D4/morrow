@@ -41,6 +41,8 @@ const schemaIds = <String, String>{
   'editorRecoverySchema': 'ee7e7702bb7039cc',
   'fileStartSchema': '85aad5dfacc34977',
   'fileResultSchema': 'a3409b45a3cf9630',
+  'directoryStartSchema': '938d050d85ae1676',
+  'directoryResultSchema': '98386cf72e015a24',
   'mutationStartSchema': 'f0119eaaa7f2d237',
   'mutationReconcileSchema': 'b255361c70318dd3',
   'mutationDiscoverSchema': 'ab663dbc87ed6d1e',

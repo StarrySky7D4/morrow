@@ -290,6 +290,13 @@
       }
     }
   },
+  "@pluginsDirectoryEntries": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsEndpointCertificateSelected": {
     "placeholders": {
       "bytes": {
@@ -1509,6 +1516,14 @@
   "pluginsCredentialUnknown": "Das Ergebnis konnte nicht bestätigt werden. Das Geheimnisfeld wurde geleert. Aktualisieren Sie den Status vor weiteren Änderungen.",
   "pluginsDeclared": "Angegebene Berechtigungen: {permissions}",
   "pluginsDependenciesNotice": "Abhängigkeiten müssen im Host konfiguriert werden. Diese Seite genehmigt sie nicht.",
+  "pluginsDirectoryEntries": "Erfasste Einträge: {count}",
+  "pluginsDirectoryFormError": "Ordner, Plugin, Grenzen und Aufgabendauer prüfen.",
+  "pluginsDirectoryIntro": "Nur Namen und Metadaten direkt im gewählten Ordner werden geteilt. Dateiinhalte und Unterordner werden nicht gelesen.",
+  "pluginsDirectoryLimit": "Maximale Einträge (bis 1024)",
+  "pluginsDirectoryMetadataLimit": "Metadatenlimit (Bytes, bis 1 MiB)",
+  "pluginsDirectorySelectHandler": "Genehmigtes Ordner-Plugin wählen",
+  "pluginsDirectoryStart": "Ordner lesen und Plugin ausführen",
+  "pluginsDirectoryTitle": "Ordnerinhalt",
   "pluginsDisable": "Deaktivieren",
   "pluginsDisableWorkbench": "Arbeitsbereich-Plugin deaktivieren",
   "pluginsDisabled": "Deaktiviert",

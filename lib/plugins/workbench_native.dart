@@ -43,6 +43,8 @@ import 'io_task_control.dart';
 import 'io_task_codec_native.dart';
 import 'file_task_models.dart';
 import 'file_task_native.dart';
+import 'directory_task_models.dart';
+import 'directory_task_native.dart';
 import 'channel_task_models.dart';
 import 'channel_task_native.dart';
 import 'channel_task_codec_native.dart';
@@ -130,6 +132,7 @@ PluginLibraryEntry decodePluginLibraryEntry(host.PluginEntryReader row) {
         ? null
         : ChannelTaskCodec.hostBudget(row.channelBudget!),
     mutationSupported: row.mutationSupported,
+    directorySupported: row.directorySupported,
     mutationBudget: switch (row.mutationBudget) {
       null => null,
       final budget => PluginMutationBudget(
@@ -182,6 +185,8 @@ class RustWorkbench
         WorkbenchTlsIdentityControl,
         WorkbenchIoTaskControl,
         FileTaskBackend,
+        DirectoryTaskBackend,
+        DirectoryTaskPlatformCapabilities,
         ChannelTaskBackend,
         FileTaskPlatformCapabilities,
         MutationTaskSupport,
@@ -1313,6 +1318,26 @@ class RustWorkbench
       _channelTasks.readChannelSent(key, sequence);
 
   late final _fileTasks = NativeFileTaskClient(_callDecoded);
+  late final _directoryTasks = NativeDirectoryTaskClient(_callDecoded);
+  @override
+  bool get supportsSelectedDirectoryTasks =>
+      Platform.isWindows && _nativeProcess != null;
+  @override
+  Future<IoTaskSnapshot> startDirectory(DirectoryTaskRequest request) =>
+      _directoryTasks.startDirectory(request);
+  @override
+  Future<IoTaskSnapshot> runDirectoryGuest(Uint8List key, int timeoutMs) =>
+      _directoryTasks.runDirectoryGuest(key, timeoutMs);
+  @override
+  Future<IoTaskSnapshot> finishDirectory(Uint8List key) =>
+      _directoryTasks.finishDirectory(key);
+  @override
+  Future<DirectoryTaskRead> readDirectory(Uint8List key) =>
+      _directoryTasks.readDirectory(key);
+  @override
+  Future<DirectoryTaskRead> readDirectoryGuest(Uint8List key) =>
+      _directoryTasks.readDirectoryGuest(key);
+
   @override
   Future<IoTaskSnapshot> startFile(FileTaskRequest request) =>
       _fileTasks.startFile(request);

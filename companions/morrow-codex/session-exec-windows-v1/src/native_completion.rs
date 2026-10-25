@@ -240,6 +240,13 @@ impl ProvisionedWindowsBackend {
         let artifact=self.native_close_artifact().ok_or(Error::Denied)?;
         artifact.qualify_asuser_source_policy_rejection_for(self).map_err(|_|Error::Denied)
     }
+    /// Denial-only fault after actual helper completion and pipe creation. The
+    /// resulting original start remains Unknown and keeps all occupied slots.
+    #[doc(hidden)]
+    pub fn qualify_after_helper_stop_once(self:&Arc<Self>)->Result<()> {
+        let artifact=self.native_close_artifact().ok_or(Error::Denied)?;
+        artifact.qualify_asuser_after_helper_stop_for(self).map_err(|_|Error::Denied)
+    }
     pub(crate) fn take_caller_refusal(self:&Arc<Self>)->Result<Option<codex_sandboxing::AsUserCallerRefusal>> {
         let Some(artifact)=self.native_close_artifact() else{return Ok(None);};
         artifact.take_asuser_caller_refusal_for(self).map_err(|_|Error::CommitUnknown)

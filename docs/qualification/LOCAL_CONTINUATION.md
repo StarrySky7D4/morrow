@@ -1,6 +1,6 @@
 # Local continuation, 2026-10-21
 
-Status: **paused by direct user instruction on 2026-10-24; four VMs retained; source and release are not accepted**.
+Status: **resumed by direct user instruction after report publication 65072026; Windows qualification active; four VMs retained; source and release are not accepted**.
 See [the current pause and publication handoff](PAUSED_WINDOWS_20261024.md). Historical results below retain their original source and VM-state boundaries.
 Working checkout: `C:\ms1020`, branch `codex/local-continue-20261020`, base
 `116d1eb9beffa1675a48eb5ab06d1abc79137ae2`. This document records the development continuation and its historical snapshots. Current acceptance scope is Windows only by direct user instruction; other platforms are deferred and not accepted. The original
@@ -1068,3 +1068,8 @@ The selected derived parent/Runner and v8 native-close chains now use typed Cap'
 ## Paused publication checkpoint, 2026-10-24
 
 Case041 passed the original47/nine review (284 checks) on roles029/source77f509c0. Shared SDK owner009 passed 15 methods including 17 frozen guests; native010 passed 125 selected methods. Case042 then ended Unknown after the observer stopped; no completed round count or final native closure is claimed. Its original same-owner policy restore is verified. VM030 memory and disk are saved, all four VM registrations remain, and the original host session56421/PID12972 is retained without querying or terminating it. Full P2/P3 and Windows SDK remain open. See [the pause handoff](PAUSED_WINDOWS_20261024.md) and its committed public evidence. No acceptance work is scheduled or resumed by this publication.
+
+
+## Paused publication checkpoint, 2026-10-25
+
+The current task is paused by direct user instruction. [The new handoff](PAUSED_WINDOWS_20261025.md) records current-source case078 original47/nine, case079 setup-failure retention, the defined Windows P3 matrix pass and scoped SDK directory/approval results. Case080 did not reach late creation: an old setup-fault library was reused by the qualification build. It is rejected, its original Unknown remains retained and VM035 is Saved. Four VMs remain registered. Full P2 and Windows SDK26/G04/FREEZE, source and release acceptance remain open. [Updated progress report](../../reports/project-progress-2026-10-25/index.html). No further acceptance starts until a later explicit resume.

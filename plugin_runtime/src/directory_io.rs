@@ -19,14 +19,24 @@ use zeroize::Zeroizing;
 // Only the private OS query module may use unsafe. No guest memory reaches it.
 #[allow(unsafe_code)]
 mod native_windows;
+mod selected_path;
 mod selection;
 pub(crate) mod selection_path;
+pub use selected_path::DirectoryAbsolutePath;
 pub use selection_path::{DirectoryPathError, DirectoryRelativePath};
 
 pub const MAX_ENTRIES: usize = 1024;
 pub const MAX_METADATA_BYTES: u64 = 1024 * 1024;
 const MAX_SELECTIONS: usize = 8;
 const ROOT_QUERY_BYTES: u64 = 32; // FILE_ATTRIBUTE_TAG_INFO + FILE_ID_INFO
+// Fixed volume-root open spelling and bounded final-name query. This charge
+// precedes any native access and remains inside the original job ceiling.
+const VOLUME_ROOT_OPEN_BYTES: u64 = 512;
+
+enum CaptureRoot {
+    Open(File),
+    Volume(u8),
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Error {
@@ -285,7 +295,15 @@ impl DirectoryBroker {
         cancelled: impl FnMut() -> bool,
     ) -> Result<SelectedDirectory, Error> {
         self.grant_source(
-            manager, host, instance, binding, root, None, limits, clock, cancelled,
+            manager,
+            host,
+            instance,
+            binding,
+            CaptureRoot::Open(root),
+            None,
+            limits,
+            clock,
+            cancelled,
         )
     }
 
@@ -311,8 +329,38 @@ impl DirectoryBroker {
             host,
             instance,
             binding,
-            anchor,
+            CaptureRoot::Open(anchor),
             Some(relative),
+            limits,
+            clock,
+            cancelled,
+        )
+    }
+
+    /// Trusted host selection only. Open the actual volume root after original
+    /// FileList admission, then retain every descendant using the existing
+    /// no-reparse traversal and resource limits. No caller path is reopened on
+    /// a later page. This does not attest to the directory at picker time.
+    #[allow(clippy::too_many_arguments)]
+    pub fn grant_selected_directory_with_clock_and_cancel(
+        &mut self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        selected: DirectoryAbsolutePath,
+        limits: CaptureLimits,
+        clock: &mut impl DirectoryClock,
+        cancelled: impl FnMut() -> bool,
+    ) -> Result<SelectedDirectory, Error> {
+        let (drive, relative) = selected.into_parts();
+        self.grant_source(
+            manager,
+            host,
+            instance,
+            binding,
+            CaptureRoot::Volume(drive),
+            relative,
             limits,
             clock,
             cancelled,
@@ -326,7 +374,7 @@ impl DirectoryBroker {
         host: &HostRuntime,
         instance: &ManagedInstance,
         binding: &IoBinding,
-        root: File,
+        root: CaptureRoot,
         relative: Option<DirectoryRelativePath>,
         limits: CaptureLimits,
         clock: &mut impl DirectoryClock,
@@ -357,6 +405,25 @@ impl DirectoryBroker {
                 .admit_job_authenticated(0, limits.max_job_bytes, now)
                 .map_err(Error::from)
         })?;
+        let root = match root {
+            CaptureRoot::Open(root) => root,
+            CaptureRoot::Volume(drive) => {
+                clock.with(|now| {
+                    lease.check(manager, host, instance, now)?;
+                    job.charge(&[IoCapability::FileList], VOLUME_ROOT_OPEN_BYTES, now)?;
+                    Ok(())
+                })?;
+                cancellation_veto(&mut cancelled)?;
+                let root = native_windows::open_volume_root(drive)?;
+                cancellation_veto(&mut cancelled)?;
+                clock.with(|now| {
+                    lease
+                        .check(manager, host, instance, now)
+                        .map_err(Error::from)
+                })?;
+                root
+            }
+        };
         let (root, ancestors) = match relative {
             Some(relative) => selection::open_under(
                 manager,

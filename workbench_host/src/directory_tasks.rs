@@ -1,23 +1,46 @@
-//! Trusted host-nominated directory tasks on the original owner worker.
-//! The supplied root and relative components do not attest to a native picker,
-//! ancestors above that root, a durable pathname or public guest authority.
+//! Trusted directory tasks on the original owner worker. Open anchors retain
+//! their prior provenance boundary; native-selected absolute paths are resolved
+//! from a verified volume root. Neither API attests to picker-time identity or
+//! grants a durable pathname or public guest authority.
 use super::{AccessError, Executor, StartOptions, TaskKey};
 use crate::{Result, Workbench, WorkbenchState};
 use morrow_core::plugin_package::io::{self, IoCapability};
 use morrow_plugin_runtime::{
     directory_io::{
-        CaptureLimits, DirectoryRelativePath, MAX_ENTRIES, MAX_METADATA_BYTES, PageRequest,
+        CaptureLimits, DirectoryAbsolutePath, DirectoryRelativePath, MAX_ENTRIES,
+        MAX_METADATA_BYTES, PageRequest,
     },
     io_jobs::{
-        DirectoryCommandHandle, DirectoryResponse, DirectorySession, IoWorker, OwnerCommandPoll,
-        Poll, DirectoryGuestHandle, DirectoryGuestResult,
+        DirectoryCommandHandle, DirectoryGuestHandle, DirectoryGuestResult, DirectoryResponse,
+        DirectorySession, IoWorker, OwnerCommandPoll, Poll,
     },
 };
-use std::{collections::BTreeSet, fs::File, time::Duration};
+use std::{collections::BTreeSet, fs::File, path::PathBuf, time::Duration};
+
+/// Private application request. A native selection is required at the UI
+/// boundary; the worker proves the object only when this request is captured.
+pub struct DirectoryStart {
+    pub submission: [u8; 32],
+    pub package_id: String,
+    pub digest: [u8; 32],
+    pub revision: u64,
+    pub handler: String,
+    pub selected_path: PathBuf,
+    pub max_entries: usize,
+    pub max_metadata_bytes: u64,
+    pub timeout_ms: u32,
+}
+
+enum Source {
+    Under {
+        root: File,
+        relative: DirectoryRelativePath,
+    },
+    Selected(DirectoryAbsolutePath),
+}
 
 pub(super) struct Admission {
-    root: File,
-    relative: DirectoryRelativePath,
+    source: Source,
     limits: CaptureLimits,
     timeout: Duration,
     handler: String,
@@ -27,8 +50,14 @@ impl Admission {
         self.timeout
     }
     pub(super) fn submit(self, worker: &IoWorker<WorkbenchState>) -> Result<DirectoryTask> {
-        let (session, handle) =
-            worker.capture_directory_under(self.root, self.relative, self.limits)?;
+        let (session, handle) = match self.source {
+            Source::Under { root, relative } => {
+                worker.capture_directory_under(root, relative, self.limits)?
+            }
+            Source::Selected(selected) => {
+                worker.capture_selected_directory(selected, self.limits)?
+            }
+        };
         Ok(DirectoryTask {
             session,
             pending: Some(handle),
@@ -90,6 +119,77 @@ impl Workbench {
             return Err(AccessError::UnacknowledgedTask.into());
         }
         self.local_state()?;
+        self.state.submission = None;
+        self.start_directory_source(options, Source::Under { root, relative }, limits, handler)
+    }
+
+    /// No filesystem operation before authority moves to the original worker.
+    /// Once admitted, a submission cannot be used for another selection, even
+    /// after error/cancellation. File and directory selections share the same
+    /// existing 512-entry submission ledger rather than raising its capacity.
+    pub fn start_selected_directory(&mut self, request: DirectoryStart) -> Result<TaskKey> {
+        if self.io_status().key.is_some() {
+            return Err(AccessError::UnacknowledgedTask.into());
+        }
+        let owner = self.local_state()?;
+        if request.submission == [0; 32]
+            || self.state.file_submissions.contains(&request.submission)
+            || self.state.file_submissions.len() >= 512
+            || request.timeout_ms == 0
+            || request.timeout_ms > 30_000
+            || request.max_entries > MAX_ENTRIES
+            || request.max_metadata_bytes > MAX_METADATA_BYTES
+        {
+            return Err("invalid, repeated or exhausted directory submission".into());
+        }
+        let selected = DirectoryAbsolutePath::new(&request.selected_path)?;
+        let package = owner
+            .manager
+            .as_ref()
+            .ok_or("catalog unavailable")?
+            .installed_package(request.digest)?;
+        let budget = package
+            .io_declaration()
+            .and_then(|d| d.budget.as_ref())
+            .ok_or("missing directory IO budget")?;
+        if u64::from(request.timeout_ms) > budget.max_duration_ms {
+            return Err("directory task exceeds declared duration".into());
+        }
+        let limits = morrow_plugin_runtime::io_jobs::JobLimits::new(
+            morrow_plugin_runtime::io_jobs::JobLimits::default().max_calls,
+            budget.max_job_bytes.min(io::MAX_JOB_BYTES),
+            budget.max_bytes.min(io::MAX_BYTES),
+        )
+        .map_err(|_| "invalid directory job budget")?;
+        let capture = CaptureLimits {
+            max_entries: request.max_entries,
+            max_metadata_bytes: request.max_metadata_bytes,
+            max_job_bytes: budget.max_job_bytes.min(io::MAX_JOB_BYTES),
+        };
+        self.state.file_submissions.insert(request.submission);
+        self.state.submission = Some(request.submission);
+        self.start_directory_source(
+            StartOptions {
+                package_id: request.package_id,
+                digest: request.digest,
+                revision: request.revision,
+                capabilities: BTreeSet::from([IoCapability::FileList]),
+                lifetime: Duration::from_millis(u64::from(request.timeout_ms)),
+                limits,
+            },
+            Source::Selected(selected),
+            capture,
+            request.handler,
+        )
+    }
+
+    fn start_directory_source(
+        &mut self,
+        options: StartOptions,
+        source: Source,
+        limits: CaptureLimits,
+        handler: String,
+    ) -> Result<TaskKey> {
         if options.capabilities != BTreeSet::from([IoCapability::FileList])
             || handler.is_empty()
             || handler.len() > 256
@@ -100,7 +200,6 @@ impl Workbench {
         {
             return Err("invalid trusted directory options".into());
         }
-        self.state.submission = None;
         let timeout = options.lifetime;
         self.start_task(options, move |prepared| {
             if !prepared
@@ -113,8 +212,7 @@ impl Workbench {
                 return Err("directory handler is not declared".into());
             }
             Ok(Admission {
-                root,
-                relative,
+                source,
                 limits,
                 timeout,
                 // Clone retains at most the already bounded spelling, not a
@@ -163,15 +261,21 @@ impl Workbench {
     pub fn request_directory_guest_frame(&mut self, key: TaskKey, timeout: Duration) -> Result<()> {
         let task = self.state.checked_task(key)?;
         let directory = task.directory.as_mut().ok_or(AccessError::StaleTask)?;
-        if !directory.captured || directory.pending.is_some() || directory.guest_pending.is_some()
-            || directory.guest_invoked {
+        if !directory.captured
+            || directory.pending.is_some()
+            || directory.guest_pending.is_some()
+            || directory.guest_invoked
+        {
             return Err(AccessError::Busy.into());
         }
         let Some(Executor::Io(worker)) = &task.worker else {
             return Err(AccessError::StaleTask.into());
         };
-        let handle = worker.submit_directory_guest_frame(directory.session,
-            directory.handler.clone(), timeout)?;
+        let handle = worker.submit_directory_guest_frame(
+            directory.session,
+            directory.handler.clone(),
+            timeout,
+        )?;
         directory.guest_pending = Some(handle);
         directory.guest_invoked = true;
         Ok(())
@@ -181,10 +285,16 @@ impl Workbench {
     /// Finish, Cancel, EOF or this read is not a join; local owner access still
     /// waits for the existing actual worker reclamation path. Unknown is never
     /// automatically resubmitted, even if the guest had produced a response.
-    pub fn read_directory_guest_result(&mut self, key: TaskKey) -> Result<Option<DirectoryGuestResult>> {
+    pub fn read_directory_guest_result(
+        &mut self,
+        key: TaskKey,
+    ) -> Result<Option<DirectoryGuestResult>> {
         let task = self.state.checked_task(key)?;
         let directory = task.directory.as_mut().ok_or(AccessError::StaleTask)?;
-        let handle = directory.guest_pending.as_mut().ok_or(AccessError::StaleTask)?;
+        let handle = directory
+            .guest_pending
+            .as_mut()
+            .ok_or(AccessError::StaleTask)?;
         let result = match handle.read() {
             Ok(None) => return Ok(None),
             Ok(Some(result)) => result.map_err(|error| error.to_string()),

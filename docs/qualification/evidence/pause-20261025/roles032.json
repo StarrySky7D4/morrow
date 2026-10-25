@@ -1,0 +1,40 @@
+{
+  "status": "COMPILED_BYTE_BOUND_NOT_RUNTIME_ACCEPTED",
+  "source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+  "roles": {
+    "P": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-032\\P\\morrow-workbench-supervisor.exe",
+      "bytes": 30111744,
+      "sha256": "b19745bb64e797db65faa6b71776910d0db6013a84fa545dd6cf75a73b397083"
+    },
+    "C": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-032\\C\\morrow-protected-checked-vm-harness.exe",
+      "bytes": 108547584,
+      "sha256": "4bd0334a9d379d8a7dc6e9c9cc695e62337b80bd307ef6fd6dd8491b90357f71"
+    },
+    "R": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-032\\R\\codex-command-runner.exe",
+      "bytes": 27000320,
+      "sha256": "89b3de4b4aba1abf67f5645b2e9cc6e2a262513472cbeb1ad163e79452e693d1"
+    },
+    "S": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-032\\S\\codex-windows-sandbox-setup.exe",
+      "bytes": 37597184,
+      "sha256": "fd632afba22742e993e11f52fbef754421034ed39894f09352a1907a71fb9d05"
+    }
+  },
+  "s_table_hex": "433238413154414201000000010000004bd0334a9d379d8a7dc6e9c9cc695e62337b80bd307ef6fd6dd8491b90357f7189b3de4b4aba1abf67f5645b2e9cc6e2a262513472cbeb1ad163e79452e693d1",
+  "s_section": {
+    "virtual_bytes": 80,
+    "raw_bytes": 512,
+    "raw_offset": 37451776,
+    "flags": 1073741888
+  },
+  "source_accepted": false,
+  "release_eligible": false,
+  "L1": "NOT_RUN",
+  "full47": "NOT_RUN",
+  "VM_calls": 0,
+  "all_dependencies_bound_to_canonical_source": true,
+  "minimal_role_overlays": true
+}
