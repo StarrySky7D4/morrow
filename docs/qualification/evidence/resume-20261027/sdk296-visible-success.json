@@ -1,0 +1,32 @@
+{
+  "status": "ACTUAL_FULL_UI_SUCCESS_ACK_OBSERVED",
+  "utc": "2026-10-27T05:04:11.2444964Z",
+  "ui_window": 398268,
+  "native_picker_window": 594722,
+  "actual_ui_import": true,
+  "actual_ui_enable": true,
+  "actual_file_list_approval": true,
+  "fixture": "D:\\build_cache\\d296\\incoming.mplugin",
+  "selected_directory": "D:\\build_cache\\d296\\selected",
+  "native_picker_address_observed": "D:\\build_cache\\d296\\selected",
+  "timeout_ms": 30000,
+  "before_ack": [
+    "已完成",
+    "后台线程已退出，原内容库已归还",
+    "已捕获条目：70"
+  ],
+  "after_ack": [
+    "内容库可用，当前无任务",
+    "此前任务记录（最多 5 项）",
+    "已完成 · 70"
+  ],
+  "approval_seeded": false,
+  "native_picker_injected": false,
+  "qualification_shell": false,
+  "normal_process_exit_pending": true,
+  "guest_call_count_not_displayed": true,
+  "full_sdk_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "return_line_observation": "Visible screenshot showed worker returned; immediate AX snapshot still showed stopping. No complete accessibility fidelity claim."
+}

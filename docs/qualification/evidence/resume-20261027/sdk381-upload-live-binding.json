@@ -1,0 +1,101 @@
+{
+  "status": "PASS_SCOPED_UPLOAD_IMPORT_AND_ORIGINAL_LIVE_APPROVAL",
+  "utc": "2026-10-27T11:38:37.828137+00:00",
+  "qualified_source_digest": "9dc4d0bf826191c599e7b3837c951917b60a308718e5fc25f1a14ae9ddbec3df",
+  "source_manifest": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-380\\source-before.json",
+    "bytes": 48366,
+    "sha256": "a725d85024a441a6d7c0f5d80f43cb563e96ae7ecaad792953260f1416d68d1c"
+  },
+  "dedicated_import": "morrow_blob_upload_v1.call",
+  "exact_imports": 3,
+  "raw_callback_route_allowed": false,
+  "live_original_manager_instance_store_binding": true,
+  "one_shot_original_instance_claim": true,
+  "cumulative_call_and_wire_charges": true,
+  "sticky_observed_store_substitution": true,
+  "fixed_original_approval_deadline": true,
+  "invalid_empty_object_hash_rejected_before_claim": true,
+  "private_continuation_methods": {
+    "passed": 5,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 121
+  },
+  "runtime_regressions": {
+    "passed": 83,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0,
+    "new_profile_methods_included": 12
+  },
+  "core_regressions": {
+    "passed": 86,
+    "failed": 0,
+    "ignored": 2,
+    "filtered": 0,
+    "new_store_lifetime_method_included": 1
+  },
+  "strict_library_clippy": {
+    "core": "PASS",
+    "runtime": "PASS"
+  },
+  "production_host": "COLD_LIBRARY_CHECK_ONLY",
+  "runtime_cold_target": false,
+  "modified_runtime_and_selected_programs_recompiled": true,
+  "previous_failed_programs_retained": true,
+  "original_results": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-380\\result.json",
+      "bytes": 5615,
+      "sha256": "9f9481c95d84ffc0dc05e998bbb3970342ae3356ffc81acdded42fbba62d7f4a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-core-375\\result.json",
+      "bytes": 3487,
+      "sha256": "1d770127ca8bba765a74df4094e79f96aa1d08797bc18e20dc3cc5ad95e91d85"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-core-review-382\\result.json",
+      "bytes": 566,
+      "sha256": "7c65e88193b3df911f87d8010e17a1626d574811cd4f3964e3ccc1908b588443"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\workbench-check-376\\result.json",
+      "bytes": 1931,
+      "sha256": "210093fcb17ef3016cfb88286c24a8a8479353f6ab7dfaa6c6d381bebc572290"
+    }
+  ],
+  "prior_failed_runs": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-373\\result.json",
+      "bytes": 3210,
+      "sha256": "fbf50fc787725afddca444925055d555c16b5b09e5cf237b29c6e414ab5bae91"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-374\\result.json",
+      "bytes": 3213,
+      "sha256": "f05e45ee56a0eeaf37fb34b3c4e3e3b03c11da269298578dc07d47c8b50b396c"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-377\\result.json",
+      "bytes": 4930,
+      "sha256": "0ba180901fa01af4324af9ecdbb2cd8ca8f31e1a236c218af433d0bd02473612"
+    }
+  ],
+  "upload_original_worker_dispatch": false,
+  "actual_guest_store_commit": false,
+  "protected_session": false,
+  "production_approval_UI": false,
+  "three_language_upload_guests": false,
+  "frozen_inputs_verified": 57,
+  "all_processes_closed": true,
+  "build_cache_root": "D:/build_cache",
+  "registered_VMs": 4,
+  "VM_mutations": 0,
+  "host_policy_changes": 0,
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

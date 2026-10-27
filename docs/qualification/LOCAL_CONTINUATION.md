@@ -1073,3 +1073,604 @@ Case041 passed the original47/nine review (284 checks) on roles029/source77f509c
 ## Paused publication checkpoint, 2026-10-25
 
 The current task is paused by direct user instruction. [The new handoff](PAUSED_WINDOWS_20261025.md) records current-source case078 original47/nine, case079 setup-failure retention, the defined Windows P3 matrix pass and scoped SDK directory/approval results. Case080 did not reach late creation: an old setup-fault library was reused by the qualification build. It is rejected, its original Unknown remains retained and VM035 is Saved. Four VMs remain registered. Full P2 and Windows SDK26/G04/FREEZE, source and release acceptance remain open. [Updated progress report](../../reports/project-progress-2026-10-25/index.html). No further acceptance starts until a later explicit resume.
+
+
+## Active continuation, 2026-10-26
+
+The user resumed Windows work and explicitly authorized a local VM password file; protected per-phase input now works without repeated manual-login prompts. Private contents are absent from this report and repository evidence. Build caches remain under `D:\build_cache`; four VMs are registered and VM039 is Saved.
+
+Case080 cache contamination is repaired by distinct cold C/S output directories, full compiler-artifact checks, the rebuilt setup library and forbidden-marker checks. Case098 on source4040 passed772 independent checks: actual process/thread outputs were held, an injected delay crossed the unchanged original deadline, and the original first failure was Create/DeadlineGuard/TimedOut. Its155 native records are separate diagnostic evidence; the original observer retained88 of89 journal records. The case remains Unknown, `case_clean=false`, `policy_clean=true`; original host PID4752/session1237 is not polled, adopted, terminated or replayed. This is scoped fault evidence, not normal completion, natural OS-delay proof or full retirement.
+
+SDK101 adds an explicit native directory capture API that returns the original File when admission or queue delivery is refused. Eight Windows File ownership checks plus18 related existing tests passed. The tested change is integrated; original Workbench selection ownership, the formal picker-to-worker path, checked worker close receipts, durable blob/upload and complete production network approval chains remain open. The new SDK source is not relabelled as the earlier case098 runtime source. Historical P3 matrix065 retains its own binding. Full P2, SDK26/G04/SDK_FREEZE, source acceptance and release eligibility remain open/false.
+
+VM038 is fully verified and unregistered; its archive depends on the clean-parent member in the VM037 archive. Preserve both. VM039 memory and disk remain Saved. [Current HTML progress](../../reports/project-progress-2026-10-26/index.html) · [Public evidence](evidence/resume-20261026/manifest.json).
+
+
+## 2026-10-26 continued: storage reclaim and SDK106
+
+Two guarded cache passes removed 9,502 old rlib/rmeta leaves (26,313,265,979 logical bytes). Protected binaries, symbols, source, current SDK cache and historical evidence were retained. VM035 and VM036 raw archive duplicates were losslessly repacked: all nine original files in each set passed full CRC/SHA readback, original runtime disks stayed unchanged, and final archives are under D:/build_cache/VMBack. Both sets require the pinned clean-parent member in VM037; retain that archive and VM038's existing dependency. VM036's temporary C ZIP was removed after the final D copy matched. The “新建虚拟机” disk/archive was untouched. See storage112-summary.json for actual free-space snapshots and logical-versus-physical limits.
+
+SDK106 is integrated. Workbench admission now borrows the original selected File until its original worker accepts the queue request. Known early refusals and post-spawn product-gate refusal preserve that exact handle. Six real Windows original-file tests and six existing protected directory regressions passed, including Rust/C/C++ guests, immutable submission refusal, revocation, native identity, rename exclusion, checked caller close and actual worker reclaim. Native-picker integration, spawn-failure injection and checked worker-side close receipts remain open; this is not full SDK acceptance. The initial 867-artifact cold build and final recompile are recorded separately.
+
+All four roles039 programs are newly cold compiled on the SDK106 code snapshot and byte-bound: parent P, token-refusal controller C, Runner R and setup S. Every Cargo artifact was freshly compiled in its own reserved D target. Two V5 qualification overlays are prepared; token-derivation is now compiled into C, while default-DACL remains syntax-only. Fresh VM execution is NOT_RUN. The earlier 108 draft had an incorrect HANDLE representation and was rejected before compile or execution; use 109 only. Historical case098 retains source4040 and its original Unknown owner, with no replay or contact. Registered VMs remain four. Full P2, SDK26/G04/SDK_FREEZE, source acceptance and release eligibility remain open/false. All work remains local; no commit or push was requested this turn.
+
+
+## Active Windows continuation, 2026-10-27: case118
+
+VM039 was fully archived and independently verified as a complete archive set (configuration, disk, saved memory and the VM037 shared parent), then unregistered with original disks retained. Its old Unknown owner was not contacted. VM040 was created disconnected with4GB/4CPU and passed original readiness. Login input came only through the already authorized protected file producer; no manual prompt or private value entered these records.
+
+Case118 on roles039/source e962 passed920 checks. The original driver completed39 steps and reserved native-start once at step40. Actual CreateRestrictedToken with the qualification-only null input returned Win32 6. The original first failure is Token/LaunchTokenDerivation/Uncategorized, Win32 6; it is preserved in the original delivery snapshot as IoOther/ReturnedError.53 contiguous native records retain the actual login token Held, restricted output Rejected, launch/process/thread Empty; process creation and default-DACL calls are zero. Controller prefix88of89 journal records is byte-bound; the final retained failure is independently copied. This closes only the original first-failure observation scope, not resource retirement, normal47 or full P2.
+
+The same policy owner restored only its newly added right and verified the original holder set. Product Unknown remains. VM040 memory/disk is Saved, four VMs are registered, and original case hostPID15296/exec51916 must not be polled, queried, killed, adopted or replayed. The one separate diagnostic transport closed itself.
+
+SDK checked-close source review119 mapped six production lifecycle gaps: published observation retirement, partial capture/ancestors, Resource Drop, accepted queued captures, worker unwind/exit and the private native boundary. No close repair is implemented or accepted yet. AGY117 returned a known headless command permission refusal with no edits/structured result; root retained that result and continued independently. Candidate D:/build_cache/worktrees/sdk-close-117 is seeded at checkout0904 and remains available for the full ownership implementation. Do not re-run the AGY conversation automatically.
+
+Next: complete checked original-worker resource retirement in the isolated SDK candidate, and prepare/default-DACL real native failure in a fresh VM after verified offline archival of VM040. Preserve all original Unknown owners, the new virtual machine and VM037 shared-parent archive dependencies. Caches stay D:/build_cache; maximum4 registered VMs. P2/SDK26/G04/SDK_FREEZE/source/release remain open or false. No commit/push was requested this turn. See [current HTML report](../../reports/project-progress-2026-10-26/index.html) and [case118 evidence](evidence/resume-20261027/manifest.json).
+
+
+## Active Windows continuation, 2026-10-27: SDK143 and VM040 archive
+
+SDK143 is integrated after147 scoped methods:89 directory/retirement checks,12 protected Workbench Rust/C/C++ regressions,1 synthetic incomplete-receipt host policy check, and45 shared owner/IO/file worker regressions. The original directory worker now records one real CloseHandle attempt per owned root/ancestor, retains original quota and native records on ambiguity, and checks terminal page/finish/cancel/reap/partial capture/queued cancellation/unwind/exit. Status reads are atomic and remain responsive while the private native record is held. WorkerExit retains unresolved directory records; Workbench cannot clear them through ordinary storage repair, acknowledgement or a new owner/task. The source-baseline review covered all candidate files, and canonical git diff --check passed. Fifteen selected source/test files were integrated; previous mixed CRLF host formatting was normalized.
+
+Real Windows close calls and object exclusion were exercised. Lost-close-observation injection occurs after an actual successful native close and is synthetic; it is not evidence of an actual CloseHandle refusal. The host latch test likewise uses an incomplete policy fixture, paired with actual original-worker retention tests. Coverage is specifically the selected-directory lane, not every native resource type. Formal picker-time identity, complete blob/upload and network approval routes, full SDK and release acceptance remain open. Historical P2/P3 evidence keeps its original source binding.
+
+Cache130 removed2470 regenerable rlib/rmeta leaves,4286638456 logical bytes; all source, executables, DLLs, PDBs and prior reports were preserved. VM040's full original saved disk, configuration and memory passed independent decompression/CRC/SHA verification with the pinned VM037 shared parent. Registration was released only afterward; original runtime disks remain, three VMs are registered, and original VM/VM029/VM030 are unchanged. Keep the VM037 archive while any dependent VM035/036/038/039/040 archive remains. Case118 hostPID15296/session51916 and all historical Unknown owners remain untouched.
+
+Next: cold-build the default-DACL qualification variant for the current integrated source in distinct D targets; create fresh VM041 only within the four-VM ceiling, use the already authorized protected credential-file producer, and execute the original pre-registered P2 flow. Complete the remaining SDK routes without relabeling partial evidence as SDK26/G04/SDK_FREEZE or release acceptance. No commit or push was requested in this continuation.
+
+
+## Active Windows continuation, 2026-10-27: case147 default-DACL refusal
+
+The frozen SDK143-integrated source d7827205fe709e253b0f39db19b7a11d2ebcc2c1de01cc0aa84f0469c9a196fb completed four independent cold builds (P871/C872/R620/S620 compiler artifacts, all fresh=false) and mechanical source/overlay/staged-byte verification. New disconnected VM041 passed pristine readiness, original gather and binding before one original47 driver attempt. The qualification-only null input to real SetTokenInformation(TokenDefaultDacl) returned Win32 6. Original first failure TokenSecurity / DefaultInitialization / Uncategorized / win32=6 / ntstatus=None reached the original delivery unchanged. Login, restricted and launch token handles stayed Held; process/thread outputs stayed Empty.
+
+The preregistered reviewer passed1469 assertions over93 native records,89 original journal records and88 exact controller-observed records plus one independently copied tail record. There were39 completed steps and one reserved native-start step40. This is a scoped native-refusal result, not a full47/nine or resource-retirement pass. The same original policy owner removed only its actually added right and closed its own policy resources; product case_clean=false remains. The independent diagnostic connection closed after one fixed quiet interval and one allowlisted read. Original hostPID18988/exec6382 and guest nativePID1332 must not be polled, queried, killed, adopted or replayed.
+
+VM041 memory and disk are Saved, four VMs remain registered, and original VM/VM029/VM030 are unchanged. VM040's verified archive and original disk remain retained; keep the VM037 shared-parent archive required by the compact archive set. All build/temp/cache work stays under D:/build_cache.
+
+SDK148 confirms a remaining formal-picker implementation gap: Flutter currently stores a path and the private Capnp route opens it only at Start. The existing retained-original-File entry is not connected to that formal picker. Picker-time native identity, formal approval/all-language UI, persistent blob/upload, full SDK and combined qualification remain open. Next work must follow the original handoff's full P2 fault/ownership matrix and SDK26/G04/FREEZE obligations; do not reclassify any historical Unknown or narrow the release definition. No CI, push, tag or release was performed.
+
+
+## Active Windows continuation, 2026-10-27: case155 and SDK162
+
+Completed four separately cold-built roles on source 10184a3712c7d081b4784418ac3a6297934f78096392a321ed7303bd852df55a. VM042 passed original pristine readiness, stage and binding, then ran one original47 driver attempt with a qualification-only protected runner-query token. Original CloseHandle failed with Win32 6 at TokenSecurity/RunnerTokenClose. The 240-record trace and original journal passed 5113 assertions; the exact first failure, CloseFailed state, observation debt and original process/thread/token ownership were preserved. There were39 completed steps and one reserved failure step40; this is not full47, resource retirement or full P2 acceptance. The same policy owner removed only its newly added right.
+
+VM042 is Saved with memory and disk retained. HostPID13436/exec96916 and guest nativePID5508 are Unknown owners: no polling, querying, adoption, termination or replay. VM041 was fully archived with verified shared-parent dependency, then unregistered with originals retained. Four VMs remain registered; original VM/VM029/VM030 remain unchanged. Clone dispatch166 failed before any VM mutation because its shell lacked Get-FileHash; reviewed corrected dispatch167 succeeded. The source-line clerical correction is separately retained.
+
+SDK162 cold-compiled and actually ran three methods/four fresh Windows fixture scenarios against unchanged production bytes: direct close refusal, finish, terminal page, and queued-input retirement. Native error6 and the original resource charge survived, with no synthetic close-observation loss. Process exit is not original retirement. Independent review163 passed. Integration165 copied the exact five reviewed test-only files; the complete checkout then matched the tested candidate byte-for-byte at source144ab25d0b4a1545948876e3ad01638973f2a47f14d937de4c0893e4edb1abd2. Production safety lints were not relaxed. Earlier compile160 failed before tests; its logs remain.
+
+Cache164 deleted2470 pinned retired rlib/rmeta leaves,4287170848 logical bytes; cache158 stopped before deletion and freed0. Together with cache130,8573809304 logical bytes were reclaimed. All cache/temp work remains on D:/build_cache. VM archives, original disks, executable artifacts and reports were retained.
+
+Next: partial/abnormal-output P2 evidence and complete current candidate qualification; formal retained native picker/approval and original Rust/C/C++ UI, persistent blob/upload and complete SDK26/G04/FREEZE obligations remain open. Keep historical bindings and Unknown outcomes intact. No CI, push, tag or release was performed.
+
+
+## Active Windows continuation, 2026-10-27: case243, native256, full-main259
+
+Current b09 source and four independent cold roles044 passed the original47 and all nine required groups in VM045: 285 checks, 92 delivered frames, 3523 bytes and 107 original journal records. Original authenticated v8 completion, worker/monitor joins, account/setup/firewall cleanup, policy restoration and original transports returned. VM045 is Saved; four VMs remain registered. This is the current normal path, not full P2.
+
+Native255 cold-built the exact current library; native256 ran only eleven reviewed methods. The actual read-only caller test completed 17 refusals in one original registry, 34 checked token closes, and seven negative controls preserving original capacity. No Runner, account or policy mutation, or VM call occurred. SDK capacity and the rest of P2 remain open.
+
+The separate SDK244 candidate at D:/build_cache/s244s adds typed live refusal delivery through private Capnp while keeping native uncertainty and worker joins separate.31 Flutter checks and two Rust boundary tests passed. Old SDK234 Rust/C/C++ flows passed in qualification shells; this is not full application acceptance. Native cancel251 lost its original process observation before approval and has no completion receipt. Full-main252 and supervisor253 compiled from exact input4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d. Full-main254 stopped at an observer-only Windows long-path mismatch; fix258 passed 4 positive and12 rejection cases. Preserve UI9708/supervisor19532/host6508/exec51554 without contacts or replay.
+
+Full-main259 reached real normal startup with UI4908/supervisor17972/host3344, then crashed when full settings was expanded under accessibility observation. Original UI exit3221226525, engine AXTree errors, Windows event1000 and matching shipped PDB resolve the native fault to FlutterPlatformNodeDelegate::ChildAtIndex/AXNode::id at flutter_windows.dll+0x3e755. Preserve original host/supervisor/exec79784; do not poll, query, adopt, kill, or replay. No plugin import or directory operation was accepted. Next resolve the Flutter3.44.0 accessibility-tree defect with a reproducible scoped dependency fix while keeping accessibility enabled; then qualify the full application and remaining P2/SDK obligations.
+
+Cleanup257 reclaimed4936 old compiler rlib/rmeta leaves,8585965342 logical bytes, preserving all executable artifacts, sources, reports and VM disks. Cumulative logical reclaim this resume is51515100584 bytes (47.98GiB); observed free-space change is separate because builds run concurrently. Cache/temp stay on D:/build_cache. All release flags remain false. No CI, commit, push, tag or release was performed.
+
+
+## Active Windows continuation, 2026-10-27: full-main288/293 and reproducible framework
+
+The full-settings accessibility crash was reproduced as unattached native semantics nodes. A pinned local Flutter framework candidate282 keeps accessibility enabled and production main unchanged. Twelve focused regressions, 97 upstream semantics/OverlayPortal tests, 31 project lifecycle tests and 90 full-application serialized frames passed. The global Flutter SDK remains unchanged. The repository now includes an exact-source preparation tool, patch, pinned manifest and license. Reproduction290/291 produced 733 byte-identical framework files; seven cache/path/source-drift guards passed. Fresh full-main292 compiled against this independently reproduced framework.
+
+Full production UI case288 imported/enabled the Rust fixture and saved file-list approval through actual desktop interaction, cancelled the real native picker, observed original worker join and ACK, closed normally, then independently reopened with approval preserved and no old active task. All six original UI/supervisor/host processes exited zero. Review289 is a bounded cancellation pass.
+
+Full production UI case293 used the fresh292 build, a new profile and 70 synthetic files. Actual import, enable, approval and native folder selection succeeded. The production UI reported completed guest execution, 70 captured entries, original worker exit/content-library return, and idle after original ACK. No per-guest-call count is claimed from this UI. Normal close and independent reopen again returned all six original processes with exit zero; fixture bytes stayed unchanged and saved permission remained visible. Review294 is a bounded Rust successful-directory pass. Full SDK, all-language full main, P2 and release remain open. SDK source candidate s244s/input4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d is not integrated into canonical product source.
+
+Historical full-main287 native-picker uncertainty remains Unknown. Do not query, poll, kill, adopt or replay its original UI27640/supervisor29104/host15836/exec72476. Earlier crash owners are likewise unchanged. No VM was mutated by these full-main runs. Four VMs remain registered; new caches and all build/test outputs remain on D:/build_cache. Cumulative logical cache reclaim remains 51,515,100,584 bytes. No commit, push or release occurred.
+
+
+## Active Windows continuation: full-main296/298 and aggregate300
+
+C and C++ fixtures now each completed the same unmodified full-production-main flow as Rust293: actual import, enable, file-list approval, real native folder selection, 70 synthetic entries, UI-reported successful guest result, original worker return, original ACK, normal close and independent reopen with approval preserved and no old active directory task. Reviews297/299 reconcile all six original process handles per case with zero exits and unchanged fixture bytes. Together with Rust293 and separate cancel288, aggregate300 contains 24 distinct normally returned original UI/supervisor/host process identities. Per-guest-call counts are not visible in this UI and are not claimed.
+
+All three successful cases share input4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d, full-main292 and the reproducible framework290. C296 recorded a delayed accessibility text read while the screenshot already showed worker return; complete accessibility fidelity is not accepted. The formal directory scope is now bounded-pass for three languages. Other SDK26 capabilities, canonical source integration, P2 and release remain open. Earlier Unknown owners are untouched. The report has static link/content verification; browser visual preview was refused by the browser local-file policy and no workaround was attempted.
+
+
+## Active Windows continuation: canonical SDK342 and current P2 cases329/335
+
+Current checkout f8492320dbf7e156bfccadae687f50362a7aafb4d1c58e90014170aae9b04f78 completed fresh cold-role normal47 case329 and shared17 case335 in VM045. Case329 delivered all 47 steps, 92 frames and 3523 bytes with 107 journal records, nine required groups and 285 review assertions. Case335 executed 799 steps, 17 actual post-logon refusals in one original parent/owner, 1564 frames and 1837 journal records; 5730 assertions verify original closure and resource accounting. Both cases and their original policy owners closed; only newly assigned privilege was removed. VM045 was saved after case329 and the other three registrations were unchanged. The original case329 reviewer retained an uppercase CASE243 display label; the separate pinned correction changes that display label only, preserving its exact case329 inputs and every original assertion.
+
+Canonical product builds305/309 completed Rust312, C337 and C++332 directory flows plus independent cancel340: actual import/enable/approval/native selection, 70 entries per success fixture, original worker return, ACK and reopen. Twenty-four distinct original UI/supervisor/host handles returned zero. Binding334 preserves the actual original product input and separately explains the unused qualification-lock edit; these are not new builds. Native325 passed 92 Rust methods, 14 native executable runs and three external consumers; distribution323 passed 64 methods and retained all 57 frozen inputs. Counts describe different methods and do not form a release total.
+
+Large cache cleanup cumulative logical bytes are 66835141360; current free space is measured separately. All caches stay on D:/build_cache. No historical Unknown owner was polled, queried, killed or replayed. Full P2 fault matrix, final P3 source review, durable blob backend/history, versioned upload/watch/rename, remaining SDK26 and release are OPEN. This documentation update does not relabel f849 runtime evidence with a later checkout digest. No commit, push, tag, release or system rollback occurred.
+
+
+## Active Windows continuation: streaming owner357 and fresh mutation guests356
+
+The later implementation input8a5aee593e8988cfcf7ba5877cc494be087c88822d2f4fe04941a161e52473db now connects existing Cap'n Proto blob frames to the original worker, Store transaction and durable schema26 staging receipt. Explicit local-owner validation, cancellation/deadline/revocation, cumulative resource charging and post-commit Unknown are retained. No new guest import, product approval or protected blob Session is implied.
+
+Core351 passed865 methods (19 ignored); runtime351 passed149 affected methods. Counts include14 core staging and17 new blob methods. Additional actual controls/reconciliation352 passed19 and private original-owner methods354 passed33. Strict library Clippy passed for core and runtime; cold production library353 passed compilation. Six initially ignored mutation methods were actual Wasm SDK scenarios: fresh Rust/C/C++355 artifacts executed ordinary and16MiB flows in356, all six passed with the original30-second binding. These are ordinary temporary Store/Manager API approval fixtures, not product UI or guest blob upload acceptance. Review357 corrects earlier inaccurate helper labels and excludes zero-selected commands; all raw failures remain.
+
+All57 original frozen SDK inputs are unchanged. All current build/test processes returned. Four VMs remain registered, no VM or host policy mutation occurred. Caches/temp/build outputs remain on D:/build_cache; cumulative logical reclaim remains66835141360 bytes. Report358 records a fresh free-space sample separately. Old P2/UI source bindings and Unknown owners remain untouched. Public versioned upload, production/protected-owner approval and recovery, watch/rename, full P2/P3/SDK26 and release remain open. No commit, push, tag or release occurred.
+
+
+## Active Windows continuation: retired compiler cache359
+
+Cache359 freshly inventoried the four completed roles046 targets and removed only4936 compiler-declared, older, untracked .rlib/.rmeta leaves (8587002071 logical bytes). Exclusive Cargo locks, exact root/reparse/Git/recency/metadata/hash guards and compiler checks preceded deletion. All protected original program/log/source-binding pins and remaining namespace metadata were verified afterward. No executable, DLL, PDB, source, report, VM or archive was removed. Reusing these old targets for later qualification is forbidden; new builds still require fresh D:/build_cache targets.
+
+Cumulative logical reclaim is now75422143431 bytes; observed free space remains a separate fresh measurement in record360. Four VM registrations and states remain unchanged. The C: system pagefile was observed read-only, with no paging or hibernation configuration change. Qualification357 and the historical P2/UI bindings remain intact. Public guest upload, protected/product approval and recovery, the remaining P2/P3/SDK gates and release stay OPEN. Goal work continues; no commit, push or release occurred.
+
+
+## Active Windows continuation: independent upload request candidate362
+
+The new extensions/blob-upload-request-v1 crate provides independent Cap'n Proto Open/Push/Inspect/Release requests, exact-original digest/nomination/nonce response binding, explicit receiving/staged/released/absent states and existing blob chunk receipts. It preserves all old task/IO/channel/blob contracts and does not borrow FileRead/FileCreate permissions. Requests remain64KiB; embedded frames64512 bytes, responses4096, objects16MiB. The bounded Rust client preserves one original pending request, cumulative charges and nonces; transport failure, panic, malformed/foreign delivery or explicit Unknown forbids automatic replay. Inspection cannot reconstruct a sender; durable/released history cannot regress to a fresh upload.
+
+Input649b4bb929738727f2ee8dd171e81e03247121894b4b6c5098e047bb874eac58 passed19 request/client methods and strict library Clippy in362. This includes the existing receiver's274-chunk16MiB protocol path with a clearly fixture-provided Staged response; it is not a real Store commit or guest execution. Initial361 passed14 earlier methods and remains separate. All57 frozen SDK inputs and the previous351 runtime inputs are byte-identical. All build/test processes returned, caches stayed on D:/build_cache, and no VM or host policy action occurred.
+
+This crate is not yet a registered package feature, public import or host route. C/C++ helpers, explicit original package/manager approval, original-worker durable dispatch, protected Session/product/recovery, actual Rust/C/C++ guests and remaining P2/P3/SDK gates remain required. No source/release acceptance, commit, push, tag or release is claimed.
+
+
+## Active Windows continuation: native upload helpers368
+
+Input846d1c59b271c791df5aaac0aa903ec970f53e8a25c07a48d97017e57dd1c107 now includes checked C ABI and move-only C++ owners, without registering any package feature/import or authority. Review368 verifies the original cold staticlib364 and19 Rust methods/strict library Clippy, MSVC C/C++ executions366, and Clang C/C++ executions367. Each C consumer passes8 scenarios/6020 checks, including16MiB/274chunks, guard pages, exact original reply binding, cumulative budgets and Unknown no-replay. Each C++ consumer passes44 checks of moves, vector preservation, original correlation and callbacks. These per-compiler counts repeat the same scope and are not additive coverage. Staged replies are explicit fixtures; no Store/guest/product proof is claimed.
+
+Native library flag parser364, executable resolution365 and Clang library filename366 failures remain in their original evidence. No protocol or test was weakened to pass. All original processes returned. Cache remains D:/build_cache, registered VM count4, no VM mutations or host policy operations. All57 frozen SDK inputs and prior351 runtime inputs remain unchanged. Next: explicit independent package/manager approval and Runner profile, original-worker durable dispatch, protected Session/product/recovery and real Rust/C/C++ guests. Full P2/P3/SDK/source/release remain open; no publication.
+
+
+## Active Windows continuation: independent upload package/approval372
+
+Input400e55a0d69269a0a7a612b3cc2a71072ffccf7ae738dc777874a863752e19ec adds isolated Manifest field22, explicit package profile validation, and separate exact-package upload approval in Registry v3/Manager. v1/v2 cannot smuggle the new permission; old v2 publications stay compatible, and v3 history does not downgrade on revocation. No approval is inherited on a different package digest. Validation precedes manager revocation, and CommitUnknown blocks further decisions including no-ops. No Store/object/live-owner grant is restored. PreparedPackage currently refuses the new profile rather than routing it to a pure task factory.
+
+Core369 full regressions876pass/19ignored include11 new package/registry methods. Runtime370 has56pass including3 new Manager/preparation methods. Strict library Clippy passes both. Controls370 selected0 because its fault-injection requirement was absent, and gets no credit;371 executes the15 original methods with the required feature and no filtered/ignored methods. All original processes returned. All57 frozen SDK inputs and native helper code remain unchanged. Caches/builds remain D:/build_cache;4 VMs unchanged. System pagefile grew during compilation; no pagefile settings changed, and subsequent builds use1job. Cleanup total remains75422143431 logical bytes, not current free space.
+
+Next: independent original live upload binding, dedicated Runner/import and original-worker durable dispatch, protected Session/product approval/recovery, actual Rust/C/C++ upload guests, then directory watch/rename and remaining Windows P2/P3/SDK gates. Current declaration/approval does not establish runtime upload or release acceptance. Historical Unknown owners untouched; no commit/push/tag/release.
+
+
+## Active Windows continuation: upload import/live approval381 and disk reclaim379
+
+Input 9dc4d0bf826191c599e7b3837c951917b60a308718e5fc25f1a14ae9ddbec3df now has the dedicated exact-three-import upload Runner and one-shot original Manager/instance/Store/object approval. Generic callbacks remain denied. Charges do not reset on drop; expiry, revocation and observed Store substitution deny continuation. The empty-object digest validation gap found by377 was fixed before grant issuance. Failed373 compile coverage,374 fixture ABI/count assumptions and377 invalid-empty-object test remain preserved.380 verifies five private continuation methods (121 unrelated filtered),83 runtime integration methods, strict library Clippy and compiler receipts requiring the modified runtime and every selected program to rebuild. Its unchanged dependency cache was reused after preserving previous failed executables; this is not cold-target evidence.375 verifies86 core methods with two ignored child-harness entries and strict Clippy.376 is a cold Workbench library check only. Review382 corrects the expected ignored count in375 from1 to2 using the original successful compiler and test logs, without rerunning tests or altering the failed review record. All current processes returned and57 frozen SDK inputs match.
+
+Cleanup378 stopped before deletion because a copied VM configuration timestamp was compared with its source timestamp; contents matched.379 checks actual copy metadata plus original hashes, all retained originals/state files,34 inventoried VHD parent records and registered VM/snapshot references. It removes only four derived export disks under VM033/034, 196563959808 logical bytes. Original disks, the exact original-state-byte-copy sets, saved memory and all configurations remain. Export markers record that those derived exports are no longer standalone; no restore/replay was authorized. All four registrations/states remain unchanged. Prior build-cache reclamation remains75422143431 logical bytes, recorded separately. Build/temp/cache stay D:/build_cache and builds use one job. C/D free space is a fresh nonisolated sample, not a promised isolated reclamation amount.
+
+Next: Implement original-owner guest upload dispatch with final Store guard, original cancellation/deadline and bounded native verification work; qualify protected approval/recovery and real Rust/C/C++ upload guests, then watch/rename. The dispatcher must preserve original deadline/cancellation and charge bounded Store verification work; current approval/import checks do not prove commit-time liveness or actual guest persistence. Full P2/P3/SDK/source/release remain open. No commit, push, tag or release in this continuation.
+
+
+## Active Windows continuation391: original upload worker and commit guard
+
+Runtime388 source 6747f69d2a42471e5ffec143ff38452a4ed87125ca9407bd16bfd9261795ba02 now executes one original
+approved upload task on its original complete owner. The independently named
+upload task handler fixes the incorrectly selected pure-handler route from387;
+pure transform dispatch still rejects uploads. Store guard384/386 previously
+qualified882 full-core methods (19 ignored) on its own exact source.388 qualifies
+96 selected runtime methods including13 actual WAT guest/Store methods,5 private
+continuations (121 filtered),12 core handler methods, and strict core/runtime
+Clippy. Empty and150017-byte objects, duplicate chunks, missing End, nonce and
+nomination failures, postcommit guest faults, release history, cancellation,
+original-owner cleanup and Store replacement are checked. These are fresh test
+fixtures, never historical Unknown owners.
+
+The one original End request closes the bounded upload stream and stays suspended
+until Store commit. Later Push cannot restart it. Native work has a separate
+nonrefundable128 MiB cumulative ceiling. Cancelled/revoked unread success becomes
+an error while original committed history remains. Owner and failed-disconnect
+instance return through the actual original thread join; Drop proves no closure.
+
+Host390 source be737588619b052c2fa00dc4a839bf5a5de7097150ab4dfe1470828efb653403 is a Windows production library compile
+only. It differs from388 only by the reviewed Workbench lock edge/local package;
+the previous full checkout digest was reproduced by substituting only the old
+lock bytes in the hash calculation without editing the checkout. Metadata389
+failed offline while resolving other-platform packages; its failure is retained.
+No dependency versions changed. All build targets and temporary paths stay on D.
+All57 frozen SDK inputs match. All recent processes returned; old Unknown owners
+were not contacted. Four VM registrations and states remain unchanged.
+
+Cleanup379 remains196563959808 logical bytes from four redundant exported disks,
+with original disks and exact original-state backups preserved. Earlier cache
+cleanup remains75422143431 logical bytes, not an additional disk-space claim.
+Current free-space samples and public report links were refreshed.
+
+Next: Build and run independent Rust/C/C++ upload SDK guests including16 MiB; integrate protected product owner and approval/recovery UI, then finish watch/rename. Remaining P2 faults must retain exact input
+lineage or receive independent fresh validation. Full Windows P2/P3, SDK26/G04/
+SDK_FREEZE, source and release remain open. This continuation does not commit,
+push, tag, publish or release.
+
+
+## Actual Rust/C/C++ upload guests403
+
+The three independently compiled Wasm guests now use only the task read/complete
+and fixed upload call imports. C and C++ share one Rust codec archive/allocator;
+C++ exercises the move-only client and response wrappers. Inputs and replies use
+existing Cap'n Proto messages. No WASI or trusted Store code is linked into guests.
+The bounded example producer generates byte42 chunks; it is not arbitrary file IO.
+
+Qualification395 ran empty,150017-byte and16 MiB objects for each language through
+the actual original UploadWorker and Store. All nine successful cases verify exact
+bytes/SHA256, observe the known existing stage without re-uploading, release under
+new explicit original-owner approval, join all27 workers and reopen durable history.
+16 MiB uses274 chunks,278 host calls,17076048 wire bytes and84525056 native work bytes.
+
+Real SHA256 and codec work exceeded the legacy100 million fuel ceiling. The isolated
+upload profile now permits an explicitly declared and host-approved cumulative
+ceiling of8 billion. Ordinary profiles retain100 million; defaults retain20 million.
+Package/host limits intersect and no resume refills fuel. Actual16 MiB used about
+6.03 billion Rust and6.63 billion C/C++ units. Absolute approval deadlines, revocation,
+memory/call/wire/native-work ceilings remain independent. Pure computation is still
+bounded by interpreter fuel, not an immediate cancellation interrupt.
+
+The low-budget negative case correctly stopped with Limits,1323 remaining units,
+six calls and no staged record.395's arbitrary test-only assertion that the remainder
+must be below1000 was wrong: the interpreter charges blocks.396 changed only that
+assertion, reproduced the entire395 source digest with the old test bytes, and reran
+only the failed method. Its actual closure/rollback passed; the nine prior successes
+were not replayed.396 then caught a new profile-test compile error: Package has no
+Clone implementation.398 corrected only that test to decode the original archive,
+then its broader test Clippy found an existing complex function-pointer type.
+400 names that test type, proves the full-source delta and runs the remaining
+regressions. Its checks all pass, but its wrapper incorrectly expects121 filtered
+private methods instead of123 with fault-injection enabled.402 reviews the logs
+without replaying passed tests and compiles the Windows production library.
+All failures392/394/395/396/398/400 remain recorded; production code did not change
+after395.
+
+Core package regressions52, related runtime methods97 and private continuations5
+pass. The123 unrelated private methods and9 success methods filtered by396 are not
+additional tests. Strict Clippy and the Windows production library check pass;
+the latter is compilation only. All57 frozen inputs remain unchanged. Targets and
+temporary files stay under D:/build_cache; no VM or host-policy actions occurred.
+
+Protected product owner, approval/recovery UI, watch/rename, remaining Windows P2/P3,
+full SDK26/G04/SDK_FREEZE, source and release acceptance remain open.
+
+Sources: successful guest execution ab4422db67fe9703479917beecb7aa580322b7b1488c075b814dd952f87f2381; corrected refusal a0b4bd000b79ab177a0760da3be994a20fb420b64cdb5e7c8483f8b1e3824d1b; regressions/host check 2c95c6b1d3802d7d017aac1e2497a2885525813afc8cd3773600783163d040e6. No commit, push, tag or release.
+
+
+## Original protected upload owner407
+
+The native Workbench now transfers its complete original protected Session,
+Manager and Store into one upload worker. The independent upload connection
+requires the exact enabled package approval and its own explicit budget; ordinary
+Manager connections retain their previous limits. A retained restriction-only
+control also vetoes unread successful results after the original join. Cancellation,
+revocation and controller loss cannot renew an approval or construct another owner.
+
+Qualification406 passes99 related runtime methods and10 actual protected Windows
+methods. Six positive cases execute the pinned Rust/C/C++ Wasm guests with150017
+bytes and16 MiB, verify exact bytes and SHA256, check the original exclusive lease,
+seal audit history, reopen the protected Session, release, and reopen released
+history. Eleven fresh synthetic libraries exercise17 original worker joins in total.
+Negative cases cover approval/task/submission refusal, low-fuel rollback, unread
+cancel/revocation, explicit original-history confirmation, and lost controller.
+Generic cleanup cannot erase an unresolved upload result. Confirmation is a separate
+observation and never rewrites the original Unknown. No historical Unknown owner
+was contacted or replayed. Runtime strict library Clippy and host library check pass.
+Qualification408 also compiles the modified state-slot unit fixtures and passes
+the six original-owner absence controls and four synthetic stop/join controls;
+all unrelated and legacy privileged tests are filtered, never executed.
+
+This is the trusted native API, not the rendered approval/recovery UI or formal
+Cap'n Proto product route. The known-success close/reopen flow is not cross-restart
+Unknown recovery. Payloads are the bounded SDK example producer, not arbitrary file
+or network uploads. Full Windows P2/P3, watch/rename, SDK26/G04/SDK_FREEZE, final source
+and release gates remain OPEN. All57 frozen inputs are unchanged. Cargo.lock only
+adds two existing direct path-dependency edges; no third-party version changed.
+
+Qualification source: 7370d500e3ec2c5b84421994f9868d3326512dd3ba1ce4dba1bb16be46445fb3. [Evidence](evidence/resume-20261027/sdk407-protected-upload-owner.json).
+
+
+## Private upload route and retained session412
+
+The native Workbench upload owner is now reachable through six appended private
+Cap'n Proto actions (162-167). Package category approval remains separate from a
+single exact operation approval. Native metadata binds package/revision, handler,
+bounded input, object identities, whole-object digest, length and deadline. The
+original submission is exposed until acknowledgement so a missing START reply can
+be correlated without starting another worker. Catalog metadata declares the
+independent upload profile; ordinary pure-transform UI excludes these handlers.
+
+Qualification410 passes31 Dart client/session tests and static analysis of the
+five affected application files. Qualification411 passes34 adjacent client tests
+with2 existing skips, and2 actual protected Windows tests through the private
+binary dispatcher, with10 older protected tests deliberately filtered. The two
+fresh synthetic libraries execute the pinned Rust Wasm producer for150017 bytes.
+They prove exact submission recovery, wrong-key/unread/repeated-read/replay refusal,
+unread cancellation veto, separate original-history observation, explicit matching
+confirmation, two original worker joins, sealing and reopened stored bytes/SHA.
+The Dart retained session blocks automatic replay, retains lost delivery, suppresses
+results to a detached view, and does not let generic repair erase Unknown.
+
+All57 frozen inputs remain unchanged. Existing private action ordinals are retained;
+only hostDigest changes among the ten generated schema identities. Source410 and
+source411 differ only in restored original LF bytes in two Rust files, independently
+reconstructed from source digests. No new VM acceptance or privileged host test ran.
+
+This is private route and retained in-process session evidence. The Dart client and
+native dispatcher have not yet run together across the process boundary for this
+upload flow. Rendered operation approval/recovery, cross-restart Unknown recovery,
+arbitrary file/network uploads, watch/rename, full Windows P2/P3, SDK26/G04/SDK_FREEZE,
+final source and release gates remain OPEN. Prior Unknown results remain unchanged.
+
+Qualification source: 6d182b995341074658c2b5d1e5d0a7a8029b1263e2dc6c21678fe158c148290c. [Evidence](evidence/resume-20261027/sdk412-upload-private-capnp-session.json).
+
+
+## Actual Dart/native upload product route417
+
+Qualification416 passes six actual production Dart-to-supervised-native tests:
+Rust, C and C++ Wasm each stage150017 bytes and16 MiB, close the original owner,
+verify exact bytes and SHA through an independent protected-library reader, reopen
+the known-success library, explicitly release the same object, and verify durable
+release history. There are12 original worker joins,12 supervised owner closures
+and12 independent history observations. Supervision's business_outcome remains
+Unknown; only the separate original upload API and protected history establish
+these business results. No historical Unknown owner was reopened or contacted.
+
+Five upload control actions now bypass pending service business and reach the
+original outer scheduler. Upload start's temporary request segments and serialized
+frame are cleared on send success or failure. The32 relevant routing/buffer tests
+pass (22 in414,10 in416), with static analysis clean. Failed mock prechecks414/415
+remain preserved: the controlled fixture was updated to the existing versioned
+page/query API. The native and builtin builds from414 are independently bound to
+416 by reconstructing the source digest; only this test fixture changed.
+
+All57 frozen SDK inputs remain unchanged. These are synthetic producer objects,
+not rendered operation approval, arbitrary file/network uploads, or cross-restart
+Unknown recovery. Those gates, directory watch/rename, full Windows P2/P3,
+SDK26/G04/SDK_FREEZE, final source and release remain OPEN.
+
+Qualification source: 4cdb680ae2dfd8b3bea5f6a798c2188d7f6bec7122077400a62e76f80ef4e52c. [Evidence](evidence/resume-20261027/sdk417-upload-dart-native-product.json).
+
+
+## Bounded upload proposal and pure planner423 — 2026-10-28
+
+An independent Cap'n Proto proposal carries bounded untrusted display metadata,
+length, SHA and producer input. It carries no Store, grant or object identity.
+The later bound-input codec checks the exact proposal digest against an unchanged
+Descriptor frame; this is correlation, never approval. Protobuf Manifest field23
+registers disjoint same-package proposal-to-upload handlers under an explicit
+required feature. Pure and upload execution routes remain separate.
+
+The new planning interpreter holds no Store, Manager, connection or effect
+callback. Any attempted upload import aborts, including attempts to hide it behind
+a completion. Original task correlation, declared output/object bounds, fixed fuel,
+cancellation and structured plugin failures are checked. Codec419 passes15 tests;
+core421 passes31 package tests; runtime421/422 passes58 selected methods including
+10 new synthetic WAT planner cases. The initial421 fixture failure is preserved;
+only its task read capacity changed to the existing128 KiB contract, with an added
+assertion proving actual upload-import admission before rejection. Core and runtime
+strict Clippy pass. Default host library/binaries/tests compile with existing
+warnings retained; this is not current-source product or VM acceptance.
+
+All57 frozen inputs remain unchanged. Only one new local dependency edge was kept;
+unrelated dependency edits produced by a Cargo update were preserved privately and
+not applied. C/C++ proposal helpers, real three-language planner guests, private
+planning route, trusted rendered approval/recovery and durable Unknown recovery
+remain open. Watch/rename, full Windows P2/P3, full SDK and release remain OPEN.
+
+Qualification source: d06aa860ffe93c9403f462e50a808556b090129d53c18329c9781e896f02598a. [Evidence](evidence/resume-20261028/sdk423-upload-proposal-and-pure-planner.json).
+
+
+## Three-language proposal helpers and real planners431 — 2026-10-28
+
+Typed C owners and C++ move-only wrappers now share the unchanged bounded Cap'n
+Proto proposal codec. Twenty-three Rust tests and four actual MSVC/Clang C/C++
+consumer programs passed. The sample-only Cap'n Proto producer options passed
+three tests and strict checks; they carry length/fill configuration, no authority.
+
+Fresh Rust/C/C++ guest builds were verified against16803 pinned toolchain/sysroot
+files. Each has only the existing three fixed task/upload imports and no start
+section. Eleven real planner tests passed: three languages at0,150017 and16777216
+bytes plus two refusal cases. Planning runs before any Store/Manager exists and
+makes zero upload calls. The three languages return identical proposal hashes at
+each size. Eighteen original upload/release workers joined; stored bytes and SHA
+match, and the successful release history survives a closed-owner reopen. Ten
+legacy Descriptor-input cases also passed, with28 original worker joins. These
+ordinary Windows test owners use explicit test approvals, not rendered approval.
+
+Failed checks425/429 are retained. Their fixes only replace an unnecessary test
+Vec and correct borrowing of the original non-Clone package. Guest and production
+inputs were proven unchanged after the second correction. All57 frozen inputs
+remain unchanged. No VM mutation or historical Unknown owner contact occurred.
+
+Cleanup427 removed824 closed compiler intermediates,995108453 logical bytes;
+observed D free-space gain was996626432 bytes. All3664 protected hashes passed;
+executables, libraries, sources, evidence and VM disks were retained. The plan
+preview omitted its numeric sum; the immutable manifest and executed totals were
+independently reconciled. Build caches remain under D:\build_cache; four VMs remain.
+
+Next: background product planner tied to the original package/revision/input,
+trusted rendered operation approval/recovery and durable Unknown recovery. Watch/
+rename, full Windows P2/P3, full SDK and final source/release gates remain OPEN.
+
+Qualification source: 68fd7dc3613307633d12f5f4cef7a3c04f3666ac407258375c1a4f5afee84e7b. [Evidence](evidence/resume-20261028/sdk431-three-language-proposal-planners.json).
+
+
+## Original native product planner436 — 2026-10-28
+
+Workbench now owns a separate bounded planning slot. Package preparation and pure
+guest execution run on its original thread with no Store, Manager or effect grant.
+The native product retains the exact proposal, original task hash, package digest,
+registry revision and control gate. It returns only bounded review metadata.
+After explicit trusted review, approval rechecks the original selection and upload
+category permission, generates fresh identities in the host, and starts the existing
+original protected upload owner with BoundInput built from the retained proposal.
+The one-shot decision is consumed before admission; a missing reply discovers the
+same original task, and even failed admission cannot silently submit again.
+
+Fifteen product methods passed, including real Rust/C/C++ guests at150017 bytes and
+16MiB. All six original planning threads and six original protected upload workers
+joined. Closed-library reads confirm exact bytes and SHA. Other cases cover no
+category grant from planning, wrong keys/hashes, unreviewed/duplicate decisions,
+late cancel, expiry, revision drift, replaced/lost controller, spawn failure,
+malformed options and failed admission. Four original gate controls also passed.
+An additional focused run435 verifies actual Workbench finish returns pending while
+the original planner is held, retains the protected lease, and succeeds only after
+the original join. Production code is byte-identical between434 and435.
+
+New planner Clippy diagnostics are empty; existing host warnings are retained.
+Default host library/binaries/tests compile. Initial build433 failed only because a
+new test used a nonexistent catalog accessor; the corrected runtime results are
+separate. No broad host legacy execution, VM mutation or Unknown owner contact was
+performed. All57 frozen inputs remain unchanged; dependencies added only local
+proposal/sample edges. This is native product API evidence, not private IPC or a
+rendered approval. Next: Cap'n Proto planning controls, retained Dart session and
+formal approval/recovery UI, followed by durable Unknown recovery. Remaining P2/P3,
+watch/rename, full SDK and final source/release gates stay OPEN.
+
+Qualification source: 6c37c46fa1c2ab552872b2ea12d69bb3f804288096a0731a1e649b01c92c3a22. [Evidence](evidence/resume-20261028/sdk436-original-product-planner.json).
+
+
+## Private planning controls442 — 2026-10-28
+
+The original planning slot now has seven private Cap'n Proto controls and typed
+catalog mappings. All168 prior actions and570 prior fields remain unchanged.
+The native plan retains its own generated upload submission/key, even after the
+upload is acknowledged. Discovery cannot replace it with whichever IO is active.
+
+The retained Dart session freezes the original input, checks its SHA together with
+package/revision/handler, and consumes the local approval attempt before dispatch.
+Missing start/read/approval/acknowledgement replies never start another operation.
+An existing upload is observed by original identity, without recreating its input.
+View detachment cannot publish an unread proposal; if an approval reply is lost,
+the session discovers and cancels only its original upload. Planning request
+copies are cleared, and scheduler controls stay outside pending service business.
+
+68 Dart client/session checks and34 Flutter buffer/routing checks pass.21 native
+methods pass:15 original product cases and6 private-control cases. Actual Rust,
+C and C++ guests each cross the new binary controls with150017 bytes and recover
+the original upload after a deliberately discarded approval reply. The product
+cases also cover16MiB. Nine positive planning joins and nine upload joins are
+observed; closed protected libraries contain exact bytes and SHA. New module
+Clippy diagnostics are empty; existing unrelated host warnings are retained.
+Default host library, binaries and tests compile;57 frozen inputs are unchanged.
+
+The initial439 run is preserved:18 native methods passed and3 failed before
+upload approval because native hashed the whole Invocation while Dart checks
+input bytes. Correction440 makes the native view hash the exact Transform input;
+441 uses fresh stores and re-runs the full selected set. No old store is replayed.
+
+Cleanup437 removed1,288 old compiler leaves:873,228,962 logical bytes and an
+observed875,315,200-byte free-space increase.6,378 retained files were hash checked.
+One missing cache-tag check stopped before deletion; the original Cargo artifact
+receipt and unchanged compiler fingerprint then established that exact cache root.
+Sources, executables, reports, VM disks and historical Unknown owners are retained.
+
+This validates native binary controls and Dart sessions separately. A combined
+Dart/native planning product run and rendered approval/recovery are next, followed
+by durable Unknown recovery and watch/rename. Full Windows P2/P3, SDK26/G04/
+SDK_FREEZE, final source and release remain OPEN. There was no GitHub publication.
+
+Qualification source: 25c18413bd5b7e4df377cec8ca38c4247f48c704c75dc704f43904f36b0eaf82. [Evidence](evidence/resume-20261028/sdk442-private-planning-controls.json).
+
+
+## Retained planning product446 — 2026-10-28
+
+Qualification444 now connects the actual retained Dart planning/upload sessions
+to the production native host and supervisor through the seven private Cap'n Proto
+controls. Seven fresh protected libraries pass: Rust, C and C++ each upload150017
+bytes and16MiB after planning, and a lost proposal read creates no stored object.
+All six positive cases discard the real start and approval responses at the trusted
+application edge, then discover the original tasks without submitting again. The
+three16MiB cases also discard the result response: original history is inspected and
+explicitly confirmed before acknowledgement, without synthesizing a missing result.
+This models application-edge reply loss; it is not OS transport-failure coverage.
+
+Seven planning and six upload workers join. Thirteen native owners exit normally
+and their original supervisors release; thirteen independent closed-library reads
+verify exact bytes/SHA, object counts and no pending bytes. Positive libraries are
+reopened only after the business result, original joins, native closure and first
+independent read. Raw supervisor business_outcome=Unknown is retained separately;
+it is not rewritten from the observed business data. Category approval is provided
+through the test API, so this is not a rendered user-approval qualification.
+
+Production source is unchanged from442. Three qualification-only files package
+the current guests, inspect known closed libraries and exercise the actual product.
+Follow-up445 adds braces to three test statements; focused analysis is clean and
+the exact before/after/source reconstruction proves no production behavior change.
+57 frozen inputs remain unchanged; all recent processes closed. Four VMs remain
+registered, caches remain on D, and no VM or host policy was changed.
+
+Rendered approval/recovery, durable Unknown recovery, watch/rename, full Windows
+P2/P3, SDK26/G04/SDK_FREEZE and final source/release remain OPEN. No remote publish.
+
+[Evidence](evidence/resume-20261028/sdk446-retained-planning-product.json).
+
+
+## Planning approval/recovery UI457 — 2026-10-28
+
+The plugin list now exposes category approval, a save action and a retained
+original-task review. The trusted dialog freezes bounded UTF8 text or an explicitly
+selected binary input file, requests a pure proposal, displays its untrusted plain
+description/length/current-library destination/fingerprint, and requires a separate
+unchecked confirmation before one native approval. It never constructs upload
+identities from plugin text. Missing responses retain the original task; lost
+results require original-history observation and explicit confirmation.
+
+The upload session now consumes acknowledgement before dispatch. Missing finish
+responses stay unresolved across view replacement and cannot cause a second
+acknowledgement or a new upload. The retained plan owns cancellation; closing a
+view cannot cancel through two independent owners. Plugin-library replacement
+removes its exact original dialog. A dialog is not a pending background request,
+so its parent no longer shows a perpetual loading animation.
+
+Qualification454 passes70 pure Dart checks and70 Flutter widget/buffer/routing
+checks, including13 new UI methods. Earlier448/450/452 failures are retained:
+an unavailable test-only dependency was replaced with a Flutter fixture; the
+background animation was corrected; file IO was awaited on the real event loop;
+and an XFile test fixture now supplies its Windows path instead of ignored name.
+
+Qualification456 then drives these production widgets against the actual pinned
+native host/supervisor in six fresh protected libraries. Rust/C/C++ each save
+150017 bytes and16MiB. Import, enablement, category permission, proposal approval,
+result review and finishing all pass through UI controls. Real start/approval
+responses are deliberately discarded at the application edge; all three16MiB
+cases also lose the result reply. Each case submits and approves once; no raw
+upload start or missing-result reconstruction occurs. Six planner and six upload
+joins,12 original supervised closures and12 independent closed-library byte/SHA
+checks pass, including known-closed reopening. Raw supervision Unknown is retained.
+
+This is headless Flutter production-widget execution with a deterministic file
+selection adapter. The captured test frames use placeholder glyphs and do not
+establish readable desktop appearance. Native Windows window/picker acceptance,
+ordinary sample parameter input, durable Unknown recovery, watch/rename, final
+P2/P3, SDK26/G04/SDK_FREEZE, final source and release remain OPEN.57 frozen inputs
+are unchanged. Four VMs remain; build caches still resolve to D. No remote publish.
+
+[Evidence](evidence/resume-20261028/sdk457-native-planning-widget-flow.json).
+
+
+## Windows text save and pause467 — 2026-10-28
+
+At the user's request, further qualification is paused and completed source,
+evidence and the HTML report are being checkpointed to the development branch.
+No new VM or acceptance case is started after this pause request.
+
+The three SDK examples now support bounded UTF8 text through existing CapnProto
+planning and bound-upload inputs. Five sample tests, 21 actual guest-planner
+methods and ten legacy descriptor methods pass. Invalid UTF8 and over-limit
+input are refused; exact empty/unicode/CRLF/NUL/32768-byte content is covered.
+Six actual protected native widget cases cover Rust/C/C++ at 41 and 32768 bytes,
+with one planning and upload join each, 12 normal supervised closures and 12
+independent closed-library content reads. Deliberately discarded replies resolve
+only the original operation. These six cases use headless qualification adapters.
+
+The separate desktop464 case uses the current unmodified production main, an
+actual Windows plugin picker and a fresh protected library. The user pasted two
+lines containing Chinese text, an emoji, leading/trailing spaces and a newline.
+The agent then reviewed the 41-byte proposal and matching SHA, approved once,
+read the saved result, checked original history, and finished once. The UI showed
+one completed record. Both initial and reopened UI/supervisor/host process sets
+exited normally (six original identities, all exit0). Each independent closed
+read found exactly one byte-for-byte matching object and no pending write.
+Reopening preserved plugin enablement and category approval and showed no pending
+proposal. This desktop text case is Rust only; it does not prove Unknown recovery.
+
+Source binding: 269f9b7420cab8a073e1cd3eb5fd2de75fd75dd4b8b906ba21401d333725c78a.
+57 frozen inputs remain unchanged. Full-host strict Clippy still reports 60
+preexisting errors; default Clippy completed and the two new examples had no
+diagnostics. The successful external text-widget adapter is retained as evidence;
+promotion into the canonical test suite remains pending. Build caches stay on D,
+four registered VMs remain, and no historical Unknown owner was contacted.
+
+Remaining: durable cross-restart Unknown recovery, watch/rename, network/account/
+TLS and full recovery matrix, final Windows P2/P3 source binding, full SDK26/G04/
+SDK_FREEZE, strict-host lint cleanup, final source acceptance and release.
+source_accepted=false; release_eligible=false. Other platforms remain deferred.
+
+[Evidence](evidence/resume-20261028/sdk467-text-desktop-and-three-language.json).

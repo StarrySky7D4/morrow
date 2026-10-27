@@ -2,7 +2,7 @@
   "schema": 1,
   "branch": "codex/local-continue-20261020",
   "base_commit": "116d1eb9beffa1675a48eb5ab06d1abc79137ae2",
-  "updated": "2026-10-25",
+  "updated": "2026-10-28",
   "release_eligible": false,
   "source_accepted": false,
   "ci_authorization": "after overall repair; intermediate commits use [skip ci]",
@@ -14,8 +14,8 @@
     },
     {
       "id": "FAILURE_OWNERSHIP",
-      "state": "PARTIAL_FULL_P2_OPEN",
-      "detail": "Current ab14 normal47/nine078 and fault063/079 pass within scope. Real17-refusal046 and logon048 retain a5 source bindings. Case080 never reached late create: S reused prior setup-fault library. Original Unknown owners remain retained."
+      "state": "CURRENT_NORMAL_AND_LOCAL_REFUSAL_PASS_FULL_P2_OPEN",
+      "detail": "Current b09 source original47/nine-group case243 passed in VM045 with complete original cleanup and policy restoration. Current-source library case256 passed 11 exact checks, 17 real read-only caller refusals, 34 checked token closes and seven charged negative controls. This is local native registry proof, not full SDK capacity or full P2. Historical faults retain their exact source bindings."
     },
     {
       "id": "HOST_PLATFORM_DEPENDENCIES",
@@ -29,8 +29,8 @@
     },
     {
       "id": "REPRODUCIBLE_ACCEPTANCE",
-      "state": "ORIGINAL47_NINE_SCOPED_PASS_REJECTED_FAULT_BUILD_RETAINED",
-      "detail": "Current ab14 normal078 passed284 checks. Case080 demonstrates that manifest/source hashes plus a rebuilt binary do not prove a library was rebuilt from the intended overlay; build isolation repair is pending explicit resume."
+      "state": "CASE080_CACHE_ISOLATION_REPAIRED_COLD_BUILD_AND_ACTUAL_SETUP_VERIFIED",
+      "detail": "Exclusive D build targets, complete fresh C/S artifacts, rebuilt setup library and forbidden-marker checks prevent reuse of the old setup fault. VM039 case098 actual setup succeeded. Old case080 remains rejected; full source/release acceptance is not inferred."
     },
     {
       "id": "EDITOR_PERSISTENCE",
@@ -40,9 +40,9 @@
   ],
   "gates": {
     "L0_TOKEN": "PASS_SCOPED_NATIVE_SNAPSHOT",
-    "L1_RUNNER": "PASS_SCOPED_CASE078_SOURCE_AB14_PUBLICATION_NOT_FULL_PRODUCT_QUALIFIED",
-    "L2_BUSINESS_AND_RETIREMENT": "PASS_SCOPED_CASE078_SOURCE_AB14_PUBLICATION_NOT_FULL_PRODUCT_QUALIFIED",
-    "L3_FULL47_NINE": "PASS_SCOPED_CASE078_SOURCE_AB14_PUBLICATION_NOT_FULL_PRODUCT_QUALIFIED",
+    "L1_RUNNER": "PASS_SCOPED_CASE329_SOURCE_F849_FINAL_PRODUCT_ACCEPTANCE_OPEN",
+    "L2_BUSINESS_AND_RETIREMENT": "PASS_SCOPED_CASE329_SOURCE_F849_FINAL_PRODUCT_ACCEPTANCE_OPEN",
+    "L3_FULL47_NINE": "PASS_SCOPED_CASE329_SOURCE_F849_FINAL_PRODUCT_ACCEPTANCE_OPEN",
     "EDITOR_PERSISTENCE": "PASS_DEFINED_WINDOWS_HANDOFF_MATRIX065_SOURCE_AB14",
     "SDK26": "OPEN",
     "G04": "OPEN",
@@ -51,15 +51,35 @@
     "NATIVE_LIBRARY_REGRESSION": "FAILED_617_PASSED_13_FAILED_8_IGNORED",
     "P2_LOGON_REFUSAL": "PASS_SCOPED_CASE048_SOURCE_A5_RETAIN_ORIGINAL_BINDING",
     "P2_SOURCE_TOKEN_POLICY_REFUSAL": "PASS_SCOPED_ONE_REAL_SOURCE_POLICY_REJECTION_CASE039_FULL_P2_OPEN",
-    "P2_SHARED_SEVENTEEN_NATIVE_REFUSALS": "PASS_SCOPED_CASE046_SOURCE_A5_RETAIN_ORIGINAL_BINDING",
+    "P2_SHARED_SEVENTEEN_NATIVE_REFUSALS": "PASS_SCOPED_CASE335_SOURCE_F849_CLEAN_SHARED_ORIGINAL_OWNER",
     "P2": "OPEN",
     "P2_AFTER_ACCOUNT_SETUP_FAILURE": "PASS_SCOPED_CASE079_SOURCE_AB14_UNKNOWN_RETAINED",
     "P2_AFTER_HELPER_BEFORE_RUNNER": "PASS_SCOPED_CASE063_SOURCE_AB14_UNKNOWN_RETAINED",
-    "P2_LATE_CREATE": "OPEN_CASE080_TARGET_NOT_REACHED_REJECTED_BUILD_CACHE"
+    "P2_LATE_CREATE": "PASS_SCOPED_CASE098_ORIGINAL_NATIVE_FAILURE_PRESERVED_FULL_RETIREMENT_OPEN",
+    "SDK_DIRECTORY_REFUSED_ADMISSION": "PASS_SCOPED_SDK101_8_NATIVE_FILE_18_RELATED_TESTS_FORMAL_PICKER_OPEN",
+    "SDK_WORKBENCH_ORIGINAL_SELECTION": "PASS_SCOPED_SDK106_12_PROTECTED_METHODS_FORMAL_PICKER_OPEN",
+    "P2_TOKEN_DERIVATION_NATIVE_REFUSAL": "PASS_SCOPED_CASE118_ORIGINAL_FIRST_FAILURE_RETAINED_FULL_RETIREMENT_OPEN",
+    "SDK_DIRECTORY_WORKER_CHECKED_CLOSE": "PASS_SCOPED_SDK143_DIRECTORY_LIFECYCLE_AND_UNKNOWN_RETENTION",
+    "P2_DEFAULT_DACL_NATIVE_REFUSAL": "PASS_SCOPED_CASE147_ORIGINAL_FIRST_FAILURE_RETAINED_FULL_RETIREMENT_OPEN",
+    "P2_HANDLE_CLOSE_NATIVE_REFUSAL": "PASS_SCOPED_CASE155_FIRST_FAILURE_AND_ORIGINAL_DEBT_RETAINED",
+    "SDK_DIRECTORY_ACTUAL_CLOSE_REFUSAL": "PASS_SCOPED_THREE_METHODS_FOUR_SCENARIOS_FULL_SDK_OPEN",
+    "SDK_FULL_MAIN_RUST_DIRECTORY": "PASS_SCOPED_CANONICAL312_SUCCESS_AND340_CANCEL_REOPEN",
+    "SDK_FULL_MAIN_ALL_LANGUAGES": "OPEN_BEYOND_DIRECTORY_SCOPED_FLOWS",
+    "SDK_FULL_MAIN_THREE_LANGUAGE_DIRECTORY": "PASS_SCOPED_CANONICAL312_337_332_SUCCESS_AND340_CANCEL_REOPEN",
+    "SDK_BLOB_DURABLE_STAGE": "PASS_SCOPED_ORIGINAL_WORKER_STREAM_357_PUBLIC_UPLOAD_OPEN",
+    "SDK_BLOB_REQUEST": "PASS_SCOPED_RUST_C_CPP_NATIVE_368_PUBLIC_HOST_OPEN",
+    "SDK_BLOB_PACKAGE_APPROVAL": "PASS_SCOPED_DECLARATION_MANAGER_372_PRODUCT_APPROVAL_OPEN",
+    "SDK_BLOB_LIVE_APPROVAL": "PASS_SCOPED_IMPORT_BINDING_AND_ORIGINAL_WORKER_391_PRODUCT_OPEN",
+    "SDK_BLOB_ORIGINAL_WORKER": "PASS_SCOPED_REAL_RUST_C_CPP_GUEST_STORE_403_PROTECTED_PRODUCT_OPEN",
+    "SDK_BLOB_THREE_LANGUAGE_UPLOAD": "PASS_SCOPED_EMPTY_MULTICHUNK_16MIB_403_FULL_PRODUCT_AND_SDK_OPEN",
+    "SDK_BLOB_PROTECTED_UPLOAD": "PASS_SCOPED_NATIVE_WORKBENCH_407_FORMAL_APPROVAL_RECOVERY_UI_OPEN",
+    "SDK_BLOB_PRIVATE_ROUTE": "PASS_SCOPED_CAPNP_AND_RETAINED_SESSION_412_RENDERED_UI_OPEN",
+    "SDK_BLOB_PRODUCT_ROUTE": "PASS_SCOPED_ACTUAL_DART_NATIVE_417_RENDERED_UI_OPEN",
+    "SDK_BLOB_PROPOSAL": "PASS_SCOPED_WINDOWS_RUST_TEXT_SAVE_467_THREE_LANGUAGE_HEADLESS_DURABLE_UNKNOWN_OPEN"
   },
   "missing_acceptance_inputs": [],
   "historical_evidence": "reports/reconstruction-2026-10-20/windows-target-policy-progress-2803/README.md",
-  "candidate_state": "PAUSED_DEVELOPMENT_SNAPSHOT_NOT_SOURCE_OR_RELEASE_ACCEPTANCE",
+  "candidate_state": "ACTIVE_WINDOWS_CONTINUATION_FULL_P2_AND_SDK_OPEN",
   "local_continuation": "docs/qualification/LOCAL_CONTINUATION.md",
   "local_evidence": "build/local-continuation/qualification-evidence-007.json",
   "retained_attempts": [
@@ -731,7 +751,7 @@
     82424,
     88014
   ],
-  "execution_state": "PAUSED_BY_USER_VM035_SAVED_P3_DEFINED_SCOPE_PASS_P2_SDK_OPEN",
+  "execution_state": "ACTIVE_WINDOWS_P2_AND_SDK_CONTINUATION",
   "host_incident": "build/local-continuation/host-legacy-incident-001.json",
   "windows_editor_subset": {
     "status": "NATIVE_WINDOWS_FORMAL_EDITABLE_RESTART_SCOPED_PASS",
@@ -3709,10 +3729,12 @@
   "task_resumed": {
     "by": "direct_user_instruction",
     "scope": "Windows only",
-    "starting_commit": "650720269c8de658f9a1d8ae674a300e31892042",
+    "starting_commit": "2696f95e3342c29b5ac3801d7eafc0c092b90db1",
     "retained_unknown_replay": false,
     "maximum_registered_vms": 4,
-    "build_cache": "D:\\build_cache"
+    "build_cache": "D:\\build_cache",
+    "latest_progress": "reports/project-progress-2026-10-26/index.html",
+    "VM_login_input": "DIRECT_USER_AUTHORIZED_LOCAL_FILE_NO_REPEATED_MANUAL_PROMPT"
   },
   "windows_pause_20261025": {
     "runtime_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
@@ -3729,5 +3751,4084 @@
     "SDK_FREEZE": "OPEN",
     "source_accepted": false,
     "release_eligible": false
-  }
+  },
+  "windows_resume_20261026": {
+    "late_create_runtime_source_digest": "4040ffeaf253f45ded09011813b3df8201da1df1738a7983fe7fc0980c868eaa",
+    "late_create_case": "098",
+    "late_create_checks": 772,
+    "actual_native_trace_records": 155,
+    "original_case_host_pid": 4752,
+    "original_case_exec_session": 1237,
+    "retained_case_owner_must_not_be_polled_or_replayed": true,
+    "case_clean": false,
+    "policy_clean": true,
+    "SDK_candidate_code_digest_before_report_refresh": "08403fa896c622b4e51e55ac9b3c2d0903897ae477c6aa576c30f528c6cfdc9f",
+    "SDK_native_file_tests": 8,
+    "SDK_related_tests": 18,
+    "SDK_formal_picker_and_Workbench_selection_handoff": "SDK106_KNOWN_REFUSALS_AND_ONCE_ONLY_TRANSFER_PASSED_FORMAL_PICKER_OPEN",
+    "P2": "OPEN",
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "SDK_FREEZE": "OPEN",
+    "registered_vms": 4,
+    "latest_vm_state": "VM042 Saved Unknown after native close refusal; four registered VMs",
+    "current_code_is_not_relabelled_as_case098_runtime_source": true,
+    "evidence": "docs/qualification/evidence/resume-20261026/manifest.json",
+    "source_accepted": false,
+    "release_eligible": false,
+    "SDK106": {
+      "actual_methods": 12,
+      "new_native_methods": 6,
+      "related_regressions": 6,
+      "integrated": true,
+      "candidate_code_digest_before_report_refresh": "e962f06eba71abe69a968d1faf89f5084b94e414de7465d6326a9dd3ad78e405",
+      "native_picker_integration": false,
+      "checked_worker_close_receipt_accepted": false
+    },
+    "P2_next": {
+      "four_roles_cold_build": "roles-039",
+      "compiler_artifacts": {
+        "P": 871,
+        "C": 872,
+        "R": 620,
+        "S": 620
+      },
+      "parent_compiler_artifacts": 871,
+      "fault_variants_prepared": 2,
+      "compiled_fault": "TOKEN_DERIVATION_NATIVE_REFUSAL_V5",
+      "C_R_S_roles": "COLD_COMPILED_BYTE_BOUND",
+      "native_fault_cases": "TOKEN_DERIVATION_CASE118_SCOPED_PASS_DEFAULT_DACL_NOT_RUN",
+      "full_P2": "OPEN"
+    },
+    "disk_reclaim": {
+      "status": "COMPLETED_TWO_CACHE_RECLAIMS_AND_TWO_LOSSLESS_ARCHIVE_REPACKS",
+      "utc": "2026-10-26T16:16:49.550528+00:00",
+      "cache_logical_bytes_removed": 26313265979,
+      "cache_files_removed": 9502,
+      "cache_observed_free_deltas": [
+        7998103552,
+        7575298048
+      ],
+      "cache_deltas_are_not_exclusive_attribution": true,
+      "raw_archive_duplicate_bytes_removed": 267598571588,
+      "compressed_replacements_bytes": 45286502884,
+      "initial_free_bytes": {
+        "C": 36418785280,
+        "D": 35683135488
+      },
+      "final_free_bytes": {
+        "C": 167882117120,
+        "D": 126161629184
+      },
+      "observed_combined_free_increase": 221941825536,
+      "original_VM_disks_deleted": 0,
+      "new_vm_preserved": true,
+      "registered_vms": 4,
+      "VM037_shared_parent_archive_must_be_preserved": true,
+      "build_cache_root": "D:/build_cache",
+      "C_staging_archive_removed": true,
+      "guest_contacts": 0,
+      "unknown_owner_queries": 0
+    }
+  },
+  "windows_resume_20261027": {
+    "case118": {
+      "status": "PASS_SCOPED_V5_TOKEN_DERIVATION_NATIVE_REFUSAL_FIRST_FAILURE_PRESERVED",
+      "source_digest": "e962f06eba71abe69a968d1faf89f5084b94e414de7465d6326a9dd3ad78e405",
+      "checkout_source_digest": "0904d5644cf533703cc20ea3d07866bfbab689358686cc16666b390d9a7e9b4b",
+      "tag": "1a01240e47774b72b3bb196d3d0ddd0a",
+      "vm_id": "b7a69dfb-b756-40e6-9eff-8eabcf8a8f1d",
+      "checks": 920,
+      "native_trace_records": 53,
+      "native_owner_pid": 3024,
+      "native_error": 6,
+      "original_first_failure": {
+        "kind": "Uncategorized",
+        "ntstatus": null,
+        "site": "LaunchTokenDerivation",
+        "stage": "Token",
+        "win32": 6
+      },
+      "original_observation_lost": false,
+      "completed_steps": 39,
+      "reserved_failure_step": 40,
+      "delivered_lines": 79,
+      "original_journal_records": 89,
+      "controller_observed_records": 88,
+      "unacknowledged_journal_tail_records": 1,
+      "original_failure_payload": "native start delivery Unknown: Unknown; diagnostic=CommandDiagnosticV1 { worker_stage: \"PORT_REJECTED\", worker_error_class: \"R2CommitUnknown\", delivery_stage: \"RECEIVER_ERROR\", delivery_error_class: \"Unknown\", command_started_observed: true, provider_observed: false }; native=NativeStartDiagnosticV3 { stage: \"BACKEND_START_RETURNED\", error_class: \"BackendError\", backend_error_class: \"ServerInternal\", invocation_entered_observed: true, backend_task_entered_observed: true, actual_handle_observed: false, provider_ready_observed: false, backend_history_scope: \"OWNER_LATEST_CALL_NOT_OPERATION_PROOF\", latest_backend_call_observation: Some(LowerBackendCallObservation { call_sequence: 1, observation: WindowsStartSnapshot { current: WindowsStartAttempt { stage: AsUserNativeStart, error: IoOther, runner_stage: NotObserved, os_class: NotObserved, runner_site: NotObserved, original_runner: None, startup_context: None, asuser_native_failure: Some(WindowsAsUserNativeFailure { owner_stage: Token, site: LaunchTokenDerivation, target_policy_rejection: None, error: IoOther, win32: Some(6), ntstatus: None }) }, first_attempt: None, attempt: 1, completion: ReturnedError } }), reviewed_invocation_start: SameReviewedInvocationStartDataOnly { snapshot: WindowsStartSnapshot { current: WindowsStartAttempt { stage: AsUserNativeStart, error: IoOther, runner_stage: NotObserved, os_class: NotObserved, runner_site: NotObserved, original_runner: None, startup_context: None, asuser_native_failure: Some(WindowsAsUserNativeFailure { owner_stage: Token, site: LaunchTokenDerivation, target_policy_rejection: None, error: IoOther, win32: Some(6), ntstatus: None }) }, first_attempt: None, attempt: 1, completion: ReturnedError } } }",
+      "case_clean": false,
+      "policy_clean": true,
+      "cold_cache_repair_build_and_actual_setup_verified": true,
+      "token_derivation_native_refusal_verified": true,
+      "original_native_failure_in_delivery_verified": true,
+      "original_case_host_pid": 15296,
+      "original_case_session_retained": true,
+      "diagnostic_one_read_without_retry": true,
+      "source_accepted": false,
+      "release_eligible": false,
+      "full_P2_accepted": false,
+      "normal_completion_accepted": false,
+      "default_dacl_native_refusal_accepted": false,
+      "late_create_accepted": false,
+      "resource_cleanup_accepted": false,
+      "issued_tokens_revoked": false,
+      "VM_calls": 0,
+      "runtime_owner_contacts": 0,
+      "automatic_replays": 0,
+      "utc": "2026-10-26T16:56:16.949342+00:00"
+    },
+    "original_case_exec_session": 51916,
+    "original_host_pid": 15296,
+    "original_owner_must_not_be_contacted": true,
+    "vm_state": {
+      "policy_clean": true,
+      "runtime_state_path": "C:\\MorrowQA\\windows-acceptance-20261027-040\\vm\\Morrow Windows Acceptance 20261027 040\\Virtual Machines\\B7A69DFB-B756-40E6-9EFF-8EABCF8A8F1D.VMRS",
+      "case_clean": false,
+      "automatic_resume": false,
+      "runtime_state_bytes": 1814867968,
+      "status": "UNKNOWN_VM_MEMORY_AND_DISK_SAVED_NO_OUTCOME_RECLASSIFICATION",
+      "stop_vm_calls": 0,
+      "release_eligible": false,
+      "disk_bytes": 30414995456,
+      "registered_vms": 4,
+      "vm_id": "b7a69dfb-b756-40e6-9eff-8eabcf8a8f1d",
+      "original_case_session_retained": true,
+      "original_owner_contacts": 0,
+      "source_accepted": false,
+      "other_vms_unchanged": true,
+      "disk": "C:\\MorrowQA\\windows-acceptance-20261027-040\\acceptance.vhdx",
+      "state": "Saved"
+    },
+    "vm039_archive": "docs/qualification/evidence/resume-20261027/vm039-archive-result.json",
+    "SDK_checked_close": "IMPLEMENTED_AND_SCOPED_TESTED_SDK143",
+    "SDK_root_review": "docs/qualification/evidence/resume-20261027/sdk119-checked-close-gap.json",
+    "AGY117": "KNOWN_COMMAND_PERMISSION_REFUSAL_NO_EDITS_NO_STRUCTURED_RESULT",
+    "latest_storage": {
+      "status": "POST_CASE155_VM042_SAVED_SNAPSHOT",
+      "utc": "2026-10-26T20:22:43.643367+00:00",
+      "free_bytes": {
+        "C": 119220625408,
+        "D": 73911689216
+      },
+      "registered_vms": 4,
+      "VMs": [
+        {
+          "Name": "Morrow Windows Acceptance 20261023 029",
+          "Id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+          "State": "Saved"
+        },
+        {
+          "Name": "Morrow Windows Acceptance 20261023 030",
+          "Id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+          "State": "Saved"
+        },
+        {
+          "Name": "Morrow Windows Acceptance 20261027 042",
+          "Id": "194b96cf-7045-4016-bab2-ba5a37e4e7de",
+          "State": "Saved"
+        },
+        {
+          "Name": "Windows 11 开发环境",
+          "Id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+          "State": "Running"
+        }
+      ],
+      "build_cache_root": "D:/build_cache",
+      "cleanup130_logical_bytes": 4286638456,
+      "cleanup164_logical_bytes": 4287170848,
+      "total_logical_bytes_reclaimed": 8573809304,
+      "cleanup158_deleted_bytes": 0,
+      "source_and_artifacts_deleted": 0,
+      "VM_disks_deleted": 0,
+      "VM041_verified_archive_and_original_disk_retained": true,
+      "VM037_shared_parent_dependency_preserved": true
+    },
+    "P2": "OPEN",
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "SDK_FREEZE": "OPEN",
+    "source_accepted": false,
+    "release_eligible": false,
+    "SDK143": {
+      "status": "INTEGRATED_SCOPED_DIRECTORY_WORKER_CHECKED_CLOSE",
+      "implementation_source_digest": "cabb2462fa591399aa5f764dbaea9e5629ad04b8fe2c9850a900e57f9ca7afd8",
+      "integrated_files": 15,
+      "test_methods": 147,
+      "directory_tests": 89,
+      "protected_methods": 12,
+      "host_policy_tests": 1,
+      "shared_worker_tests": 45,
+      "synthetic_lost_close_observation": true,
+      "actual_OS_close_refusal_proven": false,
+      "scope": "selected-directory original worker and host retention only",
+      "native_picker_integration": false,
+      "full_SDK_accepted": false
+    },
+    "latest_vm_state": "VM042 Saved Unknown after native close refusal; four registered VMs",
+    "vm040_archive": "docs/qualification/evidence/resume-20261027/vm040-archive-result.json",
+    "case147": {
+      "status": "PASS_SCOPED_V5_DEFAULT_DACL_NATIVE_REFUSAL_FIRST_FAILURE_PRESERVED",
+      "source_digest": "d7827205fe709e253b0f39db19b7a11d2ebcc2c1de01cc0aa84f0469c9a196fb",
+      "tag": "86f72fce673c4731b7310c249c36cd73",
+      "vm_id": "9105a276-a960-40a8-ae94-c19cd2957760",
+      "checks": 1469,
+      "native_trace_records": 93,
+      "native_first_failure": {
+        "kind": "Uncategorized",
+        "ntstatus": null,
+        "site": "DefaultInitialization",
+        "stage": "TokenSecurity",
+        "win32": 6
+      },
+      "completed_steps": 39,
+      "reserved_failure_step": 40,
+      "original_journal_records": 89,
+      "controller_observed_records": 88,
+      "unacknowledged_journal_tail_records": 1,
+      "original_case_host_pid": 18988,
+      "original_case_exec_session": 6382,
+      "guest_native_owner_pid": 1332,
+      "original_case_retained_no_poll_or_replay": true,
+      "case_clean": false,
+      "policy_clean": true,
+      "VM_state": "Saved",
+      "source_accepted": false,
+      "release_eligible": false,
+      "full_P2_accepted": false,
+      "resource_cleanup_accepted": false
+    },
+    "SDK_formal_picker": "OPEN_PATH_ONLY_UI_AND_CAPNP_ROUTE_GAP_CONFIRMED_SDK148",
+    "case155": {
+      "status": "PASS_SCOPED_V6_HANDLE_CLOSE_NATIVE_REFUSAL_FIRST_FAILURE_PRESERVED",
+      "source_digest": "10184a3712c7d081b4784418ac3a6297934f78096392a321ed7303bd852df55a",
+      "tag": "22156657108b4b5fb16442d0aaac19ec",
+      "vm_id": "194b96cf-7045-4016-bab2-ba5a37e4e7de",
+      "checks": 5113,
+      "native_trace_records": 240,
+      "original_first_failure": {
+        "kind": "Uncategorized",
+        "ntstatus": null,
+        "site": "RunnerTokenClose",
+        "stage": "TokenSecurity",
+        "win32": 6
+      },
+      "original_observation_lost": true,
+      "completed_steps": 39,
+      "reserved_failure_step": 40,
+      "original_journal_records": 89,
+      "controller_observed_records": 88,
+      "unacknowledged_journal_tail_records": 1,
+      "original_case_host_pid": 13436,
+      "native_owner_pid": 5508,
+      "case_clean": false,
+      "policy_clean": true,
+      "original_case_exec_session": 96916,
+      "original_case_retained_no_poll_or_replay": true,
+      "VM_state": "Saved",
+      "source_accepted": false,
+      "release_eligible": false,
+      "full_P2_accepted": false,
+      "resource_cleanup_accepted": false
+    },
+    "SDK162": {
+      "status": "PASS_INDEPENDENT_REVIEW_ACTUAL_NATIVE_CLOSE_REFUSAL",
+      "utc": "2026-10-26T19:54:11.788379+00:00",
+      "source_digest": "10184a3712c7d081b4784418ac3a6297934f78096392a321ed7303bd852df55a",
+      "candidate": "D:\\build_cache\\s161s",
+      "input_files": 53056,
+      "production_bytes_unchanged": true,
+      "changed_existing": [
+        "plugin_runtime/src/directory_io.rs",
+        "plugin_runtime/src/directory_io/native_windows.rs",
+        "plugin_runtime/src/io_jobs/directory_commands/secret_factory_tests.rs"
+      ],
+      "added_test_files": [
+        "plugin_runtime/src/directory_io/native_close_refusal_tests.rs",
+        "plugin_runtime/src/io_jobs/directory_commands/native_close_refusal_tests.rs"
+      ],
+      "evidence": [
+        {
+          "name": "directory_io::native_windows::native_close_refusal_tests::actual_protected_directory_close_preserves_original_native_error_without_retry",
+          "result": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\test-1.result.json",
+            "bytes": 909,
+            "sha256": "923a79c1e9f65befdcb410616f7a7ceeea4cf3d3c10ee14c5e178260ff993867"
+          },
+          "stdout": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\test-1.stdout",
+            "bytes": 263,
+            "sha256": "cc71b6faa4a222de785e4bdb9e48a306f441a30e8c9036a784437394b80a5b80"
+          }
+        },
+        {
+          "name": "io_jobs::owner_commands::directories::secret_factory_tests::native_close_refusal_tests::actual_close_refusal_finish_and_terminal_page_keep_original_charge",
+          "result": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\test-2.result.json",
+            "bytes": 945,
+            "sha256": "1c6b68569d61e2768257ef4b284c2c866578cb54d81f619113eaf1b9b1bcd405"
+          },
+          "stdout": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\test-2.stdout",
+            "bytes": 281,
+            "sha256": "5e71fa1e9e9547838da8b5b77242a75e3d4b7180410d0c8468138b4e45f6e104"
+          }
+        },
+        {
+          "name": "io_jobs::owner_commands::directories::secret_factory_tests::native_close_refusal_tests::actual_close_refusal_of_queued_input_blocks_worker_retirement_before_capture",
+          "result": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\test-3.result.json",
+            "bytes": 965,
+            "sha256": "5b1fdbe5642c0b87f55427253ac8274b758b588a80c8027b8c893d2b382742f4"
+          },
+          "stdout": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\test-3.stdout",
+            "bytes": 291,
+            "sha256": "d1b12e0eaebcbc5df1e9b9b26eb35d731b6b6dc3c36708ea7a288cdca452a8ba"
+          }
+        }
+      ],
+      "input_binding": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\input-binding.json",
+        "bytes": 10426496,
+        "sha256": "f4a253f2e235c473fc75c0a8ffdf5373ee71819191c1ef84d97842953b1594e4"
+      },
+      "compiler_proof": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\compiler-output-proof.json",
+        "bytes": 151322,
+        "sha256": "2a893568424ade2af1e076961c209da7a4dbddf6b5d1fe19fa8021d59f326a4a"
+      },
+      "methods": 3,
+      "scenarios": 4,
+      "canonical_source_edits": 0,
+      "runtime_calls": 0,
+      "unknown_owner_contacts": 0,
+      "VM_calls": 0,
+      "actual_OS_refusal_confirmed": true,
+      "cleanup_or_quota_refund_inferred": false,
+      "process_exit_is_not_retirement": true,
+      "formal_picker_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false
+    },
+    "SDK165": {
+      "status": "INTEGRATED_EXACT_COLD_TESTED_NATIVE_CLOSE_FIXTURES",
+      "source_before": "10184a3712c7d081b4784418ac3a6297934f78096392a321ed7303bd852df55a",
+      "source_after": "144ab25d0b4a1545948876e3ad01638973f2a47f14d937de4c0893e4edb1abd2",
+      "complete_checkout_byte_identical_to_test_candidate": true,
+      "input_files": 53056,
+      "files": [
+        {
+          "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io.rs",
+          "bytes": 36736,
+          "sha256": "676152b27cf280bee2b0ddb7e6c02cdef4c4d9c143d78e83ff8068bc69652236"
+        },
+        {
+          "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io\\native_windows.rs",
+          "bytes": 12647,
+          "sha256": "bb84a6410b7c13813ffac3500308137e85c2357b7e8744684c572a19f4fcd73e"
+        },
+        {
+          "path": "C:\\ms1020\\plugin_runtime\\src\\io_jobs\\directory_commands\\secret_factory_tests.rs",
+          "bytes": 41142,
+          "sha256": "67b7cabd5617103f5ab28ede981523a013b608b681f9e106a4bd93dc842a3c76"
+        },
+        {
+          "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io\\native_close_refusal_tests.rs",
+          "bytes": 1394,
+          "sha256": "e0ef4ec527c54670721c97d3fc0d3df9810dc9d700be5116757fa70f4913716b"
+        },
+        {
+          "path": "C:\\ms1020\\plugin_runtime\\src\\io_jobs\\directory_commands\\native_close_refusal_tests.rs",
+          "bytes": 3705,
+          "sha256": "6b76b12a176b3e7c6f73f36e3b6af08832acccf065f595dbb0fe1fca4d0759bd"
+        }
+      ],
+      "methods": 3,
+      "scenarios": 4,
+      "production_bytes_unchanged": true,
+      "cold_runtime_evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\result.json",
+        "bytes": 3767,
+        "sha256": "33e99c1abec75939790336a22480959886202bf79ab6ca6f37648aac01674e28"
+      },
+      "independent_review": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-review-163\\result.json",
+        "bytes": 3779,
+        "sha256": "9dea369a1fdce0e82ba47faa8162335acf0714590fe88710b35d995aa0d3f3e9"
+      },
+      "runtime_calls": 0,
+      "VM_calls": 0,
+      "unknown_owner_contacts": 0,
+      "historical_P2_binding_unchanged": true,
+      "formal_picker_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false
+    },
+    "P2_remaining": "Partial/abnormal outputs plus complete current candidate qualification remain open"
+  },
+  "latest_windows_continuation": {
+    "utc": "2026-10-27T23:17:26.460278+00:00",
+    "qualified_checkout_source_digest": "f8492320dbf7e156bfccadae687f50362a7aafb4d1c58e90014170aae9b04f78",
+    "normal_case329": {
+      "status": "PASS_SCOPED_ORIGINAL47_AND_NINE_REQUIRED_GROUPS",
+      "tag": "52e261492e474b27a2b32dd7c3848b21",
+      "vm_id": "4072a8d9-2f4f-4d02-98ee-ad436dd3342e",
+      "source_digest": "f8492320dbf7e156bfccadae687f50362a7aafb4d1c58e90014170aae9b04f78",
+      "commit": "2696f95e3342c29b5ac3801d7eafc0c092b90db1",
+      "original_steps": 47,
+      "original_delivered_lines": 92,
+      "original_input_bytes": 3523,
+      "journal_records": 107,
+      "case_clean": true,
+      "policy_clean": true,
+      "historical_unknowns_unchanged": true,
+      "full_network_isolation_qualified": false,
+      "P2_clean_refusal": "OPEN",
+      "P3_editor_full": "OPEN",
+      "SDK26": "OPEN",
+      "G04": "OPEN",
+      "SDK_FREEZE": "OPEN",
+      "source_accepted": false,
+      "release_eligible": false,
+      "review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case329-nine-review\\result.json",
+      "original_case_process_exit": 0,
+      "original_case_session_retained": false,
+      "original_owner_contacts": 0,
+      "vm_state": "Saved"
+    },
+    "shared_case335": {
+      "status": "PASS_SCOPED_SEVENTEEN_ACTUAL_NATIVE_REFUSALS_SHARED_ORIGINAL_OWNER",
+      "tag": "ba60145e2ce44c1b857472af5dc21b9a",
+      "vm_id": "4072a8d9-2f4f-4d02-98ee-ad436dd3342e",
+      "source_digest": "f8492320dbf7e156bfccadae687f50362a7aafb4d1c58e90014170aae9b04f78",
+      "commit": "2696f95e3342c29b5ac3801d7eafc0c092b90db1",
+      "checks_passed": 5730,
+      "workflow_steps": 799,
+      "input_lines": 1564,
+      "input_bytes": 62101,
+      "journal_records": 1837,
+      "actual_full_refusals": 17,
+      "same_original_protected_owner": true,
+      "same_original_parent_pid": 4416,
+      "case_clean": true,
+      "policy_clean": true,
+      "original_case_process_exit": 0,
+      "original_case_session_retained": false,
+      "sdk_over_16_refusal_capacity": true,
+      "post_logon_target_policy_refusal": true,
+      "original47_or_nine_acceptance_claimed": false,
+      "P2": "SCOPED_SOURCE_POLICY_REFUSAL_CAPACITY_PASSED_FULL_MATRIX_REVIEW_PENDING",
+      "P3": "OPEN",
+      "SDK26": "OPEN",
+      "G04": "OPEN",
+      "SDK_FREEZE": "OPEN",
+      "source_accepted": false,
+      "release_eligible": false,
+      "guest_calls": 0,
+      "original_owner_contacts": 0,
+      "review_is_cleanup_authority": false,
+      "recorded_utc": "2026-10-27T07:42:20.181842+00:00",
+      "review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case335-shared-refusal-review\\result.json"
+    },
+    "P2": "CURRENT_NORMAL47_AND_SHARED17_PASSED_REMAINING_P2_OPEN",
+    "full_P2_accepted": false,
+    "canonical_sdk_directory": {
+      "status": "PASS_SCOPED_CANONICAL_THREE_LANGUAGE_DIRECTORY_AND_SEPARATE_NATIVE_CANCEL",
+      "utc": "2026-10-27T07:48:46.961985+00:00",
+      "frozen_checkout_digest": "f8492320dbf7e156bfccadae687f50362a7aafb4d1c58e90014170aae9b04f78",
+      "product_input_sha256": "4173c214e07db17b6b82049674f7c1a2399da0339bcbfb2374844a8805b28776",
+      "original_builds": [
+        "305",
+        "309"
+      ],
+      "success_cases": {
+        "RUST": 312,
+        "C": 337,
+        "CPP": 332
+      },
+      "cancel_case": 340,
+      "original_processes_closed_zero": 24,
+      "actual_product_import_enable_approval": true,
+      "actual_native_picker": true,
+      "successful_directory_entries_per_language": 70,
+      "worker_join_ACK_and_independent_reopen": true,
+      "cancellation_before_deadline": true,
+      "individual_guest_call_count_independently_observed": false,
+      "new_product_build_claimed": false,
+      "evidence": {
+        "sdk-canonical-three-languages-339/result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-three-languages-339\\result.json",
+          "bytes": 5883,
+          "sha256": "d3fd24e4a6b2875516e9a6885b5d3f7863fad8156ecaca49c7478cb44daed10e"
+        },
+        "sdk-canonical-full-main-cancel-review-341/result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-full-main-cancel-review-341\\result.json",
+          "bytes": 4805,
+          "sha256": "f81d7927ecee005329b965c83f4593f9aa0877c95324cb2f5173fe019b91fca6"
+        },
+        "sdk-product-binding-334/result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-product-binding-334\\result.json",
+          "bytes": 4524,
+          "sha256": "ec2757687bcd644499b02df548a664819722b634b28ff0ea96c4e0620dc9f1f5"
+        },
+        "sdk-scope-review-326/result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-scope-review-326\\result.json",
+          "bytes": 4179,
+          "sha256": "0b39f679d12841425239641b81d8b8d09279371ba25f93ba5a522cc3240af5d2"
+        }
+      },
+      "historical_unknowns_unchanged": true,
+      "original_owner_contacts": 0,
+      "VM_calls": 0,
+      "approval_seeded": false,
+      "native_picker_injected": false,
+      "qualification_shell": false,
+      "remaining": [
+        "durable blob backend and history",
+        "versioned upload/watch/rename",
+        "remaining SDK26 production approval and recovery matrix",
+        "final Windows source acceptance and release qualification"
+      ],
+      "SDK26": "OPEN",
+      "G04": "OPEN",
+      "SDK_FREEZE": "OPEN",
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false
+    },
+    "canonical_product_integration": true,
+    "production_builds": [
+      "305",
+      "309"
+    ],
+    "production_input_sha256": "4173c214e07db17b6b82049674f7c1a2399da0339bcbfb2374844a8805b28776",
+    "source_binding": "334 preserves original build input; unused qualification lock repair separately verified",
+    "SDK_distribution_native": {
+      "status": "PASS_SCOPED_CURRENT_SDK_DISTRIBUTION_AND_NATIVE_CONSUMERS_RECONCILED",
+      "source_digest": "f8492320dbf7e156bfccadae687f50362a7aafb4d1c58e90014170aae9b04f78",
+      "distribution": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-distribution-323\\result.json",
+        "bytes": 772,
+        "sha256": "9a470470cdd9664aa7ffe01386b90e7133d1a32eec606f9733facbddf2be9707"
+      },
+      "native": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-current-325\\result.json",
+        "bytes": 1771,
+        "sha256": "8ded22f72fa255f66554bd81a4ac6868f0cb4bb3e04bf831382d6e4c67f509eb"
+      },
+      "commands": {
+        "path": "D:\\build_cache\\sdk-native-325\\commands.json",
+        "bytes": 27779,
+        "sha256": "600aca5780f7a2d2311e329d3419f192ba246785f72bd0f8b52760939095ce12"
+      },
+      "provenance": {
+        "path": "D:\\build_cache\\sdk-native-325\\provenance.json",
+        "bytes": 153110,
+        "sha256": "bfbdd1202356d86d9b270767a720371a22fcbcb104fb6766586b8993f1f00f37"
+      },
+      "methods": {
+        "distribution_contract_tamper": 64,
+        "native_rust": 92,
+        "native_executable_runs": 14,
+        "external_consumer_runs": 3
+      },
+      "method_counts_are_distinct_scopes_not_a_single_release_total": true,
+      "original_frozen_inputs_verified": 57,
+      "guest_rebuilt": false,
+      "protected_product_execution": false,
+      "current_canonical_UI": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-full-main-review-313\\result.json",
+        "bytes": 5005,
+        "sha256": "1c21338838c9b8851458e9fa00cbdebfbdd27cd8a83282a4026a9c03ab725392"
+      },
+      "UI_source_binding": "Review313 retains its pre-lock-repair product input; only the harness lock changed afterward. Do not silently relabel its original source.",
+      "remaining_implementation_evidence": [
+        {
+          "gate": "durable blob backend and history",
+          "observed": "Existing Receiver returns VerifiedBytes and retains only the latest request; it is not durable upload authority. Core stage_blob_retained stages whole reader bytes with retention, but requires caller-owned durable tombstone after release.",
+          "next": "Add an explicit bounded owner and persistent operation identity before exposing an upload request; prove restart, lost reply, cancel, quota, retention and exact retry independently."
+        },
+        {
+          "gate": "complete G04 and SDK26",
+          "observed": "Public upload/watch/rename and full production approval routes remain open beyond the passed directory scope.",
+          "next": "Preserve existing schemas and exact Unsupported behavior; qualify each new separate versioned capability and actual product route before marking the full gate accepted."
+        }
+      ],
+      "basis": [
+        {
+          "path": "C:\\ms1020\\extensions\\blob-transfer-v1\\README.md",
+          "bytes": 3647,
+          "sha256": "fa61cbcb5c517bb60b0740bd7eec8e11287b0cfecb259b70f4fd4562c176ddfd"
+        },
+        {
+          "path": "C:\\ms1020\\extensions\\blob-transfer-v1\\src\\state.rs",
+          "bytes": 22775,
+          "sha256": "1c789bd8d7451e40cf1ebf749e80da97110f4126908ceaa38076c0fb4257f7b8"
+        },
+        {
+          "path": "C:\\ms1020\\core\\src\\store\\blobs.rs",
+          "bytes": 26813,
+          "sha256": "b5363921ca260786a0d92f2fdcb898c9dd3e0507087304fdb8f92d56fbeb2af8"
+        },
+        {
+          "path": "C:\\ms1020\\workbench_host\\src\\storage.rs",
+          "bytes": 9407,
+          "sha256": "d5d031ceca4ed75c4c490b5033a3416ba49d7def25f0a437dbbccb0ead6786e5"
+        },
+        {
+          "path": "C:\\ms1020\\docs\\PLUGIN_DIRECTORY_BLOB_SDK.md",
+          "bytes": 14491,
+          "sha256": "a820c9e04afe41a506053a9062102bb97ac44fac796e484d9962f411906c369e"
+        },
+        {
+          "path": "C:\\ms1020\\reports\\reconstruction-2026-10-05\\sdk-next-gates.md",
+          "bytes": 22057,
+          "sha256": "8011441bd08ae87e0683790ee89ec311ff454cc2518fe34a34b5e4fc0efc8152"
+        }
+      ],
+      "historical_runtime_bindings_unchanged": true,
+      "VM_calls": 0,
+      "source_accepted": false,
+      "full_P2_accepted": false,
+      "full_SDK_accepted": false,
+      "SDK26": "OPEN",
+      "G04": "OPEN",
+      "SDK_FREEZE": "OPEN",
+      "release_eligible": false
+    },
+    "storage": {
+      "vms": [
+        {
+          "state": "Saved",
+          "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+          "name": "Morrow Windows Acceptance 20261023 029"
+        },
+        {
+          "state": "Saved",
+          "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+          "name": "Morrow Windows Acceptance 20261023 030"
+        },
+        {
+          "state": "Running",
+          "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+          "name": "Windows 11 开发环境"
+        },
+        {
+          "state": "Saved",
+          "id": "4072a8d9-2f4f-4d02-98ee-ad436dd3342e",
+          "name": "Morrow Windows Acceptance 20261027 045"
+        }
+      ],
+      "drives": [
+        {
+          "free_bytes": 216339091456,
+          "name": "C"
+        },
+        {
+          "free_bytes": 16241889280,
+          "name": "D"
+        }
+      ],
+      "pagefiles": [
+        {
+          "Name": "C:\\pagefile.sys",
+          "AllocatedBaseSize": 23479,
+          "CurrentUsage": 53,
+          "PeakUsage": 55
+        }
+      ],
+      "utc": "2026-10-27T23:17:26.6408235Z",
+      "registered_vms": 4,
+      "build_cache_root": "D:/build_cache",
+      "cumulative_reclaimed_logical_bytes": 78723453072,
+      "latest_large_cleanup": "retired-role-cache-359",
+      "latest_reclaimed_logical_bytes": 8587002071,
+      "logical_bytes_are_not_current_free_space": true,
+      "system_pagefile_configuration_unchanged": true,
+      "pagefile_last_write_utc": "2026-10-27T10:27:55.2564256Z",
+      "pagefile_bytes": 35897821184,
+      "future_build_jobs": 1,
+      "pagefile_observation": "System pagefile grew during the current compilation interval; it is not a build cache and configuration was not changed.",
+      "cache_locations": [
+        {
+          "user": "D:\\build_cache\\cargo",
+          "name": "CARGO_HOME"
+        },
+        {
+          "user": "D:\\build_cache\\cargo-target\\default",
+          "name": "CARGO_TARGET_DIR"
+        },
+        {
+          "user": "D:\\build_cache\\pub",
+          "name": "PUB_CACHE"
+        },
+        {
+          "user": "D:\\build_cache\\gradle",
+          "name": "GRADLE_USER_HOME"
+        },
+        {
+          "user": "D:\\build_cache\\tmp",
+          "name": "TEMP"
+        },
+        {
+          "user": "D:\\build_cache\\tmp",
+          "name": "TMP"
+        }
+      ],
+      "redundant_export_cleanup": {
+        "registered_VMs": 4,
+        "VM_mutations": 0,
+        "free_after": 215294144512,
+        "free_delta_is_nonisolated": true,
+        "original_disks_retained": true,
+        "saved_memory_retained": true,
+        "utc": "2026-10-27T11:24:08.6937751Z",
+        "observed_free_delta": 196563972096,
+        "retained_files_hash_verified": 17,
+        "guest_contacts": 0,
+        "build_cache_root": "D:\\build_cache",
+        "original_state_byte_copies_retained": true,
+        "owner_query_or_replay": 0,
+        "removed": [
+          "C:\\MorrowQA\\retained-unknown-archives\\vm033\\export\\Morrow Windows Acceptance 20261025 033\\Virtual Hard Disks\\acceptance.vhdx",
+          "C:\\MorrowQA\\retained-unknown-archives\\vm033\\export\\Morrow Windows Acceptance 20261025 033\\Virtual Hard Disks\\Windows 11 开发环境.vhdx",
+          "C:\\MorrowQA\\retained-unknown-archives\\vm034\\export\\Morrow Windows Acceptance 20261025 034\\Virtual Hard Disks\\acceptance.vhdx",
+          "C:\\MorrowQA\\retained-unknown-archives\\vm034\\export\\Morrow Windows Acceptance 20261025 034\\Virtual Hard Disks\\Windows 11 开发环境.vhdx"
+        ],
+        "status": "PASS_REDUNDANT_EXPORTED_DISK_RECLAIM",
+        "source_files_deleted": 0,
+        "free_before": 18730172416,
+        "files": 4,
+        "historical_Unknown_unchanged": true,
+        "logical_bytes": 196563959808
+      },
+      "prior_build_cache_logical_reclaimed_bytes": 77850224110,
+      "latest_cache_cleanup": "docs/qualification/evidence/resume-20261028/cache437-closed-compiler-leaves.json",
+      "latest_cache_reclaimed_logical_bytes": 873228962,
+      "latest_cache_observed_free_delta_bytes": 875315200,
+      "cache_links": [
+        {
+          "target": "D:\\build_cache\\ms1020\\.dart_tool",
+          "path": "C:\\ms1020\\.dart_tool",
+          "link_type": "Junction"
+        },
+        {
+          "target": "D:\\build_cache\\flutter-sdk",
+          "path": "C:\\flutter\\bin\\cache",
+          "link_type": "Junction"
+        },
+        {
+          "target": "D:\\build_cache\\ms1020\\build\\test_cache",
+          "path": "C:\\ms1020\\build\\test_cache",
+          "link_type": "Junction"
+        },
+        {
+          "target": "D:\\build_cache\\ms1020\\build\\unit_test_assets-324",
+          "path": "C:\\ms1020\\build\\unit_test_assets",
+          "link_type": "Junction"
+        },
+        {
+          "target": "D:\\build_cache\\ms1020\\build\\native_assets",
+          "path": "C:\\ms1020\\build\\native_assets",
+          "link_type": "Junction"
+        },
+        {
+          "target": "D:\\build_cache\\ms1020\\build\\windows",
+          "path": "C:\\ms1020\\build\\windows",
+          "link_type": "Junction"
+        }
+      ]
+    },
+    "P3": "HISTORICAL_DEFINED_WINDOWS_MATRIX_PASSED_CURRENT_FINAL_SOURCE_REVIEW_OPEN",
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "SDK_FREEZE": "OPEN",
+    "source_accepted": false,
+    "release_eligible": false,
+    "next": [
+      "Resume only on user request; audit final Windows P2/P3 source bindings and necessary remaining fault cases",
+      "Promote the retained text widget adapter, then durable Unknown recovery and directory watch/rename",
+      "Complete network/account/TLS and SDK26/G04/SDK_FREEZE; resolve strict host lints before final source/release acceptance"
+    ],
+    "historical_unknown_owners_unchanged": true,
+    "remote_publication": false,
+    "durable_blob_stage": {
+      "status": "PASS_SCOPED_STREAMING_ORIGINAL_OWNER_AND_THREE_LANGUAGE_MUTATION",
+      "public_result": "docs/qualification/evidence/resume-20261027/sdk357-streaming-original-owner-and-mutation.json",
+      "qualified_implementation_digest": "8a5aee593e8988cfcf7ba5877cc494be087c88822d2f4fe04941a161e52473db",
+      "core_methods": 865,
+      "core_ignored": 19,
+      "core_blob_methods_included": 14,
+      "runtime_methods": 149,
+      "runtime_blob_methods_included": 17,
+      "additional_controls": 19,
+      "additional_private_owner_methods": 33,
+      "fresh_three_language_mutation_methods": 6,
+      "counts_are_scoped_not_release_score": true,
+      "strict_library_clippy": "PASS_CORE_AND_RUNTIME_PACKAGES",
+      "production_library": "COLD_CHECK_PASS_NOT_RUNTIME",
+      "schema": 26,
+      "incremental_receiver_original_worker": true,
+      "public_guest_upload": false,
+      "production_approval": false,
+      "protected_blob_session": false,
+      "recovery_UI": false,
+      "prior_P2_and_product_UI_not_rebound_to_new_core": true,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false
+    },
+    "qualified_checkout_source_digest_scope": "Historical P2 cases329/335 and directory binding334; not the later blob change or current report checkout.",
+    "blob_upload_request_candidate": {
+      "status": "PASS_SCOPED_NATIVE_UPLOAD_HELPERS",
+      "qualified_checkout_source_digest": "846d1c59b271c791df5aaac0aa903ec970f53e8a25c07a48d97017e57dd1c107",
+      "tests_passed": 19,
+      "tests_failed": 0,
+      "ignored": 0,
+      "filtered": 0,
+      "strict_library_clippy": "PASS",
+      "public_result": "docs/qualification/evidence/resume-20261027/sdk368-upload-native-helpers.json",
+      "schema": {
+        "path": "C:\\ms1020\\extensions\\blob-upload-request-v1\\contracts\\blob_upload_request.capnp",
+        "bytes": 958,
+        "sha256": "07220eb1f92cbd43bb369b51d945ecbf428e586d6ac59a0c0ecae0bbdd44b0df"
+      },
+      "request_bound": 65536,
+      "response_bound": 4096,
+      "object_bound": 16777216,
+      "unknown_has_no_automatic_retry": true,
+      "request_history_is_not_live_authority": true,
+      "registered_package_feature": false,
+      "public_import": false,
+      "host_route": false,
+      "C_CPP_helpers": true,
+      "three_language_guest": false,
+      "production_approval": false,
+      "protected_session": false,
+      "full_SDK_accepted": false,
+      "native_compilers": [
+        "MSVC",
+        "Clang"
+      ],
+      "native_consumers": 4,
+      "native_C_scenarios_per_compiler": 8,
+      "native_C_checks_per_compiler": 6020,
+      "native_CPP_checks_per_compiler": 44,
+      "Store_proof": false,
+      "scope": "Native helper qualification368 and its original registration state; see blob_upload_package_approval for subsequent declaration/approval implementation."
+    },
+    "blob_upload_package_approval": {
+      "status": "PASS_SCOPED_INDEPENDENT_UPLOAD_DECLARATION_AND_APPROVAL",
+      "utc": "2026-10-27T10:34:33.231300+00:00",
+      "qualified_source_digest": "400e55a0d69269a0a7a612b3cc2a71072ffccf7ae738dc777874a863752e19ec",
+      "core": {
+        "passed": 876,
+        "failed": 0,
+        "ignored": 19,
+        "filtered": 0,
+        "new_upload_methods_included": 11,
+        "strict_library_clippy": "PASS"
+      },
+      "runtime": {
+        "passed": 56,
+        "failed": 0,
+        "ignored": 0,
+        "filtered": 0,
+        "new_upload_methods_included": 3,
+        "strict_library_clippy": "PASS"
+      },
+      "original_controls": {
+        "passed": 15,
+        "failed": 0,
+        "ignored": 0,
+        "filtered": 0,
+        "zero_selected_target370_credited": false
+      },
+      "manifest_field": 22,
+      "registry_upload_version": 3,
+      "older_v2_writes_unchanged_without_upload": true,
+      "v3_never_downgrades_on_revocation": true,
+      "upload_approval_inherited_on_upgrade": false,
+      "legacy_content_IO_is_upload_authority": false,
+      "registered_package_declaration": true,
+      "Manager_persistent_ceiling": true,
+      "live_upload_binding": false,
+      "upload_Runner": false,
+      "raw_upload_profile_preparation": "REJECTED_UNTIL_DEDICATED_OWNER_ROUTE",
+      "public_import": false,
+      "host_route": false,
+      "protected_session": false,
+      "production_approval_UI": false,
+      "three_language_upload_guests": false,
+      "frozen_inputs_verified": 57,
+      "native_helper_code_inputs_unchanged": true,
+      "all_original_processes_returned": true,
+      "cache_root": "D:/build_cache",
+      "registered_VMs": 4,
+      "VM_mutations": 0,
+      "host_policy_changes": 0,
+      "full_P2_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "public_result": "docs/qualification/evidence/resume-20261027/sdk372-upload-package-approval.json"
+    },
+    "blob_upload_live_binding": {
+      "status": "PASS_SCOPED_UPLOAD_IMPORT_AND_ORIGINAL_LIVE_APPROVAL",
+      "utc": "2026-10-27T11:38:37.828137+00:00",
+      "qualified_source_digest": "9dc4d0bf826191c599e7b3837c951917b60a308718e5fc25f1a14ae9ddbec3df",
+      "source_manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-380\\source-before.json",
+        "bytes": 48366,
+        "sha256": "a725d85024a441a6d7c0f5d80f43cb563e96ae7ecaad792953260f1416d68d1c"
+      },
+      "dedicated_import": "morrow_blob_upload_v1.call",
+      "exact_imports": 3,
+      "raw_callback_route_allowed": false,
+      "live_original_manager_instance_store_binding": true,
+      "one_shot_original_instance_claim": true,
+      "cumulative_call_and_wire_charges": true,
+      "sticky_observed_store_substitution": true,
+      "fixed_original_approval_deadline": true,
+      "invalid_empty_object_hash_rejected_before_claim": true,
+      "private_continuation_methods": {
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "filtered": 121
+      },
+      "runtime_regressions": {
+        "passed": 83,
+        "failed": 0,
+        "ignored": 0,
+        "filtered": 0,
+        "new_profile_methods_included": 12
+      },
+      "core_regressions": {
+        "passed": 86,
+        "failed": 0,
+        "ignored": 2,
+        "filtered": 0,
+        "new_store_lifetime_method_included": 1
+      },
+      "strict_library_clippy": {
+        "core": "PASS",
+        "runtime": "PASS"
+      },
+      "production_host": "COLD_LIBRARY_CHECK_ONLY",
+      "runtime_cold_target": false,
+      "modified_runtime_and_selected_programs_recompiled": true,
+      "previous_failed_programs_retained": true,
+      "original_results": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-380\\result.json",
+          "bytes": 5615,
+          "sha256": "9f9481c95d84ffc0dc05e998bbb3970342ae3356ffc81acdded42fbba62d7f4a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-core-375\\result.json",
+          "bytes": 3487,
+          "sha256": "1d770127ca8bba765a74df4094e79f96aa1d08797bc18e20dc3cc5ad95e91d85"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-core-review-382\\result.json",
+          "bytes": 566,
+          "sha256": "7c65e88193b3df911f87d8010e17a1626d574811cd4f3964e3ccc1908b588443"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\workbench-check-376\\result.json",
+          "bytes": 1931,
+          "sha256": "210093fcb17ef3016cfb88286c24a8a8479353f6ab7dfaa6c6d381bebc572290"
+        }
+      ],
+      "prior_failed_runs": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-373\\result.json",
+          "bytes": 3210,
+          "sha256": "fbf50fc787725afddca444925055d555c16b5b09e5cf237b29c6e414ab5bae91"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-374\\result.json",
+          "bytes": 3213,
+          "sha256": "f05e45ee56a0eeaf37fb34b3c4e3e3b03c11da269298578dc07d47c8b50b396c"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-binding-377\\result.json",
+          "bytes": 4930,
+          "sha256": "0ba180901fa01af4324af9ecdbb2cd8ca8f31e1a236c218af433d0bd02473612"
+        }
+      ],
+      "upload_original_worker_dispatch": false,
+      "actual_guest_store_commit": false,
+      "protected_session": false,
+      "production_approval_UI": false,
+      "three_language_upload_guests": false,
+      "frozen_inputs_verified": 57,
+      "all_processes_closed": true,
+      "build_cache_root": "D:/build_cache",
+      "registered_VMs": 4,
+      "VM_mutations": 0,
+      "host_policy_changes": 0,
+      "full_P2_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "public_result": "docs/qualification/evidence/resume-20261027/sdk381-upload-live-binding.json"
+    },
+    "blob_upload_original_worker": {
+      "status": "PASS_SCOPED_ORIGINAL_UPLOAD_WORKER_WAT_GUEST_STORE",
+      "utc": "2026-10-27T12:35:34.352414+00:00",
+      "qualification_source": "6747f69d2a42471e5ffec143ff38452a4ed87125ca9407bd16bfd9261795ba02",
+      "host_integration_source": "be737588619b052c2fa00dc4a839bf5a5de7097150ab4dfe1470828efb653403",
+      "host_lock_only_delta_verified": true,
+      "source_manifest": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-worker-388\\source-before.json",
+        "bytes": 48719,
+        "sha256": "88618a4e82d5c25455c9220fcdf59f6d827d7b1f1a02bef1b2f80ffdf1b61e25"
+      },
+      "runtime_methods": {
+        "passed": 96,
+        "failed": 0,
+        "ignored": 0,
+        "filtered": 0,
+        "new_original_worker_methods": 13
+      },
+      "private_continuations": {
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "filtered": 121
+      },
+      "core_handler_methods": {
+        "passed": 12,
+        "failed": 0,
+        "ignored": 0,
+        "filtered": 0,
+        "new_dedicated_handler_method": 1
+      },
+      "preceding_store_guard_scope": {
+        "source": "f645891d6024a0d839436946b398584e02605789e8300256afe4e6db1bf09119",
+        "full_core_passed": 882,
+        "full_core_ignored": 19,
+        "runtime_passed": 83,
+        "private_passed": 5,
+        "original_result": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-guards-review-386\\result.json",
+          "bytes": 3833,
+          "sha256": "ae24f48078239d61c38388bdba7f2d6b83f0c5748d9a8809c1ab32b6739d5242"
+        },
+        "not_added_to_current_totals": true
+      },
+      "strict_library_clippy": [
+        "core",
+        "runtime"
+      ],
+      "upload_original_worker_dispatch": true,
+      "actual_guest_store_commit": true,
+      "guest_fixture_language": "WAT",
+      "tested_objects": [
+        "empty",
+        "150017 byte multichunk"
+      ],
+      "original_owner_return_and_disconnect": true,
+      "checked_commit_guards": true,
+      "terminal_end_ack_after_commit": true,
+      "nonrefundable_native_work_ceiling_bytes": 134217728,
+      "wire_and_native_budgets_independent": true,
+      "closed_stream_after_end": true,
+      "duplicate_nonce_and_missing_end_rollback": true,
+      "later_guest_failure_preserves_original_commit": true,
+      "unread_result_veto_preserves_original_commit": true,
+      "store_substitution_refuses_foreign_cleanup": true,
+      "production_host": "LIBRARY_COMPILE_ONLY",
+      "cold_targets": false,
+      "changed_source_recompiled": true,
+      "original_results": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-worker-388\\result.json",
+          "bytes": 7909,
+          "sha256": "45339ec7bd9bf029d41fec638cece76d022beadb27e8d1356f4be93068880ec5"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-workbench-390\\result.json",
+          "bytes": 4168,
+          "sha256": "c42316b9bdf0764f9d5d017fe161a2f27dd7079af1c02123b6c4cb65ef6647a8"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-guards-review-386\\result.json",
+          "bytes": 3833,
+          "sha256": "ae24f48078239d61c38388bdba7f2d6b83f0c5748d9a8809c1ab32b6739d5242"
+        }
+      ],
+      "retained_failures": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-guards-383\\result.json",
+          "bytes": 278,
+          "sha256": "460c713f1ab60c9b98c462834e9e2e85189c7da5f43853a1ff5a9cd0137e950c"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-guards-384\\result.json",
+          "bytes": 17844,
+          "sha256": "3f75eccf09e727fec14a6423d334ff3d2acbfce38d932bab06668fe8632b6630"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-worker-387\\result.json",
+          "bytes": 3987,
+          "sha256": "f18d717f663fe808d2d1e6933c49c79cd00ae54dae43f3d6521ec0d62e5ab149"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-workbench-389\\result.json",
+          "bytes": 486,
+          "sha256": "9fce4b93bda878d1876468f73d4e8f3c1916efb1ad422e5a8a5e187369acc434"
+        }
+      ],
+      "frozen_inputs_verified": 57,
+      "all_recent_processes_closed": true,
+      "cache_root": "D:/build_cache",
+      "registered_VMs": 4,
+      "VM_calls": 0,
+      "host_policy_changes": 0,
+      "historical_unknown_owner_contacts": 0,
+      "three_language_upload_guests": false,
+      "protected_upload_owner": false,
+      "production_upload_approval_UI": false,
+      "production_upload_recovery": false,
+      "full_P2_accepted": false,
+      "full_P3_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "publication": false,
+      "public_result": "docs/qualification/evidence/resume-20261027/sdk391-upload-original-worker.json"
+    },
+    "blob_upload_sdk_guests": {
+      "status": "PASS_SCOPED_THREE_LANGUAGE_UPLOAD_ORIGINAL_STORES",
+      "utc": "2026-10-27T13:15:46.866322+00:00",
+      "guest_build_source": "8e605de2aed4ebae579b2305b7b83961a006a0978bec36f37d201391ab90c354",
+      "nine_success_source": "ab4422db67fe9703479917beecb7aa580322b7b1488c075b814dd952f87f2381",
+      "corrected_refusal_source": "a0b4bd000b79ab177a0760da3be994a20fb420b64cdb5e7c8483f8b1e3824d1b",
+      "regression_and_host_source": "2c95c6b1d3802d7d017aac1e2497a2885525813afc8cd3773600783163d040e6",
+      "only_intervening_test_deltas": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-396\\only-test-assertion-delta.json",
+          "bytes": 818,
+          "sha256": "f692e7b2ef78184bcbade0a235f805f9f4db3d821ada8dcc55260884b784a72b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-398\\only-test-assertion-delta.json",
+          "bytes": 819,
+          "sha256": "458c2b3cf3c22e1ae0135031df52db9a9eadf1a22e159c6faf0d552666253ad8"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-400\\only-test-assertion-delta.json",
+          "bytes": 819,
+          "sha256": "4f2ef1d3dd5c47e415a701c59e4bd952a56e754141bb16efddfa847ee278c334"
+        }
+      ],
+      "language_guests": {
+        "rust": {
+          "path": "D:\\build_cache\\upload-guests393\\rust_upload.wasm",
+          "bytes": 349796,
+          "sha256": "f12a3522c9196541b2dea6d8c6832009812ce35d6554cfa8ead405761568c240"
+        },
+        "c": {
+          "path": "D:\\build_cache\\upload-guests393\\c_upload.wasm",
+          "bytes": 144153,
+          "sha256": "5a0692600e65cafad245d876db7a709213670bc4c7403952546be5f9d2452b7c"
+        },
+        "cpp": {
+          "path": "D:\\build_cache\\upload-guests393\\cpp_upload.wasm",
+          "bytes": 144570,
+          "sha256": "c567f658d3dc7a9b87f8c24ac96f37afc133f3ee1f629a8e7a46276cf47d1169"
+        }
+      },
+      "exact_imports": [
+        "morrow_task_v1.read_input",
+        "morrow_task_v1.complete",
+        "morrow_blob_upload_v1.call"
+      ],
+      "WASI_imports": false,
+      "start_section": false,
+      "synthetic_payload_byte": 42,
+      "successful_cases": [
+        {
+          "language": "C",
+          "bytes": 16777216,
+          "chunks": 274
+        },
+        {
+          "language": "C",
+          "bytes": 0,
+          "chunks": 0
+        },
+        {
+          "language": "C",
+          "bytes": 150017,
+          "chunks": 3
+        },
+        {
+          "language": "CPP",
+          "bytes": 16777216,
+          "chunks": 274
+        },
+        {
+          "language": "CPP",
+          "bytes": 0,
+          "chunks": 0
+        },
+        {
+          "language": "CPP",
+          "bytes": 150017,
+          "chunks": 3
+        },
+        {
+          "language": "RUST",
+          "bytes": 16777216,
+          "chunks": 274
+        },
+        {
+          "language": "RUST",
+          "bytes": 0,
+          "chunks": 0
+        },
+        {
+          "language": "RUST",
+          "bytes": 150017,
+          "chunks": 3
+        }
+      ],
+      "actual_worker_store_upload": true,
+      "actual_content_equality_and_sha256": true,
+      "original_success_workers_joined": 27,
+      "new_low_fuel_worker_joined": 1,
+      "duplicate_upload_skipped_on_known_existing_stage": true,
+      "durable_release_after_reopen": true,
+      "independent_upload_fuel_ceiling": 8000000000,
+      "legacy_fuel_ceiling": 100000000,
+      "default_fuel_unchanged": 20000000,
+      "package_and_host_intersection": true,
+      "per_chunk_fuel_refill": false,
+      "low_fuel_actual_report": "Limits; remaining1323 of100000000; six calls; no stage; known closure",
+      "actual_16MiB_fuel_used": {
+        "C": 6627661893,
+        "CPP": 6627666910,
+        "RUST": 6027510938
+      },
+      "native_work_ceiling_bytes": 134217728,
+      "actual_16MiB_stage_wire_bytes": 17076048,
+      "actual_16MiB_native_work_bytes": 84525056,
+      "core_package_methods": {
+        "passed": 52,
+        "failed": 0,
+        "ignored": 0,
+        "filtered": 0
+      },
+      "runtime_control_methods": {
+        "passed": 97,
+        "failed": 0,
+        "ignored": 0,
+        "filtered": 0
+      },
+      "private_continuation_methods": {
+        "passed": 5,
+        "filtered": 123
+      },
+      "actual_sdk_methods": {
+        "passed": 10,
+        "nine_success_in395": true,
+        "one_corrected_refusal_in396": true,
+        "nine_success_not_rerun": true
+      },
+      "strict_checks": [
+        "core library Clippy",
+        "runtime and selected SDK test Clippy"
+      ],
+      "production_host": "WINDOWS_LIBRARY_COMPILE_ONLY",
+      "frozen_inputs_verified": 57,
+      "cold_native_targets": false,
+      "fresh_guest_target": true,
+      "prior_failures": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-guests-392\\result.json",
+          "bytes": 986,
+          "sha256": "8ae1850527d24cbf8a3217c4f14c0feb80fb64109671582e5919105a89b667fa"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-394\\result.json",
+          "bytes": 2304,
+          "sha256": "44f7f591c5c8b038049710130add7e84ca3563ca3563184010d3a2e0ba6bd087"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-395\\result.json",
+          "bytes": 4370,
+          "sha256": "78510d033e48b72f650d1ae539bf21323db92b79cc6c95c8a4cd4b5661362e88"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-396\\result.json",
+          "bytes": 2970,
+          "sha256": "5187ef3d4094d8e195a9c0de2c1e41a538dc57f2a7d108005768a56c2e7db1e3"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-398\\result.json",
+          "bytes": 1494,
+          "sha256": "15dcea1ad6764f595375619ef1fc9f379370da9cee5b89e2dbe797976044068e"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-400\\result.json",
+          "bytes": 3893,
+          "sha256": "f830e4f83d089433d015d69a17d04caf0d1aa8a899d580313a54be3df94b229f"
+        }
+      ],
+      "original_results": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-guests-393\\result.json",
+          "bytes": 8577,
+          "sha256": "b2536bebf1691043d5f1d1b34123428d11fa8e5a7dd66fba14375ba08e637899"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-395\\result.json",
+          "bytes": 4370,
+          "sha256": "78510d033e48b72f650d1ae539bf21323db92b79cc6c95c8a4cd4b5661362e88"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-396\\result.json",
+          "bytes": 2970,
+          "sha256": "5187ef3d4094d8e195a9c0de2c1e41a538dc57f2a7d108005768a56c2e7db1e3"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-398\\result.json",
+          "bytes": 1494,
+          "sha256": "15dcea1ad6764f595375619ef1fc9f379370da9cee5b89e2dbe797976044068e"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-400\\result.json",
+          "bytes": 3893,
+          "sha256": "f830e4f83d089433d015d69a17d04caf0d1aa8a899d580313a54be3df94b229f"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-host-402\\result.json",
+          "bytes": 976,
+          "sha256": "9e58922326860be2dcdccf272a049fecfb12d54e0084846f29daf9913b44f565"
+        }
+      ],
+      "all_recent_processes_closed": true,
+      "cache_root": "D:/build_cache",
+      "registered_VMs": 4,
+      "VM_calls": 0,
+      "host_policy_calls": 0,
+      "historical_unknown_owner_contacts": 0,
+      "protected_upload_owner": false,
+      "production_approval_UI": false,
+      "production_recovery_UI": false,
+      "watch_rename": false,
+      "full_P2_accepted": false,
+      "full_P3_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "remote_publication": false,
+      "public_result": "docs/qualification/evidence/resume-20261027/sdk403-upload-three-language-guests.json"
+    },
+    "blob_upload_protected_owner": {
+      "status": "PASS_SCOPED_WINDOWS_PROTECTED_UPLOAD_OWNER",
+      "utc": "2026-10-27T14:32:31.001151+00:00",
+      "qualification_source": "7370d500e3ec2c5b84421994f9868d3326512dd3ba1ce4dba1bb16be46445fb3",
+      "successful_cases": [
+        {
+          "language": "C",
+          "bytes": 16777216
+        },
+        {
+          "language": "C",
+          "bytes": 150017
+        },
+        {
+          "language": "CPP",
+          "bytes": 16777216
+        },
+        {
+          "language": "CPP",
+          "bytes": 150017
+        },
+        {
+          "language": "RUST",
+          "bytes": 16777216
+        },
+        {
+          "language": "RUST",
+          "bytes": 150017
+        }
+      ],
+      "synthetic_payload_byte": 42,
+      "actual_three_language_Wasm": true,
+      "native_protected_Workbench_owner": true,
+      "actual_AuditSession": true,
+      "exact_bytes_and_sha256": true,
+      "exclusive_original_lease": true,
+      "sealed_history_after_reopen": true,
+      "new_test_methods": {
+        "passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "filtered": 0
+      },
+      "synthetic_store_cases": 11,
+      "original_worker_joins": 17,
+      "negative_scenarios": [
+        "unapproved, stale revision and foreign package refuse before owner transfer",
+        "wrong task and unread acknowledgement refuse",
+        "single-use submission stays consumed after acknowledgement",
+        "low fuel returns Limits with no protected staged record",
+        "post-join cancellation and revision revocation veto unread success",
+        "generic maintenance cannot clear unresolved upload history",
+        "separate original-history observation and explicit confirmation preserve original Unknown",
+        "lost product gate refuses delivery, recovery and replacement owner"
+      ],
+      "runtime_methods": {
+        "passed": 99,
+        "failed": 0,
+        "ignored": 0,
+        "filtered": 0
+      },
+      "strict_runtime_library_clippy": true,
+      "production_host_library_check": true,
+      "original_task_state_methods": {
+        "passed": 10,
+        "selected_synthetic_only": true,
+        "evidence": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-task-regressions-408\\result.json",
+          "bytes": 4138,
+          "sha256": "487dba881f0394c15be66512f76a99fa15e653f611840fa17ccad5be2e485a3b"
+        }
+      },
+      "new_lock_edges": [
+        "morrow-blob-transfer-v1",
+        "morrow-blob-upload-request-v1"
+      ],
+      "third_party_lock_changes": false,
+      "guest_pins": [
+        {
+          "path": "D:\\build_cache\\upload-guests393\\rust_upload.wasm",
+          "bytes": 349796,
+          "sha256": "f12a3522c9196541b2dea6d8c6832009812ce35d6554cfa8ead405761568c240"
+        },
+        {
+          "path": "D:\\build_cache\\upload-guests393\\c_upload.wasm",
+          "bytes": 144153,
+          "sha256": "5a0692600e65cafad245d876db7a709213670bc4c7403952546be5f9d2452b7c"
+        },
+        {
+          "path": "D:\\build_cache\\upload-guests393\\cpp_upload.wasm",
+          "bytes": 144570,
+          "sha256": "c567f658d3dc7a9b87f8c24ac96f37afc133f3ee1f629a8e7a46276cf47d1169"
+        }
+      ],
+      "selected_program": {
+        "path": "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\blob_upload_protected-01e181c5b4109465.exe",
+        "bytes": 19360768,
+        "sha256": "7a015a83f8215f97d9f9b285b9f9a9e6affcb7be8c73ce2fce59c34b2dd64477"
+      },
+      "qualification": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-protected-406\\result.json",
+        "bytes": 5665,
+        "sha256": "907c6798f93ccf87b1e1d8b4a42d3bd3d5a5ae39d5efc68ecd9c6086f8bb23f8"
+      },
+      "frozen_inputs_verified": 57,
+      "all_recent_processes_closed": true,
+      "cache_root": "D:/build_cache",
+      "registered_VMs": 4,
+      "VM_calls": 0,
+      "host_policy_changes": 0,
+      "historical_unknown_owner_contacts": 0,
+      "formal_CapnProto_product_route": false,
+      "rendered_approval_UI": false,
+      "rendered_recovery_UI": false,
+      "cross_restart_Unknown_recovery_UI": false,
+      "watch_rename": false,
+      "full_P2_accepted": false,
+      "full_P3_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "remote_publication": false,
+      "public_result": "docs/qualification/evidence/resume-20261027/sdk407-protected-upload-owner.json"
+    },
+    "blob_upload_private_route": {
+      "status": "PASS_SCOPED_UPLOAD_PRIVATE_CAPNP_AND_SESSION",
+      "utc": "2026-10-27T15:12:10.519832+00:00",
+      "qualification_source": "6d182b995341074658c2b5d1e5d0a7a8029b1263e2dc6c21678fe158c148290c",
+      "client_source": "481f2c847d276f6265917aa93f22d5a5905c117e0f6e0e1744db615afc831f13",
+      "client_source_delta": {
+        "source_410": "481f2c847d276f6265917aa93f22d5a5905c117e0f6e0e1744db615afc831f13",
+        "current_411": "6d182b995341074658c2b5d1e5d0a7a8029b1263e2dc6c21678fe158c148290c",
+        "delta_only": "Restore original LF bytes in protocol.rs and io_tasks.rs; no logical change",
+        "dart_inputs_unchanged": true
+      },
+      "private_CapnProto_actions": [
+        {
+          "name": "pluginApproveBlobUpload",
+          "ordinal": 162
+        },
+        {
+          "name": "blobUploadStart",
+          "ordinal": 163
+        },
+        {
+          "name": "blobUploadStatus",
+          "ordinal": 164
+        },
+        {
+          "name": "blobUploadRead",
+          "ordinal": 165
+        },
+        {
+          "name": "blobUploadInspect",
+          "ordinal": 166
+        },
+        {
+          "name": "blobUploadConfirm",
+          "ordinal": 167
+        }
+      ],
+      "original_action_ordinals_preserved": true,
+      "changed_generated_schema_identities": [
+        "hostDigest"
+      ],
+      "product_private_dispatcher": true,
+      "actual_Rust_Wasm": true,
+      "protected_Windows_libraries": 2,
+      "original_worker_joins": 2,
+      "actual_sealed_reopen": true,
+      "client_and_session_tests": {
+        "passed": 31,
+        "failed": 0,
+        "skipped": 0
+      },
+      "adjacent_client_tests": {
+        "passed": 34,
+        "failed": 0,
+        "skipped": 2
+      },
+      "native_route_tests": {
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "filtered": 10
+      },
+      "static_Dart_analysis": "No issues found",
+      "native_library_and_test_check": true,
+      "scenarios": [
+        "category approval checks exact package digest and registry revision",
+        "single operation binds immutable metadata and bounded input",
+        "lost START reply correlates original submission and never submits another upload",
+        "wrong task identity and unread acknowledgement refuse",
+        "once-only result delivery is separate from original worker join",
+        "cancel after join vetoes unread successful result",
+        "read-only original history and explicit matching confirmation preserve Unknown",
+        "lost READ and detached view suppress success and require original observation",
+        "generic repair does not clear unresolved upload history",
+        "independent upload handlers are excluded from ordinary pure transform UI"
+      ],
+      "guest_pins": [
+        {
+          "path": "D:\\build_cache\\upload-guests393\\rust_upload.wasm",
+          "bytes": 349796,
+          "sha256": "f12a3522c9196541b2dea6d8c6832009812ce35d6554cfa8ead405761568c240"
+        },
+        {
+          "path": "D:\\build_cache\\upload-guests393\\c_upload.wasm",
+          "bytes": 144153,
+          "sha256": "5a0692600e65cafad245d876db7a709213670bc4c7403952546be5f9d2452b7c"
+        },
+        {
+          "path": "D:\\build_cache\\upload-guests393\\cpp_upload.wasm",
+          "bytes": 144570,
+          "sha256": "c567f658d3dc7a9b87f8c24ac96f37afc133f3ee1f629a8e7a46276cf47d1169"
+        }
+      ],
+      "executed_languages": [
+        "RUST"
+      ],
+      "synthetic_object_bytes": 150017,
+      "synthetic_payload_byte": 42,
+      "selected_program": {
+        "path": "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\blob_upload_protected-01e181c5b4109465.exe",
+        "bytes": 31266304,
+        "sha256": "a0a6e7094debbe7436733266f48c9bd106b90bef6013e24958cc3155976f7fad"
+      },
+      "native_evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-private-route-411\\result.json",
+        "bytes": 3099,
+        "sha256": "c75149bb75a8c2812d8fd7dce07b54414e24e0f0bd701fc6df9b7e71cb683eb0"
+      },
+      "client_evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-protocol-check-410\\result.json",
+        "bytes": 450,
+        "sha256": "406d915fd24bda5b1a10a028f5208f5c6b855a49ffaf020a4b6100bdb504641d"
+      },
+      "frozen_inputs_verified": 57,
+      "all_recent_processes_closed": true,
+      "cache_root": "D:/build_cache",
+      "registered_VMs": 4,
+      "VM_acceptance_runs": 0,
+      "host_policy_changes": 0,
+      "historical_unknown_owner_contacts": 0,
+      "native_and_Dart_cross_process_run": false,
+      "rendered_approval_UI": false,
+      "rendered_recovery_UI": false,
+      "cross_restart_Unknown_recovery_UI": false,
+      "full_P2_accepted": false,
+      "full_P3_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "remote_publication": false,
+      "public_result": "docs/qualification/evidence/resume-20261027/sdk412-upload-private-capnp-session.json"
+    },
+    "blob_upload_product_route": {
+      "status": "PASS_SCOPED_DART_NATIVE_THREE_LANGUAGE_UPLOAD",
+      "utc": "2026-10-27T15:43:50.882708+00:00",
+      "qualification_source": "4cdb680ae2dfd8b3bea5f6a798c2188d7f6bec7122077400a62e76f80ef4e52c",
+      "native_build_source": "657d9e1019e7b89880cecad504c27beab3352f34c0d6e9058bb6d8ff9f11ab4c",
+      "native_source_equivalence": {
+        "previous_source": "657d9e1019e7b89880cecad504c27beab3352f34c0d6e9058bb6d8ff9f11ab4c",
+        "current_source": "4cdb680ae2dfd8b3bea5f6a798c2188d7f6bec7122077400a62e76f80ef4e52c",
+        "only_delta": "controlled test accepts pageVersioned startup and queryVersioned request",
+        "native_and_builtin_sources_unchanged": true
+      },
+      "successful_cases": [
+        {
+          "language": "c",
+          "bytes": 150017,
+          "sha256": "0b817290e9c1f044f993fc7dee690657887c1f86777400c155c8d533e227b29b",
+          "original_workers_joined": 2,
+          "supervised_owners_closed": 2,
+          "actual_Dart_native_exchange": true,
+          "rendered_approval_UI": false
+        },
+        {
+          "language": "c",
+          "bytes": 16777216,
+          "sha256": "22e57c15beae6221c5618a4d5158171cfdba5e66a32cb9165f5887a1d1cfe8e0",
+          "original_workers_joined": 2,
+          "supervised_owners_closed": 2,
+          "actual_Dart_native_exchange": true,
+          "rendered_approval_UI": false
+        },
+        {
+          "language": "cpp",
+          "bytes": 150017,
+          "sha256": "0b817290e9c1f044f993fc7dee690657887c1f86777400c155c8d533e227b29b",
+          "original_workers_joined": 2,
+          "supervised_owners_closed": 2,
+          "actual_Dart_native_exchange": true,
+          "rendered_approval_UI": false
+        },
+        {
+          "language": "cpp",
+          "bytes": 16777216,
+          "sha256": "22e57c15beae6221c5618a4d5158171cfdba5e66a32cb9165f5887a1d1cfe8e0",
+          "original_workers_joined": 2,
+          "supervised_owners_closed": 2,
+          "actual_Dart_native_exchange": true,
+          "rendered_approval_UI": false
+        },
+        {
+          "language": "rust",
+          "bytes": 150017,
+          "sha256": "0b817290e9c1f044f993fc7dee690657887c1f86777400c155c8d533e227b29b",
+          "original_workers_joined": 2,
+          "supervised_owners_closed": 2,
+          "actual_Dart_native_exchange": true,
+          "rendered_approval_UI": false
+        },
+        {
+          "language": "rust",
+          "bytes": 16777216,
+          "sha256": "22e57c15beae6221c5618a4d5158171cfdba5e66a32cb9165f5887a1d1cfe8e0",
+          "original_workers_joined": 2,
+          "supervised_owners_closed": 2,
+          "actual_Dart_native_exchange": true,
+          "rendered_approval_UI": false
+        }
+      ],
+      "synthetic_payload_byte": 42,
+      "original_worker_joins": 12,
+      "supervised_owners_closed": 12,
+      "independent_closed_library_observers": 12,
+      "actual_Dart_native_CapnProto_exchange": true,
+      "production_default_native_features": true,
+      "actual_protected_AuditSession": true,
+      "exact_stored_bytes_and_sha256": true,
+      "sealed_released_history_after_reopen": true,
+      "successful_cross_restart_scope": "Known-success original closure only; not Unknown recovery",
+      "supervisor_business_outcome": "Unknown is preserved in raw supervision records; business stage/release is proved separately by original API and independent protected history",
+      "scheduler_tests": {
+        "passed": 10,
+        "failed": 0
+      },
+      "request_buffer_tests": {
+        "passed": 22,
+        "failed": 0,
+        "source": "414 first suite; second suite failed before fixture correction"
+      },
+      "product_tests": {
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0
+      },
+      "static_Dart_analysis": "No issues found",
+      "corrections": [
+        "Upload controls go to the outer scheduler while service business is pending",
+        "Temporary upload request builder segments and serialized frame are cleared on both successful and failed write",
+        "Controlled mock follows existing pageVersioned and queryVersioned APIs"
+      ],
+      "prior_failed_prechecks": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-414\\result.json",
+          "bytes": 3098,
+          "sha256": "acfd1c67b51125b38a2c4d99bbf1c6ad52526a61727434e48af2e9bac7b87cdc"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-415\\result.json",
+          "bytes": 1178,
+          "sha256": "76c09718baa0e96d85b8e202d57247b490786d421c953cdc9fef7ff9ef1e0979"
+        }
+      ],
+      "prior_failures_preserved": true,
+      "programs": {
+        "host": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\programs\\morrow-workbench-host.exe",
+          "bytes": 31143936,
+          "sha256": "93e4d9d5fc2df7199e6ade465cfe67854efddb8262d1983e250a202502f7011d"
+        },
+        "supervisor": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\programs\\morrow-workbench-supervisor.exe",
+          "bytes": 14088192,
+          "sha256": "2e62df37c68036c7f757253401a3b83bb093cbf2362c56baff033ca31c96fd25"
+        },
+        "packager": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\programs\\package.exe",
+          "bytes": 3177984,
+          "sha256": "e88df53921cb6280f4a89790e39825c0750827a7f893a7eada8869b391b8ab08"
+        },
+        "upload-packager": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\programs\\package_blob_upload_fixture.exe",
+          "bytes": 3208704,
+          "sha256": "421e468eb7bc20bea5dfa371985f8462fde9a303596f3f4f0654062d87e92711"
+        },
+        "history-observer": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\programs\\check_blob_upload_fixture.exe",
+          "bytes": 4681216,
+          "sha256": "898fee6335a37ccf89a6ad2a1b943f53b0e9d9ea9b8ae217ea7adae13ccce06e"
+        }
+      },
+      "guest_pins": [
+        {
+          "path": "D:\\build_cache\\upload-guests393\\rust_upload.wasm",
+          "bytes": 349796,
+          "sha256": "f12a3522c9196541b2dea6d8c6832009812ce35d6554cfa8ead405761568c240"
+        },
+        {
+          "path": "D:\\build_cache\\upload-guests393\\c_upload.wasm",
+          "bytes": 144153,
+          "sha256": "5a0692600e65cafad245d876db7a709213670bc4c7403952546be5f9d2452b7c"
+        },
+        {
+          "path": "D:\\build_cache\\upload-guests393\\cpp_upload.wasm",
+          "bytes": 144570,
+          "sha256": "c567f658d3dc7a9b87f8c24ac96f37afc133f3ee1f629a8e7a46276cf47d1169"
+        }
+      ],
+      "qualification": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\result.json",
+        "bytes": 4898,
+        "sha256": "697005d39d26fdbf86211c143774866703bc97568ff3557e3d3f795ff13e7786"
+      },
+      "closure_and_history_evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-150017\\stage-open.json",
+          "bytes": 888,
+          "sha256": "3751f9a7bf138cdcbe72c47f6094037f9d811437e93d1c9ad6bd3b0b7c7f5ad1"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-150017\\stage-closed.json",
+          "bytes": 909,
+          "sha256": "5cfa774e59ce8ae953c174be7d37c5d3d60526b0766453c68ee5e76cb2be0644"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-150017\\release-open.json",
+          "bytes": 888,
+          "sha256": "f5887d9499977fba97f721392d2fca2a49b4947d9336caf21299240a7bbe8a39"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-150017\\release-closed.json",
+          "bytes": 909,
+          "sha256": "0bda4311c51fddf83ffef013548aeb5aff3140a5dc2aaad1637f6e5650defe24"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-150017\\staged-history.json",
+          "bytes": 114,
+          "sha256": "f3b73cabade4399f1af48501e005d903b62df46c35f4e67f00a7554234397c98"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-150017\\released-history.json",
+          "bytes": 113,
+          "sha256": "59023d44962d6f6a607f0bfeca96a21b035c29115aa95671b8b7b819bb954979"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-16777216\\stage-open.json",
+          "bytes": 888,
+          "sha256": "fc69c9fc63edaca7aa18ba80d33e8b793d90cea19f7bcb00320f2e03e28a817b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-16777216\\stage-closed.json",
+          "bytes": 909,
+          "sha256": "f3848bb0324c48ead2cc1ca20a03b3469d11b22d9c8c05cf27fc745fa626d793"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-16777216\\release-open.json",
+          "bytes": 887,
+          "sha256": "50e50d071aa7e6017f953bfb0c6f278dd8deb805fad26315bd49a984191add31"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-16777216\\release-closed.json",
+          "bytes": 908,
+          "sha256": "4aca95a3fcc2ce9a47a320f656fe1744342f430800b6e9fc4bccd8da348aef8d"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-16777216\\staged-history.json",
+          "bytes": 116,
+          "sha256": "f341fc112aff3ba3c407f6f9346cb3ac19f50df9f0cb1da8883aa931a62f26a0"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-16777216\\released-history.json",
+          "bytes": 115,
+          "sha256": "58b2c4e9161079522b7c6438d3abf5ef8f52c22a2086aca638ea91c8a92693f4"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-150017\\stage-open.json",
+          "bytes": 888,
+          "sha256": "0e892a7035c0a7dc9e73e20b0ef6dbafbc05a96626feb9082de1e6c5d4ce08ac"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-150017\\stage-closed.json",
+          "bytes": 909,
+          "sha256": "676a5024c8a48d23a9dcab437cc9e0cc72301627de261e222029fecf9e6fb7c6"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-150017\\release-open.json",
+          "bytes": 888,
+          "sha256": "6df513f0c12e7b9da2021d3e3adab83b07575929810bed0cd3bd549a455ca067"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-150017\\release-closed.json",
+          "bytes": 909,
+          "sha256": "21074add117d3c7b7c5cafef844c03b10f6c21abfcaa7f68d27dc38a4d607e34"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-150017\\staged-history.json",
+          "bytes": 114,
+          "sha256": "f3b73cabade4399f1af48501e005d903b62df46c35f4e67f00a7554234397c98"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-150017\\released-history.json",
+          "bytes": 113,
+          "sha256": "59023d44962d6f6a607f0bfeca96a21b035c29115aa95671b8b7b819bb954979"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-16777216\\stage-open.json",
+          "bytes": 888,
+          "sha256": "d223e33878c168ab03e89f3973dc1336ea723737cbbbcdaa172d59f120d639fd"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-16777216\\stage-closed.json",
+          "bytes": 909,
+          "sha256": "6c774c45cfd3725219afaa43a3803c3b3aee5a7a8897100fd2ecb3b6b50bcf8b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-16777216\\release-open.json",
+          "bytes": 887,
+          "sha256": "09565199a81f25e7cb80a72f358e497182bed0b739b0e0edda42d2e0f365801f"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-16777216\\release-closed.json",
+          "bytes": 908,
+          "sha256": "3664f4420a7d052f5d8b89f4fbb40a9da69b16fbb6868c33f42c278972cc1791"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-16777216\\staged-history.json",
+          "bytes": 116,
+          "sha256": "f341fc112aff3ba3c407f6f9346cb3ac19f50df9f0cb1da8883aa931a62f26a0"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-16777216\\released-history.json",
+          "bytes": 115,
+          "sha256": "58b2c4e9161079522b7c6438d3abf5ef8f52c22a2086aca638ea91c8a92693f4"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-150017\\stage-open.json",
+          "bytes": 888,
+          "sha256": "ff6bcce01ac561ab392ca7853722689f0f5203f4c5e2db31bc5e45269438c425"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-150017\\stage-closed.json",
+          "bytes": 909,
+          "sha256": "89bdac4bebde874da347540883bf47eda1e8f10baa83cfbb1d69580d8dec69ae"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-150017\\release-open.json",
+          "bytes": 888,
+          "sha256": "774a8b7e8c5a20f3ce4ae7f31fb93fd0a91b4f5c8ab8ee1578aefb1214277b88"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-150017\\release-closed.json",
+          "bytes": 909,
+          "sha256": "5e670afcb97a48e46b250d2a1466c84a656273a563b54035009b2a0e00325087"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-150017\\staged-history.json",
+          "bytes": 114,
+          "sha256": "f3b73cabade4399f1af48501e005d903b62df46c35f4e67f00a7554234397c98"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-150017\\released-history.json",
+          "bytes": 113,
+          "sha256": "59023d44962d6f6a607f0bfeca96a21b035c29115aa95671b8b7b819bb954979"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-16777216\\stage-open.json",
+          "bytes": 887,
+          "sha256": "cf6fb0ea73e575fac033133298cc667a18000a356a69b44a221c160e3af71101"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-16777216\\stage-closed.json",
+          "bytes": 908,
+          "sha256": "4ca554b5492b811d39370e922113c64dbe7e758b4eefbf080f1a8d86d5a6c3b5"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-16777216\\release-open.json",
+          "bytes": 888,
+          "sha256": "c0ba6386d8275bfd2d38d7835d5207b4a8f7b13ab546756f864770e75469bec4"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-16777216\\release-closed.json",
+          "bytes": 909,
+          "sha256": "9a503ff50c7bb8f21a0c3d9c964509f40fed5a93971052e52f32d18e2970f63d"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-16777216\\staged-history.json",
+          "bytes": 116,
+          "sha256": "f341fc112aff3ba3c407f6f9346cb3ac19f50df9f0cb1da8883aa931a62f26a0"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-16777216\\released-history.json",
+          "bytes": 115,
+          "sha256": "58b2c4e9161079522b7c6438d3abf5ef8f52c22a2086aca638ea91c8a92693f4"
+        }
+      ],
+      "frozen_inputs_verified": 57,
+      "all_recent_original_product_owners_closed": true,
+      "cache_root": "D:/build_cache",
+      "registered_VMs": 4,
+      "VM_calls": 0,
+      "host_policy_changes": 0,
+      "historical_unknown_owner_contacts": 0,
+      "rendered_approval_UI": false,
+      "rendered_recovery_UI": false,
+      "cross_restart_Unknown_recovery": false,
+      "arbitrary_file_or_network_uploads": false,
+      "watch_rename": false,
+      "full_P2_accepted": false,
+      "full_P3_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "remote_publication": false,
+      "public_result": "docs/qualification/evidence/resume-20261027/sdk417-upload-dart-native-product.json"
+    },
+    "blob_upload_proposal": {
+      "status": "PASS_SCOPED_UPLOAD_PROPOSAL_CODEC_PACKAGE_AND_PURE_EXECUTION",
+      "utc": "2026-10-27T16:07:34.380476+00:00",
+      "qualification_source": "d06aa860ffe93c9403f462e50a808556b090129d53c18329c9781e896f02598a",
+      "codec_source": "45e8d715a722a155ea75310bdd4a962cb8039ce8ef8e56955600250fa3463cd3",
+      "previous_source": "52d93ff846e564e6f9ddf31f02a339ad1264c088fb58a9b9261f1d82e6621f5f",
+      "source_equivalence": {
+        "previous": "52d93ff846e564e6f9ddf31f02a339ad1264c088fb58a9b9261f1d82e6621f5f",
+        "current": "d06aa860ffe93c9403f462e50a808556b090129d53c18329c9781e896f02598a",
+        "only_delta": "Synthetic WAT task read capacity corrected to existing 128KiB contract; explicit import admission assertion added",
+        "production_source_unchanged": true
+      },
+      "contract": "Independent Capn Proto blob-upload-proposal-v1",
+      "schema": {
+        "path": "C:\\ms1020\\extensions\\blob-upload-proposal-v1\\contracts\\blob_upload_proposal.capnp",
+        "bytes": 768,
+        "sha256": "b06b2c578b65c4f8bdf8af8cd3ca4976b42fa6da5f6c608373b453ae4f710de2"
+      },
+      "proposal_limits": {
+        "object_bytes": 16777216,
+        "producer_input_bytes": 32768,
+        "label_UTF8_bytes": 512,
+        "label_scalars": 128,
+        "wire_bytes": 34816,
+        "bound_input_bytes": 36864
+      },
+      "semantics": [
+        "Untrusted plain-text label, length, SHA and bounded producer input; no original owner or permission",
+        "Exact proposal digest binds an unchanged Descriptor frame without conferring approval",
+        "Protobuf manifest field23 registers disjoint same-package planner-to-uploader mappings under an explicit required feature",
+        "Pure interpreter has no Store, Manager, live connection or effect callback; any pending upload import aborts",
+        "Original task completion correlation, package object/output ceilings, cancellation and fixed fuel are checked"
+      ],
+      "codec_tests": {
+        "passed": 15,
+        "failed": 0
+      },
+      "package_tests": {
+        "passed": 31,
+        "new": 7,
+        "failed": 0
+      },
+      "runtime_tests": {
+        "passed": 58,
+        "new": 10,
+        "failed": 0,
+        "passing_sources": [
+          "421 first three suites",
+          "422 planner and worker"
+        ]
+      },
+      "strict_clippy": [
+        "proposal codec all targets",
+        "core library",
+        "runtime library and planner tests"
+      ],
+      "proposal_wasm": "Library compile only",
+      "planner_Wasm": "Synthetic WAT executes in actual interpreter; no Store authority",
+      "production_host": "Default library/binaries/tests compile only; existing warnings retained in log",
+      "prior_failure": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-421\\result.json",
+        "bytes": 1937,
+        "sha256": "f910e9e1320c1805ff5599108ad5d587e86ea1cfc515c5136b58723d7a764d0f"
+      },
+      "prior_failure_reason": "Synthetic WAT incorrectly supplied64KiB task read capacity; existing fixed contract requires128KiB. Fixture corrected and actual import admission asserted. Production source unchanged.",
+      "prior_failure_preserved": true,
+      "qualification": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-proposal-419\\result.json",
+          "bytes": 2447,
+          "sha256": "e5ebaa69ba230fe8b5c1e20ed568e1a28c46fa8eba3d1a71ae0af2cf739be37f"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-421\\result.json",
+          "bytes": 1937,
+          "sha256": "f910e9e1320c1805ff5599108ad5d587e86ea1cfc515c5136b58723d7a764d0f"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-422\\result.json",
+          "bytes": 3190,
+          "sha256": "6fee317053a80dcdf3af9f670e5046eb403f5dc1798f8c5f21824421d47b7e62"
+        }
+      ],
+      "executed_programs": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-proposal-419\\morrow_blob_upload_proposal_v1-56385ca7f0e294b2.exe",
+          "bytes": 856576,
+          "sha256": "22e68bd65f64f37068260cdaed6aeb4e915cb53abb6bf233bf258e3827d81299"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-421\\package_blob_upload-0fb420084dfda4d7.exe",
+          "bytes": 4069376,
+          "sha256": "10b04eb690be4b91d5fe88ce7fd9f77622f69623ab1942c21012deafe278b874"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-421\\package_blob_upload_proposal-d928c7b277f09271.exe",
+          "bytes": 3771904,
+          "sha256": "7b217b70986ff96c3f472f83e0eb2e12d8a83fb07b4ba9f0fa2db0372aff737e"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-421\\plugin_package-f59b25a316a48ce0.exe",
+          "bytes": 5516800,
+          "sha256": "1ae089b55d66e48a7be708c1b9efa443744d2579b3e8c83ae6d62ccd196486db"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-421\\blob_upload-6390dcdcb807b062.exe",
+          "bytes": 9269760,
+          "sha256": "81acd18dfdc8b8500319c12af65111769e0356219eb782979deb9d65c12c22c2"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-421\\blob_upload_approval-6a42823d7321e358.exe",
+          "bytes": 7722496,
+          "sha256": "0436e30d26947e9c6a3af3a109220917076bb58c8c621c3ab565ec8ddb2e2f5e"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-421\\blob_upload_profile-6b424a4ca95c1d4c.exe",
+          "bytes": 8217600,
+          "sha256": "257fbe8b3aee8a705d02d61d4ee5df33f1ae48c7b1b085e257d695cd23ad6761"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-422\\blob_upload_proposal-b2b85895fcaebffc.exe",
+          "bytes": 6582784,
+          "sha256": "015fc3e8e7c43838709a5e3b6710a6c2bdfbf699f1465ce4f0bf49b19de7af74"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-422\\blob_upload_worker-d4f2a08154b1dbd9.exe",
+          "bytes": 8507392,
+          "sha256": "b074699560e80b520c1a4b488b4b84ea1b60ba9a5f420cca06778f3de2017a48"
+        }
+      ],
+      "frozen_inputs_verified": 57,
+      "third_party_dependency_changes": false,
+      "new_path_dependency": "morrow-blob-upload-proposal-v1",
+      "unrequested_dependency_update_preserved_and_not_applied": true,
+      "all_recent_processes_closed": true,
+      "cache_root": "D:/build_cache",
+      "registered_VMs": 4,
+      "VM_calls": 0,
+      "host_policy_changes": 0,
+      "historical_unknown_owner_contacts": 0,
+      "C_CPP_proposal_helpers": false,
+      "actual_three_language_planner_guests": false,
+      "private_product_planner_route": false,
+      "rendered_approval_UI": false,
+      "rendered_recovery_UI": false,
+      "cross_restart_Unknown_recovery": false,
+      "watch_rename": false,
+      "full_P2_accepted": false,
+      "full_P3_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "remote_publication": false,
+      "public_result": "docs/qualification/evidence/resume-20261028/sdk423-upload-proposal-and-pure-planner.json"
+    },
+    "blob_upload_proposal_sdk": {
+      "status": "PASS_SCOPED_THREE_LANGUAGE_PROPOSAL_HELPERS_AND_ACTUAL_PLANNERS",
+      "utc": "2026-10-27T16:44:05.551127+00:00",
+      "qualification_source": "68fd7dc3613307633d12f5f4cef7a3c04f3666ac407258375c1a4f5afee84e7b",
+      "helper_source": "767e155b2cab8f6a4fd3def55caddc5f6968014e8c27927bdeeecb80e075dab1",
+      "guest_build_source": "ee7ef6a69bf47cd170f3344fb9906d01810884fc3120a520d54ef0416b2be6ce",
+      "source_equivalence": {
+        "build_source": "ee7ef6a69bf47cd170f3344fb9906d01810884fc3120a520d54ef0416b2be6ce",
+        "current_source": "68fd7dc3613307633d12f5f4cef7a3c04f3666ac407258375c1a4f5afee84e7b",
+        "reconstructed_build_source": "ee7ef6a69bf47cd170f3344fb9906d01810884fc3120a520d54ef0416b2be6ce",
+        "test_before": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-sdk-429\\planner-test-before-owner-fix.rs",
+          "bytes": 12252,
+          "sha256": "7ed712002f6492d4961e322c157d44ff0b03752483a027e8bffe7fa590cbaa1d"
+        },
+        "test_after": {
+          "path": "C:\\ms1020\\plugin_runtime\\tests\\blob_upload_planner_sdk_guests.rs",
+          "bytes": 12279,
+          "sha256": "2cd8f430a6f4e547de830590de9578ea23a4c8608c518d45be171a09f080317f"
+        },
+        "production_and_guests_unchanged": true
+      },
+      "contract": "Independent Capn Proto proposal and bounded example business options; original task/upload/frame schemas unchanged",
+      "schema": {
+        "path": "C:\\ms1020\\extensions\\blob-upload-proposal-v1\\contracts\\blob_upload_proposal.capnp",
+        "bytes": 768,
+        "sha256": "b06b2c578b65c4f8bdf8af8cd3ca4976b42fa6da5f6c608373b453ae4f710de2"
+      },
+      "helper_tests": {
+        "rust_passed": 23,
+        "failed": 0,
+        "external_consumers": [
+          "MSVC C",
+          "MSVC C++",
+          "Clang C",
+          "Clang C++"
+        ],
+        "semantics": [
+          "owned copied inputs",
+          "borrowed view lifetime",
+          "disjoint bounded output regions",
+          "failed calls preserve outputs",
+          "C++ move-only owners and replacement only on success"
+        ]
+      },
+      "sample_tests": {
+        "passed": 3,
+        "failed": 0,
+        "options_contract": "example-only Capn Proto; no host permission",
+        "object_bytes_max": 16777216,
+        "producer_chunk_bytes": 61440
+      },
+      "actual_planner_tests": {
+        "passed": 11,
+        "failed": 0,
+        "three_language_cases": [
+          {
+            "language": "C",
+            "bytes": 16777216,
+            "fill": 219,
+            "fuel_remaining": 7401355237,
+            "proposal_sha256": "5f2b2b3c0f2f60584a85295eb91b592c11d26185eb616960f1aabfdc434dc973"
+          },
+          {
+            "language": "C",
+            "bytes": 0,
+            "fill": 0,
+            "fuel_remaining": 7999576977,
+            "proposal_sha256": "485a7981e0fff988e56bb9fb0905cb17722f3d1b1d75d7372dbfa08b87244307"
+          },
+          {
+            "language": "C",
+            "bytes": 150017,
+            "fill": 73,
+            "fuel_remaining": 7994235910,
+            "proposal_sha256": "83368d53afa2d825e2e5a715b638cd2faa6f2abaf3cbcb2b037e80eb9935c734"
+          },
+          {
+            "language": "CPP",
+            "bytes": 16777216,
+            "fill": 219,
+            "fuel_remaining": 7401339479,
+            "proposal_sha256": "5f2b2b3c0f2f60584a85295eb91b592c11d26185eb616960f1aabfdc434dc973"
+          },
+          {
+            "language": "CPP",
+            "bytes": 0,
+            "fill": 0,
+            "fuel_remaining": 7999561219,
+            "proposal_sha256": "485a7981e0fff988e56bb9fb0905cb17722f3d1b1d75d7372dbfa08b87244307"
+          },
+          {
+            "language": "CPP",
+            "bytes": 150017,
+            "fill": 73,
+            "fuel_remaining": 7994220152,
+            "proposal_sha256": "83368d53afa2d825e2e5a715b638cd2faa6f2abaf3cbcb2b037e80eb9935c734"
+          },
+          {
+            "language": "RUST",
+            "bytes": 16777216,
+            "fill": 219,
+            "fuel_remaining": 7401365522,
+            "proposal_sha256": "5f2b2b3c0f2f60584a85295eb91b592c11d26185eb616960f1aabfdc434dc973"
+          },
+          {
+            "language": "RUST",
+            "bytes": 0,
+            "fill": 0,
+            "fuel_remaining": 7999587262,
+            "proposal_sha256": "485a7981e0fff988e56bb9fb0905cb17722f3d1b1d75d7372dbfa08b87244307"
+          },
+          {
+            "language": "RUST",
+            "bytes": 150017,
+            "fill": 73,
+            "fuel_remaining": 7994246195,
+            "proposal_sha256": "83368d53afa2d825e2e5a715b638cd2faa6f2abaf3cbcb2b037e80eb9935c734"
+          }
+        ],
+        "pure_planning_upload_calls": 0,
+        "no_store_created_before_planning": true,
+        "actual_original_upload_workers_joined": 18,
+        "exact_stored_bytes_and_sha": true,
+        "successful_release_reopened": true,
+        "negative_cases": [
+          "actual C++16MiB plan denied with100M fuel",
+          "actual Rust malformed options denied without proposal"
+        ]
+      },
+      "legacy_input_compatibility": {
+        "passed": 10,
+        "failed": 0,
+        "actual_original_workers_joined": 28,
+        "descriptor_input_preserved": true,
+        "legacy_fill_byte": 42
+      },
+      "guests": {
+        "rust": {
+          "path": "D:\\build_cache\\upload-planner-guests428\\rust_upload.wasm",
+          "bytes": 391908,
+          "sha256": "95cdc17356ae7745bbf99bfc7797f5c76d9e93f382f84863956416c79c5304b6"
+        },
+        "c": {
+          "path": "D:\\build_cache\\upload-planner-guests428\\c_upload.wasm",
+          "bytes": 195237,
+          "sha256": "4ccd298ba620e706f380f6cb6650bad5aa73791eda776d5b9ea96eebfc108fd3"
+        },
+        "cpp": {
+          "path": "D:\\build_cache\\upload-planner-guests428\\cpp_upload.wasm",
+          "bytes": 196717,
+          "sha256": "6b43abd38714f84e7a1e8dfd2c8a795811188e468eb3c1d3ee4a1634db83f33f"
+        }
+      },
+      "wasm_imports": [
+        "morrow_task_v1.read_input",
+        "morrow_task_v1.complete",
+        "morrow_blob_upload_v1.call"
+      ],
+      "WASI_imports": 0,
+      "start_sections": 0,
+      "toolchain_files_verified": 16803,
+      "strict_checks": [
+        "proposal Rust all targets",
+        "sample Rust all targets",
+        "runtime library and both real guest test targets",
+        "MSVC and Clang C/C++ warnings as errors"
+      ],
+      "retained_failures": [
+        {
+          "result": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-proposal-sdk-425\\result.json",
+            "bytes": 1862,
+            "sha256": "fc1a16b8b95c5043f825f194d826f1a4af864c7af0e610d09d763a7c6667e5b0"
+          },
+          "reason": "Clippy rejected a test-only useless Vec; changed to an array"
+        },
+        {
+          "result": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-sdk-429\\result.json",
+            "bytes": 1655,
+            "sha256": "334ef85c4b47511a580be803185010c23a584e0568d2d93ac87be24352bccc88"
+          },
+          "reason": "New test attempted to clone a non-Clone Package; borrow the exact original PreparedPackage instead"
+        }
+      ],
+      "qualifications": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-proposal-sdk-426\\result.json",
+          "bytes": 10568,
+          "sha256": "1219ff96b173c69e9f31cc055ad4f910c3f4c42679df48c7209f72f0e4e05ad8"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-guests-428\\result.json",
+          "bytes": 10522,
+          "sha256": "c6d5883acb2938d6579dd8aa5e50e6a876f5ea5fa93f38a5d41454f736ce9b94"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-sdk-430\\result.json",
+          "bytes": 3258,
+          "sha256": "440920c324d1c2c8a9087ea3a051471adcc8b08612389367246d64d332355491"
+        }
+      ],
+      "frozen_inputs_verified": 57,
+      "dependency_lock_review": {
+        "added_local_packages": [
+          "morrow-blob-upload-sample"
+        ],
+        "changed_local_edges": [
+          "morrow-plugin-runtime"
+        ],
+        "registry_changes": 0
+      },
+      "all_recent_processes_closed": true,
+      "cache_root": "D:/build_cache",
+      "registered_VMs": 4,
+      "VM_mutations": 0,
+      "host_policy_changes": 0,
+      "historical_unknown_owner_contacts": 0,
+      "C_CPP_proposal_helpers": true,
+      "actual_three_language_planner_guests": true,
+      "protected_planner_product_session": false,
+      "private_product_planner_route": false,
+      "rendered_approval_UI": false,
+      "rendered_recovery_UI": false,
+      "cross_restart_Unknown_recovery": false,
+      "watch_rename": false,
+      "full_P2_accepted": false,
+      "full_P3_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "remote_publication": false,
+      "public_result": "docs/qualification/evidence/resume-20261028/sdk431-three-language-proposal-planners.json"
+    },
+    "blob_upload_planner_product": {
+      "status": "PASS_SCOPED_ACTUAL_RETAINED_DART_NATIVE_PLANNING_PRODUCT",
+      "utc": "2026-10-27T21:58:37.974734+00:00",
+      "qualification_source": "a1b69e973ee2aa45bc2d266966f0fa2b7349261c09f4840af6f098704ba39599",
+      "qualification": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\result.json",
+        "bytes": 7185,
+        "sha256": "08dcd7683fcfa41a6d92b2a6b3c31e1692ab86853939d3771c53e4893f58ea8e"
+      },
+      "style_only_followup": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-style-445\\result.json",
+        "bytes": 2544,
+        "sha256": "8609ac27397c05b750c8249da1ec06e25799ebb023dbee9deb03b119fec7bfeb"
+      },
+      "source_equivalence": {
+        "current_source": "a1b69e973ee2aa45bc2d266966f0fa2b7349261c09f4840af6f098704ba39599",
+        "prior_checkpoint_source": "b3fe87fb7a0435282fc43057d1526aac41c1421df7081cac1b77da678dd30645",
+        "only_new_qualification_inputs": [
+          "workbench_host/examples/package_blob_plan_fixture.rs",
+          "workbench_host/examples/check_blob_plan_fixture.rs",
+          "test/blob_plan_product_native_test.dart"
+        ],
+        "production_source_unchanged": true
+      },
+      "programs": {
+        "host": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\morrow-workbench-host.exe",
+          "bytes": 31293952,
+          "sha256": "d847ffb5447f10d2e37bf2abe2d5d6a62c7e86382055efe3e29173d7f5e9bff9"
+        },
+        "supervisor": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\morrow-workbench-supervisor.exe",
+          "bytes": 14086144,
+          "sha256": "8f0f80198d16bab9a554df8ec9ab38a759e5b16d397522a213832606391110d2"
+        },
+        "packager": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\package.exe",
+          "bytes": 3186688,
+          "sha256": "f58cc43dd99eedc435cda37df683b3cfd4b922aed894bb1d0ccf6d9e3ddaba1c"
+        },
+        "planner-packager": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\package_blob_plan_fixture.exe",
+          "bytes": 3217408,
+          "sha256": "8ed71f82dd3e2bbdf8836196b5754af5b3981a88f85229edac4abc58693af02a"
+        },
+        "history-observer": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\check_blob_plan_fixture.exe",
+          "bytes": 4681216,
+          "sha256": "c01eae6b4768de96198fe4d64c6b011c929b94921d90d7f04f159569fd65b56b"
+        }
+      },
+      "cases": [
+        {
+          "language": "c",
+          "bytes": 150017,
+          "original_planning_workers_joined": 1,
+          "original_upload_workers_joined": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "start_reply_discarded": true,
+          "approval_reply_discarded": true,
+          "result_reply_discarded": false,
+          "actual_Dart_native_planning_exchange": true,
+          "retained_sessions": true,
+          "exact_bytes_SHA": true,
+          "rendered_approval_UI": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "c",
+          "bytes": 16777216,
+          "original_planning_workers_joined": 1,
+          "original_upload_workers_joined": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "start_reply_discarded": true,
+          "approval_reply_discarded": true,
+          "result_reply_discarded": true,
+          "actual_Dart_native_planning_exchange": true,
+          "retained_sessions": true,
+          "exact_bytes_SHA": true,
+          "rendered_approval_UI": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "cpp",
+          "bytes": 150017,
+          "original_planning_workers_joined": 1,
+          "original_upload_workers_joined": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "start_reply_discarded": true,
+          "approval_reply_discarded": true,
+          "result_reply_discarded": false,
+          "actual_Dart_native_planning_exchange": true,
+          "retained_sessions": true,
+          "exact_bytes_SHA": true,
+          "rendered_approval_UI": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "cpp",
+          "bytes": 16777216,
+          "original_planning_workers_joined": 1,
+          "original_upload_workers_joined": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "start_reply_discarded": true,
+          "approval_reply_discarded": true,
+          "result_reply_discarded": true,
+          "actual_Dart_native_planning_exchange": true,
+          "retained_sessions": true,
+          "exact_bytes_SHA": true,
+          "rendered_approval_UI": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "rust",
+          "bytes": 150017,
+          "original_planning_workers_joined": 1,
+          "original_upload_workers_joined": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "start_reply_discarded": true,
+          "approval_reply_discarded": true,
+          "result_reply_discarded": false,
+          "actual_Dart_native_planning_exchange": true,
+          "retained_sessions": true,
+          "exact_bytes_SHA": true,
+          "rendered_approval_UI": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "rust",
+          "bytes": 16777216,
+          "original_planning_workers_joined": 1,
+          "original_upload_workers_joined": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "start_reply_discarded": true,
+          "approval_reply_discarded": true,
+          "result_reply_discarded": true,
+          "actual_Dart_native_planning_exchange": true,
+          "retained_sessions": true,
+          "exact_bytes_SHA": true,
+          "rendered_approval_UI": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "rust",
+          "bytes": 0,
+          "lost_proposal": true,
+          "approvals": 0,
+          "stored_objects": 0,
+          "original_planning_workers_joined": 1,
+          "original_upload_workers_joined": 0,
+          "supervised_owners_closed": 1,
+          "actual_Dart_native_planning_exchange": true,
+          "retained_sessions": true,
+          "rendered_approval_UI": false
+        }
+      ],
+      "actual_Dart_native_product": true,
+      "original_planning_joins": 7,
+      "original_upload_joins": 6,
+      "original_supervised_closures": [
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\c-150017\\plan-closed.json",
+            "bytes": 909,
+            "sha256": "67835de3901c81f779c6bb5415d356a55c18196ea98c717ff0eb92d329c23d7c"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\c-150017\\reopen-closed.json",
+            "bytes": 909,
+            "sha256": "6d4e490d3b6a3c59060ba715e2e4afc1541aa2f0d334cb390312be75cf0fe464"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\c-16777216\\plan-closed.json",
+            "bytes": 909,
+            "sha256": "db599cfcf0dead30136616f574076abeec7c7bbfb6bd1f6605664fda56235e79"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\c-16777216\\reopen-closed.json",
+            "bytes": 909,
+            "sha256": "9838d639ae216d5157f32ec7326b71f29d53404462d248847c58fb7e43f747fc"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\cpp-150017\\plan-closed.json",
+            "bytes": 909,
+            "sha256": "bfd184797b53789a2862d8e5b86ba868ff5a863d7840a654e2012469d44b93b3"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\cpp-150017\\reopen-closed.json",
+            "bytes": 909,
+            "sha256": "47a133fb30996c48732228e46fe10bb2054b954764993a76ef40a962659de108"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\cpp-16777216\\plan-closed.json",
+            "bytes": 907,
+            "sha256": "34a97a9d6dcdb6d82dc4ef00cb3a0efbc16dba5625a5a4264f1e86c2789c3484"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\cpp-16777216\\reopen-closed.json",
+            "bytes": 909,
+            "sha256": "e2dc683cb7e0d417dcda5f35637940a79e6fcca8bbc206aa741e5c5c6f617c03"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\rust-150017\\plan-closed.json",
+            "bytes": 909,
+            "sha256": "7bb573af1b272ccf58e8d9bcc36d4988752b2066eabeb7fbabe988cb7a082b21"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\rust-150017\\reopen-closed.json",
+            "bytes": 909,
+            "sha256": "26fa6d0f1ae9ab38ec632710196bbc55c1e9dc6f8819e7963f7f541957f406cb"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\rust-16777216\\plan-closed.json",
+            "bytes": 909,
+            "sha256": "a9b3006a84c2d1b4bf9b9f000833c5dadadd641b8ca4171f1ba683784cfa3990"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\rust-16777216\\reopen-closed.json",
+            "bytes": 909,
+            "sha256": "68812e4ac9b4e7fe8c6eaa8af3cd6a7f1b2f7cb39e7d6455f0fa3e2cfb791773"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\rust-lost-proposal\\plan-closed.json",
+            "bytes": 909,
+            "sha256": "3fd820245c0517bbf19d7ea5f3b3a28e75095a1538d0f50953709af3635e9bd6"
+          },
+          "raw_business_outcome": "Unknown"
+        }
+      ],
+      "independent_closed_library_reads": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\c-150017\\first-history.json",
+          "bytes": 128,
+          "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\c-150017\\second-history.json",
+          "bytes": 128,
+          "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\c-16777216\\first-history.json",
+          "bytes": 130,
+          "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\c-16777216\\second-history.json",
+          "bytes": 130,
+          "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\cpp-150017\\first-history.json",
+          "bytes": 128,
+          "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\cpp-150017\\second-history.json",
+          "bytes": 128,
+          "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\cpp-16777216\\first-history.json",
+          "bytes": 130,
+          "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\cpp-16777216\\second-history.json",
+          "bytes": 130,
+          "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\rust-150017\\first-history.json",
+          "bytes": 128,
+          "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\rust-150017\\second-history.json",
+          "bytes": 128,
+          "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\rust-16777216\\first-history.json",
+          "bytes": 130,
+          "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\rust-16777216\\second-history.json",
+          "bytes": 130,
+          "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\stores\\rust-lost-proposal\\empty-history.json",
+          "bytes": 128,
+          "sha256": "191eaece680f53fc1423e16cace68b8a65cada04921dbbfdd702e58058629f5c"
+        }
+      ],
+      "reply_loss_scope": "Deliberate discard of a real native response at the trusted application edge",
+      "raw_supervisor_Unknown_preserved": true,
+      "raw_business_outcome_not_reclassified": true,
+      "all_recent_processes_closed": true,
+      "rendered_approval_UI": false,
+      "rendered_recovery_UI": false,
+      "cross_restart_Unknown_recovery": false,
+      "watch_rename": false,
+      "full_P2_accepted": false,
+      "full_P3_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "cache_root": "D:/build_cache",
+      "registered_VMs": 4,
+      "VM_mutations": 0,
+      "host_policy_changes": 0,
+      "historical_unknown_owner_contacts": 0,
+      "remote_publication": false,
+      "frozen_inputs_verified": 57,
+      "public_result": "docs/qualification/evidence/resume-20261028/sdk446-retained-planning-product.json"
+    },
+    "blob_upload_planner_controls": {
+      "status": "PASS_SCOPED_PRIVATE_CAPNP_PLANNING_CONTROLS_AND_RETAINED_DART_SESSION",
+      "utc": "2026-10-27T17:41:51.792629+00:00",
+      "qualification_source": "25c18413bd5b7e4df377cec8ca38c4247f48c704c75dc704f43904f36b0eaf82",
+      "implementation": [
+        "Seven append-only Capn Proto controls cover start/status/read/cancel/acknowledge/approve/discover",
+        "Catalog exposes typed same-package planner to upload mappings; this metadata grants no upload",
+        "Native retains the original host-generated upload submission and key, including after an upload acknowledgement",
+        "Dart retains an immutable request per original backend pair; a missing start, read, approval or acknowledgement never authorizes resubmission",
+        "Proposal input SHA is checked against exact original input bytes together with package, revision and handler",
+        "An existing upload can be observed by its host-generated identity without reconstructing its input or starting another upload",
+        "View replacement/closing cannot acquire an unread proposal; a lost approval response is discovered before cancelling the original upload",
+        "Planning controls bypass pending service business; sensitive input request copies are cleared on success and failure"
+      ],
+      "schema_compatibility": {
+        "status": "PASS_APPEND_ONLY_PRIVATE_SCHEMA",
+        "prior_actions_unchanged": 168,
+        "new_actions": [
+          [
+            "blobPlanStart",
+            168
+          ],
+          [
+            "blobPlanStatus",
+            169
+          ],
+          [
+            "blobPlanRead",
+            170
+          ],
+          [
+            "blobPlanCancel",
+            171
+          ],
+          [
+            "blobPlanAcknowledge",
+            172
+          ],
+          [
+            "blobPlanApprove",
+            173
+          ],
+          [
+            "blobPlanDiscover",
+            174
+          ]
+        ],
+        "prior_structs_unchanged_prefix": 60,
+        "prior_fields_unchanged": 570,
+        "new_structs": [
+          "BlobPlanApproval",
+          "BlobPlanResult",
+          "BlobPlanStart",
+          "BlobPlanState",
+          "BlobPlanView",
+          "BlobPlanner"
+        ]
+      },
+      "Dart_client_and_sessions": {
+        "passed": 68,
+        "failed": 0
+      },
+      "Flutter_sensitive_buffers_and_service_routing": {
+        "passed": 34,
+        "failed": 0
+      },
+      "actual_native": {
+        "passed": 21,
+        "failed": 0,
+        "private_control_methods": 6,
+        "product_methods": 15,
+        "private_control_positive_cases": [
+          {
+            "language": "C",
+            "bytes": 150017
+          },
+          {
+            "language": "CPP",
+            "bytes": 150017
+          },
+          {
+            "language": "RUST",
+            "bytes": 150017
+          }
+        ],
+        "product_positive_cases": [
+          {
+            "language": "C",
+            "bytes": 16777216
+          },
+          {
+            "language": "C",
+            "bytes": 150017
+          },
+          {
+            "language": "CPP",
+            "bytes": 16777216
+          },
+          {
+            "language": "CPP",
+            "bytes": 150017
+          },
+          {
+            "language": "RUST",
+            "bytes": 16777216
+          },
+          {
+            "language": "RUST",
+            "bytes": 150017
+          }
+        ],
+        "original_planning_joins_in_positive_cases": 9,
+        "original_upload_joins_in_positive_cases": 9,
+        "protected_closed_library_reopen": true,
+        "exact_stored_bytes_SHA": true
+      },
+      "prior_failure": {
+        "result": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-controls-439\\result.json",
+          "bytes": 5682,
+          "sha256": "580ed21798985963fb6d2640e03190b22a77b4ff4d522b093119d17815cbbb9a"
+        },
+        "native_passed": 18,
+        "native_failed": 3,
+        "stage": "Input digest comparison before upload approval",
+        "cause": "Native hashed the complete task Invocation, while the Dart client verifies original input bytes",
+        "correction": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-controls-correction-440\\correction.json",
+          "bytes": 807,
+          "sha256": "538e58f334800bcd4cb69072c7d5b6f435e382c65c3b10091cffa7dbf33ea5d2"
+        },
+        "new_fresh_stores": true,
+        "old_stores_replayed": false
+      },
+      "new_module_Clippy_warnings": 0,
+      "existing_host_warnings_retained": true,
+      "default_production": "Library, binaries and tests compile; broad legacy host tests were not executed",
+      "qualification": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-controls-441\\result.json",
+        "bytes": 7029,
+        "sha256": "9773c9c4b03f59f3a8c536bf7b09ec40c0e3db77a38cfa65643082dc404b50a2"
+      },
+      "retained_program": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-controls-441\\programs\\morrow_workbench_host-249469a96bf4f976.exe",
+        "bytes": 40513024,
+        "sha256": "8991447cbd53d0cb1a7dda5d39748d7768ba05a82cdbfe97847eff86ba6e8ae6"
+      },
+      "frozen_inputs_verified": 57,
+      "all_recent_processes_closed": true,
+      "cache_root": "D:/build_cache",
+      "registered_VMs": 4,
+      "VM_mutations": 0,
+      "host_policy_changes": 0,
+      "historical_unknown_owner_contacts": 0,
+      "private_CapnProto_planning_controls": true,
+      "retained_Dart_planning_session": true,
+      "combined_Dart_to_native_planning_product_run": false,
+      "rendered_approval_UI": false,
+      "rendered_recovery_UI": false,
+      "cross_restart_Unknown_recovery": false,
+      "watch_rename": false,
+      "full_P2_accepted": false,
+      "full_P3_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "remote_publication": false,
+      "public_result": "docs/qualification/evidence/resume-20261028/sdk442-private-planning-controls.json"
+    },
+    "blob_upload_planning_UI": {
+      "status": "PASS_SCOPED_HEADLESS_NATIVE_PLANNING_APPROVAL_RECOVERY_UI",
+      "utc": "2026-10-27T22:28:00.396448+00:00",
+      "qualification_source": "6c06cf5c7e29dfabf21ee0c7e4d8a2f4137e5b566ca2274a6e0313faabc0beaa",
+      "widget_qualification_source": "48ee210947bc14d010ca8fbc2556fd6c080f8dfd92ce90030253c5827b5bb62a",
+      "source_equivalence": {
+        "source": "6c06cf5c7e29dfabf21ee0c7e4d8a2f4137e5b566ca2274a6e0313faabc0beaa",
+        "widget_qualification_source": "48ee210947bc14d010ca8fbc2556fd6c080f8dfd92ce90030253c5827b5bb62a",
+        "only_new_after_widgets": "test/blob_plan_manager_native_test.dart",
+        "changed_since054": [
+          "lib/plugins/plugin_library.dart",
+          "lib/plugins/blob_plan_session.dart",
+          "lib/plugins/blob_upload_session.dart",
+          "packages/morrow_core_client/test/blob_upload_session_test.dart"
+        ],
+        "new_since054": [
+          "lib/plugins/blob_plan_manager.dart",
+          "test/blob_plan_manager_test.dart",
+          "test/support/blob_plan_peers.dart",
+          "test/blob_plan_manager_native_test.dart"
+        ],
+        "native_Rust_and_guest_sources_unchanged_since444": true
+      },
+      "implementation": [
+        "Plugin list exposes explicit category permission, per-plugin save action and original-task review independent of current selection",
+        "UTF8 text or explicitly chosen plugin-supported binary input is bounded and frozen before a pure planning request",
+        "Plain proposal description, exact length, current-library destination and optional fingerprint precede an unchecked confirmation and single approval",
+        "Missing start/approval responses find only the original upload; a missing result requires original-history observation and explicit confirmation",
+        "Original upload acknowledgement is consumed locally before dispatch; a missing response stays unresolved across view replacement and cannot send another acknowledgement",
+        "The plan owns cancellation; closing during approval or upload cannot send duplicate cancellation through two views",
+        "Replacing or disposing the plugin library removes only its own original dialog; it cannot submit through a new backend",
+        "A user-operated dialog no longer leaves a background loading animation running"
+      ],
+      "pure_Dart_client_and_session_checks": 70,
+      "Flutter_widget_buffer_routing_checks": 70,
+      "new_planning_UI_widget_methods": 13,
+      "actual_native_cases": [
+        {
+          "language": "c",
+          "bytes": 150017,
+          "actual_native": true,
+          "production_Flutter_widgets": true,
+          "category_and_proposal_approval_via_UI": true,
+          "start_and_approval_reply_discarded": true,
+          "result_reply_discarded": false,
+          "original_planning_joins": 1,
+          "original_upload_joins": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "exact_bytes_SHA": true,
+          "headless_rendering": true,
+          "desktop_UI": false,
+          "native_file_picker": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "c",
+          "bytes": 16777216,
+          "actual_native": true,
+          "production_Flutter_widgets": true,
+          "category_and_proposal_approval_via_UI": true,
+          "start_and_approval_reply_discarded": true,
+          "result_reply_discarded": true,
+          "original_planning_joins": 1,
+          "original_upload_joins": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "exact_bytes_SHA": true,
+          "headless_rendering": true,
+          "desktop_UI": false,
+          "native_file_picker": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "cpp",
+          "bytes": 150017,
+          "actual_native": true,
+          "production_Flutter_widgets": true,
+          "category_and_proposal_approval_via_UI": true,
+          "start_and_approval_reply_discarded": true,
+          "result_reply_discarded": false,
+          "original_planning_joins": 1,
+          "original_upload_joins": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "exact_bytes_SHA": true,
+          "headless_rendering": true,
+          "desktop_UI": false,
+          "native_file_picker": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "cpp",
+          "bytes": 16777216,
+          "actual_native": true,
+          "production_Flutter_widgets": true,
+          "category_and_proposal_approval_via_UI": true,
+          "start_and_approval_reply_discarded": true,
+          "result_reply_discarded": true,
+          "original_planning_joins": 1,
+          "original_upload_joins": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "exact_bytes_SHA": true,
+          "headless_rendering": true,
+          "desktop_UI": false,
+          "native_file_picker": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "rust",
+          "bytes": 150017,
+          "actual_native": true,
+          "production_Flutter_widgets": true,
+          "category_and_proposal_approval_via_UI": true,
+          "start_and_approval_reply_discarded": true,
+          "result_reply_discarded": false,
+          "original_planning_joins": 1,
+          "original_upload_joins": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "exact_bytes_SHA": true,
+          "headless_rendering": true,
+          "desktop_UI": false,
+          "native_file_picker": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "rust",
+          "bytes": 16777216,
+          "actual_native": true,
+          "production_Flutter_widgets": true,
+          "category_and_proposal_approval_via_UI": true,
+          "start_and_approval_reply_discarded": true,
+          "result_reply_discarded": true,
+          "original_planning_joins": 1,
+          "original_upload_joins": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "exact_bytes_SHA": true,
+          "headless_rendering": true,
+          "desktop_UI": false,
+          "native_file_picker": false,
+          "cross_restart_Unknown_recovery": false
+        }
+      ],
+      "original_planning_joins": 6,
+      "original_upload_joins": 6,
+      "supervised_closures": [
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-150017\\reopen-closed.json",
+            "bytes": 909,
+            "sha256": "edba2e33b75dbca371d9f575fae35ed9703819d7d7c9da79a4ebedff8625f71c"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-150017\\ui-closed.json",
+            "bytes": 909,
+            "sha256": "5d4eb50a7ac489c67fd0d7917f0401b927d52d44ff3d03e007e3aa1ee8189d5f"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-16777216\\reopen-closed.json",
+            "bytes": 908,
+            "sha256": "201a486cfee0f361b54dfa437ac91c3e892a51f5e46863b908a55430877d4dcd"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-16777216\\ui-closed.json",
+            "bytes": 908,
+            "sha256": "92b8c40962c857bcf9a6e20e9383bd77b157f9f2df68f358bab06482daa7a635"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-150017\\reopen-closed.json",
+            "bytes": 909,
+            "sha256": "2aa08328f9a2fe2cfdb72c40828dc539f6e5636b6f1e17173c518f0c32e44334"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-150017\\ui-closed.json",
+            "bytes": 909,
+            "sha256": "42dacc2021b9c5bde57dce64aca9e3c256f595b01f83eb9b9e384aabc943f1d8"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-16777216\\reopen-closed.json",
+            "bytes": 909,
+            "sha256": "b618407335fdf009fef427a858d0228de0d6547ad40faaf1c2b38ea87862576a"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-16777216\\ui-closed.json",
+            "bytes": 909,
+            "sha256": "707830d02d4051b6876ad67cccbd553b484433993dad2daadfa5030d9d0c1c51"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-150017\\reopen-closed.json",
+            "bytes": 907,
+            "sha256": "34d1ab96e4a4f83e82222c158a852fd3ebd49606f073a0c780988c4c41de1dc9"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-150017\\ui-closed.json",
+            "bytes": 909,
+            "sha256": "6227a1339d5153cd380cf42215ce813279ea024ea184f104034da083b44cf515"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\reopen-closed.json",
+            "bytes": 908,
+            "sha256": "43eb3a259e3a6182d4a08ca5525b64498107991075b4436ad16884f2da9f6afc"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "pin": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\ui-closed.json",
+            "bytes": 908,
+            "sha256": "8a5f1ad0092766a693b1220fccd8b7d9c3df7f6ebe60667e6387fada18c53a49"
+          },
+          "raw_business_outcome": "Unknown"
+        }
+      ],
+      "independent_closed_library_reads": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-150017\\first-history.json",
+          "bytes": 128,
+          "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-150017\\second-history.json",
+          "bytes": 128,
+          "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-16777216\\first-history.json",
+          "bytes": 130,
+          "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-16777216\\second-history.json",
+          "bytes": 130,
+          "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-150017\\first-history.json",
+          "bytes": 128,
+          "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-150017\\second-history.json",
+          "bytes": 128,
+          "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-16777216\\first-history.json",
+          "bytes": 130,
+          "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-16777216\\second-history.json",
+          "bytes": 130,
+          "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-150017\\first-history.json",
+          "bytes": 128,
+          "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-150017\\second-history.json",
+          "bytes": 128,
+          "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\first-history.json",
+          "bytes": 130,
+          "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\second-history.json",
+          "bytes": 130,
+          "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+        }
+      ],
+      "business_records": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-150017\\business.json",
+          "bytes": 412,
+          "sha256": "6b352974db6ad10f34623a89415790b3fb3b217a658e277a0ec510ae596881f3"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-16777216\\business.json",
+          "bytes": 411,
+          "sha256": "f5d0929f96e341e191b4abd8d58697a559cab871fc972697df3adcf1e890c30f"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-150017\\business.json",
+          "bytes": 412,
+          "sha256": "6b352974db6ad10f34623a89415790b3fb3b217a658e277a0ec510ae596881f3"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-16777216\\business.json",
+          "bytes": 411,
+          "sha256": "f5d0929f96e341e191b4abd8d58697a559cab871fc972697df3adcf1e890c30f"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-150017\\business.json",
+          "bytes": 412,
+          "sha256": "6b352974db6ad10f34623a89415790b3fb3b217a658e277a0ec510ae596881f3"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\business.json",
+          "bytes": 411,
+          "sha256": "f5d0929f96e341e191b4abd8d58697a559cab871fc972697df3adcf1e890c30f"
+        }
+      ],
+      "actual_category_and_per_operation_approval_through_widgets": true,
+      "headless_production_widget_rendering": true,
+      "reply_loss_scope": "Deliberate discard after an actual native response at the trusted application edge; no OS transport-failure claim",
+      "input_scope": "Generic UTF8 input and explicit bounded binary-file input; actual three-language samples use their pinned typed options file. Native file picking and a friendly sample parameter form remain unqualified",
+      "visual_capture": {
+        "files": [
+          {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-150017\\proposal.png",
+            "bytes": 25405,
+            "sha256": "a99ef73531a2df38e4cc4773e412dd292528c146d3f449f8672216f255327381"
+          },
+          {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\missing-result-review.png",
+            "bytes": 28800,
+            "sha256": "b4aed642ef6f089be8d993a0e1503ea752c79ba96af5a0126ade2d9fe5584472"
+          },
+          {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\proposal.png",
+            "bytes": 25405,
+            "sha256": "85f9e414736b443509725952d0a44e0da012c01c3137423a8572d5fddcbafe49"
+          }
+        ],
+        "font": "Flutter test placeholder font",
+        "readable_visual_acceptance": false,
+        "notes": "The inspected capture contains placeholder glyphs. Semantic/layout and action assertions pass; this is not desktop visual acceptance"
+      },
+      "prior_attempts": [
+        {
+          "case": 448,
+          "status": "New Flutter test did not compile because a whole pure-Dart fixture imported package:test absent from the root Flutter graph",
+          "sessions_passed": 70,
+          "other_widgets_passed": 47,
+          "routing_skipped": 10
+        },
+        {
+          "case": 450,
+          "status": "66 widgets passed; growing-file test used fake clock and two category tests exposed a background loading animation",
+          "failed": 3
+        },
+        {
+          "case": 452,
+          "status": "68 widgets passed; final failure was XFile.fromData name ignored on Windows, fixed by its explicit path",
+          "failed": 1
+        }
+      ],
+      "qualification": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\result.json",
+        "bytes": 3171,
+        "sha256": "2ca94d34b80dbd115efec0cd73695cf57a84b053f27654c951445c38c844dfbb"
+      },
+      "widget_qualification": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-454\\result.json",
+        "bytes": 3450,
+        "sha256": "f38e5f45509a59ea5599aca12537934c6d6f1c72dcf750ca6b71d939d34b3caf"
+      },
+      "programs": {
+        "host": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\morrow-workbench-host.exe",
+          "bytes": 31293952,
+          "sha256": "d847ffb5447f10d2e37bf2abe2d5d6a62c7e86382055efe3e29173d7f5e9bff9"
+        },
+        "supervisor": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\morrow-workbench-supervisor.exe",
+          "bytes": 14086144,
+          "sha256": "8f0f80198d16bab9a554df8ec9ab38a759e5b16d397522a213832606391110d2"
+        },
+        "packager": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\package.exe",
+          "bytes": 3186688,
+          "sha256": "f58cc43dd99eedc435cda37df683b3cfd4b922aed894bb1d0ccf6d9e3ddaba1c"
+        },
+        "planner-packager": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\package_blob_plan_fixture.exe",
+          "bytes": 3217408,
+          "sha256": "8ed71f82dd3e2bbdf8836196b5754af5b3981a88f85229edac4abc58693af02a"
+        },
+        "history-observer": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\check_blob_plan_fixture.exe",
+          "bytes": 4681216,
+          "sha256": "c01eae6b4768de96198fe4d64c6b011c929b94921d90d7f04f159569fd65b56b"
+        }
+      },
+      "frozen_inputs_verified": 57,
+      "all_recent_processes_closed": true,
+      "raw_supervision_business_Unknown_preserved": true,
+      "desktop_UI_accepted": false,
+      "native_picker_accepted": false,
+      "human_approval_trial": false,
+      "cross_restart_Unknown_recovery": false,
+      "watch_rename": false,
+      "full_P2_accepted": false,
+      "full_P3_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "registered_VMs": 4,
+      "VM_mutations": 0,
+      "host_policy_changes": 0,
+      "historical_unknown_owner_contacts": 0,
+      "cache_root": "D:/build_cache",
+      "remote_publication": false,
+      "public_result": "docs/qualification/evidence/resume-20261028/sdk457-native-planning-widget-flow.json"
+    },
+    "task_status": "PAUSED_AT_USER_REQUEST",
+    "blob_text_save": {
+      "status": "PASS_SCOPED_REAL_WINDOWS_TEXT_SAVE_CLOSE_REOPEN_AND_THREE_LANGUAGE_WIDGETS",
+      "utc": "2026-10-27T23:17:26.460278+00:00",
+      "task_status": "PAUSED_AT_USER_REQUEST",
+      "qualification_source": "269f9b7420cab8a073e1cd3eb5fd2de75fd75dd4b8b906ba21401d333725c78a",
+      "source_changes": {
+        "previous_source": "dae99792423258ca99d0352ed0308ad0224de05f546aaff9c79d4ac949f5b041",
+        "reconstructed_previous": "dae99792423258ca99d0352ed0308ad0224de05f546aaff9c79d4ac949f5b041",
+        "modified": [
+          "sdk/examples/blob-upload-common/src/lib.rs",
+          "sdk/examples/blob-upload-common/sample_options.h",
+          "sdk/examples/blob-upload-common/sample.h",
+          "sdk/examples/rust-blob-upload/src/lib.rs",
+          "sdk/examples/c-blob-upload/plugin.c",
+          "sdk/examples/cpp-blob-upload/plugin.cpp",
+          "sdk/examples/blob-upload-common/README.md",
+          "plugin_runtime/tests/blob_upload_planner_sdk_guests.rs"
+        ],
+        "added": [
+          "workbench_host/examples/package_blob_text_fixture.rs",
+          "workbench_host/examples/check_blob_text_fixture.rs"
+        ],
+        "changes": {
+          "sdk/examples/blob-upload-common/src/lib.rs": "35c6d796ff14297d546e4c62e612619202291b07aaaff09152574f85cccf330b",
+          "sdk/examples/blob-upload-common/sample_options.h": "cb6697276796cad3091c49d7e5228f9b49f00c05abf66e39660c2b32b91a5f9e",
+          "sdk/examples/blob-upload-common/sample.h": "09332229efa2180f29b561b3aaff83ce39ea272a1c20bc085d32d94955d4edb5",
+          "sdk/examples/rust-blob-upload/src/lib.rs": "ddc5cd6c5a5c3d48990b0ebbe23a4279b14bde0721444f474bb0eb27dda7ee95",
+          "sdk/examples/c-blob-upload/plugin.c": "972819439633172bd5cf572cd5ae32d2081f8b08ea64cc46d01a94627edf56a9",
+          "sdk/examples/cpp-blob-upload/plugin.cpp": "b888aa59f40e3638ba191075ac5763ba0e710fad8286a11cb67299b2b758eab5",
+          "sdk/examples/blob-upload-common/README.md": "20292494111666c13acb5d0b93a79794647e5b89538914029dbc34ab8c02cd22",
+          "plugin_runtime/tests/blob_upload_planner_sdk_guests.rs": "2f93aa7e0c6613e0a9cc3369ed66a83b8b5c6371f00abb1042496fe1c04162c2",
+          "workbench_host/examples/package_blob_text_fixture.rs": "059a9566d04b64efb486f22fa7a9ea19bdf445bbc4cc6571c623f197a82309db",
+          "workbench_host/examples/check_blob_text_fixture.rs": "caea966232b4d436d628a88a85d88960a4deb392554c7318eb380b5bef7fe412"
+        },
+        "frozen_protocol_change": false
+      },
+      "sample_unit_tests": 5,
+      "actual_guest_planner_methods": 21,
+      "actual_legacy_guest_methods": 10,
+      "actual_three_language_widget_cases": [
+        {
+          "language": "c",
+          "bytes": 32768,
+          "actual_native": true,
+          "production_Flutter_widgets": true,
+          "category_and_proposal_approval_via_UI": true,
+          "start_and_approval_reply_discarded": true,
+          "result_reply_discarded": true,
+          "original_planning_joins": 1,
+          "original_upload_joins": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "exact_bytes_SHA": true,
+          "headless_rendering": true,
+          "desktop_UI": false,
+          "native_file_picker": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "c",
+          "bytes": 41,
+          "actual_native": true,
+          "production_Flutter_widgets": true,
+          "category_and_proposal_approval_via_UI": true,
+          "start_and_approval_reply_discarded": true,
+          "result_reply_discarded": false,
+          "original_planning_joins": 1,
+          "original_upload_joins": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "exact_bytes_SHA": true,
+          "headless_rendering": true,
+          "desktop_UI": false,
+          "native_file_picker": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "cpp",
+          "bytes": 32768,
+          "actual_native": true,
+          "production_Flutter_widgets": true,
+          "category_and_proposal_approval_via_UI": true,
+          "start_and_approval_reply_discarded": true,
+          "result_reply_discarded": true,
+          "original_planning_joins": 1,
+          "original_upload_joins": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "exact_bytes_SHA": true,
+          "headless_rendering": true,
+          "desktop_UI": false,
+          "native_file_picker": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "cpp",
+          "bytes": 41,
+          "actual_native": true,
+          "production_Flutter_widgets": true,
+          "category_and_proposal_approval_via_UI": true,
+          "start_and_approval_reply_discarded": true,
+          "result_reply_discarded": false,
+          "original_planning_joins": 1,
+          "original_upload_joins": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "exact_bytes_SHA": true,
+          "headless_rendering": true,
+          "desktop_UI": false,
+          "native_file_picker": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "rust",
+          "bytes": 32768,
+          "actual_native": true,
+          "production_Flutter_widgets": true,
+          "category_and_proposal_approval_via_UI": true,
+          "start_and_approval_reply_discarded": true,
+          "result_reply_discarded": true,
+          "original_planning_joins": 1,
+          "original_upload_joins": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "exact_bytes_SHA": true,
+          "headless_rendering": true,
+          "desktop_UI": false,
+          "native_file_picker": false,
+          "cross_restart_Unknown_recovery": false
+        },
+        {
+          "language": "rust",
+          "bytes": 41,
+          "actual_native": true,
+          "production_Flutter_widgets": true,
+          "category_and_proposal_approval_via_UI": true,
+          "start_and_approval_reply_discarded": true,
+          "result_reply_discarded": false,
+          "original_planning_joins": 1,
+          "original_upload_joins": 1,
+          "supervised_owners_closed": 2,
+          "independent_closed_library_checks": 2,
+          "exact_bytes_SHA": true,
+          "headless_rendering": true,
+          "desktop_UI": false,
+          "native_file_picker": false,
+          "cross_restart_Unknown_recovery": false
+        }
+      ],
+      "headless_original_planning_joins": 6,
+      "headless_original_upload_joins": 6,
+      "headless_supervised_closures": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-32768\\reopen-closed.json",
+            "bytes": 909,
+            "sha256": "bb71f1bd7fb5bc5b0e3a5456995ccf4edd7095172c666034849c0e0532575928"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-32768\\ui-closed.json",
+            "bytes": 909,
+            "sha256": "a0b7c48db4c0ce5ec42ead6346b86d86dc9df9723d067559a4c646b4872fbdf5"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-41\\reopen-closed.json",
+            "bytes": 908,
+            "sha256": "941166daf680d3bb1c72ed0bc5aff664d552a5b4a259cafbacda41a310f23e86"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-41\\ui-closed.json",
+            "bytes": 909,
+            "sha256": "42da462dcf6b016e484c41a2722138e27b99f5399701d75d6c07f286f5422aa1"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-32768\\reopen-closed.json",
+            "bytes": 908,
+            "sha256": "469c30724a5eb209db0f6d1cf36377d8560aa48e60bb0184bf0c97ac0aa94a16"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-32768\\ui-closed.json",
+            "bytes": 909,
+            "sha256": "294ef24cebafe9759471906853d508a0fb9aa164148ce266c9be5ad2848a9839"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-41\\reopen-closed.json",
+            "bytes": 909,
+            "sha256": "14dcb4785aa480cac9e009ece7a517c8eba759e8f322a9764bd10d330b1a2645"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-41\\ui-closed.json",
+            "bytes": 909,
+            "sha256": "4fef9e760e822917be4e84043c1be34097c512dbc5a00ccec2bd07087d501f5f"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-32768\\reopen-closed.json",
+            "bytes": 909,
+            "sha256": "8b46292fe4707911e62a2ef57bd81fd27efd09c5e44e055fbeafb1a5e06a827f"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-32768\\ui-closed.json",
+            "bytes": 908,
+            "sha256": "37cf6aa12edebb3ee1bcfea733eaedcb9b240f7486b68c5def63fe9f761ee76b"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-41\\reopen-closed.json",
+            "bytes": 908,
+            "sha256": "1fe3f7145418e038522b9336c132dfcdac5d1b7d05fb2e43a0dcd9304373f3d6"
+          },
+          "raw_business_outcome": "Unknown"
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-41\\ui-closed.json",
+            "bytes": 907,
+            "sha256": "6d7be45b44f009fd24b3a0d701ade4d1590c3d38fb7549d31e84fe07f388bbc5"
+          },
+          "raw_business_outcome": "Unknown"
+        }
+      ],
+      "headless_independent_closed_library_reads": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-32768\\first-history.json",
+          "bytes": 124,
+          "sha256": "137582540104159ac688aad167672831b91c6d3123373446ab1a105d3319faff"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-32768\\second-history.json",
+          "bytes": 124,
+          "sha256": "137582540104159ac688aad167672831b91c6d3123373446ab1a105d3319faff"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-41\\first-history.json",
+          "bytes": 121,
+          "sha256": "cf5ee0bd33833548a55efae09b861c3bea34c3bd79de84932ea2a8b412beaa39"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-41\\second-history.json",
+          "bytes": 121,
+          "sha256": "cf5ee0bd33833548a55efae09b861c3bea34c3bd79de84932ea2a8b412beaa39"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-32768\\first-history.json",
+          "bytes": 124,
+          "sha256": "137582540104159ac688aad167672831b91c6d3123373446ab1a105d3319faff"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-32768\\second-history.json",
+          "bytes": 124,
+          "sha256": "137582540104159ac688aad167672831b91c6d3123373446ab1a105d3319faff"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-41\\first-history.json",
+          "bytes": 121,
+          "sha256": "cf5ee0bd33833548a55efae09b861c3bea34c3bd79de84932ea2a8b412beaa39"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-41\\second-history.json",
+          "bytes": 121,
+          "sha256": "cf5ee0bd33833548a55efae09b861c3bea34c3bd79de84932ea2a8b412beaa39"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-32768\\first-history.json",
+          "bytes": 124,
+          "sha256": "137582540104159ac688aad167672831b91c6d3123373446ab1a105d3319faff"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-32768\\second-history.json",
+          "bytes": 124,
+          "sha256": "137582540104159ac688aad167672831b91c6d3123373446ab1a105d3319faff"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-41\\first-history.json",
+          "bytes": 121,
+          "sha256": "cf5ee0bd33833548a55efae09b861c3bea34c3bd79de84932ea2a8b412beaa39"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-41\\second-history.json",
+          "bytes": 121,
+          "sha256": "cf5ee0bd33833548a55efae09b861c3bea34c3bd79de84932ea2a8b412beaa39"
+        }
+      ],
+      "headless_business": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-32768\\business.json",
+            "bytes": 411,
+            "sha256": "bd496bd8d3f387b9357204c1e0d9a1087a78d99a185fa6f424be9040c728752d"
+          },
+          "observations": {
+            "original_planning_join": true,
+            "original_upload_join": true,
+            "category_approvals": 1,
+            "plan_starts": 1,
+            "proposal_approvals": 1,
+            "plan_reads": 1,
+            "upload_reads": 1,
+            "upload_acknowledgements": 1,
+            "plan_acknowledgements": 1,
+            "direct_upload_starts": 0,
+            "unexpected_calls": 0,
+            "result_reply_discarded": true,
+            "missing_result_reconstructed": false,
+            "proposal_input_sha256": "b217b65e6f205f41b3fb8ef90cf7c44da93f630ca03965273485bbb21a5cccf5"
+          }
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-41\\business.json",
+            "bytes": 412,
+            "sha256": "5e48214e65f849062e26c87b49184652b5414a6e55783123a7359ed1dc91f9e1"
+          },
+          "observations": {
+            "original_planning_join": true,
+            "original_upload_join": true,
+            "category_approvals": 1,
+            "plan_starts": 1,
+            "proposal_approvals": 1,
+            "plan_reads": 1,
+            "upload_reads": 1,
+            "upload_acknowledgements": 1,
+            "plan_acknowledgements": 1,
+            "direct_upload_starts": 0,
+            "unexpected_calls": 0,
+            "result_reply_discarded": false,
+            "missing_result_reconstructed": false,
+            "proposal_input_sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739"
+          }
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-32768\\business.json",
+            "bytes": 411,
+            "sha256": "bd496bd8d3f387b9357204c1e0d9a1087a78d99a185fa6f424be9040c728752d"
+          },
+          "observations": {
+            "original_planning_join": true,
+            "original_upload_join": true,
+            "category_approvals": 1,
+            "plan_starts": 1,
+            "proposal_approvals": 1,
+            "plan_reads": 1,
+            "upload_reads": 1,
+            "upload_acknowledgements": 1,
+            "plan_acknowledgements": 1,
+            "direct_upload_starts": 0,
+            "unexpected_calls": 0,
+            "result_reply_discarded": true,
+            "missing_result_reconstructed": false,
+            "proposal_input_sha256": "b217b65e6f205f41b3fb8ef90cf7c44da93f630ca03965273485bbb21a5cccf5"
+          }
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-41\\business.json",
+            "bytes": 412,
+            "sha256": "5e48214e65f849062e26c87b49184652b5414a6e55783123a7359ed1dc91f9e1"
+          },
+          "observations": {
+            "original_planning_join": true,
+            "original_upload_join": true,
+            "category_approvals": 1,
+            "plan_starts": 1,
+            "proposal_approvals": 1,
+            "plan_reads": 1,
+            "upload_reads": 1,
+            "upload_acknowledgements": 1,
+            "plan_acknowledgements": 1,
+            "direct_upload_starts": 0,
+            "unexpected_calls": 0,
+            "result_reply_discarded": false,
+            "missing_result_reconstructed": false,
+            "proposal_input_sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739"
+          }
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-32768\\business.json",
+            "bytes": 411,
+            "sha256": "bd496bd8d3f387b9357204c1e0d9a1087a78d99a185fa6f424be9040c728752d"
+          },
+          "observations": {
+            "original_planning_join": true,
+            "original_upload_join": true,
+            "category_approvals": 1,
+            "plan_starts": 1,
+            "proposal_approvals": 1,
+            "plan_reads": 1,
+            "upload_reads": 1,
+            "upload_acknowledgements": 1,
+            "plan_acknowledgements": 1,
+            "direct_upload_starts": 0,
+            "unexpected_calls": 0,
+            "result_reply_discarded": true,
+            "missing_result_reconstructed": false,
+            "proposal_input_sha256": "b217b65e6f205f41b3fb8ef90cf7c44da93f630ca03965273485bbb21a5cccf5"
+          }
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-41\\business.json",
+            "bytes": 412,
+            "sha256": "5e48214e65f849062e26c87b49184652b5414a6e55783123a7359ed1dc91f9e1"
+          },
+          "observations": {
+            "original_planning_join": true,
+            "original_upload_join": true,
+            "category_approvals": 1,
+            "plan_starts": 1,
+            "proposal_approvals": 1,
+            "plan_reads": 1,
+            "upload_reads": 1,
+            "upload_acknowledgements": 1,
+            "plan_acknowledgements": 1,
+            "direct_upload_starts": 0,
+            "unexpected_calls": 0,
+            "result_reply_discarded": false,
+            "missing_result_reconstructed": false,
+            "proposal_input_sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739"
+          }
+        }
+      ],
+      "desktop": {
+        "language": "rust",
+        "application": "Unmodified production lib/main.dart; current fresh Dart kernel; pinned native runner and host/supervisor",
+        "qualification_shell": false,
+        "approval_seeded": false,
+        "native_picker_injected": false,
+        "native_plugin_import_picker": true,
+        "user_manual_paste": true,
+        "agent_operated_review_and_approval": true,
+        "whole_flow_human_operated": false,
+        "readable_Chinese_desktop_capture": true,
+        "text_utf8_bytes": 41,
+        "text_sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739",
+        "whitespace_newline_emoji_exact": true,
+        "normal_UI_close_and_reopen": true,
+        "original_process_receipts": [
+          {
+            "phase": "run",
+            "original_processes": [
+              {
+                "pid": 22516,
+                "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\app\\morrow_studio.exe",
+                "creation_filetime": 134376148734939116,
+                "signaled": true,
+                "exit_code": 0
+              },
+              {
+                "pid": 2180,
+                "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\app\\morrow-workbench-supervisor.exe",
+                "creation_filetime": 134376148749179688,
+                "signaled": true,
+                "exit_code": 0
+              },
+              {
+                "pid": 31840,
+                "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\app\\morrow-workbench-host.exe",
+                "creation_filetime": 134376148749896018,
+                "signaled": true,
+                "exit_code": 0
+              }
+            ],
+            "original_UI_supervisor_host_exited": true,
+            "all_exit_codes": 0,
+            "stdout": {
+              "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-464\\run.stdout",
+              "bytes": 154,
+              "sha256": "fb925d01a997ffb532d68239611d435672de072a8dfd3c85b50a6f81e9f73c22"
+            },
+            "stderr": {
+              "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-464\\run.stderr",
+              "bytes": 10,
+              "sha256": "92a19969583cef404789053f0712b32f2103453b19f4a283d3c409241d9fd1b5"
+            }
+          },
+          {
+            "phase": "reopen",
+            "original_processes": [
+              {
+                "pid": 24712,
+                "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\app\\morrow_studio.exe",
+                "creation_filetime": 134376162411894072,
+                "signaled": true,
+                "exit_code": 0
+              },
+              {
+                "pid": 27336,
+                "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\app\\morrow-workbench-supervisor.exe",
+                "creation_filetime": 134376162426583031,
+                "signaled": true,
+                "exit_code": 0
+              },
+              {
+                "pid": 33520,
+                "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\app\\morrow-workbench-host.exe",
+                "creation_filetime": 134376162427198941,
+                "signaled": true,
+                "exit_code": 0
+              }
+            ],
+            "original_UI_supervisor_host_exited": true,
+            "all_exit_codes": 0,
+            "stdout": {
+              "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-464\\reopen.stdout",
+              "bytes": 154,
+              "sha256": "80693862b4926125060250bcf14617e9476c9509960a6399a2a919eb935d2eaa"
+            },
+            "stderr": {
+              "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-464\\reopen.stderr",
+              "bytes": 10,
+              "sha256": "92a19969583cef404789053f0712b32f2103453b19f4a283d3c409241d9fd1b5"
+            }
+          }
+        ],
+        "independent_closed_library_reads": 2,
+        "objects": 1,
+        "pending": 0,
+        "visible_observations": {
+          "run": {
+            "no_pending_operation": true,
+            "normal_UI_close_requested": true,
+            "native_picker_import_observed": true,
+            "plugin_enabled_through_UI": true,
+            "category_approval_through_UI": true,
+            "user_manual_paste": true,
+            "proposal_bytes": 41,
+            "proposal_sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739",
+            "reviewed_checkbox": true,
+            "approve_action_count": 1,
+            "generate_action_count": 1,
+            "upload_result_saved": true,
+            "original_history_saved": true,
+            "finish_action_count": 1,
+            "completed_session_records": 1,
+            "repair_action_required": false,
+            "unknown_replay": false,
+            "observed_utc": "2026-10-27T23:10:34.451Z"
+          },
+          "reopen": {
+            "no_pending_operation": true,
+            "normal_UI_close_requested": true,
+            "plugin_enabled_persisted": true,
+            "category_approval_persisted": true,
+            "empty_pending_proposal_view": true,
+            "no_second_proposal": true,
+            "no_replay": true,
+            "readable_desktop_UI": true,
+            "observed_utc": "2026-10-27T23:11:55.013Z"
+          }
+        },
+        "native_runner_recompiled": false,
+        "all_three_languages_desktop_accepted": false,
+        "unknown_recovery_claim": false
+      },
+      "captures": [
+        {
+          "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/reopen-approval.jpg",
+          "sha256": "f6b1076e2b90a9d8e39fea1d5976a1ca157f6e8a0f4460fbddf61259213989c8"
+        },
+        {
+          "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/reopen-idle.jpg",
+          "sha256": "fe7c9826002147a8163dd9a076d6a4010014eb96b32cd336af23c042a988b141"
+        },
+        {
+          "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/run-completed.jpg",
+          "sha256": "35d31e5ac7407936e45d86a3639a8ebeedf9eba0c9d5fe77f2360469078be90f"
+        },
+        {
+          "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/run-input.jpg",
+          "sha256": "79f1b407bf662a777dd6d4939343904511369ea21aab6cb692ead4959e94b3f6"
+        },
+        {
+          "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/run-picker-path.png",
+          "sha256": "01cf3a34787f5dba87ef5cc5ccabd47624060be44af52d5324dd85fa222082a1"
+        },
+        {
+          "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/run-proposal.jpg",
+          "sha256": "759ac11488e4a7b9eb8ecc93eb28c794c69e102293da79bf896238b7e4ae7c0e"
+        },
+        {
+          "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/run-saved.jpg",
+          "sha256": "ebb2e6155cb1fc5d72788211f338f7fe75cd802948282b9e7fd725ff33628c05"
+        }
+      ],
+      "external_qualification_test_snapshot": {
+        "path": "docs/qualification/evidence/resume-20261028/sdk467-text-native-adapter.dart.txt",
+        "sha256": "724aac2499eb536ad7b2fc0ed3855a9b6ef40300dd47bcc34dc68405e11dbe5c",
+        "canonical_test_promotion_pending": true
+      },
+      "strict_full_host_clippy_passed": false,
+      "preexisting_host_lints": 60,
+      "new_example_lints": 0,
+      "lint_evidence": {
+        "new_examples_diagnostic_free": true,
+        "strict_host_clippy_passed": false,
+        "prior_strict_lint_errors": 60,
+        "prior_review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-product-fixtures-462\\strict-clippy-review.json"
+      },
+      "frozen_public_contract_pins_verified": 57,
+      "internal_wire": "CapnProto task/proposal/bound input; no new JSON IPC",
+      "all_recent_processes_closed": true,
+      "raw_supervision_business_Unknown_preserved": true,
+      "supersedes_waiting_checkpoint": "text-progress-466 and resume-checkpoint-20261028-056; original evidence retained",
+      "evidence": {
+        "upload-planner-guests-459/result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-guests-459\\result.json",
+          "bytes": 10559,
+          "sha256": "340c2ec1d054a338ed464f4649c51dfe32419bf6abee3ed6ee3dcae4ba3c2262"
+        },
+        "upload-planner-sdk-460/result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-sdk-460\\result.json",
+          "bytes": 3275,
+          "sha256": "ca492842dbbe59c563133351d2e829bda5ef6d8ca144e1dc4fb800c65b841c68"
+        },
+        "text-desktop-build-461/result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\result.json",
+          "bytes": 2197,
+          "sha256": "a9c15ff41aa49192b08b87499fcbca101035665868b43c5155e7a4b0d4b3d2c0"
+        },
+        "text-product-fixtures-462/result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-product-fixtures-462\\result.json",
+          "bytes": 974,
+          "sha256": "cbd91be8cd96dc3ba10b5aa340b5daac7091fc33b522065eeafd81657a639ecf"
+        },
+        "text-product-fixtures-462/strict-clippy-review.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-product-fixtures-462\\strict-clippy-review.json",
+          "bytes": 4583,
+          "sha256": "d14eed141049dca6618c192c39a2f562b3c5af5ce8b752c45baacf56258e4200"
+        },
+        "text-product-fixtures-463/result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-product-fixtures-463\\result.json",
+          "bytes": 5649,
+          "sha256": "2b20353c72a0b8ce8d968929a1f6463a822ad38e9f4ec212e9b20759b495ea23"
+        },
+        "text-product-fixtures-463/lint-scope.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-product-fixtures-463\\lint-scope.json",
+          "bytes": 262,
+          "sha256": "35c95c5d1402a57d5a243f7f344ed68b44ee72909b4927f7726d2fe7a24c4da1"
+        },
+        "text-native-widgets-465/result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\result.json",
+          "bytes": 1469,
+          "sha256": "a4e9d0542eead1e1fa6bcd55144700c7db37ebe840cefeeeb978e9dfd6110ad0"
+        },
+        "text-native-widgets-465/accepted-cases.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\accepted-cases.json",
+          "bytes": 3477,
+          "sha256": "76a12264e248e092474ba43b53df9d96cff618b3f56e40556d51e4df11571576"
+        },
+        "text-native-widgets-465/adapter.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\adapter.json",
+          "bytes": 831,
+          "sha256": "d530e01e1173a69b3a07844085ea73f263f9f56f35dcc960b8ae8ad521455cdd"
+        },
+        "text-upload-preparation-458/source-equivalence.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-upload-preparation-458\\source-equivalence.json",
+          "bytes": 2032,
+          "sha256": "7e12e66a5034ef491ebf131bd0bae2d9b540f755d9d4c32e715a48d9a6b0751b"
+        },
+        "desktop_process_result": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-464\\process-result.json",
+          "bytes": 3632,
+          "sha256": "5cbbeea3605c19f1a27d56df6aca1ff16eaef93b88b85d4acaf0d53a52d09d7c"
+        }
+      },
+      "limitations": [
+        "Desktop text save is Rust only; C/C++ text workflows have actual native headless evidence",
+        "Known-closed reopening does not establish durable recovery of Unknown operations",
+        "Final P2/P3 source binding and full SDK26/G04/SDK_FREEZE remain open",
+        "60 preexisting full-host strict lint errors remain open",
+        "External text qualification test promotion is pending"
+      ],
+      "Windows_P2_accepted": false,
+      "Windows_P3_final_source_accepted": false,
+      "full_SDK_accepted": false,
+      "source_accepted": false,
+      "release_eligible": false,
+      "registered_VMs": 4,
+      "VM_mutations": 0,
+      "host_policy_mutations": 0,
+      "historical_unknown_owner_contacts": 0,
+      "cache_root": "D:/build_cache",
+      "publication_authorized": true,
+      "publication_branch": "codex/local-continue-20261020",
+      "public_result": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop-and-three-language.json"
+    }
+  },
+  "task_status": "PAUSED_AT_USER_REQUEST"
 }

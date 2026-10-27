@@ -1,0 +1,26 @@
+{
+  "free_bytes_after": 18171682816,
+  "logical_bytes": 873228962,
+  "files": 1288,
+  "status": "PASS_CLOSED_REGENERABLE_CACHE_RECLAIMED",
+  "source_files_deleted": 0,
+  "executables_deleted": 0,
+  "observed_free_delta_bytes": 875315200,
+  "VM_calls": 0,
+  "protected_hashes_verified": 6378,
+  "cache_locks_held": 3,
+  "unknown_owner_contacts": 0,
+  "scope": "Only old compiler .rlib/.rmeta/.o/.obj leaves from three closed cache targets; all executable, library delivery, source, report and VM files retained",
+  "manifest": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-cache-437\\plan.json",
+    "bytes": 2202526,
+    "sha256": "567c0b91167cb67643c3a36f7f0f894b8ff72c7f7e754fae7477bcacb7dc6388"
+  },
+  "marker_review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-cache-437-marker-review.json",
+    "bytes": 434,
+    "sha256": "6007afd626f848ab392e88ac18d79f79a0ac35bf8cc213b8a487b125733a31e8"
+  },
+  "initial_marker_check_deleted_files": 0,
+  "protected_files_verified": 6378
+}

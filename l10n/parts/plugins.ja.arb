@@ -835,5 +835,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pluginsDirectoryNativePickerStart": "フォルダーを選んでプラグインを実行",
+  "pluginsDirectoryNativePickerIntro": "フォルダーを選ぶとプラグインが実行されます。制限時間には選択時間も含まれます。この画面を離れると未完了のタスクはキャンセルされます。"
 }

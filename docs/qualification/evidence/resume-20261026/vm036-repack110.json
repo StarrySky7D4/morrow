@@ -1,0 +1,29 @@
+{
+  "logical_removed_bytes": 135293928482,
+  "shared_parent_archive": {
+    "path": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm037\\vm037-complete-saved-state.zip",
+    "bytes": 51816644645,
+    "modified_ns": 1793003400269855900,
+    "sha256": "de9401fec978ee79ce349fdbb8fe948bc418aa197df86c68ef50f7abed6f3dc7",
+    "entry": "parent/clean-base.vhdx",
+    "member_sha256": "a52ba8c381818cc17635ee971b8125cdc1e8569e1314a609d70f6439a5010804",
+    "member_bytes": 62750982144
+  },
+  "actual_import_or_memory_resume_performed": false,
+  "free_C": 168475615232,
+  "owner_queries": 0,
+  "free_D": 133820137472,
+  "registered_vms": 4,
+  "original_disks_deleted": 0,
+  "guest_contacts": 0,
+  "status": "PASS_LOSSLESS_VM036_ARCHIVE_REPACK_FINAL_D_ARCHIVE_VERIFIED",
+  "all_build_caches_on_D": true,
+  "archive": {
+    "bytes": 22915811717,
+    "sha256": "8445d8bedb757c6c89eac07271523623a1ee2fd768070ae3f680db8b7507d94d",
+    "path": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm036\\vm036-preserved-archive.zip"
+  },
+  "raw_archive_files_removed": 9,
+  "all_original_archive_bytes_verified_recoverable": true,
+  "C_staging_zip_removed": true
+}

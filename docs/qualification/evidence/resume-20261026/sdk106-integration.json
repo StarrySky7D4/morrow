@@ -1,0 +1,105 @@
+{
+  "status": "INTEGRATED_SCOPED_TESTED_HOST_SELECTION_RETENTION",
+  "source_before": "d945a27efd1cf7b376223a22cf3e8e7d0d35efedb6e7ccdf3546347fb660afd4",
+  "source_after": "e962f06eba71abe69a968d1faf89f5084b94e414de7465d6326a9dd3ad78e405",
+  "files": [
+    {
+      "relative": "workbench_host/src/io_tasks.rs",
+      "original": {
+        "path": "C:\\ms1020\\workbench_host\\src\\io_tasks.rs",
+        "bytes": 35320,
+        "sha256": "bc046f35727bc8aaa02831b7f9db0ffb2d2af2b6cacc305ddda3835a993f3a70"
+      },
+      "candidate": {
+        "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\src\\io_tasks.rs",
+        "bytes": 35117,
+        "sha256": "ddab18fddc0ef4d47d99fe21995d4b556aba83e6ddc99e4e2ab6ccb13f69c5f1"
+      },
+      "integrated": {
+        "path": "C:\\ms1020\\workbench_host\\src\\io_tasks.rs",
+        "bytes": 35117,
+        "sha256": "ddab18fddc0ef4d47d99fe21995d4b556aba83e6ddc99e4e2ab6ccb13f69c5f1"
+      },
+      "byte_identical": true
+    },
+    {
+      "relative": "workbench_host/src/directory_tasks.rs",
+      "original": {
+        "path": "C:\\ms1020\\workbench_host\\src\\directory_tasks.rs",
+        "bytes": 13904,
+        "sha256": "72f6f9d00ddb8e04b89c7671420dd29b92d86bc2ce5f7c536a65555f5f6eb29c"
+      },
+      "candidate": {
+        "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\src\\directory_tasks.rs",
+        "bytes": 16443,
+        "sha256": "664ff1dc5d082a894d418f3a61f03dabf50709e25594ad003f85215936ab6b78"
+      },
+      "integrated": {
+        "path": "C:\\ms1020\\workbench_host\\src\\directory_tasks.rs",
+        "bytes": 16443,
+        "sha256": "664ff1dc5d082a894d418f3a61f03dabf50709e25594ad003f85215936ab6b78"
+      },
+      "byte_identical": true
+    },
+    {
+      "relative": "workbench_host/tests/directory_protected_sdk.rs",
+      "original": {
+        "path": "C:\\ms1020\\workbench_host\\tests\\directory_protected_sdk.rs",
+        "bytes": 31065,
+        "sha256": "f9998f17cbde67f71bcc3c6b6211c60566e6ad65450ac8819232529bd391a8e4"
+      },
+      "candidate": {
+        "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\tests\\directory_protected_sdk.rs",
+        "bytes": 31173,
+        "sha256": "d68494159d39725906ec6f508c0c19d5ed8d4c4289fa8c7dba0cdb5a3ba14aed"
+      },
+      "integrated": {
+        "path": "C:\\ms1020\\workbench_host\\tests\\directory_protected_sdk.rs",
+        "bytes": 31173,
+        "sha256": "d68494159d39725906ec6f508c0c19d5ed8d4c4289fa8c7dba0cdb5a3ba14aed"
+      },
+      "byte_identical": true
+    },
+    {
+      "relative": "workbench_host/tests/support/retained_directory_owner.rs",
+      "original": null,
+      "candidate": {
+        "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\tests\\support\\retained_directory_owner.rs",
+        "bytes": 8422,
+        "sha256": "b99c10021c786435f1a7affe1ebb5c21bafe8cf040a55122a268dc6e60e92a28"
+      },
+      "integrated": {
+        "path": "C:\\ms1020\\workbench_host\\tests\\support\\retained_directory_owner.rs",
+        "bytes": 8422,
+        "sha256": "b99c10021c786435f1a7affe1ebb5c21bafe8cf040a55122a268dc6e60e92a28"
+      },
+      "byte_identical": true
+    }
+  ],
+  "test_result": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\result.json",
+    "bytes": 11347,
+    "sha256": "8b0b95ba02badb01a5ed8bb879899f142afd27b0f3a27b100f56e003c14f7675"
+  },
+  "cold_build": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-build\\result.json",
+    "bytes": 2892,
+    "sha256": "a37fcd66e9a9ca05936d23fc86ae030cf31e615fff6d7c07a8e8b39d494e311f"
+  },
+  "final_build": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-final-build\\result.json",
+    "bytes": 2890,
+    "sha256": "9b6d63a73a433f54f0666454cc65bbb82752b26a0a96649a64728664b11a5758"
+  },
+  "actual_methods": 12,
+  "new_native_methods": 6,
+  "existing_regressions": 6,
+  "formal_picker_integration": false,
+  "checked_worker_close_receipt_accepted": false,
+  "full_SDK_accepted": false,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "remote_publication": false
+}

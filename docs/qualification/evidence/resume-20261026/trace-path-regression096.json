@@ -1,0 +1,16 @@
+{
+  "status": "PASS_OBSERVED_RUNNER_LAYOUT_TRACE_REGRESSION",
+  "methods": 6,
+  "exit_code": 0,
+  "helper": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\qualification-native-trace-v4.rs",
+    "bytes": 6271,
+    "sha256": "19e3aa79ca92a0fd9074ea5ff18793391e7f055a695e15740471e0fa8cd2a852"
+  },
+  "actual_VM038_path_reproduces_V3_rejection": true,
+  "corrected_exact_journal_sibling_verified": true,
+  "ordered_events_appended_to_preexisting_channel": true,
+  "VM_calls": 0,
+  "canonical_source_edits": 0,
+  "original_product_runtime_accepted": false
+}

@@ -1,0 +1,15 @@
+{
+  "status": "PASS_BYTE_EXACT_FRAMEWORK_REPRODUCTION_AND_CACHE_GUARDS",
+  "framework_files_equal": 733,
+  "output_reuse_refused": true,
+  "guard_tests_passed": 7,
+  "global_SDK_modified": false,
+  "input_package_config_modified": false,
+  "tool_sha256": "2ec6befdbf9003cecb549ed7e77b4fe5170e34437d9eb5f6c8d60077bf9355d5",
+  "patch_sha256": "385e41d738f6b763fa080f3291b3254a62b9e5a13a912701875ea62de30644ad",
+  "git_diff_check": 0,
+  "product_execution": false,
+  "full_sdk_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

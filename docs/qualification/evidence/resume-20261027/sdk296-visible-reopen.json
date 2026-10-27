@@ -1,0 +1,21 @@
+{
+  "status": "ACTUAL_FULL_UI_REOPEN_PERSISTED_APPROVAL_AND_IDLE_OBSERVED",
+  "utc": "2026-10-27T05:05:45.4429512Z",
+  "ui_window": 856898,
+  "plugin_enabled": true,
+  "file_list_approval_persisted": true,
+  "old_task_active": false,
+  "visible": [
+    "org.example.directory-protected-sdk 已启用",
+    "已批准：浏览已批准的文件夹",
+    "内容库可用，当前无任务"
+  ],
+  "approval_seeded": false,
+  "native_picker_injected": false,
+  "qualification_shell": false,
+  "guest_reexecuted": false,
+  "normal_process_exit_pending": true,
+  "full_sdk_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

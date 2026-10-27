@@ -1,0 +1,15 @@
+{
+  "status": "PASS_SCOPED_HOST_UNKNOWN_RETENTION_POLICY",
+  "exit_code": 0,
+  "method": "io_tasks::native_retirement_tests::incomplete_native_retirement_retains_owner_and_cannot_be_repaired_or_acknowledged",
+  "binary": {
+    "path": "D:\\build_cache\\s131t\\debug\\deps\\morrow_workbench_host-2ddf66b06add01a6.exe",
+    "bytes": 72805888,
+    "sha256": "4068b1284867fd7c9db50629c776b7f9102943fac9fd32e40dd8eb7161a89cc1"
+  },
+  "actual_methods": 1,
+  "receipt_fixture": "synthetic incomplete only; original native worker evidence in SDK137",
+  "host_provisioning": 0,
+  "VM_calls": 0,
+  "full_SDK_accepted": false
+}

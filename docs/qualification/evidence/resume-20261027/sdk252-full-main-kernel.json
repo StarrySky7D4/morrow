@@ -1,0 +1,33 @@
+{
+  "status": "CURRENT_FULL_MAIN_KERNEL_COMPILED_NOT_RUN",
+  "exit_code": 0,
+  "seconds": 15.688,
+  "candidate_input_sha256": "4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d",
+  "source_unchanged": true,
+  "entry": {
+    "path": "D:\\build_cache\\s244s\\lib\\main.dart",
+    "bytes": 243243,
+    "sha256": "d00a9c22a6a04331a03612767e2efcec3eef2bc785a325b26f4669920857221b"
+  },
+  "kernel": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-252\\app\\data\\flutter_assets\\kernel_blob.bin",
+    "bytes": 112786264,
+    "sha256": "c8e1dd876cc505537110c47af1c411c67ddf44d5accce065c9fb187a8733e6e2"
+  },
+  "executable": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-252\\app\\morrow_studio.exe",
+    "bytes": 2398720,
+    "sha256": "87bc90bc966ed06b949944df275e3889a21e898bed2f54dbdae4f5202310040f"
+  },
+  "engine": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-252\\app\\flutter_windows.dll",
+    "bytes": 45549056,
+    "sha256": "dcf5b71d4c9efaddf2cdd10041ae9eb71634d6964688c2b4feafcb8f88a58941"
+  },
+  "VM_calls": 0,
+  "product_runs": 0,
+  "host_build_required": "sdk-cancel-build-247",
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

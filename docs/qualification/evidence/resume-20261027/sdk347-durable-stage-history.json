@@ -1,0 +1,65 @@
+{
+  "status": "PASS_SCOPED_ATOMIC_BLOB_STAGE_AND_TERMINAL_HISTORY",
+  "exit_code": 0,
+  "summary": [
+    [
+      "14",
+      "0",
+      "1",
+      "0",
+      "0"
+    ]
+  ],
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-history-347\\tests.stdout",
+    "bytes": 1345,
+    "sha256": "6572f405bec574d3a14aa447458d4e8fdb3b2f461d6c0a6da9404befb41c1993"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-history-347\\tests.stderr",
+    "bytes": 252,
+    "sha256": "f9dd9571407cd8545168c85991454619db7d9294b095c098b58f06b01d9c8931"
+  },
+  "source_before": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-history-347\\source-before.json",
+    "bytes": 25245,
+    "sha256": "76708d41270d4fdfba35349266c5075e2b077b864d668fc5466fa0f118ca4e24"
+  },
+  "previous_full_regression_binding": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-history-345\\result.json",
+    "bytes": 16588,
+    "sha256": "4a5453a378fcb1feef1b7cec45444ee7ce58f261860459e487e04c2996a15ba6"
+  },
+  "production_default_check": {
+    "name": "production-default-library",
+    "exit_code": 0,
+    "seconds": 6.047,
+    "stdout": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-history-346\\production-default-library.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-history-346\\production-default-library.stderr",
+      "bytes": 119,
+      "sha256": "019d09925bbdb81c8ce39d60a9c885b17a407ebae04da07733b2c8e0da85e1e3"
+    },
+    "summaries": []
+  },
+  "strict_clippy": "OPEN_SIX_PREEXISTING_DIAGNOSTICS",
+  "lint_source_proof": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-history-346\\preexisting-clippy-diagnostics.json",
+    "bytes": 988,
+    "sha256": "9e9a43e98ad4bfdb3e3ee81db83247e9cb2e9ec653ceef6e8dddb887f0d3cbb4"
+  },
+  "original_ignored_worker_not_counted_as_method": true,
+  "source_unchanged": true,
+  "cache_root": "D:/build_cache",
+  "VM_calls": 0,
+  "public_guest_upload": false,
+  "incremental_chunk_upload": false,
+  "live_owner_authorization_added": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

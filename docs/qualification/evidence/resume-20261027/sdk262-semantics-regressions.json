@@ -1,0 +1,107 @@
+{
+  "status": "TEST_EXECUTION_FINISHED",
+  "mode": "patched",
+  "exit_code": 0,
+  "seconds": 8.815363645553589,
+  "test": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\flutter-semantics-repro-262\\flutter_semantics_regression_v4_test.dart",
+    "bytes": 20365,
+    "sha256": "8577ff6a0ff8c11c21674bf37f2e3b616af88c303b86f5e7b8f79bd793657898"
+  },
+  "config": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\flutter-semantics-repro-262\\patched5\\project\\.dart_tool\\package_config.json",
+    "bytes": 29045,
+    "sha256": "07021c33052abb239c368f5ac70c9812c9bedb2e71af29dd922c955bd5858225"
+  },
+  "results": [
+    {
+      "name": "loading D:/build_cache/_audit/windows-restriction-lineage-20261022-019/flutter-semantics-repro-262/flutter_semantics_regression_v4_test.dart",
+      "result": "success",
+      "skipped": false,
+      "hidden": true
+    },
+    {
+      "name": "Semantics update does not send update for merged nodes.",
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "name": "Semantics update receives attributed text",
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "name": "Semantics update receives correct traversal transform with nested OverlayPortals",
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "name": "Morrow sibling overlay anchors retain both identifiers",
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "name": "Morrow hiding a tooltip retires its serialized traversal child",
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "name": "Morrow missing traversal parent cannot leave a hit-test-only child",
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "name": "Morrow different traversal anchors cannot merge",
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "name": "Morrow ordinary content can merge without losing its traversal anchor",
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "name": "Morrow matching traversal anchors remain compatible",
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "name": "Morrow distinct anchors survive ordinary content at 0",
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "name": "Morrow distinct anchors survive ordinary content at 1",
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "name": "Morrow distinct anchors survive ordinary content at 2",
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    }
+  ],
+  "terminal_events": [
+    {
+      "success": true,
+      "type": "done",
+      "time": 6760
+    }
+  ],
+  "errors": [],
+  "global_Flutter_SDK_changed": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

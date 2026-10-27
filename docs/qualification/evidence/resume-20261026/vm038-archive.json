@@ -1,0 +1,48 @@
+{
+  "restore_compatibility_issues": 0,
+  "start_stop_calls": 0,
+  "vm_id": "1ab8b98e-7c0c-4d52-8141-85664ef44dda",
+  "guest_contacts": 0,
+  "archive_self_contained": false,
+  "logical_disk_bytes_deleted": 0,
+  "archive_requires_extraction_before_restore": true,
+  "registered_vms": 3,
+  "owner_query_or_replay": 0,
+  "independent_review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm038-offline-archive-20261026\\independent-zip-read.json",
+  "full_original_state_and_disk_chain_byte_identical": true,
+  "shared_parent_archive": {
+    "path": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm037\\vm037-complete-saved-state.zip",
+    "bytes": 51816644645,
+    "modified_ns": 1793003400269855900,
+    "sha256": "de9401fec978ee79ce349fdbb8fe948bc418aa197df86c68ef50f7abed6f3dc7"
+  },
+  "status": "SAVED_VM038_COMPLETE_ARCHIVE_SET_VERIFIED_REGISTRATION_RELEASED_ORIGINAL_DISKS_RETAINED",
+  "explicit_file_delete_calls": 0,
+  "original_disks_retained": [
+    {
+      "sha256": "f47473c79d5edaaa9076cdfb1aecedc7c1fd2611a3fa49f9fe7328b8adc7d05a",
+      "bytes": 34447818752,
+      "path": "D:\\build_cache\\VMBack\\active-vms\\windows-acceptance-20261026-038\\acceptance.vhdx",
+      "entry": "disk/acceptance-original.vhdx",
+      "modified_ticks": 639286079524636330
+    },
+    {
+      "sha256": "a52ba8c381818cc17635ee971b8125cdc1e8569e1314a609d70f6439a5010804",
+      "bytes": 62750982144,
+      "path": "C:\\MorrowQA\\isolated-candidate-20261021\\export\\Windows 11 开发环境\\Virtual Hard Disks\\Windows 11 开发环境.vhdx",
+      "entry": "parent/clean-base.vhdx",
+      "modified_ticks": 639276954050710514
+    }
+  ],
+  "historical_unknown_unchanged": true,
+  "memory_resume_test_performed": false,
+  "saved_memory_byte_identical": true,
+  "unregister_calls": 1,
+  "archive": {
+    "path": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm038\\vm038-saved-state-shared-parent.zip",
+    "bytes": 13945829055,
+    "modified_ns": 1793011930502717700,
+    "sha256": "79860153661f71fb74ba65dae0d95df380011237a7ecfde6b5c129cdfcac24a0"
+  },
+  "other_vm_states_disks_checkpoints_unchanged": true
+}

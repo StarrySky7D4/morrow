@@ -442,10 +442,10 @@ fn cleanup_created(file: File, error: Option<u32>) -> CreateAttempt {
             close_unknown: true,
         };
     }
-    if marked != 0 {
-        if let Some(code) = error.filter(|code| *code != 0) {
-            return CreateAttempt::Rejected(code);
-        }
+    if marked != 0
+        && let Some(code) = error.filter(|code| *code != 0)
+    {
+        return CreateAttempt::Rejected(code);
     }
     CreateAttempt::Unknown {
         close_unknown: false,

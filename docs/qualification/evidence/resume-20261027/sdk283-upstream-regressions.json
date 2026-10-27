@@ -1,0 +1,528 @@
+{
+  "status": "UPSTREAM_FOCUSED_CHECKS_FINISHED",
+  "exit_code": 0,
+  "seconds": 11.253056526184082,
+  "tests": [
+    {
+      "name": "SemanticsNode tagging",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsNode getSemanticsData includes tags",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsNode SemanticsConfiguration can set both string label/value/hint and attributed version",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsNode provides the correct isMergedIntoParent value",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsNode sendSemanticsUpdate verifies no invisible nodes",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsNode mutate existing semantic node list errors",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsNode after markNeedsSemanticsUpdate() all render objects between two semantic boundaries are asked for annotations",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsNode updateWith marks node as dirty when role changes",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "toStringDeep() does not throw with transform == null",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Incompatible OrdinalSortKey throw AssertionError when compared",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "OrdinalSortKey compares correctly when names are the same",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "OrdinalSortKey compares correctly when the names are different",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "toStringDeep respects childOrder parameter",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "debug properties",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "blocked actions debug properties",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "validation result debug properties",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Custom actions debug properties",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Attributed String can concat",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Semantics id does not repeat",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "performActionAt can hit test on merged semantics node",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Tags show up in debug properties",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsConfiguration getter/setter",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsConfiguration.copy() preserves hitTestBehavior",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsConfiguration.copy() preserves all hitTestBehavior values",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsOwner dispatches memory events",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsNode.indexInParent appears in string output",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder basic functionality with default separator",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder custom separator",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder empty separator",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder ignores empty parts",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder single part",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder empty builder",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder clear functionality",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder reusable builder",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder reuse without clearing",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder text direction no text direction embedding when overall direction is null",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder text direction text direction embedding with LTR overall direction",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder text direction text direction embedding with RTL overall direction",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder text direction no embedding when all parts have same direction",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder text direction part direction falls back to overall direction",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "SemanticsLabelBuilder text direction complex multilingual example",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Edge cases and error handling very long labels",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Edge cases and error handling many parts",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Edge cases and error handling special characters in separators",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Edge cases and error handling Unicode characters in content",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "The overlay child sees the right inherited widgets",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "OverlayPortal overlayChild located in root Overlay receives MediaQuery properties from root Overlay context",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "OverlayPortal overlayChild receives MediaQuery properties from Overlay context",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "The overlay portal update semantics does not dirty overlay",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Safe to deactivate and re-activate OverlayPortal",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Safe to hide overlay child and remove OverlayPortal in the same frame",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Safe to hide overlay child and reparent OverlayPortal in the same frame",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Safe to hide overlay child and reparent OverlayPortal in the same frame 2",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Overlay child remains accessible via tree walk when there is no relayout boundary between OverlayPortal and Overlay",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Throws when the same controller is attached to multiple OverlayPortal",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Properly size itself when the theater is given unbounded constraints",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "show/hide works",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "overlayChildBuilder is not evaluated until show is called",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "overlay child can use Positioned",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "overlay child can be hit tested",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "works in a LayoutBuilder",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "works in a LayoutBuilder 2",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "works in a LayoutBuilder 3",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "throws when no Overlay",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "widget is laid out before overlay child",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "adding/removing overlay child does not redirty overlay more than once",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Adding/removing overlay child causes repaint Adding child",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Adding/removing overlay child causes repaint Removing child",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Adding/Removing OverlayPortal in LayoutBuilder during layout",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Change overlay constraints",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Can target the root overlay",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Listens to overlay changes",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Listens to root overlay changes",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Root location uses view boundary",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "PortalController can be assigned to another after deactivate",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Reactivation maintains portal state",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "attachTarget is restored after reparenting",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "GlobalKey Reparenting child is laid out before overlay child after OverlayEntry shuffle",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "GlobalKey Reparenting widget is laid out before overlay child after reparenting",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "GlobalKey Reparenting Swap child and overlayChild",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "GlobalKey Reparenting forgetChild",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "GlobalKey Reparenting Paint order",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "GlobalKey Reparenting Swapping between OverlayEntry & overlayChild",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "GlobalKey Reparenting Swapping between OverlayEntry & overlayChild, featuring LayoutBuilder",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "GlobalKey Reparenting Swapping between overlayChild & overlayChild",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "GlobalKey Reparenting Swapping between overlayChild & overlayChild, featuring LayoutBuilder",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "GlobalKey Reparenting Swapping between child & overlayChild",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "GlobalKey Reparenting Swapping between child & overlayChild, featuring LayoutBuilder",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "GlobalKey Reparenting Safe to move the overlay child to a different Overlay and remove the old Overlay",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Paint order show bringsToTop",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Paint order Paint order does not change after global key reparenting",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Semantics ordering and transform",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Semantics OverlayPortal overlay child clipping",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Semantics OverlayPortal's semantics node is hidden",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "Semantics OverlayPortal's semantics node is dropped but the element is kept alive",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "overlay child can compute the paint transform of the regular child relative to the Overlay",
+      "result": "success",
+      "skipped": false
+    },
+    {
+      "name": "OverlayPortal does not crash at zero area",
+      "result": "success",
+      "skipped": false
+    }
+  ],
+  "errors": [],
+  "original_test_files": [
+    {
+      "path": "C:\\flutter\\packages\\flutter\\test\\semantics\\semantics_test.dart",
+      "bytes": 51986,
+      "sha256": "64626a2d410fd418c9dbec29c0f0ec34d52a66b106cc5d71f724bfb533dc6523"
+    },
+    {
+      "path": "C:\\flutter\\packages\\flutter\\test\\rendering\\rendering_tester.dart",
+      "bytes": 13999,
+      "sha256": "c77b28b7f4b27e4e78421cf50d4f964221737146e0ac26650f06178bdcd7289b"
+    },
+    {
+      "path": "C:\\flutter\\packages\\flutter\\test\\widgets\\overlay_portal_test.dart",
+      "bytes": 113949,
+      "sha256": "1e7d52afd41f15a9c807fe2c605769843b0f924610478c785580b0f087e2ade7"
+    },
+    {
+      "path": "C:\\flutter\\packages\\flutter\\test\\widgets\\multi_view_testing.dart",
+      "bytes": 3084,
+      "sha256": "7cccf8b3e3db124148663e36050a8d267fafa562b810619e4a3e55f654171821"
+    },
+    {
+      "path": "C:\\flutter\\packages\\flutter\\test\\widgets\\semantics_tester.dart",
+      "bytes": 46417,
+      "sha256": "b15a9a21e4dddc9bc8937d91fc3e5c0ced930bcf19aeb7b22f55d5744865ae17"
+    }
+  ],
+  "config": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\flutter-framework-tests-283\\project\\.dart_tool\\package_config.json",
+    "bytes": 29036,
+    "sha256": "96157cc3481bfc4d6b7f32013ea2dbc7683dd5ba81f2f7f9d4d7b1d8eee4c8a3"
+  },
+  "global_flutter_sdk_changed": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -41,6 +41,34 @@ impl FrameExecution {
 }
 
 impl PreparedPackage {
+    /// Independent upload frame; the original worker retains all live authority.
+    #[cfg(feature = "packages")]
+    pub(crate) fn start_blob_upload_frame(
+        &self,
+        input: &[u8],
+        cancel: Cancellation,
+    ) -> Result<FrameExecution, TaskRun> {
+        let result =
+            if self.runner.blob_upload_abi && self.package.blob_upload_declaration().is_some() {
+                Execution::start(&self.runner, Some(input), cancel)
+            } else {
+                Err(Fault::UnsupportedAbi)
+            };
+        result
+            .map(|execution| FrameExecution {
+                execution,
+                allow_content: false,
+                denied_core: false,
+            })
+            .map_err(|fault| TaskRun {
+                report: Report {
+                    outcome: Err(fault),
+                    host_calls: 0,
+                    fuel_remaining: self.limits.fuel,
+                },
+                completion: None,
+            })
+    }
     /// Allow core routing; the worker must still enforce actual content authority.
     pub(crate) fn start_service_frame(
         &self,
@@ -71,23 +99,37 @@ impl PreparedPackage {
 
     /// Only the negotiated independent directory import; Core remains denied.
     pub(crate) fn start_directory_frame(
-        &self, input: &[u8], cancel: Cancellation,
+        &self,
+        input: &[u8],
+        cancel: Cancellation,
     ) -> Result<FrameExecution, TaskRun> {
         let result = if input.len() <= crate::MAX_DIRECTORY_REQUEST_BYTES
             && self.runner.directory_abi
-            && self.package.manifest().required_features.iter().any(|feature|
-                feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE)
+            && self
+                .package
+                .manifest()
+                .required_features
+                .iter()
+                .any(|feature| feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE)
         {
             Execution::start(&self.runner, Some(input), cancel)
         } else {
             Err(Fault::UnsupportedAbi)
         };
-        result.map(|execution| FrameExecution {
-            execution, allow_content: false, denied_core: false,
-        }).map_err(|fault| TaskRun {
-            report: Report { outcome: Err(fault), host_calls: 0,
-                fuel_remaining: self.limits.fuel }, completion: None,
-        })
+        result
+            .map(|execution| FrameExecution {
+                execution,
+                allow_content: false,
+                denied_core: false,
+            })
+            .map_err(|fault| TaskRun {
+                report: Report {
+                    outcome: Err(fault),
+                    host_calls: 0,
+                    fuel_remaining: self.limits.fuel,
+                },
+                completion: None,
+            })
     }
     fn start_frame(
         &self,

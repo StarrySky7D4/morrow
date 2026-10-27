@@ -1,0 +1,77 @@
+{
+  "status": "PASS_SCOPED_INDEPENDENT_UPLOAD_DECLARATION_AND_APPROVAL",
+  "utc": "2026-10-27T10:34:33.231300+00:00",
+  "qualified_source_digest": "400e55a0d69269a0a7a612b3cc2a71072ffccf7ae738dc777874a863752e19ec",
+  "source_manifest": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-approval-369\\source-before.json",
+    "bytes": 48010,
+    "sha256": "34dfab83350bf89f95d39808c5b0dd77be738930811ce3e356e3e1bd7ac7c8d4"
+  },
+  "core": {
+    "passed": 876,
+    "failed": 0,
+    "ignored": 19,
+    "filtered": 0,
+    "new_upload_methods_included": 11,
+    "strict_library_clippy": "PASS"
+  },
+  "runtime": {
+    "passed": 56,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0,
+    "new_upload_methods_included": 3,
+    "strict_library_clippy": "PASS"
+  },
+  "original_controls": {
+    "passed": 15,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0,
+    "zero_selected_target370_credited": false
+  },
+  "original_results": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-approval-369\\result.json",
+      "bytes": 13283,
+      "sha256": "ad231ad4b966c9adf372ba82577444c3c8d89f07757275cb94b9684d9366e107"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-approval-370\\result.json",
+      "bytes": 4031,
+      "sha256": "b2f36097fa15d3ac660d5183cfb4e3396d74003c3dd7c92a87c0d31d268beb76"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-approval-controls-371\\result.json",
+      "bytes": 1975,
+      "sha256": "1da07756bb2b8c387c12ef007f224b13c52cb8f4a298d40c4eaca1e5fe6fa0bb"
+    }
+  ],
+  "manifest_field": 22,
+  "registry_upload_version": 3,
+  "older_v2_writes_unchanged_without_upload": true,
+  "v3_never_downgrades_on_revocation": true,
+  "upload_approval_inherited_on_upgrade": false,
+  "legacy_content_IO_is_upload_authority": false,
+  "registered_package_declaration": true,
+  "Manager_persistent_ceiling": true,
+  "live_upload_binding": false,
+  "upload_Runner": false,
+  "raw_upload_profile_preparation": "REJECTED_UNTIL_DEDICATED_OWNER_ROUTE",
+  "public_import": false,
+  "host_route": false,
+  "protected_session": false,
+  "production_approval_UI": false,
+  "three_language_upload_guests": false,
+  "frozen_inputs_verified": 57,
+  "native_helper_code_inputs_unchanged": true,
+  "all_original_processes_returned": true,
+  "cache_root": "D:/build_cache",
+  "registered_VMs": 4,
+  "VM_mutations": 0,
+  "host_policy_changes": 0,
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

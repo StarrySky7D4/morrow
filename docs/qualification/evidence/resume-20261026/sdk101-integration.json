@@ -1,0 +1,94 @@
+{
+  "status": "REVIEWED_NATIVE_DIRECTORY_ADMISSION_REPAIR_INTEGRATED",
+  "utc": "2026-10-26T11:58:59.288549+00:00",
+  "canonical": "C:\\ms1020",
+  "base_head": "2696f95e3342c29b5ac3801d7eafc0c092b90db1",
+  "original_digest": "4040ffeaf253f45ded09011813b3df8201da1df1738a7983fe7fc0980c868eaa",
+  "current_digest": "08403fa896c622b4e51e55ac9b3c2d0903897ae477c6aa576c30f528c6cfdc9f",
+  "integrated": [
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\io_jobs\\directory_commands.rs",
+      "bytes": 38450,
+      "sha256": "6eeef1fa94168b16931051e4054c8e493178d56b200c8a5cf21157008c22b216"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\io_jobs\\owner_commands.rs",
+      "bytes": 28923,
+      "sha256": "969d7d761db5af92ae2707a112d81ce1a06f3776c05e860d8382adbf8214beb2"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\io_jobs\\directory_commands\\secret_factory_tests.rs",
+      "bytes": 40928,
+      "sha256": "ca59042be4fe0d2553421d3b448b93b485302ae3731b4d79cba1b30f8d6b3b9f"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\io_jobs\\directory_commands\\retained_capture_tests.rs",
+      "bytes": 9421,
+      "sha256": "1e523bc57c7eae99a3cc5e6c6ec38bce6f1903818b7b2d5d379964601c6b0574"
+    }
+  ],
+  "originals": [
+    {
+      "original": {
+        "path": "C:\\ms1020\\plugin_runtime\\src\\io_jobs\\directory_commands.rs",
+        "bytes": 35653,
+        "sha256": "90cefadb9ecb9e99111d814857db87671be646ceb6d01020ba42e67394839e63"
+      },
+      "backup": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-101-integration\\before\\plugin_runtime\\src\\io_jobs\\directory_commands.rs",
+        "bytes": 35653,
+        "sha256": "90cefadb9ecb9e99111d814857db87671be646ceb6d01020ba42e67394839e63"
+      }
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\plugin_runtime\\src\\io_jobs\\owner_commands.rs",
+        "bytes": 28116,
+        "sha256": "479c8b2a6104c6f41525ee2e1d99d4e87ea20815a1e34d41b10220021df0e646"
+      },
+      "backup": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-101-integration\\before\\plugin_runtime\\src\\io_jobs\\owner_commands.rs",
+        "bytes": 28116,
+        "sha256": "479c8b2a6104c6f41525ee2e1d99d4e87ea20815a1e34d41b10220021df0e646"
+      }
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\plugin_runtime\\src\\io_jobs\\directory_commands\\secret_factory_tests.rs",
+        "bytes": 40861,
+        "sha256": "6db8c597d7cc8b40a6921b830410b9782a7dd590d021284286d8d3876352dcba"
+      },
+      "backup": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-101-integration\\before\\plugin_runtime\\src\\io_jobs\\directory_commands\\secret_factory_tests.rs",
+        "bytes": 40861,
+        "sha256": "6db8c597d7cc8b40a6921b830410b9782a7dd590d021284286d8d3876352dcba"
+      }
+    }
+  ],
+  "existing_cache_changes_preserved": true,
+  "native_ownership_tests": 8,
+  "existing_owner_command_tests": 18,
+  "test_evidence": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-101-tests\\result.json",
+      "bytes": 558,
+      "sha256": "fd93068b424b7e09e5ed7e8458a358e267997a90713669baf652cfd691c878a1"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-101-budget-test\\result.json",
+      "bytes": 1726,
+      "sha256": "12ba53b294d53f1f942bcc84ad410687b460f4ad7cb0ff1292ec84dad61ac579"
+    }
+  ],
+  "effect": "Refused native directory admission returns the original File; sent commands keep existing once-only/Unknown semantics.",
+  "original_Workbench_admission_integration": false,
+  "formal_native_picker_integration": false,
+  "product_worker_checked_close_receipt": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "IPC_changes": 0,
+  "VM_calls": 0,
+  "commits": 0,
+  "pushes": 0
+}

@@ -1,0 +1,24 @@
+{
+  "role": "P",
+  "exit_code": 0,
+  "source_digest": "e962f06eba71abe69a968d1faf89f5084b94e414de7465d6326a9dd3ad78e405",
+  "seconds": 729.109,
+  "source_unchanged": true,
+  "VM_calls": 0,
+  "runtime": "NOT_RUN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "status": "PARENT_COLD_COMPILED_OTHER_ROLES_AND_VM_ACCEPTANCE_PENDING",
+  "artifact": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-039\\P\\morrow-workbench-supervisor.exe",
+    "bytes": 27738624,
+    "sha256": "494fb43a38f1e8d9ff87c603e406c6bc7888275e3232fa3aef26994358d77b42"
+  },
+  "cold_compiler_proof": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-039\\P\\compiler-output-proof.json",
+    "bytes": 777454,
+    "sha256": "69a56d347980e7afc0eb09a85bbe0609ec5ea7f349c5f8c8af711f6acf10df92"
+  },
+  "compiler_artifacts": 871,
+  "all_compiler_artifacts_fresh_false": true
+}

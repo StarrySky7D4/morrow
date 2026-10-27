@@ -1,0 +1,131 @@
+{
+  "status": "PASS_SCOPED_UPLOAD_PRIVATE_CAPNP_AND_SESSION",
+  "utc": "2026-10-27T15:12:10.519832+00:00",
+  "qualification_source": "6d182b995341074658c2b5d1e5d0a7a8029b1263e2dc6c21678fe158c148290c",
+  "client_source": "481f2c847d276f6265917aa93f22d5a5905c117e0f6e0e1744db615afc831f13",
+  "client_source_delta": {
+    "source_410": "481f2c847d276f6265917aa93f22d5a5905c117e0f6e0e1744db615afc831f13",
+    "current_411": "6d182b995341074658c2b5d1e5d0a7a8029b1263e2dc6c21678fe158c148290c",
+    "delta_only": "Restore original LF bytes in protocol.rs and io_tasks.rs; no logical change",
+    "dart_inputs_unchanged": true
+  },
+  "private_CapnProto_actions": [
+    {
+      "name": "pluginApproveBlobUpload",
+      "ordinal": 162
+    },
+    {
+      "name": "blobUploadStart",
+      "ordinal": 163
+    },
+    {
+      "name": "blobUploadStatus",
+      "ordinal": 164
+    },
+    {
+      "name": "blobUploadRead",
+      "ordinal": 165
+    },
+    {
+      "name": "blobUploadInspect",
+      "ordinal": 166
+    },
+    {
+      "name": "blobUploadConfirm",
+      "ordinal": 167
+    }
+  ],
+  "original_action_ordinals_preserved": true,
+  "changed_generated_schema_identities": [
+    "hostDigest"
+  ],
+  "product_private_dispatcher": true,
+  "actual_Rust_Wasm": true,
+  "protected_Windows_libraries": 2,
+  "original_worker_joins": 2,
+  "actual_sealed_reopen": true,
+  "client_and_session_tests": {
+    "passed": 31,
+    "failed": 0,
+    "skipped": 0
+  },
+  "adjacent_client_tests": {
+    "passed": 34,
+    "failed": 0,
+    "skipped": 2
+  },
+  "native_route_tests": {
+    "passed": 2,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 10
+  },
+  "static_Dart_analysis": "No issues found",
+  "native_library_and_test_check": true,
+  "scenarios": [
+    "category approval checks exact package digest and registry revision",
+    "single operation binds immutable metadata and bounded input",
+    "lost START reply correlates original submission and never submits another upload",
+    "wrong task identity and unread acknowledgement refuse",
+    "once-only result delivery is separate from original worker join",
+    "cancel after join vetoes unread successful result",
+    "read-only original history and explicit matching confirmation preserve Unknown",
+    "lost READ and detached view suppress success and require original observation",
+    "generic repair does not clear unresolved upload history",
+    "independent upload handlers are excluded from ordinary pure transform UI"
+  ],
+  "guest_pins": [
+    {
+      "path": "D:\\build_cache\\upload-guests393\\rust_upload.wasm",
+      "bytes": 349796,
+      "sha256": "f12a3522c9196541b2dea6d8c6832009812ce35d6554cfa8ead405761568c240"
+    },
+    {
+      "path": "D:\\build_cache\\upload-guests393\\c_upload.wasm",
+      "bytes": 144153,
+      "sha256": "5a0692600e65cafad245d876db7a709213670bc4c7403952546be5f9d2452b7c"
+    },
+    {
+      "path": "D:\\build_cache\\upload-guests393\\cpp_upload.wasm",
+      "bytes": 144570,
+      "sha256": "c567f658d3dc7a9b87f8c24ac96f37afc133f3ee1f629a8e7a46276cf47d1169"
+    }
+  ],
+  "executed_languages": [
+    "RUST"
+  ],
+  "synthetic_object_bytes": 150017,
+  "synthetic_payload_byte": 42,
+  "selected_program": {
+    "path": "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\blob_upload_protected-01e181c5b4109465.exe",
+    "bytes": 31266304,
+    "sha256": "a0a6e7094debbe7436733266f48c9bd106b90bef6013e24958cc3155976f7fad"
+  },
+  "native_evidence": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-private-route-411\\result.json",
+    "bytes": 3099,
+    "sha256": "c75149bb75a8c2812d8fd7dce07b54414e24e0f0bd701fc6df9b7e71cb683eb0"
+  },
+  "client_evidence": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-protocol-check-410\\result.json",
+    "bytes": 450,
+    "sha256": "406d915fd24bda5b1a10a028f5208f5c6b855a49ffaf020a4b6100bdb504641d"
+  },
+  "frozen_inputs_verified": 57,
+  "all_recent_processes_closed": true,
+  "cache_root": "D:/build_cache",
+  "registered_VMs": 4,
+  "VM_acceptance_runs": 0,
+  "host_policy_changes": 0,
+  "historical_unknown_owner_contacts": 0,
+  "native_and_Dart_cross_process_run": false,
+  "rendered_approval_UI": false,
+  "rendered_recovery_UI": false,
+  "cross_restart_Unknown_recovery_UI": false,
+  "full_P2_accepted": false,
+  "full_P3_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "remote_publication": false
+}

@@ -1,0 +1,66 @@
+{
+  "status": "COMPILED_TESTS_NOT_RUN",
+  "exit_code": 0,
+  "source_unchanged": true,
+  "compiler_artifacts": 172,
+  "errors": [],
+  "binaries": [
+    {
+      "name": "morrow_plugin_runtime",
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\morrow_plugin_runtime-c83cb5de7621515e.exe",
+        "bytes": 18286592,
+        "sha256": "b713040bd81d36d350fa5e7eff8cc5fb187134e3cfe275c7dcb2687f51b043aa"
+      },
+      "fresh": false
+    },
+    {
+      "name": "directory_owner",
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\directory_owner-018f105b5c12efd8.exe",
+        "bytes": 16776192,
+        "sha256": "c68079dd49a9b2e8291028ce49ddd74be45441ce4baf23d4fc504184e99bccc4"
+      },
+      "fresh": false
+    },
+    {
+      "name": "directory_io",
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\directory_io-7f806eca86bf79c8.exe",
+        "bytes": 14520320,
+        "sha256": "296b5cf658dc1b10703cf80cdcb3c8e84e132c302acd6e1282b248bdd6e63f7e"
+      },
+      "fresh": false
+    },
+    {
+      "name": "directory_cancel",
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\directory_cancel-5d14f2447e328eb1.exe",
+        "bytes": 14168576,
+        "sha256": "dbb01853bc77ccdb10cb2feb1eafbc21aa39de7e0021786dc9a67efd3ad514aa"
+      },
+      "fresh": false
+    },
+    {
+      "name": "directory_guest_owner",
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\directory_guest_owner-5bd51a8040847e73.exe",
+        "bytes": 16544768,
+        "sha256": "c9ecdb7dbebc11e5eaf64b3e53a4ec9d83e404ef10113b47485d48cf5dd60941"
+      },
+      "fresh": false
+    },
+    {
+      "name": "directory_selection",
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\directory_selection-f0421e48ebdce57e.exe",
+        "bytes": 16539136,
+        "sha256": "5fbeae13b85f74be00975af68c3d6984580b7f3aed33e542c5ad522ea385853d"
+      },
+      "fresh": false
+    }
+  ],
+  "test_bodies_executed": 0,
+  "VM_calls": 0,
+  "full_SDK_accepted": false
+}

@@ -1,0 +1,123 @@
+{
+  "status": "PASS_SCOPED_WINDOWS_PROTECTED_UPLOAD_OWNER",
+  "utc": "2026-10-27T14:32:31.001151+00:00",
+  "qualification_source": "7370d500e3ec2c5b84421994f9868d3326512dd3ba1ce4dba1bb16be46445fb3",
+  "successful_cases": [
+    {
+      "language": "C",
+      "bytes": 16777216
+    },
+    {
+      "language": "C",
+      "bytes": 150017
+    },
+    {
+      "language": "CPP",
+      "bytes": 16777216
+    },
+    {
+      "language": "CPP",
+      "bytes": 150017
+    },
+    {
+      "language": "RUST",
+      "bytes": 16777216
+    },
+    {
+      "language": "RUST",
+      "bytes": 150017
+    }
+  ],
+  "synthetic_payload_byte": 42,
+  "actual_three_language_Wasm": true,
+  "native_protected_Workbench_owner": true,
+  "actual_AuditSession": true,
+  "exact_bytes_and_sha256": true,
+  "exclusive_original_lease": true,
+  "sealed_history_after_reopen": true,
+  "new_test_methods": {
+    "passed": 10,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0
+  },
+  "synthetic_store_cases": 11,
+  "original_worker_joins": 17,
+  "negative_scenarios": [
+    "unapproved, stale revision and foreign package refuse before owner transfer",
+    "wrong task and unread acknowledgement refuse",
+    "single-use submission stays consumed after acknowledgement",
+    "low fuel returns Limits with no protected staged record",
+    "post-join cancellation and revision revocation veto unread success",
+    "generic maintenance cannot clear unresolved upload history",
+    "separate original-history observation and explicit confirmation preserve original Unknown",
+    "lost product gate refuses delivery, recovery and replacement owner"
+  ],
+  "runtime_methods": {
+    "passed": 99,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0
+  },
+  "strict_runtime_library_clippy": true,
+  "production_host_library_check": true,
+  "original_task_state_methods": {
+    "passed": 10,
+    "selected_synthetic_only": true,
+    "evidence": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-task-regressions-408\\result.json",
+      "bytes": 4138,
+      "sha256": "487dba881f0394c15be66512f76a99fa15e653f611840fa17ccad5be2e485a3b"
+    }
+  },
+  "new_lock_edges": [
+    "morrow-blob-transfer-v1",
+    "morrow-blob-upload-request-v1"
+  ],
+  "third_party_lock_changes": false,
+  "guest_pins": [
+    {
+      "path": "D:\\build_cache\\upload-guests393\\rust_upload.wasm",
+      "bytes": 349796,
+      "sha256": "f12a3522c9196541b2dea6d8c6832009812ce35d6554cfa8ead405761568c240"
+    },
+    {
+      "path": "D:\\build_cache\\upload-guests393\\c_upload.wasm",
+      "bytes": 144153,
+      "sha256": "5a0692600e65cafad245d876db7a709213670bc4c7403952546be5f9d2452b7c"
+    },
+    {
+      "path": "D:\\build_cache\\upload-guests393\\cpp_upload.wasm",
+      "bytes": 144570,
+      "sha256": "c567f658d3dc7a9b87f8c24ac96f37afc133f3ee1f629a8e7a46276cf47d1169"
+    }
+  ],
+  "selected_program": {
+    "path": "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\blob_upload_protected-01e181c5b4109465.exe",
+    "bytes": 19360768,
+    "sha256": "7a015a83f8215f97d9f9b285b9f9a9e6affcb7be8c73ce2fce59c34b2dd64477"
+  },
+  "qualification": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-protected-406\\result.json",
+    "bytes": 5665,
+    "sha256": "907c6798f93ccf87b1e1d8b4a42d3bd3d5a5ae39d5efc68ecd9c6086f8bb23f8"
+  },
+  "frozen_inputs_verified": 57,
+  "all_recent_processes_closed": true,
+  "cache_root": "D:/build_cache",
+  "registered_VMs": 4,
+  "VM_calls": 0,
+  "host_policy_changes": 0,
+  "historical_unknown_owner_contacts": 0,
+  "formal_CapnProto_product_route": false,
+  "rendered_approval_UI": false,
+  "rendered_recovery_UI": false,
+  "cross_restart_Unknown_recovery_UI": false,
+  "watch_rename": false,
+  "full_P2_accepted": false,
+  "full_P3_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "remote_publication": false
+}

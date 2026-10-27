@@ -53,6 +53,7 @@ fn owned_service_frame_survives_package_and_input_and_exposes_exact_imports() {
             Kind::Mutation => panic!("not an admitted IO import"),
             Kind::Channel => panic!("not an admitted IO import"),
             Kind::Directory => panic!("not an admitted IO import"),
+            Kind::BlobUpload => panic!("not an admitted IO import"),
         };
         frame.resume(&token, reply).unwrap();
     }

@@ -1530,6 +1530,8 @@
   "pluginsDirectoryIntro": "Share only names and metadata directly inside the selected folder. File contents and subfolders are not read.",
   "pluginsDirectoryLimit": "Entry limit (up to 1024)",
   "pluginsDirectoryMetadataLimit": "Metadata limit (bytes, up to 1 MiB)",
+  "pluginsDirectoryNativePickerIntro": "Choosing a folder starts the plugin. The task lifetime includes selection; leaving this view cancels the pending task.",
+  "pluginsDirectoryNativePickerStart": "Choose folder and run plugin",
   "pluginsDirectorySelectHandler": "Select an approved folder plugin",
   "pluginsDirectoryStart": "Read folder and run plugin",
   "pluginsDirectoryTitle": "Folder listing",

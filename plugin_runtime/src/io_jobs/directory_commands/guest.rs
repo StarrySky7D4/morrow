@@ -7,9 +7,7 @@ use morrow_fs_directory_request_v1::{
     Action as WireAction, MAX_REQUEST_BYTES, MAX_RESPONSE_BYTES, Opened, Reply as WireReply,
     Request as WireRequest, Response as WireResponse,
 };
-use std::{
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
 
 pub struct DirectoryGuestResult {
     pub execution: crate::Report,
@@ -64,19 +62,21 @@ pub(in crate::io_jobs) struct GuestRequest {
 }
 impl GuestRequest {
     pub(in crate::io_jobs) fn charge(&self) -> u64 {
-        (size_of::<Self>() + size_of::<DirectoryGuestResult>()
+        (size_of::<Self>()
+            + size_of::<DirectoryGuestResult>()
             + self.handler.capacity()
             + self.nonces.capacity() * size_of::<[u8; 32]>()) as u64
     }
 }
-pub(in crate::io_jobs::owner_commands) type GuestDispatch<O> = fn(
-    &mut O,
-    Option<&crate::manager::ManagedInstance>,
-    &Control,
-    &Ticket,
-    &mut Resources,
-    GuestRequest,
-) -> Result<GuestReply, DirectoryCommandError>;
+pub(in crate::io_jobs::owner_commands) type GuestDispatch<O> =
+    fn(
+        &mut O,
+        Option<&crate::manager::ManagedInstance>,
+        &Control,
+        &Ticket,
+        &mut Resources,
+        GuestRequest,
+    ) -> Result<GuestReply, DirectoryCommandError>;
 
 impl<O: ManagedHostOwner> IoWorker<O> {
     /// Invoke only the new negotiated guest against this worker's already delivered capture.
@@ -103,14 +103,18 @@ impl<O: ManagedHostOwner> IoWorker<O> {
             .ok_or(OwnerCommandError::Limit)?;
         // Fallible, bounded allocation before admission locks. No later nonce
         // insertion may grow this retained vector or invent a ledger.
-        let nonce_limit = usize::try_from(self.control.limits.max_calls)
-            .map_err(|_| OwnerCommandError::Limit)?;
+        let nonce_limit =
+            usize::try_from(self.control.limits.max_calls).map_err(|_| OwnerCommandError::Limit)?;
         let mut nonces = Vec::<[u8; 32]>::new();
-        nonces.try_reserve_exact(nonce_limit).map_err(|_| OwnerCommandError::Limit)?;
+        nonces
+            .try_reserve_exact(nonce_limit)
+            .map_err(|_| OwnerCommandError::Limit)?;
         if nonces.capacity() > nonce_limit {
             return Err(OwnerCommandError::Limit);
         }
-        let nonce_bytes = nonces.capacity().checked_mul(size_of::<[u8; 32]>())
+        let nonce_bytes = nonces
+            .capacity()
+            .checked_mul(size_of::<[u8; 32]>())
             .ok_or(OwnerCommandError::Limit)?;
         let reservation = size_of::<GuestRequest>()
             .checked_add(handler.capacity())
@@ -286,6 +290,13 @@ fn dispatch_guest<O: ManagedHostOwner>(
         Cancellation::until(request.deadline),
     );
     validate(owner, instance, control, ticket, &cancel)?;
+    let ledger = Arc::clone(
+        &resources
+            .0
+            .get(&request.id.serial)
+            .ok_or(DirectoryCommandError::InvalidCursor)?
+            .ledger,
+    );
     let selected = resources
         .0
         .get(&request.id.serial)
@@ -347,7 +358,7 @@ fn dispatch_guest<O: ManagedHostOwner>(
     let derive = |domain: &[u8]| {
         let mut hash = Sha256::new();
         hash.update(domain);
-        hash.update(&*secret);
+        hash.update(secret.as_slice());
         hash.update(selected.reference);
         hash.update(invocation.worker.to_le_bytes());
         hash.update(invocation.serial.to_le_bytes());
@@ -458,6 +469,7 @@ fn dispatch_guest<O: ManagedHostOwner>(
                     advanced = true;
                     let action = Request {
                         id: request.id,
+                        ledger: Arc::clone(&ledger),
                         action: Action::Page(cursor),
                         retire: Retirement {
                             control: ticket.control.clone(),
@@ -492,6 +504,7 @@ fn dispatch_guest<O: ManagedHostOwner>(
                     advanced = true;
                     let native = Request {
                         id: request.id,
+                        ledger: Arc::clone(&ledger),
                         action: Action::Finish,
                         retire: Retirement {
                             control: ticket.control.clone(),
@@ -546,13 +559,13 @@ fn dispatch_guest<O: ManagedHostOwner>(
         }
     }
     let mut run = frame.finish();
-    if let Err(error) = validate(owner, instance, control, ticket, &cancel) {
-        if run.report.outcome.is_ok() {
-            run.report.outcome = Err(match error {
+    if let Err(error) = validate(owner, instance, control, ticket, &cancel)
+        && run.report.outcome.is_ok()
+    {
+        run.report.outcome = Err(match error {
                 DirectoryCommandError::Admission(BindingError::Expired) => crate::Fault::Deadline,
                 _ => crate::Fault::TaskProtocol,
-            });
-        }
+        });
     }
     let completed = run.report.outcome == Ok(0)
         && opened
@@ -567,11 +580,11 @@ fn dispatch_guest<O: ManagedHostOwner>(
         }
         // Drop native broker/root/leases before quota release; no cursor replay.
         resources.0.remove(&request.id.serial);
-        admission(control).selections.remove(&request.id.serial);
-    } else if !terminal {
-        if let Some(slot) = admission(control).selections.get_mut(&request.id.serial) {
-            slot.pending = false;
-        }
+        retire_admission(control, request.id.serial);
+    } else if !terminal
+        && let Some(slot) = admission(control).selections.get_mut(&request.id.serial)
+    {
+        slot.pending = false;
     }
     request.retire.complete();
     let response = if completed {

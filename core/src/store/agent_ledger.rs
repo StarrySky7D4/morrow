@@ -270,8 +270,8 @@ impl Store {
                 } => (record, *expected_revision),
                 AgentLedgerMutation::Delete { expected } => (expected, expected.revision()),
             };
-            if expected_revision != 0 {
-                if sql(tx.execute(
+            if expected_revision != 0
+                && sql(tx.execute(
                     "DELETE FROM agent_ledger WHERE domain=?1 AND id=?2 AND revision=?3",
                     params![
                         candidate.domain().as_slice(),
@@ -279,9 +279,8 @@ impl Store {
                         expected_revision as i64
                     ],
                 ))? != 1
-                {
-                    return Err(Error::RevisionConflict);
-                }
+            {
+                return Err(Error::RevisionConflict);
             }
         }
         if !paid_reservation {

@@ -1,0 +1,154 @@
+{
+  "status": "PASS_SCOPED_ORIGINAL_WORKER_CHECKED_CLOSE",
+  "results": [
+    {
+      "name": "checked-retirement",
+      "command": [
+        "D:\\build_cache\\s125t\\debug\\deps\\morrow_plugin_runtime-c83cb5de7621515e.exe",
+        "checked_retirement_tests::",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 5580,
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\morrow_plugin_runtime-c83cb5de7621515e.exe",
+        "bytes": 18286592,
+        "sha256": "b713040bd81d36d350fa5e7eff8cc5fb187134e3cfe275c7dcb2687f51b043aa"
+      },
+      "started_utc": "2026-10-26T17:54:18.310388+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "factory-and-retained-input",
+      "command": [
+        "D:\\build_cache\\s125t\\debug\\deps\\morrow_plugin_runtime-c83cb5de7621515e.exe",
+        "secret_factory_tests::",
+        "--skip",
+        "checked_retirement_tests::",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 1436,
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\morrow_plugin_runtime-c83cb5de7621515e.exe",
+        "bytes": 18286592,
+        "sha256": "b713040bd81d36d350fa5e7eff8cc5fb187134e3cfe275c7dcb2687f51b043aa"
+      },
+      "started_utc": "2026-10-26T17:54:20.954752+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 22,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "directory_io",
+      "command": [
+        "D:\\build_cache\\s125t\\debug\\deps\\directory_io-7f806eca86bf79c8.exe",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 14940,
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\directory_io-7f806eca86bf79c8.exe",
+        "bytes": 14520320,
+        "sha256": "296b5cf658dc1b10703cf80cdcb3c8e84e132c302acd6e1282b248bdd6e63f7e"
+      },
+      "started_utc": "2026-10-26T17:54:27.601342+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 16,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "directory_cancel",
+      "command": [
+        "D:\\build_cache\\s125t\\debug\\deps\\directory_cancel-5d14f2447e328eb1.exe",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 8844,
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\directory_cancel-5d14f2447e328eb1.exe",
+        "bytes": 14168576,
+        "sha256": "dbb01853bc77ccdb10cb2feb1eafbc21aa39de7e0021786dc9a67efd3ad514aa"
+      },
+      "started_utc": "2026-10-26T17:54:32.103500+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "directory_owner",
+      "command": [
+        "D:\\build_cache\\s125t\\debug\\deps\\directory_owner-018f105b5c12efd8.exe",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 18788,
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\directory_owner-018f105b5c12efd8.exe",
+        "bytes": 16776192,
+        "sha256": "c68079dd49a9b2e8291028ce49ddd74be45441ce4baf23d4fc504184e99bccc4"
+      },
+      "started_utc": "2026-10-26T17:54:34.065686+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "directory_selection",
+      "command": [
+        "D:\\build_cache\\s125t\\debug\\deps\\directory_selection-f0421e48ebdce57e.exe",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 21076,
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\directory_selection-f0421e48ebdce57e.exe",
+        "bytes": 16539136,
+        "sha256": "5fbeae13b85f74be00975af68c3d6984580b7f3aed33e542c5ad522ea385853d"
+      },
+      "started_utc": "2026-10-26T17:54:40.085554+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "directory_guest_owner",
+      "command": [
+        "D:\\build_cache\\s125t\\debug\\deps\\directory_guest_owner-5bd51a8040847e73.exe",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 15148,
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\directory_guest_owner-5bd51a8040847e73.exe",
+        "bytes": 16544768,
+        "sha256": "c9ecdb7dbebc11e5eaf64b3e53a4ec9d83e404ef10113b47485d48cf5dd60941"
+      },
+      "started_utc": "2026-10-26T17:54:43.852090+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "tests_passed": 89,
+  "host_legacy_provisioning": false,
+  "VM_calls": 0,
+  "synthetic_lost_close_result_not_actual_OS_failure": true,
+  "full_SDK_accepted": false
+}

@@ -1,0 +1,35 @@
+{
+  "utc": "2026-10-27T04:59:04.428519+00:00",
+  "registered_vms": 4,
+  "VMs": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "4072a8d9-2f4f-4d02-98ee-ad436dd3342e",
+      "name": "Morrow Windows Acceptance 20261027 045",
+      "state": "Saved"
+    }
+  ],
+  "free_bytes": {
+    "C": 40931586048,
+    "D": 32305434624
+  },
+  "build_cache_root": "D:/build_cache",
+  "cumulative_reclaimed_logical_bytes": 51515100584,
+  "latest_cleanup": "retired-role-cache-257",
+  "no_additional_cleanup_this_update": true,
+  "VM_mutations_this_update": 0
+}

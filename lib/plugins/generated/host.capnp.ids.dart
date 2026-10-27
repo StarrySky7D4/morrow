@@ -59,5 +59,14 @@ const schemaIds = <String, String>{
   'channelRunSchema': 'f124676368fb14ec',
   'channelStateSchema': 'c7b507f73451d865',
   'channelSentSchema': '9dac5e9a8392cbe8',
+  'blobUploadStartSchema': '9124da9acda8155e',
+  'blobUploadStateSchema': 'cbe3c8c204dc3344',
+  'blobUploadResultSchema': '957887b7f6cbc110',
+  'blobPlannerSchema': 'e8226860d4ca48d1',
+  'blobPlanStartSchema': 'bc59a04abf4bbeec',
+  'blobPlanApprovalSchema': 'fe8d4270bff95462',
+  'blobPlanStateSchema': 'f307c9189f2b6623',
+  'blobPlanViewSchema': 'a466e8f097f2473c',
+  'blobPlanResultSchema': 'e075e8908cbce7c8',
 };
 BigInt schemaId(String name) => BigInt.parse(schemaIds[name]!, radix: 16);

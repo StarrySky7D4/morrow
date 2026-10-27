@@ -40,6 +40,27 @@ message MutationBudget {
   uint64 max_job_bytes = 1;
   uint64 max_bytes = 2;
 }
+// Independent upload ceiling. No Store, object, live owner or authorization.
+message BlobUploadDeclaration {
+  uint32 schema_version = 1;
+  bytes request_schema_sha256 = 2;
+  bytes frame_schema_sha256 = 3;
+  repeated string handlers = 4;
+  uint64 max_object_bytes = 5;
+  uint32 max_calls = 6;
+  uint64 max_wire_bytes = 7;
+}
+// Pure proposal entrypoints paired with upload handlers in this same package.
+// These metadata mappings confer no permission to run an upload.
+message BlobUploadProposalHandler {
+  string handler = 1;
+  string upload_handler = 2;
+}
+message BlobUploadProposalDeclaration {
+  uint32 schema_version = 1;
+  bytes schema_sha256 = 2;
+  repeated BlobUploadProposalHandler handlers = 3;
+}
 message Manifest {
   uint32 schema_version = 1;
   string package_id = 2;
@@ -63,6 +84,8 @@ message Manifest {
   bytes mutation_schema_sha256 = 19; // Required only with mutation-v1; independent guest import, not approval.
   MutationBudget mutation_budget = 20; // Requires mutation-budget-v1 and explicit trusted-host approval.
   morrow.plugin.channel.v1.ChannelDeclaration channel_declaration = 21; // Requires channel-v1; declaration only.
+  BlobUploadDeclaration blob_upload_declaration = 22; // Requires blob-upload-request-v1; independent approval.
+  BlobUploadProposalDeclaration blob_upload_proposal_declaration = 23; // Requires blob-upload-proposal-v1; pure metadata only.
 }
 message Package {
   uint32 schema_version = 1;

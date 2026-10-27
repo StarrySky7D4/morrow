@@ -22,6 +22,8 @@ Future<void> sendHostRequest(
   final sensitive =
       clearAfterSend ||
       action == host.Action.credentialSave ||
+      action == host.Action.blobUploadStart ||
+      action == host.Action.blobPlanStart ||
       action == host.Action.commandSubmit ||
       action == host.Action.mutationStart ||
       action == host.Action.mutationSubmit ||

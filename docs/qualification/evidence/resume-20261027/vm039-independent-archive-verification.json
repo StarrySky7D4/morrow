@@ -1,0 +1,72 @@
+{
+  "status": "PASS_COMPLETE_SHARED_PARENT_ARCHIVE_SET_VERIFICATION",
+  "utc": "2026-10-26T16:35:38.491674+00:00",
+  "vm_id": "3f9f2894-5c98-4f43-864a-bd0603af0650",
+  "archive": {
+    "path": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm039\\vm039-saved-state-shared-parent.zip",
+    "bytes": 2111902915,
+    "modified_ns": 1793031938404937100,
+    "sha256": "074de53cd584249ac6330cbac8e953c9775244a7243acecabb9ee86d81b07f5f"
+  },
+  "shared_parent_archive": {
+    "path": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm037\\vm037-complete-saved-state.zip",
+    "bytes": 51816644645,
+    "modified_ns": 1793003400269855900,
+    "sha256": "de9401fec978ee79ce349fdbb8fe948bc418aa197df86c68ef50f7abed6f3dc7"
+  },
+  "verified_members": [
+    {
+      "entry": "disk/acceptance-original.vhdx",
+      "bytes": 7318011904,
+      "compressed_bytes": 359975616,
+      "sha256": "4a236564c44ac84f3a610c91204fd0b589ea679bdda6f3c5ec15e1fb226ec5e5",
+      "crc32": 2426427369,
+      "archive": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm039\\vm039-saved-state-shared-parent.zip"
+    },
+    {
+      "entry": "parent/clean-base.vhdx",
+      "bytes": 62750982144,
+      "compressed_bytes": 37832830664,
+      "sha256": "a52ba8c381818cc17635ee971b8125cdc1e8569e1314a609d70f6439a5010804",
+      "crc32": 107329603,
+      "archive": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm037\\vm037-complete-saved-state.zip"
+    },
+    {
+      "entry": "state/3F9F2894-5C98-4F43-864A-BD0603AF0650.vmcx",
+      "bytes": 73728,
+      "compressed_bytes": 15329,
+      "sha256": "8ce3814bb65c88d17c458446350d24ad5ede9da0b04364aef1f416e2ec06b852",
+      "crc32": 806416364,
+      "archive": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm039\\vm039-saved-state-shared-parent.zip"
+    },
+    {
+      "entry": "state/3F9F2894-5C98-4F43-864A-BD0603AF0650.vmgs",
+      "bytes": 4194816,
+      "compressed_bytes": 209633,
+      "sha256": "c3d18b6088c2f9a849ff993e2161e4554d2eb7ba48426615a8fba2b1b4f12ea8",
+      "crc32": 2963821205,
+      "archive": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm039\\vm039-saved-state-shared-parent.zip"
+    },
+    {
+      "entry": "state/3F9F2894-5C98-4F43-864A-BD0603AF0650.VMRS",
+      "bytes": 1877573632,
+      "compressed_bytes": 1751700071,
+      "sha256": "7436f916d06cd0a418629ca509ac2bbaec8f89da37dba097330adaad4d3e7301",
+      "crc32": 2354460054,
+      "archive": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm039\\vm039-saved-state-shared-parent.zip"
+    }
+  ],
+  "original_bytes": 71950836224,
+  "exact_membership": true,
+  "disk_chain_byte_identical": true,
+  "saved_memory_byte_identical": true,
+  "configuration_byte_identical": true,
+  "source_metadata_unchanged": true,
+  "archive_self_contained": false,
+  "both_archives_required_for_restore": true,
+  "preserve_shared_archive_while_any_dependent_remains": true,
+  "VM_calls": 0,
+  "owner_query_or_replay": 0,
+  "guest_contacts": 0,
+  "restore_executed": false
+}

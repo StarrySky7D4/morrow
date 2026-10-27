@@ -420,15 +420,15 @@ impl Producer {
             if queue.frame.is_none() {
                 let sequence = queue.next_sequence.checked_add(1).ok_or(Error::Limit)?;
                 let source = self.resource.source_guard.lock().map_err(|_| Error::Unknown)?.clone();
-                if let Some(source) = source {
-                    if let Err(error) = source.check_frame(sequence, &bytes, &cursor) {
+                if let Some(source) = source
+                    && let Err(error) = source.check_frame(sequence, &bytes, &cursor)
+                {
                         self.resource.close_locked(&mut queue, match error {
                             Error::Expired => Status::Expired,
                             Error::Denied => Status::Revoked,
                             _ => Status::Unknown,
                         });
                         return Err(error);
-                    }
                 }
                 context.reserve(1, bytes.len() as u64, false)?;
                 self.resource.check_locked(&mut queue)?;
@@ -894,11 +894,11 @@ impl ChannelBroker {
         // Once dispatch holds &mut HostRuntime, Store cannot be swapped before
         // final commit; the typed final guard only checks the original lifetime.
         let source = self.resource.source_guard.lock().map_err(|_| Error::Unknown)?.clone();
-        if let Some(SourceGuard::Changes(state)) = source {
-            if state.validate_store(host).is_err() {
-                self.resource.close(Status::Revoked);
-                return Err(Error::Denied);
-            }
+        if let Some(SourceGuard::Changes(state)) = source
+            && state.validate_store(host).is_err()
+        {
+            self.resource.close(Status::Revoked);
+            return Err(Error::Denied);
         }
         Ok(())
     }
@@ -1150,9 +1150,9 @@ impl ChannelBroker {
                                 != queue.accepted_sequence.checked_add(1).ok_or(Error::Limit)?
                         {
                             status = Status::Invalid;
-                        } else if queue.sent.is_some() {
-                            status = Status::Limit;
-                        } else if bytes.len() > self.resource.max_frame_bytes as usize {
+                        } else if queue.sent.is_some()
+                            || bytes.len() > self.resource.max_frame_bytes as usize
+                        {
                             status = Status::Limit;
                         } else {
                             match self.context.reserve(1, bytes.len() as u64, false) {
@@ -1382,27 +1382,24 @@ impl ChannelBroker {
             } else {
                 response
             };
-            if call.kind == CallKind::Channel {
-                if let Ok(bytes) = &response {
-                    if let Ok(reply) = Response::decode(bytes) {
-                        if reply.status == Status::Accepted {
-                            if let Err(error) = self.wait_sent_read(
-                                manager,
-                                host,
-                                instance,
-                                reply.accepted_sequence,
-                                &mut clock,
-                            ) {
-                                execution.abort(match error {
-                                    Error::Expired => Fault::Deadline,
-                                    Error::Denied => Fault::Cancelled,
-                                    _ => Fault::TaskProtocol,
-                                });
-                                break;
-                            }
-                        }
-                    }
-                }
+            if call.kind == CallKind::Channel
+                && let Ok(bytes) = &response
+                && let Ok(reply) = Response::decode(bytes)
+                && reply.status == Status::Accepted
+                && let Err(error) = self.wait_sent_read(
+                    manager,
+                    host,
+                    instance,
+                    reply.accepted_sequence,
+                    &mut clock,
+                )
+            {
+                execution.abort(match error {
+                    Error::Expired => Fault::Deadline,
+                    Error::Denied => Fault::Cancelled,
+                    _ => Fault::TaskProtocol,
+                });
+                break;
             }
             execution
                 .resume(&token, response)

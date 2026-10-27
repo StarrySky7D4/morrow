@@ -1,0 +1,56 @@
+{
+  "status": "NATIVE_TRAVERSAL_LIFECYCLE_CANDIDATE_NOT_ACCEPTED",
+  "framework_original": {
+    "path": "C:\\flutter\\packages\\flutter\\lib\\src\\semantics\\semantics.dart",
+    "bytes": 279544,
+    "sha256": "5f8d3f3357b3b3446820d7d7dbfb24a0f5c5a12e90ac9b2a53607b7a5fa2efb1"
+  },
+  "framework_patched": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\flutter-framework-overlay-282\\framework\\lib\\src\\semantics\\semantics.dart",
+    "bytes": 275979,
+    "sha256": "1de6f012fdb24964c9426d20abe30894148533b751da30dfae07995e81149e57"
+  },
+  "applied_upstream_patches": [
+    {
+      "number": 186118,
+      "url": "https://github.com/flutter/flutter/pull/186118",
+      "merged": true,
+      "merged_at": "2026-05-20T22:17:14Z",
+      "head_sha": "d3abfbb171bced0436617a66fd3c9ba3d25550f0"
+    },
+    {
+      "number": 186826,
+      "url": "https://github.com/flutter/flutter/pull/186826",
+      "merged": true,
+      "merged_at": "2026-05-29T19:34:25Z",
+      "head_sha": "153111abef57ab47429bbbbc5103a7475162b7c9"
+    }
+  ],
+  "additional_guard": "Reject only two distinct non-null traversal parent identifiers; retain ordinary content absorption.",
+  "unmerged_reference": {
+    "url": "https://github.com/flutter/flutter/pull/190344",
+    "merged": false,
+    "role": "Root-cause reference only; project guard will follow the reviewed identifier invariant."
+  },
+  "package_config": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\flutter-framework-overlay-282\\package-config.json",
+    "bytes": 28958,
+    "sha256": "796136573d59df034b3d5feee014cca761ae0c7d11c0589f1d57e4910b753095"
+  },
+  "global_Flutter_SDK_changed": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "reason": "Strict null-versus-non-null guard changed existing overlay semantics. Original upstream97 passed; strict candidate failed5. Revised candidate not yet accepted.",
+  "strict_candidate": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\flutter-framework-overlay-263\\result.json",
+    "bytes": 1781,
+    "sha256": "c0d4123641226c79ca6c368a5f937b2076c76fd9056c6431cf49be59cd572a95"
+  },
+  "prior": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\flutter-framework-overlay-268\\result.json",
+    "bytes": 2236,
+    "sha256": "bac68921bcf5568694ac8a4b82b916685ef20dc1b355e4ec2591c783dfb50543"
+  },
+  "new_behavior": "Submit only reachable native traversal nodes; fully reserialize newly visible, replaced, or reparented subtrees. Keep web behavior unchanged.",
+  "project_application_edits": 0
+}

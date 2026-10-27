@@ -1,0 +1,81 @@
+{
+  "status": "PASS_INDEPENDENT_REVIEW_ACTUAL_NATIVE_CLOSE_REFUSAL",
+  "utc": "2026-10-26T19:54:11.788379+00:00",
+  "source_digest": "10184a3712c7d081b4784418ac3a6297934f78096392a321ed7303bd852df55a",
+  "candidate": "D:\\build_cache\\s161s",
+  "input_files": 53056,
+  "production_bytes_unchanged": true,
+  "changed_existing": [
+    "plugin_runtime/src/directory_io.rs",
+    "plugin_runtime/src/directory_io/native_windows.rs",
+    "plugin_runtime/src/io_jobs/directory_commands/secret_factory_tests.rs"
+  ],
+  "added_test_files": [
+    "plugin_runtime/src/directory_io/native_close_refusal_tests.rs",
+    "plugin_runtime/src/io_jobs/directory_commands/native_close_refusal_tests.rs"
+  ],
+  "evidence": [
+    {
+      "name": "directory_io::native_windows::native_close_refusal_tests::actual_protected_directory_close_preserves_original_native_error_without_retry",
+      "result": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\test-1.result.json",
+        "bytes": 909,
+        "sha256": "923a79c1e9f65befdcb410616f7a7ceeea4cf3d3c10ee14c5e178260ff993867"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\test-1.stdout",
+        "bytes": 263,
+        "sha256": "cc71b6faa4a222de785e4bdb9e48a306f441a30e8c9036a784437394b80a5b80"
+      }
+    },
+    {
+      "name": "io_jobs::owner_commands::directories::secret_factory_tests::native_close_refusal_tests::actual_close_refusal_finish_and_terminal_page_keep_original_charge",
+      "result": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\test-2.result.json",
+        "bytes": 945,
+        "sha256": "1c6b68569d61e2768257ef4b284c2c866578cb54d81f619113eaf1b9b1bcd405"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\test-2.stdout",
+        "bytes": 281,
+        "sha256": "5e71fa1e9e9547838da8b5b77242a75e3d4b7180410d0c8468138b4e45f6e104"
+      }
+    },
+    {
+      "name": "io_jobs::owner_commands::directories::secret_factory_tests::native_close_refusal_tests::actual_close_refusal_of_queued_input_blocks_worker_retirement_before_capture",
+      "result": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\test-3.result.json",
+        "bytes": 965,
+        "sha256": "5b1fdbe5642c0b87f55427253ac8274b758b588a80c8027b8c893d2b382742f4"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\test-3.stdout",
+        "bytes": 291,
+        "sha256": "d1b12e0eaebcbc5df1e9b9b26eb35d731b6b6dc3c36708ea7a288cdca452a8ba"
+      }
+    }
+  ],
+  "input_binding": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\input-binding.json",
+    "bytes": 10426496,
+    "sha256": "f4a253f2e235c473fc75c0a8ffdf5373ee71819191c1ef84d97842953b1594e4"
+  },
+  "compiler_proof": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\compiler-output-proof.json",
+    "bytes": 151322,
+    "sha256": "2a893568424ade2af1e076961c209da7a4dbddf6b5d1fe19fa8021d59f326a4a"
+  },
+  "methods": 3,
+  "scenarios": 4,
+  "canonical_source_edits": 0,
+  "runtime_calls": 0,
+  "unknown_owner_contacts": 0,
+  "VM_calls": 0,
+  "actual_OS_refusal_confirmed": true,
+  "cleanup_or_quota_refund_inferred": false,
+  "process_exit_is_not_retirement": true,
+  "formal_picker_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,48 @@
+{
+    "archive_self_contained":  false,
+    "registered_vms":  3,
+    "shared_parent_archive":  {
+                                  "path":  "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm037\\vm037-complete-saved-state.zip",
+                                  "bytes":  51816644645,
+                                  "modified_ns":  1793003400269855900,
+                                  "sha256":  "de9401fec978ee79ce349fdbb8fe948bc418aa197df86c68ef50f7abed6f3dc7"
+                              },
+    "archive_requires_extraction_before_restore":  true,
+    "explicit_file_delete_calls":  0,
+    "vm_id":  "9105a276-a960-40a8-ae94-c19cd2957760",
+    "memory_resume_test_performed":  false,
+    "archive":  {
+                    "path":  "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm041\\vm041-saved-state-shared-parent.zip",
+                    "bytes":  11656068848,
+                    "modified_ns":  1793043309197674800,
+                    "sha256":  "e4add876fa1a7f95929213b560a5f197799578fadcf603f7e28135dd5747622c"
+                },
+    "guest_contacts":  0,
+    "restore_compatibility_issues":  0,
+    "independent_review":  "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm041-offline-archive-20261027\\independent-zip-read.json",
+    "original_disks_retained":  [
+                                    {
+                                        "path":  "C:\\MorrowQA\\windows-acceptance-20261027-041\\acceptance.vhdx",
+                                        "modified_ticks":  639286385808571846,
+                                        "entry":  "disk/acceptance-original.vhdx",
+                                        "bytes":  30205280256,
+                                        "sha256":  "e25a3abccd8652c82827b0f2cd28487afc1a4ff9e36c55f3b19abadbc40bfa8b"
+                                    },
+                                    {
+                                        "path":  "C:\\MorrowQA\\isolated-candidate-20261021\\export\\Windows 11 开发环境\\Virtual Hard Disks\\Windows 11 开发环境.vhdx",
+                                        "modified_ticks":  639276954050710514,
+                                        "entry":  "parent/clean-base.vhdx",
+                                        "bytes":  62750982144,
+                                        "sha256":  "a52ba8c381818cc17635ee971b8125cdc1e8569e1314a609d70f6439a5010804"
+                                    }
+                                ],
+    "start_stop_calls":  0,
+    "owner_query_or_replay":  0,
+    "unregister_calls":  1,
+    "status":  "SAVED_VM041_COMPLETE_ARCHIVE_SET_VERIFIED_REGISTRATION_RELEASED_ORIGINAL_DISKS_RETAINED",
+    "full_original_state_and_disk_chain_byte_identical":  true,
+    "other_vm_states_disks_checkpoints_unchanged":  true,
+    "historical_unknown_unchanged":  true,
+    "saved_memory_byte_identical":  true,
+    "logical_disk_bytes_deleted":  0
+}

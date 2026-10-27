@@ -1,0 +1,99 @@
+{
+  "status": "PRELAUNCH_PRODUCT_BINDING_VERIFIED_NO_RUNTIME",
+  "preflight330": "Closed exit1 before directory creation or launch due to qualification lock mismatch",
+  "product_runs": 0,
+  "VM_calls": 0,
+  "binding": {
+    "status": "EXACT_PRODUCT_BYTES_WITH_SEPARATE_UNUSED_QUALIFICATION_LOCK_REPAIR",
+    "original_product_input_sha256": "4173c214e07db17b6b82049674f7c1a2399da0339bcbfb2374844a8805b28776",
+    "checkout_inventory_unchanged": false,
+    "changed_paths": [
+      "companions/morrow-codex/qualification/c28-basic-harness/Cargo.lock"
+    ],
+    "repair": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-review-320\\result.json",
+      "bytes": 846,
+      "sha256": "1db14657fc68d251d409f4ab0e804a09fb23234353f971cbc419f16ddd342170"
+    },
+    "selected_manifest": {
+      "path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "bytes": 3805,
+      "sha256": "990353df43f77adde802f613356d717fcca498e681963adeb938b09d9f7033ad"
+    },
+    "selected_workspace_lock": {
+      "path": "C:\\ms1020\\workbench_host\\Cargo.lock",
+      "bytes": 235289,
+      "sha256": "166de8d2106124e37f18a6bd76a7245b0d258fe9907870d5d372b84dcc9211e2"
+    },
+    "compiler_manifest_proof": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-build-305\\cargo.jsonl",
+      "bytes": 992325,
+      "sha256": "66b714f8a88bbe44a670e6e6e78acdd59ba8f7823abc901b9d47659631a0475a"
+    },
+    "compiled_native_and_flutter_source_bytes_unchanged": true,
+    "historical_artifacts_relabelled_as_new_build": false,
+    "new_build": false
+  },
+  "rows": [
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_canonical_full_main_330.py",
+        "bytes": 10452,
+        "sha256": "661b489e9984061c1095dbf8f6999a12d46177166ce00be4774c563372e2c6d7"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_canonical_full_main_330_after_lock_review.py",
+        "bytes": 10618,
+        "sha256": "9098175e66073199ff001455ca182288de51d73386b23e706b39d7b6c2b29222"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_canonical_full_main_330_after_lock_review.py.derivation.diff",
+        "bytes": 3029,
+        "sha256": "f0178f5d2df35809979c9485312d83fb46a6bc899c6086b6e91aaa6170f14c04"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_canonical_full_main_331.py",
+        "bytes": 4797,
+        "sha256": "625aa7a444e393a517c06c172005b9dafc6f03c888cc87dd2b69eea5905f1fe6"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_canonical_full_main_331_after_lock_review.py",
+        "bytes": 4883,
+        "sha256": "f7b516e7ef2d5238af23ccdf77f87c3c3d722e9ad620bd9f64d70322a406600d"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_canonical_full_main_332.py",
+        "bytes": 10456,
+        "sha256": "9ec7552c41476b7cc2990eaf7f32589785db3830e17a57b3d365de1da30fe9a3"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_canonical_full_main_332_after_lock_review.py",
+        "bytes": 10622,
+        "sha256": "441a293e554f46d7cd86a35284a128b0de204f4e01feb6537efe514ccdab1be8"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_canonical_full_main_332_after_lock_review.py.derivation.diff",
+        "bytes": 3035,
+        "sha256": "9684afad7c2cfc798539d6c6df1de7f0c42e5071ae27b1f11499801c59de32db"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_canonical_full_main_333.py",
+        "bytes": 4801,
+        "sha256": "0c882ea9df749ea11a2841af60ecce457e6ef91294e21cee222723bde486b22b"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_canonical_full_main_333_after_lock_review.py",
+        "bytes": 4887,
+        "sha256": "d9805cc2a152c2a0bd051aa7cdad20882abc6612713344e7f4ce7a61e98b7e8f"
+      }
+    }
+  ],
+  "full_SDK_accepted": false,
+  "release_eligible": false
+}

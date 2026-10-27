@@ -1,0 +1,361 @@
+{
+  "status": "PASS_SCOPED_DART_NATIVE_THREE_LANGUAGE_UPLOAD",
+  "utc": "2026-10-27T15:43:50.882708+00:00",
+  "qualification_source": "4cdb680ae2dfd8b3bea5f6a798c2188d7f6bec7122077400a62e76f80ef4e52c",
+  "native_build_source": "657d9e1019e7b89880cecad504c27beab3352f34c0d6e9058bb6d8ff9f11ab4c",
+  "native_source_equivalence": {
+    "previous_source": "657d9e1019e7b89880cecad504c27beab3352f34c0d6e9058bb6d8ff9f11ab4c",
+    "current_source": "4cdb680ae2dfd8b3bea5f6a798c2188d7f6bec7122077400a62e76f80ef4e52c",
+    "only_delta": "controlled test accepts pageVersioned startup and queryVersioned request",
+    "native_and_builtin_sources_unchanged": true
+  },
+  "successful_cases": [
+    {
+      "language": "c",
+      "bytes": 150017,
+      "sha256": "0b817290e9c1f044f993fc7dee690657887c1f86777400c155c8d533e227b29b",
+      "original_workers_joined": 2,
+      "supervised_owners_closed": 2,
+      "actual_Dart_native_exchange": true,
+      "rendered_approval_UI": false
+    },
+    {
+      "language": "c",
+      "bytes": 16777216,
+      "sha256": "22e57c15beae6221c5618a4d5158171cfdba5e66a32cb9165f5887a1d1cfe8e0",
+      "original_workers_joined": 2,
+      "supervised_owners_closed": 2,
+      "actual_Dart_native_exchange": true,
+      "rendered_approval_UI": false
+    },
+    {
+      "language": "cpp",
+      "bytes": 150017,
+      "sha256": "0b817290e9c1f044f993fc7dee690657887c1f86777400c155c8d533e227b29b",
+      "original_workers_joined": 2,
+      "supervised_owners_closed": 2,
+      "actual_Dart_native_exchange": true,
+      "rendered_approval_UI": false
+    },
+    {
+      "language": "cpp",
+      "bytes": 16777216,
+      "sha256": "22e57c15beae6221c5618a4d5158171cfdba5e66a32cb9165f5887a1d1cfe8e0",
+      "original_workers_joined": 2,
+      "supervised_owners_closed": 2,
+      "actual_Dart_native_exchange": true,
+      "rendered_approval_UI": false
+    },
+    {
+      "language": "rust",
+      "bytes": 150017,
+      "sha256": "0b817290e9c1f044f993fc7dee690657887c1f86777400c155c8d533e227b29b",
+      "original_workers_joined": 2,
+      "supervised_owners_closed": 2,
+      "actual_Dart_native_exchange": true,
+      "rendered_approval_UI": false
+    },
+    {
+      "language": "rust",
+      "bytes": 16777216,
+      "sha256": "22e57c15beae6221c5618a4d5158171cfdba5e66a32cb9165f5887a1d1cfe8e0",
+      "original_workers_joined": 2,
+      "supervised_owners_closed": 2,
+      "actual_Dart_native_exchange": true,
+      "rendered_approval_UI": false
+    }
+  ],
+  "synthetic_payload_byte": 42,
+  "original_worker_joins": 12,
+  "supervised_owners_closed": 12,
+  "independent_closed_library_observers": 12,
+  "actual_Dart_native_CapnProto_exchange": true,
+  "production_default_native_features": true,
+  "actual_protected_AuditSession": true,
+  "exact_stored_bytes_and_sha256": true,
+  "sealed_released_history_after_reopen": true,
+  "successful_cross_restart_scope": "Known-success original closure only; not Unknown recovery",
+  "supervisor_business_outcome": "Unknown is preserved in raw supervision records; business stage/release is proved separately by original API and independent protected history",
+  "scheduler_tests": {
+    "passed": 10,
+    "failed": 0
+  },
+  "request_buffer_tests": {
+    "passed": 22,
+    "failed": 0,
+    "source": "414 first suite; second suite failed before fixture correction"
+  },
+  "product_tests": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+  },
+  "static_Dart_analysis": "No issues found",
+  "corrections": [
+    "Upload controls go to the outer scheduler while service business is pending",
+    "Temporary upload request builder segments and serialized frame are cleared on both successful and failed write",
+    "Controlled mock follows existing pageVersioned and queryVersioned APIs"
+  ],
+  "prior_failed_prechecks": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-414\\result.json",
+      "bytes": 3098,
+      "sha256": "acfd1c67b51125b38a2c4d99bbf1c6ad52526a61727434e48af2e9bac7b87cdc"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-415\\result.json",
+      "bytes": 1178,
+      "sha256": "76c09718baa0e96d85b8e202d57247b490786d421c953cdc9fef7ff9ef1e0979"
+    }
+  ],
+  "prior_failures_preserved": true,
+  "programs": {
+    "host": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\programs\\morrow-workbench-host.exe",
+      "bytes": 31143936,
+      "sha256": "93e4d9d5fc2df7199e6ade465cfe67854efddb8262d1983e250a202502f7011d"
+    },
+    "supervisor": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\programs\\morrow-workbench-supervisor.exe",
+      "bytes": 14088192,
+      "sha256": "2e62df37c68036c7f757253401a3b83bb093cbf2362c56baff033ca31c96fd25"
+    },
+    "packager": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\programs\\package.exe",
+      "bytes": 3177984,
+      "sha256": "e88df53921cb6280f4a89790e39825c0750827a7f893a7eada8869b391b8ab08"
+    },
+    "upload-packager": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\programs\\package_blob_upload_fixture.exe",
+      "bytes": 3208704,
+      "sha256": "421e468eb7bc20bea5dfa371985f8462fde9a303596f3f4f0654062d87e92711"
+    },
+    "history-observer": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\programs\\check_blob_upload_fixture.exe",
+      "bytes": 4681216,
+      "sha256": "898fee6335a37ccf89a6ad2a1b943f53b0e9d9ea9b8ae217ea7adae13ccce06e"
+    }
+  },
+  "guest_pins": [
+    {
+      "path": "D:\\build_cache\\upload-guests393\\rust_upload.wasm",
+      "bytes": 349796,
+      "sha256": "f12a3522c9196541b2dea6d8c6832009812ce35d6554cfa8ead405761568c240"
+    },
+    {
+      "path": "D:\\build_cache\\upload-guests393\\c_upload.wasm",
+      "bytes": 144153,
+      "sha256": "5a0692600e65cafad245d876db7a709213670bc4c7403952546be5f9d2452b7c"
+    },
+    {
+      "path": "D:\\build_cache\\upload-guests393\\cpp_upload.wasm",
+      "bytes": 144570,
+      "sha256": "c567f658d3dc7a9b87f8c24ac96f37afc133f3ee1f629a8e7a46276cf47d1169"
+    }
+  ],
+  "qualification": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\result.json",
+    "bytes": 4898,
+    "sha256": "697005d39d26fdbf86211c143774866703bc97568ff3557e3d3f795ff13e7786"
+  },
+  "closure_and_history_evidence": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-150017\\stage-open.json",
+      "bytes": 888,
+      "sha256": "3751f9a7bf138cdcbe72c47f6094037f9d811437e93d1c9ad6bd3b0b7c7f5ad1"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-150017\\stage-closed.json",
+      "bytes": 909,
+      "sha256": "5cfa774e59ce8ae953c174be7d37c5d3d60526b0766453c68ee5e76cb2be0644"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-150017\\release-open.json",
+      "bytes": 888,
+      "sha256": "f5887d9499977fba97f721392d2fca2a49b4947d9336caf21299240a7bbe8a39"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-150017\\release-closed.json",
+      "bytes": 909,
+      "sha256": "0bda4311c51fddf83ffef013548aeb5aff3140a5dc2aaad1637f6e5650defe24"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-150017\\staged-history.json",
+      "bytes": 114,
+      "sha256": "f3b73cabade4399f1af48501e005d903b62df46c35f4e67f00a7554234397c98"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-150017\\released-history.json",
+      "bytes": 113,
+      "sha256": "59023d44962d6f6a607f0bfeca96a21b035c29115aa95671b8b7b819bb954979"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-16777216\\stage-open.json",
+      "bytes": 888,
+      "sha256": "fc69c9fc63edaca7aa18ba80d33e8b793d90cea19f7bcb00320f2e03e28a817b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-16777216\\stage-closed.json",
+      "bytes": 909,
+      "sha256": "f3848bb0324c48ead2cc1ca20a03b3469d11b22d9c8c05cf27fc745fa626d793"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-16777216\\release-open.json",
+      "bytes": 887,
+      "sha256": "50e50d071aa7e6017f953bfb0c6f278dd8deb805fad26315bd49a984191add31"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-16777216\\release-closed.json",
+      "bytes": 908,
+      "sha256": "4aca95a3fcc2ce9a47a320f656fe1744342f430800b6e9fc4bccd8da348aef8d"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-16777216\\staged-history.json",
+      "bytes": 116,
+      "sha256": "f341fc112aff3ba3c407f6f9346cb3ac19f50df9f0cb1da8883aa931a62f26a0"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\c-16777216\\released-history.json",
+      "bytes": 115,
+      "sha256": "58b2c4e9161079522b7c6438d3abf5ef8f52c22a2086aca638ea91c8a92693f4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-150017\\stage-open.json",
+      "bytes": 888,
+      "sha256": "0e892a7035c0a7dc9e73e20b0ef6dbafbc05a96626feb9082de1e6c5d4ce08ac"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-150017\\stage-closed.json",
+      "bytes": 909,
+      "sha256": "676a5024c8a48d23a9dcab437cc9e0cc72301627de261e222029fecf9e6fb7c6"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-150017\\release-open.json",
+      "bytes": 888,
+      "sha256": "6df513f0c12e7b9da2021d3e3adab83b07575929810bed0cd3bd549a455ca067"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-150017\\release-closed.json",
+      "bytes": 909,
+      "sha256": "21074add117d3c7b7c5cafef844c03b10f6c21abfcaa7f68d27dc38a4d607e34"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-150017\\staged-history.json",
+      "bytes": 114,
+      "sha256": "f3b73cabade4399f1af48501e005d903b62df46c35f4e67f00a7554234397c98"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-150017\\released-history.json",
+      "bytes": 113,
+      "sha256": "59023d44962d6f6a607f0bfeca96a21b035c29115aa95671b8b7b819bb954979"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-16777216\\stage-open.json",
+      "bytes": 888,
+      "sha256": "d223e33878c168ab03e89f3973dc1336ea723737cbbbcdaa172d59f120d639fd"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-16777216\\stage-closed.json",
+      "bytes": 909,
+      "sha256": "6c774c45cfd3725219afaa43a3803c3b3aee5a7a8897100fd2ecb3b6b50bcf8b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-16777216\\release-open.json",
+      "bytes": 887,
+      "sha256": "09565199a81f25e7cb80a72f358e497182bed0b739b0e0edda42d2e0f365801f"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-16777216\\release-closed.json",
+      "bytes": 908,
+      "sha256": "3664f4420a7d052f5d8b89f4fbb40a9da69b16fbb6868c33f42c278972cc1791"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-16777216\\staged-history.json",
+      "bytes": 116,
+      "sha256": "f341fc112aff3ba3c407f6f9346cb3ac19f50df9f0cb1da8883aa931a62f26a0"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\cpp-16777216\\released-history.json",
+      "bytes": 115,
+      "sha256": "58b2c4e9161079522b7c6438d3abf5ef8f52c22a2086aca638ea91c8a92693f4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-150017\\stage-open.json",
+      "bytes": 888,
+      "sha256": "ff6bcce01ac561ab392ca7853722689f0f5203f4c5e2db31bc5e45269438c425"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-150017\\stage-closed.json",
+      "bytes": 909,
+      "sha256": "89bdac4bebde874da347540883bf47eda1e8f10baa83cfbb1d69580d8dec69ae"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-150017\\release-open.json",
+      "bytes": 888,
+      "sha256": "774a8b7e8c5a20f3ce4ae7f31fb93fd0a91b4f5c8ab8ee1578aefb1214277b88"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-150017\\release-closed.json",
+      "bytes": 909,
+      "sha256": "5e670afcb97a48e46b250d2a1466c84a656273a563b54035009b2a0e00325087"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-150017\\staged-history.json",
+      "bytes": 114,
+      "sha256": "f3b73cabade4399f1af48501e005d903b62df46c35f4e67f00a7554234397c98"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-150017\\released-history.json",
+      "bytes": 113,
+      "sha256": "59023d44962d6f6a607f0bfeca96a21b035c29115aa95671b8b7b819bb954979"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-16777216\\stage-open.json",
+      "bytes": 887,
+      "sha256": "cf6fb0ea73e575fac033133298cc667a18000a356a69b44a221c160e3af71101"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-16777216\\stage-closed.json",
+      "bytes": 908,
+      "sha256": "4ca554b5492b811d39370e922113c64dbe7e758b4eefbf080f1a8d86d5a6c3b5"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-16777216\\release-open.json",
+      "bytes": 888,
+      "sha256": "c0ba6386d8275bfd2d38d7835d5207b4a8f7b13ab546756f864770e75469bec4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-16777216\\release-closed.json",
+      "bytes": 909,
+      "sha256": "9a503ff50c7bb8f21a0c3d9c964509f40fed5a93971052e52f32d18e2970f63d"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-16777216\\staged-history.json",
+      "bytes": 116,
+      "sha256": "f341fc112aff3ba3c407f6f9346cb3ac19f50df9f0cb1da8883aa931a62f26a0"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-product-416\\stores\\rust-16777216\\released-history.json",
+      "bytes": 115,
+      "sha256": "58b2c4e9161079522b7c6438d3abf5ef8f52c22a2086aca638ea91c8a92693f4"
+    }
+  ],
+  "frozen_inputs_verified": 57,
+  "all_recent_original_product_owners_closed": true,
+  "cache_root": "D:/build_cache",
+  "registered_VMs": 4,
+  "VM_calls": 0,
+  "host_policy_changes": 0,
+  "historical_unknown_owner_contacts": 0,
+  "rendered_approval_UI": false,
+  "rendered_recovery_UI": false,
+  "cross_restart_Unknown_recovery": false,
+  "arbitrary_file_or_network_uploads": false,
+  "watch_rename": false,
+  "full_P2_accepted": false,
+  "full_P3_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "remote_publication": false
+}

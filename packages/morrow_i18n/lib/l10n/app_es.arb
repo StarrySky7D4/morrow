@@ -1521,6 +1521,8 @@
   "pluginsDirectoryIntro": "Solo se comparten nombres y metadatos de las entradas directas de la carpeta elegida. No se leen archivos ni el contenido de subcarpetas.",
   "pluginsDirectoryLimit": "Límite de entradas (hasta 1024)",
   "pluginsDirectoryMetadataLimit": "Límite de metadatos (bytes, hasta 1 MiB)",
+  "pluginsDirectoryNativePickerIntro": "Al elegir una carpeta se ejecuta el complemento. El plazo incluye la selección; salir de esta vista cancela la tarea pendiente.",
+  "pluginsDirectoryNativePickerStart": "Elegir carpeta y ejecutar el complemento",
   "pluginsDirectorySelectHandler": "Elegir un complemento de carpeta autorizado",
   "pluginsDirectoryStart": "Leer carpeta y ejecutar complemento",
   "pluginsDirectoryTitle": "Contenido de la carpeta",

@@ -1,0 +1,49 @@
+{
+  "status": "ISOLATED_CANDIDATE_PATCHED_NOT_COMPILED_OR_ACCEPTED",
+  "changes": [
+    {
+      "path": "workbench_host/src/directory_tasks.rs",
+      "before": "e5edb8d4acb269d54f0e2267f392c34f45a4aa214837416dd6b5d18a8c046ec2",
+      "after": "868d182297a6734f34fd9956869dcdd3e8dad71d4ef524ead30bc3fd2e31e476",
+      "diff": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-cancel-repair-244\\patches\\workbench_host__src__directory_tasks.rs.diff"
+    },
+    {
+      "path": "workbench_host/src/directory_task_protocol.rs",
+      "before": "fca1d828a96fd9dc0960517ff20cdb2b5fe5a66fb6a80f5a7cb9b96f9a0a4d3f",
+      "after": "1a4aae2e010bd8f51a9ad806cd2102c739f9477d6f729b5b5624045af2f07000",
+      "diff": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-cancel-repair-244\\patches\\workbench_host__src__directory_task_protocol.rs.diff"
+    },
+    {
+      "path": "workbench_host/schemas/host.capnp",
+      "before": "ebf7f1a7b61ca0724a87fbb544090d6455a497bac796ad0ae3d4780163bf88e7",
+      "after": "19963a7e628aed6a42fb8b5a83612100feb96570c8863a2de3c2153cc9eefd51",
+      "diff": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-cancel-repair-244\\patches\\workbench_host__schemas__host.capnp.diff"
+    },
+    {
+      "path": "lib/plugins/directory_task_models.dart",
+      "before": "67d5bbf786716972ec01e8ca149bbce13a1424af5039f64dd71ac2f32f84cc42",
+      "after": "fd75cd976df3ab9a659e0c3fa72f83435dfd58390ec91b4e7dde44ed2791713e",
+      "diff": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-cancel-repair-244\\patches\\lib__plugins__directory_task_models.dart.diff"
+    },
+    {
+      "path": "lib/plugins/directory_task_native.dart",
+      "before": "2290bb2268ac69682da384421d0796c7e33b58cb2c8ccaf8436b88674caf43d7",
+      "after": "f7b62bf2a7cabdd4f5d284bbc25f5a6e4bad013dab7b2052f151135816c0ddd6",
+      "diff": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-cancel-repair-244\\patches\\lib__plugins__directory_task_native.dart.diff"
+    },
+    {
+      "path": "lib/plugins/directory_task_session.dart",
+      "before": "a634bf3582b67c3e0896947aa7fe74dbb1aee9e50eddfe0460dec0a65f4184c0",
+      "after": "c34c29114463acf0fe524f0009d0981268fca02b6b8f6c24218b2b4d858bfae2",
+      "diff": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-cancel-repair-244\\patches\\lib__plugins__directory_task_session.dart.diff"
+    }
+  ],
+  "protocol": "PRIVATE_CAPNP_ADDITIVE_KIND4_COMMAND_FAULT_FIELD8",
+  "prior_candidate_unchanged": true,
+  "canonical_edits": 0,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false,
+  "unknown_delivery_not_reclassified": true,
+  "worker_join_not_inferred": true
+}

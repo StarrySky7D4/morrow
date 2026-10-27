@@ -82,7 +82,30 @@ fn save_metadata(connection: &Connection, info: &BlobInfo) -> Result<()> {
     Ok(())
 }
 fn retained(connection: &Connection, id: &str) -> Result<bool> {
-    sql(connection.query_row("SELECT EXISTS(SELECT 1 FROM card_blobs WHERE blob_id=?1) OR EXISTS(SELECT 1 FROM event_blobs WHERE blob_id=?1) OR EXISTS(SELECT 1 FROM retentions WHERE blob_id=?1)", [id], |r| r.get(0)))
+    let existing:bool=sql(connection.query_row("SELECT EXISTS(SELECT 1 FROM card_blobs WHERE blob_id=?1) OR EXISTS(SELECT 1 FROM event_blobs WHERE blob_id=?1) OR EXISTS(SELECT 1 FROM retentions WHERE blob_id=?1)", [id], |r| r.get(0)))?;
+    Ok(existing || super::blob_stage::retains(connection, id)?)
+}
+pub(super) fn verify_staged(c: &Connection, expected: &BlobInfo) -> Result<()> {
+    let (row, value) = info(c, &expected.id).map_err(|e| {
+        if e == Error::NotFound {
+            Error::Integrity
+        } else {
+            e
+        }
+    })?;
+    if &value != expected || value.retired_at_unix_ms.is_some() {
+        return Err(Error::Integrity);
+    }
+    stream(c, row, &value, &mut std::io::sink())
+}
+pub(super) fn retire_stage_if_unreferenced(c: &Connection, id: &str, now: i64) -> Result<()> {
+    advance_clock(c, now)?;
+    let (_, mut value) = info(c, id)?;
+    if !retained(c, id)? {
+        value.retired_at_unix_ms = Some(now);
+        save_metadata(c, &value)?;
+    }
+    Ok(())
 }
 fn verify_chunk(connection: &Connection, id: &str, offset: usize, bytes: &[u8]) -> Result<()> {
     let mut statement =
@@ -180,6 +203,12 @@ fn retained_snapshot(connection: &Connection, owner: &str) -> Result<Option<Blob
     Ok(Some(value))
 }
 
+enum StageRetention<'a> {
+    None,
+    Snapshot(&'a str),
+    Operation(&'a crate::blob_stage::Command),
+}
+
 impl Store {
     /// Host-owned reader; the exact staged bytes, length and hash become immutable.
     /// Ready stages stay protected until referenced or explicitly retired, not merely timed out.
@@ -190,7 +219,14 @@ impl Store {
         expected: Option<[u8; 32]>,
         now_unix_ms: i64,
     ) -> Result<BlobInfo> {
-        self.stage_blob_inner(reader, byte_length, expected, None, now_unix_ms)
+        self.stage_blob_inner(
+            reader,
+            byte_length,
+            expected,
+            StageRetention::None,
+            now_unix_ms,
+            || Ok(()),
+        )
     }
     /// Atomically stage exact bytes and pin them to one releasable Snapshot
     /// owner. A matching owner retry returns the original verified blob without
@@ -208,8 +244,43 @@ impl Store {
             reader,
             byte_length,
             Some(expected),
-            Some(owner),
+            StageRetention::Snapshot(owner),
             now_unix_ms,
+            || Ok(()),
+        )
+    }
+    /// Atomically stage exact bytes and an immutable operation receipt. The same
+    /// completed command returns the original verified blob without reading a
+    /// replacement reader. A released operation never stages again. This local
+    /// storage primitive is not a guest upload capability or a content commit.
+    pub fn stage_blob_operation_local(
+        &mut self,
+        reader: &mut impl Read,
+        command: &crate::blob_stage::Command,
+        now: i64,
+    ) -> Result<BlobInfo> {
+        self.stage_blob_operation_local_authorized(reader, command, now, || Ok(()))
+    }
+    /// Additional live checks before access, during bounded reads and immediately
+    /// before committing bytes and receipt together. This callback only restricts
+    /// the trusted caller's original authority; it must not re-enter a Store or
+    /// perform effects. A pre-commit error or panic rolls back. CommitUnknown and
+    /// later delivery loss never imply rollback or permission to retry.
+    pub fn stage_blob_operation_local_authorized(
+        &mut self,
+        reader: &mut impl Read,
+        command: &crate::blob_stage::Command,
+        now: i64,
+        authorize: impl FnMut() -> Result<()>,
+    ) -> Result<BlobInfo> {
+        command.validate()?;
+        self.stage_blob_inner(
+            reader,
+            command.byte_length,
+            Some(command.sha256),
+            StageRetention::Operation(command),
+            now,
+            authorize,
         )
     }
     fn stage_blob_inner(
@@ -217,23 +288,41 @@ impl Store {
         reader: &mut impl Read,
         byte_length: u64,
         expected: Option<[u8; 32]>,
-        owner: Option<&str>,
+        retention: StageRetention<'_>,
         now_unix_ms: i64,
+        mut authorize: impl FnMut() -> Result<()>,
     ) -> Result<BlobInfo> {
+        let (owner, operation) = match retention {
+            StageRetention::None => (None, None),
+            StageRetention::Snapshot(owner) => (Some(owner), None),
+            StageRetention::Operation(command) => (None, Some(command)),
+        };
         if byte_length > attachment::MAX_BLOB_BYTES {
             return Err(Error::Limit);
         }
+        authorize()?;
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        if let Some(owner) = owner {
-            if let Some(existing) = retained_snapshot(&tx, owner)? {
-                if existing.byte_length != byte_length || Some(existing.sha256) != expected {
+        if let Some(command) = operation {
+            if let Some(record) = super::blob_stage::matching(&tx, command)? {
+                authorize()?;
+                if record.is_released() {
                     return Err(Error::OperationConflict);
                 }
-                // An exact retry is read-only, including its clock state.
-                return Ok(existing);
+                return Ok(record.blob().clone());
             }
+            super::blob_stage::reserve(&tx, self.budget)?;
+        }
+        if let Some(owner) = owner
+            && let Some(existing) = retained_snapshot(&tx, owner)?
+        {
+            if existing.byte_length != byte_length || Some(existing.sha256) != expected {
+                return Err(Error::OperationConflict);
+            }
+            // An exact retry is read-only, including its clock state.
+            authorize()?;
+            return Ok(existing);
         }
         advance_clock(&tx, now_unix_ms)?;
         let (count, total): (i64, i64) = sql(tx.query_row(
@@ -256,10 +345,12 @@ impl Store {
         let mut offset = 0;
         let mut hash = Sha256::new();
         while offset < byte_length as usize {
+            authorize()?;
             let length = CHUNK.min(byte_length as usize - offset);
             reader
                 .read_exact(&mut buffer[..length])
                 .map_err(|_| Error::Io)?;
+            authorize()?;
             sql(handle.write_at(&buffer[..length], offset))?;
             hash.update(&buffer[..length]);
             boundary("stage-after-payload");
@@ -276,6 +367,7 @@ impl Store {
         }
         let mut extra = [0; 1];
         loop {
+            authorize()?;
             match reader.read(&mut extra) {
                 Ok(0) => break,
                 Ok(_) => return Err(Error::Invalid("source length changed")),
@@ -325,8 +417,16 @@ impl Store {
             boundary("stage-retained-before-commit");
         }
         boundary("stage-before-commit");
+        if let Some(command) = operation {
+            super::blob_stage::staged(&tx, command, value.clone(), now_unix_ms)?;
+            boundary("blob-stage-before-commit");
+        }
+        authorize()?;
         tx.commit().map_err(|_| Error::CommitUnknown)?;
         boundary("stage-after-commit");
+        if operation.is_some() {
+            boundary("blob-stage-after-commit");
+        }
         Ok(value)
     }
     /// Read one exact Snapshot owner; corrupted metadata, duplicate ownership

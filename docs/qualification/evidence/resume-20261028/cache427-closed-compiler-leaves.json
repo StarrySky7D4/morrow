@@ -1,0 +1,27 @@
+{
+  "source_files_deleted": 0,
+  "free_bytes_after": 18353905664,
+  "logical_bytes": 995108453,
+  "cache_locks_held": 4,
+  "protected_hashes_verified": 3664,
+  "executables_deleted": 0,
+  "VM_calls": 0,
+  "observed_free_delta_bytes": 996626432,
+  "files": 824,
+  "unknown_owner_contacts": 0,
+  "status": "PASS_CLOSED_REGENERABLE_CACHE_RECLAIMED",
+  "utc": "2026-10-27T16:44:05.551127+00:00",
+  "audit_result": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-cache-427\\result.json",
+    "bytes": 359,
+    "sha256": "e6e025db262907662580fb923713470561377102e1533fcedf0efa2cb947d162"
+  },
+  "candidate_manifest": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-cache-427\\plan.json",
+    "bytes": 1301487,
+    "sha256": "0deae0eb980fb14648a804c3605eb016c53b638abd73a9ae278f83b1fc41cea7"
+  },
+  "registered_VMs": 4,
+  "plan_preview_sum_was_null": true,
+  "executed_manifest_sum_verified": 995108453
+}

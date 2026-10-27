@@ -1,0 +1,18 @@
+{
+  "disk_bytes": 34387001344,
+  "nine_gate_review": "PENDING",
+  "vm_id": "4072a8d9-2f4f-4d02-98ee-ad436dd3342e",
+  "runtime_state_path": "C:\\MorrowQA\\windows-acceptance-20261027-045\\vm\\Morrow Windows Acceptance 20261027 045\\Virtual Machines\\4072A8D9-2F4F-4D02-98EE-AD436DD3342E.VMRS",
+  "stop_vm_calls": 0,
+  "automatic_resume": false,
+  "release_eligible": false,
+  "other_vms_unchanged": true,
+  "guest_owner_contacts": 0,
+  "original47_returned": true,
+  "disk": "C:\\MorrowQA\\windows-acceptance-20261027-045\\acceptance.vhdx",
+  "status": "TASK_VM_SAVED_MEMORY_AND_DISK_RETAINED",
+  "source_accepted": false,
+  "registered_vms": 4,
+  "state": "Saved",
+  "runtime_state_bytes": 1847685120
+}

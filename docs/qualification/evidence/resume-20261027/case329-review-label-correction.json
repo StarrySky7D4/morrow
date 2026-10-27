@@ -1,0 +1,95 @@
+{
+  "status": "DISPLAY_LABEL_CORRECTION_ORIGINAL_REVIEW_RETAINED",
+  "original_review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case329-nine-review\\result.json",
+    "bytes": 25794,
+    "sha256": "38c5ee216bb6dfd55dd407266b2d6e4b57dff23c2bc107f8631220072a3a7a94"
+  },
+  "original_reviewer": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_case329_nine.py",
+    "bytes": 25193,
+    "sha256": "618854e1e43179b809a8bc6a21450eae10512c7208e414edc9adcc25607c3495"
+  },
+  "original_case_tag": "52e261492e474b27a2b32dd7c3848b21",
+  "original_execution_label": "ACTUAL_ORIGINAL_CASE243",
+  "corrected_execution_label": "ACTUAL_ORIGINAL_CASE329",
+  "reason": "The mechanical derivation adapted paths, tag and source but retained one uppercase display literal. All original assertions consumed case329 evidence; no case243 runtime evidence was substituted.",
+  "groups": [
+    {
+      "review_index": 1,
+      "requirement": "startup/provenance/security/handshake",
+      "execution": "ACTUAL_ORIGINAL_CASE329",
+      "qualification": "PASS_SCOPED_ORIGINAL_REQUIRED_GROUP",
+      "evidence": "journal[88,92] + original source-enforced A1 construction and sealed v8 completion",
+      "boundary": "Original A1 login, security readback and startup enforcement are bound by the exact executed source and success-only opaque completion path. Raw individual startup API values are not separately claimed as serialized observations."
+    },
+    {
+      "review_index": 2,
+      "requirement": "sealed-basic files",
+      "execution": "ACTUAL_ORIGINAL_CASE329",
+      "qualification": "PASS_SCOPED_ORIGINAL_REQUIRED_GROUP",
+      "evidence": "journal[24,90,92]",
+      "boundary": "Fresh sentinels, actual workspace write and outside PermissionDenied, terminal output hashes and EOF."
+    },
+    {
+      "review_index": 3,
+      "requirement": "sealed-basic identity",
+      "execution": "ACTUAL_ORIGINAL_CASE329",
+      "qualification": "PASS_SCOPED_ORIGINAL_REQUIRED_GROUP",
+      "evidence": "journal[90,104]",
+      "boundary": "Actual business child primary token: exact owned offline SID, restricted and not elevated; this is evidence, not an authority input."
+    },
+    {
+      "review_index": 4,
+      "requirement": "sealed-basic network",
+      "execution": "ACTUAL_ORIGINAL_CASE329",
+      "qualification": "PASS_SCOPED_ORIGINAL_REQUIRED_GROUP",
+      "evidence": "journal[24,90]",
+      "boundary": "Owned loopback positive controls before and after plus explicit WSA10013 denial. Complete network isolation remains unqualified."
+    },
+    {
+      "review_index": 5,
+      "requirement": "original native/IO/worker closure",
+      "execution": "ACTUAL_ORIGINAL_CASE329",
+      "qualification": "PASS_SCOPED_ORIGINAL_REQUIRED_GROUP",
+      "evidence": "journal[92,97]",
+      "boundary": "Same original runner PID/creation/raw DWORD, actual worker joins/physical EOF and consume-only NativeHostCompletion. Legacy serialize-only NOT_PROVEN projection remains unchanged."
+    },
+    {
+      "review_index": 6,
+      "requirement": "descendant/input/keeper",
+      "execution": "ACTUAL_ORIGINAL_CASE329",
+      "qualification": "PASS_SCOPED_ORIGINAL_REQUIRED_GROUP",
+      "evidence": "journal[92,97] + source-bound native completion",
+      "boundary": "Sealed completion requires original Job/input/forwarder retirement; original invocation-owned desktop closes in take_native_host_completion. No external descendant adoption is inferred."
+    },
+    {
+      "review_index": 7,
+      "requirement": "quota/registry/authenticated closeACK",
+      "execution": "ACTUAL_ORIGINAL_CASE329",
+      "qualification": "PASS_SCOPED_ORIGINAL_REQUIRED_GROUP",
+      "evidence": "journal[92,97]",
+      "boundary": "Authenticated original terminal close ACK, timely actual SDK monitor join, original slot and durable facts retirement. Scope is this invocation; no global registry reset or >16 refusal qualification."
+    },
+    {
+      "review_index": 8,
+      "requirement": "owner/factory",
+      "execution": "ACTUAL_ORIGINAL_CASE329",
+      "qualification": "PASS_SCOPED_ORIGINAL_REQUIRED_GROUP",
+      "evidence": "journal[92,94,97] + source-bound factory/owner receipt consumption",
+      "boundary": "Actual task ACK, synchronous original runtime shutdown, captured scheduler native waits/closes, same protected owner finish and original factory identity."
+    },
+    {
+      "review_index": 9,
+      "requirement": "owned setup/P/ROOT outer closure",
+      "execution": "ACTUAL_ORIGINAL_CASE329",
+      "qualification": "PASS_SCOPED_ORIGINAL_REQUIRED_GROUP",
+      "evidence": "journal[100,103,104,106], original_helper, terminal.case_original.capture, policy_original, closed_sessions",
+      "boundary": "Owned setup and WFP retirement, C source-enforced origin closure; exact P source requires original C/thread DWORD0, Job active0/terminated0 and checked aliases/PI/Job close before exit0. ROOT independently proves P/controller native exit and EOF/joins/disposal/transports. Managed joins do not claim native TLS destructor evidence."
+    }
+  ],
+  "original_evidence_rewritten": false,
+  "checks_changed": false,
+  "VM_calls": 0,
+  "first_review_attempt": "Host-only review before required Saved-state receipt existed; no result written. Original reviewer rerun after Save-VM, no guest case replay."
+}

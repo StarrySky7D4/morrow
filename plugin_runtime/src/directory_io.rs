@@ -13,12 +13,18 @@ use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs::File,
+    sync::Arc,
 };
 use zeroize::Zeroizing;
 
 // Only the private OS query module may use unsafe. No guest memory reaches it.
 #[allow(unsafe_code)]
 mod native_windows;
+#[allow(unsafe_code)]
+pub(crate) mod native_picker;
+pub(crate) mod retirement;
+pub use retirement::DirectoryRetirementSnapshot;
+use retirement::{Ledger, TrackedFile};
 mod selected_path;
 mod selection;
 pub(crate) mod selection_path;
@@ -34,8 +40,8 @@ const ROOT_QUERY_BYTES: u64 = 32; // FILE_ATTRIBUTE_TAG_INFO + FILE_ID_INFO
 const VOLUME_ROOT_OPEN_BYTES: u64 = 512;
 
 enum CaptureRoot {
-    Open(File),
-    Volume(u8),
+    Open(TrackedFile),
+    Volume(u8, Arc<Ledger>),
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -48,6 +54,10 @@ pub enum Error {
     SourceChanged,
     InvalidCursor,
     Cancelled,
+    /// The original native retirement result is unknown; capacity stays held.
+    NativeCloseUnknown,
+    /// Native picker could not complete; no selected observation is delivered.
+    NativePickerUnavailable,
     /// System entropy failed, yielded all zero, or private derivation failed.
     /// No underlying error, partial random bytes or secret are disclosed.
     Entropy,
@@ -149,9 +159,9 @@ impl SelectedDirectory {
 
 struct Observation {
     // Actual objects close before concurrent resource capacity is released.
-    root: File,
+    root: TrackedFile,
     ancestors: selection::Ancestors,
-    lease: IoResourceLease,
+    lease: Arc<IoResourceLease>,
     identity: [u8; 24],
     epoch: [u8; 32],
     entries: Vec<DirectoryEntry>,
@@ -165,6 +175,7 @@ pub struct DirectoryBroker {
     secret: Zeroizing<[u8; 32]>,
     sequence: u64,
     observations: BTreeMap<[u8; 32], Observation>,
+    retirements: Vec<Arc<Ledger>>,
 }
 impl DirectoryBroker {
     /// Legacy trusted-host constructor. The caller owns freshness and any
@@ -179,12 +190,16 @@ impl DirectoryBroker {
             secret,
             sequence: 0,
             observations: BTreeMap::new(),
+            retirements: Vec::new(),
         }
     }
     /// Diagnostic resident capacity, never proof of join or live authority.
     pub fn usage(&self) -> (usize, u64) {
         (
-            self.observations.len(),
+            self.retirements
+                .iter()
+                .filter(|ledger| !ledger.snapshot().all_closed())
+                .count(),
             self.observations.values().map(|o| o.metadata_bytes).sum(),
         )
     }
@@ -209,7 +224,20 @@ impl DirectoryBroker {
     }
     pub(crate) fn release_reclaimed(&mut self, plan: ReclaimPlan) {
         for reference in plan.references.into_iter().flatten() {
-            self.observations.remove(&reference);
+            let _ = self.retire_observation(&reference);
+        }
+    }
+    fn retire_observation(&mut self, reference: &[u8; 32]) -> Result<(), Error> {
+        drop(self.observations.remove(reference));
+        self.retirements.retain(|ledger| !ledger.settle());
+        if self
+            .retirements
+            .iter()
+            .any(|ledger| ledger.snapshot().unknown != 0)
+        {
+            Err(Error::NativeCloseUnknown)
+        } else {
+            Ok(())
         }
     }
     fn token(&self, domain: &[u8], next: u64, identity: &[u8; 24]) -> [u8; 32] {
@@ -299,7 +327,7 @@ impl DirectoryBroker {
             host,
             instance,
             binding,
-            CaptureRoot::Open(root),
+            CaptureRoot::Open(Ledger::new().track(root)),
             None,
             limits,
             clock,
@@ -329,7 +357,7 @@ impl DirectoryBroker {
             host,
             instance,
             binding,
-            CaptureRoot::Open(anchor),
+            CaptureRoot::Open(Ledger::new().track(anchor)),
             Some(relative),
             limits,
             clock,
@@ -353,13 +381,65 @@ impl DirectoryBroker {
         clock: &mut impl DirectoryClock,
         cancelled: impl FnMut() -> bool,
     ) -> Result<SelectedDirectory, Error> {
+        self.grant_selected_with_retirement(
+            manager,
+            host,
+            instance,
+            binding,
+            selected,
+            limits,
+            clock,
+            cancelled,
+            Ledger::new(),
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn grant_selected_with_retirement(
+        &mut self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        selected: DirectoryAbsolutePath,
+        limits: CaptureLimits,
+        clock: &mut impl DirectoryClock,
+        cancelled: impl FnMut() -> bool,
+        ledger: Arc<Ledger>,
+    ) -> Result<SelectedDirectory, Error> {
         let (drive, relative) = selected.into_parts();
         self.grant_source(
             manager,
             host,
             instance,
             binding,
-            CaptureRoot::Volume(drive),
+            CaptureRoot::Volume(drive, ledger),
+            relative,
+            limits,
+            clock,
+            cancelled,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn grant_tracked_directory(
+        &mut self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        root: TrackedFile,
+        relative: Option<DirectoryRelativePath>,
+        limits: CaptureLimits,
+        clock: &mut impl DirectoryClock,
+        cancelled: impl FnMut() -> bool,
+    ) -> Result<SelectedDirectory, Error> {
+        self.grant_source(
+            manager,
+            host,
+            instance,
+            binding,
+            CaptureRoot::Open(root),
             relative,
             limits,
             clock,
@@ -378,7 +458,41 @@ impl DirectoryBroker {
         relative: Option<DirectoryRelativePath>,
         limits: CaptureLimits,
         clock: &mut impl DirectoryClock,
+        cancelled: impl FnMut() -> bool,
+    ) -> Result<SelectedDirectory, Error> {
+        let ledger = match &root {
+            CaptureRoot::Open(file) => file.ledger(),
+            CaptureRoot::Volume(_, ledger) => Arc::clone(ledger),
+        };
+        ledger.bind_worker();
+        self.retirements.retain(|old| !old.settle());
+        // Install ownership before any admission, query, callback, or unwind.
+        self.retirements.push(Arc::clone(&ledger));
+        let result = self.grant_source_inner(
+            manager, host, instance, binding, root, relative, limits, clock, cancelled, &ledger,
+        );
+        ledger.settle();
+        self.retirements.retain(|old| !old.snapshot().all_closed());
+        if ledger.snapshot().unknown != 0 {
+            Err(Error::NativeCloseUnknown)
+        } else {
+            result
+        }
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn grant_source_inner(
+        &mut self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        root: CaptureRoot,
+        relative: Option<DirectoryRelativePath>,
+        limits: CaptureLimits,
+        clock: &mut impl DirectoryClock,
         mut cancelled: impl FnMut() -> bool,
+        ledger: &Arc<Ledger>,
     ) -> Result<SelectedDirectory, Error> {
         let limits = limits.validate()?;
         let plan = clock.with(|now| {
@@ -386,6 +500,13 @@ impl DirectoryBroker {
             Ok(self.reclaimable_at(now))
         })?;
         self.release_reclaimed(plan);
+        if self
+            .retirements
+            .iter()
+            .any(|old| old.snapshot().unknown != 0)
+        {
+            return Err(Error::NativeCloseUnknown);
+        }
         if self.observations.len() >= MAX_SELECTIONS {
             return Err(Error::Limit);
         }
@@ -397,6 +518,7 @@ impl DirectoryBroker {
                 .admit_resource(manager, host, instance, &[IoCapability::FileList], now)
                 .map_err(Error::from)
         })?;
+        let lease = ledger.retain_lease(lease);
         // This local must be declared after the leaf lease: failed job
         // admission or unwind closes the owned anchor before releasing quota.
         let root = root;
@@ -407,14 +529,15 @@ impl DirectoryBroker {
         })?;
         let root = match root {
             CaptureRoot::Open(root) => root,
-            CaptureRoot::Volume(drive) => {
+            CaptureRoot::Volume(drive, _) => {
                 clock.with(|now| {
                     lease.check(manager, host, instance, now)?;
                     job.charge(&[IoCapability::FileList], VOLUME_ROOT_OPEN_BYTES, now)?;
                     Ok(())
                 })?;
                 cancellation_veto(&mut cancelled)?;
-                let root = native_windows::open_volume_root(drive)?;
+                let root = ledger.track(native_windows::open_volume_root(drive)?);
+                root.with(native_windows::verify_volume_root)?;
                 cancellation_veto(&mut cancelled)?;
                 clock.with(|now| {
                     lease
@@ -456,7 +579,7 @@ impl DirectoryBroker {
                     .map_err(Error::from)
             })
         })?;
-        let identity = native_windows::identity(&root)?;
+        let identity = root.with(native_windows::identity)?;
         cancellation_veto(&mut cancelled)?;
         clock.with(check)?;
         let epoch = self.token(b"morrow.fs-directory.epoch.v1", next, &identity);
@@ -494,7 +617,7 @@ impl DirectoryBroker {
                         .map_err(Error::from)
                 })
             })?;
-            if native_windows::identity(&root)? != identity {
+            if root.with(native_windows::identity)? != identity {
                 return Err(Error::SourceChanged);
             }
             cancellation_veto(&mut cancelled)?;
@@ -508,7 +631,7 @@ impl DirectoryBroker {
                 .map_err(Error::from)
             })?;
             cancellation_veto(&mut cancelled)?;
-            let batch = buffer.next(&root, restart)?;
+            let batch = root.with(|file| buffer.next(file, restart))?;
             cancellation_veto(&mut cancelled)?;
             restart = false;
             clock.with(check)?;
@@ -523,7 +646,7 @@ impl DirectoryBroker {
                         .map_err(Error::from)
                 })
             })?;
-            if native_windows::identity(&root)? != identity {
+            if root.with(native_windows::identity)? != identity {
                 return Err(Error::SourceChanged);
             }
             cancellation_veto(&mut cancelled)?;
@@ -591,7 +714,7 @@ impl DirectoryBroker {
                     .map_err(Error::from)
             })
         })?;
-        if native_windows::identity(&root)? != identity {
+        if root.with(native_windows::identity)? != identity {
             return Err(Error::SourceChanged);
         }
         cancellation_veto(&mut cancelled)?;
@@ -738,7 +861,7 @@ impl DirectoryBroker {
                 .verify(manager, host, instance, clock, &mut cancelled, |clock| {
                     clock.with(|now| job.check(manager, host, instance, now).map_err(Error::from))
                 })?;
-            if native_windows::identity(&observed.root)? != observed.identity {
+            if observed.root.with(native_windows::identity)? != observed.identity {
                 return Err(Error::SourceChanged);
             }
             cancellation_veto(&mut cancelled)?;
@@ -780,7 +903,7 @@ impl DirectoryBroker {
                 .verify(manager, host, instance, clock, &mut cancelled, |clock| {
                     clock.with(|now| job.check(manager, host, instance, now).map_err(Error::from))
                 })?;
-            if native_windows::identity(&observed.root)? != observed.identity {
+            if observed.root.with(native_windows::identity)? != observed.identity {
                 return Err(Error::SourceChanged);
             }
             cancellation_veto(&mut cancelled)?;
@@ -796,7 +919,7 @@ impl DirectoryBroker {
         match result {
             Ok((page, end)) => {
                 if page.terminal {
-                    self.observations.remove(&request.reference);
+                    self.retire_observation(&request.reference)?;
                 } else {
                     let o = self.observations.get_mut(&request.reference).unwrap();
                     let next_sequence = o.sequence.checked_add(1).ok_or(Error::Limit)?;
@@ -807,7 +930,7 @@ impl DirectoryBroker {
                 Ok(page)
             }
             Err(error) => {
-                self.observations.remove(&request.reference);
+                self.retire_observation(&request.reference)?;
                 Err(error)
             }
         }
@@ -827,8 +950,7 @@ impl DirectoryBroker {
         now: u64,
     ) -> Result<(), Error> {
         self.validate_cancel(manager, host, instance, binding, selected, now)?;
-        self.observations.remove(&selected.reference);
-        Ok(())
+        self.retire_observation(&selected.reference)
     }
 
     /// Authenticate cleanup in one original-clock step, then drop the retained
@@ -844,8 +966,7 @@ impl DirectoryBroker {
         clock: &mut impl DirectoryClock,
     ) -> Result<(), Error> {
         clock.with(|now| self.validate_cancel(manager, host, instance, binding, selected, now))?;
-        self.observations.remove(&selected.reference);
-        Ok(())
+        self.retire_observation(&selected.reference)
     }
 
     fn validate_cancel(
@@ -877,4 +998,9 @@ fn cancellation_veto(cancelled: &mut impl FnMut() -> bool) -> Result<(), Error> 
     } else {
         Ok(())
     }
+}
+
+#[cfg(test)]
+pub(crate) fn protect_close_fixture_for_test(file: &File) -> std::io::Result<()> {
+    native_windows::protect_close_fixture(file)
 }

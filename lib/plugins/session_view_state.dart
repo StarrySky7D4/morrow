@@ -8,7 +8,8 @@ mixin SessionViewState<T extends StatefulWidget> on State<T> {
   bool _viewActive = true;
   bool get sessionViewActive => _viewActive;
 
-  /// Display activity only; hiding a view never cancels a business operation.
+  /// Reports display activity. The mixin itself never changes ownership;
+  /// a view may revoke admission that specifically requires its presence.
   void sessionViewVisibilityChanged() {}
 
   @override

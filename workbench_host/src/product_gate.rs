@@ -37,6 +37,9 @@ pub struct ProductGate {
     stop_failed: Arc<AtomicBool>,
 }
 impl ProductGate {
+    pub(crate) fn same_gate(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.closed, &other.closed) && Arc::ptr_eq(&self.scoped, &other.scoped)
+    }
     pub fn closed(&self) -> bool {
         self.closed.load(Ordering::Acquire)
     }

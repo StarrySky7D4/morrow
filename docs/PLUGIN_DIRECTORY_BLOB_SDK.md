@@ -69,6 +69,27 @@ C 使用各库的 opaque owning handles 与小型 checked views，不复制整�
 
 C++17 wrapper 是 move-only owner，销毁时释放 handle；encode 先生成临时结果，只在成功时替换 vector。blob 的 Debug 只输出类型、长度、序号/offset及有限阶段摘要，不输出 payload、opaque IDs 或 digest 数组；Snapshot/Acceptance 的嵌套表示也遵循此规则。状态成功、快照或 receipt 均不包含授权证明。详细接口见 [目录 README](../extensions/fs-directory-v1/README.md) 和 [blob README](../extensions/blob-transfer-v1/README.md)。
 
-## 仍开放的产品能力
+## 当前产品证据与剩余能力
 
-blob真实大对象后端、上传与Store效果记录、blob原owner接线和公开guest import仍未完成；目录的watch／rename、授权选择来源及公共入口也仍开放。已有独立mutation Create/Delete不能补作目录/blob公共能力。conditional Replace 仍 Unsupported；不能用普通覆盖或先删除再写代替条件操作。来源或外部效果不确定时保留 Unknown，不能凭 receipt、VerifiedBytes、EOF、清理或新建 helper 自动重放。Linux、GUI、账户、真实数据库、DPAPI、CI、Release 与完整 SDK 资格未由本轮库检查覆盖。
+以上 C06–C09 数字保留当时的验证范围。后续 Windows 增量已实现有界 blob
+后端、Store 效果记录、原工作任务接线，以及独立扩展的 guest 上传入口；
+不能再把这些全部列为“未实现”。[当前验收记录](qualification/BLOB_STAGE_WINDOWS_20261027.md)
+和[实际应用证据446](qualification/evidence/resume-20261028/sdk446-retained-planning-product.json)
+包含 Rust、C、C++ 实际插件、受保护内容库、Dart 与原生进程的完整有界流程。
+150017 字节和16MiB 的提案上传在关闭、重新打开后字节与 SHA 一致；应用端
+故意丢弃回复后仅核对原任务，不重复提交。测试通过 API 配置权限，尚不证明
+正式批准界面；原始监督记录中的 Unknown 也没有因此改写。
+
+后续[界面流程证据457](qualification/evidence/resume-20261028/sdk457-native-planning-widget-flow.json)
+已接入提案批准、原记录核对和一次性结束控制；三语言的六个实际原生流程
+通过生产 Flutter 控件完成，但运行于自动界面测试环境，选择文件使用适配器。
+桌面窗口、原生文件选择器、普通参数输入、跨重启 Unknown 恢复、目录
+watch／rename、全套 SDK26／G04／SDK_FREEZE、Windows P2/P3 最终源码绑定
+和发布验收仍开放。
+独立 mutation Create/Delete 不能补作未完成的目录能力；conditional Replace
+仍 Unsupported，不能用普通覆盖或先删除再写代替条件操作。来源或外部效果
+不确定时保留 Unknown，不能凭 receipt、VerifiedBytes、EOF、清理或新建 helper
+自动重放。非 Windows 平台按用户当前范围暂缓。
+
+
+后续[文本实机证据467](qualification/evidence/resume-20261028/sdk467-text-desktop-and-three-language.json)确认：Rust 文本插件已在正式 Windows 窗口完成原生文件选择、人工粘贴、提案核对、一次批准、原记录结束及正常重开；两次独立读取均与原文完全一致。三语言另有六项真实原生自动界面用例通过。此处仅收窄文本保存专项缺口，跨重启 Unknown、watch／rename、完整 SDK 和最终 P2/P3、发布仍开放。任务按用户要求暂停。

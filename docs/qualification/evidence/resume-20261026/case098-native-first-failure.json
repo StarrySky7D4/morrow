@@ -1,0 +1,29 @@
+{
+  "cleanup_authority": false,
+  "create_calls": 1,
+  "event": "FirstFailure",
+  "fault": "MORROW_QUALIFICATION_LATE_CREATE_OUTPUT_V4",
+  "first_failure": {
+    "kind": "TimedOut",
+    "ntstatus": null,
+    "site": "DeadlineGuard",
+    "stage": "Create",
+    "win32": null
+  },
+  "injected_delay_entered": true,
+  "natural_os_delay_claim": false,
+  "observation_lost": true,
+  "original_deadline_expired": true,
+  "outputs_distinct": true,
+  "owner_process_id": 4620,
+  "phase": "Unknown",
+  "pid": 764,
+  "process_output_state": "Held",
+  "replay_authority": false,
+  "schema": "MORROW_QUALIFICATION_NATIVE_TRACE_V4",
+  "sequence": 154,
+  "site": "DeadlineGuard",
+  "stage": "Create",
+  "thread_output_state": "Held",
+  "tid": 4340
+}

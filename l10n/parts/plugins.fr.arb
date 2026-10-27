@@ -835,5 +835,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pluginsDirectoryNativePickerStart": "Choisir un dossier et exécuter le module",
+  "pluginsDirectoryNativePickerIntro": "La sélection du dossier lance le module. Le délai inclut la sélection ; quitter cette vue annule la tâche en attente."
 }

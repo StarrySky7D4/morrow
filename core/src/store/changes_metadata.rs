@@ -261,16 +261,20 @@ fn receipt(
     authorize()?;
     Ok(receipt)
 }
+pub(super) struct WindowIdentity {
+    pub(super) owner: Arc<()>,
+    pub(super) liveness: Weak<()>,
+}
 pub(super) fn open_connection(
     c: &Connection,
-    owner: Arc<()>,
-    liveness: Weak<()>,
+    identity: WindowIdentity,
     package: [u8; 32],
     cards: &[String],
     start: ChangesStart,
     budget: ChangesBudget,
     authorize: &mut impl FnMut() -> Result<()>,
 ) -> Result<ChangesWindow> {
+    let WindowIdentity { owner, liveness } = identity;
     budget.validate()?;
     let deadline = Instant::now()
         .checked_add(Duration::from_millis(budget.max_duration_ms))
@@ -486,8 +490,10 @@ impl Store {
         let snapshot = sql(self.connection.unchecked_transaction())?;
         let result = open_connection(
             &snapshot,
-            self.snapshot_identity.clone(),
-            Arc::downgrade(&self.changes_liveness),
+            WindowIdentity {
+                owner: self.snapshot_identity.clone(),
+                liveness: Arc::downgrade(&self.changes_liveness),
+            },
             package,
             cards,
             start,

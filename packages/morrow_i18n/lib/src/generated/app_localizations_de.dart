@@ -1876,6 +1876,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Metadatenlimit (Bytes, bis 1 MiB)';
 
   @override
+  String get pluginsDirectoryNativePickerIntro =>
+      'Nach der Ordnerauswahl startet das Plugin. Die Zeitbegrenzung umfasst die Auswahl; beim Verlassen dieser Ansicht wird die laufende Aufgabe abgebrochen.';
+
+  @override
+  String get pluginsDirectoryNativePickerStart =>
+      'Ordner wählen und Plugin starten';
+
+  @override
   String get pluginsDirectorySelectHandler =>
       'Genehmigtes Ordner-Plugin wählen';
 

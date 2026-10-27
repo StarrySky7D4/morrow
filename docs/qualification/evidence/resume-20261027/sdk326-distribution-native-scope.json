@@ -1,0 +1,93 @@
+{
+  "status": "PASS_SCOPED_CURRENT_SDK_DISTRIBUTION_AND_NATIVE_CONSUMERS_RECONCILED",
+  "source_digest": "f8492320dbf7e156bfccadae687f50362a7aafb4d1c58e90014170aae9b04f78",
+  "distribution": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-distribution-323\\result.json",
+    "bytes": 772,
+    "sha256": "9a470470cdd9664aa7ffe01386b90e7133d1a32eec606f9733facbddf2be9707"
+  },
+  "native": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-current-325\\result.json",
+    "bytes": 1771,
+    "sha256": "8ded22f72fa255f66554bd81a4ac6868f0cb4bb3e04bf831382d6e4c67f509eb"
+  },
+  "commands": {
+    "path": "D:\\build_cache\\sdk-native-325\\commands.json",
+    "bytes": 27779,
+    "sha256": "600aca5780f7a2d2311e329d3419f192ba246785f72bd0f8b52760939095ce12"
+  },
+  "provenance": {
+    "path": "D:\\build_cache\\sdk-native-325\\provenance.json",
+    "bytes": 153110,
+    "sha256": "bfbdd1202356d86d9b270767a720371a22fcbcb104fb6766586b8993f1f00f37"
+  },
+  "methods": {
+    "distribution_contract_tamper": 64,
+    "native_rust": 92,
+    "native_executable_runs": 14,
+    "external_consumer_runs": 3
+  },
+  "method_counts_are_distinct_scopes_not_a_single_release_total": true,
+  "original_frozen_inputs_verified": 57,
+  "guest_rebuilt": false,
+  "protected_product_execution": false,
+  "current_canonical_UI": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-full-main-review-313\\result.json",
+    "bytes": 5005,
+    "sha256": "1c21338838c9b8851458e9fa00cbdebfbdd27cd8a83282a4026a9c03ab725392"
+  },
+  "UI_source_binding": "Review313 retains its pre-lock-repair product input; only the harness lock changed afterward. Do not silently relabel its original source.",
+  "remaining_implementation_evidence": [
+    {
+      "gate": "durable blob backend and history",
+      "observed": "Existing Receiver returns VerifiedBytes and retains only the latest request; it is not durable upload authority. Core stage_blob_retained stages whole reader bytes with retention, but requires caller-owned durable tombstone after release.",
+      "next": "Add an explicit bounded owner and persistent operation identity before exposing an upload request; prove restart, lost reply, cancel, quota, retention and exact retry independently."
+    },
+    {
+      "gate": "complete G04 and SDK26",
+      "observed": "Public upload/watch/rename and full production approval routes remain open beyond the passed directory scope.",
+      "next": "Preserve existing schemas and exact Unsupported behavior; qualify each new separate versioned capability and actual product route before marking the full gate accepted."
+    }
+  ],
+  "basis": [
+    {
+      "path": "C:\\ms1020\\extensions\\blob-transfer-v1\\README.md",
+      "bytes": 3647,
+      "sha256": "fa61cbcb5c517bb60b0740bd7eec8e11287b0cfecb259b70f4fd4562c176ddfd"
+    },
+    {
+      "path": "C:\\ms1020\\extensions\\blob-transfer-v1\\src\\state.rs",
+      "bytes": 22775,
+      "sha256": "1c789bd8d7451e40cf1ebf749e80da97110f4126908ceaa38076c0fb4257f7b8"
+    },
+    {
+      "path": "C:\\ms1020\\core\\src\\store\\blobs.rs",
+      "bytes": 26813,
+      "sha256": "b5363921ca260786a0d92f2fdcb898c9dd3e0507087304fdb8f92d56fbeb2af8"
+    },
+    {
+      "path": "C:\\ms1020\\workbench_host\\src\\storage.rs",
+      "bytes": 9407,
+      "sha256": "d5d031ceca4ed75c4c490b5033a3416ba49d7def25f0a437dbbccb0ead6786e5"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\PLUGIN_DIRECTORY_BLOB_SDK.md",
+      "bytes": 14491,
+      "sha256": "a820c9e04afe41a506053a9062102bb97ac44fac796e484d9962f411906c369e"
+    },
+    {
+      "path": "C:\\ms1020\\reports\\reconstruction-2026-10-05\\sdk-next-gates.md",
+      "bytes": 22057,
+      "sha256": "8011441bd08ae87e0683790ee89ec311ff454cc2518fe34a34b5e4fc0efc8152"
+    }
+  ],
+  "historical_runtime_bindings_unchanged": true,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "release_eligible": false
+}

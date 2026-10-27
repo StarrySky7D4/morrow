@@ -1,0 +1,67 @@
+{
+  "status": "PASS_SCOPED_REQUEST_AND_CLIENT_NOT_HOST_INTEGRATION",
+  "utc": "2026-10-27T09:48:30.976314+00:00",
+  "source_digest": "649b4bb929738727f2ee8dd171e81e03247121894b4b6c5098e047bb874eac58",
+  "source_before": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-362\\source-before.json",
+    "bytes": 3050,
+    "sha256": "7c17c9b9405721eefced7984fa89bff7c45b6fe418a6b40c4839c9b5e397a90c"
+  },
+  "commands": [
+    {
+      "name": "contract-and-client-tests",
+      "exit_code": 0,
+      "seconds": 8.469,
+      "summaries": [
+        [
+          "19",
+          "0",
+          "0",
+          "0",
+          "0"
+        ]
+      ],
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-362\\contract-and-client-tests.stdout",
+        "bytes": 1760,
+        "sha256": "453e655bd74d0a8fe930113b987cb671870aa2a2928d20d534c53ae52c461a34"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-362\\contract-and-client-tests.stderr",
+        "bytes": 730,
+        "sha256": "34002fe2da8fd47683cb4ddcff676e77124d65b3cdf6d0551300214837c1ffb3"
+      }
+    },
+    {
+      "name": "strict-library-clippy",
+      "exit_code": 0,
+      "seconds": 2.234,
+      "summaries": [],
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-362\\strict-library-clippy.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-362\\strict-library-clippy.stderr",
+        "bytes": 515,
+        "sha256": "0c397ab305a58f90410640016503b67e949b369f5ec1189c92920e579d852598"
+      }
+    }
+  ],
+  "frozen_inputs_verified": 57,
+  "existing_runtime_inputs_unchanged": true,
+  "cache_root": "D:/build_cache",
+  "all_processes_closed": true,
+  "registered_package_feature": false,
+  "public_import": false,
+  "host_route": false,
+  "C_CPP_helpers": false,
+  "three_language_guest": false,
+  "production_approval": false,
+  "protected_session": false,
+  "VM_calls": 0,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

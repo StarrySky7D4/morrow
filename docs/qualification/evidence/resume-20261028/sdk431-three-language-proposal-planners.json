@@ -1,0 +1,234 @@
+{
+  "status": "PASS_SCOPED_THREE_LANGUAGE_PROPOSAL_HELPERS_AND_ACTUAL_PLANNERS",
+  "utc": "2026-10-27T16:44:05.551127+00:00",
+  "qualification_source": "68fd7dc3613307633d12f5f4cef7a3c04f3666ac407258375c1a4f5afee84e7b",
+  "helper_source": "767e155b2cab8f6a4fd3def55caddc5f6968014e8c27927bdeeecb80e075dab1",
+  "guest_build_source": "ee7ef6a69bf47cd170f3344fb9906d01810884fc3120a520d54ef0416b2be6ce",
+  "source_equivalence": {
+    "build_source": "ee7ef6a69bf47cd170f3344fb9906d01810884fc3120a520d54ef0416b2be6ce",
+    "current_source": "68fd7dc3613307633d12f5f4cef7a3c04f3666ac407258375c1a4f5afee84e7b",
+    "reconstructed_build_source": "ee7ef6a69bf47cd170f3344fb9906d01810884fc3120a520d54ef0416b2be6ce",
+    "test_before": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-sdk-429\\planner-test-before-owner-fix.rs",
+      "bytes": 12252,
+      "sha256": "7ed712002f6492d4961e322c157d44ff0b03752483a027e8bffe7fa590cbaa1d"
+    },
+    "test_after": {
+      "path": "C:\\ms1020\\plugin_runtime\\tests\\blob_upload_planner_sdk_guests.rs",
+      "bytes": 12279,
+      "sha256": "2cd8f430a6f4e547de830590de9578ea23a4c8608c518d45be171a09f080317f"
+    },
+    "production_and_guests_unchanged": true
+  },
+  "contract": "Independent Capn Proto proposal and bounded example business options; original task/upload/frame schemas unchanged",
+  "schema": {
+    "path": "C:\\ms1020\\extensions\\blob-upload-proposal-v1\\contracts\\blob_upload_proposal.capnp",
+    "bytes": 768,
+    "sha256": "b06b2c578b65c4f8bdf8af8cd3ca4976b42fa6da5f6c608373b453ae4f710de2"
+  },
+  "helper_tests": {
+    "rust_passed": 23,
+    "failed": 0,
+    "external_consumers": [
+      "MSVC C",
+      "MSVC C++",
+      "Clang C",
+      "Clang C++"
+    ],
+    "semantics": [
+      "owned copied inputs",
+      "borrowed view lifetime",
+      "disjoint bounded output regions",
+      "failed calls preserve outputs",
+      "C++ move-only owners and replacement only on success"
+    ]
+  },
+  "sample_tests": {
+    "passed": 3,
+    "failed": 0,
+    "options_contract": "example-only Capn Proto; no host permission",
+    "object_bytes_max": 16777216,
+    "producer_chunk_bytes": 61440
+  },
+  "actual_planner_tests": {
+    "passed": 11,
+    "failed": 0,
+    "three_language_cases": [
+      {
+        "language": "C",
+        "bytes": 16777216,
+        "fill": 219,
+        "fuel_remaining": 7401355237,
+        "proposal_sha256": "5f2b2b3c0f2f60584a85295eb91b592c11d26185eb616960f1aabfdc434dc973"
+      },
+      {
+        "language": "C",
+        "bytes": 0,
+        "fill": 0,
+        "fuel_remaining": 7999576977,
+        "proposal_sha256": "485a7981e0fff988e56bb9fb0905cb17722f3d1b1d75d7372dbfa08b87244307"
+      },
+      {
+        "language": "C",
+        "bytes": 150017,
+        "fill": 73,
+        "fuel_remaining": 7994235910,
+        "proposal_sha256": "83368d53afa2d825e2e5a715b638cd2faa6f2abaf3cbcb2b037e80eb9935c734"
+      },
+      {
+        "language": "CPP",
+        "bytes": 16777216,
+        "fill": 219,
+        "fuel_remaining": 7401339479,
+        "proposal_sha256": "5f2b2b3c0f2f60584a85295eb91b592c11d26185eb616960f1aabfdc434dc973"
+      },
+      {
+        "language": "CPP",
+        "bytes": 0,
+        "fill": 0,
+        "fuel_remaining": 7999561219,
+        "proposal_sha256": "485a7981e0fff988e56bb9fb0905cb17722f3d1b1d75d7372dbfa08b87244307"
+      },
+      {
+        "language": "CPP",
+        "bytes": 150017,
+        "fill": 73,
+        "fuel_remaining": 7994220152,
+        "proposal_sha256": "83368d53afa2d825e2e5a715b638cd2faa6f2abaf3cbcb2b037e80eb9935c734"
+      },
+      {
+        "language": "RUST",
+        "bytes": 16777216,
+        "fill": 219,
+        "fuel_remaining": 7401365522,
+        "proposal_sha256": "5f2b2b3c0f2f60584a85295eb91b592c11d26185eb616960f1aabfdc434dc973"
+      },
+      {
+        "language": "RUST",
+        "bytes": 0,
+        "fill": 0,
+        "fuel_remaining": 7999587262,
+        "proposal_sha256": "485a7981e0fff988e56bb9fb0905cb17722f3d1b1d75d7372dbfa08b87244307"
+      },
+      {
+        "language": "RUST",
+        "bytes": 150017,
+        "fill": 73,
+        "fuel_remaining": 7994246195,
+        "proposal_sha256": "83368d53afa2d825e2e5a715b638cd2faa6f2abaf3cbcb2b037e80eb9935c734"
+      }
+    ],
+    "pure_planning_upload_calls": 0,
+    "no_store_created_before_planning": true,
+    "actual_original_upload_workers_joined": 18,
+    "exact_stored_bytes_and_sha": true,
+    "successful_release_reopened": true,
+    "negative_cases": [
+      "actual C++16MiB plan denied with100M fuel",
+      "actual Rust malformed options denied without proposal"
+    ]
+  },
+  "legacy_input_compatibility": {
+    "passed": 10,
+    "failed": 0,
+    "actual_original_workers_joined": 28,
+    "descriptor_input_preserved": true,
+    "legacy_fill_byte": 42
+  },
+  "guests": {
+    "rust": {
+      "path": "D:\\build_cache\\upload-planner-guests428\\rust_upload.wasm",
+      "bytes": 391908,
+      "sha256": "95cdc17356ae7745bbf99bfc7797f5c76d9e93f382f84863956416c79c5304b6"
+    },
+    "c": {
+      "path": "D:\\build_cache\\upload-planner-guests428\\c_upload.wasm",
+      "bytes": 195237,
+      "sha256": "4ccd298ba620e706f380f6cb6650bad5aa73791eda776d5b9ea96eebfc108fd3"
+    },
+    "cpp": {
+      "path": "D:\\build_cache\\upload-planner-guests428\\cpp_upload.wasm",
+      "bytes": 196717,
+      "sha256": "6b43abd38714f84e7a1e8dfd2c8a795811188e468eb3c1d3ee4a1634db83f33f"
+    }
+  },
+  "wasm_imports": [
+    "morrow_task_v1.read_input",
+    "morrow_task_v1.complete",
+    "morrow_blob_upload_v1.call"
+  ],
+  "WASI_imports": 0,
+  "start_sections": 0,
+  "toolchain_files_verified": 16803,
+  "strict_checks": [
+    "proposal Rust all targets",
+    "sample Rust all targets",
+    "runtime library and both real guest test targets",
+    "MSVC and Clang C/C++ warnings as errors"
+  ],
+  "retained_failures": [
+    {
+      "result": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-proposal-sdk-425\\result.json",
+        "bytes": 1862,
+        "sha256": "fc1a16b8b95c5043f825f194d826f1a4af864c7af0e610d09d763a7c6667e5b0"
+      },
+      "reason": "Clippy rejected a test-only useless Vec; changed to an array"
+    },
+    {
+      "result": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-sdk-429\\result.json",
+        "bytes": 1655,
+        "sha256": "334ef85c4b47511a580be803185010c23a584e0568d2d93ac87be24352bccc88"
+      },
+      "reason": "New test attempted to clone a non-Clone Package; borrow the exact original PreparedPackage instead"
+    }
+  ],
+  "qualifications": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-proposal-sdk-426\\result.json",
+      "bytes": 10568,
+      "sha256": "1219ff96b173c69e9f31cc055ad4f910c3f4c42679df48c7209f72f0e4e05ad8"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-guests-428\\result.json",
+      "bytes": 10522,
+      "sha256": "c6d5883acb2938d6579dd8aa5e50e6a876f5ea5fa93f38a5d41454f736ce9b94"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-sdk-430\\result.json",
+      "bytes": 3258,
+      "sha256": "440920c324d1c2c8a9087ea3a051471adcc8b08612389367246d64d332355491"
+    }
+  ],
+  "frozen_inputs_verified": 57,
+  "dependency_lock_review": {
+    "added_local_packages": [
+      "morrow-blob-upload-sample"
+    ],
+    "changed_local_edges": [
+      "morrow-plugin-runtime"
+    ],
+    "registry_changes": 0
+  },
+  "all_recent_processes_closed": true,
+  "cache_root": "D:/build_cache",
+  "registered_VMs": 4,
+  "VM_mutations": 0,
+  "host_policy_changes": 0,
+  "historical_unknown_owner_contacts": 0,
+  "C_CPP_proposal_helpers": true,
+  "actual_three_language_planner_guests": true,
+  "protected_planner_product_session": false,
+  "private_product_planner_route": false,
+  "rendered_approval_UI": false,
+  "rendered_recovery_UI": false,
+  "cross_restart_Unknown_recovery": false,
+  "watch_rename": false,
+  "full_P2_accepted": false,
+  "full_P3_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "remote_publication": false
+}

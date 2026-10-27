@@ -63,6 +63,15 @@ pub struct ChangesReceiverLiveness {
     connection_revocation: Revocation,
     read_revocation: Revocation,
 }
+/// Restriction-only original Ready lifetime for independent upload approval.
+/// The wrapped observations confer no content, channel or upload permission.
+#[derive(Clone)]
+pub struct BlobUploadReceiverLiveness(ChangesReceiverLiveness);
+impl BlobUploadReceiverLiveness {
+    pub fn check(&self) -> Result<()> {
+        self.0.check().map_err(|_| Error::Invalid("inactive upload receiver"))
+    }
+}
 impl ChangesReceiverLiveness {
     /// Atomic-only: safe under a channel queue and final Store ACK guard.
     pub fn check(&self) -> Result<()> {
@@ -225,6 +234,9 @@ impl HostPolicy {
             return Err(Error::Invalid("inactive changes receiver"));
         }
         Ok(ChangesReceiverLiveness {owner: Arc::downgrade(&record.changes_owner),connection_revocation:record.revocation.clone(),read_revocation:record.read_revocation.clone()})
+    }
+    pub(crate) fn blob_upload_receiver_liveness(&self, instance: Instance) -> Result<BlobUploadReceiverLiveness> {
+        self.changes_receiver_liveness(instance).map(BlobUploadReceiverLiveness)
     }
     pub fn revocation(&self, instance: Instance) -> Result<Revocation> {
         Ok(self.record(instance)?.revocation.clone())

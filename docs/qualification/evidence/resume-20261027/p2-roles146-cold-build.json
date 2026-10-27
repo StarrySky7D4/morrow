@@ -1,0 +1,53 @@
+{
+  "status": "COMPILED_BYTE_BOUND_NATIVE_REFUSAL_NOT_RUNTIME_ACCEPTED",
+  "source_digest": "d7827205fe709e253b0f39db19b7a11d2ebcc2c1de01cc0aa84f0469c9a196fb",
+  "roles": {
+    "P": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-040\\P\\morrow-workbench-supervisor.exe",
+      "bytes": 27738624,
+      "sha256": "de8936ec83e01f4827d3b43def5dbf37b283fa21326f70de038609dc3b38c96b"
+    },
+    "C": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-040\\C\\morrow-protected-checked-vm-harness.exe",
+      "bytes": 99089920,
+      "sha256": "611a77327eecb786055b2412ab47a327cd11b995551f870c0f185c0290bc4be2"
+    },
+    "R": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-040\\R\\codex-command-runner.exe",
+      "bytes": 24591360,
+      "sha256": "6a35226adf8130c0af0c8f7672294b122979e6c7f54b7b5b5ce5d03a7f456610"
+    },
+    "S": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-040\\S\\codex-windows-sandbox-setup.exe",
+      "bytes": 37623296,
+      "sha256": "22b630827e3752f691646511744dafbcb018408cf88942daae4945f5ee231dad"
+    }
+  },
+  "s_table_hex": "43323841315441420100000001000000611a77327eecb786055b2412ab47a327cd11b995551f870c0f185c0290bc4be26a35226adf8130c0af0c8f7672294b122979e6c7f54b7b5b5ce5d03a7f456610",
+  "s_section": {
+    "virtual_bytes": 80,
+    "raw_bytes": 512,
+    "raw_offset": 37477888,
+    "flags": 1073741888
+  },
+  "qualification_fault": "DEFAULT_DACL_NATIVE_REFUSAL_V5",
+  "cold_output_isolation": true,
+  "all_four_roles_freshly_compiled": true,
+  "compiler_artifacts": {
+    "P": 871,
+    "C": 872,
+    "R": 620,
+    "S": 620
+  },
+  "fault_derivation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-040\\C-fault-derivation.json",
+    "bytes": 2451,
+    "sha256": "26d76fbd231870d1f77632c5886a65ee57d43d43fcbdee9bd5065f8a949d12ae"
+  },
+  "canonical_source_edits": 0,
+  "VM_calls": 0,
+  "L1": "NOT_RUN",
+  "full47": "NOT_RUN",
+  "source_accepted": false,
+  "release_eligible": false
+}

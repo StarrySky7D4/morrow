@@ -1884,6 +1884,14 @@ class AppLocalizationsRu extends AppLocalizations {
       'Лимит метаданных (байты, до 1 MiB)';
 
   @override
+  String get pluginsDirectoryNativePickerIntro =>
+      'Выбор папки запускает плагин. Лимит времени включает выбор; выход из этого представления отменяет незавершённую задачу.';
+
+  @override
+  String get pluginsDirectoryNativePickerStart =>
+      'Выбрать папку и запустить плагин';
+
+  @override
   String get pluginsDirectorySelectHandler => 'Выбрать одобренный плагин папок';
 
   @override

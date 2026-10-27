@@ -1,0 +1,255 @@
+{
+  "status": "PASS_SCOPED_PROTECTED_WORKBENCH_ORIGINAL_SELECTION_RETENTION",
+  "actual_methods": 12,
+  "new_native_methods": 6,
+  "existing_regressions": 6,
+  "phases": [
+    {
+      "method": "retained_owner::invalid_metadata_and_preparation_keep_original_native_selection",
+      "exit_code": 0,
+      "seconds": 0.531,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\01.stdout",
+        "bytes": 205,
+        "sha256": "6b9331b9b1deab17993c94914021ea9ff01650d7fa459466d057df106885426b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\01.stderr",
+        "bytes": 214,
+        "sha256": "71800619505c5f949a4e753d618bd51e83041c85a9ed35ce5adebc3e96b6ff1c"
+      }
+    },
+    {
+      "method": "retained_owner::stale_revision_burns_submission_without_taking_original_selection",
+      "exit_code": 0,
+      "seconds": 0.484,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\02.stdout",
+        "bytes": 207,
+        "sha256": "5fd64de978c386028983441f846f718f5ca825fff14f5f4b1a7062260bccbca7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\02.stderr",
+        "bytes": 214,
+        "sha256": "fba041058142e08ade0fb2f302fee1eacb5f601ceb35c448baaa2c22f352a249"
+      }
+    },
+    {
+      "method": "retained_owner::revoked_file_list_approval_keeps_original_selection",
+      "exit_code": 0,
+      "seconds": 0.547,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\03.stdout",
+        "bytes": 193,
+        "sha256": "ef69a2312784c773cf3a93476cafbdb6a74df182ac01ea2d0f87498e304c2ebb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\03.stderr",
+        "bytes": 214,
+        "sha256": "eced564ef02f74a4b121c13d5b1f0dc6a4d7a0e9e884abb39d7fd233b99297ee"
+      }
+    },
+    {
+      "method": "retained_owner::existing_task_cannot_take_another_original_selection",
+      "exit_code": 0,
+      "seconds": 1.516,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\04.stdout",
+        "bytes": 194,
+        "sha256": "fc60368038ac54d8d0550c15ea590e6e169f27fddecc5b922eb540c8e43f41a1"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\04.stderr",
+        "bytes": 455,
+        "sha256": "19893538f66325c36d4b9548f24b9dc4d9e7d4bd8622da9119d5078cd97bb25c"
+      }
+    },
+    {
+      "method": "retained_owner::product_gate_refusal_after_worker_creation_keeps_original_selection",
+      "exit_code": 0,
+      "seconds": 0.516,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\05.stdout",
+        "bytes": 209,
+        "sha256": "440b3478322d8a9ae994b2d86c5afa65d63995f9f0a24d47d47e6584c03604f7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\05.stderr",
+        "bytes": 214,
+        "sha256": "f918b609a0966500ad9aefe225e11b5f257de6b729640b703d43b45276aea278"
+      }
+    },
+    {
+      "method": "retained_owner::accepted_original_selection_transfers_once_and_runs_real_guest",
+      "exit_code": 0,
+      "seconds": 2.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\06.stdout",
+        "bytes": 204,
+        "sha256": "849f910161c61c3b285070611ee393f1d3688df32f02a740c56cc5f57b35ed64"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\06.stderr",
+        "bytes": 457,
+        "sha256": "f1098d73ab548b5535ab15baec22872f991079c967f90de0190e7190ea8e49fe"
+      }
+    },
+    {
+      "method": "rust_directory_guest_preserves_protected_owner_through_reclaim_and_reopen",
+      "exit_code": 0,
+      "seconds": 3.531,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\07.stdout",
+        "bytes": 199,
+        "sha256": "ac4362488b523b9f9c0eb4ead9fc2c8f8c123e75998724ab43b848eec76f60db"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\07.stderr",
+        "bytes": 416,
+        "sha256": "d276d11179ca295c04ffe53a8e3669d0bcf751cc6e97da7aae2dc43531d2bb6f"
+      }
+    },
+    {
+      "method": "c_directory_guest_preserves_protected_owner_through_reclaim_and_reopen",
+      "exit_code": 0,
+      "seconds": 2.625,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\08.stdout",
+        "bytes": 196,
+        "sha256": "18b6376b1a8792a389a1823b7f0b171288122cb883063a9c44bf5b4b9579574f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\08.stderr",
+        "bytes": 410,
+        "sha256": "ff534bffeed52ee26929fc0c8d14bf3be66ffd7a2e1b5f03c0d44f9b1bb1b591"
+      }
+    },
+    {
+      "method": "cpp_directory_guest_preserves_protected_owner_through_reclaim_and_reopen",
+      "exit_code": 0,
+      "seconds": 2.719,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\09.stdout",
+        "bytes": 198,
+        "sha256": "9e09aea07258720ca249999b2b368b03582d3acd907dc88dd3c484bd320b7508"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\09.stderr",
+        "bytes": 414,
+        "sha256": "19ea0df2021cafdf361e4f7ea5108cfd38532323687929705b6dfaee362366e1"
+      }
+    },
+    {
+      "method": "selected_directory_stale_revision_and_repeated_submission_cannot_rebind",
+      "exit_code": 0,
+      "seconds": 4.109,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\10.stdout",
+        "bytes": 197,
+        "sha256": "8d09212b60504680f31f570e305a7a8b1f4bb273be1bb472e6d70223bdde7ecb"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\10.stderr",
+        "bytes": 459,
+        "sha256": "620ed0248e8932422512c800ddd372d3002601a7bfaaae58ce59d721884000e4"
+      }
+    },
+    {
+      "method": "selected_directory_reparse_ancestor_is_refused_without_traversal",
+      "exit_code": 0,
+      "seconds": 1.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\11.stdout",
+        "bytes": 190,
+        "sha256": "be402bd78f1d759a420116bec672c037f3851d065c796e1a97575e38d0aa33e2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\11.stderr",
+        "bytes": 451,
+        "sha256": "5cf3b3832a684667c2eb8dfd6de675062a24255c0f1ceb3b62c68e0f188e01bb"
+      }
+    },
+    {
+      "method": "selected_directory_full_ancestor_chain_cannot_exceed_original_resource_limit",
+      "exit_code": 0,
+      "seconds": 0.797,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\12.stdout",
+        "bytes": 202,
+        "sha256": "c5d18145b6c5ac98d32d145f2d940af2c01234858f22d0fdf8464340b3573584"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-106-tests\\12.stderr",
+        "bytes": 459,
+        "sha256": "44a202747bc422af0ad8ce51c0912aa9106ca2c3a52663b2ba465050aa60f4d2"
+      }
+    }
+  ],
+  "binary": {
+    "path": "D:\\build_cache\\qualification-targets\\sdk-selection-106\\debug\\deps\\directory_protected_sdk-d64e8b4179137b82.exe",
+    "bytes": 59821056,
+    "sha256": "113d8e0043ff7fe780c2098772fa2163c9ce51378c780a1d368a0fc1c6f6ef2f"
+  },
+  "inputs": [
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\src\\io_tasks.rs",
+      "bytes": 35117,
+      "sha256": "ddab18fddc0ef4d47d99fe21995d4b556aba83e6ddc99e4e2ab6ccb13f69c5f1"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\src\\directory_tasks.rs",
+      "bytes": 16443,
+      "sha256": "664ff1dc5d082a894d418f3a61f03dabf50709e25594ad003f85215936ab6b78"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\tests\\directory_protected_sdk.rs",
+      "bytes": 31173,
+      "sha256": "d68494159d39725906ec6f508c0c19d5ed8d4c4289fa8c7dba0cdb5a3ba14aed"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\tests\\support\\retained_directory_owner.rs",
+      "bytes": 8422,
+      "sha256": "b99c10021c786435f1a7affe1ebb5c21bafe8cf040a55122a268dc6e60e92a28"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\plugin_runtime\\src\\io_jobs\\directory_commands.rs",
+      "bytes": 38450,
+      "sha256": "6eeef1fa94168b16931051e4054c8e493178d56b200c8a5cf21157008c22b216"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\plugin_runtime\\src\\io_jobs\\owner_commands.rs",
+      "bytes": 28923,
+      "sha256": "969d7d761db5af92ae2707a112d81ce1a06f3776c05e860d8382adbf8214beb2"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\plugin_runtime\\src\\io_jobs\\directory_commands\\secret_factory_tests.rs",
+      "bytes": 40928,
+      "sha256": "ca59042be4fe0d2553421d3b448b93b485302ae3731b4d79cba1b30f8d6b3b9f"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\plugin_runtime\\src\\io_jobs\\directory_commands\\retained_capture_tests.rs",
+      "bytes": 9421,
+      "sha256": "1e523bc57c7eae99a3cc5e6c6ec38bce6f1903818b7b2d5d379964601c6b0574"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\Cargo.toml",
+      "bytes": 3805,
+      "sha256": "990353df43f77adde802f613356d717fcca498e681963adeb938b09d9f7033ad"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\Cargo.lock",
+      "bytes": 235282,
+      "sha256": "26e32e77d138496fc72832f7b47b0a43b571c4e99ab313675747b82af07d9a3c"
+    }
+  ],
+  "source_unchanged": true,
+  "VM_calls": 0,
+  "host_provisioning": 0,
+  "native_picker_integration": false,
+  "checked_worker_close_receipt_accepted": false,
+  "worker_spawn_failure_injected": false,
+  "worker_queue_refusal_coverage": "SDK101 separate eight native tests; this run has no public queue injection",
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1781,6 +1781,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pluginsDirectoryMetadataLimit => '메타데이터 한도 (바이트, 최대 1 MiB)';
 
   @override
+  String get pluginsDirectoryNativePickerIntro =>
+      '폴더를 선택하면 플러그인이 실행됩니다. 제한 시간에는 선택 시간이 포함되며, 이 화면을 떠나면 진행 중인 작업이 취소됩니다.';
+
+  @override
+  String get pluginsDirectoryNativePickerStart => '폴더 선택 후 플러그인 실행';
+
+  @override
   String get pluginsDirectorySelectHandler => '승인된 폴더 플러그인 선택';
 
   @override

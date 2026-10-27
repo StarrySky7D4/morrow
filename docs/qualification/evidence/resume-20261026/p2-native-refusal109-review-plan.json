@@ -1,0 +1,60 @@
+{
+  "status": "RUST_SYNTAX_PARSED_RUNTIME_REVIEW_PLAN_ONLY",
+  "variants": [
+    {
+      "kind": "TOKEN_DERIVATION",
+      "parse_exit": 0,
+      "source_sha256": "763225ce5eb55e5ce534f98b1b8f204ed7e8dfd2fe8047434b114e59dc47d7d8",
+      "native_execution": false
+    },
+    {
+      "kind": "DEFAULT_DACL",
+      "parse_exit": 0,
+      "source_sha256": "c056997048ba4085dfbdfa830581befcce4a396df0b5a1bd7d707cef93e251fe",
+      "native_execution": false
+    }
+  ],
+  "required_trace_schema": "MORROW_QUALIFICATION_NATIVE_TRACE_V5",
+  "record_sequence": "contiguous, one original owner PID, exact tag-bound diagnostic path",
+  "required_events": [
+    "NativeStartEntered",
+    "InjectedNativeCallStarting",
+    "InjectedNativeCallReturned",
+    "FirstFailure"
+  ],
+  "expected": {
+    "TOKEN_DERIVATION": {
+      "stage": "Token",
+      "site": "LaunchTokenDerivation",
+      "token_derivation_calls": 1,
+      "default_dacl_calls": 0,
+      "create_calls": 0,
+      "login_output_state": "Held",
+      "restricted_output_state": "Rejected",
+      "launch_output_state": "Empty"
+    },
+    "DEFAULT_DACL": {
+      "stage": "TokenSecurity",
+      "site": "DefaultInitialization",
+      "token_derivation_calls": 1,
+      "default_dacl_calls": 1,
+      "create_calls": 0,
+      "login_output_state": "Held",
+      "restricted_output_state": "Held",
+      "launch_output_state": "Held",
+      "default_initialization_phase": "Unknown"
+    }
+  },
+  "native_status_must_match_first_failure_win32": true,
+  "native_status_must_be_nonzero": true,
+  "no_earlier_failure_or_deadline_expiry": true,
+  "required_outer_evidence": [
+    "one original attempt",
+    "original output ownership retained",
+    "same policy owner adds at most one right and removes only its own addition",
+    "original refusal remains Unknown unless actual full retirement independently proves otherwise"
+  ],
+  "current_full_P2": false,
+  "compile_performed": false,
+  "VM_calls": 0
+}

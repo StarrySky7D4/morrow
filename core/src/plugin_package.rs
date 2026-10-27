@@ -7,6 +7,8 @@ use std::{collections::BTreeSet, sync::OnceLock};
 pub mod proto {
     include!(concat!(env!("OUT_DIR"), "/morrow.plugin.v1.rs"));
 }
+pub mod blob_upload;
+pub mod blob_upload_proposal;
 pub mod io;
 pub const TRANSFORM_HANDLERS_FEATURE: &str = "transform-handlers-v1";
 pub const MAX_TRANSFORM_HANDLERS: usize = 16;
@@ -129,6 +131,8 @@ impl Package {
             mutation_schema_sha256: vec![],
             mutation_budget: None,
             channel_declaration: None,
+            blob_upload_declaration: None,
+            blob_upload_proposal_declaration: None,
         }
     }
     pub fn manifest_for_task(
@@ -157,17 +161,119 @@ impl Package {
     }
     /// Explicit metadata-only package shape; declarations are never approval.
     pub fn manifest_for_changes_metadata(
-        id: &str, version: &str, module: &[u8], handlers: Vec<proto::TransformHandler>,
+        id: &str,
+        version: &str,
+        module: &[u8],
+        handlers: Vec<proto::TransformHandler>,
     ) -> proto::Manifest {
-        let names=handlers.iter().map(|h| h.handler.clone()).collect();
-        let mut manifest=Self::manifest_for_transform(id,version,module,handlers);
-        manifest.required_features.push(crate::channel::FEATURE.into());
-        manifest.required_features.push(crate::changes_metadata::FEATURE.into());
-        manifest.channel_declaration=Some(crate::channel::declaration(names,vec![crate::channel::Kind::Events]));
+        let names = handlers.iter().map(|h| h.handler.clone()).collect();
+        let mut manifest = Self::manifest_for_transform(id, version, module, handlers);
+        manifest
+            .required_features
+            .push(crate::channel::FEATURE.into());
+        manifest
+            .required_features
+            .push(crate::changes_metadata::FEATURE.into());
+        manifest.channel_declaration = Some(crate::channel::declaration(
+            names,
+            vec![crate::channel::Kind::Events],
+        ));
         manifest
     }
     pub fn is_changes_metadata(&self) -> bool {
-        self.manifest.required_features.iter().any(|f| f == crate::changes_metadata::FEATURE)
+        self.manifest
+            .required_features
+            .iter()
+            .any(|f| f == crate::changes_metadata::FEATURE)
+    }
+    /// Independent upload package shape; each live operation still needs explicit approval.
+    pub fn manifest_for_blob_upload(
+        id: &str,
+        version: &str,
+        module: &[u8],
+        handlers: Vec<proto::TransformHandler>,
+    ) -> proto::Manifest {
+        let names = handlers.iter().map(|h| h.handler.clone()).collect();
+        let mut manifest = Self::manifest_for_transform(id, version, module, handlers);
+        manifest.required_features.push(blob_upload::FEATURE.into());
+        manifest.blob_upload_declaration = Some(blob_upload::declaration(names));
+        manifest
+    }
+    pub fn blob_upload_declaration(&self) -> Option<&proto::BlobUploadDeclaration> {
+        self.manifest.blob_upload_declaration.as_ref()
+    }
+    /// Pure proposal and upload entrypoints share a package, never live authority.
+    pub fn manifest_for_blob_upload_proposals(
+        id: &str,
+        version: &str,
+        module: &[u8],
+        handlers: Vec<proto::TransformHandler>,
+        upload_handlers: Vec<String>,
+        proposals: Vec<proto::BlobUploadProposalHandler>,
+    ) -> proto::Manifest {
+        let mut manifest = Self::manifest_for_blob_upload(id, version, module, handlers);
+        manifest.blob_upload_declaration = Some(blob_upload::declaration(upload_handlers));
+        manifest
+            .required_features
+            .push(blob_upload_proposal::FEATURE.into());
+        manifest.blob_upload_proposal_declaration =
+            Some(blob_upload_proposal::declaration(proposals));
+        manifest
+    }
+    /// Validated task metadata; execution must still deny every side-effect import.
+    pub fn blob_upload_proposal_handler(
+        &self,
+        input: &crate::task::Transform,
+    ) -> Result<(&proto::TransformHandler, &proto::BlobUploadProposalHandler)> {
+        let declaration = self
+            .manifest
+            .blob_upload_proposal_declaration
+            .as_ref()
+            .ok_or(Error::Invalid("missing upload proposal declaration"))?;
+        let mapping = declaration
+            .handlers
+            .iter()
+            .find(|p| p.handler == input.handler)
+            .ok_or(Error::Invalid("unregistered upload proposal"))?;
+        let handler = self
+            .manifest
+            .transform_handlers
+            .iter()
+            .find(|h| h.handler == input.handler)
+            .ok_or(Error::Invalid("missing upload proposal metadata"))?;
+        if handler.input_type != input.input_type || handler.output_type != input.output_type {
+            return Err(Error::Invalid("upload proposal task type mismatch"));
+        }
+        if input.input.len() > handler.max_input_bytes as usize {
+            return Err(Error::Limit);
+        }
+        Ok((handler, mapping))
+    }
+    /// Task metadata for the dedicated upload owner. This never grants access,
+    /// and the ordinary pure transform route continues to reject this package.
+    pub fn blob_upload_handler(
+        &self,
+        input: &crate::task::Transform,
+    ) -> Result<&proto::TransformHandler> {
+        let declaration = self
+            .blob_upload_declaration()
+            .ok_or(Error::Invalid("missing upload declaration"))?;
+        if !declaration.handlers.contains(&input.handler) {
+            return Err(Error::Invalid("unregistered upload handler"));
+        }
+        let handler = self
+            .manifest
+            .transform_handlers
+            .iter()
+            .find(|handler| handler.handler == input.handler)
+            .ok_or(Error::Invalid("upload handler missing task metadata"))?;
+        if handler.input_type != input.input_type || handler.output_type != input.output_type {
+            return Err(Error::Invalid("upload task type mismatch"));
+        }
+        if input.input.len() > handler.max_input_bytes as usize {
+            return Err(Error::Limit);
+        }
+        Ok(handler)
     }
     /// Presentation providers share one active slot; styles remain client settings.
     pub fn is_ui_theme(&self) -> bool {
@@ -184,7 +290,10 @@ impl Package {
     ) -> Result<&proto::TransformHandler> {
         // IO packages require their dedicated execution/observation contract, including when
         // the module also advertises a pure entrypoint. Never capture them as pure evidence.
-        if self.io_declaration().is_some() || self.channel_declaration().is_some() {
+        if self.io_declaration().is_some()
+            || self.channel_declaration().is_some()
+            || self.blob_upload_declaration().is_some()
+        {
             return Err(Error::Invalid("IO package requires IO execution"));
         }
         let handler = self
@@ -310,6 +419,8 @@ impl Package {
                     && f != MUTATION_BUDGET_FEATURE
                     && f != crate::channel::FEATURE
                     && f != crate::changes_metadata::FEATURE
+                    && f != blob_upload::FEATURE
+                    && f != blob_upload_proposal::FEATURE
             })
             || manifest
                 .required_features
@@ -330,6 +441,8 @@ impl Package {
             .required_features
             .iter()
             .any(|f| f == TRANSFORM_HANDLERS_FEATURE);
+        blob_upload::validate_manifest(&package.manifest, &manifest)?;
+        blob_upload_proposal::validate_manifest(&package.manifest, &manifest)?;
         let dependencies_feature = manifest
             .required_features
             .iter()
@@ -427,15 +540,31 @@ impl Package {
                 return Err(Error::Invalid("channel handler missing task metadata"));
             }
         }
-        if manifest.required_features.iter().any(|f| f == crate::changes_metadata::FEATURE) {
+        if manifest
+            .required_features
+            .iter()
+            .any(|f| f == crate::changes_metadata::FEATURE)
+        {
             // Opt-in metadata profile. Never relax legacy channel semantics or
             // reinterpret content/IO/service/dependency/mutation permissions.
-            if manifest.guest_abi_version != 2 || !channel_feature
+            if manifest.guest_abi_version != 2
+                || !channel_feature
                 || !manifest.requested_capabilities.is_empty()
-                || manifest.required_features.iter().any(|f| !matches!(f.as_str(),
-                    TRANSFORM_HANDLERS_FEATURE | crate::channel::FEATURE | crate::changes_metadata::FEATURE))
-                || manifest.channel_declaration.as_ref().is_none_or(|d| d.kinds != [2])
-            { return Err(Error::Invalid("changes metadata feature combination")); }
+                || manifest.required_features.iter().any(|f| {
+                    !matches!(
+                        f.as_str(),
+                        TRANSFORM_HANDLERS_FEATURE
+                            | crate::channel::FEATURE
+                            | crate::changes_metadata::FEATURE
+                    )
+                })
+                || manifest
+                    .channel_declaration
+                    .as_ref()
+                    .is_none_or(|d| d.kinds != [2])
+            {
+                return Err(Error::Invalid("changes metadata feature combination"));
+            }
         }
         io::validate_wire(&package.manifest, manifest.io_declaration.as_ref())?;
         validate_mutation_budget_wire(&package.manifest, manifest.mutation_budget.as_ref())?;
@@ -479,16 +608,27 @@ impl Package {
         } else {
             BTreeSet::new()
         };
-        let directory_feature = manifest.required_features.iter()
+        let directory_feature = manifest
+            .required_features
+            .iter()
             .any(|feature| feature == DIRECTORY_REQUEST_FEATURE);
-        if directory_feature && (manifest.guest_abi_version != 2 || !io_feature
-            || !manifest.requested_capabilities.is_empty()
-            || io_ceiling != BTreeSet::from([io::IoCapability::FileList])
-            || manifest.required_features.iter().any(|feature| !matches!(feature.as_str(),
-                io::FEATURE | DIRECTORY_REQUEST_FEATURE | TRANSFORM_HANDLERS_FEATURE))
-            || manifest.io_declaration.as_ref().is_none_or(|declaration|
-                declaration.service_run.is_some() || !declaration.service_schema_sha256.is_empty())
-            || manifest.channel_declaration.is_some() || !manifest.mutation_schema_sha256.is_empty())
+        if directory_feature
+            && (manifest.guest_abi_version != 2
+                || !io_feature
+                || !manifest.requested_capabilities.is_empty()
+                || io_ceiling != BTreeSet::from([io::IoCapability::FileList])
+                || manifest.required_features.iter().any(|feature| {
+                    !matches!(
+                        feature.as_str(),
+                        io::FEATURE | DIRECTORY_REQUEST_FEATURE | TRANSFORM_HANDLERS_FEATURE
+                    )
+                })
+                || manifest.io_declaration.as_ref().is_none_or(|declaration| {
+                    declaration.service_run.is_some()
+                        || !declaration.service_schema_sha256.is_empty()
+                })
+                || manifest.channel_declaration.is_some()
+                || !manifest.mutation_schema_sha256.is_empty())
         {
             return Err(Error::Invalid("directory request feature combination"));
         }
@@ -516,8 +656,8 @@ impl Package {
         if mutation_budget_feature != manifest.mutation_budget.is_some() {
             return Err(Error::Invalid("mutation budget declaration feature"));
         }
-        if let Some(budget) = &manifest.mutation_budget {
-            if !mutation_feature
+        if let Some(budget) = &manifest.mutation_budget
+            && (!mutation_feature
                 || dependencies_feature
                 || dependency_calls
                 || service_run_feature
@@ -531,10 +671,9 @@ impl Package {
                 || budget.max_job_bytes == 0
                 || budget.max_job_bytes > MAX_MUTATION_JOB_BYTES
                 || budget.max_bytes < budget.max_job_bytes
-                || budget.max_bytes > MAX_MUTATION_BYTES
-            {
-                return Err(Error::Invalid("mutation budget declaration"));
-            }
+                || budget.max_bytes > MAX_MUTATION_BYTES)
+        {
+            return Err(Error::Invalid("mutation budget declaration"));
         }
         if manifest
             .required_features
@@ -572,8 +711,13 @@ impl Package {
             .budget
             .as_ref()
             .ok_or(Error::Invalid("missing budget"))?;
+        let max_fuel = if manifest.blob_upload_declaration.is_some() {
+            blob_upload::MAX_FUEL
+        } else {
+            100_000_000
+        };
         if budget.fuel == 0
-            || budget.fuel > 100_000_000
+            || budget.fuel > max_fuel
             || budget.memory_bytes < 65536
             || budget.memory_bytes > 64 * 1024 * 1024
             || budget.memory_bytes % 65536 != 0

@@ -1,0 +1,124 @@
+{
+  "status": "PASS_SCOPED_THREE_LANGUAGES_CANONICAL_FULL_UI_DIRECTORY_SUCCESS_ACK_REOPEN",
+  "utc": "2026-10-27T07:27:48.391865+00:00",
+  "product_input_sha256": "4173c214e07db17b6b82049674f7c1a2399da0339bcbfb2374844a8805b28776",
+  "product_source_binding": {
+    "status": "EXACT_PRODUCT_BYTES_WITH_SEPARATE_UNUSED_QUALIFICATION_LOCK_REPAIR",
+    "original_product_input_sha256": "4173c214e07db17b6b82049674f7c1a2399da0339bcbfb2374844a8805b28776",
+    "checkout_inventory_unchanged": false,
+    "changed_paths": [
+      "companions/morrow-codex/qualification/c28-basic-harness/Cargo.lock"
+    ],
+    "repair": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-review-320\\result.json",
+      "bytes": 846,
+      "sha256": "1db14657fc68d251d409f4ab0e804a09fb23234353f971cbc419f16ddd342170"
+    },
+    "selected_manifest": {
+      "path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "bytes": 3805,
+      "sha256": "990353df43f77adde802f613356d717fcca498e681963adeb938b09d9f7033ad"
+    },
+    "selected_workspace_lock": {
+      "path": "C:\\ms1020\\workbench_host\\Cargo.lock",
+      "bytes": 235289,
+      "sha256": "166de8d2106124e37f18a6bd76a7245b0d258fe9907870d5d372b84dcc9211e2"
+    },
+    "compiler_manifest_proof": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-build-305\\cargo.jsonl",
+      "bytes": 992325,
+      "sha256": "66b714f8a88bbe44a670e6e6e78acdd59ba8f7823abc901b9d47659631a0475a"
+    },
+    "compiled_native_and_flutter_source_bytes_unchanged": true,
+    "historical_artifacts_relabelled_as_new_build": false,
+    "new_build": false
+  },
+  "shared_product_inputs": {
+    "framework": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-checks-308\\framework-overlay\\result.json",
+      "bytes": 253557,
+      "sha256": "6d1d4d5f4a26b51ef70c72b5ff9b5753d818a63afbd821443fc99f07819e96b1"
+    },
+    "reproducibility": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\framework-package-graph-repair-306\\result.json",
+      "bytes": 1878,
+      "sha256": "d5160459dbd5d0e6a1fb54dafa8cf896c89d8687a1cc6de3588419563c0406e3"
+    },
+    "canonical_native_build": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-build-305\\result.json",
+      "bytes": 1144,
+      "sha256": "2b2d5d3ae409485ce03a790e870047274ab510086e2ad67e57d95e635976cc75"
+    },
+    "canonical_source_integration": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-integration-303\\result.json",
+      "bytes": 1671,
+      "sha256": "80446cde2b38e4dbd473bca7fa33850d7c5fb9a33df818c4ed98462750eadc35"
+    }
+  },
+  "languages": [
+    {
+      "language": "RUST",
+      "case": "312",
+      "review": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-full-main-review-313\\result.json",
+        "bytes": 5005,
+        "sha256": "1c21338838c9b8851458e9fa00cbdebfbdd27cd8a83282a4026a9c03ab725392"
+      },
+      "fixture": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-formal-fixtures-229\\rust.mplugin",
+        "bytes": 176575,
+        "sha256": "32b2e371eb313e32bf181381d4b24fb8ec6ee42cc26b2f5bcefe973eeb4098b2"
+      },
+      "profile": "D:\\build_cache\\d312\\library",
+      "selected": "D:\\build_cache\\d312\\selected"
+    },
+    {
+      "language": "C",
+      "case": "337",
+      "review": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-full-main-review-338\\result.json",
+        "bytes": 6500,
+        "sha256": "544cf4d70bc23396b783ae30827b2843005bd97a3408e3f82319231b21c98fec"
+      },
+      "fixture": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-formal-fixtures-229\\c.mplugin",
+        "bytes": 120364,
+        "sha256": "75e58713bbc670d4f255fad7462fb56199d4c381cb8bb30edbd5aad9c90d2fc1"
+      },
+      "profile": "D:\\build_cache\\d337\\library",
+      "selected": "D:\\build_cache\\d337\\selected"
+    },
+    {
+      "language": "CPP",
+      "case": "332",
+      "review": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-full-main-review-333\\result.json",
+        "bytes": 6504,
+        "sha256": "f6f206aba059903e57932b233f9fd2fb7893b351f60f022e9c1d7713dbcaec58"
+      },
+      "fixture": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-formal-fixtures-229\\cpp.mplugin",
+        "bytes": 121310,
+        "sha256": "a41a17a53f9fadfea3251d006aa07c102a38f3baad8a6f505f69dc348a1f2c9d"
+      },
+      "profile": "D:\\build_cache\\d332\\library",
+      "selected": "D:\\build_cache\\d332\\selected"
+    }
+  ],
+  "all_three_language_directory_fixtures_accepted": true,
+  "actual_production_UI_approval": true,
+  "actual_native_picker_selected_fresh_fixture": true,
+  "each_captured_entries": 70,
+  "original_processes_closed_zero": 18,
+  "guest_call_count_independently_observed": false,
+  "prior_unknown_330_reclassified": false,
+  "prior_unknown_owner_contacts": 0,
+  "VM_calls": 0,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "limits": "Three independent success/ACK/reopen directory fixtures only. No claim for all API capabilities, durable upload/history, network approval, cancellation at this product input, or complete release. Prior 330 remains Unknown; no owner was queried or replayed. Original 305/309 build identities retained; separate unused qualification lock repair is explicit."
+}

@@ -1,0 +1,97 @@
+{
+  "status": "PASS_SCOPED_CANONICAL_FULL_UI_NATIVE_CANCEL_ACK_AND_REOPEN",
+  "utc": "2026-10-27T07:42:57.295507+00:00",
+  "product_input_sha256": "4173c214e07db17b6b82049674f7c1a2399da0339bcbfb2374844a8805b28776",
+  "product_source_binding": {
+    "status": "EXACT_PRODUCT_BYTES_WITH_SEPARATE_UNUSED_QUALIFICATION_LOCK_REPAIR",
+    "original_product_input_sha256": "4173c214e07db17b6b82049674f7c1a2399da0339bcbfb2374844a8805b28776",
+    "checkout_inventory_unchanged": false,
+    "changed_paths": [
+      "companions/morrow-codex/qualification/c28-basic-harness/Cargo.lock"
+    ],
+    "repair": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-review-320\\result.json",
+      "bytes": 846,
+      "sha256": "1db14657fc68d251d409f4ab0e804a09fb23234353f971cbc419f16ddd342170"
+    },
+    "selected_manifest": {
+      "path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "bytes": 3805,
+      "sha256": "990353df43f77adde802f613356d717fcca498e681963adeb938b09d9f7033ad"
+    },
+    "selected_workspace_lock": {
+      "path": "C:\\ms1020\\workbench_host\\Cargo.lock",
+      "bytes": 235289,
+      "sha256": "166de8d2106124e37f18a6bd76a7245b0d258fe9907870d5d372b84dcc9211e2"
+    },
+    "compiler_manifest_proof": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-build-305\\cargo.jsonl",
+      "bytes": 992325,
+      "sha256": "66b714f8a88bbe44a670e6e6e78acdd59ba8f7823abc901b9d47659631a0475a"
+    },
+    "compiled_native_and_flutter_source_bytes_unchanged": true,
+    "historical_artifacts_relabelled_as_new_build": false,
+    "new_build": false
+  },
+  "evidence": {
+    "preparation.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-340\\preparation.json",
+      "bytes": 19475,
+      "sha256": "a6e007b666cc894cedbee135e03acdd4bbb0d16d06fcac421e04bd3d0645d31a"
+    },
+    "run-ready.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-340\\run-ready.json",
+      "bytes": 859,
+      "sha256": "74bdf700b01d3091d2c20d85f7d00b503a3c2ff44299181f789106c206b2cd86"
+    },
+    "run-visible-observations.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-340\\run-visible-observations.json",
+      "bytes": 1155,
+      "sha256": "95ba6a15e6d6b0aeec3471cf6af0cc4e0affbf703fdfd8ea634ea6aaaa3e10a7"
+    },
+    "run-processes-returned.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-340\\run-processes-returned.json",
+      "bytes": 1496,
+      "sha256": "a159284cc407c0907e3b7f8605ee455dc9c6492e59e679cfd058a0b703b4f774"
+    },
+    "reopen-ready.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-340\\reopen-ready.json",
+      "bytes": 860,
+      "sha256": "8888c5e11ca55e21d85c721b5af0b24e252d15ac6c0b2af90bc2e58442950cb7"
+    },
+    "reopen-visible-observations.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-340\\reopen-visible-observations.json",
+      "bytes": 655,
+      "sha256": "d5f410242ff1f2e66bec0bc61685b640b80240cc589d68c584b30f448d90d9d8"
+    },
+    "reopen-processes-returned.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-340\\reopen-processes-returned.json",
+      "bytes": 1506,
+      "sha256": "621e0363ae4f33a74c94712881f031282b24442a84733321464e11aea41ca8a9"
+    },
+    "process-result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-340\\process-result.json",
+      "bytes": 5294,
+      "sha256": "d6876d2252f156e3b965404886b3ee32418dda8b08794460312fc673f6d9f3d6"
+    }
+  },
+  "original_native_picker_explicit_cancel": true,
+  "cancel_completed_before_deadline": true,
+  "original_worker_join_visible": true,
+  "original_ACK_visible": true,
+  "normal_close_and_independent_reopen": true,
+  "persisted_approval_visible": true,
+  "no_active_old_directory_task_visible": true,
+  "six_original_processes_exited_zero": true,
+  "test_directory_byte_unchanged": true,
+  "approval_seeded": false,
+  "native_picker_injected": false,
+  "qualification_shell": false,
+  "guest_success_read_accepted": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "limits": "One original native directory picker cancellation and full-main reopen on the unchanged canonical product build. Separate from success-read, all capabilities, or release acceptance; historical Unknowns unchanged."
+}

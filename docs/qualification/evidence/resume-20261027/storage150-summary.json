@@ -1,0 +1,38 @@
+{
+  "status": "POST_CASE147_VM041_SAVED_SNAPSHOT",
+  "utc": "2026-10-26T19:15:20.679848+00:00",
+  "free_bytes": {
+    "C": 102877896704,
+    "D": 96738177024
+  },
+  "registered_vms": 4,
+  "VMs": [
+    {
+      "Name": "Morrow Windows Acceptance 20261023 029",
+      "Id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "State": "Saved"
+    },
+    {
+      "Name": "Morrow Windows Acceptance 20261023 030",
+      "Id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "State": "Saved"
+    },
+    {
+      "Name": "Morrow Windows Acceptance 20261027 041",
+      "Id": "9105a276-a960-40a8-ae94-c19cd2957760",
+      "State": "Saved"
+    },
+    {
+      "Name": "Windows 11 开发环境",
+      "Id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "State": "Running"
+    }
+  ],
+  "build_cache_root": "D:/build_cache",
+  "earlier_cache130_logical_bytes": 4286638456,
+  "new_cleanup_claimed": false,
+  "original_disks_deleted": 0,
+  "original_VM_and_VM029_VM030_unchanged": true,
+  "VM040_verified_archive_retained": true,
+  "VM037_shared_parent_dependency_preserved": true
+}

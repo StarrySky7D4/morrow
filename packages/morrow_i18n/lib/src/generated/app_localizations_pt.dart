@@ -1876,6 +1876,14 @@ class AppLocalizationsPt extends AppLocalizations {
       'Limite de metadados (bytes, até 1 MiB)';
 
   @override
+  String get pluginsDirectoryNativePickerIntro =>
+      'A escolha da pasta inicia o plugin. O prazo inclui a seleção; sair desta vista cancela a tarefa pendente.';
+
+  @override
+  String get pluginsDirectoryNativePickerStart =>
+      'Escolher pasta e executar o plugin';
+
+  @override
   String get pluginsDirectorySelectHandler =>
       'Selecionar plugin de pasta aprovado';
 

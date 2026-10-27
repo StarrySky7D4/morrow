@@ -1,0 +1,38 @@
+{
+  "status": "PASS_NATIVE_RETAINED_FILE_ON_CUMULATIVE_BUDGET_REFUSAL",
+  "exit_code": 0,
+  "original_25_tests_and_production_sources_unchanged": true,
+  "changed_test_binary_recompiled": true,
+  "previous_25_test_result": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-101-tests\\result.json",
+  "distinct_passed_cases": 26,
+  "native_file_tests": 8,
+  "source_inputs": [
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\plugin_runtime\\src\\io_jobs\\directory_commands.rs",
+      "bytes": 38450,
+      "sha256": "6eeef1fa94168b16931051e4054c8e493178d56b200c8a5cf21157008c22b216"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\plugin_runtime\\src\\io_jobs\\owner_commands.rs",
+      "bytes": 28923,
+      "sha256": "969d7d761db5af92ae2707a112d81ce1a06f3776c05e860d8382adbf8214beb2"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\plugin_runtime\\src\\io_jobs\\directory_commands\\secret_factory_tests.rs",
+      "bytes": 40928,
+      "sha256": "ca59042be4fe0d2553421d3b448b93b485302ae3731b4d79cba1b30f8d6b3b9f"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\plugin_runtime\\src\\io_jobs\\directory_commands\\retained_capture_tests.rs",
+      "bytes": 9421,
+      "sha256": "1e523bc57c7eae99a3cc5e6c6ec38bce6f1903818b7b2d5d379964601c6b0574"
+    }
+  ],
+  "binary": {
+    "path": "D:\\build_cache\\qualification-targets\\sdk-selection-101\\debug\\deps\\morrow_plugin_runtime-8ce328d63a21f97c.exe",
+    "bytes": 19932160,
+    "sha256": "27da66749a39ebd60ee1d34c0f3d6fe852f3197ca740b4e581738afce4f6dd18"
+  },
+  "SDK_gate_accepted": false,
+  "VM_calls": 0
+}

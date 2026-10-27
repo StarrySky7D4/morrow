@@ -1,0 +1,24 @@
+{
+  "status": "UNKNOWN_RETAINED_NO_REPLAY",
+  "phase": "run",
+  "reason": "Visible unknown or failed observation retained",
+  "observed_original_processes": [
+    {
+      "pid": 27640,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-287\\app\\morrow_studio.exe",
+      "creation_filetime": 134375485408164253
+    },
+    {
+      "pid": 29104,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-287\\app\\morrow-workbench-supervisor.exe",
+      "creation_filetime": 134375485431459090
+    },
+    {
+      "pid": 15836,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-287\\app\\morrow-workbench-host.exe",
+      "creation_filetime": 134375485446799300
+    }
+  ],
+  "automatic_kill": false,
+  "automatic_retry": false
+}

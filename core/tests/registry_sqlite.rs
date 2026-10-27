@@ -132,7 +132,7 @@ fn unrelated_future_and_invalid_snapshots_fail_without_rewriting() {
     let bytes = pack(
         b"MORROWG1",
         &wire::Registry {
-            schema_version: 3,
+            schema_version: 4,
             revision: 1,
             selections: vec![],
             dependency_locks: vec![],

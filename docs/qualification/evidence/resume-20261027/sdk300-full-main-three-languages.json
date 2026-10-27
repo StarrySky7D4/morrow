@@ -1,0 +1,90 @@
+{
+  "status": "PASS_SCOPED_THREE_LANGUAGE_FULL_PRODUCTION_DIRECTORY_AND_SEPARATE_CANCEL",
+  "utc": "2026-10-27T05:14:45.659843+00:00",
+  "languages": {
+    "RUST": {
+      "case": 293,
+      "review": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-success-review-294\\result.json",
+        "bytes": 4439,
+        "sha256": "025be1c53cdf895a18b3a5dafb19ce76a949dfe161e83aeab6ce1ae88025cd70"
+      },
+      "processes": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-293\\process-result.json",
+        "bytes": 3793,
+        "sha256": "9f99f70c10ade79d981425feeb6510537000f35971cb275699c183ac57e5a9a2"
+      },
+      "source": "4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d",
+      "framework": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-292\\framework-input-binding.json",
+        "bytes": 84132,
+        "sha256": "c93825f55b87ab9eb648229bb3dcba8e115a1e09d4b486d542945efbc43218d2"
+      },
+      "entries": 70
+    },
+    "C": {
+      "case": 296,
+      "review": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-success-review-297\\result.json",
+        "bytes": 4443,
+        "sha256": "9b8a089f342bbcb5ec4392fc052076e848597b501e6d5a478a8fd297b39ecc9e"
+      },
+      "processes": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-296\\process-result.json",
+        "bytes": 3794,
+        "sha256": "15bf06743aa218dd2638b40ee46e04f54d67ed86f9fb96b1d8130a08f4025ed6"
+      },
+      "source": "4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d",
+      "framework": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-292\\framework-input-binding.json",
+        "bytes": 84132,
+        "sha256": "c93825f55b87ab9eb648229bb3dcba8e115a1e09d4b486d542945efbc43218d2"
+      },
+      "entries": 70
+    },
+    "CPP": {
+      "case": 298,
+      "review": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-success-review-299\\result.json",
+        "bytes": 4441,
+        "sha256": "e939d5d982ece92f1c8e874f41f8a56a02ddabb3006c4eb7cab9c593360f1ce9"
+      },
+      "processes": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-298\\process-result.json",
+        "bytes": 3790,
+        "sha256": "3ff23d1da63aa5a515b36dfa48768947176c7b54499ec76e5c570fa3b03a7615"
+      },
+      "source": "4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d",
+      "framework": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-292\\framework-input-binding.json",
+        "bytes": 84132,
+        "sha256": "c93825f55b87ab9eb648229bb3dcba8e115a1e09d4b486d542945efbc43218d2"
+      },
+      "entries": 70
+    }
+  },
+  "source_input_sha256": "4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d",
+  "cancel": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-cancel-review-289\\result.json",
+    "bytes": 3558,
+    "sha256": "0181ffa20b6f3fa17ffd9da98c8bc3d7e71df94df0bc8113950e390261c632d8"
+  },
+  "reproducible_framework": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\flutter-reproducibility-review-291\\result.json",
+    "bytes": 563,
+    "sha256": "48c5ebe39ee66f5b9c184447135f53ac521893f426162891f03f6b5c8667174c"
+  },
+  "closed_original_process_identities": 24,
+  "actual_full_main_three_language_directory_scoped": true,
+  "approval_seeded": false,
+  "native_picker_injected": false,
+  "qualification_shell": false,
+  "historical_owner_contacts": 0,
+  "VM_calls": 0,
+  "full_SDK_accepted": false,
+  "canonical_integration": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "accessibility_limit": "Immediate AX reads can lag visible state after actions. C296 return text lag was recorded; complete accessibility fidelity is not accepted.",
+  "limits": "Three synthetic directory fixtures only. Successful production UI guest result, not independently counted guest calls. Separate Rust cancellation. Full SDK26, P2, canonical integration and release remain open. Historical Unknowns are not rewritten."
+}

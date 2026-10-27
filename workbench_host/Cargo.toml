@@ -22,6 +22,9 @@ sha2 = "=0.10.9"
 serde_json = "=1.0.151"
 url = "=2.5.8"
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+morrow-blob-upload-proposal-v1 = {path = "../extensions/blob-upload-proposal-v1"}
+morrow-blob-upload-request-v1 = {path = "../extensions/blob-upload-request-v1"}
+morrow-blob-transfer-v1 = {path = "../extensions/blob-transfer-v1"}
 morrow-agent-session-process-v1-host = {path = "../extensions/agent-session-process-v1-host"}
 morrow-agent-catalog-admin-v1 = {path = "../extensions/agent-catalog-admin-v1"}
 morrow-agent-catalog-owner-v1 = {path = "../extensions/agent-catalog-owner-v1"}
@@ -39,6 +42,7 @@ prost-build = "=0.14.4"
 protoc-bin-vendored = "=3.2.0"
 capnpc = "=0.24.0"
 [dev-dependencies]
+morrow-blob-upload-sample = {path = "../sdk/examples/blob-upload-common"}
 codex-utils-path-uri = { path = "../companions/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/utils/path-uri" }
 time = "=0.3.55"
 rcgen = "=0.13.2"
@@ -58,6 +62,7 @@ rusqlite = { version = "=0.40.2", features = ["backup"] }
 tempfile = "=3.27.0"
 
 [features]
+blob-upload-guest-qualification = []
 c28-product-session-qualification = ["morrow-native-pipe-win/c28-product-session-qualification"]
 # Separate, default-off RPC fault fixture; never enabled by the normal product feature.
 c28-qualified-startup-rpc-fault-fixture = ["c28-product-session-qualification"]

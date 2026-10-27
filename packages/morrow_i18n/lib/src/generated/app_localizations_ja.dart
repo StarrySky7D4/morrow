@@ -1766,6 +1766,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get pluginsDirectoryMetadataLimit => 'メタデータの上限（バイト、最大 1 MiB）';
 
   @override
+  String get pluginsDirectoryNativePickerIntro =>
+      'フォルダーを選ぶとプラグインが実行されます。制限時間には選択時間も含まれます。この画面を離れると未完了のタスクはキャンセルされます。';
+
+  @override
+  String get pluginsDirectoryNativePickerStart => 'フォルダーを選んでプラグインを実行';
+
+  @override
   String get pluginsDirectorySelectHandler => '承認済みのフォルダープラグインを選択';
 
   @override

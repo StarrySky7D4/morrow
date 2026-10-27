@@ -1,0 +1,186 @@
+{
+  "status": "PASS_SCOPED_STREAMING_ORIGINAL_OWNER_AND_THREE_LANGUAGE_MUTATION",
+  "utc": "2026-10-27T09:09:16.300926+00:00",
+  "qualified_checkout_source_digest": "8a5aee593e8988cfcf7ba5877cc494be087c88822d2f4fe04941a161e52473db",
+  "evidence": {
+    "blob-owner-351": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-owner-351\\result.json",
+      "bytes": 15334,
+      "sha256": "a54450d67954fff61000dd81a288399c565f2baee8739582105c91b2eeeb84e2"
+    },
+    "blob-followup-352": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-followup-352\\result.json",
+      "bytes": 2301,
+      "sha256": "0d119b358217a2cd9a43a83f7fb076e464c66a112473d7a9f9a2135a56c37cd6"
+    },
+    "workbench-check-353": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\workbench-check-353\\result.json",
+      "bytes": 1930,
+      "sha256": "74b6631b6ac6a7c7fb56f5e4257e7bc54ea92f0508e3dd189e6e96d08af683d7"
+    },
+    "blob-followup-354": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-followup-354\\result.json",
+      "bytes": 2106,
+      "sha256": "bcdf0c171e55817242d7cc6ff1296c341d925df0ad4800eba8185eee76ccc083"
+    },
+    "mutation-guests-355": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\mutation-guests-355\\result.json",
+      "bytes": 7683,
+      "sha256": "aa4ba2f6da6c584a0bcf7e0c0f7a8a299d185d6d3d5a5210d008e33011ab8490"
+    },
+    "mutation-guests-356": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\mutation-guests-356\\result.json",
+      "bytes": 3170,
+      "sha256": "30c0d464b0f4d427eed2db58c190ec26317e6bec1e9fe5687253d4c6f806776b"
+    }
+  },
+  "qualified_scopes": [
+    {
+      "scope": "blob-owner-351",
+      "command": "core-full-regressions",
+      "counts": {
+        "passed": 865,
+        "failed": 0,
+        "ignored": 19,
+        "measured": 0,
+        "filtered": 0
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-owner-351\\core-full-regressions.stdout",
+        "bytes": 81283,
+        "sha256": "948b74565ebcdd57850937caf49688382b855524c2fdcc276445704401f7bb7f"
+      }
+    },
+    {
+      "scope": "blob-owner-351",
+      "command": "runtime-affected-regressions",
+      "counts": {
+        "passed": 149,
+        "failed": 0,
+        "ignored": 6,
+        "measured": 0,
+        "filtered": 0
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-owner-351\\runtime-affected-regressions.stdout",
+        "bytes": 14099,
+        "sha256": "848b8e47cf980f34f5a40a051712f08344ba97c272d93f6be70c87693f843474"
+      }
+    },
+    {
+      "scope": "blob-followup-352",
+      "command": "controls-and-mutation-recovery",
+      "counts": {
+        "passed": 19,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 0
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-followup-352\\controls-and-mutation-recovery.stdout",
+        "bytes": 1988,
+        "sha256": "c552f82fe7bce10b68acd43789b7648b5de546aeaad0766060a9a31b091349f2"
+      }
+    },
+    {
+      "scope": "blob-followup-354",
+      "command": "directory-original-private-controls",
+      "counts": {
+        "passed": 33,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 90
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-followup-354\\directory-original-private-controls.stdout",
+        "bytes": 5206,
+        "sha256": "7c5a7f891360f885549be7b9ee525703ad75bc6a2dfe1a6becee43ca1400ffcb"
+      }
+    },
+    {
+      "scope": "mutation-guests-356",
+      "command": "six-original-guest-methods",
+      "counts": {
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 34
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\mutation-guests-356\\six-original-guest-methods.stdout",
+        "bytes": 559,
+        "sha256": "ddba4fd3f36f7bcf0cf23953c28f736ad91b464a3f8fb5619342e866b5daa072"
+      }
+    }
+  ],
+  "counts_are_distinct_scopes_not_a_release_score": true,
+  "new_blob_methods_included_in_runtime_149": 17,
+  "durable_core_methods_included_in_core_865": 14,
+  "strict_library_clippy": {
+    "core": "PASS",
+    "runtime_packages": "PASS"
+  },
+  "production_library": "COLD_CHECK_PASS_NOT_RUNTIME",
+  "excluded_zero_method_commands": [
+    {
+      "scope": "blob-owner-351",
+      "command": "runtime-native-file-target",
+      "counts": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 2,
+        "measured": 0,
+        "filtered": 119
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-owner-351\\runtime-native-file-target.stdout",
+        "bytes": 565,
+        "sha256": "e5bb41f179463ec80d58cf2f1878cabde0997b4146f6d11aae3eaa84a8e73d02"
+      }
+    },
+    {
+      "scope": "blob-followup-352",
+      "command": "channel-original-private-controls",
+      "counts": {
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filtered": 123
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-followup-352\\channel-original-private-controls.stdout",
+        "bytes": 115,
+        "sha256": "a5f5626bad08c44e97ac8708af2d9f008b63f4e75fd46c80faecdacb1bfcfbfa"
+      }
+    }
+  ],
+  "correction": {
+    "original_documents_preserved": [
+      "blob-followup-352/scope-correction.json",
+      "blob-followup-354/scope-correction.json"
+    ],
+    "six_ignored_mutation_methods": "Actual Rust/C/C++ Wasm guest methods, not subprocess helpers; executed against fresh355 guests in356.",
+    "two_ignored_file_target_methods": "Explicit Windows replacement capability experiments/counterexample, not helpers; not executed or credited.",
+    "feature_gated_channel_controls": "Zero tests in351 excluded; original 15 methods enabled with fault-injection and executed in352.",
+    "wrong_channel_library_filter": "Zero selected in352 excluded; 33 actual affected directory owner methods selected by inventory and executed in354.",
+    "raw_failed_reviews_and_logs_unchanged": true
+  },
+  "frozen_inputs_verified": 57,
+  "fixture": "Original managed worker with ordinary temporary Store and original Manager API approval; actual native Windows files and fresh Wasm guests for mutation356.",
+  "incremental_blob_receiver_original_worker": true,
+  "public_guest_blob_upload": false,
+  "production_blob_approval": false,
+  "protected_blob_session": false,
+  "blob_recovery_UI": false,
+  "original_P2_and_directory_UI_keep_prior_source_binding": true,
+  "all_current_qualification_processes_closed": true,
+  "cache_root": "D:/build_cache",
+  "VM_calls": 0,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

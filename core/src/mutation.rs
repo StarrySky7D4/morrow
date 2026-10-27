@@ -120,15 +120,14 @@ impl Action {
                     return Err(Error::Invalid("mutation content hash"));
                 }
             }
-            Self::Chunk { offset, bytes } => {
+            Self::Chunk { offset, bytes }
                 if bytes.is_empty()
                     || bytes.len() > MAX_CHUNK_BYTES
                     || offset
                         .checked_add(bytes.len() as u64)
                         .is_none_or(|end| end > MAX_CONTENT_BYTES)
-                {
-                    return Err(Error::Limit);
-                }
+            => {
+                return Err(Error::Limit);
             }
             _ => {}
         }

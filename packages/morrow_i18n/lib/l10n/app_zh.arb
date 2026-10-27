@@ -1521,6 +1521,8 @@
   "pluginsDirectoryIntro": "仅向插件提供所选文件夹直属条目的名称和元数据，不读取文件内容或子文件夹内的内容。",
   "pluginsDirectoryLimit": "条目上限（最多 1024）",
   "pluginsDirectoryMetadataLimit": "元数据上限（字节，最多 1 MiB）",
+  "pluginsDirectoryNativePickerIntro": "选定文件夹后立即运行插件。任务时限包含选择时间；离开此页面会取消尚未完成的任务。",
+  "pluginsDirectoryNativePickerStart": "选择文件夹并运行插件",
   "pluginsDirectorySelectHandler": "选择已批准的目录插件",
   "pluginsDirectoryStart": "读取目录并运行插件",
   "pluginsDirectoryTitle": "目录读取",

@@ -99,6 +99,7 @@ fn tight_total_setup() -> Setup {
     let owner = WorkbenchState::with_manager(storage, Ok(manager), None).unwrap();
     Setup {
         app: Workbench {
+            upload_plans: Default::default(),
             #[cfg(windows)]
             product_session_wire: Default::default(),
             channel_tasks: Default::default(),

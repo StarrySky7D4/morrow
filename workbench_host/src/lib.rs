@@ -19,6 +19,8 @@ use std::{collections::BTreeMap, path::Path};
 mod platform;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod product_gate;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod blob_upload_plans;
 #[cfg(target_os = "windows")]
 pub mod workbench_supervision;
 use platform::Instant;
@@ -134,6 +136,8 @@ pub struct Mutation<'a> {
     pub flag: bool,
 }
 pub struct Workbench {
+    #[cfg(not(target_arch = "wasm32"))]
+    upload_plans: blob_upload_plans::Plans,
     #[cfg(windows)]
     product_session_wire: agent_product_control::NativeSlot,
     #[cfg(not(target_arch = "wasm32"))]
@@ -946,6 +950,7 @@ impl Workbench {
 impl Workbench {
     pub fn open(path: &Path, package: Option<Package>) -> Result<Self> {
         Ok(Self {
+            upload_plans: Default::default(),
             http_tasks: Default::default(),
             state: io_tasks::StateSlot::new(WorkbenchState::open(path, package)?),
             channel_tasks: Default::default(),
@@ -955,6 +960,7 @@ impl Workbench {
     }
     pub fn open_managed(root: &Path, package: Option<Package>) -> Result<Self> {
         Ok(Self {
+            upload_plans: Default::default(),
             http_tasks: Default::default(),
             state: io_tasks::StateSlot::new(WorkbenchState::open_managed(root, package)?),
             channel_tasks: Default::default(),
@@ -1012,8 +1018,10 @@ impl Workbench {
     }
     pub fn finish(&mut self) -> Result<()> {
         self.state.request_stop();
+        self.upload_plans.finish()?;
         self.finish_channels()?;
         self.state.try_reclaim()?;
+        self.state.require_upload_resolution()?;
         #[cfg(windows)]
         if self.state.agent_preparation_debt.is_some() || self.state.agent_contexts.outstanding() {
             return Err(io_tasks::AccessError::RecoveryRequired.into());
@@ -1024,6 +1032,7 @@ impl Workbench {
 #[cfg(not(target_arch = "wasm32"))]
 impl Drop for Workbench {
     fn drop(&mut self) {
+        self.upload_plans.cancel();
         self.channel_tasks.request_stop();
         self.state.request_stop();
     }

@@ -105,6 +105,8 @@ pub(crate) struct Control {
     pub(crate) io: Option<Arc<IoContext>>,
     #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
     pub(crate) channel: Option<Arc<crate::channel::ChannelContext>>,
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    pub(crate) blob_upload: Option<Arc<crate::blob_upload_binding::UploadContext>>,
     revocation: Revocation,
     cancel: Cancellation,
 }
@@ -248,6 +250,11 @@ impl Manager {
         Arc::downgrade(&self.identity)
     }
     pub(crate) fn changes_revision_guard(&self) -> Arc<AtomicBool> {
+        Arc::clone(&self.changes_revision)
+    }
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    pub(crate) fn upload_revision_guard(&self) -> Arc<AtomicBool> {
+        // Shared invalidation signal only; no channel permission is inherited.
         Arc::clone(&self.changes_revision)
     }
     /// Reap original managed channel resources without granting new source authority.
@@ -580,6 +587,22 @@ impl Manager {
         }
         self.revoke_required_tree(id);
         self.registry.approve_io(id, digest, approved, revision)?;
+        Ok(())
+    }
+    /// Independent exact-package ceiling. A live upload operation requires a separate original-owner binding.
+    pub fn approve_blob_upload(
+        &mut self,
+        id: &str,
+        digest: [u8; 32],
+        approved: bool,
+        revision: u64,
+    ) -> Result<()> {
+        self.registry.validate_blob_upload_approval(id, digest, approved, revision)?;
+        if self.selection(id).is_some_and(|s| s.approved_blob_upload == approved) {
+            return Ok(());
+        }
+        self.revoke_required_tree(id);
+        self.registry.approve_blob_upload(id, digest, approved, revision)?;
         Ok(())
     }
     /// Bind a previously approved ceiling to this exact live host/instance. This does
@@ -967,6 +990,26 @@ impl Manager {
     }
     /// Validate current enabled state and package bytes, then bind the stored approved ceiling.
     pub fn connect(&mut self, id: &str, host: &mut HostRuntime) -> Result<ManagedInstance> {
+        self.connect_profile(id, host, None)
+    }
+    /// Explicit trusted-host budget for the independent upload profile only.
+    /// This does not approve the package or nominate an object. Ordinary connect
+    /// keeps the Manager's original policy, including its original call/fuel limits.
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    pub fn connect_blob_upload(
+        &mut self,
+        id: &str,
+        host: &mut HostRuntime,
+        limits: Limits,
+    ) -> Result<ManagedInstance> {
+        self.connect_profile(id, host, Some(limits))
+    }
+    fn connect_profile(
+        &mut self,
+        id: &str,
+        host: &mut HostRuntime,
+        upload_limits: Option<Limits>,
+    ) -> Result<ManagedInstance> {
         #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
         {
             self.reap_channels();
@@ -978,7 +1021,16 @@ impl Manager {
             return Err(Error::Limit.into());
         }
         let (package, selection) = self.registry.resolve_enabled(id)?;
-        let package = PreparedPackage::new(package, self.limits)?;
+        let limits = match upload_limits {
+            Some(limits) => {
+                if package.blob_upload_declaration().is_none() || !selection.approved_blob_upload {
+                    return Err(Error::Invalid("independent upload approval required").into());
+                }
+                limits
+            }
+            None => self.limits,
+        };
+        let package = PreparedPackage::new(package, limits)?;
         let connection = package.connect_approved(host, &selection.approved)?;
         let revocation = match host.revocation(&connection) {
             Ok(v) => v,
@@ -1024,6 +1076,10 @@ impl Manager {
                 }),
             revocation,
             cancel: Cancellation::default(),
+            #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+            blob_upload: package.package().blob_upload_declaration().map(|declaration| {
+                Arc::new(crate::blob_upload_binding::UploadContext::new(declaration, package.limits()))
+            }),
         });
         self.instances
             .entry(id.into())

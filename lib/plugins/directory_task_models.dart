@@ -5,7 +5,7 @@ import 'io_task_models.dart';
 Uint8List _owned(Uint8List value) =>
     Uint8List.fromList(value).asUnmodifiableView();
 
-/// One explicit native selection. Raw Windows UTF-16 spelling is preserved.
+/// One explicit capture request. Native picker requests carry no caller path.
 class DirectoryTaskRequest {
   DirectoryTaskRequest({
     required Uint8List submission,
@@ -17,12 +17,14 @@ class DirectoryTaskRequest {
     required this.maxEntries,
     required this.maxMetadataBytes,
     required this.timeoutMs,
+    this.nativePicker = false,
   }) : submission = _owned(submission),
        packageDigest = _owned(packageDigest);
   final Uint8List submission, packageDigest;
   final String packageId, handler, selectedPath;
   final BigInt registryRevision, maxMetadataBytes;
   final int maxEntries, timeoutMs;
+  final bool nativePicker;
 }
 
 sealed class DirectoryTaskResult {}
@@ -50,6 +52,14 @@ final class DirectoryTaskGuest extends DirectoryTaskResult {
 
 final class DirectoryTaskFinished extends DirectoryTaskResult {}
 
+enum DirectoryCommandFault { cancelled, expired, rejected }
+
+/// A definitive original capture refusal; worker reclamation remains separate.
+final class DirectoryTaskRefused extends DirectoryTaskResult {
+  DirectoryTaskRefused(this.fault);
+  final DirectoryCommandFault fault;
+}
+
 class DirectoryTaskRead {
   DirectoryTaskRead({required this.snapshot, required this.result});
   final IoTaskSnapshot snapshot;
@@ -70,6 +80,11 @@ abstract interface class DirectoryTaskPlatformCapabilities {
   bool get supportsSelectedDirectoryTasks;
 }
 
+/// A trusted picker captures directory identity inside the original IO owner.
+abstract interface class NativeDirectoryPickerCapabilities {
+  bool get supportsNativeDirectoryPicker;
+}
+
 abstract final class DirectoryTaskValidation {
   static final _u64 = (BigInt.one << 64) - BigInt.one;
   static void timeout(int value) {
@@ -86,7 +101,9 @@ abstract final class DirectoryTaskValidation {
         v.isNotEmpty && !v.contains('\u0000') && utf8.encode(v).length <= 256;
     if (!text(value.packageId) ||
         !text(value.handler) ||
-        value.selectedPath.isEmpty ||
+        (value.nativePicker
+            ? value.selectedPath.isNotEmpty
+            : value.selectedPath.isEmpty) ||
         value.selectedPath.length > 4096 ||
         value.selectedPath.contains('\u0000') ||
         value.registryRevision < BigInt.zero ||

@@ -1,0 +1,57 @@
+{
+  "schema": "PRE_EXECUTION_FAULT_REVIEW_BOUNDARY_V1",
+  "status": "PREPARED_NOT_EXECUTED",
+  "case": "155",
+  "tag": "22156657108b4b5fb16442d0aaac19ec",
+  "vm_id": "194b96cf-7045-4016-bab2-ba5a37e4e7de",
+  "source_digest": "10184a3712c7d081b4784418ac3a6297934f78096392a321ed7303bd852df55a",
+  "checkout_source_digest": "10184a3712c7d081b4784418ac3a6297934f78096392a321ed7303bd852df55a",
+  "utc": "2026-10-26T20:08:40.204581+00:00",
+  "scope": "Qualification-only protect-from-close flag on the original runner query token immediately before its original checked CloseHandle once; no unprotect, duplicate, alternate close or retry. Original ownership, first failure and deadline rules stay intact.",
+  "source_roles": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-041\\result.json",
+    "bytes": 2170,
+    "sha256": "be1c6a18fc08e4bf5f8c66f85ffb28977ea589512e5ba2fc3ac4a8fbad5041dd"
+  },
+  "preparation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case155-preparation.json",
+    "bytes": 15168,
+    "sha256": "474bb7214c5f48e1133bf87608d28871d8b1cb8f353076176b663b0aa2a3ab76"
+  },
+  "trace_scope_clarification": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles041-trace-scope-clarification.json",
+    "bytes": 1558,
+    "sha256": "6413ad3d75bdd051a765f4405e51b0ee34fcf0d646d0f68884d4787c8e61b362"
+  },
+  "required_evidence": [
+    "Fresh disconnected VM042 passes original pristine readiness.",
+    "Four cold byte-bound roles; no setup, token, default-DACL or late-create fault marker.",
+    "Original setup and actual process/thread creation and security readback complete.",
+    "V6 bounded contiguous same-owner trace; exactly one original create, protection, close and first failure.",
+    "Protection succeeds and is read back before close; same original query token changes Held to CloseFailed(nonzero code).",
+    "Original first failure is TokenSecurity/RunnerTokenClose with same native code; process/thread and login/restricted/launch handles stay Held.",
+    "Original observation debt and Unknown remain; no post-failure native requery, retry, transfer or cleanup receipt.",
+    "Original journal/controller prefix, binding and first-failure delivery agree.",
+    "Same policy owner restores only actually added privilege and closes own policy resources.",
+    "Independent diagnostic takes one fixed quiet interval and one read of five public files, then closes own transport."
+  ],
+  "failure_rule": "Missing or contradictory evidence leaves the gate open; diagnostics create no cleanup or replay authority.",
+  "acceptance_limits": {
+    "token_derivation_native_refusal": false,
+    "default_dacl_native_refusal": false,
+    "late_create_accepted": false,
+    "natural_OS_delay": false,
+    "normal_47_step_completion": false,
+    "retained_product_resources_cleaned": false,
+    "issued_tokens_revoked": false,
+    "full_P2_accepted": false,
+    "source_accepted": false,
+    "release_eligible": false
+  },
+  "runtime_authority_from_this_JSON": false,
+  "trace_is_public_qualification_data_not_IPC": true,
+  "trace_record_limit": 512,
+  "diagnostic_coverage_exclusions": [
+    "No trace promised before command retention or after append failure; absence proves nothing."
+  ]
+}

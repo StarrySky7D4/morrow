@@ -1881,6 +1881,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'Limite de métadonnées (octets, 1 MiB maximum)';
 
   @override
+  String get pluginsDirectoryNativePickerIntro =>
+      'La sélection du dossier lance le module. Le délai inclut la sélection ; quitter cette vue annule la tâche en attente.';
+
+  @override
+  String get pluginsDirectoryNativePickerStart =>
+      'Choisir un dossier et exécuter le module';
+
+  @override
   String get pluginsDirectorySelectHandler =>
       'Choisir un plugin de dossier autorisé';
 

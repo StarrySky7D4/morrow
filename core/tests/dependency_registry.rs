@@ -492,6 +492,7 @@ fn maximum_lock_snapshot_opens_and_one_more_approval_preserves_it() {
             enabled: true,
             approved_capabilities: vec![],
             approved_io_capabilities: vec![],
+            approved_blob_upload: false,
         });
         if index < 64 {
             for n in 0..16 {
@@ -511,6 +512,7 @@ fn maximum_lock_snapshot_opens_and_one_more_approval_preserves_it() {
         enabled: true,
         approved_capabilities: vec![],
         approved_io_capabilities: vec![],
+        approved_blob_upload: false,
     });
     assert_eq!(state.dependency_locks.len(), MAX_DEPENDENCY_LOCKS);
     let saved = container(&state.encode_to_vec());

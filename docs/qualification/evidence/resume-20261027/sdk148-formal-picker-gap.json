@@ -1,0 +1,56 @@
+{
+  "status": "SOURCE_GAP_CONFIRMED_FORMAL_PICKER_NOT_ACCEPTED",
+  "source_digest": "d7827205fe709e253b0f39db19b7a11d2ebcc2c1de01cc0aa84f0469c9a196fb",
+  "files": [
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\directory_task_manager.dart",
+      "bytes": 13226,
+      "sha256": "2630dc0069ff477225e94c3cc5d2453310247e81acb7ffa78997b2e88ae59527"
+    },
+    {
+      "path": "C:\\ms1020\\lib\\plugins\\directory_task_native.dart",
+      "bytes": 4801,
+      "sha256": "87a9f7945fae8f2dc5af30af38ef571da213ece3325cb6635151672bc9614281"
+    },
+    {
+      "path": "C:\\ms1020\\workbench_host\\schemas\\host.capnp",
+      "bytes": 24272,
+      "sha256": "1ea7623c472bc8ea52331664e2bcc199580b8fa2eccf6a12cf48b343a49d95ee"
+    },
+    {
+      "path": "C:\\ms1020\\workbench_host\\src\\directory_task_protocol.rs",
+      "bytes": 4403,
+      "sha256": "c482694aa31d12eb344d46a5ab7e8ed9295ee72337b14de8514642cf5bbf4b86"
+    },
+    {
+      "path": "C:\\ms1020\\workbench_host\\src\\directory_tasks.rs",
+      "bytes": 16443,
+      "sha256": "664ff1dc5d082a894d418f3a61f03dabf50709e25594ad003f85215936ab6b78"
+    }
+  ],
+  "observed_chain": [
+    "Flutter picker returns a path; manager stores _path until Start",
+    "Private Capnp DirectoryStart serializes selectedPathUtf16",
+    "Rust protocol constructs DirectoryStart from that spelling",
+    "Selected path is opened later on the original worker"
+  ],
+  "existing_reusable_boundary": "start_open_directory_retained borrows the original File through preparation and admission; failed pre-enqueue keeps the same File, successful enqueue consumes it once",
+  "missing": [
+    "Native picker owner retaining the actual selected object until explicit handoff",
+    "Binding that object to the same package, approval, submission and current UI/workspace generation",
+    "Checked cancellation and lost-result ownership before original worker acceptance",
+    "Actual formal picker/approval UI evidence across original Rust/C/C++ packages"
+  ],
+  "next_implementation_boundary": "Connect a native retained-selection owner through the private Capnp protocol to start_open_directory_retained; do not treat re-opening a path after selection as picker-time identity.",
+  "code_edits": 0,
+  "VM_calls": 0,
+  "product_executions": 0,
+  "picker_time_native_identity_accepted": false,
+  "approval_UI_accepted": false,
+  "all_languages_formal_UI_accepted": false,
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false
+}

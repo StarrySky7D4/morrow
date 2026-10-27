@@ -51,6 +51,12 @@ const REVOKE: u8 = 2;
 const NOOP: u8 = 3;
 const SMALL_JOB: u64 = 128 * 1024;
 
+#[path = "retained_capture_tests.rs"]
+mod retained_capture_tests;
+
+#[path = "checked_retirement_tests.rs"]
+mod checked_retirement_tests;
+
 #[derive(Default)]
 struct Gate {
     open: Mutex<bool>,
@@ -334,6 +340,7 @@ impl Running {
             self.worker.stop();
         }
         let exit = reclaim(&mut self.worker);
+        assert!(exit.native_retirement.is_complete());
         assert!(Arc::ptr_eq(&self.identity, &exit.owner.identity));
         assert_eq!(exit.owner.host.binding(), self.host);
         assert_eq!(self.worker.directory_usage(), (0, 0));
@@ -1126,3 +1133,7 @@ fn legacy_explicit_secret_bypasses_factory_and_entropy_failures_are_redacted() {
     idle_empty(&run);
     assert_eq!(run.reclaim(true).disconnect, Ok(()));
 }
+
+#[cfg(test)]
+#[path = "native_close_refusal_tests.rs"]
+mod native_close_refusal_tests;

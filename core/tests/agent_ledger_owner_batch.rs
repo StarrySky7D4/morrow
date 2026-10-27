@@ -207,7 +207,7 @@ fn metadata_update_and_exact_physical_delete_commit_atomically_and_replay_confli
     let version: i64 = sql
         .query_row("PRAGMA user_version", [], |r| r.get(0))
         .unwrap();
-    assert_eq!(version, 25);
+    assert_eq!(version, morrow_core::store::SCHEMA_VERSION);
     let columns: Vec<String> = sql
         .prepare("PRAGMA table_info(agent_ledger)")
         .unwrap()

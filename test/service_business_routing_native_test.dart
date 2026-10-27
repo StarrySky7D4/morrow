@@ -12,6 +12,8 @@ import 'package:morrow_studio/plugins/generated/identity.dart' as contract;
 import 'package:morrow_studio/plugins/service_run_control.dart';
 import 'package:morrow_studio/plugins/workbench_backend.dart';
 import 'package:morrow_studio/plugins/workbench_native.dart';
+import 'package:morrow_studio/plugins/blob_upload_models.dart';
+import 'package:morrow_studio/plugins/blob_plan_models.dart';
 
 import 'external_plugin_native_test.dart' show removeTestDirectory;
 
@@ -102,6 +104,7 @@ class _Script {
     actions.add(request.action!);
     switch (request.action!) {
       case host.Action.page:
+      case host.Action.pageVersioned:
         return _reply((_) {});
       case host.Action.serviceRunStart:
         await startGate?.future;
@@ -119,6 +122,22 @@ class _Script {
           },
           readOnly: true,
           warning: 'outer IO scheduler',
+        );
+      case host.Action.blobPlanStart:
+      case host.Action.blobPlanStatus:
+      case host.Action.blobPlanRead:
+      case host.Action.blobPlanCancel:
+      case host.Action.blobPlanAcknowledge:
+      case host.Action.blobPlanApprove:
+      case host.Action.blobPlanDiscover:
+      case host.Action.blobUploadStart:
+      case host.Action.blobUploadStatus:
+      case host.Action.blobUploadRead:
+      case host.Action.blobUploadInspect:
+      case host.Action.blobUploadConfirm:
+        return _reply(
+          (r) => r.error = 'original owner is busy',
+          readOnly: true,
         );
       case host.Action.commandSubmit:
         expect(request.ioKey, _task);
@@ -274,6 +293,106 @@ except BaseException:
 
 void main() {
   final python = Platform.environment['MORROW_CLOSE_TEST_PYTHON'];
+  test(
+    'planning and upload controls bypass pending service business and stay with original owner',
+    () async {
+      final script = _Script((r) {
+        expect(r.action, host.Action.readUiLocale);
+        return _locale('en');
+      })..ready = false;
+      final child = await _Child.open(python!, script);
+      try {
+        await child.backend.startServiceRun(_start());
+        final business = child.backend.readUiLocale();
+        await child.waitAction(host.Action.commandStatus);
+        final input = BlobUploadRequest(
+          submission: _startSubmission,
+          packageId: 'org.example.upload',
+          packageDigest: _digest,
+          registryRevision: BigInt.one,
+          nominationRef: _digest,
+          ownerDomain: _digest,
+          transferEpoch: _digest,
+          objectRef: _digest,
+          operationId: _digest,
+          byteLength: BigInt.one,
+          wholeSha256: _digest,
+          timeoutMs: 1000,
+          handler: 'upload',
+          inputType: 'data.v1',
+          outputType: 'result.v1',
+          input: Uint8List(0),
+        );
+        final plan = BlobPlanRequest(
+          submission: _startSubmission,
+          packageId: input.packageId,
+          packageDigest: _digest,
+          registryRevision: BigInt.one,
+          handler: 'blob.plan',
+          inputType: 'options.v1',
+          input: Uint8List(0),
+        );
+        final reviewed = BlobPlanView(
+          packageId: input.packageId,
+          packageDigest: _digest,
+          registryRevision: BigInt.one,
+          plannerHandler: 'blob.plan',
+          uploadHandler: 'upload',
+          planningInputSha256: _digest,
+          label: 'Sample',
+          byteLength: BigInt.one,
+          wholeSha256: _digest,
+          proposalSha256: _digest,
+        );
+        for (final operation in <Future<Object?> Function()>[
+          () => child.backend.startBlobPlan(plan),
+          () => child.backend.statusBlobPlan(_task),
+          () => child.backend.readBlobPlan(_task),
+          () => child.backend.cancelBlobPlan(_task),
+          () => child.backend.acknowledgeBlobPlan(_task),
+          () => child.backend.approveBlobPlan(_task, reviewed),
+          () => child.backend.discoverBlobPlan(_startSubmission),
+          () => child.backend.startBlobUpload(input),
+          () => child.backend.statusBlobUpload(_task),
+          () => child.backend.readBlobUpload(_task),
+          () => child.backend.inspectBlobUpload(_task),
+          () => child.backend.confirmBlobUpload(
+            _task,
+            BlobUploadObservation.staged,
+          ),
+        ]) {
+          await expectLater(
+            operation().timeout(const Duration(seconds: 2)),
+            throwsStateError,
+          );
+        }
+        expect(script.commands.length, 1);
+        expect(
+          script.actions,
+          containsAllInOrder([
+            host.Action.blobPlanStart,
+            host.Action.blobPlanStatus,
+            host.Action.blobPlanRead,
+            host.Action.blobPlanCancel,
+            host.Action.blobPlanAcknowledge,
+            host.Action.blobPlanApprove,
+            host.Action.blobPlanDiscover,
+            host.Action.blobUploadStart,
+            host.Action.blobUploadStatus,
+            host.Action.blobUploadRead,
+            host.Action.blobUploadInspect,
+            host.Action.blobUploadConfirm,
+          ]),
+        );
+        script.ready = true;
+        expect(await business, 'en');
+      } finally {
+        script.ready = true;
+        await child.dispose();
+      }
+    },
+    skip: python == null,
+  );
   for (final mode in [0, 1, 2]) {
     final badOffset = mode == 1;
     final unknownFinish = mode == 2;
@@ -460,7 +579,7 @@ void main() {
             readOnly: true,
             warning: 'inner maintenance',
           ),
-          host.Action.query => _reply(
+          host.Action.queryVersioned => _reply(
             (r) {
               r.error = 'original query terminal';
               r.uiCode = 101;
@@ -517,7 +636,7 @@ void main() {
         );
         expect(script.commands.map((r) => r.action), [
           host.Action.pluginState,
-          host.Action.query,
+          host.Action.queryVersioned,
           host.Action.readUiLocale,
         ]);
         expect(script.commands[1].operation, 'same-op');

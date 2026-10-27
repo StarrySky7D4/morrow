@@ -166,6 +166,20 @@ enum Action {
   directoryRunGuest,
   directoryReadGuest,
   directoryFinish,
+  directoryPick,
+  pluginApproveBlobUpload,
+  blobUploadStart,
+  blobUploadStatus,
+  blobUploadRead,
+  blobUploadInspect,
+  blobUploadConfirm,
+  blobPlanStart,
+  blobPlanStatus,
+  blobPlanRead,
+  blobPlanCancel,
+  blobPlanAcknowledge,
+  blobPlanApprove,
+  blobPlanDiscover,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -562,6 +576,36 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
       ordinal: 159,
     ),
     EnumerantSchemaInfo(name: 'directoryFinish', codeOrder: 160, ordinal: 160),
+    EnumerantSchemaInfo(name: 'directoryPick', codeOrder: 161, ordinal: 161),
+    EnumerantSchemaInfo(
+      name: 'pluginApproveBlobUpload',
+      codeOrder: 162,
+      ordinal: 162,
+    ),
+    EnumerantSchemaInfo(name: 'blobUploadStart', codeOrder: 163, ordinal: 163),
+    EnumerantSchemaInfo(name: 'blobUploadStatus', codeOrder: 164, ordinal: 164),
+    EnumerantSchemaInfo(name: 'blobUploadRead', codeOrder: 165, ordinal: 165),
+    EnumerantSchemaInfo(
+      name: 'blobUploadInspect',
+      codeOrder: 166,
+      ordinal: 166,
+    ),
+    EnumerantSchemaInfo(
+      name: 'blobUploadConfirm',
+      codeOrder: 167,
+      ordinal: 167,
+    ),
+    EnumerantSchemaInfo(name: 'blobPlanStart', codeOrder: 168, ordinal: 168),
+    EnumerantSchemaInfo(name: 'blobPlanStatus', codeOrder: 169, ordinal: 169),
+    EnumerantSchemaInfo(name: 'blobPlanRead', codeOrder: 170, ordinal: 170),
+    EnumerantSchemaInfo(name: 'blobPlanCancel', codeOrder: 171, ordinal: 171),
+    EnumerantSchemaInfo(
+      name: 'blobPlanAcknowledge',
+      codeOrder: 172,
+      ordinal: 172,
+    ),
+    EnumerantSchemaInfo(name: 'blobPlanApprove', codeOrder: 173, ordinal: 173),
+    EnumerantSchemaInfo(name: 'blobPlanDiscover', codeOrder: 174, ordinal: 174),
   ],
 );
 
@@ -781,6 +825,29 @@ final class RequestReader extends StructReader {
   );
 
   int get directoryTimeoutMs => getUint32Field(80);
+
+  BlobUploadStartReader? get blobUploadStart => getStructFieldWith(
+    52,
+    (r) => BlobUploadStartReader(r, capabilities: capabilityTable),
+  );
+
+  bool get blobUploadApproved => getBoolField(257);
+
+  int get blobUploadObservation => getUint16Field(34);
+
+  BlobPlanStartReader? get blobPlanStart => getStructFieldWith(
+    53,
+    (r) => BlobPlanStartReader(r, capabilities: capabilityTable),
+  );
+
+  BlobPlanApprovalReader? get blobPlanApproval => getStructFieldWith(
+    54,
+    (r) => BlobPlanApprovalReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get blobPlanKey => getDataField(55);
+
+  Uint8List? get blobPlanSubmission => getDataField(56);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -1155,6 +1222,40 @@ final class RequestBuilder extends StructBuilder {
   set directoryTimeoutMs(int v) {
     setUint32Field(80, v);
   }
+
+  BlobUploadStartBuilder initBlobUploadStart() {
+    return initStructFieldWith(52, (r) => BlobUploadStartBuilder(r), 3, 13);
+  }
+
+  bool hasBlobUploadStart() => hasPointerField(52);
+
+  set blobUploadApproved(bool v) {
+    setBoolField(257, v);
+  }
+
+  set blobUploadObservation(int v) {
+    setUint16Field(34, v);
+  }
+
+  BlobPlanStartBuilder initBlobPlanStart() {
+    return initStructFieldWith(53, (r) => BlobPlanStartBuilder(r), 2, 7);
+  }
+
+  bool hasBlobPlanStart() => hasPointerField(53);
+
+  BlobPlanApprovalBuilder initBlobPlanApproval() {
+    return initStructFieldWith(54, (r) => BlobPlanApprovalBuilder(r), 1, 2);
+  }
+
+  bool hasBlobPlanApproval() => hasPointerField(54);
+
+  set blobPlanKey(Uint8List? v) {
+    setDataField(55, v);
+  }
+
+  set blobPlanSubmission(Uint8List? v) {
+    setDataField(56, v);
+  }
 }
 
 final class _RequestFactory
@@ -1164,7 +1265,7 @@ final class _RequestFactory
   @override
   int get dataWords => 11;
   @override
-  int get ptrWords => 52;
+  int get ptrWords => 57;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -1181,7 +1282,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 11,
-  pointerWords: 52,
+  pointerWords: 57,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1727,6 +1828,62 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('UInt32'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'blobUploadStart',
+      codeOrder: 68,
+      body: SlotFieldSchemaInfo(
+        offset: 52,
+        type: StructRefTypeSchemaInfo(0x9124da9acda8155e),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobUploadApproved',
+      codeOrder: 69,
+      body: SlotFieldSchemaInfo(
+        offset: 257,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobUploadObservation',
+      codeOrder: 70,
+      body: SlotFieldSchemaInfo(
+        offset: 17,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobPlanStart',
+      codeOrder: 71,
+      body: SlotFieldSchemaInfo(
+        offset: 53,
+        type: StructRefTypeSchemaInfo(0xbc59a04abf4bbeec),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobPlanApproval',
+      codeOrder: 72,
+      body: SlotFieldSchemaInfo(
+        offset: 54,
+        type: StructRefTypeSchemaInfo(0xfe8d4270bff95462),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobPlanKey',
+      codeOrder: 73,
+      body: SlotFieldSchemaInfo(
+        offset: 55,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobPlanSubmission',
+      codeOrder: 74,
+      body: SlotFieldSchemaInfo(
+        offset: 56,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
   ],
 );
 
@@ -1936,6 +2093,26 @@ final class ResponseReader extends StructReader {
     41,
     (r) => DirectoryResultReader(r, capabilities: capabilityTable),
   );
+
+  BlobUploadStateReader? get blobUploadState => getStructFieldWith(
+    42,
+    (r) => BlobUploadStateReader(r, capabilities: capabilityTable),
+  );
+
+  BlobUploadResultReader? get blobUploadResult => getStructFieldWith(
+    43,
+    (r) => BlobUploadResultReader(r, capabilities: capabilityTable),
+  );
+
+  BlobPlanStateReader? get blobPlanState => getStructFieldWith(
+    44,
+    (r) => BlobPlanStateReader(r, capabilities: capabilityTable),
+  );
+
+  BlobPlanResultReader? get blobPlanResult => getStructFieldWith(
+    45,
+    (r) => BlobPlanResultReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -2086,8 +2263,8 @@ final class ResponseBuilder extends StructBuilder {
       12,
       length,
       (r) => PluginEntryBuilder(r),
-      1,
-      16,
+      2,
+      18,
     );
   }
 
@@ -2293,6 +2470,30 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasDirectoryResult() => hasPointerField(41);
+
+  BlobUploadStateBuilder initBlobUploadState() {
+    return initStructFieldWith(42, (r) => BlobUploadStateBuilder(r), 1, 0);
+  }
+
+  bool hasBlobUploadState() => hasPointerField(42);
+
+  BlobUploadResultBuilder initBlobUploadResult() {
+    return initStructFieldWith(43, (r) => BlobUploadResultBuilder(r), 5, 0);
+  }
+
+  bool hasBlobUploadResult() => hasPointerField(43);
+
+  BlobPlanStateBuilder initBlobPlanState() {
+    return initStructFieldWith(44, (r) => BlobPlanStateBuilder(r), 1, 4);
+  }
+
+  bool hasBlobPlanState() => hasPointerField(44);
+
+  BlobPlanResultBuilder initBlobPlanResult() {
+    return initStructFieldWith(45, (r) => BlobPlanResultBuilder(r), 3, 1);
+  }
+
+  bool hasBlobPlanResult() => hasPointerField(45);
 }
 
 final class _ResponseFactory
@@ -2302,7 +2503,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 42;
+  int get ptrWords => 46;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2319,7 +2520,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 7,
-  pointerWords: 42,
+  pointerWords: 46,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -2767,6 +2968,38 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 41,
         type: StructRefTypeSchemaInfo(0x98386cf72e015a24),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobUploadState',
+      codeOrder: 56,
+      body: SlotFieldSchemaInfo(
+        offset: 42,
+        type: StructRefTypeSchemaInfo(0xcbe3c8c204dc3344),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobUploadResult',
+      codeOrder: 57,
+      body: SlotFieldSchemaInfo(
+        offset: 43,
+        type: StructRefTypeSchemaInfo(0x957887b7f6cbc110),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobPlanState',
+      codeOrder: 58,
+      body: SlotFieldSchemaInfo(
+        offset: 44,
+        type: StructRefTypeSchemaInfo(0xf307c9189f2b6623),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobPlanResult',
+      codeOrder: 59,
+      body: SlotFieldSchemaInfo(
+        offset: 45,
+        type: StructRefTypeSchemaInfo(0xe075e8908cbce7c8),
       ),
     ),
   ],
@@ -4812,6 +5045,22 @@ final class PluginEntryReader extends StructReader {
   );
 
   bool get directorySupported => getBoolField(5);
+
+  bool get blobUploadSupported => getBoolField(6);
+
+  bool get blobUploadApproved => getBoolField(7);
+
+  ListReader<String?>? get blobUploadHandlers => getTextListField(16);
+
+  int get blobUploadMaxBytes => getUint64Field(8);
+  BigInt get blobUploadMaxBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  ListReader<BlobPlannerReader>? get blobPlanners => getStructListFieldWith(
+    17,
+    (r) => BlobPlannerReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class PluginEntryBuilder extends StructBuilder {
@@ -4917,6 +5166,41 @@ final class PluginEntryBuilder extends StructBuilder {
   set directorySupported(bool v) {
     setBoolField(5, v);
   }
+
+  set blobUploadSupported(bool v) {
+    setBoolField(6, v);
+  }
+
+  set blobUploadApproved(bool v) {
+    setBoolField(7, v);
+  }
+
+  ListBuilder<String?> initBlobUploadHandlers(int length) {
+    return initTextListField(16, length);
+  }
+
+  set blobUploadMaxBytes(int v) {
+    setUint64Field(8, v);
+  }
+
+  set blobUploadMaxBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field blobUploadMaxBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  ListBuilder<BlobPlannerBuilder> initBlobPlanners(int length) {
+    return initStructListFieldWith(
+      17,
+      length,
+      (r) => BlobPlannerBuilder(r),
+      0,
+      2,
+    );
+  }
 }
 
 final class _PluginEntryFactory
@@ -4924,9 +5208,9 @@ final class _PluginEntryFactory
   @override
   StructSchemaInfo get schema => pluginEntrySchema;
   @override
-  int get dataWords => 1;
+  int get dataWords => 2;
   @override
-  int get ptrWords => 16;
+  int get ptrWords => 18;
   @override
   PluginEntryReader fromRawReader(RawStructReader r) => PluginEntryReader(r);
   @override
@@ -4943,8 +5227,8 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
   id: 0xe383b408b900ece2,
   displayName: 'host.capnp:PluginEntry',
   shortName: 'PluginEntry',
-  dataWords: 1,
-  pointerWords: 16,
+  dataWords: 2,
+  pointerWords: 18,
   fields: [
     FieldSchemaInfo(
       name: 'packageId',
@@ -5120,6 +5404,46 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 5,
         type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobUploadSupported',
+      codeOrder: 22,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobUploadApproved',
+      codeOrder: 23,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobUploadHandlers',
+      codeOrder: 24,
+      body: SlotFieldSchemaInfo(
+        offset: 16,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobUploadMaxBytes',
+      codeOrder: 25,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'blobPlanners',
+      codeOrder: 26,
+      body: SlotFieldSchemaInfo(
+        offset: 17,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xe8226860d4ca48d1)),
       ),
     ),
   ],
@@ -8768,6 +9092,8 @@ final class DirectoryResultReader extends StructReader {
   int get exitCode => getInt32Field(20);
 
   int get hostCalls => getUint32Field(24);
+
+  int get commandFault => getUint16Field(18);
 }
 
 final class DirectoryResultBuilder extends StructBuilder {
@@ -8815,6 +9141,10 @@ final class DirectoryResultBuilder extends StructBuilder {
 
   set hostCalls(int v) {
     setUint32Field(24, v);
+  }
+
+  set commandFault(int v) {
+    setUint16Field(18, v);
   }
 }
 
@@ -8908,6 +9238,14 @@ const StructSchemaInfo directoryResultSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 6,
         type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'commandFault',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 9,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
       ),
     ),
   ],
@@ -12002,5 +12340,1582 @@ const StructSchemaInfo channelSentSchema = StructSchemaInfo(
 );
 
 final channelSentFactory = _ChannelSentFactory();
+
+final class BlobUploadStartReader extends StructReader {
+  BlobUploadStartReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = blobUploadStartSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => getUint64Field(0);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  Uint8List? get nominationRef => getDataField(3);
+
+  Uint8List? get ownerDomain => getDataField(4);
+
+  Uint8List? get transferEpoch => getDataField(5);
+
+  Uint8List? get objectRef => getDataField(6);
+
+  Uint8List? get operationId => getDataField(7);
+
+  int get byteLength => getUint64Field(8);
+  BigInt get byteLengthBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get wholeSha256 => getDataField(8);
+
+  int get timeoutMs => getUint32Field(16);
+
+  String? get handler => getTextField(9);
+
+  String? get inputType => getTextField(10);
+
+  String? get outputType => getTextField(11);
+
+  Uint8List? get input => getDataField(12);
+}
+
+final class BlobUploadStartBuilder extends StructBuilder {
+  BlobUploadStartBuilder(super.raw);
+
+  @override
+  BlobUploadStartReader asReader() => BlobUploadStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set nominationRef(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set ownerDomain(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set transferEpoch(Uint8List? v) {
+    setDataField(5, v);
+  }
+
+  set objectRef(Uint8List? v) {
+    setDataField(6, v);
+  }
+
+  set operationId(Uint8List? v) {
+    setDataField(7, v);
+  }
+
+  set byteLength(int v) {
+    setUint64Field(8, v);
+  }
+
+  set byteLengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field byteLength');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set wholeSha256(Uint8List? v) {
+    setDataField(8, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(16, v);
+  }
+
+  set handler(String? v) {
+    setTextField(9, v);
+  }
+
+  set inputType(String? v) {
+    setTextField(10, v);
+  }
+
+  set outputType(String? v) {
+    setTextField(11, v);
+  }
+
+  set input(Uint8List? v) {
+    setDataField(12, v);
+  }
+}
+
+final class _BlobUploadStartFactory
+    extends StructFactory<BlobUploadStartReader, BlobUploadStartBuilder> {
+  @override
+  StructSchemaInfo get schema => blobUploadStartSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 13;
+  @override
+  BlobUploadStartReader fromRawReader(RawStructReader r) =>
+      BlobUploadStartReader(r);
+  @override
+  BlobUploadStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobUploadStartReader(r, capabilities: capabilities);
+  @override
+  BlobUploadStartBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobUploadStartBuilder(r);
+}
+
+const StructSchemaInfo blobUploadStartSchema = StructSchemaInfo(
+  id: 0x9124da9acda8155e,
+  displayName: 'host.capnp:BlobUploadStart',
+  shortName: 'BlobUploadStart',
+  dataWords: 3,
+  pointerWords: 13,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'nominationRef',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'ownerDomain',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'transferEpoch',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'objectRef',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'operationId',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'byteLength',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'wholeSha256',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 8,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'timeoutMs',
+      codeOrder: 11,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'handler',
+      codeOrder: 12,
+      body: SlotFieldSchemaInfo(
+        offset: 9,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'inputType',
+      codeOrder: 13,
+      body: SlotFieldSchemaInfo(
+        offset: 10,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'outputType',
+      codeOrder: 14,
+      body: SlotFieldSchemaInfo(
+        offset: 11,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'input',
+      codeOrder: 15,
+      body: SlotFieldSchemaInfo(
+        offset: 12,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final blobUploadStartFactory = _BlobUploadStartFactory();
+
+final class BlobUploadStateReader extends StructReader {
+  BlobUploadStateReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = blobUploadStateSchema;
+
+  bool get ready => getBoolField(0);
+
+  bool get delivered => getBoolField(1);
+
+  bool get recoveryRequired => getBoolField(2);
+
+  int get observed => getUint16Field(2);
+}
+
+final class BlobUploadStateBuilder extends StructBuilder {
+  BlobUploadStateBuilder(super.raw);
+
+  @override
+  BlobUploadStateReader asReader() => BlobUploadStateReader(rawToReader());
+
+  set ready(bool v) {
+    setBoolField(0, v);
+  }
+
+  set delivered(bool v) {
+    setBoolField(1, v);
+  }
+
+  set recoveryRequired(bool v) {
+    setBoolField(2, v);
+  }
+
+  set observed(int v) {
+    setUint16Field(2, v);
+  }
+}
+
+final class _BlobUploadStateFactory
+    extends StructFactory<BlobUploadStateReader, BlobUploadStateBuilder> {
+  @override
+  StructSchemaInfo get schema => blobUploadStateSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 0;
+  @override
+  BlobUploadStateReader fromRawReader(RawStructReader r) =>
+      BlobUploadStateReader(r);
+  @override
+  BlobUploadStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobUploadStateReader(r, capabilities: capabilities);
+  @override
+  BlobUploadStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobUploadStateBuilder(r);
+}
+
+const StructSchemaInfo blobUploadStateSchema = StructSchemaInfo(
+  id: 0xcbe3c8c204dc3344,
+  displayName: 'host.capnp:BlobUploadState',
+  shortName: 'BlobUploadState',
+  dataWords: 1,
+  pointerWords: 0,
+  fields: [
+    FieldSchemaInfo(
+      name: 'ready',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'delivered',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'recoveryRequired',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'observed',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+  ],
+);
+
+final blobUploadStateFactory = _BlobUploadStateFactory();
+
+final class BlobUploadResultReader extends StructReader {
+  BlobUploadResultReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = blobUploadResultSchema;
+
+  int get kind => getUint16Field(0);
+
+  int get phase => getUint16Field(2);
+
+  int get error => getUint16Field(4);
+
+  bool get unknown => getBoolField(48);
+
+  int get calls => getUint32Field(8);
+
+  int get wireBytes => getUint64Field(16);
+  BigInt get wireBytesBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  int get nativeWorkBytes => getUint64Field(24);
+  BigInt get nativeWorkBytesBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+
+  bool get hasExecution => getBoolField(49);
+
+  int get executionFault => getUint16Field(12);
+
+  int get exitCode => getInt32Field(32);
+
+  int get hostCalls => getUint32Field(36);
+}
+
+final class BlobUploadResultBuilder extends StructBuilder {
+  BlobUploadResultBuilder(super.raw);
+
+  @override
+  BlobUploadResultReader asReader() => BlobUploadResultReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set phase(int v) {
+    setUint16Field(2, v);
+  }
+
+  set error(int v) {
+    setUint16Field(4, v);
+  }
+
+  set unknown(bool v) {
+    setBoolField(48, v);
+  }
+
+  set calls(int v) {
+    setUint32Field(8, v);
+  }
+
+  set wireBytes(int v) {
+    setUint64Field(16, v);
+  }
+
+  set wireBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field wireBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set nativeWorkBytes(int v) {
+    setUint64Field(24, v);
+  }
+
+  set nativeWorkBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field nativeWorkBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+
+  set hasExecution(bool v) {
+    setBoolField(49, v);
+  }
+
+  set executionFault(int v) {
+    setUint16Field(12, v);
+  }
+
+  set exitCode(int v) {
+    setInt32Field(32, v);
+  }
+
+  set hostCalls(int v) {
+    setUint32Field(36, v);
+  }
+}
+
+final class _BlobUploadResultFactory
+    extends StructFactory<BlobUploadResultReader, BlobUploadResultBuilder> {
+  @override
+  StructSchemaInfo get schema => blobUploadResultSchema;
+  @override
+  int get dataWords => 5;
+  @override
+  int get ptrWords => 0;
+  @override
+  BlobUploadResultReader fromRawReader(RawStructReader r) =>
+      BlobUploadResultReader(r);
+  @override
+  BlobUploadResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobUploadResultReader(r, capabilities: capabilities);
+  @override
+  BlobUploadResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobUploadResultBuilder(r);
+}
+
+const StructSchemaInfo blobUploadResultSchema = StructSchemaInfo(
+  id: 0x957887b7f6cbc110,
+  displayName: 'host.capnp:BlobUploadResult',
+  shortName: 'BlobUploadResult',
+  dataWords: 5,
+  pointerWords: 0,
+  fields: [
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'phase',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'error',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'unknown',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 48,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'calls',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'wireBytes',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'nativeWorkBytes',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'hasExecution',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 49,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'executionFault',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'exitCode',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 8,
+        type: PrimitiveTypeSchemaInfo('Int32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'hostCalls',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 9,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final blobUploadResultFactory = _BlobUploadResultFactory();
+
+final class BlobPlannerReader extends StructReader {
+  BlobPlannerReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = blobPlannerSchema;
+
+  String? get handler => getTextField(0);
+
+  String? get uploadHandler => getTextField(1);
+}
+
+final class BlobPlannerBuilder extends StructBuilder {
+  BlobPlannerBuilder(super.raw);
+
+  @override
+  BlobPlannerReader asReader() => BlobPlannerReader(rawToReader());
+
+  set handler(String? v) {
+    setTextField(0, v);
+  }
+
+  set uploadHandler(String? v) {
+    setTextField(1, v);
+  }
+}
+
+final class _BlobPlannerFactory
+    extends StructFactory<BlobPlannerReader, BlobPlannerBuilder> {
+  @override
+  StructSchemaInfo get schema => blobPlannerSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 2;
+  @override
+  BlobPlannerReader fromRawReader(RawStructReader r) => BlobPlannerReader(r);
+  @override
+  BlobPlannerReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobPlannerReader(r, capabilities: capabilities);
+  @override
+  BlobPlannerBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobPlannerBuilder(r);
+}
+
+const StructSchemaInfo blobPlannerSchema = StructSchemaInfo(
+  id: 0xe8226860d4ca48d1,
+  displayName: 'host.capnp:BlobPlanner',
+  shortName: 'BlobPlanner',
+  dataWords: 0,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'handler',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'uploadHandler',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final blobPlannerFactory = _BlobPlannerFactory();
+
+final class BlobPlanStartReader extends StructReader {
+  BlobPlanStartReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = blobPlanStartSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => getUint64Field(0);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get handler => getTextField(3);
+
+  String? get inputType => getTextField(4);
+
+  String? get outputType => getTextField(5);
+
+  Uint8List? get input => getDataField(6);
+
+  int get timeoutMs => getUint32Field(8);
+}
+
+final class BlobPlanStartBuilder extends StructBuilder {
+  BlobPlanStartBuilder(super.raw);
+
+  @override
+  BlobPlanStartReader asReader() => BlobPlanStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set handler(String? v) {
+    setTextField(3, v);
+  }
+
+  set inputType(String? v) {
+    setTextField(4, v);
+  }
+
+  set outputType(String? v) {
+    setTextField(5, v);
+  }
+
+  set input(Uint8List? v) {
+    setDataField(6, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(8, v);
+  }
+}
+
+final class _BlobPlanStartFactory
+    extends StructFactory<BlobPlanStartReader, BlobPlanStartBuilder> {
+  @override
+  StructSchemaInfo get schema => blobPlanStartSchema;
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 7;
+  @override
+  BlobPlanStartReader fromRawReader(RawStructReader r) =>
+      BlobPlanStartReader(r);
+  @override
+  BlobPlanStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobPlanStartReader(r, capabilities: capabilities);
+  @override
+  BlobPlanStartBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobPlanStartBuilder(r);
+}
+
+const StructSchemaInfo blobPlanStartSchema = StructSchemaInfo(
+  id: 0xbc59a04abf4bbeec,
+  displayName: 'host.capnp:BlobPlanStart',
+  shortName: 'BlobPlanStart',
+  dataWords: 2,
+  pointerWords: 7,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'handler',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'inputType',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'outputType',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'input',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'timeoutMs',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final blobPlanStartFactory = _BlobPlanStartFactory();
+
+final class BlobPlanApprovalReader extends StructReader {
+  BlobPlanApprovalReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = blobPlanApprovalSchema;
+
+  Uint8List? get packageDigest => getDataField(0);
+
+  int get registryRevision => getUint64Field(0);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  Uint8List? get proposalSha256 => getDataField(1);
+}
+
+final class BlobPlanApprovalBuilder extends StructBuilder {
+  BlobPlanApprovalBuilder(super.raw);
+
+  @override
+  BlobPlanApprovalReader asReader() => BlobPlanApprovalReader(rawToReader());
+
+  set packageDigest(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set proposalSha256(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _BlobPlanApprovalFactory
+    extends StructFactory<BlobPlanApprovalReader, BlobPlanApprovalBuilder> {
+  @override
+  StructSchemaInfo get schema => blobPlanApprovalSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 2;
+  @override
+  BlobPlanApprovalReader fromRawReader(RawStructReader r) =>
+      BlobPlanApprovalReader(r);
+  @override
+  BlobPlanApprovalReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobPlanApprovalReader(r, capabilities: capabilities);
+  @override
+  BlobPlanApprovalBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobPlanApprovalBuilder(r);
+}
+
+const StructSchemaInfo blobPlanApprovalSchema = StructSchemaInfo(
+  id: 0xfe8d4270bff95462,
+  displayName: 'host.capnp:BlobPlanApproval',
+  shortName: 'BlobPlanApproval',
+  dataWords: 1,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'proposalSha256',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final blobPlanApprovalFactory = _BlobPlanApprovalFactory();
+
+final class BlobPlanStateReader extends StructReader {
+  BlobPlanStateReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = blobPlanStateSchema;
+
+  bool get found => getBoolField(0);
+
+  Uint8List? get key => getDataField(0);
+
+  Uint8List? get submission => getDataField(1);
+
+  bool get running => getBoolField(1);
+
+  bool get originalWorkerJoined => getBoolField(2);
+
+  bool get ready => getBoolField(3);
+
+  bool get delivered => getBoolField(4);
+
+  bool get consumed => getBoolField(5);
+
+  int get error => getUint16Field(2);
+
+  Uint8List? get uploadKey => getDataField(2);
+
+  Uint8List? get uploadSubmission => getDataField(3);
+
+  bool get submissionFailed => getBoolField(6);
+}
+
+final class BlobPlanStateBuilder extends StructBuilder {
+  BlobPlanStateBuilder(super.raw);
+
+  @override
+  BlobPlanStateReader asReader() => BlobPlanStateReader(rawToReader());
+
+  set found(bool v) {
+    setBoolField(0, v);
+  }
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set submission(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set running(bool v) {
+    setBoolField(1, v);
+  }
+
+  set originalWorkerJoined(bool v) {
+    setBoolField(2, v);
+  }
+
+  set ready(bool v) {
+    setBoolField(3, v);
+  }
+
+  set delivered(bool v) {
+    setBoolField(4, v);
+  }
+
+  set consumed(bool v) {
+    setBoolField(5, v);
+  }
+
+  set error(int v) {
+    setUint16Field(2, v);
+  }
+
+  set uploadKey(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set uploadSubmission(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set submissionFailed(bool v) {
+    setBoolField(6, v);
+  }
+}
+
+final class _BlobPlanStateFactory
+    extends StructFactory<BlobPlanStateReader, BlobPlanStateBuilder> {
+  @override
+  StructSchemaInfo get schema => blobPlanStateSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 4;
+  @override
+  BlobPlanStateReader fromRawReader(RawStructReader r) =>
+      BlobPlanStateReader(r);
+  @override
+  BlobPlanStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobPlanStateReader(r, capabilities: capabilities);
+  @override
+  BlobPlanStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobPlanStateBuilder(r);
+}
+
+const StructSchemaInfo blobPlanStateSchema = StructSchemaInfo(
+  id: 0xf307c9189f2b6623,
+  displayName: 'host.capnp:BlobPlanState',
+  shortName: 'BlobPlanState',
+  dataWords: 1,
+  pointerWords: 4,
+  fields: [
+    FieldSchemaInfo(
+      name: 'found',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'key',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'running',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'originalWorkerJoined',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'ready',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'delivered',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'consumed',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'error',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'uploadKey',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'uploadSubmission',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'submissionFailed',
+      codeOrder: 11,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+  ],
+);
+
+final blobPlanStateFactory = _BlobPlanStateFactory();
+
+final class BlobPlanViewReader extends StructReader {
+  BlobPlanViewReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = blobPlanViewSchema;
+
+  String? get packageId => getTextField(0);
+
+  Uint8List? get packageDigest => getDataField(1);
+
+  int get registryRevision => getUint64Field(0);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get plannerHandler => getTextField(2);
+
+  String? get uploadHandler => getTextField(3);
+
+  Uint8List? get planningInputSha256 => getDataField(4);
+
+  String? get label => getTextField(5);
+
+  int get byteLength => getUint64Field(8);
+  BigInt get byteLengthBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get wholeSha256 => getDataField(6);
+
+  Uint8List? get proposalSha256 => getDataField(7);
+}
+
+final class BlobPlanViewBuilder extends StructBuilder {
+  BlobPlanViewBuilder(super.raw);
+
+  @override
+  BlobPlanViewReader asReader() => BlobPlanViewReader(rawToReader());
+
+  set packageId(String? v) {
+    setTextField(0, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set plannerHandler(String? v) {
+    setTextField(2, v);
+  }
+
+  set uploadHandler(String? v) {
+    setTextField(3, v);
+  }
+
+  set planningInputSha256(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set label(String? v) {
+    setTextField(5, v);
+  }
+
+  set byteLength(int v) {
+    setUint64Field(8, v);
+  }
+
+  set byteLengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field byteLength');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set wholeSha256(Uint8List? v) {
+    setDataField(6, v);
+  }
+
+  set proposalSha256(Uint8List? v) {
+    setDataField(7, v);
+  }
+}
+
+final class _BlobPlanViewFactory
+    extends StructFactory<BlobPlanViewReader, BlobPlanViewBuilder> {
+  @override
+  StructSchemaInfo get schema => blobPlanViewSchema;
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 8;
+  @override
+  BlobPlanViewReader fromRawReader(RawStructReader r) => BlobPlanViewReader(r);
+  @override
+  BlobPlanViewReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobPlanViewReader(r, capabilities: capabilities);
+  @override
+  BlobPlanViewBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobPlanViewBuilder(r);
+}
+
+const StructSchemaInfo blobPlanViewSchema = StructSchemaInfo(
+  id: 0xa466e8f097f2473c,
+  displayName: 'host.capnp:BlobPlanView',
+  shortName: 'BlobPlanView',
+  dataWords: 2,
+  pointerWords: 8,
+  fields: [
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'plannerHandler',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'uploadHandler',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'planningInputSha256',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'label',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'byteLength',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'wholeSha256',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'proposalSha256',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final blobPlanViewFactory = _BlobPlanViewFactory();
+
+final class BlobPlanResultReader extends StructReader {
+  BlobPlanResultReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = blobPlanResultSchema;
+
+  int get kind => getUint16Field(0);
+
+  int get error => getUint16Field(2);
+
+  BlobPlanViewReader? get view => getStructFieldWith(
+    0,
+    (r) => BlobPlanViewReader(r, capabilities: capabilityTable),
+  );
+
+  bool get hasExecution => getBoolField(32);
+
+  int get executionFault => getUint16Field(6);
+
+  int get exitCode => getInt32Field(8);
+
+  int get hostCalls => getUint32Field(12);
+
+  bool get hasPluginFailure => getBoolField(33);
+
+  int get pluginFailureCode => getUint16Field(16);
+}
+
+final class BlobPlanResultBuilder extends StructBuilder {
+  BlobPlanResultBuilder(super.raw);
+
+  @override
+  BlobPlanResultReader asReader() => BlobPlanResultReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set error(int v) {
+    setUint16Field(2, v);
+  }
+
+  BlobPlanViewBuilder initView() {
+    return initStructFieldWith(0, (r) => BlobPlanViewBuilder(r), 2, 8);
+  }
+
+  bool hasView() => hasPointerField(0);
+
+  set hasExecution(bool v) {
+    setBoolField(32, v);
+  }
+
+  set executionFault(int v) {
+    setUint16Field(6, v);
+  }
+
+  set exitCode(int v) {
+    setInt32Field(8, v);
+  }
+
+  set hostCalls(int v) {
+    setUint32Field(12, v);
+  }
+
+  set hasPluginFailure(bool v) {
+    setBoolField(33, v);
+  }
+
+  set pluginFailureCode(int v) {
+    setUint16Field(16, v);
+  }
+}
+
+final class _BlobPlanResultFactory
+    extends StructFactory<BlobPlanResultReader, BlobPlanResultBuilder> {
+  @override
+  StructSchemaInfo get schema => blobPlanResultSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 1;
+  @override
+  BlobPlanResultReader fromRawReader(RawStructReader r) =>
+      BlobPlanResultReader(r);
+  @override
+  BlobPlanResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobPlanResultReader(r, capabilities: capabilities);
+  @override
+  BlobPlanResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobPlanResultBuilder(r);
+}
+
+const StructSchemaInfo blobPlanResultSchema = StructSchemaInfo(
+  id: 0xe075e8908cbce7c8,
+  displayName: 'host.capnp:BlobPlanResult',
+  shortName: 'BlobPlanResult',
+  dataWords: 3,
+  pointerWords: 1,
+  fields: [
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'error',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'view',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: StructRefTypeSchemaInfo(0xa466e8f097f2473c),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'hasExecution',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 32,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'executionFault',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'exitCode',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Int32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'hostCalls',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'hasPluginFailure',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 33,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'pluginFailureCode',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 8,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+  ],
+);
+
+final blobPlanResultFactory = _BlobPlanResultFactory();
 
 const schemaReflectionAvailable = true;

@@ -1,0 +1,55 @@
+{
+  "status": "INTEGRATED_EXACT_COLD_TESTED_NATIVE_CLOSE_FIXTURES",
+  "source_before": "10184a3712c7d081b4784418ac3a6297934f78096392a321ed7303bd852df55a",
+  "source_after": "144ab25d0b4a1545948876e3ad01638973f2a47f14d937de4c0893e4edb1abd2",
+  "complete_checkout_byte_identical_to_test_candidate": true,
+  "input_files": 53056,
+  "files": [
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io.rs",
+      "bytes": 36736,
+      "sha256": "676152b27cf280bee2b0ddb7e6c02cdef4c4d9c143d78e83ff8068bc69652236"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io\\native_windows.rs",
+      "bytes": 12647,
+      "sha256": "bb84a6410b7c13813ffac3500308137e85c2357b7e8744684c572a19f4fcd73e"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\io_jobs\\directory_commands\\secret_factory_tests.rs",
+      "bytes": 41142,
+      "sha256": "67b7cabd5617103f5ab28ede981523a013b608b681f9e106a4bd93dc842a3c76"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\directory_io\\native_close_refusal_tests.rs",
+      "bytes": 1394,
+      "sha256": "e0ef4ec527c54670721c97d3fc0d3df9810dc9d700be5116757fa70f4913716b"
+    },
+    {
+      "path": "C:\\ms1020\\plugin_runtime\\src\\io_jobs\\directory_commands\\native_close_refusal_tests.rs",
+      "bytes": 3705,
+      "sha256": "6b76b12a176b3e7c6f73f36e3b6af08832acccf065f595dbb0fe1fca4d0759bd"
+    }
+  ],
+  "methods": 3,
+  "scenarios": 4,
+  "production_bytes_unchanged": true,
+  "cold_runtime_evidence": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\result.json",
+    "bytes": 3767,
+    "sha256": "33e99c1abec75939790336a22480959886202bf79ab6ca6f37648aac01674e28"
+  },
+  "independent_review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-review-163\\result.json",
+    "bytes": 3779,
+    "sha256": "9dea369a1fdce0e82ba47faa8162335acf0714590fe88710b35d995aa0d3f3e9"
+  },
+  "runtime_calls": 0,
+  "VM_calls": 0,
+  "unknown_owner_contacts": 0,
+  "historical_P2_binding_unchanged": true,
+  "formal_picker_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,442 @@
+{
+  "status": "PASS_SCOPED_HEADLESS_NATIVE_PLANNING_APPROVAL_RECOVERY_UI",
+  "utc": "2026-10-27T22:28:00.396448+00:00",
+  "qualification_source": "6c06cf5c7e29dfabf21ee0c7e4d8a2f4137e5b566ca2274a6e0313faabc0beaa",
+  "widget_qualification_source": "48ee210947bc14d010ca8fbc2556fd6c080f8dfd92ce90030253c5827b5bb62a",
+  "source_equivalence": {
+    "source": "6c06cf5c7e29dfabf21ee0c7e4d8a2f4137e5b566ca2274a6e0313faabc0beaa",
+    "widget_qualification_source": "48ee210947bc14d010ca8fbc2556fd6c080f8dfd92ce90030253c5827b5bb62a",
+    "only_new_after_widgets": "test/blob_plan_manager_native_test.dart",
+    "changed_since054": [
+      "lib/plugins/plugin_library.dart",
+      "lib/plugins/blob_plan_session.dart",
+      "lib/plugins/blob_upload_session.dart",
+      "packages/morrow_core_client/test/blob_upload_session_test.dart"
+    ],
+    "new_since054": [
+      "lib/plugins/blob_plan_manager.dart",
+      "test/blob_plan_manager_test.dart",
+      "test/support/blob_plan_peers.dart",
+      "test/blob_plan_manager_native_test.dart"
+    ],
+    "native_Rust_and_guest_sources_unchanged_since444": true
+  },
+  "implementation": [
+    "Plugin list exposes explicit category permission, per-plugin save action and original-task review independent of current selection",
+    "UTF8 text or explicitly chosen plugin-supported binary input is bounded and frozen before a pure planning request",
+    "Plain proposal description, exact length, current-library destination and optional fingerprint precede an unchecked confirmation and single approval",
+    "Missing start/approval responses find only the original upload; a missing result requires original-history observation and explicit confirmation",
+    "Original upload acknowledgement is consumed locally before dispatch; a missing response stays unresolved across view replacement and cannot send another acknowledgement",
+    "The plan owns cancellation; closing during approval or upload cannot send duplicate cancellation through two views",
+    "Replacing or disposing the plugin library removes only its own original dialog; it cannot submit through a new backend",
+    "A user-operated dialog no longer leaves a background loading animation running"
+  ],
+  "pure_Dart_client_and_session_checks": 70,
+  "Flutter_widget_buffer_routing_checks": 70,
+  "new_planning_UI_widget_methods": 13,
+  "actual_native_cases": [
+    {
+      "language": "c",
+      "bytes": 150017,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": false,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "c",
+      "bytes": 16777216,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": true,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "cpp",
+      "bytes": 150017,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": false,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "cpp",
+      "bytes": 16777216,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": true,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "rust",
+      "bytes": 150017,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": false,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "rust",
+      "bytes": 16777216,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": true,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    }
+  ],
+  "original_planning_joins": 6,
+  "original_upload_joins": 6,
+  "supervised_closures": [
+    {
+      "pin": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-150017\\reopen-closed.json",
+        "bytes": 909,
+        "sha256": "edba2e33b75dbca371d9f575fae35ed9703819d7d7c9da79a4ebedff8625f71c"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "pin": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-150017\\ui-closed.json",
+        "bytes": 909,
+        "sha256": "5d4eb50a7ac489c67fd0d7917f0401b927d52d44ff3d03e007e3aa1ee8189d5f"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "pin": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-16777216\\reopen-closed.json",
+        "bytes": 908,
+        "sha256": "201a486cfee0f361b54dfa437ac91c3e892a51f5e46863b908a55430877d4dcd"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "pin": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-16777216\\ui-closed.json",
+        "bytes": 908,
+        "sha256": "92b8c40962c857bcf9a6e20e9383bd77b157f9f2df68f358bab06482daa7a635"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "pin": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-150017\\reopen-closed.json",
+        "bytes": 909,
+        "sha256": "2aa08328f9a2fe2cfdb72c40828dc539f6e5636b6f1e17173c518f0c32e44334"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "pin": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-150017\\ui-closed.json",
+        "bytes": 909,
+        "sha256": "42dacc2021b9c5bde57dce64aca9e3c256f595b01f83eb9b9e384aabc943f1d8"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "pin": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-16777216\\reopen-closed.json",
+        "bytes": 909,
+        "sha256": "b618407335fdf009fef427a858d0228de0d6547ad40faaf1c2b38ea87862576a"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "pin": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-16777216\\ui-closed.json",
+        "bytes": 909,
+        "sha256": "707830d02d4051b6876ad67cccbd553b484433993dad2daadfa5030d9d0c1c51"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "pin": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-150017\\reopen-closed.json",
+        "bytes": 907,
+        "sha256": "34d1ab96e4a4f83e82222c158a852fd3ebd49606f073a0c780988c4c41de1dc9"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "pin": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-150017\\ui-closed.json",
+        "bytes": 909,
+        "sha256": "6227a1339d5153cd380cf42215ce813279ea024ea184f104034da083b44cf515"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "pin": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\reopen-closed.json",
+        "bytes": 908,
+        "sha256": "43eb3a259e3a6182d4a08ca5525b64498107991075b4436ad16884f2da9f6afc"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "pin": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\ui-closed.json",
+        "bytes": 908,
+        "sha256": "8a5f1ad0092766a693b1220fccd8b7d9c3df7f6ebe60667e6387fada18c53a49"
+      },
+      "raw_business_outcome": "Unknown"
+    }
+  ],
+  "independent_closed_library_reads": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-150017\\first-history.json",
+      "bytes": 128,
+      "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-150017\\second-history.json",
+      "bytes": 128,
+      "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-16777216\\first-history.json",
+      "bytes": 130,
+      "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-16777216\\second-history.json",
+      "bytes": 130,
+      "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-150017\\first-history.json",
+      "bytes": 128,
+      "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-150017\\second-history.json",
+      "bytes": 128,
+      "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-16777216\\first-history.json",
+      "bytes": 130,
+      "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-16777216\\second-history.json",
+      "bytes": 130,
+      "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-150017\\first-history.json",
+      "bytes": 128,
+      "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-150017\\second-history.json",
+      "bytes": 128,
+      "sha256": "0bb3e64d80b0a669bf5e033693da0b92709ef373c1081a010f4fa9bb57aa577b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\first-history.json",
+      "bytes": 130,
+      "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\second-history.json",
+      "bytes": 130,
+      "sha256": "7e49bae33af05c9f7ff99e35bce4adb5bc46129e2a3f95739846e19ee5829f6a"
+    }
+  ],
+  "business_records": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-150017\\business.json",
+      "bytes": 412,
+      "sha256": "6b352974db6ad10f34623a89415790b3fb3b217a658e277a0ec510ae596881f3"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\c-16777216\\business.json",
+      "bytes": 411,
+      "sha256": "f5d0929f96e341e191b4abd8d58697a559cab871fc972697df3adcf1e890c30f"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-150017\\business.json",
+      "bytes": 412,
+      "sha256": "6b352974db6ad10f34623a89415790b3fb3b217a658e277a0ec510ae596881f3"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\cpp-16777216\\business.json",
+      "bytes": 411,
+      "sha256": "f5d0929f96e341e191b4abd8d58697a559cab871fc972697df3adcf1e890c30f"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-150017\\business.json",
+      "bytes": 412,
+      "sha256": "6b352974db6ad10f34623a89415790b3fb3b217a658e277a0ec510ae596881f3"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\business.json",
+      "bytes": 411,
+      "sha256": "f5d0929f96e341e191b4abd8d58697a559cab871fc972697df3adcf1e890c30f"
+    }
+  ],
+  "actual_category_and_per_operation_approval_through_widgets": true,
+  "headless_production_widget_rendering": true,
+  "reply_loss_scope": "Deliberate discard after an actual native response at the trusted application edge; no OS transport-failure claim",
+  "input_scope": "Generic UTF8 input and explicit bounded binary-file input; actual three-language samples use their pinned typed options file. Native file picking and a friendly sample parameter form remain unqualified",
+  "visual_capture": {
+    "files": [
+      {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-150017\\proposal.png",
+        "bytes": 25405,
+        "sha256": "a99ef73531a2df38e4cc4773e412dd292528c146d3f449f8672216f255327381"
+      },
+      {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\missing-result-review.png",
+        "bytes": 28800,
+        "sha256": "b4aed642ef6f089be8d993a0e1503ea752c79ba96af5a0126ade2d9fe5584472"
+      },
+      {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\stores\\rust-16777216\\proposal.png",
+        "bytes": 25405,
+        "sha256": "85f9e414736b443509725952d0a44e0da012c01c3137423a8572d5fddcbafe49"
+      }
+    ],
+    "font": "Flutter test placeholder font",
+    "readable_visual_acceptance": false,
+    "notes": "The inspected capture contains placeholder glyphs. Semantic/layout and action assertions pass; this is not desktop visual acceptance"
+  },
+  "prior_attempts": [
+    {
+      "case": 448,
+      "status": "New Flutter test did not compile because a whole pure-Dart fixture imported package:test absent from the root Flutter graph",
+      "sessions_passed": 70,
+      "other_widgets_passed": 47,
+      "routing_skipped": 10
+    },
+    {
+      "case": 450,
+      "status": "66 widgets passed; growing-file test used fake clock and two category tests exposed a background loading animation",
+      "failed": 3
+    },
+    {
+      "case": 452,
+      "status": "68 widgets passed; final failure was XFile.fromData name ignored on Windows, fixed by its explicit path",
+      "failed": 1
+    }
+  ],
+  "qualification": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-native-456\\result.json",
+    "bytes": 3171,
+    "sha256": "2ca94d34b80dbd115efec0cd73695cf57a84b053f27654c951445c38c844dfbb"
+  },
+  "widget_qualification": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-ui-454\\result.json",
+    "bytes": 3450,
+    "sha256": "f38e5f45509a59ea5599aca12537934c6d6f1c72dcf750ca6b71d939d34b3caf"
+  },
+  "programs": {
+    "host": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\morrow-workbench-host.exe",
+      "bytes": 31293952,
+      "sha256": "d847ffb5447f10d2e37bf2abe2d5d6a62c7e86382055efe3e29173d7f5e9bff9"
+    },
+    "supervisor": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\morrow-workbench-supervisor.exe",
+      "bytes": 14086144,
+      "sha256": "8f0f80198d16bab9a554df8ec9ab38a759e5b16d397522a213832606391110d2"
+    },
+    "packager": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\package.exe",
+      "bytes": 3186688,
+      "sha256": "f58cc43dd99eedc435cda37df683b3cfd4b922aed894bb1d0ccf6d9e3ddaba1c"
+    },
+    "planner-packager": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\package_blob_plan_fixture.exe",
+      "bytes": 3217408,
+      "sha256": "8ed71f82dd3e2bbdf8836196b5754af5b3981a88f85229edac4abc58693af02a"
+    },
+    "history-observer": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-444\\programs\\check_blob_plan_fixture.exe",
+      "bytes": 4681216,
+      "sha256": "c01eae6b4768de96198fe4d64c6b011c929b94921d90d7f04f159569fd65b56b"
+    }
+  },
+  "frozen_inputs_verified": 57,
+  "all_recent_processes_closed": true,
+  "raw_supervision_business_Unknown_preserved": true,
+  "desktop_UI_accepted": false,
+  "native_picker_accepted": false,
+  "human_approval_trial": false,
+  "cross_restart_Unknown_recovery": false,
+  "watch_rename": false,
+  "full_P2_accepted": false,
+  "full_P3_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "registered_VMs": 4,
+  "VM_mutations": 0,
+  "host_policy_changes": 0,
+  "historical_unknown_owner_contacts": 0,
+  "cache_root": "D:/build_cache",
+  "remote_publication": false
+}

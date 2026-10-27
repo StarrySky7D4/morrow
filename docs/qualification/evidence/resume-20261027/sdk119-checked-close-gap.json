@@ -1,0 +1,124 @@
+{
+  "status": "PRODUCTION_CHECKED_CLOSE_GAP_MAPPED_NOT_IMPLEMENTED",
+  "utc": "2026-10-26T17:03:38.704794+00:00",
+  "canonical": "C:\\ms1020",
+  "candidate": "D:\\build_cache\\worktrees\\sdk-close-117",
+  "candidate_source_baseline": "0904d5644cf533703cc20ea3d07866bfbab689358686cc16666b390d9a7e9b4b",
+  "candidate_still_matches_canonical_reviewed_code": true,
+  "source_edits": 0,
+  "VM_calls": 0,
+  "product_runtime_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "files": [
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\directory_io.rs",
+      "bytes": 32696,
+      "sha256": "f3d784ad68f95e4bf1490aa7deccd21997ae2093ec61e82bd42cff8d032f8900"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\directory_io\\selection.rs",
+      "bytes": 6977,
+      "sha256": "4816ec27edba7840fa0ec6401681c3c8d92b887f7baf063047f5cf2e39844eb0"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\directory_io\\native_windows.rs",
+      "bytes": 9145,
+      "sha256": "6603ab81faa8802b5d5c67893a258f29c47ad89322e664131da541a3e40f7fc2"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\io_jobs\\directory_commands.rs",
+      "bytes": 38450,
+      "sha256": "6eeef1fa94168b16931051e4054c8e493178d56b200c8a5cf21157008c22b216"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\io_jobs\\owner_commands.rs",
+      "bytes": 28923,
+      "sha256": "969d7d761db5af92ae2707a112d81ce1a06f3776c05e860d8382adbf8214beb2"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\io_jobs.rs",
+      "bytes": 131702,
+      "sha256": "f268e969797612a5e483fca892727595a61a5d8a5752fba39d6d244e29709103"
+    }
+  ],
+  "findings": [
+    {
+      "id": "OBSERVATION_CLOSE",
+      "file": "plugin_runtime/src/directory_io.rs",
+      "functions": [
+        "Observation",
+        "DirectoryBroker::release_reclaimed",
+        "DirectoryBroker::next_page_with_clock_and_cancel",
+        "DirectoryBroker::cancel_with_clock"
+      ],
+      "finding": "Observation retains std::fs::File and lease. Removal drops File; there is no checked native close result before terminal page or capacity release."
+    },
+    {
+      "id": "CAPTURE_ERROR_AND_ANCESTORS",
+      "file": "plugin_runtime/src/directory_io/selection.rs",
+      "functions": [
+        "open_under",
+        "Ancestors"
+      ],
+      "finding": "Partially opened descendant Files and ancestor leases are local values. Early errors and unwinds drop them. A checked-close implementation must retain all partial original owners and their capacity before any fallible operation."
+    },
+    {
+      "id": "RESOURCE_DROP",
+      "file": "plugin_runtime/src/io_jobs/directory_commands.rs",
+      "functions": [
+        "Resource::drop",
+        "Resources::reap",
+        "dispatch"
+      ],
+      "finding": "Resource::drop assumes dropping its broker releases all native objects and then removes admission. Finish and terminal Page currently rely on this. Unknown closure must not remove the resident selection or refund resource capacity."
+    },
+    {
+      "id": "QUEUED_CAPTURE",
+      "file": "plugin_runtime/src/io_jobs/owner_commands.rs",
+      "functions": [
+        "Command::execute"
+      ],
+      "finding": "Cancelled/closed command can return before dispatch. The accepted queued capture then drops its source File. Checked closure must cover this original-worker path and queued captures at worker exit, while preserving SDK101/106 exact File return for never-submitted requests."
+    },
+    {
+      "id": "WORKER_UNWIND",
+      "file": "plugin_runtime/src/io_jobs.rs",
+      "functions": [
+        "execute",
+        "IoWorker::spawn",
+        "WorkerExit"
+      ],
+      "finding": "FileResources is local to execute and drops on return or unwind. The original native owner record must survive the outer recovery boundary on ambiguous close, with failed retirement propagated separately from execution/maintenance/disconnect."
+    },
+    {
+      "id": "NATIVE_BOUNDARY",
+      "file": "plugin_runtime/src/directory_io/native_windows.rs",
+      "functions": [
+        "open_volume_root",
+        "identity",
+        "Buffer::next"
+      ],
+      "finding": "Native module has queries but no CloseHandle boundary. A consumed raw handle must be marked in-flight before one CloseHandle call. A failed/unobserved return cannot be reconstructed as File or automatically retried by Drop."
+    }
+  ],
+  "required_integration": [
+    "Original owner survives partial capture, returned errors and unwinds.",
+    "Only the exact successful CloseHandle result permits Finished/terminal Page/capacity release.",
+    "Failed or ambiguous close latches Unknown without retry, raw-value reuse or Rust Drop close.",
+    "Native calls occur on the original worker, outside original-clock and Control guards.",
+    "Worker stop/exit drains accepted queued inputs and retains failed original resources; caller-side never-submitted File return remains byte/handle-identical.",
+    "Meaningful Windows route tests plus separately labelled synthetic failure tests; do not execute legacy host provisioning."
+  ],
+  "AGY117": {
+    "status": "COMMAND_DENIED_NO_STRUCTURED_RESULT_NO_EDITS",
+    "root_review": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\agy-sdk-close-117\\root-review.json",
+      "bytes": 184,
+      "sha256": "4736c5e04c0e09b6b78e0874f3715a94148350df18bc5c58c54097aea88f35e6"
+    },
+    "automatic_retry": false
+  },
+  "next_step": "Implement and review the complete original-resource lifecycle in the isolated candidate before integration. Existing source and release gates remain open."
+}

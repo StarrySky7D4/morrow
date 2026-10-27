@@ -1718,6 +1718,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsDirectoryMetadataLimit => '元数据上限（字节，最多 1 MiB）';
 
   @override
+  String get pluginsDirectoryNativePickerIntro =>
+      '选定文件夹后立即运行插件。任务时限包含选择时间；离开此页面会取消尚未完成的任务。';
+
+  @override
+  String get pluginsDirectoryNativePickerStart => '选择文件夹并运行插件';
+
+  @override
   String get pluginsDirectorySelectHandler => '选择已批准的目录插件';
 
   @override

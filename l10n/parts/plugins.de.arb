@@ -835,5 +835,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pluginsDirectoryNativePickerStart": "Ordner wählen und Plugin starten",
+  "pluginsDirectoryNativePickerIntro": "Nach der Ordnerauswahl startet das Plugin. Die Zeitbegrenzung umfasst die Auswahl; beim Verlassen dieser Ansicht wird die laufende Aufgabe abgebrochen."
 }

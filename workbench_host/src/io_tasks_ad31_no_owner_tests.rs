@@ -28,14 +28,18 @@ impl Fixture {
             cleanup: None,
             agent_exit: None,
             repair_needed: false,
+            native_retirement: None,
             lost: false,
             service_submissions: Default::default(),
             file_submissions: Default::default(),
+            upload_submissions: Default::default(),
+            upload_task: None,
             mutation_submissions: Default::default(),
             mutation_checkpoints: Default::default(),
             submission: None,
         };
         let app = Workbench {
+            upload_plans: Default::default(),
             state,
             channel_tasks: Default::default(),
             http_tasks: Default::default(),

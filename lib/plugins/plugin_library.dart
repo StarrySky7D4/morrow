@@ -18,6 +18,9 @@ import 'guest_mutation_execution_session.dart';
 import 'guest_mutation_models.dart';
 import 'mutation_task_models.dart';
 import 'file_task_models.dart';
+import 'blob_plan_models.dart';
+import 'blob_plan_manager.dart';
+import 'blob_upload_models.dart';
 import 'file_task_session.dart';
 import 'directory_task_models.dart';
 import 'directory_task_session.dart';
@@ -79,12 +82,25 @@ class PluginLibraryEntry {
     this.ioHandlers = const [],
     this.mutationSupported = false,
     this.directorySupported = false,
+    this.blobUploadSupported = false,
+    this.blobUploadApproved = false,
+    this.blobUploadHandlers = const [],
+    this.blobPlanners = const [],
+    this.blobUploadMaxBytes,
     this.mutationBudget,
     this.channelSupported = false,
     this.channelHandlers = const [],
     this.channelKinds = const [],
     this.channelBudget,
   }) {
+    if (blobPlanners.isNotEmpty && (!blobUploadSupported ||
+        blobPlanners.map((p) => p.handler).toSet().length != blobPlanners.length ||
+        blobPlanners.any((p) => !blobUploadHandlers.contains(p.uploadHandler) ||
+          blobUploadHandlers.contains(p.handler) ||
+          handlers.where((h) => h.name == p.handler && h.outputType == BlobPlanRequest.outputType &&
+            h.maxInputBytes <= 32768 && h.maxOutputBytes > 0 && h.maxOutputBytes <= 34816).length != 1))) {
+      throw const FormatException('Invalid package planning mapping');
+    }
     if (mutationBudget != null && !mutationSupported) {
       throw const FormatException('Mutation budget without mutation feature');
     }
@@ -97,6 +113,10 @@ class PluginLibraryEntry {
   final List<String> ioHandlers;
   final bool mutationSupported;
   final bool directorySupported;
+  final bool blobUploadSupported, blobUploadApproved;
+  final List<String> blobUploadHandlers;
+  final List<BlobPlannerMapping> blobPlanners;
+  final BigInt? blobUploadMaxBytes;
   final PluginMutationBudget? mutationBudget;
   final bool channelSupported;
   final List<String> channelHandlers;
@@ -227,6 +247,12 @@ String _pageFingerprint(PluginLibraryPage page) => jsonEncode([
       e.approvedIo,
       e.ioHandlers,
       e.mutationSupported,
+      e.directorySupported,
+      e.blobUploadSupported,
+      e.blobUploadApproved,
+      e.blobUploadHandlers,
+      [for (final p in e.blobPlanners) [p.handler, p.uploadHandler]],
+      e.blobUploadMaxBytes?.toString(),
       e.channelSupported,
       e.channelHandlers,
       e.channelKinds.map((k) => k.name).toList(),
@@ -302,6 +328,8 @@ class _PluginLibraryState extends State<PluginLibrary> {
   List<PluginLibraryEntry> _entries = [];
   BigInt? _revision;
   bool _busy = false, _confirmed = false;
+  bool _blobDialogOpen = false;
+  DialogRoute<void>? _blobRoute;
   int _epoch = 0;
   String? _candidatePath, _toolId, _fileName;
   ThemePackageSelection? _candidateTheme;
@@ -332,6 +360,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.backend, widget.backend)) {
       _epoch++;
+      _releaseBlobDialog();
       _releaseForm(oldWidget.backend);
       _busy = false;
       _mutationRecoverySeed = null;
@@ -382,6 +411,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
   @override
   void dispose() {
     _epoch++;
+    _releaseBlobDialog();
     _releaseForm();
     _text.dispose();
     super.dispose();
@@ -676,6 +706,59 @@ class _PluginLibraryState extends State<PluginLibrary> {
         await _loadPages(backend, epoch);
         if (_current(backend, epoch)) widget.onChanged();
       }, (l) => l.pluginsApprovalUnknown);
+  bool get _blobControls => widget.backend is BlobPlanBackend &&
+      widget.backend is BlobUploadBackend && widget.backend is WorkbenchIoTaskControl;
+  void _releaseBlobDialog() {
+    final route = _blobRoute;
+    _blobRoute = null;
+    _blobDialogOpen = false;
+    if (route == null) return;
+    // A dialog outlives its caller's widget unless its exact route is removed.
+    // Dispose only this original view after the current navigation frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final navigator = route.navigator;
+      if (navigator != null && route.isActive) navigator.removeRoute(route);
+    });
+    WidgetsBinding.instance.scheduleFrame();
+  }
+  String _blobText(String zh, String en) =>
+      Localizations.localeOf(context).languageCode == 'zh' ? zh : en;
+  Future<void> _configureBlob(PluginLibraryEntry entry, bool approved) =>
+      _guard((backend, epoch) async {
+        if (backend is! BlobUploadBackend) return;
+        final revision = _revision!;
+        await _closeForm(epoch);
+        if (!_current(backend, epoch)) return;
+        await (backend as BlobUploadBackend).approveBlobUpload(
+          entry.id, Uint8List.fromList(entry.digest), revision, approved);
+        if (!_current(backend, epoch)) return;
+        await _loadPages(backend, epoch);
+        if (_current(backend, epoch)) widget.onChanged();
+      }, (l) => l.pluginsApprovalUnknown);
+  Future<void> _openBlob([PluginLibraryEntry? entry]) =>
+      _guard((backend, epoch) async {
+        if (!_blobControls) return;
+        final revision = _revision;
+        await _closeForm(epoch);
+        if (!mounted || !_current(backend, epoch)) return;
+        // Keep library actions locked, but a user-operated dialog is not a
+        // pending background request and must not spin behind it.
+        setState(() => _blobDialogOpen = true);
+        final route = DialogRoute<void>(context: context, builder: (_) => BlobPlanManager(
+          plans: backend as BlobPlanBackend,
+          uploads: backend as BlobUploadBackend,
+          io: backend as WorkbenchIoTaskControl,
+          entry: entry, registryRevision: revision,
+        ));
+        _blobRoute = route;
+        try {
+          await Navigator.of(context, rootNavigator: true).push(route);
+        } finally {
+          if (identical(_blobRoute, route)) _blobRoute = null;
+          if (_current(backend, epoch)) setState(() => _blobDialogOpen = false);
+        }
+        if (_current(backend, epoch)) await _loadPages(backend, epoch);
+      }, (l) => l.pluginsApprovalUnknown);
   Future<void> _remove(PluginLibraryEntry entry) =>
       _guard((backend, epoch) async {
         final revision = _revision!;
@@ -709,7 +792,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
             h.maxOutputBytes == 65536,
       );
   List<PluginTransformHandler> _transforms(PluginLibraryEntry entry) =>
-      entry.channelSupported
+      (entry.channelSupported || entry.blobUploadSupported)
       ? []
       : entry.handlers
             .where((h) => h.name != 'ui.form' && h.name != 'ui.edit')
@@ -1062,6 +1145,17 @@ class _PluginLibraryState extends State<PluginLibrary> {
                       }),
               ),
             ),
+            if (entry.blobUploadSupported && _blobControls)
+              CheckboxListTile(
+                key: ValueKey('plugin-blob-allow-${entry.id}'),
+                value: entry.blobUploadApproved,
+                controlAffinity: ListTileControlAffinity.leading,
+                title: Text(_blobText('允许此插件保存内容', 'Allow this plugin to save content')),
+                subtitle: Text(_blobText('每次保存仍需查看提案并单独批准。',
+                    'Each save still requires reviewing and approving its proposal.')),
+                onChanged: _busy || !_confirmed || !entry.enabled || !entry.available
+                    ? null : (value) => _configureBlob(entry, value == true),
+              ),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -1112,6 +1206,11 @@ class _PluginLibraryState extends State<PluginLibrary> {
                           ),
                     icon: Icons.stream_outlined,
                   ),
+                if (entry.blobPlanners.isNotEmpty && _blobControls)
+                  _button(_blobText('保存内容', 'Save content'),
+                    'plugin-blob-plan-${entry.id}',
+                    !usable || !entry.blobUploadApproved ? null : () => _openBlob(entry),
+                    icon: Icons.save_outlined),
                 if (!entry.isTheme && _transforms(entry).isNotEmpty)
                   _button(
                     L10n.of(context).pluginsUseTransform,
@@ -1299,9 +1398,12 @@ class _PluginLibraryState extends State<PluginLibrary> {
                     _refresh,
                     icon: Icons.refresh,
                   ),
+                  if (_blobControls)
+                    _button(_blobText('查看原上传任务', 'Review original upload'),
+                      'plugin-blob-original', _openBlob, icon: Icons.history),
                 ],
               ),
-              if (_busy)
+              if (_busy && !_blobDialogOpen)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8),
                   child: LinearProgressIndicator(),

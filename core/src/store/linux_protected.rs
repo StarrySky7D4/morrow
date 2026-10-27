@@ -83,6 +83,8 @@ fn supported_content(c: &Connection) -> Result<()> {
         "card_blobs",
         "event_blobs",
         "retentions",
+        "blob_stage_operations",
+        "blob_stage_history",
         "records",
         "sealed_segments",
         "task_evidence",
@@ -171,6 +173,7 @@ fn initialize_current(
         sql(c.execute_batch(&io_intent::reservation_schema()))?;
         service_authority::create_identity(c)?;
         channel_journal::create(c)?;
+        super::blob_stage::create(c)?;
         sql(c.execute_batch(read_archive_budget::INDEX))?;
         sql(c.pragma_update(None, "user_version", SCHEMA_VERSION))?;
         binding::bind(c, trust)?;
@@ -232,7 +235,7 @@ impl ProtectedStoreSlice {
         let owner=self.changes_identity.clone();
         let liveness=std::sync::Arc::downgrade(&self.changes_liveness);
         self.database.store_read(|c,guard| {
-            super::changes_metadata::open_connection(c,owner,liveness,package,cards,start,budget,
+            super::changes_metadata::open_connection(c,super::changes_metadata::WindowIdentity { owner,liveness },package,cards,start,budget,
                 &mut || authority(&guard,&mut authorize))
         })
     }

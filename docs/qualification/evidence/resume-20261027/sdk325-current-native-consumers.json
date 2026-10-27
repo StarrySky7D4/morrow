@@ -1,0 +1,77 @@
+{
+  "status": "PASS_SCOPED_CURRENT_WINDOWS_NATIVE_SDK_AND_EXTERNAL_CONSUMERS",
+  "source_digest": "f8492320dbf7e156bfccadae687f50362a7aafb4d1c58e90014170aae9b04f78",
+  "source_unchanged": true,
+  "exit_code": 0,
+  "seconds": 44.125,
+  "original_summary": {
+    "path": "D:\\build_cache\\sdk-native-325\\results.json",
+    "bytes": 5761,
+    "sha256": "bd9bcd63a07ad422bc4a9c0b9d8ed21e27f55ec61538dd2e808f2595bf1efde5"
+  },
+  "rust_tests_passed": 92,
+  "native_executables": [
+    {
+      "name": "clang-c_channel",
+      "status": "passed"
+    },
+    {
+      "name": "clang-cpp_channel",
+      "status": "passed"
+    },
+    {
+      "name": "clang-c_channel_guardpage",
+      "status": "passed"
+    },
+    {
+      "name": "clang-cpp_channel_guardpage",
+      "status": "passed"
+    },
+    {
+      "name": "clang-c_transport",
+      "status": "passed"
+    },
+    {
+      "name": "clang-cpp_transport",
+      "status": "passed"
+    },
+    {
+      "name": "clang-cpp_codec",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-c_channel",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-cpp_channel",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-c_channel_guardpage",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-cpp_channel_guardpage",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-c_transport",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-cpp_transport",
+      "status": "passed"
+    },
+    {
+      "name": "msvc-cpp_codec",
+      "status": "passed"
+    }
+  ],
+  "cache_root": "D:/build_cache",
+  "VM_calls": 0,
+  "product_UI_executions": 0,
+  "source_accepted": false,
+  "full_SDK_accepted": false,
+  "release_eligible": false
+}

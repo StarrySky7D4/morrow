@@ -835,5 +835,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pluginsDirectoryNativePickerStart": "Elegir carpeta y ejecutar el complemento",
+  "pluginsDirectoryNativePickerIntro": "Al elegir una carpeta se ejecuta el complemento. El plazo incluye la selección; salir de esta vista cancela la tarea pendiente."
 }

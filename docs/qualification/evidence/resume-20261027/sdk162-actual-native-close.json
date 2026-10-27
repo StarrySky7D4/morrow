@@ -1,0 +1,78 @@
+{
+  "status": "PASS_SCOPED_ACTUAL_DIRECTORY_CLOSE_REFUSAL",
+  "source_digest": "10184a3712c7d081b4784418ac3a6297934f78096392a321ed7303bd852df55a",
+  "candidate": "D:\\build_cache\\s161s",
+  "source_unchanged": true,
+  "canonical_source_edits": 0,
+  "compiler_artifacts": 172,
+  "all_artifacts_fresh_false": true,
+  "tests_passed": 3,
+  "results": [
+    {
+      "name": "directory_io::native_windows::native_close_refusal_tests::actual_protected_directory_close_preserves_original_native_error_without_retry",
+      "command": [
+        "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\morrow_plugin_runtime-f0031b9f0d9c498f.exe",
+        "directory_io::native_windows::native_close_refusal_tests::actual_protected_directory_close_preserves_original_native_error_without_retry",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 19596,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\morrow_plugin_runtime-f0031b9f0d9c498f.exe",
+        "bytes": 18326528,
+        "sha256": "d214602883edc30061ca0cbda4a392e7a5b7c0f0577a0d1d550bf3f6fe638b9f"
+      },
+      "started_utc": "2026-10-26T19:48:41.604073+00:00",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "io_jobs::owner_commands::directories::secret_factory_tests::native_close_refusal_tests::actual_close_refusal_finish_and_terminal_page_keep_original_charge",
+      "command": [
+        "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\morrow_plugin_runtime-f0031b9f0d9c498f.exe",
+        "io_jobs::owner_commands::directories::secret_factory_tests::native_close_refusal_tests::actual_close_refusal_finish_and_terminal_page_keep_original_charge",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 19272,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\morrow_plugin_runtime-f0031b9f0d9c498f.exe",
+        "bytes": 18326528,
+        "sha256": "d214602883edc30061ca0cbda4a392e7a5b7c0f0577a0d1d550bf3f6fe638b9f"
+      },
+      "started_utc": "2026-10-26T19:48:41.625514+00:00",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "io_jobs::owner_commands::directories::secret_factory_tests::native_close_refusal_tests::actual_close_refusal_of_queued_input_blocks_worker_retirement_before_capture",
+      "command": [
+        "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\morrow_plugin_runtime-f0031b9f0d9c498f.exe",
+        "io_jobs::owner_commands::directories::secret_factory_tests::native_close_refusal_tests::actual_close_refusal_of_queued_input_blocks_worker_retirement_before_capture",
+        "--exact",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 21164,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-close-162\\morrow_plugin_runtime-f0031b9f0d9c498f.exe",
+        "bytes": 18326528,
+        "sha256": "d214602883edc30061ca0cbda4a392e7a5b7c0f0577a0d1d550bf3f6fe638b9f"
+      },
+      "started_utc": "2026-10-26T19:48:42.209128+00:00",
+      "exit_code": 0,
+      "status": "PASS"
+    }
+  ],
+  "actual_OS_close_refusal_verified": true,
+  "process_exit_is_not_original_native_retirement": true,
+  "retained_negative_allocations_not_claimed_closed": true,
+  "VM_calls": 0,
+  "host_legacy_provisioning": false,
+  "formal_picker_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

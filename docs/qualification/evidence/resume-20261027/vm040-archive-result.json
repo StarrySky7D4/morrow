@@ -1,0 +1,48 @@
+{
+  "independent_review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm040-offline-archive-20261027\\independent-zip-read.json",
+  "archive_self_contained": false,
+  "archive_requires_extraction_before_restore": true,
+  "unregister_calls": 1,
+  "guest_contacts": 0,
+  "original_disks_retained": [
+    {
+      "entry": "disk/acceptance-original.vhdx",
+      "sha256": "46c15a02cd4d81bbceed0eba0ebb89f87c206a7e6b3e6ba476508a39e8624e82",
+      "path": "C:\\MorrowQA\\windows-acceptance-20261027-040\\acceptance.vhdx",
+      "bytes": 30414995456,
+      "modified_ticks": 639286308444082634
+    },
+    {
+      "entry": "parent/clean-base.vhdx",
+      "sha256": "a52ba8c381818cc17635ee971b8125cdc1e8569e1314a609d70f6439a5010804",
+      "path": "C:\\MorrowQA\\isolated-candidate-20261021\\export\\Windows 11 开发环境\\Virtual Hard Disks\\Windows 11 开发环境.vhdx",
+      "bytes": 62750982144,
+      "modified_ticks": 639276954050710514
+    }
+  ],
+  "registered_vms": 3,
+  "restore_compatibility_issues": 0,
+  "historical_unknown_unchanged": true,
+  "start_stop_calls": 0,
+  "explicit_file_delete_calls": 0,
+  "logical_disk_bytes_deleted": 0,
+  "memory_resume_test_performed": false,
+  "full_original_state_and_disk_chain_byte_identical": true,
+  "other_vm_states_disks_checkpoints_unchanged": true,
+  "status": "SAVED_VM040_COMPLETE_ARCHIVE_SET_VERIFIED_REGISTRATION_RELEASED_ORIGINAL_DISKS_RETAINED",
+  "owner_query_or_replay": 0,
+  "shared_parent_archive": {
+    "path": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm037\\vm037-complete-saved-state.zip",
+    "bytes": 51816644645,
+    "modified_ns": 1793003400269855900,
+    "sha256": "de9401fec978ee79ce349fdbb8fe948bc418aa197df86c68ef50f7abed6f3dc7"
+  },
+  "archive": {
+    "path": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm040\\vm040-saved-state-shared-parent.zip",
+    "bytes": 13028995060,
+    "modified_ns": 1793037043712876600,
+    "sha256": "0096e13b1b152a42e44a6cecfc85da5b0fdc7642da5ba6281540ddcd44c53b2c"
+  },
+  "saved_memory_byte_identical": true,
+  "vm_id": "b7a69dfb-b756-40e6-9eff-8eabcf8a8f1d"
+}

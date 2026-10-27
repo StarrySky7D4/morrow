@@ -1,0 +1,715 @@
+{
+  "status": "PASS_SCOPED_REAL_WINDOWS_TEXT_SAVE_CLOSE_REOPEN_AND_THREE_LANGUAGE_WIDGETS",
+  "utc": "2026-10-27T23:17:26.460278+00:00",
+  "task_status": "PAUSED_AT_USER_REQUEST",
+  "qualification_source": "269f9b7420cab8a073e1cd3eb5fd2de75fd75dd4b8b906ba21401d333725c78a",
+  "source_changes": {
+    "previous_source": "dae99792423258ca99d0352ed0308ad0224de05f546aaff9c79d4ac949f5b041",
+    "reconstructed_previous": "dae99792423258ca99d0352ed0308ad0224de05f546aaff9c79d4ac949f5b041",
+    "modified": [
+      "sdk/examples/blob-upload-common/src/lib.rs",
+      "sdk/examples/blob-upload-common/sample_options.h",
+      "sdk/examples/blob-upload-common/sample.h",
+      "sdk/examples/rust-blob-upload/src/lib.rs",
+      "sdk/examples/c-blob-upload/plugin.c",
+      "sdk/examples/cpp-blob-upload/plugin.cpp",
+      "sdk/examples/blob-upload-common/README.md",
+      "plugin_runtime/tests/blob_upload_planner_sdk_guests.rs"
+    ],
+    "added": [
+      "workbench_host/examples/package_blob_text_fixture.rs",
+      "workbench_host/examples/check_blob_text_fixture.rs"
+    ],
+    "changes": {
+      "sdk/examples/blob-upload-common/src/lib.rs": "35c6d796ff14297d546e4c62e612619202291b07aaaff09152574f85cccf330b",
+      "sdk/examples/blob-upload-common/sample_options.h": "cb6697276796cad3091c49d7e5228f9b49f00c05abf66e39660c2b32b91a5f9e",
+      "sdk/examples/blob-upload-common/sample.h": "09332229efa2180f29b561b3aaff83ce39ea272a1c20bc085d32d94955d4edb5",
+      "sdk/examples/rust-blob-upload/src/lib.rs": "ddc5cd6c5a5c3d48990b0ebbe23a4279b14bde0721444f474bb0eb27dda7ee95",
+      "sdk/examples/c-blob-upload/plugin.c": "972819439633172bd5cf572cd5ae32d2081f8b08ea64cc46d01a94627edf56a9",
+      "sdk/examples/cpp-blob-upload/plugin.cpp": "b888aa59f40e3638ba191075ac5763ba0e710fad8286a11cb67299b2b758eab5",
+      "sdk/examples/blob-upload-common/README.md": "20292494111666c13acb5d0b93a79794647e5b89538914029dbc34ab8c02cd22",
+      "plugin_runtime/tests/blob_upload_planner_sdk_guests.rs": "2f93aa7e0c6613e0a9cc3369ed66a83b8b5c6371f00abb1042496fe1c04162c2",
+      "workbench_host/examples/package_blob_text_fixture.rs": "059a9566d04b64efb486f22fa7a9ea19bdf445bbc4cc6571c623f197a82309db",
+      "workbench_host/examples/check_blob_text_fixture.rs": "caea966232b4d436d628a88a85d88960a4deb392554c7318eb380b5bef7fe412"
+    },
+    "frozen_protocol_change": false
+  },
+  "sample_unit_tests": 5,
+  "actual_guest_planner_methods": 21,
+  "actual_legacy_guest_methods": 10,
+  "actual_three_language_widget_cases": [
+    {
+      "language": "c",
+      "bytes": 32768,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": true,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "c",
+      "bytes": 41,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": false,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "cpp",
+      "bytes": 32768,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": true,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "cpp",
+      "bytes": 41,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": false,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "rust",
+      "bytes": 32768,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": true,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "rust",
+      "bytes": 41,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": false,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    }
+  ],
+  "headless_original_planning_joins": 6,
+  "headless_original_upload_joins": 6,
+  "headless_supervised_closures": [
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-32768\\reopen-closed.json",
+        "bytes": 909,
+        "sha256": "bb71f1bd7fb5bc5b0e3a5456995ccf4edd7095172c666034849c0e0532575928"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-32768\\ui-closed.json",
+        "bytes": 909,
+        "sha256": "a0b7c48db4c0ce5ec42ead6346b86d86dc9df9723d067559a4c646b4872fbdf5"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-41\\reopen-closed.json",
+        "bytes": 908,
+        "sha256": "941166daf680d3bb1c72ed0bc5aff664d552a5b4a259cafbacda41a310f23e86"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-41\\ui-closed.json",
+        "bytes": 909,
+        "sha256": "42da462dcf6b016e484c41a2722138e27b99f5399701d75d6c07f286f5422aa1"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-32768\\reopen-closed.json",
+        "bytes": 908,
+        "sha256": "469c30724a5eb209db0f6d1cf36377d8560aa48e60bb0184bf0c97ac0aa94a16"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-32768\\ui-closed.json",
+        "bytes": 909,
+        "sha256": "294ef24cebafe9759471906853d508a0fb9aa164148ce266c9be5ad2848a9839"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-41\\reopen-closed.json",
+        "bytes": 909,
+        "sha256": "14dcb4785aa480cac9e009ece7a517c8eba759e8f322a9764bd10d330b1a2645"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-41\\ui-closed.json",
+        "bytes": 909,
+        "sha256": "4fef9e760e822917be4e84043c1be34097c512dbc5a00ccec2bd07087d501f5f"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-32768\\reopen-closed.json",
+        "bytes": 909,
+        "sha256": "8b46292fe4707911e62a2ef57bd81fd27efd09c5e44e055fbeafb1a5e06a827f"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-32768\\ui-closed.json",
+        "bytes": 908,
+        "sha256": "37cf6aa12edebb3ee1bcfea733eaedcb9b240f7486b68c5def63fe9f761ee76b"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-41\\reopen-closed.json",
+        "bytes": 908,
+        "sha256": "1fe3f7145418e038522b9336c132dfcdac5d1b7d05fb2e43a0dcd9304373f3d6"
+      },
+      "raw_business_outcome": "Unknown"
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-41\\ui-closed.json",
+        "bytes": 907,
+        "sha256": "6d7be45b44f009fd24b3a0d701ade4d1590c3d38fb7549d31e84fe07f388bbc5"
+      },
+      "raw_business_outcome": "Unknown"
+    }
+  ],
+  "headless_independent_closed_library_reads": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-32768\\first-history.json",
+      "bytes": 124,
+      "sha256": "137582540104159ac688aad167672831b91c6d3123373446ab1a105d3319faff"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-32768\\second-history.json",
+      "bytes": 124,
+      "sha256": "137582540104159ac688aad167672831b91c6d3123373446ab1a105d3319faff"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-41\\first-history.json",
+      "bytes": 121,
+      "sha256": "cf5ee0bd33833548a55efae09b861c3bea34c3bd79de84932ea2a8b412beaa39"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-41\\second-history.json",
+      "bytes": 121,
+      "sha256": "cf5ee0bd33833548a55efae09b861c3bea34c3bd79de84932ea2a8b412beaa39"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-32768\\first-history.json",
+      "bytes": 124,
+      "sha256": "137582540104159ac688aad167672831b91c6d3123373446ab1a105d3319faff"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-32768\\second-history.json",
+      "bytes": 124,
+      "sha256": "137582540104159ac688aad167672831b91c6d3123373446ab1a105d3319faff"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-41\\first-history.json",
+      "bytes": 121,
+      "sha256": "cf5ee0bd33833548a55efae09b861c3bea34c3bd79de84932ea2a8b412beaa39"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-41\\second-history.json",
+      "bytes": 121,
+      "sha256": "cf5ee0bd33833548a55efae09b861c3bea34c3bd79de84932ea2a8b412beaa39"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-32768\\first-history.json",
+      "bytes": 124,
+      "sha256": "137582540104159ac688aad167672831b91c6d3123373446ab1a105d3319faff"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-32768\\second-history.json",
+      "bytes": 124,
+      "sha256": "137582540104159ac688aad167672831b91c6d3123373446ab1a105d3319faff"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-41\\first-history.json",
+      "bytes": 121,
+      "sha256": "cf5ee0bd33833548a55efae09b861c3bea34c3bd79de84932ea2a8b412beaa39"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-41\\second-history.json",
+      "bytes": 121,
+      "sha256": "cf5ee0bd33833548a55efae09b861c3bea34c3bd79de84932ea2a8b412beaa39"
+    }
+  ],
+  "headless_business": [
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-32768\\business.json",
+        "bytes": 411,
+        "sha256": "bd496bd8d3f387b9357204c1e0d9a1087a78d99a185fa6f424be9040c728752d"
+      },
+      "observations": {
+        "original_planning_join": true,
+        "original_upload_join": true,
+        "category_approvals": 1,
+        "plan_starts": 1,
+        "proposal_approvals": 1,
+        "plan_reads": 1,
+        "upload_reads": 1,
+        "upload_acknowledgements": 1,
+        "plan_acknowledgements": 1,
+        "direct_upload_starts": 0,
+        "unexpected_calls": 0,
+        "result_reply_discarded": true,
+        "missing_result_reconstructed": false,
+        "proposal_input_sha256": "b217b65e6f205f41b3fb8ef90cf7c44da93f630ca03965273485bbb21a5cccf5"
+      }
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\c-41\\business.json",
+        "bytes": 412,
+        "sha256": "5e48214e65f849062e26c87b49184652b5414a6e55783123a7359ed1dc91f9e1"
+      },
+      "observations": {
+        "original_planning_join": true,
+        "original_upload_join": true,
+        "category_approvals": 1,
+        "plan_starts": 1,
+        "proposal_approvals": 1,
+        "plan_reads": 1,
+        "upload_reads": 1,
+        "upload_acknowledgements": 1,
+        "plan_acknowledgements": 1,
+        "direct_upload_starts": 0,
+        "unexpected_calls": 0,
+        "result_reply_discarded": false,
+        "missing_result_reconstructed": false,
+        "proposal_input_sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739"
+      }
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-32768\\business.json",
+        "bytes": 411,
+        "sha256": "bd496bd8d3f387b9357204c1e0d9a1087a78d99a185fa6f424be9040c728752d"
+      },
+      "observations": {
+        "original_planning_join": true,
+        "original_upload_join": true,
+        "category_approvals": 1,
+        "plan_starts": 1,
+        "proposal_approvals": 1,
+        "plan_reads": 1,
+        "upload_reads": 1,
+        "upload_acknowledgements": 1,
+        "plan_acknowledgements": 1,
+        "direct_upload_starts": 0,
+        "unexpected_calls": 0,
+        "result_reply_discarded": true,
+        "missing_result_reconstructed": false,
+        "proposal_input_sha256": "b217b65e6f205f41b3fb8ef90cf7c44da93f630ca03965273485bbb21a5cccf5"
+      }
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\cpp-41\\business.json",
+        "bytes": 412,
+        "sha256": "5e48214e65f849062e26c87b49184652b5414a6e55783123a7359ed1dc91f9e1"
+      },
+      "observations": {
+        "original_planning_join": true,
+        "original_upload_join": true,
+        "category_approvals": 1,
+        "plan_starts": 1,
+        "proposal_approvals": 1,
+        "plan_reads": 1,
+        "upload_reads": 1,
+        "upload_acknowledgements": 1,
+        "plan_acknowledgements": 1,
+        "direct_upload_starts": 0,
+        "unexpected_calls": 0,
+        "result_reply_discarded": false,
+        "missing_result_reconstructed": false,
+        "proposal_input_sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739"
+      }
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-32768\\business.json",
+        "bytes": 411,
+        "sha256": "bd496bd8d3f387b9357204c1e0d9a1087a78d99a185fa6f424be9040c728752d"
+      },
+      "observations": {
+        "original_planning_join": true,
+        "original_upload_join": true,
+        "category_approvals": 1,
+        "plan_starts": 1,
+        "proposal_approvals": 1,
+        "plan_reads": 1,
+        "upload_reads": 1,
+        "upload_acknowledgements": 1,
+        "plan_acknowledgements": 1,
+        "direct_upload_starts": 0,
+        "unexpected_calls": 0,
+        "result_reply_discarded": true,
+        "missing_result_reconstructed": false,
+        "proposal_input_sha256": "b217b65e6f205f41b3fb8ef90cf7c44da93f630ca03965273485bbb21a5cccf5"
+      }
+    },
+    {
+      "evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\stores\\rust-41\\business.json",
+        "bytes": 412,
+        "sha256": "5e48214e65f849062e26c87b49184652b5414a6e55783123a7359ed1dc91f9e1"
+      },
+      "observations": {
+        "original_planning_join": true,
+        "original_upload_join": true,
+        "category_approvals": 1,
+        "plan_starts": 1,
+        "proposal_approvals": 1,
+        "plan_reads": 1,
+        "upload_reads": 1,
+        "upload_acknowledgements": 1,
+        "plan_acknowledgements": 1,
+        "direct_upload_starts": 0,
+        "unexpected_calls": 0,
+        "result_reply_discarded": false,
+        "missing_result_reconstructed": false,
+        "proposal_input_sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739"
+      }
+    }
+  ],
+  "desktop": {
+    "language": "rust",
+    "application": "Unmodified production lib/main.dart; current fresh Dart kernel; pinned native runner and host/supervisor",
+    "qualification_shell": false,
+    "approval_seeded": false,
+    "native_picker_injected": false,
+    "native_plugin_import_picker": true,
+    "user_manual_paste": true,
+    "agent_operated_review_and_approval": true,
+    "whole_flow_human_operated": false,
+    "readable_Chinese_desktop_capture": true,
+    "text_utf8_bytes": 41,
+    "text_sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739",
+    "whitespace_newline_emoji_exact": true,
+    "normal_UI_close_and_reopen": true,
+    "original_process_receipts": [
+      {
+        "phase": "run",
+        "original_processes": [
+          {
+            "pid": 22516,
+            "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\app\\morrow_studio.exe",
+            "creation_filetime": 134376148734939116,
+            "signaled": true,
+            "exit_code": 0
+          },
+          {
+            "pid": 2180,
+            "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\app\\morrow-workbench-supervisor.exe",
+            "creation_filetime": 134376148749179688,
+            "signaled": true,
+            "exit_code": 0
+          },
+          {
+            "pid": 31840,
+            "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\app\\morrow-workbench-host.exe",
+            "creation_filetime": 134376148749896018,
+            "signaled": true,
+            "exit_code": 0
+          }
+        ],
+        "original_UI_supervisor_host_exited": true,
+        "all_exit_codes": 0,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-464\\run.stdout",
+          "bytes": 154,
+          "sha256": "fb925d01a997ffb532d68239611d435672de072a8dfd3c85b50a6f81e9f73c22"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-464\\run.stderr",
+          "bytes": 10,
+          "sha256": "92a19969583cef404789053f0712b32f2103453b19f4a283d3c409241d9fd1b5"
+        }
+      },
+      {
+        "phase": "reopen",
+        "original_processes": [
+          {
+            "pid": 24712,
+            "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\app\\morrow_studio.exe",
+            "creation_filetime": 134376162411894072,
+            "signaled": true,
+            "exit_code": 0
+          },
+          {
+            "pid": 27336,
+            "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\app\\morrow-workbench-supervisor.exe",
+            "creation_filetime": 134376162426583031,
+            "signaled": true,
+            "exit_code": 0
+          },
+          {
+            "pid": 33520,
+            "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\app\\morrow-workbench-host.exe",
+            "creation_filetime": 134376162427198941,
+            "signaled": true,
+            "exit_code": 0
+          }
+        ],
+        "original_UI_supervisor_host_exited": true,
+        "all_exit_codes": 0,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-464\\reopen.stdout",
+          "bytes": 154,
+          "sha256": "80693862b4926125060250bcf14617e9476c9509960a6399a2a919eb935d2eaa"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-464\\reopen.stderr",
+          "bytes": 10,
+          "sha256": "92a19969583cef404789053f0712b32f2103453b19f4a283d3c409241d9fd1b5"
+        }
+      }
+    ],
+    "independent_closed_library_reads": 2,
+    "objects": 1,
+    "pending": 0,
+    "visible_observations": {
+      "run": {
+        "no_pending_operation": true,
+        "normal_UI_close_requested": true,
+        "native_picker_import_observed": true,
+        "plugin_enabled_through_UI": true,
+        "category_approval_through_UI": true,
+        "user_manual_paste": true,
+        "proposal_bytes": 41,
+        "proposal_sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739",
+        "reviewed_checkbox": true,
+        "approve_action_count": 1,
+        "generate_action_count": 1,
+        "upload_result_saved": true,
+        "original_history_saved": true,
+        "finish_action_count": 1,
+        "completed_session_records": 1,
+        "repair_action_required": false,
+        "unknown_replay": false,
+        "observed_utc": "2026-10-27T23:10:34.451Z"
+      },
+      "reopen": {
+        "no_pending_operation": true,
+        "normal_UI_close_requested": true,
+        "plugin_enabled_persisted": true,
+        "category_approval_persisted": true,
+        "empty_pending_proposal_view": true,
+        "no_second_proposal": true,
+        "no_replay": true,
+        "readable_desktop_UI": true,
+        "observed_utc": "2026-10-27T23:11:55.013Z"
+      }
+    },
+    "native_runner_recompiled": false,
+    "all_three_languages_desktop_accepted": false,
+    "unknown_recovery_claim": false
+  },
+  "captures": [
+    {
+      "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/reopen-approval.jpg",
+      "sha256": "f6b1076e2b90a9d8e39fea1d5976a1ca157f6e8a0f4460fbddf61259213989c8"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/reopen-idle.jpg",
+      "sha256": "fe7c9826002147a8163dd9a076d6a4010014eb96b32cd336af23c042a988b141"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/run-completed.jpg",
+      "sha256": "35d31e5ac7407936e45d86a3639a8ebeedf9eba0c9d5fe77f2360469078be90f"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/run-input.jpg",
+      "sha256": "79f1b407bf662a777dd6d4939343904511369ea21aab6cb692ead4959e94b3f6"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/run-picker-path.png",
+      "sha256": "01cf3a34787f5dba87ef5cc5ccabd47624060be44af52d5324dd85fa222082a1"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/run-proposal.jpg",
+      "sha256": "759ac11488e4a7b9eb8ecc93eb28c794c69e102293da79bf896238b7e4ae7c0e"
+    },
+    {
+      "path": "docs/qualification/evidence/resume-20261028/sdk467-text-desktop/run-saved.jpg",
+      "sha256": "ebb2e6155cb1fc5d72788211f338f7fe75cd802948282b9e7fd725ff33628c05"
+    }
+  ],
+  "external_qualification_test_snapshot": {
+    "path": "docs/qualification/evidence/resume-20261028/sdk467-text-native-adapter.dart.txt",
+    "sha256": "724aac2499eb536ad7b2fc0ed3855a9b6ef40300dd47bcc34dc68405e11dbe5c",
+    "canonical_test_promotion_pending": true
+  },
+  "strict_full_host_clippy_passed": false,
+  "preexisting_host_lints": 60,
+  "new_example_lints": 0,
+  "lint_evidence": {
+    "new_examples_diagnostic_free": true,
+    "strict_host_clippy_passed": false,
+    "prior_strict_lint_errors": 60,
+    "prior_review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-product-fixtures-462\\strict-clippy-review.json"
+  },
+  "frozen_public_contract_pins_verified": 57,
+  "internal_wire": "CapnProto task/proposal/bound input; no new JSON IPC",
+  "all_recent_processes_closed": true,
+  "raw_supervision_business_Unknown_preserved": true,
+  "supersedes_waiting_checkpoint": "text-progress-466 and resume-checkpoint-20261028-056; original evidence retained",
+  "evidence": {
+    "upload-planner-guests-459/result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-guests-459\\result.json",
+      "bytes": 10559,
+      "sha256": "340c2ec1d054a338ed464f4649c51dfe32419bf6abee3ed6ee3dcae4ba3c2262"
+    },
+    "upload-planner-sdk-460/result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-sdk-460\\result.json",
+      "bytes": 3275,
+      "sha256": "ca492842dbbe59c563133351d2e829bda5ef6d8ca144e1dc4fb800c65b841c68"
+    },
+    "text-desktop-build-461/result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-build-461\\result.json",
+      "bytes": 2197,
+      "sha256": "a9c15ff41aa49192b08b87499fcbca101035665868b43c5155e7a4b0d4b3d2c0"
+    },
+    "text-product-fixtures-462/result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-product-fixtures-462\\result.json",
+      "bytes": 974,
+      "sha256": "cbd91be8cd96dc3ba10b5aa340b5daac7091fc33b522065eeafd81657a639ecf"
+    },
+    "text-product-fixtures-462/strict-clippy-review.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-product-fixtures-462\\strict-clippy-review.json",
+      "bytes": 4583,
+      "sha256": "d14eed141049dca6618c192c39a2f562b3c5af5ce8b752c45baacf56258e4200"
+    },
+    "text-product-fixtures-463/result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-product-fixtures-463\\result.json",
+      "bytes": 5649,
+      "sha256": "2b20353c72a0b8ce8d968929a1f6463a822ad38e9f4ec212e9b20759b495ea23"
+    },
+    "text-product-fixtures-463/lint-scope.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-product-fixtures-463\\lint-scope.json",
+      "bytes": 262,
+      "sha256": "35c95c5d1402a57d5a243f7f344ed68b44ee72909b4927f7726d2fe7a24c4da1"
+    },
+    "text-native-widgets-465/result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\result.json",
+      "bytes": 1469,
+      "sha256": "a4e9d0542eead1e1fa6bcd55144700c7db37ebe840cefeeeb978e9dfd6110ad0"
+    },
+    "text-native-widgets-465/accepted-cases.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\accepted-cases.json",
+      "bytes": 3477,
+      "sha256": "76a12264e248e092474ba43b53df9d96cff618b3f56e40556d51e4df11571576"
+    },
+    "text-native-widgets-465/adapter.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-native-widgets-465\\adapter.json",
+      "bytes": 831,
+      "sha256": "d530e01e1173a69b3a07844085ea73f263f9f56f35dcc960b8ae8ad521455cdd"
+    },
+    "text-upload-preparation-458/source-equivalence.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-upload-preparation-458\\source-equivalence.json",
+      "bytes": 2032,
+      "sha256": "7e12e66a5034ef491ebf131bd0bae2d9b540f755d9d4c32e715a48d9a6b0751b"
+    },
+    "desktop_process_result": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-desktop-464\\process-result.json",
+      "bytes": 3632,
+      "sha256": "5cbbeea3605c19f1a27d56df6aca1ff16eaef93b88b85d4acaf0d53a52d09d7c"
+    }
+  },
+  "limitations": [
+    "Desktop text save is Rust only; C/C++ text workflows have actual native headless evidence",
+    "Known-closed reopening does not establish durable recovery of Unknown operations",
+    "Final P2/P3 source binding and full SDK26/G04/SDK_FREEZE remain open",
+    "60 preexisting full-host strict lint errors remain open",
+    "External text qualification test promotion is pending"
+  ],
+  "Windows_P2_accepted": false,
+  "Windows_P3_final_source_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "registered_VMs": 4,
+  "VM_mutations": 0,
+  "host_policy_mutations": 0,
+  "historical_unknown_owner_contacts": 0,
+  "cache_root": "D:/build_cache",
+  "publication_authorized": true,
+  "publication_branch": "codex/local-continue-20261020"
+}

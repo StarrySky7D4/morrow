@@ -1,0 +1,28 @@
+{
+  "status": "PASS_WINDOWS_EXTENDED_PATH_OBSERVER_FIX",
+  "public_previous_diagnostic": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-254\\unknown-retained.json",
+    "bytes": 825,
+    "sha256": "2dc6cb6b4158cca7f4ae50da8fd143e7d9e5dc99dfd521b8a8a32887d7c1c39d"
+  },
+  "helper": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk_process_path_258.py",
+    "bytes": 677,
+    "sha256": "41e4912f49bfc9ff70937dafb0e87fd7caad99f4a31d91e11076943eee33bd68"
+  },
+  "driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_sdk_full_main_259.py",
+    "bytes": 10219,
+    "sha256": "897de108faa4b7dec080b824c3f5f39344e17ec48d3a90f3448e3f3c9ebc56ff"
+  },
+  "real_observed_format_corrected": true,
+  "positive_cases": 4,
+  "negative_cases": 12,
+  "original_process_handle_image_and_creation_time_checks_retained": true,
+  "other_paths_devices_relative_names_and_alternate_streams_refused": true,
+  "previous_254_owners_or_profile_contacted": false,
+  "prior_251_replayed": false,
+  "production_source_edits": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

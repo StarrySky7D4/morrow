@@ -6,6 +6,12 @@ use morrow_core::{
 };
 #[cfg(not(target_arch = "wasm32"))]
 mod frame;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub(crate) use frame::FrameExecution;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+mod proposal;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub use proposal::ProposalReport;
 pub struct PreparedPackage {
     package: Package,
     runner: Runner,
@@ -14,8 +20,13 @@ pub struct PreparedPackage {
 impl PreparedPackage {
     pub fn new(package: Package, host_limits: Limits) -> Result<Self, Fault> {
         // Validate host policy before intersecting; an invalid policy must not silently pass.
+        let max_fuel = if package.blob_upload_declaration().is_some() {
+            crate::MAX_BLOB_UPLOAD_FUEL
+        } else {
+            100_000_000
+        };
         if host_limits.fuel == 0
-            || host_limits.fuel > 100_000_000
+            || host_limits.fuel > max_fuel
             || host_limits.memory_bytes < 65536
             || host_limits.memory_bytes > 64 * 1024 * 1024
             || host_limits.host_calls > 1024
@@ -37,11 +48,19 @@ impl PreparedPackage {
             .required_features
             .iter()
             .any(|f| f == morrow_core::plugin_package::DEPENDENCY_CALLS_FEATURE);
-        let directory = package.manifest().required_features.iter()
+        let directory = package
+            .manifest()
+            .required_features
+            .iter()
             .any(|feature| feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE);
-        let runner = if directory {
-            if dependency || package.io_declaration().is_none()
-                || package.channel_declaration().is_some() || package.mutation_enabled() {
+        let runner = if package.blob_upload_declaration().is_some() {
+            Runner::new_blob_upload_task(package.module(), limits)?
+        } else if directory {
+            if dependency
+                || package.io_declaration().is_none()
+                || package.channel_declaration().is_some()
+                || package.mutation_enabled()
+            {
                 return Err(Fault::UnsupportedAbi);
             }
             Runner::new_directory_task(package.module(), limits)?
@@ -151,7 +170,10 @@ impl PreparedPackage {
         mut clock: impl FnMut() -> u64,
         cancel: Cancellation,
     ) -> Report {
-        if self.package.io_declaration().is_some() || self.package.channel_declaration().is_some() {
+        if self.package.io_declaration().is_some()
+            || self.package.channel_declaration().is_some()
+            || self.package.blob_upload_declaration().is_some()
+        {
             return Report {
                 outcome: Err(Fault::UnsupportedAbi),
                 host_calls: 0,
@@ -197,6 +219,7 @@ impl PreparedPackage {
     ) -> TaskReport {
         let fault = if self.package.io_declaration().is_some()
             || self.package.channel_declaration().is_some()
+            || self.package.blob_upload_declaration().is_some()
         {
             Some(Fault::UnsupportedAbi)
         } else if connection.package_digest() != Some(self.package.digest()) {

@@ -22,6 +22,73 @@ void expectCleared(List<Uint8List> buffers) {
 }
 
 void main() {
+  for (final failed in [false, true]) {
+    test('planner input copies clear after send, failed=$failed', () async {
+      final source = Uint8List(32768)..fillRange(0, 32768, 73);
+      late List<Uint8List> arena;
+      late Uint8List sent;
+      final operation = sendHostRequest(
+        host.Action.blobPlanStart,
+        configure: (r) {
+          r.initBlobPlanStart().input = Uint8List(8192);
+          r.initBlobPlanStart().input = source;
+          arena = buffers(r);
+        },
+        send: (frame) async {
+          sent = frame;
+          expectCleared(arena);
+          expect(
+            MessageReader.deserialize(
+              frame,
+            ).getRoot(host.requestFactory).blobPlanStart!.input,
+            source,
+          );
+          if (failed) throw StateError('unknown planning write');
+        },
+      );
+      if (failed) {
+        await expectLater(operation, throwsStateError);
+      } else {
+        await operation;
+      }
+      expectCleared([...arena, sent]);
+      expect(source.every((b) => b == 73), isTrue);
+    });
+  }
+
+  for (final failed in [false, true]) {
+    test('upload clears temporary input after send, failed=$failed', () async {
+      final source = Uint8List(8192)..fillRange(0, 8192, 37);
+      late List<Uint8List> arena;
+      late Uint8List sent;
+      final operation = sendHostRequest(
+        host.Action.blobUploadStart,
+        configure: (r) {
+          r.initBlobUploadStart().input = Uint8List(8192);
+          r.initBlobUploadStart().input = source;
+          arena = buffers(r);
+        },
+        send: (frame) async {
+          sent = frame;
+          expectCleared(arena);
+          expect(
+            MessageReader.deserialize(
+              frame,
+            ).getRoot(host.requestFactory).blobUploadStart!.input,
+            source,
+          );
+          if (failed) throw StateError('write outcome unknown');
+        },
+      );
+      if (failed) {
+        await expectLater(operation, throwsStateError);
+      } else {
+        await operation;
+      }
+      expectCleared([...arena, sent]);
+      expect(source.every((byte) => byte == 37), isTrue);
+    });
+  }
   for (final action in [
     host.Action.mutationStart,
     host.Action.mutationSubmit,

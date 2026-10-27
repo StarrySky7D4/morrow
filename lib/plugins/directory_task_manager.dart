@@ -20,8 +20,9 @@ class _Choice {
   String get key => '${plugin.id}:${_hex(plugin.digest)}:$handler';
 }
 
-/// A view lease over the retained original session. Leaving the page neither
-/// cancels its worker nor loses a once-only or uncertain submission.
+/// A view lease over the retained original session. Native picker admission is
+/// revoked when its view changes; the original owner and uncertain submissions
+/// remain retained until their own checked retirement completes.
 class DirectoryTaskManager extends StatefulWidget {
   const DirectoryTaskManager({
     super.key,
@@ -58,6 +59,10 @@ class _DirectoryTaskManagerState extends State<DirectoryTaskManager>
   bool _picking = false, _formError = false, _availabilityQueued = false;
   int _epoch = 0;
   Timer? _timer;
+  bool get _nativePicker =>
+      widget.backend is NativeDirectoryPickerCapabilities &&
+      (widget.backend as NativeDirectoryPickerCapabilities)
+          .supportsNativeDirectoryPicker;
   List<_Choice> get _choices => [
     for (final p in widget.plugins)
       if (p.enabled &&
@@ -92,6 +97,11 @@ class _DirectoryTaskManagerState extends State<DirectoryTaskManager>
     final changed =
         !identical(old.backend, widget.backend) ||
         !identical(old.ioBackend, widget.ioBackend);
+    if (changed || _catalog(old) != _catalog(widget)) {
+      // An unconfirmed catalog also withdraws permission to continue a live
+      // picker; an unchanged confirmed catalog or locale does not.
+      unawaited(_session.revokeNativePickerView());
+    }
     if (changed) {
       _session.removeListener(_changed);
       _timer?.cancel();
@@ -113,6 +123,7 @@ class _DirectoryTaskManagerState extends State<DirectoryTaskManager>
     ++_epoch;
     _timer?.cancel();
     _session.removeListener(_changed);
+    unawaited(_session.revokeNativePickerView());
     _entries.dispose();
     _metadata.dispose();
     _timeout.dispose();
@@ -121,6 +132,7 @@ class _DirectoryTaskManagerState extends State<DirectoryTaskManager>
 
   @override
   void sessionViewVisibilityChanged() {
+    if (!sessionViewActive) unawaited(_session.revokeNativePickerView());
     _schedule();
     if (sessionViewActive && !_session.busy) unawaited(_session.refresh());
   }
@@ -161,7 +173,7 @@ class _DirectoryTaskManagerState extends State<DirectoryTaskManager>
   }
 
   Future<void> _pick() async {
-    if (!_canEdit) return;
+    if (!_canEdit || _nativePicker) return;
     final epoch = ++_epoch;
     final backend = widget.backend;
     setState(() {
@@ -182,7 +194,7 @@ class _DirectoryTaskManagerState extends State<DirectoryTaskManager>
   }
 
   Future<void> _start() async {
-    if (!_canEdit || _path == null) return;
+    if (!_canEdit || (!_nativePicker && _path == null)) return;
     final session = _session, epoch = _epoch;
     try {
       final choice = _choices.singleWhere((v) => v.key == _choice);
@@ -195,7 +207,8 @@ class _DirectoryTaskManagerState extends State<DirectoryTaskManager>
         packageDigest: choice.plugin.digest,
         registryRevision: widget.registryRevision!,
         handler: choice.handler,
-        selectedPath: _path!,
+        selectedPath: _nativePicker ? '' : _path!,
+        nativePicker: _nativePicker,
         maxEntries: int.parse(_entries.text),
         maxMetadataBytes: BigInt.parse(_metadata.text),
         timeoutMs: int.parse(_timeout.text),
@@ -285,12 +298,16 @@ class _DirectoryTaskManagerState extends State<DirectoryTaskManager>
               ? (value) => setState(() => _choice = value)
               : null,
         ),
-        _button(
-          l.pluginsFileMutationPickDirectory,
-          'directory-task-pick',
-          _canEdit ? _pick : null,
-        ),
-        if (_path != null || _session.attempt != null)
+        if (_nativePicker)
+          _note(l.pluginsDirectoryNativePickerIntro)
+        else
+          _button(
+            l.pluginsFileMutationPickDirectory,
+            'directory-task-pick',
+            _canEdit ? _pick : null,
+          ),
+        if (_path != null ||
+            (_session.attempt != null && !_session.attempt!.nativePicker))
           _note(_path ?? _session.attempt!.selectedPath),
         TextField(
           key: const ValueKey('directory-task-entries'),
@@ -321,9 +338,13 @@ class _DirectoryTaskManagerState extends State<DirectoryTaskManager>
           runSpacing: 6,
           children: [
             _button(
-              l.pluginsDirectoryStart,
+              _nativePicker
+                  ? l.pluginsDirectoryNativePickerStart
+                  : l.pluginsDirectoryStart,
               'directory-task-start',
-              _canEdit && selected != null && _path != null ? _start : null,
+              _canEdit && selected != null && (_nativePicker || _path != null)
+                  ? _start
+                  : null,
             ),
             _button(
               l.pluginsHttpTaskRefresh,

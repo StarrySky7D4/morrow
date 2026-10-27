@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "utc": "2026-10-27T23:17:26.460278+00:00",
+  "scope": "Public bounded qualification evidence and non-secret test captures; no credentials or VM images",
+  "files": [
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\cache427-closed-compiler-leaves.json",
+      "bytes": 1007,
+      "sha256": "0c3970b8b7eb6a198a6ba61a7a0463705e7e505aceb67ac12edd1c1e0287ca6c"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\cache437-closed-compiler-leaves.json",
+      "bytes": 1095,
+      "sha256": "e271a2895954d80ac59875ed329f9fd616cb1ea95f8397f386a73c25b3f505d3"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk423-upload-proposal-and-pure-planner.json",
+      "bytes": 7434,
+      "sha256": "331866bd195636a562ede75cbd6b540388012e28b9b5f2fbcb52bcd07c5e6fb2"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk431-three-language-proposal-planners.json",
+      "bytes": 8470,
+      "sha256": "85c7ea67ef8068d9dae9e98e12d2b8010867a0f772c53e8095725e2b72bb7e5b"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk436-original-product-planner.json",
+      "bytes": 6185,
+      "sha256": "94c176482747ee7326668111884e82abef43397b522eb380602ebf91008c8640"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk442-private-planning-controls.json",
+      "bytes": 5583,
+      "sha256": "12764fcfb2c7234acd6627c7c224f7cca51c584ee883c1646d61fae6c62133a1"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk446-retained-planning-product.json",
+      "bytes": 15357,
+      "sha256": "628ea6ee4f9dabc35699b2617a7de41c37c3cc515bb388d07e274ae1166b6967"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk457-native-planning-widget-flow.json",
+      "bytes": 20148,
+      "sha256": "83fe03cc53afb4c166677bff8412075262e99a46d7dbceaca51b6286a8c9d0b4"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk467-text-desktop\\reopen-approval.jpg",
+      "bytes": 57567,
+      "sha256": "f6b1076e2b90a9d8e39fea1d5976a1ca157f6e8a0f4460fbddf61259213989c8"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk467-text-desktop\\reopen-idle.jpg",
+      "bytes": 55792,
+      "sha256": "fe7c9826002147a8163dd9a076d6a4010014eb96b32cd336af23c042a988b141"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk467-text-desktop\\run-completed.jpg",
+      "bytes": 59021,
+      "sha256": "35d31e5ac7407936e45d86a3639a8ebeedf9eba0c9d5fe77f2360469078be90f"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk467-text-desktop\\run-input.jpg",
+      "bytes": 60205,
+      "sha256": "79f1b407bf662a777dd6d4939343904511369ea21aab6cb692ead4959e94b3f6"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk467-text-desktop\\run-picker-path.png",
+      "bytes": 58867,
+      "sha256": "01cf3a34787f5dba87ef5cc5ccabd47624060be44af52d5324dd85fa222082a1"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk467-text-desktop\\run-proposal.jpg",
+      "bytes": 72843,
+      "sha256": "759ac11488e4a7b9eb8ecc93eb28c794c69e102293da79bf896238b7e4ae7c0e"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk467-text-desktop\\run-saved.jpg",
+      "bytes": 66492,
+      "sha256": "ebb2e6155cb1fc5d72788211f338f7fe75cd802948282b9e7fd725ff33628c05"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk467-text-desktop-and-three-language.json",
+      "bytes": 31339,
+      "sha256": "1c53da2f5d47367c4c0133642c09a30078c0d32e9d8e81ced920f0f8dcb9d90a"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\sdk467-text-native-adapter.dart.txt",
+      "bytes": 19432,
+      "sha256": "724aac2499eb536ad7b2fc0ed3855a9b6ef40300dd47bcc34dc68405e11dbe5c"
+    }
+  ]
+}

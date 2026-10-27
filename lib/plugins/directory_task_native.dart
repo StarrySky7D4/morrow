@@ -25,7 +25,9 @@ final class NativeDirectoryTaskClient implements DirectoryTaskBackend {
   Future<IoTaskSnapshot> startDirectory(DirectoryTaskRequest value) {
     DirectoryTaskValidation.request(value);
     return _exchange(
-      host.Action.directoryStart,
+      value.nativePicker
+          ? host.Action.directoryPick
+          : host.Action.directoryStart,
       clearReply: true,
       configure: (r) {
         final out = r.initDirectoryStart();
@@ -111,8 +113,13 @@ final class NativeDirectoryTaskClient implements DirectoryTaskBackend {
     if (row == null) throw const FormatException('Missing directory result');
     final frame = row.frame ?? Uint8List(0);
     final metadata = row.metadataBytesBigInt;
-    if (row.kind > 3 ||
-        (guest ? row.kind == 1 || row.kind == 3 : row.kind == 2) ||
+    if (row.kind > 4 ||
+        (guest
+            ? row.kind == 1 || row.kind == 3 || row.kind == 4
+            : row.kind == 2) ||
+        (row.kind == 4
+            ? row.commandFault < 1 || row.commandFault > 3
+            : row.commandFault != 0) ||
         row.entries > 1024 ||
         metadata > BigInt.from(1024 * 1024) ||
         frame.length > 65536 ||
@@ -137,7 +144,10 @@ final class NativeDirectoryTaskClient implements DirectoryTaskBackend {
         exitCode: row.exitCode,
         hostCalls: row.hostCalls,
       ),
-      _ => DirectoryTaskFinished(),
+      3 => DirectoryTaskFinished(),
+      _ => DirectoryTaskRefused(
+        DirectoryCommandFault.values[row.commandFault - 1],
+      ),
     };
   }
 }

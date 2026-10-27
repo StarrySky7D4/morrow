@@ -39,6 +39,11 @@ pub struct PluginEntry {
     /// A declaration on this exact package, never a runtime approval.
     pub mutation_supported: bool,
     pub directory_supported: bool,
+    pub blob_upload_supported: bool,
+    pub blob_upload_approved: bool,
+    pub blob_upload_handlers: Vec<String>,
+    pub blob_upload_max_bytes: u64,
+    pub blob_planners: Vec<(String, String)>,
     pub mutation_budget: Option<MutationBudgetDeclaration>,
     pub channel_supported: bool,
     pub channel_handlers: Vec<String>,
@@ -249,6 +254,11 @@ impl WorkbenchState {
             mutation_supported: p.mutation_enabled(),
             directory_supported: m.required_features.iter().any(|feature|
                 feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE),
+            blob_upload_supported: p.blob_upload_declaration().is_some(),
+            blob_upload_approved: selected.is_some_and(|s| s.approved_blob_upload),
+            blob_upload_handlers: p.blob_upload_declaration().map_or_else(Vec::new, |d| d.handlers.clone()),
+            blob_upload_max_bytes: p.blob_upload_declaration().map_or(0, |d| d.max_object_bytes),
+            blob_planners: m.blob_upload_proposal_declaration.as_ref().map_or_else(Vec::new, |d| d.handlers.iter().map(|h| (h.handler.clone(), h.upload_handler.clone())).collect()),
             channel_supported: p.channel_declaration().is_some(),
             channel_handlers: p
                 .channel_declaration()
@@ -334,6 +344,11 @@ impl WorkbenchState {
                     io_handlers: vec![],
                     mutation_supported: false,
                     directory_supported: false,
+                    blob_upload_supported: false,
+                    blob_upload_approved: false,
+                    blob_upload_handlers: vec![],
+                    blob_upload_max_bytes: 0,
+                    blob_planners: vec![],
                     mutation_budget: None,
                     channel_supported: false,
                     channel_handlers: vec![],
@@ -443,6 +458,20 @@ impl WorkbenchState {
         let cleanup = self.maintain_external();
         result?;
         cleanup
+    }
+    /// Category approval only: no endpoint, path, credential, object grant or enable decision.
+    pub fn configure_external_blob_upload(
+        &mut self, id: &str, digest: &[u8], revision: u64, approved: bool,
+    ) -> Result<()> {
+        self.catalog_revision(Some(revision))?;
+        if self.builtin_id(id) { return Err("内置插件需要专用设置入口。".into()); }
+        let manager = self.manager.as_mut().ok_or("插件目录不可用。")?;
+        let selection = manager.selection(id).ok_or("插件未选择。")?;
+        if digest != selection.digest { return Err("插件摘要已变化，请重新确认。".into()); }
+        let exact = selection.digest;
+        let result = manager.approve_blob_upload(id, exact, approved, revision);
+        let cleanup = self.maintain_external();
+        result?; cleanup
     }
     /// Category approval only: no endpoint, path, credential, object grant or enable decision.
     pub fn configure_external_io(
@@ -818,6 +847,12 @@ impl Workbench {
     ) -> Result<()> {
         self.local_state_mut()?
             .configure_external_io(id, digest, revision, approved)
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn configure_external_blob_upload(
+        &mut self, id: &str, digest: &[u8], revision: u64, approved: bool,
+    ) -> Result<()> {
+        self.local_state_mut()?.configure_external_blob_upload(id, digest, revision, approved)
     }
     pub fn configure_external(
         &mut self,

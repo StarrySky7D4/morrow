@@ -1,0 +1,125 @@
+{
+  "status": "PASS_SCOPED_ORIGINAL_UPLOAD_WORKER_WAT_GUEST_STORE",
+  "utc": "2026-10-27T12:35:34.352414+00:00",
+  "qualification_source": "6747f69d2a42471e5ffec143ff38452a4ed87125ca9407bd16bfd9261795ba02",
+  "host_integration_source": "be737588619b052c2fa00dc4a839bf5a5de7097150ab4dfe1470828efb653403",
+  "host_lock_only_delta_verified": true,
+  "source_manifest": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-worker-388\\source-before.json",
+    "bytes": 48719,
+    "sha256": "88618a4e82d5c25455c9220fcdf59f6d827d7b1f1a02bef1b2f80ffdf1b61e25"
+  },
+  "runtime_methods": {
+    "passed": 96,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0,
+    "new_original_worker_methods": 13
+  },
+  "private_continuations": {
+    "passed": 5,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 121
+  },
+  "core_handler_methods": {
+    "passed": 12,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0,
+    "new_dedicated_handler_method": 1
+  },
+  "preceding_store_guard_scope": {
+    "source": "f645891d6024a0d839436946b398584e02605789e8300256afe4e6db1bf09119",
+    "full_core_passed": 882,
+    "full_core_ignored": 19,
+    "runtime_passed": 83,
+    "private_passed": 5,
+    "original_result": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-guards-review-386\\result.json",
+      "bytes": 3833,
+      "sha256": "ae24f48078239d61c38388bdba7f2d6b83f0c5748d9a8809c1ab32b6739d5242"
+    },
+    "not_added_to_current_totals": true
+  },
+  "strict_library_clippy": [
+    "core",
+    "runtime"
+  ],
+  "upload_original_worker_dispatch": true,
+  "actual_guest_store_commit": true,
+  "guest_fixture_language": "WAT",
+  "tested_objects": [
+    "empty",
+    "150017 byte multichunk"
+  ],
+  "original_owner_return_and_disconnect": true,
+  "checked_commit_guards": true,
+  "terminal_end_ack_after_commit": true,
+  "nonrefundable_native_work_ceiling_bytes": 134217728,
+  "wire_and_native_budgets_independent": true,
+  "closed_stream_after_end": true,
+  "duplicate_nonce_and_missing_end_rollback": true,
+  "later_guest_failure_preserves_original_commit": true,
+  "unread_result_veto_preserves_original_commit": true,
+  "store_substitution_refuses_foreign_cleanup": true,
+  "production_host": "LIBRARY_COMPILE_ONLY",
+  "cold_targets": false,
+  "changed_source_recompiled": true,
+  "original_results": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-worker-388\\result.json",
+      "bytes": 7909,
+      "sha256": "45339ec7bd9bf029d41fec638cece76d022beadb27e8d1356f4be93068880ec5"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-workbench-390\\result.json",
+      "bytes": 4168,
+      "sha256": "c42316b9bdf0764f9d5d017fe161a2f27dd7079af1c02123b6c4cb65ef6647a8"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-guards-review-386\\result.json",
+      "bytes": 3833,
+      "sha256": "ae24f48078239d61c38388bdba7f2d6b83f0c5748d9a8809c1ab32b6739d5242"
+    }
+  ],
+  "retained_failures": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-guards-383\\result.json",
+      "bytes": 278,
+      "sha256": "460c713f1ab60c9b98c462834e9e2e85189c7da5f43853a1ff5a9cd0137e950c"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-guards-384\\result.json",
+      "bytes": 17844,
+      "sha256": "3f75eccf09e727fec14a6423d334ff3d2acbfce38d932bab06668fe8632b6630"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-worker-387\\result.json",
+      "bytes": 3987,
+      "sha256": "f18d717f663fe808d2d1e6933c49c79cd00ae54dae43f3d6521ec0d62e5ab149"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-workbench-389\\result.json",
+      "bytes": 486,
+      "sha256": "9fce4b93bda878d1876468f73d4e8f3c1916efb1ad422e5a8a5e187369acc434"
+    }
+  ],
+  "frozen_inputs_verified": 57,
+  "all_recent_processes_closed": true,
+  "cache_root": "D:/build_cache",
+  "registered_VMs": 4,
+  "VM_calls": 0,
+  "host_policy_changes": 0,
+  "historical_unknown_owner_contacts": 0,
+  "three_language_upload_guests": false,
+  "protected_upload_owner": false,
+  "production_upload_approval_UI": false,
+  "production_upload_recovery": false,
+  "full_P2_accepted": false,
+  "full_P3_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "publication": false
+}

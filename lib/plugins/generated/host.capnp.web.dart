@@ -170,6 +170,20 @@ enum Action {
   directoryRunGuest,
   directoryReadGuest,
   directoryFinish,
+  directoryPick,
+  pluginApproveBlobUpload,
+  blobUploadStart,
+  blobUploadStatus,
+  blobUploadRead,
+  blobUploadInspect,
+  blobUploadConfirm,
+  blobPlanStart,
+  blobPlanStatus,
+  blobPlanRead,
+  blobPlanCancel,
+  blobPlanAcknowledge,
+  blobPlanApprove,
+  blobPlanDiscover,
 }
 
 Action? actionFromUint16(int v) =>
@@ -387,6 +401,29 @@ final class RequestReader extends StructReader {
   );
 
   int get directoryTimeoutMs => getUint32Field(80);
+
+  BlobUploadStartReader? get blobUploadStart => getStructFieldWith(
+    52,
+    (r) => BlobUploadStartReader(r, capabilities: capabilityTable),
+  );
+
+  bool get blobUploadApproved => getBoolField(257);
+
+  int get blobUploadObservation => getUint16Field(34);
+
+  BlobPlanStartReader? get blobPlanStart => getStructFieldWith(
+    53,
+    (r) => BlobPlanStartReader(r, capabilities: capabilityTable),
+  );
+
+  BlobPlanApprovalReader? get blobPlanApproval => getStructFieldWith(
+    54,
+    (r) => BlobPlanApprovalReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get blobPlanKey => getDataField(55);
+
+  Uint8List? get blobPlanSubmission => getDataField(56);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -779,6 +816,40 @@ final class RequestBuilder extends StructBuilder {
   set directoryTimeoutMs(int v) {
     setUint32Field(80, v);
   }
+
+  BlobUploadStartBuilder initBlobUploadStart() {
+    return initStructFieldWith(52, (r) => BlobUploadStartBuilder(r), 3, 13);
+  }
+
+  bool hasBlobUploadStart() => hasPointerField(52);
+
+  set blobUploadApproved(bool v) {
+    setBoolField(257, v);
+  }
+
+  set blobUploadObservation(int v) {
+    setUint16Field(34, v);
+  }
+
+  BlobPlanStartBuilder initBlobPlanStart() {
+    return initStructFieldWith(53, (r) => BlobPlanStartBuilder(r), 2, 7);
+  }
+
+  bool hasBlobPlanStart() => hasPointerField(53);
+
+  BlobPlanApprovalBuilder initBlobPlanApproval() {
+    return initStructFieldWith(54, (r) => BlobPlanApprovalBuilder(r), 1, 2);
+  }
+
+  bool hasBlobPlanApproval() => hasPointerField(54);
+
+  set blobPlanKey(Uint8List? v) {
+    setDataField(55, v);
+  }
+
+  set blobPlanSubmission(Uint8List? v) {
+    setDataField(56, v);
+  }
 }
 
 final class _RequestFactory
@@ -786,7 +857,7 @@ final class _RequestFactory
   @override
   int get dataWords => 11;
   @override
-  int get ptrWords => 52;
+  int get ptrWords => 57;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -1002,6 +1073,26 @@ final class ResponseReader extends StructReader {
     41,
     (r) => DirectoryResultReader(r, capabilities: capabilityTable),
   );
+
+  BlobUploadStateReader? get blobUploadState => getStructFieldWith(
+    42,
+    (r) => BlobUploadStateReader(r, capabilities: capabilityTable),
+  );
+
+  BlobUploadResultReader? get blobUploadResult => getStructFieldWith(
+    43,
+    (r) => BlobUploadResultReader(r, capabilities: capabilityTable),
+  );
+
+  BlobPlanStateReader? get blobPlanState => getStructFieldWith(
+    44,
+    (r) => BlobPlanStateReader(r, capabilities: capabilityTable),
+  );
+
+  BlobPlanResultReader? get blobPlanResult => getStructFieldWith(
+    45,
+    (r) => BlobPlanResultReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -1167,8 +1258,8 @@ final class ResponseBuilder extends StructBuilder {
       12,
       length,
       (r) => PluginEntryBuilder(r),
-      1,
-      16,
+      2,
+      18,
     );
   }
 
@@ -1377,6 +1468,30 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasDirectoryResult() => hasPointerField(41);
+
+  BlobUploadStateBuilder initBlobUploadState() {
+    return initStructFieldWith(42, (r) => BlobUploadStateBuilder(r), 1, 0);
+  }
+
+  bool hasBlobUploadState() => hasPointerField(42);
+
+  BlobUploadResultBuilder initBlobUploadResult() {
+    return initStructFieldWith(43, (r) => BlobUploadResultBuilder(r), 5, 0);
+  }
+
+  bool hasBlobUploadResult() => hasPointerField(43);
+
+  BlobPlanStateBuilder initBlobPlanState() {
+    return initStructFieldWith(44, (r) => BlobPlanStateBuilder(r), 1, 4);
+  }
+
+  bool hasBlobPlanState() => hasPointerField(44);
+
+  BlobPlanResultBuilder initBlobPlanResult() {
+    return initStructFieldWith(45, (r) => BlobPlanResultBuilder(r), 3, 1);
+  }
+
+  bool hasBlobPlanResult() => hasPointerField(45);
 }
 
 final class _ResponseFactory
@@ -1384,7 +1499,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 42;
+  int get ptrWords => 46;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2637,6 +2752,22 @@ final class PluginEntryReader extends StructReader {
   );
 
   bool get directorySupported => getBoolField(5);
+
+  bool get blobUploadSupported => getBoolField(6);
+
+  bool get blobUploadApproved => getBoolField(7);
+
+  ListReader<String?>? get blobUploadHandlers => getTextListField(16);
+
+  int get blobUploadMaxBytes => _checkedWireInt(blobUploadMaxBytesBigInt);
+  BigInt get blobUploadMaxBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  ListReader<BlobPlannerReader>? get blobPlanners => getStructListFieldWith(
+    17,
+    (r) => BlobPlannerReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class PluginEntryBuilder extends StructBuilder {
@@ -2742,14 +2873,52 @@ final class PluginEntryBuilder extends StructBuilder {
   set directorySupported(bool v) {
     setBoolField(5, v);
   }
+
+  set blobUploadSupported(bool v) {
+    setBoolField(6, v);
+  }
+
+  set blobUploadApproved(bool v) {
+    setBoolField(7, v);
+  }
+
+  ListBuilder<String?> initBlobUploadHandlers(int length) {
+    return initTextListField(16, length);
+  }
+
+  set blobUploadMaxBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    blobUploadMaxBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set blobUploadMaxBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field blobUploadMaxBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  ListBuilder<BlobPlannerBuilder> initBlobPlanners(int length) {
+    return initStructListFieldWith(
+      17,
+      length,
+      (r) => BlobPlannerBuilder(r),
+      0,
+      2,
+    );
+  }
 }
 
 final class _PluginEntryFactory
     extends StructFactory<PluginEntryReader, PluginEntryBuilder> {
   @override
-  int get dataWords => 1;
+  int get dataWords => 2;
   @override
-  int get ptrWords => 16;
+  int get ptrWords => 18;
   @override
   PluginEntryReader fromRawReader(RawStructReader r) => PluginEntryReader(r);
   @override
@@ -4977,6 +5146,8 @@ final class DirectoryResultReader extends StructReader {
   int get exitCode => getInt32Field(20).toSigned(32);
 
   int get hostCalls => getUint32Field(24);
+
+  int get commandFault => getUint16Field(18);
 }
 
 final class DirectoryResultBuilder extends StructBuilder {
@@ -5027,6 +5198,10 @@ final class DirectoryResultBuilder extends StructBuilder {
 
   set hostCalls(int v) {
     setUint32Field(24, v);
+  }
+
+  set commandFault(int v) {
+    setUint16Field(18, v);
   }
 }
 
@@ -6829,6 +7004,873 @@ final class _ChannelSentFactory
 }
 
 final channelSentFactory = _ChannelSentFactory();
+
+final class BlobUploadStartReader extends StructReader {
+  BlobUploadStartReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  Uint8List? get nominationRef => getDataField(3);
+
+  Uint8List? get ownerDomain => getDataField(4);
+
+  Uint8List? get transferEpoch => getDataField(5);
+
+  Uint8List? get objectRef => getDataField(6);
+
+  Uint8List? get operationId => getDataField(7);
+
+  int get byteLength => _checkedWireInt(byteLengthBigInt);
+  BigInt get byteLengthBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get wholeSha256 => getDataField(8);
+
+  int get timeoutMs => getUint32Field(16);
+
+  String? get handler => getTextField(9);
+
+  String? get inputType => getTextField(10);
+
+  String? get outputType => getTextField(11);
+
+  Uint8List? get input => getDataField(12);
+}
+
+final class BlobUploadStartBuilder extends StructBuilder {
+  BlobUploadStartBuilder(super.raw);
+
+  @override
+  BlobUploadStartReader asReader() => BlobUploadStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set nominationRef(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set ownerDomain(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set transferEpoch(Uint8List? v) {
+    setDataField(5, v);
+  }
+
+  set objectRef(Uint8List? v) {
+    setDataField(6, v);
+  }
+
+  set operationId(Uint8List? v) {
+    setDataField(7, v);
+  }
+
+  set byteLength(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    byteLengthBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set byteLengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field byteLength');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set wholeSha256(Uint8List? v) {
+    setDataField(8, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(16, v);
+  }
+
+  set handler(String? v) {
+    setTextField(9, v);
+  }
+
+  set inputType(String? v) {
+    setTextField(10, v);
+  }
+
+  set outputType(String? v) {
+    setTextField(11, v);
+  }
+
+  set input(Uint8List? v) {
+    setDataField(12, v);
+  }
+}
+
+final class _BlobUploadStartFactory
+    extends StructFactory<BlobUploadStartReader, BlobUploadStartBuilder> {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 13;
+  @override
+  BlobUploadStartReader fromRawReader(RawStructReader r) =>
+      BlobUploadStartReader(r);
+  @override
+  BlobUploadStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobUploadStartReader(r, capabilities: capabilities);
+  @override
+  BlobUploadStartBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobUploadStartBuilder(r);
+}
+
+final blobUploadStartFactory = _BlobUploadStartFactory();
+
+final class BlobUploadStateReader extends StructReader {
+  BlobUploadStateReader(super.raw, {super.capabilities});
+
+  bool get ready => getBoolField(0);
+
+  bool get delivered => getBoolField(1);
+
+  bool get recoveryRequired => getBoolField(2);
+
+  int get observed => getUint16Field(2);
+}
+
+final class BlobUploadStateBuilder extends StructBuilder {
+  BlobUploadStateBuilder(super.raw);
+
+  @override
+  BlobUploadStateReader asReader() => BlobUploadStateReader(rawToReader());
+
+  set ready(bool v) {
+    setBoolField(0, v);
+  }
+
+  set delivered(bool v) {
+    setBoolField(1, v);
+  }
+
+  set recoveryRequired(bool v) {
+    setBoolField(2, v);
+  }
+
+  set observed(int v) {
+    setUint16Field(2, v);
+  }
+}
+
+final class _BlobUploadStateFactory
+    extends StructFactory<BlobUploadStateReader, BlobUploadStateBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 0;
+  @override
+  BlobUploadStateReader fromRawReader(RawStructReader r) =>
+      BlobUploadStateReader(r);
+  @override
+  BlobUploadStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobUploadStateReader(r, capabilities: capabilities);
+  @override
+  BlobUploadStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobUploadStateBuilder(r);
+}
+
+final blobUploadStateFactory = _BlobUploadStateFactory();
+
+final class BlobUploadResultReader extends StructReader {
+  BlobUploadResultReader(super.raw, {super.capabilities});
+
+  int get kind => getUint16Field(0);
+
+  int get phase => getUint16Field(2);
+
+  int get error => getUint16Field(4);
+
+  bool get unknown => getBoolField(48);
+
+  int get calls => getUint32Field(8);
+
+  int get wireBytes => _checkedWireInt(wireBytesBigInt);
+  BigInt get wireBytesBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  int get nativeWorkBytes => _checkedWireInt(nativeWorkBytesBigInt);
+  BigInt get nativeWorkBytesBigInt =>
+      ((BigInt.from(getUint32Field(28).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(24).toUnsigned(32)));
+
+  bool get hasExecution => getBoolField(49);
+
+  int get executionFault => getUint16Field(12);
+
+  int get exitCode => getInt32Field(32).toSigned(32);
+
+  int get hostCalls => getUint32Field(36);
+}
+
+final class BlobUploadResultBuilder extends StructBuilder {
+  BlobUploadResultBuilder(super.raw);
+
+  @override
+  BlobUploadResultReader asReader() => BlobUploadResultReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set phase(int v) {
+    setUint16Field(2, v);
+  }
+
+  set error(int v) {
+    setUint16Field(4, v);
+  }
+
+  set unknown(bool v) {
+    setBoolField(48, v);
+  }
+
+  set calls(int v) {
+    setUint32Field(8, v);
+  }
+
+  set wireBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    wireBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set wireBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field wireBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set nativeWorkBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    nativeWorkBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set nativeWorkBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field nativeWorkBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(24, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(28, (bits >> 32).toInt());
+  }
+
+  set hasExecution(bool v) {
+    setBoolField(49, v);
+  }
+
+  set executionFault(int v) {
+    setUint16Field(12, v);
+  }
+
+  set exitCode(int v) {
+    setInt32Field(32, v);
+  }
+
+  set hostCalls(int v) {
+    setUint32Field(36, v);
+  }
+}
+
+final class _BlobUploadResultFactory
+    extends StructFactory<BlobUploadResultReader, BlobUploadResultBuilder> {
+  @override
+  int get dataWords => 5;
+  @override
+  int get ptrWords => 0;
+  @override
+  BlobUploadResultReader fromRawReader(RawStructReader r) =>
+      BlobUploadResultReader(r);
+  @override
+  BlobUploadResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobUploadResultReader(r, capabilities: capabilities);
+  @override
+  BlobUploadResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobUploadResultBuilder(r);
+}
+
+final blobUploadResultFactory = _BlobUploadResultFactory();
+
+final class BlobPlannerReader extends StructReader {
+  BlobPlannerReader(super.raw, {super.capabilities});
+
+  String? get handler => getTextField(0);
+
+  String? get uploadHandler => getTextField(1);
+}
+
+final class BlobPlannerBuilder extends StructBuilder {
+  BlobPlannerBuilder(super.raw);
+
+  @override
+  BlobPlannerReader asReader() => BlobPlannerReader(rawToReader());
+
+  set handler(String? v) {
+    setTextField(0, v);
+  }
+
+  set uploadHandler(String? v) {
+    setTextField(1, v);
+  }
+}
+
+final class _BlobPlannerFactory
+    extends StructFactory<BlobPlannerReader, BlobPlannerBuilder> {
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 2;
+  @override
+  BlobPlannerReader fromRawReader(RawStructReader r) => BlobPlannerReader(r);
+  @override
+  BlobPlannerReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobPlannerReader(r, capabilities: capabilities);
+  @override
+  BlobPlannerBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobPlannerBuilder(r);
+}
+
+final blobPlannerFactory = _BlobPlannerFactory();
+
+final class BlobPlanStartReader extends StructReader {
+  BlobPlanStartReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get handler => getTextField(3);
+
+  String? get inputType => getTextField(4);
+
+  String? get outputType => getTextField(5);
+
+  Uint8List? get input => getDataField(6);
+
+  int get timeoutMs => getUint32Field(8);
+}
+
+final class BlobPlanStartBuilder extends StructBuilder {
+  BlobPlanStartBuilder(super.raw);
+
+  @override
+  BlobPlanStartReader asReader() => BlobPlanStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set handler(String? v) {
+    setTextField(3, v);
+  }
+
+  set inputType(String? v) {
+    setTextField(4, v);
+  }
+
+  set outputType(String? v) {
+    setTextField(5, v);
+  }
+
+  set input(Uint8List? v) {
+    setDataField(6, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(8, v);
+  }
+}
+
+final class _BlobPlanStartFactory
+    extends StructFactory<BlobPlanStartReader, BlobPlanStartBuilder> {
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 7;
+  @override
+  BlobPlanStartReader fromRawReader(RawStructReader r) =>
+      BlobPlanStartReader(r);
+  @override
+  BlobPlanStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobPlanStartReader(r, capabilities: capabilities);
+  @override
+  BlobPlanStartBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobPlanStartBuilder(r);
+}
+
+final blobPlanStartFactory = _BlobPlanStartFactory();
+
+final class BlobPlanApprovalReader extends StructReader {
+  BlobPlanApprovalReader(super.raw, {super.capabilities});
+
+  Uint8List? get packageDigest => getDataField(0);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  Uint8List? get proposalSha256 => getDataField(1);
+}
+
+final class BlobPlanApprovalBuilder extends StructBuilder {
+  BlobPlanApprovalBuilder(super.raw);
+
+  @override
+  BlobPlanApprovalReader asReader() => BlobPlanApprovalReader(rawToReader());
+
+  set packageDigest(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set proposalSha256(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _BlobPlanApprovalFactory
+    extends StructFactory<BlobPlanApprovalReader, BlobPlanApprovalBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 2;
+  @override
+  BlobPlanApprovalReader fromRawReader(RawStructReader r) =>
+      BlobPlanApprovalReader(r);
+  @override
+  BlobPlanApprovalReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobPlanApprovalReader(r, capabilities: capabilities);
+  @override
+  BlobPlanApprovalBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobPlanApprovalBuilder(r);
+}
+
+final blobPlanApprovalFactory = _BlobPlanApprovalFactory();
+
+final class BlobPlanStateReader extends StructReader {
+  BlobPlanStateReader(super.raw, {super.capabilities});
+
+  bool get found => getBoolField(0);
+
+  Uint8List? get key => getDataField(0);
+
+  Uint8List? get submission => getDataField(1);
+
+  bool get running => getBoolField(1);
+
+  bool get originalWorkerJoined => getBoolField(2);
+
+  bool get ready => getBoolField(3);
+
+  bool get delivered => getBoolField(4);
+
+  bool get consumed => getBoolField(5);
+
+  int get error => getUint16Field(2);
+
+  Uint8List? get uploadKey => getDataField(2);
+
+  Uint8List? get uploadSubmission => getDataField(3);
+
+  bool get submissionFailed => getBoolField(6);
+}
+
+final class BlobPlanStateBuilder extends StructBuilder {
+  BlobPlanStateBuilder(super.raw);
+
+  @override
+  BlobPlanStateReader asReader() => BlobPlanStateReader(rawToReader());
+
+  set found(bool v) {
+    setBoolField(0, v);
+  }
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set submission(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set running(bool v) {
+    setBoolField(1, v);
+  }
+
+  set originalWorkerJoined(bool v) {
+    setBoolField(2, v);
+  }
+
+  set ready(bool v) {
+    setBoolField(3, v);
+  }
+
+  set delivered(bool v) {
+    setBoolField(4, v);
+  }
+
+  set consumed(bool v) {
+    setBoolField(5, v);
+  }
+
+  set error(int v) {
+    setUint16Field(2, v);
+  }
+
+  set uploadKey(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set uploadSubmission(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set submissionFailed(bool v) {
+    setBoolField(6, v);
+  }
+}
+
+final class _BlobPlanStateFactory
+    extends StructFactory<BlobPlanStateReader, BlobPlanStateBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 4;
+  @override
+  BlobPlanStateReader fromRawReader(RawStructReader r) =>
+      BlobPlanStateReader(r);
+  @override
+  BlobPlanStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobPlanStateReader(r, capabilities: capabilities);
+  @override
+  BlobPlanStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobPlanStateBuilder(r);
+}
+
+final blobPlanStateFactory = _BlobPlanStateFactory();
+
+final class BlobPlanViewReader extends StructReader {
+  BlobPlanViewReader(super.raw, {super.capabilities});
+
+  String? get packageId => getTextField(0);
+
+  Uint8List? get packageDigest => getDataField(1);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get plannerHandler => getTextField(2);
+
+  String? get uploadHandler => getTextField(3);
+
+  Uint8List? get planningInputSha256 => getDataField(4);
+
+  String? get label => getTextField(5);
+
+  int get byteLength => _checkedWireInt(byteLengthBigInt);
+  BigInt get byteLengthBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get wholeSha256 => getDataField(6);
+
+  Uint8List? get proposalSha256 => getDataField(7);
+}
+
+final class BlobPlanViewBuilder extends StructBuilder {
+  BlobPlanViewBuilder(super.raw);
+
+  @override
+  BlobPlanViewReader asReader() => BlobPlanViewReader(rawToReader());
+
+  set packageId(String? v) {
+    setTextField(0, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set plannerHandler(String? v) {
+    setTextField(2, v);
+  }
+
+  set uploadHandler(String? v) {
+    setTextField(3, v);
+  }
+
+  set planningInputSha256(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set label(String? v) {
+    setTextField(5, v);
+  }
+
+  set byteLength(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    byteLengthBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set byteLengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field byteLength');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set wholeSha256(Uint8List? v) {
+    setDataField(6, v);
+  }
+
+  set proposalSha256(Uint8List? v) {
+    setDataField(7, v);
+  }
+}
+
+final class _BlobPlanViewFactory
+    extends StructFactory<BlobPlanViewReader, BlobPlanViewBuilder> {
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 8;
+  @override
+  BlobPlanViewReader fromRawReader(RawStructReader r) => BlobPlanViewReader(r);
+  @override
+  BlobPlanViewReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobPlanViewReader(r, capabilities: capabilities);
+  @override
+  BlobPlanViewBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobPlanViewBuilder(r);
+}
+
+final blobPlanViewFactory = _BlobPlanViewFactory();
+
+final class BlobPlanResultReader extends StructReader {
+  BlobPlanResultReader(super.raw, {super.capabilities});
+
+  int get kind => getUint16Field(0);
+
+  int get error => getUint16Field(2);
+
+  BlobPlanViewReader? get view => getStructFieldWith(
+    0,
+    (r) => BlobPlanViewReader(r, capabilities: capabilityTable),
+  );
+
+  bool get hasExecution => getBoolField(32);
+
+  int get executionFault => getUint16Field(6);
+
+  int get exitCode => getInt32Field(8).toSigned(32);
+
+  int get hostCalls => getUint32Field(12);
+
+  bool get hasPluginFailure => getBoolField(33);
+
+  int get pluginFailureCode => getUint16Field(16);
+}
+
+final class BlobPlanResultBuilder extends StructBuilder {
+  BlobPlanResultBuilder(super.raw);
+
+  @override
+  BlobPlanResultReader asReader() => BlobPlanResultReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set error(int v) {
+    setUint16Field(2, v);
+  }
+
+  BlobPlanViewBuilder initView() {
+    return initStructFieldWith(0, (r) => BlobPlanViewBuilder(r), 2, 8);
+  }
+
+  bool hasView() => hasPointerField(0);
+
+  set hasExecution(bool v) {
+    setBoolField(32, v);
+  }
+
+  set executionFault(int v) {
+    setUint16Field(6, v);
+  }
+
+  set exitCode(int v) {
+    setInt32Field(8, v);
+  }
+
+  set hostCalls(int v) {
+    setUint32Field(12, v);
+  }
+
+  set hasPluginFailure(bool v) {
+    setBoolField(33, v);
+  }
+
+  set pluginFailureCode(int v) {
+    setUint16Field(16, v);
+  }
+}
+
+final class _BlobPlanResultFactory
+    extends StructFactory<BlobPlanResultReader, BlobPlanResultBuilder> {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 1;
+  @override
+  BlobPlanResultReader fromRawReader(RawStructReader r) =>
+      BlobPlanResultReader(r);
+  @override
+  BlobPlanResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobPlanResultReader(r, capabilities: capabilities);
+  @override
+  BlobPlanResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobPlanResultBuilder(r);
+}
+
+final blobPlanResultFactory = _BlobPlanResultFactory();
 
 int _checkedWireInt(BigInt value) {
   final signed = value.toSigned(64);

@@ -1,0 +1,20 @@
+{
+  "status": "COLD_COMPILE_PASS_NOT_RUNTIME_ACCEPTED",
+  "exit_code": 0,
+  "role": "SUPERVISOR",
+  "seconds": 772.14,
+  "input_sha256": "4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d",
+  "source_unchanged": true,
+  "canonical_source_unchanged": true,
+  "compiler_artifacts": 872,
+  "all_compiler_artifacts_fresh_false": true,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "product_runs": 0,
+  "binary": {
+    "path": "D:\\build_cache\\qualification-targets\\sdk253-SUPERVISOR-4b7030a17be2d8a9\\x86_64-pc-windows-msvc\\debug\\morrow-workbench-supervisor.exe",
+    "bytes": 27447808,
+    "sha256": "d83c738b2a095452594f5c1c9bc3714830f508b932ce3752c43d408fe78dd96d"
+  }
+}

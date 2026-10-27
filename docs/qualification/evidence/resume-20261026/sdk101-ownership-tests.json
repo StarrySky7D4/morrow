@@ -1,0 +1,16 @@
+{
+  "status": "PASS_NATIVE_RETAINED_FILE_AND_RELATED_OWNER_COMMAND_TESTS",
+  "exit_code": 0,
+  "expected": 25,
+  "passed": 25,
+  "new_native_tests": 7,
+  "related_existing_tests": 18,
+  "compile_result": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-selection-101-build\\result.json",
+  "formal_picker_integrated": false,
+  "original_workbench_admission_owner_integrated": false,
+  "SDK_gate_accepted": false,
+  "canonical_integrated": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0
+}

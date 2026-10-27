@@ -1,0 +1,42 @@
+{
+  "status": "PASS_SCOPED_FRAMEWORK282_TYPED_REFUSAL_AND_UI_LIFECYCLE",
+  "checks": [
+    {
+      "step": "flutter-lifecycle",
+      "exit_code": 0,
+      "seconds": 17.953,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-framework-tests-286\\flutter-lifecycle.stdout",
+        "bytes": 4886,
+        "sha256": "81e74726899d685743faf1a5b4e63beed39ce654e2dbc5a3fccf2a04dd005209"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-framework-tests-286\\flutter-lifecycle.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "step": "analyze",
+      "exit_code": 0,
+      "seconds": 3.515,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-framework-tests-286\\analyze.stdout",
+        "bytes": 96,
+        "sha256": "ae35a4b390302a5761ab604e99b6445a496c8037ff3fa72a0588f58e7e7b1976"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-framework-tests-286\\analyze.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "input_files_unchanged": true,
+  "VM_calls": 0,
+  "product_runs": 0,
+  "real_native_picker": "NOT_RUN",
+  "canonical_edits": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1521,6 +1521,8 @@
   "pluginsDirectoryIntro": "選択したフォルダー直下の項目名とメタデータだけを共有します。ファイル内容やサブフォルダー内は読み取りません。",
   "pluginsDirectoryLimit": "項目数の上限（最大 1024）",
   "pluginsDirectoryMetadataLimit": "メタデータの上限（バイト、最大 1 MiB）",
+  "pluginsDirectoryNativePickerIntro": "フォルダーを選ぶとプラグインが実行されます。制限時間には選択時間も含まれます。この画面を離れると未完了のタスクはキャンセルされます。",
+  "pluginsDirectoryNativePickerStart": "フォルダーを選んでプラグインを実行",
   "pluginsDirectorySelectHandler": "承認済みのフォルダープラグインを選択",
   "pluginsDirectoryStart": "フォルダーを読み取りプラグインを実行",
   "pluginsDirectoryTitle": "フォルダー一覧",

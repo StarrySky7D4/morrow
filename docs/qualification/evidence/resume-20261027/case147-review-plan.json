@@ -1,0 +1,56 @@
+{
+  "schema": "PRE_EXECUTION_FAULT_REVIEW_BOUNDARY_V1",
+  "status": "PREPARED_NOT_EXECUTED",
+  "case": "147",
+  "tag": "86f72fce673c4731b7310c249c36cd73",
+  "vm_id": "9105a276-a960-40a8-ae94-c19cd2957760",
+  "source_digest": "d7827205fe709e253b0f39db19b7a11d2ebcc2c1de01cc0aa84f0469c9a196fb",
+  "checkout_source_digest": "d7827205fe709e253b0f39db19b7a11d2ebcc2c1de01cc0aa84f0469c9a196fb",
+  "utc": "2026-10-26T18:55:13.873313+00:00",
+  "scope": "Qualification-only null input to real SetTokenInformation(TokenDefaultDacl); original login, restricted and launch tokens retained; original error capture, first failure and deadlines unchanged.",
+  "source_roles": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-040\\result.json",
+    "bytes": 2170,
+    "sha256": "3d5918531ac938b2999f5f8b779766d877f812eefd3da14742d919ced97cbee4"
+  },
+  "preparation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case147-preparation.json",
+    "bytes": 15169,
+    "sha256": "3c1870eb0b1ecedb4271cea0d117280cb0cf4d6067ac680cca497175c137cceb"
+  },
+  "trace_scope_clarification": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles040-trace-scope-clarification.json",
+    "bytes": 1558,
+    "sha256": "cdda33d279182908e36b790c2346f3c92bfecc09e6f1ae2c826f9efc0e60870e"
+  },
+  "required_evidence": [
+    "Fresh disconnected VM041 passes original pristine-readiness checks.",
+    "All four roles use distinct empty D:/build_cache targets with fresh=false compiler outputs, exact source inventory and original controller checks.",
+    "Original setup succeeds; no token-refusal, setup-after-owned-accounts or late-create fault marker.",
+    "Precreated V5 trace has exact header, contiguous sequence, one owner, at most 512 records and 512 KiB.",
+    "Exactly one NativeStartEntered, InjectedNativeCallStarting, InjectedNativeCallReturned and FirstFailure, in order; one token derivation and one default-DACL call, zero process creation calls.",
+    "Real nonzero Win32 refusal reaches original FirstFailure as TokenSecurity / DefaultInitialization with the same code. Login/restricted/launch handles remain Held; process/thread outputs Empty; default phase changes SetInFlight to Unknown.",
+    "One original native-start attempt preserves returned error and Unknown; controller observations match exact journal byte ranges and hashes.",
+    "Same policy owner verifies and removes only its actually added right, preserves holder sets and closes its own policy resources.",
+    "One fixed 30-second quiet interval and one read of five allowlisted public files; separate transport closes; no retained-owner contact or replay."
+  ],
+  "failure_rule": "Missing or contradictory evidence leaves the gate open; diagnostic trace is never cleanup authority.",
+  "acceptance_limits": {
+    "token_derivation_native_refusal": false,
+    "late_create_accepted": false,
+    "natural_OS_delay": false,
+    "normal_47_step_completion": false,
+    "retained_product_resources_cleaned": false,
+    "issued_tokens_revoked": false,
+    "full_P2_accepted": false,
+    "source_accepted": false,
+    "release_eligible": false
+  },
+  "runtime_authority_from_this_JSON": false,
+  "diagnostic_file": "case.evidence/qualification-native-trace.jsonl",
+  "trace_is_public_qualification_data_not_IPC": true,
+  "trace_record_limit": 512,
+  "diagnostic_coverage_exclusions": [
+    "No trace promised before command retention or after append failure; absence proves nothing."
+  ]
+}

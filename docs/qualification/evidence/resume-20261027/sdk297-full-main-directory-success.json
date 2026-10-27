@@ -1,0 +1,89 @@
+{
+  "status": "PASS_SCOPED_FULL_PRODUCTION_UI_NATIVE_DIRECTORY_SUCCESS_ACK_AND_REOPEN",
+  "utc": "2026-10-27T05:05:57.687026+00:00",
+  "source_input_sha256": "4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d",
+  "framework": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-292\\framework-input-binding.json",
+    "bytes": 84132,
+    "sha256": "c93825f55b87ab9eb648229bb3dcba8e115a1e09d4b486d542945efbc43218d2"
+  },
+  "reproducibility": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\flutter-reproducibility-review-291\\result.json",
+    "bytes": 563,
+    "sha256": "48c5ebe39ee66f5b9c184447135f53ac521893f426162891f03f6b5c8667174c"
+  },
+  "evidence": {
+    "preparation.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-296\\preparation.json",
+      "bytes": 18087,
+      "sha256": "4cd97efcec120ee9e304af0da7a0ca211401bf13beb81978ff679a598c453cb0"
+    },
+    "run-ready.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-296\\run-ready.json",
+      "bytes": 860,
+      "sha256": "cd21015733a54812dfb82b07906163890ba8a4b754e3748d98a726e7bbbe8203"
+    },
+    "run-visible-observations.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-296\\run-visible-observations.json",
+      "bytes": 1160,
+      "sha256": "e606d866cc66e0834798f32546deba23201ede55b50ffd0f055754a13db331a5"
+    },
+    "run-processes-returned.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-296\\run-processes-returned.json",
+      "bytes": 1497,
+      "sha256": "cdaa3e2079f7f3683b1f99b8917129b3c3f041e103ee7afd917119a12d44c2db"
+    },
+    "reopen-ready.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-296\\reopen-ready.json",
+      "bytes": 860,
+      "sha256": "5630fa509ca0a5ba9b17582ddf73aab354da74f665afa7dab67998b10c790aa0"
+    },
+    "reopen-visible-observations.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-296\\reopen-visible-observations.json",
+      "bytes": 666,
+      "sha256": "5ad45281470c99a423e0f52af4a6c07052aff625eac17f2512b30484f70bdff8"
+    },
+    "reopen-processes-returned.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-296\\reopen-processes-returned.json",
+      "bytes": 1506,
+      "sha256": "f2c7442e9b5acebad296e0a02fe80ebb8697e0da48e42d3ea788e95b090d2334"
+    },
+    "process-result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-296\\process-result.json",
+      "bytes": 3794,
+      "sha256": "15bf06743aa218dd2638b40ee46e04f54d67ed86f9fb96b1d8130a08f4025ed6"
+    }
+  },
+  "language": "C",
+  "actual_UI_import_enable_file_list_approval": true,
+  "actual_native_picker_selected_fresh_fixture": true,
+  "captured_entries": 70,
+  "guest_success_reported_by_production_UI": true,
+  "guest_call_count_independently_observed": false,
+  "UI_success_mapping": {
+    "source": {
+      "path": "D:\\build_cache\\s244s\\lib\\plugins\\directory_task_session.dart",
+      "bytes": 14378,
+      "sha256": "c34c29114463acf0fe524f0009d0981268fca02b6b8f6c24218b2b4d858bfae2"
+    },
+    "first_line": 334,
+    "last_line": 344
+  },
+  "original_worker_join_visible": true,
+  "original_ACK_visible": true,
+  "normal_close_and_independent_reopen": true,
+  "persisted_approval_visible": true,
+  "no_active_old_directory_task_visible": true,
+  "six_original_processes_exited_zero": true,
+  "test_directory_byte_unchanged": true,
+  "settings_native_crash_observed": false,
+  "approval_seeded": false,
+  "native_picker_injected": false,
+  "qualification_shell": false,
+  "VM_calls": 0,
+  "all_languages_full_main_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "limits": "One C directory fixture through unmodified production main and a pinned local Flutter framework. UI shows 70 entries and successful guest result, not individual guest call count. Other-language full main, SDK26 and combined release gates remain open. Historical Unknowns unchanged."
+}

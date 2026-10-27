@@ -1,0 +1,55 @@
+{
+  "tag": "1a01240e47774b72b3bb196d3d0ddd0a",
+  "files": [
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "length_stable": true,
+      "path": "C:\\Morrow-C28-transaction2769-1a01240e47774b72b3bb196d3d0ddd0a\\case-capture\\stdout.log",
+      "status": "COPIED_DIAGNOSTIC_ONLY",
+      "final_length": 0,
+      "local_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-118\\01-stdout.log"
+    },
+    {
+      "sha256": "2989cad2abd0c3199c469815d2544e709a38faba57f4a06159ef2faa16ee4dda",
+      "bytes": 609,
+      "length_stable": true,
+      "path": "C:\\Morrow-C28-transaction2769-1a01240e47774b72b3bb196d3d0ddd0a\\case-capture\\stderr.log",
+      "status": "COPIED_DIAGNOSTIC_ONLY",
+      "final_length": 609,
+      "local_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-118\\02-stderr.log"
+    },
+    {
+      "sha256": "3ffaae0f4daffeb89e3157eadbcdc10eae5ac1b7bdfffcda4e6489cc840a06a6",
+      "bytes": 53796,
+      "length_stable": true,
+      "path": "C:\\Morrow-C28-Root47-1725-run-1a01240e47774b72b3bb196d3d0ddd0a\\events.jsonl",
+      "status": "COPIED_DIAGNOSTIC_ONLY",
+      "final_length": 53796,
+      "local_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-118\\03-events.jsonl"
+    },
+    {
+      "sha256": "fa53e5a8399652f265f6258b266c829c1ba08248710c69535420468e220e2591",
+      "bytes": 50678,
+      "length_stable": true,
+      "path": "C:\\Morrow-C28-A1-047-1a01240e47774b72b3bb196d3d0ddd0a\\case.evidence\\journal.jsonl",
+      "status": "COPIED_DIAGNOSTIC_ONLY",
+      "final_length": 50678,
+      "local_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-118\\04-journal.jsonl"
+    },
+    {
+      "sha256": "e09fdd126506593db7b8cacf675211ff87b8973fb26fa71fc4fec899edc102b2",
+      "bytes": 40905,
+      "length_stable": true,
+      "path": "C:\\Morrow-C28-A1-047-1a01240e47774b72b3bb196d3d0ddd0a\\case.evidence\\qualification-native-trace.jsonl",
+      "status": "COPIED_DIAGNOSTIC_ONLY",
+      "final_length": 40905,
+      "local_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-118\\05-qualification-native-trace.jsonl"
+    }
+  ],
+  "diagnostic_only": true,
+  "schema": "RETAINED_CASE_FILE_SNAPSHOT_V1",
+  "original_owner_contacted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -835,5 +835,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pluginsDirectoryNativePickerStart": "选择文件夹并运行插件",
+  "pluginsDirectoryNativePickerIntro": "选定文件夹后立即运行插件。任务时限包含选择时间；离开此页面会取消尚未完成的任务。"
 }

@@ -1,0 +1,68 @@
+{
+  "status": "COLD_COMPILE_COMPLETE_TESTS_NOT_RUN",
+  "exit_code": 0,
+  "inputs": [
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\src\\io_tasks.rs",
+      "bytes": 34185,
+      "sha256": "abb9b47d75bc8a04548a175cf53d0699cacb86216622110fe3e069815de64730"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\src\\directory_tasks.rs",
+      "bytes": 16443,
+      "sha256": "664ff1dc5d082a894d418f3a61f03dabf50709e25594ad003f85215936ab6b78"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\tests\\directory_protected_sdk.rs",
+      "bytes": 31154,
+      "sha256": "07fb3f2b25fe4bde0369cba69daad1c997f675d5b355fb565bf5b914bccce708"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\tests\\support\\retained_directory_owner.rs",
+      "bytes": 8422,
+      "sha256": "b99c10021c786435f1a7affe1ebb5c21bafe8cf040a55122a268dc6e60e92a28"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\plugin_runtime\\src\\io_jobs\\directory_commands.rs",
+      "bytes": 38450,
+      "sha256": "6eeef1fa94168b16931051e4054c8e493178d56b200c8a5cf21157008c22b216"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\plugin_runtime\\src\\io_jobs\\owner_commands.rs",
+      "bytes": 28923,
+      "sha256": "969d7d761db5af92ae2707a112d81ce1a06f3776c05e860d8382adbf8214beb2"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\plugin_runtime\\src\\io_jobs\\directory_commands\\secret_factory_tests.rs",
+      "bytes": 40928,
+      "sha256": "ca59042be4fe0d2553421d3b448b93b485302ae3731b4d79cba1b30f8d6b3b9f"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\plugin_runtime\\src\\io_jobs\\directory_commands\\retained_capture_tests.rs",
+      "bytes": 9421,
+      "sha256": "1e523bc57c7eae99a3cc5e6c6ec38bce6f1903818b7b2d5d379964601c6b0574"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\Cargo.toml",
+      "bytes": 3805,
+      "sha256": "990353df43f77adde802f613356d717fcca498e681963adeb938b09d9f7033ad"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-selection-101\\workbench_host\\Cargo.lock",
+      "bytes": 235282,
+      "sha256": "26e32e77d138496fc72832f7b47b0a43b571c4e99ab313675747b82af07d9a3c"
+    }
+  ],
+  "compiler_artifacts": 867,
+  "all_compiler_artifacts_fresh_false": true,
+  "test_binaries": [
+    {
+      "path": "D:\\build_cache\\qualification-targets\\sdk-selection-106\\debug\\deps\\directory_protected_sdk-d64e8b4179137b82.exe",
+      "bytes": 59821056,
+      "sha256": "178651fd8e9204d3c48edbb5c360bd20e03458758df6e30030f180ba34e013ca"
+    }
+  ],
+  "test_bodies_executed": 0,
+  "VM_calls": 0,
+  "full_SDK_accepted": false
+}

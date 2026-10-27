@@ -1,0 +1,48 @@
+{
+  "status": "PASS_SCOPED_TWO_TYPED_REFUSAL_BOUNDARY_UNIT_TESTS",
+  "input_sha256": "4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d",
+  "binary": {
+    "path": "D:\\build_cache\\qualification-targets\\sdk246-LIB-4b7030a17be2d8a9\\x86_64-pc-windows-msvc\\debug\\deps\\morrow_workbench_host-84f45dd7db071dc2.exe",
+    "bytes": 73257472,
+    "sha256": "09d94e4ad0abcf75f7257f45e0e6885a3215b1822a60c034c1ea9d5a8a28dbe9"
+  },
+  "methods": 2,
+  "checks": [
+    {
+      "method": "io_tasks::directory::refusal_delivery_tests::known_cancel_requires_original_picker_and_native_objects_closed",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-refusal-unit-tests-249\\0.stdout",
+        "bytes": 235,
+        "sha256": "3fbea5b0316df353656556852e38a5c3b23ef6ec2772bfb688a2dd0ed2d95393"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-refusal-unit-tests-249\\0.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "method": "io_tasks::directory::refusal_delivery_tests::live_delivered_rejection_preserves_kind_without_synthesizing_completion",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-refusal-unit-tests-249\\1.stdout",
+        "bytes": 243,
+        "sha256": "25f950018d958731cd586ae224058e55a19d643731ab825fe5398c5c1c2068c5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-refusal-unit-tests-249\\1.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "VM_calls": 0,
+  "product_runs": 0,
+  "native_picker_calls": 0,
+  "scope": "Pure classification only: original picker/object close evidence required; NativeCloseUnknown never reclassified.",
+  "source_accepted": false,
+  "release_eligible": false
+}

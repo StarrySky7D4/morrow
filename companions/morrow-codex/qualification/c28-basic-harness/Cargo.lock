@@ -1567,10 +1567,10 @@ dependencies = [
 name = "codex-windows-sandbox"
 version = "0.0.0"
 dependencies = [
- "capnpc",
- "capnp",
  "anyhow",
  "base64 0.22.1",
+ "capnp",
+ "capnpc",
  "chrono",
  "codex-http-client",
  "codex-otel",
@@ -5189,6 +5189,7 @@ dependencies = [
 name = "morrow-plugin-runtime"
 version = "0.1.9-test.50"
 dependencies = [
+ "cc",
  "getrandom 0.4.3",
  "morrow-core",
  "morrow-fs-directory-request-v1",

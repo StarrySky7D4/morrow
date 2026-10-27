@@ -1521,6 +1521,8 @@
   "pluginsDirectoryIntro": "Compartilha apenas nomes e metadados das entradas diretamente na pasta escolhida. Não lê arquivos nem o conteúdo de subpastas.",
   "pluginsDirectoryLimit": "Limite de entradas (até 1024)",
   "pluginsDirectoryMetadataLimit": "Limite de metadados (bytes, até 1 MiB)",
+  "pluginsDirectoryNativePickerIntro": "A escolha da pasta inicia o plugin. O prazo inclui a seleção; sair desta vista cancela a tarefa pendente.",
+  "pluginsDirectoryNativePickerStart": "Escolher pasta e executar o plugin",
   "pluginsDirectorySelectHandler": "Selecionar plugin de pasta aprovado",
   "pluginsDirectoryStart": "Ler pasta e executar plugin",
   "pluginsDirectoryTitle": "Conteúdo da pasta",

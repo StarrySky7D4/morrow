@@ -1,0 +1,152 @@
+{
+  "status": "PASS_SCOPED_NATIVE_BACKGROUND_PLANNING_TO_ORIGINAL_PROTECTED_UPLOAD",
+  "utc": "2026-10-27T17:08:33.373299+00:00",
+  "qualification_source": "6c37c46fa1c2ab552872b2ea12d69bb3f804288096a0731a1e649b01c92c3a22",
+  "product_source": "17d3b9438b85b978ef80d42fc454f4db01ca8424ac43677f66e9122ea41b1ab8",
+  "source_equivalence": {
+    "prior_source": "17d3b9438b85b978ef80d42fc454f4db01ca8424ac43677f66e9122ea41b1ab8",
+    "current_source": "6c37c46fa1c2ab552872b2ea12d69bb3f804288096a0731a1e649b01c92c3a22",
+    "reconstructed_prior_source": "17d3b9438b85b978ef80d42fc454f4db01ca8424ac43677f66e9122ea41b1ab8",
+    "production_unchanged": true,
+    "prior_test": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-434\\planner-tests-before-workbench-finish.rs",
+      "bytes": 17197,
+      "sha256": "d725fde743bfa1713c2a95a3067cb24a4001f9fc5e55452181865872cb33b75c"
+    },
+    "new_test": {
+      "path": "C:\\ms1020\\workbench_host\\src\\blob_upload_plans_tests.rs",
+      "bytes": 17258,
+      "sha256": "0c64e27fc0be655ee1a6ee402c7e385d1d2960ebbf77238f20896459a00447bd"
+    }
+  },
+  "native_product": [
+    "Package preparation and pure interpreter run on one original background thread without a Store, Manager, connection or effect grant",
+    "Product retains exact proposal, input hash, package digest, selected revision and original control gate",
+    "Typed review exposes bounded plain-text metadata; it does not issue permission or return producer input",
+    "Explicit trusted approval rechecks current selection and category approval, then host-generates fresh operation identities and binds the retained proposal",
+    "The decision is consumed before original upload admission; failures and missing replies never cause resubmission",
+    "Cancellation, expiry, selection drift and replaced/lost control gate veto original proposal delivery or approval",
+    "Final close requests cancellation and requires the actual original planning join"
+  ],
+  "product_tests": {
+    "unique_methods": 15,
+    "passed": 15,
+    "failed": 0,
+    "positive_actual_sdk_cases": [
+      {
+        "language": "C",
+        "bytes": 16777216
+      },
+      {
+        "language": "C",
+        "bytes": 150017
+      },
+      {
+        "language": "CPP",
+        "bytes": 16777216
+      },
+      {
+        "language": "CPP",
+        "bytes": 150017
+      },
+      {
+        "language": "RUST",
+        "bytes": 16777216
+      },
+      {
+        "language": "RUST",
+        "bytes": 150017
+      }
+    ],
+    "positive_planning_workers_joined": 6,
+    "positive_upload_workers_joined": 6,
+    "exact_stored_bytes_sha": true,
+    "protected_closed_library_reopen": true,
+    "boundary_cases": [
+      "pure planning without category approval",
+      "wrong key and reviewed hash",
+      "unreviewed approval",
+      "duplicate submission and duplicate approval",
+      "cancel after original join",
+      "expiry before approval",
+      "registry revision drift",
+      "replaced or lost controller",
+      "spawn failure",
+      "malformed business options",
+      "failed upload admission consumes decision",
+      "finish waits for original thread"
+    ]
+  },
+  "original_gate_controls": {
+    "passed": 4,
+    "failed": 0
+  },
+  "finish_followup": {
+    "passed": 1,
+    "failed": 0,
+    "actual_Workbench_finish": true,
+    "original_protected_lease_retained_while_pending": true,
+    "only_test_scope_changed": true
+  },
+  "new_planner_Clippy_warnings": 0,
+  "existing_host_warnings_retained": true,
+  "default_production": "Library, binaries and tests compile with default features; no broad legacy tests run",
+  "prior_failed_build": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-433\\result.json",
+    "bytes": 1392,
+    "sha256": "b705ca915106ed7b8da82f9ed0880d50237f500e3abec14a2de114cde9b04c9d"
+  },
+  "prior_failure_reason": "New test used a nonexistent catalog accessor; corrected to the existing catalog_page API before any runtime test",
+  "qualifications": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-434\\result.json",
+      "bytes": 4407,
+      "sha256": "71a9ee166cfa0a03d51ea046243de4c0b2f1f03e03e9393e27f90f27a96e2fa8"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-finish-435\\result.json",
+      "bytes": 2171,
+      "sha256": "857e00b8e5ecdd1ded276fa835cf6d5881fed2dadcb191fc4cde8d124549de40"
+    }
+  ],
+  "retained_programs": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-product-434\\programs\\morrow_workbench_host-249469a96bf4f976.exe",
+      "bytes": 40410624,
+      "sha256": "8fefd13c4e055297888e83e5e43c806fecb86cdc94a7909dd1cc7fc1f4a1682e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-finish-435\\programs\\morrow_workbench_host-249469a96bf4f976.exe",
+      "bytes": 40413696,
+      "sha256": "5b7e954bc4257ff7f8a7cfd24124226f28affe80bdf07575bd16caa1588598b9"
+    }
+  ],
+  "dependency_review": {
+    "new_local_package": "morrow-blob-upload-sample",
+    "new_host_edges": [
+      "morrow-blob-upload-proposal-v1",
+      "morrow-blob-upload-sample"
+    ],
+    "other_dependency_changes": 0
+  },
+  "frozen_inputs_verified": 57,
+  "all_recent_processes_closed": true,
+  "cache_root": "D:/build_cache",
+  "registered_VMs": 4,
+  "VM_mutations": 0,
+  "host_policy_changes": 0,
+  "historical_unknown_owner_contacts": 0,
+  "background_native_product_planner": true,
+  "private_CapnProto_planning_route": false,
+  "Dart_planning_session": false,
+  "rendered_approval_UI": false,
+  "rendered_recovery_UI": false,
+  "cross_restart_Unknown_recovery": false,
+  "watch_rename": false,
+  "full_P2_accepted": false,
+  "full_P3_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "remote_publication": false
+}

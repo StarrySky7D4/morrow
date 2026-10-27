@@ -1,0 +1,227 @@
+{
+  "status": "PASS_SCOPED_THREE_LANGUAGE_UPLOAD_ORIGINAL_STORES",
+  "utc": "2026-10-27T13:15:46.866322+00:00",
+  "guest_build_source": "8e605de2aed4ebae579b2305b7b83961a006a0978bec36f37d201391ab90c354",
+  "nine_success_source": "ab4422db67fe9703479917beecb7aa580322b7b1488c075b814dd952f87f2381",
+  "corrected_refusal_source": "a0b4bd000b79ab177a0760da3be994a20fb420b64cdb5e7c8483f8b1e3824d1b",
+  "regression_and_host_source": "2c95c6b1d3802d7d017aac1e2497a2885525813afc8cd3773600783163d040e6",
+  "only_intervening_test_deltas": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-396\\only-test-assertion-delta.json",
+      "bytes": 818,
+      "sha256": "f692e7b2ef78184bcbade0a235f805f9f4db3d821ada8dcc55260884b784a72b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-398\\only-test-assertion-delta.json",
+      "bytes": 819,
+      "sha256": "458c2b3cf3c22e1ae0135031df52db9a9eadf1a22e159c6faf0d552666253ad8"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-400\\only-test-assertion-delta.json",
+      "bytes": 819,
+      "sha256": "4f2ef1d3dd5c47e415a701c59e4bd952a56e754141bb16efddfa847ee278c334"
+    }
+  ],
+  "language_guests": {
+    "rust": {
+      "path": "D:\\build_cache\\upload-guests393\\rust_upload.wasm",
+      "bytes": 349796,
+      "sha256": "f12a3522c9196541b2dea6d8c6832009812ce35d6554cfa8ead405761568c240"
+    },
+    "c": {
+      "path": "D:\\build_cache\\upload-guests393\\c_upload.wasm",
+      "bytes": 144153,
+      "sha256": "5a0692600e65cafad245d876db7a709213670bc4c7403952546be5f9d2452b7c"
+    },
+    "cpp": {
+      "path": "D:\\build_cache\\upload-guests393\\cpp_upload.wasm",
+      "bytes": 144570,
+      "sha256": "c567f658d3dc7a9b87f8c24ac96f37afc133f3ee1f629a8e7a46276cf47d1169"
+    }
+  },
+  "exact_imports": [
+    "morrow_task_v1.read_input",
+    "morrow_task_v1.complete",
+    "morrow_blob_upload_v1.call"
+  ],
+  "WASI_imports": false,
+  "start_section": false,
+  "synthetic_payload_byte": 42,
+  "successful_cases": [
+    {
+      "language": "C",
+      "bytes": 16777216,
+      "chunks": 274
+    },
+    {
+      "language": "C",
+      "bytes": 0,
+      "chunks": 0
+    },
+    {
+      "language": "C",
+      "bytes": 150017,
+      "chunks": 3
+    },
+    {
+      "language": "CPP",
+      "bytes": 16777216,
+      "chunks": 274
+    },
+    {
+      "language": "CPP",
+      "bytes": 0,
+      "chunks": 0
+    },
+    {
+      "language": "CPP",
+      "bytes": 150017,
+      "chunks": 3
+    },
+    {
+      "language": "RUST",
+      "bytes": 16777216,
+      "chunks": 274
+    },
+    {
+      "language": "RUST",
+      "bytes": 0,
+      "chunks": 0
+    },
+    {
+      "language": "RUST",
+      "bytes": 150017,
+      "chunks": 3
+    }
+  ],
+  "actual_worker_store_upload": true,
+  "actual_content_equality_and_sha256": true,
+  "original_success_workers_joined": 27,
+  "new_low_fuel_worker_joined": 1,
+  "duplicate_upload_skipped_on_known_existing_stage": true,
+  "durable_release_after_reopen": true,
+  "independent_upload_fuel_ceiling": 8000000000,
+  "legacy_fuel_ceiling": 100000000,
+  "default_fuel_unchanged": 20000000,
+  "package_and_host_intersection": true,
+  "per_chunk_fuel_refill": false,
+  "low_fuel_actual_report": "Limits; remaining1323 of100000000; six calls; no stage; known closure",
+  "actual_16MiB_fuel_used": {
+    "C": 6627661893,
+    "CPP": 6627666910,
+    "RUST": 6027510938
+  },
+  "native_work_ceiling_bytes": 134217728,
+  "actual_16MiB_stage_wire_bytes": 17076048,
+  "actual_16MiB_native_work_bytes": 84525056,
+  "core_package_methods": {
+    "passed": 52,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0
+  },
+  "runtime_control_methods": {
+    "passed": 97,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0
+  },
+  "private_continuation_methods": {
+    "passed": 5,
+    "filtered": 123
+  },
+  "actual_sdk_methods": {
+    "passed": 10,
+    "nine_success_in395": true,
+    "one_corrected_refusal_in396": true,
+    "nine_success_not_rerun": true
+  },
+  "strict_checks": [
+    "core library Clippy",
+    "runtime and selected SDK test Clippy"
+  ],
+  "production_host": "WINDOWS_LIBRARY_COMPILE_ONLY",
+  "frozen_inputs_verified": 57,
+  "cold_native_targets": false,
+  "fresh_guest_target": true,
+  "prior_failures": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-guests-392\\result.json",
+      "bytes": 986,
+      "sha256": "8ae1850527d24cbf8a3217c4f14c0feb80fb64109671582e5919105a89b667fa"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-394\\result.json",
+      "bytes": 2304,
+      "sha256": "44f7f591c5c8b038049710130add7e84ca3563ca3563184010d3a2e0ba6bd087"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-395\\result.json",
+      "bytes": 4370,
+      "sha256": "78510d033e48b72f650d1ae539bf21323db92b79cc6c95c8a4cd4b5661362e88"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-396\\result.json",
+      "bytes": 2970,
+      "sha256": "5187ef3d4094d8e195a9c0de2c1e41a538dc57f2a7d108005768a56c2e7db1e3"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-398\\result.json",
+      "bytes": 1494,
+      "sha256": "15dcea1ad6764f595375619ef1fc9f379370da9cee5b89e2dbe797976044068e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-400\\result.json",
+      "bytes": 3893,
+      "sha256": "f830e4f83d089433d015d69a17d04caf0d1aa8a899d580313a54be3df94b229f"
+    }
+  ],
+  "original_results": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-guests-393\\result.json",
+      "bytes": 8577,
+      "sha256": "b2536bebf1691043d5f1d1b34123428d11fa8e5a7dd66fba14375ba08e637899"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-395\\result.json",
+      "bytes": 4370,
+      "sha256": "78510d033e48b72f650d1ae539bf21323db92b79cc6c95c8a4cd4b5661362e88"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-396\\result.json",
+      "bytes": 2970,
+      "sha256": "5187ef3d4094d8e195a9c0de2c1e41a538dc57f2a7d108005768a56c2e7db1e3"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-398\\result.json",
+      "bytes": 1494,
+      "sha256": "15dcea1ad6764f595375619ef1fc9f379370da9cee5b89e2dbe797976044068e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-sdk-400\\result.json",
+      "bytes": 3893,
+      "sha256": "f830e4f83d089433d015d69a17d04caf0d1aa8a899d580313a54be3df94b229f"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-host-402\\result.json",
+      "bytes": 976,
+      "sha256": "9e58922326860be2dcdccf272a049fecfb12d54e0084846f29daf9913b44f565"
+    }
+  ],
+  "all_recent_processes_closed": true,
+  "cache_root": "D:/build_cache",
+  "registered_VMs": 4,
+  "VM_calls": 0,
+  "host_policy_calls": 0,
+  "historical_unknown_owner_contacts": 0,
+  "protected_upload_owner": false,
+  "production_approval_UI": false,
+  "production_recovery_UI": false,
+  "watch_rename": false,
+  "full_P2_accepted": false,
+  "full_P3_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "remote_publication": false
+}

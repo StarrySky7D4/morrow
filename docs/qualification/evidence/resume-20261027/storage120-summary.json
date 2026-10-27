@@ -1,0 +1,19 @@
+{
+  "status": "POST_RECLAIM_AND_VM040_ACCEPTANCE_SNAPSHOT",
+  "utc": "2026-10-26T17:03:47.421618+00:00",
+  "free_bytes": {
+    "C": 127798341632,
+    "D": 122883907584
+  },
+  "build_cache_root": "D:/build_cache",
+  "registered_vms": 4,
+  "latest_vm": "VM040 Saved",
+  "prior_reclaim_record": "docs/qualification/evidence/resume-20261026/storage112-summary.json",
+  "previous_reclaim_increase_is_historical": true,
+  "VM040_runtime_disk_bytes": 30414995456,
+  "VM040_saved_memory_bytes": 1814867968,
+  "runtime_state_is_not_build_cache": true,
+  "new_virtual_machine_preserved": true,
+  "original_disks_deleted": 0,
+  "VM037_shared_parent_archive_must_be_preserved": true
+}

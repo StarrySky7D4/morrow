@@ -1,0 +1,64 @@
+{
+  "status": "PASS_SCOPED_CANONICAL_THREE_LANGUAGE_DIRECTORY_AND_SEPARATE_NATIVE_CANCEL",
+  "utc": "2026-10-27T07:48:46.961985+00:00",
+  "frozen_checkout_digest": "f8492320dbf7e156bfccadae687f50362a7aafb4d1c58e90014170aae9b04f78",
+  "product_input_sha256": "4173c214e07db17b6b82049674f7c1a2399da0339bcbfb2374844a8805b28776",
+  "original_builds": [
+    "305",
+    "309"
+  ],
+  "success_cases": {
+    "RUST": 312,
+    "C": 337,
+    "CPP": 332
+  },
+  "cancel_case": 340,
+  "original_processes_closed_zero": 24,
+  "actual_product_import_enable_approval": true,
+  "actual_native_picker": true,
+  "successful_directory_entries_per_language": 70,
+  "worker_join_ACK_and_independent_reopen": true,
+  "cancellation_before_deadline": true,
+  "individual_guest_call_count_independently_observed": false,
+  "new_product_build_claimed": false,
+  "evidence": {
+    "sdk-canonical-three-languages-339/result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-three-languages-339\\result.json",
+      "bytes": 5883,
+      "sha256": "d3fd24e4a6b2875516e9a6885b5d3f7863fad8156ecaca49c7478cb44daed10e"
+    },
+    "sdk-canonical-full-main-cancel-review-341/result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-canonical-full-main-cancel-review-341\\result.json",
+      "bytes": 4805,
+      "sha256": "f81d7927ecee005329b965c83f4593f9aa0877c95324cb2f5173fe019b91fca6"
+    },
+    "sdk-product-binding-334/result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-product-binding-334\\result.json",
+      "bytes": 4524,
+      "sha256": "ec2757687bcd644499b02df548a664819722b634b28ff0ea96c4e0620dc9f1f5"
+    },
+    "sdk-scope-review-326/result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-scope-review-326\\result.json",
+      "bytes": 4179,
+      "sha256": "0b39f679d12841425239641b81d8b8d09279371ba25f93ba5a522cc3240af5d2"
+    }
+  },
+  "historical_unknowns_unchanged": true,
+  "original_owner_contacts": 0,
+  "VM_calls": 0,
+  "approval_seeded": false,
+  "native_picker_injected": false,
+  "qualification_shell": false,
+  "remaining": [
+    "durable blob backend and history",
+    "versioned upload/watch/rename",
+    "remaining SDK26 production approval and recovery matrix",
+    "final Windows source acceptance and release qualification"
+  ],
+  "SDK26": "OPEN",
+  "G04": "OPEN",
+  "SDK_FREEZE": "OPEN",
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,20 @@
+{
+  "status": "COLD_COMPILE_PASS_NOT_RUNTIME_ACCEPTED",
+  "source_digest": "b09d8accaeabba9510675ba015d06811dec2f72b47043d2ea092ee54e84c946a",
+  "source_unchanged": true,
+  "exit_code": 0,
+  "seconds": 530.297,
+  "compiler_artifacts": 622,
+  "all_compiler_artifacts_fresh_false": true,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "setup_calls": 0,
+  "tests_run": 0,
+  "binary": {
+    "path": "D:\\build_cache\\qualification-targets\\p2-refusal255-NATIVE-b09d8accaeabba95\\x86_64-pc-windows-msvc\\debug\\deps\\codex_windows_sandbox-b4f3e615ec35c711.exe",
+    "bytes": 39332864,
+    "sha256": "4f2195795e47c843728e720f724eb115a03c46dee55ee50396bb443c7421d72c"
+  }
+}

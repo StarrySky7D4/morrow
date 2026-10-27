@@ -554,6 +554,44 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
+name = "morrow-blob-transfer-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
+name = "morrow-blob-upload-proposal-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "morrow-blob-transfer-v1",
+ "sha2 0.10.9",
+]
+
+[[package]]
+name = "morrow-blob-upload-request-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "morrow-blob-transfer-v1",
+ "sha2 0.10.9",
+]
+
+[[package]]
+name = "morrow-blob-upload-sample"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
 name = "morrow-core"
 version = "0.1.9-test.50"
 dependencies = [
@@ -596,10 +634,15 @@ dependencies = [
 name = "morrow-plugin-runtime"
 version = "0.1.9-test.50"
 dependencies = [
- "morrow-fs-directory-request-v1",
  "capnp",
+ "cc",
  "getrandom",
+ "morrow-blob-transfer-v1",
+ "morrow-blob-upload-proposal-v1",
+ "morrow-blob-upload-request-v1",
+ "morrow-blob-upload-sample",
  "morrow-core",
+ "morrow-fs-directory-request-v1",
  "morrow-fs-directory-v1",
  "morrow-plugin-sdk",
  "morrow-workbench-plugin",

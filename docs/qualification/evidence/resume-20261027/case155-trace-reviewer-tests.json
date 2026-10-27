@@ -1,0 +1,294 @@
+{
+  "status": "PASS_V6_CLOSE_REFUSAL_TRACE_SYNTHETIC_CHECKS",
+  "methods": 46,
+  "results": [
+    {
+      "name": "same_native_handle_real_refusal_preserved",
+      "accepted": true,
+      "expected": true,
+      "reason": null
+    },
+    {
+      "name": "close_retired",
+      "accepted": false,
+      "expected": false,
+      "reason": "checked Slot preserves failed-close state"
+    },
+    {
+      "name": "handle_replaced",
+      "accepted": false,
+      "expected": false,
+      "reason": "same actual original query token retained"
+    },
+    {
+      "name": "protect_absent",
+      "accepted": false,
+      "expected": false,
+      "reason": "native protection set and read back before close"
+    },
+    {
+      "name": "protect_failed",
+      "accepted": false,
+      "expected": false,
+      "reason": "native protection set and read back before close"
+    },
+    {
+      "name": "protect_repeated",
+      "accepted": false,
+      "expected": false,
+      "reason": "once-only qualification_protect_calls"
+    },
+    {
+      "name": "close_repeated",
+      "accepted": false,
+      "expected": false,
+      "reason": "once-only original_close_calls"
+    },
+    {
+      "name": "close_not_called",
+      "accepted": false,
+      "expected": false,
+      "reason": "monotonic original_close_calls"
+    },
+    {
+      "name": "cleanup_retried",
+      "accepted": false,
+      "expected": false,
+      "reason": "no retirement retry"
+    },
+    {
+      "name": "process_transferred",
+      "accepted": false,
+      "expected": false,
+      "reason": "both original child handles retained"
+    },
+    {
+      "name": "thread_missing",
+      "accepted": false,
+      "expected": false,
+      "reason": "both original child handles retained"
+    },
+    {
+      "name": "child_pid_changed",
+      "accepted": false,
+      "expected": false,
+      "reason": "stable original distinct child outputs"
+    },
+    {
+      "name": "outputs_alias",
+      "accepted": false,
+      "expected": false,
+      "reason": "stable original distinct child outputs"
+    },
+    {
+      "name": "source_token_closed",
+      "accepted": false,
+      "expected": false,
+      "reason": "three launch tokens remain originally held"
+    },
+    {
+      "name": "launch_token_lost",
+      "accepted": false,
+      "expected": false,
+      "reason": "three launch tokens remain originally held"
+    },
+    {
+      "name": "token_recreated",
+      "accepted": false,
+      "expected": false,
+      "reason": "once-only token_derivation_calls"
+    },
+    {
+      "name": "default_repeated",
+      "accepted": false,
+      "expected": false,
+      "reason": "once-only default_dacl_calls"
+    },
+    {
+      "name": "default_unverified",
+      "accepted": false,
+      "expected": false,
+      "reason": "native creation readback preceded close"
+    },
+    {
+      "name": "runner_unverified",
+      "accepted": false,
+      "expected": false,
+      "reason": "native creation readback preceded close"
+    },
+    {
+      "name": "false_clean_phase",
+      "accepted": false,
+      "expected": false,
+      "reason": "no false transfer or clean retirement"
+    },
+    {
+      "name": "lost_observation_erased",
+      "accepted": false,
+      "expected": false,
+      "reason": "native close failure retains observation debt"
+    },
+    {
+      "name": "deadline_expired",
+      "accepted": false,
+      "expected": false,
+      "reason": "native refusal before original deadline"
+    },
+    {
+      "name": "cleanup_authority",
+      "accepted": false,
+      "expected": false,
+      "reason": "no fabricated authority"
+    },
+    {
+      "name": "replay_authority",
+      "accepted": false,
+      "expected": false,
+      "reason": "no fabricated authority"
+    },
+    {
+      "name": "wrong_owner",
+      "accepted": false,
+      "expected": false,
+      "reason": "same original native owner"
+    },
+    {
+      "name": "zero_error",
+      "accepted": false,
+      "expected": false,
+      "reason": "error only after original return"
+    },
+    {
+      "name": "wrong_error",
+      "accepted": false,
+      "expected": false,
+      "reason": "error only after original return"
+    },
+    {
+      "name": "wrong_profile",
+      "accepted": false,
+      "expected": false,
+      "reason": "exact native-close profile"
+    },
+    {
+      "name": "call_boolean",
+      "accepted": false,
+      "expected": false,
+      "reason": "once-only original_close_calls"
+    },
+    {
+      "name": "wrong_site",
+      "accepted": false,
+      "expected": false,
+      "reason": "original close stage and site"
+    },
+    {
+      "name": "first_site_changed",
+      "accepted": false,
+      "expected": false,
+      "reason": "same native close failure in first observation"
+    },
+    {
+      "name": "first_stage_changed",
+      "accepted": false,
+      "expected": false,
+      "reason": "same native close failure in first observation"
+    },
+    {
+      "name": "first_error_overwritten",
+      "accepted": false,
+      "expected": false,
+      "reason": "same native close failure in first observation"
+    },
+    {
+      "name": "timeout_substituted",
+      "accepted": false,
+      "expected": false,
+      "reason": "no substituted timeout"
+    },
+    {
+      "name": "invented_ntstatus",
+      "accepted": false,
+      "expected": false,
+      "reason": "same native close failure in first observation"
+    },
+    {
+      "name": "sequence_gap",
+      "accepted": false,
+      "expected": false,
+      "reason": "contiguous original sequence"
+    },
+    {
+      "name": "query_handle_closed_before_call",
+      "accepted": false,
+      "expected": false,
+      "reason": "checked Slot preserves failed-close state"
+    },
+    {
+      "name": "close_error_before_call",
+      "accepted": false,
+      "expected": false,
+      "reason": "error only after original return"
+    },
+    {
+      "name": "first_failure_before_close",
+      "accepted": false,
+      "expected": false,
+      "reason": "first failure neither earlier nor overwritten"
+    },
+    {
+      "name": "missing_native_return",
+      "accepted": false,
+      "expected": false,
+      "reason": "contiguous original sequence"
+    },
+    {
+      "name": "missing_create_output",
+      "accepted": false,
+      "expected": false,
+      "reason": "one CreateReturned"
+    },
+    {
+      "name": "no_native_child",
+      "accepted": false,
+      "expected": false,
+      "reason": "actual original child identity"
+    },
+    {
+      "name": "missing_failure",
+      "accepted": false,
+      "expected": false,
+      "reason": "one FirstFailure"
+    },
+    {
+      "name": "truncated_record",
+      "accepted": false,
+      "expected": false,
+      "reason": "bounded complete trace"
+    },
+    {
+      "name": "oversized",
+      "accepted": false,
+      "expected": false,
+      "reason": "bounded complete trace"
+    },
+    {
+      "name": "post_failure_owner_requery",
+      "accepted": false,
+      "expected": false,
+      "reason": "no after-failure owner query or retry trace"
+    }
+  ],
+  "reviewer": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_native_trace_155.py",
+    "bytes": 6227,
+    "sha256": "8077dbd712ce82b3c0bf2ae1cc4564a992ff660a5fb8c65e2d86da4779195235"
+  },
+  "test": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\test_case155_trace_reviewer.py",
+    "bytes": 5724,
+    "sha256": "f3d026864dc77ab3cf4794604f61f432b0858f3ee84a8b8e891aaac0e301fc90"
+  },
+  "VM_calls": 0,
+  "product_runtime_accepted": false
+}

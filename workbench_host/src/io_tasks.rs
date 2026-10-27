@@ -26,6 +26,8 @@ pub mod file;
 pub mod service;
 #[path = "service_commands.rs"]
 pub mod service_commands;
+#[path = "blob_upload_tasks.rs"]
+pub mod blob_upload;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum AccessError {
@@ -113,46 +115,39 @@ pub struct PreparedJob {
     pub router: Box<dyn BrokerRouter>,
     pub timeout: Duration,
 }
-// Preserve all existing file/IO/mutation admission paths through pure wrapping.
-// Conversion occurs immediately after the original preparation closure returns.
-enum TaskAdmission {
-    Original(file::Admission),
-    #[cfg(windows)]
-    Directory(directory::Admission),
+// Admission is synchronous and may borrow the caller's unsubmitted resource.
+// Only submit may transfer that resource to the original worker queue.
+trait TaskAdmission {
+    fn timeout(&self) -> Duration;
+    fn submit(self, worker: &IoWorker<WorkbenchState>) -> Result<TaskSubmitted>;
+    fn persistent(&self) -> bool;
 }
 enum TaskSubmitted {
     Original(file::Submitted),
     #[cfg(windows)]
     Directory(directory::DirectoryTask),
 }
-impl From<file::Admission> for TaskAdmission {
-    fn from(value: file::Admission) -> Self {
-        Self::Original(value)
+impl TaskAdmission for file::Admission {
+    fn timeout(&self) -> Duration {
+        file::Admission::timeout(self)
+    }
+    fn submit(self, worker: &IoWorker<WorkbenchState>) -> Result<TaskSubmitted> {
+        file::Admission::submit(self, worker).map(TaskSubmitted::Original)
+    }
+    fn persistent(&self) -> bool {
+        !matches!(self, file::Admission::Io(_))
     }
 }
 #[cfg(windows)]
-impl From<directory::Admission> for TaskAdmission {
-    fn from(value: directory::Admission) -> Self {
-        Self::Directory(value)
-    }
-}
-impl TaskAdmission {
+impl TaskAdmission for directory::Admission<'_> {
     fn timeout(&self) -> Duration {
-        match self {
-            Self::Original(value) => value.timeout(),
-            #[cfg(windows)]
-            Self::Directory(value) => value.timeout(),
-        }
+        directory::Admission::timeout(self)
     }
     fn submit(self, worker: &IoWorker<WorkbenchState>) -> Result<TaskSubmitted> {
-        match self {
-            Self::Original(value) => value.submit(worker).map(TaskSubmitted::Original),
-            #[cfg(windows)]
-            Self::Directory(value) => value.submit(worker).map(TaskSubmitted::Directory),
-        }
+        directory::Admission::submit(self, worker).map(TaskSubmitted::Directory)
     }
     fn persistent(&self) -> bool {
-        !matches!(self, Self::Original(file::Admission::Io(_)))
+        true
     }
 }
 
@@ -173,11 +168,13 @@ struct Task {
 enum Executor {
     Io(Box<IoWorker<WorkbenchState>>),
     Service(service::ServiceExecution),
+    Upload(Box<morrow_plugin_runtime::blob_upload_worker::UploadWorker<WorkbenchState>>),
     #[cfg(windows)]
     Agent(Box<crate::agent_tasks::AgentWorker<WorkbenchState>>),
 }
 enum Reclaimed {
     Original(Box<morrow_plugin_runtime::io_jobs::WorkerExit<WorkbenchState>>),
+    Upload(Box<morrow_plugin_runtime::blob_upload_worker::Exit<WorkbenchState>>),
     #[cfg(windows)]
     Agent(Box<crate::agent_tasks::AgentExit<WorkbenchState>>),
 }
@@ -191,6 +188,7 @@ impl Executor {
         match self {
             Self::Io(worker) => worker.stop(),
             Self::Service(worker) => worker.stop(),
+            Self::Upload(worker) => worker.cancel(),
             #[cfg(windows)]
             Self::Agent(worker) => worker.stop(),
         }
@@ -203,6 +201,9 @@ impl Executor {
             Self::Service(worker) => worker
                 .try_reclaim()
                 .map(|e| e.map(|e| Reclaimed::Original(Box::new(e)))),
+            Self::Upload(worker) => worker.try_join()
+                .map(|exit| exit.map(|exit| Reclaimed::Upload(Box::new(exit))))
+                .map_err(|_| JobError::Unavailable),
             #[cfg(windows)]
             Self::Agent(worker) => worker
                 .try_reclaim()
@@ -213,6 +214,7 @@ impl Executor {
     fn service_progress(&self) -> Option<service::Progress> {
         match self {
             Self::Io(_) => None,
+            Self::Upload(_) => None,
             Self::Service(worker) => Some(worker.progress()),
             #[cfg(windows)]
             Self::Agent(_) => None,
@@ -235,9 +237,14 @@ pub(crate) struct StateSlot {
     #[cfg(windows)]
     agent_exit: Option<(TaskKey, crate::agent_tasks::AgentExitStatus)>,
     repair_needed: bool,
+    // Retain the original worker's unresolved native records. Ordinary storage
+    // repair cannot clear this latch, acknowledge the task, or start a new one.
+    native_retirement: Option<morrow_plugin_runtime::io_jobs::NativeRetirement>,
     lost: bool,
     service_submissions: BTreeSet<[u8; 32]>,
     file_submissions: BTreeSet<[u8; 32]>,
+    upload_submissions: BTreeSet<[u8; 32]>,
+    upload_task: Option<blob_upload::UploadTask>,
     #[cfg(windows)]
     mutation_submissions: std::collections::BTreeMap<[u8; 32], ([u8; 32], Option<TaskKey>)>,
     #[cfg(windows)]
@@ -246,9 +253,16 @@ pub(crate) struct StateSlot {
     pub(crate) submission: Option<[u8; 32]>,
 }
 impl StateSlot {
+    pub(crate) fn require_upload_resolution(&self) -> Result<()> {
+        if self.upload_task.as_ref().is_some_and(blob_upload::UploadTask::needs_review) {
+            return Err(AccessError::RecoveryRequired.into());
+        }
+        Ok(())
+    }
     /// Pure current-slot observation. No reclaim, progress lock or worker command.
     pub(crate) fn observe_agent_task(&self) -> crate::agent_task_discovery::Observation {
-        let unavailable = self.lost || self.product_gate.closed();
+        let unavailable =
+            self.lost || self.native_retirement.is_some() || self.product_gate.closed();
         let task = self.task.as_ref().map(|task| {
             #[cfg(windows)]
             let retained_worker = matches!(task.worker.as_ref(), Some(Executor::Agent(_)));
@@ -431,9 +445,12 @@ impl StateSlot {
             #[cfg(windows)]
             agent_exit: None,
             repair_needed: false,
+            native_retirement: None,
             lost: false,
             service_submissions: BTreeSet::new(),
             file_submissions: BTreeSet::new(),
+            upload_submissions: BTreeSet::new(),
+            upload_task: None,
             #[cfg(windows)]
             mutation_submissions: Default::default(),
             #[cfg(windows)]
@@ -444,6 +461,9 @@ impl StateSlot {
     pub(crate) fn local(&self) -> Result<&WorkbenchState> {
         if self.lost {
             return Err(AccessError::OwnerUnavailable.into());
+        }
+        if self.native_retirement.is_some() {
+            return Err(AccessError::RecoveryRequired.into());
         }
         let owner = self.owner.as_ref().ok_or(AccessError::Busy)?;
         if self.cleanup.is_some() {
@@ -462,7 +482,7 @@ impl StateSlot {
         if self.agent_preparation_debt.is_some() || self.agent_contexts.needs_repair() {
             return Err(AccessError::RecoveryRequired.into());
         }
-        if self.repair_needed {
+        if self.repair_needed || self.upload_task.as_ref().is_some_and(blob_upload::UploadTask::needs_review) {
             return Err(AccessError::RecoveryRequired.into());
         }
         Ok(())
@@ -473,6 +493,12 @@ impl StateSlot {
         Ok(())
     }
     pub(crate) fn warning(&self) -> Option<&str> {
+        if self.upload_task.as_ref().is_some_and(blob_upload::UploadTask::needs_review) {
+            return Some("上传结果尚未确认，请保留原内容库并核对记录；不会自动重试。");
+        }
+        if self.native_retirement.is_some() {
+            return Some("后台目录资源的关闭结果无法确认，请保留当前现场。");
+        }
         if self.lost {
             return Some("后台线程未能归还原内容库。");
         }
@@ -489,6 +515,7 @@ impl StateSlot {
         self.owner.as_ref().and_then(|state| state.host.warning())
     }
     pub(crate) fn request_stop(&mut self) {
+        if let Some(upload) = &self.upload_task { upload.cancel(); }
         if let Some(task) = &mut self.task
             && let Some(worker) = &task.worker
         {
@@ -514,6 +541,9 @@ impl StateSlot {
             Ok(Some(Reclaimed::Original(exit))) => {
                 // Restore the original owner before recording any fallible cleanup.
                 self.owner = Some(exit.owner);
+                if !exit.native_retirement.is_complete() {
+                    self.native_retirement = Some(exit.native_retirement);
+                }
                 self.cleanup = exit.instance.map(Cleanup::Original);
                 self.repair_needed = exit.maintenance.is_err() || exit.disconnect.is_err();
                 task.exit = Some(ExitStatus {
@@ -526,6 +556,24 @@ impl StateSlot {
                     progress.phase = service::ServicePhase::Exited;
                 }
                 Ok(true)
+            }
+            Ok(Some(Reclaimed::Upload(exit))) => {
+                self.owner = Some(exit.owner);
+                self.cleanup = exit.instance.map(Cleanup::Original);
+                self.repair_needed = exit.maintenance.is_err() || exit.disconnect.is_err();
+                task.exit = Some(ExitStatus {
+                    execution: exit.result.as_ref().map(|_| ()).map_err(|_| JobError::Unavailable),
+                    disconnect: exit.disconnect,
+                    maintenance: exit.maintenance,
+                });
+                task.worker = None;
+                if let Some(upload) = &mut self.upload_task {
+                    upload.record_exit(exit.result, exit.usage, exit.execution_report, exit.unknown);
+                    Ok(true)
+                } else {
+                    self.repair_needed = true;
+                    Err(AccessError::RecoveryRequired.into())
+                }
             }
             #[cfg(windows)]
             Ok(Some(Reclaimed::Agent(exit))) => {
@@ -560,7 +608,7 @@ impl StateSlot {
         }
     }
     fn snapshot(&mut self) -> Snapshot {
-        let storage = if self.lost {
+        let storage = if self.lost || self.native_retirement.is_some() {
             StoragePhase::Unavailable
         } else if self.owner.is_none() {
             if self.task.as_ref().is_some_and(|t| t.stopping) {
@@ -568,7 +616,8 @@ impl StateSlot {
             } else {
                 StoragePhase::Running
             }
-        } else if self.repair_needed || self.cleanup.is_some() {
+        } else if self.repair_needed || self.cleanup.is_some()
+            || self.upload_task.as_ref().is_some_and(blob_upload::UploadTask::needs_review) {
             StoragePhase::RecoveryRequired
         } else if self.task.is_some() {
             StoragePhase::Reclaimed
@@ -661,6 +710,11 @@ impl Workbench {
         if self.state.repair_needed {
             return Err(AccessError::RecoveryRequired.into());
         }
+        if let Some(upload) = &self.state.upload_task {
+            upload.check_acknowledgement()?;
+            self.state.submission = None;
+        }
+        self.state.upload_task = None;
         self.state.task = None;
         Ok(())
     }
@@ -668,6 +722,9 @@ impl Workbench {
     pub fn repair_io(&mut self, key: TaskKey) -> Result<Snapshot> {
         self.state.checked_task(key)?;
         self.state.try_reclaim()?;
+        if self.state.native_retirement.is_some() {
+            return Err(AccessError::RecoveryRequired.into());
+        }
         if self.state.lost {
             return Err(AccessError::OwnerUnavailable.into());
         }
@@ -706,14 +763,14 @@ impl Workbench {
     ) -> Result<TaskKey> {
         self.start_task(options, |p| prepare(p).map(file::Admission::Io))
     }
-    fn start_task<J: Into<TaskAdmission>>(
+    fn start_task<J: TaskAdmission>(
         &mut self,
         options: StartOptions,
         prepare: impl FnOnce(Preparation<'_>) -> Result<J>,
     ) -> Result<TaskKey> {
         self.start_task_with_binding(options, BindingProfile::Ordinary, prepare)
     }
-    fn start_task_with_binding<J: Into<TaskAdmission>>(
+    fn start_task_with_binding<J: TaskAdmission>(
         &mut self,
         options: StartOptions,
         binding_profile: BindingProfile,
@@ -787,14 +844,13 @@ impl Workbench {
                     time,
                 )?,
             };
-            let job: TaskAdmission = prepare(Preparation {
+            let job = prepare(Preparation {
                 manager,
                 host: &state.host,
                 instance: &instance,
                 binding: &binding,
                 now: time,
-            })?
-            .into();
+            })?;
             if job.timeout().is_zero() || job.timeout() > options.lifetime {
                 return Err("invalid IO job timeout".into());
             }
@@ -938,3 +994,7 @@ mod ad31_no_owner_tests;
 #[cfg(all(test, target_os = "windows"))]
 #[path = "io_tasks_agent_stop_tests.rs"]
 mod agent_stop_tests;
+
+#[cfg(all(test, target_os = "windows"))]
+#[path = "io_tasks_native_retirement_tests.rs"]
+mod native_retirement_tests;

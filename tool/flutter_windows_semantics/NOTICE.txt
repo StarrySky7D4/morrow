@@ -1,0 +1,33 @@
+Windows qualification framework candidate
+
+The accompanying semantics.patch applies only to the exact Flutter 3.44.0
+framework, engine, Dart version, and 733 package-file hashes in manifest.json.
+Flutter is licensed under the BSD license reproduced in LICENSE. The original
+copyright notice remains in the patched Dart source.
+
+This candidate includes merged upstream fixes from Flutter PRs 186118 and
+186826. PR 190344 was not merged and is a root-cause reference only. The distinct
+non-null traversal-anchor guard and retained native traversal graph handling
+are local changes, not represented as an upstream-supported release.
+
+The local lifecycle change prevents native updates for offstage/orphan nodes
+and reserializes complete newly visible, replaced, or reparented subtrees.
+The web branch is unchanged. Production application widgets are unchanged.
+
+Prepare with tool/prepare_windows_flutter_framework.py and pass the emitted
+package-config.json explicitly to the compiler or Flutter test invocation.
+All generated files must remain below D:/build_cache in a fresh directory.
+Do not modify the global Flutter SDK or replace the ordinary package config.
+
+Current evidence is bounded: 12 targeted regressions, 97 upstream framework
+tests, 90 serialized full-application frames and 31 project lifecycle tests.
+Actual full-application Rust, C and C++ directory success flows each exercised
+import, enable, approval, native selection, 70 entries, original worker return,
+ACK, normal close and independent reopen. A separate Rust native Cancel flow
+also passed. Twenty-four distinct original UI/supervisor/host process identities
+exited normally. Individual guest call counts are not displayed by this UI.
+Immediate accessibility text reads can lag visible state; complete accessibility
+fidelity is not accepted. Remaining SDK26 and P2 capabilities are separate open
+requirements. The SDK source candidate is integrated into the canonical product source;
+canonical builds305/309 and flows312/337/332/340 retain their exact input pins. This evidence does not establish source acceptance
+or release eligibility. The global Flutter SDK remains unchanged.

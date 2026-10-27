@@ -1,0 +1,24 @@
+{
+  "protected_hashes_verified": 7033,
+  "cache_locks_held": 4,
+  "unknown_owner_contacts": 0,
+  "logical_bytes": 1432972226,
+  "observed_free_delta_bytes": 1435258880,
+  "status": "PASS_CLOSED_REGENERABLE_CACHE_RECLAIMED",
+  "VM_calls": 0,
+  "source_files_deleted": 0,
+  "executables_deleted": 0,
+  "free_bytes_after": 21585387520,
+  "files": 1195,
+  "audit": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-cache-404\\result.json",
+    "bytes": 362,
+    "sha256": "8f861def4d7f8202efa1e2146a83a3d1bd15dacf783476b470e57cfbbd2053e2"
+  },
+  "plan": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-cache-404\\plan.json",
+    "bytes": 2388856,
+    "sha256": "67b4dee482e51bbbf272b1c206b31dca654ae859984feea656c26c122bfd70ac"
+  },
+  "protected_VM_disks_unchanged": true
+}

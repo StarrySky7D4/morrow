@@ -1,0 +1,69 @@
+{
+  "status": "PASS_SCOPED_FULL_PRODUCTION_UI_NATIVE_CANCEL_ACK_AND_REOPEN",
+  "utc": "2026-10-27T04:43:47.067211+00:00",
+  "source_input_sha256": "4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d",
+  "framework": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-285\\framework-input-binding.json",
+    "bytes": 84132,
+    "sha256": "c93825f55b87ab9eb648229bb3dcba8e115a1e09d4b486d542945efbc43218d2"
+  },
+  "evidence": {
+    "preparation.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-288\\preparation.json",
+      "bytes": 17986,
+      "sha256": "344788caeb7711058ebfa7a2006b2d954d9cb953fb96e3ea1d5f1a99b3659af5"
+    },
+    "run-ready.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-288\\run-ready.json",
+      "bytes": 860,
+      "sha256": "7b36a76b435c8d882ba4879053779dcb44cd2a184a4b4994ac2a2a6f807778de"
+    },
+    "run-visible-observations.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-288\\run-visible-observations.json",
+      "bytes": 926,
+      "sha256": "bd83532f4c4d761d14324c8d3a4c6cc868ce16660182fe14cf601adb207e434d"
+    },
+    "run-processes-returned.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-288\\run-processes-returned.json",
+      "bytes": 1497,
+      "sha256": "34a582e75c8b6ba068a14b92f2d69e27989f84244898be878975850676df3713"
+    },
+    "reopen-ready.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-288\\reopen-ready.json",
+      "bytes": 859,
+      "sha256": "b603eb2de99a31aa4335b94b7f08db4e41a9d91ffcf078eb9617041b9f25f230"
+    },
+    "reopen-visible-observations.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-288\\reopen-visible-observations.json",
+      "bytes": 733,
+      "sha256": "f406351a27d3a0f16801c0aceccb53eb50ab0cdf4e62d09f5956edb216a4827f"
+    },
+    "reopen-processes-returned.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-288\\reopen-processes-returned.json",
+      "bytes": 1505,
+      "sha256": "228b258cd220151a9a8122ab9894190ebbe1c4ac6d3047da0100d5d1415d920a"
+    },
+    "process-result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-288\\process-result.json",
+      "bytes": 3793,
+      "sha256": "b62261bce6ed8dd31d312fdd57211387e1e3b76334a5c3623210aa439342ecb3"
+    }
+  },
+  "actual_UI_import_enable_file_list_approval": true,
+  "native_picker_cancel_before_deadline": true,
+  "original_worker_join_visible": true,
+  "original_ACK_visible": true,
+  "normal_close_and_independent_reopen": true,
+  "persisted_approval_visible": true,
+  "no_active_old_directory_task_visible": true,
+  "six_original_processes_exited_zero": true,
+  "settings_native_crash_observed": false,
+  "approval_seeded": false,
+  "native_picker_injected": false,
+  "qualification_shell": false,
+  "guest_success_read_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "limits": "One Rust directory fixture; actual full production UI on a pinned local framework candidate. Success/guest path and complete SDK matrix remain open. Historical Unknown outcomes are unchanged."
+}

@@ -1,0 +1,70 @@
+{
+  "status": "PASS_SCOPED_SHARED_WORKER_EXIT_REGRESSIONS",
+  "results": [
+    {
+      "name": "owner_commands",
+      "command": [
+        "D:\\build_cache\\s125t\\debug\\deps\\owner_commands-3e690acc61aeac84.exe",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 5756,
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\owner_commands-3e690acc61aeac84.exe",
+        "bytes": 16156160,
+        "sha256": "2e86e3d32a02e0ddf36640e018dadb27163cd4b0727483017de008024fb553a6"
+      },
+      "started_utc": "2026-10-26T17:59:54.659630+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 16,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "io_jobs",
+      "command": [
+        "D:\\build_cache\\s125t\\debug\\deps\\io_jobs-540339c6cd75d2b5.exe",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 9980,
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\io_jobs-540339c6cd75d2b5.exe",
+        "bytes": 15430144,
+        "sha256": "51010e0e02bfa927e9d18a992d63e5d986fea9da94f656b4f69687bcb71c5e8b"
+      },
+      "started_utc": "2026-10-26T17:59:58.626444+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "file_owner",
+      "command": [
+        "D:\\build_cache\\s125t\\debug\\deps\\file_owner-4141cf79b047527d.exe",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "pid": 7992,
+      "artifact": {
+        "path": "D:\\build_cache\\s125t\\debug\\deps\\file_owner-4141cf79b047527d.exe",
+        "bytes": 13706752,
+        "sha256": "c6a455c44ab5fa34cab07f5f2ad3f82d3dad7ef98fbf2e6d115598eef2c7ccb2"
+      },
+      "started_utc": "2026-10-26T18:00:02.424776+00:00",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "tests_passed": 45,
+  "host_legacy_provisioning": false,
+  "VM_calls": 0,
+  "synthetic_lost_close_result_not_actual_OS_failure": true,
+  "full_SDK_accepted": false
+}

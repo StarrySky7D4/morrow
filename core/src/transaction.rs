@@ -264,10 +264,10 @@ fn preflight_versioned_action(mut raw: &[u8]) -> Result<()> {
     let mut action = None;
     while !raw.is_empty() {
         let (tag, wire) = decode_key(&mut raw).map_err(|_| Error::Invalid("stored command"))?;
-        if (3..=8).contains(&tag) {
-            if wire != WireType::LengthDelimited || action.replace(tag).is_some() {
-                return Err(Error::Invalid("versioned action"));
-            }
+        if (3..=8).contains(&tag)
+            && (wire != WireType::LengthDelimited || action.replace(tag).is_some())
+        {
+            return Err(Error::Invalid("versioned action"));
         }
         skip_field(wire, tag, &mut raw, DecodeContext::default())
             .map_err(|_| Error::Invalid("stored command"))?;

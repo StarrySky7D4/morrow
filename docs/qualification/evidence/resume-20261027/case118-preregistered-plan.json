@@ -1,0 +1,56 @@
+{
+  "schema": "PRE_EXECUTION_FAULT_REVIEW_BOUNDARY_V1",
+  "status": "PREPARED_NOT_EXECUTED",
+  "case": "118",
+  "tag": "1a01240e47774b72b3bb196d3d0ddd0a",
+  "vm_id": "b7a69dfb-b756-40e6-9eff-8eabcf8a8f1d",
+  "source_digest": "e962f06eba71abe69a968d1faf89f5084b94e414de7465d6326a9dd3ad78e405",
+  "checkout_source_digest": "0904d5644cf533703cc20ea3d07866bfbab689358686cc16666b390d9a7e9b4b",
+  "utc": "2026-10-26T16:46:22.666376+00:00",
+  "scope": "Qualification-only null input to real CreateRestrictedToken; actual login token retained; original native error capture, first failure and deadlines unchanged.",
+  "source_roles": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-039\\result.json",
+    "bytes": 2174,
+    "sha256": "8c88bdcf55007027a44026dfb61f336b69c57e88ea4f079f431edf7e7e0281db"
+  },
+  "preparation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case118-preparation.json",
+    "bytes": 12012,
+    "sha256": "16233f02e367e155bc5752868505d201174d270d38e7e244ca2ea35a8d81a307"
+  },
+  "trace_scope_clarification": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles039-trace-scope-clarification.json",
+    "bytes": 1551,
+    "sha256": "6cd8302fc07c50e933cfc42cddef78b19beb9b2259a1ea2bfc53d197382215e9"
+  },
+  "required_evidence": [
+    "Fresh disconnected VM040 passes original pristine-readiness checks.",
+    "All four roles have distinct empty D:/build_cache targets and fresh=false compiler artifacts, byte-bound stage inventories and original controller checks.",
+    "Original setup succeeds; no setup-after-owned-accounts or late-create fault marker.",
+    "Precreated V5 trace has exact header, contiguous sequence, one owner, at most 512 records and 512 KiB.",
+    "Exactly one NativeStartEntered, InjectedNativeCallStarting, InjectedNativeCallReturned and FirstFailure, in that order. One token derivation call, zero default-DACL and process creation calls.",
+    "Native failure captures nonzero Win32 error from the real call; original FirstFailure preserves Token / LaunchTokenDerivation and the same error; real login token Held, restricted output Rejected, launch/process/thread outputs Empty.",
+    "Original journal reserves native start once, preserves failure and Unknown; controller observations match immutable journal byte ranges and hashes. No assumed old late-create timeout shape.",
+    "Same original policy owner verifies and removes only its actually added right, preserves holder sets and closes its own policy resources.",
+    "One fixed 30-second quiet interval, one read of five allowlisted public files, separate transport closed, no retained-owner contact or replay."
+  ],
+  "failure_rule": "Missing or contradictory evidence keeps the relevant gate open. Trace is diagnostic, not retirement authority.",
+  "acceptance_limits": {
+    "default_dacl_native_refusal": false,
+    "late_create_accepted": false,
+    "natural_OS_delay": false,
+    "normal_47_step_completion": false,
+    "retained_product_resources_cleaned": false,
+    "issued_tokens_revoked": false,
+    "full_P2_accepted": false,
+    "source_accepted": false,
+    "release_eligible": false
+  },
+  "runtime_authority_from_this_JSON": false,
+  "diagnostic_file": "case.evidence/qualification-native-trace.jsonl",
+  "trace_is_public_qualification_data_not_IPC": true,
+  "trace_record_limit": 512,
+  "diagnostic_coverage_exclusions": [
+    "No trace promised before command retention or after append failure; absence proves nothing."
+  ]
+}

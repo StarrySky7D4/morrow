@@ -5,7 +5,11 @@ use super::Error;
 use std::{
     ffi::c_void,
     fs::{File, OpenOptions},
-    os::windows::{fs::OpenOptionsExt, io::AsRawHandle},
+    mem::ManuallyDrop,
+    os::windows::{
+        fs::OpenOptionsExt,
+        io::{AsRawHandle, IntoRawHandle},
+    },
 };
 
 pub(super) const BUFFER_BYTES: usize = 16 * 1024;
@@ -15,6 +19,8 @@ const REPARSE: u32 = 0x400;
 
 #[link(name = "kernel32")]
 unsafe extern "system" {
+    fn CloseHandle(handle: *mut c_void) -> i32;
+    fn GetLastError() -> u32;
     fn GetFileInformationByHandleEx(
         handle: *mut c_void,
         class: i32,
@@ -27,6 +33,78 @@ unsafe extern "system" {
         length: u32,
         flags: u32,
     ) -> u32;
+}
+
+/// No implicit File close: the original worker records one native attempt.
+pub(super) struct NativeFile {
+    file: Option<ManuallyDrop<File>>,
+    attempted: bool,
+    closed: bool,
+    unknown: bool,
+    raw: usize,
+    error: Option<u32>,
+}
+impl NativeFile {
+    pub(super) fn new(file: File) -> Self {
+        Self {
+            file: Some(ManuallyDrop::new(file)),
+            attempted: false,
+            closed: false,
+            unknown: false,
+            raw: 0,
+            error: None,
+        }
+    }
+    pub(super) fn file(&self) -> Option<&File> {
+        if self.unknown {
+            None
+        } else {
+            self.file.as_deref()
+        }
+    }
+    pub(super) fn attempted(&self) -> bool {
+        self.attempted
+    }
+    pub(super) fn closed(&self) -> bool {
+        self.closed
+    }
+    pub(super) fn unknown(&self) -> bool {
+        self.unknown
+    }
+    pub(super) fn mark_unknown(&mut self) {
+        if !self.closed {
+            self.unknown = true;
+        }
+    }
+    pub(super) fn close_once(&mut self, lose_success: bool) {
+        if self.closed || self.unknown || self.attempted {
+            return;
+        }
+        let Some(file) = self.file.take() else {
+            self.unknown = true;
+            return;
+        };
+        let raw = ManuallyDrop::into_inner(file).into_raw_handle();
+        self.raw = raw as usize;
+        self.attempted = true;
+        // Latch before entering the OS. Interrupted/lost observation is final.
+        self.unknown = true;
+        // SAFETY: exactly this original owned File was consumed, never cloned
+        // or reconstructed. No second attempt is permitted for this record.
+        let success = unsafe { CloseHandle(raw) } != 0;
+        let error = if success {
+            None
+        } else {
+            Some(unsafe { GetLastError() })
+        };
+        self.error = error;
+        // Test-only loss occurs AFTER the one real close. It never closes a
+        // forged/stale handle and is not evidence of an actual OS failure.
+        if success && !lose_success {
+            self.closed = true;
+            self.unknown = false;
+        }
+    }
 }
 
 /// An actual local volume root, never a SUBST directory or network alias.
@@ -43,6 +121,10 @@ pub(super) fn open_volume_root(drive: u8) -> Result<File, Error> {
         .custom_flags(0x0220_0000)
         .open(format!("{}:\\", char::from(drive)))
         .map_err(|error| Error::Io(error.kind()))?;
+    Ok(root)
+}
+
+pub(super) fn verify_volume_root(root: &File) -> Result<(), Error> {
     let mut name = [0u16; 128];
     // SAFETY: original owned File remains live; the stack buffer is initialized,
     // exclusively borrowed and exactly the stated capacity. No pointer escapes.
@@ -60,7 +142,7 @@ pub(super) fn open_volume_root(drive: u8) -> Result<File, Error> {
     if length >= name.len() || !is_volume_root_name(&name[..length]) {
         return Err(Error::UnsupportedNativeQuery);
     }
-    Ok(root)
+    Ok(())
 }
 
 fn is_volume_root_name(name: &[u16]) -> bool {
@@ -249,4 +331,30 @@ pub(super) struct Entry {
     pub(super) directory: bool,
     pub(super) other: bool,
     pub(super) length: u64,
+}
+
+#[cfg(test)]
+#[path = "native_close_refusal_tests.rs"]
+mod native_close_refusal_tests;
+
+// Test-only setup for a newly owned fixture. Unsafe calls stay in this module.
+#[cfg(test)]
+pub(super) fn protect_close_fixture(file: &File) -> std::io::Result<()> {
+    #[link(name = "kernel32")]
+    unsafe extern "system" {
+        fn SetHandleInformation(handle: *mut c_void, mask: u32, flags: u32) -> i32;
+        fn GetHandleInformation(handle: *mut c_void, flags: *mut u32) -> i32;
+    }
+    // SAFETY: the borrowed File owns a live handle for both synchronous calls.
+    // Only its protect-from-close flag changes; no pointer or ownership escapes.
+    if unsafe { SetHandleInformation(file.as_raw_handle(), 2, 2) } == 0 {
+        return Err(std::io::Error::last_os_error());
+    }
+    let mut flags = 0;
+    // SAFETY: flags is a valid exclusive u32 output during this native call.
+    if unsafe { GetHandleInformation(file.as_raw_handle(), &mut flags) } == 0 {
+        return Err(std::io::Error::last_os_error());
+    }
+    if flags & 2 != 2 { return Err(std::io::Error::other("native fixture protection absent")); }
+    Ok(())
 }

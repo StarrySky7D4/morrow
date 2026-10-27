@@ -835,5 +835,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pluginsDirectoryNativePickerStart": "Choose folder and run plugin",
+  "pluginsDirectoryNativePickerIntro": "Choosing a folder starts the plugin. The task lifetime includes selection; leaving this view cancels the pending task."
 }

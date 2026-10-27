@@ -1,0 +1,18 @@
+{
+  "status": "POST_CACHE130_AND_VM040_VERIFIED_ARCHIVE_SNAPSHOT",
+  "utc": "2026-10-26T18:10:27.683602+00:00",
+  "free_bytes": {
+    "C": 127337381888,
+    "D": 109054734336
+  },
+  "build_cache_root": "D:/build_cache",
+  "registered_vms": 3,
+  "cache_files_removed": 2470,
+  "cache_logical_bytes_removed": 4286638456,
+  "cache_observed_free_delta": 4291850240,
+  "subsequent_builds_and_archive_consumed_space": true,
+  "original_disks_deleted": 0,
+  "original_VM_and_VM029_VM030_unchanged": true,
+  "new_virtual_machine_preserved": true,
+  "VM037_shared_parent_required_by_VM035_VM036_VM038_VM039_VM040": true
+}

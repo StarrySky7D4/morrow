@@ -1,0 +1,95 @@
+{
+  "status": "ORIGINAL_FULL_MAIN_PROCESSES_RETURNED_UI_REVIEW_REQUIRED",
+  "source_input_sha256": "4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d",
+  "receipts": [
+    {
+      "phase": "run",
+      "original_processes": [
+        {
+          "pid": 22276,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-293\\app\\morrow_studio.exe",
+          "creation_filetime": 134375500815751723,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 13924,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-293\\app\\morrow-workbench-supervisor.exe",
+          "creation_filetime": 134375500840552688,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 23096,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-293\\app\\morrow-workbench-host.exe",
+          "creation_filetime": 134375500857839154,
+          "signaled": true,
+          "exit_code": 0
+        }
+      ],
+      "original_UI_supervisor_host_exited": true,
+      "all_exit_codes": 0,
+      "test_directory_byte_unchanged": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-293\\run.stdout",
+        "bytes": 154,
+        "sha256": "a76df2f0d8a2c7becc17a2e72e31e02462cc5b7a982ea51b92f9dd66275057b7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-293\\run.stderr",
+        "bytes": 10,
+        "sha256": "92a19969583cef404789053f0712b32f2103453b19f4a283d3c409241d9fd1b5"
+      },
+      "logical_worker_join_requires_original_UI_evidence": true
+    },
+    {
+      "phase": "reopen",
+      "original_processes": [
+        {
+          "pid": 17960,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-293\\app\\morrow_studio.exe",
+          "creation_filetime": 134375504883459668,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 8524,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-293\\app\\morrow-workbench-supervisor.exe",
+          "creation_filetime": 134375504906515989,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 28344,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-293\\app\\morrow-workbench-host.exe",
+          "creation_filetime": 134375504920870621,
+          "signaled": true,
+          "exit_code": 0
+        }
+      ],
+      "original_UI_supervisor_host_exited": true,
+      "all_exit_codes": 0,
+      "test_directory_byte_unchanged": true,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-293\\reopen.stdout",
+        "bytes": 154,
+        "sha256": "fe269611b93b881f084fd5ee64382a032d7d8d8ad0d89fcf5ba9f45cd579249a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-293\\reopen.stderr",
+        "bytes": 10,
+        "sha256": "92a19969583cef404789053f0712b32f2103453b19f4a283d3c409241d9fd1b5"
+      },
+      "logical_worker_join_requires_original_UI_evidence": true
+    }
+  ],
+  "source_unchanged": true,
+  "production_main_unchanged": true,
+  "qualification_shell": false,
+  "approval_seeded": false,
+  "native_picker_injected": false,
+  "VM_calls": 0,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

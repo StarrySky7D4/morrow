@@ -11,6 +11,12 @@ use zeroize::{Zeroize, Zeroizing};
 #[cfg(not(target_arch = "wasm32"))]
 #[path = "channel_task_protocol.rs"]
 mod channel_task;
+#[cfg(not(target_arch = "wasm32"))]
+#[path = "blob_upload_protocol.rs"]
+mod blob_upload;
+#[cfg(not(target_arch = "wasm32"))]
+#[path = "blob_plan_protocol.rs"]
+mod blob_plan;
 #[path = "file_task_protocol.rs"]
 #[cfg(not(target_arch = "wasm32"))]
 mod file_task;
@@ -271,8 +277,17 @@ pub(crate) fn is_service_admin_action(action: wire::Action) -> bool {
     )
 }
 
+#[cfg(all(test, windows))]
+#[path = "directory_picker_tests.rs"]
+mod directory_picker_tests;
+
 fn is_scheduler_action(action: wire::Action) -> bool {
     is_service_run_action(action)
+        || matches!(action, wire::Action::BlobPlanStart | wire::Action::BlobPlanStatus
+            | wire::Action::BlobPlanRead | wire::Action::BlobPlanCancel | wire::Action::BlobPlanAcknowledge
+            | wire::Action::BlobPlanApprove | wire::Action::BlobPlanDiscover)
+        || matches!(action, wire::Action::BlobUploadStart | wire::Action::BlobUploadStatus
+            | wire::Action::BlobUploadRead | wire::Action::BlobUploadInspect | wire::Action::BlobUploadConfirm)
         || matches!(
             action,
             wire::Action::MutationDiscover
@@ -291,7 +306,7 @@ fn is_scheduler_action(action: wire::Action) -> bool {
                 | wire::Action::FileChunk
                 | wire::Action::FileFinish
                 | wire::Action::FileRead
-                | wire::Action::DirectoryStart
+                | wire::Action::DirectoryPick | wire::Action::DirectoryStart
                 | wire::Action::DirectoryRead
                 | wire::Action::DirectoryRunGuest
                 | wire::Action::DirectoryReadGuest
@@ -386,8 +401,16 @@ impl ResponseTarget for Workbench {
         if is_service_run_action(action) {
             return service_run::handle(self, r, out);
         }
+        if matches!(action, wire::Action::BlobPlanStart | wire::Action::BlobPlanStatus
+            | wire::Action::BlobPlanRead | wire::Action::BlobPlanCancel | wire::Action::BlobPlanAcknowledge
+            | wire::Action::BlobPlanApprove | wire::Action::BlobPlanDiscover) {
+            return blob_plan::handle(self, r, out);
+        }
+        if blob_upload::is_action(action) {
+            return blob_upload::handle(self, r, out);
+        }
         if matches!(action,
-            wire::Action::DirectoryStart | wire::Action::DirectoryRead
+            wire::Action::DirectoryPick | wire::Action::DirectoryStart | wire::Action::DirectoryRead
             | wire::Action::DirectoryRunGuest | wire::Action::DirectoryReadGuest
             | wire::Action::DirectoryFinish
         ) {
@@ -935,7 +958,7 @@ fn handle_business(
         | wire::Action::FileChunk
         | wire::Action::FileFinish
         | wire::Action::FileRead
-        | wire::Action::DirectoryStart
+        | wire::Action::DirectoryPick | wire::Action::DirectoryStart
         | wire::Action::DirectoryRead
         | wire::Action::DirectoryRunGuest
         | wire::Action::DirectoryReadGuest
@@ -952,6 +975,18 @@ fn handle_business(
         | wire::Action::CommandSubmit
         | wire::Action::CommandStatus
         | wire::Action::CommandRead
+        | wire::Action::BlobPlanStart
+        | wire::Action::BlobPlanStatus
+        | wire::Action::BlobPlanRead
+        | wire::Action::BlobPlanCancel
+        | wire::Action::BlobPlanAcknowledge
+        | wire::Action::BlobPlanApprove
+        | wire::Action::BlobPlanDiscover
+        | wire::Action::BlobUploadStart
+        | wire::Action::BlobUploadStatus
+        | wire::Action::BlobUploadRead
+        | wire::Action::BlobUploadInspect
+        | wire::Action::BlobUploadConfirm
         | wire::Action::CommandCancel => {
             return Err("scheduler actions require the outer application".into());
         }
@@ -1080,6 +1115,9 @@ fn handle_business(
                 &approved,
                 r.get_limit() == 1,
             )?;
+        }
+        wire::Action::PluginApproveBlobUpload => {
+            host.configure_external_blob_upload(&id, r.get_sha256()?, r.get_revision(), r.get_blob_upload_approved())?;
         }
         wire::Action::PluginApproveIo => {
             let values = r.get_approved_io_capabilities()?;
@@ -1772,6 +1810,20 @@ fn plugin_catalog_reply(
         row.set_issue(entry.issue.as_str());
         row.set_mutation_supported(entry.mutation_supported);
         row.set_directory_supported(entry.directory_supported);
+        row.set_blob_upload_supported(entry.blob_upload_supported);
+        row.set_blob_upload_approved(entry.blob_upload_approved);
+        row.set_blob_upload_max_bytes(entry.blob_upload_max_bytes);
+        {
+            let mut values = row.reborrow().init_blob_planners(entry.blob_planners.len() as u32);
+            for (i, (handler, upload_handler)) in entry.blob_planners.iter().enumerate() {
+                let mut value = values.reborrow().get(i as u32);
+                value.set_handler(handler.as_str()); value.set_upload_handler(upload_handler.as_str());
+            }
+        }
+        {
+            let mut values = row.reborrow().init_blob_upload_handlers(entry.blob_upload_handlers.len() as u32);
+            for (i, value) in entry.blob_upload_handlers.iter().enumerate() { values.set(i as u32, value); }
+        }
         row.set_channel_supported(entry.channel_supported);
         {
             let mut values = row

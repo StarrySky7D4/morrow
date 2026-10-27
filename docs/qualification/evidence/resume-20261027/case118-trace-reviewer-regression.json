@@ -1,0 +1,228 @@
+{
+  "status": "PASS_V5_NATIVE_REFUSAL_TRACE_SYNTHETIC_CHECKS",
+  "methods": 30,
+  "results": [
+    {
+      "name": "native_refusal_preserves_original_login_owner",
+      "accepted": true,
+      "expected": true,
+      "reason": null,
+      "checks": 71
+    },
+    {
+      "name": "observation_lost_is_not_fabricated_cleanup",
+      "accepted": true,
+      "expected": true,
+      "reason": null,
+      "checks": 71
+    },
+    {
+      "name": "512_record_capacity",
+      "accepted": true,
+      "expected": true,
+      "reason": null,
+      "checks": 5659
+    },
+    {
+      "name": "over_record_capacity",
+      "accepted": false,
+      "expected": false,
+      "reason": "bounded native record count",
+      "checks": 0
+    },
+    {
+      "name": "header_only",
+      "accepted": false,
+      "expected": false,
+      "reason": "bounded native record count",
+      "checks": 0
+    },
+    {
+      "name": "wrong_schema",
+      "accepted": false,
+      "expected": false,
+      "reason": "exact precreated V5 header",
+      "checks": 0
+    },
+    {
+      "name": "missing_failure",
+      "accepted": false,
+      "expected": false,
+      "reason": "one FirstFailure",
+      "checks": 0
+    },
+    {
+      "name": "sequence_gap",
+      "accepted": false,
+      "expected": false,
+      "reason": "contiguous original native sequence",
+      "checks": 0
+    },
+    {
+      "name": "second_owner",
+      "accepted": false,
+      "expected": false,
+      "reason": "one original native owner",
+      "checks": 0
+    },
+    {
+      "name": "unexpected_default_call",
+      "accepted": false,
+      "expected": false,
+      "reason": "no process or default DACL call",
+      "checks": 0
+    },
+    {
+      "name": "unexpected_creation",
+      "accepted": false,
+      "expected": false,
+      "reason": "no process or default DACL call",
+      "checks": 0
+    },
+    {
+      "name": "repeated_token_call",
+      "accepted": false,
+      "expected": false,
+      "reason": "at most one token derivation call",
+      "checks": 0
+    },
+    {
+      "name": "login_owner_closed",
+      "accepted": false,
+      "expected": false,
+      "reason": "actual login token remains originally owned",
+      "checks": 0
+    },
+    {
+      "name": "restricted_output_not_rejected",
+      "accepted": false,
+      "expected": false,
+      "reason": "original restricted output capture",
+      "checks": 0
+    },
+    {
+      "name": "process_output_held",
+      "accepted": false,
+      "expected": false,
+      "reason": "no fabricated later native ownership",
+      "checks": 0
+    },
+    {
+      "name": "fabricated_pid",
+      "accepted": false,
+      "expected": false,
+      "reason": "no fabricated child identity",
+      "checks": 0
+    },
+    {
+      "name": "wrong_failure_site",
+      "accepted": false,
+      "expected": false,
+      "reason": "original first failure preserves native stage site and code",
+      "checks": 0
+    },
+    {
+      "name": "wrong_error_code",
+      "accepted": false,
+      "expected": false,
+      "reason": "original first failure preserves native stage site and code",
+      "checks": 0
+    },
+    {
+      "name": "substituted_timeout",
+      "accepted": false,
+      "expected": false,
+      "reason": "native error kind, no substituted timeout",
+      "checks": 0
+    },
+    {
+      "name": "zero_native_error",
+      "accepted": false,
+      "expected": false,
+      "reason": "real nonzero signed Win32 failure",
+      "checks": 0
+    },
+    {
+      "name": "unobserved_error",
+      "accepted": false,
+      "expected": false,
+      "reason": "real nonzero signed Win32 failure",
+      "checks": 0
+    },
+    {
+      "name": "wrong_last_status",
+      "accepted": false,
+      "expected": false,
+      "reason": "native status changes only at original return",
+      "checks": 0
+    },
+    {
+      "name": "earlier_failure",
+      "accepted": false,
+      "expected": false,
+      "reason": "no earlier or overwritten first failure",
+      "checks": 0
+    },
+    {
+      "name": "fault_before_native_entry",
+      "accepted": false,
+      "expected": false,
+      "reason": "fault entry state follows the one actual call",
+      "checks": 0
+    },
+    {
+      "name": "cleanup_authority",
+      "accepted": false,
+      "expected": false,
+      "reason": "trace conveys no authority",
+      "checks": 0
+    },
+    {
+      "name": "replay_authority",
+      "accepted": false,
+      "expected": false,
+      "reason": "trace conveys no authority",
+      "checks": 0
+    },
+    {
+      "name": "unknown_relabelled_clean",
+      "accepted": false,
+      "expected": false,
+      "reason": "original Unknown phase retained",
+      "checks": 0
+    },
+    {
+      "name": "truncated_final_line",
+      "accepted": false,
+      "expected": false,
+      "reason": "bounded complete trace lines",
+      "checks": 0
+    },
+    {
+      "name": "oversized_trace",
+      "accepted": false,
+      "expected": false,
+      "reason": "bounded complete trace lines",
+      "checks": 0
+    },
+    {
+      "name": "duplicate_injection_with_contiguous_sequence",
+      "accepted": false,
+      "expected": false,
+      "reason": "one InjectedNativeCallStarting",
+      "checks": 0
+    }
+  ],
+  "reviewer": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_native_trace_118.py",
+    "bytes": 4715,
+    "sha256": "6ac94521a11520685d46decc27d74c62e72f61c8f8b593c8d95b214666a7f7c9"
+  },
+  "test": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\test_case118_trace_reviewer.py",
+    "bytes": 4956,
+    "sha256": "37be90728cf0bed1a76ad292a6f648500fdfb02a3af147fe3157a7a6eb89536d"
+  },
+  "VM_calls": 0,
+  "product_runtime_accepted": false
+}

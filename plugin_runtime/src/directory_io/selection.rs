@@ -2,20 +2,20 @@
 //! This proves no ancestors above that object or picker-time pathname identity.
 use super::{
     DirectoryClock, DirectoryRelativePath, Error, ROOT_QUERY_BYTES, cancellation_veto,
-    native_windows,
+    native_windows, retirement::TrackedFile,
 };
 use crate::{
     io_binding::{IoBinding, IoJobLease, IoResourceLease},
     manager::{ManagedInstance, Manager},
 };
 use morrow_core::{dispatch::HostRuntime, plugin_package::io::IoCapability};
-use std::fs::File;
+use std::sync::Arc;
 
 struct Ancestor {
     // Drop the actual object before releasing its resource reservation.
-    file: File,
+    file: TrackedFile,
     identity: [u8; 24],
-    lease: IoResourceLease,
+    lease: Arc<IoResourceLease>,
 }
 #[derive(Default)]
 pub(super) struct Ancestors {
@@ -52,7 +52,7 @@ impl Ancestors {
             })?;
             reserve(clock)?;
             cancellation_veto(cancelled)?;
-            if native_windows::identity(&node.file)? != node.identity {
+            if node.file.with(native_windows::identity)? != node.identity {
                 return Err(Error::SourceChanged);
             }
             cancellation_veto(cancelled)?;
@@ -76,13 +76,14 @@ pub(super) fn open_under(
     host: &HostRuntime,
     instance: &ManagedInstance,
     binding: &IoBinding,
-    anchor: File,
+    anchor: TrackedFile,
     path: DirectoryRelativePath,
     leaf_lease: &IoResourceLease,
     job: &IoJobLease,
     clock: &mut impl DirectoryClock,
     cancelled: &mut impl FnMut() -> bool,
-) -> Result<(File, Ancestors), Error> {
+) -> Result<(TrackedFile, Ancestors), Error> {
+    let ledger = anchor.ledger();
     clock.with(|now| {
         leaf_lease.check(manager, host, instance, now)?;
         job.charge(
@@ -104,7 +105,7 @@ pub(super) fn open_under(
                 .admit_resource(manager, host, instance, &[IoCapability::FileList], now)
                 .map_err(Error::from)
         })?;
-        reservations.push(lease);
+        reservations.push(ledger.retain_lease(lease));
     }
     let mut ancestors = Ancestors::default();
     ancestors
@@ -118,7 +119,7 @@ pub(super) fn open_under(
         Ok(())
     })?;
     cancellation_veto(cancelled)?;
-    let mut identity = native_windows::identity(&current)?;
+    let mut identity = current.with(native_windows::identity)?;
     cancellation_veto(cancelled)?;
     clock.with(|now| {
         leaf_lease
@@ -144,7 +145,7 @@ pub(super) fn open_under(
             Ok(())
         })?;
         cancellation_veto(cancelled)?;
-        if native_windows::identity(&current)? != identity {
+        if current.with(native_windows::identity)? != identity {
             return Err(Error::SourceChanged);
         }
         cancellation_veto(cancelled)?;
@@ -153,19 +154,21 @@ pub(super) fn open_under(
                 .check(manager, host, instance, now)
                 .map_err(Error::from)
         })?;
-        let child = crate::file_target::open_relative_directory(
-            &current,
-            component,
-            index + 1 == path.component_count(),
-        )
-        .map_err(|error| Error::Io(error.kind()))?;
+        let child = ledger.track(current.with(|parent| {
+            crate::file_target::open_relative_directory(
+                parent,
+                component,
+                index + 1 == path.component_count(),
+            )
+            .map_err(|error| Error::Io(error.kind()))
+        })?);
         cancellation_veto(cancelled)?;
         clock.with(|now| {
             leaf_lease
                 .check(manager, host, instance, now)
                 .map_err(Error::from)
         })?;
-        let child_identity = native_windows::identity(&child)?;
+        let child_identity = child.with(native_windows::identity)?;
         cancellation_veto(cancelled)?;
         clock.with(|now| {
             leaf_lease

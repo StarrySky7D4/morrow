@@ -1521,6 +1521,8 @@
   "pluginsDirectoryIntro": "선택한 폴더 바로 아래 항목의 이름과 메타데이터만 공유합니다. 파일 내용이나 하위 폴더 내부는 읽지 않습니다.",
   "pluginsDirectoryLimit": "항목 수 한도 (최대 1024)",
   "pluginsDirectoryMetadataLimit": "메타데이터 한도 (바이트, 최대 1 MiB)",
+  "pluginsDirectoryNativePickerIntro": "폴더를 선택하면 플러그인이 실행됩니다. 제한 시간에는 선택 시간이 포함되며, 이 화면을 떠나면 진행 중인 작업이 취소됩니다.",
+  "pluginsDirectoryNativePickerStart": "폴더 선택 후 플러그인 실행",
   "pluginsDirectorySelectHandler": "승인된 폴더 플러그인 선택",
   "pluginsDirectoryStart": "폴더 읽기 및 플러그인 실행",
   "pluginsDirectoryTitle": "폴더 목록",

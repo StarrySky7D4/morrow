@@ -1,0 +1,128 @@
+{
+  "status": "PUBLIC_SCOPED_EVIDENCE_ONLY",
+  "files": [
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\case098-summary.json",
+      "bytes": 1278,
+      "sha256": "d2bd24b6f86d2780ac55a78799096c6cd3b17e5057210894d62ace831e4c6732"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\case098-native-first-failure.json",
+      "bytes": 763,
+      "sha256": "7d064e4e24ed106af81eab3211fce964c631fa48b87f41c0342f8b8fa9264ec8"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\roles038-cold-build.json",
+      "bytes": 2318,
+      "sha256": "384abdb319c7500463d4afca59557fa8edb40b79f7cd4a4082cca530e0ee5a28"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\trace-path-regression096.json",
+      "bytes": 602,
+      "sha256": "8e5cfeb445b7650eec698dbdbd954640597c7735aa455e40a19fc464654ab3c5"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\trace-reviewer-regression098.json",
+      "bytes": 3168,
+      "sha256": "8c5d5c03470972283ddf7f85f631afc48918f3554f9fc6a0f1d935a7aeb193bc"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\sdk101-ownership-tests.json",
+      "bytes": 558,
+      "sha256": "fd93068b424b7e09e5ed7e8458a358e267997a90713669baf652cfd691c878a1"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\sdk101-budget-refusal-test.json",
+      "bytes": 1726,
+      "sha256": "12ba53b294d53f1f942bcc84ad410687b460f4ad7cb0ff1292ec84dad61ac579"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\sdk101-integration.json",
+      "bytes": 4083,
+      "sha256": "251f995f7919d2a1ab0ef9620b255742c03f0f824f4ae6995cb1ede2158535c0"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\vm039-saved.json",
+      "bytes": 825,
+      "sha256": "e3059affa867cf39f0daaf6fb31ca0f3b8c63ce1adf957bbd0cbcbb1e2de035e"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\vm038-archive.json",
+      "bytes": 2181,
+      "sha256": "259e3ffba94951e7054193e7b9ebed8b0e44e75d65f9746eddbb2f81c8e55201"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\cache097-reclaim.json",
+      "bytes": 626,
+      "sha256": "a0a19bc3fcd5137eae0d61cc2be53821db1380c1a01a1313795a9412d8119714"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\cache102-reclaim.json",
+      "bytes": 684,
+      "sha256": "fda061f37cfd20327c4e7c0921cc24cb18a7e6290163c508d7a931b5d5b3c2a0"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\cache104-reclaim.json",
+      "bytes": 628,
+      "sha256": "08841928f7dc1587aaff39289bd16bc800223046bb7eb1d9255dfbe0cf08f8cf"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\p2-native-refusal109-preparation.json",
+      "bytes": 3990,
+      "sha256": "4a652d3535920f706afefde57a1d33e2b683ce833a25b59ae87fe949c98eb19b"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\p2-native-refusal109-review-plan.json",
+      "bytes": 2009,
+      "sha256": "9cc9ccd5a312428afa3e218a76dafdbb0539e1a83103cf5b37d682e3f705ddcc"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\p2-parent111-cold-build.json",
+      "bytes": 952,
+      "sha256": "ac56f8d5ee86d86e8fb38cf6d5ec7bd1c3e2ece1292987f43a379709f462aaae"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\p2-roles114-cold-build.json",
+      "bytes": 2174,
+      "sha256": "8c88bdcf55007027a44026dfb61f336b69c57e88ea4f079f431edf7e7e0281db"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\sdk106-cold-build.json",
+      "bytes": 2892,
+      "sha256": "a37fcd66e9a9ca05936d23fc86ae030cf31e615fff6d7c07a8e8b39d494e311f"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\sdk106-final-build.json",
+      "bytes": 2890,
+      "sha256": "9b6d63a73a433f54f0666454cc65bbb82752b26a0a96649a64728664b11a5758"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\sdk106-integration.json",
+      "bytes": 4376,
+      "sha256": "c5ad7502e1ca46f57be207d29400d7a11ddd0a725b63c036b7776cd3f630be99"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\sdk106-ownership-tests.json",
+      "bytes": 11347,
+      "sha256": "8b0b95ba02badb01a5ed8bb879899f142afd27b0f3a27b100f56e003c14f7675"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\storage112-summary.json",
+      "bytes": 930,
+      "sha256": "1397ef677a02cfd12dcf64a58ecdc346f9886a83ebdfa1cc5b8e02a2ceefebc0"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\vm035-repack105.json",
+      "bytes": 1367,
+      "sha256": "bcba25a784dc3a5600920525fc6bd48705e8726135fc704c834821226a7c0339"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261026\\vm036-repack110.json",
+      "bytes": 1185,
+      "sha256": "4d5123fd27bbfaaf03891612fe6b25b7656a3181ba38bed1279b29cd0c454bbb"
+    }
+  ],
+  "private_inputs_included": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

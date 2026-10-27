@@ -5107,6 +5107,44 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-blob-transfer-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
+name = "morrow-blob-upload-proposal-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "morrow-blob-transfer-v1",
+ "sha2 0.10.9",
+]
+
+[[package]]
+name = "morrow-blob-upload-request-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "morrow-blob-transfer-v1",
+ "sha2 0.10.9",
+]
+
+[[package]]
+name = "morrow-blob-upload-sample"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
 name = "morrow-codex-session-exec-windows-v1"
 version = "0.1.0-experimental.1"
 dependencies = [
@@ -5195,7 +5233,11 @@ dependencies = [
 name = "morrow-plugin-runtime"
 version = "0.1.9-test.50"
 dependencies = [
+ "cc",
  "getrandom 0.4.3",
+ "morrow-blob-transfer-v1",
+ "morrow-blob-upload-proposal-v1",
+ "morrow-blob-upload-request-v1",
  "morrow-core",
  "morrow-fs-directory-request-v1",
  "morrow-fs-directory-v1",
@@ -5238,6 +5280,10 @@ dependencies = [
  "morrow-agent-session-exec-v1-r2",
  "morrow-agent-session-process-v1-host",
  "morrow-audit",
+ "morrow-blob-transfer-v1",
+ "morrow-blob-upload-proposal-v1",
+ "morrow-blob-upload-request-v1",
+ "morrow-blob-upload-sample",
  "morrow-codex-session-exec-windows-v1",
  "morrow-core",
  "morrow-fs-directory-request-v1",

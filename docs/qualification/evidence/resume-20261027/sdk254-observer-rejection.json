@@ -1,0 +1,19 @@
+{
+  "status": "UNKNOWN_RETAINED_NO_REPLAY",
+  "phase": "run",
+  "reason": "[{'ProcessId': 6508, 'ParentProcessId': 19532, 'ExecutablePath': '\\\\\\\\?\\\\D:\\\\build_cache\\\\_audit\\\\windows-restriction-lineage-20261022-019\\\\sdk-full-main-254\\\\app\\\\morrow-workbench-host.exe'}]",
+  "observed_original_processes": [
+    {
+      "pid": 9708,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-254\\app\\morrow_studio.exe",
+      "creation_filetime": 134375447837190263
+    },
+    {
+      "pid": 19532,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-254\\app\\morrow-workbench-supervisor.exe",
+      "creation_filetime": 134375447859970713
+    }
+  ],
+  "automatic_kill": false,
+  "automatic_retry": false
+}

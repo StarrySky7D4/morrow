@@ -21,7 +21,7 @@ use crate::{
 use morrow_core::mutation as mutation_wire;
 use morrow_core::{
     dispatch::{Connection, HostBinding, HostRuntime},
-    io::{Action, HttpOutcome, OperationOutcome, MAX_FRAME_BYTES, Request, Response},
+    io::{Action, HttpOutcome, MAX_FRAME_BYTES, OperationOutcome, Request, Response},
     io_evidence::{Kind, Material},
     io_intent::{Command, Phase as IntentPhase, Record},
     plugin_package::io::IoCapability,
@@ -73,6 +73,7 @@ mod deferred;
 mod owner_commands;
 mod transport_task;
 pub use owner_commands::{
+    BlobCommandHandle, BlobCommandKind, BlobResponse, BlobUploadOwner,
     CommandOwner, FileCommandError, FileCommandHandle, FileResponse, FileSession,
     MAX_OWNER_COMMAND_INPUT, MAX_OWNER_COMMAND_REPLY, MAX_OWNER_COMMANDS, OwnerCommandError,
     OwnerCommandHandle, OwnerCommandPoll, ServiceRunRenewalHandle,
@@ -80,11 +81,11 @@ pub use owner_commands::{
 #[cfg(windows)]
 pub use owner_commands::{
     DIRECTORY_COMMAND_FIXED_BYTES, DIRECTORY_FINISH_CHARGE, DIRECTORY_PAGE_CHARGE,
-    DirectoryCommandError, DirectoryCommandHandle, DirectoryResponse, DirectorySession,
-    DirectoryGuestHandle, DirectoryGuestResult,
-    MAX_DIRECTORY_OBSERVATIONS, MAX_MUTATION_CHUNK, MutationBudgetEstimate,
-    MutationDiscoverySession, MutationGuestExecutionPermit, MutationGuestJobMode,
-    MutationGuestLease, MutationHandle, MutationOutcome, MutationResponse, MutationSession,
+    DirectoryCommandError, DirectoryCommandHandle, DirectoryGuestHandle, DirectoryGuestResult,
+    DirectoryResponse, DirectorySession, MAX_DIRECTORY_OBSERVATIONS, MAX_MUTATION_CHUNK,
+    MutationBudgetEstimate, MutationDiscoverySession, MutationGuestExecutionPermit,
+    MutationGuestJobMode, MutationGuestLease, MutationHandle, MutationOutcome, MutationResponse,
+    MutationSession,
 };
 static NEXT_EXECUTOR: AtomicU64 = AtomicU64::new(1);
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -138,10 +139,35 @@ impl HostOwner for HostRuntime {
 }
 /// Execution and maintenance are independent: sealing failure cannot undo an
 /// already committed effect. Reclamation never grants permission to replay it.
+#[derive(Default)]
+pub struct NativeRetirement {
+    // Default is deliberately incomplete, never a manufactured success.
+    complete: bool,
+    #[cfg(windows)]
+    directories: Vec<Arc<crate::directory_io::retirement::Ledger>>,
+}
+impl NativeRetirement {
+    /// Original-worker native closure, independent of thread join or storage
+    /// maintenance. An incomplete record never authorizes retry or reuse.
+    pub fn is_complete(&self) -> bool {
+        self.complete
+    }
+    #[cfg(windows)]
+    pub fn directory_snapshots(&self) -> Vec<crate::directory_io::DirectoryRetirementSnapshot> {
+        self.directories
+            .iter()
+            .map(|ledger| ledger.snapshot())
+            .collect()
+    }
+}
+
 pub struct WorkerExit<O: HostOwner> {
     pub owner: O,
     pub result: Result<(), JobError>,
     pub maintenance: Result<(), JobError>,
+    /// Original unresolved records stay with this returned owner. Successful
+    /// storage maintenance cannot settle ambiguous native resource ownership.
+    pub native_retirement: NativeRetirement,
     /// Failed cleanup is separate from execution. The exact managed instance is
     /// retained only when its disconnection could not be confirmed.
     pub disconnect: Result<(), JobError>,
@@ -864,24 +890,30 @@ impl Control {
         let Some(authority) = &self.authority else {
             return Some(Fault::InactiveConnection);
         };
-        authority.with_execution_time(|now| {
-            authority.binding.check_liveness(now)?;
-            grant.check_at(now)
-        }).err().map(|error| match error {
-            io_execution::Error::Expired => Fault::Deadline,
-            io_execution::Error::Cancelled => Fault::Cancelled,
-            io_execution::Error::Clock => Fault::TaskProtocol,
-            io_execution::Error::Limit => Fault::Limits,
-            _ => Fault::InactiveConnection,
-        })
+        authority
+            .with_execution_time(|now| {
+                authority.binding.check_liveness(now)?;
+                grant.check_at(now)
+            })
+            .err()
+            .map(|error| match error {
+                io_execution::Error::Expired => Fault::Deadline,
+                io_execution::Error::Cancelled => Fault::Cancelled,
+                io_execution::Error::Clock => Fault::TaskProtocol,
+                io_execution::Error::Limit => Fault::Limits,
+                _ => Fault::InactiveConnection,
+            })
     }
     fn refresh(&self, slot: &mut Slot) {
-        if let Some(fault) = self.job_fault(
-            &slot.cancel,
-            slot.service_grant.as_ref(),
-            &slot.http_guards,
-            slot.service_content.as_ref(),
-        ).or_else(|| self.operation_fault(slot.operation_history.as_ref())) && let Some(report) = &mut slot.report
+        if let Some(fault) = self
+            .job_fault(
+                &slot.cancel,
+                slot.service_grant.as_ref(),
+                &slot.http_guards,
+                slot.service_content.as_ref(),
+            )
+            .or_else(|| self.operation_fault(slot.operation_history.as_ref()))
+            && let Some(report) = &mut slot.report
         {
             suppress(report, fault);
         } else if let Some(report) = &mut slot.report
@@ -1375,8 +1407,14 @@ impl<O: HostOwner> IoWorker<O> {
                 mutation_enabled: package.package().mutation_enabled(),
                 mutation_history,
                 #[cfg(windows)]
-                directory_request_enabled: package.package().manifest().required_features.iter()
-                    .any(|feature| feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE),
+                directory_request_enabled: package
+                    .package()
+                    .manifest()
+                    .required_features
+                    .iter()
+                    .any(|feature| {
+                        feature == morrow_core::plugin_package::DIRECTORY_REQUEST_FEATURE
+                    }),
                 #[cfg(windows)]
                 directories: Mutex::new(Default::default()),
                 state: Mutex::new(State {
@@ -1421,6 +1459,41 @@ impl<O: HostOwner> IoWorker<O> {
             if result.is_err() {
                 // Failure revocation must not wait behind potentially slow
                 // owner maintenance or disconnection hooks.
+                inner.stop();
+            }
+            // Seal queue admission before retiring accepted-but-not-started
+            // native inputs on this same worker, including after an unwind.
+            {
+                let mut state = inner.lock();
+                if matches!(state.phase, Phase::Running | Phase::Draining) {
+                    state.phase = Phase::Stopping;
+                }
+            }
+            let retired = catch_unwind(AssertUnwindSafe(|| {
+                while let Ok(command) = owner_receiver.try_recv() {
+                    command.discard_on_worker();
+                }
+            }));
+            #[cfg(windows)]
+            let retained_directories = owner_commands::directories::retain_retirements(&inner);
+            #[cfg(not(windows))]
+            let directory_retirement_complete = true;
+            #[cfg(windows)]
+            let directory_retirement_complete = retained_directories.is_empty();
+            let native_retirement = NativeRetirement {
+                complete: retired.is_ok() && directory_retirement_complete,
+                #[cfg(windows)]
+                directories: retained_directories,
+            };
+            if retired.is_err() {
+                // Unprocessed accepted inputs must not fall through to File's
+                // unchecked destructor if exceptional queue retirement fails.
+                std::mem::forget(owner_receiver);
+            }
+            if !native_retirement.is_complete() {
+                if result.is_ok() {
+                    result = Err(JobError::Unavailable);
+                }
                 inner.stop();
             }
             // Disconnect on success, panic and preparation failure before
@@ -1474,6 +1547,7 @@ impl<O: HostOwner> IoWorker<O> {
                 owner,
                 result,
                 maintenance,
+                native_retirement,
                 disconnect: disconnected,
                 instance,
             }
@@ -1564,9 +1638,15 @@ impl<O: HostOwner> IoWorker<O> {
         grant: OperationHistoryGrant,
         timeout: Duration,
     ) -> Result<JobHandle, JobError> {
-        let authority = self.control.authority.as_ref().ok_or(JobError::InvalidOptions)?;
+        let authority = self
+            .control
+            .authority
+            .as_ref()
+            .ok_or(JobError::InvalidOptions)?;
         // Reject a foreign grant before sampling the original clock or admission.
-        grant.validate_binding(&authority.binding).map_err(|_| JobError::InvalidOptions)?;
+        grant
+            .validate_binding(&authority.binding)
+            .map_err(|_| JobError::InvalidOptions)?;
         self.submit_routed(input, JobRouter::OperationHistory(grant), timeout, None)
     }
     /// Validate a service route before native publication, without consuming any
@@ -1979,8 +2059,12 @@ impl<O: HostOwner> IoWorker<O> {
     /// successes by `read`.
     /// Trusted cancellation only: no owner, result or join proof is transferred.
     pub fn stop_handle(&self) -> std::sync::Arc<dyn Fn() + Send + Sync> {
-        let control=self.control.clone();let sender=self.sender.clone();
-        std::sync::Arc::new(move || {control.stop();let _=sender.try_send(Message::Wake);})
+        let control = self.control.clone();
+        let sender = self.sender.clone();
+        std::sync::Arc::new(move || {
+            control.stop();
+            let _ = sender.try_send(Message::Wake);
+        })
     }
     pub fn stop(&self) {
         self.control.stop();
@@ -2175,6 +2259,10 @@ fn execute<O: HostOwner>(
     let mut files = owner_commands::FileResources::default();
     loop {
         files.reap_cancelled();
+        #[cfg(windows)]
+        if owner_commands::directories::native_close_unknown(control) {
+            return Err(JobError::Unavailable);
+        }
         {
             let mut state = control.lock();
             if control.fault(&Cancellation::default()).is_some()
@@ -2271,12 +2359,15 @@ fn execute<O: HostOwner>(
             _ => None,
         };
         let mut http_guards = Vec::new();
-        let mut report = match control.job_fault(
-            &cancel,
-            service.as_ref().map(|s| &s.grant),
-            &[],
-            service.as_ref().and_then(|s| s.content.as_ref()),
-        ).or_else(|| control.operation_fault(operation_history.as_ref())) {
+        let mut report = match control
+            .job_fault(
+                &cancel,
+                service.as_ref().map(|s| &s.grant),
+                &[],
+                service.as_ref().and_then(|s| s.content.as_ref()),
+            )
+            .or_else(|| control.operation_fault(operation_history.as_ref()))
+        {
             Some(fault) => {
                 let mut report = cancelled_report(package, fault);
                 report.bytes = input.len() as u64;
@@ -2366,12 +2457,15 @@ fn execute<O: HostOwner>(
             }
         };
         report.operation_read_only = operation_history.is_some();
-        if let Some(fault) = control.job_fault(
-            &cancel,
-            service.as_ref().map(|s| &s.grant),
-            &http_guards,
-            service.as_ref().and_then(|s| s.content.as_ref()),
-        ).or_else(|| control.operation_fault(operation_history.as_ref())) {
+        if let Some(fault) = control
+            .job_fault(
+                &cancel,
+                service.as_ref().map(|s| &s.grant),
+                &http_guards,
+                service.as_ref().and_then(|s| s.content.as_ref()),
+            )
+            .or_else(|| control.operation_fault(operation_history.as_ref()))
+        {
             suppress(&mut report, fault);
         }
         // Computation is over. Only the controlled slot owns the job lease when
@@ -2879,7 +2973,9 @@ fn run_job<O: HostOwner>(
         service,
         http_guards,
         history.map(|(_, validity)| validity),
-    ).or_else(|| control.operation_fault(operation_history.as_ref())) {
+    )
+    .or_else(|| control.operation_fault(operation_history.as_ref()))
+    {
         let mut report = cancelled_report(package, fault);
         report.bytes = bytes;
         report.unknown = history.is_some();
@@ -2905,7 +3001,9 @@ fn run_job<O: HostOwner>(
                         service,
                         http_guards,
                         history.map(|(_, validity)| validity),
-                    ).or_else(|| control.operation_fault(operation_history.as_ref())) {
+                    )
+                    .or_else(|| control.operation_fault(operation_history.as_ref()))
+                    {
                         fault = Some(late);
                         return Err(());
                     }
@@ -2949,7 +3047,9 @@ fn run_job<O: HostOwner>(
                     // effect, so a byte cap is never discovered after the call.
                     let operation_reply_bound = if operation_read_only {
                         morrow_core::io::MAX_OPERATION_RESPONSE_BYTES as u64
-                    } else { 0 };
+                    } else {
+                        0
+                    };
                     let request_charge = request.len() as u64 + operation_reply_bound;
                     if bytes
                         .checked_add(request_charge)
@@ -2973,7 +3073,9 @@ fn run_job<O: HostOwner>(
                         service,
                         http_guards,
                         history.map(|(_, validity)| validity),
-                    ).or_else(|| control.operation_fault(operation_history.as_ref())) {
+                    )
+                    .or_else(|| control.operation_fault(operation_history.as_ref()))
+                    {
                         fault = Some(late);
                         return Err(());
                     }
@@ -3026,13 +3128,15 @@ fn run_job<O: HostOwner>(
                                                 return Err(());
                                             }
                                         };
-                                        authority.with_execution_time(|now| {
-                                            authority.binding.check_liveness(now)?;
-                                            grant.read(host, instance, &parsed, now)
-                                        }).map_err(|error| match error {
-                                            io_execution::Error::Limit => RouterFault::Limit,
-                                            _ => RouterFault::Denied,
-                                        })
+                                        authority
+                                            .with_execution_time(|now| {
+                                                authority.binding.check_liveness(now)?;
+                                                grant.read(host, instance, &parsed, now)
+                                            })
+                                            .map_err(|error| match error {
+                                                io_execution::Error::Limit => RouterFault::Limit,
+                                                _ => RouterFault::Denied,
+                                            })
                                     }
                                     _ => Err(RouterFault::Denied),
                                 }
@@ -3073,14 +3177,18 @@ fn run_job<O: HostOwner>(
                             }
                         }
                     };
-                    if !operation_read_only { bytes += reserved; }
+                    if !operation_read_only {
+                        bytes += reserved;
+                    }
                     if let Some(late) = service_job_fault(
                         control,
                         cancel,
                         service,
                         http_guards,
                         history.map(|(_, validity)| validity),
-                    ).or_else(|| control.operation_fault(operation_history.as_ref())) {
+                    )
+                    .or_else(|| control.operation_fault(operation_history.as_ref()))
+                    {
                         fault = Some(late);
                         unknown = !operation_read_only;
                         return Err(());
@@ -3145,7 +3253,9 @@ fn run_job<O: HostOwner>(
         service,
         http_guards,
         history.map(|(_, validity)| validity),
-    ).or_else(|| control.operation_fault(operation_history.as_ref())) {
+    )
+    .or_else(|| control.operation_fault(operation_history.as_ref()))
+    {
         // A result that outlived its deadline or revocation is not a success.
         let mut report = cancelled_report(package, late);
         report.task.execution.host_calls = run.report.host_calls;
@@ -3220,7 +3330,9 @@ fn run_job<O: HostOwner>(
         match (run.completion, last_response, last_request) {
             (Some(done), Some(actual), Some(request)) if calls > 0 && done == actual => {
                 let decoded = Request::decode(&request).and_then(|request| {
-                    if operation_read_only && matches!(request.action(), Action::QueryOperation { .. }) {
+                    if operation_read_only
+                        && matches!(request.action(), Action::QueryOperation { .. })
+                    {
                         operation_response = Some(Response::decode_operation(&request, &actual)?);
                         operation_frame = Some(actual.clone());
                     } else if matches!(request.action(), Action::SubmitHttp(_)) {

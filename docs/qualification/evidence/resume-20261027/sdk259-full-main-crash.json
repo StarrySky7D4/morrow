@@ -1,0 +1,24 @@
+{
+  "status": "UNKNOWN_RETAINED_NO_REPLAY",
+  "phase": "run",
+  "reason": "('UI exit', 3221226525)",
+  "observed_original_processes": [
+    {
+      "pid": 4908,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-259\\app\\morrow_studio.exe",
+      "creation_filetime": 134375450288455414
+    },
+    {
+      "pid": 17972,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-259\\app\\morrow-workbench-supervisor.exe",
+      "creation_filetime": 134375450310849150
+    },
+    {
+      "pid": 3344,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-259\\app\\morrow-workbench-host.exe",
+      "creation_filetime": 134375450326380970
+    }
+  ],
+  "automatic_kill": false,
+  "automatic_retry": false
+}

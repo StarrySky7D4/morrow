@@ -2,6 +2,7 @@
 
 pub mod agent_ledger;
 pub mod attachment;
+pub mod blob_stage;
 pub mod changes_metadata;
 pub mod channel;
 #[allow(clippy::all, unsafe_code)]

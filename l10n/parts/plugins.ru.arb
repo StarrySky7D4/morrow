@@ -835,5 +835,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pluginsDirectoryNativePickerStart": "Выбрать папку и запустить плагин",
+  "pluginsDirectoryNativePickerIntro": "Выбор папки запускает плагин. Лимит времени включает выбор; выход из этого представления отменяет незавершённую задачу."
 }

@@ -1,0 +1,48 @@
+{
+  "status": "CURRENT_FULL_MAIN_KERNEL_COMPILED_NOT_RUN",
+  "exit_code": 0,
+  "seconds": 15.109,
+  "candidate_input_sha256": "4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d",
+  "source_unchanged": true,
+  "entry": {
+    "path": "D:\\build_cache\\s244s\\lib\\main.dart",
+    "bytes": 243243,
+    "sha256": "d00a9c22a6a04331a03612767e2efcec3eef2bc785a325b26f4669920857221b"
+  },
+  "kernel": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-292\\app\\data\\flutter_assets\\kernel_blob.bin",
+    "bytes": 112862936,
+    "sha256": "b151c61cd264676c69a32f5566c17875bc6b0b2b1dbe1c3d1a62f516a5ae7239"
+  },
+  "executable": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-292\\app\\morrow_studio.exe",
+    "bytes": 2398720,
+    "sha256": "87bc90bc966ed06b949944df275e3889a21e898bed2f54dbdae4f5202310040f"
+  },
+  "engine": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-292\\app\\flutter_windows.dll",
+    "bytes": 45549056,
+    "sha256": "dcf5b71d4c9efaddf2cdd10041ae9eb71634d6964688c2b4feafcb8f88a58941"
+  },
+  "VM_calls": 0,
+  "product_runs": 0,
+  "host_build_required": "sdk-cancel-build-247",
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "framework_overlay": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-292\\framework-input-binding.json",
+    "bytes": 84132,
+    "sha256": "c93825f55b87ab9eb648229bb3dcba8e115a1e09d4b486d542945efbc43218d2"
+  },
+  "reproducible_preparation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\flutter-reproducible-overlay-290\\result.json",
+    "bytes": 244532,
+    "sha256": "5aed3123d83ee0f46ad3b7ab5bf6445bff721da4f2ab03c4f7d0f7b7bd4bed3c"
+  },
+  "reproducibility_review": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\flutter-reproducibility-review-291\\result.json",
+    "bytes": 563,
+    "sha256": "48c5ebe39ee66f5b9c184447135f53ac521893f426162891f03f6b5c8667174c"
+  }
+}

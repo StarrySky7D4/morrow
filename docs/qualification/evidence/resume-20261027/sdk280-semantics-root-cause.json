@@ -1,0 +1,330 @@
+{
+  "status": "SERIALIZED_GRAPH_DIAGNOSTIC_ONLY",
+  "trace": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-semantics-trace-279\\semantics-frames.jsonl",
+    "bytes": 74256,
+    "sha256": "aa0a4507db4ff6e990bf4ffcde9af88ddda19782a25447f030869cb975095f5f"
+  },
+  "frames": [
+    {
+      "ordinal": 1,
+      "updated_count": 19,
+      "reachable_count": 19,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 2,
+      "updated_count": 18,
+      "reachable_count": 19,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 3,
+      "updated_count": 131,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 4,
+      "updated_count": 3,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 5,
+      "updated_count": 11,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 6,
+      "updated_count": 1,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 7,
+      "updated_count": 1,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 8,
+      "updated_count": 2,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 9,
+      "updated_count": 1,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 10,
+      "updated_count": 1,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 11,
+      "updated_count": 2,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 12,
+      "updated_count": 1,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 13,
+      "updated_count": 2,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 14,
+      "updated_count": 1,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 15,
+      "updated_count": 1,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 16,
+      "updated_count": 1,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 17,
+      "updated_count": 1,
+      "reachable_count": 131,
+      "unreachable_updates": [],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 18,
+      "updated_count": 110,
+      "reachable_count": 130,
+      "unreachable_updates": [
+        {
+          "id": 158,
+          "label": "",
+          "tooltip": "",
+          "traversalParent": -1,
+          "traversal": [],
+          "hitTest": [],
+          "was_previously_retained": false
+        },
+        {
+          "id": 157,
+          "label": "",
+          "tooltip": "",
+          "traversalParent": -1,
+          "traversal": [],
+          "hitTest": [],
+          "was_previously_retained": false
+        },
+        {
+          "id": 156,
+          "label": "",
+          "tooltip": "",
+          "traversalParent": -1,
+          "traversal": [],
+          "hitTest": [],
+          "was_previously_retained": false
+        }
+      ],
+      "missing_children": [],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 19,
+      "updated_count": 61,
+      "reachable_count": 82,
+      "unreachable_updates": [],
+      "missing_children": [
+        156,
+        157,
+        158
+      ],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 20,
+      "updated_count": 1,
+      "reachable_count": 82,
+      "unreachable_updates": [],
+      "missing_children": [
+        156,
+        157,
+        158
+      ],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 21,
+      "updated_count": 1,
+      "reachable_count": 82,
+      "unreachable_updates": [],
+      "missing_children": [
+        156,
+        157,
+        158
+      ],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 22,
+      "updated_count": 1,
+      "reachable_count": 82,
+      "unreachable_updates": [],
+      "missing_children": [
+        156,
+        157,
+        158
+      ],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 23,
+      "updated_count": 1,
+      "reachable_count": 82,
+      "unreachable_updates": [],
+      "missing_children": [
+        156,
+        157,
+        158
+      ],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 24,
+      "updated_count": 1,
+      "reachable_count": 82,
+      "unreachable_updates": [],
+      "missing_children": [
+        156,
+        157,
+        158
+      ],
+      "multiple_parents": {},
+      "cycles": []
+    },
+    {
+      "ordinal": 25,
+      "updated_count": 1,
+      "reachable_count": 82,
+      "unreachable_updates": [],
+      "missing_children": [
+        156,
+        157,
+        158
+      ],
+      "multiple_parents": {},
+      "cycles": []
+    }
+  ],
+  "first_invalid": {
+    "ordinal": 18,
+    "updated_count": 110,
+    "reachable_count": 130,
+    "unreachable_updates": [
+      {
+        "id": 158,
+        "label": "",
+        "tooltip": "",
+        "traversalParent": -1,
+        "traversal": [],
+        "hitTest": [],
+        "was_previously_retained": false
+      },
+      {
+        "id": 157,
+        "label": "",
+        "tooltip": "",
+        "traversalParent": -1,
+        "traversal": [],
+        "hitTest": [],
+        "was_previously_retained": false
+      },
+      {
+        "id": 156,
+        "label": "",
+        "tooltip": "",
+        "traversalParent": -1,
+        "traversal": [],
+        "hitTest": [],
+        "was_previously_retained": false
+      }
+    ],
+    "missing_children": [],
+    "multiple_parents": {},
+    "cycles": []
+  },
+  "source_accepted": false,
+  "release_eligible": false
+}

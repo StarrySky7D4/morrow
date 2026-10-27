@@ -1,0 +1,85 @@
+{
+  "status": "PREPARED_QUALIFICATION_ONLY_NATIVE_REFUSAL_OVERLAYS_NOT_COMPILED_OR_EXECUTED",
+  "canonical_native": {
+    "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+    "bytes": 116683,
+    "sha256": "ad0318b3e116479c9cdbcf27abf09d6ad60a18169338d177eee2d872d75fa867"
+  },
+  "canonical_live": {
+    "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\c28-basic-harness\\src\\live.rs",
+    "bytes": 54631,
+    "sha256": "2cbcf1ee34bb4cdc7c0d4f81edb94eb14e069c7603450ec3703e6437bd514907"
+  },
+  "patcher": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\native_patch_v5.py",
+    "bytes": 4280,
+    "sha256": "f10ccf31e14298c3ae0dee5e645f558ad3eeec5734019c43eae1fa19b331d4b5"
+  },
+  "helper": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\qualification-native-trace-v4.rs",
+    "bytes": 6271,
+    "sha256": "19e3aa79ca92a0fd9074ea5ff18793391e7f055a695e15740471e0fa8cd2a852"
+  },
+  "cases": [
+    {
+      "kind": "TOKEN_DERIVATION",
+      "marker": "MORROW_QUALIFICATION_TOKEN_DERIVATION_NATIVE_REFUSAL_V5",
+      "candidate": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-native-refusal-109\\TOKEN_DERIVATION\\asuser_a1_native.rs",
+        "bytes": 126676,
+        "sha256": "763225ce5eb55e5ce534f98b1b8f204ed7e8dfd2fe8047434b114e59dc47d7d8"
+      },
+      "live": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-native-refusal-109\\TOKEN_DERIVATION\\live.rs",
+        "bytes": 54852,
+        "sha256": "4b6627aa6000c8222982f14d4f194ee84969bcbe3537fae8e99f2fc0cadb7859"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-native-refusal-109\\TOKEN_DERIVATION\\qualification-only.diff",
+        "bytes": 15299,
+        "sha256": "5320dee949d9ee855275dbc6bfa12e22990a1ac1eceed54dfb491385eeaaf5f1"
+      },
+      "expected_first_failure_site": "LaunchTokenDerivation",
+      "native_error_must_be_nonzero": true,
+      "requires_real_OS_call_and_original_error_capture": true,
+      "native_execution": "NOT_RUN",
+      "full_retirement": "NOT_ACCEPTED"
+    },
+    {
+      "kind": "DEFAULT_DACL",
+      "marker": "MORROW_QUALIFICATION_DEFAULT_DACL_NATIVE_REFUSAL_V5",
+      "candidate": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-native-refusal-109\\DEFAULT_DACL\\asuser_a1_native.rs",
+        "bytes": 126721,
+        "sha256": "c056997048ba4085dfbdfa830581befcce4a396df0b5a1bd7d707cef93e251fe"
+      },
+      "live": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-native-refusal-109\\DEFAULT_DACL\\live.rs",
+        "bytes": 54852,
+        "sha256": "4b6627aa6000c8222982f14d4f194ee84969bcbe3537fae8e99f2fc0cadb7859"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-native-refusal-109\\DEFAULT_DACL\\qualification-only.diff",
+        "bytes": 15247,
+        "sha256": "03730584a9323ff52d971c17b4bcae2e5ea107d1c60773b4308d1f0547578a2f"
+      },
+      "expected_first_failure_site": "DefaultInitialization",
+      "native_error_must_be_nonzero": true,
+      "requires_real_OS_call_and_original_error_capture": true,
+      "native_execution": "NOT_RUN",
+      "full_retirement": "NOT_ACCEPTED"
+    }
+  ],
+  "required_before_dispatch": [
+    "complete frozen canonical source copy",
+    "fresh P/C/R/S role binding and isolated cold build proof",
+    "separate clean VM per retained Unknown result",
+    "preregistered full first-failure reviewer",
+    "actual source token remains held",
+    "same owner restores only its added privilege"
+  ],
+  "canonical_source_edits": 0,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "full_P2_accepted": false
+}

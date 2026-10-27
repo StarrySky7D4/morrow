@@ -1,0 +1,119 @@
+{
+  "status": "PASS_PREDECLARED_TRACE_REVIEWER_SYNTHETIC_ACCEPT_REFUSE_CHECKS",
+  "methods": 15,
+  "results": [
+    {
+      "name": "complete_original_output_pair_and_deadline_failure",
+      "accepted": true,
+      "expected": true,
+      "reason": null,
+      "checked": 42
+    },
+    {
+      "name": "header_only",
+      "accepted": false,
+      "expected": false,
+      "reason": "contiguous original native trace",
+      "checked": 2
+    },
+    {
+      "name": "missing_first_failure",
+      "accepted": false,
+      "expected": false,
+      "reason": "one FirstFailure",
+      "checked": 20
+    },
+    {
+      "name": "duplicate_create_with_contiguous_sequence",
+      "accepted": false,
+      "expected": false,
+      "reason": "one CreateReturned",
+      "checked": 23
+    },
+    {
+      "name": "sequence_gap",
+      "accepted": false,
+      "expected": false,
+      "reason": "contiguous original native trace",
+      "checked": 2
+    },
+    {
+      "name": "wrong_process_identity",
+      "accepted": false,
+      "expected": false,
+      "reason": "same real process thread identity InjectedDelayFinished",
+      "checked": 31
+    },
+    {
+      "name": "output_not_held",
+      "accepted": false,
+      "expected": false,
+      "reason": "original output pair retained FirstFailure",
+      "checked": 32
+    },
+    {
+      "name": "extra_cleanup_authority",
+      "accepted": false,
+      "expected": false,
+      "reason": "trace adds no authority",
+      "checked": 18
+    },
+    {
+      "name": "deadline_not_expired",
+      "accepted": false,
+      "expected": false,
+      "reason": "unchanged original deadline expired",
+      "checked": 38
+    },
+    {
+      "name": "wrong_first_failure",
+      "accepted": false,
+      "expected": false,
+      "reason": "first original native failure identity",
+      "checked": 40
+    },
+    {
+      "name": "more_than_old_64_record_capacity",
+      "accepted": true,
+      "expected": true,
+      "reason": null,
+      "checked": 342
+    },
+    {
+      "name": "new_512_record_capacity_boundary",
+      "accepted": true,
+      "expected": true,
+      "reason": null,
+      "checked": 1563
+    },
+    {
+      "name": "over_512_record_limit",
+      "accepted": false,
+      "expected": false,
+      "reason": "contiguous original native trace",
+      "checked": 2
+    },
+    {
+      "name": "different_native_owner",
+      "accepted": false,
+      "expected": false,
+      "reason": "one original native owner",
+      "checked": 3
+    },
+    {
+      "name": "obsolete_trace_schema",
+      "accepted": false,
+      "expected": false,
+      "reason": "channel initialized before setup",
+      "checked": 1
+    }
+  ],
+  "reviewer": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_late_create_case098.py",
+    "bytes": 12851,
+    "sha256": "33ab13e7896d8d9e859fbcf48899dcee945307df5b8d830710c7e71abfc9aa5b"
+  },
+  "pure_block_sha256": "fcd4d005eeaf82f227f932fcf1e5dfc15c133aaf32d38dff63c999352b76ff6f",
+  "VM_calls": 0,
+  "product_runtime_accepted": false
+}

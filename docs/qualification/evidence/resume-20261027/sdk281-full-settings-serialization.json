@@ -1,0 +1,46 @@
+{
+  "status": "SERIALIZED_SETTINGS_TRANSITION_TEST_FINISHED",
+  "mode": "framework282",
+  "exit_code": 0,
+  "seconds": 15.74404525756836,
+  "test": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\settings-semantics-281\\framework282\\project\\test\\settings_semantics_serialized_test.dart",
+    "bytes": 6495,
+    "sha256": "0eb06f69f5e0d215b1ce54997f4f5b14a70b3bc15795e7c6caa27b7da6b88559"
+  },
+  "transition_source": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\settings-semantics-281\\framework282\\project\\lib\\settings_page_transition.dart",
+    "bytes": 4394,
+    "sha256": "5202d328638b9e569c22407acae84efc2d961a68ab1756f5c8883c90dac00b9d"
+  },
+  "config": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\settings-semantics-281\\framework282\\project\\.dart_tool\\package_config.json",
+    "bytes": 29044,
+    "sha256": "7075da09df3057bf51970ae69c5a344418543a61f61efbeb187f738995e3beed"
+  },
+  "events": [
+    {
+      "testID": 1,
+      "result": "success",
+      "skipped": false,
+      "hidden": true,
+      "type": "testDone",
+      "time": 11333
+    },
+    {
+      "testID": 3,
+      "result": "success",
+      "skipped": false,
+      "hidden": false,
+      "type": "testDone",
+      "time": 13882
+    },
+    {
+      "success": true,
+      "type": "done",
+      "time": 13922
+    }
+  ],
+  "source_accepted": false,
+  "release_eligible": false
+}

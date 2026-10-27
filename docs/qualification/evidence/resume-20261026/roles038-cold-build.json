@@ -1,0 +1,52 @@
+{
+  "status": "COMPILED_BYTE_BOUND_FAULT_VARIANT_NOT_RUNTIME_ACCEPTED",
+  "source_digest": "4040ffeaf253f45ded09011813b3df8201da1df1738a7983fe7fc0980c868eaa",
+  "roles": {
+    "P": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-038\\P\\morrow-workbench-supervisor.exe",
+      "bytes": 30111744,
+      "sha256": "b19745bb64e797db65faa6b71776910d0db6013a84fa545dd6cf75a73b397083"
+    },
+    "C": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-038\\C\\morrow-protected-checked-vm-harness.exe",
+      "bytes": 108654080,
+      "sha256": "a6effab2b221f43e96299fb45e96e1fb592cd65b25b3392e602c860ef8a7251a"
+    },
+    "R": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-038\\R\\codex-command-runner.exe",
+      "bytes": 27000320,
+      "sha256": "89b3de4b4aba1abf67f5645b2e9cc6e2a262513472cbeb1ad163e79452e693d1"
+    },
+    "S": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-038\\S\\codex-windows-sandbox-setup.exe",
+      "bytes": 37597184,
+      "sha256": "f13ca3e5b6dbaf2e0ca2e54e9e5e9024af08cea6ed1923c6fe6bed505b71ec61"
+    }
+  },
+  "s_table_hex": "43323841315441420100000001000000a6effab2b221f43e96299fb45e96e1fb592cd65b25b3392e602c860ef8a7251a89b3de4b4aba1abf67f5645b2e9cc6e2a262513472cbeb1ad163e79452e693d1",
+  "s_section": {
+    "virtual_bytes": 80,
+    "raw_bytes": 512,
+    "raw_offset": 37451776,
+    "flags": 1073741888
+  },
+  "source_accepted": false,
+  "release_eligible": false,
+  "L1": "NOT_RUN",
+  "full47": "NOT_APPLICABLE_EXPECTED_LATE_CREATE_FAILURE",
+  "VM_calls": 0,
+  "all_dependencies_bound_to_canonical_source": true,
+  "minimal_role_overlays": false,
+  "cold_output_isolation": true,
+  "compiler_library_rebuild_verified": true,
+  "unexpected_setup_fault_marker_absent": true,
+  "qualification_fault": "LATE_CREATE_OUTPUT",
+  "fault_derivation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-038\\C-fault-derivation.json",
+    "bytes": 4380,
+    "sha256": "eaa3a8e5e8fe03a09225aa15a2486a67b83c81ffc7982255f8fe629e30a39c7b"
+  },
+  "canonical_source_edits": 0,
+  "original_PR_bytes_unchanged": true,
+  "production_acceptance": false
+}

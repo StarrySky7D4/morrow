@@ -51,15 +51,19 @@ impl Fixture {
             cleanup: None,
             agent_exit: None,
             repair_needed: false,
+            native_retirement: None,
             lost: false,
             service_submissions: Default::default(),
             file_submissions: Default::default(),
+            upload_submissions: Default::default(),
+            upload_task: None,
             mutation_submissions: Default::default(),
             mutation_checkpoints: Default::default(),
             submission: None,
         };
         Self {
-            app: Workbench { state, channel_tasks: Default::default(),
+            app: Workbench {
+            upload_plans: Default::default(), state, channel_tasks: Default::default(),
                 http_tasks: Default::default(), product_session_wire: Default::default() },
             _runtime: runtime,
             _fixture_root: fixture_root, release, stop_calls,

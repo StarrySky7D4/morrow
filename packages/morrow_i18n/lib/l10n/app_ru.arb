@@ -1521,6 +1521,8 @@
   "pluginsDirectoryIntro": "Передаются только имена и метаданные объектов непосредственно в выбранной папке. Содержимое файлов и вложенных папок не читается.",
   "pluginsDirectoryLimit": "Лимит записей (до 1024)",
   "pluginsDirectoryMetadataLimit": "Лимит метаданных (байты, до 1 MiB)",
+  "pluginsDirectoryNativePickerIntro": "Выбор папки запускает плагин. Лимит времени включает выбор; выход из этого представления отменяет незавершённую задачу.",
+  "pluginsDirectoryNativePickerStart": "Выбрать папку и запустить плагин",
   "pluginsDirectorySelectHandler": "Выбрать одобренный плагин папок",
   "pluginsDirectoryStart": "Прочитать папку и запустить плагин",
   "pluginsDirectoryTitle": "Содержимое папки",

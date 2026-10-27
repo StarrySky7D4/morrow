@@ -13,6 +13,7 @@ pub(super) enum Kind {
     Mutation,
     Channel,
     Directory,
+    BlobUpload,
 }
 
 #[derive(Clone)]
@@ -87,6 +88,7 @@ impl Execution {
             mutation: runner.mutation_abi,
             channel: runner.channel_abi,
             directory: runner.directory_abi,
+            blob_upload: runner.blob_upload_abi,
             agent: runner.agent_abi || runner.agent_process_abi,
             pending: None,
             session: Arc::new(()),
@@ -142,6 +144,11 @@ impl Execution {
             linker
                 .func_wrap("morrow_fs_directory_v1", "call", directory_call)
                 .expect("directory request import");
+        }
+        if runner.blob_upload_abi {
+            linker
+                .func_wrap("morrow_blob_upload_v1", "call", blob_upload_call)
+                .expect("upload request import");
         }
         if runner.agent_abi {
             linker

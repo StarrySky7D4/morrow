@@ -1,0 +1,30 @@
+{
+  "status": "COMPLETED_TWO_CACHE_RECLAIMS_AND_TWO_LOSSLESS_ARCHIVE_REPACKS",
+  "utc": "2026-10-26T16:16:49.550528+00:00",
+  "cache_logical_bytes_removed": 26313265979,
+  "cache_files_removed": 9502,
+  "cache_observed_free_deltas": [
+    7998103552,
+    7575298048
+  ],
+  "cache_deltas_are_not_exclusive_attribution": true,
+  "raw_archive_duplicate_bytes_removed": 267598571588,
+  "compressed_replacements_bytes": 45286502884,
+  "initial_free_bytes": {
+    "C": 36418785280,
+    "D": 35683135488
+  },
+  "final_free_bytes": {
+    "C": 167882117120,
+    "D": 126161629184
+  },
+  "observed_combined_free_increase": 221941825536,
+  "original_VM_disks_deleted": 0,
+  "new_vm_preserved": true,
+  "registered_vms": 4,
+  "VM037_shared_parent_archive_must_be_preserved": true,
+  "build_cache_root": "D:/build_cache",
+  "C_staging_archive_removed": true,
+  "guest_contacts": 0,
+  "unknown_owner_queries": 0
+}

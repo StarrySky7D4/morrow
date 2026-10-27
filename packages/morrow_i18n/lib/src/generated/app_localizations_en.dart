@@ -1868,6 +1868,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Metadata limit (bytes, up to 1 MiB)';
 
   @override
+  String get pluginsDirectoryNativePickerIntro =>
+      'Choosing a folder starts the plugin. The task lifetime includes selection; leaving this view cancels the pending task.';
+
+  @override
+  String get pluginsDirectoryNativePickerStart =>
+      'Choose folder and run plugin';
+
+  @override
   String get pluginsDirectorySelectHandler =>
       'Select an approved folder plugin';
 

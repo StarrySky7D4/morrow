@@ -1,0 +1,154 @@
+{
+  "status": "PASS_SCOPED_UPLOAD_PROPOSAL_CODEC_PACKAGE_AND_PURE_EXECUTION",
+  "utc": "2026-10-27T16:07:34.380476+00:00",
+  "qualification_source": "d06aa860ffe93c9403f462e50a808556b090129d53c18329c9781e896f02598a",
+  "codec_source": "45e8d715a722a155ea75310bdd4a962cb8039ce8ef8e56955600250fa3463cd3",
+  "previous_source": "52d93ff846e564e6f9ddf31f02a339ad1264c088fb58a9b9261f1d82e6621f5f",
+  "source_equivalence": {
+    "previous": "52d93ff846e564e6f9ddf31f02a339ad1264c088fb58a9b9261f1d82e6621f5f",
+    "current": "d06aa860ffe93c9403f462e50a808556b090129d53c18329c9781e896f02598a",
+    "only_delta": "Synthetic WAT task read capacity corrected to existing 128KiB contract; explicit import admission assertion added",
+    "production_source_unchanged": true
+  },
+  "contract": "Independent Capn Proto blob-upload-proposal-v1",
+  "schema": {
+    "path": "C:\\ms1020\\extensions\\blob-upload-proposal-v1\\contracts\\blob_upload_proposal.capnp",
+    "bytes": 768,
+    "sha256": "b06b2c578b65c4f8bdf8af8cd3ca4976b42fa6da5f6c608373b453ae4f710de2"
+  },
+  "proposal_limits": {
+    "object_bytes": 16777216,
+    "producer_input_bytes": 32768,
+    "label_UTF8_bytes": 512,
+    "label_scalars": 128,
+    "wire_bytes": 34816,
+    "bound_input_bytes": 36864
+  },
+  "semantics": [
+    "Untrusted plain-text label, length, SHA and bounded producer input; no original owner or permission",
+    "Exact proposal digest binds an unchanged Descriptor frame without conferring approval",
+    "Protobuf manifest field23 registers disjoint same-package planner-to-uploader mappings under an explicit required feature",
+    "Pure interpreter has no Store, Manager, live connection or effect callback; any pending upload import aborts",
+    "Original task completion correlation, package object/output ceilings, cancellation and fixed fuel are checked"
+  ],
+  "codec_tests": {
+    "passed": 15,
+    "failed": 0
+  },
+  "package_tests": {
+    "passed": 31,
+    "new": 7,
+    "failed": 0
+  },
+  "runtime_tests": {
+    "passed": 58,
+    "new": 10,
+    "failed": 0,
+    "passing_sources": [
+      "421 first three suites",
+      "422 planner and worker"
+    ]
+  },
+  "strict_clippy": [
+    "proposal codec all targets",
+    "core library",
+    "runtime library and planner tests"
+  ],
+  "proposal_wasm": "Library compile only",
+  "planner_Wasm": "Synthetic WAT executes in actual interpreter; no Store authority",
+  "production_host": "Default library/binaries/tests compile only; existing warnings retained in log",
+  "prior_failure": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-421\\result.json",
+    "bytes": 1937,
+    "sha256": "f910e9e1320c1805ff5599108ad5d587e86ea1cfc515c5136b58723d7a764d0f"
+  },
+  "prior_failure_reason": "Synthetic WAT incorrectly supplied64KiB task read capacity; existing fixed contract requires128KiB. Fixture corrected and actual import admission asserted. Production source unchanged.",
+  "prior_failure_preserved": true,
+  "qualification": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-proposal-419\\result.json",
+      "bytes": 2447,
+      "sha256": "e5ebaa69ba230fe8b5c1e20ed568e1a28c46fa8eba3d1a71ae0af2cf739be37f"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-421\\result.json",
+      "bytes": 1937,
+      "sha256": "f910e9e1320c1805ff5599108ad5d587e86ea1cfc515c5136b58723d7a764d0f"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-422\\result.json",
+      "bytes": 3190,
+      "sha256": "6fee317053a80dcdf3af9f670e5046eb403f5dc1798f8c5f21824421d47b7e62"
+    }
+  ],
+  "executed_programs": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-proposal-419\\morrow_blob_upload_proposal_v1-56385ca7f0e294b2.exe",
+      "bytes": 856576,
+      "sha256": "22e68bd65f64f37068260cdaed6aeb4e915cb53abb6bf233bf258e3827d81299"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-421\\package_blob_upload-0fb420084dfda4d7.exe",
+      "bytes": 4069376,
+      "sha256": "10b04eb690be4b91d5fe88ce7fd9f77622f69623ab1942c21012deafe278b874"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-421\\package_blob_upload_proposal-d928c7b277f09271.exe",
+      "bytes": 3771904,
+      "sha256": "7b217b70986ff96c3f472f83e0eb2e12d8a83fb07b4ba9f0fa2db0372aff737e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-421\\plugin_package-f59b25a316a48ce0.exe",
+      "bytes": 5516800,
+      "sha256": "1ae089b55d66e48a7be708c1b9efa443744d2579b3e8c83ae6d62ccd196486db"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-421\\blob_upload-6390dcdcb807b062.exe",
+      "bytes": 9269760,
+      "sha256": "81acd18dfdc8b8500319c12af65111769e0356219eb782979deb9d65c12c22c2"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-421\\blob_upload_approval-6a42823d7321e358.exe",
+      "bytes": 7722496,
+      "sha256": "0436e30d26947e9c6a3af3a109220917076bb58c8c621c3ab565ec8ddb2e2f5e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-421\\blob_upload_profile-6b424a4ca95c1d4c.exe",
+      "bytes": 8217600,
+      "sha256": "257fbe8b3aee8a705d02d61d4ee5df33f1ae48c7b1b085e257d695cd23ad6761"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-422\\blob_upload_proposal-b2b85895fcaebffc.exe",
+      "bytes": 6582784,
+      "sha256": "015fc3e8e7c43838709a5e3b6710a6c2bdfbf699f1465ce4f0bf49b19de7af74"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-planner-record-423\\programs\\upload-planner-422\\blob_upload_worker-d4f2a08154b1dbd9.exe",
+      "bytes": 8507392,
+      "sha256": "b074699560e80b520c1a4b488b4b84ea1b60ba9a5f420cca06778f3de2017a48"
+    }
+  ],
+  "frozen_inputs_verified": 57,
+  "third_party_dependency_changes": false,
+  "new_path_dependency": "morrow-blob-upload-proposal-v1",
+  "unrequested_dependency_update_preserved_and_not_applied": true,
+  "all_recent_processes_closed": true,
+  "cache_root": "D:/build_cache",
+  "registered_VMs": 4,
+  "VM_calls": 0,
+  "host_policy_changes": 0,
+  "historical_unknown_owner_contacts": 0,
+  "C_CPP_proposal_helpers": false,
+  "actual_three_language_planner_guests": false,
+  "private_product_planner_route": false,
+  "rendered_approval_UI": false,
+  "rendered_recovery_UI": false,
+  "cross_restart_Unknown_recovery": false,
+  "watch_rename": false,
+  "full_P2_accepted": false,
+  "full_P3_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "remote_publication": false
+}

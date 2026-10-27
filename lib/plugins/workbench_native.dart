@@ -45,6 +45,10 @@ import 'file_task_models.dart';
 import 'file_task_native.dart';
 import 'directory_task_models.dart';
 import 'directory_task_native.dart';
+import 'blob_upload_models.dart';
+import 'blob_upload_native.dart';
+import 'blob_plan_models.dart';
+import 'blob_plan_native.dart';
 import 'channel_task_models.dart';
 import 'channel_task_native.dart';
 import 'channel_task_codec_native.dart';
@@ -133,6 +137,12 @@ PluginLibraryEntry decodePluginLibraryEntry(host.PluginEntryReader row) {
         : ChannelTaskCodec.hostBudget(row.channelBudget!),
     mutationSupported: row.mutationSupported,
     directorySupported: row.directorySupported,
+    blobUploadSupported: row.blobUploadSupported,
+    blobUploadApproved: row.blobUploadApproved,
+    blobUploadHandlers: texts(row.blobUploadHandlers),
+    blobPlanners: [for (final p in row.blobPlanners ?? <host.BlobPlannerReader>[])
+      BlobPlannerMapping(p.handler ?? '', p.uploadHandler ?? '')],
+    blobUploadMaxBytes: row.blobUploadSupported ? row.blobUploadMaxBytesBigInt : null,
     mutationBudget: switch (row.mutationBudget) {
       null => null,
       final budget => PluginMutationBudget(
@@ -186,7 +196,10 @@ class RustWorkbench
         WorkbenchIoTaskControl,
         FileTaskBackend,
         DirectoryTaskBackend,
+        BlobUploadBackend,
+        BlobPlanBackend,
         DirectoryTaskPlatformCapabilities,
+        NativeDirectoryPickerCapabilities,
         ChannelTaskBackend,
         FileTaskPlatformCapabilities,
         MutationTaskSupport,
@@ -1319,9 +1332,47 @@ class RustWorkbench
 
   late final _fileTasks = NativeFileTaskClient(_callDecoded);
   late final _directoryTasks = NativeDirectoryTaskClient(_callDecoded);
+  late final _blobPlans = NativeBlobPlanClient(_callDecoded);
+  @override
+  Future<BlobPlanSnapshot> startBlobPlan(BlobPlanRequest request) => _blobPlans.startBlobPlan(request);
+  @override
+  Future<BlobPlanSnapshot> statusBlobPlan(Uint8List key) => _blobPlans.statusBlobPlan(key);
+  @override
+  Future<BlobPlanReply> readBlobPlan(Uint8List key) => _blobPlans.readBlobPlan(key);
+  @override
+  Future<BlobPlanSnapshot> cancelBlobPlan(Uint8List key) => _blobPlans.cancelBlobPlan(key);
+  @override
+  Future<void> acknowledgeBlobPlan(Uint8List key) => _blobPlans.acknowledgeBlobPlan(key);
+  @override
+  Future<BlobPlanSnapshot> approveBlobPlan(Uint8List key, BlobPlanView reviewed) => _blobPlans.approveBlobPlan(key, reviewed);
+  @override
+  Future<BlobPlanSnapshot?> discoverBlobPlan(Uint8List submission) => _blobPlans.discoverBlobPlan(submission);
+  late final _blobUploads = NativeBlobUploadClient(_callDecoded);
+  @override
+  Future<void> approveBlobUpload(String packageId, Uint8List digest,
+      BigInt revision, bool approved) =>
+      _blobUploads.approveBlobUpload(packageId, digest, revision, approved);
+  @override
+  Future<BlobUploadSnapshot> startBlobUpload(BlobUploadRequest request) =>
+      _blobUploads.startBlobUpload(request);
+  @override
+  Future<BlobUploadSnapshot> statusBlobUpload(Uint8List key) =>
+      _blobUploads.statusBlobUpload(key);
+  @override
+  Future<BlobUploadReply> readBlobUpload(Uint8List key) =>
+      _blobUploads.readBlobUpload(key);
+  @override
+  Future<BlobUploadSnapshot> inspectBlobUpload(Uint8List key) =>
+      _blobUploads.inspectBlobUpload(key);
+  @override
+  Future<BlobUploadSnapshot> confirmBlobUpload(
+      Uint8List key, BlobUploadObservation expected) =>
+      _blobUploads.confirmBlobUpload(key, expected);
   @override
   bool get supportsSelectedDirectoryTasks =>
       Platform.isWindows && _nativeProcess != null;
+  @override
+  bool get supportsNativeDirectoryPicker => supportsSelectedDirectoryTasks;
   @override
   Future<IoTaskSnapshot> startDirectory(DirectoryTaskRequest request) =>
       _directoryTasks.startDirectory(request);

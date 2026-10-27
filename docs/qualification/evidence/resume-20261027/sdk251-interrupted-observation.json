@@ -1,0 +1,28 @@
+{
+  "status": "OBSERVATION_LOST_BEFORE_UI_APPROVAL_NOT_ACCEPTED_NO_REPLAY",
+  "utc": "2026-10-27T03:04:43.269286+00:00",
+  "original_pid": 24396,
+  "original_pid_reused_by": "conhost",
+  "expected_original_application": "morrow_studio.exe",
+  "original_start": "2026-10-27T10:54:25+08:00",
+  "observed_replacement_start": "2026-10-27T10:55:42.518867+08:00",
+  "exact_application_and_driver_process_inventory_matches": 0,
+  "completed_receipt": false,
+  "exit_code_observed": false,
+  "original_ready": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-cancel-251-rust\\content\\run-ready.json",
+    "bytes": 336,
+    "sha256": "24f2e97e9c8111126ab75461938367220681cb1aae34750e69f07a8ad6072ac7"
+  },
+  "original_preparation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-cancel-251-rust\\preparation.json",
+    "bytes": 2401,
+    "sha256": "5937d00e30cf53ee28f5edf960d24cae5a8b91e3538527b3c0869c22c7a3a04e"
+  },
+  "same_case_replay": false,
+  "owner_adoption": false,
+  "owner_cleanup": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "cause": "Original process handles missing; cause not established. No result inferred."
+}

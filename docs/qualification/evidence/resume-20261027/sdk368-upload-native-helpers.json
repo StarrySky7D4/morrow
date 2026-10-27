@@ -1,0 +1,340 @@
+{
+  "status": "PASS_SCOPED_NATIVE_UPLOAD_HELPERS",
+  "utc": "2026-10-27T10:15:07.486434+00:00",
+  "qualified_source_digest": "846d1c59b271c791df5aaac0aa903ec970f53e8a25c07a48d97017e57dd1c107",
+  "rust_tests": 19,
+  "rust_ignored": 0,
+  "rust_filtered": 0,
+  "strict_library_clippy": "PASS",
+  "native_consumers": [
+    {
+      "compiler_language": "msvc-c",
+      "original_owner": 366,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-c.exe",
+        "bytes": 252928,
+        "sha256": "870ffb7a82a7b8c896487d686f7a2e79d8d0765786db34cd9eeb841704e09fc5",
+        "outcome": {
+          "status": "PASS_SCOPED_NATIVE_C",
+          "scenarios": 8,
+          "checks": 6020,
+          "max_bytes": 16777216,
+          "max_chunks": 274,
+          "store_proof": false
+        }
+      },
+      "build": {
+        "name": "msvc-c-build",
+        "command": [
+          "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.EXE",
+          "/nologo",
+          "/utf-8",
+          "/std:c11",
+          "/W4",
+          "/WX",
+          "/MD",
+          "/IC:\\ms1020\\extensions\\blob-upload-request-v1\\include",
+          "/IC:\\ms1020\\extensions\\blob-transfer-v1\\include",
+          "C:\\ms1020\\extensions\\blob-upload-request-v1\\tests\\native_c.c",
+          "D:\\build_cache\\qualification-targets\\blob-request364\\release\\morrow_blob_upload_request_v1.lib",
+          "kernel32.lib",
+          "ntdll.lib",
+          "userenv.lib",
+          "ws2_32.lib",
+          "dbghelp.lib",
+          "bcrypt.lib",
+          "/FoD:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-c.obj",
+          "/FeD:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-c.exe"
+        ],
+        "exit_code": 0,
+        "seconds": 0.281,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-c-build.stdout",
+          "bytes": 12,
+          "sha256": "e45b79a7e29156f8e980d54db752edd782e052fd1a334cf6ba1f32ac326860a2"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-c-build.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "run": {
+        "name": "msvc-c-run",
+        "command": [
+          "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-c.exe"
+        ],
+        "exit_code": 0,
+        "seconds": 0.266,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-c-run.stdout",
+          "bytes": 121,
+          "sha256": "d1d303c9288f98ff171ca1b899d9a8a6e94976b0fce60fa23c453bc713b92e12"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-c-run.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "compiler_language": "msvc-cpp",
+      "original_owner": 366,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-cpp.exe",
+        "bytes": 223744,
+        "sha256": "161c1ed513c6e3ac0255491b3965d345364b29525f525fddc479ed98e7130130",
+        "outcome": {
+          "status": "PASS_SCOPED_NATIVE_CPP",
+          "checks": 44,
+          "ownership_moves": true,
+          "callback_replay": false,
+          "store_proof": false
+        }
+      },
+      "build": {
+        "name": "msvc-cpp-build",
+        "command": [
+          "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.EXE",
+          "/nologo",
+          "/utf-8",
+          "/std:c++17",
+          "/W4",
+          "/WX",
+          "/MD",
+          "/EHsc",
+          "/IC:\\ms1020\\extensions\\blob-upload-request-v1\\include",
+          "/IC:\\ms1020\\extensions\\blob-transfer-v1\\include",
+          "C:\\ms1020\\extensions\\blob-upload-request-v1\\tests\\native_cpp.cpp",
+          "D:\\build_cache\\qualification-targets\\blob-request364\\release\\morrow_blob_upload_request_v1.lib",
+          "kernel32.lib",
+          "ntdll.lib",
+          "userenv.lib",
+          "ws2_32.lib",
+          "dbghelp.lib",
+          "bcrypt.lib",
+          "/FoD:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-cpp.obj",
+          "/FeD:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-cpp.exe"
+        ],
+        "exit_code": 0,
+        "seconds": 0.328,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-cpp-build.stdout",
+          "bytes": 16,
+          "sha256": "e9e69267c6d8e2a8ad00a33e170d709387f692c563bbc4613a6670d04b285845"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-cpp-build.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "run": {
+        "name": "msvc-cpp-run",
+        "command": [
+          "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-cpp.exe"
+        ],
+        "exit_code": 0,
+        "seconds": 0.015,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-cpp-run.stdout",
+          "bytes": 116,
+          "sha256": "6dccc2ac1ef82372544c663ac2554e116683c625aef7e0215191edbe663ccfde"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\msvc-cpp-run.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "compiler_language": "clang-c",
+      "original_owner": 367,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-c.exe",
+        "bytes": 246272,
+        "sha256": "69d4826ab7aeeba736d878116096e52eb26ed989a36ae74b22d6ab7908f59670",
+        "outcome": {
+          "status": "PASS_SCOPED_NATIVE_C",
+          "scenarios": 8,
+          "checks": 6020,
+          "max_bytes": 16777216,
+          "max_chunks": 274,
+          "store_proof": false
+        }
+      },
+      "build": {
+        "name": "clang-c-build",
+        "command": [
+          "C:\\Program Files\\LLVM\\bin\\clang.EXE",
+          "-std=c11",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-fms-runtime-lib=dll",
+          "-IC:\\ms1020\\extensions\\blob-upload-request-v1\\include",
+          "-IC:\\ms1020\\extensions\\blob-transfer-v1\\include",
+          "C:\\ms1020\\extensions\\blob-upload-request-v1\\tests\\native_c.c",
+          "D:\\build_cache\\qualification-targets\\blob-request364\\release\\morrow_blob_upload_request_v1.lib",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\um\\x64\\kernel32.lib",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\um\\x64\\ntdll.lib",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\um\\x64\\userenv.lib",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\um\\x64\\ws2_32.lib",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\um\\x64\\dbghelp.lib",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\um\\x64\\bcrypt.lib",
+          "-o",
+          "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-c.exe"
+        ],
+        "exit_code": 0,
+        "seconds": 0.406,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-c-build.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-c-build.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "run": {
+        "name": "clang-c-run",
+        "command": [
+          "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-c.exe"
+        ],
+        "exit_code": 0,
+        "seconds": 0.266,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-c-run.stdout",
+          "bytes": 121,
+          "sha256": "d1d303c9288f98ff171ca1b899d9a8a6e94976b0fce60fa23c453bc713b92e12"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-c-run.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "compiler_language": "clang-cpp",
+      "original_owner": 367,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-cpp.exe",
+        "bytes": 223744,
+        "sha256": "3c06aa48e0e9232b43b9886307a3c67d6ec885d6061e804d8e5943294354df15",
+        "outcome": {
+          "status": "PASS_SCOPED_NATIVE_CPP",
+          "checks": 44,
+          "ownership_moves": true,
+          "callback_replay": false,
+          "store_proof": false
+        }
+      },
+      "build": {
+        "name": "clang-cpp-build",
+        "command": [
+          "C:\\Program Files\\LLVM\\bin\\clang++.EXE",
+          "-std=c++17",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-fms-runtime-lib=dll",
+          "-IC:\\ms1020\\extensions\\blob-upload-request-v1\\include",
+          "-IC:\\ms1020\\extensions\\blob-transfer-v1\\include",
+          "C:\\ms1020\\extensions\\blob-upload-request-v1\\tests\\native_cpp.cpp",
+          "D:\\build_cache\\qualification-targets\\blob-request364\\release\\morrow_blob_upload_request_v1.lib",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\um\\x64\\kernel32.lib",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\um\\x64\\ntdll.lib",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\um\\x64\\userenv.lib",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\um\\x64\\ws2_32.lib",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\um\\x64\\dbghelp.lib",
+          "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.26100.0\\um\\x64\\bcrypt.lib",
+          "-o",
+          "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-cpp.exe"
+        ],
+        "exit_code": 0,
+        "seconds": 0.609,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-cpp-build.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-cpp-build.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "run": {
+        "name": "clang-cpp-run",
+        "command": [
+          "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-cpp.exe"
+        ],
+        "exit_code": 0,
+        "seconds": 0.016,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-cpp-run.stdout",
+          "bytes": 116,
+          "sha256": "6dccc2ac1ef82372544c663ac2554e116683c625aef7e0215191edbe663ccfde"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\clang-cpp-run.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "original_results": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-364\\result.json",
+      "bytes": 4267,
+      "sha256": "e118a9f26c963dfd3168a7d0e6a24e4676a67e4d2ef841db4f768a633a19ca65"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-365\\result.json",
+      "bytes": 2435,
+      "sha256": "1c75cb45e9c7c2251a712c9f3911554c303966a3dee1ec814d6ec013f1f0baf7"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-366\\result.json",
+      "bytes": 9549,
+      "sha256": "10c8b88e0e3df0c38cc8f74bbaa40b3e32c5e87e68f2d6722e8ed69ca5cec90b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-request-native-367\\result.json",
+      "bytes": 8588,
+      "sha256": "293a5baa214ada33a77f9aa34c4a7491d40db1fb03426f7d444112b3a59bb377"
+    }
+  ],
+  "tool_failures_preserved": {
+    "364": "Native library flag parser rejected compiler defaultlib; Rust tests, strict Clippy and cold staticlib had returned successfully.",
+    "365": "CreateProcess could not locate cl by the child environment path; no native build ran.",
+    "366": "MSVC consumers passed; Clang driver rejected relative SDK library filenames before compiling."
+  },
+  "native_scenario_counts_not_additive": true,
+  "original_static_library": {
+    "path": "D:\\build_cache\\qualification-targets\\blob-request364\\release\\morrow_blob_upload_request_v1.lib",
+    "bytes": 13504782,
+    "sha256": "5b91ada71ba04787bb9999f78c67db0afa6e3531d2504c55de0d6f31b5965ff7"
+  },
+  "frozen_inputs_verified": 57,
+  "existing_runtime_inputs_unchanged": true,
+  "all_original_processes_returned": true,
+  "cache_root": "D:/build_cache",
+  "VM_calls": 0,
+  "registered_package_feature": false,
+  "public_import": false,
+  "host_route": false,
+  "three_language_guest": false,
+  "production_approval": false,
+  "protected_session": false,
+  "Store_proof": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

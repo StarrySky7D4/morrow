@@ -608,10 +608,10 @@ fn same_request(resource: &Resource, request: &RequestRecord) -> Result<(), file
     {
         return Err(file_target::Error::Mismatch);
     }
-    if let Some(bound) = &resource.request {
-        if bound.container() != request.container() || bound.request() != request.request() {
-            return Err(file_target::Error::Mismatch);
-        }
+    if let Some(bound) = &resource.request
+        && (bound.container() != request.container() || bound.request() != request.request())
+    {
+        return Err(file_target::Error::Mismatch);
     }
     if let Some(guest) = &resource.guest
         && (guest.plan.container() != request.container()
@@ -2331,15 +2331,14 @@ fn dispatch_with_source<O: ManagedHostOwner>(
                                 rejected.unwrap_or(file_target::Error::Persistence(error))
                             })?
                     };
-                    if let Some(value) = &content {
-                        if record.is_none()
+                    if let Some(value) = &content
+                        && (record.is_none()
                             || value.request_sha256() != command.request_sha256
                             || value.content_sha256()
                                 != plan.request().content_sha256.unwrap_or([0; 32])
-                            || value.content().len() as u64 != plan.request().content_length
-                        {
-                            return Err(file_target::Error::Mismatch);
-                        }
+                            || value.content().len() as u64 != plan.request().content_length)
+                    {
+                        return Err(file_target::Error::Mismatch);
                     }
                     gate.with(|now, cancelled| {
                         authority.binding.check(manager, host, instance, now)?;

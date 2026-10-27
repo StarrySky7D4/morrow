@@ -1,0 +1,89 @@
+{
+  "status": "PASS_SCOPED_FULL_PRODUCTION_UI_NATIVE_DIRECTORY_SUCCESS_ACK_AND_REOPEN",
+  "utc": "2026-10-27T05:13:55.704810+00:00",
+  "source_input_sha256": "4b7030a17be2d8a93d5988208f567a2cbc09ac3fda01fe94e67e417f27ac313d",
+  "framework": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-preparation-292\\framework-input-binding.json",
+    "bytes": 84132,
+    "sha256": "c93825f55b87ab9eb648229bb3dcba8e115a1e09d4b486d542945efbc43218d2"
+  },
+  "reproducibility": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\flutter-reproducibility-review-291\\result.json",
+    "bytes": 563,
+    "sha256": "48c5ebe39ee66f5b9c184447135f53ac521893f426162891f03f6b5c8667174c"
+  },
+  "evidence": {
+    "preparation.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-298\\preparation.json",
+      "bytes": 18089,
+      "sha256": "e9b49f0ddab4a1cc756b51e30c87a5cbe740e37de26b3317cfd2a6fb57f3334d"
+    },
+    "run-ready.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-298\\run-ready.json",
+      "bytes": 859,
+      "sha256": "70aa57a9c9838431c813b3fa9671ae5b5cae70a8b2e5049af69528349ca93e28"
+    },
+    "run-visible-observations.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-298\\run-visible-observations.json",
+      "bytes": 1189,
+      "sha256": "4341be82c3e1c432b4b39092a52fc8c186fcddf2ebdd6da10ed66abe8344d010"
+    },
+    "run-processes-returned.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-298\\run-processes-returned.json",
+      "bytes": 1496,
+      "sha256": "6af6244fdb8f001c4812ddb97dc567b59840d9930ad46d45b87b1f45722ddd8e"
+    },
+    "reopen-ready.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-298\\reopen-ready.json",
+      "bytes": 857,
+      "sha256": "c5bcede8f3d6ab93be66987001b7c0d9a0cb0770eb976d5251f9c8b74f9c3c10"
+    },
+    "reopen-visible-observations.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-298\\reopen-visible-observations.json",
+      "bytes": 666,
+      "sha256": "59761840b17f00c18044ae4b715e7ed8f07976ed38b075a64c6f9a673f5a9228"
+    },
+    "reopen-processes-returned.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-298\\reopen-processes-returned.json",
+      "bytes": 1503,
+      "sha256": "e4e749b88111d4cab39948aa618ff91a8eb2addcf838c17696e525407a0f1c20"
+    },
+    "process-result.json": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-full-main-298\\process-result.json",
+      "bytes": 3790,
+      "sha256": "3ff23d1da63aa5a515b36dfa48768947176c7b54499ec76e5c570fa3b03a7615"
+    }
+  },
+  "language": "CPP",
+  "actual_UI_import_enable_file_list_approval": true,
+  "actual_native_picker_selected_fresh_fixture": true,
+  "captured_entries": 70,
+  "guest_success_reported_by_production_UI": true,
+  "guest_call_count_independently_observed": false,
+  "UI_success_mapping": {
+    "source": {
+      "path": "D:\\build_cache\\s244s\\lib\\plugins\\directory_task_session.dart",
+      "bytes": 14378,
+      "sha256": "c34c29114463acf0fe524f0009d0981268fca02b6b8f6c24218b2b4d858bfae2"
+    },
+    "first_line": 334,
+    "last_line": 344
+  },
+  "original_worker_join_visible": true,
+  "original_ACK_visible": true,
+  "normal_close_and_independent_reopen": true,
+  "persisted_approval_visible": true,
+  "no_active_old_directory_task_visible": true,
+  "six_original_processes_exited_zero": true,
+  "test_directory_byte_unchanged": true,
+  "settings_native_crash_observed": false,
+  "approval_seeded": false,
+  "native_picker_injected": false,
+  "qualification_shell": false,
+  "VM_calls": 0,
+  "all_languages_full_main_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "limits": "One C++ directory fixture through unmodified production main and a pinned local Flutter framework. UI shows 70 entries and successful guest result, not individual guest call count. Combined full main, SDK26 and combined release gates remain open. Historical Unknowns unchanged."
+}

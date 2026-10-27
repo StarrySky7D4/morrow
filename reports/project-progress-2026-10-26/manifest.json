@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "C:\\ms1020\\reports\\project-progress-2026-10-26\\index.html",
+      "bytes": 23558,
+      "sha256": "c8d351118f00aef8ddbc4d3d2223aead603ed3928e5375325105a3d07409ab42"
+    },
+    {
+      "path": "C:\\ms1020\\reports\\project-progress-2026-10-26\\report-data.json",
+      "bytes": 207203,
+      "sha256": "482673262a95203bd587f1092e0277e04493ee9c90ed00af01c0c362ab4a98a4"
+    }
+  ],
+  "evidence": {
+    "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\manifest.json",
+    "bytes": 4254,
+    "sha256": "bbed6465e156ff4bc97fbb66814ef4e57042d555cd77775f4db2db7a92f2e3f7"
+  }
+}

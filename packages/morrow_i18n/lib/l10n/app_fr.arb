@@ -1521,6 +1521,8 @@
   "pluginsDirectoryIntro": "Seuls les noms et métadonnées des éléments directement dans le dossier choisi sont partagés. Le contenu des fichiers et des sous-dossiers ne sera pas lu.",
   "pluginsDirectoryLimit": "Nombre maximal d’entrées (1024)",
   "pluginsDirectoryMetadataLimit": "Limite de métadonnées (octets, 1 MiB maximum)",
+  "pluginsDirectoryNativePickerIntro": "La sélection du dossier lance le module. Le délai inclut la sélection ; quitter cette vue annule la tâche en attente.",
+  "pluginsDirectoryNativePickerStart": "Choisir un dossier et exécuter le module",
   "pluginsDirectorySelectHandler": "Choisir un plugin de dossier autorisé",
   "pluginsDirectoryStart": "Lire le dossier et exécuter le plugin",
   "pluginsDirectoryTitle": "Contenu du dossier",

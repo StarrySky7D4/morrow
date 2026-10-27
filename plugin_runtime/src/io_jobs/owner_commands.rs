@@ -15,12 +15,14 @@ use zeroize::Zeroizing;
 pub(super) mod directories;
 #[path = "file_commands.rs"]
 mod files;
+#[path = "blob_commands.rs"]
+mod blobs;
+pub use blobs::{BlobCommandHandle, BlobCommandKind, BlobResponse, BlobUploadOwner};
 #[cfg(windows)]
 pub use directories::{
     DIRECTORY_COMMAND_FIXED_BYTES, DIRECTORY_FINISH_CHARGE, DIRECTORY_PAGE_CHARGE,
-    DirectoryCommandError, DirectoryCommandHandle, DirectoryResponse, DirectorySession,
-    DirectoryGuestHandle, DirectoryGuestResult,
-    MAX_DIRECTORY_OBSERVATIONS,
+    DirectoryCommandError, DirectoryCommandHandle, DirectoryGuestHandle, DirectoryGuestResult,
+    DirectoryResponse, DirectorySession, MAX_DIRECTORY_OBSERVATIONS,
 };
 #[cfg(windows)]
 #[path = "mutation_commands.rs"]
@@ -138,6 +140,7 @@ pub(super) struct Status {
 }
 
 enum Reply {
+    Blob(Box<Result<BlobResponse, crate::blob_upload::Error>>),
     Data(Zeroizing<Vec<u8>>),
     Renewal(Result<ServiceRunSnapshot, BindingError>),
     File(Result<FileResponse, FileCommandError>),
@@ -329,6 +332,10 @@ struct RenewalRequest {
 }
 
 enum CommandKind<O: HostOwner> {
+    Blob {
+        request: Box<blobs::Request>,
+        dispatch: blobs::Dispatch<O>,
+    },
     #[cfg(windows)]
     DirectoryGuest {
         request: directories::GuestRequest,
@@ -368,13 +375,26 @@ pub(super) struct Command<O: HostOwner> {
     ticket: Arc<Ticket>,
 }
 impl<O: HostOwner> Command<O> {
+    pub(super) fn discard_on_worker(mut self) {
+        #[cfg(windows)]
+        if let CommandKind::Directory { request, .. } = &mut self.kind {
+            request.enter_worker();
+        }
+        drop(self);
+    }
     pub(super) fn execute(
-        self,
+        mut self,
         owner: &mut O,
         control: &Arc<Control>,
         instance: Option<&crate::manager::ManagedInstance>,
         files: &mut FileResources,
     ) -> Result<(), JobError> {
+        // Adopt accepted native inputs before cancellation, preparation or any
+        // owner callback can return/unwind. No Control/clock guard spans this.
+        #[cfg(windows)]
+        if let CommandKind::Directory { request, .. } = &mut self.kind {
+            request.enter_worker();
+        }
         {
             let state = control.lock();
             let status = self.ticket.lock();
@@ -397,10 +417,19 @@ impl<O: HostOwner> Command<O> {
         // No control/response lock spans application code. A panic propagates
         // to the existing worker recovery boundary and retains the same owner.
         let reply = match self.kind {
+            CommandKind::Blob { request, dispatch } => Some(Reply::Blob(Box::new(dispatch(
+                owner, control, &self.ticket, *request,
+            )))),
             #[cfg(windows)]
             CommandKind::DirectoryGuest { request, dispatch } => {
-                Some(Reply::DirectoryGuest(Box::new(dispatch(owner, instance, control,
-                    &self.ticket, &mut files.directories, request))))
+                Some(Reply::DirectoryGuest(Box::new(dispatch(
+                    owner,
+                    instance,
+                    control,
+                    &self.ticket,
+                    &mut files.directories,
+                    request,
+                ))))
             }
             #[cfg(windows)]
             CommandKind::Directory { request, dispatch } => {
@@ -478,6 +507,19 @@ impl<O: HostOwner> IoWorker<O> {
         bytes: usize,
         input: Option<Zeroizing<Vec<u8>>>,
     ) -> Result<OwnerCommandHandle, OwnerCommandError> {
+        self.enqueue_owner_command_retained(kind, bytes, input)
+            .map_err(|(error, _unsubmitted)| error)
+    }
+
+    /// A refused enqueue returns the exact unsubmitted command. The caller
+    /// may recover owned native input before dropping its admission guard.
+    /// Once sent, the original delivery/Unknown rules remain unchanged.
+    fn enqueue_owner_command_retained(
+        &self,
+        kind: CommandKind<O>,
+        bytes: usize,
+        input: Option<Zeroizing<Vec<u8>>>,
+    ) -> Result<OwnerCommandHandle, (OwnerCommandError, Box<CommandKind<O>>)> {
         // Recovery bindings may enter only the four read-only mutation history
         // commands. This central gate also rejects raw CommandOwner, file,
         // service-renewal, and any future owner command variant by default.
@@ -485,21 +527,22 @@ impl<O: HostOwner> IoWorker<O> {
         if self.control.mutation_history
             && !matches!(&kind, CommandKind::Mutation { request, .. } if request.is_history_only())
         {
-            return Err(OwnerCommandError::Closed);
+            return Err((OwnerCommandError::Closed, Box::new(kind)));
         }
         #[cfg(not(windows))]
         if self.control.mutation_history {
-            return Err(OwnerCommandError::Closed);
+            return Err((OwnerCommandError::Closed, Box::new(kind)));
         }
         let mut state = self.control.lock();
         if closed(&self.control, state.phase) {
             clear_sensitive(&mut state);
-            return Err(OwnerCommandError::Closed);
+            return Err((OwnerCommandError::Closed, Box::new(kind)));
         }
         if state.owner_commands >= MAX_OWNER_COMMANDS {
-            return Err(OwnerCommandError::Busy);
+            return Err((OwnerCommandError::Busy, Box::new(kind)));
         }
         let charge = match &kind {
+            CommandKind::Blob { request, .. } => request.charge(),
             #[cfg(windows)]
             CommandKind::Directory { request, .. } => request.charge(),
             #[cfg(windows)]
@@ -510,14 +553,13 @@ impl<O: HostOwner> IoWorker<O> {
             _ => 0,
         };
         if charge != 0 {
-            let total = state
-                .bytes
-                .checked_add(charge)
-                .ok_or(OwnerCommandError::Limit)?;
+            let Some(total) = state.bytes.checked_add(charge) else {
+                return Err((OwnerCommandError::Limit, Box::new(kind)));
+            };
             if charge > self.control.limits.max_job_bytes
                 || total > self.control.limits.max_total_bytes
             {
-                return Err(OwnerCommandError::Limit);
+                return Err((OwnerCommandError::Limit, Box::new(kind)));
             }
             // Host ceilings, separate from exact instance admission in FileBroker.
             // Admitted cancellation/failure never refunds this cumulative charge.
@@ -557,8 +599,10 @@ impl<O: HostOwner> IoWorker<O> {
                 ticket: Some(ticket),
                 started: false,
             }),
-            Err(mpsc::TrySendError::Full(_)) => Err(OwnerCommandError::Busy),
-            Err(mpsc::TrySendError::Disconnected(_)) => Err(OwnerCommandError::Closed),
+            Err(mpsc::TrySendError::Full(command)) => Err((OwnerCommandError::Busy, Box::new(command.kind))),
+            Err(mpsc::TrySendError::Disconnected(command)) => {
+                Err((OwnerCommandError::Closed, Box::new(command.kind)))
+            }
         }
     }
 }

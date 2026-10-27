@@ -1,6 +1,18 @@
 part of 'workbench_native.dart';
 
 bool _isScheduler(host.Action action) => switch (action) {
+  host.Action.blobPlanStart ||
+  host.Action.blobPlanStatus ||
+  host.Action.blobPlanRead ||
+  host.Action.blobPlanCancel ||
+  host.Action.blobPlanAcknowledge ||
+  host.Action.blobPlanApprove ||
+  host.Action.blobPlanDiscover ||
+  host.Action.blobUploadStart ||
+  host.Action.blobUploadStatus ||
+  host.Action.blobUploadRead ||
+  host.Action.blobUploadInspect ||
+  host.Action.blobUploadConfirm ||
   host.Action.guestMutationStart ||
   host.Action.guestMutationSubmit ||
   host.Action.guestMutationStatus ||

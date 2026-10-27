@@ -835,5 +835,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pluginsDirectoryNativePickerStart": "Escolher pasta e executar o plugin",
+  "pluginsDirectoryNativePickerIntro": "A escolha da pasta inicia o plugin. O prazo inclui a seleção; sair desta vista cancela a tarefa pendente."
 }

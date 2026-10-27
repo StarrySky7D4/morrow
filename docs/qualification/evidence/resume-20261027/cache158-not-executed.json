@@ -1,0 +1,11 @@
+{
+  "active_roles041_preserved": true,
+  "automatic_retry": false,
+  "logical_bytes_deleted": 0,
+  "status": "NOT_EXECUTED_UNRESOLVED_COMPILER_GUARD",
+  "unknown_owner_contacts": 0,
+  "reason": "At least one matching compiler had no readable command line; guard stopped before delete reservation",
+  "files_deleted": 0,
+  "VM_calls": 0,
+  "manifest_sha256": "f7a42a094ff060ce8f995c7a59243e46a6384ee2b00e6145694ca3fbf54d921c"
+}

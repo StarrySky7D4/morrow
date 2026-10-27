@@ -1,0 +1,168 @@
+{
+  "status": "PASS_SCOPED_PRIVATE_CAPNP_PLANNING_CONTROLS_AND_RETAINED_DART_SESSION",
+  "utc": "2026-10-27T17:41:51.792629+00:00",
+  "qualification_source": "25c18413bd5b7e4df377cec8ca38c4247f48c704c75dc704f43904f36b0eaf82",
+  "implementation": [
+    "Seven append-only Capn Proto controls cover start/status/read/cancel/acknowledge/approve/discover",
+    "Catalog exposes typed same-package planner to upload mappings; this metadata grants no upload",
+    "Native retains the original host-generated upload submission and key, including after an upload acknowledgement",
+    "Dart retains an immutable request per original backend pair; a missing start, read, approval or acknowledgement never authorizes resubmission",
+    "Proposal input SHA is checked against exact original input bytes together with package, revision and handler",
+    "An existing upload can be observed by its host-generated identity without reconstructing its input or starting another upload",
+    "View replacement/closing cannot acquire an unread proposal; a lost approval response is discovered before cancelling the original upload",
+    "Planning controls bypass pending service business; sensitive input request copies are cleared on success and failure"
+  ],
+  "schema_compatibility": {
+    "status": "PASS_APPEND_ONLY_PRIVATE_SCHEMA",
+    "prior_actions_unchanged": 168,
+    "new_actions": [
+      [
+        "blobPlanStart",
+        168
+      ],
+      [
+        "blobPlanStatus",
+        169
+      ],
+      [
+        "blobPlanRead",
+        170
+      ],
+      [
+        "blobPlanCancel",
+        171
+      ],
+      [
+        "blobPlanAcknowledge",
+        172
+      ],
+      [
+        "blobPlanApprove",
+        173
+      ],
+      [
+        "blobPlanDiscover",
+        174
+      ]
+    ],
+    "prior_structs_unchanged_prefix": 60,
+    "prior_fields_unchanged": 570,
+    "new_structs": [
+      "BlobPlanApproval",
+      "BlobPlanResult",
+      "BlobPlanStart",
+      "BlobPlanState",
+      "BlobPlanView",
+      "BlobPlanner"
+    ]
+  },
+  "Dart_client_and_sessions": {
+    "passed": 68,
+    "failed": 0
+  },
+  "Flutter_sensitive_buffers_and_service_routing": {
+    "passed": 34,
+    "failed": 0
+  },
+  "actual_native": {
+    "passed": 21,
+    "failed": 0,
+    "private_control_methods": 6,
+    "product_methods": 15,
+    "private_control_positive_cases": [
+      {
+        "language": "C",
+        "bytes": 150017
+      },
+      {
+        "language": "CPP",
+        "bytes": 150017
+      },
+      {
+        "language": "RUST",
+        "bytes": 150017
+      }
+    ],
+    "product_positive_cases": [
+      {
+        "language": "C",
+        "bytes": 16777216
+      },
+      {
+        "language": "C",
+        "bytes": 150017
+      },
+      {
+        "language": "CPP",
+        "bytes": 16777216
+      },
+      {
+        "language": "CPP",
+        "bytes": 150017
+      },
+      {
+        "language": "RUST",
+        "bytes": 16777216
+      },
+      {
+        "language": "RUST",
+        "bytes": 150017
+      }
+    ],
+    "original_planning_joins_in_positive_cases": 9,
+    "original_upload_joins_in_positive_cases": 9,
+    "protected_closed_library_reopen": true,
+    "exact_stored_bytes_SHA": true
+  },
+  "prior_failure": {
+    "result": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-controls-439\\result.json",
+      "bytes": 5682,
+      "sha256": "580ed21798985963fb6d2640e03190b22a77b4ff4d522b093119d17815cbbb9a"
+    },
+    "native_passed": 18,
+    "native_failed": 3,
+    "stage": "Input digest comparison before upload approval",
+    "cause": "Native hashed the complete task Invocation, while the Dart client verifies original input bytes",
+    "correction": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-controls-correction-440\\correction.json",
+      "bytes": 807,
+      "sha256": "538e58f334800bcd4cb69072c7d5b6f435e382c65c3b10091cffa7dbf33ea5d2"
+    },
+    "new_fresh_stores": true,
+    "old_stores_replayed": false
+  },
+  "new_module_Clippy_warnings": 0,
+  "existing_host_warnings_retained": true,
+  "default_production": "Library, binaries and tests compile; broad legacy host tests were not executed",
+  "qualification": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-controls-441\\result.json",
+    "bytes": 7029,
+    "sha256": "9773c9c4b03f59f3a8c536bf7b09ec40c0e3db77a38cfa65643082dc404b50a2"
+  },
+  "retained_program": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-plan-controls-441\\programs\\morrow_workbench_host-249469a96bf4f976.exe",
+    "bytes": 40513024,
+    "sha256": "8991447cbd53d0cb1a7dda5d39748d7768ba05a82cdbfe97847eff86ba6e8ae6"
+  },
+  "frozen_inputs_verified": 57,
+  "all_recent_processes_closed": true,
+  "cache_root": "D:/build_cache",
+  "registered_VMs": 4,
+  "VM_mutations": 0,
+  "host_policy_changes": 0,
+  "historical_unknown_owner_contacts": 0,
+  "private_CapnProto_planning_controls": true,
+  "retained_Dart_planning_session": true,
+  "combined_Dart_to_native_planning_product_run": false,
+  "rendered_approval_UI": false,
+  "rendered_recovery_UI": false,
+  "cross_restart_Unknown_recovery": false,
+  "watch_rename": false,
+  "full_P2_accepted": false,
+  "full_P3_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "remote_publication": false
+}

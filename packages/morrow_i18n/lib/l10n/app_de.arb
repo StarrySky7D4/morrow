@@ -1521,6 +1521,8 @@
   "pluginsDirectoryIntro": "Nur Namen und Metadaten direkt im gewählten Ordner werden geteilt. Dateiinhalte und Unterordner werden nicht gelesen.",
   "pluginsDirectoryLimit": "Maximale Einträge (bis 1024)",
   "pluginsDirectoryMetadataLimit": "Metadatenlimit (Bytes, bis 1 MiB)",
+  "pluginsDirectoryNativePickerIntro": "Nach der Ordnerauswahl startet das Plugin. Die Zeitbegrenzung umfasst die Auswahl; beim Verlassen dieser Ansicht wird die laufende Aufgabe abgebrochen.",
+  "pluginsDirectoryNativePickerStart": "Ordner wählen und Plugin starten",
   "pluginsDirectorySelectHandler": "Genehmigtes Ordner-Plugin wählen",
   "pluginsDirectoryStart": "Ordner lesen und Plugin ausführen",
   "pluginsDirectoryTitle": "Ordnerinhalt",

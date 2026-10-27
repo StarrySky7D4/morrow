@@ -88,6 +88,7 @@ class DirectoryTaskSession {
   _Expected? _expected;
   bool _trusted = false, _busy = false, _controlBusy = false, _pumping = false;
   bool _cancelled = false, _ackUnknown = false;
+  bool _nativeViewRevoked = false;
   int _epoch = 0;
   final _history = <DirectoryTaskRecord>[];
   List<DirectoryTaskRecord> get history => List.unmodifiable(_history);
@@ -191,10 +192,16 @@ class DirectoryTaskSession {
           _same(value.submission, _attempt!.submission);
       _accept(value, start: recovered);
       if (recovered) {
-        _phase = value.exit == null
+        _phase = _nativeViewRevoked
+            ? DirectoryTaskPhase.unknown
+            : value.exit == null
             ? DirectoryTaskPhase.capturing
             : DirectoryTaskPhase.failed;
-        _notice = value.exit == null ? null : DirectoryTaskNotice.interrupted;
+        _notice = _nativeViewRevoked
+            ? DirectoryTaskNotice.interrupted
+            : value.exit == null
+            ? null
+            : DirectoryTaskNotice.interrupted;
       } else if (_notice == DirectoryTaskNotice.status ||
           _notice == DirectoryTaskNotice.controlUnknown) {
         _notice = null;
@@ -223,7 +230,12 @@ class DirectoryTaskSession {
     _notify();
     try {
       final response = await directories.startDirectory(value);
-      if (epoch == _epoch) _accept(response, start: true);
+      if (epoch == _epoch) {
+        _accept(response, start: true);
+        // A view can leave while START is still in flight. Keep its original
+        // acknowledgement, then cancel that exact owner once; never replace it.
+        if (_nativeViewRevoked && canCancel) await cancel();
+      }
     } catch (_) {
       if (epoch == _epoch) {
         _trusted = false;
@@ -232,6 +244,33 @@ class DirectoryTaskSession {
       }
     } finally {
       _busy = false;
+      _notify();
+    }
+  }
+
+  /// Revocation is sticky even before the original START acknowledges a key.
+  /// A lost reply remains Unknown; revocation never probes or replays it.
+  Future<void> revokeNativePickerView() async {
+    if (_attempt?.nativePicker != true ||
+        _nativeViewRevoked ||
+        ![
+          DirectoryTaskPhase.capturing,
+          DirectoryTaskPhase.ready,
+          DirectoryTaskPhase.running,
+          DirectoryTaskPhase.unknown,
+        ].contains(_phase)) {
+      return;
+    }
+    _nativeViewRevoked = true;
+    _cancelled = true;
+    if (_phase == DirectoryTaskPhase.unknown) {
+      _notify();
+      return;
+    }
+    _phase = DirectoryTaskPhase.cancelled;
+    if (canCancel) {
+      await cancel();
+    } else {
       _notify();
     }
   }
@@ -284,6 +323,16 @@ class DirectoryTaskSession {
           _captured = result;
           _expected = null;
           _phase = DirectoryTaskPhase.ready;
+        } else if (result is DirectoryTaskRefused &&
+            _expected == _Expected.captured) {
+          _expected = null;
+          _cancelled = true;
+          _phase = result.fault == DirectoryCommandFault.cancelled
+              ? DirectoryTaskPhase.cancelled
+              : DirectoryTaskPhase.failed;
+          if (result.fault == DirectoryCommandFault.expired) {
+            _notice = DirectoryTaskNotice.interrupted;
+          }
         } else if (result is DirectoryTaskGuest &&
             _expected == _Expected.guest) {
           _result = result;
@@ -435,5 +484,6 @@ class DirectoryTaskSession {
     _notice = null;
     _cancelled = false;
     _ackUnknown = false;
+    _nativeViewRevoked = false;
   }
 }

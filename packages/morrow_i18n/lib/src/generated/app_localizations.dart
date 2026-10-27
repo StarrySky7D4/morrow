@@ -3376,6 +3376,18 @@ abstract class AppLocalizations {
   /// **'Metadata limit (bytes, up to 1 MiB)'**
   String get pluginsDirectoryMetadataLimit;
 
+  /// No description provided for @pluginsDirectoryNativePickerIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Choosing a folder starts the plugin. The task lifetime includes selection; leaving this view cancels the pending task.'**
+  String get pluginsDirectoryNativePickerIntro;
+
+  /// No description provided for @pluginsDirectoryNativePickerStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose folder and run plugin'**
+  String get pluginsDirectoryNativePickerStart;
+
   /// No description provided for @pluginsDirectorySelectHandler.
   ///
   /// In en, this message translates to:

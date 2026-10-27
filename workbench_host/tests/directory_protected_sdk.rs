@@ -33,6 +33,10 @@ const ID: &str = "org.example.directory-protected-sdk";
 const HANDLER: &str = "directory.immediate-selected";
 const WAIT: Duration = Duration::from_secs(15);
 
+#[allow(unsafe_code)]
+#[path = "support/retained_directory_owner.rs"]
+mod retained_owner;
+
 fn directory(path: &Path, sharing: u32) -> std::io::Result<File> {
     OpenOptions::new()
         .read(true)

@@ -1,0 +1,723 @@
+{
+  "status": "CURRENT_NORMAL47_AND_SHARED17_PASSED_REMAINING_P2_OPEN",
+  "utc": "2026-10-27T07:53:45.292083+00:00",
+  "source_digest": "f8492320dbf7e156bfccadae687f50362a7aafb4d1c58e90014170aae9b04f78",
+  "original_matrix": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-matrix-review-328\\result.json",
+    "bytes": 36289,
+    "sha256": "4e91091774eb6f39741e0c825f1340f2bf47a6b176dae8ec06a6d27f2c1d2983"
+  },
+  "normal47": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case329-summary.json",
+    "bytes": 975,
+    "sha256": "2067ca5641f98d35c91be4de59b68c8c995b20a25658fc0d245520b81c234531"
+  },
+  "shared17": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case335-summary.json",
+    "bytes": 1332,
+    "sha256": "f1927522f335a8c9b8d02778ed067871425c889cff1a00d28dadc9645cc793da"
+  },
+  "display_correction": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-matrix-review-344\\case329-display-correction.json",
+    "bytes": 5473,
+    "sha256": "755add19b1ebb95733bc318b721f9f2445296b189ae11d1cfe602b9384d94be0"
+  },
+  "rows": [
+    {
+      "requirement": "Refusal before resource creation",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-refusal-ledgers-050\\result.json",
+          "bytes": 5540,
+          "sha256": "77cb49299a327b0f9a08fae709c5ce5570b4ddf0a66b5850abc369b593051edf"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+          "bytes": 15002,
+          "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+        }
+      ],
+      "historical_status": "SCOPED_PASS_WITH_PRIOR_RUNTIME_AND_CURRENT_LOGIC",
+      "historical_scope": "17 real read-only caller refusals at earlier a5 source; current native checks pass. No relabeling of historical runtime as new ab14 execution.",
+      "original_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+      "current_acceptance": "SCOPED_ACTUAL_READ_ONLY_CALLER_REFUSALS_AT_RECORDED_SOURCE",
+      "new_evidence": [
+        {
+          "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261027\\p2-native256-refusal-capacity.json",
+          "bytes": 3291,
+          "sha256": "3e2be6ec8f5c6331cc9eb7268dc85dcf0b3537fb43cc0d607825b4d0b7a1c814"
+        }
+      ],
+      "limits": "Eleven selected native methods include 17 actual read-only caller refusals in one original registry, without Runner or account/policy changes. This is not the full SDK seventeen-refusal capacity proof.",
+      "freshly_verified_original_receipts": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-refusal-ledgers-050\\result.json",
+            "bytes": 5540,
+            "sha256": "77cb49299a327b0f9a08fae709c5ce5570b4ddf0a66b5850abc369b593051edf"
+          },
+          "observed_status": "PASS_SCOPED_NATIVE_REFUSAL_LEDGER_AND_OUTER_AUTHORITY_GUARDS",
+          "actual_recorded_source": null,
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+            "bytes": 15002,
+            "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+          },
+          "observed_status": "PASS_SCOPED_AFTER_HELPER_FAULT_GUARDS_AND_NATIVE_REGRESSION",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261027\\p2-native256-refusal-capacity.json",
+            "bytes": 3291,
+            "sha256": "3e2be6ec8f5c6331cc9eb7268dc85dcf0b3537fb43cc0d607825b4d0b7a1c814"
+          },
+          "observed_status": "PASS_SCOPED_CURRENT_NATIVE_REFUSAL_AND_LOCAL_REGISTRY_CAPACITY",
+          "actual_recorded_source": "b09d8accaeabba9510675ba015d06811dec2f72b47043d2ea092ee54e84c946a",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        }
+      ],
+      "current_full_candidate_runtime_rebound": false
+    },
+    {
+      "requirement": "LogonUser explicit failure and null output",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case048-refusal-review\\result.json",
+          "bytes": 17185,
+          "sha256": "532948ccbfefb7b5d0ed277b21bcb97ebfe5a9a3d870011d88fe98bc8393adf3"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+          "bytes": 15002,
+          "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+        }
+      ],
+      "historical_status": "PRIOR_NATIVE_PASS_CURRENT_LOGIC",
+      "historical_scope": "Actual Win32 1326 refusal and full retirement chain at a5; current native checks retain original failure.",
+      "original_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+      "current_acceptance": "HISTORICAL_SCOPED_EVIDENCE_NOT_REBOUND",
+      "freshly_verified_original_receipts": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case048-refusal-review\\result.json",
+            "bytes": 17185,
+            "sha256": "532948ccbfefb7b5d0ed277b21bcb97ebfe5a9a3d870011d88fe98bc8393adf3"
+          },
+          "observed_status": "PASS_ONE_ACTUAL_WINDOWS_LOGON_REFUSAL_THROUGH_NATIVE_SDK_FACTORY_OWNER_SETUP_POLICY",
+          "actual_recorded_source": "a5f1c793049674540cb12c138b3b2597cacb73447fcb354986eab7dee808c782",
+          "case_clean": true,
+          "policy_clean": true,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+            "bytes": 15002,
+            "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+          },
+          "observed_status": "PASS_SCOPED_AFTER_HELPER_FAULT_GUARDS_AND_NATIVE_REGRESSION",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        }
+      ],
+      "current_full_candidate_runtime_rebound": false
+    },
+    {
+      "requirement": "Partial and abnormal outputs",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+          "bytes": 15002,
+          "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+        }
+      ],
+      "historical_status": "CURRENT_LOGIC_ONLY_ACTUAL_INJECTION_OPEN",
+      "historical_scope": "Original partial-output and failure-debt logic tested; no newly injected OS partial output.",
+      "original_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+      "current_acceptance": "SCOPED_REAL_CREATION_WITH_QUALIFICATION_PARTIAL_AND_ALIASED_DELIVERY_OBSERVED",
+      "new_evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case177-summary.json",
+          "bytes": 3601,
+          "sha256": "b6f0e1698a83fc3c589e39a8343cdcaaa124016b76bacebd170a09312a97e2d3"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case201-summary.json",
+          "bytes": 3648,
+          "sha256": "18035e4560159c6a1f5f08956e44e71b0f763a88c53d45b5104e3a483d2fa198"
+        }
+      ],
+      "limits": "Actual original native creation occurred; the qualification seam then withheld or aliased delivery output. Natural OS malformed output, normal completion and resource retirement are not claimed; original Unknown owners remain retained.",
+      "freshly_verified_original_receipts": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+            "bytes": 15002,
+            "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+          },
+          "observed_status": "PASS_SCOPED_AFTER_HELPER_FAULT_GUARDS_AND_NATIVE_REGRESSION",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case177-summary.json",
+            "bytes": 3601,
+            "sha256": "b6f0e1698a83fc3c589e39a8343cdcaaa124016b76bacebd170a09312a97e2d3"
+          },
+          "observed_status": "PASS_SCOPED_V7_PARTIAL_OUTPUT_DELIVERY_REJECTED_ORIGINAL_RESOURCES_RETAINED",
+          "actual_recorded_source": "b09d8accaeabba9510675ba015d06811dec2f72b47043d2ea092ee54e84c946a",
+          "case_clean": false,
+          "policy_clean": true,
+          "retained_original_session": true
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case201-summary.json",
+            "bytes": 3648,
+            "sha256": "18035e4560159c6a1f5f08956e44e71b0f763a88c53d45b5104e3a483d2fa198"
+          },
+          "observed_status": "PASS_SCOPED_V7_ALIASED_OUTPUT_DELIVERY_REJECTED_ORIGINAL_RESOURCES_RETAINED",
+          "actual_recorded_source": "b09d8accaeabba9510675ba015d06811dec2f72b47043d2ea092ee54e84c946a",
+          "case_clean": false,
+          "policy_clean": true,
+          "retained_original_session": true
+        }
+      ],
+      "current_full_candidate_runtime_rebound": false
+    },
+    {
+      "requirement": "Token derivation and default DACL failures separately",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+          "bytes": 15002,
+          "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+        }
+      ],
+      "historical_status": "CURRENT_LOGIC_ONLY_ACTUAL_INJECTION_OPEN",
+      "historical_scope": "Distinct original stages and failure preservation tested; real fault coverage still open.",
+      "original_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+      "current_acceptance": "SCOPED_REAL_NATIVE_REFUSALS_FIRST_FAILURE_RETAINED",
+      "new_evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case118-summary.json",
+          "bytes": 3410,
+          "sha256": "6bdac2b9f964604a888fe263ed1f1c82c81b3ea6854c199319d6938abb5368fd"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case147-summary.json",
+          "bytes": 3431,
+          "sha256": "effa34bc0107eb754893d31003d7d809a550b45e201bf7d8fb61f94423d3ef81"
+        }
+      ],
+      "limits": "Distinct source bindings retained; no retirement, normal completion or full P2 inferred.",
+      "freshly_verified_original_receipts": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+            "bytes": 15002,
+            "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+          },
+          "observed_status": "PASS_SCOPED_AFTER_HELPER_FAULT_GUARDS_AND_NATIVE_REGRESSION",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case118-summary.json",
+            "bytes": 3410,
+            "sha256": "6bdac2b9f964604a888fe263ed1f1c82c81b3ea6854c199319d6938abb5368fd"
+          },
+          "observed_status": "PASS_SCOPED_V5_TOKEN_DERIVATION_NATIVE_REFUSAL_FIRST_FAILURE_PRESERVED",
+          "actual_recorded_source": "e962f06eba71abe69a968d1faf89f5084b94e414de7465d6326a9dd3ad78e405",
+          "case_clean": false,
+          "policy_clean": true,
+          "retained_original_session": true
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case147-summary.json",
+            "bytes": 3431,
+            "sha256": "effa34bc0107eb754893d31003d7d809a550b45e201bf7d8fb61f94423d3ef81"
+          },
+          "observed_status": "PASS_SCOPED_V5_DEFAULT_DACL_NATIVE_REFUSAL_FIRST_FAILURE_PRESERVED",
+          "actual_recorded_source": "d7827205fe709e253b0f39db19b7a11d2ebcc2c1de01cc0aa84f0469c9a196fb",
+          "case_clean": false,
+          "policy_clean": true,
+          "retained_original_session": true
+        }
+      ],
+      "current_full_candidate_runtime_rebound": false
+    },
+    {
+      "requirement": "Setup failure after account creation",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case079-setup-failure-review\\result.json",
+          "bytes": 1619,
+          "sha256": "c0740862ac84445ce27efcfad1d34005ece7ff91622f96facad4d0449fe07705"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case079-summary.json",
+          "bytes": 1619,
+          "sha256": "c0740862ac84445ce27efcfad1d34005ece7ff91622f96facad4d0449fe07705"
+        }
+      ],
+      "historical_status": "CURRENT_ACTUAL_INJECTED_FAULT_PASS",
+      "historical_scope": "Real two users and one group created and SIDs read back, then qualification error injected. Unknown retained; no normal completion or cleanup claim.",
+      "original_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+      "current_acceptance": "HISTORICAL_SCOPED_EVIDENCE_NOT_REBOUND",
+      "freshly_verified_original_receipts": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case079-setup-failure-review\\result.json",
+            "bytes": 1619,
+            "sha256": "c0740862ac84445ce27efcfad1d34005ece7ff91622f96facad4d0449fe07705"
+          },
+          "observed_status": "PASS_SCOPED_ACTUAL_SETUP_FAILURE_AFTER_ACCOUNT_CREATION_RETAINED_UNKNOWN",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": false,
+          "policy_clean": true,
+          "retained_original_session": true
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case079-summary.json",
+            "bytes": 1619,
+            "sha256": "c0740862ac84445ce27efcfad1d34005ece7ff91622f96facad4d0449fe07705"
+          },
+          "observed_status": "PASS_SCOPED_ACTUAL_SETUP_FAILURE_AFTER_ACCOUNT_CREATION_RETAINED_UNKNOWN",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": false,
+          "policy_clean": true,
+          "retained_original_session": true
+        }
+      ],
+      "current_full_candidate_runtime_rebound": false
+    },
+    {
+      "requirement": "Late creation result",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case080-preparation.json",
+          "bytes": 11998,
+          "sha256": "28948e4da37427ec5c5833d52d20bf70bf9338f7106b7410f96d2029d4589fdd"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case080-static-review.json",
+          "bytes": 8094,
+          "sha256": "beadcc5f327d220bee46727d277e842cbcd138f223cb702f7ba0e4cdf8bf4422"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-034\\result.json",
+          "bytes": 2189,
+          "sha256": "19682ff86caad28fe5957aea2b8ddef4da57fff010987f1e9ef2f60138358e85"
+        }
+      ],
+      "historical_status": "COMPILED_PREPARED_NOT_RUN",
+      "historical_scope": "VM035 pending manual input. C-only delay after real successful CreateProcess outputs are captured; unchanged original deadline. Natural OS delay not claimed.",
+      "original_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+      "current_acceptance": "SCOPED_CASE098_REAL_OUTPUTS_AND_INJECTED_LATE_DELIVERY",
+      "new_evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case098-summary.json",
+          "bytes": 1278,
+          "sha256": "d2bd24b6f86d2780ac55a78799096c6cd3b17e5057210894d62ace831e4c6732"
+        }
+      ],
+      "limits": "case080 remains rejected; delayed original outputs retain Unknown and first native failure.",
+      "freshly_verified_original_receipts": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case080-preparation.json",
+            "bytes": 11998,
+            "sha256": "28948e4da37427ec5c5833d52d20bf70bf9338f7106b7410f96d2029d4589fdd"
+          },
+          "observed_status": "PREPARED_PUBLIC_DRIVERS_NOT_RUN",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case080-static-review.json",
+            "bytes": 8094,
+            "sha256": "beadcc5f327d220bee46727d277e842cbcd138f223cb702f7ba0e4cdf8bf4422"
+          },
+          "observed_status": "PASS_PUBLIC_DRIVER_STATIC_REVIEW",
+          "actual_recorded_source": null,
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-034\\result.json",
+            "bytes": 2189,
+            "sha256": "19682ff86caad28fe5957aea2b8ddef4da57fff010987f1e9ef2f60138358e85"
+          },
+          "observed_status": "COMPILED_BYTE_BOUND_FAULT_VARIANT_NOT_RUNTIME_ACCEPTED",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case098-summary.json",
+            "bytes": 1278,
+            "sha256": "d2bd24b6f86d2780ac55a78799096c6cd3b17e5057210894d62ace831e4c6732"
+          },
+          "observed_status": "PASS_SCOPED_V4_LATE_CREATE_NATIVE_FIRST_FAILURE_PRESERVED",
+          "actual_recorded_source": "4040ffeaf253f45ded09011813b3df8201da1df1738a7983fe7fc0980c868eaa",
+          "case_clean": false,
+          "policy_clean": true,
+          "retained_original_session": true
+        }
+      ],
+      "current_full_candidate_runtime_rebound": false
+    },
+    {
+      "requirement": "Handle close failure",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+          "bytes": 15002,
+          "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+        }
+      ],
+      "historical_status": "CURRENT_LOGIC_ONLY_ACTUAL_INJECTION_OPEN",
+      "historical_scope": "Failure retains original accounting; real injected close failure still open.",
+      "original_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+      "current_acceptance": "SCOPED_REAL_NATIVE_CLOSE_REFUSAL_FIRST_FAILURE_AND_CHARGE_RETAINED",
+      "new_evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case155-summary.json",
+          "bytes": 3466,
+          "sha256": "13c55c7bfb6f4f491109029356e87386ad3c1c6cd02ab6cee5fb13e8ded90f85"
+        }
+      ],
+      "limits": "Original runner-query handle protected then original CloseHandle once; first error6 and original process/thread/tokens remain. No cleanup, full47 or full P2 inferred.",
+      "freshly_verified_original_receipts": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+            "bytes": 15002,
+            "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+          },
+          "observed_status": "PASS_SCOPED_AFTER_HELPER_FAULT_GUARDS_AND_NATIVE_REGRESSION",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case155-summary.json",
+            "bytes": 3466,
+            "sha256": "13c55c7bfb6f4f491109029356e87386ad3c1c6cd02ab6cee5fb13e8ded90f85"
+          },
+          "observed_status": "PASS_SCOPED_V6_HANDLE_CLOSE_NATIVE_REFUSAL_FIRST_FAILURE_PRESERVED",
+          "actual_recorded_source": "10184a3712c7d081b4784418ac3a6297934f78096392a321ed7303bd852df55a",
+          "case_clean": false,
+          "policy_clean": true,
+          "retained_original_session": true
+        }
+      ],
+      "current_full_candidate_runtime_rebound": false
+    },
+    {
+      "requirement": "Helper and pipe created without Runner",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case063-after-helper-review\\result.json",
+          "bytes": 1441,
+          "sha256": "75ae6fa6705ce66ede962cbe5a785d386a811d2d90c40ff9ab505131c5fdc313"
+        }
+      ],
+      "historical_status": "CURRENT_ACTUAL_INJECTED_FAULT_PASS",
+      "historical_scope": "Original helper resources created; no Runner output; original error and Unknown retained, same-owner policy restored.",
+      "original_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+      "current_acceptance": "HISTORICAL_SCOPED_EVIDENCE_NOT_REBOUND",
+      "freshly_verified_original_receipts": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case063-after-helper-review\\result.json",
+            "bytes": 1441,
+            "sha256": "75ae6fa6705ce66ede962cbe5a785d386a811d2d90c40ff9ab505131c5fdc313"
+          },
+          "observed_status": "PASS_SCOPED_ACTUAL_AFTER_HELPER_BEFORE_RUNNER_RETAINED_UNKNOWN",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": false,
+          "policy_clean": true,
+          "retained_original_session": true
+        }
+      ],
+      "current_full_candidate_runtime_rebound": false
+    },
+    {
+      "requirement": "Concurrent close duplicate consume wrong generation",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+          "bytes": 15002,
+          "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-refusal-current-061\\result.json",
+          "bytes": 3036,
+          "sha256": "5fe1a30299d928e8d58b1825826f7aa53be2a370b1494bb35fb85660993212c8"
+        }
+      ],
+      "historical_status": "CURRENT_SCOPED_PASS",
+      "historical_scope": "Original generation and consumption checks; Unknown capacity preserved.",
+      "original_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+      "current_acceptance": "HISTORICAL_SCOPED_EVIDENCE_NOT_REBOUND",
+      "freshly_verified_original_receipts": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\parent-session-native-qualification-060\\result.json",
+            "bytes": 15002,
+            "sha256": "b8c84753c6ba6a860bb9e677743be90ca79f1ac06dfe3968fc8616b9afb63e7d"
+          },
+          "observed_status": "PASS_SCOPED_AFTER_HELPER_FAULT_GUARDS_AND_NATIVE_REGRESSION",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-refusal-current-061\\result.json",
+            "bytes": 3036,
+            "sha256": "5fe1a30299d928e8d58b1825826f7aa53be2a370b1494bb35fb85660993212c8"
+          },
+          "observed_status": "PASS_SCOPED_CURRENT_SDK_REFUSAL_AND_FACTORY_OWNERSHIP",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        }
+      ],
+      "current_full_candidate_runtime_rebound": false
+    },
+    {
+      "requirement": "Normal business full join ACK factory cleanup",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case078-nine-review\\result.json",
+          "bytes": 25862,
+          "sha256": "1acff4ecc01ba381de70542db7da72977195cab52765b2af0b4adcd182b7253a"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case078-summary.json",
+          "bytes": 975,
+          "sha256": "1e09506a3cda50b986d7ce29038ac46b664d0227a939d79b5c1913895320c4fd"
+        }
+      ],
+      "historical_status": "CURRENT_ACTUAL_VM_PASS",
+      "historical_scope": "Current ab14 original47, nine required groups,107 original records; checked complete resource retirement and same-owner policy restore.",
+      "original_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+      "current_acceptance": "PASS_CURRENT_SOURCE_ORIGINAL47_AND_NINE_REQUIRED_GROUPS",
+      "new_evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case243-summary.json",
+          "bytes": 975,
+          "sha256": "611328fef72f0438a4e032dcbfd6fd7987a6c8a77c8f49ad6798ff6c80015713"
+        }
+      ],
+      "limits": "Original47/nine passed on b09. Current f849 combined source requires its own normal case; do not relabel case243.",
+      "freshly_verified_original_receipts": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case078-nine-review\\result.json",
+            "bytes": 25862,
+            "sha256": "1acff4ecc01ba381de70542db7da72977195cab52765b2af0b4adcd182b7253a"
+          },
+          "observed_status": "PASS_SCOPED_ORIGINAL47_AND_NINE_REQUIRED_GROUPS",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": true,
+          "policy_clean": true,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case078-summary.json",
+            "bytes": 975,
+            "sha256": "1e09506a3cda50b986d7ce29038ac46b664d0227a939d79b5c1913895320c4fd"
+          },
+          "observed_status": "PASS_SCOPED_ORIGINAL47_AND_NINE_REQUIRED_GROUPS",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": true,
+          "policy_clean": true,
+          "retained_original_session": false
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case243-summary.json",
+            "bytes": 975,
+            "sha256": "611328fef72f0438a4e032dcbfd6fd7987a6c8a77c8f49ad6798ff6c80015713"
+          },
+          "observed_status": "PASS_SCOPED_ORIGINAL47_AND_NINE_REQUIRED_GROUPS",
+          "actual_recorded_source": "b09d8accaeabba9510675ba015d06811dec2f72b47043d2ea092ee54e84c946a",
+          "case_clean": true,
+          "policy_clean": true,
+          "retained_original_session": false
+        }
+      ],
+      "current_full_candidate_runtime_rebound": true,
+      "new_current_evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case329-summary.json",
+        "bytes": 975,
+        "sha256": "2067ca5641f98d35c91be4de59b68c8c995b20a25658fc0d245520b81c234531"
+      }
+    },
+    {
+      "requirement": "More than 16 clean refusals; Unknown remains charged",
+      "evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case046-summary.json",
+          "bytes": 1332,
+          "sha256": "5b66b7a20efe98a1911c425344cc878d6e38d6e4bd486a7ac667a7d58af8c377"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-refusal-current-061\\result.json",
+          "bytes": 3036,
+          "sha256": "5fe1a30299d928e8d58b1825826f7aa53be2a370b1494bb35fb85660993212c8"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-shared-catalog-062\\result.json",
+          "bytes": 3438,
+          "sha256": "e71de31738507c41e750c424033b026e8df8891482e15c3ef8d99abdb3d31531"
+        }
+      ],
+      "historical_status": "PRIOR_RUNTIME_AND_CURRENT_LEDGER_PASS",
+      "historical_scope": "17 actual a5 refusals share same parent; current SDK/ledger checks retain Unknown and refuse overflow. No discarded history restores capacity.",
+      "original_source_digest": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+      "current_acceptance": "PASS_CURRENT_SOURCE_SEVENTEEN_ACTUAL_NATIVE_REFUSALS_SHARED_OWNER",
+      "new_evidence": [
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case046-summary.json",
+          "bytes": 1332,
+          "sha256": "5b66b7a20efe98a1911c425344cc878d6e38d6e4bd486a7ac667a7d58af8c377"
+        },
+        {
+          "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261027\\p2-native256-refusal-capacity.json",
+          "bytes": 3291,
+          "sha256": "3e2be6ec8f5c6331cc9eb7268dc85dcf0b3537fb43cc0d607825b4d0b7a1c814"
+        },
+        {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case318-preregistered-review-plan.json",
+          "bytes": 1285,
+          "sha256": "b5ac0b73e53fa44813bb34694571e39f577a7ccfd0ef71bf2cd5c2f7d42f259c"
+        }
+      ],
+      "limits": "Case046 retains a5 source and original owners; native256 is only the caller/registry scope. New case318 is prepared for current f849 with fresh cold roles; no result is inferred while compilation is pending.",
+      "freshly_verified_original_receipts": [
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case046-summary.json",
+            "bytes": 1332,
+            "sha256": "5b66b7a20efe98a1911c425344cc878d6e38d6e4bd486a7ac667a7d58af8c377"
+          },
+          "observed_status": "PASS_SCOPED_SEVENTEEN_ACTUAL_NATIVE_REFUSALS_SHARED_ORIGINAL_OWNER",
+          "actual_recorded_source": "a5f1c793049674540cb12c138b3b2597cacb73447fcb354986eab7dee808c782",
+          "case_clean": true,
+          "policy_clean": true,
+          "retained_original_session": false
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-refusal-current-061\\result.json",
+            "bytes": 3036,
+            "sha256": "5fe1a30299d928e8d58b1825826f7aa53be2a370b1494bb35fb85660993212c8"
+          },
+          "observed_status": "PASS_SCOPED_CURRENT_SDK_REFUSAL_AND_FACTORY_OWNERSHIP",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-shared-catalog-062\\result.json",
+            "bytes": 3438,
+            "sha256": "e71de31738507c41e750c424033b026e8df8891482e15c3ef8d99abdb3d31531"
+          },
+          "observed_status": "PASS_SCOPED_SHARED_CATALOG_51_WRAPPERS_AND_SEVENTEEN_FROZEN_GUESTS",
+          "actual_recorded_source": "ab14e23a14cada9752adf36c64fc1c6a13ef4effad96ab758257bdb98e1b6aee",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case046-summary.json",
+            "bytes": 1332,
+            "sha256": "5b66b7a20efe98a1911c425344cc878d6e38d6e4bd486a7ac667a7d58af8c377"
+          },
+          "observed_status": "PASS_SCOPED_SEVENTEEN_ACTUAL_NATIVE_REFUSALS_SHARED_ORIGINAL_OWNER",
+          "actual_recorded_source": "a5f1c793049674540cb12c138b3b2597cacb73447fcb354986eab7dee808c782",
+          "case_clean": true,
+          "policy_clean": true,
+          "retained_original_session": false
+        },
+        {
+          "evidence": {
+            "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261027\\p2-native256-refusal-capacity.json",
+            "bytes": 3291,
+            "sha256": "3e2be6ec8f5c6331cc9eb7268dc85dcf0b3537fb43cc0d607825b4d0b7a1c814"
+          },
+          "observed_status": "PASS_SCOPED_CURRENT_NATIVE_REFUSAL_AND_LOCAL_REGISTRY_CAPACITY",
+          "actual_recorded_source": "b09d8accaeabba9510675ba015d06811dec2f72b47043d2ea092ee54e84c946a",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        },
+        {
+          "evidence": {
+            "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case318-preregistered-review-plan.json",
+            "bytes": 1285,
+            "sha256": "b5ac0b73e53fa44813bb34694571e39f577a7ccfd0ef71bf2cd5c2f7d42f259c"
+          },
+          "observed_status": "PREPARED_NOT_EXECUTED",
+          "actual_recorded_source": "f8492320dbf7e156bfccadae687f50362a7aafb4d1c58e90014170aae9b04f78",
+          "case_clean": null,
+          "policy_clean": null,
+          "retained_original_session": null
+        }
+      ],
+      "current_full_candidate_runtime_rebound": true,
+      "new_current_evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case335-summary.json",
+        "bytes": 1332,
+        "sha256": "f1927522f335a8c9b8d02778ed067871425c889cff1a00d28dadc9645cc793da"
+      }
+    }
+  ],
+  "all_historical_fault_bindings_preserved": true,
+  "new_VM_executions_in_review": 0,
+  "old_unknown_owner_contacts": 0,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

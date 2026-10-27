@@ -1,0 +1,192 @@
+{
+  "status": "PASS_SCOPED_THREE_LANGUAGE_NATIVE_DIRECTORY_PRODUCTION_WIDGET_FLOW",
+  "utc": "2026-10-27T00:05:09.536860+00:00",
+  "candidate_input_sha256": "df0c8e1d7e6e74b1696990f61a1e6f7216a52c70c2ff760e7cd8d8080bba7aee",
+  "languages": [
+    {
+      "language": "RUST",
+      "status": "PASS_SCOPED_DIRECTORY_FORMAL_UI_POSITIVE_AND_REOPEN",
+      "evidence": {
+        "result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-rust\\result.json",
+          "bytes": 1214,
+          "sha256": "b02361104c7fcf2638dead4c170cef6d032411fa83bb12ec12750430abae05fb"
+        },
+        "preparation.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-rust\\preparation.json",
+          "bytes": 20035,
+          "sha256": "5a9aab061caa05ff8a2281de3a15db4e78aa5d43f5b294d660dc958db85176e1"
+        },
+        "independent-frame-review.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-rust\\independent-frame-review.json",
+          "bytes": 422,
+          "sha256": "b6d9a8cbe3d937b804e77830394638ba1c12c1198fc70aebb95f7298b5769d9c"
+        },
+        "run-process.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-rust\\run-process.json",
+          "bytes": 526,
+          "sha256": "0a68e96e47884ea26eeb6dfa4929fd741c82d476a2130ec31e040bd7d23347bc"
+        },
+        "reopen-process.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-rust\\reopen-process.json",
+          "bytes": 532,
+          "sha256": "8454e09d059df87c1dd96678940be592f43a60320d83e43edcecef28af09bcd7"
+        },
+        "content/ui-approval-observed.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-rust\\content\\ui-approval-observed.json",
+          "bytes": 226,
+          "sha256": "ed7a8158f45316cbcd920c1a5df1af9abde5fc760bb194f8b3259dafc77f612b"
+        },
+        "content/native-start-observed.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-rust\\content\\native-start-observed.json",
+          "bytes": 164,
+          "sha256": "82781be7428b5a41ea58385dc6846a25d7e64d6e9a088b4d690b6f9b72dd8174"
+        },
+        "content/run-completed.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-rust\\content\\run-completed.json",
+          "bytes": 2086,
+          "sha256": "9bc2abcaae72f961d2b20720d16136e75f41a7349aed1a7e1920b9264c057da2"
+        },
+        "content/run.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-rust\\content\\run.json",
+          "bytes": 210,
+          "sha256": "1aa0dd1b1b562ff7143bd6c7e0e694b9279f61c81852d71781baf567c3ab0dae"
+        },
+        "content/reopen.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-rust\\content\\reopen.json",
+          "bytes": 164,
+          "sha256": "1809f6e15d1164b0c94498742293cff8b24ec5a4ac357a364cb705e363e94ac5"
+        }
+      }
+    },
+    {
+      "language": "C",
+      "status": "PASS_SCOPED_DIRECTORY_FORMAL_UI_POSITIVE_AND_REOPEN",
+      "evidence": {
+        "result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-c\\result.json",
+          "bytes": 1211,
+          "sha256": "10f7ccabd429a0554422b0ae8ab1d64b62bb9828d022f5f66c36ac43e37de703"
+        },
+        "preparation.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-c\\preparation.json",
+          "bytes": 19545,
+          "sha256": "70acc2298d1c5d3139d3addb2ac3b519bd0257f63d20135d4e8ce3ed894097f7"
+        },
+        "independent-frame-review.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-c\\independent-frame-review.json",
+          "bytes": 404,
+          "sha256": "7907a9c85d2ba6503d8c93871fed20a0a7e23f131e53d06c5c671b93110b08c7"
+        },
+        "run-process.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-c\\run-process.json",
+          "bytes": 520,
+          "sha256": "507b707af74dd60c29e6fdac39d3461b87ab85604664673b720c7adaa09f32a2"
+        },
+        "reopen-process.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-c\\reopen-process.json",
+          "bytes": 526,
+          "sha256": "d55c86f5030e06dd7ef56d97d91dc6aea9dac95cd90d668a2ded857f915b8ed9"
+        },
+        "content/ui-approval-observed.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-c\\content\\ui-approval-observed.json",
+          "bytes": 226,
+          "sha256": "b4ce47cabe8faa415ec2ed6a8ee4439104938ad0574764771df169a3600d1d86"
+        },
+        "content/native-start-observed.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-c\\content\\native-start-observed.json",
+          "bytes": 163,
+          "sha256": "10f57f4798368b79e15a79d0e928db63821c6d9ca5baf9c3db47c775872d36e1"
+        },
+        "content/run-completed.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-c\\content\\run-completed.json",
+          "bytes": 2018,
+          "sha256": "5dad3fd8d55f7d021041871f4c87fca04404e895efb9882c021debd08503b01c"
+        },
+        "content/run.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-c\\content\\run.json",
+          "bytes": 210,
+          "sha256": "e5497274eb0dfa85e894b76333f10337cb2ac3b6a52ec43ebabc932d7bebf99d"
+        },
+        "content/reopen.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-c\\content\\reopen.json",
+          "bytes": 164,
+          "sha256": "45df51fbcc97a7cb815f7c5b4d4deeb2d2edbaa17004660f4a542bbe9bd37885"
+        }
+      }
+    },
+    {
+      "language": "CPP",
+      "status": "PASS_SCOPED_DIRECTORY_FORMAL_UI_POSITIVE_AND_REOPEN",
+      "evidence": {
+        "result.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-cpp\\result.json",
+          "bytes": 1213,
+          "sha256": "26aa6c10bf02dca0e2bf4472cd9c4c03e0d4e3fe5a1a6619e8ad148c34376661"
+        },
+        "preparation.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-cpp\\preparation.json",
+          "bytes": 19837,
+          "sha256": "60bca2e64243fe0986b822ab1c48ec8a8915186d825221b79c5c6b6205449f0d"
+        },
+        "independent-frame-review.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-cpp\\independent-frame-review.json",
+          "bytes": 416,
+          "sha256": "052d3dbace6332e7d242eb78b1e1d9c755907191bc15ac7afede74e16245b026"
+        },
+        "run-process.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-cpp\\run-process.json",
+          "bytes": 524,
+          "sha256": "3310a2d3433703addf3608a85fe29f2098d05f914bb64652a75fe513ca3e3a4f"
+        },
+        "reopen-process.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-cpp\\reopen-process.json",
+          "bytes": 530,
+          "sha256": "0768666b9710ab8fb72e14ef54a9933469346e4742bc7962ae96ee98871b42b7"
+        },
+        "content/ui-approval-observed.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-cpp\\content\\ui-approval-observed.json",
+          "bytes": 226,
+          "sha256": "918c4b8abc8da6a89f29429f732f088fdeff6d95184d45cd794dfdaae2fe6808"
+        },
+        "content/native-start-observed.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-cpp\\content\\native-start-observed.json",
+          "bytes": 164,
+          "sha256": "6ba8bb30267278aa6bf8a3229d0e6d9ec8da7a1efbee006268a2c9560c575004"
+        },
+        "content/run-completed.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-cpp\\content\\run-completed.json",
+          "bytes": 2085,
+          "sha256": "c9c6ddd8916e2db3d50313046ef1cc2c4e8ffe246881a6c8f0377a9bd4505a32"
+        },
+        "content/run.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-cpp\\content\\run.json",
+          "bytes": 210,
+          "sha256": "ce50a4bd0c027dea2b2663a10143c970d5fb3c9b9bba209c6d8c94cf6417dc16"
+        },
+        "content/reopen.json": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-native-formal-234-cpp\\content\\reopen.json",
+          "bytes": 164,
+          "sha256": "10dd0b997865201ecd0b61964befef50c6e8eccac1f672649a3ef87d182abd2d"
+        }
+      }
+    }
+  ],
+  "independent_original_processes": 6,
+  "entries_per_language": 70,
+  "guest_calls_per_language": 4,
+  "UI_approval_seeded": false,
+  "native_picker_injected": false,
+  "original_ACK_and_EOF_exit_checked": true,
+  "persisted_UI_approval_reopened": true,
+  "retired_task_refused": true,
+  "full_main_shell_accepted": false,
+  "cancel_deadline_and_close_fault_matrix_accepted": false,
+  "full_SDK_accepted": false,
+  "SDK_FREEZE": "OPEN",
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "old_owner_contacts": 0,
+  "limits": "Current production PluginLibrary and DirectoryTaskManager in qualification shell. Three positive directory flows only; no full main-shell, full SDK, fault-matrix or release claim."
+}

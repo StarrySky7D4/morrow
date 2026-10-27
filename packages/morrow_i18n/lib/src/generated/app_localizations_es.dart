@@ -1880,6 +1880,14 @@ class AppLocalizationsEs extends AppLocalizations {
       'Límite de metadatos (bytes, hasta 1 MiB)';
 
   @override
+  String get pluginsDirectoryNativePickerIntro =>
+      'Al elegir una carpeta se ejecuta el complemento. El plazo incluye la selección; salir de esta vista cancela la tarea pendiente.';
+
+  @override
+  String get pluginsDirectoryNativePickerStart =>
+      'Elegir carpeta y ejecutar el complemento';
+
+  @override
   String get pluginsDirectorySelectHandler =>
       'Elegir un complemento de carpeta autorizado';
 

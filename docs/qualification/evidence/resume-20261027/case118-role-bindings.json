@@ -1,0 +1,85 @@
+{
+  "status": "PASS_MECHANICAL_ROLE_AND_COMPILER_INPUT_BINDING",
+  "tag": "1a01240e47774b72b3bb196d3d0ddd0a",
+  "vm_id": "b7a69dfb-b756-40e6-9eff-8eabcf8a8f1d",
+  "plan": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-1a01240e47774b72b3bb196d3d0ddd0a\\stage-plan.json",
+    "bytes": 7008,
+    "sha256": "9808cc61c455f38bf527f3aff096ab75ae20d092027666352e1689cb8e2b12bc"
+  },
+  "controller": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-1a01240e47774b72b3bb196d3d0ddd0a\\controller\\Root47Controller1725.exe",
+    "bytes": 164864,
+    "sha256": "ef5d21d7d3322ef2e31a894277fd8cc6ab185d52267d7a6790c50d5dd5ed83e8"
+  },
+  "parent_harness_firmware_uuid": "b2dd7c5f-88ee-4d69-8aeb-d0290e60950e",
+  "vm_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false,
+  "source_digest": "e962f06eba71abe69a968d1faf89f5084b94e414de7465d6326a9dd3ad78e405",
+  "checkout_source_digest": "0904d5644cf533703cc20ea3d07866bfbab689358686cc16666b390d9a7e9b4b",
+  "report_only_equivalence": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\report-code-equivalence-115\\result.json",
+    "bytes": 2716,
+    "sha256": "88dde74543d877fec9b81f4fda11e3b12f60baa25a9f377bce9b2bf04403fc86"
+  },
+  "all_current_code_bytes_verified": true,
+  "actual_role_input_bindings_verified": 4,
+  "original_firmware_and_compiler_checks_preserved": true,
+  "all_four_cold_compiler_outputs_verified": true,
+  "all_overlay_differences_verified": true,
+  "unexpected_setup_fault_marker_absent": true,
+  "roles": [
+    {
+      "role": "P",
+      "cold_compile": true,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-039\\P\\morrow-workbench-supervisor.exe",
+        "bytes": 27738624,
+        "sha256": "494fb43a38f1e8d9ff87c603e406c6bc7888275e3232fa3aef26994358d77b42"
+      },
+      "input_sha256": "7370d45ef8e219e9397504c8760968c9c278649e3ebf961eb5700d179eeaa071",
+      "compiler_artifacts": 871
+    },
+    {
+      "role": "C",
+      "cold_compile": true,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-039\\C\\morrow-protected-checked-vm-harness.exe",
+        "bytes": 99060736,
+        "sha256": "d78be15065e5ef45152d62f8304a0065454726cff53e658712d653b501e9bc45"
+      },
+      "input_sha256": "0e2c0a23466ec45db455a9fdf0b2c6f9e1c25fa93532b6fed306ed2d7eebef36",
+      "compiler_artifacts": 872
+    },
+    {
+      "role": "R",
+      "cold_compile": true,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-039\\R\\codex-command-runner.exe",
+        "bytes": 24591360,
+        "sha256": "f9ade2f226a491002b2df257856f5dbcf70aef304db22f9e2a41ef044da8e027"
+      },
+      "input_sha256": "bfa626ac8495a437978dd3a68e5686c4e533355462b7e3aa1490f6a46c1fcf35",
+      "compiler_artifacts": 620
+    },
+    {
+      "role": "S",
+      "cold_compile": true,
+      "artifact": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-039\\S\\codex-windows-sandbox-setup.exe",
+        "bytes": 37623296,
+        "sha256": "31a76db3f0893fa4b732671e2939b564572c7d309147cd2d6dc06225209a5d75"
+      },
+      "input_sha256": "20f198ed0c883271c52f91e1bd0c2c91ab4ac8bac2963c1925a1fd841a64d272",
+      "compiler_artifacts": 620
+    }
+  ],
+  "verifier_derivation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles039-stage118-binding-review\\derivation.json",
+    "bytes": 1811,
+    "sha256": "2ccaa858995670c335064f408ea2b3a069a1b1c6900ce32af7d84290af8ac1da"
+  },
+  "VM_calls": 0,
+  "original_owner_contacts": 0
+}

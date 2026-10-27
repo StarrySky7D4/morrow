@@ -1,0 +1,125 @@
+{
+  "policy_test_binaries": [
+    {
+      "path": "D:\\build_cache\\s131t\\debug\\deps\\morrow_workbench_host-2ddf66b06add01a6.exe",
+      "bytes": 72805888,
+      "sha256": "4068b1284867fd7c9db50629c776b7f9102943fac9fd32e40dd8eb7161a89cc1"
+    }
+  ],
+  "status": "RECOMPILE_COMPLETE_TESTS_NOT_RUN",
+  "exit_code": 0,
+  "compiler_artifacts": 868,
+  "all_compiler_artifacts_fresh_false": false,
+  "test_binaries": [
+    {
+      "path": "D:\\build_cache\\s131t\\debug\\deps\\directory_protected_sdk-e4a619e0700f4af6.exe",
+      "bytes": 59840000,
+      "sha256": "acde13ffc7124ae4231498e37741346f521f23268ba61d55d91ce9b2234f1758"
+    }
+  ],
+  "test_bodies_executed": 0,
+  "VM_calls": 0,
+  "full_SDK_accepted": false,
+  "inputs": [
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\workbench_host\\src\\io_tasks.rs",
+      "bytes": 35218,
+      "sha256": "21d431e6d873acab7ddd950ff16123639886d78b027b6bf10148e139207f95d0"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\workbench_host\\src\\directory_tasks.rs",
+      "bytes": 16443,
+      "sha256": "664ff1dc5d082a894d418f3a61f03dabf50709e25594ad003f85215936ab6b78"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\workbench_host\\tests\\directory_protected_sdk.rs",
+      "bytes": 31154,
+      "sha256": "07fb3f2b25fe4bde0369cba69daad1c997f675d5b355fb565bf5b914bccce708"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\workbench_host\\tests\\support\\retained_directory_owner.rs",
+      "bytes": 8422,
+      "sha256": "b99c10021c786435f1a7affe1ebb5c21bafe8cf040a55122a268dc6e60e92a28"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\io_jobs\\directory_commands.rs",
+      "bytes": 41377,
+      "sha256": "8a5a91d312995583365f7331c91e293f409bb21bf2015f76e85a86c3b99180d6"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\io_jobs\\owner_commands.rs",
+      "bytes": 29447,
+      "sha256": "6102d38b3daee8aa718a6893afc64781252e87f232f9372aae9ff2e4c06ed86e"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\io_jobs\\directory_commands\\secret_factory_tests.rs",
+      "bytes": 41054,
+      "sha256": "716ac5e20de6e9f6adf8e1e1e900cbce8b587ad31bd0779d4e0cd29d1aed96e7"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\io_jobs\\directory_commands\\retained_capture_tests.rs",
+      "bytes": 9421,
+      "sha256": "1e523bc57c7eae99a3cc5e6c6ec38bce6f1903818b7b2d5d379964601c6b0574"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\workbench_host\\Cargo.toml",
+      "bytes": 3805,
+      "sha256": "990353df43f77adde802f613356d717fcca498e681963adeb938b09d9f7033ad"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\workbench_host\\Cargo.lock",
+      "bytes": 235282,
+      "sha256": "26e32e77d138496fc72832f7b47b0a43b571c4e99ab313675747b82af07d9a3c"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\directory_io.rs",
+      "bytes": 36589,
+      "sha256": "e22deb2389eca719617b724b844f117b6ae56e78db245b2a1fa9488aca277469"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\directory_io\\native_windows.rs",
+      "bytes": 11518,
+      "sha256": "f7e8353f4e7c15364b67ec8944cb1f212481d0e273152d2c4c66620b759f0ed2"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\directory_io\\retirement.rs",
+      "bytes": 8639,
+      "sha256": "53ff3e0ead92cb49c12086a8320fee0df3f92901d6e1706e18909a34534c88cc"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\directory_io\\selection.rs",
+      "bytes": 7179,
+      "sha256": "af541013d1852f849947280eb197dfd85ccd19957631f1b2071977bcc6cbf82a"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\io_jobs.rs",
+      "bytes": 135293,
+      "sha256": "c27259638fb26889817bbe7c5407acc16e5a6445b02fd3ef84f5450681d2e02b"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\io_jobs\\directory_commands\\guest.rs",
+      "bytes": 22046,
+      "sha256": "15b945d5a8ed44c092201f14728bfffcf9651cb6651d761517dfe45b28d1f342"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\plugin_runtime\\src\\io_jobs\\directory_commands\\checked_retirement_tests.rs",
+      "bytes": 14063,
+      "sha256": "a2de44051b4e381cee35746b8748dfbe4975cce3e49c3a1d6d3d36c41bfd2dc0"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\workbench_host\\src\\io_tasks_native_retirement_tests.rs",
+      "bytes": 2111,
+      "sha256": "c8672e35bb1e7e2d94d576772f2ca8cfebc64c89df64d9691d19c8d5ecbad036"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\workbench_host\\src\\io_tasks_ad31_no_owner_tests.rs",
+      "bytes": 6324,
+      "sha256": "b7ac96be9fa103bf6c465b0ef62cefba450b32ab504a321fa965cc08cab58970"
+    },
+    {
+      "path": "D:\\build_cache\\worktrees\\sdk-close-117\\workbench_host\\src\\io_tasks_agent_stop_tests.rs",
+      "bytes": 7337,
+      "sha256": "51f3fa81c779f4276853f4c49fbabad790cc788960f709ca8697ce17921e3f7f"
+    }
+  ]
+}

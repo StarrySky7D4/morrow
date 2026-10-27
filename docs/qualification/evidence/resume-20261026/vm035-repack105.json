@@ -1,0 +1,37 @@
+{
+  "archive_self_contained": false,
+  "owner_queries": 0,
+  "free_before": {
+    "D": 25903828992,
+    "C": 36398817280
+  },
+  "logical_removed_bytes": 132304643106,
+  "original_disks_deleted": 0,
+  "original_disk_metadata_preserved": true,
+  "restore_import_or_memory_resume_performed": false,
+  "observed_C_free_delta": 132304658432,
+  "registered_vms": 4,
+  "original_evidence_unchanged": true,
+  "all_original_archive_bytes_verified_recoverable": true,
+  "archive": {
+    "path": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm035\\vm035-preserved-archive.zip",
+    "bytes": 22370691167,
+    "sha256": "c910f2038b3d85b286a3259865028b8926a5af4fb9752cd56565988f32671ea6"
+  },
+  "shared_parent_archive": {
+    "path": "D:\\build_cache\\VMBack\\retained-unknown-archives\\vm037\\vm037-complete-saved-state.zip",
+    "bytes": 51816644645,
+    "modified_ns": 1793003400269855900,
+    "sha256": "de9401fec978ee79ce349fdbb8fe948bc418aa197df86c68ef50f7abed6f3dc7",
+    "entry": "parent/clean-base.vhdx",
+    "member_sha256": "a52ba8c381818cc17635ee971b8125cdc1e8569e1314a609d70f6439a5010804",
+    "member_bytes": 62750982144
+  },
+  "free_after": {
+    "D": 25903828992,
+    "C": 168703475712
+  },
+  "guest_contacts": 0,
+  "raw_archive_files_removed": 9,
+  "status": "PASS_LOSSLESS_VM035_ARCHIVE_REPACK_C_DUPLICATES_RECLAIMED"
+}

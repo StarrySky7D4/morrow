@@ -25,6 +25,8 @@ pub struct Selection {
     pub approved: BTreeSet<GrantKind>,
     /// Independent IO ceiling. Resource scopes and live grants are never restored here.
     pub approved_io: BTreeSet<IoCapability>,
+    /// Exact-package upload ceiling; never an object, Store or live owner grant.
+    pub approved_blob_upload: bool,
 }
 /// Persistent exact-version approval; this is not a live instance binding or object grant.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -52,6 +54,7 @@ pub struct Registry {
     storage: Box<dyn RegistryStorage>,
     uncertain: std::cell::Cell<bool>,
     revision: u64,
+    format_version: u32,
     selections: BTreeMap<String, Selection>,
     dependencies: DependencyLocks,
 }
@@ -73,6 +76,7 @@ impl Registry {
             storage,
             uncertain: std::cell::Cell::new(false),
             revision: 0,
+            format_version: 2,
             selections: BTreeMap::new(),
             dependencies: BTreeMap::new(),
         };
@@ -84,10 +88,14 @@ impl Registry {
             let state = proto::Registry::decode(raw.as_slice())
                 .map_err(|_| Error::Invalid("registry protobuf"))?;
             // Refuse unknown/noncanonical data rather than silently rewriting and losing it.
-            if !matches!(state.schema_version, 1 | 2) || state.encode_to_vec() != raw {
+            if !matches!(state.schema_version, 1..=3) || state.encode_to_vec() != raw {
                 return Err(Error::UnsupportedVersion);
             }
             let legacy = state.schema_version == 1;
+            if state.schema_version < 3 && state.selections.iter().any(|s| s.approved_blob_upload) {
+                return Err(Error::UnsupportedVersion);
+            }
+            result.format_version = state.schema_version.max(2);
             if legacy
                 && state
                     .selections
@@ -143,6 +151,7 @@ impl Registry {
                         enabled: entry.enabled,
                         approved,
                         approved_io,
+                        approved_blob_upload: entry.approved_blob_upload,
                     },
                 );
             }
@@ -232,6 +241,7 @@ impl Registry {
         if package.manifest().package_id != selection.package_id
             || !selection.approved.is_subset(package.capabilities())
             || !selection.approved_io.is_subset(package.io_capabilities())
+            || (selection.approved_blob_upload && package.blob_upload_declaration().is_none())
         {
             return Err(Error::Integrity);
         }
@@ -461,7 +471,7 @@ impl Registry {
         }
         let revision = self.revision.checked_add(1).ok_or(Error::Limit)?;
         let state = proto::Registry {
-            schema_version: 2,
+            schema_version: self.format_version.max(if next.values().any(|s| s.approved_blob_upload) { 3 } else { 2 }),
             revision,
             dependency_locks: dependencies
                 .values()
@@ -486,6 +496,7 @@ impl Registry {
                         .copied()
                         .map(IoCapability::number)
                         .collect(),
+                    approved_blob_upload: s.approved_blob_upload,
                 })
                 .collect(),
         };
@@ -495,10 +506,12 @@ impl Registry {
         self.selections = next;
         self.dependencies = dependencies;
         self.revision = revision;
+        self.format_version = state.schema_version;
         Ok(())
     }
     /// First selection is disabled with no approvals. Upgrade requires a newer SemVer;
     /// retained approvals are intersected with the new manifest, never expanded.
+    /// Upload approval is exact-package and is always cleared on a different digest.
     pub fn select(&mut self, digest: [u8; 32], expected_revision: u64) -> Result<()> {
         self.check_revision(expected_revision)?;
         let package = self.storage.load_package(digest)?;
@@ -509,6 +522,7 @@ impl Registry {
             enabled: false,
             approved: BTreeSet::new(),
             approved_io: BTreeSet::new(),
+            approved_blob_upload: false,
         };
         if let Some(previous) = self.selections.get(id) {
             let old = self.load(previous)?;
@@ -599,6 +613,27 @@ impl Registry {
         self.validate_io_approval(id, expected_digest, &approved, expected_revision)?;
         let mut next = self.selections.clone();
         next.get_mut(id).expect("existing selection").approved_io = approved;
+        self.commit(next, self.dependencies.clone())
+    }
+    /// Exact immutable package and registry revision; removal remains possible if its file is damaged.
+    pub fn validate_blob_upload_approval(
+        &self, id: &str, digest: [u8; 32], approved: bool, revision: u64,
+    ) -> Result<()> {
+        self.check_revision(revision)?;
+        let selection = self.selections.get(id).ok_or(Error::NotFound)?;
+        if selection.digest != digest { return Err(Error::RevisionConflict); }
+        if approved && self.load(selection)?.blob_upload_declaration().is_none() {
+            return Err(Error::Invalid("upload approval exceeds declaration"));
+        }
+        Ok(())
+    }
+    /// Independent namespace; never inferred from content, IO or a previous package version.
+    pub fn approve_blob_upload(
+        &mut self, id: &str, digest: [u8; 32], approved: bool, revision: u64,
+    ) -> Result<()> {
+        self.validate_blob_upload_approval(id, digest, approved, revision)?;
+        let mut next = self.selections.clone();
+        next.get_mut(id).expect("existing selection").approved_blob_upload = approved;
         self.commit(next, self.dependencies.clone())
     }
     /// Preflight the active presentation slot without changing any selection.
@@ -699,7 +734,7 @@ mod tests {
         duplicate.extend_from_slice(&[8, 1]); // Repeated scalar field.
         assert_eq!(reject(&duplicate), Error::UnsupportedVersion);
         let mut future = state.clone();
-        future.schema_version = 3;
+        future.schema_version = 4;
         assert_eq!(reject(&future.encode_to_vec()), Error::UnsupportedVersion);
         let mut zero = state;
         zero.revision = 0;
@@ -713,6 +748,7 @@ mod tests {
             enabled: false,
             approved_capabilities: vec![],
             approved_io_capabilities: vec![],
+            approved_blob_upload: false,
         };
         let duplicate = proto::Registry {
             schema_version: 1,

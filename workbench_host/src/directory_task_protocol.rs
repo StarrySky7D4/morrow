@@ -2,7 +2,10 @@
 use super::{io_state_reply, text, wire};
 use crate::{
     Result, Workbench,
-    io_tasks::{TaskKey, directory::DirectoryStart},
+    io_tasks::{
+        TaskKey,
+        directory::{DirectoryDelivery, DirectoryObjectStart, DirectoryStart},
+    },
 };
 use morrow_plugin_runtime::{Fault, io_jobs::DirectoryResponse};
 use std::{ffi::OsString, os::windows::ffi::OsStringExt, time::Duration};
@@ -13,6 +16,23 @@ pub(super) fn handle(
     mut out: wire::response::Builder<'_>,
 ) -> Result<()> {
     match r.get_action()? {
+        wire::Action::DirectoryPick => {
+            host.local_state_mut()?;
+            let start = r.get_directory_start()?;
+            if !start.get_selected_path_utf16()?.is_empty() {
+                return Err("native picker does not accept a caller pathname".into());
+            }
+            host.start_native_directory_picker(DirectoryObjectStart {
+                submission: start.get_submission()?.try_into()?,
+                package_id: text(start.get_package_id())?,
+                digest: start.get_package_digest()?.try_into()?,
+                revision: start.get_registry_revision(),
+                handler: text(start.get_handler())?,
+                max_entries: start.get_max_entries().try_into()?,
+                max_metadata_bytes: start.get_max_metadata_bytes(),
+                timeout_ms: start.get_timeout_ms(),
+            })?;
+        }
         wire::Action::DirectoryStart => {
             host.local_state_mut()?;
             let start = r.get_directory_start()?;
@@ -47,19 +67,28 @@ pub(super) fn handle(
             host.finish_directory(TaskKey::from_bytes(r.get_io_key()?)?)?;
         }
         wire::Action::DirectoryRead => {
-            let value = host.read_directory_result(TaskKey::from_bytes(r.get_io_key()?)?)?;
+            let value = host.read_directory_delivery(TaskKey::from_bytes(r.get_io_key()?)?)?;
             let mut row = out.reborrow().init_directory_result();
             match value {
                 None => row.set_kind(0),
-                Some(DirectoryResponse::Captured(value)) => {
+                Some(DirectoryDelivery::Response(DirectoryResponse::Captured(value))) => {
                     row.set_kind(1);
                     row.set_entries(value.entries.try_into()?);
                     row.set_metadata_bytes(value.metadata_bytes);
                 }
-                Some(DirectoryResponse::Finished) => row.set_kind(3),
+                Some(DirectoryDelivery::Response(DirectoryResponse::Finished)) => row.set_kind(3),
+                Some(DirectoryDelivery::Refused(error)) => {
+                    use morrow_plugin_runtime::{directory_io::Error, io_binding};
+                    row.set_kind(4);
+                    row.set_command_fault(match error {
+                        Error::Cancelled => 1,
+                        Error::Admission(io_binding::Error::Expired) => 2,
+                        _ => 3,
+                    });
+                }
                 // This private route admits capture/finish only. Host-page
                 // requests must not be mixed into this original guest lane.
-                Some(DirectoryResponse::Page(_)) => {
+                Some(DirectoryDelivery::Response(DirectoryResponse::Page(_))) => {
                     return Err("unexpected directory page delivery".into());
                 }
             }
