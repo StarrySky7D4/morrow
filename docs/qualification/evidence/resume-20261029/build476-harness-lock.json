@@ -1,0 +1,28 @@
+{
+  "status": "PASS_CURRENT_P2_HARNESS_LOCK_WITH_EXISTING_SDK_LOCAL_MODULES",
+  "canonical": {
+    "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\c28-basic-harness\\Cargo.lock",
+    "bytes": 234727,
+    "sha256": "66f9c32830b91ee51df9c59c3168e6f7d08cd36993842741ac136cdc7b3dc7ad"
+  },
+  "preimage": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-review-476\\Cargo.lock.preimage",
+    "bytes": 234104,
+    "sha256": "4e16d7a08ec5d3e8163a760d9b0d82e9e6ee9bf78ed7fbcbb40297ac735f8a34"
+  },
+  "source_digest": "36802baf97865a29911324ef43f6527489470e38960f4a4abd7e599a40f9c885",
+  "added_local_packages": [
+    "morrow-blob-transfer-v1",
+    "morrow-blob-upload-proposal-v1",
+    "morrow-blob-upload-request-v1"
+  ],
+  "existing_package_versions_changed": 0,
+  "registry_checksums_changed": 0,
+  "upstream_commits_changed": 0,
+  "isolated_and_canonical_metadata_exit": 0,
+  "frozen_inputs_verified": 57,
+  "compile": false,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

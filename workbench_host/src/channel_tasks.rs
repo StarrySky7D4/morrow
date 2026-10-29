@@ -195,13 +195,6 @@ impl ChannelTasks {
             job.stop();
         }
     }
-    pub(crate) fn stop_package(&mut self, id: &str) {
-        if let Some(job) = &mut self.job {
-            if job.request.package_id == id {
-                job.stop();
-            }
-        }
-    }
     pub(crate) fn fence_catalog_stop(
         &mut self,
         id: &str,
@@ -411,15 +404,14 @@ impl Workbench {
         if Instant::now() >= job.deadline {
             job.stop();
         }
-        if let Ok(owner) = self.state.local() {
-            if owner
+        if let Ok(owner) = self.state.local()
+            && owner
                 .manager
                 .as_ref()
                 .is_none_or(|manager| manager.revision() != job.request.registry_revision)
             {
                 job.stop();
             }
-        }
         job.observe();
         if job.close_requested
             && (!job.worker_started || job.worker_joined)
@@ -442,11 +434,10 @@ impl Workbench {
         self.product_gate().check()?;
         crate::channel_binding::require_owner(self.channel_tasks.owner)?;
         self.channel_reclaim()?;
-        if let Some(old) = &self.channel_tasks.job {
-            if !old.disconnected || old.worker.is_some() {
+        if let Some(old) = &self.channel_tasks.job
+            && (!old.disconnected || old.worker.is_some()) {
                 return Err("close and reclaim the original channel job first".into());
             }
-        }
         if request.submission == [0; 32]
             || request.package_digest == [0; 32]
             || self.channel_tasks.seen.contains(&request.submission)
@@ -865,11 +856,10 @@ impl Workbench {
     pub(crate) fn finish_channels(&mut self) -> Result<()> {
         self.channel_tasks.request_stop();
         self.channel_reclaim()?;
-        if let Some(job) = &self.channel_tasks.job {
-            if !job.disconnected || job.worker.is_some() {
+        if let Some(job) = &self.channel_tasks.job
+            && (!job.disconnected || job.worker.is_some()) {
                 return Err(AccessError::Busy.into());
             }
-        }
         Ok(())
     }
 }

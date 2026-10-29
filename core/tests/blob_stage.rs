@@ -463,7 +463,7 @@ fn additive_v25_migration_keeps_existing_blob_bytes_and_creates_no_operation() {
     drop(store);
     let raw = rusqlite::Connection::open(&path).unwrap();
     raw.execute_batch(
-        "DROP TABLE blob_stage_history; DROP TABLE blob_stage_operations; PRAGMA user_version=25;",
+        "DROP TABLE blob_upload_history; DROP TABLE blob_upload_requests; DROP TABLE blob_stage_history; DROP TABLE blob_stage_operations; PRAGMA user_version=25;",
     )
     .unwrap();
     drop(raw);
@@ -624,7 +624,7 @@ fn v26_migration_abrupt_exit_preserves_prior_blob_and_recovers_atomically() {
             .unwrap();
         drop(store);
         let db = rusqlite::Connection::open(&path).unwrap();
-        db.execute_batch("DROP TABLE blob_stage_history; DROP TABLE blob_stage_operations; PRAGMA user_version=25;").unwrap();
+        db.execute_batch("DROP TABLE blob_upload_history; DROP TABLE blob_upload_requests; DROP TABLE blob_stage_history; DROP TABLE blob_stage_operations; PRAGMA user_version=25;").unwrap();
         drop(db);
         let child = std::process::Command::new(std::env::current_exe().unwrap())
             .args([

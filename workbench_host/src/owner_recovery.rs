@@ -39,8 +39,8 @@ fn history_head(db: &Connection) -> Result<String> {
             || proof["original_digest"] != digest || proof["profile"] != r["profile"]
             || proof["generation"] != r["generation"] || proof["incarnation"] != r["incarnation"]
             || proof["manager_sha256"] != r["supervisor_sha256"]
-            || !proof["manager_creation_filetime"].as_u64().is_some_and(|v| v>0)
-            || !proof["manager_pid"].as_u64().is_some_and(|v| v>0)
+            || proof["manager_creation_filetime"].as_u64().is_none_or(|v| v == 0)
+            || proof["manager_pid"].as_u64().is_none_or(|v| v == 0)
             || proof["original_supervisor_ended"] != true {
             return Err("Recovery history integrity or original resource proof is invalid".into());
         }

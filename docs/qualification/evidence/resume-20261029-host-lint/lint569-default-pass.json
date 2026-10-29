@@ -1,0 +1,2273 @@
+{
+  "exit_code": 0,
+  "source_digest": "110bd3d26239eadab2e61e914f3d2c72986c4197c7ef94cd5c335dec7de7966e",
+  "source_unchanged": true,
+  "diagnostics": [
+    {
+      "rendered": "warning: unused import: `TOKEN_REQUIRED`\n --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_policy.rs:9:42\n  |\n9 | pub(crate) use crate::asuser_a1_rights::{TOKEN_REQUIRED,PROCESS_MANAGEMENT,THREAD_MANAGEMENT,\n  |                                          ^^^^^^^^^^^^^^\n  |\n  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "note",
+          "message": "`#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default",
+          "rendered": null,
+          "spans": []
+        },
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "remove the unused import",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 427,
+              "byte_start": 412,
+              "column_end": 57,
+              "column_start": 42,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_policy.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 9,
+              "line_start": 9,
+              "suggested_replacement": "",
+              "suggestion_applicability": "MachineApplicable",
+              "text": [
+                {
+                  "highlight_end": 57,
+                  "highlight_start": 42,
+                  "text": "pub(crate) use crate::asuser_a1_rights::{TOKEN_REQUIRED,PROCESS_MANAGEMENT,THREAD_MANAGEMENT,"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "unused import: `TOKEN_REQUIRED`",
+      "spans": [
+        {
+          "byte_end": 426,
+          "byte_start": 412,
+          "column_end": 56,
+          "column_start": 42,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_policy.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 9,
+          "line_start": 9,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 56,
+              "highlight_start": 42,
+              "text": "pub(crate) use crate::asuser_a1_rights::{TOKEN_REQUIRED,PROCESS_MANAGEMENT,THREAD_MANAGEMENT,"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "unused_imports",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: unused import: `TOKEN_ADJUST_DEFAULT`\n  --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs:14:78\n   |\n14 |     LUID_AND_ATTRIBUTES,TOKEN_MANDATORY_LABEL,TOKEN_DEFAULT_DACL,TOKEN_OWNER,TOKEN_ADJUST_DEFAULT};\n   |                                                                              ^^^^^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "remove the unused import",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 1257,
+              "byte_start": 1236,
+              "column_end": 98,
+              "column_start": 77,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 14,
+              "line_start": 14,
+              "suggested_replacement": "",
+              "suggestion_applicability": "MachineApplicable",
+              "text": [
+                {
+                  "highlight_end": 98,
+                  "highlight_start": 77,
+                  "text": "    LUID_AND_ATTRIBUTES,TOKEN_MANDATORY_LABEL,TOKEN_DEFAULT_DACL,TOKEN_OWNER,TOKEN_ADJUST_DEFAULT};"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "unused import: `TOKEN_ADJUST_DEFAULT`",
+      "spans": [
+        {
+          "byte_end": 1257,
+          "byte_start": 1237,
+          "column_end": 98,
+          "column_start": 78,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 14,
+          "line_start": 14,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 98,
+              "highlight_start": 78,
+              "text": "    LUID_AND_ATTRIBUTES,TOKEN_MANDATORY_LABEL,TOKEN_DEFAULT_DACL,TOKEN_OWNER,TOKEN_ADJUST_DEFAULT};"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "unused_imports",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: unused import: `IsValidSecurityDescriptor`\n  --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_helper.rs:60:56\n   |\n60 | use windows_sys::Win32::Security::{GetTokenInformation,IsValidSecurityDescriptor,\n   |                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "remove the unused import",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 4459,
+              "byte_start": 4433,
+              "column_end": 81,
+              "column_start": 55,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_helper.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 60,
+              "line_start": 60,
+              "suggested_replacement": "",
+              "suggestion_applicability": "MachineApplicable",
+              "text": [
+                {
+                  "highlight_end": 81,
+                  "highlight_start": 55,
+                  "text": "use windows_sys::Win32::Security::{GetTokenInformation,IsValidSecurityDescriptor,"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "unused import: `IsValidSecurityDescriptor`",
+      "spans": [
+        {
+          "byte_end": 4459,
+          "byte_start": 4434,
+          "column_end": 81,
+          "column_start": 56,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_helper.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 60,
+          "line_start": 60,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 81,
+              "highlight_start": 56,
+              "text": "use windows_sys::Win32::Security::{GetTokenInformation,IsValidSecurityDescriptor,"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "unused_imports",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: unused import: `RunnerHandshakeHistory`\n --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner_observation.rs:6:28\n  |\n6 |     RunnerProcessIdentity, RunnerHandshakeHistory, RunnerLifecycle, RunnerFailure,\n  |                            ^^^^^^^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "remove the unused import",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 325,
+              "byte_start": 301,
+              "column_end": 50,
+              "column_start": 26,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner_observation.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 6,
+              "line_start": 6,
+              "suggested_replacement": "",
+              "suggestion_applicability": "MachineApplicable",
+              "text": [
+                {
+                  "highlight_end": 50,
+                  "highlight_start": 26,
+                  "text": "    RunnerProcessIdentity, RunnerHandshakeHistory, RunnerLifecycle, RunnerFailure,"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "unused import: `RunnerHandshakeHistory`",
+      "spans": [
+        {
+          "byte_end": 325,
+          "byte_start": 303,
+          "column_end": 50,
+          "column_start": 28,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner_observation.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 6,
+          "line_start": 6,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 50,
+              "highlight_start": 28,
+              "text": "    RunnerProcessIdentity, RunnerHandshakeHistory, RunnerLifecycle, RunnerFailure,"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "unused_imports",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: unused variable: `own_il`\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_helper.rs:633:29\n    |\n633 | ...   let (own,caller_sid,own_il)=subject(unsafe{GetCurrentProcess()},&mut self.originals.own_token,&mut self.originals.primary_def...\n    |                           ^^^^^^ help: if this is intentional, prefix it with an underscore: `_own_il`\n    |\n    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "note",
+          "message": "`#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default",
+          "rendered": null,
+          "spans": []
+        },
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "if this is intentional, prefix it with an underscore",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 42307,
+              "byte_start": 42301,
+              "column_end": 35,
+              "column_start": 29,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_helper.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 633,
+              "line_start": 633,
+              "suggested_replacement": "_own_il",
+              "suggestion_applicability": "MachineApplicable",
+              "text": [
+                {
+                  "highlight_end": 35,
+                  "highlight_start": 29,
+                  "text": "        let (own,caller_sid,own_il)=subject(unsafe{GetCurrentProcess()},&mut self.originals.own_token,&mut self.originals.primary_defaults[0])?;"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "unused variable: `own_il`",
+      "spans": [
+        {
+          "byte_end": 42307,
+          "byte_start": 42301,
+          "column_end": 35,
+          "column_start": 29,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_helper.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 633,
+          "line_start": 633,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 35,
+              "highlight_start": 29,
+              "text": "        let (own,caller_sid,own_il)=subject(unsafe{GetCurrentProcess()},&mut self.originals.own_token,&mut self.originals.primary_defaults[0])?;"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "unused_variables",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: variable does not need to be mutable\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\native_close_codec.rs:624:5\n    |\n624 |     mut b: wire::stderr_stream_worker_fact::Builder<'_>,\n    |     ----^\n    |     |\n    |     help: remove this `mut`\n    |\n    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "note",
+          "message": "`#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default",
+          "rendered": null,
+          "spans": []
+        },
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "remove this `mut`",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 26290,
+              "byte_start": 26286,
+              "column_end": 9,
+              "column_start": 5,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\native_close_codec.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 624,
+              "line_start": 624,
+              "suggested_replacement": "",
+              "suggestion_applicability": "MachineApplicable",
+              "text": [
+                {
+                  "highlight_end": 9,
+                  "highlight_start": 5,
+                  "text": "    mut b: wire::stderr_stream_worker_fact::Builder<'_>,"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "variable does not need to be mutable",
+      "spans": [
+        {
+          "byte_end": 26291,
+          "byte_start": 26286,
+          "column_end": 10,
+          "column_start": 5,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\native_close_codec.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 624,
+          "line_start": 624,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 10,
+              "highlight_start": 5,
+              "text": "    mut b: wire::stderr_stream_worker_fact::Builder<'_>,"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "unused_mut",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: type `checked_owner::OwnerState` is more private than the item `build_host_native_close_facts_snapshot`\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner_host_facts.rs:884:1\n    |\n884 | / pub(crate) fn build_host_native_close_facts_snapshot(\n885 | |     state: &OwnerState,\n886 | |     startup_id: StartupId,\n887 | |     has_local_registry: bool,\n888 | |     owner_mutex_poisoned: bool,\n889 | | ) -> HostNativeCloseFactsSnapshot {\n    | |_________________________________^ function `build_host_native_close_facts_snapshot` is reachable at visibility `pub(crate)`\n    |\nnote: but type `checked_owner::OwnerState` is only usable at visibility `pub(self)`\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs:641:1\n    |\n641 | struct OwnerState {\n    | ^^^^^^^^^^^^^^^^^\n    = note: `#[warn(private_interfaces)]` on by default\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "note",
+          "message": "but type `checked_owner::OwnerState` is only usable at visibility `pub(self)`",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 21862,
+              "byte_start": 21845,
+              "column_end": 18,
+              "column_start": 1,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 641,
+              "line_start": 641,
+              "suggested_replacement": null,
+              "suggestion_applicability": null,
+              "text": [
+                {
+                  "highlight_end": 18,
+                  "highlight_start": 1,
+                  "text": "struct OwnerState {"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "children": [],
+          "code": null,
+          "level": "note",
+          "message": "`#[warn(private_interfaces)]` on by default",
+          "rendered": null,
+          "spans": []
+        }
+      ],
+      "level": "warning",
+      "message": "type `checked_owner::OwnerState` is more private than the item `build_host_native_close_facts_snapshot`",
+      "spans": [
+        {
+          "byte_end": 40704,
+          "byte_start": 40504,
+          "column_end": 34,
+          "column_start": 1,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner_host_facts.rs",
+          "is_primary": true,
+          "label": "function `build_host_native_close_facts_snapshot` is reachable at visibility `pub(crate)`",
+          "line_end": 889,
+          "line_start": 884,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 54,
+              "highlight_start": 1,
+              "text": "pub(crate) fn build_host_native_close_facts_snapshot("
+            },
+            {
+              "highlight_end": 24,
+              "highlight_start": 1,
+              "text": "    state: &OwnerState,"
+            },
+            {
+              "highlight_end": 27,
+              "highlight_start": 1,
+              "text": "    startup_id: StartupId,"
+            },
+            {
+              "highlight_end": 30,
+              "highlight_start": 1,
+              "text": "    has_local_registry: bool,"
+            },
+            {
+              "highlight_end": 32,
+              "highlight_start": 1,
+              "text": "    owner_mutex_poisoned: bool,"
+            },
+            {
+              "highlight_end": 34,
+              "highlight_start": 1,
+              "text": ") -> HostNativeCloseFactsSnapshot {"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "private_interfaces",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: fields `owner` and `integrity_rid` are never read\n  --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_security.rs:47:41\n   |\n47 | pub(crate) struct CreationReadback {pub owner:Sid,pub integrity_rid:u32}\n   |                   ----------------      ^^^^^         ^^^^^^^^^^^^^\n   |                   |\n   |                   fields in this struct\n   |\n   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "note",
+          "message": "`#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default",
+          "rendered": null,
+          "spans": []
+        }
+      ],
+      "level": "warning",
+      "message": "fields `owner` and `integrity_rid` are never read",
+      "spans": [
+        {
+          "byte_end": 2587,
+          "byte_start": 2571,
+          "column_end": 35,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_security.rs",
+          "is_primary": false,
+          "label": "fields in this struct",
+          "line_end": 47,
+          "line_start": 47,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 35,
+              "highlight_start": 19,
+              "text": "pub(crate) struct CreationReadback {pub owner:Sid,pub integrity_rid:u32}"
+            }
+          ]
+        },
+        {
+          "byte_end": 2598,
+          "byte_start": 2593,
+          "column_end": 46,
+          "column_start": 41,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_security.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 47,
+          "line_start": 47,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 46,
+              "highlight_start": 41,
+              "text": "pub(crate) struct CreationReadback {pub owner:Sid,pub integrity_rid:u32}"
+            }
+          ]
+        },
+        {
+          "byte_end": 2620,
+          "byte_start": 2607,
+          "column_end": 68,
+          "column_start": 55,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_security.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 47,
+          "line_start": 47,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 68,
+              "highlight_start": 55,
+              "text": "pub(crate) struct CreationReadback {pub owner:Sid,pub integrity_rid:u32}"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: field `explicit_label` is never read\n  --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_security.rs:48:72\n   |\n48 | pub(crate) struct TokenLayout {pub owner:Sid,pub integrity_rid:u32,pub explicit_label:bool}\n   |                   ----------- field in this struct                     ^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "field `explicit_label` is never read",
+      "spans": [
+        {
+          "byte_end": 2655,
+          "byte_start": 2644,
+          "column_end": 30,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_security.rs",
+          "is_primary": false,
+          "label": "field in this struct",
+          "line_end": 48,
+          "line_start": 48,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 30,
+              "highlight_start": 19,
+              "text": "pub(crate) struct TokenLayout {pub owner:Sid,pub integrity_rid:u32,pub explicit_label:bool}"
+            }
+          ]
+        },
+        {
+          "byte_end": 2711,
+          "byte_start": 2697,
+          "column_end": 86,
+          "column_start": 72,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_security.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 48,
+          "line_start": 48,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 86,
+              "highlight_start": 72,
+              "text": "pub(crate) struct TokenLayout {pub owner:Sid,pub integrity_rid:u32,pub explicit_label:bool}"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: function `gui` is never used\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_security.rs:261:15\n    |\n261 | pub(crate) fn gui(bytes:&[u8],caller:Sid,logon:Sid,desktop:bool,integrity:u32)->io::Result<GuiReadback> {\n    |               ^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "function `gui` is never used",
+      "spans": [
+        {
+          "byte_end": 15756,
+          "byte_start": 15753,
+          "column_end": 18,
+          "column_start": 15,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_security.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 261,
+          "line_start": 261,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 18,
+              "highlight_start": 15,
+              "text": "pub(crate) fn gui(bytes:&[u8],caller:Sid,logon:Sid,desktop:bool,integrity:u32)->io::Result<GuiReadback> {"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: variant `Deadline` is never constructed\n  --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs:93:63\n   |\n92 | enum Stage {Admission,ThreadToken,Login,Grant,Token,TokenSecurity,Broker,ProcessSd,ThreadSd,Create,\n   |      ----- variant in this enum\n93 |     ProcessReadback,ThreadReadback,Transfer,Retirement,Unwind,Deadline}\n   |                                                               ^^^^^^^^\n   |\n   = note: `Stage` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "note",
+          "message": "`Stage` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis",
+          "rendered": null,
+          "spans": []
+        }
+      ],
+      "level": "warning",
+      "message": "variant `Deadline` is never constructed",
+      "spans": [
+        {
+          "byte_end": 5807,
+          "byte_start": 5802,
+          "column_end": 11,
+          "column_start": 6,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": false,
+          "label": "variant in this enum",
+          "line_end": 92,
+          "line_start": 92,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 11,
+              "highlight_start": 6,
+              "text": "enum Stage {Admission,ThreadToken,Login,Grant,Token,TokenSecurity,Broker,ProcessSd,ThreadSd,Create,"
+            }
+          ]
+        },
+        {
+          "byte_end": 5968,
+          "byte_start": 5960,
+          "column_end": 71,
+          "column_start": 63,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 93,
+          "line_start": 93,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 71,
+              "highlight_start": 63,
+              "text": "    ProcessReadback,ThreadReadback,Transfer,Retirement,Unwind,Deadline}"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: method `validate_target_policy` is never used\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs:572:8\n    |\n218 | impl Attempt {\n    | ------------ method in this implementation\n...\n572 |     fn validate_target_policy(&mut self,policy:&TargetPolicy,facts:&TargetFacts)->io::Result<()> {\n    |        ^^^^^^^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "method `validate_target_policy` is never used",
+      "spans": [
+        {
+          "byte_end": 13488,
+          "byte_start": 13476,
+          "column_end": 13,
+          "column_start": 1,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": false,
+          "label": "method in this implementation",
+          "line_end": 218,
+          "line_start": 218,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 13,
+              "highlight_start": 1,
+              "text": "impl Attempt {"
+            }
+          ]
+        },
+        {
+          "byte_end": 37539,
+          "byte_start": 37517,
+          "column_end": 30,
+          "column_start": 8,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 572,
+          "line_start": 572,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 30,
+              "highlight_start": 8,
+              "text": "    fn validate_target_policy(&mut self,policy:&TargetPolicy,facts:&TargetFacts)->io::Result<()> {"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: method `identity` is never used\n  --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_parent_native.rs:71:8\n   |\n70 | impl ParentC0Observed {\n   | --------------------- method in this implementation\n71 |     fn identity(&self)->ParentChildIdentity{self.identity}\n   |        ^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "method `identity` is never used",
+      "spans": [
+        {
+          "byte_end": 4402,
+          "byte_start": 4381,
+          "column_end": 22,
+          "column_start": 1,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_parent_native.rs",
+          "is_primary": false,
+          "label": "method in this implementation",
+          "line_end": 70,
+          "line_start": 70,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 22,
+              "highlight_start": 1,
+              "text": "impl ParentC0Observed {"
+            }
+          ]
+        },
+        {
+          "byte_end": 4421,
+          "byte_start": 4413,
+          "column_end": 16,
+          "column_start": 8,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_parent_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 71,
+          "line_start": 71,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 16,
+              "highlight_start": 8,
+              "text": "    fn identity(&self)->ParentChildIdentity{self.identity}"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: field `busy` is never read\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_parent_native.rs:520:31\n    |\n512 | pub(crate) struct ImportCore {\n    |                   ---------- field in this struct\n...\n520 |     verified:bool,closed:bool,busy:AtomicBool,\n    |                               ^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "field `busy` is never read",
+      "spans": [
+        {
+          "byte_end": 39107,
+          "byte_start": 39097,
+          "column_end": 29,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_parent_native.rs",
+          "is_primary": false,
+          "label": "field in this struct",
+          "line_end": 512,
+          "line_start": 512,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 29,
+              "highlight_start": 19,
+              "text": "pub(crate) struct ImportCore {"
+            }
+          ]
+        },
+        {
+          "byte_end": 39578,
+          "byte_start": 39574,
+          "column_end": 35,
+          "column_start": 31,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_parent_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 520,
+          "line_start": 520,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 35,
+              "highlight_start": 31,
+              "text": "    verified:bool,closed:bool,busy:AtomicBool,"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: method `observe_asuser_native_failure` is never used\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\start_diagnostic.rs:662:19\n    |\n660 | impl WindowsStartDiagnostic {\n    | --------------------------- method in this implementation\n661 |     /// Same invocation only; observation never waits or modifies native ownership.\n662 |     pub(crate) fn observe_asuser_native_failure(&self, owner_stage: WindowsAsUserNativeStage,\n    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "method `observe_asuser_native_failure` is never used",
+      "spans": [
+        {
+          "byte_end": 25484,
+          "byte_start": 25457,
+          "column_end": 28,
+          "column_start": 1,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\start_diagnostic.rs",
+          "is_primary": false,
+          "label": "method in this implementation",
+          "line_end": 660,
+          "line_start": 660,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 28,
+              "highlight_start": 1,
+              "text": "impl WindowsStartDiagnostic {"
+            }
+          ]
+        },
+        {
+          "byte_end": 25618,
+          "byte_start": 25589,
+          "column_end": 48,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\start_diagnostic.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 662,
+          "line_start": 662,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 48,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn observe_asuser_native_failure(&self, owner_stage: WindowsAsUserNativeStage,"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: method `observe_original_token_context` is never used\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\desktop.rs:585:19\n    |\n521 | impl OwnedLaunchDesktop {\n    | ----------------------- method in this implementation\n...\n585 |     pub(crate) fn observe_original_token_context(&mut self,process:isize,startup_id:u64,pid:u32,creation:u64)\n    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "method `observe_original_token_context` is never used",
+      "spans": [
+        {
+          "byte_end": 23123,
+          "byte_start": 23100,
+          "column_end": 24,
+          "column_start": 1,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\desktop.rs",
+          "is_primary": false,
+          "label": "method in this implementation",
+          "line_end": 521,
+          "line_start": 521,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 24,
+              "highlight_start": 1,
+              "text": "impl OwnedLaunchDesktop {"
+            }
+          ]
+        },
+        {
+          "byte_end": 27278,
+          "byte_start": 27248,
+          "column_end": 49,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\desktop.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 585,
+          "line_start": 585,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 49,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn observe_original_token_context(&mut self,process:isize,startup_id:u64,pid:u32,creation:u64)"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: field `diagnostic` is never read\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs:644:5\n    |\n641 | struct OwnerState {\n    |        ---------- field in this struct\n...\n644 |     diagnostic: Option<crate::WindowsStartDiagnostic>,\n    |     ^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "field `diagnostic` is never read",
+      "spans": [
+        {
+          "byte_end": 21862,
+          "byte_start": 21852,
+          "column_end": 18,
+          "column_start": 8,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": false,
+          "label": "field in this struct",
+          "line_end": 641,
+          "line_start": 641,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 18,
+              "highlight_start": 8,
+              "text": "struct OwnerState {"
+            }
+          ]
+        },
+        {
+          "byte_end": 21964,
+          "byte_start": 21954,
+          "column_end": 15,
+          "column_start": 5,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 644,
+          "line_start": 644,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 15,
+              "highlight_start": 5,
+              "text": "    diagnostic: Option<crate::WindowsStartDiagnostic>,"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: multiple methods are never used\n    --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs:1082:19\n     |\n1026 | impl CheckedRunnerOwner {\n     | ----------------------- methods in this implementation\n...\n1082 |     pub(crate) fn observe_startup_context(&self, diagnostic: Option<&crate::WindowsStartDiagnostic>) {\n     |                   ^^^^^^^^^^^^^^^^^^^^^^^\n...\n1125 |     pub(crate) fn observe_startup_runner(&self, diagnostic: &crate::WindowsStartDiagnostic) {\n     |                   ^^^^^^^^^^^^^^^^^^^^^^\n...\n1716 |     pub(crate) fn record_controls_runtime_installed(&self) {\n     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n...\n1729 |     pub(crate) fn record_controls_facts(&self, facts: HostPendingControlsAndWriterFacts) {\n     |                   ^^^^^^^^^^^^^^^^^^^^^\n...\n1742 |     pub(crate) fn record_controls_correlation_poisoned(&self) {\n     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n...\n1751 |     pub(crate) fn record_writer_pipe_dropped(&self) {\n     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^\n...\n1758 |     pub(crate) fn record_reader_pipe_dropped(&self) {\n     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^\n...\n1765 |     pub(crate) fn record_reader_aborted_before_start(&self) {\n     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n...\n1775 |     pub(crate) fn record_reader_protocol_violation_after_exit(&self) {\n     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n...\n1787 |     pub(crate) fn record_reader_frame_or_read_failure(&self, os_error: Option<i32>) {\n     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "multiple methods are never used",
+      "spans": [
+        {
+          "byte_end": 37247,
+          "byte_start": 37224,
+          "column_end": 24,
+          "column_start": 1,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": false,
+          "label": "methods in this implementation",
+          "line_end": 1026,
+          "line_start": 1026,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 24,
+              "highlight_start": 1,
+              "text": "impl CheckedRunnerOwner {"
+            }
+          ]
+        },
+        {
+          "byte_end": 40887,
+          "byte_start": 40864,
+          "column_end": 42,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 1082,
+          "line_start": 1082,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 42,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn observe_startup_context(&self, diagnostic: Option<&crate::WindowsStartDiagnostic>) {"
+            }
+          ]
+        },
+        {
+          "byte_end": 43547,
+          "byte_start": 43525,
+          "column_end": 41,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 1125,
+          "line_start": 1125,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 41,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn observe_startup_runner(&self, diagnostic: &crate::WindowsStartDiagnostic) {"
+            }
+          ]
+        },
+        {
+          "byte_end": 73379,
+          "byte_start": 73346,
+          "column_end": 52,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 1716,
+          "line_start": 1716,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 52,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn record_controls_runtime_installed(&self) {"
+            }
+          ]
+        },
+        {
+          "byte_end": 73923,
+          "byte_start": 73902,
+          "column_end": 40,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 1729,
+          "line_start": 1729,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 40,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn record_controls_facts(&self, facts: HostPendingControlsAndWriterFacts) {"
+            }
+          ]
+        },
+        {
+          "byte_end": 74505,
+          "byte_start": 74469,
+          "column_end": 55,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 1742,
+          "line_start": 1742,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 55,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn record_controls_correlation_poisoned(&self) {"
+            }
+          ]
+        },
+        {
+          "byte_end": 74923,
+          "byte_start": 74897,
+          "column_end": 45,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 1751,
+          "line_start": 1751,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 45,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn record_writer_pipe_dropped(&self) {"
+            }
+          ]
+        },
+        {
+          "byte_end": 75155,
+          "byte_start": 75129,
+          "column_end": 45,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 1758,
+          "line_start": 1758,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 45,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn record_reader_pipe_dropped(&self) {"
+            }
+          ]
+        },
+        {
+          "byte_end": 75395,
+          "byte_start": 75361,
+          "column_end": 53,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 1765,
+          "line_start": 1765,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 53,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn record_reader_aborted_before_start(&self) {"
+            }
+          ]
+        },
+        {
+          "byte_end": 75843,
+          "byte_start": 75800,
+          "column_end": 62,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 1775,
+          "line_start": 1775,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 62,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn record_reader_protocol_violation_after_exit(&self) {"
+            }
+          ]
+        },
+        {
+          "byte_end": 76391,
+          "byte_start": 76356,
+          "column_end": 54,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 1787,
+          "line_start": 1787,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 54,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn record_reader_frame_or_read_failure(&self, os_error: Option<i32>) {"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: field `thread_disposition` is never read\n    --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs:3807:16\n     |\n3800 | pub(crate) struct CheckedRunnerIo {\n     |                   --------------- field in this struct\n...\n3807 |     pub(crate) thread_disposition: OriginalThreadDisposition,\n     |                ^^^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "field `thread_disposition` is never read",
+      "spans": [
+        {
+          "byte_end": 165986,
+          "byte_start": 165971,
+          "column_end": 34,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": false,
+          "label": "field in this struct",
+          "line_end": 3800,
+          "line_start": 3800,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 34,
+              "highlight_start": 19,
+              "text": "pub(crate) struct CheckedRunnerIo {"
+            }
+          ]
+        },
+        {
+          "byte_end": 166289,
+          "byte_start": 166271,
+          "column_end": 34,
+          "column_start": 16,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\checked_owner.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 3807,
+          "line_start": 3807,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 34,
+              "highlight_start": 16,
+              "text": "    pub(crate) thread_disposition: OriginalThreadDisposition,"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: method `begin_with` is never used\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\owned_connect_worker.rs:191:19\n    |\n120 | impl Owner {\n    | ---------- method in this implementation\n...\n191 |     pub(crate) fn begin_with<F>(\n    |                   ^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "method `begin_with` is never used",
+      "spans": [
+        {
+          "byte_end": 3778,
+          "byte_start": 3768,
+          "column_end": 11,
+          "column_start": 1,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\owned_connect_worker.rs",
+          "is_primary": false,
+          "label": "method in this implementation",
+          "line_end": 120,
+          "line_start": 120,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 11,
+              "highlight_start": 1,
+              "text": "impl Owner {"
+            }
+          ]
+        },
+        {
+          "byte_end": 6515,
+          "byte_start": 6505,
+          "column_end": 29,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\owned_connect_worker.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 191,
+          "line_start": 191,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 29,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn begin_with<F>("
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: method `read_spawn_ready` is never used\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\runner_client.rs:353:19\n    |\n283 | impl RunnerTransport {\n    | -------------------- method in this implementation\n...\n353 |     pub(crate) fn read_spawn_ready(&mut self) -> Result<()> {\n    |                   ^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "method `read_spawn_ready` is never used",
+      "spans": [
+        {
+          "byte_end": 11852,
+          "byte_start": 11832,
+          "column_end": 21,
+          "column_start": 1,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\runner_client.rs",
+          "is_primary": false,
+          "label": "method in this implementation",
+          "line_end": 283,
+          "line_start": 283,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 21,
+              "highlight_start": 1,
+              "text": "impl RunnerTransport {"
+            }
+          ]
+        },
+        {
+          "byte_end": 15151,
+          "byte_start": 15135,
+          "column_end": 35,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\elevated\\runner_client.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 353,
+          "line_start": 353,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 35,
+              "highlight_start": 19,
+              "text": "    pub(crate) fn read_spawn_ready(&mut self) -> Result<()> {"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: field `invocation_nonce` is never read\n    --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\setup_provisioning.rs:1339:16\n     |\n1333 | pub(crate) struct OwnedSetupProcessProof {\n     |                   ---------------------- field in this struct\n...\n1339 |     pub(crate) invocation_nonce: [u8; 32],\n     |                ^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "field `invocation_nonce` is never read",
+      "spans": [
+        {
+          "byte_end": 49686,
+          "byte_start": 49664,
+          "column_end": 41,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\setup_provisioning.rs",
+          "is_primary": false,
+          "label": "field in this struct",
+          "line_end": 1333,
+          "line_start": 1333,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 41,
+              "highlight_start": 19,
+              "text": "pub(crate) struct OwnedSetupProcessProof {"
+            }
+          ]
+        },
+        {
+          "byte_end": 49903,
+          "byte_start": 49887,
+          "column_end": 32,
+          "column_start": 16,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\setup_provisioning.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 1339,
+          "line_start": 1339,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 32,
+              "highlight_start": 16,
+              "text": "    pub(crate) invocation_nonce: [u8; 32],"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: function `prepare_elevated_spawn_context_for_permissions` is never used\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\spawn_prep.rs:449:15\n    |\n449 | pub(crate) fn prepare_elevated_spawn_context_for_permissions(\n    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "function `prepare_elevated_spawn_context_for_permissions` is never used",
+      "spans": [
+        {
+          "byte_end": 18910,
+          "byte_start": 18864,
+          "column_end": 61,
+          "column_start": 15,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\spawn_prep.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 449,
+          "line_start": 449,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 61,
+              "highlight_start": 15,
+              "text": "pub(crate) fn prepare_elevated_spawn_context_for_permissions("
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: function `spawn_runner_transport_with_retry` is never used\n  --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\unified_exec\\backends\\elevated.rs:46:4\n   |\n46 | fn spawn_runner_transport_with_retry<T>(\n   |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "function `spawn_runner_transport_with_retry` is never used",
+      "spans": [
+        {
+          "byte_end": 1834,
+          "byte_start": 1801,
+          "column_end": 37,
+          "column_start": 4,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\unified_exec\\backends\\elevated.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 46,
+          "line_start": 46,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 37,
+              "highlight_start": 4,
+              "text": "fn spawn_runner_transport_with_retry<T>("
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: field `owner` is never read\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\unified_exec\\backends\\checked_runner_controls.rs:426:9\n    |\n424 | pub(crate) struct CheckedRunnerSpawn {\n    |                   ------------------ field in this struct\n425 |     pub controls: Arc<RunnerCheckedControls>,\n426 |     pub owner: Arc<CheckedRunnerOwner>,\n    |         ^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "field `owner` is never read",
+      "spans": [
+        {
+          "byte_end": 16838,
+          "byte_start": 16820,
+          "column_end": 37,
+          "column_start": 19,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\unified_exec\\backends\\checked_runner_controls.rs",
+          "is_primary": false,
+          "label": "field in this struct",
+          "line_end": 424,
+          "line_start": 424,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 37,
+              "highlight_start": 19,
+              "text": "pub(crate) struct CheckedRunnerSpawn {"
+            }
+          ]
+        },
+        {
+          "byte_end": 16902,
+          "byte_start": 16897,
+          "column_end": 14,
+          "column_start": 9,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\unified_exec\\backends\\checked_runner_controls.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 426,
+          "line_start": 426,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 14,
+              "highlight_start": 9,
+              "text": "    pub owner: Arc<CheckedRunnerOwner>,"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: function `scoped_exited_process_owner` is never used\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\unified_exec\\backends\\checked_runner_controls.rs:449:4\n    |\n449 | fn scoped_exited_process_owner(\n    |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "function `scoped_exited_process_owner` is never used",
+      "spans": [
+        {
+          "byte_end": 17602,
+          "byte_start": 17575,
+          "column_end": 31,
+          "column_start": 4,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\unified_exec\\backends\\checked_runner_controls.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 449,
+          "line_start": 449,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 31,
+              "highlight_start": 4,
+              "text": "fn scoped_exited_process_owner("
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: function `start_checked_runner` is never used\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\unified_exec\\backends\\checked_runner_controls.rs:510:15\n    |\n510 | pub(crate) fn start_checked_runner(\n    |               ^^^^^^^^^^^^^^^^^^^^\n\n",
+      "$message_type": "diagnostic",
+      "children": [],
+      "level": "warning",
+      "message": "function `start_checked_runner` is never used",
+      "spans": [
+        {
+          "byte_end": 19344,
+          "byte_start": 19324,
+          "column_end": 35,
+          "column_start": 15,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\unified_exec\\backends\\checked_runner_controls.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 510,
+          "line_start": 510,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 35,
+              "highlight_start": 15,
+              "text": "pub(crate) fn start_checked_runner("
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "dead_code",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: constant in pattern `TokenElevation` should have an upper case name\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs:647:35\n    |\n647 |         let cap=if matches!(class,TokenElevation|TokenSessionId|TokenElevationType|TokenHasRestrictions|\n    |                                   ^^^^^^^^^^^^^^ help: convert the identifier to upper case: `TOKEN_ELEVATION`\n    |\n    = note: `#[warn(non_upper_case_globals)]` (part of `#[warn(nonstandard_style)]`) on by default\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "note",
+          "message": "`#[warn(non_upper_case_globals)]` (part of `#[warn(nonstandard_style)]`) on by default",
+          "rendered": null,
+          "spans": []
+        },
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "convert the identifier to upper case",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 42780,
+              "byte_start": 42766,
+              "column_end": 49,
+              "column_start": 35,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 647,
+              "line_start": 647,
+              "suggested_replacement": "TOKEN_ELEVATION",
+              "suggestion_applicability": "MaybeIncorrect",
+              "text": [
+                {
+                  "highlight_end": 49,
+                  "highlight_start": 35,
+                  "text": "        let cap=if matches!(class,TokenElevation|TokenSessionId|TokenElevationType|TokenHasRestrictions|"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "constant in pattern `TokenElevation` should have an upper case name",
+      "spans": [
+        {
+          "byte_end": 42780,
+          "byte_start": 42766,
+          "column_end": 49,
+          "column_start": 35,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 647,
+          "line_start": 647,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 49,
+              "highlight_start": 35,
+              "text": "        let cap=if matches!(class,TokenElevation|TokenSessionId|TokenElevationType|TokenHasRestrictions|"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "non_upper_case_globals",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: constant in pattern `TokenSessionId` should have an upper case name\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs:647:50\n    |\n647 |         let cap=if matches!(class,TokenElevation|TokenSessionId|TokenElevationType|TokenHasRestrictions|\n    |                                                  ^^^^^^^^^^^^^^ help: convert the identifier to upper case: `TOKEN_SESSION_ID`\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "convert the identifier to upper case",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 42795,
+              "byte_start": 42781,
+              "column_end": 64,
+              "column_start": 50,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 647,
+              "line_start": 647,
+              "suggested_replacement": "TOKEN_SESSION_ID",
+              "suggestion_applicability": "MaybeIncorrect",
+              "text": [
+                {
+                  "highlight_end": 64,
+                  "highlight_start": 50,
+                  "text": "        let cap=if matches!(class,TokenElevation|TokenSessionId|TokenElevationType|TokenHasRestrictions|"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "constant in pattern `TokenSessionId` should have an upper case name",
+      "spans": [
+        {
+          "byte_end": 42795,
+          "byte_start": 42781,
+          "column_end": 64,
+          "column_start": 50,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 647,
+          "line_start": 647,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 64,
+              "highlight_start": 50,
+              "text": "        let cap=if matches!(class,TokenElevation|TokenSessionId|TokenElevationType|TokenHasRestrictions|"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "non_upper_case_globals",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: constant in pattern `TokenElevationType` should have an upper case name\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs:647:65\n    |\n647 |         let cap=if matches!(class,TokenElevation|TokenSessionId|TokenElevationType|TokenHasRestrictions|\n    |                                                                 ^^^^^^^^^^^^^^^^^^ help: convert the identifier to upper case: `TOKEN_ELEVATION_TYPE`\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "convert the identifier to upper case",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 42814,
+              "byte_start": 42796,
+              "column_end": 83,
+              "column_start": 65,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 647,
+              "line_start": 647,
+              "suggested_replacement": "TOKEN_ELEVATION_TYPE",
+              "suggestion_applicability": "MaybeIncorrect",
+              "text": [
+                {
+                  "highlight_end": 83,
+                  "highlight_start": 65,
+                  "text": "        let cap=if matches!(class,TokenElevation|TokenSessionId|TokenElevationType|TokenHasRestrictions|"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "constant in pattern `TokenElevationType` should have an upper case name",
+      "spans": [
+        {
+          "byte_end": 42814,
+          "byte_start": 42796,
+          "column_end": 83,
+          "column_start": 65,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 647,
+          "line_start": 647,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 83,
+              "highlight_start": 65,
+              "text": "        let cap=if matches!(class,TokenElevation|TokenSessionId|TokenElevationType|TokenHasRestrictions|"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "non_upper_case_globals",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: constant in pattern `TokenHasRestrictions` should have an upper case name\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs:647:84\n    |\n647 |         let cap=if matches!(class,TokenElevation|TokenSessionId|TokenElevationType|TokenHasRestrictions|\n    |                                                                                    ^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to upper case: `TOKEN_HAS_RESTRICTIONS`\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "convert the identifier to upper case",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 42835,
+              "byte_start": 42815,
+              "column_end": 104,
+              "column_start": 84,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 647,
+              "line_start": 647,
+              "suggested_replacement": "TOKEN_HAS_RESTRICTIONS",
+              "suggestion_applicability": "MaybeIncorrect",
+              "text": [
+                {
+                  "highlight_end": 104,
+                  "highlight_start": 84,
+                  "text": "        let cap=if matches!(class,TokenElevation|TokenSessionId|TokenElevationType|TokenHasRestrictions|"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "constant in pattern `TokenHasRestrictions` should have an upper case name",
+      "spans": [
+        {
+          "byte_end": 42835,
+          "byte_start": 42815,
+          "column_end": 104,
+          "column_start": 84,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 647,
+          "line_start": 647,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 104,
+              "highlight_start": 84,
+              "text": "        let cap=if matches!(class,TokenElevation|TokenSessionId|TokenElevationType|TokenHasRestrictions|"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "non_upper_case_globals",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: constant in pattern `TokenIsAppContainer` should have an upper case name\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs:648:13\n    |\n648 |             TokenIsAppContainer|TokenUIAccess|TokenVirtualizationEnabled|TokenMandatoryPolicy){4}else{BUFFER_BYTES};\n    |             ^^^^^^^^^^^^^^^^^^^ help: convert the identifier to upper case: `TOKEN_IS_APP_CONTAINER`\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "convert the identifier to upper case",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 42869,
+              "byte_start": 42850,
+              "column_end": 32,
+              "column_start": 13,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 648,
+              "line_start": 648,
+              "suggested_replacement": "TOKEN_IS_APP_CONTAINER",
+              "suggestion_applicability": "MaybeIncorrect",
+              "text": [
+                {
+                  "highlight_end": 32,
+                  "highlight_start": 13,
+                  "text": "            TokenIsAppContainer|TokenUIAccess|TokenVirtualizationEnabled|TokenMandatoryPolicy){4}else{BUFFER_BYTES};"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "constant in pattern `TokenIsAppContainer` should have an upper case name",
+      "spans": [
+        {
+          "byte_end": 42869,
+          "byte_start": 42850,
+          "column_end": 32,
+          "column_start": 13,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 648,
+          "line_start": 648,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 32,
+              "highlight_start": 13,
+              "text": "            TokenIsAppContainer|TokenUIAccess|TokenVirtualizationEnabled|TokenMandatoryPolicy){4}else{BUFFER_BYTES};"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "non_upper_case_globals",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: constant in pattern `TokenUIAccess` should have an upper case name\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs:648:33\n    |\n648 |             TokenIsAppContainer|TokenUIAccess|TokenVirtualizationEnabled|TokenMandatoryPolicy){4}else{BUFFER_BYTES};\n    |                                 ^^^^^^^^^^^^^ help: convert the identifier to upper case: `TOKEN_UIACCESS`\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "convert the identifier to upper case",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 42883,
+              "byte_start": 42870,
+              "column_end": 46,
+              "column_start": 33,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 648,
+              "line_start": 648,
+              "suggested_replacement": "TOKEN_UIACCESS",
+              "suggestion_applicability": "MaybeIncorrect",
+              "text": [
+                {
+                  "highlight_end": 46,
+                  "highlight_start": 33,
+                  "text": "            TokenIsAppContainer|TokenUIAccess|TokenVirtualizationEnabled|TokenMandatoryPolicy){4}else{BUFFER_BYTES};"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "constant in pattern `TokenUIAccess` should have an upper case name",
+      "spans": [
+        {
+          "byte_end": 42883,
+          "byte_start": 42870,
+          "column_end": 46,
+          "column_start": 33,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 648,
+          "line_start": 648,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 46,
+              "highlight_start": 33,
+              "text": "            TokenIsAppContainer|TokenUIAccess|TokenVirtualizationEnabled|TokenMandatoryPolicy){4}else{BUFFER_BYTES};"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "non_upper_case_globals",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: constant in pattern `TokenVirtualizationEnabled` should have an upper case name\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs:648:47\n    |\n648 |             TokenIsAppContainer|TokenUIAccess|TokenVirtualizationEnabled|TokenMandatoryPolicy){4}else{BUFFER_BYTES};\n    |                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to upper case: `TOKEN_VIRTUALIZATION_ENABLED`\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "convert the identifier to upper case",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 42910,
+              "byte_start": 42884,
+              "column_end": 73,
+              "column_start": 47,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 648,
+              "line_start": 648,
+              "suggested_replacement": "TOKEN_VIRTUALIZATION_ENABLED",
+              "suggestion_applicability": "MaybeIncorrect",
+              "text": [
+                {
+                  "highlight_end": 73,
+                  "highlight_start": 47,
+                  "text": "            TokenIsAppContainer|TokenUIAccess|TokenVirtualizationEnabled|TokenMandatoryPolicy){4}else{BUFFER_BYTES};"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "constant in pattern `TokenVirtualizationEnabled` should have an upper case name",
+      "spans": [
+        {
+          "byte_end": 42910,
+          "byte_start": 42884,
+          "column_end": 73,
+          "column_start": 47,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 648,
+          "line_start": 648,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 73,
+              "highlight_start": 47,
+              "text": "            TokenIsAppContainer|TokenUIAccess|TokenVirtualizationEnabled|TokenMandatoryPolicy){4}else{BUFFER_BYTES};"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "non_upper_case_globals",
+        "explanation": null
+      }
+    },
+    {
+      "rendered": "warning: constant in pattern `TokenMandatoryPolicy` should have an upper case name\n   --> C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs:648:74\n    |\n648 |             TokenIsAppContainer|TokenUIAccess|TokenVirtualizationEnabled|TokenMandatoryPolicy){4}else{BUFFER_BYTES};\n    |                                                                          ^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to upper case: `TOKEN_MANDATORY_POLICY`\n\n",
+      "$message_type": "diagnostic",
+      "children": [
+        {
+          "children": [],
+          "code": null,
+          "level": "help",
+          "message": "convert the identifier to upper case",
+          "rendered": null,
+          "spans": [
+            {
+              "byte_end": 42931,
+              "byte_start": 42911,
+              "column_end": 94,
+              "column_start": 74,
+              "expansion": null,
+              "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+              "is_primary": true,
+              "label": null,
+              "line_end": 648,
+              "line_start": 648,
+              "suggested_replacement": "TOKEN_MANDATORY_POLICY",
+              "suggestion_applicability": "MaybeIncorrect",
+              "text": [
+                {
+                  "highlight_end": 94,
+                  "highlight_start": 74,
+                  "text": "            TokenIsAppContainer|TokenUIAccess|TokenVirtualizationEnabled|TokenMandatoryPolicy){4}else{BUFFER_BYTES};"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "warning",
+      "message": "constant in pattern `TokenMandatoryPolicy` should have an upper case name",
+      "spans": [
+        {
+          "byte_end": 42931,
+          "byte_start": 42911,
+          "column_end": 94,
+          "column_start": 74,
+          "expansion": null,
+          "file_name": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+          "is_primary": true,
+          "label": null,
+          "line_end": 648,
+          "line_start": 648,
+          "suggested_replacement": null,
+          "suggestion_applicability": null,
+          "text": [
+            {
+              "highlight_end": 94,
+              "highlight_start": 74,
+              "text": "            TokenIsAppContainer|TokenUIAccess|TokenVirtualizationEnabled|TokenMandatoryPolicy){4}else{BUFFER_BYTES};"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "code": "non_upper_case_globals",
+        "explanation": null
+      }
+    }
+  ],
+  "new_upload_module_diagnostics": [],
+  "whole_host_strict_lint_passed": true,
+  "all_original_lint_processes_closed": true
+}

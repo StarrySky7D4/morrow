@@ -71,7 +71,7 @@ pub struct TaskCommit {
 
 pub(super) fn task_record(card: &CardRecord) -> Result<TaskRecord> {
     match versioned_record::decode(card)? {
-        VersionedRecord::Tasks(record) => Ok(record),
+        VersionedRecord::Tasks(record) => Ok(*record),
         VersionedRecord::Legacy(_) => Err("expected task content format 2".into()),
     }
 }

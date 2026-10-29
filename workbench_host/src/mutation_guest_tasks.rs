@@ -139,7 +139,7 @@ pub struct GuestMutationSnapshot {
 
 pub enum GuestMutationReply {
     /// Only Selected, Planned, History, PlanCancelled or Released are exposed.
-    Owner(MutationResponse),
+    Owner(Box<MutationResponse>),
     /// Correlated Core mutation response from exactly one guest import/completion.
     Frame(GuestMutationFrame),
 }
@@ -704,9 +704,8 @@ impl Workbench {
             };
             let result = if let Err(fault) = report.task.execution.outcome {
                 Err(GuestMutationFailure::Execution(fault))
-            } else if report.task.execution.outcome != Ok(0) {
-                Err(GuestMutationFailure::Protocol)
-            } else if report.calls != 1 || report.cancelled || report.unknown {
+            } else if report.task.execution.outcome != Ok(0)
+                || report.calls != 1 || report.cancelled || report.unknown {
                 Err(GuestMutationFailure::Protocol)
             } else if let (Some(response), Some(raw)) =
                 (report.mutation_response, report.mutation_frame)
@@ -792,40 +791,39 @@ impl Workbench {
         let mut result = match handle.read() {
             Ok(None) => return Ok(None),
             Ok(Some(result)) => result
-                .map(GuestMutationReply::Owner)
                 .map_err(|error| GuestMutationFailure::Owner(Failure::Target(error))),
             Err(error) => Err(GuestMutationFailure::Owner(Failure::Delivery(error))),
         };
         mutation.pending = None;
         match &result {
-            Ok(GuestMutationReply::Owner(MutationResponse::Selected {
+            Ok(MutationResponse::Selected {
                 reference,
                 expected_identity,
-            })) => {
+            }) => {
                 mutation.selected = true;
                 mutation.selection = Some(SelectedTarget {
                     reference: *reference,
                     expected_identity: *expected_identity,
                 });
             }
-            Ok(GuestMutationReply::Owner(MutationResponse::Planned(plan))) => {
+            Ok(MutationResponse::Planned(plan)) => {
                 guest.plan = Some(plan.clone());
             }
-            Ok(GuestMutationReply::Owner(MutationResponse::Released)) => {
+            Ok(MutationResponse::Released) => {
                 mutation.selected = false;
                 mutation.selection = None;
                 mutation.terminal = true;
                 task.stopping = true;
                 worker.stop();
             }
-            Ok(GuestMutationReply::Owner(MutationResponse::PlanCancelled(_))) => {
+            Ok(MutationResponse::PlanCancelled(_)) => {
                 mutation.terminal = true
             }
-            Ok(GuestMutationReply::Owner(MutationResponse::History {
+            Ok(MutationResponse::History {
                 record,
                 staged_bytes,
                 durable_content,
-            })) => {
+            }) => {
                 if let Some(record) = record {
                     let phase = match record.phase() {
                         Phase::Prepared => guest_wire::Phase::Prepared,
@@ -859,14 +857,13 @@ impl Workbench {
                 // An absent history entry cannot disprove an earlier unknown
                 // dispatch, so leave an existing uncertainty latched.
             }
-            Ok(GuestMutationReply::Owner(_)) => {
+            Ok(_) => {
                 mutation.reconcile_required = true;
                 result = Err(GuestMutationFailure::Protocol);
             }
             Err(_) => mutation.reconcile_required = true,
-            _ => {}
         }
-        Ok(Some(result))
+        Ok(Some(result.map(|value| GuestMutationReply::Owner(Box::new(value)))))
     }
 }
 

@@ -441,6 +441,17 @@ fn accepted(language: &str, length: usize) {
     assert!(!result.unknown);
     assert_eq!(result.execution.unwrap().outcome, Ok(0));
     assert_eq!(result.usage.calls, length.div_ceil(61440) as u32 + 4);
+    let journal = w.inspect_persisted_blob_upload(&[1; 32]).unwrap();
+    assert_eq!(journal.record.revision(), 2);
+    assert_eq!(journal.record.request().command, s.command());
+    assert!(journal.record.acknowledged_at_unix_ms().is_none());
+    assert_eq!(journal.current_stage, Observation::Staged);
+    let original = journal.record.original_result().unwrap();
+    assert_eq!(
+        original.outcome,
+        morrow_core::blob_upload_journal::Outcome::Staged
+    );
+    assert!(!original.unknown);
     assert_eq!(
         w.inspect_blob_upload_history(key).unwrap(),
         Observation::Staged
@@ -458,6 +469,23 @@ fn accepted(language: &str, length: usize) {
     drop(w);
     history(&database, &s, Some(false));
     let mut w = Workbench::open(&database, None).unwrap();
+    let journal = w.inspect_persisted_blob_upload(&[1; 32]).unwrap();
+    assert_eq!(journal.record.revision(), 3);
+    assert_eq!(journal.record.original_result(), Some(original));
+    assert_eq!(
+        w.list_blob_upload_history(None, 16).unwrap(),
+        vec![journal.record]
+    );
+    assert!(
+        w.list_blob_upload_history(Some(&[1; 32]), 16)
+            .unwrap()
+            .is_empty()
+    );
+    let duplicate_after_reopen = options(&w, &p, &s, 1, false);
+    assert!(
+        w.start_blob_upload(duplicate_after_reopen).is_err(),
+        "durable submission cannot be replayed after known-closed reopen"
+    );
     assert!(
         w.poll_blob_upload(key).is_err(),
         "reopen does not reconstruct a previous task"
@@ -561,6 +589,13 @@ fn unread_success_veto_requires_original_history_and_explicit_confirmation() {
         let start = options(&w, &p, &s, 1, false);
         let key = w.start_blob_upload(start).unwrap();
         wait(&mut w, key);
+        let original = w
+            .inspect_persisted_blob_upload(&[1; 32])
+            .unwrap()
+            .record
+            .original_result()
+            .unwrap();
+        assert!(!original.unknown);
         if revoke {
             w.configure_external_blob_upload(ID, &p.digest(), revision(&w), false)
                 .unwrap();
@@ -600,6 +635,13 @@ fn unread_success_veto_requires_original_history_and_explicit_confirmation() {
             "confirmation never reclassifies the original Unknown result"
         );
         w.acknowledge_io(key).unwrap();
+        let journal = w.inspect_persisted_blob_upload(&[1; 32]).unwrap();
+        assert_eq!(
+            journal.record.original_result(),
+            Some(original),
+            "delivery loss must not rewrite the joined native result"
+        );
+        assert_eq!(journal.record.revision(), 3);
         w.finish().unwrap();
         drop(w);
         history(&database, &s, Some(false));
@@ -627,4 +669,495 @@ fn product_gate_loss_preserves_owner_and_refuses_delivery_or_replacement() {
     // Never contact, adopt or replay any historical Unknown acceptance owner.
     drop(w);
     history(&database, &s, Some(false));
+}
+
+#[test]
+fn persisted_history_private_route_is_bounded_and_never_revives_a_task() {
+    let root = root("private-history");
+    let database = root.join("original.db");
+    let mut w = Workbench::open(&database, None).unwrap();
+    let p = package("RUST", FUEL);
+    install(&mut w, &root, &p, true);
+    let s = spec(41);
+    let start = options(&w, &p, &s, 81, false);
+    let key = w.start_blob_upload(start).unwrap();
+    assert_eq!(read(&mut w, key).outcome, Ok(Phase::Staged));
+    w.acknowledge_io(key).unwrap();
+    w.finish().unwrap();
+    drop(w);
+    let mut w = Workbench::open(&database, None).unwrap();
+    let reply = private_call(&mut w, private::Action::BlobUploadHistoryList, |r| {
+        r.init_blob_upload_history_query().set_limit(16);
+    });
+    private_success(&reply);
+    private_reply(&reply, |r| {
+        let rows = r.get_blob_upload_history().unwrap();
+        assert_eq!(rows.len(), 1);
+        let row = rows.get(0);
+        assert_eq!(row.get_submission().unwrap(), [81; 32]);
+        assert_eq!(row.get_revision(), 3);
+        assert!(row.get_result_recorded() && row.get_acknowledged());
+        assert_eq!(row.get_original_result().unwrap().get_phase(), 2);
+        assert_eq!(r.get_blob_upload_current_stage(), 0);
+        assert_eq!(r.get_blob_upload_history_cursor().unwrap(), [81; 32]);
+        assert!(r.get_io_state().unwrap().get_key().unwrap().is_empty());
+    });
+    let reply = private_call(&mut w, private::Action::BlobUploadHistoryInspect, |r| {
+        r.init_blob_upload_history_query().set_submission(&[81; 32]);
+    });
+    private_success(&reply);
+    private_reply(&reply, |r| assert_eq!(r.get_blob_upload_current_stage(), 2));
+    for limit in [0, 17, u16::MAX] {
+        let reply = private_call(&mut w, private::Action::BlobUploadHistoryList, |r| {
+            r.init_blob_upload_history_query().set_limit(limit);
+        });
+        private_reply(&reply, |r| assert!(!r.get_error().unwrap().is_empty()));
+    }
+    let reply = private_call(
+        &mut w,
+        private::Action::BlobUploadHistoryInspect,
+        |mut r| {
+            r.set_io_key(key.as_bytes());
+            r.init_blob_upload_history_query().set_submission(&[81; 32]);
+        },
+    );
+    private_reply(&reply, |r| assert!(!r.get_error().unwrap().is_empty()));
+    assert!(w.poll_blob_upload(key).is_err());
+    assert!(w.acknowledge_io(key).is_err());
+    w.finish().unwrap();
+    drop(w);
+    let foreign = Workbench::open(&root.join("foreign.db"), None).unwrap();
+    assert!(
+        foreign
+            .list_blob_upload_history(None, 16)
+            .unwrap()
+            .is_empty()
+    );
+    assert!(foreign.inspect_persisted_blob_upload(&[81; 32]).is_err());
+    drop(foreign);
+    history(&database, &s, Some(false));
+}
+
+#[cfg(feature = "fault-injection")]
+#[test]
+#[ignore = "requires one explicit metadata-failure point and a fresh process/store"]
+fn original_upload_metadata_failure_keeps_dispatch_and_acknowledgement_boundaries() {
+    let point = std::env::var("MORROW_UPLOAD_JOURNAL_FAILURE").unwrap();
+    assert!(
+        [
+            "reserve-before",
+            "reserve-after",
+            "observe-before",
+            "observe-after",
+            "ack-before",
+            "ack-after"
+        ]
+        .contains(&point.as_str())
+    );
+    let root = root(&format!("metadata-{point}"));
+    let database = root.join("original.db");
+    let mut w = Workbench::open(&database, None).unwrap();
+    let p = package("RUST", FUEL);
+    install(&mut w, &root, &p, true);
+    let s = spec(41);
+    let start = options(&w, &p, &s, 91, false);
+    let attempt = w.start_blob_upload(start);
+    if point.starts_with("reserve-") {
+        assert!(attempt.is_err());
+        assert!(
+            w.io_status().key.is_none(),
+            "reservation failure dispatches no worker"
+        );
+        let duplicate = options(&w, &p, &s, 91, false);
+        assert!(w.start_blob_upload(duplicate).is_err());
+        let rows = w.list_blob_upload_history(None, 16).unwrap();
+        assert_eq!(rows.len(), usize::from(point.ends_with("after")));
+        if let Some(row) = rows.first() {
+            assert_eq!(row.revision(), 1);
+            assert!(row.original_unknown());
+        }
+        w.finish().unwrap();
+        drop(w);
+        history(&database, &s, None);
+        return;
+    }
+    let key = attempt.unwrap();
+    assert_eq!(read(&mut w, key).outcome, Ok(Phase::Staged));
+    assert!(w.acknowledge_io(key).is_err());
+    assert!(w.poll_blob_upload(key).unwrap().recovery_required);
+    assert!(w.finish().is_err());
+    let before = w.inspect_persisted_blob_upload(&[91; 32]).unwrap().record;
+    let repair = w.repair_io(key);
+    if point.ends_with("after") {
+        assert_eq!(repair.unwrap().storage, StoragePhase::Reclaimed);
+        assert_eq!(
+            w.inspect_persisted_blob_upload(&[91; 32]).unwrap().record,
+            before,
+            "repair only reads exact original metadata"
+        );
+        w.acknowledge_io(key).unwrap();
+        assert_eq!(
+            w.inspect_persisted_blob_upload(&[91; 32])
+                .unwrap()
+                .record
+                .revision(),
+            3
+        );
+        w.finish().unwrap();
+    } else {
+        assert!(repair.is_err());
+        assert!(w.acknowledge_io(key).is_err());
+        assert!(w.poll_blob_upload(key).unwrap().recovery_required);
+        assert_eq!(
+            w.inspect_persisted_blob_upload(&[91; 32]).unwrap().record,
+            before,
+            "missing metadata is not silently rewritten"
+        );
+        assert!(Workbench::open(&database, None).is_err());
+    }
+    // Synthetic test fixture only: the original worker was actually joined by
+    // read(). A retained metadata debt is not qualified as a successful close.
+    drop(w);
+    history(&database, &s, Some(false));
+}
+
+#[test]
+fn private_history_read_never_reclaims_the_retained_original_worker() {
+    let root = root("history-read-no-reclaim");
+    let database = root.join("original.db");
+    let mut w = Workbench::open(&database, None).unwrap();
+    let p = package("RUST", FUEL);
+    install(&mut w, &root, &p, true);
+    let s = spec(41);
+    let start = options(&w, &p, &s, 92, false);
+    let key = w.start_blob_upload(start).unwrap();
+    // Let the original worker run without polling or joining it. History may
+    // not advance this owner, even when its result is ready to be reclaimed.
+    thread::sleep(Duration::from_secs(1));
+    for action in [
+        private::Action::BlobUploadMetadataReview,
+        private::Action::BlobUploadMetadataComplete,
+    ] {
+        let reply = private_call(&mut w, action, |mut r| {
+            r.set_io_key(key.as_bytes());
+            if action == private::Action::BlobUploadMetadataComplete {
+                r.set_blob_upload_metadata_permit(&[1; 32]);
+            }
+        });
+        private_reply(&reply, |r| assert!(!r.get_error().unwrap().is_empty()));
+    }
+    let reply = private_call(&mut w, private::Action::BlobUploadHistoryList, |r| {
+        r.init_blob_upload_history_query().set_limit(16);
+    });
+    private_reply(&reply, |r| assert!(!r.get_error().unwrap().is_empty()));
+    let reply = private_call(&mut w, private::Action::BlobUploadHistoryInspect, |r| {
+        r.init_blob_upload_history_query().set_submission(&[92; 32]);
+    });
+    private_reply(&reply, |r| assert!(!r.get_error().unwrap().is_empty()));
+    assert!(
+        w.list_blob_upload_history(None, 16).is_err(),
+        "history queries did not restore the retained owner"
+    );
+    assert_eq!(read(&mut w, key).outcome, Ok(Phase::Staged));
+    assert_eq!(
+        w.inspect_persisted_blob_upload(&[92; 32])
+            .unwrap()
+            .record
+            .revision(),
+        2
+    );
+    w.acknowledge_io(key).unwrap();
+    w.finish().unwrap();
+    drop(w);
+    history(&database, &s, Some(false));
+}
+
+#[cfg(feature = "fault-injection")]
+#[test]
+#[ignore = "requires explicit original metadata fault and a fresh synthetic store/process"]
+fn original_upload_metadata_completion_is_single_use_and_owner_bound() {
+    use morrow_workbench_host::io_tasks::blob_upload::MetadataPhase;
+    let point = std::env::var("MORROW_UPLOAD_JOURNAL_FAILURE").unwrap();
+    assert!(
+        ["observe-before", "observe-after", "ack-before", "ack-after"].contains(&point.as_str())
+    );
+    let mode = std::env::var("MORROW_METADATA_COMPLETION_MODE").unwrap_or_else(|_| "normal".into());
+    assert!(["normal", "cancel", "gate"].contains(&mode.as_str()));
+    let fault = std::env::var("MORROW_UPLOAD_METADATA_COMPLETION_FAILURE").ok();
+    assert!(
+        fault
+            .as_deref()
+            .is_none_or(|v| ["before", "after"].contains(&v))
+    );
+    let root = root(&format!(
+        "complete-{point}-{mode}-{}",
+        fault.as_deref().unwrap_or("none")
+    ));
+    let database = root.join("original.db");
+    let mut w = Workbench::open(&database, None).unwrap();
+    let p = package("RUST", FUEL);
+    install(&mut w, &root, &p, true);
+    let s = spec(41);
+    let start = options(&w, &p, &s, 95, false);
+    let key = w.start_blob_upload(start).unwrap();
+    wait(&mut w, key);
+    if mode == "cancel" {
+        assert!(point.starts_with("observe-"));
+        w.cancel_io(key).unwrap();
+    }
+    let delivered = read(&mut w, key);
+    assert_eq!(delivered.unknown, mode == "cancel");
+    assert!(w.acknowledge_io(key).is_err());
+    let before = w.inspect_persisted_blob_upload(&[95; 32]).unwrap().record;
+    let response = private_call(
+        &mut w,
+        private::Action::BlobUploadMetadataReview,
+        |mut r| r.set_io_key(key.as_bytes()),
+    );
+    private_success(&response);
+    let permit: [u8; 32] = private_reply(&response, |r| {
+        let review = r.get_blob_upload_metadata_review().unwrap();
+        assert_eq!(review.get_key().unwrap(), key.as_bytes());
+        assert_eq!(review.get_submission().unwrap(), &[95; 32]);
+        assert_eq!(
+            review.get_phase(),
+            if point.starts_with("ack-") { 2 } else { 1 }
+        );
+        assert_eq!(review.get_write_required(), point.ends_with("before"));
+        review.get_permit().unwrap().try_into().unwrap()
+    });
+    let review = w.review_blob_upload_metadata(key).unwrap();
+    assert_eq!(
+        review.permit, permit,
+        "review is read-only and repeats the same proposal"
+    );
+    assert_eq!(
+        w.inspect_persisted_blob_upload(&[95; 32]).unwrap().record,
+        before
+    );
+    let wrong_key = TaskKey::from_bytes(&[97; 32]).unwrap();
+    assert!(w.review_blob_upload_metadata(wrong_key).is_err());
+    assert!(w.complete_blob_upload_metadata(wrong_key, permit).is_err());
+    assert!(w.complete_blob_upload_metadata(key, [0; 32]).is_err());
+    let mut other = Workbench::open(&root.join("foreign.db"), None).unwrap();
+    assert!(other.review_blob_upload_metadata(key).is_err());
+    assert!(other.complete_blob_upload_metadata(key, permit).is_err());
+    other.finish().unwrap();
+    drop(other);
+    if mode == "gate" {
+        w.product_gate().revoke();
+    }
+    let response = private_call(
+        &mut w,
+        private::Action::BlobUploadMetadataComplete,
+        |mut r| {
+            r.set_io_key(key.as_bytes());
+            r.set_blob_upload_metadata_permit(&permit);
+        },
+    );
+    let failed = mode == "gate" || (fault.is_some() && review.write_required);
+    private_reply(&response, |r| {
+        assert_eq!(!r.get_error().unwrap().is_empty(), failed);
+        if !failed {
+            assert_eq!(
+                r.get_blob_upload_metadata_completed_permit().unwrap(),
+                &permit
+            );
+        }
+    });
+    assert!(
+        w.complete_blob_upload_metadata(key, permit).is_err(),
+        "the same completion never writes twice"
+    );
+    assert!(
+        w.review_blob_upload_metadata(key).is_err(),
+        "no replacement completion permit"
+    );
+    if failed {
+        if mode != "gate" {
+            let after = w.inspect_persisted_blob_upload(&[95; 32]).unwrap().record;
+            assert_eq!(
+                after.revision(),
+                before.revision() + u32::from(fault.as_deref() == Some("after"))
+            );
+            if fault.as_deref() == Some("before") {
+                assert_eq!(after, before);
+            }
+        }
+        assert!(w.finish().is_err());
+        assert!(Workbench::open(&database, None).is_err());
+        println!("metadata completion remains retained; no successful product close claimed");
+    } else {
+        if review.phase == MetadataPhase::Observation {
+            assert_eq!(w.poll_blob_upload(key).unwrap().task.key, Some(key));
+            assert!(
+                w.read_blob_upload(key).is_err(),
+                "no second original result delivery"
+            );
+            if mode == "cancel" {
+                assert!(w.poll_blob_upload(key).unwrap().recovery_required);
+                assert!(
+                    w.acknowledge_io(key).is_err(),
+                    "metadata does not approve an Unknown delivery"
+                );
+                w.inspect_blob_upload_history(key).unwrap();
+                w.confirm_blob_upload_recovery(key, Observation::Staged)
+                    .unwrap();
+                assert!(delivered.unknown);
+            }
+            w.acknowledge_io(key).unwrap();
+        } else {
+            private_reply(&response, |r| {
+                assert!(r.get_blob_upload_metadata_acknowledged());
+                assert!(r.get_io_state().unwrap().get_key().unwrap().is_empty());
+            });
+        }
+        assert!(w.io_status().key.is_none());
+        let record = w.inspect_persisted_blob_upload(&[95; 32]).unwrap().record;
+        assert_eq!(record.revision(), 3);
+        assert_eq!(record.original_result(), Some(review.original));
+        assert_eq!(record.observed_at_unix_ms(), Some(review.observed_at));
+        if review.phase == MetadataPhase::Acknowledgement {
+            assert_eq!(record.acknowledged_at_unix_ms(), review.acknowledgement_at);
+        }
+        assert_eq!(w.list_blob_upload_history(None, 16).unwrap().len(), 1);
+        w.finish().unwrap();
+    }
+    // All negative cases above own synthetic fixtures whose workers joined;
+    // retained metadata debt is not reported as a successful product closure.
+    drop(w);
+    history(&database, &s, Some(false));
+    let mut reopened = Workbench::open(&database, None).unwrap();
+    assert!(reopened.review_blob_upload_metadata(key).is_err());
+    assert!(reopened.complete_blob_upload_metadata(key, permit).is_err());
+    assert!(
+        reopened.io_status().key.is_none(),
+        "saved history cannot revive authority"
+    );
+    reopened.finish().unwrap();
+}
+
+#[cfg(feature = "fault-injection")]
+#[test]
+#[ignore = "requires an explicit observe-after fault and a fresh synthetic store/process"]
+fn original_metadata_read_reconciliation_invalidates_old_completion_review() {
+    assert_eq!(
+        std::env::var("MORROW_UPLOAD_JOURNAL_FAILURE").as_deref(),
+        Ok("observe-after")
+    );
+    let root = root("metadata-review-invalidated");
+    let database = root.join("original.db");
+    let mut w = Workbench::open(&database, None).unwrap();
+    let p = package("RUST", FUEL);
+    install(&mut w, &root, &p, true);
+    let s = spec(41);
+    let start = options(&w, &p, &s, 96, false);
+    let key = w.start_blob_upload(start).unwrap();
+    assert_eq!(read(&mut w, key).outcome, Ok(Phase::Staged));
+    let review = w.review_blob_upload_metadata(key).unwrap();
+    assert!(!review.write_required);
+    let before = w.inspect_persisted_blob_upload(&[96; 32]).unwrap().record;
+    w.repair_io(key).unwrap();
+    assert!(
+        w.complete_blob_upload_metadata(key, review.permit).is_err(),
+        "a review made before explicit reconciliation must be invalidated"
+    );
+    assert_eq!(
+        w.inspect_persisted_blob_upload(&[96; 32]).unwrap().record,
+        before
+    );
+    w.acknowledge_io(key).unwrap();
+    assert!(w.complete_blob_upload_metadata(key, review.permit).is_err());
+    assert_eq!(
+        w.inspect_persisted_blob_upload(&[96; 32])
+            .unwrap()
+            .record
+            .revision(),
+        3
+    );
+    w.finish().unwrap();
+    drop(w);
+    history(&database, &s, Some(false));
+}
+// Append only to the selected protected upload integration fixture.
+#[cfg(feature = "fault-injection")]
+#[test]
+#[ignore = "explicit fresh managed-library child with one abrupt commit boundary"]
+fn protected_upload_history_commit_crash_child() {
+    let root = PathBuf::from(std::env::var_os("MORROW_UPLOAD_CRASH_ROOT").unwrap());
+    assert!(root.is_absolute() && root.starts_with("D:/build_cache") && root.is_dir());
+    assert!(
+        fs::read_dir(&root)
+            .unwrap()
+            .all(|entry| entry.unwrap().file_name() == "expected.txt"),
+        "fresh fixture only; no replay"
+    );
+    let point = std::env::var("MORROW_TEST_CRASH_AT").unwrap();
+    assert!(["blob-stage-before-commit", "blob-stage-after-commit"].contains(&point.as_str()));
+    let mut w = Workbench::open_managed(&root, None).unwrap();
+    let p = package("RUST", FUEL);
+    install(&mut w, &root, &p, true);
+    let s = spec(41);
+    let start = options(&w, &p, &s, 93, false);
+    let key = w.start_blob_upload(start).unwrap();
+    wait(&mut w, key);
+    panic!("explicit abrupt commit boundary was not reached");
+}
+
+#[cfg(feature = "fault-injection")]
+#[test]
+fn protected_abrupt_commit_keeps_missing_original_result_uncertain_after_reopen() {
+    for (point, staged) in [
+        ("blob-stage-before-commit", false),
+        ("blob-stage-after-commit", true),
+    ] {
+        let root = root(&format!("crash-history-{point}"));
+        let child = std::process::Command::new(std::env::current_exe().unwrap())
+            .args([
+                "--exact",
+                "protected_upload_history_commit_crash_child",
+                "--ignored",
+                "--nocapture",
+            ])
+            .env("MORROW_UPLOAD_CRASH_ROOT", &root)
+            .env("MORROW_TEST_CRASH_AT", point)
+            .output()
+            .unwrap();
+        assert_eq!(child.status.code(), Some(86), "{point}: {child:?}");
+        // The held original child actually exited. This is a fresh read owner,
+        // never a resumed worker, restored TaskKey or historical live owner.
+        let mut w = Workbench::open_managed(&root, None).unwrap();
+        let rows = w.list_blob_upload_history(None, 16).unwrap();
+        assert_eq!(rows.len(), 1);
+        let original = rows[0].clone();
+        assert_eq!(original.request().submission, [93; 32]);
+        assert_eq!(original.revision(), 1);
+        assert!(original.original_unknown());
+        assert!(original.original_result().is_none());
+        assert!(original.acknowledged_at_unix_ms().is_none());
+        let actual = w.inspect_persisted_blob_upload(&[93; 32]).unwrap();
+        assert_eq!(
+            actual.current_stage,
+            if staged {
+                Observation::Staged
+            } else {
+                Observation::Absent
+            }
+        );
+        assert_eq!(
+            actual.record, original,
+            "current blob presence cannot upgrade the original result"
+        );
+        assert!(w.io_status().key.is_none());
+        w.finish().unwrap();
+        drop(w);
+        let database = morrow_audit::library::Registry::open(&root)
+            .unwrap()
+            .selected_database()
+            .unwrap();
+        history(&database, &spec(41), staged.then_some(false));
+        eprintln!(
+            "PROTECTED_UPLOAD_CRASH_HISTORY point={point} actual_original_exit=86 historical_revision=1 historical_unknown=true new_workers=0"
+        );
+    }
 }

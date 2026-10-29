@@ -1,0 +1,98 @@
+{
+  "status": "PASS_SCOPED_CURRENT_FULL_MAIN_TEXT_SAVE_HISTORY_REOPEN",
+  "utc": "2026-10-29T07:07:01.951948+00:00",
+  "source_digest": "5fc113edec1e26baa7db613458f9fd37fbfc1b6ee655113c738b3211289be1b6",
+  "case": 678,
+  "preparation_case": 677,
+  "language": "rust",
+  "plugin": "org.example.blob-text.rust",
+  "task_id": "bcfd2c6e2a5b8eef57d0b649ad70a1e9ee1938a8ff18011c6fafd0ff8fd3028a",
+  "content_bytes": 41,
+  "content_sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739",
+  "plugin_sha256": "a281c4adbff5cb4d2c49f7ca33088ed507a4cc1e41a5b5900974508825b34ba9",
+  "actual_UI_proposal_approval_save_finish": true,
+  "history_same_task_after_restart": true,
+  "exact_UTF8_bytes_whitespace_newline_emoji": true,
+  "independent_closed_library_checks": 2,
+  "all_six_original_processes_returned_zero": true,
+  "input_route": "Application context-menu Paste of user-copied known sample; automated Ctrl+V had no effect",
+  "native_launcher_rebuilt": false,
+  "native_launcher_source_unchanged": true,
+  "host_supervisor_kernel_builtin_current_source": true,
+  "original_frozen_guest_unchanged": true,
+  "qualification_shell": false,
+  "approval_seeded": false,
+  "native_picker_injected": false,
+  "old_unknown_owner_contacts": 0,
+  "VM_calls": 0,
+  "evidence": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\preparation.json",
+      "bytes": 3719,
+      "sha256": "3983429ff8b37d88e7feba3b5c4a918186d47ed13537a30aac8126f6806cefaa"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\process-result.json",
+      "bytes": 3676,
+      "sha256": "d4e55a6b8e968856b4da75a6ca0ddd37383256d09f07d3d3216a7fa73534f0ba"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\run-visible-observations.json",
+      "bytes": 1394,
+      "sha256": "cb2df622030073270f580ea06e9fa4c98405cd0ac2cd3a00f2ccc5da3076a3bd"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\run-processes-returned.json",
+      "bytes": 1428,
+      "sha256": "003ebed09d19655e54dd3f06945b98ecc7ac16417af939baace04b7cb69be678"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\run-history-result.json",
+      "bytes": 555,
+      "sha256": "3d552a6c81e8a5bab2c1dc44b4b60fc25026aced8de625b64d6071e3dd7e8fec"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\run-history.stdout",
+      "bytes": 81,
+      "sha256": "3cf55551cefa9225b7f6b3faf444e28432a87d13d60945a2f29b75bc6ee9b4a7"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\run-history.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\reopen-visible-observations.json",
+      "bytes": 3631,
+      "sha256": "4697652950d1b4343e0ed3a70d6d7b6ebb6591458eb511ce3a3c49b42cc468a3"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\reopen-processes-returned.json",
+      "bytes": 1436,
+      "sha256": "0ac58b774264ec12937fb674ee84e3689bc5504d1efe4769718c474a56035b3b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\reopen-history-result.json",
+      "bytes": 561,
+      "sha256": "a62146551f273b0599f9e7ff4f6a4c22df69a721a24d7e990602e951677693a3"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\reopen-history.stdout",
+      "bytes": 81,
+      "sha256": "3cf55551cefa9225b7f6b3faf444e28432a87d13d60945a2f29b75bc6ee9b4a7"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\reopen-history.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "limits": [
+    "One Rust plugin and local content-library upload route only",
+    "Keyboard automation Ctrl+V did not deliver input; actual application context-menu Paste did",
+    "Full SDK26, G04, SDK_FREEZE and release acceptance remain open"
+  ],
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

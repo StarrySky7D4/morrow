@@ -1,0 +1,18 @@
+{
+  "phase": "reopen",
+  "source_digest": "5fc113edec1e26baa7db613458f9fd37fbfc1b6ee655113c738b3211289be1b6",
+  "observed_utc": "2026-10-29T07:01:15.871Z",
+  "history_tree": "Window: \"Morrow\", App: morrow_studio.exe.\n\t0 窗口 Morrow Secondary Actions: Raise\n\t\t1 窗格\n\t\t\t25736 组\n\t\t\t\t25737 组\n\t\t\t\t\t25738 文本\n\t\t\t\t\t25739 文本 Morrow\n\t\t\t\t\t25740 组\n\t\t\t\t\t\t25741 组\n\t\t\t\t\t\t\t25742 组\n\t\t\t\t\t\t\t\t25743 组\n\t\t\t\t\t\t\t\t\t25744 组 提醒\n\t\t\t\t\t\t\t\t\t\t25745 文本 历史上传记录\n\t\t\t\t\t\t\t\t\t\t25746 组\n\t\t\t\t\t\t\t\t\t\t\t25747 文本 记录来自当前内容库。确认记录不代表当时的界面已收到结果。这里分别显示原任务结果与当前内容状态，不会启动上传或替旧任务确认。\n\t\t\t\t\t\t\t\t\t\t\t25748 组\n\t\t\t\t\t\t\t\t\t\t\t\t25749 组\n\t\t\t\t\t\t\t\t\t\t\t\t\t25750 组\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t25751 组 org.example.blob-text.rust 2026-10-29 14:42:36 · 41 字节 原任务报告：内容已保存 原任务已确认 当前内容记录：已保存 这是当前内容状态，不会改写原任务结果。\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t25752 按钮 查看当前内容记录\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t25753 文本 核对信息\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t25754 文本 (settable, string) Value: 任务标识: bcfd2c6e2a5b8eef57d0b649ad70a1e9ee1938a8ff18011c6fafd0ff8fd3028a 内容校验值: 12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739 插件校验值: a281c4adbff5cb4d2c49f7ca33088ed507a4cc1e41a5b5900974508825b34ba9\n\t\t\t\t\t\t\t\t\t\t25755 按钮 重新查看\n\t\t\t\t\t\t\t\t\t\t25756 按钮 关闭\n\t\t\t\t\t25757 文本\n\t\t\t\t\t25758 文本\n\t\t\t\t\t25759 文本\n\t\t\t\t\t25760 文本\n\t\t\t\t\t25761 文本\n\t\t\t\t\t25762 文本\n\t\t\t\t\t25763 文本\n\nThe focused UI element is 1 窗格.",
+  "no_pending_tree": "Window: \"Morrow\", App: morrow_studio.exe.\n\t0 窗口 Morrow Secondary Actions: Raise\n\t\t1 窗格\n\t\t\t33311 组\n\t\t\t\t33312 组\n\t\t\t\t\t33313 文本\n\t\t\t\t\t33314 文本 Morrow\n\t\t\t\t\t33315 组\n\t\t\t\t\t\t33316 组\n\t\t\t\t\t\t\t33317 组\n\t\t\t\t\t\t\t\t33318 组\n\t\t\t\t\t\t\t\t\t33319 组 提醒\n\t\t\t\t\t\t\t\t\t\t33320 文本 保存插件内容\n\t\t\t\t\t\t\t\t\t\t33321 组\n\t\t\t\t\t\t\t\t\t\t\t33322 组\n\t\t\t\t\t\t\t\t\t\t\t\t33323 文本 内容会保存到当前内容库。先查看插件生成的提案，再决定是否批准本次保存。\n\t\t\t\t\t\t\t\t\t\t\t\t33324 文本 当前没有待处理的上传提案。请从插件列表选择“保存内容”。\n\t\t\t\t\t\t\t\t\t\t\t\t33325 文本 关闭窗口会请求停止尚未结束的原任务。已保存的内容不会因此删除；重新打开可继续核对。\n\t\t\t\t\t\t\t\t\t\t33326 按钮 关闭\n\t\t\t\t\t33327 文本\n\t\t\t\t\t33328 文本\n\t\t\t\t\t33329 文本\n\t\t\t\t\t33330 文本\n\t\t\t\t\t33331 文本\n\t\t\t\t\t33332 文本\n\t\t\t\t\t33333 文本\n\nThe focused UI element is 1 窗格.",
+  "same_task_id": "bcfd2c6e2a5b8eef57d0b649ad70a1e9ee1938a8ff18011c6fafd0ff8fd3028a",
+  "content_bytes": 41,
+  "content_sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739",
+  "plugin_sha256": "a281c4adbff5cb4d2c49f7ca33088ed507a4cc1e41a5b5900974508825b34ba9",
+  "one_history_row": true,
+  "original_task_confirmed": true,
+  "current_content_saved": true,
+  "no_new_proposal_on_reopen": true,
+  "no_pending_operation": true,
+  "normal_UI_close_requested": true,
+  "close_request_state": "REQUEST_RECORDED_BEFORE_UI_DELIVERY; actual completion requires original process handles"
+}

@@ -1,6 +1,6 @@
 //! Trusted native product carrier. The entire original protected WorkbenchState
 //! moves into UploadWorker. This API does not establish rendered approval UI.
-use super::{AccessError, Cleanup, Executor, ExitStatus, Snapshot, Task, TaskKey};
+use super::{AccessError, Cleanup, Executor, ExitStatus, Snapshot, StateSlot, Task, TaskKey};
 use crate::{Result, Workbench, product_gate::StopRegistration};
 use morrow_blob_upload_request_v1::Phase;
 use morrow_core::{dispatch::HostBinding, store::BlobStageStoreBinding, task::Invocation};
@@ -12,6 +12,9 @@ use morrow_plugin_runtime::{
     io_jobs::JobError,
 };
 use std::{sync::Arc, time::Duration};
+
+#[path = "blob_upload_journal.rs"]
+mod journal;
 
 /// Trusted application input after explicit operation approval. Names, hashes
 /// and package declarations are correlation data, never permission by themselves.
@@ -40,6 +43,29 @@ pub enum Observation {
     Staged,
     Released,
 }
+/// Saved metadata and a separate current stage observation. Neither carries a
+/// TaskKey, approval, native owner, or permission to retry an old submission.
+pub struct HistoricalUpload {
+    pub record: morrow_core::blob_upload_journal::Record,
+    pub current_stage: Observation,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum MetadataPhase {
+    Observation,
+    Acknowledgement,
+}
+/// Exists only inside the original live owner. The single-use permit is never
+/// persisted, restored from history or exposed to a guest.
+#[derive(Clone, Debug)]
+pub struct MetadataReview {
+    pub submission: [u8; 32],
+    pub permit: [u8; 32],
+    pub phase: MetadataPhase,
+    pub write_required: bool,
+    pub original: morrow_core::blob_upload_journal::OriginalResult,
+    pub observed_at: i64,
+    pub acknowledgement_at: Option<i64>,
+}
 #[derive(Clone, Copy, Debug)]
 pub struct UploadSnapshot {
     pub task: Snapshot,
@@ -60,6 +86,7 @@ pub(super) struct UploadTask {
     delivered: bool,
     observed: Option<Observation>,
     recovery_confirmed: bool,
+    history: journal::History,
 }
 impl UploadTask {
     pub(super) fn cancel(&self) {
@@ -80,6 +107,8 @@ impl UploadTask {
             execution,
             unknown,
         });
+        self.history
+            .record_exit(self.result.as_ref().expect("original exit recorded"));
     }
     fn refresh_delivery(&mut self) {
         if self.delivered {
@@ -97,6 +126,9 @@ impl UploadTask {
         }
     }
     pub(super) fn needs_review(&self) -> bool {
+        if self.history.needs_review() {
+            return true;
+        }
         if self.recovery_confirmed {
             return false;
         }
@@ -121,7 +153,130 @@ impl UploadTask {
         Ok(())
     }
 }
+impl StateSlot {
+    pub(super) fn persist_upload_observation(&mut self) -> Result<()> {
+        let upload = self.upload_task.as_mut().ok_or(AccessError::StaleTask)?;
+        let owner = self.owner.as_mut().ok_or(AccessError::OwnerUnavailable)?;
+        upload
+            .history
+            .persist_observation(owner, upload.host, &upload.store, &self.product_gate)
+    }
+    pub(super) fn reconcile_upload_observation(&mut self) -> Result<()> {
+        let Some(upload) = self.upload_task.as_mut() else {
+            return Ok(());
+        };
+        if !upload.history.needs_review() {
+            return Ok(());
+        }
+        let owner = self.owner.as_ref().ok_or(AccessError::OwnerUnavailable)?;
+        upload
+            .history
+            .reconcile(owner, upload.host, &upload.store, &self.product_gate)
+    }
+    pub(super) fn acknowledge_upload_history(&mut self) -> Result<()> {
+        let Some(upload) = self.upload_task.as_mut() else {
+            return Ok(());
+        };
+        upload.check_acknowledgement()?;
+        let owner = self.owner.as_mut().ok_or(AccessError::OwnerUnavailable)?;
+        upload
+            .history
+            .acknowledge(owner, upload.host, &upload.store, &self.product_gate)
+    }
+}
 impl Workbench {
+    /// Only inspect an already joined original owner. This never polls it.
+    pub fn review_blob_upload_metadata(&mut self, key: TaskKey) -> Result<MetadataReview> {
+        self.state.checked_task(key)?;
+        let upload = self
+            .state
+            .upload_task
+            .as_mut()
+            .filter(|u| u.key == key)
+            .ok_or(AccessError::StaleTask)?;
+        let owner = self
+            .state
+            .owner
+            .as_ref()
+            .ok_or(AccessError::OwnerUnavailable)?;
+        upload
+            .history
+            .review_metadata(owner, upload.host, &upload.store, &self.state.product_gate)
+    }
+    /// Complete only the reviewed retained metadata. If the original explicit
+    /// acknowledgement was interrupted, finish that decision without a new write
+    /// or upload. Unknown results still require the original separate review.
+    pub fn complete_blob_upload_metadata(
+        &mut self,
+        key: TaskKey,
+        permit: [u8; 32],
+    ) -> Result<bool> {
+        self.state.checked_task(key)?;
+        let upload = self
+            .state
+            .upload_task
+            .as_mut()
+            .filter(|u| u.key == key)
+            .ok_or(AccessError::StaleTask)?;
+        let owner = self
+            .state
+            .owner
+            .as_mut()
+            .ok_or(AccessError::OwnerUnavailable)?;
+        let phase = upload.history.complete_metadata(
+            owner,
+            upload.host,
+            &upload.store,
+            &self.state.product_gate,
+            permit,
+        )?;
+        if phase == MetadataPhase::Acknowledgement {
+            self.acknowledge_io(key)?;
+            return Ok(true);
+        }
+        Ok(false)
+    }
+    /// Bounded read on the currently opened library. It does not reclaim or
+    /// reconstruct any previous worker and works after a known-closed reopen.
+    pub fn list_blob_upload_history(
+        &self,
+        after: Option<&[u8; 32]>,
+        limit: u32,
+    ) -> Result<Vec<morrow_core::blob_upload_journal::Record>> {
+        if limit == 0 || limit > 16 {
+            return Err("upload history page exceeds the private response budget".into());
+        }
+        let gate = &self.state.product_gate;
+        gate.check()?;
+        let owner = self.state.local()?;
+        let store = owner.host.store_local();
+        let binding = store.blob_stage_store_binding();
+        Ok(store
+            .list_blob_uploads_local_authorized(after, limit, || journal::guard(gate, &binding))?)
+    }
+    pub fn inspect_persisted_blob_upload(&self, submission: &[u8; 32]) -> Result<HistoricalUpload> {
+        let gate = &self.state.product_gate;
+        gate.check()?;
+        let owner = self.state.local()?;
+        let store = owner.host.store_local();
+        let binding = store.blob_stage_store_binding();
+        let record = store
+            .inspect_blob_upload_local_authorized(submission, || journal::guard(gate, &binding))?
+            .ok_or("upload history not found in this library")?;
+        let stage = store.inspect_blob_stage_local_authorized(&record.request().command, || {
+            journal::guard(gate, &binding)
+        })?;
+        let current_stage = match stage {
+            None => Observation::Absent,
+            Some(row) if row.is_released() => Observation::Released,
+            Some(_) => Observation::Staged,
+        };
+        gate.check()?;
+        Ok(HistoricalUpload {
+            record,
+            current_stage,
+        })
+    }
     pub fn start_blob_upload(&mut self, options: UploadStart) -> Result<TaskKey> {
         self.state.try_reclaim()?;
         self.state.require_writable()?;
@@ -141,6 +296,7 @@ impl Workbench {
             .spec
             .validate()
             .map_err(|_| "上传对象超出批准范围。")?;
+        let request = journal::request(&options)?;
         let gate = self.state.product_gate.clone();
         gate.check()?;
         let mut raw_key = [0; 32];
@@ -198,6 +354,30 @@ impl Workbench {
             self.state.cleanup_instance(instance)?;
             return Err(error);
         }
+        // A failed metadata commit never dispatches. Consume the in-process
+        // submission before this attempt, including an uncertain commit result.
+        self.state.upload_submissions.insert(options.submission);
+        let reservation = (|| -> Result<_> {
+            let owner = self.state.local_mut()?;
+            let store = owner.host.store_local().blob_stage_store_binding();
+            journal::qualification_failure("reserve-before")?;
+            let record = owner
+                .host
+                .store_local_mut()
+                .reserve_blob_upload_local_authorized(&request, now, || {
+                    journal::guard(&gate, &store)
+                })?;
+            journal::qualification_failure("reserve-after")?;
+            gate.check()?;
+            Ok(record)
+        })();
+        let reservation = match reservation {
+            Ok(record) => record,
+            Err(error) => {
+                self.state.cleanup_instance(instance)?;
+                return Err(error);
+            }
+        };
         let owner = self
             .state
             .owner
@@ -205,7 +385,6 @@ impl Workbench {
             .ok_or(AccessError::OwnerUnavailable)?;
         let original_host = owner.host.binding();
         let original_store = owner.host.store_local().blob_stage_store_binding();
-        self.state.upload_submissions.insert(options.submission);
         self.state.submission = Some(options.submission);
         let mut record = UploadTask {
             key,
@@ -218,6 +397,7 @@ impl Workbench {
             delivered: false,
             observed: None,
             recovery_confirmed: false,
+            history: journal::History::reserved(reservation),
         };
         let mut task = Task {
             key,
@@ -240,14 +420,9 @@ impl Workbench {
             }
             Err(failure) => {
                 self.state.owner = Some(failure.owner);
-                self.state.cleanup = Some(Cleanup::Original(failure.instance));
+                self.state.cleanup = Some(Cleanup::Original(Box::new(failure.instance)));
                 self.state.repair_needed = true;
-                record.result = Some(UploadResult {
-                    outcome: Err(failure.error),
-                    unknown: false,
-                    usage: failure.approval.usage(),
-                    execution: None,
-                });
+                record.record_exit(Err(failure.error), failure.approval.usage(), None, false);
                 task.exit = Some(ExitStatus {
                     execution: Err(JobError::Spawn),
                     disconnect: Err(JobError::Disconnect),
@@ -257,6 +432,16 @@ impl Workbench {
         }
         self.state.task = Some(task);
         self.state.upload_task = Some(record);
+        if self
+            .state
+            .task
+            .as_ref()
+            .is_some_and(|task| task.exit.is_some())
+        {
+            // The failed spawn returned the original owner. Journal failure
+            // retains the task and a separate debt; it cannot erase ownership.
+            let _ = self.state.persist_upload_observation();
+        }
         if gate.closed() {
             self.state.request_stop();
         }

@@ -1,0 +1,8 @@
+{
+  "source_digest": "08dab3cb66557d75890f495eee41553781feeb142e16a3aa484a3dda769c834c",
+  "previous_source": "7745b92da4070bfcac6d65d75a10b9a08276a844dd4242f0ff5a55250dbe0b59",
+  "only_changed_file": "test/blob_upload_metadata_native_test.dart",
+  "all_other_repository_bytes_identical": true,
+  "full_main_kernel551_equivalent": true,
+  "native_first_variant550_equivalent": true
+}

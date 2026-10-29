@@ -39,7 +39,7 @@ pub(super) enum Admission {
 pub(super) enum Submitted {
     Io(JobHandle),
     #[cfg(windows)]
-    Mutation(super::mutation::MutationTask),
+    Mutation(Box<super::mutation::MutationTask>),
     File(FileTask),
 }
 impl Admission {
@@ -54,7 +54,7 @@ impl Admission {
     pub(super) fn submit(self, worker: &IoWorker<WorkbenchState>) -> Result<Submitted> {
         match self {
             #[cfg(windows)]
-            Self::Mutation(job) => Ok(Submitted::Mutation(job.submit(worker)?)),
+            Self::Mutation(job) => Ok(Submitted::Mutation(Box::new(job.submit(worker)?))),
             Self::Io(job) => Ok(Submitted::Io(
                 worker
                     .submit_brokered(job.input, job.router, job.timeout)

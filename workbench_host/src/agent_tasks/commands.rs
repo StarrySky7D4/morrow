@@ -128,7 +128,7 @@ pub enum AgentReply {
     Frame(TaskRun),
     Started(Handle),
     ToolReview {
-        review: ToolReview,
+        review: Box<ToolReview>,
         observation: ToolObservation,
     },
     Claimed {

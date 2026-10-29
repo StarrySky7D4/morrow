@@ -320,15 +320,14 @@ impl WorkbenchState {
         {
             return Err("editor recovery projection changed".into());
         }
-        if let Some(slot) = self.editor_slot(&card_id)? {
-            if slot.active {
+        if let Some(slot) = self.editor_slot(&card_id)?
+            && slot.active {
                 if slot.operation_id != operation || slot.evidence_sha256 != evidence.digest() {
                     return Err("active editor recovery requires reconciliation".into());
                 }
                 self.slot_evidence(&slot)?;
                 return self.editor_status(&slot);
             }
-        }
         if !matches!(self.host.store_local().lookup(operation)?, Lookup::Absent) {
             return Err("editor recovery operation already used".into());
         }

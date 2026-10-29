@@ -1,0 +1,59 @@
+{
+  "status": "PAUSED_CLEAN_VM047_SAVED_CASE703_NOT_DISPATCHED",
+  "utc": "2026-10-29T12:11:28.4800011Z",
+  "vm_id": "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
+  "state": "Saved",
+  "registered_vms": 4,
+  "before": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
+      "name": "Morrow Windows Acceptance 20261029 047",
+      "state": "Running"
+    }
+  ],
+  "after": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
+      "name": "Morrow Windows Acceptance 20261029 047",
+      "state": "Saved"
+    }
+  ],
+  "disk_retained": "C:\\MorrowQA\\windows-acceptance-20261029-047\\acceptance.vhdx",
+  "case703_dispatched": false,
+  "guest_calls": 0,
+  "credential_reads": 0,
+  "old_unknown_owner_contacts": 0,
+  "other_vm_states_unchanged": true,
+  "source_accepted": false,
+  "release_eligible": false
+}

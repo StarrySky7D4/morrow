@@ -18,12 +18,6 @@ pub(crate) struct Exit<O> {
     pub(crate) error: String,
     pub(crate) repair: bool,
 }
-impl<O> Exit<O> {
-    pub(crate) fn requires_cleanup(&self) -> bool {
-        self.repair || !self.error.is_empty() || self.report.as_ref().is_none_or(failed_report)
-    }
-}
-
 fn failed_report(report: &TaskReport) -> bool {
     report.failure.is_some() || report.execution.outcome.is_err() || report.output.is_none()
 }

@@ -46,6 +46,8 @@ import 'file_task_native.dart';
 import 'directory_task_models.dart';
 import 'directory_task_native.dart';
 import 'blob_upload_models.dart';
+import 'blob_upload_history_models.dart';
+import 'blob_upload_history_native.dart';
 import 'blob_upload_native.dart';
 import 'blob_plan_models.dart';
 import 'blob_plan_native.dart';
@@ -197,6 +199,8 @@ class RustWorkbench
         FileTaskBackend,
         DirectoryTaskBackend,
         BlobUploadBackend,
+        BlobUploadMetadataBackend,
+        BlobUploadHistoryBackend,
         BlobPlanBackend,
         DirectoryTaskPlatformCapabilities,
         NativeDirectoryPickerCapabilities,
@@ -1348,6 +1352,20 @@ class RustWorkbench
   @override
   Future<BlobPlanSnapshot?> discoverBlobPlan(Uint8List submission) => _blobPlans.discoverBlobPlan(submission);
   late final _blobUploads = NativeBlobUploadClient(_callDecoded);
+  late final _blobUploadMetadata = NativeBlobUploadClient(_localChannelExchange);
+  @override
+  Future<BlobUploadMetadataReview> reviewBlobUploadMetadata(Uint8List key) =>
+      _blobUploadMetadata.reviewBlobUploadMetadata(key);
+  @override
+  Future<BlobUploadMetadataCompletion> completeBlobUploadMetadata(BlobUploadMetadataReview review) =>
+      _blobUploadMetadata.completeBlobUploadMetadata(review);
+  late final _blobUploadHistory = NativeBlobUploadHistoryClient(_localChannelExchange);
+  @override
+  Future<BlobUploadHistoryPage> listBlobUploadHistory({Uint8List? after, int limit = 16}) =>
+      _blobUploadHistory.listBlobUploadHistory(after: after, limit: limit);
+  @override
+  Future<BlobUploadHistoryInspection> inspectBlobUploadHistory(Uint8List submission) =>
+      _blobUploadHistory.inspectBlobUploadHistory(submission);
   @override
   Future<void> approveBlobUpload(String packageId, Uint8List digest,
       BigInt revision, bool approved) =>

@@ -1,0 +1,14 @@
+{
+  "exit_code": 0,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\reopen-history.stdout",
+    "bytes": 81,
+    "sha256": "3cf55551cefa9225b7f6b3faf444e28432a87d13d60945a2f29b75bc6ee9b4a7"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\reopen-history.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "original_closed_library": true
+}

@@ -84,7 +84,7 @@ fn idea() -> Idea {
 
 fn record(host: &Workbench) -> TaskRecord {
     match host.read_versioned("card").unwrap() {
-        VersionedRecord::Tasks(record) => record,
+        VersionedRecord::Tasks(record) => *record,
         VersionedRecord::Legacy(_) => panic!("expected migrated V2 card"),
     }
 }

@@ -20,14 +20,6 @@ pub(super) fn is_action(action: wire::Action) -> bool {
             | wire::Action::PluginRemove
     )
 }
-pub(super) fn budget_reply(value: Budget, mut out: wire::channel_budget::Builder<'_>) {
-    out.set_max_channels(value.max_channels);
-    out.set_max_frame_bytes(value.max_frame_bytes);
-    out.set_max_bytes(value.max_bytes);
-    out.set_max_messages(value.max_messages);
-    out.set_max_requests(value.max_requests);
-    out.set_max_duration_ms(value.max_duration_ms);
-}
 fn budget(value: wire::channel_budget::Reader<'_>) -> Budget {
     Budget {
         max_channels: value.get_max_channels(),

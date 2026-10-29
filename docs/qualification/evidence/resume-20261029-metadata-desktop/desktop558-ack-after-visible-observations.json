@@ -1,0 +1,15 @@
+{
+  "phase": "ack-after",
+  "input": "d",
+  "input_bytes": 1,
+  "original_result_saved": true,
+  "metadata_review_displayed": true,
+  "write_required": false,
+  "original_record_finished": true,
+  "persisted_original_acknowledged": true,
+  "current_content_saved": true,
+  "normal_UI_close_requested": true,
+  "synthetic_data": true,
+  "extra_uploads_started": false,
+  "qualification_host": true
+}

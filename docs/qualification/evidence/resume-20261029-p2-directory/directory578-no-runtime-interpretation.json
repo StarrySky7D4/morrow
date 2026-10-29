@@ -1,0 +1,15 @@
+{
+  "status": "DISCOVERY_ONLY_NO_RUNTIME_TEST_DISPATCH",
+  "original_result": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\directory-sdk-current-578\\result.json",
+    "bytes": 1591,
+    "sha256": "44d907c96a11a5987445c9c548b945ecacbb18ca4f64c30b0c466bea8f7cfeae"
+  },
+  "reason": "The current binary exposes 26 methods: 15 original lifecycle, six retained-owner and five included private Capn Proto cases. The driver expected 21 and stopped after test listing.",
+  "original_discovery_process_exit": 0,
+  "actual_guest_runs": 0,
+  "actual_protected_store_opens": 0,
+  "actual_native_directory_operations": 0,
+  "static_scope_fields_are_not_runtime_acceptance": true,
+  "original_failure_preserved": true
+}

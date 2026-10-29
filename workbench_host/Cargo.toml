@@ -63,6 +63,12 @@ tempfile = "=3.27.0"
 
 [features]
 blob-upload-guest-qualification = []
+# Dedicated full-UI fixtures choose one fixed point at compile time. They do
+# not forward arbitrary environment variables through the trusted supervisor.
+blob-upload-ui-observe-before-qualification = []
+blob-upload-ui-observe-after-qualification = []
+blob-upload-ui-ack-before-qualification = []
+blob-upload-ui-ack-after-qualification = []
 c28-product-session-qualification = ["morrow-native-pipe-win/c28-product-session-qualification"]
 # Separate, default-off RPC fault fixture; never enabled by the normal product feature.
 c28-qualified-startup-rpc-fault-fixture = ["c28-product-session-qualification"]

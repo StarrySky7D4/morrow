@@ -73,8 +73,8 @@ pub(crate) fn classify(
     let Some((key, retained_worker, retained_exit)) = task else {
         return Observation::without_key(if owner_present { Kind::None } else { Kind::Unavailable });
     };
-    if key.as_bytes() == &[0; 32] || retained_worker && (owner_present || retained_exit)
-        || retained_exit && !owner_present {
+    let conflicting_owner = if owner_present { retained_worker } else { retained_exit };
+    if key.as_bytes() == &[0; 32] || conflicting_owner {
         return Observation::without_key(Kind::Unavailable);
     }
     if retained_worker { return Observation { kind: Kind::RunningAgent, task: Some(key) }; }

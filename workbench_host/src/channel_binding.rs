@@ -61,7 +61,7 @@ impl OwnerBinding {
 pub(crate) fn require_owner(
     owner: Option<OwnerBinding>,
 ) -> std::result::Result<OwnerBinding, Prerequisite> {
-    owner.ok_or_else(|| {
+    owner.ok_or({
         if cfg!(windows) {
             Prerequisite::SupervisedOwnerRequired
         } else {

@@ -1,0 +1,153 @@
+{
+  "selected": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+    "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+    "target": {
+      "kind": [
+        "bin"
+      ],
+      "crate_types": [
+        "bin"
+      ],
+      "name": "morrow-workbench-supervisor",
+      "src_path": "C:\\ms1020\\workbench_host\\src\\bin\\morrow-workbench-supervisor.rs",
+      "edition": "2024",
+      "doc": true,
+      "doctest": false,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": false
+    },
+    "features": [],
+    "filenames": [
+      "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\morrow-workbench-supervisor.exe",
+      "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\morrow_workbench_supervisor.pdb"
+    ],
+    "executable": "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\morrow-workbench-supervisor.exe",
+    "fresh": false
+  },
+  "canonical_libraries": {
+    "morrow_workbench_host": {
+      "record": {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+        "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+        "target": {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "morrow_workbench_host",
+          "src_path": "C:\\ms1020\\workbench_host\\src\\lib.rs",
+          "edition": "2024",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "features": [],
+        "filenames": [
+          "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-579692483608fafc.rlib",
+          "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-579692483608fafc.rmeta"
+        ],
+        "executable": null,
+        "fresh": true
+      },
+      "outputs": [
+        {
+          "path": "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-579692483608fafc.rlib",
+          "bytes": 37387082,
+          "sha256": "6428e32b637ab350d6d133934b854fb285f02c9757a5f6cb82651f14eefd40cb"
+        },
+        {
+          "path": "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-579692483608fafc.rmeta",
+          "bytes": 14032152,
+          "sha256": "711e762e72e163978fecaa597e438a69bb7b445930db1144b8557a84cd299135"
+        }
+      ]
+    },
+    "morrow_core": {
+      "record": {
+        "reason": "compiler-artifact",
+        "package_id": "path+file:///C:/ms1020/core#morrow-core@0.1.9-test.50",
+        "manifest_path": "C:\\ms1020\\core\\Cargo.toml",
+        "target": {
+          "kind": [
+            "rlib",
+            "cdylib"
+          ],
+          "crate_types": [
+            "rlib",
+            "cdylib"
+          ],
+          "name": "morrow_core",
+          "src_path": "C:\\ms1020\\core\\src\\lib.rs",
+          "edition": "2024",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        },
+        "profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "features": [],
+        "filenames": [
+          "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_core.rlib",
+          "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll",
+          "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll.lib",
+          "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll.exp",
+          "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.pdb"
+        ],
+        "executable": null,
+        "fresh": true
+      },
+      "outputs": [
+        {
+          "path": "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_core.rlib",
+          "bytes": 20118228,
+          "sha256": "b9561e75ef560a512c74a03b74fc9423fad86423d795d2f9d85464ab5e2c9262"
+        },
+        {
+          "path": "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll",
+          "bytes": 4786176,
+          "sha256": "bffff31163017cc2e36bb2da421308d7a774c03c06649532f402a6f99f1b31a3"
+        },
+        {
+          "path": "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll.lib",
+          "bytes": 5432,
+          "sha256": "027afff1668885d62e5337934e3b0c51d4b69ddd7592c3480a23a9d202e4582c"
+        },
+        {
+          "path": "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll.exp",
+          "bytes": 3163,
+          "sha256": "4bed039e2c9b0aefe01bf305648e61a388f19ba2b2c813243940bb6d38a93ab3"
+        },
+        {
+          "path": "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.pdb",
+          "bytes": 2551808,
+          "sha256": "f6fc3e342b8e6d354fb1b6229f6c29a47873f0a8c83db9d9dff8582bd08ac72a"
+        }
+      ]
+    }
+  },
+  "selected_program_fresh": true,
+  "dependencies_may_be_warm": true
+}

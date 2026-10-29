@@ -1,6 +1,6 @@
 @0xeefcf786d6838bda;
 # Private trusted UI/host connection. Native selected paths never reach a guest.
-enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; httpStart @47; ioStatus @48; ioPoll @49; ioRead @50; ioCancel @51; ioRepair @52; ioAcknowledge @53; serviceConfigPage @54; serviceConfigSave @55; serviceConfigDisable @56; serviceAuthorityPage @57; serviceAuthenticationIssue @58; serviceAuthorityDisable @59; servicePublicationSave @60; serviceRunStart @61; serviceRunStatus @62; commandSubmit @63; commandStatus @64; commandRead @65; commandCancel @66; commandFrameBegin @67; commandFrameAppend @68; commandFrameFinish @69; commandFrameAbort @70; serviceTlsInspect @71; tlsIdentityPage @72; tlsIdentitySave @73; tlsIdentityDisable @74; readUiFont @75; saveUiFont @76; pendingPreferences @77; acknowledgePreferences @78; abandonPreferences @79; readVersioned @80; pageVersioned @81; planTasksMigration @82; migrateTasks @83; editTasks @84; editCard @85; queryVersioned @86; finishCapturedCard @87; inspectEditorRecoveries @88; resumeEditorRecovery @89; acknowledgeEditorRecovery @90; abandonEditorRecovery @91; beginEditorDraft @92; appendEditorDraft @93; finishEditorDraft @94; abortEditorDraftTransfer @95; readEditorDraft @96; readEditorDraftPart @97; listEditorDrafts @98; discardEditorDraft @99; importEditorDraftAsset @100; exportEditorDraftAsset @101; beginEditorDraftImport @102; completeEditorDraftImport @103; inspectEditorDraftImport @104; listEditorDraftImports @105; exportEditorDraftImport @106; abandonEditorDraftImport @107; reconcileEditorDraftImports @108; prepareEditorDraftImportDecision @109; inspectEditorDraftImportDecision @110; listEditorDraftImportDecisions @111; cancelEditorDraftImportDecision @112; listEditorDraftImportDecisionScopes @113; finishEditorDraftHandoff @114; retireEditorDraftParent @115; listEditorDraftLineages @116; prepareEditorDraftHandoffProposal @117; inspectEditorDraftHandoffProposal @118; listEditorDraftHandoffProposals @119; completeEditorDraftHandoffProposal @120; retireEditorDraftHandoffProposal @121; cancelEditorDraftHandoffProposal @122; inspectEditorCommit @123; fileStart @124; fileChunk @125; fileFinish @126; fileRead @127; mutationStart @128; mutationSubmit @129; mutationStatus @130; mutationRead @131; mutationCancelCommand @132; mutationReconcile @133; mutationDiscover @134; guestMutationStart @135; guestMutationSubmit @136; guestMutationStatus @137; guestMutationRead @138; guestMutationCancelCommand @139; channelPrepare @140; channelAppend @141; channelRun @142; channelStatus @143; channelClose @144; channelReadSent @145; exportEditorDraftCapture @146; archiveEditorDraft @147; inspectEditorDraftArchive @148; listEditorDraftHistory @149; exportEditorDraftHistory @150; finishEditorDraftResume @151; retireEditorDraftResumeParent @152; stageEditorDraftAssets @153; maintainEditorDraftArchive @154; inspectEditorDraftArchiveMaintenance @155; directoryStart @156; directoryRead @157; directoryRunGuest @158; directoryReadGuest @159; directoryFinish @160; directoryPick @161; pluginApproveBlobUpload @162; blobUploadStart @163; blobUploadStatus @164; blobUploadRead @165; blobUploadInspect @166; blobUploadConfirm @167; blobPlanStart @168; blobPlanStatus @169; blobPlanRead @170; blobPlanCancel @171; blobPlanAcknowledge @172; blobPlanApprove @173; blobPlanDiscover @174; }
+enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; httpStart @47; ioStatus @48; ioPoll @49; ioRead @50; ioCancel @51; ioRepair @52; ioAcknowledge @53; serviceConfigPage @54; serviceConfigSave @55; serviceConfigDisable @56; serviceAuthorityPage @57; serviceAuthenticationIssue @58; serviceAuthorityDisable @59; servicePublicationSave @60; serviceRunStart @61; serviceRunStatus @62; commandSubmit @63; commandStatus @64; commandRead @65; commandCancel @66; commandFrameBegin @67; commandFrameAppend @68; commandFrameFinish @69; commandFrameAbort @70; serviceTlsInspect @71; tlsIdentityPage @72; tlsIdentitySave @73; tlsIdentityDisable @74; readUiFont @75; saveUiFont @76; pendingPreferences @77; acknowledgePreferences @78; abandonPreferences @79; readVersioned @80; pageVersioned @81; planTasksMigration @82; migrateTasks @83; editTasks @84; editCard @85; queryVersioned @86; finishCapturedCard @87; inspectEditorRecoveries @88; resumeEditorRecovery @89; acknowledgeEditorRecovery @90; abandonEditorRecovery @91; beginEditorDraft @92; appendEditorDraft @93; finishEditorDraft @94; abortEditorDraftTransfer @95; readEditorDraft @96; readEditorDraftPart @97; listEditorDrafts @98; discardEditorDraft @99; importEditorDraftAsset @100; exportEditorDraftAsset @101; beginEditorDraftImport @102; completeEditorDraftImport @103; inspectEditorDraftImport @104; listEditorDraftImports @105; exportEditorDraftImport @106; abandonEditorDraftImport @107; reconcileEditorDraftImports @108; prepareEditorDraftImportDecision @109; inspectEditorDraftImportDecision @110; listEditorDraftImportDecisions @111; cancelEditorDraftImportDecision @112; listEditorDraftImportDecisionScopes @113; finishEditorDraftHandoff @114; retireEditorDraftParent @115; listEditorDraftLineages @116; prepareEditorDraftHandoffProposal @117; inspectEditorDraftHandoffProposal @118; listEditorDraftHandoffProposals @119; completeEditorDraftHandoffProposal @120; retireEditorDraftHandoffProposal @121; cancelEditorDraftHandoffProposal @122; inspectEditorCommit @123; fileStart @124; fileChunk @125; fileFinish @126; fileRead @127; mutationStart @128; mutationSubmit @129; mutationStatus @130; mutationRead @131; mutationCancelCommand @132; mutationReconcile @133; mutationDiscover @134; guestMutationStart @135; guestMutationSubmit @136; guestMutationStatus @137; guestMutationRead @138; guestMutationCancelCommand @139; channelPrepare @140; channelAppend @141; channelRun @142; channelStatus @143; channelClose @144; channelReadSent @145; exportEditorDraftCapture @146; archiveEditorDraft @147; inspectEditorDraftArchive @148; listEditorDraftHistory @149; exportEditorDraftHistory @150; finishEditorDraftResume @151; retireEditorDraftResumeParent @152; stageEditorDraftAssets @153; maintainEditorDraftArchive @154; inspectEditorDraftArchiveMaintenance @155; directoryStart @156; directoryRead @157; directoryRunGuest @158; directoryReadGuest @159; directoryFinish @160; directoryPick @161; pluginApproveBlobUpload @162; blobUploadStart @163; blobUploadStatus @164; blobUploadRead @165; blobUploadInspect @166; blobUploadConfirm @167; blobPlanStart @168; blobPlanStatus @169; blobPlanRead @170; blobPlanCancel @171; blobPlanAcknowledge @172; blobPlanApprove @173; blobPlanDiscover @174; blobUploadHistoryList @175; blobUploadHistoryInspect @176; blobUploadMetadataReview @177; blobUploadMetadataComplete @178; }
 struct Request {
  version @0 :UInt16; digest @1 :Data; action @2 :Action;
  id @3 :Text; operation @4 :Text; revision @5 :UInt64;
@@ -32,6 +32,8 @@ struct Request {
  blobUploadObservation @70 :UInt16;
  blobPlanStart @71 :BlobPlanStart; blobPlanApproval @72 :BlobPlanApproval;
  blobPlanKey @73 :Data; blobPlanSubmission @74 :Data;
+ blobUploadHistoryQuery @75 :BlobUploadHistoryQuery;
+ blobUploadMetadataPermit @76 :Data;
 }
 struct Response {
  version @0 :UInt16; digest @1 :Data; payload @2 :Data;
@@ -67,6 +69,11 @@ struct Response {
  directoryResult @55 :DirectoryResult;
  blobUploadState @56 :BlobUploadState; blobUploadResult @57 :BlobUploadResult;
  blobPlanState @58 :BlobPlanState; blobPlanResult @59 :BlobPlanResult;
+ blobUploadHistory @60 :List(BlobUploadHistory);
+ blobUploadHistoryCursor @61 :Data; blobUploadCurrentStage @62 :UInt16;
+ blobUploadMetadataReview @63 :BlobUploadMetadataReview;
+ blobUploadMetadataAcknowledged @64 :Bool;
+ blobUploadMetadataCompletedPermit @65 :Data;
 }
 
 struct EditorCommitProof {
@@ -405,6 +412,29 @@ struct BlobUploadResult {
  kind @0 :UInt16; phase @1 :UInt16; error @2 :UInt16; unknown @3 :Bool;
  calls @4 :UInt32; wireBytes @5 :UInt64; nativeWorkBytes @6 :UInt64;
  hasExecution @7 :Bool; executionFault @8 :UInt16; exitCode @9 :Int32; hostCalls @10 :UInt32;
+}
+
+# One retained live-owner metadata attempt. No upload input or grant is carried.
+# phase: 1 original result; 2 original acknowledgement. The permit is single-use.
+struct BlobUploadMetadataReview {
+ key @0 :Data; submission @1 :Data; permit @2 :Data; phase @3 :UInt16;
+ writeRequired @4 :Bool; originalUnknown @5 :Bool;
+ originalPhase @6 :UInt16; originalError @7 :UInt16;
+ observedAt @8 :Int64; acknowledgementAt @9 :Int64;
+}
+
+# Read-only metadata. No old task key, authority, raw input, or retry action.
+struct BlobUploadHistoryQuery {
+ after @0 :Data; limit @1 :UInt16; submission @2 :Data;
+}
+struct BlobUploadHistory {
+ submission @0 :Data; packageId @1 :Text; packageDigest @2 :Data;
+ registryRevision @3 :UInt64; nominationRef @4 :Data; ownerDomain @5 :Data;
+ operationId @6 :Text; byteLength @7 :UInt64; wholeSha256 @8 :Data;
+ handler @9 :Text; inputSha256 @10 :Data; bindingSha256 @11 :Data;
+ reservedAt @12 :Int64; revision @13 :UInt16;
+ resultRecorded @14 :Bool; originalResult @15 :BlobUploadResult;
+ observedAt @16 :Int64; acknowledged @17 :Bool; acknowledgedAt @18 :Int64;
 }
 
 # Planning controls belong to this original trusted application, not a guest.

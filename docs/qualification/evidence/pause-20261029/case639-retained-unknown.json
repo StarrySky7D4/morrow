@@ -1,0 +1,144 @@
+{
+  "status": "UNKNOWN_RETAINED_GUEST_SHUTDOWN_DURING_SHARED17_NO_REPLAY",
+  "tag": "799c7fbf9c154f38be68e274c42749ad",
+  "vm_id": "4072a8d9-2f4f-4d02-98ee-ad436dd3342e",
+  "source_digest": "5fc113edec1e26baa7db613458f9fd37fbfc1b6ee655113c738b3211289be1b6",
+  "profile": "P2_SHARED_PARENT_REFUSAL_SESSION",
+  "qualification_result": "NOT_ACCEPTED",
+  "actual_full_refusals": null,
+  "completed_rounds": null,
+  "case_clean": false,
+  "policy_clean": false,
+  "original_case_process_exit": null,
+  "original_case_session_retained": true,
+  "original_host_case_pid": 8476,
+  "outer_pipeline_exec_session_id": 24427,
+  "native_guest_process_id_not_observed": true,
+  "shared17_capacity_qualified": false,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "original_owned_policy_add_observed": true,
+  "original_conditional_restore_attempt_observed": true,
+  "original_policy_restore_return_not_observed": true,
+  "host_management_observation": {
+    "vm_state": "Off",
+    "event_log": "Microsoft-Windows-Hyper-V-Worker-Admin",
+    "event_id": 18508,
+    "event_local_time": "2026-10-29T13:00:29.1002374+08:00",
+    "meaning": "Guest operating system shut down this VM",
+    "root_cause": "NOT_YET_ESTABLISHED; offline guest logs being copied by separate read-only case656"
+  },
+  "completed_pre_dispatch_phases": [
+    {
+      "phase": "resume-known-clean-vm",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared639-pipeline-639\\01-resume-known-clean-vm-result.json",
+        "bytes": 578,
+        "sha256": "82dc7d7ee32f6f682fc7c356e8220d577d1852d293750cc2808d3e90b84ac2c6"
+      }
+    },
+    {
+      "phase": "authorized-protected-login-input",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared639-pipeline-639\\02-authorized-protected-login-input-result.json",
+        "bytes": 611,
+        "sha256": "2145bb5fa88789cdb7061348c378638f55b4554d0e682d1abce48d8d422c1800"
+      }
+    },
+    {
+      "phase": "fresh-readiness",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared639-pipeline-639\\03-fresh-readiness-result.json",
+        "bytes": 561,
+        "sha256": "86217aa8d104ebe6e23da2d1284185ee1580c8bb2651d6886251a1c117e875e7"
+      }
+    },
+    {
+      "phase": "prepare-current-stage",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared639-pipeline-639\\04-prepare-current-stage-result.json",
+        "bytes": 579,
+        "sha256": "b7578f0a0d7a8f8fb22bfb86f184ae942639c0034cef347e5d6802aa91ea8bc3"
+      }
+    },
+    {
+      "phase": "review-current-stage",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared639-pipeline-639\\05-review-current-stage-result.json",
+        "bytes": 576,
+        "sha256": "5e964b23bac349581dfe56cd183e8d4bfb29ff46bc31a9bb87d91637750fdca9"
+      }
+    },
+    {
+      "phase": "pure-shared-round-reader",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared639-pipeline-639\\06-pure-shared-round-reader-result.json",
+        "bytes": 587,
+        "sha256": "a0e3dc78238429cfd818287f222204429cf1eb18f21b67978748cc90dd3ed504"
+      }
+    },
+    {
+      "phase": "stage-once",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared639-pipeline-639\\07-stage-once-result.json",
+        "bytes": 546,
+        "sha256": "cc4cdf8ee7fb481e651fe033d96511a7d2418bc8865ed675bfcda57bdcd3a337"
+      }
+    },
+    {
+      "phase": "prepare-reviewed-binding",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared639-pipeline-639\\08-prepare-reviewed-binding-result.json",
+        "bytes": 588,
+        "sha256": "4a64d2e290aa01a11426c52aed723f98eebdfc747221992ec51d9f2a4bc2cbd2"
+      }
+    },
+    {
+      "phase": "bind-once",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared639-pipeline-639\\09-bind-once-result.json",
+        "bytes": 543,
+        "sha256": "304c5468110d3fb22c27424d6a88614b70b77fa0e33b2721f13f4bf41475116a"
+      }
+    },
+    {
+      "phase": "prepare-shared17",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\shared639-pipeline-639\\10-prepare-shared17-result.json",
+        "bytes": 564,
+        "sha256": "feb37bae5d79a3671d70024fb48c92297aef4dd4e63a4c0af5468233d037fd73"
+      }
+    }
+  ],
+  "original_receipts": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-799c7fbf9c154f38be68e274c42749ad-case\\retained.json",
+      "bytes": 458,
+      "sha256": "43df404f328a37cdd9a701bacbe7fea3b789be500b946bb61ce5dbe194a51b0a"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-799c7fbf9c154f38be68e274c42749ad\\case.stderr",
+      "bytes": 71,
+      "sha256": "153b544832a89c0ab42b20c6ad1392e5d0bf344b9b35de137191cfffdc5ba92b"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-799c7fbf9c154f38be68e274c42749ad\\case-started.json",
+      "bytes": 156,
+      "sha256": "4d092acf1f92431c801d43bb6f9ae9ae1476f4f060646a0d054cee823c6f3007"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case639-preparation.json",
+      "bytes": 15642,
+      "sha256": "ab5f98cb5f3c34a2112547a7bce3005ad657431a48784e2eaff64a6cd0506144"
+    }
+  ],
+  "no_automatic_retry": true,
+  "no_original_owner_poll_or_kill": true,
+  "old_unknown_outcomes_unchanged": true,
+  "source_cleanup_or_policy_restoration_not_inferred": true,
+  "local_receipts_only": true,
+  "VM_calls": 0,
+  "guest_owner_contacts": 0,
+  "utc": "2026-10-29T05:14:57.166076+00:00"
+}

@@ -1,0 +1,119 @@
+{
+  "status": "PASS_EXACT_CORE_BASE_EQUIVALENCE",
+  "current_source": "1de075935d3753b2fccacc9003622c9e4efc3343a5b759ffe9a099f66f7a0a1e",
+  "reconstructed_full_pre_host_source": "4ef2178ad70a12053530d3425d9e483486a8d1289c64762b0657bbee8ec98ae0",
+  "base_result": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\result.json",
+    "bytes": 27487,
+    "sha256": "b5f44244fcc4873a85c733d269d8cdbbedb8da2471127c791e6f08a28f8c89f3"
+  },
+  "overrides": [
+    {
+      "relative": "lib/plugins/generated/host.capnp.ids.dart",
+      "preimage": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-promotion-493\\before\\lib\\plugins\\generated\\host.capnp.ids.dart",
+        "bytes": 3408,
+        "sha256": "a75e95e7b7f1fa529fea3687e67e45a12811edeb60d4e1f27c694a76153ab58b"
+      }
+    },
+    {
+      "relative": "lib/plugins/generated/host.capnp.native.dart",
+      "preimage": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-promotion-493\\before\\lib\\plugins\\generated\\host.capnp.native.dart",
+        "bytes": 360621,
+        "sha256": "c0c8825ab4815736250e3b2208833d9b528ca9109e67058b291597cfabb13947"
+      }
+    },
+    {
+      "relative": "lib/plugins/generated/host.capnp.web.dart",
+      "preimage": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-promotion-493\\before\\lib\\plugins\\generated\\host.capnp.web.dart",
+        "bytes": 217971,
+        "sha256": "24eb1175f7223a8654a8e91bed2e5ca3ad33c9a1242e387bae816a47759af2c3"
+      }
+    },
+    {
+      "relative": "lib/plugins/generated/identity.dart",
+      "preimage": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-promotion-493\\before\\lib\\plugins\\generated\\identity.dart",
+        "bytes": 2847,
+        "sha256": "51ed0cb2f730be58864c29283729f1bd243805bd5e310d591d24ec6b100281b6"
+      }
+    },
+    {
+      "relative": "lib/plugins/plugin_library.dart",
+      "preimage": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-promotion-493\\before\\lib\\plugins\\plugin_library.dart",
+        "bytes": 67469,
+        "sha256": "35387810efb1491ae270d107249559e57c5d7b505b99f5ee8e971d8a84110910"
+      }
+    },
+    {
+      "relative": "lib/plugins/workbench_native.dart",
+      "preimage": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-promotion-493\\before\\lib\\plugins\\workbench_native.dart",
+        "bytes": 140216,
+        "sha256": "bda0bd13317b152c38cb4df317ec664206dd512e49ebb9577bb61256099a7e39"
+      }
+    },
+    {
+      "relative": "workbench_host/schemas/host.capnp",
+      "preimage": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-host-preparation-490\\before\\workbench_host\\schemas\\host.capnp",
+        "bytes": 28564,
+        "sha256": "06f7cbe7b5f9f7dd025e97b32791928201a15c817212ae352cd20e6a3064cdce"
+      }
+    },
+    {
+      "relative": "workbench_host/src/blob_upload_protocol.rs",
+      "preimage": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-host-preparation-490\\before\\workbench_host\\src\\blob_upload_protocol.rs",
+        "bytes": 6636,
+        "sha256": "546b357c0f3b6061986d19d5f036ddb4dd4384c6e456373bbf323fb2b08558a6"
+      }
+    },
+    {
+      "relative": "workbench_host/src/blob_upload_tasks.rs",
+      "preimage": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-host-preparation-490\\before\\workbench_host\\src\\blob_upload_tasks.rs",
+        "bytes": 13455,
+        "sha256": "0b1673a49b12254e9029d8322d65750d96fb517d683e08f0dc6e2bd727dd5691"
+      }
+    },
+    {
+      "relative": "workbench_host/src/io_tasks.rs",
+      "preimage": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-host-preparation-490\\before\\workbench_host\\src\\io_tasks.rs",
+        "bytes": 37714,
+        "sha256": "589fe992fb7fb72adabe83a50bc8cd0c99f534a89067730c454e45f0eb1dff84"
+      }
+    },
+    {
+      "relative": "workbench_host/src/protocol.rs",
+      "preimage": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-promotion-493\\before\\workbench_host\\src\\protocol.rs",
+        "bytes": 92297,
+        "sha256": "011ace0b28902ff22d857bd82666d15c4ff61007d276ab8f822777b8c7fcd5b1"
+      }
+    },
+    {
+      "relative": "workbench_host/tests/blob_upload_protected.rs",
+      "preimage": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-host-preparation-490\\before\\workbench_host\\tests\\blob_upload_protected.rs",
+        "bytes": 24078,
+        "sha256": "e5efe58e48384cf22870b40c6b6c4359ecbc725f7f9e2ffb2c59ea0cd8d2816c"
+      }
+    }
+  ],
+  "excluded_new_host_UI_tests": [
+    "lib/plugins/blob_upload_history_manager.dart",
+    "lib/plugins/blob_upload_history_models.dart",
+    "lib/plugins/blob_upload_history_native.dart",
+    "packages/morrow_core_client/test/blob_upload_history_client_test.dart",
+    "test/blob_upload_history_manager_test.dart",
+    "workbench_host/src/blob_upload_journal.rs"
+  ],
+  "Core_files_overridden_or_excluded": 0,
+  "Core_bytes_unchanged_since_migration_matrix": true,
+  "runtime_replayed": false
+}

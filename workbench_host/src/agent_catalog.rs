@@ -305,11 +305,10 @@ pub(crate) fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
         Ok(reply) => {
             // Final delivery gate follows encoding. Never run a submitted action again.
             if gate.closed() {
-                if let Ok(state) = host.state.local_mut() {
-                    if let Some(slot) = state.agent_catalog.as_mut() {
+                if let Ok(state) = host.state.local_mut()
+                    && let Some(slot) = state.agent_catalog.as_mut() {
                         slot.invalidate();
                     }
-                }
                 let request = admin::Request::decode(bytes)?;
                 return Ok(
                     admin::Reply::new(&request, failure(admin::Status::Unknown, 0))?

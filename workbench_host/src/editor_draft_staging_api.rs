@@ -1,14 +1,14 @@
 //! Typed private wire for durable editor-draft imports. The journal remains Protobuf/Core-owned.
 use crate::editor_draft_import_decision::{DecisionRecord, DecisionStatus};
 use crate::{
-    editor_draft_api, editor_draft_staging, editor_draft_staging_api_capnp as wire, host_capnp,
-    Result, WorkbenchState,
+    Result, WorkbenchState, editor_draft_api, editor_draft_staging,
+    editor_draft_staging_api_capnp as wire, host_capnp,
 };
 use capnp::{
     message::{Builder, ReaderOptions},
     serialize,
 };
-use editor_draft_staging::{proto, DraftImportPhase, DraftImportRecord};
+use editor_draft_staging::{DraftImportPhase, DraftImportRecord, proto};
 use sha2::{Digest, Sha256};
 use std::{
     io::{Cursor, Read, Write},
@@ -101,18 +101,44 @@ fn record_reply(
     out.set_current_generation(current.0);
     out.set_main_active(current.1);
 }
-fn envelope(
+struct ImportEnvelope<'a> {
     kind: wire::ResultKind,
-    card: &str,
-    draft: &str,
-    operation: &str,
+    card: &'a str,
+    draft: &'a str,
+    operation: &'a str,
     expected: u64,
-    import_op: &str,
-    current: (u64, bool, u64),
-    record: Option<&DraftImportRecord>,
-    records: &[DraftImportRecord],
-    exported: Option<(&[u8], u64)>,
-) -> Result<Vec<u8>> {
+    import_op: &'a str,
+    record: Option<&'a DraftImportRecord>,
+    records: &'a [DraftImportRecord],
+    exported: Option<(&'a [u8], u64)>,
+}
+
+struct DecisionEnvelope<'a> {
+    kind: wire::ResultKind,
+    card: &'a str,
+    draft: &'a str,
+    operation: &'a str,
+    expected: u64,
+    imported: &'a str,
+    decision: Option<&'a DecisionRecord>,
+    decisions: &'a [DecisionRecord],
+    request_cursor: &'a str,
+    request_limit: u32,
+    next_cursor: &'a str,
+}
+
+fn envelope(value: ImportEnvelope<'_>, current: (u64, bool, u64)) -> Result<Vec<u8>> {
+    let ImportEnvelope {
+        kind,
+        card,
+        draft,
+        operation,
+        expected,
+        import_op,
+        record,
+        records,
+        exported,
+    } = value;
     let mut message = Builder::new_default();
     {
         let mut out = message.init_root::<wire::envelope::Builder>();
@@ -170,19 +196,33 @@ fn send(
     host: &mut WorkbenchState,
     out: host_capnp::response::Builder<'_>,
     correlation: &str,
-    kind: wire::ResultKind,
-    card: &str,
-    draft: &str,
-    operation: &str,
-    expected: u64,
-    import_op: &str,
-    record: Option<&DraftImportRecord>,
-    records: &[DraftImportRecord],
-    exported: Option<(&[u8], u64)>,
+    value: ImportEnvelope<'_>,
 ) -> Result<()> {
+    let ImportEnvelope {
+        kind,
+        card,
+        draft,
+        operation,
+        expected,
+        import_op,
+        record,
+        records,
+        exported,
+    } = value;
     let current = host.draft_import_wire_context(card, draft)?;
     let bytes = envelope(
-        kind, card, draft, operation, expected, import_op, current, record, records, exported,
+        ImportEnvelope {
+            kind,
+            card,
+            draft,
+            operation,
+            expected,
+            import_op,
+            record,
+            records,
+            exported,
+        },
+        current,
     )?;
     let download = editor_draft_api::envelope_chunk(host, out, bytes, current.0)?;
     editor_draft_api::bind_reply(host, correlation, download);
@@ -330,15 +370,17 @@ pub(crate) fn handle(
                 host,
                 out,
                 &correlation,
-                wire::ResultKind::Record,
-                &card,
-                &draft,
-                &operation,
-                r.get_revision(),
-                &import_op,
-                Some(&record),
-                &[],
-                None,
+                ImportEnvelope {
+                    kind: wire::ResultKind::Record,
+                    card: &card,
+                    draft: &draft,
+                    operation: &operation,
+                    expected: r.get_revision(),
+                    import_op: &import_op,
+                    record: Some(&record),
+                    records: &[],
+                    exported: None,
+                },
             )?;
         }
         Action::InspectEditorDraftImport => {
@@ -355,19 +397,21 @@ pub(crate) fn handle(
                 host,
                 out,
                 &correlation,
-                if record.is_some() {
-                    wire::ResultKind::Record
-                } else {
-                    wire::ResultKind::Absent
+                ImportEnvelope {
+                    kind: if record.is_some() {
+                        wire::ResultKind::Record
+                    } else {
+                        wire::ResultKind::Absent
+                    },
+                    card: &card,
+                    draft: &draft,
+                    operation: &operation,
+                    expected: 0,
+                    import_op: &import_op,
+                    record: record.as_ref(),
+                    records: &[],
+                    exported: None,
                 },
-                &card,
-                &draft,
-                &operation,
-                0,
-                &import_op,
-                record.as_ref(),
-                &[],
-                None,
             )?;
         }
         Action::ListEditorDraftImports | Action::ReconcileEditorDraftImports => {
@@ -387,19 +431,21 @@ pub(crate) fn handle(
                 host,
                 out,
                 &correlation,
-                if action == Action::ReconcileEditorDraftImports {
-                    wire::ResultKind::Reconciled
-                } else {
-                    wire::ResultKind::List
+                ImportEnvelope {
+                    kind: if action == Action::ReconcileEditorDraftImports {
+                        wire::ResultKind::Reconciled
+                    } else {
+                        wire::ResultKind::List
+                    },
+                    card: &card,
+                    draft: &draft,
+                    operation: "",
+                    expected: 0,
+                    import_op: "",
+                    record: None,
+                    records: &records,
+                    exported: None,
                 },
-                &card,
-                &draft,
-                "",
-                0,
-                "",
-                None,
-                &records,
-                None,
             )?;
         }
         Action::ExportEditorDraftImport => {
@@ -424,15 +470,17 @@ pub(crate) fn handle(
                 host,
                 out,
                 &correlation,
-                wire::ResultKind::Exported,
-                &card,
-                &draft,
-                &operation,
-                r.get_revision(),
-                &import_op,
-                None,
-                &[],
-                Some((&record.request.sha256, record.request.byte_length)),
+                ImportEnvelope {
+                    kind: wire::ResultKind::Exported,
+                    card: &card,
+                    draft: &draft,
+                    operation: &operation,
+                    expected: r.get_revision(),
+                    import_op: &import_op,
+                    record: None,
+                    records: &[],
+                    exported: Some((&record.request.sha256, record.request.byte_length)),
+                },
             )?;
         }
         Action::AbandonEditorDraftImport => {
@@ -456,15 +504,17 @@ pub(crate) fn handle(
                 host,
                 out,
                 &correlation,
-                wire::ResultKind::Record,
-                &card,
-                &draft,
-                &operation,
-                r.get_revision(),
-                &import_op,
-                Some(&record),
-                &[],
-                None,
+                ImportEnvelope {
+                    kind: wire::ResultKind::Record,
+                    card: &card,
+                    draft: &draft,
+                    operation: &operation,
+                    expected: r.get_revision(),
+                    import_op: &import_op,
+                    record: Some(&record),
+                    records: &[],
+                    exported: None,
+                },
             )?;
         }
         Action::PrepareEditorDraftImportDecision
@@ -514,21 +564,23 @@ pub(crate) fn handle(
                 host,
                 out,
                 &correlation,
-                if decision.is_some() {
-                    wire::ResultKind::Decision
-                } else {
-                    wire::ResultKind::Absent
+                DecisionEnvelope {
+                    kind: if decision.is_some() {
+                        wire::ResultKind::Decision
+                    } else {
+                        wire::ResultKind::Absent
+                    },
+                    card: &card,
+                    draft: &draft,
+                    operation: &operation,
+                    expected: r.get_revision(),
+                    imported: &import_op,
+                    decision: decision.as_ref(),
+                    decisions: &[],
+                    request_cursor: "",
+                    request_limit: 0,
+                    next_cursor: "",
                 },
-                &card,
-                &draft,
-                &operation,
-                r.get_revision(),
-                &import_op,
-                decision.as_ref(),
-                &[],
-                "",
-                0,
-                "",
             )?;
         }
         Action::ListEditorDraftImportDecisions => {
@@ -548,17 +600,19 @@ pub(crate) fn handle(
                 host,
                 out,
                 &correlation,
-                wire::ResultKind::Decisions,
-                &card,
-                &draft,
-                "",
-                0,
-                "",
-                None,
-                &decisions,
-                &cursor,
-                limit,
-                &next,
+                DecisionEnvelope {
+                    kind: wire::ResultKind::Decisions,
+                    card: &card,
+                    draft: &draft,
+                    operation: "",
+                    expected: 0,
+                    imported: "",
+                    decision: None,
+                    decisions: &decisions,
+                    request_cursor: &cursor,
+                    request_limit: limit,
+                    next_cursor: &next,
+                },
             )?;
         }
         _ => return Err("not a draft import action".into()),
@@ -619,16 +673,18 @@ mod tests {
     #[test]
     fn empty_list_is_explicit_and_record_has_exact_current_context() {
         let empty = envelope(
-            wire::ResultKind::List,
-            "card",
-            "draft",
-            "",
-            0,
-            "",
+            ImportEnvelope {
+                kind: wire::ResultKind::List,
+                card: "card",
+                draft: "draft",
+                operation: "",
+                expected: 0,
+                import_op: "",
+                record: None,
+                records: &[],
+                exported: None,
+            },
             (2, true, 9),
-            None,
-            &[],
-            None,
         )
         .unwrap();
         let list = serialize::read_message(&mut Cursor::new(empty), ReaderOptions::new()).unwrap();
@@ -650,16 +706,18 @@ mod tests {
             repeated: false,
         };
         let bytes = envelope(
-            wire::ResultKind::Record,
-            "card",
-            "draft",
-            "import-one",
-            2,
-            "import-one",
+            ImportEnvelope {
+                kind: wire::ResultKind::Record,
+                card: "card",
+                draft: "draft",
+                operation: "import-one",
+                expected: 2,
+                import_op: "import-one",
+                record: Some(&record),
+                records: &[],
+                exported: None,
+            },
             (2, true, 9),
-            Some(&record),
-            &[],
-            None,
         )
         .unwrap();
         let message =
@@ -715,20 +773,20 @@ fn decision_reply(value: &DecisionRecord, mut out: wire::decision::Builder<'_>) 
     out.set_decision_revision(value.decision_revision);
     out.set_committed_revision(value.committed_revision);
 }
-fn decision_envelope(
-    kind: wire::ResultKind,
-    card: &str,
-    draft: &str,
-    operation: &str,
-    expected: u64,
-    imported: &str,
-    current: (u64, bool, u64),
-    decision: Option<&DecisionRecord>,
-    decisions: &[DecisionRecord],
-    request_cursor: &str,
-    request_limit: u32,
-    next_cursor: &str,
-) -> Result<Vec<u8>> {
+fn decision_envelope(value: DecisionEnvelope<'_>, current: (u64, bool, u64)) -> Result<Vec<u8>> {
+    let DecisionEnvelope {
+        kind,
+        card,
+        draft,
+        operation,
+        expected,
+        imported,
+        decision,
+        decisions,
+        request_cursor,
+        request_limit,
+        next_cursor,
+    } = value;
     let mut message = Builder::new_default();
     {
         let mut out = message.init_root::<wire::envelope::Builder>();
@@ -782,32 +840,37 @@ fn send_decision(
     host: &mut WorkbenchState,
     out: host_capnp::response::Builder<'_>,
     correlation: &str,
-    kind: wire::ResultKind,
-    card: &str,
-    draft: &str,
-    operation: &str,
-    expected: u64,
-    imported: &str,
-    decision: Option<&DecisionRecord>,
-    decisions: &[DecisionRecord],
-    request_cursor: &str,
-    request_limit: u32,
-    next_cursor: &str,
+    value: DecisionEnvelope<'_>,
 ) -> Result<()> {
-    let current = host.draft_import_wire_context(card, draft)?;
-    let bytes = decision_envelope(
+    let DecisionEnvelope {
         kind,
         card,
         draft,
         operation,
         expected,
         imported,
-        current,
         decision,
         decisions,
         request_cursor,
         request_limit,
         next_cursor,
+    } = value;
+    let current = host.draft_import_wire_context(card, draft)?;
+    let bytes = decision_envelope(
+        DecisionEnvelope {
+            kind,
+            card,
+            draft,
+            operation,
+            expected,
+            imported,
+            decision,
+            decisions,
+            request_cursor,
+            request_limit,
+            next_cursor,
+        },
+        current,
     )?;
     let download = editor_draft_api::envelope_chunk(host, out, bytes, current.0)?;
     editor_draft_api::bind_reply(host, correlation, download);

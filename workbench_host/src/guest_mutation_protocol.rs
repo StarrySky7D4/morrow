@@ -203,7 +203,7 @@ fn result_reply(
         Some(Ok(GuestMutationReply::Owner(value))) => {
             out.set_kind(1);
             super::mutation_task::result_reply(
-                Some(Ok(value)),
+                Some(Ok(*value)),
                 out.reborrow().init_owner(),
                 [0; 32],
             )?;

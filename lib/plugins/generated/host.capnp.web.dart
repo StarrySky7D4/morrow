@@ -184,6 +184,10 @@ enum Action {
   blobPlanAcknowledge,
   blobPlanApprove,
   blobPlanDiscover,
+  blobUploadHistoryList,
+  blobUploadHistoryInspect,
+  blobUploadMetadataReview,
+  blobUploadMetadataComplete,
 }
 
 Action? actionFromUint16(int v) =>
@@ -424,6 +428,14 @@ final class RequestReader extends StructReader {
   Uint8List? get blobPlanKey => getDataField(55);
 
   Uint8List? get blobPlanSubmission => getDataField(56);
+
+  BlobUploadHistoryQueryReader? get blobUploadHistoryQuery =>
+      getStructFieldWith(
+        57,
+        (r) => BlobUploadHistoryQueryReader(r, capabilities: capabilityTable),
+      );
+
+  Uint8List? get blobUploadMetadataPermit => getDataField(58);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -850,6 +862,21 @@ final class RequestBuilder extends StructBuilder {
   set blobPlanSubmission(Uint8List? v) {
     setDataField(56, v);
   }
+
+  BlobUploadHistoryQueryBuilder initBlobUploadHistoryQuery() {
+    return initStructFieldWith(
+      57,
+      (r) => BlobUploadHistoryQueryBuilder(r),
+      1,
+      2,
+    );
+  }
+
+  bool hasBlobUploadHistoryQuery() => hasPointerField(57);
+
+  set blobUploadMetadataPermit(Uint8List? v) {
+    setDataField(58, v);
+  }
 }
 
 final class _RequestFactory
@@ -857,7 +884,7 @@ final class _RequestFactory
   @override
   int get dataWords => 11;
   @override
-  int get ptrWords => 57;
+  int get ptrWords => 59;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -1093,6 +1120,26 @@ final class ResponseReader extends StructReader {
     45,
     (r) => BlobPlanResultReader(r, capabilities: capabilityTable),
   );
+
+  ListReader<BlobUploadHistoryReader>? get blobUploadHistory =>
+      getStructListFieldWith(
+        46,
+        (r) => BlobUploadHistoryReader(r, capabilities: capabilityTable),
+      );
+
+  Uint8List? get blobUploadHistoryCursor => getDataField(47);
+
+  int get blobUploadCurrentStage => getUint16Field(6);
+
+  BlobUploadMetadataReviewReader? get blobUploadMetadataReview =>
+      getStructFieldWith(
+        48,
+        (r) => BlobUploadMetadataReviewReader(r, capabilities: capabilityTable),
+      );
+
+  bool get blobUploadMetadataAcknowledged => getBoolField(22);
+
+  Uint8List? get blobUploadMetadataCompletedPermit => getDataField(49);
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -1492,6 +1539,43 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasBlobPlanResult() => hasPointerField(45);
+
+  ListBuilder<BlobUploadHistoryBuilder> initBlobUploadHistory(int length) {
+    return initStructListFieldWith(
+      46,
+      length,
+      (r) => BlobUploadHistoryBuilder(r),
+      6,
+      11,
+    );
+  }
+
+  set blobUploadHistoryCursor(Uint8List? v) {
+    setDataField(47, v);
+  }
+
+  set blobUploadCurrentStage(int v) {
+    setUint16Field(6, v);
+  }
+
+  BlobUploadMetadataReviewBuilder initBlobUploadMetadataReview() {
+    return initStructFieldWith(
+      48,
+      (r) => BlobUploadMetadataReviewBuilder(r),
+      3,
+      3,
+    );
+  }
+
+  bool hasBlobUploadMetadataReview() => hasPointerField(48);
+
+  set blobUploadMetadataAcknowledged(bool v) {
+    setBoolField(22, v);
+  }
+
+  set blobUploadMetadataCompletedPermit(Uint8List? v) {
+    setDataField(49, v);
+  }
 }
 
 final class _ResponseFactory
@@ -1499,7 +1583,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 46;
+  int get ptrWords => 50;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -7346,6 +7430,419 @@ final class _BlobUploadResultFactory
 }
 
 final blobUploadResultFactory = _BlobUploadResultFactory();
+
+final class BlobUploadMetadataReviewReader extends StructReader {
+  BlobUploadMetadataReviewReader(super.raw, {super.capabilities});
+
+  Uint8List? get key => getDataField(0);
+
+  Uint8List? get submission => getDataField(1);
+
+  Uint8List? get permit => getDataField(2);
+
+  int get phase => getUint16Field(0);
+
+  bool get writeRequired => getBoolField(16);
+
+  bool get originalUnknown => getBoolField(17);
+
+  int get originalPhase => getUint16Field(4);
+
+  int get originalError => getUint16Field(6);
+
+  int get observedAt => _checkedWireInt(observedAtBigInt);
+  BigInt get observedAtBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+              BigInt.from(getUint32Field(8).toUnsigned(32)))
+          .toSigned(64);
+
+  int get acknowledgementAt => _checkedWireInt(acknowledgementAtBigInt);
+  BigInt get acknowledgementAtBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+              BigInt.from(getUint32Field(16).toUnsigned(32)))
+          .toSigned(64);
+}
+
+final class BlobUploadMetadataReviewBuilder extends StructBuilder {
+  BlobUploadMetadataReviewBuilder(super.raw);
+
+  @override
+  BlobUploadMetadataReviewReader asReader() =>
+      BlobUploadMetadataReviewReader(rawToReader());
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set submission(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set permit(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set phase(int v) {
+    setUint16Field(0, v);
+  }
+
+  set writeRequired(bool v) {
+    setBoolField(16, v);
+  }
+
+  set originalUnknown(bool v) {
+    setBoolField(17, v);
+  }
+
+  set originalPhase(int v) {
+    setUint16Field(4, v);
+  }
+
+  set originalError(int v) {
+    setUint16Field(6, v);
+  }
+
+  set observedAt(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    observedAtBigInt = BigInt.from(v).toSigned(64);
+  }
+
+  set observedAtBigInt(BigInt v) {
+    if (v < -(BigInt.one << 63) || v > (BigInt.one << 63) - BigInt.one) {
+      throw RangeError('64-bit field observedAt');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set acknowledgementAt(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    acknowledgementAtBigInt = BigInt.from(v).toSigned(64);
+  }
+
+  set acknowledgementAtBigInt(BigInt v) {
+    if (v < -(BigInt.one << 63) || v > (BigInt.one << 63) - BigInt.one) {
+      throw RangeError('64-bit field acknowledgementAt');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+}
+
+final class _BlobUploadMetadataReviewFactory
+    extends
+        StructFactory<
+          BlobUploadMetadataReviewReader,
+          BlobUploadMetadataReviewBuilder
+        > {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 3;
+  @override
+  BlobUploadMetadataReviewReader fromRawReader(RawStructReader r) =>
+      BlobUploadMetadataReviewReader(r);
+  @override
+  BlobUploadMetadataReviewReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobUploadMetadataReviewReader(r, capabilities: capabilities);
+  @override
+  BlobUploadMetadataReviewBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobUploadMetadataReviewBuilder(r);
+}
+
+final blobUploadMetadataReviewFactory = _BlobUploadMetadataReviewFactory();
+
+final class BlobUploadHistoryQueryReader extends StructReader {
+  BlobUploadHistoryQueryReader(super.raw, {super.capabilities});
+
+  Uint8List? get after => getDataField(0);
+
+  int get limit => getUint16Field(0);
+
+  Uint8List? get submission => getDataField(1);
+}
+
+final class BlobUploadHistoryQueryBuilder extends StructBuilder {
+  BlobUploadHistoryQueryBuilder(super.raw);
+
+  @override
+  BlobUploadHistoryQueryReader asReader() =>
+      BlobUploadHistoryQueryReader(rawToReader());
+
+  set after(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set limit(int v) {
+    setUint16Field(0, v);
+  }
+
+  set submission(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _BlobUploadHistoryQueryFactory
+    extends
+        StructFactory<
+          BlobUploadHistoryQueryReader,
+          BlobUploadHistoryQueryBuilder
+        > {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 2;
+  @override
+  BlobUploadHistoryQueryReader fromRawReader(RawStructReader r) =>
+      BlobUploadHistoryQueryReader(r);
+  @override
+  BlobUploadHistoryQueryReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobUploadHistoryQueryReader(r, capabilities: capabilities);
+  @override
+  BlobUploadHistoryQueryBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobUploadHistoryQueryBuilder(r);
+}
+
+final blobUploadHistoryQueryFactory = _BlobUploadHistoryQueryFactory();
+
+final class BlobUploadHistoryReader extends StructReader {
+  BlobUploadHistoryReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  Uint8List? get nominationRef => getDataField(3);
+
+  Uint8List? get ownerDomain => getDataField(4);
+
+  String? get operationId => getTextField(5);
+
+  int get byteLength => _checkedWireInt(byteLengthBigInt);
+  BigInt get byteLengthBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get wholeSha256 => getDataField(6);
+
+  String? get handler => getTextField(7);
+
+  Uint8List? get inputSha256 => getDataField(8);
+
+  Uint8List? get bindingSha256 => getDataField(9);
+
+  int get reservedAt => _checkedWireInt(reservedAtBigInt);
+  BigInt get reservedAtBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+              BigInt.from(getUint32Field(16).toUnsigned(32)))
+          .toSigned(64);
+
+  int get revision => getUint16Field(24);
+
+  bool get resultRecorded => getBoolField(208);
+
+  BlobUploadResultReader? get originalResult => getStructFieldWith(
+    10,
+    (r) => BlobUploadResultReader(r, capabilities: capabilityTable),
+  );
+
+  int get observedAt => _checkedWireInt(observedAtBigInt);
+  BigInt get observedAtBigInt =>
+      ((BigInt.from(getUint32Field(36).toUnsigned(32)) << 32) |
+              BigInt.from(getUint32Field(32).toUnsigned(32)))
+          .toSigned(64);
+
+  bool get acknowledged => getBoolField(209);
+
+  int get acknowledgedAt => _checkedWireInt(acknowledgedAtBigInt);
+  BigInt get acknowledgedAtBigInt =>
+      ((BigInt.from(getUint32Field(44).toUnsigned(32)) << 32) |
+              BigInt.from(getUint32Field(40).toUnsigned(32)))
+          .toSigned(64);
+}
+
+final class BlobUploadHistoryBuilder extends StructBuilder {
+  BlobUploadHistoryBuilder(super.raw);
+
+  @override
+  BlobUploadHistoryReader asReader() => BlobUploadHistoryReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set nominationRef(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set ownerDomain(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set operationId(String? v) {
+    setTextField(5, v);
+  }
+
+  set byteLength(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    byteLengthBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set byteLengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field byteLength');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set wholeSha256(Uint8List? v) {
+    setDataField(6, v);
+  }
+
+  set handler(String? v) {
+    setTextField(7, v);
+  }
+
+  set inputSha256(Uint8List? v) {
+    setDataField(8, v);
+  }
+
+  set bindingSha256(Uint8List? v) {
+    setDataField(9, v);
+  }
+
+  set reservedAt(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    reservedAtBigInt = BigInt.from(v).toSigned(64);
+  }
+
+  set reservedAtBigInt(BigInt v) {
+    if (v < -(BigInt.one << 63) || v > (BigInt.one << 63) - BigInt.one) {
+      throw RangeError('64-bit field reservedAt');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set revision(int v) {
+    setUint16Field(24, v);
+  }
+
+  set resultRecorded(bool v) {
+    setBoolField(208, v);
+  }
+
+  BlobUploadResultBuilder initOriginalResult() {
+    return initStructFieldWith(10, (r) => BlobUploadResultBuilder(r), 5, 0);
+  }
+
+  bool hasOriginalResult() => hasPointerField(10);
+
+  set observedAt(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    observedAtBigInt = BigInt.from(v).toSigned(64);
+  }
+
+  set observedAtBigInt(BigInt v) {
+    if (v < -(BigInt.one << 63) || v > (BigInt.one << 63) - BigInt.one) {
+      throw RangeError('64-bit field observedAt');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(32, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(36, (bits >> 32).toInt());
+  }
+
+  set acknowledged(bool v) {
+    setBoolField(209, v);
+  }
+
+  set acknowledgedAt(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    acknowledgedAtBigInt = BigInt.from(v).toSigned(64);
+  }
+
+  set acknowledgedAtBigInt(BigInt v) {
+    if (v < -(BigInt.one << 63) || v > (BigInt.one << 63) - BigInt.one) {
+      throw RangeError('64-bit field acknowledgedAt');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(40, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(44, (bits >> 32).toInt());
+  }
+}
+
+final class _BlobUploadHistoryFactory
+    extends StructFactory<BlobUploadHistoryReader, BlobUploadHistoryBuilder> {
+  @override
+  int get dataWords => 6;
+  @override
+  int get ptrWords => 11;
+  @override
+  BlobUploadHistoryReader fromRawReader(RawStructReader r) =>
+      BlobUploadHistoryReader(r);
+  @override
+  BlobUploadHistoryReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => BlobUploadHistoryReader(r, capabilities: capabilities);
+  @override
+  BlobUploadHistoryBuilder fromRawBuilder(RawStructBuilder r) =>
+      BlobUploadHistoryBuilder(r);
+}
+
+final blobUploadHistoryFactory = _BlobUploadHistoryFactory();
 
 final class BlobPlannerReader extends StructReader {
   BlobPlannerReader(super.raw, {super.capabilities});

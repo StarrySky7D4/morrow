@@ -1,0 +1,16 @@
+{
+  "free_delta_not_isolated_from_other_activity": true,
+  "unknown_owner_contacts": 0,
+  "observed_free_delta": 5149077504,
+  "free_after": 17460973568,
+  "runtime_outcomes_unchanged": true,
+  "VM_calls": 0,
+  "free_before": 12311896064,
+  "all_files": 24564,
+  "files_compressed": 2512,
+  "status": "PASS_CLOSED_CACHE_LOSSLESS_NTFS_COMPRESSION",
+  "all_file_hashes_and_timestamps_verified": true,
+  "file_deletions": 0,
+  "current_roles052_untouched": true,
+  "original_executables_and_evidence_retained": true
+}

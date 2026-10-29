@@ -827,8 +827,8 @@ fn initialize_manager(
     let mut manager = Manager::new(registry, Limits::default());
     if let Some(bundle) = package.as_ref() {
         let id = &bundle.manifest().package_id;
-        if let Some(selected) = manager.selection(id) {
-            if selected.digest != bundle.digest() {
+        if let Some(selected) = manager.selection(id)
+            && selected.digest != bundle.digest() {
                 let installed = manager.installed_package(selected.digest)?;
                 let offered_version = semver::Version::parse(&bundle.manifest().package_version)?;
                 let installed_version =
@@ -843,7 +843,6 @@ fn initialize_manager(
                     return Ok(manager);
                 }
             }
-        }
         let first = manager.revision() == 0 && manager.selection(id).is_none();
         manager.select(bundle, manager.revision())?;
         if first {

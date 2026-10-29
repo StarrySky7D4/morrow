@@ -58,7 +58,7 @@ pub fn root_for(database: &Path, managed: bool) -> Result<PathBuf> {
 }
 fn validate(record: &Value) -> Result<()> {
     if ![json!(1), json!(2)].contains(&record["version"])
-        || !record["generation"].as_u64().is_some_and(|v| v > 0)
+        || record["generation"].as_u64().is_none_or(|v| v == 0)
         || !["Pending", "Active", "Closing", "Released", "Recovered"]
             .contains(&record["phase"].as_str().unwrap_or(""))
     {
@@ -80,10 +80,10 @@ fn validate(record: &Value) -> Result<()> {
                 return Err("Supervisor producer identity missing".into());
             }
         }
-        if !record["supervisor_creation_filetime"].as_u64().is_some_and(|v| v>0)
+        if record["supervisor_creation_filetime"].as_u64().is_none_or(|v| v == 0)
             || !record["supervisor_pid"].as_u64().is_some_and(|v| v>0 && v<=u32::MAX as u64)
             || (record["phase"] != "Pending" &&
-                (!record["child_creation_filetime"].as_u64().is_some_and(|v| v>0)
+                (record["child_creation_filetime"].as_u64().is_none_or(|v| v == 0)
                  || !record["child_pid"].as_u64().is_some_and(|v| v>0 && v<=u32::MAX as u64))) {
             return Err("Supervisor process creation binding missing".into());
         }

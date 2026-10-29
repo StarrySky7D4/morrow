@@ -1,0 +1,19 @@
+{
+  "source_digest": "a038cc73bb370e1cd5b028aa022c744192005fd10ec6dec8a489819aaf12c993",
+  "manifest": {
+    "path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+    "bytes": 4487,
+    "sha256": "ddeec4bec9f21fc037df86cfb099d06471cbafd139f78f404c0ef51fdf8acc8e"
+  },
+  "target": "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b",
+  "features": [],
+  "dependencies_warm": true,
+  "cold_build_claim": false,
+  "selected_programs_must_be_fresh": true,
+  "original_SDK_guests_rebuilt": false,
+  "VM_calls": 0,
+  "product_starts": 0,
+  "automatic_retry": false,
+  "independent_compile_only": true,
+  "normal703_runtime_gate_unchanged": true
+}

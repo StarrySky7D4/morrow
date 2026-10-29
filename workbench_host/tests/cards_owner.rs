@@ -77,7 +77,7 @@ fn idea(id: &str) -> Idea {
 
 fn task_record(host: &Workbench, id: &str) -> TaskRecord {
     match host.read_versioned(id).unwrap() {
-        VersionedRecord::Tasks(record) => record,
+        VersionedRecord::Tasks(record) => *record,
         VersionedRecord::Legacy(_) => panic!("expected migrated format 2"),
     }
 }

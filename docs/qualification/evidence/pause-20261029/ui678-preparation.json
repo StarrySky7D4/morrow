@@ -1,0 +1,80 @@
+{
+  "status": "FRESH_CURRENT_PRODUCTION_MAIN_NOT_RUN",
+  "source_digest": "5fc113edec1e26baa7db613458f9fd37fbfc1b6ee655113c738b3211289be1b6",
+  "app": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\app",
+  "profile": "D:\\build_cache\\t677\\library",
+  "language": "rust",
+  "pins": {
+    "executable": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\app\\morrow_studio.exe",
+      "bytes": 2398720,
+      "sha256": "87bc90bc966ed06b949944df275e3889a21e898bed2f54dbdae4f5202310040f"
+    },
+    "kernel": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\app\\data\\flutter_assets\\kernel_blob.bin",
+      "bytes": 113307472,
+      "sha256": "76713743506061a447a0bc2c9d53de2f7529b8062d51710989fe0b71c6b59e38"
+    },
+    "host": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\app\\morrow-workbench-host.exe",
+      "bytes": 31406592,
+      "sha256": "787d9d36885c25ffc9aef4ed5f1853a0c04c7a302ce6e77b39938a549aadd81e"
+    },
+    "supervisor": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\app\\morrow-workbench-supervisor.exe",
+      "bytes": 14087168,
+      "sha256": "7ab4dfce844cadd16df0d33fc7f4f64f65bea37c4b5d725fb46bb2de8f4ec958"
+    },
+    "builtin": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\app\\plugins\\workbench.morrowplugin",
+      "bytes": 920498,
+      "sha256": "4c83579b154bcea37a37ccb38fce3ee07bc7ca3e54b321e4907c60bfc67dadba"
+    },
+    "fixture": {
+      "path": "D:\\build_cache\\t677\\incoming.mplugin",
+      "bytes": 191696,
+      "sha256": "a281c4adbff5cb4d2c49f7ca33088ed507a4cc1e41a5b5900974508825b34ba9"
+    },
+    "sample": {
+      "path": "D:\\build_cache\\t677\\sample.txt",
+      "bytes": 41,
+      "sha256": "12117051966b039b0bc94ced4369ba705ad39180e841ceef0640bba502e07739"
+    }
+  },
+  "observer": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-661\\programs\\check_blob_text_fixture.exe",
+    "bytes": 4729856,
+    "sha256": "59fd367494656f909d2b934fcefdc4af1fa8f5d44a77a9a0ea6b0a4a8b117f44"
+  },
+  "build_receipts": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-661\\result.json",
+      "bytes": 2572,
+      "sha256": "c79506ae631a082f59601cf24d21e064d755a7a71bc6ecf95e45a8f92ea7df2e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-build-651\\kernel-result.json",
+      "bytes": 1144,
+      "sha256": "ff0faf9293bbcfddff680b2abc9382b2b83eeb5e8efadcc2704cb18481db7f51"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-builtin-666\\result.json",
+      "bytes": 2031,
+      "sha256": "16fe473871144df6f8d7413acbb653b780cf5cc21a7b0ac6cf3f5c6adfe28cd6"
+    }
+  ],
+  "original_fixture_receipt": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-product-fixtures-463\\result.json",
+    "bytes": 5649,
+    "sha256": "2b20353c72a0b8ce8d968929a1f6463a822ad38e9f4ec212e9b20759b495ea23"
+  },
+  "native_launcher_source_unchanged": true,
+  "native_launcher_rebuilt": false,
+  "approval_seeded": false,
+  "native_picker_injected": false,
+  "qualification_shell": false,
+  "old_owner_contacts": 0,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

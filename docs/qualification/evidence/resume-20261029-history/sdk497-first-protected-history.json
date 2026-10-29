@@ -1,0 +1,180 @@
+{
+  "status": "PASS_SCOPED_PROTECTED_DURABLE_UPLOAD_HISTORY",
+  "source_digest": "1de075935d3753b2fccacc9003622c9e4efc3343a5b759ffe9a099f66f7a0a1e",
+  "source_unchanged": true,
+  "error": null,
+  "program": {
+    "path": "D:\\build_cache\\qualification-targets\\upload-history497-PROTECTED-1de075935d3753b2\\x86_64-pc-windows-msvc\\release\\deps\\blob_upload_protected-b591f3e52a7c6f24.exe",
+    "bytes": 31567360,
+    "sha256": "65d2da64b292385016d0eb51b082785c8571e024d7deb7407812f41d948c1d36"
+  },
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "seconds": 1997.328,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\build.stdout",
+        "bytes": 1039456,
+        "sha256": "17160f68dbcb0f18cad2420f7821aa9a2652e3b51a1b989195a48109ba83f8c1"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\build.stderr",
+        "bytes": 30375,
+        "sha256": "a6ad4dc19ec158ade88c5cb0302bec48035b3dfd707555087449202452ffe083"
+      }
+    },
+    {
+      "name": "discovery",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\discovery.stdout",
+        "bytes": 698,
+        "sha256": "14c81380330c1e65a9ec203aae589ba1dfad09797cd1e2f44b5fe4a25006d95f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "protected-originals",
+      "exit_code": 0,
+      "seconds": 30.953,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\protected-originals.stdout",
+        "bytes": 951,
+        "sha256": "3d10bdf037f0a3c1c139c2975995c3b3577f1f1c61fe551db347724ede89a439"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\protected-originals.stderr",
+        "bytes": 6676,
+        "sha256": "0dd06172e069dd7036b209e4272a341d1a9fdbe71d80654c9653c4d8b2923e84"
+      },
+      "passed": 13,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "fault-reserve-before",
+      "exit_code": 0,
+      "seconds": 0.156,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\fault-reserve-before.stdout",
+        "bytes": 204,
+        "sha256": "70854092098d6d8540cc7ad3cf09ad4b900f2b697651459609527e18f1dd864e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\fault-reserve-before.stderr",
+        "bytes": 268,
+        "sha256": "042a74bbed4a39d9e2a6ff14a643908abae45bbf26599da311d0db4df424c075"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "fault-reserve-after",
+      "exit_code": 0,
+      "seconds": 0.156,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\fault-reserve-after.stdout",
+        "bytes": 204,
+        "sha256": "70854092098d6d8540cc7ad3cf09ad4b900f2b697651459609527e18f1dd864e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\fault-reserve-after.stderr",
+        "bytes": 267,
+        "sha256": "646a9e55bda8cc70396bfbc1bc191806de1801560504c887c2e840dc1210238f"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "fault-observe-before",
+      "exit_code": 0,
+      "seconds": 0.172,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\fault-observe-before.stdout",
+        "bytes": 204,
+        "sha256": "3bba07f307f43dc24ef73273193a6033b085b87437a1a4a7a2705e31baaa1a49"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\fault-observe-before.stderr",
+        "bytes": 395,
+        "sha256": "d648027dbd38208120c8bc3007a54c7c1c49f8b91683570606b0d3b309fff043"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "fault-observe-after",
+      "exit_code": 0,
+      "seconds": 0.172,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\fault-observe-after.stdout",
+        "bytes": 204,
+        "sha256": "70854092098d6d8540cc7ad3cf09ad4b900f2b697651459609527e18f1dd864e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\fault-observe-after.stderr",
+        "bytes": 394,
+        "sha256": "69ae3116e9b28137a5beeb69ea09409675c896cb857be7cf3a28d5510196b4df"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "fault-ack-before",
+      "exit_code": 0,
+      "seconds": 0.156,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\fault-ack-before.stdout",
+        "bytes": 204,
+        "sha256": "70854092098d6d8540cc7ad3cf09ad4b900f2b697651459609527e18f1dd864e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\fault-ack-before.stderr",
+        "bytes": 391,
+        "sha256": "5fbfc4b0e75292932da69588cd783cfdbd472a843199cac6cff0ddcaf0fb2428"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "fault-ack-after",
+      "exit_code": 0,
+      "seconds": 0.203,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\fault-ack-after.stdout",
+        "bytes": 204,
+        "sha256": "3bba07f307f43dc24ef73273193a6033b085b87437a1a4a7a2705e31baaa1a49"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-497\\fault-ack-after.stderr",
+        "bytes": 390,
+        "sha256": "a0e92ab452b472705b7c2175f942cd998dc758135cadd77a85edf9124c1852ef"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "compiler_artifacts": 893,
+  "all_compiler_artifacts_fresh_false": true,
+  "all_original_top_level_processes_closed": true,
+  "frozen_public_inputs_verified": 57,
+  "VM_calls": 0,
+  "host_account_or_policy_calls": 0,
+  "rendered_native_UI": false,
+  "precommit_metadata_debt_automatically_rewritten": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

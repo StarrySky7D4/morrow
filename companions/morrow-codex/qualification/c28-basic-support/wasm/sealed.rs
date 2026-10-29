@@ -205,7 +205,7 @@ impl GuestProposal {
                         || observation.latest.is_some() || observation.accepted_report.is_some() {
                         return Err("original durable review differs from actual guest proposal; no approval".into());
                     }
-                    self.review = Some((review.clone(), observation.clone()));
+                    self.review = Some((review.as_ref().clone(), observation.clone()));
                     self.phase = ProposalPhase::Reviewed;
                     return Ok(());
                 }

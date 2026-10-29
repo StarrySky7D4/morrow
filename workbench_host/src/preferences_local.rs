@@ -61,11 +61,10 @@ impl WorkbenchState {
             return Err("preferences operation conflict".into());
         }
         let prior = self.host.store_local().card(ID)?;
-        if let Some(card) = &prior {
-            if card.summary().type_id != TYPE || card.summary().format_version != 1 {
+        if let Some(card) = &prior
+            && (card.summary().type_id != TYPE || card.summary().format_version != 1) {
                 return Err("preferences type".into());
             }
-        }
         let body =
             preferences::encode_persistent(&value, prior.as_ref().map(|c| c.body()).as_deref())?;
         if prior.as_ref().is_some_and(|c| c.body() == body) {

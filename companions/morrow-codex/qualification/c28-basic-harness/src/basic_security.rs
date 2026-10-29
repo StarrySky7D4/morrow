@@ -12,8 +12,8 @@ use std::{io::{Read, Write},
 pub const SYSTEM_QUERY: &str = r"C:\Windows\System32\whoami.exe";
 // This private fixture accepts only the root's freshly observed selected-guest image.
 // It is not a portable system-image pin and was not derived from the host image.
-pub const SYSTEM_QUERY_SHA256: &str = "574bc2a2995fe2b1f732ccd39f2d99460ace980af29efdf1eb0d3e888be7d6f0";
-pub const SYSTEM_QUERY_BYTES: u64 = 94208;
+pub const SYSTEM_QUERY_SHA256: &str = "23240ef9f8b0a9a324110b1c2331de31dc1b0e08f5359cb707e51a939af56cd3";
+pub const SYSTEM_QUERY_BYTES: u64 = 98304;
 pub const QUERY_ARGS: [&str; 4] = ["/user", "/fo", "csv", "/nh"];
 const QUERY_OUTPUT_MAX: u64 = 16384;
 #[derive(Clone)]

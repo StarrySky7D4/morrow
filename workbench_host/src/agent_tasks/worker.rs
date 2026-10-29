@@ -803,7 +803,6 @@ impl NativeCommandQueue {
     pub(super) fn submit(&self, value: AgentCommand) -> Result<AgentCommandHandle, AgentError> {
         submit_command(&self.sender, &self.control, value)
     }
-    pub(super) fn live(&self) -> bool { self.control.live() }
     pub(super) fn now_millis(&self) -> u64 { (self.control.clock)() }
     pub(super) fn live_at(&self, now: u64) -> bool { self.control.live_at(now) }
 }
@@ -1256,7 +1255,7 @@ fn execute<O: ManagedHostOwner>(
             control.stop();
         }
         command.diagnostic.worker(super::commands::diagnostic_stage::CHECKPOINT, 0);
-        control.checkpoint().map_err(|error| { command.diagnostic.worker(super::commands::diagnostic_stage::CHECKPOINT, super::commands::diagnostic_error(error)); error })?;
+        control.checkpoint().inspect_err(|&error| { command.diagnostic.worker(super::commands::diagnostic_stage::CHECKPOINT, super::commands::diagnostic_error(error)); })?;
         if owner.runtime().binding() != binding {
             command.diagnostic.worker(super::commands::diagnostic_stage::OWNER_MISMATCH, super::commands::diagnostic_error(AgentError::Unknown));
             return Err(AgentError::Unknown);
@@ -1381,7 +1380,7 @@ fn execute<O: ManagedHostOwner>(
             } => {
                 command.diagnostic.worker(super::commands::diagnostic_stage::PREPARE_IO, 0);
                 owner.prepare_io().map_err(|_| { command.diagnostic.worker(super::commands::diagnostic_stage::PREPARE_IO, super::commands::diagnostic_error(AgentError::Maintenance)); AgentError::Maintenance })?;
-                control.checkpoint().map_err(|error| { command.diagnostic.worker(super::commands::diagnostic_stage::CHECKPOINT, super::commands::diagnostic_error(error)); error })?;
+                control.checkpoint().inspect_err(|&error| { command.diagnostic.worker(super::commands::diagnostic_stage::CHECKPOINT, super::commands::diagnostic_error(error)); })?;
                 let port = context.port.as_ref().ok_or(AgentError::Unavailable)?;
                 command.diagnostic.worker(super::commands::diagnostic_stage::PORT_START, 0);
                 let started = port

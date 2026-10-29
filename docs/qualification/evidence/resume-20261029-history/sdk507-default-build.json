@@ -1,0 +1,81 @@
+{
+  "status": "PASS_FRESH_DEFAULT_HISTORY_PRODUCT_ARTIFACTS",
+  "error": null,
+  "source_digest": "ddb675f775f6fc3b540562ee7797dd88d1b7f8b4d7a3342e1d8b4beda656f7db",
+  "source_unchanged": true,
+  "commands": [
+    {
+      "name": "native",
+      "exit_code": 0,
+      "seconds": 1047.484,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-default-build-507\\native.stdout",
+        "bytes": 1018857,
+        "sha256": "dea0f9705eff83b2f9a4592bde7322f5fe724a01581ab1dd054ff2858cea1a62"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-default-build-507\\native.stderr",
+        "bytes": 30427,
+        "sha256": "b719b42b8f7055228c4e27370f9d19d74932f0ef930bceb8b8969fe0e0e9b96a"
+      }
+    },
+    {
+      "name": "builtin",
+      "exit_code": 0,
+      "seconds": 44.609,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-default-build-507\\builtin.stdout",
+        "bytes": 107168,
+        "sha256": "1e82c85d656f35731f2a7d7079b3617f0d3610830f15a24f753d35004478ebf2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-default-build-507\\builtin.stderr",
+        "bytes": 2986,
+        "sha256": "23f204b71bb6af5ef4d79b44f5ddcc950ab5e185bd231b94350f0dd6af31c065"
+      }
+    },
+    {
+      "name": "package-builtin",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-default-build-507\\package-builtin.stdout",
+        "bytes": 50,
+        "sha256": "b2f8007b2ba558beda9cb3ff4dad401d153bde2766be04cc8d922b610b644302"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-default-build-507\\package-builtin.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "programs": {
+    "host": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-default-build-507\\programs\\morrow-workbench-host.exe",
+      "bytes": 31348224,
+      "sha256": "2e57ea381f687592b8b39f9672687b5014ac58f7b7ed9fcde166362cdcfe9964"
+    },
+    "supervisor": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-default-build-507\\programs\\morrow-workbench-supervisor.exe",
+      "bytes": 14078464,
+      "sha256": "78464ebbba298d7a0717e872b5a1a145c12401b9a92c77ce7785efe3028f276e"
+    },
+    "packager": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-default-build-507\\programs\\package.exe",
+      "bytes": 3189248,
+      "sha256": "81078899eec40be716e8d8f92d82184a099ab5a3dd4264b1ab1849fc60744548"
+    },
+    "history-observer": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-default-build-507\\programs\\check_blob_text_fixture.exe",
+      "bytes": 4729856,
+      "sha256": "f88801b523ccda9ef878391d09a15360e511a13e985fcfd2ac6ebb9d6220834b"
+    }
+  },
+  "all_original_top_level_processes_closed": true,
+  "frozen_public_inputs_verified": 57,
+  "runtime": "NOT_RUN",
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

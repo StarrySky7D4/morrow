@@ -1,0 +1,40 @@
+{
+  "status": "PASS_CHANGED_HISTORY_PREFLIGHT",
+  "source_digest": "8a31564a0881b0df5ce24779369e239d9bb77c030e3dea6eb9c5668c01e80e33",
+  "source_unchanged": true,
+  "commands": [
+    {
+      "name": "analyze",
+      "exit_code": 0,
+      "seconds": 7.0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-dart-523\\analyze.stdout",
+        "bytes": 175,
+        "sha256": "8abc5fe3360fc7e7067ad4f0a59abf51dd603e336ad761a8aff74c368509a30c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-dart-523\\analyze.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "routing-and-history",
+      "exit_code": 0,
+      "seconds": 22.563,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-dart-523\\routing-and-history.stdout",
+        "bytes": 2195,
+        "sha256": "f4d0c4af70d663c70ed7e2d4a3d70a6fd99da8eba28c567cac80cf94bea10a09"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-dart-523\\routing-and-history.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_original_top_level_processes_closed": true,
+  "native_source_equivalent_to": "ddb675f775f6fc3b540562ee7797dd88d1b7f8b4d7a3342e1d8b4beda656f7db",
+  "new_native_build_claim": false
+}

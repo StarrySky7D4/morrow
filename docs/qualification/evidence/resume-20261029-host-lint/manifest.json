@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "scope": "Host library lint and targeted Windows regression evidence; no credentials or disks",
+  "files": [
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-host-lint\\binding566-test-only.json",
+      "bytes": 374,
+      "sha256": "b6d6b99249daf0ac58bffbe3e68105fe8d2c935c77f42492a77aba32f0fd82ee"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-host-lint\\build564-test-adapter-failure-retained.json",
+      "bytes": 98835,
+      "sha256": "c8f139caa6855a6d4497397e7f4d4c575451ff01a57439da8d409732b198e593"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-host-lint\\build567-eleven-programs.json",
+      "bytes": 119010,
+      "sha256": "890e4ec2b943b1ff561862ed9c1b444a757bfacdb2b2b79bc3f22e42ee267a9a"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-host-lint\\environment.json",
+      "bytes": 1345,
+      "sha256": "59c8e2c0ca000bed09c865e38844b6ed6a01c975365d840f240160b7cce6c86b"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-host-lint\\faults570-eighteen-pass.json",
+      "bytes": 13991,
+      "sha256": "fecc69bf9798b53cc448515705f67a59d4e20c8674b743da12da59cf8b8d2353"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-host-lint\\host-lint571.json",
+      "bytes": 1924,
+      "sha256": "9234a0d3c520c27b51d96f32e2877bac28ccf75885ac14c8930b3eefe8335f69"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-host-lint\\lint561-three-errors-retained.json",
+      "bytes": 112712,
+      "sha256": "9da7621c3b9a0368593b306cdc602a4c0a2892e9477b05d5db69628b3f78bb9f"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-host-lint\\lint563-qualified-pass.json",
+      "bytes": 94057,
+      "sha256": "09d36b32cbe055e2425953049aee4445cc1d2b7bb570e223dfeb04dd408dd83f"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-host-lint\\lint569-default-pass.json",
+      "bytes": 94057,
+      "sha256": "4b7f7a2b059622617f5727bf8e795b5677726b4de531d472c082903f5a742e79"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-host-lint\\regressions568-150-pass.json",
+      "bytes": 17667,
+      "sha256": "ec9e9b7a983dda466e7ee837c024d8264330aaec4dbb3666ea5cb8c6f4d66555"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-host-lint\\regressions568-unit-selection.json",
+      "bytes": 9566,
+      "sha256": "9de7786aa3d95e5349d8910672eca49035dcf0011c9487bb517f6537ae8bd7b7"
+    }
+  ]
+}

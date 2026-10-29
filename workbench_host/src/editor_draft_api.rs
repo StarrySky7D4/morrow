@@ -141,26 +141,38 @@ pub(crate) fn decode_resume(bytes: &[u8]) -> Result<(proto::WriteRequest, proto:
         return Err("editor draft resume wire frame budget".into());
     }
     let mut cursor = Cursor::new(bytes);
-    let message = serialize::read_message(&mut cursor, ReaderOptions {
-        traversal_limit_in_words: Some(4 * 1024 * 1024), nesting_limit: 20,
-    })?;
-    if cursor.position() != bytes.len() as u64 { return Err("trailing editor draft resume bytes".into()); }
+    let message = serialize::read_message(
+        &mut cursor,
+        ReaderOptions {
+            traversal_limit_in_words: Some(4 * 1024 * 1024),
+            nesting_limit: 20,
+        },
+    )?;
+    if cursor.position() != bytes.len() as u64 {
+        return Err("trailing editor draft resume bytes".into());
+    }
     let value = message.get_root::<wire::resume_request::Reader>()?;
-    if value.get_version() != 1 || value.get_digest()? != digest()
-        || !value.has_request() || !value.has_resume_link() {
+    if value.get_version() != 1
+        || value.get_digest()? != digest()
+        || !value.has_request()
+        || !value.has_resume_link()
+    {
         return Err("editor draft resume contract or identity missing".into());
     }
     let request = decode_request(value.get_request()?)?;
     let value = value.get_resume_link()?;
     let link = proto::ResumeLink {
-        parent_draft_id: text(value.get_parent_draft_id())?, parent_generation: value.get_parent_generation(),
+        parent_draft_id: text(value.get_parent_draft_id())?,
+        parent_generation: value.get_parent_generation(),
         parent_save_operation: text(value.get_parent_save_operation())?,
         parent_request_sha256: value.get_parent_request_sha256()?.to_vec(),
         parent_business_operation: text(value.get_parent_business_operation())?,
         retirement_operation: text(value.get_retirement_operation())?,
     };
     editor_draft::model::validate_resume_link(&request, &link)?;
-    if request.expected_generation != 0 { return Err("resume requires first child generation".into()); }
+    if request.expected_generation != 0 {
+        return Err("resume requires first child generation".into());
+    }
     Ok((request, link))
 }
 
@@ -397,16 +409,40 @@ fn record_reply(
     Ok(())
 }
 
-fn envelope(
+struct DraftEnvelope<'a> {
     kind: wire::ResultKind,
-    card: &str,
-    draft: &str,
-    operation: &str,
+    card: &'a str,
+    draft: &'a str,
+    operation: &'a str,
     expected_generation: u64,
-    record: Option<&editor_draft::EditorDraftRecord>,
-    summaries: &[editor_draft::EditorDraftSummary],
-    asset: Option<&Asset>,
-) -> Result<Vec<u8>> {
+    record: Option<&'a editor_draft::EditorDraftRecord>,
+    summaries: &'a [editor_draft::EditorDraftSummary],
+    asset: Option<&'a Asset>,
+}
+
+struct ProposalEnvelope<'a> {
+    kind: wire::ResultKind,
+    card: &'a str,
+    parent: &'a str,
+    operation: &'a str,
+    record: Option<&'a editor_draft::HandoffProposalRecord>,
+    summaries: &'a [editor_draft::HandoffProposalRecord],
+    request_cursor: &'a str,
+    request_limit: u32,
+    next_cursor: &'a str,
+}
+
+fn envelope(value: DraftEnvelope<'_>) -> Result<Vec<u8>> {
+    let DraftEnvelope {
+        kind,
+        card,
+        draft,
+        operation,
+        expected_generation,
+        record,
+        summaries,
+        asset,
+    } = value;
     let mut message = Builder::new_default();
     {
         let mut out = message.init_root::<wire::envelope::Builder>();
@@ -484,82 +520,140 @@ fn lineages_envelope(
     Ok(bytes)
 }
 
-fn archive_envelope(card: &str, draft: &str, operation: &str, generation: u64,
-    archive: Option<&editor_draft::EditorDraftArchive>) -> Result<Vec<u8>> {
+fn archive_envelope(
+    card: &str,
+    draft: &str,
+    operation: &str,
+    generation: u64,
+    archive: Option<&editor_draft::EditorDraftArchive>,
+) -> Result<Vec<u8>> {
     let mut message = Builder::new_default();
     let mut out = message.init_root::<wire::envelope::Builder>();
-    out.set_version(1); out.set_digest(&digest()); out.set_kind(wire::ResultKind::Archive);
-    out.set_card_id(card); out.set_draft_id(draft); out.set_operation(operation);
+    out.set_version(1);
+    out.set_digest(&digest());
+    out.set_kind(wire::ResultKind::Archive);
+    out.set_card_id(card);
+    out.set_draft_id(draft);
+    out.set_operation(operation);
     out.set_expected_generation(generation);
     if let Some(value) = archive {
         let mut item = out.init_archive();
-        item.set_card_id(&value.card_id); item.set_draft_id(&value.draft_id);
-        item.set_generation(value.generation); item.set_request_sha256(&value.request_sha256);
-        item.set_slot_sha256(&value.slot_sha256); item.set_operation(&value.operation);
+        item.set_card_id(&value.card_id);
+        item.set_draft_id(&value.draft_id);
+        item.set_generation(value.generation);
+        item.set_request_sha256(&value.request_sha256);
+        item.set_slot_sha256(&value.slot_sha256);
+        item.set_operation(&value.operation);
         item.set_repeated(value.repeated);
-        item.set_archive_version(value.version); item.set_archive_sha256(&value.archive_sha256);
+        item.set_archive_version(value.version);
+        item.set_archive_sha256(&value.archive_sha256);
         item.set_legacy_auxiliary_count(value.legacy_auxiliary_count);
     }
     Ok(serialize::write_message_to_words(&message))
 }
 
-fn maintenance_request_reply(value: &editor_draft::EditorDraftArchiveMaintenanceRequest,
-    mut out: wire::archive_maintenance_request::Builder<'_>) {
-    out.set_version(1); out.set_digest(&digest()); out.set_card_id(&value.card_id);
-    out.set_draft_id(&value.draft_id); out.set_generation(value.generation);
-    out.set_request_sha256(&value.request_sha256); out.set_archive_operation(&value.archive_operation);
-    out.set_archive_sha256(&value.archive_sha256); out.set_operation(&value.operation);
+fn maintenance_request_reply(
+    value: &editor_draft::EditorDraftArchiveMaintenanceRequest,
+    mut out: wire::archive_maintenance_request::Builder<'_>,
+) {
+    out.set_version(1);
+    out.set_digest(&digest());
+    out.set_card_id(&value.card_id);
+    out.set_draft_id(&value.draft_id);
+    out.set_generation(value.generation);
+    out.set_request_sha256(&value.request_sha256);
+    out.set_archive_operation(&value.archive_operation);
+    out.set_archive_sha256(&value.archive_sha256);
+    out.set_operation(&value.operation);
 }
 
 fn decode_maintenance(bytes: &[u8]) -> Result<editor_draft::EditorDraftArchiveMaintenanceRequest> {
-    if bytes.is_empty() || bytes.len() > 4096 { return Err("draft maintenance request budget".into()); }
+    if bytes.is_empty() || bytes.len() > 4096 {
+        return Err("draft maintenance request budget".into());
+    }
     let mut cursor = Cursor::new(bytes);
-    let message = serialize::read_message(&mut cursor, ReaderOptions {
-        traversal_limit_in_words: Some(1024), nesting_limit: 12,
-    })?;
-    if cursor.position() != bytes.len() as u64 { return Err("draft maintenance trailing bytes".into()); }
+    let message = serialize::read_message(
+        &mut cursor,
+        ReaderOptions {
+            traversal_limit_in_words: Some(1024),
+            nesting_limit: 12,
+        },
+    )?;
+    if cursor.position() != bytes.len() as u64 {
+        return Err("draft maintenance trailing bytes".into());
+    }
     let value = message.get_root::<wire::archive_maintenance_request::Reader<'_>>()?;
     if value.get_version() != 1 || value.get_digest()? != digest() {
         return Err("draft maintenance schema changed".into());
     }
     Ok(editor_draft::EditorDraftArchiveMaintenanceRequest {
-        card_id: text(value.get_card_id())?, draft_id: text(value.get_draft_id())?,
-        generation: value.get_generation(), request_sha256: value.get_request_sha256()?.to_vec(),
+        card_id: text(value.get_card_id())?,
+        draft_id: text(value.get_draft_id())?,
+        generation: value.get_generation(),
+        request_sha256: value.get_request_sha256()?.to_vec(),
         archive_operation: text(value.get_archive_operation())?,
-        archive_sha256: value.get_archive_sha256()?.to_vec(), operation: text(value.get_operation())?,
+        archive_sha256: value.get_archive_sha256()?.to_vec(),
+        operation: text(value.get_operation())?,
     })
 }
 
-fn maintenance_envelope(card: &str, draft: &str, operation: &str, generation: u64,
-    receipt: Option<&editor_draft::EditorDraftArchiveMaintenance>) -> Result<Vec<u8>> {
+fn maintenance_envelope(
+    card: &str,
+    draft: &str,
+    operation: &str,
+    generation: u64,
+    receipt: Option<&editor_draft::EditorDraftArchiveMaintenance>,
+) -> Result<Vec<u8>> {
     let mut message = Builder::new_default();
     let mut out = message.init_root::<wire::envelope::Builder>();
-    out.set_version(1); out.set_digest(&digest()); out.set_kind(wire::ResultKind::ArchiveMaintenance);
-    out.set_card_id(card); out.set_draft_id(draft); out.set_operation(operation);
+    out.set_version(1);
+    out.set_digest(&digest());
+    out.set_kind(wire::ResultKind::ArchiveMaintenance);
+    out.set_card_id(card);
+    out.set_draft_id(draft);
+    out.set_operation(operation);
     out.set_expected_generation(generation);
     if let Some(receipt) = receipt {
         let mut item = out.init_archive_maintenance();
         maintenance_request_reply(&receipt.request, item.reborrow().init_request());
-        item.set_auxiliary_count(receipt.auxiliary_count); item.set_auxiliary_bytes(receipt.auxiliary_bytes);
-        item.set_auxiliary_sha256(&receipt.auxiliary_sha256); item.set_repeated(receipt.repeated);
+        item.set_auxiliary_count(receipt.auxiliary_count);
+        item.set_auxiliary_bytes(receipt.auxiliary_bytes);
+        item.set_auxiliary_sha256(&receipt.auxiliary_sha256);
+        item.set_repeated(receipt.repeated);
     }
     Ok(serialize::write_message_to_words(&message))
 }
 
-fn history_envelope(page: &editor_draft::EditorDraftHistoryPage, cursor: &str, limit: u32) -> Result<Vec<u8>> {
+fn history_envelope(
+    page: &editor_draft::EditorDraftHistoryPage,
+    cursor: &str,
+    limit: u32,
+) -> Result<Vec<u8>> {
     let mut message = Builder::new_default();
     let mut out = message.init_root::<wire::envelope::Builder>();
-    out.set_version(1); out.set_digest(&digest()); out.set_kind(wire::ResultKind::History);
-    out.set_card_id(""); out.set_draft_id(""); out.set_operation("");
-    out.set_request_cursor(cursor); out.set_request_limit(limit); out.set_next_cursor(&page.next_cursor);
-    out.set_unarchived_count(page.unarchived); out.set_archived_count(page.archived);
+    out.set_version(1);
+    out.set_digest(&digest());
+    out.set_kind(wire::ResultKind::History);
+    out.set_card_id("");
+    out.set_draft_id("");
+    out.set_operation("");
+    out.set_request_cursor(cursor);
+    out.set_request_limit(limit);
+    out.set_next_cursor(&page.next_cursor);
+    out.set_unarchived_count(page.unarchived);
+    out.set_archived_count(page.archived);
     out.set_archived_bytes(page.archived_bytes);
     let mut rows = out.init_history(page.rows.len().try_into()?);
     for (index, row) in page.rows.iter().enumerate() {
         let mut item = rows.reborrow().get(index as u32);
-        item.set_card_id(&row.card_id); item.set_draft_id(&row.draft_id); item.set_generation(row.generation);
-        item.set_request_sha256(&row.request_sha256); item.set_archive_operation(&row.archive_operation);
-        item.set_cursor(&row.cursor); item.set_title(&row.title); item.set_preview(&row.preview);
+        item.set_card_id(&row.card_id);
+        item.set_draft_id(&row.draft_id);
+        item.set_generation(row.generation);
+        item.set_request_sha256(&row.request_sha256);
+        item.set_archive_operation(&row.archive_operation);
+        item.set_cursor(&row.cursor);
+        item.set_title(&row.title);
+        item.set_preview(&row.preview);
     }
     Ok(serialize::write_message_to_words(&message))
 }
@@ -589,17 +683,18 @@ fn proposal_summary_reply(
     out.set_cursor(&value.cursor);
 }
 
-fn proposal_envelope(
-    kind: wire::ResultKind,
-    card: &str,
-    parent: &str,
-    operation: &str,
-    record: Option<&editor_draft::HandoffProposalRecord>,
-    summaries: &[editor_draft::HandoffProposalRecord],
-    request_cursor: &str,
-    request_limit: u32,
-    next_cursor: &str,
-) -> Result<Vec<u8>> {
+fn proposal_envelope(value: ProposalEnvelope<'_>) -> Result<Vec<u8>> {
+    let ProposalEnvelope {
+        kind,
+        card,
+        parent,
+        operation,
+        record,
+        summaries,
+        request_cursor,
+        request_limit,
+        next_cursor,
+    } = value;
     let mut message = Builder::new_default();
     {
         let mut out = message.init_root::<wire::envelope::Builder>();
@@ -652,7 +747,17 @@ fn proposal_chunk(
     } else {
         wire::ResultKind::Absent
     };
-    let bytes = proposal_envelope(kind, card, parent, operation, record, &[], "", 0, "")?;
+    let bytes = proposal_envelope(ProposalEnvelope {
+        kind,
+        card,
+        parent,
+        operation,
+        record,
+        summaries: &[],
+        request_cursor: "",
+        request_limit: 0,
+        next_cursor: "",
+    })?;
     envelope_chunk(host, out, bytes, record.map_or(0, |r| r.revision))
 }
 
@@ -715,16 +820,16 @@ fn record_chunk(
     expected: u64,
     record: &editor_draft::EditorDraftRecord,
 ) -> Result<String> {
-    let bytes = envelope(
-        wire::ResultKind::Record,
+    let bytes = envelope(DraftEnvelope {
+        kind: wire::ResultKind::Record,
         card,
         draft,
         operation,
-        expected,
-        Some(record),
-        &[],
-        None,
-    )?;
+        expected_generation: expected,
+        record: Some(record),
+        summaries: &[],
+        asset: None,
+    })?;
     envelope_chunk(host, out, bytes, record.current_generation)
 }
 
@@ -949,11 +1054,18 @@ pub(crate) fn handle(
             let upload = text(r.get_transfer())?;
             let (uploaded_operation, bytes) = host.draft_transfers.finish(&upload, now)?;
             let (request, link) = decode_resume(&bytes)?;
-            if uploaded_operation != request.operation_id || operation != request.operation_id
-                || card != request.card_id || draft != request.draft_id || r.get_revision() != 0
-                || !r.get_payload()?.is_empty() || !text(r.get_selected_path())?.is_empty()
-                || !text(r.get_name())?.is_empty() || !text(r.get_kind())?.is_empty()
-                || !text(r.get_cursor())?.is_empty() || r.get_limit() != 0 {
+            if uploaded_operation != request.operation_id
+                || operation != request.operation_id
+                || card != request.card_id
+                || draft != request.draft_id
+                || r.get_revision() != 0
+                || !r.get_payload()?.is_empty()
+                || !text(r.get_selected_path())?.is_empty()
+                || !text(r.get_name())?.is_empty()
+                || !text(r.get_kind())?.is_empty()
+                || !text(r.get_cursor())?.is_empty()
+                || r.get_limit() != 0
+            {
                 return Err("editor draft resume outer binding changed".into());
             }
             let record = host.resume_editor_draft(&request, &link)?;
@@ -962,26 +1074,50 @@ pub(crate) fn handle(
         }
         Action::StageEditorDraftAssets => {
             let operation = text(r.get_operation())?;
-            if !r.get_payload()?.is_empty() || !text(r.get_selected_path())?.is_empty()
-                || !text(r.get_name())?.is_empty() || !text(r.get_kind())?.is_empty()
-                || !text(r.get_cursor())?.is_empty() || r.get_limit() != 0 {
+            if !r.get_payload()?.is_empty()
+                || !text(r.get_selected_path())?.is_empty()
+                || !text(r.get_name())?.is_empty()
+                || !text(r.get_kind())?.is_empty()
+                || !text(r.get_cursor())?.is_empty()
+                || r.get_limit() != 0
+            {
                 return Err("draft asset staging outer fields changed".into());
             }
-            let record = host.stage_editor_draft_assets(&card, &draft, r.get_revision(),
-                &operation, &text(r.get_capture_scope())?)?;
-            let reply = record_chunk(host, out, &card, &draft, &operation, r.get_revision(), &record)?;
+            let record = host.stage_editor_draft_assets(
+                &card,
+                &draft,
+                r.get_revision(),
+                &operation,
+                &text(r.get_capture_scope())?,
+            )?;
+            let reply = record_chunk(
+                host,
+                out,
+                &card,
+                &draft,
+                &operation,
+                r.get_revision(),
+                &record,
+            )?;
             bind_reply(host, &reply_owner, reply);
         }
         Action::RetireEditorDraftResumeParent => {
             let operation = text(r.get_operation())?;
             let parent = text(r.get_name())?;
             let expected = r.get_revision();
-            let (_, child) = host.draft_card(&card, &draft)?.ok_or("resumed child missing")?;
+            let (_, child) = host
+                .draft_card(&card, &draft)?
+                .ok_or("resumed child missing")?;
             let link = child.resume_link.as_ref().ok_or("resume link missing")?;
-            if parent != link.parent_draft_id || expected != link.parent_generation
+            if parent != link.parent_draft_id
+                || expected != link.parent_generation
                 || text(r.get_kind())? != link.parent_business_operation
-                || operation != link.retirement_operation || !r.get_payload()?.is_empty()
-                || !text(r.get_selected_path())?.is_empty() || !text(r.get_cursor())?.is_empty() || r.get_limit() != 0 {
+                || operation != link.retirement_operation
+                || !r.get_payload()?.is_empty()
+                || !text(r.get_selected_path())?.is_empty()
+                || !text(r.get_cursor())?.is_empty()
+                || r.get_limit() != 0
+            {
                 return Err("editor draft resume retirement outer binding changed".into());
             }
             let record = host.retire_resumed_editor_draft_parent(&card, &draft, &operation)?;
@@ -1051,28 +1187,28 @@ pub(crate) fn handle(
             if !next.is_empty() && page.last().is_none_or(|last| last.cursor != next) {
                 return Err("editor draft proposal next cursor changed".into());
             }
-            let bytes = proposal_envelope(
-                wire::ResultKind::HandoffProposals,
-                "",
-                "",
-                "",
-                None,
-                &page,
-                &cursor,
-                r.get_limit(),
-                &next,
-            )?;
+            let bytes = proposal_envelope(ProposalEnvelope {
+                kind: wire::ResultKind::HandoffProposals,
+                card: "",
+                parent: "",
+                operation: "",
+                record: None,
+                summaries: &page,
+                request_cursor: &cursor,
+                request_limit: r.get_limit(),
+                next_cursor: &next,
+            })?;
             let download = envelope_chunk(host, out, bytes, 0)?;
             bind_reply(host, &reply_owner, download);
         }
         Action::AbortEditorDraftTransfer => {
             let token = text(r.get_transfer())?;
             host.draft_transfers.abort(&token);
-            if let Some((upload, download)) = host.draft_reply_owner.as_ref() {
-                if upload == &token {
-                    host.draft_transfers.abort(download);
-                    host.draft_reply_owner = None;
-                }
+            if let Some((upload, download)) = host.draft_reply_owner.as_ref()
+                && upload == &token
+            {
+                host.draft_transfers.abort(download);
+                host.draft_reply_owner = None;
             }
         }
         Action::ReadEditorDraft => {
@@ -1088,16 +1224,16 @@ pub(crate) fn handle(
                 let download = record_chunk(host, out, &card, &draft, "", 0, &record)?;
                 bind_reply(host, &reply_owner, download);
             } else {
-                let bytes = envelope(
-                    wire::ResultKind::Absent,
-                    &card,
-                    &draft,
-                    "",
-                    0,
-                    None,
-                    &[],
-                    None,
-                )?;
+                let bytes = envelope(DraftEnvelope {
+                    kind: wire::ResultKind::Absent,
+                    card: &card,
+                    draft: &draft,
+                    operation: "",
+                    expected_generation: 0,
+                    record: None,
+                    summaries: &[],
+                    asset: None,
+                })?;
                 let download = envelope_chunk(host, out, bytes, 0)?;
                 bind_reply(host, &reply_owner, download);
             }
@@ -1126,16 +1262,16 @@ pub(crate) fn handle(
                     }
                 })
                 .collect::<Vec<_>>();
-            let bytes = envelope(
-                wire::ResultKind::List,
-                "",
-                "",
-                "",
-                0,
-                None,
-                &summaries,
-                None,
-            )?;
+            let bytes = envelope(DraftEnvelope {
+                kind: wire::ResultKind::List,
+                card: "",
+                draft: "",
+                operation: "",
+                expected_generation: 0,
+                record: None,
+                summaries: &summaries,
+                asset: None,
+            })?;
             let download = envelope_chunk(host, out, bytes, 0)?;
             bind_reply(host, &reply_owner, download);
         }
@@ -1149,14 +1285,20 @@ pub(crate) fn handle(
         Action::MaintainEditorDraftArchive | Action::InspectEditorDraftArchiveMaintenance => {
             let operation = text(r.get_operation())?;
             let generation = r.get_revision();
-            if !text(r.get_selected_path())?.is_empty() || !text(r.get_cursor())?.is_empty()
-                || r.get_limit() != 0 || !r.get_sha256()?.is_empty() {
+            if !text(r.get_selected_path())?.is_empty()
+                || !text(r.get_cursor())?.is_empty()
+                || r.get_limit() != 0
+                || !r.get_sha256()?.is_empty()
+            {
                 return Err("draft maintenance outer fields".into());
             }
             let receipt = if action == Action::MaintainEditorDraftArchive {
                 let request = decode_maintenance(r.get_payload()?)?;
-                if request.card_id != card || request.draft_id != draft
-                    || request.operation != operation || request.generation != generation {
+                if request.card_id != card
+                    || request.draft_id != draft
+                    || request.operation != operation
+                    || request.generation != generation
+                {
                     return Err("draft maintenance outer correlation changed".into());
                 }
                 Some(host.maintain_editor_draft_archive(&request)?)
@@ -1166,7 +1308,8 @@ pub(crate) fn handle(
                 }
                 host.inspect_editor_draft_archive_maintenance(&card, &draft)?
             };
-            let bytes = maintenance_envelope(&card, &draft, &operation, generation, receipt.as_ref())?;
+            let bytes =
+                maintenance_envelope(&card, &draft, &operation, generation, receipt.as_ref())?;
             let revision = receipt.as_ref().map_or(0, |value| value.request.generation);
             let download = envelope_chunk(host, out, bytes, revision)?;
             bind_reply(host, &reply_owner, download);
@@ -1175,8 +1318,11 @@ pub(crate) fn handle(
             let operation = text(r.get_operation())?;
             let generation = r.get_revision();
             let hash = r.get_sha256()?;
-            if !text(r.get_selected_path())?.is_empty() || !r.get_payload()?.is_empty()
-                || !text(r.get_cursor())?.is_empty() || r.get_limit() != 0 {
+            if !text(r.get_selected_path())?.is_empty()
+                || !r.get_payload()?.is_empty()
+                || !text(r.get_cursor())?.is_empty()
+                || r.get_limit() != 0
+            {
                 return Err("draft archive outer fields".into());
             }
             let archive = if action == Action::ArchiveEditorDraft {
@@ -1195,9 +1341,13 @@ pub(crate) fn handle(
         Action::ListEditorDraftHistory => {
             let cursor = text(r.get_cursor())?;
             let limit = r.get_limit();
-            if !card.is_empty() || !draft.is_empty() || !text(r.get_operation())?.is_empty()
-                || r.get_revision() != 0 || !r.get_payload()?.is_empty()
-                || !text(r.get_selected_path())?.is_empty() {
+            if !card.is_empty()
+                || !draft.is_empty()
+                || !text(r.get_operation())?.is_empty()
+                || r.get_revision() != 0
+                || !r.get_payload()?.is_empty()
+                || !text(r.get_selected_path())?.is_empty()
+            {
                 return Err("draft history outer fields".into());
             }
             let page = host.list_editor_draft_history(&cursor, limit)?;
@@ -1223,26 +1373,32 @@ pub(crate) fn handle(
                 &mut file,
                 metadata.len(),
             )?;
-            let bytes = envelope(
-                wire::ResultKind::Imported,
-                &card,
-                &draft,
-                "",
-                r.get_revision(),
-                None,
-                &[],
-                Some(&asset),
-            )?;
+            let bytes = envelope(DraftEnvelope {
+                kind: wire::ResultKind::Imported,
+                card: &card,
+                draft: &draft,
+                operation: "",
+                expected_generation: r.get_revision(),
+                record: None,
+                summaries: &[],
+                asset: Some(&asset),
+            })?;
             let download = envelope_chunk(host, out, bytes, r.get_revision())?;
             bind_reply(host, &reply_owner, download);
         }
-        Action::ExportEditorDraftAsset | Action::ExportEditorDraftCapture | Action::ExportEditorDraftHistory => {
+        Action::ExportEditorDraftAsset
+        | Action::ExportEditorDraftCapture
+        | Action::ExportEditorDraftHistory => {
             let asset_id = text(r.get_name())?;
             let bytes = if action == Action::ExportEditorDraftHistory {
-                if !asset_id.is_empty() { return Err("history export has no asset selector".into()); }
+                if !asset_id.is_empty() {
+                    return Err("history export has no asset selector".into());
+                }
                 host.export_editor_draft_history(&card, &draft, r.get_revision())?
             } else if action == Action::ExportEditorDraftCapture {
-                if !asset_id.is_empty() { return Err("capture export has no asset selector".into()); }
+                if !asset_id.is_empty() {
+                    return Err("capture export has no asset selector".into());
+                }
                 host.export_editor_draft_capture(&card, &draft, r.get_revision())?
             } else {
                 host.export_editor_draft_asset(&card, &draft, r.get_revision(), &asset_id)?
@@ -1263,16 +1419,16 @@ pub(crate) fn handle(
                 let _ = std::fs::remove_file(destination);
             }
             result?;
-            let bytes = envelope(
-                wire::ResultKind::Exported,
-                &card,
-                &draft,
-                "",
-                r.get_revision(),
-                None,
-                &[],
-                None,
-            )?;
+            let bytes = envelope(DraftEnvelope {
+                kind: wire::ResultKind::Exported,
+                card: &card,
+                draft: &draft,
+                operation: "",
+                expected_generation: r.get_revision(),
+                record: None,
+                summaries: &[],
+                asset: None,
+            })?;
             let download = envelope_chunk(host, out, bytes, r.get_revision())?;
             bind_reply(host, &reply_owner, download);
         }
@@ -1377,7 +1533,8 @@ mod tests {
             source_revision: 1,
             source_kind: 0,
             commit_operation: String::new(),
-            capture_scope: String::new(), capture_events: 0,
+            capture_scope: String::new(),
+            capture_events: 0,
             predecessor_operation: String::new(),
             predecessor_sha256: Vec::new(),
             values: Some(proto::Values {
@@ -1611,17 +1768,17 @@ mod tests {
 
     #[test]
     fn proposal_absence_keeps_child_operation_without_page_fields() {
-        let bytes = proposal_envelope(
-            wire::ResultKind::Absent,
-            "card",
-            "parent",
-            "child-operation",
-            None,
-            &[],
-            "",
-            0,
-            "",
-        )
+        let bytes = proposal_envelope(ProposalEnvelope {
+            kind: wire::ResultKind::Absent,
+            card: "card",
+            parent: "parent",
+            operation: "child-operation",
+            record: None,
+            summaries: &[],
+            request_cursor: "",
+            request_limit: 0,
+            next_cursor: "",
+        })
         .unwrap();
         let decoded =
             serialize::read_message(&mut Cursor::new(bytes), ReaderOptions::default()).unwrap();
@@ -1668,17 +1825,17 @@ mod tests {
                 cursor: format!("proposal-{index:02}"),
             });
         }
-        let bytes = proposal_envelope(
-            wire::ResultKind::HandoffProposals,
-            "",
-            "",
-            "",
-            None,
-            &records,
-            "",
-            32,
-            "",
-        )
+        let bytes = proposal_envelope(ProposalEnvelope {
+            kind: wire::ResultKind::HandoffProposals,
+            card: "",
+            parent: "",
+            operation: "",
+            record: None,
+            summaries: &records,
+            request_cursor: "",
+            request_limit: 32,
+            next_cursor: "",
+        })
         .unwrap();
         assert!(
             bytes.len() < 16 * 1024,

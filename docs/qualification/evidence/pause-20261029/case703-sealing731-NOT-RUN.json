@@ -1,0 +1,38 @@
+{
+  "status": "PUBLIC_PIPELINE_DERIVATION_COMPLETED_EXISTING_SEALED_PINS_VERIFIED",
+  "source_digest": "a038cc73bb370e1cd5b028aa022c744192005fd10ec6dec8a489819aaf12c993",
+  "tag": "db7267578b31433ab3d9f2c749ab30a5",
+  "original_sealer": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\seal_case703_preparation.py",
+    "bytes": 7359,
+    "sha256": "9e67222ce0a78ec90b5220180ab8b45a49e3d3af3bcf32b01509f422bb9d3ca2"
+  },
+  "original_error": "NameError: old_source in extracted adapt function after public evidence was sealed",
+  "original_sealer_observed_exit_code": 1,
+  "sealed_preparation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-preparation.json",
+    "bytes": 18812,
+    "sha256": "4e059ccfbdc8dd68c4fc9c76f50bdfa46e01f309c9cf41f6c4bf596b83b6a50c"
+  },
+  "original_adapt_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\prepare_vm047_case703_drivers.py",
+    "bytes": 8477,
+    "sha256": "9227816decebc6bf8f31fac8e5f8c76e15d56e2c63191f894d503e7010a0ea39"
+  },
+  "bound_old_source": "25b8cc2c78c65fcc58bf18bb581ad40fccfc889cbc898fe555c2b2d93ef0afe4",
+  "pipeline": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_case703_pipeline_703.py",
+    "bytes": 4745,
+    "sha256": "24229d147dedab2bd9675d4e8ba2f326976b27bda590328f2546c39efe93f4d3"
+  },
+  "original_pipeline": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_case684_pipeline_684.py",
+    "bytes": 4745,
+    "sha256": "b08d97b8cfa398f4a8613c3f90ee6a451a061241556f28fa0f7830c4672eb7fd"
+  },
+  "all_existing_evidence_preserved": true,
+  "source_unchanged": true,
+  "VM_calls": 0,
+  "credential_reads": 0,
+  "original_runtime_predicates_changed": 0
+}

@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "scope": "Scoped native refusal, protected directory and cache cleanup; no credentials/databases/binaries",
+  "files": [
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-p2-directory\\cache573-result.json",
+      "bytes": 635,
+      "sha256": "6203af6702e227f31b07d941734e4131c0324dc3e77caec9395490d2deaae324"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-p2-directory\\cache574-inventory-corrections.json",
+      "bytes": 580,
+      "sha256": "edf2ed8f5734f21186dc2d8e7f60db9efe3d784b66febe8b328ac419d9c7ca97"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-p2-directory\\cache574-result.json",
+      "bytes": 634,
+      "sha256": "a04e2f125fee1856603cd1f77c11fe80a291eb8a7721f520c160433c1734c50c"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-p2-directory\\directory577-current-build.json",
+      "bytes": 6616,
+      "sha256": "025098701258ae0bfaa703cefa0cd0b3430fd0b1fd873666df9b3d8e0f260fe4"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-p2-directory\\directory578-discovery-rejection.json",
+      "bytes": 1591,
+      "sha256": "44d907c96a11a5987445c9c548b945ecacbb18ca4f64c30b0c466bea8f7cfeae"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-p2-directory\\directory578-no-runtime-interpretation.json",
+      "bytes": 757,
+      "sha256": "f24a7c670f4eda673e1b54c6878b0962e4250308e9f0c28a764659aadd2b8efd"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-p2-directory\\directory579-current-26-pass.json",
+      "bytes": 24378,
+      "sha256": "2162346cd749acefe651171a9f4ccf710fa7c02e2fb33c5139eb819c9f16be46"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-p2-directory\\environment.json",
+      "bytes": 1345,
+      "sha256": "75c44bcefd84bbc342cce12c001404376048d5103ae16e026702158fd33c8a4b"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-p2-directory\\native575-cold-build.json",
+      "bytes": 1093,
+      "sha256": "07b4ceccd908f5f28c6a71398d495543a2a8295097b2cb19c5a22af28f078996"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-p2-directory\\native576-refusal-capacity.json",
+      "bytes": 3292,
+      "sha256": "df49aa5dd1d46b2a7f528cc31494bfa45715b478365530a9dabc2ac06cbb4d65"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-p2-directory\\p2-directory580.json",
+      "bytes": 1962,
+      "sha256": "0e608014287bc34cec3b9c4234b92eb8f0164bf6fa689285cca311300ab6645e"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-p2-directory\\p2-source-comparison580.json",
+      "bytes": 997,
+      "sha256": "35fec5c9ebaccd089c88b0912929be14098bc622ca185253ccb67397d69ce84b"
+    }
+  ]
+}

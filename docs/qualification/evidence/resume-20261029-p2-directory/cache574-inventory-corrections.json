@@ -1,0 +1,10 @@
+{
+  "initial_preparation": "TWO_INVENTORY_GUARDS_STOPPED_BEFORE_PLAN_OR_DELETION",
+  "reason": "Three reusable targets had newer terminal builds than the first receipt. Latest actual receipts are now pinned. Seven empty metadata placeholders lack a compiler magic header and are retained. No candidate age, termination or header guard was relaxed.",
+  "corrected_receipts": {
+    "blob-binding-core-375": "upload-planner-422",
+    "blob-binding-377": "upload-planner-sdk-460",
+    "blob-upload-migrations-487": "upload-metadata-core-540"
+  },
+  "source_unchanged": true
+}

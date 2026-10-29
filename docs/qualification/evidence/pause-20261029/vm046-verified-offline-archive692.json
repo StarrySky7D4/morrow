@@ -1,0 +1,18 @@
+{
+  "source_disks_retained": true,
+  "case_clean": false,
+  "archive": "C:\\MorrowQA\\retained-unknown-archives\\vm046",
+  "full_original_state_and_disk_chain_byte_identical": true,
+  "full_file_hash_verification_before_unregister": true,
+  "original_disk_sizes_times_unchanged_after_unregister": true,
+  "owner_query_or_replay": 0,
+  "guest_contacts": 0,
+  "vm_id": "b077176b-5c7d-4549-aa93-5aa09b4a8e85",
+  "release_eligible": false,
+  "registered_vms": 3,
+  "policy_clean": false,
+  "status": "SAVED_VM046_FULL_ARCHIVE_VERIFIED_REGISTRATION_RELEASED_ORIGINAL_DISK_RETAINED",
+  "original_case_outcome": "UNKNOWN_RETAINED_NO_REPLAY",
+  "VM_starts": 0,
+  "source_accepted": false
+}

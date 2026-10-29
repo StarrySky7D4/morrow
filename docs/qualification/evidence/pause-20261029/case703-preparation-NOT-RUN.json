@@ -1,0 +1,396 @@
+{
+  "status": "PREPARED_PUBLIC_DRIVERS_NOT_RUN",
+  "tag": "db7267578b31433ab3d9f2c749ab30a5",
+  "vm_id": "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
+  "source_digest": "a038cc73bb370e1cd5b028aa022c744192005fd10ec6dec8a489819aaf12c993",
+  "checkout_source_digest": "a038cc73bb370e1cd5b028aa022c744192005fd10ec6dec8a489819aaf12c993",
+  "profile": "ORIGINAL47_NINE_GATES_NO_INJECTED_FAULT",
+  "single_use_input_phases": 6,
+  "source_roles": "roles-052",
+  "fresh_installation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047-creation-695\\result.json",
+    "bytes": 959,
+    "sha256": "d2df096668f389986a3d8c5e277a1e1b50d8411c062558cdee0f1393666c5ed7"
+  },
+  "fresh_readiness": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047-readiness-prepared-707\\isolated-vm-probe-707\\result.json",
+    "bytes": 491,
+    "sha256": "9d4fbfc961add08b66351c09829749dfb7982f08a3589b38b1c8091b76ed01f1"
+  },
+  "retained_predecessor": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm046-offline-verified-692\\result.json",
+    "bytes": 698,
+    "sha256": "0826630e5e9bb3a4ed046193994cc00438810e9ee7c3b2ca21fe2aab1d651155"
+  },
+  "old_unknown_case684_not_replayed": true,
+  "normal_roles": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-052\\result.json",
+    "bytes": 2136,
+    "sha256": "8c8cf9de2018e3a80fea3c89219d519c6391156a580090f614fb0903c88ede54"
+  },
+  "source_equivalence": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\source-equivalence-703\\result.json",
+    "bytes": 952,
+    "sha256": "083dcd5e85b5742c74d693d72f788e490042aad2264a11f3443a84b995fd36bb"
+  },
+  "cold_stage_verifier": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\verify_roles052_stage703.py",
+    "bytes": 11367,
+    "sha256": "8a13aa8a421543032870384bc1ad661f742700157308d868fac2f2ba03db856d"
+  },
+  "cold_dispatch_guard": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_cold_guarded_703.py",
+    "bytes": 4867,
+    "sha256": "f4b1f55614c4d16ccb90d888d7f7ce3303c13fdadd20aa117a6d1497798875b5"
+  },
+  "wrapper": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\invoke_pinned_ps5_utility_703.ps1",
+    "bytes": 1953,
+    "sha256": "ad074d7c18325b217ab728424705ee2abe4e13208a6abf19ff21205c52dec051"
+  },
+  "native_and_outer_deadlines_unchanged": true,
+  "rows": [
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm046_binding_684.py",
+        "bytes": 2686,
+        "sha256": "f18f2023446f6b7074ea41874434972c283f9953674b64df3fa0bd74d7ec0266"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047_binding_703.py",
+        "bytes": 2724,
+        "sha256": "8aebe6d048d36862c27686bd7bf24d795f01703a53e1db3b10c6f299e5147014"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\vm047_binding_703.py.diff",
+        "bytes": 1151,
+        "sha256": "b204f2d8c2737f681578f23b76f4d3b5a2baeff98644d0d97e184d78562af93d"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\prepare_vm_stage_684.py",
+        "bytes": 29472,
+        "sha256": "e74694036a44e34d948c63c75c710675e94659eb02da3314185c3df1745c53a1"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\prepare_vm_stage_703.py",
+        "bytes": 30734,
+        "sha256": "b3a87194224b952e3a1b98fe91f5f3ce60833ef830ddbc85c92ae81dee35cbb7"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\prepare_vm_stage_703.py.diff",
+        "bytes": 23203,
+        "sha256": "a59e62e2e03879466c246d232f1cdf598a572af5c741c62b37081f6f7600cd14"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_stage_684.py",
+        "bytes": 2856,
+        "sha256": "459fa5f12d4e7975b62772339819c5861a8bd087e3e25e4b0e87862a1254856c"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_stage_703.py",
+        "bytes": 2856,
+        "sha256": "135ddb118415a9941b51fee3aed90d73aa48c8f82c9d0ebc73bf5455d7c3beef"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\review_stage_703.py.diff",
+        "bytes": 1823,
+        "sha256": "b99275414cdc985c336cdf059f1ccac3bd0699d2b21e3dff53c103691b764ad1"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\prepare_bind_684.py",
+        "bytes": 4265,
+        "sha256": "b3c5e299fb7fc3dd52ac553088ab8a13161948d8b35b304afde11182de6b557e"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\prepare_bind_703.py",
+        "bytes": 4265,
+        "sha256": "6def02f56f3788cbe650259d03c8788de2b121000f763908726281f168b7b55f"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\prepare_bind_703.py.diff",
+        "bytes": 2201,
+        "sha256": "6d94165dd5ead140716c7b0f6da55880e48a3b21b168e9a413550f506bfa38dc"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_isolated_case_684.py",
+        "bytes": 6275,
+        "sha256": "b17cfa02f445188793ee084551b1d5f004af6e8fccac22cc1dc03f331bc538d5"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_isolated_case_703.py",
+        "bytes": 6293,
+        "sha256": "d05e2e4157b8683db9b5b1458232c333d7037f8d9809a4b17ec5902d0e58f07a"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\run_isolated_case_703.py.diff",
+        "bytes": 2716,
+        "sha256": "7066948b71535d493498f1caa4a7cc881b994c782be3b27acf5855b7bb007ca0"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_vm_stage_684.py",
+        "bytes": 1715,
+        "sha256": "c2f61e8c8a52ba9e394fc28f0f999af3aa4985cc2f8abccfcb4e0a024ac3803e"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_vm_stage_703.py",
+        "bytes": 1715,
+        "sha256": "a3a10c7770001b485e74bc5f76fc235942dfc3908eaf3083e61269cb4f3f5389"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\run_vm_stage_703.py.diff",
+        "bytes": 484,
+        "sha256": "435fd179d57b33511884bda255dd74d1ea32d9f0e6a7f0d9c2ce5ecff1018a25"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_vm_bind_684.py",
+        "bytes": 1707,
+        "sha256": "355410c6a12648a748b9dca4301486164708665d06b00dbd66af28b4e27ce24d"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_vm_bind_703.py",
+        "bytes": 1707,
+        "sha256": "c1c19b43c7eac91b598a0bdfa99cd1c51185358495b2110baebb1aee3fceb34f"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\run_vm_bind_703.py.diff",
+        "bytes": 480,
+        "sha256": "9f7ef9f19700fb91e77d7d692b26539e984a6538b2067fd37eff18a36ed471fe"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\manual_vm046_case684_login_adapter.py",
+        "bytes": 956,
+        "sha256": "9c699f4353e55a9f0ce72473adfdd20f16ac2f92b0d4f89ed18d82f20bba89a1"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\manual_vm047_case703_login_adapter.py",
+        "bytes": 956,
+        "sha256": "891446fec602510fb7bc38b312f29b2bb300db10a9f9121658838a388348ee49"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\manual_vm047_case703_login_adapter.py.diff",
+        "bytes": 1623,
+        "sha256": "1661e96c9f480f5109c4785d921b87a08408d0b1c57af411f84bef75de54fe64"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\verify_roles051_stage684.py",
+        "bytes": 11367,
+        "sha256": "ebbcfc2ef61992ba94a19c367f77ae7efc2695f8730d86ba43e6a357195f83cf"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\verify_roles052_stage703.py",
+        "bytes": 11367,
+        "sha256": "8a13aa8a421543032870384bc1ad661f742700157308d868fac2f2ba03db856d"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\verify_roles052_stage703.py.diff",
+        "bytes": 5365,
+        "sha256": "64e107ae1e0e670439048a0351c5bc128063ab22d00b586b1a3e709271dce930"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_cold_guarded_684.py",
+        "bytes": 4867,
+        "sha256": "400443613aaecf920df3c03e707493606fa497224a839c307625aa588edb67fb"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\run_cold_guarded_703.py",
+        "bytes": 4867,
+        "sha256": "f4b1f55614c4d16ccb90d888d7f7ce3303c13fdadd20aa117a6d1497798875b5"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\run_cold_guarded_703.py.diff",
+        "bytes": 5322,
+        "sha256": "f9d422c95c09a518b471d53e019feb829fe23cf8fe853981bf48544bea09b686"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_case684_prepared.py",
+        "bytes": 2776,
+        "sha256": "4e5aa276c13673a99cb167dc3feeae5c79a305d4a4a499ea199aebd34d11be36"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_case703_prepared.py",
+        "bytes": 2776,
+        "sha256": "584b76dee87ce7211e01d3df1a3a74dd6fae37dede002878a50c0445c119a6a1"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\review_case703_prepared.py.diff",
+        "bytes": 4022,
+        "sha256": "a1ea1e529d374385130e7d02a2b009e85279a8b702bd896f62cf580a1f893ca8"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\prepare_isolated_case_684.py",
+        "bytes": 4577,
+        "sha256": "6374021a1edfb220351bffbd020dbf21a708e09589d03c14c916b367a5bdc9d6"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\prepare_isolated_case_703.py",
+        "bytes": 4577,
+        "sha256": "5b34749e14f5d50fbddfafeead75d5c3fcfcaa02feefdb8b2e85799f617906ee"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\prepare_isolated_case_703.py.diff",
+        "bytes": 3030,
+        "sha256": "bc279972f72d3a74d8647ef7e8aa2ab8b0d97f259c1997a14c5a8ffb65d7814a"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_case684_nine.py",
+        "bytes": 25569,
+        "sha256": "57245e0e7a1efc6df3a81e97bfc3b126a75e645bc8f530f89f82f8c4485e72ff"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_case703_nine.py",
+        "bytes": 25569,
+        "sha256": "fb326c7010989284f1cd4599da2c3a587710c3744c08bde250348f2d81009b87"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\review_case703_nine.py.diff",
+        "bytes": 7288,
+        "sha256": "612c1b9b66793879609c58271f1da5443567de0867629aab6ef769d7c3e630fc"
+      },
+      "initial_derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\review_case703_nine.py",
+        "bytes": 25569,
+        "sha256": "785c10b592f39ba5d949e1aadea60d6a38f25e929ecaf565c8e8b91e0ea62a58"
+      },
+      "label_correction": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-review-label-709\\result.json",
+        "bytes": 1027,
+        "sha256": "041b08a9b5dc30fc5859b04c003f30a6ea28706af7effe508f3a107446af7bbf"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\collect_vm_case_diagnostic_684.py",
+        "bytes": 9079,
+        "sha256": "163713422c833951cb5f677a41c004f205b705ed62b224242d9856d5fdbf4a2a"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\collect_vm_case_diagnostic_703.py",
+        "bytes": 9076,
+        "sha256": "4d925c7a247314086e6a9744d06567623d94d55829b2384c989a1ee79467e36f"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\collect_vm_case_diagnostic_703.py.diff",
+        "bytes": 3345,
+        "sha256": "97b2c89c4e3aa51e0ac49c36db2f192f9546a81f5e42b16fe48ff37ba817b536"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\save_case684_vm_state.ps1",
+        "bytes": 3799,
+        "sha256": "57e480571ce68671be769d164a3e951fc8abbcef7b2e55589fd3064f0a9bfc1b"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\save_case703_vm_state.ps1",
+        "bytes": 3799,
+        "sha256": "06149fd565cd723167d4fb86ff0e2683c7507a795e413199aab425c908f86e86"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\save_case703_vm_state.ps1.diff",
+        "bytes": 2506,
+        "sha256": "041348bcb4c06f873a211cc77ba0f1022b7ab8d6edc78200774f908b24903043"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\collect_authorized_vm046_credential_684.ps1",
+        "bytes": 7135,
+        "sha256": "145b017705db27173bc8e9b083c3c24d697d2fd28af3f2bbe9909a033d6a625a"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\collect_authorized_vm047_credential_703.ps1",
+        "bytes": 7135,
+        "sha256": "ac42c277b1d721fef1f630999afee2bb847795099a106610fe8df8232b7d3fb4"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\collect_authorized_vm047_credential_703.ps1.diff",
+        "bytes": 3749,
+        "sha256": "b1ce6e0a209dab97bf743da00bb73171ffeaa45e37337163dd74bf9974f0bee5"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\invoke_pinned_ps5_utility_684.ps1",
+        "bytes": 1953,
+        "sha256": "3505ea01cdf5d58213455d5c6d42006560d2ab29ffe9d8fd694d8ddf4a613077"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\invoke_pinned_ps5_utility_703.ps1",
+        "bytes": 1953,
+        "sha256": "ad074d7c18325b217ab728424705ee2abe4e13208a6abf19ff21205c52dec051"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\invoke_pinned_ps5_utility_703.ps1.diff",
+        "bytes": 770,
+        "sha256": "001384e597c603e876e73922e05990c0210d60739da884bc7e13673944eb606b"
+      }
+    },
+    {
+      "original": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\preflight_case684_deployment.py",
+        "bytes": 4479,
+        "sha256": "c59837900cfd79ecfbe97b27f878cb51954a6fe7980703d07738a60998e8a745"
+      },
+      "derived": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\preflight_case703_deployment.py",
+        "bytes": 4850,
+        "sha256": "261cde1678be22e4185435202eb3c768d06c0b6cb252df2495a4e3581840331a"
+      },
+      "diff": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-driver-derivation\\preflight_case703_deployment.py.diff",
+        "bytes": 4504,
+        "sha256": "3c1f85b0ffa17fdebfa43de4c3d1074c13f3192f581e5d3cd7092d2a0860ed6a"
+      }
+    }
+  ],
+  "binding_module": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047_binding_703.py",
+    "bytes": 2724,
+    "sha256": "8aebe6d048d36862c27686bd7bf24d795f01703a53e1db3b10c6f299e5147014"
+  },
+  "corrections_before_first_use": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-review-label-709\\result.json",
+      "bytes": 1027,
+      "sha256": "041b08a9b5dc30fc5859b04c003f30a6ea28706af7effe508f3a107446af7bbf"
+    }
+  ],
+  "fixed_policy_identity_preflight": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\policy-identity-preflight-703\\result.json",
+    "bytes": 1946,
+    "sha256": "49550a5294f2663b9b5c4139667d7e7b2dd743020e0a882780047e5fc4b0249d"
+  },
+  "deployment_preflight": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-deployment-preflight-utf8\\result.json",
+    "bytes": 11834,
+    "sha256": "f84350b9e5cc083ce1af9fc890ff4fdb2219c19ebbd5297ea40ddda40b998ba9"
+  },
+  "VM_calls": 0,
+  "credential_reads": 0,
+  "old_unknown_owner_contacts": 0,
+  "canonical_source_edits_at_this_step": 0
+}

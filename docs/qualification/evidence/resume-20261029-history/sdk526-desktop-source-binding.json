@@ -1,0 +1,84 @@
+{
+  "status": "CURRENT_CANONICAL_MAIN_AND_DEFAULT_NATIVE_READY_NOT_RUN",
+  "exit_code": 0,
+  "source_digest": "8a31564a0881b0df5ce24779369e239d9bb77c030e3dea6eb9c5668c01e80e33",
+  "source_unchanged": true,
+  "seconds": 14.656,
+  "entry": {
+    "path": "C:\\ms1020\\lib\\main.dart",
+    "bytes": 243243,
+    "sha256": "d00a9c22a6a04331a03612767e2efcec3eef2bc785a325b26f4669920857221b"
+  },
+  "kernel": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-build-526\\app\\data\\flutter_assets\\kernel_blob.bin",
+    "bytes": 113265624,
+    "sha256": "1736dc8429fe7dcf2b0c0add0afa2e61ffec51c99436d17103924907ae83dda5"
+  },
+  "executable": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-build-526\\app\\morrow_studio.exe",
+    "bytes": 2398720,
+    "sha256": "87bc90bc966ed06b949944df275e3889a21e898bed2f54dbdae4f5202310040f"
+  },
+  "native_launcher_rebuilt": false,
+  "native_launcher_source_unchanged": true,
+  "all_original_top_level_processes_closed": true,
+  "product_runs": 0,
+  "full_SDK_accepted": false,
+  "host": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-build-526\\app\\morrow-workbench-host.exe",
+    "bytes": 31348224,
+    "sha256": "2e57ea381f687592b8b39f9672687b5014ac58f7b7ed9fcde166362cdcfe9964"
+  },
+  "supervisor": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-build-526\\app\\morrow-workbench-supervisor.exe",
+    "bytes": 14078464,
+    "sha256": "78464ebbba298d7a0717e872b5a1a145c12401b9a92c77ce7785efe3028f276e"
+  },
+  "package": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-build-526\\app\\plugins\\workbench.morrowplugin",
+    "bytes": 921545,
+    "sha256": "e9180fbfbfea67f8f8d97f3f5d10f6d38a5c1955dbdf58ac1e1da4b7fa05fab0"
+  },
+  "native_default_cold_evidence": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-default-build-507\\result.json",
+    "bytes": 3543,
+    "sha256": "c1c42d1e0717a4ba1cb7aa3c8786e5b18bbe156bfa43849d8b292d0fa88d507f"
+  },
+  "native_build_source": "ddb675f775f6fc3b540562ee7797dd88d1b7f8b4d7a3342e1d8b4beda656f7db",
+  "native_source_equivalence": {
+    "current_source": "8a31564a0881b0df5ce24779369e239d9bb77c030e3dea6eb9c5668c01e80e33",
+    "reconstructed_native_build_source": "ddb675f775f6fc3b540562ee7797dd88d1b7f8b4d7a3342e1d8b4beda656f7db",
+    "only_changed_paths": [
+      "lib/plugins/workbench_native.dart",
+      "test/service_business_routing_native_test.dart",
+      "test/blob_text_history_native_test.dart",
+      "test/blob_upload_history_crash_native_test.dart"
+    ],
+    "all_other_repository_bytes_identical": true,
+    "native_build_reused_from": 507,
+    "new_cold_build_claim": false,
+    "preimages": [
+      {
+        "path": "lib/plugins/workbench_native.dart",
+        "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-wait-route-522\\preimages\\lib\\plugins\\workbench_native.dart",
+        "sha256": "0b66b3447ce7a3c77fb5c961cb6cc79bde7575c3eca54f3b25bf30b8ba612a25"
+      },
+      {
+        "path": "test/service_business_routing_native_test.dart",
+        "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-wait-route-522\\preimages\\test\\service_business_routing_native_test.dart",
+        "sha256": "f9c1ffa9549c0eb6c5db55cb94c969ce1dd75f8e1c6bbd2711dc66e3080926f8"
+      },
+      {
+        "path": "test/blob_text_history_native_test.dart",
+        "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-wait-route-522\\preimages\\test\\blob_text_history_native_test.dart",
+        "sha256": "2864285d8b3e63e07a0dcb41bd9e96f6e5ee82c3c5c5ba748211aacb8dffe2ba"
+      },
+      {
+        "path": "test/blob_upload_history_crash_native_test.dart",
+        "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-wait-route-522\\preimages\\test\\blob_upload_history_crash_native_test.dart",
+        "sha256": "b9d557e30f64c482a2e48116b805ff58baba4a2b0760a3be4231360066ea3e1c"
+      }
+    ]
+  },
+  "new_native_cold_build_claim": false
+}

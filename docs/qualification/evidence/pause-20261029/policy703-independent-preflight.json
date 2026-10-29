@@ -1,0 +1,43 @@
+{
+  "status": "PASS_NEW_TARGET_INDEPENDENT_DOTNET_SID_AND_NEGATIVES_NO_LSA",
+  "source_digest": "a038cc73bb370e1cd5b028aa022c744192005fd10ec6dec8a489819aaf12c993",
+  "vm_id": "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
+  "account_sid": "S-1-5-21-118159-3579602386-2696782449-1000",
+  "helper": {
+    "path": "C:\\ms1020\\tool\\windows\\rebind_fixed_policy.py",
+    "bytes": 7248,
+    "sha256": "31796ed21b629155e8c29380847f584da94fdbbd1f8cbce0d865ba8fc4f26809"
+  },
+  "derived_sources": {
+    "AssignPrimary1709.cs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\policy-identity-preflight-703\\AssignPrimary1709.cs",
+      "bytes": 14966,
+      "sha256": "c3c52603339f86e1277a75c0f789c7904bf56a41d5544121ade70577456c8b5f"
+    },
+    "AssignPrimary1709.Pure.cs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\policy-identity-preflight-703\\AssignPrimary1709.Pure.cs",
+      "bytes": 9819,
+      "sha256": "9b22788467b7f1e9a92fee40e5d3a8c32e439fc8d9f806ce45bc32bcee4a49d3"
+    },
+    "AssignPrimary1709.PureTests.cs": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\policy-identity-preflight-703\\AssignPrimary1709.PureTests.cs",
+      "bytes": 9178,
+      "sha256": "08ebf6afec8b45133d84fe9d724d49a1a0ce447db315d5a945d4a47bc1a76dff"
+    }
+  },
+  "independent_dotnet_encoder_and_decoder": true,
+  "original_pure_methods": 18,
+  "corrupt_byte_and_shape_inputs_rejected": 31,
+  "compile_exit": 0,
+  "original_test_process_exit": 0,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\policy-identity-preflight-703\\run.stdout",
+    "bytes": 83,
+    "sha256": "057652ed16f3888f628e688fef70df6dc6a075a6e054deed63513534b20b2323"
+  },
+  "VM_calls": 0,
+  "LSA_calls": 0,
+  "old_unknown_owner_contacts": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,93 @@
+{
+  "status": "PASS_SCOPED_CURRENT_NATIVE_REFUSAL_AND_LOCAL_REGISTRY_CAPACITY",
+  "source_digest": "74100e0b1d116072b3852363056be51d701c9f4fc95b0db61bd4ddab958d8b63",
+  "source_unchanged": true,
+  "methods": [
+    {
+      "method": "caller_prerequisites::asuser_policy_tests::assign_absence_unknown_close_and_expiry_cannot_be_consumed_for_asuser",
+      "pid": 15384,
+      "exit_code": 0,
+      "seconds": 0.016
+    },
+    {
+      "method": "caller_prerequisites::asuser_policy_tests::asuser_contract_consumes_actual_closed_attempt_without_changing_046_eligibility",
+      "pid": 5096,
+      "exit_code": 0,
+      "seconds": 0.016
+    },
+    {
+      "method": "caller_prerequisites::asuser_policy_tests::clean_caller_refusal_cannot_be_minted_by_a_foreign_thread",
+      "pid": 8376,
+      "exit_code": 0,
+      "seconds": 0.015
+    },
+    {
+      "method": "caller_prerequisites::asuser_policy_tests::clean_caller_refusal_consumes_exact_closed_observation_without_launch_authority",
+      "pid": 2912,
+      "exit_code": 0,
+      "seconds": 0.016
+    },
+    {
+      "method": "caller_prerequisites::asuser_policy_tests::clean_caller_refusal_never_accepts_unknown_live_handle_or_failed_close",
+      "pid": 13796,
+      "exit_code": 0,
+      "seconds": 0.016
+    },
+    {
+      "method": "caller_prerequisites::asuser_policy_tests::clean_caller_refusal_requires_complete_timely_missing_privilege_evidence",
+      "pid": 4780,
+      "exit_code": 0,
+      "seconds": 0.015
+    },
+    {
+      "method": "caller_prerequisites::asuser_policy_tests::consumed_asuser_caller_cannot_authorize_a_different_launch_thread",
+      "pid": 19812,
+      "exit_code": 0,
+      "seconds": 0.031
+    },
+    {
+      "method": "asuser_attempt_outcome::tests::os_rejection_and_completed_native_ownership_are_distinct",
+      "pid": 20440,
+      "exit_code": 0,
+      "seconds": 0.016
+    },
+    {
+      "method": "asuser_attempt_outcome::tests::predispatch_denial_does_not_claim_resources_are_closed",
+      "pid": 3304,
+      "exit_code": 0,
+      "seconds": 0.016
+    },
+    {
+      "method": "asuser_attempt_outcome::tests::unknown_is_not_rewritten_by_late_rejection_or_close",
+      "pid": 20000,
+      "exit_code": 0,
+      "seconds": 0.031
+    },
+    {
+      "method": "elevated::checked_owner::caller_refusal::tests::readonly_native_seventeen_refusals_reuse_original_registry_and_retain_uncertainty",
+      "pid": 5304,
+      "exit_code": 0,
+      "seconds": 1.078
+    }
+  ],
+  "methods_passed": 11,
+  "native_refusals": 17,
+  "actual_checked_token_closes": 34,
+  "blocking_returns_acknowledged": 17,
+  "same_original_registry_never_reset": true,
+  "negative_controls_retained": 7,
+  "original_native_report": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-native-refusal-current-576\\native-original-refusals.json",
+    "bytes": 76092,
+    "sha256": "68bafb16fa7d6421808493338d942a63cafcc6ac8c728bd18f577589f274d49e"
+  },
+  "all_selected_processes_returned": true,
+  "VM_calls": 0,
+  "runner_starts": 0,
+  "account_mutations": 0,
+  "policy_mutations": 0,
+  "SDK_capacity_qualified": false,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

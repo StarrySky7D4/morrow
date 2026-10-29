@@ -1,0 +1,419 @@
+{
+  "source_equivalence": {
+    "source_digest": "08dab3cb66557d75890f495eee41553781feeb142e16a3aa484a3dda769c834c",
+    "previous_source": "7745b92da4070bfcac6d65d75a10b9a08276a844dd4242f0ff5a55250dbe0b59",
+    "only_changed_file": "test/blob_upload_metadata_native_test.dart",
+    "all_other_repository_bytes_identical": true,
+    "full_main_kernel551_equivalent": true,
+    "native_first_variant550_equivalent": true
+  },
+  "status": "PASS_EXACT_COMPILED_METADATA_UI_VARIANTS",
+  "error": null,
+  "source_digest": "08dab3cb66557d75890f495eee41553781feeb142e16a3aa484a3dda769c834c",
+  "source_unchanged": true,
+  "commands": [
+    {
+      "name": "dart-analysis",
+      "exit_code": 0,
+      "seconds": 4.546,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\dart-analysis.stdout",
+        "bytes": 68,
+        "sha256": "8332c4df3012fea0a9acd5026b3e46e03b859d31e30a201334e56c0059dbf788"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\dart-analysis.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "native-observe-after",
+      "exit_code": 0,
+      "seconds": 67.422,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\native-observe-after.stdout",
+        "bytes": 1017301,
+        "sha256": "2e0630be80a1add9c461f2ba0c9ff633fc466990e2f6ca541abd29983d713430"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\native-observe-after.stderr",
+        "bytes": 386,
+        "sha256": "c6ac53de1c74e795b7204c856c0393471fdc2a18f21e3f9f1979eb2bd8082dbd"
+      }
+    },
+    {
+      "name": "native-ack-before",
+      "exit_code": 0,
+      "seconds": 68.875,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\native-ack-before.stdout",
+        "bytes": 1017286,
+        "sha256": "537d525b1669ba0f1de4340bf90b21433ba893c06921052380817a8e664b69a0"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\native-ack-before.stderr",
+        "bytes": 386,
+        "sha256": "fd65af3940bd34ded069206942e33f87669149b773e1cd0087469fb3c4c839d4"
+      }
+    },
+    {
+      "name": "native-ack-after",
+      "exit_code": 0,
+      "seconds": 68.469,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\native-ack-after.stdout",
+        "bytes": 1017281,
+        "sha256": "4d1ffa31a449925e63988aab3564fdaaac8bf021e37eb532a3b98c3323a21a6d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\native-ack-after.stderr",
+        "bytes": 386,
+        "sha256": "fd65af3940bd34ded069206942e33f87669149b773e1cd0087469fb3c4c839d4"
+      }
+    },
+    {
+      "name": "native-default",
+      "exit_code": 0,
+      "seconds": 66.438,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\native-default.stdout",
+        "bytes": 1017081,
+        "sha256": "ab26e16e0b607f4fe0bf09e035e1484ac878a46d6c590a5e6597eda3e7f9c803"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\native-default.stderr",
+        "bytes": 386,
+        "sha256": "338d4eb0b2d9d858b9de3b66fe2ed21b51a3bd51fc54d80c48df72143133f196"
+      }
+    }
+  ],
+  "variants": {
+    "observe-before": {
+      "point": "observe-before",
+      "features": [
+        "blob-upload-ui-observe-before-qualification"
+      ],
+      "programs": {
+        "host": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\observe-before\\morrow-workbench-host.exe",
+          "bytes": 31420416,
+          "sha256": "c5ae16a3547c518f4cbacb449918952f79fd7b954482c9c0683a87a0a738d0fd"
+        },
+        "supervisor": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\observe-before\\morrow-workbench-supervisor.exe",
+          "bytes": 14086656,
+          "sha256": "08c7b60ac7fc8b26b0476d31688930e1971b77cdcbb336e0aa721b48dcb842e7"
+        },
+        "observer": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\observe-before\\check_blob_text_fixture.exe",
+          "bytes": 4729856,
+          "sha256": "67d5005a6618ad32a14d50227f400b3cb402dd6b0d5a75eec30c1d317e1bd8a5"
+        }
+      },
+      "Host_freshly_compiled": true,
+      "core_cached": true,
+      "compiler_source": "7745b92da4070bfcac6d65d75a10b9a08276a844dd4242f0ff5a55250dbe0b59",
+      "compiler_records": [
+        {
+          "reason": "compiler-artifact",
+          "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+          "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+          "target": {
+            "kind": [
+              "lib"
+            ],
+            "crate_types": [
+              "lib"
+            ],
+            "name": "morrow_workbench_host",
+            "src_path": "C:\\ms1020\\workbench_host\\src\\lib.rs",
+            "edition": "2024",
+            "doc": true,
+            "doctest": true,
+            "test": true
+          },
+          "profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": false,
+            "overflow_checks": false,
+            "test": false
+          },
+          "features": [
+            "blob-upload-ui-observe-before-qualification"
+          ],
+          "filenames": [
+            "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-1f7f39793c34b41d.rlib",
+            "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-1f7f39793c34b41d.rmeta"
+          ],
+          "executable": null,
+          "fresh": false
+        }
+      ],
+      "cold_build_claim": false
+    },
+    "observe-after": {
+      "point": "observe-after",
+      "features": [
+        "blob-upload-ui-observe-after-qualification"
+      ],
+      "programs": {
+        "host": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\observe-after\\morrow-workbench-host.exe",
+          "bytes": 31419904,
+          "sha256": "3b3246dfd32ef714c9afdbefae61db2a90bc82d4b233a4d664e2fc51e9dc6870"
+        },
+        "supervisor": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\observe-after\\morrow-workbench-supervisor.exe",
+          "bytes": 14087168,
+          "sha256": "9d59a20c9b1c1a9f750423f52a8a547c1baf4e93a7cf2feabbe343e7597432af"
+        },
+        "observer": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\observe-after\\check_blob_text_fixture.exe",
+          "bytes": 4729856,
+          "sha256": "dd6fedd05a39363cc67911399e43dddf0cdd968a957bfecc0a3baa251d0498ec"
+        }
+      },
+      "Host_freshly_compiled": true,
+      "core_cached": true,
+      "compiler_source": "08dab3cb66557d75890f495eee41553781feeb142e16a3aa484a3dda769c834c",
+      "compiler_records": [
+        {
+          "reason": "compiler-artifact",
+          "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+          "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+          "target": {
+            "kind": [
+              "lib"
+            ],
+            "crate_types": [
+              "lib"
+            ],
+            "name": "morrow_workbench_host",
+            "src_path": "C:\\ms1020\\workbench_host\\src\\lib.rs",
+            "edition": "2024",
+            "doc": true,
+            "doctest": true,
+            "test": true
+          },
+          "profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": false,
+            "overflow_checks": false,
+            "test": false
+          },
+          "features": [
+            "blob-upload-ui-observe-after-qualification"
+          ],
+          "filenames": [
+            "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-14f513a0e3adfe9e.rlib",
+            "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-14f513a0e3adfe9e.rmeta"
+          ],
+          "executable": null,
+          "fresh": false
+        }
+      ],
+      "cold_build_claim": false
+    },
+    "ack-before": {
+      "point": "ack-before",
+      "features": [
+        "blob-upload-ui-ack-before-qualification"
+      ],
+      "programs": {
+        "host": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\ack-before\\morrow-workbench-host.exe",
+          "bytes": 31420928,
+          "sha256": "4df4c2f47ee45f3b1f443e9687938a86890ff8613e29fc908671617e2641a098"
+        },
+        "supervisor": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\ack-before\\morrow-workbench-supervisor.exe",
+          "bytes": 14087168,
+          "sha256": "a88355579ed88e49824a92bd9422645da86037609538ec9dc3f12971bea65845"
+        },
+        "observer": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\ack-before\\check_blob_text_fixture.exe",
+          "bytes": 4729856,
+          "sha256": "48a94a11607e9aecf17ac3b8f71d440d8d2f15fe1e0c3094613e96e7d9c5fe3a"
+        }
+      },
+      "Host_freshly_compiled": true,
+      "core_cached": true,
+      "compiler_source": "08dab3cb66557d75890f495eee41553781feeb142e16a3aa484a3dda769c834c",
+      "compiler_records": [
+        {
+          "reason": "compiler-artifact",
+          "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+          "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+          "target": {
+            "kind": [
+              "lib"
+            ],
+            "crate_types": [
+              "lib"
+            ],
+            "name": "morrow_workbench_host",
+            "src_path": "C:\\ms1020\\workbench_host\\src\\lib.rs",
+            "edition": "2024",
+            "doc": true,
+            "doctest": true,
+            "test": true
+          },
+          "profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": false,
+            "overflow_checks": false,
+            "test": false
+          },
+          "features": [
+            "blob-upload-ui-ack-before-qualification"
+          ],
+          "filenames": [
+            "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-a0426758409a6e7c.rlib",
+            "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-a0426758409a6e7c.rmeta"
+          ],
+          "executable": null,
+          "fresh": false
+        }
+      ],
+      "cold_build_claim": false
+    },
+    "ack-after": {
+      "point": "ack-after",
+      "features": [
+        "blob-upload-ui-ack-after-qualification"
+      ],
+      "programs": {
+        "host": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\ack-after\\morrow-workbench-host.exe",
+          "bytes": 31420416,
+          "sha256": "8c08bc9000bbb2689db353c83e7e02b868a83ee7fcf46d54e5fba3d4566b2ef2"
+        },
+        "supervisor": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\ack-after\\morrow-workbench-supervisor.exe",
+          "bytes": 14086656,
+          "sha256": "67637843d8d5e42371c62a128ae50a1b90946cae4d3dacd1e4f7e87d3fb25d97"
+        },
+        "observer": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\ack-after\\check_blob_text_fixture.exe",
+          "bytes": 4729856,
+          "sha256": "cfc1ca9be4cf519fd0851a480da69c31d7a378b61f340c69e8c8345d4f4be9c1"
+        }
+      },
+      "Host_freshly_compiled": true,
+      "core_cached": true,
+      "compiler_source": "08dab3cb66557d75890f495eee41553781feeb142e16a3aa484a3dda769c834c",
+      "compiler_records": [
+        {
+          "reason": "compiler-artifact",
+          "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+          "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+          "target": {
+            "kind": [
+              "lib"
+            ],
+            "crate_types": [
+              "lib"
+            ],
+            "name": "morrow_workbench_host",
+            "src_path": "C:\\ms1020\\workbench_host\\src\\lib.rs",
+            "edition": "2024",
+            "doc": true,
+            "doctest": true,
+            "test": true
+          },
+          "profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": false,
+            "overflow_checks": false,
+            "test": false
+          },
+          "features": [
+            "blob-upload-ui-ack-after-qualification"
+          ],
+          "filenames": [
+            "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-9bd6cbae920d7a90.rlib",
+            "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-9bd6cbae920d7a90.rmeta"
+          ],
+          "executable": null,
+          "fresh": false
+        }
+      ],
+      "cold_build_claim": false
+    },
+    "default": {
+      "point": "default",
+      "features": [],
+      "programs": {
+        "host": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\default\\morrow-workbench-host.exe",
+          "bytes": 31402496,
+          "sha256": "6e0580efdbdaceb602ab0395babe54c12e9e2489ed16f2f5b627a5922323d9e2"
+        },
+        "supervisor": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\default\\morrow-workbench-supervisor.exe",
+          "bytes": 14079488,
+          "sha256": "1c6be1f058fbeec213b87f6fc10c3d29fd4b8fa5d1fc750cde816a9264ec22bd"
+        },
+        "observer": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-ui-build-552\\default\\check_blob_text_fixture.exe",
+          "bytes": 4729856,
+          "sha256": "efe108120f4c3c1bd0b9fc563f2d2d7454ef9fc5becb816de124d39e8228d437"
+        }
+      },
+      "Host_freshly_compiled": true,
+      "core_cached": true,
+      "compiler_source": "08dab3cb66557d75890f495eee41553781feeb142e16a3aa484a3dda769c834c",
+      "compiler_records": [
+        {
+          "reason": "compiler-artifact",
+          "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+          "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+          "target": {
+            "kind": [
+              "lib"
+            ],
+            "crate_types": [
+              "lib"
+            ],
+            "name": "morrow_workbench_host",
+            "src_path": "C:\\ms1020\\workbench_host\\src\\lib.rs",
+            "edition": "2024",
+            "doc": true,
+            "doctest": true,
+            "test": true
+          },
+          "profile": {
+            "opt_level": "3",
+            "debuginfo": 0,
+            "debug_assertions": false,
+            "overflow_checks": false,
+            "test": false
+          },
+          "features": [],
+          "filenames": [
+            "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-579692483608fafc.rlib",
+            "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-579692483608fafc.rmeta"
+          ],
+          "executable": null,
+          "fresh": false
+        }
+      ],
+      "cold_build_claim": false
+    }
+  },
+  "all_original_top_level_processes_closed": true,
+  "pure_positive_cases": 4,
+  "pure_rejected_combinations": 6,
+  "frozen_inputs_verified": 57,
+  "default_marker_absence": true,
+  "VM_calls": 0,
+  "historical_unknown_owner_contacts": 0,
+  "desktop_UI": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

@@ -1,0 +1,47 @@
+{
+  "record": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///C:/ms1020/companions/morrow-codex/derived/c28-cleanup-com-002/codex-rs/windows-sandbox-rs#codex-windows-sandbox@0.0.0",
+    "manifest_path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\Cargo.toml",
+    "target": {
+      "kind": [
+        "lib"
+      ],
+      "crate_types": [
+        "lib"
+      ],
+      "name": "codex_windows_sandbox",
+      "src_path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\lib.rs",
+      "edition": "2024",
+      "doc": true,
+      "doctest": false,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": false,
+      "overflow_checks": false,
+      "test": false
+    },
+    "features": [],
+    "filenames": [
+      "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libcodex_windows_sandbox-ab44c4149270f3a6.rlib",
+      "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libcodex_windows_sandbox-ab44c4149270f3a6.rmeta"
+    ],
+    "executable": null,
+    "fresh": false
+  },
+  "outputs": [
+    {
+      "path": "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libcodex_windows_sandbox-ab44c4149270f3a6.rlib",
+      "bytes": 32875928,
+      "sha256": "589902b216c4a1a6632c3f9e3855edf8143036b739a99bf62fc4c0698cf9bed1"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libcodex_windows_sandbox-ab44c4149270f3a6.rmeta",
+      "bytes": 17088618,
+      "sha256": "b193b65810cd14ef47df738384a194b96366cb05e241056e64f0193cfe57a173"
+    }
+  ]
+}

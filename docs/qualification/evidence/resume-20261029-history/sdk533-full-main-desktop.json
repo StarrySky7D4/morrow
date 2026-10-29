@@ -1,0 +1,96 @@
+{
+  "status": "PASS_SCOPED_FULL_MAIN_DESKTOP_MISSING_RESULT_HISTORY",
+  "source_digest": "8a31564a0881b0df5ce24779369e239d9bb77c030e3dea6eb9c5668c01e80e33",
+  "source_unchanged": true,
+  "receipts": [
+    {
+      "phase": "before",
+      "original_processes": [
+        {
+          "pid": 13280,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-build-526\\app\\morrow_studio.exe",
+          "creation_filetime": 134376892040905665,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 376,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-build-526\\app\\morrow-workbench-supervisor.exe",
+          "creation_filetime": 134376892053749743,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 9100,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-build-526\\app\\morrow-workbench-host.exe",
+          "creation_filetime": 134376892054422089,
+          "signaled": true,
+          "exit_code": 0
+        }
+      ],
+      "original_UI_supervisor_host_exited": true,
+      "all_exit_codes": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-533\\before.stdout",
+        "bytes": 154,
+        "sha256": "9e826fbc9baba6e712db76eef3ce47e6070e397a362e278fc8e66e62602079f4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-533\\before.stderr",
+        "bytes": 10,
+        "sha256": "92a19969583cef404789053f0712b32f2103453b19f4a283d3c409241d9fd1b5"
+      }
+    },
+    {
+      "phase": "after",
+      "original_processes": [
+        {
+          "pid": 21240,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-build-526\\app\\morrow_studio.exe",
+          "creation_filetime": 134376893535755876,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 21104,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-build-526\\app\\morrow-workbench-supervisor.exe",
+          "creation_filetime": 134376893551470118,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 20200,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-build-526\\app\\morrow-workbench-host.exe",
+          "creation_filetime": 134376893552114173,
+          "signaled": true,
+          "exit_code": 0
+        }
+      ],
+      "original_UI_supervisor_host_exited": true,
+      "all_exit_codes": 0,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-533\\after.stdout",
+        "bytes": 154,
+        "sha256": "35f7e41204506f302897f9ad83091dd6ac48de083d5971942d8281ff8bfd2a74"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-533\\after.stderr",
+        "bytes": 10,
+        "sha256": "92a19969583cef404789053f0712b32f2103453b19f4a283d3c409241d9fd1b5"
+      }
+    }
+  ],
+  "original_fault_children_actually_exited": 2,
+  "original_UI_supervisor_host_normal_exits": 6,
+  "independent_closed_library_checks": 2,
+  "headless": false,
+  "production_main_unchanged": true,
+  "native_launcher_rebuilt": false,
+  "native_launcher_inputs_unchanged": true,
+  "new_history_upload_or_acknowledgement": false,
+  "VM_calls": 0,
+  "historical_unknown_owner_contacts": 0,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

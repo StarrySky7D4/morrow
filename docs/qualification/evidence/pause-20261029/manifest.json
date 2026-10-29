@@ -1,0 +1,299 @@
+{
+  "schema": 1,
+  "utc": "2026-10-29T12:21:18.389248+00:00",
+  "files": [
+    {
+      "path": "source-before-publication.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\pause-publication-20261029\\source-before-publication.json",
+      "bytes": 49525,
+      "sha256": "62da357babff47e956a1a31b875112169532c118e8fe1330f10c1bd492c55203"
+    },
+    {
+      "path": "vm047-saved-at-pause.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\pause-publication-20261029\\vm047-saved-at-pause.json",
+      "bytes": 1713,
+      "sha256": "6c99925d3259c48bbd8167d7f2ec31beef1d23bcd21100af6d522e4a8c7b4a17"
+    },
+    {
+      "path": "vm046-verified-offline-archive692.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm046-offline-verified-692\\result.json",
+      "bytes": 698,
+      "sha256": "0826630e5e9bb3a4ed046193994cc00438810e9ee7c3b2ca21fe2aab1d651155"
+    },
+    {
+      "path": "vm047-clean-readiness707.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047-readiness-prepared-707\\isolated-vm-probe-707\\result.json",
+      "bytes": 491,
+      "sha256": "9d4fbfc961add08b66351c09829749dfb7982f08a3589b38b1c8091b76ed01f1"
+    },
+    {
+      "path": "roles052-cold-build.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-052\\result.json",
+      "bytes": 2136,
+      "sha256": "8c8cf9de2018e3a80fea3c89219d519c6391156a580090f614fb0903c88ede54"
+    },
+    {
+      "path": "roles052-C-normal-derivation.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-052\\C-normal-derivation.json",
+      "bytes": 1939,
+      "sha256": "4d79d508db66359225e0b66541455e77f998d905ed8c3650953a47545e9212bd"
+    },
+    {
+      "path": "roles052-unstarted-continuation717.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-052\\unstarted-continuation-717.json",
+      "bytes": 1405,
+      "sha256": "13c8a9a2d0894fc2f941f107a77ac7bc0b890b5e2d79ff3485113e7d0eaf3ca8"
+    },
+    {
+      "path": "policy-regression689.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fixed-policy-regression-689\\result.json",
+      "bytes": 5025,
+      "sha256": "b25f7e5dae230da28fd443f2feff97fc4b36ec0651b3f2f890be7b2d6279cc08"
+    },
+    {
+      "path": "policy703-independent-preflight.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\policy-identity-preflight-703\\result.json",
+      "bytes": 1946,
+      "sha256": "49550a5294f2663b9b5c4139667d7e7b2dd743020e0a882780047e5fc4b0249d"
+    },
+    {
+      "path": "case703-preparation-NOT-RUN.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-preparation.json",
+      "bytes": 18812,
+      "sha256": "4e059ccfbdc8dd68c4fc9c76f50bdfa46e01f309c9cf41f6c4bf596b83b6a50c"
+    },
+    {
+      "path": "case703-deployment-preflight.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-deployment-preflight-utf8\\result.json",
+      "bytes": 11834,
+      "sha256": "f84350b9e5cc083ce1af9fc890ff4fdb2219c19ebbd5297ea40ddda40b998ba9"
+    },
+    {
+      "path": "case703-sealing731-NOT-RUN.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-sealing-completion-731\\result.json",
+      "bytes": 1846,
+      "sha256": "2d7c288393793d2e66a10d1a76de496f527c1142e1c0d5b27a581f03c76ede0e"
+    },
+    {
+      "path": "case638-original47-nine.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case638-summary.json",
+      "bytes": 975,
+      "sha256": "f379923d9b2e5cc9ddd723b8ccb5f099f55d732373ae0a34c7d0a47eaf70cb64"
+    },
+    {
+      "path": "case639-retained-unknown.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case639-summary.json",
+      "bytes": 6205,
+      "sha256": "167cde4fcd1586cb74a99a80194b564f2ec92e2befa6c5f346c17a719d2acf88"
+    },
+    {
+      "path": "case655-retained-unknown.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case655-summary.json",
+      "bytes": 2058,
+      "sha256": "30f19a025bf636a8f70a5d3b0bbda6b7655da14076b6c2f696b524865f4fa486"
+    },
+    {
+      "path": "case678-text-save-history-reopen.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case678-summary.json",
+      "bytes": 4730,
+      "sha256": "aea2b041fecd80109925bbc7a048d258dd25a291a29ef6e3533840927d1655a1"
+    },
+    {
+      "path": "case684-policy-binding-unknown.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case684-summary.json",
+      "bytes": 7138,
+      "sha256": "6bae67244a6095cb644be59c6ec5afef393b806a9e086cd0dbe35d54a91020d0"
+    },
+    {
+      "path": "sdk719-default-hosts-build.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-719\\result.json",
+      "bytes": 2572,
+      "sha256": "e026cfc925e3fa5eac1d3c0c5a5704858379331c05ca00f486515abbe776240b"
+    },
+    {
+      "path": "sdk719-build-plan.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-719\\plan.json",
+      "bytes": 680,
+      "sha256": "588c887625ce9b4d230ddab67a5edb3d377651abcf67b1e5d2a6f6b4ccff7b80"
+    },
+    {
+      "path": "kernel722-current-main.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-kernel-722\\kernel-result.json",
+      "bytes": 1130,
+      "sha256": "2b64e13d0541f369cf81639304dec80811aa75cce9befb7a43b52cc8d966a1cd"
+    },
+    {
+      "path": "cache702-retired-roles.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\superseded-roles-cache-702\\result.json",
+      "bytes": 690,
+      "sha256": "144ebc0009fbc0aadcd5e7cff2c21a8aa90ebb9beaac68cddb189207f7ec864c"
+    },
+    {
+      "path": "media706-derived-installer-retired.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047-install-media-retired-706\\result.json",
+      "bytes": 526,
+      "sha256": "0f3e3eb3c994b63c98d2ad8c993cfb956591e8fcff27b93250ccc64c4f711054"
+    },
+    {
+      "path": "cache713-retired-sdk.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-sdk-cache-713\\result.json",
+      "bytes": 686,
+      "sha256": "da15398af95e2398f5fdcfc9a9ee02ffe9328703d7e9d6a7107e9ab17e03fbf2"
+    },
+    {
+      "path": "compression716-old-controllers.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-compiler-compression-716\\result.json",
+      "bytes": 529,
+      "sha256": "41f6b734fb9288f326996d8306f6d4c81d24e6395d1f8507306169cc53185a60"
+    },
+    {
+      "path": "compression728-old-setups.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-compiler-compression-728\\result.json",
+      "bytes": 527,
+      "sha256": "981bd4b5b9bfe421e20a7d82bade585228be6d80f77a11ca346e6f13de932495"
+    },
+    {
+      "path": "cache730-retired-sdk.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\closed-sdk-cache-730\\result.json",
+      "bytes": 690,
+      "sha256": "da0002ee08225d2c7491900ef39e7798357bf8dcaa53ba975275e8d27e1e65d7"
+    },
+    {
+      "path": "sdk719-host-compiler-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-719\\host-compiler-result.json",
+      "bytes": 60,
+      "sha256": "78345b5bcb982779f5d64ac0cce7eedf24acecea30f437d9891e3a5b40cbb78e"
+    },
+    {
+      "path": "sdk719-host-proof.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-719\\host-proof.json",
+      "bytes": 6476,
+      "sha256": "1a9357de2d5f6f66cf2f5b67f7d0196a6386a4f6dffec0f6ee309019808d658d"
+    },
+    {
+      "path": "sdk719-host-native-proof.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-719\\host-native-proof.json",
+      "bytes": 1962,
+      "sha256": "de554cc2be0229a0634d408131374b578a72134c180902d92e4a6627ce1d1d79"
+    },
+    {
+      "path": "sdk719-supervisor-compiler-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-719\\supervisor-compiler-result.json",
+      "bytes": 60,
+      "sha256": "78345b5bcb982779f5d64ac0cce7eedf24acecea30f437d9891e3a5b40cbb78e"
+    },
+    {
+      "path": "sdk719-supervisor-proof.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-719\\supervisor-proof.json",
+      "bytes": 6526,
+      "sha256": "254c7c7d391adee43fd79e04b536a56267c34d5a38ace71cb475e73b4c5da419"
+    },
+    {
+      "path": "sdk719-supervisor-native-proof.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-719\\supervisor-native-proof.json",
+      "bytes": 1961,
+      "sha256": "6c2235b966dfe5d21859c2b1967fb9cccf8359eccfb2e90bd0d6123df53dd5a7"
+    },
+    {
+      "path": "sdk719-history-observer-compiler-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-719\\history-observer-compiler-result.json",
+      "bytes": 60,
+      "sha256": "78345b5bcb982779f5d64ac0cce7eedf24acecea30f437d9891e3a5b40cbb78e"
+    },
+    {
+      "path": "sdk719-history-observer-proof.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-719\\history-observer-proof.json",
+      "bytes": 6542,
+      "sha256": "b99e919a6b4f0836fcec7776c97b39b7f01fb1f72f5b5c3115c30a84bd2b422c"
+    },
+    {
+      "path": "sdk719-history-observer-native-proof.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-hosts-719\\history-observer-native-proof.json",
+      "bytes": 1961,
+      "sha256": "6c2235b966dfe5d21859c2b1967fb9cccf8359eccfb2e90bd0d6123df53dd5a7"
+    },
+    {
+      "path": "ui678-preparation.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\preparation.json",
+      "bytes": 3719,
+      "sha256": "3983429ff8b37d88e7feba3b5c4a918186d47ed13537a30aac8126f6806cefaa"
+    },
+    {
+      "path": "ui678-process-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\process-result.json",
+      "bytes": 3676,
+      "sha256": "d4e55a6b8e968856b4da75a6ca0ddd37383256d09f07d3d3216a7fa73534f0ba"
+    },
+    {
+      "path": "ui678-run-visible-observations.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\run-visible-observations.json",
+      "bytes": 1394,
+      "sha256": "cb2df622030073270f580ea06e9fa4c98405cd0ac2cd3a00f2ccc5da3076a3bd"
+    },
+    {
+      "path": "ui678-run-processes-returned.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\run-processes-returned.json",
+      "bytes": 1428,
+      "sha256": "003ebed09d19655e54dd3f06945b98ecc7ac16417af939baace04b7cb69be678"
+    },
+    {
+      "path": "ui678-run-history-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\run-history-result.json",
+      "bytes": 555,
+      "sha256": "3d552a6c81e8a5bab2c1dc44b4b60fc25026aced8de625b64d6071e3dd7e8fec"
+    },
+    {
+      "path": "ui678-run-history.stdout",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\run-history.stdout",
+      "bytes": 81,
+      "sha256": "3cf55551cefa9225b7f6b3faf444e28432a87d13d60945a2f29b75bc6ee9b4a7"
+    },
+    {
+      "path": "ui678-run-history.stderr",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\run-history.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "ui678-reopen-visible-observations.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\reopen-visible-observations.json",
+      "bytes": 3631,
+      "sha256": "4697652950d1b4343e0ed3a70d6d7b6ebb6591458eb511ce3a3c49b42cc468a3"
+    },
+    {
+      "path": "ui678-reopen-processes-returned.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\reopen-processes-returned.json",
+      "bytes": 1436,
+      "sha256": "0ac58b774264ec12937fb674ee84e3689bc5504d1efe4769718c474a56035b3b"
+    },
+    {
+      "path": "ui678-reopen-history-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\reopen-history-result.json",
+      "bytes": 561,
+      "sha256": "a62146551f273b0599f9e7ff4f6a4c22df69a721a24d7e990602e951677693a3"
+    },
+    {
+      "path": "ui678-reopen-history.stdout",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\reopen-history.stdout",
+      "bytes": 81,
+      "sha256": "3cf55551cefa9225b7f6b3faf444e28432a87d13d60945a2f29b75bc6ee9b4a7"
+    },
+    {
+      "path": "ui678-reopen-history.stderr",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-677\\reopen-history.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pause-summary.json",
+      "derived": true,
+      "bytes": 2350,
+      "sha256": "ff529fed16fbba08eeada5dd7c86c2f27f1d130ec4d1ae7d2380e74e93c47262"
+    }
+  ],
+  "exact_allowlist": true,
+  "credentials_included": false,
+  "binaries_included": false,
+  "VM_images_included": false,
+  "scope": "Paused source-bound public receipts. Historical Unknown retained; no acceptance after pause."
+}

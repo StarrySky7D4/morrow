@@ -1,0 +1,311 @@
+{
+  "status": "ACTIVE_WINDOWS_RESUME_CURRENT_LOGON_AND_NORMAL47_QUALIFIED_SDK_TEXT_PROMOTED",
+  "utc": "2026-10-28T17:00:25.411566+00:00",
+  "task_status": "ACTIVE_WINDOWS_P2_AND_SDK_CONTINUATION",
+  "qualification_source": "36802baf97865a29911324ef43f6527489470e38960f4a4abd7e599a40f9c885",
+  "current_normal47": {
+    "status": "PASS_SCOPED_ORIGINAL47_AND_NINE_REQUIRED_GROUPS",
+    "tag": "07bddc9b25ca46dd87d870f4c63de6d0",
+    "vm_id": "4072a8d9-2f4f-4d02-98ee-ad436dd3342e",
+    "source_digest": "36802baf97865a29911324ef43f6527489470e38960f4a4abd7e599a40f9c885",
+    "commit": "56a9d0072fdb372caf0e5544500f1d76bbe40654",
+    "original_steps": 47,
+    "original_delivered_lines": 92,
+    "original_input_bytes": 3523,
+    "journal_records": 107,
+    "case_clean": true,
+    "policy_clean": true,
+    "historical_unknowns_unchanged": true,
+    "full_network_isolation_qualified": false,
+    "P2_clean_refusal": "OPEN",
+    "P3_editor_full": "OPEN",
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "SDK_FREEZE": "OPEN",
+    "source_accepted": false,
+    "release_eligible": false,
+    "review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case481-nine-review\\result.json",
+    "original_case_process_exit": 0,
+    "original_case_session_retained": false,
+    "original_owner_contacts": 0,
+    "vm_state": "Saved"
+  },
+  "current_logon_refusal": {
+    "status": "PASS_ONE_ACTUAL_WINDOWS_LOGON_REFUSAL_THROUGH_NATIVE_SDK_FACTORY_OWNER_SETUP_POLICY",
+    "tag": "34b0e3db536a42db8099170f19a3202e",
+    "vm_id": "4072a8d9-2f4f-4d02-98ee-ad436dd3342e",
+    "source_digest": "36802baf97865a29911324ef43f6527489470e38960f4a4abd7e599a40f9c885",
+    "commit": "56a9d0072fdb372caf0e5544500f1d76bbe40654",
+    "checks_passed": 355,
+    "workflow_steps": 47,
+    "input_lines": 92,
+    "input_bytes": 3541,
+    "journal_records": 107,
+    "journal_sha256": "17423fb27c07ae1d3dbc72a135db80df41070604d3c4d461ae4fb8b48c8ce24b",
+    "case_clean": true,
+    "policy_clean": true,
+    "actual_full_refusals": 1,
+    "original47_or_nine_acceptance_claimed": false,
+    "sdk_over_16_refusal_capacity": false,
+    "post_logon_target_policy_refusal": false,
+    "P2_clean_refusal": "PARTIAL_SINGLE_LOGON_REJECTION_PATH",
+    "P3_editor_full": "OPEN",
+    "SDK26": "OPEN",
+    "G04": "OPEN",
+    "SDK_FREEZE": "OPEN",
+    "source_accepted": false,
+    "release_eligible": false,
+    "guest_calls": 0,
+    "original_owner_contacts": 0,
+    "review_is_cleanup_authority": false,
+    "recorded_utc": "2026-10-28T16:48:27.227136+00:00",
+    "review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case480-refusal-review\\result.json",
+    "original_case_process_exit": 0,
+    "original_case_session_retained": false
+  },
+  "canonical_text_test": {
+    "status": "PASS_SCOPED_CANONICAL_TEXT_TEST_AND_ENVIRONMENT_ISOLATION",
+    "error": null,
+    "source_digest": "63eaf4d5f946b06aac51a4235636fdf3a2a3d379a7a1476b26ff42d562794ddc",
+    "source_unchanged": true,
+    "canonical_test": {
+      "path": "C:\\ms1020\\test\\blob_text_manager_native_test.dart",
+      "bytes": 19726,
+      "sha256": "b24681bc77c0e9ce839aadd4205697fe91ec12de09889b66db3aad5062f3ee83"
+    },
+    "all_top_level_processes_closed": true,
+    "actual_supervised_closures": 12,
+    "all_closures_verified": true,
+    "independent_reads": 12,
+    "all_reads_verified": true,
+    "old_namespace_does_not_activate": true,
+    "production_source_changed": false,
+    "cache_root": "D:/build_cache",
+    "VM_calls": 0,
+    "full_SDK_accepted": false,
+    "source_accepted": false,
+    "release_eligible": false,
+    "canonical_test_path": "test/blob_text_manager_native_test.dart",
+    "actual_cases": 6,
+    "languages": [
+      "Rust",
+      "C",
+      "C++"
+    ],
+    "byte_lengths": [
+      41,
+      32768
+    ],
+    "analyze_exit": 0,
+    "three_commands_exit": [
+      0,
+      0,
+      0
+    ],
+    "native_programs_reused": true,
+    "qualification_is_headless": true,
+    "original_evidence": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-test-canonical-470\\result.json",
+      "bytes": 2750,
+      "sha256": "18d6a1a26858ebdfb64af82f4e002fbe3da37bd14cdc425b658c7f4dc2aa9321"
+    }
+  },
+  "harness_lock": {
+    "status": "PASS_CURRENT_P2_HARNESS_LOCK_WITH_EXISTING_SDK_LOCAL_MODULES",
+    "canonical": {
+      "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\c28-basic-harness\\Cargo.lock",
+      "bytes": 234727,
+      "sha256": "66f9c32830b91ee51df9c59c3168e6f7d08cd36993842741ac136cdc7b3dc7ad"
+    },
+    "preimage": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\harness-lock-review-476\\Cargo.lock.preimage",
+      "bytes": 234104,
+      "sha256": "4e16d7a08ec5d3e8163a760d9b0d82e9e6ee9bf78ed7fbcbb40297ac735f8a34"
+    },
+    "source_digest": "36802baf97865a29911324ef43f6527489470e38960f4a4abd7e599a40f9c885",
+    "added_local_packages": [
+      "morrow-blob-transfer-v1",
+      "morrow-blob-upload-proposal-v1",
+      "morrow-blob-upload-request-v1"
+    ],
+    "existing_package_versions_changed": 0,
+    "registry_checksums_changed": 0,
+    "upstream_commits_changed": 0,
+    "isolated_and_canonical_metadata_exit": 0,
+    "frozen_inputs_verified": 57,
+    "compile": false,
+    "VM_calls": 0,
+    "source_accepted": false,
+    "release_eligible": false
+  },
+  "cold_roles": {
+    "status": "COMPILED_BYTE_BOUND_NORMAL_NOT_RUNTIME_ACCEPTED",
+    "source_digest": "36802baf97865a29911324ef43f6527489470e38960f4a4abd7e599a40f9c885",
+    "roles": {
+      "P": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-047\\P\\morrow-workbench-supervisor.exe",
+        "bytes": 27745280,
+        "sha256": "2c21434cd3ebdfe6ee740ef656874fbf3a47d911d569d6b9ad6f19a7e2648fec"
+      },
+      "C": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-047\\C\\morrow-protected-checked-vm-harness.exe",
+        "bytes": 99867648,
+        "sha256": "3af3ee9dadb9b80a1bd2e826fd0895c4a8d6101a95c0dee85a9d1fb92f350ed9"
+      },
+      "R": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-047\\R\\codex-command-runner.exe",
+        "bytes": 24591360,
+        "sha256": "5b6eff57e8ecf5aedccacf29937a928510ff01460b4d717ee49d5a9d99fd5513"
+      },
+      "S": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-047\\S\\codex-windows-sandbox-setup.exe",
+        "bytes": 37623296,
+        "sha256": "a3b05cdd67a6da0e8efb20a99e488be82066fe6a3175d7706f94725341e7de58"
+      }
+    },
+    "s_table_hex": "433238413154414201000000010000003af3ee9dadb9b80a1bd2e826fd0895c4a8d6101a95c0dee85a9d1fb92f350ed95b6eff57e8ecf5aedccacf29937a928510ff01460b4d717ee49d5a9d99fd5513",
+    "s_section": {
+      "virtual_bytes": 80,
+      "raw_bytes": 512,
+      "raw_offset": 37477888,
+      "flags": 1073741888
+    },
+    "qualification_fault": null,
+    "cold_output_isolation": true,
+    "all_four_roles_freshly_compiled": true,
+    "compiler_artifacts": {
+      "P": 878,
+      "C": 879,
+      "R": 620,
+      "S": 620
+    },
+    "normal_derivation": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-047\\C-normal-derivation.json",
+      "bytes": 1939,
+      "sha256": "2fcc20f5aa7dbc84b48f9e520e2e532a1518da09a2b44c1f0b450425941007f1"
+    },
+    "canonical_source_edits": 0,
+    "VM_calls": 0,
+    "L1": "NOT_RUN",
+    "full47": "NOT_RUN",
+    "source_accepted": false,
+    "release_eligible": false,
+    "original_evidence": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-047\\result.json",
+      "bytes": 2136,
+      "sha256": "844008b467e8b82fa3e2a09308d776ca395d70a9c9de83cbd499cd405e94c910"
+    },
+    "runtime_cases": [
+      {
+        "status": "PASS_SCOPED_ORIGINAL47_AND_NINE_REQUIRED_GROUPS",
+        "tag": "07bddc9b25ca46dd87d870f4c63de6d0",
+        "vm_id": "4072a8d9-2f4f-4d02-98ee-ad436dd3342e",
+        "source_digest": "36802baf97865a29911324ef43f6527489470e38960f4a4abd7e599a40f9c885",
+        "commit": "56a9d0072fdb372caf0e5544500f1d76bbe40654",
+        "original_steps": 47,
+        "original_delivered_lines": 92,
+        "original_input_bytes": 3523,
+        "journal_records": 107,
+        "case_clean": true,
+        "policy_clean": true,
+        "historical_unknowns_unchanged": true,
+        "full_network_isolation_qualified": false,
+        "P2_clean_refusal": "OPEN",
+        "P3_editor_full": "OPEN",
+        "SDK26": "OPEN",
+        "G04": "OPEN",
+        "SDK_FREEZE": "OPEN",
+        "source_accepted": false,
+        "release_eligible": false,
+        "review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case481-nine-review\\result.json",
+        "original_case_process_exit": 0,
+        "original_case_session_retained": false,
+        "original_owner_contacts": 0,
+        "vm_state": "Saved"
+      },
+      {
+        "status": "PASS_ONE_ACTUAL_WINDOWS_LOGON_REFUSAL_THROUGH_NATIVE_SDK_FACTORY_OWNER_SETUP_POLICY",
+        "tag": "34b0e3db536a42db8099170f19a3202e",
+        "vm_id": "4072a8d9-2f4f-4d02-98ee-ad436dd3342e",
+        "source_digest": "36802baf97865a29911324ef43f6527489470e38960f4a4abd7e599a40f9c885",
+        "commit": "56a9d0072fdb372caf0e5544500f1d76bbe40654",
+        "checks_passed": 355,
+        "workflow_steps": 47,
+        "input_lines": 92,
+        "input_bytes": 3541,
+        "journal_records": 107,
+        "journal_sha256": "17423fb27c07ae1d3dbc72a135db80df41070604d3c4d461ae4fb8b48c8ce24b",
+        "case_clean": true,
+        "policy_clean": true,
+        "actual_full_refusals": 1,
+        "original47_or_nine_acceptance_claimed": false,
+        "sdk_over_16_refusal_capacity": false,
+        "post_logon_target_policy_refusal": false,
+        "P2_clean_refusal": "PARTIAL_SINGLE_LOGON_REJECTION_PATH",
+        "P3_editor_full": "OPEN",
+        "SDK26": "OPEN",
+        "G04": "OPEN",
+        "SDK_FREEZE": "OPEN",
+        "source_accepted": false,
+        "release_eligible": false,
+        "guest_calls": 0,
+        "original_owner_contacts": 0,
+        "review_is_cleanup_authority": false,
+        "recorded_utc": "2026-10-28T16:48:27.227136+00:00",
+        "review": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case480-refusal-review\\result.json",
+        "original_case_process_exit": 0,
+        "original_case_session_retained": false
+      }
+    ]
+  },
+  "cache_reclaim": {
+    "source_files_deleted": 0,
+    "concurrent_build_and_archive_make_free_delta_nonisolated": true,
+    "free_after": 21438799872,
+    "PDBs_deleted": 0,
+    "reports_deleted": 0,
+    "observed_free_delta": 5211934720,
+    "status": "PASS_RETIRED_COLD_BUILD_CACHE_RECLAIM",
+    "executables_deleted": 0,
+    "future_rebuild_requires_new_empty_target": true,
+    "VM_calls": 0,
+    "files": 2884,
+    "unknown_owner_contacts": 0,
+    "protected_pins_verified": 56,
+    "DLLs_deleted": 0,
+    "current_SDK_build_caches_preserved": true,
+    "free_before": 16226865152,
+    "all_remaining_file_metadata_verified": true,
+    "logical_bytes": 5205802158
+  },
+  "frozen_public_contract_pins_verified": 57,
+  "registered_VMs": 4,
+  "all_current_processes_closed": true,
+  "VM_saved_receipt": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm045-case481-saved-state\\result.json",
+    "bytes": 772,
+    "sha256": "a75c7a1db8c4369856c7ff499830ac54761c480808147a56a691a0489e41de23"
+  },
+  "historical_unknown_owner_contacts": 0,
+  "host_policy_mutations": 0,
+  "cache_root": "D:/build_cache",
+  "source_accepted": false,
+  "release_eligible": false,
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "note": "The file-only normal-case reviewer first awaited the required Saved receipt; only the file review was repeated after saving. No case or owner was replayed.",
+  "review_order_evidence": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case481-review-prerequisite-order.json",
+    "bytes": 466,
+    "sha256": "2bf6449670c9d127e2acfb3ea1dce44d77b14f1e21dc2e70e0da095388f0053f"
+  },
+  "remaining": [
+    "Cross-restart durable upload request/outcome history and explicit read-only recovery",
+    "Remaining Windows P2 fault/source binding and final P3 binding",
+    "Directory watch/rename and conditional ReplaceUnsupported",
+    "Network/account/TLS and complete SDK26/G04/SDK_FREEZE",
+    "60 preexisting strict host lint diagnostics and final source/release acceptance"
+  ],
+  "other_platforms": "DEFERRED_WINDOWS_ONLY",
+  "remote_publication_this_turn": false
+}

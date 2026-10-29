@@ -424,7 +424,7 @@ impl Workbench {
             Err(error) => Err(error.to_string()),
         };
         directory.pending = None;
-        let expected = match (&result, directory.pending_kind) {
+        let expected = matches!((&result, directory.pending_kind),
             (
                 Ok(DirectoryDelivery::Response(DirectoryResponse::Captured(_))),
                 CommandKind::Capture,
@@ -432,9 +432,8 @@ impl Workbench {
             | (Ok(DirectoryDelivery::Response(DirectoryResponse::Page(_))), CommandKind::Page)
             | (Ok(DirectoryDelivery::Response(DirectoryResponse::Finished)), CommandKind::Finish)
             | (Ok(DirectoryDelivery::Refused(_)), _)
-            | (Err(_), _) => true,
-            _ => false,
-        };
+            | (Err(_), _)
+        );
         if !expected {
             result =
                 Err("unexpected directory response; inspect task status before retrying".into());

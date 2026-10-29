@@ -1,0 +1,118 @@
+{
+  "product_gate::tests::": [
+    "product_gate::tests::failing_primary_stop_still_notifies_scoped_original_owner",
+    "product_gate::tests::lost_gate_cancels_original_and_late_workers",
+    "product_gate::tests::scoped_budget_is_reusable_and_late_registration_stops_without_retention",
+    "product_gate::tests::scoped_stop_preserves_primary_and_drops_only_its_own_identity"
+  ],
+  "agent_task_discovery::tests::": [
+    "agent_task_discovery::tests::absent_task_requires_retained_original_owner",
+    "agent_task_discovery::tests::canonical_request_and_all_five_bounded_observations_round_trip",
+    "agent_task_discovery::tests::each_write_and_flush_failure_is_preserved_without_retry",
+    "agent_task_discovery::tests::inconsistent_owner_worker_exit_and_zero_key_are_unavailable",
+    "agent_task_discovery::tests::live_gate_delivers_little_endian_frame_and_closed_gate_delivers_nothing",
+    "agent_task_discovery::tests::lost_or_gate_closed_never_discloses_retained_identity",
+    "agent_task_discovery::tests::other_tasks_never_expose_their_keys",
+    "agent_task_discovery::tests::private_observation_interop_vectors_are_create_new_synthetic_fixtures",
+    "agent_task_discovery::tests::reply_correlates_request_identity_digest_and_actual_request_hash",
+    "agent_task_discovery::tests::reply_key_presence_is_restricted_to_exact_agent_lifecycles",
+    "agent_task_discovery::tests::response_cap_and_canonical_trailing_data_rejected",
+    "agent_task_discovery::tests::retained_agent_exit_is_same_current_key_and_original_owner_present",
+    "agent_task_discovery::tests::revoke_between_header_and_body_prevents_observation_body_delivery",
+    "agent_task_discovery::tests::running_means_retained_original_worker_not_permission_or_native_execution",
+    "agent_task_discovery::tests::zero_request_id_trailing_truncated_oversized_and_wrong_profile_rejected"
+  ],
+  "workbench_supervision::ledger_tests::": [
+    "workbench_supervision::ledger_tests::changed_binding_digest_or_schema_cannot_persist_release",
+    "workbench_supervision::ledger_tests::changed_profile_or_marker_cannot_become_fresh_owner",
+    "workbench_supervision::ledger_tests::concurrent_claims_and_direct_host_cannot_take_active_owner",
+    "workbench_supervision::ledger_tests::deleted_owner_row_and_missing_ledger_fail_closed",
+    "workbench_supervision::ledger_tests::release_requires_original_complete_normal_proof_then_generation_increases"
+  ],
+  "workbench_supervision::recovery::recovery_tests::": [
+    "workbench_supervision::recovery::recovery_tests::explicit_recovery_preserves_unknown_and_only_new_supervisor_may_claim",
+    "workbench_supervision::recovery::recovery_tests::live_original_writer_and_each_missing_proof_refuse_repair",
+    "workbench_supervision::recovery::recovery_tests::modified_or_deleted_archive_cannot_unlock_recovered_or_next_generation",
+    "workbench_supervision::recovery::recovery_tests::new_session_cannot_report_normal_release_after_archive_or_table_loss",
+    "workbench_supervision::recovery::recovery_tests::raw_text_changed_after_preview_is_rejected_even_when_json_value_matches",
+    "workbench_supervision::recovery::recovery_tests::repreview_confirms_existing_resource_recovery_but_never_normal_release_or_changed_artifacts"
+  ],
+  "content_api::tests::": [
+    "content_api::tests::envelope_retains_full_uint64_revisions",
+    "content_api::tests::equivalent_multisegment_payloads_are_accepted",
+    "content_api::tests::invalid_page_request_cannot_create_a_query_capture",
+    "content_api::tests::private_edit_and_query_payloads_require_canonical_action_specific_fields",
+    "content_api::tests::query_pages_fit_actual_outer_frame_and_cursor_binds_identity"
+  ],
+  "versioned_record::tests::": [
+    "versioned_record::tests::future_format_and_other_type_are_explicitly_unsupported",
+    "versioned_record::tests::legacy_and_migrated_tasks_are_distinct_read_views",
+    "versioned_record::tests::malformed_v2_and_attachment_mismatch_are_rejected"
+  ],
+  "editor_draft_api::tests::": [
+    "editor_draft_api::tests::capnp_write_over_four_mib_still_decodes_when_protobuf_fits",
+    "editor_draft_api::tests::handoff_frame_binds_parent_and_rejects_old_upload_origin_four",
+    "editor_draft_api::tests::lineage_cursor_rejects_foreign_and_noncanonical_keys",
+    "editor_draft_api::tests::lineage_page_echoes_cursor_limit_and_full_parent_binding",
+    "editor_draft_api::tests::proposal_absence_keeps_child_operation_without_page_fields",
+    "editor_draft_api::tests::proposal_page_of_32_exposes_only_bounded_summaries",
+    "editor_draft_api::tests::record_wire_includes_parent_link_and_distinct_retirement_marker"
+  ],
+  "editor_draft_staging_api::tests::": [
+    "editor_draft_staging_api::tests::empty_list_is_explicit_and_record_has_exact_current_context",
+    "editor_draft_staging_api::tests::export_retry_accepts_only_exact_existing_regular_bytes",
+    "editor_draft_staging_api::tests::typed_import_request_roundtrip_and_frame_contract"
+  ],
+  "io_tasks::directory::refusal_delivery_tests::": [
+    "io_tasks::directory::refusal_delivery_tests::known_cancel_requires_original_picker_and_native_objects_closed",
+    "io_tasks::directory::refusal_delivery_tests::live_delivered_rejection_preserves_kind_without_synthesizing_completion"
+  ],
+  "agent_tasks::trusted::tests::": [
+    "agent_tasks::trusted::tests::ordinary_claim_maintenance_revocation_preserves_consumed_unknown",
+    "agent_tasks::trusted::tests::ordinary_happy_claim_is_exactly_once_and_keeps_original_binding",
+    "agent_tasks::trusted::tests::ordinary_maintenance_failure_never_delivers_consumed_claim",
+    "agent_tasks::trusted::tests::ordinary_review_maintenance_revocation_prevents_sensitive_delivery",
+    "agent_tasks::trusted::tests::ordinary_stale_revision_or_whole_record_hash_cannot_approve",
+    "agent_tasks::trusted::tests::ordinary_wrong_session_admission_cannot_review_or_approve"
+  ],
+  "agent_tasks::commands::diagnostic_tests::": [
+    "agent_tasks::commands::diagnostic_tests::command_debug_has_fixed_fields_and_no_payload_input",
+    "agent_tasks::commands::diagnostic_tests::command_first_error_is_sticky_and_snapshot_is_bounded",
+    "agent_tasks::commands::diagnostic_tests::command_format_failure_does_not_mutate_snapshot",
+    "agent_tasks::commands::diagnostic_tests::command_late_flags_preserve_worker_and_delivery_causes",
+    "agent_tasks::commands::diagnostic_tests::delivery_recording_borrows_reply_without_consuming_sensitive_bytes",
+    "agent_tasks::commands::diagnostic_tests::delivery_recording_preserves_error_and_distinguishes_disconnect"
+  ],
+  "io_tasks::mutation::guest::tests::": [
+    "io_tasks::mutation::guest::tests::absent_extended_budget_burns_failed_start_token",
+    "io_tasks::mutation::guest::tests::attempted_effect_absent_or_prepared_history_cannot_reenable_execute",
+    "io_tasks::mutation::guest::tests::guest_history_tests::budgeted_guest_history_is_read_only_and_preserves_exact_original_plan",
+    "io_tasks::mutation::guest::tests::guest_history_tests::budgeted_history_requires_current_authority_and_exact_scope",
+    "io_tasks::mutation::guest::tests::guest_history_tests::maximum_guest_create_reconciles_with_read_only_history_budget",
+    "io_tasks::mutation::guest::tests::guest_history_tests::tight_ordinary_total_preserves_small_history_reads",
+    "io_tasks::mutation::guest::tests::guest_sdk_original_owner_create_delete",
+    "io_tasks::mutation::guest::tests::guest_start_budget_is_part_of_exact_submission_identity",
+    "io_tasks::mutation::guest::tests::guest_wire_tests::private_guest_wire_exports_owner_issue_failure_without_approval",
+    "io_tasks::mutation::guest::tests::guest_wire_tests::private_guest_wire_real_sdk_original_owner_create_delete",
+    "io_tasks::mutation::guest::tests::guest_wire_tests::private_guest_wire_rejects_cross_domain_and_irrelevant_payloads",
+    "io_tasks::mutation::guest::tests::guest_wire_tests::private_guest_wire_rejects_missing_budget_and_conflicting_start_identity",
+    "io_tasks::mutation::guest::tests::lost_commit_receipt_requires_history_and_never_executes_implicitly",
+    "io_tasks::mutation::guest::tests::ordinary_mutation_v1_uses_declared_legacy_budget_without_extension",
+    "io_tasks::mutation::guest::tests::unread_guest_command_and_explicit_cancel_never_start_effect"
+  ],
+  "channel_binding::tests::": [
+    "channel_binding::tests::compiled_source_route_and_discovery_never_grant_an_owner"
+  ],
+  "io_tasks::tests::": [
+    "io_tasks::tests::application_ready_keeps_complete_state_busy_and_reclaims_original_state",
+    "io_tasks::tests::cancelling_ready_owner_write_is_unknown_but_preserves_exactly_one_commit",
+    "io_tasks::tests::dropping_application_keeps_protected_storage_until_actual_router_exit",
+    "io_tasks::tests::maintenance_failure_requires_explicit_repair_and_does_not_resend_observed_http",
+    "io_tasks::tests::old_or_foreign_tokens_cannot_stop_new_task_and_cancel_waits_for_late_router_release",
+    "io_tasks::tests::owner_lane_real_guest_mutations_and_http_share_original_state",
+    "io_tasks::tests::owner_lane_rejects_scheduler_and_malformed_frames_then_accepts_business",
+    "io_tasks::tests::preparation_failure_or_panic_returns_original_owner_and_keeps_existing_pool_usable",
+    "io_tasks::tests::real_workbench_content_inline_ui_and_capture_editor_survive_io_handoff",
+    "io_tasks::tests::rejected_worker_options_and_submission_return_owner_with_inspectable_status"
+  ]
+}

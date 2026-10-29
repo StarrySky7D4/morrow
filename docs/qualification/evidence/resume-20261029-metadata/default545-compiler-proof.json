@@ -1,0 +1,79 @@
+{
+  "cold_build_claim": false,
+  "current_core_and_host_freshly_compiled": true,
+  "records": [
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/core#morrow-core@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\core\\Cargo.toml",
+      "target": {
+        "kind": [
+          "rlib",
+          "cdylib"
+        ],
+        "crate_types": [
+          "rlib",
+          "cdylib"
+        ],
+        "name": "morrow_core",
+        "src_path": "C:\\ms1020\\core\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_core.rlib",
+        "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll",
+        "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll.lib",
+        "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.dll.exp",
+        "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\morrow_core.pdb"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "morrow_workbench_host",
+        "src_path": "C:\\ms1020\\workbench_host\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-579692483608fafc.rlib",
+        "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\libmorrow_workbench_host-579692483608fafc.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    }
+  ],
+  "compiler_artifacts": 891,
+  "default_features_verified": true
+}

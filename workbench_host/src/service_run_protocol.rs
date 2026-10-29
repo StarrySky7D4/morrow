@@ -13,8 +13,6 @@ use morrow_plugin_runtime::{
 use std::time::Duration;
 use zeroize::Zeroizing;
 
-pub(crate) fn is_action(action: wire::Action) -> bool { crate::protocol::is_service_run_action(action) }
-
 fn network_outcome(value: Option<std::result::Result<(), morrow_network_node::Error>>) -> u16 {
     use morrow_network_node::Error::*;
     match value {

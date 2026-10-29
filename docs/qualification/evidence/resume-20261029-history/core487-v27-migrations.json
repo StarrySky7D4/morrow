@@ -1,0 +1,616 @@
+{
+  "status": "PASS_SCOPED_V27_MIGRATION_MATRIX",
+  "source_digest": "4ef2178ad70a12053530d3425d9e483486a8d1289c64762b0657bbee8ec98ae0",
+  "source_unchanged": true,
+  "compiler_artifacts": 132,
+  "all_compiler_artifacts_fresh_false": true,
+  "tests": [
+    {
+      "name": "agent_ledger",
+      "exit_code": 0,
+      "seconds": 3.516,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\agent_ledger-3acfd2179a805e24.exe",
+        "bytes": 7799296,
+        "sha256": "2d4be1ea5e0f2c2450350750fd5016b233dcd1ece5798128b2145f249b7cf8d5"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\agent_ledger.stdout",
+        "bytes": 1352,
+        "sha256": "c2e9725fc26bf5e137fd84b909bec0a37d583c333ffc7f95376e87b88dee3cfd"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\agent_ledger.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 13,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "blob_stage",
+      "exit_code": 0,
+      "seconds": 4.735,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\blob_stage-dcc89af53bb6be1f.exe",
+        "bytes": 8129024,
+        "sha256": "6e8e7a97a5b216dbdb7bbac0f51444fa41d1be6126842f93ccecd19bd10ba09d"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\blob_stage.stdout",
+        "bytes": 1870,
+        "sha256": "862b548b2d6140108bd73def605d0b47feb0ffecc8be328c34fe8e71e06e861c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\blob_stage.stderr",
+        "bytes": 394,
+        "sha256": "ddfa8f8199afa6ebfd2d2e147b1ef62458682fd52729f96813d5ec69806cfa3d"
+      },
+      "passed": 20,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "blob_upload_journal",
+      "exit_code": 0,
+      "seconds": 3.781,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\blob_upload_journal-eea1a18d1cdd3b4f.exe",
+        "bytes": 7820288,
+        "sha256": "f190fc6a21ddd402389a7aff9684b740fab3010a74a862e759b8df1433bf66fc"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\blob_upload_journal.stdout",
+        "bytes": 1440,
+        "sha256": "5c541df6ace35d06e08aaa3f85ceb11f23ee623d7324906d0ceb51a402370958"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\blob_upload_journal.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 13,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "channel_journal",
+      "exit_code": 0,
+      "seconds": 2.0,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\channel_journal-4abc76658c9e4bf9.exe",
+        "bytes": 7730176,
+        "sha256": "af9abf8126de04f72a9e14b7a87ad97ba60617835be84656e98587734af05060"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\channel_journal.stdout",
+        "bytes": 2047,
+        "sha256": "4d41b6d775591b13b053d5ac6c9de105f827b3a8851b1bf62a904b8ede122d30"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\channel_journal.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 9,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "evidence_chunks",
+      "exit_code": 0,
+      "seconds": 37.203,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\evidence_chunks-c3afa11684f2c238.exe",
+        "bytes": 8176128,
+        "sha256": "c1e50c382f35097132047b6cbd49dd8f4f684853a36f592e8a13d43fd731d997"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\evidence_chunks.stdout",
+        "bytes": 1305,
+        "sha256": "02d866c23ac0d0b50b76005b9737ab4c073ac00f25ca8f4e09aede463edd7576"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\evidence_chunks.stderr",
+        "bytes": 43,
+        "sha256": "153d7b52d9cdf6d5d6d79d0143f37c5c9bdcf3624945878931e12e29ec6a2a16"
+      },
+      "passed": 15,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "file_content_crash",
+      "exit_code": 0,
+      "seconds": 1.203,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\file_content_crash-c98be76dbaf676bd.exe",
+        "bytes": 7619072,
+        "sha256": "1c0750c680844e927c90704f416d9244463fa56c609a93e06cf8d85a0aae108f"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\file_content_crash.stdout",
+        "bytes": 295,
+        "sha256": "c006d471c4a7bea9d0f90d9cd1baf27ea5f4852700bb95d979aa68ec7b2b74c9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\file_content_crash.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "file_content_receipt_crash",
+      "exit_code": 0,
+      "seconds": 0.672,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\file_content_receipt_crash-061d949d89cfb78b.exe",
+        "bytes": 7591936,
+        "sha256": "f2c78e7efa4cbe2bc3a0f336b2fead407f0b74a6bd10b1ba8363b4100c048f81"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\file_content_receipt_crash.stdout",
+        "bytes": 327,
+        "sha256": "3a0f96655fc64d0a706550cb38a23aec620f75880f59d4fd83c40636f6b02492"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\file_content_receipt_crash.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "file_content_receipt_store",
+      "exit_code": 0,
+      "seconds": 1.5,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\file_content_receipt_store-efeba430c73783c6.exe",
+        "bytes": 7823360,
+        "sha256": "bf69359e757cd59e4b311ed0fd987d244b402adee452fd7bbbad1406981ed502"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\file_content_receipt_store.stdout",
+        "bytes": 655,
+        "sha256": "743eb34192854adb8907b4b272eb3b3d9347a5d804293e49bf2f6ff154a4c210"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\file_content_receipt_store.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "file_content_store",
+      "exit_code": 0,
+      "seconds": 2.343,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\file_content_store-ddde975d3309c490.exe",
+        "bytes": 7767552,
+        "sha256": "6ec76616f612ebb89e63c551eb0a41bf58634ba0c9e353d5cd266c59cbeab15f"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\file_content_store.stdout",
+        "bytes": 816,
+        "sha256": "c1e235872f3f4ece2774d8dc81a08d72c079bece11585ad662f4292e520e7edc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\file_content_store.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "io_evidence",
+      "exit_code": 0,
+      "seconds": 4.563,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\io_evidence-02b2e1cf6d4b57f3.exe",
+        "bytes": 8165888,
+        "sha256": "b6355652f3c2d587f47192ab1040d2725f40cdf09d6410f314851e60e17fce60"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\io_evidence.stdout",
+        "bytes": 1421,
+        "sha256": "d204a883605ac31cb2ab72c46b1e8fd1064c25d64a6d2a2e4cda591ab9ec740c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\io_evidence.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 19,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "io_evidence_crash",
+      "exit_code": 0,
+      "seconds": 1.797,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\io_evidence_crash-5a65e7f0c94e7fc3.exe",
+        "bytes": 7733760,
+        "sha256": "730f2c868c71fade9c60bc7d247173432113ecdbc2bbe6e41ecda05c05bc0202"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\io_evidence_crash.stdout",
+        "bytes": 542,
+        "sha256": "bf9c8c0eb482139e3747941d494cdfe0243c5de62c2b94c6c6f01219eb2cc5b6"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\io_evidence_crash.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 4,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "io_intent_crash",
+      "exit_code": 0,
+      "seconds": 2.218,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\io_intent_crash-e64245d757b02390.exe",
+        "bytes": 7845888,
+        "sha256": "f39b7632211e28189635eb812f48a718eaafc8dbb7e8011178ef03534e85bc28"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\io_intent_crash.stdout",
+        "bytes": 556,
+        "sha256": "999f2487810f9397af896da0f4d6b80d8c0e21cf9d41a5bed1416ec22fd03f6a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\io_intent_crash.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 4,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "io_intent_reservation",
+      "exit_code": 0,
+      "seconds": 1.859,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\io_intent_reservation-731a4c35e8e06b15.exe",
+        "bytes": 7911936,
+        "sha256": "3ffcec6c796d52835e936933e76ceab6be33a5e85a6620d84c5d7c868321350d"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\io_intent_reservation.stdout",
+        "bytes": 981,
+        "sha256": "6ddd73a9b04293496c19d35a6453891060197115fa35c33b59353dcd054f7594"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\io_intent_reservation.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "io_intent_store",
+      "exit_code": 0,
+      "seconds": 1.766,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\io_intent_store-1bcf29d17d15db57.exe",
+        "bytes": 8050176,
+        "sha256": "9282a0641a20facec5162d0f0fd5f5d7cced40d6b5c821e600631e6ea8e633a3"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\io_intent_store.stdout",
+        "bytes": 880,
+        "sha256": "8fb173b9252118f51b84afac7610b357551cf36f19e77fd850c3d751b6fab19d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\io_intent_store.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "morrow_core",
+      "exit_code": 0,
+      "seconds": 3.719,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\morrow_core-7a09f4074bdba740.exe",
+        "bytes": 9201664,
+        "sha256": "a5cf461a112aba82ce403b9a902146f24053f70277abff082ae4c31470490c93"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\morrow_core.stdout",
+        "bytes": 7051,
+        "sha256": "8c4c29e3463a9d116079360bc7b974a07573047c361a323b56d15983bcf0f3c9"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\morrow_core.stderr",
+        "bytes": 1024,
+        "sha256": "79b32ead8a5902414d8bc3e70ae8076a140a91a9a3433a94a28832ed79ac9386"
+      },
+      "passed": 60,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "operation_evidence",
+      "exit_code": 0,
+      "seconds": 7.203,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\operation_evidence-dc746b8bfc7ffcfd.exe",
+        "bytes": 8288768,
+        "sha256": "92ca6cb0d94b408f7f92d33268a9c6b245067f7977424b7c2d20aed8782f8b78"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\operation_evidence.stdout",
+        "bytes": 1144,
+        "sha256": "f398fc24835533fda1ebee0215be329977f9a4b37cd3f9ea592adaa8309cf3d2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\operation_evidence.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "outbound_authority",
+      "exit_code": 0,
+      "seconds": 3.828,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\outbound_authority-0b36b686e0c8bc64.exe",
+        "bytes": 7901696,
+        "sha256": "ec4c9c95eb5e7ed41a29aa074ee52411fe4f43b28e1636b381702003c79c9489"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\outbound_authority.stdout",
+        "bytes": 2126,
+        "sha256": "7a5bfcee42b7d417e628db86c9619d8a02ffcf3ec561b3c187782952ad1eaaa5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\outbound_authority.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 23,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "read_archive",
+      "exit_code": 0,
+      "seconds": 64.328,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\read_archive-72f8c094215eb040.exe",
+        "bytes": 8153088,
+        "sha256": "fcf2190d73b081dabf29b0de4aa2ac57a82fe01a371a2d683030aed52eae897a"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\read_archive.stdout",
+        "bytes": 1904,
+        "sha256": "3026118b664e6a04e89b2ec269cacc4b38f07a1a9d7f7d9f65442be3b8f2eb3a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\read_archive.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 21,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "read_archive_budget",
+      "exit_code": 0,
+      "seconds": 5.875,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\read_archive_budget-855144f50a122ca8.exe",
+        "bytes": 7671296,
+        "sha256": "91479a6e36006c0e93d5a3c15d3bf35e57e2686c2ee0768971e88df98e650d2a"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\read_archive_budget.stdout",
+        "bytes": 905,
+        "sha256": "fd21450e742305c6bc8437aa2c8f838b6755fcb0848765b6447afeb80139448e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\read_archive_budget.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "read_archive_retention_budget",
+      "exit_code": 0,
+      "seconds": 34.078,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\read_archive_retention_budget-174f2dd835165f19.exe",
+        "bytes": 8052224,
+        "sha256": "1194d84cf89ef8b1177b7d65e7ae296dcbc8831f4e17010ef93aa6fbb63587cf"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\read_archive_retention_budget.stdout",
+        "bytes": 1385,
+        "sha256": "0d4ef235a6c6083a3d82f1ba9b67baadb1127fa9c605f0e328035a55cd6acd18"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\read_archive_retention_budget.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 15,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "read_capture",
+      "exit_code": 0,
+      "seconds": 11.64,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\read_capture-1f674d3e39de360f.exe",
+        "bytes": 8181248,
+        "sha256": "0eece90b6a4464f170645fa2ef72673213c8ba8aafdaadf27f88e80d4860907b"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\read_capture.stdout",
+        "bytes": 1439,
+        "sha256": "89ccc860c178cfa6ffa9bb263e5f5663cfdb0999f28a81e9ea02aad93b6b9986"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\read_capture.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 16,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "read_journal",
+      "exit_code": 0,
+      "seconds": 10.875,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\read_journal-77721c4e6bf9c5d4.exe",
+        "bytes": 8367104,
+        "sha256": "aa0cc154365cb1e1d47ccb99d4c8617f1372dedd40fc97665111b6d9742c8b09"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\read_journal.stdout",
+        "bytes": 1394,
+        "sha256": "9c4bbb7492651095b7c6f4c802971de2cdff6080bccff2ee50acaac55f266c7f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\read_journal.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 16,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "sealing",
+      "exit_code": 0,
+      "seconds": 2.578,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\sealing-6a8e6a484410f32c.exe",
+        "bytes": 7807488,
+        "sha256": "92728e4d6b85904207b482e439869a5c06ed32a942c1fbefe05ab2ea3d6ebc9f"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\sealing.stdout",
+        "bytes": 1155,
+        "sha256": "7ade6462b8566eccbbf9dab8e4fd13fb176f52434351894a65cf48fbd8c2cd52"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\sealing.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "service_authority",
+      "exit_code": 0,
+      "seconds": 2.64,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\service_authority-3f8823d484b0d7d1.exe",
+        "bytes": 7786496,
+        "sha256": "7ee9bfb7c3a7c16b3064251d645f58b2c102002b57a1701913a97aa4d06c56f7"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\service_authority.stdout",
+        "bytes": 1474,
+        "sha256": "bf519ce7e7f567bfa7df640f66327fa715bf6f1d53c264f8f970d65fb4cf6ebe"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\service_authority.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 15,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "service_config",
+      "exit_code": 0,
+      "seconds": 2.016,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\service_config-543025505f0c1a66.exe",
+        "bytes": 7729152,
+        "sha256": "5e0f23d5007a484ef242aeeccbf30520c46e5319e90d5c7c05e9fab4d9ee421d"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\service_config.stdout",
+        "bytes": 1078,
+        "sha256": "a4cadb4060bc7924fd816bb91278e3510e38557d9538e4b96809dd1fa8e62d18"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\service_config.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 11,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "tls_identity_store",
+      "exit_code": 0,
+      "seconds": 2.312,
+      "program": {
+        "path": "D:\\build_cache\\qualification-targets\\upload-migrations487-CORE-4ef2178ad70a1205\\x86_64-pc-windows-msvc\\debug\\deps\\tls_identity_store-7f2088a47b8125ba.exe",
+        "bytes": 7695872,
+        "sha256": "999aa9543b7a099a998a41c1c7ab8ad2336c65ebd6ee912fdfe1b7ed95562af2"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\tls_identity_store.stdout",
+        "bytes": 896,
+        "sha256": "a68f6ceaff62000ee1cfb147ecd99422a790f40e11bd4f559e45aa67807692fc"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\blob-upload-migrations-487\\tls_identity_store.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 9,
+      "failed": 0,
+      "ignored": 1
+    }
+  ],
+  "all_original_top_level_processes_closed": true,
+  "frozen_public_inputs_verified": 57,
+  "VM_calls": 0,
+  "host_account_or_policy_calls": 0,
+  "protected_host_integration": false,
+  "rendered_UI_qualification": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

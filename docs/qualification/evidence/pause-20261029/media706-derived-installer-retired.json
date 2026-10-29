@@ -1,0 +1,14 @@
+{
+    "P2_dispatched":  false,
+    "registered_vms":  4,
+    "host_boot_changes":  false,
+    "free_bytes_after":  14962941952,
+    "all_VM_states_unchanged":  true,
+    "observed_free_bytes_delta":  5069651968,
+    "VM_firmware_uuid_changed":  false,
+    "private_answer_retained_protected":  true,
+    "original_installer_sha256_verified":  true,
+    "status":  "PASS_NEW_VM_INSTALL_DVDS_DETACHED_DERIVED_PUBLIC_ISO_REMOVED",
+    "logical_bytes_deleted":  5069602816,
+    "fresh_object_review_required":  true
+}

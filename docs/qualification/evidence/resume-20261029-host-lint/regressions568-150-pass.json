@@ -1,0 +1,464 @@
+{
+  "status": "PASS_SCOPED_HOST_LINT_REGRESSIONS",
+  "error": null,
+  "source_digest": "110bd3d26239eadab2e61e914f3d2c72986c4197c7ef94cd5c335dec7de7966e",
+  "source_unchanged": true,
+  "commands": [
+    {
+      "name": "unit-discovery",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-discovery.stdout",
+        "bytes": 40959,
+        "sha256": "b5f76fbabee69cbb6e534f6019d680f048f2728cd6415b750d48349dcaf28955"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "unit-01",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-01.stdout",
+        "bytes": 483,
+        "sha256": "9b6fa433e4126d594a704b7dc87506d63a85ca4a31f16adc0aeaaf3aec6b5ff7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-01.stderr",
+        "bytes": 240,
+        "sha256": "5f0b46917d91a57a255438be04501b155c372ca606a1b2cbab81dc449678f5cb"
+      },
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-02",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-02.stdout",
+        "bytes": 1641,
+        "sha256": "8b85bedddb22d29da0f610d7aeb90836503b03bd8fe6659cdff116a2365fa49d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-02.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 15,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-03",
+      "exit_code": 0,
+      "seconds": 0.391,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-03.stdout",
+        "bytes": 650,
+        "sha256": "e7fdd04cb787437321462c39d4b637f44289d10bcf22e0547b129ca34f83bd9c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-03.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-04",
+      "exit_code": 0,
+      "seconds": 1.344,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-04.stdout",
+        "bytes": 913,
+        "sha256": "8fd1839cda3b713f3422d37566e32083885403be439ec3f1e3657fd3a2460ea7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-04.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-05",
+      "exit_code": 0,
+      "seconds": 0.171,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-05.stdout",
+        "bytes": 545,
+        "sha256": "d88cb26e9225dfc317c537346cbf4e89de3d618e566890a3be684ccdfd045e28"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-05.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-06",
+      "exit_code": 0,
+      "seconds": 0.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-06.stdout",
+        "bytes": 382,
+        "sha256": "360a5396bc19bcc4a3efaa0ca47e6209fba90e65d05259f971680d6bcd3048da"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-06.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-07",
+      "exit_code": 0,
+      "seconds": 0.047,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-07.stdout",
+        "bytes": 779,
+        "sha256": "e7960e30075ed685fd63d59fdb955a711b0963e0fde4a5fb68418340957f00f4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-07.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-08",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-08.stdout",
+        "bytes": 415,
+        "sha256": "4beb1dac3d6792b05f89226e854d06f1d8b2ed5b52cfd72cca0b0a6ea8606c4b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-08.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-09",
+      "exit_code": 0,
+      "seconds": 0.015,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-09.stdout",
+        "bytes": 365,
+        "sha256": "848556b1237a5826ca30a58b1610f18d6a7cb6afba087e7b50fd35d6b9340413"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-09.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-10",
+      "exit_code": 0,
+      "seconds": 0.641,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-10.stdout",
+        "bytes": 734,
+        "sha256": "e8a699eaee06047e3bd03fd241d34f34920c329d216b9ee69cc79eb561cf527e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-10.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-11",
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-11.stdout",
+        "bytes": 773,
+        "sha256": "0e9a02db1afbc5305bead667e8c57a03c6ffc4b51a7f75062df609c3c33d8071"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-11.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-12",
+      "exit_code": 0,
+      "seconds": 4.25,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-12.stdout",
+        "bytes": 3189,
+        "sha256": "8a797f91dac97cb5fe54f24a1384c0f314c5a13d01d761e3f35d8f1b0b0c98e2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-12.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 15,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-13",
+      "exit_code": 0,
+      "seconds": 0.032,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-13.stdout",
+        "bytes": 207,
+        "sha256": "332db1a0893d1db27ec6d3941ceef9c869e5763f968a31a08fe26299c27fe142"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-13.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "unit-14",
+      "exit_code": 0,
+      "seconds": 2.718,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-14.stdout",
+        "bytes": 1149,
+        "sha256": "8ee32e8e2ee3cfb9fb2f2af780553fee4ec53be05430126a5ab1e04e276b3350"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\unit-14.stderr",
+        "bytes": 268,
+        "sha256": "c255e80c940bee29f34569e88513d86716f248e3601308d426c63e7d9d1f68f6"
+      },
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "editor_draft_protocol",
+      "exit_code": 0,
+      "seconds": 1.875,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\editor_draft_protocol.stdout",
+        "bytes": 716,
+        "sha256": "20589f0883c1c069aa967f05b91358ab42fb461510f07c0fed4cad23d89d8b10"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\editor_draft_protocol.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "editor_draft_handoff_proposal_protocol",
+      "exit_code": 0,
+      "seconds": 3.36,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\editor_draft_handoff_proposal_protocol.stdout",
+        "bytes": 414,
+        "sha256": "c859822bfaf75549922c953b05cdef3529cc5b0e21ca830afad6cf027eb3ade3"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\editor_draft_handoff_proposal_protocol.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "editor_draft_import_protocol",
+      "exit_code": 0,
+      "seconds": 1.218,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\editor_draft_import_protocol.stdout",
+        "bytes": 714,
+        "sha256": "572d469413c1fe42fb9e67cd878c48c757b59c08a8edb882e742c83998243eec"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\editor_draft_import_protocol.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "editor_draft_import_decision",
+      "exit_code": 0,
+      "seconds": 15.235,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\editor_draft_import_decision.stdout",
+        "bytes": 614,
+        "sha256": "7d16c6356e8ea86486d1d7a29424b15577a6ebde7136c4c3e1ee22e9a99363d8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\editor_draft_import_decision.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "captured_cards_owner",
+      "exit_code": 0,
+      "seconds": 2.437,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\captured_cards_owner.stdout",
+        "bytes": 464,
+        "sha256": "68406ccfe0433b7f0f06412d5fc72f0c5ccd5808c881d2db8b389bc0641106f2"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\captured_cards_owner.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "cards_owner",
+      "exit_code": 0,
+      "seconds": 10.516,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\cards_owner.stdout",
+        "bytes": 516,
+        "sha256": "040773b871b3d2f510b76449f2ba9b80debc6274ef375b28af8dfe4f1a0b5b3b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\cards_owner.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "tasks_owner",
+      "exit_code": 0,
+      "seconds": 2.016,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\tasks_owner.stdout",
+        "bytes": 441,
+        "sha256": "424575b9f990944e1b0b28dfbd50197b0024bc8b8c32fe44269c0e90e546b83b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\tasks_owner.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "editor_commit_proof",
+      "exit_code": 0,
+      "seconds": 0.781,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\editor_commit_proof.stdout",
+        "bytes": 193,
+        "sha256": "3ff6fe2a29f0f9a04bf301f77bc7e8669307c8231898cc68d236eb773947f336"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\editor_commit_proof.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "editor_recovery",
+      "exit_code": 0,
+      "seconds": 5.297,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\editor_recovery.stdout",
+        "bytes": 716,
+        "sha256": "9d19676778b8c1cd6607dd1efbb23c2007cdebff5391beb5a55b616cfaf7932c"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\editor_recovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "blob_upload_protected",
+      "exit_code": 0,
+      "seconds": 38.968,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\blob_upload_protected.stdout",
+        "bytes": 1577,
+        "sha256": "4164d9be5d120daaf947a02be0ae96bd40d287b8e17b33e8da0b0ea4aac058a7"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-regressions-568\\blob_upload_protected.stderr",
+        "bytes": 7547,
+        "sha256": "5e3179ba2f9949a866e4e5505c311a875fe745443a58cce03c445bd6e7371433"
+      },
+      "passed": 15,
+      "failed": 0,
+      "ignored": 4
+    }
+  ],
+  "passed_tests": 150,
+  "ignored_tests": 4,
+  "all_original_top_level_processes_closed": true,
+  "frozen_public_inputs_verified": 57,
+  "VM_calls": 0,
+  "host_policy_or_account_calls": 0,
+  "desktop_UI": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

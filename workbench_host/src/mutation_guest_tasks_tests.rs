@@ -119,7 +119,7 @@ impl Setup {
         let owner = WorkbenchState::with_manager(storage, Ok(manager), None).unwrap();
         Self {
             app: Workbench {
-            upload_plans: Default::default(),
+                upload_plans: Default::default(),
                 #[cfg(windows)]
                 product_session_wire: Default::default(),
                 channel_tasks: Default::default(),
@@ -189,14 +189,20 @@ fn read(
         thread::sleep(Duration::from_millis(1));
     }
 }
+fn owner(reply: GuestMutationReply) -> MutationResponse {
+    let GuestMutationReply::Owner(value) = reply else {
+        panic!("expected original owner response");
+    };
+    *value
+}
 fn call(app: &mut Workbench, key: TaskKey, token: u8, action: GuestAction) -> GuestMutationReply {
     let command = app.submit_guest_mutation(key, [token; 32], action).unwrap();
     read(app, key, command).unwrap()
 }
 fn selected(app: &mut Workbench, key: TaskKey) {
     assert!(matches!(
-        read(app, key, 1).unwrap(),
-        GuestMutationReply::Owner(MutationResponse::Selected { .. })
+        owner(read(app, key, 1).unwrap()),
+        MutationResponse::Selected { .. }
     ));
     assert!(app.guest_mutation_status(key).unwrap().selected);
 }
@@ -213,9 +219,7 @@ fn plan(
         content_length: if delete { 0 } else { bytes.len() as u64 },
         content_sha256: (!delete).then(|| Sha256::digest(bytes).into()),
     };
-    let GuestMutationReply::Owner(MutationResponse::Planned(record)) =
-        call(app, key, token, action)
-    else {
+    let MutationResponse::Planned(record) = owner(call(app, key, token, action)) else {
         panic!("host canonical plan");
     };
     assert_eq!(record.request().operation_id, operation);
@@ -358,10 +362,10 @@ fn guest_sdk_original_owner_create_delete() {
             .submit_guest_mutation(key, [11; 32], GuestAction::Execute { plan_sha256: sha })
             .is_err()
     );
-    let GuestMutationReply::Owner(MutationResponse::History {
+    let MutationResponse::History {
         record: Some(record),
         ..
-    }) = call(&mut setup.app, key, 11, GuestAction::HostQuery)
+    } = owner(call(&mut setup.app, key, 11, GuestAction::HostQuery))
     else {
         panic!("host observed history");
     };
@@ -474,8 +478,8 @@ fn guest_start_budget_is_part_of_exact_submission_identity() {
     );
     selected(&mut setup.app, key);
     assert!(matches!(
-        call(&mut setup.app, key, 22, GuestAction::HostRelease),
-        GuestMutationReply::Owner(MutationResponse::Released)
+        owner(call(&mut setup.app, key, 22, GuestAction::HostRelease)),
+        MutationResponse::Released
     ));
     stop(&mut setup.app, key);
 }
@@ -615,8 +619,8 @@ fn unread_guest_command_and_explicit_cancel_never_start_effect() {
             .is_err()
     );
     assert!(matches!(
-        call(&mut setup.app, key, 35, GuestAction::HostRelease),
-        GuestMutationReply::Owner(MutationResponse::Released)
+        owner(call(&mut setup.app, key, 35, GuestAction::HostRelease)),
+        MutationResponse::Released
     ));
     stop(&mut setup.app, key);
 }
@@ -692,11 +696,11 @@ fn lost_commit_receipt_requires_history_and_never_executes_implicitly() {
             .durable_content
     );
     assert!(!leaf.exists());
-    let GuestMutationReply::Owner(MutationResponse::History {
+    let MutationResponse::History {
         record: Some(record),
         staged_bytes,
         durable_content,
-    }) = call(&mut setup.app, key, 46, GuestAction::HostQuery)
+    } = owner(call(&mut setup.app, key, 46, GuestAction::HostQuery))
     else {
         panic!("host Commit history");
     };
@@ -709,8 +713,8 @@ fn lost_commit_receipt_requires_history_and_never_executes_implicitly() {
     assert!(!status.effect_attempted);
     assert!(!leaf.exists());
     assert!(matches!(
-        call(&mut setup.app, key, 47, GuestAction::HostRelease),
-        GuestMutationReply::Owner(MutationResponse::Released)
+        owner(call(&mut setup.app, key, 47, GuestAction::HostRelease)),
+        MutationResponse::Released
     ));
     stop(&mut setup.app, key);
 }
@@ -766,9 +770,12 @@ fn attempted_effect_absent_or_prepared_history_cannot_reenable_execute() {
             mutation.guest.as_mut().unwrap().effect_attempted = true;
             mutation.reconcile_required = true;
         }
-        let GuestMutationReply::Owner(MutationResponse::History { record, .. }) =
-            call(&mut setup.app, key, 55 + index * 10, GuestAction::HostQuery)
-        else {
+        let MutationResponse::History { record, .. } = owner(call(
+            &mut setup.app,
+            key,
+            55 + index * 10,
+            GuestAction::HostQuery,
+        )) else {
             panic!("host history");
         };
         assert_eq!(
@@ -790,13 +797,13 @@ fn attempted_effect_absent_or_prepared_history_cannot_reenable_execute() {
         );
         assert!(!leaf.exists());
         assert!(matches!(
-            call(
+            owner(call(
                 &mut setup.app,
                 key,
                 57 + index * 10,
                 GuestAction::HostRelease
-            ),
-            GuestMutationReply::Owner(MutationResponse::Released)
+            )),
+            MutationResponse::Released
         ));
         stop(&mut setup.app, key);
     }

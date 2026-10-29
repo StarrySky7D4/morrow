@@ -54,6 +54,7 @@ fn bounded(value: &str, max: usize) -> Result<()> {
     }
     Ok(())
 }
+#[cfg(test)]
 pub(crate) fn encode_task_edit(command: &TaskCommand) -> Vec<u8> {
     let mut message = Builder::new_default();
     {
@@ -158,6 +159,7 @@ fn task_edit(bytes: &[u8]) -> Result<TaskCommand> {
     };
     Ok(command)
 }
+#[cfg(test)]
 fn fields_to_wire(mut out: wire::card_fields::Builder<'_>, fields: &Fields) {
     out.set_title(&fields.title);
     out.set_description(&fields.description);
@@ -174,6 +176,7 @@ fn fields_to_wire(mut out: wire::card_fields::Builder<'_>, fields: &Fields) {
         item.set_bytes(asset.bytes);
     }
 }
+#[cfg(test)]
 pub(crate) fn encode_card_edit(action: &CardAction) -> Vec<u8> {
     let mut message = Builder::new_default();
     {
@@ -524,7 +527,7 @@ pub(crate) fn handle(
         host_wire::Action::MigrateTasks => {
             require_empty(payload)?;
             let result = host.migrate_tasks(&operation, &id, r.get_revision())?;
-            let record = VersionedRecord::Tasks(result.committed);
+            let record = VersionedRecord::Tasks(Box::new(result.committed));
             out.set_payload(&encode_envelope(
                 wire::EnvelopeKind::Commit,
                 &id,
@@ -540,7 +543,7 @@ pub(crate) fn handle(
             let command =
                 task_edit(payload).map_err(|e| host.no_commit_if_absent(&id, &operation, e))?;
             let result = host.edit_tasks(&operation, &id, r.get_revision(), &command)?;
-            let record = VersionedRecord::Tasks(result.committed);
+            let record = VersionedRecord::Tasks(Box::new(result.committed));
             out.set_payload(&encode_envelope(
                 wire::EnvelopeKind::Commit,
                 &id,
@@ -556,7 +559,7 @@ pub(crate) fn handle(
             let command =
                 card_edit(payload).map_err(|e| host.no_commit_if_absent(&id, &operation, e))?;
             let result = host.edit_card(&operation, &id, r.get_revision(), &command)?;
-            let record = VersionedRecord::Tasks(result.committed);
+            let record = VersionedRecord::Tasks(Box::new(result.committed));
             out.set_payload(&encode_envelope(
                 wire::EnvelopeKind::Commit,
                 &id,
@@ -703,7 +706,7 @@ fn query_page<'a>(
     }
     let (mut low, mut high) = (1, maximum);
     while low < high {
-        let middle = low + (high - low + 1) / 2;
+        let middle = low + (high - low).div_ceil(2);
         if fits(middle) {
             low = middle;
         } else {
@@ -735,7 +738,7 @@ fn validate_query_page_request(
             .host
             .store_local()
             .lookup_read_capture(crate::query_capture_v2::SUBJECT, operation)?;
-        if !state.is_some_and(|state| state.phase() == morrow_core::read_capture::Phase::Ready) {
+        if state.is_none_or(|state| state.phase() != morrow_core::read_capture::Phase::Ready) {
             return Err("query continuation requires an existing ready result".into());
         }
     }

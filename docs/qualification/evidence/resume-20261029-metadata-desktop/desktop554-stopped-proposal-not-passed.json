@@ -1,0 +1,15 @@
+{
+  "phase": "observe-after",
+  "input": "b",
+  "input_bytes": 1,
+  "original_result_saved": false,
+  "metadata_review_displayed": false,
+  "write_required": false,
+  "original_record_finished": true,
+  "normal_UI_close_requested": true,
+  "synthetic_data": true,
+  "extra_uploads_started": false,
+  "qualification_host": true,
+  "status": "NOT_PASSED_PROPOSAL_STOPPED_BEFORE_UPLOAD",
+  "reason": "Observed stopped proposal after delayed approval; record finished normally; no metadata completion claimed"
+}

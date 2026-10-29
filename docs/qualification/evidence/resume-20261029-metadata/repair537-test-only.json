@@ -1,0 +1,22 @@
+{
+  "preimages": [
+    {
+      "path": "test/support/blob_upload_metadata_peer.dart",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-test-repair-537\\blob_upload_metadata_peer.dart",
+      "sha256": "3e4cca3d81e67c18996350cc9b88ff9686ce32a8f02b86ade40c823b292e7222"
+    },
+    {
+      "path": "packages/morrow_core_client/test/blob_upload_metadata_client_test.dart",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-test-repair-537\\blob_upload_metadata_client_test.dart",
+      "sha256": "e623a39ea90abfeb47b249d8de77c2d6ee07616f2ad4ea988d0dad138dbbf8d6"
+    },
+    {
+      "path": "packages/morrow_core_client/test/blob_upload_metadata_session_test.dart",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-test-repair-537\\blob_upload_metadata_session_test.dart",
+      "sha256": "48cfd6636e991410ae2f498ba19f3ee8baf69b9c3df22d98202b35f40ae808a4"
+    }
+  ],
+  "new_file": "C:\\ms1020\\packages\\morrow_core_client\\test\\blob_upload_metadata_peer.dart",
+  "product_source_changed": false,
+  "reason": "Separate package/file URI test peers; generated builder fields are setters, not getters"
+}

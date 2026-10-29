@@ -21,6 +21,8 @@ import 'file_task_models.dart';
 import 'blob_plan_models.dart';
 import 'blob_plan_manager.dart';
 import 'blob_upload_models.dart';
+import 'blob_upload_history_models.dart';
+import 'blob_upload_history_manager.dart';
 import 'file_task_session.dart';
 import 'directory_task_models.dart';
 import 'directory_task_session.dart';
@@ -759,6 +761,23 @@ class _PluginLibraryState extends State<PluginLibrary> {
         }
         if (_current(backend, epoch)) await _loadPages(backend, epoch);
       }, (l) => l.pluginsApprovalUnknown);
+  Future<void> _openBlobHistory() =>
+      _guard((backend, epoch) async {
+        if (backend is! BlobUploadHistoryBackend) return;
+        await _closeForm(epoch);
+        if (!mounted || !_current(backend, epoch)) return;
+        setState(() => _blobDialogOpen = true);
+        final route = DialogRoute<void>(context: context, builder: (_) => BlobUploadHistoryManager(
+          backend: backend as BlobUploadHistoryBackend,
+        ));
+        _blobRoute = route;
+        try {
+          await Navigator.of(context, rootNavigator: true).push(route);
+        } finally {
+          if (identical(_blobRoute, route)) _blobRoute = null;
+          if (_current(backend, epoch)) setState(() => _blobDialogOpen = false);
+        }
+      }, (l) => l.pluginsApprovalUnknown);
   Future<void> _remove(PluginLibraryEntry entry) =>
       _guard((backend, epoch) async {
         final revision = _revision!;
@@ -1401,6 +1420,9 @@ class _PluginLibraryState extends State<PluginLibrary> {
                   if (_blobControls)
                     _button(_blobText('查看原上传任务', 'Review original upload'),
                       'plugin-blob-original', _openBlob, icon: Icons.history),
+                  if (widget.backend is BlobUploadHistoryBackend)
+                    _button(_blobText('历史上传记录', 'Upload history'),
+                      'plugin-blob-history', _openBlobHistory, icon: Icons.manage_search),
                 ],
               ),
               if (_busy && !_blobDialogOpen)

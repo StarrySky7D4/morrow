@@ -1,0 +1,7 @@
+{
+  "case": "observe-before",
+  "original_process": 19260,
+  "automatic_retry": false,
+  "automatic_kill": false,
+  "reason": "Original live UI fixture retained after failed observation"
+}

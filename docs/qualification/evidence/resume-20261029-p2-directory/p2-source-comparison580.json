@@ -1,0 +1,20 @@
+{
+  "status": "COMPONENT_COMPARISON_ONLY_NOT_FULL_RUNTIME_REBIND",
+  "previous_normal47_source": "36802baf97865a29911324ef43f6527489470e38960f4a4abd7e599a40f9c885",
+  "current_qualification_source": "74100e0b1d116072b3852363056be51d701c9f4fc95b0db61bd4ddab958d8b63",
+  "previous_inventory": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-047\\source-before.json",
+    "bytes": 10455784,
+    "sha256": "4f951de971825a4e4be999739632c852dafe6e682aa075840adb7f64ab62cebf"
+  },
+  "current_inventory": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-native-refusal-build-575\\input.json",
+    "bytes": 10478671,
+    "sha256": "b395554725198ba783c62d57b484d7729709416b5b25d2e2e08f2b2da07ba42f"
+  },
+  "changed_files": 237,
+  "native_companion_changed_files": 0,
+  "current_host_core_and_UI_changes": true,
+  "old_normal47_and_fault_results_keep_original_source": true,
+  "full_P2_runtime_rebound": false
+}

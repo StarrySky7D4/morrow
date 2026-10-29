@@ -122,6 +122,47 @@ abstract interface class BlobUploadBackend {
   );
 }
 
+enum BlobUploadMetadataPhase { observation, acknowledgement }
+
+/// A review from the retained live host, never reconstructed from saved history.
+final class BlobUploadMetadataReview {
+  BlobUploadMetadataReview({
+    required Uint8List key,
+    required Uint8List submission,
+    required Uint8List permit,
+    required this.phase,
+    required this.writeRequired,
+    required this.originalUnknown,
+    required this.originalPhase,
+    required this.originalError,
+    required this.observedAt,
+    required this.acknowledgementAt,
+  }) : key = _owned(key),
+       submission = _owned(submission),
+       permit = _owned(permit);
+  final Uint8List key, submission, permit;
+  final BlobUploadMetadataPhase phase;
+  final bool writeRequired, originalUnknown;
+  final BlobUploadObservation? originalPhase;
+  final BlobUploadError? originalError;
+  final BigInt observedAt;
+  final BigInt? acknowledgementAt;
+}
+
+final class BlobUploadMetadataCompletion {
+  const BlobUploadMetadataCompletion(this.task, this.upload);
+  final IoTaskSnapshot task;
+  // Null only when the original interrupted acknowledgement actually finished.
+  final BlobUploadSnapshot? upload;
+}
+
+abstract interface class BlobUploadMetadataBackend {
+  Future<BlobUploadMetadataReview> reviewBlobUploadMetadata(Uint8List key);
+  Future<BlobUploadMetadataCompletion> completeBlobUploadMetadata(
+    BlobUploadMetadataReview review,
+  );
+}
+
 abstract final class BlobUploadValidation {
   static final _u64 = (BigInt.one << 64) - BigInt.one;
   static void selection(String id, Uint8List digest, BigInt revision) {

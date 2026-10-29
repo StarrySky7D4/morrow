@@ -1,0 +1,19 @@
+{
+  "exit_code": 0,
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\observe-after-history.stdout",
+    "bytes": 80,
+    "sha256": "95a3ce6ab09439725fbd0cdf82852e45813d4611ae35f131c44a15366aa6bc23"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\observe-after-history.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "expected_input": {
+    "path": "D:\\build_cache\\m558\\observe-after\\desktop-expected.txt",
+    "bytes": 1,
+    "sha256": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d"
+  },
+  "original_closed_library": true
+}

@@ -179,7 +179,7 @@ enum Reclaimed {
     Agent(Box<crate::agent_tasks::AgentExit<WorkbenchState>>),
 }
 enum Cleanup {
-    Original(ManagedInstance),
+    Original(Box<ManagedInstance>),
     #[cfg(windows)]
     Agent(Box<crate::agent_tasks::AgentCleanup>),
 }
@@ -544,7 +544,7 @@ impl StateSlot {
                 if !exit.native_retirement.is_complete() {
                     self.native_retirement = Some(exit.native_retirement);
                 }
-                self.cleanup = exit.instance.map(Cleanup::Original);
+                self.cleanup = exit.instance.map(|instance| Cleanup::Original(Box::new(instance)));
                 self.repair_needed = exit.maintenance.is_err() || exit.disconnect.is_err();
                 task.exit = Some(ExitStatus {
                     execution: exit.result,
@@ -559,7 +559,7 @@ impl StateSlot {
             }
             Ok(Some(Reclaimed::Upload(exit))) => {
                 self.owner = Some(exit.owner);
-                self.cleanup = exit.instance.map(Cleanup::Original);
+                self.cleanup = exit.instance.map(|instance| Cleanup::Original(Box::new(instance)));
                 self.repair_needed = exit.maintenance.is_err() || exit.disconnect.is_err();
                 task.exit = Some(ExitStatus {
                     execution: exit.result.as_ref().map(|_| ()).map_err(|_| JobError::Unavailable),
@@ -569,6 +569,9 @@ impl StateSlot {
                 task.worker = None;
                 if let Some(upload) = &mut self.upload_task {
                     upload.record_exit(exit.result, exit.usage, exit.execution_report, exit.unknown);
+                    // Preserve the actual joined result and owner even if this
+                    // metadata write fails. Polling never repeats that write.
+                    let _ = self.persist_upload_observation();
                     Ok(true)
                 } else {
                     self.repair_needed = true;
@@ -672,7 +675,7 @@ impl StateSlot {
             .host
             .disconnect(instance.connection());
         if let Err(error) = result {
-            self.cleanup = Some(Cleanup::Original(instance));
+            self.cleanup = Some(Cleanup::Original(Box::new(instance)));
             self.repair_needed = true;
             return Err(error.into());
         }
@@ -710,8 +713,8 @@ impl Workbench {
         if self.state.repair_needed {
             return Err(AccessError::RecoveryRequired.into());
         }
-        if let Some(upload) = &self.state.upload_task {
-            upload.check_acknowledgement()?;
+        if self.state.upload_task.is_some() {
+            self.state.acknowledge_upload_history()?;
             self.state.submission = None;
         }
         self.state.upload_task = None;
@@ -733,7 +736,7 @@ impl Workbench {
         }
         if let Some(cleanup) = self.state.cleanup.take() {
             match cleanup {
-                Cleanup::Original(instance) => self.state.cleanup_instance(instance)?,
+                Cleanup::Original(instance) => self.state.cleanup_instance(*instance)?,
                 #[cfg(windows)]
                 Cleanup::Agent(mut cleanup) => {
                     let result = cleanup.repair(
@@ -751,6 +754,7 @@ impl Workbench {
             }
         }
         self.state.finish_maintenance()?;
+        self.state.reconcile_upload_observation()?;
         Ok(self.state.snapshot())
     }
     /// Start one explicitly approved job on an independently admitted instance.
@@ -958,7 +962,7 @@ impl Workbench {
             Ok(TaskSubmitted::Directory(directory)) => task.directory = Some(directory),
             #[cfg(windows)]
             Ok(TaskSubmitted::Original(file::Submitted::Mutation(mutation))) => {
-                task.mutation = Some(mutation)
+                task.mutation = Some(*mutation)
             }
             Err(error) => {
                 self.state.request_stop();

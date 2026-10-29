@@ -25,6 +25,7 @@ mod card_snapshot;
 pub use card_snapshot::{CardPage, CardReadSnapshot, Census, FrozenCard, ReadPoint};
 mod blobs;
 mod blob_stage;
+mod blob_upload_journal;
 #[cfg(not(target_arch = "wasm32"))]
 pub use blob_stage::BlobStageStoreBinding;
 mod evidence;
@@ -74,7 +75,7 @@ const BASE_SCHEMA: &str = "CREATE TABLE cards (id TEXT PRIMARY KEY, payload BLOB
                 CREATE TABLE outbox (sequence INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE NOT NULL REFERENCES operations(id), payload BLOB NOT NULL) STRICT;
                 PRAGMA application_id=1297044050; PRAGMA user_version=4;";
 /// Latest supported persistent Store schema; historical feature floors stay fixed.
-pub const SCHEMA_VERSION: i64 = 26;
+pub const SCHEMA_VERSION: i64 = 27;
 #[derive(Clone, Copy)]
 pub struct EventBudget {
     pub max_count: u32,
@@ -184,6 +185,7 @@ fn capacity_room(
             .saturating_add(channel_journal::accounted(c)?)
             .saturating_add(agent_ledger::accounted(c)?)
             .saturating_add(blob_stage::accounted(c)?)
+            .saturating_add(blob_upload_journal::accounted(c)?)
             .saturating_add(incoming_bytes)
             > budget.max_bytes
     {
@@ -946,6 +948,16 @@ impl Store {
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("blob-stage-migration-after-commit");
         }
+        if version < 27 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            blob_upload_journal::create(&tx)?;
+            sql(tx.pragma_update(None, "user_version", 27))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("blob-upload-journal-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("blob-upload-journal-migration-after-commit");
+        }
         // Rebuildable SQLite access index; no business-payload change.
         sql(connection.execute_batch(read_archive_budget::INDEX))?;
         sql(connection.pragma_update(None, "foreign_keys", true))?;
@@ -1262,6 +1274,7 @@ impl Store {
         channel_journal::verify_schema(snapshot)?;
         agent_ledger::verify_schema(snapshot)?;
         blob_stage::verify_schema(snapshot)?;
+        blob_upload_journal::verify_schema(snapshot)?;
         service_config::verify_schema(snapshot)?;
         service_authority::verify_schema(snapshot)?;
         outbound_authority::verify_schema(snapshot)?;

@@ -32,7 +32,7 @@ impl Drop for StopRegistration {
 #[derive(Clone, Default)]
 pub struct ProductGate {
     closed: Arc<AtomicBool>,
-    stop: Arc<Mutex<Option<Arc<dyn Fn() + Send + Sync>>>>,
+    stop: Arc<Mutex<Option<Stop>>>,
     scoped: Arc<Mutex<ScopedStops>>,
     stop_failed: Arc<AtomicBool>,
 }

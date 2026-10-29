@@ -1,0 +1,47 @@
+{
+  "status": "PASS_SCOPED_CANONICAL_TEXT_TEST_AND_ENVIRONMENT_ISOLATION",
+  "error": null,
+  "source_digest": "63eaf4d5f946b06aac51a4235636fdf3a2a3d379a7a1476b26ff42d562794ddc",
+  "source_unchanged": true,
+  "canonical_test": {
+    "path": "C:\\ms1020\\test\\blob_text_manager_native_test.dart",
+    "bytes": 19726,
+    "sha256": "b24681bc77c0e9ce839aadd4205697fe91ec12de09889b66db3aad5062f3ee83"
+  },
+  "all_top_level_processes_closed": true,
+  "actual_supervised_closures": 12,
+  "all_closures_verified": true,
+  "independent_reads": 12,
+  "all_reads_verified": true,
+  "old_namespace_does_not_activate": true,
+  "production_source_changed": false,
+  "cache_root": "D:/build_cache",
+  "VM_calls": 0,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "canonical_test_path": "test/blob_text_manager_native_test.dart",
+  "actual_cases": 6,
+  "languages": [
+    "Rust",
+    "C",
+    "C++"
+  ],
+  "byte_lengths": [
+    41,
+    32768
+  ],
+  "analyze_exit": 0,
+  "three_commands_exit": [
+    0,
+    0,
+    0
+  ],
+  "native_programs_reused": true,
+  "qualification_is_headless": true,
+  "original_evidence": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\text-test-canonical-470\\result.json",
+    "bytes": 2750,
+    "sha256": "18d6a1a26858ebdfb64af82f4e002fbe3da37bd14cdc425b658c7f4dc2aa9321"
+  }
+}

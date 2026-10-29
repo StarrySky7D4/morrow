@@ -1,0 +1,143 @@
+{
+  "status": "PASS_FOUR_ORIGINAL_SUPERVISED_METADATA_COMPLETIONS",
+  "error": null,
+  "source_digest": "3089c4a6758ce1ee40fb79184695d33e53a668e48eb4d514b124e30d4759f848",
+  "source_unchanged": true,
+  "cases": [
+    {
+      "point": "ack-after",
+      "original_review": true,
+      "same_original_observed_at": true,
+      "same_original_acknowledgement_at": true,
+      "one_upload_history": true,
+      "original_workers_joined": true,
+      "supervised_normal_close": true,
+      "independent_closed_read": true,
+      "desktop_UI": false,
+      "qualification_host": true
+    },
+    {
+      "point": "ack-before",
+      "original_review": true,
+      "same_original_observed_at": true,
+      "same_original_acknowledgement_at": true,
+      "one_upload_history": true,
+      "original_workers_joined": true,
+      "supervised_normal_close": true,
+      "independent_closed_read": true,
+      "desktop_UI": false,
+      "qualification_host": true
+    },
+    {
+      "point": "observe-after",
+      "original_review": true,
+      "same_original_observed_at": true,
+      "same_original_acknowledgement_at": false,
+      "one_upload_history": true,
+      "original_workers_joined": true,
+      "supervised_normal_close": true,
+      "independent_closed_read": true,
+      "desktop_UI": false,
+      "qualification_host": true
+    },
+    {
+      "point": "observe-before",
+      "original_review": true,
+      "same_original_observed_at": true,
+      "same_original_acknowledgement_at": false,
+      "one_upload_history": true,
+      "original_workers_joined": true,
+      "supervised_normal_close": true,
+      "independent_closed_read": true,
+      "desktop_UI": false,
+      "qualification_host": true
+    }
+  ],
+  "commands": [
+    {
+      "name": "framework",
+      "exit_code": 0,
+      "seconds": 1.797,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-native-widgets-556\\framework.stdout",
+        "bytes": 483,
+        "sha256": "2bdc900b43b778079223ab8ecbe7e9ca7f747f3b4ca65fe1c5c42a943e1631a8"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-native-widgets-556\\framework.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "observe-before",
+      "exit_code": 0,
+      "seconds": 17.562,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-native-widgets-556\\observe-before.stdout",
+        "bytes": 266,
+        "sha256": "a8fd6b1f3893155ada3b8a84b38e660f128432cb2f970263f615bb3f6b66800d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-native-widgets-556\\observe-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "observe-after",
+      "exit_code": 0,
+      "seconds": 7.641,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-native-widgets-556\\observe-after.stdout",
+        "bytes": 266,
+        "sha256": "a8fd6b1f3893155ada3b8a84b38e660f128432cb2f970263f615bb3f6b66800d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-native-widgets-556\\observe-after.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "ack-before",
+      "exit_code": 0,
+      "seconds": 7.563,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-native-widgets-556\\ack-before.stdout",
+        "bytes": 266,
+        "sha256": "a8fd6b1f3893155ada3b8a84b38e660f128432cb2f970263f615bb3f6b66800d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-native-widgets-556\\ack-before.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "ack-after",
+      "exit_code": 0,
+      "seconds": 7.5,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-native-widgets-556\\ack-after.stdout",
+        "bytes": 266,
+        "sha256": "a8fd6b1f3893155ada3b8a84b38e660f128432cb2f970263f615bb3f6b66800d"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-native-widgets-556\\ack-after.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_original_top_level_processes_closed": true,
+  "verified_supervised_closures": 4,
+  "independent_closed_library_reads": 4,
+  "qualification_host": true,
+  "desktop_UI": false,
+  "frozen_inputs_verified": 57,
+  "old_owner_contacts": 0,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

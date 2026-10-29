@@ -1,0 +1,208 @@
+{
+  "failures": [
+    {
+      "case": 509,
+      "result": {
+        "status": "FAILURE_RETAINED_NO_REPLAY",
+        "source_digest": "ddb675f775f6fc3b540562ee7797dd88d1b7f8b4d7a3342e1d8b4beda656f7db",
+        "source_unchanged": true,
+        "error": "AssertionError: ('morrow_core', 'must compile current source')",
+        "program": null,
+        "commands": [
+          {
+            "name": "build",
+            "exit_code": 0,
+            "seconds": 1873.64,
+            "stdout": {
+              "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-509\\build.stdout",
+              "bytes": 951453,
+              "sha256": "8a63591cc9fb79312030e9080bb042edfca50aaa9e4f2a7891b865abe3ed7590"
+            },
+            "stderr": {
+              "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-509\\build.stderr",
+              "bytes": 26694,
+              "sha256": "8d1c09fa31e6402a12aaf8616f8d6b18a5e7ba615977f62bd61a6c17598de138"
+            }
+          }
+        ],
+        "compiler_artifacts": 893,
+        "cold_build_claim": false,
+        "all_compiler_artifacts_fresh_false": false,
+        "all_original_top_level_processes_closed": true,
+        "frozen_public_inputs_verified": 57,
+        "VM_calls": 0,
+        "host_account_or_policy_calls": 0,
+        "rendered_native_UI": false,
+        "precommit_metadata_debt_automatically_rewritten": false,
+        "full_SDK_accepted": false,
+        "source_accepted": false,
+        "release_eligible": false
+      },
+      "original_evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-509\\result.json",
+        "bytes": 1351,
+        "sha256": "012a8dcef7f9ec1fdcf598ff7b6af9a5449c24083b78b57179fa679bceabff14"
+      }
+    },
+    {
+      "case": 524,
+      "result": {
+        "status": "FAILURE_RETAINED_NO_REPLAY",
+        "source_digest": "8a31564a0881b0df5ce24779369e239d9bb77c030e3dea6eb9c5668c01e80e33",
+        "source_unchanged": true,
+        "error": "AssertionError: ('morrow_core', 'must compile current source')",
+        "program": null,
+        "commands": [
+          {
+            "name": "build",
+            "exit_code": 0,
+            "seconds": 244.187,
+            "stdout": {
+              "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-524\\build.stdout",
+              "bytes": 950832,
+              "sha256": "35cda6a70e470478d43b102b632d735ad315cd65026545cb7895772fa8dc6409"
+            },
+            "stderr": {
+              "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-524\\build.stderr",
+              "bytes": 1135,
+              "sha256": "12a01ef4f44bc3569e800a4b80e5f7314793d727757143e00eea0ba2922a1fd8"
+            }
+          }
+        ],
+        "compiler_artifacts": 893,
+        "cold_build_claim": false,
+        "all_compiler_artifacts_fresh_false": false,
+        "all_original_top_level_processes_closed": true,
+        "frozen_public_inputs_verified": 57,
+        "VM_calls": 0,
+        "host_account_or_policy_calls": 0,
+        "rendered_native_UI": false,
+        "precommit_metadata_debt_automatically_rewritten": false,
+        "full_SDK_accepted": false,
+        "source_accepted": false,
+        "release_eligible": false
+      },
+      "original_evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-524\\result.json",
+        "bytes": 1350,
+        "sha256": "7318effa9d35e119545df335be43834aeeb6660fe983a5ab438a630210665a90"
+      }
+    },
+    {
+      "case": 510,
+      "result": {
+        "status": "FAILURE_RETAINED_NO_REPLAY",
+        "error": "AssertionError: known-original-history failed; no replay",
+        "source_digest": "ddb675f775f6fc3b540562ee7797dd88d1b7f8b4d7a3342e1d8b4beda656f7db",
+        "source_unchanged": true,
+        "commands": [
+          {
+            "name": "framework",
+            "exit_code": 0,
+            "seconds": 1.875,
+            "stdout": {
+              "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-native-ui-510\\framework.stdout",
+              "bytes": 471,
+              "sha256": "da36cb9b4d7d9e5dab8c21711bb1d365252b2cc1f3ed572dcb9e66e9df3235ee"
+            },
+            "stderr": {
+              "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-native-ui-510\\framework.stderr",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "name": "known-original-history",
+            "exit_code": 1,
+            "seconds": 372.359,
+            "stdout": {
+              "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-native-ui-510\\known-original-history.stdout",
+              "bytes": 667,
+              "sha256": "e77e2b54a5b730c4a7f4ab94599d679c55a5e14996a6427c97758bfd48116738"
+            },
+            "stderr": {
+              "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-native-ui-510\\known-original-history.stderr",
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        ],
+        "known_cases": [],
+        "crash_cases": [],
+        "supervised_closures": 1,
+        "all_expected_closures_verified": false,
+        "independent_closed_reads": 1,
+        "all_expected_reads_verified": false,
+        "all_original_top_level_processes_closed": true,
+        "frozen_public_inputs_verified": 57,
+        "qualification_fonts_only": true,
+        "desktop_UI": false,
+        "VM_calls": 0,
+        "prior_historical_Unknown_owner_contacts": 0,
+        "full_SDK_accepted": false,
+        "source_accepted": false,
+        "release_eligible": false
+      },
+      "original_evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-native-ui-510\\result.json",
+        "bytes": 2064,
+        "sha256": "d338902167925cfedeaee701715df16bde37a6ad0a05822f05925a44b1bd4be6"
+      }
+    },
+    {
+      "case": 521,
+      "result": {
+        "exit_code": 1,
+        "source_digest": "ddb675f775f6fc3b540562ee7797dd88d1b7f8b4d7a3342e1d8b4beda656f7db",
+        "source_unchanged": true,
+        "closed_receipts": [
+          "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-trace-521\\stores\\rust-41\\ui-closed.json"
+        ],
+        "all_top_level_processes_closed": true,
+        "full_SDK_accepted": false,
+        "diagnostic": true,
+        "old_owner_contacts": 0
+      },
+      "original_evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-trace-521\\result.json",
+        "bytes": 426,
+        "sha256": "ef4f1ba98abd07f6a3c6d92fe66bdb2a7497f3c3b4450d74250a55d9af4fc4a7"
+      }
+    },
+    {
+      "case": 529,
+      "result": {
+        "status": "INVENTORY_HELPER_IMPORT_FAILURE_NO_DELETION",
+        "error": "NameError: hashlib was not imported for the existing pin helper",
+        "deletion_started": false,
+        "deleted_files": 0
+      },
+      "original_evidence": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\retired-build-cache-529\\result.json",
+        "bytes": 195,
+        "sha256": "462066e64b9915e4d6fcf3ff6fc570de52444687b09b2f1d14e4dae8e1104a15"
+      }
+    }
+  ],
+  "compiler_review": "509 and 524 wrongly required Core kind lib. 531 verifies the actual rlib/cdylib record; 524 Core, Host and selected test are fresh=false. No build failure was relabelled.",
+  "UI_review": "510/521 retained unobserved reopened-owner closures. Four Dart/test changes corrected waiting, one-close pumping and local-only history routing. Fresh 525 known cases and 532 crash cases passed; old owners were not contacted.",
+  "failure_inventories": [
+    {
+      "status": "HISTORICAL_REOPENED_OWNER_CLOSURE_NOT_OBSERVED_NO_REPLAY",
+      "receipt": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-native-ui-510\\known\\rust-41\\reopen-open.json",
+      "child_pid_at_open": 8800,
+      "supervisor_pid_at_open": 21192,
+      "owner_contacted": false,
+      "original_contents_retained": true
+    },
+    {
+      "status": "HISTORICAL_REOPENED_OWNER_CLOSURE_NOT_OBSERVED_NO_REPLAY",
+      "receipt": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-trace-521\\stores\\rust-41\\reopen-open.json",
+      "child_pid_at_open": 7156,
+      "supervisor_pid_at_open": 22108,
+      "owner_contacted": false,
+      "original_contents_retained": true
+    }
+  ],
+  "runtime_replays": 0
+}

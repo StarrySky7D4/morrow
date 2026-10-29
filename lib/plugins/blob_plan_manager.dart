@@ -596,6 +596,54 @@ final class _BlobPlanManagerState extends State<BlobPlanManager> {
                     _observation(upload.observed!),
                     key: const ValueKey('blob-plan-history'),
                   ),
+                if (uploads.metadataReview case final review?) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    review.phase == BlobUploadMetadataPhase.observation
+                        ? _s(
+                            '待完成：原任务的结果记录。',
+                            'Pending: the original task result record.',
+                          )
+                        : _s(
+                            '待完成：此前已发起的结束记录。',
+                            'Pending: the acknowledgement already requested.',
+                          ),
+                    key: const ValueKey('blob-upload-metadata-review-details'),
+                  ),
+                  Text(
+                    review.writeRequired
+                        ? _s(
+                            '此记录尚未写入内容库，将使用原任务保留的结果补记。',
+                            'This record is missing from the library. It will use the result retained by the original task.',
+                          )
+                        : _s(
+                            '此记录已经写入内容库，只需核对并完成原任务收尾。',
+                            'This record is already in the library. Confirm it to finish the original task bookkeeping.',
+                          ),
+                  ),
+                  Text(
+                    review.originalUnknown
+                        ? _s(
+                            '原结果仍未确定；补记会保留这一状态。',
+                            'The original result is still uncertain; this status will be preserved.',
+                          )
+                        : review.originalError != null
+                        ? _s(
+                            '原结果记录为失败；补记会保留这一结果。',
+                            'The original result records a failure; it will be preserved.',
+                          )
+                        : _s(
+                            '补记使用原任务已返回的结果。',
+                            'The original returned result will be recorded.',
+                          ),
+                  ),
+                  Text(
+                    _s(
+                      '此操作仅完成原任务的记录，不会再次运行插件或上传内容。',
+                      'This completes the original task record without running the plugin or uploading again.',
+                    ),
+                  ),
+                ],
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -636,6 +684,22 @@ final class _BlobPlanManagerState extends State<BlobPlanManager> {
                           !uploads.acknowledgementUncertain,
                       () => _action(() async {
                         await uploads.repair(uploadView!);
+                      }),
+                    ),
+                    _button(
+                      'blob-upload-metadata-review',
+                      _s('核对待补记记录', 'Review pending task record'),
+                      uploads.canReviewMetadata,
+                      () => _action(() async {
+                        await uploads.reviewMetadata(uploadView!);
+                      }),
+                    ),
+                    _button(
+                      'blob-upload-metadata-complete',
+                      _s('确认，完成原任务记录', 'Confirm and complete original record'),
+                      uploads.canCompleteMetadata,
+                      () => _action(() async {
+                        await uploads.completeMetadata(uploadView!);
                       }),
                     ),
                   ],

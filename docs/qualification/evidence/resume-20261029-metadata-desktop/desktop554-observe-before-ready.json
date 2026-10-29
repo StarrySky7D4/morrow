@@ -1,0 +1,21 @@
+{
+  "original_processes": [
+    {
+      "pid": 7452,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-554\\apps\\observe-before\\morrow_studio.exe",
+      "creation_filetime": 134376966476151242
+    },
+    {
+      "pid": 19980,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-554\\apps\\observe-before\\morrow-workbench-supervisor.exe",
+      "creation_filetime": 134376966490743815
+    },
+    {
+      "pid": 13124,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-554\\apps\\observe-before\\morrow-workbench-host.exe",
+      "creation_filetime": 134376966491310017
+    }
+  ],
+  "source_digest": "3089c4a6758ce1ee40fb79184695d33e53a668e48eb4d514b124e30d4759f848",
+  "point": "observe-before"
+}

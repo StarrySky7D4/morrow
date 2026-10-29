@@ -127,7 +127,7 @@ fn tight_ordinary_total_preserves_small_history_reads() {
     );
     selected(&mut setup.app, key);
     let body = b"small plan under tight ordinary total";
-    let GuestMutationReply::Owner(MutationResponse::Planned(original)) = call(
+    let MutationResponse::Planned(original) = owner(call(
         &mut setup.app,
         key,
         161,
@@ -136,7 +136,7 @@ fn tight_ordinary_total_preserves_small_history_reads() {
             content_length: body.len() as u64,
             content_sha256: Some(Sha256::digest(body).into()),
         },
-    ) else {
+    )) else {
         panic!("tight canonical plan");
     };
     let plan_sha256 = Sha256::digest(original.container()).into();
@@ -150,8 +150,8 @@ fn tight_ordinary_total_preserves_small_history_reads() {
         GuestMutationReply::Frame(_)
     ));
     assert!(matches!(
-        call(&mut setup.app, key, 163, GuestAction::HostRelease),
-        GuestMutationReply::Owner(MutationResponse::Released)
+        owner(call(&mut setup.app, key, 163, GuestAction::HostRelease)),
+        MutationResponse::Released
     ));
     stop(&mut setup.app, key);
     assert!(!leaf.exists());
@@ -196,7 +196,7 @@ fn budgeted_guest_history_is_read_only_and_preserves_exact_original_plan() {
     );
     selected(&mut setup.app, key);
     let body = b"prepared guest history";
-    let GuestMutationReply::Owner(MutationResponse::Planned(original)) = call(
+    let MutationResponse::Planned(original) = owner(call(
         &mut setup.app,
         key,
         102,
@@ -205,7 +205,7 @@ fn budgeted_guest_history_is_read_only_and_preserves_exact_original_plan() {
             content_length: body.len() as u64,
             content_sha256: Some(Sha256::digest(body).into()),
         },
-    ) else {
+    )) else {
         panic!("canonical plan");
     };
     let plan_sha256 = Sha256::digest(original.container()).into();
@@ -219,8 +219,8 @@ fn budgeted_guest_history_is_read_only_and_preserves_exact_original_plan() {
         GuestMutationReply::Frame(_)
     ));
     assert!(matches!(
-        call(&mut setup.app, key, 104, GuestAction::HostRelease),
-        GuestMutationReply::Owner(MutationResponse::Released)
+        owner(call(&mut setup.app, key, 104, GuestAction::HostRelease)),
+        MutationResponse::Released
     ));
     stop(&mut setup.app, key);
     assert!(!leaf.exists());
@@ -399,7 +399,7 @@ fn maximum_guest_create_reconciles_with_read_only_history_budget() {
         Some(RelativeFilePath::parse("maximum.bin").unwrap()),
     );
     selected(&mut setup.app, key);
-    let GuestMutationReply::Owner(MutationResponse::Planned(original)) = call(
+    let MutationResponse::Planned(original) = owner(call(
         &mut setup.app,
         key,
         151,
@@ -408,7 +408,7 @@ fn maximum_guest_create_reconciles_with_read_only_history_budget() {
             content_length: body.len() as u64,
             content_sha256: Some(body_sha256),
         },
-    ) else {
+    )) else {
         panic!("canonical maximum plan");
     };
     let plan_sha256 = Sha256::digest(original.container()).into();

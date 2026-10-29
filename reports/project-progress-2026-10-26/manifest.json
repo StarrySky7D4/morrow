@@ -1,19 +1,25 @@
 {
   "files": [
     {
-      "path": "C:\\ms1020\\reports\\project-progress-2026-10-26\\index.html",
-      "bytes": 23558,
-      "sha256": "c8d351118f00aef8ddbc4d3d2223aead603ed3928e5375325105a3d07409ab42"
+      "path": "index.html",
+      "bytes": 32157,
+      "sha256": "b58fef2b36d93b0a63c000a5a7d5bacb4251e35a2f0c5e6c7db93fbe6db9eb96"
     },
     {
-      "path": "C:\\ms1020\\reports\\project-progress-2026-10-26\\report-data.json",
-      "bytes": 207203,
-      "sha256": "482673262a95203bd587f1092e0277e04493ee9c90ed00af01c0c362ab4a98a4"
+      "path": "report-data.json",
+      "bytes": 230039,
+      "sha256": "089b36fd2b957538fae4f20caf7c92a2a19a2a38f68b8c005e8df4be6c24301b"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 967,
+      "sha256": "3edfea19643a2cd4111cd31cc6ecc39ecd8e16a15b39a21de0a1d683a1ec5d17"
     }
   ],
   "evidence": {
-    "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261028\\manifest.json",
-    "bytes": 4254,
-    "sha256": "bbed6465e156ff4bc97fbb66814ef4e57042d555cd77775f4db2db7a92f2e3f7"
-  }
+    "path": "../../docs/qualification/evidence/pause-20261029/manifest.json",
+    "bytes": 14476,
+    "sha256": "7b0eddd9b62f08b7b8f5fbaa025e6d66e5eae75d8c9b9890d2c3b345929d1153"
+  },
+  "scope": "Paused public progress files, not product qualification"
 }

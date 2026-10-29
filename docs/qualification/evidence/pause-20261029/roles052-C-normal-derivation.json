@@ -1,0 +1,38 @@
+{
+  "status": "NORMAL_CANONICAL_NATIVE_AND_LIVE_ONLY_PARENT_ANCHOR_BOUND",
+  "anchor": {
+    "path": "D:\\build_cache\\m701s\\companions\\morrow-codex\\qualification\\c28-basic-harness\\src\\a1_parent_anchor.rs",
+    "before": "451492f2f0e58940d249c8fea967d68f6de4ebca528534343920363387e7355f",
+    "after": "0886f7403fc569ca4abc81832627a55de16bb723d5cefe1989f5020454dfa498",
+    "old": "pub(crate) const P_IMAGE_SHA256:[u8;32]=[0;32];",
+    "new": "pub(crate) const P_IMAGE_SHA256:[u8;32]=[0x00,0x96,0x67,0xef,0x5a,0x70,0x50,0x44,0xd1,0x29,0x14,0xb7,0x90,0x1f,0x9f,0xa5,0x40,0x8a,0xbd,0xf5,0x28,0xba,0x86,0x40,0xcf,0x3e,0x18,0x7d,0x96,0xd1,0x5a,0x2e];"
+  },
+  "original": {
+    "path": "C:\\ms1020\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+    "bytes": 116683,
+    "sha256": "ad0318b3e116479c9cdbcf27abf09d6ad60a18169338d177eee2d872d75fa867"
+  },
+  "derived": {
+    "path": "D:\\build_cache\\m701s\\companions\\morrow-codex\\derived\\c28-cleanup-com-002\\codex-rs\\windows-sandbox-rs\\src\\asuser_a1_native.rs",
+    "bytes": 116683,
+    "sha256": "ad0318b3e116479c9cdbcf27abf09d6ad60a18169338d177eee2d872d75fa867"
+  },
+  "original_live": {
+    "path": "C:\\ms1020\\companions\\morrow-codex\\qualification\\c28-basic-harness\\src\\live.rs",
+    "bytes": 54631,
+    "sha256": "2cbcf1ee34bb4cdc7c0d4f81edb94eb14e069c7603450ec3703e6437bd514907"
+  },
+  "derived_live": {
+    "path": "D:\\build_cache\\m701s\\companions\\morrow-codex\\qualification\\c28-basic-harness\\src\\live.rs",
+    "bytes": 54631,
+    "sha256": "2cbcf1ee34bb4cdc7c0d4f81edb94eb14e069c7603450ec3703e6437bd514907"
+  },
+  "complete_source_files": 53427,
+  "changed_files": [
+    "companions/morrow-codex/qualification/c28-basic-harness/src/a1_parent_anchor.rs"
+  ],
+  "canonical_source_edits": 0,
+  "ipc_changes": 0,
+  "qualification_fault": null,
+  "VM_calls": 0
+}

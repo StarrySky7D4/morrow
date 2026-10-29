@@ -1,0 +1,15 @@
+{
+  "exit_code": 86,
+  "point": "blob-stage-before-commit",
+  "stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-533\\before-child.stdout",
+    "bytes": 16,
+    "sha256": "daf071121a9ffe32bbce44190e37a068c96d08bff63fd7b660dd95b77d786dca"
+  },
+  "stderr": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-533\\before-child.stderr",
+    "bytes": 122,
+    "sha256": "11e70ed79e6fa7a40867f155d80600d1d6d92ff7369ca551d6caaeddb5abf437"
+  },
+  "original_handle_held_until_exit": true
+}

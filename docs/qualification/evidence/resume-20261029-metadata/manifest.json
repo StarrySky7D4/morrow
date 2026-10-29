@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "utc": "2026-10-28T21:06:43.713449+00:00",
+  "scope": "Scoped original-owner metadata evidence; no credentials or disks",
+  "files": [
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\binding541-core-equivalence.json",
+      "bytes": 6815,
+      "sha256": "aec414a80cd9869bf0deaaaf8caca561db999fcb64cb96a648b7dbce0156d811"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\core540-metadata-and-lint.json",
+      "bytes": 3723,
+      "sha256": "7223da324528f1062f08c3744c95dbdcfbe9859b3b401bf3e63e8ff0f95d2a3f"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\default545-compiler-proof.json",
+      "bytes": 2914,
+      "sha256": "441adaad2b515fa2aedc547d4721816fe5f05169cc833a758c03f79b15009d6e"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\default545-product-build.json",
+      "bytes": 3599,
+      "sha256": "54b891b892e41df4c9e052adc5ed5924b0d8949e1895fa413d3f10d0a5346044"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\environment.json",
+      "bytes": 1345,
+      "sha256": "8332b693f1b77d323a1e2f7b6d28ec8ea3cf20605bc6865b33bdfe35ca5aa04e"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\metadata-resume548.json",
+      "bytes": 2339,
+      "sha256": "57a2a1a1ff59d61103d73e546424ae0dfad6b9eec2146e402c8962cc145a19e4"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\native539-first-completion-matrix.json",
+      "bytes": 15746,
+      "sha256": "e8240bc60ede07cd8d803bf60bc0833dbb40bd3416866a753990ba7ed7ee2b8e"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\native543-compiler-proof.json",
+      "bytes": 5577,
+      "sha256": "5c035cc8fa00164404a40a12855b82980a08d1219c00552f369c3ed7e23f06c6"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\native543-completion-matrix.json",
+      "bytes": 16473,
+      "sha256": "60ab607aac5ee77d1d4624b860c37b574f4563e843d961bad9204699c9bf1c65"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\native546-three-language-and-crash-history.json",
+      "bytes": 12634,
+      "sha256": "b0287680ecaa9c06511c4b6e508cc5fe9429080522d3a90f3a9c0fc2daa4db6a"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\preflight536-retained-test-fixture-failures.json",
+      "bytes": 3553,
+      "sha256": "19d0e1b79c301c5331625c24889b8e4db1c6eca2841f2a0f2494c1bbf0d31e4f"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\preflight542-codec-session-widget.json",
+      "bytes": 2922,
+      "sha256": "ca72f1d0f96a75d635894126c0fa619fc3a5d932c4a1c07339d90f94eb1f6c34"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata\\repair537-test-only.json",
+      "bytes": 1275,
+      "sha256": "979599d66eb37f35d6228cd923ef3ea80c5e5218cf5d994c273aef01a15c7a19"
+    }
+  ]
+}

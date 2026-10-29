@@ -4,6 +4,9 @@ use std::sync::{Arc, Mutex, TryLockError};
 use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
 
 static NEXT_INSTANCE: AtomicU64 = AtomicU64::new(1);
+// A reader or an earlier post-unlock publication may briefly hold one slot.
+// Keep a fixed number of alternatives; exhausting every slot remains a loss.
+const HISTORY_SLOTS: usize = 4;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct RunnerObservationKey { pub instance: u64, pub startup_attempt: u64 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -98,7 +101,8 @@ struct Store {
     poisoned: AtomicBool,
     lost: AtomicBool,
     retired: AtomicBool,
-    latest: Mutex<Option<(u64, RunnerOwnerSnapshot)>>,
+    published_revision: AtomicU64,
+    slots: [Mutex<Option<(u64, RunnerOwnerSnapshot)>>; HISTORY_SLOTS],
 }
 /// Trusted owner-side data publisher. It cannot operate on native resources.
 pub struct RunnerObservationPublisher { store: Arc<Store> }
@@ -116,7 +120,8 @@ impl RunnerObservationPublisher {
         Self { store: Arc::new(Store { key: instance.map(|instance| RunnerObservationKey { instance, startup_attempt }),
             revision: AtomicU64::new(0), active_accesses: AtomicUsize::new(0),
             poisoned: AtomicBool::new(false), lost: AtomicBool::new(false),
-            retired: AtomicBool::new(false), latest: Mutex::new(None) }) }
+            retired: AtomicBool::new(false), published_revision: AtomicU64::new(0),
+            slots: std::array::from_fn(|_| Mutex::new(None)) }) }
     }
     pub fn reader(&self) -> RunnerObservationReader { RunnerObservationReader { store: Some(self.store.clone()) } }
     pub fn begin_access(&self) {
@@ -136,11 +141,25 @@ impl RunnerObservationPublisher {
     }
     /// Nonblocking concrete data copy, never a callback under the owner lock.
     pub fn publish(&self, revision: u64, snapshot: RunnerOwnerSnapshot) {
-        match self.store.latest.try_lock() {
-            Ok(mut slot) => if slot.as_ref().is_none_or(|(old,_)|revision>*old) { *slot=Some((revision,snapshot)); },
-            Err(TryLockError::WouldBlock) => self.lost(),
-            Err(TryLockError::Poisoned(_)) => self.poison(),
+        if self.store.published_revision.load(Ordering::SeqCst) >= revision { return; }
+        for offset in 0..HISTORY_SLOTS {
+            let index = ((revision % HISTORY_SLOTS as u64) as usize + offset) % HISTORY_SLOTS;
+            match self.store.slots[index].try_lock() {
+                Ok(mut slot) => {
+                    // Another original guard may have published a newer capture
+                    // first. Neither its slot nor the revision may move back.
+                    if self.store.published_revision.load(Ordering::SeqCst) >= revision { return; }
+                    *slot=Some((revision,snapshot));
+                    self.store.published_revision.fetch_max(revision,Ordering::SeqCst);
+                    return;
+                }
+                Err(TryLockError::WouldBlock) => continue,
+                Err(TryLockError::Poisoned(_)) => { self.poison(); return; }
+            }
         }
+        // No waiting, spinning, allocation or native resource operation. A true
+        // capacity loss is permanent and cannot be repaired by later snapshots.
+        self.lost();
     }
     pub fn retire(&self) { self.store.retired.store(true,Ordering::SeqCst); }
 }
@@ -157,15 +176,27 @@ impl RunnerObservationReader {
         if store.poisoned.load(Ordering::SeqCst) { return result(A::Poisoned,store.key); }
         if store.lost.load(Ordering::SeqCst) { return result(A::HistoryLost,store.key); }
         if store.active_accesses.load(Ordering::SeqCst)!=0 { return result(A::Busy,store.key); }
-        let slot=match store.latest.try_lock() {
-            Ok(slot)=>slot,
-            Err(TryLockError::WouldBlock)=>return result(A::Busy,store.key),
-            Err(TryLockError::Poisoned(_))=>return result(A::Poisoned,store.key),
-        };
+        let wanted=store.published_revision.load(Ordering::SeqCst);
+        let mut captured=None;
+        for slot in &store.slots {
+            match slot.try_lock() {
+                Ok(slot)=>if let Some((revision,snapshot))=*slot {
+                    if revision==wanted { captured=Some((revision,snapshot)); break; }
+                },
+                Err(TryLockError::WouldBlock)=>continue,
+                Err(TryLockError::Poisoned(_))=>{
+                    store.poisoned.store(true,Ordering::SeqCst);
+                    return result(A::Poisoned,store.key);
+                },
+            }
+        }
         if store.active_accesses.load(Ordering::SeqCst)!=0 { return result(A::Busy,store.key); }
         if store.poisoned.load(Ordering::SeqCst) { return result(A::Poisoned,store.key); }
         if store.lost.load(Ordering::SeqCst) { return result(A::HistoryLost,store.key); }
-        let Some((revision,snapshot))=*slot else { return result(A::NotObserved,store.key) };
+        if store.published_revision.load(Ordering::SeqCst)!=wanted { return result(A::Busy,store.key); }
+        let Some((revision,snapshot))=captured else {
+            return result(if wanted==0 { A::NotObserved } else { A::Busy },store.key);
+        };
         let availability=if store.retired.load(Ordering::SeqCst) { A::Retired }
             else if snapshot.borrowed() { A::Borrowed } else { A::Observed };
         RunnerObservation { availability,key:store.key,revision:Some(revision),snapshot:Some(snapshot) }
@@ -229,20 +260,41 @@ mod tests {
         assert_eq!(value.runner_get_exit_code_process_u32,None);
     }
     #[test]
-    fn busy_poisoned_cache_and_lost_publication_never_become_clean_history() {
+    fn reader_contention_does_not_destroy_a_later_original_snapshot() {
         let publisher=RunnerObservationPublisher::new(101);
         let reader=publisher.reader();publisher.publish(1,sample());
-        let hold=publisher.store.latest.lock().unwrap();
+        let hold=publisher.store.slots[1].lock().unwrap();
         assert_eq!(reader.read().availability,RunnerObservationAvailability::Busy);
-        publisher.publish(2,sample()); // Deliberate test contention, no native work.
+        let mut later=sample();later.runner_get_exit_code_process_u32=Some(0xffff_ff07);
+        // Revision 5 starts at the held slot, then uses a free fixed-size slot.
+        std::thread::scope(|scope| {
+            scope.spawn(|| publisher.publish(5,later)).join().unwrap();
+        });
+        assert_eq!(reader.read().revision,Some(5));
         drop(hold);
+        publisher.publish(4,sample());
+        let observed=reader.read();
+        assert_eq!(observed.availability,RunnerObservationAvailability::Observed);
+        assert_eq!(observed.revision,Some(5));
+        assert_eq!(observed.snapshot,Some(later));
+    }
+    #[test]
+    fn exhausted_cache_and_poison_never_become_clean_history() {
+        let publisher=RunnerObservationPublisher::new(104);
+        let reader=publisher.reader();publisher.publish(1,sample());
+        let holds=publisher.store.slots.iter().map(|s|s.lock().unwrap()).collect::<Vec<_>>();
+        publisher.publish(2,sample());
+        drop(holds);
+        publisher.publish(3,sample());
         assert_eq!(reader.read().availability,RunnerObservationAvailability::HistoryLost);
         assert!(reader.read().snapshot.is_none());
         let other=RunnerObservationPublisher::new(102);let read=other.reader();
         let _=std::panic::catch_unwind(std::panic::AssertUnwindSafe(||{
-            let _guard=other.store.latest.lock().unwrap();
+            let _guard=other.store.slots[0].lock().unwrap();
             panic!("pure history cache poison");
         }));
+        assert_eq!(read.read().availability,RunnerObservationAvailability::Poisoned);
+        other.publish(1,sample());
         assert_eq!(read.read().availability,RunnerObservationAvailability::Poisoned);
         assert!(read.read().snapshot.is_none());
     }
@@ -255,6 +307,22 @@ mod tests {
         publisher.publish(2,second);publisher.publish(1,first);
         assert_eq!(reader.read().revision,Some(2));
         assert_eq!(reader.read().snapshot.unwrap().runner_get_exit_code_process_u32,Some(0xffff_ff07));
+    }
+
+    #[test]
+    fn busy_latest_slot_never_falls_back_to_an_older_complete_snapshot() {
+        let publisher=RunnerObservationPublisher::new(105);let reader=publisher.reader();
+        publisher.publish(1,sample());
+        let mut later=sample();later.no_replay_sealed=true;
+        later.runner_get_exit_code_process_u32=Some(0xffff_ff07);
+        publisher.publish(2,later);
+        let hold=publisher.store.slots[2].lock().unwrap();
+        assert_eq!(reader.read().availability,RunnerObservationAvailability::Busy);
+        assert!(reader.read().snapshot.is_none());
+        drop(hold);publisher.retire();drop(publisher);
+        assert_eq!(reader.read().availability,RunnerObservationAvailability::Retired);
+        assert_eq!(reader.read().revision,Some(2));
+        assert_eq!(reader.read().snapshot,Some(later));
     }
 
 }

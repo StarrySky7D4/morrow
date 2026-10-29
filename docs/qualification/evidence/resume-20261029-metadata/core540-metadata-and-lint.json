@@ -1,0 +1,97 @@
+{
+  "status": "PASS_CORE_METADATA_COMPLETION_AND_STRICT_LINT",
+  "source_digest": "55d09a0cb9dc1108a55d3e4fa8a6715e431f2231c69b7bbb21589d1e83481928",
+  "source_unchanged": true,
+  "commands": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "seconds": 21.125,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-core-540\\build.stdout",
+        "bytes": 108406,
+        "sha256": "ed3c69b45c210da4f9366480e25bf5ff7009ae2b8effca1ba1b82f3931bc8ee5"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-core-540\\build.stderr",
+        "bytes": 119,
+        "sha256": "c79b7b82c6e8ecaee9722c47fb87da64e46b2cc1ee639d8302f161863f0e5b60"
+      }
+    },
+    {
+      "name": "blob_upload_journal",
+      "exit_code": 0,
+      "seconds": 4.406,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-core-540\\blob_upload_journal.stdout",
+        "bytes": 1590,
+        "sha256": "fe693c28b0daded10c8313d841f839ad7cfc1afdc54b8715b81d32d43bcfccba"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-core-540\\blob_upload_journal.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "passed": 15,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "blob_stage",
+      "exit_code": 0,
+      "seconds": 5.282,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-core-540\\blob_stage.stdout",
+        "bytes": 1870,
+        "sha256": "f0de9c7949275b3060aa20ad47ed755ac2b29dceb3c4b9cb9e4c6a0649cd6ead"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-core-540\\blob_stage.stderr",
+        "bytes": 394,
+        "sha256": "c4557430ad1d60c52d50df540c2bfdfd4b2ed30cb955fb4fd189b7d1f3375fc1"
+      },
+      "passed": 20,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "morrow_core",
+      "exit_code": 0,
+      "seconds": 4.25,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-core-540\\morrow_core.stdout",
+        "bytes": 7049,
+        "sha256": "f8583f8c5d56f675f1a89cd7baa2144413c382462d8bb18ebcd31ace658c9617"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-core-540\\morrow_core.stderr",
+        "bytes": 1024,
+        "sha256": "79b32ead8a5902414d8bc3e70ae8076a140a91a9a3433a94a28832ed79ac9386"
+      },
+      "passed": 60,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "name": "clippy",
+      "exit_code": 0,
+      "seconds": 7.094,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-core-540\\clippy.stdout",
+        "bytes": 97593,
+        "sha256": "99e326ffef53d27ae582a679c4e88a41cf5e9f583f40f00f5d3870130fb1a448"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-core-540\\clippy.stderr",
+        "bytes": 117,
+        "sha256": "ff09b97ab9b700b0e2d656ebc27268ac95606a7828f3b5fd2d2718119c698b5b"
+      }
+    }
+  ],
+  "error": null,
+  "all_original_top_level_processes_closed": true,
+  "VM_calls": 0,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

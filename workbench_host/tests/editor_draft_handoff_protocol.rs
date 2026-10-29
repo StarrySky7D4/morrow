@@ -149,7 +149,7 @@ fn request(
 
 fn source_fields(host: &Workbench) -> Fields {
     let record = match host.read_versioned(CARD).unwrap() {
-        VersionedRecord::Tasks(record) => record,
+        VersionedRecord::Tasks(record) => *record,
         VersionedRecord::Legacy(_) => panic!("expected migrated V2 card"),
     };
     let p = &record.properties;

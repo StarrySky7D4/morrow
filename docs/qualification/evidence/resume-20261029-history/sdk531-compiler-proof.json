@@ -1,0 +1,137 @@
+{
+  "compiler_artifacts": 893,
+  "cold_build_claim": false,
+  "current_core_and_host_and_test_compiled": true,
+  "program": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-531\\programs\\blob_upload_protected-7f1a8617d05a1058.exe",
+    "bytes": 31639552,
+    "sha256": "24bb541b9b5c860b41c26841c4a0b7072c214ae6d97d6d1b30e1747f6ff7d224"
+  },
+  "compiler_records": [
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/core#morrow-core@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\core\\Cargo.toml",
+      "target": {
+        "kind": [
+          "rlib",
+          "cdylib"
+        ],
+        "crate_types": [
+          "rlib",
+          "cdylib"
+        ],
+        "name": "morrow_core",
+        "src_path": "C:\\ms1020\\core\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "fault-injection"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\libmorrow_core.rlib",
+        "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\morrow_core.dll",
+        "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\morrow_core.dll.lib",
+        "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\morrow_core.dll.exp",
+        "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\morrow_core.pdb"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "target": {
+        "kind": [
+          "lib"
+        ],
+        "crate_types": [
+          "lib"
+        ],
+        "name": "morrow_workbench_host",
+        "src_path": "C:\\ms1020\\workbench_host\\src\\lib.rs",
+        "edition": "2024",
+        "doc": true,
+        "doctest": true,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": false
+      },
+      "features": [
+        "blob-upload-guest-qualification",
+        "fault-injection"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\libmorrow_workbench_host-530eec63166cf391.rlib",
+        "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\libmorrow_workbench_host-530eec63166cf391.rmeta"
+      ],
+      "executable": null,
+      "fresh": false
+    },
+    {
+      "reason": "compiler-artifact",
+      "package_id": "path+file:///C:/ms1020/workbench_host#morrow-workbench-host@0.1.9-test.50",
+      "manifest_path": "C:\\ms1020\\workbench_host\\Cargo.toml",
+      "target": {
+        "kind": [
+          "test"
+        ],
+        "crate_types": [
+          "bin"
+        ],
+        "name": "blob_upload_protected",
+        "src_path": "C:\\ms1020\\workbench_host\\tests\\blob_upload_protected.rs",
+        "edition": "2024",
+        "doc": false,
+        "doctest": false,
+        "test": true
+      },
+      "profile": {
+        "opt_level": "3",
+        "debuginfo": 0,
+        "debug_assertions": false,
+        "overflow_checks": false,
+        "test": true
+      },
+      "features": [
+        "blob-upload-guest-qualification",
+        "fault-injection"
+      ],
+      "filenames": [
+        "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\blob_upload_protected-7f1a8617d05a1058.exe",
+        "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\blob_upload_protected-7f1a8617d05a1058.pdb"
+      ],
+      "executable": "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\blob_upload_protected-7f1a8617d05a1058.exe",
+      "fresh": false
+    }
+  ],
+  "reviewed_build": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-524\\result.json",
+    "bytes": 1350,
+    "sha256": "7318effa9d35e119545df335be43834aeeb6660fe983a5ab438a630210665a90"
+  },
+  "reviewed_build_stdout": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-protected-524\\build.stdout",
+    "bytes": 950832,
+    "sha256": "35cda6a70e470478d43b102b632d735ad315cd65026545cb7895772fa8dc6409"
+  },
+  "prior_validator_error": "Core crate kinds are rlib/cdylib, not lib. The old lib-only filter matched no Core artifact.",
+  "prior_failure_retained": true,
+  "build_repeated": false
+}

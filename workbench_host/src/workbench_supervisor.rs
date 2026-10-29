@@ -133,11 +133,10 @@ pub async fn run() -> Result<u32> {
         Arc::new(move || {
             let _start = starting.lock().unwrap_or_else(|e| e.into_inner());
             stopped.store(true, Ordering::Release);
-            if let Some(event) = revoked.lock().unwrap_or_else(|e| e.into_inner()).as_ref() {
-                if event.revoke().is_err() {
+            if let Some(event) = revoked.lock().unwrap_or_else(|e| e.into_inner()).as_ref()
+                && event.revoke().is_err() {
                     morrow_native_pipe_win::job::terminate_current_process(2);
                 }
-            }
         }),
     )?;
     let (send, mut commands) = mpsc::channel(8);
@@ -336,8 +335,8 @@ pub async fn run() -> Result<u32> {
             job.terminate()?;
             killed = true;
         }
-        if exit.is_none() {
-            if let Ok(status) = tokio::time::timeout(Duration::from_millis(1), child.wait()).await {
+        if exit.is_none()
+            && let Ok(status) = tokio::time::timeout(Duration::from_millis(1), child.wait()).await {
                 exit = Some(status?);
                 drain_at = Some(Instant::now());
                 if !closing {
@@ -363,7 +362,6 @@ pub async fn run() -> Result<u32> {
                     writer.reclaim_bounded(Duration::from_millis(750));
                 }
             }
-        }
         if exit.is_some()
             && outdone.load(Ordering::Acquire)
             && errdone.load(Ordering::Acquire)
@@ -395,7 +393,8 @@ pub async fn run() -> Result<u32> {
          command=commands.recv(),if !closing || (abnormal_closing.load(Ordering::Acquire) && !quarantine_requested)=>{match command{
           Some(Command::QuarantineClose) if closing && fault && abnormal_closing.load(Ordering::Acquire)=>{quarantine_requested=true;gate.store(true,Ordering::Release);},
           Some(Command::Data(bytes)) if !closing=>{if signal.lost()||gate.load(Ordering::Acquire){continue;}let writer=stdin.as_mut().ok_or("closed host input")?;let mut frame=zeroize::Zeroizing::new(Vec::with_capacity(bytes.len()+4));frame.extend_from_slice(&(bytes.len() as u32).to_le_bytes());frame.extend_from_slice(&bytes);tokio::select!{write=writer.write_all(&frame)=>{if write.is_err(){signal.disconnect();gate.store(true,Ordering::Release);}},_=async{while !signal.lost(){tokio::time::sleep(Duration::from_millis(5)).await;}}=>{}}},
-          Some(Command::Close) if !closing=>{closing=true;gate.store(true,Ordering::Release);record=owner.record();record["phase"]="Closing".into();record["gate_closed"]=true.into();persisted_closing=owner.update(record.clone()).is_ok();if !persisted_closing{signal.disconnect();continue;}if let Some(writer)=stdin.take(){writer.reclaim_bounded(Duration::from_millis(750));}record["owner_phase"]="Closing".into();emit(&mut output,&signal,2,record.to_string().as_bytes()).await?;},
+          Some(Command::Close) if !closing=>{closing=true;gate.store(true,Ordering::Release);record=owner.record();record["phase"]="Closing".into();record["gate_closed"]=true.into();persisted_closing=owner.update(record.clone()).is_ok();if !persisted_closing{signal.disconnect();continue;}
+                    if let Some(writer)=stdin.take(){writer.reclaim_bounded(Duration::from_millis(750));}record["owner_phase"]="Closing".into();emit(&mut output,&signal,2,record.to_string().as_bytes()).await?;},
           Some(_) | None=>signal.disconnect()
          }},
          _=tokio::time::sleep(Duration::from_millis(5))=>{}

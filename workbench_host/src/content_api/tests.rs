@@ -127,7 +127,7 @@ fn equivalent_multisegment_payloads_are_accepted() {
 #[test]
 fn envelope_retains_full_uint64_revisions() {
     for revision in [(1u64 << 53) - 1, (1u64 << 53) + 1, 1u64 << 63, u64::MAX] {
-        let record = VersionedRecord::Legacy(Record {
+        let record = VersionedRecord::Legacy(Box::new(Record {
             idea: Idea {
                 id: "card".into(),
                 title: "Exact".into(),
@@ -136,7 +136,7 @@ fn envelope_retains_full_uint64_revisions() {
                 ..Default::default()
             },
             revision,
-        });
+        }));
         let bytes = encode_envelope(
             wire::EnvelopeKind::Record,
             "card",

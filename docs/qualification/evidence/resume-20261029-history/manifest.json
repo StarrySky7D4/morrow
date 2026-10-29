@@ -1,0 +1,157 @@
+{
+  "schema": 1,
+  "utc": "2026-10-28T19:35:10.570566+00:00",
+  "scope": "Source-bound summaries and synthetic-library screenshots; no credentials or VM disks",
+  "files": [
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\cache495-closed-role-intermediates.json",
+      "bytes": 635,
+      "sha256": "c1f161eaba5d19008c94be73e493e2467bc23d9ea7788fba2aa1d7fd9ac10ac6"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\cache530-closed-history-intermediates.json",
+      "bytes": 635,
+      "sha256": "7d63a3c976401365881ff52f48213711ca7052b3520d1d7031c4c904714a3112"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\core487-v27-migrations.json",
+      "bytes": 27487,
+      "sha256": "b5f44244fcc4873a85c733d269d8cdbbedb8da2471127c791e6f08a28f8c89f3"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\core489-strict-lint.json",
+      "bytes": 191,
+      "sha256": "7078b28d43d863794b636c779604df1a1e0ee7b68351926dd30cc2a6a07b6ad3"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\core503-source-equivalence.json",
+      "bytes": 5601,
+      "sha256": "dc23abfeafc2ccb600ffde415dbae4fa2b219ad78b71a5a40c5704a5ff4cf11d"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\desktop533-after-history-result.json",
+      "bytes": 563,
+      "sha256": "bebcfb7f672e2cf07bd121a0d2c50065a40f8cfc7c81a448fb9f14aaf21f89c3"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\desktop533-after-history.png",
+      "bytes": 51716,
+      "sha256": "4042ae3b7b0358b1542cef1e7f51ec431c7fb2cdb19076752f79a3dca849500a"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\desktop533-after-no-task.png",
+      "bytes": 55553,
+      "sha256": "d68a396555ae52ae294beed03fdc301e83976907852e56b5dd8edf5fed203c73"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\desktop533-after-original-child-exit.json",
+      "bytes": 609,
+      "sha256": "1c4d8aebe63d8f46bc273010034df2d1c75efa012955f78ef134a78b244d90d8"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\desktop533-after-visible-observations.json",
+      "bytes": 572,
+      "sha256": "22d113bdf016eb42a9836ed6e7a6d8b0a6ffedbdc46ec72d563941684653b64d"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\desktop533-before-history-result.json",
+      "bytes": 565,
+      "sha256": "cce6bc962a080a55c7b9b6293ac9135ac34d50ec04cb31cfc2a197226049a59f"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\desktop533-before-history.png",
+      "bytes": 51549,
+      "sha256": "2e83f996586a692f09a4752b80d874d888164399483fff50515c2bc33c0f9cfe"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\desktop533-before-no-task.png",
+      "bytes": 55482,
+      "sha256": "f64da624b600a57a52931f080bc6a201f3ead3afa867d3fe5fd6fe4222b9dfad"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\desktop533-before-original-child-exit.json",
+      "bytes": 612,
+      "sha256": "3e02bf5974f665c811898591d8c722095c635b6ac02ad3e56bfc4383454520fe"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\desktop533-before-visible-observations.json",
+      "bytes": 576,
+      "sha256": "c1fa149a56b8dceb8ba7ea9c1788170f34df59ebd430e15a98ed44b198f0443f"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\environment.json",
+      "bytes": 1345,
+      "sha256": "ad028ca7f243ebb1275f69bde14a6e7bdc3f2a257dc5de7de44ab601af4158d4"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\history-resume534.json",
+      "bytes": 2007,
+      "sha256": "798d12e33a9b684a4df8c64a1ffc9fa5ea1203593f771ddbec4e891f45246e77"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\host504-strict-lint-summary.json",
+      "bytes": 569,
+      "sha256": "6e4c49af6241c2e8f5f68a71c56ce12420dc7d9657ebca479eb02c81d5e53cc1"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\retained-failures.json",
+      "bytes": 9170,
+      "sha256": "510f183ac41838e0c6492de8ef700b7aee6cb81ef0927c653733d1055e09bba3"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\sdk496-history-client-widget.json",
+      "bytes": 107783,
+      "sha256": "feb1af03c57317219f3dc29e36e1116ab6b36f87ad6c891bb346deab61c4cb54"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\sdk497-first-protected-history.json",
+      "bytes": 7267,
+      "sha256": "12f4db9cf9ea365e94aae3e05c3355aaf7b869466ed80d214238e52c17d0c0b8"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\sdk507-default-build.json",
+      "bytes": 3543,
+      "sha256": "c1c42d1e0717a4ba1cb7aa3c8786e5b18bbe156bfa43849d8b292d0fa88d507f"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\sdk523-native-equivalence.json",
+      "bytes": 1910,
+      "sha256": "fcb901e8b1055996bc0d56d054aca9f072c7c96c43cdcb79495ebc3c17b5c405"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\sdk523-routing-and-wait.json",
+      "bytes": 1647,
+      "sha256": "0610eb84a1f3bb357115fb5f64badc6f63eca0dbdf26d140d527ba9a24b2ea9e"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\sdk525-known-ui-partial-and-prerequisite-failure.json",
+      "bytes": 8421,
+      "sha256": "0cee6b6f011e5cc7ce8bb40d964fce41b7d04927560dcc69ed4975250a5087ac"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\sdk526-desktop-source-binding.json",
+      "bytes": 4404,
+      "sha256": "f39e8e314261e160b829b30eded14fba72b193a32487f655e93be8ce7236c15d"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\sdk531-compiler-proof.json",
+      "bytes": 5014,
+      "sha256": "a96374940e7c5981ddb0a8b97505f4535ed3e1cad494dfecfa20a6a956e36945"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\sdk531-protected-history.json",
+      "bytes": 6655,
+      "sha256": "e35695e43d629a97dde7d8fb6a908ddb233c6971c37efd17d5d3b6c1f73a73b6"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\sdk532-six-known-plus-two-crash-ui.json",
+      "bytes": 10470,
+      "sha256": "6d09fc086844c35db18717ee2d92349e1bb26308e99a679a609cbec66eeb46a0"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-history\\sdk533-full-main-desktop.json",
+      "bytes": 3931,
+      "sha256": "5a7ca3c41f1490d188fb67ae73a3c2705dab830c940067b1977b9c59869167fb"
+    }
+  ]
+}

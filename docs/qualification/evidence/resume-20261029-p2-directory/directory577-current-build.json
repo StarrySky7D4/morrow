@@ -1,0 +1,236 @@
+{
+  "status": "CURRENT_DIRECTORY_TEST_BINARY_COMPILED_NOT_RUNTIME",
+  "source_digest": "74100e0b1d116072b3852363056be51d701c9f4fc95b0db61bd4ddab958d8b63",
+  "source_unchanged": true,
+  "exit_code": 0,
+  "seconds": 15.032,
+  "dependencies_warm": true,
+  "cold_build_claim": false,
+  "all_original_compiler_processes_closed": true,
+  "VM_calls": 0,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "binary": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\directory-sdk-build-577\\directory_protected_sdk-965813f7e93e495a.exe",
+    "bytes": 31671296,
+    "sha256": "b29212b400c94f26b50e6d657008bb520f06f3ea09570663a495706a4fdaf663"
+  },
+  "selected_program_freshly_compiled": true,
+  "guest_pins": {
+    "RUST": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-lifecycle-windows-003\\rust-target\\wasm32-unknown-unknown\\release\\morrow_fs_directory_request_guest.wasm",
+      "bytes": 175450,
+      "sha256": "210b4256a8b2fc678e7bdd07c49bf8de77cd879f2fced2e3f303590e624b8636",
+      "static_abi": {
+        "imports": [
+          {
+            "module": "morrow_task_v1",
+            "name": "read_input",
+            "params": [
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          },
+          {
+            "module": "morrow_task_v1",
+            "name": "complete",
+            "params": [
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          },
+          {
+            "module": "morrow_fs_directory_v1",
+            "name": "call",
+            "params": [
+              127,
+              127,
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          }
+        ],
+        "exports": [
+          "__data_end",
+          "__heap_base",
+          "mdr_client_accept",
+          "mdr_client_begin",
+          "mdr_client_begin_request",
+          "mdr_client_call_once",
+          "mdr_client_call_request_once",
+          "mdr_client_free",
+          "mdr_client_new",
+          "mdr_client_snapshot",
+          "mdr_client_transport_unknown",
+          "mdr_page_schema_digest",
+          "mdr_request_decode",
+          "mdr_request_encode",
+          "mdr_request_free",
+          "mdr_request_get_view",
+          "mdr_request_set",
+          "mdr_response_decode_for",
+          "mdr_response_encode",
+          "mdr_response_free",
+          "mdr_response_get_view",
+          "mdr_response_set",
+          "mdr_schema_digest",
+          "memory",
+          "mfd_directory_v1_schema_digest",
+          "mfd_page_v1_create",
+          "mfd_page_v1_decode",
+          "mfd_page_v1_encode",
+          "mfd_page_v1_entry",
+          "mfd_page_v1_free",
+          "mfd_page_v1_view",
+          "mfd_state_v1_accept_page",
+          "mfd_state_v1_admit",
+          "mfd_state_v1_free",
+          "mfd_state_v1_new",
+          "mfd_state_v1_release",
+          "mfd_state_v1_snapshot",
+          "morrow_cancel",
+          "morrow_finish",
+          "morrow_run"
+        ],
+        "start_section": false,
+        "defined_memories": [
+          {
+            "minimum_pages": 17,
+            "maximum_pages": null
+          }
+        ],
+        "function_type_refs_checked": 329,
+        "defined_functions": 326,
+        "code_bodies": 326
+      }
+    },
+    "C": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-lifecycle-windows-003\\c-cpp-build\\directory-c.wasm",
+      "bytes": 119459,
+      "sha256": "37983b5f39dee8183a9d790142659c8c11f20ee6c0cfdd9d053cf5a5e0febec3",
+      "static_abi": {
+        "imports": [
+          {
+            "module": "morrow_task_v1",
+            "name": "read_input",
+            "params": [
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          },
+          {
+            "module": "morrow_task_v1",
+            "name": "complete",
+            "params": [
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          },
+          {
+            "module": "morrow_fs_directory_v1",
+            "name": "call",
+            "params": [
+              127,
+              127,
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          }
+        ],
+        "exports": [
+          "memory",
+          "morrow_run"
+        ],
+        "start_section": false,
+        "defined_memories": [
+          {
+            "minimum_pages": 17,
+            "maximum_pages": 256
+          }
+        ],
+        "function_type_refs_checked": 271,
+        "defined_functions": 268,
+        "code_bodies": 268
+      }
+    },
+    "CPP": {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\sdk-directory-lifecycle-windows-003\\c-cpp-build\\directory-cpp.wasm",
+      "bytes": 120401,
+      "sha256": "3f3d4501a2038f85fded5174adb40fb657d15441d0280014623255242b913b42",
+      "static_abi": {
+        "imports": [
+          {
+            "module": "morrow_task_v1",
+            "name": "read_input",
+            "params": [
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          },
+          {
+            "module": "morrow_task_v1",
+            "name": "complete",
+            "params": [
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          },
+          {
+            "module": "morrow_fs_directory_v1",
+            "name": "call",
+            "params": [
+              127,
+              127,
+              127,
+              127
+            ],
+            "results": [
+              127
+            ]
+          }
+        ],
+        "exports": [
+          "__wasm_call_ctors",
+          "memory",
+          "morrow_run"
+        ],
+        "start_section": false,
+        "defined_memories": [
+          {
+            "minimum_pages": 17,
+            "maximum_pages": 256
+          }
+        ],
+        "function_type_refs_checked": 281,
+        "defined_functions": 278,
+        "code_bodies": 278
+      }
+    }
+  },
+  "guest_source_inputs_identical": true
+}

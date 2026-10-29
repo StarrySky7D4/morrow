@@ -1,0 +1,16 @@
+{
+  "status": "PASS_CLOSED_CACHE_LOSSLESS_NTFS_COMPRESSION",
+  "free_after": 8927719424,
+  "original_executables_and_evidence_retained": true,
+  "free_before": 7626936320,
+  "all_files": 17620,
+  "files_compressed": 1760,
+  "all_file_hashes_and_timestamps_verified": true,
+  "free_delta_not_isolated_from_other_activity": true,
+  "current_roles052_untouched": true,
+  "unknown_owner_contacts": 0,
+  "runtime_outcomes_unchanged": true,
+  "file_deletions": 0,
+  "observed_free_delta": 1300783104,
+  "VM_calls": 0
+}

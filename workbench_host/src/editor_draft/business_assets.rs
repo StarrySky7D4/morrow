@@ -15,11 +15,10 @@ impl WorkbenchState {
             || !matches!(self.host.store_local().lookup(operation)?, Lookup::Absent) {
             return Err("draft business staging original identity changed".into());
         }
-        if let Some(parent) = draft_parent_id(&slot) {
-            if self.draft_card(card, parent)?.ok_or("draft staging ancestor missing")?.1.active {
+        if let Some(parent) = draft_parent_id(&slot)
+            && self.draft_card(card, parent)?.ok_or("draft staging ancestor missing")?.1.active {
                 return Err("retire the original ancestor before business staging".into());
             }
-        }
         match (self.host.store_local().card(card)?, request.source_kind) {
             (None, 1) if slot.source_card.is_empty() => {}
             (Some(source), 0) if source.encode() == slot.source_card => {}

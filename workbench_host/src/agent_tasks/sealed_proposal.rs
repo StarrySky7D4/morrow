@@ -73,15 +73,15 @@ impl SealedProposalLease {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn prepare(manager: &mut Manager, catalog: &mut CatalogOwner,
         runtime: &mut HostRuntime, host: &SessionExecHost, spec: SealedProposalSpec,
-        expires: u64, now: u64) -> std::result::Result<Self, SealedProposalPrepareFailure> {
+        expires: u64, now: u64) -> std::result::Result<Self, Box<SealedProposalPrepareFailure>> {
         // The immutable9552 module imports morrow_agent_session_process_v1.call.
         // Select that exact profile directly; never try/fallback from single-R2.
         let package = match catalog.connect(manager, runtime, host, &spec.id, spec.wrapper,
             spec.expected, expires, now) {
             Ok(package) => package,
-            Err(error) => return Err(SealedProposalPrepareFailure {
+            Err(error) => return Err(Box::new(SealedProposalPrepareFailure {
                 error: format!("original combined proposer catalog connection: {error:?}").into(), lease: None,
-            }),
+            })),
         };
         let checked: Result<()> = (|| {
             let p = package.package();
@@ -105,7 +105,7 @@ impl SealedProposalLease {
         let lease = Self { package, spec, attempted: false, completed: false };
         match checked {
             Ok(()) => Ok(lease),
-            Err(error) => { lease.request_stop(); Err(SealedProposalPrepareFailure { error, lease: Some(lease) }) }
+            Err(error) => { lease.request_stop(); Err(Box::new(SealedProposalPrepareFailure { error, lease: Some(lease) })) }
         }
     }
     pub(crate) fn stop_handle(&self) -> Arc<dyn Fn() + Send + Sync> { self.package.stop_handle() }

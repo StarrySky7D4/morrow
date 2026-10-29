@@ -54,7 +54,7 @@ pub fn compose(
     {
         return Err("invalid final cards-edit capture composition".into());
     }
-    if snapshot.todos != "" {
+    if !snapshot.todos.is_empty() {
         return Err("TaskId editor content is not a card capture".into());
     }
     let facts = Facts {

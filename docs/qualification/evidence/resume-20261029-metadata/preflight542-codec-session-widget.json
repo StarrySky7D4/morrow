@@ -1,0 +1,74 @@
+{
+  "status": "PASS_METADATA_COMPLETION_PREFLIGHT",
+  "source_digest": "bedc9de25d8b80ff5b7cbbf30223f0e0b604c05ae2aa4efe897d25375bbb95ed",
+  "source_unchanged": true,
+  "commands": [
+    {
+      "name": "dart",
+      "exit_code": 0,
+      "seconds": 6.281,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-preflight-542\\dart.stdout",
+        "bytes": 378,
+        "sha256": "e3596e824364e66fcd284b45e8c52748ebb0b6361f4ef9caf9834a2131509989"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-preflight-542\\dart.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "bindings",
+      "exit_code": 0,
+      "seconds": 3.219,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-preflight-542\\bindings.stdout",
+        "bytes": 29,
+        "sha256": "73053600804a903908d390418d2d78e7cbc11740d157ec1fbb6fbf0d413dceab"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-preflight-542\\bindings.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "client",
+      "exit_code": 0,
+      "seconds": 1.813,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-preflight-542\\client.stdout",
+        "bytes": 7150,
+        "sha256": "7122275df16e2f1df8e55d363e7d6c4554ff1f6f62626e52ef0a3b754c19726b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-preflight-542\\client.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "widget",
+      "exit_code": 0,
+      "seconds": 18.813,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-preflight-542\\widget.stdout",
+        "bytes": 4308,
+        "sha256": "263fb30c9a98df9fff69f07dcda4fcf39b7dbea132ac787a850f5c347b56318f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-preflight-542\\widget.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "frozen_public_inputs_verified": 57,
+  "all_original_top_level_processes_closed": true,
+  "cold_build_claim": false,
+  "native_runtime": false,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

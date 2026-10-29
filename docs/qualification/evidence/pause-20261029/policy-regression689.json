@@ -1,0 +1,111 @@
+{
+  "status": "PASS_POLICY_BINARY_IDENTITY_REGRESSION_WITHOUT_NATIVE_POLICY_CALLS",
+  "source_digest": "7981c5d15be83d8a92e27dee78149436e0394c22e40ac36a1320c47a3c1d6eca",
+  "source_unchanged": true,
+  "original_counterexample_reproduced": true,
+  "original_pure_tests_alone_did_not_detect_split": true,
+  "corrected_observed_and_second_domain_verified": true,
+  "compiled_variants": 3,
+  "cases": [
+    {
+      "label": "original-inconsistent",
+      "compile_exit": 0,
+      "original_process_exit": 0,
+      "independent_dotnet_binary_sid_check": true,
+      "original_methods": 18,
+      "rejected_bad_inputs": 0,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fixed-policy-regression-689\\original-inconsistent\\PolicySidRegression.exe",
+        "bytes": 32256,
+        "sha256": "031c4ab6f5f1ff83d10d205bf4ad4e6641c88f5e93d65df7779082a32d941a09"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fixed-policy-regression-689\\original-inconsistent\\run.stdout",
+        "bytes": 83,
+        "sha256": "47d960dff6a89d91c202f4cc525a147fd80f2ac4c364336f30b87a0d37fd4a7d"
+      },
+      "derivation": {
+        "original_counterexample": true,
+        "expected_sid": "S-1-5-21-307430596-3187481878-1423720967-1000"
+      }
+    },
+    {
+      "label": "corrected-observed",
+      "compile_exit": 0,
+      "original_process_exit": 0,
+      "independent_dotnet_binary_sid_check": true,
+      "original_methods": 18,
+      "rejected_bad_inputs": 31,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fixed-policy-regression-689\\corrected-observed\\PolicySidRegression.exe",
+        "bytes": 32768,
+        "sha256": "e0291d353e58b675b5c63a7ac9ee9fad34d8a8ba0cf5284943470ac2fc40420e"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fixed-policy-regression-689\\corrected-observed\\run.stdout",
+        "bytes": 83,
+        "sha256": "057652ed16f3888f628e688fef70df6dc6a075a6e054deed63513534b20b2323"
+      },
+      "derivation": {
+        "original_vm_id": "b077176b-5c7d-4549-aa93-5aa09b4a8e85",
+        "original_declared_sid": "S-1-5-21-307430596-3187481878-1423720967-1000",
+        "original_encoded_sid": "S-1-5-21-2826996052-4136963862-3109888007-1000",
+        "original_identity_consistent": false,
+        "vm_id": "b077176b-5c7d-4549-aa93-5aa09b4a8e85",
+        "account_sid": "S-1-5-21-307430596-3187481878-1423720967-1000",
+        "expected_binary_sid_hex": "010500000000000515000000c4045312161dfdbd0742dc54e8030000",
+        "native_input_derived_from_fixed_text": true,
+        "guard_before_native_allocation_and_lsa": true,
+        "vm_calls": 0,
+        "lsa_calls": 0
+      }
+    },
+    {
+      "label": "corrected-other-domain",
+      "compile_exit": 0,
+      "original_process_exit": 0,
+      "independent_dotnet_binary_sid_check": true,
+      "original_methods": 18,
+      "rejected_bad_inputs": 31,
+      "executable": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fixed-policy-regression-689\\corrected-other-domain\\PolicySidRegression.exe",
+        "bytes": 32768,
+        "sha256": "63c71173babe0a6aff1d11bf0f4c0605c7670bf500129c4b1e68e4c635eb04a7"
+      },
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\fixed-policy-regression-689\\corrected-other-domain\\run.stdout",
+        "bytes": 83,
+        "sha256": "057652ed16f3888f628e688fef70df6dc6a075a6e054deed63513534b20b2323"
+      },
+      "derivation": {
+        "original_vm_id": "b077176b-5c7d-4549-aa93-5aa09b4a8e85",
+        "original_declared_sid": "S-1-5-21-307430596-3187481878-1423720967-1000",
+        "original_encoded_sid": "S-1-5-21-2826996052-4136963862-3109888007-1000",
+        "original_identity_consistent": false,
+        "vm_id": "b077176b-5c7d-4549-aa93-5aa09b4a8e85",
+        "account_sid": "S-1-5-21-4294967295-0-2147483648-1001",
+        "expected_binary_sid_hex": "010500000000000515000000ffffffff0000000000000080e9030000",
+        "native_input_derived_from_fixed_text": true,
+        "guard_before_native_allocation_and_lsa": true,
+        "vm_calls": 0,
+        "lsa_calls": 0
+      }
+    }
+  ],
+  "helper": {
+    "path": "C:\\ms1020\\tool\\windows\\rebind_fixed_policy.py",
+    "bytes": 7248,
+    "sha256": "31796ed21b629155e8c29380847f584da94fdbbd1f8cbce0d865ba8fc4f26809"
+  },
+  "retained_failure": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case684-summary.json",
+    "bytes": 7138,
+    "sha256": "6bae67244a6095cb644be59c6ec5afef393b806a9e086cd0dbe35d54a91020d0"
+  },
+  "VM_calls": 0,
+  "LSA_calls": 0,
+  "old_unknown_owner_contacts": 0,
+  "original_sources_changed": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

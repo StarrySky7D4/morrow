@@ -1,0 +1,255 @@
+{
+  "status": "PASS_EXACT_DEPLOYMENT_DERIVATION_AND_PUBLIC_SYNTAX",
+  "source_digest": "a038cc73bb370e1cd5b028aa022c744192005fd10ec6dec8a489819aaf12c993",
+  "vm_id": "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
+  "firmware_uuid": "d3d88282-6edf-48eb-b124-e66ed94cc45c",
+  "account_sid": "S-1-5-21-118159-3579602386-2696782449-1000",
+  "checked_original_sources": [
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\Root47-QA1855.cs",
+        "bytes": 2757,
+        "sha256": "6e45c5789b29ee11d8926b3a97ed7174504b1c3db19f143a1f3f8cc85977c2f0"
+      },
+      "derived_sha256": "6e45c5789b29ee11d8926b3a97ed7174504b1c3db19f143a1f3f8cc85977c2f0",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\Root47Controller1725.IO.cs",
+        "bytes": 14682,
+        "sha256": "b5dbd6f2c77b89ffe33ec122be5b5919c0ecf3ffac59006c7f2b166453dcd092"
+      },
+      "derived_sha256": "b5dbd6f2c77b89ffe33ec122be5b5919c0ecf3ffac59006c7f2b166453dcd092",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\Root47Controller1725.Privileges.cs",
+        "bytes": 5905,
+        "sha256": "382bb416b90fca44c5f3e7ee161c197805d846c7ad43243f273d27224223d908"
+      },
+      "derived_sha256": "382bb416b90fca44c5f3e7ee161c197805d846c7ad43243f273d27224223d908",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\Root47Controller1725.Pure.cs",
+        "bytes": 15632,
+        "sha256": "8887dd68f0998f1418cf839d00736e321486e36241d2aa0a9a01965519c19581"
+      },
+      "derived_sha256": "5c3e16203be596e515775f2d5af93ffcf0b8de275a8bdc796e160db0fcdd624c",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\Root47Controller1725.PureTests.cs",
+        "bytes": 13693,
+        "sha256": "4e7c3bd8f915e0fc030fdecdc4c262696fb5e49b2faab10b348ea97fe3cbc4cd"
+      },
+      "derived_sha256": "7213cebd2bff36fb83c44e15c5c88c4638d8dc1e0c1b7a907c39c8ff3bfe3afa",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\Root47Controller1725.cs",
+        "bytes": 23880,
+        "sha256": "751c67d7dc2c50d018ffbbfbc01c6a6ef4633aeb597e67e8fb7958b6877e2015"
+      },
+      "derived_sha256": "751c67d7dc2c50d018ffbbfbc01c6a6ef4633aeb597e67e8fb7958b6877e2015",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\RootPPrebirth1682.Pure.cs",
+        "bytes": 13675,
+        "sha256": "c550a29816ed6b56bdbe3a021099bf5cac66bdc513390037defff5d7f37c8ffd"
+      },
+      "derived_sha256": "4078ad22d572835fb29644e5f513bb2c5cfb203f81c075a91d049068403c1bac",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\RootPPrebirth1682.PureTests.cs",
+        "bytes": 13754,
+        "sha256": "b9c0eb10b14525efb53e2852e1680d7f82433e1db921b3570b33cb4bb496a187"
+      },
+      "derived_sha256": "ae6c18603c00f8b453a6c620e827b412b424531ac128c72d27fa664991f3be70",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\RootPPrebirth1682.cs",
+        "bytes": 37847,
+        "sha256": "428ecba7f5e2a7f161875485aac53fe48f3493824bef7c5eb8b9c31b91d6a49b"
+      },
+      "derived_sha256": "428ecba7f5e2a7f161875485aac53fe48f3493824bef7c5eb8b9c31b91d6a49b",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\RootPPrebirth1701.Input.cs",
+        "bytes": 17638,
+        "sha256": "98d36d0f3768147f6e5731561fc7bcf322506ea7422f5a0899acf91e783ab2b7"
+      },
+      "derived_sha256": "98d36d0f3768147f6e5731561fc7bcf322506ea7422f5a0899acf91e783ab2b7",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\RootPPrebirth1701.InputPureTests.cs",
+        "bytes": 9396,
+        "sha256": "f4995733af8c9ebe5881eff616b63d2e726d30acb3a1731b250f533435a72d4d"
+      },
+      "derived_sha256": "f4995733af8c9ebe5881eff616b63d2e726d30acb3a1731b250f533435a72d4d",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\RootPPrebirth1701.Protocol.cs",
+        "bytes": 7768,
+        "sha256": "cae93970959666313fb6e3495f5eb8302145d68e93f6384da69921221f9d5c03"
+      },
+      "derived_sha256": "cae93970959666313fb6e3495f5eb8302145d68e93f6384da69921221f9d5c03",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\RootPPrebirth1718.Metadata.cs",
+        "bytes": 2798,
+        "sha256": "b6bc62d5999844b369b80554d6472b73ccd16972c71d4e95091518abaa8e4ebd"
+      },
+      "derived_sha256": "dc2802538831f4d6defd888e139d5b96d6803ed36484c38b32d4c560ccaa8c1d",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\RootPPrebirth1718.MetadataPureTests.cs",
+        "bytes": 9796,
+        "sha256": "15a2216bffaba40481755a41507057601d17452f9cd0210e2376eff40aecc57b"
+      },
+      "derived_sha256": "7ba5c23dfd8b7c9c3f5f0a6ede071474f8036233e0cc9d01d5f600ba1192d1f3",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\Root47FirstPrompt2169.cs",
+        "bytes": 3147,
+        "sha256": "4b6c7f7fd51aed61896e115bd224bd515fe651f7c3f01d0ef8a4f1130ffac3cb"
+      },
+      "derived_sha256": "4b6c7f7fd51aed61896e115bd224bd515fe651f7c3f01d0ef8a4f1130ffac3cb",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\Root47FirstPrompt2169.PureTests.cs",
+        "bytes": 6173,
+        "sha256": "2b5a4005d36051c279fb9f987fb37174990cdc551b6df1d035fccd34584aed5a"
+      },
+      "derived_sha256": "2b5a4005d36051c279fb9f987fb37174990cdc551b6df1d035fccd34584aed5a",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\ms1020\\build\\local-continuation\\controller-004\\source\\Root47FirstPrompt2169.PureEntry.cs",
+        "bytes": 2386,
+        "sha256": "c9b15243ad91feaea1e87d18ab0f8f43d96fc7bd817c30f18772cd6db9e40d91"
+      },
+      "derived_sha256": "c9b15243ad91feaea1e87d18ab0f8f43d96fc7bd817c30f18772cd6db9e40d91",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-assign-primary-policy-review1719\\AssignPrimary1709.cs",
+        "bytes": 14868,
+        "sha256": "62e9c587645b06eea4e979cd2d793c736de0af8fe9f27ad2bc743b3eda596830"
+      },
+      "derived_sha256": "62e9c587645b06eea4e979cd2d793c736de0af8fe9f27ad2bc743b3eda596830",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-assign-primary-policy-review1719\\AssignPrimary1709.Pure.cs",
+        "bytes": 9072,
+        "sha256": "55036fb9d14e1e0dadff580d9b50b205a6a6de562fd9fcc41320c12fa4bccdfd"
+      },
+      "derived_sha256": "b3036a63c7bb901b4d31537ccd3c85b83dda057da91f29645c1b5cd313a40f88",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-assign-primary-policy-review1719\\AssignPrimary1709.PureTests.cs",
+        "bytes": 8971,
+        "sha256": "c966f48e6e0be08a355eeaa70fbd5a0322ad28d0a1f4a138386741ef970ed679"
+      },
+      "derived_sha256": "c966f48e6e0be08a355eeaa70fbd5a0322ad28d0a1f4a138386741ef970ed679",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-transaction-review2770\\RootTransactionCapture1737.cs",
+        "bytes": 10297,
+        "sha256": "10107dd59e9faba8bd7ecaf1282928b4f4ad6a24e8587f3b4d52de4f48a80896"
+      },
+      "derived_sha256": "10107dd59e9faba8bd7ecaf1282928b4f4ad6a24e8587f3b4d52de4f48a80896",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-transaction-review2770\\RootTransactionCapture1737.Metadata.cs",
+        "bytes": 8554,
+        "sha256": "a07b09ab436bc0c56d35eed13736418b48f2ae24fabd753fd9d582efad87e2ed"
+      },
+      "derived_sha256": "f732470fb3ad0dcd22bfec49a1e397a0e75b0589f1f84e4de860ab4651ebee31",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-transaction-review2770\\Guest-Readiness1737.ps1",
+        "bytes": 12855,
+        "sha256": "726867001b2fb8455dc3507220146290cb7616d5058c81aa63524dece7dfec59"
+      },
+      "derived_sha256": "5a40821baad48ba9c03a0712398ec9241cd580118badfcea9d3c6f5da8b79015",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-target-policy-controller-candidate2762\\pure85-bridge\\RootPromptAllQA2187.cs",
+        "bytes": 1400,
+        "sha256": "e71f95e7b3e5b0b1daf48a658853662ea0e02e28bd3cba9bb90d03344383ce13"
+      },
+      "derived_sha256": "e71f95e7b3e5b0b1daf48a658853662ea0e02e28bd3cba9bb90d03344383ce13",
+      "exact_inverse_deployment_mapping": true
+    },
+    {
+      "original": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\Morron\\c28-production-owner-stage755\\AssignPrimary-QA1720.cs",
+        "bytes": 2659,
+        "sha256": "ada331d19f94ad4896bea711cdbbaf9e956e9e7875196331959b33720adcd47d"
+      },
+      "derived_sha256": "ada331d19f94ad4896bea711cdbbaf9e956e9e7875196331959b33720adcd47d",
+      "exact_inverse_deployment_mapping": true
+    }
+  ],
+  "policy_identity_preflight": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\policy-identity-preflight-703\\result.json",
+    "bytes": 1946,
+    "sha256": "49550a5294f2663b9b5c4139667d7e7b2dd743020e0a882780047e5fc4b0249d"
+  },
+  "host_guard": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-deployment-preflight-utf8\\guard.ps1",
+    "bytes": 4656,
+    "sha256": "01838a38ef411d6d4cae50f83113ef29eb6c052704ceffe71652edbea51e53b8"
+  },
+  "diagnostic_guest": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case703-deployment-preflight-utf8\\diagnostic-guest.ps1",
+    "bytes": 2087,
+    "sha256": "97c5285974bab710a45c7dce0aeab33d46fb19fbd6d5cfe05cc8f64632c79cfa"
+  },
+  "parser_exit": 0,
+  "VM_calls": 0,
+  "credential_reads": 0,
+  "host_mutations": 0,
+  "old_unknown_owner_contacts": 0,
+  "runtime_accepted": false
+}

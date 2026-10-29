@@ -1,0 +1,8 @@
+{
+  "source_digest": "110bd3d26239eadab2e61e914f3d2c72986c4197c7ef94cd5c335dec7de7966e",
+  "previous_source": "5d298b758a324ea144ff66986edf01f3ee397ecf5eb975318469cace6ef510f3",
+  "inverse_source": "5d298b758a324ea144ff66986edf01f3ee397ecf5eb975318469cace6ef510f3",
+  "test_files": 10,
+  "all_other_repository_bytes_identical": true,
+  "production_changes": false
+}

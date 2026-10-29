@@ -135,9 +135,24 @@ class _Script {
       case host.Action.blobUploadRead:
       case host.Action.blobUploadInspect:
       case host.Action.blobUploadConfirm:
+      case host.Action.blobUploadMetadataReview:
+      case host.Action.blobUploadMetadataComplete:
         return _reply(
           (r) => r.error = 'original owner is busy',
           readOnly: true,
+        );
+      case host.Action.blobUploadHistoryList:
+        return _reply(
+          (r) => r.initBlobUploadHistory(0),
+          readOnly: true,
+          warning: 'local history only',
+        );
+      case host.Action.blobUploadHistoryInspect:
+        expect(request.blobUploadHistoryQuery!.submission, _startSubmission);
+        return _reply(
+          (r) => r.error = 'local history entry not found',
+          readOnly: true,
+          warning: 'local history only',
         );
       case host.Action.commandSubmit:
         expect(request.ioKey, _task);
@@ -294,6 +309,61 @@ except BaseException:
 void main() {
   final python = Platform.environment['MORROW_CLOSE_TEST_PYTHON'];
   test(
+    'history reads bypass a pending service command without changing presentation',
+    () async {
+      final script = _Script((r) {
+        expect(r.action, host.Action.readUiLocale);
+        return _locale('en');
+      })..ready = false;
+      final child = await _Child.open(python!, script);
+      Future<String>? business;
+      try {
+        await child.backend.startServiceRun(_start());
+        final writable = child.backend.writable;
+        final warning = child.backend.maintenanceWarning;
+        business = child.backend.readUiLocale();
+        await child.waitAction(host.Action.commandStatus);
+        final page = await child.backend.listBlobUploadHistory();
+        expect(page.records, isEmpty);
+        await expectLater(
+          child.backend.inspectBlobUploadHistory(_startSubmission),
+          throwsA(
+            isA<StateError>().having(
+              (e) => e.message,
+              'local error',
+              'local history entry not found',
+            ),
+          ),
+        );
+        expect(child.backend.writable, writable);
+        expect(child.backend.maintenanceWarning, warning);
+        expect(script.commands.map((r) => r.action), [
+          host.Action.readUiLocale,
+        ]);
+        expect(
+          script.actions
+              .where((a) => a == host.Action.blobUploadHistoryList)
+              .length,
+          1,
+        );
+        expect(
+          script.actions
+              .where((a) => a == host.Action.blobUploadHistoryInspect)
+              .length,
+          1,
+        );
+        script.ready = true;
+        expect(await business, 'en');
+      } finally {
+        script.ready = true;
+        await business;
+        await child.dispose();
+      }
+    },
+    skip: python == null,
+  );
+
+  test(
     'planning and upload controls bypass pending service business and stay with original owner',
     () async {
       final script = _Script((r) {
@@ -360,6 +430,21 @@ void main() {
             _task,
             BlobUploadObservation.staged,
           ),
+          () => child.backend.reviewBlobUploadMetadata(_task),
+          () => child.backend.completeBlobUploadMetadata(
+            BlobUploadMetadataReview(
+              key: _task,
+              submission: _startSubmission,
+              permit: _digest,
+              phase: BlobUploadMetadataPhase.observation,
+              writeRequired: true,
+              originalUnknown: false,
+              originalPhase: BlobUploadObservation.staged,
+              originalError: null,
+              observedAt: BigInt.one,
+              acknowledgementAt: null,
+            ),
+          ),
         ]) {
           await expectLater(
             operation().timeout(const Duration(seconds: 2)),
@@ -382,6 +467,8 @@ void main() {
             host.Action.blobUploadRead,
             host.Action.blobUploadInspect,
             host.Action.blobUploadConfirm,
+            host.Action.blobUploadMetadataReview,
+            host.Action.blobUploadMetadataComplete,
           ]),
         );
         script.ready = true;

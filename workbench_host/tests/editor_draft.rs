@@ -665,7 +665,7 @@ fn failed_journal_update_keeps_prior_draft_and_original_operation_retryable() {
 
 fn source_fields(host: &Workbench) -> Fields {
     let record = match host.read_versioned(CARD).unwrap() {
-        VersionedRecord::Tasks(record) => record,
+        VersionedRecord::Tasks(record) => *record,
         VersionedRecord::Legacy(_) => panic!("expected migrated V2 card"),
     };
     let p = &record.properties;

@@ -1,0 +1,49 @@
+{
+  "status": "UNKNOWN_RETAINED_UI_INPUT_WAIT_EXPIRED_NO_REPLAY",
+  "case": "655",
+  "source_digest": "5fc113edec1e26baa7db613458f9fd37fbfc1b6ee655113c738b3211289be1b6",
+  "retained": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-654\\unknown-retained.json",
+    "bytes": 896,
+    "sha256": "dc66519e3e3cc08126ead192e1a28040271a50f3e462754ff7d8f79abacee652"
+  },
+  "preparation": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-654\\preparation.json",
+    "bytes": 3719,
+    "sha256": "b9a49434b10bc03d4f0f9ad75ee7d9efca8bac17d1d530d4eac43d54b76497c2"
+  },
+  "original_processes": [
+    {
+      "pid": 6232,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-654\\app\\morrow_studio.exe",
+      "creation_filetime": 134377256687198592
+    },
+    {
+      "pid": 21520,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-654\\app\\morrow-workbench-supervisor.exe",
+      "creation_filetime": 134377256702964802
+    },
+    {
+      "pid": 7452,
+      "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-text-desktop-654\\app\\morrow-workbench-host.exe",
+      "creation_filetime": 134377256703605200
+    }
+  ],
+  "outer_exec_session": 11145,
+  "qualified": false,
+  "visible_before_deadline": {
+    "plugin_imported": true,
+    "plugin_enabled": true,
+    "local_save_permission_configured": true,
+    "text_dialog_opened": true,
+    "automated_text_entry_attempts": 2,
+    "observed_text_characters": 0,
+    "upload_proposal_generated": false
+  },
+  "later_user_reply": "User reported completion after observation deadline; no old-owner contact or post-deadline inspection performed",
+  "old_owner_contacts_after_retention": 0,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "utc": "2026-10-29T06:32:20.001458+00:00"
+}

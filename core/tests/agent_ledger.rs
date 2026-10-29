@@ -470,7 +470,7 @@ fn genuine_v24_readonly_and_additive_migration_preserve_original_business_bytes(
     drop(store);
     Connection::open(&path)
         .unwrap()
-        .execute_batch("DROP TABLE blob_stage_history; DROP TABLE blob_stage_operations; DROP TABLE agent_ledger; PRAGMA user_version=24;")
+        .execute_batch("DROP TABLE blob_upload_history; DROP TABLE blob_upload_requests; DROP TABLE blob_stage_history; DROP TABLE blob_stage_operations; DROP TABLE agent_ledger; PRAGMA user_version=24;")
         .unwrap();
     let readonly = Store::open_read_only_audited(&path, trust.clone()).unwrap();
     assert!(
@@ -501,7 +501,7 @@ fn premature_or_missing_ledger_schema_is_rejected_without_repairing_history() {
     drop(store);
     Connection::open(&path)
         .unwrap()
-        .execute_batch("DROP TABLE blob_stage_history; DROP TABLE blob_stage_operations; PRAGMA user_version=24;")
+        .execute_batch("DROP TABLE blob_upload_history; DROP TABLE blob_upload_requests; DROP TABLE blob_stage_history; DROP TABLE blob_stage_operations; PRAGMA user_version=24;")
         .unwrap();
     assert!(matches!(
         Store::open_existing(&path, Default::default()),
@@ -597,7 +597,7 @@ fn additive_migration_crash_keeps_v24_or_v25_without_changing_existing_events() 
         drop(store);
         Connection::open(&path)
             .unwrap()
-            .execute_batch("DROP TABLE blob_stage_history; DROP TABLE blob_stage_operations; DROP TABLE agent_ledger; PRAGMA user_version=24;")
+            .execute_batch("DROP TABLE blob_upload_history; DROP TABLE blob_upload_requests; DROP TABLE blob_stage_history; DROP TABLE blob_stage_operations; DROP TABLE agent_ledger; PRAGMA user_version=24;")
             .unwrap();
         crash(&path, "migration", boundary);
         assert_eq!(version(&path), expected);

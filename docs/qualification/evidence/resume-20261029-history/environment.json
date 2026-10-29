@@ -1,0 +1,61 @@
+{
+  "drives": [
+    {
+      "free_bytes": 216166862848,
+      "name": "C"
+    },
+    {
+      "free_bytes": 6852435968,
+      "name": "D"
+    }
+  ],
+  "vms": [
+    {
+      "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+      "name": "Morrow Windows Acceptance 20261023 029",
+      "state": "Saved"
+    },
+    {
+      "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+      "name": "Morrow Windows Acceptance 20261023 030",
+      "state": "Saved"
+    },
+    {
+      "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+      "name": "Windows 11 开发环境",
+      "state": "Running"
+    },
+    {
+      "id": "4072a8d9-2f4f-4d02-98ee-ad436dd3342e",
+      "name": "Morrow Windows Acceptance 20261027 045",
+      "state": "Saved"
+    }
+  ],
+  "cache_locations": [
+    {
+      "user": "D:\\build_cache\\cargo",
+      "name": "CARGO_HOME"
+    },
+    {
+      "user": "D:\\build_cache\\cargo-target\\default",
+      "name": "CARGO_TARGET_DIR"
+    },
+    {
+      "user": "D:\\build_cache\\pub",
+      "name": "PUB_CACHE"
+    },
+    {
+      "user": "D:\\build_cache\\gradle",
+      "name": "GRADLE_USER_HOME"
+    },
+    {
+      "user": "D:\\build_cache\\tmp",
+      "name": "TEMP"
+    },
+    {
+      "user": "D:\\build_cache\\tmp",
+      "name": "TMP"
+    }
+  ],
+  "utc": "2026-10-28T19:35:10.7774265Z"
+}

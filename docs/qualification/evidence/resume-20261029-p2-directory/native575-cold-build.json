@@ -1,0 +1,26 @@
+{
+  "status": "COLD_COMPILE_PASS_NOT_RUNTIME_ACCEPTED",
+  "source_digest": "74100e0b1d116072b3852363056be51d701c9f4fc95b0db61bd4ddab958d8b63",
+  "source_unchanged": true,
+  "exit_code": 0,
+  "seconds": 455.61,
+  "compiler_artifacts": 622,
+  "all_compiler_artifacts_fresh_false": true,
+  "all_original_compiler_processes_closed": true,
+  "full_P2_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "VM_calls": 0,
+  "setup_calls": 0,
+  "tests_run": 0,
+  "binary": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-native-refusal-build-575\\codex_windows_sandbox-b4f3e615ec35c711.exe",
+    "bytes": 39332864,
+    "sha256": "7127ee130653fac0dce585508fdb27531c8ff75323cd97c1fcb5da2a33eebbae"
+  },
+  "original_compiler_output": {
+    "path": "D:\\build_cache\\qualification-targets\\p2-refusal575-NATIVE-74100e0b1d116072\\x86_64-pc-windows-msvc\\debug\\deps\\codex_windows_sandbox-b4f3e615ec35c711.exe",
+    "bytes": 39332864,
+    "sha256": "7127ee130653fac0dce585508fdb27531c8ff75323cd97c1fcb5da2a33eebbae"
+  }
+}

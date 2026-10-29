@@ -1,0 +1,118 @@
+{
+  "source_before": "55d09a0cb9dc1108a55d3e4fa8a6715e431f2231c69b7bbb21589d1e83481928",
+  "source_after": "bedc9de25d8b80ff5b7cbbf30223f0e0b604c05ae2aa4efe897d25375bbb95ed",
+  "preimages": [
+    {
+      "path": "workbench_host/src/blob_upload_journal.rs",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\workbench_host\\src\\blob_upload_journal.rs",
+      "sha256": "50e32c6ed4c676888f9051404f3131041714c655967b91f109269e09576179cd"
+    },
+    {
+      "path": "workbench_host/src/blob_upload_protocol.rs",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\workbench_host\\src\\blob_upload_protocol.rs",
+      "sha256": "99b48db2bd7fee34b7ebee7d3342241e9bea38094f75a066791163338e8ac3f5"
+    },
+    {
+      "path": "workbench_host/schemas/host.capnp",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\workbench_host\\schemas\\host.capnp",
+      "sha256": "a2db0eaef1bbc3d2e772192835cac1c847aa619d87930abbdd2056fc861ac13e"
+    },
+    {
+      "path": "workbench_host/tests/blob_upload_protected.rs",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\workbench_host\\tests\\blob_upload_protected.rs",
+      "sha256": "b4bb9daff09899fc2f5dfe36d9bfac8ac399a183308173654e76dc26d306e1dc"
+    },
+    {
+      "path": "lib/plugins/blob_upload_native.dart",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\lib\\plugins\\blob_upload_native.dart",
+      "sha256": "0e1f04d20612bde9d43379e3e18ceac78160b6acedf51a5668ba77b649492446"
+    },
+    {
+      "path": "lib/plugins/blob_upload_session.dart",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\lib\\plugins\\blob_upload_session.dart",
+      "sha256": "f071e21b073531c97069dc9b6669ea9f8b636e5ce0837c1dffd703bab90f50b7"
+    },
+    {
+      "path": "packages/morrow_core_client/test/blob_upload_metadata_client_test.dart",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\packages\\morrow_core_client\\test\\blob_upload_metadata_client_test.dart",
+      "sha256": "25b0927ea477a26735e5f9d567a46e66590096f034b2dbc77450841c5b9e7358"
+    },
+    {
+      "path": "packages/morrow_core_client/test/blob_upload_metadata_session_test.dart",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\packages\\morrow_core_client\\test\\blob_upload_metadata_session_test.dart",
+      "sha256": "ec8a19f4403e812ede4a6660e560b698fc91517bd21b6a4e3fbdb55b7728f9e8"
+    },
+    {
+      "path": "test/service_business_routing_native_test.dart",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\test\\service_business_routing_native_test.dart",
+      "sha256": "bdd1e9a66ea1130c9866a8324a118326e1bce600d4bddb0ab2944ea6faae2181"
+    },
+    {
+      "path": "lib/plugins/generated/host.capnp.ids.dart",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\lib\\plugins\\generated\\host.capnp.ids.dart",
+      "sha256": "03bcc630352c83a6e20dfcabb8e0b4ed683c3a1c73f3706e46b2d4ac72a30ac2"
+    },
+    {
+      "path": "lib/plugins/generated/host.capnp.native.dart",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\lib\\plugins\\generated\\host.capnp.native.dart",
+      "sha256": "9d59e4027ccb11cd8b98802b42d5c715f49176afcca0c625faa3a6482b03f904"
+    },
+    {
+      "path": "lib/plugins/generated/host.capnp.web.dart",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\lib\\plugins\\generated\\host.capnp.web.dart",
+      "sha256": "f90eb67ab487e9b827c3d491eb245820f6a0a242c421913b933b6c4cd0ba55b1"
+    },
+    {
+      "path": "lib/plugins/generated/identity.dart",
+      "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-review-binding-541\\preimages\\lib\\plugins\\generated\\identity.dart",
+      "sha256": "c85d1ed59b9b7cff785e6017268572f003cbdd14acd5e273122d3765048ab395"
+    }
+  ],
+  "only_changed_paths": [
+    "workbench_host/src/blob_upload_journal.rs",
+    "workbench_host/src/blob_upload_protocol.rs",
+    "workbench_host/schemas/host.capnp",
+    "workbench_host/tests/blob_upload_protected.rs",
+    "lib/plugins/blob_upload_native.dart",
+    "lib/plugins/blob_upload_session.dart",
+    "packages/morrow_core_client/test/blob_upload_metadata_client_test.dart",
+    "packages/morrow_core_client/test/blob_upload_metadata_session_test.dart",
+    "test/service_business_routing_native_test.dart",
+    "lib/plugins/generated/host.capnp.ids.dart",
+    "lib/plugins/generated/host.capnp.native.dart",
+    "lib/plugins/generated/host.capnp.web.dart",
+    "lib/plugins/generated/identity.dart"
+  ],
+  "all_other_repository_bytes_identical": true,
+  "core_inputs_verified": 249,
+  "core_outputs": [
+    {
+      "path": "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\libmorrow_core.rlib",
+      "bytes": 20142646,
+      "sha256": "6286f9bbf20858d25d3a297ea3b0d6af51359d8ca8cf694ad17fe0c62342d937"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\morrow_core.dll",
+      "bytes": 4794880,
+      "sha256": "a49750794b11c0c0daa90c85680d5fb6906ca3a536cbec87af0fc7cc41068582"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\morrow_core.dll.lib",
+      "bytes": 5432,
+      "sha256": "027afff1668885d62e5337934e3b0c51d4b69ddd7592c3480a23a9d202e4582c"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\morrow_core.dll.exp",
+      "bytes": 3078,
+      "sha256": "c3112531fa3aa984da39a779269043f52e8028ed25f13d81488fe1fd203b729f"
+    },
+    {
+      "path": "D:\\build_cache\\qualification-targets\\blob-workbench376\\release\\deps\\morrow_core.pdb",
+      "bytes": 2650112,
+      "sha256": "950823a9925f3a791c9d9e81bd75c06688dd91031727b47d3ca932d41a4f0850"
+    }
+  ],
+  "Core_540_evidence_bytes_unchanged": true,
+  "source_accepted": false,
+  "release_eligible": false
+}

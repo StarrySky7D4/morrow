@@ -1,0 +1,48 @@
+{
+  "status": "FAILURE_RETAINED_NO_REPLAY",
+  "source_digest": "74100e0b1d116072b3852363056be51d701c9f4fc95b0db61bd4ddab958d8b63",
+  "source_unchanged": true,
+  "error": "AssertionError: ",
+  "passed": [],
+  "methods_passed": 0,
+  "original_process_results": [
+    {
+      "label": "discovery",
+      "pid": 1924,
+      "exit_code": 0,
+      "seconds": 0.031,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\directory-sdk-current-578\\discovery.stdout",
+        "bytes": 1914,
+        "sha256": "da959739c1b9ab3842164a6a7cd581358ec81561ddb24e36d9538f30cab75f38"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\directory-sdk-current-578\\discovery.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "all_original_top_level_processes_closed": true,
+  "actual_languages": [
+    "RUST",
+    "C",
+    "CPP"
+  ],
+  "independent_guest_pins_verified": true,
+  "frozen_public_inputs_verified": 57,
+  "original_native_filesystem_and_managed_owner": true,
+  "retained_selection_cases": 6,
+  "existing_eight_resource_cap_unchanged": true,
+  "guest_recompilation": false,
+  "VM_calls": 0,
+  "host_account_or_policy_calls": 0,
+  "old_unknown_owner_contacts": 0,
+  "formal_picker": false,
+  "rendered_UI": false,
+  "watch_or_rename": false,
+  "full_G04_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

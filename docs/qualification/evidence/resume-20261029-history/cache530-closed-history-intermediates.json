@@ -1,0 +1,20 @@
+{
+  "protected_pins_verified": 534,
+  "concurrent_build_and_archive_make_free_delta_nonisolated": true,
+  "observed_free_delta": 2028445696,
+  "free_before": 4898922496,
+  "DLLs_deleted": 0,
+  "future_rebuild_requires_new_empty_target": true,
+  "status": "PASS_RETIRED_COLD_BUILD_CACHE_RECLAIM",
+  "current_SDK_build_caches_preserved": true,
+  "source_files_deleted": 0,
+  "PDBs_deleted": 0,
+  "all_remaining_file_metadata_verified": true,
+  "VM_calls": 0,
+  "files": 1410,
+  "unknown_owner_contacts": 0,
+  "free_after": 6927368192,
+  "logical_bytes": 2060587775,
+  "reports_deleted": 0,
+  "executables_deleted": 0
+}

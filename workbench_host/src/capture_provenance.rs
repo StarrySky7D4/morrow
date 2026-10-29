@@ -971,8 +971,8 @@ impl WorkbenchState {
 
         // A prior attempt may have failed after its exact proposal was stored.
         // Keep that proposal bound to its original intent and never rerun its guest.
-        if let Some(recovery) = self.editor_recovery(id)? {
-            if recovery.active {
+        if let Some(recovery) = self.editor_recovery(id)?
+            && recovery.active {
                 if recovery.operation_id != operation {
                     return Err("card has an unresolved captured editor proposal".into());
                 }
@@ -1008,7 +1008,6 @@ impl WorkbenchState {
                     repeated: false,
                 });
             }
-        }
 
         let source = self.authorized_read(id)?;
         if source.summary().revision != revision {

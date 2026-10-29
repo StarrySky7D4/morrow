@@ -1,0 +1,342 @@
+{
+  "status": "PASS_CURRENT_METADATA_FAULT_REGRESSION",
+  "source_digest": "110bd3d26239eadab2e61e914f3d2c72986c4197c7ef94cd5c335dec7de7966e",
+  "source_unchanged": true,
+  "error": null,
+  "commands": [
+    {
+      "name": "original-reserve-before",
+      "exit_code": 0,
+      "seconds": 0.313,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\original-reserve-before.stdout",
+        "bytes": 204,
+        "sha256": "c303cd7a219016f177552b402f033d1abe363e01fb7d34ccee6ba4d394c5fd07"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\original-reserve-before.stderr",
+        "bytes": 264,
+        "sha256": "a48eccdd00bcdba1bc80998121954932ce663bffa7a367ba960c41bd881b3746"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "original-reserve-after",
+      "exit_code": 0,
+      "seconds": 0.219,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\original-reserve-after.stdout",
+        "bytes": 204,
+        "sha256": "9c3ebc7a94ec5129eef701679659ef04a5438af109da5e821330fef60bff523f"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\original-reserve-after.stderr",
+        "bytes": 263,
+        "sha256": "8cf2667a7e62d2edc9a9fde5d0af44921ee13814cbc696352e7c04b848f8d3b4"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "original-observe-before",
+      "exit_code": 0,
+      "seconds": 0.25,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\original-observe-before.stdout",
+        "bytes": 204,
+        "sha256": "2f07cef356f98927fa60137bdd718856d68c662cc5d9e2ad1b86bf8b868410aa"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\original-observe-before.stderr",
+        "bytes": 391,
+        "sha256": "1474fb27f1a483cfe7ff81b9552f746c41ea4709bb7afa59500d00c5dece50a1"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "original-observe-after",
+      "exit_code": 0,
+      "seconds": 0.218,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\original-observe-after.stdout",
+        "bytes": 204,
+        "sha256": "5a07856371f884df329bd1dd94b8b92662717be2970f133667878dacd2a1996e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\original-observe-after.stderr",
+        "bytes": 390,
+        "sha256": "34c76ce14b8f68c59b92664cadff73c191b2737b0fa9115f7eeb26f44df376e0"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "original-ack-before",
+      "exit_code": 0,
+      "seconds": 0.219,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\original-ack-before.stdout",
+        "bytes": 204,
+        "sha256": "5a07856371f884df329bd1dd94b8b92662717be2970f133667878dacd2a1996e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\original-ack-before.stderr",
+        "bytes": 387,
+        "sha256": "02672d6fb3c3060581262cf1479ff1a2606a744ad827557b9afdf1c687a4634a"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "original-ack-after",
+      "exit_code": 0,
+      "seconds": 0.219,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\original-ack-after.stdout",
+        "bytes": 204,
+        "sha256": "5a07856371f884df329bd1dd94b8b92662717be2970f133667878dacd2a1996e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\original-ack-after.stderr",
+        "bytes": 386,
+        "sha256": "c99750a51dc229cdd4282c39f95962a39ec5124e4bdac4cda9a824ad72747034"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "complete-observe-before-normal-none",
+      "exit_code": 0,
+      "seconds": 0.375,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-observe-before-normal-none.stdout",
+        "bytes": 191,
+        "sha256": "c5ab0cb85f867de8aede452afb7db7e8703d5b74d577d5447f969e66731d0594"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-observe-before-normal-none.stderr",
+        "bytes": 403,
+        "sha256": "89f696232f5caa1535e8fe2aaa7a666f6c8a5778100606242f3e092a0cda823b"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "complete-observe-after-normal-none",
+      "exit_code": 0,
+      "seconds": 0.344,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-observe-after-normal-none.stdout",
+        "bytes": 191,
+        "sha256": "d50edfb0d58296351efccf9aafec21df490494840f12782329e46bfce5587ae4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-observe-after-normal-none.stderr",
+        "bytes": 402,
+        "sha256": "1d54708eee2b395a5c0c7e4436096ec22db5e4bb11ca80da5f96ea9a92436426"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "complete-ack-before-normal-none",
+      "exit_code": 0,
+      "seconds": 0.344,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-ack-before-normal-none.stdout",
+        "bytes": 191,
+        "sha256": "d50edfb0d58296351efccf9aafec21df490494840f12782329e46bfce5587ae4"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-ack-before-normal-none.stderr",
+        "bytes": 399,
+        "sha256": "08d99b87a8fb3f20ed30a2ea91a1a73853db56ea4d10cb7b0d3efc71753a1a28"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "complete-ack-after-normal-none",
+      "exit_code": 0,
+      "seconds": 0.359,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-ack-after-normal-none.stdout",
+        "bytes": 191,
+        "sha256": "8895ba7d7adda80d6abb478635e0e80689f310bd90760b1af5ed16e6f60fe183"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-ack-after-normal-none.stderr",
+        "bytes": 398,
+        "sha256": "426ba2cac79d06193afb7c19042700850f26198f3208f2577099e9e5e2f8b1f9"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "complete-observe-before-cancel-none",
+      "exit_code": 0,
+      "seconds": 0.313,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-observe-before-cancel-none.stdout",
+        "bytes": 191,
+        "sha256": "cfbc5a6e3a1cfd334d2400e37e907fe27c8f765f601fd876048c6021cdc39b48"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-observe-before-cancel-none.stderr",
+        "bytes": 406,
+        "sha256": "ce96690a64209ff59c5a0c3fa1b9dd21b26adee0c583e4db85fb4eecf4766a88"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "complete-observe-before-gate-none",
+      "exit_code": 0,
+      "seconds": 0.344,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-observe-before-gate-none.stdout",
+        "bytes": 265,
+        "sha256": "160d99e74461f13dec22d16f1dda9f9c2f83c05e724d763d7045790b40b9a365"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-observe-before-gate-none.stderr",
+        "bytes": 401,
+        "sha256": "93728ff3e8032562656aeec3c3aaae4454caa225a82c4a006d212fbd4cad3658"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "complete-ack-before-gate-none",
+      "exit_code": 0,
+      "seconds": 0.39,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-ack-before-gate-none.stdout",
+        "bytes": 265,
+        "sha256": "758541e8300d49a421ac563bcc60af947408d74c350a26126cc21ed9bd09a3ea"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-ack-before-gate-none.stderr",
+        "bytes": 397,
+        "sha256": "f448d73f7e67e5d9aae074d794da41c6f07de2b784d920cfc8e4a71bc9a42f2f"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "complete-observe-before-normal-before",
+      "exit_code": 0,
+      "seconds": 0.844,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-observe-before-normal-before.stdout",
+        "bytes": 265,
+        "sha256": "b7b21a0b45e88df5b5f194055abd5ee424dfe57522bfa2a36f87359010b60208"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-observe-before-normal-before.stderr",
+        "bytes": 405,
+        "sha256": "32d1e6f6f5ef59072be5bef42eb0635834661492b5ef950299d88e4e3bae76ce"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "complete-observe-before-normal-after",
+      "exit_code": 0,
+      "seconds": 0.922,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-observe-before-normal-after.stdout",
+        "bytes": 265,
+        "sha256": "d120cf79e2acefb77764c1e21e841b88977f09d38671573af172df0484d729ca"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-observe-before-normal-after.stderr",
+        "bytes": 404,
+        "sha256": "8fea119104e751783ef3f73431289033b043206db6e3551e6d1c85a8212bcbd1"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "complete-ack-before-normal-before",
+      "exit_code": 0,
+      "seconds": 1.172,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-ack-before-normal-before.stdout",
+        "bytes": 265,
+        "sha256": "7d469cecf18b1146d459e6de87a78626cbe907170957e86708dedb9f2129e538"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-ack-before-normal-before.stderr",
+        "bytes": 401,
+        "sha256": "d1adf47fe74b10bb0d3765f156ee6785e723db6e18318293e97b77f8b67231f7"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "complete-ack-before-normal-after",
+      "exit_code": 0,
+      "seconds": 0.781,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-ack-before-normal-after.stdout",
+        "bytes": 265,
+        "sha256": "af11a4d3287c0b7b125c13e0386c0e5e08fae8227224c835a95f5fe465ea750b"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\complete-ack-before-normal-after.stderr",
+        "bytes": 400,
+        "sha256": "47eb320d32ae9d4b0a4ef2cf4a2d240542b51ee399b8b82aa17bf5841b2c12a7"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "name": "review-invalidation",
+      "exit_code": 0,
+      "seconds": 0.469,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\review-invalidation.stdout",
+        "bytes": 197,
+        "sha256": "26fb0154ff467b0959cc8dd0a06289b888b2d0522fbbd969c8d90d71d995e818"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\host-metadata-faults-570\\review-invalidation.stderr",
+        "bytes": 395,
+        "sha256": "182145b28362f5d2c8d60c77ce1d78cee9a6f217e9998025b58744003c7f6604"
+      },
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "explicit_native_fault_cases": 18,
+  "all_original_top_level_processes_closed": true,
+  "frozen_public_inputs_verified": 57,
+  "negative_fixture_debt_is_not_product_retirement": true,
+  "old_unknown_owner_contacts": 0,
+  "VM_calls": 0,
+  "host_policy_or_account_calls": 0,
+  "desktop_UI": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

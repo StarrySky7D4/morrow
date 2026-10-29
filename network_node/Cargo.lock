@@ -1140,6 +1140,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-blob-transfer-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2 0.10.9",
+]
+
+[[package]]
+name = "morrow-blob-upload-proposal-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "morrow-blob-transfer-v1",
+ "sha2 0.10.9",
+]
+
+[[package]]
+name = "morrow-blob-upload-request-v1"
+version = "0.1.0"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "morrow-blob-transfer-v1",
+ "sha2 0.10.9",
+]
+
+[[package]]
 name = "morrow-core"
 version = "0.1.9-test.50"
 dependencies = [
@@ -1205,7 +1234,11 @@ dependencies = [
 name = "morrow-plugin-runtime"
 version = "0.1.9-test.50"
 dependencies = [
+ "cc",
  "getrandom 0.4.3",
+ "morrow-blob-transfer-v1",
+ "morrow-blob-upload-proposal-v1",
+ "morrow-blob-upload-request-v1",
  "morrow-core",
  "morrow-fs-directory-request-v1",
  "morrow-fs-directory-v1",

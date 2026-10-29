@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "utc": "2026-10-28T17:00:25.411566+00:00",
+  "scope": "Public source-bound qualification summaries; no credentials, private input or VM images",
+  "files": [
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029\\build476-harness-lock.json",
+      "bytes": 1083,
+      "sha256": "f28cf0482301c13b83af4b2e7f72eae71a4c171391ce76246683d2de5d1e0a7f"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029\\build478-cold-role-set.json",
+      "bytes": 4989,
+      "sha256": "3de4cfbbebd7fedafe0f0771270193990cf6997b75433d7fce75efd9f9ff94e5"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029\\cache473-retired-compiler-leaves.json",
+      "bytes": 636,
+      "sha256": "1dab67db4a357ee6f12f2a1b055e8ebd3400a14c4b132472f6e101b18d7fa2e2"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029\\p2-case480-logon-refusal.json",
+      "bytes": 1337,
+      "sha256": "106cd7533356c7ed1de3e68f34fa7ace3fa0c7d07d1d3d90c00c4d0453e1d101"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029\\p2-case481-original47-nine.json",
+      "bytes": 975,
+      "sha256": "a7da03c2d5e69b4ef45da3952265a01e614c1ce03bf236fb9670af9eb147db78"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029\\p2-matrix482-current.json",
+      "bytes": 40320,
+      "sha256": "d3c884055ab1c714b227e1ed39b8909c8bd03f070ce70d55343db4f49b63a13d"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029\\sdk470-canonical-text-tests.json",
+      "bytes": 1416,
+      "sha256": "4f0a7e51f07b4cb369bf923f248d14aaf296cf95d00ebe2fcab36cc2f35ece3d"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029\\windows-resume482.json",
+      "bytes": 12956,
+      "sha256": "19e79dd60ca6a59821b9397da94dd0de02541c12262e13d1ce4e38fe9e276ce0"
+    }
+  ]
+}

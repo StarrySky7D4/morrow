@@ -1,0 +1,272 @@
+{
+  "schema": 1,
+  "utc": "2026-10-28T22:18:06.973220+00:00",
+  "scope": "Four scoped synthetic Windows metadata completions; no credentials or disks",
+  "files": [
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\binding552-test-only.json",
+      "bytes": 390,
+      "sha256": "a6d5fda683eb84e7f2c4fc2cc0cd97e931ff36b0bf4c9e725ed2c99f55c0f47d"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\binding555-test-only.json",
+      "bytes": 384,
+      "sha256": "d8becd8fafdfa68f115f2573de4077041c07e3f7276263b18376eba96bdf18a7"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\build550-receipt-parser-failure-retained.json",
+      "bytes": 10752,
+      "sha256": "0517772b81f5d0932ac69d6ca652270c8277f03dd5364b1fe7e40db066e43b42"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop551-kernel.json",
+      "bytes": 1144,
+      "sha256": "f8bb4f2c1ab15f4178a2310105effbf9c2db5a5ee47bc7eac544cde9df1b4c32"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop554-observe-before-finished.png",
+      "bytes": 53863,
+      "sha256": "3e4bdc648d418f2f47b7d235237f86739985f60e9ce3c5e9e1bc00c8184001d4"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop554-observe-before-finished.txt",
+      "bytes": 1234,
+      "sha256": "026c4dd5566e239a650b7401ea136d3ddf0a0491856e1610727fc087d542dbb3"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop554-observe-before-history-result.json",
+      "bytes": 787,
+      "sha256": "49a5262a40f3e294ccdc7d980a58fa30434f3b7a9331b1416cb3f479fe770211"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop554-observe-before-history.png",
+      "bytes": 49786,
+      "sha256": "5fa807a7b063beeed369d7210ee8df676fe1427e82bcb44d34b03771fbfc4b39"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop554-observe-before-history.txt",
+      "bytes": 1138,
+      "sha256": "e83eb164cd31e33cf5e99fbdc9e5d979c8e8edf2559751ef89dd5c5b42d354ad"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop554-observe-before-processes-returned.json",
+      "bytes": 1986,
+      "sha256": "c775a88d26cce45deeded055c3f3f56be9225f9fe3527d6c3a0d70a18d8044ee"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop554-observe-before-ready.json",
+      "bytes": 888,
+      "sha256": "9ef2e365e1edd34d9531eeaa0defc78d8eb6c5f6c391d72541ed37e22b60b9be"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop554-observe-before-review.png",
+      "bytes": 76280,
+      "sha256": "ee206527ce080e9c1425d9f019de70c39c81183e2f83aac4f71a72152bbfbaa7"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop554-observe-before-review.txt",
+      "bytes": 1934,
+      "sha256": "33454fb9fe125ced75c3ee4f30caf395d87ebd8354bf13f19a2b2b062304e0bd"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop554-observe-before-visible-observations.json",
+      "bytes": 402,
+      "sha256": "95446f0d1cacced12944f428612aad7468be3c22b96d2a80612f37bb60ed68e7"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop554-partial-run-retained.json",
+      "bytes": 187,
+      "sha256": "b545d1484cfafb129e5410d6dc28b6a99d1eaee3274deb326f10e86162cee94b"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop554-stopped-proposal-not-passed.json",
+      "bytes": 507,
+      "sha256": "e2a90e95fdfd78395596bfe970765ab55db5eff67e78b199d401e2008fb26f96"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-after-finished.jpg",
+      "bytes": 53488,
+      "sha256": "3539a52f1072d25c4e65ab5a29e06b040016671aa90c789a730591ce6e881788"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-after-finished.txt",
+      "bytes": 1205,
+      "sha256": "1fa4449efdc7c919ccc755ed112a395d404d3f77818022cb00cb7059c17a1c22"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-after-history-result.json",
+      "bytes": 772,
+      "sha256": "c9493ac39b1f164bd9378bc6e11d66f3d3fcc565285b1e44a0a1068b70f54d18"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-after-history.jpg",
+      "bytes": 49751,
+      "sha256": "5775e626f7db7c606b541c6d4232547adf81c937a37216a052b91d7a48318051"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-after-history.txt",
+      "bytes": 1112,
+      "sha256": "f384098ca3261c3b9b1b35c7d07152bfa520410f5688e65cf25d675836c4d13b"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-after-processes-returned.json",
+      "bytes": 1952,
+      "sha256": "9cd44306c322014dca1c938ec4c487c2c93d4ec3dc949cc2c1a5c5f761453415"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-after-ready.json",
+      "bytes": 868,
+      "sha256": "1ffdf59a57970129f49b6798d1c7792d686e3329c47931a693ee89e2554fc09b"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-after-review.jpg",
+      "bytes": 74155,
+      "sha256": "beef47efe154add827eb3a9173cab5ee1c9cb5184cfb6ee0d20e023488f61bf4"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-after-review.txt",
+      "bytes": 2010,
+      "sha256": "958232d02ec9df2e7a133e161f405e936ba1ec6ae3caa303f6820d11f1873f33"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-after-visible-observations.json",
+      "bytes": 398,
+      "sha256": "140de9b6b4d73517d9b6af89bd709a179405525588951703359f1c5b6bd6eb2d"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-before-finished.jpg",
+      "bytes": 53376,
+      "sha256": "45a68816f7563b542fc5d95014894f177e7f060220e08162f3e2cb24a8cabade"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-before-finished.txt",
+      "bytes": 1205,
+      "sha256": "5ef45c6fe439317b120159c9c3717e84c40129078666a1ee2c15f74f739f96a4"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-before-history-result.json",
+      "bytes": 775,
+      "sha256": "c190dfaa47e33a5d363b8924ec9405811bf970daf37bd8c0a24c5ba5b40c7b59"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-before-history.jpg",
+      "bytes": 49758,
+      "sha256": "250236d54736b260b47e21fa6f0a98866232f879442fac244e63c72aa466bd1a"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-before-history.txt",
+      "bytes": 1112,
+      "sha256": "9ad8eff257ba00a49411a7944765b442a902aab505e1f555bdbc2e40290f4b62"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-before-processes-returned.json",
+      "bytes": 1958,
+      "sha256": "4f07af7b8048834c79479e28dd709988f7a67deb7701427ac8356d4c251eb9a7"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-before-ready.json",
+      "bytes": 872,
+      "sha256": "597b7a3da631dd188a321c780d43045a38706c8f0462e999948ee4bce0648a54"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-before-review.jpg",
+      "bytes": 74267,
+      "sha256": "f96cd5328dc111f5da0706b78b34d21c6b6d23a1a72f5a2604e3775a7f7d6fca"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-before-review.txt",
+      "bytes": 2013,
+      "sha256": "d048451e1c5f00a0fe87778030025fb87f509ed85e107d4e240923fb315a48b4"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-ack-before-visible-observations.json",
+      "bytes": 398,
+      "sha256": "db00e3fbc571be3488f4cf599d6aaf6f45e7be05da507da533963e027d2881af"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-observe-after-finished.jpg",
+      "bytes": 53913,
+      "sha256": "38ca2e08a0ebbec191bb8881170c262aab9521535ec5e326f25f1cbc7b509ae5"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-observe-after-finished.txt",
+      "bytes": 1205,
+      "sha256": "52165b9a8bc536955cef2f042bccedf4d030667675deb91a8d2db35a236fbd1e"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-observe-after-history-result.json",
+      "bytes": 784,
+      "sha256": "9ab9937d9eacdafbaafa2418da377c996ffdb4daeaf4526a341a481fa8a4ba31"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-observe-after-history.jpg",
+      "bytes": 49711,
+      "sha256": "90fba640bdbbc84f185ab0fe2408c79e5abd29d662306468aed902804202d118"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-observe-after-history.txt",
+      "bytes": 1112,
+      "sha256": "291a79bdc73d4977780b9059e775624640baecb602f1bba1ab3a17e95e59c0f6"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-observe-after-processes-returned.json",
+      "bytes": 1980,
+      "sha256": "1c4a2757fa14a49e7ac57986bf6edcc92ad2ba3d4fc0208ed6bdddd7d68c4786"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-observe-after-ready.json",
+      "bytes": 884,
+      "sha256": "45224ebdb1fb281f31ea83feee48edd6c08012b74c590eaa942ec0de25abc31c"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-observe-after-review.jpg",
+      "bytes": 76104,
+      "sha256": "fb64c6b70f93a11e2acb5c88b4ea3a8bee72a0fe00c00e20fbda5dc34c166396"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-observe-after-review.txt",
+      "bytes": 1891,
+      "sha256": "21a698fa42c0b8cd3052b2103a8496b5f6fcfcb2b145f38b23164c4ee651a1a3"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-observe-after-visible-observations.json",
+      "bytes": 402,
+      "sha256": "bf57a3319c2f47a37a0135747e75407305308a26f4182cdb163ae88ad96c4006"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\desktop558-three-fresh-windows.json",
+      "bytes": 7270,
+      "sha256": "30a848961155e6848040d9626d268eaa795883a0fa7047aae64d12ea71c811fa"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\environment.json",
+      "bytes": 1345,
+      "sha256": "985c76606d0a7792d3c94a270f32ce4e411f74a76e966bc1ebbd27ad25b7da4f"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\host557-strict-lint-failed.json",
+      "bytes": 357413,
+      "sha256": "55e0a010a45c93c1819604af518015edd980f146a179b9277e1403dda6ec6847"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\metadata-desktop559.json",
+      "bytes": 12362,
+      "sha256": "9f358aca9ff71ebb338829afb9da37e53be3112c67e710b4ce72e904da031663"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\native552-five-exact-variants.json",
+      "bytes": 17787,
+      "sha256": "b8f4652aa230faf7744c364a9b0ad5c5ed45bb02c6c62735214c4ab58fbd9685"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\native553-unknown-retained.json",
+      "bytes": 194,
+      "sha256": "4cb0bc44799afc232827d70e6d774e0d761f1f2b68153b0b054138d4543ec60b"
+    },
+    {
+      "path": "C:\\ms1020\\docs\\qualification\\evidence\\resume-20261029-metadata-desktop\\native556-four-original-owners.json",
+      "bytes": 5368,
+      "sha256": "84cd877bf257a43a3b9dca7a6d0f2e0c546ae095d9d3fd6a673c3230af882fd2"
+    }
+  ]
+}

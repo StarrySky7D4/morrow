@@ -55,7 +55,7 @@ pub enum SessionPoll {
 enum PendingKind {
     Open,
     AdmitWriter { session_id: String },
-    Exchange { request: Request, writer: Option<Writer> },
+    Exchange { request: Box<Request>, writer: Option<Writer> },
 }
 struct Pending {
     submission: Submission,
@@ -249,7 +249,7 @@ impl ProductSessionController {
             endpoint: endpoint.id(), canonical: Zeroizing::new(canonical.to_vec()),
         };
         self.delivery_armed = mutation;
-        let submission = self.enqueue(command, PendingKind::Exchange { request, writer })?;
+        let submission = self.enqueue(command, PendingKind::Exchange { request: Box::new(request), writer })?;
         self.seen.push(id);
         Ok(submission)
     }
@@ -303,7 +303,7 @@ impl ProductSessionController {
                         SessionCompletion::WriterAdmitted { writer, generation: authority.generation() }
                     }
                     (PendingKind::Exchange { request, .. }, AgentReply::NativeSession(bytes)) => {
-                        let decoded = match Reply::decode_for(&request, &bytes) {
+                        let decoded = match Reply::decode_for(request, bytes) {
                             Ok(decoded) => decoded,
                             Err(_) => { self.seal(AgentError::Unknown); return Err(AgentError::Unknown); }
                         };
@@ -367,9 +367,8 @@ fn definite_rejection(error: AgentError) -> bool {
 }
 impl Drop for ProductSessionController {
     fn drop(&mut self) {
-        if self.delivery_armed || self.pending.is_some() || self.sealed {
-            if let Some(endpoint) = &self.endpoint { endpoint.mark_unknown(); }
-        }
+        if (self.delivery_armed || self.pending.is_some() || self.sealed)
+            && let Some(endpoint) = &self.endpoint { endpoint.mark_unknown(); }
         for lease in &self.writers {
             if self.delivery_armed || self.pending.is_some() || self.sealed { lease.authority.mark_unknown(); }
             let _ = lease.authority.close();

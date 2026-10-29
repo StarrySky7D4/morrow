@@ -68,7 +68,7 @@ fn idea(id: &str) -> Idea {
 
 fn tasks(host: &Workbench, id: &str) -> morrow_workbench_host::versioned_record::TaskRecord {
     match host.read_versioned(id).unwrap() {
-        VersionedRecord::Tasks(record) => record,
+        VersionedRecord::Tasks(record) => *record,
         VersionedRecord::Legacy(_) => panic!("card remained in legacy format"),
     }
 }

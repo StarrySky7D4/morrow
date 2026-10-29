@@ -1,0 +1,18 @@
+{
+  "exit_code": 101,
+  "source_digest": "1de075935d3753b2fccacc9003622c9e4efc3343a5b759ffe9a099f66f7a0a1e",
+  "source_unchanged": true,
+  "diagnostic_levels": {
+    "error": 59,
+    "warning": 35,
+    "note": 0
+  },
+  "total_diagnostics": 94,
+  "new_history_module_diagnostics": [],
+  "original_evidence": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-host-lint-504\\result.json",
+    "bytes": 357408,
+    "sha256": "408eaf8d52a1bb38bb1cd2b63d9db649a916dad4938b780d81156eb4cde54b99"
+  },
+  "gate": "OPEN"
+}

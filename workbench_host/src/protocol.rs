@@ -287,7 +287,9 @@ fn is_scheduler_action(action: wire::Action) -> bool {
             | wire::Action::BlobPlanRead | wire::Action::BlobPlanCancel | wire::Action::BlobPlanAcknowledge
             | wire::Action::BlobPlanApprove | wire::Action::BlobPlanDiscover)
         || matches!(action, wire::Action::BlobUploadStart | wire::Action::BlobUploadStatus
-            | wire::Action::BlobUploadRead | wire::Action::BlobUploadInspect | wire::Action::BlobUploadConfirm)
+            | wire::Action::BlobUploadRead | wire::Action::BlobUploadInspect | wire::Action::BlobUploadConfirm
+            | wire::Action::BlobUploadHistoryList | wire::Action::BlobUploadHistoryInspect
+            | wire::Action::BlobUploadMetadataReview | wire::Action::BlobUploadMetadataComplete)
         || matches!(
             action,
             wire::Action::MutationDiscover
@@ -385,6 +387,10 @@ impl ResponseTarget for Workbench {
         }
         if is_command_frame(action) {
             return Err("frame staging requires the original owner command lane".into());
+        }
+        // History reads must not poll, join or persist the current live task.
+        if blob_upload::is_history_action(action) || blob_upload::is_metadata_action(action) {
+            return blob_upload::handle(self, r, out);
         }
         // Parse and validate first. Only an actually completed worker can return
         // the original state; malformed frames do not trigger recovery work.
@@ -696,9 +702,9 @@ fn respond_target(host: &mut impl ResponseTarget, bytes: &[u8]) -> Result<Vec<u8
         if let Some(no_commit) = e.downcast_ref::<crate::tasks_content::VersionedNoCommit>() {
             // The marker is scoped to the exact direct edit request. A nested
             // command frame or any mismatched outer identity stays unknown.
-            if let Ok(message) = validated_request(bytes, 128 * 1024) {
-                if let Ok(request) = message.get_root::<wire::request::Reader>() {
-                    if matches!(
+            if let Ok(message) = validated_request(bytes, 128 * 1024)
+                && let Ok(request) = message.get_root::<wire::request::Reader>()
+                    && matches!(
                         request.get_action(),
                         Ok(wire::Action::EditTasks | wire::Action::EditCard)
                     ) && text(request.get_id()).is_ok_and(|id| id == no_commit.card_id)
@@ -707,8 +713,6 @@ fn respond_target(host: &mut impl ResponseTarget, bytes: &[u8]) -> Result<Vec<u8
                     {
                         out.set_ui_code(crate::tasks_content::VERSIONED_NO_COMMIT_UI_CODE);
                     }
-                }
-            }
         }
         out.set_error(e.to_string().as_str());
     }
@@ -987,6 +991,10 @@ fn handle_business(
         | wire::Action::BlobUploadRead
         | wire::Action::BlobUploadInspect
         | wire::Action::BlobUploadConfirm
+        | wire::Action::BlobUploadHistoryList
+        | wire::Action::BlobUploadHistoryInspect
+        | wire::Action::BlobUploadMetadataReview
+        | wire::Action::BlobUploadMetadataComplete
         | wire::Action::CommandCancel => {
             return Err("scheduler actions require the outer application".into());
         }
@@ -1503,7 +1511,7 @@ fn handle_business(
                 row.set_digest(&value.evidence_digest);
                 row.set_source_revision(value.source_revision);
                 row.set_current_revision(value.current_revision);
-                row.set_title(&value.title.chars().take(256).collect::<String>());
+                row.set_title(value.title.chars().take(256).collect::<String>());
                 row.set_status(match value.status {
                     crate::editor_recovery::EditorRecoveryStatus::Pending => 0,
                     crate::editor_recovery::EditorRecoveryStatus::Committed => 1,
@@ -1518,7 +1526,7 @@ fn handle_business(
                 return Err("editor recovery source revision changed".into());
             }
             let result = host.resume_editor_recovery(&id, &operation, r.get_sha256()?)?;
-            let record = crate::versioned_record::VersionedRecord::Tasks(result.committed);
+            let record = crate::versioned_record::VersionedRecord::Tasks(Box::new(result.committed));
             out.set_revision(result.receipt.revision);
             out.set_payload(&crate::content_api::encode_envelope(
                 crate::content_api_capnp::EnvelopeKind::Commit,
@@ -1563,7 +1571,7 @@ fn handle_business(
             let snapshot = editor_snapshot(upload.get_snapshot()?)?;
             let result =
                 host.edit_card_captured(&operation, &target, revision, &fields, &scope, snapshot)?;
-            let record = crate::versioned_record::VersionedRecord::Tasks(result.committed);
+            let record = crate::versioned_record::VersionedRecord::Tasks(Box::new(result.committed));
             out.set_revision(result.receipt.revision);
             out.set_payload(&crate::content_api::encode_envelope(
                 crate::content_api_capnp::EnvelopeKind::Commit,

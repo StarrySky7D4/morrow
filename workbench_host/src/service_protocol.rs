@@ -5,8 +5,6 @@ use morrow_core::{
     service_config::{Config, proto as config},
 };
 
-pub(crate) fn is_action(action: wire::Action) -> bool { crate::protocol::is_service_admin_action(action) }
-
 fn text(value: capnp::Result<capnp::text::Reader<'_>>, limit: usize) -> Result<String> {
     let value = value?;
     if value.len() > limit {

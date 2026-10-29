@@ -1,7 +1,7 @@
 # Local continuation, 2026-10-21
 
-Status: **resumed by direct user instruction after report publication 65072026; Windows qualification active; four VMs retained; source and release are not accepted**.
-See [the current pause and publication handoff](PAUSED_WINDOWS_20261024.md). Historical results below retain their original source and VM-state boundaries.
+Status: **paused by direct user instruction on 2026-10-29; VM047 Saved; four VMs registered; source and release are not accepted**.
+See [the current pause and publication handoff](PAUSED_WINDOWS_20261029.md). Historical results below retain their original source and VM-state boundaries.
 Working checkout: `C:\ms1020`, branch `codex/local-continue-20261020`, base
 `116d1eb9beffa1675a48eb5ab06d1abc79137ae2`. This document records the development continuation and its historical snapshots. Current acceptance scope is Windows only by direct user instruction; other platforms are deferred and not accepted. The original
 `morrow` checkout and its unrelated work were not used as the implementation tree.
@@ -1674,3 +1674,272 @@ SDK_FREEZE, strict-host lint cleanup, final source acceptance and release.
 source_accepted=false; release_eligible=false. Other platforms remain deferred.
 
 [Evidence](evidence/resume-20261028/sdk467-text-desktop-and-three-language.json).
+
+
+## Windows resume482 — 2026-10-29
+
+Work resumed at the user's request. Six actual native text test cases were
+promoted into test/blob_text_manager_native_test.dart and passed for Rust/C/C++
+at 41 and 32768 bytes, with 12 verified supervised closures and 12 independent
+closed-library reads. The old generic environment namespace does not enable
+these cases. This is headless native evidence at source63eaf4d5, not new desktop
+acceptance. The prior desktop464/467 evidence retains its own source binding.
+
+The harness lock was missing three existing local SDK modules. The reviewed
+lock repair changed no existing package version, checksum or upstream commit;
+locked offline metadata passed. All four P/C/R/S programs were then compiled
+into fresh exclusive D targets with every compiler artifact marked fresh=false.
+The canonical source and permitted role overlays were checked before dispatch.
+
+At source36802baf, VM045 case480 observed real LogonUser error1326, NULL output,
+no Runner and complete original refusal retirement, setup cleanup and same-owner
+policy restoration (355 checks). A separate fresh case481 passed the original
+47 steps and all nine requirement groups (285 checks). Both original processes
+returned zero and all their sessions closed. The VM was saved, and four VMs
+remain registered. A file-only review initially lacked its Saved prerequisite;
+that prerequisite was supplied before repeating only the file review. Neither
+runtime case was replayed. Historical Unknown owners were not contacted.
+
+The guarded cleanup removed 2884 closed compiler intermediates, 5205802158
+logical bytes; observed free-space delta was 5211934720 bytes in a nonisolated
+sample. Sources, reports, executables, DLLs, PDBs and VM disks were preserved.
+All caches and temporary build outputs remain under D:/build_cache.
+
+Durable cross-restart upload task history remains unimplemented: current task
+identity/results are in memory, while blob receipts are durable. Read-only
+historical review must not manufacture an old task, Store binding or worker,
+rewrite Unknown, release live capacity, or grant a replacement upload. Remaining
+Windows P2/P3, watch/rename, network/account/TLS, full SDK26/G04/SDK_FREEZE and
+strict-host lint gates remain open. 57 frozen public inputs are unchanged.
+source_accepted=false; release_eligible=false. No commit, push, tag or release
+was made during this resume. The earlier development snapshot remains separate.
+
+[Evidence](evidence/resume-20261029/windows-resume482.json).
+
+
+## Windows durable upload history — 2026-10-29 / checkpoint534
+
+Core schema27 now retains the original request binding, joined native result and
+original acknowledgement across reopening. The 1024-record bound reserves space
+before dispatch and does not evict acknowledged history. Private list/inspect
+actions175/176 use Capn Proto; the at-rest journal follows Core's existing
+protobuf convention. History reads do not reconstruct an old TaskKey, reclaim a
+retained worker, submit new work, acknowledge a past task or rewrite Unknown.
+
+At qualification source8a31564a, fresh cases525/532 passed six Rust/C/C++ upload
+and reopen cases plus two real abrupt-commit widget cases. Fourteen supervised
+closures and fourteen independent closed-library byte checks were verified.
+Case533 then passed both crash boundaries in the full Windows main window:
+before commit shows absent content; after commit shows saved content; both keep
+the missing original result uncertain and unacknowledged. There is no pending
+upload. All six original UI/supervisor/host processes returned zero, followed by
+two independent closed-library reads. The launcher inputs are byte-identical;
+the current Dart main was rebuilt. Default native programs retain their exact
+ddb675 build source with an exact four-Dart-file equivalence proof, not a new
+cold-build claim. No historical Unknown owner was contacted.
+
+Selected native case531 passed15 tests and six separately selected metadata
+fault points. Case524 actually recompiled Core, Host and the selected test;
+its validator mistakenly filtered only lib and missed Core rlib/cdylib. Cases509
+and524 remain failed validations; case531 independently checks the real records
+before the first runtime use on fresh stores. This is a warm-dependency build.
+The 510/521 widget timeouts remain retained with unobserved reopened-owner
+closure. The fresh repair waits for dialog reads, drains the original close
+while pumping test callbacks, and keeps history off the service business route.
+Fifteen routing/widget tests and fatal-info analysis passed. Core migration487
+retains its own4ef2178a source and352 passed/13 ignored helper entry points.
+
+Guarded cache495/530 removed8598390576 and2060587775 logical bytes respectively,
+preserving programs, reports, disks and Unknown evidence. All caches remain on D.
+There are four registered VMs; VM045 stays Saved after the source36802 P2 runs.
+The prior logon/normal47 evidence is not rebound to the new SDK source.
+
+Still open: explicit completion of precommit metadata debt, remaining P2 fault
+retirement/final source binding, final P3 binding, directory watch/rename and
+conditional ReplaceUnsupported, network/account/TLS, complete SDK26/G04/
+SDK_FREEZE, host strict lint (59 errors in the504 configuration), and release
+qualification.57 public frozen inputs are unchanged. source_accepted=false;
+release_eligible=false. Work remains active; no commit or push was performed.
+
+[Evidence](evidence/resume-20261029-history/history-resume534.json).
+
+
+## Original upload metadata completion — 2026-10-29 / checkpoint548
+
+The retained live owner can now review and explicitly complete its original
+result record or interrupted acknowledgement. Private Cap'n Proto actions177/178
+carry a single-use review; completion replies echo that original permit. The
+transaction compares the exact reviewed predecessor before appending the original
+result/timestamp. Reconciliation or a new acknowledgement invalidates an earlier
+review. No worker, upload, approval, task identity or timestamp is reconstructed
+from saved history, and an original Unknown remains Unknown.
+
+Qualification source bedc9de25d8b80ff5b7cbbf30223f0e0b604c05ae2aa4efe897d25375bbb95ed: case543 passed15 protected tests, six existing
+metadata fault points and12 completion/owner/revocation/reconciliation boundaries.
+Case542 passed66 codec/session tests and31 component/routing tests. Case540 passed
+95 Core tests (three explicit helper entry points ignored) and strict lint;
+case541 verifies its249 Core input files and full reverse-source equivalence.
+Current Host and selected native test actually compiled; exact prior Core output
+pins remain bound. Case545 rebuilt the default native Core/Host with no fault
+features or fault markers. Dependencies and unchanged Wasm outputs were warm;
+these are not cold builds.
+
+Case546 passed six current-default Rust/C/C++ upload/reopen cases and two real
+abrupt-commit history cases with production widgets. All14 supervised closures
+and14 independent closed-library reads passed. These validate ordinary upload
+and retained history on this source. They do not yet establish full Windows
+window acceptance of the new explicit metadata completion controls. Prior533
+full Windows history-window evidence stays bound to source8a31564a.
+
+The initial536 test-fixture failures remain recorded: generated builder setters
+were mistakenly read and test helpers mixed Dart URI identities. Case537 fixes
+only those test fixtures. No historical Unknown owner was contacted. All build
+and temporary outputs remain under D:\build_cache; four VM registrations are
+unchanged. No commit, push, tag or release was made.
+
+Still open: formal Windows completion-fault UI/close evidence, remaining P2/P3
+and final source binding, directory watch/rename, conditional ReplaceUnsupported,
+network/account/TLS, async/long-watch/product scope, SDK26/G04/SDK_FREEZE, host
+strict lint and release qualification. source_accepted=false;
+release_eligible=false. The complete objective remains active.
+
+[Evidence](evidence/resume-20261029-metadata/metadata-resume548.json).
+
+
+## Full Windows original metadata completion — 2026-10-29 / checkpoint559
+
+Four defined fault points now pass in the full canonical Windows application:
+result-record write before/after commit, and acknowledgement write before/after
+commit. Each window starts one original upload, displays the actual retained
+result, reviews whether a write is required, completes only that original record,
+and shows one acknowledged saved history entry. Case554's observe-before window
+and case558's three independent windows provide 12 original UI/supervisor/host
+normal exits and four independent closed-library exact-byte reads. These are
+four scoped cases, not full SDK or release acceptance.
+
+Source 3089c4a6758ce1ee40fb79184695d33e53a668e48eb4d514b124e30d4759f848 is bound through exact test-only inverse-source comparisons555
+and552 to native artifacts552 and the canonical main kernel551. The existing
+native launcher inputs remain unchanged; the launcher was not rebuilt. The four
+fixed fault hosts are compile-time qualification variants, absent by default.
+Four point selectors and six invalid feature-pair compile rejections passed;
+the normal default artifact has no qualification marker. The production
+supervisor environment policy and internal Cap'n Proto IPC remain unchanged.
+Dependencies were warm; no cold-build claim is made.
+
+Case556 separately passed all four real supervised native/production-widget
+flows, preserving original result and acknowledgement timestamps, revision and
+single-use permit identity, with four verified closures and four independent
+reads. Those counts are separate from the full-window evidence.
+
+Failures remain visible: case550's receipt parser rejected the Core target-kind
+shape after a successful original compiler exit; case552 validated those exact
+raw compiler artifacts without replaying a runtime. Case553's test harness
+missed an animating control before starting an upload; its owner remains Unknown
+and untouched. Test-only timing/focus repair555 was then validated in fresh556.
+Case554's second proposal stopped after delayed approval beyond the configured
+120-second lifetime; its record and application were closed normally, but it did
+not exercise metadata completion and is NOT passed. The batch failure remains
+retained, with no retained original process handles in its failure record; its
+last two windows were never started. Case558 used three new libraries/owners.
+
+Whole-Host strict lint557 still fails with59 errors and35 dependency warnings.
+It reports no diagnostics in the newly added upload modules; this does not make
+the whole Host clean. The57 frozen public inputs and four VM registrations are
+unchanged. Caches and temporary outputs remain in D:\build_cache. No commit,
+push, tag or release occurred.
+
+Still open: remaining Windows P2 retirement and final P2/P3 source binding,
+directory watch/rename, conditional ReplaceUnsupported, network/account/TLS,
+async/long-watch/product scope, SDK26/G04/SDK_FREEZE, strict Host lint and final
+release qualification. source_accepted=false; release_eligible=false. Goal active.
+
+[Evidence](evidence/resume-20261029-metadata-desktop/metadata-desktop559.json).
+
+
+## Host library lint and regression checkpoint — 2026-10-29 / checkpoint571
+
+The59 Host errors from case557 are resolved without new lint suppressions.
+Case563 passes the same qualified Host-library strict configuration; case569
+also passes the default Host-library configuration. Each retains35 warnings
+from the native companion dependency. This is --lib --no-deps -D warnings,
+not all-targets or dependency-wide lint acceptance.
+
+Changes make wire-encoder arguments named, retain test-only encoders under
+cfg(test), remove unused private forwarding helpers, simplify equivalent
+conditions and move oversized owned values behind Box. Original cleanup debt,
+stop ordering, result delivery, unknown-state handling and wire schemas remain.
+No account, policy, VM or historical Unknown owner was accessed by these checks.
+
+Current source 110bd3d26239eadab2e61e914f3d2c72986c4197c7ef94cd5c335dec7de7966e is byte-equivalent to lint563 production inputs through
+the exact ten-test-file inverse binding566. Case564 initially failed to compile
+a test adapter after the owned read-model change; no runtime was dispatched.
+The adapter fixes preserve its failure receipt. Case567 freshly compiled all11
+selected test programs with warm dependencies. Case568 passed150 targeted
+tests (88 selected library tests and62 integration tests), with four explicit
+fault/helper entries ignored in the ordinary run. Case570 separately passed18
+fresh original metadata-fault cases: six journal boundaries, eleven completion
+and cancellation/gate/failure cases, and one stale-review invalidation case.
+These18 cases are not18 distinct test methods and are not added to a release
+score. Negative fixture debt is not proof of normal product retirement.
+
+Every original top-level compiler/test process completed. The57 frozen public
+inputs remain byte-identical; registered VMs remain4; build and temporary
+outputs remain on D:\build_cache. No commit, push, tag or release occurred.
+
+The four full Windows metadata windows from checkpoint559 retain their original
+3089c4a6 source identity. They were not rerun after the Host lint refactor and
+are not relabeled as current-source desktop acceptance. Remaining Windows P2
+retirement and final P2/P3 binding, watch/rename, conditional ReplaceUnsupported,
+network/account/TLS, async/long-watch/product scope and SDK26/G04/SDK_FREEZE
+remain OPEN. source_accepted=false; release_eligible=false; goal ACTIVE.
+
+[Evidence](evidence/resume-20261029-host-lint/host-lint571.json).
+
+
+## Current native refusal and protected directory checkpoint — 2026-10-29 / checkpoint580
+
+Current source 74100e0b1d116072b3852363056be51d701c9f4fc95b0db61bd4ddab958d8b63 passed case576: 11 selected native methods, including
+17 actual read-only caller refusals in the same original production registry,
+34 checked token closes and seven retained Unknown controls. Case575 compiled
+all 622 reported compiler artifacts in its own previously empty D target. No
+Runner, account setup, policy change or VM execution occurred. This is local
+registry evidence; complete SDK factory capacity and full P2 remain open.
+
+Case577 freshly compiled the current directory test program using warm Host
+dependencies. The original Rust/C/C++ directory guest artifacts and their SDK
+source inputs match the independent case003 pins. Case579 passed 26 actual
+Windows protected-directory methods in separate original processes and new D
+stores: 15 lifecycle/three-language cases, six retained-selection cases and five
+private Cap'n Proto cases. These cover paging, native ancestor boundaries,
+original eight-resource limits, refusal/cancellation, once-only File transfer,
+lost start reply observation, raw UTF-16 and independent library reopening.
+Formal picker/UI, watch/rename, full G04 and full SDK are not established.
+
+Case578 stopped after discovery because the current binary also includes five
+private protocol methods omitted by the initial driver list. Its failure and
+the interpretation that zero runtime tests were dispatched are preserved.
+Case579 uses a new run identity and explicitly reviews all 26 methods; no old
+runtime or Unknown owner was retried. Every original test/compiler process from
+these new completed runs returned, and all 57 frozen inputs remain unchanged.
+
+Cache cases573/574 removed 3,799 compiler-marked .rlib/.rmeta files, logical
+5,672,152,308 bytes (about 5.28 GiB), with 1,887 protected-file checks. Executables,
+DLLs, PDBs, Wasm, sources, logs, reports and VM disks were retained. Observed free
+space change is recorded separately and is not an isolated storage benchmark.
+Two inventory guards stopped before deletion; later build receipts were pinned
+and seven empty metadata files retained. Current Host/507 warm targets stayed.
+
+Comparison with the case481 build snapshot finds 237 changed repository files
+and no changed native companion file; Host/Core/UI changes still require full
+candidate runtime qualification. The old normal47 and fault results retain
+their original source. Four VMs remain registered. The task is ACTIVE, no commit
+or push was performed, and source_accepted/release_eligible remain false.
+
+Evidence: [scope and outcome](evidence/resume-20261029-p2-directory/p2-directory580.json),
+[native P2](evidence/resume-20261029-p2-directory/native576-refusal-capacity.json),
+[directory SDK](evidence/resume-20261029-p2-directory/directory579-current-26-pass.json).
+
+
+## Paused publication checkpoint, 2026-10-29
+
+Four P2 roles052 cold-built; policy703 passed 18 pure methods and 31 malformed-input checks without LSA calls. The already-running SDK719 build closed all three original compilers. Kernel722 compiled. VM047 is Saved; case703 remains prepared and NOT_RUN. Original47 case638 and formal text/history/reopen678 retain source5fc113; neither qualifies a038. Policy failure684 and earlier Unknown outcomes are preserved. P2, current-source P3, SDK26/G04/FREEZE and release remain open. Publication changes the whole-tree digest: prove equivalence and rebind sealed preparation after explicit resume. [Current handoff](PAUSED_WINDOWS_20261029.md).

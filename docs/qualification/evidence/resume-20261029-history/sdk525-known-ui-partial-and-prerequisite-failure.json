@@ -1,0 +1,211 @@
+{
+  "status": "FAILURE_RETAINED_NO_REPLAY",
+  "error": "AssertionError: ",
+  "source_digest": "8a31564a0881b0df5ce24779369e239d9bb77c030e3dea6eb9c5668c01e80e33",
+  "source_unchanged": true,
+  "commands": [
+    {
+      "name": "framework",
+      "exit_code": 0,
+      "seconds": 1.813,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-native-ui-525\\framework.stdout",
+        "bytes": 471,
+        "sha256": "3f3a0d720d101c0b2d39ab9d15e53a5fbd6eba7145ba0581c882ea1f44facc7e"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-native-ui-525\\framework.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "known-original-history",
+      "exit_code": 0,
+      "seconds": 37.609,
+      "stdout": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-native-ui-525\\known-original-history.stdout",
+        "bytes": 739,
+        "sha256": "bb4eab7cd62ed243914e7ddd2ee66b47d7ba437e8facdcec5f72b70e8470f85a"
+      },
+      "stderr": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-native-ui-525\\known-original-history.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "known_cases": [
+    {
+      "language": "c",
+      "bytes": 32768,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "persisted_history_private_capnp": true,
+      "rendered_readonly_history_UI": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": true,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "c",
+      "bytes": 41,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "persisted_history_private_capnp": true,
+      "rendered_readonly_history_UI": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": false,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "cpp",
+      "bytes": 32768,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "persisted_history_private_capnp": true,
+      "rendered_readonly_history_UI": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": true,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "cpp",
+      "bytes": 41,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "persisted_history_private_capnp": true,
+      "rendered_readonly_history_UI": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": false,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "rust",
+      "bytes": 32768,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "persisted_history_private_capnp": true,
+      "rendered_readonly_history_UI": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": true,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    },
+    {
+      "language": "rust",
+      "bytes": 41,
+      "actual_native": true,
+      "production_Flutter_widgets": true,
+      "persisted_history_private_capnp": true,
+      "rendered_readonly_history_UI": true,
+      "category_and_proposal_approval_via_UI": true,
+      "start_and_approval_reply_discarded": true,
+      "result_reply_discarded": false,
+      "original_planning_joins": 1,
+      "original_upload_joins": 1,
+      "supervised_owners_closed": 2,
+      "independent_closed_library_checks": 2,
+      "exact_bytes_SHA": true,
+      "headless_rendering": true,
+      "desktop_UI": false,
+      "native_file_picker": false,
+      "cross_restart_Unknown_recovery": false
+    }
+  ],
+  "crash_cases": [],
+  "supervised_closures": 12,
+  "all_expected_closures_verified": false,
+  "independent_closed_reads": 12,
+  "all_expected_reads_verified": false,
+  "all_original_top_level_processes_closed": true,
+  "frozen_public_inputs_verified": 57,
+  "native_build_source": "ddb675f775f6fc3b540562ee7797dd88d1b7f8b4d7a3342e1d8b4beda656f7db",
+  "native_source_equivalence": {
+    "current_source": "8a31564a0881b0df5ce24779369e239d9bb77c030e3dea6eb9c5668c01e80e33",
+    "reconstructed_native_build_source": "ddb675f775f6fc3b540562ee7797dd88d1b7f8b4d7a3342e1d8b4beda656f7db",
+    "only_changed_paths": [
+      "lib/plugins/workbench_native.dart",
+      "test/service_business_routing_native_test.dart",
+      "test/blob_text_history_native_test.dart",
+      "test/blob_upload_history_crash_native_test.dart"
+    ],
+    "all_other_repository_bytes_identical": true,
+    "native_build_reused_from": 507,
+    "new_cold_build_claim": false,
+    "preimages": [
+      {
+        "path": "lib/plugins/workbench_native.dart",
+        "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-wait-route-522\\preimages\\lib\\plugins\\workbench_native.dart",
+        "sha256": "0b66b3447ce7a3c77fb5c961cb6cc79bde7575c3eca54f3b25bf30b8ba612a25"
+      },
+      {
+        "path": "test/service_business_routing_native_test.dart",
+        "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-wait-route-522\\preimages\\test\\service_business_routing_native_test.dart",
+        "sha256": "f9c1ffa9549c0eb6c5db55cb94c969ce1dd75f8e1c6bbd2711dc66e3080926f8"
+      },
+      {
+        "path": "test/blob_text_history_native_test.dart",
+        "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-wait-route-522\\preimages\\test\\blob_text_history_native_test.dart",
+        "sha256": "2864285d8b3e63e07a0dcb41bd9e96f6e5ee82c3c5c5ba748211aacb8dffe2ba"
+      },
+      {
+        "path": "test/blob_upload_history_crash_native_test.dart",
+        "preimage": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-wait-route-522\\preimages\\test\\blob_upload_history_crash_native_test.dart",
+        "sha256": "b9d557e30f64c482a2e48116b805ff58baba4a2b0760a3be4231360066ea3e1c"
+      }
+    ]
+  },
+  "new_native_cold_build_claim": false,
+  "qualification_fonts_only": true,
+  "desktop_UI": false,
+  "VM_calls": 0,
+  "prior_historical_Unknown_owner_contacts": 0,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

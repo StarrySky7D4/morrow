@@ -30,6 +30,8 @@ final class BlobUploadSession {
   String? _failure;
   int _completed = 0;
   final List<BlobUploadReply> _history = [];
+  BlobUploadMetadataReview? _metadataReview;
+  final Set<BlobUploadMetadataPhase> _metadataAttempts = {};
 
   bool get busy => _busy;
 
@@ -43,6 +45,19 @@ final class BlobUploadSession {
   bool get deliveryLost => _deliveryLost;
   String? get failure => _failure;
   List<BlobUploadReply> get history => List.unmodifiable(_history);
+  BlobUploadMetadataReview? get metadataReview => _metadataReview;
+  bool get canReviewMetadata =>
+      !_busy &&
+      _view != null &&
+      backend is BlobUploadMetadataBackend &&
+      _originalKey != null &&
+      _snapshot?.task.exit != null &&
+      (_snapshot?.recoveryRequired == true || _ackAttempted);
+  bool get canCompleteMetadata =>
+      !_busy &&
+      _view != null &&
+      _metadataReview != null &&
+      !_metadataAttempts.contains(_metadataReview!.phase);
   bool get canStart =>
       !_busy &&
       _view != null &&
@@ -73,6 +88,7 @@ final class BlobUploadSession {
   Future<void> detachView(Object view, {bool cancelOriginal = true}) async {
     if (!_current(view)) return;
     _view = null;
+    _metadataReview = null;
     // A planning view can delegate cancellation to its retained plan owner,
     // including an approval whose upload key has not been delivered yet.
     if (!cancelOriginal) return;
@@ -231,9 +247,73 @@ final class BlobUploadSession {
   Future<bool> repair(Object view) => _run(view, () async {
     final key = _snapshot?.task.key;
     if (key == null) throw StateError('Original key unavailable');
+    _metadataReview = null;
     await io.repairIo(key);
     _accept(await backend.statusBlobUpload(key));
   });
+  Future<bool> reviewMetadata(Object view) {
+    if (!canReviewMetadata) return Future.value(false);
+    return _run(view, () async {
+      _metadataReview = null;
+      final value = await (backend as BlobUploadMetadataBackend)
+          .reviewBlobUploadMetadata(_originalKey!);
+      if (!_same(value.key, _originalKey) ||
+          !_same(value.submission, _submission) ||
+          _metadataAttempts.contains(value.phase) ||
+          ((value.phase == BlobUploadMetadataPhase.acknowledgement) !=
+              _ackAttempted)) {
+        throw const FormatException('Original metadata review changed');
+      }
+      if (_current(view)) _metadataReview = value;
+    });
+  }
+
+  Future<bool> completeMetadata(Object view) {
+    if (!canCompleteMetadata) return Future.value(false);
+    return _run(view, () async {
+      final review = _metadataReview!;
+      _metadataReview = null;
+      _metadataAttempts.add(review.phase);
+      final value = await (backend as BlobUploadMetadataBackend)
+          .completeBlobUploadMetadata(review);
+      if (review.phase == BlobUploadMetadataPhase.acknowledgement) {
+        if (value.upload != null || !_ackAttempted) {
+          throw const FormatException('Original acknowledgement changed');
+        }
+        _rememberAcknowledged(value.task);
+      } else {
+        if (value.upload == null) {
+          throw const FormatException('Original upload record unavailable');
+        }
+        _accept(value.upload!);
+      }
+    });
+  }
+
+  void _rememberAcknowledged(IoTaskSnapshot idle) {
+    if (idle.key != null ||
+        idle.submission != null ||
+        idle.storage != IoStoragePhase.local) {
+      throw StateError('Original acknowledgement unresolved');
+    }
+    _history.add(BlobUploadReply(_snapshot!, _result));
+    _completed++;
+    _attempt = null;
+    _submission = null;
+    _originalKey = null;
+    _snapshot = null;
+    _result = null;
+    _idle = idle;
+    _readAttempted = false;
+    _deliveryLost = false;
+    _confirmed = false;
+    _cancelRequested = false;
+    _cancelSent = false;
+    _ackAttempted = false;
+    _metadataReview = null;
+    _metadataAttempts.clear();
+  }
+
   Future<bool> acknowledge(Object view) {
     if (!canAcknowledge) return Future.value(false);
     return _run(view, () async {
@@ -241,24 +321,9 @@ final class BlobUploadSession {
       // A missing response may follow a completed acknowledgement. Retain this
       // attempt and permit observation only; never send that decision twice.
       _ackAttempted = true;
+      _metadataReview = null;
       final idle = await io.acknowledgeIo(closed.task.key!);
-      if (idle.key != null || idle.storage != IoStoragePhase.local) {
-        throw StateError('Original acknowledgement unresolved');
-      }
-      _history.add(BlobUploadReply(closed, _result));
-      _completed++;
-      _attempt = null;
-      _submission = null;
-      _originalKey = null;
-      _snapshot = null;
-      _result = null;
-      _idle = idle;
-      _readAttempted = false;
-      _deliveryLost = false;
-      _confirmed = false;
-      _cancelRequested = false;
-      _cancelSent = false;
-      _ackAttempted = false;
+      _rememberAcknowledged(idle);
     });
   }
 }

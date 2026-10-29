@@ -1,0 +1,39 @@
+syntax = "proto3";
+package morrow.blob_upload_journal.v1;
+
+// At-rest host-local history, never an IPC message or a live upload capability.
+message Request {
+  bytes submission = 1;
+  string package_id = 2;
+  bytes package_digest = 3;
+  uint64 registry_revision = 4;
+  bytes nomination_ref = 5;
+  bytes owner_domain = 6;
+  string operation_id = 7;
+  uint64 byte_length = 8;
+  bytes whole_sha256 = 9;
+  string handler = 10;
+  bytes input_sha256 = 11;
+  bytes binding_sha256 = 12;
+}
+message OriginalResult {
+  // 1 absent, 2 staged, 3 released, 4 error. Error codes use the private host map.
+  uint32 kind = 1;
+  uint32 error = 2;
+  bool unknown = 3;
+  uint32 calls = 4;
+  uint64 wire_bytes = 5;
+  uint64 native_work_bytes = 6;
+  bool has_execution = 7;
+  uint32 execution_fault = 8;
+  sint32 exit_code = 9;
+  uint32 host_calls = 10;
+}
+message Record {
+  uint32 schema_version = 1;
+  Request request = 2;
+  int64 reserved_at_unix_ms = 3;
+  OriginalResult original_result = 4;
+  optional int64 observed_at_unix_ms = 5;
+  optional int64 acknowledged_at_unix_ms = 6;
+}

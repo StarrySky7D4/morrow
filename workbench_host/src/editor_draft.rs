@@ -416,8 +416,8 @@ impl WorkbenchState {
                         return Err("draft historical evidence mismatch".into());
                     }
                 }
-                if slot.active {
-                    if let Some(pin) = &slot.capture {
+                if slot.active
+                    && let Some(pin) = &slot.capture {
                         let expected = capture_attachment(pin)?;
                         let value = values.last().ok_or("draft historical capture missing")?;
                         if value.id != expected.id || value.display_name != expected.display_name
@@ -425,7 +425,6 @@ impl WorkbenchState {
                             || value.sha256 != expected.sha256
                         { return Err("draft historical capture mismatch".into()); }
                     }
-                }
                 slot
             }
             _ => return Err("operation is not a draft mutation".into()),

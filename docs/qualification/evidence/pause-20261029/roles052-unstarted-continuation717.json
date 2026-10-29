@@ -1,0 +1,32 @@
+{
+  "status": "C_R_S_NOT_PREVIOUSLY_DISPATCHED",
+  "prior_denied_admission": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\p2-build-rebase-700\\space-C.json",
+    "bytes": 622,
+    "sha256": "ac909bbad54335c24ebcdf9406c55dd403c10e2c15070ba348f32b942394fbe8"
+  },
+  "prior_roles_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\build_p2_roles_701.py",
+    "bytes": 12577,
+    "sha256": "0956bdfd86696b87a9cb98eca6572c014ba480ae42ff6429eebbb482f4814d3c"
+  },
+  "new_driver": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\build_p2_unstarted_roles_717.py",
+    "bytes": 12751,
+    "sha256": "518c3e4f7518be6f7f5ddaa08c3dfce2cee2fdd0781c79c6037a517933e65b9f"
+  },
+  "source_copy": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-052\\C-normal-derivation.json",
+    "bytes": 1939,
+    "sha256": "4d79d508db66359225e0b66541455e77f998d905ed8c3650953a47545e9212bd"
+  },
+  "parent_result": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles-052\\P\\result.json",
+    "bytes": 952,
+    "sha256": "d06346b20095ae6884208981e0d23ec99260514c208b7ea83b90f1ced42044ac"
+  },
+  "all_copied_source_bytes_verified": true,
+  "canonical_source_edits": 0,
+  "existing_compiler_replays": 0,
+  "VM_calls": 0
+}

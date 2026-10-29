@@ -147,7 +147,7 @@ pub(super) fn review<O: ManagedHostOwner>(
     context.validate_sealed_proposer(owner, operation_id, full.proposal_sha256, checkpoint)?;
     read_live(owner, context, operation_id, checkpoint)?;
     Ok(AgentReply::ToolReview {
-        review: review.deliver(),
+        review: Box::new(review.deliver()),
         observation,
     })
 }

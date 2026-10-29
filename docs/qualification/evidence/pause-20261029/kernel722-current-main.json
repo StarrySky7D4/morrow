@@ -1,0 +1,27 @@
+{
+  "status": "CANONICAL_MAIN_KERNEL_READY_NATIVE_PACKAGING_PENDING",
+  "exit_code": 0,
+  "source_digest": "a038cc73bb370e1cd5b028aa022c744192005fd10ec6dec8a489819aaf12c993",
+  "source_unchanged": true,
+  "seconds": 17.844,
+  "entry": {
+    "path": "C:\\ms1020\\lib\\main.dart",
+    "bytes": 243243,
+    "sha256": "d00a9c22a6a04331a03612767e2efcec3eef2bc785a325b26f4669920857221b"
+  },
+  "kernel": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-kernel-722\\app\\data\\flutter_assets\\kernel_blob.bin",
+    "bytes": 113307472,
+    "sha256": "76713743506061a447a0bc2c9d53de2f7529b8062d51710989fe0b71c6b59e38"
+  },
+  "executable": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\current-desktop-kernel-722\\app\\morrow_studio.exe",
+    "bytes": 2398720,
+    "sha256": "87bc90bc966ed06b949944df275e3889a21e898bed2f54dbdae4f5202310040f"
+  },
+  "native_launcher_rebuilt": false,
+  "native_launcher_source_unchanged": true,
+  "all_original_top_level_processes_closed": true,
+  "product_runs": 0,
+  "full_SDK_accepted": false
+}

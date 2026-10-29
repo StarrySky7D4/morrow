@@ -1,0 +1,300 @@
+{
+  "status": "PASS_SCOPED_FOUR_FULL_WINDOWS_ORIGINAL_METADATA_COMPLETIONS",
+  "utc": "2026-10-28T22:18:06.973220+00:00",
+  "task_status": "ACTIVE_WINDOWS_P2_AND_SDK_CONTINUATION",
+  "qualification_source": "3089c4a6758ce1ee40fb79184695d33e53a668e48eb4d514b124e30d4759f848",
+  "native_build_source": "08dab3cb66557d75890f495eee41553781feeb142e16a3aa484a3dda769c834c",
+  "kernel_source": "7745b92da4070bfcac6d65d75a10b9a08276a844dd4242f0ff5a55250dbe0b59",
+  "test_only_equivalence_chain": [
+    "binding555-test-only.json",
+    "binding552-test-only.json"
+  ],
+  "full_application_metadata_completion": "PASS_FOUR_DEFINED_ORIGINAL_OWNER_FAULT_POINTS",
+  "full_application_cases": [
+    {
+      "case": 554,
+      "phase": "observe-before",
+      "processes": [
+        {
+          "pid": 7452,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-554\\apps\\observe-before\\morrow_studio.exe",
+          "creation_filetime": 134376966476151242,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 19980,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-554\\apps\\observe-before\\morrow-workbench-supervisor.exe",
+          "creation_filetime": 134376966490743815,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 13124,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-554\\apps\\observe-before\\morrow-workbench-host.exe",
+          "creation_filetime": 134376966491310017,
+          "signaled": true,
+          "exit_code": 0
+        }
+      ],
+      "visible": {
+        "phase": "observe-before",
+        "input": "a",
+        "input_bytes": 1,
+        "original_result_saved": true,
+        "metadata_review_displayed": true,
+        "write_required": true,
+        "original_record_finished": true,
+        "persisted_original_acknowledged": true,
+        "current_content_saved": true,
+        "normal_UI_close_requested": true,
+        "synthetic_data": true,
+        "extra_uploads_started": false,
+        "qualification_host": true
+      },
+      "closed_read": {
+        "exit_code": 0,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-554\\observe-before-history.stdout",
+          "bytes": 80,
+          "sha256": "95a3ce6ab09439725fbd0cdf82852e45813d4611ae35f131c44a15366aa6bc23"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-554\\observe-before-history.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "expected_input": {
+          "path": "D:\\build_cache\\m554\\observe-before\\desktop-expected.txt",
+          "bytes": 1,
+          "sha256": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
+        },
+        "original_closed_library": true
+      }
+    },
+    {
+      "case": 558,
+      "phase": "observe-after",
+      "processes": [
+        {
+          "pid": 19500,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\apps\\observe-after\\morrow_studio.exe",
+          "creation_filetime": 134376981356457297,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 7176,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\apps\\observe-after\\morrow-workbench-supervisor.exe",
+          "creation_filetime": 134376981371233854,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 14696,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\apps\\observe-after\\morrow-workbench-host.exe",
+          "creation_filetime": 134376981371817496,
+          "signaled": true,
+          "exit_code": 0
+        }
+      ],
+      "visible": {
+        "phase": "observe-after",
+        "input": "b",
+        "input_bytes": 1,
+        "original_result_saved": true,
+        "metadata_review_displayed": true,
+        "write_required": false,
+        "original_record_finished": true,
+        "persisted_original_acknowledged": true,
+        "current_content_saved": true,
+        "normal_UI_close_requested": true,
+        "synthetic_data": true,
+        "extra_uploads_started": false,
+        "qualification_host": true
+      },
+      "closed_read": {
+        "exit_code": 0,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\observe-after-history.stdout",
+          "bytes": 80,
+          "sha256": "95a3ce6ab09439725fbd0cdf82852e45813d4611ae35f131c44a15366aa6bc23"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\observe-after-history.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "expected_input": {
+          "path": "D:\\build_cache\\m558\\observe-after\\desktop-expected.txt",
+          "bytes": 1,
+          "sha256": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d"
+        },
+        "original_closed_library": true
+      }
+    },
+    {
+      "case": 558,
+      "phase": "ack-before",
+      "processes": [
+        {
+          "pid": 7516,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\apps\\ack-before\\morrow_studio.exe",
+          "creation_filetime": 134376983928154378,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 18048,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\apps\\ack-before\\morrow-workbench-supervisor.exe",
+          "creation_filetime": 134376983942525578,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 17132,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\apps\\ack-before\\morrow-workbench-host.exe",
+          "creation_filetime": 134376983943070768,
+          "signaled": true,
+          "exit_code": 0
+        }
+      ],
+      "visible": {
+        "phase": "ack-before",
+        "input": "c",
+        "input_bytes": 1,
+        "original_result_saved": true,
+        "metadata_review_displayed": true,
+        "write_required": true,
+        "original_record_finished": true,
+        "persisted_original_acknowledged": true,
+        "current_content_saved": true,
+        "normal_UI_close_requested": true,
+        "synthetic_data": true,
+        "extra_uploads_started": false,
+        "qualification_host": true
+      },
+      "closed_read": {
+        "exit_code": 0,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\ack-before-history.stdout",
+          "bytes": 80,
+          "sha256": "95a3ce6ab09439725fbd0cdf82852e45813d4611ae35f131c44a15366aa6bc23"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\ack-before-history.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "expected_input": {
+          "path": "D:\\build_cache\\m558\\ack-before\\desktop-expected.txt",
+          "bytes": 1,
+          "sha256": "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6"
+        },
+        "original_closed_library": true
+      }
+    },
+    {
+      "case": 558,
+      "phase": "ack-after",
+      "processes": [
+        {
+          "pid": 3328,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\apps\\ack-after\\morrow_studio.exe",
+          "creation_filetime": 134376987655185882,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 20180,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\apps\\ack-after\\morrow-workbench-supervisor.exe",
+          "creation_filetime": 134376987670663497,
+          "signaled": true,
+          "exit_code": 0
+        },
+        {
+          "pid": 10836,
+          "image": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\apps\\ack-after\\morrow-workbench-host.exe",
+          "creation_filetime": 134376987671261676,
+          "signaled": true,
+          "exit_code": 0
+        }
+      ],
+      "visible": {
+        "phase": "ack-after",
+        "input": "d",
+        "input_bytes": 1,
+        "original_result_saved": true,
+        "metadata_review_displayed": true,
+        "write_required": false,
+        "original_record_finished": true,
+        "persisted_original_acknowledged": true,
+        "current_content_saved": true,
+        "normal_UI_close_requested": true,
+        "synthetic_data": true,
+        "extra_uploads_started": false,
+        "qualification_host": true
+      },
+      "closed_read": {
+        "exit_code": 0,
+        "stdout": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\ack-after-history.stdout",
+          "bytes": 80,
+          "sha256": "95a3ce6ab09439725fbd0cdf82852e45813d4611ae35f131c44a15366aa6bc23"
+        },
+        "stderr": {
+          "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-metadata-desktop-558\\ack-after-history.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "expected_input": {
+          "path": "D:\\build_cache\\m558\\ack-after\\desktop-expected.txt",
+          "bytes": 1,
+          "sha256": "18ac3e7343f016890c510e93f935261169d9e3f565436429830faf0934f4f8e4"
+        },
+        "original_closed_library": true
+      }
+    }
+  ],
+  "full_application_original_process_exits": 12,
+  "full_application_closed_library_reads": 4,
+  "production_widgets_actual_native_cases": 4,
+  "production_widgets_original_supervised_closures": 4,
+  "production_widgets_closed_library_reads": 4,
+  "fixed_compile_time_qualification_hosts": true,
+  "supervisor_environment_unchanged": true,
+  "normal_default_fault_markers_absent": true,
+  "qualification_feature_positive_tests": 4,
+  "invalid_feature_pairs_rejected": 6,
+  "production_main_unchanged": true,
+  "native_launcher_rebuilt": false,
+  "cold_build_claim": false,
+  "original_timestamps_preserved_by_native_tests": true,
+  "no_upload_replay": true,
+  "prior_553_unknown_owner_retained": true,
+  "prior_554_second_proposal_not_passed": true,
+  "prior_554_last_two_windows_never_started": true,
+  "host_strict_lint_exit_code": 101,
+  "host_strict_lint_counts": {
+    "error": 59,
+    "warning": 35
+  },
+  "new_upload_module_lint_diagnostics": 0,
+  "frozen_public_inputs_verified": 57,
+  "old_unknown_owner_contacts": 0,
+  "VM_mutations": 0,
+  "registered_VMs": 4,
+  "cache_root": "D:/build_cache",
+  "full_P2_accepted": false,
+  "full_SDK_accepted": false,
+  "source_accepted": false,
+  "release_eligible": false,
+  "remote_publication_this_turn": false,
+  "remaining": [
+    "Remaining Windows P2 fault retirement and final source binding; final P3 binding",
+    "Directory watch/rename and conditional ReplaceUnsupported",
+    "Network/account/TLS, async composition, long watch and complete SDK26/G04/SDK_FREEZE matrix",
+    "Whole Host strict lint: 59 errors and 35 dependency warnings in case557",
+    "Final source/release qualification and separately authorized publication"
+  ]
+}

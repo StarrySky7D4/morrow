@@ -1,0 +1,16 @@
+{
+  "phase": "after",
+  "window": {
+    "app": "process:D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\upload-history-desktop-build-526\\app\\morrow_studio.exe",
+    "id": 133022,
+    "title": "Morrow"
+  },
+  "original_result_uncertain": true,
+  "no_original_acknowledgement": true,
+  "current_state": "staged",
+  "no_pending_operation": true,
+  "normal_UI_close_requested": true,
+  "history_image": "after-history.png",
+  "empty_task_image": "after-no-task.png",
+  "normal_close_method": "window close button; process exit is independently required"
+}

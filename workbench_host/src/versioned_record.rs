@@ -8,8 +8,8 @@ use morrow_workbench_plugin::{persistence, tasks_v2};
 use std::{error::Error, fmt};
 
 pub enum VersionedRecord {
-    Legacy(Record),
-    Tasks(TaskRecord),
+    Legacy(Box<Record>),
+    Tasks(Box<TaskRecord>),
 }
 
 pub struct TaskRecord {
@@ -49,10 +49,10 @@ pub fn decode(card: &CardRecord) -> Result<VersionedRecord> {
     }
     let body = card.body();
     match summary.format_version {
-        1 => Ok(VersionedRecord::Legacy(Record {
+        1 => Ok(VersionedRecord::Legacy(Box::new(Record {
             idea: persistence::decode(&summary.id, &summary.title, &body)?,
             revision: summary.revision,
-        })),
+        }))),
         2 => {
             // The plugin's pure decoder validates all common fields, TaskIds,
             // completion states, origin and source digest. It does not consult
@@ -75,13 +75,13 @@ pub fn decode(card: &CardRecord) -> Result<VersionedRecord> {
             // Keep stage and each completion count from the existing V2
             // projection. Legacy checklist/stage inference never runs here.
             let projection = tasks_v2::project(&summary.id, &summary.title, &body)?;
-            Ok(VersionedRecord::Tasks(TaskRecord {
+            Ok(VersionedRecord::Tasks(Box::new(TaskRecord {
                 id: summary.id,
                 title: summary.title,
                 revision: summary.revision,
                 properties,
                 projection,
-            }))
+            })))
         }
         _ => unreachable!("unsupported versions were rejected above"),
     }

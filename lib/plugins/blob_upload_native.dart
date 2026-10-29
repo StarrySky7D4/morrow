@@ -6,13 +6,99 @@ import 'io_task_codec_native.dart';
 import 'io_task_models.dart';
 
 /// One exchange per explicit command. No retry and no result reconstruction.
-final class NativeBlobUploadClient implements BlobUploadBackend {
+final class NativeBlobUploadClient
+    implements BlobUploadBackend, BlobUploadMetadataBackend {
   NativeBlobUploadClient(this._exchange);
   final FileTaskExchange _exchange;
   static bool _same(Uint8List? a, Uint8List b) =>
       a != null &&
       a.length == b.length &&
       Iterable<int>.generate(b.length).every((i) => a[i] == b[i]);
+
+  @override
+  Future<BlobUploadMetadataReview> reviewBlobUploadMetadata(Uint8List key) {
+    final exact = HttpTaskCodec.identity(key);
+    return _exchange(
+      host.Action.blobUploadMetadataReview,
+      clearReply: true,
+      configure: (r) => r.ioKey = exact,
+      decode: (reply) {
+        final row = reply.blobUploadMetadataReview;
+        if (row == null ||
+            !_same(row.key, exact) ||
+            row.submission == null ||
+            row.permit == null ||
+            row.phase < 1 ||
+            row.phase > 2 ||
+            row.originalPhase > 3 ||
+            row.originalError > 10 ||
+            ((row.originalPhase == 0) == (row.originalError == 0)) ||
+            (row.originalError == 7 && !row.originalUnknown) ||
+            (row.phase == 1 && row.acknowledgementAtBigInt != BigInt.zero) ||
+            (row.phase == 2 &&
+                row.acknowledgementAtBigInt < row.observedAtBigInt)) {
+          throw const FormatException('Invalid original metadata review');
+        }
+        return BlobUploadMetadataReview(
+          key: exact,
+          submission: HttpTaskCodec.identity(row.submission!),
+          permit: HttpTaskCodec.identity(row.permit!),
+          phase: BlobUploadMetadataPhase.values[row.phase - 1],
+          writeRequired: row.writeRequired,
+          originalUnknown: row.originalUnknown,
+          originalPhase: row.originalPhase == 0
+              ? null
+              : BlobUploadObservation.values[row.originalPhase - 1],
+          originalError: row.originalError == 0
+              ? null
+              : BlobUploadError.values[row.originalError - 1],
+          observedAt: row.observedAtBigInt,
+          acknowledgementAt: row.phase == 1
+              ? null
+              : row.acknowledgementAtBigInt,
+        );
+      },
+    );
+  }
+
+  @override
+  Future<BlobUploadMetadataCompletion> completeBlobUploadMetadata(
+    BlobUploadMetadataReview review,
+  ) {
+    final key = HttpTaskCodec.identity(review.key);
+    final permit = HttpTaskCodec.identity(review.permit);
+    return _exchange(
+      host.Action.blobUploadMetadataComplete,
+      clearReply: true,
+      configure: (r) {
+        r.ioKey = key;
+        r.blobUploadMetadataPermit = permit;
+      },
+      decode: (reply) {
+        if (!_same(reply.blobUploadMetadataCompletedPermit, permit) ||
+            reply.blobUploadMetadataAcknowledged !=
+                (review.phase == BlobUploadMetadataPhase.acknowledgement)) {
+          throw const FormatException('Original metadata phase changed');
+        }
+        if (reply.blobUploadMetadataAcknowledged) {
+          final task = HttpTaskCodec.snapshot(reply.ioState);
+          if (task.key != null ||
+              task.submission != null ||
+              task.storage != IoStoragePhase.local ||
+              task.exit != null) {
+            throw const FormatException('Original acknowledgement unresolved');
+          }
+          return BlobUploadMetadataCompletion(task, null);
+        }
+        final value = decodeReply(reply, allowResult: false).snapshot;
+        if (!_same(value.task.key, key) ||
+            !_same(value.task.submission, review.submission)) {
+          throw const FormatException('Original metadata task changed');
+        }
+        return BlobUploadMetadataCompletion(value.task, value);
+      },
+    );
+  }
 
   @override
   Future<void> approveBlobUpload(
