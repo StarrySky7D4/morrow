@@ -1,0 +1,12 @@
+{
+    "old_owner_calls":  0,
+    "vm_id":  "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
+    "source_accepted":  false,
+    "VM_writes":  0,
+    "own_transport_closed":  true,
+    "files":  6,
+    "tag":  "2d7a837644264b389c3b0dc73736cd88",
+    "status":  "FIXED_HELPER_FILES_SNAPSHOT_COMPLETE_OWN_TRANSPORT_CLOSED",
+    "release_eligible":  false,
+    "process_queries":  0
+}

@@ -1,0 +1,37 @@
+{
+  "reason": "compiler-artifact",
+  "package_id": "path+file:///C:/ms1020/plugin_runtime#morrow-plugin-runtime@0.1.9-test.50",
+  "manifest_path": "C:\\ms1020\\plugin_runtime\\Cargo.toml",
+  "target": {
+    "kind": [
+      "test"
+    ],
+    "crate_types": [
+      "bin"
+    ],
+    "name": "sdk_frozen_dependency",
+    "src_path": "C:\\ms1020\\plugin_runtime\\tests\\sdk_frozen_dependency.rs",
+    "edition": "2024",
+    "doc": false,
+    "doctest": false,
+    "test": true
+  },
+  "profile": {
+    "opt_level": "3",
+    "debuginfo": 0,
+    "debug_assertions": false,
+    "overflow_checks": false,
+    "test": true
+  },
+  "features": [
+    "package-execution",
+    "package-management",
+    "packages"
+  ],
+  "filenames": [
+    "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\sdk_frozen_dependency-6f78afc11b82522b.exe",
+    "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\sdk_frozen_dependency-6f78afc11b82522b.pdb"
+  ],
+  "executable": "D:\\build_cache\\qualification-targets\\history507-PRODUCT-ddb675f775f6fc3b\\x86_64-pc-windows-msvc\\release\\deps\\sdk_frozen_dependency-6f78afc11b82522b.exe",
+  "fresh": false
+}

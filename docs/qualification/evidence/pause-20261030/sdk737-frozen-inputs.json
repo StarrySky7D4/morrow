@@ -1,0 +1,290 @@
+{
+  "files": [
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\SHA256SUMS",
+      "bytes": 3062,
+      "sha256": "cdda1d8fde36f984f95d193753eaf40b2f75db4bb119986ca1cc733710000266"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1.sha256",
+      "bytes": 65,
+      "sha256": "6121afcc710ad2ddeb99ca6eb47dc292f036773cdb39b8ba312344da3e144d1c"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\c-dependency.mplugin",
+      "bytes": 55462,
+      "sha256": "90393bec34c097c24f53a48ec0e4228f391423b018da8f0aa9e2a45a59aad9f8"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\c-dependency.wasm",
+      "bytes": 103778,
+      "sha256": "525e1474599185e9f85f6a8726e4b5b6167bd7027e238c649ea345c663ad3f00"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\c-task.mplugin",
+      "bytes": 49943,
+      "sha256": "43cba9cea5eac3b74021128d6be52f3acfc8c540440d6cc6ab7e0e5333f3a37b"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\c-task.wasm",
+      "bytes": 96212,
+      "sha256": "dc3f5eef19485ac1da4a2a6928f51e1ed992b20b862652ae130c3e4bab0df03c"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\c-transform.mplugin",
+      "bytes": 45169,
+      "sha256": "9a4875fd49d5ee50683bb37bf87a1815f8d6511a086d8aeb39fc392da290babb"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\c-transform.wasm",
+      "bytes": 83503,
+      "sha256": "0cd8842db87957b2a9705279b3755daf680c73ad8c2ea3127abec38b03f437d6"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\c-ui.mplugin",
+      "bytes": 54030,
+      "sha256": "414c9584b3602fa81a19bba0c12529a8e62bbe4009aede129b1d5c95e92cc3cb"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\c-ui.wasm",
+      "bytes": 99837,
+      "sha256": "9fb52531f0d05cfac257bfa4911a594539ea3a08e503b5bcc8da4a5ac9bd5253"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\contracts\\content.proto",
+      "bytes": 1396,
+      "sha256": "8493c9194c760bad05d480a82a676098e002513eac2166418410c274ec957ff4"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\contracts\\dependency_call.capnp",
+      "bytes": 738,
+      "sha256": "8dd7821caed15769c80dee950ac71fbdb3aa1106a37f411d88ec4d3a37952cb8"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\contracts\\runtime.capnp",
+      "bytes": 2953,
+      "sha256": "18f584f69472373bab33a6c47dcfda874477e36e0a52c32b3af1fe4fbb748855"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\contracts\\task-version.txt",
+      "bytes": 2,
+      "sha256": "1121cfccd5913f0a63fec40a6ffd44ea64f9dc135c66634ba001d10bcf4302a2"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\contracts\\task.capnp",
+      "bytes": 782,
+      "sha256": "6de9310cc2d81f4718a1a62e92d80b18326f8701313dccbd1e8dde2cc2791b0b"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\contracts\\ui-version.txt",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\contracts\\ui.capnp",
+      "bytes": 820,
+      "sha256": "253f074420307ce737b61f8669d553b3ed7a825132f2ce449900a1d9b372bda6"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\contracts\\version.txt",
+      "bytes": 2,
+      "sha256": "10159baf262b43a92d95db59dae1f72c645127301661e0a3ce4e38b295a97c58"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\cpp-dependency.mplugin",
+      "bytes": 57706,
+      "sha256": "3798d753ee16d443afff8d19d9fd801a427e6c1f4e22ad5c26ad67d63607be5b"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\cpp-dependency.wasm",
+      "bytes": 107223,
+      "sha256": "71f0218084add6ae933f6208c9450f2acc646d4735066f7d54efae71c65106be"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\cpp-task.mplugin",
+      "bytes": 50637,
+      "sha256": "e9ad3f5ab5b561af39bc651bcb6739a98a730b1c1a42db0b6b8e4960964ee338"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\cpp-task.wasm",
+      "bytes": 97174,
+      "sha256": "10d514991cab6cde3ec6028c8bbca9a3156673ba8b644de31db127d97e7f77e7"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\cpp-transform.mplugin",
+      "bytes": 46446,
+      "sha256": "78acef6e0ffe3a653833f64d01c1e7c8696d94bbfa315f59217c9b588b64fbcb"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\cpp-transform.wasm",
+      "bytes": 85324,
+      "sha256": "73d8d8d5343f67d337bb7a5788dcba21c1139d38cb1a6406586b4dda5231b641"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\cpp-ui.mplugin",
+      "bytes": 58301,
+      "sha256": "65b3d3ab2b713da1ed8119114f6401a86ba21418ad6b0d3b2708c5fb979edbea"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\cpp-ui.wasm",
+      "bytes": 107006,
+      "sha256": "50b6c9333e8ebb09a23f9184e89ac945fba07f33efa9d18660c5d7c4f7691213"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\provenance.txt",
+      "bytes": 1398,
+      "sha256": "05b79964ec7776a13ab2345d5ae8e40d1dd3d1c5c21c596b97e1b13107adef58"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\rust-dependency.mplugin",
+      "bytes": 77305,
+      "sha256": "9148fb6624985d57aa694ddc27c1b8c74c8b01a8b1b701b52622f5dafa910e66"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\rust-dependency.wasm",
+      "bytes": 152309,
+      "sha256": "8d27dde13213dd33df242a5ad048cc500aac644140d2071004532ed80732920e"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\rust-provider.mplugin",
+      "bytes": 76886,
+      "sha256": "f76269064b25e15b665188d990717572bb26c477917619dc8f6e7246c8828628"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\rust-provider.wasm",
+      "bytes": 151187,
+      "sha256": "4c1e05966f3fb591cbd4a7028ced367960c0e1e40fef1506ee66cbfdf89c67c3"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\rust-task.mplugin",
+      "bytes": 77316,
+      "sha256": "5c178ed920a202b51d78442f7e399db7facdf88ecd064f298b30ca38809ee14d"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\rust-task.wasm",
+      "bytes": 152069,
+      "sha256": "94947aeda1e944add63a8b161e77539c20a635cce2a23fbc9b23bd591085c490"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\rust-transform.mplugin",
+      "bytes": 77366,
+      "sha256": "d33c2c1242f7c463a64a59be26ee612f62482a0dd1cf2056aeb70b34eb69cf11"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\rust-transform.wasm",
+      "bytes": 151840,
+      "sha256": "2b79ee7512d36d3b31c7712eebb7389bf9ddd202428086e43027a8e73868d874"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\rust-ui.mplugin",
+      "bytes": 78125,
+      "sha256": "72afa618b9c6e08e08133349a94674c46426b38527a846769cade866eb4fecef"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\rust-ui.wasm",
+      "bytes": 153948,
+      "sha256": "3fd8bda18d923e59c48fa197e20a3a19ed1ba1a20acf2c8c2d182eee2c621e56"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\guest-v1-rc1\\SOURCE_SHA256SUMS",
+      "bytes": 7275,
+      "sha256": "99256d70e32c94b87b8cab2fdfe5acd809ae441ea0a8011a78cad39ec6561da4"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\SHA256SUMS",
+      "bytes": 1421,
+      "sha256": "341a40bf335b468954734613c2e8d43999c6523249ac06b8648558d6593f4cb0"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1.sha256",
+      "bytes": 65,
+      "sha256": "682a92a7b26fcfe5562ccbdb11a24c5be5c81a19ba737d1f3d781acf935d1b19"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\SOURCE_SHA256SUMS",
+      "bytes": 9911,
+      "sha256": "1073b8cd3628ce3824089276655b0b56d8681277c74c5ed09b8539694e43dfa1"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\c-io.mplugin",
+      "bytes": 39812,
+      "sha256": "45f888c07e34fbc25acf7f4822a39aa911380d79f1cf8e0b13088f11ab783295"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\c-io.wasm",
+      "bytes": 71910,
+      "sha256": "e80bc3c7b6d654e5c4570c6612289187eaec0421e74fbfc1c83c3765bf27698d"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\c-service.mplugin",
+      "bytes": 48650,
+      "sha256": "adb081d71279d3c4409b272c39250c04fc9f95bbe289dd603ec183fa96174c88"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\c-service.wasm",
+      "bytes": 85257,
+      "sha256": "a3e35a6eb3454dbe44dea9af0e2b8d4000d35535da411a775621cc1c9a7f3856"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\contracts\\io.capnp",
+      "bytes": 2311,
+      "sha256": "78e87b3f7b7a2df7675937f3bea84d5b33399cd4559d560c7d4ab7f4da4bccf5"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\contracts\\service.capnp",
+      "bytes": 572,
+      "sha256": "a7dd4a67934af84b6c3792b3e2131597fb6078fe9c95316e4c5c66ad0cc836d2"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\contracts\\service_resources.capnp",
+      "bytes": 429,
+      "sha256": "5e50bd682470d49197da70afc49f37cc4d64eb0d3e60efdd0ee32b6ba6292842"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\cpp-io.mplugin",
+      "bytes": 40156,
+      "sha256": "03ed861e5b68a1fc95d6235c763186365d08bb31aa3cdc617f8eef2b8f69b965"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\cpp-io.wasm",
+      "bytes": 72290,
+      "sha256": "7d9c338166936491c7c91f9e64a46ab8ccc490908e89fad05ceacfe107c46ad2"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\cpp-service.mplugin",
+      "bytes": 48714,
+      "sha256": "77e8620760e0ea8e6f6f702c012a7917b709b270d3840abe410948360fc72cb0"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\cpp-service.wasm",
+      "bytes": 85318,
+      "sha256": "374b12ffa92b476d3d41e37ad2f7fc05cb31cb374d3cd04461f2e2c5d1d7dba7"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\provenance.json",
+      "bytes": 2759,
+      "sha256": "3f57ad088bc11c576753e92f71f0011b8857ea9f5a46f01d30384efd9eea77d2"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\rust-io.mplugin",
+      "bytes": 103066,
+      "sha256": "c925d62eb50bda2f292bb1d3ea52633dc5c58b52acb073d179542e97cdaa6e66"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\rust-io.wasm",
+      "bytes": 204983,
+      "sha256": "d444342b88b39b1656799a66d076f1156909c86e95cab3cc46ffbbb95435068b"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\rust-service.mplugin",
+      "bytes": 103196,
+      "sha256": "ebd1ac473dc98f22b2eb01ec873345922bba01c1de3e29e8edacc0af84671d46"
+    },
+    {
+      "path": "C:\\ms1020\\sdk\\compat\\transport-v1-rc1\\rust-service.wasm",
+      "bytes": 204592,
+      "sha256": "9375164161a7c9e77069adcfc500d95b33542570468b7fde6c8193b17bf45fa0"
+    }
+  ],
+  "count": 57
+}

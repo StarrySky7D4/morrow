@@ -1,0 +1,43 @@
+{
+  "tag": "2d7a837644264b389c3b0dc73736cd88",
+  "files": [
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "length_stable": true,
+      "path": "C:\\Morrow-C28-transaction2769-2d7a837644264b389c3b0dc73736cd88\\case-capture\\stdout.log",
+      "status": "COPIED_DIAGNOSTIC_ONLY",
+      "final_length": 0,
+      "local_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-736\\01-stdout.log"
+    },
+    {
+      "sha256": "67c88119802a77c0a66b046a4203d3b00ca36d6cfcf7b256397aef096ea6438e",
+      "bytes": 592,
+      "length_stable": true,
+      "path": "C:\\Morrow-C28-transaction2769-2d7a837644264b389c3b0dc73736cd88\\case-capture\\stderr.log",
+      "status": "COPIED_DIAGNOSTIC_ONLY",
+      "final_length": 592,
+      "local_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-736\\02-stderr.log"
+    },
+    {
+      "sha256": "94098764dc5499daadc89967738f19153c54bb8a7f880e6fdd1c379ff58d95f5",
+      "bytes": 1069,
+      "length_stable": true,
+      "path": "C:\\Morrow-C28-Root47-1725-run-2d7a837644264b389c3b0dc73736cd88\\events.jsonl",
+      "status": "COPIED_DIAGNOSTIC_ONLY",
+      "final_length": 1069,
+      "local_path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-736\\03-events.jsonl"
+    },
+    {
+      "path": "C:\\Morrow-C28-A1-047-2d7a837644264b389c3b0dc73736cd88\\case.evidence\\journal.jsonl",
+      "status": "UNAVAILABLE_NO_RETRY",
+      "hresult": -2146233087,
+      "error_type": "System.Management.Automation.MethodInvocationException"
+    }
+  ],
+  "diagnostic_only": true,
+  "schema": "RETAINED_CASE_FILE_SNAPSHOT_V1",
+  "original_owner_contacted": false,
+  "source_accepted": false,
+  "release_eligible": false
+}

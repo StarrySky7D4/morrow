@@ -1,0 +1,12 @@
+{
+  "suite": "sdk_frozen_compat",
+  "name": "c_ui",
+  "exit_code": 0,
+  "passed": true,
+  "original_process_returned": true,
+  "log": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\03.log",
+    "bytes": 129,
+    "sha256": "c0c2a127119bba16862f60223b7f91aad05c1889d3286fa9cba05901cfe2de12"
+  }
+}

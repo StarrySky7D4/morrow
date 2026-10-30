@@ -1,0 +1,12 @@
+{
+  "suite": "sdk_frozen_dependency",
+  "name": "frozen_rust_dependency_binary_preserves_routing_and_authorization",
+  "exit_code": 0,
+  "passed": true,
+  "original_process_returned": true,
+  "log": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\12.log",
+    "bytes": 190,
+    "sha256": "b75cadf1b5549abf1d79c8e447bc64b7b8bf3fb60ce773a4e099cf615e62939c"
+  }
+}

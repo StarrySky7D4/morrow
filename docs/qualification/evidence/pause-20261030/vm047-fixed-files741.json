@@ -1,0 +1,40 @@
+{
+  "tag": "2d7a837644264b389c3b0dc73736cd88",
+  "owner_calls": 0,
+  "files": [
+    {
+      "path": "C:\\Morrow-C28-RootP1701-2d7a837644264b389c3b0dc73736cd88\\stdout.log",
+      "status": "ABSENT_FILE",
+      "exists": false
+    },
+    {
+      "path": "C:\\Morrow-C28-RootP1701-2d7a837644264b389c3b0dc73736cd88\\stderr.log",
+      "status": "ABSENT_FILE",
+      "exists": false
+    },
+    {
+      "path": "C:\\Windows\\System32\\VCRUNTIME140.dll",
+      "status": "ABSENT_FILE",
+      "exists": false
+    },
+    {
+      "path": "C:\\Windows\\System32\\VCRUNTIME140_1.dll",
+      "status": "ABSENT_FILE",
+      "exists": false
+    },
+    {
+      "path": "C:\\Morrow-C28-RootP1701-bin-2d7a837644264b389c3b0dc73736cd88\\VCRUNTIME140.dll",
+      "status": "ABSENT_FILE",
+      "exists": false
+    },
+    {
+      "path": "C:\\Morrow-C28-RootP1701-bin-2d7a837644264b389c3b0dc73736cd88\\VCRUNTIME140_1.dll",
+      "status": "ABSENT_FILE",
+      "exists": false
+    }
+  ],
+  "diagnostic_only": true,
+  "schema": "RETAINED_HELPER_FIXED_FILE_SNAPSHOT_V1",
+  "VM_writes": 0,
+  "process_queries": 0
+}

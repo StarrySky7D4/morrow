@@ -1,0 +1,12 @@
+{
+  "guest_calls": 0,
+  "source_accepted": false,
+  "state": "Running",
+  "status": "CLEAN_VM047_RESUMED_ONCE_NO_CASE_DISPATCH",
+  "old_unknown_owner_contacts": 0,
+  "registered_vms": 4,
+  "other_vm_states_unchanged": true,
+  "release_eligible": false,
+  "credentials_read": false,
+  "vm_id": "75ca0a13-40f1-4aed-be6f-e15a946c14bb"
+}

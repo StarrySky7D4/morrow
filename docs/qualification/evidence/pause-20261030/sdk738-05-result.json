@@ -1,0 +1,12 @@
+{
+  "suite": "sdk_frozen_compat",
+  "name": "cpp_transform",
+  "exit_code": 0,
+  "passed": true,
+  "original_process_returned": true,
+  "log": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\05.log",
+    "bytes": 138,
+    "sha256": "8600656f1bd068e3b6f033f8a21adc028ad8664b16e20a2a16d9be6d8357beab"
+  }
+}

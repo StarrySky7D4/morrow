@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-29",
+  "updated": "2026-10-30",
   "state": "PAUSED_BY_USER",
   "case098": {
     "status": "PASS_SCOPED_V4_LATE_CREATE_NATIVE_FIRST_FAILURE_PRESERVED",
@@ -42,7 +42,7 @@
     "formal_picker_complete": false
   },
   "registered_vms": 4,
-  "latest_vm": "VM047 Saved",
+  "latest_vm": "VM047 Saved; case736 Unknown retained",
   "full_P2": "OPEN",
   "SDK26": "OPEN",
   "G04": "OPEN",
@@ -96,8 +96,8 @@
     "latest_large_cleanup": "retired-role-cache-316",
     "logical_bytes_are_not_current_free_space": true
   },
-  "P2_next": "Explicit resume, source-equivalence rebind and fresh readiness before case703",
-  "updated_utc": "2026-10-29T12:21:18.401398+00:00",
+  "P2_next": "Explicit resume, cached startup/deployment diagnosis, then a fresh isolated VM; never replay case736",
+  "updated_utc": "2026-10-30T08:38:37.908044+00:00",
   "case118": {
     "status": "PASS_SCOPED_V5_TOKEN_DERIVATION_NATIVE_REFUSAL_FIRST_FAILURE_PRESERVED",
     "source_digest": "e962f06eba71abe69a968d1faf89f5084b94e414de7465d6326a9dd3ad78e405",
@@ -145,11 +145,42 @@
     "utc": "2026-10-26T16:56:16.949342+00:00"
   },
   "storage_current": {
-    "build_cache_root": "D:\\build_cache",
-    "C_free_bytes": 66026254336,
-    "D_free_bytes": 11215511552,
-    "evidence": "../../docs/qualification/evidence/pause-20261029/manifest.json",
-    "note": "Fresh pause snapshot; concurrent compilation means cleanup free deltas are not additive."
+    "utc": "2026-10-30T08:32:43.9910474Z",
+    "free_bytes": [
+      {
+        "bytes": 63847964672,
+        "drive": "C"
+      },
+      {
+        "bytes": 13825040384,
+        "drive": "D"
+      }
+    ],
+    "vm_inventory": [
+      {
+        "name": "Morrow Windows Acceptance 20261023 029",
+        "id": "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+        "state": "Saved"
+      },
+      {
+        "name": "Morrow Windows Acceptance 20261023 030",
+        "id": "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+        "state": "Saved"
+      },
+      {
+        "name": "Morrow Windows Acceptance 20261029 047",
+        "id": "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
+        "state": "Saved"
+      },
+      {
+        "name": "Windows 11 开发环境",
+        "id": "1ab5adc5-316d-4092-9151-cc618ff1957c",
+        "state": "Running"
+      }
+    ],
+    "cache_root": "D:\\build_cache",
+    "registered_vms": 4,
+    "evidence": "docs/qualification/evidence/pause-20261030/manifest.json"
   },
   "SDK119": {
     "status": "PRODUCTION_CHECKED_CLOSE_GAP_MAPPED_NOT_IMPLEMENTED",
@@ -446,11 +477,13 @@
   },
   "latest": {
     "status": "PAUSED_BY_USER",
-    "date": "2026-10-29",
+    "date": "2026-10-30",
+    "utc": "2026-10-30T08:38:37.908044+00:00",
     "branch": "codex/local-continue-20261020",
-    "publication_parent": "56a9d0072fdb372caf0e5544500f1d76bbe40654",
-    "source_before_publication": "a038cc73bb370e1cd5b028aa022c744192005fd10ec6dec8a489819aaf12c993",
-    "latest_scoped_runtime_source": "5fc113edec1e26baa7db613458f9fd37fbfc1b6ee655113c738b3211289be1b6",
+    "publication_parent": "bfc2b1644f84e732ee4224fd6417ffdd8648a75b",
+    "source_before_publication": "cc68d67688e74738dc07dea4cba3a124cf4efefada9bd8dbb9fcfcbd006fcf94",
+    "compiled_roles_source": "a038cc73bb370e1cd5b028aa022c744192005fd10ec6dec8a489819aaf12c993",
+    "source_relation": "732 proves product code and bound compiled outputs unchanged; publication changes full repository digest",
     "P2": "OPEN",
     "P3": "CURRENT_SOURCE_REQUALIFICATION_PENDING_HISTORICAL_DEFINED_SCOPE_PASSES_RETAINED",
     "SDK26": "OPEN",
@@ -458,32 +491,40 @@
     "SDK_FREEZE": "OPEN",
     "source_accepted": false,
     "release_eligible": false,
-    "roles052": "FOUR_COLD_BUILDS_PASS_NO_RUNTIME",
-    "policy703": "18_PURE_METHODS_31_CORRUPT_INPUTS_PASS_NO_LSA",
-    "case703": "PREPARED_NOT_DISPATCHED",
-    "case638": "PASS_SCOPED_47_STEPS_NINE_GROUPS_SOURCE_5FC113",
-    "case678": "PASS_SCOPED_ONE_RUST_PLUGIN_FORMAL_TEXT_SAVE_HISTORY_REOPEN_SOURCE_5FC113",
-    "case684": "UNKNOWN_RETAINED_POLICY_IDENTITY_MISMATCH_NO_REPLAY",
-    "SDK719": "THREE_DEFAULT_PROGRAMS_COMPILED_ORIGINAL_COMPILERS_CLOSED_DEPENDENCIES_WARM_NO_RUNTIME",
-    "kernel722": "CANONICAL_MAIN_KERNEL_COMPILED_NATIVE_LAUNCHER_NOT_REBUILT",
+    "case736": "UNKNOWN_RETAINED_BEFORE_FIRST_BEGIN_NO_REPLAY",
+    "case736_case_clean": false,
+    "case736_policy_clean": true,
+    "policy_identity": "ACTUAL_SINGLE_RIGHT_ADD_AND_SAME_OWNER_REMOVE_VERIFIED",
+    "original_case_session_retained": 62133,
+    "original_host_case_pid": 20980,
+    "original_guest_controller_pid": 3120,
+    "root_cause": "UNPROVEN_HELPER_STARTUP_OR_OBSERVATION_FAILURE",
+    "runtime_dependency_observation": "VCRUNTIME140.dll and VCRUNTIME140_1.dll absent at four fixed System32/install paths; helper stdout/stderr also absent; not loader-resolution or causation proof",
+    "SDK737": "THREE_READER_PROGRAMS_RECOMPILED_ORIGINAL_COMPILERS_CLOSED_DEPENDENCIES_WARM",
+    "SDK738": "13_SCOPED_WINDOWS_FROZEN_COMPATIBILITY_METHODS_PASSED",
+    "frozen_inputs_unchanged": 57,
+    "SDK738_transport_metadata_only": true,
+    "SDK738_UI_rendering_proven": false,
     "registered_vms": 4,
     "latest_vm": "VM047",
     "latest_vm_id": "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
     "latest_vm_state": "Saved",
     "build_cache_root": "D:\\build_cache",
-    "product_runs_started_after_pause": 0,
-    "already_running_build719_allowed_to_close": true,
-    "credentials_published": false,
-    "publication_handoff": "docs/qualification/PAUSED_WINDOWS_20261029.md",
-    "evidence_manifest": "docs/qualification/evidence/pause-20261029/manifest.json",
-    "resume_requirements": [
-      "Explicit user resume; preserve all historical Unknown owners and outcomes.",
-      "Publication edits documentation and Git byte-preservation metadata: full repository digest changes. Validate exact source/code equivalence and rebind sealed inputs before case703; never bypass its source guard.",
-      "Confirm VM047 Saved identity and at most four registrations, then refresh readiness before any fresh original47/nine run.",
-      "After current normal path closes, complete remaining P2 and source-bound P3/SDK qualification; frozen guest720/721, builtin723 and desktop724/725 remain unrun."
-    ],
     "new_build_jobs_started_after_pause": 0,
-    "already_running_build719_remaining_stages_allowed_to_close": true
+    "product_runs_started_after_pause": 0,
+    "credentials_published": false,
+    "automatic_resume": false,
+    "requires_explicit_resume": true,
+    "publication_handoff": "docs/qualification/PAUSED_WINDOWS_20261030.md",
+    "evidence_manifest": "docs/qualification/evidence/pause-20261030/manifest.json",
+    "resume_requirements": [
+      "Wait for explicit resume. Never poll, replay, terminate or adopt case736 original session62133 or other retained Unknown owners.",
+      "Verify checkout/code and artifact identity after this documentation-only publication; preserve original source labels and rebind new preparations.",
+      "Keep VM047 Saved as retained Unknown. Diagnose cached startup facts and deployment/runtime prerequisites; missing fixed DLL paths alone do not establish the first failure cause.",
+      "Use a fresh isolated VM for any new runtime case, with at most four registrations. Existing verified offline archive permission remains in force; preserve original disks and audit evidence.",
+      "SDK737/738 are complete and need no replay. case703, shared711, old720/721, builtin723 and desktop724/725 remain unrun; do not bypass their predicates.",
+      "Complete current-source normal P2, remaining fault matrix, P3 and full Windows SDK gates before claiming source or release acceptance."
+    ]
   },
   "previous_latest_301": {
     "utc": "2026-10-27T05:16:00.759825+00:00",
@@ -5150,6 +5191,6 @@
       "Native companion dependency warnings and final source/release qualification"
     ]
   },
-  "publication_parent": "56a9d0072fdb372caf0e5544500f1d76bbe40654",
-  "publication_verification_receipt": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\pause-publication-20261029\\push-verification.json"
+  "publication_parent": "bfc2b1644f84e732ee4224fd6417ffdd8648a75b",
+  "publication_verification_receipt": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\pause-publication-20261030\\push-verification.json"
 }

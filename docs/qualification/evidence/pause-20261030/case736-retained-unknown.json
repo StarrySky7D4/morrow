@@ -1,0 +1,183 @@
+{
+  "status": "UNKNOWN_RETAINED_INNER_OBSERVER_HELPER_STARTUP_POLICY_RESTORED",
+  "utc": "2026-10-30T08:20:24.650281+00:00",
+  "tag": "2d7a837644264b389c3b0dc73736cd88",
+  "vm_id": "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
+  "source_digest": "a038cc73bb370e1cd5b028aa022c744192005fd10ec6dec8a489819aaf12c993",
+  "checkout_source_digest": "cc68d67688e74738dc07dea4cba3a124cf4efefada9bd8dbb9fcfcbd006fcf94",
+  "source_equivalence": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\source-equivalence-732\\result.json",
+    "bytes": 6756,
+    "sha256": "8563c22beb0c3cb7a72a709ca38fbcdc9bd6153ab5171914dc3278a4826f5fac"
+  },
+  "case_clean": false,
+  "policy_clean": true,
+  "full47_or_nine_gate_accepted": false,
+  "original_case_session_retained": true,
+  "original_case_process_exit": null,
+  "outer_pipeline_exec_session_id": 62133,
+  "original_host_case_pid": 20980,
+  "original_guest_controller_pid": 3120,
+  "first_guard": "HELPER_UNKNOWN_OR_STARTUP",
+  "first_step": "begin expected but not applied",
+  "original_capture": {
+    "status": "UNKNOWN_ORIGINALS_RETAINED_NO_REPLAY",
+    "pid": 3120,
+    "creation_filetime_100ns": 134378216359136738,
+    "original_native_handle": 2216,
+    "original_image_path": "C:\\Morrow-C28-RootP1701-bin-2d7a837644264b389c3b0dc73736cd88\\Root47Controller1725.exe",
+    "actual_native_dword": null,
+    "exit_raw_buffer": 0,
+    "exit_query_returned": null,
+    "exit_query_error": 0,
+    "original_process_signaled": false,
+    "record_directory_created": true,
+    "record_directory_error": 0,
+    "stdout_EOF": false,
+    "stderr_EOF": false,
+    "no_replay": true,
+    "reason": "INNER_ROOT_OBSERVER_STOP_RETAINED_NO_REPLAY",
+    "process_close": "NOT_ATTEMPTED",
+    "stdout_native_close": "NOT_ATTEMPTED",
+    "stderr_native_close": "NOT_ATTEMPTED",
+    "elapsed_ms": 111,
+    "reader_native_TLS": "NOT_CLAIMED_BY_MANAGED_THREAD_JOIN"
+  },
+  "policy_identity_fix_actual_apply_and_restore_verified": true,
+  "policy_target_sid": "S-1-5-21-118159-3579602386-2696782449-1000",
+  "actual_added_sid": "S-1-5-21-118159-3579602386-2696782449-1000",
+  "actual_removed_sid": "S-1-5-21-118159-3579602386-2696782449-1000",
+  "issued_tokens_revoked": false,
+  "diagnostic_fixed_file_snapshot_closed": true,
+  "diagnostic_original_owner_contacts": 0,
+  "root_cause": "NOT_YET_PROVEN_HELPER_STARTUP_OR_OBSERVATION_FAILURE",
+  "completed_pre_dispatch_phases": [
+    {
+      "phase": "public-driver-static-review",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal736-pipeline-736\\01-public-driver-static-review-result.json",
+        "bytes": 597,
+        "sha256": "0ee6c274c157b50ac0415fea9697633a16a0b9b5dac648151a4db635c25a82b5"
+      }
+    },
+    {
+      "phase": "authorized-protected-login-input",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal736-pipeline-736\\02-authorized-protected-login-input-result.json",
+        "bytes": 611,
+        "sha256": "5a2b038d97fca2623adc6edbec0b83fbdeb8f3d4845b3df4f75fdf154e5d2e82"
+      }
+    },
+    {
+      "phase": "prepare-current-stage",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal736-pipeline-736\\03-prepare-current-stage-result.json",
+        "bytes": 579,
+        "sha256": "f3fe0f40660a20c947e7c562bbbf123360ce7f822cc5db92de3ede16cc4b68f5"
+      }
+    },
+    {
+      "phase": "review-current-stage",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal736-pipeline-736\\04-review-current-stage-result.json",
+        "bytes": 576,
+        "sha256": "0d83e622837a3c41bcceb277323fc7873cb9814fb3d2fc0e9e7ccc05e1b4b958"
+      }
+    },
+    {
+      "phase": "stage-once",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal736-pipeline-736\\05-stage-once-result.json",
+        "bytes": 546,
+        "sha256": "605d19a1a57ab46d0d34f7c3e4632a935a1200372de722edca65e5c8c5680369"
+      }
+    },
+    {
+      "phase": "prepare-reviewed-binding",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal736-pipeline-736\\06-prepare-reviewed-binding-result.json",
+        "bytes": 588,
+        "sha256": "c7b6be74b36b6fff07a729e8c5a9c612ade316b99fee475201d0250c926f7d92"
+      }
+    },
+    {
+      "phase": "bind-once",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal736-pipeline-736\\07-bind-once-result.json",
+        "bytes": 543,
+        "sha256": "42c48bbb4930a92e3dce666b6f68f90c3a483e87ab27438ae13adb942023024c"
+      }
+    },
+    {
+      "phase": "prepare-original47",
+      "receipt": {
+        "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\normal736-pipeline-736\\08-prepare-original47-result.json",
+        "bytes": 570,
+        "sha256": "09f6a55374542de7304b1a46f382f5b2b6e5374e2e511a662533780ae07bdb67"
+      }
+    }
+  ],
+  "original_receipts": [
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case736-preparation.json",
+      "bytes": 22427,
+      "sha256": "ddc03a862bbdda8263493f1cc3b07da0ed448dcdaa50c2a13c97b32dbdc984dc"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\source-equivalence-732\\result.json",
+      "bytes": 6756,
+      "sha256": "8563c22beb0c3cb7a72a709ca38fbcdc9bd6153ab5171914dc3278a4826f5fac"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-isolated-stage-current-20261021-2d7a837644264b389c3b0dc73736cd88\\case-started.json",
+      "bytes": 157,
+      "sha256": "0a3c24fca54a0bedd51dc42f5fe618db08bac3add65d41ed43a055c7e0c6b8d5"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-2d7a837644264b389c3b0dc73736cd88-case\\retained.json",
+      "bytes": 3965,
+      "sha256": "ed8a6afbc61ab3e5f9c8e7f0845516e8c3b76fa040c819705c653f39277505b7"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-2d7a837644264b389c3b0dc73736cd88-case\\apply-original.json",
+      "bytes": 3340,
+      "sha256": "77c78aecf2aa185c21059ed850364b99e0768aff5f6ed95c6d1deb3423052c3e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-2d7a837644264b389c3b0dc73736cd88-case\\restore-original.json",
+      "bytes": 3504,
+      "sha256": "f6cea1595befc63f142d6c6cf822b1418afe00caf3d80801c5f35efbfce62cf5"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-2d7a837644264b389c3b0dc73736cd88-case\\guest-reply-05-run.json",
+      "bytes": 1154,
+      "sha256": "b4b22c0f04557415a1000fbd7b0501e3118c020c651a6f1509c09fb4613ae4a4"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-736\\result.json",
+      "bytes": 202,
+      "sha256": "a2f1803e2056726333e62d7f622343e4c40b99973a26cbf3642f277e4fa54087"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-736\\manifest.json",
+      "bytes": 1870,
+      "sha256": "c69ad2b4fa32a35494550ffab93b06e2b6efae4fa5092007128100e384cb9435"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-736\\02-stderr.log",
+      "bytes": 592,
+      "sha256": "67c88119802a77c0a66b046a4203d3b00ca36d6cfcf7b256397aef096ea6438e"
+    },
+    {
+      "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-736\\03-events.jsonl",
+      "bytes": 1069,
+      "sha256": "94098764dc5499daadc89967738f19153c54bb8a7f880e6fdd1c379ff58d95f5"
+    }
+  ],
+  "no_original_owner_poll_or_kill": true,
+  "no_automatic_retry": true,
+  "original_outcome_not_reclassified": true,
+  "VM_calls": 0,
+  "source_accepted": false,
+  "release_eligible": false
+}

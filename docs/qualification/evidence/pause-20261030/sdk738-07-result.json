@@ -1,0 +1,12 @@
+{
+  "suite": "sdk_frozen_compat",
+  "name": "rust_task",
+  "exit_code": 0,
+  "passed": true,
+  "original_process_returned": true,
+  "log": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\07.log",
+    "bytes": 134,
+    "sha256": "609939244d29fed3468e468854bfefc61f0f67b229ce8095e6e46f50feefcf29"
+  }
+}

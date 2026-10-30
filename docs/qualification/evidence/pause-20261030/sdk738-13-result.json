@@ -1,0 +1,12 @@
+{
+  "suite": "sdk_transport_frozen",
+  "name": "six_original_transport_packages_keep_modules_profiles_and_bounded_budgets",
+  "exit_code": 0,
+  "passed": true,
+  "original_process_returned": true,
+  "log": {
+    "path": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\13.log",
+    "bytes": 198,
+    "sha256": "aaf190b6c9e63077e2ea285e240abe58c838103142a04d7ec4e583e2863e7f73"
+  }
+}

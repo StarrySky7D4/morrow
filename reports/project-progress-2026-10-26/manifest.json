@@ -2,24 +2,24 @@
   "files": [
     {
       "path": "index.html",
-      "bytes": 32157,
-      "sha256": "b58fef2b36d93b0a63c000a5a7d5bacb4251e35a2f0c5e6c7db93fbe6db9eb96"
+      "bytes": 34369,
+      "sha256": "7268ca0cb885ca07369e17ed5b77f1d837f329579bcb3aef719ad47ca1e784d3"
     },
     {
       "path": "report-data.json",
-      "bytes": 230039,
-      "sha256": "089b36fd2b957538fae4f20caf7c92a2a19a2a38f68b8c005e8df4be6c24301b"
+      "bytes": 231582,
+      "sha256": "02741b3a73e3bbd6df5162b73c39cc450b94ddda872c5b5fa675ebd6abaa0627"
     },
     {
       "path": "verification.json",
-      "bytes": 967,
-      "sha256": "3edfea19643a2cd4111cd31cc6ecc39ecd8e16a15b39a21de0a1d683a1ec5d17"
+      "bytes": 886,
+      "sha256": "88dbab978ffd3aa6fb790d6b51333eb6936410143eacc7d57bb251ecfa60ea57"
     }
   ],
   "evidence": {
-    "path": "../../docs/qualification/evidence/pause-20261029/manifest.json",
-    "bytes": 14476,
-    "sha256": "7b0eddd9b62f08b7b8f5fbaa025e6d66e5eae75d8c9b9890d2c3b345929d1153"
+    "path": "../../docs/qualification/evidence/pause-20261030/manifest.json",
+    "bytes": 16096,
+    "sha256": "3bf8c369e4668860a2409b8bede6a9595e924a50a8dd7aa9e65dd06af76c7544"
   },
-  "scope": "Paused public progress files, not product qualification"
+  "scope": "Paused public progress snapshot, not product qualification"
 }

@@ -1,0 +1,53 @@
+﻿{
+    "source_accepted":  false,
+    "registered_vms":  4,
+    "original_owner_contacts":  0,
+    "vm_id":  "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
+    "case_clean":  false,
+    "utc":  "2026-10-30T08:32:43.9910474Z",
+    "stop_vm_calls":  0,
+    "release_eligible":  false,
+    "state":  "Saved",
+    "automatic_resume":  false,
+    "original_case_session_retained":  true,
+    "policy_clean":  true,
+    "runtime_state_bytes":  2276098048,
+    "runtime_state_path":  "C:\\MorrowQA\\windows-acceptance-20261029-047\\vm\\Morrow Windows Acceptance 20261029 047\\Virtual Machines\\75CA0A13-40F1-4AED-BE6F-E15A946C14BB.VMRS",
+    "status":  "UNKNOWN_VM_MEMORY_AND_DISK_SAVED_AT_USER_PAUSE",
+    "disk_bytes":  20472397824,
+    "free_bytes":  [
+                       {
+                           "bytes":  63847964672,
+                           "drive":  "C"
+                       },
+                       {
+                           "bytes":  13825040384,
+                           "drive":  "D"
+                       }
+                   ],
+    "vm_inventory":  [
+                         {
+                             "name":  "Morrow Windows Acceptance 20261023 029",
+                             "id":  "0211b2b1-bb56-4f2a-8077-f911f9ecf73c",
+                             "state":  "Saved"
+                         },
+                         {
+                             "name":  "Morrow Windows Acceptance 20261023 030",
+                             "id":  "0bc007bf-8f66-4462-ba44-b957459cfd6d",
+                             "state":  "Saved"
+                         },
+                         {
+                             "name":  "Morrow Windows Acceptance 20261029 047",
+                             "id":  "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
+                             "state":  "Saved"
+                         },
+                         {
+                             "name":  "Windows 11 开发环境",
+                             "id":  "1ab5adc5-316d-4092-9151-cc618ff1957c",
+                             "state":  "Running"
+                         }
+                     ],
+    "original_case_session":  62133,
+    "other_vms_unchanged":  true,
+    "disk":  "C:\\MorrowQA\\windows-acceptance-20261029-047\\acceptance.vhdx"
+}

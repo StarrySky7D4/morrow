@@ -1,0 +1,12 @@
+{
+    "environment_ready":  true,
+    "host_policy_mutations":  0,
+    "vm_id":  "75ca0a13-40f1-4aed-be6f-e15a946c14bb",
+    "license_activation_not_changed":  true,
+    "password_output":  false,
+    "firmware_uuid":  "d3d88282-6edf-48eb-b124-e66ed94cc45c",
+    "P2_dispatched":  false,
+    "own_transport_closed":  true,
+    "status":  "PASS_NEW_INSTALLATION_INVENTORY_CLOSED_NOT_P2",
+    "account_sid":  "S-1-5-21-118159-3579602386-2696782449-1000"
+}

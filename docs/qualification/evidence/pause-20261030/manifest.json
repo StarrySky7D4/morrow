@@ -1,0 +1,338 @@
+{
+  "schema": 1,
+  "utc": "2026-10-30T08:38:37.908044+00:00",
+  "scope": "Public completed evidence and retained Unknown, not full qualification",
+  "files": [
+    {
+      "path": "source-equivalence732.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\source-equivalence-732\\result.json",
+      "bytes": 6756,
+      "sha256": "8563c22beb0c3cb7a72a709ca38fbcdc9bd6153ab5171914dc3278a4826f5fac"
+    },
+    {
+      "path": "vm047-resume733.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047-resume-733\\result.json",
+      "bytes": 344,
+      "sha256": "a48712a3972382aac8be5debfb98e9144acaa248c1561023bfb9e2efddcac5d4"
+    },
+    {
+      "path": "vm047-environment734.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047-environment-734\\result.json",
+      "bytes": 464,
+      "sha256": "ec4ad47b5bf1fa52f4ec06ebacfb091296a1db44f1b682b323bdde5628d568bc"
+    },
+    {
+      "path": "vm047-readiness735.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047-readiness-prepared-735\\isolated-vm-probe-735\\result.json",
+      "bytes": 491,
+      "sha256": "bfa0865d73c4bbd2d8d1aa406c63b7bff488e611f5e631626d95cdd5b910ce15"
+    },
+    {
+      "path": "case736-retained-unknown.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case736-summary.json",
+      "bytes": 8345,
+      "sha256": "050b16bfce9e2a7b50bc55702bf8a9fcb0c01f316e80645a224859b31a06258d"
+    },
+    {
+      "path": "case736-retained-review739.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\case736-retained-review-739\\result.json",
+      "bytes": 8345,
+      "sha256": "050b16bfce9e2a7b50bc55702bf8a9fcb0c01f316e80645a224859b31a06258d"
+    },
+    {
+      "path": "case736-policy-apply.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-2d7a837644264b389c3b0dc73736cd88-case\\apply-original.json",
+      "bytes": 3340,
+      "sha256": "77c78aecf2aa185c21059ed850364b99e0768aff5f6ed95c6d1deb3423052c3e"
+    },
+    {
+      "path": "case736-policy-restore.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-2d7a837644264b389c3b0dc73736cd88-case\\restore-original.json",
+      "bytes": 3504,
+      "sha256": "f6cea1595befc63f142d6c6cf822b1418afe00caf3d80801c5f35efbfce62cf5"
+    },
+    {
+      "path": "case736-retained-receipt.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-2d7a837644264b389c3b0dc73736cd88-case\\retained.json",
+      "bytes": 3965,
+      "sha256": "ed8a6afbc61ab3e5f9c8e7f0845516e8c3b76fa040c819705c653f39277505b7"
+    },
+    {
+      "path": "case736-original-run-reply.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\c28-root-vm-transaction2769-2d7a837644264b389c3b0dc73736cd88-case\\guest-reply-05-run.json",
+      "bytes": 1154,
+      "sha256": "b4b22c0f04557415a1000fbd7b0501e3118c020c651a6f1509c09fb4613ae4a4"
+    },
+    {
+      "path": "case736-diagnostic-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-736\\result.json",
+      "bytes": 202,
+      "sha256": "a2f1803e2056726333e62d7f622343e4c40b99973a26cbf3642f277e4fa54087"
+    },
+    {
+      "path": "case736-diagnostic-manifest.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-736\\manifest.json",
+      "bytes": 1870,
+      "sha256": "c69ad2b4fa32a35494550ffab93b06e2b6efae4fa5092007128100e384cb9435"
+    },
+    {
+      "path": "case736-stderr.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-736\\02-stderr.log",
+      "bytes": 592,
+      "sha256": "67c88119802a77c0a66b046a4203d3b00ca36d6cfcf7b256397aef096ea6438e"
+    },
+    {
+      "path": "case736-events.jsonl",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm-case-diagnostic-736\\03-events.jsonl",
+      "bytes": 1069,
+      "sha256": "94098764dc5499daadc89967738f19153c54bb8a7f880e6fdd1c379ff58d95f5"
+    },
+    {
+      "path": "roles052-imports740.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\roles052-import-inspection-740\\result.json",
+      "bytes": 5261,
+      "sha256": "3e931504f8e4bfa93e979563295cc373c90f781ad94655885bcdd2b6506f8b56"
+    },
+    {
+      "path": "vm047-fixed-files741.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047-helper-diagnostic-741\\manifest.json",
+      "bytes": 1128,
+      "sha256": "ee221756e5d8605b3c7971df977a298f570dfa1fa60f8fc51f276276b6cfb92f"
+    },
+    {
+      "path": "vm047-diagnostic741-closed.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047-helper-diagnostic-741\\result.json",
+      "bytes": 381,
+      "sha256": "173dcaf2aecc4ae42615120e8036e55ecb0979672a28ee34c80e8b9cc20cfbc9"
+    },
+    {
+      "path": "vm047-diagnostic741-driver-closed.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047-helper-diagnostic-driver-741\\result.json",
+      "bytes": 70,
+      "sha256": "54d48743069df138c02b8c48c969beb1e31dfcd3a8c3aff2b4e3c3bfbbd3d280"
+    },
+    {
+      "path": "vm047-saved-at-pause.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\vm047-case736-paused-20261030\\result.json",
+      "bytes": 2318,
+      "sha256": "5ed00b0b0c0e60abfbc036184818ff59095ec75381251c8a50ba57cbced0ca56"
+    },
+    {
+      "path": "sdk737-build.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-737\\result.json",
+      "bytes": 1421,
+      "sha256": "5057f9ec372d28d5e7b0e75d56bf4bb339aae01486ba87c4baf108702c152a0d"
+    },
+    {
+      "path": "sdk737-frozen-inputs.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-737\\frozen-inputs.json",
+      "bytes": 11322,
+      "sha256": "e342a2fa92a13b4bdfb02cc2964b62b5a506f6bae510244aed6ae0629e0bef31"
+    },
+    {
+      "path": "sdk738-frozen-compatibility.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\result.json",
+      "bytes": 6278,
+      "sha256": "4bc80eed7065f4e62f89843a5666153875e6c8d8b5c6b654d0f5605dad7a4886"
+    },
+    {
+      "path": "sdk737-sdk_frozen_compat-proof.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-737\\sdk_frozen_compat-proof.json",
+      "bytes": 1270,
+      "sha256": "1fbedbc33ad35a8503598bb9036b35ed1a0042319da7aeb0e3637c71255e224e"
+    },
+    {
+      "path": "sdk737-sdk_frozen_compat-compiler-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-737\\sdk_frozen_compat-compiler-result.json",
+      "bytes": 60,
+      "sha256": "78345b5bcb982779f5d64ac0cce7eedf24acecea30f437d9891e3a5b40cbb78e"
+    },
+    {
+      "path": "sdk737-sdk_frozen_dependency-proof.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-737\\sdk_frozen_dependency-proof.json",
+      "bytes": 1290,
+      "sha256": "adc6817f6ae96be3294c866bdbf91a083ecf75f7f3d37d3a878458bebc12b2e2"
+    },
+    {
+      "path": "sdk737-sdk_frozen_dependency-compiler-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-737\\sdk_frozen_dependency-compiler-result.json",
+      "bytes": 60,
+      "sha256": "78345b5bcb982779f5d64ac0cce7eedf24acecea30f437d9891e3a5b40cbb78e"
+    },
+    {
+      "path": "sdk737-sdk_transport_frozen-proof.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-737\\sdk_transport_frozen-proof.json",
+      "bytes": 1285,
+      "sha256": "ce3225fc5445072f93e1a6187dcdfa5111af2c93734a2601d2bab54806175f68"
+    },
+    {
+      "path": "sdk737-sdk_transport_frozen-compiler-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-build-737\\sdk_transport_frozen-compiler-result.json",
+      "bytes": 60,
+      "sha256": "78345b5bcb982779f5d64ac0cce7eedf24acecea30f437d9891e3a5b40cbb78e"
+    },
+    {
+      "path": "sdk738-01.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\01.log",
+      "bytes": 131,
+      "sha256": "774ecefae6490efc8358134b9a9e2226af475c3aa9350b79c27f5a9868370038"
+    },
+    {
+      "path": "sdk738-01-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\01-result.json",
+      "bytes": 369,
+      "sha256": "f4d023769154cc4e4d3ca22289ce84cebe59128f227cdb0ad7bae7744a9c558f"
+    },
+    {
+      "path": "sdk738-02.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\02.log",
+      "bytes": 136,
+      "sha256": "f6d0e8e9138dc0d623ee364456d342787ade9fe6198315cc7ef899c53f92103b"
+    },
+    {
+      "path": "sdk738-02-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\02-result.json",
+      "bytes": 374,
+      "sha256": "40d96fdd8f5f64be0c39c6e2141a27d8e59f4c069883ddea526251149c18e597"
+    },
+    {
+      "path": "sdk738-03.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\03.log",
+      "bytes": 129,
+      "sha256": "c0c2a127119bba16862f60223b7f91aad05c1889d3286fa9cba05901cfe2de12"
+    },
+    {
+      "path": "sdk738-03-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\03-result.json",
+      "bytes": 367,
+      "sha256": "bc8e1f07fc812cb3fdd73edb09635cfc911dd2d44cea50a4a541082779eab97e"
+    },
+    {
+      "path": "sdk738-04.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\04.log",
+      "bytes": 133,
+      "sha256": "0d968cb9c2090d9861bdcd03bee6aa1334709349a82806593ff3ece419c61abb"
+    },
+    {
+      "path": "sdk738-04-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\04-result.json",
+      "bytes": 371,
+      "sha256": "83decf46f97d1d6b9d4e313ac06799be4010693a0d008e4abb9d2352e1761316"
+    },
+    {
+      "path": "sdk738-05.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\05.log",
+      "bytes": 138,
+      "sha256": "8600656f1bd068e3b6f033f8a21adc028ad8664b16e20a2a16d9be6d8357beab"
+    },
+    {
+      "path": "sdk738-05-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\05-result.json",
+      "bytes": 376,
+      "sha256": "109b0f38fb790f10aec9efdc01eff6a6567042b2577a570040ee551bfcdf159e"
+    },
+    {
+      "path": "sdk738-06.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\06.log",
+      "bytes": 131,
+      "sha256": "5010d211c98a4226890362cc31e89f0f67446612cccdde06f6cd7f763c573b05"
+    },
+    {
+      "path": "sdk738-06-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\06-result.json",
+      "bytes": 369,
+      "sha256": "219d37ef7a246c52df1b6a94b0cbfc382d5859b3733f9c39368ccd525bea0781"
+    },
+    {
+      "path": "sdk738-07.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\07.log",
+      "bytes": 134,
+      "sha256": "609939244d29fed3468e468854bfefc61f0f67b229ce8095e6e46f50feefcf29"
+    },
+    {
+      "path": "sdk738-07-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\07-result.json",
+      "bytes": 372,
+      "sha256": "740db7e69ad308b5385c3c2527ff5633937295d1000e892125f5e2cb89245c2d"
+    },
+    {
+      "path": "sdk738-08.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\08.log",
+      "bytes": 139,
+      "sha256": "a76d3428bf01905aa15fd60205c419c5d80375b53ab540eeb3dac4de3ac03066"
+    },
+    {
+      "path": "sdk738-08-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\08-result.json",
+      "bytes": 377,
+      "sha256": "aea467a15f34372a2877d510a437a296edad81895d1c1b7bb17bdbec115f5941"
+    },
+    {
+      "path": "sdk738-09.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\09.log",
+      "bytes": 132,
+      "sha256": "1871bf99363f2b27e5be2014baa0bc583da91d041ebaf22a061542cfbbc17608"
+    },
+    {
+      "path": "sdk738-09-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\09-result.json",
+      "bytes": 370,
+      "sha256": "33459f6236ed6fbe1defc89385834fac5783e6f6905dc399a46fdce9dbc36cec"
+    },
+    {
+      "path": "sdk738-10.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\10.log",
+      "bytes": 187,
+      "sha256": "115d74e7083e063971e84d9c40b6b96d061081e8675e7a607803738a40a4191d"
+    },
+    {
+      "path": "sdk738-10-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\10-result.json",
+      "bytes": 429,
+      "sha256": "2076ff225c3378322d93b7f256ce01be68751a589512ca6a02398b2f8387fa67"
+    },
+    {
+      "path": "sdk738-11.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\11.log",
+      "bytes": 189,
+      "sha256": "708de0ef1878f3c25888d8772a9c1799fda0787831596435964320322dbc0566"
+    },
+    {
+      "path": "sdk738-11-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\11-result.json",
+      "bytes": 431,
+      "sha256": "da976ea3b3f5fea842c78cec621c6574d8374d5692b17dde18311481c980993c"
+    },
+    {
+      "path": "sdk738-12.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\12.log",
+      "bytes": 190,
+      "sha256": "b75cadf1b5549abf1d79c8e447bc64b7b8bf3fb60ce773a4e099cf615e62939c"
+    },
+    {
+      "path": "sdk738-12-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\12-result.json",
+      "bytes": 432,
+      "sha256": "46a461bb7554b2d947162f8ae3a0770cba68bb942e389dcea7d8e8e331b04003"
+    },
+    {
+      "path": "sdk738-13.log",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\13.log",
+      "bytes": 198,
+      "sha256": "aaf190b6c9e63077e2ea285e240abe58c838103142a04d7ec4e583e2863e7f73"
+    },
+    {
+      "path": "sdk738-13-result.json",
+      "original": "D:\\build_cache\\_audit\\windows-restriction-lineage-20261022-019\\frozen-guests-runtime-738\\13-result.json",
+      "bytes": 439,
+      "sha256": "7764999fab1e2ee7cdd9384cb3dfb5c9de661c8f4c7fac082784d09549c0daf5"
+    },
+    {
+      "path": "pause-summary.json",
+      "bytes": 3145,
+      "sha256": "e38a779c1a1f2f216b976816560d6b6dd64643aeefac51c4136a6db60919eb6b"
+    }
+  ],
+  "credentials_included": false,
+  "VM_disks_or_memory_included": false
+}
